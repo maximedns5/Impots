@@ -1,0 +1,66 @@
+{
+ "annee": 2023,
+ "commit": "da1cfab7450518c25e03a8d007cf4618e972e08b",
+ "lots": 4,
+ "jeu": "insee_constate",
+ "vieillissement_menages": {
+  "jeu": "insee_constate",
+  "source": "Insee, constaté : salaires par tête, D11 sur l'emploi intérieur salarié (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac, ensemble des ménages, France (BDM 001768695)",
+  "de": 2024,
+  "vers": 2023,
+  "salaires": {
+   "2024": 0.026386633280596428
+  },
+  "prix": {
+   "2024": 0.018000000000000002
+  },
+  "facteur_salaires": 0.9742917216329504,
+  "facteur_prix": 0.9823182711198428,
+  "colonnes": {
+   "salaire_brut_annuel": "wage",
+   "pension_annuelle": "price",
+   "chomage_annuel": "wage",
+   "loyer_mensuel": "price"
+  }
+ },
+ "vieillissement_firmes": {
+  "de": 2023,
+  "vers": 2023,
+  "facteur": 1.0
+ },
+ "mesures": {
+  "cotisations_salariales": 116492142271.81477,
+  "salaire_super_brut - salaire_brut": 414772482758.7814,
+  "allegement_general": 34098542493.907143,
+  "allegement_bandeau_maladie": 27551819511.806004,
+  "allegement_bandeau_famille": 10761659688.686836,
+  "csg_deductible + csg_imposable": 97981630015.56876,
+  "csg_retraite + csg_chomage": 25400461704.68099,
+  "ir_avant_niches": 101201487772.86253,
+  "salaire_imposable": 894545940593.181,
+  "retraite_imposable": 367571835972.5364,
+  "rsa / 1,355": 18683140724.55188,
+  "ppa / 1,725": 7122281372.834218,
+  "aide_logement": 11749296386.90727,
+  "af": 10134537254.109413,
+  "niveau de vie médian, pondéré personne": 23746.998274958965,
+  "D9/D1, pondéré personne": 3.695265966542951,
+  "n_foyers": 35335186.47460228,
+  "n_foyers_imposes": 18720529.823807247,
+  "n_persons": 67423772.56758225,
+  "n_dependants": 17225362.610251836,
+  "n_foyers_tmi_0": 11525028.877111074,
+  "n_foyers_tmi_1": 16122354.73812034,
+  "n_foyers_tmi_2": 7122780.553210404,
+  "n_foyers_tmi_3": 499762.857378443,
+  "n_foyers_tmi_4": 65259.448782017884,
+  "n_allocataires_af": 4163668.5000725463,
+  "n_allocataires_ppa": 4827384.909208788,
+  "n_allocataires_rsa": 3603323.050977257,
+  "n_allocataires_aide_logement": 4779710.755236071,
+  "IS de la couche entreprises": 69307461316.9191,
+  "contribution sociale sur l'IS": 1402520298.013413,
+  "C3S": 5289273504.153075,
+  "CVAE": 0.0
+ }
+}

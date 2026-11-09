@@ -27192,3 +27192,66 @@ publiés et de l'IPC, pas de la population. Celles de 2024 sont une cible de cal
 **La loi d'erreur.** Pour chaque ligne notée, l'écart relatif des trois années ; par
 instrument, sa moyenne (le biais) et son étendue. Elle est publiée, et le Monte-Carlo
 pourra la tirer dans un but suivant ; ce but ne change aucun nombre d'étude.
+
+## D-364 — La grille de vérification : 58 lignes tenues sur 80, et ce qu'elle apprend
+
+**Ce qui a tourné.** Les trois passes de D-363, au commit da1cfab, le 9 novembre (19
+minutes, quatre lots, sans imputation) ; la grille et la loi d'erreur par `impots
+verification ecrire`, dans `docs/verification/GRILLE.md` et
+`reports/verification/grille.json`. Rien n'a changé entre l'enregistrement et le calcul,
+sauf la borne de la tolérance en virgule flottante (da1cfab), qu'un test a vue échouer avant
+la première passe : 110/100 − 1 vaut 0,1000…01, une ligne à 10,0 % aurait été dite hors de
+±10 %. Aucune ligne de la grille ne tombe sur cette borne.
+
+**Le compte.** 93 lignes : 80 notées, dont 58 dans leur tolérance et 22 hors ; 10 refusées
+(D-362) ; 3 de contexte ou de calage. Par année, 19 sur 25 en 2022, 18 sur 27 en 2023, 21
+sur 28 en 2024. Les lignes hors de leur tolérance sont, presque toutes, les mêmes les trois
+années : la population ne change pas de forme quand on la ramène en arrière.
+
+**Le pronostic.** Tenu sur 18 de ses 22 points :
+
+* **Tenus, les trois années.** Le RSA (pont), de +58 à +65 % ; la prime d'activité (pont),
+  de −30 à −27 % ; les aides au logement, de −24 à −22 % ; les foyers fiscaux, de −15 à
+  −13 % ; l'impôt au barème, +10,3 % en 2023 et +5,8 % en 2024 ; les foyers au taux de 0 %,
+  de −14 à −13 % ; ceux de 30 %, de +5 à +12 % ; ceux de 41 et 45 %, de −2 à +19 % ; les
+  cotisations salariales, de −12 à −9 % ; la réduction générale, de −14 à −11 %, au bas
+  d'une fourchette qui craignait le haut ; le bandeau maladie, de +5 à +7 % ; la CSG
+  d'activité, de −7 à −6 % ; celle de remplacement, de −7 à −3 % ; le niveau de vie
+  médian, de −9 à −7 % ; le D9/D1, de +3 à +7 % ; l'IS de 2022, −16,8 %, et de 2023 et 2024,
+  +2,7 et +5,6 % ; la CVAE de 2024, −12,1 %.
+* **Manqué de peu.** Les foyers imposés de 2022, +2,6 % pour une borne à +2 %.
+* **Manqué.** Les foyers au taux de 11 %, de −23 à −21 %, qu'il croyait dans ±15 % : les
+  foyers qui manquent ne sont pas seulement non imposables, ils sont aussi dans la première
+  tranche. Le bandeau famille, de +14 à +17 %, au-dessus de sa fourchette (+8 %).
+* **Manqué, et de signe.** Les cotisations des employeurs après allègements, de +30 à
+  +33 %, quand il les attendait de −25 à 0 %. C'est le constat neuf de la grille.
+
+**Les cotisations des employeurs.** `salaire_super_brut − salaire_brut` dépasse D121 de 100
+Md€ par an. Le pronostic attendait le manque de la prévoyance ; il y a un surplus. Deux
+causes possibles, non vérifiées ici : le surbrut d'OpenFisca compte des prélèvements sur
+les salaires que les comptes classent en impôts (versement mobilité, Fnal, taxe
+d'apprentissage, formation, CSA), et, pour les agents de l'État, la contribution aux
+pensions, que les comptes classent en cotisations imputées (D122), pas effectives. Les
+études chiffrent les cotisations des employeurs par l'écart de deux passes : leur niveau
+n'entre pas dans un chiffrage, mais un écart de taux appliqué à une assiette trop large
+l'est. C'est la première ligne à ouvrir dans un but suivant.
+
+**Les autres lignes hors de tolérance, sans pronostic.** Les foyers au RSA, +98 % en 2023 et
+2024 : le montant (pont) et le compte disent le même excès de droits ; le pont de
+non-recours corrige le montant, pas le nombre. La contribution sociale sur l'IS, +39 % en
+2023 et +25 % en 2024 (−17 % en 2022) : une contribution qui ne vit qu'au-dessus de 7,63 M€
+d'IS suit mal le PIB. Les allocations familiales, de −25 à −23 %, tiennent ±25 % à un
+demi-point près.
+
+**La loi d'erreur** est publiée par ligne : son biais et son étendue sur les années notées.
+Pour presque toutes les lignes, l'étendue est de quelques points autour du biais : l'erreur
+du modèle est un biais de structure, stable d'une année à l'autre, pas un bruit. Les
+exceptions sont les lignes des entreprises (l'IS, de −17 à +6 % ; sa contribution sociale,
+de −17 à +39 %), que le PIB ramène d'une année sans lire leurs bénéfices.
+
+**Ce que la grille ne dit pas.** Elle porte sur des années que la structure de 2024 n'a pas
+vues : un écart stable dit un biais de la population, pas une erreur du droit de l'année.
+Elle refuse la TVA et les accises des ménages, qu'aucun total publié ne sépare. Elle ne
+change aucun nombre d'étude (D-363). L'URL Filosofi de `margins.py` (8402386) rend 404, et
+la médiane de 25 920 € qu'y calent les marges de 2024 ne se retrouve dans aucune
+publication relevée ; à vérifier avec la passe de calage, que ce but ne touche pas.

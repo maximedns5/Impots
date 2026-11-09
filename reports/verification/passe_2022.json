@@ -1,0 +1,72 @@
+{
+ "annee": 2022,
+ "commit": "da1cfab7450518c25e03a8d007cf4618e972e08b",
+ "lots": 4,
+ "jeu": "insee_constate",
+ "vieillissement_menages": {
+  "jeu": "insee_constate",
+  "source": "Insee, constaté : salaires par tête, D11 sur l'emploi intérieur salarié (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac, ensemble des ménages, France (BDM 001768695)",
+  "de": 2024,
+  "vers": 2022,
+  "salaires": {
+   "2023": 0.046620701783021135,
+   "2024": 0.026386633280596428
+  },
+  "prix": {
+   "2023": 0.048,
+   "2024": 0.018000000000000002
+  },
+  "facteur_salaires": 0.9308928439626207,
+  "facteur_prix": 0.9373265945800026,
+  "colonnes": {
+   "salaire_brut_annuel": "wage",
+   "pension_annuelle": "price",
+   "chomage_annuel": "wage",
+   "loyer_mensuel": "price"
+  }
+ },
+ "vieillissement_firmes": {
+  "jeu": "insee_constate",
+  "de": 2023,
+  "vers": 2022,
+  "facteur": 0.9365419754070998,
+  "source": "comptes nationaux (INSEE), de 2023 ramené à 2022",
+  "pib_valeur": {},
+  "convention": "le coût du millésime suit le PIB nominal (D-246)"
+ },
+ "mesures": {
+  "cotisations_salariales": 111221196915.1164,
+  "salaire_super_brut - salaire_brut": 397435044643.84436,
+  "allegement_general": 31893002018.413177,
+  "allegement_bandeau_maladie": 26107906529.820663,
+  "allegement_bandeau_famille": 10245760786.680304,
+  "csg_deductible + csg_imposable": 93620735341.23624,
+  "csg_retraite + csg_chomage": 23821647690.50457,
+  "ir_avant_niches": 96824414987.08691,
+  "salaire_imposable": 854799425687.7495,
+  "retraite_imposable": 350736484906.9994,
+  "rsa / 1,355": 18051427957.515396,
+  "ppa / 1,725": 6930506454.696075,
+  "aide_logement": 11518698909.587423,
+  "af": 9847772734.87331,
+  "niveau de vie médian, pondéré personne": 22747.19396784054,
+  "D9/D1, pondéré personne": 3.6315244302509933,
+  "n_foyers": 35335186.47460228,
+  "n_foyers_imposes": 18718317.362112828,
+  "n_persons": 67423772.56758225,
+  "n_dependants": 17225362.610251836,
+  "n_foyers_tmi_0": 11512695.656656373,
+  "n_foyers_tmi_1": 16117488.083007282,
+  "n_foyers_tmi_2": 7137466.329344521,
+  "n_foyers_tmi_3": 501833.1412813741,
+  "n_foyers_tmi_4": 65703.26431272563,
+  "n_allocataires_af": 4164605.391952825,
+  "n_allocataires_ppa": 5152497.0500038285,
+  "n_allocataires_rsa": 3626353.3860046556,
+  "n_allocataires_aide_logement": 4864189.149198169,
+  "IS de la couche entreprises": 64909346732.19857,
+  "contribution sociale sur l'IS": 1313519130.450036,
+  "C3S": 4953626656.047955,
+  "CVAE": 0.0
+ }
+}
