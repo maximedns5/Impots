@@ -27125,3 +27125,70 @@ d'impôt sont imputés depuis B3). Puis les totaux publiés de chaque ligne neuv
 manifestés. Puis une D-entrée qui fixe, pour chaque ligne neuve, sa tolérance et sa
 raison, avant le premier calcul ; elle est commitée et poussée avant toute passe. Puis
 les passes, une par année.
+
+## D-363 — La grille de vérification préenregistrée : 93 lignes, tolérances, pronostic
+
+**Ce qui est fixé ici, avant toute passe des années 2022 et 2023 et avant le premier calcul
+de chaque ligne neuve.** Les lignes, leurs totaux publiés et leurs tolérances sont dans
+`docs/verification/lignes.json` : 31 lignes par année sur 2022, 2023 et 2024, dont 10
+refusées faute de total publié ou de droit servi par le moteur. Chaque total porte sa
+source, son tableau, son URL et le sha256 du fichier lu. Trois relecteurs les ont relevés
+le 9 novembre sur l'Insee (comptes nationaux 3.217 et 7.401, ERFS), la CCSS (mai 2024 et
+juin 2025), la DGFiP (n° 14, 22, 32, 41, IRCOM, taux marginaux, 2042) et la Cnaf (rapports
+du directeur comptable, RSA et PA Conjoncture). budget.gouv.fr, l'Urssaf, la Dares et la
+Drees ont refusé le conteneur.
+
+**La passe.** Une par année : la loi de l'année, la population de 2024 ramenée à l'année
+par les indices constatés (D-362), en quatre lots (`households_par_lots`), tier complet,
+sans imputation (ni niches, ni capital, ni IJ, ni consommation) : la population telle que
+les études la voient par défaut. Les entreprises : le millésime 2023, son coût suivant le
+PIB nominal des comptes (D-246). Deux sorties neuves : la CSG des pensions et du chômage, et
+les foyers par taux marginal (`ir_tranche`). Elles sont calculées dans la passe de
+population seulement : la réponse de l'API énumère ses champs, et deux de plus la
+cassaient. Un essai de plomberie sur 4 000 ménages, après l'écriture de cette entrée et
+avant son commit, a vérifié les signes et que les foyers par taux s'additionnent au total ;
+rien de cette entrée n'a changé après lui.
+
+**Les tolérances**, celles de la réconciliation quand la ligne existe, et pour les neuves :
+
+* **Les cotisations salariales** (Insee D613CE), ±10 % : le même concept, tous régimes ;
+  le moteur n'a pas les non-salariés.
+* **Les cotisations des employeurs après allègements** (D121), ±15 % : D121 compte la
+  prévoyance d'entreprise, que le moteur n'a pas.
+* **La réduction générale et les bandeaux maladie et famille** (CCSS), ±15 % : la
+  réduction générale ne vit que sous 1,6 SMIC, elle mesure la masse que les études
+  chiffrent.
+* **La CSG d'activité** (CCSS), ±15 % : le total publié compte les indépendants.
+* **La CSG de remplacement** (CCSS), ±10 % : les pensions sont calées, reste le taux, qui
+  suit le RFR.
+* **Les foyers aux taux de 0, 11 et 30 %**, ±15 % : des comptes, au cœur de la
+  distribution ; **aux taux de 41 et 45 %**, ±30 % : la queue, l'étage L1.
+* **L'IS avant crédits, la contribution sociale, la C3S et la CVAE**, ±20 % et ±25 % :
+  celles de la réconciliation des entreprises.
+
+Les pensions déclarées de 2022 et 2023 ne sont pas notées : leur écart découle des totaux
+publiés et de l'IPC, pas de la population. Celles de 2024 sont une cible de calage.
+
+**Le pronostic**, par ligne et pour les trois années, écrit avant le calcul :
+
+* **Inchangées de 2024 à 2022, à quelques points près**, parce que la population ne change
+  pas de forme : le RSA (pont) de +50 à +65 %, la prime d'activité (pont) de −35 à −20 %,
+  les aides au logement de −30 à −15 %, les foyers fiscaux de −20 à −10 %, les foyers
+  imposés de −10 à +2 %, l'impôt au barème de 0 à +12 %.
+* **Les foyers au taux de 0 %** sous leur total, de −35 à −10 % : les foyers qui manquent
+  sont surtout de petits foyers non imposables. Les taux de 11 et 30 % dans leur
+  tolérance ; ceux de 41 et 45 % de −40 à +40 %, un pronostic qui ne sait pas.
+* **Les cotisations salariales** de −12 à +3 % ; celles des employeurs de −25 à 0 %.
+* **La réduction générale** de −15 à +40 %, le pronostic le plus large : D-076 a trouvé un
+  chiffrage des allègements à +112 % par la masse près du SMIC, et c'est elle que cette
+  ligne voit. Les bandeaux de −12 à +8 %.
+* **La CSG d'activité** de −18 à 0 % (les indépendants) ; celle de remplacement de −8 à
+  +8 %.
+* **Le niveau de vie médian** de −12 à −5 % contre l'ERFS ; le D9/D1 de −3 à +8 %.
+* **L'IS** de 2022 sous son total, de −30 à −8 %, parce que les bénéfices de 2022 ont
+  monté plus vite que le PIB qui ramène les entreprises de 2023 ; de 2023 et 2024 dans sa
+  tolérance. La CVAE de 2024 de −25 à −5 %.
+
+**La loi d'erreur.** Pour chaque ligne notée, l'écart relatif des trois années ; par
+instrument, sa moyenne (le biais) et son étendue. Elle est publiée, et le Monte-Carlo
+pourra la tirer dans un but suivant ; ce but ne change aucun nombre d'étude.

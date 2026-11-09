@@ -32,7 +32,9 @@ INSTRUMENTS = (
     "salaire_brut", "salaire_super_brut", "salaire_net", "salaire_imposable",
     "cotisations_salariales", "cotisations_employeur",
     "retraite_imposable", "chomage_brut",
-    "csg_deductible", "csg_imposable", "crds", "csg_ij", "ir",
+    "csg_deductible", "csg_imposable", "crds", "csg_ij", "csg_retraite", "csg_chomage",
+    "allegement_general", "allegement_bandeau_maladie", "allegement_bandeau_famille",
+    "ir",
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",
     "af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
@@ -46,6 +48,8 @@ CONSOMMATION = ("tva_menages", "accises_energie")
 
 #: Weighted counts rather than euro totals — reported alongside, never summed in.
 COUNTS = ("n_foyers", "n_foyers_imposes", "n_persons", "n_dependants",
+          "n_foyers_tmi_0", "n_foyers_tmi_1", "n_foyers_tmi_2", "n_foyers_tmi_3",
+          "n_foyers_tmi_4",
           "n_allocataires_af", "n_allocataires_ppa", "n_allocataires_rsa",
           "n_allocataires_aide_logement")
 

@@ -271,6 +271,22 @@ def _extract(
     results["n_foyers_imposes"] = _to_households(
         (ir_per_foyer < -0.5).astype(np.float64), foyer_index, n_households
     )
+    # Foyers by marginal bracket (D-362), the DGFiP's « taux marginal » table: the index
+    # of the barème's top bracket each foyer reaches, 0 for the 0 % one.
+    tranche = built.calculate("ir_tranche")
+    for k in range(5):
+        results[f"n_foyers_tmi_{k}"] = _to_households(
+            (tranche == k).astype(np.float64), foyer_index, n_households
+        )
+    # The CSG on replacement incomes, by base (D-362), for the verification grid only:
+    # population passes, not the wire format, whose rows are the API's. Engine-signed
+    # negative, reported as a positive receipt like the salary's CSG rows.
+    individu_index = index_for["individu"]
+    for key, names in (("csg_retraite", ("csg_deductible_retraite", "csg_imposable_retraite")),
+                       ("csg_chomage", ("csg_deductible_chomage", "csg_imposable_chomage"))):
+        array = sum(built.calculate(name, add=True) for name in names)
+        results[key] = -_to_households(array.astype(np.float64), individu_index,
+                                       n_households)
 
     # Allocataire counts, at FAMILLE level and in December.
     #
