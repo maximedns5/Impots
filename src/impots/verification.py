@@ -149,7 +149,9 @@ def grille() -> list[dict[str, Any]]:
             ecart = sim / ligne["publie"] - 1.0
             tol = ligne["tolerance"]
             verdict = (ligne["usage"] if ligne["usage"] != "validation" else
-                       "dans la tolérance" if abs(ecart) <= tol else "hors de la tolérance")
+                       # Inclusive, and in floating point: 110/100 − 1 is 0,1000…01.
+                       "dans la tolérance" if abs(ecart) <= tol + 1e-12
+                       else "hors de la tolérance")
             row.update(simule=sim, ecart=ecart, verdict=verdict, commit=p["commit"])
         out.append(row)
     return out
