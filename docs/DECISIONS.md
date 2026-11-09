@@ -27255,3 +27255,11 @@ Elle refuse la TVA et les accises des ménages, qu'aucun total publié ne sépar
 change aucun nombre d'étude (D-363). L'URL Filosofi de `margins.py` (8402386) rend 404, et
 la médiane de 25 920 € qu'y calent les marges de 2024 ne se retrouve dans aucune
 publication relevée ; à vérifier avec la passe de calage, que ce but ne touche pas.
+
+**Les pages d'étude** disent, dans « D'où viennent ces nombres », la ligne de vérification
+de chaque instrument qu'elles chiffrent : son écart moyen, son étendue et les années qui
+tiennent leur tolérance, sous une étiquette neuve, « vérifié ». Un instrument y figure
+quand il bouge d'au moins 5 % du plus grand mouvement de la ligne : une baisse de salaire
+qui touche la prime d'activité ne fait pas lister la prime. La TVA et les accises disent
+qu'elles n'ont pas de ligne. Aucun nombre d'étude ne change ; les pages et le site sont
+réécrits depuis les mêmes rapports, et `etude verifier` et `site verifier` le confirment.

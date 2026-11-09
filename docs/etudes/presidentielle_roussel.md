@@ -186,5 +186,11 @@ Les passes ont tourné sur le commit `12e769c`, conteneur cloud 15 Go, 4 cœurs,
 
 Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
 
+**La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
+
+* La TVA : aucune ligne, faute d'un total publié pour les seuls ménages (D-362).
+
+Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
+
 * `reports/etudes/presidentielle_roussel/premiere_annee_pres2027_roussel_programme.json`, `reports/etudes/presidentielle_roussel/predictif_pres2027_roussel_programme.json`
 * `reports/etudes/presidentielle_roussel/plages/`, les 3 points des plages
