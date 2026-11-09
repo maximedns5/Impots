@@ -1,0 +1,681 @@
+{
+ "texte": "plf2021",
+ "trie_par": "agent but 18",
+ "articles": [
+  {
+   "numero": "liminaire",
+   "intitule": "Prévisions de solde structurel et de solde effectif de l’ensemble des administrations publiques de l’année 2021, prévisions d’exécution 2020 et exécution 2019",
+   "case": "perimetre",
+   "raison": "Article de solde structurel et effectif des administrations publiques : équilibre macro-budgétaire, sans mesure fiscale.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "1",
+   "intitule": "Autorisation de percevoir les impôts et produits existants",
+   "case": "perimetre",
+   "raison": "Formalité annuelle d'autorisation de percevoir les impôts existants.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "2",
+   "intitule": "Indexation sur l'inflation du barème de l’impôt sur le revenu pour les revenus 2020 et des grilles de taux par défaut du prélèvement à la source",
+   "case": "chiffrable",
+   "raison": "Le cœur de l'article, l'indexation de 0,2 % des tranches du barème, de la décote et du plafond général de la demi-part, s'écrit avec quatre boutons existants. Attention : l'arbre de l'année porte déjà ces valeurs ; le chiffrage se fait contre le barème des revenus 2019 reconduit (10 064 / 25 659 / 73 369 / 157 806, décote 777 et 1 286, demi-part 1 567), écart de signe inversé. Non chiffrés : le 196 B, les autres plafonds de quotient familial (3 697, 936, 1 562, 1 745) et les grilles du prélèvement à la source (structure : aucun bouton).",
+   "volet": "indexation du barème, de la décote et du plafond général de la demi-part",
+   "boutons": {
+    "ir_bareme": [
+     {
+      "threshold": 0,
+      "rate": 0.0
+     },
+     {
+      "threshold": 10084,
+      "rate": 0.11
+     },
+     {
+      "threshold": 25710,
+      "rate": 0.3
+     },
+     {
+      "threshold": 73516,
+      "rate": 0.41
+     },
+     {
+      "threshold": 158122,
+      "rate": 0.45
+     }
+    ],
+    "decote_seuil_celib": 779,
+    "decote_seuil_couple": 1289,
+    "plafond_qf_demi_part": 1570
+   },
+   "couche": "menages",
+   "annee_revenus": 2020,
+   "rendement_connu": false
+  },
+  {
+   "numero": "3",
+   "intitule": "Baisse de la cotisation sur la valeur ajoutée des entreprises à hauteur de la part affectée aux régions et ajustement du taux du plafonnement de la contribution économique territoriale en fonction de la valeur ajoutée",
+   "case": "structure",
+   "raison": "Le moteur entreprises ne date le barème de la CVAE qu'à partir de 2024 et rend une CVAE nulle avant (`cvae_echelle` n'aurait rien à mettre à l'échelle en 2021). Le plafonnement de la CET à la valeur ajoutée, la CFE et le transfert de TVA aux régions sont hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true
+  },
+  {
+   "numero": "4",
+   "intitule": "Modernisation des paramètres de la méthode d'évaluation de la valeur locative des établissements industriels et modification du coefficient de revalorisation de la valeur locative de ces établissements",
+   "case": "structure",
+   "raison": "Valeurs locatives des établissements industriels (TFPB, CFE) : ni taxe foncière ni CFE dans le modèle entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true
+  },
+  {
+   "numero": "5",
+   "intitule": "Neutralisation fiscale de la réévaluation libre des actifs",
+   "case": "structure",
+   "raison": "Réévaluation libre des actifs : le modèle entreprises n'a ni bilan, ni actif, ni amortissement.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "6",
+   "intitule": "Étalement de la plus-value réalisée lors d'une opération de cession-bail d'immeuble par une entreprise",
+   "case": "structure",
+   "raison": "Étalement de plus-value de cession-bail d'immeuble : ni immobilier d'entreprise ni plus-value dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "7",
+   "intitule": "Suppression progressive de la majoration de 25 % des bénéfices des entreprises qui n'adhèrent pas à un organisme de gestion agréé",
+   "case": "structure",
+   "raison": "Majoration de 25 % des bénéfices des non-adhérents d'un OGA : aucun bouton, et ni BIC/BNC au réel ni adhésion à un OGA dans la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "8",
+   "intitule": "Aménagements du crédit d'impôt recherche et du crédit d'impôt innovation",
+   "case": "structure",
+   "raison": "Doublement d'assiette du CIR pour la recherche publique et taux majorés Corse du CIR et du CII : `cir_taux` déplace le taux général, pas l'assiette ni les taux zonés.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "9",
+   "intitule": "Clarification des règles de TVA applicables aux offres composites",
+   "case": "structure",
+   "raison": "TVA des offres composites : règle d'assiette sans paramètre ; la consommation par poste ne distingue pas les offres composites.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "10",
+   "intitule": "Report de l'entrée en vigueur des règles modifiant le régime de TVA du commerce électronique",
+   "case": "structure",
+   "raison": "Report du régime de TVA du commerce électronique : règle de territorialité et de procédure, hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "11",
+   "intitule": "Mise en conformité avec le droit européen du régime de TVA des gains de course hippique",
+   "case": "structure",
+   "raison": "TVA des gains de course hippique : ni gains de course ni organisateurs dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "12",
+   "intitule": "Maintien d'un crédit d'impôt en faveur de l'acquisition et de la pose de systèmes de charge pour véhicule électrique",
+   "case": "structure",
+   "raison": "Crédit d'impôt nouveau pour les bornes de recharge (et précision du CITE) : dispositif absent du moteur et des boutons, et aucune dépense de ce type dans la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "13",
+   "intitule": "Simplification de la taxation de l'électricité",
+   "case": "structure",
+   "raison": "Alignement des taxes communales et départementales sur l'électricité (coefficients locaux, gestion par la DGFiP) : `accise_electricite` est un tarif national, il n'exprime pas des coefficients communaux que la population n'a pas.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "14",
+   "intitule": "Refonte des taxes sur les véhicules à moteur",
+   "case": "structure",
+   "raison": "Refonte des taxes sur les véhicules (malus, taxes annuelles) : aucun véhicule dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "15",
+   "intitule": "Renforcement des incitations à l'utilisation d'énergies renouvelables dans les transports",
+   "case": "structure",
+   "raison": "Incitation à l'incorporation d'énergies renouvelables dans les transports (TIRUERT) : fiscalité des distributeurs de carburant, hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "16",
+   "intitule": "Suppression de taxes à faible rendement",
+   "case": "structure",
+   "raison": "Suppression de sept taxes à faible rendement : aucune n'est codée ni portée par la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "17",
+   "intitule": "Suppression de dépenses fiscales inefficientes",
+   "case": "structure",
+   "raison": "Suppression de deux dépenses fiscales (prix French Tech Ticket, huiles végétales pures carburant) : ni paramètre ni assiette dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "18",
+   "intitule": "Suppression du caractère obligatoire de l'enregistrement de certains actes de société",
+   "case": "structure",
+   "raison": "Enregistrement des actes de société : droits d'enregistrement, hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "19",
+   "intitule": "Harmonisation des procédures de recouvrement forcé des créances publiques",
+   "case": "perimetre",
+   "raison": "Procédure de recouvrement forcé des créances publiques.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "20",
+   "intitule": "Prorogation du taux de l'intérêt de retard et de l'intérêt moratoire",
+   "case": "perimetre",
+   "raison": "Taux de l'intérêt de retard et de l'intérêt moratoire : procédure.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "21",
+   "intitule": "Modernisation des contributions à l'AMF",
+   "case": "structure",
+   "raison": "Contributions dues à l'AMF par les acteurs financiers : taxe affectée sectorielle, hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "22",
+   "intitule": "Fixation pour 2021 de la dotation globale de fonctionnement (DGF) et des variables d'ajustement",
+   "case": "perimetre",
+   "raison": "Dotation globale de fonctionnement et variables d'ajustement : concours aux collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "23",
+   "intitule": "Évaluation des prélèvements opérés sur les recettes de l'État au profit des collectivités territoriales",
+   "case": "perimetre",
+   "raison": "Prélèvements sur recettes au profit des collectivités territoriales.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "24",
+   "intitule": "Mesures relatives à l'ajustement des ressources affectées à des organismes chargés de missions de service public",
+   "case": "perimetre",
+   "raison": "Ressources affectées aux organismes de service public (plafonds de taxes affectées).",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "25",
+   "intitule": "Intégration au budget de l’État du Fonds de prévention des risques naturels majeurs (FPRNM)",
+   "case": "perimetre",
+   "raison": "Budgétisation du fonds de prévention des risques naturels majeurs.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "26",
+   "intitule": "Dispositions relatives aux affectations : reconduction des budgets annexes et comptes spéciaux existants",
+   "case": "perimetre",
+   "raison": "Reconduction des budgets annexes et comptes spéciaux.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "27",
+   "intitule": "Actualisation et reconduction du dispositif de garantie des ressources de l’audiovisuel public (compte de concours financiers « Avances à l'audiovisuel public ») et stabilisation du tarif de la contribution à l’audiovisuel public (CAP)",
+   "case": "perimetre",
+   "raison": "Garantie des ressources de l'audiovisuel public (compte de concours financiers).",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "28",
+   "intitule": "Suppression du compte d’affectation spéciale « Services nationaux de transports conventionnés de voyageurs » (CAS SNTCV)",
+   "case": "perimetre",
+   "raison": "Suppression d'un compte d'affectation spéciale.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "29",
+   "intitule": "Suppression des dernières dispositions de l’ancien mécanisme de recouvrement de la contribution au service public de l’électricité afférentes aux consommations effectuées jusqu’au 31 décembre 2015",
+   "case": "perimetre",
+   "raison": "Suppression de reliquats de l'ancien recouvrement de la CSPE : comptabilité publique.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "30",
+   "intitule": "Relations financières entre l'État et la sécurité sociale",
+   "case": "perimetre",
+   "raison": "Relations financières entre l'État et la sécurité sociale.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "31",
+   "intitule": "Évaluation du prélèvement opéré sur les recettes de l'État au titre de la participation de la France au budget de l'Union européenne (PSR-UE)",
+   "case": "perimetre",
+   "raison": "Prélèvement sur recettes au profit du budget de l'Union européenne.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "32",
+   "intitule": "Équilibre général du budget, trésorerie et plafond d’autorisation des emplois",
+   "case": "perimetre",
+   "raison": "Article d'équilibre, de trésorerie et de plafond d'emplois.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "33",
+   "intitule": "Crédits du budget général",
+   "case": "perimetre",
+   "raison": "Crédits du budget général.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "34",
+   "intitule": "Crédits des budgets annexes",
+   "case": "perimetre",
+   "raison": "Crédits des budgets annexes.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "35",
+   "intitule": "Crédits des comptes d'affectation spéciale et des comptes de concours financiers",
+   "case": "perimetre",
+   "raison": "Crédits des comptes spéciaux.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "36",
+   "intitule": "Autorisations de découvert",
+   "case": "perimetre",
+   "raison": "Autorisations de découvert.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "37",
+   "intitule": "Plafonds des autorisations d’emplois de l'État",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "38",
+   "intitule": "Plafonds des emplois des opérateurs de l'État",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois des opérateurs.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "39",
+   "intitule": "Plafonds des emplois des établissements à autonomie financière",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois des établissements à autonomie financière.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "40",
+   "intitule": "Plafonds des emplois de diverses autorités publiques",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois d'autorités publiques.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "41",
+   "intitule": "Majoration des plafonds de reports de crédits de paiement",
+   "case": "perimetre",
+   "raison": "Plafonds de reports de crédits.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "42",
+   "intitule": "Exonération de contribution économique territoriale en cas de création ou extension d'établissement",
+   "case": "structure",
+   "raison": "Exonération de CFE et de CVAE sur délibération en cas de création ou d'extension d'établissement : ni CFE, ni établissement, ni délibération locale dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "43",
+   "intitule": "Adaptation de la taxe d'aménagement en vue de lutter contre l'artificialisation des sols",
+   "case": "structure",
+   "raison": "Taxe d'aménagement : urbanisme, hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "44",
+   "intitule": "Transfert à la DGFIP de la gestion des taxes d'urbanisme",
+   "case": "perimetre",
+   "raison": "Transfert à la DGFiP de la gestion des taxes d'urbanisme : organisation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "45",
+   "intitule": "Création d’un régime de groupe de TVA et révision du champ du dispositif du groupement autonome de personnes",
+   "case": "structure",
+   "raison": "Groupe TVA : régime de consolidation, sans paramètre ni assiette dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "46",
+   "intitule": "Sécurisation du droit de communication à la DGFIP des données de connexion",
+   "case": "perimetre",
+   "raison": "Droit de communication des données de connexion : procédure de contrôle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "47",
+   "intitule": "Prélèvement exceptionnel sur le groupe Action Logement",
+   "case": "perimetre",
+   "raison": "Prélèvement exceptionnel sur le groupe Action Logement : ressource budgétaire tirée d'un organisme, pas un impôt de ménages ou d'entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "48",
+   "intitule": "Suppression pour l’année 2021 de l’indexation de la réduction de loyer de solidarité (RLS)",
+   "case": "structure",
+   "raison": "Gel des plafonds de la réduction de loyer de solidarité : la RLS et le parc social ne sont pas codés ; `al_revalorisation_octobre` vise les aides au logement, pas la RLS.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "49",
+   "intitule": "Garantie de l’État aux projets immobiliers des établissements français d’enseignement à l’étranger",
+   "case": "perimetre",
+   "raison": "Garantie de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "50",
+   "intitule": "Modification du régime d’appel de la garantie de l’État au Comité international olympique (CIO)",
+   "case": "perimetre",
+   "raison": "Garantie de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "51",
+   "intitule": "Garantie par l’État des emprunts de l’Unédic émis en 2021",
+   "case": "perimetre",
+   "raison": "Garantie de l'État aux emprunts de l'Unédic.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "52",
+   "intitule": "Garantie de l’État aux prêts participatifs des PME et entreprises de taille intermédiaire",
+   "case": "perimetre",
+   "raison": "Garantie de l'État aux prêts participatifs.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "53",
+   "intitule": "Souscription à l’augmentation de capital de la Banque africaine de développement (BAfD)",
+   "case": "perimetre",
+   "raison": "Souscription au capital d'une banque de développement.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "54",
+   "intitule": "Revalorisation du seuil à partir duquel est ouvert l’octroi d’une allocation pour conjoints survivants de très grands invalides",
+   "case": "structure",
+   "raison": "Majoration des pensions de conjoints survivants de très grands invalides : les pensions militaires d'invalidité ne sont pas dans le moteur.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "55",
+   "intitule": "Création du Programme d’investissements d’avenir n° 4 (PIA 4)",
+   "case": "perimetre",
+   "raison": "Programme d'investissements d'avenir : crédits.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "56",
+   "intitule": "Mise en œuvre de la subvention exceptionnelle versée à France compétences",
+   "case": "perimetre",
+   "raison": "Subvention exceptionnelle à France compétences : crédits.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "57",
+   "intitule": "Application progressive de la date d’entrée en vigueur de l’automatisation du FCTVA",
+   "case": "perimetre",
+   "raison": "Automatisation du FCTVA : concours aux collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "58",
+   "intitule": "Répartition de la dotation globale de fonctionnement (DGF)",
+   "case": "perimetre",
+   "raison": "Répartition de la DGF : concours aux collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  }
+ ]
+}

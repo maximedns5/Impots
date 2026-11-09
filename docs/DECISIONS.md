@@ -27019,3 +27019,62 @@ préalable ; ce sont des annexes à part, qu'aucun enregistrement n'a encore vue
   règle : enregistrés avant d'être lus.
 
 **Ce qui ne bouge pas.** Les cinq cas déjà notés, leurs tolérances, et aucune étude.
+
+## D-360 — Le triage des dix textes : 9 articles chiffrables sur 531, et un aveugle percé
+
+**Ce qui a été fait.** Les dix textes de D-359, découpés par `scripts/decoupe_textes.py`,
+ont été triés article par article par cinq relecteurs indépendants, un par année, sur la
+consigne `docs/triage_retro/CONSIGNE.md` : le texte seul, exposés montants masqués, sans
+réseau, sans `data/raw`, sans aucun chiffrage du dépôt. Le triage est figé ici, dans
+`docs/triage_retro/`, avant l'ouverture de toute évaluation préalable. Les montants qui y
+restent sont ceux des dispositifs (objectifs de dépense, seuils) : des paramètres, pas des
+rendements.
+
+**Le compte.** 531 articles : 395 hors du périmètre (équilibre, crédits, plafonds,
+garanties, finances sociales agrégées), 111 hors de la structure du moteur, 16 hors de ses
+données, **9 chiffrables** :
+
+| texte | art. | mesure | couche | année | rendement déjà connu |
+|---|---|---|---|---|---|
+| PLF 2021 | 2 | indexation du barème de l'IR | ménages | revenus 2020 | non |
+| PLF 2022 | 2 | indexation du barème de l'IR | ménages | revenus 2021 | non |
+| PLF 2023 | 2 | indexation du barème de l'IR | ménages | revenus 2022 | oui (D-035) |
+| PLF 2024 | 2 | indexation du barème de l'IR | ménages | revenus 2023 | oui |
+| PLF 2024 | 8 | aménagement de la suppression de la CVAE | entreprises | 2024 | oui |
+| PLF 2025 | 2 | indexation du barème de l'IR | ménages | revenus 2024 | non |
+| PLF 2025 | 11 | CEBGE, premier exercice | entreprises | 2024 | oui |
+| PLF 2025 | 15 | report de la suppression de la CVAE | entreprises | 2025 | oui |
+| PLFSS 2025 | 6 | allègements généraux, étape 2025 | ménages | 2025 | oui |
+
+**Trois constats qui changent le but.**
+
+* **Le banc est étroit.** Le pronostic du but parlait de dizaines de cas ; il y en a neuf,
+  dont cinq sont la même mesure, l'indexation du barème. Un PLF porte peu de mesures
+  fiscales chiffrables sur des ménages et des entreprises synthétiques, et un PLFSS
+  presque aucune.
+* **L'aveugle est percé.** Les relecteurs sont le même modèle que celui qui enregistre :
+  ce qu'ils disent connaître de mémoire, l'enregistreur le connaît aussi. Six des neuf
+  rendements sont marqués connus ; par la règle de D-359, ils se notent à part. Trois
+  cas aveugles resteraient : les indexations de 2020, de 2021 et de 2024.
+* **Le moteur ne descend pas partout.** La fenêtre des années servies commence en 2022
+  (`api/schemas.MIN_YEAR`), le barème de la CVAE n'est daté qu'à partir de 2024, et la
+  consommation refuse toute année avant 2024. Les indexations de 2020 et 2021 demandent
+  d'élargir la fenêtre, après vérification.
+
+**La convention de chiffrage d'un texte passé.** L'arbre de l'année porte la loi votée ; un
+article se chiffre donc en miroir (D-298), le droit d'avant reconduit, le signe changé.
+L'écart entre le projet et la loi votée, quand il existe, est dit sur le cas.
+
+**Ce qui est aussi commité.** `Uprating.factor` sait ramener une population en arrière,
+sur des indices constatés année par année seulement ; un taux constant reste refusé
+(`tests/test_uprating.py`, vu échouer sur le code d'avant). Le jeu d'indices constatés
+n'est pas encore écrit ; ses sources sont trouvées. Les prix : l'IPC hors tabac, ensemble
+des ménages, France (Insee, idbank 001768695), +0,2 % en 2020, +1,6, +5,3, +4,8, +1,8 % de
+2021 à 2024. Les salaires par tête : les salaires et traitements bruts (D11, T_6205) sur
+l'emploi intérieur salarié (T_6210) des comptes nationaux base 2020, −3,7 % en 2020, +5,3,
++5,6, +4,7, +2,6 % ensuite. Le −3,7 % de 2020 est l'activité partielle, que D11 ne compte
+pas : une population ramenée à 2020 par cet indice perdrait des revenus que les ménages
+ont reçus, une raison de plus de tenir 2020 pour fragile.
+
+**Ce qui attend le propriétaire.** Continuer sur ces neuf cas, dont trois aveugles, ou
+changer de juge : voir le compte rendu du 9 novembre.

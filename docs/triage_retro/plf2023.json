@@ -1,0 +1,561 @@
+{
+ "texte": "plf2023",
+ "trie_par": "agent but 18",
+ "articles": [
+  {
+   "numero": "liminaire",
+   "intitule": "Prévisions de solde structurel et de solde effectif de l’ensemble des administrations publiques de l’année 2023, prévisions d’exécution 2022 et exécution 2021",
+   "case": "perimetre",
+   "raison": "Article liminaire de prévisions de solde des administrations publiques : aucune mesure à chiffrer.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "1",
+   "intitule": "Autorisation de percevoir les impôts existants",
+   "case": "perimetre",
+   "raison": "Formalité annuelle (autorisation de percevoir les impôts existants), pas une mesure.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "2",
+   "intitule": "Indexation sur l'inflation du barème de l'impôt sur le revenu pour les revenus de 2022 et des grilles de taux par défaut du prélèvement à la source",
+   "case": "chiffrable",
+   "raison": "Le volet barème s'écrit avec des boutons existants, sur les revenus 2022 : tranches indexées de 5,4 %, seuils de la décote, plafond général de la demi-part et plafond du premier enfant du parent isolé. L'arbre de 2022 porte déjà ces valeurs, puisque la mesure a été votée : le chiffrage est l'écart avec le contrefactuel non indexé (barème 10 225 / 26 070 / 74 545 / 160 336, décote 790 / 1 307, demi-part 1 592, parent isolé 3 756), de signe inversé. Ne sont pas chiffrés : le 196 B, les plafonds de 951, 1 587 et 1 772 EUR et les grilles de taux par défaut du PAS (aucun bouton ; le PAS est de la trésorerie, pas l'impôt dû).",
+   "volet": "indexation du barème, de la décote et des plafonds QF général et parent isolé",
+   "boutons": {
+    "ir_bareme": [
+     {
+      "threshold": 0,
+      "rate": 0.0
+     },
+     {
+      "threshold": 10777,
+      "rate": 0.11
+     },
+     {
+      "threshold": 27478,
+      "rate": 0.3
+     },
+     {
+      "threshold": 78570,
+      "rate": 0.41
+     },
+     {
+      "threshold": 168994,
+      "rate": 0.45
+     }
+    ],
+    "decote_seuil_celib": 833,
+    "decote_seuil_couple": 1378,
+    "plafond_qf_demi_part": 1678,
+    "plafond_qf_parent_isole": 3959
+   },
+   "couche": "menages",
+   "annee_revenus": 2022,
+   "rendement_connu": true
+  },
+  {
+   "numero": "3",
+   "intitule": "Aménagement du prélèvement à la source de l'impôt sur le revenu",
+   "case": "perimetre",
+   "raison": "Modulation à la baisse du prélèvement à la source et retenue des employeurs étrangers : procédure et trésorerie, l'impôt dû ne change pas.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "4",
+   "intitule": "Aménagement du régime fiscal des grands événements sportifs",
+   "case": "donnees",
+   "raison": "Régime fiscal des organisateurs de grandes compétitions sportives et dégrèvement d'IR des participants aux Jeux : ni organisme organisateur ni sportif non résident dans les populations.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "5",
+   "intitule": "Suppression de la cotisation sur la valeur ajoutée des entreprises",
+   "case": "structure",
+   "raison": "La CVAE de 2023 n'est pas exprimable : le barème de la CVAE du modèle entreprises n'est daté qu'à partir de 2024 (pentes, bases, dégrèvement, franchise), et sa formule rend zéro avant, si bien que la réduction de moitié de 2023 n'a pas d'assiette dans le modèle. La suppression de 2024 se chiffrerait contre un arbre de 2024 qui porte la trajectoire votée plus tard (0,28 %), pas la loi dont partait le texte. Le plafonnement de la CFE en fonction de la valeur ajoutée et la taxe additionnelle des CCI ne sont pas modélisés.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true
+  },
+  {
+   "numero": "6",
+   "intitule": "Prorogation de la réduction des tarifs d'accise sur l'électricité",
+   "case": "structure",
+   "raison": "Le bouton accise_electricite existe, mais la consommation n'est servie qu'à partir de 2024 : les accises et les prix de l'énergie de 2023 ne sont pas relevés, et le moteur refuse l'année. Le volet entreprises (0,5 EUR/MWh) n'a pas de consommation d'énergie dans la population d'entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true
+  },
+  {
+   "numero": "7",
+   "intitule": "Adaptation du système fiscal aux exigences de la transition énergétique",
+   "case": "structure",
+   "raison": "Paquet d'adaptations fiscales à la transition énergétique : étalement des aides CEE, périmètre du taux réduit de TVA des travaux de rénovation, exonérations de TFPB des logements sociaux, taxe d'aménagement, accise du charbon, PTZ mobilités. Aucun de ces volets n'a de paramètre ni d'assiette dans le moteur.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "8",
+   "intitule": "Renforcement des incitations fiscales à l'utilisation d'énergie renouvelable dans les transports",
+   "case": "structure",
+   "raison": "Tarifs et objectifs de la TIRUERT, taxe sur les metteurs à la consommation de carburants : hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "9",
+   "intitule": "Suppression de dépenses fiscales inefficientes",
+   "case": "donnees",
+   "raison": "Suppression de six dépenses fiscales très ciblées (tuteurs de chômeurs créateurs, SOFIPECHE, navires de pêche, Corse, inventions non brevetées, maîtres-restaurateurs) : aucune de ces bases dans les populations.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "10",
+   "intitule": "Mise en œuvre du transfert du recouvrement de certaines impositions et amendes à la DGFiP",
+   "case": "perimetre",
+   "raison": "Transfert du recouvrement d'impositions et d'amendes à la DGFiP et ratification d'ordonnance : organisation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "11",
+   "intitule": "Relèvement du taux de la contribution additionnelle aux primes ou cotisations afférentes aux conventions d'assurance applicable aux exploitations agricoles",
+   "case": "structure",
+   "raison": "Contribution additionnelle sur les conventions d'assurance des exploitations agricoles affectée au FNGRA : ni taxe sur les conventions d'assurance ni exploitation agricole dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "12",
+   "intitule": "Fixation pour 2023 de la dotation globale de fonctionnement (DGF) et des variables d'ajustement",
+   "case": "perimetre",
+   "raison": "Dotation globale de fonctionnement et variables d'ajustement : dotations aux collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "13",
+   "intitule": "Réforme du dispositif de remboursement des frais de garde, du dispositif de compensation des frais de protection fonctionnelle des élus et de la dotation particulière relative aux conditions d’exercic",
+   "case": "perimetre",
+   "raison": "Dotation particulière des élus locaux : dotations aux collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "14",
+   "intitule": "Évaluation des prélèvements opérés sur les recettes de l'État au profit des collectivités territoriales",
+   "case": "perimetre",
+   "raison": "Prélèvements sur recettes au profit des collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "15",
+   "intitule": "Dispositions relatives à l'affectation de ressources à des tiers",
+   "case": "perimetre",
+   "raison": "Affectation de ressources à des tiers et plafonds de taxes affectées.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "16",
+   "intitule": "Prise en charge par Action Logement d’une partie des contributions des bailleurs sociaux au financement des aides à la pierre",
+   "case": "perimetre",
+   "raison": "Contributions des bailleurs sociaux à la CGLLS et contribution d'Action Logement : financement du FNAP, hors ménages et entreprises modélisés.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "17",
+   "intitule": "Dispositions relatives aux affectations : reconduction des budgets annexes et comptes spéciaux existants",
+   "case": "perimetre",
+   "raison": "Disposition relative aux budgets annexes, comptes spéciaux, relations financières entre l'État et des tiers ou l'Union européenne : équilibre budgétaire.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "18",
+   "intitule": "Fixation pour 2023 de la fraction du produit de la taxe sur la valeur ajoutée transférée au compte de concours financiers \"Avances à l'audiovisuel public",
+   "case": "perimetre",
+   "raison": "Disposition relative aux budgets annexes, comptes spéciaux, relations financières entre l'État et des tiers ou l'Union européenne : équilibre budgétaire.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "19",
+   "intitule": "Modification du périmètre du compte de concours financiers « Avances à divers services de l'État ou organismes gérant des services publics »",
+   "case": "perimetre",
+   "raison": "Disposition relative aux budgets annexes, comptes spéciaux, relations financières entre l'État et des tiers ou l'Union européenne : équilibre budgétaire.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "20",
+   "intitule": "Actualisation de la définition du budget annexe « Contrôle et exploitation aériens » prévue à l’article 125 modifié de la loi de finances pour 1991",
+   "case": "perimetre",
+   "raison": "Disposition relative aux budgets annexes, comptes spéciaux, relations financières entre l'État et des tiers ou l'Union européenne : équilibre budgétaire.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "21",
+   "intitule": "Suppression du compte de commerce \"Renouvellement des concessions hydroélectriques\"",
+   "case": "perimetre",
+   "raison": "Disposition relative aux budgets annexes, comptes spéciaux, relations financières entre l'État et des tiers ou l'Union européenne : équilibre budgétaire.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "22",
+   "intitule": "Modification du compte de commerce « Approvisionnement de l’État et des forces armées en produits pétroliers, biens et services complémentaires »",
+   "case": "perimetre",
+   "raison": "Disposition relative aux budgets annexes, comptes spéciaux, relations financières entre l'État et des tiers ou l'Union européenne : équilibre budgétaire.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "23",
+   "intitule": "Relations financières entre l'État et la sécurité sociale",
+   "case": "perimetre",
+   "raison": "Relations financières entre l'État et la sécurité sociale : finances sociales agrégées.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "24",
+   "intitule": "Versement au budget général du solde du Fonds de stabilisation des changes et suppression du fonds",
+   "case": "perimetre",
+   "raison": "Disposition relative aux budgets annexes, comptes spéciaux, relations financières entre l'État et des tiers ou l'Union européenne : équilibre budgétaire.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "25",
+   "intitule": "Évaluation du prélèvement opéré sur les recettes de l'État au titre de la participation de la France au budget de l'Union européenne (PSR-UE)",
+   "case": "perimetre",
+   "raison": "Disposition relative aux budgets annexes, comptes spéciaux, relations financières entre l'État et des tiers ou l'Union européenne : équilibre budgétaire.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "26",
+   "intitule": "Équilibre général du budget, trésorerie et plafond d’autorisation des emplois",
+   "case": "perimetre",
+   "raison": "Article d'équilibre, de trésorerie et de plafond d'emplois.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "27",
+   "intitule": "Crédits du budget général",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "28",
+   "intitule": "Crédits des budgets annexes",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "29",
+   "intitule": "Crédits des comptes d'affectation spéciale et des comptes de concours financiers",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "30",
+   "intitule": "Objectifs et indicateurs de performance",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "31",
+   "intitule": "Autorisations de découvert",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "32",
+   "intitule": "Plafonds des autorisations d’emplois de l'État",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "33",
+   "intitule": "Plafonds des emplois des opérateurs de l'État",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "34",
+   "intitule": "Plafonds des emplois des établissements à autonomie financière",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "35",
+   "intitule": "Plafonds des emplois des autorités publiques indépendantes",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "36",
+   "intitule": "Majoration des plafonds de reports de crédits de paiement",
+   "case": "perimetre",
+   "raison": "Crédits, autorisations de découvert, plafonds d'emplois ou reports de crédits : seconde partie, hors chiffrage d'impôt ou de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "37",
+   "intitule": "Garantie de l’État à la Banque de France sur un prêt au Fonds monétaire international",
+   "case": "perimetre",
+   "raison": "Garantie de l'État : hors du champ.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "38",
+   "intitule": "Transfert des missions de soutien au commerce extérieur anciennement confiées à Natixis",
+   "case": "perimetre",
+   "raison": "Soutien public au commerce extérieur transféré de Natixis : garanties.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "39",
+   "intitule": "Arrêt du soutien à l’export des hydrocarbures",
+   "case": "perimetre",
+   "raison": "Arrêt du soutien à l'export des hydrocarbures : garanties publiques.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "40",
+   "intitule": "Participation de l’État à l’augmentation de capital de la Banque Ouest Africaine de développement (BOAD)",
+   "case": "perimetre",
+   "raison": "Participation de l'État au capital d'une banque de développement.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "41",
+   "intitule": "Droit à pension des victimes d’attentats commis antérieurement au 1er janvier 1982",
+   "case": "perimetre",
+   "raison": "Droit à pension des victimes d'attentats anciens : pensions de victimes servies par l'État, hors des prestations modélisées.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "42",
+   "intitule": "Extension de la majoration de traitement à certains agents publics civils et militaires du ministère des Armées",
+   "case": "perimetre",
+   "raison": "Majoration de traitement d'agents publics : rémunération publique.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "43",
+   "intitule": "Intégration au budget de l’État du financement de la mission d'accessibilité bancaire",
+   "case": "perimetre",
+   "raison": "Financement de la mission d'accessibilité bancaire : budget de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "44",
+   "intitule": "Prolongation et extension de l’expérimentation rendant obligatoire une tentative de médiation préalable pour certaines affaires familiales",
+   "case": "perimetre",
+   "raison": "Expérimentation de médiation familiale préalable : organisation de la justice.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "45",
+   "intitule": "Répartition de la dotation globale de fonctionnement",
+   "case": "perimetre",
+   "raison": "Répartition de la DGF : dotations aux collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "46",
+   "intitule": "Augmentation de la dotation de soutien aux communes pour la protection de la biodiversité et pour la valorisation des aménités rurales",
+   "case": "perimetre",
+   "raison": "Dotation de soutien aux communes pour la biodiversité : dotations aux collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "47",
+   "intitule": "Prolongation des expérimentations de la loi n° 2018-771 du 5 septembre 2018 pour la liberté de choisir son avenir professionnel",
+   "case": "perimetre",
+   "raison": "Prolongation d'expérimentations des entreprises adaptées : organisation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  }
+ ]
+}
