@@ -723,7 +723,7 @@ paramétrées, 13 se chiffrent. La porte la plus large, la dépense publique (56
 avec un module : les retraites (22 refus chez 10 candidats, l'âge légal en tête) et les
 transmissions (13 refus chez 8 candidats).
 
-### But 18 — Les juges du passé : assez de cas notés pour que la note veuille dire quelque chose (proposé)
+### But 18 — Les juges du passé : assez de cas notés pour que la note veuille dire quelque chose (validé le 9 novembre 2026, D-359)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
 et il repose sur cinq cas : trois dans leur tolérance, des écarts de −22 % (les aides au

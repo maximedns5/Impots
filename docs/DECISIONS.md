@@ -26981,3 +26981,41 @@ doublait celle de la légende : elle s'appelle « etiquettes ».
 préenregistrer. Au propriétaire : l'adresse pour signaler une erreur, l'hébergement (le
 dépôt est privé), le libellé d'un parti, et les faits que la relecture demande de vérifier
 (la candidature de Le Pen, une mesure de Mélenchon portée par Mathilde Panot).
+
+## D-359 — Le but 18 validé : les juges du passé, de 2021 à 2025
+
+**La demande.** Le propriétaire, le 9 novembre : « oui, lance le but 18 en commençant en
+2021 ». Le but est celui que `docs/BUT.md` écrit, sur les PLF et les PLFSS de 2021 à 2025.
+
+**Les dix textes.** Les projets déposés à l'Assemblée nationale, en open data, téléchargés
+le 9 novembre et manifestés : PLF 2021 (n° 3360, XVe législature), 2022 (n° 4482), 2023
+(n° 273, XVIe), 2024 (n° 1680), 2025 (n° 324, XVIIe) ; PLFSS 2021 (n° 3397), 2022
+(n° 4523), 2023 (n° 274), 2024 (n° 1682), 2025 (n° 325). Aucun ne contient d'évaluation
+préalable ; ce sont des annexes à part, qu'aucun enregistrement n'a encore vues.
+
+**Les règles, celles du PLF 2027 (D-175), étendues.**
+
+* **Le triage se fait sur le texte.** Chaque article est découpé en son dispositif, lu en
+  clair (ses paramètres sont nécessaires au codage), et son exposé des motifs, lu montants
+  masqués : tout montant en euros y est remplacé avant la lecture, parce que l'exposé
+  annonce parfois le rendement que l'annexe chiffre.
+* **Un cas se préenregistre avant l'ouverture de sa fiche**, avec sa tolérance, sa raison
+  et son pronostic, dans un commit poussé. La fiche n'est ouverte qu'ensuite, et la
+  tolérance ne change plus.
+* **Un montant déjà connu se note à part.** Ceux de la suite de précision (D-035) sont dans
+  le dépôt ; un cas dont le rendement est connu de celui qui l'enregistre est une révision,
+  comptée à part, comme au but 10.
+
+**Les choix, faute d'une réponse.** Le propriétaire n'a tranché que l'année de départ.
+
+* **Les articles de prestations** entrent comme les articles fiscaux, à la façon de
+  l'art. 74 du PLF 2027 (D-298) : le juge est le même document, et le moteur les chiffre.
+* **Remonter le temps.** La population est de 2024 et le moteur refuse de la « rajeunir »
+  (`hypotheses.vieillissement_menages`). Le but ajoute le sens inverse, aux indices
+  observés de l'Insee (salaire moyen par tête, prix hors tabac), manifestés comme les
+  autres sources ; un cas sans indices est refusé. La structure de la population reste
+  celle de 2024 : chaque cas le dit, et c'est la raison d'avoir commencé en 2021.
+* **Les effets par décile de l'Insee et de la Drees** viennent après les cas, avec la même
+  règle : enregistrés avant d'être lus.
+
+**Ce qui ne bouge pas.** Les cinq cas déjà notés, leurs tolérances, et aucune étude.
