@@ -106,7 +106,37 @@ HISTORY_YEARS = 2
 # caches check, and its wiring here: every number of every self-employed household moves.
 # The étape « ir » pays the gérants a salary and writes the exempt share of the salaries
 # (correction 24): every employee's income tax moves.
-WIRING = "D-346_ns_ir" + ("_sansE1" if decomposition.sans("E1") else "")
+# The months worked (étape « ppa »): a salary is paid on the months its earner worked, and
+# the unemployment benefit of someone who worked part of the year on the others; every
+# number of a household with a partial year moves, and the population's height does not.
+WIRING = "D-346_ns_ir_md" + ("_sansE1" if decomposition.sans("E1") else "")
+
+#: The column `emploi_discontinu` writes: twelve bits, bit m - 1 for the month m worked.
+MONTHS_WORKED = "mois_travailles"
+
+
+def monthly_by_month(frame: pl.DataFrame, annual: np.ndarray, worked: bool
+                     ) -> list[np.ndarray]:
+    """Twelve monthly arrays of an annual amount: the twelfth of it on every month, as
+    before the étape « ppa », when the frame carries no months worked; otherwise
+    divided among the months worked (`worked`, the salary) or among the others (the
+    unemployment benefit of someone who worked part of the year). A person whose mask
+    is full keeps the twelfth. The annual amount does not change."""
+    annual = np.asarray(annual, dtype=np.float64)
+    if MONTHS_WORKED not in frame.columns:
+        return [annual / 12.0] * 12
+    mask = frame[MONTHS_WORKED].fill_null((1 << 12) - 1).to_numpy().astype(np.int64)
+    bits = np.stack([(mask >> m) & 1 for m in range(12)]).astype(bool)
+    full = mask == (1 << 12) - 1
+    if not worked:
+        bits = ~bits
+    count = bits.sum(axis=0)
+    out = []
+    for m in range(12):
+        share = np.where(count > 0, annual / np.maximum(count, 1), 0.0)
+        out.append(np.where(full, annual / 12.0, np.where(bits[m], share, 0.0)))
+    # Nothing is lost: an amount with no month to go to keeps the twelfth on every month.
+    return [np.where(count > 0, o, annual / 12.0) for o in out]
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
 #: fiscal block, which never reaches a benefit. The ASS the income tax reads since D-192
@@ -477,15 +507,19 @@ def build_simulation(
         [f"{year - age:04d}-01-01" for age in frame["age"].to_list()], dtype="datetime64[D]"
     )
     simulation.set_input("date_naissance", "ETERNITY", births)
-    monthly_salary = (frame["salaire_brut_annuel"].to_numpy() / 12.0).astype(np.float64)
-    categorie, monthly_salary, monthly_tib = public_service(frame, monthly_salary,
-                                                            tax_benefit_system)
+    # The salary on the months worked (étape « ppa »), the twelfth of it on each month for
+    # a frame without them. The public split is linear in the pay, month by month.
+    salary_by_month = monthly_by_month(frame, frame["salaire_brut_annuel"].to_numpy(),
+                                       worked=True)
+    split = [public_service(frame, pay, tax_benefit_system) for pay in salary_by_month]
+    categorie = split[0][0]
     # Pensions and unemployment benefit are monthly individual inputs too. Leaving
     # them out is not a visible failure: the simulation runs, every guard passes,
     # and 14 M pensioners simply appear to live on nothing — which then shows up
     # three steps away as an RSA bill three times the published one.
     monthly_pension = (frame["pension_annuelle"].to_numpy() / 12.0).astype(np.float64)
-    monthly_chomage = (frame["chomage_annuel"].to_numpy() / 12.0).astype(np.float64)
+    chomage_by_month = monthly_by_month(frame, frame["chomage_annuel"].to_numpy(),
+                                        worked=False)
     # The sick pay `population.ij` imputes, when the run asked for it (D-305): openfisca
     # reads it in the RSA's, the prime's, the ASS's and the ASPA's resources only.
     monthly_ij = {
@@ -534,14 +568,14 @@ def build_simulation(
     for offset in range(HISTORY_YEARS, -1, -1):
         for month in range(1, 13):
             period = f"{year - offset}-{month:02d}"
-            simulation.set_input("salaire_de_base", period, monthly_salary)
-            simulation.set_input("traitement_indiciaire_brut", period, monthly_tib)
+            simulation.set_input("salaire_de_base", period, split[month - 1][1])
+            simulation.set_input("traitement_indiciaire_brut", period, split[month - 1][2])
             simulation.set_input("categorie_salarie", period, categorie)
             simulation.set_input("retraite_brute", period, monthly_pension)
             # Failure mode #4. `pension_annuelle` is calibrated on DECLARED pensions,
             # so it is pinned on the declared box as well; see the module docstring.
             simulation.set_input("retraite_imposable", period, monthly_pension)
-            simulation.set_input("chomage_brut", period, monthly_chomage)
+            simulation.set_input("chomage_brut", period, chomage_by_month[month - 1])
             for variable, values in monthly_ij.items():
                 simulation.set_input(variable, period, values)
             simulation.set_input("statut_occupation_logement", period, statut)

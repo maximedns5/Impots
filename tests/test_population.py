@@ -39,6 +39,7 @@ from impots.population.calibrate import (
     standard_margins,
     with_cells,
 )
+from impots.population.emploi_discontinu import attach_mois_travailles
 from impots.population.incomes import (
     IncomeScaleError,
     attach_incomes,
@@ -47,7 +48,7 @@ from impots.population.incomes import (
     sample_curve,
 )
 from impots.population.runner import _pps_certainty_split, run, subsample
-from impots.population.skeleton import build_skeleton
+from impots.population.skeleton import SEED, build_skeleton
 from impots.population.to_openfisca import (
     ROLE_VOCABULARY,
     WiringError,
@@ -77,6 +78,7 @@ def population() -> pl.DataFrame:
     children = {key: np.array(value) for key, value in margins.CHILDREN_PER_FAMILY.items()}
     frame, _ = build_skeleton(children_per_household=children, source=pl.read_parquet(FIXTURE))
     frame, _ = attach_incomes(frame, targets_scale=household_share_of_france(frame))
+    frame, _ = attach_mois_travailles(frame, seed=SEED)
     return frame
 
 
@@ -439,11 +441,17 @@ def test_wage_bill_is_calibrated(population: pl.DataFrame) -> None:
 
 def test_only_employees_earn_wages(population: pl.DataFrame) -> None:
     """And the gérants majoritaires, whose pay is a salary (art. 62 of the CGI) that D11
-    counts (but 19, étape « ir »)."""
+    counts (but 19, étape « ir »); and, since the étape « ppa », people out of work at the
+    survey week who left a salaried job less than a year before, paid on the months
+    before they left, and on those months only."""
     earners = population.filter(pl.col("salaire_brut_annuel") > 0)
     gerant = earners["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"]).fill_null(False)
-    assert (earners["is_salarie"] | gerant).all()
-    assert (earners["statut_activite"] == "employed").all()
+    employed = earners["statut_activite"] == "employed"
+    assert ((earners["is_salarie"] | gerant) & employed | ~employed).all()
+    leavers = earners.filter(~employed)
+    assert leavers["anciennete_sans_emploi"].is_in(["1", "2", "3", "4"]).all()
+    assert leavers["classe_emploi"].str.slice(0, 1).is_in(["A", "B", "C", "D"]).all()
+    assert (leavers["mois_travailles"] != (1 << 12) - 1).all()
 
 
 def test_pensions_go_to_older_inactive_people_only(population: pl.DataFrame) -> None:

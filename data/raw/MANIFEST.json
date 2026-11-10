@@ -1937,6 +1937,33 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.9 : dispersion du salaire net mensuel EQTP dans la fonction publique en 2024 par versant (Siasp, figure 2) (étape haut)",
       "quarantined": false
+    },
+    "insee_ecrt2026_F30_revenu_salarial.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733097/ECRT2026_F30.xlsx",
+      "sha256": "c6b2d697d461e6b8c0f07c2cae5a720358dd83a8cc28b642455bd76bc4994854",
+      "bytes": 20414,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Références « Emploi, chômage, revenus du travail », édition 2026, fiche « Revenu salarial », figures 1 à 3 : revenu salarial, salaire en EQTP et volume de travail annuel moyen en EQTP en 2023, dispersion du revenu salarial (étape ppa)",
+      "quarantined": false
+    },
+    "insee_revenus_salariaux_2022.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/2381326/marc-salair-revenu-salarial.xlsx",
+      "sha256": "6e749570d9c43e114173eca03354332123c1d115b52811fb0147766a932bf17e",
+      "bytes": 111275,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Revenus salariaux, données annuelles 2022 (décembre 2025) : revenu salarial, salaire en EQTP, volume de travail par sexe, âge, diplôme, CS, quotité, secteur (étape ppa)",
+      "quarantined": false
+    },
+    "senat_r25-728_ccomptes_prime_activite.pdf": {
+      "url": "https://www.senat.fr/rap/r25-728/r25-7281.pdf",
+      "sha256": "8990f4c044ea85301f77ef2154ce7d881e12eb0d8fdab14564faee431633d0df",
+      "bytes": 2689355,
+      "downloaded": "2026-11-10",
+      "licence": "publication du Sénat, réutilisation avec mention de la source",
+      "description": "Sénat, rapport d'information n° 728 (2025-2026) sur la prime d'activité, avec l'enquête de la Cour des comptes : tableaux 12 et 13 (Cnaf, Allstat FR6, décembre 2023), montants moyens par configuration et répartition des foyers par montant versable ; élasticités de la Cnaf (étape ppa)",
+      "quarantined": false
     }
   }
 }
