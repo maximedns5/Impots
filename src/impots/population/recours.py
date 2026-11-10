@@ -25,7 +25,7 @@ d'occupation, n° 1370) ne vérifie pas forcément.
 de consommation (l'échelle du RSA, n° 1370, note 2), ramené en euros de la fin de 2021
 par le montant de base de la prestation dans la loi de référence du mois. `p(0) = 0`,
 `p` croît et sature : les petits droits sont moins réclamés (n° 1370, graphique 1 ;
-n° 1379, cité par la presse). La forme exponentielle est une **hypothèse** ; `τ` est
+n° 1379, graphique 1). La forme exponentielle est une **hypothèse** ; `τ` est
 ajusté sur les recours par tranche de montant publiés, `p_max` est **calé** pour que le
 modèle refasse le taux de non-recours publié en foyers (moyenne de la fourchette), sur
 l'échantillon de 15 000 ménages de 2024. Le taux en masse ne sert pas au calage : il est
@@ -104,12 +104,16 @@ RSA = Recours(
 
 PPA = Recours(
     prestation="ppa",
-    # Le n° 1379 n'a pas été lu (le site de la Drees refuse le conteneur). Ce qu'en
-    # rapporte la presse : 3,4 M de non-recourants (32 % sous 50 € par mois et par UC,
-    # 29 % de 50 à 100, 17 % de 100 à 150, 12 % de 150 à 200, 10 % au-delà) et 3,2 M de
-    # recourants, dont 20 % sous 50 €. Recours : 0,37 sous 50 €, 0,525 au-delà, un
-    # rapport de 0,705, que τ = 21 € refait aux milieux des tranches (25 € sous 50 ;
-    # au-delà, les milieux pondérés par la répartition des non-recourants, hypothèse).
+    # Le n° 1379, lu (étape ppa2, sur la copie de l'Internet Archive) : graphique 1,
+    # fourchette haute, 3 203 k recourants et 3 426 k non-recourants répartis par montant
+    # mensuel PAR UNITÉ DE CONSOMMATION (la note du graphique et la note 3 le disent ;
+    # l'échelle est celle de `unites`) : moins de 50 € : 20 et 32 % ; 50-100 : 24 et 29 ;
+    # 100-150 : 22 et 17 ; 150-200 : 18 et 12 ; 200-250 : 11 et 7 ; 250-300 : 3 et 2.
+    # Recours par tranche : 0,37 ; 0,44 ; 0,55 ; 0,58 ; 0,60 ; 0,58. Les moindres carrés
+    # pondérés par les éligibles donnent τ = 25,7 € aux milieux des tranches, 19,5 € en
+    # moyennant p sur des droits uniformes dans chaque tranche ; τ = 21 €, tiré d'abord de
+    # deux tranches de presse, est dans cet intervalle et reste. La forme exponentielle
+    # sature trop vite : elle donne 0,51 entre 50 et 100 € quand la Drees lit 0,44.
     tau=21.0,
     # Calé comme celui du RSA : 5,105 M de familles ayant droit en décembre, 14 % sous
     # 50 € par UC (la presse en dit 26 % parmi les éligibles de la Drees). Contrôle : un
@@ -119,10 +123,12 @@ PPA = Recours(
     p_max=0.5327,
     non_recours_foyers=(0.48, 0.52),
     non_recours_masse=(0.43, 0.46),
-    source=("Drees, Études et Résultats n° 1379 (juillet 2026, C. Gayet), NON LU : taux "
-            "du communiqué de la Drees et de la presse (Le Média social, ADCF, "
-            "toutsurmesfinances), tranches de montants de la presse seulement"),
-    forme="hypothèse (exponentielle saturante) ; τ ajusté sur deux tranches de presse",
+    source=("Drees, Études et Résultats n° 1379 (juillet 2026, C. Gayet), tableau 1 et "
+            "graphique 1, France métropolitaine, T4 2021 ; lu sur la copie "
+            "https://web.archive.org/web/2026id_/https://drees.solidarites-sante.gouv.fr/"
+            "sites/default/files/2026-07/ER1379_Non-recours_PA.pdf (sha256 222853d7…, "
+            "au manifeste)"),
+    forme="hypothèse (exponentielle saturante) ; τ ajusté sur le graphique 1",
 )
 
 LOIS: dict[str, Recours] = {"rsa": RSA, "ppa": PPA}

@@ -40,6 +40,7 @@ from impots.population.calibrate import (
     with_cells,
 )
 from impots.population.emploi_discontinu import attach_mois_travailles
+from impots.population.familles_jeunes import attach_familles_jeunes
 from impots.population.incomes import (
     IncomeScaleError,
     attach_incomes,
@@ -79,6 +80,7 @@ def population() -> pl.DataFrame:
     frame, _ = build_skeleton(children_per_household=children, source=pl.read_parquet(FIXTURE))
     frame, _ = attach_incomes(frame, targets_scale=household_share_of_france(frame))
     frame, _ = attach_mois_travailles(frame, seed=SEED)
+    frame, _ = attach_familles_jeunes(frame)
     return frame
 
 
