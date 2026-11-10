@@ -1035,6 +1035,9 @@ def test_every_reform_shape_balances_on_the_real_population() -> None:
         {"plafond_qf_demi_part": 1000.0},
         {"decote_taux": 0.50},
         {"csg_activite_imposable": 0.034},
+        # The deductible part too: the self-employed declare an income net of it, and a
+        # cut of its rate left their income where it was (Lisnard, 1,27 Md€, but 19).
+        {"csg_activite_deductible": 0.0488},
         {"allegement_general_plafond": 2.0},
     ):
         aggregates = aggregate_module.aggregate(

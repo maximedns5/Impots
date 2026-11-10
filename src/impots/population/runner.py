@@ -60,6 +60,10 @@ class RunResult:
     """
 
 
+#: The deductible CSG of the self-employed, a working column of `run` (not reported).
+CSG_DEDUCTIBLE_NS = "_csg_deductible_non_salarie"
+
+
 def households_par_lots(population: pl.DataFrame | Path, lots: int, **kwargs: Any
                         ) -> pl.DataFrame:
     """`run(...).households` over the whole population, `lots` groups of ménages at a time
@@ -313,6 +317,12 @@ def _extract(
                                                     "csg_imposable_non_salarie"))
     results["csg_non_salarie"] = -_to_households(csg_ns.astype(np.float64), individu_index,
                                                  n_households)
+    # Its deductible part, apart: the declared income the population gives openfisca is
+    # already net of it, so a reform of its rate moves the receipt and not the income;
+    # `run` gives the difference back to the reform's disposable income (but 19).
+    results[CSG_DEDUCTIBLE_NS] = -_to_households(
+        built.calculate("csg_deductible_non_salarie").astype(np.float64), individu_index,
+        n_households)
     rpns = built.calculate("rpns_imposables").astype(np.float64)
     liberatoire = _to_households(built.calculate("microentreprise").astype(np.float64),
                                  foyer_index, n_households)
@@ -718,9 +728,22 @@ def run(
         timings["reform_s"] = round(time.perf_counter() - started, 2)
         for key, values in reform_rows.items():
             columns[f"{key}_reform"] = values
+        # A self-employed person declares an income net of the deductible CSG (5KC, 5QC…):
+        # the population holds that declared income fixed, so a cut of the rate would
+        # leave it where it is while the receipt falls, a cost no household receives
+        # (the sector balance refused Lisnard's CSG at 6,6 % by exactly that part, 1,27
+        # Md€ on 15 000 ménages). The declared income of the reform is the baseline's
+        # plus the deductible CSG it no longer pays; its income-tax feedback, which that
+        # higher declared income would carry, is not computed, a small omission said.
+        gain = columns[CSG_DEDUCTIBLE_NS] - columns[f"{CSG_DEDUCTIBLE_NS}_reform"]
+        for key in ("revenu_disponible", "revenu_disponible_droit"):
+            if f"{key}_reform" in columns:
+                columns[f"{key}_reform"] = columns[f"{key}_reform"] + gain
         persons = persons.with_columns(pl.Series(
             "salaire_super_brut_reform",
             reformed_built.calculate("salaire_super_brut", add=True).astype(np.float64)))
+    for key in [k for k in columns if k.startswith(CSG_DEDUCTIBLE_NS)]:
+        del columns[key]
 
     # The MEAN of member weights, not the sum. EXTRIAN is an individual weight, but
     # the survey weights a whole dwelling together: it is identical across members
