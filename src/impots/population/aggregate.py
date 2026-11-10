@@ -41,6 +41,10 @@ INSTRUMENTS = (
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",
     "af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
+    # The full-take-up entitlements, beside the expected payments that carry the plain
+    # names (but 19, étape 4, `runner._serve_in_expectation`): read by the lines that
+    # compare an entitlement through the Drees bridge, never summed into a cost.
+    "rsa_droit", "ppa_droit", "crds_mini_droit", "aefa_droit", "revenu_disponible_droit",
     # The consumption taxes, only when the consumption is imputed (D-323): receipts the
     # state collects that disposable income, taken before indirect taxes, does not show.
     "tva_menages", "accises_energie", "consommation_imputee",
@@ -54,7 +58,9 @@ COUNTS = ("n_foyers", "n_foyers_imposes", "n_persons", "n_dependants",
           "n_foyers_tmi_0", "n_foyers_tmi_1", "n_foyers_tmi_2", "n_foyers_tmi_3",
           "n_foyers_tmi_4",
           "n_allocataires_af", "n_allocataires_ppa", "n_allocataires_rsa",
-          "n_allocataires_aide_logement")
+          "n_allocataires_aide_logement",
+          # Expected payees in December, Σ p over the entitled familles (étape 4).
+          "n_allocataires_rsa_servi", "n_allocataires_ppa_servi")
 
 
 def consumption_units(n_aged_14_plus: np.ndarray, n_children_under_14: np.ndarray) -> np.ndarray:
@@ -157,6 +163,14 @@ class Aggregates:
     balance: dict[str, float] = field(default_factory=dict)
     """Double-entry check (D-045): the reported cost against the same figure
     reconstituted from the individual instrument deltas."""
+    niveau_de_vie_quantiles_droit: dict[int, float] = field(default_factory=dict)
+    """The same quantiles at full take-up, from `revenu_disponible_droit`: what the
+    reconciliation and the grid compared before the take-up layer (D-363), kept so their
+    existing lines read the same concept until a new one is preregistered. Empty when the
+    frame has no entitlement column."""
+    reform_cost_droit: float | None = None
+    """The cost at full take-up, the difference of two entitlements: what every cost was
+    before the take-up layer. Reported beside `reform_cost`, never instead of it."""
     employer_contribution_delta: float = 0.0
     """Change in employer contributions actually paid, net of allègements. Derived as
     Δ(salaire_super_brut − salaire_brut) rather than from `cotisations_employeur`,
@@ -225,6 +239,11 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
     # AFTER the deltas exist, not before: computed above, `cost` read an empty dict
     # and came back None for every reform without an employer term.
     cost = _public_cost(deltas, employer_delta)
+    cost_droit = None
+    if cost is not None and "revenu_disponible_droit" in deltas:
+        cost_droit = _public_cost(
+            {**deltas, "revenu_disponible": deltas["revenu_disponible_droit"]},
+            employer_delta)
 
     units = consumption_units(
         frame["n_aged_14_plus"].to_numpy(), frame["n_children_under_14"].to_numpy()
@@ -237,7 +256,7 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
             households=float(weights.sum()),
             persons=float((frame["n_persons"].to_numpy() * weights).sum()),
             employer_contribution_delta=employer_delta,
-            reform_cost=cost,
+            reform_cost=cost, reform_cost_droit=cost_droit,
             balance=(
                 sector_balance(deltas, reform_cost=cost,
                                employer_contribution_delta=employer_delta)
@@ -254,6 +273,11 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
     person_weights = weights * frame["n_persons"].to_numpy().astype(np.float64)
     cuts = weighted_quantiles(niveau_de_vie, person_weights, np.array([0.1, 0.5, 0.9]))
     quantiles = {10: float(cuts[0]), 50: float(cuts[1]), 90: float(cuts[2])}
+    quantiles_droit: dict[int, float] = {}
+    if "revenu_disponible_droit" in frame.columns:
+        droit = frame["revenu_disponible_droit"].to_numpy().astype(np.float64) / units
+        cuts = weighted_quantiles(droit, person_weights, np.array([0.1, 0.5, 0.9]))
+        quantiles_droit = {10: float(cuts[0]), 50: float(cuts[1]), 90: float(cuts[2])}
 
     reform_values = (
         frame["revenu_disponible_reform"].to_numpy().astype(np.float64)
@@ -302,6 +326,7 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
         totals=totals,
         counts=counts,
         niveau_de_vie_quantiles=quantiles,
+        niveau_de_vie_quantiles_droit=quantiles_droit,
         totals_reform=totals_reform,
         deltas=deltas,
         deciles=rows,
@@ -309,7 +334,7 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
         persons=float((frame["n_persons"].to_numpy() * weights).sum()),
         # A reform that raises disposable income costs the budget that much.
         employer_contribution_delta=employer_delta,
-        reform_cost=cost,
+        reform_cost=cost, reform_cost_droit=cost_droit,
         balance=(
             sector_balance(deltas, reform_cost=cost,
                            employer_contribution_delta=employer_delta)

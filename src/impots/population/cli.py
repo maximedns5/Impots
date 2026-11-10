@@ -40,8 +40,12 @@ KNOWN_LIMITATIONS = [
     "**Age is banded.** The EEC gives five age groups; exact ages are drawn inside "
     "them, so any threshold that does not fall on a band edge is fuzzy for an "
     "individual household and only right on average.",
-    "**Benefits assume 100 % take-up.** OpenFisca computes legal entitlement; DREES "
-    "measures non-take-up of RSA at 33-37 % of eligible households.",
+    "**Take-up is an expectation by amount.** OpenFisca computes legal entitlement; "
+    "the RSA and the prime d'activité are served as each famille's probability of "
+    "take-up times its entitlement, calibrated on DREES's non-take-up (n° 1370: 33-37 % "
+    "of eligible households for the RSA; n° 1379, not read, 48-52 % for the prime). "
+    "Housing aid keeps full take-up: no published national rate was found. The "
+    "full-take-up figures stay as `*_droit`.",
     "**Assortative mating is absent.** Two earners in a household are drawn "
     "independently, which flattens the top of the household income distribution.",
 ]

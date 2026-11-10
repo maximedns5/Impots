@@ -174,7 +174,12 @@ def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, 
     households = households_par_lots(frame, lots, year=annee, tier="full")
     agg = aggregate.aggregate(households)
     del households
-    t, c, q = agg.totals, agg.counts, agg.niveau_de_vie_quantiles
+    # The existing lines read the full-take-up entitlement and its niveau de vie, as they
+    # were preregistered (D-363); the expected payments of the take-up layer (but 19,
+    # étape 4) are measured beside them, under names no line reads until one is
+    # preregistered.
+    t, c = agg.totals, agg.counts
+    q, servi = agg.niveau_de_vie_quantiles_droit, agg.niveau_de_vie_quantiles
     m = {
         "cotisations_salariales": t["cotisations_salariales"],
         "salaire_super_brut - salaire_brut": t["salaire_super_brut"] - t["salaire_brut"],
@@ -192,8 +197,12 @@ def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, 
         "ir_avant_niches": t["ir_avant_niches"],
         "salaire_imposable": t["salaire_imposable"],
         "retraite_imposable": t["retraite_imposable"],
-        "rsa / 1,355": t["rsa"] / PONT["rsa"],
-        "ppa / 1,725": t["ppa"] / PONT["ppa"],
+        "rsa / 1,355": t["rsa_droit"] / PONT["rsa"],
+        "ppa / 1,725": t["ppa_droit"] / PONT["ppa"],
+        "rsa servi en espérance": t["rsa"],
+        "ppa servie en espérance": t["ppa"],
+        "niveau de vie médian servi, pondéré personne": servi[50],
+        "D9/D1 servi, pondéré personne": servi[90] / servi[10],
         "aide_logement": t["aide_logement"], "af": t["af"],
         "niveau de vie médian, pondéré personne": q[50],
         "D9/D1, pondéré personne": q[90] / q[10],
