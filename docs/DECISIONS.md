@@ -27587,8 +27587,9 @@ de 5 points des minima sociaux, élargie après D-367, a suffi.
 **Ce qu'il a déplacé**, et qui vient ensuite :
 
 * **Les allègements**, trop hauts : réduction générale +14 %, bandeau maladie +22 %,
-  bandeau famille +27 %. Ils lisent le bas de la distribution des salaires, que les
-  quantiles publiés et l'extrapolation ont relevé en masse sous 1,6 et 3,5 SMIC.
+  bandeau famille +27 %. Ils lisent le bas de la distribution des salaires ; hypothèse,
+  non mesurée : les quantiles publiés et l'extrapolation y ont mis trop de masse sous 1,6
+  et 3,5 SMIC.
 * **Le milieu des revenus** : la tranche à 30 % à +21 %, les foyers imposés à +11 %.
 * **Les salaires déclarés** à −8 %, dans la tolérance : l'assiette de l'IR n'est pas
   portée par l'extrapolation, quand le total publié compte les salariés absents.
