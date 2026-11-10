@@ -881,8 +881,11 @@ def _vieillir_entreprises(args: argparse.Namespace) -> tuple[float, dict | None]
     A vintage with no year, the tests' populations, has nothing to age from: it is
     registered as it is, and refused only if indices are asked for."""
     from impots import hypotheses
+    from impots.predictif import firmes
 
-    base = int(args.vintage) if args.vintage.isdigit() else None
+    # The year of the vintage's taxes, not of its name (but 19, étape 1 : the vintage
+    # « 2023 » carries the DGFiP's profits of 2024).
+    base = firmes.base_year(args.vintage) if args.vintage.isdigit() else None
     if base is None:
         if args.vieillir is not None:
             raise ValueError(f"le millésime « {args.vintage} » n'a pas d'année : il ne se "

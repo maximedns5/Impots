@@ -105,7 +105,9 @@
     return `interpolé ; au témoin, écart de ${eur(t.ecart_cout)} (${share.toLocaleString("fr-FR", { maximumFractionDigits: 2 })} % de l'amplitude)`;
   }
 
-  function verdictOf(box) {
+  // « Selon θ », comme la colonne des pages : le signe de Δb à θ et à chaque coin de la
+  // boîte. Pas le « verdict » des pages, qui lit le Monte-Carlo (D-345, but 19).
+  function selonTheta(box) {
     const vs = [box.theta, ...box.corners.map((c) => c[1])];
     if (vs.every((v) => v > 0)) return "hausse";
     if (vs.every((v) => v < 0)) return "baisse";
@@ -139,7 +141,8 @@
       const lo = Math.min(...box.corners.map((c) => c[1])), hi = Math.max(...box.corners.map((c) => c[1]));
       const sens = R.sensibilites(G.rejeu, G.horizon, k.parts, lignes, rows, th, R.READ);
       html += `<p class="dette">Dette en ${G.rejeu.start.year + G.horizon} : <strong>${pt(box.theta)}</strong>${etage("L4", true)} à θ,`
-        + ` de ${pt(lo)} à ${pt(hi)} aux ${box.corners.length} coins de la boîte ; verdict <strong>${verdictOf(box)}</strong>.</p>`;
+        + ` de ${pt(lo)} à ${pt(hi)} aux ${box.corners.length} coins de la boîte ; selon θ, <strong>${selonTheta(box)}</strong>`
+        + " (la boîte seule, sans probabilité ; le verdict des pages d'étude lit le Monte-Carlo).</p>";
       html += "<table><thead><tr><th>paramètre</th><th>∂Δb / ∂θ, à θ</th></tr></thead><tbody>"
         + rows.map((r) => `<tr><td>${r}</td><td class="num">${pt(sens[r])} par unité de θ</td></tr>`).join("")
         + "</tbody></table>";

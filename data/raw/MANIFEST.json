@@ -1784,6 +1784,42 @@
       "licence": "Insee — Licence Ouverte / Etalab",
       "description": "Insee, comptes nationaux annuels base 2020, tableau 6.210 « Emploi intérieur salarié par branche en nombre de personnes », milliers ; ligne « _T ». Dénominateur du salaire par tête des indices constatés (D-362).",
       "quarantined": false
+    },
+    "dgfip_stat_32_2025.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num32_04/dgfip_stat_32_2025.xlsx",
+      "sha256": "d8721958c326fb381818bddcf112f783f8f9af0dc1845fac49b43eb499292029",
+      "bytes": 40607,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 32 (avril 2025), l'impôt sur les revenus perçus en 2023 : Graphique 1 (montant d'émission de l'IR net, 2014-2023), tableaux 1 à 5. Même fichier (sha256) que dgfip_stat_32_ir_2023_tables.xlsx, en quarantaine faute d'URL ; l'URL est celle de docs/verification/lignes.json.",
+      "quarantined": false
+    },
+    "dgfip_stat_22_ir_2022.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2024/num22_04/dgfip_stat_ir_2022.xlsx",
+      "sha256": "ca58409105940a089d4d307e4e1ef219695f6a277ca8a51479124684a3c4e70c",
+      "bytes": 33177,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 22 (avril 2024), l'impôt sur les revenus perçus en 2022 : Graphique 1 (montant d'émission de l'IR net, 2013-2022), tableaux 1 à 4.",
+      "quarantined": false
+    },
+    "insee_filosofi_2023_TCRD_022.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/2012717/TCRD_022.xlsx",
+      "sha256": "1331aa5469a0a54c519d21d80ea4168a211a1387cadbadb6b0c6daf9eb4e65a5",
+      "bytes": 13138,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Niveau de vie en 2023 : comparaisons régionales et départementales (Filosofi 2023), page https://www.insee.fr/fr/statistiques/2012717 ; feuilles DEP et REG, médiane, D1 et D9.",
+      "quarantined": false
+    },
+    "insee_cn2026_T_7401_compte_menages.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988835/T_7401_fr.xlsx",
+      "sha256": "f27bfdffc08c809398bb09b1f1c0ef83376b3194e10bc8daf8ace7ee3283826e",
+      "bytes": 56572,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.401, compte des ménages (S14) : D11, D121, D122, D613CE ; le fichier que docs/verification/lignes.json cite.",
+      "quarantined": false
     }
   }
 }

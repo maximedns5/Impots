@@ -8,8 +8,9 @@ Les lignes, leurs totaux publiés et leurs tolérances sont dans
 `docs/verification/lignes.json`, préenregistrés par D-363 avant toute passe ; ce module
 les lit et ne les écrit jamais. Une passe prend la loi de l'année et la population de
 2024 ramenée à l'année par les indices constatés de l'Insee (D-362), sans imputation : la
-population telle que les études la voient par défaut. Les entreprises du millésime 2023
-suivent le PIB nominal des comptes (D-246).
+population telle que les études la voient par défaut. Les entreprises du millésime 2023,
+dont les bénéfices sont ceux de 2024, suivent le PIB nominal des comptes depuis 2024
+(D-246 ; but 19, étape 1).
 
 Une ligne refusée (aucun total publié, ou un droit que le moteur ne sert pas) le reste :
 la grille dit le trou, elle ne le comble pas.
@@ -28,11 +29,25 @@ LIGNES = ROOT / "docs" / "verification" / "lignes.json"
 RAPPORTS = ROOT / "reports" / "verification"
 GRILLE = ROOT / "docs" / "verification" / "GRILLE.md"
 POPULATION = ROOT / "data" / "processed" / "population_2024.parquet"
-FIRMES = ROOT / "data" / "processed" / "firms_2023.parquet"
-BASE_MENAGES, BASE_FIRMES = 2024, 2023
+#: The firm vintage the studies serve (IMPOTS_FIRM_VINTAGE), its file under its name, and
+#: the year of its taxes, 2024, from which the grid ages it (but 19, étape 1 :
+#: `predictif.firmes.ANNEE_DES_IMPOTS`). It was 2023 until then, the GDP of 2024 over 2023
+#: applied to profits that were already the DGFiP's of 2024.
+MILLESIME_FIRMES = "2023"
+FIRMES = ROOT / "data" / "processed" / f"firms_{MILLESIME_FIRMES}.parquet"
+BASE_MENAGES = 2024
 JEU = "insee_constate"
 PONT = {"rsa": 1.355, "ppa": 1.725}
 """Le milieu des ponts de non-recours de la Drees (`margins.TAKE_UP_BRIDGE`)."""
+
+
+def _base_firmes() -> int:
+    from impots.predictif import firmes
+
+    return firmes.base_year(MILLESIME_FIRMES)
+
+
+BASE_FIRMES = _base_firmes()
 
 
 class VerificationError(RuntimeError):
@@ -52,26 +67,118 @@ def _commit() -> tuple[str, bool]:
     return head, dirty
 
 
-def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, Any]]:
-    """Les totaux et les comptes de la passe des ménages de `annee`."""
+#: L'IR net comparable aux émissions publiées (but 19, étape 1 ; proposition A1 du
+#: diagnostic `ir_net_et_entreprises.md`) : `ir` (impot_revenu_restant_a_payer, après
+#: les seuils de recouvrement) = impôt au barème + PFU + CEHR − réductions − crédits,
+#: d'une passe à part, niches et capital imputés, la seule où le modèle porte les quatre
+#: termes que la DGFiP additionne. Le PFU et 10,6 des 19,5 Md€ de RICI y sont calés :
+#: la ligne le dit. Le capital imputé décrit les revenus de 2024 (n° 41) ; une autre
+#: année le vieillit par un indice déclaré (D-249), ici l'impôt hors barème publié de
+#: l'année sur celui de 2024 : 7,603 Md€ en 2023 (n° 32, tableau 3, ligne « Total »),
+#: 7,505 en 2022 (7,603 moins la variation de 2023, +0,098, n° 41, graphique 1), 10,32 en
+#: 2024 (n° 41, tableau 2). Hypothèse déclarée : le PFU de l'année est calé par lui.
+HORS_BAREME = {2022: 7.505e9, 2023: 7.602575235e9, 2024: 10.32e9}
+IR_NET = "ir, niches et capital imputés"
+
+
+def indice_capital(annee: int) -> float | None:
+    """L'indice qui vieillit le capital imputé de 2024 vers `annee` (`HORS_BAREME`)."""
+    if annee == BASE_MENAGES:
+        return None
+    if annee not in HORS_BAREME:
+        raise VerificationError(f"aucun impôt hors barème publié pour {annee}")
+    return HORS_BAREME[annee] / HORS_BAREME[BASE_MENAGES]
+
+
+def _population(annee: int) -> tuple[Any, dict[str, Any]]:
+    """La population de 2024 ramenée à `annee` par les indices constatés (D-362)."""
     import polars as pl
 
     from impots import hypotheses
     from impots import uprating as up
-    from impots.population import aggregate
-    from impots.population.runner import households_par_lots
 
     frame = pl.read_parquet(POPULATION)
     record: dict[str, Any] = {"de": BASE_MENAGES, "vers": annee}
     if annee != BASE_MENAGES:
         uprating, record = hypotheses.vieillissement_menages(JEU, BASE_MENAGES, annee)
         frame = up.uprate(frame, annee, uprating)
+    return frame, record
+
+
+def employeurs(t: dict[str, float]) -> dict[str, float]:
+    """Les cotisations des employeurs au sens D121, et ce qui les sépare du super-brut
+    moins le brut, chacun à part (but 19, étape 1) : les prélèvements que l'Insee classe
+    en impôts sur les salaires (D291), la contribution de l'État aux pensions de ses
+    titulaires et militaires (cotisation imputée, D122), l'indemnité de résidence et le
+    SFT (des salaires, D11). La mesure de D-363 reste, telle qu'elle était."""
+    d291, etat, hors_brut = (t["prelevements_salaires_d291"], t["pension_employeur_etat"],
+                             t["remuneration_hors_brut"])
+    return {
+        "salaire_super_brut - salaire_brut - D291 - pension de l'État - hors brut":
+            t["salaire_super_brut"] - t["salaire_brut"] - d291 - etat - hors_brut,
+        "prelevements_salaires_d291": d291,
+        "pension_employeur_etat": etat,
+        "remuneration_hors_brut": hors_brut,
+    }
+
+
+def mesures_ir_net(frame: Any, annee: int, lots: int) -> dict[str, float]:
+    """L'IR net d'une passe à part, niches et capital imputés (`IR_NET`), et ses termes.
+
+    Par lots, comme la passe des ménages (D-362), mais chaque lot pèse la France entière
+    le temps de son imputation : `niches.impute` tire chaque foyer avec la probabilité
+    « foyers bénéficiaires publiés / foyers pondérés de la tranche », et un lot qui ne
+    pèse qu'un quart de la France en tirerait quatre fois trop (bornés à tous). Le poids
+    de chaque lot est multiplié par le poids total sur le sien, et ses totaux divisés
+    d'autant ; le capital imputé ne dépend pas de l'échelle (`population.capital`, 5).
+    `households_par_lots` ne le fait pas : la réconciliation qui impute les niches par
+    lots en tire trop (but 19, étape 1, rapport)."""
+    import gc
+    import zlib
+
+    import polars as pl
+
+    from impots.population import aggregate
+    from impots.population.runner import run
+
+    keys = ("ir", "ir_avant_niches", "reductions", "credits_impot")
+    totals = dict.fromkeys(keys, 0.0)
+    lot = frame["household_id"].map_elements(
+        lambda key: zlib.crc32(str(key).encode()) % max(lots, 1), return_dtype=pl.Int64)
+    poids = frame.group_by("household_id").agg(pl.col("weight").mean())["weight"].sum()
+    for k in range(max(lots, 1)):
+        part = frame.filter(lot == k)
+        facteur = poids / part.group_by("household_id").agg(
+            pl.col("weight").mean())["weight"].sum()
+        part = part.with_columns(pl.col("weight") * facteur)
+        t = aggregate.aggregate(run(part, year=annee, tier="light", impute_niches=True,
+                                    impute_capital=True,
+                                    capital_index=indice_capital(annee)).households).totals
+        for key in keys:
+            totals[key] += t[key] / facteur
+        del part
+        gc.collect()
+    return {IR_NET: totals["ir"],
+            "ir_avant_niches, niches et capital imputés": totals["ir_avant_niches"],
+            "reductions + credits_impot, imputés": totals["reductions"]
+            + totals["credits_impot"]}
+
+
+def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, Any]]:
+    """Les totaux et les comptes de la passe des ménages de `annee`, puis l'IR net de sa
+    passe imputée."""
+    from impots.population import aggregate
+    from impots.population.runner import households_par_lots
+
+    frame, record = _population(annee)
     households = households_par_lots(frame, lots, year=annee, tier="full")
     agg = aggregate.aggregate(households)
+    del households
     t, c, q = agg.totals, agg.counts, agg.niveau_de_vie_quantiles
     m = {
         "cotisations_salariales": t["cotisations_salariales"],
         "salaire_super_brut - salaire_brut": t["salaire_super_brut"] - t["salaire_brut"],
+        **employeurs(t),
         "allegement_general": t["allegement_general"],
         "allegement_bandeau_maladie": t["allegement_bandeau_maladie"],
         "allegement_bandeau_famille": t["allegement_bandeau_famille"],
@@ -86,6 +193,7 @@ def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, 
         "niveau de vie médian, pondéré personne": q[50],
         "D9/D1, pondéré personne": q[90] / q[10],
         **{k: c[k] for k in c},
+        **mesures_ir_net(frame, annee, lots),
     }
     return m, record
 

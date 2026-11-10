@@ -389,18 +389,52 @@ VERDICTS_MC = {
     "dépend": "son effet sur la dette en {year} **dépend des hypothèses** : moins de {haut} "
               "des tirages s'accordent sur son signe, vue vieillie",
 }
-def raison_bande(behavioural: Any) -> str:
+#: The levies that move the net hourly wage as the CSG on earnings does, and that the
+#: labour-supply channel (C7) does not claim: a choice of the model (D-220), not a want of
+#: a published study (but 19, `docs/diagnostics/demarche.md`, constat 10).
+HORS_OFFRE_DE_TRAVAIL = ("cotisations_salariales_*",)
+
+RAISON_OFFRE_DE_TRAVAIL = (
+    "Ce n'est pas faute d'une étude publiée : les cotisations à la charge des salariés "
+    "baissent le salaire net horaire comme la CSG, et l'outil chiffre la réponse des heures "
+    "à la CSG sur les revenus d'activité (le canal de l'offre de travail, Bargain, Orsini "
+    "et Peichl). C'est un choix du modèle de n'ouvrir ce canal qu'à la CSG (D-220) : une "
+    "seule variation du salaire net par personne y suffit, l'assiette de la CSG étant "
+    "presque tout le brut, quand celle des cotisations de retraite est en partie "
+    "plafonnée ; le canal n'a pas été étendu aux cotisations. La mesure reste donc "
+    "mécanique.")
+
+
+def hors_offre_de_travail(reform: Any) -> bool:
+    """Whether a households' reform moves a levy the labour-supply channel could read and
+    the model does not let it (`HORS_OFFRE_DE_TRAVAIL`)."""
+    import fnmatch
+
+    knobs = reform.model_dump(exclude_none=True) if reform is not None else {}
+    return any(fnmatch.fnmatch(k, pattern) for k in knobs for pattern in HORS_OFFRE_DE_TRAVAIL)
+
+
+def _applied(behavioural: Any) -> list[str]:
+    """The labels of the channels that apply, lowered, objects or dicts alike."""
+    return [(c.label if hasattr(c, "label") else c["label"]).lower()
+            for c in behavioural.channels
+            if (c.applies if hasattr(c, "applies") else c["applies"])]
+
+
+def raison_bande(behavioural: Any, reform: Any = None) -> str:
     """Why a page has no behavioural band, as a reader reads it (D-357). The grade's
     reason is the absence's when no channel applies; when channels apply and none moves
     revenue (`behavioural.band`), the grade's reason speaks of an extrapolation that is
-    not there, and the page says what the channels do instead."""
-    applied = [(c.label if hasattr(c, "label") else c["label"]).lower()
-               for c in behavioural.channels
-               if (c.applies if hasattr(c, "applies") else c["applies"])]
+    not there, and the page says what the channels do instead. A reform of the
+    employees' contributions has no band by a choice of the model, which the page says
+    rather than the want of evidence (but 19)."""
+    applied = _applied(behavioural)
     if applied and behavioural.grade != "no-evidence":
         return (f"Les canaux qui s'appliquent ({', '.join(applied)}) déplacent des euros "
                 f"entre salariés et employeurs, ou des emplois, sans changer ce que la "
                 f"mesure coûte au budget : aucun n'entre dans la bande.")
+    if not applied and hors_offre_de_travail(reform):
+        return RAISON_OFFRE_DE_TRAVAIL
     return behavioural.grade_reason or "non précisée"
 
 
@@ -1803,6 +1837,11 @@ class Etude:
                 deux = (f"Une fois comptés les changements de comportement que des études "
                         f"publiées permettent de chiffrer, le coût{part} irait de "
                         f"{n(fiche._eur(low), 'L3')} à {n(fiche._eur(high), 'L3')}.")
+            elif (behavioural is not None and not _applied(behavioural)
+                  and hors_offre_de_travail(entry["scenario"].reform)):
+                deux = ("L'outil ne dit pas ce que les comportements y changent : il n'ouvre "
+                        "pas aux cotisations des salariés le canal de l'offre de travail "
+                        "qu'il ouvre à la CSG, un choix du modèle, et la page dit pourquoi.")
             else:
                 deux = ("L'outil ne dit pas ce que les comportements y changent : aucune "
                         "étude publiée ne le permet ici, et la page dit pourquoi.")
@@ -1849,7 +1888,10 @@ class Etude:
 
     def _boucle(self, n: Nombres, entry: dict[str, Any]) -> str:
         """Which part of a line the macro loop reads, and its debt without any effect on
-        activity, the θ box's corner « multiplicateur_macro = 0 » (D-356, D-357)."""
+        activity: the decomposition of D-349, its step « le coût, sans boucle », vue
+        vieillie (but 19). Not the θ box's corner « multiplicateur_macro = 0 », which puts
+        the multiplier at the bottom of its published range (θ = 0), not at zero, and
+        which the page read until then (D-356, D-357)."""
         stats = ((entry["path"].get("years") or [{}])[0].get("statistiques") or {})
         impulses = stats.get("figee", {}).get("impulses", {})
         read = [INSTRUMENTS.get(k, k) for k, v in impulses.items() if v]
@@ -1863,18 +1905,21 @@ class Etude:
         else:
             text = (" L'outil ne lit aucun effet sur l'activité pour les impôts des "
                     "entreprises : la mesure agit sur la dette sans effet sur l'activité.")
-        lue = next((b for b in (entry["path"].get("theta_box") or {}).get("paths", [])
-                    if b["persistence"] == "lue"), None)
-        corners = dict(map(tuple, ((lue or {}).get("every_year", {}).get("vieillie", {})
-                                   .get("corners", []))))
-        flat = corners.get("multiplicateur_macro = 0")
+        decomposition = (entry["path"].get("lectures") or {}).get("decomposition") or {}
+        flat = (decomposition.get("vieillie") or {}).get("cout")
         if read and flat is not None:
             flat *= entry["sign"]
             points = f"{abs(flat) * 100:.2f}".replace(".", ",")
             value = n(f"{points} point{'s' if abs(flat) * 100 >= 2 else ''}",
                       debt_etage(entry["path"]), conditionnel=True)
+            behavioural = (getattr(entry["response"], "behavioural", None)
+                           if entry["kind"] != "entreprises" else None)
+            seul = ("le coût après les comportements, à θ½, sans la boucle macro"
+                    if behavioural is not None and behavioural.band is not None
+                    else "le coût seul, sans la boucle macro")
             text += (f" Sans aucun effet sur l'activité, la dette serait "
-                     f"{'plus haute' if flat > 0 else 'plus basse'} de {value} de PIB.")
+                     f"{'plus haute' if flat > 0 else 'plus basse'} de {value} de PIB : "
+                     f"{seul}.")
         return text
 
     def _first(self, w: Any, n: Nombres, entry: dict[str, Any], texte: Any) -> None:
@@ -1934,7 +1979,7 @@ class Etude:
                 else "Aucune réponse comportementale n'a été calculée."))
         elif behavioural.band is None:
             w(f"**Bande comportementale : aucune, et la raison est donnée.** "
-              f"{raison_bande(behavioural)}")
+              f"{raison_bande(behavioural, entry['scenario'].reform)}")
         else:
             band = behavioural.band
             # The band is about the budget balance, the mechanical figure repeated in its

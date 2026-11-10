@@ -33,8 +33,22 @@ class FirmViewError(ValueError):
     """The firm layer's view was asked for in a way it cannot honour."""
 
 
+#: The year whose taxes a firm vintage carries, when it is not the year in its name (but
+#: 19, étape 1). The vintage « 2023 » takes its shape from the Ésane 2023, but
+#: `entreprises/cells.py` sets its profits on the DGFiP's of 2024 (n° 39, 283,95 Md€,
+#: `entreprises/margins.TAXABLE_PROFIT`, year=2024) : under the law of 2024 its IS is the
+#: DGFiP's of 2024 (69,31 against 69,05 Md€). Its turnover, of 2023, is the base of the
+#: C3S of 2024 (`margins.C3S_2024`). Aged from 2023, the layer took the GDP of 2024 over
+#: 2023 (+3,6 %) twice. Only the CVAE, on the value added of 2023, stays a year behind.
+#: The file keeps its name, `firms_2023.parquet`, shared by every worktree.
+ANNEE_DES_IMPOTS = {"2023": 2024}
+
+
 def base_year(vintage: str) -> int:
-    """The year a firm vintage describes, or a refusal when it names none."""
+    """The year whose taxes a firm vintage describes (`ANNEE_DES_IMPOTS`), the year in
+    its name otherwise, or a refusal when it names none."""
+    if vintage in ANNEE_DES_IMPOTS:
+        return ANNEE_DES_IMPOTS[vintage]
     if not re.fullmatch(r"\d{4}", vintage):
         raise FirmViewError(
             f"la population d'entreprises « {vintage} » n'a pas d'année : sa vue vieillie, "
@@ -76,15 +90,25 @@ def convention(vintage: str) -> str:
     without the factor of any one year."""
     return (f"Couche entreprises : le millésime {vintage}, sous le droit de chaque année. "
             f"Vue figée : le millésime tel quel ; vue vieillie : son coût suivi au PIB "
-            f"nominal du scénario depuis le millésime (M0, R7). L'IS est compté à "
+            f"nominal du scénario depuis {_annee(vintage)} (M0, R7). L'IS est compté à "
             f"l'exercice, non à la caisse (PHASE11_SPEC §3).")
+
+
+def _annee(vintage: str) -> str:
+    """The year the aged view starts from, as a note says it: the vintage's taxes'."""
+    try:
+        base = base_year(vintage)
+    except FirmViewError:
+        return "le millésime"
+    return (f"{base}, l'année de ses bénéfices" if str(base) != vintage
+            else f"{base}")
 
 
 def note(view: str, vintage: str, year: int, factor: float | None) -> str:
     if view == AGED and factor is not None:
         shown = f"{factor:.4f}".replace(".", ",")
         return (f"vue vieillie : le coût du millésime {vintage} suivi au PIB nominal du "
-                f"scénario, ×{shown} jusqu'à {year} (M0, R7)")
+                f"scénario depuis {_annee(vintage)}, ×{shown} jusqu'à {year} (M0, R7)")
     return f"vue figée : le millésime {vintage} tel quel"
 
 

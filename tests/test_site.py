@@ -142,7 +142,8 @@ def test_each_absent_answer_says_its_reason_on_the_site(built) -> None:
             if behavioural is not None and behavioural.band is None:
                 assert ('<p class="absent"><strong>Bande comportementale : aucune, et la '
                         'raison est donnée.</strong> '
-                        + html.escape(etude.raison_bande(behavioural), quote=False)) in page
+                        + html.escape(etude.raison_bande(behavioural, entry["scenario"].reform),
+                                    quote=False)) in page
             macro = getattr(response, "macro", None)
             if macro is not None and not macro.available:
                 assert ('<p class="absent"><strong>Éventail macro : refusé.</strong> '
