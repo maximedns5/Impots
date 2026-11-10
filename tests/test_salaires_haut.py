@@ -63,7 +63,7 @@ def test_the_private_upper_half_is_the_published_centiles(frame, draws, p) -> No
 
 @pytest.mark.parametrize("versant", ["etat", "territoriale", "hospitaliere"])
 def test_the_fonction_publique_has_its_own_upper_half(frame, draws, versant) -> None:
-    """Siasp 2024 : the median, Q3 and D9 of each versant, not the private shape."""
+    """Siasp 2024 : D1, Q1, median, Q3 and D9 of each versant, not the private shape."""
     mine = _group(frame, versant)
     weight = frame["weight"].to_numpy()[mine]
     for p, published in margins.WAGE_QUANTILES_FP_NET_EQTP_MONTHLY[versant].items():
@@ -90,10 +90,22 @@ def test_the_private_means_by_age_and_sex_are_the_published_ones(frame, draws) -
     assert got / level == pytest.approx(published, rel=0.005)
 
 
-def test_the_lower_half_keeps_its_drawn_shape(frame, draws) -> None:
-    """Below the median the draw is only scaled: the order of the employees is kept, and
-    nobody in the lower half is paid above the published median."""
+def test_variant_a_keeps_the_drawn_lower_half(frame, monkeypatch) -> None:
+    """Variant (a): below the median the draw is only scaled, so its D1 is the drawn one
+    and not the published one; nobody in the lower half is above the published median."""
+    monkeypatch.setattr(incomes, "WHOLE_DISTRIBUTION", False)
+    draws = incomes._draw_net_eqtp(frame, np.random.default_rng(incomes.SEED))
     mine = _group(frame, None)
     weight = frame["weight"].to_numpy()[mine]
     low = draws[mine] < margins.WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY[0.5]
     assert weight[low].sum() / weight.sum() == pytest.approx(0.5, abs=0.01)
+    d1 = _weighted_quantile(draws[mine], weight, 0.1)
+    assert abs(d1 / margins.WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY[0.1] - 1) > 0.02
+
+
+@pytest.mark.parametrize("p", [0.05, 0.1, 0.25, 0.4])
+def test_the_whole_distribution_is_read_on_the_published_centiles(frame, draws, p) -> None:
+    """Variant (d), the default: the lower half too is read on the published curve."""
+    mine = _group(frame, None)
+    got = _weighted_quantile(draws[mine], frame["weight"].to_numpy()[mine], p)
+    assert got == pytest.approx(margins.WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY[p], rel=0.015)

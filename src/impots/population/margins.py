@@ -68,27 +68,29 @@ WAGE_MEAN_NET_EQTP_BY_AGE_SEX: tuple[tuple[int, int, float, float], ...] = (
     (50, 55, 2820.0, 3430.0), (55, 200, 2810.0, 3600.0),
 )
 
-#: Centiles of the net EQTP monthly wage, private sector, 2024: the upper half of the
-#: distribution the wage draw is mapped onto (but 19, étape « haut »). Insee Première
+#: Centiles of the net EQTP monthly wage, private sector, 2024, which the wage draw is
+#: mapped onto (its upper half, or all of it: `incomes.WHOLE_DISTRIBUTION`; but 19, étape
+#: « haut »). Insee Première
 #: n° 2079 (octobre 2025), tableau complémentaire 3,
 #: https://www.insee.fr/fr/statistiques/fichier/8657156/ip2079.xlsx. Above the 99th
 #: centile, a Pareto tail through the 95th and 99th (`incomes.TAIL_C95_NET_EQTP_MONTHLY`).
 WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY: dict[float, float] = {
+    0.05: 1362.0, 0.10: 1492.0, 0.20: 1669.0, 0.25: 1746.0, 0.30: 1823.0, 0.40: 1992.0,
     0.50: 2190.0, 0.60: 2442.0, 0.70: 2785.0, 0.80: 3305.0, 0.85: 3709.0, 0.90: 4334.0,
     0.91: 4509.0, 0.92: 4709.0, 0.93: 4947.0, 0.94: 5234.0, 0.95: 5593.0, 0.96: 6073.0,
     0.97: 6752.0, 0.98: 7869.0, 0.99: 10261.0,
 }
 
 #: Quantiles of the net EQTP monthly wage in the fonction publique, 2024, by versant:
-#: median, third quartile, ninth decile. Insee, « Emploi, chômage, revenus du travail »,
+#: D1, Q1, median, Q3, D9. Insee, « Emploi, chômage, revenus du travail »,
 #: édition 2026, fiche 2.9, figure 2 (Siasp 2024),
 #: https://www.insee.fr/fr/statistiques/fichier/8733095/ECRT2026_F29.xlsx. Above D9 the
 #: curve is extended with the slope of its last segment: no upper centile is published,
 #: and that tail is a hypothesis.
 WAGE_QUANTILES_FP_NET_EQTP_MONTHLY: dict[str, dict[float, float]] = {
-    "etat": {0.50: 2820.0, 0.75: 3510.0, 0.90: 4330.0},
-    "territoriale": {0.50: 2120.0, 0.75: 2540.0, 0.90: 3190.0},
-    "hospitaliere": {0.50: 2470.0, 0.75: 3050.0, 0.90: 4010.0},
+    "etat": {0.10: 1760.0, 0.25: 2260.0, 0.50: 2820.0, 0.75: 3510.0, 0.90: 4330.0},
+    "territoriale": {0.10: 1650.0, 0.25: 1840.0, 0.50: 2120.0, 0.75: 2540.0, 0.90: 3190.0},
+    "hospitaliere": {0.10: 1890.0, 0.25: 2110.0, 0.50: 2470.0, 0.75: 3050.0, 0.90: 4010.0},
 }
 
 NET_TO_GROSS_RATIO = Figure(

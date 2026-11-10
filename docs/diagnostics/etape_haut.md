@@ -19,6 +19,10 @@ ramènent les foyers à 41 % de **+31 % à −0,3 %** et l'impôt au barème de 
 milieu et au bas : la tranche à 30 % passe de +9,5 à +17,7 %, les foyers imposés de +2,6
 à +6,2 %, la prime d'activité perd 9 %. **C'est une décision à prendre** (§ 5).
 
+**Mise à jour (§ 7)** : après la jonction avec D-367 et l'étape « ppa », la variante (d)
+(toute la distribution lue sur les quantiles publiés) est le défaut ; les § 1 à 6
+décrivent la variante (a). Le défaut de niveau est l'effectif salarié (§ 7.2).
+
 ## 1. Ce qui a changé, fichier par fichier
 
 **`population/incomes.py`, `_draw_net_eqtp`** (réécrite) :
@@ -353,3 +357,229 @@ dans la même réforme ; les assertions ne changent pas, la raison est dans le t
 Non lancés : la suite légère entière, `make impact`, les lourds, la grille, les études.
 `test_firmes_vues` et `test_predictif_entreprises` échouaient déjà au départ (étape
 « ir », § 6) et ne sont pas relancés.
+
+## 7. Suite : la jonction avec la grille et l'étape « ppa », la variante (d)
+
+*Demande du coordinateur, le 10 novembre après-midi. Jointes dans cette branche :
+`claude/but19` (abeff16, D-367) puis `claude/but19-ppa` (4e2a151, les mois travaillés).
+Un seul conflit, le manifeste, résolu par l'union des entrées ; `build.py` et le `WIRING`
+de `to_openfisca.py` ont fusionné seuls. Les mesures de cette section sont toutes faites
+avec l'étape « ppa » jointe, sur 15 000 ménages (graine 20240101), droit 2024 ; elles ne
+sont pas aveugles.*
+
+### 7.1 La variante (d) et ce qui change dans le code
+
+**(d)** : toute la distribution, bas compris, est lue sur les courbes publiées, le rang
+toujours tiré de l'enquête et ajusté par âge et sexe comme en (a). Privé : les centiles 5,
+10, 20, 25, 30 et 40 de l'IP n° 2079 (tableau complémentaire 3) s'ajoutent aux centiles
+50 à 99 ; fonction publique : D1 et Q1 de chaque versant (Siasp 2024, ECRT 2026 fiche 2.9).
+La quotité de l'enquête passe de l'EQTP au salaire payé, et les mois travaillés de
+l'étape « ppa » le répartissent sur l'année. D11 reste calé. `incomes.WHOLE_DISTRIBUTION`
+choisit la variante ; **(d) est le défaut** (§ 7.4). Les points ajoutés à `margins.py`
+ne changent rien à la moitié haute (l'interpolation au-dessus de la médiane ne lit que
+les points au-dessus).
+
+### 7.2 Les quantiles publiés et D11 sont-ils cohérents ?
+
+Ce qu'impliquent les quantiles publiés, avec l'effectif et la quotité de l'enquête :
+
+| | |
+|---|---:|
+| salariés de l'enquête (semaine) | 24,93 M |
+| en EQTP (quotité), privé / fonction publique | 17,96 / 5,35 M |
+| masse du privé : 17,96 M × 3 602 € bruts (IP n° 2079, figure 1) × 12 | 776,5 Md€ |
+| masse de la fonction publique : 5,35 M × 2 740 € nets / 0,7587 × 12 | 232,0 Md€ |
+| total | 1 008,5 Md€ |
+| D11 moins les gérants | 1 074,5 Md€ |
+| écart | **D11 à +6,5 %** |
+
+Le facteur de calage de la variante (d) le mesure à son tour : **1,062**. L'écart n'est
+pas dans la forme : il est dans l'**effectif**. Les comptes nationaux comptent 27,18 M de
+salariés dans l'emploi intérieur en 2024 (tableau 6.210, déjà au manifeste) ; l'enquête en
+a 24,93, plus 0,98 M de gérants : **−4,7 %**. Le reste (2 points environ) tient au champ
+(militaires, salariés hors ménages ordinaires, avantages en nature, épargne salariale) et
+au rapport net / brut de la fonction publique (0,7587, celui du privé : hypothèse). Le
+calage de D11 sur les seuls salariés de l'enquête transforme donc un manque d'effectif en
+hausse de salaire de 6 % pour chacun. C'est cela, et non la forme, qui abaisse la prime.
+
+Deux contrôles l'appuient. **Le revenu salarial annuel net** (ECRT 2026, fiche « Revenu
+salarial », 2023, apporté par l'étape « ppa » ; non calé) : D1 / médiane / D9 de 3 470 /
+22 270 / 44 590 € publiés, contre 7 879 / 23 922 / 50 665 (jonction et ppa, sans cette
+étape), 8 678 / 25 232 / 50 969 (a), 9 036 / 25 364 / 50 164 (d), et **8 599 / 24 139 /
+47 741** quand D11 est ramené à l'effectif de l'enquête (sensibilité « d2 » : D11 × 25,91 /
+27,18). **La part exonérée** de l'étape « ir », qui ferme l'écart entre l'assiette et les
+salaires déclarés : 6,85 % en (a) et (d), **2,1 %** en d2, soit 17 Md€, à comparer aux
+21,8 Md€ d'heures supplémentaires exonérées publiées (cases 1GH à 1JH) : la part commune
+de 6,85 % mesurait surtout le même manque d'effectif.
+
+### 7.3 Les mesures
+
+| 2024, 15 000 ménages | jonction + ppa | (a) | (d) | d2 (sensib.) | publié |
+|---|---:|---:|---:|---:|---:|
+| foyers à 0 % (M) | 12,58 | 12,13 | 11,93 | 11,92 | 13,13 |
+| à 11 % | 17,94 | 17,99 | 18,27 | 18,27 | 20,93 |
+| à 30 % | 7,51 | 8,07 | 8,00 | 8,00 | 6,87 |
+| à 41 % | 0,563 | 0,416 | 0,408 | 0,406 | 0,434 |
+| à 45 % | 0,106 | 0,095 | 0,095 | 0,095 | 0,061 |
+| IR au barème (Md€) | 109,2 | 105,4 | **103,9** | 103,9 | 98,84 |
+| foyers imposés (M) | 20,17 | 20,79 | 21,18 | 21,18 | 19,68 |
+| salaires déclarés (Md€) | 855 | 859 | 859 | 859 | 860 |
+| prime servie (Md€) | 7,73 | 7,07 | 6,52 | 7,27 | 10,28 |
+| prime, foyers servis (M) | 3,10 | 2,86 | 2,72 | 3,00 | 4,63 |
+| RSA servi (Md€) | 11,98 | 11,96 | 11,94 | 11,95 | 11,79 |
+| RSA, foyers servis (M) | 1,79 | 1,78 | 1,77 | 1,78 | 1,83 |
+| réduction générale (Md€) | 39,55 | 36,68 | 35,04 | 39,91 | 39,35 |
+| cotisations salariales (Md€) | 119,8 | 120,1 | 120,2 | 114,7 | |
+| aides au logement (Md€) | 11,91 | 11,42 | 11,14 | 11,48 | 15,67 |
+| niveau de vie médian servi (€) | 24 860 | 25 592 | 25 694 | 24 902 | 26 740 |
+| D9/D1 servi | 3,544 | 3,505 | 3,465 | 3,356 | 3,48 |
+
+(d) contre (a) : l'IR au barème baisse encore de 1,5 point et la tranche à 41 % de
+2 points ; le bas monte (D1 du revenu salarial +4 %), la prime perd 8 % de plus, la
+réduction générale 4,5 %, les foyers imposés gagnent 2 points. Les tranches à 30 et
+45 % ne bougent pas. Le facteur de l'étape « ppa » (qui doit valoir 1 avec `PLEIN_AVANT`
+calé) vaut 0,9986 en (a) et 0,9984 en (d) : à recaler à la jonction, sans effet visible.
+
+**`p_max` recalé** (`recours.caler`, 15 000 ménages, 2024 ; la constante n'est pas
+changée) : sur (d), **RSA 0,6866** (recours en masse 0,675, 2,68 M de familles ayant
+droit en décembre), **prime 0,5358** (recours 0,527, 5,52 M) ; pour comparaison, sur la
+jonction et ppa sans cette étape : 0,6903 et 0,5309 ; les constantes : 0,6974 et 0,5277.
+Les pronostics ci-dessous sont faits avec les constantes en place.
+
+### 7.4 La recommandation
+
+**(d), D11 inchangé, pour la jonction.** Avec les mois travaillés de l'étape « ppa », la
+raison de garder le bas tiré (§ 1 : il tenait lieu de l'emploi discontinu) tombe : la
+quotité et les mois font le passage de l'EQTP au salaire annuel, et le bas tiré, 11 %
+sous le D1 publié en EQTP, compterait l'emploi discontinu deux fois. (d) lit toute la
+forme sur une source, et donne le meilleur impôt (IR au barème +5,1 %, 41 % −6 %). Son prix,
+la prime, ne vient pas de la forme mais du niveau (§ 7.2).
+
+**Ensuite, à décider et à préenregistrer** : le défaut est l'effectif. Deux voies :
+(i) caler la masse des salaires sur D11 × (salariés de l'enquête et gérants / emploi
+salarié des comptes nationaux), soit 0,9533 en 2024 (d2) : la prime remonte à 7,27 Md€,
+la réduction générale tombe sur le publié (39,91 contre 39,35), le revenu salarial se
+rapproche, la part exonérée tombe à 2,1 % ; mais les cotisations et la CSG, comparées à
+des totaux nationaux qui comptent les 1,3 M de salariés absents, perdent 4,5 % (les
+cotisations salariales sont déjà à −11 %) ; (ii) ajouter ces salariés (hors ménages
+ordinaires, frontaliers, multi-actifs), ce que l'enquête ne permet pas directement. Je ne
+fais ni l'une ni l'autre ici.
+
+### 7.5 Le pronostic de (d), ligne par ligne
+
+Écart de l'échantillon (15 000 ménages, `grille_ech.py`, les trois années), élargi de
+5 points pour les minima sociaux (RSA et prime), 5 / 10 / 25 pour les tranches à 30 / 41 /
+45 %, 3 ailleurs (IR compris). Avec l'étape « ppa » jointe, les constantes de `p_max` en
+place, aucune autre étape. « h » : hors de la tolérance attendu ; « b » : au bord ;
+« ctx » : contexte.
+
+Les écarts de l'échantillon, (a) et (d), en % :
+
+| ligne | tol. | (a) 22 / 23 / 24 | (d) 22 / 23 / 24 |
+|---|---|---|---|
+| `af_montant` | 25 | −17,0 / −16,9 / −15,5 | −17,1 / −17,0 / −15,7 |
+| `aide_logement_montant` | 25 | −29,0 / −28,7 / −27,1 | −30,9 / −30,6 / −28,9 |
+| `bandeau_famille` | 15 | +23,2 / +21,0 / +20,5 | +24,4 / +22,1 / +21,7 |
+| `bandeau_maladie` | 15 | +12,9 / +11,4 / +10,7 | +15,6 / +14,1 / +13,1 |
+| `cotisations_employeurs` | 15 | +30,1 / +29,1 / +26,9 | +30,4 / +29,4 / +27,2 |
+| `cotisations_employeurs_d121` | 15 | +3,0 / +2,1 / +0,3 | +3,3 / +2,3 / +0,6 |
+| `cotisations_salariales` | 10 | −8,6 / −10,0 / −11,3 | −8,5 / −9,9 / −11,3 |
+| `csg_activite` | 15 | −6,4 / −6,2 / −6,8 | −6,4 / −6,2 / −6,8 |
+| `csg_activite_avec_non_salaries` | 15 | −0,7 / −0,6 / −1,2 | −0,7 / −0,6 / −1,2 |
+| `csg_remplacement` | 10 | −3,7 / −1,9 / −6,4 | −3,7 / −1,9 / −6,4 |
+| `d9_d1` | 15 | −1,6 / −4,2 / −4,6 | −2,8 / −5,6 / −5,8 |
+| `d9_d1_servi` | 15 | +3,4 / +0,9 / +0,7 | +2,1 / −0,4 / −0,4 |
+| `foyers_fiscaux` | 10 | −5,0 / −6,1 / −7,1 | −5,0 / −6,1 / −7,1 |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | — / — / −6,2 | — / — / −6,2 |
+| `foyers_imposes` | 10 | +13,2 / +10,6 / +5,6 | +15,4 / +12,7 / +7,6 |
+| `foyers_tmi_0` | 15 | −8,7 / −9,5 / −7,7 | −10,3 / −11,1 / −9,2 |
+| `foyers_tmi_1` | 15 | −11,5 / −12,8 / −14,1 | −10,0 / −11,3 / −12,7 |
+| `foyers_tmi_2` | 15 | +25,5 / +24,8 / +17,5 | +24,4 / +23,6 / +16,4 |
+| `foyers_tmi_3` | 30 | −7,3 / −4,1 / −4,1 | −8,8 / −6,1 / −6,1 |
+| `foyers_tmi_4` | 30 | +42,8 / +56,1 / +54,9 | +42,8 / +56,1 / +54,9 |
+| `impots_salaires_calcules` | 20 | −3,6 / −3,6 / −4,0 | −3,7 / −3,6 / −4,1 |
+| `impots_salaires_d291` | ctx | −69,3 / −69,6 / −69,7 | −69,3 / −69,6 / −69,7 |
+| `ir_bareme` | 10 | — / +11,2 / +6,6 | — / +9,6 / +5,1 |
+| `ir_net` | 15 | +18,9 / +21,5 / +17,1 | +17,2 / +19,8 / +15,5 |
+| `niveau_de_vie_median` | 15 | −1,6 / −2,8 / −4,1 | −1,1 / −2,4 / −3,7 |
+| `niveau_de_vie_median_servi` | 15 | −1,9 / −3,0 / −4,3 | −1,4 / −2,7 / −3,9 |
+| `pension_etat_d122` | ctx | −5,8 / −5,3 / −7,7 | −5,4 / −4,9 / −7,4 |
+| `pensions_declarees` | ctx | +3,8 / +3,4 / −1,2 | +3,8 / +3,4 / −1,2 |
+| `ppa_foyers` | 25 | +26,4 / +21,7 / +24,4 | +21,1 / +15,6 / +19,3 |
+| `ppa_foyers_servis` | 25 | −37,0 / −39,7 / −38,3 | −40,0 / −43,0 / −41,2 |
+| `ppa_montant` | 13 | −24,8 / −26,5 / −23,4 | −30,5 / −32,1 / −29,2 |
+| `ppa_montant_servi` | 13 | −32,5 / −34,1 / −31,3 | −37,8 / −39,2 / −36,6 |
+| `reduction_generale` | 15 | −5,6 / −8,5 / −6,8 | −9,9 / −12,4 / −11,0 |
+| `revenus_non_salaries_hors_gerants` | 15 | +15,6 / +18,8 / +8,2 | +15,6 / +18,8 / +8,2 |
+| `rsa_foyers` | 25 | — / +47,3 / +48,0 | — / +46,5 / +46,9 |
+| `rsa_foyers_servis` | 25 | — / −2,8 / −2,5 | — / −3,3 / −3,0 |
+| `rsa_montant` | 14 | +5,0 / +6,7 / +9,2 | +4,7 / +6,4 / +8,9 |
+| `rsa_montant_servi` | 14 | −2,5 / −0,9 / +1,4 | −2,7 / −1,1 / +1,2 |
+| `salaires_declares` | 10 | −0,1 / −1,3 / −1,3 | −0,1 / −1,3 / −1,3 |
+
+
+Le pronostic de (d) :
+
+|---|---|---|---|---|
+| `af_montant` | 25 | −20 à −14 | −20 à −14 | −19 à −13 |
+| `aide_logement_montant` | 25 | −34 à −28 h | −34 à −28 h | −32 à −26 h |
+| `bandeau_famille` | 15 | +21 à +27 h | +19 à +25 h | +19 à +25 h |
+| `bandeau_maladie` | 15 | +13 à +19 b | +11 à +17 b | +10 à +16 b |
+| `cotisations_employeurs` | 15 | +27 à +33 h | +26 à +32 h | +24 à +30 h |
+| `cotisations_employeurs_d121` | 15 | 0 à +6 | −1 à +5 | −2 à +4 |
+| `cotisations_salariales` | 10 | −11 à −5 b | −13 à −7 b | −14 à −8 b |
+| `csg_activite` | 15 | −9 à −3 | −9 à −3 | −10 à −4 |
+| `csg_activite_avec_non_salaries` | 15 | −4 à +2 | −4 à +2 | −4 à +2 |
+| `csg_remplacement` | 10 | −7 à −1 | −5 à +1 | −9 à −3 |
+| `d9_d1` | 15 | −6 à +0 | −9 à −3 | −9 à −3 |
+| `d9_d1_servi` | 15 | −1 à +5 | −3 à +3 | −3 à +3 |
+| `foyers_fiscaux` | 10 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | — | — | −9 à −3 |
+| `foyers_imposes` | 10 | +12 à +18 h | +10 à +16 b | +5 à +11 b |
+| `foyers_tmi_0` | 15 | −13 à −7 | −14 à −8 | −12 à −6 |
+| `foyers_tmi_1` | 15 | −13 à −7 | −14 à −8 | −16 à −10 b |
+| `foyers_tmi_2` | 15 | +19 à +29 h | +19 à +29 h | +11 à +21 b |
+| `foyers_tmi_3` | 30 | −19 à +1 | −16 à +4 | −16 à +4 |
+| `foyers_tmi_4` | 30 | +18 à +68 b | +31 à +81 h | +30 à +80 b |
+| `impots_salaires_calcules` | 20 | −7 à −1 | −7 à −1 | −7 à −1 |
+| `impots_salaires_d291` | ctx | −72 à −66 | −73 à −67 | −73 à −67 |
+| `ir_bareme` | 10 | — | +7 à +13 b | +2 à +8 |
+| `ir_net` | 15 | +14 à +20 b | +17 à +23 h | +13 à +19 b |
+| `niveau_de_vie_median` | 15 | −4 à +2 | −5 à +1 | −7 à −1 |
+| `niveau_de_vie_median_servi` | 15 | −4 à +2 | −6 à +0 | −7 à −1 |
+| `pension_etat_d122` | ctx | −8 à −2 | −8 à −2 | −10 à −4 |
+| `pensions_declarees` | ctx | +1 à +7 | 0 à +6 | −4 à +2 |
+| `ppa_foyers` | 25 | +16 à +26 b | +11 à +21 | +14 à +24 |
+| `ppa_foyers_servis` | 25 | −45 à −35 h | −48 à −38 h | −46 à −36 h |
+| `ppa_montant` | 13 | −36 à −26 h | −37 à −27 h | −34 à −24 h |
+| `ppa_montant_servi` | 13 | −43 à −33 h | −44 à −34 h | −42 à −32 h |
+| `reduction_generale` | 15 | −13 à −7 | −15 à −9 | −14 à −8 |
+| `revenus_non_salaries_hors_gerants` | 15 | +13 à +19 b | +16 à +22 h | +5 à +11 |
+| `rsa_foyers` | 25 | — | +41 à +51 h | +42 à +52 h |
+| `rsa_foyers_servis` | 25 | — | −8 à +2 | −8 à +2 |
+| `rsa_montant` | 14 | 0 à +10 | +1 à +11 | +4 à +14 |
+| `rsa_montant_servi` | 14 | −8 à +2 | −6 à +4 | −4 à +6 |
+| `salaires_declares` | 10 | −3 à +3 | −4 à +2 | −4 à +2 |
+
+Contre (a), (d) met l'IR au barème plus au centre (2024 : +5,1 % contre +6,6 ; 2023 :
++9,6 contre +11,2, au bord), rapproche l'IR net et la prime en foyers de droit (2024 :
++19 contre +24 %) ; il pousse au bord les foyers imposés de 2024 (+7,6 contre +5,6 %) et
+le bandeau maladie, baisse la réduction générale (qui reste dedans), et éloigne la prime
+en montant, déjà dehors. Les tranches à 41 % (dedans) et 45 % (dehors, de +43 à +56 %)
+ne dépendent pas du choix.
+
+### 7.6 Les tests
+
+```
+PYTHONPATH=src .venv/bin/python -m pytest -m "not lourd and not chrono" -n 2 \
+  tests/test_salaires_haut.py tests/test_population.py tests/test_emploi_discontinu.py \
+  tests/test_non_salaries.py tests/test_salaires_exoneres.py tests/test_verification.py \
+  tests/test_recours.py tests/test_foyers_fiscaux.py
+145 passed
+# tests/test_salaires_haut.py sur le code de (a) (git stash des sources) : 5 failed,
+# 10 passed (les centiles du bas du privé, D1 et Q1 des versants, la variante (a))
+ruff check (fichiers touchés) : propre
+```
+
+Après la seule jonction (avant la variante (d)), les tests des fichiers touchés : 126
+passés. Non lancés : la suite entière, `make impact`, les lourds, la grille.

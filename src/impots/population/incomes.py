@@ -267,15 +267,15 @@ def _draw_net_eqtp(frame: pl.DataFrame, rng: np.random.Generator) -> np.ndarray:
     """A net full-time-equivalent monthly wage for every employee.
 
     **The rank** comes from the survey: a draw on the published curve of the person's
-    PCS (D1, median, D9), times a factor for his age band and sex. **The value** of the
-    upper half comes from the publications: each employee's weighted rank among the
-    employees of his sector is read on the published curve of that sector, the Insee
-    Première n° 2079 centiles for the private sector (a Pareto tail above the 99th), the
-    Siasp median, third quartile and ninth decile for each versant of the fonction
-    publique. The lower half keeps the shape of the draw, scaled to meet the published
-    median: below it the EQTP distribution is not the annual one (part-year work is not
-    modelled), and the RSA and the prime d'activité, recalibrated on this lower half
-    (D-366), are left where they were. The age and sex factors are fitted so that the
+    PCS (D1, median, D9), times a factor for his age band and sex. **The value** comes
+    from the publications: each employee's weighted rank among the employees of his
+    sector is read on the published curve of that sector, the Insee Première n° 2079
+    centiles for the private sector (a Pareto tail above the 99th), the Siasp D1, Q1,
+    median, Q3 and D9 for each versant of the fonction publique. The survey's quotité then
+    turns the EQTP wage into the one paid, and the months worked of `emploi_discontinu`
+    (étape « ppa ») spread it over the year: the drawn lower half, kept below the median
+    while part-year work was not modelled (variant (a), `WHOLE_DISTRIBUTION` off), is no
+    longer needed for that (variant (d), on; both measured in the étape's report). The age and sex factors are fitted so that the
     private employees' mean in each of the ten published cells (`margins.
     WAGE_MEAN_NET_EQTP_BY_AGE_SEX`), relative to the private mean, is the published one;
     the fonction publique takes the same factors, a hypothesis.
@@ -346,6 +346,10 @@ def _draw_net_eqtp(frame: pl.DataFrame, rng: np.random.Generator) -> np.ndarray:
     return _map_upper_half(score * factor, weight, groups)
 
 
+#: Read the whole distribution, and not only its upper half, on the published curves:
+#: variant (d) of the étape « haut » (off: variant (a), the drawn lower half kept).
+WHOLE_DISTRIBUTION = True
+
 #: Rounds of the age and sex fit (the largest miss is under 0.1 % after six, on the
 #: test frame).
 AGE_SEX_ITERATIONS = 12
@@ -368,7 +372,7 @@ def _normal_quantile(p: np.ndarray) -> np.ndarray:
 
 
 def _private_curve(p: np.ndarray) -> np.ndarray:
-    """The published private-sector curve at probabilities `p` of 0.5 or more."""
+    """The published private-sector curve at probabilities `p`."""
     points = margins.WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY
     values = sample_curve(_normal_quantile(p), *quantile_curve(points))
     top = max(points)
@@ -385,7 +389,8 @@ def _fp_curve(points: dict[float, float]):
 
 
 def _map_upper_half(score: np.ndarray, weight: np.ndarray, groups) -> np.ndarray:
-    """Each group's upper half read on its published curve; the lower half scaled to meet it."""
+    """Each group read on its published curve (in variant (a), its upper half only, the
+    lower half scaled to meet it)."""
     out = score.copy()
     for mask, curve in groups:
         here = np.flatnonzero(mask)
@@ -394,10 +399,12 @@ def _map_upper_half(score: np.ndarray, weight: np.ndarray, groups) -> np.ndarray
         order = here[np.argsort(score[here], kind="stable")]
         cumulative = np.cumsum(weight[order])
         rank = (cumulative - weight[order] / 2.0) / cumulative[-1]
-        upper = rank >= 0.5
+        upper = rank >= (0.0 if WHOLE_DISTRIBUTION else 0.5)
         if not upper.any():
             continue
         out[order[upper]] = curve(rank[upper])
+        if upper.all():
+            continue
         median_draw = score[order[upper][0]]
         median = curve(np.array([0.5]))[0]
         out[order[~upper]] = score[order[~upper]] * median / median_draw
