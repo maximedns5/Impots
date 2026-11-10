@@ -583,3 +583,183 @@ ruff check (fichiers touchés) : propre
 
 Après la seule jonction (avant la variante (d)), les tests des fichiers touchés : 126
 passés. Non lancés : la suite entière, `make impact`, les lourds, la grille.
+
+## 8. La variante retenue : (d), la masse ramenée au champ de l'enquête
+
+*Décision du coordinateur après le § 7 : (d), avec la masse des salaires des salariés
+ramenée au champ de l'enquête (la sensibilité d2), le rapport calculé de sources
+publiées. Population reconstruite dans ce worktree (liens supprimés d'abord). Mesures sur
+15 000 ménages (graine 20240101), étape « ppa » jointe ; elles ne sont pas aveugles.*
+
+### 8.1 Le rapport, ses sources, ce qui sépare les champs
+
+`margins.CHAMP_SALARIES_ENQUETE` = **0,9305** = 25 293 000 / 27 181 700 :
+
+* **Numérateur** : 29 187 000 personnes en emploi au sens du BIT, 15 ans ou plus, en
+  logement ordinaire, France, 2024 (Insee, ECRT 2026, fiche 2.1, figure 1,
+  `ECRT2026_F2.xlsx`, publié), fois la part des salariés (STATUT = 2) dans l'emploi
+  pondéré du fichier détail de l'enquête Emploi 2024 (86,66 %). Le nombre de salariés
+  lui-même n'est pas publié sur cette page : sa part vient du fichier public, celui dont
+  la population est construite. La population ratissée en compte 24,93 M (−1,4 %).
+* **Dénominateur** : emploi intérieur salarié, 2024, ligne « _T » du tableau 6.210 des
+  comptes nationaux (déjà au manifeste) : 27 181 700.
+* **La cible** des salariés devient (D11 − gérants) × 0,9305 = 999,9 Md€ (1 074,5 avant).
+  Les gérants majoritaires gardent leur salaire déclaré (37,1 Md€ bruts). Trois `Figure`
+  neuves dans `margins.py` (`SALARIES_COMPTES_NATIONAUX`, `SALARIES_ENQUETE_EMPLOI`,
+  `CHAMP_SALARIES_ENQUETE`), sources et caveat.
+
+**Ce qui sépare les champs.** L'enquête laisse de côté les personnes en logement collectif
+(foyers de travailleurs, casernes, résidences : quelques centaines de milliers de
+salariés), Mayotte (environ 0,05 M) et les non-résidents qui travaillent en France
+(frontaliers entrants), que l'emploi intérieur compte ; et surtout les personnes que les
+sources administratives paient dans l'année mais qui déclarent, la semaine de l'enquête,
+ne pas avoir d'emploi (contrats courts, petits emplois d'étudiants et de retraités :
+l'Insee compte 30,4 M de personnes en emploi par ses estimations, 29,0 par l'enquête).
+L'enquête compte en sens inverse les résidents qui travaillent à l'étranger (environ
+0,4 M de frontaliers), que D11 ne paie pas. Les absents sont surtout **moins payés** que
+la moyenne (emplois courts et petits) : leur part de D11 est plus petite que leur part
+de l'effectif, et le rapport des effectifs, appliqué à une masse, retire un peu trop ;
+les frontaliers sortants, mieux payés et comptés par la seule enquête, vont dans le même
+sens. Aucune de ces masses n'est publiée : le rapport des effectifs est l'hypothèse.
+
+**La part exonérée** se recale comme avant sur les salaires imposables déclarés : elle
+tombe à **0** (bornée) : la masse imposable des salariés (999,9 × 0,8285 = 828,4 Md€) est
+à 0,1 % sous les 829,3 Md€ déclarés. La part de l'étape « ir » compensait l'effectif ;
+qu'elle disparaisse tout à fait, quand les heures supplémentaires exonérées publiées font
+21,8 Md€, dit que le rapport des effectifs retire un peu trop (ci-dessus), de l'ordre de
+2 %. Le facteur de calage des salaires sur les quantiles publiés vaut 0,988.
+
+### 8.2 `PLEIN_AVANT` et `p_max`
+
+`PLEIN_AVANT` recalé par `caler_plein_avant` sur la population entière : **0,4072**
+(0,4267 donnait un facteur de 0,9984 ; recalé, 0,999997). Volume de travail : 0,844 EQTP
+(Insee 0,77). La constante est changée (`emploi_discontinu.py`).
+
+`p_max` recalé (`recours.caler`, 15 000 ménages, 2024), **constantes non changées** :
+**RSA 0,6893** (recours en masse 0,677, 2,73 M de familles ayant droit en décembre),
+**prime 0,5349** (0,527, 6,37 M). En place : 0,6974 et 0,5277.
+
+### 8.3 Les mesures (2024)
+
+| 2024, 15 000 ménages | jonction + ppa | (d) | retenue | publié |
+|---|---:|---:|---:|---:|
+| foyers à 0 % (M) | 12,58 | 11,93 | 11,95 | 13,13 |
+| à 11 % | 17,94 | 18,27 | 18,26 | 20,93 |
+| à 30 % | 7,51 | 8,00 | 7,98 | 6,87 |
+| à 41 % | 0,563 | 0,408 | 0,408 | 0,434 |
+| à 45 % | 0,106 | 0,095 | 0,095 | 0,061 |
+| IR au barème (Md€) | 109,2 | 103,9 | 103,8 | 98,84 |
+| foyers imposés (M) | 20,17 | 21,18 | 21,16 | 19,68 |
+| salaires déclarés, après part (Md€) | 855 | 859 | 858 | 860 |
+| part exonérée | 6,85 % | 6,85 % | 0 | |
+| salaire brut (Md€) | 1 105,0 | 1 110,2 | 1 035,2 | |
+| prime servie (Md€) | 7,73 | 6,52 | **7,60** | 10,28 |
+| prime, foyers servis (M) | 3,10 | 2,72 | **3,14** | 4,63 |
+| RSA servi (Md€) | 11,98 | 11,94 | 12,04 | 11,79 |
+| RSA, foyers servis (M) | 1,79 | 1,77 | 1,79 | 1,83 |
+| réduction générale (Md€) | 39,55 | 35,04 | **41,85** | 39,35 |
+| cotisations salariales (Md€) | 119,8 | 120,2 | **112,3** | |
+| CSG déductible (Md€) | 74,2 | 74,5 | 69,5 | |
+| aides au logement (Md€) | 11,91 | 11,14 | 11,68 | 15,67 |
+| niveau de vie médian servi (€) | 24 860 | 25 694 | 24 561 | 26 740 |
+| D9/D1 servi | 3,544 | 3,465 | 3,311 | 3,48 |
+
+Le revenu salarial annuel net (contrôle, non calé ; Insee 2023 : 3 470 / 22 270 / 44 590 €)
+: D1 / médiane / D9 de 8 305 / 23 616 / 46 727 €, le plus proche des variantes.
+
+L'impôt ne bouge pas (la cible des salaires déclarés tient l'assiette) ; ce qui bouge, ce
+sont les prélèvements et prestations qui lisent le brut : la prime revient au niveau de la
+jonction (7,60 Md€), la réduction générale passe le publié de 6 %, les cotisations et la
+CSG perdent 7 %, parce que leurs totaux publiés comptent les salariés que l'enquête n'a
+pas (§ 8.1).
+
+### 8.4 La grille sur 15 000 ménages
+
+`docs/diagnostics/grille_ech_haut.json` (commité) : la grille sur l'échantillon, les trois
+années, avec le script du coordinateur (`grille_ech.py`, mesures des ménages et des
+entreprises), sur la population reconstruite. Écarts au publié en % pour (d) (§ 7) et la
+variante retenue, et le pronostic de la retenue (marges du § 7.5 : 5 points pour les
+minima sociaux, 5 / 10 / 25 pour les tranches à 30 / 41 / 45 %, 3 ailleurs) :
+
+| ligne | tol. | (d) 22 / 23 / 24 | retenue 22 / 23 / 24 | pronostic 2022 | 2023 | 2024 |
+|---|---|---|---|---|---|---|
+| `af_montant` | 25 | −17,1 / −17,0 / −15,7 | −15,3 / −15,0 / −13,7 | −18 à −12 | −18 à −12 | −17 à −11 |
+| `aide_logement_montant` | 25 | −30,9 / −30,6 / −28,9 | −27,4 / −27,1 / −25,4 | −30 à −24 b | −30 à −24 b | −28 à −22 b |
+| `bandeau_famille` | 15 | +24,4 / +22,1 / +21,7 | +19,7 / +17,5 / +16,8 | +17 à +23 h | +14 à +20 b | +14 à +20 b |
+| `bandeau_maladie` | 15 | +15,6 / +14,1 / +13,1 | +15,0 / +13,4 / +12,9 | +12 à +18 b | +10 à +16 b | +10 à +16 b |
+| `c3s` | 25 | — / — / — | +11,9 / +6,2 / +1,2 | +9 à +15 | +3 à +9 | −2 à +4 |
+| `contribution_sociale_is` | 25 | — / — / — | −20,2 / +33,8 / +20,3 | −23 à −17 | +31 à +37 h | +17 à +23 |
+| `cotisations_employeurs` | 15 | +30,4 / +29,4 / +27,2 | +18,1 / +17,1 / +15,2 | +15 à +21 b | +14 à +20 b | +12 à +18 b |
+| `cotisations_employeurs_d121` | 15 | +3,3 / +2,3 / +0,6 | −7,2 / −8,1 / −9,7 | −10 à −4 | −11 à −5 | −13 à −7 |
+| `cotisations_salariales` | 10 | −8,5 / −9,9 / −11,3 | −14,5 / −15,9 / −17,1 | −18 à −12 h | −19 à −13 h | −20 à −14 h |
+| `csg_activite` | 15 | −6,4 / −6,2 / −6,8 | −12,7 / −12,6 / −13,1 | −16 à −10 b | −16 à −10 b | −16 à −10 b |
+| `csg_activite_avec_non_salaries` | 15 | −0,7 / −0,6 / −1,2 | −7,1 / −6,9 / −7,5 | −10 à −4 | −10 à −4 | −11 à −5 |
+| `csg_remplacement` | 10 | −3,7 / −1,9 / −6,4 | −3,8 / −2,0 / −6,4 | −7 à −1 | −5 à +1 | −9 à −3 |
+| `cvae` | 25 | — / — / — | — / — / −15,2 | — | — | −18 à −12 |
+| `d9_d1` | 15 | −2,8 / −5,6 / −5,8 | −7,1 / −9,1 / −9,7 | −10 à −4 | −12 à −6 | −13 à −7 |
+| `d9_d1_servi` | 15 | +2,1 / −0,4 / −0,4 | −2,0 / −4,4 / −4,9 | −5 à +1 | −7 à −1 | −8 à −2 |
+| `foyers_fiscaux` | 10 | −5,0 / −6,1 / −7,1 | −5,0 / −6,1 / −7,1 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | — / — / −6,2 | — / — / −6,2 | — | — | −9 à −3 |
+| `foyers_imposes` | 10 | +15,4 / +12,7 / +7,6 | +15,3 / +12,6 / +7,5 | +12 à +18 h | +10 à +16 b | +5 à +11 b |
+| `foyers_tmi_0` | 15 | −10,3 / −11,1 / −9,2 | −10,1 / −10,9 / −9,0 | −13 à −7 | −14 à −8 | −12 à −6 |
+| `foyers_tmi_1` | 15 | −10,0 / −11,3 / −12,7 | −10,0 / −11,4 / −12,7 | −13 à −7 | −14 à −8 | −16 à −10 b |
+| `foyers_tmi_2` | 15 | +24,4 / +23,6 / +16,4 | +24,1 / +23,3 / +16,1 | +19 à +29 h | +18 à +28 h | +11 à +21 b |
+| `foyers_tmi_3` | 30 | −8,8 / −6,1 / −6,1 | −8,8 / −5,6 / −6,1 | −19 à +1 | −16 à +4 | −16 à +4 |
+| `foyers_tmi_4` | 30 | +42,8 / +56,1 / +54,9 | +42,8 / +56,1 / +54,9 | +18 à +68 b | +31 à +81 h | +30 à +80 b |
+| `impots_salaires_calcules` | 20 | −3,7 / −3,6 / −4,1 | −10,1 / −10,0 / −10,4 | −13 à −7 | −13 à −7 | −13 à −7 |
+| `impots_salaires_d291` | ctx | −69,3 / −69,6 / −69,7 | −71,4 / −71,6 / −71,7 | −74 à −68 | −75 à −69 | −75 à −69 |
+| `ir_bareme` | 10 | — / +9,6 / +5,1 | — / +9,4 / +5,0 | — | +6 à +12 b | +2 à +8 |
+| `ir_net` | 15 | +17,2 / +19,8 / +15,5 | +17,1 / +19,6 / +15,4 | +14 à +20 b | +17 à +23 h | +12 à +18 b |
+| `is` | 20 | — / — / — | −19,7 / −0,8 / +2,0 | −23 à −17 b | −4 à +2 | −1 à +5 |
+| `niveau_de_vie_median` | 15 | −1,1 / −2,4 / −3,7 | −5,3 / −6,5 / −7,7 | −8 à −2 | −10 à −4 | −11 à −5 |
+| `niveau_de_vie_median_servi` | 15 | −1,4 / −2,7 / −3,9 | −5,7 / −6,9 / −8,1 | −9 à −3 | −10 à −4 | −11 à −5 |
+| `pension_etat_d122` | ctx | −5,4 / −4,9 / −7,4 | −11,9 / −11,4 / −13,7 | −15 à −9 | −14 à −8 | −17 à −11 |
+| `pensions_declarees` | ctx | +3,8 / +3,4 / −1,2 | +3,8 / +3,4 / −1,2 | +1 à +7 | 0 à +6 | −4 à +2 |
+| `ppa_foyers` | 25 | +21,1 / +15,6 / +19,3 | +40,9 / +32,7 / +37,6 | +36 à +46 h | +28 à +38 h | +33 à +43 h |
+| `ppa_foyers_servis` | 25 | −40,0 / −43,0 / −41,2 | −30,3 / −34,2 / −32,1 | −35 à −25 b | −39 à −29 h | −37 à −27 h |
+| `ppa_montant` | 13 | −30,5 / −32,1 / −29,2 | −19,1 / −21,0 / −17,6 | −24 à −14 h | −26 à −16 h | −23 à −13 b |
+| `ppa_montant_servi` | 13 | −37,8 / −39,2 / −36,6 | −27,5 / −29,1 / −26,1 | −32 à −22 h | −34 à −24 h | −31 à −21 h |
+| `reduction_generale` | 15 | −9,9 / −12,4 / −11,0 | +7,7 / +4,6 / +6,4 | +5 à +11 | +2 à +8 | +3 à +9 |
+| `revenus_non_salaries_hors_gerants` | 15 | +15,6 / +18,8 / +8,2 | +15,6 / +18,8 / +8,2 | +13 à +19 b | +16 à +22 h | +5 à +11 |
+| `rsa_foyers` | 25 | — / +46,5 / +46,9 | — / +48,6 / +49,4 | — | +44 à +54 h | +44 à +54 h |
+| `rsa_foyers_servis` | 25 | — / −3,3 / −3,0 | — / −2,0 / −1,7 | — | −7 à +3 | −7 à +3 |
+| `rsa_montant` | 14 | +4,7 / +6,4 / +8,9 | +5,7 / +7,4 / +10,0 | +1 à +11 | +2 à +12 | +5 à +15 b |
+| `rsa_montant_servi` | 14 | −2,7 / −1,1 / +1,2 | −1,8 / −0,2 / +2,1 | −7 à +3 | −5 à +5 | −3 à +7 |
+| `salaires_declares` | 10 | −0,1 / −1,3 / −1,3 | −6,8 / −8,0 / −8,0 | −10 à −4 | −11 à −5 b | −11 à −5 b |
+
+Au centre de l'échantillon : **73 lignes sur 113 dans leur tolérance** (les 10 lignes
+des entreprises comprises, dont 9 dedans) ; sur les 103 lignes des ménages, (d) en tenait
+68 et la retenue 64. Contre (d), **une ligne gagnée** (le bandeau maladie de 2022, au bord
+à +15,0 %), **cinq perdues** : les cotisations salariales de 2022 et 2023 (−14,5 et
+−15,9 %, 2024 était déjà dehors) et la prime en foyers de droit des trois années (+33 à
++41 %). **Se rapprochent sans entrer** : la prime en montant et en foyers servis (de −37
+à −41 % à −26 à −34 %), le bandeau famille (+17 % en 2023 et 2024), les aides au
+logement (−25,4 % en 2024). **S'éloignent sans sortir** : la CSG d'activité (−13 %), les
+salaires déclarés (−8 % ; la ligne compte aussi le chômage, les heures supplémentaires et
+les gérants), le niveau de vie médian (−8 %), la réduction générale passe de −11 à +6 %.
+L'impôt ne bouge pas.
+
+Le défaut que cette variante rend visible : les totaux publiés des cotisations, de la CSG
+et des salaires déclarés comptent 1,9 M de salariés que l'enquête n'a pas. Ces lignes
+devraient être lues sur le même champ (le même rapport, ou les salariés absents ajoutés à
+la population) : c'est à décider avant la grille entière.
+
+### 8.5 Les tests
+
+```
+PYTHONPATH=src .venv/bin/python -m pytest -m "not lourd and not chrono" -n 2 \
+  tests/test_population.py tests/test_non_salaries.py tests/test_salaires_exoneres.py \
+  tests/test_emploi_discontinu.py tests/test_salaires_haut.py tests/test_verification.py \
+  tests/test_recours.py
+137 passed
+```
+
+Neuf : `test_the_survey_s_share_of_the_salaried_headcount_is_the_published_ratio`. Changés,
+avec leur raison écrite : `test_wage_bill_is_calibrated` et
+`test_the_gerants_are_paid_their_declared_pay_out_of_d11` (la masse attendue est celle des
+gérants plus la part des salariés ramenée au champ) ; `test_the_unscaled_sample_is_kept_
+as_the_defect_it_was` (le défaut épinglé de D-149 : la moyenne passe de 19,96 à 18,6 M€,
+seuils abaissés en le disant) ; `test_the_exempt_share_makes_the_declared_salaries` (sur
+la fixture, la part est maintenant nulle : le test vérifie qu'elle est commune et jamais
+négative, et que les salaires déclarés tiennent la cible quand elle est positive, ne la
+dépassent pas sinon).

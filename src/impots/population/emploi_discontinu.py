@@ -98,14 +98,16 @@ ALTERNANCE = "24"
 #: mensuels du tirage ne change pas, parce que l'enquête Emploi mesure l'emploi d'un mois
 #: moyen et que les mois travaillés ne font que le répartir entre les personnes ; les
 #: allègements et les cotisations, calculés au mois, gardent leur assiette. Population
-#: de 2024 jointe (D-366, 199 451 ménages), graine 20240101, le 10 novembre 2026.
+#: de 2024 jointe (D-366, 199 451 ménages), graine 20240101, le 10 novembre 2026 : 0,4267 ;
+#: recalée à 0,4072 sur les salaires de l'étape « haut » (la distribution lue sur les
+#: quantiles publiés, la masse sur le champ de l'enquête), où 0,4267 donnait 0,9984.
 #:
 #: Le volume de travail de l'Insee (`VOLUME_EQTP`) est le contrôle : 0,846 EQTP en moyenne
-#: (0,935 avant, 0,77 publié). Calé sur lui, `PLEIN_AVANT` bute sur sa borne : à 0, le
+#: (0,935 avant, 0,77 publié ; 0,844 avec l'étape « haut »). Calé sur lui, `PLEIN_AVANT` bute sur sa borne : à 0, le
 #: volume est encore de 0,813, et le facteur de 1,034 relève tous les taux mensuels
 #: (la réduction générale de l'échantillon perdait 10,8 %). Les mouvements que la semaine
 #: de l'enquête voit n'en font pas plus ; les contrats très courts répétés manquent.
-PLEIN_AVANT = 0.4267
+PLEIN_AVANT = 0.4072
 
 #: Le flux aléatoire du module : distinct de ceux des salaires (`seed`) et des
 #: non-salariés (`[seed, 2]`), pour qu'aucun de leurs tirages ne bouge.

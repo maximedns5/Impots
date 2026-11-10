@@ -70,7 +70,7 @@ def test_a_recent_hire_is_paid_fewer_months_at_the_same_rate(
     mois = ed.nombre_de_mois(frame["mois_travailles"].to_numpy())
     recent = employe & (avant["anciennete_emploi"].fill_null("").to_numpy() == "1")
     ancien = employe & ~recent
-    # Short of twelve unless the months before were worked too (`PLEIN_AVANT`, 0,43).
+    # Short of twelve unless the months before were worked too (`PLEIN_AVANT`, 0,41).
     assert recent.any() and (mois[recent] < 12).mean() > 0.35
     assert (mois[ancien] == 12).all()
     taux_avant = avant["salaire_brut_annuel"].to_numpy()[recent] / 12.0

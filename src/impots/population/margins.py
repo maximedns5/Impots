@@ -117,6 +117,61 @@ TOTAL_GROSS_WAGES = Figure(
            "15+ in ordinary households, so it should land slightly below.",
 )
 
+#: The wage bill of the employees the survey covers: D11, less the gérants, times this
+#: ratio (but 19, étape « haut », décision du coordinateur après la variante d2). D11 pays
+#: every employee of the national accounts; the survey's employees are fewer, and
+#: calibrating D11 onto them alone raised each one's pay by the missing headcount (+6.5 %
+#: over what the published wage quantiles imply, the « part exonérée » of the étape « ir »
+#: absorbing it on the tax side).
+SALARIES_COMPTES_NATIONAUX = Figure(
+    value=27_181_700.0, unit="count", year=2024,
+    scope="Emploi intérieur salarié en nombre de personnes, ensemble des branches (ligne "
+          "« _T »), moyenne annuelle",
+    source="INSEE, comptes nationaux annuels base 2020, tableau 6.210",
+    url="https://www.insee.fr/fr/statistiques/fichier/8988823/T_6210_fr.xlsx",
+    use="calibration",
+)
+
+SALARIES_ENQUETE_EMPLOI = Figure(
+    value=29_187_000.0 * 0.8665994595935453, unit="count", year=2024,
+    scope="Personnes en emploi au sens du BIT, 15 ans ou plus, logement ordinaire, France "
+          "(29 187 000, publié), fois la part des salariés (STATUT = 2) dans l'emploi "
+          "pondéré par EXTRIAN du fichier détail de l'enquête Emploi 2024 (86,66 %)",
+    source="INSEE, « Emploi, chômage, revenus du travail », édition 2026, fiche 2.1, "
+           "figure 1 ; enquête Emploi 2024, fichier détail (FD_EEC_2024)",
+    url="https://www.insee.fr/fr/statistiques/fichier/8733041/ECRT2026_F2.xlsx",
+    use="calibration",
+    caveat="The salaried count itself is not published on that page; its share is read "
+           "from the survey file, which the population is built from. The raked "
+           "population counts 24.93 M employees, 1.4 % fewer.",
+)
+
+#: 0,9305. What separates the two fields: the survey leaves out people in collective
+#: households (foyers de travailleurs, casernes, résidences : a few hundred thousand
+#: employees), Mayotte (about 0.05 M) and non-residents working in France (frontaliers
+#: entrants), whom the accounts' domestic employment counts; and above all the people
+#: the administrative sources pay in the year but who answer, in the survey week, that
+#: they have no job (short contracts, students' and retirees' small jobs: the Insee's
+#: own gap between its employment estimates and the survey, 30.4 against 29.0 M
+#: workers). In the other direction, the survey counts residents working abroad (about
+#: 0.4 M cross-border workers), whom D11 does not pay. Those missing are mostly paid less
+#: than the average (short and small jobs), so their share of D11 is smaller than their
+#: share of the headcount and this ratio, applied to the mass, takes slightly too much
+#: off; the cross-border workers, paid more and counted in the survey only, push the
+#: same way. Neither is published as a mass: the ratio of headcounts is the hypothesis.
+CHAMP_SALARIES_ENQUETE = Figure(
+    value=SALARIES_ENQUETE_EMPLOI.value / SALARIES_COMPTES_NATIONAUX.value, unit="ratio",
+    year=2024,
+    scope="Salariés de l'enquête Emploi (logement ordinaire) sur l'emploi salarié "
+          "intérieur des comptes nationaux",
+    source="INSEE, ECRT 2026 fiche 2.1 et enquête Emploi 2024 ; comptes nationaux, T_6210",
+    url=SALARIES_COMPTES_NATIONAUX.url,
+    use="calibration",
+    caveat="A ratio of headcounts applied to a mass: the employees missing from the "
+           "survey are mostly lower paid than the average, so the survey's true share "
+           "of D11 is a little above it (not published).",
+)
+
 PRIVATE_WAGE_BILL = Figure(
     value=726.5e9, unit="EUR", year=2024,
     scope="Masse salariale du secteur privé (champ Urssaf), France entière",

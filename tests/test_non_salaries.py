@@ -108,7 +108,7 @@ def test_the_gerants_are_paid_their_declared_pay_out_of_d11(
         population: tuple[pl.DataFrame, float]) -> None:
     """Un gérant majoritaire est payé en salaire (art. 62 du CGI), pas en bénéfice : la part
     imposable de ces salaires est celle des cases 1GB à 1JB (30,7 Md€), et la masse brute de
-    tous, salariés et gérants, reste D11. Échoue sur le code de l'étape 2, qui leur donnait
+    tous est D11, celle des salariés ramenée au champ de l'enquête (étape « haut »). Échoue sur le code de l'étape 2, qui leur donnait
     43,8 Md€ de BIC et de BNC à côté d'une masse salariale qui les comptait déjà."""
     frame, share = population
     regime = frame["regime_non_salarie"].to_numpy()
@@ -120,8 +120,10 @@ def test_the_gerants_are_paid_their_declared_pay_out_of_d11(
     assert (wages[gerant] > 0).mean() >= 0.75  # 12,7 % de revenus nuls publiés
     taxable = incomes.IMPOSABLE_SUR_BRUT * float((wages * weight)[gerant].sum())
     assert taxable == pytest.approx(margins.GERANTS_REMUNERATION.value * share, rel=1e-9)
+    gerants = float((wages * weight)[gerant].sum())
     assert float((wages * weight).sum()) == pytest.approx(
-        margins.TOTAL_GROSS_WAGES.value * share, rel=1e-9)
+        gerants + (margins.TOTAL_GROSS_WAGES.value * share - gerants)
+        * margins.CHAMP_SALARIES_ENQUETE.value, rel=1e-9)
     # No share of a gérant's pay is exempt: its taxable part is the declared one.
     assert (frame[incomes.EXEMPT_SHARE].to_numpy()[gerant] == 0).all()
 
@@ -133,7 +135,12 @@ def test_the_exempt_share_makes_the_declared_salaries(
     et cette part déduite, refassent les salaires déclarés (`DECLARED_TAXABLE_WAGES`) à 3 %
     près : `IMPOSABLE_SUR_BRUT` est un rapport moyen, mesuré sur la population et non sur la
     fixture. Échoue sur le code d'avant : il n'y avait pas de part, et les salaires
-    imposables passaient de 7 % les salaires déclarés."""
+    imposables passaient de 7 % les salaires déclarés.
+
+    Depuis l'étape « haut » (la masse des salariés ramenée au champ de l'enquête), la part
+    vaut 2,1 % sur la population ; sur cette fixture, dont les salariés pèsent moins, les
+    salaires imposables passent déjà sous les salaires déclarés, et la part, qui ne peut être
+    négative, est nulle : les salaires imposables restent alors sous la cible, sans part."""
     from impots.engine.system import baseline
     from impots.population.to_openfisca import build_simulation
 
@@ -141,12 +148,18 @@ def test_the_exempt_share_makes_the_declared_salaries(
     frame = frame.sort("person_id")
     exempt = frame[incomes.EXEMPT_SHARE].to_numpy()
     employee = (frame["is_salarie"] & (frame["statut_activite"] == "employed")).to_numpy()
-    assert exempt[employee & (frame["salaire_brut_annuel"].to_numpy() > 0)].min() > 0.03
+    paid = employee & (frame["salaire_brut_annuel"].to_numpy() > 0)
+    assert exempt.min() >= 0.0
+    assert np.unique(exempt[paid]).size == 1  # une part commune
     assert (exempt[~employee] == 0).all()
     built = build_simulation(frame, baseline(), 2024)
     taxable = built.simulation.calculate_add("salaire_imposable", "2024")
     declared = float((taxable * (1 - exempt) * frame["weight"].to_numpy())[employee].sum())
-    assert declared == pytest.approx(margins.DECLARED_TAXABLE_WAGES.value * share, rel=0.03)
+    target = margins.DECLARED_TAXABLE_WAGES.value * share
+    if exempt[paid][0] > 0:
+        assert declared == pytest.approx(target, rel=0.03)
+    else:
+        assert declared < target * 1.03
 
 
 def test_the_draw_is_reproducible(skeleton: pl.DataFrame) -> None:

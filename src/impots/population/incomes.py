@@ -725,9 +725,14 @@ def attach_incomes(
 
     before = float((wages * weight).sum())
     gerants_gross = float((gerant_gross * weight).sum())
-    target = margins.TOTAL_GROSS_WAGES.value * targets_scale - gerants_gross
+    target = ((margins.TOTAL_GROSS_WAGES.value * targets_scale - gerants_gross)
+              * margins.CHAMP_SALARIES_ENQUETE.value)
     # The one calibration on incomes, and therefore spent: the wage bill can never
-    # afterwards appear as a validation line (§4.3). D11 holds the gérants' pay too.
+    # afterwards appear as a validation line (§4.3). D11 holds the gérants' pay too, and
+    # the pay of employees the survey does not cover: the employees' share is D11 less
+    # the gérants, times the survey's share of the accounts' salaried headcount (but 19,
+    # étape « haut »). Before, the whole of it went to the survey's employees, 6.5 % more
+    # each than the published wage quantiles imply.
     factor = target / before if before > 0 else 1.0
     wages = np.where(employee, wages * factor, gerant_gross)
 
