@@ -57,7 +57,8 @@ Trois chiffres, donnés ensemble, parce que chacun seul ment :
 | articles chiffrables | **3 sur 33** fiscaux (PLF 2027), plus l'art. 74 de dépense ; **0 sur 49** (PLFSS 2027) ; 1 sur 29 (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 | euros quantifiés par l'annexe que l'outil chiffre | **72,8 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 
-Et le livrable : **1 étude à trois réponses** (PLF 2027), **0 en ligne**.
+Et le livrable : **10 études à trois réponses** (le PLF 2027, le PLFSS 2027 et huit
+candidats), **0 en ligne** : le site est construit, pas activé.
 
 En valeur absolue, les cinq écarts ne tombent pas du même côté : trois au-dessus du
 publié (art. 3, 15 et la prime d'activité), deux en dessous (art. 2 et le logement). Le
@@ -162,6 +163,14 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
   politique d'imputation, la couche de service hors de l'API, la persistance « lue », le
   multiplicateur borné, une fonction pure qui rejoue la dette ; les dix études relancées
   sur un commit, coûts 13 sur 13, verdicts 11 sur 13.
+* **But 15 — Les études explorables** (D-343, D-344, D-351, PR #119) : une grille de 169
+  passes préenregistrées, et `site/explorer.html`, qui rejoue θ, la boucle et la dette dans
+  le navigateur comme `rejouer` ; 19 témoins sur 19, 16 dettes sur 17, 9 termes croisés
+  sur 11.
+* **But 16 — Les chiffres des candidats, défendables** (D-345 à D-356, PR #120) : le
+  secteur public câblé, l'IS après CVAE et C3S, la TVA au point net, le verdict lu sur le
+  Monte-Carlo ; les dix études relancées, 39 pronostics sur 39 ; E1 et E2 séparées pour
+  trois candidats, et l'IS qui pèse plus sur la dette parce que la boucle ne le lit pas.
 
 ### But 6 — Une étude par commande
 
@@ -520,7 +529,7 @@ point près (D-339). Sous la persistance « lue », Attal passe de +20,3 à +4,4
 en 2035, et la falaise de l'an 4 a disparu ; trois programmes montent la dette à chaque coin
 (Lisnard, Retailleau, Labib), cinq en dépendent de θ. Les pages publient « éteint » et « tenu » à côté, comme sensibilités.
 
-### But 15 — Les études explorables : des curseurs précalculés (validé le 5 novembre 2026, D-343)
+### But 15 — Les études explorables : des curseurs précalculés (fait, D-343, D-344, D-351)
 
 Les dix études répondent pour un point : la mesure telle que le texte ou le candidat
 l'écrit, et trois points de sa plage. Un lecteur qui demande « et à 55 % au lieu de 60 % ? »
@@ -585,7 +594,7 @@ points qui portent une part. La dette de la tranche à 60 % manque sa tolérance
 linéairement. Deux termes croisés sur onze sortent de leur fourchette (les deux plafonds du
 quotient). Restent make impact, les lourds, la PR et le merge.
 
-### But 16 — Les chiffres des candidats, défendables (validé le 5 novembre 2026, D-345)
+### But 16 — Les chiffres des candidats, défendables (fait, D-345 à D-356)
 
 L'examen de validité du 5 novembre (deux relectures adverses indépendantes et des contrôles
 refaits sur les rapports de `7235bd8`) trouve la chaîne juste : la dette rejouée égale le
@@ -664,3 +673,116 @@ Les décisions à prendre avant de lancer : faut-il câbler le secteur public si
 dépend (`calibrate.py` est fermé jusqu'à la phase 7) ; quelle forme pour l'incertitude de
 spécification (une ligne de θ, ou une variante publiée à côté) ; quel seuil pour le
 verdict.
+
+### But 17 — Les études en ligne, lisibles par qui n'a pas lu le dépôt (validé le 8 novembre 2026, D-357)
+
+Le deuxième chiffre de la règle de priorité compte les études publiées : il y en a dix,
+aucune en ligne. Le but 16 devait passer avant la publication (« aucune étude ne se publie
+avec une erreur connue ») ; il est fait. Ce qui manque n'est plus un calcul, c'est le
+lecteur. Les pages sont écrites pour qui suit le dépôt. Celle de Retailleau renvoie
+dix-neuf fois à une D-entrée. Elle ouvre sur un tableau (+16,08 Md€, +2,19 pt, « hausse »,
+« hausse ») dont les colonnes ne s'expliquent que plus bas : la phrase qui dit le coût est
+à la ligne 27, celle qui dit la dette à la ligne 76, et la différence entre le verdict et
+« selon θ » se lit plus loin encore. Les termes sont définis là où ils servent (une légende
+des étages, θ, les vues vieillie et figée), jamais ensemble. Rien ne dit, sur une page à
+part, ce que l'outil ne fait pas (la dépense n'est pas microsimulée, l'IS n'entre pas dans
+la boucle macro, un programme n'est chiffré qu'en partie), ni comment signaler une erreur.
+En pleine campagne, une page qui nomme un candidat et se lit mal est un risque pour le
+projet.
+
+```
+/goal Les dix études se lisent en ligne par qui n'a pas lu le dépôt, prêtes à publier, et
+c'est mergé dans main. Chaque page d'étude s'ouvre sur ce qu'elle conclut, en trois
+phrases sans renvoi au dépôt : le coût de la première année et qui y gagne, la bande ou
+son absence, la dette en 2035 et son verdict, chaque nombre tiré des rapports comme le
+reste de la page. Une page « méthode et limites » définit chaque terme que les pages
+emploient (θ, la boîte, les vues vieillie et figée, la persistance, les étages, le
+verdict, la couverture) et dit ce que l'outil ne fait pas ; chaque page y renvoie au
+premier emploi d'un terme. Chaque page dit sa date, son commit et comment signaler une
+erreur. Une relecture adverse indépendante lit les dix pages comme un lecteur et comme un
+vérificateur de faits ; chaque erreur trouvée est corrigée, ou listée avec sa raison si
+elle tient au modèle. Aucun nombre ne change : un correctif qui en changerait un s'arrête
+et se préenregistre. Le site se lit sans défilement horizontal sur un téléphone. Un test
+refuse la dérive de chaque page, et `site verifier` est vert. La publication reste la
+décision du propriétaire : le workflow est prêt, pas activé. Preuve attendue : le site
+construit, le rapport de relecture, les captures sur téléphone, la sortie verte des tests
+ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 40 tours, en disant ce qui
+manque.
+```
+
+Le budget : aucune passe sur la population ; une journée d'horloge, la relecture comprise.
+Les décisions à prendre avant de lancer : où publier (GitHub Pages sous le dépôt, ou un
+domaine) et quand ; quelle adresse pour signaler une erreur ; si les pages des candidats
+paraissent pendant la campagne, ou d'abord le PLF et le PLFSS seuls.
+
+**Ce qui vient après.** Un juge qui paraît passe avant tout : le chiffrage des programmes
+par l'Institut Montaigne, qui jugera les treize mesures en attente (D-321, D-326), et le
+PLF 2028 en octobre 2027. Sans juge, la couverture des programmes : sur 212 mesures
+paramétrées, 13 se chiffrent. La porte la plus large, la dépense publique (56 refus chez
+11 candidats), est hors du modèle par construction. Les deux suivantes se chiffreraient
+avec un module : les retraites (22 refus chez 10 candidats, l'âge légal en tête) et les
+transmissions (13 refus chez 8 candidats).
+
+### But 18 — Les juges du passé : assez de cas notés pour que la note veuille dire quelque chose (proposé)
+
+Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
+et il repose sur cinq cas : trois dans leur tolérance, des écarts de −22 % (les aides au
+logement) à +167 % (la prime d'activité). Avec cinq tirages, un taux de 60 % a un intervalle
+de confiance à 95 % qui va d'environ 15 % à 95 % : la note ne distingue pas un bon outil
+d'un mauvais. Les juges d'octobre 2027 sont loin, et ceux de l'automne 2026 sont épuisés.
+Ceux du passé sont là. Les évaluations préalables des PLF et des PLFSS de 2019 à 2025
+chiffrent des centaines d'articles ; le projet n'en a noté aucun article, et n'en connaît
+que quelques montants, ceux de la suite de précision (D-035 : l'indexation de 2023, l'IS à
+25 %, l'indexation du PLF 2025). Le 29 octobre, le propriétaire avait préféré le PLFSS 2027,
+jamais ouvert, à un banc rétrospectif des PLF 2023 à 2025 (D-296) ; ce juge-là est noté,
+et le banc revient avec une raison de plus. L'Insee et la Drees
+publient chaque année, dans *France, portrait social*, l'effet par décile des mesures de
+l'année : c'est un juge de « qui y gagne », qu'aucune étude n'a jamais eu.
+
+Ce but sert aussi tous les suivants. Sans lui, on ne saura pas si la population sur l'ERFS
+améliore le modèle (la note de cinq cas ne bougerait pas de façon lisible). Il donne aussi
+au Monte-Carlo ce qui lui manque le plus : la loi d'erreur du coût de la première année,
+que l'audit du 8 novembre désigne comme la plus grande incertitude non publiée.
+
+```
+/goal Le modèle est noté sur assez de chiffrages officiels pour que la note veuille dire
+quelque chose, et c'est mergé dans main. Les PLF et PLFSS de 2019 à 2025 sont triés article
+par article sur leur texte, avant toute ouverture de leurs évaluations préalables ; chaque
+article chiffrable sur la population de son année est préenregistré (cas, tolérance et sa
+raison, pronostic), commité et poussé, puis sa fiche est ouverte et il est noté. La
+population est ramenée à l'année de chaque cas par des indices observés et manifestés ; un
+cas sans indices est refusé, pas approché. Les effets par décile que l'Insee et la Drees
+publient pour les mesures de l'année servent de juge à la colonne « qui y gagne », sur les
+mesures que le moteur chiffre, préenregistrés de la même façon. La distribution des écarts
+du coût de la première année (L2) est publiée par famille d'instrument, avec son biais, sa
+dispersion et le nombre de cas qui la portent ; elle devient la loi d'erreur que le
+Monte-Carlo pourra tirer. Aucune tolérance n'est modifiée après le premier calcul, et les
+cas manqués restent notés. Preuve attendue : le nombre de cas notés avant et après, leur
+taux dans la tolérance avec son intervalle de confiance, le tableau des écarts par
+instrument, les juges par décile, la sortie verte des tests ciblés, l'URL de la PR et le SHA
+du merge. Ou s'arrêter après 60 tours, en disant combien d'articles restent à trier.
+```
+
+Le budget : le triage de sept années de textes (deux textes par an) et une passe courte par
+cas chiffrable, sur la population ramenée à son année ; aucune étude n'est refaite.
+Quelques jours d'horloge, surtout de lecture.
+
+Les décisions à prendre avant de lancer :
+
+* **Remonter le temps.** La population est de 2024, et le but 10 ne sait la vieillir que
+  vers l'avant. La ramener à 2018 demande des indices observés (salaires par tête, prix,
+  pensions) et accepte une population dont la structure est celle de 2024 : une limite à
+  dire sur chaque cas, ou une raison de commencer en 2021.
+* **L'aveugle.** Les montants des réformes les plus connues (le prélèvement forfaitaire
+  unique, la suppression de la taxe d'habitation) circulent ailleurs que dans les annexes,
+  et ceux de la suite de précision sont dans le dépôt (D-035). Un cas dont le chiffre
+  officiel est déjà connu de celui qui l'enregistre est noté à part, comme les révisions.
+* **Le périmètre.** Les articles de dépense que le moteur sait chiffrer (les prestations)
+  entrent comme les articles fiscaux, à la façon de l'art. 74 (D-298).
+
+**Ce qui viendrait ensuite**, proposé le 8 novembre et pas encore écrit en but : la
+population des ménages sur l'ERFS 2022, que le propriétaire détient depuis D-134 et dont le
+plan de migration est complet (`docs/PHASE1C_ERFS.md`), mesurée par les juges de ce but ;
+puis une incertitude qui tire l'erreur du coût et un effet sur l'activité lu dans plusieurs
+modèles publiés, impôts des entreprises compris ; puis la dépense et les retraites des
+programmes, à leur montant annoncé et sur des projections publiées.

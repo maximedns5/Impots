@@ -26899,3 +26899,85 @@ côté du tableau de décomposition est au propriétaire.
 Les pages d'Attal et de Retailleau la portent sous le tableau de décomposition, là où une
 part E2 y figure (`Etude._avant`) ; celle de Mélenchon, sans E2, ne change pas. Aucun
 nombre ne bouge.
+
+## D-357 — Le but 17 validé : les études lisibles par qui n'a pas lu le dépôt
+
+**La demande.** Le propriétaire, le 8 novembre, sur le but 17 proposé (« fais-moi tout
+ça ») : les dix études prêtes à publier, lisibles par un lecteur qui n'a pas lu le dépôt.
+
+**Les choix, faute d'une réponse aux quatre questions du but.** Ils se défont tous sans
+toucher un nombre.
+
+* **Où et quand publier** reste au propriétaire : le workflow `site` est prêt, il ne publie
+  que si la variable `SITE_PUBLIE` vaut « oui » et que GitHub Pages est activé.
+* **Signaler une erreur** demande une adresse que le projet n'a pas : le dépôt est privé,
+  ses issues ne s'ouvrent pas au lecteur. L'adresse est un réglage du site
+  (`etudes/site.json`, clé `signaler`), vide jusqu'à ce que le propriétaire la fixe ; vide,
+  le pied de page le dit, et `impots site publiable`, que le workflow lance avant de
+  publier, refuse. Une page publiée sans adresse serait une page qu'on ne peut pas
+  corriger. Un site servi depuis un dépôt privé demande aussi une offre GitHub qui le
+  permet, ou un autre hébergeur : c'est la même décision.
+* **Les pages des candidats** sont construites avec les autres ; publier d'abord le PLF et
+  le PLFSS seuls est une décision de publication, au propriétaire.
+
+**Ce qui se fait.**
+
+* **En tête de chaque page**, ce que l'étude conclut, sans renvoi au dépôt : pour chaque
+  ligne, le coût de la première année et qui y gagne, ce que les comportements y changent
+  ou pourquoi l'outil ne le dit pas, et la dette en 2035 avec son verdict. Les nombres sont
+  ceux de la page, tirés des mêmes rapports par les mêmes jetons (`Nombres`) : `etude
+  verifier` les tient comme le reste.
+* **Une page « méthode et limites »** (`site/methode.html`), qui définit chaque terme des
+  pages et dit ce que l'outil ne fait pas ; dans chaque page, le premier emploi d'un terme
+  y renvoie.
+* **Au pied de chaque page**, sa date, son commit, et le lien pour signaler une erreur.
+* **Une relecture adverse indépendante** des dix pages, comme un lecteur et comme un
+  vérificateur de faits ; chaque constat corrigé, ou listé avec sa raison.
+* **Le téléphone** : aucune page ne défile en largeur à 390 pixels.
+
+**Ce qui ne bouge pas.** Aucun rapport, aucune tolérance, aucun nombre. Un correctif qui en
+changerait un s'arrête et se préenregistre dans une D-entrée à part.
+
+## D-358 — Le but 17 : les pages lisibles, et ce que la relecture adverse a trouvé
+
+**Ce qui est fait.** Aucun rapport n'a tourné, aucun nombre n'a changé : `etude verifier`
+et `site verifier` tiennent chaque page contre ses rapports, comme avant.
+
+* **En tête de chaque page**, « Ce que dit cette étude » (`Etude._conclut`) : pour chaque
+  ligne, le coût de la première année et qui y gagne (les deux déciles extrêmes, et le
+  plus touché s'il est ailleurs) ; la bande, ou pourquoi elle manque ; la dette en 2035,
+  la part des tirages où elle monte et ce que l'outil en conclut ; les instruments que la
+  boucle macro lit, et la dette sans aucun effet sur l'activité, le coin « multiplicateur
+  nul » de la boîte (D-356). Les nombres sont les jetons de la page.
+* **`site/methode.html`**, depuis `src/impots/site_textes/methode.html` : ce que fait
+  l'outil, les trois réponses, les étiquettes, la dette et son incertitude, les
+  programmes, les juges, les autres mots des pages, et ce que l'outil ne fait pas. Le
+  premier emploi d'un terme, dans chaque page, y renvoie (`site.termes`) ; jamais dans un
+  titre, un tableau, un nombre ou du code.
+* **Le pied de page** dit la date et le commit de l'étude, et où signaler une erreur. Le
+  réglage `site_reglages.json` est vide (D-357) : le pied le dit, et `impots site
+  publiable`, que le workflow lance avant de publier, refuse.
+* **Au téléphone** (Chromium, iPhone 13, 390 px), aucune des quatorze pages ne défile en
+  largeur.
+
+**La relecture adverse.** Un relecteur indépendant, en lecture seule, a rendu 29 constats ;
+`docs/RELECTURE_BUT17.md` les donne un à un avec leur sort. Huit sont des erreurs : sept
+corrigées dans le texte (une bande comparée au mauvais total chez Lisnard, une unité fausse
+chez Labib, un message anglais, une raison de bande qui se contredisait chez Mélenchon, la
+boîte dite extrême alors que le Monte-Carlo en sort, des refus du PLF non datés, le chiffre
+officiel retenu sans ce qu'il couvre) ; la huitième, le brut d'IS de Mélenchon, demande un
+nombre neuf et attend son préenregistrement. Le constat le plus lourd est d'équité : le
+verdict de dette dépend de l'instrument que la boucle lit, pas de la taille de la mesure.
+Les pages le disent maintenant en tête, et la page des candidats dit que les verdicts ne se
+comparent pas d'un candidat à l'autre ; l'outil, lui, n'y remédie pas (D-356).
+
+**Trois tests suivent le texte, aucun ne perd sa garde.** `test_etude_programmes` figeait
+« dont 1 énoncent » : il lit maintenant l'accord. `test_site` lisait la raison brute d'une
+réponse absente : il lit la raison que la page donne (`raison_bande`, `raison_macro`), qui
+est la brute sauf dans les deux cas corrigés. L'ancre « etages » de la page de méthode
+doublait celle de la légende : elle s'appelle « etiquettes ».
+
+**Ce qui reste.** Les constats 8, 10, 11, 12 et 13 sont des chiffrages neufs, chacun à
+préenregistrer. Au propriétaire : l'adresse pour signaler une erreur, l'hébergement (le
+dépôt est privé), le libellé d'un parti, et les faits que la relecture demande de vérifier
+(la candidature de Le Pen, une mesure de Mélenchon portée par Mathilde Panot).

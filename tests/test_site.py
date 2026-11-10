@@ -142,11 +142,11 @@ def test_each_absent_answer_says_its_reason_on_the_site(built) -> None:
             if behavioural is not None and behavioural.band is None:
                 assert ('<p class="absent"><strong>Bande comportementale : aucune, et la '
                         'raison est donnée.</strong> '
-                        + html.escape(behavioural.grade_reason, quote=False)) in page
+                        + html.escape(etude.raison_bande(behavioural), quote=False)) in page
             macro = getattr(response, "macro", None)
             if macro is not None and not macro.available:
                 assert ('<p class="absent"><strong>Éventail macro : refusé.</strong> '
-                        + html.escape(macro.unavailable_because, quote=False)) in page
+                        + html.escape(etude.raison_macro(macro), quote=False)) in page
 
 
 def test_the_page_is_the_study_s_text(built) -> None:

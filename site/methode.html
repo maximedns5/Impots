@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Méthode et limites — Impôts — les études</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><a href="index.html">Impôts — les études</a> · <a href="methode.html">Méthode et limites</a></header>
+<main>
+<h1>Méthode et limites</h1>
+<p>Cette page dit, sans renvoyer au code, comment les études sont faites, ce que veut dire
+chaque mot qu'elles emploient, et ce que l'outil ne fait pas. Chaque page d'étude y renvoie
+au premier emploi d'un terme.</p>
+
+<h2 id="ce-que-fait-l-outil">Ce que fait l'outil</h2>
+<p>Il applique la loi fiscale et sociale, telle que le modèle public OpenFisca-France la
+code, à une population de ménages construite à partir de données ouvertes (la structure des
+ménages de l'enquête Emploi de l'Insee, les revenus tirés de distributions publiées, le tout
+calé sur des totaux publiés), et à une population d'entreprises construite à partir des
+tableaux publiés de l'Insee (Ésane). Il chiffre une réforme en faisant tourner la loi deux
+fois, avec et sans elle, et en comptant l'écart. Il ne prévoit rien : chaque nombre est
+conditionnel aux hypothèses écrites à côté de lui.</p>
+
+<h2 id="trois-reponses">Les trois réponses</h2>
+<ol>
+<li><strong>Ce que la mesure coûte la première année, et qui y gagne.</strong> Le coût
+<span id="mecanique">mécanique</span> : personne ne change de comportement, chacun paie le
+nouveau droit sur ses revenus d'avant. Un coût positif coûte au budget, un coût négatif lui
+rapporte. Qui y gagne se lit par dixième de niveau de vie (décile), du plus modeste au plus
+aisé.</li>
+<li><strong>Ce qu'elle coûte une fois les comportements pris en compte.</strong> La
+<span id="bande">bande</span> : une fourchette, jamais un point, tirée d'élasticités
+publiées (combien le travail, les revenus déclarés ou l'investissement réagissent à un
+taux). Quand aucune étude publiée ne permet de chiffrer un comportement, la page dit que la
+bande est absente et pourquoi : une bande absente n'est pas une bande nulle.</li>
+<li><strong>Ce qu'elle fait à la dette en 2035.</strong> L'écart de dette publique, en
+<span id="point-de-pib">points de PIB</span> : la dette de 2035 avec la mesure, moins la
+dette de 2035 sans elle. Un point de PIB de 2035 vaut environ 40 milliards d'euros, sous les hypothèses de
+croissance des études.</li>
+</ol>
+
+<h2 id="etiquettes">Les étiquettes de confiance</h2>
+<p>À côté de chaque nombre, une étiquette dit sur quoi il repose : L1 pour ce qui vient de
+la population, L2 pour la simulation mécanique, L3 pour les comportements, L4 pour
+l'économie entière ; « publié » pour un chiffre du gouvernement, « déclaré » pour une
+tolérance ou un seuil écrits avant le calcul, « hypothèse » pour ce que l'étude suppose. Plus l'étage
+est haut, moins le nombre est sûr. Une étiquette « sous hypothèses » dit que le nombre
+change si les hypothèses de croissance, de taux ou de dépense changent.</p>
+
+<h2 id="la-dette">La dette, et son incertitude</h2>
+<p>La dette suit une identité comptable : chaque année, la dette d'avant porte intérêt, le
+déficit s'y ajoute, et le tout se rapporte au PIB. La mesure change le déficit par son coût,
+et le PIB par son effet sur l'activité ; un PIB plus haut fait à la fois rentrer des
+recettes et grossir le dénominateur. Cet effet sur l'activité est lu dans
+<span id="mesange">Mésange</span>, le modèle macroéconomique de la direction générale du
+Trésor et de l'Insee, qui publie la réponse du PIB et du solde public à chaque type de
+mesure (une baisse de cotisations, d'impôt sur le revenu, de TVA) à un, deux, trois, cinq
+et dix ans.</p>
+<p><span id="theta">θ</span> (thêta) dit où l'on se place dans chaque fourchette publiée :
+θ = 0 est son bas, θ = 1 son haut, θ½ son milieu. Les nombres de tête sont à θ½. La
+<span id="boite">boîte θ</span> fait passer chaque fourchette à ses deux extrêmes : ses
+coins disent jusqu'où le résultat peut aller, sans dire avec quelle probabilité.</p>
+<p>Le <span id="monte-carlo">Monte-Carlo</span> tire 2 000 fois chaque fourchette au
+hasard, sous des lois déclarées à l'avance, et compte la part des tirages où la dette
+monte. Le <span id="verdict">verdict</span> en découle : « hausse » si au moins 90 % des
+tirages font monter la dette, « baisse » si au moins 90 % la font baisser, « dépend »
+entre les deux. « Selon θ » est l'autre lecture : la boîte dit-elle un seul signe à son
+milieu et à chacun de ses coins ? Un verdict n'est pas un jugement sur la mesure : il dit
+seulement dans quel sens la dette bouge, et avec quelle assurance.</p>
+<p>La <span id="vue">vue vieillie</span> fait vieillir chaque année les revenus de la
+population avec les salaires ; la <span id="vue-figee">vue figée</span> la garde telle
+qu'elle est. Les deux encadrent l'effet du temps sur la base taxée.</p>
+<p>La <span id="persistance">persistance</span> dit combien de temps l'effet sur l'activité
+dure. « Lue » le lit dans Mésange à ses horizons, jusqu'à dix ans : c'est la lecture des
+nombres de tête. « Éteint » le coupe après trois ans, « tenu » le garde au niveau de la
+troisième année : ce sont des sensibilités, montrées à part.</p>
+
+<h2 id="programmes">Les programmes des candidats</h2>
+<p>Chaque programme est relevé et sourcé, mesure par mesure. Une mesure qui énonce un
+paramètre (un taux, un seuil, un montant) est <em>paramétrée</em> ; l'outil chiffre celles
+que son moteur sait faire, et dit pour chacune des autres pourquoi il la refuse. La
+<span id="couverture">couverture</span> est la part des mesures paramétrées que l'outil
+chiffre. <strong>Les nombres d'une étude de candidat valent pour cette seule part chiffrée,
+jamais pour le programme entier</strong> : un programme chiffré en partie peut paraître
+creuser ou baisser la dette pour une raison qui tient à l'outil, parce que les mesures qui
+compensent sont parmi celles qu'il ne chiffre pas. Un montant que le candidat annonce
+lui-même est montré à part, jamais additionné.</p>
+<p>Une mesure est chiffrée <span id="miroir">en miroir</span> quand le droit en vigueur
+porte déjà ce qu'elle produit : l'outil chiffre l'inverse et change le signe.</p>
+
+<h2 id="les-juges">Comment on sait que ça marche</h2>
+<p>Quand le gouvernement publie le chiffrage d'un texte (l'évaluation préalable d'un projet
+de loi de finances), l'outil écrit d'abord son propre chiffrage et une
+<span id="tolerance">tolérance</span>, avant d'ouvrir celui du gouvernement ; puis il les
+compare. Une tolérance n'est jamais changée après le calcul. Les pages disent « dans la
+tolérance » ou « hors de la tolérance », et les écarts qui restent sont dits, pas
+cachés.</p>
+<p>Les renvois de la forme « D-345 » désignent les décisions du journal du projet, qui dit
+pourquoi chaque choix a été fait. Ils servent à qui veut vérifier ; une page se lit sans
+eux.</p>
+
+<h2 id="vocabulaire">Les autres mots des pages</h2>
+<dl>
+<dt>La porte d'un refus</dt><dd>Ce que l'outil devrait savoir faire pour chiffrer la
+mesure refusée : un module (les retraites, les successions), une donnée, un canal. Les
+refus sont classés par porte.</dd>
+<dt>Une plage</dt><dd>Les trois points (le bas, la valeur du candidat, le haut) par
+lesquels une étude parcourt un paramètre chiffré, pour montrer ce qu'il déplace. Chaque
+point est mécanique, sans comportements ni effet sur l'activité.</dd>
+<dt>Le grade d'une bande</dt><dd>« In-support » quand la réforme reste dans le domaine où
+les élasticités ont été estimées ; « illustrative » quand elle en sort, et que la bande est
+une extrapolation, élargie et signalée comme telle.</dd>
+<dt>Le chemin</dt><dd>Le calcul année par année jusqu'en 2035, avec les comportements et
+l'effet sur l'activité ; le chemin rapide reporte la seule première année, en part de PIB,
+sans eux.</dd>
+<dt>Les indices de Sobol</dt><dd>La part de l'incertitude du Monte-Carlo que porte chaque
+groupe de paramètres (le multiplicateur, ou les élasticités d'un article). L'indice
+« total » compte aussi les interactions : plusieurs indices totaux peuvent dépasser
+ensemble 1, et un indice estimé peut dépasser 1 de peu, par l'erreur d'échantillonnage.</dd>
+<dt>Les déciles, les dixièmes</dt><dd>Les ménages rangés par niveau de vie et coupés en
+dix groupes de même taille. Toute structure plus fine qu'un décile tient à la construction
+de la population, pas au résultat.</dd>
+</dl>
+
+<h2 id="limites">Ce que l'outil ne fait pas</h2>
+<ul>
+<li><strong>La dépense publique n'est pas simulée.</strong> Elle est un scénario (gelée en
+volume dans les études) ; une mesure de dépense, une économie annoncée ou une suppression
+de postes ne se chiffrent pas ici.</li>
+<li><strong>Les impôts des entreprises n'ont pas d'effet sur l'activité.</strong> Mésange
+ne publie pas de réponse à l'impôt sur les sociétés ni aux impôts de production : un euro
+d'impôt sur les sociétés rendu pèse sur la dette en entier, quand un euro de cotisations
+rendu aux ménages en revient en partie par la croissance. Une mesure des entreprises paraît
+donc plus coûteuse en dette qu'une mesure des ménages de même montant, sans que l'outil ait
+mesuré qu'elle rapporte moins de croissance.</li>
+<li><strong>Les retraites ne bougent pas.</strong> Les pensions sont des données de la
+population : l'âge légal, la durée d'assurance ou l'indexation des pensions ne se chiffrent
+pas.</li>
+<li><strong>Les successions et le patrimoine</strong> n'ont pas de module : les droits de
+succession ne se chiffrent pas.</li>
+<li><strong>Les comportements</strong> ne se chiffrent que là où une étude publiée donne
+une élasticité ; ailleurs, la bande est absente.</li>
+<li><strong>Les prix et les salaires</strong> ne réagissent pas à la mesure dans la
+simulation de la première année : une hausse du SMIC ou un blocage des prix ne se chiffrent
+pas.</li>
+<li><strong>La fraude</strong> n'est pas simulée : l'outil calcule l'impôt dû, pas l'impôt
+recouvré.</li>
+<li><strong>L'incertitude</strong> est celle des fourchettes publiées et des lois
+déclarées du Monte-Carlo ; d'autres lois donneraient d'autres probabilités.</li>
+</ul>
+
+<h2 id="signaler">Signaler une erreur</h2>
+<p>L'adresse pour signaler une erreur n'est pas encore fixée : elle le sera avant la publication.</p>
+
+<section id="etages"><h2>Les étages de confiance</h2><p>À côté de chaque nombre, ce sur quoi il repose. Un nombre que l'outil calcule dit son étage, de L1 à L4 ; un nombre qu'il reprend dit d'où il vient. Un écart de dette dit l'étage le plus haut qui y entre, et qu'il est <em>sous hypothèses</em> : celles du cadre nommé en bas de page, et θ.</p><dl><dt id="etage-l1"><span class="etage e-l1">L1</span></dt><dd>population synthétique calée sur des totaux publiés : bonne sur les agrégats, faible dans les queues.</dd><dt id="etage-l2"><span class="etage e-l2">L2</span></dt><dd>simulation mécanique : qui paie quoi le premier jour, personne ne change de comportement.</dd><dt id="etage-l3"><span class="etage e-l3">L3</span></dt><dd>réponse des comportements : une fourchette sur des élasticités publiées, jamais un point.</dd><dt id="etage-l4"><span class="etage e-l4">L4</span></dt><dd>ordre de grandeur macroéconomique, en éventail : large par construction, et souvent indisponible.</dd><dt id="etage-publie"><span class="etage e-publie">publié</span></dt><dd>le chiffrage du gouvernement, l&#x27;évaluation préalable publiée avec le texte.</dd><dt id="etage-texte"><span class="etage e-texte">texte</span></dt><dd>ce que le texte de loi, ou son triage, compte.</dd><dt id="etage-hypothese"><span class="etage e-hypothese">hypothèse</span></dt><dd>ce que l&#x27;étude suppose : son scénario, son cadre.</dd><dt id="etage-declare"><span class="etage e-declare">déclaré</span></dt><dd>une tolérance ou un seuil écrits avant le chiffrage.</dd><dt id="etage-programme"><span class="etage e-programme">programme</span></dt><dd>ce que le programme du candidat énonce, relevé et sourcé dans `programmes/`.</dd><dt id="etage-annonce"><span class="etage e-annonce">annoncé</span></dt><dd>un montant que le candidat annonce lui-même, que le moteur ne vérifie pas et n&#x27;additionne jamais à son chiffrage (D-319).</dd></dl></section>
+</main>
+<footer><p>Pages construites par <code>impots site construire</code> depuis les études et leurs seuls rapports commités ; rien n'y est calculé, rien n'y tourne.</p><p>L'adresse pour signaler une erreur n'est pas encore fixée : elle le sera avant la publication.</p></footer>
+</body>
+</html>

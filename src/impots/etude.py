@@ -389,6 +389,48 @@ VERDICTS_MC = {
     "dépend": "son effet sur la dette en {year} **dépend des hypothèses** : moins de {haut} "
               "des tirages s'accordent sur son signe, vue vieillie",
 }
+def raison_bande(behavioural: Any) -> str:
+    """Why a page has no behavioural band, as a reader reads it (D-357). The grade's
+    reason is the absence's when no channel applies; when channels apply and none moves
+    revenue (`behavioural.band`), the grade's reason speaks of an extrapolation that is
+    not there, and the page says what the channels do instead."""
+    applied = [(c.label if hasattr(c, "label") else c["label"]).lower()
+               for c in behavioural.channels
+               if (c.applies if hasattr(c, "applies") else c["applies"])]
+    if applied and behavioural.grade != "no-evidence":
+        return (f"Les canaux qui s'appliquent ({', '.join(applied)}) déplacent des euros "
+                f"entre salariés et employeurs, ou des emplois, sans changer ce que la "
+                f"mesure coûte au budget : aucun n'entre dans la bande.")
+    return behavioural.grade_reason or "non précisée"
+
+
+def raison_macro(macro: Any) -> str:
+    """Why a page has no macro fan, as a reader reads it (D-357): the engine's English
+    message for instruments that pull apart (`macro.shocks.allocation`), in French."""
+    why = macro.unavailable_because
+    if "opposite directions" in why:
+        return ("L'éventail ne se compose pas quand les mesures poussent l'activité en "
+                "sens contraires : il mêlerait les produits de l'une et de l'autre. La "
+                "dette, plus bas, lit l'effet de chaque mesure sur l'activité à part, dans "
+                "Mésange.")
+    return why
+
+
+#: The macro loop's instruments as a reader names them (D-357).
+INSTRUMENTS = {
+    "cotisations_salaries": "les cotisations des salariés",
+    "cotisations_employeurs": "les cotisations des employeurs",
+    "cotisations_employeurs_ciblees": "les cotisations des employeurs",
+    "impot_sur_le_revenu": "l'impôt sur le revenu", "csg": "la CSG", "tva": "la TVA",
+    "taxe_carbone": "les accises sur l'énergie",
+}
+
+
+def _et(items: list[str]) -> str:
+    items = list(dict.fromkeys(items))
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " et " + items[-1]
+
+
 #: The instruments whose cost is gross of the corporate tax they move (D-349).
 EMPLOYEURS = ("cotisations_employeurs", "cotisations_employeurs_ciblees")
 
@@ -466,7 +508,7 @@ ETAGES = {
     "L1": "population synthétique calée sur des totaux publiés : bonne sur les agrégats, "
           "faible dans les queues",
     "L2": "simulation mécanique : qui paie quoi le premier jour, personne ne change de "
-          "comportement ; à 1 à 3 % près sur les agrégats",
+          "comportement",
     "L3": "réponse des comportements : une fourchette sur des élasticités publiées, "
           "jamais un point",
     "L4": "ordre de grandeur macroéconomique, en éventail : large par construction, et "
@@ -474,7 +516,7 @@ ETAGES = {
     "publié": "le chiffrage du gouvernement, l'évaluation préalable publiée avec le texte",
     "texte": "ce que le texte de loi, ou son triage, compte",
     "hypothèse": "ce que l'étude suppose : son scénario, son cadre",
-    "déclaré": "une tolérance déclarée avant le chiffrage",
+    "déclaré": "une tolérance ou un seuil écrits avant le chiffrage",
     "programme": "ce que le programme du candidat énonce, relevé et sourcé dans "
                  "`programmes/`",
     "annoncé": "un montant que le candidat annonce lui-même, que le moteur ne vérifie pas "
@@ -609,7 +651,10 @@ class _PLF2027:
         w("")
         w("Un article refusé n'est pas un article à zéro. Le refus est pris sur le texte, "
           "avant tout chiffrage, et sa raison est dite : hors du périmètre (`scope`), hors de "
-          "la structure du modèle (`structure`), ou hors de ses données (`data`).")
+          "la structure du modèle (`structure`), ou hors de ses données (`data`). Ce "
+          "triage a été fait à la parution du texte, avant que l'outil ne chiffre la TVA "
+          "par poste de consommation et les accises sur l'énergie payées par les ménages : "
+          "les refus qui les disent hors du modèle n'ont pas été revus depuis.")
         w("")
         w("| art. | intitulé | case | pourquoi |")
         w("|---|---|---|---|")
@@ -723,9 +768,14 @@ class _Programme:
                 f"présidentielle de 2027. Son programme, relevé le "
                 f"{p.releve.strftime('%d/%m/%Y')}, porte "
                 f"{n(c['mesures'], 'programme')} mesures, dont "
-                f"{n(c['parametrees'], 'programme')} énoncent un paramètre. Cet outil en "
-                f"chiffre {n(c['chiffrees'], 'texte')}, soit {n(part, 'texte')} des mesures "
-                f"paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part "
+                f"{n(c['parametrees'], 'programme')} "
+                f"{'énonce' if c['parametrees'] == 1 else 'énoncent'} un paramètre. Cet outil en "
+                + (f"chiffre {n(c['chiffrees'], 'texte')}, la seule qui en énonce un, et dit "
+                   f"pourquoi il ne chiffre pas les autres."
+                   if c["chiffrees"] == c["parametrees"] == 1 else
+                   f"chiffre {n(c['chiffrees'], 'texte')}, soit {n(part, 'texte')} des "
+                   f"mesures paramétrées, et dit pourquoi il ne chiffre pas les autres.")
+                + f" Pour la part "
                 f"chiffrée, {together}, trois réponses : ce qu'elle coûte et qui y gagne ; "
                 f"ce qu'elle coûte une fois les comportements et l'économie pris en compte ; "
                 f"ce qu'elle fait à la dette en {last}. **{AVERTISSEMENT_PROGRAMME}**")
@@ -782,16 +832,20 @@ class _Programme:
           "population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de "
           "PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus "
           "haut, que le chemin annuel chiffre année par année avec les comportements et la "
-          "boucle.")
+          "boucle. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est "
+          "chiffrée sur la population de 2024 au droit de 2026, les plages sur la population "
+          "vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se "
+          "règle seul, les autres restant à la valeur du candidat.")
         w("")
         by_key = {(r["mesure"], r["champ"], r["point"]): r for r in reports}
         for m in self.programme.chiffrees():
             w(f"### {amounts(m.libelle, 'programme', n)}")
             w("")
-            w(f"*Le candidat : {amounts(m.parametre, 'programme', n)}.*")
+            w(f"*Le programme : {amounts(m.parametre, 'programme', n)}.*")
             w("")
             for plage in m.chiffrage.plages:
-                w(f"| `{plage.champ}` | valeur | coût {START_PLUS_ONE} | dette en {LAST_YEAR} |")
+                w(f"| `{plage.champ}` | valeur | coût {START_PLUS_ONE} | dette en {LAST_YEAR}, "
+                  f"mécanique, sans comportements ni boucle |")
                 w("|---|---|---|---|")
                 absente = None
                 for point in POINTS:
@@ -855,11 +909,11 @@ class _Programme:
         w("")
         couches = [self.programme.couche_declaree(rho) for rho in (0.0, 0.5, 1.0)]
         if not couches[-1]["mesures"]:
-            w("Le candidat n'annonce, pour aucune de ses mesures, un montant que le relevé ait "
-              "trouvé.")
+            w("Le programme n'annonce, pour aucune de ses mesures, un montant que le relevé "
+              "ait trouvé.")
             w("")
             return
-        w(f"Le candidat annonce lui-même un montant pour "
+        w(f"Le programme annonce lui-même un montant pour "
           f"{n(len(couches[-1]['mesures']), 'programme')} de ses mesures. Ces montants ne "
           f"sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part "
           f"qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes "
@@ -894,7 +948,7 @@ def valeur_lue(champ: str, valeur: float) -> str:
     """A knob's value as a reader reads it: a rate in per cent, an excise in its unit, a
     ceiling in euros, a factor as it is."""
     leaf = champ.split(".")[-1]
-    if champ.startswith("accise_electricite") or champ.startswith("accise_gaz"):
+    if champ.split(".")[0] in ("accise_electricite", "accise_gaz"):
         text = f"{valeur:g} €/MWh"
     elif champ.startswith("accise_"):
         text = f"{valeur:g} €/L"
@@ -1439,6 +1493,7 @@ class Etude:
         w(f"<!-- Généré par `impots etude ecrire {self.nom}` depuis "
           f"{_relative(self.rapports)}/ ; ne pas éditer à la main. -->")
         w("")
+        self._conclut(w, n, entries, last, texte)
         w(texte.chapeau(entries, last, n))
         w("")
         w(f"Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année "
@@ -1446,7 +1501,12 @@ class Etude:
           f"comportements y changent quand une étude publiée permet de le dire. La dette en "
           f"{last} dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas "
           f"de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ "
-          f"est le milieu, les coins de la boîte en sont les extrêmes.")
+          f"est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de "
+          f"sa fourchette."
+          + (" Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité "
+             "au-delà de ces bornes, de l'écart qui sépare les études entre elles : le "
+             "verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer."
+             if lectures(entries) else ""))
         w("")
         if any(e["volet"].miroir for e in entries):
             w("**En miroir.** L'arbre des paramètres porte déjà l'état que la mesure produit : "
@@ -1594,6 +1654,144 @@ class Etude:
             row[2] += sign * cell.n_firms * (cell.mean_delta or 0.0)
         return [(taille, *row) for taille, row in out.items()]
 
+    def _conclut(self, w: Any, n: Nombres, entries: list[dict[str, Any]], last: int,
+                 texte: Any) -> None:
+        """What the study concludes, before anything else, for a reader who has not read
+        the repository (but 17, D-357): for each line, three sentences, the cost and who
+        gains, what behaviour changes or why it is not said, the debt and its verdict.
+        Its numbers are the page's, the same tokens from the same reports."""
+        from impots import fiche
+
+        w("## Ce que dit cette étude")
+        w("")
+        programme = self.programme is not None
+        for entry in entries:
+            cost, sign, response = entry["cost"], entry["sign"], entry["response"]
+            sujet = ("La part chiffrée du programme" if programme
+                     else f"**{texte.label(entry)}** : la mesure")
+            sense = "coûte" if cost > 0 else "rapporte"
+            year = entry["scenario"].year
+            quand = (f"sur le droit et les revenus de {year}, comme si elle s'appliquait "
+                     f"cette année-là" if programme else texte.first_year(year))
+            un = (f"{sujet} {sense} {n(fiche._width(cost), 'L2')} au budget {quand}, "
+                  f"avant tout changement de comportement.")
+            gain = []
+            if entry["kind"] != "entreprises":
+                rows = getattr(_mirrored(response, sign), "deciles", None) or []
+                if rows and any(abs(r.mean_delta) >= 1.0 for r in rows):
+                    first, top = rows[0], rows[-1]
+                    def euros(value: float) -> str:
+                        return "0 €" if abs(value) < 0.5 else fiche._eur(value)
+
+                    text = (f"les ménages y voient leur revenu disponible changer en "
+                            f"moyenne de {n(euros(first.mean_delta), 'L2')} par an dans le "
+                            f"dixième le plus modeste à {n(euros(top.mean_delta), 'L2')} "
+                            f"dans le dixième le plus aisé")
+                    most = max(rows, key=lambda r: abs(r.mean_delta))
+                    if most is not first and most is not top:
+                        text += (f", le plus touché étant le {most.decile}"
+                                 f"{'er' if most.decile == 1 else 'e'} dixième "
+                                 f"({n(euros(most.mean_delta), 'L2')})")
+                    gain.append(text)
+                elif rows:
+                    impulses = ((entry["path"].get("years") or [{}])[0].get("statistiques")
+                                or {}).get("figee", {}).get("impulses", {})
+                    employeurs = any(impulses.get(k) for k in EMPLOYEURS)
+                    gain.append("le revenu disponible des ménages n'en bouge pas, en "
+                                "moyenne de chaque dixième de niveau de vie" + (
+                                    " : la mesure porte sur les cotisations que paient les "
+                                    "employeurs" if employeurs else ""))
+            firms = entry["firms"] if entry["kind"] == "mixte" else (
+                response if entry["kind"] == "entreprises" else None)
+            if firms is not None:
+                paid = sign * firms.reform_cost
+                gain.append(f"les entreprises paient {n(fiche._width(paid), 'L2')} "
+                            f"{'de moins' if paid > 0 else 'de plus'}")
+            if gain:
+                joined = " ; ".join(gain)
+                un += " " + joined[0].upper() + joined[1:] + "."
+            behavioural = response.behavioural if entry["kind"] != "entreprises" else None
+            band = behavioural.band if behavioural is not None else None
+            if band is not None and band.unit == "EUR":
+                low, high = ((-band.p90, -band.p10) if sign == 1 else (band.p10, band.p90))
+                part = " pour la part des ménages" if entry["kind"] == "mixte" else ""
+                deux = (f"Une fois comptés les changements de comportement que des études "
+                        f"publiées permettent de chiffrer, le coût{part} irait de "
+                        f"{n(fiche._eur(low), 'L3')} à {n(fiche._eur(high), 'L3')}.")
+            else:
+                deux = ("L'outil ne dit pas ce que les comportements y changent : aucune "
+                        "étude publiée ne le permet ici, et la page dit pourquoi.")
+            delta = entry["debt"][0]["theta"]
+            points = f"{abs(delta) * 100:.2f}".replace(".", ",")
+            lead = n(f"{points} point{'s' if abs(delta) * 100 >= 2 else ''}",
+                     debt_etage(entry["path"]), conditionnel=True)
+            sens = "plus haute" if delta > 0 else "plus basse"
+            trois = (f"En {last}, la dette publique serait {sens} de {lead} de PIB, au milieu "
+                     f"des fourchettes publiées et sous les hypothèses de croissance, de taux "
+                     f"et de dépense de la page")
+            monte = entry["path"].get("monte_carlo")
+            if entry["path"].get("lectures") is not None and monte:
+                share = monte["vues"]["vieillie"]["p_hausse"]
+                rise = share if sign == 1 else 1.0 - share
+                pct = n(f"{rise:.0%}".replace("%", "\u202f%"), debt_etage(entry["path"]),
+                        conditionnel=True)
+                reading = verdict_mc(entry)
+                quoi = "cette part du programme" if programme else "la mesure"
+                conclusion = {
+                    "hausse": f"l'outil conclut que {quoi} augmente la dette",
+                    "baisse": f"l'outil conclut que {quoi} baisse la dette",
+                    "dépend": f"l'outil ne tranche pas : {quoi} peut faire monter ou "
+                              f"baisser la dette selon les hypothèses",
+                }[reading]
+                trois += (f" ; la dette monte dans {pct} des tirages du calcul "
+                          f"d'incertitude, et {conclusion}.")
+            else:
+                trois += "."
+            if (cost > 0) != (delta > 0):
+                trois += (" Le coût de la première année et l'effet sur la dette sont de "
+                          "signes contraires : les comportements et l'effet sur l'activité, "
+                          "chiffrés plus bas, suffisent à renverser le signe.")
+            trois += self._boucle(n, entry)
+            if programme:
+                trois += (" Ces nombres valent pour la seule part chiffrée, pas pour le "
+                          "programme entier.")
+            w(f"* {un} {deux} {trois}" if len(entries) > 1 and not programme
+              else f"{un} {deux} {trois}")
+            if not (len(entries) > 1 and not programme):
+                w("")
+        if len(entries) > 1 and not programme:
+            w("")
+
+    def _boucle(self, n: Nombres, entry: dict[str, Any]) -> str:
+        """Which part of a line the macro loop reads, and its debt without any effect on
+        activity, the θ box's corner « multiplicateur_macro = 0 » (D-356, D-357)."""
+        stats = ((entry["path"].get("years") or [{}])[0].get("statistiques") or {})
+        impulses = stats.get("figee", {}).get("impulses", {})
+        read = [INSTRUMENTS.get(k, k) for k, v in impulses.items() if v]
+        firms = entry["kind"] in ("mixte", "entreprises")
+        if not read and not firms:
+            return ""
+        if read:
+            text = (f" L'effet sur l'activité n'est lu que pour {_et(read)}"
+                    + (", pas pour la part des entreprises, qui "
+                       "agit sur la dette sans effet sur l'activité." if firms else "."))
+        else:
+            text = (" L'outil ne lit aucun effet sur l'activité pour les impôts des "
+                    "entreprises : la mesure agit sur la dette sans effet sur l'activité.")
+        lue = next((b for b in (entry["path"].get("theta_box") or {}).get("paths", [])
+                    if b["persistence"] == "lue"), None)
+        corners = dict(map(tuple, ((lue or {}).get("every_year", {}).get("vieillie", {})
+                                   .get("corners", []))))
+        flat = corners.get("multiplicateur_macro = 0")
+        if read and flat is not None:
+            flat *= entry["sign"]
+            points = f"{abs(flat) * 100:.2f}".replace(".", ",")
+            value = n(f"{points} point{'s' if abs(flat) * 100 >= 2 else ''}",
+                      debt_etage(entry["path"]), conditionnel=True)
+            text += (f" Sans aucun effet sur l'activité, la dette serait "
+                     f"{'plus haute' if flat > 0 else 'plus basse'} de {value} de PIB.")
+        return text
+
     def _first(self, w: Any, n: Nombres, entry: dict[str, Any], texte: Any) -> None:
         from impots import fiche
 
@@ -1651,7 +1849,7 @@ class Etude:
                 else "Aucune réponse comportementale n'a été calculée."))
         elif behavioural.band is None:
             w(f"**Bande comportementale : aucune, et la raison est donnée.** "
-              f"{behavioural.grade_reason or 'non précisée'}")
+              f"{raison_bande(behavioural)}")
         else:
             band = behavioural.band
             # The band is about the budget balance, the mechanical figure repeated in its
@@ -1667,7 +1865,8 @@ class Etude:
             w(f"**Une fois les comportements pris en compte**, la mesure coûte de "
               f"{n(fiche._eur(low), 'L3')} à {n(fiche._eur(high), 'L3')}, central "
               f"{n(fiche._eur(central), 'L3')} (grade **{behavioural.grade}**), pour "
-              f"{n(fiche._eur(entry['cost']), 'L2')} sans eux.")
+              f"{n(fiche._eur(sign * response.reform_cost), 'L2')} sans eux"
+              f"{' (la part des ménages)' if entry['kind'] == 'mixte' else ''}.")
             if behavioural.grade_reason:
                 w("")
                 w(f"*{behavioural.grade_reason}*")
@@ -1696,7 +1895,7 @@ class Etude:
                 w(f"> {a.banner}")
                 w("")
         elif macro is not None:
-            w(f"**Éventail macro : refusé.** {macro.unavailable_because}")
+            w(f"**Éventail macro : refusé.** {raison_macro(macro)}")
             w("")
         closed = entry["path"].get("closed") or {}
         if closed:
@@ -2013,6 +2212,9 @@ class Etude:
           f"{n(fiche._eur(grade.gap_eur), 'L2')} ({n(rel, 'L2')}), pour une tolérance "
           f"déclarée de {n(fiche._width(grade.allowed_eur), 'déclaré')} : {within}.")
         w("")
+        w(f"Ce que couvre le chiffre publié retenu, écrit avant le calcul : "
+          f"{amounts(case.comparator.net_of.rstrip('.'), 'déclaré', n)}.")
+        w("")
         now = entry["cost"]
         w(f"La première année de cette étude, sur le code de l'étude, chiffre "
           f"{n(fiche._eur(now), 'L2')}, soit {n(fiche._eur(now - grade.simulated_eur), 'L2')} "
@@ -2055,6 +2257,13 @@ def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
       f"les autres. Un candidat dont une mesure se chiffre a son étude, en trois réponses, "
       f"sur cette part et elle seule. Les autres n'ont pas de chiffre : la porte de chaque "
       f"refus dit ce que l'outil devrait savoir faire pour l'ouvrir.")
+    w("")
+    w("**Les verdicts de dette ne se comparent pas d'un candidat à l'autre.** Chacun porte "
+      "sur une part différente du programme, et l'outil ne lit l'effet sur l'activité que "
+      "pour les impôts des ménages : une baisse de cotisations ou d'impôt sur le revenu en "
+      "regagne une partie par la croissance, une baisse d'impôt des entreprises ou "
+      "d'accises n'en regagne rien. Deux mesures de même montant peuvent donc peser "
+      "très différemment sur la dette, pour une raison qui tient à l'outil.")
     w("")
     w("| candidat | mesures | paramétrées | chiffrées | étude | refusées, par porte |")
     w("|---|---|---|---|---|---|")

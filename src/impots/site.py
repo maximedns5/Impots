@@ -25,6 +25,23 @@ from impots import etude
 
 SITE = etude.ROOT / "site"
 TITLE = "Impôts — les études"
+#: The site's settings (D-357): where a reader reports an error. Empty until the owner
+#: sets it; empty, the footer says so and `impots site publiable` refuses.
+REGLAGES = etude.ROOT / "site_reglages.json"
+METHODE = "methode.html"
+TEXTES = Path(__file__).resolve().parent / "site_textes"
+#: The terms the method page defines, each linked at its first use in a page (D-357):
+#: (anchor on the method page, the pattern of its use). Longest first where they overlap.
+TERMES: tuple[tuple[str, str], ...] = (
+    ("vue", r"vues? vieillies?"), ("vue-figee", r"vues? figées?"),
+    ("boite", r"boîte(?: θ| de θ)?"), ("theta", r"θ½|θ"),
+    ("monte-carlo", r"Monte-Carlo"), ("verdict", r"verdicts?"),
+    ("persistance", r"persistances?"), ("bande", r"bandes? comportementales?|bandes?"),
+    ("mecanique", r"mécaniques?"), ("couverture", r"couverture"),
+    ("mesange", r"Mésange"), ("point-de-pib", r"points? de PIB"),
+    ("miroir", r"en miroir"), ("tolerance", r"tolérances?"),
+    ("les-juges", r"D-\d{3}"),
+)
 
 
 class SiteError(ValueError):
@@ -137,17 +154,86 @@ def _legend() -> str:
             f"<dl>{rows}</dl></section>")
 
 
-def _page(title: str, main: str) -> str:
+def reglages() -> dict:
+    import json
+
+    if not REGLAGES.exists():
+        return {"signaler": None}
+    return json.loads(REGLAGES.read_text(encoding="utf-8"))
+
+
+def _signaler() -> str:
+    """Where a reader reports an error, or that the address is not set yet (D-357)."""
+    where = reglages().get("signaler")
+    if not where:
+        return ("L'adresse pour signaler une erreur n'est pas encore fixée : elle le sera "
+                "avant la publication.")
+    target = html.escape(where)
+    href = target if where.startswith(("http://", "https://", "mailto:")) else (
+        f"mailto:{target}")
+    return (f'Une erreur, un nombre qui paraît faux, une phrase qui se lit mal : '
+            f'<a href="{href}">{target}</a>. Chaque signalement reçoit une réponse, et '
+            f"chaque correction est datée sur la page.")
+
+
+def publiable() -> str | None:
+    """Why the site may not be published yet, or None (D-357): a page put online that a
+    reader cannot get corrected is not published."""
+    if not reglages().get("signaler"):
+        return (f"{etude._relative(REGLAGES)} ne dit pas où signaler une erreur (clé "
+                f"« signaler ») : le site ne se publie pas sans elle (D-357).")
+    return None
+
+
+_SKIP = {"a", "h1", "h2", "h3", "code", "th", "td", "title", "dt", "span", "label",
+         "option", "script", "style", "summary"}
+
+
+def termes(main: str) -> str:
+    """Link the first use of each term of the method page in a page's text (D-357): in
+    prose only, never inside a link, a heading, a table, a number or code."""
+    pieces = re.split(r"(<[^>]+>)", main)
+    seen: set[str] = set()
+    depth = 0
+    for i, piece in enumerate(pieces):
+        tag = re.match(r"<(/?)([a-zA-Z0-9]+)", piece)
+        if tag:
+            if tag[2].lower() in _SKIP and not piece.endswith("/>"):
+                depth += -1 if tag[1] else 1
+            continue
+        if depth or not piece.strip():
+            continue
+        # The piece as segments, (text, may still take a link).
+        segments = [(piece, True)]
+        for anchor, pattern in TERMES:
+            if anchor in seen:
+                continue
+            for k, (text, free) in enumerate(segments):
+                match = re.search(rf"(?<![\w-])(?:{pattern})(?![\w-])", text) if free else None
+                if match is None:
+                    continue
+                seen.add(anchor)
+                link = f'<a class="terme" href="{METHODE}#{anchor}">{match[0]}</a>'
+                segments[k:k + 1] = [(text[:match.start()], True), (link, False),
+                                     (text[match.end():], True)]
+                break
+        pieces[i] = "".join(text for text, _ in segments)
+    return "".join(pieces)
+
+
+def _page(title: str, main: str, pied: str = "", liens: bool = True) -> str:
+    main = termes(main) if liens else main
     return ("<!doctype html>\n"
             '<html lang="fr">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             f"<title>{html.escape(title)}</title>\n"
             '<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
-            f'<header><a href="index.html">{html.escape(TITLE)}</a></header>\n'
+            f'<header><a href="index.html">{html.escape(TITLE)}</a> · '
+            f'<a href="{METHODE}">Méthode et limites</a></header>\n'
             f"<main>\n{main}\n{_legend()}\n</main>\n"
-            "<footer>Pages construites par <code>impots site construire</code> depuis les "
-            "études et leurs seuls rapports commités ; rien n'y est calculé, rien n'y "
-            "tourne.</footer>\n</body>\n</html>\n")
+            f"<footer>{pied}<p>Pages construites par <code>impots site construire</code> "
+            "depuis les études et leurs seuls rapports commités ; rien n'y est calculé, rien "
+            f"n'y tourne.</p><p>{_signaler()}</p></footer>\n</body>\n</html>\n")
 
 
 STYLE = """\
@@ -181,6 +267,13 @@ p.absent { border-left: 3px solid var(--l3); padding-left: .8rem; }
 dl { display: grid; grid-template-columns: max-content 1fr; gap: .4rem 1rem; }
 dd { margin: 0; }
 code { font-size: .85em; overflow-wrap: anywhere; }
+a.terme { text-decoration-style: dotted; }
+main, p, li, dd { overflow-wrap: break-word; }
+.cite { overflow-wrap: anywhere; }
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  dl { grid-template-columns: 1fr; }
+  header, main, footer { padding: 0 1rem; } }
 """
 
 
@@ -195,6 +288,9 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
     """Every file of the site, by name: the index, the style, a page per run study."""
     studies = etude.definitions() if studies is None else studies
     files: dict[str, str] = {"style.css": STYLE, ".nojekyll": ""}
+    methode = (TEXTES / "methode.html").read_text(encoding="utf-8").replace(
+        "{signaler}", _signaler())
+    files[METHODE] = _page(f"Méthode et limites — {TITLE}", methode, liens=False)
     listed: list[str] = []
     codes: set[str] = set()
     for study in studies:
@@ -208,16 +304,20 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
             continue
         entries = study.load()
         lines, n = study.lines(entries)
-        files[f"{study.nom}.html"] = _page(f"{study.titre} — {TITLE}", body(lines, n))
         commits = [commit for commit, _ in entries[0]["commits"]]
         codes |= set(commits)
         shown = ", ".join(f"<code>{c[:7]}</code>" for c in commits)
         code = (f"sur le commit {shown}" if len(commits) == 1 else
                 f"sur les commits {shown}, joints par une passe témoin")
+        pied = (f"<p>Étude chiffrée le {html.escape(entries[0]['first']['computed'])}, "
+                f"{code}.</p>")
+        files[f"{study.nom}.html"] = _page(f"{study.titre} — {TITLE}", body(lines, n), pied)
         listed.append(f'<li><h2><a href="{study.nom}.html">{html.escape(study.titre)}</a>'
                       f"</h2>\n<p>Chiffrée le {html.escape(entries[0]['first']['computed'])}, "
                       f"{code}.</p>\n{body(_bref(lines), n)}</li>")
-    intro = ("<h1>Les études</h1>\n<p>Chaque étude prend une réforme, ou les articles d'un "
+    intro = ("<h1>Les études</h1>\n<p>Avant de lire un nombre : <a href=\"methode.html\">"
+             "la méthode et les limites</a>, ce que veut dire chaque mot des pages et ce que "
+             "l'outil ne fait pas.</p>\n<p>Chaque étude prend une réforme, ou les articles d'un "
              "texte, et donne trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle "
              "coûte une fois les comportements et l'économie pris en compte ; ce qu'elle "
              "fait à la dette dans dix ans. À côté de chaque nombre, son étage de confiance ; "
@@ -373,9 +473,16 @@ def drift(site: Path | None = None) -> str | None:
 
 
 def main_args(action: str) -> int:
-    """`impots site construire|verifier`."""
+    """`impots site construire|verifier|publiable`."""
     import sys
 
+    if action == "publiable":
+        why = publiable()
+        if why:
+            print(why, file=sys.stderr)
+            return 1
+        print("le site peut se publier : il dit où signaler une erreur.")
+        return 0
     try:
         if action == "construire":
             for path in write():

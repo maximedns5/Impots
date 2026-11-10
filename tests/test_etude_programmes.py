@@ -208,7 +208,8 @@ def test_every_page_says_its_debt_is_not_the_programme_s(pages) -> None:
         head = text.split("## En bref")[0]
         assert etude.AVERTISSEMENT_PROGRAMME in head, slug
         c = pg.charger(slug).couverture()
-        assert f"porte {c['mesures']} mesures, dont {c['parametrees']} énoncent" in head
+        verbe = "énonce" if c["parametrees"] == 1 else "énoncent"
+        assert f"porte {c['mesures']} mesures, dont {c['parametrees']} {verbe}" in head
 
 
 def test_every_measure_is_on_its_page_with_its_door(pages) -> None:

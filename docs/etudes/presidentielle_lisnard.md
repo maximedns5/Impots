@@ -2,9 +2,13 @@
 
 <!-- Généré par `impots etude ecrire presidentielle_lisnard` depuis reports/etudes/presidentielle_lisnard/ ; ne pas éditer à la main. -->
 
+## Ce que dit cette étude
+
+La part chiffrée du programme coûte 35,43 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +16 € par an dans le dixième le plus modeste à +3 513 € dans le dixième le plus aisé ; les entreprises paient 6,55 Md€ de moins. Une fois comptés les changements de comportement que des études publiées permettent de chiffrer, le coût pour la part des ménages irait de +27,19 Md€ à +28,13 Md€. En 2035, la dette publique serait plus haute de 5,56 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 88 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu et la CSG, pas pour la part des entreprises, qui agit sur la dette sans effet sur l'activité. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+
 David Lisnard, Nouvelle Énergie, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 24 mesures, dont 17 énoncent un paramètre. Cet outil en chiffre 3, soit 18 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, ces 3 mesures ensemble, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
-Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, les coins de la boîte en sont les extrêmes.
+Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
 ## En bref
 
@@ -55,7 +59,7 @@ Population d'entreprises synthétique : effectifs et agrégats par secteur × ta
 
 La bande et l'éventail ne lisent que la part des ménages : aucun canal des comportements ne lit une réforme des entreprises, et aucune variante de Mésange ne porte leurs impôts. La dette, plus bas, compte les deux parts.
 
-**Une fois les comportements pris en compte**, la mesure coûte de +27,19 Md€ à +28,13 Md€, central +27,67 Md€ (grade **illustrative**), pour +35,43 Md€ sans eux.
+**Une fois les comportements pris en compte**, la mesure coûte de +27,19 Md€ à +28,13 Md€, central +27,67 Md€ (grade **illustrative**), pour +28,88 Md€ sans eux (la part des ménages).
 
 *Cette réforme est plus grande que celles sur lesquelles les élasticités ont été estimées : la bande est une extrapolation, élargie et signalée comme telle.*
 
@@ -130,19 +134,19 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 
 ## Ce que bouge chaque paramètre
 
-Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle.
+Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
 
 ### Baisse de la CSG sur les revenus d'activité
 
-*Le candidat : 9,2 % → 6,6 %.*
+*Le programme : 9,2 % → 6,6 %.*
 
-| `csg_activite_deductible` | valeur | coût 2026 | dette en 2035 |
+| `csg_activite_deductible` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 3,92 % | +33,14 Md€ | +10,24 pt |
 | le candidat | 4,88 % | +24,69 Md€ | +7,63 pt |
 | le haut | 6,8 % | +7,74 Md€ | +2,39 pt |
 
-| `csg_activite_imposable` | valeur | coût 2026 | dette en 2035 |
+| `csg_activite_imposable` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 0 % | +44,29 Md€ | +13,68 pt |
 | le candidat | 1,72 % | +24,69 Md€ | +7,63 pt |
@@ -150,9 +154,9 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 ### Suppression de la C3S et, « le cas échéant », de la CVAE
 
-*Le candidat : impôts de production de 2 % à 1 % du PIB.*
+*Le programme : impôts de production de 2 % à 1 % du PIB.*
 
-| `c3s_taux` | valeur | coût 2026 | dette en 2035 |
+| `c3s_taux` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 0 % | +6,55 Md€ | absente |
 | le candidat | 0 % | +6,55 Md€ | absente |
@@ -160,7 +164,7 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 **Dette : absente, et la raison est donnée.** Le droit que règle « cvae_echelle » en 2028 change dans l'horizon : le chemin rapide la tiendrait à son droit de 2026 jusqu'en 2035. La dette de la valeur du candidat est celle de la part chiffrée, que le chemin annuel chiffre chaque année sous son droit (D-254).
 
-| `cvae_echelle` | valeur | coût 2026 | dette en 2035 |
+| `cvae_echelle` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 0 | +6,55 Md€ | absente |
 | le candidat | 0 | +6,55 Md€ | absente |
@@ -170,15 +174,15 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 ### Déplafonnement du quotient familial
 
-*Le candidat : plafond supprimé.*
+*Le programme : plafond supprimé.*
 
-| `plafond_qf_demi_part` | valeur | coût 2026 | dette en 2035 |
+| `plafond_qf_demi_part` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 1 807 € | +895 M€ | +0,28 pt |
 | le candidat | 100 000 € | +6,08 Md€ | +1,88 pt |
 | le haut | 100 000 € | +6,08 Md€ | +1,88 pt |
 
-| `plafond_qf_parent_isole` | valeur | coût 2026 | dette en 2035 |
+| `plafond_qf_parent_isole` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 4 262 € | +5,62 Md€ | +1,74 pt |
 | le candidat | 100 000 € | +6,08 Md€ | +1,88 pt |
@@ -229,7 +233,7 @@ Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait 
 
 ## Ce que le candidat annonce, à part
 
-Le candidat annonce lui-même un montant pour 4 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent.
+Le programme annonce lui-même un montant pour 4 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent.
 
 | ρ | solde annoncé |
 |---|---|

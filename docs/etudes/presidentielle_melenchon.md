@@ -2,9 +2,13 @@
 
 <!-- Généré par `impots etude ecrire presidentielle_melenchon` depuis reports/etudes/presidentielle_melenchon/ ; ne pas éditer à la main. -->
 
+## Ce que dit cette étude
+
+La part chiffrée du programme rapporte 6,61 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Le revenu disponible des ménages n'en bouge pas, en moyenne de chaque dixième de niveau de vie : la mesure porte sur les cotisations que paient les employeurs. L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,33 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 42 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour les cotisations des employeurs. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+
 Jean-Luc Mélenchon, La France insoumise, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 40 mesures, dont 26 énoncent un paramètre. Cet outil en chiffre 1, soit 4 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
-Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, les coins de la boîte en sont les extrêmes.
+Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
 ## En bref
 
@@ -45,7 +49,7 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 ### 2. Avec les comportements et l'économie
 
-**Bande comportementale : aucune, et la raison est donnée.** Cette réforme est plus grande que celles sur lesquelles les élasticités ont été estimées : la bande est une extrapolation, élargie et signalée comme telle.
+**Bande comportementale : aucune, et la raison est donnée.** Les canaux qui s'appliquent (emploi au voisinage du smic, incidence des cotisations patronales) déplacent des euros entre salariés et employeurs, ou des emplois, sans changer ce que la mesure coûte au budget : aucun n'entre dans la bande.
 
 **L'effet sur l'économie**, l'éventail macro de grade **in-support**, couverture 100 %, conjoncture « normal » :
 
@@ -118,13 +122,13 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 
 ## Ce que bouge chaque paramètre
 
-Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle.
+Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
 
 ### Fin des exonérations de cotisations au-dessus de 2 SMIC
 
-*Le candidat : seuil : 2 SMIC.*
+*Le programme : seuil : 2 SMIC.*
 
-| `allegement_general_plafond` | valeur | coût 2026 | dette en 2035 |
+| `allegement_general_plafond` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 1,5 | -22,08 Md€ | -6,82 pt |
 | le candidat | 2 | -7,20 Md€ | -2,23 pt |
@@ -193,7 +197,7 @@ Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait 
 
 ## Ce que le candidat annonce, à part
 
-Le candidat annonce lui-même un montant pour 28 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent.
+Le programme annonce lui-même un montant pour 28 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent.
 
 | ρ | solde annoncé |
 |---|---|

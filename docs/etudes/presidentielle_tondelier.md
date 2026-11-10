@@ -2,9 +2,13 @@
 
 <!-- Généré par `impots etude ecrire presidentielle_tondelier` depuis reports/etudes/presidentielle_tondelier/ ; ne pas éditer à la main. -->
 
+## Ce que dit cette étude
+
+La part chiffrée du programme rapporte 847 M€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de 0 € par an dans le dixième le plus modeste à -273 € dans le dixième le plus aisé. Une fois comptés les changements de comportement que des études publiées permettent de chiffrer, le coût irait de -442 M€ à +722 M€. En 2035, la dette publique serait plus haute de 0,27 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 93 % des tirages du calcul d'incertitude, et l'outil conclut que cette part du programme augmente la dette. Le coût de la première année et l'effet sur la dette sont de signes contraires : les comportements et l'effet sur l'activité, chiffrés plus bas, suffisent à renverser le signe. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+
 Marine Tondelier, Les Écologistes, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 21 mesures, dont 14 énoncent un paramètre. Cet outil en chiffre 1, soit 7 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
-Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, les coins de la boîte en sont les extrêmes.
+Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
 ## En bref
 
@@ -118,13 +122,13 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 
 ## Ce que bouge chaque paramètre
 
-Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle.
+Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
 
 ### Nouvelle tranche d'impôt sur le revenu à 60 %
 
-*Le candidat : 60 % « au-delà de 250 000 € annuels ».*
+*Le programme : 60 % « au-delà de 250 000 € annuels ».*
 
-| `ir_bareme.5.rate` | valeur | coût 2026 | dette en 2035 |
+| `ir_bareme.5.rate` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 45 % | +0 € | +0,00 pt |
 | le candidat | 60 % | -1,04 Md€ | -0,32 pt |
@@ -170,7 +174,7 @@ Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait 
 
 ## Ce que le candidat annonce, à part
 
-Le candidat annonce lui-même un montant pour 5 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent.
+Le programme annonce lui-même un montant pour 5 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent.
 
 | ρ | solde annoncé |
 |---|---|

@@ -2,9 +2,13 @@
 
 <!-- Généré par `impots etude ecrire presidentielle_roussel` depuis reports/etudes/presidentielle_roussel/ ; ne pas éditer à la main. -->
 
+## Ce que dit cette étude
+
+La part chiffrée du programme coûte 5,19 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +94 € par an dans le dixième le plus modeste à +208 € dans le dixième le plus aisé, le plus touché étant le 9e dixième (+221 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 0,52 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 73 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour la TVA. Sans aucun effet sur l'activité, la dette serait plus haute de 1,42 point de PIB. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+
 Fabien Roussel, PCF, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 14 mesures, dont 6 énoncent un paramètre. Cet outil en chiffre 1, soit 17 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
-Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, les coins de la boîte en sont les extrêmes.
+Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
 ## En bref
 
@@ -116,13 +120,13 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 
 ## Ce que bouge chaque paramètre
 
-Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle.
+Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
 
 ### TVA sur les carburants
 
-*Le candidat : de 20 % à 5,5 %.*
+*Le programme : de 20 % à 5,5 %.*
 
-| `tva_postes.carburants` | valeur | coût 2026 | dette en 2035 |
+| `tva_postes.carburants` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 0 % | +7,28 Md€ | +2,25 pt |
 | le candidat | 5,5 % | +5,28 Md€ | +1,63 pt |
@@ -158,7 +162,7 @@ Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait 
 
 ## Ce que le candidat annonce, à part
 
-Le candidat n'annonce, pour aucune de ses mesures, un montant que le relevé ait trouvé.
+Le programme n'annonce, pour aucune de ses mesures, un montant que le relevé ait trouvé.
 
 ## Ce qui a bougé depuis la série précédente
 
