@@ -1964,6 +1964,15 @@
       "licence": "publication du Sénat, réutilisation avec mention de la source",
       "description": "Sénat, rapport d'information n° 728 (2025-2026) sur la prime d'activité, avec l'enquête de la Cour des comptes : tableaux 12 et 13 (Cnaf, Allstat FR6, décembre 2023), montants moyens par configuration et répartition des foyers par montant versable ; élasticités de la Cnaf (étape ppa)",
       "quarantined": false
+    },
+    "insee_ecrt2026_f2_emploi.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733041/ECRT2026_F2.xlsx",
+      "sha256": "a20cb076b38193b43f32fde54ced4d1ba61496f8288b7e9286ad2ae932b41779",
+      "bytes": 25565,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.1, figure 1 : personnes en emploi (enquête Emploi, logement ordinaire), 29 187 000 en 2024 (étape haut, champ des salariés)",
+      "quarantined": false
     }
   }
 }
