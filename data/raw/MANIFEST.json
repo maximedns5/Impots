@@ -416,13 +416,13 @@
       "quarantined": false
     },
     "insee_ip2079_salaires_prive_2024.xlsx": {
-      "url": null,
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8657156/ip2079.xlsx",
       "sha256": "34b7e19cce45d8a5bc7a83f125d00d694ea6266e06b94531f8815a957f5b7d11",
       "bytes": 42082,
-      "downloaded": "2026-09-03",
-      "licence": "unknown",
-      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it.",
-      "quarantined": true
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Première n° 2079, « Les salaires dans le secteur privé en 2024 » (base Tous salariés 2024) : centiles du salaire net mensuel EQTP (tableau complémentaire 3), C95 et C99 (figure 3) (étape haut)",
+      "quarantined": false
     },
     "insee_ip2100_fonction_publique_etat_2024.xlsx": {
       "url": null,
@@ -1918,6 +1918,24 @@
       "downloaded": "2026-11-10",
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "SDES, Datalab Essentiel, « 5,4 millions de logements locatifs sociaux en France au 1er janvier 2024 » (RPLS), tableau 4 : loyer moyen du parc social par m² (étape al)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_f26_salaires_prive_age_sexe.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733089/ECRT2026_F26.xlsx",
+      "sha256": "5e3b2648ca13be5192585473cbe46e6ebd11622b6a9b5e132b5441436436b262",
+      "bytes": 24753,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.6 : salaire net mensuel EQTP moyen du privé par âge et sexe en 2024 (figure 3), dispersion par PCS (figure 4) (étape haut)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_f29_salaires_fonction_publique.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733095/ECRT2026_F29.xlsx",
+      "sha256": "82a22593c10ffd686287e1b3e4ce9147c914b720c14c3ddb252e60ad9b0d7ccb",
+      "bytes": 19727,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.9 : dispersion du salaire net mensuel EQTP dans la fonction publique en 2024 par versant (Siasp, figure 2) (étape haut)",
       "quarantined": false
     }
   }

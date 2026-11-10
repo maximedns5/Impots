@@ -667,11 +667,15 @@ def test_light_tier_has_no_benefit_totals(population: pl.DataFrame) -> None:
 # reforms over a population
 # --------------------------------------------------------------------------- #
 def test_reform_moves_tax_and_leaves_a_delta(population: pl.DataFrame) -> None:
-    """A 50 % top rate must raise money and produce losers, not winners."""
+    """Higher top rates must raise money and produce losers, not winners.
+
+    The 41 % rate is raised too: since the étape « haut » of but 19 the 400-household
+    fixture has no foyer above the 45 % threshold (the draw had put 6.5 % of the employees
+    in its Pareto tail instead of 5 %), and a reform of that rate alone moved nothing."""
     reform = ReformSpec.model_validate(
         {"ir_bareme": [
             {"threshold": 0, "rate": 0.00}, {"threshold": 11497, "rate": 0.11},
-            {"threshold": 29315, "rate": 0.30}, {"threshold": 83823, "rate": 0.41},
+            {"threshold": 29315, "rate": 0.30}, {"threshold": 83823, "rate": 0.43},
             {"threshold": 180294, "rate": 0.50},
         ]}
     )

@@ -56,6 +56,41 @@ WAGE_MEAN_NET_EQTP_MONTHLY = 2733.0
 #: five bands are enough to carry most of it.
 WAGE_MEAN_NET_EQTP_BY_AGE: dict[str, float] = {"under_25": 1620.0, "25_39": 2550.0}
 
+#: Mean net EQTP monthly by age band and sex, private sector, 2024: (lower age, upper
+#: age, women, men). Insee, « Emploi, chômage, revenus du travail », édition 2026, fiche
+#: 2.6, figure 3 (base Tous salariés 2024),
+#: https://www.insee.fr/fr/statistiques/fichier/8733089/ECRT2026_F26.xlsx. Read by the
+#: wage draw (but 19, étape « haut »): before it, only the under-25 penalty and the sex
+#: gap were applied, and the 25-39-year-olds came out 12 % above their published mean
+#: and the 55 and over 17 % below it.
+WAGE_MEAN_NET_EQTP_BY_AGE_SEX: tuple[tuple[int, int, float, float], ...] = (
+    (0, 25, 1590.0, 1640.0), (25, 40, 2440.0, 2630.0), (40, 50, 2760.0, 3190.0),
+    (50, 55, 2820.0, 3430.0), (55, 200, 2810.0, 3600.0),
+)
+
+#: Centiles of the net EQTP monthly wage, private sector, 2024: the upper half of the
+#: distribution the wage draw is mapped onto (but 19, étape « haut »). Insee Première
+#: n° 2079 (octobre 2025), tableau complémentaire 3,
+#: https://www.insee.fr/fr/statistiques/fichier/8657156/ip2079.xlsx. Above the 99th
+#: centile, a Pareto tail through the 95th and 99th (`incomes.TAIL_C95_NET_EQTP_MONTHLY`).
+WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY: dict[float, float] = {
+    0.50: 2190.0, 0.60: 2442.0, 0.70: 2785.0, 0.80: 3305.0, 0.85: 3709.0, 0.90: 4334.0,
+    0.91: 4509.0, 0.92: 4709.0, 0.93: 4947.0, 0.94: 5234.0, 0.95: 5593.0, 0.96: 6073.0,
+    0.97: 6752.0, 0.98: 7869.0, 0.99: 10261.0,
+}
+
+#: Quantiles of the net EQTP monthly wage in the fonction publique, 2024, by versant:
+#: median, third quartile, ninth decile. Insee, « Emploi, chômage, revenus du travail »,
+#: édition 2026, fiche 2.9, figure 2 (Siasp 2024),
+#: https://www.insee.fr/fr/statistiques/fichier/8733095/ECRT2026_F29.xlsx. Above D9 the
+#: curve is extended with the slope of its last segment: no upper centile is published,
+#: and that tail is a hypothesis.
+WAGE_QUANTILES_FP_NET_EQTP_MONTHLY: dict[str, dict[float, float]] = {
+    "etat": {0.50: 2820.0, 0.75: 3510.0, 0.90: 4330.0},
+    "territoriale": {0.50: 2120.0, 0.75: 2540.0, 0.90: 3190.0},
+    "hospitaliere": {0.50: 2470.0, 0.75: 3050.0, 0.90: 4010.0},
+}
+
 NET_TO_GROSS_RATIO = Figure(
     value=0.7587, unit="ratio", year=2024,
     scope="Salariés du secteur privé, ensemble : salaire net / salaire brut",
