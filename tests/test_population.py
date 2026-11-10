@@ -324,7 +324,7 @@ def _eec_rows(shapes: dict[str, tuple[str, list[tuple[str, str, str, str]], bool
     return pl.DataFrame(rows, schema={column: source.schema[column] for column in columns})
 
 
-def test_case_t_follows_the_couple_not_the_dwelling() -> None:
+def test_case_t_follows_the_couple_not_the_dwelling(monkeypatch) -> None:
     """Eight dwellings, the answer written beside each (D-195).
 
     The fixture holds unpaired partners of one shape only, absent from the file. Two
@@ -332,7 +332,18 @@ def test_case_t_follows_the_couple_not_the_dwelling() -> None:
     A parent beside an adult child, that child's couple or a brother's couple is the
     shape an over-broad rule would hit. The last is not the law's answer but the
     owner's pending one, pinned so that changing it is a decision.
+
+    The shapes are the structure the rule reads: every couple one déclaration, every
+    child of the family rattaché. Since the but 19 (étape 3) a couple in union libre
+    and an adult child who is not rattaché file their own, by a draw; the draw is held
+    off here, so that the eight answers stay those of the rule and not of a coin. The
+    split itself is tested in `test_foyers_fiscaux.py`.
     """
+    from impots.population import skeleton
+
+    monkeypatch.setattr(skeleton, "_draw_foyers", lambda people, seed: (
+        people.with_columns(pl.lit(False).alias("separate_return"),
+                            pl.col("is_child").alias("rattache")), 1.0))
     frame, _ = build_skeleton(children_per_household=None, source=_eec_rows(CASE_T_SHAPES))
     unit = frame.filter(pl.col("foyer_id").str.ends_with("#0")).group_by("household_id").agg(
         pl.col("role_foyer").is_in(DECLARANT_ROLES).sum().alias("declarants"),
@@ -812,7 +823,7 @@ def test_standard_margins_hold_age_sex_as_a_drift_constraint(population: pl.Data
     framed = with_cells(population)
     margin_list = standard_margins(framed)
     names = {margin.name for margin in margin_list}
-    assert names == {"household_type", "age_sex"}
+    assert names == {"household_type", "tenure", "age_sex"}  # tenure: D-365, but 19
 
     age_sex = next(m for m in margin_list if m.name == "age_sex")
     assert all(not cell.startswith("under_15") for cell in age_sex.targets), (
