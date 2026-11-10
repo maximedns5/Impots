@@ -107,3 +107,63 @@ def test_a_reunion_foyer_has_the_dom_abattement_on_its_income_tax() -> None:
     # sur l'impôt réduit, et en retire encore un peu (1 168 € contre 2 023 €).
     assert reunion <= metro * 0.7
     assert reunion > metro * 0.5
+
+
+# ---- who is on the lease (étape al, second part) ---------------------------------------
+
+def _two_familles(heberge: bool | None, colocation: bool | None,
+                  statut: str = "locataire_vide") -> pl.DataFrame:
+    """Two adults alone in one dwelling of 700 € a month, each his own famille and foyer:
+    the reference person (6 000 € of wages) and a second adult with no income."""
+    columns = {
+        "person_id": ["p1", "p2"], "household_id": ["m1", "m1"],
+        "foyer_id": ["f1", "f2"], "famille_id": ["a1", "a2"], "age": [55, 30],
+        "role_menage": ["personne_de_reference", "autre"],
+        "role_foyer": ["declarant_principal", "declarant_principal"],
+        "role_famille": ["demandeur", "demandeur"],
+        "salaire_brut_annuel": [6_000.0, 0.0], "pension_annuelle": [0.0, 0.0],
+        "chomage_annuel": [0.0, 0.0], "statut_occupation": [statut] * 2,
+        "zone_apl": ["zone_2"] * 2, "loyer_mensuel": [700.0] * 2,
+        "parent_isole": [False, False],
+    }
+    if heberge is not None:
+        columns["aide_logement_heberge"] = [False, heberge]
+    if colocation is not None:
+        columns["colocation"] = [colocation] * 2
+    return pl.DataFrame(columns)
+
+
+def _per_famille(frame: pl.DataFrame, variable: str, month: bool = False) -> np.ndarray:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        simulation = build_simulation(frame, system.baseline(), YEAR).simulation
+    if month:
+        return np.asarray(simulation.calculate(variable, f"{YEAR}-06"))
+    return np.asarray(simulation.calculate_add(variable, str(YEAR)))
+
+
+@pytest.mark.parametrize("statut", ["locataire_vide", "locataire_hlm"])
+def test_a_famille_lodged_off_the_lease_has_no_housing_aid(statut: str) -> None:
+    before = _per_famille(_two_familles(None, None, statut), "aide_logement")
+    after = _per_famille(_two_familles(True, False, statut), "aide_logement")
+    assert before[1] > 2_000.0          # avant : l'hébergé touchait l'aide sur tout le loyer
+    assert after[1] == 0.0
+    assert after[0] == pytest.approx(before[0])
+
+
+def test_the_lodged_keeps_the_forfait_logement_of_the_rsa_in_full() -> None:
+    before = _per_famille(_two_familles(None, None), "rsa_forfait_logement", month=True)
+    after = _per_famille(_two_familles(True, False), "rsa_forfait_logement", month=True)
+    # Logé gratuitement : le forfait d'une personne seule, 12 % du montant de base.
+    assert after[1] == pytest.approx(before[1]) and after[1] > 70.0
+
+
+def test_a_colocation_shares_the_rent_under_the_colocation_plafond() -> None:
+    alone = _per_famille(_two_familles(None, None), "aide_logement_loyer_plafond", month=True)
+    coloc = _per_famille(_two_familles(False, True), "aide_logement_loyer_plafond", month=True)
+    assert coloc == pytest.approx(alone * 0.75, abs=0.01)
+    rent = _per_famille(_two_familles(False, True), "aide_logement_loyer_reel", month=True)
+    assert rent == pytest.approx([350.0, 350.0])
+    aid_before = _per_famille(_two_familles(None, None), "aide_logement")
+    aid_coloc = _per_famille(_two_familles(False, True), "aide_logement")
+    assert (aid_coloc < aid_before - 300.0).all()

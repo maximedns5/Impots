@@ -47,6 +47,9 @@ SCHEMA: dict[str, pl.DataType] = {
     "zone_apl": pl.String,
     # The DOM département, drawn (étape al) ; null in metropole.
     "departement": pl.String,
+    # Who is on the lease (étape al): a famille lodged off it, a colocation.
+    "aide_logement_heberge": pl.Boolean,
+    "colocation": pl.Boolean,
     "is_salarie": pl.Boolean,
     "pcs": pl.String,
     "secteur_public": pl.Boolean,
