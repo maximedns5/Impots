@@ -95,10 +95,25 @@ SURFACE_BASE_M2 = 30.0
 SURFACE_PER_PERSON_M2 = 12.0
 
 
+#: openfisca's taxable salary over the gross it is handed (`salaire_imposable` over
+#: `salaire_de_base` and the traitement), on the whole population: the cotisations and
+#: the deductible CSG come off. Measured on 20 000 ménages of the population of the but 19,
+#: law of 2024 (étape « ir ») : 919,66 / 1 109,98 Md€. Used twice, to give a gérant
+#: majoritaire the gross pay whose taxable part is his declared one, and to set the exempt
+#: share of the salaries (`part_salaire_exoneree`) before openfisca has run.
+IMPOSABLE_SUR_BRUT = 0.8285
+
 #: The self-employment draw has its own stream, so that adding it moved no wage, pension
 #: or unemployment benefit already drawn: the draws of `attach_incomes` before it read
 #: `default_rng(seed)` in the same order as they did.
 SELF_EMPLOYMENT_STREAM = 2
+
+#: The column `attach_self_employment` hands the gérants' gross salary in, which
+#: `attach_incomes` folds into `salaire_brut_annuel` and drops.
+GERANT_GROSS_PAY = "salaire_brut_gerant"
+
+#: The column of the income tax's exempt share of a salary, read by engine correction 24.
+EXEMPT_SHARE = "part_salaire_exoneree"
 
 #: The survey's agricultural sector (NAF divisions 01 to 03), which has its own tables.
 AGRICULTURE = "agriculture"
@@ -165,6 +180,8 @@ class SelfEmploymentStats:
     total_before_calibration: float
     total_after_calibration: float
     calibration_factor: float
+    gerants_taxable_pay: float = 0.0
+    """What the gérants majoritaires are paid as a salary, its taxable part (1GB)."""
 
 
 @dataclass(frozen=True)
@@ -189,6 +206,11 @@ class IncomeStats:
     below are that sample's share of the national figure, not the figure itself.
     """
     self_employment: SelfEmploymentStats | None = None
+    gerants_gross_pay: float = 0.0
+    """The gérants majoritaires' gross salary, taken out of the employees' share of D11."""
+    exempt_wage_share: float = 0.0
+    """The share of each employee's taxable salary the income tax exempts (D11 against the
+    declared salaries, `margins.DECLARED_TAXABLE_WAGES`)."""
 
 
 def lognormal_from_deciles(d1: float, median: float, d9: float) -> tuple[float, float]:
@@ -398,14 +420,24 @@ def attach_self_employment(
          published shares (Insee; DGFiP, 2042-C-PRO) — the latter drawn and, for an
          openfisca defect, not yet wired (`to_openfisca.SELF_EMPLOYMENT_INPUTS`); a micro
          income is capped at its regime's ceiling;
-      6. ONE factor on everyone, so that the weighted total is `SELF_EMPLOYMENT_INCOME`
-         times `targets_scale`, as the wage bill is calibrated.
+      6. ONE factor on everyone but the gérants majoritaires, so that the weighted total
+         is `SELF_EMPLOYMENT_INCOME` (hors gérants) times `targets_scale`, as the wage bill
+         is calibrated; the gérants' drawn income becomes a salary, below.
 
     **What it is not.** The nature of a micro-entrepreneur's turnover and the
-    contributions category follow the sector, by hypothesis (`NATURE_PAR_SECTEUR`). A
-    gérant majoritaire is wired as a réel BIC or BNC where the tax code taxes his pay as
-    a salary, after its 10 % deduction: the income tax of the 940 000 gérants is a
-    little high. Age is not conditioned on. Aides familiaux, whom the survey records as
+    contributions category follow the sector, by hypothesis (`NATURE_PAR_SECTEUR`).
+
+    **A gérant majoritaire is paid a salary** (but 19, étape « ir »). The tax code taxes his
+    pay as one (art. 62 of the CGI, box 1GB), and D11, onto which the wage bill is
+    calibrated, already counts it: wired as a réel BIC or BNC beside it, as étape 2 did, it
+    was counted twice (43.8 bn €, seven points of income tax). His drawn income is scaled so
+    that the gérants' taxable pay is the declared one (`GERANTS_REMUNERATION`, 30.7 bn €:
+    the Insee's 43.8 also counts dividends above 10 % of the capital), turned into a gross
+    salary by `IMPOSABLE_SUR_BRUT`, and handed to `attach_incomes` in `GERANT_GROSS_PAY`,
+    which takes it out of the employees' share of D11. His contributions and CSG are then an
+    employee's, where the SSI levies his; his RSA and prime read a salary, where the Caf
+    reads a self-employed income: the same amount. His `regime_non_salarie` stays, to name
+    him, and his `revenu_non_salarie_annuel` is nil. Age is not conditioned on. Aides familiaux, whom the survey records as
     self-employed too, draw an income like the rest. A loss is a nil income, as in the
     published means: no deficit is set against other income.
 
@@ -500,6 +532,15 @@ def attach_self_employment(
         monthly[capped] = np.minimum(monthly[capped], ceiling * (1.0 - abatement) / 12.0)
 
     annual = monthly * 12.0
+    # A gérant majoritaire is paid a salary (art. 62 of the CGI), which D11 already counts:
+    # his drawn income becomes a gross salary whose taxable part makes the declared boxes
+    # (`margins.GERANTS_REMUNERATION`), and no profit. The others are calibrated alone.
+    gerant = np.isin(regime, ("gerant_bic", "gerant_bnc"))
+    drawn_gerants = float((annual * weight)[gerant].sum())
+    taxable_pay = (annual * (margins.GERANTS_REMUNERATION.value * targets_scale / drawn_gerants)
+                   if drawn_gerants > 0 else np.zeros(n))
+    gross_pay = np.where(gerant, taxable_pay / IMPOSABLE_SUR_BRUT, 0.0)
+    annual = np.where(gerant, 0.0, annual)
     before = float((annual * weight).sum())
     target = margins.SELF_EMPLOYMENT_INCOME.value * targets_scale
     # The second calibration on incomes, spent like the wage bill (§4.3).
@@ -510,6 +551,7 @@ def attach_self_employment(
         pl.Series("revenu_non_salarie_annuel", annual),
         pl.Series("regime_non_salarie", regime.tolist(), dtype=pl.String),
         pl.Series("secteur_non_salarie", row.tolist(), dtype=pl.String),
+        pl.Series(GERANT_GROSS_PAY, gross_pay),
     )
     total_weight = float(weight[self_employed].sum())
     stats = SelfEmploymentStats(
@@ -522,6 +564,7 @@ def attach_self_employment(
         total_before_calibration=before,
         total_after_calibration=float((annual * weight).sum()),
         calibration_factor=factor,
+        gerants_taxable_pay=float((gross_pay * weight).sum()) * IMPOSABLE_SUR_BRUT,
     )
     return enriched, stats
 
@@ -530,7 +573,7 @@ def attach_incomes(
     frame: pl.DataFrame, seed: int = SEED, targets_scale: float | None = None
 ) -> tuple[pl.DataFrame, IncomeStats]:
     """Add `salaire_brut_annuel`, `pension_annuelle`, `chomage_annuel`, `loyer_mensuel`,
-    and the self-employment columns of `attach_self_employment`.
+    `part_salaire_exoneree`, and the self-employment columns of `attach_self_employment`.
 
     `targets_scale` multiplies the four national calibration targets — the wage
     bill, the self-employment income, the pension mass and the unemployment mass —
@@ -566,6 +609,12 @@ def attach_incomes(
     n = frame.height
     weight = frame["weight"].to_numpy().astype(np.float64)
 
+    # The self-employed first, on their own stream: the gérants majoritaires among them are
+    # paid out of D11, so their gross salary must be known before the employees' share is.
+    frame, self_employment = attach_self_employment(frame, seed, targets_scale)
+    gerant_gross = frame[GERANT_GROSS_PAY].to_numpy().astype(np.float64)
+    frame = frame.drop(GERANT_GROSS_PAY)
+
     # ---- wages ------------------------------------------------------------
     employee = frame["is_salarie"].to_numpy() & (
         frame["statut_activite"].to_numpy() == "employed"
@@ -576,11 +625,22 @@ def attach_incomes(
     wages = np.where(employee, gross_annual, 0.0)
 
     before = float((wages * weight).sum())
-    target = margins.TOTAL_GROSS_WAGES.value * targets_scale
+    gerants_gross = float((gerant_gross * weight).sum())
+    target = margins.TOTAL_GROSS_WAGES.value * targets_scale - gerants_gross
     # The one calibration on incomes, and therefore spent: the wage bill can never
-    # afterwards appear as a validation line (§4.3).
+    # afterwards appear as a validation line (§4.3). D11 holds the gérants' pay too.
     factor = target / before if before > 0 else 1.0
-    wages = wages * factor
+    wages = np.where(employee, wages * factor, gerant_gross)
+
+    # The share of an employee's taxable salary the income tax exempts: D11 holds overtime,
+    # apprentices' pay, placed profit-sharing and the rest the declarations do not, so its
+    # taxable part runs above the salaries declared. One share for every employee, set so
+    # that their taxable salaries make `DECLARED_TAXABLE_WAGES` (a hypothesis on who: the
+    # breakdown is not published); read by the income tax only (engine correction 24).
+    employees_taxable = IMPOSABLE_SUR_BRUT * float((np.where(employee, wages, 0.0)
+                                                    * weight).sum())
+    exempt_share = (max(0.0, 1.0 - margins.DECLARED_TAXABLE_WAGES.value * targets_scale
+                        / employees_taxable) if employees_taxable > 0 else 0.0)
 
     # ---- pensions ---------------------------------------------------------
     age = frame["age"].to_numpy()
@@ -626,11 +686,11 @@ def attach_incomes(
 
     enriched = frame.with_columns(
         pl.Series("salaire_brut_annuel", wages),
+        pl.Series(EXEMPT_SHARE, np.where(employee & (wages > 0), exempt_share, 0.0)),
         pl.Series("pension_annuelle", pensions),
         pl.Series("chomage_annuel", chomage),
         pl.Series("loyer_mensuel", rent),
     )
-    enriched, self_employment = attach_self_employment(enriched, seed, targets_scale)
     self_employed = enriched["regime_non_salarie"].is_not_null().to_numpy()
 
     no_income = ~(employee | pensioner | unemployed | self_employed) & (age >= 18)
@@ -648,5 +708,7 @@ def attach_incomes(
         people_without_modelled_income=float((no_income * weight).sum()),
         targets_scale=targets_scale,
         self_employment=self_employment,
+        gerants_gross_pay=gerants_gross,
+        exempt_wage_share=exempt_share,
     )
     return enriched, stats

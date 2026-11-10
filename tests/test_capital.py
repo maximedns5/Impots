@@ -267,7 +267,10 @@ def test_a_run_with_it_pays_the_pfu_and_the_levies_on_the_base(fixture_populatio
     assert np.allclose(ratio.to_numpy(), 0.172 / 0.128, rtol=1e-6)
     rfr_gain = (taxed["revenu_fiscal_reference"] - plain["revenu_fiscal_reference"]).to_numpy()
     pfu = taxed["pfu"].to_numpy()
-    assert np.allclose(rfr_gain, pfu / 0.128, rtol=1e-6)
+    # One cent of absolute tolerance: openfisca's RFR is float32, and a gain read as the
+    # difference of two RFRs of some 30 000 € carries a few thousandths of a euro (570,996
+    # for 571,000 on one household once the salaries carry an exempt share, étape « ir »).
+    assert np.allclose(rfr_gain, pfu / 0.128, rtol=1e-6, atol=0.01)
     assert ((taxed["ir"] - plain["ir"]).to_numpy() >= -1e-6).all()
 
 

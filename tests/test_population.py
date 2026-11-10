@@ -438,8 +438,11 @@ def test_wage_bill_is_calibrated(population: pl.DataFrame) -> None:
 
 
 def test_only_employees_earn_wages(population: pl.DataFrame) -> None:
+    """And the gérants majoritaires, whose pay is a salary (art. 62 of the CGI) that D11
+    counts (but 19, étape « ir »)."""
     earners = population.filter(pl.col("salaire_brut_annuel") > 0)
-    assert earners["is_salarie"].all()
+    gerant = earners["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"]).fill_null(False)
+    assert (earners["is_salarie"] | gerant).all()
     assert (earners["statut_activite"] == "employed").all()
 
 
@@ -1209,10 +1212,14 @@ def test_the_unscaled_sample_is_kept_as_the_defect_it_was() -> None:
     this.
     """
     frame, _ = attach_incomes(_skeleton(), targets_scale=1.0)
-    wages = frame["salaire_brut_annuel"].to_numpy()
+    # The employees: a gérant majoritaire's pay follows his drawn income (étape « ir »).
+    wages = frame.filter(pl.col("is_salarie"))["salaire_brut_annuel"].to_numpy()
     earners = wages[wages > 0]
-    assert earners.min() > 3_000_000.0
-    assert earners.mean() > 20_000_000.0
+    # 3 M€ and 20 M€ until the étape « ir » of but 19, which pays the gérants majoritaires
+    # out of D11: the employees' share falls by their 3,3 %, the minimum to 2,93 M€ and the
+    # mean to 19,96 M€.
+    assert earners.min() > 2_900_000.0
+    assert earners.mean() > 19_000_000.0
 
 
 def test_the_scaled_population_has_plausible_wages(population: pl.DataFrame) -> None:

@@ -48,9 +48,10 @@ def _self_employed(frame: pl.DataFrame) -> np.ndarray:
 
 def test_the_self_employment_income_is_calibrated_on_its_published_total(
         population: tuple[pl.DataFrame, float]) -> None:
-    """Le total pondéré est la cible de l'Insee (117,5 Md€) ramenée à la fixture, comme la
-    masse salariale l'est à la sienne. Échoue sur le code d'avant : la colonne n'existait
-    pas, et les 3,87 M de non-salariés n'avaient aucun revenu."""
+    """Le total pondéré est la cible de l'Insee hors gérants majoritaires (73,76 Md€)
+    ramenée à la fixture, comme la masse salariale l'est à la sienne. Échoue sur le code de
+    l'étape 2, qui y comptait les gérants (117,5 Md€), et sur le code d'avant elle : la
+    colonne n'existait pas."""
     frame, share = population
     total = float((frame["revenu_non_salarie_annuel"] * frame["weight"]).sum())
     assert total == pytest.approx(margins.SELF_EMPLOYMENT_INCOME.value * share, rel=1e-9)
@@ -68,28 +69,84 @@ def test_only_the_self_employed_draw_it_and_most_of_them_earn(
     assert all(r in incomes.REGIMES for r in regime[self_employed])
     assert all(r is None for r in regime[~self_employed])
     assert (income[~self_employed] == 0).all()
-    weight = frame["weight"].to_numpy()[self_employed]
-    nil = float(weight[income[self_employed] == 0].sum() / weight.sum())
+    # The gérants majoritaires are paid a salary, not a profit (étape « ir »).
+    gerant = np.isin(regime, ("gerant_bic", "gerant_bnc"))
+    earning = self_employed & ~gerant
+    weight = frame["weight"].to_numpy()[earning]
+    nil = float(weight[income[earning] == 0].sum() / weight.sum())
     assert 0.0 < nil < 0.15
 
 
-def test_the_draw_moves_no_wage_pension_or_unemployment_benefit(
+def test_the_draw_moves_no_pension_or_unemployment_benefit_and_wages_by_one_factor(
         skeleton: pl.DataFrame, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Le tirage des non-salariés lit son propre flux : les salaires, pensions et
-    allocations chômage sont ceux d'avant lui, euro pour euro."""
+    """Le tirage des non-salariés lit son propre flux : les pensions et allocations chômage
+    sont celles d'avant lui, euro pour euro. Les salaires des salariés aussi, à un facteur
+    commun près : les gérants majoritaires sont payés sur D11 (étape « ir »), ce qu'ils
+    reçoivent manque aux autres, et rien d'autre ne bouge."""
     share = household_share_of_france(skeleton)
-    after, _ = attach_incomes(skeleton, targets_scale=share)
+    after, stats = attach_incomes(skeleton, targets_scale=share)
 
     def nothing(frame: pl.DataFrame, seed: int, targets_scale: float):
         empty = pl.Series([None] * frame.height, dtype=pl.String)
         return frame.with_columns(pl.lit(0.0).alias("revenu_non_salarie_annuel"),
                                   empty.alias("regime_non_salarie"),
-                                  empty.alias("secteur_non_salarie")), None
+                                  empty.alias("secteur_non_salarie"),
+                                  pl.lit(0.0).alias(incomes.GERANT_GROSS_PAY)), None
 
     monkeypatch.setattr(incomes, "attach_self_employment", nothing)
     before, _ = attach_incomes(skeleton, targets_scale=share)
-    for column in ("salaire_brut_annuel", "pension_annuelle", "chomage_annuel"):
+    for column in ("pension_annuelle", "chomage_annuel"):
         assert after[column].to_list() == before[column].to_list(), column
+    employee = (skeleton["is_salarie"] & (skeleton["statut_activite"] == "employed")).to_numpy()
+    ratio = (after["salaire_brut_annuel"].to_numpy()[employee]
+             / before["salaire_brut_annuel"].to_numpy()[employee])
+    d11 = margins.TOTAL_GROSS_WAGES.value * share
+    assert ratio == pytest.approx(1.0 - stats.gerants_gross_pay / d11, rel=1e-9)
+
+
+def test_the_gerants_are_paid_their_declared_pay_out_of_d11(
+        population: tuple[pl.DataFrame, float]) -> None:
+    """Un gérant majoritaire est payé en salaire (art. 62 du CGI), pas en bénéfice : la part
+    imposable de ces salaires est celle des cases 1GB à 1JB (30,7 Md€), et la masse brute de
+    tous, salariés et gérants, reste D11. Échoue sur le code de l'étape 2, qui leur donnait
+    43,8 Md€ de BIC et de BNC à côté d'une masse salariale qui les comptait déjà."""
+    frame, share = population
+    regime = frame["regime_non_salarie"].to_numpy()
+    gerant = np.isin(regime, ("gerant_bic", "gerant_bnc"))
+    weight = frame["weight"].to_numpy()
+    wages = frame["salaire_brut_annuel"].to_numpy()
+    assert gerant.any()
+    assert (frame["revenu_non_salarie_annuel"].to_numpy()[gerant] == 0).all()
+    assert (wages[gerant] > 0).mean() >= 0.75  # 12,7 % de revenus nuls publiés
+    taxable = incomes.IMPOSABLE_SUR_BRUT * float((wages * weight)[gerant].sum())
+    assert taxable == pytest.approx(margins.GERANTS_REMUNERATION.value * share, rel=1e-9)
+    assert float((wages * weight).sum()) == pytest.approx(
+        margins.TOTAL_GROSS_WAGES.value * share, rel=1e-9)
+    # No share of a gérant's pay is exempt: its taxable part is the declared one.
+    assert (frame[incomes.EXEMPT_SHARE].to_numpy()[gerant] == 0).all()
+
+
+def test_the_exempt_share_makes_the_declared_salaries(
+        population: tuple[pl.DataFrame, float]) -> None:
+    """La part exonérée d'impôt des salaires (heures supplémentaires, apprentis, épargne
+    salariale…) est fixée pour que les salaires imposables des salariés, lus par openfisca
+    et cette part déduite, refassent les salaires déclarés (`DECLARED_TAXABLE_WAGES`) à 3 %
+    près : `IMPOSABLE_SUR_BRUT` est un rapport moyen, mesuré sur la population et non sur la
+    fixture. Échoue sur le code d'avant : il n'y avait pas de part, et les salaires
+    imposables passaient de 7 % les salaires déclarés."""
+    from impots.engine.system import baseline
+    from impots.population.to_openfisca import build_simulation
+
+    frame, share = population
+    frame = frame.sort("person_id")
+    exempt = frame[incomes.EXEMPT_SHARE].to_numpy()
+    employee = (frame["is_salarie"] & (frame["statut_activite"] == "employed")).to_numpy()
+    assert exempt[employee & (frame["salaire_brut_annuel"].to_numpy() > 0)].min() > 0.03
+    assert (exempt[~employee] == 0).all()
+    built = build_simulation(frame, baseline(), 2024)
+    taxable = built.simulation.calculate_add("salaire_imposable", "2024")
+    declared = float((taxable * (1 - exempt) * frame["weight"].to_numpy())[employee].sum())
+    assert declared == pytest.approx(margins.DECLARED_TAXABLE_WAGES.value * share, rel=0.03)
 
 
 def test_the_draw_is_reproducible(skeleton: pl.DataFrame) -> None:

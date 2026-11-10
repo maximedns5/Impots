@@ -1865,6 +1865,24 @@
       "licence": "Insee — Licence Ouverte / Etalab",
       "description": "Insee, dossier complet France, RP 2023, tableau LOG T10 « Résidences principales selon le statut d'occupation » : propriétaires 17 944 861, locataires 12 584 249 dont HLM loué vide 4 546 449, logés gratuitement 691 037, ensemble 31 220 147. Page HTML enregistrée telle quelle. Marge du calage du statut d'occupation (margins.TENURE_2023, but 19, étape 3).",
       "quarantined": false
+    },
+    "ircom-2025-revenus-2024.zip": {
+      "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20260526-131537/ircom-2025-revenus-2024.zip",
+      "sha256": "3df14c80f69afb76a8c6d1f13cd2fb9e861ba9e162bc1e516c6fb2ed77338b00",
+      "bytes": 18181698,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP, IRCOM 2025 (revenus 2024), archive complète. national/national.xls, onglet « nat » : foyers, RFR, impôt net, foyers imposés, traitements et salaires, pensions, par tranche de RFR ; ligne « Dont non-résidents (DINR) » : 298 023 foyers, 3 122 828 904 € de traitements et salaires, retirés de margins.DECLARED_TAXABLE_WAGES (but 19, étape « ir »).",
+      "quarantined": false
+    },
+    "dgfip_ir_taux_marginal_2019_2024.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25519_ir_taux_marginal.xlsx",
+      "sha256": "2fb279cf8d89e6737a0d1afe9b2dffd7719477944e09e69b442f50f653261f17",
+      "bytes": 36224,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP, nombre de foyers et montant de l'impôt net par taux marginal du barème, revenus 2019 à 2024, un onglet par année. 2024 : 13 132,148 / 20 930,797 / 6 868,031 / 434,112 / 61,476 milliers de foyers à 0, 11, 30, 41 et 45 % ; impôt net −597, 12 658, 48 858, 17 791, 12 541 M€. Lu par le diagnostic de l'étape « ir » du but 19.",
+      "quarantined": false
     }
   }
 }

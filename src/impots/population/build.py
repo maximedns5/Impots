@@ -61,6 +61,8 @@ SCHEMA: dict[str, pl.DataType] = {
     "revenu_non_salarie_annuel": pl.Float64,
     "regime_non_salarie": pl.String,
     "secteur_non_salarie": pl.String,
+    # The share of a salary the income tax exempts (but 19, étape « ir »).
+    "part_salaire_exoneree": pl.Float64,
 }
 
 
