@@ -1,0 +1,913 @@
+{
+ "preenregistre": "D-368",
+ "echantillon": {
+  "menages": 20000,
+  "graine": 20240101
+ },
+ "pronostic": [
+  {
+   "id": "cotisations_salariales",
+   "annee": 2022,
+   "echantillon": -0.0852,
+   "de": -0.1152,
+   "a": -0.0552,
+   "tolerance": 0.1
+  },
+  {
+   "id": "cotisations_employeurs",
+   "annee": 2022,
+   "echantillon": 0.2534,
+   "de": 0.2234,
+   "a": 0.2834,
+   "tolerance": 0.15
+  },
+  {
+   "id": "reduction_generale",
+   "annee": 2022,
+   "echantillon": 0.1595,
+   "de": 0.1295,
+   "a": 0.1895,
+   "tolerance": 0.15
+  },
+  {
+   "id": "bandeau_maladie",
+   "annee": 2022,
+   "echantillon": 0.2532,
+   "de": 0.2232,
+   "a": 0.2832,
+   "tolerance": 0.15
+  },
+  {
+   "id": "bandeau_famille",
+   "annee": 2022,
+   "echantillon": 0.3002,
+   "de": 0.2702,
+   "a": 0.3302,
+   "tolerance": 0.15
+  },
+  {
+   "id": "csg_activite",
+   "annee": 2022,
+   "echantillon": -0.0691,
+   "de": -0.0991,
+   "a": -0.0391,
+   "tolerance": 0.15
+  },
+  {
+   "id": "csg_remplacement",
+   "annee": 2022,
+   "echantillon": -0.0195,
+   "de": -0.0495,
+   "a": 0.0105,
+   "tolerance": 0.1
+  },
+  {
+   "id": "foyers_fiscaux",
+   "annee": 2022,
+   "echantillon": -0.0501,
+   "de": -0.0801,
+   "a": -0.0201,
+   "tolerance": 0.1
+  },
+  {
+   "id": "foyers_imposes",
+   "annee": 2022,
+   "echantillon": 0.1579,
+   "de": 0.1279,
+   "a": 0.1879,
+   "tolerance": 0.1
+  },
+  {
+   "id": "foyers_tmi_0",
+   "annee": 2022,
+   "echantillon": -0.1152,
+   "de": -0.1452,
+   "a": -0.0852,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_tmi_1",
+   "annee": 2022,
+   "echantillon": -0.0917,
+   "de": -0.1217,
+   "a": -0.0617,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_tmi_2",
+   "annee": 2022,
+   "echantillon": 0.2534,
+   "de": 0.2034,
+   "a": 0.3034,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_tmi_3",
+   "annee": 2022,
+   "echantillon": -0.1556,
+   "de": -0.2556,
+   "a": -0.0556,
+   "tolerance": 0.3
+  },
+  {
+   "id": "foyers_tmi_4",
+   "annee": 2022,
+   "echantillon": 0.0473,
+   "de": -0.2027,
+   "a": 0.2973,
+   "tolerance": 0.3
+  },
+  {
+   "id": "salaires_declares",
+   "annee": 2022,
+   "echantillon": -0.074,
+   "de": -0.104,
+   "a": -0.044,
+   "tolerance": 0.1
+  },
+  {
+   "id": "niveau_de_vie_median",
+   "annee": 2022,
+   "echantillon": -0.044,
+   "de": -0.074,
+   "a": -0.014,
+   "tolerance": 0.15
+  },
+  {
+   "id": "d9_d1",
+   "annee": 2022,
+   "echantillon": -0.0872,
+   "de": -0.1172,
+   "a": -0.0572,
+   "tolerance": 0.15
+  },
+  {
+   "id": "rsa_montant",
+   "annee": 2022,
+   "echantillon": 0.0488,
+   "de": -0.0012,
+   "a": 0.0988,
+   "tolerance": 0.14
+  },
+  {
+   "id": "ppa_montant",
+   "annee": 2022,
+   "echantillon": -0.23,
+   "de": -0.28,
+   "a": -0.18,
+   "tolerance": 0.13
+  },
+  {
+   "id": "aide_logement_montant",
+   "annee": 2022,
+   "echantillon": -0.2904,
+   "de": -0.3404,
+   "a": -0.2404,
+   "tolerance": 0.25
+  },
+  {
+   "id": "af_montant",
+   "annee": 2022,
+   "echantillon": -0.1563,
+   "de": -0.2063,
+   "a": -0.1063,
+   "tolerance": 0.25
+  },
+  {
+   "id": "ppa_foyers",
+   "annee": 2022,
+   "echantillon": 0.3528,
+   "de": 0.3028,
+   "a": 0.4028,
+   "tolerance": 0.25
+  },
+  {
+   "id": "is",
+   "annee": 2022,
+   "echantillon": -0.1968,
+   "de": -0.2018,
+   "a": -0.1918,
+   "tolerance": 0.2
+  },
+  {
+   "id": "contribution_sociale_is",
+   "annee": 2022,
+   "echantillon": -0.2024,
+   "de": -0.2074,
+   "a": -0.1974,
+   "tolerance": 0.25
+  },
+  {
+   "id": "c3s",
+   "annee": 2022,
+   "echantillon": 0.119,
+   "de": 0.114,
+   "a": 0.124,
+   "tolerance": 0.25
+  },
+  {
+   "id": "cotisations_salariales",
+   "annee": 2023,
+   "echantillon": -0.0996,
+   "de": -0.1296,
+   "a": -0.0696,
+   "tolerance": 0.1
+  },
+  {
+   "id": "cotisations_employeurs",
+   "annee": 2023,
+   "echantillon": 0.2424,
+   "de": 0.2124,
+   "a": 0.2724,
+   "tolerance": 0.15
+  },
+  {
+   "id": "reduction_generale",
+   "annee": 2023,
+   "echantillon": 0.1262,
+   "de": 0.0962,
+   "a": 0.1562,
+   "tolerance": 0.15
+  },
+  {
+   "id": "bandeau_maladie",
+   "annee": 2023,
+   "echantillon": 0.2354,
+   "de": 0.2054,
+   "a": 0.2654,
+   "tolerance": 0.15
+  },
+  {
+   "id": "bandeau_famille",
+   "annee": 2023,
+   "echantillon": 0.2766,
+   "de": 0.2466,
+   "a": 0.3066,
+   "tolerance": 0.15
+  },
+  {
+   "id": "csg_activite",
+   "annee": 2023,
+   "echantillon": -0.0677,
+   "de": -0.0977,
+   "a": -0.0377,
+   "tolerance": 0.15
+  },
+  {
+   "id": "csg_remplacement",
+   "annee": 2023,
+   "echantillon": -0.0033,
+   "de": -0.0333,
+   "a": 0.0267,
+   "tolerance": 0.1
+  },
+  {
+   "id": "ir_bareme",
+   "annee": 2023,
+   "echantillon": 0.0374,
+   "de": -0.0026,
+   "a": 0.0774,
+   "tolerance": 0.1
+  },
+  {
+   "id": "foyers_fiscaux",
+   "annee": 2023,
+   "echantillon": -0.0608,
+   "de": -0.0908,
+   "a": -0.0308,
+   "tolerance": 0.1
+  },
+  {
+   "id": "foyers_imposes",
+   "annee": 2023,
+   "echantillon": 0.1312,
+   "de": 0.1012,
+   "a": 0.1612,
+   "tolerance": 0.1
+  },
+  {
+   "id": "foyers_tmi_0",
+   "annee": 2023,
+   "echantillon": -0.1229,
+   "de": -0.1529,
+   "a": -0.0929,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_tmi_1",
+   "annee": 2023,
+   "echantillon": -0.105,
+   "de": -0.135,
+   "a": -0.075,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_tmi_2",
+   "annee": 2023,
+   "echantillon": 0.2454,
+   "de": 0.1954,
+   "a": 0.2954,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_tmi_3",
+   "annee": 2023,
+   "echantillon": -0.1298,
+   "de": -0.2298,
+   "a": -0.0298,
+   "tolerance": 0.3
+  },
+  {
+   "id": "foyers_tmi_4",
+   "annee": 2023,
+   "echantillon": 0.1452,
+   "de": -0.1048,
+   "a": 0.3952,
+   "tolerance": 0.3
+  },
+  {
+   "id": "salaires_declares",
+   "annee": 2023,
+   "echantillon": -0.0855,
+   "de": -0.1155,
+   "a": -0.0555,
+   "tolerance": 0.1
+  },
+  {
+   "id": "niveau_de_vie_median",
+   "annee": 2023,
+   "echantillon": -0.0572,
+   "de": -0.0872,
+   "a": -0.0272,
+   "tolerance": 0.15
+  },
+  {
+   "id": "d9_d1",
+   "annee": 2023,
+   "echantillon": -0.1061,
+   "de": -0.1361,
+   "a": -0.0761,
+   "tolerance": 0.15
+  },
+  {
+   "id": "rsa_montant",
+   "annee": 2023,
+   "echantillon": 0.0658,
+   "de": 0.0158,
+   "a": 0.1158,
+   "tolerance": 0.14
+  },
+  {
+   "id": "ppa_montant",
+   "annee": 2023,
+   "echantillon": -0.2477,
+   "de": -0.2977,
+   "a": -0.1977,
+   "tolerance": 0.13
+  },
+  {
+   "id": "aide_logement_montant",
+   "annee": 2023,
+   "echantillon": -0.286,
+   "de": -0.336,
+   "a": -0.236,
+   "tolerance": 0.25
+  },
+  {
+   "id": "af_montant",
+   "annee": 2023,
+   "echantillon": -0.1539,
+   "de": -0.2039,
+   "a": -0.1039,
+   "tolerance": 0.25
+  },
+  {
+   "id": "rsa_foyers",
+   "annee": 2023,
+   "echantillon": 0.4898,
+   "de": 0.4398,
+   "a": 0.5398,
+   "tolerance": 0.25
+  },
+  {
+   "id": "ppa_foyers",
+   "annee": 2023,
+   "echantillon": 0.2903,
+   "de": 0.2403,
+   "a": 0.3403,
+   "tolerance": 0.25
+  },
+  {
+   "id": "is",
+   "annee": 2023,
+   "echantillon": -0.0082,
+   "de": -0.0132,
+   "a": -0.0032,
+   "tolerance": 0.2
+  },
+  {
+   "id": "contribution_sociale_is",
+   "annee": 2023,
+   "echantillon": 0.338,
+   "de": 0.333,
+   "a": 0.343,
+   "tolerance": 0.25
+  },
+  {
+   "id": "c3s",
+   "annee": 2023,
+   "echantillon": 0.0616,
+   "de": 0.0566,
+   "a": 0.0666,
+   "tolerance": 0.25
+  },
+  {
+   "id": "cotisations_salariales",
+   "annee": 2024,
+   "echantillon": -0.113,
+   "de": -0.143,
+   "a": -0.083,
+   "tolerance": 0.1
+  },
+  {
+   "id": "cotisations_employeurs",
+   "annee": 2024,
+   "echantillon": 0.2217,
+   "de": 0.1917,
+   "a": 0.2517,
+   "tolerance": 0.15
+  },
+  {
+   "id": "reduction_generale",
+   "annee": 2024,
+   "echantillon": 0.1454,
+   "de": 0.1154,
+   "a": 0.1754,
+   "tolerance": 0.15
+  },
+  {
+   "id": "bandeau_maladie",
+   "annee": 2024,
+   "echantillon": 0.2308,
+   "de": 0.2008,
+   "a": 0.2608,
+   "tolerance": 0.15
+  },
+  {
+   "id": "bandeau_famille",
+   "annee": 2024,
+   "echantillon": 0.2705,
+   "de": 0.2405,
+   "a": 0.3005,
+   "tolerance": 0.15
+  },
+  {
+   "id": "csg_activite",
+   "annee": 2024,
+   "echantillon": -0.0738,
+   "de": -0.1038,
+   "a": -0.0438,
+   "tolerance": 0.15
+  },
+  {
+   "id": "csg_remplacement",
+   "annee": 2024,
+   "echantillon": -0.0461,
+   "de": -0.0761,
+   "a": -0.0161,
+   "tolerance": 0.1
+  },
+  {
+   "id": "ir_bareme",
+   "annee": 2024,
+   "echantillon": -0.0046,
+   "de": -0.0446,
+   "a": 0.0354,
+   "tolerance": 0.1
+  },
+  {
+   "id": "foyers_fiscaux",
+   "annee": 2024,
+   "echantillon": -0.0703,
+   "de": -0.1003,
+   "a": -0.0403,
+   "tolerance": 0.1
+  },
+  {
+   "id": "foyers_imposes",
+   "annee": 2024,
+   "echantillon": 0.0799,
+   "de": 0.0499,
+   "a": 0.1099,
+   "tolerance": 0.1
+  },
+  {
+   "id": "foyers_tmi_0",
+   "annee": 2024,
+   "echantillon": -0.1071,
+   "de": -0.1371,
+   "a": -0.0771,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_tmi_1",
+   "annee": 2024,
+   "echantillon": -0.1178,
+   "de": -0.1478,
+   "a": -0.0878,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_tmi_2",
+   "annee": 2024,
+   "echantillon": 0.1757,
+   "de": 0.1257,
+   "a": 0.2257,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_tmi_3",
+   "annee": 2024,
+   "echantillon": -0.1453,
+   "de": -0.2453,
+   "a": -0.0453,
+   "tolerance": 0.3
+  },
+  {
+   "id": "foyers_tmi_4",
+   "annee": 2024,
+   "echantillon": 0.1616,
+   "de": -0.0884,
+   "a": 0.4116,
+   "tolerance": 0.3
+  },
+  {
+   "id": "salaires_declares",
+   "annee": 2024,
+   "echantillon": -0.0856,
+   "de": -0.1156,
+   "a": -0.0556,
+   "tolerance": 0.1
+  },
+  {
+   "id": "niveau_de_vie_median",
+   "annee": 2024,
+   "echantillon": -0.0695,
+   "de": -0.0995,
+   "a": -0.0395,
+   "tolerance": 0.15
+  },
+  {
+   "id": "d9_d1",
+   "annee": 2024,
+   "echantillon": -0.1108,
+   "de": -0.1408,
+   "a": -0.0808,
+   "tolerance": 0.15
+  },
+  {
+   "id": "rsa_montant",
+   "annee": 2024,
+   "echantillon": 0.0907,
+   "de": 0.0407,
+   "a": 0.1407,
+   "tolerance": 0.14
+  },
+  {
+   "id": "ppa_montant",
+   "annee": 2024,
+   "echantillon": -0.2149,
+   "de": -0.2649,
+   "a": -0.1649,
+   "tolerance": 0.13
+  },
+  {
+   "id": "aide_logement_montant",
+   "annee": 2024,
+   "echantillon": -0.2709,
+   "de": -0.3209,
+   "a": -0.2209,
+   "tolerance": 0.25
+  },
+  {
+   "id": "af_montant",
+   "annee": 2024,
+   "echantillon": -0.1409,
+   "de": -0.1909,
+   "a": -0.0909,
+   "tolerance": 0.25
+  },
+  {
+   "id": "rsa_foyers",
+   "annee": 2024,
+   "echantillon": 0.4976,
+   "de": 0.4476,
+   "a": 0.5476,
+   "tolerance": 0.25
+  },
+  {
+   "id": "ppa_foyers",
+   "annee": 2024,
+   "echantillon": 0.3223,
+   "de": 0.2723,
+   "a": 0.3723,
+   "tolerance": 0.25
+  },
+  {
+   "id": "is",
+   "annee": 2024,
+   "echantillon": 0.0199,
+   "de": 0.0149,
+   "a": 0.0249,
+   "tolerance": 0.2
+  },
+  {
+   "id": "contribution_sociale_is",
+   "annee": 2024,
+   "echantillon": 0.2028,
+   "de": 0.1978,
+   "a": 0.2078,
+   "tolerance": 0.25
+  },
+  {
+   "id": "c3s",
+   "annee": 2024,
+   "echantillon": 0.0117,
+   "de": 0.0067,
+   "a": 0.0167,
+   "tolerance": 0.25
+  },
+  {
+   "id": "cvae",
+   "annee": 2024,
+   "echantillon": -0.1516,
+   "de": -0.1566,
+   "a": -0.1466,
+   "tolerance": 0.25
+  },
+  {
+   "id": "cotisations_employeurs_d121",
+   "annee": 2022,
+   "echantillon": -0.0111,
+   "de": -0.0411,
+   "a": 0.0189,
+   "tolerance": 0.15
+  },
+  {
+   "id": "cotisations_employeurs_d121",
+   "annee": 2023,
+   "echantillon": -0.0207,
+   "de": -0.0507,
+   "a": 0.0093,
+   "tolerance": 0.15
+  },
+  {
+   "id": "cotisations_employeurs_d121",
+   "annee": 2024,
+   "echantillon": -0.0374,
+   "de": -0.0674,
+   "a": -0.0074,
+   "tolerance": 0.15
+  },
+  {
+   "id": "csg_activite_avec_non_salaries",
+   "annee": 2022,
+   "echantillon": -0.0195,
+   "de": -0.0495,
+   "a": 0.0105,
+   "tolerance": 0.15
+  },
+  {
+   "id": "csg_activite_avec_non_salaries",
+   "annee": 2023,
+   "echantillon": -0.018,
+   "de": -0.048,
+   "a": 0.012,
+   "tolerance": 0.15
+  },
+  {
+   "id": "csg_activite_avec_non_salaries",
+   "annee": 2024,
+   "echantillon": -0.0244,
+   "de": -0.0544,
+   "a": 0.0056,
+   "tolerance": 0.15
+  },
+  {
+   "id": "d9_d1_servi",
+   "annee": 2022,
+   "echantillon": -0.0408,
+   "de": -0.0708,
+   "a": -0.0108,
+   "tolerance": 0.15
+  },
+  {
+   "id": "d9_d1_servi",
+   "annee": 2023,
+   "echantillon": -0.0617,
+   "de": -0.0917,
+   "a": -0.0317,
+   "tolerance": 0.15
+  },
+  {
+   "id": "d9_d1_servi",
+   "annee": 2024,
+   "echantillon": -0.0661,
+   "de": -0.0961,
+   "a": -0.0361,
+   "tolerance": 0.15
+  },
+  {
+   "id": "foyers_fiscaux_residents_hors_mayotte",
+   "annee": 2024,
+   "echantillon": -0.0618,
+   "de": -0.0918,
+   "a": -0.0318,
+   "tolerance": 0.1
+  },
+  {
+   "id": "impots_salaires_calcules",
+   "annee": 2022,
+   "echantillon": -0.0359,
+   "de": -0.0659,
+   "a": -0.0059,
+   "tolerance": 0.2
+  },
+  {
+   "id": "impots_salaires_calcules",
+   "annee": 2023,
+   "echantillon": -0.0355,
+   "de": -0.0655,
+   "a": -0.0055,
+   "tolerance": 0.2
+  },
+  {
+   "id": "impots_salaires_calcules",
+   "annee": 2024,
+   "echantillon": -0.0396,
+   "de": -0.0696,
+   "a": -0.0096,
+   "tolerance": 0.2
+  },
+  {
+   "id": "ir_net",
+   "annee": 2022,
+   "echantillon": 0.1039,
+   "de": 0.0639,
+   "a": 0.1439,
+   "tolerance": 0.15
+  },
+  {
+   "id": "ir_net",
+   "annee": 2023,
+   "echantillon": 0.1277,
+   "de": 0.0877,
+   "a": 0.1677,
+   "tolerance": 0.15
+  },
+  {
+   "id": "ir_net",
+   "annee": 2024,
+   "echantillon": 0.0892,
+   "de": 0.0492,
+   "a": 0.1292,
+   "tolerance": 0.15
+  },
+  {
+   "id": "niveau_de_vie_median_servi",
+   "annee": 2022,
+   "echantillon": -0.0471,
+   "de": -0.0771,
+   "a": -0.0171,
+   "tolerance": 0.15
+  },
+  {
+   "id": "niveau_de_vie_median_servi",
+   "annee": 2023,
+   "echantillon": -0.0608,
+   "de": -0.0908,
+   "a": -0.0308,
+   "tolerance": 0.15
+  },
+  {
+   "id": "niveau_de_vie_median_servi",
+   "annee": 2024,
+   "echantillon": -0.073,
+   "de": -0.103,
+   "a": -0.043,
+   "tolerance": 0.15
+  },
+  {
+   "id": "ppa_foyers_servis",
+   "annee": 2022,
+   "echantillon": -0.3221,
+   "de": -0.3721,
+   "a": -0.2721,
+   "tolerance": 0.25
+  },
+  {
+   "id": "ppa_foyers_servis",
+   "annee": 2023,
+   "echantillon": -0.3568,
+   "de": -0.4068,
+   "a": -0.3068,
+   "tolerance": 0.25
+  },
+  {
+   "id": "ppa_foyers_servis",
+   "annee": 2024,
+   "echantillon": -0.3389,
+   "de": -0.3889,
+   "a": -0.2889,
+   "tolerance": 0.25
+  },
+  {
+   "id": "ppa_montant_servi",
+   "annee": 2022,
+   "echantillon": -0.3033,
+   "de": -0.3533,
+   "a": -0.2533,
+   "tolerance": 0.13
+  },
+  {
+   "id": "ppa_montant_servi",
+   "annee": 2023,
+   "echantillon": -0.3195,
+   "de": -0.3695,
+   "a": -0.2695,
+   "tolerance": 0.13
+  },
+  {
+   "id": "ppa_montant_servi",
+   "annee": 2024,
+   "echantillon": -0.2898,
+   "de": -0.3398,
+   "a": -0.2398,
+   "tolerance": 0.13
+  },
+  {
+   "id": "revenus_non_salaries_hors_gerants",
+   "annee": 2022,
+   "echantillon": 0.02,
+   "de": -0.01,
+   "a": 0.05,
+   "tolerance": 0.15
+  },
+  {
+   "id": "revenus_non_salaries_hors_gerants",
+   "annee": 2023,
+   "echantillon": 0.0484,
+   "de": 0.0184,
+   "a": 0.0784,
+   "tolerance": 0.15
+  },
+  {
+   "id": "revenus_non_salaries_hors_gerants",
+   "annee": 2024,
+   "echantillon": -0.0446,
+   "de": -0.0746,
+   "a": -0.0146,
+   "tolerance": 0.15
+  },
+  {
+   "id": "rsa_foyers_servis",
+   "annee": 2023,
+   "echantillon": -0.0298,
+   "de": -0.0798,
+   "a": 0.0202,
+   "tolerance": 0.25
+  },
+  {
+   "id": "rsa_foyers_servis",
+   "annee": 2024,
+   "echantillon": -0.0266,
+   "de": -0.0766,
+   "a": 0.0234,
+   "tolerance": 0.25
+  },
+  {
+   "id": "rsa_montant_servi",
+   "annee": 2022,
+   "echantillon": -0.0368,
+   "de": -0.0868,
+   "a": 0.0132,
+   "tolerance": 0.14
+  },
+  {
+   "id": "rsa_montant_servi",
+   "annee": 2023,
+   "echantillon": -0.021,
+   "de": -0.071,
+   "a": 0.029,
+   "tolerance": 0.14
+  },
+  {
+   "id": "rsa_montant_servi",
+   "annee": 2024,
+   "echantillon": 0.0016,
+   "de": -0.0484,
+   "a": 0.0516,
+   "tolerance": 0.14
+  }
+ ]
+}

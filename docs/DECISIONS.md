@@ -27472,3 +27472,97 @@ par la prime (emploi discontinu dans l'année) ; chacune sera préenregistrée.
 grille réécrite, et, quand une ligne neuve mesure mieux l'instrument, celle-ci : D121 pour
 les cotisations des employeurs, la CSG avec les non-salariés, le RSA et la prime servis.
 Aucun nombre d'étude ne change.
+
+## D-368 — Le haut des salaires, l'emploi discontinu, l'extrapolation : préenregistrés
+
+**Ce qui est joint**, sur `claude/but19` (cd0af4d), après la grille de D-367 et avant toute
+passe de celle-ci sur la population entière. Les rapports sont
+`docs/diagnostics/etape_haut.md`, `etape_ppa.md` et `etape_extrapolation.md`.
+
+* **Les salaires lus sur les quantiles publiés.** La queue de Pareto était greffée sur
+  6,5 % des salariés au lieu de 5 %, la fonction publique avait la forme du privé, et le
+  salaire ne suivait pas l'âge. Toute la distribution des salaires est maintenant lue sur
+  les centiles 5 à 99 de l'Insee Première n° 2079 (privé) et les déciles du Siasp 2024
+  (fonction publique), le rang de chacun venant toujours de l'enquête, avec le gradient
+  d'âge et de sexe de l'ECRT 2026.
+* **La masse des salariés ramenée au champ de l'enquête.** L'enquête Emploi compte 25,29 M
+  de salariés, les comptes nationaux 27,18 M : caler la masse D11 sur les premiers donnait
+  à chacun 6 % de trop. La masse est D11 hors gérants fois 0,9305 (999,9 Md€). La part
+  exonérée qui calait les salaires déclarés tombe de 6,85 % à 0.
+* **L'extrapolation, décidée par le propriétaire le 10 novembre.** Chaque salaire garde sa
+  valeur publiée ; dans les totaux et dans les écarts de réforme, les montants assis sur un
+  salaire (cotisations, CSG et CRDS des salaires, allègements, masses de salaire, mesures de
+  D121) comptent 27,18 / 25,29 = 1,0747 fois, en supposant les salariés absents de
+  l'enquête semblables aux présents (`margins.EXTRAPOLATION_SALARIES`). L'IR, les
+  prestations, les retraites et les niveaux de vie ne sont pas portés. Une marge de calage
+  sur l'effectif salarié a été essayée et écartée : elle retirait 12 % des chômeurs et des
+  non-salariés. Les coûts des réformes sur les salaires montent d'autant : Attal et
+  Retailleau d'environ 9 %, Mélenchon de 7 %, la part CSG de Lisnard de 9 %.
+* **L'emploi discontinu.** Un salarié entré depuis moins d'un an n'est payé que sur ses
+  mois travaillés, une personne sortie depuis moins d'un an sur ses mois d'avant, puis au
+  chômage (ancienneté et temps sans emploi de l'enquête). La masse annuelle ne change pas.
+* **Le non-recours recalé** sur la population reconstruite : p_max 0,6890 (RSA), 0,5327
+  (prime). **La CSG des non-salariés** entre dans les recettes de l'identité comptable et
+  dans la boucle macro avec la CSG.
+
+**Les marges et les lignes.** Les marges de D-366 restent, sauf la masse des salariés, et la
+part exonérée qui tombe à 0. Aucune ligne neuve : les 113 lignes notées de D-363 et D-366 ne
+changent ni de total ni de tolérance. Les lignes de cotisations, de CSG et d'allègements
+lisent désormais des totaux portés par l'extrapolation.
+
+**Le pronostic**, dans `docs/verification/pronostic_d368.json`, tiré comme celui de D-366
+d'une grille passée sur 20 000 ménages avec ce code, donc pas aveugle. Les marges : 5 points
+pour les minima sociaux, les aides au logement et les allocations familiales (D-367 a vu le
+RSA de l'échantillon s'écarter de 3 points), 5, 10 et 25 pour les tranches à 30, 41 et
+45 %, 4 pour l'IR, 0,5 pour les entreprises, 3 ailleurs. Il annonce 79 lignes sur 113 dans
+leur tolérance (78 à D-367), dont 52 des 80 de D-363. Gagnées : les tranches à 41 et 45 %
+et l'IR au barème de 2023. Perdues : les
+allègements (réduction générale de 2022, bandeau maladie), la tranche à 30 % et les foyers
+imposés, qui montent avec les salaires du milieu. « h » : hors de la tolérance attendu.
+
+| ligne | tol. | 2022 | 2023 | 2024 |
+|---|---|---|---|---|
+| `cotisations_salariales` | 10 | −12 à −6 | −13 à −7 | −14 à −8 h |
+| `cotisations_employeurs` | 15 | +22 à +28 h | +21 à +27 h | +19 à +25 h |
+| `reduction_generale` | 15 | +13 à +19 h | +10 à +16 | +12 à +18 |
+| `bandeau_maladie` | 15 | +22 à +28 h | +21 à +27 h | +20 à +26 h |
+| `bandeau_famille` | 15 | +27 à +33 h | +25 à +31 h | +24 à +30 h |
+| `csg_activite` | 15 | −10 à −4 | −10 à −4 | −10 à −4 |
+| `csg_remplacement` | 10 | −5 à +1 | −3 à +3 | −8 à −2 |
+| `foyers_fiscaux` | 10 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `foyers_imposes` | 10 | +13 à +19 h | +10 à +16 h | +5 à +11 |
+| `foyers_tmi_0` | 15 | −15 à −9 | −15 à −9 | −14 à −8 |
+| `foyers_tmi_1` | 15 | −12 à −6 | −14 à −8 | −15 à −9 |
+| `foyers_tmi_2` | 15 | +20 à +30 h | +20 à +30 h | +13 à +23 h |
+| `foyers_tmi_3` | 30 | −26 à −6 | −23 à −3 | −25 à −5 |
+| `foyers_tmi_4` | 30 | −20 à +30 | −10 à +40 | −9 à +41 |
+| `salaires_declares` | 10 | −10 à −4 | −12 à −6 | −12 à −6 |
+| `niveau_de_vie_median` | 15 | −7 à −1 | −9 à −3 | −10 à −4 |
+| `d9_d1` | 15 | −12 à −6 | −14 à −8 | −14 à −8 |
+| `rsa_montant` | 14 | −0 à +10 | +2 à +12 | +4 à +14 |
+| `ppa_montant` | 13 | −28 à −18 h | −30 à −20 h | −26 à −16 h |
+| `aide_logement_montant` | 25 | −34 à −24 h | −34 à −24 h | −32 à −22 h |
+| `af_montant` | 25 | −21 à −11 | −20 à −10 | −19 à −9 |
+| `ppa_foyers` | 25 | +30 à +40 h | +24 à +34 h | +27 à +37 h |
+| `is` | 20 | −20 à −19 | −1 à −0 | +1 à +2 |
+| `contribution_sociale_is` | 25 | −21 à −20 | +33 à +34 h | +20 à +21 |
+| `c3s` | 25 | +11 à +12 | +6 à +7 | +1 à +2 |
+| `ir_bareme` | 10 | — | −0 à +8 | −4 à +4 |
+| `rsa_foyers` | 25 | — | +44 à +54 h | +45 à +55 h |
+| `cvae` | 25 | — | — | −16 à −15 |
+| `cotisations_employeurs_d121` | 15 | −4 à +2 | −5 à +1 | −7 à −1 |
+| `csg_activite_avec_non_salaries` | 15 | −5 à +1 | −5 à +1 | −5 à +1 |
+| `d9_d1_servi` | 15 | −7 à −1 | −9 à −3 | −10 à −4 |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | — | — | −9 à −3 |
+| `impots_salaires_calcules` | 20 | −7 à −1 | −7 à −1 | −7 à −1 |
+| `ir_net` | 15 | +6 à +14 | +9 à +17 | +5 à +13 |
+| `niveau_de_vie_median_servi` | 15 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `ppa_foyers_servis` | 25 | −37 à −27 h | −41 à −31 h | −39 à −29 h |
+| `ppa_montant_servi` | 13 | −35 à −25 h | −37 à −27 h | −34 à −24 h |
+| `revenus_non_salaries_hors_gerants` | 15 | −1 à +5 | +2 à +8 | −7 à −1 |
+| `rsa_foyers_servis` | 25 | — | −8 à +2 | −8 à +2 |
+| `rsa_montant_servi` | 14 | −9 à +1 | −7 à +3 | −5 à +5 |
+
+**Ce que le pronostic désigne ensuite** : les allègements (réduction générale +13 à +16 %,
+bandeaux +23 à +30 %), qui lisent le bas de la distribution et l'extrapolation ; la tranche
+à 30 % (+18 à +25 %) ; la prime d'activité (−29 à −32 % servie) ; les aides au logement.
