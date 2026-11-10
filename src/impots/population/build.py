@@ -23,6 +23,7 @@ from impots.population.calibrate import (
     standard_margins,
     with_cells,
 )
+from impots.population.emploi_discontinu import attach_mois_travailles
 from impots.population.incomes import attach_incomes
 from impots.population.ingest import load_manifest
 from impots.population.skeleton import SEED, build_skeleton
@@ -68,6 +69,8 @@ SCHEMA: dict[str, pl.DataType] = {
     "secteur_non_salarie": pl.String,
     # The share of a salary the income tax exempts (but 19, étape « ir »).
     "part_salaire_exoneree": pl.Float64,
+    # The months a salary is paid on, twelve bits (but 19, étape « ppa »).
+    "mois_travailles": pl.Int64,
 }
 
 
@@ -125,6 +128,9 @@ def _build(seed: int, raking: bool) -> tuple[pl.DataFrame, dict]:
         check_rake_result(diagnostics)
 
     frame, income_stats = attach_incomes(frame, seed=seed)
+    # The months worked (étape « ppa » of but 19): the salaries spread over the months the
+    # survey's flows say were worked, the calibrated wage bill unchanged.
+    frame, months_stats = attach_mois_travailles(frame, seed=seed)
 
     missing = set(SCHEMA) - set(frame.columns)
     if missing:
@@ -143,6 +149,7 @@ def _build(seed: int, raking: bool) -> tuple[pl.DataFrame, dict]:
         },
         "skeleton": asdict(skeleton_stats),
         "incomes": asdict(income_stats),
+        "mois_travailles": asdict(months_stats),
         "raking": rake_diagnostics,
     }
     return frame, provenance

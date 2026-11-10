@@ -194,6 +194,18 @@ def _observed_persons(eec: pl.DataFrame) -> pl.DataFrame:
             pl.col("STATUTDET").alias("statut_detaille"),
             pl.col("TPPRED").alias("temps_partiel"),
             pl.col("TXTPPRED").alias("taux_partiel"),
+            # The year's employment around the survey week, for the months worked
+            # (`emploi_discontinu`, étape « ppa » of but 19): the seniority in the job
+            # (ANCEMPL4), the time since the last job of anyone out of work (ANCSSEMP),
+            # and the class of the current or last job, whose second character tells a
+            # fixed-term contract (ACL_EMPLOI).
+            # Read as missing from a hand-made survey frame that lacks them: nobody's year
+            # is then cut (a tenure of a year or more is the default).
+            *(pl.col(code).alias(name) if code in eec.columns
+              else pl.lit(None, dtype=pl.String).alias(name)
+              for code, name in (("ANCEMPL4", "anciennete_emploi"),
+                                 ("ANCSSEMP", "anciennete_sans_emploi"),
+                                 ("ACL_EMPLOI", "classe_emploi"))),
         )
         .sort(["household_id", "noi"])
         .with_columns(
@@ -726,5 +738,6 @@ SKELETON_COLUMNS = [
     "aide_logement_heberge", "colocation",
     "is_salarie", "pcs", "secteur_public", "fonction_publique", "titulaire",
     "quotite_travail", "naf88",
+    "statut_detaille", "anciennete_emploi", "anciennete_sans_emploi", "classe_emploi",
     "parent_isole", "synthetic",
 ]
