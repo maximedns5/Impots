@@ -658,6 +658,32 @@ of their rate or of their tax shows in it. Wrapped around correction 7's formula
 
 **Blast radius of both:** a person with a daily allowance. The wire carries none; the
 population carries them only when `impute_ij` runs (D-305). Elsewhere nothing moves.
+
+---
+
+**Correction 24 — the share of a salary the income tax exempts (but 19, étape « ir »).**
+
+Not openfisca's law against the code: an input the population needs and openfisca has no
+place for. The gross salaries are calibrated on D11 (1 111,65 Md€ in 2024), and the CSG and
+the contributions are right to read all of it. The income tax is not: D11 holds overtime
+(exempt up to 7 500 € a year, CGI art. 81 quater: 21,8 Md€ declared in 1GH to 1JH), the
+apprentices' pay up to the SMIC (art. 81 bis), placed profit-sharing (art. 163 bis AA and
+B), the exempt prime de partage de la valeur, and the rest the declarations do not carry.
+openfisca's own variable for overtime, `hsup`, ends in 2013. So its taxable salaries ran 7 %
+above the salaries declared (`margins.DECLARED_TAXABLE_WAGES`), and the income tax, convex,
+some 11 % above the barème's.
+
+The correction adds `part_salaire_exoneree_ir`, a person's share of `salaire_imposable` that
+is exempt, zero unless the population writes it (`incomes.attach_incomes`), and takes it off
+`revenu_categoriel_tspr` the way correction 22 adds sick pay: openfisca's own deduction
+rerun on each member's salaries less that share, less what it leaves of the salaries alone.
+So the 10 % deduction falls on the declared salary, as it does. Nothing else reads it: the
+RSA, the prime and the housing aid count the whole salary, as they do. The exempt overtime
+should stay in the revenu fiscal de référence (art. 1417, IV, 1°, c) and does not here: the
+breakdown of the exempt part is not published, and the RFR runs a little low.
+
+**Blast radius:** a person with a share above zero. The wire carries none; the population
+built since the étape « ir » carries one share for every employee.
 """
 
 from __future__ import annotations
@@ -1053,6 +1079,13 @@ def apply_to(system: Any) -> Any:
                                                              deduction.get_formula))
             nettes_corrected = self.get_variable(PENSIONS_NETTES).get_formula(LEVIES_SINCE)
             self.update_variable(_sick_pay_among_the_replacement_incomes(nettes_corrected))
+            # Correction 24 (but 19, étape « ir »). Read after correction 22's update: it wraps
+            # the formula that one left, so the variable keeps both.
+            self.add_variable(_exempt_salary_share())
+            category_with_sick_pay = self.get_variable(SALARY_CATEGORY).get_formula(
+                "0001-01-01")
+            self.update_variable(_exempt_share_off_the_salaries(category_with_sick_pay,
+                                                                deduction.get_formula))
 
     return BenefitCorrections(system)
 
@@ -2058,3 +2091,60 @@ def _sick_pay_among_the_replacement_incomes(openfisca_formula: Any) -> Any:
             return openfisca_formula(individu, period, parameters) + sickness + work + levied
 
     return pensions_nettes
+
+
+#: The share of a person's `salaire_imposable` the income tax exempts (correction 24).
+EXEMPT_SALARY_SHARE = "part_salaire_exoneree_ir"
+
+
+def _exempt_salary_share() -> Any:
+    """`part_salaire_exoneree_ir`: the share of a person's taxable salary that the income tax
+    exempts, an input; zero unless the population writes it (correction 24)."""
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import Individu
+
+    class part_salaire_exoneree_ir(Variable):
+        value_type = float
+        entity = Individu
+        label = ("Part du salaire imposable exonérée d'impôt sur le revenu (heures "
+                 "supplémentaires, apprentis, épargne salariale…), correction 24")
+        reference = "https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/"
+        definition_period = YEAR
+
+    return part_salaire_exoneree_ir
+
+
+class _SalariesLessTheExemptShare(_SalariesWithTheAss):
+    """The individuals as openfisca's deduction formula sees them, each one's salaries less the
+    share the income tax exempts (correction 24)."""
+
+
+def _exempt_share_off_the_salaries(openfisca_formula: Any, deduction_formula: Any) -> Any:
+    """`revenu_categoriel_tspr`, each member's exempt share of his taxable salary taken off
+    (CGI art. 81 quater, 81 bis, 163 bis AA and B): the formula it wraps, plus what openfisca's
+    own deduction leaves of a member's salaries less that share, less what it leaves of the
+    salaries whole. Nothing is read when nobody in the simulation has a share that year."""
+    from openfisca_core.model_api import ADD, YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class revenu_categoriel_tspr(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Revenu catégoriel - Traitements, salaires, pensions et rentes, la part "
+                 "exonérée des salaires déduite (correction 24)")
+        reference = "https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/"
+        definition_period = YEAR
+
+        def formula(foyer_fiscal, period, parameters):
+            montant = openfisca_formula(foyer_fiscal, period, parameters)
+            individus = foyer_fiscal.members
+            share = individus(EXEMPT_SALARY_SHARE, period)
+            if not (share > 0).any():
+                return montant
+            exempt = share * individus("salaire_imposable", period, options=[ADD])
+            avec = deduction_formula(period)(_SalariesLessTheExemptShare(individus, -exempt),
+                                             period, parameters)
+            sans = individus(SALARIES_AFTER_DEDUCTION, period)
+            return montant + foyer_fiscal.sum(avec - sans)
+
+    return revenu_categoriel_tspr

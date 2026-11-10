@@ -368,27 +368,68 @@ VERSEMENT_LIBERATOIRE: dict[str, tuple[int, int]] = {
     "bnc": (281_611, 482_337),
 }
 
+#: Les gérants majoritaires de sociétés (figure 1) : effectif fin 2024 (milliers) et revenu
+#: mensuel moyen, déficits mis à 0. Leur revenu est un salaire pour l'impôt (art. 62 du CGI)
+#: et pour les comptes nationaux, qui le comptent dans D11 : la population le leur verse en
+#: salaire (`incomes.attach_incomes`), pas en bénéfice.
+GERANTS_MAJORITAIRES = (940.0, 3_880.0)
+
 #: Le total que la population doit porter, au champ de l'enquête Emploi : les
-#: non-salariés dont c'est l'emploi principal. Effectifs fois revenus moyens publiés :
-#: classiques 1 864 000 × 4 150 €, micro-entrepreneurs 2 047 000 × 680 € moins les
-#: principalement salariés 0,28 × 2 047 000 × 250 €, agricoles au réel 302 000 × 2 410 €
-#: et au micro-BA 101 000 × 810 € ; 9 793,9 M€ par mois, douze fois.
+#: non-salariés dont c'est l'emploi principal, HORS gérants majoritaires. Effectifs fois
+#: revenus moyens publiés : classiques 1 864 000 × 4 150 €, moins les gérants majoritaires
+#: 940 000 × 3 880 €, micro-entrepreneurs 2 047 000 × 680 € moins les principalement
+#: salariés 0,28 × 2 047 000 × 250 €, agricoles au réel 302 000 × 2 410 € et au micro-BA
+#: 101 000 × 810 € ; 6 146,7 M€ par mois, douze fois.
 SELF_EMPLOYMENT_INCOME = Figure(
-    value=117_526_800_000.0, unit="EUR", year=2024,
+    value=73_760_400_000.0, unit="EUR", year=2024,
     scope="Revenus d'activité non salariés 2024 (déficits mis à 0) des non-salariés en "
-          "activité au 31 décembre, hors micro-entrepreneurs principalement salariés, "
-          "agriculture comprise, France hors Mayotte",
-    source="INSEE, Insee Première n° 2114 (juin 2026), figure 1, encadré et texte ; "
-           "effectifs fois revenus moyens",
+          "activité au 31 décembre, hors gérants majoritaires et hors micro-entrepreneurs "
+          "principalement salariés, agriculture comprise, France hors Mayotte",
+    source="INSEE, Insee Première n° 2114 (juin 2026), figure 1 (dont la ligne « Gérants "
+           "majoritaires de sociétés », 940 000 à 3 880 €), encadré et texte ; effectifs "
+           "fois revenus moyens",
     url=NON_SALARIES_URL, use="calibration",
     caveat="Dépensé : le revenu des non-salariés ne peut plus être une ligne de "
-           "validation. Ce n'est pas une case publiée mais la somme de cinq produits "
-           "publiés : l'Insee publie des effectifs et des revenus moyens, pas leur total. "
-           "L'enquête Emploi compte 3,87 M de non-salariés dans leur emploi principal, "
-           "contre 3,74 M dans ce champ : le calage baisse les revenus tirés d'environ "
-           "3 %. Les gérants majoritaires (940 000, 3 880 €) y sont ; la DGFiP déclare "
-           "leur rémunération en salaires (art. 62 du CGI), et les BIC, BNC et BA "
-           "déclarés (2042-C-PRO) sont donc un autre total, plus petit.",
+           "validation. Ce n'est pas une case publiée mais une somme de produits publiés. "
+           "Jusqu'à l'étape « ir » du but 19, la cible comptait les gérants majoritaires "
+           "(117,53 Md€) et la population leur versait 43,8 Md€ de BIC et de BNC, quand la "
+           "masse salariale calée sur D11 portait déjà leur rémunération : un double compte. "
+           "Ils sont maintenant payés en salaire, calé sur `GERANTS_REMUNERATION`.",
+)
+
+#: Les rémunérations des gérants majoritaires et associés imposées comme des salaires (art.
+#: 62 du CGI), cases 1GB, 1HB, 1IB, 1JB de la 2042, revenus 2024.
+GERANTS_REMUNERATION = Figure(
+    value=30_717_889_341.0, unit="EUR", year=2024,
+    scope="Revenus des associés et gérants (art. 62 du CGI) déclarés, cases 1GB à 1JB",
+    source="DGFiP, L'impôt sur le revenu : les déclarations nationales (2042), revenus 2024",
+    url="https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/",
+    use="calibration",
+    caveat="Dépensé : le salaire imposable des gérants majoritaires de la population. Plus "
+           "petit que le revenu de l'Insee (43,8 Md€), qui compte la part des dividendes "
+           "au-delà de 10 % du capital, imposée en revenus de capitaux mobiliers, et que la "
+           "population ne porte pas. La case a baissé de 37,4 Md€ (2023) à 30,7 Md€ (2024).",
+)
+
+#: Les salaires imposables déclarés par les salariés résidents : ce que l'impôt lit, et
+#: que la masse D11 dépasse de tout ce qui est exonéré d'impôt sur le revenu.
+DECLARED_TAXABLE_WAGES = Figure(
+    value=836_801_494_057.0 - 4_343_947_247.0 - 3_122_828_904.0, unit="EUR", year=2024,
+    scope="Salaires imposables déclarés des résidents, hors gérants : cases 1AJ à 1DJ, 1AA "
+          "à 1DA, 1AF à 1DF, 1AG à 1DG, 1GF à 1JF, 1GG à 1JG, 1TT, 1UT, moins les "
+          "abattements des assistantes maternelles et journalistes (1GA à 1JA), moins les "
+          "traitements et salaires des non-résidents (IRCOM 2025, ligne DINR)",
+    source="DGFiP, L'impôt sur le revenu : les déclarations nationales (2042), revenus "
+           "2024 ; DGFiP, IRCOM 2025 (revenus 2024), national, ligne « Dont non-résidents »",
+    url="https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/",
+    use="calibration",
+    caveat="Dépensé : la part exonérée d'impôt des salaires de la population "
+           "(`incomes.part_salaire_exoneree`) est fixée pour que ses salaires imposables le "
+           "refassent. D11 (1 111,65 Md€ bruts) compte ce que l'impôt exonère : les heures "
+           "supplémentaires (1GH à 1JH, 21,8 Md€ déclarés), les salaires des apprentis "
+           "jusqu'au SMIC, l'intéressement et la participation placés, la prime de partage "
+           "de la valeur, les indemnités de rupture exonérées ; la répartition de ce reste "
+           "entre ces postes n'est pas publiée. Mayotte reste dedans (non publié à part).",
 )
 
 # --------------------------------------------------------------------------- #
