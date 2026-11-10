@@ -1316,7 +1316,10 @@ def test_a_pensioners_disposable_income_does_not_depend_on_evaluation_order() ->
     runner = run(frame, 2024, tier="full").households
     built = build_simulation(frame, baseline(), 2024)
     first = built.calculate("revenu_disponible")
-    np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
+    # The engine's entitlement: the runner serves the RSA and the prime in expectation
+    # under `revenu_disponible` and keeps the engine's figure as `revenu_disponible_droit`
+    # (but 19, étape 4).
+    np.testing.assert_allclose(first, runner["revenu_disponible_droit"].to_numpy(), atol=0.5)
     taxable = built.calculate("retraite_imposable", add=True)
     np.testing.assert_allclose(taxable, frame["pension_annuelle"].to_numpy(), atol=0.5)
 
@@ -1435,7 +1438,10 @@ def test_unemployment_benefit_prices_the_same_whatever_is_computed_first() -> No
     runner = run(frame, 2024, tier="full").households
     built = build_simulation(frame, baseline(), 2024)
     first = built.calculate("revenu_disponible")
-    np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
+    # The engine's entitlement: the runner serves the RSA and the prime in expectation
+    # under `revenu_disponible` and keeps the engine's figure as `revenu_disponible_droit`
+    # (but 19, étape 4).
+    np.testing.assert_allclose(first, runner["revenu_disponible_droit"].to_numpy(), atol=0.5)
 
 
 def test_unemployment_benefit_is_taxed_and_levied_net_of_its_csg() -> None:
@@ -1619,7 +1625,10 @@ def test_a_renters_disposable_income_does_not_depend_on_evaluation_order() -> No
     frame = _renters()
     runner = run(frame, 2024, tier="full").households
     first = build_simulation(frame, baseline(), 2024).calculate("revenu_disponible")
-    np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
+    # The engine's entitlement: the runner serves the RSA and the prime in expectation
+    # under `revenu_disponible` and keeps the engine's figure as `revenu_disponible_droit`
+    # (but 19, étape 4).
+    np.testing.assert_allclose(first, runner["revenu_disponible_droit"].to_numpy(), atol=0.5)
 
 
 # --------------------------------------------------------------------------- #

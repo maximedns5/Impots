@@ -319,7 +319,52 @@ def _extract(
                 array.astype(np.float64), index_for[row.entity], n_households
             )
         results[row.key] = -values if row.negate else values
+    if tier == "full":
+        _serve_in_expectation(results, built, famille_index, n_households)
     return results
+
+
+#: The columns the take-up layer serves in expectation (but 19, étape 4). Each keeps its
+#: full-take-up entitlement beside it as `{key}_droit`.
+SERVED = ("rsa", "ppa", "crds_mini", "aefa")
+
+
+def _serve_in_expectation(results: dict[str, np.ndarray], built: Any,
+                          famille_index: np.ndarray, n_households: int) -> None:
+    """Serve the RSA and the prime d'activité in expectation (`population.recours`).
+
+    The engine computes an ENTITLEMENT; the Caf counts what it PAYS. From here on, `rsa`,
+    `ppa`, their CRDS (`crds_mini`) and the prime de Noël (`aefa`) are what each famille
+    is paid in expectation, its probability of take-up times its entitlement, month by
+    month; `revenu_disponible` loses what is not claimed. The entitlements stay, as
+    `{key}_droit` and `revenu_disponible_droit`, for the lines that compare an
+    entitlement through the Drees bridge (the reconciliation and the grid, D-363), and
+    for a reader who wants the full-take-up figure. The cost of a reform, its deciles and
+    its instrument deltas are then the difference of two expectations, which counts the
+    families a larger entitlement brings to claim it. The allocataire counts stay
+    entitlement counts; `n_allocataires_{rsa,ppa}_servi` are the expected payees.
+    """
+    from impots.population import recours
+
+    famille = recours.colonnes(built)
+    unclaimed = np.zeros(n_households)
+    for key in SERVED:
+        droit = _to_households(famille[f"{key}_droit"], famille_index, n_households)
+        paid = _to_households(famille[f"{key}_servi"], famille_index, n_households)
+        # The registry's own read and the month-by-month one must be the same euros:
+        # a gap would be served money the cost cannot see.
+        if not np.allclose(droit, results[key], rtol=1e-6, atol=0.05):
+            raise WiringError(f"{key} : le droit mois par mois ne refait pas celui de la "
+                              f"passe ({float(droit.sum()):.2f} contre "
+                              f"{float(results[key].sum()):.2f})")
+        results[f"{key}_droit"] = results[key]
+        results[key] = paid
+        unclaimed += results[f"{key}_droit"] - paid
+    for key in recours.PRESTATIONS:
+        results[f"n_allocataires_{key}_servi"] = _to_households(
+            famille[f"n_{key}_servi"], famille_index, n_households)
+    results["revenu_disponible_droit"] = results["revenu_disponible"]
+    results["revenu_disponible"] = results["revenu_disponible"] - unclaimed
 
 
 def _impute_niches(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any]:
