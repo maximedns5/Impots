@@ -791,7 +791,7 @@ l'IMK et de l'OCDE déjà manifestées, si le propriétaire rouvre D-246. Une in
 tire l'erreur du coût mesurée ici. Puis les juges du passé, sur un modèle dont l'erreur est
 connue.
 
-### But 19 — Un modèle juste sur sa population, et une démarche que chacun peut refaire (proposé le 10 novembre 2026)
+### But 19 — Un modèle juste sur sa population (validé le 10 novembre 2026, D-365)
 
 La grille du but 18 a mesuré le modèle ; six diagnostics, le 10 novembre
 (`docs/diagnostics/`, leur synthèse dans `SYNTHESE.md`), ont expliqué ses écarts. Les 22
@@ -822,54 +822,63 @@ de +18,30. Et un constat les domine tous : un lecteur voit chaque nombre et boug
 curseurs, mais ne peut rien vérifier. Le dépôt est privé, et aucune page ne porte de lien
 vers une source.
 
-Le but tient ensemble les deux moitiés. Un modèle juste qu'on ne peut pas vérifier ne
-convainc personne ; une démarche transparente sur un modèle faux se réfute en une page. Le
-propriétaire, le 10 novembre : prouver ce qu'on avance, que le lecteur comprenne la
+Le propriétaire, le 10 novembre : prouver ce qu'on avance, que le lecteur comprenne la
 démarche au point de juger lui-même si une mesure d'un candidat est une bonne ou une
-mauvaise idée.
+mauvaise idée. Un modèle juste qu'on ne peut pas vérifier ne convainc personne ; une
+démarche transparente sur un modèle faux se réfute en une page. Les deux moitiés sont deux
+buts : celui-ci corrige le modèle, le but 20 l'explique, sur les nombres de la série
+refaite. Le dépôt devient public et le site se publie (D-365).
 
 ```
 /goal La population tient la grille de vérification sur ses causes connues, chaque
-chiffrage est refait sur elle, et un lecteur peut refaire le chemin de chaque nombre
-publié, de la source au verdict ; c'est mergé dans main. Dans l'ordre : (1) les trois
+chiffrage est refait sur elle, et c'est mergé dans main. Dans l'ordre : (1) les trois
 textes faux des pages sont corrigés, et la grille compare ce qu'elle doit (les cotisations
 des employeurs au sens D121, avec les impôts sur les salaires et la pension de l'État en
 lignes à part ; un IR net comparable ; l'IS au millésime de ses bénéfices ; l'URL Filosofi
 juste) ; (2) les indépendants ont un revenu, tiré de sources publiées et calé ; (3) les
 foyers fiscaux sont découpés comme la DGFiP les compte (concubins séparés, rattachement des
-jeunes majeurs, adultes hors ménages ordinaires) et l'âge des 15-24 ans suit leur place
-dans le ménage ; (4) le non-recours au RSA, à la prime d'activité et aux aides au logement
-entre dans le coût des réformes, en espérance, depuis les taux publiés par la Drees ;
-(5) la grille et la série des dix études sont refaites, chacune préenregistrée avec son
-pronostic avant de tourner, et chaque page dit ce qui a bougé et pourquoi ; (6) un parcours
-public de huit pages (un ménage, la France simulée, le coût, les comportements, l'activité,
-la dette, le verdict, où l'outil se trompe), où chaque page prouve une chose, montre sa
-donnée avec le lien de sa source et donne au lecteur un curseur, et où deux candidats se
-comparent sur la même base. Aucune tolérance de la grille ne change. Preuve attendue : la
-grille avant et après, ligne par ligne ; les D-entrées de préenregistrement et de résultat
-de chaque étape ; la série refaite et ce qui a bougé ; les huit pages, vérifiées au
-téléphone, chaque nombre relié à sa source ; la sortie verte des tests ciblés, de make
-impact et des lourds ; l'URL de la PR et le SHA du merge. Ou s'arrêter après 80 tours, en
-disant quelles étapes restent et pourquoi.
+jeunes majeurs, adultes hors ménages ordinaires), l'âge des 15-24 ans suit leur place dans
+le ménage, et le calage porte les foyers par situation et tranche de revenu et le statut
+d'occupation (`calibrate.py` ouvert, D-365) ; (4) le non-recours au RSA, à la prime
+d'activité et aux aides au logement entre dans le coût des réformes, en espérance, depuis
+les taux publiés par la Drees ; (5) la grille et la série des dix études sont refaites,
+chacune préenregistrée avec son pronostic avant de tourner, et chaque page dit ce qui a
+bougé et pourquoi. Aucune tolérance de la grille ne change ; une ligne neuve a la sienne
+avant son premier calcul. Preuve attendue : la grille avant et après, ligne par ligne ; les
+D-entrées de préenregistrement et de résultat de chaque étape ; la série refaite et ce qui
+a bougé ; la sortie verte des tests ciblés, de make impact et des lourds ; l'URL de la PR
+et le SHA du merge. Ou s'arrêter après 80 tours, en disant quelles étapes restent et
+pourquoi.
 ```
 
-Le budget : une à deux semaines d'horloge. La grille tourne en vingt minutes et se relance
-après chaque étape ; la série des dix études, une fois, à la fin des étapes 2 à 4. Les
-pronostics des étapes 2 à 4 viennent de mesures sur échantillon faites par les diagnostics :
-ils ne sont pas aveugles, et leur D-entrée le dit.
+Le budget : une à deux semaines d'horloge. Les étapes 1 à 4 se développent en parallèle,
+chacune dans son worktree, et se joignent une à une ; la grille (vingt minutes) se relance
+après chaque jonction, la série des dix études une fois, à la fin. Les pronostics des
+étapes 2 à 4 viennent de mesures sur échantillon faites par les diagnostics : ils ne sont
+pas aveugles, et leur D-entrée le dit.
 
-Les décisions à prendre avant de lancer :
+### But 20 — La démarche que chacun peut refaire (validé le 10 novembre 2026, D-365)
 
-* **Rendre le dépôt public, ou publier sur le site les rapports et leurs sources.** Sans
-  l'un ou l'autre, l'étape 6 ne prouve rien : le lecteur ne peut pas suivre un lien.
-* **Ouvrir `calibrate.py` avant la phase 7.** Le calage des foyers sur la situation de
-  famille et la tranche de revenu, le statut d'occupation et les charges déductibles y
-  passent. Sans lui, l'étape 3 ramène les foyers à leur total mais dégrade les tranches à
-  30 et 41 % et l'impôt au barème ; le but s'arrête alors à ce qui tient sans calage, et le
-  dit.
-* **Un but ou deux.** Les étapes 1 à 5 corrigent le modèle, l'étape 6 l'explique. Les
-  couper donne deux PR plus courtes ; l'explication attendrait la série refaite, puisque
-  ses pages en citent les nombres.
+Le constat du diagnostic de la démarche (`docs/diagnostics/demarche.md`) : un lecteur voit
+chaque nombre et bouge des curseurs, mais ne peut rien vérifier. Ce but construit le
+parcours qui le lui permet, sur les nombres de la série refaite au but 19.
+
+```
+/goal Un lecteur qui n'a pas lu le dépôt peut refaire le chemin de chaque nombre publié,
+de la source au verdict, et juger lui-même une mesure ; le site public le porte, et c'est
+mergé dans main. Un parcours de huit pages (un ménage, la France simulée, le coût, les
+comportements, l'activité, la dette, le verdict, où l'outil se trompe) : chaque page
+prouve une chose, montre sa donnée avec le lien de sa source publique et le fichier du
+dépôt public qui la calcule, et donne au lecteur un curseur. La page de l'erreur range
+l'erreur de la grille par étage, montre qu'elle est stable, et sépare l'erreur de niveau
+de l'erreur de coût. Deux candidats se comparent sur la même base : le coût de la
+première année, la dette sans boucle, ce que la boucle lit ou non, le coût par euro rendu
+aux trois premiers déciles. Aucun nombre d'étude ne change dans ce but. Preuve attendue :
+les huit pages en ligne, vérifiées au téléphone, chaque nombre relié à sa source ; une
+relecture adverse par un lecteur qui n'a pas lu le dépôt, et le sort de chaque constat ;
+la sortie verte des tests ciblés ; l'URL de la PR, le SHA du merge et l'URL du site. Ou
+s'arrêter après 50 tours, en disant quelles pages manquent.
+```
 
 **Ce qui viendrait ensuite.** La population sur l'ERFS 2022 (`docs/PHASE1C_ERFS.md`), si
 la grille montre que la population de l'enquête Emploi plafonne ; les réductions et crédits

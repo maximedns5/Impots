@@ -27272,3 +27272,39 @@ imputation, il reste à la réconciliation (+19,0 % sur les recettes nettes). L'
 barème et les foyers au RSA de 2022, la CVAE de 2022 et 2023 : refusés, faute de total ou
 de barème. La réconciliation des entreprises n'est pas régénérée : ses cibles mêlent 2024
 et 2025 ; les lignes des entreprises de la grille la remplacent sur 2022 à 2024.
+
+## D-365 — Les buts 19 et 20 validés : le dépôt public, calibrate.py ouvert
+
+**Le 10 novembre 2026, le propriétaire** valide le but 19 proposé le même jour, coupé en
+deux buts, et tranche les trois décisions qu'il laissait ouvertes. Les six diagnostics qui
+le fondent sont dans `docs/diagnostics/`, commités avant cette entrée ; leurs mesures sont
+sur échantillon, en lecture seule, et ne changent aucun nombre d'étude.
+
+**Deux buts.** Le but 19 corrige le modèle (étapes 1 à 5 : la grille et les textes, le
+revenu des indépendants, les foyers fiscaux et le calage, le non-recours dans le coût, la
+grille et la série refaites). Le but 20 construit le parcours public de huit pages sur les
+nombres de la série refaite : il commence quand le but 19 est mergé. Le propriétaire veut
+que la démarche soit comprise au point qu'un lecteur juge lui-même une mesure.
+
+**Le dépôt devient public, et le site se publie.** Une démarche se prouve si un sceptique
+peut refaire le chemin ; un dépôt privé ne le permet pas. Avant ce choix, les fichiers
+suivis et l'historique ont été relus : aucun secret, aucune donnée de l'ERFS (qui reste
+hors de git, D-016), un seul échantillon de l'enquête Emploi, sous Licence Ouverte. Le
+changement de visibilité et l'activation de GitHub Pages sont des réglages du dépôt que
+seul le propriétaire fait ; la variable `SITE_PUBLIE` du workflow aussi. Les issues du
+dépôt deviennent l'adresse où signaler une erreur (`site_reglages.json`, D-357) : elles
+seront ouvertes au public avec lui.
+
+**`calibrate.py` est ouvert pour le but 19**, avant la phase 7. Le calage des foyers par
+situation de famille et tranche de revenu, du statut d'occupation et des charges
+déductibles y passe ; sans lui, découper les foyers ramène leur total mais dégrade les
+tranches à 30 et 41 % et l'impôt au barème (`docs/diagnostics/foyers_fiscaux.md`). La règle
+de `CLAUDE.md` le dit. Chaque marge neuve nomme sa source publiée et son année, et sa
+cible entre dans la D-entrée de préenregistrement de l'étape qui l'ajoute.
+
+**Comment les étapes avancent.** Les étapes 1 à 4 se développent en parallèle, chacune dans
+son worktree et sur sa branche partie de `claude/but19`, par un agent qui ne lance aucune
+passe sur la population entière. Elles se joignent sur `claude/but19` une à une. Chaque
+jonction qui change un nombre de la grille est préenregistrée avec son pronostic avant que
+la grille tourne ; les pronostics tirés des diagnostics le disent. La série des dix études
+tourne une fois, quand les quatre étapes sont jointes, préenregistrée.
