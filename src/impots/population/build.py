@@ -45,6 +45,8 @@ SCHEMA: dict[str, pl.DataType] = {
     "statut_activite": pl.String,
     "statut_occupation": pl.String,
     "zone_apl": pl.String,
+    # The DOM département, drawn (étape al) ; null in metropole.
+    "departement": pl.String,
     "is_salarie": pl.Boolean,
     "pcs": pl.String,
     "secteur_public": pl.Boolean,

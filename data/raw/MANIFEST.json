@@ -1865,6 +1865,42 @@
       "licence": "Insee — Licence Ouverte / Etalab",
       "description": "Insee, dossier complet France, RP 2023, tableau LOG T10 « Résidences principales selon le statut d'occupation » : propriétaires 17 944 861, locataires 12 584 249 dont HLM loué vide 4 546 449, logés gratuitement 691 037, ensemble 31 220 147. Page HTML enregistrée telle quelle. Marge du calage du statut d'occupation (margins.TENURE_2023, but 19, étape 3).",
       "quarantined": false
+    },
+    "UU2020_au_01-01-2026.zip": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4802589/UU2020_au_01-01-2026.zip",
+      "sha256": "262e511e5781ab9480eb77064f98c5dcaf35e21fa30e066fd88d89e3adcdaf5d",
+      "bytes": 1072365,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, base des unités urbaines 2020, géographie au 01/01/2026 : statut de chaque commune dans son unité urbaine (STATUT_COM_UU), pour tirer la zone APL (étape al du but 19)",
+      "quarantined": false
+    },
+    "base_cc_logement_2023_xlsx.zip": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8997194/base_cc_logement_2023_xlsx.zip",
+      "sha256": "0eccb43a2966f496c3fe397764da2992002a6694093834e5ec65e470e8cc83cc",
+      "bytes": 62588981,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, RP 2023, logement, base des principaux indicateurs par commune (géographie 2026) : résidences principales, locataires, HLM louées vides, pour la zone APL et les départements des DOM (étape al)",
+      "quarantined": false
+    },
+    "beneficiaires_CAF_31-12-2024_Iris.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8682393/beneficiaires_CAF_31-12-2024_Iris.xlsx",
+      "sha256": "e8f02333a22074f4460dd9e94d1f6b698623799a72c74c315154abad00137e17",
+      "bytes": 2641821,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee / Cnaf, bénéficiaires des prestations légales au 31/12/2024 par Iris et commune (communes à Iris) : allocataires d'une aide au logement, de l'APL, étudiants ; comparaison par zone (étape al)",
+      "quarantined": false
+    },
+    "sdes_rpls_2024_datalab_essentiel.pdf": {
+      "url": "https://www.statistiques.developpement-durable.gouv.fr/media/7974/download?inline",
+      "sha256": "06ea948ce4babd5df770decc764a1991ae4dacb942ccb5a97cea27f426e986a6",
+      "bytes": 522296,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "SDES, Datalab Essentiel, « 5,4 millions de logements locatifs sociaux en France au 1er janvier 2024 » (RPLS), tableau 4 : loyer moyen du parc social par m² (étape al)",
+      "quarantined": false
     }
   }
 }

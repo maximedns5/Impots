@@ -33,7 +33,7 @@ from statistics import NormalDist
 import numpy as np
 import polars as pl
 
-from impots.population import margins
+from impots.population import logement, margins
 
 SEED = 20240101
 
@@ -87,12 +87,6 @@ RETIREMENT_AGE = 55
 #: anchored. Recorded here rather than hidden inside a call.
 PENSION_SIGMA = 0.55
 UNEMPLOYMENT_SIGMA = 0.45
-
-#: Dwelling size, in m², as a function of household size. An assumption — no
-#: published surface distribution was used — and the weakest link in the housing
-#: benefit chain. See margins.RENT_PER_M2.
-SURFACE_BASE_M2 = 30.0
-SURFACE_PER_PERSON_M2 = 12.0
 
 
 #: The self-employment draw has its own stream, so that adding it moved no wage, pension
@@ -609,20 +603,9 @@ def attach_incomes(
         else chomage_draw
     )
 
-    # ---- rent -------------------------------------------------------------
-    statut = frame["statut_occupation"].to_numpy()
-    household_size = (
-        frame.group_by("household_id").agg(pl.len().alias("size"))
-        .join(frame.select("household_id"), on="household_id", how="right")["size"]
-        .to_numpy()
-    )
-    surface = SURFACE_BASE_M2 + SURFACE_PER_PERSON_M2 * household_size
-    social = statut == "locataire_hlm"
-    private = np.isin(statut, ["locataire_vide", "locataire_meuble", "locataire_foyer"])
-    rent = np.where(
-        social, surface * margins.RENT_PER_M2["social"].value,
-        np.where(private, surface * margins.RENT_PER_M2["prive"].value, 0.0),
-    )
+    # ---- rent: by tenure, zone and size (`logement`, étape al) -------------
+    rent = logement.monthly_rent(frame["statut_occupation"].to_numpy(),
+                                 frame["zone_apl"].to_numpy(), logement.household_size(frame))
 
     enriched = frame.with_columns(
         pl.Series("salaire_brut_annuel", wages),

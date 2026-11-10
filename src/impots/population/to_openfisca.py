@@ -498,6 +498,13 @@ def build_simulation(
     statut = _text(menage["statut_occupation"])
     zone = _text(menage["zone_apl"])
     loyer = menage["loyer_mensuel"].to_numpy().astype(np.float64)
+    # The DOM (étape al): the drawn département, as a commune code openfisca's
+    # `residence_<dom>` read by their prefix. Metropole keeps the default, the empty
+    # string, so that nothing else reading `depcom` moves there.
+    depcom = None
+    if "departement" in frame.columns:
+        depcom = _text(_group_frame(frame, "household_id", ["departement"]).select(
+            (pl.col("departement") + "01").fill_null(""))["departement"])
 
     for offset in range(HISTORY_YEARS, -1, -1):
         for month in range(1, 13):
@@ -515,6 +522,8 @@ def build_simulation(
             simulation.set_input("statut_occupation_logement", period, statut)
             simulation.set_input("zone_apl", period, zone)
             simulation.set_input("loyer", period, loyer)
+            if depcom is not None:
+                simulation.set_input("depcom", period, depcom)
 
     # ---- the self-employed's income, on each year of the history -----------
     # Annual boxes, written N-2 to N as the earnings are: the RSA and the prime read the
@@ -538,6 +547,13 @@ def build_simulation(
     parent_isole = foyer["parent_isole"].to_numpy().astype(bool)
     for offset in range(HISTORY_YEARS, -1, -1):
         simulation.set_input("caseT", str(year - offset), parent_isole)
+    # The fiscal domicile of a DOM foyer, for the income tax's DOM abattement, on every
+    # year of the history, before the RFR of N-2 is pinned. A foyer lives in one ménage.
+    if "departement" in frame.columns:
+        depcom_foyer = _text(_group_frame(frame, "foyer_id", ["departement"]).select(
+            (pl.col("departement") + "01").fill_null("00000"))["departement"])
+        for offset in range(HISTORY_YEARS, -1, -1):
+            simulation.set_input("depcom_foyer", str(year - offset), depcom_foyer)
 
     if niche_bases:
         _set_niche_inputs(
