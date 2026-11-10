@@ -372,3 +372,132 @@ Un essai de construction du squelette sur un sixième des ménages de l'EEC (non
 5,21 / 10,26 / 14,97 M), une seule zone par ménage. Ni `make impact` ni les lourds n'ont
 tourné. **La population doit être reconstruite** (`make data`) pour porter la colonne
 `departement` ; sans elle, `to_openfisca` se comporte comme avant.
+
+## 7. Suite : qui est au bail (les deux surcomptes corrigés)
+
+*Le 10 novembre 2026, après la jonction de `claude/but19` (étapes al et « ir ») dans
+cette branche. Population **reconstruite dans ce worktree** (`impots population build`,
+une fois, liens `population_2024.*` supprimés d'abord ; 423 347 personnes, 199 451
+ménages, calage en 27 itérations, aucun écrêtage).*
+
+### 7.1 La règle et sa source
+
+* **CCH art. R. 821-4** : « Lorsque plusieurs personnes ou ménages constituant des foyers
+  distincts occupent le même logement et qu'ils sont […] cotitulaires du bail ou de
+  l'engagement de location, une aide personnelle au logement peut être accordée à
+  chacune de ces personnes ou chacun de ces ménages. » Un foyer distinct qui n'est pas
+  au bail (un fils de 26 ans qui travaille, une mère veuve, logés par la famille) n'a
+  pas d'aide.
+* **CCH art. D. 842-3** : en colocation, « le loyer principal retenu est le résultat du
+  quotient du loyer effectivement payé par le nombre de cotitulaires du bail ».
+* **CCH art. D. 823-16** et arrêté du 27 septembre 2019, art. 8 : le loyer plafond des
+  colocataires est 0,75 fois celui d'une personne isolée (le paramètre `coef_colocation`
+  d'openfisca, lu quand `coloc` est vrai, avec le forfait de charges des colocataires).
+* **CASF art. R. 262-9** (forfait logement du RSA ; la prime le reprend) : une personne
+  hébergée à titre gratuit a le forfait logement entier.
+* Les deux premiers textes sont lus dans un extrait du CCH (sites-cites.fr, « dispositions
+  réglementaires APL », 2022) ; Légifrance n'a pas été relu depuis le conteneur.
+
+**Ce que fait openfisca.** Chaque famille lit le loyer de son ménage
+(`famille.demandeur.menage('loyer')`) : un logement, une famille. `coloc` existe (plafond
+et charges), aucune variable ne dit qu'une famille est hors du bail, et
+`proprietaire_proche_famille` (le logement d'un parent) n'annule que l'ALS et l'ALF, pas
+l'APL.
+
+### 7.2 Ce qui change
+
+* **`engine/corrections.py`, correction 25** (sur le modèle de la 24 : une entrée qui
+  manque à openfisca, pas un désaccord avec lui ; pas d'entrée dans `CORRECTIONS`, faute
+  de test de mort à écrire). Variable d'entrée `aide_logement_heberge` (famille, mois,
+  fausse par défaut). `aide_logement_montant_brut` est nul pour une famille hébergée
+  (APL, ALS et ALF, CRDS comprise), enveloppé autour de la correction 6.
+  `rsa_forfait_logement` et `ppa_forfait_logement` lui comptent le forfait entier : la
+  formule d'openfisca relue comme si l'aide dépassait le forfait. **Une D-entrée est
+  à écrire** par le coordinateur (je n'en écris pas).
+* **`population/logement.py`, `lodging`** ; `skeleton.py` (après `_assign_units`),
+  `build.py` : deux colonnes. `aide_logement_heberge` : les familles autres que celle de
+  la personne de référence, dans un logement que l'EEC type comme celui d'une famille
+  (`TYPLOG5` 1 à 4). `colocation` : un logement « autre » (`TYPLOG5` 5) de plusieurs
+  familles. Population reconstruite : 0,90 M de familles hébergées chez des locataires
+  (1,29 M chez des propriétaires, sans effet), 1,02 M de ménages en colocation.
+* **`population/to_openfisca.py`** : `coloc` par ménage, le loyer d'une colocation divisé
+  par son nombre de familles, `aide_logement_heberge` par famille, sur les 36 mois. Sans
+  les colonnes, rien ne change.
+* **Hypothèses**, car l'EEC ne dit pas qui a signé le bail : dans un logement de famille,
+  personne d'autre que la famille de référence n'est au bail ; dans un logement
+  « autre », toutes les familles le sont. La seconde surestime sans doute l'aide (une
+  part de ces familles est hébergée).
+
+### 7.3 La mesure
+
+20 000 ménages de la population reconstruite, `runner.subsample`, graine 20240101, droit
+2024, palier complet. « Avant » : la même population sans les deux colonnes (le code
+d'avant) ; « après » : avec. Non aveugle.
+
+| ligne (2024) | avant | hébergés seuls | après | publié |
+|---|---|---|---|---|
+| aides au logement, Md€ | 13,05 | 12,25 | **11,16** | 15,67 |
+| allocataires AL, décembre, M | 5,21 | 4,80 | **4,63** | ≈ 5,8 |
+| prime d'activité servie, Md€ | 7,13 | 7,06 | 7,10 | |
+| RSA servi, Md€ | 10,550 | 10,545 | 10,549 | |
+| IR, AF, CSG, salaires | | | ±0,00 % | |
+| niveau de vie D1 / D5 / D9 | | | −0,5 / −0,1 / 0,0 % | |
+
+Les hébergés font −0,80 Md€ et −0,41 M d'allocataires ; la colocation −1,10 Md€ et
+−0,17 M. L'aide d'avant était de 13,05 Md€ et non 12,67 (§ 2) : la population est
+reconstruite avec l'étape « ir », qui change les ressources.
+
+**Le RSA et la prime.** Le RSA ne bouge pas (−0,01 %). La prime baisse de 0,07 Md€ par
+les hébergés : ceux dont l'aide était sous le forfait logement en retiraient moins que le
+forfait ; hébergés à titre gratuit, ils en retirent le forfait entier, comme le veut la
+règle. La colocation la remonte de 0,03 Md€ (une aide plus petite, un forfait plus
+petit). Ce sont des mouvements de droit, pas des erreurs.
+
+**Le niveau de vie** du premier dixième baisse de 0,5 % : l'aide retirée était dans les
+bas revenus.
+
+### 7.4 Ce que cela dit, et le pronostic révisé
+
+L'écart de la ligne passe de −17 % à **−29 %** (11,16 contre 15,67 Md€), **hors de la
+tolérance de ±25 %**. Le modèle était dans la tolérance parce qu'il comptait deux fois
+des loyers. Ce qui manque désormais, −4,5 Md€ : hors champ ≈ 0,9 (foyers et résidences,
+accédants, § 2.1 a et b) ; régime permanent nominal 0,23 ; loyer HLM de l'Ancols 0,13 ;
+le reste, ≈ 3,2 Md€, pour l'essentiel des locataires ordinaires trop riches dans le
+modèle (cause e : les revenus ne sont pas tirés selon le statut d'occupation) et trop
+peu nombreux à être aidés (4,63 M d'allocataires contre 5,23 M de locataires aidés hors
+foyers et accédants en 2023, −11 %). C'est la marge de revenu par statut d'occupation
+(§ 3) qui le corrigerait.
+
+**Pronostic révisé, ligne `aide_logement_montant` (±25 %)** — les années 2022 et 2023
+gardent l'écart de pente du diagnostic (1 à 2 points plus bas que 2024) :
+
+| année | publié, Md€ | pronostic |
+|---|---|---|
+| 2022 | 15,11 | −34 à −28 % (hors tolérance) |
+| 2023 | 15,33 | −33 à −27 % (hors tolérance) |
+| 2024 | 15,67 | −32 à −26 % (hors tolérance) |
+
+La ligne neuve proposée « allocataires en zone 1 » (§ 3) baisse aussi (de +20 à +30 %
+vers 0 à +20 %, hypothèse : la zone n'a pas été remesurée). **L'art. 74 du PLF 2027, volet logement** suit le niveau : de −82 M€ (§ 4) à
+**−70 à −76 M€** contre −101 M€ officiels, encore dans la tolérance de 40 M€. Les autres
+lignes ne bougent pas, sauf la prime (−0,5 % de niveau, −0,7 % de foyers servis).
+
+### 7.5 Les tests
+
+`tests/test_logement.py`, quatre tests neufs : l'hébergé n'a pas d'aide, en location
+privée et en HLM (avant : 3 464 € par an, vu échouer) ; la famille de référence garde la
+sienne ; le forfait logement du RSA de l'hébergé ne bouge pas (76,29 € par mois) ; la
+colocation a 0,75 fois le plafond (208,71 € contre 278,28 €), la moitié du loyer
+(350 €) et une aide plus basse de plus de 300 € par an (vu échouer). Sur le code d'avant
+(`corrections.py` et `to_openfisca.py` remis), trois échouent ; le test du forfait passe,
+il garde que rien ne bouge.
+
+```
+$ pytest -q -p no:randomly tests/test_logement.py
+10 passed in 13.12s
+$ pytest -m "not lourd and not chrono" -n 2 -q tests/test_engine.py
+  tests/test_population.py tests/test_foyers_fiscaux.py tests/test_logement.py
+  tests/test_prestations.py tests/test_secteur_public.py tests/test_salaires_exoneres.py
+  tests/test_non_salaries.py
+525 passed in 377.03s
+```
