@@ -24,6 +24,7 @@ from impots.population.calibrate import (
     with_cells,
 )
 from impots.population.emploi_discontinu import attach_mois_travailles
+from impots.population.familles_jeunes import attach_familles_jeunes
 from impots.population.incomes import attach_incomes
 from impots.population.ingest import load_manifest
 from impots.population.skeleton import SEED, build_skeleton
@@ -131,6 +132,10 @@ def _build(seed: int, raking: bool) -> tuple[pl.DataFrame, dict]:
     # The months worked (étape « ppa » of but 19): the salaries spread over the months the
     # survey's flows say were worked, the calibrated wage bill unchanged.
     frame, months_stats = attach_mois_travailles(frame, seed=seed)
+    # The young adults living with their parents (étape « ppa2 »): a child of 18 to 24
+    # paid above the prestations familiales ceiling is a famille of his own, as the
+    # Drees counts him (n° 1379, encadré 3); the prime is his, not his parents'.
+    frame, jeunes_stats = attach_familles_jeunes(frame)
 
     missing = set(SCHEMA) - set(frame.columns)
     if missing:
@@ -150,6 +155,7 @@ def _build(seed: int, raking: bool) -> tuple[pl.DataFrame, dict]:
         "skeleton": asdict(skeleton_stats),
         "incomes": asdict(income_stats),
         "mois_travailles": asdict(months_stats),
+        "familles_jeunes": asdict(jeunes_stats),
         "raking": rake_diagnostics,
     }
     return frame, provenance

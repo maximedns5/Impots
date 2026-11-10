@@ -1956,6 +1956,15 @@
       "description": "Insee, Revenus salariaux, données annuelles 2022 (décembre 2025) : revenu salarial, salaire en EQTP, volume de travail par sexe, âge, diplôme, CS, quotité, secteur (étape ppa)",
       "quarantined": false
     },
+    "drees_er1379_non_recours_ppa.pdf": {
+      "url": "https://drees.solidarites-sante.gouv.fr/sites/default/files/2026-07/ER1379_Non-recours_PA.pdf",
+      "sha256": "222853d711e012ee3bb36d423a8381a8e1edfb019d341dbe163e8cd06262ac13",
+      "bytes": 286280,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Drees, Études et Résultats n° 1379 (juillet 2026, C. Gayet), « Non-recours à la prime d'activité : la moitié des foyers éligibles ne la perçoivent pas fin 2021 », 8 p. Lu sur la copie de l'Internet Archive (web.archive.org/web/2026id_/ + l'URL), le site de la Drees refusant le conteneur. Tableau 1 : éligibles, recourants, non-recourants, taux en foyers (48-52 %) et en masse (43-46 %), beta error 13 % ; graphique 1 : répartition des recourants et des non-recourants par montant mensuel PAR UNITÉ DE CONSOMMATION (tranches de 50 €, note du graphique et note 3) ; tableau 2 : composition familiale, logement, emploi des recourants et non-recourants ; encadré 3 : les jeunes actifs comptés en foyers sociaux autonomes. Source du τ de `recours.PPA` et de `familles_jeunes` (étape ppa2).",
+      "quarantined": false
+    },
     "senat_r25-728_ccomptes_prime_activite.pdf": {
       "url": "https://www.senat.fr/rap/r25-728/r25-7281.pdf",
       "sha256": "8990f4c044ea85301f77ef2154ce7d881e12eb0d8fdab14564faee431633d0df",
