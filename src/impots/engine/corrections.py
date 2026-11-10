@@ -684,6 +684,34 @@ breakdown of the exempt part is not published, and the RFR runs a little low.
 
 **Blast radius:** a person with a share above zero. The wire carries none; the population
 built since the étape « ir » carries one share for every employee.
+
+---
+
+**Correction 25 — a famille that is not on the lease has no housing aid (CCH art. R. 821-4),
+but 19, étape al.**
+
+Again an input openfisca has no place for, not openfisca against the code. openfisca computes
+the housing aid of each famille on the rent of its ménage (`famille.demandeur.menage('loyer')`):
+one dwelling, one famille, which is what its own situations describe. The population puts
+every adult who is neither the reference person, nor the partner, nor a child the tax code
+may attach, in a famille of his own: an employed son of 26, a widowed mother, a sister. Each
+drew the aid on the whole rent of his parents' dwelling, with the plafond of a person alone:
+0,38 M familles, 0,78 Md€ in 2024 (étape al, § 2.1). The code gives the aid to « plusieurs
+personnes ou ménages constituant des foyers distincts [qui] occupent le même logement »
+only when « cotitulaires du bail ou de l'engagement de location » (CCH art. R. 821-4), the
+colocation, whose rent is shared (art. D. 842-3) and whose plafond is cut (art. D. 823-16,
+openfisca's `coloc`). A relative lodged in a family's dwelling is not on its lease.
+
+The correction adds `aide_logement_heberge`, a famille-level input, false unless the
+population writes it (`logement.lodging`), and sets the aid of such a famille to zero at
+`aide_logement_montant_brut` (so the CRDS on it is zero too): wrapped around correction 6.
+The RSA's and the prime's forfait logement then read the lodged famille as what it is,
+« hébergée à titre gratuit » (CASF art. R. 262-9; openfisca's own reading for
+`loge_gratuitement`): the forfait in full, which before it drew through its housing aid.
+
+**Blast radius:** a famille marked lodged. The wire carries none; the population built
+since the étape al marks the familles other than the reference person's in a dwelling the
+EEC types as a family's (`TYPLOG5` 1 to 4).
 """
 
 from __future__ import annotations
@@ -1086,6 +1114,14 @@ def apply_to(system: Any) -> Any:
                 "0001-01-01")
             self.update_variable(_exempt_share_off_the_salaries(category_with_sick_pay,
                                                                 deduction.get_formula))
+            # Correction 25 (but 19, étape al). Read after correction 6's update: it wraps the
+            # formula that one left, so the variable keeps both.
+            self.add_variable(_lodged_famille())
+            al_amount_corrected = self.get_variable(AL_AMOUNT).get_formula("2016-07-01")
+            self.update_variable(_no_housing_aid_off_the_lease(al_amount_corrected))
+            for name in (RSA_FORFAIT_LOGEMENT, PPA_FORFAIT_LOGEMENT):
+                forfait = self.get_variable(name).get_formula(FORFAIT_LOGEMENT_SINCE)
+                self.update_variable(_forfait_logement_of_the_lodged(name, forfait))
 
     return BenefitCorrections(system)
 
@@ -2148,3 +2184,100 @@ def _exempt_share_off_the_salaries(openfisca_formula: Any, deduction_formula: An
             return montant + foyer_fiscal.sum(avec - sans)
 
     return revenu_categoriel_tspr
+
+
+#: A famille lodged in a dwelling whose lease it is not on (correction 25).
+LODGED = "aide_logement_heberge"
+RSA_FORFAIT_LOGEMENT = "rsa_forfait_logement"
+PPA_FORFAIT_LOGEMENT = "ppa_forfait_logement"
+#: The formula era both forfaits are read in: every year this project accepts.
+FORFAIT_LOGEMENT_SINCE = "2016-01-01"
+
+
+def _lodged_famille() -> Any:
+    """`aide_logement_heberge`: the famille lives in a dwelling whose lease it is not on, an
+    input; false unless the population writes it (correction 25)."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_dispatch_by_period
+    from openfisca_france.entities import Famille
+
+    class aide_logement_heberge(Variable):
+        value_type = bool
+        entity = Famille
+        label = ("La famille est hébergée dans un logement dont elle n'est pas cotitulaire du "
+                 "bail (correction 25)")
+        reference = "https://www.legifrance.gouv.fr/codes/id/LEGISCTA000038878839"
+        definition_period = MONTH
+        set_input = set_input_dispatch_by_period
+
+    return aide_logement_heberge
+
+
+def _no_housing_aid_off_the_lease(openfisca_formula: Any) -> Any:
+    """`aide_logement_montant_brut`, zero for a famille lodged off the lease (CCH art.
+    R. 821-4): the formula it wraps for everyone else."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_divide_by_period, where
+    from openfisca_france.entities import Famille
+
+    class aide_logement_montant_brut(Variable):  # openfisca's naming
+        value_type = float
+        entity = Famille
+        label = ("Montant des aides au logement après dégressivité et minoration forfaitaire, "
+                 "avant CRDS ; nul pour une famille hébergée hors du bail (CCH art. R. 821-4)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878905"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula_2016_07_01(famille, period, parameters):
+            montant = openfisca_formula(famille, period, parameters)
+            heberge = famille(LODGED, period)
+            if not heberge.any():
+                return montant
+            return where(heberge, 0.0, montant)
+
+    return aide_logement_montant_brut
+
+
+def _forfait_logement_of_the_lodged(name: str, openfisca_formula: Any) -> Any:
+    """The RSA's or the prime's forfait logement, in full for a famille lodged off the lease,
+    « hébergée à titre gratuit » (CASF art. R. 262-9): openfisca's formula for everyone else,
+    and for the lodged one the same formula read as if its housing aid exceeded the forfait,
+    which is what its `min_(aide_logement, forfait)` then returns."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_divide_by_period, where
+    from openfisca_france.entities import Famille
+
+    class _AsIfAidedAboveTheForfait:
+        """The famille as the forfait formula reads it, its housing aid set above any
+        forfait, so that the formula returns the forfait itself."""
+
+        def __init__(self, famille: Any) -> None:
+            self._famille = famille
+
+        def __call__(self, variable: str, period: Any, *args: Any, **kwargs: Any) -> Any:
+            value = self._famille(variable, period, *args, **kwargs)
+            if variable == "aide_logement":
+                return value * 0 + 1e9
+            return value
+
+        def __getattr__(self, attribute: str) -> Any:
+            return getattr(self._famille, attribute)
+
+    class forfait(Variable):
+        value_type = float
+        entity = Famille
+        label = (f"{name}, en entier pour une famille hébergée à titre gratuit hors du bail "
+                 "(correction 25)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031694445"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula_2016_01_01(famille, period, parameters):
+            montant = openfisca_formula(famille, period, parameters)
+            heberge = famille(LODGED, period)
+            if not heberge.any():
+                return montant
+            plein = openfisca_formula(_AsIfAidedAboveTheForfait(famille), period, parameters)
+            return where(heberge, plein, montant)
+
+    forfait.__name__ = name
+    forfait.__qualname__ = name
+    return forfait

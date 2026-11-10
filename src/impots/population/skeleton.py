@@ -491,7 +491,7 @@ def build_skeleton(
         people = pl.concat([people, children], how="diagonal_relaxed")
     people = _draw_zone(people, seed)
 
-    people = _assign_units(people)
+    people = logement.lodging(_assign_units(people))
     people = people.sort(["household_id", "unit", "role_rank"]).with_columns(
         pl.int_range(pl.len()).alias("person_id")
     )
@@ -723,6 +723,7 @@ SKELETON_COLUMNS = [
     "age", "sex", "region",
     "role_menage", "role_foyer", "role_famille",
     "statut_activite", "statut_occupation", "zone_apl", "departement",
+    "aide_logement_heberge", "colocation",
     "is_salarie", "pcs", "secteur_public", "fonction_publique", "titulaire",
     "quotite_travail", "naf88",
     "parent_isole", "synthetic",

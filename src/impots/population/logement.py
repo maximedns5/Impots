@@ -99,3 +99,31 @@ def household_size(frame: pl.DataFrame) -> np.ndarray:
         .join(frame.select("household_id"), on="household_id", how="right")["size"]
         .to_numpy()
     )
+
+
+#: The EEC's `TYPLOG5` of a dwelling built around a family: a person alone, a lone parent,
+#: a couple with or without children. « 5 », « autre », is any other composition.
+FAMILY_DWELLINGS = ("1", "2", "3", "4")
+
+
+def lodging(people: pl.DataFrame) -> pl.DataFrame:
+    """Who is on the lease (étape al, second part): two columns, on every row.
+
+    `aide_logement_heberge`: the person's famille is not the reference person's (`unit` 0)
+    in a dwelling the EEC types as a family's. A grown son, a widowed mother, a sister,
+    lodged by the family, are not « cotitulaires du bail » (CCH art. R. 821-4) and have no
+    housing aid. An assumption: the EEC does not say who signed the lease.
+
+    `colocation`: the ménage is an « autre » dwelling of several familles. Each is taken
+    for a cotitulaire of the lease, the colocation of art. R. 821-4: its rent is the
+    dwelling's divided by the number of familles (art. D. 842-3, in `to_openfisca`), its
+    plafond the colocation's (art. D. 823-16, openfisca's `coloc`). The assumption the
+    other way: some of these familles are lodged, not co-tenants.
+    """
+    over = pl.col("household_id")
+    several = pl.col("unit").n_unique().over(over) > 1
+    family_dwelling = pl.col("hh_type").is_in(FAMILY_DWELLINGS).fill_null(False)
+    return people.with_columns(
+        (family_dwelling & (pl.col("unit") != 0)).alias("aide_logement_heberge"),
+        (~family_dwelling & several).alias("colocation"),
+    )

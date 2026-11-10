@@ -511,6 +511,21 @@ def build_simulation(
     # The DOM (étape al): the drawn département, as a commune code openfisca's
     # `residence_<dom>` read by their prefix. Metropole keeps the default, the empty
     # string, so that nothing else reading `depcom` moves there.
+    # Who is on the lease (étape al): a colocation's familles each pay the dwelling's rent
+    # divided by their number (CCH art. D. 842-3) under the colocation's plafond (`coloc`,
+    # art. D. 823-16); a famille lodged off the lease has no aid (correction 25).
+    coloc = None
+    if "colocation" in frame.columns:
+        menage_coloc = frame.group_by("household_id").agg(
+            pl.col("colocation").first(), pl.col("famille_id").n_unique().alias("familles"),
+        ).sort("household_id")
+        coloc = menage_coloc["colocation"].to_numpy().astype(bool)
+        loyer = np.where(coloc, loyer / menage_coloc["familles"].to_numpy(), loyer)
+    heberge = None
+    if ("aide_logement_heberge" in frame.columns
+            and "aide_logement_heberge" in tax_benefit_system.variables):
+        heberge = _group_frame(frame, "famille_id", ["aide_logement_heberge"])[
+            "aide_logement_heberge"].to_numpy().astype(bool)
     depcom = None
     if "departement" in frame.columns:
         depcom = _text(_group_frame(frame, "household_id", ["departement"]).select(
@@ -534,6 +549,10 @@ def build_simulation(
             simulation.set_input("loyer", period, loyer)
             if depcom is not None:
                 simulation.set_input("depcom", period, depcom)
+            if coloc is not None:
+                simulation.set_input("coloc", period, coloc)
+            if heberge is not None:
+                simulation.set_input("aide_logement_heberge", period, heberge)
 
     # ---- the self-employed's income, on each year of the history -----------
     # Annual boxes, written N-2 to N as the earnings are: the RSA and the prime read the
