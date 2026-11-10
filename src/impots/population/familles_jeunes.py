@@ -36,12 +36,12 @@ plus pour les allocations familiales, et le moteur le retire déjà du nombre d'
 la prime. La Drees sort tous les jeunes actifs ; le seuil garde aux parents les
 allocations familiales d'un enfant qui a un job d'été (sans lui, ces allocations
 perdaient 3 % sur l'échantillon). **Hypothèses, dites.** Le seuil est lu sur le mois
-moyen travaillé, quand la Caf le lit mois par mois. Le jeune hébergé chez des parents locataires n'a pas de
-forfait logement dans le moteur (le moteur lit le statut d'occupation du ménage), alors
-que la Caf le compte logé gratuitement : sa prime est trop haute d'au plus le forfait
-(75 € par mois pour une personne seule en 2024) ; défaut du câblage, mesuré, non corrigé
-ici. L'étudiant salarié n'est pas distingué : l'enquête ne dit pas qui est inscrit dans
-le supérieur au sens de la Caf, et le plancher de 0,78 Smic des apprenants
+moyen travaillé, quand la Caf le lit mois par mois. Le jeune hébergé chez des parents
+locataires n'a pas de forfait logement dans le moteur (le moteur lit le statut
+d'occupation du ménage), alors que la Caf le compte logé gratuitement : sa prime est
+trop haute d'au plus le forfait (75 € par mois pour une personne seule en 2024) ; défaut
+du câblage, mesuré, non corrigé ici. L'étudiant salarié n'est pas distingué : l'enquête ne dit pas qui est inscrit dans
+le supérieur au sens de la Caf, et le plancher de revenu des apprenants
 (`ppa_eligibilite_apprenants`) ne joue pas.
 """
 
@@ -85,7 +85,7 @@ def revenu_mensuel(frame: pl.DataFrame) -> pl.Expr:
 
 
 def jeunes_actifs(frame: pl.DataFrame) -> pl.Expr:
-    """Les enfants de la famille de 18 à 24 ans qui ne sont plus à charge de leurs parents."""
+    """Les enfants de 18 à 24 ans qui ne sont plus à la charge de leurs parents."""
     return ((pl.col("role_famille") == "enfant") & (pl.col("age") >= AGE_MIN)
             & (pl.col("age") < AGE_MAX) & (revenu_mensuel(frame) > SEUIL_A_CHARGE))
 
@@ -96,13 +96,15 @@ def attach_familles_jeunes(frame: pl.DataFrame) -> tuple[pl.DataFrame, FamillesJ
     jeunes = frame.filter(marque)
     nouvelle = (pl.col("famille_id") + pl.lit("-j") + pl.col("person_id").cast(pl.String))
     out = frame.with_columns(marque).with_columns(
-        pl.when("_jeune").then(nouvelle).otherwise(pl.col("famille_id")).alias("famille_id"),
+        pl.when("_jeune").then(nouvelle).otherwise(pl.col("famille_id"))
+        .alias("famille_id"),
         pl.when("_jeune").then(pl.lit("demandeur")).otherwise(pl.col("role_famille"))
         .alias("role_famille"),
     )
     if "aide_logement_heberge" in out.columns:
         out = out.with_columns(
-            (pl.col("aide_logement_heberge") | pl.col("_jeune")).alias("aide_logement_heberge"))
+            (pl.col("aide_logement_heberge") | pl.col("_jeune"))
+            .alias("aide_logement_heberge"))
     out = out.drop("_jeune")
     stats = FamillesJeunesStats(
         jeunes=jeunes.height,
