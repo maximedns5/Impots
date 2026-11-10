@@ -501,19 +501,18 @@ RSA_NON_TAKE_UP = Figure(
 # --------------------------------------------------------------------------- #
 # Rent — the weakest input in the model, and the one the housing-benefit
 # validation line rests on. Published per square metre; the surface itself is an
-# assumption, stated in `incomes.py`.
+# assumption, stated in `logement.py`. The social rent is RPLS's, by zone
+# (`HLM_RENT_PER_M2`, étape al); the 5,6 €/m² it replaces was not on the page cited.
 # --------------------------------------------------------------------------- #
 RENT_PER_M2: dict[str, Figure] = {
     "prive": Figure(8.8, "EUR_per_m2_per_month", 2024,
                     "Loyer au m² des locataires du parc privé",
                     "INSEE, France portrait social 2024 — dépenses de logement",
-                    "https://www.insee.fr/fr/statistiques/8612568", "context"),
-    "social": Figure(5.6, "EUR_per_m2_per_month", 2024,
-                     "Loyer au m² des locataires du parc social",
-                     "INSEE, France portrait social 2024 — dépenses de logement",
-                     "https://www.insee.fr/fr/statistiques/8612568", "context",
-                     caveat="No published surface distribution was used: the dwelling "
-                            "size rule in incomes.py is an assumption, not a measurement."),
+                    "https://www.insee.fr/fr/statistiques/8612568", "context",
+                    caveat="Not found on the page cited (re-read 10/11/2026: it gives "
+                           "spending per dwelling, no rent per m²). Every private tenant's "
+                           "rent is above his loyer plafond (unfurnished: all of them) "
+                           "so the aid barely reads it, but the number has no source."),
 }
 
 # --------------------------------------------------------------------------- #
@@ -759,3 +758,79 @@ def tenure_targets() -> dict[str, float]:
 def figures_by_use(use: Use) -> dict[str, Figure]:
     """Every module-level `Figure` declared with the given use."""
     return _figures_by_use(globals(), use)
+
+
+# --------------------------------------------------------------------------- #
+# Housing aid geography and social rents (but 19, étape al)
+#
+# The EEC carries no commune, only the commune's place in its urban unit
+# (`STCOMM2020`: ville-centre, banlieue, ville isolée, hors unité urbaine) and
+# metropole / DOM. The APL zone is a list of communes. The two are crossed here, on
+# the commune: the census's résidences principales by tenure (RP 2023), the commune's
+# status in the 2020 urban units (Insee, géographie 2026) and openfisca's own zoning
+# file (`assets/apl/20110914_zonage.csv`, the one its `zone_apl` formula reads from
+# `depcom`). 151 résidences principales of 31,22 M have no zone in that file (communes
+# created since). The DOM are all zone 2.
+# --------------------------------------------------------------------------- #
+RP_LOGEMENT_2023_URL = "https://www.insee.fr/fr/statistiques/8997194"
+UU2020_URL = "https://www.insee.fr/fr/information/4802589"
+
+#: Résidences principales of metropolitan France, by the commune's status in its urban
+#: unit, the household's tenure and the commune's APL zone (1, 2, 3). « hlm » is the
+#: census's « résidence principale HLM louée vide », « autre_locataire » every other
+#: tenant (vide non HLM, meublé, hôtel), « autre » owners and the logés gratuitement.
+APL_ZONE_BY_STCOMM: dict[str, tuple[float, float, float]] = {
+    "C|hlm": (228_311.0, 964_375.0, 727_618.0),
+    "C|autre_locataire": (527_092.0, 1_983_396.0, 1_201_420.0),
+    "C|autre": (527_511.0, 1_938_461.0, 2_313_221.0),
+    "B|hlm": (927_241.0, 894_579.0, 199_097.0),
+    "B|autre_locataire": (983_305.0, 1_182_624.0, 435_466.0),
+    "B|autre": (1_875_468.0, 2_943_719.0, 1_736_814.0),
+    "I|hlm": (8_938.0, 17_234.0, 244_790.0),
+    "I|autre_locataire": (13_619.0, 32_698.0, 542_326.0),
+    "I|autre": (51_213.0, 96_566.0, 1_693_511.0),
+    "H|hlm": (1_639.0, 5_691.0, 190_584.0),
+    "H|autre_locataire": (9_855.0, 32_001.0, 889_856.0),
+    "H|autre": (59_137.0, 183_816.0, 4_757_513.0),
+}
+
+APL_ZONE_SOURCES = Figure(
+    value=30_421_000.0, unit="count", year=2023,
+    scope="Résidences principales de métropole, croisées commune par commune : statut "
+          "d'occupation (RP 2023, base des principaux indicateurs, COM_2023, colonnes "
+          "« Résid princ occupées Locataires » et « Résid princ HLM louée vide »), statut "
+          "de la commune dans l'unité urbaine 2020 (STATUT_COM_UU, géographie 2026), zone "
+          "APL du fichier d'openfisca-france",
+    source="Insee, RP 2023, base_cc_logement_2023 ; Insee, base des unités urbaines 2020 "
+           "au 01/01/2026 ; openfisca-france, assets/apl/20110914_zonage.csv",
+    url=RP_LOGEMENT_2023_URL, use="calibration",
+    caveat="The zoning file is of 2014 communes and the census of 2026 ones: the 151 "
+           "résidences principales whose commune it lacks are left out. Zone 1 is "
+           "the Paris agglomeration of the 1978 arrêté (with the villes nouvelles), "
+           "not Île-de-France. Spent as the draw of each ménage's zone.",
+)
+
+#: Résidences principales by DOM département (RP 2023, same base), to draw a DOM
+#: ménage's département: the EEC says only « DOM ». Mayotte is outside the census base.
+DOM_HOUSEHOLDS_BY_DEPARTEMENT: dict[str, float] = {
+    "971": 179_833.0, "972": 171_743.0, "973": 88_425.0, "974": 359_288.0,
+}
+
+RPLS_2024_URL = ("https://www.statistiques.developpement-durable.gouv.fr/"
+                 "54-millions-de-logements-locatifs-sociaux-en-france-au-1er-janvier-2024")
+
+#: Loyer moyen du parc social, euros par m² de surface habitable, baux en cours au
+#: 1er janvier 2024 (tableau 4) : France entière 6,52 ; Île-de-France 7,68 ; province
+#: et DROM 6,15.
+HLM_RENT_PER_M2: dict[str, Figure] = {
+    "ile_de_france": Figure(7.68, "EUR_per_m2_per_month", 2024,
+                            "Loyer moyen du parc social, Île-de-France",
+                            "SDES, Datalab Essentiel, RPLS au 1er janvier 2024, tableau 4",
+                            RPLS_2024_URL, "calibration",
+                            caveat="Applied to zone 1 (the Paris agglomeration), the "
+                                   "nearest the population can say to Île-de-France."),
+    "province_drom": Figure(6.15, "EUR_per_m2_per_month", 2024,
+                            "Loyer moyen du parc social, province et DROM",
+                            "SDES, Datalab Essentiel, RPLS au 1er janvier 2024, tableau 4",
+                            RPLS_2024_URL, "calibration"),
+}

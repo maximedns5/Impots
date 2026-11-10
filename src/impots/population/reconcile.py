@@ -133,8 +133,8 @@ BENEFIT_ZERO_NOTES = {
             "lui), donc l'aide en foyer — résidences étudiantes, FJT, EHPAD — est "
             "nulle. (c) L'APL accession est nulle, et doublement : les accédants n'ont "
             "pas de mensualité ET le moteur n'y répond pas (mesuré : +0,0000 md). (d) "
-            "`zone_apl` ne peut jamais valoir zone 1, donc le barème parisien est "
-            "absent."
+            "La zone 1 est tirée (étape al du but 19) aux parts du recensement, "
+            "pas lue : quels ménages y vivent n'est pas connu."
         ),
         "spend_effect": (
             "Mesuré sur la dépense : un pont de 1,15 seulement suffirait à porter la "

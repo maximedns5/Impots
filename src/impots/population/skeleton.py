@@ -66,7 +66,7 @@ from dataclasses import dataclass
 import numpy as np
 import polars as pl
 
-from impots.population import margins
+from impots.population import logement, margins
 from impots.population.ingest import load_eec
 
 #: Published under-15 counts cover only children living with a resident parent.
@@ -108,18 +108,10 @@ STATUT_OCCUPATION: dict[str, str] = {
     "9": "locataire_vide",
 }
 
-#: EEC `STCOMM2020` -> APL zone. A genuine approximation: STCOMM2020 measures
-#: position in an urban unit, while the APL zoning is an administrative list of
-#: communes. Zone 1 is Paris and its inner suburbs specifically, which no EEC
-#: variable identifies, so the mapping cannot produce zone 1 at all — housing aid
-#: is therefore slightly under-estimated for Paris. Recorded in the reconciliation
-#: report rather than smoothed over.
-ZONE_APL: dict[str, str] = {
-    "C": "zone_2",   # ville-centre
-    "B": "zone_2",   # banlieue
-    "I": "zone_3",   # ville isolée
-    "H": "zone_3",   # hors unité urbaine
-}
+#: EEC `STCOMM2020` -> APL zone: no longer a mapping but a draw, ménage by ménage, on
+#: the census's résidences principales of the same urban-unit status and tenure
+#: (`logement.draw_zone_and_departement`, étape al of but 19). The mapping it replaces
+#: (ville-centre and banlieue zone 2, the rest zone 3) could not produce zone 1.
 
 #: EEC `PCS1Q` -> the four categories INSEE publishes wage distributions for.
 #: Farmers (10) and artisans/shopkeepers (20) are self-employed: they get no wage, and
@@ -467,7 +459,6 @@ def build_skeleton(
           .otherwise(pl.lit("dom")).alias("region"),
         pl.col("hh_so").replace_strict(STATUT_OCCUPATION, default="locataire_vide")
           .alias("statut_occupation"),
-        pl.col("hh_stcomm").replace_strict(ZONE_APL, default="zone_3").alias("zone_apl"),
         pl.lit(False).alias("synthetic"),
         # Job characteristics: what the wage synthesis conditions on.
         # STATUT is null for anyone not in employment, so the comparison yields
@@ -498,6 +489,7 @@ def build_skeleton(
     if children_per_household is not None:
         children = _synthesise_children(people, children_per_household, rng)
         people = pl.concat([people, children], how="diagonal_relaxed")
+    people = _draw_zone(people, seed)
 
     people = _assign_units(people)
     people = people.sort(["household_id", "unit", "role_rank"]).with_columns(
@@ -537,7 +529,6 @@ def _synthesise_children(
             pl.col("weight").first(),
             pl.col("region").first(),
             pl.col("statut_occupation").first(),
-            pl.col("zone_apl").first(),
             pl.col("insee_child").sum().alias("visible_children"),
         )
         .filter(pl.col("hh_type").is_in(CHILD_HOUSEHOLD_TYPES))
@@ -552,11 +543,10 @@ def _synthesise_children(
     weights = households["weight"].to_list()
     regions = households["region"].to_list()
     occupations = households["statut_occupation"].to_list()
-    zones = households["zone_apl"].to_list()
     visible = households["visible_children"].to_list()
 
-    for household, hh_type, weight, region, occupation, zone, seen in zip(
-        ids, types, weights, regions, occupations, zones, visible, strict=True
+    for household, hh_type, weight, region, occupation, seen in zip(
+        ids, types, weights, regions, occupations, visible, strict=True
     ):
         probabilities = distribution[hh_type]
         total = int(rng.choice(len(probabilities), p=probabilities))
@@ -580,7 +570,6 @@ def _synthesise_children(
                 "quotite_travail": 1.0,
                 "region": region,
                 "statut_occupation": occupation,
-                "zone_apl": zone,
                 "hh_type": hh_type,
                 "is_reference": False,
                 "is_conjoint": False,
@@ -606,6 +595,29 @@ def _synthesise_children(
         keep = rng.random(children.height) < (target / drawn)
         children = children.filter(pl.Series(keep))
     return children
+
+
+def _draw_zone(people: pl.DataFrame, seed: int) -> pl.DataFrame:
+    """The APL zone and the DOM département of each ménage (`logement`), on every row.
+
+    Drawn once the synthesised children are in, on the ménage's observed members'
+    urban-unit status, region and tenure, from its own stream: no other draw moves.
+    """
+    households = (
+        people.group_by("household_id").agg(
+            pl.col("hh_stcomm").drop_nulls().first(),
+            pl.col("region").first(),
+            pl.col("statut_occupation").first(),
+        ).sort("household_id")
+    )
+    zone, departement = logement.draw_zone_and_departement(
+        households["hh_stcomm"].to_numpy(), (households["region"] == "dom").to_numpy(),
+        households["statut_occupation"].to_numpy(), seed)
+    drawn = households.select("household_id").with_columns(
+        pl.Series("zone_apl", zone.tolist(), dtype=pl.String),
+        pl.Series("departement", departement.tolist(), dtype=pl.String),
+    )
+    return people.join(drawn, on="household_id", how="left", maintain_order="left")
 
 
 def _assign_units(people: pl.DataFrame) -> pl.DataFrame:
@@ -710,7 +722,7 @@ SKELETON_COLUMNS = [
     "person_id", "household_id", "foyer_id", "famille_id", "weight",
     "age", "sex", "region",
     "role_menage", "role_foyer", "role_famille",
-    "statut_activite", "statut_occupation", "zone_apl",
+    "statut_activite", "statut_occupation", "zone_apl", "departement",
     "is_salarie", "pcs", "secteur_public", "fonction_publique", "titulaire",
     "quotite_travail", "naf88",
     "parent_isole", "synthetic",
