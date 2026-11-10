@@ -459,6 +459,117 @@ HOUSEHOLDS = Figure(
 )
 
 
+# --------------------------------------------------------------------------- #
+# Foyers fiscaux as the DGFiP counts them (but 19, étape 3).
+#
+# A foyer fiscal is a déclaration, not a dwelling: concubins file two, a young adult
+# who is not rattaché files his own. The skeleton draws both from the figures below;
+# the famille (CAF) is left as it was, so that the benefits see the same households.
+# --------------------------------------------------------------------------- #
+POP3_URL = "https://www.insee.fr/fr/statistiques/fichier/8202264/TD_POP3_2021_csv.zip"
+
+#: Share of the persons living in a couple who are in « concubinage ou union libre »
+#: (STAT_CONJ_19 = 3 over 1 + 2 + 3), by quinquennial age (lower bound; 80 = 80 or
+#: more). Recomputed from TD_POP3_2021, lines NIVGEO = COM summed, both sexes.
+UNION_LIBRE_SHARE_BY_AGE: dict[int, float] = {
+    15: 0.863051, 20: 0.727370, 25: 0.505629, 30: 0.325125, 35: 0.249017,
+    40: 0.206582, 45: 0.185745, 50: 0.158176, 55: 0.122499, 60: 0.084792,
+    65: 0.060995, 70: 0.044832, 75: 0.035380, 80: 0.026810,
+}
+
+UNION_LIBRE_SHARE = Figure(
+    value=0.188, unit="ratio", year=2021,
+    scope="Personnes de 15 ans ou plus en couple : part en concubinage ou union libre "
+          "(6,11 M sur 32,49 M), France hors Mayotte",
+    source="Insee, recensement 2021, tableau détaillé TD_POP3 (sexe, âge, statut "
+           "conjugal)",
+    url=POP3_URL, use="calibration",
+    caveat="Spent: the skeleton splits each paired couple into two foyers fiscaux with "
+           "the mean of its two members' shares, by age. The draw ignores who, in "
+           "reality, is married (concubins are younger and more often both in work than "
+           "an age-only draw says). The famille (CAF) is not split.",
+)
+
+#: Enfants célibataires majeurs rattachés au foyer fiscal de leurs parents, case 0DJ
+#: (the second column of the export, the number of children, not of foyers).
+RATTACHES_MAJEURS = Figure(
+    value=2_014_392, unit="count", year=2024,
+    scope="Nombre d'enfants célibataires rattachés (case 0DJ, nombre d'enfants), "
+          "déclarations des revenus 2024 ; 1 720 889 foyers",
+    source="DGFiP, « L'impôt sur le revenu : les déclarations nationales » (2042), "
+           "export manifesté dgfip_ir_2042_nat_export_2026-10-15.csv",
+    url="https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/",
+    use="calibration",
+    caveat="Spent: the probability that an eligible young adult living with his parents "
+           "is rattaché is set so that the weighted rattachés reach it. 0DJ also counts "
+           "rattachés who do not live with their parents (students in their own "
+           "dwelling), whom the EEC puts in a household of their own: the model, which "
+           "can only rattach a co-resident child, therefore rattaches a little too many "
+           "of those it sees. How many is not published.",
+)
+
+#: Enfants des familles aged 18 to 24, ordinary households, France hors Mayotte.
+FAM6_URL = "https://www.insee.fr/fr/statistiques/fichier/8205229/TD_FAM6v1_2021_csv.zip"
+CHILDREN_18_24 = Figure(
+    value=2_930_587, unit="count", year=2021,
+    scope="Enfants des familles âgés de 18 à 24 ans (AGEFOR5 = 18), France hors Mayotte",
+    source="Insee, recensement 2021, tableau détaillé TD_FAM6v1 (enfants par âge et type "
+           "de famille), lignes NIVGEO = COM",
+    url=FAM6_URL, use="calibration",
+    caveat="Anchors the share of 18-24-year-olds living as a child of the family; the "
+           "shape inside the band is regional (CHILD_SHARE_SHAPE).",
+)
+
+#: Persons of 15-19 and 20-24 years in ordinary households (CATPR = 01), census 2021,
+#: TD_POP2 (already manifested), lines NIVGEO = COM. Spread evenly over the five years.
+ORDINARY_HOUSEHOLD_POPULATION_15_24: dict[int, float] = {15: 4_024_913.0, 20: 3_673_432.0}
+
+#: Share of young people living with their parents, by single year of age: Nouvelle-
+#: Aquitaine, census 2013, Insee Flash Nouvelle-Aquitaine n° 21, figure 1
+#: (https://www.insee.fr/fr/statistiques/2573899): 72,1 % at 18, 51,1 % at 20, 37,3 % at
+#: 22, 20,7 % at 25. 19, 21, 23 and 24 are interpolated, 15 to 17 are an assumption near
+#: the 98,1 % of under-18s that SL_PERS1 (RP 2022) counts as children of a family. No
+#: national table by single year of age was found (searched: Insee Première n° 1686,
+#: RP séries longues SL_PERS1, TD_FAM6, all banded). The SHAPE only is used: the level
+#: of 18-24 is moved, by one shift on the logit scale, onto CHILDREN_18_24.
+CHILD_SHARE_SHAPE: dict[int, float] = {
+    15: 0.97, 16: 0.97, 17: 0.97,
+    18: 0.721, 19: 0.616, 20: 0.511, 21: 0.442, 22: 0.373, 23: 0.318, 24: 0.262,
+}
+
+# --------------------------------------------------------------------------- #
+# Housing tenure — a raking margin (but 19, étape 3, D-365).
+# --------------------------------------------------------------------------- #
+LOG_T10_URL = "https://www.insee.fr/fr/statistiques/2011101?geo=FE-1"
+
+#: Résidences principales by statut d'occupation, RP 2023, LOG T10, France.
+TENURE_2023: dict[str, float] = {
+    "proprietaire": 17_944_861.0,
+    "locataire_hlm": 4_546_449.0,
+    "locataire_autre": 12_584_249.0 - 4_546_449.0,
+    "loge_gratuitement": 691_037.0,
+}
+
+HOUSEHOLDS_BY_TENURE = Figure(
+    value=31_220_147.0, unit="count", year=2023,
+    scope="Résidences principales selon le statut d'occupation : propriétaires "
+          "(accédants compris), locataires d'un logement HLM loué vide, autres locataires "
+          "(vide non HLM, meublé, chambre d'hôtel), logés gratuitement",
+    source="Insee, RP 2023, exploitation principale, tableau LOG T10",
+    url=LOG_T10_URL, use="calibration",
+    caveat="Spent once the raking targets it. Its total (31,22 M) is not the household "
+           "total of HOUSEHOLDS_BY_TYPE (31,27 M, exploitation complémentaire): the "
+           "shares are kept and scaled onto the latter, so that the two margins do not "
+           "contradict each other (D-150). The EEC's usufruitiers are owners.",
+)
+
+
+def tenure_targets() -> dict[str, float]:
+    """LOG T10's shares on the household total the type margin holds."""
+    total = sum(TENURE_2023.values())
+    return {key: value / total * HOUSEHOLDS.value for key, value in TENURE_2023.items()}
+
+
 def figures_by_use(use: Use) -> dict[str, Figure]:
     """Every module-level `Figure` declared with the given use."""
     return _figures_by_use(globals(), use)

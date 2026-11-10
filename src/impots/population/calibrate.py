@@ -55,6 +55,7 @@ from typing import Literal
 import numpy as np
 import polars as pl
 
+from impots.population import margins as _margins
 from impots.population.margins import HOUSEHOLDS_BY_TYPE as _HOUSEHOLDS_BY_TYPE
 
 #: Stop when the largest relative weight change in a full pass falls below this.
@@ -381,6 +382,19 @@ AGE_BANDS: tuple[tuple[str, int, int], ...] = (
 )
 
 
+#: `statut_occupation` -> the four categories of the census's LOG T10 (D-365). An
+#: accédant is an owner there; a furnished let is a non-HLM tenancy.
+TENURE: dict[str, str] = {
+    "primo_accedant": "proprietaire",
+    "proprietaire": "proprietaire",
+    "locataire_hlm": "locataire_hlm",
+    "locataire_vide": "locataire_autre",
+    "locataire_meuble": "locataire_autre",
+    "locataire_foyer": "locataire_autre",
+    "loge_gratuitement": "loge_gratuitement",
+}
+
+
 def with_cells(frame: pl.DataFrame) -> pl.DataFrame:
     """Add the categorical columns the standard margins are defined on."""
     band = pl.when(pl.col("age") < 15).then(pl.lit("under_15"))
@@ -388,12 +402,14 @@ def with_cells(frame: pl.DataFrame) -> pl.DataFrame:
         band = band.when((pl.col("age") >= low) & (pl.col("age") <= high)).then(pl.lit(name))
     return household_type(frame).with_columns(
         pl.concat_str([band.otherwise(pl.lit("unknown")), pl.lit("_"), pl.col("sex")])
-        .alias("age_sex")
+        .alias("age_sex"),
+        pl.col("statut_occupation").replace_strict(TENURE, default="locataire_autre")
+        .alias("tenure"),
     )
 
 
 def standard_margins(frame: pl.DataFrame) -> list[Margin]:
-    """The two margin sets D-017 rules on, and no others.
+    """The margin sets D-017 rules on, and the tenure D-365 adds.
 
     **Households by type** is the one doing work: it is published, the population
     misses it by up to 41 % on the smallest category, and fitting it corrects the
@@ -410,6 +426,12 @@ def standard_margins(frame: pl.DataFrame) -> list[Margin]:
     calibrated over: the synthesised under-15s (D-013) were never in it, and
     pinning an invented margin would constrain the fit towards our own assumption.
 
+    **Households by tenure** (D-365, but 19): the census's LOG T10 of 2023, its shares
+    on the type margin's total. The EEC has 11,1 M tenant households against 12,58 M,
+    and the aides au logement follow the tenants: the diagnostic of the housing aid
+    line put −0,8 to −1,6 Md€ of its −3,4 on that alone. It moves weight between
+    households of the same type, owners to tenants, which the type margin cannot.
+
     No region margin: the EEC has none (M0_RECON §4.3).
     """
     weight = frame["weight"].to_numpy()
@@ -424,6 +446,12 @@ def standard_margins(frame: pl.DataFrame) -> list[Margin]:
             name="household_type", level="household", column="hh_type",
             targets=dict(_HOUSEHOLDS_BY_TYPE),
             source="INSEE, recensement 2023 — ménages par type",
+        ),
+        Margin(
+            name="tenure", level="household", column="tenure",
+            targets=_margins.tenure_targets(),
+            source="INSEE, recensement 2023 — résidences principales par statut "
+                   "d'occupation (LOG T10), parts sur le total des ménages par type",
         ),
         Margin(
             name="age_sex", level="person", column="age_sex", targets=targets,

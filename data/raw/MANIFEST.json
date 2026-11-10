@@ -1784,6 +1784,33 @@
       "licence": "Insee — Licence Ouverte / Etalab",
       "description": "Insee, comptes nationaux annuels base 2020, tableau 6.210 « Emploi intérieur salarié par branche en nombre de personnes », milliers ; ligne « _T ». Dénominateur du salaire par tête des indices constatés (D-362).",
       "quarantined": false
+    },
+    "TD_FAM6v1_2021_csv.zip": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8205229/TD_FAM6v1_2021_csv.zip",
+      "sha256": "788008303b4666cd1e21eb5c0768119814b8a39194ba033410e03a20bdf66d84",
+      "bytes": 3896115,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Recensement de la population 2021, base des tableaux détaillés, FAM6v1 : nombre d'enfants des familles par âge (AGEFOR5 : 00, 03, 06, 11, 18, 25) et type de famille, par commune. CSV « ; » NIVGEO;CODGEO;LIBGEO;AGEFOR5;TAF;TF4;NB ; ne garder que NIVGEO = COM. Lu pour le but 19, étape 3 : 2 930 587 enfants des familles de 18 à 24 ans (margins.CHILDREN_18_24), l'ancre nationale de l'âge des 15-24 ans selon leur place dans le ménage.",
+      "quarantined": false
+    },
+    "insee_rp2022_SL_PERS1_series_longues.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8613715/SL_PERS1%202022%20series%20longues.xlsx",
+      "sha256": "b32c12609ee4925632afd3249299da9fe22aaa347ed1f76e40e42ea2fbae6f44",
+      "bytes": 34146,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, Ménages et familles en 2022 et en séries longues, SL_PERS1 « Population selon le sexe, l'âge et le mode de cohabitation », RP 2011, 2016, 2022, tranches 0-17, 18-29, … Lu pour le but 19, étape 3 : 98,1 % des moins de 18 ans sont enfants d'une famille (France hors Mayotte, 2022) ; aucun âge détaillé.",
+      "quarantined": false
+    },
+    "insee_rp2023_log_t10_france.html": {
+      "url": "https://www.insee.fr/fr/statistiques/2011101?geo=FE-1",
+      "sha256": "ab6fd37010647139322d727be86da71756803aad0424c90ee99df57d58606c5f",
+      "bytes": 574664,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, dossier complet France, RP 2023, tableau LOG T10 « Résidences principales selon le statut d'occupation » : propriétaires 17 944 861, locataires 12 584 249 dont HLM loué vide 4 546 449, logés gratuitement 691 037, ensemble 31 220 147. Page HTML enregistrée telle quelle. Marge du calage du statut d'occupation (margins.TENURE_2023, but 19, étape 3).",
+      "quarantined": false
     }
   }
 }

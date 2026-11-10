@@ -35,12 +35,13 @@ There is no link-to-reference-person variable, so relationships are inferred:
                     under-15s are absent from the file entirely.
   extra adult       anyone else — a flatmate, a grandparent, an adult child
 
-The rattachement rule matters: attaching every 15-24-year-old, as the obvious
-reading suggests, hands a half-part to households whose 23-year-old works full
-time and files their own return, inflating `nbptr` across 9 000 households. The
-age it turns on is drawn inside a ten-year band, so for any individual it is a
-coin flip; in aggregate it puts roughly the right number of young adults on each
-side of the line, which is all a weighted population needs.
+The rule above makes a child of the FAMILLE (the CAF's unit, where the benefits'
+own age and income tests then apply). The foyer fiscal is narrower since the but 19
+(étape 3, D-365): rattachement is an option, so an eligible adult child is rattaché
+with one probability set on case 0DJ, and a couple in union libre files two
+déclarations (`_draw_foyers`). The exact age inside 15-24 is drawn by place in the
+dwelling, a child of the family younger than a young adult on his own
+(`_draw_young_ages_by_role`).
 
 ## One deviation from the spec, and why
 
@@ -172,6 +173,8 @@ class SkeletonStats:
     households_with_extra_adults: int
     couple_households_without_a_pair: int
     households_missing_noi_01: int
+    rattachement_probability: float = 1.0
+    """The probability that an eligible adult child is rattaché (0DJ, `_draw_foyers`)."""
 
 
 def _observed_persons(eec: pl.DataFrame) -> pl.DataFrame:
@@ -228,7 +231,7 @@ def _observed_persons(eec: pl.DataFrame) -> pl.DataFrame:
 
 
 def _classify_dependants(people: pl.DataFrame) -> pl.DataFrame:
-    """Decide who is a dependent child and who is their own tax unit.
+    """Decide who is a child of the famille, and who is a unit of their own.
 
     Only in a household the EEC types as containing children, only for someone who
     is neither the reference person nor their partner, and only if they are young
@@ -246,7 +249,9 @@ def _classify_dependants(people: pl.DataFrame) -> pl.DataFrame:
     )
     # Two different notions of "child", deliberately kept apart:
     #
-    #   is_child     rattaché au foyer fiscal — drives roles, nbptr, AF
+    #   is_child     enfant de la famille, rattachable au foyer fiscal — drives the
+    #                famille roles and AF; whether the child is rattaché is drawn
+    #                after (`_draw_foyers`), on case 0DJ
     #   insee_child  "enfant d'une famille" in INSEE's sense: anyone under 25 in the
     #                dwelling who is neither the reference person nor their partner
     #
@@ -273,9 +278,9 @@ def _draw_ages(bands: pl.Series, rng: np.random.Generator) -> np.ndarray:
 
     Uniform is crude where the band is wide — 25-49 especially — but the one
     threshold that moves tax cleanly, the over-65 abattement, sits on a band edge
-    and so stays exact. Ages inside 15-24 do move `af` (paid to under-20s) and the
-    quotient familial, and that imprecision is real; it is a candidate for
-    refinement against the population pyramid, not a silent approximation.
+    and so stays exact. Inside 15-24 the draw is redone by role
+    (`_draw_young_ages_by_role`); this one is kept, and still consumed from the same
+    generator, so that every later draw of the skeleton is the one it was.
     """
     codes = bands.to_numpy()
     ages = np.empty(len(codes), dtype=np.int64)
@@ -285,6 +290,134 @@ def _draw_ages(bands: pl.Series, rng: np.random.Generator) -> np.ndarray:
         if count:
             ages[mask] = rng.integers(low, high + 1, size=count)
     return ages
+
+
+def child_share_by_age() -> dict[int, float]:
+    """The share of each single year of 15-24 living as a child of the family.
+
+    The regional shape of `margins.CHILD_SHARE_SHAPE`, its 18-24 part moved by one shift
+    on the logit scale until the ordinary-household population of those ages, spread
+    evenly over each five-year band, holds the census's 2,93 M children of the family
+    (`margins.CHILDREN_18_24`). 15-17 keep the shape's level.
+    """
+    population = {
+        age: margins.ORDINARY_HOUSEHOLD_POPULATION_15_24[15 if age < 20 else 20] / 5.0
+        for age in range(15, 25)
+    }
+    shape = margins.CHILD_SHARE_SHAPE
+    logit = {age: np.log(shape[age] / (1.0 - shape[age])) for age in range(18, 25)}
+
+    def children(shift: float) -> float:
+        return sum(population[a] / (1.0 + np.exp(-(logit[a] + shift))) for a in logit)
+
+    low, high = -5.0, 5.0
+    for _ in range(200):
+        middle = (low + high) / 2.0
+        if children(middle) < margins.CHILDREN_18_24.value:
+            low = middle
+        else:
+            high = middle
+    shift = (low + high) / 2.0
+    shares = {age: shape[age] for age in range(15, 18)}
+    shares.update({a: float(1.0 / (1.0 + np.exp(-(logit[a] + shift)))) for a in logit})
+    return shares
+
+
+def _draw_young_ages_by_role(
+    ages: np.ndarray, bands: np.ndarray, child_of_family: np.ndarray, seed: int
+) -> np.ndarray:
+    """Redraw the exact age of the 15-24-year-olds according to their place.
+
+    A 15-24-year-old who lives with his parents is younger, on average, than one who
+    heads his own household: the uniform draw handed half the children of the family
+    20 years or more, which took them out of the allocations familiales (paid to under-
+    20s) and out of the unconditional rattachement (under 21). Here a child of the
+    family receives age *a* with a probability proportional to N(a)·s(a), anyone else
+    in the band with N(a)·(1 − s(a)): N the census population of each year, s the share
+    living as a child (`child_share_by_age`). Its own generator, so that nothing else
+    drawn from the skeleton's moves.
+    """
+    rng = np.random.default_rng([seed, 15])
+    shares = child_share_by_age()
+    years = np.arange(15, 25)
+    population = np.array([
+        margins.ORDINARY_HOUSEHOLD_POPULATION_15_24[15 if a < 20 else 20] / 5.0
+        for a in years])
+    share = np.array([shares[int(a)] for a in years])
+    young = bands == "15"
+    ages = ages.copy()
+    for is_child, weights in ((True, population * share),
+                              (False, population * (1.0 - share))):
+        mask = young & (child_of_family == is_child)
+        count = int(mask.sum())
+        if count:
+            ages[mask] = rng.choice(years, size=count, p=weights / weights.sum())
+    return ages
+
+
+def _union_libre_probability(age: np.ndarray) -> np.ndarray:
+    """The census share of union libre among the persons in a couple, by age."""
+    lows = np.array(sorted(margins.UNION_LIBRE_SHARE_BY_AGE))
+    values = np.array([margins.UNION_LIBRE_SHARE_BY_AGE[k] for k in lows])
+    index = np.clip(np.searchsorted(lows, age, side="right") - 1, 0, lows.size - 1)
+    return values[index]
+
+
+def _draw_foyers(people: pl.DataFrame, seed: int) -> tuple[pl.DataFrame, float]:
+    """Who files his own déclaration though he lives in unit 0: two draws.
+
+    **Concubins** (`separate_return` on the conjoint). A couple married or pacsé files
+    one déclaration; a couple in union libre files two (art. 6 CGI). The EEC does not
+    say which couple is which. Each paired couple is split with the mean of its two
+    members' census shares of union libre by age (`margins.UNION_LIBRE_SHARE_BY_AGE`).
+    The children stay on the reference person's déclaration. The couple stays one
+    famille: the CAF treats any couple as one, and OpenFisca reads both parents'
+    foyers when the conjoint is the principal declarant of his own
+    (`famille.conjoint.foyer_fiscal`, × `has_role(DECLARANT_PRINCIPAL)`).
+
+    **Majeurs rattachés** (`rattache`). Rattachement is an option (art. 6, 3 CGI), not
+    a rule: under 21, or under 25 and studying, a child MAY ask for it. Every minor
+    child of the family is rattaché; an eligible adult child (18-20, or 21-24 and not
+    in work, the nearest the EEC comes to « studying ») is rattaché with one common
+    probability, set so that the weighted rattachés reach case 0DJ
+    (`margins.RATTACHES_MAJEURS`), scaled to the frame's share of the country. A child
+    who is not rattaché files his own déclaration and stays an enfant of the famille,
+    where the CAF's own age and income tests apply.
+    """
+    rng = np.random.default_rng([seed, 6])
+    over = pl.col("household_id")
+    partner_age = (
+        pl.when(pl.col("is_conjoint")).then(pl.col("age")).otherwise(None).max().over(over)
+    )
+    reference_age = (
+        pl.when(pl.col("is_reference")).then(pl.col("age")).otherwise(None).max().over(over)
+    )
+    people = people.with_columns(
+        partner_age.alias("__partner_age"), reference_age.alias("__reference_age"))
+    is_conjoint = people["is_conjoint"].to_numpy()
+    p_split = 0.5 * (
+        _union_libre_probability(people["__reference_age"].fill_null(0).to_numpy())
+        + _union_libre_probability(people["__partner_age"].fill_null(0).to_numpy()))
+    separate = is_conjoint & (rng.random(people.height) < p_split)
+
+    # Rattachement: one probability for every eligible adult child of the family.
+    from impots.population.incomes import household_share_of_france
+
+    age = people["age"].to_numpy()
+    child = people["is_child"].to_numpy()
+    employed = (people["statut_activite"] == "employed").to_numpy()
+    eligible = child & (age >= 18) & (
+        (age < RATTACHEMENT_AGE) | ((age < RATTACHEMENT_MAX_AGE) & ~employed))
+    weight = people["weight"].to_numpy().astype(np.float64)
+    eligible_weight = float(weight[eligible].sum())
+    target = margins.RATTACHES_MAJEURS.value * household_share_of_france(people)
+    probability = min(1.0, target / eligible_weight) if eligible_weight > 0 else 0.0
+    draw = rng.random(people.height)
+    rattache = child & ((age < 18) | (eligible & (draw < probability)))
+    return people.drop("__partner_age", "__reference_age").with_columns(
+        pl.Series("separate_return", separate),
+        pl.Series("rattache", rattache),
+    ), probability
 
 
 def build_skeleton(
@@ -316,8 +449,15 @@ def build_skeleton(
     )
     # Ages are drawn before roles are settled, because whether a young adult is a
     # dependant turns on their exact age, not on their band.
+    child_of_family = (
+        observed["hh_type"].is_in(CHILD_HOUSEHOLD_TYPES)
+        & ~observed["is_reference"] & ~observed["is_conjoint"]
+    ).to_numpy()
+    ages = _draw_young_ages_by_role(
+        _draw_ages(observed["age_band"], rng), observed["age_band"].to_numpy(),
+        child_of_family, seed)
     people = observed.with_columns(
-        pl.Series("age", _draw_ages(observed["age_band"], rng)),
+        pl.Series("age", ages),
         pl.when(pl.col("sexe") == "1").then(pl.lit("male")).otherwise(pl.lit("female")).alias("sex"),
         pl.col("acteu").replace_strict(ACTIVITE, default="inactive").alias("statut_activite"),
         pl.when(pl.col("hh_metrodom") == "1").then(pl.lit("metropole"))
@@ -350,6 +490,7 @@ def build_skeleton(
     )
     people = _classify_dependants(people)
     stats_extra = people.filter(pl.col("is_extra")).select("household_id").n_unique()
+    people, rattachement_probability = _draw_foyers(people, seed)
 
     if children_per_household is not None:
         children = _synthesise_children(people, children_per_household, rng)
@@ -367,6 +508,7 @@ def build_skeleton(
         households_with_extra_adults=stats_extra,
         couple_households_without_a_pair=stats_no_pair,
         households_missing_noi_01=stats_missing_noi,
+        rattachement_probability=rattachement_probability,
     )
     return people.select(SKELETON_COLUMNS), stats
 
@@ -441,6 +583,8 @@ def _synthesise_children(
                 "is_conjoint": False,
                 "is_child": True,
                 "is_extra": False,
+                "rattache": True,
+                "separate_return": False,
                 "synthetic": True,
             })
     if not rows:
@@ -464,15 +608,35 @@ def _synthesise_children(
 def _assign_units(people: pl.DataFrame) -> pl.DataFrame:
     """Split each ménage into tax units and stamp the subrole vocabulary.
 
-    Unit 0 is the reference person, their partner and the dependent children.
-    Every other adult is a unit of their own — see the module docstring for why
-    this departs from §4.4's "one foyer per ménage".
+    Unit 0 is the reference person, their partner and the dependent children: it is
+    the famille. Every other adult is a unit of their own — see the module docstring
+    for why this departs from §4.4's "one foyer per ménage".
+
+    The foyer fiscal is unit 0 less those who file their own déclaration inside it
+    (`_draw_foyers`): a conjoint in union libre, an adult child not rattaché. Each
+    becomes the principal declarant of a foyer numbered by his seat, as an extra adult
+    is, and keeps his place in the famille. Without that split a famille and a foyer
+    were one identifier, and splitting the foyer would have split the famille the CAF
+    pays.
     """
     over = pl.col("household_id")
     people = people.sort(["household_id", "noi"]).with_columns(
         pl.int_range(pl.len()).over(over).alias("seat")
     )
+    if "separate_return" not in people.columns:
+        people = people.with_columns(pl.lit(False).alias("separate_return"))
+    if "rattache" not in people.columns:
+        people = people.with_columns(pl.col("is_child").alias("rattache"))
+    people = people.with_columns(
+        pl.col("separate_return").fill_null(False),
+        pl.col("rattache").fill_null(False),
+    )
+    own_return = (
+        (pl.col("is_conjoint") & pl.col("separate_return"))
+        | (pl.col("is_child") & ~pl.col("rattache"))
+    )
     unit = pl.when(pl.col("is_extra")).then(pl.col("seat") + 1).otherwise(0)
+    foyer_unit = pl.when(pl.col("is_extra") | own_return).then(pl.col("seat") + 1).otherwise(0)
     role_rank = (
         pl.when(pl.col("is_reference")).then(0)
         .when(pl.col("is_conjoint")).then(1)
@@ -488,7 +652,8 @@ def _assign_units(people: pl.DataFrame) -> pl.DataFrame:
     # declarant_principal / demandeur there even though the ménage calls them
     # "autre". Conflating the two vocabularies is exactly silent-failure mode #1.
     foyer_role = (
-        pl.when(pl.col("is_conjoint")).then(pl.lit("conjoint"))
+        pl.when(own_return).then(pl.lit("declarant_principal"))
+        .when(pl.col("is_conjoint")).then(pl.lit("conjoint"))
         .when(pl.col("is_child")).then(pl.lit("personne_a_charge"))
         .otherwise(pl.lit("declarant_principal"))
     )
@@ -504,7 +669,7 @@ def _assign_units(people: pl.DataFrame) -> pl.DataFrame:
         foyer_role.alias("role_foyer"),
         famille_role.alias("role_famille"),
     ).with_columns(
-        pl.concat_str([over, pl.lit("#"), pl.col("unit").cast(pl.String)]).alias("foyer_id"),
+        pl.concat_str([over, pl.lit("#"), foyer_unit.cast(pl.String)]).alias("foyer_id"),
         pl.concat_str([over, pl.lit("#"), pl.col("unit").cast(pl.String)]).alias("famille_id"),
     )
     # Case T, art. 194, II CGI: « contribuables célibataires ou divorcés qui vivent
