@@ -1820,6 +1820,24 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.401, compte des ménages (S14) : D11, D121, D122, D613CE ; le fichier que docs/verification/lignes.json cite.",
       "quarantined": false
+    },
+    "insee_ip2114_revenus_non_salaries_2024.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9013403/IP2114.xlsx",
+      "sha256": "2761bc1ae40e2f449b4c59f954e1e8d70ea29acb6c08f3e300b6306370afae44",
+      "bytes": 59271,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee Première n° 2114 (juin 2026), « Les revenus d'activité des non-salariés en 2024 », données (page https://www.insee.fr/fr/statistiques/9013403). Figure 1 (effectifs et revenus moyens par secteur, hors agriculture), figures 2a et 2b (distribution des revenus des classiques), encadré (agricoles, réel et micro-BA), tableaux complémentaires 1 (part des micro-entrepreneurs, des gérants majoritaires et des pluriactifs, revenus moyens par secteur), 2 (micro-entrepreneurs par secteur), 3 (part des revenus nuls, D1, Q1, médiane, Q3, D9 des revenus positifs par secteur ; micro-entrepreneurs tous secteurs), 4 (sexe, ancienneté, région). Revenus mensuels, déficits mis à 0, France hors Mayotte. Lu pour le but 19, étape 2 : `margins.CLASSIQUES_PAR_SECTEUR`, `MICRO_PAR_SECTEUR`, `MICRO_QUANTILES`, `AGRICOLES`, `SELF_EMPLOYMENT_INCOME`.",
+      "quarantined": false
+    },
+    "insee_ip2114_revenus_non_salaries_2024.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/version-html/9013403/IP2114.pdf",
+      "sha256": "02fefb0fd008b606e00644c8ae6fb5f26e084288a8f6a3e4312c8bca5a0444a1",
+      "bytes": 557930,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee Première n° 2114 (juin 2026), M. Diakhaté, « Les revenus d'activité des non-salariés en 2024 », texte. P. 3 : 32 % des micro-entrepreneurs sont pluriactifs, près de neuf sur dix principalement salariés, 28 % de l'ensemble, 250 € par mois d'activité non salariée ; ceux sans activité salariée, 820 €. P. 4 : à secteur identique, les femmes classiques gagnent 30 % de moins, les micro-entrepreneuses 14 %. Lu pour le but 19, étape 2.",
+      "quarantined": false
     }
   }
 }

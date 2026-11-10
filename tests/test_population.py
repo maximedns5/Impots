@@ -318,6 +318,7 @@ def _eec_rows(shapes: dict[str, tuple[str, list[tuple[str, str, str, str]], bool
                 "STATUT": "2" if working else None, "PCS1Q": "51" if working else None,
                 "PUB3FP": "4" if working else None, "TPPRED": "1" if working else None,
                 "TXTPPRED": None, "STATUTDET": "21" if working else None,
+                "NAFG088UN": "47" if working else None,
             })
     columns = list(rows[0])
     return pl.DataFrame(rows, schema={column: source.schema[column] for column in columns})

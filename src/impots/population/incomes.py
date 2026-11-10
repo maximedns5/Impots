@@ -16,9 +16,13 @@ What that buys and what it does not:
     so assortative mating is absent and couple incomes are less correlated than
     reality. That flattens the top of the household distribution specifically.
 
-Not modelled at all, and declared rather than approximated: capital income, income
-from self-employment (3.87 M people), and any income of the 15+ population outside
-wages, pensions and unemployment benefit.
+**Self-employment income** (3.87 M people) is drawn by `attach_self_employment`, on the
+sector the survey records, from the Insee's published distributions by sector, and
+calibrated on the Insee's total (but 19, étape 2): see its docstring.
+
+Not modelled at all, and declared rather than approximated: capital income, and any
+income of the 15+ population outside wages, self-employment, pensions and unemployment
+benefit.
 """
 
 from __future__ import annotations
@@ -91,6 +95,78 @@ SURFACE_BASE_M2 = 30.0
 SURFACE_PER_PERSON_M2 = 12.0
 
 
+#: The self-employment draw has its own stream, so that adding it moved no wage, pension
+#: or unemployment benefit already drawn: the draws of `attach_incomes` before it read
+#: `default_rng(seed)` in the same order as they did.
+SELF_EMPLOYMENT_STREAM = 2
+
+#: The survey's agricultural sector (NAF divisions 01 to 03), which has its own tables.
+AGRICULTURE = "agriculture"
+
+#: Insee row -> the nature of a micro-entreprise's turnover, which sets its abatement
+#: and its versement libératoire: « vente » (marchandises, 71 %), « service » (BIC
+#: prestations, 50 %), « bnc » (34 %); for a classique, BIC or BNC. A hypothesis by
+#: sector: the Insee does not cross the two. A restaurant sells for consumption on the
+#: premises, which is a sale.
+NATURE_PAR_SECTEUR: dict[str, str] = {
+    "industrie": "vente", "metiers_bouche": "vente", "commerce_auto": "vente",
+    "commerce_gros": "vente", "pharmacie": "vente", "detail_magasin": "vente",
+    "detail_hors_magasin": "vente", "hebergement_restauration": "vente",
+    "construction": "service", "transports": "service", "immobilier": "service",
+    "services_administratifs": "service", "services_personnels": "service",
+    "ensemble": "service",
+    "information_communication": "bnc", "finance": "bnc", "juridique": "bnc",
+    "conseil": "bnc", "architecture": "bnc", "autres_specialisees": "bnc",
+    "veterinaires": "bnc", "arts": "bnc", "enseignement": "bnc", "medecins": "bnc",
+    "paramedicaux": "bnc", "autres_sante": "bnc",
+}
+
+#: Insee row -> openfisca's `categorie_non_salarie`, which sets a classique's
+#: contributions and, through them, his CSG base. A BNC is a profession libérale; the
+#: trades that make or repair are artisans; the rest commerçants. A hypothesis too.
+_ARTISANS = {"industrie", "construction", "metiers_bouche", "services_administratifs",
+             "services_personnels"}
+CATEGORIE_PAR_SECTEUR: dict[str, str] = {
+    row: ("profession_liberale" if nature == "bnc"
+          else "artisan" if row in _ARTISANS else "commercant")
+    for row, nature in NATURE_PAR_SECTEUR.items()
+}
+
+#: The micro regime's turnover ceiling and abatement in 2024 (CGI art. 50-0 and 102 ter;
+#: openfisca's `regime_micro_bic` and `regime_micro_bnc`). A drawn micro income is
+#: capped at the ceiling's, the turnover after abatement: the regime ends there.
+MICRO_PLAFONDS_2024: dict[str, tuple[float, float]] = {
+    "vente": (188_700.0, 0.71), "service": (77_700.0, 0.50), "bnc": (77_700.0, 0.34),
+}
+
+#: The régimes a self-employed person is drawn into, and so the 2042-C-PRO box
+#: `to_openfisca` writes: réel BIC or BNC (a gérant majoritaire is wired as one, see
+#: `attach_self_employment`), micro with or without the versement libératoire, by
+#: nature, and the two agricultural régimes.
+REGIMES = ("reel_bic", "reel_bnc", "gerant_bic", "gerant_bnc",
+           "micro_vente", "micro_service", "micro_bnc", "vl_vente", "vl_service", "vl_bnc",
+           "reel_ba", "micro_ba")
+
+#: The agricultural incomes' shape is not published. The réel farmers take the shape of
+#: the non-agricultural classiques (the Insee's « ensemble » row), the micro-BA farmers
+#: a lognormal of this dispersion: hypotheses, each rescaled to its published mean.
+MICRO_BA_SIGMA = 0.5
+
+
+@dataclass(frozen=True)
+class SelfEmploymentStats:
+    """What `attach_self_employment` drew, and against which target."""
+
+    self_employed: float
+    micro_entrepreneurs: float
+    agricoles: float
+    gerants: float
+    share_zero: float
+    total_before_calibration: float
+    total_after_calibration: float
+    calibration_factor: float
+
+
 @dataclass(frozen=True)
 class IncomeStats:
     """What was drawn, and against which target. Feeds the reconciliation report."""
@@ -107,11 +183,12 @@ class IncomeStats:
     rent_total: float
     people_without_modelled_income: float
     targets_scale: float = 1.0
-    """What the three national targets were multiplied by before calibration.
+    """What the four national targets were multiplied by before calibration.
 
     1.0 for the country. Anything else says the frame is a sample and the totals
     below are that sample's share of the national figure, not the figure itself.
     """
+    self_employment: SelfEmploymentStats | None = None
 
 
 def lognormal_from_deciles(d1: float, median: float, d9: float) -> tuple[float, float]:
@@ -225,13 +302,239 @@ def household_share_of_france(frame: pl.DataFrame) -> float:
     return float(households) / margins.HOUSEHOLDS.value
 
 
+def _sector_cells(naf88: np.ndarray, pcs: np.ndarray) -> np.ndarray:
+    """The survey's sector, read as the Insee's tables: one cell per person.
+
+    The NAF division the survey records, and in two places the PCS: in health care
+    (division 86) it tells the doctor (cadres et professions intellectuelles
+    supérieures, PCS 31) from the paramedical professions (professions intermédiaires,
+    PCS 43), in retail the pharmacist (PCS 31). Retail is one division and two Insee
+    rows (`_CELL_ROWS`). An unknown sector takes the all-sector row, « ensemble ».
+    """
+    division = np.array([int(c) if isinstance(c, str) and c.isdigit() else 0
+                         for c in naf88], dtype=np.int64)
+    cadre, intermediaire = pcs == "cadre", pcs == "profession_intermediaire"
+    rules = [
+        ((division >= 1) & (division <= 3), AGRICULTURE),
+        (np.isin(division, (10, 11)), "metiers_bouche"),
+        ((division >= 5) & (division <= 39), "industrie"),
+        ((division >= 41) & (division <= 43), "construction"),
+        (division == 45, "commerce_auto"),
+        (division == 46, "commerce_gros"),
+        ((division == 47) & cadre, "pharmacie"),
+        (division == 47, "detail"),
+        ((division >= 49) & (division <= 53), "transports"),
+        (np.isin(division, (55, 56)), "hebergement_restauration"),
+        ((division >= 58) & (division <= 63), "information_communication"),
+        ((division >= 64) & (division <= 66), "finance"),
+        (division == 68, "immobilier"),
+        (division == 69, "juridique"),
+        (division == 70, "conseil"),
+        (division == 71, "architecture"),
+        (division == 75, "veterinaires"),
+        ((division >= 72) & (division <= 74), "autres_specialisees"),
+        ((division >= 77) & (division <= 82), "services_administratifs"),
+        (division == 85, "enseignement"),
+        ((division == 86) & cadre, "medecins"),
+        ((division == 86) & intermediaire, "paramedicaux"),
+        (np.isin(division, (86, 87, 88)), "autres_sante"),
+        ((division >= 90) & (division <= 93), "arts"),
+        ((division >= 94) & (division <= 99), "services_personnels"),
+    ]
+    cells = np.full(division.size, "ensemble", dtype=object)
+    assigned = np.zeros(division.size, dtype=bool)
+    for mask, cell in rules:
+        take = mask & ~assigned
+        cells[take] = cell
+        assigned |= take
+    return cells
+
+
+#: A survey cell -> the Insee rows it stands for, when it is not one row of its name.
+_CELL_ROWS: dict[str, tuple[str, ...]] = {
+    "detail": ("detail_magasin", "detail_hors_magasin"),
+}
+
+
+def _micro_in_field(row: str) -> tuple[float, float]:
+    """(count in thousands, mean monthly income) of a row's micro-entrepreneurs whose
+    main job is not salaried: the survey's field. Those principally salaried (28 % of
+    all, 250 € a month) leave, sector by sector in proportion to its pluriactive share."""
+    if row not in margins.MICRO_PAR_SECTEUR:
+        return 0.0, 0.0
+    count, mean, pluriactive = margins.MICRO_PAR_SECTEUR[row]
+    share, income = margins.MICRO_PRINCIPALEMENT_SALARIES
+    salaried = share / margins.MICRO_PAR_SECTEUR["ensemble"][2] * pluriactive / 100.0
+    return count * (1.0 - salaried), (mean - salaried * income) / (1.0 - salaried)
+
+
+def attach_self_employment(
+    frame: pl.DataFrame, seed: int = SEED, targets_scale: float = 1.0
+) -> tuple[pl.DataFrame, SelfEmploymentStats]:
+    """Add `revenu_non_salarie_annuel`, `regime_non_salarie`, `secteur_non_salarie`.
+
+    **Who.** Everyone in employment the survey does not record as an employee: 3.87 M
+    people whose main job is self-employed. Until but 19 they had no income at all, and
+    the model read them as destitute: 45 % of its RSA households, half its bottom
+    decile, and none of the income tax on 70 to 110 bn € of base (D-365).
+
+    **What is published, and drawn.** The Insee Première n° 2114 and its tables give,
+    for 2024 and by sector: the counts of classiques and of micro-entrepreneurs, their
+    mean incomes, the classiques' share of nil or loss-making years and the quartiles
+    and deciles of their positive incomes, the share of gérants majoritaires; for the
+    micro-entrepreneurs, their dispersion across sectors only; for farmers, counts,
+    means and the nil share by régime. So, per person:
+
+      1. the sector, from the survey's NAF division (`_sector_cells`);
+      2. micro-entrepreneur or classique, at the sector's published odds once the
+         micro-entrepreneurs whose main job is salaried — whom the survey counts as
+         employees — are taken out; a farmer, micro-BA or réel at theirs;
+      3. a nil income at the published share, else a positive one through the
+         published quantiles (`quantile_curve`, exact at each of the five points);
+      4. women's incomes 30 % (classiques) and 14 % (micro) below men's of the same
+         sector, as published; then each sector and status rescaled to its published
+         mean, nil incomes included, which moves the drawn quantiles by under 10 %;
+      5. a classique's gérance, a micro-entrepreneur's versement libératoire, at the
+         published shares (Insee; DGFiP, 2042-C-PRO) — the latter drawn and, for an
+         openfisca defect, not yet wired (`to_openfisca.SELF_EMPLOYMENT_INPUTS`); a micro
+         income is capped at its regime's ceiling;
+      6. ONE factor on everyone, so that the weighted total is `SELF_EMPLOYMENT_INCOME`
+         times `targets_scale`, as the wage bill is calibrated.
+
+    **What it is not.** The nature of a micro-entrepreneur's turnover and the
+    contributions category follow the sector, by hypothesis (`NATURE_PAR_SECTEUR`). A
+    gérant majoritaire is wired as a réel BIC or BNC where the tax code taxes his pay as
+    a salary, after its 10 % deduction: the income tax of the 940 000 gérants is a
+    little high. Age is not conditioned on. Aides familiaux, whom the survey records as
+    self-employed too, draw an income like the rest. A loss is a nil income, as in the
+    published means: no deficit is set against other income.
+
+    The draw reads its own stream (`SELF_EMPLOYMENT_STREAM`), every uniform and normal
+    for every row in a fixed order: the wages, pensions and unemployment benefit of
+    `attach_incomes` are the ones drawn before it existed.
+    """
+    rng = np.random.default_rng([seed, SELF_EMPLOYMENT_STREAM])
+    n = frame.height
+    weight = frame["weight"].to_numpy().astype(np.float64)
+    self_employed = (
+        (frame["statut_activite"].to_numpy() == "employed")
+        & ~frame["is_salarie"].to_numpy().astype(bool)
+    )
+    female = frame["sex"].to_numpy() == "female"
+    cells = _sector_cells(frame["naf88"].to_numpy(), frame["pcs"].to_numpy())
+    u_row, u_status, u_zero, u_gerant, u_vl = (rng.uniform(size=n) for _ in range(5))
+    z = rng.standard_normal(n)
+
+    row = np.full(n, None, dtype=object)
+    regime = np.full(n, None, dtype=object)
+    micro = np.zeros(n, dtype=bool)
+    monthly = np.zeros(n, dtype=np.float64)
+
+    # ---- the sector row and the status ------------------------------------------
+    for cell in sorted(set(cells[self_employed])):
+        here = np.flatnonzero(self_employed & (cells == cell))
+        if cell == AGRICULTURE:
+            row[here] = AGRICULTURE
+            reel, micro_ba = (margins.AGRICOLES[k][0] for k in ("reel", "micro_ba"))
+            regime[here] = np.where(u_status[here] < micro_ba / (reel + micro_ba),
+                                    "micro_ba", "reel_ba")
+            continue
+        rows = _CELL_ROWS.get(cell, (cell,))
+        sizes = np.array([margins.CLASSIQUES_PAR_SECTEUR[r][0] + _micro_in_field(r)[0]
+                          for r in rows])
+        pick = np.searchsorted(np.cumsum(sizes) / sizes.sum(), u_row[here], side="right")
+        for k, r in enumerate(rows):
+            mine = here[np.minimum(pick, len(rows) - 1) == k]
+            row[mine] = r
+            classiques, in_field = margins.CLASSIQUES_PAR_SECTEUR[r][0], _micro_in_field(r)[0]
+            micro[mine] = u_status[mine] < in_field / (classiques + in_field)
+
+    # ---- the incomes, row by row, and the régime -------------------------------
+    p = (0.1, 0.25, 0.5, 0.75, 0.9)
+    ensemble_curve = quantile_curve(
+        dict(zip(p, margins.CLASSIQUES_PAR_SECTEUR["ensemble"][2:7], strict=True)))
+    micro_curve = quantile_curve(dict(zip(p, margins.MICRO_QUANTILES, strict=True)))
+    groups: dict[tuple[str, str], tuple[np.ndarray, float]] = {}
+    for r in sorted({str(x) for x in row[self_employed]}):
+        here = self_employed & (row == r)
+        if r == AGRICULTURE:
+            for name, key in (("reel_ba", "reel"), ("micro_ba", "micro_ba")):
+                mask = here & (regime == name)
+                _, mean, zero = margins.AGRICOLES[key]
+                draw = (sample_curve(z[mask], *ensemble_curve) if name == "reel_ba"
+                        else np.exp(MICRO_BA_SIGMA * z[mask]))
+                monthly[mask] = np.where(u_zero[mask] < zero / 100.0, 0.0, draw)
+                groups[(r, name)] = (mask, mean)
+            continue
+        nature = NATURE_PAR_SECTEUR[r]
+        _, zero, *quantiles, mean, gerants = margins.CLASSIQUES_PAR_SECTEUR[r]
+        mask = here & ~micro
+        draw = sample_curve(z[mask], *quantile_curve(dict(zip(p, quantiles, strict=True))))
+        draw *= np.where(female[mask], 1.0 - margins.ECART_FEMMES_CLASSIQUES, 1.0)
+        monthly[mask] = np.where(u_zero[mask] < zero / 100.0, 0.0, draw)
+        base = "bnc" if nature == "bnc" else "bic"
+        regime[mask] = np.where(u_gerant[mask] < gerants / 100.0,
+                                f"gerant_{base}", f"reel_{base}")
+        groups[(r, "classique")] = (mask, mean)
+
+        mask = here & micro
+        if mask.any():
+            draw = sample_curve(z[mask], *micro_curve)
+            draw *= np.where(female[mask], 1.0 - margins.ECART_FEMMES_MICRO, 1.0)
+            monthly[mask] = np.where(u_zero[mask] < margins.MICRO_PART_NULLE / 100.0,
+                                     0.0, draw)
+            with_vl, without = margins.VERSEMENT_LIBERATOIRE[nature]
+            regime[mask] = np.where(u_vl[mask] < with_vl / (with_vl + without),
+                                    f"vl_{nature}", f"micro_{nature}")
+            groups[(r, "micro")] = (mask, _micro_in_field(r)[1])
+
+    # Each sector and status to its published mean, nil incomes included.
+    for mask, mean in groups.values():
+        drawn = float((monthly[mask] * weight[mask]).sum())
+        if drawn > 0:
+            monthly[mask] *= mean * float(weight[mask].sum()) / drawn
+
+    # The micro regime ends at its ceiling.
+    for nature, (ceiling, abatement) in MICRO_PLAFONDS_2024.items():
+        capped = np.isin(regime, (f"micro_{nature}", f"vl_{nature}"))
+        monthly[capped] = np.minimum(monthly[capped], ceiling * (1.0 - abatement) / 12.0)
+
+    annual = monthly * 12.0
+    before = float((annual * weight).sum())
+    target = margins.SELF_EMPLOYMENT_INCOME.value * targets_scale
+    # The second calibration on incomes, spent like the wage bill (§4.3).
+    factor = target / before if before > 0 else 1.0
+    annual = annual * factor
+
+    enriched = frame.with_columns(
+        pl.Series("revenu_non_salarie_annuel", annual),
+        pl.Series("regime_non_salarie", regime.tolist(), dtype=pl.String),
+        pl.Series("secteur_non_salarie", row.tolist(), dtype=pl.String),
+    )
+    total_weight = float(weight[self_employed].sum())
+    stats = SelfEmploymentStats(
+        self_employed=total_weight,
+        micro_entrepreneurs=float(weight[self_employed & micro].sum()),
+        agricoles=float(weight[self_employed & (row == AGRICULTURE)].sum()),
+        gerants=float(weight[np.isin(regime, ("gerant_bic", "gerant_bnc"))].sum()),
+        share_zero=(float(weight[self_employed & (annual == 0)].sum()) / total_weight
+                    if total_weight > 0 else 0.0),
+        total_before_calibration=before,
+        total_after_calibration=float((annual * weight).sum()),
+        calibration_factor=factor,
+    )
+    return enriched, stats
+
+
 def attach_incomes(
     frame: pl.DataFrame, seed: int = SEED, targets_scale: float | None = None
 ) -> tuple[pl.DataFrame, IncomeStats]:
-    """Add `salaire_brut_annuel`, `pension_annuelle`, `chomage_annuel`, `loyer_mensuel`.
+    """Add `salaire_brut_annuel`, `pension_annuelle`, `chomage_annuel`, `loyer_mensuel`,
+    and the self-employment columns of `attach_self_employment`.
 
-    `targets_scale` multiplies the three national calibration targets — the wage
-    bill, the pension mass and the unemployment mass — before they are imposed on
+    `targets_scale` multiplies the four national calibration targets — the wage
+    bill, the self-employment income, the pension mass and the unemployment mass —
+    before they are imposed on
     this frame. It exists because **the calibration divides a national total among
     whatever weights it is handed**, and says nothing about whether those weights
     are the country. Handed a sample, it makes the sample rich: the committed
@@ -327,8 +630,10 @@ def attach_incomes(
         pl.Series("chomage_annuel", chomage),
         pl.Series("loyer_mensuel", rent),
     )
+    enriched, self_employment = attach_self_employment(enriched, seed, targets_scale)
+    self_employed = enriched["regime_non_salarie"].is_not_null().to_numpy()
 
-    no_income = ~(employee | pensioner | unemployed) & (age >= 18)
+    no_income = ~(employee | pensioner | unemployed | self_employed) & (age >= 18)
     stats = IncomeStats(
         employees=float((employee * weight).sum()),
         gross_wages_before_calibration=before,
@@ -342,5 +647,6 @@ def attach_incomes(
         rent_total=float((rent * 12 * weight).sum()),
         people_without_modelled_income=float((no_income * weight).sum()),
         targets_scale=targets_scale,
+        self_employment=self_employment,
     )
     return enriched, stats

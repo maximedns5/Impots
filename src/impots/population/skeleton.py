@@ -121,8 +121,8 @@ ZONE_APL: dict[str, str] = {
 }
 
 #: EEC `PCS1Q` -> the four categories INSEE publishes wage distributions for.
-#: Farmers (10) and artisans/shopkeepers (20) are self-employed: Phase 1 models no
-#: self-employment income, so they get no wage and that gap is declared.
+#: Farmers (10) and artisans/shopkeepers (20) are self-employed: they get no wage, and
+#: their income is drawn on their sector by `incomes.attach_self_employment`.
 PCS_GROUP: dict[str, str] = {
     "30": "cadre",
     "40": "profession_intermediaire",
@@ -192,6 +192,9 @@ def _observed_persons(eec: pl.DataFrame) -> pl.DataFrame:
             pl.col("STCOMM2020").alias("stcomm"),
             pl.col("STATUT").alias("statut_emploi"),
             pl.col("PCS1Q").alias("pcs_code"),
+            # The establishment's sector, NAF rév. 2 in 88 divisions: what the
+            # self-employment income is drawn on (`incomes.py`), as the Insee publishes it.
+            pl.col("NAFG088UN").alias("naf88"),
             pl.col("PUB3FP").alias("employeur"),
             pl.col("STATUTDET").alias("statut_detaille"),
             pl.col("TPPRED").alias("temps_partiel"),
@@ -544,6 +547,6 @@ SKELETON_COLUMNS = [
     "role_menage", "role_foyer", "role_famille",
     "statut_activite", "statut_occupation", "zone_apl",
     "is_salarie", "pcs", "secteur_public", "fonction_publique", "titulaire",
-    "quotite_travail",
+    "quotite_travail", "naf88",
     "parent_isole", "synthetic",
 ]

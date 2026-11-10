@@ -22,7 +22,7 @@ def frame() -> pl.DataFrame:
         "person_id": [1, 2], "household_id": [1, 1], "weight": [100.0, 100.0],
         "age": [40, 70], "salaire_brut_annuel": [30_000.0, 0.0],
         "pension_annuelle": [0.0, 20_000.0], "chomage_annuel": [0.0, 0.0],
-        "loyer_mensuel": [700.0, 700.0],
+        "loyer_mensuel": [700.0, 700.0], "revenu_non_salarie_annuel": [12_000.0, 0.0],
     })
 
 
@@ -87,6 +87,7 @@ def test_wages_and_prices_move_on_their_own_indices():
     out = up.uprate(frame(), 2028, HYPO)
     wage_factor, price_factor = 1.025 ** 4, 1.02 ** 4
     assert out["salaire_brut_annuel"][0] == pytest.approx(30_000.0 * wage_factor)
+    assert out["revenu_non_salarie_annuel"][0] == pytest.approx(12_000.0 * wage_factor)
     assert out["pension_annuelle"][1] == pytest.approx(20_000.0 * price_factor)
     assert out["loyer_mensuel"][0] == pytest.approx(700.0 * price_factor)
 
