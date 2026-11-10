@@ -27308,3 +27308,119 @@ passe sur la population entière. Elles se joignent sur `claude/but19` une à un
 jonction qui change un nombre de la grille est préenregistrée avec son pronostic avant que
 la grille tourne ; les pronostics tirés des diagnostics le disent. La série des dix études
 tourne une fois, quand les quatre étapes sont jointes, préenregistrée.
+
+## D-366 — La jonction des étapes du but 19 préenregistrée : 42 lignes neuves, pronostic
+
+**Ce qui est joint**, sur `claude/but19`, avant toute passe de la grille sur la population
+entière : les étapes 1 à 4 (D-365) et deux étapes nées de leur jonction. Chacune a son
+rapport dans `docs/diagnostics/etape_*.md`.
+
+* **Étape 1, la grille et les textes.** La phrase « sans aucun effet sur l'activité » lit
+  le coût sans boucle (D-349) et non plus le coin bas du multiplicateur (Attal 13,95 →
+  18,30 points, Retailleau 3,98 → 4,69, Le Pen 3,98 → 4,42, Labib 5,71 → 5,90, Roussel
+  1,42 → 1,56, PLF art. 3 −0,35 → −0,40 ; elle paraît sur PLF art. 2, Lisnard, Mélenchon,
+  Tondelier). L'explorateur dit « selon θ » ; Attal et Retailleau disent la vraie raison du
+  refus de la bande (D-220). Les pages ont été réécrites par l'étape avant cette entrée,
+  depuis les rapports commités ; aucune passe n'a tourné et aucun juge ne les note. Trois
+  mesures neuves (D291, pension de l'État, salaires hors brut), un IR net d'une passe
+  imputée, l'année de base des entreprises à 2024, l'URL Filosofi juste.
+* **Étape 2.** Les non-salariés ont un revenu tiré de l'Insee Première n° 2114.
+* **Étape 3.** Les concubins et les jeunes majeurs non rattachés sont des foyers fiscaux ;
+  l'âge des 15-24 ans suit leur place ; marge neuve : le statut d'occupation (recensement
+  2023, LOG T10).
+* **Étape 4.** Le RSA et la prime sont servis en espérance dans le coût des réformes.
+* **Étape « ir ».** Les gérants majoritaires sont payés en salaire (art. 62 du CGI) : leur
+  rémunération est déjà dans les salaires déclarés que le modèle refaisait, la leur donner
+  en BIC la comptait deux fois. Une part exonérée de 6,85 % des salaires, lue par l'impôt
+  seul, cale les salaires imposables déclarés : D11 compte des salaires que l'impôt ne voit
+  pas (participation, heures supplémentaires exonérées). Sa répartition, uniforme, est une
+  hypothèse. Biais connu : les gérants reçoivent environ 3 Md€ d'allègements que la loi ne
+  leur donne pas.
+* **Étape « al ».** La zone des aides au logement est tirée au recensement ; les DOM ont un
+  département ; les loyers HLM viennent du RPLS 2024 ; un hébergé hors du bail n'a plus
+  d'aide (R. 821-4 du CCH) et les ménages « autres » sont en colocation (D. 842-3). Les
+  deux derniers retirent 1,9 Md€ d'aides que le modèle comptait deux fois.
+* **Le non-recours recalé** sur la population jointe : p_max 0,6974 (RSA), 0,5277 (prime).
+* **Un défaut corrigé** : `households_par_lots` tirait les niches quatre fois trop par lot.
+* **Décidé, non fait** : l'IS reste vieilli par le PIB (D-246) ; le vieillir par l'IS de
+  l'exercice ferait de sa ligne un calage, et aucune série n'existe après 2024. Les
+  revenus N−1 et N−2 restent ceux de N (D-011).
+
+**Les marges neuves du calage**, dépensées : revenus non salariés hors gérants, 73,76 Md€
+(Insee Première n° 2114) ; salaires imposables des gérants, 30,72 Md€ (2042, cases 1GB à
+1JB) ; salaires imposables déclarés des salariés, 829,33 Md€ (2042, moins la ligne DINR
+de l'IRCOM 2025) ; locataires, 12,58 M (recensement 2023). Les lignes « salaires
+déclarés » de D-363 ne changent pas d'usage : leur total compte aussi le chômage, les
+heures supplémentaires et les gérants, et la grille dira si elles tiennent.
+
+**Les 42 lignes neuves** de `docs/verification/lignes.json`, marquées `"preenregistre":
+"D-366"`, relevées dans les fichiers bruts par un relevé indépendant
+(`docs/verification/lignes_d366_projet.json`) : 33 notées, 6 en contexte (deux lignes sur
+trois ans), 3 refusées. Les cotisations des employeurs au sens D121, les impôts sur les salaires que le
+moteur calcule, l'IR net, la CSG d'activité avec les non-salariés, les revenus
+professionnels déclarés hors gérants, le RSA et la prime servis en montant et en foyers,
+le niveau de vie médian et le D9/D1 servis, les foyers résidents hors Mayotte ; D291 total
+et la pension de l'État contre D122, en contexte. Les 93 lignes de D-363 sont intactes.
+Quarante-cinq lignes du relevé attendent une mesure que la passe n'a pas encore (foyers
+par situation et par tranche de RFR, chômage déclaré, abattement DOM, aides en zone 1) :
+elles ne sont pas notées ici.
+
+**Le pronostic**, dans `docs/verification/pronostic_d366.json`. Il n'est pas aveugle : la
+grille entière a tourné sur un échantillon de 20 000 ménages (graine 20240101) avec ce
+code, et le pronostic est l'écart de l'échantillon, élargi de 3 points (5 pour la tranche
+à 30 %, 10 pour 41 %, 25 pour 45 %, 4 pour l'IR, 0,5 pour les entreprises, dont la couche
+tourne entière). Il est tenu si l'écart de la population entière tombe dans la fourchette.
+Il annonce 52 des 80 lignes de D-363 dans leur tolérance (58 au but 18) et 76 des 113
+lignes notées. Gagnées : les foyers fiscaux, la tranche à 11 %, le RSA. Perdues : les
+tranches à 30, 41 et 45 %, les foyers imposés de 2022, les aides au logement (qui ne
+tenaient que par des loyers comptés deux fois), le bandeau famille. Le modèle est plus
+juste et la grille le dit moins bien : des erreurs qui se compensaient ont été retirées
+une à une, et ce qui reste faux se voit. « h » : hors de la tolérance attendu.
+
+| ligne | tol. | 2022 | 2023 | 2024 |
+|---|---|---|---|---|
+| `cotisations_salariales` | 10 | −12 à −6 | −13 à −7 h | −15 à −9 h |
+| `cotisations_employeurs` | 15 | +27 à +33 h | +26 à +32 h | +24 à +30 h |
+| `reduction_generale` | 15 | −4 à +2 | −7 à −1 | −5 à +1 |
+| `bandeau_maladie` | 15 | +9 à +15 | +7 à +13 | +6 à +12 |
+| `bandeau_famille` | 15 | +17 à +23 h | +15 à +21 h | +14 à +20 h |
+| `csg_activite` | 15 | −10 à −4 | −10 à −4 | −10 à −4 |
+| `csg_remplacement` | 10 | −7 à −1 | −5 à +1 | −10 à −4 |
+| `foyers_fiscaux` | 10 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `foyers_imposes` | 10 | +8 à +14 h | +5 à +11 | +0 à +6 |
+| `foyers_tmi_0` | 15 | −11 à −5 | −11 à −5 | −10 à −4 |
+| `foyers_tmi_1` | 15 | −13 à −7 | −14 à −8 | −16 à −10 |
+| `foyers_tmi_2` | 15 | +12 à +22 h | +11 à +21 h | +5 à +15 |
+| `foyers_tmi_3` | 30 | +26 à +46 h | +30 à +50 h | +29 à +49 h |
+| `foyers_tmi_4` | 30 | +19 à +69 h | +33 à +83 h | +34 à +84 h |
+| `salaires_declares` | 10 | −3 à +3 | −5 à +1 | −5 à +1 |
+| `niveau_de_vie_median` | 15 | −6 à −0 | −7 à −1 | −9 à −3 |
+| `d9_d1` | 15 | −3 à +3 | −6 à +0 | −6 à −0 |
+| `rsa_montant` | 14 | −7 à −1 | −6 à +0 | −3 à +3 |
+| `ppa_montant` | 13 | −27 à −21 h | −29 à −23 h | −26 à −20 h |
+| `aide_logement_montant` | 25 | −34 à −28 h | −33 à −27 h | −32 à −26 h |
+| `af_montant` | 25 | −20 à −14 | −20 à −14 | −19 à −13 |
+| `ppa_foyers` | 25 | +22 à +28 h | +17 à +23 | +20 à +26 |
+| `is` | 20 | −20 à −19 | −1 à −0 | +1 à +2 |
+| `contribution_sociale_is` | 25 | −21 à −20 | +33 à +34 h | +20 à +21 |
+| `c3s` | 25 | +11 à +12 | +6 à +7 | +1 à +2 |
+| `ir_bareme` | 10 | — | +8 à +16 h | +3 à +11 |
+| `rsa_foyers` | 25 | — | +35 à +41 h | +37 à +43 h |
+| `cvae` | 25 | — | — | −16 à −15 |
+| `cotisations_employeurs_d121` | 15 | −2 à +4 | −3 à +3 | −4 à +2 |
+| `csg_activite_avec_non_salaries` | 15 | −5 à +1 | −5 à +1 | −5 à +1 |
+| `d9_d1_servi` | 15 | +2 à +8 | −1 à +5 | −1 à +5 |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | — | — | −9 à −3 |
+| `impots_salaires_calcules` | 20 | −8 à −2 | −8 à −2 | −8 à −2 |
+| `ir_net` | 15 | +16 à +24 h | +18 à +26 h | +14 à +22 h |
+| `niveau_de_vie_median_servi` | 15 | −7 à −1 | −8 à −2 | −9 à −3 |
+| `ppa_foyers_servis` | 25 | −40 à −34 h | −43 à −37 h | −42 à −36 h |
+| `ppa_montant_servi` | 13 | −35 à −29 h | −37 à −31 h | −34 à −28 h |
+| `revenus_non_salaries_hors_gerants` | 15 | −1 à +5 | +2 à +8 | −7 à −1 |
+| `rsa_foyers_servis` | 25 | — | −13 à −7 | −12 à −6 |
+| `rsa_montant_servi` | 14 | −14 à −8 | −13 à −7 | −10 à −4 |
+
+**Ce qui reste faux, et vient ensuite** : le haut des revenus (foyers à 41 et 45 %),
+la prime d'activité (montant et foyers servis), les aides au logement, le bandeau
+famille. Chacun sera préenregistré à son tour. La série des dix études ne tourne pas
+avant.
