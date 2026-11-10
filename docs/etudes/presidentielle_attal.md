@@ -241,9 +241,9 @@ Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement i
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
-* Cotisations à la charge des salariés : −10,2 % en moyenne, de −11,6 % à −8,8 % ; 1 année sur 3 dans sa tolérance.
-* Foyers imposés : +6,5 % en moyenne, de +2,4 % à +9,8 % ; 3 années sur 3 dans sa tolérance.
-* Impôt sur le revenu au barème, avant réductions et crédits : +11,2 % en moyenne, de +8,9 % à +13,5 % ; 1 année sur 2 dans sa tolérance.
+* Cotisations à la charge des salariés : −9,6 % en moyenne, de −11,0 % à −8,2 % ; 2 années sur 3 dans sa tolérance.
+* Foyers imposés : +11,1 % en moyenne, de +6,8 % à +14,6 % ; 1 année sur 3 dans sa tolérance.
+* Impôt sur le revenu au barème, avant réductions et crédits : +2,8 % en moyenne, de +0,6 % à +4,9 % ; 2 années sur 2 dans sa tolérance.
 
 Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
 

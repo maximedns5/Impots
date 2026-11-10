@@ -27566,3 +27566,35 @@ imposés, qui montent avec les salaires du milieu. « h » : hors de la toléran
 **Ce que le pronostic désigne ensuite** : les allègements (réduction générale +13 à +16 %,
 bandeaux +23 à +30 %), qui lisent le bas de la distribution et l'extrapolation ; la tranche
 à 30 % (+18 à +25 %) ; la prime d'activité (−29 à −32 % servie) ; les aides au logement.
+
+## D-369 — La grille de D-368 : 79 lignes tenues sur 113, pronostic tenu sur 113
+
+**Ce qui a tourné.** Les trois passes de D-368, au commit 114f885, l'une après l'autre,
+seules sur la machine (38 minutes). La grille et la loi d'erreur sont réécrites.
+
+**Le compte.** 79 lignes notées sur 113 tiennent leur tolérance (78 à D-367), dont 52 des
+80 de D-363 (54 à D-367, 58 au but 18). Le pronostic tient sur les 113 lignes : la marge
+de 5 points des minima sociaux, élargie après D-367, a suffi.
+
+**Ce que D-368 a corrigé**, sur la population entière :
+
+* **Le haut des revenus.** Foyers à 41 % de +40 à −5 %, à 45 % de +52 à +11 % ; l'IR au
+  barème de +11 à +3 % ; l'IR net de +21 à +12 %. Le défaut était dans le tirage des
+  salaires, pas dans l'impôt.
+* **La masse salariale.** Les cotisations des employeurs au sens D121 tiennent à −2 %, avec
+  l'extrapolation aux salariés absents de l'enquête ; le RSA servi à +1 %.
+
+**Ce qu'il a déplacé**, et qui vient ensuite :
+
+* **Les allègements**, trop hauts : réduction générale +14 %, bandeau maladie +22 %,
+  bandeau famille +27 %. Ils lisent le bas de la distribution des salaires, que les
+  quantiles publiés et l'extrapolation ont relevé en masse sous 1,6 et 3,5 SMIC.
+* **Le milieu des revenus** : la tranche à 30 % à +21 %, les foyers imposés à +11 %.
+* **Les salaires déclarés** à −8 %, dans la tolérance : l'assiette de l'IR n'est pas
+  portée par l'extrapolation, quand le total publié compte les salariés absents.
+* **Le niveau de vie** médian à −6 %, le D9/D1 à −9 %, dans la tolérance.
+* **Restent** : la prime d'activité (−29 % servie), les aides au logement (−28 %), les
+  allocations familiales (−15 %, dans la tolérance).
+
+**Les pages d'étude** disent leur ligne de vérification depuis cette grille ; aucun nombre
+d'étude ne change.

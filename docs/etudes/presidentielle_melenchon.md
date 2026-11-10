@@ -235,8 +235,8 @@ Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement i
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
-* Réduction générale dégressive : −2,3 % en moyenne, de −4,0 % à −0,8 % ; 3 années sur 3 dans sa tolérance.
-* Cotisations effectives des employeurs au sens D121 (hors impôts sur les salaires, pension de l'État et salaires hors brut) : +0,4 % en moyenne, de −1,1 % à +1,6 % ; 3 années sur 3 dans sa tolérance.
+* Réduction générale dégressive : +14,3 % en moyenne, de +12,5 % à +15,9 % ; 2 années sur 3 dans sa tolérance.
+* Cotisations effectives des employeurs au sens D121 (hors impôts sur les salaires, pension de l'État et salaires hors brut) : −1,7 % en moyenne, de −3,1 % à −0,5 % ; 3 années sur 3 dans sa tolérance.
 
 Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
 
