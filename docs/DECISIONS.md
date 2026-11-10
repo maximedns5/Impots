@@ -27720,6 +27720,6 @@ aucune d'elles par une erreur qui en compense une autre. Le pronostic tient sur 
   tolérance), **le niveau de vie** et le D9/D1 (dans la tolérance) ; les entreprises
   inchangées (D-364).
 
-**La loi d'erreur** reste un biais de structure, stable d'une année à l'autre : la population
-de 2024 ramenée aux autres années garde sa forme. Le modèle est prêt pour la série des dix
+**La loi d'erreur** reste un biais de structure, stable d'une année à l'autre : la
+population de 2024 ramenée aux autres années garde sa forme. Le modèle est prêt pour la série des dix
 études : chaque écart qui reste a sa cause dite, et chaque page dira sa ligne.
