@@ -27599,3 +27599,86 @@ de 5 points des minima sociaux, élargie après D-367, a suffi.
 
 **Les pages d'étude** disent leur ligne de vérification depuis cette grille ; aucun nombre
 d'étude ne change.
+
+## D-370 — Le dernier tour du but 19 préenregistré : allègements, milieu, prime
+
+**Ce qui est joint**, sur `claude/but19` (7cef942), après la grille de D-369 et avant toute
+passe de celle-ci. Les rapports : `docs/diagnostics/etape_alleg.md`, `etape_milieu.md`,
+`etape_ppa2.md`.
+
+* **Les règles des allègements.** Le temps partiel est câblé (un mi-temps payé deux SMIC de
+  l'heure était lu au SMIC et touchait la réduction générale) ; les gérants majoritaires et
+  les salariés des particuliers employeurs n'ont plus d'allègements (CSS L. 241-13) ; un
+  sortant garde la quotité de son emploi. Correction 26 du moteur. Le SMIC de référence
+  est lu mois par mois, sur les mois travaillés.
+* **L'assiette de l'IR sur le champ de l'enquête.** La part exonérée des salaires visait
+  les salaires déclarés de la France entière quand la masse était ramenée au champ de
+  l'enquête (D-368) : chaque salarié déclarait 7 à 8 % de trop. Elle vise maintenant les
+  salaires déclarés fois le champ, et revient à 6,85 %. Le rang des salaires se tire en
+  équivalent temps plein, comme les quantiles publiés.
+* **Les jeunes et la prime d'activité.** Un jeune de 18 à 24 ans payé au-delà de 55 % de
+  169 heures de SMIC est son propre foyer pour la prime, comme la Drees le compte ; avant,
+  son salaire allait à la base de ses parents. Le n° 1379 de la Drees est lu : ses tranches
+  sont par unité de consommation, et τ = 21 € tient sur ses six tranches. La prime est calée
+  sur les recourants de la Drees, qui retrouve 73 à 83 % des foyers que la Cnaf paie : la
+  ligne de la prime, jugée contre la Cnaf, reste au-dessous ; c'est un choix de cible.
+* **La CSG déductible des indépendants** est rendue au revenu disponible de la réforme : le
+  revenu déclaré en est net, et une baisse de son taux faisait tomber la recette sans
+  monter leur revenu (l'identité comptable refusait la CSG de Lisnard, 1,27 Md€ sur
+  l'échantillon). L'IR qu'un revenu déclaré plus haut porterait n'est pas calculé.
+* **Le non-recours recalé** : p_max 0,6892 (RSA), 0,5322 (prime).
+
+**Les marges et les lignes** ne changent pas : la part exonérée vise le champ de
+l'enquête, comme la masse de D-368. Aucune ligne neuve, aucune tolérance changée.
+
+**Le pronostic**, dans `docs/verification/pronostic_d370.json`, tiré comme les précédents
+d'une grille sur 20 000 ménages avec ce code (pas aveugle), aux marges de D-368. Il annonce
+81 lignes sur 113 dans leur tolérance (79 à D-369), dont 54 des 80 de D-363. Gagnées : la
+tranche à 30 % les trois années, le bandeau maladie de 2023 et 2024, les foyers imposés de
+2023. Perdues : la réduction générale de 2023 et 2024, passée de +14 % à −17 % (la règle est
+juste ; il manque des salaires horaires sous 1,6 SMIC), l'IR au barème de 2024 (−11 %),
+qui n'est pas porté par l'extrapolation quand ses salaires déclarés le sont à la France
+entière, et les cotisations salariales de 2023. « h » : hors de la tolérance attendu.
+
+| ligne | tol. | 2022 | 2023 | 2024 |
+|---|---|---|---|---|
+| `cotisations_salariales` | 10 | −12 à −6 | −13 à −7 h | −14 à −8 h |
+| `cotisations_employeurs` | 15 | +27 à +33 h | +26 à +32 h | +24 à +30 h |
+| `reduction_generale` | 15 | −20 à −14 h | −21 à −15 h | −20 à −14 h |
+| `bandeau_maladie` | 15 | +13 à +19 h | +12 à +18 | +11 à +17 |
+| `bandeau_famille` | 15 | +20 à +26 h | +17 à +23 h | +17 à +23 h |
+| `csg_activite` | 15 | −10 à −4 | −10 à −4 | −10 à −4 |
+| `csg_remplacement` | 10 | −5 à +1 | −3 à +3 | −8 à −2 |
+| `foyers_fiscaux` | 10 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `foyers_imposes` | 10 | +8 à +14 h | +5 à +11 | +0 à +6 |
+| `foyers_tmi_0` | 15 | −11 à −5 | −12 à −6 | −10 à −4 |
+| `foyers_tmi_1` | 15 | −10 à −4 | −12 à −6 | −13 à −7 |
+| `foyers_tmi_2` | 15 | +7 à +17 | +6 à +16 | +0 à +10 |
+| `foyers_tmi_3` | 30 | −36 à −16 | −33 à −13 | −35 à −15 |
+| `foyers_tmi_4` | 30 | −30 à +20 | −21 à +29 | −19 à +31 |
+| `salaires_declares` | 10 | −10 à −4 | −12 à −6 | −12 à −6 |
+| `niveau_de_vie_median` | 15 | −7 à −1 | −8 à −2 | −9 à −3 |
+| `d9_d1` | 15 | −11 à −5 | −13 à −7 | −13 à −7 |
+| `rsa_montant` | 14 | −0 à +10 | +2 à +12 | +4 à +14 |
+| `ppa_montant` | 13 | −24 à −14 h | −26 à −16 h | −22 à −12 h |
+| `aide_logement_montant` | 25 | −34 à −24 h | −34 à −24 h | −32 à −22 h |
+| `af_montant` | 25 | −23 à −13 | −22 à −12 | −21 à −11 |
+| `ppa_foyers` | 25 | +42 à +52 h | +34 à +44 h | +38 à +48 h |
+| `is` | 20 | −20 à −19 | −1 à −0 | +1 à +2 |
+| `contribution_sociale_is` | 25 | −21 à −20 | +33 à +34 h | +20 à +21 |
+| `c3s` | 25 | +11 à +12 | +6 à +7 | +1 à +2 |
+| `ir_bareme` | 10 | — | −11 à −3 | −15 à −7 h |
+| `rsa_foyers` | 25 | — | +44 à +54 h | +45 à +55 h |
+| `cvae` | 25 | — | — | −16 à −15 |
+| `cotisations_employeurs_d121` | 15 | +1 à +7 | −0 à +6 | −2 à +4 |
+| `csg_activite_avec_non_salaries` | 15 | −5 à +1 | −5 à +1 | −5 à +1 |
+| `d9_d1_servi` | 15 | −6 à −0 | −8 à −2 | −9 à −3 |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | — | — | −9 à −3 |
+| `impots_salaires_calcules` | 20 | −7 à −1 | −7 à −1 | −7 à −1 |
+| `ir_net` | 15 | −5 à +3 | −3 à +5 | −6 à +2 |
+| `niveau_de_vie_median_servi` | 15 | −7 à −1 | −9 à −3 | −10 à −4 |
+| `ppa_foyers_servis` | 25 | −32 à −22 h | −36 à −26 h | −33 à −23 h |
+| `ppa_montant_servi` | 13 | −31 à −21 h | −33 à −23 h | −30 à −20 h |
+| `revenus_non_salaries_hors_gerants` | 15 | −1 à +5 | +2 à +8 | −7 à −1 |
+| `rsa_foyers_servis` | 25 | — | −8 à +2 | −8 à +2 |
+| `rsa_montant_servi` | 14 | −9 à +1 | −7 à +3 | −5 à +5 |
