@@ -40,9 +40,9 @@ moyen travaillé, quand la Caf le lit mois par mois. Le jeune hébergé chez des
 locataires n'a pas de forfait logement dans le moteur (le moteur lit le statut
 d'occupation du ménage), alors que la Caf le compte logé gratuitement : sa prime est
 trop haute d'au plus le forfait (75 € par mois pour une personne seule en 2024) ; défaut
-du câblage, mesuré, non corrigé ici. L'étudiant salarié n'est pas distingué : l'enquête ne dit pas qui est inscrit dans
-le supérieur au sens de la Caf, et le plancher de revenu des apprenants
-(`ppa_eligibilite_apprenants`) ne joue pas.
+du câblage, mesuré, non corrigé ici. L'étudiant salarié n'est pas distingué : l'enquête
+ne dit pas qui est inscrit dans le supérieur au sens de la Caf, et le plancher de revenu
+des apprenants (`ppa_eligibilite_apprenants`) ne joue pas.
 """
 
 from __future__ import annotations
