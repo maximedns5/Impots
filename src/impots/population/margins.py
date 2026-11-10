@@ -56,6 +56,43 @@ WAGE_MEAN_NET_EQTP_MONTHLY = 2733.0
 #: five bands are enough to carry most of it.
 WAGE_MEAN_NET_EQTP_BY_AGE: dict[str, float] = {"under_25": 1620.0, "25_39": 2550.0}
 
+#: Mean net EQTP monthly by age band and sex, private sector, 2024: (lower age, upper
+#: age, women, men). Insee, « Emploi, chômage, revenus du travail », édition 2026, fiche
+#: 2.6, figure 3 (base Tous salariés 2024),
+#: https://www.insee.fr/fr/statistiques/fichier/8733089/ECRT2026_F26.xlsx. Read by the
+#: wage draw (but 19, étape « haut »): before it, only the under-25 penalty and the sex
+#: gap were applied, and the 25-39-year-olds came out 12 % above their published mean
+#: and the 55 and over 17 % below it.
+WAGE_MEAN_NET_EQTP_BY_AGE_SEX: tuple[tuple[int, int, float, float], ...] = (
+    (0, 25, 1590.0, 1640.0), (25, 40, 2440.0, 2630.0), (40, 50, 2760.0, 3190.0),
+    (50, 55, 2820.0, 3430.0), (55, 200, 2810.0, 3600.0),
+)
+
+#: Centiles of the net EQTP monthly wage, private sector, 2024, which the wage draw is
+#: mapped onto (its upper half, or all of it: `incomes.WHOLE_DISTRIBUTION`; but 19, étape
+#: « haut »). Insee Première
+#: n° 2079 (octobre 2025), tableau complémentaire 3,
+#: https://www.insee.fr/fr/statistiques/fichier/8657156/ip2079.xlsx. Above the 99th
+#: centile, a Pareto tail through the 95th and 99th (`incomes.TAIL_C95_NET_EQTP_MONTHLY`).
+WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY: dict[float, float] = {
+    0.05: 1362.0, 0.10: 1492.0, 0.20: 1669.0, 0.25: 1746.0, 0.30: 1823.0, 0.40: 1992.0,
+    0.50: 2190.0, 0.60: 2442.0, 0.70: 2785.0, 0.80: 3305.0, 0.85: 3709.0, 0.90: 4334.0,
+    0.91: 4509.0, 0.92: 4709.0, 0.93: 4947.0, 0.94: 5234.0, 0.95: 5593.0, 0.96: 6073.0,
+    0.97: 6752.0, 0.98: 7869.0, 0.99: 10261.0,
+}
+
+#: Quantiles of the net EQTP monthly wage in the fonction publique, 2024, by versant:
+#: D1, Q1, median, Q3, D9. Insee, « Emploi, chômage, revenus du travail »,
+#: édition 2026, fiche 2.9, figure 2 (Siasp 2024),
+#: https://www.insee.fr/fr/statistiques/fichier/8733095/ECRT2026_F29.xlsx. Above D9 the
+#: curve is extended with the slope of its last segment: no upper centile is published,
+#: and that tail is a hypothesis.
+WAGE_QUANTILES_FP_NET_EQTP_MONTHLY: dict[str, dict[float, float]] = {
+    "etat": {0.10: 1760.0, 0.25: 2260.0, 0.50: 2820.0, 0.75: 3510.0, 0.90: 4330.0},
+    "territoriale": {0.10: 1650.0, 0.25: 1840.0, 0.50: 2120.0, 0.75: 2540.0, 0.90: 3190.0},
+    "hospitaliere": {0.10: 1890.0, 0.25: 2110.0, 0.50: 2470.0, 0.75: 3050.0, 0.90: 4010.0},
+}
+
 NET_TO_GROSS_RATIO = Figure(
     value=0.7587, unit="ratio", year=2024,
     scope="Salariés du secteur privé, ensemble : salaire net / salaire brut",
@@ -78,6 +115,83 @@ TOTAL_GROSS_WAGES = Figure(
     caveat="Covers every employee in the economy, including those in collective "
            "households the EEC does not survey. Our population is employees aged "
            "15+ in ordinary households, so it should land slightly below.",
+)
+
+#: The wage bill of the employees the survey covers: D11, less the gérants, times this
+#: ratio (but 19, étape « haut », décision du coordinateur après la variante d2). D11 pays
+#: every employee of the national accounts; the survey's employees are fewer, and
+#: calibrating D11 onto them alone raised each one's pay by the missing headcount (+6.5 %
+#: over what the published wage quantiles imply, the « part exonérée » of the étape « ir »
+#: absorbing it on the tax side).
+SALARIES_COMPTES_NATIONAUX = Figure(
+    value=27_181_700.0, unit="count", year=2024,
+    scope="Emploi intérieur salarié en nombre de personnes, ensemble des branches (ligne "
+          "« _T »), moyenne annuelle",
+    source="INSEE, comptes nationaux annuels base 2020, tableau 6.210",
+    url="https://www.insee.fr/fr/statistiques/fichier/8988823/T_6210_fr.xlsx",
+    use="calibration",
+)
+
+SALARIES_ENQUETE_EMPLOI = Figure(
+    value=29_187_000.0 * 0.8665994595935453, unit="count", year=2024,
+    scope="Personnes en emploi au sens du BIT, 15 ans ou plus, logement ordinaire, France "
+          "(29 187 000, publié), fois la part des salariés (STATUT = 2) dans l'emploi "
+          "pondéré par EXTRIAN du fichier détail de l'enquête Emploi 2024 (86,66 %)",
+    source="INSEE, « Emploi, chômage, revenus du travail », édition 2026, fiche 2.1, "
+           "figure 1 ; enquête Emploi 2024, fichier détail (FD_EEC_2024)",
+    url="https://www.insee.fr/fr/statistiques/fichier/8733041/ECRT2026_F2.xlsx",
+    use="calibration",
+    caveat="The salaried count itself is not published on that page; its share is read "
+           "from the survey file, which the population is built from. The raked "
+           "population counts 24.93 M employees, 1.4 % fewer.",
+)
+
+#: 0,9305. What separates the two fields: the survey leaves out people in collective
+#: households (foyers de travailleurs, casernes, résidences : a few hundred thousand
+#: employees), Mayotte (about 0.05 M) and non-residents working in France (frontaliers
+#: entrants), whom the accounts' domestic employment counts; and above all the people
+#: the administrative sources pay in the year but who answer, in the survey week, that
+#: they have no job (short contracts, students' and retirees' small jobs: the Insee's
+#: own gap between its employment estimates and the survey, 30.4 against 29.0 M
+#: workers). In the other direction, the survey counts residents working abroad (about
+#: 0.4 M cross-border workers), whom D11 does not pay. Those missing are mostly paid less
+#: than the average (short and small jobs), so their share of D11 is smaller than their
+#: share of the headcount and this ratio, applied to the mass, takes slightly too much
+#: off; the cross-border workers, paid more and counted in the survey only, push the
+#: same way. Neither is published as a mass: the ratio of headcounts is the hypothesis.
+CHAMP_SALARIES_ENQUETE = Figure(
+    value=SALARIES_ENQUETE_EMPLOI.value / SALARIES_COMPTES_NATIONAUX.value, unit="ratio",
+    year=2024,
+    scope="Salariés de l'enquête Emploi (logement ordinaire) sur l'emploi salarié "
+          "intérieur des comptes nationaux",
+    source="INSEE, ECRT 2026 fiche 2.1 et enquête Emploi 2024 ; comptes nationaux, T_6210",
+    url=SALARIES_COMPTES_NATIONAUX.url,
+    use="calibration",
+    caveat="A ratio of headcounts applied to a mass: the employees missing from the "
+           "survey are mostly lower paid than the average, so the survey's true share "
+           "of D11 is a little above it (not published).",
+)
+
+#: 1,0747 = 27 181 700 / 25 293 000, the inverse of `CHAMP_SALARIES_ENQUETE`: what carries
+#: the totals and the reform costs assis sur les salaires from the survey's employees to
+#: France's (décision du propriétaire, 10 novembre 2026 ; étape « extrapolation »). Each
+#: wage stays at its published value; the aggregate counts every non-gérant employee's
+#: wage-borne amounts this many times (`aggregate.ASSIS_SUR_LES_SALAIRES`), on the
+#: hypothesis that the 1,9 M employees the survey does not see are like those it does.
+#: The income tax and its base, the benefits, the pensions and the niveaux de vie are not
+#: carried: they are the declarations' and the households' (`aggregate`, docstring).
+EXTRAPOLATION_SALARIES = Figure(
+    value=1.0 / CHAMP_SALARIES_ENQUETE.value, unit="ratio", year=2024,
+    scope="Emploi intérieur salarié des comptes nationaux sur les salariés de l'enquête "
+          "Emploi (logement ordinaire) : 27,18 M sur 25,29 M",
+    source="INSEE, comptes nationaux, T_6210 ; ECRT 2026 fiche 2.1 et enquête Emploi 2024",
+    url=SALARIES_COMPTES_NATIONAUX.url,
+    use="context",
+    caveat="A hypothesis, not a measurement: the employees missing from the survey "
+           "(collective households, Mayotte, cross-border workers coming in, short jobs "
+           "the survey week misses) are taken to pay and receive, per head, what the "
+           "surveyed employees do. The wage bill it gives is D11 exactly; the missing "
+           "are mostly lower paid, so the allègements it gives run a little low.",
 )
 
 PRIVATE_WAGE_BILL = Figure(

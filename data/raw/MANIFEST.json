@@ -416,13 +416,13 @@
       "quarantined": false
     },
     "insee_ip2079_salaires_prive_2024.xlsx": {
-      "url": null,
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8657156/ip2079.xlsx",
       "sha256": "34b7e19cce45d8a5bc7a83f125d00d694ea6266e06b94531f8815a957f5b7d11",
       "bytes": 42082,
-      "downloaded": "2026-09-03",
-      "licence": "unknown",
-      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it.",
-      "quarantined": true
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Première n° 2079, « Les salaires dans le secteur privé en 2024 » (base Tous salariés 2024) : centiles du salaire net mensuel EQTP (tableau complémentaire 3), C95 et C99 (figure 3) (étape haut)",
+      "quarantined": false
     },
     "insee_ip2100_fonction_publique_etat_2024.xlsx": {
       "url": null,
@@ -1918,6 +1918,60 @@
       "downloaded": "2026-11-10",
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "SDES, Datalab Essentiel, « 5,4 millions de logements locatifs sociaux en France au 1er janvier 2024 » (RPLS), tableau 4 : loyer moyen du parc social par m² (étape al)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_f26_salaires_prive_age_sexe.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733089/ECRT2026_F26.xlsx",
+      "sha256": "5e3b2648ca13be5192585473cbe46e6ebd11622b6a9b5e132b5441436436b262",
+      "bytes": 24753,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.6 : salaire net mensuel EQTP moyen du privé par âge et sexe en 2024 (figure 3), dispersion par PCS (figure 4) (étape haut)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_f29_salaires_fonction_publique.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733095/ECRT2026_F29.xlsx",
+      "sha256": "82a22593c10ffd686287e1b3e4ce9147c914b720c14c3ddb252e60ad9b0d7ccb",
+      "bytes": 19727,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.9 : dispersion du salaire net mensuel EQTP dans la fonction publique en 2024 par versant (Siasp, figure 2) (étape haut)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_F30_revenu_salarial.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733097/ECRT2026_F30.xlsx",
+      "sha256": "c6b2d697d461e6b8c0f07c2cae5a720358dd83a8cc28b642455bd76bc4994854",
+      "bytes": 20414,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Références « Emploi, chômage, revenus du travail », édition 2026, fiche « Revenu salarial », figures 1 à 3 : revenu salarial, salaire en EQTP et volume de travail annuel moyen en EQTP en 2023, dispersion du revenu salarial (étape ppa)",
+      "quarantined": false
+    },
+    "insee_revenus_salariaux_2022.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/2381326/marc-salair-revenu-salarial.xlsx",
+      "sha256": "6e749570d9c43e114173eca03354332123c1d115b52811fb0147766a932bf17e",
+      "bytes": 111275,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Revenus salariaux, données annuelles 2022 (décembre 2025) : revenu salarial, salaire en EQTP, volume de travail par sexe, âge, diplôme, CS, quotité, secteur (étape ppa)",
+      "quarantined": false
+    },
+    "senat_r25-728_ccomptes_prime_activite.pdf": {
+      "url": "https://www.senat.fr/rap/r25-728/r25-7281.pdf",
+      "sha256": "8990f4c044ea85301f77ef2154ce7d881e12eb0d8fdab14564faee431633d0df",
+      "bytes": 2689355,
+      "downloaded": "2026-11-10",
+      "licence": "publication du Sénat, réutilisation avec mention de la source",
+      "description": "Sénat, rapport d'information n° 728 (2025-2026) sur la prime d'activité, avec l'enquête de la Cour des comptes : tableaux 12 et 13 (Cnaf, Allstat FR6, décembre 2023), montants moyens par configuration et répartition des foyers par montant versable ; élasticités de la Cnaf (étape ppa)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_f2_emploi.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733041/ECRT2026_F2.xlsx",
+      "sha256": "a20cb076b38193b43f32fde54ced4d1ba61496f8288b7e9286ad2ae932b41779",
+      "bytes": 25565,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.1, figure 1 : personnes en emploi (enquête Emploi, logement ordinaire), 29 187 000 en 2024 (étape haut, champ des salariés)",
       "quarantined": false
     }
   }

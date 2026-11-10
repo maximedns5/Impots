@@ -24,6 +24,8 @@ import polars as pl
 
 from impots.engine import outputs
 from impots.engine.system import baseline, reformed_for
+from impots.population import margins
+from impots.population.aggregate import ASSIS_SUR_LES_SALAIRES, HORS_CHAMP
 from impots.population.to_openfisca import WiringError, build_simulation
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
@@ -322,6 +324,11 @@ def _extract(
     results["revenus_non_salaries_hors_gerants"] = (
         _to_households(np.where(gerant, 0.0, rpns), individu_index, n_households)
         + liberatoire)
+    # What each person's wage-borne amounts count beyond themselves in the totals: the
+    # employees the survey does not see, taken to be like those it does (étape
+    # « extrapolation », `aggregate.ASSIS_SUR_LES_SALAIRES`). The gérants are paid their
+    # declared pay, already the whole of theirs, and are not carried.
+    hors_champ = np.where(gerant, 0.0, margins.EXTRAPOLATION_SALARIES.value - 1.0)
 
     # The employers' contributions as the national accounts count them (D121), for the
     # verification grid only (but 19, étape 1; `docs/diagnostics/cotisations_employeurs.md`).
@@ -333,6 +340,7 @@ def _extract(
     # Population passes, not the API's rows (D-363); no cost reads them.
     for key, value in employeurs_d121(built).items():
         results[key] = _to_households(value, individu_index, n_households)
+        _hors_champ(results, key, value, hors_champ, individu_index, n_households)
 
     # Allocataire counts, at FAMILLE level and in December.
     #
@@ -365,9 +373,22 @@ def _extract(
                 array.astype(np.float64), index_for[row.entity], n_households
             )
         results[row.key] = -values if row.negate else values
+        if row.key in ASSIS_SUR_LES_SALAIRES and row.entity == "individu":
+            _hors_champ(results, row.key,
+                        -array.astype(np.float64) if row.negate else array.astype(np.float64),
+                        hors_champ, individu_index, n_households)
     if tier == "full":
         _serve_in_expectation(results, built, famille_index, n_households)
     return results
+
+
+def _hors_champ(results: dict[str, np.ndarray], key: str, per_person: np.ndarray,
+                hors_champ: np.ndarray, index: np.ndarray, n_households: int) -> None:
+    """`{key}_hors_champ`: per ménage, what its members' `key` stands for beyond
+    themselves, the employees outside the survey (`aggregate.extrapole`). Zero for a
+    ménage without an employee; never read by a household's own figures."""
+    results[f"{key}{HORS_CHAMP}"] = _to_households(per_person * hors_champ, index,
+                                                   n_households)
 
 
 #: The levies on wages OpenFisca counts in `cotisations_employeur` and the national

@@ -39,6 +39,7 @@ from impots.population.calibrate import (
     standard_margins,
     with_cells,
 )
+from impots.population.emploi_discontinu import attach_mois_travailles
 from impots.population.incomes import (
     IncomeScaleError,
     attach_incomes,
@@ -47,7 +48,7 @@ from impots.population.incomes import (
     sample_curve,
 )
 from impots.population.runner import _pps_certainty_split, run, subsample
-from impots.population.skeleton import build_skeleton
+from impots.population.skeleton import SEED, build_skeleton
 from impots.population.to_openfisca import (
     ROLE_VOCABULARY,
     WiringError,
@@ -77,6 +78,7 @@ def population() -> pl.DataFrame:
     children = {key: np.array(value) for key, value in margins.CHILDREN_PER_FAMILY.items()}
     frame, _ = build_skeleton(children_per_household=children, source=pl.read_parquet(FIXTURE))
     frame, _ = attach_incomes(frame, targets_scale=household_share_of_france(frame))
+    frame, _ = attach_mois_travailles(frame, seed=SEED)
     return frame
 
 
@@ -425,25 +427,45 @@ def test_wage_curve_reproduces_published_deciles() -> None:
         assert np.quantile(draws, decile / 10) == pytest.approx(published, rel=0.02)
 
 
+def test_the_survey_s_share_of_the_salaried_headcount_is_the_published_ratio() -> None:
+    """ECRT 2026 (29 187 000 en emploi, 86,66 % de salariés dans le fichier de l'enquête)
+    sur l'emploi salarié intérieur des comptes (27 181 700) : 0,9305."""
+    assert margins.CHAMP_SALARIES_ENQUETE.value == pytest.approx(0.93053, abs=1e-5)
+
+
 def test_wage_bill_is_calibrated(population: pl.DataFrame) -> None:
     """The one calibration on incomes, and therefore spent (§4.3).
 
     The target is the national wage bill scaled to the share of France this frame
-    represents. On the full EEC that scale is 1.0 and this is the national figure.
+    represents. On the full EEC that scale is 1.0 and this is the national figure. The
+    gérants are paid out of it; the employees, out of the rest times the survey's share of
+    the accounts' salaried headcount (but 19, étape « haut »).
     """
     weight = population["weight"].to_numpy()
-    total = float((population["salaire_brut_annuel"].to_numpy() * weight).sum())
+    wages = population["salaire_brut_annuel"].to_numpy()
+    gerant = population["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"]) \
+        .fill_null(False).to_numpy()
+    total = float((wages * weight).sum())
+    gerants = float((wages * weight)[gerant].sum())
     share = household_share_of_france(population)
-    assert total == pytest.approx(margins.TOTAL_GROSS_WAGES.value * share, rel=1e-6)
+    expected = gerants + (margins.TOTAL_GROSS_WAGES.value * share - gerants) \
+        * margins.CHAMP_SALARIES_ENQUETE.value
+    assert total == pytest.approx(expected, rel=1e-6)
 
 
 def test_only_employees_earn_wages(population: pl.DataFrame) -> None:
     """And the gérants majoritaires, whose pay is a salary (art. 62 of the CGI) that D11
-    counts (but 19, étape « ir »)."""
+    counts (but 19, étape « ir »); and, since the étape « ppa », people out of work at the
+    survey week who left a salaried job less than a year before, paid on the months
+    before they left, and on those months only."""
     earners = population.filter(pl.col("salaire_brut_annuel") > 0)
     gerant = earners["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"]).fill_null(False)
-    assert (earners["is_salarie"] | gerant).all()
-    assert (earners["statut_activite"] == "employed").all()
+    employed = earners["statut_activite"] == "employed"
+    assert ((earners["is_salarie"] | gerant) & employed | ~employed).all()
+    leavers = earners.filter(~employed)
+    assert leavers["anciennete_sans_emploi"].is_in(["1", "2", "3", "4"]).all()
+    assert leavers["classe_emploi"].str.slice(0, 1).is_in(["A", "B", "C", "D"]).all()
+    assert (leavers["mois_travailles"] != (1 << 12) - 1).all()
 
 
 def test_pensions_go_to_older_inactive_people_only(population: pl.DataFrame) -> None:
@@ -667,11 +689,15 @@ def test_light_tier_has_no_benefit_totals(population: pl.DataFrame) -> None:
 # reforms over a population
 # --------------------------------------------------------------------------- #
 def test_reform_moves_tax_and_leaves_a_delta(population: pl.DataFrame) -> None:
-    """A 50 % top rate must raise money and produce losers, not winners."""
+    """Higher top rates must raise money and produce losers, not winners.
+
+    The 41 % rate is raised too: since the étape « haut » of but 19 the 400-household
+    fixture has no foyer above the 45 % threshold (the draw had put 6.5 % of the employees
+    in its Pareto tail instead of 5 %), and a reform of that rate alone moved nothing."""
     reform = ReformSpec.model_validate(
         {"ir_bareme": [
             {"threshold": 0, "rate": 0.00}, {"threshold": 11497, "rate": 0.11},
-            {"threshold": 29315, "rate": 0.30}, {"threshold": 83823, "rate": 0.41},
+            {"threshold": 29315, "rate": 0.30}, {"threshold": 83823, "rate": 0.43},
             {"threshold": 180294, "rate": 0.50},
         ]}
     )
@@ -1197,10 +1223,12 @@ def test_the_country_itself_is_never_refused() -> None:
 
     scaled, stats = attach_incomes(frame)
     assert stats.targets_scale == 1.0
-    weighted = float(
-        (scaled["salaire_brut_annuel"].to_numpy() * scaled["weight"].to_numpy()).sum()
-    )
-    assert weighted == pytest.approx(margins.TOTAL_GROSS_WAGES.value, rel=1e-6)
+    wages = scaled["salaire_brut_annuel"].to_numpy() * scaled["weight"].to_numpy()
+    gerants = float(wages[scaled["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"])
+                          .fill_null(False).to_numpy()].sum())
+    assert float(wages.sum()) == pytest.approx(
+        gerants + (margins.TOTAL_GROSS_WAGES.value - gerants)
+        * margins.CHAMP_SALARIES_ENQUETE.value, rel=1e-6)
 
 
 def test_the_unscaled_sample_is_kept_as_the_defect_it_was() -> None:
@@ -1217,9 +1245,11 @@ def test_the_unscaled_sample_is_kept_as_the_defect_it_was() -> None:
     earners = wages[wages > 0]
     # 3 M€ and 20 M€ until the étape « ir » of but 19, which pays the gérants majoritaires
     # out of D11: the employees' share falls by their 3,3 %, the minimum to 2,93 M€ and the
-    # mean to 19,96 M€.
-    assert earners.min() > 2_900_000.0
-    assert earners.mean() > 19_000_000.0
+    # mean to 19,96 M€; then the étape « haut », which reads the whole distribution on the
+    # published quantiles and brings the employees' share to the survey's field (× 0,9305):
+    # the mean to 18,6 M€.
+    assert earners.min() > 2_000_000.0
+    assert earners.mean() > 18_000_000.0
 
 
 def test_the_scaled_population_has_plausible_wages(population: pl.DataFrame) -> None:

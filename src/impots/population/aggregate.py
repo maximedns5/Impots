@@ -19,6 +19,7 @@ import numpy as np
 import polars as pl
 
 from impots.guards import sector_balance
+from impots.population import margins as _margins
 
 #: A reform moves a household by less than this and we call it unaffected. Below
 #: about ten euros a year the answer is dominated by rounding inside the engine
@@ -49,6 +50,50 @@ INSTRUMENTS = (
     # state collects that disposable income, taken before indirect taxes, does not show.
     "tva_menages", "accises_energie", "consommation_imputee",
 )
+#: The instruments assis sur les salaires, which the totals and the reform costs carry
+#: to France's employees (étape « extrapolation », décision du propriétaire du
+#: 10 novembre 2026). The survey sees 25,29 M employees, the national accounts count
+#: 27,18 M; each wage stays at its published value, and each non-gérant employee's
+#: wage-borne amounts count `margins.EXTRAPOLATION_SALARIES` times (1,0747) in a total
+#: and in a delta. The runner writes, per ménage, `{key}_hors_champ`: what its members
+#: stand for beyond themselves.
+#:
+#: **What is not carried, and why.** `salaire_imposable` and the income tax: their base
+#: is calibrated on the salaries the foyers declare (`margins.DECLARED_TAXABLE_WAGES`,
+#: met to 0,1 % on the survey's field), so carrying it would count the declared salaries
+#: 7,5 % twice; a reform's income-tax feedback is that of the declared salaries, which
+#: the survey's field already reaches (counting it, and the prime's, for the missing too
+#: would take 0,9 Md€ off the 60,9 of Attal's « droit au brut », 15 000 ménages, droit
+#: 2024). The benefits (prime d'activité, RSA, aides au logement), the pensions, the
+#: unemployment benefit and the CSG on them, and every niveau de vie, decile and
+#: household's own figure: they are the surveyed households', whom the survey weights to
+#: France already. The gérants, whose declared pay is the whole of theirs.
+#:
+#: `revenu_disponible` is carried by its net wages alone (`salaire_net`'s part), so that
+#: a reform's cost, Δ disposable income less Δ employers' contributions, stays the sum of
+#: its instruments' deltas (`guards.sector_balance`); its deciles are not.
+ASSIS_SUR_LES_SALAIRES = (
+    "salaire_brut", "salaire_super_brut", "salaire_net",
+    "cotisations_salariales", "cotisations_employeur",
+    "csg_deductible", "csg_imposable", "crds",
+    "allegement_general", "allegement_bandeau_maladie", "allegement_bandeau_famille",
+    "prelevements_salaires_d291", "pension_employeur_etat", "remuneration_hors_brut",
+)
+#: The suffix of the runner's per-ménage extrapolation columns.
+HORS_CHAMP = "_hors_champ"
+#: Which carried column each total reads; the disposable incomes by their net wages.
+_PORTE_PAR = {**{name: name for name in ASSIS_SUR_LES_SALAIRES},
+              "revenu_disponible": "salaire_net", "revenu_disponible_droit": "salaire_net"}
+#: The setting a page reads to say the hypothesis; off, the totals are the survey's.
+EXTRAPOLER_SALARIES = True
+#: The sentence a public page says (étape « extrapolation »).
+PHRASE_EXTRAPOLATION = (
+    "Les cotisations, la CSG et les allègements sur les salaires, et le coût des réformes "
+    "qui les touchent, sont portés aux 27,2 millions de salariés de la France entière, en "
+    "supposant les 1,9 million que l'enquête Emploi ne voit pas semblables aux autres ; "
+    "l'impôt sur le revenu, les prestations et les niveaux de vie restent ceux des "
+    "ménages enquêtés.")
+
 #: The receipts on consumption: a fall in them is a cost, and a loss of purchasing power
 #: for the household that pays them.
 CONSOMMATION = ("tva_menages", "accises_energie")
@@ -171,6 +216,10 @@ class Aggregates:
     reform_cost_droit: float | None = None
     """The cost at full take-up, the difference of two entitlements: what every cost was
     before the take-up layer. Reported beside `reform_cost`, never instead of it."""
+    extrapolation_salaires: float = 1.0
+    """The factor the totals assis sur les salaires were carried by
+    (`margins.EXTRAPOLATION_SALARIES`), 1 when the frame has no `_hors_champ` column or
+    `EXTRAPOLER_SALARIES` is off: what a page reads to say the hypothesis."""
     employer_contribution_delta: float = 0.0
     """Change in employer contributions actually paid, net of allègements. Derived as
     Δ(salaire_super_brut − salaire_brut) rather than from `cotisations_employeur`,
@@ -179,6 +228,22 @@ class Aggregates:
 
 def _total(frame: pl.DataFrame, column: str, weights: np.ndarray) -> float:
     return float((frame[column].to_numpy() * weights).sum())
+
+
+def extrapole(frame: pl.DataFrame, column: str, weights: np.ndarray) -> float:
+    """The weighted total of `column` (`name` or `name_reform`), carried to France's
+    employees when the instrument is assis sur les salaires (`ASSIS_SUR_LES_SALAIRES`):
+    plus what its `_hors_champ` column holds. A frame without that column (a runner
+    before the étape « extrapolation », a hand-made frame) is the survey's."""
+    total = _total(frame, column, weights)
+    reform = column.endswith("_reform")
+    name = column.removesuffix("_reform")
+    if not EXTRAPOLER_SALARIES or name not in _PORTE_PAR:
+        return total
+    carried = f"{_PORTE_PAR[name]}{HORS_CHAMP}" + ("_reform" if reform else "")
+    if carried not in frame.columns:
+        return total
+    return total + _total(frame, carried, weights)
 
 
 def _employer_contribution_delta(frame: pl.DataFrame, weights: np.ndarray) -> float:
@@ -192,10 +257,11 @@ def _employer_contribution_delta(frame: pl.DataFrame, weights: np.ndarray) -> fl
               "salaire_super_brut_reform", "salaire_brut_reform")
     if not all(column in frame.columns for column in needed):
         return 0.0
-    paid = _total(frame, "salaire_super_brut", weights) - _total(frame, "salaire_brut", weights)
+    paid = (extrapole(frame, "salaire_super_brut", weights)
+            - extrapole(frame, "salaire_brut", weights))
     paid_reform = (
-        _total(frame, "salaire_super_brut_reform", weights)
-        - _total(frame, "salaire_brut_reform", weights)
+        extrapole(frame, "salaire_super_brut_reform", weights)
+        - extrapole(frame, "salaire_brut_reform", weights)
     )
     return paid_reform - paid
 
@@ -222,8 +288,10 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
     has_reform = any(column.endswith("_reform") for column in frame.columns)
 
     totals = {
-        name: _total(frame, name, weights) for name in INSTRUMENTS if name in frame.columns
+        name: extrapole(frame, name, weights) for name in INSTRUMENTS if name in frame.columns
     }
+    carried = EXTRAPOLER_SALARIES and f"salaire_brut{HORS_CHAMP}" in frame.columns
+    factor = _margins.EXTRAPOLATION_SALARIES.value if carried else 1.0
     counts = {
         name: _total(frame, name, weights) for name in COUNTS if name in frame.columns
     }
@@ -234,7 +302,7 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
         for name in totals:
             reform_column = f"{name}_reform"
             if reform_column in frame.columns:
-                totals_reform[name] = _total(frame, reform_column, weights)
+                totals_reform[name] = extrapole(frame, reform_column, weights)
                 deltas[name] = totals_reform[name] - totals[name]
     # AFTER the deltas exist, not before: computed above, `cost` read an empty dict
     # and came back None for every reform without an employer term.
@@ -255,7 +323,7 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
             totals=totals, counts=counts, totals_reform=totals_reform, deltas=deltas,
             households=float(weights.sum()),
             persons=float((frame["n_persons"].to_numpy() * weights).sum()),
-            employer_contribution_delta=employer_delta,
+            employer_contribution_delta=employer_delta, extrapolation_salaires=factor,
             reform_cost=cost, reform_cost_droit=cost_droit,
             balance=(
                 sector_balance(deltas, reform_cost=cost,
@@ -333,7 +401,7 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
         households=float(weights.sum()),
         persons=float((frame["n_persons"].to_numpy() * weights).sum()),
         # A reform that raises disposable income costs the budget that much.
-        employer_contribution_delta=employer_delta,
+        employer_contribution_delta=employer_delta, extrapolation_salaires=factor,
         reform_cost=cost, reform_cost_droit=cost_droit,
         balance=(
             sector_balance(deltas, reform_cost=cost,

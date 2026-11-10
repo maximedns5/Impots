@@ -54,11 +54,13 @@ class IncomeScaleError(RuntimeError):
 #: Standard normal quantile at 0.9 — the deciles are converted through this.
 Z90 = 1.2815515655446004
 
-#: Above this quantile the lognormal understates: real top wages have a Pareto
-#: tail. Spliced at the 95th percentile and calibrated on the published C95/C99.
+#: Above the 99th centile the private wages follow a Pareto tail through the published
+#: C95 and C99 (Insee Première n° 2079, figure 3 and tableau complémentaire 3).
+#: `TAIL_QUANTILE` is the cut of the draw before the étape « haut », kept to replay its
+#: stream (`_legacy_tail_size`).
 TAIL_QUANTILE = 0.95
 TAIL_C95_NET_EQTP_MONTHLY = 5593.0
-TAIL_C99_NET_EQTP_MONTHLY = 10260.0
+TAIL_C99_NET_EQTP_MONTHLY = 10261.0
 
 #: Retirement: an inactive person at or above this age is treated as a pensioner.
 #: The EEC has no "retired" status — `ACTEU` distinguishes only employment,
@@ -262,9 +264,33 @@ def _pareto_alpha(c95: float, c99: float) -> float:
 
 
 def _draw_net_eqtp(frame: pl.DataFrame, rng: np.random.Generator) -> np.ndarray:
-    """A net full-time-equivalent monthly wage for every employee."""
+    """A net full-time-equivalent monthly wage for every employee.
+
+    **The rank** comes from the survey: a draw on the published curve of the person's
+    PCS (D1, median, D9), times a factor for his age band and sex. **The value** comes
+    from the publications: each employee's weighted rank among the employees of his
+    sector is read on the published curve of that sector, the Insee Première n° 2079
+    centiles for the private sector (a Pareto tail above the 99th), the Siasp D1, Q1,
+    median, Q3 and D9 for each versant of the fonction publique. The survey's quotité then
+    turns the EQTP wage into the one paid, and the months worked of `emploi_discontinu`
+    (étape « ppa ») spread it over the year: the drawn lower half, kept below the median
+    while part-year work was not modelled (variant (a), `WHOLE_DISTRIBUTION` off), is no
+    longer needed for that (variant (d), on; both measured in the étape's report). The age and sex factors are fitted so that the
+    private employees' mean in each of the ten published cells (`margins.
+    WAGE_MEAN_NET_EQTP_BY_AGE_SEX`), relative to the private mean, is the published one;
+    the fonction publique takes the same factors, a hypothesis.
+
+    **Why** (but 19, étape « haut »). The draw before it spliced its Pareto tail on the
+    5 % of *rows* above an unweighted cut, children and inactive people included: 6.5 %
+    of the employees were in it, the 95th and 99th centiles came out 10 and 8 % above the
+    published ones before the wage-bill calibration and 17 and 15 % after; it gave the
+    private sector's shape to the fonction publique, whose D9/D1 is 2.3 and not 2.9; and
+    it applied no age gradient after 25, so the 25-39-year-olds, more often single, came
+    out 12 % above their published mean and the 55 and over 17 % below it. The foyers at
+    41 and 45 % were 31 and 72 % above the DGFiP's count.
+    """
     n = frame.height
-    draws = np.zeros(n, dtype=np.float64)
+    score = np.zeros(n, dtype=np.float64)
     pcs = frame["pcs"].to_numpy()
     normals = rng.standard_normal(n)
 
@@ -273,37 +299,116 @@ def _draw_net_eqtp(frame: pl.DataFrame, rng: np.random.Generator) -> np.ndarray:
         if not mask.any():
             continue
         knots_z, knots_log = quantile_curve({0.1: d1, 0.5: median, 0.9: d9})
-        draws[mask] = sample_curve(normals[mask], knots_z, knots_log)
+        score[mask] = sample_curve(normals[mask], knots_z, knots_log)
 
     # Employees whose PCS is not coded (0.29 M) take the all-employee curve, which
     # has all nine published deciles rather than three.
-    unknown = draws == 0
+    unknown = score == 0
     if unknown.any():
         deciles = margins.WAGE_DECILES_NET_EQTP_MONTHLY
         knots_z, knots_log = quantile_curve({k / 10: v for k, v in deciles.items()})
-        draws[unknown] = sample_curve(normals[unknown], knots_z, knots_log)
+        score[unknown] = sample_curve(normals[unknown], knots_z, knots_log)
 
-    # Sex gap, applied *within* PCS: women are both over-represented in lower-paid
-    # categories and paid less inside each one, and the PCS draw only carries the first.
+    # The stream. The draw before the étape « haut » took one uniform for each row of its
+    # tail; they are drawn and discarded, so that the pensions and the unemployment
+    # benefit, which read the same generator after the wages, are the ones drawn before.
+    rng.uniform(size=_legacy_tail_size(frame, score))
+
+    employee = frame["is_salarie"].to_numpy().astype(bool) & (
+        frame["statut_activite"].to_numpy() == "employed")
+    weight = frame["weight"].to_numpy().astype(np.float64)
+    versant = frame["fonction_publique"].to_numpy()
+    groups = [(employee & np.array([v is None for v in versant]), _private_curve)]
+    groups += [(employee & (versant == name), _fp_curve(points))
+               for name, points in margins.WAGE_QUANTILES_FP_NET_EQTP_MONTHLY.items()]
+
+    age = frame["age"].to_numpy()
+    female = frame["sex"].to_numpy() == "female"
+    cells = []
+    for low, high, women, men in margins.WAGE_MEAN_NET_EQTP_BY_AGE_SEX:
+        band = (age >= low) & (age < high)
+        cells += [(band & female, women), (band & ~female, men)]
+    private = groups[0][0]
+    factor = np.ones(n, dtype=np.float64)
+    # The fit is on the cells' means *relative to each other*: the level of the private
+    # sector is the published curve's, and the published means, weighted by the survey's
+    # mix of ages and sexes, need not average to it exactly.
+    masses = [float(weight[cell & private].sum()) for cell, _ in cells]
+    total = sum(masses)
+    expected = sum(m * mean for m, (_, mean) in zip(masses, cells, strict=True)) / total
+    for _ in range(AGE_SEX_ITERATIONS):
+        draws = _map_upper_half(score * factor, weight, groups)
+        level = float((draws * weight)[private].sum()) / total if total > 0 else 0.0
+        for (cell, mean), mass in zip(cells, masses, strict=True):
+            if mass > 0:
+                got = float((draws * weight)[cell & private].sum()) / mass
+                factor[cell] *= mean * level / expected / got
+    return _map_upper_half(score * factor, weight, groups)
+
+
+#: Read the whole distribution, and not only its upper half, on the published curves:
+#: variant (d) of the étape « haut » (off: variant (a), the drawn lower half kept).
+WHOLE_DISTRIBUTION = True
+
+#: Rounds of the age and sex fit (the largest miss is under 0.1 % after six, on the
+#: test frame).
+AGE_SEX_ITERATIONS = 12
+
+
+def _legacy_tail_size(frame: pl.DataFrame, score: np.ndarray) -> int:
+    """How many uniforms the draw before the étape « haut » took for its Pareto tail."""
     overall = margins.WAGE_MEAN_NET_EQTP_MONTHLY
+    legacy = score.copy()
     sex = frame["sex"].to_numpy()
     for label, mean in margins.WAGE_MEAN_NET_EQTP_BY_SEX.items():
-        draws[sex == label] *= mean / overall
+        legacy[sex == label] *= mean / overall
+    legacy[frame["age"].to_numpy() < 25] *= margins.WAGE_MEAN_NET_EQTP_BY_AGE["under_25"] / overall
+    return int((legacy > np.quantile(legacy, TAIL_QUANTILE)).sum())
 
-    # Age gradient: the under-25 penalty is large and the band identifies it exactly.
-    young = frame["age"].to_numpy() < 25
-    draws[young] *= margins.WAGE_MEAN_NET_EQTP_BY_AGE["under_25"] / overall
 
-    # Pareto tail. A lognormal fitted to deciles puts the 99th percentile far below
-    # the published 10 260 EUR, and the top decile pays two thirds of all income
-    # tax — so without this the IR validation line cannot come close.
+def _normal_quantile(p: np.ndarray) -> np.ndarray:
+    inverse = NormalDist().inv_cdf
+    return np.array([inverse(x) for x in p], dtype=np.float64)
+
+
+def _private_curve(p: np.ndarray) -> np.ndarray:
+    """The published private-sector curve at probabilities `p`."""
+    points = margins.WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY
+    values = sample_curve(_normal_quantile(p), *quantile_curve(points))
+    top = max(points)
+    above = p > top
     alpha = _pareto_alpha(TAIL_C95_NET_EQTP_MONTHLY, TAIL_C99_NET_EQTP_MONTHLY)
-    cutoff = np.quantile(draws, TAIL_QUANTILE)
-    in_tail = draws > cutoff
-    if in_tail.any():
-        uniform = rng.uniform(size=int(in_tail.sum()))
-        draws[in_tail] = TAIL_C95_NET_EQTP_MONTHLY * (1.0 - uniform) ** (-1.0 / alpha)
-    return draws
+    values[above] = points[top] * ((1.0 - top) / (1.0 - p[above])) ** (1.0 / alpha)
+    return values
+
+
+def _fp_curve(points: dict[float, float]):
+    def curve(p: np.ndarray) -> np.ndarray:
+        return sample_curve(_normal_quantile(p), *quantile_curve(points))
+    return curve
+
+
+def _map_upper_half(score: np.ndarray, weight: np.ndarray, groups) -> np.ndarray:
+    """Each group read on its published curve (in variant (a), its upper half only, the
+    lower half scaled to meet it)."""
+    out = score.copy()
+    for mask, curve in groups:
+        here = np.flatnonzero(mask)
+        if here.size == 0:
+            continue
+        order = here[np.argsort(score[here], kind="stable")]
+        cumulative = np.cumsum(weight[order])
+        rank = (cumulative - weight[order] / 2.0) / cumulative[-1]
+        upper = rank >= (0.0 if WHOLE_DISTRIBUTION else 0.5)
+        if not upper.any():
+            continue
+        out[order[upper]] = curve(rank[upper])
+        if upper.all():
+            continue
+        median_draw = score[order[upper][0]]
+        median = curve(np.array([0.5]))[0]
+        out[order[~upper]] = score[order[~upper]] * median / median_draw
+    return out
 
 
 def household_share_of_france(frame: pl.DataFrame) -> float:
@@ -620,9 +725,14 @@ def attach_incomes(
 
     before = float((wages * weight).sum())
     gerants_gross = float((gerant_gross * weight).sum())
-    target = margins.TOTAL_GROSS_WAGES.value * targets_scale - gerants_gross
+    target = ((margins.TOTAL_GROSS_WAGES.value * targets_scale - gerants_gross)
+              * margins.CHAMP_SALARIES_ENQUETE.value)
     # The one calibration on incomes, and therefore spent: the wage bill can never
-    # afterwards appear as a validation line (§4.3). D11 holds the gérants' pay too.
+    # afterwards appear as a validation line (§4.3). D11 holds the gérants' pay too, and
+    # the pay of employees the survey does not cover: the employees' share is D11 less
+    # the gérants, times the survey's share of the accounts' salaried headcount (but 19,
+    # étape « haut »). Before, the whole of it went to the survey's employees, 6.5 % more
+    # each than the published wage quantiles imply.
     factor = target / before if before > 0 else 1.0
     wages = np.where(employee, wages * factor, gerant_gross)
 
