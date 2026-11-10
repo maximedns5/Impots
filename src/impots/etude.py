@@ -471,11 +471,13 @@ GRILLE = ROOT / "reports" / "verification" / "grille.json"
 VERIFIE_PAR = {
     "cotisations_salariales": ("cotisations_salariales",),
     # The employers' side is salaire_super_brut − salaire_brut, as the cost reads it.
-    "employeurs": ("cotisations_employeurs", "reduction_generale"),
-    "csg_deductible": ("csg_activite", "csg_remplacement"),
-    "csg_imposable": ("csg_activite", "csg_remplacement"),
+    "employeurs": ("cotisations_employeurs_d121", "reduction_generale"),
+    "csg_deductible": ("csg_activite_avec_non_salaries", "csg_remplacement"),
+    "csg_imposable": ("csg_activite_avec_non_salaries", "csg_remplacement"),
     "ir_avant_niches": ("ir_bareme", "foyers_imposes"),
-    "rsa": ("rsa_montant", "rsa_foyers"), "ppa": ("ppa_montant", "ppa_foyers"),
+    # The served lines (D-366): the cost of a reform is served in expectation (étape 4).
+    "rsa": ("rsa_montant_servi", "rsa_foyers_servis"),
+    "ppa": ("ppa_montant_servi", "ppa_foyers_servis"),
     "aide_logement": ("aide_logement_montant",), "af": ("af_montant",),
     "impot_societes": ("is",), "contribution_sociale_is": ("contribution_sociale_is",),
     "c3s": ("c3s",), "cvae": ("cvae",),

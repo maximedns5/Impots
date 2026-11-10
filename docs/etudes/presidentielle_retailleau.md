@@ -248,12 +248,12 @@ Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement i
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
-* Cotisations à la charge des salariés : −10,3 % en moyenne, de −11,6 % à −8,9 % ; 1 année sur 3 dans sa tolérance.
-* Foyers imposés : −0,5 % en moyenne, de −4,4 % à +2,6 % ; 3 années sur 3 dans sa tolérance.
-* Impôt sur les sociétés, avant crédits d'impôt : −2,8 % en moyenne, de −16,8 % à +5,6 % ; 3 années sur 3 dans sa tolérance.
-* C3S : +10,2 % en moyenne, de +4,8 % à +15,9 % ; 3 années sur 3 dans sa tolérance.
-* Impôt sur le revenu au barème, avant réductions et crédits : +8,0 % en moyenne, de +5,8 % à +10,3 % ; 1 année sur 2 dans sa tolérance.
-* CVAE : −12,1 % en moyenne, de −12,1 % à −12,1 % ; 1 année sur 1 dans sa tolérance.
+* Cotisations à la charge des salariés : −10,2 % en moyenne, de −11,6 % à −8,8 % ; 1 année sur 3 dans sa tolérance.
+* Foyers imposés : +6,5 % en moyenne, de +2,4 % à +9,8 % ; 3 années sur 3 dans sa tolérance.
+* Impôt sur les sociétés, avant crédits d'impôt : −6,2 % en moyenne, de −19,7 % à +2,0 % ; 3 années sur 3 dans sa tolérance.
+* C3S : +6,4 % en moyenne, de +1,2 % à +11,9 % ; 3 années sur 3 dans sa tolérance.
+* Impôt sur le revenu au barème, avant réductions et crédits : +11,2 % en moyenne, de +8,9 % à +13,5 % ; 1 année sur 2 dans sa tolérance.
+* CVAE : −15,2 % en moyenne, de −15,2 % à −15,2 % ; 1 année sur 1 dans sa tolérance.
 
 Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
 

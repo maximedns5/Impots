@@ -27424,3 +27424,51 @@ une à une, et ce qui reste faux se voit. « h » : hors de la tolérance attend
 la prime d'activité (montant et foyers servis), les aides au logement, le bandeau
 famille. Chacun sera préenregistré à son tour. La série des dix études ne tourne pas
 avant.
+
+## D-367 — La grille sur la population jointe : 78 lignes tenues sur 113, pronostic 107
+
+**Ce qui a tourné.** Les trois passes de D-366, au commit da95021, sur la population de
+2024 reconstruite avec les étapes jointes (quatre lots, tier complet, sans imputation, plus
+la passe imputée de l'IR net). La passe de 2023 a été tuée une fois faute de mémoire : deux
+agents faisaient des essais sur échantillon en même temps ; elle a été relancée seule, sur
+le même commit, sans rien changer. La grille et la loi d'erreur sont dans
+`docs/verification/GRILLE.md` et `reports/verification/grille.json`.
+
+**Le compte.** 113 lignes notées : 78 tiennent leur tolérance. Les 80 lignes de D-363 : 54
+(58 au but 18, 52 annoncées par D-366). Les 33 lignes neuves de D-366 : 24.
+
+**Le pronostic** tient sur 107 lignes sur 113. Les six ratés sont les lignes du RSA, les
+deux mesures et les trois années, toutes du même côté : la population entière sert 2 à 3
+points de RSA de plus que l'échantillon de 20 000 ménages (+3,1 % en 2024 pour une borne à
++3 ; −4,2 % servi pour une borne à −4). Une prestation concentrée sur peu de foyers varie
+plus d'un échantillon à l'autre que la marge de 3 points ne le supposait : la marge d'un
+pronostic tiré d'un échantillon sera de 5 points pour les minima sociaux.
+
+**Ce que la jonction a corrigé, mesuré sur la population entière.**
+
+* Les cotisations des employeurs au sens de l'Insee (D121) : +0,4 % en moyenne, de −1,1 à
+  +1,6 % ; l'ancienne mesure reste à +29 %, et c'était un classement (D-364).
+* Le RSA : +1,0 % au pont, −6,2 % servi en espérance, ses foyers servis à −7 % ; avant, le
+  droit était à +61 % et les foyers à +98 %. Les indépendants avaient un revenu nul.
+* Les foyers fiscaux : −6 % (−14 % avant) ; la tranche à 11 % : −12 % (−22 %).
+* La CSG d'activité avec celle des non-salariés : −1,6 % ; la réduction générale : −2,3 %.
+* Les revenus professionnels déclarés des non-salariés hors gérants : +2,4 %.
+
+**Ce qui reste faux**, et que la jonction a rendu visible en retirant des compensations :
+
+* **Le haut des revenus** : foyers à 41 % à +40 %, à 45 % à +52 %, à 30 % à +13 % ; l'IR
+  au barème à +11 % ; l'IR net à +21 % (les réductions non imputées en font une part).
+* **La prime d'activité** : −31 % servie, ses foyers servis à −38 %.
+* **Les aides au logement** : −29 %, ce qui reste quand les loyers ne sont plus comptés
+  deux fois ; le hors-champ (foyers, résidences, accédants) en explique une part.
+* **Le bandeau famille** : +17 % ; **les cotisations salariales** : −10 %.
+* **Les allocations familiales** : −16 %, dans la tolérance.
+
+La loi d'erreur reste un biais de structure : l'étendue sur trois ans de presque chaque
+ligne est de quelques points. Deux étapes en cours le prennent par le haut des revenus et
+par la prime (emploi discontinu dans l'année) ; chacune sera préenregistrée.
+
+**Les pages d'étude** disent la ligne de vérification de leurs instruments depuis la
+grille réécrite, et, quand une ligne neuve mesure mieux l'instrument, celle-ci : D121 pour
+les cotisations des employeurs, la CSG avec les non-salariés, le RSA et la prime servis.
+Aucun nombre d'étude ne change.
