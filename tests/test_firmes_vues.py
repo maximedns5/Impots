@@ -203,7 +203,9 @@ def test_the_command_prices_a_firm_scenario_by_layer_in_both_views(monkeypatch,
     processed.mkdir()
     pl.DataFrame({"person_id": [1], "salaire_brut_annuel": [30_000.0],
                   "pension_annuelle": [0.0], "chomage_annuel": [0.0],
-                  "loyer_mensuel": [500.0]}).write_parquet(
+                  "loyer_mensuel": [500.0],
+                  # Every monetary column the ageing reads (étape 2 of but 19 added it).
+                  "revenu_non_salarie_annuel": [0.0]}).write_parquet(
         processed / "population_2024.parquet")
     monkeypatch.setattr(cli, "PROCESSED", processed)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
