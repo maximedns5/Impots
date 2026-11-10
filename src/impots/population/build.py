@@ -56,6 +56,8 @@ SCHEMA: dict[str, pl.DataType] = {
     "secteur_public": pl.Boolean,
     "fonction_publique": pl.String,
     "titulaire": pl.Boolean,
+    # The employer is a private person (CHPUB 7): no allègement (étape « alleg »).
+    "particulier_employeur": pl.Boolean,
     "quotite_travail": pl.Float64,
     "parent_isole": pl.Boolean,
     "synthetic": pl.Boolean,

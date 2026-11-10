@@ -320,6 +320,16 @@ def attach_mois_travailles(frame: pl.DataFrame, seed: int,
     # salariés, que reçoivent aussi les personnes payées une partie de l'année.
     colonnes = [pl.Series("salaire_brut_annuel", nouveau),
                 pl.Series("mois_travailles", masques.astype(np.int64))]
+    # La personne sans emploi payée au taux mensuel de son donneur l'est aussi à sa
+    # quotité, que le câblage lit pour proratiser le SMIC des allègements (étape
+    # « alleg ») : sans elle, le mi-temps d'un donneur passait pour un plein temps payé
+    # à demi. Et son employeur est, comme celui du donneur, un particulier ou non.
+    quotite_frame = frame["quotite_travail"].to_numpy().astype(np.float64)
+    colonnes.append(pl.Series("quotite_travail", np.where(sortant, quotite, quotite_frame)))
+    if "particulier_employeur" in frame.columns:
+        particulier = frame["particulier_employeur"].fill_null(False).to_numpy().astype(bool)
+        colonnes.append(pl.Series("particulier_employeur", np.where(
+            sortant, particulier[np.maximum(donneur, 0)], particulier)))
     if "part_salaire_exoneree" in frame.columns:
         part = frame["part_salaire_exoneree"].fill_null(0.0).to_numpy().astype(np.float64)
         commune = float(part[employe].max()) if employe.any() else 0.0
