@@ -109,7 +109,10 @@ HISTORY_YEARS = 2
 # The months worked (étape « ppa »): a salary is paid on the months its earner worked, and
 # the unemployment benefit of someone who worked part of the year on the others; every
 # number of a household with a partial year moves, and the population's height does not.
-WIRING = "D-346_ns_ir_md" + ("_sansE1" if decomposition.sans("E1") else "")
+# The allègements (étape « alleg »): a part-timer's SMIC is prorated to his hours, and the
+# gérants majoritaires and the employees of a private person have none; every number of
+# their households moves.
+WIRING = "D-346_ns_ir_md_al" + ("_sansE1" if decomposition.sans("E1") else "")
 
 #: The column `emploi_discontinu` writes: twelve bits, bit m - 1 for the month m worked.
 MONTHS_WORKED = "mois_travailles"
@@ -351,6 +354,43 @@ SELF_EMPLOYMENT_INPUTS: dict[str, tuple[str, str | None]] = {
 #: The régimes of the gérants majoritaires, paid a salary: no self-employment box.
 GERANTS = frozenset({"gerant_bic", "gerant_bnc"})
 
+#: Who gives no allègement (correction 26): the column that marks an employee of a private
+#: person, and the project variable that carries both kinds of exclusion.
+PARTICULIER_EMPLOYEUR = "particulier_employeur"
+EXCLUDED_FROM_ALLEGEMENTS = "exclu_allegements"
+
+
+def working_time(frame: pl.DataFrame, tax_benefit_system: Any) -> tuple[Any, np.ndarray] | None:
+    """(contrat_de_travail encoded, the share of a full-time month paid), per person, or None
+    for a frame with no part-timer. A paid earner whose `quotite_travail` is under 1 works
+    `temps_partiel`: openfisca then prorates the SMIC of the réduction générale and of the
+    bandeaux (`coefficient_proratisation`, CSS art. D. 241-7, I) and the plafond de la
+    sécurité sociale to his hours. Before the étape « alleg », everyone went full time: a
+    half-timer at twice the SMIC an hour was paid one SMIC a month, and read as a SMIC earner,
+    with the whole réduction générale."""
+    if "quotite_travail" not in frame.columns:
+        return None
+    share = frame["quotite_travail"].fill_null(1.0).to_numpy().astype(np.float64)
+    paid = frame["salaire_brut_annuel"].to_numpy() > 0
+    partial = paid & (share > 0) & (share < 1.0)
+    if not partial.any():
+        return None
+    possible = tax_benefit_system.variables["contrat_de_travail"].possible_values
+    names = np.where(partial, "temps_partiel", "temps_plein").astype(str)
+    return possible.encode(names), np.where(partial, share, 1.0)
+
+
+def excluded_from_allegements(frame: pl.DataFrame) -> np.ndarray:
+    """Who gives his employer no allègement (correction 26): a gérant majoritaire, whom the
+    population pays a salary, and the employee of a private person (CSS art. L. 241-13, II)."""
+    excluded = np.zeros(frame.height, dtype=bool)
+    if "regime_non_salarie" in frame.columns:
+        excluded |= frame["regime_non_salarie"].is_in(list(GERANTS)).fill_null(False).to_numpy()
+    if PARTICULIER_EMPLOYEUR in frame.columns:
+        excluded |= frame[PARTICULIER_EMPLOYEUR].fill_null(False).to_numpy().astype(bool)
+    return excluded
+
+
 #: The share of a salary the income tax exempts (correction 24), by the column that carries it.
 EXEMPT_SHARE_INPUT = ("part_salaire_exoneree_ir", "part_salaire_exoneree")
 
@@ -565,9 +605,24 @@ def build_simulation(
         depcom = _text(_group_frame(frame, "household_id", ["departement"]).select(
             (pl.col("departement") + "01").fill_null(""))["departement"])
 
+    # The working time and the field of the allègements (étape « alleg »), written only where
+    # they say something: a frame with neither, and raw openfisca, keep the defaults.
+    time_worked = working_time(frame, tax_benefit_system)
+    excluded = excluded_from_allegements(frame)
+    if not (excluded.any() and EXCLUDED_FROM_ALLEGEMENTS in tax_benefit_system.variables):
+        excluded = None
+
     for offset in range(HISTORY_YEARS, -1, -1):
         for month in range(1, 13):
             period = f"{year - offset}-{month:02d}"
+            if time_worked is not None:
+                contrat, share = time_worked
+                full_month = tax_benefit_system.parameters(period).marche_travail \
+                    .salaire_minimum.smic.nb_heures_travail_mensuel
+                simulation.set_input("contrat_de_travail", period, contrat)
+                simulation.set_input("heures_remunerees_volume", period, share * full_month)
+            if excluded is not None:
+                simulation.set_input(EXCLUDED_FROM_ALLEGEMENTS, period, excluded)
             simulation.set_input("salaire_de_base", period, split[month - 1][1])
             simulation.set_input("traitement_indiciaire_brut", period, split[month - 1][2])
             simulation.set_input("categorie_salarie", period, categorie)

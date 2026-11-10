@@ -191,6 +191,12 @@ def _observed_persons(eec: pl.DataFrame) -> pl.DataFrame:
             # self-employment income is drawn on (`incomes.py`), as the Insee publishes it.
             pl.col("NAFG088UN").alias("naf88"),
             pl.col("PUB3FP").alias("employeur"),
+            # The nature of the employer: « un particulier » (7) gives no allègement
+            # (CSS art. L. 241-13, II), étape « alleg » of but 19. Read as missing from a
+            # hand-made survey frame that lacks it: nobody is then a private person's
+            # employee.
+            (pl.col("CHPUB") if "CHPUB" in eec.columns
+             else pl.lit(None, dtype=pl.String)).alias("nature_employeur"),
             pl.col("STATUTDET").alias("statut_detaille"),
             pl.col("TPPRED").alias("temps_partiel"),
             pl.col("TXTPPRED").alias("taux_partiel"),
@@ -489,6 +495,12 @@ def build_skeleton(
           .alias("fonction_publique"),
         ((pl.col("employeur").is_in(["1", "2", "3"]))
          & (pl.col("statut_detaille") == "21")).fill_null(False).alias("titulaire"),
+        # An employee of a private person (CHPUB 7, « un particulier »): the réduction
+        # générale and the bandeaux exclude « les gains et rémunérations versés par les
+        # particuliers employeurs » (CSS art. L. 241-13, II, and its renvoi in L. 241-2-1
+        # and L. 241-6-1). Étape « alleg » of but 19.
+        ((pl.col("statut_emploi") == "2") & (pl.col("nature_employeur") == "7"))
+          .fill_null(False).alias("particulier_employeur"),
         pl.when(pl.col("temps_partiel") == "2")
           .then(pl.col("taux_partiel").replace_strict(PART_TIME_FACTOR,
                                                       default=PART_TIME_DEFAULT))
@@ -579,6 +591,7 @@ def _synthesise_children(
                 "secteur_public": False,
                 "fonction_publique": None,
                 "titulaire": False,
+                "particulier_employeur": False,
                 "quotite_travail": 1.0,
                 "region": region,
                 "statut_occupation": occupation,
@@ -737,7 +750,7 @@ SKELETON_COLUMNS = [
     "statut_activite", "statut_occupation", "zone_apl", "departement",
     "aide_logement_heberge", "colocation",
     "is_salarie", "pcs", "secteur_public", "fonction_publique", "titulaire",
-    "quotite_travail", "naf88",
+    "particulier_employeur", "quotite_travail", "naf88",
     "statut_detaille", "anciennete_emploi", "anciennete_sans_emploi", "classe_emploi",
     "parent_isole", "synthetic",
 ]

@@ -712,6 +712,31 @@ The RSA's and the prime's forfait logement then read the lodged famille as what 
 **Blast radius:** a famille marked lodged. The wire carries none; the population built
 since the étape al marks the familles other than the reference person's in a dwelling the
 EEC types as a family's (`TYPLOG5` 1 to 4).
+
+---
+
+**Correction 26 — no allègement for a gérant majoritaire or a particulier employeur (CSS art.
+L. 241-13, II; L. 241-2-1; L. 241-6-1), but 19, étape « alleg ».**
+
+An input openfisca has no place for, again. Its `assiette_allegement` is the base of the
+réduction générale and of both bandeaux for every « privé » category. Two kinds of earner the
+population wires as private have none in law. The gérant majoritaire of a SARL is not an
+employee in the sense of social security (CSS art. L. 311-3, 11°, a contrario; he is affiliated
+to the self-employed's scheme): the population pays him a salary since the étape « ir » (his
+pay is in D11 and declared in 1GB), and openfisca gave his company 1,78 Md€ of réduction
+générale, 0,87 of bandeau maladie and 0,34 of bandeau famille (15 000 ménages, 2024). And the
+réduction générale is applied « à l'exception des gains et rémunérations versés par les
+particuliers employeurs » (L. 241-13, II), whose field the bandeaux take over (L. 241-2-1 and
+L. 241-6-1 apply to the employers « entrant dans le champ d'application du II de l'article
+L. 241-13 »): the EEC's employees of « un particulier » (CHPUB 7, 0,64 M in 2024).
+
+The correction adds `exclu_allegements`, an individual input, false unless the population
+writes it (`to_openfisca`), and sets `assiette_allegement` to zero for such a person: wrapped
+around openfisca's formula. His contributions stay those of an employee: the gérant's are
+the self-employed's in law, a bias the étape « ir » stated and that remains.
+
+**Blast radius:** a person marked excluded. The wire carries none; the population marks the
+gérants majoritaires and the employees of a private person.
 """
 
 from __future__ import annotations
@@ -1122,6 +1147,10 @@ def apply_to(system: Any) -> Any:
             for name in (RSA_FORFAIT_LOGEMENT, PPA_FORFAIT_LOGEMENT):
                 forfait = self.get_variable(name).get_formula(FORFAIT_LOGEMENT_SINCE)
                 self.update_variable(_forfait_logement_of_the_lodged(name, forfait))
+            # Correction 26 (but 19, étape « alleg »).
+            self.add_variable(_excluded_from_the_allegements())
+            base_formula = self.get_variable(ALLEGEMENT_BASE).get_formula()
+            self.update_variable(_no_allegement_base_for_the_excluded(base_formula))
 
     return BenefitCorrections(system)
 
@@ -2281,3 +2310,53 @@ def _forfait_logement_of_the_lodged(name: str, openfisca_formula: Any) -> Any:
     forfait.__name__ = name
     forfait.__qualname__ = name
     return forfait
+
+
+#: A person whose employer receives no allègement (correction 26), and the base openfisca's
+#: réduction générale and bandeaux all read.
+EXCLUDED_FROM_ALLEGEMENTS = "exclu_allegements"
+ALLEGEMENT_BASE = "assiette_allegement"
+
+
+def _excluded_from_the_allegements() -> Any:
+    """`exclu_allegements`: the person is a gérant majoritaire, or the employee of a private
+    person, and gives no allègement; an input, false unless the population writes it
+    (correction 26)."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_dispatch_by_period
+    from openfisca_france.entities import Individu
+
+    class exclu_allegements(Variable):
+        value_type = bool
+        entity = Individu
+        label = ("Rémunération hors du champ des allègements généraux : gérant majoritaire, "
+                 "salarié d'un particulier employeur (correction 26)")
+        reference = "https://www.legifrance.gouv.fr/codes/id/LEGITEXT000006073189"
+        definition_period = MONTH
+        set_input = set_input_dispatch_by_period
+
+    return exclu_allegements
+
+
+def _no_allegement_base_for_the_excluded(openfisca_formula: Any) -> Any:
+    """`assiette_allegement`, zero for a person outside the field of the allègements (CSS
+    art. L. 241-13, II): the formula it wraps for everyone else."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_divide_by_period, where
+    from openfisca_france.entities import Individu
+
+    class assiette_allegement(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Assiette des allègements de cotisations sociales employeur ; nulle hors de "
+                 "leur champ (correction 26)")
+        reference = "https://www.legifrance.gouv.fr/codes/id/LEGITEXT000006073189"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula(individu, period, parameters):
+            montant = openfisca_formula(individu, period, parameters)
+            exclu = individu(EXCLUDED_FROM_ALLEGEMENTS, period)
+            if not exclu.any():
+                return montant
+            return where(exclu, 0.0, montant)
+
+    return assiette_allegement

@@ -135,3 +135,18 @@ def test_the_simulation_pays_the_salary_on_the_months_worked(
         assert (base[k][off] == 0).all()
     assert np.allclose(base.sum(axis=0)[prive], frame["salaire_brut_annuel"].to_numpy()[prive],
                        rtol=1e-5)
+
+
+def test_a_leaver_works_at_his_donor_s_quotite(
+        avant: pl.DataFrame, apres: tuple[pl.DataFrame, ed.Statistiques]) -> None:
+    """La personne sans emploi payée au taux mensuel de son donneur porte aussi sa quotité
+    (étape « alleg ») : le câblage en tire le SMIC proratisé de ses allègements. Avant,
+    elle restait à 1, et le mi-temps d'un donneur passait pour un plein temps payé à demi."""
+    frame, _ = apres
+    _, employe, quotite, donneur = ed._tirages_et_quotite(avant, 20240101)
+    sortant = ~employe & (frame["salaire_brut_annuel"].to_numpy() > 0) & (donneur >= 0)
+    assert sortant.any()
+    after = frame["quotite_travail"].to_numpy()
+    assert np.array_equal(after[sortant], quotite[sortant])
+    assert np.array_equal(after[~sortant], avant["quotite_travail"].to_numpy()[~sortant])
+    assert (after[sortant] < 1.0).any()
