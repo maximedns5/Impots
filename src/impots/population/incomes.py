@@ -317,6 +317,16 @@ def _draw_net_eqtp(frame: pl.DataFrame, rng: np.random.Generator) -> np.ndarray:
     employee = frame["is_salarie"].to_numpy().astype(bool) & (
         frame["statut_activite"].to_numpy() == "employed")
     weight = frame["weight"].to_numpy().astype(np.float64)
+    if RANG_EQTP and "quotite_travail" in frame.columns:
+        # The published quantiles and means are of salariés *en EQTP*: each poste counts
+        # for its quotité (IP n° 2079, figure 3, « 10 % des salariés en EQTP » ; figure 2,
+        # « effectifs en milliers d'EQTP » ; the Siasp the same). A rank by head gives the
+        # part-time, who sit low in the draw, more of the curve than they have, and lifts
+        # every full-time employee above them (but 19, étape « milieu »). The duration is
+        # not counted again: a one-week stock sample already holds a poste in proportion
+        # to the time it is held. A frame without quotité (the tests' synthetic ones) is
+        # ranked by head.
+        weight = weight * frame["quotite_travail"].to_numpy().astype(np.float64)
     versant = frame["fonction_publique"].to_numpy()
     groups = [(employee & np.array([v is None for v in versant]), _private_curve)]
     groups += [(employee & (versant == name), _fp_curve(points))
@@ -349,6 +359,15 @@ def _draw_net_eqtp(frame: pl.DataFrame, rng: np.random.Generator) -> np.ndarray:
 #: Read the whole distribution, and not only its upper half, on the published curves:
 #: variant (d) of the étape « haut » (off: variant (a), the drawn lower half kept).
 WHOLE_DISTRIBUTION = True
+
+#: Rank each employee by his weight times his quotité (salariés en EQTP), as the published
+#: quantiles are counted; off: by head, as before the étape « milieu » of but 19.
+RANG_EQTP = True
+
+#: Set the exempt share so that the survey's employees declare their field's share of the
+#: declared salaries (`CHAMP_SALARIES_ENQUETE`), as their wage bill is D11's share of it;
+#: off: France's declared salaries, as from D-368 to the étape « milieu » of but 19.
+PART_EXONEREE_SUR_LE_CHAMP = True
 
 #: Rounds of the age and sex fit (the largest miss is under 0.1 % after six, on the
 #: test frame).
@@ -743,8 +762,16 @@ def attach_incomes(
     # breakdown is not published); read by the income tax only (engine correction 24).
     employees_taxable = IMPOSABLE_SUR_BRUT * float((np.where(employee, wages, 0.0)
                                                     * weight).sum())
-    exempt_share = (max(0.0, 1.0 - margins.DECLARED_TAXABLE_WAGES.value * targets_scale
-                        / employees_taxable) if employees_taxable > 0 else 0.0)
+    declared = margins.DECLARED_TAXABLE_WAGES.value * targets_scale
+    if PART_EXONEREE_SUR_LE_CHAMP:
+        # The declared salaries of the survey's employees, and not of France's: the wage
+        # bill they are paid is D11's share of the survey's field (`CHAMP_SALARIES_
+        # ENQUETE`), and the 1,9 M employees it does not see declare the rest (but 19,
+        # étape « milieu »). Before, the survey's 25,3 M employees were set to declare
+        # what France's 27,2 M do, and the share fell to nought.
+        declared *= margins.CHAMP_SALARIES_ENQUETE.value
+    exempt_share = (max(0.0, 1.0 - declared / employees_taxable)
+                    if employees_taxable > 0 else 0.0)
 
     # ---- pensions ---------------------------------------------------------
     age = frame["age"].to_numpy()

@@ -140,7 +140,12 @@ def test_the_exempt_share_makes_the_declared_salaries(
     Depuis l'étape « haut » (la masse des salariés ramenée au champ de l'enquête), la part
     vaut 2,1 % sur la population ; sur cette fixture, dont les salariés pèsent moins, les
     salaires imposables passent déjà sous les salaires déclarés, et la part, qui ne peut être
-    négative, est nulle : les salaires imposables restent alors sous la cible, sans part."""
+    négative, est nulle : les salaires imposables restent alors sous la cible, sans part.
+
+    Depuis l'étape « milieu », la cible est la part du champ de l'enquête des salaires
+    déclarés (`CHAMP_SALARIES_ENQUETE`), comme la masse D11 : les salariés de l'enquête ne
+    déclarent plus ce que déclarent ceux de la France entière. Échoue sur le code d'avant :
+    la part, nulle, laisse les salaires imposables 7 % au-dessus de cette cible."""
     from impots.engine.system import baseline
     from impots.population.to_openfisca import build_simulation
 
@@ -155,7 +160,8 @@ def test_the_exempt_share_makes_the_declared_salaries(
     built = build_simulation(frame, baseline(), 2024)
     taxable = built.simulation.calculate_add("salaire_imposable", "2024")
     declared = float((taxable * (1 - exempt) * frame["weight"].to_numpy())[employee].sum())
-    target = margins.DECLARED_TAXABLE_WAGES.value * share
+    target = (margins.DECLARED_TAXABLE_WAGES.value * share
+              * margins.CHAMP_SALARIES_ENQUETE.value)
     if exempt[paid][0] > 0:
         assert declared == pytest.approx(target, rel=0.03)
     else:

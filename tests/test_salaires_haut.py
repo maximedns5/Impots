@@ -109,3 +109,27 @@ def test_the_whole_distribution_is_read_on_the_published_centiles(frame, draws, 
     mine = _group(frame, None)
     got = _weighted_quantile(draws[mine], frame["weight"].to_numpy()[mine], p)
     assert got == pytest.approx(margins.WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY[p], rel=0.015)
+
+
+@pytest.fixture(scope="module")
+def part_time(frame: pl.DataFrame) -> pl.DataFrame:
+    """The frame, with the part-time where the survey has them: among the employés, low
+    in the draw (three in five of them at 40 %), and nowhere else."""
+    rng = np.random.default_rng(12)
+    employe = (frame["pcs"] == "employe").fill_null(False).to_numpy()
+    quotite = np.where(employe & (rng.uniform(size=frame.height) < 0.6), 0.4, 1.0)
+    return frame.with_columns(pl.Series("quotite_travail", quotite))
+
+
+@pytest.mark.parametrize("p", [0.25, 0.5, 0.8])
+def test_the_published_quantiles_are_held_in_eqtp(part_time, p) -> None:
+    """IP n° 2079 counts « salariés en EQTP » : a poste at 40 % is 0,4 of one. Ranked by
+    head, the part-time take more of the curve than they hold, and every full-time employee
+    above them is read higher : the quantiles of the employees weighted by their EQTP come
+    out above the published ones. Fails on the code before (rank by head, `RANG_EQTP`
+    off) : the EQTP quartile 1,4 % and median 2,7 % high (but 19, étape « milieu »)."""
+    draws = incomes._draw_net_eqtp(part_time, np.random.default_rng(incomes.SEED))
+    mine = _group(part_time, None)
+    eqtp = (part_time["weight"] * part_time["quotite_travail"]).to_numpy()[mine]
+    got = _weighted_quantile(draws[mine], eqtp, p)
+    assert got == pytest.approx(margins.WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY[p], rel=0.01)
