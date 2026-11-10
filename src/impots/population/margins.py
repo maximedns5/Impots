@@ -172,6 +172,28 @@ CHAMP_SALARIES_ENQUETE = Figure(
            "of D11 is a little above it (not published).",
 )
 
+#: 1,0747 = 27 181 700 / 25 293 000, the inverse of `CHAMP_SALARIES_ENQUETE`: what carries
+#: the totals and the reform costs assis sur les salaires from the survey's employees to
+#: France's (décision du propriétaire, 10 novembre 2026 ; étape « extrapolation »). Each
+#: wage stays at its published value; the aggregate counts every non-gérant employee's
+#: wage-borne amounts this many times (`aggregate.ASSIS_SUR_LES_SALAIRES`), on the
+#: hypothesis that the 1,9 M employees the survey does not see are like those it does.
+#: The income tax and its base, the benefits, the pensions and the niveaux de vie are not
+#: carried: they are the declarations' and the households' (`aggregate`, docstring).
+EXTRAPOLATION_SALARIES = Figure(
+    value=1.0 / CHAMP_SALARIES_ENQUETE.value, unit="ratio", year=2024,
+    scope="Emploi intérieur salarié des comptes nationaux sur les salariés de l'enquête "
+          "Emploi (logement ordinaire) : 27,18 M sur 25,29 M",
+    source="INSEE, comptes nationaux, T_6210 ; ECRT 2026 fiche 2.1 et enquête Emploi 2024",
+    url=SALARIES_COMPTES_NATIONAUX.url,
+    use="context",
+    caveat="A hypothesis, not a measurement: the employees missing from the survey "
+           "(collective households, Mayotte, cross-border workers coming in, short jobs "
+           "the survey week misses) are taken to pay and receive, per head, what the "
+           "surveyed employees do. The wage bill it gives is D11 exactly; the missing "
+           "are mostly lower paid, so the allègements it gives run a little low.",
+)
+
 PRIVATE_WAGE_BILL = Figure(
     value=726.5e9, unit="EUR", year=2024,
     scope="Masse salariale du secteur privé (champ Urssaf), France entière",
