@@ -53,8 +53,8 @@ def test_a_page_lists_the_lines_of_the_instruments_it_moves(tmp_path):
 
     loi = {k: {"ligne": k, "annees": [2024], "biais": 0.1, "min": 0.1, "max": 0.1,
                "tenues": 1}
-           for k in ("cotisations_employeurs", "reduction_generale", "ppa_montant",
-                     "ppa_foyers", "is")}
+           for k in ("cotisations_employeurs_d121", "reduction_generale", "ppa_montant_servi",
+                     "ppa_foyers_servis", "is")}
     path = tmp_path / "grille.json"
     path.write_text(json.dumps({"lignes": [], "loi": loi}), encoding="utf-8")
     reply = SimpleNamespace(deltas={"salaire_super_brut": 6e9, "salaire_brut": 0.0,
@@ -62,5 +62,5 @@ def test_a_page_lists_the_lines_of_the_instruments_it_moves(tmp_path):
     entry = {"response": reply, "firms": None, "path": {"years": [{"statistiques": {
         "figee": {"impulses": {"tva": 1.0, "cotisations_employeurs": 1.0}}}}]}}
     rows, refused = etude.verifications([entry], path)
-    assert [r["id"] for r in rows] == ["cotisations_employeurs", "reduction_generale"]
+    assert [r["id"] for r in rows] == ["cotisations_employeurs_d121", "reduction_generale"]
     assert refused == ["la TVA"]
