@@ -1,5 +1,17 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-09 update adds D-359 to D-364: goal 18. The past-judges bench found 9
+priceable articles in 531, and was set aside (D-361) for a verification grid: each
+instrument the studies price, against a published total for 2022, 2023 and 2024, the 2024
+population brought back with observed INSEE indices (D-362). 93 lines were preregistered
+with tolerances and a prognosis (D-363); on `da1cfab`, 58 of 80 graded lines hold, the
+prognosis 18 of 22 points (D-364). The error is a structural bias, stable across years.
+New: employer contributions sit +31 % above national accounts D121 (taxes on wages or
+civil-service imputed pensions, to open next). Still out: RSA (bridge +61 %, recipients
++98 %), prime d'activité (bridge −28 %), tax units (−14 %), the 11 % bracket (−22 %). Each
+study page now states its instruments' grid lines, under a new « vérifié » label; no
+study number changed. Next: the owner merges #121 then the goal 18 PR.
+
 The 2026-11-08 update adds D-345 to D-356: goal 16, validated by the owner. The public
 sector is wired in the population (24 % of the wage bill no longer gets the private
 reliefs and scales, D-346), the firm layer deducts the CVAE and C3S from taxable profit

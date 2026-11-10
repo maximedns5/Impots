@@ -1,0 +1,762 @@
+{
+ "texte": "plf2025",
+ "trie_par": "agent but 18",
+ "articles": [
+  {
+   "numero": "liminaire",
+   "intitule": "Prévisions de solde structurel et de solde effectif des administrations publiques",
+   "case": "perimetre",
+   "raison": "Article d'équilibre (trajectoire de solde public), sans mesure d'impôt ni de prestation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "1",
+   "intitule": "Autorisation de percevoir les impôts existants",
+   "case": "perimetre",
+   "raison": "Formalité annuelle reconduite, pas une mesure.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "2",
+   "intitule": "Indexation sur l'inflation du barème de l'impôt sur le revenu pour les revenus de 2024 et des grilles du prélèvement à la source",
+   "case": "chiffrable",
+   "raison": "Les tranches (2 %), la décote, le plafond général de la demi-part et celui du premier enfant d'un parent isolé s'écrivent avec des boutons existants, sur les revenus 2024. DOUTE DE RÉFÉRENCE : l'arbre de 2024 porte déjà l'indexation votée (1,8 % : 11 497, 29 315, 83 823, 180 294 ; décote 889/1 470 ; demi-part 1 791 ; parent isolé 4 224), si bien qu'une passe directe ne mesure que l'écart entre le projet et la loi votée ; le coût contre un barème gelé demande en plus la passe miroir (barème des revenus 2023 sur les revenus 2024). Non chiffrés : le 196 B, les plafonds de QF des cases L, invalides et veufs (aucun bouton), et les grilles du PAS (trésorerie, pas l'impôt final).",
+   "volet": "I, A et B : barème, décote, plafond général de la demi-part et plafond du parent isolé (les quatre tranches, 890/1 473, 1 794, 4 232)",
+   "boutons": {
+    "ir_bareme": [
+     {
+      "threshold": 0,
+      "rate": 0.0
+     },
+     {
+      "threshold": 11520,
+      "rate": 0.11
+     },
+     {
+      "threshold": 29373,
+      "rate": 0.3
+     },
+     {
+      "threshold": 83988,
+      "rate": 0.41
+     },
+     {
+      "threshold": 180648,
+      "rate": 0.45
+     }
+    ],
+    "decote_seuil_celib": 890,
+    "decote_seuil_couple": 1473,
+    "plafond_qf_demi_part": 1794,
+    "plafond_qf_parent_isole": 4232
+   },
+   "couche": "menages",
+   "annee_revenus": 2024,
+   "rendement_connu": false
+  },
+  {
+   "numero": "3",
+   "intitule": "Instauration d'une contribution différentielle sur les hauts revenus",
+   "case": "structure",
+   "raison": "Dispositif nouveau sur les revenus 2024 : aucun bouton de ReformSpec ne porte la CDHR, et l'arbre ne la connaît pas pour 2024. Même câblée, sa base (RFR > 250 000 €, taux moyen < 20 %, niches réintégrées) est quasi absente d'une population sans patrimoine ni revenus du capital fins (la case du triage de septembre était « population aveugle »).",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true
+  },
+  {
+   "numero": "4",
+   "intitule": "Partage avec les consommateurs des revenus du nucléaire historique",
+   "case": "structure",
+   "raison": "Taxe sur l'utilisation du combustible nucléaire et reversement aux consommateurs (après l'ARENH, dès 2026) : ni producteur d'électricité ni prix de gros dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "5",
+   "intitule": "Ajustements de la fiscalité applicable aux installations nucléaires de base",
+   "case": "structure",
+   "raison": "Taxes sur les installations nucléaires de base : aucune installation de production d'énergie dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "6",
+   "intitule": "Répartition des coûts du mécanisme de capacité entre les utilisateurs du système électrique",
+   "case": "structure",
+   "raison": "Prélèvement sur les fournisseurs d'électricité finançant le mécanisme de capacité : hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "7",
+   "intitule": "Adaptation des tarifs d'accise sur l'électricité et diverses simplifications et sécurisations",
+   "case": "structure",
+   "raison": "Le bouton accise_electricite existe, mais le tarif ménages de 2025 n'est pas fixé par le texte : 25,09 €/MWh plus une modulation fixée par arrêté entre 5 et 25 €/MWh et une majoration (charges de service public) constatée par arrêté. Le passage au taux normal de TVA des abonnements d'électricité et de gaz n'a pas de poste : la consommation imputée ne sépare pas l'abonnement. Le reste (péréquation, Corse, affectations, tarifs réduits des entreprises) est hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true
+  },
+  {
+   "numero": "8",
+   "intitule": "Évolution de la taxe sur les émissions de CO2 et de la taxe sur la masse en ordre de marche",
+   "case": "structure",
+   "raison": "Malus CO2 et malus masse : aucun véhicule ni immatriculation dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "9",
+   "intitule": "Réfaction des malus CO2 et masse pour les véhicules d'occasion",
+   "case": "structure",
+   "raison": "Aucun véhicule dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "10",
+   "intitule": "Taux réduits de TVA sur les opérations liées au chauffage (droit de l'Union)",
+   "case": "structure",
+   "raison": "Exclusion des chaudières fossiles des taux réduits et définition des réseaux de chaleur : aucun poste de consommation ne porte ces travaux ni la chaleur livrée par réseau ; tva_postes ne peut pas les viser.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "11",
+   "intitule": "Instauration d'une contribution exceptionnelle sur les bénéfices des grandes entreprises",
+   "case": "chiffrable",
+   "raison": "La CEBGE à deux tranches s'écrit avec cebge_seuils_et_taux, et la population d'entreprises porte des redevables de l'IS au-delà d'un milliard de chiffre d'affaires. Le premier exercice est clos au 31 décembre 2024 : l'arbre n'a pas de CEBGE en 2024, d'où la prorogation par création, avec la largeur de lissage que le texte fixe (100 M€). Le second exercice (10,3 % et 20,6 % en 2025) n'est pas chiffré : l'arbre de 2025 porte la CEBGE votée à 20,6 % et 41,2 %, et une passe contre elle mesurerait autre chose que l'article. Le lissage vers le taux majoré suit la formule du texte (T1 + (T2 − T1) × …).",
+   "volet": "IV, premier exercice clos à compter du 31 décembre 2024 (exercice 2024 d'une entreprise calendaire)",
+   "boutons": {
+    "cebge_seuils_et_taux": [
+     {
+      "seuil_ca": 1000000000,
+      "taux": 0.206
+     },
+     {
+      "seuil_ca": 3000000000,
+      "taux": 0.412
+     }
+    ],
+    "cebge_prorogation_largeur": 100000000
+   },
+   "couche": "entreprises",
+   "annee_revenus": 2024,
+   "rendement_connu": true
+  },
+  {
+   "numero": "12",
+   "intitule": "Contribution exceptionnelle sur le résultat d'exploitation des grandes entreprises de transport maritime",
+   "case": "donnees",
+   "raison": "Assiette sur le résultat d'exploitation des entreprises au régime de la taxe au tonnage : aucune entreprise de transport maritime n'est identifiable dans les cellules secteur × taille, et aucun bouton ne porte cette taxe.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true
+  },
+  {
+   "numero": "13",
+   "intitule": "Précisions apportées à l'imposition minimale mondiale (Pilier 2)",
+   "case": "structure",
+   "raison": "Groupes multinationaux et taux effectif par juridiction : hors de la structure des cellules d'entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "14",
+   "intitule": "Coopération administrative : échange d'informations sur les crypto-actifs, supervision des obligations déclaratives",
+   "case": "perimetre",
+   "raison": "Obligations déclaratives et sanctions, sans paramètre d'impôt.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "15",
+   "intitule": "Report de trois ans de la suppression progressive de la CVAE",
+   "case": "chiffrable",
+   "raison": "Le texte reconduit en 2025 à 2027 le barème de 2024 (taux maximal 0,28 %). L'arbre de 2025 porte encore la trajectoire de la LF 2024 (0,19 %, dégrèvement 125 €) : en 2025 la référence est donc bien la loi d'avant et cvae_echelle exprime le retour au barème de 2024. En 2026 et 2027 l'arbre porte déjà 0,28 % (report voté) et une passe y vaudrait zéro : seul 2025 est chiffré. L'échelle est le rapport des taux maximaux (0,28/0,19) ; la loi relève les pentes de 1,49 et le dégrèvement de 1,50, d'où un écart de un à deux pour cent sur les petites tranches. Le report du plafonnement de la CET en fonction de la valeur ajoutée et la taxe additionnelle pour CCI France ne sont pas chiffrés (aucun bouton).",
+   "volet": "Taux de CVAE dus au titre de 2025 ramenés à ceux de 2024",
+   "boutons": {
+    "cvae_echelle": 1.4737
+   },
+   "couche": "entreprises",
+   "annee_revenus": 2025,
+   "rendement_connu": true
+  },
+  {
+   "numero": "16",
+   "intitule": "Calcul de l'atténuation des variations de valeurs locatives des locaux professionnels",
+   "case": "structure",
+   "raison": "Valeurs locatives et impôts locaux : ni local ni taxe foncière dans le modèle ; validation législative.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "17",
+   "intitule": "Aménagement du régime spécial des fusions (ordonnance du 24 mai 2023)",
+   "case": "structure",
+   "raison": "Opérations de restructuration : aucune fusion ni apport dans le modèle d'entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "18",
+   "intitule": "Déductions et exonérations applicables au secteur agricole",
+   "case": "donnees",
+   "raison": "Déduction pour épargne de précaution, stocks de bovins et exonération de TFPNB : aucun bénéfice agricole ni foncier non bâti dans la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "19",
+   "intitule": "Incitation à la transmission des exploitations agricoles au profit de jeunes agriculteurs",
+   "case": "structure",
+   "raison": "Plus-values professionnelles et transmissions : aucun modèle de transmission.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "20",
+   "intitule": "Maintien du tarif d'accise sur le gazole des travaux agricoles et forestiers",
+   "case": "structure",
+   "raison": "Gazole non routier des exploitants : accise_gazole porte le gazole routier des ménages, pas ce tarif réduit, et aucune consommation agricole n'existe.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "21",
+   "intitule": "Mesures diverses de correction, clarification et coordination en fiscalité sectorielle",
+   "case": "structure",
+   "raison": "Corrections de codification et transfert de gestion des accises : sans paramètre chiffrable dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "22",
+   "intitule": "Mise en conformité des dispositions fiscales avec la réglementation européenne des aides d'État",
+   "case": "perimetre",
+   "raison": "Mise à jour de références juridiques, sans paramètre.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "23",
+   "intitule": "Sécurisation des modalités d'imposition des non-résidents",
+   "case": "perimetre",
+   "raison": "Clarification du domicile fiscal, sans effet de paramètre ; aucun non-résident dans la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "24",
+   "intitule": "Réintégration des amortissements dans la plus-value de cession des locations meublées non professionnelles",
+   "case": "donnees",
+   "raison": "Ni location meublée, ni amortissement, ni plus-value immobilière dans la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "25",
+   "intitule": "Sécurisation du régime des bons de souscription d'actions (BSPCE)",
+   "case": "donnees",
+   "raison": "Ni BSPCE ni plan d'épargne en actions dans la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "26",
+   "intitule": "Taxe sur les réductions de capital consécutives au rachat de leurs propres titres",
+   "case": "structure",
+   "raison": "Taxe nouvelle : ni rachat ni annulation de titres dans le modèle d'entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true
+  },
+  {
+   "numero": "27",
+   "intitule": "Communes anciennement en ZRR intégrées au zonage France ruralités revitalisation",
+   "case": "structure",
+   "raison": "Régime zoné : aucune localisation fine des entreprises ni des ménages.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "28",
+   "intitule": "Prorogation de l'expérimentation des clubs de jeux à Paris",
+   "case": "structure",
+   "raison": "Prélèvements sur les jeux : hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "29",
+   "intitule": "Fixation pour 2025 de la DGF et des variables d'ajustement",
+   "case": "perimetre",
+   "raison": "Dotations et concours financiers aux collectivités territoriales.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "30",
+   "intitule": "Modulation des conditions d'attribution du FCTVA",
+   "case": "perimetre",
+   "raison": "Dotations et concours financiers aux collectivités territoriales.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "31",
+   "intitule": "Stabilisation en valeur des fractions de TVA affectées aux collectivités",
+   "case": "perimetre",
+   "raison": "Dotations et concours financiers aux collectivités territoriales.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "32",
+   "intitule": "Évaluation des prélèvements sur recettes au profit des collectivités territoriales",
+   "case": "perimetre",
+   "raison": "Dotations et concours financiers aux collectivités territoriales.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "33",
+   "intitule": "Affectation de ressources à des tiers",
+   "case": "perimetre",
+   "raison": "Plafonds et affectations de taxes à des opérateurs : répartition de recettes, pas un impôt des ménages ou des entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "34",
+   "intitule": "Reconduction des budgets annexes et comptes spéciaux",
+   "case": "perimetre",
+   "raison": "Mesure d'organisation budgétaire.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "35",
+   "intitule": "Avances remboursables aux collectivités d'outre-mer",
+   "case": "perimetre",
+   "raison": "Concours aux collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "36",
+   "intitule": "Financement du CAS Financement des aides aux collectivités pour l'électrification rurale",
+   "case": "perimetre",
+   "raison": "Organisation d'un compte spécial.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "37",
+   "intitule": "Minoration et affectation de recettes d'un compte d'affectation spéciale",
+   "case": "perimetre",
+   "raison": "Organisation d'un compte spécial.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "38",
+   "intitule": "Relations financières entre l'État et la sécurité sociale",
+   "case": "perimetre",
+   "raison": "Transferts de recettes entre l'État et la sécurité sociale.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "39",
+   "intitule": "Financement des missions de sûreté et de sécurité des aéroports",
+   "case": "structure",
+   "raison": "Taxe d'aéroport : ni vol ni passager dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "40",
+   "intitule": "Prélèvement sur recettes au titre du budget de l'Union européenne",
+   "case": "perimetre",
+   "raison": "Prélèvement sur recettes.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "41",
+   "intitule": "Équilibre général du budget, trésorerie et plafond d'autorisation des emplois",
+   "case": "perimetre",
+   "raison": "Article d'équilibre.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "42",
+   "intitule": "Crédits du budget général",
+   "case": "perimetre",
+   "raison": "Crédits et autorisations budgétaires.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "43",
+   "intitule": "Crédits des budgets annexes",
+   "case": "perimetre",
+   "raison": "Crédits et autorisations budgétaires.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "44",
+   "intitule": "Crédits des comptes d'affectation spéciale et des comptes de concours financiers",
+   "case": "perimetre",
+   "raison": "Crédits et autorisations budgétaires.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "45",
+   "intitule": "Objectifs et indicateurs de performance",
+   "case": "perimetre",
+   "raison": "Crédits et autorisations budgétaires.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "46",
+   "intitule": "Autorisations de découvert",
+   "case": "perimetre",
+   "raison": "Crédits et autorisations budgétaires.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "47",
+   "intitule": "Plafonds des autorisations d'emplois de l'État",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "48",
+   "intitule": "Plafonds des emplois des opérateurs de l'État",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "49",
+   "intitule": "Plafonds des emplois des établissements à autonomie financière",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "50",
+   "intitule": "Plafonds des emplois des autorités publiques indépendantes",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "51",
+   "intitule": "Majoration des plafonds de report de crédits de paiement",
+   "case": "perimetre",
+   "raison": "Gestion des crédits.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "52",
+   "intitule": "Garantie de l'État à l'Unédic",
+   "case": "perimetre",
+   "raison": "Garanties, prêts et participations financières de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "53",
+   "intitule": "Sécurisation des prêts à la Nouvelle-Calédonie",
+   "case": "perimetre",
+   "raison": "Garanties, prêts et participations financières de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "54",
+   "intitule": "Garantie au comité d'organisation des Jeux olympiques et paralympiques d'hiver",
+   "case": "perimetre",
+   "raison": "Garanties, prêts et participations financières de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "55",
+   "intitule": "Garantie de l'État à la BIRD",
+   "case": "perimetre",
+   "raison": "Garanties, prêts et participations financières de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "56",
+   "intitule": "Souscription à l'augmentation de capital de la Banque africaine de développement",
+   "case": "perimetre",
+   "raison": "Garanties, prêts et participations financières de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "57",
+   "intitule": "Augmentation de la quote-part de la France au FMI",
+   "case": "perimetre",
+   "raison": "Garanties, prêts et participations financières de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "58",
+   "intitule": "Calendrier du financement à 50 % par l'employeur de la complémentaire santé dans la fonction publique de l'État",
+   "case": "perimetre",
+   "raison": "Dépense de l'État employeur, ni impôt ni prestation des ménages.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "59",
+   "intitule": "Financement forfaitaire par l'employeur de la complémentaire santé dans la fonction publique outre-mer",
+   "case": "perimetre",
+   "raison": "Dépense de l'État employeur.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "60",
+   "intitule": "Réforme du chèque énergie",
+   "case": "structure",
+   "raison": "Changement des modalités d'attribution (foyer fiscal du titulaire du contrat, un chèque par logement) : aucun bouton ne porte le chèque énergie et le texte ne change ni barème ni plafond.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "61",
+   "intitule": "Répartition de la dotation globale de fonctionnement",
+   "case": "perimetre",
+   "raison": "Dotations et péréquation entre collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "62",
+   "intitule": "Répartition du FPIC",
+   "case": "perimetre",
+   "raison": "Dotations et péréquation entre collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "63",
+   "intitule": "Répartition des taxes afférentes aux laboratoires géologiques et centres de stockage de déchets radioactifs",
+   "case": "perimetre",
+   "raison": "Dotations et péréquation entre collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "64",
+   "intitule": "Instauration et affectation d'un fonds de réserve au profit des collectivités territoriales",
+   "case": "perimetre",
+   "raison": "Dotations et péréquation entre collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  }
+ ]
+}

@@ -351,9 +351,12 @@ def cmd_reconcile(args: argparse.Namespace) -> int:
     # target that is net of them, and they do so only because this flag is off. The
     # zero-masked sweep (D-073) measured the second at 6.4 points. There was no way to
     # produce the other reading at all until this flag existed.
-    result = run(population, year=args.year, tier="full", sample=args.sample,
-                 impute_niches=args.impute_niches, impute_capital=args.impute_capital)
-    agg = aggregate_module.aggregate(result.households)
+    from impots.population.runner import households_par_lots
+
+    households = households_par_lots(
+        population, args.lots, year=args.year, tier="full", sample=args.sample,
+        impute_niches=args.impute_niches, impute_capital=args.impute_capital)
+    agg = aggregate_module.aggregate(households)
 
     path = reconcile_module.write(
         agg, vintage=args.vintage, notes=KNOWN_LIMITATIONS, unraked=unraked,
@@ -1765,6 +1768,14 @@ def cmd_programme(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_verification(args: argparse.Namespace) -> int:
+    """La grille de vérification (but 18, D-362, D-363)."""
+    from impots import verification
+
+    return verification.main_args(args.action, getattr(args, "annee", None),
+                                  getattr(args, "lots", 4))
+
+
 def cmd_site(args: argparse.Namespace) -> int:
     """Le site des études (but 7, D-304) : le construire, ou vérifier qu'il est à jour."""
     from impots import site
@@ -1997,6 +2008,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--impute-capital", action="store_true",
         help="hand out the PFU's base from DGFiP n° 41's fractiles (D-248). Off by "
              "default, which leaves the PFU in the net-IR target and out of the model")
+    reconciler.add_argument("--lots", type=int, default=1,
+                            help="run the population that many groups of ménages at a "
+                                 "time, to hold in memory (D-362)")
     reconciler.add_argument("--compare-unraked", action="store_true",
                             help="also build and run the population without raking, and "
                                  "show every line before and after (D-017)")
@@ -2358,6 +2372,16 @@ def build_parser() -> argparse.ArgumentParser:
                                                 "salaires) : sans lui, rien n'est simulé")
     programme.add_argument("--sortie", help="où écrire le rapport JSON")
     programme.set_defaults(func=cmd_programme)
+
+    verif = subcommands.add_parser(
+        "verification", help="la grille de vérification : chaque instrument contre un "
+                             "total publié (but 18, D-362)")
+    verif_actions = verif.add_subparsers(dest="action", required=True)
+    verif_passe = verif_actions.add_parser("passe", help="une passe d'une année")
+    verif_passe.add_argument("--annee", type=int, required=True)
+    verif_passe.add_argument("--lots", type=int, default=4)
+    verif_actions.add_parser("ecrire", help="la grille et la loi d'erreur")
+    verif.set_defaults(func=cmd_verification)
 
     site = subcommands.add_parser(
         "site", help="le site statique des études : sans calcul, sans script (but 7, D-304)")

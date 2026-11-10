@@ -1,0 +1,572 @@
+{
+ "texte": "plf2022",
+ "trie_par": "agent but 18",
+ "articles": [
+  {
+   "numero": "liminaire",
+   "intitule": "Prévisions de solde structurel et de solde effectif de l’ensemble des administrations publiques de l’année 2022, prévisions d’exécution 2021 et exécution 2020",
+   "case": "perimetre",
+   "raison": "Article de soldes structurel et effectif des administrations publiques : aucune mesure.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "1",
+   "intitule": "Autorisation de percevoir les impôts existants",
+   "case": "perimetre",
+   "raison": "Formalité annuelle d'autorisation de percevoir les impôts, sans mesure.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "2",
+   "intitule": "Indexation sur l'inflation du barème de l'impôt sur le revenu pour les revenus de 2021 et des grilles de taux par défaut du prélèvement à la source",
+   "case": "chiffrable",
+   "raison": "Le barème (quatre seuils de tranche), la décote (779/1 289 → 790/1 307 €), le plafond général de la demi-part (1 570 → 1 592 €) et celui du premier enfant du parent isolé (3 704 → 3 756 €) s'écrivent avec cinq boutons existants. ATTENTION au contrefactuel : l'arbre des revenus 2021 porte déjà ces valeurs indexées (vérifié : 10 225, 790, 1 592, 3 756 au 2021-01-01), si bien que les boutons donnés sont ceux du GEL (valeurs 2020 reconduites) et que le coût de l'article est l'opposé de l'écart. Ne sont pas chiffrés : le 196 B (6 042 €), les plafonds de 938, 1 565 et 1 748 € (aucun bouton) et les grilles de taux par défaut du PAS (trésorerie, pas l'impôt de l'année).",
+   "volet": "indexation de 1,4 % du barème, de la décote, du plafond général de la demi-part et du plafond parent isolé (197 I 1, 2 premier et deuxième alinéas, 4 a)",
+   "boutons": {
+    "ir_bareme": [
+     {
+      "threshold": 0,
+      "rate": 0.0
+     },
+     {
+      "threshold": 10084,
+      "rate": 0.11
+     },
+     {
+      "threshold": 25710,
+      "rate": 0.3
+     },
+     {
+      "threshold": 73516,
+      "rate": 0.41
+     },
+     {
+      "threshold": 158122,
+      "rate": 0.45
+     }
+    ],
+    "decote_seuil_celib": 779,
+    "decote_seuil_couple": 1289,
+    "plafond_qf_demi_part": 1570,
+    "plafond_qf_parent_isole": 3704
+   },
+   "couche": "menages",
+   "annee_revenus": 2021,
+   "rendement_connu": false
+  },
+  {
+   "numero": "3",
+   "intitule": "Sécurisation du champ des prestations de services éligibles au crédit d'impôt en faveur des services à la personne",
+   "case": "structure",
+   "raison": "Sécurisation du champ des services éligibles au crédit d'impôt services à la personne (services hors domicile compris dans une offre globale) : une règle d'éligibilité par nature de service, que ni saldom_taux ni saldom_plafond n'expriment.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "4",
+   "intitule": "Allongement des délais d'option pour les régimes d'imposition à l'impôt sur le revenu des entrepreneurs individuels",
+   "case": "perimetre",
+   "raison": "Allongement des délais d'option et de renonciation aux régimes réels des entrepreneurs individuels : procédure, sans assiette ni taux.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "5",
+   "intitule": "Aménagement des dispositifs d'exonération des plus-values de cession d'entreprises ou de cession de titres détenus par les chefs d'entreprise et renforcement du crédit d'impôt pour la formation des chefs d'entreprise",
+   "case": "donnees",
+   "raison": "Exonérations de plus-values de cession d'entreprise (151 septies A, 238 quindecies) et crédit d'impôt formation des dirigeants : la population ne porte ni plus-value professionnelle ni revenu d'indépendant ; le crédit formation n'a pas d'instrument.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "6",
+   "intitule": "Faculté temporaire d'amortissement fiscal des fonds commerciaux",
+   "case": "structure",
+   "raison": "Déduction temporaire de l'amortissement des fonds commerciaux : le modèle entreprises n'a ni actif ni amortissement, un résultat fiscal donné en cellule.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "7",
+   "intitule": "Mise en conformité avec le droit européen des retenues à la source applicables aux sociétés non résidentes",
+   "case": "structure",
+   "raison": "Retenues à la source des sociétés non résidentes : ni non-résident ni retenue à la source dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "8",
+   "intitule": "Aménagement du dispositif de déduction exceptionnelle en faveur des équipements permettant aux navires et bateaux de transport de passagers ou de marchandises d'utiliser des énergies permettant de réduire les émissions de gaz à effet de serre ou la pollution atmosphérique",
+   "case": "structure",
+   "raison": "Déduction exceptionnelle pour les équipements verts des navires : ni investissement ni armateur identifiable dans le modèle entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "9",
+   "intitule": "Simplification et mise en conformité avec le droit de l'Union européenne des règles de la TVA",
+   "case": "structure",
+   "raison": "Mesures techniques de TVA (exonérations diplomatiques, forces armées, organismes européens, représentants fiscaux) : le moteur ne porte la TVA que par taux sur la consommation des ménages, pas par régime d'exonération ni par redevable.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "10",
+   "intitule": "Suppression de dépenses fiscales inefficientes",
+   "case": "structure",
+   "raison": "Suppression de six dépenses fiscales (ZFU, reprise d'entreprise en difficulté, espaces naturels, lots d'obligations, CEAF, recherche minière outre-mer) et des exonérations locales liées : aucun de ces dispositifs n'est codé, et la population ne porterait de toute façon ni zonage, ni reprise, ni épargne détaillée.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "11",
+   "intitule": "Fixation pour 2022 de la dotation globale de fonctionnement (DGF) et des variables d'ajustement",
+   "case": "perimetre",
+   "raison": "Fixation de la DGF et des variables d'ajustement : concours aux collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "12",
+   "intitule": "Expérimentation de la recentralisation du revenu de solidarité active",
+   "case": "perimetre",
+   "raison": "Expérimentation de la recentralisation du RSA : transfert de compétence et de financement entre départements et État, sans changement du barème du RSA.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "13",
+   "intitule": "Évaluation des prélèvements opérés sur les recettes de l'État au profit des collectivités territoriales",
+   "case": "perimetre",
+   "raison": "Évaluation des prélèvements sur recettes au profit des collectivités.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "14",
+   "intitule": "Mesures relatives à l'ajustement des ressources affectées à des organismes chargés de missions de service public",
+   "case": "perimetre",
+   "raison": "Ajustement des plafonds des ressources affectées aux opérateurs : répartition, pas impôt des ménages ou des entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "15",
+   "intitule": "Dispositions relatives aux affectations : reconduction des budgets annexes et comptes spéciaux existants",
+   "case": "perimetre",
+   "raison": "Reconduction des budgets annexes et comptes spéciaux.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "16",
+   "intitule": "Actualisation et reconduction du dispositif de garantie des ressources de l’audiovisuel public (compte de concours financiers « Avances à l'audiovisuel public ») et stabilisation du tarif de la contribution à l’audiovisuel public (CAP)",
+   "case": "structure",
+   "raison": "Garantie de ressources de l'audiovisuel public (périmètre) et non-indexation de la contribution à l'audiovisuel public : la CAP n'est pas un instrument du moteur ni un paramètre de l'arbre.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "17",
+   "intitule": "Relations financières entre l'État et la sécurité sociale",
+   "case": "perimetre",
+   "raison": "Relations financières État-sécurité sociale : fraction de TVA affectée.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "18",
+   "intitule": "Évaluation du prélèvement opéré sur les recettes de l'État au titre de la participation de la France au budget de l'Union européenne (PSR-UE)",
+   "case": "perimetre",
+   "raison": "Prélèvement sur recettes au titre du budget de l'Union européenne.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "19",
+   "intitule": "Équilibre général du budget, trésorerie et plafond d’autorisation des emplois",
+   "case": "perimetre",
+   "raison": "Article d'équilibre, trésorerie et plafond d'emplois.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "20",
+   "intitule": "Crédits du budget général",
+   "case": "perimetre",
+   "raison": "Crédits du budget général.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "21",
+   "intitule": "Crédits des budgets annexes",
+   "case": "perimetre",
+   "raison": "Crédits des budgets annexes.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "22",
+   "intitule": "Crédits des comptes d'affectation spéciale et des comptes de concours financiers",
+   "case": "perimetre",
+   "raison": "Crédits des comptes spéciaux.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "23",
+   "intitule": "Autorisations de découvert",
+   "case": "perimetre",
+   "raison": "Autorisations de découvert.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "24",
+   "intitule": "Plafonds des autorisations d’emplois de l'État",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois de l'État.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "25",
+   "intitule": "Plafonds des emplois des opérateurs de l'État",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois des opérateurs.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "26",
+   "intitule": "Plafonds des emplois des établissements à autonomie financière",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois des établissements à autonomie financière.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "27",
+   "intitule": "Plafonds des emplois des autorités publiques indépendantes",
+   "case": "perimetre",
+   "raison": "Plafonds d'emplois des autorités publiques indépendantes.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "28",
+   "intitule": "Majoration des plafonds de reports de crédits de paiement",
+   "case": "perimetre",
+   "raison": "Majoration des plafonds de reports de crédits.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "29",
+   "intitule": "Renforcement des incitations fiscales à l'utilisation d'énergie renouvelable dans les transports",
+   "case": "structure",
+   "raison": "TIRUERT (taxe incitative à l'incorporation d'énergie renouvelable) : redevables metteurs à la consommation et taux d'incorporation absents du modèle ; les accises carburants des ménages ne sont pas cet instrument.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "30",
+   "intitule": "Suppression de taxes à faible rendement",
+   "case": "structure",
+   "raison": "Suppression de quatre taxes à faible rendement : aucune n'est un instrument du moteur.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "31",
+   "intitule": "Transposition de la décision (UE) 2021-991 du 7 juin 2021 relative au régime de l'octroi de mer",
+   "case": "structure",
+   "raison": "Octroi de mer (seuil d'assujettissement, listes de différentiels) : ni outre-mer ni octroi de mer dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "32",
+   "intitule": "Création d'une taxe affectée à l'Autorité des relations sociales des plateformes d'emploi",
+   "case": "structure",
+   "raison": "Création d'une taxe sur les plateformes de VTC et de livraison affectée à l'ARPE : dispositif nouveau, sans redevable identifiable sous la section NAF.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "33",
+   "intitule": "Habilitation à poursuivre la recodification par ordonnance des impositions sur les biens et services",
+   "case": "perimetre",
+   "raison": "Habilitation à recodifier par ordonnance : aucune mesure de rendement.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "34",
+   "intitule": "Mesures relatives au recouvrement forcé des créances publiques et au transfert du stock des créances impayées de la direction générale des douanes et droits indirects à la direction générale des finances publiques",
+   "case": "perimetre",
+   "raison": "Recouvrement forcé et transfert des créances de la DGDDI à la DGFiP : procédure.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "35",
+   "intitule": "Garantie par l’État d’un emprunt de la Collectivité de Polynésie française octroyé par l’Agence française de développement",
+   "case": "perimetre",
+   "raison": "Garantie de l'État à un emprunt de la Polynésie française.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "36",
+   "intitule": "Garantie de l’État à la Banque de France sur un prêt au Fonds monétaire international",
+   "case": "perimetre",
+   "raison": "Garantie de l'État à la Banque de France sur un prêt au FMI.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "37",
+   "intitule": "Modification de la garantie de l’État octroyée à la Caisse Centrale de Réassurance pour couvrir le risque nucléaire",
+   "case": "perimetre",
+   "raison": "Garantie de l'État à la Caisse centrale de réassurance (risque nucléaire).",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "38",
+   "intitule": "Relèvement du plafond de la garantie UNEDIC",
+   "case": "perimetre",
+   "raison": "Relèvement du plafond de la garantie Unédic.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "39",
+   "intitule": "Modification de la garantie de l’État au Comité d'organisation des jeux olympiques et paralympiques",
+   "case": "perimetre",
+   "raison": "Garantie de l'État au comité d'organisation des Jeux olympiques.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "40",
+   "intitule": "Reprise par l’État de la dette de SNCF Réseau",
+   "case": "perimetre",
+   "raison": "Reprise de la dette de SNCF Réseau.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "41",
+   "intitule": "Habilitation à modifier par ordonnance le régime de responsabilité des gestionnaires publics",
+   "case": "perimetre",
+   "raison": "Habilitation sur la responsabilité des gestionnaires publics : organisation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "42",
+   "intitule": "Mesure de revalorisation du point de pension militaire d’invalidité",
+   "case": "structure",
+   "raison": "Revalorisation du point de pension militaire d'invalidité : ni PMI, ni retraite du combattant dans le moteur ni dans la population (les pensions sont des données).",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "43",
+   "intitule": "Abattement forfaitaire sur les revenus du conjoint d’un bénéficiaire de l’AAH",
+   "case": "structure",
+   "raison": "Abattement forfaitaire sur les revenus du conjoint pour l'AAH, à la place de l'abattement proportionnel, montant renvoyé au décret : aucun bouton AAH dans ReformSpec, et le montant n'est pas dans le texte.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true
+  },
+  {
+   "numero": "44",
+   "intitule": "Revalorisation de l'aide juridictionnelle",
+   "case": "perimetre",
+   "raison": "Revalorisation de l'unité de valeur de l'aide juridictionnelle : rétribution des avocats, une dépense de crédits.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "45",
+   "intitule": "Réforme des modalités d’attribution de la dotation de soutien à l’investissement des départements",
+   "case": "perimetre",
+   "raison": "Réforme de la dotation de soutien à l'investissement des départements.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "46",
+   "intitule": "Réforme des modalités d’attribution de la dotation de soutien aux communes pour la protection de la biodiversité",
+   "case": "perimetre",
+   "raison": "Réforme de la dotation biodiversité et aménités rurales des communes.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "47",
+   "intitule": "Répartition de la dotation globale de fonctionnement (DGF)",
+   "case": "perimetre",
+   "raison": "Répartition de la DGF et péréquation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  },
+  {
+   "numero": "48",
+   "intitule": "Compensation des effets de la baisse des impôts de production sur le dispositif de compensation péréquée",
+   "case": "perimetre",
+   "raison": "Dotation de compensation aux départements (dispositif de compensation péréquée).",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false
+  }
+ ]
+}

@@ -1666,6 +1666,124 @@
       "licence": "publication de la DG Trésor, réutilisation avec mention de la source",
       "description": "DG Trésor, Trésor-Éco n° 371, 25/09/2025, « Analyse de la composition des recettes de TVA » : 65,1 % de la TVA nette payée par les ménages en 2022 ; rendement d'un point de chaque taux en 2025 (tableaux 1 et 2). Agrégat de la vérification (but 12).",
       "quarantined": false
+    },
+    "plf2021_texte_an_b3360.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L15B3360.html",
+      "sha256": "42c3b1217800a0c58e34ebce799f5b4492362aa05d9c970e5e2837a3261ccbf2",
+      "bytes": 3651489,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 3360 (15e législature) : projet de loi de finances pour 2021, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "plf2022_texte_an_b4482.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L15B4482.html",
+      "sha256": "e3f1db2b1299e4799e28cd81435eda0c707488c7f2c567f1eeef450a913c8485",
+      "bytes": 2949537,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 4482 (15e législature) : projet de loi de finances pour 2022, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "plf2023_texte_an_b273.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L16B0273.html",
+      "sha256": "81ff50c02fd58c33264d607cb4f56b73b603c947670fbc7d574de387006320d7",
+      "bytes": 7987531,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 273 (16e législature) : projet de loi de finances pour 2023, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "plf2024_texte_an_b1680.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L16B1680.html",
+      "sha256": "58d9406553b5598b256ab3b830bd20186abedc57b7c75d59e3f3032a9576db5a",
+      "bytes": 6112070,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 1680 (16e législature) : projet de loi de finances pour 2024, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "plf2025_texte_an_b324.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B0324.html",
+      "sha256": "00378a9a82ed255db11c5ef97154e62d182b0799f91619807ad67f1b9b2fbabe",
+      "bytes": 7694491,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 324 (17e législature) : projet de loi de finances pour 2025, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "plfss2021_texte_an_b3397.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L15B3397.html",
+      "sha256": "dff95e4f2a96e2c082d9a14bcd420ce126499e8afc828b8b58793ff605d3a2ed",
+      "bytes": 1479609,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 3397 (15e législature) : projet de loi de financement de la sécurité sociale pour 2021, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "plfss2022_texte_an_b4523.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L15B4523.html",
+      "sha256": "34db99c9501217d72d06583b86c7581d3b111d9a6e2c8b4665d79eb025329827",
+      "bytes": 1795661,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 4523 (15e législature) : projet de loi de financement de la sécurité sociale pour 2022, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "plfss2023_texte_an_b274.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L16B0274.html",
+      "sha256": "84ddb93deaaa467b5b895e3b5b12a1a0bdd127bedb2644c52508c4aae0ff96eb",
+      "bytes": 1750564,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 274 (16e législature) : projet de loi de financement de la sécurité sociale pour 2023, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "plfss2024_texte_an_b1682.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L16B1682.html",
+      "sha256": "b33fb98298789a90055ee89bbd4ce10c49254b331a93851d1bea0cd4cfb412c6",
+      "bytes": 1662553,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 1682 (16e législature) : projet de loi de financement de la sécurité sociale pour 2024, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "plfss2025_texte_an_b325.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B0325.html",
+      "sha256": "7788ec6a7c8dca1412584acc00b02af6b9c4545a79aa6923716779262841cd5b",
+      "bytes": 935207,
+      "downloaded": "2026-11-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 325 (17e législature) : projet de loi de financement de la sécurité sociale pour 2025, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
+      "quarantined": false
+    },
+    "insee_bdm_001768695_ipc_hors_tabac_annuel.xml": {
+      "url": "https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/001768695",
+      "sha256": "028a7434e9110532f32c503bee99ced572a79b844226d4155e03485002bcabec",
+      "bytes": 3736,
+      "downloaded": "2026-11-09",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, BDM 001768695 : « Indice des prix à la consommation - Base 2015 - Variations annuelles - Ensemble des ménages - France - Ensemble hors tabac - Séries arrêtées ». Variations annuelles constatées, 2020 à 2025 (+0,2 ; +1,6 ; +5,3 ; +4,8 ; +1,8 ; +0,9 %). Les prix des indices constatés du but 18 (D-362), l'indice légal des pensions.",
+      "quarantined": false,
+      "provenance": "API SDMX de la BDM. NON reproductible à l'octet : l'en-tête de la réponse porte un identifiant et une date de préparation qui changent à chaque requête ; les observations, elles, sont celles d'une série arrêtée. Un nouveau téléchargement aura un autre sha256, et `impots data fetch` le refusera, à dessein : le fichier se compare alors observation par observation."
+    },
+    "insee_cn2025_t6205_salaires_bruts_branches.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988821/T_6205_fr.xlsx",
+      "sha256": "1e6d708aee9546c82d13d406e22a3c21cc2706a1c78c1037f58d4266ae83f454",
+      "bytes": 52496,
+      "downloaded": "2026-11-09",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, comptes nationaux annuels base 2020, tableau 6.205 « Salaires et traitements bruts des salariés par branche à prix courants », milliards d'euros ; ligne « _T » total des branches (1 111,65 en 2024, la cible de calage TOTAL_GROSS_WAGES). Numérateur du salaire par tête des indices constatés (D-362).",
+      "quarantined": false
+    },
+    "insee_cn2025_t6210_emploi_salarie_branches.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988823/T_6210_fr.xlsx",
+      "sha256": "8cc073067002a3a06b7be09a469dc44944dc483e9826d3d552481aaa697d864b",
+      "bytes": 53394,
+      "downloaded": "2026-11-09",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, comptes nationaux annuels base 2020, tableau 6.210 « Emploi intérieur salarié par branche en nombre de personnes », milliers ; ligne « _T ». Dénominateur du salaire par tête des indices constatés (D-362).",
+      "quarantined": false
     }
   }
 }

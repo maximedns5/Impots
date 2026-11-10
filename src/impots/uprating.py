@@ -127,13 +127,27 @@ class Uprating:
         """Cumulative uprating from `base_year` to `year`, on the named index."""
         if kind not in ("wage", "price"):
             raise UpratingError(f"indice inconnu : {kind}")
-        if year < self.base_year:
-            raise UpratingError(
-                f"vieillir vers {year} depuis {self.base_year} reviendrait à rajeunir "
-                f"la population. Ce module ne fait pas cela : reculer demanderait des "
-                f"indices constatés année par année et une population qui n'a pas déjà "
-                f"été calibrée sur l'année d'arrivée.")
         by_year = dict(self.wage_by_year if kind == "wage" else self.price_by_year)
+        if year < self.base_year:
+            # Backwards only on observed indices, year by year (D-359): the rate of year
+            # y is the growth from y − 1 to y, so going back from the base to `year`
+            # divides by the years after `year`, the base included.
+            if not by_year:
+                raise UpratingError(
+                    f"ramener la population de {self.base_year} à {year} sur un taux "
+                    f"constant : reculer demande des indices constatés année par année "
+                    f"(D-359).")
+            back = range(year + 1, self.base_year + 1)
+            missing = [y for y in back if y not in by_year]
+            if missing:
+                raise UpratingError(
+                    f"ramener la population de {self.base_year} à {year} : l'indice "
+                    f"{kind} n'a pas de taux constaté pour {missing}, et l'outil n'en "
+                    f"invente pas")
+            factor = 1.0
+            for y in back:
+                factor /= 1.0 + by_year[y]
+            return factor
         if by_year:
             missing = [y for y in range(self.base_year + 1, year + 1) if y not in by_year]
             if missing:
@@ -184,14 +198,24 @@ def caveat(year: int, uprating: Uprating) -> str:
     """The sentence that must travel with any figure computed on an aged population."""
     from impots.reporting import pct_fr
 
+    back = year < uprating.base_year
     if uprating.wage_by_year:
-        years = range(uprating.base_year + 1, year + 1)
+        years = (range(year + 1, uprating.base_year + 1) if back
+                 else range(uprating.base_year + 1, year + 1))
         wages, prices = dict(uprating.wage_by_year), dict(uprating.price_by_year)
         rates = (f"salaires {', '.join(f'{pct_fr(wages[y], 1)} en {y}' for y in years)}, "
                  f"prix {', '.join(f'{pct_fr(prices[y], 1)} en {y}' for y in years)}")
     else:
         rates = (f"salaires {pct_fr(uprating.wage, 1)} par an, prix "
                  f"{pct_fr(uprating.price, 1)} par an")
+    if back:
+        return (
+            f"Population ramenée mécaniquement de {uprating.base_year} à {year}, chaque "
+            f"montant divisé par les évolutions constatées — {rates} ({uprating.source}). "
+            "La structure des ménages, les âges et les poids sont ceux de "
+            f"{uprating.base_year} : c'est la France de {uprating.base_year} avec l'argent "
+            f"de {year}. **Cette population n'est pas calibrée sur {year}** : les totaux "
+            "dépensés au registre le sont sur l'année de base (D-359).")
     return (
         f"Population vieillie mécaniquement de {uprating.base_year} à {year} — {rates}, "
         f"hypothèses "

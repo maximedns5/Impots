@@ -26981,3 +26981,294 @@ doublait celle de la légende : elle s'appelle « etiquettes ».
 préenregistrer. Au propriétaire : l'adresse pour signaler une erreur, l'hébergement (le
 dépôt est privé), le libellé d'un parti, et les faits que la relecture demande de vérifier
 (la candidature de Le Pen, une mesure de Mélenchon portée par Mathilde Panot).
+
+## D-359 — Le but 18 validé : les juges du passé, de 2021 à 2025
+
+**La demande.** Le propriétaire, le 9 novembre : « oui, lance le but 18 en commençant en
+2021 ». Le but est celui que `docs/BUT.md` écrit, sur les PLF et les PLFSS de 2021 à 2025.
+
+**Les dix textes.** Les projets déposés à l'Assemblée nationale, en open data, téléchargés
+le 9 novembre et manifestés : PLF 2021 (n° 3360, XVe législature), 2022 (n° 4482), 2023
+(n° 273, XVIe), 2024 (n° 1680), 2025 (n° 324, XVIIe) ; PLFSS 2021 (n° 3397), 2022
+(n° 4523), 2023 (n° 274), 2024 (n° 1682), 2025 (n° 325). Aucun ne contient d'évaluation
+préalable ; ce sont des annexes à part, qu'aucun enregistrement n'a encore vues.
+
+**Les règles, celles du PLF 2027 (D-175), étendues.**
+
+* **Le triage se fait sur le texte.** Chaque article est découpé en son dispositif, lu en
+  clair (ses paramètres sont nécessaires au codage), et son exposé des motifs, lu montants
+  masqués : tout montant en euros y est remplacé avant la lecture, parce que l'exposé
+  annonce parfois le rendement que l'annexe chiffre.
+* **Un cas se préenregistre avant l'ouverture de sa fiche**, avec sa tolérance, sa raison
+  et son pronostic, dans un commit poussé. La fiche n'est ouverte qu'ensuite, et la
+  tolérance ne change plus.
+* **Un montant déjà connu se note à part.** Ceux de la suite de précision (D-035) sont dans
+  le dépôt ; un cas dont le rendement est connu de celui qui l'enregistre est une révision,
+  comptée à part, comme au but 10.
+
+**Les choix, faute d'une réponse.** Le propriétaire n'a tranché que l'année de départ.
+
+* **Les articles de prestations** entrent comme les articles fiscaux, à la façon de
+  l'art. 74 du PLF 2027 (D-298) : le juge est le même document, et le moteur les chiffre.
+* **Remonter le temps.** La population est de 2024 et le moteur refuse de la « rajeunir »
+  (`hypotheses.vieillissement_menages`). Le but ajoute le sens inverse, aux indices
+  observés de l'Insee (salaire moyen par tête, prix hors tabac), manifestés comme les
+  autres sources ; un cas sans indices est refusé. La structure de la population reste
+  celle de 2024 : chaque cas le dit, et c'est la raison d'avoir commencé en 2021.
+* **Les effets par décile de l'Insee et de la Drees** viennent après les cas, avec la même
+  règle : enregistrés avant d'être lus.
+
+**Ce qui ne bouge pas.** Les cinq cas déjà notés, leurs tolérances, et aucune étude.
+
+## D-360 — Le triage des dix textes : 9 articles chiffrables sur 531, et un aveugle percé
+
+**Ce qui a été fait.** Les dix textes de D-359, découpés par `scripts/decoupe_textes.py`,
+ont été triés article par article par cinq relecteurs indépendants, un par année, sur la
+consigne `docs/triage_retro/CONSIGNE.md` : le texte seul, exposés montants masqués, sans
+réseau, sans `data/raw`, sans aucun chiffrage du dépôt. Le triage est figé ici, dans
+`docs/triage_retro/`, avant l'ouverture de toute évaluation préalable. Les montants qui y
+restent sont ceux des dispositifs (objectifs de dépense, seuils) : des paramètres, pas des
+rendements.
+
+**Le compte.** 531 articles : 395 hors du périmètre (équilibre, crédits, plafonds,
+garanties, finances sociales agrégées), 111 hors de la structure du moteur, 16 hors de ses
+données, **9 chiffrables** :
+
+| texte | art. | mesure | couche | année | rendement déjà connu |
+|---|---|---|---|---|---|
+| PLF 2021 | 2 | indexation du barème de l'IR | ménages | revenus 2020 | non |
+| PLF 2022 | 2 | indexation du barème de l'IR | ménages | revenus 2021 | non |
+| PLF 2023 | 2 | indexation du barème de l'IR | ménages | revenus 2022 | oui (D-035) |
+| PLF 2024 | 2 | indexation du barème de l'IR | ménages | revenus 2023 | oui |
+| PLF 2024 | 8 | aménagement de la suppression de la CVAE | entreprises | 2024 | oui |
+| PLF 2025 | 2 | indexation du barème de l'IR | ménages | revenus 2024 | non |
+| PLF 2025 | 11 | CEBGE, premier exercice | entreprises | 2024 | oui |
+| PLF 2025 | 15 | report de la suppression de la CVAE | entreprises | 2025 | oui |
+| PLFSS 2025 | 6 | allègements généraux, étape 2025 | ménages | 2025 | oui |
+
+**Trois constats qui changent le but.**
+
+* **Le banc est étroit.** Le pronostic du but parlait de dizaines de cas ; il y en a neuf,
+  dont cinq sont la même mesure, l'indexation du barème. Un PLF porte peu de mesures
+  fiscales chiffrables sur des ménages et des entreprises synthétiques, et un PLFSS
+  presque aucune.
+* **L'aveugle est percé.** Les relecteurs sont le même modèle que celui qui enregistre :
+  ce qu'ils disent connaître de mémoire, l'enregistreur le connaît aussi. Six des neuf
+  rendements sont marqués connus ; par la règle de D-359, ils se notent à part. Trois
+  cas aveugles resteraient : les indexations de 2020, de 2021 et de 2024.
+* **Le moteur ne descend pas partout.** La fenêtre des années servies commence en 2022
+  (`api/schemas.MIN_YEAR`), le barème de la CVAE n'est daté qu'à partir de 2024, et la
+  consommation refuse toute année avant 2024. Les indexations de 2020 et 2021 demandent
+  d'élargir la fenêtre, après vérification.
+
+**La convention de chiffrage d'un texte passé.** L'arbre de l'année porte la loi votée ; un
+article se chiffre donc en miroir (D-298), le droit d'avant reconduit, le signe changé.
+L'écart entre le projet et la loi votée, quand il existe, est dit sur le cas.
+
+**Ce qui est aussi commité.** `Uprating.factor` sait ramener une population en arrière,
+sur des indices constatés année par année seulement ; un taux constant reste refusé
+(`tests/test_uprating.py`, vu échouer sur le code d'avant). Le jeu d'indices constatés
+n'est pas encore écrit ; ses sources sont trouvées. Les prix : l'IPC hors tabac, ensemble
+des ménages, France (Insee, idbank 001768695), +0,2 % en 2020, +1,6, +5,3, +4,8, +1,8 % de
+2021 à 2024. Les salaires par tête : les salaires et traitements bruts (D11, T_6205) sur
+l'emploi intérieur salarié (T_6210) des comptes nationaux base 2020, −3,7 % en 2020, +5,3,
++5,6, +4,7, +2,6 % ensuite. Le −3,7 % de 2020 est l'activité partielle, que D11 ne compte
+pas : une population ramenée à 2020 par cet indice perdrait des revenus que les ménages
+ont reçus, une raison de plus de tenir 2020 pour fragile.
+
+**Ce qui attend le propriétaire.** Continuer sur ces neuf cas, dont trois aveugles, ou
+changer de juge : voir le compte rendu du 9 novembre.
+
+## D-361 — Les juges du passé mis de côté : d'abord un modèle mesuré et robuste
+
+**La décision.** Le propriétaire, le 9 novembre, sur le compte rendu de D-360 : les neuf
+cas ne se chiffrent pas maintenant. « Avant de refaire les 9 cas il faut qu'on continue à
+développer et à voir la robustesse et l'intérêt de notre modèle » ; la passe se fera
+« lorsque tout est vérifié ». Puis, sur la proposition qui suivait : « oui, écris le
+nouveau but 18 dans BUT.md ».
+
+**Ce qui est gardé.** Le triage de D-360, figé dans `docs/triage_retro/` avant toute
+ouverture d'annexe : il resservira tel quel, et aucune évaluation préalable de 2021 à 2025
+n'est ouverte d'ici là. La remontée d'une population sur des indices constatés
+(`Uprating.factor`), commitée et testée ; le jeu d'indices de l'Insee n'est pas écrit, ses
+sources sont dans D-360.
+
+**Le nouveau but 18**, proposé dans `docs/BUT.md` : la grille de vérification, chaque
+instrument que les études chiffrent mesuré contre un total publié sur 2022, 2023 et 2024.
+L'ancien but 18 y reste, sous « Mis de côté », avec ses décisions. Les améliorations qui
+suivent (l'ERFS, les réductions d'impôt, le non-recours, une boucle pour les impôts des
+entreprises, l'incertitude du coût) se mesureront sur cette grille.
+
+## D-362 — Le but 18 validé : la grille de vérification, sur 2022, 2023 et 2024
+
+**La demande.** Le propriétaire, le 9 novembre : « oui, lance le but 18 sur 2022 à 2024 ».
+Le but est celui de `docs/BUT.md`.
+
+**Les choix, faute d'une réponse aux deux autres questions.**
+
+* **Une ligne sans total publié pour une année est refusée pour cette année**, pas
+  reportée depuis une autre : un total d'une autre année serait une valeur substituée.
+  La grille dit le trou.
+* **Les pages d'étude disent leur ligne de vérification** dans ce but, comme le `/goal`
+  l'écrit, sans qu'aucun nombre d'étude change.
+
+**Comment chaque année se mesure.** La population est de 2024. Pour 2022 et 2023, elle est
+ramenée à l'année par les indices constatés de D-360 (les prix hors tabac de l'Insee, les
+salaires par tête des comptes nationaux), avec la règle de D-359 : la structure reste
+celle de 2024, et chaque ligne le dit. La loi est celle de l'année, dans OpenFisca. Les
+entreprises suivent le PIB nominal des comptes, à rebours comme à l'endroit (D-246).
+
+**L'ordre, et ce qui est préenregistré.** D'abord la réconciliation existante régénérée
+sur le code de la branche, telle qu'elle est, ses tolérances inchangées ; elle date du 4
+septembre et plusieurs de ses lignes ont changé de sens depuis (les réductions et crédits
+d'impôt sont imputés depuis B3). Puis les totaux publiés de chaque ligne neuve, trouvés et
+manifestés. Puis une D-entrée qui fixe, pour chaque ligne neuve, sa tolérance et sa
+raison, avant le premier calcul ; elle est commitée et poussée avant toute passe. Puis
+les passes, une par année.
+
+## D-363 — La grille de vérification préenregistrée : 93 lignes, tolérances, pronostic
+
+**Ce qui est fixé ici, avant toute passe des années 2022 et 2023 et avant le premier calcul
+de chaque ligne neuve.** Les lignes, leurs totaux publiés et leurs tolérances sont dans
+`docs/verification/lignes.json` : 31 lignes par année sur 2022, 2023 et 2024, dont 10
+refusées faute de total publié ou de droit servi par le moteur. Chaque total porte sa
+source, son tableau, son URL et le sha256 du fichier lu. Trois relecteurs les ont relevés
+le 9 novembre sur l'Insee (comptes nationaux 3.217 et 7.401, ERFS), la CCSS (mai 2024 et
+juin 2025), la DGFiP (n° 14, 22, 32, 41, IRCOM, taux marginaux, 2042) et la Cnaf (rapports
+du directeur comptable, RSA et PA Conjoncture). budget.gouv.fr, l'Urssaf, la Dares et la
+Drees ont refusé le conteneur.
+
+**La passe.** Une par année : la loi de l'année, la population de 2024 ramenée à l'année
+par les indices constatés (D-362), en quatre lots (`households_par_lots`), tier complet,
+sans imputation (ni niches, ni capital, ni IJ, ni consommation) : la population telle que
+les études la voient par défaut. Les entreprises : le millésime 2023, son coût suivant le
+PIB nominal des comptes (D-246). Deux sorties neuves : la CSG des pensions et du chômage, et
+les foyers par taux marginal (`ir_tranche`). Elles sont calculées dans la passe de
+population seulement : la réponse de l'API énumère ses champs, et deux de plus la
+cassaient. Un essai de plomberie sur 4 000 ménages, après l'écriture de cette entrée et
+avant son commit, a vérifié les signes et que les foyers par taux s'additionnent au total ;
+rien de cette entrée n'a changé après lui.
+
+**Les tolérances**, celles de la réconciliation quand la ligne existe, et pour les neuves :
+
+* **Les cotisations salariales** (Insee D613CE), ±10 % : le même concept, tous régimes ;
+  le moteur n'a pas les non-salariés.
+* **Les cotisations des employeurs après allègements** (D121), ±15 % : D121 compte la
+  prévoyance d'entreprise, que le moteur n'a pas.
+* **La réduction générale et les bandeaux maladie et famille** (CCSS), ±15 % : la
+  réduction générale ne vit que sous 1,6 SMIC, elle mesure la masse que les études
+  chiffrent.
+* **La CSG d'activité** (CCSS), ±15 % : le total publié compte les indépendants.
+* **La CSG de remplacement** (CCSS), ±10 % : les pensions sont calées, reste le taux, qui
+  suit le RFR.
+* **Les foyers aux taux de 0, 11 et 30 %**, ±15 % : des comptes, au cœur de la
+  distribution ; **aux taux de 41 et 45 %**, ±30 % : la queue, l'étage L1.
+* **L'IS avant crédits, la contribution sociale, la C3S et la CVAE**, ±20 % et ±25 % :
+  celles de la réconciliation des entreprises.
+
+Les pensions déclarées de 2022 et 2023 ne sont pas notées : leur écart découle des totaux
+publiés et de l'IPC, pas de la population. Celles de 2024 sont une cible de calage.
+
+**Le pronostic**, par ligne et pour les trois années, écrit avant le calcul :
+
+* **Inchangées de 2024 à 2022, à quelques points près**, parce que la population ne change
+  pas de forme : le RSA (pont) de +50 à +65 %, la prime d'activité (pont) de −35 à −20 %,
+  les aides au logement de −30 à −15 %, les foyers fiscaux de −20 à −10 %, les foyers
+  imposés de −10 à +2 %, l'impôt au barème de 0 à +12 %.
+* **Les foyers au taux de 0 %** sous leur total, de −35 à −10 % : les foyers qui manquent
+  sont surtout de petits foyers non imposables. Les taux de 11 et 30 % dans leur
+  tolérance ; ceux de 41 et 45 % de −40 à +40 %, un pronostic qui ne sait pas.
+* **Les cotisations salariales** de −12 à +3 % ; celles des employeurs de −25 à 0 %.
+* **La réduction générale** de −15 à +40 %, le pronostic le plus large : D-076 a trouvé un
+  chiffrage des allègements à +112 % par la masse près du SMIC, et c'est elle que cette
+  ligne voit. Les bandeaux de −12 à +8 %.
+* **La CSG d'activité** de −18 à 0 % (les indépendants) ; celle de remplacement de −8 à
+  +8 %.
+* **Le niveau de vie médian** de −12 à −5 % contre l'ERFS ; le D9/D1 de −3 à +8 %.
+* **L'IS** de 2022 sous son total, de −30 à −8 %, parce que les bénéfices de 2022 ont
+  monté plus vite que le PIB qui ramène les entreprises de 2023 ; de 2023 et 2024 dans sa
+  tolérance. La CVAE de 2024 de −25 à −5 %.
+
+**La loi d'erreur.** Pour chaque ligne notée, l'écart relatif des trois années ; par
+instrument, sa moyenne (le biais) et son étendue. Elle est publiée, et le Monte-Carlo
+pourra la tirer dans un but suivant ; ce but ne change aucun nombre d'étude.
+
+## D-364 — La grille de vérification : 58 lignes tenues sur 80, et ce qu'elle apprend
+
+**Ce qui a tourné.** Les trois passes de D-363, au commit da1cfab, le 9 novembre (19
+minutes, quatre lots, sans imputation) ; la grille et la loi d'erreur par `impots
+verification ecrire`, dans `docs/verification/GRILLE.md` et
+`reports/verification/grille.json`. Rien n'a changé entre l'enregistrement et le calcul,
+sauf la borne de la tolérance en virgule flottante (da1cfab), qu'un test a vue échouer avant
+la première passe : 110/100 − 1 vaut 0,1000…01, une ligne à 10,0 % aurait été dite hors de
+±10 %. Aucune ligne de la grille ne tombe sur cette borne.
+
+**Le compte.** 93 lignes : 80 notées, dont 58 dans leur tolérance et 22 hors ; 10 refusées
+(D-362) ; 3 de contexte ou de calage. Par année, 19 sur 25 en 2022, 18 sur 27 en 2023, 21
+sur 28 en 2024. Les lignes hors de leur tolérance sont, presque toutes, les mêmes les trois
+années : la population ne change pas de forme quand on la ramène en arrière.
+
+**Le pronostic.** Tenu sur 18 de ses 22 points :
+
+* **Tenus, les trois années.** Le RSA (pont), de +58 à +65 % ; la prime d'activité (pont),
+  de −30 à −27 % ; les aides au logement, de −24 à −22 % ; les foyers fiscaux, de −15 à
+  −13 % ; l'impôt au barème, +10,3 % en 2023 et +5,8 % en 2024 ; les foyers au taux de 0 %,
+  de −14 à −13 % ; ceux de 30 %, de +5 à +12 % ; ceux de 41 et 45 %, de −2 à +19 % ; les
+  cotisations salariales, de −12 à −9 % ; la réduction générale, de −14 à −11 %, au bas
+  d'une fourchette qui craignait le haut ; le bandeau maladie, de +5 à +7 % ; la CSG
+  d'activité, de −7 à −6 % ; celle de remplacement, de −7 à −3 % ; le niveau de vie
+  médian, de −9 à −7 % ; le D9/D1, de +3 à +7 % ; l'IS de 2022, −16,8 %, et de 2023 et 2024,
+  +2,7 et +5,6 % ; la CVAE de 2024, −12,1 %.
+* **Manqué de peu.** Les foyers imposés de 2022, +2,6 % pour une borne à +2 %.
+* **Manqué.** Les foyers au taux de 11 %, de −23 à −21 %, qu'il croyait dans ±15 % : les
+  foyers qui manquent ne sont pas seulement non imposables, ils sont aussi dans la première
+  tranche. Le bandeau famille, de +14 à +17 %, au-dessus de sa fourchette (+8 %).
+* **Manqué, et de signe.** Les cotisations des employeurs après allègements, de +30 à
+  +33 %, quand il les attendait de −25 à 0 %. C'est le constat neuf de la grille.
+
+**Les cotisations des employeurs.** `salaire_super_brut − salaire_brut` dépasse D121 de 100
+Md€ par an. Le pronostic attendait le manque de la prévoyance ; il y a un surplus. Deux
+causes possibles, non vérifiées ici : le surbrut d'OpenFisca compte des prélèvements sur
+les salaires que les comptes classent en impôts (versement mobilité, Fnal, taxe
+d'apprentissage, formation, CSA), et, pour les agents de l'État, la contribution aux
+pensions, que les comptes classent en cotisations imputées (D122), pas effectives. Les
+études chiffrent les cotisations des employeurs par l'écart de deux passes : leur niveau
+n'entre pas dans un chiffrage, mais un écart de taux appliqué à une assiette trop large
+l'est. C'est la première ligne à ouvrir dans un but suivant.
+
+**Les autres lignes hors de tolérance, sans pronostic.** Les foyers au RSA, +98 % en 2023 et
+2024 : le montant (pont) et le compte disent le même excès de droits ; le pont de
+non-recours corrige le montant, pas le nombre. La contribution sociale sur l'IS, +39 % en
+2023 et +25 % en 2024 (−17 % en 2022) : une contribution qui ne vit qu'au-dessus de 7,63 M€
+d'IS suit mal le PIB. Les allocations familiales, de −25 à −23 %, tiennent ±25 % à un
+demi-point près.
+
+**La loi d'erreur** est publiée par ligne : son biais et son étendue sur les années notées.
+Pour presque toutes les lignes, l'étendue est de quelques points autour du biais : l'erreur
+du modèle est un biais de structure, stable d'une année à l'autre, pas un bruit. Les
+exceptions sont les lignes des entreprises (l'IS, de −17 à +6 % ; sa contribution sociale,
+de −17 à +39 %), que le PIB ramène d'une année sans lire leurs bénéfices.
+
+**Ce que la grille ne dit pas.** Elle porte sur des années que la structure de 2024 n'a pas
+vues : un écart stable dit un biais de la population, pas une erreur du droit de l'année.
+Elle refuse la TVA et les accises des ménages, qu'aucun total publié ne sépare. Elle ne
+change aucun nombre d'étude (D-363). L'URL Filosofi de `margins.py` (8402386) rend 404, et
+la médiane de 25 920 € qu'y calent les marges de 2024 ne se retrouve dans aucune
+publication relevée ; à vérifier avec la passe de calage, que ce but ne touche pas.
+
+**Les pages d'étude** disent, dans « D'où viennent ces nombres », la ligne de vérification
+de chaque instrument qu'elles chiffrent : son écart moyen, son étendue et les années qui
+tiennent leur tolérance, sous une étiquette neuve, « vérifié ». Un instrument y figure
+quand il bouge d'au moins 5 % du plus grand mouvement de la ligne : une baisse de salaire
+qui touche la prime d'activité ne fait pas lister la prime. La TVA et les accises disent
+qu'elles n'ont pas de ligne. Aucun nombre d'étude ne change ; les pages et le site sont
+réécrits depuis les mêmes rapports, et `etude verifier` et `site verifier` le confirment.
+
+**Ce que le /goal demandait et que la grille n'a pas.** La TVA et les accises payées par
+les ménages, et la masse salariale par bande de SMIC : aucun total publié relevé, refusées
+(D-362) ; la réduction générale, qui ne vit que sous 1,6 SMIC, en tient lieu pour la
+masse près du SMIC. L'impôt sur le revenu après réductions et crédits : la passe est sans
+imputation, il reste à la réconciliation (+19,0 % sur les recettes nettes). L'impôt au
+barème et les foyers au RSA de 2022, la CVAE de 2022 et 2023 : refusés, faute de total ou
+de barème. La réconciliation des entreprises n'est pas régénérée : ses cibles mêlent 2024
+et 2025 ; les lignes des entreprises de la grille la remplacent sur 2022 à 2024.

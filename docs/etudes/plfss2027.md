@@ -285,5 +285,13 @@ Les passes ont tourné sur le commit `12e769c`, conteneur cloud 15 Go, 4 cœurs,
 
 Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
 
+**La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
+
+* Prime d'activité, montant versé (pont de non-recours) : −28,4 % en moyenne, de −30,0 % à −26,9 % ; 0 année sur 3 dans sa tolérance.
+* Aides au logement, montant versé : −22,9 % en moyenne, de −23,8 % à −21,7 % ; 3 années sur 3 dans sa tolérance.
+* Foyers allocataires de la prime d'activité : +8,8 % en moyenne, de +6,0 % à +11,5 % ; 3 années sur 3 dans sa tolérance.
+
+Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
+
 * `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_ppa.json`, `reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json`, `chiffrages_preregistres/plf2027_art_74_ppa.yaml`
 * `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_apl.json`, `reports/etudes/plfss2027/predictif_plf2027_art_74_apl.json`, `chiffrages_preregistres/plf2027_art_74_apl.yaml`

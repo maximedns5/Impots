@@ -147,12 +147,25 @@ def test_an_implausible_index_is_refused(kwargs):
         up.Uprating(source="s", base_year=2024, **kwargs)
 
 
-def test_ageing_backwards_is_refused():
-    """Rejuvenating is a different operation needing observed indices year by year, and
-    a population not already calibrated on the arrival year. Fails if it silently
-    divides instead."""
-    with pytest.raises(up.UpratingError, match="rajeunir"):
+def test_ageing_backwards_on_constant_rates_is_refused():
+    """Going back needs observed indices year by year (D-359). Fails if a constant rate,
+    a hypothesis, silently divides instead."""
+    with pytest.raises(up.UpratingError, match="constatés"):
         HYPO.factor("wage", 2020)
+
+
+def test_going_back_divides_by_the_observed_years_after_the_target():
+    """D-359 : the rate of year y is the growth from y − 1 to y, so a 2024 population
+    brought back to 2021 is divided by 2022, 2023 and 2024, never by 2021. Fails if the
+    target year's own rate enters, or a year is skipped."""
+    observed = up.Uprating.par_annee({2021: 0.05, 2022: 0.04, 2023: 0.03, 2024: 0.02},
+                                     {2021: 0.016, 2022: 0.053, 2023: 0.048, 2024: 0.018},
+                                     "constaté", 2024)
+    assert observed.factor("wage", 2021) == pytest.approx(1 / (1.04 * 1.03 * 1.02))
+    assert observed.factor("price", 2020) == pytest.approx(
+        1 / (1.016 * 1.053 * 1.048 * 1.018))
+    with pytest.raises(up.UpratingError, match=r"\[2020\]"):
+        observed.factor("wage", 2019)
 
 
 def test_a_missing_money_column_is_refused_rather_than_skipped():

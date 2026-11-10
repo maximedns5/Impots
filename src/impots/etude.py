@@ -431,6 +431,58 @@ def _et(items: list[str]) -> str:
     return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " et " + items[-1]
 
 
+#: The verification grid's lines (but 18, D-364) that an instrument a page moves answers
+#: to, by the reply's delta key; and the instruments the grid refuses (D-362).
+GRILLE = ROOT / "reports" / "verification" / "grille.json"
+VERIFIE_PAR = {
+    "cotisations_salariales": ("cotisations_salariales",),
+    # The employers' side is salaire_super_brut − salaire_brut, as the cost reads it.
+    "employeurs": ("cotisations_employeurs", "reduction_generale"),
+    "csg_deductible": ("csg_activite", "csg_remplacement"),
+    "csg_imposable": ("csg_activite", "csg_remplacement"),
+    "ir_avant_niches": ("ir_bareme", "foyers_imposes"),
+    "rsa": ("rsa_montant", "rsa_foyers"), "ppa": ("ppa_montant", "ppa_foyers"),
+    "aide_logement": ("aide_logement_montant",), "af": ("af_montant",),
+    "impot_societes": ("is",), "contribution_sociale_is": ("contribution_sociale_is",),
+    "c3s": ("c3s",), "cvae": ("cvae",),
+}
+SANS_TOTAL = {"tva": "la TVA", "taxe_carbone": "les accises sur l'énergie"}
+#: Below this share of the largest move of a line, an instrument moves only through
+#: another one (a pay cut that moves the prime d'activité), and the page does not list it.
+BOUGE = 0.05
+
+
+def verifications(entries: list[dict[str, Any]],
+                  grille: Path | None = None) -> tuple[list[dict[str, Any]], list[str]]:
+    """The grid lines of the instruments the page's lines move, in the grid's order, and
+    the instruments it moves that the grid refuses. None when no grid is written."""
+    path = grille or GRILLE
+    if not path.exists():
+        return [], []
+    loi = json.loads(path.read_text(encoding="utf-8"))["loi"]
+    wanted: set[str] = set()
+    refused: list[str] = []
+    for entry in entries:
+        moves: dict[str, float] = {}
+        for reply in (entry["response"], entry.get("firms")):
+            deltas = {k: float(v or 0.0) for k, v in
+                      (getattr(reply, "deltas", None) or {}).items()}
+            if "salaire_super_brut" in deltas:
+                deltas["employeurs"] = (deltas["salaire_super_brut"]
+                                        - deltas.get("salaire_brut", 0.0))
+            moves.update({k: abs(v) for k, v in deltas.items() if k in VERIFIE_PAR})
+        top = max(moves.values(), default=0.0)
+        for key, move in moves.items():
+            if top > 0 and move >= BOUGE * top:
+                wanted.update(VERIFIE_PAR[key])
+        stats = ((entry["path"].get("years") or [{}])[0].get("statistiques") or {})
+        for key, v in stats.get("figee", {}).get("impulses", {}).items():
+            if v and key in SANS_TOTAL:
+                refused.append(SANS_TOTAL[key])
+    return ([{"id": k, **v} for k, v in loi.items() if k in wanted],
+            list(dict.fromkeys(refused)))
+
+
 #: The instruments whose cost is gross of the corporate tax they move (D-349).
 EMPLOYEURS = ("cotisations_employeurs", "cotisations_employeurs_ciblees")
 
@@ -517,6 +569,8 @@ ETAGES = {
     "texte": "ce que le texte de loi, ou son triage, compte",
     "hypothèse": "ce que l'étude suppose : son scénario, son cadre",
     "déclaré": "une tolérance ou un seuil écrits avant le chiffrage",
+    "vérifié": "l'écart d'un total du moteur à son total publié, sur 2022, 2023 et 2024 : "
+               "la grille de vérification (D-364)",
     "programme": "ce que le programme du candidat énonce, relevé et sourcé dans "
                  "`programmes/`",
     "annoncé": "un montant que le candidat annonce lui-même, que le moteur ne vérifie pas "
@@ -1626,6 +1680,7 @@ class Etude:
               "contractuel et la fonction publique, pas le corps ni l'indice : la part des "
               "primes est la moyenne qu'openfisca porte, la même pour tous.")
             w("")
+        self._verification(w, n, entries)
         where = _relative(self.rapports)
         for entry in entries:
             case = (f", `chiffrages_preregistres/{entry['name']}.yaml`" if entry["case"]
@@ -1642,6 +1697,36 @@ class Etude:
             if found := AMOUNT.search(bare):
                 raise EtudeError(f"« {found[0]} » sans son étage : « {bare[:90]} »")
         return lines, n
+
+    @staticmethod
+    def _verification(w: Any, n: Nombres, entries: list[dict[str, Any]]) -> None:
+        """Each instrument the page moves, against its published total of 2022 to 2024
+        (but 18, D-362, D-364). It changes no number of the study: it says how far the
+        engine's level of that instrument stood from the published one."""
+        rows, refused = verifications(entries)
+        if not rows and not refused:
+            return
+        w("**La vérification de ses instruments.** Le niveau que le moteur donne à chaque "
+          "instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 "
+          "(`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les "
+          "années qui tiennent la tolérance écrite avant le calcul.")
+        w("")
+        for r in rows:
+            def pct(x: float) -> str:
+                return f"{x * 100:+.1f} %".replace(".", ",").replace("-", "−")
+            years = len(r["annees"])
+            w(f"* {r['ligne']} : {n(pct(r['biais']), 'vérifié')} en moyenne, de "
+              f"{n(pct(r['min']), 'vérifié')} à {n(pct(r['max']), 'vérifié')} ; "
+              f"{n(r['tenues'], 'vérifié')} année{'s' if r['tenues'] > 1 else ''} sur "
+              f"{n(years, 'vérifié')} dans sa tolérance.")
+        if refused:
+            w(f"* {_et(refused)[0].upper() + _et(refused)[1:]} : aucune ligne, faute d'un "
+              f"total publié pour les seuls ménages (D-362).")
+        w("")
+        w("Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une "
+          "mesure est la différence de deux passes sur la même population, et ce qui manque "
+          "aux deux passes s'y annule en partie.")
+        w("")
 
     @staticmethod
     def _sizes(response: Any, sign: int) -> list[tuple[str, float, float, float]]:
