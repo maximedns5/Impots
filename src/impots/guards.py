@@ -144,6 +144,10 @@ STATE_RECEIPTS = (
     # rows. Without it the first pass of a CSG rate on the allowances was refused, its
     # 467,7 M€ held by no instrument (D-307).
     "csg_ij",
+    # The CSG of the non-salariés, whose income the population carries since but 19
+    # (étape 2): a reform of the CSG rate moved their disposable income with no receipt to
+    # hold it, and the real-population balance test failed by it.
+    "csg_non_salarie",
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.

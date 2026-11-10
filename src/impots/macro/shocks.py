@@ -70,6 +70,9 @@ INSTRUMENT_MAP = {
     "crds": "csg",
     # The CSG on the sick pay (D-307): a CSG like the salary's, on a replacement income.
     "csg_ij": "csg",
+    # The CSG of the non-salariés (but 19, étape 2): the same levy, read by the same
+    # Mésange variant as the CSG on wages.
+    "csg_non_salarie": "csg",
     "cotisations_salariales": "cotisations_salaries",
     "employer_contributions": "cotisations_employeurs",
     # The consumption taxes, when the consumption is imputed (D-323, D-327): the household

@@ -88,10 +88,10 @@ RSA = Recours(
     # 500 € par UC (euros de 2021). Contrôle : un recours en masse de 66,7 %, sous la
     # fourchette publiée (68 à 71 %) : les droits du modèle sont presque tous au plafond,
     # la pente du recours y mord peu.
-    # Recalé à la jonction des étapes (D-366) : 20 000 ménages de la population jointe,
-    # graine 20240101, droit 2024, 2,550 M de familles ayant droit en décembre ; contrôle,
-    # un recours en masse de 68,5 %, dans la fourchette publiée.
-    p_max=0.6974,
+    # Recalé sur la population de D-368 (le haut des salaires, l'emploi discontinu) :
+    # 20 000 ménages, graine 20240101, droit 2024, 2,735 M de familles ayant droit en
+    # décembre ; contrôle, un recours en masse de 67,8 %, au bord bas de la fourchette.
+    p_max=0.6890,
     non_recours_foyers=(0.33, 0.37),
     non_recours_masse=(0.29, 0.32),
     source=("Drees, Études et Résultats n° 1370 (mai 2026, C. Gayet), tableau 1 et "
@@ -114,9 +114,9 @@ PPA = Recours(
     # Calé comme celui du RSA : 5,105 M de familles ayant droit en décembre, 14 % sous
     # 50 € par UC (la presse en dit 26 % parmi les éligibles de la Drees). Contrôle : un
     # recours en masse de 52,0 %, sous la fourchette publiée (54 à 57 %).
-    # Recalé à la jonction des étapes (D-366) : 20 000 ménages, 5,680 M de familles ayant
-    # droit en décembre ; contrôle, un recours en masse de 52,1 %, sous la fourchette.
-    p_max=0.5277,
+    # Recalé sur la population de D-368 : 20 000 ménages, 6,120 M de familles ayant droit
+    # en décembre ; contrôle, un recours en masse de 52,4 %, sous la fourchette.
+    p_max=0.5327,
     non_recours_foyers=(0.48, 0.52),
     non_recours_masse=(0.43, 0.46),
     source=("Drees, Études et Résultats n° 1379 (juillet 2026, C. Gayet), NON LU : taux "
