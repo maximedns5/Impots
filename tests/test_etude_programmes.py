@@ -257,6 +257,36 @@ def test_a_mixed_part_shows_both_layers(pages) -> None:
         assert "La bande et l'éventail ne lisent que la part des ménages" in text
 
 
+def test_the_debt_without_activity_is_the_cost_without_the_loop(pages) -> None:
+    """But 19, étape 1. « Sans aucun effet sur l'activité » lit la marche « le coût, sans
+    boucle » de la décomposition (D-349), pas le coin θ = 0 de la boîte, qui met le
+    multiplicateur au bas de sa fourchette publiée et non à zéro : chez Attal, 18,30
+    points, quand le coin en donnait 13,95."""
+    study, text = pages["attal"]
+    path = json.loads(next(study.rapports.glob("predictif_*.json")).read_text("utf-8"))
+    cout = path["lectures"]["decomposition"]["vieillie"]["cout"]
+    assert f"{cout * 100:.2f}" == "18.30"
+    head = text.split("## En bref")[0]
+    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 18,30 points" in head
+    assert "13,95" not in head
+    for slug, (_, page) in pages.items():
+        assert "Sans aucun effet sur l'activité" in page.split("## En bref")[0], slug
+
+
+def test_the_employees_contributions_say_the_model_s_choice_not_a_missing_study(
+        pages) -> None:
+    """But 19, étape 1. Une baisse des cotisations des salariés n'a pas de bande parce que
+    le modèle n'ouvre l'offre de travail qu'à la CSG (D-220), pas faute d'étude publiée."""
+    for slug in ("attal", "retailleau"):
+        text = pages[slug][1]
+        head = text.split("## En bref")[0]
+        assert "aucune étude publiée ne le permet ici" not in head, slug
+        assert "un choix du modèle" in head, slug
+        assert etude.RAISON_OFFRE_DE_TRAVAIL in text, slug
+    for slug in ("labib", "roussel", "le_pen"):
+        assert etude.RAISON_OFFRE_DE_TRAVAIL not in pages[slug][1], slug
+
+
 def test_a_pass_run_in_a_process_of_its_own_gives_its_value_back() -> None:
     """D-331 : chaque passe du chemin tourne dans un processus neuf, et le nombre qu'elle
     chiffre en revient tel quel. Que `cmd_predictif` l'y fasse tourner est de la plomberie,
