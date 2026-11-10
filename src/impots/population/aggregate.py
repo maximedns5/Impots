@@ -34,6 +34,8 @@ INSTRUMENTS = (
     "retraite_imposable", "chomage_brut",
     "csg_deductible", "csg_imposable", "crds", "csg_ij", "csg_retraite", "csg_chomage",
     "allegement_general", "allegement_bandeau_maladie", "allegement_bandeau_famille",
+    # What separates super-brut minus brut from D121, for the grid (but 19, étape 1).
+    "prelevements_salaires_d291", "pension_employeur_etat", "remuneration_hors_brut",
     "ir",
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",
     "af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",

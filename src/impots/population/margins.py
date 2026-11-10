@@ -339,14 +339,18 @@ RENT_PER_M2: dict[str, Figure] = {
 # --------------------------------------------------------------------------- #
 # Living standards — VALIDATION for the decile table.
 # --------------------------------------------------------------------------- #
-FILOSOFI_URL = "https://www.insee.fr/fr/statistiques/8402386"
+#: Insee, « Niveau de vie en 2023 : comparaisons régionales et départementales »
+#: (Filosofi 2023), file `TCRD_022.xlsx` (https://www.insee.fr/fr/statistiques/fichier/
+#: 2012717/TCRD_022.xlsx, sha256 1331aa54…65a5, read on 10 November 2026), sheet REG,
+#: row « France métropolitaine » : median 25 920, D1 13 200, D9 46 500 EUR. The page
+#: this constant named until but 19, 8402386, answers 404 (D-364).
+FILOSOFI_URL = "https://www.insee.fr/fr/statistiques/2012717"
 
 #: Deciles of niveau de vie, EUR per consumption unit per year, France
-#: métropolitaine, Filosofi 2023.
-NIVEAU_DE_VIE_DECILES: dict[int, float] = {
-    1: 13_200.0, 2: 17_010.0, 3: 20_300.0, 4: 23_190.0, 5: 25_920.0,
-    6: 28_860.0, 7: 32_600.0, 8: 38_100.0, 9: 46_500.0,
-}
+#: métropolitaine, Filosofi 2023: the three the page publishes. D2 to D8 (17 010 …
+#: 38 100) stood here until but 19 and are found in no publication read (diagnostic
+#: `famille_logement_niveau_de_vie.md`, C8) : withdrawn, not replaced. Nothing read them.
+NIVEAU_DE_VIE_DECILES: dict[int, float] = {1: 13_200.0, 5: 25_920.0, 9: 46_500.0}
 
 NIVEAU_DE_VIE_MEDIAN = Figure(
     value=25_920.0, unit="EUR_per_uc_per_year", year=2023,
@@ -359,6 +363,8 @@ NIVEAU_DE_VIE_MEDIAN = Figure(
 NIVEAU_DE_VIE_GINI = Figure(
     value=0.297, unit="ratio", year=2023, scope="Indice de Gini du niveau de vie, métropole",
     source="INSEE, Filosofi 2023", url=FILOSOFI_URL, use="validation",
+    caveat="Non retrouvé : la page de l'URL (TCRD_022) ne publie que D1, la médiane et "
+           "D9 ; aucune ligne ne lit ce nombre (but 19, étape 1).",
 )
 NIVEAU_DE_VIE_D9_D1 = Figure(
     value=3.5, unit="ratio", year=2023, scope="Rapport interdécile D9/D1 du niveau de vie",

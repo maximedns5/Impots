@@ -288,6 +288,17 @@ def _extract(
         results[key] = -_to_households(array.astype(np.float64), individu_index,
                                        n_households)
 
+    # The employers' contributions as the national accounts count them (D121), for the
+    # verification grid only (but 19, étape 1; `docs/diagnostics/cotisations_employeurs.md`).
+    # `salaire_super_brut − salaire_brut` holds three things D121 does not, each kept
+    # here as a positive amount so the grid can take it out and show it apart:
+    # the levies on wages the Insee books as taxes (D291), the State's contribution to
+    # its own civil servants' and soldiers' pensions (an imputed contribution, D122),
+    # and the résidence allowance and the SFT, wages (D11) that `salaire_brut` leaves out.
+    # Population passes, not the API's rows (D-363); no cost reads them.
+    for key, value in employeurs_d121(built).items():
+        results[key] = _to_households(value, individu_index, n_households)
+
     # Allocataire counts, at FAMILLE level and in December.
     #
     # `margins.BENEFIT_RECIPIENTS` carries four `use="validation"` figures that were
@@ -320,6 +331,56 @@ def _extract(
             )
         results[row.key] = -values if row.negate else values
     return results
+
+
+#: The levies on wages OpenFisca counts in `cotisations_employeur` and the national
+#: accounts class as taxes on wages (D291, Insee tableau 3.217, lines 39 to 48): training
+#: and apprenticeship, the CSA, the Fnal, the AGS, the taxe sur les salaires, the forfait
+#: social, the versement mobilité, the PEEC. Six are zero in the population today (no
+#: employer size, commune or liability is wired); they are listed so that wiring them
+#: later moves them out of D121 with the rest.
+PRELEVEMENTS_D291 = (
+    "contribution_unique_formation_professionnelle_alternance",
+    "contribution_solidarite_autonomie", "fnal", "ags", "taxe_salaires", "forfait_social",
+    "versement_transport", "participation_effort_construction",
+    "contribution_developpement_apprentissage",
+    "contribution_supplementaire_apprentissage", "conge_individuel_formation_cdd",
+)
+#: The categories whose employer, the State, pays their pension itself: its
+#: contribution is imputed (D122), not effective. The CNRACL's (territorial, hospital)
+#: is a fund apart, and stays in D121.
+PENSION_ETAT = ("public_titulaire_etat", "public_titulaire_militaire")
+#: Wages (D11) that `salaire_super_brut` holds and `salaire_brut` does not.
+REMUNERATION_HORS_BRUT = ("indemnite_residence", "supplement_familial_traitement")
+
+
+def employeurs_d121(built: Any) -> dict[str, np.ndarray]:
+    """Per person, over the year, in euros and positive: what separates
+    `salaire_super_brut − salaire_brut` from D121 (but 19, étape 1).
+
+    * `prelevements_salaires_d291`: the `PRELEVEMENTS_D291`, engine-signed negative;
+    * `pension_employeur_etat`: `pension_employeur` of the months a person is in a
+      `PENSION_ETAT` category, month by month as the category is posed. The ATI the
+      State pays (`ati_atiacl`, 0,3 Md€ on the diagnostic's sample) stays in D121, a
+      hypothesis said in the step's report;
+    * `remuneration_hors_brut`: the `REMUNERATION_HORS_BRUT`.
+
+    Worked example, held in the tests: a State civil servant whose `salaire_brut` is
+    36 000 € has a TIB of 36 000 / 1,195 = 30 126 €, and the State's pension
+    contribution, 74,28 % of it, is 22 378 €."""
+    d291 = -sum(np.asarray(built.calculate(name, add=True), dtype=np.float64)
+                for name in PRELEVEMENTS_D291)
+    etat = np.zeros_like(d291)
+    for month in range(1, 13):
+        categorie = built.calculate("categorie_salarie", month=month)
+        mask = np.isin(np.asarray(categorie.decode_to_str()), PENSION_ETAT)
+        pension = np.asarray(built.calculate("pension_employeur", month=month),
+                             dtype=np.float64)
+        etat -= np.where(mask, pension, 0.0)
+    hors_brut = sum(np.asarray(built.calculate(name, add=True), dtype=np.float64)
+                    for name in REMUNERATION_HORS_BRUT)
+    return {"prelevements_salaires_d291": d291, "pension_employeur_etat": etat,
+            "remuneration_hors_brut": hors_brut}
 
 
 def _impute_niches(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any]:

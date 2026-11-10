@@ -86,3 +86,25 @@ def test_a_frame_with_public_earners_but_no_status_is_refused() -> None:
     frame = _frame().drop("fonction_publique", "titulaire")
     with pytest.raises(WiringError, match="fonction_publique, titulaire"):
         _run(frame)
+
+
+def test_what_separates_the_super_brut_from_d121_is_taken_person_by_person() -> None:
+    """But 19, étape 1. Le super-brut moins le brut tient trois choses que D121 ne compte
+    pas : la contribution de l'État aux pensions de ses titulaires (74,28 % du TIB de
+    36 000 / 1,195, soit 22 377 €), les prélèvements que l'Insee classe en impôts sur les
+    salaires (au privé, au SMIC comme à 36 000 € : formation 1,23 %, CSA 0,3 %, Fnal
+    0,1 %, AGS 0,2 %, soit 658,80 €), l'indemnité de résidence et le SFT (des salaires)."""
+    from impots.population.runner import employeurs_d121
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        built = build_simulation(_frame(), system.baseline(), 2024)
+    parts = employeurs_d121(built)
+    assert parts["pension_employeur_etat"] == pytest.approx(
+        [0.7428 * 36_000.0 / 1.195, 0.0, 0.0], abs=1.0)
+    assert parts["prelevements_salaires_d291"][2] == pytest.approx(36_000.0 * 0.0183, abs=0.01)
+    assert parts["remuneration_hors_brut"][2] == 0.0
+    hors_brut = (np.asarray(built.calculate("indemnite_residence", add=True))
+                 + np.asarray(built.calculate("supplement_familial_traitement", add=True)))
+    assert parts["remuneration_hors_brut"] == pytest.approx(hors_brut)
+    assert (parts["remuneration_hors_brut"][:2] > 0).all()
