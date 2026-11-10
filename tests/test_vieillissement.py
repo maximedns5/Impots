@@ -113,7 +113,8 @@ def test_households_are_aged_on_the_set() -> None:
     assert record["facteur_prix"] == pytest.approx(1.009 * 1.021)
     assert record["salaires"] == pytest.approx({"2025": 0.02, "2026": 0.02})
     frame = pl.DataFrame({"salaire_brut_annuel": [100.0], "pension_annuelle": [100.0],
-                          "chomage_annuel": [100.0], "loyer_mensuel": [100.0]})
+                          "chomage_annuel": [100.0], "loyer_mensuel": [100.0],
+                          "revenu_non_salarie_annuel": [100.0]})
     aged = up.uprate(frame, 2026, uprating)
     assert aged["salaire_brut_annuel"][0] == pytest.approx(104.04)
     assert aged["pension_annuelle"][0] == pytest.approx(100 * 1.009 * 1.021)
@@ -159,7 +160,8 @@ def _household_cli(tmp_path, monkeypatch, year: int, *extra: str):
 
     population = tmp_path / "population_2024.parquet"
     pl.DataFrame({"salaire_brut_annuel": [100.0], "pension_annuelle": [100.0],
-                  "chomage_annuel": [100.0], "loyer_mensuel": [100.0]}
+                  "chomage_annuel": [100.0], "loyer_mensuel": [100.0],
+                  "revenu_non_salarie_annuel": [100.0]}
                  ).write_parquet(population)
     seen = {}
 

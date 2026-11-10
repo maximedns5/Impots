@@ -253,6 +253,145 @@ UNEMPLOYMENT_BENEFIT_SPEND = Figure(
 )
 
 # --------------------------------------------------------------------------- #
+# Revenus d'activité des non-salariés — Insee Première n° 2114 (juin 2026), revenus
+# 2024, et ses tableaux complémentaires (IP2114.xlsx, au manifeste). Tout montant est
+# MENSUEL, en euros, « déficits mis à 0 » : un exercice déficitaire compte pour un
+# revenu nul. Le revenu de l'Insee est le revenu professionnel : pour un non-salarié
+# « classique », le bénéfice (net des charges et des cotisations obligatoires) ou la
+# rémunération du gérant ; pour un micro-entrepreneur, le chiffre d'affaires après
+# l'abattement forfaitaire du régime micro. C'est, au gérant près, ce que la 2042-C-PRO
+# déclare : 48,4 Md€ de BIC et de BNC réels professionnels en 2024 (DGFiP), contre
+# 924 000 entrepreneurs individuels à 4 410 € par mois, 48,9 Md€ (Insee).
+# --------------------------------------------------------------------------- #
+NON_SALARIES_URL = "https://www.insee.fr/fr/statistiques/9013403"
+
+#: Les non-salariés classiques (hors micro-entrepreneurs, hors agriculture), par
+#: secteur : (effectif fin 2024 en milliers, part des revenus nuls ou déficitaires en
+#: %, D1, Q1, médiane, Q3, D9 des revenus positifs, revenu moyen, part des gérants
+#: majoritaires en %). Tableau complémentaire 3 pour l'effectif, la part nulle et les
+#: quantiles ; tableau complémentaire 1 pour la moyenne et la part des gérants (2024).
+#: « ensemble » est la ligne « Ensemble des non-salariés hors micro-entrepreneurs ».
+CLASSIQUES_PAR_SECTEUR: dict[str, tuple[float, ...]] = {
+    "industrie": (63, 12.4, 420, 1100, 2450, 4520, 7740, 3320, 72.82),
+    "construction": (227, 7.5, 770, 1620, 2620, 3960, 6060, 3050, 69.8),
+    "commerce_auto": (46, 12.2, 570, 1310, 2440, 3980, 6260, 2830, 78.86),
+    "commerce_gros": (48, 16.5, 490, 1250, 2860, 5500, 9780, 3940, 74.06),
+    "pharmacie": (24, 3.8, 2430, 3680, 5240, 7830, 11920, 6390, 87.4),
+    "metiers_bouche": (36, 8.4, 620, 1370, 2280, 3600, 5490, 2650, 77.34),
+    "detail_magasin": (119, 12.9, 410, 1040, 2140, 3710, 6210, 2650, 75.06),
+    "detail_hors_magasin": (28, 17.1, 140, 430, 1120, 2360, 4160, 1560, 43.41),
+    "transports": (60, 11.1, 430, 880, 1630, 2800, 4450, 2050, 43.72),
+    "hebergement_restauration": (142, 17.3, 300, 880, 1780, 3030, 5000, 2080, 76.37),
+    "information_communication": (43, 14.0, 650, 1840, 3880, 6300, 8990, 4190, 80.29),
+    "finance": (45, 12.0, 800, 2330, 4700, 8580, 14360, 6170, 69.99),
+    "immobilier": (42, 27.2, 260, 820, 2030, 4040, 7020, 2480, 57.0),
+    "juridique": (105, 3.7, 1750, 3080, 5320, 9540, 16230, 8240, 26.1),
+    "conseil": (60, 15.7, 570, 1440, 3310, 6130, 10270, 4510, 79.29),
+    "architecture": (47, 10.0, 710, 1790, 3320, 5480, 8690, 4070, 72.12),
+    "autres_specialisees": (30, 13.7, 420, 1050, 2240, 4120, 6840, 2950, 63.04),
+    "veterinaires": (12, 2.7, 1880, 3480, 5670, 8530, 11940, 6370, 35.0),
+    "services_administratifs": (45, 18.8, 450, 1200, 2540, 4700, 8310, 3370, 75.25),
+    "arts": (23, 17.9, 210, 660, 1490, 2830, 5000, 2030, 51.76),
+    "enseignement": (42, 11.8, 310, 800, 1640, 2750, 4450, 2020, 33.87),
+    "services_personnels": (85, 8.9, 390, 870, 1540, 2340, 3440, 1710, 47.52),
+    "medecins": (166, 1.8, 2780, 4980, 8090, 12880, 20090, 10180, 13.6),
+    "paramedicaux": (279, 1.5, 1610, 2530, 3570, 4890, 6600, 3890, 2.211),
+    "autres_sante": (29, 9.4, 400, 970, 1940, 3250, 5170, 2410, 29.08),
+    "ensemble": (1864, 9.6, 650, 1550, 3000, 5300, 9360, 4150, 50.31),
+}
+
+#: Les micro-entrepreneurs économiquement actifs, par secteur : (effectif fin 2024 en
+#: milliers, revenu moyen, part des pluriactifs en %). Tableau complémentaire 2 pour
+#: l'effectif et la moyenne, tableau complémentaire 1 pour les pluriactifs. Les
+#: secteurs absents sont fermés au régime (pharmacie, droit, médecine, vétérinaires).
+MICRO_PAR_SECTEUR: dict[str, tuple[float, float, float]] = {
+    "industrie": (142, 370, 33.6),
+    "construction": (219, 900, 12.3),
+    "commerce_auto": (39, 530, 27.8),
+    "commerce_gros": (38, 850, 25.1),
+    "metiers_bouche": (6, 490, 32.1),
+    "detail_magasin": (34, 550, 22.7),
+    "detail_hors_magasin": (125, 340, 25.5),
+    "transports": (91, 290, 44.1),
+    "hebergement_restauration": (53, 660, 24.0),
+    "information_communication": (112, 1060, 33.9),
+    "finance": (10, 1090, 21.0),
+    "immobilier": (44, 1030, 21.9),
+    "conseil": (134, 1010, 34.2),
+    "architecture": (34, 1160, 29.9),
+    "autres_specialisees": (135, 720, 33.8),
+    "services_administratifs": (184, 630, 33.7),
+    "arts": (93, 510, 41.9),
+    "enseignement": (184, 650, 45.7),
+    "services_personnels": (266, 500, 28.7),
+    "paramedicaux": (15, 1340, 35.2),
+    "autres_sante": (86, 780, 41.6),
+    "ensemble": (2047, 680, 31.5),
+}
+
+#: La dispersion des revenus positifs des micro-entrepreneurs, tous secteurs (D1, Q1,
+#: médiane, Q3, D9), et leur part de revenus nuls en % : tableau complémentaire 3,
+#: ligne « Micro-entrepreneurs économiquement actifs ». Le texte la donne aussi (« un
+#: sur quatre gagne moins de 80 euros, un sur deux moins de 330, un sur dix plus de
+#: 1 790 »). L'Insee ne la publie pas par secteur.
+MICRO_QUANTILES: tuple[float, float, float, float, float] = (20, 80, 330, 950, 1790)
+MICRO_PART_NULLE = 0.8
+
+#: Les micro-entrepreneurs principalement salariés (texte, p. 3) : 28 % de l'ensemble,
+#: 250 € par mois d'activité non salariée. L'enquête Emploi les compte parmi les
+#: salariés, leur emploi principal : ils sortent du champ de la population, secteur par
+#: secteur au prorata de ses pluriactifs (« près de neuf sur dix » des pluriactifs sont
+#: principalement salariés : 28 sur les 31,5 % du tableau complémentaire 1).
+MICRO_PRINCIPALEMENT_SALARIES = (28.0, 250.0)
+
+#: À secteur identique, l'écart de revenu des femmes non salariées (texte, p. 4) :
+#: −30 % chez les classiques, −14 % chez les micro-entrepreneurs.
+ECART_FEMMES_CLASSIQUES = 0.30
+ECART_FEMMES_MICRO = 0.14
+
+#: Les non-salariés agricoles (encadré) : (effectif fin 2024 en milliers, revenu moyen
+#: déficits mis à 0, part des revenus nuls ou déficitaires en %). L'Insee ne publie pas
+#: leur dispersion : la forme est une hypothèse (`incomes.py`).
+AGRICOLES: dict[str, tuple[float, float, float]] = {
+    "reel": (302, 2410, 21.7),
+    "micro_ba": (101, 810, 2.1),
+}
+
+#: Le versement libératoire parmi les micro-entrepreneurs, par nature d'activité :
+#: cases remplies de la 2042-C-PRO, revenus 2024, avec le versement contre sans (DGFiP,
+#: déclarations nationales 2042, au manifeste). Ventes : 5TA, 5UA contre 5KO, 5LO,
+#: 5MO ; services : 5TB, 5UB, 5VB contre 5KP, 5LP, 5MP ; BNC : 5TE, 5UE contre 5HQ,
+#: 5IQ, 5JQ. `test_non_salaries` les relit dans le fichier.
+VERSEMENT_LIBERATOIRE: dict[str, tuple[int, int]] = {
+    "vente": (229_159, 228_690),
+    "service": (337_872, 349_143),
+    "bnc": (281_611, 482_337),
+}
+
+#: Le total que la population doit porter, au champ de l'enquête Emploi : les
+#: non-salariés dont c'est l'emploi principal. Effectifs fois revenus moyens publiés :
+#: classiques 1 864 000 × 4 150 €, micro-entrepreneurs 2 047 000 × 680 € moins les
+#: principalement salariés 0,28 × 2 047 000 × 250 €, agricoles au réel 302 000 × 2 410 €
+#: et au micro-BA 101 000 × 810 € ; 9 793,9 M€ par mois, douze fois.
+SELF_EMPLOYMENT_INCOME = Figure(
+    value=117_526_800_000.0, unit="EUR", year=2024,
+    scope="Revenus d'activité non salariés 2024 (déficits mis à 0) des non-salariés en "
+          "activité au 31 décembre, hors micro-entrepreneurs principalement salariés, "
+          "agriculture comprise, France hors Mayotte",
+    source="INSEE, Insee Première n° 2114 (juin 2026), figure 1, encadré et texte ; "
+           "effectifs fois revenus moyens",
+    url=NON_SALARIES_URL, use="calibration",
+    caveat="Dépensé : le revenu des non-salariés ne peut plus être une ligne de "
+           "validation. Ce n'est pas une case publiée mais la somme de cinq produits "
+           "publiés : l'Insee publie des effectifs et des revenus moyens, pas leur total. "
+           "L'enquête Emploi compte 3,87 M de non-salariés dans leur emploi principal, "
+           "contre 3,74 M dans ce champ : le calage baisse les revenus tirés d'environ "
+           "3 %. Les gérants majoritaires (940 000, 3 880 €) y sont ; la DGFiP déclare "
+           "leur rémunération en salaires (art. 62 du CGI), et les BIC, BNC et BA "
+           "déclarés (2042-C-PRO) sont donc un autre total, plus petit.",
+)
+
+# --------------------------------------------------------------------------- #
 # Benefits — VALIDATION only. Expected to run high: OpenFisca computes legal
 # entitlement, i.e. 100 % take-up.
 # --------------------------------------------------------------------------- #

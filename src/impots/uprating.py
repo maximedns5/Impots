@@ -56,6 +56,9 @@ UPRATED = {
     "pension_annuelle": "price",
     "chomage_annuel": "wage",
     "loyer_mensuel": "price",
+    # The self-employed's income, by the wage per head: the Insee's mean non-salarié
+    # income is published by year, but not as an index the grid's years declare (D-360).
+    "revenu_non_salarie_annuel": "wage",
 }
 
 #: Money columns deliberately NOT uprated, with the reason. Empty today, and kept as the

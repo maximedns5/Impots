@@ -33,6 +33,7 @@ INSTRUMENTS = (
     "cotisations_salariales", "cotisations_employeur",
     "retraite_imposable", "chomage_brut",
     "csg_deductible", "csg_imposable", "crds", "csg_ij", "csg_retraite", "csg_chomage",
+    "csg_non_salarie", "revenus_non_salaries", "revenus_non_salaries_hors_gerants",
     "allegement_general", "allegement_bandeau_maladie", "allegement_bandeau_famille",
     "ir",
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",

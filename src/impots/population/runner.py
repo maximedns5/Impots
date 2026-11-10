@@ -287,6 +287,26 @@ def _extract(
         array = sum(built.calculate(name, add=True) for name in names)
         results[key] = -_to_households(array.astype(np.float64), individu_index,
                                        n_households)
+    # The self-employed (but 19, étape 2), for the grid too: their CSG, which the
+    # published CSG on activity income counts beside the salaries', and their income as
+    # the 2042-C-PRO declares it, after the micro abatement, versement libératoire
+    # included; and the same without the gérants majoritaires, whose pay the DGFiP
+    # counts among the salaries (art. 62 CGI) and the population as a réel profit.
+    csg_ns = sum(built.calculate(name) for name in ("csg_deductible_non_salarie",
+                                                    "csg_imposable_non_salarie"))
+    results["csg_non_salarie"] = -_to_households(csg_ns.astype(np.float64), individu_index,
+                                                 n_households)
+    rpns = built.calculate("rpns_imposables").astype(np.float64)
+    liberatoire = _to_households(built.calculate("microentreprise").astype(np.float64),
+                                 foyer_index, n_households)
+    results["revenus_non_salaries"] = (
+        _to_households(rpns, individu_index, n_households) + liberatoire)
+    gerant = (frame["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"])
+              .fill_null(False).to_numpy() if "regime_non_salarie" in frame.columns
+              else np.zeros(frame.height, dtype=bool))
+    results["revenus_non_salaries_hors_gerants"] = (
+        _to_households(np.where(gerant, 0.0, rpns), individu_index, n_households)
+        + liberatoire)
 
     # Allocataire counts, at FAMILLE level and in December.
     #

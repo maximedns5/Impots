@@ -76,6 +76,11 @@ def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, 
         "allegement_bandeau_maladie": t["allegement_bandeau_maladie"],
         "allegement_bandeau_famille": t["allegement_bandeau_famille"],
         "csg_deductible + csg_imposable": t["csg_deductible"] + t["csg_imposable"],
+        # The CSG on activity income with the self-employed's (but 19, étape 2): what the
+        # published total counts. Read once `lignes.json` names it, preregistered.
+        "csg_deductible + csg_imposable + csg_non_salarie":
+            t["csg_deductible"] + t["csg_imposable"] + t["csg_non_salarie"],
+        "revenus_non_salaries_hors_gerants": t["revenus_non_salaries_hors_gerants"],
         "csg_retraite + csg_chomage": t["csg_retraite"] + t["csg_chomage"],
         "ir_avant_niches": t["ir_avant_niches"],
         "salaire_imposable": t["salaire_imposable"],

@@ -102,7 +102,9 @@ HISTORY_YEARS = 2
 #: fixture, two pensioners' revenu disponible rises, by 839.58 and 104.64 EUR. The
 #: population itself does not change, and a cache written before would be served after.
 # A run without E1 wires every earner as private: its EMTR caches are not E1's (D-354).
-WIRING = "D-346" + ("_sansE1" if decomposition.sans("E1") else "")
+# The self-employed's income (but 19, étape 2) changes the population, whose height the
+# caches check, and its wiring here: every number of every self-employed household moves.
+WIRING = "D-346_ns" + ("_sansE1" if decomposition.sans("E1") else "")
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
 #: fiscal block, which never reaches a benefit. The ASS the income tax reads since D-192
@@ -283,6 +285,85 @@ IJ_INPUTS: dict[str, str] = {
 IJ_PROJECT_INPUTS = frozenset({"indemnites_journalieres_maladie_ald"})
 
 
+#: The self-employed's régime (`incomes.REGIMES`) -> the 2042-C-PRO box written, and for
+#: a micro-entrepreneur the nature of his turnover. The frame carries the Insee's income,
+#: the turnover AFTER the abatement for a micro-entrepreneur; the box is the turnover,
+#: so it is grossed up by the year's abatement. A réel profit is its own box: 5KC
+#: (`abic_impn`), 5QC (`abnc_impo`), 5HC (`arag_impg`). A gérant majoritaire is wired as
+#: a réel (`incomes.attach_self_employment` says what that costs). The micro-BA income
+#: goes on the variable the boxes compute, `rpns_revenus_microBA_agricole`, as the
+#: three-year average it is.
+#:
+#: **The versement libératoire is drawn, and not wired.** Its boxes (5TA, 5TB, 5TE:
+#: `ebic_impv`, `ebic_imps`, `ebnc_impo`) feed openfisca's `microentreprise`, which
+#: `revenus_non_salarie_nets` adds to each person as `sum(...)` of a vector: the
+#: liberatory profit of EVERY foyer of the simulation, added to every person's disposable
+#: income. One household computes right; a population of 15 000 ménages had a median
+#: niveau de vie of 3.9 M€ (étape 2, measured). Until a correction holds it, the
+#: micro-entrepreneurs drawn into the versement libératoire are declared in the micro
+#: boxes: taxed at the barème rather than at 1 to 2.2 % of their turnover, which puts
+#: their income tax a little high, and their RFR, benefits and CSG are the same.
+SELF_EMPLOYMENT_INPUTS: dict[str, tuple[str, str | None]] = {
+    "reel_bic": ("abic_impn", None), "gerant_bic": ("abic_impn", None),
+    "reel_bnc": ("abnc_impo", None), "gerant_bnc": ("abnc_impo", None),
+    "micro_vente": ("mbic_impv", "vente"), "micro_service": ("mbic_imps", "service"),
+    "micro_bnc": ("mbnc_impo", "bnc"),
+    "vl_vente": ("mbic_impv", "vente"), "vl_service": ("mbic_imps", "service"),
+    "vl_bnc": ("mbnc_impo", "bnc"),
+    "reel_ba": ("arag_impg", None),
+    "micro_ba": ("rpns_revenus_microBA_agricole", None),
+}
+
+
+def micro_turnover(income: np.ndarray, abatement: float, minimum: float) -> np.ndarray:
+    """The turnover whose micro income is `income`: the inverse of openfisca's
+    `abat_rpns`, income = turnover − max(abatement × turnover, minimum), below the ceiling.
+    A nil income is a nil turnover."""
+    income = np.asarray(income, dtype=np.float64)
+    return np.where(income > 0, np.maximum(income / (1.0 - abatement), income + minimum), 0.0)
+
+
+def self_employment_inputs(frame: pl.DataFrame, tax_benefit_system: Any, year: int
+                           ) -> tuple[dict[str, np.ndarray], Any]:
+    """({openfisca variable: annual amount per person}, `categorie_non_salarie` encoded),
+    for one year of the law. Empty, and None, for a frame that carries no self-employment
+    columns: a population built before but 19 (étape 2), whose self-employed earned
+    nothing; any frame `incomes.attach_incomes` builds carries them."""
+    if "regime_non_salarie" not in frame.columns:
+        return {}, None
+    from impots.population.incomes import CATEGORIE_PAR_SECTEUR
+
+    regime = frame["regime_non_salarie"].to_numpy()
+    income = frame["revenu_non_salarie_annuel"].to_numpy().astype(np.float64)
+    unknown = {r for r in regime if r is not None} - set(SELF_EMPLOYMENT_INPUTS)
+    if unknown:
+        raise WiringError(f"régimes non salariés inconnus du câblage : {sorted(unknown)}")
+    micro = tax_benefit_system.parameters(year).impot_revenu.calcul_revenus_imposables \
+        .rpns.micro.microentreprise
+    abatement = {"vente": micro.regime_micro_bic.marchandises.taux,
+                 "service": micro.regime_micro_bic.services.taux,
+                 "bnc": micro.regime_micro_bnc.taux}
+    inputs: dict[str, np.ndarray] = {}
+    for name, (variable, nature) in SELF_EMPLOYMENT_INPUTS.items():
+        mine = regime == name
+        if not mine.any():
+            continue
+        amount = np.where(mine, income, 0.0)
+        if nature is not None:
+            amount = micro_turnover(amount, abatement[nature], micro.montant_minimum)
+        inputs[variable] = inputs.get(variable, 0.0) + amount
+    # A classique's contributions category, which sets his CSG base. Left `non_pertinent`
+    # for the micro-entrepreneurs, whose contributions openfisca levies on the versement
+    # libératoire's turnover only, and for the farmers, whose MSA contributions and CSG
+    # it does not model.
+    sector = frame["secteur_non_salarie"].to_numpy()
+    reel = np.isin(regime, ("reel_bic", "reel_bnc", "gerant_bic", "gerant_bnc"))
+    names = np.full(frame.height, "non_pertinent", dtype=object)
+    names[reel] = [CATEGORIE_PAR_SECTEUR[s] for s in sector[reel]]
+    possible = tax_benefit_system.variables["categorie_non_salarie"].possible_values
+    return inputs, possible.encode(names.astype(str))
+
+
 #: The public service's side, as the frame carries it -> openfisca's category (D-346).
 CATEGORIE_PUBLIQUE = {"etat": "public_titulaire_etat",
                       "territoriale": "public_titulaire_territoriale",
@@ -434,6 +515,17 @@ def build_simulation(
             simulation.set_input("statut_occupation_logement", period, statut)
             simulation.set_input("zone_apl", period, zone)
             simulation.set_input("loyer", period, loyer)
+
+    # ---- the self-employed's income, on each year of the history -----------
+    # Annual boxes, written N-2 to N as the earnings are: the RSA and the prime read the
+    # last known year, the housing aid N-2, and the RFR of N-2 is pinned below.
+    for offset in range(HISTORY_YEARS, -1, -1):
+        inputs, categorie_ns = self_employment_inputs(frame, tax_benefit_system,
+                                                      year - offset)
+        for variable, values in inputs.items():
+            simulation.set_input(variable, str(year - offset), values)
+        if categorie_ns is not None:
+            simulation.set_input("categorie_non_salarie", str(year - offset), categorie_ns)
 
     # ---- foyer fiscal inputs, ordered to match `foyer_ids` -----------------
     foyer = _group_frame(frame, "foyer_id", ["parent_isole"])

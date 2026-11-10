@@ -57,6 +57,10 @@ SCHEMA: dict[str, pl.DataType] = {
     "pension_annuelle": pl.Float64,
     "chomage_annuel": pl.Float64,
     "loyer_mensuel": pl.Float64,
+    # The self-employed's income and the box it is declared in (but 19, étape 2).
+    "revenu_non_salarie_annuel": pl.Float64,
+    "regime_non_salarie": pl.String,
+    "secteur_non_salarie": pl.String,
 }
 
 
