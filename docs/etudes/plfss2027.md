@@ -287,9 +287,9 @@ Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement i
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
-* Aides au logement, montant versé : −28,0 % en moyenne, de −28,7 % à −26,8 % ; 0 année sur 3 dans sa tolérance.
-* Foyers allocataires de la prime d'activité, servis en espérance : −32,9 % en moyenne, de −34,7 % à −31,1 % ; 0 année sur 3 dans sa tolérance.
-* Prime d'activité, montant servi en espérance (sans pont) : −28,7 % en moyenne, de −30,2 % à −27,2 % ; 0 année sur 3 dans sa tolérance.
+* Aides au logement, montant versé : −28,1 % en moyenne, de −28,9 % à −27,0 % ; 0 année sur 3 dans sa tolérance.
+* Foyers allocataires de la prime d'activité, servis en espérance : −28,1 % en moyenne, de −30,0 % à −26,2 % ; 0 année sur 3 dans sa tolérance.
+* Prime d'activité, montant servi en espérance (sans pont) : −25,1 % en moyenne, de −26,8 % à −23,5 % ; 0 année sur 3 dans sa tolérance.
 
 Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
 

@@ -267,11 +267,11 @@ Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement i
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
-* CSG sur les revenus de remplacement : −3,0 % en moyenne, de −5,3 % à −0,9 % ; 3 années sur 3 dans sa tolérance.
-* Foyers imposés : +11,1 % en moyenne, de +6,8 % à +14,6 % ; 1 année sur 3 dans sa tolérance.
+* CSG sur les revenus de remplacement : −3,1 % en moyenne, de −5,4 % à −1,0 % ; 3 années sur 3 dans sa tolérance.
+* Foyers imposés : +6,2 % en moyenne, de +2,1 % à +9,4 % ; 3 années sur 3 dans sa tolérance.
 * Impôt sur les sociétés, avant crédits d'impôt : −6,2 % en moyenne, de −19,7 % à +2,0 % ; 3 années sur 3 dans sa tolérance.
 * C3S : +6,4 % en moyenne, de +1,2 % à +11,9 % ; 3 années sur 3 dans sa tolérance.
-* Impôt sur le revenu au barème, avant réductions et crédits : +2,8 % en moyenne, de +0,6 % à +4,9 % ; 2 années sur 2 dans sa tolérance.
+* Impôt sur le revenu au barème, avant réductions et crédits : −7,9 % en moyenne, de −9,8 % à −6,0 % ; 2 années sur 2 dans sa tolérance.
 * CVAE : −15,2 % en moyenne, de −15,2 % à −15,2 % ; 1 année sur 1 dans sa tolérance.
 * CSG sur les revenus d'activité, avec celle des non-salariés : −1,6 % en moyenne, de −2,0 % à −1,4 % ; 3 années sur 3 dans sa tolérance.
 

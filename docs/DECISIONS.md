@@ -27682,3 +27682,44 @@ entière, et les cotisations salariales de 2023. « h » : hors de la tolérance
 | `revenus_non_salaries_hors_gerants` | 15 | −1 à +5 | +2 à +8 | −7 à −1 |
 | `rsa_foyers_servis` | 25 | — | −8 à +2 | −8 à +2 |
 | `rsa_montant_servi` | 14 | −9 à +1 | −7 à +3 | −5 à +5 |
+
+## D-371 — La grille du dernier tour : 84 lignes tenues sur 113, pronostic tenu sur 113
+
+**Ce qui a tourné.** Les trois passes de D-370, au commit db13e03, l'une après l'autre,
+seules sur la machine (37 minutes). La grille, la loi d'erreur et les pages d'étude sont
+réécrites ; aucun nombre d'étude ne change.
+
+**Le compte.** 84 lignes notées sur 113 tiennent leur tolérance (79 à D-369, 78 à D-367).
+Les 80 lignes de D-363 : 57, une de moins qu'au but 18 (58), quand le modèle ne tient plus
+aucune d'elles par une erreur qui en compense une autre. Le pronostic tient sur les 113.
+
+**Le chemin du but 19, sur la population entière** (écart moyen de 2022 à 2024) :
+
+| ligne | but 18 | D-371 |
+|---|---:|---:|
+| cotisations des employeurs, au sens D121 | (+31, autre mesure) | +3,1 % |
+| RSA, montant servi en espérance | (+61, au pont) | +1,2 % |
+| IR net (barème, hors barème, CEHR, moins RICI) | — | +0,4 % |
+| foyers fiscaux | −14,2 % | −6 % |
+| foyers au taux de 11 % | −21,9 % | −11 % |
+| foyers au taux de 30 % | +9,4 % | +8,5 % |
+| foyers au taux de 41 % | +17,4 % | −16,4 % |
+| foyers imposés | −0,5 % | +6,2 % |
+
+**Ce qui reste hors de sa tolérance**, et pourquoi, chacun mesuré :
+
+* **La réduction générale** (−17 %) et **le bandeau famille** (+19 %) : la règle est juste
+  (D-370) ; il manque des salaires horaires sous 1,6 SMIC et il y en a trop entre 1,6 et
+  3,5. C'est la forme du bas des salaires horaires, que les quantiles publiés en EQTP ne
+  donnent pas.
+* **La prime d'activité** (−25 % servie) : calée sur les recourants de la Drees, que la
+  Cnaf dépasse de 17 à 27 % ; un choix de cible, dit.
+* **Les aides au logement** (−28 %) : le hors-champ (foyers, résidences, accédants) et les
+  hébergés, mesurés à l'étape « al ».
+* **Les cotisations salariales** (−10 %, au bord), **l'IR au barème** (−8 %, dans la
+  tolérance), **le niveau de vie** et le D9/D1 (dans la tolérance) ; les entreprises
+  inchangées (D-364).
+
+**La loi d'erreur** reste un biais de structure, stable d'une année à l'autre : la population
+de 2024 ramenée aux autres années garde sa forme. Le modèle est prêt pour la série des dix
+études : chaque écart qui reste a sa cause dite, et chaque page dira sa ligne.
