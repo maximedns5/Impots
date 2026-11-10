@@ -75,13 +75,28 @@ def households_par_lots(population: pl.DataFrame | Path, lots: int, **kwargs: An
     frame = pl.read_parquet(population) if isinstance(population, Path) else population
     lot = frame["household_id"].map_elements(
         lambda key: zlib.crc32(str(key).encode()) % lots, return_dtype=pl.Int64)
+    # The niches are drawn with the probability « published claimants / weighted foyers
+    # of the bracket » (`niches.impute`): a lot that weighs a quarter of France would draw
+    # four times too many (but 19, étape 1). Each lot then weighs all France while it runs,
+    # and its households take their own weight back after.
+    rescale = bool(kwargs.get("impute_niches"))
+    total = _household_weight(frame) if rescale else 1.0
     parts = []
     for k in range(lots):
         part = frame.filter(lot == k)
-        parts.append(run(part, **kwargs).households)
+        factor = total / _household_weight(part) if rescale else 1.0
+        if rescale:
+            part = part.with_columns(pl.col("weight") * factor)
+        households = run(part, **kwargs).households
+        parts.append(households.with_columns(pl.col("weight") / factor) if rescale
+                     else households)
         del part
         gc.collect()
     return pl.concat(parts, how="vertical")
+
+
+def _household_weight(frame: pl.DataFrame) -> float:
+    return float(frame.group_by("household_id").agg(pl.col("weight").mean())["weight"].sum())
 
 
 def subsample(frame: pl.DataFrame, households: int, seed: int = SAMPLE_SEED) -> pl.DataFrame:

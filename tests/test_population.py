@@ -1815,3 +1815,27 @@ def test_the_pension_calibration_target_is_the_retirement_boxes() -> None:
 
     assert margins.DECLARED_PENSIONS.value == pytest.approx(
         ingest.declared_retirement_pensions(2024), rel=1e-9)
+
+
+def test_lots_with_niches_draw_each_lot_as_if_it_weighed_all_france(monkeypatch) -> None:
+    """`niches.impute` draws with « claimants / weighted foyers »: a lot that weighs a
+    quarter of France would hand out four times the niches. Each lot runs weighing all
+    France, and its households take their own weight back (but 19, étape 1)."""
+    from types import SimpleNamespace
+
+    from impots.population import runner
+
+    frame = pl.DataFrame({"household_id": [f"m{i}" for i in range(40) for _ in (0, 1)],
+                          "weight": [float(i % 7 + 1) for i in range(40) for _ in (0, 1)]})
+    total = float(sum(i % 7 + 1 for i in range(40)))
+    seen = []
+
+    def fake_run(part, **kwargs):
+        seen.append(runner._household_weight(part))
+        households = part.group_by("household_id").agg(pl.col("weight").mean())
+        return SimpleNamespace(households=households)
+
+    monkeypatch.setattr(runner, "run", fake_run)
+    out = runner.households_par_lots(frame, 4, impute_niches=True)
+    assert seen == pytest.approx([total] * 4)
+    assert float(out["weight"].sum()) == pytest.approx(total)
