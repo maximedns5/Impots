@@ -27942,3 +27942,54 @@ revient avec une grille refaite, préenregistrée. Le curseur de la page 3 du pa
 lisait la même grille, lit les points des plages de la série (`plages/`, sur `601b442`) :
 les cotisations retraite des salariés en cinq points (Attal et Retailleau règlent le même
 bouton), la TVA sur l'énergie en trois, sans interpolation.
+
+## D-378 — Deux relectures adverses du site, et le sort de chaque constat
+
+**Ce qui a tourné.** Deux lecteurs qui n'avaient pas lu le dépôt, chacun sur une copie du
+site seule, avec un navigateur, les curseurs et les sources publiques : 18 constats sur le
+site du but 20, puis, sur le site corrigé, 6 réglés, 11 en partie, 1 non, et 15 neufs.
+Chaque correction est de texte ou de lien : aucun nombre d'étude ni de grille ne change,
+le compte de la grille reste 84 sur 113.
+
+**Corrigé.**
+
+* Labib : la boucle ne lit pas les accises sur l'énergie (`retroaction.NOT_ACTIVITY`),
+  la page d'étude disait le contraire ; elle, la page 5 et Comparer disent maintenant
+  « lu » de ce qui a sa table (`rejeu.macro.instruments`), « non lu » du reste, avec sa
+  raison, et l'éventail macro dit qu'il compte ce que la dette ne lit pas.
+* Attal et Retailleau : la variante de Mésange lue pour les cotisations des salariés (les
+  branches marchandes, le brut qui baisse de 2,49 % à dix ans) rend un retour que le coût
+  de l'outil, brut tenu fixe, n'a pas ; le retour est probablement surestimé. Les pages le
+  disent à côté du chiffre de tête, avec la dette sans boucle et la variante salariale au
+  même rang. Tondelier, Lisnard, PLF art. 2 : le double compte possible entre C1 et la
+  boucle est dit ; le seuil de Tondelier est par part.
+* Le tableau en bref : le chiffre préenregistré noté à côté de sa tolérance, la part des
+  tirages à côté du verdict, la couverture de chaque programme ; l'index dit que les
+  candidats ne se comparent pas ligne à ligne. Retailleau r21 « chiffrée en partie ».
+* La page 3 : un tableau de passage par mesure, chaque convention nommée ; une seule
+  décomposition du raté de la prime (mois, taux, population) ; le juge de l'art. 15 dit
+  sa sensibilité : noté contre 5,5 Md€ il tient, contre 5,0 Md€ il sortirait, et le cas
+  enregistré ne fixait pas lequel. Comparer : le coût par euro rendu sur la part des
+  ménages ; l'asymétrie de l'offre de travail (CSG seule) dite.
+* La page 1 restreinte à ce que deux ménages en décote prouvent ; L0 dans la légende ;
+  une population ramenée en arrière, pas trois épreuves ; une seule description du
+  non-recours, et les deux lignes de foyers servis qu'il cale marquées comme ne prouvant
+  rien du recours ; la ligne des salaires déclarés dite non indépendante du calage.
+* Le jargon interne traduit sur toutes les pages, un lexique sur la Méthode ; ρ ne nomme
+  plus que la corrélation. Les tableaux disent au téléphone qu'ils défilent.
+* Six liens faux corrigés à la source : deux dans `margins.py`, trois dans le magasin
+  (le rapport SMIC 2025 ; Bunel et L'Horty, Fiscal Studies 2012, valeur −0,429 vérifiée
+  dans la version de travail TEPP n° 2012-12), la source de Tondelier doublée d'une
+  source lisible dans l'Union.
+
+**Dit, pas corrigé**, parce que le corriger change des nombres ou demande un but :
+
+* le champ et l'incidence de la variante de Mésange appliquée à Attal, et sa linéarité au
+  delà du choc d'un point ; le double compte C1 et boucle : des choix du modèle ;
+* la grille de l'explorateur, d'avant le but 19 (D-377) ;
+* la phrase de C11 chez Mélenchon, stockée dans le rapport de la série ;
+* les citations du magasin : 20 lignes sur 23 portent « la citation est à reprendre » ;
+  la page 4 dit ce que cela veut dire ;
+* le triage du PLF, pas revu depuis septembre ; le RESF 2027, absent des données : la
+  page 6 compare au RESF 2026 et au texte du PLF 2027 ;
+* les liens vers le dépôt, morts tant qu'il n'est pas public.

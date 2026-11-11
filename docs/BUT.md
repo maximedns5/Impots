@@ -791,7 +791,7 @@ l'IMK et de l'OCDE déjà manifestées, si le propriétaire rouvre D-246. Une in
 tire l'erreur du coût mesurée ici. Puis les juges du passé, sur un modèle dont l'erreur est
 connue.
 
-### But 19 — Un modèle juste sur sa population (fait, D-365 à D-373)
+### But 19 — Un modèle juste sur sa population (fait, D-365 à D-374)
 
 La grille du but 18 a mesuré le modèle ; six diagnostics, le 10 novembre
 (`docs/diagnostics/`, leur synthèse dans `SYNTHESE.md`), ont expliqué ses écarts. Les 22
@@ -857,7 +857,7 @@ après chaque jonction, la série des dix études une fois, à la fin. Les prono
 étapes 2 à 4 viennent de mesures sur échantillon faites par les diagnostics : ils ne sont
 pas aveugles, et leur D-entrée le dit.
 
-### But 20 — La démarche que chacun peut refaire (validé le 10 novembre 2026, D-365)
+### But 20 — La démarche que chacun peut refaire (fait, D-375 à D-378)
 
 Le constat du diagnostic de la démarche (`docs/diagnostics/demarche.md`) : un lecteur voit
 chaque nombre et bouge des curseurs, mais ne peut rien vérifier. Ce but construit le

@@ -1,5 +1,21 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-12 update adds D-375 to D-378: goal 20, done once merged. The site carries a
+public path of eight pages and a comparison page (`src/impots/parcours/`, published by
+`impots site construire` as `site/parcours-*.html`): one household, simulated France, the
+cost of a measure, behaviours, activity, the debt, the verdict, where the tool is wrong,
+and two candidates on the same base. Each page states what it proves, links its public
+source and the repository file that computes it, and gives a cursor (the error page
+excepted); scripts that compute are held against the engine by node (debt and loop to
+1e-12, the Monte-Carlo to the bit). No study number changed. Two disposable-income lines
+got their registry row, the RLS (D-374) and the ARS (D-376). The explorer is withdrawn
+until its grid, from goal 16, is rerun (D-377, owner's decision). Two adversarial
+readings by outsiders, and the fate of each finding, are in D-378: text and links fixed,
+model choices said, not changed (Mésange's employee-contribution variant applied beyond
+its field to Attal, the C1-and-loop overlap). Next: the owner merges the goal 20 PR, makes
+the repository public and publishes the site; then the explorer grid, the store's
+citations, and the past judges (BUT.md).
+
 The 2026-11-11 update adds D-365 to D-373: goal 19, validated by the owner, done once
 merged. Six diagnostics (`docs/diagnostics/`) traced the grid's misses to five causes;
 `calibrate.py` was opened for this goal (D-365). The self-employed now have an income,
