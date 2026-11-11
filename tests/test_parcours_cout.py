@@ -62,3 +62,26 @@ def test_nombres_a_la_francaise() -> None:
     assert cout.num(-0.004, 2) == "0,00"
     assert cout.md(-1_234_500_000_000) == "−1\u202f234,50 Md€"
     assert cout.pct(0.25, 0) == "+25 %"
+
+
+def test_le_tableau_de_passage_porte_chaque_convention(page: parcours.Page) -> None:
+    """Constat 4 : chaque nombre de la mesure, avec sa convention, lu dans les fichiers."""
+    attal = [r[2] for r in cout.passage_attal()]
+    for texte in ("+61,73 Md€", "+63,14 Md€", "+66,40 Md€", "+68,02 Md€", "+75,66 Md€"):
+        assert any(texte in x for x in attal), texte
+    ppa, _ = cout.passage_ppa()
+    for texte in ("−1\u202f056 M€", "−560 M€", "−557 M€", "−493 M€", "−791 M€", "−952 M€",
+                  "−887 M€", "−819 M€"):
+        assert any(texte in r[2] for r in ppa), texte
+    for mot, _ in cout.CONVENTIONS:
+        assert f"<dt>{mot}</dt>" in page.corps
+
+
+def test_le_rate_du_juge_se_decompose(page: parcours.Page) -> None:
+    """Constat 5 : mois × taux × population refont le rapport du cas au juge (D-316)."""
+    t = cout._ecart_ppa_textes()
+    assert (t["mois_cas"], t["base"], t["taux_cas"], t["taux_fiche"]) == (7.05, 1.66, 2.1, 2.3)
+    _, texte = cout.passage_ppa()
+    assert "2,67" in texte and "1,76" in texte and "0,91" in texte and "1,66" in texte
+    assert f"{cout.pct(0.001, 1)}</span>" in texte  # le reste du produit, +0,1 %
+    assert "chiffrée dans\naucun fichier" in texte or "chiffrée dans aucun fichier" in texte

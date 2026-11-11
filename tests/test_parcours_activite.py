@@ -43,8 +43,9 @@ def test_the_page_carries_the_tables_the_reports_carry() -> None:
     cot = tables["cotisations_salaries"]["table"]
     assert activite.part_rendue(cot) == pytest.approx(1.0 + cot["solde"]["10"], abs=1e-12)
     assert "<strong>0,76</strong>" in corps
-    # Ce que la boucle ne lit pas rend zéro : l'IS est dans la liste du code.
-    assert "impot_societes" in corps
+    # Ce que la boucle ne lit pas rend zéro : l'IS est dans la liste du code, en mots.
+    assert "impot_societes" in activite.shocks.UNMAPPED
+    assert activite.poste("impot_societes") in corps
 
 
 def test_the_half_columns_are_the_reports() -> None:
@@ -101,3 +102,51 @@ def test_the_script_is_the_engine(tmp_path) -> None:
     out = json.loads(done.stdout)
     assert out["n"] == len(cases) > 0
     assert out["worst"] < 1e-12
+
+
+def test_la_taxe_carbone_de_labib_n_est_pas_lue() -> None:
+    """Constat 1 de la relecture : est lu ce qui a sa table dans le rapport ; l'impulsion
+    « taxe_carbone » de Labib n'en a pas, et sa raison est celle du code."""
+    labib = next(r for r in activite.rapports() if "labib" in r["chemin"])
+    data = labib["data"]
+    assert "taxe_carbone" not in data["rejeu"]["macro"]["instruments"]
+    assert activite.impulsions_non_lues(data, "figee")["taxe_carbone"] == pytest.approx(
+        data["years"][0]["statistiques"]["figee"]["impulses"]["taxe_carbone"])
+    assert activite.non_lus(data)["taxe_carbone"] == activite.retroaction.CARBON
+    corps = activite.page().corps
+    assert "Hausse de la taxe carbone de 1 pt de PIB" in corps
+    assert activite.retroaction.CARBON in corps.replace("&#x27;", "'")
+    # Le Pen et Roussel n'ont pas d'impulsion sans table : leur TVA est lue.
+    for nom in ("le_pen", "roussel"):
+        r = next(r for r in activite.rapports() if nom in r["chemin"])
+        assert not activite.impulsions_non_lues(r["data"])
+
+
+def test_les_impulsions_sans_table_sont_celles_que_rejouer_ignore() -> None:
+    """La boucle du moteur, sur un rapport, ne voit que les impulsions qui ont une table :
+    retirer celles qui n'en ont pas ne change rien."""
+    labib = next(r for r in activite.rapports() if "labib" in r["chemin"])["data"]
+    impulses = [row["statistiques"]["vieillie"]["impulses"] for row in labib["years"]]
+    gdp, _, _ = rejouer.reference_path(labib["rejeu"], labib["rejeu"]["start"], len(impulses))
+    tables = labib["rejeu"]["macro"]["instruments"]
+    gardees = [{k: v for k, v in y.items() if k in tables} for y in impulses]
+    a = rejouer.loop(impulses, gdp, labib["rejeu"]["macro"], 0.0, rejouer.READ)
+    b = rejouer.loop(gardees, gdp, labib["rejeu"]["macro"], 0.0, rejouer.READ)
+    assert [list(x) for x in a] == [list(x) for x in b]
+
+
+COTISATIONS_PDF = activite.mesange.RAW / activite.mesange.SOURCE_FILE
+
+
+@pytest.mark.skipif(not COTISATIONS_PDF.exists(),
+                    reason="le PDF de Mésange n'est pas dans data/raw : `make data`")
+def test_la_variante_des_cotisations_salaries_est_celle_du_pdf() -> None:
+    v = activite.COTISATIONS_SALARIES
+    pages = dict(activite.mesange._pages(str(COTISATIONS_PDF)))
+    lignes = next(lines for lines in pages.values() if lines and lines[0] == str(v["folio"])
+                  and any("4.1.4 Cotisations sociales salariés" in x for x in lines))
+    texte = " ".join(lignes)
+    assert " ".join(v["champ"].split()) in " ".join(texte.split())
+    brut = next(x for x in lignes if x.startswith("Salaire nominal brut"))
+    nombres = [float(t.replace(",", ".")) for t in brut.split()[3:]]
+    assert nombres[:5] == [v["salaire_brut"][h] for h in ("1", "2", "3", "5", "10")]

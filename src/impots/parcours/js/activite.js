@@ -251,17 +251,25 @@
     const c = atTheta(e.payload, th, opts);
     const dec = decomposition(e.payload, th, opts);
     const n = c.years.length;
+    // Est lue l'impulsion qui a sa table dans le rapport (`rejouer.loop` ne garde
+    // qu'elles) ; les autres vont à la dette entières.
+    const tables = e.payload.rejeu.macro.instruments;
     const lignes = c.years.map((y, k) => {
-      const imp = Object.values(e.payload.years[k].statistiques.vieillie.impulses || {})
-        .reduce((a, b) => a + b, 0.0);
-      return `<tr><td>${y}</td><td class="num">${md(imp)}</td><td class="num">${signe(c.gap[k] * 100, 2)} %</td>`
+      let lue = 0.0, nonLue = 0.0;
+      for (const [i, v] of Object.entries(e.payload.years[k].statistiques.vieillie.impulses || {})) {
+        if (i in tables) lue += v; else nonLue += v;
+      }
+      return `<tr><td>${y}</td><td class="num">${md(lue)}</td><td class="num">${md(nonLue)}</td>`
+        + `<td class="num">${signe(c.gap[k] * 100, 2)} %</td>`
         + `<td class="num">${md(c.feedback[k] * c.gdp[k])}</td><td class="num">${pt(c.delta[k])}</td></tr>`;
     }).join("");
-    sortie.innerHTML = `<p>Dette en ${c.years[n - 1]}, avec la mesure moins sans elle : <strong>${pt(dec.total)}</strong> `
-      + `(le coût sans boucle ${pt(dec.cout)} ; le PIB, dénominateur, ${pt(dec.denominateur)} ; `
-      + `les recettes induites ${pt(dec.retroaction)}).</p>`
-      + `<table><thead><tr><th>année</th><th>impulsion lue</th><th>écart de PIB</th>`
-      + `<th>recette induite</th><th>Δ dette</th></tr></thead><tbody>${lignes}</tbody></table>`
+    sortie.innerHTML = `<p>Dette en ${c.years[n - 1]}, avec la mesure moins sans elle : `
+      + `sans boucle, <strong>${pt(dec.cout)}</strong> ; avec la boucle à ce réglage, `
+      + `<strong>${pt(dec.total)}</strong> (le PIB, dénominateur, ${pt(dec.denominateur)} ; `
+      + `les recettes induites ${pt(dec.retroaction)}). Le premier nombre ne dépend pas `
+      + `de Mésange ; le second, si.</p>`
+      + `<table><thead><tr><th>année</th><th>impulsion lue</th><th>impulsion non lue</th>`
+      + `<th>écart de PIB</th><th>recette induite</th><th>Δ dette</th></tr></thead><tbody>${lignes}</tbody></table>`
       + `<p class="note">Rejoué ici, vue vieillie, comportements à θ½. Au réglage du rapport `
       + `(θ½, lue, centrale), la page redonne ${pt(e.temoin)}, le nombre de la page de l'étude.</p>`;
   }

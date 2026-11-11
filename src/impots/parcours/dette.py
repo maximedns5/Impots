@@ -34,6 +34,21 @@ CADRE = "etudes/cadres/central.json"
 #: L'étude montrée d'abord : celle dont la page d'étude ouvre la série.
 PREMIERE = "presidentielle_attal"
 LUE = "lue"
+#: Les hypothèses que le gouvernement publie pour 2025 à 2029 : le rapport économique,
+#: social et financier annexé au PLF 2026, tableau 1 p. 64 (« Principaux indicateurs du
+#: scénario économique 2025-2029 »), le dernier du manifeste des données. Écrites ici,
+#: le PDF n'étant pas dans le dépôt ; `tests/test_parcours_dette.py` les relit dans le
+#: PDF quand il est là. Le curseur avertit quand le cadre en sort.
+RESF = {
+    "fichier": "resf_2026.pdf", "page": 64,
+    "annees": (2025, 2026, 2027, 2028, 2029),
+    "pib_volume": (0.007, 0.010, 0.012, 0.013, 0.013),
+    "deflateur": (0.015, 0.015, 0.016, 0.016, 0.016),
+}
+#: Les bornes des curseurs, en pour cent : au-delà, la trajectoire de référence (la
+#: dépense gelée en volume, les recettes tenues en part du PIB) part loin de tout ce que
+#: publient les comptes, et le coût, qui ne bouge pas avec elle, n'a plus de sens.
+BORNES = {"croissance": (-0.5, 2.0), "prix": (0.0, 3.0)}
 VUES = (("vieillie", "delta_aged", "vue vieillie"), ("figee", "delta_frozen", "vue figée"))
 esc = html.escape
 
@@ -268,16 +283,17 @@ def _reference_html(e: dict[str, Any], cadre: dict[str, Any], c: dict[str, Any])
 
 def _marches_html() -> str:
     taux = central(etudes()[0]["data"])["taux_marche"]["taux"]
-    head = ("<tr><th>étude</th><th>le coût, sans effet sur l'activité</th>"
-            "<th>le dénominateur</th><th>les recettes induites</th>"
-            f"<th>Δb en 2035</th><th>dette ajoutée à {pct(taux, 1)}</th></tr>")
+    head = ("<tr><th>étude</th><th>Δb en 2035 sans boucle : le coût, sans effet sur "
+            "l'activité</th><th>le dénominateur</th><th>les recettes induites</th>"
+            f"<th>Δb en 2035 avec la boucle, à θ½</th><th>dette ajoutée à {pct(taux, 1)}</th></tr>")
     rows = []
     for e in etudes():
         c = central(e["data"])
         d = c["decomposition"]["vieillie"]
         rows.append(
             f'<tr><td><a href="{esc(e["page"])}">{esc(e["candidat"])}</a></td>'
-            f'<td class="num">{pt(d["cout"])}</td><td class="num">{pt(d["denominateur"])}</td>'
+            f'<td class="num"><strong>{pt(d["cout"])}</strong></td>'
+            f'<td class="num">{pt(d["denominateur"])}</td>'
             f'<td class="num">{pt(d["retroaction"])}</td><td class="num"><strong>'
             f'{pt(d["total"])}</strong></td>'
             f'<td class="num">{pt(c["taux_marche"]["vieillie"])}</td></tr>')
@@ -294,7 +310,8 @@ def _marches_html() -> str:
         f"{pt(attal['total'])} : l'écart entre les deux nombres tient entier à l'effet "
         "sur l'activité, le maillon le moins sûr de la chaîne.</p>\n"
         "<table><thead>" + head + "</thead><tbody>" + "".join(rows) + "</tbody></table>\n"
-        "<p>Vue vieillie, θ½ (chaque réponse au milieu de sa fourchette publiée), "
+        "<p>Les deux nombres en gras se lisent ensemble : le premier ne dépend d'aucun "
+        "modèle de l'activité, le second dépend de Mésange et de θ. Vue vieillie, θ½ (chaque réponse au milieu de sa fourchette publiée), "
         "persistance « lue ». La dernière colonne charge la seule dette ajoutée au "
         f"taux de {pct(taux, 1)} au lieu du taux implicite. Lu dans "
         "<code>lectures.decomposition</code> et <code>lectures.taux_marche</code> de "
@@ -304,6 +321,38 @@ def _marches_html() -> str:
         "l'autre : c'est la même identité pour toutes. Les deux marches suivantes "
         "dépendent des instruments que la boucle sait lire (page "
         f"{lien('activite')}).</p>")
+
+
+def plage(cle: str) -> tuple[float, float]:
+    """La plage que le PLF 2026 publie pour 2025 à 2029, du plus bas au plus haut."""
+    return min(RESF[cle]), max(RESF[cle])
+
+
+def _plages_html(cadre: dict[str, Any]) -> str:
+    g, p = plage("pib_volume"), plage("deflateur")
+    real, prices = cadre["growth"]["real"], cadre["growth"]["prices"]
+    hors = []
+    if not g[0] <= real <= g[1]:
+        hors.append(f"la croissance réelle ({pct(real, 1)})")
+    if not p[0] <= prices <= p[1]:
+        hors.append(f"les prix ({pct(prices, 1)})")
+    centre = ("Le cadre des études est dans ces plages." if not hors else
+              "Le cadre des études lui-même en sort par " + " et ".join(hors) + " : c'est "
+              "une hypothèse déclarée (D-289), pas une prévision, et la page le dit.")
+    return (
+        "<p><strong>Les plages publiées.</strong> Le gouvernement publie, avec le PLF 2026, "
+        f"une croissance du PIB en volume de {pct(g[0], 1)} à {pct(g[1], 1)} par an et un "
+        f"déflateur du PIB de {pct(p[0], 1)} à {pct(p[1], 1)} pour {RESF['annees'][0]} à "
+        f"{RESF['annees'][-1]} ("
+        + publique(RESF["fichier"], f"rapport économique, social et financier 2026, tableau 1 "
+                                    f"p. {RESF['page']}")
+        + f"). {centre} Le curseur va de {fr(BORNES['croissance'][0], 1)} à "
+        f"{fr(BORNES['croissance'][1], 1)} % pour la croissance et de "
+        f"{fr(BORNES['prix'][0], 1)} à {fr(BORNES['prix'][1], 1)} % pour les prix ; hors des "
+        "plages publiées, la page le signale. Loin d'elles, la dette de référence "
+        "change beaucoup (la dépense gelée en volume perd ou gagne sa part de croissance "
+        "chaque année), quand le coût de la mesure, lui, ne bouge pas : le rejeu ne refait "
+        "pas le vieillissement des revenus de la passe.</p>\n")
 
 
 def _curseurs_html(e0: dict[str, Any], c0: dict[str, Any]) -> str:
@@ -330,13 +379,15 @@ def _curseurs_html(e0: dict[str, Any], c0: dict[str, Any]) -> str:
         f"({fichier('src/impots/parcours/js/dette.js')}). Aux valeurs de départ, il "
         "redonne les nombres du tableau au-dessus ; un test le vérifie pour chaque "
         "étude.</p>\n"
-        "<noscript><p><strong>Sans JavaScript</strong>, les curseurs ne bougent pas : les "
+        + _plages_html(cadre)
+        + "<noscript><p><strong>Sans JavaScript</strong>, les curseurs ne bougent pas : les "
         "tableaux de cette page sont ceux des rapports, au cadre central.</p></noscript>\n"
         '<div id="d-curseurs">\n'
         f'<div class="curseur"><label for="d-etude">l\'étude</label><select id="d-etude">'
         f"{options}</select><span></span></div>\n"
-        + curseur("d-croissance", "la croissance réelle, par an", -1, 3, real) + "\n"
-        + curseur("d-prix", "les prix, par an", 0, 4, prices) + "\n"
+        + curseur("d-croissance", "la croissance réelle, par an", *BORNES["croissance"], real)
+        + "\n"
+        + curseur("d-prix", "les prix, par an", *BORNES["prix"], prices) + "\n"
         + '<div class="curseur"><label for="d-taux">le taux de la dette ajoutée</label>'
         '<select id="d-taux">'
         f'<option value="implicite" selected>implicite de 2025, '
@@ -349,6 +400,7 @@ def _curseurs_html(e0: dict[str, Any], c0: dict[str, Any]) -> str:
         + "\n"
         '<p><button type="button" id="d-retour">revenir au cadre des études</button></p>\n'
         '<p id="d-tete" aria-live="polite"></p>\n'
+        '<p id="d-alerte" role="status"></p>\n'
         '<table><thead><tr><th>marche, vue vieillie, 2035</th><th>ce cadre</th>'
         '<th>le rapport</th></tr></thead><tbody id="d-marches"></tbody></table>\n'
         '<table><thead><tr><th>année</th><th>PIB</th><th>dette de référence</th>'
@@ -398,6 +450,8 @@ def page() -> Page:
     cadre = lire(CADRE)
     donnees = {
         "taux_marche": c0["taux_marche"]["taux"],
+        "plages": {"croissance": plage("pib_volume"), "prix": plage("deflateur"),
+                   "annees": [RESF["annees"][0], RESF["annees"][-1]]},
         "etudes": [{"candidat": e["candidat"], "chemin": e["chemin"],
                     "payload": charge(e["data"]), "rapport": central(e["data"])}
                    for e in liste],

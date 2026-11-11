@@ -47,3 +47,24 @@ def test_un_euro_aux_trois_premiers_deciles_ne_se_lit_pas_sans_gain() -> None:
     assert c["par_euro"] is None and "rapporte" in c["pourquoi"]
     a = comparer.candidat("presidentielle_attal")
     assert a["par_euro"] == comparer.num(a["cout"] / a["bas"], 1) + " €"
+
+
+def test_labib_les_accises_ne_sont_pas_lues() -> None:
+    """Constat 1 : les accises de Labib (l'impulsion « taxe_carbone ») n'ont pas de table
+    dans le rapport ; elles ne sont pas « lues », et la raison est celle du code."""
+    c = comparer.candidat("presidentielle_labib")
+    assert "taxe_carbone" not in c["impulses"] and set(c["impulses"]) == {"tva"}
+    assert comparer.md(c["lu"]) == "+7,17 Md€"
+    assert comparer.md(c["familles"]["accises sur l'énergie"]) == "+15,75 Md€"
+    assert c["lu"] + c["non_lu"] == pytest.approx(c["cout"])
+    from impots.predictif import retroaction
+    assert c["raisons"]["accises sur l'énergie"] == retroaction.CARBON
+
+
+def test_couverture_asymetrie_et_sources(page: parcours.Page) -> None:
+    """Constats 7 et 8 : la couverture à côté de chaque coût, l'asymétrie du canal
+    d'offre de travail, une source accessible pour Tondelier."""
+    assert "+65,69 Md€, pour 2 mesures sur 20" in page.script
+    assert "ne s'ouvre que pour la\nCSG" in page.corps or "ne s'ouvre que pour la CSG" in page.corps
+    assert "https://monvote2027.fr/candidat/tondelier" in page.corps
+    assert "francais.rt.com" in page.corps

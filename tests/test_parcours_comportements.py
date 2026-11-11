@@ -39,7 +39,8 @@ def test_the_page_carries_the_store() -> None:
         assert f"<code>{key}</code>" in corps
         assert comportements._fourchette(entry["p"]) in corps
         if entry["p"].source.url:
-            assert entry["p"].source.url in corps
+            # Un lien mort du magasin est montré corrigé (constat 9 de la relecture).
+            assert comportements.lien_article(entry["p"].source.url)[0] in corps
     assert "0,15 ; 0,31 ; 0,5" in corps  # Cabannes, Houdré et Landais, tableau 4
     assert m["mortes"] and all(f"<code>{x['cle']}</code>" in corps for x in m["mortes"])
     # Chaque canal ouvert ou fermé dans une étude est celui du rapport de la première année.
@@ -135,3 +136,16 @@ def test_the_script_is_the_engine(tmp_path) -> None:
     assert out["n"] == len(cases) > 0
     assert out["euros"] < 1e-3  # des milliards d'euros : 1e-12 en relatif
     assert out["dette"] < 1e-12
+
+
+def test_les_codes_sont_traduits_et_les_liens_corriges() -> None:
+    """Constat 9 : aucun code brut du magasin sur la page, et les liens morts corrigés."""
+    import re
+
+    texte = re.sub(r"<[^>]+>", " ", comportements.page().corps)
+    for code in ("SCOPE_PROBLEM", "CONFIRMED", "in-support", "no-evidence", "A_haut",
+                 "R5 de", "`"):
+        assert code not in texte, code
+    corps = comportements.page().corps
+    for mort, (bon, _) in comportements.LIENS_CORRIGES.items():
+        assert bon in corps and f'href="{mort}"' not in corps

@@ -376,6 +376,186 @@ autres instruments, l'erreur d'un coût n'est pas mesurée.</p>
 """
 
 
+
+# --------------------------------------------------------------------------- #
+# Le tableau de passage : une mesure, ses nombres, leurs conventions
+# --------------------------------------------------------------------------- #
+#: Les conventions, un mot chacune, et ce qu'il veut dire. Chaque nombre du tableau de
+#: passage en porte une ; la page les définit avant de les montrer.
+CONVENTIONS = (
+    ("droit", "ce que les ménages gagnent si chaque ayant droit touche ses prestations, sans "
+              "le non-recours"),
+    ("perçu", "les prestations comptées comme les ménages les touchent, le non-recours "
+              "compté ; c'est la convention de la série"),
+    ("première année", "la population de 2024 (ses revenus de 2024) sous le droit de 2026, "
+                       "sur les mois de l'année où la mesure joue : le coût des études"),
+    ("vieillie", "la même passe, les revenus portés à l'année dite (salaires à 3 % l'an, "
+                 "la loi reconduite) : la vue du chemin annuel"),
+    ("année pleine", "douze mois de mesure, la population de 2024 sans vieillissement"),
+    ("préenregistré", "le chiffre du code du jour où le cas a été enregistré, commité avant "
+                      "de lire le juge ; c'est lui qui est noté, à sa date"),
+    ("révisé", "un cas refait après la lecture du juge : il ne compte pas dans la note"),
+)
+
+
+def _definitions() -> str:
+    return ("<dl class=\"conventions\">" + "".join(
+        f"<dt>{e(mot)}</dt><dd>{e(sens)}</dd>" for mot, sens in CONVENTIONS) + "</dl>")
+
+
+def _ligne_passage(mot: str, quoi: str, nombre: str, etage: str, ou: str) -> list[str]:
+    if mot not in dict(CONVENTIONS):
+        raise ParcoursError(f"convention « {mot} » non définie sur la page.")
+    return [f"<strong>{e(mot)}</strong>", quoi, b(nombre, etage), ou]
+
+
+def passage_attal() -> list[list[str]]:
+    from impots import preregistration as pr
+
+    rep = lire(ATTAL)
+    m, _ = menages_entreprises(rep)
+    years = {y["year"]: y for y in lire(ATTAL_PRED)["years"]}
+    an = min(years)
+    vieillie = {y: years[y]["mechanical_by_layer"]["vieillie"]["menages"] for y in years}
+    figee = {y: years[y]["mechanical_by_layer"]["figee"]["menages"] for y in years}
+    case = pr.load("pres2027_attal_a16_droit_au_brut")
+    if not math.isclose(float(m["reform_cost"]), figee[an], rel_tol=1e-9):
+        raise ParcoursError("Attal : la première année n'est plus la vue figée du chemin.")
+    return [
+        _ligne_passage("droit", f"{an}, ménages", md(m["deltas"]["revenu_disponible_droit"]),
+                       "L2", fichier(ATTAL, "rapport")),
+        _ligne_passage("première année", f"{an}, ménages, perçu : le coût de la série",
+                       md(float(m["reform_cost"])), "L2", fichier(ATTAL, "rapport")),
+        _ligne_passage("vieillie", f"{an}, ménages", md(vieillie[an]), "L2",
+                       fichier(ATTAL_PRED, "chemin annuel")),
+        _ligne_passage("vieillie", f"{an + 1}, ménages", md(vieillie[an + 1]), "L2",
+                       fichier(ATTAL_PRED, "chemin annuel")),
+        _ligne_passage("année pleine", f"{an + 1}, ménages : la mesure joue dès janvier, la "
+                       "première année en est déjà une", md(figee[an + 1]), "L2",
+                       fichier(ATTAL_PRED, "chemin annuel")),
+        _ligne_passage("préenregistré", f"enregistré le {e(case.pre_registered[:10])}, "
+                       f"{commit(case.commit)} ; sans juge à ce jour, il n'est pas noté",
+                       md(case.mechanical_eur), "L2",
+                       fichier(f"chiffrages_preregistres/{case.case}.yaml", "le cas")),
+    ]
+
+
+def _ecart_ppa_textes() -> dict[str, float]:
+    """Les nombres du lien entre le cas, la fiche et la base du moteur, lus dans
+    `reports/ecart_ppa.md` (D-315, D-316)."""
+    text = (ROOT / ECART_PPA).read_text(encoding="utf-8")
+
+    def f(x: str) -> float:
+        return float(x.replace("\u202f", "").replace(" ", "").replace(",", "."))
+
+    cas = re.search(r"Le cas, ([\d ,]+) M€ pour ([\d,]+) points, vaut ([\d,]+) mois", text)
+    fiche = re.search(r"La fiche, ([\d ]+) M€ en année pleine pour ([\d,]+) points.*?le "
+                      r"moteur en a \*\*([\d,]+)\*\*", text)
+    annee = re.search(r"\| L'année : [^|]*\| ([\d,]+) \| \+(\d+) % \|", text)
+    total = re.search(r"\| \*\*Le rapport à la fiche, en 2026\*\* \| \*\*([\d,]+)\*\*", text)
+    if not (cas and fiche and annee and total):
+        raise ParcoursError(f"{ECART_PPA} ne donne plus le lien du cas à la fiche.")
+    return {"cas": f(cas[1]), "taux_cas": f(cas[2]), "mois_cas": f(cas[3]),
+            "fiche_pleine": f(fiche[1]), "taux_fiche": f(fiche[2]), "base": f(fiche[3]),
+            "log_annee": f(annee[1]), "log_total": f(total[1])}
+
+
+def passage_ppa() -> tuple[list[list[str]], str]:
+    from impots import preregistration as pr
+
+    rep = lire(PPA)
+    m, _ = menages_entreprises(rep)
+    s = -1.0
+    d = m["deltas"]
+    years = {y["year"]: y for y in lire(PPA_PRED)["years"]}
+    an = min(years)
+    case = pr.load("plf2027_art_74_ppa")
+    g = pr.grade(case)
+    revu = pr.load("plf2027_art_74_ppa_vieilli")
+    gr = pr.grade(revu)
+    lignes = [
+        _ligne_passage("droit", f"{an}, la prime seule", meur(s * d["ppa_droit"]), "L2",
+                       fichier(PPA, "rapport")),
+        _ligne_passage("perçu", f"{an}, la prime seule", meur(s * d["ppa"]), "L2",
+                       fichier(PPA, "rapport")),
+        _ligne_passage("première année", f"{an}, perçu, CRDS comprise : le coût de la série",
+                       meur(s * float(m["reform_cost"])), "L2", fichier(PPA, "rapport")),
+        _ligne_passage("vieillie", f"{an}", meur(s * years[an]["mechanical_aged_eur"]), "L2",
+                       fichier(PPA_PRED, "chemin annuel")),
+        _ligne_passage("vieillie", f"{an + 1}", meur(s * years[an + 1]["mechanical_aged_eur"]),
+                       "L2", fichier(PPA_PRED, "chemin annuel")),
+        _ligne_passage("année pleine", f"{an + 1}",
+                       meur(s * years[an + 1]["mechanical_frozen_eur"]), "L2",
+                       fichier(PPA_PRED, "chemin annuel")),
+        _ligne_passage("préenregistré", f"enregistré le {e(case.pre_registered[:10])}, "
+                       f"{commit(case.commit)} ; noté contre le juge, "
+                       f"{meur(g.published_eur)} pour l'État en 2027 : hors de sa tolérance",
+                       meur(g.simulated_eur), "L2",
+                       fichier(f"chiffrages_preregistres/{case.case}.yaml", "le cas")),
+        _ligne_passage("révisé", f"enregistré le {e(revu.pre_registered[:10])}, "
+                       f"{commit(revu.commit)}, après l'annexe : "
+                       f"{e(revu.revision['raison'])}", meur(gr.simulated_eur), "L2",
+                       fichier(f"chiffrages_preregistres/{revu.case}.yaml", "le cas")),
+    ]
+    # Le raté du juge, en trois facteurs dont le produit refait le rapport (D-316).
+    t = _ecart_ppa_textes()
+    if not math.isclose(t["cas"], -g.simulated_eur / 1e6, abs_tol=0.1):
+        raise ParcoursError(f"{ECART_PPA} ne parle plus du cas noté.")
+    rapport = g.simulated_eur / g.published_eur
+    mois_fiche = 12 * g.published_eur / (-t["fiche_pleine"] * 1e6)
+    mois = t["mois_cas"] / mois_fiche
+    taux = t["taux_cas"] / t["taux_fiche"]
+    base = t["base"]
+    reste = rapport / (mois * taux * base)
+    part_annee = t["log_annee"] / t["log_total"]
+    texte = f"""
+<p><strong>Le raté du juge, décomposé.</strong> Le cas noté vaut {b(num(rapport, 2), "L2")}
+fois le chiffre officiel. Trois facteurs le refont, chacun lu dans les fichiers :</p>
+<ul>
+<li><strong>les mois</strong> : le cas compte {b(num(t["mois_cas"], 2), "L2")} mois de la
+hausse, la fiche {b(num(mois_fiche, 2), "publié")} ({meur(g.published_eur)} sur
+{num(t["fiche_pleine"], 0)} M€ d'année pleine, comme le relève le comparateur du cas : « {e(case.comparator.net_of.split('. ')[0])} ») :
+un facteur {b(num(mois, 2), "L2")} ;</li>
+<li><strong>le taux</strong> : le cas revalorise de {num(t["taux_cas"], 1)} %, la fiche de
+{num(t["taux_fiche"], 1)} % : un facteur {b(num(taux, 2), "L2")} ;</li>
+<li><strong>la population</strong> : un point de forfait coûte au moteur
+{b(num(base, 2), "vérifié")} fois ce que la fiche suppose, à mois et taux égaux ; de ce
+facteur, {b(pct(part_annee, 0, signed=False), "vérifié")} (en logarithme) tient à l'année,
+la base du moteur de 2024 à 2026, et le reste à la population de 2024 contre la Cnaf
+(effectifs, montants, sensibilité au forfait).</li>
+</ul>
+<p>Leur produit redonne le rapport à {b(pct(reste - 1, 1), "L2")} près
+({fichier(ECART_PPA)}, {fichier("docs/DECISIONS.md", "D-316")}). Le facteur de la population
+a été mesuré sur le commit {commit(_rapport_des_bases()[1])}, avant le but 19 ; le
+non-recours, entré au but 19 (D-370), n'y est pas : sa part dans l'écart n'est chiffrée dans
+aucun fichier, et la page ne la donne pas.</p>
+"""
+    return lignes, texte
+
+
+def _passage() -> str:
+    lignes_ppa, raté = passage_ppa()
+    entetes = ["convention", "quoi, quand", "nombre", "d'où"]
+    return f"""
+<h2 id="passage">Une mesure, plusieurs nombres : le tableau de passage</h2>
+<p>Une même mesure porte plusieurs nombres, qui ne se contredisent pas : chacun répond à une
+convention. Les voici, un mot chacune :</p>
+{_definitions()}
+<h3>Attal, « Droit au brut » (la mesure des ménages)</h3>
+{tableau(entetes, passage_attal())}
+<h3>La prime d'activité, art. 74, au signe de l'article</h3>
+{tableau(entetes, lignes_ppa)}
+<p><strong>Pourquoi le chiffre préenregistré n'est pas celui de la série.</strong> Il est
+celui du code du jour de l'enregistrement ; le modèle a changé depuis : le but 19 a refait
+la population et recalé le non-recours ({fichier("docs/DECISIONS.md", "D-370")}), puis
+refait la série ({fichier("docs/DECISIONS.md", "D-373")}). Le chiffre noté reste celui de
+l'enregistrement : une note ne se refait pas avec le modèle. L'explorateur, retiré du site
+jusqu'à sa grille refaite ({fichier("docs/DECISIONS.md", "D-377")}), donnait encore d'autres
+nombres, d'une grille tournée avant le but 19 ; ils ne sont plus publiés.</p>
+{raté}
+"""
+
+
 # --------------------------------------------------------------------------- #
 # Les juges
 # --------------------------------------------------------------------------- #
@@ -489,15 +669,19 @@ def plages(champ: str, prefixes: tuple[str, ...]) -> list[dict[str, Any]]:
             x = _valeur(r["request"]["reform"], champ)
             cout = float(r["response"]["mechanical_first_year_eur"])
             etude_ = prefix.split("/")[0]
+            borne = "" if cote == "candidat" else f"le {cote} de la plage {_de(CANDIDATS[etude_])}"
             if x in points:
                 if not math.isclose(points[x]["cout"], cout, rel_tol=1e-6, abs_tol=1e3):
                     raise ParcoursError(f"{champ} = {x} : deux plages, deux coûts.")
                 if cote == "candidat":
                     points[x]["qui"] = CANDIDATS[etude_]
+                else:
+                    points[x]["bornes"].append(borne)
                 continue
             points[x] = {"x": x, "cout": cout, "chemin": chemin, "commit": r["commit"],
                          "computed": r["computed"], "vue": r["response"]["population_view"],
-                         "qui": CANDIDATS[etude_] if cote == "candidat" else ""}
+                         "qui": CANDIDATS[etude_] if cote == "candidat" else "",
+                         "bornes": [borne] if borne else []}
     return [points[x] for x in sorted(points)]
 
 
@@ -520,7 +704,8 @@ def _bouton_donnees() -> tuple[dict[str, Any], str]:
         vues |= {p["vue"] for p in pts}
         out[cle] = [{"x": num(p["x"], 3).rstrip("0").rstrip(","),
                      "dit": _dit(cle, p["x"]) + (f", le bouton {_de(p['qui'])}" if p["qui"]
-                                                  else ""),
+                                                  else "")
+                            + "".join(f", {x}" for x in p["bornes"]),
                      "cout": md(p["cout"])} for p in pts]
         out["depart"][cle] = next(k for k, p in enumerate(pts) if p["qui"])
         tables.append(tableau(
@@ -602,6 +787,7 @@ mesures, avec les nombres de la série du {e(rep["computed"])} (commit
 {commit(rep["commit"])}).</p>
 {_attal()}
 {_ppa()}
+{_passage()}
 {_juges()}
 <h2 id="bouton">Le bouton</h2>
 <p>Un coût dépend du bouton qu'on tourne. Choisissez un point : le coût de la première année
@@ -618,7 +804,9 @@ sont sur la page {lien("comparer", "Comparer deux candidats")}.</p>
     return Page(prouve="un coût est la différence de deux passes sur la même population, "
                        "et son erreur est celle de la base qu'il touche.",
                 corps=corps, script=script,
-                style="p.lecture{font-family:system-ui,sans-serif;margin:.2rem 0 1rem}")
+                style=("p.lecture{font-family:system-ui,sans-serif;margin:.2rem 0 1rem}"
+                       "dl.conventions dt{font-weight:700;margin-top:.4rem}"
+                       "dl.conventions dd{margin-left:1.2rem}"))
 
 
 def _json_script(data: Any) -> str:

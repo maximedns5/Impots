@@ -173,6 +173,28 @@ def _sobol_rows(e: dict[str, Any]) -> str:
     return "".join(rows)
 
 
+def _verdict_cellule(verdict: str, p_hausse: float, seuil: float) -> str:
+    """Le verdict et la part qui le fait, sur la même ligne."""
+    if verdict == "—":
+        return "—"
+    return (f"<strong>{esc(verdict)}</strong> : {pct(p_hausse, 2)} des tirages font monter "
+            f"la dette (seuil {pct(seuil, 0)})")
+
+
+def _lecture_cellule(lecture: str, verdict: str) -> str:
+    """La lecture de la boîte, et, quand elle ne dit pas le mot du verdict, pourquoi."""
+    if lecture == verdict or (lecture == "dépend de θ" and verdict == "dépend"):
+        return esc(lecture)
+    if lecture == "dépend de θ":
+        return (f"{esc(lecture)} : des coins de la boîte changent le signe, mais un coin "
+                "n'est pas plus probable que le milieu ; sous les lois du Monte-Carlo, ces "
+                f"tirages-là sont trop rares pour empêcher « {esc(verdict)} ».")
+    return (f"{esc(lecture)} : la boîte ne tire pas le multiplicateur au-delà de son coin "
+            "(θ = 1, le centre de Mésange plus un écart-type), et tous ses coins ont le même "
+            "signe ; le Monte-Carlo tire au-delà, la loi normale du multiplicateur ayant des "
+            f"queues, et assez de ces tirages changent le signe pour faire « {esc(verdict)} ».")
+
+
 def _cote_a_cote(liste: list[dict[str, Any]], seuil: float) -> str:
     rows = []
     for e in liste:
@@ -189,8 +211,9 @@ def _cote_a_cote(liste: list[dict[str, Any]], seuil: float) -> str:
                 f'<td class="num">{pct(mv["p_hausse"], 2)}</td>'
                 f'<td class="num">{pt(mv["quantiles"]["q05"])} · {pt(mv["quantiles"]["q50"])}'
                 f' · {pt(mv["quantiles"]["q95"])}</td>'
-                f"<td>{esc(verdict)}</td>"
-                f"<td>{esc(b['lecture']) if view == 'vieillie' else '—'}</td></tr>")
+                f"<td>{_verdict_cellule(verdict, mv['p_hausse'], seuil)}</td>"
+                f"<td>{_lecture_cellule(b['lecture'], verdict) if view == 'vieillie' else '—'}"
+                "</td></tr>")
     e0 = liste[0]
     b0, m0 = boite(e0["data"]), e0["data"]["monte_carlo"]
     return (

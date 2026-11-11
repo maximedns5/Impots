@@ -265,9 +265,25 @@
       const fin = vieillie.years[n - 1];
       const ref = rapport.delta.vieillie[n - 1];
       const ici = vieillie.delta[n - 1];
-      $("d-tete").textContent = `${etude.candidat} : la dette de ${fin} serait plus haute de ${pt(ici)} de PIB `
-        + `(vue vieillie), contre ${pt(ref)} au cadre des études`
-        + (Math.abs(ici - ref) < 5e-5 ? "." : `, soit ${pt(ici - ref)} de différence.`);
+      $("d-tete").textContent = `${etude.candidat}, dette de ${fin} (vue vieillie) : sans boucle, `
+        + `${pt(marches.cout)} de PIB ; avec la boucle à θ½, ${pt(ici)}. Au cadre des études : `
+        + `${pt(rapport.decomposition.vieillie.cout)} et ${pt(ref)}`
+        + (Math.abs(ici - ref) < 5e-5 ? "." : `, soit ${pt(ici - ref)} de différence avec la boucle.`);
+      // Hors des plages que le gouvernement publie, la page le dit : le rejeu change le PIB et
+      // la dette de référence, pas les revenus de la passe.
+      const pl = donnees.plages;
+      const hors = [];
+      if (pl && (real < pl.croissance[0] - 1e-9 || real > pl.croissance[1] + 1e-9)) {
+        hors.push(`la croissance réelle (${pct(real, 1)}, publiée de ${pct(pl.croissance[0], 1)} à ${pct(pl.croissance[1], 1)})`);
+      }
+      if (pl && (prices < pl.prix[0] - 1e-9 || prices > pl.prix[1] + 1e-9)) {
+        hors.push(`les prix (${pct(prices, 1)}, déflateur publié de ${pct(pl.prix[0], 1)} à ${pct(pl.prix[1], 1)})`);
+      }
+      $("d-alerte").textContent = hors.length
+        ? `Attention : ${hors.join(" et ")} sortent des plages du PLF 2026 pour ${pl.annees[0]} à ${pl.annees[1]}. `
+          + `La dette de référence de ${fin} est ici de ${pct(vieillie.reference[n - 1], 1)} du PIB. Le rejeu ne refait pas `
+          + "le vieillissement des revenus : le coût de chaque année reste celui de la passe, et le nombre n'est qu'un ordre de grandeur."
+        : "";
       const tbody = $("d-marches");
       tbody.textContent = "";
       const r = rapport.decomposition.vieillie;

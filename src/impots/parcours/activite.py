@@ -201,13 +201,90 @@ def impulsions_max(data: dict[str, Any]) -> tuple[float, str, int]:
     return best, instrument, year
 
 
-def non_lus(data: dict[str, Any]) -> list[str]:
-    """Les postes qu'une étude déplace et que la boucle ne lit pas, sur toutes ses années."""
-    seen: dict[str, None] = {}
+#: Les noms que la page donne aux postes que la boucle ne lit pas, au lieu de leur clé.
+POSTES = {
+    "af": "allocations familiales", "ppa": "prime d'activité", "rsa": "RSA",
+    "aide_logement": "aides au logement", "reduction_loyer_solidarite":
+    "réduction de loyer de solidarité", "aefa": "prime de Noël", "cf": "complément familial",
+    "asf": "allocation de soutien familial", "ars": "allocation de rentrée scolaire",
+    "crds_pfam": "CRDS sur les prestations familiales", "crds_mini": "CRDS sur les minima",
+    "impot_societes": "impôt sur les sociétés", "contribution_sociale_is":
+    "contribution sociale sur l'IS", "cebge": "contribution des grandes entreprises",
+    "cvae": "CVAE", "c3s": "C3S", "prelevements_sociaux_capital":
+    "prélèvements sociaux sur le capital",
+}
+
+
+def poste(nom: str) -> str:
+    """Un poste ou un instrument, en mots."""
+    return POSTES.get(nom) or etude.INSTRUMENTS.get(nom, nom)
+
+
+def raison_impulsion(instrument: str) -> str:
+    """Pourquoi la boucle ne lit pas une impulsion qui n'a pas de table dans le rapport :
+    la raison que `retroaction.feedback` donne, dans son ordre. Une impulsion sans table et
+    sans raison connue est refusée : la page ne la dirait pas lue, ni non lue sans motif."""
+    if instrument in retroaction.NOT_ACTIVITY:
+        return retroaction.NOT_ACTIVITY[instrument]
+    spec = mesange.VARIANTS.get(instrument)
+    if spec is not None and spec.targeted:
+        return retroaction.NO_BALANCE_ROW
+    if spec is not None and spec.basis != "ex_ante_fiscal":
+        return retroaction.NOT_FISCAL
+    raise ParcoursError(f"l'impulsion « {instrument} » n'a pas de table dans le rapport, et "
+                        "la page ne sait pas pourquoi la boucle ne la lit pas.")
+
+
+def impulsions_non_lues(data: dict[str, Any], vue: str = VUE) -> dict[str, float]:
+    """Les impulsions qu'un rapport porte et que la boucle ne lit pas, faute de table dans
+    `rejeu.macro.instruments` (`rejouer.loop` ne garde que les impulsions qui en ont une) :
+    par instrument, celle de la première année où elle n'est pas nulle."""
+    lues = data["rejeu"]["macro"]["instruments"]
+    out: dict[str, float] = {}
+    for row in data["years"]:
+        for i, v in (row["statistiques"][vue].get("impulses") or {}).items():
+            if v and i not in lues and i not in out:
+                out[i] = float(v)
+    return out
+
+
+def non_lus(data: dict[str, Any]) -> dict[str, str]:
+    """Ce qu'une étude déplace et que la boucle ne lit pas, sur toutes ses années, avec la
+    raison : les impulsions sans table, puis les postes sans variante (`uncovered`)."""
+    seen: dict[str, str] = {}
+    for vue in (VUE, "figee"):
+        for i in impulsions_non_lues(data, vue):
+            seen.setdefault(i, raison_impulsion(i))
     for row in data["years"]:
         for name in (row["statistiques"][VUE].get("uncovered") or {}):
-            seen[name] = None
-    return list(seen)
+            famille = shocks.UNMAPPED.get(name)
+            if famille is None:
+                raise ParcoursError(f"« {name} » non lu, d'une famille que le code ne range "
+                                    "pas.")
+            seen.setdefault(name, f"pas de variante dans Mésange (famille « {famille} », sa "
+                                  "raison est plus haut)")
+    return seen
+
+
+def double_compte_ir(data: dict[str, Any]) -> bool:
+    """Une étude où le revenu imposable répond (C1, qui contient déjà les heures) et où la
+    boucle lit aussi l'impôt sur le revenu dans Mésange : la même réaction peut y être
+    comptée deux fois."""
+    lignes = data["rejeu"]["lignes"] or {}
+    return (any(k.startswith("eti_") for k in lignes)
+            and "impot_sur_le_revenu" in data["rejeu"]["macro"]["instruments"])
+
+
+#: La variante « cotisations sociales salariés » de Mésange, telle que le document la
+#: décrit (G2017/04, § 4.1.4, folio 110, page 111 du PDF) : son champ, et la ligne du
+#: salaire brut de sa table. Écrites ici parce que le PDF n'est pas dans le dépôt ;
+#: `tests/test_parcours_activite.py` les relit dans le PDF quand il est là.
+COTISATIONS_SALARIES = {
+    "folio": 110,
+    "champ": ("Le choc consiste à réduire de façon permanente les cotisations acquittées "
+              "par les salariés des branches marchandes."),
+    "salaire_brut": {"1": -0.11, "2": -0.67, "3": -1.30, "5": -2.13, "10": -2.49},
+}
 
 
 # --------------------------------------------------------------------------- #
@@ -250,7 +327,8 @@ def _table_rendu(t: dict[str, dict[str, Any]]) -> str:
     for nom, groupe in shocks.UNMAPPED.items():
         groupes.setdefault(groupe, []).append(nom)
     for groupe, noms in groupes.items():
-        rows.append(f"<tr><td>{esc(groupe)} : <small>{esc(', '.join(noms))}</small></td>"
+        rows.append(f"<tr><td>{esc(groupe)} : <small>{esc(', '.join(poste(n) for n in noms))}"
+                    "</small></td>"
                     '<td class="num">—</td><td class="num"><strong>0</strong></td>'
                     '<td class="num">0</td><td class="num">0</td></tr>')
     return ("<table><thead><tr><th>instrument</th><th>solde à 10 ans</th>"
@@ -289,11 +367,134 @@ def _table_lus() -> str:
     rows = []
     for r in rapports():
         lus = [_instrument(i) for i in r["data"]["rejeu"]["macro"]["instruments"]]
-        absents = non_lus(r["data"])
+        raisons: dict[str, list[str]] = {}
+        for nom, raison in non_lus(r["data"]).items():
+            raisons.setdefault(raison, []).append(poste(nom))
+        absents = "".join(f"<li>{esc(', '.join(noms))} : <small>{esc(clair(raison))}</small>"
+                          "</li>" for raison, noms in raisons.items())
         rows.append(f"<tr><td>{esc(r['nom'])}</td><td>{esc(', '.join(lus) or 'aucun')}</td>"
-                    f"<td>{esc(', '.join(absents) or 'aucun')}</td></tr>")
-    return ("<table><thead><tr><th>étude</th><th>lu par la boucle</th><th>non lu : va à la "
-            "dette entier</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table>")
+                    f"<td>{'<ul>' + absents + '</ul>' if absents else 'aucun'}</td></tr>")
+    return ("<table><thead><tr><th>étude</th><th>lu par la boucle : a sa table dans le "
+            "rapport</th><th>non lu : va à la dette entier, et pourquoi</th></tr></thead>"
+            "<tbody>" + "".join(rows) + "</tbody></table>")
+
+
+def _carbone() -> str:
+    """Les variantes de Mésange qu'une étude pousse et que la boucle refuse de lire : la
+    taxe carbone, nommée, avec l'étude, l'impulsion et la raison du code."""
+    blocs = []
+    for instrument, raison in retroaction.NOT_ACTIVITY.items():
+        spec = mesange.VARIANTS.get(instrument)
+        if spec is None:
+            raise ParcoursError(f"« {instrument} » n'est pas une variante de Mésange.")
+        qui = []
+        for r in rapports():
+            imp = impulsions_non_lues(r["data"], "figee").get(instrument)
+            if imp:
+                qui.append(f"{esc(r['nom'])} en pousse une, {md(imp)} la première année "
+                           f"(vue figée, {fichier(r['chemin'], 'rapport')})")
+        blocs.append(
+            f"<p><strong>La variante « {esc(spec.shock)} »</strong>, que l'outil lit pour "
+            f"{esc(_instrument(instrument))}. "
+            + ("; ".join(qui) + ". " if qui else "Aucune étude publiée ne la pousse. ")
+            + "La boucle ne la lit pas, et le code dit pourquoi : « "
+            f"{esc(raison)} » ({fichier('src/impots/predictif/retroaction.py')}, "
+            "<code>NOT_ACTIVITY</code>). Le code qui lit Mésange ajoute : « "
+            f"{esc(spec.caveat)} » Ce coût va donc à la dette entier, sans effet sur le PIB "
+            "ni recette induite ; ce n'est pas une mesure de l'effet d'une taxe carbone, "
+            "c'est l'absence de lecture.</p>")
+    return "".join(blocs)
+
+
+def _cotisations_salaries() -> str:
+    """Ce que suppose la table des cotisations des salariés quand une étude la lit."""
+    if "cotisations_salaries" not in tables():
+        return ""
+    v = COTISATIONS_SALARIES
+    etudes_ = []
+    for r in boucles():
+        if "cotisations_salaries" not in r["data"]["rejeu"]["macro"]["instruments"]:
+            continue
+        best = max((abs(row["statistiques"][VUE]["impulses"].get("cotisations_salaries", 0.0))
+                    / y * 100.0, int(row["year"]))
+                   for row, y in zip(r["data"]["years"], rejouer.reference_path(
+                       r["data"]["rejeu"], r["data"]["rejeu"]["start"],
+                       len(r["data"]["years"]))[0], strict=True))
+        etudes_.append(f"{esc(r['nom'])} {fr(best[0], 2)} points ({best[1]})")
+    brut = v["salaire_brut"]
+    return (
+        "<p><strong>La table des cotisations des salariés, et ce qu'elle suppose.</strong> "
+        f"Mésange la décrit ainsi (folio {v['folio']}) : « {esc(v['champ'])} » La variante "
+        "porte donc sur les salariés des branches marchandes. Le bouton des études, lui, "
+        "multiplie les barèmes salariés de la CNAV et de l'Agirc-Arrco "
+        f"({fichier('src/impots/engine/reforms.py')}, <code>ECHELLE_KNOBS</code>) : il "
+        "touche tous les salariés qui les paient, y compris hors des branches marchandes "
+        "(associations, et agents publics non titulaires pour la part CNAV). Dans la "
+        "variante, le salaire brut baisse : "
+        + " ; ".join(f"{fr(brut[h], 2)} % à {h} an{'s' if h != '1' else ''}" for h in brut)
+        + " ; une part de la baisse des cotisations revient aux employeurs. Le coût que "
+        f"l'outil chiffre ({lien('cout', 'page 3')}) tient le salaire brut fixe : tout va au "
+        "salaire net. La table est donc lue pour un choc qui n'a ni le même champ ni la "
+        "même incidence. Elle est d'un point de PIB, et la boucle la suppose linéaire bien "
+        "au-delà : plus grande impulsion lue, en points de PIB, "
+        + esc(" ; ".join(etudes_)) + ". Aucun nombre ne corrige ces écarts ; ils sont "
+        "dits ici, pas mesurés.</p>\n")
+
+
+def _double_compte() -> str:
+    noms = [r["nom"] for r in boucles() if double_compte_ir(r["data"])]
+    if not noms:
+        return ""
+    return (
+        "<p><strong>Un double compte possible.</strong> Pour "
+        + esc(etude._et(noms)) + ", la réponse du revenu imposable (C1, "
+        f"{lien('comportements', 'page 4')}) contient déjà les heures travaillées : "
+        "l'élasticité est mesurée sur le revenu déclaré, toutes réactions comprises. La "
+        "boucle applique en plus le multiplicateur de l'impôt sur le revenu de Mésange, qui "
+        "passe lui aussi par l'emploi et l'activité. La même réaction peut donc être comptée "
+        "deux fois, une fois dans le coût après comportements, une fois dans les recettes "
+        "induites ; l'outil ne mesure pas ce recouvrement. Et la réforme porte sur le haut "
+        "de la distribution, là où la population simulée est la plus faible : peu de foyers "
+        "tirés, aucun revenu du capital ("
+        f"{lien('erreur', 'Où l’outil se trompe')}).</p>\n")
+
+
+POSTES_TVA = {"energie": "l'énergie", "carburants": "les carburants"}
+
+
+def _tva_ciblee() -> str:
+    """Les études dont une mesure baisse la TVA d'un seul poste (`tva_postes`) : la boucle
+    la lit avec la table de la TVA, celle d'une hausse uniforme de son taux."""
+    noms = []
+    for r in boucles():
+        dossier = Path(r["chemin"]).parent.name
+        prog = json.loads((ROOT / "programmes" / (json.loads(
+            (ROOT / "etudes" / f"{dossier}.json").read_text(encoding="utf-8"))["programme"]
+            + ".json")).read_text(encoding="utf-8"))
+        postes = sorted({k for m in prog["mesures"]
+                         for k in ((m.get("chiffrage") or {}).get("reforme") or {})
+                         .get("tva_postes", {})})
+        if postes and "tva" in r["data"]["rejeu"]["macro"]["instruments"]:
+            noms.append(f"{r['nom']} (TVA sur {etude._et([POSTES_TVA.get(k, k) for k in postes])})")
+    if not noms:
+        return ""
+    return (" " + esc(etude._et(noms)) + " baissent la TVA d'un seul poste : c'est une "
+            "impulsion de TVA, lue avec la table de la TVA, qui est celle d'un changement "
+            "uniforme de son taux dans Mésange ; la boucle ne distingue pas le poste.")
+
+
+#: Les mots du code que la page traduit quand elle cite une phrase du code.
+TRADUCTIONS = {
+    "M4 dira si celle de la CSG les porte": ("une étape à venir du projet dira si celle "
+                                             "de la CSG les porte"),
+}
+
+
+def clair(texte: str) -> str:
+    texte = " ".join(str(texte).split())
+    for code, mots in TRADUCTIONS.items():
+        texte = texte.replace(code, mots)
+    return texte
 
 
 def _table_statique() -> str:
@@ -304,14 +505,18 @@ def _table_statique() -> str:
         d = r["data"]
         an = d["years"][-1]["year"]
         variante = d["lectures"]["variante_salariale"]["boite"][VUE]["theta"]
+        sans = d["lectures"]["decomposition"][VUE]["cout"]
         rows.append(
             f"<tr><td>{esc(r['nom'])} ({an})</td>"
-            + "".join(f'<td class="num">{pt(temoin(d, p))}</td>' for p in rejouer.PERSISTENCES)
+            f'<td class="num"><strong>{pt(sans)}</strong></td>'
+            + "".join(f'<td class="num">{"<strong>" if p == rejouer.READ else ""}'
+                      f'{pt(temoin(d, p))}{"</strong>" if p == rejouer.READ else ""}</td>'
+                      for p in rejouer.PERSISTENCES)
             + f'<td class="num">{pt(dernier(d, macro=0.0))}</td>'
             f'<td class="num">{pt(dernier(d, macro=1.0))}</td>'
             f'<td class="num">{pt(variante)}</td></tr>')
-    return ("<table><thead><tr><th>étude</th><th>lue, θ½</th><th>éteinte, θ½</th><th>tenue, "
-            "θ½</th><th>lue, θ = 0</th><th>lue, θ = 1</th><th>variante salariale, lue, θ½"
+    return ("<table><thead><tr><th>étude</th><th>sans boucle</th><th>lue, θ½</th>"
+            "<th>éteinte, θ½</th><th>tenue, θ½</th><th>lue, θ = 0</th><th>lue, θ = 1</th><th>variante salariale, lue, θ½"
             "</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table>")
 
 
@@ -355,7 +560,7 @@ def page() -> Page:
     mult = _yaml(MULTIPLIERS)
     sd = sorted({e["table"]["sd"] for e in t.values()})
     cot = t.get("cotisations_salaries")
-    hors = [k for k in mesange.VARIANTS if k not in t]
+    hors = [k for k in mesange.VARIANTS if k not in t and k not in retroaction.NOT_ACTIVITY]
     attal = next((r for r in boucles() if "attal" in r["chemin"]), None)
     exemple = ""
     premier = min(int(r["data"]["years"][0]["year"]) for r in boucles())
@@ -395,24 +600,26 @@ def page() -> Page:
         "refuse de se construire. La variante salariale n'est imprimée qu'à 1, 5 et 10 ans ; "
         "l'astérisque marque les horizons interpolés (D-349).</p>\n"
         + _table_mesange(t)
+        + _cotisations_salaries()
         + "<p>Mésange imprime ces chocs « de façon permanente, à taux d'intérêt réels "
         "constants et à taux de change nominaux constants », sans réaction de la politique "
         f"budgétaire ni monétaire ({fichier(MULTIPLIERS)}). Ses autres variantes, que "
         "l'outil lit dans le PDF mais qu'aucune étude publiée ne fait tourner, ne sont pas "
         "dans un fichier commité et ne sont pas montrées ici : "
         + esc(" ; ".join(mesange.VARIANTS[k].shock for k in hors)) + ".</p>\n"
-        "<h2>La part rendue à dix ans</h2>\n"
+        + _carbone()
+        + "<h2>La part rendue à dix ans</h2>\n"
         "<p>Pour un choc permanent, la part du coût que la croissance rend au bout de dix "
         "ans. Aux bouts de θ, le multiplicateur se déplace d'un écart-type et la part avec "
         "lui, bornée à zéro et au coût. Ce que la boucle ne lit pas rend zéro, quel que soit "
-        f"θ : les postes sans variante dans Mésange ({fichier('src/impots/macro/shocks.py')}, "
-        "<code>UNMAPPED</code>).</p>\n"
+        "θ : les postes sans variante dans Mésange, que le code range en trois familles "
+        f"({fichier('src/impots/macro/shocks.py')}).</p>\n"
         + _table_rendu(t)
         + "<p>C'est ce zéro qui fait qu'un euro d'impôt sur les sociétés rendu pèse plus sur la "
         "dette qu'un euro de cotisations : l'outil ne mesure pas que l'IS ne rapporte pas de "
         "croissance, il ne sait pas le lire (D-356). Les raisons, telles que le code les "
         "donne :</p>\n<ul>"
-        + "".join(f"<li><strong>{esc(g)}</strong> — {esc(r)}</li>"
+        + "".join(f"<li><strong>{esc(g)}</strong> — {esc(clair(r))}</li>"
                   for g, r in shocks.UNMAPPED_REASONS.items())
         + "</ul>\n"
         "<h2>&sigma;, l'écart-type des méta-analyses d'IMK</h2>\n"
@@ -444,6 +651,11 @@ def page() -> Page:
         "candidat à l'autre tant que la boucle ne lit pas les impôts des entreprises "
         f"(D-358) ; la page {lien('comparer')} le dit.</p>\n"
         + _table_lus()
+        + "<p>Est lu ce qui a sa table dans le rapport (<code>rejeu.macro</code>) : la "
+        "boucle ne garde que les impulsions qui en ont une. Une impulsion sans table n'est "
+        "pas lue, même quand Mésange a une variante pour elle ; un poste sans variante non "
+        f"plus.{_tva_ciblee()}</p>\n"
+        + _double_compte()
         + "<h2>Faire varier le multiplicateur</h2>\n"
         f"<p>Le curseur rejoue la dette d'une étude, de {premier} à {fin}, depuis son rapport : les "
         "coûts de chaque année, les impulsions par instrument, et la table ci-dessus. "

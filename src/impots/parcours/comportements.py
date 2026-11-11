@@ -55,6 +55,63 @@ ROLES = {
 }
 
 
+#: Le verdict de la relecture adverse d'une ligne, en mots (`store.LOADABLE_VERDICTS` :
+#: seuls ces deux-là laissent une ligne se charger).
+VERDICTS = {
+    "CONFIRMED": "la valeur et sa citation sont confirmées",
+    "SCOPE_PROBLEM": ("la valeur tient, mais la citation est à reprendre : le texte cité ne "
+                      "dit pas exactement, ou pas à la page dite, ce que la ligne en lit "
+                      "(un défaut de documentation, pas un nombre faux)"),
+}
+
+#: La note de support d'une étude (`behavioural.grading`), en mots.
+NOTES = {
+    "in-support": "dans l'étendue estimée",
+    "illustrative": "extrapolée",
+    "no-evidence": "aucun canal",
+}
+
+#: Les liens du magasin qui ne mènent plus à leur article, et le bon, trouvé le
+#: 2026-11-11. Le YAML n'est pas changé ici ; une correction dont le lien a disparu du
+#: magasin est refusée, pour qu'elle ne survive pas à la réparation du YAML.
+LIENS_CORRIGES = {
+    "https://www.strategie.gouv.fr/publications/rapport-groupe-dexperts-smic-2025": (
+        "https://www.vie-publique.fr/files/rapport/pdf/301429_0.pdf#page=152",
+        "l'adresse de France Stratégie répond 404 ; le rapport du 25 novembre 2025 est "
+        "publié par vie-publique.fr, la courbe à la p. 152 du PDF"),
+    "https://www.insee.fr/fr/statistiques/fichier/1377767/ES429F.pdf": (
+        "https://www.insee.fr/fr/statistiques/1377396?sommaire=1377415",
+        "l'adresse citée mène à un autre article du même numéro (ES429F, sur les "
+        "donations) ; l'article d'Économie et Statistique n° 429-430 est celui de Bunel, "
+        "Gilles et L'Horty (2009), ES429D, dont la version anglaise est parue dans Fiscal "
+        "Studies en 2012"),
+}
+
+#: Les mots du code que la page traduit quand elle cite le magasin.
+TRADUCTIONS = {
+    "Choix du propriétaire sur R5 de `docs/M0_PHASE11.md`":
+        ("Choix du propriétaire du dépôt sur la cinquième réserve de la phase 11, "
+         "l'autofinancement des baisses ciblées de cotisations (docs/M0_PHASE11.md)"),
+    "(`SelfFinancingOutOfRange`)": "et dit pourquoi",
+    " (`behavioural.dividendes`)": " par le code du dépôt",
+}
+
+
+def clair(texte: str) -> str:
+    texte = " ".join(str(texte).split())
+    for code, mots in TRADUCTIONS.items():
+        texte = texte.replace(code, mots)
+    return texte
+
+
+def lien_article(url: str) -> tuple[str, str]:
+    """Le lien à afficher pour un article du magasin, et la note quand il a été corrigé."""
+    if url in LIENS_CORRIGES:
+        bon, pourquoi = LIENS_CORRIGES[url]
+        return bon, f" (lien corrigé : {pourquoi})"
+    return url, ""
+
+
 def _numero(cle: str) -> str:
     return "C" + cle.split("_")[0][1:]
 
@@ -81,6 +138,11 @@ def magasin() -> dict[str, Any]:
                            "page": " ".join(str((raw.get("source") or {}).get("citation", "")).split())}
         for key, reason in (doc.get("removed") or {}).items():
             mortes.append({"cle": key, "fichier": chemin, "raison": " ".join(str(reason).split())})
+    urls = {e["p"].source.url for e in lignes.values()}
+    perimes = sorted(set(LIENS_CORRIGES) - urls)
+    if perimes:
+        raise ParcoursError(f"liens corrigés que le magasin ne cite plus : {perimes} ; retirer "
+                            "la correction.")
     return {"lignes": lignes, "mortes": mortes}
 
 
@@ -195,21 +257,27 @@ def _fourchette(p: store.Parameter) -> str:
 
 def _ligne(key: str, entry: dict[str, Any]) -> str:
     p: store.Parameter = entry["p"]
-    citation = entry["page"].rstrip(". ")
-    article = (source(p.source.url, citation) if p.source.url
-               else f"<em>pas d'article</em> : {esc(citation)}")
+    citation = clair(entry["page"]).rstrip(". ")
+    if p.source.url:
+        url, corrige = lien_article(p.source.url)
+        article = source(url, citation) + esc(corrige)
+    else:
+        article = f"<em>pas d'article</em> : {esc(citation)}"
+    if p.verifier.verdict not in VERDICTS:
+        raise ParcoursError(f"{key} : verdict « {p.verifier.verdict} » que la page ne sait "
+                            "pas dire.")
     theta = ("" if not p.is_open else
              f" θ = 1 au {'haut' if p.theta_one == 'high' else 'bas'} : "
-             f"{esc(p.theta_reason)}")
+             f"{esc(clair(p.theta_reason))}")
     leviers = ", ".join(p.responds_to_knobs) or "aucun"
     return (f'<li><p><code>{esc(key)}</code> — <strong class="num">{_fourchette(p)}</strong> '
             f"(bas ; centre ; haut).{theta}</p>"
-            f"<p>{article}. Vérification adverse : {esc(p.verifier.verdict or '')} "
-            f"({esc(p.verifier.date)}). Leviers qui l'ouvrent : <code>{esc(leviers)}</code>. "
+            f"<p>{article}. Relecture adverse du {esc(p.verifier.date)} : "
+            f"{esc(VERDICTS[p.verifier.verdict])}. Leviers qui l'ouvrent : <code>{esc(leviers)}</code>. "
             f"{fichier(entry['fichier'])}</p>"
             f"<details><summary>Ce qu'elle mesure, et sa limite</summary>"
-            f"<p>{esc(' '.join(p.applies_to.split()))}</p>"
-            + (f"<p>{esc(' '.join(p.note.split()))}</p>" if p.note else "")
+            f"<p>{esc(clair(p.applies_to))}</p>"
+            + (f"<p>{esc(clair(p.note))}</p>" if p.note else "")
             + "</details></li>")
 
 
@@ -257,12 +325,18 @@ def _matrice() -> str:
             else:
                 cells.append(f'<td>fermé <sup>{messages[etat["message"]]}</sup></td>')
         rows.append(f"<tr><td>{esc(o['nom'])}<br><small>{fichier(o['chemin'], 'rapport')}"
-                    f"</small></td>" + "".join(cells) + f"<td>{esc(o['grade'])}</td></tr>")
+                    f"</small></td>" + "".join(cells) + f"<td>{esc(_note(o['grade']))}</td></tr>")
     notes = "".join(f"<li value=\"{n}\">{esc(m)}</li>" for m, n in messages.items())
     return ("<table><thead><tr><th>étude</th>" + tete + "<th>note de support</th></tr></thead>"
             "<tbody>" + "".join(rows) + "</tbody></table>"
             "<p>Pourquoi un canal reste fermé, dans les mots du rapport :</p><ol>" + notes
             + "</ol>")
+
+
+def _note(grade: str) -> str:
+    if grade not in NOTES:
+        raise ParcoursError(f"note de support « {grade} » que la page ne sait pas dire.")
+    return NOTES[grade]
 
 
 def _regles() -> str:
@@ -365,9 +439,10 @@ def page() -> Page:
                    f"{fr(p.central, 2)}, entre {fr(p.low, 2)} et {fr(p.high, 2)} : ces trois "
                    f"nombres sont ceux de {source(p.source.url, eti['page'].rstrip('. '))}, cités dans "
                    f"{fichier(eti['fichier'])}. La passe sur la population calcule une seule "
-                   "somme, A_haut : ce que la recette perdrait si l'élasticité valait un. La "
-                   "recette du canal est l'élasticité fois cette somme. Changer d'article change "
-                   "la bande ; changer l'outil ne change que A_haut.</p>\n")
+                   "somme, notée A<sub>haut</sub> : ce que la recette perdrait si l'élasticité "
+                   "valait un. La recette du canal est l'élasticité fois cette somme. Changer "
+                   "d'article change la bande ; changer l'outil ne change que cette somme."
+                   "</p>\n")
     corps = (
         "<h2>D'où vient une bande</h2>\n"
         f"<p>Le coût d'une mesure se chiffre d'abord à comportements inchangés (page "
@@ -397,10 +472,12 @@ def page() -> Page:
         + _regles()
         + "<p>Dans les études publiées :</p>\n"
         + _matrice()
-        + "<p>La note de support dit si la réforme reste dans l'étendue des réformes qui ont "
-        "servi à estimer l'élasticité ; « illustrative » veut dire qu'elle en sort : la bande "
-        "de la première année est alors élargie et signalée comme une extrapolation. "
-        "« no-evidence » veut dire qu'aucun canal ne couvre la mesure, qui reste mécanique.</p>\n"
+        + f"<p>La note de support ({fichier('src/impots/behavioural/grading.py')}) dit si la "
+        f"réforme reste dans l'étendue des réformes qui ont servi à estimer l'élasticité : "
+        f"« {NOTES['in-support']} ». « {NOTES['illustrative']} » veut dire qu'elle en sort : "
+        "la bande de la première année est alors élargie et signalée comme une "
+        f"extrapolation. « {NOTES['no-evidence']} » veut dire qu'aucun canal ne couvre la "
+        "mesure, qui reste mécanique.</p>\n"
         "<p>Pourquoi l'offre de travail ne s'ouvre pas pour les cotisations des salariés : "
         f"« {esc(etude.RAISON_OFFRE_DE_TRAVAIL)} »</p>\n"
         "<h2>Les lignes mortes</h2>\n"
@@ -411,8 +488,10 @@ def page() -> Page:
         "<p>Les pages d'étude donnent un seul θ à tous les comportements. Ici chaque ligne a le "
         "sien, "
         "sur les études dont le rapport porte les statistiques des canaux (les sommes que la "
-        "passe a écrites, année par année). La recette de C1 est ε<sub>tous</sub> × A_bas + "
-        "ε<sub>haut</sub> × A_haut ; celle de C7, la somme des ε<sub>g</sub> × S<sub>g</sub> "
+        "passe a écrites, année par année). La recette de C1 est ε<sub>tous</sub> × "
+        "A<sub>bas</sub> + ε<sub>haut</sub> × A<sub>haut</sub>, où A<sub>bas</sub> et "
+        "A<sub>haut</sub> sont ce que la recette perdrait, sous et dans le dixième le plus "
+        "aisé, si l'élasticité valait un ; celle de C7, la somme des ε<sub>g</sub> × S<sub>g</sub> "
         "des groupes de l'article ; C2 compte ε × ancre + queue emplois. Vue vieillie ; la dette suit, "
         f"multiplicateur à θ½ et persistance lue (le multiplicateur a sa page, {lien('activite')}"
         "). Un coût positif coûte au budget ; une recette positive lui rapporte.</p>\n"

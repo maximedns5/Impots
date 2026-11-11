@@ -108,3 +108,34 @@ def test_le_javascript_redonne_les_rapports_et_rejouer(tmp_path) -> None:
             for view in ("vieillie", "figee"):
                 assert got["delta"][view][-1] == pytest.approx(
                     rapport["taux_marche"][view], abs=1e-12)
+
+
+RESF_PDF = dette.ROOT / "data" / "raw" / dette.RESF["fichier"]
+
+
+@pytest.mark.skipif(not RESF_PDF.exists(),
+                    reason="le RESF 2026 n'est pas dans data/raw : `make data`")
+def test_les_plages_publiees_sont_celles_du_resf() -> None:
+    import pypdf
+
+    texte = pypdf.PdfReader(str(RESF_PDF)).pages[dette.RESF["page"] - 1].extract_text()
+    assert "2024 2025 2026 2027 2028 2029" in texte
+
+    def serie(debut: str) -> tuple[float, ...]:
+        ligne = next(x for x in texte.splitlines() if x.startswith(debut))
+        nombres = [float(t.replace(",", ".")) / 100 for t in ligne.split()
+                   if t.replace(",", "").isdigit()]
+        return tuple(nombres[-5:])
+
+    assert serie("PIB (volume)") == pytest.approx(dette.RESF["pib_volume"])
+    assert serie("Déflateur du PIB") == pytest.approx(dette.RESF["deflateur"])
+
+
+def test_les_curseurs_sont_bornes_et_le_hors_plage_se_dit() -> None:
+    """Constat 6 : croissance 3 % et prix 4 % ne se règlent plus ; hors des plages du
+    PLF 2026, la page le dit, et le cadre central y est nommé."""
+    corps = dette.page().corps
+    assert 'id="d-croissance" min="-0.5" max="2.0"' in corps
+    assert 'id="d-prix" min="0.0" max="3.0"' in corps
+    assert 'id="d-alerte"' in corps and "ne refait pas le vieillissement des revenus" in corps
+    assert "le cadre des études lui-même en sort par les prix" in corps.lower()

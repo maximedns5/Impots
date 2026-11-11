@@ -18,8 +18,9 @@ import json
 import math
 from typing import Any
 
+from impots import etude as et
 from impots import programmes as pg
-from impots.parcours import Page, ParcoursError, fichier, lien, source
+from impots.parcours import Page, ParcoursError, activite, fichier, lien, source
 from impots.parcours.cout import (
     _json_script,
     b,
@@ -41,6 +42,23 @@ ETUDES = ("presidentielle_attal", "presidentielle_labib", "presidentielle_le_pen
 #: Ce que la boucle ne lit pas, par famille de `shocks.UNMAPPED`.
 FAMILLES = {"transfert": "prestations", "fiscalité des entreprises": "impôts des entreprises",
             "revenus du capital": "prélèvements sur le capital"}
+#: Des sources publiques du même engagement, quand celle du programme relevé n'est pas
+#: lisible partout : (programme, mesure) → [(url, texte)]. La source relevée reste dans
+#: `programmes/*.json` ; une entrée dont la mesure ou la source relevée a changé est refusée.
+AUSSI = {
+    ("tondelier", "tranche_ir_60"): {
+        "releve": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
+        "pourquoi": "RT en français, la source relevée, est bloqué dans l'Union européenne",
+        "sources": (
+            ("https://monvote2027.fr/candidat/tondelier",
+             "MonVote2027, fiche de Marine Tondelier, qui cite le programme « Pour une "
+             "prospérité écologique » (juillet 2026) : « créer une tranche à 60 % au-delà de "
+             "250 000 euros annuels »"),
+            ("https://lesecologistes.fr/pages/6ImK65GKUnvibm33WGkjkj/projet-2027",
+             "Les Écologistes, le projet 2027, la page que cette fiche cite"),
+        ),
+    },
+}
 #: Un montant sous ce seuil, en euros, est « rien » : sous la résolution d'une impulsion
 #: (`shocks.MINIMUM_IMPULSE_EUR` vaut 100 M€ ; on garde ici le million).
 RIEN_EUR = 1e6
@@ -78,10 +96,19 @@ def candidat(nom: str) -> dict[str, Any]:
         raise ParcoursError(f"{nom} : le chemin annuel ne part pas du coût de la première "
                             "année.")
     stats = first["statistiques"]["figee"]
-    impulses = {k: float(v) for k, v in stats["impulses"].items()}
+    # Est lu ce qui a sa table dans le rapport : `rejouer.loop` ne garde que ces impulsions.
+    tables = pr["rejeu"]["macro"]["instruments"]
+    impulses = {k: float(v) for k, v in stats["impulses"].items() if k in tables}
+    sans_table = {k: float(v) for k, v in stats["impulses"].items()
+                  if k not in tables and v}
     lu = sum(impulses.values())
     non_lu = cost - lu
     familles: dict[str, float] = {}
+    raisons: dict[str, str] = {}
+    for key, v in sans_table.items():
+        nom_ = INSTRUMENTS_NON_LUS.get(key, et.INSTRUMENTS.get(key, key))
+        familles[nom_] = v
+        raisons[nom_] = activite.raison_impulsion(key)
     for key in stats["uncovered"]:
         fam = shocks.UNMAPPED.get(key)
         if fam is None:
@@ -92,7 +119,7 @@ def candidat(nom: str) -> dict[str, Any]:
     elif abs(cost_f) > RIEN_EUR:
         raise ParcoursError(f"{nom} : un coût des entreprises que la boucle dirait lire.")
     reste = non_lu - sum(familles.values())
-    autres = [k for k in familles if k != "impôts des entreprises"]
+    autres = [k for k in familles if k != "impôts des entreprises" and k not in raisons]
     if len(autres) == 1:
         familles[autres[0]] = reste
     elif abs(reste) > RIEN_EUR:
@@ -120,25 +147,54 @@ def candidat(nom: str) -> dict[str, Any]:
         "sans_boucle": float(dec["cout"]), "activite": float(dec["denominateur"]
                                                              + dec["retroaction"]),
         "impulses": impulses, "lu": lu, "non_lu": non_lu, "familles": familles,
+        "raisons": raisons,
         "bas": bas, "tous": tous, "par_euro": par_euro, "pourquoi": pourquoi,
         "deciles": [r["mean_delta"] for r in deciles[:3]],
         "mesures_chiffrees": [(mm.id, mm.libelle, mm.sources[0].url, mm.sources[0].date)
                               for mm in prog.chiffrees()],
+        "aussi": _aussi(prog),
     }
+
+
+#: Le nom d'une impulsion sans table, sur cette page.
+INSTRUMENTS_NON_LUS = {"taxe_carbone": "accises sur l'énergie"}
+
+
+def _aussi(prog: Any) -> dict[str, list[tuple[str, str]]]:
+    """Les sources accessibles d'une mesure chiffrée, en plus de celle relevée."""
+    out: dict[str, list[tuple[str, str]]] = {}
+    for (slug, mid), entree in AUSSI.items():
+        if slug != prog.slug:
+            continue
+        mesure = next((m for m in prog.chiffrees() if m.id == mid), None)
+        if mesure is None or mesure.sources[0].url != entree["releve"]:
+            raise ParcoursError(f"{slug}, {mid} : la mesure ou sa source relevée a changé ; "
+                                "les sources ajoutées par la page sont à revoir.")
+        out[mid] = [(url, texte) for url, texte in entree["sources"]]
+        out[mid].insert(0, ("", entree["pourquoi"]))
+    return out
 
 
 def _non_lu(c: dict[str, Any]) -> str:
     if not c["familles"] and abs(c["non_lu"]) <= RIEN_EUR:
         return "rien"
-    parts = " ; ".join(f"{k} {md(v)}" for k, v in c["familles"].items())
+    parts = " ; ".join(f"{k} {md(v)}" + (f", une impulsion sans table : {c['raisons'][k]}"
+                                          if k in c["raisons"] else "")
+                       for k, v in c["familles"].items())
     return f"{md(c['non_lu'])} ({parts})" if parts else md(c["non_lu"])
+
+
+def _part(c: dict[str, Any]) -> str:
+    """La couverture, à côté de chaque coût : de quoi il est le coût."""
+    return (f"{c['chiffrees']} mesure{'s' if c['chiffrees'] > 1 else ''} sur "
+            f"{c['parametrees']}")
 
 
 def _cellules(c: dict[str, Any]) -> dict[str, str]:
     """Les cellules d'un candidat, en texte simple : ce que le script recopie."""
     return {
         "nom": f"{c['candidat']} ({c['parti']})",
-        "cout": md(c["cout"]),
+        "cout": f"{md(c['cout'])}, pour {_part(c)}",
         "couches": (f"ménages {md(c['cout_m'])} ; entreprises {md(c['cout_f'])}"
                     if c["cout_f"] else "ménages seuls"),
         "couverture": (f"{c['chiffrees']} mesures chiffrées sur {c['parametrees']} "
@@ -155,7 +211,8 @@ def _cellules(c: dict[str, Any]) -> dict[str, str]:
 
 #: Les lignes du tableau des deux candidats : (clé, ce qu'elle dit, étage).
 LIGNES = (
-    ("cout", "Le coût de la première année", "L2"),
+    ("cout", "Le coût de la première année, et pour combien des mesures paramétrées",
+     "L2"),
     ("couches", "dont ménages, entreprises", "L2"),
     ("couverture", "La part du programme chiffrée", "programme"),
     ("sans_boucle", "La dette en 2035, sans aucune boucle", "L2"),
@@ -185,6 +242,14 @@ SCRIPT = """
   montrer();
 })();
 """
+
+
+def _sources_aussi(c: dict[str, Any], mid: str) -> str:
+    if mid not in c["aussi"]:
+        return ""
+    (_, pourquoi), *autres = c["aussi"][mid]
+    return (f"<br><small>{e(pourquoi)} ; le même engagement, ailleurs : "
+            + " ; ".join(source(url, texte) for url, texte in autres) + "</small>")
 
 
 def _menus(cands: list[dict[str, Any]], cells: dict[str, dict[str, str]],
@@ -219,11 +284,10 @@ def page() -> Page:
     attal = par_nom["presidentielle_attal"]
 
     t1 = tableau(
-        ["candidat", "coût de la première année", "chiffrées / paramétrées",
+        ["candidat", "coût de la première année, pour combien de mesures paramétrées",
          "dette 2035 sans boucle", "€ par euro aux 3 premiers déciles"],
         [[f'<a href="{c["nom"]}.html">{e(c["candidat"])}</a>',
-          b(md(c["cout"]), "L2"),
-          b(f"{c['chiffrees']} / {c['parametrees']}", "programme"),
+          b(md(c["cout"]), "L2") + " pour " + b(_part(c), "programme"),
           b(pt(c["sans_boucle"]), "L2", True),
           (b(c["par_euro"], "L2") if c["par_euro"] else e(f"— ({c['pourquoi']})"))]
          for c in cands])
@@ -242,8 +306,8 @@ def page() -> Page:
     sources = tableau(
         ["candidat", "les mesures chiffrées, à la source relevée", "les rapports"],
         [[f'<a href="{c["nom"]}.html">{e(c["candidat"])}</a>, relevé le {e(c["releve"])}',
-          "<br>".join(source(url, f"{lib} ({d})")
-                      for _, lib, url, d in c["mesures_chiffrees"]),
+          "<br>".join(source(url, f"{lib} ({d})") + _sources_aussi(c, mid)
+                      for mid, lib, url, d in c["mesures_chiffrees"]),
           fichier(c["pa"], "première année") + "<br>" + fichier(c["pr"], "chemin annuel")
           + "<br>" + fichier(f"programmes/{c['slug']}.json", "programme")]
          for c in cands])
@@ -252,8 +316,11 @@ def page() -> Page:
 <h2 id="ce-qui-ne-se-compare-pas">Ce qui ne se compare pas</h2>
 <p><strong>Le verdict sur la dette, la probabilité qu'elle monte et la boîte θ ne se
 comparent pas d'un candidat à l'autre.</strong> La boucle macro, qui fait l'essentiel de
-l'incertitude, ne lit que les instruments qui ont une variante dans le modèle Mésange : les
-cotisations, l'impôt sur le revenu, la CSG, la TVA, les accises. Un euro de cotisation rendu
+l'incertitude, ne lit que les instruments dont le rapport porte la table, tirée d'une
+variante du modèle Mésange : les cotisations, l'impôt sur le revenu, la CSG, la TVA. Pas les
+accises sur l'énergie : Mésange a une variante « taxe carbone », mais son solde contient la
+baisse de l'assiette énergie, qui n'est pas un effet de l'activité, et la boucle ne la lit
+pas ({lien("activite", "page 5")}). Un euro de cotisation rendu
 passe par elle et revient en partie par la croissance ; un euro d'impôt des entreprises ou
 de prestation va à la dette entier, faute de mesure, pas parce qu'il ne rapporterait rien
 ({fichier("src/impots/macro/shocks.py")}, {fichier("docs/DECISIONS.md", "D-356 et D-358")}).
@@ -262,11 +329,22 @@ plus un programme pris entier : l'outil n'en chiffre qu'une part, différente po
 Les verdicts restent sur la page de chaque candidat, avec ce qu'ils lisent.</p>
 <p>Ce qui se compare a la même base pour tous : la même population, la même loi, la même
 arithmétique (la série du {e(serie["computed"])}, commit {commit(serie["commit"])}).</p>
+<p><strong>Une asymétrie du modèle, qui ne se voit pas dans les coûts.</strong> Le canal de
+l'offre de travail, qui rend une recette quand le salaire net monte, ne s'ouvre que pour la
+CSG, pas pour les cotisations des salariés : « {e(et.RAISON_OFFRE_DE_TRAVAIL)} »
+({lien("comportements", "page 4")}). Un programme qui baisse la CSG, comme celui de
+{e(par_nom["presidentielle_lisnard"]["candidat"])}, reçoit donc cette recette ; un programme
+qui rend le même salaire net par les cotisations, comme ceux de
+{e(attal["candidat"])} et de {e(par_nom["presidentielle_retailleau"]["candidat"])}, ne la
+reçoit pas. Sur la dette, la comparaison avantage le premier par construction.</p>
 
 <h2 id="deux-candidats">Deux candidats, côte à côte</h2>
 {_menus(cands, cells, "presidentielle_attal", "presidentielle_retailleau")}
-<p>Le coût est celui de la première année, sur le droit et les revenus de 2026, avant tout
-comportement ({lien("cout", "page 3")}). La couverture dit de quoi il est le coût : les
+<p>Le coût est celui de la première année : la population de 2024 au droit de 2026, la
+prestation perçue (non-recours compté), avant tout comportement. Une même mesure porte
+d'autres nombres sous d'autres conventions (le droit, la vue vieillie, l'année pleine, le
+chiffre préenregistré) : la {lien("cout", "page 3")} les range dans un tableau de passage.
+Chaque coût est dit avec sa couverture, parce qu'il n'est le coût que de ces mesures-là. La couverture dit de quoi il est le coût : les
 mesures que l'outil chiffre, sur celles du programme qui énoncent un paramètre
 ({fichier("src/impots/programmes.py")}). La dette sans boucle est la première marche de la
 décomposition : la dette de 2035 si le coût n'avait aucun effet sur l'activité, dans la vue
@@ -292,7 +370,9 @@ n'a pas ce biais.</p>
 reste, qu'elle ne lit pas. « Non lu » n'est pas « nul » : l'outil n'en sait pas l'effet sur
 l'activité, et la dette le porte entier. La dernière colonne dit ce que l'activité change à
 la dette de 2035 à θ½ (le PIB plus haut et les recettes qu'il rend) : elle dépend de ce que
-la boucle lit, et c'est pourquoi elle ne se compare pas ({lien("activite", "page 5")}). Les
+la boucle lit, et c'est pourquoi elle ne se compare pas ({lien("activite", "page 5")}). Est
+lue une impulsion dont le rapport porte la table (<code>rejeu.macro</code>) ; une impulsion
+sans table et un poste sans variante ne le sont pas, et la cellule dit pourquoi. Les
 impulsions et les instruments non couverts sont ceux du chemin annuel, la première année,
 dans la vue figée ; la part « prestations » est le reste, à l'arrondi de la double entrée
 près.</p>

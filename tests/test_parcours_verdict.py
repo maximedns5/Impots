@@ -54,7 +54,9 @@ def test_la_page_porte_les_nombres_des_rapports() -> None:
             assert pt(monte["vues"][view]["quantiles"]["q95"]) in page.corps
             box = verdict.boite(e["data"])["vues"][view]
             assert pt(box["min"]) in page.corps and pt(box["max"]) in page.corps
-        assert f"<td>{montecarlo.verdict(monte)}</td>" in page.corps
+        # Le verdict, et sur la même cellule la part des tirages qui le fait.
+        assert (f"<td><strong>{montecarlo.verdict(monte)}</strong> : "
+                f"{pct(monte['vues']['vieillie']['p_hausse'], 2)} des tirages") in page.corps
     assert "<noscript>" in page.corps and "var PARCOURS_VERDICT" in page.script
 
 
@@ -91,3 +93,11 @@ def test_le_seuil_se_lit_comme_montecarlo(tmp_path) -> None:
     want = [montecarlo.verdict({"vues": {"vieillie": {"p_hausse": p}}}, threshold=s)
             for p, s in seuils]
     assert out == want
+
+
+def test_la_boite_et_le_verdict_s_expliquent_sur_la_ligne() -> None:
+    """Constat 10 : quand la boîte lit « hausse » et le verdict « dépend », la ligne dit
+    pourquoi."""
+    corps = verdict.page().corps
+    assert "la boîte ne tire pas le multiplicateur au-delà de son coin" in corps
+    assert f"<strong>dépend</strong> : {pct(0.8885, 2)} des tirages" in corps
