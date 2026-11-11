@@ -14,7 +14,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| la part chiffrée | +17,11 Md€ | — | +2,28 pt | hausse | hausse |
+| la part chiffrée (2 mesures sur 29 paramétrées, 33 relevées) | +17,11 Md€ | — | +2,28 pt | hausse (100 % des tirages en hausse) | hausse |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -180,7 +180,7 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 | Seniors : seuil « zéro cotisation senior anticipé » (pas de cotisations retraite ni chômage avant l'âge légal si tous les trimestres sont acquis) ; cumul emploi-retraite sans cotisations hors CSG-CRDS, pension minorée de 30 % du revenu d'activité | pension − 30 % du revenu d'activité | refusée, porte `retraites` | Le cumul emploi-retraite et les trimestres acquis relèvent des droits à la retraite : les âges ne bougent pas et les pensions sont des données. |
 | Gains rendus pour moitié aux salariés, pour moitié aux entreprises | ≥ 30 Md€ ; ≈ 500 € par an au salaire médian (TG), « 500 euros par mois » selon Public Sénat : les deux se contredisent | chiffrée | Au salaire médian de 2026 (34 000 € brut par an, 2 243 € nets par mois), supprimer toutes les cotisations retraite salariales rend 3 845 € nets par an (mesuré par le moteur). La moitié des gains rendue aux salariés, environ 500 € par an au salaire médian : l'échelle de 0,87 les rend. La moitié rendue aux entreprises n'a pas de règle (R20, R22). Plage de 1 (la mesure retirée) à 0,805, la règle commune. Les sources se contredisent : 500 € par an (TG), « 500 euros par mois » (Public Sénat). Par mois, ils dépasseraient les 320 € de cotisations retraite salariales au médian : seule la lecture par an se chiffre, et c'est elle qui l'est. |
 | « Choc fiscal » : > 25 Md€ sur le coût du travail (zéro cotisation et baisse des cotisations patronales non contributives) + ≈ 15 Md€ sur la fiscalité de production | 40 Md€ dès le début du quinquennat ; stabilité garantie au moins 5 ans | refusée, porte `donnee_menages` | Une enveloppe de 40 Md€ sans taux : sa part travail passe par le « zéro cotisation » au-delà d'un seuil d'heures, absent de la population, et sa part production ne nomme pas ses impôts. |
-| Suppression de la C3S et de la CVAE ; forfait social maintenu à 20 % sur la participation légale, supprimé sur l'intéressement, la participation supra-légale et l'épargne retraite individuelle ; part industrielle de la CFE exonérée ; CIR sanctuarisé | C3S = 0 ; CVAE = 0 ; forfait social 20 % / 0 % ; CFE industrielle = 0 | chiffrée | La C3S (0,16 % en 2026) et la CVAE sont supprimées sur le droit de 2026, comme dans la mesure L4 de Lisnard, avec les mêmes plages. Le forfait social « maintenu » à 20 % est le droit de 2026 : il ne change rien. La CFE n'a pas de bouton et n'est pas dans la mesure énoncée. |
+| Suppression de la C3S et de la CVAE ; forfait social maintenu à 20 % sur la participation légale, supprimé sur l'intéressement, la participation supra-légale et l'épargne retraite individuelle ; part industrielle de la CFE exonérée ; CIR sanctuarisé | C3S = 0 ; CVAE = 0 ; forfait social 20 % / 0 % ; CFE industrielle = 0 | chiffrée | La C3S (0,16 % en 2026) et la CVAE sont supprimées sur le droit de 2026, comme dans la mesure L4 de Lisnard, avec les mêmes plages. La mesure n'est chiffrée qu'en partie : le forfait social maintenu à 20 % sur la participation légale est le droit de 2026 et ne change rien, mais sa suppression sur l'intéressement, la participation supra-légale et l'épargne retraite, une baisse de recette, n'a pas de bouton et n'est pas chiffrée ; l'exonération de la part industrielle de la CFE non plus. Le coût affiché est celui de la C3S et de la CVAE seules. |
 | Baisse de la fiscalité des entreprises dans le plan du 12/10 (suppression d'impôts de production) | 30 Md€ | refusée, porte `bases_locales` | Une enveloppe de 30 Md€ sans impôt nommé ni taux : au-delà de la C3S et de la CVAE, les impôts de production sont locaux (CFE, foncier), que le moteur ne porte pas. |
 | Baisse des prélèvements des ménages (cotisations sur les heures supplémentaires, facture d'électricité) | 21 Md€ | refusée, porte `donnee_menages` | Une enveloppe de 21 Md€ sans taux, qui passe par les heures supplémentaires, absentes de la population, et par la facture d'électricité, que le moteur ne porte pas. |
 | Transmission du capital productif : droits de mutation calculés à la transmission mais exigibles seulement à la cession | 0 € tant qu'il n'y a pas de cession | refusée, porte `transmission` | Les droits de succession et leur report à la cession demandent un module de transmission. |
@@ -207,7 +207,7 @@ Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait 
 
 ## Ce que le candidat annonce, à part
 
-Le programme annonce lui-même un montant pour 11 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent.
+Le programme annonce lui-même un montant pour 11 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent. Le relevé, fait à la main, ne retient que les montants que le programme attache à une mesure comme un effet annuel ; d'autres montants cités dans le tableau des mesures (des totaux sur plusieurs années, des enveloppes) n'y sont pas, et il peut en avoir manqué (D-378).
 
 | ρ | solde annoncé |
 |---|---|
@@ -223,18 +223,18 @@ La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dan
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée | +16,08 Md€ → +17,11 Md€ | +2,19 pt → +2,28 pt | hausse → hausse |
+| la part chiffrée (2 mesures sur 29 paramétrées, 33 relevées) | +16,08 Md€ → +17,11 Md€ | +2,19 pt → +2,28 pt | hausse → hausse |
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée** : le secteur public câblé (D-346), la CVAE et la C3S déduites de l'IS (D-347), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (2 mesures sur 29 paramétrées, 33 relevées)** : le secteur public câblé (D-346), la CVAE et la C3S déduites de l'IS (D-347), le verdict lu sur le Monte-Carlo (D-345).
 
 Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-354, D-355) : la part d'une correction est l'écart entre la ligne et sa passe sans elle. E1 est le secteur public câblé (D-346), E2 la CVAE et la C3S déduites de l'IS (D-347).
 
 | | correction | la première année | dette à θ½ |
 |---|---|---|---|
-| la part chiffrée | E1 | -1,67 Md€ | -0,07 pt |
-| la part chiffrée | E2 | -990 M€ | -0,35 pt |
+| la part chiffrée (2 mesures sur 29 paramétrées, 33 relevées) | E1 | -1,67 Md€ | -0,07 pt |
+| la part chiffrée (2 mesures sur 29 paramétrées, 33 relevées) | E2 | -990 M€ | -0,35 pt |
 
 E1 et E2 ne se lisent pas de la même façon dans la dette. E1 rend des cotisations des ménages, que la boucle macro lit dans Mésange : sa part porte la croissance et les recettes qu'elle induit. E2 rend de l'IS, un impôt des entreprises qu'aucune variante de Mésange ne porte : sa part va à la dette telle quelle (D-218, D-356). Par euro, E2 paraît donc peser plus sur la dette que E1, sans que l'outil ait mesuré que l'IS rapporte moins de croissance : il ne le mesure pas.
 

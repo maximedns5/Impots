@@ -397,7 +397,8 @@ def test_a_path_of_d349_says_the_monte_carlo_verdict_and_its_readings(lu) -> Non
     text = "\n".join(n.resolve(line) for line in lines)
     row = next(line for line in text.splitlines()
                if line.startswith("| art. 74 du PLF, les aides au logement |"))
-    assert row.endswith("| hausse | hausse |")
+    # The verdict and its share of draws beside it (D-378), then the θ box's reading.
+    assert re.search(r"\| hausse \(\d+\u202f% des tirages en hausse\) \| hausse \|$", row)
     assert "« hausse » quand au moins 90\u202f% des tirages font monter la dette" in text
     section = _section(text, "les aides au logement")
     assert ("**Le verdict**, lu sur le Monte-Carlo (D-345) : elle **augmente la dette** en "
@@ -728,7 +729,9 @@ def _etages(study: etude.Etude, start: str) -> list[tuple[str, bool]]:
 
 @pytest.mark.parametrize("nom, start, expected", [
     ("plfss2027", "| 1 | ", ["L1", "L1", "L2", "L2", "L2"]),
-    ("plfss2027", "| art. 74 du PLF, la prime", ["L2", "publié", "L2"]),
+    # The cost, the published figure, the figure noted when preregistered (D-378), the
+    # debt and the share of draws in which it rises.
+    ("plfss2027", "| art. 74 du PLF, la prime", ["L2", "publié", "L2", "L2", "L2"]),
     ("plfss2027", "Enregistré le", ["L2", "publié", "publié", "L2", "L2", "déclaré"]),
     ("plfss2027", "| Effet macro éteint après trois ans | figée", ["L2", "L2", "L2"]),
     ("plfss2027", "Le projet de loi", ["texte", "texte"]),
@@ -741,7 +744,7 @@ def test_each_answer_says_its_layer(nom, start, expected) -> None:
     found = _etages(etude.definition(nom), start)
     assert [etage for etage, _ in found] == expected
     # Only a gap in the debt is conditional, and each of its numbers is.
-    assert all(conditional == ("Effet macro" in start or ("art. 74" in start and i == 2))
+    assert all(conditional == ("Effet macro" in start or ("art. 74" in start and i >= 3))
                for i, (_, conditional) in enumerate(found))
 
 

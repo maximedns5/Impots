@@ -14,7 +14,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| la part chiffrée | +5,20 Md€ | — | +0,52 pt | dépend | dépend de θ |
+| la part chiffrée (1 mesure sur 6 paramétrées, 14 relevées) | +5,20 Md€ | — | +0,52 pt | dépend (73 % des tirages en hausse) | dépend de θ |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -170,11 +170,11 @@ La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dan
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée | +5,19 Md€ → +5,20 Md€ | +0,52 pt → +0,52 pt | dépend de θ → dépend |
+| la part chiffrée (1 mesure sur 6 paramétrées, 14 relevées) | +5,19 Md€ → +5,20 Md€ | +0,52 pt → +0,52 pt | dépend de θ → dépend |
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée** : le secteur public câblé (D-346), la TVA des ménages au point net (D-348), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (1 mesure sur 6 paramétrées, 14 relevées)** : le secteur public câblé (D-346), la TVA des ménages au point net (D-348), le verdict lu sur le Monte-Carlo (D-345).
 
 Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une seule la touche ; ailleurs, elles ne se séparent pas sans une passe par correction, qui n'est pas faite.
 

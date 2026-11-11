@@ -871,7 +871,12 @@ class _Programme:
                 f"ce qu'elle fait à la dette en {last}. **{AVERTISSEMENT_PROGRAMME}**")
 
     def label(self, entry: dict[str, Any]) -> str:
-        return "la part chiffrée"
+        # The coverage beside every number of a programme, the index's row included: a
+        # reader compares parts, not programmes (D-378).
+        c = self.programme.couverture()
+        return (f"la part chiffrée ({c['chiffrees']} mesure{'s' if c['chiffrees'] > 1 else ''}"
+                f" sur {c['parametrees']} paramétrée{'s' if c['parametrees'] > 1 else ''}, "
+                f"{c['mesures']} relevées)")
 
     def heading(self, entry: dict[str, Any], n: Nombres) -> str:
         return "## La part chiffrée"
@@ -1007,7 +1012,10 @@ class _Programme:
           f"{n(len(couches[-1]['mesures']), 'programme')} de ses mesures. Ces montants ne "
           f"sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part "
           f"qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes "
-          f"publics, positif quand ils s'améliorent.")
+          f"publics, positif quand ils s'améliorent. Le relevé, fait à la main, ne retient que "
+          f"les montants que le programme attache à une mesure comme un effet annuel ; "
+          f"d'autres montants cités dans le tableau des mesures (des totaux sur plusieurs "
+          f"années, des enveloppes) n'y sont pas, et il peut en avoir manqué (D-378).")
         w("")
         w("| ρ | solde annoncé |")
         w("|---|---|")
@@ -1619,12 +1627,26 @@ class Etude:
             w("|---|---|---|---|---|")
         for entry in entries:
             grade = entry["grade"]
+            # The grade is of the number preregistered then, not of this series': the
+            # cell says both, or a −1,10 beside « dans la tolérance » reads as an
+            # agreement it never was (D-378).
             official = "—" if grade is None else (
-                f"{n(fiche._eur(grade.published_eur), 'publié')}, "
-                f"{'dans' if grade.verdict == 'within' else 'hors de'} la tolérance")
+                f"{n(fiche._eur(grade.published_eur), 'publié')} ; noté sur "
+                f"{n(fiche._eur(grade.simulated_eur), 'L2')}, chiffre de son "
+                f"préenregistrement, {'dans' if grade.verdict == 'within' else 'hors de'} "
+                f"la tolérance")
             lead = n(_points(entry["debt"][0]["theta"]), debt_etage(entry["path"]),
                      conditionnel=True)
-            mc = f"{verdict_mc(entry)} | " if read else ""
+            mc = ""
+            if read:
+                monte = entry["path"].get("monte_carlo") or {}
+                share = ((monte.get("vues") or {}).get("vieillie") or {}).get("p_hausse")
+                rise = None if share is None else (
+                    share if entry["sign"] == 1 else 1.0 - share)
+                p_text = "" if rise is None else (
+                    " (" + n(f"{rise:.0%}".replace("%", "\u202f%"), debt_etage(entry["path"]),
+                             conditionnel=True) + " des tirages en hausse)")
+                mc = f"{verdict_mc(entry)}{p_text} | "
             w(f"| {texte.label(entry)} | {n(fiche._eur(entry['cost']), 'L2')} | {official} | "
               f"{lead} | {mc}{verdict(entry['debt'])} |")
         w("")
@@ -1896,17 +1918,35 @@ class Etude:
         which the page read until then (D-356, D-357)."""
         stats = ((entry["path"].get("years") or [{}])[0].get("statistiques") or {})
         impulses = stats.get("figee", {}).get("impulses", {})
-        read = [INSTRUMENTS.get(k, k) for k, v in impulses.items() if v]
+        # Read is what the loop's tables carry (`rejouer.loop` keeps only those): an
+        # impulse outside them, the energy excises (`retroaction.NOT_ACTIVITY`), goes to
+        # the debt whole, and the page said it read (D-378).
+        tables = (((entry["path"].get("rejeu") or {}).get("macro") or {})
+                  .get("instruments") or {})
+        read = [INSTRUMENTS.get(k, k) for k, v in impulses.items() if v and k in tables]
+        unread = [INSTRUMENTS.get(k, k) for k, v in impulses.items()
+                  if v and k not in tables]
         firms = entry["kind"] in ("mixte", "entreprises")
-        if not read and not firms:
+        if not read and not firms and not unread:
             return ""
         if read:
             text = (f" L'effet sur l'activité n'est lu que pour {_et(read)}"
                     + (", pas pour la part des entreprises, qui "
                        "agit sur la dette sans effet sur l'activité." if firms else "."))
+        elif unread and not firms:
+            text = ""
         else:
             text = (" L'outil ne lit aucun effet sur l'activité pour les impôts des "
                     "entreprises : la mesure agit sur la dette sans effet sur l'activité.")
+        if unread:
+            from impots.predictif import retroaction
+
+            raisons = sorted({retroaction.NOT_ACTIVITY[k] for k, v in impulses.items()
+                              if v and k not in tables and k in retroaction.NOT_ACTIVITY})
+            text += (f" {_et(unread)[0].upper()}{_et(unread)[1:]} "
+                     f"{'entrent' if len(unread) > 1 or ' et ' in _et(unread) or _et(unread).startswith('les ') else 'entre'}"
+                     f" dans la dette sans effet sur l'activité"
+                     + (f", car {' ; '.join(raisons)}." if raisons else "."))
         decomposition = (entry["path"].get("lectures") or {}).get("decomposition") or {}
         flat = (decomposition.get("vieillie") or {}).get("cout")
         if read and flat is not None:

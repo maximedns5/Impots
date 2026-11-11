@@ -4,7 +4,7 @@
 
 ## Ce que dit cette étude
 
-La part chiffrée du programme coûte 22,92 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +414 € par an dans le dixième le plus modeste à +916 € dans le dixième le plus aisé, le plus touché étant le 9e dixième (+974 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 4,47 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 100 % des tirages du calcul d'incertitude, et l'outil conclut que cette part du programme augmente la dette. L'effet sur l'activité n'est lu que pour la TVA et les accises sur l'énergie. Sans aucun effet sur l'activité, la dette serait plus haute de 5,91 points de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+La part chiffrée du programme coûte 22,92 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +414 € par an dans le dixième le plus modeste à +916 € dans le dixième le plus aisé, le plus touché étant le 9e dixième (+974 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 4,47 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 100 % des tirages du calcul d'incertitude, et l'outil conclut que cette part du programme augmente la dette. L'effet sur l'activité n'est lu que pour la TVA. Les accises sur l'énergie entrent dans la dette sans effet sur l'activité, car le choc porte sur les volumes d'énergie (folio 120) : l'écart du solde contient la baisse de l'assiette énergie, qui n'est pas un effet de l'activité. Sans aucun effet sur l'activité, la dette serait plus haute de 5,91 points de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
 Selma Labib, NPA-Révolutionnaires, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 7 mesures, dont 1 énonce un paramètre. Cet outil en chiffre 1, la seule qui en énonce un, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
@@ -14,7 +14,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| la part chiffrée | +22,92 Md€ | — | +4,47 pt | hausse | hausse |
+| la part chiffrée (1 mesure sur 1 paramétrée, 7 relevées) | +22,92 Md€ | — | +4,47 pt | hausse (100 % des tirages en hausse) | hausse |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -168,11 +168,11 @@ La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dan
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée | +22,89 Md€ → +22,92 Md€ | +4,47 pt → +4,47 pt | hausse → hausse |
+| la part chiffrée (1 mesure sur 1 paramétrée, 7 relevées) | +22,89 Md€ → +22,92 Md€ | +4,47 pt → +4,47 pt | hausse → hausse |
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée** : le secteur public câblé (D-346), la TVA des ménages au point net (D-348), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (1 mesure sur 1 paramétrée, 7 relevées)** : le secteur public câblé (D-346), la TVA des ménages au point net (D-348), le verdict lu sur le Monte-Carlo (D-345).
 
 Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une seule la touche ; ailleurs, elles ne se séparent pas sans une passe par correction, qui n'est pas faite.
 

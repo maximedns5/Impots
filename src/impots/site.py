@@ -255,11 +255,18 @@ table { border-collapse: collapse; margin: 1rem 0; font-size: .92rem; display: b
   overflow-x: auto; }
 th, td { border-bottom: 1px solid var(--trait); padding: .3rem .5rem; text-align: left;
   vertical-align: top; }
+td code, th code { overflow-wrap: normal; white-space: nowrap; }
+table { background: linear-gradient(to right, var(--fond) 30%, transparent),
+  linear-gradient(to left, var(--fond) 30%, transparent) right,
+  radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.25), transparent),
+  radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.25), transparent) right;
+  background-repeat: no-repeat; background-size: 2rem 100%, 2rem 100%, .8rem 100%, .8rem 100%;
+  background-attachment: local, local, scroll, scroll; }
 blockquote { border-left: 3px solid var(--trait); margin: 1rem 0; padding: 0 1rem;
   color: var(--doux); }
 p.absent { border-left: 3px solid var(--l3); padding-left: .8rem; }
 .nombre { white-space: nowrap; }
-.etage { font: 600 .68rem/1 system-ui, sans-serif; padding: .12rem .3rem;
+.etage { font: 600 .76rem/1 system-ui, sans-serif; padding: .12rem .3rem;
   margin-left: .25rem; border-radius: .25rem; vertical-align: .12em; text-decoration: none;
   color: var(--texte); background: var(--ext); white-space: nowrap; }
 .e-l1 { background: var(--l1); } .e-l2 { background: var(--l2); }
@@ -322,6 +329,15 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
              "coûte une fois les comportements et l'économie pris en compte ; ce qu'elle "
              "fait à la dette dans dix ans. À côté de chaque nombre, son étage de confiance ; "
              "une réponse absente est dite absente, avec sa raison.</p>")
+    if any(study.programme for study in studies):
+        # The review of goal 20: the index sets the candidates side by side, and the
+        # parcours says what of them does not compare (D-378).
+        intro += ("\n<p><strong>Les candidats ne se comparent pas ligne à ligne.</strong> "
+                  "Chaque étude ne chiffre qu'une part du programme, dite à côté de chaque "
+                  "nombre ; la dette et le verdict dépendent de ce que la boucle macro sait "
+                  "lire, qui n'est pas le même d'un candidat à l'autre. Ce qui se compare, "
+                  "et comment : <a href=\"parcours-comparer.html\">comparer deux "
+                  "candidats</a>.</p>")
     if len(codes) > 1:
         # The studies ran on different code (D-336): a reader is told before comparing.
         intro += (f"\n<p><strong>Les études n'ont pas été chiffrées sur le même code</strong>"

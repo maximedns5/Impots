@@ -14,7 +14,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| la part chiffrée | -6,33 Md€ | — | -0,35 pt | dépend | dépend de θ |
+| la part chiffrée (1 mesure sur 26 paramétrées, 40 relevées) | -6,33 Md€ | — | -0,35 pt | dépend (42 % des tirages en hausse) | dépend de θ |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -197,7 +197,7 @@ Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait 
 
 ## Ce que le candidat annonce, à part
 
-Le programme annonce lui-même un montant pour 28 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent.
+Le programme annonce lui-même un montant pour 28 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent. Le relevé, fait à la main, ne retient que les montants que le programme attache à une mesure comme un effet annuel ; d'autres montants cités dans le tableau des mesures (des totaux sur plusieurs années, des enveloppes) n'y sont pas, et il peut en avoir manqué (D-378).
 
 | ρ | solde annoncé |
 |---|---|
@@ -213,17 +213,17 @@ La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dan
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée | -6,61 Md€ → -6,33 Md€ | -0,33 pt → -0,35 pt | dépend de θ → dépend |
+| la part chiffrée (1 mesure sur 26 paramétrées, 40 relevées) | -6,61 Md€ → -6,33 Md€ | -0,33 pt → -0,35 pt | dépend de θ → dépend |
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée** : le secteur public câblé (D-346), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (1 mesure sur 26 paramétrées, 40 relevées)** : le secteur public câblé (D-346), le verdict lu sur le Monte-Carlo (D-345).
 
 Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-354, D-355) : la part d'une correction est l'écart entre la ligne et sa passe sans elle. E1 est le secteur public câblé (D-346), E2 la CVAE et la C3S déduites de l'IS (D-347).
 
 | | correction | la première année | dette à θ½ |
 |---|---|---|---|
-| la part chiffrée | E1 | +2,41 Md€ | +0,09 pt |
+| la part chiffrée (1 mesure sur 26 paramétrées, 40 relevées) | E1 | +2,41 Md€ | +0,09 pt |
 
 ## D'où viennent ces nombres
 

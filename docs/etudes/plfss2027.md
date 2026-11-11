@@ -17,8 +17,8 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | article | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| art. 74 du PLF, la prime d'activité | -557 M€ | -332 M€, hors de la tolérance | -0,16 pt | baisse | baisse |
-| art. 74 du PLF, les aides au logement | -72 M€ | -101 M€, dans la tolérance | -0,07 pt | baisse | baisse |
+| art. 74 du PLF, la prime d'activité | -557 M€ | -332 M€ ; noté sur -887 M€, chiffre de son préenregistrement, hors de la tolérance | -0,16 pt | baisse (0 % des tirages en hausse) | baisse |
+| art. 74 du PLF, les aides au logement | -72 M€ | -101 M€ ; noté sur -78 M€, chiffre de son préenregistrement, dans la tolérance | -0,07 pt | baisse (0 % des tirages en hausse) | baisse |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
