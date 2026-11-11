@@ -45,11 +45,17 @@ def test_les_juges_et_ce_que_vaut_la_note(page: parcours.Page) -> None:
     assert "6 sur 9" in page.corps and "13 mesures" in page.corps
 
 
-def test_le_curseur_choisit_des_points_de_la_grille(page: parcours.Page) -> None:
+def test_le_curseur_choisit_des_points_des_plages(page: parcours.Page) -> None:
     donnees, _ = cout._bouton_donnees()
-    assert len(donnees["cotisations"]) == 5 and len(donnees["ppa"]) == 9
-    assert donnees["cotisations"][-1]["cout"] == "0,00 Md€"  # le point « loi »
-    assert "+59,91 Md€" in page.corps  # l'interpolation de l'explorateur au bouton 0,22
+    # Attal (0 ; 0,22 ; 1) et Retailleau (0,805 ; 0,87 ; 1) sur le même bouton.
+    assert [p["cout"] for p in donnees["cotisations"]] == [
+        "+85,01 Md€", "+66,40 Md€", "+16,66 Md€", "+11,11 Md€", "0,00 Md€"]
+    assert [p["cout"] for p in donnees["tva_energie"]] == [
+        "+16,06 Md€", "+11,64 Md€", "0,00 Md€"]
+    assert donnees["depart"] == {"cotisations": 1, "tva_energie": 1}
+    assert "+66,40 Md€" in page.corps and "+11,64 Md€" in page.corps
+    for ancien in ("explorer.html", "reports/grille", "1,108", "+59,91"):
+        assert ancien not in page.corps
 
 
 def test_nombres_a_la_francaise() -> None:

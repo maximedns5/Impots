@@ -5,7 +5,7 @@ erreur est celle de la base qu'il touche. Deux mesures pas à pas, Attal (« Dro
 et la prime d'activité de l'art. 74 du PLF 2027, chacune lue dans les rapports de la série
 de D-373 ; les juges, lus dans `chiffrages_preregistres/` et notés par
 `preregistration.grade` ; un curseur sur le bouton de deux mesures, qui choisit entre les
-points de la grille de l'explorateur (`reports/grille/`), chiffrés d'avance.
+points des plages des études (`reports/etudes/*/plages/`), chiffrés par la série.
 
 Aucun nombre n'est tapé ici : chacun est lu dans un fichier commité à la construction. Les
 fonctions de mise en forme servent aussi à la page « Comparer ».
@@ -27,8 +27,6 @@ from impots.parcours import DEPOT, ROOT, Page, ParcoursError, fichier, lien, sou
 # --------------------------------------------------------------------------- #
 ATTAL = "reports/etudes/presidentielle_attal/premiere_annee_pres2027_attal_programme.json"
 ATTAL_PRED = "reports/etudes/presidentielle_attal/predictif_pres2027_attal_programme.json"
-ATTAL_PLAGE = ("reports/etudes/presidentielle_attal/plages/"
-               "a16_droit_au_brut__cotisations_salariales_retraite_echelle__{}.json")
 PPA = "reports/etudes/plfss2027/premiere_annee_plf2027_art_74_ppa.json"
 PPA_PRED = "reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json"
 PPA_SCENARIO = "scenarios/plf2027_art_74_ppa.json"
@@ -36,8 +34,6 @@ PPA_ETUDE = "etudes/plfss2027.json"
 VERIFICATION = "reports/verification/grille.json"
 MANIFESTE = "data/raw/MANIFEST.json"
 ECART_PPA = "reports/ecart_ppa.md"
-#: Les deux boutons du curseur : (curseur de la grille, étude, mesure du programme).
-BOUTONS = ("cotisations_retraite", "plf_art_74_ppa")
 
 
 def lire(chemin: str) -> Any:
@@ -454,92 +450,104 @@ l'enregistrement, pas celui de la série ; c'est lui qui sera noté.</p>
 
 
 # --------------------------------------------------------------------------- #
-# Le curseur : le bouton, sur la grille de l'explorateur
+# Le curseur : le bouton, sur les points des plages de la série
 # --------------------------------------------------------------------------- #
-def _points(cid: str) -> tuple[Any, list[dict[str, Any]]]:
-    from impots import grille
+#: Les deux boutons : (clé, champ, plages qui le chiffrent, ce que dit un point, titre).
+#: Les plages sont celles des études (`reports/etudes/*/plages/`), une passe par point, sur
+#: le commit de la série ; Attal et Retailleau règlent le même bouton, et leurs points se
+#: rangent sur un même curseur.
+BOUTONS = (
+    ("cotisations", "cotisations_salariales_retraite_echelle",
+     ("presidentielle_attal/plages/a16_droit_au_brut",
+      "presidentielle_retailleau/plages/r19_gains_rendus_moitie"),
+     "Cotisations retraite des salariés : la part gardée"),
+    ("tva_energie", "tva_postes.energie",
+     ("presidentielle_le_pen/plages/lp20_tva_energie",),
+     "TVA sur l'énergie : le taux"),
+)
+CANDIDATS = {"presidentielle_attal": "Attal", "presidentielle_retailleau": "Retailleau",
+             "presidentielle_le_pen": "Le Pen"}
 
-    curseurs, _, _ = grille.charger()
-    c = curseurs[cid]
-    pts = grille.points_de(c)
-    for p in pts:
-        if p["report"]["dirty"]:
-            raise ParcoursError(f"{cid} : un point de la grille sur un arbre sale.")
-    return c, pts
+
+def _valeur(reforme: dict[str, Any], champ: str) -> float:
+    v: Any = reforme
+    for part in champ.split("."):
+        v = v[part]
+    return float(v)
+
+
+def plages(champ: str, prefixes: tuple[str, ...]) -> list[dict[str, Any]]:
+    """Les points chiffrés d'un bouton, rangés par valeur ; un point deux fois chiffré doit
+    redonner le même coût."""
+    points: dict[float, dict[str, Any]] = {}
+    for prefix in prefixes:
+        for cote in ("bas", "candidat", "haut"):
+            chemin = f"reports/etudes/{prefix}__{champ}__{cote}.json"
+            r = lire(chemin)
+            if r["dirty"] or r["champ"] != champ:
+                raise ParcoursError(f"{chemin} : point sale, ou d'un autre champ.")
+            x = _valeur(r["request"]["reform"], champ)
+            cout = float(r["response"]["mechanical_first_year_eur"])
+            etude_ = prefix.split("/")[0]
+            if x in points:
+                if not math.isclose(points[x]["cout"], cout, rel_tol=1e-6, abs_tol=1e3):
+                    raise ParcoursError(f"{champ} = {x} : deux plages, deux coûts.")
+                if cote == "candidat":
+                    points[x]["qui"] = CANDIDATS[etude_]
+                continue
+            points[x] = {"x": x, "cout": cout, "chemin": chemin, "commit": r["commit"],
+                         "computed": r["computed"], "vue": r["response"]["population_view"],
+                         "qui": CANDIDATS[etude_] if cote == "candidat" else ""}
+    return [points[x] for x in sorted(points)]
+
+
+def _dit(cle: str, x: float) -> str:
+    taux = pct(x, 0 if math.isclose(x * 100, round(x * 100)) else 1, signed=False)
+    return f"on garde {taux}" if cle == "cotisations" else f"TVA à {taux}"
+
+
+def _de(nom: str) -> str:
+    return f"d'{nom}" if nom[0] in "AEIOUÉ" else f"de {nom}"
 
 
 def _bouton_donnees() -> tuple[dict[str, Any], str]:
-    """Les points des deux boutons, mis en forme ; et leur tableau statique."""
-    from impots import grille
-
-    out: dict[str, Any] = {}
-    tables = []
-    c, pts = _points("cotisations_retraite")
-    knob = lire(ATTAL)["request"]["menages"]["reform"]["cotisations_salariales_retraite_echelle"]
-    xs = [p["x"] for p in pts]
-    ys = [p["report"]["cout"]["total"] for p in pts]
-    interp = grille.interpoler(xs, ys, knob, c.interpolation)
-    plage = {k: lire(ATTAL_PLAGE.format(k)) for k in ("bas", "candidat")}
-    p_bas = plage["bas"]["response"]["mechanical_first_year_eur"]
-    p_cand = plage["candidat"]["response"]["mechanical_first_year_eur"]
-    if plage["bas"]["request"]["reform"]["cotisations_salariales_retraite_echelle"] != xs[0]:
-        raise ParcoursError("la plage basse d'Attal n'est plus le premier point de la grille.")
-    r_bas, r_cand = p_bas / ys[0], p_cand / interp
-    if abs(r_bas - r_cand) <= 0.01:
-        forme = (f"Le rapport de la série à la grille est le même aux deux boutons, "
-                 f"{num(r_cand, 3)} et {num(r_bas, 3)} : le bouton n'a pas changé la forme "
-                 "du coût, la base l'a déplacée tout entière quand la population a été "
-                 f"refaite ({fichier('docs/DECISIONS.md', 'D-368 et D-373')} en donnent les "
-                 "raisons).")
-    else:
-        forme = (f"Le rapport de la série à la grille n'est pas le même aux deux boutons, "
-                 f"{num(r_cand, 3)} et {num(r_bas, 3)} : la population refaite a changé la "
-                 "forme du coût, pas seulement son niveau.")
-    gcommit = pts[0]["report"]["commit"]
-    gdate = pts[0]["report"]["computed"]
-    out["cotisations"] = [
-        {"x": f"{num(p['x'], 2)}",
-         "dit": (f"on garde {pct(p['x'], 0, signed=False)} des cotisations retraite des "
-                 "salariés"),
-         "cout": md(p["report"]["cout"]["total"])} for p in pts]
-    tables.append(tableau(
-        ["échelle", "ce que cela veut dire", "coût la première année (grille)"],
-        [[num(p["x"], 2), e(f"on garde {pct(p['x'], 0, signed=False)} des cotisations"),
-          b(md(p["report"]["cout"]["total"]), "L2")] for p in pts]))
-
-    _, pts2 = _points("plf_art_74_ppa")
-    ppa_knob = lire(PPA)["request"]["reform"]["ppa_revalorisation_avril"]
-    serie_v = lire(PPA_PRED)["years"][0]["mechanical_aged_eur"]
-    un = next(p for p in pts2 if math.isclose(p["x"], 1.0))
-    out["ppa"] = [
-        {"x": f"{num(p['x'], 2)}",
-         "dit": ("suspendre une revalorisation d'avril de "
-                 f"{pct(p['x'] * (ppa_knob - 1), 2, signed=False)}"),
-         "cout": meur(-p["report"]["cout"]["total"])} for p in pts2]
-    tables.append(tableau(
-        ["λ", "la revalorisation que l'article suspend", "ce que l'article économise (grille)"],
-        [[num(p["x"], 2), e(f"{pct(p['x'] * (ppa_knob - 1), 2, signed=False)}"),
-          b(meur(-p["report"]["cout"]["total"]), "L2")] for p in pts2]))
-    if any(p["report"]["commit"] != gcommit for p in pts + pts2):
-        raise ParcoursError("les points des deux boutons ne sont pas d'un même commit.")
-    depart = {"cotisations": min(range(len(xs)), key=lambda k: abs(xs[k] - knob)),
-              "ppa": next(k for k, p in enumerate(pts2) if math.isclose(p["x"], 1.0))}
+    """Les points des deux boutons, mis en forme ; et leurs tableaux statiques."""
+    out: dict[str, Any] = {"depart": {}}
+    tables, commits, vues = [], set(), set()
+    for cle, champ, prefixes, _ in BOUTONS:
+        pts = plages(champ, prefixes)
+        commits |= {p["commit"] for p in pts}
+        vues |= {p["vue"] for p in pts}
+        out[cle] = [{"x": num(p["x"], 3).rstrip("0").rstrip(","),
+                     "dit": _dit(cle, p["x"]) + (f", le bouton {_de(p['qui'])}" if p["qui"]
+                                                  else ""),
+                     "cout": md(p["cout"])} for p in pts]
+        out["depart"][cle] = next(k for k, p in enumerate(pts) if p["qui"])
+        tables.append(tableau(
+            ["valeur", "ce que cela veut dire", "coût la première année", "la passe"],
+            [[e(o["x"]), e(o["dit"]), b(o["cout"], "L2"), fichier(p["chemin"], "rapport")]
+             for o, p in zip(out[cle], pts, strict=True)]))
+    if len(commits) != 1 or vues != {"vieillie"}:
+        raise ParcoursError("les points des boutons ne sont pas d'une même série, d'une même "
+                            "vue.")
+    (sha,) = commits
+    attal = plages(BOUTONS[0][1], BOUTONS[0][2][:1])
+    cand = next(p for p in attal if p["qui"])
+    serie = lire(ATTAL_PRED)["years"][0]["mechanical_by_layer"]["vieillie"]["menages"]
+    if not math.isclose(cand["cout"], serie, rel_tol=1e-9):
+        raise ParcoursError("la plage d'Attal ne redonne pas le coût de la série.")
     texte = f"""
-<p>Les points viennent de la grille de l'<a href="explorer.html">explorateur</a> : une
-passe par point, chiffrée d'avance le {e(gdate)} au commit {commit(gcommit)}
-({fichier("reports/grille/cotisations_retraite")}, {fichier("reports/grille/plf_art_74_ppa")},
-compilés par {fichier("src/impots/grille.py")}). Le curseur choisit un point ; il ne calcule
-rien. Les points sont dans la vue vieillie (la population de 2024 portée à 2026).</p>
-<p><strong>La grille est d'avant la série.</strong> Elle a tourné avant que la population ne
-soit refaite (but 19). Au bouton d'Attal, {num(knob, 2)}, l'explorateur interpole
-{b(md(interp), "L2")} entre deux points ; la série, sur le code d'aujourd'hui, mesure
-{b(md(p_cand), "L2")} ({fichier(ATTAL_PLAGE.format("candidat"), "sa plage")}). À
-l'échelle 0, la grille dit {b(md(ys[0]), "L2")}, la série {b(md(p_bas), "L2")}. {forme}
-Pour la prime, à λ = 1, la grille
-dit {b(meur(-un["report"]["cout"]["total"]), "L2")} et la série
-{b(meur(-serie_v), "L2")} dans la même vue : le non-recours est entré entre les deux.</p>
+<p>Chaque point est une passe de la série, sur le commit {commit(sha)} des études : les
+« plages » de chaque étude, qui chiffrent un bouton à son bas, à la valeur du candidat et à
+son haut, la loi intacte autour. Le curseur choisit un point ; il ne calcule rien et
+n'interpole pas entre deux points. Les coûts sont dans la vue vieillie, la population de
+2024 portée à 2026 : au bouton d'Attal, {b(md(cand["cout"]), "L2")} pour les ménages, le
+même nombre que le chemin annuel de son étude ({fichier(ATTAL_PRED, "chemin annuel")}),
+quand la population de 2024 au droit de 2026 en donne
+{b(md(lire(ATTAL)["response"]["menages"]["reform_cost"]), "L2")}. Attal et Retailleau
+règlent le même bouton, à 0,22 et 0,87 : leurs points sont sur le même curseur.</p>
 """
-    return {**out, "depart": depart}, texte + "".join(tables)
+    return out, texte + "".join(tables)
 
 
 SCRIPT = """
@@ -559,26 +567,24 @@ SCRIPT = """
     montrer();
   }
   brancher("cotisations");
-  brancher("ppa");
+  brancher("tva_energie");
 })();
 """
 
 
 def _curseur(donnees: dict[str, Any]) -> str:
-    def un(cle: str, titre: str, loi: int) -> str:
+    def un(cle: str, titre: str, depart: int) -> str:
         n = len(donnees[cle]) - 1
-        p = donnees[cle][loi]
+        p = donnees[cle][depart]
         return (f'<div class="curseur"><label for="bouton-{cle}">{e(titre)}</label>'
                 f'<input type="range" id="bouton-{cle}" min="0" max="{n}" step="1" '
-                f'value="{loi}"><output id="bouton-{cle}-x" class="num">{e(p["x"])}</output>'
-                f'</div><p class="lecture"><span id="bouton-{cle}-dit">{e(p["dit"])}</span> : '
-                f'<strong id="bouton-{cle}-cout">{e(p["cout"])}</strong> la première année.</p>')
+                f'value="{depart}"><output id="bouton-{cle}-x" class="num">{e(p["x"])}'
+                f'</output></div><p class="lecture"><span id="bouton-{cle}-dit">'
+                f'{e(p["dit"])}</span> : <strong id="bouton-{cle}-cout">{e(p["cout"])}'
+                "</strong> la première année.</p>")
 
-    # Au départ, chaque curseur est sur le point le plus proche de la mesure étudiée.
-    return (un("cotisations", "Cotisations retraite des salariés, la part gardée",
-               donnees["depart"]["cotisations"])
-            + un("ppa", "Prime d'activité : λ fois la revalorisation suspendue",
-                 donnees["depart"]["ppa"])
+    # Au départ, chaque curseur est sur le bouton d'un candidat.
+    return ("".join(un(cle, titre, donnees["depart"][cle]) for cle, _, _, titre in BOUTONS)
             + "<noscript><p>Sans JavaScript, le curseur ne bouge pas : chaque point qu'il "
               "choisirait est dans les tableaux ci-dessous.</p></noscript>")
 
