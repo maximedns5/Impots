@@ -36,18 +36,6 @@ NIVEAU_DE_VIE = ("niveau_de_vie_median", "niveau_de_vie_median_servi", "d9_d1",
 #: L'enquête Emploi, fichier détail 2024 (Licence Ouverte), d'où vient la structure des
 #: ménages (`scripts/verify_eec.py`).
 EEC_URL = "https://www.insee.fr/fr/statistiques/8632441"
-#: Des liens de `population/margins.py` qui ne répondent plus (404, relevé le 2026-11-11),
-#: et l'adresse que la page affiche à leur place. margins.py n'est pas touché ici.
-#: CHILDREN_DISTRIBUTION : le tableau FAM1 du recensement 2023, France entière, qui donne
-#: 9 340 128 familles avec au moins un enfant de moins de 25 ans. SICK_PAY_BY_BRANCH : le
-#: rapport de mai 2026 de la CCSS, tel que `data/raw/MANIFEST.json` l'a téléchargé.
-URL_CORRIGEES = {
-    "https://www.insee.fr/fr/statistiques/8268533":
-        "https://www.insee.fr/fr/statistiques/9005622?geo=FE-1",
-    "https://www.securite-sociale.fr/la-secu-en-detail/comptes-de-la-securite-sociale":
-        "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2026/"
-        "CCSS%20mai%202026_assembl%c3%a9_V2.pdf",
-}
 #: Pourquoi une ligne est refusée une année, en clair (la remarque de `lignes.json` parle
 #: la langue du dépôt). Une ligne absente d'ici garde sa remarque, raccourcie.
 REFUS = {
@@ -116,7 +104,7 @@ def lien_source(url: str | None, texte: str, titre: str = "") -> str:
     plus le titre."""
     if not url:
         return ""
-    a = source(URL_CORRIGEES.get(url, url), texte)
+    a = source(url, texte)
     return a.replace(">", f' title="{html.escape(titre)}">', 1) if titre else a
 
 

@@ -266,7 +266,8 @@ SICK_PAY_BY_BRANCH = Figure(
           "dépenses remboursées 2024 : 10,690 Md€ de maladie, 4,955 Md€ d'AT-MP",
     source="Rapport à la Commission des comptes de la sécurité sociale, mai 2026, "
            "fiche 2.3 tableau 1 et fiche 4.4 tableau 1",
-    url="https://www.securite-sociale.fr/la-secu-en-detail/comptes-de-la-securite-sociale",
+    url=("https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2026/"
+         "CCSS%20mai%202026_assembl%c3%a9_V2.pdf"),
     use="calibration",
     caveat="Spent when `impute_ij` runs (D-305). Every employee of the private sector "
            "gets the expected sick pay of its cell (age band × PCS, the EEC's weekly "
@@ -709,7 +710,7 @@ CHILDREN_DISTRIBUTION = Figure(
     value=9.34e6, unit="count", year=2023,
     scope="Familles avec au moins un enfant de moins de 25 ans, France",
     source="INSEE, recensement de la population — séries famille",
-    url="https://www.insee.fr/fr/statistiques/8268533", use="calibration",
+    url="https://www.insee.fr/fr/statistiques/9005622?geo=FE-1", use="calibration",
     caveat="Used to synthesise the under-15 children the EEC omits, so it is spent. "
            "INSEE's 'enfant d'une famille' is broader than the tax definition of a "
            "dependant: it covers any child living with a parent who has no partner "

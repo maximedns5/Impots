@@ -59,7 +59,10 @@ def test_la_page_dit_le_perimetre_des_salaires_et_la_population_unique():
 
 
 def test_les_liens_morts_de_margins_ne_sont_pas_affiches():
+    """Les deux URL mortes de margins.py, corrigées à la source (D-378)."""
     corps = france.page().corps
-    for mort, bon in france.URL_CORRIGEES.items():
+    for mort in ("https://www.insee.fr/fr/statistiques/8268533",
+                 "https://www.securite-sociale.fr/la-secu-en-detail/"
+                 "comptes-de-la-securite-sociale"):
         assert html.escape(mort) not in corps
-        assert html.escape(bon) in corps
+    assert html.escape("https://www.insee.fr/fr/statistiques/9005622?geo=FE-1") in corps
