@@ -1,0 +1,4177 @@
+{
+ "commit": "42be98b33a2b37e6947346b7d49f08bf73d195d4",
+ "src_modifies_au_chiffrage": [],
+ "date": "2026-11-11",
+ "commande": "PYTHONPATH=src .venv/bin/python -m impots.parcours.menage",
+ "annee": 2024,
+ "moteur": {
+  "openfisca_france": "176.0.8",
+  "openfisca_core": "44.7.0"
+ },
+ "bareme": [
+  [
+   0.0,
+   0.0
+  ],
+  [
+   11497.0,
+   0.11
+  ],
+  [
+   29315.0,
+   0.3
+  ],
+  [
+   83823.0,
+   0.41
+  ],
+  [
+   180294.0,
+   0.45
+  ]
+ ],
+ "types": {
+  "single_30k": {
+   "menage": {
+    "adults": [
+     {
+      "salaire_brut_annuel": 30000,
+      "annee_naissance": 1990
+     }
+    ]
+   },
+   "valeurs": {
+    "salaire_super_brut": 37919.8,
+    "salaire_brut": 30000.0,
+    "cotisations_salariales": 3393.0,
+    "csg_deductible": 2004.3,
+    "csg_imposable": 707.4,
+    "crds": 147.38,
+    "salaire_net": 23747.93,
+    "salaire_imposable": 24602.7,
+    "revenu_fiscal_reference": 22142.7,
+    "parts_fiscales": 1.0,
+    "ir_avant_reductions": 1171.03,
+    "ir": 812.0,
+    "af": 0.0,
+    "cf": 0.0,
+    "asf": 0.0,
+    "ars": 0.0,
+    "ppa": 213.42,
+    "rsa": 0.0,
+    "aefa": 0.0,
+    "aide_logement": 0.0,
+    "revenu_disponible": 23148.28,
+    "crds_prestations": 1.07,
+    "prestations": 212.35,
+    "reste": 0.0
+   }
+  },
+  "couple_70k_2kids": {
+   "menage": {
+    "adults": [
+     {
+      "salaire_brut_annuel": 45000,
+      "annee_naissance": 1985
+     },
+     {
+      "salaire_brut_annuel": 25000,
+      "annee_naissance": 1987
+     }
+    ],
+    "children": [
+     {
+      "annee_naissance": 2015
+     },
+     {
+      "annee_naissance": 2018
+     }
+    ],
+    "couple_marie_ou_pacse": true
+   },
+   "valeurs": {
+    "salaire_super_brut": 88692.15,
+    "salaire_brut": 70000.0,
+    "cotisations_salariales": 7921.96,
+    "csg_deductible": 4676.7,
+    "csg_imposable": 1650.6,
+    "crds": 343.88,
+    "salaire_net": 55406.86,
+    "salaire_imposable": 57401.34,
+    "revenu_fiscal_reference": 51661.34,
+    "parts_fiscales": 3.0,
+    "ir_avant_reductions": 1888.74,
+    "ir": 1274.0,
+    "af": 1771.44,
+    "cf": 0.0,
+    "asf": 0.0,
+    "ars": 0.0,
+    "ppa": 0.0,
+    "rsa": 0.0,
+    "aefa": 0.0,
+    "aide_logement": 0.0,
+    "revenu_disponible": 55895.45,
+    "crds_prestations": 8.86,
+    "prestations": 1762.58,
+    "reste": 0.01
+   }
+  },
+  "single_240k": {
+   "menage": {
+    "adults": [
+     {
+      "salaire_brut_annuel": 240000,
+      "annee_naissance": 1980
+     }
+    ]
+   },
+   "valeurs": {
+    "salaire_super_brut": 337268.62,
+    "salaire_brut": 240000.0,
+    "cotisations_salariales": 25174.34,
+    "csg_deductible": 16099.9,
+    "csg_imposable": 5682.32,
+    "crds": 1183.82,
+    "salaire_net": 191859.61,
+    "salaire_imposable": 198725.78,
+    "revenu_fiscal_reference": 184299.78,
+    "parts_fiscales": 1.0,
+    "ir_avant_reductions": 59668.09,
+    "ir": 59668.0,
+    "af": 0.0,
+    "cf": 0.0,
+    "asf": 0.0,
+    "ars": 0.0,
+    "ppa": 0.0,
+    "rsa": 0.0,
+    "aefa": 0.0,
+    "aide_logement": 0.0,
+    "revenu_disponible": 132191.61,
+    "crds_prestations": -0.0,
+    "prestations": 0.0,
+    "reste": 0.0
+   }
+  }
+ },
+ "reforme": {
+  "nom": "single_240k_toprate50",
+  "menage": {
+   "adults": [
+    {
+     "salaire_brut_annuel": 240000,
+     "annee_naissance": 1980
+    }
+   ]
+  },
+  "bareme": [
+   {
+    "threshold": 0,
+    "rate": 0.0
+   },
+   {
+    "threshold": 11497,
+    "rate": 0.11
+   },
+   {
+    "threshold": 29315,
+    "rate": 0.3
+   },
+   {
+    "threshold": 83823,
+    "rate": 0.41
+   },
+   {
+    "threshold": 180294,
+    "rate": 0.5
+   }
+  ],
+  "loi": {
+   "ir": 59668.0,
+   "revenu_fiscal_reference": 184299.78,
+   "salaire_imposable": 198725.78
+  },
+  "reforme": {
+   "ir": 59868.0
+  },
+  "ecart": {
+   "ir": 200.0
+  }
+ },
+ "salaires": [
+  0,
+  10000,
+  15000,
+  20000,
+  25000,
+  30000,
+  35000,
+  40000,
+  50000,
+  60000,
+  70000,
+  80000,
+  90000,
+  100000,
+  120000,
+  150000,
+  200000,
+  240000,
+  300000
+ ],
+ "situations": [
+  {
+   "cle": "seul",
+   "libelle": "Une personne seule, sans enfant",
+   "menages": [
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 0,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 10000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 15000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 20000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 25000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 30000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 35000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 40000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 50000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 60000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 70000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 80000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 90000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 100000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 120000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 150000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 200000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 240000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 300000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": false
+    }
+   ],
+   "valeurs": [
+    {
+     "salaire_super_brut": 0.0,
+     "salaire_brut": 0.0,
+     "cotisations_salariales": 0.0,
+     "csg_deductible": 0.0,
+     "csg_imposable": 0.0,
+     "crds": 0.0,
+     "salaire_net": 0.0,
+     "salaire_imposable": 0.0,
+     "revenu_fiscal_reference": 0.0,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 7544.64,
+     "aefa": 152.45,
+     "aide_logement": 0.0,
+     "revenu_disponible": 7697.09,
+     "crds_prestations": -0.0,
+     "prestations": 7697.09,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 10162.48,
+     "salaire_brut": 10000.0,
+     "cotisations_salariales": 1131.0,
+     "csg_deductible": 668.1,
+     "csg_imposable": 235.8,
+     "crds": 49.13,
+     "salaire_net": 7915.97,
+     "salaire_imposable": 8200.9,
+     "revenu_fiscal_reference": 7380.9,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 4247.43,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 12142.16,
+     "crds_prestations": 21.24,
+     "prestations": 4226.19,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 15243.78,
+     "salaire_brut": 15000.0,
+     "cotisations_salariales": 1696.56,
+     "csg_deductible": 1002.15,
+     "csg_imposable": 353.7,
+     "crds": 73.69,
+     "salaire_net": 11873.91,
+     "salaire_imposable": 12301.29,
+     "revenu_fiscal_reference": 11071.29,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 3615.13,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 15470.96,
+     "crds_prestations": 18.08,
+     "prestations": 3597.05,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 20325.32,
+     "salaire_brut": 20000.0,
+     "cotisations_salariales": 2262.0,
+     "csg_deductible": 1336.2,
+     "csg_imposable": 471.6,
+     "crds": 98.25,
+     "salaire_net": 15831.95,
+     "salaire_imposable": 16401.8,
+     "revenu_fiscal_reference": 14761.8,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 359.13,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 3063.43,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 18880.06,
+     "crds_prestations": 15.32,
+     "prestations": 3048.11,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 28579.47,
+     "salaire_brut": 25000.0,
+     "cotisations_salariales": 2827.44,
+     "csg_deductible": 1670.25,
+     "csg_imposable": 589.5,
+     "crds": 122.81,
+     "salaire_net": 19789.99,
+     "salaire_imposable": 20502.31,
+     "revenu_fiscal_reference": 18452.31,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 765.08,
+     "ir": 222.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 1750.99,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 21310.23,
+     "crds_prestations": 8.75,
+     "prestations": 1742.24,
+     "reste": -0.0
+    },
+    {
+     "salaire_super_brut": 37919.8,
+     "salaire_brut": 30000.0,
+     "cotisations_salariales": 3393.0,
+     "csg_deductible": 2004.3,
+     "csg_imposable": 707.4,
+     "crds": 147.38,
+     "salaire_net": 23747.93,
+     "salaire_imposable": 24602.7,
+     "revenu_fiscal_reference": 22142.7,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 1171.03,
+     "ir": 812.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 213.42,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 23148.28,
+     "crds_prestations": 1.07,
+     "prestations": 212.35,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 46748.45,
+     "salaire_brut": 35000.0,
+     "cotisations_salariales": 3958.56,
+     "csg_deductible": 2338.35,
+     "csg_imposable": 825.3,
+     "crds": 171.94,
+     "salaire_net": 27705.85,
+     "salaire_imposable": 28703.09,
+     "revenu_fiscal_reference": 25833.09,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 1576.97,
+     "ir": 1402.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 26303.85,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 53426.29,
+     "salaire_brut": 40000.0,
+     "cotisations_salariales": 4524.0,
+     "csg_deductible": 2672.4,
+     "csg_imposable": 943.2,
+     "crds": 196.5,
+     "salaire_net": 31663.9,
+     "salaire_imposable": 32803.6,
+     "revenu_fiscal_reference": 29523.6,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 2022.56,
+     "ir": 2023.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 29640.9,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 66884.65,
+     "salaire_brut": 50000.0,
+     "cotisations_salariales": 5680.34,
+     "csg_deductible": 3340.5,
+     "csg_imposable": 1179.0,
+     "crds": 245.62,
+     "salaire_net": 39554.53,
+     "salaire_imposable": 40979.16,
+     "revenu_fiscal_reference": 36881.16,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 4229.83,
+     "ir": 4230.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 35324.53,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 83853.13,
+     "salaire_brut": 60000.0,
+     "cotisations_salariales": 6706.34,
+     "csg_deductible": 4008.6,
+     "csg_imposable": 1414.8,
+     "crds": 294.75,
+     "salaire_net": 47575.51,
+     "salaire_imposable": 49285.07,
+     "revenu_fiscal_reference": 44356.07,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 6472.3,
+     "ir": 6472.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 41103.51,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 97821.73,
+     "salaire_brut": 69999.99,
+     "cotisations_salariales": 7732.34,
+     "csg_deductible": 4676.7,
+     "csg_imposable": 1650.6,
+     "crds": 343.88,
+     "salaire_net": 55596.48,
+     "salaire_imposable": 57590.95,
+     "revenu_fiscal_reference": 51831.95,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 8715.06,
+     "ir": 8715.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 46881.48,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 113230.46,
+     "salaire_brut": 80000.0,
+     "cotisations_salariales": 8758.34,
+     "csg_deductible": 5344.8,
+     "csg_imposable": 1886.4,
+     "crds": 393.0,
+     "salaire_net": 63617.46,
+     "salaire_imposable": 65896.86,
+     "revenu_fiscal_reference": 59306.86,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 10957.54,
+     "ir": 10958.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 52659.46,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 127378.95,
+     "salaire_brut": 90000.0,
+     "cotisations_salariales": 9784.34,
+     "csg_deductible": 6012.9,
+     "csg_imposable": 2122.2,
+     "crds": 442.12,
+     "salaire_net": 71638.44,
+     "salaire_imposable": 74202.75,
+     "revenu_fiscal_reference": 66782.75,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 13200.3,
+     "ir": 13200.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 58438.44,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 141527.52,
+     "salaire_brut": 100000.01,
+     "cotisations_salariales": 10810.34,
+     "csg_deductible": 6681.0,
+     "csg_imposable": 2358.0,
+     "crds": 491.25,
+     "salaire_net": 79659.41,
+     "salaire_imposable": 82508.66,
+     "revenu_fiscal_reference": 74257.66,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 15442.78,
+     "ir": 15443.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 64216.41,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 169824.72,
+     "salaire_brut": 120000.0,
+     "cotisations_salariales": 12862.34,
+     "csg_deductible": 8017.2,
+     "csg_imposable": 2829.6,
+     "crds": 589.5,
+     "salaire_net": 95701.36,
+     "salaire_imposable": 99120.45,
+     "revenu_fiscal_reference": 89208.45,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 20520.42,
+     "ir": 20520.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 75181.36,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 212270.52,
+     "salaire_brut": 150000.0,
+     "cotisations_salariales": 15940.34,
+     "csg_deductible": 10021.5,
+     "csg_imposable": 3537.0,
+     "crds": 736.88,
+     "salaire_net": 119764.27,
+     "salaire_imposable": 124038.14,
+     "revenu_fiscal_reference": 111634.14,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 29714.95,
+     "ir": 29715.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 90049.27,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 282374.34,
+     "salaire_brut": 200000.02,
+     "cotisations_salariales": 21070.34,
+     "csg_deductible": 13379.9,
+     "csg_imposable": 4722.32,
+     "crds": 983.82,
+     "salaire_net": 159843.64,
+     "salaire_imposable": 165549.75,
+     "revenu_fiscal_reference": 151123.75,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 45905.69,
+     "ir": 45906.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 113937.64,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": -0.0
+    },
+    {
+     "salaire_super_brut": 337268.62,
+     "salaire_brut": 240000.0,
+     "cotisations_salariales": 25174.34,
+     "csg_deductible": 16099.9,
+     "csg_imposable": 5682.32,
+     "crds": 1183.82,
+     "salaire_net": 191859.61,
+     "salaire_imposable": 198725.78,
+     "revenu_fiscal_reference": 184299.78,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 59668.09,
+     "ir": 59668.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 132191.61,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 419610.16,
+     "salaire_brut": 300000.0,
+     "cotisations_salariales": 31330.34,
+     "csg_deductible": 20179.9,
+     "csg_imposable": 7122.32,
+     "crds": 1483.82,
+     "salaire_net": 239883.64,
+     "salaire_imposable": 248489.78,
+     "revenu_fiscal_reference": 234063.78,
+     "parts_fiscales": 1.0,
+     "ir_avant_reductions": 82061.89,
+     "ir": 82062.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 157821.64,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    }
+   ]
+  },
+  {
+   "cle": "seul_2e",
+   "libelle": "Un parent seul, deux enfants",
+   "menages": [
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 0,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 10000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 15000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 20000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 25000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 30000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 35000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 40000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 50000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 60000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 70000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 80000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 90000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 100000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 120000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 150000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 200000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 240000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 300000,
+       "annee_naissance": 1985
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": false
+    }
+   ],
+   "valeurs": [
+    {
+     "salaire_super_brut": 0.0,
+     "salaire_brut": 0.0,
+     "cotisations_salariales": 0.0,
+     "csg_deductible": 0.0,
+     "csg_imposable": 0.0,
+     "crds": 0.0,
+     "salaire_net": 0.0,
+     "salaire_imposable": 0.0,
+     "revenu_fiscal_reference": 0.0,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 836.98,
+     "ppa": 0.0,
+     "rsa": 9317.83,
+     "aefa": 274.41,
+     "aide_logement": 0.0,
+     "revenu_disponible": 16836.43,
+     "crds_prestations": 36.4,
+     "prestations": 16836.43,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 10162.48,
+     "salaire_brut": 10000.0,
+     "cotisations_salariales": 1131.0,
+     "csg_deductible": 668.1,
+     "csg_imposable": 235.8,
+     "crds": 49.13,
+     "salaire_net": 7915.97,
+     "salaire_imposable": 8200.9,
+     "revenu_fiscal_reference": 7380.9,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 836.98,
+     "ppa": 4828.74,
+     "rsa": 1401.85,
+     "aefa": 274.41,
+     "aide_logement": 0.0,
+     "revenu_disponible": 21641.02,
+     "crds_prestations": 60.54,
+     "prestations": 13725.05,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 15243.78,
+     "salaire_brut": 15000.0,
+     "cotisations_salariales": 1696.56,
+     "csg_deductible": 1002.15,
+     "csg_imposable": 353.7,
+     "crds": 73.69,
+     "salaire_net": 11873.91,
+     "salaire_imposable": 12301.29,
+     "revenu_fiscal_reference": 11071.29,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 836.98,
+     "ppa": 5251.91,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 24343.75,
+     "crds_prestations": 62.66,
+     "prestations": 12469.84,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 20325.32,
+     "salaire_brut": 20000.0,
+     "cotisations_salariales": 2262.0,
+     "csg_deductible": 1336.2,
+     "csg_imposable": 471.6,
+     "crds": 98.25,
+     "salaire_net": 15831.95,
+     "salaire_imposable": 16401.8,
+     "revenu_fiscal_reference": 14761.8,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 836.98,
+     "ppa": 4700.21,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 27752.85,
+     "crds_prestations": 59.9,
+     "prestations": 11920.9,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 28579.47,
+     "salaire_brut": 25000.0,
+     "cotisations_salariales": 2827.44,
+     "csg_deductible": 1670.25,
+     "csg_imposable": 589.5,
+     "crds": 122.81,
+     "salaire_net": 19789.99,
+     "salaire_imposable": 20502.31,
+     "revenu_fiscal_reference": 18452.31,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 836.98,
+     "ppa": 3387.77,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 30405.02,
+     "crds_prestations": 53.34,
+     "prestations": 10615.02,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 37919.8,
+     "salaire_brut": 30000.0,
+     "cotisations_salariales": 3393.0,
+     "csg_deductible": 2004.3,
+     "csg_imposable": 707.4,
+     "crds": 147.38,
+     "salaire_net": 23747.93,
+     "salaire_imposable": 24602.7,
+     "revenu_fiscal_reference": 22142.7,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 836.98,
+     "ppa": 1844.18,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 32827.07,
+     "crds_prestations": 45.62,
+     "prestations": 9079.15,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 46748.45,
+     "salaire_brut": 35000.0,
+     "cotisations_salariales": 3958.56,
+     "csg_deductible": 2338.35,
+     "csg_imposable": 825.3,
+     "crds": 171.94,
+     "salaire_net": 27705.85,
+     "salaire_imposable": 28703.09,
+     "revenu_fiscal_reference": 25833.09,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 836.98,
+     "ppa": 282.46,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 35231.09,
+     "crds_prestations": 37.81,
+     "prestations": 7525.24,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 53426.29,
+     "salaire_brut": 40000.0,
+     "cotisations_salariales": 4524.0,
+     "csg_deductible": 2672.4,
+     "csg_imposable": 943.2,
+     "crds": 196.5,
+     "salaire_net": 31663.9,
+     "salaire_imposable": 32803.6,
+     "revenu_fiscal_reference": 29523.6,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 85.92,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 836.98,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 38908.09,
+     "crds_prestations": 36.4,
+     "prestations": 7244.19,
+     "reste": -0.0
+    },
+    {
+     "salaire_super_brut": 66884.65,
+     "salaire_brut": 50000.0,
+     "cotisations_salariales": 5680.34,
+     "csg_deductible": 3340.5,
+     "csg_imposable": 1179.0,
+     "crds": 245.62,
+     "salaire_net": 39554.53,
+     "salaire_imposable": 40979.16,
+     "revenu_fiscal_reference": 36881.16,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 895.25,
+     "ir": 411.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 45554.93,
+     "crds_prestations": 32.22,
+     "prestations": 6411.39,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 83853.13,
+     "salaire_brut": 60000.0,
+     "cotisations_salariales": 6706.34,
+     "csg_deductible": 4008.6,
+     "csg_imposable": 1414.8,
+     "crds": 294.75,
+     "salaire_net": 47575.51,
+     "salaire_imposable": 49285.07,
+     "revenu_fiscal_reference": 44356.07,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 1717.49,
+     "ir": 1605.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 52381.9,
+     "crds_prestations": 32.22,
+     "prestations": 6411.39,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 97821.73,
+     "salaire_brut": 69999.99,
+     "cotisations_salariales": 7732.34,
+     "csg_deductible": 4676.7,
+     "csg_imposable": 1650.6,
+     "crds": 343.88,
+     "salaire_net": 55596.48,
+     "salaire_imposable": 57590.95,
+     "revenu_fiscal_reference": 51831.95,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 2700.06,
+     "ir": 2700.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 59307.87,
+     "crds_prestations": 32.22,
+     "prestations": 6411.39,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 113230.46,
+     "salaire_brut": 80000.0,
+     "cotisations_salariales": 8758.34,
+     "csg_deductible": 5344.8,
+     "csg_imposable": 1886.4,
+     "crds": 393.0,
+     "salaire_net": 63617.46,
+     "salaire_imposable": 65896.86,
+     "revenu_fiscal_reference": 59306.86,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 4942.54,
+     "ir": 4943.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 65085.86,
+     "crds_prestations": 32.22,
+     "prestations": 6411.39,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 127378.95,
+     "salaire_brut": 90000.0,
+     "cotisations_salariales": 9784.34,
+     "csg_deductible": 6012.9,
+     "csg_imposable": 2122.2,
+     "crds": 442.12,
+     "salaire_net": 71638.44,
+     "salaire_imposable": 74202.75,
+     "revenu_fiscal_reference": 66782.75,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 7185.3,
+     "ir": 7185.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 70864.84,
+     "crds_prestations": 32.22,
+     "prestations": 6411.39,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 141527.52,
+     "salaire_brut": 100000.01,
+     "cotisations_salariales": 10810.34,
+     "csg_deductible": 6681.0,
+     "csg_imposable": 2358.0,
+     "crds": 491.25,
+     "salaire_net": 79659.41,
+     "salaire_imposable": 82508.66,
+     "revenu_fiscal_reference": 74257.66,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 9427.78,
+     "ir": 9428.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 76642.8,
+     "crds_prestations": 32.22,
+     "prestations": 6411.39,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 169824.72,
+     "salaire_brut": 120000.0,
+     "cotisations_salariales": 12862.34,
+     "csg_deductible": 8017.2,
+     "csg_imposable": 2829.6,
+     "crds": 589.5,
+     "salaire_net": 95701.36,
+     "salaire_imposable": 99120.45,
+     "revenu_fiscal_reference": 89208.45,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 14505.42,
+     "ir": 14505.0,
+     "af": 885.72,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 86726.46,
+     "crds_prestations": 27.79,
+     "prestations": 5530.1,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 212270.52,
+     "salaire_brut": 150000.0,
+     "cotisations_salariales": 15940.34,
+     "csg_deductible": 10021.5,
+     "csg_imposable": 3537.0,
+     "crds": 736.88,
+     "salaire_net": 119764.27,
+     "salaire_imposable": 124038.14,
+     "revenu_fiscal_reference": 111634.14,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 23699.95,
+     "ir": 23700.0,
+     "af": 442.86,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 101153.73,
+     "crds_prestations": 25.58,
+     "prestations": 5089.45,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 282374.34,
+     "salaire_brut": 200000.02,
+     "cotisations_salariales": 21070.34,
+     "csg_deductible": 13379.9,
+     "csg_imposable": 4722.32,
+     "crds": 983.82,
+     "salaire_net": 159843.64,
+     "salaire_imposable": 165549.75,
+     "revenu_fiscal_reference": 151123.75,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 39890.69,
+     "ir": 39891.0,
+     "af": 442.86,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 125042.1,
+     "crds_prestations": 25.58,
+     "prestations": 5089.45,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 337268.62,
+     "salaire_brut": 240000.0,
+     "cotisations_salariales": 25174.34,
+     "csg_deductible": 16099.9,
+     "csg_imposable": 5682.32,
+     "crds": 1183.82,
+     "salaire_net": 191859.61,
+     "salaire_imposable": 198725.78,
+     "revenu_fiscal_reference": 184299.78,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 53653.09,
+     "ir": 53653.0,
+     "af": 442.86,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 143296.06,
+     "crds_prestations": 25.58,
+     "prestations": 5089.45,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 419610.16,
+     "salaire_brut": 300000.0,
+     "cotisations_salariales": 31330.34,
+     "csg_deductible": 20179.9,
+     "csg_imposable": 7122.32,
+     "crds": 1483.82,
+     "salaire_net": 239883.64,
+     "salaire_imposable": 248489.78,
+     "revenu_fiscal_reference": 234063.78,
+     "parts_fiscales": 2.5,
+     "ir_avant_reductions": 76046.89,
+     "ir": 76047.0,
+     "af": 442.86,
+     "cf": 0.0,
+     "asf": 4672.17,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 168926.09,
+     "crds_prestations": 25.58,
+     "prestations": 5089.45,
+     "reste": -0.0
+    }
+   ]
+  },
+  {
+   "cle": "couple_1s",
+   "libelle": "Un couple marié sans enfant, un seul salaire",
+   "menages": [
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 10000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 15000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 20000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 25000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 30000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 35000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 40000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 50000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 60000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 70000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 80000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 90000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 100000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 120000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 150000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 200000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 240000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 300000,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    }
+   ],
+   "valeurs": [
+    {
+     "salaire_super_brut": 0.0,
+     "salaire_brut": 0.0,
+     "cotisations_salariales": 0.0,
+     "csg_deductible": 0.0,
+     "csg_imposable": 0.0,
+     "crds": 0.0,
+     "salaire_net": 0.0,
+     "salaire_imposable": 0.0,
+     "revenu_fiscal_reference": 0.0,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 11316.96,
+     "aefa": 228.68,
+     "aide_logement": 0.0,
+     "revenu_disponible": 11545.64,
+     "crds_prestations": -0.0,
+     "prestations": 11545.64,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 10162.48,
+     "salaire_brut": 10000.0,
+     "cotisations_salariales": 1131.0,
+     "csg_deductible": 668.1,
+     "csg_imposable": 235.8,
+     "crds": 49.13,
+     "salaire_net": 7915.97,
+     "salaire_imposable": 8200.9,
+     "revenu_fiscal_reference": 7380.9,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 4828.74,
+     "rsa": 3400.99,
+     "aefa": 228.68,
+     "aide_logement": 0.0,
+     "revenu_disponible": 16350.23,
+     "crds_prestations": 24.14,
+     "prestations": 8434.27,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 15243.78,
+     "salaire_brut": 15000.0,
+     "cotisations_salariales": 1696.56,
+     "csg_deductible": 1002.15,
+     "csg_imposable": 353.7,
+     "crds": 73.69,
+     "salaire_net": 11873.91,
+     "salaire_imposable": 12301.29,
+     "revenu_fiscal_reference": 11071.29,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 7282.46,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 19119.96,
+     "crds_prestations": 36.41,
+     "prestations": 7246.05,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 20325.32,
+     "salaire_brut": 20000.0,
+     "cotisations_salariales": 2262.0,
+     "csg_deductible": 1336.2,
+     "csg_imposable": 471.6,
+     "crds": 98.25,
+     "salaire_net": 15831.95,
+     "salaire_imposable": 16401.8,
+     "revenu_fiscal_reference": 14761.8,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 6730.76,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 22529.06,
+     "crds_prestations": 33.65,
+     "prestations": 6697.11,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 28579.47,
+     "salaire_brut": 25000.0,
+     "cotisations_salariales": 2827.44,
+     "csg_deductible": 1670.25,
+     "csg_imposable": 589.5,
+     "crds": 122.81,
+     "salaire_net": 19789.99,
+     "salaire_imposable": 20502.31,
+     "revenu_fiscal_reference": 18452.31,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 5418.32,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 25181.22,
+     "crds_prestations": 27.09,
+     "prestations": 5391.23,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 37919.8,
+     "salaire_brut": 30000.0,
+     "cotisations_salariales": 3393.0,
+     "csg_deductible": 2004.3,
+     "csg_imposable": 707.4,
+     "crds": 147.38,
+     "salaire_net": 23747.93,
+     "salaire_imposable": 24602.7,
+     "revenu_fiscal_reference": 22142.7,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 3874.73,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 27603.28,
+     "crds_prestations": 19.37,
+     "prestations": 3855.36,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 46748.45,
+     "salaire_brut": 35000.0,
+     "cotisations_salariales": 3958.56,
+     "csg_deductible": 2338.35,
+     "csg_imposable": 825.3,
+     "crds": 171.94,
+     "salaire_net": 27705.85,
+     "salaire_imposable": 28703.09,
+     "revenu_fiscal_reference": 25833.09,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 312.3,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 2331.14,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 30025.33,
+     "crds_prestations": 11.66,
+     "prestations": 2319.48,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 53426.29,
+     "salaire_brut": 40000.0,
+     "cotisations_salariales": 4524.0,
+     "csg_deductible": 2672.4,
+     "csg_imposable": 943.2,
+     "crds": 196.5,
+     "salaire_net": 31663.9,
+     "salaire_imposable": 32803.6,
+     "revenu_fiscal_reference": 29523.6,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 718.26,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 787.5,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 32447.46,
+     "crds_prestations": 3.94,
+     "prestations": 783.56,
+     "reste": -0.0
+    },
+    {
+     "salaire_super_brut": 66884.65,
+     "salaire_brut": 50000.0,
+     "cotisations_salariales": 5680.34,
+     "csg_deductible": 3340.5,
+     "csg_imposable": 1179.0,
+     "crds": 245.62,
+     "salaire_net": 39554.53,
+     "salaire_imposable": 40979.16,
+     "revenu_fiscal_reference": 36881.16,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 1527.59,
+     "ir": 749.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 38805.53,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 83853.13,
+     "salaire_brut": 60000.0,
+     "cotisations_salariales": 6706.34,
+     "csg_deductible": 4008.6,
+     "csg_imposable": 1414.8,
+     "crds": 294.75,
+     "salaire_net": 47575.51,
+     "salaire_imposable": 49285.07,
+     "revenu_fiscal_reference": 44356.07,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 2349.83,
+     "ir": 1943.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 45632.51,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 97821.73,
+     "salaire_brut": 69999.99,
+     "cotisations_salariales": 7732.34,
+     "csg_deductible": 4676.7,
+     "csg_imposable": 1650.6,
+     "crds": 343.88,
+     "salaire_net": 55596.48,
+     "salaire_imposable": 57590.95,
+     "revenu_fiscal_reference": 51831.95,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 3172.17,
+     "ir": 3137.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 52459.48,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 113230.46,
+     "salaire_brut": 80000.0,
+     "cotisations_salariales": 8758.34,
+     "csg_deductible": 5344.8,
+     "csg_imposable": 1886.4,
+     "crds": 393.0,
+     "salaire_net": 63617.46,
+     "salaire_imposable": 65896.86,
+     "revenu_fiscal_reference": 59306.86,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 4123.02,
+     "ir": 4123.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 59494.46,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 127378.95,
+     "salaire_brut": 90000.0,
+     "cotisations_salariales": 9784.34,
+     "csg_deductible": 6012.9,
+     "csg_imposable": 2122.2,
+     "crds": 442.12,
+     "salaire_net": 71638.44,
+     "salaire_imposable": 74202.75,
+     "revenu_fiscal_reference": 66782.75,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 6365.79,
+     "ir": 6366.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 65272.44,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 141527.52,
+     "salaire_brut": 100000.01,
+     "cotisations_salariales": 10810.34,
+     "csg_deductible": 6681.0,
+     "csg_imposable": 2358.0,
+     "crds": 491.25,
+     "salaire_net": 79659.41,
+     "salaire_imposable": 82508.66,
+     "revenu_fiscal_reference": 74257.66,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 8608.26,
+     "ir": 8608.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 71051.41,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 169824.72,
+     "salaire_brut": 120000.0,
+     "cotisations_salariales": 12862.34,
+     "csg_deductible": 8017.2,
+     "csg_imposable": 2829.6,
+     "crds": 589.5,
+     "salaire_net": 95701.36,
+     "salaire_imposable": 99120.45,
+     "revenu_fiscal_reference": 89208.45,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 13093.5,
+     "ir": 13093.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 82608.36,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 212270.52,
+     "salaire_brut": 150000.0,
+     "cotisations_salariales": 15940.34,
+     "csg_deductible": 10021.5,
+     "csg_imposable": 3537.0,
+     "crds": 736.88,
+     "salaire_net": 119764.27,
+     "salaire_imposable": 124038.14,
+     "revenu_fiscal_reference": 111634.14,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 19821.2,
+     "ir": 19821.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 99943.27,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 282374.34,
+     "salaire_brut": 200000.02,
+     "cotisations_salariales": 21070.34,
+     "csg_deductible": 13379.9,
+     "csg_imposable": 4722.32,
+     "crds": 983.82,
+     "salaire_net": 159843.64,
+     "salaire_imposable": 165549.75,
+     "revenu_fiscal_reference": 151123.75,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 31668.09,
+     "ir": 31668.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 128175.64,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": -0.0
+    },
+    {
+     "salaire_super_brut": 337268.62,
+     "salaire_brut": 240000.0,
+     "cotisations_salariales": 25174.34,
+     "csg_deductible": 16099.9,
+     "csg_imposable": 5682.32,
+     "crds": 1183.82,
+     "salaire_net": 191859.61,
+     "salaire_imposable": 198725.78,
+     "revenu_fiscal_reference": 184299.78,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 43452.81,
+     "ir": 43453.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 148406.61,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 419610.16,
+     "salaire_brut": 300000.0,
+     "cotisations_salariales": 31330.34,
+     "csg_deductible": 20179.9,
+     "csg_imposable": 7122.32,
+     "crds": 1483.82,
+     "salaire_net": 239883.64,
+     "salaire_imposable": 248489.78,
+     "revenu_fiscal_reference": 234063.78,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 63856.05,
+     "ir": 63856.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 176027.64,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    }
+   ]
+  },
+  {
+   "cle": "couple_2s",
+   "libelle": "Un couple marié sans enfant, deux salaires",
+   "menages": [
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 6000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 4000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 9000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 6000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 12000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 8000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 15000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 10000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 18000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 12000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 21000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 14000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 24000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 16000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 30000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 20000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 36000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 24000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 42000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 28000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 48000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 32000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 54000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 36000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 60000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 40000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 72000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 48000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 90000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 60000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 120000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 80000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 144000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 96000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 180000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 120000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [],
+     "couple_marie_ou_pacse": true
+    }
+   ],
+   "valeurs": [
+    {
+     "salaire_super_brut": 0.0,
+     "salaire_brut": 0.0,
+     "cotisations_salariales": 0.0,
+     "csg_deductible": 0.0,
+     "csg_imposable": 0.0,
+     "crds": 0.0,
+     "salaire_net": 0.0,
+     "salaire_imposable": 0.0,
+     "revenu_fiscal_reference": 0.0,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 11316.96,
+     "aefa": 228.68,
+     "aide_logement": 0.0,
+     "revenu_disponible": 11545.64,
+     "crds_prestations": -0.0,
+     "prestations": 11545.64,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 10162.48,
+     "salaire_brut": 10000.0,
+     "cotisations_salariales": 1131.0,
+     "csg_deductible": 668.1,
+     "csg_imposable": 235.8,
+     "crds": 49.13,
+     "salaire_net": 7915.97,
+     "salaire_imposable": 8200.9,
+     "revenu_fiscal_reference": 7192.9,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 4828.74,
+     "rsa": 3400.99,
+     "aefa": 228.68,
+     "aide_logement": 0.0,
+     "revenu_disponible": 16350.24,
+     "crds_prestations": 24.14,
+     "prestations": 8434.27,
+     "reste": -0.0
+    },
+    {
+     "salaire_super_brut": 15244.02,
+     "salaire_brut": 15000.0,
+     "cotisations_salariales": 1696.44,
+     "csg_deductible": 1002.15,
+     "csg_imposable": 353.7,
+     "crds": 73.69,
+     "salaire_net": 11874.03,
+     "salaire_imposable": 12301.41,
+     "revenu_fiscal_reference": 11059.41,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 6371.12,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 18213.29,
+     "crds_prestations": 31.86,
+     "prestations": 6339.26,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 20325.32,
+     "salaire_brut": 20000.0,
+     "cotisations_salariales": 2262.0,
+     "csg_deductible": 1336.2,
+     "csg_imposable": 471.6,
+     "crds": 98.25,
+     "salaire_net": 15831.96,
+     "salaire_imposable": 16401.8,
+     "revenu_fiscal_reference": 14761.8,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 5143.69,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 20949.92,
+     "crds_prestations": 25.72,
+     "prestations": 5117.97,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 25406.26,
+     "salaire_brut": 25000.0,
+     "cotisations_salariales": 2827.56,
+     "csg_deductible": 1670.25,
+     "csg_imposable": 589.5,
+     "crds": 122.81,
+     "salaire_net": 19789.88,
+     "salaire_imposable": 20502.19,
+     "revenu_fiscal_reference": 18452.19,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 4195.23,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 23964.13,
+     "crds_prestations": 20.98,
+     "prestations": 4174.25,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 30487.8,
+     "salaire_brut": 30000.0,
+     "cotisations_salariales": 3393.0,
+     "csg_deductible": 2004.3,
+     "csg_imposable": 707.4,
+     "crds": 147.38,
+     "salaire_net": 23747.93,
+     "salaire_imposable": 24602.7,
+     "revenu_fiscal_reference": 22142.7,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 3562.92,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 27293.04,
+     "crds_prestations": 17.81,
+     "prestations": 3545.11,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 35569.34,
+     "salaire_brut": 35000.0,
+     "cotisations_salariales": 3958.44,
+     "csg_deductible": 2338.34,
+     "csg_imposable": 825.3,
+     "crds": 171.94,
+     "salaire_net": 27705.98,
+     "salaire_imposable": 28703.21,
+     "revenu_fiscal_reference": 25833.21,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 312.31,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 3009.79,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 30700.71,
+     "crds_prestations": 15.05,
+     "prestations": 2994.74,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 42971.88,
+     "salaire_brut": 40000.0,
+     "cotisations_salariales": 4524.0,
+     "csg_deductible": 2672.4,
+     "csg_imposable": 943.2,
+     "crds": 196.5,
+     "salaire_net": 31663.9,
+     "salaire_imposable": 32803.59,
+     "revenu_fiscal_reference": 29523.6,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 718.26,
+     "ir": 0.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 1897.19,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 33551.61,
+     "crds_prestations": 9.49,
+     "prestations": 1887.7,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 58245.12,
+     "salaire_brut": 50000.0,
+     "cotisations_salariales": 5655.0,
+     "csg_deductible": 3340.5,
+     "csg_imposable": 1179.0,
+     "crds": 245.62,
+     "salaire_net": 39579.88,
+     "salaire_imposable": 41004.5,
+     "revenu_fiscal_reference": 36904.5,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 1530.16,
+     "ir": 752.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 38827.88,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 74795.6,
+     "salaire_brut": 60000.0,
+     "cotisations_salariales": 6786.0,
+     "csg_deductible": 4008.6,
+     "csg_imposable": 1414.8,
+     "crds": 294.75,
+     "salaire_net": 47495.86,
+     "salaire_imposable": 49205.39,
+     "revenu_fiscal_reference": 44285.39,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 2342.05,
+     "ir": 1932.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 45563.86,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 90281.2,
+     "salaire_brut": 70000.0,
+     "cotisations_salariales": 7917.0,
+     "csg_deductible": 4676.7,
+     "csg_imposable": 1650.6,
+     "crds": 343.88,
+     "salaire_net": 55411.82,
+     "salaire_imposable": 57406.3,
+     "revenu_fiscal_reference": 51666.3,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 3153.95,
+     "ir": 3111.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 52300.82,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 105868.33,
+     "salaire_brut": 80000.0,
+     "cotisations_salariales": 9094.34,
+     "csg_deductible": 5344.8,
+     "csg_imposable": 1886.4,
+     "crds": 393.0,
+     "salaire_net": 63281.47,
+     "salaire_imposable": 65560.87,
+     "revenu_fiscal_reference": 59004.87,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 4032.42,
+     "ir": 4032.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 59249.47,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 123555.73,
+     "salaire_brut": 90000.0,
+     "cotisations_salariales": 10162.34,
+     "csg_deductible": 6012.9,
+     "csg_imposable": 2122.2,
+     "crds": 442.12,
+     "salaire_net": 71260.45,
+     "salaire_imposable": 73824.75,
+     "revenu_fiscal_reference": 66442.75,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 6263.79,
+     "ir": 6264.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 64996.45,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 137279.42,
+     "salaire_brut": 100000.0,
+     "cotisations_salariales": 11230.34,
+     "csg_deductible": 6681.0,
+     "csg_imposable": 2358.0,
+     "crds": 491.25,
+     "salaire_net": 79239.41,
+     "salaire_imposable": 82088.66,
+     "revenu_fiscal_reference": 73879.66,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 8494.86,
+     "ir": 8495.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 70744.41,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 164826.27,
+     "salaire_brut": 120000.0,
+     "cotisations_salariales": 13412.68,
+     "csg_deductible": 8017.2,
+     "csg_imposable": 2829.6,
+     "crds": 589.5,
+     "salaire_net": 95151.02,
+     "salaire_imposable": 98570.14,
+     "revenu_fiscal_reference": 88713.14,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 12944.9,
+     "ir": 12945.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 82206.02,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 211232.08,
+     "salaire_brut": 150000.0,
+     "cotisations_salariales": 16490.68,
+     "csg_deductible": 10021.5,
+     "csg_imposable": 3537.0,
+     "crds": 736.88,
+     "salaire_net": 119213.95,
+     "salaire_imposable": 123487.81,
+     "revenu_fiscal_reference": 111138.81,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 19672.6,
+     "ir": 19673.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 99540.95,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 283055.19,
+     "salaire_brut": 200000.0,
+     "cotisations_salariales": 21620.68,
+     "csg_deductible": 13362.0,
+     "csg_imposable": 4716.0,
+     "crds": 982.5,
+     "salaire_net": 159318.83,
+     "salaire_imposable": 165017.31,
+     "revenu_fiscal_reference": 148515.31,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 30885.55,
+     "ir": 30886.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 128432.83,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 339649.44,
+     "salaire_brut": 240000.0,
+     "cotisations_salariales": 25724.68,
+     "csg_deductible": 16034.4,
+     "csg_imposable": 5659.2,
+     "crds": 1179.0,
+     "salaire_net": 191402.72,
+     "salaire_imposable": 198240.94,
+     "revenu_fiscal_reference": 178416.94,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 41040.84,
+     "ir": 41041.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 150361.72,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 424538.56,
+     "salaire_brut": 300000.0,
+     "cotisations_salariales": 31880.68,
+     "csg_deductible": 20043.07,
+     "csg_imposable": 7074.03,
+     "crds": 1473.76,
+     "salaire_net": 239528.45,
+     "salaire_imposable": 248076.23,
+     "revenu_fiscal_reference": 223738.23,
+     "parts_fiscales": 2.0,
+     "ir_avant_reductions": 59622.57,
+     "ir": 59623.0,
+     "af": 0.0,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 179905.45,
+     "crds_prestations": -0.0,
+     "prestations": 0.0,
+     "reste": 0.0
+    }
+   ]
+  },
+  {
+   "cle": "couple_2s_2e",
+   "libelle": "Un couple marié, deux salaires, deux enfants",
+   "menages": [
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 0.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 6000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 4000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 9000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 6000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 12000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 8000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 15000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 10000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 18000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 12000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 21000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 14000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 24000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 16000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 30000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 20000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 36000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 24000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 42000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 28000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 48000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 32000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 54000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 36000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 60000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 40000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 72000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 48000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 90000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 60000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 120000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 80000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 144000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 96000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    },
+    {
+     "adults": [
+      {
+       "salaire_brut_annuel": 180000.0,
+       "annee_naissance": 1985
+      },
+      {
+       "salaire_brut_annuel": 120000.0,
+       "annee_naissance": 1987
+      }
+     ],
+     "children": [
+      {
+       "annee_naissance": 2015
+      },
+      {
+       "annee_naissance": 2018
+      }
+     ],
+     "couple_marie_ou_pacse": true
+    }
+   ],
+   "valeurs": [
+    {
+     "salaire_super_brut": 0.0,
+     "salaire_brut": 0.0,
+     "cotisations_salariales": 0.0,
+     "csg_deductible": 0.0,
+     "csg_imposable": 0.0,
+     "crds": 0.0,
+     "salaire_net": 0.0,
+     "salaire_imposable": 0.0,
+     "revenu_fiscal_reference": 0.0,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 836.98,
+     "ppa": 0.0,
+     "rsa": 14072.3,
+     "aefa": 320.14,
+     "aide_logement": 0.0,
+     "revenu_disponible": 16987.82,
+     "crds_prestations": 13.04,
+     "prestations": 16987.82,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 10162.48,
+     "salaire_brut": 10000.0,
+     "cotisations_salariales": 1131.0,
+     "csg_deductible": 668.1,
+     "csg_imposable": 235.8,
+     "crds": 49.13,
+     "salaire_net": 7915.97,
+     "salaire_imposable": 8200.9,
+     "revenu_fiscal_reference": 7192.9,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 836.98,
+     "ppa": 4828.74,
+     "rsa": 6156.33,
+     "aefa": 320.14,
+     "aide_logement": 0.0,
+     "revenu_disponible": 21792.43,
+     "crds_prestations": 37.18,
+     "prestations": 13876.45,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 15244.02,
+     "salaire_brut": 15000.0,
+     "cotisations_salariales": 1696.44,
+     "csg_deductible": 1002.15,
+     "csg_imposable": 353.7,
+     "crds": 73.69,
+     "salaire_net": 11874.03,
+     "salaire_imposable": 12301.41,
+     "revenu_fiscal_reference": 11059.41,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 836.98,
+     "ppa": 7243.16,
+     "rsa": 2198.28,
+     "aefa": 320.14,
+     "aide_logement": 0.0,
+     "revenu_disponible": 24194.77,
+     "crds_prestations": 49.26,
+     "prestations": 12320.74,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 20325.32,
+     "salaire_brut": 20000.0,
+     "cotisations_salariales": 2262.0,
+     "csg_deductible": 1336.2,
+     "csg_imposable": 471.6,
+     "crds": 98.25,
+     "salaire_net": 15831.96,
+     "salaire_imposable": 16401.8,
+     "revenu_fiscal_reference": 14761.8,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 836.98,
+     "ppa": 7786.16,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 26174.56,
+     "crds_prestations": 51.97,
+     "prestations": 10342.61,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 25406.26,
+     "salaire_brut": 25000.0,
+     "cotisations_salariales": 2827.56,
+     "csg_deductible": 1670.25,
+     "csg_imposable": 589.5,
+     "crds": 122.81,
+     "salaire_net": 19789.88,
+     "salaire_imposable": 20502.19,
+     "revenu_fiscal_reference": 18452.19,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 836.98,
+     "ppa": 6837.71,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 29188.78,
+     "crds_prestations": 47.23,
+     "prestations": 9398.9,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 30487.8,
+     "salaire_brut": 30000.0,
+     "cotisations_salariales": 3393.0,
+     "csg_deductible": 2004.3,
+     "csg_imposable": 707.4,
+     "crds": 147.38,
+     "salaire_net": 23747.93,
+     "salaire_imposable": 24602.7,
+     "revenu_fiscal_reference": 22142.7,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 836.98,
+     "ppa": 6205.4,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 32517.68,
+     "crds_prestations": 44.07,
+     "prestations": 8769.75,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 35569.34,
+     "salaire_brut": 35000.0,
+     "cotisations_salariales": 3958.44,
+     "csg_deductible": 2338.34,
+     "csg_imposable": 825.3,
+     "crds": 171.94,
+     "salaire_net": 27705.98,
+     "salaire_imposable": 28703.21,
+     "revenu_fiscal_reference": 25833.21,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 836.98,
+     "ppa": 5652.26,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 35925.36,
+     "crds_prestations": 41.3,
+     "prestations": 8219.38,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 42971.88,
+     "salaire_brut": 40000.0,
+     "cotisations_salariales": 4524.0,
+     "csg_deductible": 2672.4,
+     "csg_imposable": 943.2,
+     "crds": 196.5,
+     "salaire_net": 31663.9,
+     "salaire_imposable": 32803.59,
+     "revenu_fiscal_reference": 29523.6,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 0.0,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 836.98,
+     "ppa": 4539.67,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 38776.25,
+     "crds_prestations": 35.74,
+     "prestations": 7112.35,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 58245.12,
+     "salaire_brut": 50000.0,
+     "cotisations_salariales": 5655.0,
+     "csg_deductible": 3340.5,
+     "csg_imposable": 1179.0,
+     "crds": 245.62,
+     "salaire_net": 39579.88,
+     "salaire_imposable": 41004.5,
+     "revenu_fiscal_reference": 36904.5,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 265.48,
+     "ir": 0.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 2245.97,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 43577.21,
+     "crds_prestations": 20.09,
+     "prestations": 3997.32,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 74795.6,
+     "salaire_brut": 60000.0,
+     "cotisations_salariales": 6786.0,
+     "csg_deductible": 4008.6,
+     "csg_imposable": 1414.8,
+     "crds": 294.75,
+     "salaire_net": 47495.86,
+     "salaire_imposable": 49205.39,
+     "revenu_fiscal_reference": 44285.39,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 1077.38,
+     "ir": 95.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 49163.44,
+     "crds_prestations": 8.86,
+     "prestations": 1762.58,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 90281.2,
+     "salaire_brut": 70000.0,
+     "cotisations_salariales": 7917.0,
+     "csg_deductible": 4676.7,
+     "csg_imposable": 1650.6,
+     "crds": 343.88,
+     "salaire_net": 55411.82,
+     "salaire_imposable": 57406.3,
+     "revenu_fiscal_reference": 51666.3,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 1889.28,
+     "ir": 1274.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 55900.41,
+     "crds_prestations": 8.86,
+     "prestations": 1762.58,
+     "reste": 0.01
+    },
+    {
+     "salaire_super_brut": 105868.33,
+     "salaire_brut": 80000.0,
+     "cotisations_salariales": 9094.34,
+     "csg_deductible": 5344.8,
+     "csg_imposable": 1886.4,
+     "crds": 393.0,
+     "salaire_net": 63281.47,
+     "salaire_imposable": 65560.87,
+     "revenu_fiscal_reference": 59004.87,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 2696.53,
+     "ir": 2447.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 62597.05,
+     "crds_prestations": 8.86,
+     "prestations": 1762.58,
+     "reste": 0.0
+    },
+    {
+     "salaire_super_brut": 123555.73,
+     "salaire_brut": 90000.0,
+     "cotisations_salariales": 10162.34,
+     "csg_deductible": 6012.9,
+     "csg_imposable": 2122.2,
+     "crds": 442.12,
+     "salaire_net": 71260.45,
+     "salaire_imposable": 73824.75,
+     "revenu_fiscal_reference": 66442.75,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 3514.69,
+     "ir": 3515.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 69508.02,
+     "crds_prestations": 8.86,
+     "prestations": 1762.58,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 137279.42,
+     "salaire_brut": 100000.0,
+     "cotisations_salariales": 11230.34,
+     "csg_deductible": 6681.0,
+     "csg_imposable": 2358.0,
+     "crds": 491.25,
+     "salaire_net": 79239.41,
+     "salaire_imposable": 82088.66,
+     "revenu_fiscal_reference": 73879.66,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 4912.86,
+     "ir": 4913.0,
+     "af": 1771.44,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 76088.98,
+     "crds_prestations": 8.86,
+     "prestations": 1762.58,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 164826.27,
+     "salaire_brut": 120000.0,
+     "cotisations_salariales": 13412.68,
+     "csg_deductible": 8017.2,
+     "csg_imposable": 2829.6,
+     "crds": 589.5,
+     "salaire_net": 95151.02,
+     "salaire_imposable": 98570.14,
+     "revenu_fiscal_reference": 88713.14,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 9362.9,
+     "ir": 9363.0,
+     "af": 885.72,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 86669.3,
+     "crds_prestations": 4.43,
+     "prestations": 881.29,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 211232.08,
+     "salaire_brut": 150000.0,
+     "cotisations_salariales": 16490.68,
+     "csg_deductible": 10021.5,
+     "csg_imposable": 3537.0,
+     "crds": 736.88,
+     "salaire_net": 119213.95,
+     "salaire_imposable": 123487.81,
+     "revenu_fiscal_reference": 111138.81,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 16090.6,
+     "ir": 16091.0,
+     "af": 442.86,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 103563.59,
+     "crds_prestations": 2.21,
+     "prestations": 440.65,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 283055.19,
+     "salaire_brut": 200000.0,
+     "cotisations_salariales": 21620.68,
+     "csg_deductible": 13362.0,
+     "csg_imposable": 4716.0,
+     "crds": 982.5,
+     "salaire_net": 159318.83,
+     "salaire_imposable": 165017.31,
+     "revenu_fiscal_reference": 148515.31,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 27303.55,
+     "ir": 27304.0,
+     "af": 442.86,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 132455.47,
+     "crds_prestations": 2.21,
+     "prestations": 440.65,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 339649.44,
+     "salaire_brut": 240000.0,
+     "cotisations_salariales": 25724.68,
+     "csg_deductible": 16034.4,
+     "csg_imposable": 5659.2,
+     "crds": 1179.0,
+     "salaire_net": 191402.72,
+     "salaire_imposable": 198240.94,
+     "revenu_fiscal_reference": 178416.94,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 37458.84,
+     "ir": 37459.0,
+     "af": 442.86,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 154384.36,
+     "crds_prestations": 2.21,
+     "prestations": 440.65,
+     "reste": -0.01
+    },
+    {
+     "salaire_super_brut": 424538.56,
+     "salaire_brut": 300000.0,
+     "cotisations_salariales": 31880.68,
+     "csg_deductible": 20043.07,
+     "csg_imposable": 7074.03,
+     "crds": 1473.76,
+     "salaire_net": 239528.45,
+     "salaire_imposable": 248076.23,
+     "revenu_fiscal_reference": 223738.23,
+     "parts_fiscales": 3.0,
+     "ir_avant_reductions": 56040.57,
+     "ir": 56041.0,
+     "af": 442.86,
+     "cf": 0.0,
+     "asf": 0.0,
+     "ars": 0.0,
+     "ppa": 0.0,
+     "rsa": 0.0,
+     "aefa": 0.0,
+     "aide_logement": 0.0,
+     "revenu_disponible": 183928.09,
+     "crds_prestations": 2.21,
+     "prestations": 440.65,
+     "reste": -0.01
+    }
+   ]
+  }
+ ]
+}
