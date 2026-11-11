@@ -4,7 +4,7 @@
 
 ## Ce que dit cette étude
 
-La part chiffrée du programme coûte 5,19 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +94 € par an dans le dixième le plus modeste à +208 € dans le dixième le plus aisé, le plus touché étant le 9e dixième (+221 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 0,52 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 73 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour la TVA. Sans aucun effet sur l'activité, la dette serait plus haute de 1,56 point de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+La part chiffrée du programme coûte 5,20 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +94 € par an dans le dixième le plus modeste à +208 € dans le dixième le plus aisé, le plus touché étant le 9e dixième (+221 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 0,52 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 73 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour la TVA. Sans aucun effet sur l'activité, la dette serait plus haute de 1,56 point de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
 Fabien Roussel, PCF, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 14 mesures, dont 6 énoncent un paramètre. Cet outil en chiffre 1, soit 17 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
@@ -14,7 +14,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| la part chiffrée | +5,19 Md€ | — | +0,52 pt | dépend | dépend de θ |
+| la part chiffrée | +5,20 Md€ | — | +0,52 pt | dépend | dépend de θ |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -28,20 +28,20 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ### 1. Ce qu'il coûte, et qui y gagne
 
-La mesure coûte **5,19 Md€** la première année (2026), sur la population de 2024 au droit de 2026.
+La mesure coûte **5,20 Md€** la première année (2026), sur la population de 2024 au droit de 2026.
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
 |---|---|---|---|---|---|
-| 1 | 3 102 007 | 8 275 € | +94 € | 100 % | 0 % |
-| 2 | 3 100 131 | 13 318 € | +114 € | 100 % | 0 % |
-| 3 | 3 101 226 | 16 631 € | +131 € | 100 % | 0 % |
-| 4 | 3 102 674 | 19 778 € | +152 € | 100 % | 0 % |
-| 5 | 3 100 962 | 22 665 € | +177 € | 100 % | 0 % |
-| 6 | 3 101 037 | 25 579 € | +181 € | 100 % | 0 % |
-| 7 | 3 101 015 | 28 953 € | +201 € | 100 % | 0 % |
-| 8 | 3 101 048 | 33 097 € | +195 € | 100 % | 0 % |
-| 9 | 3 101 712 | 39 363 € | +221 € | 100 % | 0 % |
-| 10 | 3 101 552 | 61 952 € | +208 € | 100 % | 0 % |
+| 1 | 3 105 392 | 9 086 € | +94 € | 100 % | 0 % |
+| 2 | 3 106 035 | 14 127 € | +114 € | 100 % | 0 % |
+| 3 | 3 105 379 | 17 504 € | +131 € | 100 % | 0 % |
+| 4 | 3 104 866 | 20 518 € | +152 € | 100 % | 0 % |
+| 5 | 3 104 805 | 23 184 € | +177 € | 100 % | 0 % |
+| 6 | 3 105 390 | 25 938 € | +181 € | 100 % | 0 % |
+| 7 | 3 105 062 | 29 037 € | +201 € | 100 % | 0 % |
+| 8 | 3 105 369 | 32 966 € | +195 € | 100 % | 0 % |
+| 9 | 3 105 660 | 38 679 € | +221 € | 100 % | 0 % |
+| 10 | 3 105 795 | 57 952 € | +208 € | 100 % | 0 % |
 
 Les déciles sont ceux du niveau de vie de la population simulée. Toute structure
 plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
@@ -53,12 +53,12 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 **L'effet sur l'économie**, l'éventail macro de grade **in-support**, couverture 100 %, conjoncture « normal » :
 
-* **PIB, à 1 an** : [-3,00 Md€ ; +6,52 Md€], central +1,81 Md€
-* **PIB, à 2 ans** : [-1,24 Md€ ; +8,17 Md€], central +3,58 Md€
-* **PIB, à 3 ans** : [-851 M€ ; +8,39 Md€], central +3,77 Md€
-* **emploi, à 1 an** : [-10,46 ; +22,70] milliers ETP, central +6,30
-* **emploi, à 2 ans** : [-7,72 ; +50,88] milliers ETP, central +22,28
-* **emploi, à 3 ans** : [-6,29 ; +62,12] milliers ETP, central +27,90
+* **PIB, à 1 an** : [-3,01 Md€ ; +6,53 Md€], central +1,81 Md€
+* **PIB, à 2 ans** : [-1,24 Md€ ; +8,18 Md€], central +3,58 Md€
+* **PIB, à 3 ans** : [-852 M€ ; +8,41 Md€], central +3,77 Md€
+* **emploi, à 1 an** : [-10,47 ; +22,73] milliers ETP, central +6,31
+* **emploi, à 2 ans** : [-7,73 ; +50,95] milliers ETP, central +22,31
+* **emploi, à 3 ans** : [-6,30 ; +62,20] milliers ETP, central +27,93
 
 > Couche macro (L4) : ordre de grandeur et composition, pas une prévision. L'éventail des estimations crédibles pour un même choc est large — la dispersion entre études publiées est du même ordre que la valeur centrale elle-même. C'est une propriété de la littérature, pas de ce modèle.
 
@@ -85,7 +85,7 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
 | Effet macro éteint après trois ans | vieillie | +1,34 pt | de +1,19 pt à +1,55 pt |
-| Effet macro éteint après trois ans | figée | +1,22 pt | de +1,10 pt à +1,40 pt |
+| Effet macro éteint après trois ans | figée | +1,22 pt | de +1,11 pt à +1,40 pt |
 | Effet macro tenu au niveau de la troisième année | vieillie | +0,40 pt | de -0,17 pt à +1,47 pt |
 | Effet macro tenu au niveau de la troisième année | figée | +0,36 pt | de -0,14 pt à +1,33 pt |
 
@@ -94,14 +94,14 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 | vue | P(hausse de la dette en 2035) | quantile 5 % | médiane | quantile 95 % | ce qui pèse le plus (Sobol, total) |
 |---|---|---|---|---|---|
 | vieillie | 73 % | -0,28 pt | +0,55 pt | +1,56 pt | le multiplicateur 0,98 |
-| figée | 73 % | -0,23 pt | +0,50 pt | +1,40 pt | le multiplicateur 0,98 |
+| figée | 73 % | -0,23 pt | +0,50 pt | +1,41 pt | le multiplicateur 0,98 |
 
 **D'où vient Δb.** La dette de 2035 en trois marches, à θ½ sous la persistance « lue » : le coût après comportements, sans la boucle macro ; ce que le PIB plus haut ou plus bas change au seul ratio, comme dénominateur ; ce que les recettes induites par l'activité y changent. Les trois font la ligne du tableau (D-349).
 
 | vue | le coût, sans boucle | le PIB, dénominateur | les recettes induites | Δ dette 2035 |
 |---|---|---|---|---|
 | vieillie | +1,56 pt | -0,13 pt | -0,91 pt | +0,52 pt |
-| figée | +1,40 pt | -0,11 pt | -0,82 pt | +0,48 pt |
+| figée | +1,41 pt | -0,11 pt | -0,82 pt | +0,48 pt |
 
 **Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : +0,57 pt en vue vieillie, contre +0,52 pt ; +0,52 pt en vue figée, contre +0,48 pt.
 
@@ -128,8 +128,8 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 | `tva_postes.carburants` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
-| le bas | 0 % | +7,28 Md€ | +2,25 pt |
-| le candidat | 5,5 % | +5,28 Md€ | +1,63 pt |
+| le bas | 0 % | +7,29 Md€ | +2,25 pt |
+| le candidat | 5,5 % | +5,29 Md€ | +1,63 pt |
 | le haut | 20 % | +0 € | +0,00 pt |
 
 ## Le programme, mesure par mesure
@@ -166,11 +166,11 @@ Le programme n'annonce, pour aucune de ses mesures, un montant que le relevé ai
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `7235bd8` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_roussel/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_roussel/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée | +5,19 Md€ → +5,19 Md€ | +0,44 pt → +0,52 pt | dépend de θ → dépend |
+| la part chiffrée | +5,19 Md€ → +5,20 Md€ | +0,52 pt → +0,52 pt | dépend de θ → dépend |
 
 Ce qui touche chaque ligne :
 
@@ -180,7 +180,7 @@ Le résultat de la série (D-352) dit ce que chaque correction y pèse là où u
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `12e769c`, conteneur cloud 15 Go, 4 cœurs, but 16 (D-350). Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
