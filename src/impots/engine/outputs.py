@@ -219,6 +219,12 @@ REGISTRY: tuple[Row, ...] = (
     # the 0.5 % between the two is exactly what made a national AF reform miss by
     # 0.50 %. Entered on the transfer side, where it nets the benefit down to what the
     # state actually bears.
+    # The allocation de rentrée scolaire, gross; its CRDS is inside `crds_pfam`. openfisca
+    # counts it in `prestations_familiales`, hence in `revenu_disponible`: without a row a
+    # parent of a child of 6 to 18 saw a disposable income above the sum of its lines
+    # (836.98 EUR for a lone parent of two, found by the parcours, D-376).
+    Row("ars", "ars", "famille", "year", "full", False,
+        label="Allocation de rentrée scolaire"),
     Row("crds_pfam", "crds_pfam", "famille", "year", "full", False,
         label="CRDS sur prestations familiales"),
     Row("crds_logement", "crds_logement", "famille", "month", "full", False,

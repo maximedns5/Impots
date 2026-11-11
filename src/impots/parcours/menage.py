@@ -69,10 +69,9 @@ SITUATIONS: tuple[tuple[str, str, int, bool, int, bool], ...] = (
 #: Les prestations que la page montre, une ligne chacune.
 PRESTATIONS = ("af", "cf", "asf", "ars", "ppa", "rsa", "aefa", "aide_logement")
 #: Les variables qu'OpenFisca verse dans le revenu disponible et que le registre du moteur
-#: (`engine/outputs.py`) n'extrait pas : lues à côté, sur la même simulation. Sans elles,
-#: un parent qui a des enfants de 6 à 18 ans a un revenu disponible que ses lignes ne
-#: retrouvent pas, de l'allocation de rentrée scolaire exactement.
-HORS_REGISTRE = ("ars",)
+#: (`engine/outputs.py`) n'extrait pas, lues à côté sur la même simulation. Vide : l'ARS,
+#: qu'elle a d'abord portée, a sa ligne au registre depuis D-376.
+HORS_REGISTRE: tuple[str, ...] = ()
 #: La CRDS prélevée sur ces prestations, que le moteur stocke négative.
 CRDS_PRESTATIONS = ("crds_pfam", "crds_logement", "crds_mini")
 #: Ce que le moteur sait payer ou prélever et que ces ménages n'ont pas : la commande
