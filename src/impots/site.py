@@ -40,6 +40,16 @@ TERMES: tuple[tuple[str, str], ...] = (
     ("mecanique", r"mécaniques?"), ("couverture", r"couverture"),
     ("mesange", r"Mésange"), ("point-de-pib", r"points? de PIB"),
     ("miroir", r"en miroir"), ("tolerance", r"tolérances?"),
+    ("pont", r"ponts? de non-recours"), ("non-recours", r"non-recours"),
+    ("en-esperance", r"(?:servie?s? )?en espérance"),
+    ("bandeaux", r"bandeaux maladie et famille|bandeaux? (?:maladie|famille)|bandeaux?"),
+    ("reduction-generale", r"réductions? générales?"),
+    ("preenregistrement", r"préenregistr(?:ée?s?|ements?)"),
+    ("grille", r"grilles? de vérification"), ("delta-b", r"Δb"),
+    ("decomposition", r"décomposition|recettes induites"),
+    # The noun only: « porte » is far more often the verb (« le programme porte… »).
+    ("porte", r"portes?(?= de chaque refus| qui l'ouvrir)|(?<=avec leur )porte"
+              r"|(?<=avec sa )porte"),
     ("les-juges", r"D-\d{3}"),
 )
 
