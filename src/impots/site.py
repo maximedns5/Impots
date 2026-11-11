@@ -380,7 +380,7 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         scripted |= set(pages)
         intro += (f'\n<p><a href="{parcours.PAGES[0][1]}">Refaire le chemin d\'un nombre</a> : '
                   "huit pages, du ménage au verdict, chacune avec sa donnée, le lien de sa "
-                  "source et le fichier qui la calcule (but 20).</p>")
+                  "source et le fichier qui la calcule.</p>")
     files["index.html"] = _page(TITLE, intro + "\n<ul class=\"etudes\">\n"
                                 + "\n".join(listed) + "\n</ul>")
     for name, text in files.items():
