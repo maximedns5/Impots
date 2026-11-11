@@ -27723,3 +27723,55 @@ aucune d'elles par une erreur qui en compense une autre. Le pronostic tient sur 
 **La loi d'erreur** reste un biais de structure, stable d'une année à l'autre : la
 population de 2024 ramenée aux autres années garde sa forme. Le modèle est prêt pour la série des dix
 études : chaque écart qui reste a sa cause dite, et chaque page dira sa ligne.
+
+## D-372 — La série du but 19 préenregistrée : dix études sur le modèle de D-370
+
+**Ce qui tourne.** Les dix études (`etudes/*.json`), une fois, sur le commit qui porte
+cette entrée, dans le cadre central, avec la population de 2024 reconstruite sur le code de
+D-370 (celle de la grille de D-371) et le millésime d'entreprises 2023, dont l'année de
+base est 2024 (D-366). Rien d'autre ne tourne sur la machine pendant la série.
+
+**L'ordre, étude par étude** (D-350). La série d'avant est celle de `12e769c` (but 16),
+figée dans `avant/serie.json` par `impots etude avant` ; l'ancien gel, de `7235bd8`, est
+remplacé. Les rapports de `12e769c` sont retirés ; `impots etude lancer <nom>` les refait.
+Chaque page dit, ligne par ligne, avant → après.
+
+**Le coût de la première année est mesuré, pas pronostiqué.** Il passe par l'échantillon
+de 20 000 ménages de l'API, celui que la série reprend : calculé avant cette entrée sur ce
+code, il sera retrouvé à l'euro, et le dire pronostic serait se noter soi-même. La série le
+vérifie : un écart au-delà de 0,1 % dirait que la série n'a pas tourné sur ce code.
+
+**Le pronostic** porte sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance « lue ») et le verdict du
+Monte-Carlo (seuils de D-345). Δb est celui d'avant, mis à l'échelle du coût mesuré, ±15 %
+(±20 % pour la prime et les APL, que le non-recours change dans leur forme) : la boucle et
+les comportements suivent le coût au premier ordre, et le mélange des instruments bouge peu.
+Le verdict est celui d'avant, sauf où P(hausse) était à moins de 0,05 d'un seuil.
+
+| ligne | avant : coût ; Δb ; P | coût, mesuré | Δb, pronostic | verdict |
+|---|---|---|---|---|
+| PLF art. 2 | +2,85 ; +0,39 ; 0,80 | +2,62 | +0,31 à +0,41 | dépend |
+| PLF art. 3 | −1,12 ; −0,17 ; 0,18 | −1,10 | −0,19 à −0,14 | dépend |
+| PLF art. 15 | −7,05 ; −0,23 ; 0,00 | −7,05 | −0,26 à −0,19 | baisse |
+| PLFSS, prime | −0,87 ; −0,26 ; 0,00 | −0,56 | −0,20 à −0,14 | baisse |
+| PLFSS, APL | −0,08 ; −0,07 ; 0,00 | −0,07 | −0,08 à −0,05 | baisse |
+| Attal | +59,53 ; +3,41 ; 0,63 | +65,69 | +3,20 à +4,33 | dépend |
+| Labib | +22,89 ; +4,47 ; 1,00 | +22,92 | +3,80 à +5,14 | hausse |
+| Le Pen | +13,97 ; +1,56 ; 0,75 | +13,38 | +1,27 à +1,72 | dépend |
+| Lisnard | +35,43 ; +5,56 ; 0,88 | +36,19 | +4,83 à +6,53 | dépend ou hausse |
+| Mélenchon | −6,61 ; −0,33 ; 0,43 | −6,33 | −0,37 à −0,27 | dépend |
+| Retailleau | +16,08 ; +2,19 ; 1,00 | +17,11 | +1,98 à +2,68 | hausse |
+| Roussel | +5,19 ; +0,52 ; 0,73 | +5,20 | +0,44 à +0,60 | dépend |
+| Tondelier | −0,85 ; +0,27 ; 0,93 | −0,92 | +0,25 à +0,34 | hausse ou dépend |
+
+**Les raisons.** Attal +10 % : l'extrapolation aux salariés absents (+9 %, D-368), moins
+les allègements que les gérants et les particuliers employeurs n'ont plus (D-370).
+Retailleau +6 %, Mélenchon −4 % : les mêmes, avec la règle des allègements qui pèse sur
+la réduction générale de Mélenchon. Le Pen −4 % et PLF art. 2 −8 % : l'impôt au barème est
+passé de +6 % à −8 % de son total publié (D-371), et ces mesures portent sur lui. La prime
+du PLFSS −36 % : le non-recours (D-366). Lisnard +2 % : la CSG portée par l'extrapolation.
+Labib, Roussel, PLF art. 3 et 15 : moins de 2 %.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/` : le chiffre noté contre un juge reste celui de son
+enregistrement. Les seuils du verdict sont ceux de D-345. Le résultat va dans une nouvelle
+D-entrée, avec les dix études avant et après et l'écart au pronostic.
