@@ -91,7 +91,8 @@ def test_le_non_recours_est_decrit_par_son_vrai_calage():
     """Le calage vise le milieu de la fourchette de la Drees en foyers (35 % pour le RSA,
     50 % pour la prime), pas des allocataires ; le pont de la prime dit 42 % en montant."""
     texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", france.page().corps)))
-    assert "35\u00a0% pour le RSA (la Drees dit 33 à 37\u00a0%)" in texte
-    assert "50\u00a0% pour la prime (48 à 52\u00a0%)" in texte
-    assert "un non-recours d'environ 42\u00a0% des montants" in texte
+    # `\s+` a ramené les espaces fines et insécables à des espaces : on compare ainsi.
+    assert "35 % pour le RSA (la Drees dit 33 à 37 %)" in texte
+    assert "50 % pour la prime (48 à 52 %)" in texte
+    assert "un non-recours d'environ 42 % des montants" in texte
     assert "calée sur les allocataires que compte la Drees" not in texte

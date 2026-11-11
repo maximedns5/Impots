@@ -682,7 +682,7 @@ ARTICLES_2027: tuple[Article2027, ...] = (
     Article2027(
         13, "Soutien au secteur agricole",
         _CAT[10], "not_priceable", "septembre",
-        "data. Aucun bénéfice agricole dans la population, comme en septembre."),
+        "data. Aucun bénéfice agricole dans la population ; le triage de septembre 2026 le disait déjà."),
     Article2027(
         14, "Soutien aux entreprises touchées par les incendies de l'été 2026",
         "soutien conjoncturel après sinistre", "not_priceable", "neuve",
@@ -703,7 +703,7 @@ ARTICLES_2027: tuple[Article2027, ...] = (
         16, "Rationalisation des taux de taxe sur la valeur ajoutée applicables aux "
             "services de télévision",
         "TVA — taux applicables à des services", "not_priceable", "neuve",
-        "structure. Pas de TVA par taux : F8 attend le budget de famille."),
+        "structure. Pas de TVA par taux au moment du triage : la ventilation de la consommation par taux attendait l'enquête Budget de famille. Ce refus n'a pas été revu depuis."),
     Article2027(
         17, "Ajustements sur les taxes sur les réductions de capital",
         "taxe sur les réductions de capital", "not_priceable", "neuve",
