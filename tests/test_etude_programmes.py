@@ -261,13 +261,14 @@ def test_the_debt_without_activity_is_the_cost_without_the_loop(pages) -> None:
     """But 19, étape 1. « Sans aucun effet sur l'activité » lit la marche « le coût, sans
     boucle » de la décomposition (D-349), pas le coin θ = 0 de la boîte, qui met le
     multiplicateur au bas de sa fourchette publiée et non à zéro : chez Attal, 18,30
-    points, quand le coin en donnait 13,95."""
+    points à l'étape 1, quand le coin en donnait 13,95 ; 20,28 sur les rapports de la
+    série du but 19 (D-373), au coût de 65,69 Md€."""
     study, text = pages["attal"]
     path = json.loads(next(study.rapports.glob("predictif_*.json")).read_text("utf-8"))
     cout = path["lectures"]["decomposition"]["vieillie"]["cout"]
-    assert f"{cout * 100:.2f}" == "18.30"
+    assert f"{cout * 100:.2f}" == "20.28"
     head = text.split("## En bref")[0]
-    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 18,30 points" in head
+    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 20,28 points" in head
     assert "13,95" not in head
     for slug, (_, page) in pages.items():
         assert "Sans aucun effet sur l'activité" in page.split("## En bref")[0], slug

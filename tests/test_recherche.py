@@ -221,7 +221,8 @@ def test_the_frozen_view_is_priced_on_the_population_as_it_is(monkeypatch) -> No
     population = pl.DataFrame({
         "person_id": [0], "household_id": ["h0"], "weight": [500.0], "age": [40],
         "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
-        "pension_annuelle": [0.0], "loyer_mensuel": [600.0]})
+        "pension_annuelle": [0.0], "loyer_mensuel": [600.0],
+        "revenu_non_salarie_annuel": [0.0]})
     passed: list = []
 
     def run(request, frame):
