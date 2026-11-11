@@ -40,7 +40,7 @@ INSTRUMENTS = (
     "prelevements_salaires_d291", "pension_employeur_etat", "remuneration_hors_brut",
     "ir",
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",
-    "af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",
+    "af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite", "aefa", "cf", "asf",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
     # The full-take-up entitlements, beside the expected payments that carry the plain
     # names (but 19, étape 4, `runner._serve_in_expectation`): read by the lines that

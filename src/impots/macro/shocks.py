@@ -91,6 +91,7 @@ UNMAPPED = {
     "ppa": "transfert",
     "rsa": "transfert",
     "aide_logement": "transfert",
+    "reduction_loyer_solidarite": "transfert",
     # The rest of `guards.STATE_TRANSFERS` (D-218): the prime de Noël, the complément
     # familial, the ASF, and the CRDS netted off the benefits, which belongs with them.
     "aefa": "transfert",

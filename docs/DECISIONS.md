@@ -27831,3 +27831,35 @@ suit.
 
 **Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
 `chiffrages_preregistres/`, les seuils de D-345. Le pronostic manqué n'est pas réécrit.
+
+## D-374 — La réduction de loyer de solidarité, vue ; deux tests lourds remis au code
+
+**Ce que les lourds ont trouvé.** `make impact`, sur le commit de D-373, a vu échouer
+deux tests lourds. Les légers étaient verts après deux corrections de tests (une colonne
+absente des mini-populations, la dette d'Attal sans boucle lue à 20,28 sur les rapports
+de la série).
+
+**Le solveur budgétaire refusé par le garde des secteurs.** Le test du solveur (RSA à
+700 €, CSG pour le payer, 5 000 ménages) a buté près de sa racine : coût annoncé
+−15,6 M€ contre −17,4 M€ reconstitué, un écart de 1,79 M€ au-dessus du seuil de 3·10⁻⁴
+du mouvement brut. Mesuré ménage par ménage, l'écart vient de trois locataires HLM, et il
+est la réduction de loyer de solidarité à l'euro près (1 788 137 € contre 1 788 083 €).
+openfisca la compte dans `prestations_sociales`, donc dans le revenu disponible ; aucun
+instrument ne la portait. Elle pèse 1,27 Md€ sur la population de 2024 et se montre depuis
+que l'étape « al » tire les loyers HLM du RPLS. Elle a désormais sa ligne
+(`reduction_loyer_solidarite`, famille, mensuelle), un champ de la réponse de l'API, et
+entre dans les transferts du garde.
+
+**Aucun nombre ne bouge.** Le coût est la variation du revenu disponible, qui la
+contenait déjà ; le garde la reconstitue maintenant comme le coût la compte. Le canal
+macro n'en lit rien : un transfert n'a pas de variante Mésange (« non couvert »). La série
+de D-373 n'est pas relancée. Un biais est dit : la RLS est payée par le bailleur social,
+pas par l'État, et le coût la compte comme une dépense publique. Une réforme qui ouvre
+l'aide au logement à des locataires HLM est surestimée d'environ 2 % de ce qu'elle ouvre
+(l'aide baisse de 98 % de la RLS). Le corriger change des coûts : c'est un travail à part,
+préenregistré.
+
+**Le test du niveau de vie lisait l'ancien quantile.** Depuis l'étape 4, les lignes du
+niveau de vie médian et du D9/D1 lisent les quantiles au plein recours, le concept sur
+lequel elles ont été posées ; le test comparait aux quantiles servis. Il lit maintenant
+ce que la ligne lit. Les deux lourds passent.
