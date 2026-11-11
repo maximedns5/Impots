@@ -218,7 +218,7 @@ def chiffrer() -> dict[str, Any]:
         "commande": COMMANDE,
         "annee": ANNEE,
         "moteur": versions(),
-        "bareme": [[float(t), float(r)] for t, r in zip(bareme.thresholds, bareme.rates)],
+        "bareme": [[float(t), float(r)] for t, r in zip(bareme.thresholds, bareme.rates, strict=True)],
         "types": types,
         "reforme": reforme,
         "salaires": list(SALAIRES),
@@ -247,7 +247,7 @@ def golden(nom: str) -> dict[str, Any]:
 
 
 def _nombre(texte: str) -> float:
-    return float(texte.replace(" ", "").replace(" ", "").replace(" ", "")
+    return float(texte.replace("\u202f", "").replace("\u00a0", "").replace(" ", "")
                  .replace(",", "."))
 
 
@@ -288,8 +288,8 @@ STYLE = "tr.info td{color:var(--doux)}"
 def eur(valeur: float, centimes: bool = False) -> str:
     """Un montant en euros, à la française : 1 274 €, ou 1 888,74 €."""
     texte = f"{valeur:,.2f}" if centimes else f"{round(valeur):,.0f}"
-    texte = texte.replace(",", " ").replace(".", ",")
-    return texte.replace("-", "−") + " €"
+    texte = texte.replace(",", "\u202f").replace(".", ",")
+    return texte.replace("-", "−") + "\u00a0€"
 
 
 def _cellule(key: str, sens: str, valeurs: dict[str, float]) -> str:
@@ -298,7 +298,7 @@ def _cellule(key: str, sens: str, valeurs: dict[str, float]) -> str:
         return f"{valeur:g}".replace(".", ",")
     texte = eur(valeur)
     if sens == "-" and round(valeur) != 0:
-        return "− " + texte
+        return "−\u202f" + texte
     return texte
 
 
@@ -369,9 +369,9 @@ def _controle(d: dict[str, Any], ref: dict[str, Any]) -> str:
              round(v["ir_avant_reductions"]), r["droits_simples"]),
             ("Décote (droits simples moins impôt)", round(decote), r["decote"]),
         )
-        rows = "".join(f"<tr><td>{html.escape(l)}</td><td class=\"num\">{eur(a)}</td>"
+        rows = "".join(f"<tr><td>{html.escape(nom_ligne)}</td><td class=\"num\">{eur(a)}</td>"
                        f"<td class=\"num\">{eur(b)}</td><td class=\"num\">{eur(a - b)}</td></tr>"
-                       for l, a, b in lignes)
+                       for nom_ligne, a, b in lignes)
         parts = (f"<tr><td>Parts</td><td class=\"num\">{v['parts_fiscales']:g}</td>"
                  f"<td class=\"num\">{r['parts_fiscales']:g}</td>"
                  f"<td class=\"num\">{v['parts_fiscales'] - r['parts_fiscales']:g}</td></tr>")
@@ -406,12 +406,12 @@ def _readme(d: dict[str, Any]) -> str:
         f"<span class=\"nombre\">{eur(r['loi']['revenu_fiscal_reference'])}</span>. La "
         f"dernière tranche du barème commence à {eur(seuil)} : "
         f"<span class=\"nombre\">{eur(au_dessus)}</span> de son revenu y sont. Passer son "
-        f"taux de {round(taux * 100)} % à {round(nouveau * 100)} %, c'est "
+        f"taux de {round(taux * 100)}\u202f% à {round(nouveau * 100)}\u202f%, c'est "
         f"{points} points de plus sur ces euros-là, soit, à la main, "
         f"<span class=\"nombre\">{eur(main)}</span>.</p>"
         "<table><thead><tr><th></th><th>impôt sur le revenu</th></tr></thead><tbody>"
         f"<tr><td>la loi</td><td class=\"num\">{eur(r['loi']['ir'])}</td></tr>"
-        f"<tr><td>la tranche à {round(nouveau * 100)} %</td><td class=\"num\">"
+        f"<tr><td>la tranche à {round(nouveau * 100)}\u202f%</td><td class=\"num\">"
         f"{eur(r['reforme']['ir'])}</td></tr>"
         f"<tr><td><strong>l'écart, par le moteur</strong></td><td class=\"num\"><strong>"
         f"+{eur(r['ecart']['ir'])}</strong></td></tr>"
@@ -452,7 +452,7 @@ def _curseur(d: dict[str, Any]) -> tuple[str, str]:
             f"<tr><td class=\"num\">{eur(sal)}</td><td class=\"num\">{eur(v['salaire_net'])}"
             f"</td><td class=\"num\">{eur(v['ir'])}</td><td class=\"num\">"
             f"{eur(v['prestations'])}</td><td class=\"num\">{eur(v['revenu_disponible'])}</td>"
-            "</tr>" for sal, v in zip(salaires, s["valeurs"]))
+            "</tr>" for sal, v in zip(salaires, s["valeurs"], strict=True))
         statique.append(
             f"<h3>{html.escape(s['libelle'])}</h3><table><thead><tr><th>salaire brut</th>"
             "<th>salaire net</th><th>impôt sur le revenu</th><th>prestations, nettes de "
@@ -501,7 +501,7 @@ def page() -> Page:
                         f"{d['annee']} »")
     curseur, script = _curseur(d)
     seuils = ", ".join(eur(t) for t, _ in d["bareme"][1:])
-    taux = ", ".join(f"{round(r * 100)} %" for _, r in d["bareme"])
+    taux = ", ".join(f"{round(r * 100)}\u202f%" for _, r in d["bareme"])
     ecarts_ir = [round(d["types"][n]["valeurs"]["ir"]) - ref[n]["ir"] for n in CONTROLES]
     verdict = ("à l'euro près" if all(e == 0 for e in ecarts_ir)
                else "avec un écart, montré ci-dessous")
@@ -547,7 +547,7 @@ prestations de cette page sont ceux d'OpenFisca, sans contrôle indépendant.</p
 
 <h2>Les valeurs d'or</h2>
 <p>Chaque ménage type est aussi un cas d'or : ses valeurs, produites par le moteur le jour
-où le cas a été écrit, sont tenues à ±2 € par {fichier("tests/test_golden.py")}. Le
+où le cas a été écrit, sont tenues à ±2\u00a0€ par {fichier("tests/test_golden.py")}. Le
 fichier de cette page doit les retrouver : un écart dirait que le moteur a bougé depuis.</p>
 {_anneau_or(d)}
 

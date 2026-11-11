@@ -74,7 +74,7 @@ def test_le_script_porte_chaque_point_de_la_grille(page, donnees):
     for situation in donnees["situations"]:
         points = blob["points"][situation["cle"]]
         assert len(points) == len(donnees["salaires"])
-        for cellules, valeurs in zip(points, situation["valeurs"]):
+        for cellules, valeurs in zip(points, situation["valeurs"], strict=True):
             assert cellules[i] == menage.eur(valeurs["revenu_disponible"])
 
 
