@@ -744,6 +744,7 @@ def run(
             reformed_built.calculate("salaire_super_brut", add=True).astype(np.float64)))
     for key in [k for k in columns if k.startswith(CSG_DEDUCTIBLE_NS)]:
         del columns[key]
+    baseline_rows.pop(CSG_DEDUCTIBLE_NS, None)
 
     # The MEAN of member weights, not the sum. EXTRIAN is an individual weight, but
     # the survey weights a whole dwelling together: it is identical across members
