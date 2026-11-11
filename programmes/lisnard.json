@@ -93,7 +93,7 @@
       ],
       "refus": {
         "porte": "bases_locales",
-        "raison": "Une enveloppe de 40 Md€ sans taux : la C3S et la CVAE n'en font qu'une part (L4), le reste passe par des impôts de production locaux que le moteur ne porte pas."
+        "raison": "Une enveloppe de 40 Md€ sans taux : la C3S et la CVAE n'en font qu'une part, chiffrée dans sa propre mesure, le reste passe par des impôts de production locaux que le moteur ne porte pas."
       },
       "declare": {
         "montant_eur": 40000000000.0,

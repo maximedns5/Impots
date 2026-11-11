@@ -7,7 +7,7 @@
 * **art. 74 du PLF, la prime d'activité** : la mesure rapporte 557 M€ au budget la première année, chiffrée en 2026, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de -11 € par an dans le dixième le plus modeste à -3 € dans le dixième le plus aisé, le plus touché étant le 3e dixième (-38 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,16 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 0 % des tirages du calcul d'incertitude, et l'outil conclut que la mesure baisse la dette.
 * **art. 74 du PLF, les aides au logement** : la mesure rapporte 72 M€ au budget la première année, chiffrée en 2026, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de -7 € par an dans le dixième le plus modeste à 0 € dans le dixième le plus aisé, le plus touché étant le 2e dixième (-8 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,07 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 0 % des tirages du calcul d'incertitude, et l'outil conclut que la mesure baisse la dette.
 
-Le projet de loi de financement de la sécurité sociale pour 2027 porte 49 articles. Cet outil n'en chiffre aucun, et dit pour chacun pourquoi, avec la porte qui l'ouvrirait. La mesure de prestations que l'automne lui donne à chiffrer est dans le projet de loi de finances : l'art. 74, en 2 volets. Pour chacun, trois réponses : ce qu'il coûte et qui y gagne ; ce qu'il coûte une fois les comportements et l'économie pris en compte ; ce qu'il fait à la dette en 2035. Puis l'écart au chiffrage du gouvernement, l'évaluation préalable publiée avec le texte.
+Le projet de loi de financement de la sécurité sociale pour 2027 porte 49 articles. Cet outil n'en chiffre aucun, et dit pour chacun pourquoi, avec sa « porte » : ce que l'outil devrait savoir faire pour le chiffrer. La mesure de prestations que l'automne lui donne à chiffrer est dans le projet de loi de finances : l'art. 74, en 2 volets. Pour chacun, trois réponses : ce qu'il coûte et qui y gagne ; ce qu'il coûte une fois les comportements et l'économie pris en compte ; ce qu'il fait à la dette en 2035. Puis l'écart au chiffrage du gouvernement, l'évaluation préalable publiée avec le texte.
 
 Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
@@ -198,7 +198,7 @@ La première année de cette étude, sur le code de l'étude, chiffre -72 M€, 
 
 ## Les 49 articles du PLFSS
 
-Un article refusé n'est pas un article à zéro. Le refus est pris sur le texte, avant tout chiffrage, et sa raison est dite : hors du périmètre (`scope`), hors de la structure du modèle (`structure`), ou hors de ses données (`data`). La porte est ce que l'outil devrait savoir faire pour le chiffrer.
+Un article refusé n'est pas un article à zéro. Le refus est pris sur le texte, avant tout chiffrage, et sa raison est dite : hors du périmètre (`scope`), hors de la structure du modèle (`structure`), ou hors de ses données (`data`). La « porte » est ce que l'outil devrait savoir faire pour le chiffrer.
 
 | art. | intitulé | case | porte | pourquoi |
 |---|---|---|---|---|
@@ -272,24 +272,26 @@ La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dan
 
 Ce qui touche chaque ligne :
 
-* **art. 74 du PLF, la prime d'activité** : le secteur public câblé (D-346), le verdict lu sur le Monte-Carlo (D-345).
-* **art. 74 du PLF, les aides au logement** : le secteur public câblé (D-346), le verdict lu sur le Monte-Carlo (D-345).
+* **art. 74 du PLF, la prime d'activité** : le secteur public modélisé statut par statut (D-346), le verdict lu sur le Monte-Carlo (D-345).
+* **art. 74 du PLF, les aides au logement** : le secteur public modélisé statut par statut (D-346), le verdict lu sur le Monte-Carlo (D-345).
 
-Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une seule la touche ; ailleurs, elles ne se séparent pas sans une passe par correction, qui n'est pas faite.
+Là où une seule correction touche une ligne, l'écart avant → après est ce qu'elle pèse (D-352) ; ailleurs, les corrections ne se séparent pas sans un calcul refait sans chacune, qui n'est pas fait.
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
-Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
+Le secteur public est modélisé statut par statut (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
 * Aides au logement, montant versé : −28,1 % en moyenne, de −28,9 % à −27,0 % ; 0 année sur 3 dans sa tolérance.
 * Foyers allocataires de la prime d'activité, servis en espérance : −28,1 % en moyenne, de −30,0 % à −26,2 % ; 0 année sur 3 dans sa tolérance.
 * Prime d'activité, montant servi en espérance (sans pont) : −25,1 % en moyenne, de −26,8 % à −23,5 % ; 0 année sur 3 dans sa tolérance.
+
+Le moteur calcule le droit de chaque famille, ce qu'elle toucherait si elle le demandait ; une part des ayants droit ne demande rien (le non-recours). « Servi en espérance » : chaque famille reçoit son droit multiplié par sa probabilité de le demander, calée sur le non-recours publié par la Drees. « Sans pont » : ce montant se compare tel quel au total versé. Un « pont de non-recours » est l'ancienne correction : un seul coefficient de non-recours, appliqué au total.
 
 Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
 

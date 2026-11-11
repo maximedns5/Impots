@@ -6,7 +6,7 @@
 
 La part chiffrée du programme rapporte 917 M€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de 0 € par an dans le dixième le plus modeste à -295 € dans le dixième le plus aisé. Une fois comptés les changements de comportement que des études publiées permettent de chiffrer, le coût irait de -744 M€ à -245 M€. En 2035, la dette publique serait plus haute de 0,01 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 55 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. Le coût de la première année et l'effet sur la dette sont de signes contraires : les comportements et l'effet sur l'activité, chiffrés plus bas, suffisent à renverser le signe. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu. Sans aucun effet sur l'activité, la dette serait plus basse de 0,23 point de PIB : le coût après les comportements, à θ½, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
-Marine Tondelier, Les Écologistes, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 21 mesures, dont 14 énoncent un paramètre. Cet outil en chiffre 1, soit 7 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
+Marine Tondelier, Les Écologistes, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 21 mesures, dont 14 énoncent un paramètre. Cet outil en chiffre 1, soit 7 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
 Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
@@ -49,11 +49,11 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 ### 2. Avec les comportements et l'économie
 
-**Une fois les comportements pris en compte**, la mesure coûte de -744 M€ à -245 M€, central -513 M€ (grade **illustrative**), pour -917 M€ sans eux.
+**Une fois les comportements pris en compte**, la mesure coûte de -744 M€ à -245 M€, central -513 M€ (bande **extrapolée** : la réforme sort de l'étendue des variations sur lesquelles les élasticités publiées ont été estimées), pour -917 M€ sans eux.
 
 *Cette réforme est plus grande que celles sur lesquelles les élasticités ont été estimées : la bande est une extrapolation, élargie et signalée comme telle.*
 
-**L'effet sur l'économie**, l'éventail macro de grade **in-support**, couverture 100 %, conjoncture « normal » :
+**L'effet sur l'économie**, l'éventail macro (la fourchette de ce que des multiplicateurs publiés disent du PIB et de l'emploi), **dans l'étendue des estimations**, le choc ne dépassant pas ceux sur lesquels les multiplicateurs ont été estimés ; 100 % de la mesure a un multiplicateur publié ; conjoncture supposée normale, ni récession ni surchauffe :
 
 * **PIB, à 1 an** : [-1,23 Md€ ; +448 M€], central -402 M€
 * **PIB, à 2 ans** : [-1,60 Md€ ; +63 M€], central -788 M€
@@ -122,7 +122,7 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 
 ## Ce que bouge chaque paramètre
 
-Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
+Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035, un calcul rapide qui ne refait pas chaque année. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le calcul complet chiffre année par année avec les comportements et la boucle macro. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
 
 ### Nouvelle tranche d'impôt sur le revenu à 60 %
 
@@ -136,7 +136,7 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 ## Le programme, mesure par mesure
 
-Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure à zéro : la porte dit ce que l'outil devrait savoir faire pour la chiffrer. Une mesure vague n'énonce ni taux ni montant.
+Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure à zéro : sa « porte » dit ce qui manque à l'outil, ce qu'il devrait savoir faire pour la chiffrer. Une mesure vague n'énonce ni taux ni montant.
 
 | mesure | ce que dit le candidat | sort | pourquoi |
 |---|---|---|---|
@@ -194,17 +194,17 @@ La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dan
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée (1 mesure sur 14 paramétrées, 21 relevées)** : le secteur public câblé (D-346), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (1 mesure sur 14 paramétrées, 21 relevées)** : le secteur public modélisé statut par statut (D-346), le verdict lu sur le Monte-Carlo (D-345).
 
-Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une seule la touche ; ailleurs, elles ne se séparent pas sans une passe par correction, qui n'est pas faite.
+Là où une seule correction touche une ligne, l'écart avant → après est ce qu'elle pèse (D-352) ; ailleurs, les corrections ne se séparent pas sans un calcul refait sans chacune, qui n'est pas fait.
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
-Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
+Le secteur public est modélisé statut par statut (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 

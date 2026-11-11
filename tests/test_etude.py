@@ -215,7 +215,9 @@ def test_in_mirror_the_band_and_the_fan_turn_over(plfss) -> None:
     section = _section(plfss.render(plfss.load()), "la prime d'activité")
     cost = 4.0e8
     assert (f"la mesure coûte de {fiche._eur(-1.1 * cost)} à {fiche._eur(-0.9 * cost)}, "
-            f"central {fiche._eur(-cost)} (grade **illustrative**), pour "
+            f"central {fiche._eur(-cost)} (bande **extrapolée** : la réforme sort de "
+            f"l'étendue des variations sur lesquelles les élasticités publiées ont été "
+            f"estimées), pour "
             f"{fiche._eur(-cost)} sans eux") in section
     assert "* **PIB, à 1 an** : [-3,00 Md€ ; +1,00 Md€], central -1,00 Md€" in section
 
@@ -409,7 +411,7 @@ def test_a_path_of_d349_says_the_monte_carlo_verdict_and_its_readings(lu) -> Non
     assert "| vieillie | -0,40 pt | de -0,80 pt à -0,10 pt | 3\u202f% | baisse |" in section
     assert "pour `taxe_carbone`" in section and "la variante est partielle" in section
     assert "**Brut d'IS.**" in section
-    assert "Le secteur public est câblé (D-346)" in text
+    assert "Le secteur public est modélisé statut par statut (D-346)" in text
     said = {item.texte: item for item in n.items}
     assert said["90\u202f%"].etage == "déclaré" and said["3,5\u202f%"].etage == "hypothèse"
 
@@ -430,8 +432,8 @@ def test_the_page_says_what_moved_against_the_frozen_series_and_why(lu) -> None:
                if line.startswith("| art. 74 du PLF, les aides au logement |"))
     assert row.endswith(f"| +1,20 pt → {etude._points(entry['debt'][0]['theta'])} | "
                         f"dépend de θ → hausse |")
-    assert ("* **art. 74 du PLF, les aides au logement** : le secteur public câblé (D-346), "
-            "le verdict lu sur le Monte-Carlo (D-345).") in section
+    assert ("* **art. 74 du PLF, les aides au logement** : le secteur public modélisé "
+            "statut par statut (D-346), le verdict lu sur le Monte-Carlo (D-345).") in section
 
 
 def test_a_study_half_of_d349_is_refused(lu) -> None:

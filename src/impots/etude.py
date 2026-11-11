@@ -545,20 +545,48 @@ def verdict_mc(entry: dict[str, Any], monte: dict[str, Any] | None = None) -> st
     return reading
 
 
+#: Le degré de la bande des comportements (`behavioural.grading`), en mots : la réforme
+#: reste-t-elle dans l'étendue des variations sur lesquelles l'élasticité a été estimée ?
+GRADES_BANDE = {
+    "in-support": ("**dans l'étendue des estimations** : la réforme reste dans l'étendue "
+                   "des variations sur lesquelles les élasticités publiées ont été estimées"),
+    "illustrative": ("**extrapolée** : la réforme sort de l'étendue des variations sur "
+                     "lesquelles les élasticités publiées ont été estimées"),
+    "no-evidence": "**sans estimation publiée** pour ce prélèvement",
+}
+
+#: Le même degré pour l'éventail macro (`macro.fan`) : le choc contre ceux sur lesquels
+#: les multiplicateurs ont été estimés.
+GRADES_EVENTAIL = {
+    "in-support": ("**dans l'étendue des estimations**, le choc ne dépassant pas ceux sur "
+                   "lesquels les multiplicateurs ont été estimés"),
+    "illustrative": ("**extrapolé**, le choc dépassant ceux sur lesquels les "
+                     "multiplicateurs ont été estimés"),
+    "no-evidence": "**sans estimation publiée** pour ce choc",
+}
+
+#: L'état de la conjoncture que l'éventail suppose, en mots.
+CONJONCTURES = {
+    "normal": "conjoncture supposée normale, ni récession ni surchauffe",
+    "normale": "conjoncture supposée normale, ni récession ni surchauffe",
+}
+
+
 def causes(entry: dict[str, Any]) -> list[str]:
     """The corrections of but 16 that touch an entry (D-350): the public sector for any
     household pass, the corporate tax for a firm reform of the CVAE or the C3S, the VAT
     coefficient when the loop carries VAT; the verdict's rule for every one."""
     out = []
     if entry["kind"] != "entreprises":
-        out.append("le secteur public câblé (D-346)")
+        out.append("le secteur public modélisé statut par statut (D-346)")
     firm = entry["scenario"].firm_reform
     fields = firm.model_dump(exclude_none=True) if firm is not None else {}
     if any("cvae" in k or "c3s" in k for k in fields):
         out.append("la CVAE et la C3S déduites de l'IS (D-347)")
     macro = (entry["path"].get("rejeu") or {}).get("macro") or {}
     if "tva" in (macro.get("instruments") or {}):
-        out.append("la TVA des ménages au point net (D-348)")
+        out.append("la TVA des ménages lue dans Mésange sans la part que les "
+                   "administrations se paient (D-348)")
     out.append("le verdict lu sur le Monte-Carlo (D-345)")
     return out
 
@@ -779,7 +807,8 @@ class _PLFSS2027:
         return (f"Le projet de loi de financement de la sécurité sociale pour 2027 porte "
                 f"{n(len(every), 'texte')} articles. Cet outil n'en chiffre aucun, et dit pour "
                 f"chacun "
-                f"pourquoi, avec la porte qui l'ouvrirait. La mesure de prestations que "
+                f"pourquoi, avec sa « porte » : ce que l'outil devrait savoir faire pour le "
+                f"chiffrer. La mesure de prestations que "
                 f"l'automne lui donne à chiffrer est dans le projet de loi de finances : "
                 f"l'art. {art}, en {n(len(entries), 'texte')} volets. Pour chacun, trois "
                 f"réponses : ce "
@@ -804,7 +833,7 @@ class _PLFSS2027:
         w("")
         w("Un article refusé n'est pas un article à zéro. Le refus est pris sur le texte, "
           "avant tout chiffrage, et sa raison est dite : hors du périmètre (`scope`), hors de "
-          "la structure du modèle (`structure`), ou hors de ses données (`data`). La porte "
+          "la structure du modèle (`structure`), ou hors de ses données (`data`). La « porte » "
           "est ce que l'outil devrait savoir faire pour le chiffrer.")
         w("")
         w("| art. | intitulé | case | porte | pourquoi |")
@@ -828,7 +857,8 @@ class _PLFSS2027:
 #: renvoie à ses sections, là où la commande renvoie à ses clés.
 AVERTISSEMENT_PROGRAMME = (
     "La dette porte sur la seule part du programme que l'outil chiffre, pas sur le "
-    "programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont "
+    "programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce "
+    "qui manque à l'outil pour les chiffrer), n'y sont "
     "pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour "
     "une raison qui tient à l'outil (D-319).")
 
@@ -925,9 +955,9 @@ class _Programme:
           "Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point "
           "est la mesure seule, mécanique (personne ne change de comportement), sur la "
           "population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de "
-          "PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus "
-          "haut, que le chemin annuel chiffre année par année avec les comportements et la "
-          "boucle. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est "
+          "PIB jusqu'en 2035, un calcul rapide qui ne refait pas chaque année. Elle ne se "
+          "compare donc pas à celle de la part chiffrée, plus haut, que le calcul complet "
+          "chiffre année par année avec les comportements et la boucle macro. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est "
           "chiffrée sur la population de 2024 au droit de 2026, les plages sur la population "
           "vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se "
           "règle seul, les autres restant à la valeur du candidat.")
@@ -959,11 +989,11 @@ class _Programme:
                 if absente is not None:
                     raison = absente.split(" : ")[0]
                     w(f"**Dette : absente, et la raison est donnée.** "
-                      f"{amounts(raison[:1].upper() + raison[1:], 'texte', n)} : le chemin "
-                      f"rapide la "
-                      f"tiendrait à son droit de 2026 jusqu'en {LAST_YEAR}. La dette de la "
-                      f"valeur du candidat est celle de la part chiffrée, que le chemin annuel "
-                      f"chiffre chaque année sous son droit (D-254).")
+                      f"{amounts(raison[:1].upper() + raison[1:], 'texte', n)} : reporter la "
+                      f"première année, comme le fait ce calcul rapide, la tiendrait à tort "
+                      f"à son droit de 2026 jusqu'en {LAST_YEAR}. La dette de la "
+                      f"valeur du candidat est celle de la part chiffrée, que le calcul "
+                      f"complet chiffre chaque année sous le droit de cette année (D-254).")
                     w("")
 
     def _mesures(self, w: Any, n: Nombres) -> None:
@@ -973,7 +1003,8 @@ class _Programme:
         w("## Le programme, mesure par mesure")
         w("")
         w("Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure "
-          "à zéro : la porte dit ce que l'outil devrait savoir faire pour la chiffrer. Une "
+          "à zéro : sa « porte » dit ce qui manque à l'outil, ce qu'il devrait savoir faire "
+          "pour la chiffrer. Une "
           "mesure vague n'énonce ni taux ni montant.")
         w("")
         w("| mesure | ce que dit le candidat | sort | pourquoi |")
@@ -1724,7 +1755,8 @@ class Etude:
         else:
             opening = (f"Les passes ont tourné sur le commit `{first['commit'][:7]}`, "
                        f"{first['where']}. Cadre")
-        w(f"{opening} du chemin annuel : {n(path['growth_name'], 'hypothèse')} ; "
+        w(f"{opening} du calcul année par année jusqu'en {last} : "
+          f"{n(path['growth_name'], 'hypothèse')} ; "
           f"{n(path['rate_name'], 'hypothèse')} ; {n(path['spending_name'], 'hypothèse')} ; "
           f"droit reconduit tel qu'openfisca le porte ; θ½ sur "
           f"toutes les lignes ; comportements et boucle macro appliqués.")
@@ -1732,7 +1764,7 @@ class Etude:
         w(f"*{n(path['uprating_note'], 'hypothèse')}*")
         w("")
         if read:
-            w("Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement "
+            w("Le secteur public est modélisé statut par statut (D-346) : un titulaire est payé d'un traitement "
               "indiciaire et de primes, et cotise à son régime ; un contractuel cotise au "
               "régime général, sans allègement. L'enquête Emploi dit titulaire ou "
               "contractuel et la fonction publique, pas le corps ni l'indice : la part des "
@@ -1781,6 +1813,17 @@ class Etude:
             w(f"* {_et(refused)[0].upper() + _et(refused)[1:]} : aucune ligne, faute d'un "
               f"total publié pour les seuls ménages (D-362).")
         w("")
+        lignes = " ".join(r["ligne"] for r in rows)
+        if "en espérance" in lignes or "pont" in lignes:
+            # The line names are the grid's, in its committed report: said here in words.
+            w("Le moteur calcule le droit de chaque famille, ce qu'elle toucherait si elle "
+              "le demandait ; une part des ayants droit ne demande rien (le non-recours). "
+              "« Servi en espérance » : chaque famille reçoit son droit multiplié par sa "
+              "probabilité de le demander, calée sur le non-recours publié par la Drees. "
+              "« Sans pont » : ce montant se compare tel quel au total versé. Un « pont de "
+              "non-recours » est l'ancienne correction : un seul coefficient de non-recours, "
+              "appliqué au total.")
+            w("")
         w("Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une "
           "mesure est la différence de deux passes sur la même population, et ce qui manque "
           "aux deux passes s'y annule en partie.")
@@ -2036,7 +2079,8 @@ class Etude:
                                   else (band.p10, band.p50, band.p90))
             w(f"**Une fois les comportements pris en compte**, la mesure coûte de "
               f"{n(fiche._eur(low), 'L3')} à {n(fiche._eur(high), 'L3')}, central "
-              f"{n(fiche._eur(central), 'L3')} (grade **{behavioural.grade}**), pour "
+              f"{n(fiche._eur(central), 'L3')} "
+              f"(bande {GRADES_BANDE.get(behavioural.grade, behavioural.grade)}), pour "
               f"{n(fiche._eur(sign * response.reform_cost), 'L2')} sans eux"
               f"{' (la part des ménages)' if entry['kind'] == 'mixte' else ''}.")
             if behavioural.grade_reason:
@@ -2051,9 +2095,11 @@ class Etude:
                 raise EtudeError(f"{entry['name']} : l'éventail macro n'a pas son bandeau "
                                  f"d'hypothèses ; il se lirait comme une prévision.")
             a = macro.assumptions
-            w(f"**L'effet sur l'économie**, l'éventail macro de grade **{a.grade}**, "
-              f"couverture {n(fiche._pct(a.covered_share), 'L4')}, conjoncture "
-              f"« {a.cycle_state} » :")
+            w(f"**L'effet sur l'économie**, l'éventail macro (la fourchette de ce que des "
+              f"multiplicateurs publiés disent du PIB et de l'emploi), "
+              f"{GRADES_EVENTAIL.get(a.grade, a.grade)} ; "
+              f"{n(fiche._pct(a.covered_share), 'L4')} de la mesure a un multiplicateur "
+              f"publié ; {CONJONCTURES.get(a.cycle_state, 'conjoncture ' + a.cycle_state)} :")
             w("")
             for label, series in (("PIB", macro.gdp), ("emploi", macro.jobs)):
                 for horizon, q in sorted(series.items()):
@@ -2302,14 +2348,14 @@ class Etude:
         w("")
         parts = self.decomposition(entries)
         if not parts:
-            w("Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une "
-              "seule la touche ; ailleurs, elles ne se séparent pas sans une passe par "
-              "correction, qui n'est pas faite.")
+            w("Là où une seule correction touche une ligne, l'écart avant → après est ce "
+              "qu'elle pèse (D-352) ; ailleurs, les corrections ne se séparent pas sans un "
+              "calcul refait sans chacune, qui n'est pas fait.")
             w("")
             return
         w("Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-354, "
           "D-355) : la part d'une correction est l'écart entre la ligne et sa passe sans "
-          "elle. E1 est le secteur public câblé (D-346), E2 la CVAE et la C3S déduites de "
+          "elle. E1 est le secteur public modélisé statut par statut (D-346), E2 la CVAE et la C3S déduites de "
           "l'IS (D-347).")
         w("")
         w("| | correction | la première année | dette à θ½ |")
@@ -2427,8 +2473,9 @@ def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
       f"{releves[-1].strftime('%d/%m/%Y')}. Pour chacun : ses mesures relevées et sourcées, "
       f"celles qui énoncent un paramètre, celles que l'outil chiffre, et pourquoi il refuse "
       f"les autres. Un candidat dont une mesure se chiffre a son étude, en trois réponses, "
-      f"sur cette part et elle seule. Les autres n'ont pas de chiffre : la porte de chaque "
-      f"refus dit ce que l'outil devrait savoir faire pour l'ouvrir.")
+      f"sur cette part et elle seule. Les autres n'ont pas de chiffre : la « porte » de "
+      f"chaque refus dit ce qui manque à l'outil, ce qu'il devrait savoir faire pour "
+      f"chiffrer la mesure.")
     w("")
     w("**Les verdicts de dette ne se comparent pas d'un candidat à l'autre.** Chacun porte "
       "sur une part différente du programme, et l'outil ne lit l'effet sur l'activité que "

@@ -464,7 +464,7 @@
             "max": 1.0
           }
         ],
-        "note": "Au salaire médian de 2026 (34 000 € brut par an, 2 243 € nets par mois), supprimer toutes les cotisations retraite salariales rend 3 845 € nets par an (mesuré par le moteur). La moitié des gains rendue aux salariés, environ 500 € par an au salaire médian : l'échelle de 0,87 les rend. La moitié rendue aux entreprises n'a pas de règle (R20, R22). Plage de 1 (la mesure retirée) à 0,805, la règle commune. Les sources se contredisent : 500 € par an (TG), « 500 euros par mois » (Public Sénat). Par mois, ils dépasseraient les 320 € de cotisations retraite salariales au médian : seule la lecture par an se chiffre, et c'est elle qui l'est."
+        "note": "Au salaire médian de 2026 (34 000 € brut par an, 2 243 € nets par mois), supprimer toutes les cotisations retraite salariales rend 3 845 € nets par an (mesuré par le moteur). La moitié des gains rendue aux salariés, environ 500 € par an au salaire médian : l'échelle de 0,87 les rend. La moitié rendue aux entreprises n'a pas de règle : les deux mesures qui en parlent, le « choc fiscal » de 40 Md€ et la baisse de 30 Md€ des impôts de production, sont des enveloppes sans taux, refusées plus bas. Plage de 1 (la mesure retirée) à 0,805 : la valeur du candidat, poussée encore de la moitié de son écart au droit de 2026. Les sources se contredisent : 500 € par an (TG), « 500 euros par mois » (Public Sénat). Par mois, ils dépasseraient les 320 € de cotisations retraite salariales au médian : seule la lecture par an se chiffre, et c'est elle qui l'est."
       }
     },
     {
@@ -518,7 +518,7 @@
             "max": 1.0
           }
         ],
-        "note": "La C3S (0,16 % en 2026) et la CVAE sont supprimées sur le droit de 2026, comme dans la mesure L4 de Lisnard, avec les mêmes plages. La mesure n'est chiffrée qu'en partie : le forfait social maintenu à 20 % sur la participation légale est le droit de 2026 et ne change rien, mais sa suppression sur l'intéressement, la participation supra-légale et l'épargne retraite, une baisse de recette, n'a pas de bouton et n'est pas chiffrée ; l'exonération de la part industrielle de la CFE non plus. Le coût affiché est celui de la C3S et de la CVAE seules."
+        "note": "La C3S (0,16 % en 2026) et la CVAE sont supprimées sur le droit de 2026, comme dans la mesure de David Lisnard qui supprime ces deux impôts, avec les mêmes plages. La mesure n'est chiffrée qu'en partie : le forfait social maintenu à 20 % sur la participation légale est le droit de 2026 et ne change rien, mais sa suppression sur l'intéressement, la participation supra-légale et l'épargne retraite, une baisse de recette, n'a pas de bouton et n'est pas chiffrée ; l'exonération de la part industrielle de la CFE non plus. Le coût affiché est celui de la C3S et de la CVAE seules."
       }
     },
     {

@@ -1023,7 +1023,7 @@
             "max": 3.0
           }
         ],
-        "note": "Sur le droit de 2026, les bandeaux maladie et famille ont disparu et la réduction générale est la seule exonération générale ; son seuil de sortie, 3 SMIC (allegement_general_plafond), est ramené à 2 SMIC. Le candidat ne dit rien de la courbe sous 2 SMIC : elle reste celle de 2026, et la réduction s'arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de 3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l'écart)."
+        "note": "Sur le droit de 2026, les taux réduits de cotisations maladie et famille (les « bandeaux ») ont disparu, fondus dans la réduction générale des cotisations patronales, qui est la seule exonération générale ; son seuil de sortie, 3 SMIC (le paramètre allegement_general_plafond), est ramené à 2 SMIC. Le candidat ne dit rien de la courbe sous 2 SMIC : elle reste celle de 2026, et la réduction s'arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de 3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l'écart)."
       }
     },
     {

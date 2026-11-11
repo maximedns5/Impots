@@ -6,7 +6,7 @@
 
 La part chiffrée du programme rapporte 6,33 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Le revenu disponible des ménages n'en bouge pas, en moyenne de chaque dixième de niveau de vie : la mesure porte sur les cotisations que paient les employeurs. L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,35 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 42 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour les cotisations des employeurs. Sans aucun effet sur l'activité, la dette serait plus basse de 2,36 points de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
-Jean-Luc Mélenchon, La France insoumise, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 40 mesures, dont 26 énoncent un paramètre. Cet outil en chiffre 1, soit 4 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
+Jean-Luc Mélenchon, La France insoumise, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 40 mesures, dont 26 énoncent un paramètre. Cet outil en chiffre 1, soit 4 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
 Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
@@ -51,7 +51,7 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 **Bande comportementale : aucune, et la raison est donnée.** Les canaux qui s'appliquent (emploi au voisinage du smic, incidence des cotisations patronales) déplacent des euros entre salariés et employeurs, ou des emplois, sans changer ce que la mesure coûte au budget : aucun n'entre dans la bande.
 
-**L'effet sur l'économie**, l'éventail macro de grade **in-support**, couverture 100 %, conjoncture « normal » :
+**L'effet sur l'économie**, l'éventail macro (la fourchette de ce que des multiplicateurs publiés disent du PIB et de l'emploi), **dans l'étendue des estimations**, le choc ne dépassant pas ceux sur lesquels les multiplicateurs ont été estimés ; 100 % de la mesure a un multiplicateur publié ; conjoncture supposée normale, ni récession ni surchauffe :
 
 * **PIB, à 1 an** : [-7,18 Md€ ; +4,42 Md€], central -1,45 Md€
 * **PIB, à 2 ans** : [-9,26 Md€ ; +2,21 Md€], central -3,67 Md€
@@ -122,7 +122,7 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 
 ## Ce que bouge chaque paramètre
 
-Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
+Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035, un calcul rapide qui ne refait pas chaque année. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le calcul complet chiffre année par année avec les comportements et la boucle macro. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
 
 ### Fin des exonérations de cotisations au-dessus de 2 SMIC
 
@@ -136,7 +136,7 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 ## Le programme, mesure par mesure
 
-Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure à zéro : la porte dit ce que l'outil devrait savoir faire pour la chiffrer. Une mesure vague n'énonce ni taux ni montant.
+Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure à zéro : sa « porte » dit ce qui manque à l'outil, ce qu'il devrait savoir faire pour la chiffrer. Une mesure vague n'énonce ni taux ni montant.
 
 | mesure | ce que dit le candidat | sort | pourquoi |
 |---|---|---|---|
@@ -175,7 +175,7 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 | Taxe sur les rachats d'actions | aucun taux | vague | Aucun taux de la taxe sur les rachats d'actions n'est énoncé. |
 | Taxe sur les crypto-actifs | aucun taux | vague | Aucun taux de la taxe sur les crypto-actifs n'est énoncé. |
 | Lutte contre la fraude fiscale | reconstruction des effectifs | vague | Ni effectifs ni paramètre de contrôle ne sont énoncés. |
-| Fin des exonérations de cotisations au-dessus de 2 SMIC | seuil : 2 SMIC | chiffrée | Sur le droit de 2026, les bandeaux maladie et famille ont disparu et la réduction générale est la seule exonération générale ; son seuil de sortie, 3 SMIC (allegement_general_plafond), est ramené à 2 SMIC. Le candidat ne dit rien de la courbe sous 2 SMIC : elle reste celle de 2026, et la réduction s'arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de 3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l'écart). |
+| Fin des exonérations de cotisations au-dessus de 2 SMIC | seuil : 2 SMIC | chiffrée | Sur le droit de 2026, les taux réduits de cotisations maladie et famille (les « bandeaux ») ont disparu, fondus dans la réduction générale des cotisations patronales, qui est la seule exonération générale ; son seuil de sortie, 3 SMIC (le paramètre allegement_general_plafond), est ramené à 2 SMIC. Le candidat ne dit rien de la courbe sous 2 SMIC : elle reste celle de 2026, et la réduction s'arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de 3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l'écart). |
 | Trajectoire : ajustement de 25 Md€ en 2027, dette/PIB stabilisée en un quinquennat | 25 Md€ en 2027 ; stabilisation en 5 ans | refusée, porte `chaine` | Une trajectoire de déficit et de dette est une hypothèse de la chaîne de la dette, pas une réforme. |
 | Gel ou annulation par la BCE des dettes publiques qu'elle détient | aucun montant | vague | Aucun montant de dette gelée ou annulée n'est énoncé. |
 | Pôle public bancaire : 100 Md€ d'investissements par an | 100 Md€ par an | refusée, porte `chaine` | Un investissement hors budget de l'État par un pôle public bancaire n'est ni un impôt ni une prestation : il n'entrerait dans la chaîne de la dette que comme hypothèse de croissance. |
@@ -217,9 +217,9 @@ La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dan
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée (1 mesure sur 26 paramétrées, 40 relevées)** : le secteur public câblé (D-346), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (1 mesure sur 26 paramétrées, 40 relevées)** : le secteur public modélisé statut par statut (D-346), le verdict lu sur le Monte-Carlo (D-345).
 
-Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-354, D-355) : la part d'une correction est l'écart entre la ligne et sa passe sans elle. E1 est le secteur public câblé (D-346), E2 la CVAE et la C3S déduites de l'IS (D-347).
+Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-354, D-355) : la part d'une correction est l'écart entre la ligne et sa passe sans elle. E1 est le secteur public modélisé statut par statut (D-346), E2 la CVAE et la C3S déduites de l'IS (D-347).
 
 | | correction | la première année | dette à θ½ |
 |---|---|---|---|
@@ -227,11 +227,11 @@ Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-35
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
-Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
+Le secteur public est modélisé statut par statut (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
