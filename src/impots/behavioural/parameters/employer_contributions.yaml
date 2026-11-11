@@ -32,7 +32,7 @@ parameters:
       citation: >
         Bunel & L'Horty, « The Effects of Reduced Social Security Contributions on
         Employment », Économie et Statistique n° 429-430, 2012, tableaux 5 et 7.
-      url: https://www.insee.fr/fr/statistiques/fichier/1377767/ES429F.pdf
+      url: https://www.insee.fr/fr/statistiques/1377396?sommaire=1377415
       vintage: "2012"
     verifier:
       verdict: SCOPE_PROBLEM
@@ -70,7 +70,7 @@ parameters:
       citation: >
         Groupe d'experts sur le SMIC, rapport 2025 — la courbe d'élasticité décroît
         « pour atteindre −0,1 au niveau de deux fois le Smic ».
-      url: https://www.strategie.gouv.fr/publications/rapport-groupe-dexperts-smic-2025
+      url: https://www.vie-publique.fr/files/rapport/pdf/301429_0.pdf#page=152
       vintage: "2025"
     verifier:
       verdict: SCOPE_PROBLEM
@@ -101,7 +101,7 @@ parameters:
       max_variation_graded_in_support: null
     source:
       citation: "Groupe d'experts sur le SMIC, rapport 2025."
-      url: https://www.strategie.gouv.fr/publications/rapport-groupe-dexperts-smic-2025
+      url: https://www.vie-publique.fr/files/rapport/pdf/301429_0.pdf#page=152
       vintage: "2025"
     verifier:
       verdict: SCOPE_PROBLEM

@@ -71,21 +71,11 @@ NOTES = {
     "no-evidence": "aucun canal",
 }
 
-#: Les liens du magasin qui ne mènent plus à leur article, et le bon, trouvé le
-#: 2026-11-11. Le YAML n'est pas changé ici ; une correction dont le lien a disparu du
-#: magasin est refusée, pour qu'elle ne survive pas à la réparation du YAML.
-LIENS_CORRIGES = {
-    "https://www.strategie.gouv.fr/publications/rapport-groupe-dexperts-smic-2025": (
-        "https://www.vie-publique.fr/files/rapport/pdf/301429_0.pdf#page=152",
-        "l'adresse de France Stratégie répond 404 ; le rapport du 25 novembre 2025 est "
-        "publié par vie-publique.fr, la courbe à la p. 152 du PDF"),
-    "https://www.insee.fr/fr/statistiques/fichier/1377767/ES429F.pdf": (
-        "https://www.insee.fr/fr/statistiques/1377396?sommaire=1377415",
-        "l'adresse citée mène à un autre article du même numéro (ES429F, sur les "
-        "donations) ; l'article d'Économie et Statistique n° 429-430 est celui de Bunel, "
-        "Gilles et L'Horty (2009), ES429D, dont la version anglaise est parue dans Fiscal "
-        "Studies en 2012"),
-}
+#: Les liens du magasin qui ne mènent plus à leur article, et le bon. Vide : les deux
+#: trouvés par la relecture du but 20 sont corrigés dans le YAML (D-378). Une correction
+#: dont le lien a disparu du magasin est refusée, pour qu'elle ne survive pas à la
+#: réparation du YAML.
+LIENS_CORRIGES: dict[str, tuple[str, str]] = {}
 
 #: Les mots du code que la page traduit quand elle cite le magasin.
 TRADUCTIONS = {
