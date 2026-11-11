@@ -27863,3 +27863,39 @@ préenregistré.
 niveau de vie médian et du D9/D1 lisent les quantiles au plein recours, le concept sur
 lequel elles ont été posées ; le test comparait aux quantiles servis. Il lit maintenant
 ce que la ligne lit. Les deux lourds passent.
+
+## D-375 — Le but 20 ouvert : le parcours public, ses pages et ses règles
+
+**Le but.** Celui de D-365 : un lecteur qui n'a pas lu le dépôt refait le chemin de
+chaque nombre publié, de la source au verdict, sur les nombres de la série de D-373. Le
+parcours suit la proposition du diagnostic de la démarche (`docs/diagnostics/demarche.md`,
+§ 5) : huit pages, du plus sûr au moins sûr, et une page qui compare deux candidats.
+
+**Où il vit.** Un paquet, `src/impots/parcours/`, une page par module, chacune rendant
+une `Page` : la phrase qu'elle prouve, son corps, son script. `impots site construire`
+les publie à côté des études (`site/parcours-*.html`) et `impots site verifier` les tient
+comme le reste : le site commité est leur construction.
+
+**Les règles d'une page**, que `parcours.build` refuse de voir manquer :
+
+* une source publique au moins, par son lien, et le fichier du dépôt qui la calcule, par
+  son lien sur `main` du dépôt public ;
+* un curseur, sauf la page de l'erreur, qui est celle qu'on cite ;
+* un curseur a un script, et la page se lit sans lui (`<noscript>`). Le site n'avait
+  qu'une page à script, l'explorateur (D-343) ; les pages du parcours qui donnent un
+  curseur en ont un, par décision. Aucune autre page n'en porte.
+
+**Rien de neuf n'est chiffré pour une étude.** Les pages lisent des fichiers commités :
+les rapports des études, la grille et ses passes, le magasin des élasticités, les tables
+de Mésange. Un curseur rejoue une arithmétique que le moteur a déjà (θ, la boucle, la
+dette, le seuil du verdict) ou choisit entre des points chiffrés d'avance. Les ménages
+types de la page 1 sont chiffrés d'avance par le moteur des ménages, et leur fichier va
+dans `reports/parcours/` avec son commit ; ce ne sont pas des chiffrages d'étude.
+
+**Ce qui n'est pas fait, et pourquoi.** L'interrupteur « corrigé par la ligne de
+vérification » de la page 3 (diagnostic, § 5) changerait un coût affiché : il demande un
+préenregistrement, et n'entre pas dans ce but. La page le dit.
+
+**Comment.** Le squelette est commun ; les pages se développent en parallèle, chacune dans
+ses fichiers. La relecture adverse se fait à la fin, par un lecteur qui n'a pas lu le
+dépôt, et chaque constat reçoit son sort dans une D-entrée.

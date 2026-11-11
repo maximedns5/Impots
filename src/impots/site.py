@@ -345,11 +345,22 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
                   "études sur une grille précalculée, la dette rejouée dans le navigateur, "
                   "chaque nombre dit calculé, interpolé ou tiré d'une étude (but 15, D-344)."
                   "</p>")
+    from impots import parcours
+
+    scripted = {EXPLORER}
+    if parcours.present():
+        pages = parcours.build()
+        files.update(pages)
+        scripted |= set(pages)
+        intro += (f'\n<p><a href="{parcours.PAGES[0][1]}">Refaire le chemin d\'un nombre</a> : '
+                  "huit pages, du ménage au verdict, chacune avec sa donnée, le lien de sa "
+                  "source et le fichier qui la calcule (but 20).</p>")
     files["index.html"] = _page(TITLE, intro + "\n<ul class=\"etudes\">\n"
                                 + "\n".join(listed) + "\n</ul>")
     for name, text in files.items():
-        # The explorer is the one page that runs a script, by decision (D-343).
-        if name != EXPLORER and "<script" in text.lower():
+        # The explorer runs a script by decision (D-343), and the parcours pages that give
+        # a cursor (D-375); no other page does.
+        if name not in scripted and "<script" in text.lower():
             raise SiteError(f"{name} porte un script : le site se lit sans en exécuter.")
     return files
 
