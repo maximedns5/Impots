@@ -318,7 +318,7 @@
             "max": 0.675
           }
         ],
-        "note": "Barème de 2026 et une 6e tranche à 60 % au-delà de 250 000 €. Le seuil s'applique au revenu par part, comme tous les seuils du barème : le candidat ne dit pas s'il l'entend par foyer. La plage va du taux de la tranche supérieure actuelle, 45 % (la mesure retirée), à 67,5 %."
+        "note": "Barème de 2026 et une 6e tranche à 60 % au-delà de 250 000 €. Le seuil s'applique au revenu par part, comme tous les seuils du barème, et c'est ce que fait la réforme : pour un couple, qui a deux parts, la tranche à 60 % commence au-delà de 500 000 € de revenu imposable. Le candidat ne dit pas s'il l'entend par foyer. La plage va du taux de la tranche supérieure actuelle, 45 % (la mesure retirée), à 67,5 %."
       }
     },
     {
@@ -451,7 +451,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 10000000000.0,
@@ -481,7 +481,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 4000000000.0,
@@ -511,7 +511,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 3300000000.0,

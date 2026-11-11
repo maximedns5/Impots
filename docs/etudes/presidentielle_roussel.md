@@ -6,7 +6,13 @@
 
 La part chiffrée du programme coûte 5,20 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +94 € par an dans le dixième le plus modeste à +208 € dans le dixième le plus aisé, le plus touché étant le 9e dixième (+221 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 0,52 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 73 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour la TVA. Sans aucun effet sur l'activité, la dette serait plus haute de 1,56 point de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
-Fabien Roussel, PCF, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 14 mesures, dont 6 énoncent un paramètre. Cet outil en chiffre 1, soit 17 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
+Fabien Roussel, PCF, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 01/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
+
+| mesures relevées | dont qui énoncent un paramètre | chiffrées par l'outil | part des mesures paramétrées |
+|---|---|---|---|
+| 14 | 6 | 1 | 17 % |
+
+Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
 Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
@@ -80,7 +86,7 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 **Le verdict**, lu sur le Monte-Carlo (D-345) : son effet sur la dette en 2035 **dépend des hypothèses** : moins de 90 % des tirages s'accordent sur son signe, vue vieillie.
 
-**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
+**Les sensibilités, hors du verdict.** Les deux persistances que les pages lisaient avant la persistance « lue » (D-336), sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -126,6 +132,8 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 *Le programme : de 20 % à 5,5 %.*
 
+Ce que l'outil en lit : La TVA du poste des carburants (07221) passe de 20 % à 5,5 %, à volumes constants et répercutée en entier dans les prix (D-323). Plage de 0 à 20 % (la mesure retirée).
+
 | `tva_postes.carburants` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 0 % | +7,29 Md€ | +2,25 pt |
@@ -141,24 +149,24 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 | Rétablissement de l'ISF | aucun barème | vague | Ni barème ni seuil de l'ISF rétabli ne sont énoncés. |
 | Cotisations sur les revenus financiers et les dividendes | aucun taux | vague | Aucun taux des cotisations sur les revenus financiers n'est énoncé. |
 | Taxation des plus gros héritages | aucun seuil | vague | Ni seuil ni taux des héritages taxés ne sont énoncés. |
-| Exonération des héritages de moins de 200 000 € | seuil 200 000 € | refusée, porte `transmission` | Le moteur n'a pas de module des transmissions. |
+| Exonération des héritages de moins de 200 000 € | seuil 200 000 € | refusée : les donations et les reprises (`transmission`) | Le moteur n'a pas de module des transmissions. |
 | TVA sur les carburants | de 20 % à 5,5 % | chiffrée | La TVA du poste des carburants (07221) passe de 20 % à 5,5 %, à volumes constants et répercutée en entier dans les prix (D-323). Plage de 0 à 20 % (la mesure retirée). |
-| Suppression des certificats d'économie d'énergie sur l'essence | suppression « tout de suite » | refusée, porte `prix` | Les certificats d'économies d'énergie sont une obligation des fournisseurs, lue dans les prix : ni une taxe que la couche consommation chiffre, ni une recette de l'État. |
-| Baisse du prix de l'essence exigée de TotalEnergies, sinon « nationalisation-sanction » | 30 à 50 centimes | refusée, porte `prix` | Un prix exigé d'une entreprise, sous menace de nationalisation : ni une taxe ni un paramètre du moteur. |
+| Suppression des certificats d'économie d'énergie sur l'essence | suppression « tout de suite » | refusée : un prix administré (`prix`) | Les certificats d'économies d'énergie sont une obligation des fournisseurs, lue dans les prix : ni une taxe que la couche consommation chiffre, ni une recette de l'État. |
+| Baisse du prix de l'essence exigée de TotalEnergies, sinon « nationalisation-sanction » | 30 à 50 centimes | refusée : un prix administré (`prix`) | Un prix exigé d'une entreprise, sous menace de nationalisation : ni une taxe ni un paramètre du moteur. |
 | Confiscation des profits de Total | aucun paramètre | vague | Ni montant ni taux de la confiscation ne sont énoncés. |
 | Nationaliser une grande banque, pôle public bancaire | prêts « à taux bonifiés, à taux zéro, voire négatifs » | vague | Ni la banque, ni le montant des prêts, ni leurs taux ne sont énoncés. |
 | Réorienter des crédits des armées vers les services publics | aucun montant | vague | Aucun montant réorienté n'est énoncé. |
-| Doubler la part de l'industrie dans le PIB | ×2 | refusée, porte `chaine` | Doubler la part de l'industrie dans le PIB est un objectif de croissance, une hypothèse de la chaîne, pas une réforme. |
-| Doubler la production d'électricité nucléaire, renouvelable et hydraulique | ×2 | refusée, porte `secteur` | La production d'électricité, nucléaire comprise, est hors du modèle. |
+| Doubler la part de l'industrie dans le PIB | ×2 | refusée : une hypothèse du calcul de la dette (`chaine`) | Doubler la part de l'industrie dans le PIB est un objectif de croissance, une hypothèse du calcul de la dette, pas une réforme. |
+| Doubler la production d'électricité nucléaire, renouvelable et hydraulique | ×2 | refusée : un secteur hors du modèle (`secteur`) | La production d'électricité, nucléaire comprise, est hors du modèle. |
 | Hausse des salaires et des pensions | aucun montant | vague | Aucun montant ni taux de hausse n'est énoncé. |
 | Lutte contre la fraude fiscale : prison | aucun paramètre | vague | Une sanction pénale, sans paramètre fiscal. |
 
 Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait le moins :
 
-* `prix`, 2 — un prix fixé hors du marché, ou une obligation des fournisseurs lue dans les prix (énergie, carburants, certificats d'économies d'énergie) : ni une taxe ni une prestation, et la consommation imputée ne réagit pas aux prix (D-323).
-* `chaine`, 1 — une hypothèse de la chaîne de la dette, pas une réforme : règle budgétaire, trajectoire de déficit.
-* `secteur`, 1 — l'assiette d'un secteur hors du modèle : audiovisuel, nucléaire, aérien, infrastructures, dépôts, justice.
-* `transmission`, 1 — un module de transmission : donations et reprises.
+* 2 mesures — un prix fixé hors du marché, ou une obligation des fournisseurs lue dans les prix (énergie, carburants, certificats d'économies d'énergie) : ni une taxe ni une prestation, et la consommation imputée ne réagit pas aux prix (D-323) (`prix`).
+* 1 mesure — une hypothèse du calcul de la dette année par année, pas une réforme : règle budgétaire, trajectoire de déficit (`chaine`).
+* 1 mesure — l'assiette d'un secteur hors du modèle : audiovisuel, nucléaire, aérien, infrastructures, dépôts, justice (`secteur`).
+* 1 mesure — un module de transmission : donations et reprises (`transmission`).
 
 ## Ce que le candidat annonce, à part
 

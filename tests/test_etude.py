@@ -483,9 +483,10 @@ def test_every_plfss_article_is_listed_with_its_door(plfss) -> None:
     assert "## Les 49 articles du PLFSS" in text
     for a in plf_coverage.ARTICLES_PLFSS_2027:
         kind, why = etude.refusal(a.raison)
-        assert f"| {a.numero} | {a.intitule} | `{kind}` | `{a.porte}` | {why} |" in text
+        assert (f"| {a.numero} | {a.intitule} | {etude.case_lue(kind)} | "
+                f"{etude.porte_lue(a.porte)} | {why} |") in text
     for porte, numeros in plf_coverage.portes_plfss_2027():
-        assert f"* `{porte}`, {len(numeros)} article" in text
+        assert f"* {etude.porte_lue(porte)}, {len(numeros)} article" in text
 
 
 def test_a_volet_read_against_its_registration_s_sense_is_refused(plfss) -> None:

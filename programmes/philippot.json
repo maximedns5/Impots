@@ -58,7 +58,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "La dépense des collectivités n'est pas microsimulée : elle n'entre qu'en scénario de la chaîne."
+        "raison": "La dépense des collectivités n'est pas microsimulée : elle n'entre qu'en scénario du calcul de la dette."
       },
       "declare": {
         "montant_eur": 30000000000.0,
@@ -178,7 +178,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Le moteur calcule l'impôt et les droits dus, pas la fraude : un objectif de recouvrement n'est qu'une hypothèse de la chaîne."
+        "raison": "Le moteur calcule l'impôt et les droits dus, pas la fraude : un objectif de recouvrement n'est qu'une hypothèse du calcul de la dette."
       },
       "declare": {
         "montant_eur": 25000000000.0,
@@ -208,7 +208,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "La croissance est une hypothèse de la chaîne de la dette, pas une réforme."
+        "raison": "La croissance est une hypothèse du calcul de la dette, pas une réforme."
       },
       "declare": {
         "montant_eur": 39300000000.0,
@@ -276,7 +276,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Le change d'une monnaie nouvelle est une hypothèse macroéconomique de la chaîne, pas un paramètre fiscal."
+        "raison": "Le change d'une monnaie nouvelle est une hypothèse macroéconomique du calcul de la dette, pas un paramètre fiscal."
       }
     },
     {

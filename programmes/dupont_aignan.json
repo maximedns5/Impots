@@ -591,7 +591,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Le moteur calcule l'impôt dû, pas la fraude : un objectif de recouvrement n'est qu'une hypothèse de recettes pour la chaîne."
+        "raison": "Le moteur calcule l'impôt dû, pas la fraude : un objectif de recouvrement n'est qu'une hypothèse de recettes pour le calcul de la dette."
       },
       "declare": {
         "montant_eur": 20000000000.0,
@@ -681,7 +681,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Le taux de la dette est une hypothèse de la chaîne, pas une réforme du moteur."
+        "raison": "Le taux de la dette est une hypothèse du calcul de la dette, pas une réforme du moteur."
       },
       "declare": {
         "montant_eur": 10000000000.0,

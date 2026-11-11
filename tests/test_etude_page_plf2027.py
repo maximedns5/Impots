@@ -204,7 +204,7 @@ def test_every_other_article_is_listed_with_its_reason(page, reports) -> None:
     assert f"## Les {len(refused)} autres articles" in text
     for a in refused:
         kind, why = page.refusal(a.raison)
-        assert f"| {a.numero} | {a.intitule} | `{kind}` | {why} |" in text
+        assert f"| {a.numero} | {a.intitule} | {etude.case_lue(kind)} | {why} |" in text
         assert kind in ("scope", "structure", "data") and why != "."
 
 

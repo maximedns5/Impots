@@ -28,7 +28,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario de la chaîne de la dette."
+        "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario du calcul de la dette."
       }
     },
     {
@@ -53,7 +53,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Des économies sans dépense désignée : la dépense n'est qu'un scénario de la chaîne de la dette."
+        "raison": "Des économies sans dépense désignée : la dépense n'est qu'un scénario du calcul de la dette."
       },
       "declare": {
         "montant_eur": 20000000000.0,
@@ -83,7 +83,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Une trajectoire de déficit est une hypothèse de la chaîne de la dette, pas une réforme : aucun bouton ne la règle."
+        "raison": "Une trajectoire de déficit est une hypothèse du calcul de la dette, pas une réforme : aucun bouton ne la règle."
       }
     },
     {
@@ -102,7 +102,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Une trajectoire de déficit est une hypothèse de la chaîne de la dette, pas une réforme : aucun bouton ne la règle."
+        "raison": "Une trajectoire de déficit est une hypothèse du calcul de la dette, pas une réforme : aucun bouton ne la règle."
       }
     },
     {
@@ -127,7 +127,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Un solde cible de la Sécurité sociale est une hypothèse de la chaîne de la dette, pas une réforme : aucun bouton ne le règle."
+        "raison": "Un solde cible de la Sécurité sociale est une hypothèse du calcul de la dette, pas une réforme : aucun bouton ne le règle."
       }
     },
     {
@@ -152,7 +152,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Une règle d'or est une hypothèse de la chaîne de la dette (un solde et une dépense cibles), pas une réforme."
+        "raison": "Une règle d'or est une hypothèse du calcul de la dette (un solde et une dépense cibles), pas une réforme."
       }
     },
     {
@@ -190,7 +190,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement un scénario de dépense de la chaîne."
+        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement un scénario de dépense du calcul de la dette."
       }
     },
     {

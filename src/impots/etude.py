@@ -51,7 +51,7 @@ import sys
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFINITIONS = ROOT / "etudes"
@@ -600,6 +600,57 @@ def refusal(raison: str) -> tuple[str, str]:
     return kind, rest.split(" ; ")[0].split(". ")[0].rstrip(".") + "."
 
 
+#: The case of a refused article, in words; its identifier follows in parentheses.
+CASES = {"scope": "hors du périmètre", "structure": "hors de la structure du modèle",
+         "data": "hors des données du modèle"}
+
+#: A door as a reader names it: the identifier of `programmes.PORTES` and
+#: `plf_coverage.OUVERTURES` follows it in parentheses, never alone.
+PORTE_NOMS = {
+    "depense_publique": "la dépense publique", "chaine": "une hypothèse du calcul de la dette",
+    "bouton_hors_but": "un réglage que le moteur n'a pas encore",
+    "retraites": "les droits à la retraite", "indexation": "l'indexation année par année",
+    "patrimoine": "le patrimoine des ménages", "salaires": "la distribution des salaires",
+    "prestations_hors_modele": "une prestation que le moteur ne porte pas",
+    "enveloppe": "un montant sans règle de calcul",
+    "pensions_declarees": "les pensions déclarées", "prix": "un prix administré",
+    "importations": "les importations par origine", "hors_champ": "rien, une formalité",
+    "donnee_menages": "une donnée des ménages",
+    "dimension_entreprises": "une dimension des entreprises",
+    "transmission": "les donations et les reprises",
+    "bilan_entreprises": "le bilan des entreprises", "consommation": "la consommation",
+    "bases_locales": "les bases locales", "secteur": "un secteur hors du modèle",
+    "sante": "un modèle des soins",
+}
+#: What a door opens, where `programmes.PORTES` says it in the repository's words.
+PORTE_SENS = {
+    "depense_publique": "la dépense publique, que le moteur ne simule pas ménage par "
+                        "ménage : elle n'entre dans la dette que comme une hypothèse de "
+                        "dépense",
+    "chaine": "une hypothèse du calcul de la dette année par année, pas une réforme : "
+              "règle budgétaire, trajectoire de déficit",
+    "bouton_hors_but": "un réglage que le moteur n'a pas encore et qui reste à écrire "
+                       "(l'imposition des revenus du capital au barème, une exonération "
+                       "par âge…)",
+}
+
+
+def porte_lue(porte: str) -> str:
+    """A door in words, its identifier after it: « la dépense publique
+    (`depense_publique`) »."""
+    return f"{PORTE_NOMS.get(porte, porte)} (`{porte}`)"
+
+
+def porte_sens(porte: str) -> str:
+    from impots import programmes as pg
+
+    return PORTE_SENS.get(porte) or pg.PORTES[porte]
+
+
+def case_lue(kind: str) -> str:
+    return f"{CASES.get(kind, kind)} (`{kind}`)"
+
+
 def _mirrored(response: Any, sign: int) -> Any:
     """The households' reply as the measure reads it: each decile's delta turned over, its
     winners and losers exchanged. Exact, a household's delta being one difference."""
@@ -778,7 +829,7 @@ class _PLF2027:
         w("|---|---|---|---|")
         for a in refused:
             kind, why = refusal(a.raison)
-            w(f"| {a.numero} | {amounts(a.intitule, 'texte', n)} | `{kind}` | "
+            w(f"| {a.numero} | {amounts(a.intitule, 'texte', n)} | {case_lue(kind)} | "
               f"{amounts(why, 'texte', n)} |")
         w("")
 
@@ -840,21 +891,24 @@ class _PLFSS2027:
         w("|---|---|---|---|---|")
         for a in every:
             kind, why = refusal(a.raison)
-            w(f"| {a.numero} | {amounts(a.intitule, 'texte', n)} | `{kind}` | `{a.porte}` | "
-              f"{amounts(why, 'texte', n)} |")
+            w(f"| {a.numero} | {amounts(a.intitule, 'texte', n)} | {case_lue(kind)} | "
+              f"{porte_lue(a.porte)} | {amounts(why, 'texte', n)} |")
         w("")
         w("Les portes, de celle qui ouvrirait le plus d'articles à celle qui en ouvrirait le "
           "moins :")
         w("")
         for porte, numeros in plf_coverage.portes_plfss_2027():
             many = "s" if len(numeros) > 1 else ""
-            w(f"* `{porte}`, {n(len(numeros), 'texte')} article{many} — "
+            w(f"* {porte_lue(porte)}, {n(len(numeros), 'texte')} article{many} — "
               f"{plf_coverage.OUVERTURES_PLFSS_2027[porte]}.")
         w("")
 
 
 #: Ce que la page d'un programme dit en tête, à côté de sa couverture (D-319) : la page
 #: renvoie à ses sections, là où la commande renvoie à ses clés.
+#: What a measure's note says when only part of it is priced (`programmes/*.json`).
+EN_PARTIE = "n'est chiffrée qu'en partie"
+
 AVERTISSEMENT_PROGRAMME = (
     "La dette porte sur la seule part du programme que l'outil chiffre, pas sur le "
     "programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce "
@@ -880,25 +934,27 @@ class _Programme:
         return self.programme
 
     def chapeau(self, entries: list[dict[str, Any]], last: int, n: Nombres) -> str:
+        # The counts are the relevé's, in `programmes/` : the measures, those that state
+        # a parameter, and those the tool prices. They stand in a table, each with the
+        # étage « programme », not glued to the prose.
         p, c = self.programme, self.programme.couverture()
-        together = (f"ces {n(c['chiffrees'], 'texte')} mesures ensemble"
-                    if c["chiffrees"] > 1 else "cette seule mesure")
+        together = ("ces mesures ensemble" if c["chiffrees"] > 1 else "cette seule mesure")
         part = f"{c['part_des_parametrees'] * 100:.0f} %"
-        return (f"{p.candidat}, {p.parti}, a déclaré sa candidature à l'élection "
-                f"présidentielle de 2027. Son programme, relevé le "
-                f"{p.releve.strftime('%d/%m/%Y')}, porte "
-                f"{n(c['mesures'], 'programme')} mesures, dont "
-                f"{n(c['parametrees'], 'programme')} "
-                f"{'énonce' if c['parametrees'] == 1 else 'énoncent'} un paramètre. Cet outil en "
-                + (f"chiffre {n(c['chiffrees'], 'texte')}, la seule qui en énonce un, et dit "
-                   f"pourquoi il ne chiffre pas les autres."
-                   if c["chiffrees"] == c["parametrees"] == 1 else
-                   f"chiffre {n(c['chiffrees'], 'texte')}, soit {n(part, 'texte')} des "
-                   f"mesures paramétrées, et dit pourquoi il ne chiffre pas les autres.")
-                + f" Pour la part "
-                f"chiffrée, {together}, trois réponses : ce qu'elle coûte et qui y gagne ; "
-                f"ce qu'elle coûte une fois les comportements et l'économie pris en compte ; "
-                f"ce qu'elle fait à la dette en {last}. **{AVERTISSEMENT_PROGRAMME}**")
+        return [
+            f"{p.candidat}, {p.parti}, a déclaré sa candidature à l'élection présidentielle "
+            f"de 2027. Son programme a été relevé le {p.releve.strftime('%d/%m/%Y')} ; le "
+            f"relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet "
+            f"outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.",
+            "",
+            "| mesures relevées | dont qui énoncent un paramètre | chiffrées par l'outil | "
+            "part des mesures paramétrées |",
+            "|---|---|---|---|",
+            f"| {n(c['mesures'], 'programme')} | {n(c['parametrees'], 'programme')} | "
+            f"{n(c['chiffrees'], 'programme')} | {n(part, 'programme')} |",
+            "",
+            f"Pour la part chiffrée, {together}, trois réponses : ce qu'elle coûte et qui y "
+            f"gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en "
+            f"compte ; ce qu'elle fait à la dette en {last}. **{AVERTISSEMENT_PROGRAMME}**"]
 
     def label(self, entry: dict[str, Any]) -> str:
         # The coverage beside every number of a programme, the index's row included: a
@@ -968,6 +1024,11 @@ class _Programme:
             w("")
             w(f"*Le programme : {amounts(m.parametre, 'programme', n)}.*")
             w("")
+            # How the tool reads it, beside the range: a threshold per part, a share the
+            # candidate leaves open (but 20).
+            if m.chiffrage.note:
+                w(f"Ce que l'outil en lit : {amounts(m.chiffrage.note, 'hypothèse', n)}")
+                w("")
             for plage in m.chiffrage.plages:
                 w(f"| `{plage.champ}` | valeur | coût {START_PLUS_ONE} | dette en {LAST_YEAR}, "
                   f"mécanique, sans comportements ni boucle |")
@@ -997,8 +1058,6 @@ class _Programme:
                     w("")
 
     def _mesures(self, w: Any, n: Nombres) -> None:
-        from impots import programmes as pg
-
         p, c = self.programme, self.programme.couverture()
         w("## Le programme, mesure par mesure")
         w("")
@@ -1011,11 +1070,16 @@ class _Programme:
         w("|---|---|---|---|")
         for m in p.mesures:
             if m.chiffrage is not None:
-                sort, why = "chiffrée", amounts(m.chiffrage.note, "hypothèse", n)
+                # A note that says the measure is priced only in part says it in the
+                # column too: its cost leaves out what has no knob.
+                sort = ("chiffrée en partie" if EN_PARTIE in m.chiffrage.note
+                        else "chiffrée")
+                why = amounts(m.chiffrage.note, "hypothèse", n)
             else:
                 sort = ("vague" if m.refus.porte == "vague"
-                        else f"refusée, porte `{m.refus.porte}`")
-                why = amounts(m.refus.raison, "texte", n)
+                        else f"refusée : {porte_lue(m.refus.porte)}")
+                # A refusal quotes the candidate's amounts, not a law's.
+                why = amounts(m.refus.raison, "programme", n)
             w(f"| {amounts(m.libelle, 'programme', n)} | "
               f"{amounts(m.parametre, 'programme', n)} | {sort} | {why} |")
         w("")
@@ -1025,7 +1089,9 @@ class _Programme:
               "ouvrirait le moins :")
             w("")
             for porte, count in sorted(portes.items(), key=lambda kv: (-kv[1], kv[0])):
-                w(f"* `{porte}`, {n(count, 'texte')} — {amounts(pg.PORTES[porte], 'texte', n)}.")
+                sens = amounts(porte_sens(porte), "programme", n)
+                w(f"* {n(count, 'programme')} mesure{'s' if count > 1 else ''} — "
+                  f"{sens} (`{porte}`).")
             w("")
 
     def _annonce(self, w: Any, n: Nombres) -> None:
@@ -1041,18 +1107,19 @@ class _Programme:
             return
         w(f"Le programme annonce lui-même un montant pour "
           f"{n(len(couches[-1]['mesures']), 'programme')} de ses mesures. Ces montants ne "
-          f"sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part "
-          f"qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes "
+          f"sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : la part "
+          f"réalisée dit ce qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes "
           f"publics, positif quand ils s'améliorent. Le relevé, fait à la main, ne retient que "
           f"les montants que le programme attache à une mesure comme un effet annuel ; "
           f"d'autres montants cités dans le tableau des mesures (des totaux sur plusieurs "
           f"années, des enveloppes) n'y sont pas, et il peut en avoir manqué (D-378).")
         w("")
-        w("| ρ | solde annoncé |")
+        w("| part réalisée | solde annoncé |")
         w("|---|---|")
         for couche in couches:
-            rho = f"{couche['rho']:g}".replace(".", ",")
-            w(f"| {n(rho, 'hypothèse')} | {n(fiche._eur(couche['solde_eur']), 'annoncé')} |")
+            realisee = f"{couche['rho'] * 100:.0f}\u202f%"
+            w(f"| {n(realisee, 'hypothèse')} | "
+              f"{n(fiche._eur(couche['solde_eur']), 'annoncé')} |")
         w("")
         w(f"*{couches[-1]['statut']}*")
         w("")
@@ -1623,7 +1690,9 @@ class Etude:
           f"{_relative(self.rapports)}/ ; ne pas éditer à la main. -->")
         w("")
         self._conclut(w, n, entries, last, texte)
-        w(texte.chapeau(entries, last, n))
+        chapeau = texte.chapeau(entries, last, n)
+        for line in [chapeau] if isinstance(chapeau, str) else chapeau:
+            w(line)
         w("")
         w(f"Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année "
           f"est mécanique : personne ne change de comportement. La bande dit ce que les "
@@ -2005,7 +2074,135 @@ class Etude:
             text += (f" Sans aucun effet sur l'activité, la dette serait "
                      f"{'plus haute' if flat > 0 else 'plus basse'} de {value} de PIB : "
                      f"{seul}.")
+        for reserve in self._reserves(n, entry, sans_boucle=False):
+            text += " " + reserve
         return text
+
+    @staticmethod
+    def _impulses(entry: dict[str, Any]) -> tuple[dict[str, float], dict[str, Any]]:
+        """The first year's impulses by instrument, vue figée, and the loop's tables: what
+        the loop reads is what its tables carry (`rejouer.loop` keeps only those)."""
+        stats = ((entry["path"].get("years") or [{}])[0].get("statistiques") or {})
+        impulses = {k: float(v) for k, v in stats.get("figee", {}).get("impulses", {}).items()
+                    if v}
+        tables = (((entry["path"].get("rejeu") or {}).get("macro") or {})
+                  .get("instruments") or {})
+        return impulses, tables
+
+    def _eventail_hors_boucle(self, n: Nombres, entry: dict[str, Any], a: Any) -> str:
+        """What the macro fan counts and the debt's loop does not read: an instrument
+        Mésange has a variant for, so the fan's « published multiplier » covers it, which
+        the loop leaves out (`retroaction.NOT_ACTIVITY`). The fan's GDP for it never
+        reaches the debt; the page says so beside the fan, since the fan's number is the
+        report's and is not split by instrument."""
+        from impots import fiche
+        from impots.predictif import retroaction
+
+        impulses, tables = self._impulses(entry)
+        fan = set(getattr(a, "instruments", None) or [])
+        unread = [k for k in impulses if k in fan and k not in tables]
+        if not unread:
+            return ""
+        read = [INSTRUMENTS.get(k, k) for k in impulses if k in tables]
+        names = _et([INSTRUMENTS.get(k, k) for k in unread])
+        plural = len(unread) > 1 or names.startswith("les ")
+        part = sum(abs(impulses[k]) for k in unread)
+        total = sum(abs(v) for v in impulses.values())
+        raisons = sorted({retroaction.NOT_ACTIVITY[k] for k in unread
+                          if k in retroaction.NOT_ACTIVITY})
+        pron = "les" if plural else "la"
+        dat = "leur" if plural else "lui"
+        return (f"**Ce que l'éventail compte et que la dette ne lit pas.** L'éventail compte "
+                f"{names}, {n(fiche._width(part), 'L2')} des "
+                f"{n(fiche._width(total), 'L2')} de la première année : Mésange en publie "
+                f"une variante, et l'éventail {dat} trouve donc un multiplicateur publié. "
+                f"La boucle de la dette ne {pron} lit pas"
+                + (f", car {' ; '.join(raisons)}" if raisons else "")
+                + f". Le PIB et l'emploi que l'éventail {dat} prête n'entrent donc pas dans "
+                f"la dette, qui {pron} compte comme un coût sans effet sur l'activité. "
+                + (f"L'éventail ci-dessus mêle ce que la dette lit ({_et(read)}) et ce "
+                   f"qu'elle ne lit pas, sans séparer leurs parts : il ne se lit pas comme "
+                   f"l'effet sur l'activité que la dette compte."
+                   if read else
+                   "L'éventail ci-dessus ne se lit donc pas comme un effet que la dette "
+                   "compte."))
+
+    def _reserves(self, n: Nombres, entry: dict[str, Any], *,
+                  sans_boucle: bool) -> list[str]:
+        """What a reader must know beside the debt's headline when the loop reads a table
+        whose bias the tool does not measure (but 20): the employees' contributions read
+        in Mésange's variant, and the taxable-income channel beside the income tax's
+        multiplier. No number of its own: the debt without the loop and the wage variant
+        are the report's (`lectures`), the variant's wage line Mésange's."""
+        from impots.predictif import rejouer
+
+        out: list[str] = []
+        path, sign = entry["path"], entry["sign"]
+        impulses, tables = self._impulses(entry)
+        etage = debt_etage(path)
+
+        def points(value: float) -> str:
+            v = sign * value
+            text = f"{abs(v) * 100:.2f}".replace(".", ",")
+            return (("plus haute" if v > 0 else "plus basse") + " de "
+                    + n(f"{text} point{'s' if abs(v) * 100 >= 2 else ''}", etage,
+                        conditionnel=True))
+
+        lectures_ = path.get("lectures") or {}
+        if "cotisations_salaries" in tables and impulses.get("cotisations_salaries"):
+            from impots.parcours.activite import COTISATIONS_SALARIES as v
+
+            rejeu = path["rejeu"]
+            gdp = rejouer.reference_path(rejeu, rejeu["start"], len(path["years"]))[0]
+            brut = float(tables["cotisations_salaries"].get("brut") or 1.0)
+            fois = max(abs(row["statistiques"]["vieillie"]["impulses"]
+                           .get("cotisations_salaries", 0.0)) / y * 100.0 / brut
+                       for row, y in zip(path["years"], gdp, strict=True))
+            retour = sign * float((lectures_.get("decomposition", {}).get("vieillie")
+                                   or {}).get("retroaction") or 0.0)
+            sens = "basse" if retour < 0 else "haute"
+            ten = f"{v['salaire_brut']['10']:.2f}".replace(".", ",").replace("-", "−")
+            text = (f"La boucle lit les cotisations des salariés dans la variante "
+                    f"« cotisations sociales salariés » de Mésange (G2017/04, folio "
+                    f"{v['folio']}). Elle porte sur les salariés des branches marchandes et "
+                    f"rend son effet par une baisse du salaire brut "
+                    f"({n(ten + chr(0x202f) + '%', 'L4')} à dix ans) et du coût du travail ; "
+                    f"le coût de l'outil, lui, tient le salaire brut fixe, et tout va au "
+                    f"salaire net. Le retour que la boucle lit est donc probablement "
+                    f"surestimé, et la dette de tête trop {sens} d'autant, d'un écart que "
+                    f"l'outil ne mesure pas. Le choc vaut jusqu'à "
+                    f"{n(f'{fois:.2f}'.replace('.', ',') + ' fois', 'L4')} celui de la "
+                    f"variante, d'un point de PIB, que la boucle lit comme linéaire.")
+            regard = []
+            flat = (lectures_.get("decomposition", {}).get("vieillie") or {}).get("cout")
+            if sans_boucle and flat is not None:
+                regard.append(f"sans aucun effet sur l'activité, la dette serait "
+                              f"{points(flat)}")
+            variante = ((lectures_.get("variante_salariale") or {}).get("boite") or {}
+                        ).get("vieillie")
+            if variante is not None:
+                regard.append(f"si les salaires se forment comme dans la variante "
+                              f"salariale de Mésange (un super-brut visé, folios 137 et "
+                              f"138), la dette serait {points(variante['theta'])}")
+            if regard:
+                text += (" En regard du chiffre de tête, à θ½ et vue vieillie : "
+                         + " ; ".join(regard) + ".")
+            out.append(text)
+        lignes = (path.get("rejeu") or {}).get("lignes") or {}
+        if (any(k.startswith("eti_") for k in lignes)
+                and "impot_sur_le_revenu" in tables):
+            out.append(
+                "Le revenu imposable répond aux taux (le canal C1, l'élasticité du revenu "
+                "imposable), et la boucle lit aussi l'impôt sur le revenu dans Mésange. "
+                "L'élasticité est mesurée sur le revenu déclaré, toutes réactions "
+                "comprises, les heures travaillées avec ; le multiplicateur de Mésange passe "
+                "lui aussi par l'emploi et l'activité. La même réaction peut donc être "
+                "comptée deux fois, une fois dans le coût après comportements, une fois "
+                "dans les recettes induites ; l'outil ne mesure pas ce recouvrement. Et "
+                "l'élasticité pèse surtout dans le haut de la distribution, là où la "
+                "population simulée est la plus faible : peu de foyers tirés, aucun revenu "
+                "du capital.")
+        return out
 
     def _first(self, w: Any, n: Nombres, entry: dict[str, Any], texte: Any) -> None:
         from impots import fiche
@@ -2109,6 +2306,10 @@ class Etude:
                     w(f"* **{label}, {years}** : "
                       f"{n(fiche._band(p10, p50, p90, q.unit), 'L4')}")
             w("")
+            unread = self._eventail_hors_boucle(n, entry, a)
+            if unread:
+                w(unread)
+                w("")
             if a.banner:
                 w(f"> {a.banner}")
                 w("")
@@ -2169,11 +2370,16 @@ class Etude:
             w(f"**Le verdict**, lu sur le Monte-Carlo (D-345) : "
               f"{VERDICTS_MC[verdict_mc(entry)].format(year=year, haut=haut)}.")
             w("")
+        reserves = self._reserves(n, entry, sans_boucle=True)
+        if reserves:
+            w("**Ce que la boucle lit, et ce que l'outil ne mesure pas.** "
+              + " ".join(reserves))
+            w("")
         others = sensitivity_rows(rows)
         if others:
-            w("**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, "
-              "sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au "
-              "niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles "
+            w("**Les sensibilités, hors du verdict.** Les deux persistances que les pages "
+              "lisaient avant la persistance « lue » (D-336), sur les mêmes passes : l'effet "
+              "macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles "
               "disent ce que le choix de la persistance pèse, et n'entrent pas dans le "
               "verdict.")
             w("")
@@ -2355,8 +2561,8 @@ class Etude:
             return
         w("Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-354, "
           "D-355) : la part d'une correction est l'écart entre la ligne et sa passe sans "
-          "elle. E1 est le secteur public modélisé statut par statut (D-346), E2 la CVAE et la C3S déduites de "
-          "l'IS (D-347).")
+          "elle. Les deux corrections sont le secteur public modélisé statut par statut "
+          "(D-346) et la CVAE et la C3S déduites de l'IS (D-347).")
         w("")
         w("| | correction | la première année | dette à θ½ |")
         w("|---|---|---|---|")
@@ -2364,18 +2570,24 @@ class Etude:
             for sans, other in parts.get(entry["name"], []):
                 cout = entry["cost"] - other["cost"]
                 dette = entry["debt"][0]["theta"] - other["debt"][0]["theta"]
-                w(f"| {texte.label(entry)} | {sans} | {n(fiche._eur(cout), 'L2')} | "
+                w(f"| {texte.label(entry)} | {self.CORRECTIONS[sans]} | "
+                  f"{n(fiche._eur(cout), 'L2')} | "
                   f"{n(_points(dette), debt_etage(entry['path']), conditionnel=True)} |")
         w("")
         if any(sans == "E2" for rows in parts.values() for sans, _ in rows):
-            w("E1 et E2 ne se lisent pas de la même façon dans la dette. E1 rend des "
-              "cotisations des ménages, que la boucle macro lit dans Mésange : sa part "
-              "porte la croissance et les recettes qu'elle induit. E2 rend de l'IS, un "
-              "impôt des entreprises qu'aucune variante de Mésange ne porte : sa part va à "
-              "la dette telle quelle (D-218, D-356). Par euro, E2 paraît donc peser plus "
-              "sur la dette que E1, sans que l'outil ait mesuré que l'IS rapporte moins de "
-              "croissance : il ne le mesure pas.")
+            w("Les deux corrections ne se lisent pas de la même façon dans la dette. Le "
+              "secteur public rend des cotisations des ménages, que la boucle macro lit "
+              "dans Mésange : sa part porte la croissance et les recettes qu'elle induit. "
+              "La CVAE et la C3S déduites rendent de l'IS, un impôt des entreprises "
+              "qu'aucune variante de Mésange ne porte : leur part va à la dette telle "
+              "quelle (D-218, D-356). Par euro, la seconde paraît donc peser plus sur la "
+              "dette que la première, sans que l'outil ait mesuré que l'IS rapporte moins "
+              "de croissance : il ne le mesure pas.")
             w("")
+
+    #: The corrections a decomposition pass leaves out (D-354), as a reader names them.
+    CORRECTIONS: ClassVar[dict[str, str]] = {"E1": "le secteur public statut par statut",
+                   "E2": "la CVAE et la C3S déduites de l'IS"}
 
     def decomposition(self, entries: list[dict[str, Any]]
                       ) -> dict[str, list[tuple[str, dict[str, Any]]]]:
@@ -2490,24 +2702,25 @@ def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
     for slug in slugs:
         p = pg.charger(slug)
         c = p.couverture()
-        portes = ", ".join(f"`{k}` {n(v, 'texte')}" for k, v in sorted(
+        portes = ", ".join(f"{porte_lue(k)} {n(v, 'programme')}" for k, v in sorted(
             c["refus_par_porte"].items(), key=lambda kv: (-kv[1], kv[0]))
             if k != "vague") or "—"
         etude_ = "oui" if slug in studied else "—"
         w(f"| {p.candidat} ({p.parti}) | {n(c['mesures'], 'programme')} | "
-          f"{n(c['parametrees'], 'programme')} | {n(c['chiffrees'], 'texte')} | {etude_} | "
+          f"{n(c['parametrees'], 'programme')} | {n(c['chiffrees'], 'programme')} | {etude_} | "
           f"{portes} |")
         for i, key in enumerate(("mesures", "parametrees", "chiffrees")):
             totals[i] += c[key]
     w(f"| **total** | {n(totals[0], 'programme')} | {n(totals[1], 'programme')} | "
-      f"{n(totals[2], 'texte')} | {n(len(studied), 'texte')} | |")
+      f"{n(totals[2], 'programme')} | {n(len(studied), 'programme')} | |")
     w("")
     w("Les portes :")
     w("")
     used = sorted({k for slug in slugs for k in pg.charger(slug).couverture()[
         "refus_par_porte"] if k != "vague"})
     for porte in used:
-        w(f"* `{porte}` — {amounts(pg.PORTES[porte], 'texte', n)}.")
+        sens = amounts(porte_sens(porte), "programme", n)
+        w(f"* {sens[:1].upper()}{sens[1:]} (`{porte}`).")
     w("")
     for line in lines:
         bare = n.resolve(line, lambda _: "")

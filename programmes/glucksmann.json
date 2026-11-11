@@ -157,7 +157,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       }
     },
     {

@@ -4,9 +4,15 @@
 
 ## Ce que dit cette étude
 
-La part chiffrée du programme rapporte 917 M€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de 0 € par an dans le dixième le plus modeste à -295 € dans le dixième le plus aisé. Une fois comptés les changements de comportement que des études publiées permettent de chiffrer, le coût irait de -744 M€ à -245 M€. En 2035, la dette publique serait plus haute de 0,01 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 55 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. Le coût de la première année et l'effet sur la dette sont de signes contraires : les comportements et l'effet sur l'activité, chiffrés plus bas, suffisent à renverser le signe. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu. Sans aucun effet sur l'activité, la dette serait plus basse de 0,23 point de PIB : le coût après les comportements, à θ½, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+La part chiffrée du programme rapporte 917 M€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de 0 € par an dans le dixième le plus modeste à -295 € dans le dixième le plus aisé. Une fois comptés les changements de comportement que des études publiées permettent de chiffrer, le coût irait de -744 M€ à -245 M€. En 2035, la dette publique serait plus haute de 0,01 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 55 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. Le coût de la première année et l'effet sur la dette sont de signes contraires : les comportements et l'effet sur l'activité, chiffrés plus bas, suffisent à renverser le signe. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu. Sans aucun effet sur l'activité, la dette serait plus basse de 0,23 point de PIB : le coût après les comportements, à θ½, sans la boucle macro. Le revenu imposable répond aux taux (le canal C1, l'élasticité du revenu imposable), et la boucle lit aussi l'impôt sur le revenu dans Mésange. L'élasticité est mesurée sur le revenu déclaré, toutes réactions comprises, les heures travaillées avec ; le multiplicateur de Mésange passe lui aussi par l'emploi et l'activité. La même réaction peut donc être comptée deux fois, une fois dans le coût après comportements, une fois dans les recettes induites ; l'outil ne mesure pas ce recouvrement. Et l'élasticité pèse surtout dans le haut de la distribution, là où la population simulée est la plus faible : peu de foyers tirés, aucun revenu du capital. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
-Marine Tondelier, Les Écologistes, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 21 mesures, dont 14 énoncent un paramètre. Cet outil en chiffre 1, soit 7 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
+Marine Tondelier, Les Écologistes, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 01/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
+
+| mesures relevées | dont qui énoncent un paramètre | chiffrées par l'outil | part des mesures paramétrées |
+|---|---|---|---|
+| 21 | 14 | 1 | 7 % |
+
+Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
 Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
@@ -82,7 +88,9 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 **Le verdict**, lu sur le Monte-Carlo (D-345) : son effet sur la dette en 2035 **dépend des hypothèses** : moins de 90 % des tirages s'accordent sur son signe, vue vieillie.
 
-**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
+**Ce que la boucle lit, et ce que l'outil ne mesure pas.** Le revenu imposable répond aux taux (le canal C1, l'élasticité du revenu imposable), et la boucle lit aussi l'impôt sur le revenu dans Mésange. L'élasticité est mesurée sur le revenu déclaré, toutes réactions comprises, les heures travaillées avec ; le multiplicateur de Mésange passe lui aussi par l'emploi et l'activité. La même réaction peut donc être comptée deux fois, une fois dans le coût après comportements, une fois dans les recettes induites ; l'outil ne mesure pas ce recouvrement. Et l'élasticité pèse surtout dans le haut de la distribution, là où la population simulée est la plus faible : peu de foyers tirés, aucun revenu du capital.
+
+**Les sensibilités, hors du verdict.** Les deux persistances que les pages lisaient avant la persistance « lue » (D-336), sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -128,6 +136,8 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 *Le programme : 60 % « au-delà de 250 000 € annuels ».*
 
+Ce que l'outil en lit : Barème de 2026 et une 6e tranche à 60 % au-delà de 250 000 €. Le seuil s'applique au revenu par part, comme tous les seuils du barème, et c'est ce que fait la réforme : pour un couple, qui a deux parts, la tranche à 60 % commence au-delà de 500 000 € de revenu imposable. Le candidat ne dit pas s'il l'entend par foyer. La plage va du taux de la tranche supérieure actuelle, 45 % (la mesure retirée), à 67,5 %.
+
 | `ir_bareme.5.rate` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 45 % | +0 € | +0,00 pt |
@@ -140,47 +150,47 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 
 | mesure | ce que dit le candidat | sort | pourquoi |
 |---|---|---|---|
-| Taxe Zucman | 2 % au-delà de 100 M€ de patrimoine | refusée, porte `patrimoine` | La population ne porte pas le patrimoine des ménages, ni a fortiori celui qui dépasse 100 M€. |
+| Taxe Zucman | 2 % au-delà de 100 M€ de patrimoine | refusée : le patrimoine des ménages (`patrimoine`) | La population ne porte pas le patrimoine des ménages, ni a fortiori celui qui dépasse 100 M€. |
 | Rétablir l'impôt sur la fortune, « ISF climatique » | aucun barème | vague | Ni barème ni seuil de l'impôt sur la fortune ne sont énoncés. |
-| Impôt minimal sur les bénéfices des sociétés | sociétés de plus de 1 Md€ de chiffre d'affaires, au prorata de l'activité en France | refusée, porte `dimension_entreprises` | Un impôt au prorata de l'activité en France demande les bénéfices mondiaux des groupes et leur partage par territoire, que le modèle des entreprises ne porte pas, et son taux n'est pas cité. |
+| Impôt minimal sur les bénéfices des sociétés | sociétés de plus de 1 Md€ de chiffre d'affaires, au prorata de l'activité en France | refusée : une dimension des entreprises (`dimension_entreprises`) | Un impôt au prorata de l'activité en France demande les bénéfices mondiaux des groupes et leur partage par territoire, que le modèle des entreprises ne porte pas, et son taux n'est pas cité. |
 | Taxe exceptionnelle sur les superprofits pétroliers, gaziers et maritimes | aucun taux | vague | Ni la définition du superprofit ni le taux ne sont énoncés. |
-| Taxe sur le chiffre d'affaires additionnel des groupes pétroliers | 33 % du chiffre d'affaires additionnel réalisé en France en 2026 et 2027 par rapport à 2025 | refusée, porte `secteur` | Le chiffre d'affaires des groupes pétroliers en France et sa hausse depuis 2025 ne sont pas une assiette du modèle des entreprises. |
-| Chèque carburant financé par la taxe pétrolière | 450 € pour environ 6 millions de ménages | refusée, porte `prestations_hors_modele` | Un chèque carburant est une prestation neuve, dont le moteur ne porte ni le montant ni le ciblage des quelque 6 millions de ménages. |
-| Contribution additionnelle sur les gros héritages | 10 % au-delà de 4 M€ ; 10 points de plus au-delà de 13 M€ (le programme parle de deux tranches, top 1 % et top 0,1 %) | refusée, porte `transmission` | Le moteur n'a pas de module des transmissions. |
-| Pacte Dutreil | exonération ramenée de 75 % à 50 % | refusée, porte `transmission` | Le pacte Dutreil exonère des transmissions d'entreprises, que le moteur ne porte pas. |
+| Taxe sur le chiffre d'affaires additionnel des groupes pétroliers | 33 % du chiffre d'affaires additionnel réalisé en France en 2026 et 2027 par rapport à 2025 | refusée : un secteur hors du modèle (`secteur`) | Le chiffre d'affaires des groupes pétroliers en France et sa hausse depuis 2025 ne sont pas une assiette du modèle des entreprises. |
+| Chèque carburant financé par la taxe pétrolière | 450 € pour environ 6 millions de ménages | refusée : une prestation que le moteur ne porte pas (`prestations_hors_modele`) | Un chèque carburant est une prestation neuve, dont le moteur ne porte ni le montant ni le ciblage des quelque 6 millions de ménages. |
+| Contribution additionnelle sur les gros héritages | 10 % au-delà de 4 M€ ; 10 points de plus au-delà de 13 M€ (le programme parle de deux tranches, top 1 % et top 0,1 %) | refusée : les donations et les reprises (`transmission`) | Le moteur n'a pas de module des transmissions. |
+| Pacte Dutreil | exonération ramenée de 75 % à 50 % | refusée : les donations et les reprises (`transmission`) | Le pacte Dutreil exonère des transmissions d'entreprises, que le moteur ne porte pas. |
 | Fin des avantages fiscaux du démembrement de propriété | aucun paramètre | vague | Aucun avantage visé ni barème n'est énoncé. |
-| Suppression de l'abattement spécifique de l'assurance-vie | suppression | refusée, porte `transmission` | L'abattement de l'assurance-vie, lu ici à la transmission comme le reste du volet héritages, n'est pas porté par le moteur, qui n'a pas de module des transmissions. |
-| Taxation des plus-values latentes | au-delà de 4 M€ ; taux non donné | refusée, porte `patrimoine` | Les plus-values latentes demandent le patrimoine des ménages, que la population ne porte pas, et le taux n'est pas donné. |
-| Nouvelle tranche d'impôt sur le revenu à 60 % | 60 % « au-delà de 250 000 € annuels » | chiffrée | Barème de 2026 et une 6e tranche à 60 % au-delà de 250 000 €. Le seuil s'applique au revenu par part, comme tous les seuils du barème : le candidat ne dit pas s'il l'entend par foyer. La plage va du taux de la tranche supérieure actuelle, 45 % (la mesure retirée), à 67,5 %. |
+| Suppression de l'abattement spécifique de l'assurance-vie | suppression | refusée : les donations et les reprises (`transmission`) | L'abattement de l'assurance-vie, lu ici à la transmission comme le reste du volet héritages, n'est pas porté par le moteur, qui n'a pas de module des transmissions. |
+| Taxation des plus-values latentes | au-delà de 4 M€ ; taux non donné | refusée : le patrimoine des ménages (`patrimoine`) | Les plus-values latentes demandent le patrimoine des ménages, que la population ne porte pas, et le taux n'est pas donné. |
+| Nouvelle tranche d'impôt sur le revenu à 60 % | 60 % « au-delà de 250 000 € annuels » | chiffrée | Barème de 2026 et une 6e tranche à 60 % au-delà de 250 000 €. Le seuil s'applique au revenu par part, comme tous les seuils du barème, et c'est ce que fait la réforme : pour un couple, qui a deux parts, la tranche à 60 % commence au-delà de 500 000 € de revenu imposable. Le candidat ne dit pas s'il l'entend par foyer. La plage va du taux de la tranche supérieure actuelle, 45 % (la mesure retirée), à 67,5 %. |
 | Extension de l'exit tax | aucun paramètre | vague | Ni seuil, ni durée, ni taux de l'exit tax étendue ne sont énoncés. |
 | « TVA verte » | aucun taux | vague | Aucun taux ni produit visé n'est énoncé. |
 | Fiscalité des transports : renchérir l'aérien, favoriser le rail | aucun taux | vague | Aucun taux ni tarif n'est énoncé. |
-| Retour à 62 ans, 60 ans selon la pénibilité | 62 ans « immédiat » ; viser 60 ans pour carrières longues et métiers pénibles | refusée, porte `retraites` | L'âge légal n'est pas un paramètre du moteur : la population ne vieillit pas en âge et ses pensions sont des données. |
+| Retour à 62 ans, 60 ans selon la pénibilité | 62 ans « immédiat » ; viser 60 ans pour carrières longues et métiers pénibles | refusée : les droits à la retraite (`retraites`) | L'âge légal n'est pas un paramètre du moteur : la population ne vieillit pas en âge et ses pensions sont des données. |
 | Blocage des prix réservé à l'« inflation anormale » | aucun seuil | vague | Aucun seuil d'inflation ni prix bloqué n'est énoncé. |
-| Sortie progressive du nucléaire | environ vingt ans ; neutralité carbone en 2040 | refusée, porte `secteur` | Le nucléaire et la production d'électricité sont hors du modèle. |
-| Plan climat | environ 10 Md€ | refusée, porte `depense_publique` | Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette. |
-| Rénovation thermique des écoles | 4 Md€ par an pendant 10 ans dès 2027, moitié État, moitié collectivités | refusée, porte `depense_publique` | Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette. |
-| Fonds vert et MaPrimeRénov' | fonds vert +1,9 Md€ ; MaPrimeRénov' +1,4 Md€ | refusée, porte `depense_publique` | Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette. |
+| Sortie progressive du nucléaire | environ vingt ans ; neutralité carbone en 2040 | refusée : un secteur hors du modèle (`secteur`) | Le nucléaire et la production d'électricité sont hors du modèle. |
+| Plan climat | environ 10 Md€ | refusée : la dépense publique (`depense_publique`) | Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette. |
+| Rénovation thermique des écoles | 4 Md€ par an pendant 10 ans dès 2027, moitié État, moitié collectivités | refusée : la dépense publique (`depense_publique`) | Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette. |
+| Fonds vert et MaPrimeRénov' | fonds vert +1,9 Md€ ; MaPrimeRénov' +1,4 Md€ | refusée : la dépense publique (`depense_publique`) | Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette. |
 
 Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait le moins :
 
-* `depense_publique`, 3 — la dépense publique, que le moteur ne microsimule pas : elle n'est qu'un scénario de la chaîne de la dette.
-* `transmission`, 3 — un module de transmission : donations et reprises.
-* `patrimoine`, 2 — le patrimoine des ménages : la population n'en porte pas (ISF, taxe sur les grandes fortunes, plus-values latentes).
-* `secteur`, 2 — l'assiette d'un secteur hors du modèle : audiovisuel, nucléaire, aérien, infrastructures, dépôts, justice.
-* `dimension_entreprises`, 1 — une dimension des entreprises : territoire, département, secteur agricole.
-* `prestations_hors_modele`, 1 — une prestation que le moteur ne porte pas : assurance chômage, prestation fusionnée ou neuve.
-* `retraites`, 1 — les droits à la retraite (âges, durées, régimes) : la population ne vieillit pas en âge et ses pensions sont des données.
+* 3 mesures — la dépense publique, que le moteur ne simule pas ménage par ménage : elle n'entre dans la dette que comme une hypothèse de dépense (`depense_publique`).
+* 3 mesures — un module de transmission : donations et reprises (`transmission`).
+* 2 mesures — le patrimoine des ménages : la population n'en porte pas (ISF, taxe sur les grandes fortunes, plus-values latentes) (`patrimoine`).
+* 2 mesures — l'assiette d'un secteur hors du modèle : audiovisuel, nucléaire, aérien, infrastructures, dépôts, justice (`secteur`).
+* 1 mesure — une dimension des entreprises : territoire, département, secteur agricole (`dimension_entreprises`).
+* 1 mesure — une prestation que le moteur ne porte pas : assurance chômage, prestation fusionnée ou neuve (`prestations_hors_modele`).
+* 1 mesure — les droits à la retraite (âges, durées, régimes) : la population ne vieillit pas en âge et ses pensions sont des données (`retraites`).
 
 ## Ce que le candidat annonce, à part
 
-Le programme annonce lui-même un montant pour 5 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent. Le relevé, fait à la main, ne retient que les montants que le programme attache à une mesure comme un effet annuel ; d'autres montants cités dans le tableau des mesures (des totaux sur plusieurs années, des enveloppes) n'y sont pas, et il peut en avoir manqué (D-378).
+Le programme annonce lui-même un montant pour 5 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : la part réalisée dit ce qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent. Le relevé, fait à la main, ne retient que les montants que le programme attache à une mesure comme un effet annuel ; d'autres montants cités dans le tableau des mesures (des totaux sur plusieurs années, des enveloppes) n'y sont pas, et il peut en avoir manqué (D-378).
 
-| ρ | solde annoncé |
+| part réalisée | solde annoncé |
 |---|---|
-| 0 | +0 € |
-| 0,5 | +250 M€ |
-| 1 | +500 M€ |
+| 0 % | +0 € |
+| 50 % | +250 M€ |
+| 100 % | +500 M€ |
 
 *déclaré par le candidat, non vérifié ; jamais additionné au chiffrage du moteur (D-319)*
 

@@ -6,7 +6,13 @@
 
 La part chiffrée du programme coûte 22,92 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +414 € par an dans le dixième le plus modeste à +916 € dans le dixième le plus aisé, le plus touché étant le 9e dixième (+974 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 4,47 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 100 % des tirages du calcul d'incertitude, et l'outil conclut que cette part du programme augmente la dette. L'effet sur l'activité n'est lu que pour la TVA. Les accises sur l'énergie entrent dans la dette sans effet sur l'activité, car le choc porte sur les volumes d'énergie (folio 120) : l'écart du solde contient la baisse de l'assiette énergie, qui n'est pas un effet de l'activité. Sans aucun effet sur l'activité, la dette serait plus haute de 5,91 points de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
-Selma Labib, NPA-Révolutionnaires, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 7 mesures, dont 1 énonce un paramètre. Cet outil en chiffre 1, la seule qui en énonce un, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
+Selma Labib, NPA-Révolutionnaires, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 01/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
+
+| mesures relevées | dont qui énoncent un paramètre | chiffrées par l'outil | part des mesures paramétrées |
+|---|---|---|---|
+| 7 | 1 | 1 | 100 % |
+
+Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
 Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
@@ -60,6 +66,8 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 * **emploi, à 2 ans** : [+18,20 ; +214,76] milliers ETP, central +115,53
 * **emploi, à 3 ans** : [+7,95 ; +256,23] milliers ETP, central +134,08
 
+**Ce que l'éventail compte et que la dette ne lit pas.** L'éventail compte les accises sur l'énergie, 15,75 Md€ des 22,92 Md€ de la première année : Mésange en publie une variante, et l'éventail leur trouve donc un multiplicateur publié. La boucle de la dette ne les lit pas, car le choc porte sur les volumes d'énergie (folio 120) : l'écart du solde contient la baisse de l'assiette énergie, qui n'est pas un effet de l'activité. Le PIB et l'emploi que l'éventail leur prête n'entrent donc pas dans la dette, qui les compte comme un coût sans effet sur l'activité. L'éventail ci-dessus mêle ce que la dette lit (la TVA) et ce qu'elle ne lit pas, sans séparer leurs parts : il ne se lit pas comme l'effet sur l'activité que la dette compte.
+
 > Couche macro (L4) : ordre de grandeur et composition, pas une prévision. L'éventail des estimations crédibles pour un même choc est large — la dispersion entre études publiées est du même ordre que la valeur centrale elle-même. C'est une propriété de la littérature, pas de ce modèle.
 
 Ce que la chaîne ne lit pas, et pourquoi :
@@ -80,7 +88,7 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 **Le verdict**, lu sur le Monte-Carlo (D-345) : elle **augmente la dette** en 2035 dans au moins 90 % des tirages, vue vieillie.
 
-**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
+**Les sensibilités, hors du verdict.** Les deux persistances que les pages lisaient avant la persistance « lue » (D-336), sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -125,6 +133,8 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 ### Suppression de la TVA et des taxes sur les carburants
 
 *Le programme : suppression.*
+
+Ce que l'outil en lit : La TVA et l'accise des carburants des ménages tombent à zéro, à volumes constants et répercutées en entier dans les prix (D-323). « Les taxes » sont lues comme l'accise sur le gazole et l'essence ; la majoration régionale et la taxe incitative sur les biocarburants ne sont pas dans le moteur. Plages jusqu'au droit de 2026 (la mesure retirée).
 
 | `tva_postes.carburants` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|

@@ -208,8 +208,9 @@ def test_every_page_says_its_debt_is_not_the_programme_s(pages) -> None:
         head = text.split("## En bref")[0]
         assert etude.AVERTISSEMENT_PROGRAMME in head, slug
         c = pg.charger(slug).couverture()
-        verbe = "énonce" if c["parametrees"] == 1 else "énoncent"
-        assert f"porte {c['mesures']} mesures, dont {c['parametrees']} {verbe}" in head
+        part = f"{c['part_des_parametrees'] * 100:.0f} %"
+        assert (f"| {c['mesures']} | {c['parametrees']} | {c['chiffrees']} | {part} |"
+                in head), slug
 
 
 def test_every_measure_is_on_its_page_with_its_door(pages) -> None:
@@ -220,7 +221,7 @@ def test_every_measure_is_on_its_page_with_its_door(pages) -> None:
                        and m.libelle.split(" ")[0] in line)
             assert row
             if m.refus is not None and m.refus.porte != "vague":
-                assert f"porte `{m.refus.porte}`" in mesures, (slug, m.id)
+                assert f"refusée : {etude.porte_lue(m.refus.porte)}" in mesures, (slug, m.id)
 
 
 def test_every_range_point_is_on_the_page(pages) -> None:
@@ -286,6 +287,61 @@ def test_the_employees_contributions_say_the_model_s_choice_not_a_missing_study(
         assert etude.RAISON_OFFRE_DE_TRAVAIL in text, slug
     for slug in ("labib", "roussel", "le_pen"):
         assert etude.RAISON_OFFRE_DE_TRAVAIL not in pages[slug][1], slug
+
+
+def test_the_fan_says_what_the_debt_does_not_read(pages) -> None:
+    """But 20. L'éventail de Labib prête un multiplicateur publié aux accises sur
+    l'énergie, que la boucle de la dette ne lit pas : la page le dit à côté de lui, avec
+    leur part de la première année, et nulle part ailleurs ce paragraphe n'apparaît."""
+    text = pages["labib"][1]
+    section = text.split("**L'effet sur l'économie**")[1].split("### 3.")[0]
+    assert "**Ce que l'éventail compte et que la dette ne lit pas.**" in section
+    assert "les accises sur l'énergie, 15,75 Md€ des 22,92 Md€" in section
+    for slug in ("le_pen", "roussel", "tondelier", "melenchon", "lisnard"):
+        assert "que la dette ne lit pas" not in pages[slug][1], slug
+
+
+def test_the_employees_contributions_say_the_bias_beside_the_headline(pages) -> None:
+    """But 20. Quand la boucle lit les cotisations des salariés, la page dit le sens du
+    biais de la variante de Mésange, et met en regard la dette sans boucle et la variante
+    salariale, des nombres du rapport."""
+    for slug in ("attal", "retailleau"):
+        study, text = pages[slug]
+        path = json.loads(next(study.rapports.glob("predictif_*.json")).read_text("utf-8"))
+        theta = path["lectures"]["variante_salariale"]["boite"]["vieillie"]["theta"]
+        variante = f"{abs(theta) * 100:.2f}".replace(".", ",")
+        for part in (text.split("## En bref")[0], text.split("### 3.")[1]):
+            assert "(G2017/04, folio 110)" in part, slug
+            assert "probablement surestimé" in part, slug
+            assert f"la dette serait plus haute de {variante} points" in part, slug
+        cout = path["lectures"]["decomposition"]["vieillie"]["cout"]
+        assert (f"sans aucun effet sur l'activité, la dette serait plus haute de "
+                f"{cout * 100:.2f}".replace(".", ",") in text.split("### 3.")[1]), slug
+    assert "folio 110" not in pages["lisnard"][1]
+
+
+def test_the_taxable_income_and_the_income_tax_loop_say_a_double_count(pages) -> None:
+    """But 20. C1 ouvert et la boucle qui lit l'impôt sur le revenu : la page dit que la
+    même réaction peut être comptée deux fois, et que l'outil ne le mesure pas."""
+    for slug in ("tondelier", "lisnard"):
+        assert "comptée deux fois" in pages[slug][1].split("## En bref")[0], slug
+    for slug in ("attal", "retailleau", "labib", "roussel"):
+        assert "comptée deux fois" not in pages[slug][1], slug
+
+
+def test_a_measure_priced_in_part_says_it_in_its_row(pages) -> None:
+    mesures = pages["retailleau"][1].split("## Le programme, mesure par mesure")[1]
+    row = next(line for line in mesures.splitlines()
+               if line.startswith("| Suppression de la C3S et de la CVAE ; forfait social"))
+    assert "| chiffrée en partie |" in row
+
+
+def test_the_announced_share_is_not_called_rho(pages) -> None:
+    """But 20. ρ est la corrélation de la copule du Monte-Carlo ; la part réalisée des
+    montants annoncés porte un autre nom."""
+    for slug, (_, text) in pages.items():
+        annonce = text.split("## Ce que le candidat annonce, à part")[1].split("\n## ")[0]
+        assert "ρ" not in annonce, slug
 
 
 def test_a_pass_run_in_a_process_of_its_own_gives_its_value_back() -> None:

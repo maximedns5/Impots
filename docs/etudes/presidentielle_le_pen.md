@@ -6,7 +6,13 @@
 
 La part chiffrée du programme coûte 13,38 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +235 € par an dans le dixième le plus modeste à +656 € dans le dixième le plus aisé. L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 1,49 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 75 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu et la TVA. Sans aucun effet sur l'activité, la dette serait plus haute de 4,24 points de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
-Marine Le Pen, Rassemblement national (RN), a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 33 mesures, dont 22 énoncent un paramètre. Cet outil en chiffre 2, soit 9 % des mesures paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, ces 2 mesures ensemble, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
+Marine Le Pen, Rassemblement national (RN), a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 01/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
+
+| mesures relevées | dont qui énoncent un paramètre | chiffrées par l'outil | part des mesures paramétrées |
+|---|---|---|---|
+| 33 | 22 | 2 | 9 % |
+
+Pour la part chiffrée, ces mesures ensemble, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
 Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
@@ -80,7 +86,7 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 **Le verdict**, lu sur le Monte-Carlo (D-345) : son effet sur la dette en 2035 **dépend des hypothèses** : moins de 90 % des tirages s'accordent sur son signe, vue vieillie.
 
-**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
+**Les sensibilités, hors du verdict.** Les deux persistances que les pages lisaient avant la persistance « lue » (D-336), sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -127,6 +133,8 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 *Le programme : De 20 % à 5,5 %.*
 
+Ce que l'outil en lit : La TVA de l'électricité, du gaz, du fioul et des carburants (le groupe « energie » de la couche consommation) passe de 20 % à 5,5 %, à volumes constants et répercutée en entier dans les prix (D-323). Le bois de chauffage, déjà à 10 %, et la chaleur de réseau ne bougent pas. Plage de 0 à 20 % (la mesure retirée).
+
 | `tva_postes.energie` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
 | le bas | 0 % | +16,06 Md€ | +4,96 pt |
@@ -136,6 +144,8 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 ### Part fiscale pleine dès le deuxième enfant
 
 *Le programme : Une part au lieu d'une demi-part.*
+
+Ce que l'outil en lit : Le deuxième enfant apporte une part entière au lieu d'une demi-part, dans le cas général ; le premier et le troisième ne bougent pas. Plage de 0,5 (la mesure retirée) à 1,25.
 
 | `qf_parts_enf2` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
@@ -149,32 +159,32 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 
 | mesure | ce que dit le candidat | sort | pourquoi |
 |---|---|---|---|
-| Plan d'économies nettes | 140 Md€ nets d'ici 2032 par rapport à 2026 | refusée, porte `chaine` | Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour la chaîne de la dette, pas une réforme que le moteur chiffre. |
-| Déficit sous 3 % | Sous 3 % du PIB en 2030, l'essentiel de l'effort sur les 3 premières années | refusée, porte `chaine` | Un objectif de solde est une trajectoire de la chaîne de la dette, pas une réforme que le moteur chiffre. |
-| Équilibre primaire | En 18 mois | refusée, porte `chaine` | Un objectif de solde est une trajectoire de la chaîne de la dette, pas une réforme que le moteur chiffre. |
-| Trajectoire de dette | 121 % du PIB en 2027, 112 % en 2032 | refusée, porte `chaine` | Une cible de dette est ce que la chaîne calcule, pas une réforme qu'elle prend en entrée. |
-| Règle d'or constitutionnelle par référendum | Le déficit doit rester sous le « seuil stabilisant de la dette ». Plafonds : 4,9 % (2027), 4,4 % (2028), 3,9 % (2030), 3,4 % (2031), 2,9 % (2032), 2,4 % (2033), maintenus jusqu'à une dette sous 60 % du PIB. Dérogation possible à la majorité des 3/5 du Parlement. Référendum « dans les douze mois » | refusée, porte `chaine` | Une règle budgétaire est une hypothèse de la chaîne de la dette, qui ne porte qu'un scénario de dépense à la fois. |
-| Économies sur l'immigration et « priorité nationale » | 15 Md€ la première année, 29 Md€ en année pleine (environ 20 % du plan) | refusée, porte `depense_publique` | Une enveloppe d'économies sans règle de calcul, sur une dépense que le moteur ne microsimule pas. |
-| Baisse de la contribution française à l'UE | −8,9 Md€ nets (AFP) ; « 9 milliards » (J. Bardella) | refusée, porte `depense_publique` | La contribution au budget de l'Union est une dépense de l'État, que le moteur ne microsimule pas. |
-| « Réorganisation de l'État » | 20,7 Md€ d'économies dès 2027 | refusée, porte `depense_publique` | Une enveloppe d'économies de fonctionnement de l'État, sans règle de calcul, que le moteur ne microsimule pas. |
-| Suppression de la quasi-totalité des agences | 3,4 Md€ d'économies en 2027 | refusée, porte `depense_publique` | La dépense des agences n'est pas microsimulée : elle n'entre qu'en scénario de la chaîne. |
-| Collectivités : fin du « millefeuille », suppression des EPCI et des métropoles | 8,2 Md€ en 2027, dont 250 M€ (EPCI et métropoles) et 800 M€ (ajustement des effectifs) | refusée, porte `depense_publique` | La dépense des collectivités n'est pas microsimulée : elle n'entre qu'en scénario de la chaîne. |
-| Réduction des effectifs publics | Au moins 200 000 postes en cinq ans (collectivités, agences, organismes) | refusée, porte `depense_publique` | Les effectifs publics sont une dépense que le moteur ne microsimule pas. |
+| Plan d'économies nettes | 140 Md€ nets d'ici 2032 par rapport à 2026 | refusée : une hypothèse du calcul de la dette (`chaine`) | Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour le calcul de la dette, pas une réforme que le moteur chiffre. |
+| Déficit sous 3 % | Sous 3 % du PIB en 2030, l'essentiel de l'effort sur les 3 premières années | refusée : une hypothèse du calcul de la dette (`chaine`) | Un objectif de solde est une trajectoire du calcul de la dette, pas une réforme que le moteur chiffre. |
+| Équilibre primaire | En 18 mois | refusée : une hypothèse du calcul de la dette (`chaine`) | Un objectif de solde est une trajectoire du calcul de la dette, pas une réforme que le moteur chiffre. |
+| Trajectoire de dette | 121 % du PIB en 2027, 112 % en 2032 | refusée : une hypothèse du calcul de la dette (`chaine`) | Une cible de dette est ce que le calcul de la dette donne, pas une réforme qu'il prend en entrée. |
+| Règle d'or constitutionnelle par référendum | Le déficit doit rester sous le « seuil stabilisant de la dette ». Plafonds : 4,9 % (2027), 4,4 % (2028), 3,9 % (2030), 3,4 % (2031), 2,9 % (2032), 2,4 % (2033), maintenus jusqu'à une dette sous 60 % du PIB. Dérogation possible à la majorité des 3/5 du Parlement. Référendum « dans les douze mois » | refusée : une hypothèse du calcul de la dette (`chaine`) | Une règle budgétaire est une hypothèse du calcul de la dette, qui ne porte qu'un scénario de dépense à la fois. |
+| Économies sur l'immigration et « priorité nationale » | 15 Md€ la première année, 29 Md€ en année pleine (environ 20 % du plan) | refusée : la dépense publique (`depense_publique`) | Une enveloppe d'économies sans règle de calcul, sur une dépense que le moteur ne microsimule pas. |
+| Baisse de la contribution française à l'UE | −8,9 Md€ nets (AFP) ; « 9 milliards » (J. Bardella) | refusée : la dépense publique (`depense_publique`) | La contribution au budget de l'Union est une dépense de l'État, que le moteur ne microsimule pas. |
+| « Réorganisation de l'État » | 20,7 Md€ d'économies dès 2027 | refusée : la dépense publique (`depense_publique`) | Une enveloppe d'économies de fonctionnement de l'État, sans règle de calcul, que le moteur ne microsimule pas. |
+| Suppression de la quasi-totalité des agences | 3,4 Md€ d'économies en 2027 | refusée : la dépense publique (`depense_publique`) | La dépense des agences n'est pas microsimulée : elle n'entre qu'en scénario du calcul de la dette. |
+| Collectivités : fin du « millefeuille », suppression des EPCI et des métropoles | 8,2 Md€ en 2027, dont 250 M€ (EPCI et métropoles) et 800 M€ (ajustement des effectifs) | refusée : la dépense publique (`depense_publique`) | La dépense des collectivités n'est pas microsimulée : elle n'entre qu'en scénario du calcul de la dette. |
+| Réduction des effectifs publics | Au moins 200 000 postes en cinq ans (collectivités, agences, organismes) | refusée : la dépense publique (`depense_publique`) | Les effectifs publics sont une dépense que le moteur ne microsimule pas. |
 | Centralisation des recettes de TVA ; pas de dépense reconduite sans visa | Non chiffré | vague | Une organisation des finances publiques, sans taux ni montant. |
-| Baisse nette d'impôts sur le quinquennat | 30 Md€ ; pas de ventilation officielle publiée | refusée, porte `enveloppe` | Un montant de baisses d'impôts sur le quinquennat, sans dire lesquelles ni de combien. |
-| « Droits nouveaux » | 15 Md€ provisionnés, plus des hausses pour l'outre-mer, la recherche et l'éducation | refusée, porte `depense_publique` | Une provision de dépense sans règle de calcul, que le moteur ne microsimule pas. |
-| Âge légal à 60 ou 62 ans selon le début de carrière | Début avant 20 ans : départ à 60 ans avec 40 annuités. Après 20 ans : montée progressive jusqu'à 62 ans avec 42 annuités. Détails attendus le 17/11/2026 | refusée, porte `retraites` | L'âge légal et la durée d'assurance : la population ne vieillit pas en âge et ses pensions sont des données. |
-| Suppression des cotisations retraite et chômage des seniors qui continuent à travailler | Seniors ayant dépassé l'âge de la retraite et ayant tous leurs trimestres | refusée, porte `retraites` | La cible, qui a passé l'âge légal avec tous ses trimestres, demande des durées d'assurance que la population ne porte pas. |
-| Économies sur les retraites | 15 à 20 Md€ « à terme », par des « corrections de mesures injustes » (non détaillées) | refusée, porte `retraites` | Une enveloppe d'économies sur des pensions, que la population porte comme des données, sans dire quelles règles changent. |
+| Baisse nette d'impôts sur le quinquennat | 30 Md€ ; pas de ventilation officielle publiée | refusée : un montant sans règle de calcul (`enveloppe`) | Un montant de baisses d'impôts sur le quinquennat, sans dire lesquelles ni de combien. |
+| « Droits nouveaux » | 15 Md€ provisionnés, plus des hausses pour l'outre-mer, la recherche et l'éducation | refusée : la dépense publique (`depense_publique`) | Une provision de dépense sans règle de calcul, que le moteur ne microsimule pas. |
+| Âge légal à 60 ou 62 ans selon le début de carrière | Début avant 20 ans : départ à 60 ans avec 40 annuités. Après 20 ans : montée progressive jusqu'à 62 ans avec 42 annuités. Détails attendus le 17/11/2026 | refusée : les droits à la retraite (`retraites`) | L'âge légal et la durée d'assurance : la population ne vieillit pas en âge et ses pensions sont des données. |
+| Suppression des cotisations retraite et chômage des seniors qui continuent à travailler | Seniors ayant dépassé l'âge de la retraite et ayant tous leurs trimestres | refusée : les droits à la retraite (`retraites`) | La cible, qui a passé l'âge légal avec tous ses trimestres, demande des durées d'assurance que la population ne porte pas. |
+| Économies sur les retraites | 15 à 20 Md€ « à terme », par des « corrections de mesures injustes » (non détaillées) | refusée : les droits à la retraite (`retraites`) | Une enveloppe d'économies sur des pensions, que la population porte comme des données, sans dire quelles règles changent. |
 | Pilier de capitalisation | Non chiffré | vague | Une intention, sans taux, ni montant, ni règle. |
-| Baisse des impôts de production | 20 Md€ | refusée, porte `enveloppe` | Un montant de 20 Md€ sans dire quels impôts de production baissent, ni de combien chacun. |
+| Baisse des impôts de production | 20 Md€ | refusée : un montant sans règle de calcul (`enveloppe`) | Un montant de 20 Md€ sans dire quels impôts de production baissent, ni de combien chacun. |
 | Baisse de la TVA sur l'énergie et les carburants | De 20 % à 5,5 % | chiffrée | La TVA de l'électricité, du gaz, du fioul et des carburants (le groupe « energie » de la couche consommation) passe de 20 % à 5,5 %, à volumes constants et répercutée en entier dans les prix (D-323). Le bois de chauffage, déjà à 10 %, et la chaleur de réseau ne bougent pas. Plage de 0 à 20 % (la mesure retirée). |
-| Exonération d'impôt sur le revenu des moins de 30 ans | Jusqu'à 4 SMIC | refusée, porte `bouton_hors_but` | Exonérer d'IR les revenus des moins de 30 ans demande une exonération par âge au sein du foyer, que le moteur n'a pas. |
+| Exonération d'impôt sur le revenu des moins de 30 ans | Jusqu'à 4 SMIC | refusée : un réglage que le moteur n'a pas encore (`bouton_hors_but`) | Exonérer d'IR les revenus des moins de 30 ans demande une exonération par âge au sein du foyer, que le moteur n'a pas. |
 | Part fiscale pleine dès le deuxième enfant | Une part au lieu d'une demi-part | chiffrée | Le deuxième enfant apporte une part entière au lieu d'une demi-part, dans le cas général ; le premier et le troisième ne bougent pas. Plage de 0,5 (la mesure retirée) à 1,25. |
 | Relèvement du plafond d'exonération des dons familiaux de sommes d'argent | Non chiffré | vague | Un relèvement de plafond qui ne dit pas jusqu'où. |
 | « Prime d'activité étudiante » | Paramètres non donnés | vague | Une prestation nommée, sans montant ni règle d'éligibilité. |
-| Permis de conduire gratuit | Jeunes au casier judiciaire vierge, demande faite dans leur dix-huitième année | refusée, porte `depense_publique` | Une dépense nouvelle de l'État, que le moteur ne microsimule pas. |
-| Suppression de la CVEC | Suppression (105 €) | refusée, porte `bouton_hors_but` | La CVEC, contribution des étudiants, n'est pas un prélèvement que le moteur calcule. |
+| Permis de conduire gratuit | Jeunes au casier judiciaire vierge, demande faite dans leur dix-huitième année | refusée : la dépense publique (`depense_publique`) | Une dépense nouvelle de l'État, que le moteur ne microsimule pas. |
+| Suppression de la CVEC | Suppression (105 €) | refusée : un réglage que le moteur n'a pas encore (`bouton_hors_but`) | La CVEC, contribution des étudiants, n'est pas un prélèvement que le moteur calcule. |
 | Fin des subventions aux énergies intermittentes | Non chiffré par la candidate | vague | Une intention sans montant ni calendrier. |
 | Prêt à taux zéro pour les voitures propres (piste) | « réfléchissant » | vague | Une piste à l'étude, sans taux ni montant. |
 | Taxation exceptionnelle des surprofits (TotalEnergies) | Temporaire, liée à une crise ; pas de taux | vague | Une taxe exceptionnelle sans taux ni assiette. |
@@ -185,21 +195,21 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 
 Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait le moins :
 
-* `depense_publique`, 8 — la dépense publique, que le moteur ne microsimule pas : elle n'est qu'un scénario de la chaîne de la dette.
-* `chaine`, 5 — une hypothèse de la chaîne de la dette, pas une réforme : règle budgétaire, trajectoire de déficit.
-* `retraites`, 3 — les droits à la retraite (âges, durées, régimes) : la population ne vieillit pas en âge et ses pensions sont des données.
-* `bouton_hors_but`, 2 — un bouton du moteur à écrire, hors des cinq de ce but (l'imposition du capital au barème, une exonération par âge…).
-* `enveloppe`, 2 — une règle : le candidat dit combien (un montant global), pas comment (un taux, un seuil, une assiette).
+* 8 mesures — la dépense publique, que le moteur ne simule pas ménage par ménage : elle n'entre dans la dette que comme une hypothèse de dépense (`depense_publique`).
+* 5 mesures — une hypothèse du calcul de la dette année par année, pas une réforme : règle budgétaire, trajectoire de déficit (`chaine`).
+* 3 mesures — les droits à la retraite (âges, durées, régimes) : la population ne vieillit pas en âge et ses pensions sont des données (`retraites`).
+* 2 mesures — un réglage que le moteur n'a pas encore et qui reste à écrire (l'imposition des revenus du capital au barème, une exonération par âge…) (`bouton_hors_but`).
+* 2 mesures — une règle : le candidat dit combien (un montant global), pas comment (un taux, un seuil, une assiette) (`enveloppe`).
 
 ## Ce que le candidat annonce, à part
 
-Le programme annonce lui-même un montant pour 11 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent. Le relevé, fait à la main, ne retient que les montants que le programme attache à une mesure comme un effet annuel ; d'autres montants cités dans le tableau des mesures (des totaux sur plusieurs années, des enveloppes) n'y sont pas, et il peut en avoir manqué (D-378).
+Le programme annonce lui-même un montant pour 11 de ses mesures. Ces montants ne sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : la part réalisée dit ce qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes publics, positif quand ils s'améliorent. Le relevé, fait à la main, ne retient que les montants que le programme attache à une mesure comme un effet annuel ; d'autres montants cités dans le tableau des mesures (des totaux sur plusieurs années, des enveloppes) n'y sont pas, et il peut en avoir manqué (D-378).
 
-| ρ | solde annoncé |
+| part réalisée | solde annoncé |
 |---|---|
-| 0 | +0 € |
-| 0,5 | +25,75 Md€ |
-| 1 | +51,50 Md€ |
+| 0 % | +0 € |
+| 50 % | +25,75 Md€ |
+| 100 % | +51,50 Md€ |
 
 *déclaré par le candidat, non vérifié ; jamais additionné au chiffrage du moteur (D-319)*
 

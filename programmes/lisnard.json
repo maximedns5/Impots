@@ -139,7 +139,7 @@
             "max": 1.0
           }
         ],
-        "note": "La C3S est supprimée (taux de 0,16 % en 2026 ramené à 0) et la CVAE aussi, sur le droit de 2026. Le candidat ne supprime la CVAE que « le cas échéant » : le choix retenu suit son chiffrage de 11,5 Md€, qui compte les deux impôts, et la plage de cvae_echelle couvre son maintien (1). La plage de la C3S va du droit de 2026 à 0, la borne du schéma. L'objectif d'impôts de production ramenés de 2 % à 1 % du PIB va au-delà de ces deux impôts (L3) et n'est pas chiffré ici."
+        "note": "La C3S est supprimée (taux de 0,16 % en 2026 ramené à 0) et la CVAE aussi, sur le droit de 2026. Le candidat ne supprime la CVAE que « le cas échéant » : le choix retenu suit son chiffrage de 11,5 Md€, qui compte les deux impôts, et la plage de cvae_echelle couvre son maintien (1). La plage de la C3S va du droit de 2026 à 0, la borne du schéma. L'objectif d'impôts de production ramenés de 2 % à 1 % du PIB va au-delà de ces deux impôts (c'est la mesure « Baisse des impôts de production, à commencer par la C3S ») et n'est pas chiffré ici."
       }
     },
     {
@@ -177,7 +177,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario de la chaîne de la dette."
+        "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario du calcul de la dette."
       },
       "declare": {
         "montant_eur": 200000000000.0,
@@ -300,7 +300,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement un scénario de dépense de la chaîne."
+        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement un scénario de dépense du calcul de la dette."
       }
     },
     {
@@ -363,7 +363,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une baisse de la dépense en points de PIB est un scénario de dépense de la chaîne, pas une réforme que le moteur microsimule."
+        "raison": "Une baisse de la dépense en points de PIB est un scénario de dépense du calcul de la dette, pas une réforme que le moteur microsimule."
       }
     },
     {
