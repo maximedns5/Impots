@@ -1,0 +1,69 @@
+{
+  "programme": "lisnard",
+  "mesure": "l1_csg_activite_6_6",
+  "champ": "csg_activite_deductible",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "csg_activite_imposable": 0.0172,
+      "csg_activite_deductible": 0.068
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 8126002400.359863,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.002637125854170641,
+      0.005245142149193471,
+      0.007824370207023312,
+      0.010375127802745299,
+      0.012897729203727337,
+      0.015392485208339135,
+      0.017859703184244458,
+      0.020299687106269948,
+      0.022712737593857835,
+      0.025099151948102305
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-11",
+  "commit": "601b4423890c7d130a10d6278339b1a65ea4b145",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs"
+}

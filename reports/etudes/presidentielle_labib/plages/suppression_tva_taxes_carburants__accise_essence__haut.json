@@ -1,0 +1,72 @@
+{
+  "programme": "labib",
+  "mesure": "suppression_tva_taxes_carburants",
+  "champ": "accise_essence",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "tva_postes": {
+        "carburants": 0.0
+      },
+      "accise_gazole": 0.0,
+      "accise_essence": 0.6702
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 14654325518.793934,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.004755757972620289,
+      0.00945902015032929,
+      0.01411036600090032,
+      0.018710368595729943,
+      0.02325959468044303,
+      0.027758604744718474,
+      0.032207953091346164,
+      0.03660818790451881,
+      0.04095985131737101,
+      0.04526347947877474
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-11",
+  "commit": "601b4423890c7d130a10d6278339b1a65ea4b145",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs"
+}
