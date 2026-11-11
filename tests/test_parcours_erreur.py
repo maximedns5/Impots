@@ -44,3 +44,14 @@ def test_les_juges_sont_ceux_du_registre():
     assert f"{note[1]} sur {note[2]} cas aveugles" in texte
     for cas in ("plf2027_art_2", "plf2027_art_74_ppa"):
         assert f"{cas} : chiffré" in texte
+
+
+def test_la_page_ne_parle_pas_la_langue_du_depot():
+    """Relecture adverse : ni jargon interne, ni seconde décomposition de la prime ; L0 est
+    défini à son premier emploi."""
+    texte = _texte(erreur.page().corps)
+    for mot in ("VERIFIE_PAR", "But 19", "but 19", "étape « al »"):
+        assert mot not in texte, mot
+    assert texte.index("qu'elle appelle L0") < texte.index("la loi codée : chaque taux")
+    assert "Le détail est sur la page 3" in texte
+    assert "ne sont donc pas trois épreuves indépendantes" in texte

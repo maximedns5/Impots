@@ -1,4 +1,6 @@
-"""Page 1 du parcours : un ménage. Elle prouve que la loi est codée juste.
+"""Page 1 du parcours : un ménage. Elle prouve que le barème de l'impôt, le quotient
+familial et la décote sont codés juste, sur deux ménages salariés simples, et dit ce que
+ce contrôle ne couvre pas (les cotisations, la CSG, les prestations).
 
 Elle montre trois ménages types (les cas d'or `tests/golden/single_30k`,
 `couple_70k_2kids` et `single_240k`) ligne à ligne, l'exemple du README (une tranche à
@@ -511,8 +513,9 @@ l'impôt et les prestations d'un seul ménage. Il ne code pas la loi lui-même :
 législation française, à travers un moteur des ménages
 ({fichier("src/impots/engine/compute.py")}) qui lit une liste fermée de lignes
 ({fichier("src/impots/engine/outputs.py")}). Cette page montre ce que ce moteur rend pour
-des ménages simples, et la seule preuve indépendante qu'il rend juste : le même calcul
-refait par l'administration fiscale.</p>
+des ménages simples, et la seule preuve indépendante qu'il ait : une partie du même
+calcul, l'impôt sur le revenu, refaite par l'administration fiscale. Ce que cette preuve
+couvre et ce qu'elle ne couvre pas est dit plus bas, ligne à ligne.</p>
 
 <p>Tous les montants sont annuels, sur les revenus de {d['annee']}, et chiffrés d'avance
 par ce moteur dans {fichier(CHEMIN_JSON)}, au commit <code>{d['commit'][:10]}</code>, le
@@ -539,10 +542,26 @@ ménages y ont été saisis à la main le {ref['date']} ; le moteur et l'adminis
 s'accordent {verdict}, sur l'impôt comme sur ses étapes. Les montants du simulateur sont
 ceux que {fichier(CROSSCHECK)} a relevés.</p>
 {_controle(d, ref)}
-<p>Le contrôle porte sur l'impôt sur le revenu, pas sur les prestations : le simulateur
-de la DGFiP n'en calcule pas. Le contrôle équivalent contre l'estimateur de la CAF est
-préparé et n'est pas fait ({fichier("tests/golden/CROSSCHECK_CAF.md")}) ; les montants de
-prestations de cette page sont ceux d'OpenFisca, sans contrôle indépendant.</p>
+<p><strong>Ce que ce contrôle prouve.</strong> Partant du même salaire imposable, le
+moteur et l'administration trouvent le même revenu fiscal de référence, le même nombre de
+parts, les mêmes droits simples et la même décote : l'abattement de 10 %, le barème, le
+quotient familial et la décote sont codés juste, sur ces deux ménages.</p>
+<p><strong>Ce qu'il ne prouve pas.</strong></p>
+<ul>
+<li><strong>Le passage du brut à l'imposable.</strong> Le salaire saisi dans le simulateur
+est le salaire imposable que le moteur a calculé, pas le brut : les cotisations
+salariales, la CSG et la CRDS, qui font ce passage, ne sont contrôlées par personne
+d'autre qu'OpenFisca.</li>
+<li><strong>Les prestations.</strong> Le simulateur de la DGFiP n'en calcule pas. Le
+contrôle équivalent contre l'estimateur de la CAF est préparé et n'est pas fait
+({fichier("tests/golden/CROSSCHECK_CAF.md")}) ; les montants de prestations de cette
+page sont ceux d'OpenFisca, sans contrôle indépendant.</li>
+<li><strong>Les autres situations.</strong> Deux ménages seulement ont été saisis, deux
+foyers de salariés sans autre revenu, sans niche ni crédit d'impôt : une personne seule,
+et un couple marié avec deux enfants. Le plafonnement du quotient familial, les pensions,
+les revenus du capital, les réductions et crédits d'impôt n'ont pas été refaits par
+l'administration.</li>
+</ul>
 
 <h2>Les valeurs d'or</h2>
 <p>Chaque ménage type est aussi un cas d'or : ses valeurs, produites par le moteur le jour
@@ -579,9 +598,12 @@ calcule.</li>
 page est {fichier("src/impots/parcours/menage.py")}. Le contrôle DGFiP se refait à la main,
 en suivant {fichier(CROSSCHECK)}, sur {simulateur}.</p>
 """
-    return Page(prouve="la loi est codée juste : le moteur calcule l'impôt d'un ménage "
-                       f"{verdict.split(',')[0]} comme le simulateur de l'administration "
-                       "fiscale.",
+    return Page(prouve="sur deux ménages salariés simples, le moteur trouve l'impôt sur le "
+                       f"revenu {verdict.split(',')[0]} comme le simulateur de "
+                       "l'administration fiscale, à partir du même salaire imposable ; le "
+                       "barème, le quotient familial et la décote sont donc codés juste. "
+                       "Les cotisations, la CSG et les prestations ne sont pas contrôlées "
+                       "par un tiers.",
                 corps=corps, script=script, style=STYLE)
 
 

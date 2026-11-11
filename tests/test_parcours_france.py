@@ -46,3 +46,20 @@ def test_la_page_se_lit_sans_script():
         assert re.search(rf'<section class="vue-annee" data-annee="{annee}"[^>]*>',
                          page.corps)
     assert 'class="vue-annee" data-annee="2022" hidden' not in page.corps
+
+
+def test_la_page_dit_le_perimetre_des_salaires_et_la_population_unique():
+    """Relecture adverse : la ligne des salaires déclarés suit en partie un total calé, et
+    les trois années sont une seule population ramenée en arrière."""
+    texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", france.page().corps)))
+    assert "n'en est pas indépendante" in texte
+    assert "Ces trois années ne sont pas trois épreuves." in texte
+    assert "38,74 M en 2022, en 2023 et en 2024" in texte
+    assert "Le rang de chacun dans la distribution vient de l'enquête" not in texte
+
+
+def test_les_liens_morts_de_margins_ne_sont_pas_affiches():
+    corps = france.page().corps
+    for mort, bon in france.URL_CORRIGEES.items():
+        assert html.escape(mort) not in corps
+        assert html.escape(bon) in corps

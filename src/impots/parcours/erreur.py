@@ -22,7 +22,15 @@ from typing import Any
 
 from impots import etude, preregistration, site, verification
 from impots.parcours import ROOT, Page, ParcoursError, fichier, lien, source
-from impots.parcours.france import ANNEES, compte, lien_source, par_ligne, pct
+from impots.parcours.france import (
+    ANNEES,
+    GLOSSAIRE,
+    compte,
+    foyers_identiques,
+    lien_source,
+    par_ligne,
+    pct,
+)
 
 CROSSCHECK = ROOT / "tests" / "golden" / "CROSSCHECK.md"
 CROSSCHECK_CAF = ROOT / "tests" / "golden" / "CROSSCHECK_CAF.md"
@@ -47,47 +55,55 @@ EXPLICATIONS: dict[str, tuple[str, str]] = {
         "ne donnent pas."),
     "bandeau_famille": (
         "D-371",
-        "La même cause que la réduction générale, de l'autre côté : il y a trop de salaires "
-        "horaires entre les deux seuils du bandeau."),
+        "La baisse de la cotisation patronale d'allocations familiales sur les salaires "
+        "sous 3,5 SMIC. La même cause que la réduction générale, de l'autre côté : il y a "
+        "trop de salaires horaires entre 1,6 et 3,5 SMIC."),
     "bandeau_maladie": (
         "D-369, D-371",
-        "Rangée avec les allègements : la forme du bas des salaires horaires. Elle ne sort "
-        "de sa tolérance qu'en 2022."),
+        "La baisse de la cotisation patronale d'assurance maladie sur les salaires sous "
+        "2,5 SMIC, rangée avec les autres allègements : la forme du bas des salaires "
+        "horaires. Elle ne sort de sa tolérance qu'en 2022."),
     "ppa_montant_servi": (
         "D-370, D-371",
-        "Un choix de cible, dit : la prime est calée sur les recourants comptés par la "
-        "Drees, que les foyers payés par la Cnaf dépassent."),
+        "Un choix de cible, dit : le nombre de foyers qui demandent la prime est calé sur "
+        "les allocataires que compte la Drees, moins nombreux que les foyers que la Cnaf "
+        "paie."),
     "ppa_foyers_servis": (
         "D-370, D-371",
-        "Le même choix de cible que le montant servi : les recourants de la Drees, sous les "
+        "Le même choix de cible que le montant : les allocataires de la Drees, sous les "
         "foyers que la Cnaf paie."),
     "ppa_montant": (
         "D-370, D-371",
-        "La mesure par le pont de non-recours, que la mesure servie en espérance remplace ; "
-        "la même cible, sous la Cnaf."),
+        "L'ancienne mesure du non-recours, un seul coefficient qui ramène le total des "
+        "droits au total versé ; la mesure foyer par foyer la remplace. La même cible, sous "
+        "la Cnaf."),
     "ppa_foyers": (
         "D-364, D-366",
-        "Elle compte les foyers qui ont droit à la prime, au plein recours ; la Cnaf ne "
-        "compte que ceux qui la demandent. La ligne des foyers servis en espérance mesure "
-        "ce que la Cnaf compte."),
+        "Elle compte les foyers qui ont droit à la prime, comme si tous la demandaient ; la "
+        "Cnaf ne compte que ceux qui la demandent. La ligne qui pondère chaque foyer par "
+        "sa probabilité de la demander mesure ce que la Cnaf compte."),
     "rsa_foyers": (
         "D-364, D-367",
-        "Elle compte les foyers qui ont droit au RSA, au plein recours ; le pont de "
-        "non-recours corrige le montant, pas le nombre. La ligne des foyers servis en "
-        "espérance tient sa tolérance."),
+        "Elle compte les foyers qui ont droit au RSA, comme si tous le demandaient ; "
+        "l'ancienne correction du non-recours, un seul coefficient, corrige le montant, "
+        "pas le nombre. La ligne qui pondère chaque foyer par sa probabilité de le "
+        "demander tient sa tolérance."),
     "aide_logement_montant": (
         "D-371",
-        "Le hors-champ du modèle (foyers, résidences, accédants à la propriété) et les "
-        "hébergés, mesurés à l'étape « al » du but 19."),
+        "Ce que le modèle ne couvre pas : les foyers et résidences (étudiants, "
+        "travailleurs, personnes âgées), les accédants à la propriété, et les personnes "
+        "hébergées hors du bail, qui n'ont plus d'aide dans le modèle. Chacun a été "
+        "mesuré lors de la refonte des aides au logement."),
     "contribution_sociale_is": (
         "D-364",
-        "Une contribution qui ne vit qu'au-dessus d'un seuil d'impôt suit mal le PIB qui "
-        "ramène les entreprises d'une année à l'autre. Elle ne sort de sa tolérance qu'en "
+        "Une contribution qui n'est due qu'au-dessus d'un seuil d'impôt sur les sociétés "
+        "suit mal le PIB, par lequel les entreprises sont ramenées d'une année à l'autre. Elle ne sort de sa tolérance qu'en "
         "2023."),
 }
 
 #: Les instruments que les études chiffrent, comme un lecteur les nomme, par la clé de
-#: `etude.VERIFIE_PAR`.
+#: `etude.VERIFIE_PAR` (la table qui dit quelle ligne de la grille vérifie quel
+#: instrument ; la page ne la nomme pas).
 INSTRUMENTS = {
     "cotisations_salariales": "les cotisations des salariés",
     "employeurs": "les cotisations des employeurs",
@@ -280,8 +296,8 @@ def _bloc_hors(h: dict[str, Any]) -> str:
     else:
         expl = "<p><strong>Pourquoi.</strong> <em>Pas encore expliquée.</em></p>"
     if h["instruments"]:
-        touche = (f"Elle vérifie {html.escape(etude._et(h['instruments']))} "
-                  f"(<code>etude.VERIFIE_PAR</code>). ")
+        touche = (f"C'est la ligne qui vérifie "
+                  f"{html.escape(etude._et(h['instruments']))} dans les études. ")
         if h["etudes"]:
             touche += "Les études qui la citent : " + ", ".join(
                 f'<a href="{page}">{html.escape(titre)}</a>' for titre, page in h["etudes"]
@@ -315,12 +331,14 @@ def table_etages(rows: list[dict[str, Any]], loi_: dict[str, Any],
          f"{source(SIMULATEUR_DGFIP, 'simulateur de la DGFiP')}, le {loi_['date']} "
          f"({fichier('tests/golden/CROSSCHECK.md', 'CROSSCHECK.md')}) ; les prestations "
          f"contre le simulateur de la Caf : {caf}",
-         f"<strong>{ok} sur {len(loi_['cas'])}</strong> à l'euro ; les prestations ne sont "
-         "pas vérifiées ainsi", lien("menage", "page 1")),
+         f"<strong>{ok} sur {len(loi_['cas'])}</strong> à l'euro sur l'impôt, à partir du "
+         "salaire imposable du moteur ; ni les cotisations, ni la CSG, ni les prestations "
+         "ne sont vérifiées ainsi", lien("menage", "page 1")),
         ("L1", etude.ETAGES["L1"],
          f"la grille : chaque total contre son total publié, sur trois ans "
          f"({fichier('docs/verification/GRILLE.md', 'GRILLE.md')})",
-         f"<strong>{tenues} sur {n}</strong> lignes tenues ; {n - tenues} hors",
+         f"<strong>{tenues} sur {n}</strong> lignes tenues ; {n - tenues} hors (une seule "
+         "population, comptée une fois par année)",
          lien("france", "page 2")),
         ("L2", etude.ETAGES["L2"],
          "des juges : les chiffrages préenregistrés, notés contre l'évaluation préalable "
@@ -432,6 +450,17 @@ def page() -> Page:
         raise ParcoursError("le juge de la prime d'activité (plf2027_art_74_ppa) manque.")
     ppa_case = next(c for g, c in aveugles if c.case == "plf2027_art_74_ppa")
     signaler = site.reglages().get("signaler")
+    # La prime : d'abord ce que les deux chiffres comptent (la page 3, qui cite le cas),
+    # puis ce qui reste à mois et taux égaux, mesuré par D-316 (reports/ecart_ppa.md).
+    ppa_explication = (
+        "Les deux chiffres ne comptent pas la même chose : « "
+        + html.escape(ppa_case.comparator.net_of) + " » Le détail est sur "
+        + lien("cout", "la page 3") + ". À mois et taux égaux, la base du moteur reste "
+        + f"{_virgule(s['fiche'])} fois celle de l'évaluation : sur une version antérieure "
+        "de la population, environ un tiers de ce reste tient au droit de 2026 appliqué à des "
+        "revenus de 2024, deux tiers à la population, plus sensible au forfait que celle de "
+        "la Cnaf. Le recours n'a pas pu être mesuré (D-300, D-316, "
+        + fichier("reports/ecart_ppa.md") + ").")
 
     manques_html = "".join(
         f"<li><code>{html.escape(c.case)}</code> : chiffré {_md(g.simulated_eur)}, publié "
@@ -442,9 +471,7 @@ def page() -> Page:
            "sur la base de 2027, écrit après l'annexe, tient sa tolérance, et n'est pas "
            "compté ici (D-204, D-292)."
            if c.case == "plf2027_art_2" else
-           "Un tiers de l'écart est l'année (le droit de 2026 sur les revenus de 2024), "
-           "deux tiers la population contre la Cnaf ; le recours n'a pas pu être mesuré "
-           "(D-300, D-316)." if c.case == "plf2027_art_74_ppa" else
+           ppa_explication if c.case == "plf2027_art_74_ppa" else
            "<em>Pas encore expliqué.</em>")
         + "</li>" for g, c in manques)
 
@@ -455,27 +482,37 @@ son étage, montre qu'elle tient d'une année à l'autre, dit ce qu'elle touche,
 les ratés. Elle n'a ni curseur ni script : c'est la page qu'on cite.</p>
 
 <h2 id="etages-erreur">L'erreur, étage par étage</h2>
-<p>Un nombre de l'outil repose sur des étages empilés, du plus sûr au moins sûr. L'erreur
-ne se répartit pas également : la loi est juste à l'euro là où elle a été contrôlée ;
-l'erreur se concentre dans la population (L1), et l'activité (L4) n'est pas vérifiée du
-tout.</p>
+<p>Un nombre de l'outil repose sur des étages empilés, du plus sûr au moins sûr. Les
+études en nomment quatre, de L1 (la population) à L4 (l'activité). Sous eux, cette page en
+ajoute un, qu'elle appelle <strong>L0</strong> : la loi elle-même, telle qu'elle est codée
+dans le moteur, que tous les autres étages supposent juste. L'erreur ne se répartit pas
+également : l'impôt sur le revenu est juste à l'euro sur les deux ménages contrôlés
+(L0) ; l'erreur se concentre dans la population (L1), et l'activité (L4) n'est pas
+vérifiée du tout.</p>
 {table_etages(rows, loi_, j)}
 
-<h2 id="stable">Une erreur stable sur trois ans</h2>
-<p>La population est celle de 2024 ; pour 2022 et 2023, elle est ramenée à l'année par
-les prix et les salaires constatés, et la loi est celle de l'année
-({fichier("src/impots/verification.py")}). Si l'erreur était un bruit, elle sauterait
-d'une année à l'autre ; c'est un biais de structure. Sur les <span class="num">{plusieurs}
+<h2 id="stable">Une erreur stable sur trois ans, et ce que cela prouve</h2>
+<p>Il n'y a qu'une population, celle de 2024. Pour 2022 et 2023, elle est ramenée à
+l'année par des indices constatés, les prix et les salaires par tête, sans qu'aucun ménage
+change ni que son poids bouge ; seule la loi est celle de l'année
+({fichier("src/impots/verification.py")}, D-362).{foyers_identiques(par_ligne(rows))}
+<strong>Les trois années ne sont donc pas trois
+épreuves indépendantes</strong> : une erreur qui tient à la structure de la population se
+retrouve forcément les trois fois. Que l'erreur soit stable montre que les indices ne la
+déforment pas, et que trois années de totaux publiés la voient du même côté ; cela ne
+montre pas que trois échantillons la confirment. Sur les <span class="num">{plusieurs}
 </span> lignes notées plusieurs années, <span class="num">{etroites}</span> ont une
 étendue de 5 points au plus ; la plus large, {html.escape(large["ligne"][0].lower() + large["ligne"][1:])}, de
 <span class="num">{_virgule(f"{largeur:.1f}")}</span> points : les entreprises sont
-ramenées d'une année à l'autre par le PIB, sans lire leurs bénéfices. Un biais stable se corrige ; un bruit ne se corrige pas. Les écarts sont
+ramenées d'une année à l'autre par le PIB, sans lire leurs bénéfices. Les écarts sont
 ceux des trois passes commitées ({fichier("reports/verification/grille.json")}).</p>
+{GLOSSAIRE}
 {table_stabilite(rows, loi)}
 
 <h2 id="hors">Les lignes hors de leur tolérance, et ce qu'elles touchent</h2>
 <p><span class="num">{n - tenues}</span> lignes-années notées sur <span class="num">{n}
-</span> sortent de leur tolérance ; elles viennent de <span class="num">{len(hors)}</span>
+</span> sortent de leur tolérance (la même population comptée trois fois, une par
+année) ; elles viennent de <span class="num">{len(hors)}</span>
 lignes de la grille, dont <span class="num">{expliquees}</span> ont une cause mesurée et
 dite. Les tolérances ont été écrites avant le premier calcul et n'ont pas bougé depuis.
 Une ligne qui touche une étude le dit, avec la page de l'étude ; une ligne qui n'en touche
@@ -492,7 +529,8 @@ bouton que la réforme tourne.</p>
 Son coût est trop haut : un point de forfait ajoute <span class="num">{s["moteur"]} M€
 </span> par mois à la prime du moteur, contre <span class="num">{s["cnaf"]} M€</span> à
 celle de la Cnaf, <span class="num">{s["rapport"]}</span> fois plus (mesure de D-316, au
-commit <code>{s["commit"]}</code>, avant le but 19 ; {fichier("reports/ecart_ppa.md")}).
+commit <code>{s["commit"]}</code>, sur une version antérieure de la population ;
+{fichier("reports/ecart_ppa.md")}).
 Le juge l'a vu : la revalorisation de l'art. 74, chiffrée
 <span class="num">{_md(ppa_juge.simulated_eur)}</span>, a été publiée à
 <span class="num">{_md(ppa_juge.published_eur)}</span>, un écart de

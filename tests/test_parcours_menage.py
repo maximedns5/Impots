@@ -85,3 +85,12 @@ def test_les_lignes_retombent_sur_le_revenu_disponible(donnees):
     for v in points:
         assert v["revenu_disponible"] == pytest.approx(
             v["salaire_net"] + v["prestations"] - v["ir"], abs=1.0)
+
+
+def test_la_phrase_prouvee_ne_depasse_pas_le_controle(page):
+    """Relecture adverse : le contrôle DGFiP part du salaire imposable du moteur et ne
+    porte que sur l'impôt de deux ménages ; la page dit ce qu'il ne prouve pas."""
+    assert ":" not in page.prouve  # précédée de « Ce que cette page prouve : »
+    assert "la loi est codée juste" not in page.prouve
+    assert "deux ménages" in page.prouve and "ne sont pas contrôlées" in page.prouve
+    assert "Ce qu'il ne prouve pas." in page.corps
