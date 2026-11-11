@@ -64,9 +64,10 @@ VERDICTS = {
                       "(un défaut de documentation, pas un nombre faux)"),
 }
 
-#: La note de support d'une étude (`behavioural.grading`), en mots.
+#: La note de support d'une étude (`behavioural.grading`), dans les mots de la page
+#: Méthode.
 NOTES = {
-    "in-support": "dans l'étendue estimée",
+    "in-support": "dans l'étendue des estimations",
     "illustrative": "extrapolée",
     "no-evidence": "aucun canal",
 }
@@ -80,8 +81,9 @@ LIENS_CORRIGES: dict[str, tuple[str, str]] = {}
 #: Les mots du code que la page traduit quand elle cite le magasin.
 TRADUCTIONS = {
     "Choix du propriétaire sur R5 de `docs/M0_PHASE11.md`":
-        ("Choix du propriétaire du dépôt sur la cinquième réserve de la phase 11, "
-         "l'autofinancement des baisses ciblées de cotisations (docs/M0_PHASE11.md)"),
+        ("Choix du propriétaire du dépôt sur l'autofinancement des baisses ciblées de "
+         "cotisations"),
+    "(calcul de M0, R5)": "(calcul du dépôt)",
     "(`SelfFinancingOutOfRange`)": "et dit pourquoi",
     " (`behavioural.dividendes`)": " par le code du dépôt",
 }
@@ -100,6 +102,34 @@ def lien_article(url: str) -> tuple[str, str]:
         bon, pourquoi = LIENS_CORRIGES[url]
         return bon, f" (lien corrigé : {pourquoi})"
     return url, ""
+
+
+def verdicts() -> dict[str, int]:
+    """Combien de lignes chargées portent chaque verdict de la relecture adverse."""
+    out: dict[str, int] = {}
+    for entry in magasin()["lignes"].values():
+        v = entry["p"].verifier.verdict
+        out[v] = out.get(v, 0) + 1
+    return out
+
+
+def _verdicts_html() -> str:
+    v = verdicts()
+    total = sum(v.values())
+    reprendre = v.get("SCOPE_PROBLEM", 0)
+    confirmees = v.get("CONFIRMED", 0)
+    return (
+        "<p><strong>Ce que veut dire « la citation est à reprendre ».</strong> Chaque ligne "
+        "a été relue par un lecteur adverse, qui a rouvert l'article. Deux verdicts laissent "
+        "une ligne se charger. « Confirmée » : la valeur et la référence qui la porte sont "
+        "exactes. « La citation est à reprendre » : la valeur a été retrouvée dans la source "
+        "et tient, mais la référence qui la porte est imprécise — un tableau ou une page "
+        "mal dits, un champ plus étroit que ce que la ligne en lit, une édition confondue "
+        "avec une autre. C'est un défaut de documentation, pas un nombre faux. Sur "
+        f"<strong>{total}</strong> lignes chargées, <strong>{reprendre}</strong> portent ce "
+        f"second verdict et {confirmees} le premier. La page donne donc chaque élasticité "
+        "avec l'article d'où elle vient et la référence telle que le magasin l'écrit ; la "
+        "page exacte n'est sûre que pour les lignes confirmées.</p>\n")
 
 
 def _numero(cle: str) -> str:
@@ -313,13 +343,14 @@ def _matrice() -> str:
             elif etat["ouvert"]:
                 cells.append("<td><strong>ouvert</strong></td>")
             else:
-                cells.append(f'<td>fermé <sup>{messages[etat["message"]]}</sup></td>')
+                cells.append(f'<td>fermé, raison {messages[etat["message"]]}</td>')
         rows.append(f"<tr><td>{esc(o['nom'])}<br><small>{fichier(o['chemin'], 'rapport')}"
                     f"</small></td>" + "".join(cells) + f"<td>{esc(_note(o['grade']))}</td></tr>")
     notes = "".join(f"<li value=\"{n}\">{esc(m)}</li>" for m, n in messages.items())
     return ("<table><thead><tr><th>étude</th>" + tete + "<th>note de support</th></tr></thead>"
             "<tbody>" + "".join(rows) + "</tbody></table>"
-            "<p>Pourquoi un canal reste fermé, dans les mots du rapport :</p><ol>" + notes
+            "<p>Pourquoi un canal reste fermé : chaque « raison n » du tableau renvoie à la "
+            "phrase n ci-dessous, celle du rapport de l'étude.</p><ol>" + notes
             + "</ol>")
 
 
@@ -429,8 +460,8 @@ def page() -> Page:
                    f"{fr(p.central, 2)}, entre {fr(p.low, 2)} et {fr(p.high, 2)} : ces trois "
                    f"nombres sont ceux de {source(p.source.url, eti['page'].rstrip('. '))}, cités dans "
                    f"{fichier(eti['fichier'])}. La passe sur la population calcule une seule "
-                   "somme, notée A<sub>haut</sub> : ce que la recette perdrait si l'élasticité "
-                   "valait un. La recette du canal est l'élasticité fois cette somme. Changer "
+                   "somme : ce que la recette perdrait si l'élasticité valait un, la base de la "
+                   "recette. La recette du canal est l'élasticité fois cette somme. Changer "
                    "d'article change la bande ; changer l'outil ne change que cette somme."
                    "</p>\n")
     corps = (
@@ -440,9 +471,10 @@ def page() -> Page:
         "Les comportements y ajoutent des recettes ou en retirent : un revenu imposable qui "
         "baisse quand l'impôt monte, des heures travaillées qui montent quand le salaire net "
         "monte. L'outil n'estime aucune de ces réactions. Il les lit dans un magasin de lignes "
-        "(les élasticités), chacune tirée d'un article publié, avec sa page, sa fourchette "
-        "publiée, et le verdict d'une relecture adverse ; une ligne sans verdict ne se charge "
-        f"pas ({fichier('src/impots/behavioural/store.py')}).</p>\n"
+        "(les élasticités), chacune tirée d'un article publié, avec sa référence, sa "
+        "fourchette publiée, et le verdict d'une relecture adverse ; une ligne sans verdict "
+        f"ne se charge pas ({fichier('src/impots/behavioural/store.py')}).</p>\n"
+        + _verdicts_html()
         + exemple
         + "<p>θ choisit un point dans chaque fourchette : 0 le bas, ½ le centre publié, 1 le "
         "haut, en ligne droite par le centre. Le sens est déclaré ligne par ligne : θ = 1 est "
@@ -454,7 +486,8 @@ def page() -> Page:
         f"<p>Le magasin nourrit {len(canaux())} canaux ; {len(RECETTES)} rendent une recette que "
         "la dette compte, les autres comptent "
         "des emplois, partagent un coût sans le changer, ou sont des indices. Chaque ligne "
-        "dit sa fourchette, l'article et la page d'où elle vient, et le sens de θ.</p>\n"
+        "dit sa fourchette, l'article d'où elle vient et la référence que le magasin en "
+        "donne, le verdict de sa relecture, et le sens de θ.</p>\n"
         + _magasin()
         + "<h2>Quand un canal s'ouvre</h2>\n"
         "<p>Un canal s'ouvre quand la réforme bouge un levier qu'une de ses lignes revendique. "
@@ -463,10 +496,12 @@ def page() -> Page:
         + "<p>Dans les études publiées :</p>\n"
         + _matrice()
         + f"<p>La note de support ({fichier('src/impots/behavioural/grading.py')}) dit si la "
-        f"réforme reste dans l'étendue des réformes qui ont servi à estimer l'élasticité : "
-        f"« {NOTES['in-support']} ». « {NOTES['illustrative']} » veut dire qu'elle en sort : "
-        "la bande de la première année est alors élargie et signalée comme une "
-        f"extrapolation. « {NOTES['no-evidence']} » veut dire qu'aucun canal ne couvre la "
+        f"réforme reste dans l'étendue des réformes qui ont servi à estimer l'élasticité, "
+        "avec les trois mots de la page "
+        '<a href="methode.html">Méthode</a> : '
+        f"« {NOTES['in-support']} » quand elle y reste ; « {NOTES['illustrative']} » quand "
+        "elle en sort, la bande de la première année étant alors élargie et signalée comme "
+        f"une extrapolation ; « {NOTES['no-evidence']} » quand aucun canal ne couvre la "
         "mesure, qui reste mécanique.</p>\n"
         "<p>Pourquoi l'offre de travail ne s'ouvre pas pour les cotisations des salariés : "
         f"« {esc(etude.RAISON_OFFRE_DE_TRAVAIL)} »</p>\n"
@@ -478,11 +513,13 @@ def page() -> Page:
         "<p>Les pages d'étude donnent un seul θ à tous les comportements. Ici chaque ligne a le "
         "sien, "
         "sur les études dont le rapport porte les statistiques des canaux (les sommes que la "
-        "passe a écrites, année par année). La recette de C1 est ε<sub>tous</sub> × "
-        "A<sub>bas</sub> + ε<sub>haut</sub> × A<sub>haut</sub>, où A<sub>bas</sub> et "
-        "A<sub>haut</sub> sont ce que la recette perdrait, sous et dans le dixième le plus "
-        "aisé, si l'élasticité valait un ; celle de C7, la somme des ε<sub>g</sub> × S<sub>g</sub> "
-        "des groupes de l'article ; C2 compte ε × ancre + queue emplois. Vue vieillie ; la dette suit, "
+        "passe a écrites, année par année). La recette de C1 est l'élasticité de tous "
+        "les foyers fois la base de la recette sous le dixième le plus aisé, plus celle du "
+        "dixième le plus aisé fois la base dans ce dixième ; la base est ce que la recette "
+        "perdrait si l'élasticité valait un. Celle de C7 : pour chaque groupe de l'article, son "
+        "élasticité fois la base de son groupe. C2 compte des emplois : l'élasticité au SMIC "
+        "fois la variation du coût du travail des salariés qu'elle couvre, plus la part qui "
+        "s'éteint vers deux SMIC, à son élasticité fixe. Vue vieillie ; la dette suit, "
         f"multiplicateur à θ½ et persistance lue (le multiplicateur a sa page, {lien('activite')}"
         "). Un coût positif coûte au budget ; une recette positive lui rapporte.</p>\n"
         + curseurs
@@ -505,7 +542,8 @@ def page() -> Page:
                 "multiplie."),
         corps=corps, script=script,
         style=("ul.lignes{padding-left:1.1rem}ul.lignes li{margin:.6rem 0}"
-               "ul.lignes p{margin:.2rem 0}#c-curseurs .curseur[hidden]{display:none}"))
+               "ul.lignes p{margin:.2rem 0}#c-curseurs .curseur[hidden]{display:none}"
+               + activite.LISIBLE))
 
 
 # Pour les tests : les valeurs d'un rapport à un θ par ligne.

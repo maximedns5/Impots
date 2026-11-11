@@ -103,6 +103,10 @@ def candidat(nom: str) -> dict[str, Any]:
                   if k not in tables and v}
     lu = sum(impulses.values())
     non_lu = cost - lu
+    # La même définition dans la vue vieillie, celle du curseur de la page 5 : le passage.
+    vieil = first["statistiques"]["vieillie"]
+    lu_v = sum(float(v) for k, v in (vieil["impulses"] or {}).items() if k in tables)
+    non_lu_v = float(first["mechanical_aged_eur"]) - lu_v
     familles: dict[str, float] = {}
     raisons: dict[str, str] = {}
     for key, v in sans_table.items():
@@ -128,14 +132,18 @@ def candidat(nom: str) -> dict[str, Any]:
     deciles = sorted(m["deciles"], key=lambda r: r["decile"])
     gains = [r["mean_delta"] * r["n_households"] for r in deciles]
     bas, tous = sum(gains[:3]), sum(gains)
-    if cost > 0 and bas > RIEN_EUR:
-        par_euro: str | None = f"{num(cost / bas, 1)} €"
+    # Le coût par euro rendu se lit sur la part des ménages : les déciles ne voient
+    # qu'elle. Le coût total, part des entreprises comprise, vient en second.
+    if cost_m > 0 and bas > RIEN_EUR:
+        par_euro: str | None = f"{num(cost_m / bas, 1)} €"
+        par_euro_total: str | None = (f"{num(cost / bas, 1)} €" if abs(cost_f) > RIEN_EUR
+                                      else None)
         pourquoi = ""
     else:
-        par_euro = None
-        pourquoi = ("la mesure rapporte au budget" if cost <= 0 else
+        par_euro = par_euro_total = None
+        pourquoi = ("la part des ménages rapporte au budget" if cost_m <= 0 else
                     "les trois premiers déciles n'y gagnent rien")
-        if cost <= 0 and bas <= RIEN_EUR:
+        if cost_m <= 0 and bas <= RIEN_EUR:
             pourquoi += " et les trois premiers déciles n'y gagnent rien"
     c = prog.couverture()
     return {
@@ -147,8 +155,10 @@ def candidat(nom: str) -> dict[str, Any]:
         "sans_boucle": float(dec["cout"]), "activite": float(dec["denominateur"]
                                                              + dec["retroaction"]),
         "impulses": impulses, "lu": lu, "non_lu": non_lu, "familles": familles,
+        "lu_vieillie": lu_v, "non_lu_vieillie": non_lu_v,
         "raisons": raisons,
-        "bas": bas, "tous": tous, "par_euro": par_euro, "pourquoi": pourquoi,
+        "bas": bas, "tous": tous, "par_euro": par_euro, "par_euro_total": par_euro_total,
+        "pourquoi": pourquoi,
         "deciles": [r["mean_delta"] for r in deciles[:3]],
         "mesures_chiffrees": [(mm.id, mm.libelle, mm.sources[0].url, mm.sources[0].date)
                               for mm in prog.chiffrees()],
@@ -205,8 +215,17 @@ def _cellules(c: dict[str, Any]) -> dict[str, str]:
         "activite": pt(c["activite"]),
         "bas": (f"{md(c['bas'])} sur {md(c['tous'])} rendus aux ménages"
                 if abs(c["tous"]) > RIEN_EUR else "rien"),
-        "par_euro": c["par_euro"] or f"ne se lit pas : {c['pourquoi']}",
+        "par_euro": _par_euro(c),
     }
+
+
+def _par_euro(c: dict[str, Any]) -> str:
+    if not c["par_euro"]:
+        return f"ne se lit pas : {c['pourquoi']}"
+    if c["par_euro_total"]:
+        return (f"{c['par_euro']} sur le coût des ménages ; {c['par_euro_total']} sur le coût "
+                "total, entreprises comprises")
+    return f"{c['par_euro']} (ménages seuls)"
 
 
 #: Les lignes du tableau des deux candidats : (clé, ce qu'elle dit, étage).
@@ -217,11 +236,12 @@ LIGNES = (
     ("couverture", "La part du programme chiffrée", "programme"),
     ("sans_boucle", "La dette en 2035, sans aucune boucle", "L2"),
     ("lu", "Ce que la boucle macro lit, la première année", "L2"),
-    ("non_lu", "Ce qu'elle ne lit pas", "L2"),
+    ("non_lu", "Ce qu'elle ne lit pas, la première année, vue figée", "L2"),
     ("activite", "Ce que l'activité change à la dette en 2035, à θ½ (ne se compare pas)",
      "L4"),
     ("bas", "Ce que gagnent les trois premiers déciles, par an", "L2"),
-    ("par_euro", "Le coût d'un euro rendu aux trois premiers déciles", "L2"),
+    ("par_euro", "Le coût d'un euro rendu aux trois premiers déciles, sur le coût des "
+                 "ménages", "L2"),
 )
 
 SCRIPT = """
@@ -230,7 +250,21 @@ SCRIPT = """
   var a = document.getElementById("candidat-a");
   var b = document.getElementById("candidat-b");
   if (!a || !b) { return; }
-  function montrer() {
+  // Un candidat ne se compare pas à lui-même : celui d'un menu est grisé dans l'autre.
+  function griser() {
+    for (var i = 0; i < a.options.length; i++) {
+      a.options[i].disabled = a.options[i].value === b.value;
+      b.options[i].disabled = b.options[i].value === a.value;
+    }
+  }
+  function montrer(ev) {
+    if (a.value === b.value) {
+      var autre = ev && ev.target === a ? b : a;
+      for (var j = 0; j < autre.options.length; j++) {
+        if (autre.options[j].value !== autre.value) { autre.selectedIndex = j; break; }
+      }
+    }
+    griser();
     var cles = __CLES__;
     for (var i = 0; i < cles.length; i++) {
       document.getElementById("cmp-a-" + cles[i]).textContent = D[a.value][cles[i]];
@@ -261,12 +295,17 @@ def _menus(cands: list[dict[str, Any]], cells: dict[str, dict[str, str]],
         return (f'<div class="curseur"><label for="{ident}">{titre}</label>'
                 f'<select id="{ident}">{opts}</select><span></span></div>')
 
+    if a == b_:
+        raise ParcoursError("les deux menus partent du même candidat.")
+
     rows = "".join(
         f"<tr><th scope=\"row\">{e(titre)} {b('', etage)}</th>"
         f'<td id="cmp-a-{k}">{e(cells[a][k])}</td><td id="cmp-b-{k}">{e(cells[b_][k])}</td>'
         "</tr>" for k, titre, etage in LIGNES)
     return (menu("candidat-a", a, "Premier candidat") + menu("candidat-b", b_,
                                                               "Second candidat")
+            + "<p>Un candidat ne se compare pas à lui-même : celui qui est choisi dans un "
+              "menu est grisé dans l'autre.</p>"
             + '<table class="deux"><thead><tr><th></th><th>premier</th><th>second</th></tr>'
             f"</thead><tbody>{rows}</tbody></table>"
             "<noscript><p>Sans JavaScript, les menus ne changent pas ce tableau : les huit "
@@ -285,15 +324,20 @@ def page() -> Page:
 
     t1 = tableau(
         ["candidat", "coût de la première année, pour combien de mesures paramétrées",
-         "dette 2035 sans boucle", "€ par euro aux 3 premiers déciles"],
+         "dette 2035 sans boucle",
+         "€ par euro aux 3 premiers déciles : coût des ménages (coût total)"],
         [[f'<a href="{c["nom"]}.html">{e(c["candidat"])}</a>',
           b(md(c["cout"]), "L2") + " pour " + b(_part(c), "programme"),
           b(pt(c["sans_boucle"]), "L2", True),
-          (b(c["par_euro"], "L2") if c["par_euro"] else e(f"— ({c['pourquoi']})"))]
+          ((b(c["par_euro"], "L2")
+            + (f" ({b(c['par_euro_total'], 'L2')})" if c["par_euro_total"] else ""))
+           if c["par_euro"] else e(f"— ({c['pourquoi']})"))]
          for c in cands])
     t2 = tableau(
-        ["candidat", "lu par la boucle", "non lu", "l'activité, en 2035 à θ½"],
+        ["candidat", "lu par la boucle, vue figée", "non lu, vue figée",
+         "lu et non lu, vue vieillie (page 5)", "l'activité, en 2035 à θ½"],
         [[e(c["candidat"]), e(cells[c["nom"]]["lu"]), e(cells[c["nom"]]["non_lu"]),
+          e(f"lu {md(c['lu_vieillie'])} ; non lu {md(c['non_lu_vieillie'])}"),
           b(pt(c["activite"]), "L4", True)] for c in cands])
     t3 = tableau(
         ["candidat", "ce que gagnent les déciles 1, 2 et 3, par ménage et par an",
@@ -355,10 +399,16 @@ de dette en 2035 sans boucle.</p>
 <h2 id="les-huit">Les huit programmes</h2>
 {t1}
 <p>Le coût d'un euro rendu aux trois premiers déciles divise le coût de la première année
-par ce que gagnent, ensemble, les ménages des trois premiers dixièmes de niveau de vie. Il
-ne demande aucun calcul neuf : les déciles sont ceux des rapports. Deux réserves, lues dans
-les mêmes rapports. Le coût compte la part des entreprises, que les déciles ne voient pas.
-Et les déciles ne portent pas l'extrapolation aux salariés absents de l'enquête, que les
+<em>pour les ménages</em> par ce que gagnent, ensemble, les ménages des trois premiers
+dixièmes de niveau de vie. Il ne demande aucun calcul neuf : le coût des ménages et les
+déciles sont ceux des rapports de première année. Les déciles ne voient que les ménages :
+diviser le coût total, part des entreprises comprise, compterait au débit des trois
+premiers déciles une baisse d'impôt des entreprises qu'ils ne reçoivent pas. Le coût total
+vient donc en second, entre parenthèses, pour les programmes qui ont une part des
+entreprises (pour {e(attal["candidat"])}, {b(md(attal["cout_f"]), "L2")} ; pour
+{e(par_nom["presidentielle_retailleau"]["candidat"])},
+{b(md(par_nom["presidentielle_retailleau"]["cout_f"]), "L2")}). Une réserve, lue dans
+les mêmes rapports : les déciles ne portent pas l'extrapolation aux salariés absents de l'enquête, que les
 totaux portent ({fichier("docs/DECISIONS.md", "D-368")}) : pour une mesure sur les salaires,
 ce que gagnent les ménages est un peu sous-estimé, et le coût par euro un peu
 surestimé. La part des trois premiers déciles dans le gain des ménages, au tableau suivant,
@@ -371,11 +421,14 @@ reste, qu'elle ne lit pas. « Non lu » n'est pas « nul » : l'outil n'en sait 
 l'activité, et la dette le porte entier. La dernière colonne dit ce que l'activité change à
 la dette de 2035 à θ½ (le PIB plus haut et les recettes qu'il rend) : elle dépend de ce que
 la boucle lit, et c'est pourquoi elle ne se compare pas ({lien("activite", "page 5")}). Est
-lue une impulsion dont le rapport porte la table (<code>rejeu.macro</code>) ; une impulsion
-sans table et un poste sans variante ne le sont pas, et la cellule dit pourquoi. Les
-impulsions et les instruments non couverts sont ceux du chemin annuel, la première année,
-dans la vue figée ; la part « prestations » est le reste, à l'arrondi de la double entrée
-près.</p>
+lue une impulsion dont le rapport de l'étude porte la table de Mésange ; une impulsion
+sans table et un poste sans variante ne le sont pas, et la cellule dit pourquoi.
+« Non lu » a une seule définition, ici et sur la {lien("activite", "page 5")} :
+{e(activite.NON_LU)}. Les colonnes « vue figée » sont la première année du chemin annuel
+dans la vue du coût de la première année ; la part « prestations » est le reste, à
+l'arrondi de la double entrée près. La page 5 montre la même partition année par année
+dans la vue vieillie, celle de la dette : la colonne du milieu donne sa première année,
+pour passer d'une page à l'autre.</p>
 {t2}
 
 <h2 id="sources">D'où viennent ces nombres</h2>
@@ -388,4 +441,4 @@ près.</p>
                        "première année et sa couverture, la dette sans boucle, ce que la "
                        "boucle lit ; pas sur le verdict.",
                 corps=corps, script=script,
-                style="table.deux th[scope=row]{font-weight:400}")
+                style="table.deux th[scope=row]{font-weight:400}" + activite.LISIBLE)

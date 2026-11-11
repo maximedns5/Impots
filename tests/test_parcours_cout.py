@@ -85,3 +85,24 @@ def test_le_rate_du_juge_se_decompose(page: parcours.Page) -> None:
     assert "2,67" in texte and "1,76" in texte and "0,91" in texte and "1,66" in texte
     assert f"{cout.pct(0.001, 1)}</span>" in texte  # le reste du produit, +0,1 %
     assert "chiffrée dans\naucun fichier" in texte or "chiffrée dans aucun fichier" in texte
+
+
+def test_le_juge_de_l_art_15_et_sa_sensibilite() -> None:
+    """Relecture 2, constat 5 : contre 5,5 Md€ (2027 et 2028) le cas tient sa tolérance ;
+    contre 5,0 Md€ (2027 seul) il en sortirait. Chaque juge dit sa convention d'année."""
+    a = cout.art15()
+    assert a["g"].verdict == "within"
+    assert cout.md(a["seul"]) == "−5,00 Md€" and not a["within_seul"]
+    assert cout.md(a["gap_seul"]) == "−2,05 Md€"
+    assert cout.md(a["allowed_seul"], signed=False) == "1,50 Md€"
+    corps = cout.page().corps
+    assert "l'année du juge" in corps and "hors de la tolérance" in corps
+
+
+def test_les_menages_disent_leur_population() -> None:
+    """Relecture 2, constat 4 : 31,05 M (les ménages tirés), 31,01 M (la population
+    entière), 31,27 M (le recensement de 2023, la cible du calage)."""
+    corps = cout.page().corps
+    for n in ("31,05 M", "31,01 M", "31,27 M"):
+        assert n in corps
+    assert "pour les ménages, en 2026, vue vieillie" in corps

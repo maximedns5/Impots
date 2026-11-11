@@ -35,6 +35,14 @@ WP139 = "imk_wp139_2014_gechert_rannenberg_regime_dependent.pdf"
 VUE = "vieillie"
 HORIZONS = ("1", "2", "3", "5", "10")
 esc = html.escape
+#: Au téléphone, aucun texte sous 12 px : les petites lignes des tableaux (`<small>`) et
+#: le code qu'elles portent (un lien vers un fichier) ne rapetissent pas deux fois.
+LISIBLE = "small{font-size:max(12px,.83em)}small code{font-size:1em}"
+#: « Non lu », une seule définition sur les pages 5 et Comparer : le coût de l'année moins
+#: les impulsions que la boucle lit (celles qui ont leur table de Mésange dans le rapport).
+NON_LU = ("le coût de l'année moins les impulsions que la boucle lit : les impulsions "
+          "sans table de Mésange (les accises sur l'énergie), les prestations, les impôts "
+          "des entreprises et les autres postes sans variante dans Mésange")
 
 
 # --------------------------------------------------------------------------- #
@@ -584,7 +592,9 @@ def page() -> Page:
         f"({source(mesange_url, _titre(mesange.SOURCE_FILE))}, section 4). "
         "Chaque variante dit, pour une baisse d'un point de PIB d'un impôt, de combien le PIB "
         "monte (c) et de combien le solde public se dégrade (solde), à 1, 2, 3, 5 et 10 ans.</p>\n"
-        "<p>Pour chaque année et chaque marche de l'impulsion, la boucle prend le multiplicateur "
+        "<p>Chaque année, pour ce que l'impulsion a changé depuis l'année d'avant (une "
+        "hausse ou une baisse de l'impôt, prise à son propre horizon), la boucle prend le "
+        "multiplicateur "
         "<em>m</em> = max(0, <em>c</em>(<em>h</em>) + (2θ − 1) &sigma;) et rend au budget "
         "(solde(<em>h</em>) + 1) × <em>m</em> / <em>c</em>(<em>h</em>) du coût, jamais plus que "
         "le coût lui-même (D-336). À θ½, <em>m</em> = <em>c</em> et la part rendue est "
@@ -651,7 +661,7 @@ def page() -> Page:
         "candidat à l'autre tant que la boucle ne lit pas les impôts des entreprises "
         f"(D-358) ; la page {lien('comparer')} le dit.</p>\n"
         + _table_lus()
-        + "<p>Est lu ce qui a sa table dans le rapport (<code>rejeu.macro</code>) : la "
+        + "<p>Est lu ce dont le rapport de l'étude porte la table de Mésange : la "
         "boucle ne garde que les impulsions qui en ont une. Une impulsion sans table n'est "
         "pas lue, même quand Mésange a une variante pour elle ; un poste sans variante non "
         f"plus.{_tva_ciblee()}</p>\n"
@@ -667,6 +677,12 @@ def page() -> Page:
         "multiplicateur bouge, le solde restant proportionnel au PIB, ce qui est une "
         "hypothèse (D-349). Les comportements restent à θ½ ; ils ont leur page, "
         f"{lien('comportements')}. La dette elle-même a la sienne, {lien('dette')}.</p>\n"
+        "<p>Le tableau du curseur donne, chaque année, l'impulsion lue et la part non lue. "
+        f"« Non lu » a la même définition ici et sur la page {lien('comparer')} : {NON_LU}. "
+        "Ce tableau est dans la vue vieillie, celle de la dette ; la page "
+        f"{lien('comparer')} donne la première année dans la vue figée, celle du coût de "
+        "la première année. Sous son tableau, le curseur donne aussi les deux nombres de la "
+        "première année dans la vue figée, pour passer de l'une à l'autre.</p>\n"
         + _curseurs()
         + "<p>Les mêmes nombres, sans script : la dette de la dernière année, en points de PIB, "
         "vue vieillie. Les colonnes à θ½ sont celles des rapports ; les colonnes aux bouts de "
@@ -674,8 +690,12 @@ def page() -> Page:
         + _table_statique()
         + "<h2>Ce qui n'est pas vérifié</h2>\n"
         "<p>Aucune évaluation après coup d'une baisse de cotisations des salariés n'a été "
-        "confrontée à la boucle ; la seule porte est celle du CICE, sur l'éventail d'emplois "
-        f"(README, phase 4). Les multiplicateurs sont ceux d'un modèle réestimé en "
+        "confrontée à la boucle. Le seul contrôle contre des évaluations publiées porte sur "
+        "le CICE, et sur les emplois, pas sur la dette : l'éventail d'emplois que l'outil "
+        "donne pour le CICE doit contenir ce que les évaluations publiées trouvent (de "
+        "100 000 à 400 000 emplois), et sa médiane doit y tomber ; c'est le cas, sans rien "
+        f"régler pour cela ({fichier('README.md', 'README, la couche macro')}). Les "
+        "multiplicateurs sont ceux d'un modèle réestimé en "
         f"{esc(str(mult['source_table']['vintage']))}, et la boucle les prend tels quels "
         "jusqu'au bout de l'horizon. "
         f"{lien('erreur', 'Où l’outil se trompe')} range cette absence à son étage.</p>\n"
@@ -689,4 +709,4 @@ def page() -> Page:
                 "élargi d'un écart-type entre études ; il vaut zéro pour ce que Mésange ne "
                 "porte pas."),
         corps=corps, script=script,
-        style="#a-resultat .note{color:var(--doux);font-size:.9rem}")
+        style="#a-resultat .note{color:var(--doux);font-size:.9rem}" + LISIBLE)

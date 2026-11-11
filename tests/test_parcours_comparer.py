@@ -46,7 +46,31 @@ def test_un_euro_aux_trois_premiers_deciles_ne_se_lit_pas_sans_gain() -> None:
     c = comparer.candidat("presidentielle_melenchon")
     assert c["par_euro"] is None and "rapporte" in c["pourquoi"]
     a = comparer.candidat("presidentielle_attal")
-    assert a["par_euro"] == comparer.num(a["cout"] / a["bas"], 1) + " €"
+    assert a["par_euro"] == comparer.num(a["cout_m"] / a["bas"], 1) + " €"
+
+
+def test_un_euro_rendu_se_lit_sur_le_cout_des_menages() -> None:
+    """Relecture 2, constat 2 : les déciles ne voient que les ménages ; le coût par euro
+    divise le coût des ménages, le coût total vient en second."""
+    a = comparer.candidat("presidentielle_attal")
+    r = comparer.candidat("presidentielle_retailleau")
+    assert (a["par_euro"], a["par_euro_total"]) == ("11,3 €", "11,7 €")
+    assert (r["par_euro"], r["par_euro_total"]) == ("11,4 €", "18,4 €")
+    assert comparer._cellules(r)["par_euro"].startswith("11,4 € sur le coût des ménages")
+
+
+def test_non_lu_une_definition_deux_vues() -> None:
+    """Relecture 2, constat 1 : « non lu » est le coût de l'année moins ce qui est lu, dans
+    la vue figée (cette page) comme dans la vue vieillie (la page 5)."""
+    a = comparer.candidat("presidentielle_attal")
+    assert comparer.md(a["non_lu"]) == "+0,60 Md€"
+    assert comparer.md(a["non_lu_vieillie"]) == "+0,93 Md€"
+    lab = comparer.candidat("presidentielle_labib")
+    assert comparer.md(lab["non_lu_vieillie"]) == "+13,90 Md€"
+
+
+def test_un_candidat_ne_se_compare_pas_a_lui_meme(page: parcours.Page) -> None:
+    assert "options[i].disabled" in page.script
 
 
 def test_labib_les_accises_ne_sont_pas_lues() -> None:

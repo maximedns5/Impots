@@ -251,12 +251,16 @@
         const m = mean(both);
         let v = 0.0; for (const x of both) v += (x - m) * (x - m);
         const variance = v / both.length;
+        // Une variance nulle ou presque (σ = 0 sans élasticité tirée : il ne reste que
+        // l'arrondi) ne se partage pas : l'indice est « sans objet », pas un nombre.
+        // Le seuil : un écart-type sous un milliardième de la moyenne (ou de 1e-15).
+        const nulle = !(variance > 0) || Math.sqrt(variance) <= 1e-9 * Math.max(Math.abs(m), 1e-6);
         const sobol = {};
         for (const [name, keys] of groupes) {
           const mixed = { ...A };
           for (const key of keys) mixed[key] = B[key];
           const fab = last(payload, mixed, n, c);
-          if (variance > 0) {
+          if (!nulle) {
             let first = 0.0, total = 0.0;
             for (let i = 0; i < n; i++) { first += fb[i] * (fab[i] - fa[i]); total += (fa[i] - fab[i]) ** 2; }
             sobol[name] = { premier_ordre: first / n / variance, total: 0.5 * (total / n) / variance };
@@ -361,7 +365,7 @@
       sobol.textContent = "";
       for (const [g] of etude.tirages.groupes) {
         const s = out.vieillie.sobol[g];
-        ligne(sobol, [nom(g), s ? fr(s.premier_ordre, 3) : "—", s ? fr(s.total, 3) : "—"]);
+        ligne(sobol, [nom(g), s ? fr(s.premier_ordre, 3) : "sans objet", s ? fr(s.total, 3) : "sans objet"]);
       }
     }
 

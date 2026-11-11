@@ -139,3 +139,38 @@ def test_les_curseurs_sont_bornes_et_le_hors_plage_se_dit() -> None:
     assert 'id="d-prix" min="0.0" max="3.0"' in corps
     assert 'id="d-alerte"' in corps and "ne refait pas le vieillissement des revenus" in corps
     assert "le cadre des études lui-même en sort par les prix" in corps.lower()
+
+
+PLF2027_HTML = dette.ROOT / "data" / "raw" / dette.PLF2027["fichier"]
+
+
+@pytest.mark.skipif(not PLF2027_HTML.exists(),
+                    reason="le texte du PLF 2027 n'est pas dans data/raw : `make data`")
+def test_la_trajectoire_du_gouvernement_est_celle_du_plf_2027() -> None:
+    """Relecture 2, constat 9 : la dette et la dépense de l'article liminaire, la
+    croissance de l'exposé des motifs, relues dans le texte."""
+    import html as h
+    import re
+
+    texte = re.sub(r"\s+", " ", h.unescape(re.sub(r"<[^>]+>", " ", PLF2027_HTML.read_text(
+        encoding="utf-8", errors="replace"))))
+
+    def nombres(ligne: str) -> list[float]:
+        i = texte.index("ARTICLE liminaire : :")
+        m = re.search(re.escape(ligne) + r"((?: ?\u2011?\d+,\d)+)", texte[i:])
+        assert m is not None, ligne
+        return [float(x.replace("\u2011", "-").replace(",", ".")) / 100 for x in m[1].split()]
+
+    assert nombres("Dette au sens de Maastricht")[:3] == pytest.approx(dette.PLF2027["dette"])
+    assert nombres("Évolution de la dépense publique hors CI en volume (%) 1")[:3] == \
+        pytest.approx(dette.PLF2027["depense_volume"])
+    assert "révisée à la baisse (de +1,0 % à +0,5 %)" in texte
+    assert "La croissance s’élèverait à +1,0 % en 2027" in texte
+    assert dette.PLF2027["croissance"] == {2026: 0.005, 2027: 0.010}
+
+
+def test_la_reference_est_comparee_au_gouvernement() -> None:
+    corps = dette.page().corps
+    assert "plus favorable que celui du gouvernement" in corps
+    assert "119,30" in corps and "116,86" in corps
+    assert "n'est pas dans les données du dépôt" in corps

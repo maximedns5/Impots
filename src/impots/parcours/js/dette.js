@@ -280,7 +280,7 @@
         hors.push(`les prix (${pct(prices, 1)}, déflateur publié de ${pct(pl.prix[0], 1)} à ${pct(pl.prix[1], 1)})`);
       }
       $("d-alerte").textContent = hors.length
-        ? `Attention : ${hors.join(" et ")} sortent des plages du PLF 2026 pour ${pl.annees[0]} à ${pl.annees[1]}. `
+        ? `Attention : ${hors.join(" et ")} sortent des plages du PLF 2026 pour ${pl.annees[0]} à ${pl.annees[1]} (celles du PLF 2027 ne sont pas dans les données du dépôt). `
           + `La dette de référence de ${fin} est ici de ${pct(vieillie.reference[n - 1], 1)} du PIB. Le rejeu ne refait pas `
           + "le vieillissement des revenus : le coût de chaque année reste celui de la passe, et le nombre n'est qu'un ordre de grandeur."
         : "";

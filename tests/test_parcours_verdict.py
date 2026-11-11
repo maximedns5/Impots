@@ -101,3 +101,22 @@ def test_la_boite_et_le_verdict_s_expliquent_sur_la_ligne() -> None:
     corps = verdict.page().corps
     assert "la boîte ne tire pas le multiplicateur au-delà de son coin" in corps
     assert f"<strong>dépend</strong> : {pct(0.8885, 2)} des tirages" in corps
+
+
+@needs_node
+def test_a_sigma_nul_sobol_est_sans_objet(tmp_path) -> None:
+    """Relecture 2, constat 10 : à sigma nul, une étude dont seul le multiplicateur est tiré
+    n'a plus de variance que l'arrondi ; aucun indice de Sobol ne s'y lit (il valait
+    2,183 pour Attal). Une étude qui tire aussi des élasticités garde les siens."""
+    from impots.predictif import rejouer
+
+    vus = 0
+    for e in verdict.montrees():
+        monte = e["data"]["monte_carlo"]
+        (got,) = _node({"payload": charge(e["data"]), "tirages": verdict.tirages(monte),
+                        "lois": [[monte["rho"], 0.0]]}, tmp_path)
+        if list(monte["groupes"]) == [rejouer.MACRO_ROW]:
+            vus += 1
+            for view in ("vieillie", "figee"):
+                assert all(s is None for s in got[view]["sobol"].values()), e["nom"]
+    assert vus > 0

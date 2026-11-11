@@ -319,7 +319,8 @@ def _lois(liste: list[dict[str, Any]]) -> str:
         f"<li><strong>{fr(m0['tirages'], 0)} tirages, graine {m0['graine']}</strong> : "
         "le même calcul redonne le même nombre, au tirage près.</li>\n</ul>\n"
         + "".join(_lois_html(e) for e in liste)
-        + "<p>Lu dans <code>rejeu.lignes</code> et <code>rejeu.macro</code> des rapports ; "
+        + "<p>Lu dans les rapports des études, qui portent les fourchettes de leurs lignes "
+        "et les tables de Mésange que la boucle lit ; "
         "le multiplicateur aux horizons 1, 2, 3, 5 et 10 ans est la ligne de PIB de "
         "Mésange que la boucle lit, interpolée entre eux.</p>")
 
@@ -332,7 +333,10 @@ def _sobol(liste: list[dict[str, Any]]) -> str:
         "le multiplicateur. Le premier ordre est la part qu'une entrée explique seule ; "
         "le total, la part qu'elle explique avec ses interactions. Ce sont des "
         "estimations sur les tirages : un premier ordre un peu au-dessus de 1 ou sous 0 "
-        "est du bruit d'estimation, pas une erreur.</p>\n"
+        "est du bruit d'estimation, pas une erreur. Quand la variance est nulle ou presque "
+        "(au curseur, \u03c3 = 0 sur une étude sans élasticité tirée : il ne reste que "
+        "l'arrondi des calculs), il n'y a rien à partager, et la page écrit « sans objet » "
+        "au lieu d'un indice.</p>\n"
         "<table><thead><tr><th>étude</th><th>entrée</th><th>premier ordre, vieillie</th>"
         "<th>total, vieillie</th><th>premier ordre, figée</th><th>total, figée</th></tr>"
         "</thead><tbody>" + "".join(_sobol_rows(e) for e in liste) + "</tbody></table>\n"

@@ -149,3 +149,14 @@ def test_les_codes_sont_traduits_et_les_liens_corriges() -> None:
     corps = comportements.page().corps
     for mort, (bon, _) in comportements.LIENS_CORRIGES.items():
         assert bon in corps and f'href="{mort}"' not in corps
+
+
+def test_le_verdict_de_relecture_se_dit_en_tete() -> None:
+    """Relecture 2, constat 7 : ce que veut dire « la citation est à reprendre », et
+    combien de lignes le portent."""
+    v = comportements.verdicts()
+    corps = comportements.page().corps
+    assert f"<strong>{v['SCOPE_PROBLEM']}</strong> portent ce second verdict" in corps
+    assert "pas un nombre faux" in corps
+    for mot in ("dans l'étendue des estimations", "extrapolée", "aucun canal"):
+        assert f"« {mot} »" in corps

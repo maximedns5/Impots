@@ -252,13 +252,19 @@
     const dec = decomposition(e.payload, th, opts);
     const n = c.years.length;
     // Est lue l'impulsion qui a sa table dans le rapport (`rejouer.loop` ne garde
-    // qu'elles) ; les autres vont à la dette entières.
+    // qu'elles). Le non lu est le coût de l'année moins ce qui est lu : la définition de
+    // la page « Comparer » (impulsions sans table, prestations, impôts des entreprises).
     const tables = e.payload.rejeu.macro.instruments;
-    const lignes = c.years.map((y, k) => {
-      let lue = 0.0, nonLue = 0.0;
-      for (const [i, v] of Object.entries(e.payload.years[k].statistiques.vieillie.impulses || {})) {
-        if (i in tables) lue += v; else nonLue += v;
+    const partage = (k, vue) => {
+      let lue = 0.0;
+      for (const [i, v] of Object.entries(e.payload.years[k].statistiques[vue].impulses || {})) {
+        if (i in tables) lue += v;
       }
+      return [lue, +e.payload.years[k][VIEWS[vue]] - lue];
+    };
+    const figee = partage(0, "figee"), vieil = partage(0, "vieillie");
+    const lignes = c.years.map((y, k) => {
+      const [lue, nonLue] = partage(k, "vieillie");
       return `<tr><td>${y}</td><td class="num">${md(lue)}</td><td class="num">${md(nonLue)}</td>`
         + `<td class="num">${signe(c.gap[k] * 100, 2)} %</td>`
         + `<td class="num">${md(c.feedback[k] * c.gdp[k])}</td><td class="num">${pt(c.delta[k])}</td></tr>`;
@@ -268,10 +274,13 @@
       + `<strong>${pt(dec.total)}</strong> (le PIB, dénominateur, ${pt(dec.denominateur)} ; `
       + `les recettes induites ${pt(dec.retroaction)}). Le premier nombre ne dépend pas `
       + `de Mésange ; le second, si.</p>`
-      + `<table><thead><tr><th>année</th><th>impulsion lue</th><th>impulsion non lue</th>`
+      + `<table><thead><tr><th>année</th><th>lu, vue vieillie</th><th>non lu, vue vieillie</th>`
       + `<th>écart de PIB</th><th>recette induite</th><th>Δ dette</th></tr></thead><tbody>${lignes}</tbody></table>`
       + `<p class="note">Rejoué ici, vue vieillie, comportements à θ½. Au réglage du rapport `
-      + `(θ½, lue, centrale), la page redonne ${pt(e.temoin)}, le nombre de la page de l'étude.</p>`;
+      + `(θ½, lue, centrale), la page redonne ${pt(e.temoin)}, le nombre de la page de l'étude.</p>`
+      + `<p class="note">Le passage à la page « Comparer » : en ${c.years[0]}, vue figée, `
+      + `lu ${md(figee[0])}, non lu ${md(figee[1])} ; vue vieillie, lu ${md(vieil[0])}, `
+      + `non lu ${md(vieil[1])}. Non lu : le coût de l'année moins ce que la boucle lit.</p>`;
   }
   for (const el of [choix, theta, persistance, variante]) el.addEventListener("input", rendre);
   rendre();

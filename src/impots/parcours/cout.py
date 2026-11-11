@@ -34,6 +34,11 @@ PPA_ETUDE = "etudes/plfss2027.json"
 VERIFICATION = "reports/verification/grille.json"
 MANIFESTE = "data/raw/MANIFEST.json"
 ECART_PPA = "reports/ecart_ppa.md"
+RECONCILIATION = "reports/reconciliation.md"
+#: Le commit qui a enregistré le cas de l'art. 15, avant l'ouverture de l'annexe : son
+#: fichier n'avait pas de comparateur, sa note disait seulement « le seul volet CEBGE ».
+#: (`commit` du cas est celui du code ; celui-ci est celui du fichier, lu dans git.)
+ENREGISTREMENT_ART15 = "25b2a61ad81b55312723bec77bab9831129e0a40"
 
 
 def lire(chemin: str) -> Any:
@@ -173,6 +178,34 @@ ENTREPRISES_LIBELLES = {
 }
 
 
+def _menages_html(meta: dict[str, Any]) -> str:
+    """Le nombre de ménages de la passe, et d'où il vient : la somme des poids des ménages
+    tirés, contre la cible du calage (le recensement) et la population entière."""
+    from impots.population import margins
+
+    text = (ROOT / RECONCILIATION).read_text(encoding="utf-8")
+    vintage = re.search(r"\*\*Vintage\*\*: `(\d{4})`", text)
+    ligne = re.search(r"^\| Ménages \| ([\d.]+) M \| ([\d.]+) M \|", text, re.M)
+    if not (vintage and ligne):
+        raise ParcoursError(f"{RECONCILIATION} ne donne plus le nombre de ménages.")
+    if vintage[1] != str(meta["vintage"]):
+        raise ParcoursError(f"{RECONCILIATION} n'est pas du millésime de la passe.")
+    entiere = float(ligne[1]) * 1e6
+    cible = margins.HOUSEHOLDS
+    return (
+        f"La population est celle de {e(meta['vintage'])} : la structure des ménages de "
+        f"l'enquête Emploi de {e(meta['vintage'])}, repondérée. "
+        f"{b(num(meta['households'] / 1e6, 2) + ' M', 'L1')} ménages, c'est la somme des "
+        f"poids des {b(num(meta['sampled_households'], 0), 'L1')} ménages tirés pour la "
+        "passe et repondérés. La population entière en compte "
+        f"{b(num(entiere / 1e6, 2) + ' M', 'L1')} ; elle est calée sur "
+        f"{num(cible.value / 1e6, 2)} M ménages, le nombre du recensement de "
+        f"{cible.year} ({source(cible.url, 'Insee')}), celui de la "
+        f"{lien('france', 'page 2')} ; le calage en laisse "
+        f"{b(pct(entiere / cible.value - 1, 1), 'L1')} ({fichier(RECONCILIATION)}), le tirage "
+        f"{b(pct(meta['households'] / entiere - 1, 1), 'L1')} de plus.")
+
+
 def _attal() -> str:
     from impots.guards import STATE_TRANSFERS
 
@@ -230,9 +263,7 @@ def _attal() -> str:
 <h2 id="attal">Attal, « Droit au brut », pas à pas</h2>
 <p>Le candidat énonce un gain, pas un taux. L'outil le traduit en un bouton, et le dit :</p>
 <blockquote>{e(a16["chiffrage"]["note"])}</blockquote>
-<p>La population est celle de 2024 ({b(num(meta["households"] / 1e6, 2) + " M", "L1")}
-ménages, dont {b(num(meta["sampled_households"], 0), "L1")} tirés et repondérés), le droit
-celui de 2026. Une passe applique la loi, l'autre la loi avec le bouton ; le coût est ce que
+<p>{_menages_html(meta)} Le droit est celui de 2026. Une passe applique la loi, l'autre la loi avec le bouton ; le coût est ce que
 le revenu disponible des ménages gagne d'une passe à l'autre, plus ce que les entreprises
 paient en moins. Personne ne change de comportement entre les deux passes.</p>
 {tableau(["étape", "nombre", "d'où"], lignes)}
@@ -571,6 +602,67 @@ def _lien_juge(case: Any) -> str:
     return source(url, where[0])
 
 
+#: La base d'un comparateur (`Comparator.basis`), en mots.
+BASES = {"annee-pleine": "année pleine", "premiere-annee": "première année",
+         "unstated": "non dite"}
+
+
+def _convention_juge(case: Any) -> str:
+    """La convention d'année d'un juge, lue dans son cas : sa base et ce qu'il compte."""
+    basis = case.comparator.basis
+    if basis not in BASES:
+        raise ParcoursError(f"{case.case} : base « {basis} » que la page ne sait pas dire.")
+    return f"<strong>{e(BASES[basis])}</strong> : <small>{e(case.comparator.net_of)}</small>"
+
+
+def art15() -> dict[str, Any]:
+    """Le juge de l'art. 15 et sa sensibilité au chiffre retenu : 2027 seul, ou 2027 et
+    2028. Le simulé, les deux chiffres et la tolérance sont lus dans le cas."""
+    from impots import preregistration as pr
+
+    case = pr.load("plf2027_art_15")
+    g = pr.grade(case)
+    m = re.search(r"« (\d+) Md€ au titre des acomptes attendus en (\d{4})", case.comparator.source)
+    if m is None:
+        raise ParcoursError("le comparateur de l'art. 15 ne cite plus les acomptes de 2027.")
+    seul = -float(m[1]) * 1e9  # un rendement : négatif, au signe du cas
+    allowed, _ = case.tolerance.allowance(seul)
+    gap = g.simulated_eur - seul
+    return {"case": case, "g": g, "seul": seul, "annee": m[1 + 1], "allowed_seul": allowed,
+            "gap_seul": gap, "within_seul": abs(gap) <= allowed}
+
+
+def _art15_html() -> str:
+    a = art15()
+    case, g = a["case"], a["g"]
+    url = f"{DEPOT}/blob/{ENREGISTREMENT_ART15}/chiffrages_preregistres/{case.case}.yaml"
+    tenu = "dans" if g.verdict == "within" else "hors de"
+    tenu_seul = "dans" if a["within_seul"] else "hors de"
+    change = ("" if (g.verdict == "within") == a["within_seul"] else
+              " ; avec le second, elle " + ("perdrait" if g.verdict == "within" else "gagnerait")
+              + " une réussite")
+    return f"""
+<p><strong>L'art. 15 dépend du chiffre retenu pour le juge.</strong> Le simulé,
+{b(md(g.simulated_eur, 3), "L2")}, est noté contre {b(md(g.published_eur), "publié")} :
+{md(-a["seul"], 1, signed=False)} d'acomptes en {e(a["annee"])} et
+{md(a["seul"] - g.published_eur, 1, signed=False)} payés en {int(a["annee"]) + 1} par les
+entreprises dont l'exercice clôt plus tard, soit le rendement de l'exercice entier (« {e(case.comparator.net_of)} »).
+Le fichier commité avant l'ouverture de l'annexe
+(<a class="fichier" href="{e(url)}"><code>{e(case.case)}.yaml</code>, commit
+{e(ENREGISTREMENT_ART15[:7])}</a>) n'avait pas de comparateur ; sa note disait seulement
+« {e(case.note.split(". ")[0])} ». Il ne fixait donc pas entre les deux chiffres : le choix
+de l'exercice entier a été écrit avec le comparateur, après la lecture de la fiche. Le
+résultat y est sensible. Contre {b(md(g.published_eur), "publié")}, l'écart est de
+{b(md(g.gap_eur), "L2")} pour {b("± " + md(g.allowed_eur, 2, signed=False), "déclaré")} de
+tolérance : {tenu} la tolérance. Contre {b(md(a["seul"]), "publié")}, {e(a["annee"])} seul,
+il serait de {b(md(a["gap_seul"]), "L2")} pour
+{b("± " + md(a["allowed_seul"], 2, signed=False), "déclaré")} : {tenu_seul} la tolérance
+(± {pct(case.tolerance.relative, 0, signed=False)} du chiffre officiel, ou
+{meur(case.tolerance.absolute_eur, signed=False)} au moins). La note ci-dessus compte le
+premier{change}.</p>
+"""
+
+
 def _juges() -> str:
     from impots import preregistration as pr
 
@@ -590,10 +682,10 @@ def _juges() -> str:
                 b(f"{md(g.gap_eur, 3)} ({ecart_rel(g)})", "L2"),
                 b(f"± {md(g.allowed_eur, 3, signed=False)}", "déclaré"),
                 ("dans la tolérance" if g.verdict == "within" else "<strong>hors</strong>"),
-                _lien_juge(case)]
+                _convention_juge(case), _lien_juge(case)]
 
     entetes = ["cas", "enregistré le", "simulé", "officiel", "écart", "toléré", "note",
-               "le juge"]
+               "l'année du juge, et ce qu'il compte", "le juge"]
     tenus = sum(g.verdict == "within" for g, _ in notes)
     bas, haut = clopper_pearson(tenus, len(notes))
     revus_tenus = sum(g.verdict == "within" for g, _ in revus)
@@ -618,6 +710,11 @@ date de l'enregistrement ; une tolérance qui aurait bougé depuis est refusée
 de {b(pct(bas, 0, signed=False), "L2")} à {b(pct(haut, 0, signed=False), "L2")}
 (intervalle exact de Clopper-Pearson). La note ne distingue pas un bon outil d'un mauvais
 ({fichier("docs/BUT.md")}).</p>
+<p>Chaque juge a sa convention d'année, lue dans le comparateur de son cas : « année
+pleine », douze mois de la mesure, ou un exercice entier payé sur deux ans ; « première
+année », l'effet budgétaire de la seule année du texte. Le cas est chiffré dans la même
+convention que son juge, ou l'écart le dit.</p>
+{_art15_html()}
 <p>À part, des révisions écrites après l'ouverture de l'annexe (une autre année de base, une
 population vieillie, un volet isolé) : elles ne sont pas aveugles et ne comptent pas dans la
 note. {revus_tenus} sur {len(revus)} tiennent leur tolérance.</p>
@@ -709,7 +806,8 @@ def _bouton_donnees() -> tuple[dict[str, Any], str]:
                      "cout": md(p["cout"])} for p in pts]
         out["depart"][cle] = next(k for k, p in enumerate(pts) if p["qui"])
         tables.append(tableau(
-            ["valeur", "ce que cela veut dire", "coût la première année", "la passe"],
+            ["valeur", "ce que cela veut dire", "coût des ménages, 2026, vue vieillie",
+             "la passe"],
             [[e(o["x"]), e(o["dit"]), b(o["cout"], "L2"), fichier(p["chemin"], "rapport")]
              for o, p in zip(out[cle], pts, strict=True)]))
     if len(commits) != 1 or vues != {"vieillie"}:
@@ -766,7 +864,8 @@ def _curseur(donnees: dict[str, Any]) -> str:
                 f'value="{depart}"><output id="bouton-{cle}-x" class="num">{e(p["x"])}'
                 f'</output></div><p class="lecture"><span id="bouton-{cle}-dit">'
                 f'{e(p["dit"])}</span> : <strong id="bouton-{cle}-cout">{e(p["cout"])}'
-                "</strong> la première année.</p>")
+                "</strong> pour les ménages, en 2026, vue vieillie (la convention "
+                "« vieillie » du tableau de passage).</p>")
 
     # Au départ, chaque curseur est sur le bouton d'un candidat.
     return ("".join(un(cle, titre, donnees["depart"][cle]) for cle, _, _, titre in BOUTONS)
@@ -790,8 +889,9 @@ mesures, avec les nombres de la série du {e(rep["computed"])} (commit
 {_passage()}
 {_juges()}
 <h2 id="bouton">Le bouton</h2>
-<p>Un coût dépend du bouton qu'on tourne. Choisissez un point : le coût de la première année
-qu'une passe a donné à ce bouton, la loi intacte autour.</p>
+<p>Un coût dépend du bouton qu'on tourne. Choisissez un point : le coût qu'une passe a
+donné à ce bouton, la loi intacte autour. Ces passes sont dans la vue vieillie, en 2026 :
+la convention « vieillie » du tableau de passage, pas celle de la « première année ».</p>
 {_curseur(donnees)}
 {statique}
 <p><strong>Ce qui n'est pas construit.</strong> Un interrupteur « corrigé par la ligne de
@@ -806,7 +906,8 @@ sont sur la page {lien("comparer", "Comparer deux candidats")}.</p>
                 corps=corps, script=script,
                 style=("p.lecture{font-family:system-ui,sans-serif;margin:.2rem 0 1rem}"
                        "dl.conventions dt{font-weight:700;margin-top:.4rem}"
-                       "dl.conventions dd{margin-left:1.2rem}"))
+                       "dl.conventions dd{margin-left:1.2rem}"
+                       "small{font-size:max(12px,.83em)}small code{font-size:1em}"))
 
 
 def _json_script(data: Any) -> str:

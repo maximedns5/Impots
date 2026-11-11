@@ -45,6 +45,19 @@ RESF = {
     "pib_volume": (0.007, 0.010, 0.012, 0.013, 0.013),
     "deflateur": (0.015, 0.015, 0.016, 0.016, 0.016),
 }
+#: Le rapport économique annexé au PLF 2027 n'est pas au manifeste des données : les
+#: plages pluriannuelles sont donc celles du PLF 2026. Ce que le texte du PLF 2027 publie,
+#: lui, pour 2025 à 2027 : l'article liminaire (dette au sens de Maastricht, évolution de
+#: la dépense publique hors crédits d'impôt en volume) et l'exposé général des motifs
+#: (croissance du PIB). Écrits ici, le texte n'étant pas dans le dépôt ;
+#: `tests/test_parcours_dette.py` les relit dans le texte quand il est là.
+PLF2027 = {
+    "fichier": "plf2027_texte_an_b3210.html",
+    "annees": (2025, 2026, 2027),
+    "dette": (1.157, 1.193, 1.217),
+    "depense_volume": (0.016, 0.007, 0.006),
+    "croissance": {2026: 0.005, 2027: 0.010},
+}
 #: Les bornes des curseurs, en pour cent : au-delà, la trajectoire de référence (la
 #: dépense gelée en volume, les recettes tenues en part du PIB) part loin de tout ce que
 #: publient les comptes, et le coût, qui ne bouge pas avec elle, n'a plus de sens.
@@ -271,14 +284,50 @@ def _reference_html(e: dict[str, Any], cadre: dict[str, Any], c: dict[str, Any])
         "<p>Ces valeurs sont <strong>déclarées, pas prévues</strong> : aucune n'est lue "
         "dans une prévision officielle. Le gouvernement publie les siennes avec le projet "
         f"de loi de finances ({publique('plf2027_texte_an_b3210.html', 'PLF 2027, texte n° 3210')}"
-        ") et le rapport économique qui l'accompagne ; elles ne sont pas lues ici, et le "
-        "curseur plus bas permet de mettre les vôtres. Sous ce cadre, la dépense gelée en "
+        ") ; elles ne nourrissent pas la référence, qui leur est comparée plus bas, et le "
+        "curseur permet de mettre les vôtres. Sous ce cadre, la dépense gelée en "
         "volume perd chaque année sa part de croissance réelle, et la dette de référence "
         "baisse :</p>\n"
         "<table><thead><tr><th>année</th><th>dette de référence, en % du PIB</th></tr>"
         f"</thead><tbody>{rows}</tbody></table>\n"
-        f"<p>Lue dans <code>years[].reference</code> du rapport ({fichier(e['chemin'])})"
-        " ; c'est la même pour toutes les études, qui partagent ce cadre.</p>")
+        f"<p>Lue dans la trajectoire de référence du rapport ({fichier(e['chemin'])})"
+        " ; c'est la même pour toutes les études, qui partagent ce cadre.</p>\n"
+        + _gouvernement_html(data, c))
+
+
+def _gouvernement_html(data: dict[str, Any], c: dict[str, Any]) -> str:
+    """La référence contre la trajectoire que le gouvernement publie avec le PLF 2027."""
+    g = PLF2027
+    ref = dict(zip(c["annees"], c["reference"], strict=True))
+    communes = [y for y in g["annees"] if y in ref]
+    if not communes:
+        raise ParcoursError("la référence et le PLF 2027 n'ont aucune année commune.")
+    gov = dict(zip(g["annees"], g["dette"], strict=True))
+    vol = dict(zip(g["annees"], g["depense_volume"], strict=True))
+    start = data["start"]
+    if abs(start["debt_ratio"] - gov[start["year"]]) > 0.0006:
+        raise ParcoursError("le départ des études n'est plus la dette de 2025 du PLF 2027.")
+    comparaison = " ; ".join(
+        f"en {y}, {pct(gov[y])} pour le gouvernement, {pct(ref[y])} pour la référence, "
+        f"{fr((gov[y] - ref[y]) * 100, 1)} points de moins" for y in communes)
+    texte = publique(g["fichier"], "PLF 2027, texte n° 3210, article liminaire et exposé "
+                                   "général des motifs")
+    return (
+        "<p><strong>Un cadre déclaré, plus favorable que celui du gouvernement.</strong> "
+        f"Partant du même {pct(start['debt_ratio'])} de {start['year']}, le gouvernement "
+        f"prévoit une dette qui monte ({texte}) : {comparaison}. La référence ne lui "
+        "ressemble pas parce qu'elle gèle la dépense primaire en volume, quand le PLF 2027 "
+        "prévoit une dépense publique (hors crédits d'impôt) en hausse en volume de "
+        + " et ".join(f"{pct(vol[y], 1)} en {y}" for y in communes)
+        + " ; et elle suppose une croissance réelle de "
+        f"{pct(data['rejeu']['cadre']['growth']['real'], 1)} par an, quand le PLF 2027 en "
+        "prévoit "
+        + " et ".join(f"{pct(v, 1)} en {y}" for y, v in g["croissance"].items())
+        + ". Le gouvernement ne publie pas, avec ce texte, de trajectoire au-delà de "
+        f"{g['annees'][-1]}. La référence n'est pas une prévision : elle fixe le niveau "
+        "dont part chaque étude, et ne touche l'écart qu'une étude chiffre que par le "
+        "dénominateur (le PIB que la réforme fait bouger, appliqué à une dette de "
+        "référence plus basse).</p>\n")
 
 
 def _marches_html() -> str:
@@ -340,7 +389,12 @@ def _plages_html(cadre: dict[str, Any]) -> str:
               "Le cadre des études lui-même en sort par " + " et ".join(hors) + " : c'est "
               "une hypothèse déclarée (D-289), pas une prévision, et la page le dit.")
     return (
-        "<p><strong>Les plages publiées.</strong> Le gouvernement publie, avec le PLF 2026, "
+        "<p><strong>Les plages publiées.</strong> Le rapport économique annexé au PLF 2027 "
+        "n'est pas dans les données du dépôt (le manifeste, "
+        f"{fichier('data/raw/MANIFEST.json')}, ne le porte pas) ; le texte du PLF 2027 ne "
+        "donne la croissance que pour 2026 et 2027 (plus haut). Les plages "
+        "pluriannuelles les plus récentes que le dépôt lit sont donc celles du PLF 2026. "
+        "Le gouvernement y publie "
         f"une croissance du PIB en volume de {pct(g[0], 1)} à {pct(g[1], 1)} par an et un "
         f"déflateur du PIB de {pct(p[0], 1)} à {pct(p[1], 1)} pour {RESF['annees'][0]} à "
         f"{RESF['annees'][-1]} ("
