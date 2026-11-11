@@ -102,7 +102,44 @@ HISTORY_YEARS = 2
 #: fixture, two pensioners' revenu disponible rises, by 839.58 and 104.64 EUR. The
 #: population itself does not change, and a cache written before would be served after.
 # A run without E1 wires every earner as private: its EMTR caches are not E1's (D-354).
-WIRING = "D-346" + ("_sansE1" if decomposition.sans("E1") else "")
+# The self-employed's income (but 19, étape 2) changes the population, whose height the
+# caches check, and its wiring here: every number of every self-employed household moves.
+# The étape « ir » pays the gérants a salary and writes the exempt share of the salaries
+# (correction 24): every employee's income tax moves.
+# The months worked (étape « ppa »): a salary is paid on the months its earner worked, and
+# the unemployment benefit of someone who worked part of the year on the others; every
+# number of a household with a partial year moves, and the population's height does not.
+# The allègements (étape « alleg »): a part-timer's SMIC is prorated to his hours, and the
+# gérants majoritaires and the employees of a private person have none; every number of
+# their households moves.
+WIRING = "D-346_ns_ir_md_al" + ("_sansE1" if decomposition.sans("E1") else "")
+
+#: The column `emploi_discontinu` writes: twelve bits, bit m - 1 for the month m worked.
+MONTHS_WORKED = "mois_travailles"
+
+
+def monthly_by_month(frame: pl.DataFrame, annual: np.ndarray, worked: bool
+                     ) -> list[np.ndarray]:
+    """Twelve monthly arrays of an annual amount: the twelfth of it on every month, as
+    before the étape « ppa », when the frame carries no months worked; otherwise
+    divided among the months worked (`worked`, the salary) or among the others (the
+    unemployment benefit of someone who worked part of the year). A person whose mask
+    is full keeps the twelfth. The annual amount does not change."""
+    annual = np.asarray(annual, dtype=np.float64)
+    if MONTHS_WORKED not in frame.columns:
+        return [annual / 12.0] * 12
+    mask = frame[MONTHS_WORKED].fill_null((1 << 12) - 1).to_numpy().astype(np.int64)
+    bits = np.stack([(mask >> m) & 1 for m in range(12)]).astype(bool)
+    full = mask == (1 << 12) - 1
+    if not worked:
+        bits = ~bits
+    count = bits.sum(axis=0)
+    out = []
+    for m in range(12):
+        share = np.where(count > 0, annual / np.maximum(count, 1), 0.0)
+        out.append(np.where(full, annual / 12.0, np.where(bits[m], share, 0.0)))
+    # Nothing is lost: an amount with no month to go to keeps the twelfth on every month.
+    return [np.where(count > 0, o, annual / 12.0) for o in out]
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
 #: fiscal block, which never reaches a benefit. The ASS the income tax reads since D-192
@@ -283,6 +320,130 @@ IJ_INPUTS: dict[str, str] = {
 IJ_PROJECT_INPUTS = frozenset({"indemnites_journalieres_maladie_ald"})
 
 
+#: The self-employed's régime (`incomes.REGIMES`) -> the 2042-C-PRO box written, and for
+#: a micro-entrepreneur the nature of his turnover. The frame carries the Insee's income,
+#: the turnover AFTER the abatement for a micro-entrepreneur; the box is the turnover,
+#: so it is grossed up by the year's abatement. A réel profit is its own box: 5KC
+#: (`abic_impn`), 5QC (`abnc_impo`), 5HC (`arag_impg`). A gérant majoritaire has no box
+#: here: he is paid a salary (`incomes.attach_self_employment`, étape « ir »), and his
+#: régime only names him. The micro-BA income
+#: goes on the variable the boxes compute, `rpns_revenus_microBA_agricole`, as the
+#: three-year average it is.
+#:
+#: **The versement libératoire is drawn, and not wired.** Its boxes (5TA, 5TB, 5TE:
+#: `ebic_impv`, `ebic_imps`, `ebnc_impo`) feed openfisca's `microentreprise`, which
+#: `revenus_non_salarie_nets` adds to each person as `sum(...)` of a vector: the
+#: liberatory profit of EVERY foyer of the simulation, added to every person's disposable
+#: income. One household computes right; a population of 15 000 ménages had a median
+#: niveau de vie of 3.9 M€ (étape 2, measured). Until a correction holds it, the
+#: micro-entrepreneurs drawn into the versement libératoire are declared in the micro
+#: boxes: taxed at the barème rather than at 1 to 2.2 % of their turnover, which puts
+#: their income tax a little high, and their RFR, benefits and CSG are the same.
+SELF_EMPLOYMENT_INPUTS: dict[str, tuple[str, str | None]] = {
+    "reel_bic": ("abic_impn", None),
+    "reel_bnc": ("abnc_impo", None),
+    "micro_vente": ("mbic_impv", "vente"), "micro_service": ("mbic_imps", "service"),
+    "micro_bnc": ("mbnc_impo", "bnc"),
+    "vl_vente": ("mbic_impv", "vente"), "vl_service": ("mbic_imps", "service"),
+    "vl_bnc": ("mbnc_impo", "bnc"),
+    "reel_ba": ("arag_impg", None),
+    "micro_ba": ("rpns_revenus_microBA_agricole", None),
+}
+
+
+#: The régimes of the gérants majoritaires, paid a salary: no self-employment box.
+GERANTS = frozenset({"gerant_bic", "gerant_bnc"})
+
+#: Who gives no allègement (correction 26): the column that marks an employee of a private
+#: person, and the project variable that carries both kinds of exclusion.
+PARTICULIER_EMPLOYEUR = "particulier_employeur"
+EXCLUDED_FROM_ALLEGEMENTS = "exclu_allegements"
+
+
+def working_time(frame: pl.DataFrame, tax_benefit_system: Any) -> tuple[Any, np.ndarray] | None:
+    """(contrat_de_travail encoded, the share of a full-time month paid), per person, or None
+    for a frame with no part-timer. A paid earner whose `quotite_travail` is under 1 works
+    `temps_partiel`: openfisca then prorates the SMIC of the réduction générale and of the
+    bandeaux (`coefficient_proratisation`, CSS art. D. 241-7, I) and the plafond de la
+    sécurité sociale to his hours. Before the étape « alleg », everyone went full time: a
+    half-timer at twice the SMIC an hour was paid one SMIC a month, and read as a SMIC earner,
+    with the whole réduction générale."""
+    if "quotite_travail" not in frame.columns:
+        return None
+    share = frame["quotite_travail"].fill_null(1.0).to_numpy().astype(np.float64)
+    paid = frame["salaire_brut_annuel"].to_numpy() > 0
+    partial = paid & (share > 0) & (share < 1.0)
+    if not partial.any():
+        return None
+    possible = tax_benefit_system.variables["contrat_de_travail"].possible_values
+    names = np.where(partial, "temps_partiel", "temps_plein").astype(str)
+    return possible.encode(names), np.where(partial, share, 1.0)
+
+
+def excluded_from_allegements(frame: pl.DataFrame) -> np.ndarray:
+    """Who gives his employer no allègement (correction 26): a gérant majoritaire, whom the
+    population pays a salary, and the employee of a private person (CSS art. L. 241-13, II)."""
+    excluded = np.zeros(frame.height, dtype=bool)
+    if "regime_non_salarie" in frame.columns:
+        excluded |= frame["regime_non_salarie"].is_in(list(GERANTS)).fill_null(False).to_numpy()
+    if PARTICULIER_EMPLOYEUR in frame.columns:
+        excluded |= frame[PARTICULIER_EMPLOYEUR].fill_null(False).to_numpy().astype(bool)
+    return excluded
+
+
+#: The share of a salary the income tax exempts (correction 24), by the column that carries it.
+EXEMPT_SHARE_INPUT = ("part_salaire_exoneree_ir", "part_salaire_exoneree")
+
+
+def micro_turnover(income: np.ndarray, abatement: float, minimum: float) -> np.ndarray:
+    """The turnover whose micro income is `income`: the inverse of openfisca's
+    `abat_rpns`, income = turnover − max(abatement × turnover, minimum), below the ceiling.
+    A nil income is a nil turnover."""
+    income = np.asarray(income, dtype=np.float64)
+    return np.where(income > 0, np.maximum(income / (1.0 - abatement), income + minimum), 0.0)
+
+
+def self_employment_inputs(frame: pl.DataFrame, tax_benefit_system: Any, year: int
+                           ) -> tuple[dict[str, np.ndarray], Any]:
+    """({openfisca variable: annual amount per person}, `categorie_non_salarie` encoded),
+    for one year of the law. Empty, and None, for a frame that carries no self-employment
+    columns: a population built before but 19 (étape 2), whose self-employed earned
+    nothing; any frame `incomes.attach_incomes` builds carries them."""
+    if "regime_non_salarie" not in frame.columns:
+        return {}, None
+    from impots.population.incomes import CATEGORIE_PAR_SECTEUR
+
+    regime = frame["regime_non_salarie"].to_numpy()
+    income = frame["revenu_non_salarie_annuel"].to_numpy().astype(np.float64)
+    unknown = {r for r in regime if r is not None} - set(SELF_EMPLOYMENT_INPUTS) - GERANTS
+    if unknown:
+        raise WiringError(f"régimes non salariés inconnus du câblage : {sorted(unknown)}")
+    micro = tax_benefit_system.parameters(year).impot_revenu.calcul_revenus_imposables \
+        .rpns.micro.microentreprise
+    abatement = {"vente": micro.regime_micro_bic.marchandises.taux,
+                 "service": micro.regime_micro_bic.services.taux,
+                 "bnc": micro.regime_micro_bnc.taux}
+    inputs: dict[str, np.ndarray] = {}
+    for name, (variable, nature) in SELF_EMPLOYMENT_INPUTS.items():
+        mine = regime == name
+        if not mine.any():
+            continue
+        amount = np.where(mine, income, 0.0)
+        if nature is not None:
+            amount = micro_turnover(amount, abatement[nature], micro.montant_minimum)
+        inputs[variable] = inputs.get(variable, 0.0) + amount
+    # A classique's contributions category, which sets his CSG base. Left `non_pertinent`
+    # for the micro-entrepreneurs, whose contributions openfisca levies on the versement
+    # libératoire's turnover only, and for the farmers, whose MSA contributions and CSG
+    # it does not model.
+    sector = frame["secteur_non_salarie"].to_numpy()
+    reel = np.isin(regime, ("reel_bic", "reel_bnc"))
+    names = np.full(frame.height, "non_pertinent", dtype=object)
+    names[reel] = [CATEGORIE_PAR_SECTEUR[s] for s in sector[reel]]
+    possible = tax_benefit_system.variables["categorie_non_salarie"].possible_values
+    return inputs, possible.encode(names.astype(str))
+
+
 #: The public service's side, as the frame carries it -> openfisca's category (D-346).
 CATEGORIE_PUBLIQUE = {"etat": "public_titulaire_etat",
                       "territoriale": "public_titulaire_territoriale",
@@ -386,15 +547,19 @@ def build_simulation(
         [f"{year - age:04d}-01-01" for age in frame["age"].to_list()], dtype="datetime64[D]"
     )
     simulation.set_input("date_naissance", "ETERNITY", births)
-    monthly_salary = (frame["salaire_brut_annuel"].to_numpy() / 12.0).astype(np.float64)
-    categorie, monthly_salary, monthly_tib = public_service(frame, monthly_salary,
-                                                            tax_benefit_system)
+    # The salary on the months worked (étape « ppa »), the twelfth of it on each month for
+    # a frame without them. The public split is linear in the pay, month by month.
+    salary_by_month = monthly_by_month(frame, frame["salaire_brut_annuel"].to_numpy(),
+                                       worked=True)
+    split = [public_service(frame, pay, tax_benefit_system) for pay in salary_by_month]
+    categorie = split[0][0]
     # Pensions and unemployment benefit are monthly individual inputs too. Leaving
     # them out is not a visible failure: the simulation runs, every guard passes,
     # and 14 M pensioners simply appear to live on nothing — which then shows up
     # three steps away as an RSA bill three times the published one.
     monthly_pension = (frame["pension_annuelle"].to_numpy() / 12.0).astype(np.float64)
-    monthly_chomage = (frame["chomage_annuel"].to_numpy() / 12.0).astype(np.float64)
+    chomage_by_month = monthly_by_month(frame, frame["chomage_annuel"].to_numpy(),
+                                        worked=False)
     # The sick pay `population.ij` imputes, when the run asked for it (D-305): openfisca
     # reads it in the RSA's, the prime's, the ASS's and the ASPA's resources only.
     monthly_ij = {
@@ -417,23 +582,86 @@ def build_simulation(
     statut = _text(menage["statut_occupation"])
     zone = _text(menage["zone_apl"])
     loyer = menage["loyer_mensuel"].to_numpy().astype(np.float64)
+    # The DOM (étape al): the drawn département, as a commune code openfisca's
+    # `residence_<dom>` read by their prefix. Metropole keeps the default, the empty
+    # string, so that nothing else reading `depcom` moves there.
+    # Who is on the lease (étape al): a colocation's familles each pay the dwelling's rent
+    # divided by their number (CCH art. D. 842-3) under the colocation's plafond (`coloc`,
+    # art. D. 823-16); a famille lodged off the lease has no aid (correction 25).
+    coloc = None
+    if "colocation" in frame.columns:
+        menage_coloc = frame.group_by("household_id").agg(
+            pl.col("colocation").first(), pl.col("famille_id").n_unique().alias("familles"),
+        ).sort("household_id")
+        coloc = menage_coloc["colocation"].to_numpy().astype(bool)
+        loyer = np.where(coloc, loyer / menage_coloc["familles"].to_numpy(), loyer)
+    heberge = None
+    if ("aide_logement_heberge" in frame.columns
+            and "aide_logement_heberge" in tax_benefit_system.variables):
+        heberge = _group_frame(frame, "famille_id", ["aide_logement_heberge"])[
+            "aide_logement_heberge"].to_numpy().astype(bool)
+    depcom = None
+    if "departement" in frame.columns:
+        depcom = _text(_group_frame(frame, "household_id", ["departement"]).select(
+            (pl.col("departement") + "01").fill_null(""))["departement"])
+
+    # The working time and the field of the allègements (étape « alleg »), written only where
+    # they say something: a frame with neither, and raw openfisca, keep the defaults.
+    time_worked = working_time(frame, tax_benefit_system)
+    excluded = excluded_from_allegements(frame)
+    if not (excluded.any() and EXCLUDED_FROM_ALLEGEMENTS in tax_benefit_system.variables):
+        excluded = None
 
     for offset in range(HISTORY_YEARS, -1, -1):
         for month in range(1, 13):
             period = f"{year - offset}-{month:02d}"
-            simulation.set_input("salaire_de_base", period, monthly_salary)
-            simulation.set_input("traitement_indiciaire_brut", period, monthly_tib)
+            if time_worked is not None:
+                contrat, share = time_worked
+                full_month = tax_benefit_system.parameters(period).marche_travail \
+                    .salaire_minimum.smic.nb_heures_travail_mensuel
+                simulation.set_input("contrat_de_travail", period, contrat)
+                simulation.set_input("heures_remunerees_volume", period, share * full_month)
+            if excluded is not None:
+                simulation.set_input(EXCLUDED_FROM_ALLEGEMENTS, period, excluded)
+            simulation.set_input("salaire_de_base", period, split[month - 1][1])
+            simulation.set_input("traitement_indiciaire_brut", period, split[month - 1][2])
             simulation.set_input("categorie_salarie", period, categorie)
             simulation.set_input("retraite_brute", period, monthly_pension)
             # Failure mode #4. `pension_annuelle` is calibrated on DECLARED pensions,
             # so it is pinned on the declared box as well; see the module docstring.
             simulation.set_input("retraite_imposable", period, monthly_pension)
-            simulation.set_input("chomage_brut", period, monthly_chomage)
+            simulation.set_input("chomage_brut", period, chomage_by_month[month - 1])
             for variable, values in monthly_ij.items():
                 simulation.set_input(variable, period, values)
             simulation.set_input("statut_occupation_logement", period, statut)
             simulation.set_input("zone_apl", period, zone)
             simulation.set_input("loyer", period, loyer)
+            if depcom is not None:
+                simulation.set_input("depcom", period, depcom)
+            if coloc is not None:
+                simulation.set_input("coloc", period, coloc)
+            if heberge is not None:
+                simulation.set_input("aide_logement_heberge", period, heberge)
+
+    # ---- the self-employed's income, on each year of the history -----------
+    # Annual boxes, written N-2 to N as the earnings are: the RSA and the prime read the
+    # last known year, the housing aid N-2, and the RFR of N-2 is pinned below.
+    for offset in range(HISTORY_YEARS, -1, -1):
+        inputs, categorie_ns = self_employment_inputs(frame, tax_benefit_system,
+                                                      year - offset)
+        for variable, values in inputs.items():
+            simulation.set_input(variable, str(year - offset), values)
+        if categorie_ns is not None:
+            simulation.set_input("categorie_non_salarie", str(year - offset), categorie_ns)
+
+    # ---- the exempt share of the salaries (correction 24), each year of the history -----
+    # Written only where the system carries the variable: raw openfisca, which the kill
+    # tests run, has none, and a frame built before the étape « ir » no column.
+    variable, column = EXEMPT_SHARE_INPUT
+    if column in frame.columns and variable in tax_benefit_system.variables:
+        share = frame[column].fill_null(0.0).to_numpy().astype(np.float64)
+        for offset in range(HISTORY_YEARS, -1, -1):
+            simulation.set_input(variable, str(year - offset), share)
 
     # ---- foyer fiscal inputs, ordered to match `foyer_ids` -----------------
     foyer = _group_frame(frame, "foyer_id", ["parent_isole"])
@@ -446,6 +674,13 @@ def build_simulation(
     parent_isole = foyer["parent_isole"].to_numpy().astype(bool)
     for offset in range(HISTORY_YEARS, -1, -1):
         simulation.set_input("caseT", str(year - offset), parent_isole)
+    # The fiscal domicile of a DOM foyer, for the income tax's DOM abattement, on every
+    # year of the history, before the RFR of N-2 is pinned. A foyer lives in one ménage.
+    if "departement" in frame.columns:
+        depcom_foyer = _text(_group_frame(frame, "foyer_id", ["departement"]).select(
+            (pl.col("departement") + "01").fill_null("00000"))["departement"])
+        for offset in range(HISTORY_YEARS, -1, -1):
+            simulation.set_input("depcom_foyer", str(year - offset), depcom_foyer)
 
     if niche_bases:
         _set_niche_inputs(

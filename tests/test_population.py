@@ -39,6 +39,8 @@ from impots.population.calibrate import (
     standard_margins,
     with_cells,
 )
+from impots.population.emploi_discontinu import attach_mois_travailles
+from impots.population.familles_jeunes import attach_familles_jeunes
 from impots.population.incomes import (
     IncomeScaleError,
     attach_incomes,
@@ -47,7 +49,7 @@ from impots.population.incomes import (
     sample_curve,
 )
 from impots.population.runner import _pps_certainty_split, run, subsample
-from impots.population.skeleton import build_skeleton
+from impots.population.skeleton import SEED, build_skeleton
 from impots.population.to_openfisca import (
     ROLE_VOCABULARY,
     WiringError,
@@ -77,6 +79,8 @@ def population() -> pl.DataFrame:
     children = {key: np.array(value) for key, value in margins.CHILDREN_PER_FAMILY.items()}
     frame, _ = build_skeleton(children_per_household=children, source=pl.read_parquet(FIXTURE))
     frame, _ = attach_incomes(frame, targets_scale=household_share_of_france(frame))
+    frame, _ = attach_mois_travailles(frame, seed=SEED)
+    frame, _ = attach_familles_jeunes(frame)
     return frame
 
 
@@ -318,12 +322,13 @@ def _eec_rows(shapes: dict[str, tuple[str, list[tuple[str, str, str, str]], bool
                 "STATUT": "2" if working else None, "PCS1Q": "51" if working else None,
                 "PUB3FP": "4" if working else None, "TPPRED": "1" if working else None,
                 "TXTPPRED": None, "STATUTDET": "21" if working else None,
+                "NAFG088UN": "47" if working else None,
             })
     columns = list(rows[0])
     return pl.DataFrame(rows, schema={column: source.schema[column] for column in columns})
 
 
-def test_case_t_follows_the_couple_not_the_dwelling() -> None:
+def test_case_t_follows_the_couple_not_the_dwelling(monkeypatch) -> None:
     """Eight dwellings, the answer written beside each (D-195).
 
     The fixture holds unpaired partners of one shape only, absent from the file. Two
@@ -331,7 +336,18 @@ def test_case_t_follows_the_couple_not_the_dwelling() -> None:
     A parent beside an adult child, that child's couple or a brother's couple is the
     shape an over-broad rule would hit. The last is not the law's answer but the
     owner's pending one, pinned so that changing it is a decision.
+
+    The shapes are the structure the rule reads: every couple one déclaration, every
+    child of the family rattaché. Since the but 19 (étape 3) a couple in union libre
+    and an adult child who is not rattaché file their own, by a draw; the draw is held
+    off here, so that the eight answers stay those of the rule and not of a coin. The
+    split itself is tested in `test_foyers_fiscaux.py`.
     """
+    from impots.population import skeleton
+
+    monkeypatch.setattr(skeleton, "_draw_foyers", lambda people, seed: (
+        people.with_columns(pl.lit(False).alias("separate_return"),
+                            pl.col("is_child").alias("rattache")), 1.0))
     frame, _ = build_skeleton(children_per_household=None, source=_eec_rows(CASE_T_SHAPES))
     unit = frame.filter(pl.col("foyer_id").str.ends_with("#0")).group_by("household_id").agg(
         pl.col("role_foyer").is_in(DECLARANT_ROLES).sum().alias("declarants"),
@@ -413,22 +429,45 @@ def test_wage_curve_reproduces_published_deciles() -> None:
         assert np.quantile(draws, decile / 10) == pytest.approx(published, rel=0.02)
 
 
+def test_the_survey_s_share_of_the_salaried_headcount_is_the_published_ratio() -> None:
+    """ECRT 2026 (29 187 000 en emploi, 86,66 % de salariés dans le fichier de l'enquête)
+    sur l'emploi salarié intérieur des comptes (27 181 700) : 0,9305."""
+    assert margins.CHAMP_SALARIES_ENQUETE.value == pytest.approx(0.93053, abs=1e-5)
+
+
 def test_wage_bill_is_calibrated(population: pl.DataFrame) -> None:
     """The one calibration on incomes, and therefore spent (§4.3).
 
     The target is the national wage bill scaled to the share of France this frame
-    represents. On the full EEC that scale is 1.0 and this is the national figure.
+    represents. On the full EEC that scale is 1.0 and this is the national figure. The
+    gérants are paid out of it; the employees, out of the rest times the survey's share of
+    the accounts' salaried headcount (but 19, étape « haut »).
     """
     weight = population["weight"].to_numpy()
-    total = float((population["salaire_brut_annuel"].to_numpy() * weight).sum())
+    wages = population["salaire_brut_annuel"].to_numpy()
+    gerant = population["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"]) \
+        .fill_null(False).to_numpy()
+    total = float((wages * weight).sum())
+    gerants = float((wages * weight)[gerant].sum())
     share = household_share_of_france(population)
-    assert total == pytest.approx(margins.TOTAL_GROSS_WAGES.value * share, rel=1e-6)
+    expected = gerants + (margins.TOTAL_GROSS_WAGES.value * share - gerants) \
+        * margins.CHAMP_SALARIES_ENQUETE.value
+    assert total == pytest.approx(expected, rel=1e-6)
 
 
 def test_only_employees_earn_wages(population: pl.DataFrame) -> None:
+    """And the gérants majoritaires, whose pay is a salary (art. 62 of the CGI) that D11
+    counts (but 19, étape « ir »); and, since the étape « ppa », people out of work at the
+    survey week who left a salaried job less than a year before, paid on the months
+    before they left, and on those months only."""
     earners = population.filter(pl.col("salaire_brut_annuel") > 0)
-    assert earners["is_salarie"].all()
-    assert (earners["statut_activite"] == "employed").all()
+    gerant = earners["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"]).fill_null(False)
+    employed = earners["statut_activite"] == "employed"
+    assert ((earners["is_salarie"] | gerant) & employed | ~employed).all()
+    leavers = earners.filter(~employed)
+    assert leavers["anciennete_sans_emploi"].is_in(["1", "2", "3", "4"]).all()
+    assert leavers["classe_emploi"].str.slice(0, 1).is_in(["A", "B", "C", "D"]).all()
+    assert (leavers["mois_travailles"] != (1 << 12) - 1).all()
 
 
 def test_pensions_go_to_older_inactive_people_only(population: pl.DataFrame) -> None:
@@ -652,11 +691,15 @@ def test_light_tier_has_no_benefit_totals(population: pl.DataFrame) -> None:
 # reforms over a population
 # --------------------------------------------------------------------------- #
 def test_reform_moves_tax_and_leaves_a_delta(population: pl.DataFrame) -> None:
-    """A 50 % top rate must raise money and produce losers, not winners."""
+    """Higher top rates must raise money and produce losers, not winners.
+
+    The 41 % rate is raised too: since the étape « haut » of but 19 the 400-household
+    fixture has no foyer above the 45 % threshold (the draw had put 6.5 % of the employees
+    in its Pareto tail instead of 5 %), and a reform of that rate alone moved nothing."""
     reform = ReformSpec.model_validate(
         {"ir_bareme": [
             {"threshold": 0, "rate": 0.00}, {"threshold": 11497, "rate": 0.11},
-            {"threshold": 29315, "rate": 0.30}, {"threshold": 83823, "rate": 0.41},
+            {"threshold": 29315, "rate": 0.30}, {"threshold": 83823, "rate": 0.43},
             {"threshold": 180294, "rate": 0.50},
         ]}
     )
@@ -811,7 +854,7 @@ def test_standard_margins_hold_age_sex_as_a_drift_constraint(population: pl.Data
     framed = with_cells(population)
     margin_list = standard_margins(framed)
     names = {margin.name for margin in margin_list}
-    assert names == {"household_type", "age_sex"}
+    assert names == {"household_type", "tenure", "age_sex"}  # tenure: D-365, but 19
 
     age_sex = next(m for m in margin_list if m.name == "age_sex")
     assert all(not cell.startswith("under_15") for cell in age_sex.targets), (
@@ -992,6 +1035,9 @@ def test_every_reform_shape_balances_on_the_real_population() -> None:
         {"plafond_qf_demi_part": 1000.0},
         {"decote_taux": 0.50},
         {"csg_activite_imposable": 0.034},
+        # The deductible part too: the self-employed declare an income net of it, and a
+        # cut of its rate left their income where it was (Lisnard, 1,27 Md€, but 19).
+        {"csg_activite_deductible": 0.0488},
         {"allegement_general_plafond": 2.0},
     ):
         aggregates = aggregate_module.aggregate(
@@ -1182,10 +1228,12 @@ def test_the_country_itself_is_never_refused() -> None:
 
     scaled, stats = attach_incomes(frame)
     assert stats.targets_scale == 1.0
-    weighted = float(
-        (scaled["salaire_brut_annuel"].to_numpy() * scaled["weight"].to_numpy()).sum()
-    )
-    assert weighted == pytest.approx(margins.TOTAL_GROSS_WAGES.value, rel=1e-6)
+    wages = scaled["salaire_brut_annuel"].to_numpy() * scaled["weight"].to_numpy()
+    gerants = float(wages[scaled["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"])
+                          .fill_null(False).to_numpy()].sum())
+    assert float(wages.sum()) == pytest.approx(
+        gerants + (margins.TOTAL_GROSS_WAGES.value - gerants)
+        * margins.CHAMP_SALARIES_ENQUETE.value, rel=1e-6)
 
 
 def test_the_unscaled_sample_is_kept_as_the_defect_it_was() -> None:
@@ -1197,10 +1245,16 @@ def test_the_unscaled_sample_is_kept_as_the_defect_it_was() -> None:
     this.
     """
     frame, _ = attach_incomes(_skeleton(), targets_scale=1.0)
-    wages = frame["salaire_brut_annuel"].to_numpy()
+    # The employees: a gérant majoritaire's pay follows his drawn income (étape « ir »).
+    wages = frame.filter(pl.col("is_salarie"))["salaire_brut_annuel"].to_numpy()
     earners = wages[wages > 0]
-    assert earners.min() > 3_000_000.0
-    assert earners.mean() > 20_000_000.0
+    # 3 M€ and 20 M€ until the étape « ir » of but 19, which pays the gérants majoritaires
+    # out of D11: the employees' share falls by their 3,3 %, the minimum to 2,93 M€ and the
+    # mean to 19,96 M€; then the étape « haut », which reads the whole distribution on the
+    # published quantiles and brings the employees' share to the survey's field (× 0,9305):
+    # the mean to 18,6 M€.
+    assert earners.min() > 2_000_000.0
+    assert earners.mean() > 18_000_000.0
 
 
 def test_the_scaled_population_has_plausible_wages(population: pl.DataFrame) -> None:
@@ -1316,7 +1370,10 @@ def test_a_pensioners_disposable_income_does_not_depend_on_evaluation_order() ->
     runner = run(frame, 2024, tier="full").households
     built = build_simulation(frame, baseline(), 2024)
     first = built.calculate("revenu_disponible")
-    np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
+    # The engine's entitlement: the runner serves the RSA and the prime in expectation
+    # under `revenu_disponible` and keeps the engine's figure as `revenu_disponible_droit`
+    # (but 19, étape 4).
+    np.testing.assert_allclose(first, runner["revenu_disponible_droit"].to_numpy(), atol=0.5)
     taxable = built.calculate("retraite_imposable", add=True)
     np.testing.assert_allclose(taxable, frame["pension_annuelle"].to_numpy(), atol=0.5)
 
@@ -1435,7 +1492,10 @@ def test_unemployment_benefit_prices_the_same_whatever_is_computed_first() -> No
     runner = run(frame, 2024, tier="full").households
     built = build_simulation(frame, baseline(), 2024)
     first = built.calculate("revenu_disponible")
-    np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
+    # The engine's entitlement: the runner serves the RSA and the prime in expectation
+    # under `revenu_disponible` and keeps the engine's figure as `revenu_disponible_droit`
+    # (but 19, étape 4).
+    np.testing.assert_allclose(first, runner["revenu_disponible_droit"].to_numpy(), atol=0.5)
 
 
 def test_unemployment_benefit_is_taxed_and_levied_net_of_its_csg() -> None:
@@ -1619,7 +1679,10 @@ def test_a_renters_disposable_income_does_not_depend_on_evaluation_order() -> No
     frame = _renters()
     runner = run(frame, 2024, tier="full").households
     first = build_simulation(frame, baseline(), 2024).calculate("revenu_disponible")
-    np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
+    # The engine's entitlement: the runner serves the RSA and the prime in expectation
+    # under `revenu_disponible` and keeps the engine's figure as `revenu_disponible_droit`
+    # (but 19, étape 4).
+    np.testing.assert_allclose(first, runner["revenu_disponible_droit"].to_numpy(), atol=0.5)
 
 
 # --------------------------------------------------------------------------- #
@@ -1794,3 +1857,27 @@ def test_the_pension_calibration_target_is_the_retirement_boxes() -> None:
 
     assert margins.DECLARED_PENSIONS.value == pytest.approx(
         ingest.declared_retirement_pensions(2024), rel=1e-9)
+
+
+def test_lots_with_niches_draw_each_lot_as_if_it_weighed_all_france(monkeypatch) -> None:
+    """`niches.impute` draws with « claimants / weighted foyers »: a lot that weighs a
+    quarter of France would hand out four times the niches. Each lot runs weighing all
+    France, and its households take their own weight back (but 19, étape 1)."""
+    from types import SimpleNamespace
+
+    from impots.population import runner
+
+    frame = pl.DataFrame({"household_id": [f"m{i}" for i in range(40) for _ in (0, 1)],
+                          "weight": [float(i % 7 + 1) for i in range(40) for _ in (0, 1)]})
+    total = float(sum(i % 7 + 1 for i in range(40)))
+    seen = []
+
+    def fake_run(part, **kwargs):
+        seen.append(runner._household_weight(part))
+        households = part.group_by("household_id").agg(pl.col("weight").mean())
+        return SimpleNamespace(households=households)
+
+    monkeypatch.setattr(runner, "run", fake_run)
+    out = runner.households_par_lots(frame, 4, impute_niches=True)
+    assert seen == pytest.approx([total] * 4)
+    assert float(out["weight"].sum()) == pytest.approx(total)

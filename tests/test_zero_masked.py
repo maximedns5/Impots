@@ -89,7 +89,11 @@ def test_the_distribution_lines_read_quantiles_not_decile_means(aggregates):
     +3,5 %. This is a line moving INTO tolerance because of a change we made, which is
     exactly the kind of improvement that has to be pinned rather than pocketed.
     """
-    quantiles = aggregates.niveau_de_vie_quantiles
+    assert set(aggregates.niveau_de_vie_quantiles) == {10, 50, 90}
+    # The lines read the quantiles at full take-up, the concept they were set on (but 19,
+    # étape 4); the served ones sit beside them, for the grid's served lines.
+    quantiles = (aggregates.niveau_de_vie_quantiles_droit
+                 or aggregates.niveau_de_vie_quantiles)
     assert set(quantiles) == {10, 50, 90}
     lines = {line.label: line for line in reconcile.build_lines(aggregates)}
 

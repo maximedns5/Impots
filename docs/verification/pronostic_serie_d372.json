@@ -1,0 +1,83 @@
+{
+ "preenregistre": "D-372",
+ "lignes": {
+  "plf2027_art_2": {
+   "cout_mesure": 2618177748.3063965,
+   "dette_de": 0.003057167766507389,
+   "dette_a": 0.004136168154686468,
+   "verdict": "dépend"
+  },
+  "plf2027_art_3": {
+   "cout_mesure": -1102690344.1845703,
+   "dette_de": -0.001914154484318942,
+   "dette_a": -0.0014148098362357397,
+   "verdict": "dépend"
+  },
+  "plf2027_art_15": {
+   "cout_mesure": -7054329155.676697,
+   "dette_de": -0.0026194850964665227,
+   "dette_a": -0.0019361411582578647,
+   "verdict": "baisse"
+  },
+  "plf2027_art_74_ppa": {
+   "cout_mesure": -557100615.3408203,
+   "dette_de": -0.0020288972625375325,
+   "dette_a": -0.0013525981750250216,
+   "verdict": "baisse"
+  },
+  "plf2027_art_74_apl": {
+   "cout_mesure": -72492824.14233398,
+   "dette_de": -0.0007857864789645359,
+   "dette_a": -0.000523857652643024,
+   "verdict": "baisse"
+  },
+  "pres2027_attal_programme": {
+   "cout_mesure": 65691129407.55472,
+   "dette_de": 0.031973753923823275,
+   "dette_a": 0.043258608249878545,
+   "verdict": "dépend"
+  },
+  "pres2027_labib_programme": {
+   "cout_mesure": 22916712620.32241,
+   "dette_de": 0.03802762573934953,
+   "dette_a": 0.051449140706178766,
+   "verdict": "hausse"
+  },
+  "pres2027_le_pen_programme": {
+   "cout_mesure": 13378130586.281967,
+   "dette_de": 0.012718378104239907,
+   "dette_a": 0.01720721743514811,
+   "verdict": "dépend"
+  },
+  "pres2027_lisnard_programme": {
+   "cout_mesure": 36185440063.88997,
+   "dette_de": 0.04827656766335192,
+   "dette_a": 0.06531535625041729,
+   "verdict": "dépend ou hausse"
+  },
+  "pres2027_melenchon_programme": {
+   "cout_mesure": -6326031316.012451,
+   "dette_de": -0.0036614669274945884,
+   "dette_a": -0.0027063016420612175,
+   "verdict": "dépend"
+  },
+  "pres2027_retailleau_programme": {
+   "cout_mesure": 17110216239.474442,
+   "dette_de": 0.01984316810159984,
+   "dette_a": 0.026846639196282135,
+   "verdict": "hausse"
+  },
+  "pres2027_roussel_programme": {
+   "cout_mesure": 5198684093.532196,
+   "dette_de": 0.004447419675190823,
+   "dette_a": 0.006017097207611111,
+   "verdict": "dépend"
+  },
+  "pres2027_tondelier_programme": {
+   "cout_mesure": -917469815.7626953,
+   "dette_de": 0.0025204241317312733,
+   "dette_a": 0.0034099855899893694,
+   "verdict": "hausse ou dépend"
+  }
+ }
+}

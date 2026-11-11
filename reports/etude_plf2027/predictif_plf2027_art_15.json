@@ -70,9 +70,9 @@
       "vieillie": {
         "p_hausse": 0.0,
         "quantiles": {
-          "q05": -0.0022778131273621938,
-          "q50": -0.0022778131273621938,
-          "q95": -0.0022778131273621938
+          "q05": -0.0021991165492178943,
+          "q50": -0.0021991165492178943,
+          "q95": -0.0021991165492178943
         },
         "sobol": {},
         "evaluations": 4000
@@ -97,10 +97,10 @@
     },
     "decomposition": {
       "vieillie": {
-        "cout": -0.0022778131273621938,
+        "cout": -0.0021991165492178943,
         "denominateur": 0.0,
         "retroaction": 0.0,
-        "total": -0.0022778131273621938
+        "total": -0.0021991165492178943
       },
       "figee": {
         "cout": -0.002033403828118008,
@@ -111,7 +111,7 @@
     },
     "taux_marche": {
       "taux": 0.035,
-      "vieillie": -0.0025836457929098167,
+      "vieillie": -0.0024943829466315126,
       "figee": -0.0023064206552745325
     },
     "variante_salariale": null
@@ -120,7 +120,7 @@
   "titre": "plf2027_art_15",
   "source": "PLF 2027 (AN, texte n° 3210), art. 15 — Mise à contribution des grandes entreprises. Volet chiffré : le troisième exercice de la CEBGE, à 15,7 % et 31,4 %, seuil de 1,5 Md€ (I de l'article), la réforme que `reforms/plf2027_art_15.json` porte et que son enregistrement a chiffrée.",
   "reference": "reconduit",
-  "computed": "2026-11-06",
+  "computed": "2026-11-11",
   "spending_name": "Dépenses gelées en volume",
   "growth_name": "Croissance réelle 1 %, prix 2 %",
   "rate_name": "Taux implicite tenu à son niveau de 2025",
@@ -173,7 +173,7 @@
       "year": 2027,
       "basis": "legislated",
       "mechanical_frozen_eur": -7054329155.676697,
-      "mechanical_aged_eur": -7902239256.826252,
+      "mechanical_aged_eur": -7629223362.010724,
       "reference": 1.1746928799602263,
       "reform_aged": null,
       "delta_aged": null,
@@ -186,7 +186,7 @@
         },
         "vieillie": {
           "menages": 0.0,
-          "entreprises": -7902239256.826252
+          "entreprises": -7629223362.010724
         }
       },
       "statistiques": {
@@ -200,7 +200,7 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": -7902239256.826252,
+          "cost_eur": -7629223362.010724,
           "impulses": {},
           "uncovered": {
             "cebge": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
@@ -509,7 +509,7 @@
   ],
   "conventions": [
     "Prélèvements constants en % du PIB",
-    "Couche entreprises : le millésime 2023, sous le droit de chaque année. Vue figée : le millésime tel quel ; vue vieillie : son coût suivi au PIB nominal du scénario depuis le millésime (M0, R7). L'IS est compté à l'exercice, non à la caisse (PHASE11_SPEC §3).",
+    "Couche entreprises : le millésime 2023, sous le droit de chaque année. Vue figée : le millésime tel quel ; vue vieillie : son coût suivi au PIB nominal du scénario depuis 2024, l'année de ses bénéfices (M0, R7). L'IS est compté à l'exercice, non à la caisse (PHASE11_SPEC §3).",
     "La mesure ne s'applique qu'en 2027, les années que le texte nomme : les autres années, la réforme est vide et ne coûte rien. La première année seule reportée ne dit donc rien d'une mesure qui ne commence pas la première année du chemin."
   ],
   "absent": {
@@ -563,15 +563,15 @@
         "persistence": "lue",
         "every_year": {
           "vieillie": {
-            "theta": -0.0022778131273621938,
+            "theta": -0.0021991165492178943,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                -0.0022778131273621938
+                -0.0021991165492178943
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.0022778131273621938
+                -0.0021991165492178943
               ]
             ]
           },
@@ -622,15 +622,15 @@
         "persistence": "eteint",
         "every_year": {
           "vieillie": {
-            "theta": -0.0022778131273621938,
+            "theta": -0.0021991165492178943,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                -0.0022778131273621938
+                -0.0021991165492178943
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.0022778131273621938
+                -0.0021991165492178943
               ]
             ]
           },
@@ -681,15 +681,15 @@
         "persistence": "tenu",
         "every_year": {
           "vieillie": {
-            "theta": -0.0022778131273621938,
+            "theta": -0.0021991165492178943,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                -0.0022778131273621938
+                -0.0021991165492178943
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.0022778131273621938
+                -0.0021991165492178943
               ]
             ]
           },
@@ -738,9 +738,9 @@
       }
     ]
   },
-  "commit": "12e769cab051b41731adcb01c52ff67274bc9d12",
+  "commit": "601b4423890c7d130a10d6278339b1a65ea4b145",
   "dirty": false,
-  "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)",
+  "where": "conteneur cloud, 15 Go, 4 cœurs",
   "annees": [
     2027
   ],
@@ -759,64 +759,64 @@
         },
         {
           "year": 2027,
-          "reform_aged": 1.172203549579435,
-          "delta_aged": -0.0024893303807913547,
+          "reform_aged": 1.1722895539054639,
+          "delta_aged": -0.0024033260547624558,
           "reform_frozen": 1.172470654675392,
           "delta_frozen": -0.0022222252848342894
         },
         {
           "year": 2028,
-          "reform_aged": 1.1729267272548445,
-          "delta_aged": -0.0024618522421038236,
+          "reform_aged": 1.173011782233685,
+          "delta_aged": -0.0023767972632633416,
           "reform_frozen": 1.1731908839471155,
           "delta_frozen": -0.0021976955498328454
         },
         {
           "year": 2029,
-          "reform_aged": 1.1683458958145478,
-          "delta_aged": -0.0024346774171553065,
+          "reform_aged": 1.168430011925441,
+          "delta_aged": -0.002350561306262211,
           "reform_frozen": 1.1686071366486903,
           "delta_frozen": -0.0021734365830128333
         },
         {
           "year": 2030,
-          "reform_aged": 1.1585720387550906,
-          "delta_aged": -0.0024078025578579965,
+          "reform_aged": 1.1586552263616041,
+          "delta_aged": -0.002324614951344506,
           "reform_frozen": 1.1588303959174124,
           "delta_frozen": -0.002149445395536187
         },
         {
           "year": 2031,
-          "reform_aged": 1.1437143953292377,
-          "delta_aged": -0.0023812243530814126,
+          "reform_aged": 1.1437966646805422,
+          "delta_aged": -0.0022989550017769034,
           "reform_frozen": 1.1439699006507624,
           "delta_frozen": -0.002125719031556672
         },
         {
           "year": 2032,
-          "reform_aged": 1.1238804849398447,
-          "delta_aged": -0.002354939528244504,
+          "reform_aged": 1.123961846171977,
+          "delta_aged": -0.0022735782961122997,
           "reform_frozen": 1.1241331699002335,
           "delta_frozen": -0.0021022545678557325
         },
         {
           "year": 2033,
-          "reform_aged": 1.099176131213567,
-          "delta_aged": -0.0023289448449124173,
+          "reform_aged": 1.0992565943506787,
+          "delta_aged": -0.002248481707800787,
           "reform_frozen": 1.0994260269449974,
           "delta_frozen": -0.002079049113482112
         },
         {
           "year": 2034,
-          "reform_aged": 1.0697054857584456,
-          "delta_aged": -0.0023032371003968155,
+          "reform_aged": 1.0697850607140373,
+          "delta_aged": -0.002223662144805072,
           "reform_frozen": 1.069952623049446,
           "delta_frozen": -0.002056099809396361
         },
         {
           "year": 2035,
-          "reform_aged": 1.0355710516093546,
-          "delta_aged": -0.0022778131273621938,
+          "reform_aged": 1.0356497481874989,
+          "delta_aged": -0.0021991165492178943,
           "reform_frozen": 1.0358154609085988,
           "delta_frozen": -0.002033403828118008
         }
@@ -837,64 +837,64 @@
         },
         {
           "year": 2027,
-          "reform_aged": 1.172203549579435,
-          "delta_aged": -0.0024893303807913547,
+          "reform_aged": 1.1722895539054639,
+          "delta_aged": -0.0024033260547624558,
           "reform_frozen": 1.172470654675392,
           "delta_frozen": -0.0022222252848342894
         },
         {
           "year": 2028,
-          "reform_aged": 1.1729267272548445,
-          "delta_aged": -0.0024618522421038236,
+          "reform_aged": 1.173011782233685,
+          "delta_aged": -0.0023767972632633416,
           "reform_frozen": 1.1731908839471155,
           "delta_frozen": -0.0021976955498328454
         },
         {
           "year": 2029,
-          "reform_aged": 1.1683458958145478,
-          "delta_aged": -0.0024346774171553065,
+          "reform_aged": 1.168430011925441,
+          "delta_aged": -0.002350561306262211,
           "reform_frozen": 1.1686071366486903,
           "delta_frozen": -0.0021734365830128333
         },
         {
           "year": 2030,
-          "reform_aged": 1.1585720387550906,
-          "delta_aged": -0.0024078025578579965,
+          "reform_aged": 1.1586552263616041,
+          "delta_aged": -0.002324614951344506,
           "reform_frozen": 1.1588303959174124,
           "delta_frozen": -0.002149445395536187
         },
         {
           "year": 2031,
-          "reform_aged": 1.1437143953292377,
-          "delta_aged": -0.0023812243530814126,
+          "reform_aged": 1.1437966646805422,
+          "delta_aged": -0.0022989550017769034,
           "reform_frozen": 1.1439699006507624,
           "delta_frozen": -0.002125719031556672
         },
         {
           "year": 2032,
-          "reform_aged": 1.1238804849398447,
-          "delta_aged": -0.002354939528244504,
+          "reform_aged": 1.123961846171977,
+          "delta_aged": -0.0022735782961122997,
           "reform_frozen": 1.1241331699002335,
           "delta_frozen": -0.0021022545678557325
         },
         {
           "year": 2033,
-          "reform_aged": 1.099176131213567,
-          "delta_aged": -0.0023289448449124173,
+          "reform_aged": 1.0992565943506787,
+          "delta_aged": -0.002248481707800787,
           "reform_frozen": 1.0994260269449974,
           "delta_frozen": -0.002079049113482112
         },
         {
           "year": 2034,
-          "reform_aged": 1.0697054857584456,
-          "delta_aged": -0.0023032371003968155,
+          "reform_aged": 1.0697850607140373,
+          "delta_aged": -0.002223662144805072,
           "reform_frozen": 1.069952623049446,
           "delta_frozen": -0.002056099809396361
         },
         {
           "year": 2035,
-          "reform_aged": 1.0355710516093546,
-          "delta_aged": -0.0022778131273621938,
+          "reform_aged": 1.0356497481874989,
+          "delta_aged": -0.0021991165492178943,
           "reform_frozen": 1.0358154609085988,
           "delta_frozen": -0.002033403828118008
         }
@@ -915,64 +915,64 @@
         },
         {
           "year": 2027,
-          "reform_aged": 1.172203549579435,
-          "delta_aged": -0.0024893303807913547,
+          "reform_aged": 1.1722895539054639,
+          "delta_aged": -0.0024033260547624558,
           "reform_frozen": 1.172470654675392,
           "delta_frozen": -0.0022222252848342894
         },
         {
           "year": 2028,
-          "reform_aged": 1.1729267272548445,
-          "delta_aged": -0.0024618522421038236,
+          "reform_aged": 1.173011782233685,
+          "delta_aged": -0.0023767972632633416,
           "reform_frozen": 1.1731908839471155,
           "delta_frozen": -0.0021976955498328454
         },
         {
           "year": 2029,
-          "reform_aged": 1.1683458958145478,
-          "delta_aged": -0.0024346774171553065,
+          "reform_aged": 1.168430011925441,
+          "delta_aged": -0.002350561306262211,
           "reform_frozen": 1.1686071366486903,
           "delta_frozen": -0.0021734365830128333
         },
         {
           "year": 2030,
-          "reform_aged": 1.1585720387550906,
-          "delta_aged": -0.0024078025578579965,
+          "reform_aged": 1.1586552263616041,
+          "delta_aged": -0.002324614951344506,
           "reform_frozen": 1.1588303959174124,
           "delta_frozen": -0.002149445395536187
         },
         {
           "year": 2031,
-          "reform_aged": 1.1437143953292377,
-          "delta_aged": -0.0023812243530814126,
+          "reform_aged": 1.1437966646805422,
+          "delta_aged": -0.0022989550017769034,
           "reform_frozen": 1.1439699006507624,
           "delta_frozen": -0.002125719031556672
         },
         {
           "year": 2032,
-          "reform_aged": 1.1238804849398447,
-          "delta_aged": -0.002354939528244504,
+          "reform_aged": 1.123961846171977,
+          "delta_aged": -0.0022735782961122997,
           "reform_frozen": 1.1241331699002335,
           "delta_frozen": -0.0021022545678557325
         },
         {
           "year": 2033,
-          "reform_aged": 1.099176131213567,
-          "delta_aged": -0.0023289448449124173,
+          "reform_aged": 1.0992565943506787,
+          "delta_aged": -0.002248481707800787,
           "reform_frozen": 1.0994260269449974,
           "delta_frozen": -0.002079049113482112
         },
         {
           "year": 2034,
-          "reform_aged": 1.0697054857584456,
-          "delta_aged": -0.0023032371003968155,
+          "reform_aged": 1.0697850607140373,
+          "delta_aged": -0.002223662144805072,
           "reform_frozen": 1.069952623049446,
           "delta_frozen": -0.002056099809396361
         },
         {
           "year": 2035,
-          "reform_aged": 1.0355710516093546,
-          "delta_aged": -0.0022778131273621938,
+          "reform_aged": 1.0356497481874989,
+          "delta_aged": -0.0021991165492178943,
           "reform_frozen": 1.0358154609085988,
           "delta_frozen": -0.002033403828118008
         }

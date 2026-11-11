@@ -4,8 +4,8 @@
 
 ## Ce que dit cette étude
 
-* **art. 74 du PLF, la prime d'activité** : la mesure rapporte 870 M€ au budget la première année, chiffrée en 2026, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de -4 € par an dans le dixième le plus modeste à -3 € dans le dixième le plus aisé, le plus touché étant le 3e dixième (-69 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,26 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 0 % des tirages du calcul d'incertitude, et l'outil conclut que la mesure baisse la dette.
-* **art. 74 du PLF, les aides au logement** : la mesure rapporte 78 M€ au budget la première année, chiffrée en 2026, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de -7 € par an dans le dixième le plus modeste à 0 € dans le dixième le plus aisé. L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,07 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 0 % des tirages du calcul d'incertitude, et l'outil conclut que la mesure baisse la dette.
+* **art. 74 du PLF, la prime d'activité** : la mesure rapporte 557 M€ au budget la première année, chiffrée en 2026, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de -11 € par an dans le dixième le plus modeste à -3 € dans le dixième le plus aisé, le plus touché étant le 3e dixième (-38 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,16 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 0 % des tirages du calcul d'incertitude, et l'outil conclut que la mesure baisse la dette.
+* **art. 74 du PLF, les aides au logement** : la mesure rapporte 72 M€ au budget la première année, chiffrée en 2026, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de -7 € par an dans le dixième le plus modeste à 0 € dans le dixième le plus aisé, le plus touché étant le 2e dixième (-8 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,07 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 0 % des tirages du calcul d'incertitude, et l'outil conclut que la mesure baisse la dette.
 
 Le projet de loi de financement de la sécurité sociale pour 2027 porte 49 articles. Cet outil n'en chiffre aucun, et dit pour chacun pourquoi, avec la porte qui l'ouvrirait. La mesure de prestations que l'automne lui donne à chiffrer est dans le projet de loi de finances : l'art. 74, en 2 volets. Pour chacun, trois réponses : ce qu'il coûte et qui y gagne ; ce qu'il coûte une fois les comportements et l'économie pris en compte ; ce qu'il fait à la dette en 2035. Puis l'écart au chiffrage du gouvernement, l'évaluation préalable publiée avec le texte.
 
@@ -17,8 +17,8 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | article | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| art. 74 du PLF, la prime d'activité | -870 M€ | -332 M€, hors de la tolérance | -0,26 pt | baisse | baisse |
-| art. 74 du PLF, les aides au logement | -78 M€ | -101 M€, dans la tolérance | -0,07 pt | baisse | baisse |
+| art. 74 du PLF, la prime d'activité | -557 M€ | -332 M€, hors de la tolérance | -0,16 pt | baisse | baisse |
+| art. 74 du PLF, les aides au logement | -72 M€ | -101 M€, dans la tolérance | -0,07 pt | baisse | baisse |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -32,20 +32,20 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ### 1. Ce qu'il coûte, et qui y gagne
 
-La mesure rapporte **870 M€** la première année, chiffrée en 2026, sur la population de 2024 au droit de 2026.
+La mesure rapporte **557 M€** la première année, chiffrée en 2026, sur la population de 2024 au droit de 2026.
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
 |---|---|---|---|---|---|
-| 1 | 3 102 007 | 8 275 € | -4 € | 0 % | 3 % |
-| 2 | 3 100 131 | 13 318 € | -34 € | 0 % | 20 % |
-| 3 | 3 101 226 | 16 631 € | -69 € | 0 % | 41 % |
-| 4 | 3 102 674 | 19 778 € | -60 € | 0 % | 36 % |
-| 5 | 3 100 962 | 22 665 € | -58 € | 0 % | 38 % |
-| 6 | 3 101 037 | 25 579 € | -24 € | 0 % | 15 % |
-| 7 | 3 101 015 | 28 953 € | -11 € | 0 % | 7 % |
-| 8 | 3 101 048 | 33 097 € | -9 € | 0 % | 7 % |
-| 9 | 3 101 712 | 39 363 € | -8 € | 0 % | 6 % |
-| 10 | 3 101 552 | 61 952 € | -3 € | 0 % | 3 % |
+| 1 | 3 105 392 | 9 086 € | -11 € | 0 % | 19 % |
+| 2 | 3 106 035 | 14 127 € | -29 € | 0 % | 36 % |
+| 3 | 3 105 379 | 17 504 € | -38 € | 0 % | 44 % |
+| 4 | 3 104 866 | 20 518 € | -34 € | 0 % | 41 % |
+| 5 | 3 104 805 | 23 184 € | -30 € | 0 % | 38 % |
+| 6 | 3 105 390 | 25 938 € | -15 € | 0 % | 19 % |
+| 7 | 3 105 062 | 29 037 € | -8 € | 0 % | 12 % |
+| 8 | 3 105 369 | 32 966 € | -7 € | 0 % | 10 % |
+| 9 | 3 105 660 | 38 679 € | -5 € | 0 % | 8 % |
+| 10 | 3 105 795 | 57 952 € | -3 € | 0 % | 4 % |
 
 Les déciles sont ceux du niveau de vie de la population simulée. Toute structure
 plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
@@ -70,8 +70,8 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
-| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | vieillie | -0,26 pt | de -0,26 pt à -0,26 pt |
-| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | -0,38 pt | de -0,38 pt à -0,38 pt |
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | vieillie | -0,16 pt | de -0,16 pt à -0,16 pt |
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | -0,25 pt | de -0,25 pt à -0,25 pt |
 
 En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sous cette persistance, elle **baisse la dette** en 2035, à θ½ comme à chaque coin de la boîte, dans les deux vues.
 
@@ -81,26 +81,26 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
-| Effet macro éteint après trois ans | vieillie | -0,26 pt | de -0,26 pt à -0,26 pt |
-| Effet macro éteint après trois ans | figée | -0,38 pt | de -0,38 pt à -0,38 pt |
-| Effet macro tenu au niveau de la troisième année | vieillie | -0,26 pt | de -0,26 pt à -0,26 pt |
-| Effet macro tenu au niveau de la troisième année | figée | -0,38 pt | de -0,38 pt à -0,38 pt |
+| Effet macro éteint après trois ans | vieillie | -0,16 pt | de -0,16 pt à -0,16 pt |
+| Effet macro éteint après trois ans | figée | -0,25 pt | de -0,25 pt à -0,25 pt |
+| Effet macro tenu au niveau de la troisième année | vieillie | -0,16 pt | de -0,16 pt à -0,16 pt |
+| Effet macro tenu au niveau de la troisième année | figée | -0,25 pt | de -0,25 pt à -0,25 pt |
 
 **La distribution, à côté de la boîte.** La boîte dit jusqu'où Δb va quand chaque effet parcourt sa fourchette publiée : ce n'est pas une probabilité. Le Monte-Carlo en est une, sous des lois déclarées : Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes. (ρ = 0,8, 2000 tirages, persistance « lue », D-336). D'autres lois donneraient une autre réponse.
 
 | vue | P(hausse de la dette en 2035) | quantile 5 % | médiane | quantile 95 % | ce qui pèse le plus (Sobol, total) |
 |---|---|---|---|---|---|
-| vieillie | 0 % | -0,26 pt | -0,26 pt | -0,26 pt | — |
-| figée | 0 % | -0,38 pt | -0,38 pt | -0,38 pt | — |
+| vieillie | 0 % | -0,16 pt | -0,16 pt | -0,16 pt | — |
+| figée | 0 % | -0,25 pt | -0,25 pt | -0,25 pt | — |
 
 **D'où vient Δb.** La dette de 2035 en trois marches, à θ½ sous la persistance « lue » : le coût après comportements, sans la boucle macro ; ce que le PIB plus haut ou plus bas change au seul ratio, comme dénominateur ; ce que les recettes induites par l'activité y changent. Les trois font la ligne du tableau (D-349).
 
 | vue | le coût, sans boucle | le PIB, dénominateur | les recettes induites | Δ dette 2035 |
 |---|---|---|---|---|
-| vieillie | -0,26 pt | -0,00 pt | -0,00 pt | -0,26 pt |
-| figée | -0,38 pt | -0,00 pt | -0,00 pt | -0,38 pt |
+| vieillie | -0,16 pt | -0,00 pt | -0,00 pt | -0,16 pt |
+| figée | -0,25 pt | -0,00 pt | -0,00 pt | -0,25 pt |
 
-**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : -0,29 pt en vue vieillie, contre -0,26 pt ; -0,41 pt en vue figée, contre -0,38 pt.
+**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : -0,18 pt en vue vieillie, contre -0,16 pt ; -0,26 pt en vue figée, contre -0,25 pt.
 
 ### L'écart au chiffrage officiel
 
@@ -108,7 +108,7 @@ Enregistré le 2026-10-29, sur le commit `c05f1ee`, avant l'ouverture de l'annex
 
 Ce que couvre le chiffre publié retenu, écrit avant le calcul : L'effet de 2027 seul, le tiers de celui de 2028 (332 sur 995) : quatre mois de l'année pleine, là où le cas en compte sept effectifs. Revalorisation légale supposée de 2,3 %, le cas 2,1 %. Aucun effet comportemental.
 
-La première année de cette étude, sur le code de l'étude, chiffre -870 M€, soit +17 M€ de l'enregistrement. Le chiffre noté reste celui de l'enregistrement : c'est lui qui a été préenregistré.
+La première année de cette étude, sur le code de l'étude, chiffre -557 M€, soit +330 M€ de l'enregistrement. Le chiffre noté reste celui de l'enregistrement : c'est lui qui a été préenregistré.
 
 ## Art. 74 du PLF 2027 — les aides au logement
 
@@ -118,20 +118,20 @@ La première année de cette étude, sur le code de l'étude, chiffre -870 M€,
 
 ### 1. Ce qu'il coûte, et qui y gagne
 
-La mesure rapporte **78 M€** la première année, chiffrée en 2026, sur la population de 2024 au droit de 2026.
+La mesure rapporte **72 M€** la première année, chiffrée en 2026, sur la population de 2024 au droit de 2026.
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
 |---|---|---|---|---|---|
-| 1 | 3 102 007 | 8 275 € | -7 € | 0 % | 29 % |
-| 2 | 3 100 131 | 13 318 € | -5 € | 0 % | 18 % |
-| 3 | 3 101 226 | 16 631 € | -5 € | 0 % | 20 % |
-| 4 | 3 102 674 | 19 778 € | -2 € | 0 % | 8 % |
-| 5 | 3 100 962 | 22 665 € | -2 € | 0 % | 6 % |
-| 6 | 3 101 037 | 25 579 € | -1 € | 0 % | 4 % |
-| 7 | 3 101 015 | 28 953 € | -1 € | 0 % | 4 % |
-| 8 | 3 101 048 | 33 097 € | -1 € | 0 % | 3 % |
-| 9 | 3 101 712 | 39 363 € | -0 € | 0 % | 1 % |
-| 10 | 3 101 552 | 61 952 € | -0 € | 0 % | 1 % |
+| 1 | 3 105 392 | 9 086 € | -7 € | 0 % | 31 % |
+| 2 | 3 106 035 | 14 127 € | -8 € | 0 % | 32 % |
+| 3 | 3 105 379 | 17 504 € | -4 € | 0 % | 16 % |
+| 4 | 3 104 866 | 20 518 € | -2 € | 0 % | 6 % |
+| 5 | 3 104 805 | 23 184 € | -1 € | 0 % | 4 % |
+| 6 | 3 105 390 | 25 938 € | -1 € | 0 % | 3 % |
+| 7 | 3 105 062 | 29 037 € | -0 € | 0 % | 2 % |
+| 8 | 3 105 369 | 32 966 € | -0 € | 0 % | 1 % |
+| 9 | 3 105 660 | 38 679 € | -0 € | 0 % | 1 % |
+| 10 | 3 105 795 | 57 952 € | -0 € | 0 % | 0 % |
 
 Les déciles sont ceux du niveau de vie de la population simulée. Toute structure
 plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
@@ -186,7 +186,7 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 | vieillie | -0,07 pt | -0,00 pt | -0,00 pt | -0,07 pt |
 | figée | -0,07 pt | -0,00 pt | -0,00 pt | -0,07 pt |
 
-**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : -0,08 pt en vue vieillie, contre -0,07 pt ; -0,08 pt en vue figée, contre -0,07 pt.
+**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : -0,07 pt en vue vieillie, contre -0,07 pt ; -0,07 pt en vue figée, contre -0,07 pt.
 
 ### L'écart au chiffrage officiel
 
@@ -194,7 +194,7 @@ Enregistré le 2026-10-29, sur le commit `c318cef`, avant l'ouverture de l'annex
 
 Ce que couvre le chiffre publié retenu, écrit avant le calcul : L'effet de 2027 seul, le quart de celui de 2028 (101 sur 404) : octobre à décembre, des droits, comme le cas. Le taux de la révision de 2027 n'est pas publié ; celle du 1er octobre 2026 vaut 1,15 % (§ 4.1.2), le cas suppose 2,0 % en 2027. Aucun effet comportemental.
 
-La première année de cette étude, sur le code de l'étude, chiffre -78 M€, soit +360 787 € de l'enregistrement. Le chiffre noté reste celui de l'enregistrement : c'est lui qui a été préenregistré.
+La première année de cette étude, sur le code de l'étude, chiffre -72 M€, soit +6 M€ de l'enregistrement. Le chiffre noté reste celui de l'enregistrement : c'est lui qui a été préenregistré.
 
 ## Les 49 articles du PLFSS
 
@@ -263,12 +263,12 @@ Les portes, de celle qui ouvrirait le plus d'articles à celle qui en ouvrirait 
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `7235bd8` ; ce qu'elle disait est figé dans `reports/etudes/plfss2027/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dans `reports/etudes/plfss2027/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| art. 74 du PLF, la prime d'activité | -887 M€ → -870 M€ | -0,27 pt → -0,26 pt | baisse → baisse |
-| art. 74 du PLF, les aides au logement | -78 M€ → -78 M€ | -0,07 pt → -0,07 pt | baisse → baisse |
+| art. 74 du PLF, la prime d'activité | -870 M€ → -557 M€ | -0,26 pt → -0,16 pt | baisse → baisse |
+| art. 74 du PLF, les aides au logement | -78 M€ → -72 M€ | -0,07 pt → -0,07 pt | baisse → baisse |
 
 Ce qui touche chaque ligne :
 
@@ -279,7 +279,7 @@ Le résultat de la série (D-352) dit ce que chaque correction y pèse là où u
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `12e769c`, conteneur cloud 15 Go, 4 cœurs, but 16 (D-350). Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
@@ -287,9 +287,9 @@ Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement i
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
-* Prime d'activité, montant versé (pont de non-recours) : −28,4 % en moyenne, de −30,0 % à −26,9 % ; 0 année sur 3 dans sa tolérance.
-* Aides au logement, montant versé : −22,9 % en moyenne, de −23,8 % à −21,7 % ; 3 années sur 3 dans sa tolérance.
-* Foyers allocataires de la prime d'activité : +8,8 % en moyenne, de +6,0 % à +11,5 % ; 3 années sur 3 dans sa tolérance.
+* Aides au logement, montant versé : −28,1 % en moyenne, de −28,9 % à −27,0 % ; 0 année sur 3 dans sa tolérance.
+* Foyers allocataires de la prime d'activité, servis en espérance : −28,1 % en moyenne, de −30,0 % à −26,2 % ; 0 année sur 3 dans sa tolérance.
+* Prime d'activité, montant servi en espérance (sans pont) : −25,1 % en moyenne, de −26,8 % à −23,5 % ; 0 année sur 3 dans sa tolérance.
 
 Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
 

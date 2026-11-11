@@ -769,7 +769,7 @@ s'arrêter après 50 tours, en disant quelles lignes manquent leur source.
 Le budget : une passe de population par année (trois), et surtout la recherche des totaux
 publiés, ligne par ligne. Deux à trois jours d'horloge.
 
-**Fait, le 9 novembre 2026 (D-363, D-364), en attente de la PR.** 93 lignes, 80 notées :
+**Fait, le 9 novembre 2026 (D-363, D-364), mergé le 10 novembre (#122).** 93 lignes, 80 notées :
 58 dans leur tolérance, 22 hors ; pronostic tenu sur 18 points de 22. L'erreur est un
 biais de structure, stable d'une année à l'autre. Le constat neuf : les cotisations des
 employeurs à +31 % de D121. Restent hors de tolérance le RSA (pont, +61 %) et ses foyers
@@ -790,6 +790,101 @@ lit déjà. Une boucle macro pour les impôts des entreprises, tirée de la mét
 l'IMK et de l'OCDE déjà manifestées, si le propriétaire rouvre D-246. Une incertitude qui
 tire l'erreur du coût mesurée ici. Puis les juges du passé, sur un modèle dont l'erreur est
 connue.
+
+### But 19 — Un modèle juste sur sa population (fait, D-365 à D-373)
+
+La grille du but 18 a mesuré le modèle ; six diagnostics, le 10 novembre
+(`docs/diagnostics/`, leur synthèse dans `SYNTHESE.md`), ont expliqué ses écarts. Les 22
+lignes hors de leur tolérance ne sont pas 22 erreurs : elles remontent à cinq causes, dont
+trois sont des défauts de construction de la population.
+
+* **Les indépendants n'ont aucun revenu** (3,87 M de personnes, `incomes.py`). Le modèle
+  les croit sans ressources : ils font 45 % des foyers au RSA, et lui donner un revenu
+  ramène la ligne du RSA de +67 % à +4 % sur échantillon. Ils faussent aussi la prime
+  d'activité, le bas des déciles et le niveau de vie.
+* **Tout couple cohabitant forme un seul foyer fiscal, marié ou non** (`skeleton.py`), et
+  trop de jeunes majeurs sont rattachés à leurs parents : 6,3 M de foyers manquent, surtout
+  dans la tranche à 11 % et la zone de la décote.
+* **L'âge des 15-24 ans est tiré au hasard**, et la moitié des grands enfants sortent du
+  droit aux allocations familiales ; 1,5 M de locataires manquent aux aides au logement.
+* **Des lignes qui ne comparent pas la même chose** : les cotisations des employeurs, dont
+  98 % de l'écart est un classement (la pension des fonctionnaires de l'État est une
+  cotisation imputée pour l'Insee, et 17 Md€ sont des impôts sur les salaires) ; l'IR net,
+  dont l'écart se décompose entièrement (réductions et crédits absents, PFU absent) ; l'IS,
+  vieilli deux fois.
+* **Le non-recours n'entre dans aucun coût** : une réforme de la prime d'activité se
+  chiffre comme si tous les ayants droit la touchaient, environ 1,7 fois trop haut.
+
+Les diagnostics ont aussi trouvé trois erreurs de texte sur les pages publiées. La plus
+grave vient du but 17 : la phrase « sans aucun effet sur l'activité » lit le bas de la
+fourchette du multiplicateur, pas un multiplicateur nul ; chez Attal, +13,95 points au lieu
+de +18,30. Et un constat les domine tous : un lecteur voit chaque nombre et bouge des
+curseurs, mais ne peut rien vérifier. Le dépôt est privé, et aucune page ne porte de lien
+vers une source.
+
+Le propriétaire, le 10 novembre : prouver ce qu'on avance, que le lecteur comprenne la
+démarche au point de juger lui-même si une mesure d'un candidat est une bonne ou une
+mauvaise idée. Un modèle juste qu'on ne peut pas vérifier ne convainc personne ; une
+démarche transparente sur un modèle faux se réfute en une page. Les deux moitiés sont deux
+buts : celui-ci corrige le modèle, le but 20 l'explique, sur les nombres de la série
+refaite. Le dépôt devient public et le site se publie (D-365).
+
+```
+/goal La population tient la grille de vérification sur ses causes connues, chaque
+chiffrage est refait sur elle, et c'est mergé dans main. Dans l'ordre : (1) les trois
+textes faux des pages sont corrigés, et la grille compare ce qu'elle doit (les cotisations
+des employeurs au sens D121, avec les impôts sur les salaires et la pension de l'État en
+lignes à part ; un IR net comparable ; l'IS au millésime de ses bénéfices ; l'URL Filosofi
+juste) ; (2) les indépendants ont un revenu, tiré de sources publiées et calé ; (3) les
+foyers fiscaux sont découpés comme la DGFiP les compte (concubins séparés, rattachement des
+jeunes majeurs, adultes hors ménages ordinaires), l'âge des 15-24 ans suit leur place dans
+le ménage, et le calage porte les foyers par situation et tranche de revenu et le statut
+d'occupation (`calibrate.py` ouvert, D-365) ; (4) le non-recours au RSA, à la prime
+d'activité et aux aides au logement entre dans le coût des réformes, en espérance, depuis
+les taux publiés par la Drees ; (5) la grille et la série des dix études sont refaites,
+chacune préenregistrée avec son pronostic avant de tourner, et chaque page dit ce qui a
+bougé et pourquoi. Aucune tolérance de la grille ne change ; une ligne neuve a la sienne
+avant son premier calcul. Preuve attendue : la grille avant et après, ligne par ligne ; les
+D-entrées de préenregistrement et de résultat de chaque étape ; la série refaite et ce qui
+a bougé ; la sortie verte des tests ciblés, de make impact et des lourds ; l'URL de la PR
+et le SHA du merge. Ou s'arrêter après 80 tours, en disant quelles étapes restent et
+pourquoi.
+```
+
+Le budget : une à deux semaines d'horloge. Les étapes 1 à 4 se développent en parallèle,
+chacune dans son worktree, et se joignent une à une ; la grille (vingt minutes) se relance
+après chaque jonction, la série des dix études une fois, à la fin. Les pronostics des
+étapes 2 à 4 viennent de mesures sur échantillon faites par les diagnostics : ils ne sont
+pas aveugles, et leur D-entrée le dit.
+
+### But 20 — La démarche que chacun peut refaire (validé le 10 novembre 2026, D-365)
+
+Le constat du diagnostic de la démarche (`docs/diagnostics/demarche.md`) : un lecteur voit
+chaque nombre et bouge des curseurs, mais ne peut rien vérifier. Ce but construit le
+parcours qui le lui permet, sur les nombres de la série refaite au but 19.
+
+```
+/goal Un lecteur qui n'a pas lu le dépôt peut refaire le chemin de chaque nombre publié,
+de la source au verdict, et juger lui-même une mesure ; le site public le porte, et c'est
+mergé dans main. Un parcours de huit pages (un ménage, la France simulée, le coût, les
+comportements, l'activité, la dette, le verdict, où l'outil se trompe) : chaque page
+prouve une chose, montre sa donnée avec le lien de sa source publique et le fichier du
+dépôt public qui la calcule, et donne au lecteur un curseur. La page de l'erreur range
+l'erreur de la grille par étage, montre qu'elle est stable, et sépare l'erreur de niveau
+de l'erreur de coût. Deux candidats se comparent sur la même base : le coût de la
+première année, la dette sans boucle, ce que la boucle lit ou non, le coût par euro rendu
+aux trois premiers déciles. Aucun nombre d'étude ne change dans ce but. Preuve attendue :
+les huit pages en ligne, vérifiées au téléphone, chaque nombre relié à sa source ; une
+relecture adverse par un lecteur qui n'a pas lu le dépôt, et le sort de chaque constat ;
+la sortie verte des tests ciblés ; l'URL de la PR, le SHA du merge et l'URL du site. Ou
+s'arrêter après 50 tours, en disant quelles pages manquent.
+```
+
+**Ce qui viendrait ensuite.** La population sur l'ERFS 2022 (`docs/PHASE1C_ERFS.md`), si
+la grille montre que la population de l'enquête Emploi plafonne ; les réductions et crédits
+d'impôt imputés par défaut ; une boucle macro pour les impôts des entreprises, si le
+propriétaire rouvre D-246 ; une incertitude qui tire l'erreur mesurée par la grille ; puis
+les juges du passé, sur un modèle dont l'erreur est connue et expliquée.
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 

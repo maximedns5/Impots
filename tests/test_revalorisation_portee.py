@@ -69,6 +69,7 @@ def stubbed(monkeypatch, tmp_path) -> SimpleNamespace:
     processed.mkdir()
     pl.DataFrame({"person_id": [1, 2, 3, 4, 5], "salaire_brut_annuel": [30_000.0] * 5,
                   "pension_annuelle": [0.0] * 5, "chomage_annuel": [0.0] * 5,
+                  "revenu_non_salarie_annuel": [0.0] * 5,
                   "loyer_mensuel": [500.0] * 5}).write_parquet(
         processed / "population_2024.parquet")
     monkeypatch.setattr(cli, "PROCESSED", processed)

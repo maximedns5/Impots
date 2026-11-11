@@ -133,8 +133,8 @@ BENEFIT_ZERO_NOTES = {
             "lui), donc l'aide en foyer — résidences étudiantes, FJT, EHPAD — est "
             "nulle. (c) L'APL accession est nulle, et doublement : les accédants n'ont "
             "pas de mensualité ET le moteur n'y répond pas (mesuré : +0,0000 md). (d) "
-            "`zone_apl` ne peut jamais valoir zone 1, donc le barème parisien est "
-            "absent."
+            "La zone 1 est tirée (étape al du but 19) aux parts du recensement, "
+            "pas lue : quels ménages y vivent n'est pas connu."
         ),
         "spend_effect": (
             "Mesuré sur la dépense : un pont de 1,15 seulement suffirait à porter la "
@@ -300,7 +300,10 @@ def build_lines(agg: Aggregates, population_year: int | None = None,
                        ("rsa", "RSA"), ("aide_logement", "Aides au logement")):
         figure = margins.BENEFIT_SPEND[key]
         bridge = margins.TAKE_UP_BRIDGE.get(key)
-        simulated = totals.get(key)
+        # The entitlement, which the bridge is for: `rsa` and `ppa` are served in
+        # expectation since but 19, étape 4, and dividing them by the bridge would count
+        # the non-take-up twice. Without the take-up layer the two are the same column.
+        simulated = totals.get(f"{key}_droit", totals.get(key))
         zero_note = " ".join(BENEFIT_ZERO_NOTES[key].values())
         if bridge is None:
             lines.append(Line.from_figure(
@@ -352,7 +355,8 @@ def build_lines(agg: Aggregates, population_year: int | None = None,
     # The QUANTILES, not the decile means. The published targets are person-weighted
     # quantiles; reading decile means against them was a wrong-estimator comparison,
     # and it was the larger half of both residuals.
-    quantiles = agg.niveau_de_vie_quantiles
+    # At full take-up, as these lines were set (étape 4 keeps their concept).
+    quantiles = agg.niveau_de_vie_quantiles_droit or agg.niveau_de_vie_quantiles
     if quantiles:
         median = quantiles[50]
         d1 = quantiles[10]

@@ -24,6 +24,8 @@ import polars as pl
 
 from impots.engine import outputs
 from impots.engine.system import baseline, reformed_for
+from impots.population import margins
+from impots.population.aggregate import ASSIS_SUR_LES_SALAIRES, HORS_CHAMP
 from impots.population.to_openfisca import WiringError, build_simulation
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
@@ -58,6 +60,10 @@ class RunResult:
     """
 
 
+#: The deductible CSG of the self-employed, a working column of `run` (not reported).
+CSG_DEDUCTIBLE_NS = "_csg_deductible_non_salarie"
+
+
 def households_par_lots(population: pl.DataFrame | Path, lots: int, **kwargs: Any
                         ) -> pl.DataFrame:
     """`run(...).households` over the whole population, `lots` groups of ménages at a time
@@ -75,13 +81,28 @@ def households_par_lots(population: pl.DataFrame | Path, lots: int, **kwargs: An
     frame = pl.read_parquet(population) if isinstance(population, Path) else population
     lot = frame["household_id"].map_elements(
         lambda key: zlib.crc32(str(key).encode()) % lots, return_dtype=pl.Int64)
+    # The niches are drawn with the probability « published claimants / weighted foyers
+    # of the bracket » (`niches.impute`): a lot that weighs a quarter of France would draw
+    # four times too many (but 19, étape 1). Each lot then weighs all France while it runs,
+    # and its households take their own weight back after.
+    rescale = bool(kwargs.get("impute_niches"))
+    total = _household_weight(frame) if rescale else 1.0
     parts = []
     for k in range(lots):
         part = frame.filter(lot == k)
-        parts.append(run(part, **kwargs).households)
+        factor = total / _household_weight(part) if rescale else 1.0
+        if rescale:
+            part = part.with_columns(pl.col("weight") * factor)
+        households = run(part, **kwargs).households
+        parts.append(households.with_columns(pl.col("weight") / factor) if rescale
+                     else households)
         del part
         gc.collect()
     return pl.concat(parts, how="vertical")
+
+
+def _household_weight(frame: pl.DataFrame) -> float:
+    return float(frame.group_by("household_id").agg(pl.col("weight").mean())["weight"].sum())
 
 
 def subsample(frame: pl.DataFrame, households: int, seed: int = SAMPLE_SEED) -> pl.DataFrame:
@@ -287,6 +308,49 @@ def _extract(
         array = sum(built.calculate(name, add=True) for name in names)
         results[key] = -_to_households(array.astype(np.float64), individu_index,
                                        n_households)
+    # The self-employed (but 19, étape 2), for the grid too: their CSG, which the
+    # published CSG on activity income counts beside the salaries', and their income as
+    # the 2042-C-PRO declares it, after the micro abatement, versement libératoire
+    # included; and the same without the gérants majoritaires, whose pay the DGFiP
+    # counts among the salaries (art. 62 CGI) and the population as a réel profit.
+    csg_ns = sum(built.calculate(name) for name in ("csg_deductible_non_salarie",
+                                                    "csg_imposable_non_salarie"))
+    results["csg_non_salarie"] = -_to_households(csg_ns.astype(np.float64), individu_index,
+                                                 n_households)
+    # Its deductible part, apart: the declared income the population gives openfisca is
+    # already net of it, so a reform of its rate moves the receipt and not the income;
+    # `run` gives the difference back to the reform's disposable income (but 19).
+    results[CSG_DEDUCTIBLE_NS] = -_to_households(
+        built.calculate("csg_deductible_non_salarie").astype(np.float64), individu_index,
+        n_households)
+    rpns = built.calculate("rpns_imposables").astype(np.float64)
+    liberatoire = _to_households(built.calculate("microentreprise").astype(np.float64),
+                                 foyer_index, n_households)
+    results["revenus_non_salaries"] = (
+        _to_households(rpns, individu_index, n_households) + liberatoire)
+    gerant = (frame["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"])
+              .fill_null(False).to_numpy() if "regime_non_salarie" in frame.columns
+              else np.zeros(frame.height, dtype=bool))
+    results["revenus_non_salaries_hors_gerants"] = (
+        _to_households(np.where(gerant, 0.0, rpns), individu_index, n_households)
+        + liberatoire)
+    # What each person's wage-borne amounts count beyond themselves in the totals: the
+    # employees the survey does not see, taken to be like those it does (étape
+    # « extrapolation », `aggregate.ASSIS_SUR_LES_SALAIRES`). The gérants are paid their
+    # declared pay, already the whole of theirs, and are not carried.
+    hors_champ = np.where(gerant, 0.0, margins.EXTRAPOLATION_SALARIES.value - 1.0)
+
+    # The employers' contributions as the national accounts count them (D121), for the
+    # verification grid only (but 19, étape 1; `docs/diagnostics/cotisations_employeurs.md`).
+    # `salaire_super_brut − salaire_brut` holds three things D121 does not, each kept
+    # here as a positive amount so the grid can take it out and show it apart:
+    # the levies on wages the Insee books as taxes (D291), the State's contribution to
+    # its own civil servants' and soldiers' pensions (an imputed contribution, D122),
+    # and the résidence allowance and the SFT, wages (D11) that `salaire_brut` leaves out.
+    # Population passes, not the API's rows (D-363); no cost reads them.
+    for key, value in employeurs_d121(built).items():
+        results[key] = _to_households(value, individu_index, n_households)
+        _hors_champ(results, key, value, hors_champ, individu_index, n_households)
 
     # Allocataire counts, at FAMILLE level and in December.
     #
@@ -319,7 +383,115 @@ def _extract(
                 array.astype(np.float64), index_for[row.entity], n_households
             )
         results[row.key] = -values if row.negate else values
+        if row.key in ASSIS_SUR_LES_SALAIRES and row.entity == "individu":
+            _hors_champ(results, row.key,
+                        -array.astype(np.float64) if row.negate else array.astype(np.float64),
+                        hors_champ, individu_index, n_households)
+    if tier == "full":
+        _serve_in_expectation(results, built, famille_index, n_households)
     return results
+
+
+def _hors_champ(results: dict[str, np.ndarray], key: str, per_person: np.ndarray,
+                hors_champ: np.ndarray, index: np.ndarray, n_households: int) -> None:
+    """`{key}_hors_champ`: per ménage, what its members' `key` stands for beyond
+    themselves, the employees outside the survey (`aggregate.extrapole`). Zero for a
+    ménage without an employee; never read by a household's own figures."""
+    results[f"{key}{HORS_CHAMP}"] = _to_households(per_person * hors_champ, index,
+                                                   n_households)
+
+
+#: The levies on wages OpenFisca counts in `cotisations_employeur` and the national
+#: accounts class as taxes on wages (D291, Insee tableau 3.217, lines 39 to 48): training
+#: and apprenticeship, the CSA, the Fnal, the AGS, the taxe sur les salaires, the forfait
+#: social, the versement mobilité, the PEEC. Six are zero in the population today (no
+#: employer size, commune or liability is wired); they are listed so that wiring them
+#: later moves them out of D121 with the rest.
+PRELEVEMENTS_D291 = (
+    "contribution_unique_formation_professionnelle_alternance",
+    "contribution_solidarite_autonomie", "fnal", "ags", "taxe_salaires", "forfait_social",
+    "versement_transport", "participation_effort_construction",
+    "contribution_developpement_apprentissage",
+    "contribution_supplementaire_apprentissage", "conge_individuel_formation_cdd",
+)
+#: The categories whose employer, the State, pays their pension itself: its
+#: contribution is imputed (D122), not effective. The CNRACL's (territorial, hospital)
+#: is a fund apart, and stays in D121.
+PENSION_ETAT = ("public_titulaire_etat", "public_titulaire_militaire")
+#: Wages (D11) that `salaire_super_brut` holds and `salaire_brut` does not.
+REMUNERATION_HORS_BRUT = ("indemnite_residence", "supplement_familial_traitement")
+
+
+def employeurs_d121(built: Any) -> dict[str, np.ndarray]:
+    """Per person, over the year, in euros and positive: what separates
+    `salaire_super_brut − salaire_brut` from D121 (but 19, étape 1).
+
+    * `prelevements_salaires_d291`: the `PRELEVEMENTS_D291`, engine-signed negative;
+    * `pension_employeur_etat`: `pension_employeur` of the months a person is in a
+      `PENSION_ETAT` category, month by month as the category is posed. The ATI the
+      State pays (`ati_atiacl`, 0,3 Md€ on the diagnostic's sample) stays in D121, a
+      hypothesis said in the step's report;
+    * `remuneration_hors_brut`: the `REMUNERATION_HORS_BRUT`.
+
+    Worked example, held in the tests: a State civil servant whose `salaire_brut` is
+    36 000 € has a TIB of 36 000 / 1,195 = 30 126 €, and the State's pension
+    contribution, 74,28 % of it, is 22 378 €."""
+    d291 = -sum(np.asarray(built.calculate(name, add=True), dtype=np.float64)
+                for name in PRELEVEMENTS_D291)
+    etat = np.zeros_like(d291)
+    for month in range(1, 13):
+        categorie = built.calculate("categorie_salarie", month=month)
+        mask = np.isin(np.asarray(categorie.decode_to_str()), PENSION_ETAT)
+        pension = np.asarray(built.calculate("pension_employeur", month=month),
+                             dtype=np.float64)
+        etat -= np.where(mask, pension, 0.0)
+    hors_brut = sum(np.asarray(built.calculate(name, add=True), dtype=np.float64)
+                    for name in REMUNERATION_HORS_BRUT)
+    return {"prelevements_salaires_d291": d291, "pension_employeur_etat": etat,
+            "remuneration_hors_brut": hors_brut}
+
+
+#: The columns the take-up layer serves in expectation (but 19, étape 4). Each keeps its
+#: full-take-up entitlement beside it as `{key}_droit`.
+SERVED = ("rsa", "ppa", "crds_mini", "aefa")
+
+
+def _serve_in_expectation(results: dict[str, np.ndarray], built: Any,
+                          famille_index: np.ndarray, n_households: int) -> None:
+    """Serve the RSA and the prime d'activité in expectation (`population.recours`).
+
+    The engine computes an ENTITLEMENT; the Caf counts what it PAYS. From here on, `rsa`,
+    `ppa`, their CRDS (`crds_mini`) and the prime de Noël (`aefa`) are what each famille
+    is paid in expectation, its probability of take-up times its entitlement, month by
+    month; `revenu_disponible` loses what is not claimed. The entitlements stay, as
+    `{key}_droit` and `revenu_disponible_droit`, for the lines that compare an
+    entitlement through the Drees bridge (the reconciliation and the grid, D-363), and
+    for a reader who wants the full-take-up figure. The cost of a reform, its deciles and
+    its instrument deltas are then the difference of two expectations, which counts the
+    families a larger entitlement brings to claim it. The allocataire counts stay
+    entitlement counts; `n_allocataires_{rsa,ppa}_servi` are the expected payees.
+    """
+    from impots.population import recours
+
+    famille = recours.colonnes(built)
+    unclaimed = np.zeros(n_households)
+    for key in SERVED:
+        droit = _to_households(famille[f"{key}_droit"], famille_index, n_households)
+        paid = _to_households(famille[f"{key}_servi"], famille_index, n_households)
+        # The registry's own read and the month-by-month one must be the same euros:
+        # a gap would be served money the cost cannot see.
+        if not np.allclose(droit, results[key], rtol=1e-6, atol=0.05):
+            raise WiringError(f"{key} : le droit mois par mois ne refait pas celui de la "
+                              f"passe ({float(droit.sum()):.2f} contre "
+                              f"{float(results[key].sum()):.2f})")
+        results[f"{key}_droit"] = results[key]
+        results[key] = paid
+        unclaimed += results[f"{key}_droit"] - paid
+    for key in recours.PRESTATIONS:
+        results[f"n_allocataires_{key}_servi"] = _to_households(
+            famille[f"n_{key}_servi"], famille_index, n_households)
+    results["revenu_disponible_droit"] = results["revenu_disponible"]
+    results["revenu_disponible"] = results["revenu_disponible"] - unclaimed
 
 
 def _impute_niches(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any]:
@@ -556,9 +728,23 @@ def run(
         timings["reform_s"] = round(time.perf_counter() - started, 2)
         for key, values in reform_rows.items():
             columns[f"{key}_reform"] = values
+        # A self-employed person declares an income net of the deductible CSG (5KC, 5QC…):
+        # the population holds that declared income fixed, so a cut of the rate would
+        # leave it where it is while the receipt falls, a cost no household receives
+        # (the sector balance refused Lisnard's CSG at 6,6 % by exactly that part, 1,27
+        # Md€ on 15 000 ménages). The declared income of the reform is the baseline's
+        # plus the deductible CSG it no longer pays; its income-tax feedback, which that
+        # higher declared income would carry, is not computed, a small omission said.
+        gain = columns[CSG_DEDUCTIBLE_NS] - columns[f"{CSG_DEDUCTIBLE_NS}_reform"]
+        for key in ("revenu_disponible", "revenu_disponible_droit"):
+            if f"{key}_reform" in columns:
+                columns[f"{key}_reform"] = columns[f"{key}_reform"] + gain
         persons = persons.with_columns(pl.Series(
             "salaire_super_brut_reform",
             reformed_built.calculate("salaire_super_brut", add=True).astype(np.float64)))
+    for key in [k for k in columns if k.startswith(CSG_DEDUCTIBLE_NS)]:
+        del columns[key]
+    baseline_rows.pop(CSG_DEDUCTIBLE_NS, None)
 
     # The MEAN of member weights, not the sum. EXTRIAN is an individual weight, but
     # the survey weights a whole dwelling together: it is identical across members

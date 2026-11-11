@@ -658,6 +658,85 @@ of their rate or of their tax shows in it. Wrapped around correction 7's formula
 
 **Blast radius of both:** a person with a daily allowance. The wire carries none; the
 population carries them only when `impute_ij` runs (D-305). Elsewhere nothing moves.
+
+---
+
+**Correction 24 — the share of a salary the income tax exempts (but 19, étape « ir »).**
+
+Not openfisca's law against the code: an input the population needs and openfisca has no
+place for. The gross salaries are calibrated on D11 (1 111,65 Md€ in 2024), and the CSG and
+the contributions are right to read all of it. The income tax is not: D11 holds overtime
+(exempt up to 7 500 € a year, CGI art. 81 quater: 21,8 Md€ declared in 1GH to 1JH), the
+apprentices' pay up to the SMIC (art. 81 bis), placed profit-sharing (art. 163 bis AA and
+B), the exempt prime de partage de la valeur, and the rest the declarations do not carry.
+openfisca's own variable for overtime, `hsup`, ends in 2013. So its taxable salaries ran 7 %
+above the salaries declared (`margins.DECLARED_TAXABLE_WAGES`), and the income tax, convex,
+some 11 % above the barème's.
+
+The correction adds `part_salaire_exoneree_ir`, a person's share of `salaire_imposable` that
+is exempt, zero unless the population writes it (`incomes.attach_incomes`), and takes it off
+`revenu_categoriel_tspr` the way correction 22 adds sick pay: openfisca's own deduction
+rerun on each member's salaries less that share, less what it leaves of the salaries alone.
+So the 10 % deduction falls on the declared salary, as it does. Nothing else reads it: the
+RSA, the prime and the housing aid count the whole salary, as they do. The exempt overtime
+should stay in the revenu fiscal de référence (art. 1417, IV, 1°, c) and does not here: the
+breakdown of the exempt part is not published, and the RFR runs a little low.
+
+**Blast radius:** a person with a share above zero. The wire carries none; the population
+built since the étape « ir » carries one share for every employee.
+
+---
+
+**Correction 25 — a famille that is not on the lease has no housing aid (CCH art. R. 821-4),
+but 19, étape al.**
+
+Again an input openfisca has no place for, not openfisca against the code. openfisca computes
+the housing aid of each famille on the rent of its ménage (`famille.demandeur.menage('loyer')`):
+one dwelling, one famille, which is what its own situations describe. The population puts
+every adult who is neither the reference person, nor the partner, nor a child the tax code
+may attach, in a famille of his own: an employed son of 26, a widowed mother, a sister. Each
+drew the aid on the whole rent of his parents' dwelling, with the plafond of a person alone:
+0,38 M familles, 0,78 Md€ in 2024 (étape al, § 2.1). The code gives the aid to « plusieurs
+personnes ou ménages constituant des foyers distincts [qui] occupent le même logement »
+only when « cotitulaires du bail ou de l'engagement de location » (CCH art. R. 821-4), the
+colocation, whose rent is shared (art. D. 842-3) and whose plafond is cut (art. D. 823-16,
+openfisca's `coloc`). A relative lodged in a family's dwelling is not on its lease.
+
+The correction adds `aide_logement_heberge`, a famille-level input, false unless the
+population writes it (`logement.lodging`), and sets the aid of such a famille to zero at
+`aide_logement_montant_brut` (so the CRDS on it is zero too): wrapped around correction 6.
+The RSA's and the prime's forfait logement then read the lodged famille as what it is,
+« hébergée à titre gratuit » (CASF art. R. 262-9; openfisca's own reading for
+`loge_gratuitement`): the forfait in full, which before it drew through its housing aid.
+
+**Blast radius:** a famille marked lodged. The wire carries none; the population built
+since the étape al marks the familles other than the reference person's in a dwelling the
+EEC types as a family's (`TYPLOG5` 1 to 4).
+
+---
+
+**Correction 26 — no allègement for a gérant majoritaire or a particulier employeur (CSS art.
+L. 241-13, II; L. 241-2-1; L. 241-6-1), but 19, étape « alleg ».**
+
+An input openfisca has no place for, again. Its `assiette_allegement` is the base of the
+réduction générale and of both bandeaux for every « privé » category. Two kinds of earner the
+population wires as private have none in law. The gérant majoritaire of a SARL is not an
+employee in the sense of social security (CSS art. L. 311-3, 11°, a contrario; he is affiliated
+to the self-employed's scheme): the population pays him a salary since the étape « ir » (his
+pay is in D11 and declared in 1GB), and openfisca gave his company 1,78 Md€ of réduction
+générale, 0,87 of bandeau maladie and 0,34 of bandeau famille (15 000 ménages, 2024). And the
+réduction générale is applied « à l'exception des gains et rémunérations versés par les
+particuliers employeurs » (L. 241-13, II), whose field the bandeaux take over (L. 241-2-1 and
+L. 241-6-1 apply to the employers « entrant dans le champ d'application du II de l'article
+L. 241-13 »): the EEC's employees of « un particulier » (CHPUB 7, 0,64 M in 2024).
+
+The correction adds `exclu_allegements`, an individual input, false unless the population
+writes it (`to_openfisca`), and sets `assiette_allegement` to zero for such a person: wrapped
+around openfisca's formula. His contributions stay those of an employee: the gérant's are
+the self-employed's in law, a bias the étape « ir » stated and that remains.
+
+**Blast radius:** a person marked excluded. The wire carries none; the population marks the
+gérants majoritaires and the employees of a private person.
 """
 
 from __future__ import annotations
@@ -1053,6 +1132,25 @@ def apply_to(system: Any) -> Any:
                                                              deduction.get_formula))
             nettes_corrected = self.get_variable(PENSIONS_NETTES).get_formula(LEVIES_SINCE)
             self.update_variable(_sick_pay_among_the_replacement_incomes(nettes_corrected))
+            # Correction 24 (but 19, étape « ir »). Read after correction 22's update: it wraps
+            # the formula that one left, so the variable keeps both.
+            self.add_variable(_exempt_salary_share())
+            category_with_sick_pay = self.get_variable(SALARY_CATEGORY).get_formula(
+                "0001-01-01")
+            self.update_variable(_exempt_share_off_the_salaries(category_with_sick_pay,
+                                                                deduction.get_formula))
+            # Correction 25 (but 19, étape al). Read after correction 6's update: it wraps the
+            # formula that one left, so the variable keeps both.
+            self.add_variable(_lodged_famille())
+            al_amount_corrected = self.get_variable(AL_AMOUNT).get_formula("2016-07-01")
+            self.update_variable(_no_housing_aid_off_the_lease(al_amount_corrected))
+            for name in (RSA_FORFAIT_LOGEMENT, PPA_FORFAIT_LOGEMENT):
+                forfait = self.get_variable(name).get_formula(FORFAIT_LOGEMENT_SINCE)
+                self.update_variable(_forfait_logement_of_the_lodged(name, forfait))
+            # Correction 26 (but 19, étape « alleg »).
+            self.add_variable(_excluded_from_the_allegements())
+            base_formula = self.get_variable(ALLEGEMENT_BASE).get_formula()
+            self.update_variable(_no_allegement_base_for_the_excluded(base_formula))
 
     return BenefitCorrections(system)
 
@@ -2058,3 +2156,207 @@ def _sick_pay_among_the_replacement_incomes(openfisca_formula: Any) -> Any:
             return openfisca_formula(individu, period, parameters) + sickness + work + levied
 
     return pensions_nettes
+
+
+#: The share of a person's `salaire_imposable` the income tax exempts (correction 24).
+EXEMPT_SALARY_SHARE = "part_salaire_exoneree_ir"
+
+
+def _exempt_salary_share() -> Any:
+    """`part_salaire_exoneree_ir`: the share of a person's taxable salary that the income tax
+    exempts, an input; zero unless the population writes it (correction 24)."""
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import Individu
+
+    class part_salaire_exoneree_ir(Variable):
+        value_type = float
+        entity = Individu
+        label = ("Part du salaire imposable exonérée d'impôt sur le revenu (heures "
+                 "supplémentaires, apprentis, épargne salariale…), correction 24")
+        reference = "https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/"
+        definition_period = YEAR
+
+    return part_salaire_exoneree_ir
+
+
+class _SalariesLessTheExemptShare(_SalariesWithTheAss):
+    """The individuals as openfisca's deduction formula sees them, each one's salaries less the
+    share the income tax exempts (correction 24)."""
+
+
+def _exempt_share_off_the_salaries(openfisca_formula: Any, deduction_formula: Any) -> Any:
+    """`revenu_categoriel_tspr`, each member's exempt share of his taxable salary taken off
+    (CGI art. 81 quater, 81 bis, 163 bis AA and B): the formula it wraps, plus what openfisca's
+    own deduction leaves of a member's salaries less that share, less what it leaves of the
+    salaries whole. Nothing is read when nobody in the simulation has a share that year."""
+    from openfisca_core.model_api import ADD, YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class revenu_categoriel_tspr(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Revenu catégoriel - Traitements, salaires, pensions et rentes, la part "
+                 "exonérée des salaires déduite (correction 24)")
+        reference = "https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/"
+        definition_period = YEAR
+
+        def formula(foyer_fiscal, period, parameters):
+            montant = openfisca_formula(foyer_fiscal, period, parameters)
+            individus = foyer_fiscal.members
+            share = individus(EXEMPT_SALARY_SHARE, period)
+            if not (share > 0).any():
+                return montant
+            exempt = share * individus("salaire_imposable", period, options=[ADD])
+            avec = deduction_formula(period)(_SalariesLessTheExemptShare(individus, -exempt),
+                                             period, parameters)
+            sans = individus(SALARIES_AFTER_DEDUCTION, period)
+            return montant + foyer_fiscal.sum(avec - sans)
+
+    return revenu_categoriel_tspr
+
+
+#: A famille lodged in a dwelling whose lease it is not on (correction 25).
+LODGED = "aide_logement_heberge"
+RSA_FORFAIT_LOGEMENT = "rsa_forfait_logement"
+PPA_FORFAIT_LOGEMENT = "ppa_forfait_logement"
+#: The formula era both forfaits are read in: every year this project accepts.
+FORFAIT_LOGEMENT_SINCE = "2016-01-01"
+
+
+def _lodged_famille() -> Any:
+    """`aide_logement_heberge`: the famille lives in a dwelling whose lease it is not on, an
+    input; false unless the population writes it (correction 25)."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_dispatch_by_period
+    from openfisca_france.entities import Famille
+
+    class aide_logement_heberge(Variable):
+        value_type = bool
+        entity = Famille
+        label = ("La famille est hébergée dans un logement dont elle n'est pas cotitulaire du "
+                 "bail (correction 25)")
+        reference = "https://www.legifrance.gouv.fr/codes/id/LEGISCTA000038878839"
+        definition_period = MONTH
+        set_input = set_input_dispatch_by_period
+
+    return aide_logement_heberge
+
+
+def _no_housing_aid_off_the_lease(openfisca_formula: Any) -> Any:
+    """`aide_logement_montant_brut`, zero for a famille lodged off the lease (CCH art.
+    R. 821-4): the formula it wraps for everyone else."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_divide_by_period, where
+    from openfisca_france.entities import Famille
+
+    class aide_logement_montant_brut(Variable):  # openfisca's naming
+        value_type = float
+        entity = Famille
+        label = ("Montant des aides au logement après dégressivité et minoration forfaitaire, "
+                 "avant CRDS ; nul pour une famille hébergée hors du bail (CCH art. R. 821-4)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878905"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula_2016_07_01(famille, period, parameters):
+            montant = openfisca_formula(famille, period, parameters)
+            heberge = famille(LODGED, period)
+            if not heberge.any():
+                return montant
+            return where(heberge, 0.0, montant)
+
+    return aide_logement_montant_brut
+
+
+def _forfait_logement_of_the_lodged(name: str, openfisca_formula: Any) -> Any:
+    """The RSA's or the prime's forfait logement, in full for a famille lodged off the lease,
+    « hébergée à titre gratuit » (CASF art. R. 262-9): openfisca's formula for everyone else,
+    and for the lodged one the same formula read as if its housing aid exceeded the forfait,
+    which is what its `min_(aide_logement, forfait)` then returns."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_divide_by_period, where
+    from openfisca_france.entities import Famille
+
+    class _AsIfAidedAboveTheForfait:
+        """The famille as the forfait formula reads it, its housing aid set above any
+        forfait, so that the formula returns the forfait itself."""
+
+        def __init__(self, famille: Any) -> None:
+            self._famille = famille
+
+        def __call__(self, variable: str, period: Any, *args: Any, **kwargs: Any) -> Any:
+            value = self._famille(variable, period, *args, **kwargs)
+            if variable == "aide_logement":
+                return value * 0 + 1e9
+            return value
+
+        def __getattr__(self, attribute: str) -> Any:
+            return getattr(self._famille, attribute)
+
+    class forfait(Variable):
+        value_type = float
+        entity = Famille
+        label = (f"{name}, en entier pour une famille hébergée à titre gratuit hors du bail "
+                 "(correction 25)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031694445"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula_2016_01_01(famille, period, parameters):
+            montant = openfisca_formula(famille, period, parameters)
+            heberge = famille(LODGED, period)
+            if not heberge.any():
+                return montant
+            plein = openfisca_formula(_AsIfAidedAboveTheForfait(famille), period, parameters)
+            return where(heberge, plein, montant)
+
+    forfait.__name__ = name
+    forfait.__qualname__ = name
+    return forfait
+
+
+#: A person whose employer receives no allègement (correction 26), and the base openfisca's
+#: réduction générale and bandeaux all read.
+EXCLUDED_FROM_ALLEGEMENTS = "exclu_allegements"
+ALLEGEMENT_BASE = "assiette_allegement"
+
+
+def _excluded_from_the_allegements() -> Any:
+    """`exclu_allegements`: the person is a gérant majoritaire, or the employee of a private
+    person, and gives no allègement; an input, false unless the population writes it
+    (correction 26)."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_dispatch_by_period
+    from openfisca_france.entities import Individu
+
+    class exclu_allegements(Variable):
+        value_type = bool
+        entity = Individu
+        label = ("Rémunération hors du champ des allègements généraux : gérant majoritaire, "
+                 "salarié d'un particulier employeur (correction 26)")
+        reference = "https://www.legifrance.gouv.fr/codes/id/LEGITEXT000006073189"
+        definition_period = MONTH
+        set_input = set_input_dispatch_by_period
+
+    return exclu_allegements
+
+
+def _no_allegement_base_for_the_excluded(openfisca_formula: Any) -> Any:
+    """`assiette_allegement`, zero for a person outside the field of the allègements (CSS
+    art. L. 241-13, II): the formula it wraps for everyone else."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_divide_by_period, where
+    from openfisca_france.entities import Individu
+
+    class assiette_allegement(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Assiette des allègements de cotisations sociales employeur ; nulle hors de "
+                 "leur champ (correction 26)")
+        reference = "https://www.legifrance.gouv.fr/codes/id/LEGITEXT000006073189"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula(individu, period, parameters):
+            montant = openfisca_formula(individu, period, parameters)
+            exclu = individu(EXCLUDED_FROM_ALLEGEMENTS, period)
+            if not exclu.any():
+                return montant
+            return where(exclu, 0.0, montant)
+
+    return assiette_allegement

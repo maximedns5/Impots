@@ -56,6 +56,43 @@ WAGE_MEAN_NET_EQTP_MONTHLY = 2733.0
 #: five bands are enough to carry most of it.
 WAGE_MEAN_NET_EQTP_BY_AGE: dict[str, float] = {"under_25": 1620.0, "25_39": 2550.0}
 
+#: Mean net EQTP monthly by age band and sex, private sector, 2024: (lower age, upper
+#: age, women, men). Insee, « Emploi, chômage, revenus du travail », édition 2026, fiche
+#: 2.6, figure 3 (base Tous salariés 2024),
+#: https://www.insee.fr/fr/statistiques/fichier/8733089/ECRT2026_F26.xlsx. Read by the
+#: wage draw (but 19, étape « haut »): before it, only the under-25 penalty and the sex
+#: gap were applied, and the 25-39-year-olds came out 12 % above their published mean
+#: and the 55 and over 17 % below it.
+WAGE_MEAN_NET_EQTP_BY_AGE_SEX: tuple[tuple[int, int, float, float], ...] = (
+    (0, 25, 1590.0, 1640.0), (25, 40, 2440.0, 2630.0), (40, 50, 2760.0, 3190.0),
+    (50, 55, 2820.0, 3430.0), (55, 200, 2810.0, 3600.0),
+)
+
+#: Centiles of the net EQTP monthly wage, private sector, 2024, which the wage draw is
+#: mapped onto (its upper half, or all of it: `incomes.WHOLE_DISTRIBUTION`; but 19, étape
+#: « haut »). Insee Première
+#: n° 2079 (octobre 2025), tableau complémentaire 3,
+#: https://www.insee.fr/fr/statistiques/fichier/8657156/ip2079.xlsx. Above the 99th
+#: centile, a Pareto tail through the 95th and 99th (`incomes.TAIL_C95_NET_EQTP_MONTHLY`).
+WAGE_CENTILES_PRIVATE_NET_EQTP_MONTHLY: dict[float, float] = {
+    0.05: 1362.0, 0.10: 1492.0, 0.20: 1669.0, 0.25: 1746.0, 0.30: 1823.0, 0.40: 1992.0,
+    0.50: 2190.0, 0.60: 2442.0, 0.70: 2785.0, 0.80: 3305.0, 0.85: 3709.0, 0.90: 4334.0,
+    0.91: 4509.0, 0.92: 4709.0, 0.93: 4947.0, 0.94: 5234.0, 0.95: 5593.0, 0.96: 6073.0,
+    0.97: 6752.0, 0.98: 7869.0, 0.99: 10261.0,
+}
+
+#: Quantiles of the net EQTP monthly wage in the fonction publique, 2024, by versant:
+#: D1, Q1, median, Q3, D9. Insee, « Emploi, chômage, revenus du travail »,
+#: édition 2026, fiche 2.9, figure 2 (Siasp 2024),
+#: https://www.insee.fr/fr/statistiques/fichier/8733095/ECRT2026_F29.xlsx. Above D9 the
+#: curve is extended with the slope of its last segment: no upper centile is published,
+#: and that tail is a hypothesis.
+WAGE_QUANTILES_FP_NET_EQTP_MONTHLY: dict[str, dict[float, float]] = {
+    "etat": {0.10: 1760.0, 0.25: 2260.0, 0.50: 2820.0, 0.75: 3510.0, 0.90: 4330.0},
+    "territoriale": {0.10: 1650.0, 0.25: 1840.0, 0.50: 2120.0, 0.75: 2540.0, 0.90: 3190.0},
+    "hospitaliere": {0.10: 1890.0, 0.25: 2110.0, 0.50: 2470.0, 0.75: 3050.0, 0.90: 4010.0},
+}
+
 NET_TO_GROSS_RATIO = Figure(
     value=0.7587, unit="ratio", year=2024,
     scope="Salariés du secteur privé, ensemble : salaire net / salaire brut",
@@ -78,6 +115,83 @@ TOTAL_GROSS_WAGES = Figure(
     caveat="Covers every employee in the economy, including those in collective "
            "households the EEC does not survey. Our population is employees aged "
            "15+ in ordinary households, so it should land slightly below.",
+)
+
+#: The wage bill of the employees the survey covers: D11, less the gérants, times this
+#: ratio (but 19, étape « haut », décision du coordinateur après la variante d2). D11 pays
+#: every employee of the national accounts; the survey's employees are fewer, and
+#: calibrating D11 onto them alone raised each one's pay by the missing headcount (+6.5 %
+#: over what the published wage quantiles imply, the « part exonérée » of the étape « ir »
+#: absorbing it on the tax side).
+SALARIES_COMPTES_NATIONAUX = Figure(
+    value=27_181_700.0, unit="count", year=2024,
+    scope="Emploi intérieur salarié en nombre de personnes, ensemble des branches (ligne "
+          "« _T »), moyenne annuelle",
+    source="INSEE, comptes nationaux annuels base 2020, tableau 6.210",
+    url="https://www.insee.fr/fr/statistiques/fichier/8988823/T_6210_fr.xlsx",
+    use="calibration",
+)
+
+SALARIES_ENQUETE_EMPLOI = Figure(
+    value=29_187_000.0 * 0.8665994595935453, unit="count", year=2024,
+    scope="Personnes en emploi au sens du BIT, 15 ans ou plus, logement ordinaire, France "
+          "(29 187 000, publié), fois la part des salariés (STATUT = 2) dans l'emploi "
+          "pondéré par EXTRIAN du fichier détail de l'enquête Emploi 2024 (86,66 %)",
+    source="INSEE, « Emploi, chômage, revenus du travail », édition 2026, fiche 2.1, "
+           "figure 1 ; enquête Emploi 2024, fichier détail (FD_EEC_2024)",
+    url="https://www.insee.fr/fr/statistiques/fichier/8733041/ECRT2026_F2.xlsx",
+    use="calibration",
+    caveat="The salaried count itself is not published on that page; its share is read "
+           "from the survey file, which the population is built from. The raked "
+           "population counts 24.93 M employees, 1.4 % fewer.",
+)
+
+#: 0,9305. What separates the two fields: the survey leaves out people in collective
+#: households (foyers de travailleurs, casernes, résidences : a few hundred thousand
+#: employees), Mayotte (about 0.05 M) and non-residents working in France (frontaliers
+#: entrants), whom the accounts' domestic employment counts; and above all the people
+#: the administrative sources pay in the year but who answer, in the survey week, that
+#: they have no job (short contracts, students' and retirees' small jobs: the Insee's
+#: own gap between its employment estimates and the survey, 30.4 against 29.0 M
+#: workers). In the other direction, the survey counts residents working abroad (about
+#: 0.4 M cross-border workers), whom D11 does not pay. Those missing are mostly paid less
+#: than the average (short and small jobs), so their share of D11 is smaller than their
+#: share of the headcount and this ratio, applied to the mass, takes slightly too much
+#: off; the cross-border workers, paid more and counted in the survey only, push the
+#: same way. Neither is published as a mass: the ratio of headcounts is the hypothesis.
+CHAMP_SALARIES_ENQUETE = Figure(
+    value=SALARIES_ENQUETE_EMPLOI.value / SALARIES_COMPTES_NATIONAUX.value, unit="ratio",
+    year=2024,
+    scope="Salariés de l'enquête Emploi (logement ordinaire) sur l'emploi salarié "
+          "intérieur des comptes nationaux",
+    source="INSEE, ECRT 2026 fiche 2.1 et enquête Emploi 2024 ; comptes nationaux, T_6210",
+    url=SALARIES_COMPTES_NATIONAUX.url,
+    use="calibration",
+    caveat="A ratio of headcounts applied to a mass: the employees missing from the "
+           "survey are mostly lower paid than the average, so the survey's true share "
+           "of D11 is a little above it (not published).",
+)
+
+#: 1,0747 = 27 181 700 / 25 293 000, the inverse of `CHAMP_SALARIES_ENQUETE`: what carries
+#: the totals and the reform costs assis sur les salaires from the survey's employees to
+#: France's (décision du propriétaire, 10 novembre 2026 ; étape « extrapolation »). Each
+#: wage stays at its published value; the aggregate counts every non-gérant employee's
+#: wage-borne amounts this many times (`aggregate.ASSIS_SUR_LES_SALAIRES`), on the
+#: hypothesis that the 1,9 M employees the survey does not see are like those it does.
+#: The income tax and its base, the benefits, the pensions and the niveaux de vie are not
+#: carried: they are the declarations' and the households' (`aggregate`, docstring).
+EXTRAPOLATION_SALARIES = Figure(
+    value=1.0 / CHAMP_SALARIES_ENQUETE.value, unit="ratio", year=2024,
+    scope="Emploi intérieur salarié des comptes nationaux sur les salariés de l'enquête "
+          "Emploi (logement ordinaire) : 27,18 M sur 25,29 M",
+    source="INSEE, comptes nationaux, T_6210 ; ECRT 2026 fiche 2.1 et enquête Emploi 2024",
+    url=SALARIES_COMPTES_NATIONAUX.url,
+    use="context",
+    caveat="A hypothesis, not a measurement: the employees missing from the survey "
+           "(collective households, Mayotte, cross-border workers coming in, short jobs "
+           "the survey week misses) are taken to pay and receive, per head, what the "
+           "surveyed employees do. The wage bill it gives is D11 exactly; the missing "
+           "are mostly lower paid, so the allègements it gives run a little low.",
 )
 
 PRIVATE_WAGE_BILL = Figure(
@@ -253,6 +367,186 @@ UNEMPLOYMENT_BENEFIT_SPEND = Figure(
 )
 
 # --------------------------------------------------------------------------- #
+# Revenus d'activité des non-salariés — Insee Première n° 2114 (juin 2026), revenus
+# 2024, et ses tableaux complémentaires (IP2114.xlsx, au manifeste). Tout montant est
+# MENSUEL, en euros, « déficits mis à 0 » : un exercice déficitaire compte pour un
+# revenu nul. Le revenu de l'Insee est le revenu professionnel : pour un non-salarié
+# « classique », le bénéfice (net des charges et des cotisations obligatoires) ou la
+# rémunération du gérant ; pour un micro-entrepreneur, le chiffre d'affaires après
+# l'abattement forfaitaire du régime micro. C'est, au gérant près, ce que la 2042-C-PRO
+# déclare : 48,4 Md€ de BIC et de BNC réels professionnels en 2024 (DGFiP), contre
+# 924 000 entrepreneurs individuels à 4 410 € par mois, 48,9 Md€ (Insee).
+# --------------------------------------------------------------------------- #
+NON_SALARIES_URL = "https://www.insee.fr/fr/statistiques/9013403"
+
+#: Les non-salariés classiques (hors micro-entrepreneurs, hors agriculture), par
+#: secteur : (effectif fin 2024 en milliers, part des revenus nuls ou déficitaires en
+#: %, D1, Q1, médiane, Q3, D9 des revenus positifs, revenu moyen, part des gérants
+#: majoritaires en %). Tableau complémentaire 3 pour l'effectif, la part nulle et les
+#: quantiles ; tableau complémentaire 1 pour la moyenne et la part des gérants (2024).
+#: « ensemble » est la ligne « Ensemble des non-salariés hors micro-entrepreneurs ».
+CLASSIQUES_PAR_SECTEUR: dict[str, tuple[float, ...]] = {
+    "industrie": (63, 12.4, 420, 1100, 2450, 4520, 7740, 3320, 72.82),
+    "construction": (227, 7.5, 770, 1620, 2620, 3960, 6060, 3050, 69.8),
+    "commerce_auto": (46, 12.2, 570, 1310, 2440, 3980, 6260, 2830, 78.86),
+    "commerce_gros": (48, 16.5, 490, 1250, 2860, 5500, 9780, 3940, 74.06),
+    "pharmacie": (24, 3.8, 2430, 3680, 5240, 7830, 11920, 6390, 87.4),
+    "metiers_bouche": (36, 8.4, 620, 1370, 2280, 3600, 5490, 2650, 77.34),
+    "detail_magasin": (119, 12.9, 410, 1040, 2140, 3710, 6210, 2650, 75.06),
+    "detail_hors_magasin": (28, 17.1, 140, 430, 1120, 2360, 4160, 1560, 43.41),
+    "transports": (60, 11.1, 430, 880, 1630, 2800, 4450, 2050, 43.72),
+    "hebergement_restauration": (142, 17.3, 300, 880, 1780, 3030, 5000, 2080, 76.37),
+    "information_communication": (43, 14.0, 650, 1840, 3880, 6300, 8990, 4190, 80.29),
+    "finance": (45, 12.0, 800, 2330, 4700, 8580, 14360, 6170, 69.99),
+    "immobilier": (42, 27.2, 260, 820, 2030, 4040, 7020, 2480, 57.0),
+    "juridique": (105, 3.7, 1750, 3080, 5320, 9540, 16230, 8240, 26.1),
+    "conseil": (60, 15.7, 570, 1440, 3310, 6130, 10270, 4510, 79.29),
+    "architecture": (47, 10.0, 710, 1790, 3320, 5480, 8690, 4070, 72.12),
+    "autres_specialisees": (30, 13.7, 420, 1050, 2240, 4120, 6840, 2950, 63.04),
+    "veterinaires": (12, 2.7, 1880, 3480, 5670, 8530, 11940, 6370, 35.0),
+    "services_administratifs": (45, 18.8, 450, 1200, 2540, 4700, 8310, 3370, 75.25),
+    "arts": (23, 17.9, 210, 660, 1490, 2830, 5000, 2030, 51.76),
+    "enseignement": (42, 11.8, 310, 800, 1640, 2750, 4450, 2020, 33.87),
+    "services_personnels": (85, 8.9, 390, 870, 1540, 2340, 3440, 1710, 47.52),
+    "medecins": (166, 1.8, 2780, 4980, 8090, 12880, 20090, 10180, 13.6),
+    "paramedicaux": (279, 1.5, 1610, 2530, 3570, 4890, 6600, 3890, 2.211),
+    "autres_sante": (29, 9.4, 400, 970, 1940, 3250, 5170, 2410, 29.08),
+    "ensemble": (1864, 9.6, 650, 1550, 3000, 5300, 9360, 4150, 50.31),
+}
+
+#: Les micro-entrepreneurs économiquement actifs, par secteur : (effectif fin 2024 en
+#: milliers, revenu moyen, part des pluriactifs en %). Tableau complémentaire 2 pour
+#: l'effectif et la moyenne, tableau complémentaire 1 pour les pluriactifs. Les
+#: secteurs absents sont fermés au régime (pharmacie, droit, médecine, vétérinaires).
+MICRO_PAR_SECTEUR: dict[str, tuple[float, float, float]] = {
+    "industrie": (142, 370, 33.6),
+    "construction": (219, 900, 12.3),
+    "commerce_auto": (39, 530, 27.8),
+    "commerce_gros": (38, 850, 25.1),
+    "metiers_bouche": (6, 490, 32.1),
+    "detail_magasin": (34, 550, 22.7),
+    "detail_hors_magasin": (125, 340, 25.5),
+    "transports": (91, 290, 44.1),
+    "hebergement_restauration": (53, 660, 24.0),
+    "information_communication": (112, 1060, 33.9),
+    "finance": (10, 1090, 21.0),
+    "immobilier": (44, 1030, 21.9),
+    "conseil": (134, 1010, 34.2),
+    "architecture": (34, 1160, 29.9),
+    "autres_specialisees": (135, 720, 33.8),
+    "services_administratifs": (184, 630, 33.7),
+    "arts": (93, 510, 41.9),
+    "enseignement": (184, 650, 45.7),
+    "services_personnels": (266, 500, 28.7),
+    "paramedicaux": (15, 1340, 35.2),
+    "autres_sante": (86, 780, 41.6),
+    "ensemble": (2047, 680, 31.5),
+}
+
+#: La dispersion des revenus positifs des micro-entrepreneurs, tous secteurs (D1, Q1,
+#: médiane, Q3, D9), et leur part de revenus nuls en % : tableau complémentaire 3,
+#: ligne « Micro-entrepreneurs économiquement actifs ». Le texte la donne aussi (« un
+#: sur quatre gagne moins de 80 euros, un sur deux moins de 330, un sur dix plus de
+#: 1 790 »). L'Insee ne la publie pas par secteur.
+MICRO_QUANTILES: tuple[float, float, float, float, float] = (20, 80, 330, 950, 1790)
+MICRO_PART_NULLE = 0.8
+
+#: Les micro-entrepreneurs principalement salariés (texte, p. 3) : 28 % de l'ensemble,
+#: 250 € par mois d'activité non salariée. L'enquête Emploi les compte parmi les
+#: salariés, leur emploi principal : ils sortent du champ de la population, secteur par
+#: secteur au prorata de ses pluriactifs (« près de neuf sur dix » des pluriactifs sont
+#: principalement salariés : 28 sur les 31,5 % du tableau complémentaire 1).
+MICRO_PRINCIPALEMENT_SALARIES = (28.0, 250.0)
+
+#: À secteur identique, l'écart de revenu des femmes non salariées (texte, p. 4) :
+#: −30 % chez les classiques, −14 % chez les micro-entrepreneurs.
+ECART_FEMMES_CLASSIQUES = 0.30
+ECART_FEMMES_MICRO = 0.14
+
+#: Les non-salariés agricoles (encadré) : (effectif fin 2024 en milliers, revenu moyen
+#: déficits mis à 0, part des revenus nuls ou déficitaires en %). L'Insee ne publie pas
+#: leur dispersion : la forme est une hypothèse (`incomes.py`).
+AGRICOLES: dict[str, tuple[float, float, float]] = {
+    "reel": (302, 2410, 21.7),
+    "micro_ba": (101, 810, 2.1),
+}
+
+#: Le versement libératoire parmi les micro-entrepreneurs, par nature d'activité :
+#: cases remplies de la 2042-C-PRO, revenus 2024, avec le versement contre sans (DGFiP,
+#: déclarations nationales 2042, au manifeste). Ventes : 5TA, 5UA contre 5KO, 5LO,
+#: 5MO ; services : 5TB, 5UB, 5VB contre 5KP, 5LP, 5MP ; BNC : 5TE, 5UE contre 5HQ,
+#: 5IQ, 5JQ. `test_non_salaries` les relit dans le fichier.
+VERSEMENT_LIBERATOIRE: dict[str, tuple[int, int]] = {
+    "vente": (229_159, 228_690),
+    "service": (337_872, 349_143),
+    "bnc": (281_611, 482_337),
+}
+
+#: Les gérants majoritaires de sociétés (figure 1) : effectif fin 2024 (milliers) et revenu
+#: mensuel moyen, déficits mis à 0. Leur revenu est un salaire pour l'impôt (art. 62 du CGI)
+#: et pour les comptes nationaux, qui le comptent dans D11 : la population le leur verse en
+#: salaire (`incomes.attach_incomes`), pas en bénéfice.
+GERANTS_MAJORITAIRES = (940.0, 3_880.0)
+
+#: Le total que la population doit porter, au champ de l'enquête Emploi : les
+#: non-salariés dont c'est l'emploi principal, HORS gérants majoritaires. Effectifs fois
+#: revenus moyens publiés : classiques 1 864 000 × 4 150 €, moins les gérants majoritaires
+#: 940 000 × 3 880 €, micro-entrepreneurs 2 047 000 × 680 € moins les principalement
+#: salariés 0,28 × 2 047 000 × 250 €, agricoles au réel 302 000 × 2 410 € et au micro-BA
+#: 101 000 × 810 € ; 6 146,7 M€ par mois, douze fois.
+SELF_EMPLOYMENT_INCOME = Figure(
+    value=73_760_400_000.0, unit="EUR", year=2024,
+    scope="Revenus d'activité non salariés 2024 (déficits mis à 0) des non-salariés en "
+          "activité au 31 décembre, hors gérants majoritaires et hors micro-entrepreneurs "
+          "principalement salariés, agriculture comprise, France hors Mayotte",
+    source="INSEE, Insee Première n° 2114 (juin 2026), figure 1 (dont la ligne « Gérants "
+           "majoritaires de sociétés », 940 000 à 3 880 €), encadré et texte ; effectifs "
+           "fois revenus moyens",
+    url=NON_SALARIES_URL, use="calibration",
+    caveat="Dépensé : le revenu des non-salariés ne peut plus être une ligne de "
+           "validation. Ce n'est pas une case publiée mais une somme de produits publiés. "
+           "Jusqu'à l'étape « ir » du but 19, la cible comptait les gérants majoritaires "
+           "(117,53 Md€) et la population leur versait 43,8 Md€ de BIC et de BNC, quand la "
+           "masse salariale calée sur D11 portait déjà leur rémunération : un double compte. "
+           "Ils sont maintenant payés en salaire, calé sur `GERANTS_REMUNERATION`.",
+)
+
+#: Les rémunérations des gérants majoritaires et associés imposées comme des salaires (art.
+#: 62 du CGI), cases 1GB, 1HB, 1IB, 1JB de la 2042, revenus 2024.
+GERANTS_REMUNERATION = Figure(
+    value=30_717_889_341.0, unit="EUR", year=2024,
+    scope="Revenus des associés et gérants (art. 62 du CGI) déclarés, cases 1GB à 1JB",
+    source="DGFiP, L'impôt sur le revenu : les déclarations nationales (2042), revenus 2024",
+    url="https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/",
+    use="calibration",
+    caveat="Dépensé : le salaire imposable des gérants majoritaires de la population. Plus "
+           "petit que le revenu de l'Insee (43,8 Md€), qui compte la part des dividendes "
+           "au-delà de 10 % du capital, imposée en revenus de capitaux mobiliers, et que la "
+           "population ne porte pas. La case a baissé de 37,4 Md€ (2023) à 30,7 Md€ (2024).",
+)
+
+#: Les salaires imposables déclarés par les salariés résidents : ce que l'impôt lit, et
+#: que la masse D11 dépasse de tout ce qui est exonéré d'impôt sur le revenu.
+DECLARED_TAXABLE_WAGES = Figure(
+    value=836_801_494_057.0 - 4_343_947_247.0 - 3_122_828_904.0, unit="EUR", year=2024,
+    scope="Salaires imposables déclarés des résidents, hors gérants : cases 1AJ à 1DJ, 1AA "
+          "à 1DA, 1AF à 1DF, 1AG à 1DG, 1GF à 1JF, 1GG à 1JG, 1TT, 1UT, moins les "
+          "abattements des assistantes maternelles et journalistes (1GA à 1JA), moins les "
+          "traitements et salaires des non-résidents (IRCOM 2025, ligne DINR)",
+    source="DGFiP, L'impôt sur le revenu : les déclarations nationales (2042), revenus "
+           "2024 ; DGFiP, IRCOM 2025 (revenus 2024), national, ligne « Dont non-résidents »",
+    url="https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/",
+    use="calibration",
+    caveat="Dépensé : la part exonérée d'impôt des salaires de la population "
+           "(`incomes.part_salaire_exoneree`) est fixée pour que ses salaires imposables le "
+           "refassent. D11 (1 111,65 Md€ bruts) compte ce que l'impôt exonère : les heures "
+           "supplémentaires (1GH à 1JH, 21,8 Md€ déclarés), les salaires des apprentis "
+           "jusqu'au SMIC, l'intéressement et la participation placés, la prime de partage "
+           "de la valeur, les indemnités de rupture exonérées ; la répartition de ce reste "
+           "entre ces postes n'est pas publiée. Mayotte reste dedans (non publié à part).",
+)
+
+# --------------------------------------------------------------------------- #
 # Benefits — VALIDATION only. Expected to run high: OpenFisca computes legal
 # entitlement, i.e. 100 % take-up.
 # --------------------------------------------------------------------------- #
@@ -321,32 +615,35 @@ RSA_NON_TAKE_UP = Figure(
 # --------------------------------------------------------------------------- #
 # Rent — the weakest input in the model, and the one the housing-benefit
 # validation line rests on. Published per square metre; the surface itself is an
-# assumption, stated in `incomes.py`.
+# assumption, stated in `logement.py`. The social rent is RPLS's, by zone
+# (`HLM_RENT_PER_M2`, étape al); the 5,6 €/m² it replaces was not on the page cited.
 # --------------------------------------------------------------------------- #
 RENT_PER_M2: dict[str, Figure] = {
     "prive": Figure(8.8, "EUR_per_m2_per_month", 2024,
                     "Loyer au m² des locataires du parc privé",
                     "INSEE, France portrait social 2024 — dépenses de logement",
-                    "https://www.insee.fr/fr/statistiques/8612568", "context"),
-    "social": Figure(5.6, "EUR_per_m2_per_month", 2024,
-                     "Loyer au m² des locataires du parc social",
-                     "INSEE, France portrait social 2024 — dépenses de logement",
-                     "https://www.insee.fr/fr/statistiques/8612568", "context",
-                     caveat="No published surface distribution was used: the dwelling "
-                            "size rule in incomes.py is an assumption, not a measurement."),
+                    "https://www.insee.fr/fr/statistiques/8612568", "context",
+                    caveat="Not found on the page cited (re-read 10/11/2026: it gives "
+                           "spending per dwelling, no rent per m²). Every private tenant's "
+                           "rent is above his loyer plafond (unfurnished: all of them) "
+                           "so the aid barely reads it, but the number has no source."),
 }
 
 # --------------------------------------------------------------------------- #
 # Living standards — VALIDATION for the decile table.
 # --------------------------------------------------------------------------- #
-FILOSOFI_URL = "https://www.insee.fr/fr/statistiques/8402386"
+#: Insee, « Niveau de vie en 2023 : comparaisons régionales et départementales »
+#: (Filosofi 2023), file `TCRD_022.xlsx` (https://www.insee.fr/fr/statistiques/fichier/
+#: 2012717/TCRD_022.xlsx, sha256 1331aa54…65a5, read on 10 November 2026), sheet REG,
+#: row « France métropolitaine » : median 25 920, D1 13 200, D9 46 500 EUR. The page
+#: this constant named until but 19, 8402386, answers 404 (D-364).
+FILOSOFI_URL = "https://www.insee.fr/fr/statistiques/2012717"
 
 #: Deciles of niveau de vie, EUR per consumption unit per year, France
-#: métropolitaine, Filosofi 2023.
-NIVEAU_DE_VIE_DECILES: dict[int, float] = {
-    1: 13_200.0, 2: 17_010.0, 3: 20_300.0, 4: 23_190.0, 5: 25_920.0,
-    6: 28_860.0, 7: 32_600.0, 8: 38_100.0, 9: 46_500.0,
-}
+#: métropolitaine, Filosofi 2023: the three the page publishes. D2 to D8 (17 010 …
+#: 38 100) stood here until but 19 and are found in no publication read (diagnostic
+#: `famille_logement_niveau_de_vie.md`, C8) : withdrawn, not replaced. Nothing read them.
+NIVEAU_DE_VIE_DECILES: dict[int, float] = {1: 13_200.0, 5: 25_920.0, 9: 46_500.0}
 
 NIVEAU_DE_VIE_MEDIAN = Figure(
     value=25_920.0, unit="EUR_per_uc_per_year", year=2023,
@@ -359,6 +656,8 @@ NIVEAU_DE_VIE_MEDIAN = Figure(
 NIVEAU_DE_VIE_GINI = Figure(
     value=0.297, unit="ratio", year=2023, scope="Indice de Gini du niveau de vie, métropole",
     source="INSEE, Filosofi 2023", url=FILOSOFI_URL, use="validation",
+    caveat="Non retrouvé : la page de l'URL (TCRD_022) ne publie que D1, la médiane et "
+           "D9 ; aucune ligne ne lit ce nombre (but 19, étape 1).",
 )
 NIVEAU_DE_VIE_D9_D1 = Figure(
     value=3.5, unit="ratio", year=2023, scope="Rapport interdécile D9/D1 du niveau de vie",
@@ -459,6 +758,193 @@ HOUSEHOLDS = Figure(
 )
 
 
+# --------------------------------------------------------------------------- #
+# Foyers fiscaux as the DGFiP counts them (but 19, étape 3).
+#
+# A foyer fiscal is a déclaration, not a dwelling: concubins file two, a young adult
+# who is not rattaché files his own. The skeleton draws both from the figures below;
+# the famille (CAF) is left as it was, so that the benefits see the same households.
+# --------------------------------------------------------------------------- #
+POP3_URL = "https://www.insee.fr/fr/statistiques/fichier/8202264/TD_POP3_2021_csv.zip"
+
+#: Share of the persons living in a couple who are in « concubinage ou union libre »
+#: (STAT_CONJ_19 = 3 over 1 + 2 + 3), by quinquennial age (lower bound; 80 = 80 or
+#: more). Recomputed from TD_POP3_2021, lines NIVGEO = COM summed, both sexes.
+UNION_LIBRE_SHARE_BY_AGE: dict[int, float] = {
+    15: 0.863051, 20: 0.727370, 25: 0.505629, 30: 0.325125, 35: 0.249017,
+    40: 0.206582, 45: 0.185745, 50: 0.158176, 55: 0.122499, 60: 0.084792,
+    65: 0.060995, 70: 0.044832, 75: 0.035380, 80: 0.026810,
+}
+
+UNION_LIBRE_SHARE = Figure(
+    value=0.188, unit="ratio", year=2021,
+    scope="Personnes de 15 ans ou plus en couple : part en concubinage ou union libre "
+          "(6,11 M sur 32,49 M), France hors Mayotte",
+    source="Insee, recensement 2021, tableau détaillé TD_POP3 (sexe, âge, statut "
+           "conjugal)",
+    url=POP3_URL, use="calibration",
+    caveat="Spent: the skeleton splits each paired couple into two foyers fiscaux with "
+           "the mean of its two members' shares, by age. The draw ignores who, in "
+           "reality, is married (concubins are younger and more often both in work than "
+           "an age-only draw says). The famille (CAF) is not split.",
+)
+
+#: Enfants célibataires majeurs rattachés au foyer fiscal de leurs parents, case 0DJ
+#: (the second column of the export, the number of children, not of foyers).
+RATTACHES_MAJEURS = Figure(
+    value=2_014_392, unit="count", year=2024,
+    scope="Nombre d'enfants célibataires rattachés (case 0DJ, nombre d'enfants), "
+          "déclarations des revenus 2024 ; 1 720 889 foyers",
+    source="DGFiP, « L'impôt sur le revenu : les déclarations nationales » (2042), "
+           "export manifesté dgfip_ir_2042_nat_export_2026-10-15.csv",
+    url="https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/",
+    use="calibration",
+    caveat="Spent: the probability that an eligible young adult living with his parents "
+           "is rattaché is set so that the weighted rattachés reach it. 0DJ also counts "
+           "rattachés who do not live with their parents (students in their own "
+           "dwelling), whom the EEC puts in a household of their own: the model, which "
+           "can only rattach a co-resident child, therefore rattaches a little too many "
+           "of those it sees. How many is not published.",
+)
+
+#: Enfants des familles aged 18 to 24, ordinary households, France hors Mayotte.
+FAM6_URL = "https://www.insee.fr/fr/statistiques/fichier/8205229/TD_FAM6v1_2021_csv.zip"
+CHILDREN_18_24 = Figure(
+    value=2_930_587, unit="count", year=2021,
+    scope="Enfants des familles âgés de 18 à 24 ans (AGEFOR5 = 18), France hors Mayotte",
+    source="Insee, recensement 2021, tableau détaillé TD_FAM6v1 (enfants par âge et type "
+           "de famille), lignes NIVGEO = COM",
+    url=FAM6_URL, use="calibration",
+    caveat="Anchors the share of 18-24-year-olds living as a child of the family; the "
+           "shape inside the band is regional (CHILD_SHARE_SHAPE).",
+)
+
+#: Persons of 15-19 and 20-24 years in ordinary households (CATPR = 01), census 2021,
+#: TD_POP2 (already manifested), lines NIVGEO = COM. Spread evenly over the five years.
+ORDINARY_HOUSEHOLD_POPULATION_15_24: dict[int, float] = {15: 4_024_913.0, 20: 3_673_432.0}
+
+#: Share of young people living with their parents, by single year of age: Nouvelle-
+#: Aquitaine, census 2013, Insee Flash Nouvelle-Aquitaine n° 21, figure 1
+#: (https://www.insee.fr/fr/statistiques/2573899): 72,1 % at 18, 51,1 % at 20, 37,3 % at
+#: 22, 20,7 % at 25. 19, 21, 23 and 24 are interpolated, 15 to 17 are an assumption near
+#: the 98,1 % of under-18s that SL_PERS1 (RP 2022) counts as children of a family. No
+#: national table by single year of age was found (searched: Insee Première n° 1686,
+#: RP séries longues SL_PERS1, TD_FAM6, all banded). The SHAPE only is used: the level
+#: of 18-24 is moved, by one shift on the logit scale, onto CHILDREN_18_24.
+CHILD_SHARE_SHAPE: dict[int, float] = {
+    15: 0.97, 16: 0.97, 17: 0.97,
+    18: 0.721, 19: 0.616, 20: 0.511, 21: 0.442, 22: 0.373, 23: 0.318, 24: 0.262,
+}
+
+# --------------------------------------------------------------------------- #
+# Housing tenure — a raking margin (but 19, étape 3, D-365).
+# --------------------------------------------------------------------------- #
+LOG_T10_URL = "https://www.insee.fr/fr/statistiques/2011101?geo=FE-1"
+
+#: Résidences principales by statut d'occupation, RP 2023, LOG T10, France.
+TENURE_2023: dict[str, float] = {
+    "proprietaire": 17_944_861.0,
+    "locataire_hlm": 4_546_449.0,
+    "locataire_autre": 12_584_249.0 - 4_546_449.0,
+    "loge_gratuitement": 691_037.0,
+}
+
+HOUSEHOLDS_BY_TENURE = Figure(
+    value=31_220_147.0, unit="count", year=2023,
+    scope="Résidences principales selon le statut d'occupation : propriétaires "
+          "(accédants compris), locataires d'un logement HLM loué vide, autres locataires "
+          "(vide non HLM, meublé, chambre d'hôtel), logés gratuitement",
+    source="Insee, RP 2023, exploitation principale, tableau LOG T10",
+    url=LOG_T10_URL, use="calibration",
+    caveat="Spent once the raking targets it. Its total (31,22 M) is not the household "
+           "total of HOUSEHOLDS_BY_TYPE (31,27 M, exploitation complémentaire): the "
+           "shares are kept and scaled onto the latter, so that the two margins do not "
+           "contradict each other (D-150). The EEC's usufruitiers are owners.",
+)
+
+
+def tenure_targets() -> dict[str, float]:
+    """LOG T10's shares on the household total the type margin holds."""
+    total = sum(TENURE_2023.values())
+    return {key: value / total * HOUSEHOLDS.value for key, value in TENURE_2023.items()}
+
+
 def figures_by_use(use: Use) -> dict[str, Figure]:
     """Every module-level `Figure` declared with the given use."""
     return _figures_by_use(globals(), use)
+
+
+# --------------------------------------------------------------------------- #
+# Housing aid geography and social rents (but 19, étape al)
+#
+# The EEC carries no commune, only the commune's place in its urban unit
+# (`STCOMM2020`: ville-centre, banlieue, ville isolée, hors unité urbaine) and
+# metropole / DOM. The APL zone is a list of communes. The two are crossed here, on
+# the commune: the census's résidences principales by tenure (RP 2023), the commune's
+# status in the 2020 urban units (Insee, géographie 2026) and openfisca's own zoning
+# file (`assets/apl/20110914_zonage.csv`, the one its `zone_apl` formula reads from
+# `depcom`). 151 résidences principales of 31,22 M have no zone in that file (communes
+# created since). The DOM are all zone 2.
+# --------------------------------------------------------------------------- #
+RP_LOGEMENT_2023_URL = "https://www.insee.fr/fr/statistiques/8997194"
+UU2020_URL = "https://www.insee.fr/fr/information/4802589"
+
+#: Résidences principales of metropolitan France, by the commune's status in its urban
+#: unit, the household's tenure and the commune's APL zone (1, 2, 3). « hlm » is the
+#: census's « résidence principale HLM louée vide », « autre_locataire » every other
+#: tenant (vide non HLM, meublé, hôtel), « autre » owners and the logés gratuitement.
+APL_ZONE_BY_STCOMM: dict[str, tuple[float, float, float]] = {
+    "C|hlm": (228_311.0, 964_375.0, 727_618.0),
+    "C|autre_locataire": (527_092.0, 1_983_396.0, 1_201_420.0),
+    "C|autre": (527_511.0, 1_938_461.0, 2_313_221.0),
+    "B|hlm": (927_241.0, 894_579.0, 199_097.0),
+    "B|autre_locataire": (983_305.0, 1_182_624.0, 435_466.0),
+    "B|autre": (1_875_468.0, 2_943_719.0, 1_736_814.0),
+    "I|hlm": (8_938.0, 17_234.0, 244_790.0),
+    "I|autre_locataire": (13_619.0, 32_698.0, 542_326.0),
+    "I|autre": (51_213.0, 96_566.0, 1_693_511.0),
+    "H|hlm": (1_639.0, 5_691.0, 190_584.0),
+    "H|autre_locataire": (9_855.0, 32_001.0, 889_856.0),
+    "H|autre": (59_137.0, 183_816.0, 4_757_513.0),
+}
+
+APL_ZONE_SOURCES = Figure(
+    value=30_421_000.0, unit="count", year=2023,
+    scope="Résidences principales de métropole, croisées commune par commune : statut "
+          "d'occupation (RP 2023, base des principaux indicateurs, COM_2023, colonnes "
+          "« Résid princ occupées Locataires » et « Résid princ HLM louée vide »), statut "
+          "de la commune dans l'unité urbaine 2020 (STATUT_COM_UU, géographie 2026), zone "
+          "APL du fichier d'openfisca-france",
+    source="Insee, RP 2023, base_cc_logement_2023 ; Insee, base des unités urbaines 2020 "
+           "au 01/01/2026 ; openfisca-france, assets/apl/20110914_zonage.csv",
+    url=RP_LOGEMENT_2023_URL, use="calibration",
+    caveat="The zoning file is of 2014 communes and the census of 2026 ones: the 151 "
+           "résidences principales whose commune it lacks are left out. Zone 1 is "
+           "the Paris agglomeration of the 1978 arrêté (with the villes nouvelles), "
+           "not Île-de-France. Spent as the draw of each ménage's zone.",
+)
+
+#: Résidences principales by DOM département (RP 2023, same base), to draw a DOM
+#: ménage's département: the EEC says only « DOM ». Mayotte is outside the census base.
+DOM_HOUSEHOLDS_BY_DEPARTEMENT: dict[str, float] = {
+    "971": 179_833.0, "972": 171_743.0, "973": 88_425.0, "974": 359_288.0,
+}
+
+RPLS_2024_URL = ("https://www.statistiques.developpement-durable.gouv.fr/"
+                 "54-millions-de-logements-locatifs-sociaux-en-france-au-1er-janvier-2024")
+
+#: Loyer moyen du parc social, euros par m² de surface habitable, baux en cours au
+#: 1er janvier 2024 (tableau 4) : France entière 6,52 ; Île-de-France 7,68 ; province
+#: et DROM 6,15.
+HLM_RENT_PER_M2: dict[str, Figure] = {
+    "ile_de_france": Figure(7.68, "EUR_per_m2_per_month", 2024,
+                            "Loyer moyen du parc social, Île-de-France",
+                            "SDES, Datalab Essentiel, RPLS au 1er janvier 2024, tableau 4",
+                            RPLS_2024_URL, "calibration",
+                            caveat="Applied to zone 1 (the Paris agglomeration), the "
+                                   "nearest the population can say to Île-de-France."),
+    "province_drom": Figure(6.15, "EUR_per_m2_per_month", 2024,
+                            "Loyer moyen du parc social, province et DROM",
+                            "SDES, Datalab Essentiel, RPLS au 1er janvier 2024, tableau 4",
+                            RPLS_2024_URL, "calibration"),
+}

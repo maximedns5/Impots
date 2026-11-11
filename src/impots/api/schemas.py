@@ -1254,6 +1254,7 @@ class ResultRows(BaseModel):
     """The allocation de solidarité spécifique, summed over the adults who draw it. Zero
     unless an adult is declared `fin_de_droits_ass` (D-189)."""
     aide_logement: float | None = None
+    reduction_loyer_solidarite: float | None = None
     aah: float | None = None
     mva: float | None = None
     """The AAH, and the majoration pour la vie autonome that rides on it. Zero for a

@@ -56,11 +56,18 @@ UPRATED = {
     "pension_annuelle": "price",
     "chomage_annuel": "wage",
     "loyer_mensuel": "price",
+    # The self-employed's income, by the wage per head: the Insee's mean non-salarié
+    # income is published by year, but not as an index the grid's years declare (D-360).
+    "revenu_non_salarie_annuel": "wage",
 }
 
 #: Money columns deliberately NOT uprated, with the reason. Empty today, and kept as the
 #: place a future exception must be justified rather than just omitted.
-NOT_UPRATED: dict[str, str] = {}
+NOT_UPRATED: dict[str, str] = {
+    # A share of the taxable salary, not an amount: the same share whatever the year
+    # (but 19, étape « ir », engine correction 24).
+    "part_salaire_exoneree": "une part du salaire imposable, pas un montant",
+}
 
 
 class UpratingError(RuntimeError):

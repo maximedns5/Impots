@@ -113,7 +113,8 @@ def test_households_are_aged_on_the_set() -> None:
     assert record["facteur_prix"] == pytest.approx(1.009 * 1.021)
     assert record["salaires"] == pytest.approx({"2025": 0.02, "2026": 0.02})
     frame = pl.DataFrame({"salaire_brut_annuel": [100.0], "pension_annuelle": [100.0],
-                          "chomage_annuel": [100.0], "loyer_mensuel": [100.0]})
+                          "chomage_annuel": [100.0], "loyer_mensuel": [100.0],
+                          "revenu_non_salarie_annuel": [100.0]})
     aged = up.uprate(frame, 2026, uprating)
     assert aged["salaire_brut_annuel"][0] == pytest.approx(104.04)
     assert aged["pension_annuelle"][0] == pytest.approx(100 * 1.009 * 1.021)
@@ -159,7 +160,8 @@ def _household_cli(tmp_path, monkeypatch, year: int, *extra: str):
 
     population = tmp_path / "population_2024.parquet"
     pl.DataFrame({"salaire_brut_annuel": [100.0], "pension_annuelle": [100.0],
-                  "chomage_annuel": [100.0], "loyer_mensuel": [100.0]}
+                  "chomage_annuel": [100.0], "loyer_mensuel": [100.0],
+                  "revenu_non_salarie_annuel": [100.0]}
                  ).write_parquet(population)
     seen = {}
 
@@ -246,7 +248,7 @@ def _firm_cli(tmp_path, monkeypatch, fixture_firms, *extra: str) -> int:
 
     monkeypatch.setattr(firm_build, "PROCESSED", tmp_path)
     monkeypatch.setattr(ch, "head_commit", lambda: "abc1234")
-    monkeypatch.setattr(comptes, "gdp", lambda years: {y: {2023: 100.0, 2025: 110.0}[y]
+    monkeypatch.setattr(comptes, "gdp", lambda years: {y: {2023: 100.0, 2024: 104.0, 2025: 110.0}[y]
                                                        for y in years})
     fixture_firms.write_parquet(tmp_path / "firms_2023.parquet")
     (tmp_path / "firms_2023.manifest.json").write_text(
@@ -276,7 +278,8 @@ def test_a_firm_case_is_aged_on_the_gdp(tmp_path, monkeypatch, fixture_firms) ->
         fixture_firms, year=2027,
         reform=__import__("impots.entreprises.reforms", fromlist=["FirmReformSpec"])
         .FirmReformSpec.model_validate(PROROGATION_2027)).firms).reform_cost
-    factor = 1.10 * 1.020 * 1.027
+    # From 2024, the year of the vintage « 2023 »'s profits (but 19, étape 1), not 2023.
+    factor = 110.0 / 104.0 * 1.020 * 1.027
     assert case.mechanical_eur == pytest.approx(frozen * factor)
     assert case.vieillissement["facteur"] == pytest.approx(factor)
     assert case.revision["apres_annexe"] is True

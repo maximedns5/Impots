@@ -40,8 +40,12 @@ KNOWN_LIMITATIONS = [
     "**Age is banded.** The EEC gives five age groups; exact ages are drawn inside "
     "them, so any threshold that does not fall on a band edge is fuzzy for an "
     "individual household and only right on average.",
-    "**Benefits assume 100 % take-up.** OpenFisca computes legal entitlement; DREES "
-    "measures non-take-up of RSA at 33-37 % of eligible households.",
+    "**Take-up is an expectation by amount.** OpenFisca computes legal entitlement; "
+    "the RSA and the prime d'activité are served as each famille's probability of "
+    "take-up times its entitlement, calibrated on DREES's non-take-up (n° 1370: 33-37 % "
+    "of eligible households for the RSA; n° 1379, not read, 48-52 % for the prime). "
+    "Housing aid keeps full take-up: no published national rate was found. The "
+    "full-take-up figures stay as `*_droit`.",
     "**Assortative mating is absent.** Two earners in a household are drawn "
     "independently, which flattens the top of the household income distribution.",
 ]
@@ -881,8 +885,11 @@ def _vieillir_entreprises(args: argparse.Namespace) -> tuple[float, dict | None]
     A vintage with no year, the tests' populations, has nothing to age from: it is
     registered as it is, and refused only if indices are asked for."""
     from impots import hypotheses
+    from impots.predictif import firmes
 
-    base = int(args.vintage) if args.vintage.isdigit() else None
+    # The year of the vintage's taxes, not of its name (but 19, étape 1 : the vintage
+    # « 2023 » carries the DGFiP's profits of 2024).
+    base = firmes.base_year(args.vintage) if args.vintage.isdigit() else None
     if base is None:
         if args.vieillir is not None:
             raise ValueError(f"le millésime « {args.vintage} » n'a pas d'année : il ne se "

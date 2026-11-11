@@ -1,9 +1,9 @@
 {
-  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
+  "commit": "12e769cab051b41731adcb01c52ff67274bc9d12",
   "scenarios": {
     "pres2027_retailleau_programme": {
-      "cout": 20806683878.044952,
-      "dette": 0.02777085634049481,
+      "cout": 16076223324.749588,
+      "dette": 0.021934140358162102,
       "selon_theta": "hausse"
     }
   }

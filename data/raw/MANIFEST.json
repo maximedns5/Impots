@@ -416,13 +416,13 @@
       "quarantined": false
     },
     "insee_ip2079_salaires_prive_2024.xlsx": {
-      "url": null,
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8657156/ip2079.xlsx",
       "sha256": "34b7e19cce45d8a5bc7a83f125d00d694ea6266e06b94531f8815a957f5b7d11",
       "bytes": 42082,
-      "downloaded": "2026-09-03",
-      "licence": "unknown",
-      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it.",
-      "quarantined": true
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Première n° 2079, « Les salaires dans le secteur privé en 2024 » (base Tous salariés 2024) : centiles du salaire net mensuel EQTP (tableau complémentaire 3), C95 et C99 (figure 3) (étape haut)",
+      "quarantined": false
     },
     "insee_ip2100_fonction_publique_etat_2024.xlsx": {
       "url": null,
@@ -1783,6 +1783,204 @@
       "downloaded": "2026-11-09",
       "licence": "Insee — Licence Ouverte / Etalab",
       "description": "Insee, comptes nationaux annuels base 2020, tableau 6.210 « Emploi intérieur salarié par branche en nombre de personnes », milliers ; ligne « _T ». Dénominateur du salaire par tête des indices constatés (D-362).",
+      "quarantined": false
+    },
+    "dgfip_stat_32_2025.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num32_04/dgfip_stat_32_2025.xlsx",
+      "sha256": "d8721958c326fb381818bddcf112f783f8f9af0dc1845fac49b43eb499292029",
+      "bytes": 40607,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 32 (avril 2025), l'impôt sur les revenus perçus en 2023 : Graphique 1 (montant d'émission de l'IR net, 2014-2023), tableaux 1 à 5. Même fichier (sha256) que dgfip_stat_32_ir_2023_tables.xlsx, en quarantaine faute d'URL ; l'URL est celle de docs/verification/lignes.json.",
+      "quarantined": false
+    },
+    "dgfip_stat_22_ir_2022.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2024/num22_04/dgfip_stat_ir_2022.xlsx",
+      "sha256": "ca58409105940a089d4d307e4e1ef219695f6a277ca8a51479124684a3c4e70c",
+      "bytes": 33177,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 22 (avril 2024), l'impôt sur les revenus perçus en 2022 : Graphique 1 (montant d'émission de l'IR net, 2013-2022), tableaux 1 à 4.",
+      "quarantined": false
+    },
+    "insee_filosofi_2023_TCRD_022.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/2012717/TCRD_022.xlsx",
+      "sha256": "1331aa5469a0a54c519d21d80ea4168a211a1387cadbadb6b0c6daf9eb4e65a5",
+      "bytes": 13138,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Niveau de vie en 2023 : comparaisons régionales et départementales (Filosofi 2023), page https://www.insee.fr/fr/statistiques/2012717 ; feuilles DEP et REG, médiane, D1 et D9.",
+      "quarantined": false
+    },
+    "insee_cn2026_T_7401_compte_menages.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988835/T_7401_fr.xlsx",
+      "sha256": "f27bfdffc08c809398bb09b1f1c0ef83376b3194e10bc8daf8ace7ee3283826e",
+      "bytes": 56572,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.401, compte des ménages (S14) : D11, D121, D122, D613CE ; le fichier que docs/verification/lignes.json cite.",
+      "quarantined": false
+    },
+    "insee_ip2114_revenus_non_salaries_2024.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9013403/IP2114.xlsx",
+      "sha256": "2761bc1ae40e2f449b4c59f954e1e8d70ea29acb6c08f3e300b6306370afae44",
+      "bytes": 59271,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee Première n° 2114 (juin 2026), « Les revenus d'activité des non-salariés en 2024 », données (page https://www.insee.fr/fr/statistiques/9013403). Figure 1 (effectifs et revenus moyens par secteur, hors agriculture), figures 2a et 2b (distribution des revenus des classiques), encadré (agricoles, réel et micro-BA), tableaux complémentaires 1 (part des micro-entrepreneurs, des gérants majoritaires et des pluriactifs, revenus moyens par secteur), 2 (micro-entrepreneurs par secteur), 3 (part des revenus nuls, D1, Q1, médiane, Q3, D9 des revenus positifs par secteur ; micro-entrepreneurs tous secteurs), 4 (sexe, ancienneté, région). Revenus mensuels, déficits mis à 0, France hors Mayotte. Lu pour le but 19, étape 2 : `margins.CLASSIQUES_PAR_SECTEUR`, `MICRO_PAR_SECTEUR`, `MICRO_QUANTILES`, `AGRICOLES`, `SELF_EMPLOYMENT_INCOME`.",
+      "quarantined": false
+    },
+    "insee_ip2114_revenus_non_salaries_2024.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/version-html/9013403/IP2114.pdf",
+      "sha256": "02fefb0fd008b606e00644c8ae6fb5f26e084288a8f6a3e4312c8bca5a0444a1",
+      "bytes": 557930,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee Première n° 2114 (juin 2026), M. Diakhaté, « Les revenus d'activité des non-salariés en 2024 », texte. P. 3 : 32 % des micro-entrepreneurs sont pluriactifs, près de neuf sur dix principalement salariés, 28 % de l'ensemble, 250 € par mois d'activité non salariée ; ceux sans activité salariée, 820 €. P. 4 : à secteur identique, les femmes classiques gagnent 30 % de moins, les micro-entrepreneuses 14 %. Lu pour le but 19, étape 2.",
+      "quarantined": false
+    },
+    "TD_FAM6v1_2021_csv.zip": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8205229/TD_FAM6v1_2021_csv.zip",
+      "sha256": "788008303b4666cd1e21eb5c0768119814b8a39194ba033410e03a20bdf66d84",
+      "bytes": 3896115,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Recensement de la population 2021, base des tableaux détaillés, FAM6v1 : nombre d'enfants des familles par âge (AGEFOR5 : 00, 03, 06, 11, 18, 25) et type de famille, par commune. CSV « ; » NIVGEO;CODGEO;LIBGEO;AGEFOR5;TAF;TF4;NB ; ne garder que NIVGEO = COM. Lu pour le but 19, étape 3 : 2 930 587 enfants des familles de 18 à 24 ans (margins.CHILDREN_18_24), l'ancre nationale de l'âge des 15-24 ans selon leur place dans le ménage.",
+      "quarantined": false
+    },
+    "insee_rp2022_SL_PERS1_series_longues.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8613715/SL_PERS1%202022%20series%20longues.xlsx",
+      "sha256": "b32c12609ee4925632afd3249299da9fe22aaa347ed1f76e40e42ea2fbae6f44",
+      "bytes": 34146,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, Ménages et familles en 2022 et en séries longues, SL_PERS1 « Population selon le sexe, l'âge et le mode de cohabitation », RP 2011, 2016, 2022, tranches 0-17, 18-29, … Lu pour le but 19, étape 3 : 98,1 % des moins de 18 ans sont enfants d'une famille (France hors Mayotte, 2022) ; aucun âge détaillé.",
+      "quarantined": false
+    },
+    "insee_rp2023_log_t10_france.html": {
+      "url": "https://www.insee.fr/fr/statistiques/2011101?geo=FE-1",
+      "sha256": "ab6fd37010647139322d727be86da71756803aad0424c90ee99df57d58606c5f",
+      "bytes": 574664,
+      "downloaded": "2026-11-10",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, dossier complet France, RP 2023, tableau LOG T10 « Résidences principales selon le statut d'occupation » : propriétaires 17 944 861, locataires 12 584 249 dont HLM loué vide 4 546 449, logés gratuitement 691 037, ensemble 31 220 147. Page HTML enregistrée telle quelle. Marge du calage du statut d'occupation (margins.TENURE_2023, but 19, étape 3).",
+      "quarantined": false
+    },
+    "ircom-2025-revenus-2024.zip": {
+      "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20260526-131537/ircom-2025-revenus-2024.zip",
+      "sha256": "3df14c80f69afb76a8c6d1f13cd2fb9e861ba9e162bc1e516c6fb2ed77338b00",
+      "bytes": 18181698,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP, IRCOM 2025 (revenus 2024), archive complète. national/national.xls, onglet « nat » : foyers, RFR, impôt net, foyers imposés, traitements et salaires, pensions, par tranche de RFR ; ligne « Dont non-résidents (DINR) » : 298 023 foyers, 3 122 828 904 € de traitements et salaires, retirés de margins.DECLARED_TAXABLE_WAGES (but 19, étape « ir »).",
+      "quarantined": false
+    },
+    "dgfip_ir_taux_marginal_2019_2024.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25519_ir_taux_marginal.xlsx",
+      "sha256": "2fb279cf8d89e6737a0d1afe9b2dffd7719477944e09e69b442f50f653261f17",
+      "bytes": 36224,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP, nombre de foyers et montant de l'impôt net par taux marginal du barème, revenus 2019 à 2024, un onglet par année. 2024 : 13 132,148 / 20 930,797 / 6 868,031 / 434,112 / 61,476 milliers de foyers à 0, 11, 30, 41 et 45 % ; impôt net −597, 12 658, 48 858, 17 791, 12 541 M€. Lu par le diagnostic de l'étape « ir » du but 19.",
+      "quarantined": false
+    },
+    "UU2020_au_01-01-2026.zip": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4802589/UU2020_au_01-01-2026.zip",
+      "sha256": "262e511e5781ab9480eb77064f98c5dcaf35e21fa30e066fd88d89e3adcdaf5d",
+      "bytes": 1072365,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, base des unités urbaines 2020, géographie au 01/01/2026 : statut de chaque commune dans son unité urbaine (STATUT_COM_UU), pour tirer la zone APL (étape al du but 19)",
+      "quarantined": false
+    },
+    "base_cc_logement_2023_xlsx.zip": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8997194/base_cc_logement_2023_xlsx.zip",
+      "sha256": "0eccb43a2966f496c3fe397764da2992002a6694093834e5ec65e470e8cc83cc",
+      "bytes": 62588981,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, RP 2023, logement, base des principaux indicateurs par commune (géographie 2026) : résidences principales, locataires, HLM louées vides, pour la zone APL et les départements des DOM (étape al)",
+      "quarantined": false
+    },
+    "beneficiaires_CAF_31-12-2024_Iris.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8682393/beneficiaires_CAF_31-12-2024_Iris.xlsx",
+      "sha256": "e8f02333a22074f4460dd9e94d1f6b698623799a72c74c315154abad00137e17",
+      "bytes": 2641821,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee / Cnaf, bénéficiaires des prestations légales au 31/12/2024 par Iris et commune (communes à Iris) : allocataires d'une aide au logement, de l'APL, étudiants ; comparaison par zone (étape al)",
+      "quarantined": false
+    },
+    "sdes_rpls_2024_datalab_essentiel.pdf": {
+      "url": "https://www.statistiques.developpement-durable.gouv.fr/media/7974/download?inline",
+      "sha256": "06ea948ce4babd5df770decc764a1991ae4dacb942ccb5a97cea27f426e986a6",
+      "bytes": 522296,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "SDES, Datalab Essentiel, « 5,4 millions de logements locatifs sociaux en France au 1er janvier 2024 » (RPLS), tableau 4 : loyer moyen du parc social par m² (étape al)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_f26_salaires_prive_age_sexe.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733089/ECRT2026_F26.xlsx",
+      "sha256": "5e3b2648ca13be5192585473cbe46e6ebd11622b6a9b5e132b5441436436b262",
+      "bytes": 24753,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.6 : salaire net mensuel EQTP moyen du privé par âge et sexe en 2024 (figure 3), dispersion par PCS (figure 4) (étape haut)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_f29_salaires_fonction_publique.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733095/ECRT2026_F29.xlsx",
+      "sha256": "82a22593c10ffd686287e1b3e4ce9147c914b720c14c3ddb252e60ad9b0d7ccb",
+      "bytes": 19727,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.9 : dispersion du salaire net mensuel EQTP dans la fonction publique en 2024 par versant (Siasp, figure 2) (étape haut)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_F30_revenu_salarial.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733097/ECRT2026_F30.xlsx",
+      "sha256": "c6b2d697d461e6b8c0f07c2cae5a720358dd83a8cc28b642455bd76bc4994854",
+      "bytes": 20414,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Références « Emploi, chômage, revenus du travail », édition 2026, fiche « Revenu salarial », figures 1 à 3 : revenu salarial, salaire en EQTP et volume de travail annuel moyen en EQTP en 2023, dispersion du revenu salarial (étape ppa)",
+      "quarantined": false
+    },
+    "insee_revenus_salariaux_2022.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/2381326/marc-salair-revenu-salarial.xlsx",
+      "sha256": "6e749570d9c43e114173eca03354332123c1d115b52811fb0147766a932bf17e",
+      "bytes": 111275,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Revenus salariaux, données annuelles 2022 (décembre 2025) : revenu salarial, salaire en EQTP, volume de travail par sexe, âge, diplôme, CS, quotité, secteur (étape ppa)",
+      "quarantined": false
+    },
+    "drees_er1379_non_recours_ppa.pdf": {
+      "url": "https://drees.solidarites-sante.gouv.fr/sites/default/files/2026-07/ER1379_Non-recours_PA.pdf",
+      "sha256": "222853d711e012ee3bb36d423a8381a8e1edfb019d341dbe163e8cd06262ac13",
+      "bytes": 286280,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Drees, Études et Résultats n° 1379 (juillet 2026, C. Gayet), « Non-recours à la prime d'activité : la moitié des foyers éligibles ne la perçoivent pas fin 2021 », 8 p. Lu sur la copie de l'Internet Archive (web.archive.org/web/2026id_/ + l'URL), le site de la Drees refusant le conteneur. Tableau 1 : éligibles, recourants, non-recourants, taux en foyers (48-52 %) et en masse (43-46 %), beta error 13 % ; graphique 1 : répartition des recourants et des non-recourants par montant mensuel PAR UNITÉ DE CONSOMMATION (tranches de 50 €, note du graphique et note 3) ; tableau 2 : composition familiale, logement, emploi des recourants et non-recourants ; encadré 3 : les jeunes actifs comptés en foyers sociaux autonomes. Source du τ de `recours.PPA` et de `familles_jeunes` (étape ppa2).",
+      "quarantined": false
+    },
+    "senat_r25-728_ccomptes_prime_activite.pdf": {
+      "url": "https://www.senat.fr/rap/r25-728/r25-7281.pdf",
+      "sha256": "8990f4c044ea85301f77ef2154ce7d881e12eb0d8fdab14564faee431633d0df",
+      "bytes": 2689355,
+      "downloaded": "2026-11-10",
+      "licence": "publication du Sénat, réutilisation avec mention de la source",
+      "description": "Sénat, rapport d'information n° 728 (2025-2026) sur la prime d'activité, avec l'enquête de la Cour des comptes : tableaux 12 et 13 (Cnaf, Allstat FR6, décembre 2023), montants moyens par configuration et répartition des foyers par montant versable ; élasticités de la Cnaf (étape ppa)",
+      "quarantined": false
+    },
+    "insee_ecrt2026_f2_emploi.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733041/ECRT2026_F2.xlsx",
+      "sha256": "a20cb076b38193b43f32fde54ced4d1ba61496f8288b7e9286ad2ae932b41779",
+      "bytes": 25565,
+      "downloaded": "2026-11-10",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.1, figure 1 : personnes en emploi (enquête Emploi, logement ordinaire), 29 187 000 en 2024 (étape haut, champ des salariés)",
       "quarantined": false
     }
   }

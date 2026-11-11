@@ -144,6 +144,10 @@ STATE_RECEIPTS = (
     # rows. Without it the first pass of a CSG rate on the allowances was refused, its
     # 467,7 M€ held by no instrument (D-307).
     "csg_ij",
+    # The CSG of the non-salariés, whose income the population carries since but 19
+    # (étape 2): a reform of the CSG rate moved their disposable income with no receipt to
+    # hold it, and the real-population balance test failed by it.
+    "csg_non_salarie",
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.
@@ -162,8 +166,11 @@ STATE_RECEIPTS = (
 #: so the aid is reported ALREADY net and disposable income moves by exactly it. Netting
 #: its CRDS here counted it twice, unseen until the first population pass of a housing
 #: reform (PLF 2027 art. 74), which missed by +0.52 % (D-299).
-STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",
-                   "crds_pfam", "crds_mini")
+#: `reduction_loyer_solidarite`: the HLM landlord pays it, not the state, but
+#: `revenu_disponible`, of which the cost is the change, contains it; the reconstitution
+#: follows the cost, and the cost counting it is a bias said in D-374.
+STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite",
+                   "aefa", "cf", "asf", "crds_pfam", "crds_mini")
 
 #: The identity is checked in absolute euros against a floor, and relatively above it.
 #: A reform moving a few million is not worth a relative test; one moving billions is.

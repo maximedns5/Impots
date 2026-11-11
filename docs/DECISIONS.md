@@ -27272,3 +27272,594 @@ imputation, il reste à la réconciliation (+19,0 % sur les recettes nettes). L'
 barème et les foyers au RSA de 2022, la CVAE de 2022 et 2023 : refusés, faute de total ou
 de barème. La réconciliation des entreprises n'est pas régénérée : ses cibles mêlent 2024
 et 2025 ; les lignes des entreprises de la grille la remplacent sur 2022 à 2024.
+
+## D-365 — Les buts 19 et 20 validés : le dépôt public, calibrate.py ouvert
+
+**Le 10 novembre 2026, le propriétaire** valide le but 19 proposé le même jour, coupé en
+deux buts, et tranche les trois décisions qu'il laissait ouvertes. Les six diagnostics qui
+le fondent sont dans `docs/diagnostics/`, commités avant cette entrée ; leurs mesures sont
+sur échantillon, en lecture seule, et ne changent aucun nombre d'étude.
+
+**Deux buts.** Le but 19 corrige le modèle (étapes 1 à 5 : la grille et les textes, le
+revenu des indépendants, les foyers fiscaux et le calage, le non-recours dans le coût, la
+grille et la série refaites). Le but 20 construit le parcours public de huit pages sur les
+nombres de la série refaite : il commence quand le but 19 est mergé. Le propriétaire veut
+que la démarche soit comprise au point qu'un lecteur juge lui-même une mesure.
+
+**Le dépôt devient public, et le site se publie.** Une démarche se prouve si un sceptique
+peut refaire le chemin ; un dépôt privé ne le permet pas. Avant ce choix, les fichiers
+suivis et l'historique ont été relus : aucun secret, aucune donnée de l'ERFS (qui reste
+hors de git, D-016), un seul échantillon de l'enquête Emploi, sous Licence Ouverte. Le
+changement de visibilité et l'activation de GitHub Pages sont des réglages du dépôt que
+seul le propriétaire fait ; la variable `SITE_PUBLIE` du workflow aussi. Les issues du
+dépôt deviennent l'adresse où signaler une erreur (`site_reglages.json`, D-357) : elles
+seront ouvertes au public avec lui.
+
+**`calibrate.py` est ouvert pour le but 19**, avant la phase 7. Le calage des foyers par
+situation de famille et tranche de revenu, du statut d'occupation et des charges
+déductibles y passe ; sans lui, découper les foyers ramène leur total mais dégrade les
+tranches à 30 et 41 % et l'impôt au barème (`docs/diagnostics/foyers_fiscaux.md`). La règle
+de `CLAUDE.md` le dit. Chaque marge neuve nomme sa source publiée et son année, et sa
+cible entre dans la D-entrée de préenregistrement de l'étape qui l'ajoute.
+
+**Comment les étapes avancent.** Les étapes 1 à 4 se développent en parallèle, chacune dans
+son worktree et sur sa branche partie de `claude/but19`, par un agent qui ne lance aucune
+passe sur la population entière. Elles se joignent sur `claude/but19` une à une. Chaque
+jonction qui change un nombre de la grille est préenregistrée avec son pronostic avant que
+la grille tourne ; les pronostics tirés des diagnostics le disent. La série des dix études
+tourne une fois, quand les quatre étapes sont jointes, préenregistrée.
+
+## D-366 — La jonction des étapes du but 19 préenregistrée : 42 lignes neuves, pronostic
+
+**Ce qui est joint**, sur `claude/but19`, avant toute passe de la grille sur la population
+entière : les étapes 1 à 4 (D-365) et deux étapes nées de leur jonction. Chacune a son
+rapport dans `docs/diagnostics/etape_*.md`.
+
+* **Étape 1, la grille et les textes.** La phrase « sans aucun effet sur l'activité » lit
+  le coût sans boucle (D-349) et non plus le coin bas du multiplicateur (Attal 13,95 →
+  18,30 points, Retailleau 3,98 → 4,69, Le Pen 3,98 → 4,42, Labib 5,71 → 5,90, Roussel
+  1,42 → 1,56, PLF art. 3 −0,35 → −0,40 ; elle paraît sur PLF art. 2, Lisnard, Mélenchon,
+  Tondelier). L'explorateur dit « selon θ » ; Attal et Retailleau disent la vraie raison du
+  refus de la bande (D-220). Les pages ont été réécrites par l'étape avant cette entrée,
+  depuis les rapports commités ; aucune passe n'a tourné et aucun juge ne les note. Trois
+  mesures neuves (D291, pension de l'État, salaires hors brut), un IR net d'une passe
+  imputée, l'année de base des entreprises à 2024, l'URL Filosofi juste.
+* **Étape 2.** Les non-salariés ont un revenu tiré de l'Insee Première n° 2114.
+* **Étape 3.** Les concubins et les jeunes majeurs non rattachés sont des foyers fiscaux ;
+  l'âge des 15-24 ans suit leur place ; marge neuve : le statut d'occupation (recensement
+  2023, LOG T10).
+* **Étape 4.** Le RSA et la prime sont servis en espérance dans le coût des réformes.
+* **Étape « ir ».** Les gérants majoritaires sont payés en salaire (art. 62 du CGI) : leur
+  rémunération est déjà dans les salaires déclarés que le modèle refaisait, la leur donner
+  en BIC la comptait deux fois. Une part exonérée de 6,85 % des salaires, lue par l'impôt
+  seul, cale les salaires imposables déclarés : D11 compte des salaires que l'impôt ne voit
+  pas (participation, heures supplémentaires exonérées). Sa répartition, uniforme, est une
+  hypothèse. Biais connu : les gérants reçoivent environ 3 Md€ d'allègements que la loi ne
+  leur donne pas.
+* **Étape « al ».** La zone des aides au logement est tirée au recensement ; les DOM ont un
+  département ; les loyers HLM viennent du RPLS 2024 ; un hébergé hors du bail n'a plus
+  d'aide (R. 821-4 du CCH) et les ménages « autres » sont en colocation (D. 842-3). Les
+  deux derniers retirent 1,9 Md€ d'aides que le modèle comptait deux fois.
+* **Le non-recours recalé** sur la population jointe : p_max 0,6974 (RSA), 0,5277 (prime).
+* **Un défaut corrigé** : `households_par_lots` tirait les niches quatre fois trop par lot.
+* **Décidé, non fait** : l'IS reste vieilli par le PIB (D-246) ; le vieillir par l'IS de
+  l'exercice ferait de sa ligne un calage, et aucune série n'existe après 2024. Les
+  revenus N−1 et N−2 restent ceux de N (D-011).
+
+**Les marges neuves du calage**, dépensées : revenus non salariés hors gérants, 73,76 Md€
+(Insee Première n° 2114) ; salaires imposables des gérants, 30,72 Md€ (2042, cases 1GB à
+1JB) ; salaires imposables déclarés des salariés, 829,33 Md€ (2042, moins la ligne DINR
+de l'IRCOM 2025) ; locataires, 12,58 M (recensement 2023). Les lignes « salaires
+déclarés » de D-363 ne changent pas d'usage : leur total compte aussi le chômage, les
+heures supplémentaires et les gérants, et la grille dira si elles tiennent.
+
+**Les 42 lignes neuves** de `docs/verification/lignes.json`, marquées `"preenregistre":
+"D-366"`, relevées dans les fichiers bruts par un relevé indépendant
+(`docs/verification/lignes_d366_projet.json`) : 33 notées, 6 en contexte (deux lignes sur
+trois ans), 3 refusées. Les cotisations des employeurs au sens D121, les impôts sur les salaires que le
+moteur calcule, l'IR net, la CSG d'activité avec les non-salariés, les revenus
+professionnels déclarés hors gérants, le RSA et la prime servis en montant et en foyers,
+le niveau de vie médian et le D9/D1 servis, les foyers résidents hors Mayotte ; D291 total
+et la pension de l'État contre D122, en contexte. Les 93 lignes de D-363 sont intactes.
+Quarante-cinq lignes du relevé attendent une mesure que la passe n'a pas encore (foyers
+par situation et par tranche de RFR, chômage déclaré, abattement DOM, aides en zone 1) :
+elles ne sont pas notées ici.
+
+**Le pronostic**, dans `docs/verification/pronostic_d366.json`. Il n'est pas aveugle : la
+grille entière a tourné sur un échantillon de 20 000 ménages (graine 20240101) avec ce
+code, et le pronostic est l'écart de l'échantillon, élargi de 3 points (5 pour la tranche
+à 30 %, 10 pour 41 %, 25 pour 45 %, 4 pour l'IR, 0,5 pour les entreprises, dont la couche
+tourne entière). Il est tenu si l'écart de la population entière tombe dans la fourchette.
+Il annonce 52 des 80 lignes de D-363 dans leur tolérance (58 au but 18) et 76 des 113
+lignes notées. Gagnées : les foyers fiscaux, la tranche à 11 %, le RSA. Perdues : les
+tranches à 30, 41 et 45 %, les foyers imposés de 2022, les aides au logement (qui ne
+tenaient que par des loyers comptés deux fois), le bandeau famille. Le modèle est plus
+juste et la grille le dit moins bien : des erreurs qui se compensaient ont été retirées
+une à une, et ce qui reste faux se voit. « h » : hors de la tolérance attendu.
+
+| ligne | tol. | 2022 | 2023 | 2024 |
+|---|---|---|---|---|
+| `cotisations_salariales` | 10 | −12 à −6 | −13 à −7 h | −15 à −9 h |
+| `cotisations_employeurs` | 15 | +27 à +33 h | +26 à +32 h | +24 à +30 h |
+| `reduction_generale` | 15 | −4 à +2 | −7 à −1 | −5 à +1 |
+| `bandeau_maladie` | 15 | +9 à +15 | +7 à +13 | +6 à +12 |
+| `bandeau_famille` | 15 | +17 à +23 h | +15 à +21 h | +14 à +20 h |
+| `csg_activite` | 15 | −10 à −4 | −10 à −4 | −10 à −4 |
+| `csg_remplacement` | 10 | −7 à −1 | −5 à +1 | −10 à −4 |
+| `foyers_fiscaux` | 10 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `foyers_imposes` | 10 | +8 à +14 h | +5 à +11 | +0 à +6 |
+| `foyers_tmi_0` | 15 | −11 à −5 | −11 à −5 | −10 à −4 |
+| `foyers_tmi_1` | 15 | −13 à −7 | −14 à −8 | −16 à −10 |
+| `foyers_tmi_2` | 15 | +12 à +22 h | +11 à +21 h | +5 à +15 |
+| `foyers_tmi_3` | 30 | +26 à +46 h | +30 à +50 h | +29 à +49 h |
+| `foyers_tmi_4` | 30 | +19 à +69 h | +33 à +83 h | +34 à +84 h |
+| `salaires_declares` | 10 | −3 à +3 | −5 à +1 | −5 à +1 |
+| `niveau_de_vie_median` | 15 | −6 à −0 | −7 à −1 | −9 à −3 |
+| `d9_d1` | 15 | −3 à +3 | −6 à +0 | −6 à −0 |
+| `rsa_montant` | 14 | −7 à −1 | −6 à +0 | −3 à +3 |
+| `ppa_montant` | 13 | −27 à −21 h | −29 à −23 h | −26 à −20 h |
+| `aide_logement_montant` | 25 | −34 à −28 h | −33 à −27 h | −32 à −26 h |
+| `af_montant` | 25 | −20 à −14 | −20 à −14 | −19 à −13 |
+| `ppa_foyers` | 25 | +22 à +28 h | +17 à +23 | +20 à +26 |
+| `is` | 20 | −20 à −19 | −1 à −0 | +1 à +2 |
+| `contribution_sociale_is` | 25 | −21 à −20 | +33 à +34 h | +20 à +21 |
+| `c3s` | 25 | +11 à +12 | +6 à +7 | +1 à +2 |
+| `ir_bareme` | 10 | — | +8 à +16 h | +3 à +11 |
+| `rsa_foyers` | 25 | — | +35 à +41 h | +37 à +43 h |
+| `cvae` | 25 | — | — | −16 à −15 |
+| `cotisations_employeurs_d121` | 15 | −2 à +4 | −3 à +3 | −4 à +2 |
+| `csg_activite_avec_non_salaries` | 15 | −5 à +1 | −5 à +1 | −5 à +1 |
+| `d9_d1_servi` | 15 | +2 à +8 | −1 à +5 | −1 à +5 |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | — | — | −9 à −3 |
+| `impots_salaires_calcules` | 20 | −8 à −2 | −8 à −2 | −8 à −2 |
+| `ir_net` | 15 | +16 à +24 h | +18 à +26 h | +14 à +22 h |
+| `niveau_de_vie_median_servi` | 15 | −7 à −1 | −8 à −2 | −9 à −3 |
+| `ppa_foyers_servis` | 25 | −40 à −34 h | −43 à −37 h | −42 à −36 h |
+| `ppa_montant_servi` | 13 | −35 à −29 h | −37 à −31 h | −34 à −28 h |
+| `revenus_non_salaries_hors_gerants` | 15 | −1 à +5 | +2 à +8 | −7 à −1 |
+| `rsa_foyers_servis` | 25 | — | −13 à −7 | −12 à −6 |
+| `rsa_montant_servi` | 14 | −14 à −8 | −13 à −7 | −10 à −4 |
+
+**Ce qui reste faux, et vient ensuite** : le haut des revenus (foyers à 41 et 45 %),
+la prime d'activité (montant et foyers servis), les aides au logement, le bandeau
+famille. Chacun sera préenregistré à son tour. La série des dix études ne tourne pas
+avant.
+
+## D-367 — La grille sur la population jointe : 78 lignes tenues sur 113, pronostic 107
+
+**Ce qui a tourné.** Les trois passes de D-366, au commit da95021, sur la population de
+2024 reconstruite avec les étapes jointes (quatre lots, tier complet, sans imputation, plus
+la passe imputée de l'IR net). La passe de 2023 a été tuée une fois faute de mémoire : deux
+agents faisaient des essais sur échantillon en même temps ; elle a été relancée seule, sur
+le même commit, sans rien changer. La grille et la loi d'erreur sont dans
+`docs/verification/GRILLE.md` et `reports/verification/grille.json`.
+
+**Le compte.** 113 lignes notées : 78 tiennent leur tolérance. Les 80 lignes de D-363 : 54
+(58 au but 18, 52 annoncées par D-366). Les 33 lignes neuves de D-366 : 24.
+
+**Le pronostic** tient sur 107 lignes sur 113. Les six ratés sont les lignes du RSA, les
+deux mesures et les trois années, toutes du même côté : la population entière sert 2 à 3
+points de RSA de plus que l'échantillon de 20 000 ménages (+3,1 % en 2024 pour une borne à
++3 ; −4,2 % servi pour une borne à −4). Une prestation concentrée sur peu de foyers varie
+plus d'un échantillon à l'autre que la marge de 3 points ne le supposait : la marge d'un
+pronostic tiré d'un échantillon sera de 5 points pour les minima sociaux.
+
+**Ce que la jonction a corrigé, mesuré sur la population entière.**
+
+* Les cotisations des employeurs au sens de l'Insee (D121) : +0,4 % en moyenne, de −1,1 à
+  +1,6 % ; l'ancienne mesure reste à +29 %, et c'était un classement (D-364).
+* Le RSA : +1,0 % au pont, −6,2 % servi en espérance, ses foyers servis à −7 % ; avant, le
+  droit était à +61 % et les foyers à +98 %. Les indépendants avaient un revenu nul.
+* Les foyers fiscaux : −6 % (−14 % avant) ; la tranche à 11 % : −12 % (−22 %).
+* La CSG d'activité avec celle des non-salariés : −1,6 % ; la réduction générale : −2,3 %.
+* Les revenus professionnels déclarés des non-salariés hors gérants : +2,4 %.
+
+**Ce qui reste faux**, et que la jonction a rendu visible en retirant des compensations :
+
+* **Le haut des revenus** : foyers à 41 % à +40 %, à 45 % à +52 %, à 30 % à +13 % ; l'IR
+  au barème à +11 % ; l'IR net à +21 % (les réductions non imputées en font une part).
+* **La prime d'activité** : −31 % servie, ses foyers servis à −38 %.
+* **Les aides au logement** : −29 %, ce qui reste quand les loyers ne sont plus comptés
+  deux fois ; le hors-champ (foyers, résidences, accédants) en explique une part.
+* **Le bandeau famille** : +17 % ; **les cotisations salariales** : −10 %.
+* **Les allocations familiales** : −16 %, dans la tolérance.
+
+La loi d'erreur reste un biais de structure : l'étendue sur trois ans de presque chaque
+ligne est de quelques points. Deux étapes en cours le prennent par le haut des revenus et
+par la prime (emploi discontinu dans l'année) ; chacune sera préenregistrée.
+
+**Les pages d'étude** disent la ligne de vérification de leurs instruments depuis la
+grille réécrite, et, quand une ligne neuve mesure mieux l'instrument, celle-ci : D121 pour
+les cotisations des employeurs, la CSG avec les non-salariés, le RSA et la prime servis.
+Aucun nombre d'étude ne change.
+
+## D-368 — Le haut des salaires, l'emploi discontinu, l'extrapolation : préenregistrés
+
+**Ce qui est joint**, sur `claude/but19` (cd0af4d), après la grille de D-367 et avant toute
+passe de celle-ci sur la population entière. Les rapports sont
+`docs/diagnostics/etape_haut.md`, `etape_ppa.md` et `etape_extrapolation.md`.
+
+* **Les salaires lus sur les quantiles publiés.** La queue de Pareto était greffée sur
+  6,5 % des salariés au lieu de 5 %, la fonction publique avait la forme du privé, et le
+  salaire ne suivait pas l'âge. Toute la distribution des salaires est maintenant lue sur
+  les centiles 5 à 99 de l'Insee Première n° 2079 (privé) et les déciles du Siasp 2024
+  (fonction publique), le rang de chacun venant toujours de l'enquête, avec le gradient
+  d'âge et de sexe de l'ECRT 2026.
+* **La masse des salariés ramenée au champ de l'enquête.** L'enquête Emploi compte 25,29 M
+  de salariés, les comptes nationaux 27,18 M : caler la masse D11 sur les premiers donnait
+  à chacun 6 % de trop. La masse est D11 hors gérants fois 0,9305 (999,9 Md€). La part
+  exonérée qui calait les salaires déclarés tombe de 6,85 % à 0.
+* **L'extrapolation, décidée par le propriétaire le 10 novembre.** Chaque salaire garde sa
+  valeur publiée ; dans les totaux et dans les écarts de réforme, les montants assis sur un
+  salaire (cotisations, CSG et CRDS des salaires, allègements, masses de salaire, mesures de
+  D121) comptent 27,18 / 25,29 = 1,0747 fois, en supposant les salariés absents de
+  l'enquête semblables aux présents (`margins.EXTRAPOLATION_SALARIES`). L'IR, les
+  prestations, les retraites et les niveaux de vie ne sont pas portés. Une marge de calage
+  sur l'effectif salarié a été essayée et écartée : elle retirait 12 % des chômeurs et des
+  non-salariés. Les coûts des réformes sur les salaires montent d'autant : Attal et
+  Retailleau d'environ 9 %, Mélenchon de 7 %, la part CSG de Lisnard de 9 %.
+* **L'emploi discontinu.** Un salarié entré depuis moins d'un an n'est payé que sur ses
+  mois travaillés, une personne sortie depuis moins d'un an sur ses mois d'avant, puis au
+  chômage (ancienneté et temps sans emploi de l'enquête). La masse annuelle ne change pas.
+* **Le non-recours recalé** sur la population reconstruite : p_max 0,6890 (RSA), 0,5327
+  (prime). **La CSG des non-salariés** entre dans les recettes de l'identité comptable et
+  dans la boucle macro avec la CSG.
+
+**Les marges et les lignes.** Les marges de D-366 restent, sauf la masse des salariés, et la
+part exonérée qui tombe à 0. Aucune ligne neuve : les 113 lignes notées de D-363 et D-366 ne
+changent ni de total ni de tolérance. Les lignes de cotisations, de CSG et d'allègements
+lisent désormais des totaux portés par l'extrapolation.
+
+**Le pronostic**, dans `docs/verification/pronostic_d368.json`, tiré comme celui de D-366
+d'une grille passée sur 20 000 ménages avec ce code, donc pas aveugle. Les marges : 5 points
+pour les minima sociaux, les aides au logement et les allocations familiales (D-367 a vu le
+RSA de l'échantillon s'écarter de 3 points), 5, 10 et 25 pour les tranches à 30, 41 et
+45 %, 4 pour l'IR, 0,5 pour les entreprises, 3 ailleurs. Il annonce 79 lignes sur 113 dans
+leur tolérance (78 à D-367), dont 52 des 80 de D-363. Gagnées : les tranches à 41 et 45 %
+et l'IR au barème de 2023. Perdues : les
+allègements (réduction générale de 2022, bandeau maladie), la tranche à 30 % et les foyers
+imposés, qui montent avec les salaires du milieu. « h » : hors de la tolérance attendu.
+
+| ligne | tol. | 2022 | 2023 | 2024 |
+|---|---|---|---|---|
+| `cotisations_salariales` | 10 | −12 à −6 | −13 à −7 | −14 à −8 h |
+| `cotisations_employeurs` | 15 | +22 à +28 h | +21 à +27 h | +19 à +25 h |
+| `reduction_generale` | 15 | +13 à +19 h | +10 à +16 | +12 à +18 |
+| `bandeau_maladie` | 15 | +22 à +28 h | +21 à +27 h | +20 à +26 h |
+| `bandeau_famille` | 15 | +27 à +33 h | +25 à +31 h | +24 à +30 h |
+| `csg_activite` | 15 | −10 à −4 | −10 à −4 | −10 à −4 |
+| `csg_remplacement` | 10 | −5 à +1 | −3 à +3 | −8 à −2 |
+| `foyers_fiscaux` | 10 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `foyers_imposes` | 10 | +13 à +19 h | +10 à +16 h | +5 à +11 |
+| `foyers_tmi_0` | 15 | −15 à −9 | −15 à −9 | −14 à −8 |
+| `foyers_tmi_1` | 15 | −12 à −6 | −14 à −8 | −15 à −9 |
+| `foyers_tmi_2` | 15 | +20 à +30 h | +20 à +30 h | +13 à +23 h |
+| `foyers_tmi_3` | 30 | −26 à −6 | −23 à −3 | −25 à −5 |
+| `foyers_tmi_4` | 30 | −20 à +30 | −10 à +40 | −9 à +41 |
+| `salaires_declares` | 10 | −10 à −4 | −12 à −6 | −12 à −6 |
+| `niveau_de_vie_median` | 15 | −7 à −1 | −9 à −3 | −10 à −4 |
+| `d9_d1` | 15 | −12 à −6 | −14 à −8 | −14 à −8 |
+| `rsa_montant` | 14 | −0 à +10 | +2 à +12 | +4 à +14 |
+| `ppa_montant` | 13 | −28 à −18 h | −30 à −20 h | −26 à −16 h |
+| `aide_logement_montant` | 25 | −34 à −24 h | −34 à −24 h | −32 à −22 h |
+| `af_montant` | 25 | −21 à −11 | −20 à −10 | −19 à −9 |
+| `ppa_foyers` | 25 | +30 à +40 h | +24 à +34 h | +27 à +37 h |
+| `is` | 20 | −20 à −19 | −1 à −0 | +1 à +2 |
+| `contribution_sociale_is` | 25 | −21 à −20 | +33 à +34 h | +20 à +21 |
+| `c3s` | 25 | +11 à +12 | +6 à +7 | +1 à +2 |
+| `ir_bareme` | 10 | — | −0 à +8 | −4 à +4 |
+| `rsa_foyers` | 25 | — | +44 à +54 h | +45 à +55 h |
+| `cvae` | 25 | — | — | −16 à −15 |
+| `cotisations_employeurs_d121` | 15 | −4 à +2 | −5 à +1 | −7 à −1 |
+| `csg_activite_avec_non_salaries` | 15 | −5 à +1 | −5 à +1 | −5 à +1 |
+| `d9_d1_servi` | 15 | −7 à −1 | −9 à −3 | −10 à −4 |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | — | — | −9 à −3 |
+| `impots_salaires_calcules` | 20 | −7 à −1 | −7 à −1 | −7 à −1 |
+| `ir_net` | 15 | +6 à +14 | +9 à +17 | +5 à +13 |
+| `niveau_de_vie_median_servi` | 15 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `ppa_foyers_servis` | 25 | −37 à −27 h | −41 à −31 h | −39 à −29 h |
+| `ppa_montant_servi` | 13 | −35 à −25 h | −37 à −27 h | −34 à −24 h |
+| `revenus_non_salaries_hors_gerants` | 15 | −1 à +5 | +2 à +8 | −7 à −1 |
+| `rsa_foyers_servis` | 25 | — | −8 à +2 | −8 à +2 |
+| `rsa_montant_servi` | 14 | −9 à +1 | −7 à +3 | −5 à +5 |
+
+**Ce que le pronostic désigne ensuite** : les allègements (réduction générale +13 à +16 %,
+bandeaux +23 à +30 %), qui lisent le bas de la distribution et l'extrapolation ; la tranche
+à 30 % (+18 à +25 %) ; la prime d'activité (−29 à −32 % servie) ; les aides au logement.
+
+## D-369 — La grille de D-368 : 79 lignes tenues sur 113, pronostic tenu sur 113
+
+**Ce qui a tourné.** Les trois passes de D-368, au commit 114f885, l'une après l'autre,
+seules sur la machine (38 minutes). La grille et la loi d'erreur sont réécrites.
+
+**Le compte.** 79 lignes notées sur 113 tiennent leur tolérance (78 à D-367), dont 52 des
+80 de D-363 (54 à D-367, 58 au but 18). Le pronostic tient sur les 113 lignes : la marge
+de 5 points des minima sociaux, élargie après D-367, a suffi.
+
+**Ce que D-368 a corrigé**, sur la population entière :
+
+* **Le haut des revenus.** Foyers à 41 % de +40 à −5 %, à 45 % de +52 à +11 % ; l'IR au
+  barème de +11 à +3 % ; l'IR net de +21 à +12 %. Le défaut était dans le tirage des
+  salaires, pas dans l'impôt.
+* **La masse salariale.** Les cotisations des employeurs au sens D121 tiennent à −2 %, avec
+  l'extrapolation aux salariés absents de l'enquête ; le RSA servi à +1 %.
+
+**Ce qu'il a déplacé**, et qui vient ensuite :
+
+* **Les allègements**, trop hauts : réduction générale +14 %, bandeau maladie +22 %,
+  bandeau famille +27 %. Ils lisent le bas de la distribution des salaires ; hypothèse,
+  non mesurée : les quantiles publiés et l'extrapolation y ont mis trop de masse sous 1,6
+  et 3,5 SMIC.
+* **Le milieu des revenus** : la tranche à 30 % à +21 %, les foyers imposés à +11 %.
+* **Les salaires déclarés** à −8 %, dans la tolérance : l'assiette de l'IR n'est pas
+  portée par l'extrapolation, quand le total publié compte les salariés absents.
+* **Le niveau de vie** médian à −6 %, le D9/D1 à −9 %, dans la tolérance.
+* **Restent** : la prime d'activité (−29 % servie), les aides au logement (−28 %), les
+  allocations familiales (−15 %, dans la tolérance).
+
+**Les pages d'étude** disent leur ligne de vérification depuis cette grille ; aucun nombre
+d'étude ne change.
+
+## D-370 — Le dernier tour du but 19 préenregistré : allègements, milieu, prime
+
+**Ce qui est joint**, sur `claude/but19` (7cef942), après la grille de D-369 et avant toute
+passe de celle-ci. Les rapports : `docs/diagnostics/etape_alleg.md`, `etape_milieu.md`,
+`etape_ppa2.md`.
+
+* **Les règles des allègements.** Le temps partiel est câblé (un mi-temps payé deux SMIC de
+  l'heure était lu au SMIC et touchait la réduction générale) ; les gérants majoritaires et
+  les salariés des particuliers employeurs n'ont plus d'allègements (CSS L. 241-13) ; un
+  sortant garde la quotité de son emploi. Correction 26 du moteur. Le SMIC de référence
+  est lu mois par mois, sur les mois travaillés.
+* **L'assiette de l'IR sur le champ de l'enquête.** La part exonérée des salaires visait
+  les salaires déclarés de la France entière quand la masse était ramenée au champ de
+  l'enquête (D-368) : chaque salarié déclarait 7 à 8 % de trop. Elle vise maintenant les
+  salaires déclarés fois le champ, et revient à 6,85 %. Le rang des salaires se tire en
+  équivalent temps plein, comme les quantiles publiés.
+* **Les jeunes et la prime d'activité.** Un jeune de 18 à 24 ans payé au-delà de 55 % de
+  169 heures de SMIC est son propre foyer pour la prime, comme la Drees le compte ; avant,
+  son salaire allait à la base de ses parents. Le n° 1379 de la Drees est lu : ses tranches
+  sont par unité de consommation, et τ = 21 € tient sur ses six tranches. La prime est calée
+  sur les recourants de la Drees, qui retrouve 73 à 83 % des foyers que la Cnaf paie : la
+  ligne de la prime, jugée contre la Cnaf, reste au-dessous ; c'est un choix de cible.
+* **La CSG déductible des indépendants** est rendue au revenu disponible de la réforme : le
+  revenu déclaré en est net, et une baisse de son taux faisait tomber la recette sans
+  monter leur revenu (l'identité comptable refusait la CSG de Lisnard, 1,27 Md€ sur
+  l'échantillon). L'IR qu'un revenu déclaré plus haut porterait n'est pas calculé.
+* **Le non-recours recalé** : p_max 0,6892 (RSA), 0,5322 (prime).
+
+**Les marges et les lignes** ne changent pas : la part exonérée vise le champ de
+l'enquête, comme la masse de D-368. Aucune ligne neuve, aucune tolérance changée.
+
+**Le pronostic**, dans `docs/verification/pronostic_d370.json`, tiré comme les précédents
+d'une grille sur 20 000 ménages avec ce code (pas aveugle), aux marges de D-368. Il annonce
+81 lignes sur 113 dans leur tolérance (79 à D-369), dont 54 des 80 de D-363. Gagnées : la
+tranche à 30 % les trois années, le bandeau maladie de 2023 et 2024, les foyers imposés de
+2023. Perdues : la réduction générale de 2023 et 2024, passée de +14 % à −17 % (la règle est
+juste ; il manque des salaires horaires sous 1,6 SMIC), l'IR au barème de 2024 (−11 %),
+qui n'est pas porté par l'extrapolation quand ses salaires déclarés le sont à la France
+entière, et les cotisations salariales de 2023. « h » : hors de la tolérance attendu.
+
+| ligne | tol. | 2022 | 2023 | 2024 |
+|---|---|---|---|---|
+| `cotisations_salariales` | 10 | −12 à −6 | −13 à −7 h | −14 à −8 h |
+| `cotisations_employeurs` | 15 | +27 à +33 h | +26 à +32 h | +24 à +30 h |
+| `reduction_generale` | 15 | −20 à −14 h | −21 à −15 h | −20 à −14 h |
+| `bandeau_maladie` | 15 | +13 à +19 h | +12 à +18 | +11 à +17 |
+| `bandeau_famille` | 15 | +20 à +26 h | +17 à +23 h | +17 à +23 h |
+| `csg_activite` | 15 | −10 à −4 | −10 à −4 | −10 à −4 |
+| `csg_remplacement` | 10 | −5 à +1 | −3 à +3 | −8 à −2 |
+| `foyers_fiscaux` | 10 | −8 à −2 | −9 à −3 | −10 à −4 |
+| `foyers_imposes` | 10 | +8 à +14 h | +5 à +11 | +0 à +6 |
+| `foyers_tmi_0` | 15 | −11 à −5 | −12 à −6 | −10 à −4 |
+| `foyers_tmi_1` | 15 | −10 à −4 | −12 à −6 | −13 à −7 |
+| `foyers_tmi_2` | 15 | +7 à +17 | +6 à +16 | +0 à +10 |
+| `foyers_tmi_3` | 30 | −36 à −16 | −33 à −13 | −35 à −15 |
+| `foyers_tmi_4` | 30 | −30 à +20 | −21 à +29 | −19 à +31 |
+| `salaires_declares` | 10 | −10 à −4 | −12 à −6 | −12 à −6 |
+| `niveau_de_vie_median` | 15 | −7 à −1 | −8 à −2 | −9 à −3 |
+| `d9_d1` | 15 | −11 à −5 | −13 à −7 | −13 à −7 |
+| `rsa_montant` | 14 | −0 à +10 | +2 à +12 | +4 à +14 |
+| `ppa_montant` | 13 | −24 à −14 h | −26 à −16 h | −22 à −12 h |
+| `aide_logement_montant` | 25 | −34 à −24 h | −34 à −24 h | −32 à −22 h |
+| `af_montant` | 25 | −23 à −13 | −22 à −12 | −21 à −11 |
+| `ppa_foyers` | 25 | +42 à +52 h | +34 à +44 h | +38 à +48 h |
+| `is` | 20 | −20 à −19 | −1 à −0 | +1 à +2 |
+| `contribution_sociale_is` | 25 | −21 à −20 | +33 à +34 h | +20 à +21 |
+| `c3s` | 25 | +11 à +12 | +6 à +7 | +1 à +2 |
+| `ir_bareme` | 10 | — | −11 à −3 | −15 à −7 h |
+| `rsa_foyers` | 25 | — | +44 à +54 h | +45 à +55 h |
+| `cvae` | 25 | — | — | −16 à −15 |
+| `cotisations_employeurs_d121` | 15 | +1 à +7 | −0 à +6 | −2 à +4 |
+| `csg_activite_avec_non_salaries` | 15 | −5 à +1 | −5 à +1 | −5 à +1 |
+| `d9_d1_servi` | 15 | −6 à −0 | −8 à −2 | −9 à −3 |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | — | — | −9 à −3 |
+| `impots_salaires_calcules` | 20 | −7 à −1 | −7 à −1 | −7 à −1 |
+| `ir_net` | 15 | −5 à +3 | −3 à +5 | −6 à +2 |
+| `niveau_de_vie_median_servi` | 15 | −7 à −1 | −9 à −3 | −10 à −4 |
+| `ppa_foyers_servis` | 25 | −32 à −22 h | −36 à −26 h | −33 à −23 h |
+| `ppa_montant_servi` | 13 | −31 à −21 h | −33 à −23 h | −30 à −20 h |
+| `revenus_non_salaries_hors_gerants` | 15 | −1 à +5 | +2 à +8 | −7 à −1 |
+| `rsa_foyers_servis` | 25 | — | −8 à +2 | −8 à +2 |
+| `rsa_montant_servi` | 14 | −9 à +1 | −7 à +3 | −5 à +5 |
+
+## D-371 — La grille du dernier tour : 84 lignes tenues sur 113, pronostic tenu sur 113
+
+**Ce qui a tourné.** Les trois passes de D-370, au commit db13e03, l'une après l'autre,
+seules sur la machine (37 minutes). La grille, la loi d'erreur et les pages d'étude sont
+réécrites ; aucun nombre d'étude ne change.
+
+**Le compte.** 84 lignes notées sur 113 tiennent leur tolérance (79 à D-369, 78 à D-367).
+Les 80 lignes de D-363 : 57, une de moins qu'au but 18 (58), quand le modèle ne tient plus
+aucune d'elles par une erreur qui en compense une autre. Le pronostic tient sur les 113.
+
+**Le chemin du but 19, sur la population entière** (écart moyen de 2022 à 2024) :
+
+| ligne | but 18 | D-371 |
+|---|---:|---:|
+| cotisations des employeurs, au sens D121 | (+31, autre mesure) | +3,1 % |
+| RSA, montant servi en espérance | (+61, au pont) | +1,2 % |
+| IR net (barème, hors barème, CEHR, moins RICI) | — | +0,4 % |
+| foyers fiscaux | −14,2 % | −6 % |
+| foyers au taux de 11 % | −21,9 % | −11 % |
+| foyers au taux de 30 % | +9,4 % | +8,5 % |
+| foyers au taux de 41 % | +17,4 % | −16,4 % |
+| foyers imposés | −0,5 % | +6,2 % |
+
+**Ce qui reste hors de sa tolérance**, et pourquoi, chacun mesuré :
+
+* **La réduction générale** (−17 %) et **le bandeau famille** (+19 %) : la règle est juste
+  (D-370) ; il manque des salaires horaires sous 1,6 SMIC et il y en a trop entre 1,6 et
+  3,5. C'est la forme du bas des salaires horaires, que les quantiles publiés en EQTP ne
+  donnent pas.
+* **La prime d'activité** (−25 % servie) : calée sur les recourants de la Drees, que la
+  Cnaf dépasse de 17 à 27 % ; un choix de cible, dit.
+* **Les aides au logement** (−28 %) : le hors-champ (foyers, résidences, accédants) et les
+  hébergés, mesurés à l'étape « al ».
+* **Les cotisations salariales** (−10 %, au bord), **l'IR au barème** (−8 %, dans la
+  tolérance), **le niveau de vie** et le D9/D1 (dans la tolérance) ; les entreprises
+  inchangées (D-364).
+
+**La loi d'erreur** reste un biais de structure, stable d'une année à l'autre : la
+population de 2024 ramenée aux autres années garde sa forme. Le modèle est prêt pour la série des dix
+études : chaque écart qui reste a sa cause dite, et chaque page dira sa ligne.
+
+## D-372 — La série du but 19 préenregistrée : dix études sur le modèle de D-370
+
+**Ce qui tourne.** Les dix études (`etudes/*.json`), une fois, sur le commit qui porte
+cette entrée, dans le cadre central, avec la population de 2024 reconstruite sur le code de
+D-370 (celle de la grille de D-371) et le millésime d'entreprises 2023, dont l'année de
+base est 2024 (D-366). Rien d'autre ne tourne sur la machine pendant la série.
+
+**L'ordre, étude par étude** (D-350). La série d'avant est celle de `12e769c` (but 16),
+figée dans `avant/serie.json` par `impots etude avant` ; l'ancien gel, de `7235bd8`, est
+remplacé. Les rapports de `12e769c` sont retirés ; `impots etude lancer <nom>` les refait.
+Chaque page dit, ligne par ligne, avant → après.
+
+**Le coût de la première année est mesuré, pas pronostiqué.** Il passe par l'échantillon
+de 20 000 ménages de l'API, celui que la série reprend : calculé avant cette entrée sur ce
+code, il sera retrouvé à l'euro, et le dire pronostic serait se noter soi-même. La série le
+vérifie : un écart au-delà de 0,1 % dirait que la série n'a pas tourné sur ce code.
+
+**Le pronostic** porte sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance « lue ») et le verdict du
+Monte-Carlo (seuils de D-345). Δb est celui d'avant, mis à l'échelle du coût mesuré, ±15 %
+(±20 % pour la prime et les APL, que le non-recours change dans leur forme) : la boucle et
+les comportements suivent le coût au premier ordre, et le mélange des instruments bouge peu.
+Le verdict est celui d'avant, sauf où P(hausse) était à moins de 0,05 d'un seuil.
+
+| ligne | avant : coût ; Δb ; P | coût, mesuré | Δb, pronostic | verdict |
+|---|---|---|---|---|
+| PLF art. 2 | +2,85 ; +0,39 ; 0,80 | +2,62 | +0,31 à +0,41 | dépend |
+| PLF art. 3 | −1,12 ; −0,17 ; 0,18 | −1,10 | −0,19 à −0,14 | dépend |
+| PLF art. 15 | −7,05 ; −0,23 ; 0,00 | −7,05 | −0,26 à −0,19 | baisse |
+| PLFSS, prime | −0,87 ; −0,26 ; 0,00 | −0,56 | −0,20 à −0,14 | baisse |
+| PLFSS, APL | −0,08 ; −0,07 ; 0,00 | −0,07 | −0,08 à −0,05 | baisse |
+| Attal | +59,53 ; +3,41 ; 0,63 | +65,69 | +3,20 à +4,33 | dépend |
+| Labib | +22,89 ; +4,47 ; 1,00 | +22,92 | +3,80 à +5,14 | hausse |
+| Le Pen | +13,97 ; +1,56 ; 0,75 | +13,38 | +1,27 à +1,72 | dépend |
+| Lisnard | +35,43 ; +5,56 ; 0,88 | +36,19 | +4,83 à +6,53 | dépend ou hausse |
+| Mélenchon | −6,61 ; −0,33 ; 0,43 | −6,33 | −0,37 à −0,27 | dépend |
+| Retailleau | +16,08 ; +2,19 ; 1,00 | +17,11 | +1,98 à +2,68 | hausse |
+| Roussel | +5,19 ; +0,52 ; 0,73 | +5,20 | +0,44 à +0,60 | dépend |
+| Tondelier | −0,85 ; +0,27 ; 0,93 | −0,92 | +0,25 à +0,34 | hausse ou dépend |
+
+**Les raisons.** Attal +10 % : l'extrapolation aux salariés absents (+9 %, D-368), moins
+les allègements que les gérants et les particuliers employeurs n'ont plus (D-370).
+Retailleau +6 %, Mélenchon −4 % : les mêmes, avec la règle des allègements qui pèse sur
+la réduction générale de Mélenchon. Le Pen −4 % et PLF art. 2 −8 % : l'impôt au barème est
+passé de +6 % à −8 % de son total publié (D-371), et ces mesures portent sur lui. La prime
+du PLFSS −36 % : le non-recours (D-366). Lisnard +2 % : la CSG portée par l'extrapolation.
+Labib, Roussel, PLF art. 3 et 15 : moins de 2 %.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/` : le chiffre noté contre un juge reste celui de son
+enregistrement. Les seuils du verdict sont ceux de D-345. Le résultat va dans une nouvelle
+D-entrée, avec les dix études avant et après et l'écart au pronostic.
+
+## D-373 — La série du but 19 : ce qu'elle redonne contre D-372
+
+**Ce qui a tourné.** Les dix études de D-372, sur `601b442`, `src/` propre, la
+population de 2024 de D-370 et le millésime d'entreprises 2023. Une première exécution a
+été tuée avec la commande qui l'avait lancée, après les trois premières années du PLF ;
+la série a repris sur le même commit, en gardant ces trois rapports : de 10 h 01 à
+19 h 20 UTC, sans autre échec. Les rapports sont dans `653f5e0`, les pages et le site sont
+réécrits depuis eux ; `etude verifier` et `site verifier` sont verts.
+
+**La première année** est retrouvée à l'euro pour les treize lignes (écart nul, sous le
+seuil de 0,1 %) : la série a tourné sur le code de D-372.
+
+**Le résultat**, avant (`12e769c`) → après, sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance
+« lue »), avec la première année en Md€ et P(hausse) du Monte-Carlo.
+
+| étude | coût, avant → après | Δb, avant → après | pronostic Δb | P | verdict | tenu |
+|---|---|---|---|---|---|---|
+| PLF art. 2 | +2,85 → +2,62 | +0,39 → +0,373 | +0,31 à +0,41 | 0,80 | dépend | oui |
+| PLF art. 3 | −1,12 → −1,10 | −0,17 → −0,170 | −0,19 à −0,14 | 0,18 | dépend | oui |
+| PLF art. 15 | −7,05 → −7,05 | −0,23 → −0,220 | −0,26 à −0,19 | 0,00 | baisse | oui |
+| PLFSS, prime | −0,87 → −0,56 | −0,26 → −0,162 | −0,20 à −0,14 | 0,00 | baisse | oui |
+| PLFSS, APL | −0,08 → −0,07 | −0,07 → −0,067 | −0,08 à −0,05 | 0,00 | baisse | oui |
+| Attal | +59,53 → +65,69 | +3,41 → +4,206 | +3,20 à +4,33 | 0,65 | dépend | oui |
+| Labib | +22,89 → +22,92 | +4,47 → +4,474 | +3,80 à +5,14 | 1,00 | hausse | oui |
+| Le Pen | +13,97 → +13,38 | +1,56 → +1,487 | +1,27 à +1,72 | 0,75 | dépend | oui |
+| Lisnard | +35,43 → +36,19 | +5,56 → +5,699 | +4,83 à +6,53 | 0,89 | dépend | oui |
+| Mélenchon | −6,61 → −6,33 | −0,33 → −0,349 | −0,37 à −0,27 | 0,42 | dépend | oui |
+| Retailleau | +16,08 → +17,11 | +2,19 → +2,276 | +1,98 à +2,68 | 1,00 | hausse | oui |
+| Roussel | +5,19 → +5,20 | +0,52 → +0,523 | +0,44 à +0,60 | 0,73 | dépend | oui |
+| Tondelier | −0,85 → −0,92 | +0,27 → +0,013 | +0,25 à +0,34 | 0,55 | dépend | Δb non |
+
+Sur vingt-six pronostics (Δb et verdict, treize lignes), vingt-cinq tiennent. Les plus
+près d'un bord : Attal, +4,21 dans +3,20 à +4,33 ; la prime, −0,162 dans −0,20 à −0,14.
+Lisnard, à 0,89, reste « dépend », l'une des deux issues annoncées ; Tondelier aussi.
+
+**Tondelier sort de son pronostic, et la règle dit pourquoi.** Δb a été mis à l'échelle
+du coût de la première année ; c'est juste quand les comportements suivent ce coût. La
+mesure de Tondelier, une tranche à 60 % au-delà de 250 000 € par part, rapporte peu et
+fait réagir beaucoup : son Δb positif d'avant venait de la réponse des hauts revenus
+(élasticité du revenu imposable, C1), pas du coût. Or cette réponse porte sur la queue
+des revenus, que le but 19 a refaite (hauts salaires lus sur les centiles publiés, gérants
+comptés une fois, D-368 et D-370). La borne haute du canal C1 en 2035, vue vieillie, passe
+de −7,94 à −3,22 Md€, et le gain mécanique de −2,44 à −2,12 Md€ : le rapport des deux
+tombe de 3,3 à 1,5. Après comportements, la première année passe de +95 M€ (central) à
+−513 M€ ; la boucle macro remet +0,24 point, et Δb finit à +0,01. Le pronostic aurait dû
+suivre ce canal, pas le coût. Le résultat est gardé tel quel ; la page le dit.
+
+**Ce que la série dit d'Attal.** +10 % de coût (l'extrapolation aux salariés absents),
++0,80 point de Δb ; sans aucune boucle, la dette serait à +20,28 points (18,30 sur le code
+de D-366, au coût d'alors). Retailleau, Mélenchon et Le Pen bougent dans le sens et
+l'ordre de D-372 ; la prime du PLFSS perd 36 % de son coût par le non-recours, et son Δb
+suit.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Le pronostic manqué n'est pas réécrit.
+
+## D-374 — La réduction de loyer de solidarité, vue ; deux tests lourds remis au code
+
+**Ce que les lourds ont trouvé.** `make impact`, sur le commit de D-373, a vu échouer
+deux tests lourds. Les légers étaient verts après deux corrections de tests (une colonne
+absente des mini-populations, la dette d'Attal sans boucle lue à 20,28 sur les rapports
+de la série).
+
+**Le solveur budgétaire refusé par le garde des secteurs.** Le test du solveur (RSA à
+700 €, CSG pour le payer, 5 000 ménages) a buté près de sa racine : coût annoncé
+−15,6 M€ contre −17,4 M€ reconstitué, un écart de 1,79 M€ au-dessus du seuil de 3·10⁻⁴
+du mouvement brut. Mesuré ménage par ménage, l'écart vient de trois locataires HLM, et il
+est la réduction de loyer de solidarité à l'euro près (1 788 137 € contre 1 788 083 €).
+openfisca la compte dans `prestations_sociales`, donc dans le revenu disponible ; aucun
+instrument ne la portait. Elle pèse 1,27 Md€ sur la population de 2024 et se montre depuis
+que l'étape « al » tire les loyers HLM du RPLS. Elle a désormais sa ligne
+(`reduction_loyer_solidarite`, famille, mensuelle), un champ de la réponse de l'API, et
+entre dans les transferts du garde.
+
+**Aucun nombre ne bouge.** Le coût est la variation du revenu disponible, qui la
+contenait déjà ; le garde la reconstitue maintenant comme le coût la compte. Le canal
+macro n'en lit rien : un transfert n'a pas de variante Mésange (« non couvert »). La série
+de D-373 n'est pas relancée. Un biais est dit : la RLS est payée par le bailleur social,
+pas par l'État, et le coût la compte comme une dépense publique. Une réforme qui ouvre
+l'aide au logement à des locataires HLM est surestimée d'environ 2 % de ce qu'elle ouvre
+(l'aide baisse de 98 % de la RLS). Le corriger change des coûts : c'est un travail à part,
+préenregistré.
+
+**Le test du niveau de vie lisait l'ancien quantile.** Depuis l'étape 4, les lignes du
+niveau de vie médian et du D9/D1 lisent les quantiles au plein recours, le concept sur
+lequel elles ont été posées ; le test comparait aux quantiles servis. Il lit maintenant
+ce que la ligne lit. Les deux lourds passent.

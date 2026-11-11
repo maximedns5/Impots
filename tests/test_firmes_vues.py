@@ -44,20 +44,37 @@ def _gdp(years: list[int]) -> dict[int, float]:
 # --------------------------------------------------------------------------- #
 def test_the_aged_factor_is_nominal_gdp_over_the_vintages() -> None:
     """The accounts up to 2025, the scenario's nominal growth beyond, as the debt's
-    denominator grows: 2026 is 3 000 × 1,0302 over 2 800."""
-    assert firmes.aging_factor(2023, GROWTH, "2023", _gdp) == 1.0
-    assert firmes.aging_factor(2025, GROWTH, "2023", _gdp) == pytest.approx(3_000 / 2_800)
+    denominator grows: 2026 is 3 000 × 1,0302 over the GDP of the vintage's year."""
+    assert firmes.aging_factor(2024, GROWTH, "2024", _gdp) == 1.0
+    assert firmes.aging_factor(2025, GROWTH, "2024", _gdp) == pytest.approx(3_000 / 2_900)
+    assert firmes.aging_factor(2026, GROWTH, "2024", _gdp) == pytest.approx(
+        3_000 * 1.01 * 1.02 / 2_900)
+    assert firmes.aging_factor(2028, GROWTH, "2024", _gdp) == pytest.approx(
+        3_000 * (1.01 * 1.02) ** 3 / 2_900)
+
+
+def test_the_vintage_2023_is_aged_from_the_year_of_its_profits() -> None:
+    """But 19, étape 1. The vintage « 2023 » has the Ésane 2023's shape and the DGFiP's
+    profits of 2024 (`entreprises/margins.TAXABLE_PROFIT`): it is aged from 2024. Aged
+    from 2023, as until then, 2026 took 3 000 × 1,0302 / 2 800, the GDP of 2024 over
+    2023 once too many."""
+    assert firmes.base_year("2023") == 2024
+    assert firmes.aging_factor(2024, GROWTH, "2023", _gdp) == 1.0
     assert firmes.aging_factor(2026, GROWTH, "2023", _gdp) == pytest.approx(
-        3_000 * 1.01 * 1.02 / 2_800)
-    assert firmes.aging_factor(2028, GROWTH, "2023", _gdp) == pytest.approx(
-        3_000 * (1.01 * 1.02) ** 3 / 2_800)
+        3_000 * 1.01 * 1.02 / 2_900)
+    assert "depuis 2024, l'année de ses bénéfices" in firmes.convention("2023")
+    from impots import verification
+
+    assert verification.BASE_FIRMES == 2024
+    assert verification.FIRMES.name == "firms_2023.parquet"
 
 
 @pytest.mark.parametrize("year, growth, vintage, needle", [
     (2026, GROWTH, "fixture", "n'a pas d'année"),
     (2022, GROWTH, "2023", "précède le millésime"),
+    (2023, GROWTH, "2023", "précède le millésime"),
     (2026, None, "2023", "sans scénario de croissance"),
-], ids=["sans-annee", "avant-le-millesime", "sans-croissance"])
+], ids=["sans-annee", "avant-le-millesime", "avant-ses-benefices", "sans-croissance"])
 def test_an_aged_view_it_cannot_compute_is_refused(year, growth, vintage, needle) -> None:
     with pytest.raises(firmes.FirmViewError, match=needle):
         firmes.aging_factor(year, growth, vintage, _gdp)
@@ -186,7 +203,9 @@ def test_the_command_prices_a_firm_scenario_by_layer_in_both_views(monkeypatch,
     processed.mkdir()
     pl.DataFrame({"person_id": [1], "salaire_brut_annuel": [30_000.0],
                   "pension_annuelle": [0.0], "chomage_annuel": [0.0],
-                  "loyer_mensuel": [500.0]}).write_parquet(
+                  "loyer_mensuel": [500.0],
+                  # Every monetary column the ageing reads (étape 2 of but 19 added it).
+                  "revenu_non_salarie_annuel": [0.0]}).write_parquet(
         processed / "population_2024.parquet")
     monkeypatch.setattr(cli, "PROCESSED", processed)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)

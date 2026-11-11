@@ -169,6 +169,12 @@ REGISTRY: tuple[Row, ...] = (
         label="Allocation de solidarité spécifique"),
     Row("aide_logement", "aide_logement", "famille", "month", "full", False,
         label="Aide au logement"),
+    # The réduction de loyer de solidarité of an HLM tenant (CCH art. L. 442-2-1). openfisca
+    # counts it in `prestations_sociales`, hence in `revenu_disponible`, beside an aid it
+    # lowers by 98 % of it: without a row it moved disposable income unseen (1,27 Md€ on
+    # the 2024 population, D-374).
+    Row("reduction_loyer_solidarite", "reduction_loyer_solidarite", "famille", "month",
+        "full", False, label="Réduction de loyer de solidarité"),
     # The AAH and its complement, on the individual who receives them. Given rows when the
     # wire format learned to open them (D-184): without one, an AAH was a benefit inside
     # `revenu_disponible` that no reader could see. `caah` is the complement as paid since

@@ -380,7 +380,7 @@ def test_the_first_year_is_priced_on_the_aged_population_and_says_so(
     population = pl.DataFrame({
         "person_id": [0, 1], "household_id": ["h0", "h1"], "weight": [500.0, 700.0],
         "age": [40, 70], "salaire_brut_annuel": [30_000.0, 0.0],
-        "chomage_annuel": [1_000.0, 0.0], "pension_annuelle": [0.0, 20_000.0],
+        "chomage_annuel": [1_000.0, 0.0], "pension_annuelle": [0.0, 20_000.0], "revenu_non_salarie_annuel": [0.0, 0.0],
         "loyer_mensuel": [600.0, 0.0]})
     passed: list = []
 
@@ -435,7 +435,8 @@ def test_the_behavioural_pass_on_the_aged_population_keys_its_caches_on_the_upra
     population = pl.DataFrame({
         "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
         "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
-        "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
+        "pension_annuelle": [0.0], "loyer_mensuel": [0.0],
+        "revenu_non_salarie_annuel": [0.0]})
     keys: list = []
 
     def cached(frame, vintage, **kwargs):
@@ -466,7 +467,8 @@ def test_the_frozen_view_keys_its_emtr_caches_on_the_frame_it_prices(monkeypatch
     population = pl.DataFrame({
         "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
         "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
-        "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
+        "pension_annuelle": [0.0], "loyer_mensuel": [0.0],
+        "revenu_non_salarie_annuel": [0.0]})
     seen: list = []
 
     def cached(frame, vintage, **kwargs):
@@ -580,7 +582,8 @@ def test_a_shock_the_builder_refuses_is_a_422_with_its_reason(client,
     population = pl.DataFrame({
         "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
         "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
-        "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
+        "pension_annuelle": [0.0], "loyer_mensuel": [0.0],
+        "revenu_non_salarie_annuel": [0.0]})
     monkeypatch.setattr(service, "population_frame", lambda: population)
     monkeypatch.setattr(service, "run_population", lambda request, frame: (
         SimpleNamespace(households=None),
@@ -639,7 +642,8 @@ def test_a_pass_without_a_cost_is_a_server_error_with_its_reason(client,
     population = pl.DataFrame({
         "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
         "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
-        "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
+        "pension_annuelle": [0.0], "loyer_mensuel": [0.0],
+        "revenu_non_salarie_annuel": [0.0]})
     monkeypatch.setattr(service, "population_frame", lambda: population)
     monkeypatch.setattr(service, "run_population", lambda request, frame: (
         SimpleNamespace(households=None), SimpleNamespace(reform_cost=None, deciles=[])))

@@ -23,6 +23,8 @@ from impots.population.calibrate import (
     standard_margins,
     with_cells,
 )
+from impots.population.emploi_discontinu import attach_mois_travailles
+from impots.population.familles_jeunes import attach_familles_jeunes
 from impots.population.incomes import attach_incomes
 from impots.population.ingest import load_manifest
 from impots.population.skeleton import SEED, build_skeleton
@@ -45,11 +47,18 @@ SCHEMA: dict[str, pl.DataType] = {
     "statut_activite": pl.String,
     "statut_occupation": pl.String,
     "zone_apl": pl.String,
+    # The DOM département, drawn (étape al) ; null in metropole.
+    "departement": pl.String,
+    # Who is on the lease (étape al): a famille lodged off it, a colocation.
+    "aide_logement_heberge": pl.Boolean,
+    "colocation": pl.Boolean,
     "is_salarie": pl.Boolean,
     "pcs": pl.String,
     "secteur_public": pl.Boolean,
     "fonction_publique": pl.String,
     "titulaire": pl.Boolean,
+    # The employer is a private person (CHPUB 7): no allègement (étape « alleg »).
+    "particulier_employeur": pl.Boolean,
     "quotite_travail": pl.Float64,
     "parent_isole": pl.Boolean,
     "synthetic": pl.Boolean,
@@ -57,6 +66,14 @@ SCHEMA: dict[str, pl.DataType] = {
     "pension_annuelle": pl.Float64,
     "chomage_annuel": pl.Float64,
     "loyer_mensuel": pl.Float64,
+    # The self-employed's income and the box it is declared in (but 19, étape 2).
+    "revenu_non_salarie_annuel": pl.Float64,
+    "regime_non_salarie": pl.String,
+    "secteur_non_salarie": pl.String,
+    # The share of a salary the income tax exempts (but 19, étape « ir »).
+    "part_salaire_exoneree": pl.Float64,
+    # The months a salary is paid on, twelve bits (but 19, étape « ppa »).
+    "mois_travailles": pl.Int64,
 }
 
 
@@ -114,6 +131,13 @@ def _build(seed: int, raking: bool) -> tuple[pl.DataFrame, dict]:
         check_rake_result(diagnostics)
 
     frame, income_stats = attach_incomes(frame, seed=seed)
+    # The months worked (étape « ppa » of but 19): the salaries spread over the months the
+    # survey's flows say were worked, the calibrated wage bill unchanged.
+    frame, months_stats = attach_mois_travailles(frame, seed=seed)
+    # The young adults living with their parents (étape « ppa2 »): a child of 18 to 24
+    # paid above the prestations familiales ceiling is a famille of his own, as the
+    # Drees counts him (n° 1379, encadré 3); the prime is his, not his parents'.
+    frame, jeunes_stats = attach_familles_jeunes(frame)
 
     missing = set(SCHEMA) - set(frame.columns)
     if missing:
@@ -132,6 +156,8 @@ def _build(seed: int, raking: bool) -> tuple[pl.DataFrame, dict]:
         },
         "skeleton": asdict(skeleton_stats),
         "incomes": asdict(income_stats),
+        "mois_travailles": asdict(months_stats),
+        "familles_jeunes": asdict(jeunes_stats),
         "raking": rake_diagnostics,
     }
     return frame, provenance
