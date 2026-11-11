@@ -22,7 +22,7 @@ from typing import Any
 
 from impots import etude, preregistration, site, verification
 from impots.parcours import ROOT, Page, ParcoursError, fichier, lien, source
-from impots.parcours.france import (ANNEES, compte, lien_source, notees, par_ligne, pct)
+from impots.parcours.france import ANNEES, compte, lien_source, par_ligne, pct
 
 CROSSCHECK = ROOT / "tests" / "golden" / "CROSSCHECK.md"
 CROSSCHECK_CAF = ROOT / "tests" / "golden" / "CROSSCHECK_CAF.md"
@@ -113,7 +113,7 @@ def _lire(path: Path) -> str:
 
 
 def _entier(texte: str) -> int:
-    return int(re.sub(r"[\s  ]", "", texte))
+    return int(re.sub(r"[\s\u202f\u00a0]", "", texte))
 
 
 def controle_loi() -> dict[str, Any]:
@@ -126,8 +126,8 @@ def controle_loi() -> dict[str, Any]:
         raise ParcoursError("CROSSCHECK.md ne dit plus son statut.")
     cas = []
     for nom, bloc in re.findall(r"### `([^`]+)`\n(.*?)(?=\n### |\n## |\Z)", text, re.S):
-        moteur = re.search(r"Our engine, `ir` \| \*\*([\d\s ]+) €\*\*", bloc)
-        dgfip = re.search(r"DGFiP simulator \| \*\*([\d\s ]+) €\*\*", bloc)
+        moteur = re.search(r"Our engine, `ir` \| \*\*([\d\s\u202f]+) €\*\*", bloc)
+        dgfip = re.search(r"DGFiP simulator \| \*\*([\d\s\u202f]+) €\*\*", bloc)
         if moteur and dgfip:
             cas.append({"nom": nom, "moteur": _entier(moteur[1]),
                         "dgfip": _entier(dgfip[1])})
@@ -416,7 +416,6 @@ def page() -> Page:
     etudes = etudes_par_ligne()
     tenues, n = compte(rows)
     hors = lignes_hors(rows, loi, etudes)
-    n_hors = sum(len(h["hors"]) for h in hors)
     expliquees = sum(h["explication"] is not None for h in hors)
     large = max(loi.values(), key=lambda v: v["max"] - v["min"])
     largeur = (large["max"] - large["min"]) * 100
@@ -455,7 +454,7 @@ trompe, mais où, de combien, et si on le sait. Cette page range chaque erreur m
 son étage, montre qu'elle tient d'une année à l'autre, dit ce qu'elle touche, et garde
 les ratés. Elle n'a ni curseur ni script : c'est la page qu'on cite.</p>
 
-<h2 id="etages">L'erreur, étage par étage</h2>
+<h2 id="etages-erreur">L'erreur, étage par étage</h2>
 <p>Un nombre de l'outil repose sur des étages empilés, du plus sûr au moins sûr. L'erreur
 ne se répartit pas également : la loi est juste à l'euro là où elle a été contrôlée ;
 l'erreur se concentre dans la population (L1), et l'activité (L4) n'est pas vérifiée du

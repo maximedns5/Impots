@@ -101,9 +101,10 @@ def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(buil
 
 
 def test_no_study_page_runs_a_script(built, monkeypatch) -> None:
-    # The explorer is the one page with a script (D-343), held by test_page_explorer.
+    # The explorer runs a script (D-343), and the parcours pages that give a cursor
+    # (D-375), held by their own tests.
     assert not any("<script" in text.lower() for name, text in built.items()
-                   if name != site.EXPLORER)
+                   if name != site.EXPLORER and not name.startswith("parcours-"))
     monkeypatch.setattr(site, "STYLE", "<script>alert(1)</script>")
     with pytest.raises(site.SiteError, match="script"):
         site.build()

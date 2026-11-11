@@ -91,7 +91,7 @@ def nom_publie(module: str) -> str:
 
 def lien(module: str, texte: str | None = None) -> str:
     """Un lien vers une autre page du parcours."""
-    mod, name, titre = next(p for p in PAGES if p[0] == module)
+    _, name, titre = next(p for p in PAGES if p[0] == module)
     return f'<a href="{name}">{html.escape(texte or titre)}</a>'
 
 

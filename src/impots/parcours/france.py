@@ -50,7 +50,7 @@ def pct(x: float | None, chiffres: int = 1) -> str:
 
 
 def _groupe(x: float, chiffres: int = 0) -> str:
-    return f"{x:,.{chiffres}f}".replace(",", " ").replace(".", ",")
+    return f"{x:,.{chiffres}f}".replace(",", "\u202f").replace(".", ",")
 
 
 def valeur(ligne_id: str, x: float | None) -> str:
