@@ -408,7 +408,8 @@ def page() -> Page:
         "son fichier avec sa raison : un canal qui rétrécit montre pourquoi.</p>\n"
         + _mortes()
         + "<h2>Un θ par élasticité</h2>\n"
-        "<p>L'explorateur donne un seul θ à tous les comportements. Ici chaque ligne a le sien, "
+        "<p>Les pages d'étude donnent un seul θ à tous les comportements. Ici chaque ligne a le "
+        "sien, "
         "sur les études dont le rapport porte les statistiques des canaux (les sommes que la "
         "passe a écrites, année par année). La recette de C1 est ε<sub>tous</sub> × A_bas + "
         "ε<sub>haut</sub> × A_haut ; celle de C7, la somme des ε<sub>g</sub> × S<sub>g</sub> "

@@ -186,8 +186,9 @@ def test_an_unrun_study_is_listed_without_a_page(tmp_path) -> None:
                           page=tmp_path / "futur.md", rapports=tmp_path / "rien")
     files = site.build([study])
     assert "futur.html" not in files
-    assert (f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné"
-            in files["index.html"])
+    # The first D-xxx of a page links to the method page (D-357): read the text.
+    text = re.sub(r"<[^>]+>", "", files["index.html"])
+    assert f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné" in text
 
 
 def test_a_table_without_its_header_line_is_refused() -> None:

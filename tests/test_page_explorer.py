@@ -67,8 +67,12 @@ def test_every_grid_point_is_the_chain_in_the_page(tmp_path) -> None:
 
 
 @needs_grid
-def test_the_explorer_is_the_one_page_that_runs_a_script() -> None:
+def test_the_explorer_is_withdrawn_until_its_grid_is_rerun(monkeypatch) -> None:
+    """D-377: the grid precedes goal 19's population, so the page is not published; built,
+    it is still the one study page with a script."""
+    files = site.build()
+    assert site.EXPLORER not in files and 'href="explorer.html"' not in files["index.html"]
+    assert not any('href="explorer.html"' in text for text in files.values())
+    monkeypatch.setattr(site, "EXPLORATEUR_PUBLIE", True)
     files = site.build()
     assert site.EXPLORER in files and "<script" in files[site.EXPLORER]
-    assert all("<script" not in text for name, text in files.items() if name != site.EXPLORER)
-    assert 'href="explorer.html"' in files["index.html"]

@@ -27899,3 +27899,46 @@ préenregistrement, et n'entre pas dans ce but. La page le dit.
 **Comment.** Le squelette est commun ; les pages se développent en parallèle, chacune dans
 ses fichiers. La relecture adverse se fait à la fin, par un lecteur qui n'a pas lu le
 dépôt, et chaque constat reçoit son sort dans une D-entrée.
+
+## D-376 — Les pages du parcours écrites ; l'allocation de rentrée scolaire a sa ligne
+
+**Les neuf pages.** Écrites en parallèle, chacune dans son module de
+`src/impots/parcours/`, et jointes : `impots site construire` les publie, `impots site
+verifier` les tient. Chacune passe les règles de D-375. Les scripts qui calculent sont
+tenus contre le moteur par node : la boucle et la dette à 1e-12 (pages 5 et 6), les
+recettes des canaux au millième d'euro (page 4), le Monte-Carlo au bit aux lois des
+rapports (page 7), dont les normales de la graine sont tirées par numpy à la construction
+et portées par la page, le générateur de numpy n'étant pas refait dans le navigateur. Les
+autres scripts choisissent entre des valeurs écrites en Python. Les pages se lisent au
+téléphone, sans débordement ni erreur de script.
+
+**Les ménages de la page 1** sont chiffrés d'avance par le moteur des ménages
+(`python -m impots.parcours.menage`, `reports/parcours/menages.json`, avec son commit) :
+cinq situations, dix-neuf salaires, les revenus de 2024 ; ce ne sont pas des chiffrages
+d'étude. La commande refuse un ménage dont les lignes ne retombent pas sur le revenu
+disponible. Le parent seul de deux enfants n'y retombait pas, de 836,98 € : l'allocation
+de rentrée scolaire, qu'openfisca compte dans `prestations_familiales` et qu'aucune ligne
+du registre ne portait. Elle a sa ligne (`ars`, sa CRDS étant dans `crds_pfam`), un champ
+de la réponse de l'API, et entre dans les transferts du garde des secteurs, comme la RLS à
+D-374. Aucun coût ne bouge, le coût étant la variation du revenu disponible ; les ménages,
+refaits, redonnent les mêmes nombres.
+
+**Trois corrections en passant.** La phrase de C11 fermé disait « cette baisse de
+cotisations » d'une hausse (Mélenchon) ; elle dit « ce changement ». Le rapport de la
+série garde l'ancienne phrase jusqu'à la prochaine. `reports/chiffrages_preregistres.md`
+est régénéré : trois cas en attente (Labib, Le Pen, Roussel) n'y étaient pas.
+
+## D-377 — L'explorateur retiré du site jusqu'à sa grille refaite
+
+**Le fait.** La grille de l'explorateur (D-344, 169 passes) a tourné sur `3c19f52`, au but
+16, avant la population du but 19. Elle donne 59,91 Md€ au bouton d'Attal quand la plage de
+la série en mesure 66,40, un rapport de 1,108 tenu à chaque bouton ; −776 M€ pour la prime
+d'activité contre −493 M€, le non-recours entré depuis. Le but 19 a refait la série, pas
+cette grille.
+
+**La décision du propriétaire** : retirer l'explorateur du site plutôt que l'avertir. Il
+n'est plus construit (`site.EXPLORATEUR_PUBLIE`), son code et ses contrôles restent ; il
+revient avec une grille refaite, préenregistrée. Le curseur de la page 3 du parcours, qui
+lisait la même grille, lit les points des plages de la série (`plages/`, sur `601b442`) :
+les cotisations retraite des salariés en cinq points (Attal et Retailleau règlent le même
+bouton), la TVA sur l'énergie en trois, sans interpolation.

@@ -338,7 +338,7 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         intro += ('\n<p><a href="presidentielle.html">Les programmes de la présidentielle '
                   "2027</a> : les 24 candidats déclarés, ce que l'outil chiffre de chacun, et "
                   "pourquoi pas le reste.</p>")
-    explorer = _explorer() if grille_present() else None
+    explorer = _explorer() if EXPLORATEUR_PUBLIE and grille_present() else None
     if explorer is not None:
         files[EXPLORER] = explorer
         intro += ('\n<p><a href="explorer.html">Explorer les études</a> : les boutons des dix '
@@ -366,6 +366,11 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
 
 
 EXPLORER = "explorer.html"
+#: The explorer is withdrawn from the site (D-377): its grid ran on the code of goal 16
+#: (3c19f52), before the population of goal 19, and it would show the costs of then
+#: (59,91 Md€ at Attal's knob for 66,40 in the series). It comes back with a grid rerun,
+#: preregistered. The page's code and its checks stay.
+EXPLORATEUR_PUBLIE = False
 EXPLORER_JS = Path(__file__).resolve().parent / "site_explorer"
 
 
