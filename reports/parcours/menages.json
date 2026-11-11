@@ -1,5 +1,5 @@
 {
- "commit": "42be98b33a2b37e6947346b7d49f08bf73d195d4",
+ "commit": "9c59c5309a482cca171b85756399c27ef584dfdf",
  "src_modifies_au_chiffrage": [],
  "date": "2026-11-11",
  "commande": "PYTHONPATH=src .venv/bin/python -m impots.parcours.menage",

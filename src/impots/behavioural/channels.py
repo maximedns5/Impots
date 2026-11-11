@@ -1087,9 +1087,9 @@ C11_WEIGHT = "autofinancement_poids_tresor_eco"
 C11_KEYS = (C11_RETURN, C11_COST, C11_WEIGHT)
 
 NOT_TARGETED = (
-    "Cette baisse de cotisations n'est pas ciblée sur les bas salaires cette année : elle "
-    "tombe sous la variante uniforme de Mésange, dont la ligne de solde porte déjà ce qui "
-    "en revient. Un autofinancement ici compterait deux fois le même retour (D-239)."
+    "Ce changement de cotisations patronales n'est pas une baisse ciblée sur les bas "
+    "salaires cette année : il tombe sous la variante uniforme de Mésange, dont la ligne "
+    "de solde porte déjà ce qui en revient. Un autofinancement ici compterait deux fois le même retour (D-239)."
 )
 
 
