@@ -24,9 +24,12 @@ from impots import etude, preregistration, site, verification
 from impots.parcours import ROOT, Page, ParcoursError, fichier, lien, source
 from impots.parcours.france import (
     ANNEES,
-    GLOSSAIRE,
+    CALEES_PAR_LE_RECOURS,
+    MARQUE_RECOURS,
     compte,
+    dont_calees,
     foyers_identiques,
+    glossaire,
     lien_source,
     par_ligne,
     pct,
@@ -65,29 +68,35 @@ EXPLICATIONS: dict[str, tuple[str, str]] = {
         "horaires. Elle ne sort de sa tolérance qu'en 2022."),
     "ppa_montant_servi": (
         "D-370, D-371",
-        "Un choix de cible, dit : le nombre de foyers qui demandent la prime est calé sur "
-        "les allocataires que compte la Drees, moins nombreux que les foyers que la Cnaf "
-        "paie."),
+        "Un choix de cible, dit : la probabilité de demander la prime est calée sur le "
+        "taux de non-recours de la Drees, la moitié des foyers qui y ont droit ; or les "
+        "recourants que la Drees compte ne sont que 73 à 83 % des foyers que la Cnaf paie. "
+        "La prime servie reste donc sous ce que la Cnaf verse."),
     "ppa_foyers_servis": (
         "D-370, D-371",
-        "Le même choix de cible que le montant : les allocataires de la Drees, sous les "
-        "foyers que la Cnaf paie."),
+        "Le même choix de cible que le montant : la part des ayants droit qui demandent la "
+        "prime est imposée par le calage, à la moitié ; la ligne, calée par le "
+        "non-recours, ne dit que le nombre de foyers ayant droit, mesuré contre des "
+        "recourants de la Drees moins nombreux que les foyers que la Cnaf paie."),
     "ppa_montant": (
         "D-370, D-371",
         "L'ancienne mesure du non-recours, un seul coefficient qui ramène le total des "
-        "droits au total versé ; la mesure foyer par foyer la remplace. La même cible, sous "
-        "la Cnaf."),
+        "droits au total versé ; la mesure foyer par foyer la remplace. Le coefficient dit "
+        "un non-recours en montant, tiré des mêmes travaux de la Drees (les mots de la "
+        "grille, plus haut) : la même cible, sous la Cnaf."),
     "ppa_foyers": (
         "D-364, D-366",
         "Elle compte les foyers qui ont droit à la prime, comme si tous la demandaient ; la "
         "Cnaf ne compte que ceux qui la demandent. La ligne qui pondère chaque foyer par "
-        "sa probabilité de la demander mesure ce que la Cnaf compte."),
+        "sa probabilité de la demander compte ce que la Cnaf compte ; la part des "
+        "demandeurs y est imposée par le calage du non-recours."),
     "rsa_foyers": (
         "D-364, D-367",
         "Elle compte les foyers qui ont droit au RSA, comme si tous le demandaient ; "
         "l'ancienne correction du non-recours, un seul coefficient, corrige le montant, "
         "pas le nombre. La ligne qui pondère chaque foyer par sa probabilité de le "
-        "demander tient sa tolérance."),
+        "demander tient sa tolérance ; mais la part des demandeurs y est imposée par le "
+        "calage du non-recours : elle ne dit que le nombre de foyers ayant droit."),
     "aide_logement_montant": (
         "D-371",
         "Ce que le modèle ne couvre pas : les foyers et résidences (étudiants, "
@@ -249,7 +258,10 @@ def table_stabilite(rows: list[dict[str, Any]], loi: dict[str, dict[str, Any]]) 
             if a in ans and ans[a]["usage"] == "validation" and ans[a].get("ecart") is not None
             else '<td class="num vide">—</td>' for a in ANNEES)
         etendue = (v["max"] - v["min"]) * 100
-        out.append(f'<tr id="stable-{ident}"><th scope="row">{html.escape(v["ligne"])}<br>'
+        marque = (f'<br><small class="calee-recours">{MARQUE_RECOURS}</small>'
+                  if ident in CALEES_PAR_LE_RECOURS else "")
+        out.append(f'<tr id="stable-{ident}"><th scope="row">{html.escape(v["ligne"])}'
+                   f"{marque}<br>"
                    f"{_bande(ans, tol)}</th><td>±{tol * 100:.0f} %</td>{cells}"
                    f'<td class="num">{pct(v["biais"])}</td>'
                    f'<td class="num">{_virgule(f"{etendue:.1f}")} pt</td></tr>')
@@ -309,8 +321,10 @@ def _bloc_hors(h: dict[str, Any]) -> str:
                   "autre ligne, ou n'est chiffré par aucune étude.")
     r0 = h["hors"][0]
     src = lien_source(r0.get("url"), "le total publié", r0.get("localisation") or "")
+    marque = (f'<br><small class="calee-recours">{MARQUE_RECOURS}</small>'
+              if h["id"] in CALEES_PAR_LE_RECOURS else "")
     return (f'<section class="hors-ligne" id="hors-{h["id"]}"><h3>{html.escape(h["ligne"])}'
-            f"</h3><p>Hors de sa tolérance (±{tol * 100:.0f} %) en {annees} ; biais sur "
+            f"{marque}</h3><p>Hors de sa tolérance (±{tol * 100:.0f} %) en {annees} ; biais sur "
             f"trois ans {pct(h['loi']['biais'])}, "
             f"{h['loi']['tenues']} année{'s' if h['loi']['tenues'] > 1 else ''} sur "
             f"{len(h['loi']['annees'])} dans la tolérance. Contre {src}.</p>"
@@ -337,8 +351,8 @@ def table_etages(rows: list[dict[str, Any]], loi_: dict[str, Any],
         ("L1", etude.ETAGES["L1"],
          f"la grille : chaque total contre son total publié, sur trois ans "
          f"({fichier('docs/verification/GRILLE.md', 'GRILLE.md')})",
-         f"<strong>{tenues} sur {n}</strong> lignes tenues ; {n - tenues} hors (une seule "
-         "population, comptée une fois par année)",
+         f"<strong>{tenues} sur {n}</strong> lignes tenues{dont_calees(rows)} ; "
+         f"{n - tenues} hors (une seule population, comptée une fois par année)",
          lien("france", "page 2")),
         ("L2", etude.ETAGES["L2"],
          "des juges : les chiffrages préenregistrés, notés contre l'évaluation préalable "
@@ -422,6 +436,7 @@ td.hors,.num.hors{background:var(--l4)}
 table.stable th[scope=row]{font-weight:400;min-width:11rem}
 section.hors-ligne{border-left:3px solid var(--l4);padding-left:.8rem;margin:1.2rem 0}
 section.hors-ligne h3{margin-bottom:.2rem}
+small code{font-size:inherit}
 """
 
 
@@ -506,7 +521,7 @@ montre pas que trois échantillons la confirment. Sur les <span class="num">{plu
 <span class="num">{_virgule(f"{largeur:.1f}")}</span> points : les entreprises sont
 ramenées d'une année à l'autre par le PIB, sans lire leurs bénéfices. Les écarts sont
 ceux des trois passes commitées ({fichier("reports/verification/grille.json")}).</p>
-{GLOSSAIRE}
+{glossaire()}
 {table_stabilite(rows, loi)}
 
 <h2 id="hors">Les lignes hors de leur tolérance, et ce qu'elles touchent</h2>

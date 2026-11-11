@@ -95,8 +95,8 @@ LIGNES: tuple[tuple[str, str, str], ...] = (
     ("salaire_net", "Salaire net", "="),
     ("salaire_imposable", "Salaire imposable (net, plus la CSG non déductible et la CRDS)",
      ""),
-    ("revenu_fiscal_reference", "Revenu fiscal de référence (après l'abattement de 10 %)",
-     ""),
+    ("revenu_fiscal_reference", "Revenu fiscal de référence (après l'abattement de {taux}, "
+     "plafonné à {plafond})", ""),
     ("parts_fiscales", "Parts fiscales", ""),
     ("ir_avant_reductions", "Impôt par le barème et le quotient familial, avant décote",
      ""),
@@ -282,6 +282,30 @@ def dgfip() -> dict[str, Any]:
     return cas
 
 
+def abattement(d: dict[str, Any]) -> tuple[float, float]:
+    """Le taux et le plafond de l'abattement pour frais professionnels, lus dans les
+    paramètres d'OpenFisca à l'année du fichier. Le célibataire à 240 000 € y est plafonné :
+    son revenu fiscal doit être son salaire imposable moins ce plafond, sinon le fichier et
+    les paramètres ne parlent plus de la même loi."""
+    from impots.engine import baseline
+
+    abatpro = (baseline().parameters(f"{d['annee']}-01-01")
+               .impot_revenu.calcul_revenus_imposables.deductions.abatpro)
+    taux, plafond = float(abatpro.taux), float(abatpro.max)
+    v = d["types"]["single_240k"]["valeurs"]
+    if round(v["salaire_imposable"] - v["revenu_fiscal_reference"]) != round(plafond):
+        raise ParcoursError(f"single_240k : l'abattement du fichier n'est plus le plafond des "
+                            f"paramètres ({eur(plafond)}).")
+    return taux, plafond
+
+
+def _lignes(d: dict[str, Any]) -> tuple[tuple[str, str, str], ...]:
+    """Les lignes de la page, l'abattement lu dans les paramètres (`d["abattement"]`)."""
+    taux, plafond = d["abattement"]
+    return tuple((key, libelle.format(taux=f"{round(taux * 100)}\u202f%", plafond=eur(plafond)),
+                  sens) for key, libelle, sens in LIGNES)
+
+
 # --------------------------------------------------------------------------- rendu
 
 STYLE = "tr.info td{color:var(--doux)}"
@@ -331,7 +355,7 @@ def _types(d: dict[str, Any]) -> str:
     tete = "".join(f"<th>{html.escape(_description(d['types'][n]['menage']))}<br>"
                    f"{fichier(f'tests/golden/{n}.yaml', n)}</th>" for n in noms)
     rows = [_ligne(key, libelle, sens, [_cellule(key, sens, d["types"][n]["valeurs"])
-                                         for n in noms]) for key, libelle, sens in LIGNES]
+                                         for n in noms]) for key, libelle, sens in _lignes(d)]
     return (f"<table><thead><tr><th>ligne</th>{tete}</tr></thead><tbody>"
             + "".join(rows) + "</tbody></table>")
 
@@ -435,7 +459,7 @@ def _curseur(d: dict[str, Any]) -> tuple[str, str]:
     lignes = "".join(
         _ligne(key, libelle, sens, [_cellule(key, sens, premiere["valeurs"][defaut])])
         .replace('<td class="num">', f'<td class="num" data-k="{key}">', 1)
-        for key, libelle, sens in LIGNES)
+        for key, libelle, sens in _lignes(d))
     corps = (
         '<div id="m-curseur" hidden>'
         '<div class="curseur"><label for="m-sit">La situation</label>'
@@ -494,6 +518,7 @@ def _curseur(d: dict[str, Any]) -> tuple[str, str]:
 
 def page() -> Page:
     d = donnees()
+    d["abattement"] = abattement(d)
     ref = dgfip()
     moteur = d["moteur"]
     of = f"OpenFisca-France {moteur['openfisca_france']}"
@@ -504,6 +529,16 @@ def page() -> Page:
     seuils = ", ".join(eur(t) for t, _ in d["bareme"][1:])
     taux = ", ".join(f"{round(r * 100)}\u202f%" for _, r in d["bareme"])
     ecarts_ir = [round(d["types"][n]["valeurs"]["ir"]) - ref[n]["ir"] for n in CONTROLES]
+    # Ce que les deux ménages contrôlés ne testent pas, vérifié ici plutôt que supposé :
+    # tous deux sont en décote, et leur revenu par part reste sous la dernière tranche.
+    seuil_haut, taux_haut = d["bareme"][-1]
+    for n in CONTROLES:
+        v = d["types"][n]["valeurs"]
+        if ref[n]["decote"] <= 0:
+            raise ParcoursError(f"{n} n'est plus en décote ; la page dit le contraire.")
+        if v["revenu_fiscal_reference"] / v["parts_fiscales"] >= seuil_haut:
+            raise ParcoursError(f"{n} atteint la dernière tranche ; la page dit le contraire.")
+    haut = f"{round(taux_haut * 100)}\u202f%"
     verdict = ("à l'euro près" if all(e == 0 for e in ecarts_ir)
                else "avec un écart, montré ci-dessous")
     corps = f"""
@@ -544,8 +579,10 @@ ceux que {fichier(CROSSCHECK)} a relevés.</p>
 {_controle(d, ref)}
 <p><strong>Ce que ce contrôle prouve.</strong> Partant du même salaire imposable, le
 moteur et l'administration trouvent le même revenu fiscal de référence, le même nombre de
-parts, les mêmes droits simples et la même décote : l'abattement de 10 %, le barème, le
-quotient familial et la décote sont codés juste, sur ces deux ménages.</p>
+parts, les mêmes droits simples et la même décote : sur ces deux ménages, tous deux en
+décote, l'abattement de 10 %, le barème, le quotient familial et la décote sont codés
+juste. Aucun des deux n'atteint la tranche à {haut}, ni le plafonnement du quotient
+familial, ni le plafond de l'abattement : ces trois-là ne sont pas contrôlés.</p>
 <p><strong>Ce qu'il ne prouve pas.</strong></p>
 <ul>
 <li><strong>Le passage du brut à l'imposable.</strong> Le salaire saisi dans le simulateur
@@ -600,8 +637,10 @@ en suivant {fichier(CROSSCHECK)}, sur {simulateur}.</p>
 """
     return Page(prouve="sur deux ménages salariés simples, le moteur trouve l'impôt sur le "
                        f"revenu {verdict.split(',')[0]} comme le simulateur de "
-                       "l'administration fiscale, à partir du même salaire imposable ; le "
-                       "barème, le quotient familial et la décote sont donc codés juste. "
+                       "l'administration fiscale, à partir du même salaire imposable ; sur "
+                       "ces deux ménages, tous deux en décote, le barème, le quotient "
+                       "familial et la décote sont donc codés juste, mais aucun ne teste la "
+                       f"tranche à {haut}, ni le plafonnement du quotient familial. "
                        "Les cotisations, la CSG et les prestations ne sont pas contrôlées "
                        "par un tiers.",
                 corps=corps, script=script, style=STYLE)

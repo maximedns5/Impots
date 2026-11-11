@@ -41,6 +41,7 @@ TERMES: tuple[tuple[str, str], ...] = (
     ("mesange", r"Mésange"), ("point-de-pib", r"points? de PIB"),
     ("miroir", r"en miroir"), ("tolerance", r"tolérances?"),
     ("pont", r"ponts? de non-recours"), ("non-recours", r"non-recours"),
+    ("grade", r"dans l(?:'|&#x27;)étendue des estimations"),
     ("en-esperance", r"(?:servie?s? )?en espérance"),
     ("bandeaux", r"bandeaux maladie et famille|bandeaux? (?:maladie|famille)|bandeaux?"),
     ("reduction-generale", r"réductions? générales?"),
@@ -152,13 +153,24 @@ def body(lines: list[str], n: etude.Nombres) -> str:
 
 
 def _legend() -> str:
+    # L0, the law as the engine codes it, carries no number of a study and so is not in
+    # `etude.ETAGES`; the legend names it as the method page does. « vérifié » says there
+    # is one population, 2024's, carried back to the other years (seconde relecture).
+    meanings = {"L0": "la loi : chaque taux, seuil et barème, tel que l'outil le code ; "
+                      "contrôlée en refaisant l'impôt de ménages types avec le simulateur de "
+                      "la DGFiP", **etude.ETAGES}
+    if "vérifié" in meanings:
+        meanings["vérifié"] = ("l'écart d'un total du moteur à son total publié, sur 2022, "
+                               "2023 et 2024, avec une seule population, celle de 2024, "
+                               "ramenée aux deux autres années : la grille de vérification "
+                               "(D-364)")
     rows = "".join(
         f'<dt id="etage-{_slug(key)}"><span class="etage e-{_slug(key)}">'
         f"{html.escape(key)}</span></dt><dd>{html.escape(meaning)}.</dd>"
-        for key, meaning in etude.ETAGES.items())
+        for key, meaning in meanings.items())
     return ('<section id="etages"><h2>Les étages de confiance</h2>'
             "<p>À côté de chaque nombre, ce sur quoi il repose. Un nombre que l'outil "
-            "calcule dit son étage, de L1 à L4 ; un nombre qu'il reprend dit d'où il vient. "
+            "calcule dit son étage, de L0 à L4 ; un nombre qu'il reprend dit d'où il vient. "
             "Un écart de dette dit l'étage le plus haut qui y entre, et qu'il est "
             "<em>sous hypothèses</em> : celles du cadre nommé en bas de page, et θ.</p>"
             f"<dl>{rows}</dl></section>")

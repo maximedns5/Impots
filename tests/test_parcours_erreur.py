@@ -55,3 +55,17 @@ def test_la_page_ne_parle_pas_la_langue_du_depot():
     assert texte.index("qu'elle appelle L0") < texte.index("la loi codée : chaque taux")
     assert "Le détail est sur la page 3" in texte
     assert "ne sont donc pas trois épreuves indépendantes" in texte
+
+
+def test_les_lignes_calees_par_le_non_recours_sont_dites():
+    """Seconde relecture adverse : le compte reste préenregistré, la page dit combien des
+    lignes tenues sont calées par le non-recours, et ne dit plus la prime calée sur des
+    allocataires."""
+    page = erreur.page()
+    texte = _texte(page.corps)
+    assert "84 sur 113 lignes tenues (dont 2 calées par le non-recours" in texte
+    for ident in ("rsa_foyers_servis", "ppa_foyers_servis"):
+        ligne = re.search(rf'<tr id="stable-{ident}">(.*?)</tr>', page.corps, re.S)[1]
+        assert "calée par le non-recours" in ligne, ident
+    assert "allocataires de la Drees" not in texte
+    assert "allocataires que compte la Drees" not in texte

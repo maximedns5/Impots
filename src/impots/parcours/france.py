@@ -33,6 +33,14 @@ TMI = ("foyers_tmi_0", "foyers_tmi_1", "foyers_tmi_2", "foyers_tmi_3", "foyers_t
 #: prestations pondérées par la probabilité de les demander (D-365, D-366).
 NIVEAU_DE_VIE = ("niveau_de_vie_median", "niveau_de_vie_median_servi", "d9_d1",
                  "d9_d1_servi")
+#: Les lignes que le calage du non-recours force (`population/recours.py`) : la
+#: probabilité de demander est calée pour que la part des foyers ayant droit qui
+#: recourent soit le milieu de la fourchette de la Drees ; le nombre de foyers servis est
+#: donc le nombre d'ayants droit fois une part imposée. Elles restent notées telles
+#: qu'elles ont été préenregistrées, et le compte des lignes tenues ne change pas ; la
+#: page les marque et dit combien des lignes tenues sont de celles-là.
+CALEES_PAR_LE_RECOURS = ("rsa_foyers_servis", "ppa_foyers_servis")
+MARQUE_RECOURS = "calée par le non-recours : ne prouve rien du recours"
 #: L'enquête Emploi, fichier détail 2024 (Licence Ouverte), d'où vient la structure des
 #: ménages (`scripts/verify_eec.py`).
 EEC_URL = "https://www.insee.fr/fr/statistiques/8632441"
@@ -144,6 +152,22 @@ def compte(rows: list[dict[str, Any]], annee: int | None = None) -> tuple[int, i
     return sum(r["verdict"] == "dans la tolérance" for r in n), len(n)
 
 
+def tenues_calees(rows: list[dict[str, Any]], annee: int | None = None) -> int:
+    """Combien des lignes tenues sont calées par le non-recours."""
+    return sum(r["id"] in CALEES_PAR_LE_RECOURS and r["verdict"] == "dans la tolérance"
+               for r in notees(rows) if annee is None or r["annee"] == annee)
+
+
+def dont_calees(rows: list[dict[str, Any]], annee: int | None = None) -> str:
+    """« dont 2 calées par le non-recours », à côté d'un compte de lignes tenues."""
+    k = tenues_calees(rows, annee)
+    if not k:
+        return ""
+    return (f' (dont <span class="num">{k}</span> <a href="#non-recours-cale">calée'
+            f'{"s" if k > 1 else ""} par le non-recours</a>, qui ne prouve'
+            f'{"nt" if k > 1 else ""} rien du recours)')
+
+
 def commits(rows: list[dict[str, Any]]) -> list[str]:
     return sorted({r["commit"][:7] for r in rows if r.get("commit")})
 
@@ -167,6 +191,8 @@ def _cellule(r: dict[str, Any] | None) -> str:
         corps = (f'<span class="num">{pct(r["ecart"])}</span> <span class="etat">{mot}'
                  f"</span><br><small>{valeur(r['id'], r['simule'])} contre "
                  f"{valeur(r['id'], r['publie'])}</small>")
+    if r["id"] in CALEES_PAR_LE_RECOURS and r["verdict"] != "refusée":
+        corps += f'<br><small class="calee-recours">{MARQUE_RECOURS}</small>'
     lien_ = lien_source(r.get("url"), _editeur(r.get("source")), titre)
     return (f'<td class="{cls}" data-annee="{annee}">{corps}'
             + (f"<br><small>{lien_}</small>" if lien_ else "") + "</td>")
@@ -249,7 +275,8 @@ def vue_annee(rows: list[dict[str, Any]], annee: int, plus_grand: float) -> str:
     return (f'<section class="vue-annee" data-annee="{annee}" aria-live="polite">\n'
             f"<h3>{annee}</h3>\n"
             f'<p><strong><span class="num">{tenues}</span> lignes sur '
-            f'<span class="num">{n}</span></strong> tiennent leur tolérance en {annee}. '
+            f'<span class="num">{n}</span></strong> tiennent leur tolérance en {annee}'
+            f"{dont_calees(rows, annee)}. "
             f"La population est celle de 2024, ramenée à {annee} par les prix et les "
             f"salaires constatés ; la loi est celle de {annee}.</p>\n"
             f"<h4>Les foyers par taux marginal d'imposition, simulés contre la DGFiP</h4>\n"
@@ -339,8 +366,24 @@ def foyers_identiques(lignes: dict[str, dict[int, dict[str, Any]]]) -> str:
             f"2022, en 2023 et en 2024, le même nombre, parce que ce sont les mêmes foyers.")
 
 
-GLOSSAIRE = """<p><strong>Les mots de la grille.</strong> Les libellés viennent du fichier
-des lignes ; trois d'entre eux demandent une traduction.</p>
+def _fourchette(x: tuple[float, float]) -> str:
+    return f"{round(x[0] * 100)} à {round(x[1] * 100)}\u00a0%"
+
+
+def glossaire() -> str:
+    """Les mots de la grille, et la description du non-recours, une seule pour les pages 2
+    et 8 : les nombres sont ceux de `population/recours.py` et du pont de `margins.py`."""
+    from impots.population import margins, recours
+
+    rsa, ppa = recours.RSA, recours.PPA
+    pont = {k: sum(v) / 2 for k, v in margins.TAKE_UP_BRIDGE.items()}
+    verse = 1 / pont["ppa"]
+
+    def cible(loi: recours.Recours) -> str:
+        return f"{round((1 - loi.cible_foyers) * 100)}\u00a0%"
+
+    return f"""<p><strong>Les mots de la grille.</strong> Les libellés viennent du fichier
+des lignes ; quelques-uns demandent une traduction.</p>
 <ul>
 <li><strong>Bandeau maladie, bandeau famille</strong> : deux baisses de cotisations
 patronales, l'une sur l'assurance maladie (7 % au lieu de 13 %), l'autre sur les
@@ -349,11 +392,29 @@ allocations familiales (3,45 % au lieu de 5,25 %), pour les salaires sous un pla
 s'annule à 1,6 SMIC.</li>
 <li><strong>Servi en espérance</strong> : chaque foyer reçoit son droit au RSA ou à la
 prime d'activité multiplié par la probabilité qu'il le demande. C'est ainsi que les
-études comptent le non-recours.</li>
+études comptent le non-recours. Cette probabilité croît avec le montant du droit, selon une
+forme supposée dont la pente suit les taux de recours par tranche de montant que la Drees
+publie ; son plafond est <em>calé</em> pour que la part des foyers ayant droit du modèle
+qui ne la demandent pas soit le milieu de la fourchette publiée en foyers :
+{cible(rsa)} pour le RSA (la Drees dit {_fourchette(rsa.non_recours_foyers)}),
+{cible(ppa)} pour la prime ({_fourchette(ppa.non_recours_foyers)}). Le non-recours en
+montant, plus faible parce que les petits droits sont les moins demandés
+({_fourchette(rsa.non_recours_masse)} pour le RSA, {_fourchette(ppa.non_recours_masse)}
+pour la prime), n'est pas calé : il sert de contrôle. Le calage ne vise ni le nombre
+d'allocataires ni le montant que la Caf verse
+({fichier("src/impots/population/recours.py")}).</li>
+<li id="non-recours-cale"><strong>Calée par le non-recours</strong> : une ligne qui compte
+les foyers servis en espérance retrouve, par construction, la part de recourants que le
+calage impose. Elle ne prouve rien du recours ; elle ne dit que le nombre de foyers ayant
+droit. Elle reste notée telle qu'elle a été préenregistrée, et comptée parmi les lignes
+tenues quand elle tient.</li>
 <li><strong>Pont de non-recours</strong> : l'ancienne façon de le compter, un seul
-coefficient de la Drees (1,355 pour le RSA, 1,725 pour la prime) qui divise le total des
-droits pour retrouver le total versé. Les lignes « pont » restent notées telles qu'elles
-ont été préenregistrées.</li>
+coefficient tiré des travaux de la Drees ({_groupe(pont["rsa"], 3)} pour le RSA,
+{_groupe(pont["ppa"], 3)} pour la prime) qui divise le total des droits pour retrouver le
+total versé. Diviser par {_groupe(pont["ppa"], 3)}, c'est verser {round(verse * 100)}\u00a0%
+des droits : un non-recours d'environ {round((1 - verse) * 100)}\u00a0% des montants,
+proche de la fourchette en montant, non de la moitié des foyers. Les lignes « pont »
+restent notées telles qu'elles ont été préenregistrées.</li>
 </ul>"""
 
 
@@ -477,8 +538,8 @@ les foyers à chaque taux du barème, les prestations qu'elle touche, son niveau
 Chacun est comparé à son total publié, pour 2022, 2023 et 2024, avec une tolérance
 écrite <em>avant</em> le calcul (préenregistrée dans les D-363 et D-366 de
 {fichier("docs/DECISIONS.md")}). Sur trois ans, <strong><span class="num">{tenues}</span>
-lignes notées sur <span class="num">{n}</span></strong> tiennent leur tolérance,
-<span class="num">{hors}</span> n'y tiennent pas ({par_annee}). À côté,
+lignes notées sur <span class="num">{n}</span></strong> tiennent leur
+tolérance{dont_calees(rows)}, <span class="num">{hors}</span> n'y tiennent pas ({par_annee}). À côté,
 <span class="num">{refusees}</span> lignes sont refusées, faute d'un total publié ou d'un
 droit que le moteur sert, et <span class="num">{contexte}</span> sont données pour
 contexte, sans tolérance.</p>
@@ -514,21 +575,24 @@ population en arrière par les indices ne déforme pas l'erreur, et que les tota
 de trois années la voient du même côté. {lien("erreur", "La page 8")} range chaque écart
 ligne par ligne, avec sa cause.</p>
 
-{GLOSSAIRE}
+{glossaire()}
 
 <h3 id="grille-entiere">La grille entière</h3>
 <p>Chaque cellule dit l'écart au total publié, le simulé contre le publié, et le lien de
 la source de l'année ; l'onglet et la ligne lus s'affichent au survol du lien. Une ligne
-« contexte » n'est pas notée ; une ligne « calée » est dépensée ; une ligne refusée dit
-pourquoi.</p>
+« contexte » n'est pas notée ; une ligne « calée » est dépensée ; une ligne
+« <a href="#non-recours-cale">calée par le non-recours</a> » est notée, mais ne prouve rien
+du recours ; une ligne refusée dit pourquoi.</p>
 {table_grille(rows)}
 
 <h2 id="ou-elle-ne-ressemble-pas">Où elle ne ressemble pas à la France</h2>
 <p>Les foyers fiscaux sont un peu trop peu nombreux ; il manque des salaires horaires
 près du SMIC et il y en a trop un peu plus haut, ce que disent la réduction générale (trop
 basse) et la baisse de cotisation d'allocations familiales jusqu'à 3,5 SMIC (trop haute) ;
-la prime d'activité est calée sur les allocataires que compte la Drees, sous ce que la
-Cnaf verse ; les aides au logement n'ont pas les foyers, les résidences et les
+le recours à la prime d'activité est calé sur le taux de non-recours de la Drees, la
+moitié des foyers qui y ont droit, et les recourants que la Drees compte ne sont que 73 à
+83 % des foyers que la Cnaf paie (D-370) : la prime servie reste sous ce que la Cnaf
+verse ; les aides au logement n'ont pas les foyers, les résidences et les
 accédants que la Cnaf paie. Chaque écart, sa cause et ce qu'il touche sont sur
 {lien("erreur", "la page de l'erreur")}. Le coût d'une réforme se lit sur
 {lien("cout", "la page suivante")} : c'est la différence de deux passes sur cette même

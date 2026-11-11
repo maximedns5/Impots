@@ -66,3 +66,32 @@ def test_les_liens_morts_de_margins_ne_sont_pas_affiches():
                  "comptes-de-la-securite-sociale"):
         assert html.escape(mort) not in corps
     assert html.escape("https://www.insee.fr/fr/statistiques/9005622?geo=FE-1") in corps
+
+
+def test_les_lignes_calees_par_le_non_recours_sont_marquees_sans_changer_le_compte():
+    """Seconde relecture adverse : le calage du non-recours impose la part des ayants
+    droit servis ; les lignes des foyers servis sont marquées, le compte préenregistré ne
+    bouge pas, et la page dit combien des lignes tenues sont de celles-là."""
+    page = france.page()
+    texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", page.corps)))
+    rows = _grille()
+    notees = [r for r in rows if r["usage"] == "validation" and r["ecart"] is not None]
+    calees = [r for r in notees if r["id"] in france.CALEES_PAR_LE_RECOURS
+              and r["verdict"] == "dans la tolérance"]
+    assert len(calees) == 2  # rsa_foyers_servis, 2023 et 2024
+    assert "84 lignes notées sur 113 tiennent leur tolérance (dont 2 calées par le " \
+           "non-recours" in texte
+    for ident in france.CALEES_PAR_LE_RECOURS:
+        ligne = re.search(rf'<tr id="ligne-{ident}">(.*?)</tr>', page.corps, re.S)[1]
+        notees_ici = [r for r in notees if r["id"] == ident]
+        assert ligne.count(france.MARQUE_RECOURS) == len(notees_ici), ident
+
+
+def test_le_non_recours_est_decrit_par_son_vrai_calage():
+    """Le calage vise le milieu de la fourchette de la Drees en foyers (35 % pour le RSA,
+    50 % pour la prime), pas des allocataires ; le pont de la prime dit 42 % en montant."""
+    texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", france.page().corps)))
+    assert "35\u00a0% pour le RSA (la Drees dit 33 à 37\u00a0%)" in texte
+    assert "50\u00a0% pour la prime (48 à 52\u00a0%)" in texte
+    assert "un non-recours d'environ 42\u00a0% des montants" in texte
+    assert "calée sur les allocataires que compte la Drees" not in texte

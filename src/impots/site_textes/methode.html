@@ -12,17 +12,29 @@ tableaux publiés de l'Insee (Ésane). Il chiffre une réforme en faisant tourne
 fois, avec et sans elle, et en comptant l'écart. Il ne prévoit rien : chaque nombre est
 conditionnel aux hypothèses écrites à côté de lui.</p>
 <p>Le <span id="non-recours">non-recours</span> : une partie des foyers qui ont droit au RSA
-ou à la prime d'activité ne les demandent pas (environ un tiers pour le RSA, la moitié pour
-la prime, selon la Drees). La loi codée donne un droit ; la Caf verse moins. Les études
-servent donc ces deux prestations <span id="en-esperance">en espérance</span> : chaque
-foyer reçoit son droit multiplié par la probabilité qu'il le demande, probabilité qui croît
-avec le montant du droit et qui est calée pour retrouver le taux de non-recours publié. Le
-coût d'une réforme de ces prestations tient ainsi compte de ceux qui ne la toucheront pas.
-Les aides au logement sont servies en entier, faute d'un taux publié.</p>
+ou à la prime d'activité ne les demandent pas. La Drees l'estime pour la fin de 2021, en
+part des foyers qui y ont droit : 33 à 37 % pour le RSA, 48 à 52 % pour la prime ; et en
+part des montants dus, moins, parce que les petits droits sont les moins demandés : 29 à
+32 % pour le RSA, 43 à 46 % pour la prime. La loi codée donne un droit ; la Caf verse
+moins. Les études servent donc ces deux prestations <span id="en-esperance">en
+espérance</span> : chaque foyer reçoit son droit multiplié par la probabilité qu'il le
+demande. Cette probabilité croît avec le montant du droit, selon une forme supposée dont la
+pente est ajustée sur les taux de recours par tranche de montant que la Drees publie ; son
+plafond est <em>calé</em> pour que la part des foyers ayant droit du modèle qui ne la
+demandent pas soit le milieu de la fourchette publiée en foyers, 35 % pour le RSA et 50 %
+pour la prime. Le non-recours en montant n'est pas calé : il sert de contrôle, et le modèle
+le trouve un peu au-dessus de la fourchette publiée. Le calage ne vise ni le nombre
+d'allocataires ni le montant que la Caf verse ; mais une ligne de la grille qui compte les
+foyers servis en espérance retrouve, par construction, la part de recourants qu'on lui a
+imposée : elle ne prouve rien du recours, seulement le nombre de foyers ayant droit. Le coût d'une réforme de ces prestations
+tient ainsi compte de ceux qui ne la toucheront pas. Les aides au logement sont servies en
+entier, faute d'un taux publié.</p>
 <p>Le <span id="pont">pont de non-recours</span> est l'ancienne façon de le compter : un
-seul coefficient, tiré des taux de la Drees (1,355 pour le RSA, 1,725 pour la prime), qui
-divise le total des droits pour retrouver le total versé. Des lignes de la grille de
-vérification le gardent, telles qu'elles ont été préenregistrées.</p>
+seul coefficient, tiré des travaux de la Drees (1,355 pour le RSA, 1,725 pour la prime), qui
+divise le total des droits pour retrouver le total versé. Diviser par 1,725, c'est verser
+58 % des droits : un non-recours d'environ 42 % des montants, proche de la fourchette en
+montant, et non de la moitié des foyers. Des lignes de la grille de vérification le
+gardent, telles qu'elles ont été préenregistrées.</p>
 
 <h2 id="trois-reponses">Les trois réponses</h2>
 <ol>
@@ -65,7 +77,8 @@ souvent indisponible.</li>
 <p>Plus l'étage est haut, moins le nombre est sûr. Un nombre que l'outil reprend dit d'où il
 vient : « publié » pour un chiffre du gouvernement, « déclaré » pour une tolérance ou un
 seuil écrits avant le calcul, « hypothèse » pour ce que l'étude suppose, « vérifié » pour
-l'écart d'un total du moteur à son total publié de 2022 à 2024. Une étiquette « sous
+l'écart d'un total du moteur à son total publié de 2022 à 2024, avec une seule population,
+celle de 2024, ramenée aux deux autres années. Une étiquette « sous
 hypothèses » dit que le nombre change si les hypothèses de croissance, de taux ou de
 dépense changent. Au pied de chaque page, une légende rappelle chaque étiquette.</p>
 
@@ -160,9 +173,12 @@ patronales sur les bas salaires : maximal au SMIC, il décroît avec le salaire 
 <dt>Une plage</dt><dd>Les trois points (le bas, la valeur du candidat, le haut) par
 lesquels une étude parcourt un paramètre chiffré, pour montrer ce qu'il déplace. Chaque
 point est mécanique, sans comportements ni effet sur l'activité.</dd>
-<dt>Le grade d'une bande</dt><dd>« In-support » quand la réforme reste dans le domaine où
-les élasticités ont été estimées ; « illustrative » quand elle en sort, et que la bande est
-une extrapolation, élargie et signalée comme telle.</dd>
+<dt id="grade">Le grade d'une bande</dt><dd>« Dans l'étendue des estimations » quand la réforme reste
+dans le domaine où les élasticités ont été estimées (<em>in-support</em>) ; « extrapolée »
+quand elle en sort, et que la bande est une extrapolation, élargie et signalée comme telle
+(<em>illustrative</em>) ; « sans estimation publiée » quand aucune élasticité publiée ne
+couvre le prélèvement. « Aucun canal » dit qu'aucun canal des comportements ne lit la
+mesure : elle reste mécanique.</dd>
 <dt>Le chemin</dt><dd>Le calcul année par année jusqu'en 2035, avec les comportements et
 l'effet sur l'activité ; le chemin rapide reporte la seule première année, en part de PIB,
 sans eux.</dd>

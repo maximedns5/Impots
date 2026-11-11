@@ -94,3 +94,20 @@ def test_la_phrase_prouvee_ne_depasse_pas_le_controle(page):
     assert "la loi est codée juste" not in page.prouve
     assert "deux ménages" in page.prouve and "ne sont pas contrôlées" in page.prouve
     assert "Ce qu'il ne prouve pas." in page.corps
+
+
+def test_la_phrase_prouvee_dit_ce_que_les_deux_menages_ne_testent_pas(page):
+    """Seconde relecture adverse : les deux ménages contrôlés sont en décote, sous la
+    tranche à 45 % et loin du plafonnement du quotient familial ; la phrase le dit."""
+    assert "tous deux en décote" in page.prouve
+    assert "tranche à 45\u202f%" in page.prouve
+    assert "plafonnement du quotient familial" in page.prouve
+
+
+def test_l_abattement_est_dit_plafonne_au_plafond_des_parametres(page, donnees):
+    """Le célibataire à 240 000 € est plafonné : 198 726 − 14 426 = 184 300 €, et le
+    libellé du revenu fiscal donne ce plafond, lu dans les paramètres d'OpenFisca."""
+    taux, plafond = menage.abattement(donnees)
+    assert (taux, plafond) == (0.1, 14_426)
+    assert "plafonné à " + menage.eur(plafond) in page.corps
+    assert "après l&#x27;abattement de 10\u202f%)" not in page.corps
