@@ -27775,3 +27775,59 @@ Labib, Roussel, PLF art. 3 et 15 : moins de 2 %.
 `chiffrages_preregistres/` : le chiffre noté contre un juge reste celui de son
 enregistrement. Les seuils du verdict sont ceux de D-345. Le résultat va dans une nouvelle
 D-entrée, avec les dix études avant et après et l'écart au pronostic.
+
+## D-373 — La série du but 19 : ce qu'elle redonne contre D-372
+
+**Ce qui a tourné.** Les dix études de D-372, sur `601b442`, `src/` propre, la
+population de 2024 de D-370 et le millésime d'entreprises 2023. Une première exécution a
+été tuée avec la commande qui l'avait lancée, après les trois premières années du PLF ;
+la série a repris sur le même commit, en gardant ces trois rapports : de 10 h 01 à
+19 h 20 UTC, sans autre échec. Les rapports sont dans `653f5e0`, les pages et le site sont
+réécrits depuis eux ; `etude verifier` et `site verifier` sont verts.
+
+**La première année** est retrouvée à l'euro pour les treize lignes (écart nul, sous le
+seuil de 0,1 %) : la série a tourné sur le code de D-372.
+
+**Le résultat**, avant (`12e769c`) → après, sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance
+« lue »), avec la première année en Md€ et P(hausse) du Monte-Carlo.
+
+| étude | coût, avant → après | Δb, avant → après | pronostic Δb | P | verdict | tenu |
+|---|---|---|---|---|---|---|
+| PLF art. 2 | +2,85 → +2,62 | +0,39 → +0,373 | +0,31 à +0,41 | 0,80 | dépend | oui |
+| PLF art. 3 | −1,12 → −1,10 | −0,17 → −0,170 | −0,19 à −0,14 | 0,18 | dépend | oui |
+| PLF art. 15 | −7,05 → −7,05 | −0,23 → −0,220 | −0,26 à −0,19 | 0,00 | baisse | oui |
+| PLFSS, prime | −0,87 → −0,56 | −0,26 → −0,162 | −0,20 à −0,14 | 0,00 | baisse | oui |
+| PLFSS, APL | −0,08 → −0,07 | −0,07 → −0,067 | −0,08 à −0,05 | 0,00 | baisse | oui |
+| Attal | +59,53 → +65,69 | +3,41 → +4,206 | +3,20 à +4,33 | 0,65 | dépend | oui |
+| Labib | +22,89 → +22,92 | +4,47 → +4,474 | +3,80 à +5,14 | 1,00 | hausse | oui |
+| Le Pen | +13,97 → +13,38 | +1,56 → +1,487 | +1,27 à +1,72 | 0,75 | dépend | oui |
+| Lisnard | +35,43 → +36,19 | +5,56 → +5,699 | +4,83 à +6,53 | 0,89 | dépend | oui |
+| Mélenchon | −6,61 → −6,33 | −0,33 → −0,349 | −0,37 à −0,27 | 0,42 | dépend | oui |
+| Retailleau | +16,08 → +17,11 | +2,19 → +2,276 | +1,98 à +2,68 | 1,00 | hausse | oui |
+| Roussel | +5,19 → +5,20 | +0,52 → +0,523 | +0,44 à +0,60 | 0,73 | dépend | oui |
+| Tondelier | −0,85 → −0,92 | +0,27 → +0,013 | +0,25 à +0,34 | 0,55 | dépend | Δb non |
+
+Sur vingt-six pronostics (Δb et verdict, treize lignes), vingt-cinq tiennent. Les plus
+près d'un bord : Attal, +4,21 dans +3,20 à +4,33 ; la prime, −0,162 dans −0,20 à −0,14.
+Lisnard, à 0,89, reste « dépend », l'une des deux issues annoncées ; Tondelier aussi.
+
+**Tondelier sort de son pronostic, et la règle dit pourquoi.** Δb a été mis à l'échelle
+du coût de la première année ; c'est juste quand les comportements suivent ce coût. La
+mesure de Tondelier, une tranche à 60 % au-delà de 250 000 € par part, rapporte peu et
+fait réagir beaucoup : son Δb positif d'avant venait de la réponse des hauts revenus
+(élasticité du revenu imposable, C1), pas du coût. Or cette réponse porte sur la queue
+des revenus, que le but 19 a refaite (hauts salaires lus sur les centiles publiés, gérants
+comptés une fois, D-368 et D-370). La borne haute du canal C1 en 2035, vue vieillie, passe
+de −7,94 à −3,22 Md€, et le gain mécanique de −2,44 à −2,12 Md€ : le rapport des deux
+tombe de 3,3 à 1,5. Après comportements, la première année passe de +95 M€ (central) à
+−513 M€ ; la boucle macro remet +0,24 point, et Δb finit à +0,01. Le pronostic aurait dû
+suivre ce canal, pas le coût. Le résultat est gardé tel quel ; la page le dit.
+
+**Ce que la série dit d'Attal.** +10 % de coût (l'extrapolation aux salariés absents),
++0,80 point de Δb ; sans aucune boucle, la dette serait à +20,28 points (18,30 sur le code
+de D-366, au coût d'alors). Retailleau, Mélenchon et Le Pen bougent dans le sens et
+l'ordre de D-372 ; la prime du PLFSS perd 36 % de son coût par le non-recours, et son Δb
+suit.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Le pronostic manqué n'est pas réécrit.
