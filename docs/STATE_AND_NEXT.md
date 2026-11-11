@@ -1,5 +1,27 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-11 update adds D-365 to D-373: goal 19, validated by the owner, done once
+merged. Six diagnostics (`docs/diagnostics/`) traced the grid's misses to five causes;
+`calibrate.py` was opened for this goal (D-365). The self-employed now have an income,
+calibrated on Insee Première n° 2114; cohabiting partners file apart, young adults are
+attached by probability and aged by their place in the household; wages are read on
+published quantiles with the 1.9 M employees missing from the EEC extrapolated (D-368);
+gérants majoritaires are paid as wages (art. 62 CGI); RSA and prime d'activité are served
+in expectation of take-up in every reform's cost; the housing-aid zone, DOM, HLM rents and
+co-renting are drawn from published sources; the grid compares employer contributions in
+the D121 sense, a comparable net income tax and the IS at its profit year, and three
+wrong page texts are fixed. The grid went from 58 of 80 lines held to 84 of 113 (57 of
+the 80 old ones, none held by compensating errors any more), its prognosis held on all
+113 (D-371). The ten studies reran on `601b442` (D-373): first-year costs to the euro,
+25 of 26 prognoses held. Attal +59.5 → +65.7 bn€ and +3.41 → +4.21 points of debt;
+Tondelier's Δb misses (+0.27 → +0.01): its sign came from the top-income response, which
+the rebuilt top tail halved, and the prognosis scaled with the cost. Still off: the
+general reduction (−17 %) and family band (+19 %), prime d'activité served (−25 %, a
+target choice), housing aid (−28 %, out of field); not done: adults outside ordinary
+households, the calibration of tax units by status and income bracket; housing aid keeps
+full take-up, no national rate being published. Next: the owner merges the goal 19 PR,
+makes the repository public and turns on the site; then goal 20, the eight-page path.
+
 The 2026-11-09 update adds D-359 to D-364: goal 18. The past-judges bench found 9
 priceable articles in 531, and was set aside (D-361) for a verification grid: each
 instrument the studies price, against a published total for 2022, 2023 and 2024, the 2024

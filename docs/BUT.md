@@ -791,7 +791,7 @@ l'IMK et de l'OCDE déjà manifestées, si le propriétaire rouvre D-246. Une in
 tire l'erreur du coût mesurée ici. Puis les juges du passé, sur un modèle dont l'erreur est
 connue.
 
-### But 19 — Un modèle juste sur sa population (validé le 10 novembre 2026, D-365)
+### But 19 — Un modèle juste sur sa population (fait, D-365 à D-373)
 
 La grille du but 18 a mesuré le modèle ; six diagnostics, le 10 novembre
 (`docs/diagnostics/`, leur synthèse dans `SYNTHESE.md`), ont expliqué ses écarts. Les 22
