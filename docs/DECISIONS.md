@@ -27993,3 +27993,35 @@ le compte de la grille reste 84 sur 113.
 * le triage du PLF, pas revu depuis septembre ; le RESF 2027, absent des données : la
   page 6 compare au RESF 2026 et au texte du PLF 2027 ;
 * les liens vers le dépôt, morts tant qu'il n'est pas public.
+
+## D-379 — Le but 21 : les programmes avant la robustesse
+
+**Le constat.** La vidéo explicative (branche `claude/video-explicative`) suit « Droit au
+brut » du ménage au verdict ; elle montre un modèle dont chaque étage dit son erreur, mais
+qui ne lit qu'une petite part de chaque programme. Le compte des 24 fichiers de
+`programmes/`, le 12 novembre : 321 mesures relevées, 13 chiffrées (4 %), 109 vagues
+(34 %), 199 refusées par une porte (62 %). Cinq candidats n'ont aucune mesure relevée ;
+onze en ont sans qu'aucune se chiffre, et n'ont donc pas d'étude. Les études publiées
+portent sur 1 à 3 mesures par programme (Attal 2 sur 33 relevées, Mélenchon 1 sur 40).
+
+**Les portes, comptées.** Parmi les refus chiffrés par le candidat : la dépense publique
+56, les retraites 22, la chaîne de la dette 20, une donnée des ménages 18, une prestation
+hors du moteur 14, les successions 13, les prix 10, les salaires 7, un secteur 7,
+l'indexation 5, une enveloppe 4, un bouton hors du but 4, le patrimoine 4, et 15 autres.
+Le compte est un décompte des champs `refus.porte` des fichiers ; il ne chiffre rien.
+
+**La décision.** Le propriétaire, le 12 novembre : le travail se règle sur ce que disent
+les candidats, et l'impact de leurs choix se mesure sur la population. Le but 21 ouvre les
+portes qui appliquent une règle neuve à la population existante (les boutons non câblés,
+l'indexation, les enveloppes traduites, les prestations neuves, les données de ménages
+imputées et calées, les salaires que la population distingue), et préenregistre chaque
+mesure avant le juge de l'Institut Montaigne, attendu au premier trimestre 2027. Les
+retraites, les successions et le patrimoine, qui demandent un module entier, viennent
+après ; la robustesse de la boucle macro, de l'offre de travail et du coût par bouton
+aussi. La règle de priorité de `BUT.md` le permet : des mesures chiffrées et
+préenregistrées font monter, à terme, le nombre de cas notés, et le nombre d'études qui
+portent les trois réponses.
+
+**Ce qui reste au propriétaire.** Une lecture séparée de la dette « si les économies
+annoncées sont tenues » (76 mesures de dépense et de chaîne), jamais additionnée au
+chiffrage ni au verdict (D-319) : à accepter ou à refuser avant le lancement.

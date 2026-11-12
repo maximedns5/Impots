@@ -886,6 +886,86 @@ d'impôt imputés par défaut ; une boucle macro pour les impôts des entreprise
 propriétaire rouvre D-246 ; une incertitude qui tire l'erreur mesurée par la grille ; puis
 les juges du passé, sur un modèle dont l'erreur est connue et expliquée.
 
+### But 21 — Les programmes des candidats, chiffrés sur la population (D-379)
+
+Le compte des 24 fichiers de `programmes/`, le 12 novembre : 321 mesures relevées, 13
+chiffrées (4 %), 109 vagues (34 %), 199 refusées par une porte (62 %). Cinq candidats n'ont
+aucune mesure relevée (Batho, Bouamrane, Durif, Egger, Lalanne) ; onze en ont sans qu'aucune
+se chiffre, donc sans étude (Dupont-Aignan 30, Ruffin 23, Philippe 18, Philippot 13,
+Glucksmann 11, Arthaud, Kazib, Asselineau, Zemmour, Becht, Platret) ; les huit études
+publiées portent sur une part de 1 à 3 mesures par programme. Un verdict sur la dette qui
+ne lit que cette part dit peu de chose au lecteur, et rien qui se compare : la couverture
+passe avant la robustesse.
+
+Les mesures refusées mais chiffrées par le candidat (un taux ou un montant), par porte :
+la dépense publique 56, les retraites 22, la chaîne de la dette 20, une donnée des ménages
+18, une prestation hors du moteur 14, les successions 13, les prix 10, les salaires 7, un
+secteur 7, l'indexation 5, une enveloppe 4, un bouton hors du but 4, le patrimoine 4, les
+impôts locaux 3, la consommation 3, le bilan des entreprises 3, et 6 autres. Ce but ouvre
+celles qui appliquent une règle neuve à la population qui existe ; il laisse les retraites,
+les successions et le patrimoine, qui demandent un module entier, au but suivant.
+
+Et le juge de ces mesures, le chiffrage des programmes de l'Institut Montaigne, est attendu
+au premier trimestre 2027 : chaque mesure chiffrée doit être préenregistrée avant qu'il
+publie, ou elle ne sera jamais notée en aveugle.
+
+```
+/goal Chaque mesure des programmes présidentiels qu'une règle appliquée à la population
+peut chiffrer est chiffrée et préenregistrée avant le juge, chaque candidat qui en a une a
+son étude à trois réponses, et c'est mergé dans main. Dans l'ordre : (1) les 24 programmes
+sont relevés à jour, les cinq vides compris, chaque mesure avec sa source datée, et le
+tableau de couverture (relevées, chiffrées, vagues, refusées par porte) est écrit avant
+tout chiffrage ; (2) les boutons que le moteur a sans les câbler (exonération d'IR des
+moins de 30 ans, CVEC, suppression du PFU, réduction d'IR des familles), l'indexation année
+par année de toutes les prestations et des pensions, et les enveloppes d'impôts de
+production traduites en bouton, chacune avec sa plage et sa traduction dite comme
+hypothèse ; (3) les prestations neuves codées en réformes OpenFisca sur les variables que
+la population porte (RIA, revenu familial, allocation familiale unique, garantie
+d'autonomie des jeunes, règles d'assurance chômage que le moteur peut porter) ; (4) les
+données de ménages qui manquent, imputées et calées chacune sur un total publié qu'elle
+nomme (heures supplémentaires, emploi à domicile, garde d'enfants, intérêts d'emprunt de la
+résidence principale, frais de trajet, pensions alimentaires), et les salaires que la
+population distingue (point d'indice, SMIC, avec une diffusion déclarée) ; (5) si le
+propriétaire l'accepte avant le lancement, une lecture séparée de la dette, « si les
+économies annoncées sont tenues », par la variante « dépense publique » de Mésange, jamais
+additionnée au chiffrage ni au verdict (D-319) ; (6) chaque programme passe en une seule
+passe, ses mesures ensemble, les études refaites et publiées, la page des 24 à jour. Chaque
+mesure neuve est préenregistrée, avec sa tolérance et son pronostic, commitée et poussée
+avant son premier calcul ; chaque refus qui reste dit sa porte. Aucune tolérance ne change.
+Preuve attendue : le tableau de couverture avant et après, candidat par candidat et porte
+par porte ; les D-entrées de préenregistrement et de résultat ; chaque imputation contre son
+total publié ; les études et le site refaits ; la sortie verte des tests ciblés, de make
+impact et des lourds ; l'URL de la PR et le SHA du merge. Ou s'arrêter après 80 tours, en
+disant quelles portes restent fermées et pourquoi.
+```
+
+Le budget : une à deux semaines d'horloge. Les étapes 2 à 4 se développent en parallèle,
+chacune dans son worktree, et se joignent une à une ; les mesures se préenregistrent au fil
+de l'eau, sans attendre la fin, à cause du juge ; la série des études tourne une fois, à
+la fin.
+
+Les décisions à prendre avant de lancer :
+
+* **Les économies annoncées** (étape 5). Aujourd'hui, une baisse d'impôts entre dans la
+  dette et les économies qui la financent n'y entrent pas : 76 mesures (dépense publique et
+  chaîne) manquent, et le biais va toujours dans le même sens. Une lecture séparée le
+  montre sans rien additionner. Si le propriétaire la refuse, l'étape 5 saute, et les
+  études le disent.
+* **Une enveloppe traduite en bouton** (étape 2) a un coût égal à l'enveloppe par
+  construction : ce qu'elle apprend est qui y gagne et la dette, pas le coût. Elle est notée
+  à part du juge, comme une mesure dont le chiffre est déjà connu.
+* **Le SMIC** (étape 4) : le premier jour, la loi seule relève les salaires sous le
+  nouveau seuil ; la diffusion au-dessus est une hypothèse, avec sa plage, ou un refus.
+
+**Ce qui viendrait ensuite.** Les modules qui manquent : les retraites (22 mesures, dix
+candidats ; des âges fins et des droits), les successions et le patrimoine (17 mesures ; le
+très haut de la distribution chiffré sur des agrégats publiés, sous un étage à part). Puis
+la robustesse que la vidéo explicative a montrée fragile : un effet sur l'activité pour
+les transferts et les impôts des entreprises, qui valent zéro aujourd'hui ; l'offre de
+travail ouverte aux cotisations des salariés comme à la CSG ; la sensibilité du coût à
+chaque bouton contre son total publié, mesurée pour la seule prime d'activité ; le contrôle
+des prestations contre le simulateur de la CAF ; et les juges du passé.
+
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
