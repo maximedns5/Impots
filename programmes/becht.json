@@ -9,45 +9,451 @@
     "date": "2026-10-11",
     "type": "entretien"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
       "id": "o1_contrat_unique_portable",
       "categorie": "prestations",
-      "libelle": "Contrat de travail unique « portable », avec un « salaire socle » pendant les périodes sans emploi : emploi accepté, formation, ou 25 h de bénévolat",
-      "parametre": "25 h de bénévolat (montant du salaire socle non donné)",
-      "precision": "vague",
+      "libelle": "« CDI universel » portable, garanti par l'État, qui remplace l'assurance chômage, le RSA et les aides au logement ; sans poste, formation ou 25 h par semaine au service d'une collectivité ou d'une association",
+      "parametre": "revenu jamais sous le salaire minimum ; 25 h par semaine ; plus de 20 Md€ d'économies par an selon le candidat",
+      "precision": "parametree",
       "sources": [
         {
           "citation": "« Ce contrat serait portable d'une entreprise à l'autre et resterait attaché à la personne pendant les périodes sans emploi, avec un salaire socle. »",
           "url": "https://www.sudradio.fr/politique/olivier-becht-je-suis-candidat-a-lelection-presidentielle-et-jirai-jusquau-bout",
           "date": "2026-10-11",
           "type": "entretien"
+        },
+        {
+          "citation": "« Par une Entreprise pour l'Emploi, l'État garantit à chacun ce contrat universel, jamais rémunéré en deçà du salaire minimum. »",
+          "url": "https://becht2027.fr/chapitre/partie-5/",
+          "date": "2026-10-19",
+          "type": "programme"
+        },
+        {
+          "citation": "« ce système permettrait plus de 20 milliards d'économies sur les quatre-vingts que nous consacrons chaque année au chômage et à l'inactivité. »",
+          "url": "https://becht2027.fr/chapitre/partie-5/",
+          "date": "2026-10-19",
+          "type": "programme"
+        },
+        {
+          "citation": "« le CDI universel remplace justement l'assurance chômage, le revenu de solidarité et les aides au logement. »",
+          "url": "https://becht2027.fr/chapitre/partie-5/",
+          "date": "2026-10-19",
+          "type": "programme"
         }
       ],
       "refus": {
-        "porte": "vague",
-        "raison": "Le montant du salaire socle n'est pas donné."
+        "porte": "prestations_hors_modele",
+        "raison": "Un revenu garanti au salaire minimum qui remplace l'assurance chômage, le RSA et les aides au logement est une prestation neuve, et le moteur n'a pas l'assurance chômage."
+      },
+      "declare": {
+        "montant_eur": 20000000000.0,
+        "sens": "economie_depense",
+        "horizon": "chaque année (« plus de 20 milliards » sur 80 Md€ annuels)",
+        "source": {
+          "citation": "« ce système permettrait plus de 20 milliards d'économies sur les quatre-vingts que nous consacrons chaque année au chômage et à l'inactivité. »",
+          "url": "https://becht2027.fr/chapitre/partie-5/",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
       }
     },
     {
       "id": "o2_revolution_energetique",
       "categorie": "energie_carburants",
       "libelle": "« Révolution énergétique », dont les carburants de synthèse",
-      "parametre": "non énoncé",
-      "precision": "vague",
+      "parametre": "≈ 150 Md€ d'investissement sur 20 ans (public et privé non distingués)",
+      "precision": "parametree",
       "sources": [
         {
           "citation": "« Je souhaite notamment engager une révolution énergétique, avec le développement des carburants de synthèse, pour réduire notre dépendance aux importations pétrolières. »",
           "url": "https://www.sudradio.fr/politique/olivier-becht-je-suis-candidat-a-lelection-presidentielle-et-jirai-jusquau-bout",
           "date": "2026-10-11",
           "type": "entretien"
+        },
+        {
+          "citation": "« C'est un effort colossal, qui mobilisera la Nation pendant 20 ans, près de 150 milliards d'investissement et un développement massif de notre production électrique »",
+          "url": "https://becht2027.fr/chapitre/partie-4/",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "Les carburants de synthèse et la production d'énergie sont un secteur hors du modèle ; la part publique de l'investissement n'est pas dite."
+      }
+    },
+    {
+      "id": "o3_rabot_depenses",
+      "categorie": "depense_publique",
+      "libelle": "« Rabot » : abattement égalitaire sur toutes les dépenses publiques, à court terme",
+      "parametre": "−3 % sur toutes les dépenses ; ≈ 50 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Appliqué à hauteur de 3 %, il représente environ 50 milliards d'économies immédiates, soit le tiers du déficit supprimé d'un coup. »",
+          "url": "https://becht2027.fr/chapitre/partie-10/",
+          "date": "2026-11-05",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un abattement sur toutes les dépenses : la dépense publique n'est qu'un scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 50000000000.0,
+        "sens": "economie_depense",
+        "horizon": "immédiat, dès le début du mandat ; montant annuel d'un abattement de 3 % sur la dépense",
+        "source": {
+          "citation": "« Appliqué à hauteur de 3 %, il représente environ 50 milliards d'économies immédiates, soit le tiers du déficit supprimé d'un coup. »",
+          "url": "https://becht2027.fr/chapitre/partie-10/",
+          "date": "2026-11-05",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "o4_stabilite_taux_impots",
+      "categorie": "autre",
+      "libelle": "Taux des impôts ni augmentés ni baissés pendant le mandat",
+      "parametre": "taux inchangés",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« le taux des impôts n'augmentera pas, mais ne baissera pas non plus. »",
+          "url": "https://becht2027.fr/chapitre/partie-10/",
+          "date": "2026-11-05",
+          "type": "programme"
         }
       ],
       "refus": {
         "porte": "vague",
-        "raison": "Ni taux, ni montant, ni objectif chiffré."
+        "raison": "Un engagement de ne rien changer : aucun taux ni montant à régler."
+      }
+    },
+    {
+      "id": "o5_fraude_25_md",
+      "categorie": "regle_budgetaire",
+      "libelle": "Récupérer le quart de la fraude fiscale et sociale, par une organisation nouvelle contre la criminalité économique",
+      "parametre": "25 Md€ par an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Quant à la fraude fiscale et sociale, estimée à plus de 100 milliards par an, en récupérer le quart, 25 milliards […] est un objectif réaliste. »",
+          "url": "https://becht2027.fr/chapitre/partie-10/",
+          "date": "2026-11-05",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une fraude recouvrée est une hypothèse de recettes du calcul de la dette, pas une règle que le moteur applique aux ménages."
+      },
+      "declare": {
+        "montant_eur": 25000000000.0,
+        "sens": "recette",
+        "horizon": "par an (objectif)",
+        "source": {
+          "citation": "« Quant à la fraude fiscale et sociale, estimée à plus de 100 milliards par an, en récupérer le quart, 25 milliards […] est un objectif réaliste. »",
+          "url": "https://becht2027.fr/chapitre/partie-10/",
+          "date": "2026-11-05",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "o6_equilibre_7_ans",
+      "categorie": "regle_budgetaire",
+      "libelle": "Retour à l'équilibre en moins de 7 ans ; dette sous 85 % du PIB en moins de 10 ans",
+      "parametre": "équilibre en < 7 ans ; dette < 85 % du PIB en < 10 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« la France pourrait revenir à l'équilibre en moins de 7 ans, et dégager de l'ordre de 45 milliards par an pour de nouveaux investissements. »",
+          "url": "https://becht2027.fr/chapitre/partie-10/",
+          "date": "2026-11-05",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une trajectoire de déficit est une hypothèse du calcul de la dette, pas une réforme : aucun bouton ne la règle."
+      }
+    },
+    {
+      "id": "o7_primes_partage_valeur",
+      "categorie": "csg_cotisations",
+      "libelle": "Primes de partage de la valeur fusionnées, avantage fiscal et social relevé ; intéressement et participation renforcés",
+      "parametre": "« jusqu'à plusieurs milliers d'euros par an »",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« les primes de partage de la valeur seront fusionnées et leur avantage fiscal et social relevé, jusqu'à plusieurs milliers d'euros par an »",
+          "url": "https://becht2027.fr/chapitre/partie-4/",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "« Plusieurs milliers d'euros » n'est pas un plafond chiffré."
+      }
+    },
+    {
+      "id": "o8_bouclier_travail",
+      "categorie": "salaires_smic",
+      "libelle": "« Bouclier travail » : part nette d'une hausse de revenu garantie au salarié",
+      "parametre": "≥ 60 % de toute hausse de revenu en net (contre 40 %)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous instaurerons aussi un « bouclier travail » : toute augmentation de revenu devra bénéficier en net pour 60 % au salarié, et non 40 % comme aujourd'hui »",
+          "url": "https://becht2027.fr/chapitre/partie-4/",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Un taux marginal cible n'est pas un paramètre : il faudrait les règles de prélèvements et de prestations qui le produiraient, que le candidat ne dit pas."
+      }
+    },
+    {
+      "id": "o9_remuneration_enseignants",
+      "categorie": "depense_publique",
+      "libelle": "Salaires des enseignants rapportés au SMIC en début de carrière",
+      "parametre": "1,8 SMIC (professeur des écoles) et 2,3 SMIC (agrégé), contre 1,5 et 1,8",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 1,8 SMIC pour un professeur des écoles et 2,3 pour un agrégé en début de carrière, contre 1,5 et 1,8 aujourd'hui »",
+          "url": "https://becht2027.fr/chapitre/partie-4/",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le traitement des enseignants est un salaire public : la population ne les distingue pas, et ses salaires sont des données."
+      }
+    },
+    {
+      "id": "o10_fonds_marianne_succession",
+      "categorie": "patrimoine_capital",
+      "libelle": "Fonds souverain « Fonds Marianne » à capital garanti, exonéré de droits de succession si le capital y reste placé",
+      "parametre": "droits de succession = 0 si placé 7 ans après la succession",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« avec un capital et une rémunération garantis par l'État et exonérés de droits de succession si ce capital y reste placé 7 années après la succession. »",
+          "url": "https://becht2027.fr/chapitre/partie-4/",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Une exonération de droits de succession demande un module de transmission."
+      }
+    },
+    {
+      "id": "o11_allocations_premier_enfant",
+      "categorie": "prestations",
+      "libelle": "Allocations familiales dès le premier enfant, plafonnées au-delà du cinquième ; avantage fiscal pour les foyers recomposés",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Nous soutiendrons la natalité par des allocations familiales dès le premier enfant, mais plafonnées au-delà du cinquième »",
+          "url": "https://becht2027.fr/chapitre/partie-5/",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni montant de l'allocation ni plafond chiffré."
+      }
+    },
+    {
+      "id": "o12_periscolaire_creches",
+      "categorie": "prestations",
+      "libelle": "Maillage de crèches et de relais d'assistantes maternelles ; périscolaire quasi gratuit, hors repas",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« nous rendrons le périscolaire quasi gratuit, hors prix du repas »",
+          "url": "https://becht2027.fr/chapitre/partie-5/",
+          "date": "2026-10-19",
+          "type": "programme"
+        },
+        {
+          "citation": "« un maillage de crèches, de relais d'assistantes maternelles et de structures périscolaires gratuites »",
+          "url": "https://becht2027.fr/projet-france/les-5-refondations/refondation-sociale/",
+          "date": "2026-10-07",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "« Quasi gratuit » n'est pas un tarif ; aucune place ni aucun montant."
+      }
+    },
+    {
+      "id": "o13_pret_etudiant",
+      "categorie": "prestations",
+      "libelle": "Prêt étudiant garanti par l'État, à taux très réduit, remboursable selon les revenus",
+      "parametre": "≈ 50 000 € sur 5 ans (≈ 850 €/mois) ; remboursable sur 15 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Chaque étudiant qui le souhaite pourra emprunter de l'ordre de 50 000 euros sur cinq ans, à taux très réduit, remboursable sur 15 ans après les études selon ses revenus. »",
+          "url": "https://becht2027.fr/chapitre/partie-5/",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Un prêt garanti par l'État n'est ni une prestation ni un impôt du moteur, et la population ne dit pas qui l'emprunterait."
+      }
+    },
+    {
+      "id": "o14_retraite_points_minimum",
+      "categorie": "retraites",
+      "libelle": "Retraite par points, âge de départ choisi, pension indexée sur le rapport actifs retraités ; minimum de 1 200 € pour une carrière complète",
+      "parametre": "1 200 €/mois minimum",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un complément de dignité garantira qu'aucune retraite, pour une carrière complète ou un travail mené jusqu'à un âge avancé, ne soit inférieure à 1 200 euros par mois »",
+          "url": "https://becht2027.fr/chapitre/partie-5/",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Un régime par points et un minimum de pension refont le système de retraite : les pensions de la population sont des données."
+      }
+    },
+    {
+      "id": "o15_dotations_communes",
+      "categorie": "depense_publique",
+      "libelle": "Dotations nouvelles aux communes et intercommunalités : sécurité, vie locale, investissement",
+      "parametre": "plus de 4 Md€ ; 10 €, 10 € et 30 € par habitant",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Communes et intercommunalités verront leurs moyens renforcés de plus de 4 milliards d'euros »",
+          "url": "https://becht2027.fr/chapitre/partie-8/",
+          "date": "2026-10-29",
+          "type": "programme"
+        },
+        {
+          "citation": "« une dotation communale de sécurité et une dotation de vie locale, de 10 euros par habitant et par an chacune, et une dotation d'investissement de 30 euros par habitant »",
+          "url": "https://becht2027.fr/chapitre/partie-8/",
+          "date": "2026-10-29",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Des dotations aux collectivités sont une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 4000000000.0,
+        "sens": "depense",
+        "horizon": "non énoncé (« plus de 4 milliards d'euros » ; deux des trois dotations sont annuelles)",
+        "source": {
+          "citation": "« Communes et intercommunalités verront leurs moyens renforcés de plus de 4 milliards d'euros »",
+          "url": "https://becht2027.fr/chapitre/partie-8/",
+          "date": "2026-10-29",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "o16_plan_amenagement",
+      "categorie": "depense_publique",
+      "libelle": "Plan d'aménagement de l'État pour les investissements de proximité",
+      "parametre": "10 Md€ sur 5 ans ; 100 M€ par département",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« L'État, de son côté, lancera un grand plan d'aménagement de 10 milliards d'euros sur 5 ans, soit 100 millions par département »",
+          "url": "https://becht2027.fr/chapitre/partie-8/",
+          "date": "2026-10-29",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un plan d'investissement public est une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 10000000000.0,
+        "sens": "depense",
+        "horizon": "total sur cinq ans (100 M€ par département)",
+        "source": {
+          "citation": "« L'État, de son côté, lancera un grand plan d'aménagement de 10 milliards d'euros sur 5 ans, soit 100 millions par département »",
+          "url": "https://becht2027.fr/chapitre/partie-8/",
+          "date": "2026-10-29",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "o17_plan_ferroviaire",
+      "categorie": "depense_publique",
+      "libelle": "Plan ferroviaire : entretien du réseau et renouvellement des matériels",
+      "parametre": "10 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Elle s'accompagnera d'un grand plan ferroviaire de 10 milliards d'euros pour entretenir le réseau et renouveler les matériels »",
+          "url": "https://becht2027.fr/chapitre/partie-8/",
+          "date": "2026-10-29",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un plan d'investissement public est une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 10000000000.0,
+        "sens": "depense",
+        "horizon": "total, sans calendrier donné",
+        "source": {
+          "citation": "« Elle s'accompagnera d'un grand plan ferroviaire de 10 milliards d'euros pour entretenir le réseau et renouveler les matériels »",
+          "url": "https://becht2027.fr/chapitre/partie-8/",
+          "date": "2026-10-29",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "o18_plan_climat",
+      "categorie": "depense_publique",
+      "libelle": "Plan national de protection contre le changement climatique, financé par le public et le privé",
+      "parametre": "30 Md€ (part publique non dite)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Le Pacte des Territoires s'accompagnera, dans toute la France, d'un plan national de 30 milliards d'euros pour protéger les Français du changement climatique. »",
+          "url": "https://becht2027.fr/chapitre/partie-8/",
+          "date": "2026-10-29",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un plan d'investissement est une dépense que le moteur ne microsimule pas, et sa part publique n'est pas dite."
       }
     }
   ]

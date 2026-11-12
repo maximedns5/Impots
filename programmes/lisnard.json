@@ -9,7 +9,7 @@
     "date": "2026-03-31",
     "type": "entretien"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -51,14 +51,20 @@
       "id": "l2_cotisations_salaire_net",
       "categorie": "csg_cotisations",
       "libelle": "Baisse des cotisations rendue en salaire net",
-      "parametre": "120 Md€ ; environ 400 €/mois nets par salarié",
+      "parametre": "120 Md€ ; ≈ 400 €/mois nets (janvier 2026) ; 250 €/mois sur un revenu médian de 2 500 € (29/08/2026) : les deux se contredisent",
       "precision": "parametree",
       "sources": [
         {
           "citation": "« c'est ce qui va permettre de rehausser le salaire net tout en baissant l'extra brut. Parce qu'on va cotiser moins pour gagner plus »",
-          "url": "https://www.unenouvelleenergie.fr/questions/david-lisnard-veut-il-baisser-les-impots/",
+          "url": "https://www.unenouvelleenergie.fr/questions/comment-david-lisnard-veut-il-augmenter-les-salaires-sans-augmenter-le-cout-du-travail/",
           "date": "2026-06-11",
           "type": "entretien"
+        },
+        {
+          "citation": "« Sur un revenu médian qu'il situe à 2 500 euros, cela représenterait 10 % net de plus par mois, soit 250 euros. » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/questions/le-programme-de-david-lisnard-est-il-chiffre/",
+          "date": "2026-08-29",
+          "type": "discours"
         }
       ],
       "refus": {
@@ -173,6 +179,12 @@
           "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
           "date": "2026-10-27",
           "type": "entretien"
+        },
+        {
+          "citation": "« on documente deux cent milliards de baisse de dépenses. L'objectif, c'est trois cent milliards. »",
+          "url": "https://www.unenouvelleenergie.fr/questions/le-programme-de-david-lisnard-est-il-chiffre/",
+          "date": "2026-08-29",
+          "type": "discours"
         }
       ],
       "refus": {
@@ -182,7 +194,7 @@
       "declare": {
         "montant_eur": 200000000000.0,
         "sens": "economie_depense",
-        "horizon": "à l'horizon 2032 (80 Md€ dès la première année)",
+        "horizon": "à l'horizon 2032, en année pleine en fin de quinquennat ; 80 Md€ dès la première année ; 300 Md€ visés, non documentés",
         "source": {
           "citation": "« 80 milliards d'euros d'économies dès la première année, puis 200 milliards d'euros à l'horizon 2032 » (texte de la page)",
           "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
@@ -576,6 +588,112 @@
       "refus": {
         "porte": "vague",
         "raison": "Ni taux ni calendrier de dégressivité."
+      }
+    },
+    {
+      "id": "l25_is_20_pct",
+      "categorie": "entreprises",
+      "libelle": "Impôt sur les sociétés ramené à 20 %, avec une part variable laissée aux collectivités (livre de 2025, repris par le parti)",
+      "parametre": "IS à 20 % + part locale de 0 à 5 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« ramener l'impôt sur les sociétés à 20 % avec une part variable laissée aux collectivités locales entre 0 et 5 % »",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-baisser-les-impots/",
+          "date": "2026-10-16",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "dimension_entreprises",
+        "raison": "La part locale de 0 à 5 % dépend de la collectivité de chaque entreprise, que le modèle ne localise pas ; le taux total n'est donc pas fixé."
+      }
+    },
+    {
+      "id": "l26_residence_5_ans_allocations",
+      "categorie": "prestations",
+      "libelle": "Cinq ans de résidence en France avant toute allocation non contributive",
+      "parametre": "5 ans ; 8 Md€ d'économies par an selon le candidat",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Exiger cinq ans de résidence en France avant d'ouvrir droit à une allocation non contributive ferait économiser, selon lui, huit milliards d'euros par an. » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/questions/le-programme-de-david-lisnard-est-il-chiffre/",
+          "date": "2026-08-29",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La durée de résidence en France n'est pas dans la population : le moteur ne sait pas qui perdrait ses prestations."
+      },
+      "declare": {
+        "montant_eur": 8000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an ; comprise dans les 200 Md€ de l6, et recoupe sans doute l8 : ne pas additionner",
+        "source": {
+          "citation": "« Exiger cinq ans de résidence en France avant d'ouvrir droit à une allocation non contributive ferait économiser, selon lui, huit milliards d'euros par an. » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/questions/le-programme-de-david-lisnard-est-il-chiffre/",
+          "date": "2026-08-29",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "l27_remuneration_enseignants",
+      "categorie": "depense_publique",
+      "libelle": "Revalorisation des enseignants, conditionnée à une réorganisation (autonomie, présence, formation, évaluation)",
+      "parametre": "+20 % des rémunérations en cinq ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous proposons une augmentation de 20 % des rémunérations en cinq ans, conditionnée à une réorganisation profonde »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/education/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le traitement des enseignants est un salaire public : la population ne les distingue pas, et ses salaires sont des données."
+      }
+    },
+    {
+      "id": "l28_suppression_ame",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de l'aide médicale d'État",
+      "parametre": "AME supprimée",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« David Lisnard propose de supprimer l'aide médicale d'État. » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-propose-de-supprimer-l-aide-medicale-d-etat/",
+          "date": "2026-07-03",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "L'aide médicale d'État est une dépense de santé que le moteur ne microsimule pas, et ses bénéficiaires ne sont pas dans la population."
+      }
+    },
+    {
+      "id": "l29_fin_subventions_entreprises",
+      "categorie": "depense_publique",
+      "libelle": "Fin des subventions qui compensent les charges des entreprises, contre une baisse directe des charges",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« nous cesserons de subventionner les entreprises pour compenser les charges »",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-supprimer-les-subventions-aux-entreprises/",
+          "date": "2026-07-03",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni dispositif désigné ni montant."
       }
     }
   ]

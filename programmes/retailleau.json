@@ -9,7 +9,7 @@
     "date": "2026-04-19",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -820,6 +820,203 @@
       "refus": {
         "porte": "consommation",
         "raison": "Les installations photovoltaïques ne sont pas un poste de la consommation dans l'enquête Budget de famille : elles sont dans les gros travaux, hors de son champ (division 13), et la TVA par poste ne les isole pas."
+      }
+    },
+    {
+      "id": "r34_remuneration_enseignants",
+      "categorie": "depense_publique",
+      "libelle": "Revalorisation du traitement des professeurs (pas des primes), financée par la baisse démographique",
+      "parametre": "+135 € nets/mois en début de carrière ; ≈ +300 € nets/mois au cœur de la carrière",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous alignerons ainsi intégralement le début de carrière sur la moyenne européenne, soit 135 euros nets de plus chaque mois […] soit environ 300 euros nets supplémentaires par mois. »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/09/LR_Ecole_vF.pdf",
+          "date": "2026-08-31",
+          "type": "programme"
+        },
+        {
+          "citation": "« libérer plus de 3 milliards d'euros par an en fin de quinquennat, pour financer intégralement cette revalorisation sans un euro d'impôt nouveau »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/09/LR_Ecole_vF.pdf",
+          "date": "2026-08-31",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le traitement des enseignants est un salaire public : la population ne les distingue pas, et ses salaires sont des données."
+      },
+      "declare": {
+        "montant_eur": 3000000000.0,
+        "sens": "depense",
+        "horizon": "par an en fin de quinquennat : « plus de 3 milliards d'euros par an » libérés par la baisse du nombre d'élèves, que le parti affecte à cette revalorisation",
+        "source": {
+          "citation": "« libérer plus de 3 milliards d'euros par an en fin de quinquennat, pour financer intégralement cette revalorisation sans un euro d'impôt nouveau »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/09/LR_Ecole_vF.pdf",
+          "date": "2026-08-31",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "r35_ia_economies_etat",
+      "categorie": "depense_publique",
+      "libelle": "IA dans l'État : 125 000 départs à la retraite non remplacés, achats publics et lutte contre la fraude",
+      "parametre": "125 000 départs non remplacés ; ≈ 15 Md€ nets par an à terme (7,5 de masse salariale, ≈ 4 d'achats, 3 à 4 de fraude)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Au total, de l'ordre de 15 milliards d'euros par an à terme, intégralement affectés au rétablissement des comptes publics. »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf",
+          "date": "2026-07-07",
+          "type": "programme"
+        },
+        {
+          "citation": "« Les 125 000 départs non remplacés, eux, produisent une économie nette de masse salariale de l'ordre de 7,5 milliards d'euros par an à terme »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf",
+          "date": "2026-07-07",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Des effectifs, des achats et une fraude recouvrée : une dépense que le moteur ne microsimule pas, seulement un scénario de la dette."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an à terme (cible 2031-2032) ; dont 3 à 4 Md€ de fraude recouvrée ; recoupe sans doute le non-remplacement de r4 et le plan de r1 : ne pas additionner",
+        "source": {
+          "citation": "« Au total, de l'ordre de 15 milliards d'euros par an à terme, intégralement affectés au rétablissement des comptes publics. »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf",
+          "date": "2026-07-07",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "r36_programme_ia_cout",
+      "categorie": "depense_publique",
+      "libelle": "Programme « L'IA au service des Français » : investissement public nouveau",
+      "parametre": "11,6 Md€ sur le quinquennat, ≈ 2,3 Md€ par an (23 Md€ d'effort brut)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« l'investissement réellement nouveau et spécifique à l'intelligence artificielle s'établit à environ 11,6 milliards d'euros, soit de l'ordre de 2,3 milliards par an. »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf",
+          "date": "2026-07-07",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un investissement public dans l'IA est une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 2300000000.0,
+        "sens": "depense",
+        "horizon": "par an sur le quinquennat (11,6 Md€ au total)",
+        "source": {
+          "citation": "« l'investissement réellement nouveau et spécifique à l'intelligence artificielle s'établit à environ 11,6 milliards d'euros, soit de l'ordre de 2,3 milliards par an. »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf",
+          "date": "2026-07-07",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "r37_actionnariat_salarie",
+      "categorie": "csg_cotisations",
+      "libelle": "Suppression de la contribution patronale sur l'actionnariat salarié (actions gratuites, BSPCE, stock-options), pour toutes les entreprises",
+      "parametre": "contribution patronale de 30 % → 0",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous supprimerons totalement cette contribution patronale, pour tous les dispositifs d'actionnariat salarié, actions gratuites, BSPCE et stock-options »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf",
+          "date": "2026-07-07",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les attributions d'actions gratuites et de stock-options ne sont ni dans la population ni dans les entreprises du moteur."
+      }
+    },
+    {
+      "id": "r38_retour_talents_ir",
+      "categorie": "ir",
+      "libelle": "Programme « Retour au pays » : exonération d'impôt sur le revenu pour les talents de la tech qui rentrent en France",
+      "parametre": "IR = 0 pendant 5 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« leur proposerons un dispositif de retour ambitieux : exonération totale d'impôt sur le revenu pendant cinq ans »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf",
+          "date": "2026-07-07",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne dit pas qui rentre de l'étranger, ni qui est un talent de la tech que le programme viserait."
+      }
+    },
+    {
+      "id": "r39_sur_amortissement",
+      "categorie": "entreprises",
+      "libelle": "Sur-amortissement des investissements productifs, IA, robotique et calcul compris",
+      "parametre": "100 % sur trois ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« le sur-amortissement de 100 % sur trois ans des investissements productifs (cf. Produire plus) »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf",
+          "date": "2026-07-07",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "bilan_entreprises",
+        "raison": "Un sur-amortissement demande l'investissement et les amortissements des entreprises, que le modèle ne porte pas."
+      }
+    },
+    {
+      "id": "r40_forfait_petit_agriculteur",
+      "categorie": "entreprises",
+      "libelle": "PAC : forfait « petit agriculteur » relevé par réorientation des aides directes",
+      "parametre": "1 250 € → 3 000 €",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous réorienterons une part des aides directes afin de porter le forfait « petit agriculteur » de 1 250 euros à 3 000 euros »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/03/LR_Agriculture.pdf",
+          "date": "2026-03-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "dimension_entreprises",
+        "raison": "Une aide de la PAC aux petites exploitations : le secteur agricole et ses aides ne sont pas une dimension du modèle."
+      }
+    },
+    {
+      "id": "r41_transmission_agricole",
+      "categorie": "patrimoine_capital",
+      "libelle": "Transmission des exploitations agricoles : droits différés jusqu'à la cession, à un taux forfaitaire unique",
+      "parametre": "0 € tant que l'exploitation produit ; taux forfaitaire non chiffré",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Une exploitation ne sera pas taxée tant qu'elle continue de produire. L'impôt deviendra exigible uniquement lors de la cession ou de la liquidation »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/03/LR_Agriculture.pdf",
+          "date": "2026-03-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Les droits de mutation et leur report à la cession demandent un module de transmission."
       }
     }
   ]

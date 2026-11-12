@@ -9,7 +9,7 @@
     "date": "2026-05-22",
     "type": "discours"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -24,11 +24,28 @@
           "url": "https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques",
           "date": "2026-10-15",
           "type": "entretien"
+        },
+        {
+          "citation": "« Ensuite, je lancerai un plan de 150 milliards d'euros d'économies sur le quinquennat. »",
+          "url": "https://doc.parti.re/2026/Lettre-finances-publiques.pdf",
+          "date": "2026-10-15",
+          "type": "programme"
         }
       ],
       "refus": {
         "porte": "depense_publique",
         "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 150000000000.0,
+        "sens": "economie_depense",
+        "horizon": "total sur le quinquennat (cinq ans), sans calendrier annuel donné par le candidat ; comprend le frein d'urgence de 20 Md€ (a2) et les 7 Md€ par an de l'organisation (a9) : ne pas additionner",
+        "source": {
+          "citation": "« 150 milliards d'euros d'économies sur le quinquennat, dont deux tiers sur les dépenses sociales » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques",
+          "date": "2026-10-15",
+          "type": "entretien"
+        }
       }
     },
     {
@@ -45,7 +62,7 @@
           "type": "programme"
         },
         {
-          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "citation": "« avec un frein d'urgence de 20 milliards d'euros d'économies dès 2027 » (texte de la page)",
           "url": "https://attalpresident.fr/programme/mesures/deficit-sous-trois-pour-cent",
           "date": "2026-07-03",
           "type": "programme"
@@ -58,7 +75,7 @@
       "declare": {
         "montant_eur": 20000000000.0,
         "sens": "economie_depense",
-        "horizon": "dès 2027",
+        "horizon": "dès 2027 ; compris dans les 150 Md€ du quinquennat (a1) : ne pas additionner",
         "source": {
           "citation": "« Un frein d'urgence de 20 milliards d'euros d'économies dès son arrivée à l'Élysée » (texte de la page)",
           "url": "https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques",
@@ -197,7 +214,7 @@
       "id": "a9_big_bang_territorial",
       "categorie": "depense_publique",
       "libelle": "Suppression d'un échelon de collectivité (« big bang territorial »)",
-      "parametre": "1 échelon",
+      "parametre": "1 échelon ; plus de 7 Md€ d'économies par an (lettre du 15/10/2026)",
       "precision": "vague",
       "sources": [
         {
@@ -205,11 +222,28 @@
           "url": "https://attalpresident.fr/programme/mesures/big-bang-territorial",
           "date": "2026-08-02",
           "type": "programme"
+        },
+        {
+          "citation": "« Il faudra notamment tout changer dans notre organisation, supprimer des échelons, tout simplifier. Plus de 7 milliards d'euros pourront ainsi être économisés chaque année. »",
+          "url": "https://doc.parti.re/2026/Lettre-finances-publiques.pdf",
+          "date": "2026-10-15",
+          "type": "programme"
         }
       ],
       "refus": {
         "porte": "vague",
-        "raison": "Ni l'échelon supprimé ni l'économie ne sont chiffrés."
+        "raison": "L'échelon supprimé n'est pas nommé : seule l'économie est chiffrée, et la dépense des collectivités n'est pas microsimulée."
+      },
+      "declare": {
+        "montant_eur": 7000000000.0,
+        "sens": "economie_depense",
+        "horizon": "chaque année (« plus de 7 milliards ») ; comprise dans les 150 Md€ du quinquennat (a1) : ne pas additionner",
+        "source": {
+          "citation": "« Il faudra notamment tout changer dans notre organisation, supprimer des échelons, tout simplifier. Plus de 7 milliards d'euros pourront ainsi être économisés chaque année. »",
+          "url": "https://doc.parti.re/2026/Lettre-finances-publiques.pdf",
+          "date": "2026-10-15",
+          "type": "programme"
+        }
       }
     },
     {
@@ -292,7 +326,7 @@
       "id": "a14_epargne_retraite_naissance",
       "categorie": "retraites",
       "libelle": "Pilier de capitalisation et plan d'épargne retraite ouvert par l'État à chaque naissance, abondable jusqu'à 18 ans avec avantage fiscal",
-      "parametre": "1 000 € à la naissance",
+      "parametre": "1 000 € à la naissance ; 660 M€ par an",
       "precision": "parametree",
       "sources": [
         {
@@ -300,11 +334,28 @@
           "url": "https://attalpresident.fr/programme/mesures/capitalisation-startups",
           "date": "2026-06-18",
           "type": "programme"
+        },
+        {
+          "citation": "« la création de « baby bonds » de 1 000 euros à chaque naissance, destinés à alimenter un fonds d'investissement à hauteur de 660 millions d'euros par an » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-vision-economique-liberer-innover-independance-france",
+          "date": "2026-10-28",
+          "type": "discours"
         }
       ],
       "refus": {
         "porte": "retraites",
         "raison": "Un plan d'épargne retraite doté de 1 000 € à la naissance : la population ne porte ni épargne retraite ni régime par capitalisation."
+      },
+      "declare": {
+        "montant_eur": 660000000.0,
+        "sens": "depense",
+        "horizon": "par an (« 660 millions d'euros par an »)",
+        "source": {
+          "citation": "« la création de « baby bonds » de 1 000 euros à chaque naissance, destinés à alimenter un fonds d'investissement à hauteur de 660 millions d'euros par an » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-vision-economique-liberer-innover-independance-france",
+          "date": "2026-10-28",
+          "type": "discours"
+        }
       }
     },
     {
@@ -515,6 +566,17 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Un investissement public sur dix ans est une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 100000000000.0,
+        "sens": "depense",
+        "horizon": "total sur dix ans : la moitié publique des 200 Md€ « partagés à égalité entre financement public et privé » ; aucun montant annuel donné",
+        "source": {
+          "citation": "« Gabriel Attal veut porter l'effort à 200 milliards d'euros, partagés à égalité entre financement public et privé » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/plan-france-2040",
+          "date": "2026-06-19",
+          "type": "programme"
+        }
       }
     },
     {
@@ -654,6 +716,17 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Une subvention de 160 M€ par an est une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 160000000.0,
+        "sens": "depense",
+        "horizon": "par an dès 2027 : le niveau des subventions doublées (la moitié existe déjà), que le candidat dit financé par des budgets sous-consommés, « sans dépense supplémentaire »",
+        "source": {
+          "citation": "« Doubler les subventions à la géoénergie, pour les porter à 160 millions d'euros par an dès 2027 » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/doubler-subventions-geoenergie",
+          "date": "2026-06-25",
+          "type": "programme"
+        }
       }
     },
     {
@@ -692,6 +765,82 @@
       "refus": {
         "porte": "hors_champ",
         "raison": "La charge administrative est une formalité : ni impôt ni prestation que le moteur porte."
+      }
+    },
+    {
+      "id": "a34_prelevement_reseaux_sociaux",
+      "categorie": "entreprises",
+      "libelle": "Prélèvement sur les revenus des réseaux sociaux en France, affecté à la santé mentale des jeunes",
+      "parametre": "2 % des revenus des réseaux sociaux en France",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« le prélèvement de 2 % des revenus des réseaux sociaux en France afin de financer des dispositifs consacrés à la santé mentale des jeunes » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/harcelement-scolaire-gabriel-attal-parole-huit-jeunes-victimes-engagement",
+          "date": "2026-11-05",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "Un prélèvement sur le chiffre d'affaires des réseaux sociaux : ce secteur numérique n'est pas une assiette du modèle des entreprises."
+      }
+    },
+    {
+      "id": "a35_carte_famille_monoparentale",
+      "categorie": "prestations",
+      "libelle": "Carte « famille monoparentale » (transports, loisirs, culture, vacances, garde d'enfants), sur le modèle de la carte famille nombreuse",
+      "parametre": "aucun montant ni taux de réduction",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Gabriel Attal veut créer une carte « famille monoparentale », sur le modèle de la carte famille nombreuse » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/carte-famille-monoparentale",
+          "date": "2026-08-28",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni réduction chiffrée ni montant : des avantages annoncés."
+      }
+    },
+    {
+      "id": "a36_droit_au_repit",
+      "categorie": "prestations",
+      "libelle": "« Droit au répit » : heures de garde en soirée, le week-end et en urgence pour les parents seuls, avec les CAF et les collectivités",
+      "parametre": "aucun nombre d'heures ni montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Il ouvrira des heures de garde et de relais mobilisables en soirée, le week-end ou dans l'urgence » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/droit-au-repit",
+          "date": "2026-08-28",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni nombre d'heures, ni prise en charge, ni montant."
+      }
+    },
+    {
+      "id": "a37_portage_foncier_agricole",
+      "categorie": "patrimoine_capital",
+      "libelle": "Fiscalité du portage du foncier agricole revue, pour la transmission et l'installation des jeunes agriculteurs",
+      "parametre": "aucun taux ni abattement",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« inciter à la transmission, optimiser la fiscalité sur le portage du foncier, mieux accompagner les jeunes porteurs de projet » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/fiscalite-portage-foncier",
+          "date": "2026-06-04",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni impôt désigné, ni taux, ni abattement."
       }
     }
   ]
