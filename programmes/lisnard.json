@@ -613,7 +613,7 @@
       "id": "l26_residence_5_ans_allocations",
       "categorie": "prestations",
       "libelle": "Cinq ans de résidence en France avant toute allocation non contributive",
-      "parametre": "5 ans ; 8 Md€ d'économies par an selon le candidat",
+      "parametre": "5 ans ; 8 Md€ d'économies par an selon le candidat — montant annoncé : 8 Md€ (par an ; comprise dans les 200 Md€ de l6, et recoupe sans doute l8 : ne pas additionner) ; non lu comme montant annuel : compris dans les 200 Md€ de l6 (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -626,17 +626,6 @@
       "refus": {
         "porte": "donnee_menages",
         "raison": "La durée de résidence en France n'est pas dans la population : le moteur ne sait pas qui perdrait ses prestations."
-      },
-      "declare": {
-        "montant_eur": 8000000000.0,
-        "sens": "economie_depense",
-        "horizon": "par an ; comprise dans les 200 Md€ de l6, et recoupe sans doute l8 : ne pas additionner",
-        "source": {
-          "citation": "« Exiger cinq ans de résidence en France avant d'ouvrir droit à une allocation non contributive ferait économiser, selon lui, huit milliards d'euros par an. » (texte de la page)",
-          "url": "https://www.unenouvelleenergie.fr/questions/le-programme-de-david-lisnard-est-il-chiffre/",
-          "date": "2026-08-29",
-          "type": "discours"
-        }
       }
     },
     {

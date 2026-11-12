@@ -16,7 +16,7 @@
       "id": "a1_plan_economies_150_md",
       "categorie": "depense_publique",
       "libelle": "Plan d'économies sur le quinquennat, deux tiers sur le social",
-      "parametre": "150 Md€ sur 5 ans",
+      "parametre": "150 Md€ sur 5 ans — montant annoncé : 150 Md€ (total sur le quinquennat (cinq ans), sans calendrier annuel donné par le candidat ; comprend le frein d'urgence de 20 Md€ (a2) et les 7 Md€ par an de l'organisation (a9) : ne pas additionner) ; non lu comme montant annuel : un total sur le quinquennat, sans annuel (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -35,17 +35,6 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario du calcul de la dette."
-      },
-      "declare": {
-        "montant_eur": 150000000000.0,
-        "sens": "economie_depense",
-        "horizon": "total sur le quinquennat (cinq ans), sans calendrier annuel donné par le candidat ; comprend le frein d'urgence de 20 Md€ (a2) et les 7 Md€ par an de l'organisation (a9) : ne pas additionner",
-        "source": {
-          "citation": "« 150 milliards d'euros d'économies sur le quinquennat, dont deux tiers sur les dépenses sociales » (texte de la page)",
-          "url": "https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques",
-          "date": "2026-10-15",
-          "type": "entretien"
-        }
       }
     },
     {
@@ -553,7 +542,7 @@
       "id": "a24_plan_ia_france_2040",
       "categorie": "depense_publique",
       "libelle": "Plan IA « France 2040 », à parité public et privé ; part publique financée par des économies (arrêts maladie, gel des prestations)",
-      "parametre": "200 Md€ sur 10 ans",
+      "parametre": "200 Md€ sur 10 ans — montant annoncé : 100 Md€ (total sur dix ans : la moitié publique des 200 Md€ « partagés à égalité entre financement public et privé » ; aucun montant annuel donné) ; non lu comme montant annuel : un total sur dix ans (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -566,17 +555,6 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Un investissement public sur dix ans est une dépense que le moteur ne microsimule pas."
-      },
-      "declare": {
-        "montant_eur": 100000000000.0,
-        "sens": "depense",
-        "horizon": "total sur dix ans : la moitié publique des 200 Md€ « partagés à égalité entre financement public et privé » ; aucun montant annuel donné",
-        "source": {
-          "citation": "« Gabriel Attal veut porter l'effort à 200 milliards d'euros, partagés à égalité entre financement public et privé » (texte de la page)",
-          "url": "https://attalpresident.fr/programme/mesures/plan-france-2040",
-          "date": "2026-06-19",
-          "type": "programme"
-        }
       }
     },
     {

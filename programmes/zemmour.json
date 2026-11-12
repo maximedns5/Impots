@@ -918,7 +918,7 @@
       "id": "ez33_plan_140_md",
       "categorie": "regle_budgetaire",
       "libelle": "Plan de 140 Md€ d'économies par an",
-      "parametre": "140 Md€ par an « au minimum », somme des 24 mesures (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "parametre": "140 Md€ par an « au minimum », somme des 24 mesures (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026) — montant annoncé : 140 Md€ (par an, au minimum ; total des 24 mesures du plan, qui sont aussi déclarées une à une) ; non lu comme montant annuel : le total des 24 lignes, déclarées une à une (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -931,17 +931,6 @@
       "refus": {
         "porte": "chaine",
         "raison": "Un effort d'ensemble est une trajectoire de dépense du calcul de la dette ; ses lignes chiffrées sont relevées une à une."
-      },
-      "declare": {
-        "montant_eur": 140000000000.0,
-        "sens": "economie_depense",
-        "horizon": "par an, au minimum ; total des 24 mesures du plan, qui sont aussi déclarées une à une",
-        "source": {
-          "citation": "140 Md€ d'économies par an, au minimum",
-          "url": "https://www.budget2027.fr/",
-          "date": "2026-11-12",
-          "type": "programme"
-        }
       }
     }
   ]

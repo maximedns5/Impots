@@ -862,7 +862,7 @@
       "id": "r35_ia_economies_etat",
       "categorie": "depense_publique",
       "libelle": "IA dans l'État : 125 000 départs à la retraite non remplacés, achats publics et lutte contre la fraude",
-      "parametre": "125 000 départs non remplacés ; ≈ 15 Md€ nets par an à terme (7,5 de masse salariale, ≈ 4 d'achats, 3 à 4 de fraude)",
+      "parametre": "125 000 départs non remplacés ; ≈ 15 Md€ nets par an à terme (7,5 de masse salariale, ≈ 4 d'achats, 3 à 4 de fraude) — montant annoncé : 15 Md€ (par an à terme (cible 2031-2032) ; dont 3 à 4 Md€ de fraude recouvrée ; recoupe sans doute le non-remplacement de r4 et le plan de r1 : ne pas additionner) ; non lu comme montant annuel : recoupe le non-remplacement de r4 (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -881,17 +881,6 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Des effectifs, des achats et une fraude recouvrée : une dépense que le moteur ne microsimule pas, seulement un scénario de la dette."
-      },
-      "declare": {
-        "montant_eur": 15000000000.0,
-        "sens": "economie_depense",
-        "horizon": "par an à terme (cible 2031-2032) ; dont 3 à 4 Md€ de fraude recouvrée ; recoupe sans doute le non-remplacement de r4 et le plan de r1 : ne pas additionner",
-        "source": {
-          "citation": "« Au total, de l'ordre de 15 milliards d'euros par an à terme, intégralement affectés au rétablissement des comptes publics. »",
-          "url": "https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf",
-          "date": "2026-07-07",
-          "type": "programme"
-        }
       }
     },
     {

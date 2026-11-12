@@ -381,7 +381,7 @@
       "id": "o16_plan_amenagement",
       "categorie": "depense_publique",
       "libelle": "Plan d'aménagement de l'État pour les investissements de proximité",
-      "parametre": "10 Md€ sur 5 ans ; 100 M€ par département",
+      "parametre": "10 Md€ sur 5 ans ; 100 M€ par département — montant annoncé : 10 Md€ (total sur cinq ans (100 M€ par département)) ; non lu comme montant annuel : un total sur cinq ans (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -394,24 +394,13 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Un plan d'investissement public est une dépense que le moteur ne microsimule pas."
-      },
-      "declare": {
-        "montant_eur": 10000000000.0,
-        "sens": "depense",
-        "horizon": "total sur cinq ans (100 M€ par département)",
-        "source": {
-          "citation": "« L'État, de son côté, lancera un grand plan d'aménagement de 10 milliards d'euros sur 5 ans, soit 100 millions par département »",
-          "url": "https://becht2027.fr/chapitre/partie-8/",
-          "date": "2026-10-29",
-          "type": "programme"
-        }
       }
     },
     {
       "id": "o17_plan_ferroviaire",
       "categorie": "depense_publique",
       "libelle": "Plan ferroviaire : entretien du réseau et renouvellement des matériels",
-      "parametre": "10 Md€",
+      "parametre": "10 Md€ — montant annoncé : 10 Md€ (total, sans calendrier donné) ; non lu comme montant annuel : un total sans calendrier (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -424,17 +413,6 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Un plan d'investissement public est une dépense que le moteur ne microsimule pas."
-      },
-      "declare": {
-        "montant_eur": 10000000000.0,
-        "sens": "depense",
-        "horizon": "total, sans calendrier donné",
-        "source": {
-          "citation": "« Elle s'accompagnera d'un grand plan ferroviaire de 10 milliards d'euros pour entretenir le réseau et renouveler les matériels »",
-          "url": "https://becht2027.fr/chapitre/partie-8/",
-          "date": "2026-10-29",
-          "type": "programme"
-        }
       }
     },
     {

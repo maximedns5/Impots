@@ -28047,3 +28047,45 @@ compte les champs des fichiers.
 source datée ; le tableau de couverture du relevé à jour est commité avant tout chiffrage.
 Les étapes 2 à 4 se développent ensuite en parallèle, chacune dans son worktree ; chaque
 mesure neuve est préenregistrée, commitée et poussée avant son premier calcul.
+
+## D-381 — Le relevé des 24 programmes au 12 novembre, avant tout chiffrage du but 21
+
+**Ce qui est fait.** Quatre relevés en parallèle, six candidats chacun, depuis les sources
+primaires (site du candidat ou du parti, programme, propositions de loi, discours,
+entretiens), chaque mesure avec sa citation, son URL, sa date et son type. Aucun bloc
+`chiffrage` n'est touché, aucune porte n'est ajoutée. Les cinq programmes vides ont des
+mesures : Batho 6, Bouamrane 4, Durif 4, Egger 2, Lalanne 8, presque toutes vagues.
+
+**Le tableau du relevé** (`docs/presidentielle/couverture_releve.md`), commité avant tout
+chiffrage : 525 mesures relevées (321 avant), 13 chiffrées (2 %), 165 vagues (31 %), 347
+refusées par une porte (66 %). Les portes les plus lourdes : la dépense publique 113, une
+donnée des ménages 39, les retraites 27, les salaires 25, la chaîne 24, une prestation
+hors du moteur 23, la transmission 19. Les grandes hausses : Mélenchon 40 → 64 (son
+programme du 6 novembre), Dupont-Aignan 30 → 59, Zemmour 3 → 33 (le plan budgétaire de
+son parti, sur une page non datée, lue le 12 novembre), Tondelier 21 → 39.
+
+**La règle des montants déclarés.** Un montant déclaré est un montant annuel (D-319). Onze
+ne le sont pas et perdent leur champ `declare`, leur montant restant écrit dans le
+paramètre : les totaux sur plusieurs années (Attal 150 et 100 Md€, Becht 10 et 10,
+Glucksmann 200, Le Pen 140 et 15), une recette d'une seule année (Glucksmann 50), et les
+montants compris dans un autre déjà déclaré (Lisnard l26, Retailleau r35, Zemmour 140, la
+somme de ses lignes). Un montant dont le candidat ne dit pas l'horizon reste lu comme
+annuel : la page le dira comme une hypothèse.
+
+**Ce qui se chiffrera sans porte nouvelle.** Trois mesures ont un bouton qui existe (la
+CSG d'activité à zéro chez Zemmour, les allocations familiales universelles et le plafond
+du quotient familial chez Dupont-Aignan), rangées pour l'instant sous `bouton_hors_but` ;
+la suppression du CIR de Mélenchon se chiffre par le bouton du CIR de la couche des
+entreprises, sa réaffectation restant de la dépense. Chacune sera préenregistrée.
+
+**Ce que les relevés ont vu sans le lire.** Les résumés de recherche ont montré trois
+chiffrages de tiers, ni ouverts ni utilisés : une tranche à 60 % chiffrée par l'Institut
+Montaigne en 2022 (pour un autre candidat), une estimation anonyme de 15 Md€ de la
+tranche de Tondelier, déjà préenregistrée (D-321), et un avis de l'OFCE sans montant sur
+la CSG de Glucksmann. Ils sont dits ici pour qu'un préenregistrement qui toucherait ces
+mesures le sache.
+
+**Les sources fragiles.** Le programme de Tondelier est derrière une protection anti-robots ;
+trois de ses mesures n'ont que francais.rt.com pour source. Platret n'a aucune source
+primaire. Les scénarios et définitions des études sont régénérés (date et comptes du
+relevé) ; aucun rapport n'est relancé.

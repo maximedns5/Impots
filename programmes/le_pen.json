@@ -16,7 +16,7 @@
       "id": "lp01_economies_nettes",
       "categorie": "regle_budgetaire",
       "libelle": "Plan d'économies nettes",
-      "parametre": "140 Md€ nets d'ici 2032 par rapport à 2026",
+      "parametre": "140 Md€ nets d'ici 2032 par rapport à 2026 — montant annoncé : 140 Md€ (total net d'ici 2032 par rapport à 2026, sur le quinquennat ; la candidate ne donne pas d'annuel (montant non annualisé)) ; non lu comme montant annuel : un total d'ici 2032, dont les lignes sont déclarées une à une (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -29,17 +29,6 @@
       "refus": {
         "porte": "chaine",
         "raison": "Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour le calcul de la dette, pas une réforme que le moteur chiffre."
-      },
-      "declare": {
-        "montant_eur": 140000000000.0,
-        "sens": "economie_depense",
-        "horizon": "total net d'ici 2032 par rapport à 2026, sur le quinquennat ; la candidate ne donne pas d'annuel (montant non annualisé)",
-        "source": {
-          "citation": "140 milliards d'euros net d'économies d'ici 2032",
-          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
-          "date": "2026-10-06",
-          "type": "discours"
-        }
       }
     },
     {
@@ -347,7 +336,7 @@
       "id": "lp14_droits_nouveaux",
       "categorie": "depense_publique",
       "libelle": "« Droits nouveaux »",
-      "parametre": "15 Md€ provisionnés, plus des hausses pour l'outre-mer, la recherche et l'éducation",
+      "parametre": "15 Md€ provisionnés, plus des hausses pour l'outre-mer, la recherche et l'éducation — montant annoncé : 15 Md€ (15 Md€ « provisionnés » sur la trajectoire, calendrier non dit (montant non annualisé)) ; non lu comme montant annuel : une provision sans calendrier (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -360,17 +349,6 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Une provision de dépense sans règle de calcul, que le moteur ne microsimule pas."
-      },
-      "declare": {
-        "montant_eur": 15000000000.0,
-        "sens": "depense",
-        "horizon": "15 Md€ « provisionnés » sur la trajectoire, calendrier non dit (montant non annualisé)",
-        "source": {
-          "citation": "Pas de citation directe sur le montant. Texte de l'AFP : « 15 mds de \"dépenses provisionnées pour des droits nouveaux\" »",
-          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
-          "date": "2026-10-06",
-          "type": "discours"
-        }
       }
     },
     {

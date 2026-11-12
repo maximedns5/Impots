@@ -314,7 +314,7 @@
       "id": "contribution_exceptionnelle_patrimoines",
       "categorie": "patrimoine_capital",
       "libelle": "Contribution exceptionnelle pour l'investissement climatique sur les plus hauts patrimoines",
-      "parametre": "50 Md€, une seule année ; ni seuil ni taux",
+      "parametre": "50 Md€, une seule année ; ni seuil ni taux — montant annoncé : 50 Md€ (une seule année (« une recette exceptionnelle, une seule année ») : pas un montant annuel récurrent) ; non lu comme montant annuel : une recette d'une seule année (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -327,24 +327,13 @@
       "refus": {
         "porte": "patrimoine",
         "raison": "La population ne porte pas le patrimoine des ménages, et ni le seuil ni le taux ne sont énoncés."
-      },
-      "declare": {
-        "montant_eur": 50000000000.0,
-        "sens": "recette",
-        "horizon": "une seule année (« une recette exceptionnelle, une seule année ») : pas un montant annuel récurrent",
-        "source": {
-          "citation": "« Cette contribution concernera une infime minorité de foyers, tout en haut de l'échelle des patrimoines, et rapportera 50 milliards d'euros. »",
-          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
-          "date": "2026-11-09",
-          "type": "programme"
-        }
       }
     },
     {
       "id": "investissement_public_200_md",
       "categorie": "depense_publique",
       "libelle": "200 Md€ d'investissement public pour la transition sur le quinquennat",
-      "parametre": "200 Md€ sur cinq ans",
+      "parametre": "200 Md€ sur cinq ans — montant annoncé : 200 Md€ (200 Md€ sur la durée du quinquennat : un total sur cinq ans, pas un montant annuel (le candidat ne donne pas de calendrier)) ; non lu comme montant annuel : un total sur le quinquennat (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -357,17 +346,6 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
-      },
-      "declare": {
-        "montant_eur": 200000000000.0,
-        "sens": "depense",
-        "horizon": "200 Md€ sur la durée du quinquennat : un total sur cinq ans, pas un montant annuel (le candidat ne donne pas de calendrier)",
-        "source": {
-          "citation": "« Nous investirons, sur la durée du quinquennat, 200 milliards d'euros d'argent public. »",
-          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
-          "date": "2026-11-09",
-          "type": "programme"
-        }
       }
     },
     {
