@@ -28468,3 +28468,59 @@ ne changent pas.
 
 **Ce qui reste aveugle.** Le garde refuse sans donner de coût : rien du cas n'a été vu. Les
 cas qui restent sont enregistrés sur le commit de cette entrée.
+
+## D-391 — Le lot 1 enregistré : vingt sur vingt-trois dans leur pronostic
+
+**Le fait.** Les vingt-trois cas de D-384 sont enregistrés, sur `f8f2740` (deux), `ae0c176`
+(trois), `485fed0`, `59d845b` (trois) et `32e2ee2` (sept) ; chacun garde son commit. Entre
+eux, quatre correctifs, tous dits avant le cas qu'ils débloquaient : la réforme commence
+l'année qu'elle chiffre (D-386), la pension et la PAJE dans le garde (D-387), l'indice du
+capital (D-388), la plus-value sans PFU (D-389) ; et une traduction réduite (D-390).
+`reports/programmes_presidentielle.md` est rendu de nouveau. Le juge reste à venir.
+
+**Contre le pronostic**, coût mécanique de 2026, en Md€ :
+
+| mesure | pronostic | coût | |
+|---|---|---:|---|
+| SMIC à 1 700 € nets, Mélenchon et Glucksmann | +15 à +40 | +30,3 | dedans |
+| SMIC à 2 000 € bruts, Tondelier et Kazib | +6 à +18 | +15,5 | dedans |
+| SMIC à 1 600 € nets, Ruffin | +7 à +22 | +17,7 | dedans |
+| 2 200 € nets, Arthaud | +40 à +90 | +78,9 | dedans |
+| 2 200 €, Labib | +20 à +50 | +35,3 | dedans |
+| 150 € aux bas salaires, Bouamrane | +6 à +18 | +15,4 | dedans |
+| SMIC +15 %, Roussel | +15 à +38 | +28,2 | dedans |
+| point d'indice +10 %, Mélenchon | +6 à +13 | +11,5 | dedans |
+| point d'indice sur l'inflation, Tondelier et Dupont-Aignan | +1,5 à +3,5 | +2,4 | dedans |
+| pensions, famille, logement +10 %, Mélenchon | +25 à +42 | +32,7 | dedans |
+| APL +10 %, Tondelier | +1,2 à +3 | +1,3 | dedans |
+| garantie d'autonomie, Mélenchon | +20 à +45 | +35,4 | dedans |
+| PFU supprimé, Mélenchon | −1,5 à −7 | −14,4 | dehors |
+| IR des moins de 30 ans, Le Pen | +2 à +5 | +9,6 | dehors |
+| allocation familiale unique, Philippe | +20 à +45 | +45,6 | dehors, au bord |
+| revenu d'incitation à l'activité, Retailleau | −5 à +25 | +5,8 | dedans |
+| revenu familial, Retailleau | +8 à +22 | +20,3 | dedans |
+| CSG d'activité supprimée, Zemmour | +75 à +100 | +95,2 | dedans |
+| allocations familiales universelles, Dupont-Aignan | +0,5 à +1,2 | +0,9 | dedans |
+| plafond du quotient à 3 000 €, Dupont-Aignan | +1,5 à +4,5 | +2,3 | dedans |
+
+Aucune des réfutations de D-384 ne se lit : les deux SMIC à 1 700 € nets ont le même coût,
+comme les deux à 2 000 € bruts et les deux points d'indice ; aucun cas n'est à zéro ; le
+coût du SMIC monte avec le niveau, de 15,5 (2 000 € bruts) à 17,7 (1 600 € nets, 2 021 €
+bruts), 28,2 (+15 %), 30,3 et 78,9 Md€.
+
+**Les trois dehors, sans rien régler après eux.**
+
+* Le PFU : les revenus du capital imputés (D-248) passent au barème au taux marginal de
+  chaque foyer, et la CDHR ne rend que la part qu'elle prenait au PFU. Le pronostic lisait
+  l'assiette du seul PFU, sans la progressivité qu'elle rencontre au barème. Le coût a été
+  vu avant l'enregistrement (D-389) ; il est celui que le garde reconstituait alors.
+* L'IR des moins de 30 ans : la traduction sort aussi les salaires exonérés du RFR, que
+  la loi y garde pour les heures supplémentaires, et l'exonération porte sur tous les
+  revenus d'activité jusqu'à 4 SMIC, au-delà de ce que le pronostic comptait. Le coût a été
+  vu avant l'enregistrement (D-386), à +9,7 Md€.
+* L'allocation familiale unique : lue par enfant, comme D-384 le disait ; 0,6 Md€ au-delà
+  de la fourchette, dans la tolérance de la classe (50 % ou 2 Md€) de toute borne.
+
+**Ce qui reste.** Le second lot, les mesures que les boutons des données imputées ouvrent ;
+puis la série des études et la lecture des économies annoncées (étape 5). La comparaison au
+juge se fera à sa publication, avec les tolérances de D-384, inchangées.
