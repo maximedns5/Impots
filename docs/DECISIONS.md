@@ -28524,3 +28524,56 @@ bruts), 28,2 (+15 %), 30,3 et 78,9 Md€.
 **Ce qui reste.** Le second lot, les mesures que les boutons des données imputées ouvrent ;
 puis la série des études et la lecture des économies annoncées (étape 5). La comparaison au
 juge se fera à sa publication, avec les tolérances de D-384, inchangées.
+
+## D-392 — Huit mesures des données imputées préenregistrées avant le juge (lot 2)
+
+**Les cas.** Les boutons de l'étape 4 (D-383) ouvrent huit mesures, que leur porte
+`donnee_menages` ou `bouton_hors_but` refusait. Elles reçoivent leur chiffrage dans
+`programmes/*.json` et leur scénario par `--ecrire`, sans aucun calcul, et sont
+préenregistrées ici comme celles de D-384 : droit de 2026, population vieillie aux
+hypothèses du PLF 2027, 20 000 ménages, données de ménages imputées sur 2024 puis
+vieillies. Toutes sont de la classe des ménages (25 % ou 200 M€). Le juge reste celui de
+D-384 ; aucun chiffrage de tiers de ces mesures n'est lu.
+
+**Les traductions, dites dans la note de chaque mesure.** Les pensions alimentaires
+(Attal, Mélenchon) : toutes celles qu'impute la population, perçues par les parents isolés,
+sans plafond. Les heures supplémentaires : celles qu'impute la population, déjà faites ;
+aucune heure neuve n'est comptée. Dupont-Aignan : cotisations salariales, CSG et CRDS
+(« le net sera égal au brut »), 300 heures. Retailleau r13 : salariales et patronales,
+CSG maintenue, une franchise de 16 heures. Philippe p10 : salariales, deux heures par
+semaine sur 47 semaines, 94 heures. Les intérêts d'emprunt (Retailleau r28) : 50, 75 et
+100 % selon les enfants mineurs, plafond de 400 € plus 400 € par enfant. Le crédit trajet
+(Ruffin) : 30 % des frais de chaque salarié, sans franchise ni plafond ; les « gros
+rouleurs aux revenus moyens » ne sont pas définis. La CVEC (Le Pen) : supprimée, sur les
+étudiants imputés.
+
+**Le pronostic, avant toute passe.** Coût mécanique de 2026, en Md€, positif quand l'État
+perd ; une fourchette raisonnée sur les totaux de D-383, sans calcul.
+
+| candidat | mesure | pronostic |
+|---|---|---|
+| Attal | pensions alimentaires défiscalisées | +0,3 à +0,9 |
+| Mélenchon | pensions alimentaires défiscalisées | +0,3 à +0,9 |
+| Dupont-Aignan | heures supplémentaires, net égal au brut | +1,3 à +3 |
+| Retailleau | zéro cotisation au-delà de 1 623 h | +2,5 à +6 |
+| Philippe | deux heures par semaine exonérées | +0,05 à +0,6 |
+| Retailleau | réduction sur les intérêts d'emprunt | +1,5 à +4 |
+| Ruffin | crédit d'impôt trajet à 30 % | +13 à +19 |
+| Le Pen | CVEC supprimée | +0,2 à +0,28 |
+
+Le raisonnement. Les pensions : 5,55 Md€ chez des parents isolés souvent non imposables,
+à un taux moyen de 5 à 15 %. Les heures : 20,3 Md€ de rémunération en 2024 ; la CSG et la
+CRDS en prennent 9,5 %, les cotisations salariales presque rien au-delà de la réduction
+légale ; les patronales nettes des allègements, de 15 à 30 % dans le privé. Les intérêts :
+7,2 M d'accédants, la moitié avec un enfant mineur, une réduction plafonnée de 800 à
+1 600 €, que l'impôt dû arrête. Les trajets : 30 % des 52,4 Md€ de frais de tous les
+salariés, vieillis de deux ans. La CVEC : 231 M€ à 100 €, à 105 €, 36 % de trop (D-383).
+
+La réfutation qui se lirait : les deux pensions alimentaires à deux coûts différents ; une
+mesure à zéro, signe d'un bouton qui ne mord pas ; Philippe au-dessus de Dupont-Aignan,
+dont les heures et les prélèvements contiennent les siens.
+
+**Ce qui reste refusé.** Les heures neuves (Philippe p10, l'annualisation de Retailleau
+r14, les 35 heures de Mélenchon), les pensions alimentaires de Tondelier (plafond non
+chiffré), la majoration de pension de Dupont-Aignan (nd39), la baisse globale de 21 Md€ de
+Retailleau (r23), sans partage dit entre ses postes.

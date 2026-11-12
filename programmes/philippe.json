@@ -255,9 +255,26 @@
           "type": "entretien"
         }
       ],
-      "refus": {
-        "porte": "donnee_menages",
-        "raison": "Les heures travaillées ne sont pas dans la population : le moteur ne sait pas qui ferait deux heures de plus, ni comment les exonérer."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "heures_sup_exoneration_salariale": 1.0,
+          "heures_sup_exoneration_csg_crds": 0.0,
+          "heures_sup_plafond_heures": 94.0
+        },
+        "plages": [
+          {
+            "champ": "heures_sup_plafond_heures",
+            "min": 88.0,
+            "max": 104.0
+          },
+          {
+            "champ": "heures_sup_exoneration_csg_crds",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "« Exonérer de cotisations sociales les salariés qui accepteraient de travailler deux heures supplémentaires par semaine » : sur les heures supplémentaires imputées (D-383), les deux premières de chaque semaine travaillée, 94 heures par an sur 47 semaines (plage de 44 à 52 semaines). Les cotisations salariales que la loi laisse au-delà de sa réduction ; la CSG et la CRDS restent, la plage va jusqu'à les exonérer. Les patronales ne bougent pas : le texte parle des salariés. Seules les heures déjà faites : les deux heures neuves que la mesure veut faire faire, et les 1 000 € par an qu'elles rapporteraient, ne sont pas comptées. Contre le droit de 2026."
       }
     },
     {

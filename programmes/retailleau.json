@@ -315,9 +315,21 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "donnee_menages",
-        "raison": "Les heures travaillées dans l'année ne sont pas dans la population : le moteur ne sait pas quelle part du salaire passe 1 623 heures."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "heures_sup_exoneration_salariale": 1.0,
+          "heures_sup_exoneration_patronale": 1.0,
+          "heures_sup_franchise_heures": 16.0
+        },
+        "plages": [
+          {
+            "champ": "heures_sup_franchise_heures",
+            "min": 0.0,
+            "max": 16.0
+          }
+        ],
+        "note": "« Toutes les cotisations sociales au-delà de 1 623 heures par an » : les heures supplémentaires imputées (D-383) comptent depuis la durée légale, 1 607 h ; les 16 premières de l'année restent soumises (une franchise), la plage descend à 0 pour la lecture de Public Sénat (« au-delà de 1 607 heures »). Les cotisations salariales que la loi laisse au-delà de sa réduction, et les patronales nettes des allègements, dans le privé ; la CSG et la CRDS sont maintenues, comme l'exonération d'impôt. Pas de plafond d'heures. La déduction forfaitaire patronale des petites entreprises n'est pas portée. Seules les heures déjà faites ; l'annualisation (r14) n'est pas lue. Contre le droit de 2026."
       }
     },
     {
@@ -739,9 +751,20 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "donnee_menages",
-        "raison": "Les intérêts d'emprunt de la résidence principale ne sont pas dans la population, et aucun bouton ne crée la réduction."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "interets_emprunt_taux": [
+            0.0,
+            0.5,
+            0.75,
+            1.0
+          ],
+          "interets_emprunt_plafond": 400.0,
+          "interets_emprunt_plafond_par_enfant": 400.0
+        },
+        "plages": [],
+        "note": "Une réduction d'impôt de 50 % des intérêts annuels de l'emprunt de la résidence principale avec un enfant mineur à charge, 75 % avec deux, 100 % à partir de trois ; rien sans enfant mineur. Plafonnée à 400 € plus 400 € par enfant mineur (le plafond borne la réduction, hypothèse de D-383), hors du plafond global des niches. Les intérêts sont ceux qu'impute la population aux accédants (18,64 Md€ en 2024, D-383). La durée du prêt et une date d'achat ne sont pas lues. Une réduction, non un crédit : elle s'arrête à l'impôt. Pas de plage : le candidat dit ses taux et ses plafonds. Contre le droit de 2026."
       }
     },
     {

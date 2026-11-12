@@ -392,9 +392,19 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "donnee_menages",
-        "raison": "La population ne porte ni les trajets domicile-travail ni les frais kilométriques des foyers."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "credit_trajets_taux": 0.3
+        },
+        "plages": [
+          {
+            "champ": "credit_trajets_taux",
+            "min": 0.25,
+            "max": 0.35
+          }
+        ],
+        "note": "Un crédit d'impôt de 30 % des frais de trajet domicile-travail de chaque salarié (« autour de 30 % », plage de 25 à 35 %), sur les frais qu'impute la population (D-383), sans franchise ni plafond ni condition de revenu : les « gros rouleurs aux revenus moyens » ne sont pas définis. La remise à plat des frais kilométriques et des avantages en nature des véhicules n'est pas lue ; les frais réels déclarés restent. Contre le droit de 2026."
       },
       "declare": {
         "montant_eur": 500000000.0,

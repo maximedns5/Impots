@@ -514,9 +514,13 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "donnee_menages",
-        "raison": "Les pensions alimentaires reçues ne sont ni dans la population ni dans le foyer décrit, et aucun bouton ne les sort du revenu imposable."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "pensions_alimentaires_exonerees": true
+        },
+        "plages": [],
+        "note": "« Pour les enfants » : toutes celles qu'impute la population le sont. Les pensions alimentaires perçues (1AO à 1DO) sortent du revenu imposable du parent qui les reçoit, entières : le bouton de l'étape 4 (D-383), sans plafond par enfant. Les pensions sont celles qu'impute la population, perçues par les parents isolés pour leurs enfants (5,55 Md€ en 2024, vieillies par les prix) : celles que reçoit un parent en couple ou un ex-conjoint pour lui-même ne sont pas portées. Les prestations qui comptent la pension ne bougent pas. Contre le droit de 2026. Pas de plage : la mesure est un oui ou un non."
       }
     },
     {

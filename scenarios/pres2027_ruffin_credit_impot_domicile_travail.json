@@ -1,0 +1,14 @@
+{
+  "name": "pres2027_ruffin_credit_impot_domicile_travail",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "François Ruffin (Debout !), programme relevé le 2026-11-12 — Crédit d'impôt pour les trajets domicile-travail, remise à plat des frais kilométriques et avantages véhicules : « « Avec un taux de couverture des déplacements autour de 30%, ce crédit d'impôt permettrait à des gros rouleurs aux revenus moyens d'être remboursés d'environ 700€en 2026 » » (https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf, 2026-10-21)",
+  "note": "Un crédit d'impôt de 30 % des frais de trajet domicile-travail de chaque salarié (« autour de 30 % », plage de 25 à 35 %), sur les frais qu'impute la population (D-383), sans franchise ni plafond ni condition de revenu : les « gros rouleurs aux revenus moyens » ne sont pas définis. La remise à plat des frais kilométriques et des avantages en nature des véhicules n'est pas lue ; les frais réels déclarés restent. Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "ruffin"
+  ],
+  "reform": {
+    "credit_trajets_taux": 0.3
+  }
+}

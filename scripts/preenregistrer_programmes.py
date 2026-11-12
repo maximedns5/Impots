@@ -120,6 +120,15 @@ CLASSE = {
     "r15_revenu_incitation_activite": "prestation_neuve",
     "r27_revenu_familial": "prestation_neuve",
     "p11_allocation_familiale_unique": "prestation_neuve",
+    # Le lot 2 (D-392) : les mesures que les boutons des données imputées ouvrent.
+    "a22_pensions_alimentaires": "menages",
+    "defiscalisation_pensions_alimentaires": "menages",
+    "nd08_heures_supplementaires": "menages",
+    "r13_zero_cotisation_1623_h": "menages",
+    "p10_exoneration_deux_heures": "menages",
+    "r28_reduction_ir_interets_emprunt": "menages",
+    "credit_impot_domicile_travail": "menages",
+    "lp26_suppression_cvec": "menages",
 }
 
 

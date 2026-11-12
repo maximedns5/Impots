@@ -1,0 +1,16 @@
+{
+  "name": "pres2027_philippe_p10_exoneration_deux_heures",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Édouard Philippe (Horizons), programme relevé le 2026-11-12 — Exonération de cotisations pour les salariés qui travaillent deux heures de plus par semaine : « « exonérer de cotisations sociales les salariés qui accepteraient de travailler deux heures supplémentaires par semaine » (texte de l'article) » (https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ, 2026-10-09)",
+  "note": "« Exonérer de cotisations sociales les salariés qui accepteraient de travailler deux heures supplémentaires par semaine » : sur les heures supplémentaires imputées (D-383), les deux premières de chaque semaine travaillée, 94 heures par an sur 47 semaines (plage de 44 à 52 semaines). Les cotisations salariales que la loi laisse au-delà de sa réduction ; la CSG et la CRDS restent, la plage va jusqu'à les exonérer. Les patronales ne bougent pas : le texte parle des salariés. Seules les heures déjà faites : les deux heures neuves que la mesure veut faire faire, et les 1 000 € par an qu'elles rapporteraient, ne sont pas comptées. Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "philippe"
+  ],
+  "reform": {
+    "heures_sup_exoneration_salariale": 1.0,
+    "heures_sup_exoneration_csg_crds": 0.0,
+    "heures_sup_plafond_heures": 94.0
+  }
+}

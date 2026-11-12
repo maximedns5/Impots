@@ -685,9 +685,13 @@
           "type": "discours"
         }
       ],
-      "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "La CVEC, contribution des étudiants, n'est pas un prélèvement que le moteur calcule."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "cvec_montant": 0.0
+        },
+        "plages": [],
+        "note": "La contribution de vie étudiante et de campus supprimée, sur les étudiants du supérieur et les boursiers qu'impute la population (D-383). Le compte des inscrits contient ceux que la CVEC ne frappe pas : à 100 €, l'imputation donne 231 M€ contre un produit de 170 M€ en 2023-2024, 36 % de trop, et la suppression en est surestimée d'autant. Contre le droit de 2026, 105 €."
       }
     },
     {

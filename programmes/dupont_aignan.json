@@ -235,9 +235,26 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "donnee_menages",
-        "raison": "La population ne porte pas les heures travaillées au-delà de 1 607 h par an."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "heures_sup_exoneration_salariale": 1.0,
+          "heures_sup_exoneration_csg_crds": 1.0,
+          "heures_sup_plafond_heures": 300.0
+        },
+        "plages": [
+          {
+            "champ": "heures_sup_exoneration_csg_crds",
+            "min": 0.0,
+            "max": 1.0
+          },
+          {
+            "champ": "heures_sup_plafond_heures",
+            "min": 100.0,
+            "max": 300.0
+          }
+        ],
+        "note": "Les heures supplémentaires imputées (D-383), au-delà de la durée légale, donc de 1 607 h pour un temps plein : pas de franchise. « Le net sera égal au brut » : les cotisations salariales que la loi laisse au-delà de sa réduction, la CSG et la CRDS ; la CSG n'est pas une cotisation, et la plage va de 0 (les cotisations seules) à 1. 300 heures par an au plus (100 dans la version du 27 octobre 2026, le bas de la plage). L'impôt sur le revenu des heures est déjà exonéré jusqu'à 7 500 € ; les cotisations patronales ne bougent pas. Seules les heures déjà faites : celles qu'une exonération ferait faire ne sont pas comptées. Contre le droit de 2026."
       }
     },
     {

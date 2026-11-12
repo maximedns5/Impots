@@ -6,29 +6,29 @@ Candidats déclarés au 1er novembre 2026, mesures relevées et sourcées dans `
 |---|---:|---:|---:|---:|---:|---|
 | Nathalie Arthaud | 6 | 1 | 5 | 1 | 1 | — |
 | François Asselineau | 3 | 0 | 3 | 0 | 0 | — |
-| Gabriel Attal | 37 | 21 | 16 | 2 | 2 | chaine 4, depense_publique 6, donnee_menages 2, hors_champ 1, indexation 1, prestations_hors_modele 1, retraites 1, salaires 1, secteur 2 |
+| Gabriel Attal | 37 | 21 | 16 | 3 | 2 | chaine 4, depense_publique 6, donnee_menages 1, hors_champ 1, indexation 1, prestations_hors_modele 1, retraites 1, salaires 1, secteur 2 |
 | Delphine Batho | 6 | 1 | 5 | 0 | 0 | depense_publique 1 |
 | Olivier Becht | 18 | 14 | 4 | 0 | 0 | chaine 2, depense_publique 5, prestations_hors_modele 3, retraites 1, salaires 1, secteur 1, transmission 1 |
 | Karim Bouamrane | 4 | 1 | 3 | 1 | 1 | — |
-| Nicolas Dupont-Aignan | 59 | 51 | 8 | 3 | 3 | bilan_entreprises 2, bouton_hors_but 1, chaine 2, consommation 2, depense_publique 9, dimension_entreprises 2, donnee_menages 11, enveloppe 1, hors_champ 1, importations 1, indexation 3, patrimoine 1, prestations_hors_modele 4, prix 3, retraites 2, secteur 1, transmission 2 |
+| Nicolas Dupont-Aignan | 59 | 51 | 8 | 4 | 3 | bilan_entreprises 2, bouton_hors_but 1, chaine 2, consommation 2, depense_publique 9, dimension_entreprises 2, donnee_menages 10, enveloppe 1, hors_champ 1, importations 1, indexation 3, patrimoine 1, prestations_hors_modele 4, prix 3, retraites 2, secteur 1, transmission 2 |
 | Sylvain Durif | 4 | 0 | 4 | 0 | 0 | — |
 | Clara Egger | 2 | 0 | 2 | 0 | 0 | — |
 | Raphaël Glucksmann | 27 | 18 | 9 | 1 | 1 | chaine 1, depense_publique 7, donnee_menages 1, enveloppe 1, patrimoine 1, prestations_hors_modele 1, prix 1, retraites 1, secteur 2, transmission 1 |
 | Anasse Kazib | 7 | 3 | 4 | 1 | 1 | retraites 1, salaires 1 |
 | Selma Labib | 10 | 4 | 6 | 2 | 2 | salaires 2 |
 | Francis Lalanne | 8 | 2 | 6 | 0 | 0 | depense_publique 2 |
-| Marine Le Pen | 36 | 25 | 11 | 3 | 3 | bouton_hors_but 1, chaine 5, consommation 1, depense_publique 8, donnee_menages 1, enveloppe 2, retraites 3, salaires 1 |
+| Marine Le Pen | 36 | 25 | 11 | 4 | 3 | chaine 5, consommation 1, depense_publique 8, donnee_menages 1, enveloppe 2, retraites 3, salaires 1 |
 | David Lisnard | 29 | 21 | 8 | 3 | 3 | bases_locales 1, depense_publique 4, dimension_entreprises 1, donnee_menages 2, indexation 1, prestations_hors_modele 1, prix 1, retraites 3, salaires 2, transmission 2 |
-| Jean-Luc Mélenchon | 64 | 42 | 22 | 6 | 6 | bouton_hors_but 2, chaine 2, depense_publique 15, donnee_menages 4, patrimoine 1, prestations_hors_modele 2, prix 1, retraites 4, salaires 1, secteur 2, transmission 2 |
-| Édouard Philippe | 23 | 16 | 7 | 1 | 1 | bouton_hors_but 1, chaine 1, depense_publique 5, donnee_menages 1, enveloppe 1, prestations_hors_modele 1, retraites 4, salaires 1 |
+| Jean-Luc Mélenchon | 64 | 42 | 22 | 7 | 6 | bouton_hors_but 2, chaine 2, depense_publique 15, donnee_menages 3, patrimoine 1, prestations_hors_modele 2, prix 1, retraites 4, salaires 1, secteur 2, transmission 2 |
+| Édouard Philippe | 23 | 16 | 7 | 2 | 1 | bouton_hors_but 1, chaine 1, depense_publique 5, enveloppe 1, prestations_hors_modele 1, retraites 4, salaires 1 |
 | Florian Philippot | 15 | 9 | 6 | 0 | 0 | chaine 3, depense_publique 4, importations 1, prix 1 |
 | Gilles Platret | 1 | 0 | 1 | 0 | 0 | — |
-| Bruno Retailleau | 41 | 37 | 4 | 4 | 4 | bases_locales 2, bilan_entreprises 1, chaine 1, consommation 1, depense_publique 6, dimension_entreprises 1, donnee_menages 10, prestations_hors_modele 3, retraites 4, salaires 1, transmission 3 |
+| Bruno Retailleau | 41 | 37 | 4 | 6 | 4 | bases_locales 2, bilan_entreprises 1, chaine 1, consommation 1, depense_publique 6, dimension_entreprises 1, donnee_menages 8, prestations_hors_modele 3, retraites 4, salaires 1, transmission 3 |
 | Fabien Roussel | 16 | 7 | 9 | 2 | 2 | chaine 1, prix 2, secteur 1, transmission 1 |
-| François Ruffin | 37 | 28 | 9 | 1 | 1 | bilan_entreprises 1, chaine 1, depense_publique 13, donnee_menages 5, indexation 1, patrimoine 1, prix 2, retraites 1, transmission 2 |
+| François Ruffin | 37 | 28 | 9 | 2 | 1 | bilan_entreprises 1, chaine 1, depense_publique 13, donnee_menages 4, indexation 1, patrimoine 1, prix 2, retraites 1, transmission 2 |
 | Marine Tondelier | 39 | 27 | 12 | 4 | 4 | consommation 1, depense_publique 6, dimension_entreprises 1, patrimoine 3, prestations_hors_modele 3, retraites 1, salaires 1, secteur 3, transmission 4 |
 | Éric Zemmour | 33 | 32 | 1 | 1 | 1 | chaine 1, depense_publique 22, donnee_menages 3, enveloppe 1, patrimoine 1, prix 1, retraites 1, transmission 1 |
-| **total** | **525** | **360** | **165** | **36** | **36** | |
+| **total** | **525** | **360** | **165** | **44** | **36** | |
 
 ## Les cas préenregistrés
 

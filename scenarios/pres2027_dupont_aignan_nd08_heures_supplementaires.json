@@ -1,0 +1,16 @@
+{
+  "name": "pres2027_dupont_aignan_nd08_heures_supplementaires",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Nicolas Dupont-Aignan (Debout la France (DLF)), programme relevé le 2026-11-12 — Défiscalisation des heures supplémentaires : « au-delà de 1 607 h/an pour un temps plein, chaque heure effectuée sera défiscalisée dans la limite de 300 heures/an. Cette défiscalisation concernera les cotisations salariales (le net sera égal au brut). » (https://www.debout-la-france.fr/projet/economie-travail/, 2026-11-10)",
+  "note": "Les heures supplémentaires imputées (D-383), au-delà de la durée légale, donc de 1 607 h pour un temps plein : pas de franchise. « Le net sera égal au brut » : les cotisations salariales que la loi laisse au-delà de sa réduction, la CSG et la CRDS ; la CSG n'est pas une cotisation, et la plage va de 0 (les cotisations seules) à 1. 300 heures par an au plus (100 dans la version du 27 octobre 2026, le bas de la plage). L'impôt sur le revenu des heures est déjà exonéré jusqu'à 7 500 € ; les cotisations patronales ne bougent pas. Seules les heures déjà faites : celles qu'une exonération ferait faire ne sont pas comptées. Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "dupont_aignan"
+  ],
+  "reform": {
+    "heures_sup_exoneration_salariale": 1.0,
+    "heures_sup_exoneration_csg_crds": 1.0,
+    "heures_sup_plafond_heures": 300.0
+  }
+}
