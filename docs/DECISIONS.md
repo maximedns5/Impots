@@ -28164,3 +28164,77 @@ refusées, porte « prestations hors du modèle ».
 gardent leur commit. Sur l'échantillon de test (`tests/fixtures/eec_sample.parquet`), à des
 valeurs d'aucun candidat, le garde des secteurs reconstitue le coût à 1,53 € près sur
 84 M€. Le numéro de cette entrée est à revoir à la jonction des étapes.
+
+## D-384 — Vingt-trois mesures des programmes préenregistrées avant le juge (lot 1)
+
+**Les cas.** Vingt-trois mesures que les boutons du but 21 ouvrent (étapes 2 à 4, D-382)
+reçoivent leur chiffrage dans `programmes/*.json` et leur scénario par `--ecrire`, sans
+aucun calcul. Elles sont préenregistrées ici, avec leur tolérance et leur pronostic, avant
+leur première passe, comme celles de D-321 : `impots chiffrage register`, droit de 2026,
+population vieillie aux hypothèses du PLF 2027, 20 000 ménages. Le juge reste le chiffrage
+de l'Institut Montaigne, attendu au premier trimestre 2027 ; aucun chiffrage de tiers de
+ces mesures n'est lu (D-381 dit ce que les relevés ont vu sans le lire).
+
+**Les traductions, dites dans la note de chaque mesure.** Le SMIC : un coefficient sur le
+SMIC horaire brut, calé pour que le niveau annoncé soit atteint en moyenne sur 2026 ; un net
+annoncé passe en brut à 79,16 % ; un niveau sans net ni brut est lu brut, le net en haut de
+la plage ; la valeur du candidat est la loi seule, la diffusion au-dessus du SMIC (Koubi et
+Lhommeau, Dares) restant dans la plage, de 0 à 1 (D-380). Le point d'indice se mesure contre
+le point gelé du droit ; « l'inflation » vaut 2,1 %, celle des hypothèses du PLF 2027. Une
+indexation se mesure contre l'indexation légale sur les prix : seule la hausse au-delà
+compte, posée à l'année 2025 pour porter toute l'année 2026. L'allocation familiale unique
+de Philippe est lue par enfant ; la lire par famille la diviserait environ par deux.
+
+**Deux classes de tolérance neuves**, écrites dans le script :
+
+* salaires, 40 % ou 200 M€ : le salaire horaire vient de l'enquête Emploi, le public est
+  imputé, la diffusion est une hypothèse, et le coût public tient à une convention que le
+  juge peut ne pas partager ;
+* prestation neuve, 50 % ou 2 Md€ : un recours supposé, des conditions que la population
+  ne porte pas, et un coût net qui est l'écart de deux masses de 20 à 60 Md€.
+
+**Le pronostic, avant toute passe.** Coût mécanique de 2026, en Md€, positif quand l'État
+perd ; une fourchette raisonnée sur l'assiette publiée, sans calcul.
+
+| candidat | mesure | classe | pronostic |
+|---|---|---|---|
+| Mélenchon | SMIC à 1 700 € nets | salaires | +15 à +40 |
+| Glucksmann | SMIC à 1 700 € nets | salaires | +15 à +40 |
+| Tondelier | SMIC à 2 000 € bruts | salaires | +6 à +18 |
+| Kazib | SMIC à 2 000 € | salaires | +6 à +18 |
+| Ruffin | SMIC à 1 600 € nets | salaires | +7 à +22 |
+| Arthaud | 2 200 € nets au moins (le SMIC seul) | salaires | +40 à +90 |
+| Labib | 2 200 € au moins (le SMIC seul) | salaires | +20 à +50 |
+| Bouamrane | 150 € de plus aux bas salaires | salaires | +6 à +18 |
+| Roussel | SMIC +15 % | salaires | +15 à +38 |
+| Mélenchon | point d'indice +10 % | salaires | +6 à +13 |
+| Tondelier | point d'indice sur l'inflation | salaires | +1,5 à +3,5 |
+| Dupont-Aignan | point d'indice sur l'inflation | salaires | +1,5 à +3,5 |
+| Mélenchon | pensions, famille, logement +10 % | ménages | +25 à +42 |
+| Tondelier | APL +10 % | ménages | +1,2 à +3 |
+| Mélenchon | garantie d'autonomie, 1 337 € | prestation neuve | +20 à +45 |
+| Mélenchon | PFU supprimé | haut | −1,5 à −7 |
+| Le Pen | IR des moins de 30 ans, 4 SMIC | ménages | +2 à +5 |
+| Philippe | allocation familiale unique | prestation neuve | +20 à +45 |
+| Retailleau | revenu d'incitation à l'activité | prestation neuve | −5 à +25 |
+| Retailleau | revenu familial | prestation neuve | +8 à +22 |
+| Zemmour | CSG d'activité supprimée | ménages | +75 à +100 |
+| Dupont-Aignan | allocations familiales universelles | ménages | +0,5 à +1,2 |
+| Dupont-Aignan | plafond du quotient à 3 000 € | haut | +1,5 à +4,5 |
+
+La réfutation qui se lirait : deux SMIC de même niveau (Mélenchon et Glucksmann) à deux
+coûts différents ; une mesure à zéro, signe d'un bouton qui ne mord pas sur la population ;
+le SMIC dont le coût ne monte pas avec le niveau.
+
+**Ce qui n'était pas aveugle.** En mettant au point le garde des secteurs (étape 4), le
+point d'indice a tourné une fois à +10 %, la valeur de Mélenchon, sur 1 500 ménages ; rien
+n'en a été gardé, et ce nombre n'est pas lu ici. Le pronostic de cette mesure vient de
+l'assiette publiée, comme les autres.
+
+**Ce qui reste refusé**, faute d'un bouton fidèle : la suppression du CIR (la créance est
+hors du coût des entreprises, D-222), la réduction d'impôt des familles de Philippe (sans
+sa condition de trois ans), la garde d'enfants de Retailleau (un autre plafond), le SMIC
+net de Dupont-Aignan (une baisse de cotisations salariales autour du SMIC), les enveloppes
+d'impôts de production de 20 à 50 Md€ (au-delà de la CVAE et de la C3S), les indexations
+égales à la référence (Dupont-Aignan), l'année blanche d'Attal (sans seuil de pension).
+Les mesures qui attendent les boutons des données imputées viennent dans un second lot.

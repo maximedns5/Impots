@@ -79,8 +79,8 @@ CLASSES: dict[str, tuple[float, float, str]] = {
 #: L'entrée qui écrit une classe, quand ce n'est pas D-321. Les trois cas de D-326 portent
 #: « (D-321) » dans leur raison, enregistrée avant cette correction : la règle de leur
 #: classe est dans D-326.
-ENTREE_DE_LA_CLASSE = {"consommation": "D-326", "salaires": "D-383",
-                       "prestation_neuve": "D-383"}
+ENTREE_DE_LA_CLASSE = {"consommation": "D-326", "salaires": "D-384",
+                       "prestation_neuve": "D-384"}
 #: La classe de chaque mesure chiffrée, par id ; une mesure sans classe est refusée.
 CLASSE = {
     "exonerations_au_dela_2_smic": "menages",
