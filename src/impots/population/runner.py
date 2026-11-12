@@ -652,6 +652,12 @@ def run(
         raise WiringError(
             "la réforme règle la TVA ou une accise, que seule la consommation imputée "
             "porte : demander l'imputation « consommation » (D-323)")
+    if reform is not None and reform.cvec_montant is not None:
+        raise WiringError(
+            "cvec_montant sur la population : elle ne distingue ni les étudiants du supérieur "
+            "ni les boursiers, et la CVEC y vaudrait zéro pour tous — un coût nul qui se "
+            "lirait comme un chiffrage. Le bouton se règle sur un ménage ; sur la population, "
+            "il attend ces deux données, imputées et calées (but 21, étape 4).")
     conso_reform = reform
     if reform is not None and conso_module.touche(reform):
         reform = conso_module.sans_consommation(reform)
@@ -732,8 +738,15 @@ def run(
     columns: dict[str, np.ndarray] = dict(baseline_rows)
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
+        # Les pensions sont des données : leur indexation multiplie la pension de la passe
+        # de la réforme, et d'elle seule (but 21, étape 2).
+        from impots.engine.boutons_programmes import facteur_pensions
+
+        pension_factor = facteur_pensions(reform, year)
+        reform_frame = (frame if pension_factor == 1.0 else frame.with_columns(
+            pl.col("pension_annuelle") * pension_factor))
         reformed_built = build_simulation(
-            frame, reformed_for(reform, year), year, niche_bases,
+            reform_frame, reformed_for(reform, year), year, niche_bases,
             capital_bases=capital_bases)
         reform_guards: dict[str, Any] = {}
         reform_rows = _extract(reformed_built, frame, tier, reform_guards)

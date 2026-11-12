@@ -93,6 +93,22 @@ def _emtr(
     return round(1.0 - (bumped - base_disposable) / EMTR_STEP, 4)
 
 
+def _pensions_indexees(household: HouseholdInput, reform: ReformSpec, year: int,
+                       historique_revenus: bool, situation: dict[str, Any]) -> dict[str, Any]:
+    """La situation de la passe de la réforme : celle du droit, sauf une indexation des
+    pensions, qui multiplie la pension de chaque adulte (sur toutes les années que la
+    situation couvre, comme la pension est écrite)."""
+    from impots.engine.boutons_programmes import facteur_pensions
+
+    factor = facteur_pensions(reform, year)
+    if factor == 1.0 or not any(a.pension_annuelle for a in household.adults):
+        return situation
+    indexed = household.model_copy(update={"adults": [
+        a.model_copy(update={"pension_annuelle": a.pension_annuelle * factor})
+        for a in household.adults]})
+    return situations.build_situation(indexed, year, historique_revenus)
+
+
 def compute(
     household: HouseholdInput,
     year: int,
@@ -111,12 +127,17 @@ def compute(
 
     baseline_system = baseline()
     reformed_system = None
+    reform_situation = situation
     cache_hit: bool | None = None
     if reform is not None and not reform.is_empty():
         key = reform_key(reform, year)
         before = reformed.cache_info().hits
         reformed_system = reformed(key)
         cache_hit = reformed.cache_info().hits > before
+        # Les pensions sont des données, pas des paramètres : leur indexation multiplie la
+        # pension déclarée de la passe de la réforme (but 21, étape 2).
+        reform_situation = _pensions_indexees(household, reform, year, historique_revenus,
+                                              situation)
 
     build_ms = (time.perf_counter() - started) * 1000.0
 
@@ -124,7 +145,8 @@ def compute(
     baseline_rows = outputs.extract(
         _build(baseline_system, situation, year, tier), year, tier, debug)
     reform_rows = (
-        outputs.extract(_build(reformed_system, situation, year, tier), year, tier, debug)
+        outputs.extract(_build(reformed_system, reform_situation, year, tier), year, tier,
+                        debug)
         if reformed_system is not None
         else None
     )
@@ -138,7 +160,7 @@ def compute(
         emtr_value = _emtr(baseline_system, situation, year, baseline_rows["revenu_disponible"])
         if reformed_system is not None and reform_rows is not None:
             emtr_reform_value = _emtr(
-                reformed_system, situation, year, reform_rows["revenu_disponible"]
+                reformed_system, reform_situation, year, reform_rows["revenu_disponible"]
             )
         emtr_ms = (time.perf_counter() - emtr_started) * 1000.0
 

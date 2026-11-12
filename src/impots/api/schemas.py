@@ -982,6 +982,84 @@ class ReformSpec(BaseModel):
             raise ValueError(
                 f"{', '.join(morts)} : ces boutons règlent une prestation que la prestation "
                 f"neuve posée par la même réforme remplace ; ils ne bougeraient rien.")
+
+    # --- Les boutons des programmes de 2027 qui changent une formule (but 21, étape 2) ---
+    # Ce que chacun fait et ne fait pas : `impots.engine.boutons_programmes`.
+    pfu_supprime: bool | None = None
+    """Le prélèvement forfaitaire unique supprimé : chaque foyer imposé comme s'il cochait la
+    case 2OP, ses revenus du capital au barème (abattement de 40 % sur les dividendes, CSG
+    déductible). False est le droit. Pas avec `pfu_taux`. Les prélèvements sociaux ne
+    bougent pas ; la population ne porte que le capital qu'impute D-248."""
+    ir_exoneration_jeunes_age: Annotated[int, Field(ge=18, le=40)] | None = None
+    """L'âge, au 1er janvier de l'année des revenus, sous lequel les salaires sont exonérés
+    d'impôt sur le revenu (30 : « les moins de 30 ans »). Avec son plafond."""
+    ir_exoneration_jeunes_plafond_smic: Annotated[float, Field(ge=0.0, le=20.0)] | None = None
+    """Le plafond de l'exonération, en SMIC bruts annuels : la part du salaire imposable qui
+    correspond aux premiers euros bruts jusqu'à lui est exonérée, le reste imposé (un
+    abattement, pas une falaise). 0 n'exonère rien."""
+    reduction_impot_familles_montant: Annotated[float, Field(ge=0, le=20_000)] | None = None
+    """Une réduction d'impôt par foyer, en euros, pour un foyer qui a au moins
+    `reduction_impot_familles_enfants_min` personnes à charge et un déclarant au moins avec
+    un revenu d'activité. Elle s'arrête à l'impôt dû."""
+    reduction_impot_familles_enfants_min: Annotated[int, Field(ge=1, le=10)] | None = None
+    indexations: dict[str, dict[int, Annotated[float, Field(ge=0.5, le=2.0)]]] | None = None
+    """L'indexation année par année : pour chaque prestation de
+    `boutons_programmes.INDEXATIONS` (rsa, prime_activite, prestations_familiales, aah,
+    minimum_vieillesse, aides_logement, pensions), un coefficient par année sur ce que le
+    droit porte à la date légale de sa revalorisation de cette année-là. 1 laisse le droit.
+    Une passe de l'année Y applique, dans l'ordre, les coefficients des années jusqu'à Y."""
+    cvec_montant: Annotated[float, Field(ge=0, le=1_000)] | None = None
+    """La contribution de vie étudiante et de campus, en euros par étudiant non boursier du
+    supérieur (105 € en 2025-2026). 0 la supprime. Ni le format d'entrée ni la population ne
+    portent les étudiants du supérieur et les boursiers : sur un ménage le bouton ne bouge
+    rien, et une passe sur la population le refuse (`boutons_programmes.ajouter_cvec`)."""
+
+    @model_validator(mode="after")
+    def _check_boutons_programmes(self) -> ReformSpec:
+        """Les boutons du but 21 qui vont par deux, et ceux qui portent le même montant
+        qu'un autre bouton (D-298, D-301)."""
+        from impots.engine.boutons_programmes import (
+            ANNEES_INDEXATION,
+            FORMULE_KNOBS,
+            INDEXATIONS,
+        )
+
+        for knob, partners in FORMULE_KNOBS.items():
+            if getattr(self, knob) is None:
+                continue
+            for partner in partners:
+                if getattr(self, partner) is None:
+                    raise ValueError(f"« {knob} » sans « {partner} » : l'un ne se dit pas "
+                                     f"sans l'autre.")
+        if self.pfu_supprime is not None and self.pfu_taux is not None:
+            raise ValueError("« pfu_supprime » et « pfu_taux » : un taux d'un PFU supprimé "
+                             "ne se lirait nulle part. L'un ou l'autre.")
+        if self.indexations is not None:
+            inconnues = sorted(set(self.indexations) - set(INDEXATIONS))
+            if inconnues or not self.indexations:
+                raise ValueError(f"indexations : {inconnues or 'aucune prestation'} ; "
+                                 f"connues : {sorted(INDEXATIONS)}")
+            low, high = ANNEES_INDEXATION
+            for prestation, par_annee in self.indexations.items():
+                hors = sorted(y for y in par_annee if not low <= y <= high)
+                if hors or not par_annee:
+                    raise ValueError(f"indexations de {prestation} : années {hors or 'aucune'}"
+                                     f", hors de [{low}, {high}]")
+            meme_montant = {
+                "prime_activite": ("ppa_montant_de_base", "ppa_revalorisation_avril",
+                                   "ppa_revalorisation_portee"),
+                "aides_logement": ("al_revalorisation_octobre", "al_revalorisation_portee"),
+                "rsa": ("rsa_montant_de_base",),
+                "prestations_familiales": ("bmaf",),
+            }
+            for prestation, knobs in meme_montant.items():
+                if prestation not in self.indexations:
+                    continue
+                for knob in knobs:
+                    if getattr(self, knob) is not None:
+                        raise ValueError(
+                            f"« indexations.{prestation} » et « {knob} » portent le même "
+                            f"montant : l'un ou l'autre, pas les deux.")
         return self
 
     @field_validator("tva_postes")
