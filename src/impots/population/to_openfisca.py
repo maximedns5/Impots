@@ -508,6 +508,8 @@ def _set_menages_inputs(simulation: Any, tax_benefit_system: Any, year: int,
         if variable not in tax_benefit_system.variables:
             raise WiringError(f"{variable} n'est pas une variable d'openfisca")
         values = frame[column].fill_null(0.0).to_numpy().astype(np.float64)
+        if tax_benefit_system.variables[variable].value_type is bool:
+            values = values > 0.5
         if entity == "foyer_fiscal":
             values = (frame.select("foyer_id").with_columns(pl.Series("v", values))
                       .group_by("foyer_id").agg(pl.col("v").sum()).sort("foyer_id")["v"]

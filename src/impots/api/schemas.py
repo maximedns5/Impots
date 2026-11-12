@@ -1011,9 +1011,66 @@ class ReformSpec(BaseModel):
     Une passe de l'année Y applique, dans l'ordre, les coefficients des années jusqu'à Y."""
     cvec_montant: Annotated[float, Field(ge=0, le=1_000)] | None = None
     """La contribution de vie étudiante et de campus, en euros par étudiant non boursier du
-    supérieur (105 € en 2025-2026). 0 la supprime. Ni le format d'entrée ni la population ne
-    portent les étudiants du supérieur et les boursiers : sur un ménage le bouton ne bouge
-    rien, et une passe sur la population le refuse (`boutons_programmes.ajouter_cvec`)."""
+    supérieur (105 € en 2025-2026). 0 la supprime. Le format d'entrée ne porte pas les
+    étudiants du supérieur et les boursiers : sur un ménage le bouton ne bouge rien. Une
+    passe sur la population qui le règle les impute (`population.menages`, calés sur le
+    SIES)."""
+
+    # --- Les boutons qui lisent les données de ménages imputées (but 21, étape 4) -------
+    # Une passe sur la population qui en règle un impute les données de ménages
+    # (`population.menages`) ; sur un ménage, ils lisent ce que le ménage porte. Ce que
+    # chacun fait et ne fait pas : `impots.engine.boutons_programmes`.
+    pensions_alimentaires_exonerees: bool | None = None
+    """Les pensions alimentaires perçues (1AO à 1DO) sortent du revenu imposable du parent
+    qui les reçoit, entières ou jusqu'au plafond par enfant. False est le droit."""
+    pensions_alimentaires_plafond_par_enfant: Annotated[
+        float, Field(ge=0, le=100_000)] | None = None
+    """Le plafond de la pension exonérée, en euros par an et par personne à charge du foyer
+    (None : toute la pension). Exige `pensions_alimentaires_exonerees`."""
+    interets_emprunt_taux: list[Annotated[float, Field(ge=0.0, le=1.0)]] | None = Field(
+        default=None, min_length=1, max_length=8)
+    """Une réduction d'impôt égale à un taux des intérêts d'emprunt de la résidence
+    principale : un taux par nombre d'enfants mineurs à charge, de zéro enfant au dernier
+    (qui vaut au-delà). [0, 0.2] : rien sans enfant, 20 % dès le premier."""
+    interets_emprunt_plafond: Annotated[float, Field(ge=0, le=50_000)] | None = None
+    """Le plafond de la réduction, en euros par foyer (None : pas de plafond)."""
+    interets_emprunt_plafond_par_enfant: Annotated[float, Field(ge=0, le=10_000)] | None = None
+    """Ce que chaque enfant mineur à charge ajoute au plafond, en euros."""
+    credit_trajets_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """Un crédit d'impôt égal à ce taux des frais de trajet domicile-travail de chaque
+    personne, au-delà de la franchise et dans la limite du plafond."""
+    credit_trajets_franchise: Annotated[float, Field(ge=0, le=50_000)] | None = None
+    """Les frais de l'année, en euros, en deçà desquels rien n'est remboursé (0 par
+    défaut)."""
+    credit_trajets_plafond: Annotated[float, Field(ge=0, le=50_000)] | None = None
+    """Le crédit au plus, en euros par personne (None : pas de plafond)."""
+    heures_sup_exoneration_salariale: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """La part exonérée des cotisations salariales des heures supplémentaires que la loi
+    laisse, au-delà de sa réduction (11,31 % du brut au plus). 1 : toutes."""
+    heures_sup_exoneration_csg_crds: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """La part exonérée de la CSG et de la CRDS sur la rémunération des heures."""
+    heures_sup_exoneration_patronale: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """La part exonérée des cotisations patronales sur la rémunération des heures, nettes des
+    allègements, dans le privé."""
+    heures_sup_franchise_heures: Annotated[float, Field(ge=0, le=1_000)] | None = None
+    """Les premières heures supplémentaires de l'année, que l'exonération ne touche pas."""
+    heures_sup_plafond_heures: Annotated[float, Field(ge=0, le=2_000)] | None = None
+    """Les heures exonérées au plus par an, après la franchise (None : toutes)."""
+
+    @model_validator(mode="after")
+    def _check_boutons_menages(self) -> ReformSpec:
+        """Une borne d'heures sans exonération ne borne rien : refusée."""
+        from impots.engine.boutons_programmes import HEURES_SUP_BORNES, HEURES_SUP_TAUX
+
+        bornes = [b for b in HEURES_SUP_BORNES if getattr(self, b) is not None]
+        if bornes and not any(getattr(self, t) is not None for t in HEURES_SUP_TAUX):
+            raise ValueError(f"{', '.join(bornes)} sans exonération des heures "
+                             f"supplémentaires ({', '.join(HEURES_SUP_TAUX)}) : ne borne rien.")
+        if (self.pensions_alimentaires_plafond_par_enfant is not None
+                and not self.pensions_alimentaires_exonerees):
+            raise ValueError("« pensions_alimentaires_plafond_par_enfant » exige "
+                             "« pensions_alimentaires_exonerees » à vrai.")
+        return self
 
     @model_validator(mode="after")
     def _check_boutons_programmes(self) -> ReformSpec:
@@ -1435,6 +1492,9 @@ class ResultRows(BaseModel):
     garantie_autonomie: float | None = None
     """The new benefits of the programmes (but 21, étape 3): zero unless the reform poses
     their group, the law having none of them."""
+    cvec: float | None = None
+    """The CVEC, POSITIVE, paid by a student of higher education who holds no grant: zero
+    for a household of the input format, which declares no student."""
     ifi: float | None = None
     """Impôt sur la fortune immobilière, POSITIVE. Zero for all but ~186 000 foyers
     nationally, and zero for any foyer with no income whatever its wealth — the

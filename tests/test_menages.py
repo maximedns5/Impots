@@ -149,11 +149,44 @@ def test_who_has_what_follows_the_declared_rules(imputed) -> None:
 
 
 @needs_boxes
-def test_another_year_is_refused(population) -> None:
+def test_another_year_without_its_factors_is_refused(population) -> None:
+    """Sans les facteurs qui ont vieilli la population, une autre année ne se ramène pas à
+    2024 : refusée. La politique d'imputation, elle, la laisse au runner."""
     with pytest.raises(menages.MenagesError, match="2025"):
         menages.impute(population, 2025)
-    with pytest.raises(imp.ImputationRefusee, match="2025"):
-        imp.imputations(None, 2025, demandees=[imp.MENAGES])
+    assert imp.imputations(None, 2025, demandees=[imp.MENAGES]).menages
+
+
+@needs_boxes
+def test_an_aged_population_is_imputed_on_2024_and_aged_by_its_indices(population,
+                                                                       imputed) -> None:
+    """Vieillie de 2024 à 2027, la population reçoit les données de 2024, aux mêmes
+    personnes, chaque montant multiplié par le facteur de son indice (`INDICES`) ; les
+    nombres et la part exonérée ne bougent pas, les totaux calés restent ceux des sources
+    de 2024. Le choix tenu : imputer sur 2024 puis vieillir, plutôt que d'imputer sur la
+    population vieillie, où les seuils nominaux de 2024 (le plafond de 7 500 €, les bornes
+    de la déduction de 10 %) changeraient qui a quoi."""
+    from impots import uprating as up
+    from impots.population.incomes import EXEMPT_SHARE
+
+    vieillissement = up.Uprating(wage=0.031, price=0.017, source="essai", base_year=2024)
+    facteurs = menages.facteurs_de(vieillissement, 2027)
+    assert facteurs["wage"] == pytest.approx(1.031 ** 3)
+    vieillie = up.uprate(population, 2027, vieillissement).sort("person_id")
+    frame, stats = menages.impute(vieillie, 2027, facteurs=facteurs)
+    base, stats_base = imputed
+    assert set(menages.INDICES) | set(menages.NOMBRES) == set(menages.COLONNES)
+    for colonne, indice in menages.INDICES.items():
+        assert np.allclose(frame[colonne].to_numpy(),
+                           base[colonne].to_numpy() * facteurs[indice], rtol=1e-9), colonne
+    for colonne in (*menages.NOMBRES, EXEMPT_SHARE):
+        assert np.allclose(frame[colonne].to_numpy(), base[colonne].to_numpy(),
+                           rtol=1e-9), colonne
+    for colonne in up.UPRATED:
+        assert np.array_equal(frame[colonne].to_numpy(), vieillie[colonne].to_numpy())
+    for avant, apres in zip(stats_base.composantes, stats.composantes, strict=True):
+        assert apres.montant == pytest.approx(avant.montant, rel=1e-9), apres.nom
+    assert stats.facteurs == facteurs
 
 
 def test_the_imputation_is_asked_for_never_required() -> None:
@@ -201,3 +234,19 @@ def test_openfisca_reads_the_imputed_data(imputed) -> None:
         float(some[menages.PENSION_VERSEE_MINEURS].sum()), abs=len(some))
     garde = sum(float(sim.calculate(c, "2024").sum()) for c in menages.CASES_GARDE)
     assert garde == pytest.approx(float(some[menages.FRAIS_GARDE].sum()), abs=len(some))
+
+
+@needs_boxes
+def test_the_frais_reels_total_holds_on_a_small_aged_lot() -> None:
+    """Sur 1 500 ménages, un déclarant pèse 0,2 % des frais réels : la population ramenée à
+    2024 par division (un écart d'un ulp sur les salaires) déplaçait la marche où la
+    bissection s'arrêtait, et le total manquait sa cible de 0,2 %, refusé. Pris sous la
+    cible puis relevé, il la refait exactement, vieilli ou non."""
+    from impots import uprating as up
+    from impots.population.cli import PROCESSED
+
+    frame = pl.read_parquet(PROCESSED / "population_2024.parquet")
+    vieillissement = up.Uprating(wage=0.025, price=0.015, source="essai", base_year=2024)
+    lot = runner.subsample(up.uprate(frame, 2026, vieillissement), 1_500)
+    _, stats = menages.impute(lot, 2026, facteurs=menages.facteurs_de(vieillissement, 2026))
+    assert abs(stats.par_nom()["frais_reels"].ecart_montant) < 1e-9

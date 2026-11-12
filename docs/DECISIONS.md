@@ -28164,3 +28164,109 @@ refusées, porte « prestations hors du modèle ».
 gardent leur commit. Sur l'échantillon de test (`tests/fixtures/eec_sample.parquet`), à des
 valeurs d'aucun candidat, le garde des secteurs reconstitue le coût à 1,53 € près sur
 84 M€. Le numéro de cette entrée est à revoir à la jonction des étapes.
+
+## D-383 — Les données de ménages vieillies, et les boutons qui les lisent (but 21, étape 4)
+
+**Les imputations de l'étape 4** (`population.menages`, commit 2c2ed19), une calibration :
+chaque total est celui de sa source par construction, et sa `Figure` est dépensée. Sur la
+population entière de 2024 : les heures supplémentaires exonérées (1GH-1JH, 20,31 Md€ au
+champ de l'enquête, 11,91 M de lignes contre 11,95), tirées uniformément parmi les salariés
+hors gérants (probabilité 0,431), au salaire horaire et à la quotité, sous les 7 500 € du
+CGI, prises dans la part exonérée des salaires sans en changer le total ; les frais de
+trajet de chaque salarié, loi log-normale (médiane 978 €, σ du logarithme 1,269), déclarés
+en frais réels au-delà de la déduction de 10 % (1AK-1DK, 32,85 Md€, 5,46 M) ; les pensions
+alimentaires perçues par les parents isolés (5,55 Md€, 1,16 M contre 1,19), versées pour un
+mineur (4,84 Md€) et pour un majeur (4,24 Md€) ; les frais de garde des moins de six ans
+(4,61 Md€, 2,34 M d'enfants contre 2,33) ; les intérêts d'emprunt des accédants (compte du
+logement 2024, 18,64 Md€ ; 7,21 M de ménages contre 7,09, nombre non calé).
+
+**Ce qui s'y ajoute.** Les étudiants du supérieur (2 965 000, SIES, Note Flash n° 19,
+juillet 2024) tirés parmi les 18-25 ans inactifs ou payés sous 10 600 € par an
+(probabilité 0,839 ; 2,99 M tirés), puis les boursiers sur critères sociaux (679 044, Note
+Flash n° 24, septembre 2024), les plus modestes d'abord. Hypothèses : pas d'étudiant de plus
+de 25 ans, et la bourse lit le revenu par personne du ménage, pas celui des parents d'un
+étudiant parti. La CVEC qu'ils paient vaut 231 M€ à 100 € contre un produit de 170 M€ en
+2023-2024 (amendement n° 103 au PLF 2025, contexte, jamais calé) : 36 % de trop, parce que
+le compte des inscrits contient les STS et CPGE des lycées, les contrats de
+professionnalisation et les autres que la CVEC ne frappe pas. Une suppression serait
+surestimée d'autant ; un préenregistrement le dira. Et la rémunération brute des heures
+supplémentaires, que lit leur bouton. Les frais réels étaient calés sur une bissection
+qui s'arrêtait sur une marche : sur 1 500 ménages, un déclarant pèse 0,2 % du total, et la
+population ramenée à 2024 par division le manquait de 0,2 %, refusée ; σ est pris sous la
+cible et les frais des déclarants relevés d'un facteur k ≥ 1 (exact, `test_menages`).
+
+**Le vieillissement : imputer sur 2024, puis vieillir.** Une passe d'une autre année reçoit
+la population vieillie et ses facteurs (`menages.facteurs_de`, `runner(menages_facteurs)`,
+passés par la commande des préenregistrements, `scenarios` et l'API) ; l'imputation se fait
+sur la population ramenée à 2024, calée sur les totaux de 2024, et chaque montant vieillit
+avec l'indice de la colonne monétaire la plus proche, une hypothèse dite (`INDICES`) :
+salaires pour les heures supplémentaires, les frais de trajet et les frais réels (pour que
+la part de ceux qui passent leur déduction reste celle de 2024 ; le barème kilométrique
+suit plutôt les prix) et les frais de garde ; prix pour les pensions alimentaires (indexées
+par les juges) et les intérêts d'emprunt (fixes pour un prêt en cours ; faute d'un indice
+des taux). Les nombres ne vieillissent pas. Pourquoi pas l'inverse, imputer sur la
+population vieillie et caler sur un total vieilli : c'est le même calage aux seuils près,
+et les seuils sont nominaux et de 2024 (les 7 500 €, les bornes de la déduction) ; les
+appliquer aux revenus de 2027 changerait qui a des heures et qui déclare ses frais, sans
+source pour le dire. Imputer sur 2024 garde aussi les mêmes ménages d'une année à
+l'autre, comme le vieillissement garde ménages, poids et âges. Tenu par
+`test_an_aged_population_is_imputed_on_2024_and_aged_by_its_indices`. Sans facteurs, une
+autre année est refusée par le runner (la politique d'imputation ne refuse plus l'année).
+
+**Les boutons**, chacun une formule datée du 1er janvier de l'année chiffrée (avant, celle
+du droit : sans date, la pension défiscalisée baissait le revenu fiscal de référence de
+N-2, donc le taux de CSG des pensions et l'ARS, et le garde refusait la passe de 18 M€ sur
+1 500 ménages), nul à `None`, tenu sur des ménages types (`test_boutons_menages`) :
+
+* `pensions_alimentaires_exonerees` (booléen) et `pensions_alimentaires_plafond_par_enfant`
+  (0 à 100 000 € par personne à charge) : la pension sort des revenus imposés comme des
+  pensions ; les prestations qui la comptent ne bougent pas. Ouvre Attal a22 et Mélenchon
+  (sans plafond) ; Tondelier reste vague (plafond non chiffré).
+* `interets_emprunt_taux` (un taux de 0 à 1 par nombre d'enfants mineurs à charge, 1 à 8
+  valeurs), `interets_emprunt_plafond` (0 à 50 000 €) et `..._plafond_par_enfant` (0 à
+  10 000 €) : une réduction, plafonnée (le plafond borne la réduction, hypothèse), hors du
+  plafond global. Ouvre Retailleau r28 ; la durée n'est pas lue (la population ne porte
+  pas la date du prêt), et le relevé n'en dit pas.
+* `credit_trajets_taux` (0 à 1), `credit_trajets_franchise` et `credit_trajets_plafond` (0 à
+  50 000 €) : un crédit par personne sur les frais de trajet imputés, que les frais réels
+  ne remplacent pas. Ouvre Ruffin en partie : « autour de 30 % » a son taux, mais les
+  « gros rouleurs aux revenus moyens » n'ont ni franchise ni condition de revenu ; à 30 %
+  des 52,4 Md€ de frais extrapolés, le crédit dépasse de loin les 0,5 Md€ déclarés.
+* `heures_sup_exoneration_salariale`, `..._csg_crds`, `..._patronale` (0 à 1),
+  `heures_sup_franchise_heures` (0 à 1 000) et `heures_sup_plafond_heures` (0 à 2 000) : sur
+  la rémunération des heures au-delà de la franchise et dans le plafond, la part dite de ce
+  que la loi laisse des cotisations salariales (au-delà des 11,31 % du brut que la réduction
+  de CSS art. D. 241-21 ôte déjà, et qu'openfisca ne porte pas : chez un non-cadre du privé,
+  rien ne reste), de la CSG et de la CRDS, et des cotisations patronales nettes (le privé
+  seul). Le net imposable gagné reste exonéré d'impôt. Non portée : la déduction forfaitaire
+  patronale (la taille de l'entreprise). Ouvre Dupont-Aignan nd08 (net égal au brut, 300 h ;
+  la CSG y entre-t-elle : à dire au préenregistrement), Retailleau r13 (salariales et
+  patronales au-delà de 1 623 h : une franchise de 16 h, CSG et CRDS maintenues) et
+  l'exonération de Philippe p10 sur deux heures par semaine (un plafond) ; pas les heures
+  neuves de p10, ni l'annualisation r14, ni les 35 heures de Mélenchon, qui ne se portent
+  pas sur des heures imputées.
+* `cvec_montant` n'est plus refusé sur une passe : il impute les étudiants. Ouvre Le Pen
+  lp26. La CVEC entre au registre (`cvec`), au garde (prélèvement : elle va aux Crous, un
+  biais dit comme la RLS, D-374) et au canal macro comme non couverte (aucune variante).
+
+Une passe qui règle un de ces boutons impute les données de ménages
+(`imputations.MENAGES_KNOBS`) ; sans elles, le runner la refuse. Sur 1 500 ménages vieillis
+de 2024 à 2026, à des valeurs d'aucun candidat, le garde reconstitue chaque coût, et une
+exonération nulle coûte 0 € exactement (`tests/lourds.txt`). Une passe qui impute les
+données de ménages fait payer la CVEC aux étudiants dans la référence aussi.
+
+**Les élargissements du garde de l'étape 4.** L'ASPA (transferts) et la CSG du chômage
+(prélèvements, variante csg de Mésange) ne déplacent l'impulsion d'une étude que si la
+réforme les bouge. Dans les douze rapports de première année commités (PLF 2027 art. 2, 3,
+74 APL et prime ; Attal, Labib, Le Pen, Lisnard, Mélenchon, Retailleau, Roussel,
+Tondelier), le delta de `csg_chomage` est 0,0 exactement : leur impulsion ne change pas.
+L'ASPA n'y est pas rapportée, mais ses ressources (salaire brut, retraite brute, chômage
+net, les paramètres de l'ASPA) ne bougent sous aucune de leurs réformes. Dans les
+trajectoires, dont les rapports ne gardent pas les deltas, une réforme qui baisse le
+revenu fiscal de référence (art. 3, Attal a16, Retailleau r19, Lisnard l1) bouge, à partir
+de l'année N+2, le taux de CSG du chômage : ce petit mouvement entre désormais dans la
+variante csg, qu'il n'atteignait pas. L'ordre de grandeur : l'impulsion de l'art. 3 en vue
+figée diffère de 7,8 k€ entre la première et la troisième année. Rien n'est relancé. La
+CSG des pensions bouge de même et n'est dans aucune liste : un trou d'avant, que les
+boutons de cette entrée évitent en datant leurs formules, et que ceux de l'étape 2
+(exonération des jeunes) n'évitent pas.

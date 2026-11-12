@@ -152,6 +152,10 @@ STATE_RECEIPTS = (
     # where it would bring the benefit under the SMIC, so a raised SMIC took 43 M€ off it
     # on 1 500 ménages, in disposable income and in no instrument. No knob moved it before.
     "csg_chomage",
+    # The CVEC, paid by the students the households' data impute (but 21, étape 4): zero
+    # unless they are imputed. The Crous collect it, not the State; counted with the
+    # receipts as the cost counts it, a bias said like the RLS's (D-374).
+    "cvec",
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.

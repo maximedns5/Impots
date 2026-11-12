@@ -114,6 +114,8 @@ UNMAPPED = {
     "c3s": "fiscalité des entreprises",
     # Zero unless capital income is imputed (D-248), and no knob moves it yet.
     "prelevements_sociaux_capital": "revenus du capital",
+    # Zero unless the households' data are imputed (but 21, étape 4): the students' levy.
+    "cvec": "contribution étudiante",
 }
 
 UNMAPPED_REASONS = {
@@ -139,6 +141,12 @@ UNMAPPED_REASONS = {
         "propre dans Mésange, et aucune ne leur est encore associée : M4 dira si celle "
         "de la CSG les porte. D'ici là, la boucle d'une réforme qui ne bouge qu'eux est "
         "absente, pas nulle (D-248)."
+    ),
+    "contribution étudiante": (
+        "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux "
+        "établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur "
+        "le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une "
+        "réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
     ),
 }
 

@@ -17,8 +17,12 @@ demande et de ce dont la réforme a besoin pour bouger,
 * les niches, sur demande seulement : leur imputation est une calibration, et le plafond
   global reste aveugle même imputé (`guards.DISPERSION_DEPENDENT_KNOBS`) ;
 * les données de ménages des programmes (heures supplémentaires, frais de trajet et frais
-  réels, pensions alimentaires, frais de garde, intérêts d'emprunt), sur demande
-  seulement : une calibration sur leurs totaux publiés (`population.menages`, but 21).
+  réels, pensions alimentaires, frais de garde, intérêts d'emprunt, étudiants et
+  boursiers), sur demande, et quand la réforme règle un bouton qui les lit
+  (`boutons_programmes.MENAGES_KNOBS`) : une calibration sur leurs totaux publiés
+  (`population.menages`, but 21). Une autre année que 2024 les impute sur la population
+  ramenée à 2024 et les vieillit (`menages.impute`) : le runner refuse une telle passe
+  sans les facteurs qui ont vieilli sa population.
 
 Ce qu'une passe ne peut pas imputer est refusé, avec sa raison, avant la passe, jamais
 rendu à zéro : un bouton de l'IFI (la population ne porte aucun patrimoine), les IJ hors
@@ -103,7 +107,15 @@ def exigees(reform: Any) -> frozenset[str]:
         voulues.add(CONSOMMATION)
     if _knobs(reform) & IJ_KNOBS:
         voulues.add(IJ)
+    if _knobs(reform) & menages_knobs():
+        voulues.add(MENAGES)
     return frozenset(voulues)
+
+
+def menages_knobs() -> frozenset[str]:
+    from impots.engine.boutons_programmes import MENAGES_KNOBS
+
+    return MENAGES_KNOBS
 
 
 def imputations(reform: Any, annee: int, *, demandees: Iterable[str] = (),
@@ -143,14 +155,6 @@ def imputations(reform: Any, annee: int, *, demandees: Iterable[str] = (),
                 f"{ij_module.YEAR}, et une autre année demanderait de vieillir la masse, "
                 f"ce qui n'est pas fait (D-305) ; "
                 f"{_pourquoi(reform, [IJ]) or 'demandées par l’appelant'}")
-    if MENAGES in voulues:
-        from impots.population import menages as menages_module
-
-        if annee != menages_module.YEAR:
-            raise ImputationRefusee(
-                f"données de ménages imputées pour {annee} : leurs sources décrivent "
-                f"{menages_module.YEAR}, et une autre année demanderait de vieillir les "
-                f"montants, ce qui n'est pas fait (but 21, étape 4)")
     if CONSOMMATION in voulues:
         from impots import consommation
 
@@ -169,6 +173,6 @@ def _pourquoi(reform: Any, noms: Iterable[str]) -> str:
     knobs = _knobs(reform)
     par_nom = {CAPITAL: knobs & CAPITAL_KNOBS,
                CONSOMMATION: {k for k in knobs if k in consommation.BOUTONS},
-               IJ: knobs & IJ_KNOBS}
+               IJ: knobs & IJ_KNOBS, MENAGES: knobs & menages_knobs()}
     return " ; ".join(f"{nom} : {', '.join(sorted(par_nom.get(nom, ())))}"
                       for nom in noms if par_nom.get(nom))
