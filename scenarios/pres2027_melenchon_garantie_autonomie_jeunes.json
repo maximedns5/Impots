@@ -1,0 +1,19 @@
+{
+  "name": "pres2027_melenchon_garantie_autonomie_jeunes",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 — Garantie d'autonomie des jeunes : « « plus aucun jeune ne doit vivre sous le seuil de pauvreté, fixé à 1 337 euros par mois, ce qui coûtera 9,5 milliards d'euros » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf, 2026-10-14)",
+  "note": "Une prestation neuve (D-382) : chaque jeune reçoit la différence entre 1 337 € par mois et ses ressources propres du mois (salaire, revenu d'indépendant, chômage, pension), sans les ressources de ses parents ni les prestations de sa famille. Le candidat dit « les jeunes » sans âge : de 18 ans à la veille de 25, l'âge sous lequel le RSA est fermé, est une hypothèse ; la plage de l'âge de sortie va de 21 (la fin des prestations familiales) à 30 ans. Le programme du 6 novembre la réserve aux jeunes « détachés du foyer fiscal parental » : la population ne dit pas le rattachement, et la garantie va à tous les jeunes de la tranche, ce qui la surestime. Servie en espérance avec la loi de recours du RSA (D-382). Elle ne remplace rien et n'entre dans aucune base de ressources. Contre le droit de 2026, où elle n'existe pas.",
+  "tags": [
+    "presidentielle_2027",
+    "melenchon"
+  ],
+  "reform": {
+    "garantie_autonomie": {
+      "seuil": 1337.0,
+      "age_minimum": 18,
+      "age_maximum": 25,
+      "taux_ressources": 1.0
+    }
+  }
+}

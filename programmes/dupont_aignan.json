@@ -422,7 +422,7 @@
       ],
       "refus": {
         "porte": "indexation",
-        "raison": "L'indexation des pensions d'année en année n'est pas dans le moteur, dont les pensions sont des données."
+        "raison": "La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : le droit de 2026 l'indexe déjà, et elle ne coûte rien contre lui. Son effet n'existe que contre un gel, que le droit de la référence n'a pas."
       }
     },
     {
@@ -847,12 +847,12 @@
         }
       ],
       "refus": {
-        "porte": "salaires",
-        "raison": "Un SMIC relevé et une baisse dégressive des cotisations salariales dont la pente n'est pas donnée : la distribution des salaires autour du SMIC."
+        "porte": "bouton_hors_but",
+        "raison": "Le net du SMIC monte par une baisse des cotisations salariales « pour ne pas pénaliser les entreprises » : le brut ne bouge pas. Le bouton du SMIC relève le brut, payé par l'employeur, ce que la mesure exclut ; celui des cotisations salariales (cotisations_salariales_retraite_echelle) est uniforme sur tous les salaires, quand la baisse vise les 2,5 millions de salariés au SMIC, dégressive sans pente dite. Il manque un bouton de baisse des cotisations salariales autour du SMIC."
       }
     },
     {
-      "id": "nd32_indexation_traitements_fonctionnaires",
+      "id": "nd32_indexation_point_indice",
       "categorie": "salaires_smic",
       "libelle": "Réindexation des traitements des fonctionnaires sur l'inflation",
       "parametre": "Indexation du point d'indice sur l'inflation",
@@ -865,9 +865,25 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "salaires",
-        "raison": "Le point d'indice et son indexation année par année : la population ne distingue pas les traitements indiciaires."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "point_indice_revalorisation": 1.021,
+          "point_indice_contractuels": 0.0
+        },
+        "plages": [
+          {
+            "champ": "point_indice_revalorisation",
+            "min": 1.0,
+            "max": 1.0315
+          },
+          {
+            "champ": "point_indice_contractuels",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Le point d'indice indexé sur l'inflation : la première année, il monte de l'inflation de l'année. L'inflation de 2026 est celle des hypothèses du PLFSS 2027 (annexe B, IPC hors tabac : 2,1 %), les hypothèses de la population vieillie des cas (plf2027). Plage du point : du droit (1, le point gelé) à 2,1 % prolongé de la moitié de l'écart (1,0315). Le bouton multiplie le traitement indiciaire des fonctionnaires titulaires, leur brut sur 1,195 (le taux de prime du moteur) ; leurs primes ne bougent pas. La part du salaire des contractuels qui suit le point n'est pas publiée : 0 pour la valeur retenue, la plage allant jusqu'à 1 (tous payés sur une grille indiciaire). La mesure se mesure contre le droit de 2026, où le point est gelé depuis le 1er janvier 2024 : il n'a pas d'indexation légale. Le coût compte le salaire que paient l'État, les collectivités et les hôpitaux, moins les cotisations, la CSG et l'impôt qui en reviennent ; les collectivités sont comptées comme l'État, leur compensation éventuelle ne change pas le coût public."
       }
     },
     {
@@ -973,7 +989,7 @@
       ],
       "refus": {
         "porte": "indexation",
-        "raison": "L'indexation des prestations année par année ; la revalorisation immédiate n'a pas de montant."
+        "raison": "La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : le droit de 2026 l'indexe déjà, et elle ne coûte rien contre lui. Son effet n'existe que contre un gel, que le droit de la référence n'a pas. La revalorisation « immédiate » n'a pas de montant."
       }
     },
     {
@@ -990,9 +1006,25 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "Porte provisoire : le moteur a ce bouton (af_modulation_taux_tranche_2, af_modulation_taux_tranche_3), mais ce relevé ne chiffre rien ; la mesure attend son chiffrage préenregistré."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "af_modulation_taux_tranche_2": 1.0,
+          "af_modulation_taux_tranche_3": 1.0
+        },
+        "plages": [
+          {
+            "champ": "af_modulation_taux_tranche_2",
+            "min": 0.5,
+            "max": 1.0
+          },
+          {
+            "champ": "af_modulation_taux_tranche_3",
+            "min": 0.25,
+            "max": 1.0
+          }
+        ],
+        "note": "La modulation des allocations familiales selon le revenu, depuis 2015, est levée : les deux tranches de revenus au-dessus des plafonds reçoivent le montant plein (1 au lieu de 0,5 et 0,25), majorations pour âge et forfait compris. Plages : du droit de 2026 à la mesure. Contre le droit de 2026."
       }
     },
     {
@@ -1028,9 +1060,19 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "Porte provisoire : le moteur a ce bouton (plafond_qf_demi_part), mais ce relevé ne chiffre rien ; la mesure attend son chiffrage préenregistré."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "plafond_qf_demi_part": 3000.0
+        },
+        "plages": [
+          {
+            "champ": "plafond_qf_demi_part",
+            "min": 1807.0,
+            "max": 3596.5
+          }
+        ],
+        "note": "Le plafond général de l'avantage procuré par chaque demi-part passe de 1 807 € à 3 000 €. Les plafonds particuliers (le premier enfant d'un parent isolé, la personne seule, les veufs) ne sont pas dits et restent ceux de 2026. Plage : du droit de 2026 à 3 000 € prolongés de la moitié de l'écart. Contre le droit de 2026."
       }
     },
     {
@@ -1207,7 +1249,7 @@
       ],
       "refus": {
         "porte": "indexation",
-        "raison": "L'indexation des prestations année par année n'est pas dans le moteur."
+        "raison": "La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : le droit de 2026 l'indexe déjà, et elle ne coûte rien contre lui. Son effet n'existe que contre un gel, que le droit de la référence n'a pas."
       }
     },
     {

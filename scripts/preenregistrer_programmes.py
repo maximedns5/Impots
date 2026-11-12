@@ -59,11 +59,28 @@ CLASSES: dict[str, tuple[float, float, str]] = {
                      "entier dans les prix : le juge peut compter une réaction de la "
                      "consommation, une répercussion partielle, une autre année, et la "
                      "vérification des agrégats (D-325) dit l'écart de l'assiette."),
+    # Les deux classes proposées au but 21, à préenregistrer par le propriétaire avant la
+    # première passe, dans l'entrée qui porte les cas.
+    "salaires": (0.40, 200e6,
+                 "Mesure d'un salaire (le SMIC, le point d'indice) : le salaire horaire est "
+                 "tiré de l'enquête Emploi, le secteur public et les titulaires sont imputés, "
+                 "la diffusion au-dessus du SMIC est une hypothèse déclarée (D-380), et le "
+                 "coût public tient à une convention que le juge peut ne pas partager (le "
+                 "brut ou le super-brut des agents publics, les allègements qui suivent le "
+                 "SMIC pour les salaires qui ne bougent pas)."),
+    "prestation_neuve": (0.50, 2e9,
+                         "Prestation que la loi n'a pas (D-382) : son coût tient à un recours "
+                         "supposé, à des conditions que la population ne porte pas "
+                         "(résidence, activité passée, rattachement au foyer des parents) et "
+                         "à ce qu'elle remplace ; son coût net est l'écart de deux masses de "
+                         "20 à 60 Md€, d'où un plancher en milliards, de l'ordre de 5 % de "
+                         "ces masses."),
 }
 #: L'entrée qui écrit une classe, quand ce n'est pas D-321. Les trois cas de D-326 portent
 #: « (D-321) » dans leur raison, enregistrée avant cette correction : la règle de leur
 #: classe est dans D-326.
-ENTREE_DE_LA_CLASSE = {"consommation": "D-326"}
+ENTREE_DE_LA_CLASSE = {"consommation": "D-326", "salaires": "D-383",
+                       "prestation_neuve": "D-383"}
 #: La classe de chaque mesure chiffrée, par id ; une mesure sans classe est refusée.
 CLASSE = {
     "exonerations_au_dela_2_smic": "menages",
@@ -79,6 +96,30 @@ CLASSE = {
     "lp20_tva_energie": "consommation",
     "tva_carburants_5_5": "consommation",
     "suppression_tva_taxes_carburants": "consommation",
+    # Le but 21 : les mesures que les boutons des étapes 2 à 4 ouvrent (classes proposées,
+    # à préenregistrer).
+    "smic_1700_net": "salaires",  # Mélenchon et Glucksmann
+    "smic_2000_brut": "salaires",
+    "smic_1600": "salaires",
+    "smic_2000": "salaires",
+    "smic_plus_15": "salaires",
+    "revenu_minimum_2200_net": "salaires",
+    "revenu_minimum_2200": "salaires",
+    "hausse_salaires_150": "salaires",
+    "point_indice_10": "salaires",
+    "point_indice_inflation": "salaires",
+    "nd32_indexation_point_indice": "salaires",
+    "indexation_pensions_prestations_10": "menages",
+    "apl_plus_10": "menages",
+    "ez4_suppression_csg_activite": "menages",
+    "nd38_allocations_familiales_universelles": "menages",
+    "lp21_ir_moins_30_ans": "menages",
+    "nd40_plafond_quotient_familial": "haut",
+    "suppression_pfu": "haut",
+    "garantie_autonomie_jeunes": "prestation_neuve",
+    "r15_revenu_incitation_activite": "prestation_neuve",
+    "r27_revenu_familial": "prestation_neuve",
+    "p11_allocation_familiale_unique": "prestation_neuve",
 }
 
 

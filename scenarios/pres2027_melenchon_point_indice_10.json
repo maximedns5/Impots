@@ -1,0 +1,15 @@
+{
+  "name": "pres2027_melenchon_point_indice_10",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 — Point d'indice des fonctionnaires +10 % : « « en augmentant de 10% les fonctionnaires, dont le point d'indice a été gelé huit années sur dix durant les deux quinquennats d'Emmanuel Macron (17 milliards d'euros) » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf, 2026-10-14)",
+  "note": "La valeur du point d'indice relevée de 10 %. Plage du point : du droit de 2026 (1, le point gelé) à 10 % prolongé de la moitié de l'écart (1,15). Le bouton multiplie le traitement indiciaire des fonctionnaires titulaires, leur brut sur 1,195 (le taux de prime du moteur) ; leurs primes ne bougent pas. La part du salaire des contractuels qui suit le point n'est pas publiée : 0 pour la valeur retenue, la plage allant jusqu'à 1 (tous payés sur une grille indiciaire). La mesure se mesure contre le droit de 2026, où le point est gelé depuis le 1er janvier 2024 : il n'a pas d'indexation légale. Le coût compte le salaire que paient l'État, les collectivités et les hôpitaux, moins les cotisations, la CSG et l'impôt qui en reviennent ; les collectivités sont comptées comme l'État, leur compensation éventuelle ne change pas le coût public.",
+  "tags": [
+    "presidentielle_2027",
+    "melenchon"
+  ],
+  "reform": {
+    "point_indice_revalorisation": 1.1,
+    "point_indice_contractuels": 0.0
+  }
+}

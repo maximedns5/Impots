@@ -1,0 +1,26 @@
+{
+  "name": "pres2027_retailleau_r15_revenu_incitation_activite",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-12 — Revenu d'incitation à l'activité (RIA), qui fusionne RSA, prime d'activité et ASS ; activité de 15 h/semaine : « « un « RIA Socle » de 300 euros par mois » » (https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf, 2026-01-09)",
+  "note": "Une prestation neuve (D-382), individuelle : 300 € par mois, plus 250 € à qui travaille ou cherche un emploi, moins 30 % des revenus d'activité nets, nulle au-delà de 1 833 € de revenus d'activité par mois, de 18 ans à la veille de 65, à la place du RSA, de la prime d'activité et de l'ASS (que la population ne porte pas). Hypothèses : l'insertion va à qui touche une allocation chômage ou se déclare chômeur, la population ne portant pas les quinze heures ; les revenus de remplacement (chômage, pension) sont déduits à 100 %, la règle des minima remplacés, la plage allant de 30 % (le taux du salaire) à 100 %. Servi en espérance avec la loi de recours du RSA. Les aides au logement restent, sans le RIA dans leurs ressources. La situation régulière n'est pas lue. Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "retailleau"
+  ],
+  "reform": {
+    "ria": {
+      "socle": 300.0,
+      "insertion": 250.0,
+      "taux_revenus_activite": 0.3,
+      "plafond_revenus_activite": 1833.0,
+      "remplace_rsa": true,
+      "remplace_ppa": true,
+      "remplace_ass": true,
+      "age_minimum": 18,
+      "age_maximum": 65,
+      "insertion_demandeurs_emploi": true,
+      "taux_autres_revenus": 1.0
+    }
+  }
+}

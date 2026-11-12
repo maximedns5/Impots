@@ -32,9 +32,25 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "salaires",
-        "raison": "Le moteur ne déplace pas la distribution des salaires, et le point d'indice des fonctionnaires n'est pas un de ses boutons."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "point_indice_revalorisation": 1.1,
+          "point_indice_contractuels": 0.0
+        },
+        "plages": [
+          {
+            "champ": "point_indice_revalorisation",
+            "min": 1.0,
+            "max": 1.15
+          },
+          {
+            "champ": "point_indice_contractuels",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "La valeur du point d'indice relevée de 10 %. Plage du point : du droit de 2026 (1, le point gelé) à 10 % prolongé de la moitié de l'écart (1,15). Le bouton multiplie le traitement indiciaire des fonctionnaires titulaires, leur brut sur 1,195 (le taux de prime du moteur) ; leurs primes ne bougent pas. La part du salaire des contractuels qui suit le point n'est pas publiée : 0 pour la valeur retenue, la plage allant jusqu'à 1 (tous payés sur une grille indiciaire). La mesure se mesure contre le droit de 2026, où le point est gelé depuis le 1er janvier 2024 : il n'a pas d'indexation légale. Le coût compte le salaire que paient l'État, les collectivités et les hôpitaux, moins les cotisations, la CSG et l'impôt qui en reviennent ; les collectivités sont comptées comme l'État, leur compensation éventuelle ne change pas le coût public."
       },
       "declare": {
         "montant_eur": 17000000000.0,
@@ -68,9 +84,39 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "indexation",
-        "raison": "La hausse porte d'un bloc sur les pensions, données de la population que le moteur ne revalorise pas, et sur les AF et les APL : n'en chiffrer que la part familiale et logement ne serait pas la mesure."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "indexations": {
+            "pensions": {
+              "2025": 1.1
+            },
+            "prestations_familiales": {
+              "2025": 1.1
+            },
+            "aides_logement": {
+              "2025": 1.1
+            }
+          }
+        },
+        "plages": [
+          {
+            "champ": "indexations.pensions.2025",
+            "min": 1.0,
+            "max": 1.15
+          },
+          {
+            "champ": "indexations.prestations_familiales.2025",
+            "min": 1.0,
+            "max": 1.15
+          },
+          {
+            "champ": "indexations.aides_logement.2025",
+            "min": 1.0,
+            "max": 1.15
+          }
+        ],
+        "note": "La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : l'indexation qu'elle promet est celle du droit, et ne coûte rien ; la hausse de 10 % est la mesure. Trois coefficients de 1,10 sur ce que le droit porte : les pensions de retraite de la population (des données, multipliées au 1er janvier), la base mensuelle des allocations familiales (au 1er avril) et les paramètres des aides au logement révisés en octobre. Ils sont posés à la date légale de 2025 pour que toute l'année chiffrée porte la hausse, comme les boutons « portée » (D-301). Le candidat dit « allocations familiales » : la base mensuelle porte aussi le complément familial, l'allocation de soutien familial, l'allocation de rentrée scolaire et l'allocation de base de la PAJE, qui montent avec elles ; c'est la traduction qui ne choisit pas entre les prestations familiales. Les pensions d'invalidité et les autres prestations ne bougent pas. Plages : du droit (1) à 10 % prolongé de la moitié de l'écart (1,15)."
       },
       "declare": {
         "montant_eur": 8000000000.0,
@@ -104,9 +150,26 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "salaires",
-        "raison": "Le moteur ne déplace pas la distribution des salaires, et le SMIC n'est pas un de ses boutons."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "smic_revalorisation": 1.1617,
+          "smic_diffusion_profil": "annee_avec_effets_fixes",
+          "smic_diffusion_echelle": 0.0
+        },
+        "plages": [
+          {
+            "champ": "smic_revalorisation",
+            "min": 1.1503,
+            "max": 1.178
+          },
+          {
+            "champ": "smic_diffusion_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Le SMIC mensuel porté à 1 700 € nets, « immédiatement ». Le bouton est un coefficient sur le SMIC horaire brut de chaque mois de 2026, qui en porte deux : 12,02 € de janvier à mai (1 823,03 € bruts par mois), 12,31 € de juin à décembre (1 867,02 €), 1 848,69 € en moyenne. Le coefficient retenu, 1,1617, donne 1 700 € nets par mois en moyenne sur l'année ; la plage va de 1,1503 (1 700 € nets atteints depuis le SMIC de juin) à 1,178 (depuis celui de janvier). Le net est le brut moins les prélèvements salariaux d'un non-cadre sous le plafond (vieillesse 7,30 %, Agirc-Arrco et CEG 4,01 %, CSG et CRDS 9,70 % sur 98,25 % du brut), soit 79,16 % du brut, sans mutuelle ni prévoyance. La diffusion au-dessus du nouveau SMIC, entre 1 et 1,5 SMIC dans le privé, est une hypothèse déclarée (D-380) : le profil à un an avec effets fixes d'entreprise de Koubi et Lhommeau (Insee, Les salaires en France 2007), le plus large des quatre publiés, à l'échelle 0 pour la valeur du candidat (le premier jour, la loi seule relève les salaires horaires sous le nouveau SMIC), sa plage allant jusqu'à 1 (le profil entier). La mesure se mesure contre le SMIC de l'arbre de 2026. Le coût ne compte pas le salaire que paie un employeur privé ; il compte celui que paie l'État employeur (les agents publics relevés au SMIC), les cotisations, la CSG et l'impôt qui montent, la prime d'activité qui bouge, et les allègements généraux, qui suivent le SMIC : un SMIC relevé les élargit aussi pour les salaires qui ne bougent pas."
       }
     },
     {
@@ -154,9 +217,24 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "prestations_hors_modele",
-        "raison": "La garantie d'autonomie des jeunes est une prestation neuve, que le moteur ne porte pas."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "garantie_autonomie": {
+            "seuil": 1337.0,
+            "age_minimum": 18,
+            "age_maximum": 25,
+            "taux_ressources": 1.0
+          }
+        },
+        "plages": [
+          {
+            "champ": "garantie_autonomie.age_maximum",
+            "min": 21,
+            "max": 30
+          }
+        ],
+        "note": "Une prestation neuve (D-382) : chaque jeune reçoit la différence entre 1 337 € par mois et ses ressources propres du mois (salaire, revenu d'indépendant, chômage, pension), sans les ressources de ses parents ni les prestations de sa famille. Le candidat dit « les jeunes » sans âge : de 18 ans à la veille de 25, l'âge sous lequel le RSA est fermé, est une hypothèse ; la plage de l'âge de sortie va de 21 (la fin des prestations familiales) à 30 ans. Le programme du 6 novembre la réserve aux jeunes « détachés du foyer fiscal parental » : la population ne dit pas le rattachement, et la garantie va à tous les jeunes de la tranche, ce qui la surestime. Servie en espérance avec la loi de recours du RSA (D-382). Elle ne remplace rien et n'entre dans aucune base de ressources. Contre le droit de 2026, où elle n'existe pas."
       },
       "declare": {
         "montant_eur": 9500000000.0,
@@ -613,9 +691,13 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "Supprimer le PFU renvoie les revenus du capital au barème de l'IR : le moteur n'a pas le bouton qui impose ce choix à tous les foyers."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "pfu_supprime": true
+        },
+        "plages": [],
+        "note": "Le prélèvement forfaitaire unique supprimé : chaque foyer est imposé comme s'il cochait la case 2OP, ses revenus du capital au barème de l'impôt sur le revenu (abattement de 40 % sur les dividendes, CSG déductible). Les prélèvements sociaux ne changent pas ; « imposer les revenus du capital comme ceux du travail » ne dit pas d'autre taux. Le capital est celui qu'impute la population (D-248) : ni l'assurance vie, ni les plus-values d'avant 2018. Contre le droit de 2026. Pas de plage : la mesure est un oui ou un non."
       },
       "declare": {
         "montant_eur": 9000000000.0,
@@ -1281,7 +1363,7 @@
       ],
       "refus": {
         "porte": "prestations_hors_modele",
-        "raison": "Une garantie de revenu au seuil de pauvreté pour tous est une prestation neuve, que le moteur ne porte pas."
+        "raison": "Le bouton de la garantie (garantie_autonomie) porte la mesure des jeunes, chiffrée à part : deux mesures qui règlent le même bouton sont refusées par le chargeur, et la garantie de tous, au-delà de 41 ans, sort des âges du bouton. La loi de finances 2027 n'engage que le volet des jeunes."
       }
     },
     {
@@ -1413,8 +1495,8 @@
         }
       ],
       "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "Le moteur calcule l'AAH mais son montant n'est pas un bouton câblé ; porter l'AAH au SMIC est un bouton à écrire."
+        "porte": "donnee_menages",
+        "raison": "Le montant de l'AAH a un bouton (indexations, « aah »), mais la population ne porte ni le handicap ni l'AAH : le bouton n'y mordrait sur personne, et chiffrerait zéro."
       }
     },
     {
@@ -1680,7 +1762,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "La suppression du CIR a un bouton dans la couche des entreprises, non chiffrée à ce relevé ; sa contrepartie, des dotations sans montant, est une dépense publique."
+        "raison": "Le CIR a un bouton (cir_taux, cir_taux_au_dela, à 0), mais il se chiffre sur la créance d'un millésime, hors du coût des entreprises (D-222) : un cas préenregistré par register-entreprises lirait 0 €, et la chaîne de la dette refuse ces boutons, ce qui ferait tomber l'étude du programme. La suppression attend une route de préenregistrement sur la créance ; sa contrepartie, des dotations sans montant, est une dépense publique."
       }
     },
     {

@@ -624,9 +624,26 @@
           "type": "presse"
         }
       ],
-      "refus": {
-        "porte": "salaires",
-        "raison": "La distribution des salaires que le moteur lit est une donnée : il ne relève pas encore un seuil ni ne diffuse la hausse au-dessus (étape 4 du but 21)."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "smic_revalorisation": 1.0818,
+          "smic_diffusion_profil": "annee_avec_effets_fixes",
+          "smic_diffusion_echelle": 0.0
+        },
+        "plages": [
+          {
+            "champ": "smic_revalorisation",
+            "min": 1.0712,
+            "max": 1.0971
+          },
+          {
+            "champ": "smic_diffusion_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Le SMIC porté à 2 000 € bruts par mois. Le bouton est un coefficient sur le SMIC horaire brut de chaque mois de 2026, qui en porte deux : 12,02 € de janvier à mai (1 823,03 € bruts par mois), 12,31 € de juin à décembre (1 867,02 €), 1 848,69 € en moyenne. Le coefficient retenu, 1,0818, donne 2 000 € bruts par mois en moyenne sur l'année ; la plage va de 1,0712 (2 000 € bruts atteints depuis le SMIC de juin) à 1,0971 (depuis celui de janvier). La diffusion au-dessus du nouveau SMIC, entre 1 et 1,5 SMIC dans le privé, est une hypothèse déclarée (D-380) : le profil à un an avec effets fixes d'entreprise de Koubi et Lhommeau (Insee, Les salaires en France 2007), le plus large des quatre publiés, à l'échelle 0 pour la valeur du candidat (le premier jour, la loi seule relève les salaires horaires sous le nouveau SMIC), sa plage allant jusqu'à 1 (le profil entier). La mesure se mesure contre le SMIC de l'arbre de 2026. Le coût ne compte pas le salaire que paie un employeur privé ; il compte celui que paie l'État employeur (les agents publics relevés au SMIC), les cotisations, la CSG et l'impôt qui montent, la prime d'activité qui bouge, et les allègements généraux, qui suivent le SMIC : un SMIC relevé les élargit aussi pour les salaires qui ne bougent pas."
       }
     },
     {
@@ -668,9 +685,25 @@
           "type": "presse"
         }
       ],
-      "refus": {
-        "porte": "salaires",
-        "raison": "Le point d'indice et les traitements des fonctionnaires ne sont pas encore distingués dans les salaires de la population (étape 4 du but 21)."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "point_indice_revalorisation": 1.021,
+          "point_indice_contractuels": 0.0
+        },
+        "plages": [
+          {
+            "champ": "point_indice_revalorisation",
+            "min": 1.0,
+            "max": 1.1
+          },
+          {
+            "champ": "point_indice_contractuels",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Le point d'indice indexé sur l'inflation, ce que dit le programme : la première année, il monte de l'inflation de l'année. L'inflation de 2026 est celle des hypothèses du PLFSS 2027 (annexe B, IPC hors tabac : 2,1 %), les hypothèses de la population vieillie des cas (plf2027). La presse ajoute +10 % pour les fonctionnaires autres que les enseignants (+15 % en cinq ans pour ceux-ci, une mesure à part) : c'est le haut de la plage du point (1,10), qui va du droit (1, le point gelé) à cette lecture, appliquée à tous les titulaires, enseignants compris. Le bouton multiplie le traitement indiciaire des fonctionnaires titulaires, leur brut sur 1,195 (le taux de prime du moteur) ; leurs primes ne bougent pas. La part du salaire des contractuels qui suit le point n'est pas publiée : 0 pour la valeur retenue, la plage allant jusqu'à 1 (tous payés sur une grille indiciaire). La mesure se mesure contre le droit de 2026, où le point est gelé depuis le 1er janvier 2024 : il n'a pas d'indexation légale. Le coût compte le salaire que paient l'État, les collectivités et les hôpitaux, moins les cotisations, la CSG et l'impôt qui en reviennent ; les collectivités sont comptées comme l'État, leur compensation éventuelle ne change pas le coût public."
       }
     },
     {
@@ -725,9 +758,19 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "indexation",
-        "raison": "Une revalorisation des aides au logement passe par la porte de l'indexation des prestations ; le mécanisme sur les loyers n'est pas décrit."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "al_revalorisation_portee": 1.1
+        },
+        "plages": [
+          {
+            "champ": "al_revalorisation_portee",
+            "min": 1.0,
+            "max": 1.15
+          }
+        ],
+        "note": "Les paramètres des aides au logement que le droit révise en octobre (loyers plafonds, forfaits de charges, équivalences de loyer, participation minimale) relevés de 10 %, portés sur toute l'année chiffrée (D-301). La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : les 10 % s'ajoutent à elle. Le mécanisme contre la répercussion sur les loyers n'est pas décrit ; les loyers ne bougent pas, ce qu'il viserait. Plage : du droit (1) à 10 % prolongé de la moitié de l'écart (1,15)."
       }
     },
     {

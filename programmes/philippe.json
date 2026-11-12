@@ -84,7 +84,7 @@
       ],
       "refus": {
         "porte": "enveloppe",
-        "raison": "Une enveloppe de 50 Md€ par an de baisse des impôts de production, sans dire quels impôts baissent ni de combien chacun."
+        "raison": "Une enveloppe de 50 Md€ par an sans dire de combien baisse chaque impôt. Le bouton de l'enveloppe (impots_production_baisse) ne la répartit qu'entre la CVAE et la C3S, les seuls impôts de production du moteur, qui rapportent moins de 50 Md€ en 2026 : il la refuse. La CFE, citée, et la taxe foncière des entreprises n'y sont pas."
       },
       "declare": {
         "montant_eur": 50000000000.0,
@@ -280,9 +280,28 @@
           "type": "entretien"
         }
       ],
-      "refus": {
-        "porte": "prestations_hors_modele",
-        "raison": "Une allocation unique dès le premier enfant, dégressive selon l'impôt, est une prestation neuve : les allocations familiales du moteur commencent au deuxième enfant et se modulent par plafonds de ressources."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "allocation_enfant": {
+            "montant_par_enfant": 350.0,
+            "age_maximum": 20,
+            "remplace_af": true,
+            "remplace_cf": true,
+            "remplace_ars": false,
+            "par_famille": false,
+            "degressivite_part_ir": 0.5,
+            "plancher_par_enfant": 0.0
+          }
+        },
+        "plages": [
+          {
+            "champ": "allocation_enfant.degressivite_part_ir",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Une prestation neuve (D-382) : 350 € par mois pour chaque enfant à charge dès le premier, à la place des allocations familiales (avec leur majoration pour âge et leur forfait) et du complément familial, que « unique » fond ; l'allocation de rentrée scolaire reste. Hypothèses : par enfant, comme le dit « dès le premier enfant » (l'autre lecture, 350 € par famille, coûterait bien moins et n'est pas la valeur retenue) ; jusqu'à la veille de 20 ans, l'âge des allocations familiales. « Dégressif en fonction de l'impôt sur le revenu » n'a pas de barème : l'allocation annuelle de la famille baisse de la moitié de l'impôt de son foyer (un douzième par mois), sans plancher ; la plage va de 0 (pas de dégressivité) à 1 (un euro d'allocation par euro d'impôt). Ni imposable ni dans les ressources des minima et des aides au logement (D-382). Contre le droit de 2026."
       }
     },
     {
@@ -307,7 +326,7 @@
       ],
       "refus": {
         "porte": "bouton_hors_but",
-        "raison": "Une réduction d'impôt neuve, plafonnée et limitée aux trois années qui suivent une naissance, que le moteur n'a pas."
+        "raison": "Le bouton de la réduction d'impôt des familles (reduction_impot_familles_montant, _enfants_min) donne le montant à tout foyer qui travaille et a des enfants, chaque année ; la mesure ne vaut que pendant les trois années qui suivent une naissance. Il manque au bouton une condition sur l'âge du plus jeune enfant : le chiffrer sans elle chiffrerait une autre mesure, bien plus large."
       }
     },
     {

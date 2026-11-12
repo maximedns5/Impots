@@ -1,0 +1,14 @@
+{
+  "name": "pres2027_dupont_aignan_nd40_plafond_quotient_familial",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Nicolas Dupont-Aignan (Debout la France (DLF)), programme relevé le 2026-11-12 — Plafond du quotient familial à 3 000 € par demi-part : « En revalorisant le quotient familial à 3 000 € par demi-part. » (https://www.debout-la-france.fr/projet/famille/, 2026-06-09)",
+  "note": "Le plafond général de l'avantage procuré par chaque demi-part passe de 1 807 € à 3 000 €. Les plafonds particuliers (le premier enfant d'un parent isolé, la personne seule, les veufs) ne sont pas dits et restent ceux de 2026. Plage : du droit de 2026 à 3 000 € prolongés de la moitié de l'écart. Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "dupont_aignan"
+  ],
+  "reform": {
+    "plafond_qf_demi_part": 3000.0
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "pres2027_le_pen_lp21_ir_moins_30_ans",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-12 — Exonération d'impôt sur le revenu des moins de 30 ans : « Pas de citation directe. Texte de LCP : « propose d'exonérer les jeunes de moins de 30 ans d'impôt sur le revenu, jusqu'à quatre fois le Smic » » (https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut, 2026-10-06)",
+  "note": "Les salaires des moins de 30 ans au 1er janvier de l'année des revenus sortent du revenu imposable jusqu'à 4 SMIC bruts annuels. « Jusqu'à quatre fois le Smic » se lit comme un abattement : le salaire au-delà reste imposé, sans falaise (l'autre lecture, tout imposé au-delà, n'est pas codée). Le SMIC est brut, le candidat ne le dit pas ; 4 SMIC nets feraient 3,17 SMIC bruts, dans la plage. Les revenus des non-salariés, le chômage et les pensions ne sont pas exonérés ; les prestations, qui lisent le salaire entier, ne bougent pas. Un jeune rattaché au foyer de ses parents allège l'impôt de ce foyer. Plage du plafond : de 0 (la mesure retirée) à 4 SMIC prolongés de la moitié de l'écart (6). Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "le_pen"
+  ],
+  "reform": {
+    "ir_exoneration_jeunes_age": 30,
+    "ir_exoneration_jeunes_plafond_smic": 4.0
+  }
+}

@@ -353,9 +353,31 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "prestations_hors_modele",
-        "raison": "Une prestation qui fusionne RSA, prime d'activité et ASS sous condition d'activité est neuve : le moteur n'a ni l'ASS ni la condition de 15 heures."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "ria": {
+            "socle": 300.0,
+            "insertion": 250.0,
+            "taux_revenus_activite": 0.3,
+            "plafond_revenus_activite": 1833.0,
+            "remplace_rsa": true,
+            "remplace_ppa": true,
+            "remplace_ass": true,
+            "age_minimum": 18,
+            "age_maximum": 65,
+            "insertion_demandeurs_emploi": true,
+            "taux_autres_revenus": 1.0
+          }
+        },
+        "plages": [
+          {
+            "champ": "ria.taux_autres_revenus",
+            "min": 0.3,
+            "max": 1.0
+          }
+        ],
+        "note": "Une prestation neuve (D-382), individuelle : 300 € par mois, plus 250 € à qui travaille ou cherche un emploi, moins 30 % des revenus d'activité nets, nulle au-delà de 1 833 € de revenus d'activité par mois, de 18 ans à la veille de 65, à la place du RSA, de la prime d'activité et de l'ASS (que la population ne porte pas). Hypothèses : l'insertion va à qui touche une allocation chômage ou se déclare chômeur, la population ne portant pas les quinze heures ; les revenus de remplacement (chômage, pension) sont déduits à 100 %, la règle des minima remplacés, la plage allant de 30 % (le taux du salaire) à 100 %. Servi en espérance avec la loi de recours du RSA. Les aides au logement restent, sans le RIA dans leurs ressources. La situation régulière n'est pas lue. Contre le droit de 2026."
       }
     },
     {
@@ -664,9 +686,29 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "prestations_hors_modele",
-        "raison": "Un revenu familial qui remplace douze dispositifs, dont le quotient familial, est une prestation neuve : le moteur n'a ni allocation dès le premier enfant ni condition de résidence."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "allocation_enfant": {
+            "montant_par_enfant": 240.0,
+            "montant_troisieme_enfant": 480.0,
+            "age_maximum": 18,
+            "remplace_af": true,
+            "remplace_cf": true,
+            "remplace_ars": true,
+            "par_famille": false,
+            "degressivite_part_ir": 0.0,
+            "plancher_par_enfant": 0.0
+          },
+          "qf_parts_enf1": 0.0,
+          "qf_parts_enf2": 0.0,
+          "qf_parts_enf3_et_sup": 0.0,
+          "frais_scolarite_college": 0.0,
+          "frais_scolarite_lycee": 0.0,
+          "frais_scolarite_superieur": 0.0
+        },
+        "plages": [],
+        "note": "Une prestation neuve (D-382) : 240 € par mois pour chaque enfant de moins de 18 ans dès le premier, 480 € pour le troisième. Des douze dispositifs que le document du 28 avril 2026 dit remplacer, le moteur en porte cinq, tous retirés : les allocations familiales (et leur majoration pour âge), le complément familial, l'allocation de rentrée scolaire, les parts du quotient familial des enfants (0 au lieu d'une demi-part, d'une part au troisième) et la réduction d'impôt pour frais de scolarité. Le supplément familial de traitement, les bourses et la prise en compte des enfants dans le RSA et la prime d'activité ne sont pas lus ; la PAJE, l'ASF, les aides au logement et l'AEEH restent, comme le dit le document. Les parts des enfants majeurs rattachés tombent avec celles des mineurs ; la demi-part du parent isolé reste. La condition de cinq ans de résidence et d'activité n'est pas lue. Recours plein, comme les allocations familiales. Pas de plage : le candidat dit ses montants. Contre le droit de 2026."
       },
       "declare": {
         "montant_eur": 700000000.0,
@@ -751,7 +793,7 @@
       ],
       "refus": {
         "porte": "donnee_menages",
-        "raison": "La participation de l'employeur aux frais de garde n'est pas dans la population, et le crédit d'impôt famille des entreprises n'a pas de bouton."
+        "raison": "Les 2 421 € sont le plafond d'exonération de l'aide de l'employeur aux frais de garde, pas le plafond du crédit d'impôt des ménages pour frais de garde (gardenf_plafond, 3 500 € par enfant) : la participation de l'employeur n'est pas dans la population, et le crédit d'impôt famille des entreprises n'a pas de bouton."
       },
       "declare": {
         "montant_eur": 800000000.0,

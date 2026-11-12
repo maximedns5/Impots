@@ -471,7 +471,7 @@
       ],
       "refus": {
         "porte": "enveloppe",
-        "raison": "Un montant de 20 Md€ sans dire quels impôts de production baissent, ni de combien chacun."
+        "raison": "Une enveloppe de 20 Md€ sans dire quels impôts de production baissent. Le bouton de l'enveloppe (impots_production_baisse) ne la répartit qu'entre la CVAE et la C3S, les seuls impôts de production du moteur, qui rapportent moins de 20 Md€ en 2026 : il la refuse. La CFE, la taxe foncière des entreprises et les autres n'y sont pas."
       },
       "declare": {
         "montant_eur": 20000000000.0,
@@ -536,9 +536,20 @@
           "type": "discours"
         }
       ],
-      "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "Exonérer d'IR les revenus des moins de 30 ans demande une exonération par âge au sein du foyer, que le moteur n'a pas."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "ir_exoneration_jeunes_age": 30,
+          "ir_exoneration_jeunes_plafond_smic": 4.0
+        },
+        "plages": [
+          {
+            "champ": "ir_exoneration_jeunes_plafond_smic",
+            "min": 0.0,
+            "max": 6.0
+          }
+        ],
+        "note": "Les salaires des moins de 30 ans au 1er janvier de l'année des revenus sortent du revenu imposable jusqu'à 4 SMIC bruts annuels. « Jusqu'à quatre fois le Smic » se lit comme un abattement : le salaire au-delà reste imposé, sans falaise (l'autre lecture, tout imposé au-delà, n'est pas codée). Le SMIC est brut, le candidat ne le dit pas ; 4 SMIC nets feraient 3,17 SMIC bruts, dans la plage. Les revenus des non-salariés, le chômage et les pensions ne sont pas exonérés ; les prestations, qui lisent le salaire entier, ne bougent pas. Un jeune rattaché au foyer de ses parents allège l'impôt de ce foyer. Plage du plafond : de 0 (la mesure retirée) à 4 SMIC prolongés de la moitié de l'écart (6). Contre le droit de 2026."
       }
     },
     {

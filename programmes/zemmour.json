@@ -89,9 +89,25 @@
           "type": "entretien"
         }
       ],
-      "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "Porte provisoire : le moteur a les taux de CSG d'activité (csg_activite_imposable, csg_activite_deductible), mais ce relevé ne chiffre rien ; la mesure attend son chiffrage préenregistré."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "csg_activite_deductible": 0.0,
+          "csg_activite_imposable": 0.0
+        },
+        "plages": [
+          {
+            "champ": "csg_activite_deductible",
+            "min": 0.0,
+            "max": 0.068
+          },
+          {
+            "champ": "csg_activite_imposable",
+            "min": 0.0,
+            "max": 0.024
+          }
+        ],
+        "note": "La CSG sur les revenus d'activité à zéro, ses deux parts : la déductible (6,8 %) et l'imposable (2,4 %). L'impôt sur le revenu en reprend une part, la part déductible ne venant plus en déduction. La CSG des revenus de remplacement et du capital, et la CRDS, ne bougent pas. Plages : de la mesure (0) au droit de 2026. Contre le droit de 2026."
       }
     },
     {

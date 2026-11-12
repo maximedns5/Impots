@@ -1,0 +1,15 @@
+{
+  "name": "pres2027_dupont_aignan_nd38_allocations_familiales_universelles",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Nicolas Dupont-Aignan (Debout la France (DLF)), programme relevé le 2026-11-12 — Universalité des allocations familiales : « Rétablir l'universalité des allocations familiales. » (https://www.debout-la-france.fr/projet/famille/, 2026-06-09)",
+  "note": "La modulation des allocations familiales selon le revenu, depuis 2015, est levée : les deux tranches de revenus au-dessus des plafonds reçoivent le montant plein (1 au lieu de 0,5 et 0,25), majorations pour âge et forfait compris. Plages : du droit de 2026 à la mesure. Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "dupont_aignan"
+  ],
+  "reform": {
+    "af_modulation_taux_tranche_2": 1.0,
+    "af_modulation_taux_tranche_3": 1.0
+  }
+}
