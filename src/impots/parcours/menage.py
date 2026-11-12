@@ -80,7 +80,8 @@ CRDS_PRESTATIONS = ("crds_pfam", "crds_logement", "crds_mini")
 #: refuse un point où l'un d'eux n'est pas nul, la page ne le montrerait pas.
 ABSENTS = ("aeeh", "ass", "aah", "mva", "aspa", "asi", "reduction_loyer_solidarite",
            "csg_ij", "pfu", "prelevements_sociaux_capital", "cdhr", "ifi", "reductions",
-           "credits_impot", "retraite_imposable", "chomage_brut", "pension_invalidite")
+           "credits_impot", "retraite_imposable", "chomage_brut", "pension_invalidite",
+           "ria", "allocation_enfant", "garantie_autonomie")
 
 #: Les lignes du calcul, dans l'ordre de la page : (clé, libellé, sens). Le sens dit
 #: comment la ligne entre dans le revenu disponible : "+", "-", "=" pour un sous-total,

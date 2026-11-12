@@ -225,6 +225,16 @@ REGISTRY: tuple[Row, ...] = (
     # (836.98 EUR for a lone parent of two, found by the parcours, D-376).
     Row("ars", "ars", "famille", "year", "full", False,
         label="Allocation de rentrée scolaire"),
+    # The new benefits of the programmes (but 21, étape 3), each added to the system by
+    # the reform that poses its group and by nothing else (`engine.prestations_neuves`):
+    # `projet` rows, zero where the variable does not exist, the law above all. Each
+    # enters `revenu_disponible` through `prestations_sociales`, untaxed and free of CRDS.
+    Row("ria", "ria", "individu", "month", "full", False,
+        label="Revenu d'incitation à l'activité", projet=True),
+    Row("allocation_enfant", "allocation_enfant", "famille", "month", "full", False,
+        label="Allocation par enfant", projet=True),
+    Row("garantie_autonomie", "garantie_autonomie", "individu", "month", "full", False,
+        label="Garantie d'autonomie des jeunes", projet=True),
     Row("crds_pfam", "crds_pfam", "famille", "year", "full", False,
         label="CRDS sur prestations familiales"),
     Row("crds_logement", "crds_logement", "famille", "month", "full", False,
@@ -294,6 +304,12 @@ def extract(simulation: Any, year: int, tier: Tier, debug: bool = False) -> dict
     return values
 
 
+#: The `projet` variables a reform adds, which the law does not carry: `check_registry`
+#: does not ask the baseline for them (but 21, étape 3). The tests read them on a reformed
+#: system instead.
+_ADDED_BY_A_REFORM = frozenset({"ria", "allocation_enfant", "garantie_autonomie"})
+
+
 def check_registry(tax_benefit_system: Any) -> list[str]:
     """Assert every registry row still matches the engine. Returns a list of
     problems, empty when the registry is sound.
@@ -305,6 +321,8 @@ def check_registry(tax_benefit_system: Any) -> list[str]:
     for row in REGISTRY:
         for name in (row.variable, *row.extra):
             variable = tax_benefit_system.variables.get(name)
+            if variable is None and row.projet and name in _ADDED_BY_A_REFORM:
+                continue
             if variable is None:
                 problems.append(f"{row.key}: variable {name!r} no longer exists")
                 continue

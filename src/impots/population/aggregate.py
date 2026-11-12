@@ -42,11 +42,14 @@ INSTRUMENTS = (
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",
     "af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite", "aefa", "cf", "asf",
     "ars",
+    # The new benefits of the programmes (but 21, étape 3): zero unless a reform poses them.
+    "ria", "allocation_enfant", "garantie_autonomie",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
     # The full-take-up entitlements, beside the expected payments that carry the plain
     # names (but 19, étape 4, `runner._serve_in_expectation`): read by the lines that
     # compare an entitlement through the Drees bridge, never summed into a cost.
     "rsa_droit", "ppa_droit", "crds_mini_droit", "aefa_droit", "revenu_disponible_droit",
+    "ria_droit", "garantie_autonomie_droit",
     # The consumption taxes, only when the consumption is imputed (D-323): receipts the
     # state collects that disposable income, taken before indirect taxes, does not show.
     "tva_menages", "accises_energie", "consommation_imputee",

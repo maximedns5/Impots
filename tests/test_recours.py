@@ -100,3 +100,30 @@ def test_the_run_serves_in_expectation_and_keeps_the_entitlement(
     assert abs(agg.balance["unexplained"]) < 1e-4 * agg.reform_cost
     assert agg.niveau_de_vie_quantiles_droit[10] >= agg.niveau_de_vie_quantiles[10]
     assert 0 < agg.counts["n_allocataires_rsa_servi"] < agg.counts["n_allocataires_rsa"]
+
+
+def test_the_new_benefits_are_served_with_the_rsa_law_and_balance(
+        population: pl.DataFrame) -> None:
+    """Les prestations neuves d'une réforme (but 21, étape 3), sur l'échantillon de test et à
+    des valeurs qui ne sont celles d'aucun candidat : le RIA et la garantie d'autonomie sont
+    servis en espérance avec la loi du RSA, sous son p_max ; l'allocation par enfant, à
+    recours 1, n'a pas de droit à part ; la loi n'en porte aucune ; et le garde des secteurs
+    reconstitue le coût avec elles parmi les transferts (mesuré : 1,53 € d'écart sur 84 M€)."""
+    reform = ReformSpec.model_validate({
+        "ria": {"socle": 400.0, "insertion": 100.0, "taux_revenus_activite": 0.5,
+                "remplace_rsa": True, "remplace_ppa": True, "remplace_ass": True},
+        "allocation_enfant": {"montant_par_enfant": 200.0, "age_maximum": 16,
+                              "remplace_af": True, "remplace_cf": False,
+                              "remplace_ars": False},
+        "garantie_autonomie": {"seuil": 800.0}})
+    households = run(population, 2024, reform=reform, tier="full").households
+    for key in ("ria", "garantie_autonomie"):
+        assert (households[key] == 0).all() and (households[f"{key}_droit"] == 0).all()
+        servi, droit = households[f"{key}_reform"], households[f"{key}_droit_reform"]
+        assert droit.sum() > 0 and (servi <= recours.RSA.p_max * droit + 1e-6).all()
+    assert (households["allocation_enfant"] == 0).all()
+    assert households["allocation_enfant_reform"].sum() > 0
+    assert (households["rsa_reform"] == 0).all() and (households["ppa_reform"] == 0).all()
+    agg = aggregate(households)
+    assert agg.reform_cost > 0
+    assert abs(agg.balance["unexplained"]) < 1e-4 * agg.reform_cost

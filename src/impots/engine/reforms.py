@@ -445,6 +445,7 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
     — one household, which has no consumption — they would be dead, so they are refused.
     """
     from impots import consommation
+    from impots.engine import prestations_neuves
 
     if consommation.touche(spec):
         raise ValueError(
@@ -486,6 +487,9 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                 return parameters
 
             self.modify_parameters(modifier_function=modify)
+            # The new benefits of the programmes (but 21, étape 3): variables, not
+            # parameters, added only when the reform poses their group.
+            prestations_neuves.appliquer(self, spec, year)
 
     return UserReform
 
