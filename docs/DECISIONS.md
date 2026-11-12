@@ -28577,3 +28577,37 @@ dont les heures et les prélèvements contiennent les siens.
 r14, les 35 heures de Mélenchon), les pensions alimentaires de Tondelier (plafond non
 chiffré), la majoration de pension de Dupont-Aignan (nd39), la baisse globale de 21 Md€ de
 Retailleau (r23), sans partage dit entre ses postes.
+
+## D-393 — Le lot 2 enregistré : cinq sur huit dans leur pronostic
+
+**Le fait.** Les huit cas de D-392 sont enregistrés sur `cbd842d`, d'une traite, sans garde
+ni correctif. `reports/programmes_presidentielle.md` est rendu de nouveau.
+
+**Contre le pronostic**, coût mécanique de 2026, en Md€ :
+
+| mesure | pronostic | coût | |
+|---|---|---:|---|
+| pensions alimentaires, Attal et Mélenchon | +0,3 à +0,9 | +0,22 | dehors, dessous |
+| heures supplémentaires, Dupont-Aignan | +1,3 à +3 | +2,27 | dedans |
+| zéro cotisation au-delà de 1 623 h, Retailleau | +2,5 à +6 | +4,62 | dedans |
+| deux heures par semaine exonérées, Philippe | +0,05 à +0,6 | +0,001 | dehors, dessous |
+| intérêts d'emprunt, Retailleau | +1,5 à +4 | +1,60 | dedans, au bord |
+| crédit d'impôt trajet, Ruffin | +13 à +19 | +16,2 | dedans |
+| CVEC supprimée, Le Pen | +0,2 à +0,28 | +0,24 | dedans |
+
+Les réfutations de D-392 : les deux pensions alimentaires ont le même coût ; Philippe
+reste sous Dupont-Aignan. Philippe est presque à zéro, sans l'être : le bouton mord, et ce
+qu'il exonère est presque vide. La loi de 2026 ôte déjà des cotisations salariales des
+heures supplémentaires jusqu'à 11,31 % du brut (D-383) ; chez un non-cadre du privé, rien
+ne reste, et les cotisations salariales seules, sur 94 heures, ne laissent qu'un million.
+Le pronostic comptait un reste que la loi ne laisse pas. Lue ainsi, la mesure exonère ce qui
+l'est déjà ; une lecture avec la CSG (le haut de sa plage) ou avec les patronales serait
+une autre mesure, que le texte ne dit pas.
+
+Les pensions alimentaires : 0,22 Md€ sur une assiette de 5,8 Md€, un taux moyen de 4 %,
+sous les 5 à 15 % du pronostic. Les parents isolés qui les reçoivent sont pour beaucoup non
+imposables, ou dans la décote, que la pension sortie du revenu ne fait que creuser.
+
+**Ce qui n'est pas aveugle.** Rien n'a été vu avant l'enregistrement : aucune passe de ces
+mesures n'a tourné hors de celle-ci. La CVEC reste surestimée de 36 % (D-383), dans le
+coût. La comparaison au juge se fera à sa publication, avec les tolérances de D-392.

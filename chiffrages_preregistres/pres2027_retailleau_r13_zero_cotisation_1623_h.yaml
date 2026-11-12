@@ -1,0 +1,60 @@
+case: pres2027_retailleau_r13_zero_cotisation_1623_h
+pre_registered: '2026-11-12T14:14:58+00:00'
+commit: cbd842dca3eaf71957f19bac28f1cc2bf09bd090
+scenario: pres2027_retailleau_r13_zero_cotisation_1623_h
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 4615535174.909912
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 200000000.0
+  rationale: 'Classe « menages » (D-321). Mesure des ménages sur une large assiette
+    (salaires, CSG, quotient familial) : le moteur retrouve ses agrégats à quelques
+    pour cent. Le juge chiffre peut-être une autre année que 2026 (la croissance nominale
+    en écarte de 3 % par an) et contre la continuité des politiques, pas le droit
+    gelé.'
+note: 'Bruno Retailleau (Les Républicains), programme relevé le 2026-11-12 — Seuil
+  « zéro cotisation » : aucune cotisation sociale (salariale ou patronale) au-delà
+  de 1 623 h par an ; CSG et CRDS maintenues ; exonération d''IR des heures supplémentaires
+  maintenue : « « Nous proposons de libérer le temps de travail en supprimant toutes
+  les cotisations sociales au‑delà de 1 623 heures par an » » (https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf,
+  2026-01-09). « Toutes les cotisations sociales au-delà de 1 623 heures par an »
+  : les heures supplémentaires imputées (D-383) comptent depuis la durée légale, 1
+  607 h ; les 16 premières de l''année restent soumises (une franchise), la plage
+  descend à 0 pour la lecture de Public Sénat (« au-delà de 1 607 heures »). Les cotisations
+  salariales que la loi laisse au-delà de sa réduction, et les patronales nettes des
+  allègements, dans le privé ; la CSG et la CRDS sont maintenues, comme l''exonération
+  d''impôt. Pas de plafond d''heures. La déduction forfaitaire patronale des petites
+  entreprises n''est pas portée. Seules les heures déjà faites ; l''annualisation
+  (r14) n''est pas lue. Contre le droit de 2026.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage
