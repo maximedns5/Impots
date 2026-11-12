@@ -225,6 +225,11 @@ REGISTRY: tuple[Row, ...] = (
     # (836.98 EUR for a lone parent of two, found by the parcours, D-376).
     Row("ars", "ars", "famille", "year", "full", False,
         label="Allocation de rentrée scolaire"),
+    # The PAJE (its base allowance and the rest), gross; its CRDS is inside `crds_pfam`.
+    # It follows the BMAF, so an indexation of the family benefits moved disposable income
+    # by it with no row to hold it (D-387).
+    Row("paje", "paje", "famille", "month", "full", False,
+        label="Prestation d'accueil du jeune enfant"),
     # The new benefits of the programmes (but 21, étape 3), each added to the system by
     # the reform that poses its group and by nothing else (`engine.prestations_neuves`):
     # `projet` rows, zero where the variable does not exist, the law above all. Each

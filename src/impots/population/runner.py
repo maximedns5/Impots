@@ -305,7 +305,12 @@ def _extract(
     # negative, reported as a positive receipt like the salary's CSG rows.
     individu_index = index_for["individu"]
     for key, names in (("csg_retraite", ("csg_deductible_retraite", "csg_imposable_retraite")),
-                       ("csg_chomage", ("csg_deductible_chomage", "csg_imposable_chomage"))):
+                       ("csg_chomage", ("csg_deductible_chomage", "csg_imposable_chomage")),
+                       # What the state takes back on a pension and the household feels:
+                       # the pensions are declared net of the deductible CSG (D-176), so
+                       # only these move disposable income (D-387).
+                       ("prelevements_pensions", ("csg_imposable_retraite", "crds_retraite",
+                                                  "casa"))):
         array = sum(built.calculate(name, add=True) for name in names)
         results[key] = -_to_households(array.astype(np.float64), individu_index,
                                        n_households)

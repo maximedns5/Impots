@@ -152,6 +152,10 @@ STATE_RECEIPTS = (
     # where it would bring the benefit under the SMIC, so a raised SMIC took 43 M€ off it
     # on 1 500 ménages, in disposable income and in no instrument. No knob moved it before.
     "csg_chomage",
+    # The levies on a pension that reach disposable income (D-387): the non-deductible
+    # CSG, the CRDS and the CASA. With `retraite_imposable` among the transfers, an
+    # indexation of the pensions, which the population carries as data, balances.
+    "prelevements_pensions",
     # NOT `csg_retraite` (D-385): the population's pensions are declared, net of the
     # deductible CSG (D-176), so a move of the deductible rate stays in the engine and
     # never reaches disposable income ; counted, it is a receipt no household paid.
@@ -186,9 +190,13 @@ STATE_RECEIPTS = (
 #: `aspa`, since the but 21 (étape 4): the minimum vieillesse of a couple counts the
 #: partner's earnings, so a raised point d'indice took 25 M€ off it on 1 500 ménages, a
 #: movement no instrument held, and the reconstitution missed by 0,21 % of the net.
+#: `retraite_imposable`, since D-387: the pensions are public (the régimes de base and the
+#: complementary ones are in the APU) and the population carries them as data; an
+#: indexation moves them, the state pays it.
 STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite",
                    "aefa", "cf", "asf", "ars", "crds_pfam", "crds_mini", "aspa",
-                   "ria", "allocation_enfant", "garantie_autonomie")
+                   "ria", "allocation_enfant", "garantie_autonomie",
+                   "retraite_imposable", "paje")
 
 #: The identity is checked in absolute euros against a floor, and relatively above it.
 #: A reform moving a few million is not worth a relative test; one moving billions is.

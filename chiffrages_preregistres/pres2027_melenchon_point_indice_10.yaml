@@ -1,0 +1,62 @@
+case: pres2027_melenchon_point_indice_10
+pre_registered: '2026-11-12T13:18:19+00:00'
+commit: f8f2740c3e66d2d9d95aa0f858eb8f2bda3baaea
+scenario: pres2027_melenchon_point_indice_10
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 11487879858.919434
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.4
+  absolute_eur: 200000000.0
+  rationale: 'Classe « salaires » (D-384). Mesure d''un salaire (le SMIC, le point
+    d''indice) : le salaire horaire est tiré de l''enquête Emploi, le secteur public
+    et les titulaires sont imputés, la diffusion au-dessus du SMIC est une hypothèse
+    déclarée (D-380), et le coût public tient à une convention que le juge peut ne
+    pas partager (le brut ou le super-brut des agents publics, les allègements qui
+    suivent le SMIC pour les salaires qui ne bougent pas).'
+note: 'Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 —
+  Point d''indice des fonctionnaires +10 % : « « en augmentant de 10% les fonctionnaires,
+  dont le point d''indice a été gelé huit années sur dix durant les deux quinquennats
+  d''Emmanuel Macron (17 milliards d''euros) » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf,
+  2026-10-14). La valeur du point d''indice relevée de 10 %. Plage du point : du droit
+  de 2026 (1, le point gelé) à 10 % prolongé de la moitié de l''écart (1,15). Le bouton
+  multiplie le traitement indiciaire des fonctionnaires titulaires, leur brut sur
+  1,195 (le taux de prime du moteur) ; leurs primes ne bougent pas. La part du salaire
+  des contractuels qui suit le point n''est pas publiée : 0 pour la valeur retenue,
+  la plage allant jusqu''à 1 (tous payés sur une grille indiciaire). La mesure se
+  mesure contre le droit de 2026, où le point est gelé depuis le 1er janvier 2024
+  : il n''a pas d''indexation légale. Le coût compte le salaire que paient l''État,
+  les collectivités et les hôpitaux, moins les cotisations, la CSG et l''impôt qui
+  en reviennent ; les collectivités sont comptées comme l''État, leur compensation
+  éventuelle ne change pas le coût public.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

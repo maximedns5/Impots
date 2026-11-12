@@ -75,6 +75,7 @@ INSTRUMENT_MAP = {
     "csg_non_salarie": "csg",
     # The CSG on the unemployment benefit (but 21, étape 4): the SMIC sets its exemption.
     "csg_chomage": "csg",
+    "prelevements_pensions": "csg",
     "cotisations_salariales": "cotisations_salaries",
     "employer_contributions": "cotisations_employeurs",
     # The consumption taxes, when the consumption is imputed (D-323, D-327): the household
@@ -107,6 +108,8 @@ UNMAPPED = {
     "allocation_enfant": "transfert",
     "garantie_autonomie": "transfert",
     "aspa": "transfert",
+    "retraite_imposable": "transfert",
+    "paje": "transfert",
     "impot_societes": "fiscalité des entreprises",
     "contribution_sociale_is": "fiscalité des entreprises",
     "cebge": "fiscalité des entreprises",

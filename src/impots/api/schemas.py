@@ -1475,6 +1475,7 @@ class ResultRows(BaseModel):
     aide_logement: float | None = None
     reduction_loyer_solidarite: float | None = None
     ars: float | None = None
+    paje: float | None = None
     aah: float | None = None
     mva: float | None = None
     """The AAH, and the majoration pour la vie autonome that rides on it. Zero for a

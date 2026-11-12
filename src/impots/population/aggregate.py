@@ -32,7 +32,7 @@ N_DECILES = 10
 INSTRUMENTS = (
     "salaire_brut", "salaire_super_brut", "salaire_net", "salaire_imposable",
     "cotisations_salariales", "cotisations_employeur",
-    "retraite_imposable", "chomage_brut",
+    "retraite_imposable", "chomage_brut", "prelevements_pensions",
     "csg_deductible", "csg_imposable", "crds", "csg_ij", "csg_retraite", "csg_chomage",
     "csg_non_salarie", "revenus_non_salaries", "revenus_non_salaries_hors_gerants",
     "allegement_general", "allegement_bandeau_maladie", "allegement_bandeau_famille",
@@ -41,7 +41,7 @@ INSTRUMENTS = (
     "ir",
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",
     "af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite", "aefa", "cf", "asf",
-    "ars", "aspa",
+    "ars", "aspa", "paje",
     # The new benefits of the programmes (but 21, étape 3): zero unless a reform poses them.
     "ria", "allocation_enfant", "garantie_autonomie",
     # The CVEC (but 21, étape 4): zero unless the students are imputed.

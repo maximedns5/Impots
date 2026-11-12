@@ -28385,3 +28385,26 @@ déductible de celle des pensions prenaient à tort, quelques dizaines de millio
 dix milliards. Le pronostic et la tolérance de D-384 ne bougent pas ; D-385 dit le nombre vu
 avant l'enregistrement. Les quinze cas qui restent sont enregistrés sur le commit qui porte
 cette entrée et la jonction de D-383.
+
+## D-387 — Les pensions indexées : la pension et la PAJE dans le garde des secteurs
+
+**Le fait.** Les cas de Le Pen (les moins de 30 ans) et de Mélenchon (le point d'indice)
+sont enregistrés sur `f8f2740`. Le suivant, la hausse de 10 % des pensions et des
+prestations de Mélenchon, est refusé par le garde : le coût de 32,7 Md€ n'avait presque
+rien pour le reconstituer. Les pensions sont des données de la population ; le bouton les
+multiplie dans la passe de la réforme, et aucun instrument ne les portait.
+
+**Le correctif, sans toucher au coût.** La pension imposable entre dans les transferts : les
+régimes de base et complémentaires sont dans les administrations publiques, l'État au
+sens du garde la paie. Ce que la pension rend et que le ménage sent entre dans les
+recettes : la CSG non déductible, la CRDS et la CASA (`prelevements_pensions`) ; la part
+déductible ne touche aucun revenu disponible (D-386). La PAJE, qui suit la base des
+allocations familiales, a sa ligne au registre, comme l'ARS (D-376), et entre dans les
+transferts. Sur 3 000 ménages, le garde reconstitue le cas des pensions à 473 € près, et
+celui des jeunes à 162 €. La passe dit aussi que l'ASPA baisse de 1,2 Md€ quand les
+pensions montent : le minimum vieillesse est différentiel, et le coût le compte.
+
+**Ce qui n'est plus aveugle.** Le coût du cas, 32,7 Md€, était dans le message du garde ;
+il est dans le pronostic de D-384 (25 à 42 Md€). Rien n'a été réglé après lui : le
+correctif ne change que la reconstitution. Les treize cas qui restent sont enregistrés sur
+le commit de cette entrée.
