@@ -28687,3 +28687,26 @@ pas ceux de l'impôt.
 **Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
 `chiffrages_preregistres/`, les seuils de D-345. Le résultat va dans une nouvelle
 D-entrée, avec les études avant et après et l'écart au pronostic.
+
+## D-395 — La CRDS du chômage dans le garde ; la série de D-394 relancée
+
+**Le fait.** La série de D-394, lancée sur `5679147`, s'est arrêtée au point haut de la
+plage du SMIC de Tondelier (2 000 € bruts, diffusion pleine) : le garde des secteurs
+reconstituait +5,118 Md€ pour un coût de +5,126 Md€, 8,1 M€ de trop, 0,16 % du net. Le
+revenu disponible se décompose à l'euro ; la passe relève le chômage net de 97,0 M€, et
+la ligne `csg_chomage` n'en tient que 89,1 : un SMIC plus haut exonère une part de plus
+de l'allocation de CSG et de CRDS (le plancher qui ne la fait pas passer sous le SMIC), et
+la CRDS du chômage, +7,9 M€ sur 3 000 ménages, n'était dans aucun instrument.
+
+**Le correctif.** La ligne `csg_chomage` porte la CRDS avec la CSG. La population des
+tests ne porte pas d'allocation exonérée : un test n'y verrait rien, et l'effet est
+mesuré une fois, ici (D-335), sur la passe qui l'a montré. Aucun enregistrement de
+`chiffrages_preregistres/` n'est touché : le coût est le revenu disponible, que la ligne
+ne change pas ; elle change ce que le garde reconstitue et ce que la boucle lit comme CSG.
+
+**La série relancée.** Arrêtée après vingt minutes, ses rapports retirés, elle repart en
+entier sur le commit de cette entrée, sur deux files : un rapport d'un autre code ne se
+mêle pas à elle. Le pronostic et les coûts de D-394 ne changent pas ; la première année
+mesurée là reste celle que la série doit retrouver à 0,1 % près, la ligne ne touchant
+pas le coût. Rien n'a été lu des rapports arrêtés, sinon le coût du point de plage que le
+message du garde donnait.

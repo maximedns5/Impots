@@ -305,7 +305,10 @@ def _extract(
     # negative, reported as a positive receipt like the salary's CSG rows.
     individu_index = index_for["individu"]
     for key, names in (("csg_retraite", ("csg_deductible_retraite", "csg_imposable_retraite")),
-                       ("csg_chomage", ("csg_deductible_chomage", "csg_imposable_chomage")),
+                       # The CSG and the CRDS: a raised SMIC exempts more of a benefit from
+                       # both, and the CRDS alone held no instrument (D-395).
+                       ("csg_chomage", ("csg_deductible_chomage", "csg_imposable_chomage",
+                                        "crds_chomage")),
                        # What the state takes back on a pension and the household feels:
                        # the pensions are declared net of the deductible CSG (D-176), so
                        # only these move disposable income (D-387).
