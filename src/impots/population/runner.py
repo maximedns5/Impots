@@ -663,6 +663,7 @@ def run(
     prix_au_dela: dict[int, float] | None = None,
     annee_consommation: int | None = None,
     impute_menages: bool = False,
+    menages_facteurs: dict[str, float] | None = None,
 ) -> RunResult:
     """Run the population through current law and, optionally, one reform.
 
@@ -695,8 +696,10 @@ def run(
     étape 4): overtime, commuting costs and frais réels, alimony received and paid,
     childcare under six, the interest on a main-residence loan, each calibrated on the
     published total it names (`population.menages`, spent). A frame transformation, no
-    pass; its childcare replaces the niches' case 7GA when both run. Refused for another
-    year than 2024.
+    pass; its childcare replaces the niches' case 7GA when both run. For another year than
+    2024, `menages_facteurs` says what aged the frame (wage and price factors from 2024,
+    `menages.facteurs_de`): the imputation runs on the frame brought back to 2024 and its
+    amounts age with the index of `menages.INDICES`. Without them, refused.
 
     A reform of the SMIC or of the point d'indice (`population.salaires`) changes the
     salaries of the priced year: the reformed pass is built on the population whose
@@ -709,12 +712,20 @@ def run(
         raise WiringError(
             "la réforme règle la TVA ou une accise, que seule la consommation imputée "
             "porte : demander l'imputation « consommation » (D-323)")
-    if reform is not None and reform.cvec_montant is not None:
+    from impots.population.imputations import menages_knobs
+
+    lus = sorted(set(reform.model_dump(exclude_none=True)) & menages_knobs()
+                 if reform is not None else ())
+    if lus and not impute_menages:
         raise WiringError(
-            "cvec_montant sur la population : elle ne distingue ni les étudiants du supérieur "
-            "ni les boursiers, et la CVEC y vaudrait zéro pour tous — un coût nul qui se "
-            "lirait comme un chiffrage. Le bouton se règle sur un ménage ; sur la population, "
-            "il attend ces deux données, imputées et calées (but 21, étape 4).")
+            f"{', '.join(lus)} sur la population sans les données de ménages : ni les "
+            f"heures supplémentaires, ni les frais de trajet, ni les pensions alimentaires, "
+            f"ni les intérêts d'emprunt, ni les étudiants du supérieur n'y sont, et le coût "
+            f"serait un zéro qui se lirait comme un chiffrage. Demander l'imputation "
+            f"« menages » (but 21, étape 4).")
+    if menages_facteurs is not None and not impute_menages:
+        raise ValueError("facteurs des données de ménages sans leur imputation : ils "
+                         "vieillissent les montants imputés, et ne se donnent qu'avec elle")
     conso_reform = reform
     if reform is not None and conso_module.touche(reform):
         reform = conso_module.sans_consommation(reform)
@@ -751,7 +762,8 @@ def run(
         from impots.population import menages as menages_module
 
         started = time.perf_counter()
-        frame, menages_stats = menages_module.impute(frame, year)
+        # A `MenagesError` is a `ValueError`: each path refuses it as it refuses the others.
+        frame, menages_stats = menages_module.impute(frame, year, facteurs=menages_facteurs)
         menages_timing = round(time.perf_counter() - started, 2)
     from impots.population import salaires as salaires_module
 

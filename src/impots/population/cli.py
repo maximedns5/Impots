@@ -954,12 +954,20 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
     # The consumption imputed for a year past the national accounts follows the prices
     # of the same set that ages the incomes (D-323).
     prix_au_dela = None
+    menages_facteurs = None
     if vieillissement is not None:
         from impots import hypotheses
+        from impots.population import menages
 
         prix_au_dela = dict(hypotheses.jeu(vieillissement["jeu"]).prix)
+        # The households' data are imputed on the frame brought back to 2024, then aged
+        # by the same factors (but 21, étape 4): only from a 2024 vintage.
+        if vieillissement["de"] == menages.YEAR:
+            menages_facteurs = {"wage": vieillissement["facteur_salaires"],
+                                "price": vieillissement["facteur_prix"]}
     priced = scenarios_module.mechanical_price(
-        scenario, frame=frame, households=args.sample, prix_au_dela=prix_au_dela)
+        scenario, frame=frame, households=args.sample, prix_au_dela=prix_au_dela,
+        menages_facteurs=menages_facteurs)
 
     try:
         path = chiffrages_module.register(

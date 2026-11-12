@@ -155,6 +155,10 @@ STATE_RECEIPTS = (
     # NOT `csg_retraite` (D-385): the population's pensions are declared, net of the
     # deductible CSG (D-176), so a move of the deductible rate stays in the engine and
     # never reaches disposable income ; counted, it is a receipt no household paid.
+    # The CVEC, paid by the students the households' data impute (but 21, étape 4): zero
+    # unless they are imputed. The Crous collect it, not the State; counted with the
+    # receipts as the cost counts it, a bias said like the RLS's (D-374).
+    "cvec",
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.

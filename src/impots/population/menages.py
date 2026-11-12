@@ -14,7 +14,7 @@ source par construction (au tirage près pour les nombres) : il ne prouve rien, 
 coûte plus un zéro confiant, et que son incidence se calcule. Ce qu'il ne dit pas : qui en
 a vraiment. Chaque règle de répartition est une hypothèse, dite dans la `Figure` et ici.
 
-LES SEPT DONNÉES, et ce que la passe en fait :
+LES HUIT DONNÉES, et ce que la passe en fait :
 
 1. **Les heures supplémentaires exonérées** (cases 1GH à 1JH, 21,83 Md€, 12,85 M lignes).
    Un tirage uniforme parmi les salariés hors gérants (aucune ventilation publiée par
@@ -47,13 +47,31 @@ LES SEPT DONNÉES, et ce que la passe en fait :
    sur la table par décile de la DGFiP. `ecart_emploi_domicile` compare cette table au
    total de la 2042, deux publications indépendantes.
 
-Les montants sont ceux de 2024. Une autre année demanderait de les vieillir, ce qui n'est
-pas fait : elle est refusée par son nom, comme les IJ (D-305).
+8. **Les étudiants du supérieur et les boursiers** (2 965 000 et 679 044, SIES, 2023-2024),
+   que la CVEC lit. Un tirage uniforme parmi les 18-25 ans inactifs ou dont le salaire de
+   l'année est sous un demi-SMIC (petits boulots, apprentis peu payés) ; puis les boursiers
+   parmi eux, les plus modestes d'abord (revenu par personne du ménage). Openfisca lit
+   `etudiant_superieur` et `boursier_superieur` (`boutons_programmes.ajouter_cvec`). Les
+   étudiants de plus de 25 ans n'en sont pas, et le compte inscrit contient des non
+   assujettis (lycées, contrats de professionnalisation) : la CVEC imputée dépasse son
+   produit publié, un écart rapporté (`margins.CVEC_PERCUE`).
+
+LE VIEILLISSEMENT. Les sources décrivent 2024. Une passe d'une autre année reçoit une
+population vieillie (`uprating`) et les facteurs qui l'ont vieillie (`facteurs`, salaires et
+prix) : l'imputation se fait sur la population ramenée à 2024 (chaque colonne monétaire
+divisée par son facteur), calée sur les totaux de 2024, puis ses montants vieillissent avec
+l'indice de la colonne monétaire la plus proche (`INDICES`). Ainsi les mêmes ménages
+portent les mêmes données chaque année, comme la population vieillie garde ses ménages,
+ses poids et ses âges ; et les seuils nominaux de la loi de 2024 (le plafond de 7 500 €, la
+déduction de 10 % et ses bornes) servent aux montants de 2024 qu'ils ont produits, pas à
+ceux d'une autre année. Les nombres (heures, étudiants, boursiers) ne vieillissent pas :
+la démographie de la population ne bouge pas. Sans facteurs, une autre année est refusée.
 """
 
 from __future__ import annotations
 
 import csv
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -100,8 +118,29 @@ PENSION_VERSEE_MINEURS = "pension_alimentaire_versee_mineurs_annuel"
 PENSION_VERSEE_MAJEURS = "pension_alimentaire_versee_majeurs_annuel"
 FRAIS_GARDE = "frais_garde_annuel"
 INTERETS_EMPRUNT = "interets_emprunt_rp_annuel"
-COLONNES = (HEURES_SUP, HEURES_SUP_HEURES, FRAIS_TRAJET, FRAIS_REELS, PENSION_PERCUE,
-            PENSION_VERSEE_MINEURS, PENSION_VERSEE_MAJEURS, FRAIS_GARDE, INTERETS_EMPRUNT)
+HEURES_SUP_BRUT = "heures_sup_brut_annuel"
+ETUDIANT = "etudiant_superieur"
+BOURSIER = "boursier_superieur"
+COLONNES = (HEURES_SUP, HEURES_SUP_HEURES, HEURES_SUP_BRUT, FRAIS_TRAJET, FRAIS_REELS,
+            PENSION_PERCUE, PENSION_VERSEE_MINEURS, PENSION_VERSEE_MAJEURS, FRAIS_GARDE,
+            INTERETS_EMPRUNT, ETUDIANT, BOURSIER)
+
+#: L'indice qui vieillit chaque montant imputé, celui de la colonne monétaire la plus
+#: proche dans `uprating.UPRATED` (hypothèses) : les heures supplémentaires sont du salaire ;
+#: les frais de trajet et les frais réels suivent le salaire, pour que la part des
+#: salariés dont les frais passent leur déduction de 10 % reste celle de 2024 (le barème
+#: kilométrique suit plutôt les prix, et le choisir ferait déclarer moins de frais réels
+#: chaque année) ; les frais de garde sont le salaire d'une assistante maternelle ; les
+#: pensions alimentaires sont indexées sur les prix par les juges (C. civ. art. 208) ; les
+#: intérêts d'un prêt en cours sont fixes en euros, et ceux des prêts neufs suivent les
+#: prix des logements : les prix, faute d'un indice des taux.
+INDICES: dict[str, str] = {
+    HEURES_SUP: "wage", HEURES_SUP_BRUT: "wage", FRAIS_TRAJET: "wage", FRAIS_REELS: "wage",
+    FRAIS_GARDE: "wage", PENSION_PERCUE: "price", PENSION_VERSEE_MINEURS: "price",
+    PENSION_VERSEE_MAJEURS: "price", INTERETS_EMPRUNT: "price",
+}
+#: Les colonnes imputées qui ne sont pas des montants : elles ne vieillissent pas.
+NOMBRES = (HEURES_SUP_HEURES, ETUDIANT, BOURSIER)
 
 #: Ce qu'openfisca lit des colonnes : (variable, entité où la colonne vit). Les intérêts
 #: d'emprunt, les frais de trajet et les heures n'ont pas de variable : la part exonérée
@@ -112,6 +151,14 @@ ENTREES_OPENFISCA: dict[str, tuple[str, str]] = {
     PENSION_PERCUE: ("pensions_alimentaires_percues", "individu"),
     PENSION_VERSEE_MINEURS: ("f6gu", "foyer_fiscal"),
     PENSION_VERSEE_MAJEURS: ("f6el", "foyer_fiscal"),
+    # Les entrées que le projet ajoute au droit (`boutons_programmes.ajouter_donnees_menages`
+    # et `ajouter_cvec`) : la loi ne les lit pas, seuls les boutons de l'étape 4 les lisent.
+    HEURES_SUP_BRUT: ("heures_sup_brut", "individu"),
+    HEURES_SUP_HEURES: ("heures_sup_nombre", "individu"),
+    FRAIS_TRAJET: ("frais_trajet_domicile_travail", "individu"),
+    INTERETS_EMPRUNT: ("interets_emprunt_residence_principale", "individu"),
+    ETUDIANT: ("etudiant_superieur", "individu"),
+    BOURSIER: ("boursier_superieur", "individu"),
 }
 #: Les cases des frais de garde, enfant par enfant, dans l'ordre des `person_id`.
 CASES_GARDE = ("f7ga", "f7gb", "f7gc")
@@ -144,6 +191,10 @@ PLAFOND_GARDE = 3_500.0
 #: L'âge où un prêt de résidence principale est supposé remboursé, et le plancher de la
 #: part restante (hypothèses : aucune distribution publiée des intérêts par âge).
 AGE_FIN_EMPRUNT, DUREE_EMPRUNT, PART_MIN_EMPRUNT = 65.0, 35.0, 0.1
+#: Les étudiants : de 18 à 25 ans, inactifs ou payés sous ce salaire annuel, un demi-SMIC
+#: brut de 2024 (11,65 € × 151,67 h × 12 / 2) ; des hypothèses.
+AGES_ETUDIANT = (18, 25)
+SALAIRE_ETUDIANT_MAX = 10_600.0
 #: L'écart toléré entre un total imputé et sa cible : la calibration est exacte, aux
 #: bissections près (les nombres, eux, sont au tirage près).
 TOLERANCE_MONTANT = 1e-3
@@ -182,6 +233,9 @@ class Composante:
 @dataclass(frozen=True)
 class Stats:
     composantes: tuple[Composante, ...] = field(default_factory=tuple)
+    """En euros de 2024 : les totaux calés sont ceux des sources."""
+    facteurs: dict[str, float] = field(default_factory=lambda: {"wage": 1.0, "price": 1.0})
+    """Ce qui a vieilli les montants imputés vers l'année de la passe (`INDICES`)."""
 
     def par_nom(self) -> dict[str, Composante]:
         return {c.nom: c for c in self.composantes}
@@ -246,8 +300,10 @@ def _gerant(frame: pl.DataFrame) -> np.ndarray:
     return frame["regime_non_salarie"].is_in(list(GERANTS)).fill_null(False).to_numpy()
 
 
-def _bissection(f, lo: float, hi: float, cible: float, iterations: int = 200) -> float:
-    """La racine de f(x) = cible pour f croissante sur [lo, hi]."""
+def _bissection(f, lo: float, hi: float, cible: float, iterations: int = 200,
+                bas: bool = False) -> float:
+    """La racine de f(x) = cible pour f croissante sur [lo, hi] ; avec `bas`, la borne
+    basse de l'intervalle final, où f reste sous la cible."""
     if f(hi) < cible:
         raise MenagesError(f"cible {cible:,.0f} hors d'atteinte (au plus {f(hi):,.0f})")
     for _ in range(iterations):
@@ -256,7 +312,7 @@ def _bissection(f, lo: float, hi: float, cible: float, iterations: int = 200) ->
             lo = mid
         else:
             hi = mid
-    return 0.5 * (lo + hi)
+    return lo if bas else 0.5 * (lo + hi)
 
 
 def _tirage(eligible: np.ndarray, poids: np.ndarray, nombre: float,
@@ -313,7 +369,9 @@ def _heures_sup(frame: pl.DataFrame, poids: np.ndarray, rng: np.random.Generator
             f"an à temps plein avant le plafond ; part exonérée uniforme ramenée de "
             f"{float(np.median(part[porteurs])):.4f} à {uniforme:.4f}")
     figure = FIGURES["heures_sup"]
-    return ({HEURES_SUP: hs, HEURES_SUP_HEURES: heures, EXEMPT_SHARE: nouvelle},
+    brut_hs = heures * MAJORATION_HEURES_SUP * horaire
+    return ({HEURES_SUP: hs, HEURES_SUP_HEURES: heures, HEURES_SUP_BRUT: brut_hs,
+             EXEMPT_SHARE: nouvelle},
             Composante("heures_sup", figure.source, figure.url, montant,
                        float((hs * poids).sum()), nombre, float(poids[hs > 0].sum()),
                        note=note + " ; cibles ramenées au champ de l'enquête"))
@@ -346,10 +404,22 @@ def _frais_reels(frame: pl.DataFrame, poids: np.ndarray, rng: np.random.Generato
         f = frais(mu_pour(sigma), sigma)
         return float((f * w)[f > deduction].sum())
 
-    sigma = _bissection(montant_pour, 0.05, 3.0, montant, iterations=50)
+    sigma = _bissection(montant_pour, 0.05, 3.0, montant, iterations=50, bas=True)
     mu = mu_pour(sigma)
     trajet = frais(mu, sigma)
     declares = np.where(trajet > deduction, trajet, 0.0)
+    # Sur un échantillon, le montant saute d'un déclarant à l'autre quand sigma bouge : un
+    # déclarant pèse 0,2 % du total sur 1 500 ménages, et une perturbation infime des
+    # salaires (la population ramenée à 2024 par division) déplace la marche où la
+    # bissection s'arrête. Sigma est pris du côté bas de la marche, sous la cible, et les frais
+    # des déclarants sont relevés d'un facteur k ≥ 1 qui rend le montant exact : aucun ne
+    # repasse sous sa déduction, aucun autre ne la passe.
+    k = montant / float((declares * w).sum())
+    if k < 1.0:
+        raise MenagesError(f"frais réels : la loi la plus resserrée dépasse déjà la cible "
+                           f"({1 / k - 1:+.2%}) ; le relèvement ne la rejoint pas")
+    trajet = np.where(declares > 0, trajet * k, trajet)
+    declares = declares * k
     figure = FIGURES["frais_reels"]
     note = (f"loi log-normale des frais de trajet à temps plein : médiane "
             f"{np.exp(mu):.0f} €, écart-type du logarithme {sigma:.3f} ; frais de trajet de tous les salariés "
@@ -466,16 +536,82 @@ def _interets(frame: pl.DataFrame, poids: np.ndarray) -> tuple[dict[str, np.ndar
              f"prêt"))
 
 
+def _etudiants(frame: pl.DataFrame, poids: np.ndarray, rng: np.random.Generator
+               ) -> tuple[dict[str, np.ndarray], list[Composante]]:
+    """Les étudiants du supérieur, tirés parmi les 18-25 ans inactifs ou peu payés, puis
+    les boursiers parmi eux, les plus modestes d'abord."""
+    age = frame["age"].to_numpy()
+    statut = frame["statut_activite"].to_numpy().astype(str)
+    brut = frame["salaire_brut_annuel"].fill_null(0.0).to_numpy().astype(np.float64)
+    bas, haut = AGES_ETUDIANT
+    eligible = ((age >= bas) & (age <= haut)
+                & ((statut == "inactive")
+                   | ((statut == "employed") & (brut < SALAIRE_ETUDIANT_MAX))))
+    figure = margins.ETUDIANTS_SUPERIEUR
+    etudiant, p = _tirage(eligible, poids, figure.value, rng)
+    composantes = [Composante(
+        "etudiants", figure.source, figure.url, 0.0, 0.0, figure.value,
+        float(poids[etudiant].sum()),
+        note=f"tirés avec la probabilité {p:.3f} parmi les {bas}-{haut} ans inactifs ou "
+             f"payés sous {SALAIRE_ETUDIANT_MAX:.0f} € par an ; un nombre, au tirage près")]
+    revenu = sum(frame[c].fill_null(0.0).to_numpy().astype(np.float64)
+                 for c in ("salaire_brut_annuel", "pension_annuelle", "chomage_annuel",
+                           "revenu_non_salarie_annuel") if c in frame.columns)
+    par_personne = (frame.select("household_id").with_columns(pl.Series("r", revenu))
+                    .select(pl.col("r").mean().over("household_id")).to_series().to_numpy())
+    cible = margins.BOURSIERS_CRITERES_SOCIAUX
+    ordre = np.flatnonzero(etudiant)[np.argsort(par_personne[etudiant], kind="stable")]
+    cumul = np.cumsum(poids[ordre])
+    pris = ordre[: int(np.searchsorted(cumul, cible.value)) + 1]
+    boursier = np.zeros(frame.height, dtype=bool)
+    boursier[pris] = True
+    composantes.append(Composante(
+        "boursiers", cible.source, cible.url, 0.0, 0.0, cible.value,
+        float(poids[boursier].sum()),
+        note="les étudiants imputés les plus modestes (revenu par personne du ménage), "
+             "jusqu'au nombre publié ; un nombre, au dernier boursier près"))
+    return ({ETUDIANT: etudiant.astype(np.float64), BOURSIER: boursier.astype(np.float64)},
+            composantes)
+
+
+def facteurs_de(uprating, year: int) -> dict[str, float]:
+    """Les facteurs, salaires et prix, qui ont vieilli une population de `uprating` vers
+    `year` : ce que `impute` divise et multiplie. Les deux valent 1 sans vieillissement."""
+    if uprating is None:
+        return {"wage": 1.0, "price": 1.0}
+    if uprating.base_year != YEAR:
+        raise MenagesError(f"population vieillie depuis {uprating.base_year} : les sources "
+                           f"des données de ménages décrivent {YEAR}")
+    return {kind: uprating.factor(kind, year) for kind in ("wage", "price")}
+
+
 def impute(frame: pl.DataFrame, year: int = YEAR, *, seed: int = SEED,
-           raw: Path | None = None) -> tuple[pl.DataFrame, Stats]:
+           raw: Path | None = None, facteurs: Mapping[str, float] | None = None
+           ) -> tuple[pl.DataFrame, Stats]:
     """La population avec les colonnes de `COLONNES`, et la part exonérée des salaires
     redistribuée vers les heures supplémentaires. Chaque total est calé sur sa source ;
-    `Stats` les met contre elle."""
-    if year != YEAR:
-        raise MenagesError(
-            f"données de ménages imputées pour {year} : les sources décrivent {YEAR}, et "
-            f"une autre année demanderait de vieillir les montants, ce qui n'est pas fait")
+    `Stats` les met contre elle, en euros de 2024.
+
+    `facteurs` : ceux qui ont vieilli `frame` de 2024 à `year` (`facteurs_de`). L'imputation
+    se fait sur la population ramenée à 2024, et ses montants vieillissent avec l'indice de
+    `INDICES` ; sans eux, une autre année que 2024 est refusée."""
+    if facteurs is None:
+        if year != YEAR:
+            raise MenagesError(
+                f"données de ménages imputées pour {year} sans les facteurs qui ont vieilli "
+                f"la population : les sources décrivent {YEAR}, et l'imputation se fait sur "
+                f"la population ramenée à {YEAR}, ce que seuls ces facteurs permettent")
+        facteurs = {"wage": 1.0, "price": 1.0}
+    facteurs = {kind: float(facteurs[kind]) for kind in ("wage", "price")}
+    if not all(f > 0 for f in facteurs.values()):
+        raise MenagesError(f"facteurs de vieillissement {facteurs} : strictement positifs")
+    from impots.uprating import UPRATED
+
     frame = frame.sort("person_id")
+    vieillie = frame
+    if facteurs != {"wage": 1.0, "price": 1.0}:
+        frame = frame.with_columns([(pl.col(c) / facteurs[kind]).alias(c)
+                                    for c, kind in UPRATED.items() if c in frame.columns])
     rng = np.random.default_rng(seed)
     poids = _poids_menage(frame)
     colonnes: dict[str, np.ndarray] = {}
@@ -494,9 +630,16 @@ def impute(frame: pl.DataFrame, year: int = YEAR, *, seed: int = SEED,
         if c.depense and abs(c.ecart_montant) > TOLERANCE_MONTANT:
             raise MenagesError(f"{c.nom} : {c.montant:,.0f} € imputés contre "
                                f"{c.cible_montant:,.0f} € publiés")
-    frame = frame.with_columns([pl.Series(nom, valeurs.astype(np.float64))
-                                for nom, valeurs in colonnes.items()])
-    return frame, Stats(tuple(composantes))
+    # Les étudiants après la vérification des montants : ce sont des nombres, au tirage
+    # près, et ils ne déplacent pas le générateur des autres données.
+    ajout, liste = _etudiants(frame, poids, rng)
+    colonnes.update(ajout)
+    composantes.extend(liste)
+    vieillies = {nom: valeurs * facteurs[INDICES[nom]] if nom in INDICES else valeurs
+                 for nom, valeurs in colonnes.items()}
+    frame = vieillie.with_columns([pl.Series(nom, valeurs.astype(np.float64))
+                                   for nom, valeurs in vieillies.items()])
+    return frame, Stats(tuple(composantes), facteurs=dict(facteurs))
 
 
 def garde_par_foyer(frame: pl.DataFrame, foyer_ids: np.ndarray) -> dict[str, np.ndarray]:

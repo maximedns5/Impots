@@ -34,3 +34,9 @@ tests/test_zero_masked.py::test_the_decile_table_itself_is_still_household_weigh
 tests/test_zero_masked.py::test_the_distribution_lines_read_quantiles_not_decile_means  # 3224 Mo à froid
 tests/test_salaires.py::test_a_salary_reform_balances_on_the_population[point]  # passe de 1 500 ménages (but 21, étape 4), non mesuré à froid
 tests/test_salaires.py::test_a_salary_reform_balances_on_the_population[smic]  # passe de 1 500 ménages (but 21, étape 4), non mesuré à froid
+tests/test_boutons_menages.py::test_a_knob_on_the_households_data_balances_on_an_aged_population[heures_sup]  # passe de 1 500 ménages vieillis (but 21, étape 4, suite)
+tests/test_boutons_menages.py::test_a_knob_on_the_households_data_balances_on_an_aged_population[trajets]  # passe de 1 500 ménages vieillis
+tests/test_boutons_menages.py::test_a_knob_on_the_households_data_balances_on_an_aged_population[interets]  # passe de 1 500 ménages vieillis
+tests/test_boutons_menages.py::test_a_knob_on_the_households_data_balances_on_an_aged_population[pensions]  # passe de 1 500 ménages vieillis
+tests/test_boutons_menages.py::test_a_knob_on_the_households_data_balances_on_an_aged_population[cvec]  # passe de 1 500 ménages vieillis
+tests/test_boutons_menages.py::test_a_knob_on_the_households_data_balances_on_an_aged_population[rien]  # passe de 1 500 ménages vieillis

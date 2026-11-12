@@ -1078,6 +1078,55 @@ ACCEDANTS = Figure(
            "rapporté, pas calé.",
 )
 
+# Les étudiants du supérieur et les boursiers, que la CVEC lit (Le Pen lp26 ; but 21,
+# étape 4, suite). La population ne les distingue pas : `menages` les impute, calés ici.
+ETUDIANTS_SUPERIEUR = Figure(
+    value=2_965_000.0, unit="count", year=2024,
+    scope="Étudiants inscrits dans l'enseignement supérieur, France métropolitaine et DROM, "
+          "rentrée 2023 (année universitaire 2023-2024), toutes formations, apprentis "
+          "compris",
+    source="MESR-SIES, Note Flash n° 19, juillet 2024, « Les effectifs étudiants dans "
+           "l'enseignement supérieur en 2023-2024 »",
+    url=("https://enseignementsup-recherche.gouv.fr/sites/default/files/2024-07/"
+         "nf-sies-2024-19-33906.pdf"),
+    use="calibration",
+    caveat="Dépensé par `menages` : le nombre de personnes tirées. Le compte contient les "
+           "STS et les CPGE des lycées (219 000 et 82 000), les contrats de "
+           "professionnalisation et d'autres que la CVEC ne frappe pas : la population ne "
+           "les sépare pas, et la CVEC qu'elle lit dépasse ce que la contribution rapporte "
+           "(`CVEC_PERCUE`, contexte). Qui est étudiant est un tirage (hypothèse dite dans "
+           "`menages`).",
+)
+
+BOURSIERS_CRITERES_SOCIAUX = Figure(
+    value=679_044.0, unit="count", year=2024,
+    scope="Étudiants ayant perçu une bourse sur critères sociaux du MESR, année "
+          "universitaire 2023-2024, France hors Polynésie et Nouvelle-Calédonie (tous "
+          "échelons, 0bis à 7)",
+    source="MESR-SIES, Note Flash n° 24, septembre 2024, « Les boursiers sur critères "
+           "sociaux en 2023-2024 », système AGLAE (extraction du 15 mars 2024)",
+    url=("https://enseignementsup-recherche.gouv.fr/sites/default/files/2024-09/"
+         "nf-sies-2024-24-34681.pdf"),
+    use="calibration",
+    caveat="Dépensé par `menages` : le nombre de boursiers tirés parmi les étudiants "
+           "imputés, les plus modestes d'abord (le revenu par personne de leur ménage ; "
+           "hypothèse : la bourse lit le revenu des parents, que le ménage d'un étudiant "
+           "parti de chez eux ne porte pas).",
+)
+
+CVEC_PERCUE = Figure(
+    value=170_000_000.0, unit="EUR", year=2024,
+    scope="Produit de la CVEC en 2023-2024, au montant de 100 €, « en faveur des "
+          "établissements d'enseignement supérieur et à destination du réseau des œuvres "
+          "universitaires »",
+    source="Assemblée nationale, amendement n° 103 au projet de loi de finances pour 2025 "
+           "(exposé sommaire) ; un montant rond, non relu dans un document du ministère",
+    url="https://www.assemblee-nationale.fr/dyn/17/amendements/0324A/AN/103.pdf",
+    use="context",
+    caveat="Rapporté contre la CVEC que la population impute, jamais calé : l'écart dit "
+           "ce que le compte des étudiants inscrits contient de non assujettis.",
+)
+
 # --------------------------------------------------------------------------- #
 # Les salaires que la population distingue (but 21, étape 4) : la diffusion d'une hausse
 # du SMIC aux salaires au-dessus, une hypothèse déclarée (D-380).

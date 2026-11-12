@@ -201,8 +201,9 @@ def test_the_cvec_at_the_law_costs_nothing() -> None:
 
 
 def test_a_population_pass_refuses_the_cvec() -> None:
-    """La population ne porte ni les étudiants du supérieur ni les boursiers : un coût nul
-    se lirait comme un chiffrage. Refusé avant toute passe."""
+    """Sans les données de ménages, la population ne porte ni les étudiants du supérieur ni
+    les boursiers : un coût nul se lirait comme un chiffrage. Refusé avant toute passe ; la
+    politique d'imputation les demande pour ce bouton (`test_boutons_menages`)."""
     from impots.population.runner import WiringError, run
 
     with pytest.raises(WiringError, match="étudiants du supérieur"):

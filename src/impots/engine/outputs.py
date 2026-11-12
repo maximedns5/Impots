@@ -235,6 +235,10 @@ REGISTRY: tuple[Row, ...] = (
         label="Allocation par enfant", projet=True),
     Row("garantie_autonomie", "garantie_autonomie", "individu", "month", "full", False,
         label="Garantie d'autonomie des jeunes", projet=True),
+    # The CVEC the project adds to the law (`boutons_programmes.ajouter_cvec`): zero for
+    # whoever declares no student of higher education, raw openfisca having none.
+    Row("cvec", "cvec", "individu", "year", "full", False,
+        label="Contribution de vie étudiante et de campus", projet=True),
     Row("crds_pfam", "crds_pfam", "famille", "year", "full", False,
         label="CRDS sur prestations familiales"),
     Row("crds_logement", "crds_logement", "famille", "month", "full", False,

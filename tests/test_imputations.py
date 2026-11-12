@@ -104,7 +104,8 @@ def test_every_registered_scenario_gets_what_each_path_gave_it_before() -> None:
     """Chaque scénario de `scenarios/` reçoit, de la politique unique, exactement ce que
     lui donnait chacun des chemins qui le chiffrent : le chiffrage mécanique (ce que le
     scénario demande), l'API et le chemin annuel (le capital et la consommation quand la
-    réforme les règle). Aucun ne règle le capital, l'IFI ni une niche aujourd'hui."""
+    réforme les règle). Le capital, quand la réforme le règle : depuis le but 21, la
+    suppression du PFU d'un programme (D-384). Aucun ne règle l'IFI ni une niche."""
     from impots import consommation
     from impots import scenarios as sc
     from impots.engine.reforms import moves_capital
@@ -114,7 +115,7 @@ def test_every_registered_scenario_gets_what_each_path_gave_it_before() -> None:
         reform, year = scenario.reform, scenario.year
         got = imp.imputations(reform, year, demandees=scenario.imputations)
         before = SimpleNamespace(
-            capital=False, consommation="consommation" in scenario.imputations,
+            capital=moves_capital(reform), consommation="consommation" in scenario.imputations,
             ij="ij" in scenario.imputations, niches=False)
         assert vars(before) == {k: getattr(got, k) for k in vars(before)}, name
         if "ij" not in scenario.imputations:

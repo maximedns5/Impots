@@ -51,13 +51,16 @@ def baseline() -> FranceTaxBenefitSystem:
     global _TBS
     if _TBS is None:
         from impots.engine import parametres
-        from impots.engine.boutons_programmes import ajouter_cvec
+        from impots.engine.boutons_programmes import ajouter_cvec, ajouter_donnees_menages
         from impots.engine.corrections import apply_to as apply_benefit_corrections
         from impots.patrimoine.corrections import apply_to
 
         # La CVEC, qu'openfisca ne porte pas (but 21, étape 2) : nulle pour qui ne déclare
         # pas d'étudiant du supérieur, c'est-à-dire, aujourd'hui, pour tous.
-        _TBS = ajouter_cvec(apply_benefit_corrections(apply_to(FranceTaxBenefitSystem())))
+        # Les entrées des données de ménages imputées (but 21, étape 4), nulles par défaut,
+        # que seuls les boutons de l'étape 4 lisent.
+        _TBS = ajouter_donnees_menages(ajouter_cvec(
+            apply_benefit_corrections(apply_to(FranceTaxBenefitSystem()))))
         # Its own cache of the parameters at each instant: openfisca's holds 128, shared by
         # every system, and a full-tier household reads more than that (D-311).
         parametres.memoriser(_TBS)

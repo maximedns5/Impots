@@ -44,6 +44,8 @@ INSTRUMENTS = (
     "ars", "aspa",
     # The new benefits of the programmes (but 21, étape 3): zero unless a reform poses them.
     "ria", "allocation_enfant", "garantie_autonomie",
+    # The CVEC (but 21, étape 4): zero unless the students are imputed.
+    "cvec",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
     # The full-take-up entitlements, beside the expected payments that carry the plain
     # names (but 19, étape 4, `runner._serve_in_expectation`): read by the lines that
