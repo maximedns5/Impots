@@ -28710,3 +28710,22 @@ mêle pas à elle. Le pronostic et les coûts de D-394 ne changent pas ; la prem
 mesurée là reste celle que la série doit retrouver à 0,1 % près, la ligne ne touchant
 pas le coût. Rien n'a été lu des rapports arrêtés, sinon le coût du point de plage que le
 message du garde donnait.
+
+## D-396 — Le chemin annuel impute les données de ménages ; sept études reprises
+
+**Le fait.** Sur `aa22293`, le chemin annuel de Mélenchon est refusé avant sa première
+passe : il n'imputait que le capital et la consommation (`CHEMIN_POSSIBLES`), et les
+pensions alimentaires défiscalisées demandent les données de ménages de l'étape 4. Le même
+refus attend les six autres études dont une mesure du lot 2 lit ces données : Attal,
+Dupont-Aignan, Le Pen, Philippe, Retailleau et Ruffin.
+
+**Le correctif.** Le chemin annuel les impute, avec les facteurs qui ont vieilli son cadre
+chaque année : ceux du jeu dans la vue vieillie, aucun dans la vue figée, comme le service
+(D-383). Un test le tient, vu échouer sur le code d'avant.
+
+**La série ne repart pas en entier.** Le correctif ne touche que le chemin annuel d'une
+réforme qui demande ces données, refusé jusqu'ici : il ne change aucun nombre d'une passe
+déjà faite. Les premières années et les points de plage de ces sept études, qui passent
+par le service, restent sur `aa22293` ; leur chemin annuel tourne sur le commit de cette
+entrée, joint au premier par une passe témoin (D-335) qui doit redonner son rapport. Les
+onze autres études restent entières sur `aa22293`. Le pronostic de D-394 ne change pas.

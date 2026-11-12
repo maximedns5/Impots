@@ -1585,10 +1585,11 @@ def _liberer() -> None:
     gc.collect()
 
 
-#: What the passes of the trajectory and of the annual path can impute: the capital and the
-#: consumption, each whenever the reform moves it. Not the sick pay, which the CCSS gives for
-#: 2024 alone (D-305, D-306), nor the niches, a calibration these paths never ran.
-CHEMIN_POSSIBLES = ("capital", "consommation")
+#: What the passes of the trajectory and of the annual path can impute: the capital, the
+#: consumption and the households' data of the but 21 (D-396), each whenever the reform moves
+#: it. Not the sick pay, which the CCSS gives for 2024 alone (D-305, D-306), nor the niches,
+#: a calibration these paths never ran.
+CHEMIN_POSSIBLES = ("capital", "consommation", "menages")
 
 
 def _chemin_pass(pop: object, year: int, reform: object, *, capital: bool, index: float,
@@ -1612,13 +1613,26 @@ def _chemin_pass(pop: object, year: int, reform: object, *, capital: bool, index
     # Where the consumption's euros come from follows the view (D-328); whether it is
     # imputed at all is the policy's, which `_consommation` agrees with.
     kwargs = {**imputed.runner(), **_consommation(reform, year, view, uprating, vintage),
-              **({"capital_index": index} if imputed.capital else {})}
+              **({"capital_index": index} if imputed.capital else {}),
+              **({"menages_facteurs": _menages_facteurs(year, view, uprating)}
+                 if imputed.menages else {})}
     result = population_run(pop, year=year, reform=reform, tier="full", sample=sample,
                             **kwargs)
     agg = agg_mod.aggregate(result.households)
     guards.refuse_zero_confiant(reform.model_dump(exclude_none=True), imputed.noms(),
                                 agg.totals, chemin=chemin)
     return guards.cout_calcule(agg.reform_cost, chemin=chemin)
+
+
+def _menages_facteurs(year: int, view: str, uprating: object) -> dict[str, float]:
+    """What aged the frame of a pass of the annual path, which the households' data read
+    when they are imputed (but 21, étape 4) : the frame's factors in the aged view, none in
+    the frozen one, whose frame is the vintage's — as the service does (D-396)."""
+    from impots.population import menages
+
+    if view == "figee":
+        return {"wage": 1.0, "price": 1.0}
+    return menages.facteurs_de(uprating, year)
 
 
 def _consommation(reform: object, year: int, view: str, uprating: object,

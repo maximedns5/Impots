@@ -221,3 +221,26 @@ def test_the_annual_path_imputes_the_scenario_s_capital_in_both_passes(monkeypat
                          index=1.06, sample=10, view="figee", uprating=None,
                          vintage="2024", chemin="le chemin annuel")
     assert seen[-1]["impute_capital"] is True and seen[-1]["capital_index"] == 1.06
+
+
+@pytest.mark.parametrize("view, expected", [("figee", {"wage": 1.0, "price": 1.0}),
+                                            ("vieillie", {"wage": 1.03 ** 2,
+                                                          "price": 1.02 ** 2})])
+def test_the_annual_path_imputes_the_households_data_with_its_frame(monkeypatch, view,
+                                                                     expected) -> None:
+    """Le chemin annuel impute les données de ménages qu'une mesure du but 21 demande (les
+    pensions alimentaires), avec les facteurs qui ont vieilli son cadre : ceux du jeu dans
+    la vue vieillie, aucun dans la vue figée. Il les refusait, et le chemin de Mélenchon
+    s'arrêtait (D-396)."""
+    from impots import uprating as up
+    from impots.population import cli
+
+    seen = _spy(monkeypatch)
+    uprating = up.Uprating(wage=0.03, price=0.02, source="test", base_year=2024)
+    with pytest.raises(_Arret):
+        cli._chemin_pass(pl.DataFrame(), 2026,
+                         ReformSpec(pensions_alimentaires_exonerees=True), capital=False,
+                         index=1.0, sample=10, view=view, uprating=uprating,
+                         vintage="2024", chemin="le chemin annuel")
+    assert seen[-1]["impute_menages"] is True
+    assert seen[-1]["menages_facteurs"] == pytest.approx(expected)
