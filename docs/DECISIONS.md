@@ -28408,3 +28408,20 @@ pensions montent : le minimum vieillesse est différentiel, et le coût le compt
 il est dans le pronostic de D-384 (25 à 42 Md€). Rien n'a été réglé après lui : le
 correctif ne change que la reconstitution. Les treize cas qui restent sont enregistrés sur
 le commit de cette entrée.
+
+## D-388 — Le capital imputé vieillit aussi dans le chemin des cas enregistrés
+
+**Le fait.** Sur `ae0c176`, trois cas de plus sont enregistrés : la hausse de 10 % des
+pensions et des prestations, le SMIC à 1 700 € net et la garantie d'autonomie des jeunes
+de Mélenchon. Le suivant, la suppression du PFU, est refusé avant toute passe : l'assiette
+du capital imputé décrit les revenus 2024, une passe de 2026 doit la vieillir par un indice
+déclaré, et le chemin de `impots chiffrage register` n'en passait aucun (D-248, D-249).
+Le service le passait déjà ; la CLI des cas, non, parce qu'aucun cas enregistré avant le
+but 21 ne touchait le capital une autre année que 2024.
+
+**Le correctif.** `scenarios.mechanical_price` prend l'indice, et la CLI lui donne le
+facteur de salaires du jeu qui vieillit la population, comme la vue vieillie du service.
+L'indice ne va qu'à une passe qui impute le capital. Un test le tient, vu échouer sur le
+code d'avant. Le refus portait sur l'absence d'un indice, pas sur un nombre : aucun coût
+n'a été vu, et les cas déjà enregistrés ne touchent pas le capital, ils ne changent pas.
+Les cas qui restent sont enregistrés sur le commit de cette entrée.

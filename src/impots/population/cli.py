@@ -965,9 +965,13 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
         if vieillissement["de"] == menages.YEAR:
             menages_facteurs = {"wage": vieillissement["facteur_salaires"],
                                 "price": vieillissement["facteur_prix"]}
+    # The imputed capital ages with the frame, on its wage index, as in the service's aged
+    # view (D-249, D-388).
+    capital_index = (vieillissement["facteur_salaires"] if vieillissement is not None
+                     else None)
     priced = scenarios_module.mechanical_price(
         scenario, frame=frame, households=args.sample, prix_au_dela=prix_au_dela,
-        menages_facteurs=menages_facteurs)
+        menages_facteurs=menages_facteurs, capital_index=capital_index)
 
     try:
         path = chiffrages_module.register(

@@ -174,3 +174,25 @@ def test_the_first_year_ages_the_capital_with_the_frame(monkeypatch, view, expec
                                view=service.FIRST_YEAR_VIEW if view == "vieillie"
                                else service.FROZEN_VIEW)
     assert seen["index"] == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("index, expected", [(1.03 ** 2, 1.03 ** 2), (None, None)])
+def test_the_registered_case_ages_the_capital_like_the_service(monkeypatch, index,
+                                                                expected):
+    """The mechanical pricing of a registered case hands the runner the wage index that
+    aged its frame, as the service's aged view does; the PFU of 2026 was refused for want
+    of it (D-388)."""
+    from impots import scenarios
+    from impots.population import runner
+
+    seen = {}
+
+    def run(frame, **kwargs):
+        seen["index"] = kwargs.get("capital_index")
+        raise RuntimeError("arrêt après le passage de l'indice")
+
+    monkeypatch.setattr(runner, "run", run)
+    with pytest.raises(RuntimeError, match="arrêt"):
+        scenarios._priced(ReformSpec(pfu_taux=0.0), 2026, frame="frame",
+                          capital_index=index, chemin="test")
+    assert seen["index"] == (pytest.approx(expected) if expected else None)

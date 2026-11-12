@@ -641,7 +641,8 @@ def _frame() -> Any:
 def mechanical_price(scenario: Scenario, *, frame: Any = None,
                      households: int | None = None,
                      prix_au_dela: dict[int, float] | None = None,
-                     menages_facteurs: dict[str, float] | None = None) -> dict[str, Any]:
+                     menages_facteurs: dict[str, float] | None = None,
+                     capital_index: float | None = None) -> dict[str, Any]:
     """Price one scenario's MECHANICAL cost. The `price` argument `compare` expects.
 
     Returns only the mechanical layer. The banded layers are deliberately absent rather
@@ -650,14 +651,14 @@ def mechanical_price(scenario: Scenario, *, frame: Any = None,
     """
     return _priced(scenario.reform, scenario.year, demandees=scenario.imputations,
                    frame=frame, households=households, prix_au_dela=prix_au_dela,
-                   menages_facteurs=menages_facteurs,
+                   menages_facteurs=menages_facteurs, capital_index=capital_index,
                    chemin=f"le chiffrage mécanique de « {scenario.name} »")
 
 
 def _priced(reform: Any, year: int, *, demandees: Any = (), frame: Any = None,
             households: int | None = None, prix_au_dela: dict[int, float] | None = None,
             menages_facteurs: dict[str, float] | None = None,
-            chemin: str) -> dict[str, Any]:
+            capital_index: float | None = None, chemin: str) -> dict[str, Any]:
     """One quick-tier pass of the solver or of the mechanical pricing: its cost and deltas.
 
     What it imputes is the one policy's (`population.imputations`): what the scenario asks
@@ -666,7 +667,9 @@ def _priced(reform: Any, year: int, *, demandees: Any = (), frame: Any = None,
     capital; the solver imputed nothing, and a consumption knob raised there. What cannot
     be imputed is refused before the pass, and the confident-zero guard reads the pass after
     it. `menages_facteurs`: what aged `frame` from 2024, which the households' data read
-    when they are imputed (`population.menages`, but 21, étape 4)."""
+    when they are imputed (`population.menages`, but 21, étape 4). `capital_index`: the
+    growth since 2024 that ages the imputed capital, given only to a pass that imputes it,
+    as the service does (D-249, D-388)."""
     from impots import guards
     from impots.api.schemas import QUICK_TIER_HOUSEHOLDS
     from impots.population import aggregate as aggregate_module
@@ -679,6 +682,8 @@ def _priced(reform: Any, year: int, *, demandees: Any = (), frame: Any = None,
         sample=households or QUICK_TIER_HOUSEHOLDS, **imputed.runner(),
         **({"menages_facteurs": menages_facteurs}
            if imputed.menages and menages_facteurs is not None else {}),
+        **({"capital_index": capital_index}
+           if imputed.capital and capital_index is not None else {}),
         prix_au_dela=prix_au_dela)
     agg = aggregate_module.aggregate(result.households)
     guards.refuse_zero_confiant(reform.model_dump(exclude_none=True), imputed.noms(),
