@@ -28085,7 +28085,7 @@ tranche de Tondelier, déjà préenregistrée (D-321), et un avis de l'OFCE sans
 la CSG de Glucksmann. Ils sont dits ici pour qu'un préenregistrement qui toucherait ces
 mesures le sache.
 
-**Les sources fragiles.** Le programme de Tondelier est derrière une protection anti-robots ;
+**Les sources fragiles.** Le programme de Tondelier est derrière une protection anti-robot ;
 trois de ses mesures n'ont que francais.rt.com pour source. Platret n'a aucune source
 primaire. Les scénarios et définitions des études sont régénérés (date et comptes du
 relevé) ; aucun rapport n'est relancé.
