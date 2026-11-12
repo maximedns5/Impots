@@ -28238,3 +28238,23 @@ net de Dupont-Aignan (une baisse de cotisations salariales autour du SMIC), les 
 d'impôts de production de 20 à 50 Md€ (au-delà de la CVAE et de la C3S), les indexations
 égales à la référence (Dupont-Aignan), l'année blanche d'Attal (sans seuil de pension).
 Les mesures qui attendent les boutons des données imputées viennent dans un second lot.
+
+## D-385 — Le garde des secteurs refuse un cas du lot 1 : la CSG des retraites
+
+**Le fait.** L'enregistrement des cas de D-384, sur `026f7b2`, s'est arrêté au neuvième :
+l'exonération d'impôt des moins de 30 ans (Le Pen). Le garde des secteurs a refusé le coût
+annoncé, 9,743 Md€, contre 9,714 Md€ reconstitués, un écart de 28,9 M€ (0,30 %). Les huit
+cas d'avant sont enregistrés. Mesuré sur 3 000 ménages, l'écart est la CSG des retraites :
+le bouton retire les salaires exonérés du revenu fiscal de référence, et le taux de CSG
+d'une pension se lit sur ce revenu ; la ligne `csg_retraite` n'était pas une recette du
+garde. Elle l'est, et elle passe par la variante « csg » du canal macro, comme
+`csg_chomage` (étape 4). Aucun coût ne change : le coût est la variation du revenu
+disponible, qui la portait déjà.
+
+**Ce qui n'est plus aveugle.** Le message du garde a donné le coût du cas avant qu'il soit
+enregistré : 9,74 Md€, au-dessus du pronostic de D-384 (2 à 5 Md€). Le pronostic et la
+tolérance sont commités et ne bougent pas. La règle du bouton n'est pas touchée après ce
+nombre : la part exonérée sort du revenu fiscal de référence, comme le bouton l'écrivait
+avant la première passe ; la loi fait l'inverse pour les heures supplémentaires (CGI, art.
+1417, IV), et ce choix, qui touche les droits liés au revenu, sera dit dans le résultat.
+Les quinze cas qui restent sont enregistrés sur le commit de cette entrée.

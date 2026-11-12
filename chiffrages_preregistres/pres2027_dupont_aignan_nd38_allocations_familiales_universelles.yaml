@@ -1,0 +1,53 @@
+case: pres2027_dupont_aignan_nd38_allocations_familiales_universelles
+pre_registered: '2026-11-12T12:45:08+00:00'
+commit: 026f7b2d412bda926cb3c654b9d896664c18b0f4
+scenario: pres2027_dupont_aignan_nd38_allocations_familiales_universelles
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 915968302.494873
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 200000000.0
+  rationale: 'Classe « menages » (D-321). Mesure des ménages sur une large assiette
+    (salaires, CSG, quotient familial) : le moteur retrouve ses agrégats à quelques
+    pour cent. Le juge chiffre peut-être une autre année que 2026 (la croissance nominale
+    en écarte de 3 % par an) et contre la continuité des politiques, pas le droit
+    gelé.'
+note: 'Nicolas Dupont-Aignan (Debout la France (DLF)), programme relevé le 2026-11-12
+  — Universalité des allocations familiales : « Rétablir l''universalité des allocations
+  familiales. » (https://www.debout-la-france.fr/projet/famille/, 2026-06-09). La
+  modulation des allocations familiales selon le revenu, depuis 2015, est levée :
+  les deux tranches de revenus au-dessus des plafonds reçoivent le montant plein (1
+  au lieu de 0,5 et 0,25), majorations pour âge et forfait compris. Plages : du droit
+  de 2026 à la mesure. Contre le droit de 2026.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

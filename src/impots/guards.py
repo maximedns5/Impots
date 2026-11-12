@@ -152,6 +152,11 @@ STATE_RECEIPTS = (
     # where it would bring the benefit under the SMIC, so a raised SMIC took 43 M€ off it
     # on 1 500 ménages, in disposable income and in no instrument. No knob moved it before.
     "csg_chomage",
+    # The CSG on the pensions, since the but 21 (D-385): its rate (exonération, taux réduit,
+    # médian, normal) is read on the RFR, so a reform that moves the RFR without touching
+    # a pension moves it too. The exemption of the under-30s' wages took 28,9 M€ off it,
+    # in disposable income and in no instrument, and the guard refused the case.
+    "csg_retraite",
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.
