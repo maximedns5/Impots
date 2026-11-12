@@ -410,3 +410,18 @@ def test_an_envelope_beside_the_knobs_it_sets_is_refused(fields: dict) -> None:
 
     with pytest.raises(ValidationError):
         FirmReformSpec(**fields)
+
+
+def test_the_young_exemption_leaves_the_years_before_it_alone() -> None:
+    """D-385 : une réforme de 2026 ne change pas les revenus de 2024, que le RFR de N-2
+    lit pour le taux de CSG d'une pension ou d'une allocation chômage. Le jeune salarié
+    garde en 2024 le revenu catégoriel de la loi ; en 2026 il en sort."""
+    household = HouseholdInput.model_validate(JEUNE_SALARIE)
+    situation = situations.build_situation(household, YEAR, True)
+    loi = _build(baseline(), situation, YEAR, "full")
+    reforme = _build(reformed_for(ReformSpec(**JEUNES), YEAR), situation, YEAR, "full")
+    avant = {y: float(loi.calculate("revenu_categoriel_tspr", str(y)).sum()) for y in (2024, 2026)}
+    apres = {y: float(reforme.calculate("revenu_categoriel_tspr", str(y)).sum())
+             for y in (2024, 2026)}
+    assert avant[2024] > 0 and apres[2024] == pytest.approx(avant[2024])
+    assert apres[2026] < avant[2026]

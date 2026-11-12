@@ -306,7 +306,8 @@ def smic_brut_annuel(parameters: Any, period: Any) -> float:
     return float(smic.smic_b_horaire) * float(smic.nb_heures_travail_mensuel) * 12.0
 
 
-def _exoneration_jeunes(tspr: Any, deduction: Any, age_max: int, plafond_smic: float) -> Any:
+def _exoneration_jeunes(tspr: Any, deduction: Any, age_max: int, plafond_smic: float,
+                        annee: int) -> Any:
     from openfisca_core.model_api import ADD, YEAR, Variable
     from openfisca_france.entities import FoyerFiscal
 
@@ -320,6 +321,11 @@ def _exoneration_jeunes(tspr: Any, deduction: Any, age_max: int, plafond_smic: f
 
         def formula(foyer_fiscal, period, parameters):
             montant = tspr(foyer_fiscal, period, parameters)
+            # The reform starts the year it prices (D-385): the revenus of the years before,
+            # which the RFR of N-2 reads for the CSG rate of a pension or of an unemployment
+            # benefit, stay those of the law.
+            if period.start.year < annee:
+                return montant
             individus = foyer_fiscal.members
             jeune = individus("age", period.first_month) < age_max
             if not jeune.any():
@@ -341,7 +347,8 @@ def _exoneration_jeunes(tspr: Any, deduction: Any, age_max: int, plafond_smic: f
     return revenu_categoriel_tspr
 
 
-def _reduction_familles(avant_formule: Any, montant: float, enfants_min: int) -> Any:
+def _reduction_familles(avant_formule: Any, montant: float, enfants_min: int,
+                        annee: int) -> Any:
     from openfisca_core.model_api import ADD, YEAR, Variable
     from openfisca_france.entities import FoyerFiscal
 
@@ -353,6 +360,8 @@ def _reduction_familles(avant_formule: Any, montant: float, enfants_min: int) ->
 
         def formula(foyer_fiscal, period, parameters):
             avant = avant_formule(foyer_fiscal, period, parameters)
+            if period.start.year < annee:  # the reform starts the year it prices (D-385)
+                return avant
             individus = foyer_fiscal.members
             activite = (individus("salaire_imposable", period, options=[ADD])
                         + individus("rpns_imposables", period))
@@ -385,13 +394,13 @@ def appliquer_formules(reform: Any, spec: Any, annee: int) -> None:
         tspr = reform.get_variable(SALARY_CATEGORY).get_formula(f"{annee}-01-01")
         deduction = reform.get_variable(SALARIES_AFTER_DEDUCTION).get_formula
         variable = _exoneration_jeunes(tspr, deduction, spec.ir_exoneration_jeunes_age,
-                                       spec.ir_exoneration_jeunes_plafond_smic)
+                                       spec.ir_exoneration_jeunes_plafond_smic, annee)
         reform.update_variable(variable)
     if spec.reduction_impot_familles_montant is not None:
         avant = reform.get_variable("reductions").get_formula(f"{annee}-01-01")
         reform.update_variable(_reduction_familles(
             avant, spec.reduction_impot_familles_montant,
-            spec.reduction_impot_familles_enfants_min))
+            spec.reduction_impot_familles_enfants_min, annee))
 
 
 def verifier_formules(system: Any, spec: Any, annee: int) -> None:
