@@ -1,0 +1,55 @@
+case: pres2027_melenchon_suppression_pfu
+pre_registered: '2026-11-12T13:46:03+00:00'
+commit: 59d845b7b09a91f49273e857f8fac4ffdfc4a029
+scenario: pres2027_melenchon_suppression_pfu
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -14437316996.89502
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.4
+  absolute_eur: 200000000.0
+  rationale: 'Classe « haut » (D-321). Mesure qui ne touche que le haut de la distribution
+    (au-delà de 250 000 € par part, ou le plafond du quotient familial) : la population
+    a de bons agrégats et des queues faibles (README, L1), et le juge chiffre peut-être
+    une autre année.'
+note: 'Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 —
+  Suppression du PFU (« flat tax ») : « « suppression de la flat tax pour que le capital
+  ne soit pas moins imposé que le travail (9 milliards d''euros) » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf,
+  2026-10-14). Le prélèvement forfaitaire unique supprimé : chaque foyer est imposé
+  comme s''il cochait la case 2OP, ses revenus du capital au barème de l''impôt sur
+  le revenu (abattement de 40 % sur les dividendes, CSG déductible). Les prélèvements
+  sociaux ne changent pas ; « imposer les revenus du capital comme ceux du travail
+  » ne dit pas d''autre taux. Le capital est celui qu''impute la population (D-248)
+  : ni l''assurance vie, ni les plus-values d''avant 2018. Contre le droit de 2026.
+  Pas de plage : la mesure est un oui ou un non.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

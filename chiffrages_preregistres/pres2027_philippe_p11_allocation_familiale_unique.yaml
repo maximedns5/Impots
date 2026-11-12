@@ -1,0 +1,61 @@
+case: pres2027_philippe_p11_allocation_familiale_unique
+pre_registered: '2026-11-12T13:47:25+00:00'
+commit: 59d845b7b09a91f49273e857f8fac4ffdfc4a029
+scenario: pres2027_philippe_p11_allocation_familiale_unique
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 45557607834.21655
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.5
+  absolute_eur: 2000000000.0
+  rationale: 'Classe « prestation_neuve » (D-384). Prestation que la loi n''a pas
+    (D-382) : son coût tient à un recours supposé, à des conditions que la population
+    ne porte pas (résidence, activité passée, rattachement au foyer des parents) et
+    à ce qu''elle remplace ; son coût net est l''écart de deux masses de 20 à 60 Md€,
+    d''où un plancher en milliards, de l''ordre de 5 % de ces masses.'
+note: 'Édouard Philippe (Horizons), programme relevé le 2026-11-12 — Allocation familiale
+  unique dès le premier enfant, dégressive selon l''IR : « « une allocation familiale
+  unique de 350 euros par mois dès le premier enfant, dont le montant serait ensuite
+  dégressif en fonction de l''impôt sur le revenu » (texte de l''article) » (https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ,
+  2026-10-08). Une prestation neuve (D-382) : 350 € par mois pour chaque enfant à
+  charge dès le premier, à la place des allocations familiales (avec leur majoration
+  pour âge et leur forfait) et du complément familial, que « unique » fond ; l''allocation
+  de rentrée scolaire reste. Hypothèses : par enfant, comme le dit « dès le premier
+  enfant » (l''autre lecture, 350 € par famille, coûterait bien moins et n''est pas
+  la valeur retenue) ; jusqu''à la veille de 20 ans, l''âge des allocations familiales.
+  « Dégressif en fonction de l''impôt sur le revenu » n''a pas de barème : l''allocation
+  annuelle de la famille baisse de la moitié de l''impôt de son foyer (un douzième
+  par mois), sans plancher ; la plage va de 0 (pas de dégressivité) à 1 (un euro d''allocation
+  par euro d''impôt). Ni imposable ni dans les ressources des minima et des aides
+  au logement (D-382). Contre le droit de 2026.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

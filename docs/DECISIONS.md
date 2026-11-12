@@ -28449,3 +28449,22 @@ de D-384 (−1,5 à −7 Md€), écrit pour un PFU dont les revenus imputés ne
 l'assurance vie ni les plus-values d'avant 2018. Rien n'est réglé après eux : ni la
 tolérance, ni la mesure. Le résultat le dira contre le pronostic, tel qu'il est. Les cas
 qui restent sont enregistrés sur le commit de cette entrée.
+
+## D-390 — Le revenu familial de Retailleau : la réduction pour frais de scolarité reste
+
+**Le fait.** Sur `59d845b`, trois cas sont enregistrés : la suppression du PFU de
+Mélenchon, l'allocation familiale unique de Philippe et le revenu d'incitation à l'activité
+de Retailleau. Le suivant, le revenu familial de Retailleau, est refusé après sa passe par
+le garde du zéro confiant (D-064, D-075) : la traduction de D-384 retirait aussi la
+réduction d'impôt pour frais de scolarité, dont la population ne déclare pas les cases
+7EA, 7EC et 7EF. Son retrait y vaudrait zéro faute d'assiette, et le garde le refuse.
+
+**Le choix.** Les trois boutons sortent de la traduction, dans le programme et le
+scénario ; la note le dit. Imputer les cases depuis l'âge des enfants serait une
+imputation neuve pour une réduction de quelques centaines de millions, dans une mesure qui
+se compte en dizaines de milliards : elle ne vaut pas l'étape. Le chiffrage porte donc
+quatre des douze dispositifs remplacés, et non cinq. Le pronostic et la tolérance de D-384
+ne changent pas.
+
+**Ce qui reste aveugle.** Le garde refuse sans donner de coût : rien du cas n'a été vu. Les
+cas qui restent sont enregistrés sur le commit de cette entrée.

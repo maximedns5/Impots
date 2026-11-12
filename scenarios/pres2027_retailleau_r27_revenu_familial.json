@@ -3,7 +3,7 @@
   "year": 2026,
   "created": "2026-11-01",
   "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-12 — Revenu familial remplaçant 12 dispositifs, dont le quotient familial ; conditionné à 5 ans de résidence régulière et d'activité : « « un Revenu familial (RF) de 240 euros versé chaque mois à tous, dès le premier enfant, de la naissance jusqu'à 18 ans » » (https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf, 2026-04-28)",
-  "note": "Une prestation neuve (D-382) : 240 € par mois pour chaque enfant de moins de 18 ans dès le premier, 480 € pour le troisième. Des douze dispositifs que le document du 28 avril 2026 dit remplacer, le moteur en porte cinq, tous retirés : les allocations familiales (et leur majoration pour âge), le complément familial, l'allocation de rentrée scolaire, les parts du quotient familial des enfants (0 au lieu d'une demi-part, d'une part au troisième) et la réduction d'impôt pour frais de scolarité. Le supplément familial de traitement, les bourses et la prise en compte des enfants dans le RSA et la prime d'activité ne sont pas lus ; la PAJE, l'ASF, les aides au logement et l'AEEH restent, comme le dit le document. Les parts des enfants majeurs rattachés tombent avec celles des mineurs ; la demi-part du parent isolé reste. La condition de cinq ans de résidence et d'activité n'est pas lue. Recours plein, comme les allocations familiales. Pas de plage : le candidat dit ses montants. Contre le droit de 2026.",
+  "note": "Une prestation neuve (D-382) : 240 € par mois pour chaque enfant de moins de 18 ans dès le premier, 480 € pour le troisième. Des douze dispositifs que le document du 28 avril 2026 dit remplacer, le moteur en porte cinq ; quatre sont retirés : les allocations familiales (et leur majoration pour âge), le complément familial, l'allocation de rentrée scolaire, les parts du quotient familial des enfants (0 au lieu d'une demi-part, d'une part au troisième). La réduction d'impôt pour frais de scolarité reste : la population ne déclare pas ses cases, et son retrait serait un zéro sans assiette (D-390). Le supplément familial de traitement, les bourses et la prise en compte des enfants dans le RSA et la prime d'activité ne sont pas lus ; la PAJE, l'ASF, les aides au logement et l'AEEH restent, comme le dit le document. Les parts des enfants majeurs rattachés tombent avec celles des mineurs ; la demi-part du parent isolé reste. La condition de cinq ans de résidence et d'activité n'est pas lue. Recours plein, comme les allocations familiales. Pas de plage : le candidat dit ses montants. Contre le droit de 2026.",
   "tags": [
     "presidentielle_2027",
     "retailleau"
@@ -22,9 +22,6 @@
     },
     "qf_parts_enf1": 0.0,
     "qf_parts_enf2": 0.0,
-    "qf_parts_enf3_et_sup": 0.0,
-    "frais_scolarite_college": 0.0,
-    "frais_scolarite_lycee": 0.0,
-    "frais_scolarite_superieur": 0.0
+    "qf_parts_enf3_et_sup": 0.0
   }
 }
