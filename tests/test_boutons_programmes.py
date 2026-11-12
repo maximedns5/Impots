@@ -106,6 +106,20 @@ def test_without_the_pfu_a_high_income_pays_more_and_a_modest_one_less() -> None
     assert after["ir"] < before["ir"]
 
 
+def test_without_the_pfu_a_capital_gain_stays_in_the_disposable_income() -> None:
+    """Au barème, la plus-value 3VG entre dans le RNI et sort des plus-values « hors RNI »
+    d'OpenFisca, dont le revenu disponible lit le capital : sans correctif, elle sortait du
+    revenu du ménage, qui l'a pourtant touchée (D-389). Le ménage perd ce que ses impôts
+    prennent en plus, rien d'autre."""
+    foyer = {"adults": [{"salaire_brut_annuel": 200_000, "annee_naissance": 1975}],
+             "capital": {"plus_values": 100_000.0}}
+    before, after = _both(foyer, ReformSpec(pfu_supprime=True))
+    impots = sum(after[k] - before[k] for k in ("ir", "cdhr", "prelevements_sociaux_capital"))
+    assert impots > 5_000
+    assert before["revenu_disponible"] - after["revenu_disponible"] == pytest.approx(
+        impots, abs=1.0)
+
+
 def test_the_pfu_kept_costs_nothing() -> None:
     before, after = _both(RENTIER_AISE, ReformSpec(pfu_supprime=False))
     for row in ("ir", "pfu", "revenu_disponible"):

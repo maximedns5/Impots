@@ -734,6 +734,36 @@ def _heures_sup(reform: Any, spec: Any, annee: int) -> None:
     reform.update_variable(_datee(reform, revenu_categoriel_tspr, annee))
 
 
+def _plus_values_au_bareme(formule: Any) -> Any:
+    """Les plus-values du revenu disponible, que la case 2OP ne fait pas disparaître.
+
+    OpenFisca lit le capital du revenu disponible sur les plus-values « hors RNI » du RFR ;
+    au barème, 3VG, 3UA, 3TJ et 3VT entrent dans le RNI et sortent de cette liste, et donc
+    du revenu du ménage, qui les a pourtant touchées. Sur la population, la suppression du
+    PFU faisait perdre aux ménages 19,4 Md€ qu'aucun impôt ne prenait (D-389). On les rend,
+    pour les foyers au barème seulement : au PFU, rien ne change."""
+    from numpy import where
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class plus_values_base_large(Variable):
+        value_type = float
+        entity = FoyerFiscal
+        label = "Plus-values du revenu disponible, au barème comme au PFU (but 21, D-389)"
+        definition_period = YEAR
+
+        def formula(foyer_fiscal, period, parameters):
+            f = formule(period)
+            # Les formules d'OpenFisca prennent `parameters` ou non, selon l'année.
+            avant = (f(foyer_fiscal, period, parameters)
+                     if f.__code__.co_argcount == 3 else f(foyer_fiscal, period))
+            rendues = sum(foyer_fiscal(case, period)
+                          for case in ("f3vg", "f3ua", "f3tj", "f3vt"))
+            return avant + where(foyer_fiscal("f2op", period), rendues, 0)
+
+    return plus_values_base_large
+
+
 def appliquer_formules(reform: Any, spec: Any, annee: int) -> None:
     """Les boutons de formule que `spec` règle, posés sur la réforme qui s'applique."""
     from openfisca_core.model_api import YEAR, Variable
@@ -749,6 +779,8 @@ def appliquer_formules(reform: Any, spec: Any, annee: int) -> None:
             cerfa_field = "2OP"
 
         reform.update_variable(f2op)
+        reform.update_variable(_plus_values_au_bareme(
+            reform.get_variable("plus_values_base_large").get_formula))
     if spec.ir_exoneration_jeunes_age is not None:
         from impots.engine.corrections import SALARIES_AFTER_DEDUCTION, SALARY_CATEGORY
 

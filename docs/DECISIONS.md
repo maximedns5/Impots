@@ -28425,3 +28425,27 @@ L'indice ne va qu'à une passe qui impute le capital. Un test le tient, vu écho
 code d'avant. Le refus portait sur l'absence d'un indice, pas sur un nombre : aucun coût
 n'a été vu, et les cas déjà enregistrés ne touchent pas le capital, ils ne changent pas.
 Les cas qui restent sont enregistrés sur le commit de cette entrée.
+
+## D-389 — La suppression du PFU : la plus-value reste dans le revenu du ménage
+
+**Le fait.** Sur `485fed0`, la suppression du PFU de Mélenchon est refusée par le garde des
+secteurs : le coût rapporté, −33,8 Md€, n'est reconstitué qu'à −14,4 Md€ par les postes.
+Sur 3 000 ménages de 2024, le revenu disponible perd ce que l'impôt prend, et en plus la
+plus-value imputée en 3VG. OpenFisca lit le capital du revenu disponible sur les
+plus-values « hors RNI » du RFR ; au barème, la case 2OP fait entrer 3VG, 3UA, 3TJ et 3VT
+dans le RNI, et les sort de cette liste. Le ménage les a pourtant touchées : l'option ne
+change que l'impôt. La perte de 19,4 Md€ n'était prise par personne.
+
+**Le correctif.** Le bouton `pfu_supprime` redéfinit `plus_values_base_large` : la formule
+d'OpenFisca, plus ces quatre cases pour un foyer au barème. Au PFU, rien ne change ; le
+droit de référence ne coche jamais 2OP. Un test tient le ménage type, une plus-value de
+100 000 € : sa perte de revenu disponible est la hausse de ses impôts, à l'euro, quand elle
+la dépassait de 100 000 € sur le code d'avant. Sur la population, le garde tient.
+
+**Ce qui n'est plus aveugle.** Deux nombres ont été vus avant l'enregistrement. Le coût
+faux, −33,8 Md€, dans le message du garde ; et la hausse de l'impôt sur le revenu,
++14,7 Md€ sur l'échantillon de 2024, dans le diagnostic. Tous deux sont hors du pronostic
+de D-384 (−1,5 à −7 Md€), écrit pour un PFU dont les revenus imputés ne comptent ni
+l'assurance vie ni les plus-values d'avant 2018. Rien n'est réglé après eux : ni la
+tolérance, ni la mesure. Le résultat le dira contre le pronostic, tel qu'il est. Les cas
+qui restent sont enregistrés sur le commit de cette entrée.
