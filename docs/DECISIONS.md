@@ -28025,3 +28025,25 @@ portent les trois réponses.
 **Ce qui reste au propriétaire.** Une lecture séparée de la dette « si les économies
 annoncées sont tenues » (76 mesures de dépense et de chaîne), jamais additionnée au
 chiffrage ni au verdict (D-319) : à accepter ou à refuser avant le lancement.
+
+## D-380 — Le but 21 lancé : les décisions du propriétaire, le tableau d'avant
+
+**Les décisions, le 12 novembre.** La lecture séparée de la dette « si les économies
+annoncées sont tenues » (étape 5) est acceptée : la variante « dépense publique » de
+Mésange lit les mesures de dépense et de chaîne que le candidat chiffre, à côté du
+chiffrage, jamais additionnée au coût ni au verdict (D-319), et marquée comme annoncée par
+le candidat. Le SMIC relevé (étape 4) : le premier jour, la loi seule relève les salaires
+sous le nouveau seuil ; la diffusion au-dessus est une hypothèse déclarée, avec une plage
+tirée d'une source publiée, montrée comme telle. Une enveloppe traduite en bouton (étape
+2) est notée à part du juge : son coût est l'enveloppe par construction.
+
+**Le tableau d'avant**, écrit avant tout relevé et tout chiffrage par
+`python -m impots.couverture_programmes` dans `docs/presidentielle/couverture_avant.md` :
+321 mesures relevées sur 24 programmes, 13 chiffrées (4 %), 109 vagues (34 %), 199
+refusées par une porte (62 %), les mêmes comptes que D-379. Le module ne chiffre rien ; il
+compte les champs des fichiers.
+
+**L'ordre.** Le relevé est refait d'abord, candidat par candidat, chaque mesure avec sa
+source datée ; le tableau de couverture du relevé à jour est commité avant tout chiffrage.
+Les étapes 2 à 4 se développent ensuite en parallèle, chacune dans son worktree ; chaque
+mesure neuve est préenregistrée, commitée et poussée avant son premier calcul.
