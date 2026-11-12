@@ -1,0 +1,15 @@
+{
+  "nom": "presidentielle_glucksmann",
+  "titre": "Raphaël Glucksmann : la part chiffrée du programme, en trois réponses",
+  "texte": "programme",
+  "programme": "glucksmann",
+  "preenregistrement": "D-394",
+  "cadre": "central",
+  "millesime_entreprises": "2023",
+  "scenarios": [
+    {
+      "scenario": "pres2027_glucksmann_programme"
+    }
+  ],
+  "dette_annoncee": true
+}

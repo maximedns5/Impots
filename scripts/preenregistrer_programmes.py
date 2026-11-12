@@ -199,7 +199,7 @@ def arguments(nom: str, p, m) -> list[str]:
 #: Les études des programmes (but 13, D-328) : une par candidat dont une mesure se
 #: chiffre, sur le scénario de sa part chiffrée.
 ETUDES = ROOT / "etudes"
-PREENREGISTREMENT_ETUDES = "D-350"  # la série du but 16 (D-338 au but 14, D-328 au but 13)
+PREENREGISTREMENT_ETUDES = "D-394"  # la série du but 21 (D-372 au but 19, D-350 au but 16)
 CADRE_ETUDES = "central"
 
 
@@ -241,6 +241,8 @@ def etudes() -> list[tuple[str, dict, dict]]:
             "preenregistrement": PREENREGISTREMENT_ETUDES, "cadre": CADRE_ETUDES,
             "millesime_entreprises": VINTAGE_ENTREPRISES,
             "scenarios": [{"scenario": nom}],
+            # La dette « si les économies annoncées sont tenues », à côté (étape 5, D-380).
+            "dette_annoncee": True,
         }
         out.append((slug, scenario, definition))
     return out

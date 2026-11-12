@@ -1,9 +1,9 @@
 {
-  "commit": "12e769cab051b41731adcb01c52ff67274bc9d12",
+  "commit": "601b4423890c7d130a10d6278339b1a65ea4b145",
   "scenarios": {
     "pres2027_attal_programme": {
-      "cout": 59530011784.41824,
-      "dette": 0.03408819004301544,
+      "cout": 65691129407.55472,
+      "dette": 0.042058087481908535,
       "selon_theta": "dépend de θ"
     }
   }

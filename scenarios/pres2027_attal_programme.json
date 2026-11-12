@@ -2,15 +2,16 @@
   "name": "pres2027_attal_programme",
   "year": 2026,
   "created": "2026-11-02",
-  "source": "Gabriel Attal (Renaissance), programme relevé le 2026-11-12 — la part chiffrée : a16_droit_au_brut, a18_suppression_cvae",
-  "note": "2 mesures chiffrées sur 21 paramétrées et 37 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "source": "Gabriel Attal (Renaissance), programme relevé le 2026-11-12 — la part chiffrée : a16_droit_au_brut, a18_suppression_cvae, a22_pensions_alimentaires",
+  "note": "3 mesures chiffrées sur 21 paramétrées et 37 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
   "tags": [
     "presidentielle_2027",
     "attal",
     "etude"
   ],
   "reform": {
-    "cotisations_salariales_retraite_echelle": 0.22
+    "cotisations_salariales_retraite_echelle": 0.22,
+    "pensions_alimentaires_exonerees": true
   },
   "firm_reform": {
     "cvae_echelle": 0.0

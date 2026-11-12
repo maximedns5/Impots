@@ -3,12 +3,13 @@
   "titre": "Jean-Luc Mélenchon : la part chiffrée du programme, en trois réponses",
   "texte": "programme",
   "programme": "melenchon",
-  "preenregistrement": "D-350",
+  "preenregistrement": "D-394",
   "cadre": "central",
   "millesime_entreprises": "2023",
   "scenarios": [
     {
       "scenario": "pres2027_melenchon_programme"
     }
-  ]
+  ],
+  "dette_annoncee": true
 }

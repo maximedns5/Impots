@@ -1,9 +1,9 @@
 {
-  "commit": "12e769cab051b41731adcb01c52ff67274bc9d12",
+  "commit": "601b4423890c7d130a10d6278339b1a65ea4b145",
   "scenarios": {
     "pres2027_labib_programme": {
-      "cout": 22886968422.31488,
-      "dette": 0.044680316110296436,
+      "cout": 22916712620.32241,
+      "dette": 0.04473835901548928,
       "selon_theta": "hausse"
     }
   }

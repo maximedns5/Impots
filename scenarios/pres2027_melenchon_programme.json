@@ -2,14 +2,38 @@
   "name": "pres2027_melenchon_programme",
   "year": 2026,
   "created": "2026-11-02",
-  "source": "Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 — la part chiffrée : exonerations_au_dela_2_smic",
-  "note": "1 mesures chiffrées sur 42 paramétrées et 64 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "source": "Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 — la part chiffrée : point_indice_10, indexation_pensions_prestations_10, smic_1700_net, garantie_autonomie_jeunes, suppression_pfu, exonerations_au_dela_2_smic, defiscalisation_pensions_alimentaires",
+  "note": "7 mesures chiffrées sur 42 paramétrées et 64 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
   "tags": [
     "presidentielle_2027",
     "melenchon",
     "etude"
   ],
   "reform": {
-    "allegement_general_plafond": 2.0
+    "allegement_general_plafond": 2.0,
+    "garantie_autonomie": {
+      "seuil": 1337.0,
+      "age_minimum": 18,
+      "age_maximum": 25,
+      "taux_ressources": 1.0
+    },
+    "pfu_supprime": true,
+    "indexations": {
+      "pensions": {
+        "2025": 1.1
+      },
+      "prestations_familiales": {
+        "2025": 1.1
+      },
+      "aides_logement": {
+        "2025": 1.1
+      }
+    },
+    "pensions_alimentaires_exonerees": true,
+    "smic_revalorisation": 1.1617,
+    "smic_diffusion_profil": "annee_avec_effets_fixes",
+    "smic_diffusion_echelle": 0.0,
+    "point_indice_revalorisation": 1.1,
+    "point_indice_contractuels": 0.0
   }
 }

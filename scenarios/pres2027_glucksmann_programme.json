@@ -1,0 +1,17 @@
+{
+  "name": "pres2027_glucksmann_programme",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Raphaël Glucksmann (Place publique), programme relevé le 2026-11-12 — la part chiffrée : smic_1700_net",
+  "note": "1 mesures chiffrées sur 18 paramétrées et 27 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "tags": [
+    "presidentielle_2027",
+    "glucksmann",
+    "etude"
+  ],
+  "reform": {
+    "smic_revalorisation": 1.1617,
+    "smic_diffusion_profil": "annee_avec_effets_fixes",
+    "smic_diffusion_echelle": 0.0
+  }
+}

@@ -2,8 +2,8 @@
   "name": "pres2027_le_pen_programme",
   "year": 2026,
   "created": "2026-11-02",
-  "source": "Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-12 — la part chiffrée : lp20_tva_energie, lp22_part_pleine_2e_enfant",
-  "note": "2 mesures chiffrées sur 25 paramétrées et 36 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "source": "Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-12 — la part chiffrée : lp20_tva_energie, lp21_ir_moins_30_ans, lp22_part_pleine_2e_enfant, lp26_suppression_cvec",
+  "note": "4 mesures chiffrées sur 25 paramétrées et 36 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
   "tags": [
     "presidentielle_2027",
     "le_pen",
@@ -13,7 +13,10 @@
     "qf_parts_enf2": 1.0,
     "tva_postes": {
       "energie": 0.055
-    }
+    },
+    "ir_exoneration_jeunes_age": 30,
+    "ir_exoneration_jeunes_plafond_smic": 4.0,
+    "cvec_montant": 0.0
   },
   "imputations": [
     "consommation"

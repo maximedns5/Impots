@@ -2,8 +2,8 @@
   "name": "pres2027_labib_programme",
   "year": 2026,
   "created": "2026-11-02",
-  "source": "Selma Labib (NPA-Révolutionnaires), programme relevé le 2026-11-12 — la part chiffrée : suppression_tva_taxes_carburants",
-  "note": "1 mesures chiffrées sur 4 paramétrées et 10 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "source": "Selma Labib (NPA-Révolutionnaires), programme relevé le 2026-11-12 — la part chiffrée : suppression_tva_taxes_carburants, revenu_minimum_2200",
+  "note": "2 mesures chiffrées sur 4 paramétrées et 10 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
   "tags": [
     "presidentielle_2027",
     "labib",
@@ -14,7 +14,10 @@
       "carburants": 0.0
     },
     "accise_gazole": 0.0,
-    "accise_essence": 0.0
+    "accise_essence": 0.0,
+    "smic_revalorisation": 1.19,
+    "smic_diffusion_profil": "annee_avec_effets_fixes",
+    "smic_diffusion_echelle": 0.0
   },
   "imputations": [
     "consommation"

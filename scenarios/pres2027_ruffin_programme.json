@@ -1,0 +1,18 @@
+{
+  "name": "pres2027_ruffin_programme",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "François Ruffin (Debout !), programme relevé le 2026-11-12 — la part chiffrée : credit_impot_domicile_travail, smic_1600",
+  "note": "2 mesures chiffrées sur 28 paramétrées et 37 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "tags": [
+    "presidentielle_2027",
+    "ruffin",
+    "etude"
+  ],
+  "reform": {
+    "credit_trajets_taux": 0.3,
+    "smic_revalorisation": 1.0933,
+    "smic_diffusion_profil": "annee_avec_effets_fixes",
+    "smic_diffusion_echelle": 0.0
+  }
+}

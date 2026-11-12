@@ -28611,3 +28611,79 @@ imposables, ou dans la décote, que la pension sortie du revenu ne fait que creu
 **Ce qui n'est pas aveugle.** Rien n'a été vu avant l'enregistrement : aucune passe de ces
 mesures n'a tourné hors de celle-ci. La CVEC reste surestimée de 36 % (D-383), dans le
 coût. La comparaison au juge se fera à sa publication, avec les tolérances de D-392.
+
+## D-394 — La série du but 21 préenregistrée : vingt et une lignes, seize programmes
+
+**Ce qui tourne.** Les dix-huit études (`etudes/*.json`) : le PLF et le PLFSS, et une étude
+par programme qui chiffre une mesure, seize au lieu de huit (Arthaud, Bouamrane,
+Dupont-Aignan, Glucksmann, Kazib, Philippe, Ruffin et Zemmour s'ajoutent). Chaque
+programme passe en une seule passe, ses mesures chiffrées ensemble, à la valeur du
+candidat, et chacun de ses points de plage. Cadre central, population de 2024, millésime
+d'entreprises 2023, sur le commit qui porte cette entrée. 21 premières années, 183 points
+de plage et 21 chemins annuels : la série tourne sur deux files, dans un worktree figé,
+une étude après l'autre dans chaque file ; rien d'autre ne tourne.
+
+**Deux correctifs avant elle** (`fe6316d`), sans nombre publié en jeu : les taux marginaux
+lisent la réforme sans ses boutons de salaire, comme sans la TVA (D-323), donc aux
+salaires du cadre ; la route `/population/simulate` chiffre la population de 2024 avec un
+indice du capital et des facteurs de ménages de 1, comme la vue figée du service. Sans
+eux, les premières années des programmes au SMIC ou aux données imputées étaient
+refusées. Chacun a son test, vu échouer sur le code d'avant.
+
+**La lecture « si les économies annoncées sont tenues »** (étape 5, accordée par le
+propriétaire, D-380) est ouverte dans chaque étude de programme (`dette_annoncee`). Elle se
+lit sur le rapport, sans passe : à côté de la dette, jamais additionnée au chiffrage ni au
+verdict (D-319). Elle n'a pas de pronostic : elle ne lit que des montants du candidat.
+
+**L'ordre, étude par étude** (D-350, D-372). La série d'avant est celle du but 19
+(`601b442`), figée par `impots etude avant` depuis `main`, où rapports et scénarios vont
+ensemble ; ses rapports sont retirés, `impots etude lancer <nom>` les refait.
+
+**La première année est mesurée, pas pronostiquée** (D-372) : sur ce code, à 20 000
+ménages, avant cette entrée. Une première mesure des lignes d'entreprises avait pris la
+population d'entreprises de test, faute du millésime que `lancer` donne ; refaite sur
+2023, elle retrouve à l'euro le PLF art. 15 et Lisnard. Un écart de plus de 0,1 % dans
+la série dirait qu'elle n'a pas tourné sur ce code.
+
+**Le pronostic** porte sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance « lue »), en points de
+PIB, et sur le verdict du Monte-Carlo (seuils de D-345). Une ligne dont les mesures n'ont
+pas changé garde son Δb d'avant, mis à l'échelle du coût, ±15 % (±20 % pour la prime et
+les APL) et son verdict. Une ligne neuve ou changée n'a pas d'avant : son Δb est le coût
+fois 0,05 à 0,22 point par Md€, l'étendue des huit études d'avant (0,064 pour Attal à
+0,195 pour Labib) élargie d'un quart ; son verdict, « hausse » ou « dépend », jamais
+« baisse » pour un coût positif de plus de 7 Md€.
+
+| ligne | coût mesuré | Δb, pronostic | verdict |
+|---|---:|---|---|
+| PLF art. 2 | +2,62 | +0,32 à +0,43 | dépend |
+| PLF art. 3 | −1,10 | −0,20 à −0,14 | dépend |
+| PLF art. 15 | −7,05 | −0,25 à −0,19 | baisse |
+| PLFSS, prime | −0,56 | −0,19 à −0,13 | baisse |
+| PLFSS, APL | −0,07 | −0,08 à −0,05 | baisse |
+| Attal | +66,18 | +3,60 à +4,87 | dépend |
+| Lisnard | +36,19 | +4,84 à +6,55 | dépend ou hausse |
+| Arthaud | +74,24 | +3,71 à +16,33 | hausse ou dépend |
+| Bouamrane | +15,32 | +0,77 à +3,37 | hausse ou dépend |
+| Dupont-Aignan | +7,36 | +0,37 à +1,62 | hausse ou dépend |
+| Glucksmann | +29,74 | +1,49 à +6,54 | hausse ou dépend |
+| Kazib | +15,44 | +0,77 à +3,40 | hausse ou dépend |
+| Labib | +57,37 | +2,87 à +12,62 | hausse ou dépend |
+| Le Pen | +21,41 | +1,07 à +4,71 | hausse ou dépend |
+| Mélenchon | +88,98 | +4,45 à +19,58 | hausse ou dépend |
+| Philippe | +46,57 | +2,33 à +10,25 | hausse ou dépend |
+| Retailleau | +48,89 | +2,44 à +10,76 | hausse ou dépend |
+| Roussel | +32,97 | +1,65 à +7,25 | hausse ou dépend |
+| Ruffin | +33,16 | +1,66 à +7,30 | hausse ou dépend |
+| Tondelier | +18,17 | +0,91 à +4,00 | hausse ou dépend |
+| Zemmour | +91,69 | +4,58 à +20,17 | hausse ou dépend |
+
+Les coûts de la prime et des APL sont ceux de la série (+0,56 et +0,07 au rapport, où le
+signe est celui de la recette). Attal change de 0,5 Md€ : les pensions alimentaires (lot
+2) et les données de ménages qu'elles font imputer. Les fourchettes des lignes neuves sont
+larges, et le disent : aucune étude d'avant ne portait le SMIC, une prestation neuve ou
+une pension indexée, dont les canaux de la boucle (salaires publics, transferts) ne sont
+pas ceux de l'impôt.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Le résultat va dans une nouvelle
+D-entrée, avec les études avant et après et l'écart au pronostic.
