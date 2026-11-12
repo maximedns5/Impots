@@ -9,7 +9,7 @@
     "date": "2026-05-12",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -133,6 +133,12 @@
           "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
           "date": "2026-10-21",
           "type": "programme"
+        },
+        {
+          "citation": "« Le crédit d'impôt recherche (CIR) sera également recentré sur les PME et ETI industrielles et conditionné en termes de localisation des emplois. »",
+          "url": "https://nouspresident.fr/pour-proteger-notre-industrie-relocaliser-100-produits-strategiques/",
+          "date": "2026-10-15",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -192,6 +198,12 @@
           "citation": "« nous proposons de mieux lisser les réductions de cotisations patronales et les geler à leur niveau actuel »",
           "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
           "date": "2026-10-21",
+          "type": "programme"
+        },
+        {
+          "citation": "« Nous proposons également de mieux « lisser » les réductions de cotisations sur les salaires. »",
+          "url": "https://nouspresident.fr/pour-proteger-notre-industrie-relocaliser-100-produits-strategiques/",
+          "date": "2026-10-15",
           "type": "programme"
         }
       ],
@@ -296,6 +308,17 @@
       "refus": {
         "porte": "vague",
         "raison": "Un horizon, sans paramètre de contrôle ni de sanction."
+      },
+      "declare": {
+        "montant_eur": 7000000000.0,
+        "sens": "recette",
+        "horizon": "« à terme », potentiel à horizon 3 à 5 ans, montée en charge jusqu'en 2030 (9 Md€) ; la fraude sociale (≥ 1 Md€ par an) est « hors chiffrage officiel »",
+        "source": {
+          "citation": "« En renforçant nos moyens et en modernisant nos outils, un rattrapage de nos partenaires est possible, ce qui pourrait à terme représenter un gain de 7 Mds € par an. »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
       }
     },
     {
@@ -596,6 +619,300 @@
       "refus": {
         "porte": "vague",
         "raison": "Ni nombre de trimestres ni critère de pénibilité ne sont énoncés."
+      }
+    },
+    {
+      "id": "smic_1600",
+      "categorie": "salaires_smic",
+      "libelle": "SMIC à 1 600 €",
+      "parametre": "1 600 € (net ou brut non dit) ; écrit par Sophie Taillé-Polian dans le livret",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Des mesures fortes, concrètes, comme le SMIC à 1 600€ ou la retraite à 60 ans, qui revalorisent le travail. »",
+          "url": "https://nouspresident.fr/statut-travailleurs-essentiels/",
+          "date": "2026-04-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le moteur ne déplace pas la distribution des salaires, et le SMIC n'est pas un de ses boutons."
+      }
+    },
+    {
+      "id": "retraite_60_ans",
+      "categorie": "retraites",
+      "libelle": "Retraite à 60 ans",
+      "parametre": "60 ans ; écrit par Sophie Taillé-Polian dans le livret",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Des mesures fortes, concrètes, comme le SMIC à 1 600€ ou la retraite à 60 ans, qui revalorisent le travail. »",
+          "url": "https://nouspresident.fr/statut-travailleurs-essentiels/",
+          "date": "2026-04-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge légal n'est pas un paramètre du moteur : la population ne vieillit pas en âge et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "ptz_double",
+      "categorie": "prestations",
+      "libelle": "Doublement du prêt à taux zéro",
+      "parametre": "PTZ moyen de 60 000 € à 120 000 € ; étendu aux bénéficiaires en cours",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Avec un PTZ moyen passant d'environ 60 000 euros actuellement à 120 000 euros, l'avantage supplémentaire peut atteindre 30 000 euros étalés sur 15 à 25 ans »",
+          "url": "https://nouspresident.fr/face-a-la-crise-du-logement/",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les accédants à la propriété et leurs prêts ne sont pas dans la population."
+      }
+    },
+    {
+      "id": "plus_values_immobilieres_abattement",
+      "categorie": "patrimoine_capital",
+      "libelle": "Suppression de l'abattement pour durée de détention sur les plus-values immobilières",
+      "parametre": "abattement supprimé hors résidence principale ; déduction de l'inflation et des frais de notaire",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Cette suppression de l'abattement sur les plus-values ne concerne pas les résidences principales, mais l'ensemble des autres logements et terrains »",
+          "url": "https://nouspresident.fr/face-a-la-crise-du-logement/",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les plus-values immobilières et la durée de détention ne sont pas dans la population."
+      }
+    },
+    {
+      "id": "meubles_tourisme_imposition",
+      "categorie": "patrimoine_capital",
+      "libelle": "Imposition des locations touristiques doublée",
+      "parametre": "imposition des usages occasionnels « au moins deux fois plus qu'actuellement » ; abattements et amortissements supprimés",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« en imposant les usages occasionnels au moins deux fois plus qu'actuellement, tout en réduisant l'imposition des locations pérennes abordables »",
+          "url": "https://nouspresident.fr/face-a-la-crise-du-logement/",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne distingue pas les revenus des meublés de tourisme des autres revenus locatifs."
+      }
+    },
+    {
+      "id": "th_residences_secondaires_progressive",
+      "categorie": "autre",
+      "libelle": "Taxe d'habitation sur les résidences secondaires progressive selon les revenus",
+      "parametre": "aucun barème",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Enfin, pour que la taxe d'habitation sur les résidences secondaires devienne plus juste et efficace, nous proposons de la rendre progressive selon les revenus. »",
+          "url": "https://nouspresident.fr/face-a-la-crise-du-logement/",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le barème selon les revenus n'est pas énoncé."
+      }
+    },
+    {
+      "id": "logements_jeunes_200000",
+      "categorie": "depense_publique",
+      "libelle": "200 000 places de logement pour étudiants et jeunes actifs",
+      "parametre": "200 000 places d'ici 2032 (150 000 étudiantes, 50 000 jeunes actifs)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« le plan fixe un objectif ambitieux de 200 000 places d'ici 2032 (150 000 étudiantes dont 75 000 en complément du programme AGiLE et 50 000 jeunes actifs) »",
+          "url": "https://nouspresident.fr/face-a-la-crise-du-logement/",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La construction de logements est une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "soutien_logement_social",
+      "categorie": "depense_publique",
+      "libelle": "Soutien public au logement social ramené au niveau d'avant 2018",
+      "parametre": "+2 à 3 Md€ par an à court terme",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Un retour à la situation d'avant 2018 (soit +2 à 3 milliards d'euros par an) est nécessaire à court terme et devra être amplifié progressivement. »",
+          "url": "https://nouspresident.fr/face-a-la-crise-du-logement/",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une aide aux bailleurs sociaux est une dépense que le moteur ne microsimule pas ; le candidat donne une fourchette, pas un montant, d'où l'absence de montant déclaré."
+      }
+    },
+    {
+      "id": "assurance_vie_fonds_propres",
+      "categorie": "patrimoine_capital",
+      "libelle": "Avantages fiscaux de l'assurance-vie conditionnés à 5 % en fonds propres non cotés",
+      "parametre": "part minimale de 5 % en fonds propres d'industries non cotées",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Un taux minimum même modéré de 5% ne présenterait aucun risque significatif pour les épargnants »",
+          "url": "https://nouspresident.fr/pour-proteger-notre-industrie-relocaliser-100-produits-strategiques/",
+          "date": "2026-10-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les contrats d'assurance-vie et leur composition ne sont pas dans la population."
+      }
+    },
+    {
+      "id": "pompiers",
+      "categorie": "depense_publique",
+      "libelle": "Pompiers : effectifs et indemnités",
+      "parametre": "professionnels +10 % par an (+20 000 en 2030) ; indemnité des volontaires +15 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous proposons une augmentation des effectifs de 10 % par an, permettant d'atteindre +20 000 sapeurs-pompiers professionnels à l'horizon 2030. »",
+          "url": "https://nouspresident.fr/plan-urgence-climat/",
+          "date": "2026-10-12",
+          "type": "programme"
+        },
+        {
+          "citation": "« Pour cela nous proposons une revalorisation de leur indemnité de 15 %, et augmenter leurs effectifs de 10 % en 5 ans. »",
+          "url": "https://nouspresident.fr/plan-urgence-climat/",
+          "date": "2026-10-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les effectifs et les indemnités des pompiers sont une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "friches_industrielles",
+      "categorie": "depense_publique",
+      "libelle": "Prise en charge par l'État des surcoûts des friches industrielles",
+      "parametre": "100 % des surcoûts",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Enfin, 100% des surcoûts liés à la remobilisation des friches seront pris en charge par l'État afin de faciliter l'installation rapide et écologique de nouvelles usines. »",
+          "url": "https://nouspresident.fr/pour-proteger-notre-industrie-relocaliser-100-produits-strategiques/",
+          "date": "2026-10-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une subvention aux entreprises est une dépense que le moteur ne microsimule pas ; le montant que le livret donne est repris du Cerema, non déclaré ici."
+      }
+    },
+    {
+      "id": "budget_elysee",
+      "categorie": "depense_publique",
+      "libelle": "Économies sur le budget de l'Élysée",
+      "parametre": "20 M€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous ferons 20 millions d'euros d'économies sur le budget de l'Elysée, l'équivalent de 400 postes d'infirmières. »",
+          "url": "https://nouspresident.fr/president-au-smic/",
+          "date": "2026-01-29",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le budget de l'Élysée est une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 20000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an (non précisé)",
+        "source": {
+          "citation": "« Nous ferons 20 millions d'euros d'économies sur le budget de l'Elysée, l'équivalent de 400 postes d'infirmières. »",
+          "url": "https://nouspresident.fr/president-au-smic/",
+          "date": "2026-01-29",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "gestion_publique_forets",
+      "categorie": "depense_publique",
+      "libelle": "Gestion publique des forêts privées peu ou pas gérées",
+      "parametre": "régies publiques ; 0,04 Md€ en 2027, 0,2 Md€ par an en moyenne",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« diffuser la gestion par des régies publiques des forêts privées aujourd'hui peu ou pas gérées »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La gestion des forêts est une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 40000000.0,
+        "sens": "depense",
+        "horizon": "2027 (0,2 Md€ par an en moyenne sur cinq ans)",
+        "source": {
+          "citation": "Annexe 2, coût budgétaire des principales mesures : « Gestion publique des forêts 0,04 Md€ 0,2 Md€ »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "taxe_balai",
+      "categorie": "entreprises",
+      "libelle": "Taxe « balai » sur les produits hors filières REP",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Créer une taxe « balai » touchant l'ensemble des produits hors filières REP, pour que tous les producteurs contribuent à la prévention et à la gestion des déchets. »",
+          "url": "https://nouspresident.fr/travaillisme-ecologique/",
+          "date": "2026-09-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le taux ni l'assiette de la taxe ne sont énoncés."
       }
     }
   ]

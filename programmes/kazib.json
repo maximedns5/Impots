@@ -9,7 +9,7 @@
     "date": "2026-06-01",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -24,6 +24,12 @@
           "url": "https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature",
           "date": "2026-09-16",
           "type": "discours"
+        },
+        {
+          "citation": "« En 2027, elle veut porter des revendications urgentes comme l'augmentation du SMIC à 2000€, la retraite à 60 ans »",
+          "url": "https://www.revolutionpermanente.fr/Anasse-Kazib-2027-decouvre-la-campagne-et-rejoins-les-assemblees-ouvertes-partout-en-France",
+          "date": "2026-09-11",
+          "type": "presse"
         }
       ],
       "refus": {
@@ -62,6 +68,12 @@
           "url": "https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature",
           "date": "2026-09-16",
           "type": "discours"
+        },
+        {
+          "citation": "« En 2027, elle veut porter des revendications urgentes comme l'augmentation du SMIC à 2000€, la retraite à 60 ans »",
+          "url": "https://www.revolutionpermanente.fr/Anasse-Kazib-2027-decouvre-la-campagne-et-rejoins-les-assemblees-ouvertes-partout-en-France",
+          "date": "2026-09-11",
+          "type": "presse"
         }
       ],
       "refus": {
@@ -124,6 +136,25 @@
       "refus": {
         "porte": "vague",
         "raison": "Une règle du contrat de travail, sans paramètre fiscal ni social."
+      }
+    },
+    {
+      "id": "budget_guerre_services_publics",
+      "categorie": "depense_publique",
+      "libelle": "Crédits militaires réaffectés à la santé, à l'éducation et aux transports gratuits",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« L'argent de la guerre doit financer la santé, l'éducation et des transports gratuits. »",
+          "url": "https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature",
+          "date": "2026-09-16",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le montant réaffecté ni l'étendue de la gratuité des transports ne sont énoncés."
       }
     }
   ]

@@ -9,20 +9,26 @@
     "date": "2026-08-26",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
       "id": "revenu_minimum_2200_net",
       "categorie": "salaires_smic",
-      "libelle": "Revenu minimum de 2 200 € net",
-      "parametre": "2 200 € net par mois",
+      "libelle": "SMIC et revenu minimum à 2 200 € net",
+      "parametre": "2 200 € net par mois ; le dépliant du 3 novembre 2026 écrit « le SMIC à 2 200 € »",
       "precision": "parametree",
       "sources": [
         {
           "citation": "« Aujourd'hui il faut gagner au moins 2 200 euros net par mois pour s'en sortir. Eh bien voilà ce que nous devons exiger ! »",
           "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
           "date": "2026-07-06",
+          "type": "programme"
+        },
+        {
+          "citation": "« Exigeons L'AUGMENTATION des salaires, des retraites et des pensions, le SMIC à 2 200 € et leur INDEXATION sur l'inflation. »",
+          "url": "https://lutte-ouvriere.org/medias/document/fichiers/2026/11/Depliant-NA-3nov.pdf",
+          "date": "2026-11-03",
           "type": "programme"
         }
       ],
@@ -43,6 +49,12 @@
           "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
           "date": "2026-07-06",
           "type": "programme"
+        },
+        {
+          "citation": "« Exigeons L'AUGMENTATION des salaires, des retraites et des pensions, le SMIC à 2 200 € et leur INDEXATION sur l'inflation. »",
+          "url": "https://lutte-ouvriere.org/medias/document/fichiers/2026/11/Depliant-NA-3nov.pdf",
+          "date": "2026-11-03",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -62,6 +74,12 @@
           "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
           "date": "2026-07-06",
           "type": "programme"
+        },
+        {
+          "citation": "« Contre le chômage et la précarité, RÉPARTITION DU TRAVAIL ENTRE TOUS, sans perte de salaire ! »",
+          "url": "https://lutte-ouvriere.org/medias/document/fichiers/2026/11/Depliant-NA-3nov.pdf",
+          "date": "2026-11-03",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -80,6 +98,12 @@
           "citation": "« Levée du secret commercial et du secret des affaires pour rendre publics les comptes de ces grandes entreprises, y compris ceux qui sont cachés ! »",
           "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
           "date": "2026-07-06",
+          "type": "programme"
+        },
+        {
+          "citation": "« Il faut supprimer le secret commercial et bancaire ! »",
+          "url": "https://lutte-ouvriere.org/medias/document/fichiers/2026/11/Depliant-NA-3nov.pdf",
+          "date": "2026-11-03",
           "type": "programme"
         }
       ],
