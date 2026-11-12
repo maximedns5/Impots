@@ -170,7 +170,7 @@ STATE_RECEIPTS = (
 #: `revenu_disponible`, of which the cost is the change, contains it; the reconstitution
 #: follows the cost, and the cost counting it is a bias said in D-374.
 STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite",
-                   "aefa", "cf", "asf", "crds_pfam", "crds_mini")
+                   "aefa", "cf", "asf", "ars", "crds_pfam", "crds_mini")
 
 #: The identity is checked in absolute euros against a floor, and relatively above it.
 #: A reform moving a few million is not worth a relative test; one moving billions is.

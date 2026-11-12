@@ -28,7 +28,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour la chaîne de la dette, pas une réforme que le moteur chiffre."
+        "raison": "Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour le calcul de la dette, pas une réforme que le moteur chiffre."
       }
     },
     {
@@ -47,7 +47,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Un objectif de solde est une trajectoire de la chaîne de la dette, pas une réforme que le moteur chiffre."
+        "raison": "Un objectif de solde est une trajectoire du calcul de la dette, pas une réforme que le moteur chiffre."
       }
     },
     {
@@ -66,7 +66,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Un objectif de solde est une trajectoire de la chaîne de la dette, pas une réforme que le moteur chiffre."
+        "raison": "Un objectif de solde est une trajectoire du calcul de la dette, pas une réforme que le moteur chiffre."
       }
     },
     {
@@ -85,7 +85,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Une cible de dette est ce que la chaîne calcule, pas une réforme qu'elle prend en entrée."
+        "raison": "Une cible de dette est ce que le calcul de la dette donne, pas une réforme qu'il prend en entrée."
       }
     },
     {
@@ -104,7 +104,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Une règle budgétaire est une hypothèse de la chaîne de la dette, qui ne porte qu'un scénario de dépense à la fois."
+        "raison": "Une règle budgétaire est une hypothèse du calcul de la dette, qui ne porte qu'un scénario de dépense à la fois."
       }
     },
     {
@@ -219,7 +219,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "La dépense des agences n'est pas microsimulée : elle n'entre qu'en scénario de la chaîne."
+        "raison": "La dépense des agences n'est pas microsimulée : elle n'entre qu'en scénario du calcul de la dette."
       },
       "declare": {
         "montant_eur": 3400000000.0,
@@ -249,7 +249,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "La dépense des collectivités n'est pas microsimulée : elle n'entre qu'en scénario de la chaîne."
+        "raison": "La dépense des collectivités n'est pas microsimulée : elle n'entre qu'en scénario du calcul de la dette."
       },
       "declare": {
         "montant_eur": 8200000000.0,

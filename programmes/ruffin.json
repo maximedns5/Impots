@@ -216,7 +216,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 6000000000.0,
@@ -333,7 +333,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Un effort budgétaire d'ensemble est une hypothèse de la chaîne de la dette, pas une réforme."
+        "raison": "Un effort budgétaire d'ensemble est une hypothèse du calcul de la dette, pas une réforme."
       }
     },
     {
@@ -401,7 +401,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique d'aide à la location de voitures électriques, sur un parc que le moteur n'a pas : elle n'est qu'un scénario de la chaîne de la dette."
+        "raison": "Une dépense publique d'aide à la location de voitures électriques, sur un parc que le moteur n'a pas : elle n'est qu'un scénario du calcul de la dette."
       },
       "declare": {
         "montant_eur": 800000000.0,
@@ -431,7 +431,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 1900000000.0,
@@ -480,7 +480,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 1600000000.0,
@@ -516,7 +516,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 900000000.0,
@@ -546,7 +546,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 1000000000.0,
@@ -576,7 +576,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       }
     },
     {

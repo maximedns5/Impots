@@ -40,6 +40,17 @@ TERMES: tuple[tuple[str, str], ...] = (
     ("mecanique", r"mécaniques?"), ("couverture", r"couverture"),
     ("mesange", r"Mésange"), ("point-de-pib", r"points? de PIB"),
     ("miroir", r"en miroir"), ("tolerance", r"tolérances?"),
+    ("pont", r"ponts? de non-recours"), ("non-recours", r"non-recours"),
+    ("grade", r"dans l(?:'|&#x27;)étendue des estimations"),
+    ("en-esperance", r"(?:servie?s? )?en espérance"),
+    ("bandeaux", r"bandeaux maladie et famille|bandeaux? (?:maladie|famille)|bandeaux?"),
+    ("reduction-generale", r"réductions? générales?"),
+    ("preenregistrement", r"préenregistr(?:ée?s?|ements?)"),
+    ("grille", r"grilles? de vérification"), ("delta-b", r"Δb"),
+    ("decomposition", r"décomposition|recettes induites"),
+    # The noun only: « porte » is far more often the verb (« le programme porte… »).
+    ("porte", r"portes?(?= de chaque refus| qui l'ouvrir)|(?<=avec leur )porte"
+              r"|(?<=avec sa )porte"),
     ("les-juges", r"D-\d{3}"),
 )
 
@@ -142,13 +153,24 @@ def body(lines: list[str], n: etude.Nombres) -> str:
 
 
 def _legend() -> str:
+    # L0, the law as the engine codes it, carries no number of a study and so is not in
+    # `etude.ETAGES`; the legend names it as the method page does. « vérifié » says there
+    # is one population, 2024's, carried back to the other years (seconde relecture).
+    meanings = {"L0": "la loi : chaque taux, seuil et barème, tel que l'outil le code ; "
+                      "contrôlée en refaisant l'impôt de ménages types avec le simulateur de "
+                      "la DGFiP", **etude.ETAGES}
+    if "vérifié" in meanings:
+        meanings["vérifié"] = ("l'écart d'un total du moteur à son total publié, sur 2022, "
+                               "2023 et 2024, avec une seule population, celle de 2024, "
+                               "ramenée aux deux autres années : la grille de vérification "
+                               "(D-364)")
     rows = "".join(
         f'<dt id="etage-{_slug(key)}"><span class="etage e-{_slug(key)}">'
         f"{html.escape(key)}</span></dt><dd>{html.escape(meaning)}.</dd>"
-        for key, meaning in etude.ETAGES.items())
+        for key, meaning in meanings.items())
     return ('<section id="etages"><h2>Les étages de confiance</h2>'
             "<p>À côté de chaque nombre, ce sur quoi il repose. Un nombre que l'outil "
-            "calcule dit son étage, de L1 à L4 ; un nombre qu'il reprend dit d'où il vient. "
+            "calcule dit son étage, de L0 à L4 ; un nombre qu'il reprend dit d'où il vient. "
             "Un écart de dette dit l'étage le plus haut qui y entre, et qu'il est "
             "<em>sous hypothèses</em> : celles du cadre nommé en bas de page, et θ.</p>"
             f"<dl>{rows}</dl></section>")
@@ -255,11 +277,18 @@ table { border-collapse: collapse; margin: 1rem 0; font-size: .92rem; display: b
   overflow-x: auto; }
 th, td { border-bottom: 1px solid var(--trait); padding: .3rem .5rem; text-align: left;
   vertical-align: top; }
+td code, th code { overflow-wrap: normal; white-space: nowrap; }
+table { background: linear-gradient(to right, var(--fond) 30%, transparent),
+  linear-gradient(to left, var(--fond) 30%, transparent) right,
+  radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.25), transparent),
+  radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.25), transparent) right;
+  background-repeat: no-repeat; background-size: 2rem 100%, 2rem 100%, .8rem 100%, .8rem 100%;
+  background-attachment: local, local, scroll, scroll; }
 blockquote { border-left: 3px solid var(--trait); margin: 1rem 0; padding: 0 1rem;
   color: var(--doux); }
 p.absent { border-left: 3px solid var(--l3); padding-left: .8rem; }
 .nombre { white-space: nowrap; }
-.etage { font: 600 .68rem/1 system-ui, sans-serif; padding: .12rem .3rem;
+.etage { font: 600 .76rem/1 system-ui, sans-serif; padding: .12rem .3rem;
   margin-left: .25rem; border-radius: .25rem; vertical-align: .12em; text-decoration: none;
   color: var(--texte); background: var(--ext); white-space: nowrap; }
 .e-l1 { background: var(--l1); } .e-l2 { background: var(--l2); }
@@ -322,6 +351,15 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
              "coûte une fois les comportements et l'économie pris en compte ; ce qu'elle "
              "fait à la dette dans dix ans. À côté de chaque nombre, son étage de confiance ; "
              "une réponse absente est dite absente, avec sa raison.</p>")
+    if any(study.programme for study in studies):
+        # The review of goal 20: the index sets the candidates side by side, and the
+        # parcours says what of them does not compare (D-378).
+        intro += ("\n<p><strong>Les candidats ne se comparent pas ligne à ligne.</strong> "
+                  "Chaque étude ne chiffre qu'une part du programme, dite à côté de chaque "
+                  "nombre ; la dette et le verdict dépendent de ce que la boucle macro sait "
+                  "lire, qui n'est pas le même d'un candidat à l'autre. Ce qui se compare, "
+                  "et comment : <a href=\"parcours-comparer.html\">comparer deux "
+                  "candidats</a>.</p>")
     if len(codes) > 1:
         # The studies ran on different code (D-336): a reader is told before comparing.
         intro += (f"\n<p><strong>Les études n'ont pas été chiffrées sur le même code</strong>"
@@ -338,23 +376,39 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         intro += ('\n<p><a href="presidentielle.html">Les programmes de la présidentielle '
                   "2027</a> : les 24 candidats déclarés, ce que l'outil chiffre de chacun, et "
                   "pourquoi pas le reste.</p>")
-    explorer = _explorer() if grille_present() else None
+    explorer = _explorer() if EXPLORATEUR_PUBLIE and grille_present() else None
     if explorer is not None:
         files[EXPLORER] = explorer
         intro += ('\n<p><a href="explorer.html">Explorer les études</a> : les boutons des dix '
                   "études sur une grille précalculée, la dette rejouée dans le navigateur, "
                   "chaque nombre dit calculé, interpolé ou tiré d'une étude (but 15, D-344)."
                   "</p>")
+    from impots import parcours
+
+    scripted = {EXPLORER}
+    if parcours.present():
+        pages = parcours.build()
+        files.update(pages)
+        scripted |= set(pages)
+        intro += (f'\n<p><a href="{parcours.PAGES[0][1]}">Refaire le chemin d\'un nombre</a> : '
+                  "huit pages, du ménage au verdict, chacune avec sa donnée, le lien de sa "
+                  "source et le fichier qui la calcule.</p>")
     files["index.html"] = _page(TITLE, intro + "\n<ul class=\"etudes\">\n"
                                 + "\n".join(listed) + "\n</ul>")
     for name, text in files.items():
-        # The explorer is the one page that runs a script, by decision (D-343).
-        if name != EXPLORER and "<script" in text.lower():
+        # The explorer runs a script by decision (D-343), and the parcours pages that give
+        # a cursor (D-375); no other page does.
+        if name not in scripted and "<script" in text.lower():
             raise SiteError(f"{name} porte un script : le site se lit sans en exécuter.")
     return files
 
 
 EXPLORER = "explorer.html"
+#: The explorer is withdrawn from the site (D-377): its grid ran on the code of goal 16
+#: (3c19f52), before the population of goal 19, and it would show the costs of then
+#: (59,91 Md€ at Attal's knob for 66,40 in the series). It comes back with a grid rerun,
+#: preregistered. The page's code and its checks stay.
+EXPLORATEUR_PUBLIE = False
 EXPLORER_JS = Path(__file__).resolve().parent / "site_explorer"
 
 

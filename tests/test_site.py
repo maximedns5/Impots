@@ -101,9 +101,10 @@ def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(buil
 
 
 def test_no_study_page_runs_a_script(built, monkeypatch) -> None:
-    # The explorer is the one page with a script (D-343), held by test_page_explorer.
+    # The explorer runs a script (D-343), and the parcours pages that give a cursor
+    # (D-375), held by their own tests.
     assert not any("<script" in text.lower() for name, text in built.items()
-                   if name != site.EXPLORER)
+                   if name != site.EXPLORER and not name.startswith("parcours-"))
     monkeypatch.setattr(site, "STYLE", "<script>alert(1)</script>")
     with pytest.raises(site.SiteError, match="script"):
         site.build()
@@ -185,8 +186,9 @@ def test_an_unrun_study_is_listed_without_a_page(tmp_path) -> None:
                           page=tmp_path / "futur.md", rapports=tmp_path / "rien")
     files = site.build([study])
     assert "futur.html" not in files
-    assert (f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné"
-            in files["index.html"])
+    # The first D-xxx of a page links to the method page (D-357): read the text.
+    text = re.sub(r"<[^>]+>", "", files["index.html"])
+    assert f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné" in text
 
 
 def test_a_table_without_its_header_line_is_refused() -> None:

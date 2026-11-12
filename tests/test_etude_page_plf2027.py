@@ -204,7 +204,7 @@ def test_every_other_article_is_listed_with_its_reason(page, reports) -> None:
     assert f"## Les {len(refused)} autres articles" in text
     for a in refused:
         kind, why = page.refusal(a.raison)
-        assert f"| {a.numero} | {a.intitule} | `{kind}` | {why} |" in text
+        assert f"| {a.numero} | {a.intitule} | {etude.case_lue(kind)} | {why} |" in text
         assert kind in ("scope", "structure", "data") and why != "."
 
 
@@ -283,8 +283,9 @@ def test_reports_that_are_not_the_study_s_are_refused(page, reports, label, name
 
 def test_the_band_is_read_as_a_cost_around_the_mechanical_cost(page, reports) -> None:
     section = page.render(page.load(reports)).split("\n## Art. 2 ")[1].split("\n## Art.")[0]
-    assert ("la mesure coûte de +2,61 Md€ à +3,19 Md€, central +2,90 Md€ (grade "
-            "**illustrative**), pour +2,90 Md€ sans eux") in section
+    assert ("la mesure coûte de +2,61 Md€ à +3,19 Md€, central +2,90 Md€ (bande "
+            "**extrapolée** : la réforme sort de l'étendue des variations sur lesquelles "
+            "les élasticités publiées ont été estimées), pour +2,90 Md€ sans eux") in section
 
 
 def test_a_band_that_is_not_around_the_balance_is_refused(page, reports) -> None:
@@ -328,8 +329,11 @@ def test_a_fan_is_read_with_its_strip_and_its_horizons_in_years(page, reports) -
     section = page.render(page.load(reports)).split("\n## Art. 2 ")[1].split("\n## Art.")[0]
     from impots import fiche
 
-    assert (f"éventail macro de grade **in-support**, couverture {fiche._pct(1.0)}, "
-            f"conjoncture « normale » :") in section
+    assert ("l'éventail macro (la fourchette de ce que des multiplicateurs publiés disent "
+            "du PIB et de l'emploi), **dans l'étendue des estimations**, le choc ne "
+            "dépassant pas ceux sur lesquels les multiplicateurs ont été estimés ; "
+            f"{fiche._pct(1.0)} de la mesure a un multiplicateur publié ; conjoncture "
+            "supposée normale, ni récession ni surchauffe :") in section
     assert "* **PIB, à 1 an** : [-1,00 Md€ ; +3,00 Md€], central +1,00 Md€" in section
     assert "* **PIB, à 2 ans** :" in section and "* **emploi, à 1 an** :" in section
     assert "> Pas une prévision." in section

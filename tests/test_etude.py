@@ -215,7 +215,9 @@ def test_in_mirror_the_band_and_the_fan_turn_over(plfss) -> None:
     section = _section(plfss.render(plfss.load()), "la prime d'activité")
     cost = 4.0e8
     assert (f"la mesure coûte de {fiche._eur(-1.1 * cost)} à {fiche._eur(-0.9 * cost)}, "
-            f"central {fiche._eur(-cost)} (grade **illustrative**), pour "
+            f"central {fiche._eur(-cost)} (bande **extrapolée** : la réforme sort de "
+            f"l'étendue des variations sur lesquelles les élasticités publiées ont été "
+            f"estimées), pour "
             f"{fiche._eur(-cost)} sans eux") in section
     assert "* **PIB, à 1 an** : [-3,00 Md€ ; +1,00 Md€], central -1,00 Md€" in section
 
@@ -397,7 +399,8 @@ def test_a_path_of_d349_says_the_monte_carlo_verdict_and_its_readings(lu) -> Non
     text = "\n".join(n.resolve(line) for line in lines)
     row = next(line for line in text.splitlines()
                if line.startswith("| art. 74 du PLF, les aides au logement |"))
-    assert row.endswith("| hausse | hausse |")
+    # The verdict and its share of draws beside it (D-378), then the θ box's reading.
+    assert re.search(r"\| hausse \(\d+\u202f% des tirages en hausse\) \| hausse \|$", row)
     assert "« hausse » quand au moins 90\u202f% des tirages font monter la dette" in text
     section = _section(text, "les aides au logement")
     assert ("**Le verdict**, lu sur le Monte-Carlo (D-345) : elle **augmente la dette** en "
@@ -408,7 +411,7 @@ def test_a_path_of_d349_says_the_monte_carlo_verdict_and_its_readings(lu) -> Non
     assert "| vieillie | -0,40 pt | de -0,80 pt à -0,10 pt | 3\u202f% | baisse |" in section
     assert "pour `taxe_carbone`" in section and "la variante est partielle" in section
     assert "**Brut d'IS.**" in section
-    assert "Le secteur public est câblé (D-346)" in text
+    assert "Le secteur public est modélisé statut par statut (D-346)" in text
     said = {item.texte: item for item in n.items}
     assert said["90\u202f%"].etage == "déclaré" and said["3,5\u202f%"].etage == "hypothèse"
 
@@ -429,8 +432,8 @@ def test_the_page_says_what_moved_against_the_frozen_series_and_why(lu) -> None:
                if line.startswith("| art. 74 du PLF, les aides au logement |"))
     assert row.endswith(f"| +1,20 pt → {etude._points(entry['debt'][0]['theta'])} | "
                         f"dépend de θ → hausse |")
-    assert ("* **art. 74 du PLF, les aides au logement** : le secteur public câblé (D-346), "
-            "le verdict lu sur le Monte-Carlo (D-345).") in section
+    assert ("* **art. 74 du PLF, les aides au logement** : le secteur public modélisé "
+            "statut par statut (D-346), le verdict lu sur le Monte-Carlo (D-345).") in section
 
 
 def test_a_study_half_of_d349_is_refused(lu) -> None:
@@ -480,9 +483,10 @@ def test_every_plfss_article_is_listed_with_its_door(plfss) -> None:
     assert "## Les 49 articles du PLFSS" in text
     for a in plf_coverage.ARTICLES_PLFSS_2027:
         kind, why = etude.refusal(a.raison)
-        assert f"| {a.numero} | {a.intitule} | `{kind}` | `{a.porte}` | {why} |" in text
+        assert (f"| {a.numero} | {a.intitule} | {etude.case_lue(kind)} | "
+                f"{etude.porte_lue(a.porte)} | {why} |") in text
     for porte, numeros in plf_coverage.portes_plfss_2027():
-        assert f"* `{porte}`, {len(numeros)} article" in text
+        assert f"* {etude.porte_lue(porte)}, {len(numeros)} article" in text
 
 
 def test_a_volet_read_against_its_registration_s_sense_is_refused(plfss) -> None:
@@ -728,7 +732,9 @@ def _etages(study: etude.Etude, start: str) -> list[tuple[str, bool]]:
 
 @pytest.mark.parametrize("nom, start, expected", [
     ("plfss2027", "| 1 | ", ["L1", "L1", "L2", "L2", "L2"]),
-    ("plfss2027", "| art. 74 du PLF, la prime", ["L2", "publié", "L2"]),
+    # The cost, the published figure, the figure noted when preregistered (D-378), the
+    # debt and the share of draws in which it rises.
+    ("plfss2027", "| art. 74 du PLF, la prime", ["L2", "publié", "L2", "L2", "L2"]),
     ("plfss2027", "Enregistré le", ["L2", "publié", "publié", "L2", "L2", "déclaré"]),
     ("plfss2027", "| Effet macro éteint après trois ans | figée", ["L2", "L2", "L2"]),
     ("plfss2027", "Le projet de loi", ["texte", "texte"]),
@@ -741,7 +747,7 @@ def test_each_answer_says_its_layer(nom, start, expected) -> None:
     found = _etages(etude.definition(nom), start)
     assert [etage for etage, _ in found] == expected
     # Only a gap in the debt is conditional, and each of its numbers is.
-    assert all(conditional == ("Effet macro" in start or ("art. 74" in start and i == 2))
+    assert all(conditional == ("Effet macro" in start or ("art. 74" in start and i >= 3))
                for i, (_, conditional) in enumerate(found))
 
 

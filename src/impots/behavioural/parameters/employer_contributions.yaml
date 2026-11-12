@@ -31,8 +31,12 @@ parameters:
     source:
       citation: >
         Bunel & L'Horty, « The Effects of Reduced Social Security Contributions on
-        Employment », Économie et Statistique n° 429-430, 2012, tableaux 5 et 7.
-      url: https://www.insee.fr/fr/statistiques/fichier/1377767/ES429F.pdf
+        Employment: An Evaluation of the 2003 French Reform », Fiscal Studies, vol. 33,
+        n° 3, 2012, p. 371-398 (doi 10.1111/j.1475-5890.2012.00165.x). Tableaux 5 à 7
+        lus dans sa version de travail, TEPP n° 2012-12, p. 20-21 : tableau 7, MCO,
+        −0,429 en postes et −0,522 en ETP ; régression quantile en postes, −0,318 et
+        −0,308.
+      url: https://www.tepp-repec.eu/RePEc/files/teppwp/TEPP-WP-12-12-Bunel-LHorty.pdf
       vintage: "2012"
     verifier:
       verdict: SCOPE_PROBLEM
@@ -70,7 +74,7 @@ parameters:
       citation: >
         Groupe d'experts sur le SMIC, rapport 2025 — la courbe d'élasticité décroît
         « pour atteindre −0,1 au niveau de deux fois le Smic ».
-      url: https://www.strategie.gouv.fr/publications/rapport-groupe-dexperts-smic-2025
+      url: https://www.vie-publique.fr/files/rapport/pdf/301429_0.pdf#page=152
       vintage: "2025"
     verifier:
       verdict: SCOPE_PROBLEM
@@ -101,7 +105,7 @@ parameters:
       max_variation_graded_in_support: null
     source:
       citation: "Groupe d'experts sur le SMIC, rapport 2025."
-      url: https://www.strategie.gouv.fr/publications/rapport-groupe-dexperts-smic-2025
+      url: https://www.vie-publique.fr/files/rapport/pdf/301429_0.pdf#page=152
       vintage: "2025"
     verifier:
       verdict: SCOPE_PROBLEM

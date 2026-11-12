@@ -4,9 +4,15 @@
 
 ## Ce que dit cette étude
 
-La part chiffrée du programme coûte 22,92 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +414 € par an dans le dixième le plus modeste à +916 € dans le dixième le plus aisé, le plus touché étant le 9e dixième (+974 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 4,47 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 100 % des tirages du calcul d'incertitude, et l'outil conclut que cette part du programme augmente la dette. L'effet sur l'activité n'est lu que pour la TVA et les accises sur l'énergie. Sans aucun effet sur l'activité, la dette serait plus haute de 5,91 points de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+La part chiffrée du programme coûte 22,92 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +414 € par an dans le dixième le plus modeste à +916 € dans le dixième le plus aisé, le plus touché étant le 9e dixième (+974 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 4,47 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 100 % des tirages du calcul d'incertitude, et l'outil conclut que cette part du programme augmente la dette. L'effet sur l'activité n'est lu que pour la TVA. Les accises sur l'énergie entrent dans la dette sans effet sur l'activité, car le choc porte sur les volumes d'énergie (folio 120) : l'écart du solde contient la baisse de l'assiette énergie, qui n'est pas un effet de l'activité. Sans aucun effet sur l'activité, la dette serait plus haute de 5,91 points de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
-Selma Labib, NPA-Révolutionnaires, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme, relevé le 01/11/2026, porte 7 mesures, dont 1 énonce un paramètre. Cet outil en chiffre 1, la seule qui en énonce un, et dit pourquoi il ne chiffre pas les autres. Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
+Selma Labib, NPA-Révolutionnaires, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 01/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
+
+| mesures relevées | dont qui énoncent un paramètre | chiffrées par l'outil | part des mesures paramétrées |
+|---|---|---|---|
+| 7 | 1 | 1 | 100 % |
+
+Pour la part chiffrée, cette seule mesure, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
 Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
@@ -14,7 +20,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| la part chiffrée | +22,92 Md€ | — | +4,47 pt | hausse | hausse |
+| la part chiffrée (1 mesure sur 1 paramétrée, 7 relevées) | +22,92 Md€ | — | +4,47 pt | hausse (100 % des tirages en hausse) | hausse |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -51,7 +57,7 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 **Bande comportementale : aucune, et la raison est donnée.** Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.
 
-**L'effet sur l'économie**, l'éventail macro de grade **in-support**, couverture 100 %, conjoncture « normal » :
+**L'effet sur l'économie**, l'éventail macro (la fourchette de ce que des multiplicateurs publiés disent du PIB et de l'emploi), **dans l'étendue des estimations**, le choc ne dépassant pas ceux sur lesquels les multiplicateurs ont été estimés ; 100 % de la mesure a un multiplicateur publié ; conjoncture supposée normale, ni récession ni surchauffe :
 
 * **PIB, à 1 an** : [-4,79 Md€ ; +26,13 Md€], central +11,34 Md€
 * **PIB, à 2 ans** : [+2,87 Md€ ; +32,16 Md€], central +17,24 Md€
@@ -59,6 +65,8 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 * **emploi, à 1 an** : [-17,94 ; +93,96] milliers ETP, central +40,37
 * **emploi, à 2 ans** : [+18,20 ; +214,76] milliers ETP, central +115,53
 * **emploi, à 3 ans** : [+7,95 ; +256,23] milliers ETP, central +134,08
+
+**Ce que l'éventail compte et que la dette ne lit pas.** L'éventail compte les accises sur l'énergie, 15,75 Md€ des 22,92 Md€ de la première année : Mésange en publie une variante, et l'éventail leur trouve donc un multiplicateur publié. La boucle de la dette ne les lit pas, car le choc porte sur les volumes d'énergie (folio 120) : l'écart du solde contient la baisse de l'assiette énergie, qui n'est pas un effet de l'activité. Le PIB et l'emploi que l'éventail leur prête n'entrent donc pas dans la dette, qui les compte comme un coût sans effet sur l'activité. L'éventail ci-dessus mêle ce que la dette lit (la TVA) et ce qu'elle ne lit pas, sans séparer leurs parts : il ne se lit pas comme l'effet sur l'activité que la dette compte.
 
 > Couche macro (L4) : ordre de grandeur et composition, pas une prévision. L'éventail des estimations crédibles pour un même choc est large — la dispersion entre études publiées est du même ordre que la valeur centrale elle-même. C'est une propriété de la littérature, pas de ce modèle.
 
@@ -80,7 +88,7 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 **Le verdict**, lu sur le Monte-Carlo (D-345) : elle **augmente la dette** en 2035 dans au moins 90 % des tirages, vue vieillie.
 
-**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
+**Les sensibilités, hors du verdict.** Les deux persistances que les pages lisaient avant la persistance « lue » (D-336), sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -120,11 +128,13 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 
 ## Ce que bouge chaque paramètre
 
-Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le chemin annuel chiffre année par année avec les comportements et la boucle. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
+Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035, un calcul rapide qui ne refait pas chaque année. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le calcul complet chiffre année par année avec les comportements et la boucle macro. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
 
 ### Suppression de la TVA et des taxes sur les carburants
 
 *Le programme : suppression.*
+
+Ce que l'outil en lit : La TVA et l'accise des carburants des ménages tombent à zéro, à volumes constants et répercutées en entier dans les prix (D-323). « Les taxes » sont lues comme l'accise sur le gazole et l'essence ; la majoration régionale et la taxe incitative sur les biocarburants ne sont pas dans le moteur. Plages jusqu'au droit de 2026 (la mesure retirée).
 
 | `tva_postes.carburants` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
@@ -146,7 +156,7 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 ## Le programme, mesure par mesure
 
-Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure à zéro : la porte dit ce que l'outil devrait savoir faire pour la chiffrer. Une mesure vague n'énonce ni taux ni montant.
+Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure à zéro : sa « porte » dit ce qui manque à l'outil, ce qu'il devrait savoir faire pour la chiffrer. Une mesure vague n'énonce ni taux ni montant.
 
 | mesure | ce que dit le candidat | sort | pourquoi |
 |---|---|---|---|
@@ -168,21 +178,21 @@ La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dan
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée | +22,89 Md€ → +22,92 Md€ | +4,47 pt → +4,47 pt | hausse → hausse |
+| la part chiffrée (1 mesure sur 1 paramétrée, 7 relevées) | +22,89 Md€ → +22,92 Md€ | +4,47 pt → +4,47 pt | hausse → hausse |
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée** : le secteur public câblé (D-346), la TVA des ménages au point net (D-348), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (1 mesure sur 1 paramétrée, 7 relevées)** : le secteur public modélisé statut par statut (D-346), la TVA des ménages lue dans Mésange sans la part que les administrations se paient (D-348), le verdict lu sur le Monte-Carlo (D-345).
 
-Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une seule la touche ; ailleurs, elles ne se séparent pas sans une passe par correction, qui n'est pas faite.
+Là où une seule correction touche une ligne, l'écart avant → après est ce qu'elle pèse (D-352) ; ailleurs, les corrections ne se séparent pas sans un calcul refait sans chacune, qui n'est pas fait.
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
-Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
+Le secteur public est modélisé statut par statut (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 

@@ -22,6 +22,30 @@ calé sur des totaux publiés), et à une population d'entreprises construite à
 tableaux publiés de l'Insee (Ésane). Il chiffre une réforme en faisant tourner la loi deux
 fois, avec et sans elle, et en comptant l'écart. Il ne prévoit rien : chaque nombre est
 conditionnel aux hypothèses écrites à côté de lui.</p>
+<p>Le <span id="non-recours">non-recours</span> : une partie des foyers qui ont droit au RSA
+ou à la prime d'activité ne les demandent pas. La Drees l'estime pour la fin de 2021, en
+part des foyers qui y ont droit : 33 à 37 % pour le RSA, 48 à 52 % pour la prime ; et en
+part des montants dus, moins, parce que les petits droits sont les moins demandés : 29 à
+32 % pour le RSA, 43 à 46 % pour la prime. La loi codée donne un droit ; la Caf verse
+moins. Les études servent donc ces deux prestations <span id="en-esperance">en
+espérance</span> : chaque foyer reçoit son droit multiplié par la probabilité qu'il le
+demande. Cette probabilité croît avec le montant du droit, selon une forme supposée dont la
+pente est ajustée sur les taux de recours par tranche de montant que la Drees publie ; son
+plafond est <em>calé</em> pour que la part des foyers ayant droit du modèle qui ne la
+demandent pas soit le milieu de la fourchette publiée en foyers, 35 % pour le RSA et 50 %
+pour la prime. Le non-recours en montant n'est pas calé : il sert de contrôle, et le modèle
+le trouve un peu au-dessus de la fourchette publiée. Le calage ne vise ni le nombre
+d'allocataires ni le montant que la Caf verse ; mais une ligne de la grille qui compte les
+foyers servis en espérance retrouve, par construction, la part de recourants qu'on lui a
+imposée : elle ne prouve rien du recours, seulement le nombre de foyers ayant droit. Le coût d'une réforme de ces prestations
+tient ainsi compte de ceux qui ne la toucheront pas. Les aides au logement sont servies en
+entier, faute d'un taux publié.</p>
+<p>Le <span id="pont">pont de non-recours</span> est l'ancienne façon de le compter : un
+seul coefficient, tiré des travaux de la Drees (1,355 pour le RSA, 1,725 pour la prime), qui
+divise le total des droits pour retrouver le total versé. Diviser par 1,725, c'est verser
+58 % des droits : un non-recours d'environ 42 % des montants, proche de la fourchette en
+montant, et non de la moitié des foyers. Des lignes de la grille de vérification le
+gardent, telles qu'elles ont été préenregistrées.</p>
 
 <h2 id="trois-reponses">Les trois réponses</h2>
 <ol>
@@ -37,18 +61,37 @@ taux). Quand aucune étude publiée ne permet de chiffrer un comportement, la pa
 bande est absente et pourquoi : une bande absente n'est pas une bande nulle.</li>
 <li><strong>Ce qu'elle fait à la dette en 2035.</strong> L'écart de dette publique, en
 <span id="point-de-pib">points de PIB</span> : la dette de 2035 avec la mesure, moins la
-dette de 2035 sans elle. Un point de PIB de 2035 vaut environ 40 milliards d'euros, sous les hypothèses de
+dette de 2035 sans elle. Les pages le notent <span id="delta-b">Δb</span> (« delta b »,
+la différence de dette). Un point de PIB de 2035 vaut environ 40 milliards d'euros, sous les hypothèses de
 croissance des études.</li>
 </ol>
 
 <h2 id="etiquettes">Les étiquettes de confiance</h2>
-<p>À côté de chaque nombre, une étiquette dit sur quoi il repose : L1 pour ce qui vient de
-la population, L2 pour la simulation mécanique, L3 pour les comportements, L4 pour
-l'économie entière ; « publié » pour un chiffre du gouvernement, « déclaré » pour une
-tolérance ou un seuil écrits avant le calcul, « hypothèse » pour ce que l'étude suppose,
-« vérifié » pour l'écart d'un total du moteur à son total publié de 2022 à 2024. Plus l'étage
-est haut, moins le nombre est sûr. Une étiquette « sous hypothèses » dit que le nombre
-change si les hypothèses de croissance, de taux ou de dépense changent.</p>
+<p>À côté de chaque nombre, une étiquette dit sur quoi il repose. Un nombre que l'outil
+calcule porte son <em>étage</em>, de L0 à L4 ; chaque étage s'appuie sur ceux du
+dessous :</p>
+<ul>
+<li><strong>L0, la loi</strong> : chaque taux, seuil et barème, tel que l'outil le code.
+Il est contrôlé en refaisant l'impôt de ménages types avec le simulateur de la DGFiP.</li>
+<li><strong>L1, la population</strong> : les ménages construits à partir de données
+ouvertes et calés sur des totaux publiés ; juste sur les grands totaux, moins sûre pour
+les très hauts revenus ou les situations rares.</li>
+<li><strong>L2, le coût mécanique</strong> : la loi appliquée à cette population, qui paie
+quoi le premier jour, sans que personne change de comportement.</li>
+<li><strong>L3, les comportements</strong> : ce que le travail, les revenus déclarés ou
+l'investissement changent en réponse ; une fourchette tirée d'études publiées, jamais un
+point.</li>
+<li><strong>L4, l'activité et la dette</strong> : ce que la mesure fait à la croissance de
+toute l'économie, et par elle à la dette ; un ordre de grandeur, large par construction, et
+souvent indisponible.</li>
+</ul>
+<p>Plus l'étage est haut, moins le nombre est sûr. Un nombre que l'outil reprend dit d'où il
+vient : « publié » pour un chiffre du gouvernement, « déclaré » pour une tolérance ou un
+seuil écrits avant le calcul, « hypothèse » pour ce que l'étude suppose, « vérifié » pour
+l'écart d'un total du moteur à son total publié de 2022 à 2024, avec une seule population,
+celle de 2024, ramenée aux deux autres années. Une étiquette « sous
+hypothèses » dit que le nombre change si les hypothèses de croissance, de taux ou de
+dépense changent. Au pied de chaque page, une légende rappelle chaque étiquette.</p>
 
 <h2 id="la-dette">La dette, et son incertitude</h2>
 <p>La dette suit une identité comptable : chaque année, la dette d'avant porte intérêt, le
@@ -59,6 +102,12 @@ recettes et grossir le dénominateur. Cet effet sur l'activité est lu dans
 Trésor et de l'Insee, qui publie la réponse du PIB et du solde public à chaque type de
 mesure (une baisse de cotisations, d'impôt sur le revenu, de TVA) à un, deux, trois, cinq
 et dix ans.</p>
+<p>La <span id="decomposition">décomposition</span> range l'écart de dette de 2035 en trois
+marches, qui s'additionnent. <em>Le coût</em> : la dette qu'ajoute la mesure, comportements
+compris, si l'activité ne bougeait pas. <em>Le dénominateur</em> : la même dette rapportée
+à un PIB que la mesure a fait monter, ou baisser ; un PIB plus haut fait baisser le ratio
+sans qu'un euro de dette change. <em>Les recettes induites</em> : ce que ce PIB plus haut
+rend chaque année en impôts et en cotisations, et qui ne s'emprunte donc pas.</p>
 <p><span id="theta">θ</span> (thêta) dit où l'on se place dans chaque fourchette publiée :
 θ = 0 est son bas, θ = 1 son haut, θ½ son milieu. Les nombres de tête sont à θ½. La
 <span id="boite">boîte θ</span> fait passer chaque fourchette à ses deux extrêmes : ses
@@ -74,9 +123,10 @@ seulement dans quel sens la dette bouge, et avec quelle assurance.</p>
 population avec les salaires ; la <span id="vue-figee">vue figée</span> la garde telle
 qu'elle est. Les deux encadrent l'effet du temps sur la base taxée.</p>
 <p>La <span id="persistance">persistance</span> dit combien de temps l'effet sur l'activité
-dure. « Lue » le lit dans Mésange à ses horizons, jusqu'à dix ans : c'est la lecture des
-nombres de tête. « Éteint » le coupe après trois ans, « tenu » le garde au niveau de la
-troisième année : ce sont des sensibilités, montrées à part.</p>
+dure. La persistance « lue » le lit dans Mésange à ses horizons, jusqu'à dix ans : c'est la
+lecture des nombres de tête et du verdict. La persistance « éteinte » coupe l'effet après
+trois ans ; la persistance « tenue » le garde ensuite au niveau de la troisième année. Ces
+deux-là sont des sensibilités, montrées à part : elles disent ce que pèse le choix.</p>
 
 <h2 id="programmes">Les programmes des candidats</h2>
 <p>Chaque programme est relevé et sourcé, mesure par mesure. Une mesure qui énonce un
@@ -88,6 +138,10 @@ jamais pour le programme entier</strong> : un programme chiffré en partie peut 
 creuser ou baisser la dette pour une raison qui tient à l'outil, parce que les mesures qui
 compensent sont parmi celles qu'il ne chiffre pas. Un montant que le candidat annonce
 lui-même est montré à part, jamais additionné.</p>
+<p>Le même mot sert, à côté de l'effet sur l'économie, pour autre chose : la part de ce que
+la mesure déplace (en valeur absolue, hausses et baisses comptées ensemble) pour laquelle
+Mésange publie une réponse. Le reste entre dans la dette sans aucun effet sur
+l'activité.</p>
 <p>Une mesure est chiffrée <span id="miroir">en miroir</span> quand le droit en vigueur
 porte déjà ce qu'elle produit : l'outil chiffre l'inverse et change le signe.</p>
 
@@ -95,24 +149,47 @@ porte déjà ce qu'elle produit : l'outil chiffre l'inverse et change le signe.<
 <p>Quand le gouvernement publie le chiffrage d'un texte (l'évaluation préalable d'un projet
 de loi de finances), l'outil écrit d'abord son propre chiffrage et une
 <span id="tolerance">tolérance</span>, avant d'ouvrir celui du gouvernement ; puis il les
-compare. Une tolérance n'est jamais changée après le calcul. Les pages disent « dans la
-tolérance » ou « hors de la tolérance », et les écarts qui restent sont dits, pas
-cachés.</p>
+compare. La tolérance est l'écart admis entre les deux, écrit d'avance : un pourcentage et
+un montant (par exemple « 25 % ou 200 M€ »), le plus large des deux l'emportant. Une
+tolérance n'est jamais changée après le calcul. Les pages disent « dans la tolérance » ou
+« hors de la tolérance », et les écarts qui restent sont dits, pas cachés.</p>
+<p>Ce geste est le <span id="preenregistrement">préenregistrement</span> : le chiffrage de
+l'outil, sa tolérance et son pronostic sont écrits, datés et publiés dans le journal du
+projet avant que le chiffre officiel soit lu. Le chiffre noté est celui du
+préenregistrement, même quand le moteur a changé depuis : on ne refait pas un chiffrage
+après avoir vu la réponse.</p>
+<p>La <span id="grille">grille de vérification</span> fait de même pour la population :
+chaque grand total du moteur (cotisations, impôt sur le revenu, prestations versées,
+niveau de vie) est comparé à son total publié, pour 2022, 2023 et 2024, avec une tolérance
+écrite avant le calcul. Une ligne est « tenue » quand son écart reste dans sa tolérance.
+C'est elle qui dit où la population se trompe, et de combien.</p>
 <p>Les renvois de la forme « D-345 » désignent les décisions du journal du projet, qui dit
 pourquoi chaque choix a été fait. Ils servent à qui veut vérifier ; une page se lit sans
 eux.</p>
 
 <h2 id="vocabulaire">Les autres mots des pages</h2>
 <dl>
-<dt>La porte d'un refus</dt><dd>Ce que l'outil devrait savoir faire pour chiffrer la
-mesure refusée : un module (les retraites, les successions), une donnée, un canal. Les
+<dt id="porte">La porte d'un refus</dt><dd>Pourquoi une mesure n'est pas chiffrée, dit par
+ce qui manque à l'outil pour le faire : un module (les retraites, les successions), une
+donnée (le patrimoine des ménages), un canal. La porte est ce qu'il faudrait ouvrir ; les
 refus sont classés par porte.</dd>
+<dt id="bandeaux">Le bandeau maladie, le bandeau famille</dt><dd>Deux baisses de
+cotisations patronales, en vigueur jusqu'en 2025 : l'une sur l'assurance maladie (7 % au
+lieu de 13 %), l'autre sur les allocations familiales (3,45 % au lieu de 5,25 %), pour les
+salaires sous un plafond (en 2024, 2,5 et 3,5 fois le SMIC de la fin de 2023). Elles
+disparaissent en 2026, fondues dans la réduction générale.</dd>
+<dt id="reduction-generale">La réduction générale</dt><dd>L'allègement des cotisations
+patronales sur les bas salaires : maximal au SMIC, il décroît avec le salaire et s'annule
+à 1,6 SMIC jusqu'en 2025, à 3 SMIC depuis 2026.</dd>
 <dt>Une plage</dt><dd>Les trois points (le bas, la valeur du candidat, le haut) par
 lesquels une étude parcourt un paramètre chiffré, pour montrer ce qu'il déplace. Chaque
 point est mécanique, sans comportements ni effet sur l'activité.</dd>
-<dt>Le grade d'une bande</dt><dd>« In-support » quand la réforme reste dans le domaine où
-les élasticités ont été estimées ; « illustrative » quand elle en sort, et que la bande est
-une extrapolation, élargie et signalée comme telle.</dd>
+<dt id="grade">Le grade d'une bande</dt><dd>« Dans l'étendue des estimations » quand la réforme reste
+dans le domaine où les élasticités ont été estimées (<em>in-support</em>) ; « extrapolée »
+quand elle en sort, et que la bande est une extrapolation, élargie et signalée comme telle
+(<em>illustrative</em>) ; « sans estimation publiée » quand aucune élasticité publiée ne
+couvre le prélèvement. « Aucun canal » dit qu'aucun canal des comportements ne lit la
+mesure : elle reste mécanique.</dd>
 <dt>Le chemin</dt><dd>Le calcul année par année jusqu'en 2035, avec les comportements et
 l'effet sur l'activité ; le chemin rapide reporte la seule première année, en part de PIB,
 sans eux.</dd>
@@ -155,7 +232,7 @@ déclarées du Monte-Carlo ; d'autres lois donneraient d'autres probabilités.</
 <h2 id="signaler">Signaler une erreur</h2>
 <p>Une erreur, un nombre qui paraît faux, une phrase qui se lit mal : <a href="https://github.com/maximedns5/Impots/issues">https://github.com/maximedns5/Impots/issues</a>. Chaque signalement reçoit une réponse, et chaque correction est datée sur la page.</p>
 
-<section id="etages"><h2>Les étages de confiance</h2><p>À côté de chaque nombre, ce sur quoi il repose. Un nombre que l'outil calcule dit son étage, de L1 à L4 ; un nombre qu'il reprend dit d'où il vient. Un écart de dette dit l'étage le plus haut qui y entre, et qu'il est <em>sous hypothèses</em> : celles du cadre nommé en bas de page, et θ.</p><dl><dt id="etage-l1"><span class="etage e-l1">L1</span></dt><dd>population synthétique calée sur des totaux publiés : bonne sur les agrégats, faible dans les queues.</dd><dt id="etage-l2"><span class="etage e-l2">L2</span></dt><dd>simulation mécanique : qui paie quoi le premier jour, personne ne change de comportement.</dd><dt id="etage-l3"><span class="etage e-l3">L3</span></dt><dd>réponse des comportements : une fourchette sur des élasticités publiées, jamais un point.</dd><dt id="etage-l4"><span class="etage e-l4">L4</span></dt><dd>ordre de grandeur macroéconomique, en éventail : large par construction, et souvent indisponible.</dd><dt id="etage-publie"><span class="etage e-publie">publié</span></dt><dd>le chiffrage du gouvernement, l&#x27;évaluation préalable publiée avec le texte.</dd><dt id="etage-texte"><span class="etage e-texte">texte</span></dt><dd>ce que le texte de loi, ou son triage, compte.</dd><dt id="etage-hypothese"><span class="etage e-hypothese">hypothèse</span></dt><dd>ce que l&#x27;étude suppose : son scénario, son cadre.</dd><dt id="etage-declare"><span class="etage e-declare">déclaré</span></dt><dd>une tolérance ou un seuil écrits avant le chiffrage.</dd><dt id="etage-verifie"><span class="etage e-verifie">vérifié</span></dt><dd>l&#x27;écart d&#x27;un total du moteur à son total publié, sur 2022, 2023 et 2024 : la grille de vérification (D-364).</dd><dt id="etage-programme"><span class="etage e-programme">programme</span></dt><dd>ce que le programme du candidat énonce, relevé et sourcé dans `programmes/`.</dd><dt id="etage-annonce"><span class="etage e-annonce">annoncé</span></dt><dd>un montant que le candidat annonce lui-même, que le moteur ne vérifie pas et n&#x27;additionne jamais à son chiffrage (D-319).</dd></dl></section>
+<section id="etages"><h2>Les étages de confiance</h2><p>À côté de chaque nombre, ce sur quoi il repose. Un nombre que l'outil calcule dit son étage, de L0 à L4 ; un nombre qu'il reprend dit d'où il vient. Un écart de dette dit l'étage le plus haut qui y entre, et qu'il est <em>sous hypothèses</em> : celles du cadre nommé en bas de page, et θ.</p><dl><dt id="etage-l0"><span class="etage e-l0">L0</span></dt><dd>la loi : chaque taux, seuil et barème, tel que l&#x27;outil le code ; contrôlée en refaisant l&#x27;impôt de ménages types avec le simulateur de la DGFiP.</dd><dt id="etage-l1"><span class="etage e-l1">L1</span></dt><dd>population synthétique calée sur des totaux publiés : bonne sur les agrégats, faible dans les queues.</dd><dt id="etage-l2"><span class="etage e-l2">L2</span></dt><dd>simulation mécanique : qui paie quoi le premier jour, personne ne change de comportement.</dd><dt id="etage-l3"><span class="etage e-l3">L3</span></dt><dd>réponse des comportements : une fourchette sur des élasticités publiées, jamais un point.</dd><dt id="etage-l4"><span class="etage e-l4">L4</span></dt><dd>ordre de grandeur macroéconomique, en éventail : large par construction, et souvent indisponible.</dd><dt id="etage-publie"><span class="etage e-publie">publié</span></dt><dd>le chiffrage du gouvernement, l&#x27;évaluation préalable publiée avec le texte.</dd><dt id="etage-texte"><span class="etage e-texte">texte</span></dt><dd>ce que le texte de loi, ou son triage, compte.</dd><dt id="etage-hypothese"><span class="etage e-hypothese">hypothèse</span></dt><dd>ce que l&#x27;étude suppose : son scénario, son cadre.</dd><dt id="etage-declare"><span class="etage e-declare">déclaré</span></dt><dd>une tolérance ou un seuil écrits avant le chiffrage.</dd><dt id="etage-verifie"><span class="etage e-verifie">vérifié</span></dt><dd>l&#x27;écart d&#x27;un total du moteur à son total publié, sur 2022, 2023 et 2024, avec une seule population, celle de 2024, ramenée aux deux autres années : la grille de vérification (D-364).</dd><dt id="etage-programme"><span class="etage e-programme">programme</span></dt><dd>ce que le programme du candidat énonce, relevé et sourcé dans `programmes/`.</dd><dt id="etage-annonce"><span class="etage e-annonce">annoncé</span></dt><dd>un montant que le candidat annonce lui-même, que le moteur ne vérifie pas et n&#x27;additionne jamais à son chiffrage (D-319).</dd></dl></section>
 </main>
 <footer><p>Pages construites par <code>impots site construire</code> depuis les études et leurs seuls rapports commités ; rien n'y est calculé, rien n'y tourne.</p><p>Une erreur, un nombre qui paraît faux, une phrase qui se lit mal : <a href="https://github.com/maximedns5/Impots/issues">https://github.com/maximedns5/Impots/issues</a>. Chaque signalement reçoit une réponse, et chaque correction est datée sur la page.</p></footer>
 </body>

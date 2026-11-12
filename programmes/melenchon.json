@@ -156,7 +156,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 3000000000.0,
@@ -205,7 +205,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 500000000.0,
@@ -235,7 +235,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 3600000000.0,
@@ -265,7 +265,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 3500000000.0,
@@ -295,7 +295,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 3000000000.0,
@@ -325,7 +325,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 2600000000.0,
@@ -355,7 +355,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 2000000000.0,
@@ -385,7 +385,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 7000000000.0,
@@ -415,7 +415,7 @@
       ],
       "refus": {
         "porte": "depense_publique",
-        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
         "montant_eur": 10000000000.0,
@@ -1023,7 +1023,7 @@
             "max": 3.0
           }
         ],
-        "note": "Sur le droit de 2026, les bandeaux maladie et famille ont disparu et la réduction générale est la seule exonération générale ; son seuil de sortie, 3 SMIC (allegement_general_plafond), est ramené à 2 SMIC. Le candidat ne dit rien de la courbe sous 2 SMIC : elle reste celle de 2026, et la réduction s'arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de 3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l'écart)."
+        "note": "Sur le droit de 2026, les taux réduits de cotisations maladie et famille (les « bandeaux ») ont disparu, fondus dans la réduction générale des cotisations patronales, qui est la seule exonération générale ; son seuil de sortie, 3 SMIC (le paramètre allegement_general_plafond), est ramené à 2 SMIC. Le candidat ne dit rien de la courbe sous 2 SMIC : elle reste celle de 2026, et la réduction s'arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de 3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l'écart)."
       }
     },
     {
@@ -1042,7 +1042,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Une trajectoire de déficit et de dette est une hypothèse de la chaîne de la dette, pas une réforme."
+        "raison": "Une trajectoire de déficit et de dette est une hypothèse du calcul de la dette, pas une réforme."
       }
     },
     {
@@ -1080,7 +1080,7 @@
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Un investissement hors budget de l'État par un pôle public bancaire n'est ni un impôt ni une prestation : il n'entrerait dans la chaîne de la dette que comme hypothèse de croissance."
+        "raison": "Un investissement hors budget de l'État par un pôle public bancaire n'est ni un impôt ni une prestation : il n'entrerait dans le calcul de la dette que comme hypothèse de croissance."
       }
     },
     {
