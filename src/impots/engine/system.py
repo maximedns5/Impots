@@ -51,10 +51,13 @@ def baseline() -> FranceTaxBenefitSystem:
     global _TBS
     if _TBS is None:
         from impots.engine import parametres
+        from impots.engine.boutons_programmes import ajouter_cvec
         from impots.engine.corrections import apply_to as apply_benefit_corrections
         from impots.patrimoine.corrections import apply_to
 
-        _TBS = apply_benefit_corrections(apply_to(FranceTaxBenefitSystem()))
+        # La CVEC, qu'openfisca ne porte pas (but 21, étape 2) : nulle pour qui ne déclare
+        # pas d'étudiant du supérieur, c'est-à-dire, aujourd'hui, pour tous.
+        _TBS = ajouter_cvec(apply_benefit_corrections(apply_to(FranceTaxBenefitSystem())))
         # Its own cache of the parameters at each instant: openfisca's holds 128, shared by
         # every system, and a full-tier household reads more than that (D-311).
         parametres.memoriser(_TBS)
@@ -91,6 +94,7 @@ def reformed(key: str) -> Any:
     """
     from impots.api.schemas import ReformSpec
     from impots.engine import parametres
+    from impots.engine.boutons_programmes import verifier_formules, verifier_indexations
     from impots.engine.reforms import (
         make_reform,
         verify_allegements,
@@ -116,6 +120,8 @@ def reformed(key: str) -> Any:
     verify_capital(system, spec, decoded["year"])
     verify_revalorisations(system, spec, decoded["year"])
     verify_echelles(system, baseline(), spec, decoded["year"])
+    verifier_indexations(system, spec, year)
+    verifier_formules(system, spec, year)
     return system
 
 

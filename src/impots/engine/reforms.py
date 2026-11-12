@@ -37,6 +37,7 @@ from typing import TYPE_CHECKING, Any
 from openfisca_core import periods
 from openfisca_core.reforms import Reform
 
+from impots.engine.boutons_programmes import appliquer_formules, appliquer_indexations
 from impots.parameters import (
     differs,
     reactivate_bracket,
@@ -330,12 +331,15 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "plafond_global_niches": PATH_PLAFOND_GLOBAL_NICHES,
     # Capital income (D-249).
     "pfu_taux": PATH_PFU,
+    # La CVEC (but 21, étape 2) : un paramètre que l'arbre d'openfisca ne porte pas, et que
+    # `boutons_programmes.ajouter_cvec` ajoute au droit de référence. 0 la supprime.
+    "cvec_montant": ("cvec", "montant"),
 }
 
 #: Knobs that move the taxation of capital income. Read back by `verify_capital`, the
 #: guard 9 of PHASE11_SPEC §10, and claimed by the dividend channel C10.
 CAPITAL_KNOBS = frozenset({"pfu_taux", "csg_capital_taux_global",
-                           "prelevement_solidarite_capital"})
+                           "prelevement_solidarite_capital", "pfu_supprime"})
 
 #: Knobs that multiply every active rate of a set of scales by one factor (D-320). The
 #: employee's retirement contributions are five scales, each by tranche of the PSS; a
@@ -483,9 +487,12 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                     coefficient = getattr(spec, knob, None)
                     if coefficient is not None:
                         _apply_revalorisation(parameters, knob, coefficient, year)
+                appliquer_indexations(parameters, spec, year)
                 return parameters
 
             self.modify_parameters(modifier_function=modify)
+            # Les boutons qui changent une formule, pas un paramètre (but 21, étape 2).
+            appliquer_formules(self, spec, year)
 
     return UserReform
 

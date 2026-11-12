@@ -150,6 +150,32 @@ def run(
     columns = _extract(_simulate(baseline(), population, year), year)
     timings["baseline_s"] = round(time.perf_counter() - started, 3)
 
+    if reform is not None and reform.impots_production_baisse is not None:
+        # L'enveloppe se traduit sur ce que la CVAE et la C3S rapportent ici (but 21, étape 2).
+        from impots.entreprises.reforms import traduire_enveloppe
+
+        weight = population["weight"].to_numpy().astype(np.float64)
+        c3s_taux_loi = float(baseline().parameters(f"{year}-01-01").c3s.taux)
+        reform, traduction = traduire_enveloppe(
+            reform, float((columns["cvae"] * weight).sum()),
+            float((columns["c3s"] * weight).sum()), c3s_taux_loi)
+        # La C3S est linéaire dans son taux ; la CVAE ne l'est qu'à l'arrondi de ses taux
+        # près. Son facteur est donc réglé sur la population de la passe, jusqu'à ce que sa
+        # baisse soit sa part de l'enveloppe, et l'écart qui reste est dit.
+        target = traduction["cvae_loi_eur"] - traduction["baisse_cvae_eur"]
+        deductibles = (None if decomposition.sans("E2")
+                       else columns["cvae"] + columns["c3s"])
+        for _ in range(12):
+            echelle = reform.cvae_echelle
+            if not 0.0 < echelle < 1.0 or target <= 0:
+                break
+            got = float((_extract(_simulate(reformed_for(reform, year), population, year,
+                                            deductibles), year)["cvae"] * weight).sum())
+            if abs(got - target) <= 1e-6 * traduction["cvae_loi_eur"] or got <= 0:
+                break
+            reform = reform.model_copy(update={"cvae_echelle": min(1.0, echelle * target / got)})
+        traduction["cvae_echelle"] = reform.cvae_echelle
+        diagnostics["enveloppe"] = traduction
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
         # Without E2 the reform's run deducts its own CVAE and C3S, as before D-347 (D-354).
