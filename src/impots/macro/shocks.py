@@ -73,6 +73,8 @@ INSTRUMENT_MAP = {
     # The CSG of the non-salariés (but 19, étape 2): the same levy, read by the same
     # Mésange variant as the CSG on wages.
     "csg_non_salarie": "csg",
+    # The CSG on the unemployment benefit (but 21, étape 4): the SMIC sets its exemption.
+    "csg_chomage": "csg",
     "cotisations_salariales": "cotisations_salaries",
     "employer_contributions": "cotisations_employeurs",
     # The consumption taxes, when the consumption is imputed (D-323, D-327): the household
@@ -104,6 +106,7 @@ UNMAPPED = {
     "ria": "transfert",
     "allocation_enfant": "transfert",
     "garantie_autonomie": "transfert",
+    "aspa": "transfert",
     "impot_societes": "fiscalité des entreprises",
     "contribution_sociale_is": "fiscalité des entreprises",
     "cebge": "fiscalité des entreprises",

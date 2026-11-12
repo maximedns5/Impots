@@ -148,6 +148,10 @@ STATE_RECEIPTS = (
     # (étape 2): a reform of the CSG rate moved their disposable income with no receipt to
     # hold it, and the real-population balance test failed by it.
     "csg_non_salarie",
+    # The CSG on the unemployment benefit, since the but 21 (étape 4): it is not levied
+    # where it would bring the benefit under the SMIC, so a raised SMIC took 43 M€ off it
+    # on 1 500 ménages, in disposable income and in no instrument. No knob moved it before.
+    "csg_chomage",
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.
@@ -172,8 +176,11 @@ STATE_RECEIPTS = (
 #: `ria`, `allocation_enfant`, `garantie_autonomie`: the new benefits of the programmes
 #: (but 21, étape 3), zero unless a reform poses them; each enters `revenu_disponible`
 #: through `prestations_sociales`, and the state pays it.
+#: `aspa`, since the but 21 (étape 4): the minimum vieillesse of a couple counts the
+#: partner's earnings, so a raised point d'indice took 25 M€ off it on 1 500 ménages, a
+#: movement no instrument held, and the reconstitution missed by 0,21 % of the net.
 STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite",
-                   "aefa", "cf", "asf", "ars", "crds_pfam", "crds_mini",
+                   "aefa", "cf", "asf", "ars", "crds_pfam", "crds_mini", "aspa",
                    "ria", "allocation_enfant", "garantie_autonomie")
 
 #: The identity is checked in absolute euros against a floor, and relatively above it.
@@ -380,6 +387,7 @@ def sector_balance(
     reform_cost: float,
     employer_contribution_delta: float = 0.0,
     aggregate_deltas: dict[str, float] | None = None,
+    public_wage_delta: float = 0.0,
     rtol: float = BALANCE_RTOL,
     gross_rtol: float = BALANCE_GROSS_RTOL,
     floor: float = BALANCE_FLOOR_EUR,
@@ -401,6 +409,10 @@ def sector_balance(
 
     A reform that moves 17.7 bn of labour cost and reports a public cost of zero
     breaches this by 100 %.
+
+    `public_wage_delta`: what a reform of the salaries adds to the labour cost the state
+    pays its own employees (`aggregate.SALAIRES_PAYES`, but 21, étape 4), a state expense
+    no household-side instrument holds. Zero for every other reform.
     """
     aggregate_deltas = aggregate_deltas or {}
     # An instrument present on BOTH sides would be counted twice, and the identity would
@@ -423,7 +435,7 @@ def sector_balance(
     # What the state collects, across both sides. Employers paying less is a fall in
     # receipts, so the delta enters with its own sign.
     state_gain = (receipts - transfers + employer_contribution_delta
-                  + aggregate)
+                  + aggregate - public_wage_delta)
     # A cost to the state is the negative of what it gains.
     expected_cost = -state_gain
     unexplained = reform_cost - expected_cost
@@ -440,7 +452,7 @@ def sector_balance(
     # gross". The fix agreed with the one shape it had been tested on. See D-093.
     gross = (sum(abs(deltas.get(name, 0.0)) for name in STATE_RECEIPTS)
              + sum(abs(deltas.get(name, 0.0)) for name in STATE_TRANSFERS)
-             + abs(employer_contribution_delta)
+             + abs(employer_contribution_delta) + abs(public_wage_delta)
              + sum(abs(v) for v in aggregate_deltas.values()))
     scale = max(abs(reform_cost), abs(expected_cost), floor)
     allowed = max(rtol * scale, gross_rtol * gross)

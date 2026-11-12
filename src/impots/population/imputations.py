@@ -15,7 +15,10 @@ demande et de ce dont la réforme a besoin pour bouger,
 * la consommation quand elle règle la TVA ou une accise (D-323) ;
 * les IJ quand elle règle leur impôt ou leur CSG (D-306) ;
 * les niches, sur demande seulement : leur imputation est une calibration, et le plafond
-  global reste aveugle même imputé (`guards.DISPERSION_DEPENDENT_KNOBS`).
+  global reste aveugle même imputé (`guards.DISPERSION_DEPENDENT_KNOBS`) ;
+* les données de ménages des programmes (heures supplémentaires, frais de trajet et frais
+  réels, pensions alimentaires, frais de garde, intérêts d'emprunt), sur demande
+  seulement : une calibration sur leurs totaux publiés (`population.menages`, but 21).
 
 Ce qu'une passe ne peut pas imputer est refusé, avec sa raison, avant la passe, jamais
 rendu à zéro : un bouton de l'IFI (la population ne porte aucun patrimoine), les IJ hors
@@ -33,8 +36,9 @@ CAPITAL = "capital"
 CONSOMMATION = "consommation"
 IJ = "ij"
 NICHES = "niches"
+MENAGES = "menages"
 #: Ce qu'une passe sait imputer, dans l'ordre où le runner les fait.
-CATALOGUE = (CAPITAL, CONSOMMATION, IJ, NICHES)
+CATALOGUE = (CAPITAL, CONSOMMATION, IJ, NICHES, MENAGES)
 
 #: Les boutons des indemnités journalières (D-306, D-312) : ils ne mordent que sur les IJ
 #: imputées (D-305).
@@ -62,6 +66,7 @@ class Imputations:
     consommation: bool = False
     ij: bool = False
     niches: bool = False
+    menages: bool = False
 
     def noms(self) -> tuple[str, ...]:
         return tuple(nom for nom in CATALOGUE if getattr(self, nom))
@@ -138,6 +143,14 @@ def imputations(reform: Any, annee: int, *, demandees: Iterable[str] = (),
                 f"{ij_module.YEAR}, et une autre année demanderait de vieillir la masse, "
                 f"ce qui n'est pas fait (D-305) ; "
                 f"{_pourquoi(reform, [IJ]) or 'demandées par l’appelant'}")
+    if MENAGES in voulues:
+        from impots.population import menages as menages_module
+
+        if annee != menages_module.YEAR:
+            raise ImputationRefusee(
+                f"données de ménages imputées pour {annee} : leurs sources décrivent "
+                f"{menages_module.YEAR}, et une autre année demanderait de vieillir les "
+                f"montants, ce qui n'est pas fait (but 21, étape 4)")
     if CONSOMMATION in voulues:
         from impots import consommation
 
