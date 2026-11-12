@@ -61,7 +61,7 @@ SCENARIOS = ROOT / "scenarios"
 CADRES = DEFINITIONS / "cadres"
 DECISIONS = "docs/DECISIONS.md"
 FIELDS = {"nom", "titre", "texte", "preenregistrement", "cadre", "millesime_entreprises",
-          "page", "rapports", "scenarios", "programme"}
+          "page", "rapports", "scenarios", "programme", "dette_annoncee"}
 #: The points of a measure's range the study of a programme prices (D-328): its bottom,
 #: the candidate's value, its top.
 POINTS = ("bas", "candidat", "haut")
@@ -1094,6 +1094,78 @@ class _Programme:
                   f"{sens} (`{porte}`).")
             w("")
 
+    def dette_annoncee(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:
+        """La dette « si les économies annoncées sont tenues » (D-380), à côté de la dette
+        de la part chiffrée : jamais additionnée au coût ni au verdict (D-319)."""
+        from impots import fiche
+        from impots.predictif import annonce
+
+        path = entry["path"]
+        if entry["sign"] != 1:
+            raise EtudeError("une part chiffrée en miroir n'a pas de lecture annoncée")
+        year = path["years"][-1]["year"]
+        variante = annonce.tables()
+        lectures = [annonce.lire(path, self.programme, part, variante=variante)
+                    for part in PARTS_ANNONCEES]
+        lues, non_lues = lectures[-1]["mesures"], lectures[-1]["non_lues"]
+        depenses = any(m["sens"] == "depense" for m in lues)
+        w(f"### La dette en {year}, si les économies annoncées sont tenues"
+          + (" et les dépenses annoncées faites" if depenses else ""))
+        w("")
+        w("**Une lecture à part : annoncée par le candidat, non vérifiée.** La dette plus "
+          "haut est celle de la part chiffrée ; les économies de dépense que le programme "
+          "annonce, que l'outil ne microsimule pas, n'y entrent pas, et ses dépenses non "
+          "plus (D-319). Ici, les montants par an que le candidat attache lui-même à ses "
+          "mesures de dépense publique sont lus par la variante « dépense publique » de "
+          "Mésange, son effet sur le PIB et sur le solde, et s'ajoutent à la dette de la "
+          "part chiffrée. Ni le coût de la part chiffrée ni le verdict ne les lisent "
+          "(D-380).")
+        w("")
+        if not lues:
+            w("Le programme n'attache de montant par an à aucune de ses mesures de dépense "
+              "publique : il n'y a rien à lire.")
+            w("")
+        else:
+            w("| mesure | montant annoncé, par an | sens | calendrier annoncé |")
+            w("|---|---|---|---|")
+            for m in lues:
+                sens = "économie" if m["sens"] == "economie_depense" else "dépense"
+                w(f"| {amounts(m['libelle'], 'programme', n)} | "
+                  f"{n(fiche._eur(m['montant_eur']), 'annoncé')} | {sens} | "
+                  f"{amounts(m['horizon'], 'programme', n)} |")
+            w("")
+            views = [v for v in VIEWS if v in lectures[0]["vues"]]
+            w("| part réalisée | solde annoncé, par an | "
+              + " | ".join(f"Δ dette {year}, vue {VIEWS[v]}" for v in views) + " |")
+            w("|---|---|" + "---|" * len(views))
+            etage = debt_etage(path)
+            for lecture in lectures:
+                part = lecture["part"]
+                realisee = f"{part * 100:.0f}\u202f%"
+                cells = [n(_points(lecture["vues"][v]["avec_annonce"][-1]),
+                           etage if part == 0 else "annoncé", conditionnel=True)
+                         for v in views]
+                w(f"| {n(realisee, 'hypothèse')} | "
+                  f"{n(fiche._eur(lecture['solde_annonce_eur']), 'annoncé')} | "
+                  + " | ".join(cells) + " |")
+            w("")
+            w("À θ½, sous la persistance « lue ». À une part réalisée nulle, la ligne est "
+              "la dette de la part chiffrée, plus haut ; le solde est positif quand il "
+              "améliore les comptes publics.")
+            w("")
+            w("**Ce que la variante suppose.** "
+              + amounts(annonce.COMPOSITE, "hypothèse", n) + " "
+              + " ".join(annonce.HYPOTHESES))
+            w("")
+        raisons: dict[str, list[str]] = {}
+        for m in non_lues:
+            raisons.setdefault(m["raison"], []).append(amounts(m["libelle"], "programme", n))
+        for raison, libelles in raisons.items():
+            w(f"**Pas lues** — {raison} : " + " ; ".join(libelles) + ".")
+            w("")
+        w(f"*{annonce.STATUT[:1].upper() + annonce.STATUT[1:]}.*")
+        w("")
+
     def _annonce(self, w: Any, n: Nombres) -> None:
         from impots import fiche
 
@@ -1127,6 +1199,8 @@ class _Programme:
 
 START_PLUS_ONE = 2026
 LAST_YEAR = 2035
+#: Les parts réalisées que la page montre de la dette annoncée, comme la couche déclarée.
+PARTS_ANNONCEES = (0.0, 0.5, 1.0)
 POINT_LABELS = {"bas": "le bas", "candidat": "le candidat", "haut": "le haut"}
 
 
@@ -1243,6 +1317,9 @@ class Etude:
     scenarios: Path = SCENARIOS
     #: The programme a study of a presidential programme reads (D-328), or None.
     programme: str | None = None
+    #: Whether a programme's page shows its debt « si les économies annoncées sont
+    #: tenues » beside the debt (D-380). Off until the series of the but 21 runs.
+    dette_annoncee: bool = False
 
     @property
     def noms(self) -> tuple[str, ...]:
@@ -1792,6 +1869,8 @@ class Etude:
             w(f"### 3. La dette en {last}")
             w("")
             self._third(w, n, entry)
+            if self.dette_annoncee and hasattr(texte, "dette_annoncee"):
+                texte.dette_annoncee(w, n, entry)
             w("### L'écart au chiffrage officiel")
             w("")
             if hasattr(texte, "official"):
@@ -2776,7 +2855,8 @@ def definition(nom: str, directory: Path | None = None) -> Etude:
                  cadre=raw["cadre"], millesime_entreprises=raw["millesime_entreprises"],
                  page=ROOT / raw.get("page", f"docs/etudes/{nom}.md"),
                  rapports=ROOT / raw.get("rapports", f"reports/etudes/{nom}"),
-                 programme=raw.get("programme"))
+                 programme=raw.get("programme"),
+                 dette_annoncee=bool(raw.get("dette_annoncee", False)))
 
 
 def scenario_du_programme(slug: str) -> str:

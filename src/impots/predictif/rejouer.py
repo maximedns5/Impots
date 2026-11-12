@@ -229,11 +229,14 @@ BOUCLES = ("complete", "denominateur", "aucune")
 
 def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
            z: Any, persistence: str | None, variante: str | None = None,
-           boucle: str = "complete", marginal: float | None = None) -> Chemin:
+           boucle: str = "complete", marginal: float | None = None,
+           ajout: Mapping[str, Sequence[Any]] | None = None) -> Chemin:
     """One view's Δb path at the row values `values` and the multiplier shift `z`. With
     `variante`, the multiplier reads Mésange's alternative wage formation; `boucle` keeps
     the whole loop, its GDP gap alone, or none; `marginal` charges the added debt at
-    another rate than the report's (D-349)."""
+    another rate than the report's (D-349). `ajout` adds, year by year, a primary
+    balance, a feedback and a GDP gap the report does not hold (« primaire »,
+    « retroaction », « pib », shares of GDP): the announced savings, read apart (D-380)."""
     if boucle not in BOUCLES:
         raise ReplayError(f"boucle « {boucle} » inconnue ({BOUCLES})")
     rejeu = _rejeu(payload)
@@ -269,6 +272,12 @@ def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
             phi = [0.0] * horizon
     else:
         gap = phi = [0.0] * horizon
+    if ajout is not None:
+        if boucle != "complete":
+            raise ReplayError("un ajout se lit sur la boucle complète seule")
+        primary = [p + a for p, a in zip(primary, ajout["primaire"], strict=True)]
+        phi = [p + a for p, a in zip(phi, ajout["retroaction"], strict=True)]
+        gap = [g + a for g, a in zip(gap, ajout["pib"], strict=True)]
     debt = 0.0
     delta = []
     for k in range(horizon):

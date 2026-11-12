@@ -246,8 +246,14 @@ def test_the_announced_layer_stays_apart(pages) -> None:
     """La couche annoncée a sa section, et ni l'en-bref ni la part chiffrée ne la lisent."""
     for slug, (_, text) in pages.items():
         assert "## Ce que le candidat annonce, à part" in text
-        assert "annonc" not in text.split("## La part chiffrée")[1].split(
-            "## Ce que bouge")[0].lower(), slug
+        part = text.split("## La part chiffrée")[1].split("## Ce que bouge")[0]
+        # La dette « si les économies annoncées sont tenues » a sa sous-section, à côté de
+        # la dette (D-380) : la part chiffrée ne lit l'annonce nulle part ailleurs.
+        titre = "### La dette en 2035, si les économies annoncées sont tenues"
+        if titre in part:
+            debut = part.index(titre)
+            part = part[:debut] + part[part.index("### L'écart", debut):]
+        assert "annonc" not in part.lower(), slug
 
 
 def test_a_mixed_part_shows_both_layers(pages) -> None:
