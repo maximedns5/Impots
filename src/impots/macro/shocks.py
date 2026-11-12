@@ -100,6 +100,10 @@ UNMAPPED = {
     "ars": "transfert",
     "crds_pfam": "transfert",
     "crds_mini": "transfert",
+    # The new benefits of the programmes (but 21, étape 3): transfers like the others.
+    "ria": "transfert",
+    "allocation_enfant": "transfert",
+    "garantie_autonomie": "transfert",
     "impot_societes": "fiscalité des entreprises",
     "contribution_sociale_is": "fiscalité des entreprises",
     "cebge": "fiscalité des entreprises",

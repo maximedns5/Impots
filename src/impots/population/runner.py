@@ -373,7 +373,14 @@ def _extract(
                 (monthly > 0.5).astype(np.float64), famille_index, n_households
             )
 
+    variables = built.simulation.tax_benefit_system.variables
     for row in outputs.rows_for(tier):
+        # A variable of the project's that this system does not carry reads zero, as in
+        # `outputs.extract`: the new benefits of a programme exist only in the reform that
+        # poses them (but 21, étape 3).
+        if row.projet and row.variable not in variables:
+            results[row.key] = np.zeros(n_households)
+            continue
         array = sum(built.calculate(name, add=row.period == "month")
                     for name in (row.variable, *row.extra))
         if row.entity == "menage":
@@ -475,7 +482,13 @@ def _serve_in_expectation(results: dict[str, np.ndarray], built: Any,
 
     famille = recours.colonnes(built)
     unclaimed = np.zeros(n_households)
-    for key in SERVED:
+    # The new benefits a reform poses are served too, each with the law of the benefit
+    # closest to it (`recours.LOI_PROCHE`, but 21, étape 3). Where the system does not
+    # carry one, the law above all, it is zero, and so is its entitlement.
+    for key in recours.LOI_PROCHE:
+        if f"{key}_droit" not in famille:
+            results[f"{key}_droit"] = results[key]
+    for key in (*SERVED, *(k for k in recours.LOI_PROCHE if f"{k}_droit" in famille)):
         droit = _to_households(famille[f"{key}_droit"], famille_index, n_households)
         paid = _to_households(famille[f"{key}_servi"], famille_index, n_households)
         # The registry's own read and the month-by-month one must be the same euros:

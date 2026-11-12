@@ -220,6 +220,8 @@ POSTES = {
     "contribution sociale sur l'IS", "cebge": "contribution des grandes entreprises",
     "cvae": "CVAE", "c3s": "C3S", "prelevements_sociaux_capital":
     "prélèvements sociaux sur le capital",
+    "ria": "revenu d'incitation à l'activité", "allocation_enfant": "allocation par enfant",
+    "garantie_autonomie": "garantie d'autonomie des jeunes",
 }
 
 

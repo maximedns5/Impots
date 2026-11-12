@@ -169,8 +169,12 @@ STATE_RECEIPTS = (
 #: `reduction_loyer_solidarite`: the HLM landlord pays it, not the state, but
 #: `revenu_disponible`, of which the cost is the change, contains it; the reconstitution
 #: follows the cost, and the cost counting it is a bias said in D-374.
+#: `ria`, `allocation_enfant`, `garantie_autonomie`: the new benefits of the programmes
+#: (but 21, étape 3), zero unless a reform poses them; each enters `revenu_disponible`
+#: through `prestations_sociales`, and the state pays it.
 STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite",
-                   "aefa", "cf", "asf", "ars", "crds_pfam", "crds_mini")
+                   "aefa", "cf", "asf", "ars", "crds_pfam", "crds_mini",
+                   "ria", "allocation_enfant", "garantie_autonomie")
 
 #: The identity is checked in absolute euros against a floor, and relatively above it.
 #: A reform moving a few million is not worth a relative test; one moving billions is.

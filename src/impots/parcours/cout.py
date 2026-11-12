@@ -170,6 +170,8 @@ TRANSFERTS_LIBELLES = {
     "aefa": "prime de Noël", "cf": "complément familial",
     "reduction_loyer_solidarite": "réduction de loyer de solidarité",
     "crds_pfam": "CRDS sur les prestations familiales", "crds_mini": "CRDS sur les minima",
+    "ria": "revenu d'incitation à l'activité", "allocation_enfant": "allocation par enfant",
+    "garantie_autonomie": "garantie d'autonomie des jeunes",
 }
 ENTREPRISES_LIBELLES = {
     "cvae": "CVAE", "impot_societes": "impôt sur les sociétés",

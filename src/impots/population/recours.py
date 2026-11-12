@@ -134,6 +134,16 @@ PPA = Recours(
 
 LOIS: dict[str, Recours] = {"rsa": RSA, "ppa": PPA}
 
+#: Les prestations neuves d'un programme servies en espérance (but 21, étape 3), et la
+#: prestation existante dont chacune prend la loi de recours, son τ, son p_max et son
+#: déflateur : une **hypothèse**, aucun recours n'étant publié pour une prestation qui
+#: n'existe pas. Le revenu d'incitation à l'activité remplace le RSA et en reprend le
+#: socle ; la garantie d'autonomie des jeunes est, comme lui, une allocation différentielle
+#: à demander. L'allocation par enfant n'y est pas : recours 1, comme les allocations
+#: familiales dans le moteur. Ni l'une ni l'autre n'existe dans la loi : une famille ne les
+#: a que dans une réforme qui les pose.
+LOI_PROCHE: dict[str, str] = {"ria": "rsa", "garantie_autonomie": "rsa"}
+
 #: L'échelle d'unités de consommation du RSA, celle des montants par UC de la Drees
 #: (n° 1370, note 2) : 1 pour le premier adulte, 0,5 pour la personne suivante, 0,3 pour
 #: le premier enfant d'un couple ou le deuxième d'un parent isolé, 0,3 pour le deuxième
@@ -247,12 +257,35 @@ def colonnes(built: Any) -> dict[str, np.ndarray]:
     out["crds_mini_servi"] = np.sum([a * b for a, b in zip(proba["ppa"], crds, strict=True)],
                                     axis=0)
 
+    # Les prestations neuves (but 21, étape 3), avec la loi de leur prestation proche ;
+    # individuelles, elles sont sommées sur la famille avant la probabilité.
+    variables = built.simulation.tax_benefit_system.variables
+    for neuve, proche in LOI_PROCHE.items():
+        if neuve not in variables:
+            continue
+        droits = [_par_famille(built, neuve, m) for m in range(1, 13)]
+        p = probabilites(annee, proche, droits, uc)
+        out[f"{neuve}_droit"] = np.sum(droits, axis=0)
+        out[f"{neuve}_servi"] = np.sum([a * b for a, b in zip(p, droits, strict=True)],
+                                       axis=0)
+
     aefa = built.calculate("aefa").astype(np.float64)
     p_noel = np.where(decembre > 0.5, proba["rsa"][11],
                       np.where(novembre > 0.5, proba["rsa"][10], 1.0))
     out["aefa_droit"] = aefa
     out["aefa_servi"] = aefa * p_noel
     return out
+
+
+def _par_famille(built: Any, variable: str, mois: int) -> np.ndarray:
+    """Une variable du mois, par famille : sommée sur ses membres si elle est individuelle.
+    Les familles sont dans l'ordre de `built.famille_ids`, celui des variables de famille."""
+    valeurs = np.asarray(built.calculate(variable, month=mois), dtype=np.float64)
+    entite = built.simulation.tax_benefit_system.variables[variable].entity.key
+    if entite == "famille":
+        return valeurs
+    famille = built.simulation.populations["famille"]
+    return famille.sum(valeurs)
 
 
 def caler(population: Any, annee: int = 2024, menages: int = 15_000) -> dict[str, Any]:

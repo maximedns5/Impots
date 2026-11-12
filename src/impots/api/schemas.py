@@ -19,6 +19,7 @@ from typing import Annotated, Any, Literal, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from impots.api.prestations_neuves import RIA, AllocationEnfant, GarantieAutonomie
 from impots.entreprises.reforms import FirmReformSpec
 from impots.predictif.transformations import TRANSFORMATIONS
 
@@ -957,6 +958,31 @@ class ReformSpec(BaseModel):
     accise_electricite: Annotated[float, Field(ge=0.0, le=200.0)] | None = None
     accise_gaz: Annotated[float, Field(ge=0.0, le=200.0)] | None = None
     """EUR per MWh."""
+    # --- Les prestations neuves des programmes (but 21, étape 3) ----------------------
+    # Un groupe de champs par prestation que la loi n'a pas (`api.prestations_neuves`) :
+    # `None`, la loi n'en porte aucune variable et le groupe coûte 0 €. Les formules, ce
+    # que chacune remplace et son non-recours : `engine.prestations_neuves`.
+    ria: RIA | None = None
+    """Le revenu d'incitation à l'activité, individuel, à la place du RSA, de la prime
+    d'activité et de l'ASS (Retailleau, r15)."""
+    allocation_enfant: AllocationEnfant | None = None
+    """Une allocation par enfant dès le premier (le revenu familial de Retailleau, r27 ;
+    l'allocation familiale unique de Philippe, p11)."""
+    garantie_autonomie: GarantieAutonomie | None = None
+    """La garantie d'autonomie des jeunes, différentielle à un seuil (Mélenchon)."""
+
+    @model_validator(mode="after")
+    def _check_prestations_neuves(self) -> ReformSpec:
+        """Un bouton d'une prestation qu'une prestation neuve remplace n'écrirait plus dans
+        rien : la réforme qui pose les deux est refusée (but 21, étape 3)."""
+        from impots.api.prestations_neuves import boutons_morts
+
+        morts = boutons_morts(self)
+        if morts:
+            raise ValueError(
+                f"{', '.join(morts)} : ces boutons règlent une prestation que la prestation "
+                f"neuve posée par la même réforme remplace ; ils ne bougeraient rien.")
+        return self
 
     @field_validator("tva_postes")
     @classmethod
@@ -1268,6 +1294,11 @@ class ResultRows(BaseModel):
     aefa: float | None = None
     cf: float | None = None
     asf: float | None = None
+    ria: float | None = None
+    allocation_enfant: float | None = None
+    garantie_autonomie: float | None = None
+    """The new benefits of the programmes (but 21, étape 3): zero unless the reform poses
+    their group, the law having none of them."""
     ifi: float | None = None
     """Impôt sur la fortune immobilière, POSITIVE. Zero for all but ~186 000 foyers
     nationally, and zero for any foyer with no income whatever its wealth — the

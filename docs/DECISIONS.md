@@ -28089,3 +28089,78 @@ mesures le sache.
 trois de ses mesures n'ont que francais.rt.com pour source. Platret n'a aucune source
 primaire. Les scénarios et définitions des études sont régénérés (date et comptes du
 relevé) ; aucun rapport n'est relancé.
+
+## D-382 — Les prestations neuves des programmes, en réformes OpenFisca (but 21, étape 3)
+
+**Le fait.** Trois prestations que la loi n'a pas sont codées en variables OpenFisca,
+chacune ajoutée au système par la réforme qui pose son groupe de champs de `ReformSpec`
+(`ria`, `allocation_enfant`, `garantie_autonomie` ; `api.prestations_neuves`), et par elle
+seule.
+La loi de référence n'en porte aucune variable : un groupe à `None` coûte exactement 0 €,
+et une réforme qui n'en pose aucun garde le `prestations_sociales` de la loi. Chaque
+prestation a une formule datée du 1er janvier de l'année chiffrée, entre dans le revenu
+disponible par `prestations_sociales`, a sa ligne au registre (une ligne `projet`, nulle là
+où la variable n'existe pas), un champ de la réponse de l'API, sa place dans
+`STATE_TRANSFERS` et dans `UNMAPPED` (« transfert »). Les formules et leur documentation
+sont dans `engine.prestations_neuves`. Aucune mesure de candidat n'a tourné sur la
+population : chacune se préenregistre avant son premier calcul.
+
+**Dans chaque groupe, deux sortes de champs.** Ceux du candidat (un montant, un taux, un
+âge, ce que la prestation remplace) n'ont pas de défaut, sauf le plafond du RIA (`None`,
+« pas de plafond »), qu'un `model_dump(exclude_none=True)` doit pouvoir relire. Ceux de la
+traduction, ce que le candidat ne dit pas, ont un défaut qui est une hypothèse dite.
+
+**Le revenu d'incitation à l'activité (`ria`)**, Retailleau r15. Individuel et mensuel :
+`max(0, socle + insertion × justifie − taux × activité − taux_autres × remplacement)`, nul
+au-delà du plafond de revenus d'activité, de 18 à 65 ans. Activité : salaire net et
+douzième du revenu d'indépendant ; remplacement : chômage et pension nets, déduits à 100 %
+(hypothèse : le socle est celui d'une personne « sans activité et sans revenu »).
+L'insertion va à qui travaille et, par hypothèse, à qui touche une allocation chômage ou
+se déclare chômeur : la population ne porte pas les quinze heures de formation ou de
+recherche. Il remplace, par drapeau, le RSA, la prime d'activité et l'ASS, et la prime de
+Noël s'éteint avec eux. Il laisse les aides au logement et les prestations familiales, et
+n'entre dans les ressources d'aucune. Mesuré sur l'échantillon de test : l'aide au
+logement d'un ancien allocataire du RSA baisse, la neutralisation de ses ressources tombant
+avec le RSA ; un effet de la règle, pas du code. Non lus : la « situation régulière ».
+
+**L'allocation par enfant (`allocation_enfant`)**, une formule pour deux mesures : le
+revenu familial de Retailleau r27 (240 € par enfant de moins de 18 ans dès le premier, 480 €
+pour le troisième, à la place des AF, du complément familial et de l'ARS) et l'allocation
+familiale unique de Philippe p11 (350 € par mois dès le premier enfant). Par famille, l'aîné
+premier ; `par_famille` lit le montant une fois par famille. La dégressivité « en fonction
+de l'impôt sur le revenu » de Philippe n'a pas de barème : `degressivite_part_ir` (la part
+de l'impôt du foyer du demandeur, un douzième par mois, au-dessus d'un plancher par enfant)
+la rend chiffrable, et c'est une traduction, à dire comme telle. L'allocation n'est ni
+imposable ni frappée de CRDS, et n'entre pas dans les ressources du RSA, de la prime ni des
+aides au logement : sur un couple modeste de trois enfants, la prime d'activité monte de
+3 482 € quand les AF sortent de ses ressources. Le quotient familial et la réduction pour
+frais de scolarité que le revenu familial remplace ont leurs boutons ; le supplément
+familial de traitement, les bourses, les majorations du RSA pour enfant et la condition de
+cinq ans de résidence et d'activité ne sont pas lus.
+
+**La garantie d'autonomie des jeunes (`garantie_autonomie`)**, Mélenchon. Individuelle,
+différentielle : `max(0, seuil − ressources propres du mois)`, de 18 ans à la veille de 25
+(hypothèse : le candidat dit « les jeunes »), sans les ressources des parents ni les
+prestations de la famille. Elle ne remplace rien et n'entre dans aucune base de ressources.
+
+**Le non-recours, une hypothèse chacun.** Le RIA et la garantie sont servis en espérance
+avec la loi du RSA (`recours.LOI_PROCHE` : τ = 79 €, p_max = 0,6892, le déflateur du
+RSA), sur leur droit sommé par famille ; leur droit reste à côté (`ria_droit`,
+`garantie_autonomie_droit`). Un ancien bénéficiaire de la prime recourt donc au RIA comme
+un allocataire du RSA, plus souvent qu'à la prime : un biais à dire. L'allocation par
+enfant est à recours 1, comme les AF dans le moteur.
+
+**Les plages** sont celles du schéma, larges comme celles de B1 : montants de 0 à 5 000 €
+par mois, taux de 0 à 1, âges bornés ; celles d'une mesure se posent dans son fragment.
+
+**L'assurance chômage n'a pas de bouton.** La population porte un montant annuel par
+chômeur au sens du BIT, tiré et calé sur la masse de l'Unédic et versé sur ses mois sans
+salaire : ni durée d'indemnisation écoulée, ni salaire de référence, ni motif de fin de
+contrat, ni âge à l'ouverture des droits. Les règles des programmes (Philippe p14, 12 mois
+sous 50 ans ; Retailleau r17 ; l'abrogation de Mélenchon ; Attal a11, sans règle) restent
+refusées, porte « prestations hors du modèle ».
+
+**Aucun nombre ne bouge.** Une réforme sans groupe a le système d'avant ; les rapports
+gardent leur commit. Sur l'échantillon de test (`tests/fixtures/eec_sample.parquet`), à des
+valeurs d'aucun candidat, le garde des secteurs reconstitue le coût à 1,53 € près sur
+84 M€. Le numéro de cette entrée est à revoir à la jonction des étapes.
