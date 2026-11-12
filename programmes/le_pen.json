@@ -9,7 +9,7 @@
     "date": "2026-10-15",
     "type": "entretien"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -29,6 +29,17 @@
       "refus": {
         "porte": "chaine",
         "raison": "Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour le calcul de la dette, pas une réforme que le moteur chiffre."
+      },
+      "declare": {
+        "montant_eur": 140000000000.0,
+        "sens": "economie_depense",
+        "horizon": "total net d'ici 2032 par rapport à 2026, sur le quinquennat ; la candidate ne donne pas d'annuel (montant non annualisé)",
+        "source": {
+          "citation": "140 milliards d'euros net d'économies d'ici 2032",
+          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
       }
     },
     {
@@ -153,6 +164,12 @@
         {
           "citation": "« 9 milliards d'euros sur notre contribution à l'Union européenne » (J. Bardella)",
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        },
+        {
+          "citation": "Pas de citation directe. Texte de l'AFP (La Gazette France) : une baisse de la contribution nette à l'Union de « -8,9 milliards nets »",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
         }
@@ -313,6 +330,12 @@
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
+        },
+        {
+          "citation": "« 30 milliards » (de baisse d'impôts)",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
         }
       ],
       "refus": {
@@ -337,6 +360,17 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Une provision de dépense sans règle de calcul, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "depense",
+        "horizon": "15 Md€ « provisionnés » sur la trajectoire, calendrier non dit (montant non annualisé)",
+        "source": {
+          "citation": "Pas de citation directe sur le montant. Texte de l'AFP : « 15 mds de \"dépenses provisionnées pour des droits nouveaux\" »",
+          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
       }
     },
     {
@@ -398,6 +432,12 @@
         {
           "citation": "entre 15 et 20 milliards d'économies à terme",
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        },
+        {
+          "citation": "entre 15 et 20 milliards d'économies à terme",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
         }
@@ -673,6 +713,12 @@
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
+        },
+        {
+          "citation": "cesser les subventionnements à perte des énergies intermittentes",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
         }
       ],
       "refus": {
@@ -690,6 +736,12 @@
         {
           "citation": "au financement des voitures propres",
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        },
+        {
+          "citation": "au financement des voitures propres",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
         }
@@ -787,11 +839,74 @@
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
+        },
+        {
+          "citation": "La BCE doit intervenir pour que les pays de l'Eurozone dégagent des marges de manœuvre financières",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
         }
       ],
       "refus": {
         "porte": "vague",
         "raison": "Un appel à la BCE, sans paramètre."
+      }
+    },
+    {
+      "id": "lp34_gel_taxes_tabac",
+      "categorie": "tva_consommation",
+      "libelle": "Gel des taxes sur le tabac et fin de l'indexation de leur prix sur l'inflation",
+      "parametre": "Gel (hausse nulle) de l'accise sur les tabacs ; désindexation sur l'inflation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "le gel des taxes sur le tabac et la désindexation du prix sur l'inflation",
+          "url": "https://www.publicsenat.fr/actualites/politique/marine-le-pen-defend-le-gel-des-taxes-sur-le-tabac-dans-une-lettre-aux-buralistes",
+          "date": "2026-09-07",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "L'accise sur les tabacs n'est pas dans la couche consommation, qui ne porte que la TVA du poste tabac."
+      }
+    },
+    {
+      "id": "lp35_ptz_troisieme_enfant",
+      "categorie": "autre",
+      "libelle": "Prêt à taux zéro pour les parents à partir du troisième enfant",
+      "parametre": "Taux zéro, dès le troisième enfant ; plafond et durée non dits (amendement de J.-P. Tanguy au PLF 2027)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de LCP : « Jean-Philippe Tanguy a d'ailleurs proposé un amendement afin de proposer un prêt à taux zéro aux parents à partir de leur troisième enfant »",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte ni les emprunts des ménages ni leurs taux."
+      }
+    },
+    {
+      "id": "lp36_hausse_salaires_exoneree",
+      "categorie": "salaires_smic",
+      "libelle": "Hausse de 10 % des salaires exonérée de cotisations patronales",
+      "parametre": "+10 % de salaire, la hausse exonérée de cotisations patronales ; plafond non dit dans la source",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de l'AFP : « Marine Le Pen veut de son côté inciter les entreprises à augmenter les salaires de 10% en exonérant cette hausse de cotisations patronales »",
+          "url": "https://www.sudradio.fr/societe/salaires-carburants-mobilisations-le-pouvoir-dachat-simpose-dans-la-campagne",
+          "date": "2026-09-15",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Une incitation facultative : le moteur ne sait pas quels employeurs augmenteraient leurs salaires de 10 %."
       }
     }
   ]

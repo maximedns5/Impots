@@ -9,7 +9,7 @@
     "date": "2026-10-30",
     "type": "entretien"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -23,6 +23,12 @@
           "citation": "Pas de citation directe. Texte de l'UPR : « émettre de nouveaux titres de dette prioritairement souscrits par l'épargne nationale (sur le modèle de la politique gaullienne) »",
           "url": "https://upr.fr/actualites/francois-asselineau-invite-dandre-bercoff-sur-sud-radio-30-10-2026",
           "date": "2026-10-30",
+          "type": "entretien"
+        },
+        {
+          "citation": "Pas de citation directe. Texte de l'UPR : « sa proposition de réserver les nouvelles émissions de titres du Trésor aux épargnants français »",
+          "url": "https://upr.fr/actualites/francois-asselineau-invite-de-l-a-michelet-sur-tv-finance-03-11-2026",
+          "date": "2026-11-03",
           "type": "entretien"
         }
       ],

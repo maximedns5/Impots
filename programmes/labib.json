@@ -9,7 +9,7 @@
     "date": "2026-06-17",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -22,7 +22,7 @@
         {
           "citation": "« annulation de la dette pour mettre fin à la rente des financiers »",
           "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
-          "date": "2026-10-19",
+          "date": "2026-10-26",
           "type": "programme"
         }
       ],
@@ -41,7 +41,7 @@
         {
           "citation": "« socialisation des banques et institutions financières, pour reprendre la main sur le financement de l'économie et des services publics »",
           "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
-          "date": "2026-10-19",
+          "date": "2026-10-26",
           "type": "programme"
         }
       ],
@@ -60,7 +60,7 @@
         {
           "citation": "« socialisation des grandes entreprises, sans indemnité ni rachat »",
           "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
-          "date": "2026-10-19",
+          "date": "2026-10-26",
           "type": "programme"
         }
       ],
@@ -79,7 +79,7 @@
         {
           "citation": "« suppression des allègements de cotisations sociales et autres niches fiscales et sociales pour les entreprises et les grandes fortunes »",
           "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
-          "date": "2026-10-19",
+          "date": "2026-10-26",
           "type": "programme"
         }
       ],
@@ -98,7 +98,7 @@
         {
           "citation": "« contrôle des capitaux pour mettre fin à l'évasion et l'optimisation fiscale »",
           "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
-          "date": "2026-10-19",
+          "date": "2026-10-26",
           "type": "programme"
         }
       ],
@@ -160,13 +160,70 @@
         {
           "citation": "« remplacées par un impôt fortement progressif sur les revenus et les bénéfices des grandes entreprises »",
           "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
-          "date": "2026-10-19",
+          "date": "2026-10-26",
           "type": "programme"
         }
       ],
       "refus": {
         "porte": "vague",
         "raison": "Aucun barème n'est énoncé."
+      }
+    },
+    {
+      "id": "revenu_minimum_2200",
+      "categorie": "salaires_smic",
+      "libelle": "Aucun revenu inférieur à 2 200 €",
+      "parametre": "2 200 € par mois au moins, pour tout revenu (salaires, pensions, allocations) ; net ou brut non dit",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "le NPA-Révolutionnaires milite pour que les salaires suivent les prix, qu'aucun revenu ne soit inférieur à 2200 euros et que les licenciements soient interdits",
+          "url": "https://npa-revolutionnaires.org/articles/qui-seme-la-misere-recolte-la-colere",
+          "date": "2026-10-19",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Un plancher de 2 200 € pour tous les revenus relève à la fois le SMIC, dont la diffusion dans les salaires n'est pas dite, et les minima, que le moteur ne porte pas à ce niveau."
+      }
+    },
+    {
+      "id": "indexation_salaires_prix",
+      "categorie": "salaires_smic",
+      "libelle": "Indexation des salaires sur les prix",
+      "parametre": "Indexation automatique sur l'inflation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "le NPA-Révolutionnaires milite pour que les salaires suivent les prix, qu'aucun revenu ne soit inférieur à 2200 euros et que les licenciements soient interdits",
+          "url": "https://npa-revolutionnaires.org/articles/qui-seme-la-misere-recolte-la-colere",
+          "date": "2026-10-19",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "L'indexation des salaires année par année : la distribution des salaires dans le temps."
+      }
+    },
+    {
+      "id": "hausse_salaires_600",
+      "categorie": "salaires_smic",
+      "libelle": "Hausse de tous les salaires d'au moins 600 €",
+      "parametre": "+600 € par mois au moins pour tous ; net ou brut non dit",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "il faut de véritables augmentations de tous les salaires, au moins 600 euros pour tous",
+          "url": "https://npa-revolutionnaires.org/articles/amplifier-le-mouvement-pour-gagner-2",
+          "date": "2026-11-11",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Une hausse uniforme de tous les salaires, sans dire qui la paie : la distribution des salaires et leur coût pour les employeurs."
       }
     }
   ]

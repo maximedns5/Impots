@@ -4,12 +4,12 @@
   "parti": "Les Patriotes",
   "statut": "declare",
   "statut_source": {
-    "citation": "Pas de citation directe. L'inventaire relève : déclaré le 09/05/2026 sur France 2 ; il se rangera « derrière Philippe de Villiers » si celui-ci se présente.",
-    "url": "https://www.franceinfo.fr/elections/presidentielle/presidentielle-2027-le-souverainiste-florian-philippot-annonce-sa-candidature-a-l-elysee_7993346.html",
+    "citation": "Je suis candidat à l'élection présidentielle",
+    "url": "https://www.sudradio.fr/politique/je-suis-candidat-florian-philippot-se-lance-pour-la-presidentielle-de-2027",
     "date": "2026-05-09",
     "type": "entretien"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -334,6 +334,44 @@
       "refus": {
         "porte": "vague",
         "raison": "Un arrêt sans montant ni calendrier."
+      }
+    },
+    {
+      "id": "fp14_autoroutes",
+      "categorie": "autre",
+      "libelle": "Renationalisation des autoroutes",
+      "parametre": "Ni indemnité ni calendrier",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Renationaliser les autoroutes.",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une renationalisation sans montant ni calendrier."
+      }
+    },
+    {
+      "id": "fp15_reformes_sociales",
+      "categorie": "prestations",
+      "libelle": "Suppression des réformes récentes de l'assurance chômage et de la santé",
+      "parametre": "Aucune règle",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Les réformes récentes, exigées par la Commission européenne, visant à raboter les indemnités chômage, à fermer des lits à l'hôpital ou à arrêter le remboursement des médicaments pourront être supprimées.",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Un retour en arrière qui ne dit ni quelles réformes ni quelles règles."
       }
     }
   ]
