@@ -958,6 +958,63 @@ class ReformSpec(BaseModel):
     accise_gaz: Annotated[float, Field(ge=0.0, le=200.0)] | None = None
     """EUR per MWh."""
 
+    # --- Les salaires (but 21, étape 4) ------------------------------------------------
+    # Ils ne règlent pas l'impôt : la passe de la population relève les salaires de
+    # l'année chiffrée (`population.salaires`) et chiffre la réforme sur eux ; le coût
+    # retire le salaire que paie un employeur privé et compte celui que paie l'État. Un
+    # ménage seul, dont le salaire est donné, les refuse (`engine.reforms.make_reform`).
+    smic_revalorisation: Annotated[float, Field(ge=0.5, le=2.0)] | None = Field(
+        default=None,
+        description="Coefficient sur le SMIC horaire brut de chaque mois de l'année "
+        "chiffrée (1,10 le relève de 10 %). Le premier jour, la loi seule relève au "
+        "nouveau SMIC les salaires horaires entre l'ancien et le nouveau, et dans la même "
+        "proportion ceux qui étaient sous l'ancien (apprentis, jeunes) ; l'arbre réformé "
+        "porte le nouveau SMIC (allègements, prime d'activité). Rien au-dessus sans la "
+        "diffusion, une hypothèse (D-380).",
+    )
+    smic_diffusion_profil: Literal[
+        "trimestre_sans_effets_fixes", "trimestre_avec_effets_fixes",
+        "annee_sans_effets_fixes", "annee_avec_effets_fixes"] | None = Field(
+        default=None,
+        description="HYPOTHÈSE DÉCLARÉE, jamais calée : la diffusion d'une hausse du SMIC "
+        "aux salaires horaires du privé entre 1 et 1,5 SMIC, selon l'une des quatre "
+        "estimations publiées de Koubi et Lhommeau (Insee, Les salaires en France 2007, "
+        "figure 11 ; `margins.SMIC_DIFFUSION_PROFILS`) : une élasticité par tranche de 0,1 "
+        "SMIC, de 0,07 à 1,19 selon l'horizon et la tranche, zéro au-delà de 1,5 SMIC. Exige "
+        "`smic_revalorisation`.",
+    )
+    smic_diffusion_echelle: Annotated[float, Field(ge=0.0, le=1.0)] | None = Field(
+        default=None,
+        description="L'échelle de la diffusion : 0, la loi seule ; 1, le profil publié "
+        "(la valeur quand le profil est donné sans elle). La plage d'une mesure va de l'un "
+        "à l'autre. Exige `smic_diffusion_profil`.",
+    )
+    point_indice_revalorisation: Annotated[float, Field(ge=0.5, le=2.0)] | None = Field(
+        default=None,
+        description="Coefficient sur la valeur du point d'indice de la fonction publique "
+        "(1,10 la relève de 10 %) : il multiplie le traitement indiciaire des titulaires, "
+        "brut sur 1,195 (le taux de prime du moteur, `TAUX_DE_PRIME`) ; leurs primes ne "
+        "bougent pas. L'État, les collectivités et les hôpitaux paient la hausse.",
+    )
+    point_indice_contractuels: Annotated[float, Field(ge=0.0, le=1.0)] | None = Field(
+        default=None,
+        description="La part du salaire des contractuels de la fonction publique qui suit "
+        "le point (0 quand on ne la règle pas : aucune part publiée ; un contractuel payé "
+        "sur une grille indiciaire la suit en entier). Exige "
+        "`point_indice_revalorisation`.",
+    )
+
+    @model_validator(mode="after")
+    def _check_salaires(self) -> ReformSpec:
+        """Un bouton de diffusion sans la hausse qu'il diffuse ne dit rien : refusé."""
+        for bouton, exige in (("smic_diffusion_profil", "smic_revalorisation"),
+                              ("smic_diffusion_echelle", "smic_diffusion_profil"),
+                              ("point_indice_contractuels", "point_indice_revalorisation")):
+            if getattr(self, bouton) is not None and getattr(self, exige) is None:
+                raise ValueError(f"« {bouton} » exige « {exige} » : il en règle la "
+                                 f"diffusion, et sans elle ne bouge rien.")
+        return self
+
     @field_validator("tva_postes")
     @classmethod
     def _check_tva_postes(cls, value: dict[str, float] | None) -> dict[str, float] | None:

@@ -451,6 +451,13 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
             "la TVA et les accises se chiffrent sur la population, avec la consommation "
             "imputée : un ménage seul n'a pas de consommation, et ces boutons n'y "
             "bougeraient rien (D-323)")
+    from impots.population import salaires
+
+    if salaires.touche(spec):
+        raise ValueError(
+            "le SMIC et le point d'indice se chiffrent sur la population, dont la passe "
+            "réformée relève les salaires (`population.salaires`) : le salaire d'un ménage "
+            "seul est donné, et ces boutons n'y bougeraient rien (but 21, étape 4)")
     start = periods.instant(f"{year}-01-01")
     instant = f"{year}-01-01"
     reform_name = f"impots-user-reform:{name}"

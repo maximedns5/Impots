@@ -617,6 +617,7 @@ def run_population(request: Any, frame: Any,
             impute_niches=imputed.niches, impute_capital=imputed.capital,
             impute_consommation=imputed.consommation,
             **({"impute_ij": True} if imputed.ij else {}),
+            **({"impute_menages": True} if imputed.menages else {}),
             capital_index=capital_index if imputed.capital else None,
             annee_consommation=(int(POPULATION_VINTAGE) if annee_consommation is None
                                 else annee_consommation),
