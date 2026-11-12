@@ -9,7 +9,122 @@
     "date": "2025-11-25",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
-  "mesures": []
+  "mesures": [
+    {
+      "id": "pluriannualite_budgetaire",
+      "categorie": "regle_budgetaire",
+      "libelle": "Pluriannualité budgétaire pour la sortie des fossiles, l'adaptation et la souveraineté écologique",
+      "parametre": "aucun montant ni trajectoire",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« J'instaurerai la pluriannualité budgétaire pour la sortie des énergies fossiles, l'adaptation au changement climatique et la souveraineté écologique, au même titre que la défense, la sécurité intérieure et la sécurité civile. »",
+          "url": "https://delphinebatho.fr/priorites/la-republique-terrestre/",
+          "date": "2026-11-02",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une méthode budgétaire, sans montant ni trajectoire de dépense."
+      }
+    },
+    {
+      "id": "ressources_autonomes_territoires",
+      "categorie": "autre",
+      "libelle": "Ressources autonomes pour les collectivités",
+      "parametre": "aucun impôt ni montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Les territoires auront les moyens d'agir par des ressources autonomes. »",
+          "url": "https://delphinebatho.fr/priorites/la-republique-terrestre/",
+          "date": "2026-11-02",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni l'impôt local ni le montant transféré ne sont énoncés."
+      }
+    },
+    {
+      "id": "securite_civile_programmation",
+      "categorie": "depense_publique",
+      "libelle": "Loi de programmation budgétaire pour les pompiers et ministère de la sécurité civile",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Je donnerai aux pompiers la loi de programmation budgétaire qu'ils réclament et un ministère régalien dédié à la sécurité civile. »",
+          "url": "https://delphinebatho.fr/priorites/la-securite-climatique-et-la-paix/",
+          "date": "2026-10-08",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun montant de la programmation n'est énoncé."
+      }
+    },
+    {
+      "id": "securite_sociale_climatique",
+      "categorie": "prestations",
+      "libelle": "Sécurité sociale climatique",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Face aux inégalités liées aux dommages des catastrophes, j'engagerai la création d'une sécurité sociale climatique. »",
+          "url": "https://delphinebatho.fr/priorites/la-securite-climatique-et-la-paix/",
+          "date": "2026-10-08",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni prestation, ni cotisation, ni montant ne sont énoncés."
+      }
+    },
+    {
+      "id": "aides_agricoles_bio",
+      "categorie": "depense_publique",
+      "libelle": "Aides publiques à l'agriculture conditionnées au bio et à l'agroécologie au terme du quinquennat",
+      "parametre": "conditionnement au terme du quinquennat ; aucun montant",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Au terme du quinquennat, les aides publiques en agriculture seront conditionnées à l'agriculture biologique et à l'agroécologie régénérative »",
+          "url": "https://delphinebatho.fr/priorites/la-pleine-sante/",
+          "date": "2026-10-08",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les aides publiques à l'agriculture sont une dépense que le moteur ne microsimule pas, et leur conditionnement ne dit pas de montant."
+      }
+    },
+    {
+      "id": "redeploiement_argent_public_alimentation",
+      "categorie": "depense_publique",
+      "libelle": "Redéploiement de l'argent public du système alimentaire",
+      "parametre": "aucun montant redéployé (48 Md€ est le coût actuel cité, pas la mesure)",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Chaque euro doit être redéployé pour donner un nouvel avenir à l'agriculture et assurer notre sécurité alimentaire. »",
+          "url": "https://delphinebatho.fr/priorites/la-pleine-sante/",
+          "date": "2026-10-08",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le redéploiement n'a ni montant ni destination chiffrée."
+      }
+    }
+  ]
 }

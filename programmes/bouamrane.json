@@ -4,12 +4,89 @@
   "parti": "PS",
   "statut": "declare",
   "statut_source": {
-    "citation": "Déclaré le 09/06/2026 (France Inter), hors primaire ; toujours listé candidat fin octobre",
-    "url": "https://lcp.fr/actualites/presidentielle-2027-qui-est-karim-bouamrane-le-maire-socialiste-de-saint-ouen-et-nouveau",
-    "date": "2026-06-09",
-    "type": "presse"
+    "citation": "« Ce que j'ai toujours dit depuis le début, c'est que je suis candidat. Je suis candidat à l'élection présidentielle. »",
+    "url": "https://www.sudradio.fr/linvite-politique/karim-bouamrane-il-faut-arreter-de-regarder-melenchon-comme-le-superman-de-la-gauche",
+    "date": "2026-11-09",
+    "type": "entretien"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
-  "mesures": []
+  "mesures": [
+    {
+      "id": "hausse_salaires_150",
+      "categorie": "salaires_smic",
+      "libelle": "Hausse de 150 € des bas salaires",
+      "parametre": "150 € par mois ; ni SMIC seul ni bas salaires précisés",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« On parle de 100 ou 200 euros d'augmentation, de 150 euros très exactement. J'ai envie de dire que c'est le minimum syndical. »",
+          "url": "https://www.sudradio.fr/linvite-politique/karim-bouamrane-il-faut-arreter-de-regarder-melenchon-comme-le-superman-de-la-gauche",
+          "date": "2026-11-09",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Une hausse de 150 € par mois des bas salaires demande la distribution des salaires et sa diffusion, que le moteur ne porte pas encore ; le champ (SMIC seul ou au-delà) n'est pas dit."
+      }
+    },
+    {
+      "id": "prime_activite_hausse",
+      "categorie": "prestations",
+      "libelle": "Hausse de la prime d'activité",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Nous expliquons que l'augmentation de la prime d'activité est importante. »",
+          "url": "https://www.sudradio.fr/linvite-politique/karim-bouamrane-il-faut-arreter-de-regarder-melenchon-comme-le-superman-de-la-gauche",
+          "date": "2026-11-09",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le montant ni le paramètre de la prime d'activité ne sont énoncés."
+      }
+    },
+    {
+      "id": "cheque_energie",
+      "categorie": "prestations",
+      "libelle": "Chèque énergie élargi",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Le chèque énergie est également un élément essentiel pour pallier la montée du coût de l'énergie. »",
+          "url": "https://www.sudradio.fr/linvite-politique/karim-bouamrane-il-faut-arreter-de-regarder-melenchon-comme-le-superman-de-la-gauche",
+          "date": "2026-11-09",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le montant ni le public du chèque énergie ne sont énoncés."
+      }
+    },
+    {
+      "id": "baisse_csg_jusqu_au_median",
+      "categorie": "csg_cotisations",
+      "libelle": "Baisse de la CSG sur les salaires jusqu'au salaire médian",
+      "parametre": "jusqu'au salaire médian ; aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Nous proposons aussi de baisser la CSG pour donner la possibilité d'augmenter les salaires, et pas uniquement le Smic […] jusqu'au salaire médian. »",
+          "url": "https://www.sudradio.fr/linvite-politique/karim-bouamrane-il-faut-arreter-de-regarder-melenchon-comme-le-superman-de-la-gauche",
+          "date": "2026-11-09",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun taux de CSG n'est énoncé, seulement le champ des salaires visés."
+      }
+    }
+  ]
 }

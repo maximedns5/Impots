@@ -9,16 +9,22 @@
     "date": "2026-10-11",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
       "id": "csg_salaires_megaheritages",
       "categorie": "csg_cotisations",
       "libelle": "Hausse du salaire net par baisse de la CSG sur les salaires, financée par les « méga-héritages »",
-      "parametre": "baisse de CSG (taux non donné) ; financement par « les 1% des plus gros héritages » ; 15 Md€ « directement sur la fiche de paie »",
+      "parametre": "baisse de CSG sur les salaires ; le contre-budget du PS (septembre 2026) cite un barème progressif de 0,25 % à 10,2 %, sans ses seuils ; 15 Md€ « directement sur la fiche de paie »",
       "precision": "parametree",
       "sources": [
+        {
+          "citation": "« Cela nous permettra de récupérer 15 milliards d'euros et de les transférer directement sur la fiche de paie des travailleurs français. »",
+          "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann",
+          "date": "2026-08-24",
+          "type": "entretien"
+        },
         {
           "citation": "« Nous augmenterons la rémunération nette des travailleurs français et nous le financerons en taxant les méga héritages »",
           "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann",
@@ -30,20 +36,26 @@
           "url": "https://lcp.fr/actualites/glucksmann-faure-royal-maurel-guedj-quelles-differences-entre-les-candidats-a-la",
           "date": "2026-10-09",
           "type": "discours"
+        },
+        {
+          "citation": "« Dans le contre-budget qu'ils ont présenté mi-septembre, les socialistes détaillent un barème progressif de CSG, échelonné de 0,25 % à 10,2 %. » (paraphrase de Public Sénat ; le barème est celui du groupe PS, pas repris en ses mots par le candidat)",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-que-proposent-les-candidats-pour-augmenter-les-salaires",
+          "date": "2026-10-30",
+          "type": "presse"
         }
       ],
       "refus": {
         "porte": "enveloppe",
-        "raison": "Le candidat donne l'enveloppe de la baisse de CSG (les 15 Md€ attendus de la taxe sur les héritages), pas son taux ni son assiette."
+        "raison": "Le candidat donne l'enveloppe de la baisse de CSG (15 Md€) ; le barème du contre-budget du PS n'est cité que par ses deux taux extrêmes, sans seuils."
       },
       "declare": {
         "montant_eur": 15000000000.0,
         "sens": "baisse_prelevements",
         "horizon": "non précisé par le candidat",
         "source": {
-          "citation": "« permettre de récupérer 15 milliards d'euros »",
-          "url": "https://lcp.fr/actualites/heritages-et-droits-de-succession-que-proposent-les-candidats-a-l-election",
-          "date": "2026-08-27",
+          "citation": "« Cela nous permettra de récupérer 15 milliards d'euros et de les transférer directement sur la fiche de paie des travailleurs français. »",
+          "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann",
+          "date": "2026-08-24",
           "type": "entretien"
         }
       }
@@ -52,7 +64,7 @@
       "id": "taxe_tres_grands_heritages",
       "categorie": "patrimoine_capital",
       "libelle": "Taxation des très grands héritages",
-      "parametre": "« les 1% les plus gros » ; « au-delà de deux millions d'euros » (paraphrase LCP, débat du 04/10)",
+      "parametre": "« les 1% les plus gros » ; au-delà de 2 M€ ; taux marginal des droits de 45 % à 50 % au-delà de 1,8 M€, réforme du pacte Dutreil, plus-values latentes taxées au décès (paraphrase d'Upside)",
       "precision": "parametree",
       "sources": [
         {
@@ -66,11 +78,17 @@
           "url": "https://lcp.fr/actualites/glucksmann-face-a-royal-divisions-sur-lfi-lycees-ce-qu-il-faut-retenir-du-dernier-debat",
           "date": "2026-10-05",
           "type": "discours"
+        },
+        {
+          "citation": "pas de citation verbatim (paraphrase d'Upside : « le taux marginal le plus élevé passerait de 45% à 50% sur la fraction excédant 1,8 million d'euros » ; Dutreil et plus-values latentes au décès)",
+          "url": "https://www.upside24.com/articles/glucksmann-veut-lever-15-milliards-sur-les-gros-heritages-pour-baisser-la-csg-de-370207",
+          "date": "2026-10-12",
+          "type": "presse"
         }
       ],
       "refus": {
         "porte": "transmission",
-        "raison": "Le moteur n'a pas de module des transmissions, et ni le taux ni le seuil exact ne sont établis par une source primaire."
+        "raison": "Le moteur n'a pas de module des transmissions, et le barème n'est rapporté que par une seule paraphrase de presse."
       },
       "declare": {
         "montant_eur": 15000000000.0,
@@ -172,6 +190,12 @@
           "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann",
           "date": "2026-08-24",
           "type": "entretien"
+        },
+        {
+          "citation": "pas de citation verbatim (paraphrase de LCP : il propose d'inscrire ces priorités « dans une loi de programmation sur cinq ans »)",
+          "url": "https://lcp.fr/actualites/glucksmann-face-a-royal-divisions-sur-lfi-lycees-ce-qu-il-faut-retenir-du-dernier-debat",
+          "date": "2026-10-05",
+          "type": "discours"
         }
       ],
       "refus": {
@@ -205,6 +229,12 @@
       "parametre": "aucun montant",
       "precision": "vague",
       "sources": [
+        {
+          "citation": "« nous lancerons avec nos partenaires européens un grand emprunt pour le financement de la transition écologique au niveau européen »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        },
         {
           "citation": "pas de citation verbatim (paraphrase de LCP)",
           "url": "https://lcp.fr/actualites/presidentielle-raphael-glucksmann-devoile-les-premieres-lignes-de-son-possible-programme",
@@ -240,9 +270,15 @@
       "id": "nucleaire_renouvelables",
       "categorie": "energie_carburants",
       "libelle": "Nucléaire et renouvelables",
-      "parametre": "aucun paramètre",
-      "precision": "vague",
+      "parametre": "au moins doubler les capacités renouvelables d'ici 2035 ; prolonger les réacteurs existants",
+      "precision": "parametree",
       "sources": [
+        {
+          "citation": "« au moins doubler, d'ici 2035, compte tenu du retard pris, les capacités installées de production d'énergie renouvelable » ; « Nous prolongerons et sécuriserons les réacteurs nucléaires existants. »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        },
         {
           "citation": "« La France a besoin des deux »",
           "url": "https://lcp.fr/actualites/glucksmann-face-a-royal-divisions-sur-lfi-lycees-ce-qu-il-faut-retenir-du-dernier-debat",
@@ -251,8 +287,345 @@
         }
       ],
       "refus": {
+        "porte": "secteur",
+        "raison": "La production d'électricité, nucléaire et renouvelable, est hors du modèle."
+      }
+    },
+    {
+      "id": "smic_1700_net",
+      "categorie": "salaires_smic",
+      "libelle": "SMIC à 1 700 € net par mois",
+      "parametre": "1 700 € net mensuels ; date non précisée",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Raphaël Glucksmann promet lui aussi une revalorisation du SMIC à 1 700 euros net par mois » (Public Sénat)",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-que-proposent-les-candidats-pour-augmenter-les-salaires",
+          "date": "2026-10-30",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "La distribution des salaires que le moteur lit est une donnée : il ne relève pas encore un seuil ni ne diffuse la hausse au-dessus (étape 4 du but 21)."
+      }
+    },
+    {
+      "id": "contribution_exceptionnelle_patrimoines",
+      "categorie": "patrimoine_capital",
+      "libelle": "Contribution exceptionnelle pour l'investissement climatique sur les plus hauts patrimoines",
+      "parametre": "50 Md€, une seule année ; ni seuil ni taux",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Cette contribution concernera une infime minorité de foyers, tout en haut de l'échelle des patrimoines, et rapportera 50 milliards d'euros. »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "patrimoine",
+        "raison": "La population ne porte pas le patrimoine des ménages, et ni le seuil ni le taux ne sont énoncés."
+      },
+      "declare": {
+        "montant_eur": 50000000000.0,
+        "sens": "recette",
+        "horizon": "une seule année (« une recette exceptionnelle, une seule année ») : pas un montant annuel récurrent",
+        "source": {
+          "citation": "« Cette contribution concernera une infime minorité de foyers, tout en haut de l'échelle des patrimoines, et rapportera 50 milliards d'euros. »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "investissement_public_200_md",
+      "categorie": "depense_publique",
+      "libelle": "200 Md€ d'investissement public pour la transition sur le quinquennat",
+      "parametre": "200 Md€ sur cinq ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous investirons, sur la durée du quinquennat, 200 milliards d'euros d'argent public. »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 200000000000.0,
+        "sens": "depense",
+        "horizon": "200 Md€ sur la durée du quinquennat : un total sur cinq ans, pas un montant annuel (le candidat ne donne pas de calendrier)",
+        "source": {
+          "citation": "« Nous investirons, sur la durée du quinquennat, 200 milliards d'euros d'argent public. »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "stabilisation_dette_2032",
+      "categorie": "regle_budgetaire",
+      "libelle": "Stabilisation de la dette à l'horizon 2032",
+      "parametre": "dette stabilisée en 2032",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Notre plan vise à permettre à la fois la neutralité carbone en 2050 et la stabilisation de la dette à l'horizon 2032. »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une trajectoire de la dette, pas une réforme : une hypothèse de la chaîne de la dette."
+      }
+    },
+    {
+      "id": "cheque_energie_500_200",
+      "categorie": "prestations",
+      "libelle": "Chèque énergie de 500 € et de 200 €",
+      "parametre": "500 € pour 6 millions de familles ; 200 € pour 10 millions de familles des classes moyennes",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous verserons un chèque énergie de 500 euros pour six millions de familles, de 200 euros pour dix millions de familles des classes moyennes »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Un chèque énergie à deux montants pour seize millions de familles est une prestation neuve dont le moteur ne porte ni le barème ni le ciblage."
+      }
+    },
+    {
+      "id": "kerosene_vols_interieurs",
+      "categorie": "energie_carburants",
+      "libelle": "Fin des exonérations fiscales sur le carburant des vols intérieurs",
+      "parametre": "suppression de l'exonération, dans les 100 premiers jours",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Dès les 100 premiers jours, nous mettrons fin aux exonérations fiscales sur le carburant pour les vols intérieurs et nous augmenterons la taxe sur les billets d'avion. »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "Le transport aérien et son carburant ne sont pas une assiette du modèle."
+      }
+    },
+    {
+      "id": "taxe_billets_avion_jets_yachts",
+      "categorie": "energie_carburants",
+      "libelle": "Hausse de la taxe sur les billets d'avion ; jets privés et yachts ciblés",
+      "parametre": "aucun tarif",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« nous augmenterons la taxe sur les billets d'avion » ; « les jets privés, comme les yachts, seront particulièrement ciblés »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
         "porte": "vague",
-        "raison": "Une orientation, sans capacité, montant ni date."
+        "raison": "Ni le tarif de la taxe ni l'instrument visant les jets et les yachts ne sont énoncés."
+      }
+    },
+    {
+      "id": "taxe_superprofits_europeenne",
+      "categorie": "entreprises",
+      "libelle": "Taxe européenne sur les superprofits pétroliers et gaziers",
+      "parametre": "aucun taux ; au niveau européen",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« nous défendrons la création d'une taxe sur les superprofits pétroliers et gaziers au niveau européen »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni la définition du superprofit ni le taux ne sont énoncés, et la taxe serait européenne."
+      }
+    },
+    {
+      "id": "livret_souverainete",
+      "categorie": "patrimoine_capital",
+      "libelle": "Livret A doublé et fusionné avec le LDDS, rémunéré à 2,5 %",
+      "parametre": "plafond du livret A doublé ; fusion avec le LDDS ; taux 2,5 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« le plafond du livret A sera doublé et le livret fusionné avec le Livret de développement durable et solidaire pour devenir un Livret de souveraineté écologique et sociale, rémunéré à 2,5 % »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "L'épargne réglementée des ménages n'est pas dans la population, ni le coût de sa rémunération pour les finances publiques."
+      }
+    },
+    {
+      "id": "leasing_social_100",
+      "categorie": "depense_publique",
+      "libelle": "Leasing social : 1 million de voitures électriques à 100 € par mois",
+      "parametre": "1 million de véhicules sur 5 ans, 100 € par mois sans apport",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Leasing social : 1 million de voitures électriques sur 5 ans, à 100€ par mois et sans apport »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
+      }
+    },
+    {
+      "id": "pompes_a_chaleur_1_euro",
+      "categorie": "depense_publique",
+      "libelle": "1 million de pompes à chaleur à 1 € par jour",
+      "parametre": "1 million, 1 € par jour",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Pompes à chaleur : 1 million de pompes à chaleur à 1 € par jour »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
+      }
+    },
+    {
+      "id": "pass_mobilite_jeunes",
+      "categorie": "depense_publique",
+      "libelle": "Pass Mobilité Durable Jeunes à 1 € par jour pour les moins de 25 ans",
+      "parametre": "1 € par jour, moins de 25 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un Pass Mobilité Durable Jeunes à 1 euro par jour pour les jeunes de moins de 25 ans »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
+      }
+    },
+    {
+      "id": "moratoire_taxes_electricite",
+      "categorie": "energie_carburants",
+      "libelle": "Moratoire sur les hausses de taxes sur l'électricité ; prix au plus l'inflation",
+      "parametre": "gel des taxes ; prix indexé au plus sur l'inflation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous adopterons un moratoire sur les hausses de taxes sur l'électricité, et nous garantirons que son prix n'augmente pas plus vite que l'inflation. »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prix",
+        "raison": "Une garantie de prix est un prix fixé hors du marché, et le gel des taxes n'a d'effet que contre une hausse prévue que la mesure ne nomme pas."
+      }
+    },
+    {
+      "id": "securite_civile_1_md",
+      "categorie": "depense_publique",
+      "libelle": "1 Md€ d'investissement pour la sécurité civile dès juin 2027",
+      "parametre": "1 Md€ dès juin 2027",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« en allouant 1 Md € d'investissement, dès juin 2027, à la sécurité civile »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 1000000000.0,
+        "sens": "depense",
+        "horizon": "dès juin 2027 ; le candidat ne dit pas si le montant est annuel ou unique",
+        "source": {
+          "citation": "« en allouant 1 Md € d'investissement, dès juin 2027, à la sécurité civile »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "renovation_ecoles_par_an",
+      "categorie": "depense_publique",
+      "libelle": "Rénovation de 4 000 écoles primaires par an et de 2 800 collèges et lycées",
+      "parametre": "4 000 écoles par an ; plus de 2 800 collèges et lycées",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous viserons la rénovation de 4 000 écoles primaires chaque année et plus de 2800 collèges et lycées »",
+          "url": "https://glucks2027.fr/wp-content/uploads/2026/11/livret_progr_revolution_ecologique_2027.pdf",
+          "date": "2026-11-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
+      }
+    },
+    {
+      "id": "statut_parents_solos",
+      "categorie": "prestations",
+      "libelle": "Statut des parents solos",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim (paraphrase de LCP : il « partage aussi l'idée d'un statut des parents solos »)",
+          "url": "https://lcp.fr/actualites/glucksmann-face-a-royal-divisions-sur-lfi-lycees-ce-qu-il-faut-retenir-du-dernier-debat",
+          "date": "2026-10-05",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni droits ni montants attachés au statut ne sont énoncés."
       }
     }
   ]
