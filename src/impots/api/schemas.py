@@ -982,6 +982,7 @@ class ReformSpec(BaseModel):
             raise ValueError(
                 f"{', '.join(morts)} : ces boutons règlent une prestation que la prestation "
                 f"neuve posée par la même réforme remplace ; ils ne bougeraient rien.")
+        return self
 
     # --- Les boutons des programmes de 2027 qui changent une formule (but 21, étape 2) ---
     # Ce que chacun fait et ne fait pas : `impots.engine.boutons_programmes`.
