@@ -192,6 +192,10 @@ class Chemin:
     """Δb_t, one entry per year, each a float or an array along the draws."""
     gdp_gap: Any
     feedback: Any
+    primary: Any = None
+    """The primary balance the reform adds each year, before the loop's feedback, as a
+    share of reference GDP (positive improves it): with `feedback`, the balance a page
+    draws year by year (but 22)."""
 
 
 def reference_path(rejeu: Mapping[str, Any], start: Mapping[str, Any],
@@ -284,7 +288,7 @@ def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
         debt = debt * (1.0 + marginal) / (1.0 + nominal) - (primary[k] + phi[k])
         delta.append((refs[k] + debt) / (1.0 + gap[k]) - refs[k])
     return Chemin(years=years, reference=tuple(refs), delta=delta, gdp_gap=gap,
-                  feedback=phi)
+                  feedback=phi, primary=primary)
 
 
 def _rejeu(payload: Mapping[str, Any]) -> Mapping[str, Any]:
