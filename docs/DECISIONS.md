@@ -28795,3 +28795,32 @@ elles, et la décomposition est refaite dans un but suivant.
 
 **Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
 `chiffrages_preregistres/`, les seuils de D-345.
+
+## D-398 — Dupont-Aignan refusé, et dit refusé ; le site des dix-sept études
+
+**Le diagnostic.** Le chemin annuel de Dupont-Aignan a tourné une seconde fois, hors
+série, le garde relâché et son rapport écrit à part (une passe d'essai, rien n'entre dans
+`reports/`). La boîte θ porte trois lignes : l'élasticité du revenu imposable de tous, celle
+du décile du haut, le multiplicateur. Sous les persistances « lue » et « éteinte », Δb à θ
+est dans sa boîte, dans les quatre lectures. Sous la persistance « tenue », il en sort
+dans trois sur quatre, au-dessus de tous les coins : en 2035, vue figée, θ tenu chaque
+année, +1,889 point contre +1,849 au plus haut coin (tous les θ à zéro). Un effet de ce
+paquet n'est donc pas monotone en son θ sous cette persistance ; l'imputation des données
+de ménages de D-396 ne dépend pas de θ et n'y est pour rien. Le garde fait ce que D-217 et
+D-224 lui demandent : il refuse plutôt que de tracer une boîte fausse. Le chercher est un
+travail à part, laissé à un but suivant.
+
+**Le refus dit.** Une définition d'étude peut porter `refus`, sa raison et l'entrée qui la
+dit : le site liste l'étude « chiffrée, puis refusée », la page des 24 marque « refusée »,
+et le parcours de la dette la saute. `preenregistrer_programmes.py` l'écrit pour
+Dupont-Aignan. Sans lui, le site disait « ses passes n'ont pas tourné », ce qui est faux.
+
+**Le parcours suit les programmes grandis.** Le point de plage du droit au brut d'Attal
+chiffre la mesure seule ; son chemin annuel porte aussi, depuis le lot 2, les pensions
+alimentaires : la page montre les deux nombres et dit l'écart, au lieu d'affirmer leur
+égalité. La CVEC, que la boucle ne lit pas (étape 4), a sa famille dans la comparaison
+des candidats.
+
+**Ce qui est publié.** Dix-sept études et leurs pages, la page des 24, le parcours et la
+comparaison, construits depuis les rapports commités ; `site verifier` et `site
+publiable` sont verts. Aucun nombre de la série n'est touché.

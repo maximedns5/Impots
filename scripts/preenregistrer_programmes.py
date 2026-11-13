@@ -201,6 +201,11 @@ def arguments(nom: str, p, m) -> list[str]:
 ETUDES = ROOT / "etudes"
 PREENREGISTREMENT_ETUDES = "D-394"  # la série du but 21 (D-372 au but 19, D-350 au but 16)
 CADRE_ETUDES = "central"
+#: Les études dont les passes ont tourné et dont un garde a refusé le chemin (D-398).
+REFUS = {"dupont_aignan": (
+    "son chemin annuel sort de la boîte θ sous la persistance « tenue » : un effet "
+    "n'y est pas monotone en son θ, et la boîte relue à ses coins serait fausse "
+    "(D-217, D-224, D-398).")}
 
 
 def etudes() -> list[tuple[str, dict, dict]]:
@@ -244,6 +249,8 @@ def etudes() -> list[tuple[str, dict, dict]]:
             # La dette « si les économies annoncées sont tenues », à côté (étape 5, D-380).
             "dette_annoncee": True,
         }
+        if slug in REFUS:
+            definition["refus"] = REFUS[slug]
         out.append((slug, scenario, definition))
     return out
 

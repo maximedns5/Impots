@@ -120,6 +120,9 @@ def etudes() -> tuple[dict[str, Any], ...]:
     for definition in sorted(ETUDES.glob("presidentielle_*.json")):
         etude = json.loads(definition.read_text(encoding="utf-8"))
         nom = etude["nom"]
+        if etude.get("refus"):
+            # Its path was refused by a guard (D-398): no debt to replay; the index says so.
+            continue
         for scenario in etude["scenarios"]:
             chemin = f"reports/etudes/{nom}/predictif_{scenario['scenario']}.json"
             if not (ROOT / chemin).exists():

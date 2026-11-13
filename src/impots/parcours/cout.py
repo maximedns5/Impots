@@ -818,18 +818,21 @@ def _bouton_donnees() -> tuple[dict[str, Any], str]:
     (sha,) = commits
     attal = plages(BOUTONS[0][1], BOUTONS[0][2][:1])
     cand = next(p for p in attal if p["qui"])
+    # The point prices the measure alone, the study's path the whole programme's
+    # households, which since the but 21 also carries the pensions alimentaires (D-392,
+    # D-398): the two are shown side by side, their gap said, not asserted equal.
     serie = lire(ATTAL_PRED)["years"][0]["mechanical_by_layer"]["vieillie"]["menages"]
-    if not math.isclose(cand["cout"], serie, rel_tol=1e-9):
-        raise ParcoursError("la plage d'Attal ne redonne pas le coût de la série.")
     texte = f"""
 <p>Chaque point est une passe de la série, sur le commit {commit(sha)} des études : les
 « plages » de chaque étude, qui chiffrent un bouton à son bas, à la valeur du candidat et à
 son haut, la loi intacte autour. Le curseur choisit un point ; il ne calcule rien et
 n'interpole pas entre deux points. Les coûts sont dans la vue vieillie, la population de
-2024 portée à 2026 : au bouton d'Attal, {b(md(cand["cout"]), "L2")} pour les ménages, le
-même nombre que le chemin annuel de son étude ({fichier(ATTAL_PRED, "chemin annuel")}),
-quand la population de 2024 au droit de 2026 en donne
-{b(md(lire(ATTAL)["response"]["menages"]["reform_cost"]), "L2")}. Attal et Retailleau
+2024 portée à 2026 : au bouton d'Attal, {b(md(cand["cout"]), "L2")} pour les ménages, la
+mesure seule ; le chemin annuel de son étude ({fichier(ATTAL_PRED, "chemin annuel")}), qui
+porte aussi la défiscalisation des pensions alimentaires, en donne
+{b(md(serie), "L2")} : l'écart est cette mesure, et les données de ménages qu'elle fait
+imputer. Le programme entier, sur la population de 2024 au droit de 2026, sans la
+vieillir, coûte {b(md(lire(ATTAL)["response"]["menages"]["reform_cost"]), "L2")}. Attal et Retailleau
 règlent le même bouton, à 0,22 et 0,87 : leurs points sont sur le même curseur.</p>
 """
     return out, texte + "".join(tables)

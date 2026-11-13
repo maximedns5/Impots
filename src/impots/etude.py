@@ -61,7 +61,7 @@ SCENARIOS = ROOT / "scenarios"
 CADRES = DEFINITIONS / "cadres"
 DECISIONS = "docs/DECISIONS.md"
 FIELDS = {"nom", "titre", "texte", "preenregistrement", "cadre", "millesime_entreprises",
-          "page", "rapports", "scenarios", "programme", "dette_annoncee"}
+          "page", "rapports", "scenarios", "programme", "dette_annoncee", "refus"}
 #: The points of a measure's range the study of a programme prices (D-328): its bottom,
 #: the candidate's value, its top.
 POINTS = ("bas", "candidat", "haut")
@@ -1320,6 +1320,9 @@ class Etude:
     #: Whether a programme's page shows its debt « si les économies annoncées sont
     #: tenues » beside the debt (D-380). Off until the series of the but 21 runs.
     dette_annoncee: bool = False
+    #: Why the study's passes ran and its path was refused by a guard, with the entry that
+    #: says so (D-398): the study has no page, and the site says it refused, not unrun.
+    refus: str | None = None
 
     @property
     def noms(self) -> tuple[str, ...]:
@@ -2757,6 +2760,7 @@ def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
     w = lines.append
     slugs = pg.lister()
     studied = {e.programme for e in etudes if e.programme is not None}
+    refusees = {e.programme for e in etudes if e.programme is not None and e.refus}
     releves = sorted({pg.charger(slug).releve for slug in slugs})
     w("# Les programmes de la présidentielle 2027")
     w("")
@@ -2784,7 +2788,7 @@ def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
         portes = ", ".join(f"{porte_lue(k)} {n(v, 'programme')}" for k, v in sorted(
             c["refus_par_porte"].items(), key=lambda kv: (-kv[1], kv[0]))
             if k != "vague") or "—"
-        etude_ = "oui" if slug in studied else "—"
+        etude_ = ("refusée" if slug in refusees else "oui") if slug in studied else "—"
         w(f"| {p.candidat} ({p.parti}) | {n(c['mesures'], 'programme')} | "
           f"{n(c['parametrees'], 'programme')} | {n(c['chiffrees'], 'programme')} | {etude_} | "
           f"{portes} |")
@@ -2856,7 +2860,8 @@ def definition(nom: str, directory: Path | None = None) -> Etude:
                  page=ROOT / raw.get("page", f"docs/etudes/{nom}.md"),
                  rapports=ROOT / raw.get("rapports", f"reports/etudes/{nom}"),
                  programme=raw.get("programme"),
-                 dette_annoncee=bool(raw.get("dette_annoncee", False)))
+                 dette_annoncee=bool(raw.get("dette_annoncee", False)),
+                 refus=raw.get("refus"))
 
 
 def scenario_du_programme(slug: str) -> str:
