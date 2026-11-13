@@ -11,5 +11,15 @@
       "scenario": "pres2027_labib_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "suppression_tva_taxes_carburants",
+      "scenario": "pres2027_labib_suppression_tva_taxes_carburants"
+    },
+    {
+      "mesure": "revenu_minimum_2200",
+      "scenario": "pres2027_labib_revenu_minimum_2200"
+    }
+  ]
 }

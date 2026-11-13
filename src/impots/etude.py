@@ -61,12 +61,15 @@ SCENARIOS = ROOT / "scenarios"
 CADRES = DEFINITIONS / "cadres"
 DECISIONS = "docs/DECISIONS.md"
 FIELDS = {"nom", "titre", "texte", "preenregistrement", "cadre", "millesime_entreprises",
-          "page", "rapports", "scenarios", "programme", "dette_annoncee", "refus"}
+          "page", "rapports", "scenarios", "programme", "dette_annoncee", "refus", "mesures"}
 #: The points of a measure's range the study of a programme prices (D-328): its bottom,
 #: the candidate's value, its top.
 POINTS = ("bas", "candidat", "haut")
 #: Where a programme study keeps its ranges' reports, beside the two of its part.
 PLAGES = "plages"
+#: Where a programme study keeps the reports of its measures alone (but 22): one folder per
+#: measure, `mesures/<id>/`, its first year and its annual path, as the part's two.
+MESURES = "mesures"
 #: Where a study keeps its witness passes (D-335, D-336): one per commit after the first,
 #: `temoins/<short sha>.json`.
 TEMOINS = "temoins"
@@ -80,6 +83,15 @@ HORS_TEMOIN = ("computed", "commit", "dirty", "where")
 
 class EtudeError(ValueError):
     """The study would not be what it says: its definition, its passes, or its reports."""
+
+
+@dataclass(frozen=True)
+class MesureSeule:
+    """A priced measure of a programme, passed alone (but 22): its id in the programme, and
+    the scenario that prices it alone, the one its case was registered on (D-321)."""
+
+    mesure: str
+    scenario: str
 
 
 @dataclass(frozen=True)
@@ -1022,6 +1034,108 @@ class _Programme:
     def sources(self, w: Any, where: str) -> None:
         count = len(self.study.points())
         w(f"* `{where}/{PLAGES}/`, les {count} points des plages")
+        if self.study.mesures:
+            w(f"* `{where}/{MESURES}/<mesure>/`, la première année et le chemin de chaque "
+              f"mesure seule")
+
+    def mesures_seules(self, w: Any, n: Nombres, entries: list[dict[str, Any]],
+                       last: int) -> None:
+        """Each priced measure alone (but 22): its first year's cost, vue figée and vue
+        vieillie, its Δb at θ½, its three lowest deciles; then their sum, the part, and the
+        part minus the sum, « interaction », said on its line and given to no measure."""
+
+        chiffrees = self.programme.chiffrees()
+        if len(chiffrees) == 1:
+            w("## Chaque mesure seule, et leur interaction")
+            w("")
+            w("Le programme n'a qu'une mesure chiffrée : la part chiffrée est cette mesure "
+              "seule, et ses nombres sont ceux de plus haut. Il n'y a ni somme des mesures "
+              "ni interaction.")
+            w("")
+            return
+        if not self.study.mesures:
+            return
+        entry = entries[0]
+        w("## Chaque mesure seule, et leur interaction")
+        w("")
+        w(f"Chaque mesure chiffrée passe aussi seule, en entier : sa première année et son "
+          f"chemin annuel jusqu'en {last}, dans le cadre de la part chiffrée, sur la même "
+          f"population et le même code. La part chiffrée n'est pas la somme de ses mesures : "
+          f"deux mesures se rencontrent dans le barème, dans les prestations sous condition "
+          f"de ressources, dans la boucle macro, et dans la dette, que chacune creuse sur le "
+          f"PIB que l'autre a changé. L'écart, la part chiffrée moins la somme des mesures, "
+          f"est dit sur sa ligne, « interaction » : il n'est réparti entre aucune mesure.")
+        w("")
+        if entry["mesures"] is None:
+            raison = entry["mesures_absentes"]
+            w(f"**Les mesures seules : absentes, et la raison est donnée.** "
+              f"{raison[:1].upper()}{raison[1:]}. Les rapports de cette page viennent d'une "
+              f"série qui ne les avait pas.")
+            w("")
+            return
+        year, vintage = entry["scenario"].year, entry["response"].meta.vintage
+        w(f"Le coût de la première année est mécanique : en vue figée, sur la population de "
+          f"{vintage} au droit de {year}, comme la part chiffrée plus haut ; en vue "
+          f"vieillie, sur la population vieillie jusqu'en {year}, la première année du "
+          f"chemin annuel. La dette est en points de PIB, à θ½, vue vieillie, sous la "
+          f"persistance « lue ». Les déciles sont ceux du niveau de vie des ménages : ce "
+          f"que les trois premiers y gagnent en tout, et leur part de ce que gagnent tous "
+          f"les ménages (ou perdent, si la mesure leur prend) ; une mesure des seules "
+          f"entreprises n'en a pas.")
+        w("")
+        w(f"| mesure | coût {year}, vue figée | coût {year}, vue vieillie | Δ dette {last}, "
+          f"à θ½ | gain des déciles 1 à 3 | leur part |")
+        w("|---|---|---|---|---|---|")
+        libelles = {m.id: m.libelle for m in chiffrees}
+        lignes = [lecture_seule(e) for e in entry["mesures"]]
+        programme = lecture_seule(entry)
+        for seule, lue_ in zip(entry["mesures"], lignes, strict=True):
+            w(self._ligne(n, amounts(libelles[seule["mesure"]], "programme", n), lue_))
+        somme = {"figee": sum(x["figee"] for x in lignes),
+                 "vieillie": sum(x["vieillie"] for x in lignes),
+                 "dette": sum(x["dette"] for x in lignes),
+                 "etage": plus_haut(x["etage"] for x in lignes),
+                 "bas": sum(x["bas"] or 0.0 for x in lignes),
+                 "menages": sum(x["menages"] or 0.0 for x in lignes)}
+        if all(x["bas"] is None for x in lignes):
+            somme["bas"] = somme["menages"] = None
+        w(self._ligne(n, "**somme des mesures**", somme))
+        w(self._ligne(n, "**la part chiffrée**", programme))
+        interaction = {
+            "figee": programme["figee"] - somme["figee"],
+            "vieillie": programme["vieillie"] - somme["vieillie"],
+            "dette": programme["dette"] - somme["dette"],
+            "etage": plus_haut((programme["etage"], somme["etage"])),
+            "bas": (None if programme["bas"] is None
+                    else programme["bas"] - (somme["bas"] or 0.0)),
+            "menages": None}
+        w(self._ligne(n, "**interaction**, la part moins la somme", interaction))
+        w("")
+        w("Chaque ligne se lit dans ses deux rapports : la première année (le coût en vue "
+          "figée, les déciles) et le chemin annuel (le coût en vue vieillie, la dette).")
+        w("")
+        where = _relative(self.study.rapports)
+        for seule in entry["mesures"]:
+            folder = f"{where}/{self.study.dossier(seule['name'])}"
+            w(f"* {amounts(libelles[seule['mesure']], 'programme', n)} : "
+              f"`{folder}premiere_annee_{seule['name']}.json`, "
+              f"`{folder}predictif_{seule['name']}.json`")
+        w(f"* la part chiffrée : `{where}/premiere_annee_{entry['name']}.json`, "
+          f"`{where}/predictif_{entry['name']}.json`")
+        w("")
+
+    @staticmethod
+    def _ligne(n: Nombres, label: str, x: dict[str, Any]) -> str:
+        from impots import fiche
+        from impots.reporting import pct_fr
+
+        bas = "—" if x["bas"] is None else n(fiche._eur(x["bas"]), "L2")
+        part = ("—" if x["bas"] is None or x["menages"] is None
+                or abs(x["menages"]) < MENAGES_TOUCHES
+                else n(pct_fr(x["bas"] / x["menages"]), "L2"))
+        return (f"| {label} | {n(fiche._eur(x['figee']), 'L2')} | "
+                f"{n(fiche._eur(x['vieillie']), 'L2')} | "
+                f"{n(_points(x['dette']), x['etage'], conditionnel=True)} | {bas} | {part} |")
 
     def _plages(self, w: Any, n: Nombres, reports: list[dict[str, Any]],
                 entry: dict[str, Any] | None = None) -> None:
@@ -1267,6 +1381,36 @@ class _Programme:
         w("")
 
 
+#: Below this, in euros, what the households gain in all is no base for a share of it.
+MENAGES_TOUCHES = 1e6
+#: The layers a debt rests on, lowest first (`debt_etage`).
+ETAGES_DETTE = ("L2", "L3", "L4")
+
+
+def plus_haut(etages: Any) -> str:
+    """The highest layer of several debts: a sum rests on the highest of its terms."""
+    return max(etages, key=ETAGES_DETTE.index)
+
+
+def dette_lue(rows: list[dict[str, Any]]) -> float:
+    """Δb at θ½ a page leads with: vue vieillie, under « lue » when the path draws it."""
+    return next(r for r in verdict_rows(rows) if r["view"] == "vieillie")["theta"]
+
+
+def lecture_seule(entry: dict[str, Any]) -> dict[str, Any]:
+    """What the measure-by-measure table reads of an entry (but 22): the first year's cost
+    vue figée (its report) and vue vieillie (its path's first year), Δb at θ½, and what the
+    three lowest deciles of the households gain, beside what they all gain, in euros, None
+    for a reply without deciles (the firms')."""
+    rows = getattr(entry["response"], "deciles", None) or []
+    masses = [(r.decile, entry["sign"] * r.mean_delta * r.n_households) for r in rows]
+    return {"figee": entry["cost"],
+            "vieillie": entry["sign"] * float(entry["path"]["years"][0]["mechanical_aged_eur"]),
+            "dette": dette_lue(entry["debt"]), "etage": debt_etage(entry["path"]),
+            "bas": sum(m for d, m in masses if d <= 3) if masses else None,
+            "menages": sum(m for _, m in masses) if masses else None}
+
+
 START_PLUS_ONE = 2026
 LAST_YEAR = 2035
 #: Les parts réalisées que la page montre de la dette annoncée, comme la couche déclarée.
@@ -1393,6 +1537,9 @@ class Etude:
     #: Why the study's passes ran and its path was refused by a guard, with the entry that
     #: says so (D-398): the study has no page, and the site says it refused, not unrun.
     refus: str | None = None
+    #: The priced measures of a programme passed alone, each its first year and its annual
+    #: path (but 22), in the programme's order; none for a study defined before them.
+    mesures: tuple[MesureSeule, ...] = ()
 
     @property
     def noms(self) -> tuple[str, ...]:
@@ -1409,6 +1556,17 @@ class Etude:
         texte = TEXTES[self.texte]
         return texte(self) if isinstance(texte, type) else texte
 
+    def dossier(self, name: str) -> str:
+        """Where `name`'s two reports go, under the study's: the study's own folder for its
+        part, `mesures/<id>/` for a measure alone (but 22)."""
+        if name in self.noms:
+            return ""
+        for m in self.mesures:
+            if m.scenario == name:
+                return f"{MESURES}/{m.mesure}/"
+        raise EtudeError(f"{name} n'est pas un scénario de l'étude « {self.nom} » : "
+                         f"{[*self.noms, *(m.scenario for m in self.mesures)]}")
+
     def points(self) -> list[tuple[str, str, str]]:
         """(measure, field, point) of every range point the study prices, in order."""
         if self.programme is None:
@@ -1423,11 +1581,13 @@ class Etude:
 
     def annual_argv(self, name: str, *, where: str) -> list[str]:
         """`impots predictif` for `name`: the annual command of the frame's request, with
-        this scenario, this directory and this place."""
+        this scenario, this directory and this place, its report in the scenario's folder
+        (`dossier`)."""
         annual = _script("etude_annuelle")
         lire_cadre(self.cadre)
         command = annual.argv(self.cadre, where=where, requests=CADRES,
-                              scenarios=self.scenarios, out=self.rapports)
+                              scenarios=self.scenarios,
+                              out=self.rapports / self.dossier(name))
         if command[1] != annual.name(self.cadre):
             raise EtudeError(f"la commande de l'étude ne nomme pas son scénario en "
                              f"deuxième : {command[:3]}")
@@ -1435,8 +1595,10 @@ class Etude:
 
     def passes(self, where: str) -> list[tuple[str, list[str]]]:
         """(report, command): the first years, the range points of a programme, then the
-        annual paths, the longest, in the study's order."""
+        annual paths, the longest, in the study's order; after them, the measures of a
+        programme passed alone (but 22), their first years, then their paths."""
         cli = ["-m", "impots.population.cli"]
+        seules = [m.scenario for m in self.mesures]
         return ([(f"premiere_annee_{name}.json",
                   [*cli, "etude", "premiere", self.nom, name, "--ou", where])
                  for name in self.noms]
@@ -1444,7 +1606,13 @@ class Etude:
                     [*cli, "etude", "plage", self.nom, mesure, champ, point, "--ou", where])
                    for mesure, champ, point in self.points()]
                 + [(f"predictif_{name}.json", [*cli, *self.annual_argv(name, where=where)])
-                   for name in self.noms])
+                   for name in self.noms]
+                + [(f"{self.dossier(name)}premiere_annee_{name}.json",
+                    [*cli, "etude", "premiere", self.nom, name, "--ou", where])
+                   for name in seules]
+                + [(f"{self.dossier(name)}predictif_{name}.json",
+                    [*cli, *self.annual_argv(name, where=where)])
+                   for name in seules])
 
     def preregistered(self) -> str | None:
         """Why the passes may not run on this commit, or None: the entry that preregisters
@@ -1646,11 +1814,10 @@ class Etude:
         return path
 
     def write_first_year(self, name: str, *, where: str, sortie: Path | None = None) -> Path:
-        if name not in self.noms:
-            raise EtudeError(f"{name} n'est pas un scénario de l'étude « {self.nom} » : "
-                             f"{list(self.noms)}")
+        folder = self.dossier(name)
         report = first_year(name, where=where, scenarios=self.scenarios, mixte=self.mixte)
-        return self._write(sortie or self.rapports / f"premiere_annee_{name}.json", report)
+        return self._write(sortie or self.rapports / f"{folder}premiere_annee_{name}.json",
+                           report)
 
     def write_plage(self, mesure: str, champ: str, point: str, *, where: str,
                     sortie: Path | None = None) -> Path:
@@ -1700,19 +1867,13 @@ class Etude:
                 "years": list(range(first, first + request["horizon"])),
                 "persistance": request.get("persistance")}
 
-    def load(self, reports: Path | None = None, *,
-             plages: bool = True) -> list[dict[str, Any]]:
+    def load(self, reports: Path | None = None, *, plages: bool = True,
+             mesures: bool = True) -> list[dict[str, Any]]:
         """Each scenario's two reports, refused unless they are the study's, as it was set.
-        Without `plages`, the range points are not read: a decomposition pass (D-354) runs
-        the scenarios alone."""
-        from impots import preregistration
-        from impots import scenarios as scenarios_module
-        from impots.api.schemas import (
-            FirmResponse,
-            PopulationResponse,
-            PredictifReportResponse,
-        )
-
+        Without `plages`, the range points are not read, nor the measures alone without
+        `mesures`: a decomposition pass (D-354) runs the scenarios alone. The measures
+        alone (but 22) are read when every one has its reports, and said absent, with the
+        command that runs them, when none has; a series half run is refused."""
         reports = reports or self.rapports
         texte = self.texte_lu()
         wanted = {f"{kind}_{name}.json" for name in self.noms
@@ -1725,93 +1886,151 @@ class Etude:
         frame = self.frame()
         entries, commits = [], set()
         for volet in self.volets:
-            name = volet.scenario
-            first = _read(reports / f"premiere_annee_{name}.json")
-            path = _read(reports / f"predictif_{name}.json")
-            for label, report in (("la première année", first), ("le chemin", path)):
-                if not report.get("commit") or report.get("dirty") is not False:
-                    raise EtudeError(f"{name}, {label} : ne nomme pas un commit dont il a "
-                                     f"chiffré le code.")
-                if not report.get("where"):
-                    raise EtudeError(f"{name}, {label} : ne dit pas où ses passes ont "
-                                     f"tourné.")
-                commits.add(report["commit"])
-            kind, endpoint, payload = first_year_payload(name, self.scenarios, self.mixte)
-            if (first.get("scenario"), first.get("kind"), first.get("endpoint"),
-                    first.get("request")) != (name, kind, endpoint, payload):
-                raise EtudeError(f"{name} : la première année n'a pas chiffré le scénario "
-                                 f"de l'étude, par l'appel de sa chaîne.")
-            firms = None
-            if kind == "mixte":
-                response = PopulationResponse.model_validate(first["response"]["menages"])
-                firms = FirmResponse.model_validate(first["response"]["entreprises"])
-            else:
-                response = (FirmResponse if kind == "entreprises" else PopulationResponse
-                            ).model_validate(first["response"])
-            if response.reform_cost is None or (firms is not None
-                                                and firms.reform_cost is None):
-                raise EtudeError(f"{name} : la première année n'a pas de coût.")
-            firm_reply = response if kind == "entreprises" else firms
-            if firm_reply is not None and (
-                    firm_reply.meta.vintage != self.millesime_entreprises
-                    or firm_reply.meta.cells_are_synthetic):
-                raise EtudeError(f"{name} : la première année n'a pas tourné sur les "
-                                 f"entreprises de {self.millesime_entreprises}, leurs "
-                                 f"cellules réelles (millésime « {firm_reply.meta.vintage} »).")
-            try:
-                PredictifReportResponse.model_validate(path)
-            except ValueError as error:
-                raise EtudeError(f"{name} : le chemin ne valide pas : {error}") from error
-            scenario = scenarios_module.load(name, self.scenarios)
-            said = {k: path.get(k) for k in ("spending_name", "growth_name", "rate_name",
-                                             "behavioural", "macro")}
-            if (path.get("scenario") != name or said != {k: frame[k] for k in said}
-                    or set(path["theta"].values()) != {frame["theta"]}
-                    or [row["year"] for row in path["years"]] != frame["years"]
-                    or (path.get("annees") or []) != list(scenario.annees)):
-                raise EtudeError(f"{name} : le chemin n'a pas tourné dans le cadre de "
-                                 f"l'étude, sur son scénario.")
-            # A frame that says « lue » wants a path that draws it (D-336). A report
-            # written before D-336 has neither « lue », nor `rejeu`, nor `monte_carlo`:
-            # it is still read, and its page is the one it always rendered, until the
-            # series runs again. That is the one field the comparison tolerates on an old
-            # report; a new report without « lue » is refused.
-            if frame["persistance"] is not None and path.get("macro"):
-                drawn = ([p["persistence"] for p in path.get("side_by_side") or []]
-                         or [path.get("persistence")])
-                old = "rejeu" not in path and "monte_carlo" not in path
-                if frame["persistance"] not in drawn and not old:
-                    raise EtudeError(f"{name} : le cadre lit la persistance "
-                                     f"« {frame['persistance']} », et le chemin ne la "
-                                     f"trace pas ({drawn}).")
-            case = grade = None
-            if (preregistration.CHIFFRAGES / f"{name}.yaml").exists():
-                case = preregistration.load(name)
-                if case.mirror != volet.miroir:
-                    raise EtudeError(f"{name} : l'étude le lit {'en' if volet.miroir else 'sans'}"
-                                     f" miroir, son enregistrement "
-                                     f"{'en' if case.mirror else 'sans'} miroir.")
-                if case.comparator is not None:
-                    grade = preregistration.grade(case)
-            sign = -1 if volet.miroir else 1
-            entries.append({
-                "name": name, "volet": volet, "article": texte.article(volet),
-                "scenario": scenario, "kind": kind, "first": first, "response": response,
-                "firms": firms, "path": path, "case": case, "grade": grade, "sign": sign,
-                "cost": sign * (float(response.reform_cost)
-                                + (float(firms.reform_cost) if firms is not None else 0.0)),
-                "debt": [{**row, "theta": sign * row["theta"],
-                          "corners": [sign * c for c in row["corners"]]}
-                         for row in debt(path)]})
+            entry = self._paire(reports, volet, frame, texte.article(volet))
+            commits |= {entry["first"]["commit"], entry["path"]["commit"]}
+            entries.append(entry)
         plages = (self.load_plages(reports) if plages and self.programme is not None
                   else [])
         commits |= {r["commit"] for r in plages}
+        seules, absentes = (self.load_mesures(reports, frame) if mesures
+                            else (None, None))
+        for seule in seules or []:
+            commits |= {seule["first"]["commit"], seule["path"]["commit"]}
+        if seules:
+            # The measures and their part read under one verdict, of one series (D-336,
+            # D-349), or the interaction would mix two codes of the loop.
+            generation(entries + seules)
+            lectures(entries + seules)
         # One study reads on one code, or on commits a witness pass joins to the first: on
         # each, the pass replayed gave its report again (D-335, D-336).
         joined = self.commits(commits, reports)
         for entry in entries:
-            entry.update(commits=joined, plages=plages)
+            entry.update(commits=joined, plages=plages, mesures=seules,
+                         mesures_absentes=absentes)
         return entries
+
+    def load_mesures(self, reports: Path | None = None, frame: dict[str, Any] | None = None
+                     ) -> tuple[list[dict[str, Any]] | None, str | None]:
+        """(the measures alone, None) when every measure has its two reports, each refused
+        unless it is its scenario's, in the study's frame; (None, why) when none has, a
+        study whose series of the but 22 has not run; refused when some have."""
+        if not self.mesures:
+            return None, None
+        reports = reports or self.rapports
+        folder = reports / MESURES
+        wanted = {f"{self.dossier(m.scenario)}{kind}_{m.scenario}.json" for m in self.mesures
+                  for kind in ("premiere_annee", "predictif")}
+        there = ({str(p.relative_to(reports)) for p in folder.rglob("*.json")}
+                 if folder.exists() else set())
+        if not there:
+            return None, (f"les passes des mesures seules n'ont pas tourné : "
+                          f"`impots etude lancer {self.nom}` les lance, après celles de la "
+                          f"part chiffrée")
+        if there != wanted:
+            raise EtudeError(f"les mesures seules de l'étude : il manque "
+                             f"{sorted(wanted - there)}, et {sorted(there - wanted)} n'en "
+                             f"est pas. `impots etude lancer {self.nom}` reprend la série.")
+        frame = frame or self.frame()
+        out = []
+        for m in self.mesures:
+            entry = self._paire(reports / MESURES / m.mesure, Volet(scenario=m.scenario),
+                                frame, self.programme)
+            if entry["sign"] != 1:
+                raise EtudeError(f"{m.scenario} : une mesure seule n'est pas lue en miroir.")
+            entry["mesure"] = m.mesure
+            out.append(entry)
+        return out, None
+
+    def _paire(self, reports: Path, volet: Volet, frame: dict[str, Any],
+               article: Any) -> dict[str, Any]:
+        """A scenario's first year and annual path under `reports`, refused unless they are
+        its own: its scenario, by its chain's call, in the study's frame, on a clean
+        commit, said where."""
+        from impots import preregistration
+        from impots import scenarios as scenarios_module
+        from impots.api.schemas import (
+            FirmResponse,
+            PopulationResponse,
+            PredictifReportResponse,
+        )
+
+        name = volet.scenario
+        first = _read(reports / f"premiere_annee_{name}.json")
+        path = _read(reports / f"predictif_{name}.json")
+        for label, report in (("la première année", first), ("le chemin", path)):
+            if not report.get("commit") or report.get("dirty") is not False:
+                raise EtudeError(f"{name}, {label} : ne nomme pas un commit dont il a "
+                                 f"chiffré le code.")
+            if not report.get("where"):
+                raise EtudeError(f"{name}, {label} : ne dit pas où ses passes ont "
+                                 f"tourné.")
+        kind, endpoint, payload = first_year_payload(name, self.scenarios, self.mixte)
+        if (first.get("scenario"), first.get("kind"), first.get("endpoint"),
+                first.get("request")) != (name, kind, endpoint, payload):
+            raise EtudeError(f"{name} : la première année n'a pas chiffré le scénario "
+                             f"de l'étude, par l'appel de sa chaîne.")
+        firms = None
+        if kind == "mixte":
+            response = PopulationResponse.model_validate(first["response"]["menages"])
+            firms = FirmResponse.model_validate(first["response"]["entreprises"])
+        else:
+            response = (FirmResponse if kind == "entreprises" else PopulationResponse
+                        ).model_validate(first["response"])
+        if response.reform_cost is None or (firms is not None
+                                            and firms.reform_cost is None):
+            raise EtudeError(f"{name} : la première année n'a pas de coût.")
+        firm_reply = response if kind == "entreprises" else firms
+        if firm_reply is not None and (
+                firm_reply.meta.vintage != self.millesime_entreprises
+                or firm_reply.meta.cells_are_synthetic):
+            raise EtudeError(f"{name} : la première année n'a pas tourné sur les "
+                             f"entreprises de {self.millesime_entreprises}, leurs "
+                             f"cellules réelles (millésime « {firm_reply.meta.vintage} »).")
+        try:
+            PredictifReportResponse.model_validate(path)
+        except ValueError as error:
+            raise EtudeError(f"{name} : le chemin ne valide pas : {error}") from error
+        scenario = scenarios_module.load(name, self.scenarios)
+        said = {k: path.get(k) for k in ("spending_name", "growth_name", "rate_name",
+                                         "behavioural", "macro")}
+        if (path.get("scenario") != name or said != {k: frame[k] for k in said}
+                or set(path["theta"].values()) != {frame["theta"]}
+                or [row["year"] for row in path["years"]] != frame["years"]
+                or (path.get("annees") or []) != list(scenario.annees)):
+            raise EtudeError(f"{name} : le chemin n'a pas tourné dans le cadre de "
+                             f"l'étude, sur son scénario.")
+        # A frame that says « lue » wants a path that draws it (D-336). A report
+        # written before D-336 has neither « lue », nor `rejeu`, nor `monte_carlo`:
+        # it is still read, and its page is the one it always rendered, until the
+        # series runs again. That is the one field the comparison tolerates on an old
+        # report; a new report without « lue » is refused.
+        if frame["persistance"] is not None and path.get("macro"):
+            drawn = ([p["persistence"] for p in path.get("side_by_side") or []]
+                     or [path.get("persistence")])
+            old = "rejeu" not in path and "monte_carlo" not in path
+            if frame["persistance"] not in drawn and not old:
+                raise EtudeError(f"{name} : le cadre lit la persistance "
+                                 f"« {frame['persistance']} », et le chemin ne la "
+                                 f"trace pas ({drawn}).")
+        case = grade = None
+        if (preregistration.CHIFFRAGES / f"{name}.yaml").exists():
+            case = preregistration.load(name)
+            if case.mirror != volet.miroir:
+                raise EtudeError(f"{name} : l'étude le lit {'en' if volet.miroir else 'sans'}"
+                                 f" miroir, son enregistrement "
+                                 f"{'en' if case.mirror else 'sans'} miroir.")
+            if case.comparator is not None:
+                grade = preregistration.grade(case)
+        sign = -1 if volet.miroir else 1
+        return {
+            "name": name, "volet": volet, "article": article,
+            "scenario": scenario, "kind": kind, "first": first, "response": response,
+            "firms": firms, "path": path, "case": case, "grade": grade, "sign": sign,
+            "cost": sign * (float(response.reform_cost)
+                            + (float(firms.reform_cost) if firms is not None else 0.0)),
+            "debt": [{**row, "theta": sign * row["theta"],
+                      "corners": [sign * c for c in row["corners"]]}
+                     for row in debt(path)]}
 
     # -- the page ---------------------------------------------------------------- #
 
@@ -1996,6 +2215,8 @@ class Etude:
                 texte.official(w, n, entry)
             else:
                 self._official(w, n, entry)
+        if hasattr(texte, "mesures_seules"):
+            texte.mesures_seules(w, n, entries, last)
         texte.refusals(w, entries, n)
         if read and (self.rapports / AVANT).exists():
             self._avant(w, n, entries, json.loads((self.rapports / AVANT).read_text(
@@ -2797,7 +3018,7 @@ class Etude:
             where = root / f"sans_{sans.lower()}"
             if not where.exists():
                 continue
-            for other in self.load(where, plages=False):
+            for other in self.load(where, plages=False, mesures=False):
                 if any(e["name"] == other["name"] for e in entries):
                     out.setdefault(other["name"], []).append((sans, other))
         return out
@@ -2996,6 +3217,9 @@ def definition(nom: str, directory: Path | None = None) -> Etude:
         if [v.scenario for v in volets] != [scenario_du_programme(raw["programme"])]:
             raise EtudeError(f"{nom} : une étude de programme a un scénario, sa part "
                              f"chiffrée, « {scenario_du_programme(raw['programme'])} ».")
+    elif "mesures" in raw:
+        raise EtudeError(f"{nom} : seule une étude de programme passe ses mesures seules.")
+    mesures = _mesures(nom, raw)
     return Etude(nom=nom, titre=raw["titre"], texte=raw["texte"],
                  preenregistrement=raw["preenregistrement"], volets=volets,
                  cadre=raw["cadre"], millesime_entreprises=raw["millesime_entreprises"],
@@ -3003,7 +3227,56 @@ def definition(nom: str, directory: Path | None = None) -> Etude:
                  rapports=ROOT / raw.get("rapports", f"reports/etudes/{nom}"),
                  programme=raw.get("programme"),
                  dette_annoncee=bool(raw.get("dette_annoncee", False)),
-                 refus=raw.get("refus"))
+                 refus=raw.get("refus"), mesures=mesures)
+
+
+def _mesures(nom: str, raw: dict[str, Any]) -> tuple[MesureSeule, ...]:
+    """The measures a programme study passes alone (but 22), refused unless they are every
+    priced measure of the programme, in its order, each on the scenario of its case, which
+    prices that measure and nothing else. A programme of one priced measure has none: its
+    part is that measure alone, and a pass of it would be the part's again."""
+    if "mesures" not in raw:
+        return ()
+    from impots import programmes as pg
+    from impots import scenarios as scenarios_module
+
+    try:
+        mesures = tuple(MesureSeule(**m) for m in raw["mesures"])
+    except TypeError as error:
+        raise EtudeError(f"{nom} : une mesure seule mal dite : {error}") from error
+    p = pg.charger(raw["programme"])
+    chiffrees = [m.id for m in p.chiffrees()]
+    if len(chiffrees) < 2:
+        raise EtudeError(f"{nom} : une seule mesure chiffrée ; la part chiffrée est cette "
+                         f"mesure seule, que ses passes chiffrent déjà.")
+    if [m.mesure for m in mesures] != chiffrees:
+        raise EtudeError(f"{nom} : les mesures seules sont chaque mesure chiffrée du "
+                         f"programme, dans son ordre, {chiffrees}, et non "
+                         f"{[m.mesure for m in mesures]}.")
+    for m in mesures:
+        if m.scenario != scenario_de_la_mesure(p.slug, m.mesure):
+            raise EtudeError(f"{nom} : la mesure « {m.mesure} » passe seule sur le scénario "
+                             f"de son cas, « {scenario_de_la_mesure(p.slug, m.mesure)} », et "
+                             f"non « {m.scenario} ».")
+        try:
+            scenario = scenarios_module.load(m.scenario)
+        except Exception as error:
+            raise EtudeError(f"{nom} : le scénario « {m.scenario} » ne se lit pas : "
+                             f"{error}") from error
+        menages, entreprises = p.reformes(mesures=(m.mesure,))
+        firm = scenario.firm_reform
+        if (scenario.reform != (menages or type(scenario.reform)())
+                or ((firm if firm is not None and not firm.is_empty() else None)
+                    != entreprises) or scenario.year != p.annee):
+            raise EtudeError(f"{nom} : le scénario « {m.scenario} » ne chiffre pas la mesure "
+                             f"« {m.mesure} » seule, à la valeur du candidat.")
+    return mesures
+
+
+def scenario_de_la_mesure(slug: str, mesure: str) -> str:
+    """The scenario of a priced measure alone: the one its case was registered on, for the
+    households (D-321), or written beside its reform file, for the firms (but 22)."""
+    return f"pres2027_{slug}_{mesure}"
 
 
 def scenario_du_programme(slug: str) -> str:

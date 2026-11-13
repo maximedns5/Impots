@@ -11,5 +11,19 @@
       "scenario": "pres2027_lisnard_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "l1_csg_activite_6_6",
+      "scenario": "pres2027_lisnard_l1_csg_activite_6_6"
+    },
+    {
+      "mesure": "l4_suppression_c3s_cvae",
+      "scenario": "pres2027_lisnard_l4_suppression_c3s_cvae"
+    },
+    {
+      "mesure": "l20_deplafonnement_qf",
+      "scenario": "pres2027_lisnard_l20_deplafonnement_qf"
+    }
+  ]
 }

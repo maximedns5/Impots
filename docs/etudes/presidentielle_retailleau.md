@@ -177,6 +177,12 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 * `pres2027_retailleau_r27_revenu_familial`, enregistré le 2026-11-12 : +20,31 Md€ en 2026, tolérance de 50 % ou 2,00 Md€ ; le juge n'a pas publié.
 * `pres2027_retailleau_r28_reduction_ir_interets_emprunt`, enregistré le 2026-11-12 : +1,60 Md€ en 2026, tolérance de 25 % ou 200 M€ ; le juge n'a pas publié.
 
+## Chaque mesure seule, et leur interaction
+
+Chaque mesure chiffrée passe aussi seule, en entier : sa première année et son chemin annuel jusqu'en 2035, dans le cadre de la part chiffrée, sur la même population et le même code. La part chiffrée n'est pas la somme de ses mesures : deux mesures se rencontrent dans le barème, dans les prestations sous condition de ressources, dans la boucle macro, et dans la dette, que chacune creuse sur le PIB que l'autre a changé. L'écart, la part chiffrée moins la somme des mesures, est dit sur sa ligne, « interaction » : il n'est réparti entre aucune mesure.
+
+**Les mesures seules : absentes, et la raison est donnée.** Les passes des mesures seules n'ont pas tourné : `impots etude lancer presidentielle_retailleau` les lance, après celles de la part chiffrée. Les rapports de cette page viennent d'une série qui ne les avait pas.
+
 ## Ce que bouge chaque paramètre
 
 Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035, un calcul rapide qui ne refait pas chaque année. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le calcul complet chiffre année par année avec les comportements et la boucle macro. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
@@ -378,3 +384,4 @@ Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une
 
 * `reports/etudes/presidentielle_retailleau/premiere_annee_pres2027_retailleau_programme.json`, `reports/etudes/presidentielle_retailleau/predictif_pres2027_retailleau_programme.json`
 * `reports/etudes/presidentielle_retailleau/plages/`, les 15 points des plages
+* `reports/etudes/presidentielle_retailleau/mesures/<mesure>/`, la première année et le chemin de chaque mesure seule

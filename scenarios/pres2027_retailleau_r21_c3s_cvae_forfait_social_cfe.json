@@ -1,0 +1,17 @@
+{
+  "name": "pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe",
+  "year": 2026,
+  "created": "2026-11-13",
+  "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-12 — Suppression de la C3S et de la CVAE ; forfait social maintenu à 20 % sur la participation légale, supprimé sur l'intéressement, la participation supra-légale et l'épargne retraite individuelle ; part industrielle de la CFE exonérée ; CIR sanctuarisé : « « Contribution sociale de solidarité des sociétés (C3S, 5,3 milliards d'euros) : suppression intégrale » » (https://republicains.fr/wp-content/uploads/2026/02/LR_Produire_Plus_LIVRET.pdf, 2026-02-18)",
+  "note": "La C3S (0,16 % en 2026) et la CVAE sont supprimées sur le droit de 2026, comme dans la mesure de David Lisnard qui supprime ces deux impôts, avec les mêmes plages. La mesure n'est chiffrée qu'en partie : le forfait social maintenu à 20 % sur la participation légale est le droit de 2026 et ne change rien, mais sa suppression sur l'intéressement, la participation supra-légale et l'épargne retraite, une baisse de recette, n'a pas de bouton et n'est pas chiffrée ; l'exonération de la part industrielle de la CFE non plus. Le coût affiché est celui de la C3S et de la CVAE seules.",
+  "tags": [
+    "presidentielle_2027",
+    "retailleau",
+    "mesure_seule"
+  ],
+  "reform": {},
+  "firm_reform": {
+    "c3s_taux": 0.0,
+    "cvae_echelle": 0.0
+  }
+}

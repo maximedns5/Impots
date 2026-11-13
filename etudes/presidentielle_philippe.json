@@ -11,5 +11,15 @@
       "scenario": "pres2027_philippe_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "p10_exoneration_deux_heures",
+      "scenario": "pres2027_philippe_p10_exoneration_deux_heures"
+    },
+    {
+      "mesure": "p11_allocation_familiale_unique",
+      "scenario": "pres2027_philippe_p11_allocation_familiale_unique"
+    }
+  ]
 }

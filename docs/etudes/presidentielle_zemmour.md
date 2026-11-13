@@ -177,6 +177,10 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 
 * `pres2027_zemmour_ez4_suppression_csg_activite`, enregistré le 2026-11-12 : +95,16 Md€ en 2026, tolérance de 25 % ou 200 M€ ; le juge n'a pas publié.
 
+## Chaque mesure seule, et leur interaction
+
+Le programme n'a qu'une mesure chiffrée : la part chiffrée est cette mesure seule, et ses nombres sont ceux de plus haut. Il n'y a ni somme des mesures ni interaction.
+
 ## Ce que bouge chaque paramètre
 
 Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035, un calcul rapide qui ne refait pas chaque année. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le calcul complet chiffre année par année avec les comportements et la boucle macro. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.

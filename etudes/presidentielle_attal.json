@@ -11,5 +11,19 @@
       "scenario": "pres2027_attal_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "a16_droit_au_brut",
+      "scenario": "pres2027_attal_a16_droit_au_brut"
+    },
+    {
+      "mesure": "a18_suppression_cvae",
+      "scenario": "pres2027_attal_a18_suppression_cvae"
+    },
+    {
+      "mesure": "a22_pensions_alimentaires",
+      "scenario": "pres2027_attal_a22_pensions_alimentaires"
+    }
+  ]
 }
