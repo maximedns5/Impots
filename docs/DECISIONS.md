@@ -28824,3 +28824,19 @@ des candidats.
 **Ce qui est publié.** Dix-sept études et leurs pages, la page des 24, le parcours et la
 comparaison, construits depuis les rapports commités ; `site verifier` et `site
 publiable` sont verts. Aucun nombre de la série n'est touché.
+
+## D-399 — La variante « dépense publique » commitée : le site se vérifie sans données
+
+**Le fait.** Après le merge du but 21 (`4533dbe`), `impots site verifier` tombe sur le
+runner de GitHub : la page d'un programme rend la dette « si les économies annoncées sont
+tenues » (D-380), et `annonce.tables()` chargeait le magasin macro, qui relit le PDF de
+l'IMK dans `data/raw/`. Les données ne sont pas dans git (CLAUDE.md) : une page doit se
+rendre depuis les rapports seuls, et celle-ci ne le faisait pas.
+
+**Le correctif.** Les lignes de la variante que la lecture emploie (le PIB et le solde aux
+horizons lus, l'écart-type IMK de sa famille, la page du PDF) sont écrites une fois depuis
+le magasin, par `python -m impots.predictif.annonce ecrire`, dans
+`reports/macro/variante_depense_publique.json`, des coefficients publiés de Mésange et non
+un fichier de données ; les pages les y lisent (`annonce.lue()`). Un test tient le rapport
+égal au magasin, là où les données sont. Sans les fichiers hors de git, `site verifier` et
+`site publiable` sont verts. Aucun nombre ne change : la page est la même.

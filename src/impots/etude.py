@@ -1104,7 +1104,7 @@ class _Programme:
         if entry["sign"] != 1:
             raise EtudeError("une part chiffrée en miroir n'a pas de lecture annoncée")
         year = path["years"][-1]["year"]
-        variante = annonce.tables()
+        variante = annonce.lue()
         lectures = [annonce.lire(path, self.programme, part, variante=variante)
                     for part in PARTS_ANNONCEES]
         lues, non_lues = lectures[-1]["mesures"], lectures[-1]["non_lues"]

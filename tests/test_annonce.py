@@ -181,3 +181,10 @@ def test_the_page_shows_it_beside_the_debt_and_changes_nothing_else() -> None:
     lue = next(p for p in path["side_by_side"] if p["persistence"] == "lue")
     zero = etude._points(lue["years"][-1]["delta_aged"])
     assert f"| 0\u202f% | +0 € | {zero} |" in section
+
+
+def test_the_committed_variant_is_the_store_s() -> None:
+    """Les pages lisent la variante dans son rapport commité, pas dans le magasin, dont les
+    PDF ne sont pas dans git : le site se vérifiait sur un runner sans données et tombait
+    (D-399). Le rapport doit redonner le magasin, au chiffre près."""
+    assert annonce.lue() == annonce.tables() == VARIANTE
