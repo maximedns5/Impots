@@ -318,7 +318,7 @@
   "titre": "plf2027_art_2",
   "source": "PLF 2027 (AN, texte n° 3210), art. 2 — Soutenir le travail en revalorisant le barème de l'impôt sur le revenu grâce à un traitement fiscal équivalent des différents types de revenus. Volet chiffré : la revalorisation de 2,1 % des tranches, de la décote et du plafond général de la demi-part (I, H, 1° à 3°), revenus 2026.",
   "reference": "reconduit",
-  "computed": "2026-11-11",
+  "computed": "2026-11-12",
   "spending_name": "Dépenses gelées en volume",
   "growth_name": "Croissance réelle 1 %, prix 2 %",
   "rate_name": "Taux implicite tenu à son niveau de 2025",
@@ -1264,9 +1264,9 @@
       }
     ]
   },
-  "commit": "601b4423890c7d130a10d6278339b1a65ea4b145",
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
   "dirty": false,
-  "where": "conteneur cloud, 15 Go, 4 cœurs",
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
   "annees": null,
   "persistence": null,
   "side_by_side": [

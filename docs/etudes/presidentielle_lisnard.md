@@ -6,11 +6,11 @@
 
 La part chiffrée du programme coûte 36,19 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +64 € par an dans le dixième le plus modeste à +2 926 € dans le dixième le plus aisé ; les entreprises paient 6,55 Md€ de moins. Une fois comptés les changements de comportement que des études publiées permettent de chiffrer, le coût pour la part des ménages irait de +28,09 Md€ à +28,94 Md€. En 2035, la dette publique serait plus haute de 5,70 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 89 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu et la CSG, pas pour la part des entreprises, qui agit sur la dette sans effet sur l'activité. Sans aucun effet sur l'activité, la dette serait plus haute de 11,38 points de PIB : le coût après les comportements, à θ½, sans la boucle macro. Le revenu imposable répond aux taux (le canal C1, l'élasticité du revenu imposable), et la boucle lit aussi l'impôt sur le revenu dans Mésange. L'élasticité est mesurée sur le revenu déclaré, toutes réactions comprises, les heures travaillées avec ; le multiplicateur de Mésange passe lui aussi par l'emploi et l'activité. La même réaction peut donc être comptée deux fois, une fois dans le coût après comportements, une fois dans les recettes induites ; l'outil ne mesure pas ce recouvrement. Et l'élasticité pèse surtout dans le haut de la distribution, là où la population simulée est la plus faible : peu de foyers tirés, aucun revenu du capital. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
-David Lisnard, Nouvelle Énergie, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 01/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
+David Lisnard, Nouvelle Énergie, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 12/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
 
 | mesures relevées | dont qui énoncent un paramètre | chiffrées par l'outil | part des mesures paramétrées |
 |---|---|---|---|
-| 24 | 17 | 3 | 18 % |
+| 29 | 21 | 3 | 14 % |
 
 Pour la part chiffrée, ces mesures ensemble, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
@@ -20,7 +20,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| la part chiffrée (3 mesures sur 17 paramétrées, 24 relevées) | +36,19 Md€ | — | +5,70 pt | dépend (89 % des tirages en hausse) | hausse |
+| la part chiffrée (3 mesures sur 21 paramétrées, 29 relevées) | +36,19 Md€ | — | +5,70 pt | dépend (89 % des tirages en hausse) | hausse |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -28,9 +28,9 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ## La part chiffrée
 
-*David Lisnard (Nouvelle Énergie), programme relevé le 2026-11-01 — la part chiffrée : l1_csg_activite_6_6, l4_suppression_c3s_cvae, l20_deplafonnement_qf*
+*David Lisnard (Nouvelle Énergie), programme relevé le 2026-11-12 — la part chiffrée : l1_csg_activite_6_6, l4_suppression_c3s_cvae, l20_deplafonnement_qf*
 
-3 mesures chiffrées sur 17 paramétrées et 24 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.
+3 mesures chiffrées sur 21 paramétrées et 29 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.
 
 ### 1. Ce qu'il coûte, et qui y gagne
 
@@ -132,6 +132,28 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 | vieillie | +6,26 pt | de +1,33 pt à +11,10 pt | 91 % | hausse |
 | figée | +5,10 pt | de +1,19 pt à +8,93 pt | 93 % | hausse |
 
+### La dette en 2035, si les économies annoncées sont tenues
+
+**Une lecture à part : annoncée par le candidat, non vérifiée.** La dette plus haut est celle de la part chiffrée ; les économies de dépense que le programme annonce, que l'outil ne microsimule pas, n'y entrent pas, et ses dépenses non plus (D-319). Ici, les montants par an que le candidat attache lui-même à ses mesures de dépense publique sont lus par la variante « dépense publique » de Mésange, son effet sur le PIB et sur le solde, et s'ajoutent à la dette de la part chiffrée. Ni le coût de la part chiffrée ni le verdict ne les lisent (D-380).
+
+| mesure | montant annoncé, par an | sens | calendrier annoncé |
+|---|---|---|---|
+| Économies : 80 Md€ dès la première année, 200 Md€ à l'horizon 2032 ; −7 points de dépense publique dans le PIB | +200,00 Md€ | économie | à l'horizon 2032, en année pleine en fin de quinquennat ; 80 Md€ dès la première année ; 300 Md€ visés, non documentés |
+
+| part réalisée | solde annoncé, par an | Δ dette 2035, vue vieillie | Δ dette 2035, vue figée |
+|---|---|---|---|
+| 0 % | +0 € | +5,70 pt | +4,62 pt |
+| 50 % | +100,00 Md€ | -9,02 pt | -10,16 pt |
+| 100 % | +200,00 Md€ | -24,26 pt | -25,47 pt |
+
+À θ½, sous la persistance « lue ». À une part réalisée nulle, la ligne est la dette de la part chiffrée, plus haut ; le solde est positif quand il améliore les comptes publics.
+
+**Ce que la variante suppose.** La variante « dépense publique » de Mésange est un composite, pas un instrument (D-214, page 106 du PDF) : 8 % d'investissement public, 25 % de rémunérations publiques, 9 % de prestations en nature, 12 % de consommations intermédiaires, 46 % de prestations sociales en espèces. La lire suppose que chaque euro annoncé tombe sur la dépense dans ces proportions, quoi que la mesure dise ; les transferts n'ont pas de variante à eux, et une économie sur les prestations lit la même moyenne. Montant atteint dès la première année du chemin et tenu en part du PIB de cette année-là : le calendrier que le candidat énonce est montré, pas lu. Choc de la variante en volume, lu comme des euros : prix de la réforme tenus constants (D-214, condition 4). Ligne de solde lue sous la dépense gelée en volume seule (note 70, D-214). Variantes superposées : Mésange est linéaire (D-230), et ce qu'annonce le candidat s'ajoute à la part chiffrée sans interaction.
+
+**Pas lues** — hors de la dépense publique : sa porte relève d'un autre module (retraites, prestations, salaires, entreprises) : Réduction des prestations non contributives versées aux ressortissants étrangers.
+
+*Annoncé par le candidat, non vérifié ; jamais additionné au coût de l'outil ni au verdict (D-319, D-380).*
+
 ### L'écart au chiffrage officiel
 
 La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une, avant que le juge ne publie. Le juge est le chiffrage des programmes de l'Institut Montaigne, attendu au premier trimestre 2027.
@@ -209,7 +231,7 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 | mesure | ce que dit le candidat | sort | pourquoi |
 |---|---|---|---|
 | Baisse de la CSG sur les revenus d'activité | 9,2 % → 6,6 % | chiffrée | Le candidat ne dit pas comment répartir la baisse de 2,6 points entre la part déductible (6,8 %) et la part imposable (2,4 %). Le choix retenu est la répartition proportionnelle, qui garde à chaque part son poids dans le taux : 4,88 % et 1,72 %, soit 6,6 %. Chaque plage va du droit de 2026 à la valeur retenue prolongée de la moitié de l'écart ; celle de la part imposable descend jusqu'à 0 pour couvrir l'autre répartition extrême (6,6 % et 0 %), et celle de la part déductible contient la baisse portée sur elle seule (4,2 % et 2,4 %). La CSG des revenus de remplacement et du capital n'est pas touchée. |
-| Baisse des cotisations rendue en salaire net | 120 Md€ ; environ 400 €/mois nets par salarié | refusée : la distribution des salaires (`salaires`) | Environ 400 € nets par mois au salaire médian dépassent les cotisations retraite salariales, qui n'en pèsent que 320 € : la baisse passe aussi par des cotisations patronales rendues en salaire, ce qui déplace la distribution des salaires. |
+| Baisse des cotisations rendue en salaire net | 120 Md€ ; ≈ 400 €/mois nets (janvier 2026) ; 250 €/mois sur un revenu médian de 2 500 € (29/08/2026) : les deux se contredisent | refusée : la distribution des salaires (`salaires`) | Environ 400 € nets par mois au salaire médian dépassent les cotisations retraite salariales, qui n'en pèsent que 320 € : la baisse passe aussi par des cotisations patronales rendues en salaire, ce qui déplace la distribution des salaires. |
 | Baisse des impôts de production, à commencer par la C3S | 40 Md€ | refusée : les bases locales (`bases_locales`) | Une enveloppe de 40 Md€ sans taux : la C3S et la CVAE n'en font qu'une part, chiffrée dans sa propre mesure, le reste passe par des impôts de production locaux que le moteur ne porte pas. |
 | Suppression de la C3S et, « le cas échéant », de la CVAE | impôts de production de 2 % à 1 % du PIB | chiffrée | La C3S est supprimée (taux de 0,16 % en 2026 ramené à 0) et la CVAE aussi, sur le droit de 2026. Le candidat ne supprime la CVAE que « le cas échéant » : le choix retenu suit son chiffrage de 11,5 Md€, qui compte les deux impôts, et la plage de cvae_echelle couvre son maintien (1). La plage de la C3S va du droit de 2026 à 0, la borne du schéma. L'objectif d'impôts de production ramenés de 2 % à 1 % du PIB va au-delà de ces deux impôts (c'est la mesure « Baisse des impôts de production, à commencer par la C3S ») et n'est pas chiffré ici. |
 | TVA « compétitivité / relocalisation » pour baisser les charges sur les salaires : question non tranchée | non énoncé | vague | Une question laissée ouverte : ni taux de TVA ni baisse de charges. |
@@ -232,18 +254,24 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 | Suspension pendant 6 mois de l'obligation de certificats d'économies d'énergie (CEE) sur les carburants | 6 mois ; « 17 centimes par litre » selon lui | refusée : un prix administré (`prix`) | Les certificats d'économies d'énergie sont une obligation des fournisseurs, lue dans les prix : ni une taxe que la couche consommation chiffre, ni une recette de l'État. |
 | Temps de travail fixé par accord d'entreprise ; « 37 heures payées 37 » au choix du salarié | 37 h | vague | Une durée laissée aux accords d'entreprise, sans taux ni montant. |
 | Assurance chômage : dégressivité | non énoncé | vague | Ni taux ni calendrier de dégressivité. |
+| Impôt sur les sociétés ramené à 20 %, avec une part variable laissée aux collectivités (livre de 2025, repris par le parti) | IS à 20 % + part locale de 0 à 5 % | refusée : une dimension des entreprises (`dimension_entreprises`) | La part locale de 0 à 5 % dépend de la collectivité de chaque entreprise, que le modèle ne localise pas ; le taux total n'est donc pas fixé. |
+| Cinq ans de résidence en France avant toute allocation non contributive | 5 ans ; 8 Md€ d'économies par an selon le candidat — montant annoncé : 8 Md€ (par an ; comprise dans les 200 Md€ de l6, et recoupe sans doute l8 : ne pas additionner) ; non lu comme montant annuel : compris dans les 200 Md€ de l6 (D-381). | refusée : une donnée des ménages (`donnee_menages`) | La durée de résidence en France n'est pas dans la population : le moteur ne sait pas qui perdrait ses prestations. |
+| Revalorisation des enseignants, conditionnée à une réorganisation (autonomie, présence, formation, évaluation) | +20 % des rémunérations en cinq ans | refusée : la distribution des salaires (`salaires`) | Le traitement des enseignants est un salaire public : la population ne les distingue pas, et ses salaires sont des données. |
+| Suppression de l'aide médicale d'État | AME supprimée | refusée : la dépense publique (`depense_publique`) | L'aide médicale d'État est une dépense de santé que le moteur ne microsimule pas, et ses bénéficiaires ne sont pas dans la population. |
+| Fin des subventions qui compensent les charges des entreprises, contre une baisse directe des charges | aucun montant | vague | Ni dispositif désigné ni montant. |
 
 Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait le moins :
 
-* 3 mesures — la dépense publique, que le moteur ne simule pas ménage par ménage : elle n'entre dans la dette que comme une hypothèse de dépense (`depense_publique`).
+* 4 mesures — la dépense publique, que le moteur ne simule pas ménage par ménage : elle n'entre dans la dette que comme une hypothèse de dépense (`depense_publique`).
 * 3 mesures — les droits à la retraite (âges, durées, régimes) : la population ne vieillit pas en âge et ses pensions sont des données (`retraites`).
+* 2 mesures — une donnée des ménages : plus-values, épargne, logement (`donnee_menages`).
+* 2 mesures — la distribution des salaires : SMIC, point d'indice, indexation des salaires (`salaires`).
 * 2 mesures — un module de transmission : donations et reprises (`transmission`).
 * 1 mesure — les bases locales : foncier, logement social, zonage (`bases_locales`).
-* 1 mesure — une donnée des ménages : plus-values, épargne, logement (`donnee_menages`).
+* 1 mesure — une dimension des entreprises : territoire, département, secteur agricole (`dimension_entreprises`).
 * 1 mesure — l'indexation des pensions et des prestations année par année (`indexation`).
 * 1 mesure — une prestation que le moteur ne porte pas : assurance chômage, prestation fusionnée ou neuve (`prestations_hors_modele`).
 * 1 mesure — un prix fixé hors du marché, ou une obligation des fournisseurs lue dans les prix (énergie, carburants, certificats d'économies d'énergie) : ni une taxe ni une prestation, et la consommation imputée ne réagit pas aux prix (D-323) (`prix`).
-* 1 mesure — la distribution des salaires : SMIC, point d'indice, indexation des salaires (`salaires`).
 
 ## Ce que le candidat annonce, à part
 
@@ -259,21 +287,21 @@ Le programme annonce lui-même un montant pour 4 de ses mesures. Ces montants ne
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_lisnard/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `601b442` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_lisnard/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée (3 mesures sur 17 paramétrées, 24 relevées) | +35,43 Md€ → +36,19 Md€ | +5,56 pt → +5,70 pt | hausse → dépend |
+| la part chiffrée (3 mesures sur 21 paramétrées, 29 relevées) | +36,19 Md€ → +36,19 Md€ | +5,70 pt → +5,70 pt | hausse → dépend |
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée (3 mesures sur 17 paramétrées, 24 relevées)** : le secteur public modélisé statut par statut (D-346), la CVAE et la C3S déduites de l'IS (D-347), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (3 mesures sur 21 paramétrées, 29 relevées)** : le secteur public modélisé statut par statut (D-346), la CVAE et la C3S déduites de l'IS (D-347), le verdict lu sur le Monte-Carlo (D-345).
 
 Là où une seule correction touche une ligne, l'écart avant → après est ce qu'elle pèse (D-352) ; ailleurs, les corrections ne se séparent pas sans un calcul refait sans chacune, qui n'est pas fait.
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `aa22293`, conteneur cloud, 15 Go, 4 cœurs, deux files. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 

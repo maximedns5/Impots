@@ -1,0 +1,15 @@
+{
+  "name": "pres2027_zemmour_ez4_suppression_csg_activite",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Éric Zemmour (Reconquête), programme relevé le 2026-11-12 — Suppression de la CSG sur les revenus d'activité : « 10 % de hausse de revenus pour tous les actifs avec la suppression de la CSG » (https://www.ericzemmour.fr/priorites, 2026-11-12)",
+  "note": "La CSG sur les revenus d'activité à zéro, ses deux parts : la déductible (6,8 %) et l'imposable (2,4 %). L'impôt sur le revenu en reprend une part, la part déductible ne venant plus en déduction. La CSG des revenus de remplacement et du capital, et la CRDS, ne bougent pas. Plages : de la mesure (0) au droit de 2026. Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "zemmour"
+  ],
+  "reform": {
+    "csg_activite_deductible": 0.0,
+    "csg_activite_imposable": 0.0
+  }
+}

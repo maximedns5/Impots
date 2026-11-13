@@ -9,7 +9,7 @@
     "date": "2026-05-03",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -24,11 +24,33 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Revaloriser la valeur du point d'indice des fonctionnaires de 10 %, inscrire son dégel dans la loi et compenser intégralement cette augmentation pour les collectivités territoriales »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "salaires",
-        "raison": "Le moteur ne déplace pas la distribution des salaires, et le point d'indice des fonctionnaires n'est pas un de ses boutons."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "point_indice_revalorisation": 1.1,
+          "point_indice_contractuels": 0.0
+        },
+        "plages": [
+          {
+            "champ": "point_indice_revalorisation",
+            "min": 1.0,
+            "max": 1.15
+          },
+          {
+            "champ": "point_indice_contractuels",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "La valeur du point d'indice relevée de 10 %. Plage du point : du droit de 2026 (1, le point gelé) à 10 % prolongé de la moitié de l'écart (1,15). Le bouton multiplie le traitement indiciaire des fonctionnaires titulaires, leur brut sur 1,195 (le taux de prime du moteur) ; leurs primes ne bougent pas. La part du salaire des contractuels qui suit le point n'est pas publiée : 0 pour la valeur retenue, la plage allant jusqu'à 1 (tous payés sur une grille indiciaire). La mesure se mesure contre le droit de 2026, où le point est gelé depuis le 1er janvier 2024 : il n'a pas d'indexation légale. Le coût compte le salaire que paient l'État, les collectivités et les hôpitaux, moins les cotisations, la CSG et l'impôt qui en reviennent ; les collectivités sont comptées comme l'État, leur compensation éventuelle ne change pas le coût public."
       },
       "declare": {
         "montant_eur": 17000000000.0,
@@ -54,11 +76,47 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Revaloriser les aides pour le logement (APL) de 10 % »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "indexation",
-        "raison": "La hausse porte d'un bloc sur les pensions, données de la population que le moteur ne revalorise pas, et sur les AF et les APL : n'en chiffrer que la part familiale et logement ne serait pas la mesure."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "indexations": {
+            "pensions": {
+              "2025": 1.1
+            },
+            "prestations_familiales": {
+              "2025": 1.1
+            },
+            "aides_logement": {
+              "2025": 1.1
+            }
+          }
+        },
+        "plages": [
+          {
+            "champ": "indexations.pensions.2025",
+            "min": 1.0,
+            "max": 1.15
+          },
+          {
+            "champ": "indexations.prestations_familiales.2025",
+            "min": 1.0,
+            "max": 1.15
+          },
+          {
+            "champ": "indexations.aides_logement.2025",
+            "min": 1.0,
+            "max": 1.15
+          }
+        ],
+        "note": "La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : l'indexation qu'elle promet est celle du droit, et ne coûte rien ; la hausse de 10 % est la mesure. Trois coefficients de 1,10 sur ce que le droit porte : les pensions de retraite de la population (des données, multipliées au 1er janvier), la base mensuelle des allocations familiales (au 1er avril) et les paramètres des aides au logement révisés en octobre. Ils sont posés à la date légale de 2025 pour que toute l'année chiffrée porte la hausse, comme les boutons « portée » (D-301). Le candidat dit « allocations familiales » : la base mensuelle porte aussi le complément familial, l'allocation de soutien familial, l'allocation de rentrée scolaire et l'allocation de base de la PAJE, qui montent avec elles ; c'est la traduction qui ne choisit pas entre les prestations familiales. Les pensions d'invalidité et les autres prestations ne bougent pas. Plages : du droit (1) à 10 % prolongé de la moitié de l'écart (1,15)."
       },
       "declare": {
         "montant_eur": 8000000000.0,
@@ -84,11 +142,34 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Porter immédiatement le SMIC mensuel à 1 700 euros net et indexer les salaires sur l'inflation dans le privé comme dans la fonction publique »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "salaires",
-        "raison": "Le moteur ne déplace pas la distribution des salaires, et le SMIC n'est pas un de ses boutons."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "smic_revalorisation": 1.1617,
+          "smic_diffusion_profil": "annee_avec_effets_fixes",
+          "smic_diffusion_echelle": 0.0
+        },
+        "plages": [
+          {
+            "champ": "smic_revalorisation",
+            "min": 1.1503,
+            "max": 1.178
+          },
+          {
+            "champ": "smic_diffusion_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Le SMIC mensuel porté à 1 700 € nets, « immédiatement ». Le bouton est un coefficient sur le SMIC horaire brut de chaque mois de 2026, qui en porte deux : 12,02 € de janvier à mai (1 823,03 € bruts par mois), 12,31 € de juin à décembre (1 867,02 €), 1 848,69 € en moyenne. Le coefficient retenu, 1,1617, donne 1 700 € nets par mois en moyenne sur l'année ; la plage va de 1,1503 (1 700 € nets atteints depuis le SMIC de juin) à 1,178 (depuis celui de janvier). Le net est le brut moins les prélèvements salariaux d'un non-cadre sous le plafond (vieillesse 7,30 %, Agirc-Arrco et CEG 4,01 %, CSG et CRDS 9,70 % sur 98,25 % du brut), soit 79,16 % du brut, sans mutuelle ni prévoyance. La diffusion au-dessus du nouveau SMIC, entre 1 et 1,5 SMIC dans le privé, est une hypothèse déclarée (D-380) : le profil à un an avec effets fixes d'entreprise de Koubi et Lhommeau (Insee, Les salaires en France 2007), le plus large des quatre publiés, à l'échelle 0 pour la valeur du candidat (le premier jour, la loi seule relève les salaires horaires sous le nouveau SMIC), sa plage allant jusqu'à 1 (le profil entier). La mesure se mesure contre le SMIC de l'arbre de 2026. Le coût ne compte pas le salaire que paie un employeur privé ; il compte celui que paie l'État employeur (les agents publics relevés au SMIC), les cotisations, la CSG et l'impôt qui montent, la prime d'activité qui bouge, et les allègements généraux, qui suivent le SMIC : un SMIC relevé les élargit aussi pour les salaires qui ne bougent pas."
       }
     },
     {
@@ -102,6 +183,12 @@
           "citation": "« la convocation d'une conférence exceptionnelle sur les salaires et d'une indexation généralisée de ceux-ci sur l'inflation »",
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« Organiser une conférence sociale nationale sur les salaires et les conditions de travail, déclinée dans chaque branche »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
           "type": "programme"
         }
       ],
@@ -122,11 +209,32 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Financer l'autonomie des jeunes détachés du foyer fiscal parental grâce à la garantie d'autonomie qui les portera au-dessus du seuil de pauvreté (1 337 euros pour une personne seule) »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "prestations_hors_modele",
-        "raison": "La garantie d'autonomie des jeunes est une prestation neuve, que le moteur ne porte pas."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "garantie_autonomie": {
+            "seuil": 1337.0,
+            "age_minimum": 18,
+            "age_maximum": 25,
+            "taux_ressources": 1.0
+          }
+        },
+        "plages": [
+          {
+            "champ": "garantie_autonomie.age_maximum",
+            "min": 21,
+            "max": 30
+          }
+        ],
+        "note": "Une prestation neuve (D-382) : chaque jeune reçoit la différence entre 1 337 € par mois et ses ressources propres du mois (salaire, revenu d'indépendant, chômage, pension), sans les ressources de ses parents ni les prestations de sa famille. Le candidat dit « les jeunes » sans âge : de 18 ans à la veille de 25, l'âge sous lequel le RSA est fermé, est une hypothèse ; la plage de l'âge de sortie va de 21 (la fin des prestations familiales) à 30 ans. Le programme du 6 novembre la réserve aux jeunes « détachés du foyer fiscal parental » : la population ne dit pas le rattachement, et la garantie va à tous les jeunes de la tranche, ce qui la surestime. Servie en espérance avec la loi de recours du RSA (D-382). Elle ne remplace rien et n'entre dans aucune base de ressources. Contre le droit de 2026, où elle n'existe pas."
       },
       "declare": {
         "montant_eur": 9500000000.0,
@@ -182,6 +290,12 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Bloquer et encadrer les prix des produits de première nécessité (alimentation, énergie, carburant) et interdire la « réduflation » »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -230,6 +344,12 @@
           "citation": "« Nous mettrons en place la gratuité de la cantine scolaire, pour 3,6 milliards d'euros. »",
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« Assurer la gratuité réelle de l'éducation publique, y compris de la cantine, du transport, des activités périscolaires, des manuels et des fournitures »",
+          "url": "https://melenchon2027.fr/programme/livre/le-gout-du-futur-aux-nouvelles-frontieres-de-l-humanite/chapitre2",
+          "date": "2026-11-06",
           "type": "programme"
         }
       ],
@@ -441,6 +561,12 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Abroger la réforme Macron passant l'âge de départ à la retraite à 64 ans, puis abaisser l'âge de départ jusqu'à restaurer le droit à la retraite à 60 ans à taux plein pour 40 annuités de cotisations »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -471,6 +597,12 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Abroger la réforme Macron passant l'âge de départ à la retraite à 64 ans, puis abaisser l'âge de départ jusqu'à restaurer le droit à la retraite à 60 ans à taux plein pour 40 annuités de cotisations »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -490,6 +622,12 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Porter, a minima, toutes les pensions pour une carrière complète (salarié, indépendant, agriculteur) au niveau du SMIC revalorisé, et le minimum vieillesse au niveau du seuil de pauvreté »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -508,6 +646,12 @@
           "citation": "« Nous proposons, dès l'année prochaine, d'abroger ces réformes pour un coût de 3 milliards d'euros. »",
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« Annuler les réformes Macron sur l'éligibilité et les méthodes de calcul du montant et de la durée de l'allocation »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
           "type": "programme"
         }
       ],
@@ -539,11 +683,21 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Supprimer la flat tax et imposer les revenus du capital comme ceux du travail »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "Supprimer le PFU renvoie les revenus du capital au barème de l'IR : le moteur n'a pas le bouton qui impose ce choix à tous les foyers."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "pfu_supprime": true
+        },
+        "plages": [],
+        "note": "Le prélèvement forfaitaire unique supprimé : chaque foyer est imposé comme s'il cochait la case 2OP, ses revenus du capital au barème de l'impôt sur le revenu (abattement de 40 % sur les dividendes, CSG déductible). Les prélèvements sociaux ne changent pas ; « imposer les revenus du capital comme ceux du travail » ne dit pas d'autre taux. Le capital est celui qu'impute la population (D-248) : ni l'assurance vie, ni les plus-values d'avant 2018. Contre le droit de 2026. Pas de plage : la mesure est un oui ou un non."
       },
       "declare": {
         "montant_eur": 9000000000.0,
@@ -568,6 +722,12 @@
           "citation": "« rétablissement d'un impôt sur la fortune renforcé (10 milliards d'euros) »",
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« Rétablir et renforcer l'impôt de solidarité sur la fortune (ISF) incluant un volet climatique visant à taxer les gros pollueurs »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
           "type": "programme"
         }
       ],
@@ -605,6 +765,12 @@
           "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-2027-jean-luc-melenchon-table-sur-106-milliards-de-recettes-supplementaires-et-82-milliards-de-depenses-nouvelles-pour-2027",
           "date": "2026-10-14",
           "type": "presse"
+        },
+        {
+          "citation": "« Passer au crible les niches fiscales et supprimer celles qui sont injustes, inefficaces socialement ou nuisibles écologiquement ; pour les niches restantes, transformer les réductions d'impôt en crédits d'impôt »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -627,7 +793,7 @@
       "id": "cvae_grandes_entreprises",
       "categorie": "entreprises",
       "libelle": "Rétablissement de la CVAE sur les plus grandes entreprises",
-      "parametre": "aucun taux ni seuil",
+      "parametre": "aucun taux ni seuil ; le programme du 6 novembre 2026 remplace la CVAE par un impôt progressif selon le chiffre d'affaires et l'empreinte écologique",
       "precision": "vague",
       "sources": [
         {
@@ -635,11 +801,17 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Rendre l'impôt plus juste en remplaçant la cotisation sur la valeur ajoutée des entreprises (CVAE) par un nouvel impôt sur les entreprises, dont la progressivité sera fonction du chiffre d'affaires et de l'empreinte écologique globale »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
         "porte": "vague",
-        "raison": "Ni le taux ni le seuil des entreprises visées ne sont énoncés."
+        "raison": "Ni le taux ni le seuil des entreprises visées ne sont énoncés, ni le barème de l'impôt qui remplacerait la CVAE."
       },
       "declare": {
         "montant_eur": 3000000000.0,
@@ -657,7 +829,7 @@
       "id": "taxe_zucman",
       "categorie": "patrimoine_capital",
       "libelle": "Taxe Zucman",
-      "parametre": "patrimoines de plus de 100 M€ (taux non écrit)",
+      "parametre": "2 % par an du patrimoine au-delà de 100 M€ (« garantie d'impôt »)",
       "precision": "parametree",
       "sources": [
         {
@@ -665,11 +837,17 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Introduire une garantie d'impôt de 2 % sur le patrimoine des centimillionaires, dite « taxe Zucman », et rétablir une exit tax renforcée pour lutter contre l'évasion fiscale »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
         "porte": "patrimoine",
-        "raison": "La population ne porte pas le patrimoine des ménages, et le taux de la taxe n'est pas écrit."
+        "raison": "La population ne porte pas le patrimoine des ménages ; le taux, 2 %, est écrit depuis le programme du 6 novembre 2026."
       },
       "declare": {
         "montant_eur": 15000000000.0,
@@ -695,6 +873,12 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Augmenter les droits de succession sur les plus hauts patrimoines en comptabilisant l'ensemble des dons et héritages reçus tout au long de la vie »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -717,7 +901,7 @@
       "id": "plafond_heritage",
       "categorie": "patrimoine_capital",
       "libelle": "Plafond d'héritage",
-      "parametre": "au-delà de 12 M€, « prendre tout »",
+      "parametre": "héritage maximal de 12 M€ ; au-delà, « prendre tout »",
       "precision": "parametree",
       "sources": [
         {
@@ -725,11 +909,17 @@
           "url": "https://lcp.fr/actualites/heritages-et-droits-de-succession-que-proposent-les-candidats-a-l-election",
           "date": "2026-08-27",
           "type": "entretien"
+        },
+        {
+          "citation": "« créer un héritage maximal de 12 millions d'euros »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
         "porte": "transmission",
-        "raison": "Le moteur n'a pas de module des transmissions ; la mesure est d'ailleurs portée par Mathilde Panot, présidente du groupe LFI, non par le candidat."
+        "raison": "Le moteur n'a pas de module des transmissions. D'abord portée par Mathilde Panot, la mesure est écrite dans le programme du candidat depuis le 6 novembre 2026."
       }
     },
     {
@@ -743,6 +933,12 @@
           "citation": "« Nous réformerons l'impôt sur le revenu au cours du mandat pour le rendre plus progressif avec l'instauration de 14 tranches. »",
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« Rendre l'impôt sur le revenu plus progressif avec un barème à 14 tranches contre 5 aujourd'hui »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
           "type": "programme"
         }
       ],
@@ -762,6 +958,12 @@
           "citation": "« une réforme de l'impôt sur les sociétés (3 milliards) »",
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« Refonder l'impôt sur les sociétés pour établir l'égalité devant l'impôt entre petites et moyennes entreprises (PME) et grands groupes ; instaurer un barème progressif »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
           "type": "programme"
         }
       ],
@@ -792,6 +994,12 @@
           "citation": "« une taxe universelle sur les multinationales (5 milliards la première année) »",
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« Instaurer un impôt universel sur les entreprises (basant leur taxation sur l'activité effectivement réalisée en France) et sur les revenus des particuliers »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
           "type": "programme"
         }
       ],
@@ -859,6 +1067,12 @@
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Établir une taxe sur les superprofits de toutes les grandes entreprises, activée en cas de hausse soudaine de leurs bénéfices en période de crise »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -888,6 +1102,12 @@
           "citation": "« en augmentant les taxes sur les transactions financières (5 milliards d'euros) »",
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« Instaurer une taxe réelle sur les transactions financières »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre3",
+          "date": "2026-11-06",
           "type": "programme"
         }
       ],
@@ -978,6 +1198,12 @@
           "citation": "« La lutte contre la fraude fiscale sera également renforcée grâce à la reconstruction des effectifs de fonctionnaires et pourra rapporter 2 milliards d'euros la première année. »",
           "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
           "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« Faire de la lutte contre la fraude et l'évasion fiscales une priorité en renforçant massivement les moyens humains et financiers du contrôle fiscal »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
           "type": "programme"
         }
       ],
@@ -1100,6 +1326,466 @@
       "refus": {
         "porte": "secteur",
         "raison": "L'épargne réglementée et sa centralisation, des dépôts, sont hors du modèle."
+      }
+    },
+    {
+      "id": "exoneration_succession_150000",
+      "categorie": "patrimoine_capital",
+      "libelle": "Exonération des héritages inférieurs à 150 000 €",
+      "parametre": "seuil : 150 000 € par héritage",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Exonérer de droits de succession les héritages inférieurs à 150 000 euros »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Le moteur n'a pas de module des transmissions."
+      }
+    },
+    {
+      "id": "garantie_autonomie_universelle",
+      "categorie": "prestations",
+      "libelle": "Garantie d'autonomie pour toute personne",
+      "parametre": "revenu mensuel porté au seuil de pauvreté (1 337 € pour une personne seule) ; la loi de finances 2027 n'en engage que le volet des jeunes",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Créer une garantie d'autonomie, qui permettra que nul ne soit privé de sa dignité pour vivre : le revenu mensuel de chaque personne atteindra le seuil de pauvreté (1 337 euros pour une personne seule) »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Le bouton de la garantie (garantie_autonomie) porte la mesure des jeunes, chiffrée à part : deux mesures qui règlent le même bouton sont refusées par le chargeur, et la garantie de tous, au-delà de 41 ans, sort des âges du bouton. La loi de finances 2027 n'engage que le volet des jeunes."
+      }
+    },
+    {
+      "id": "exit_tax_renforcee",
+      "categorie": "patrimoine_capital",
+      "libelle": "Exit tax renforcée",
+      "parametre": "aucun taux ni seuil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« rétablir une exit tax renforcée pour lutter contre l'évasion fiscale »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le taux, ni le seuil, ni la durée de l'exit tax ne sont énoncés."
+      }
+    },
+    {
+      "id": "fin_quotient_conjugal",
+      "categorie": "ir",
+      "libelle": "Fin du quotient conjugal",
+      "parametre": "abrogation : imposition séparée des conjoints",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Mettre fin au quotient conjugal, système patriarcal favorisant les inégalités salariales entre les femmes et les hommes »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "bouton_hors_but",
+        "raison": "L'imposition séparée des conjoints n'est pas un bouton du moteur : il faut écrire l'impôt de chaque conjoint, à partir des revenus individuels que la population porte."
+      }
+    },
+    {
+      "id": "credit_impot_enfant",
+      "categorie": "ir",
+      "libelle": "Crédit d'impôt par enfant",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Créer un crédit d'impôt par enfant pour toutes les familles »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le montant du crédit par enfant n'est pas énoncé, ni ce qu'il remplace."
+      }
+    },
+    {
+      "id": "tva_grand_luxe",
+      "categorie": "tva_consommation",
+      "libelle": "TVA « grand luxe »",
+      "parametre": "aucun taux ; yachts, jets privés, palaces",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Instaurer une « TVA grand luxe » visant des produits de consommation ostentatoires et incompatibles avec l'impératif de sobriété (yachts, jets privés, palaces, etc.) »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le taux ni la liste fermée des produits ne sont énoncés."
+      }
+    },
+    {
+      "id": "salaire_maximal_1_20",
+      "categorie": "salaires_smic",
+      "libelle": "Écart maximal de salaires de 1 à 20",
+      "parametre": "plus haut salaire de l'entreprise ≤ 20 fois le plus bas",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Fixer un salaire maximal autorisé pour limiter l'écart de 1 à 20 entre le salaire le plus bas et le salaire le plus haut dans une entreprise »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le moteur ne déplace pas la distribution des salaires, et la population ne rattache pas un salarié aux autres salaires de son entreprise."
+      }
+    },
+    {
+      "id": "minima_sociaux_hausse",
+      "categorie": "prestations",
+      "libelle": "Hausse des minima sociaux",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Augmenter immédiatement le SMIC à 1 700 euros net mensuel et les minima sociaux »",
+          "url": "https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "La hausse des minima sociaux n'a ni taux ni montant."
+      }
+    },
+    {
+      "id": "aah_niveau_smic",
+      "categorie": "prestations",
+      "libelle": "AAH portée au niveau du SMIC",
+      "parametre": "montant de l'AAH = SMIC (net ou brut non dit)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Assurer l'autonomie financière des personnes en situation de handicap en revalorisant l'allocation aux adultes handicapés (AAH) à hauteur du SMIC »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Le montant de l'AAH a un bouton (indexations, « aah »), mais la population ne porte ni le handicap ni l'AAH : le bouton n'y mordrait sur personne, et chiffrerait zéro."
+      }
+    },
+    {
+      "id": "minimum_vieillesse_seuil_pauvrete",
+      "categorie": "prestations",
+      "libelle": "Minimum vieillesse au niveau du seuil de pauvreté",
+      "parametre": "ASPA = seuil de pauvreté (1 337 € par mois selon le programme)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Porter, a minima, toutes les pensions pour une carrière complète (salarié, indépendant, agriculteur) au niveau du SMIC revalorisé, et le minimum vieillesse au niveau du seuil de pauvreté »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "bouton_hors_but",
+        "raison": "Le moteur calcule le minimum vieillesse mais son montant n'est pas un bouton câblé ; le porter au seuil de pauvreté est un bouton à écrire."
+      }
+    },
+    {
+      "id": "suppression_decote_retraite",
+      "categorie": "retraites",
+      "libelle": "Suppression de la décote des pensions",
+      "parametre": "abrogation de la décote",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Supprimer la décote, qui représente une double peine pour les retraités, en particulier les femmes et les plus précaires »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Les pensions de la population sont des données : la décote n'y est pas recalculée."
+      }
+    },
+    {
+      "id": "suppression_avantages_retraite_capitalisation",
+      "categorie": "ir",
+      "libelle": "Suppression des avantages fiscaux de la retraite par capitalisation",
+      "parametre": "abrogation (dispositifs non nommés)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Supprimer les avantages fiscaux de la retraite par capitalisation pour financer le système par répartition »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les versements des ménages sur l'épargne retraite ne sont pas dans la population."
+      }
+    },
+    {
+      "id": "cotisation_sociale_universelle",
+      "categorie": "csg_cotisations",
+      "libelle": "Cotisation sociale universelle fusionnant cotisations et CSG",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Créer une cotisation sociale universelle pour financer la Sécurité sociale, fusionnant les différentes cotisations sociales actuelles et la contribution sociale généralisée (CSG) […] avec une part progressive selon les revenus »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni les taux ni le barème progressif de la cotisation fusionnée ne sont énoncés."
+      }
+    },
+    {
+      "id": "cent_pour_cent_secu",
+      "categorie": "depense_publique",
+      "libelle": "« 100 % Sécu »",
+      "parametre": "remboursement à 100 % des soins prescrits ; complémentaires intégrées",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Instaurer le « 100 % Sécu » en remboursant à 100 % les soins de santé prescrits et en intégrant les assurances maladie complémentaires dans la Sécurité sociale »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le remboursement des soins est une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "suppression_franchises_medicales",
+      "categorie": "depense_publique",
+      "libelle": "Suppression des franchises médicales et des participations forfaitaires",
+      "parametre": "abrogation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Garantir le zéro reste à charge en supprimant les franchises médicales, les participations forfaitaires et les frais annexes »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les franchises sont un moindre remboursement, une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "arret_maladie_100_carence",
+      "categorie": "prestations",
+      "libelle": "Arrêt maladie indemnisé à 100 %, sans jour de carence",
+      "parametre": "indemnisation à 100 % du salaire ; jours de carence supprimés",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Garantir le droit à l'arrêt maladie par l'indemnisation à 100 % du salaire, la suppression des jours de carence et l'auto-déclaration pour les arrêts de courte durée »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le moteur porte l'impôt des indemnités journalières, pas les arrêts ni leur carence : c'est une dépense qu'il ne microsimule pas."
+      }
+    },
+    {
+      "id": "heures_sup_majorees_35h",
+      "categorie": "salaires_smic",
+      "libelle": "35 heures rétablies, heures supplémentaires majorées à 25 % puis 50 %",
+      "parametre": "35 h ; majoration de 25 % les quatre premières heures, 50 % au-delà ; 32 h dans les métiers pénibles ou de nuit",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Rétablir immédiatement la durée légale hebdomadaire du temps de travail à 35 heures (en majorant les heures supplémentaires, cotisations incluses, à 25 % pour les quatre premières et 50 % au-delà) »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte pas les heures supplémentaires, que la majoration renchérirait."
+      }
+    },
+    {
+      "id": "premiere_tranche_gratuite_energie",
+      "categorie": "energie_carburants",
+      "libelle": "Première tranche gratuite d'électricité, de chaleur, d'eau et de gaz",
+      "parametre": "aucun volume ni seuil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Instaurer une première tranche gratuite de consommation d'électricité, de chaleur, d'eau, de gaz »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le volume de la tranche gratuite n'est pas énoncé."
+      }
+    },
+    {
+      "id": "defiscalisation_pensions_alimentaires",
+      "categorie": "ir",
+      "libelle": "Défiscalisation des pensions alimentaires",
+      "parametre": "pensions alimentaires reçues exonérées d'impôt sur le revenu",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« déconjugaliser et revaloriser l'allocation de soutien familial (ASF), défiscaliser les pensions alimentaires, réduire les délais de la justice familiale »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "pensions_alimentaires_exonerees": true
+        },
+        "plages": [],
+        "note": "« Défiscaliser les pensions alimentaires », sans plafond ni condition. Les pensions alimentaires perçues (1AO à 1DO) sortent du revenu imposable du parent qui les reçoit, entières : le bouton de l'étape 4 (D-383), sans plafond par enfant. Les pensions sont celles qu'impute la population, perçues par les parents isolés pour leurs enfants (5,55 Md€ en 2024, vieillies par les prix) : celles que reçoit un parent en couple ou un ex-conjoint pour lui-même ne sont pas portées. Les prestations qui comptent la pension ne bougent pas. Contre le droit de 2026. Pas de plage : la mesure est un oui ou un non."
+      }
+    },
+    {
+      "id": "asf_deconjugalisee",
+      "categorie": "prestations",
+      "libelle": "Allocation de soutien familial déconjugalisée et revalorisée",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« déconjugaliser et revaloriser l'allocation de soutien familial (ASF) »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "La revalorisation de l'ASF n'a pas de montant."
+      }
+    },
+    {
+      "id": "gratuite_creches_publiques",
+      "categorie": "depense_publique",
+      "libelle": "Gratuité des crèches publiques",
+      "parametre": "gratuité",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Garantir la gratuité des crèches publiques »",
+          "url": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre3",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le prix des crèches publiques est une dépense des collectivités et de la branche famille que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "gratuite_enseignement_superieur",
+      "categorie": "depense_publique",
+      "libelle": "Gratuité de l'enseignement supérieur",
+      "parametre": "gratuité, de la licence au doctorat",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Instaurer la gratuité de l'enseignement supérieur, de la licence au doctorat, quelle que soit la nationalité des étudiants »",
+          "url": "https://melenchon2027.fr/programme/livre/le-gout-du-futur-aux-nouvelles-frontieres-de-l-humanite/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les droits d'inscription sont une ressource des universités, hors du moteur."
+      }
+    },
+    {
+      "id": "suppression_cir",
+      "categorie": "entreprises",
+      "libelle": "Suppression du crédit d'impôt recherche",
+      "parametre": "abrogation, au profit de dotations « à hauteur des besoins »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Supprimer le crédit impôt recherche au profit de dotations récurrentes à hauteur des besoins des universités et instituts de recherche »",
+          "url": "https://melenchon2027.fr/programme/livre/le-gout-du-futur-aux-nouvelles-frontieres-de-l-humanite/chapitre2",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le CIR a un bouton (cir_taux, cir_taux_au_dela, à 0), mais il se chiffre sur la créance d'un millésime, hors du coût des entreprises (D-222) : un cas préenregistré par register-entreprises lirait 0 €, et la chaîne de la dette refuse ces boutons, ce qui ferait tomber l'étude du programme. La suppression attend une route de préenregistrement sur la créance ; sa contrepartie, des dotations sans montant, est une dépense publique."
+      }
+    },
+    {
+      "id": "taxe_kilometrique_frontieres",
+      "categorie": "autre",
+      "libelle": "Taxe kilométrique aux frontières de l'UE",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« La mise en place d'un protectionnisme écologique et solidaire, avec notamment une taxe kilométrique aux frontières de l'UE »",
+          "url": "https://melenchon2027.fr/programme/livre/un-monde-ordonne/chapitre1",
+          "date": "2026-11-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le taux ni l'assiette de la taxe ne sont énoncés."
       }
     }
   ]

@@ -1,0 +1,27 @@
+{
+  "name": "pres2027_philippe_programme",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Édouard Philippe (Horizons), programme relevé le 2026-11-12 — la part chiffrée : p10_exoneration_deux_heures, p11_allocation_familiale_unique",
+  "note": "2 mesures chiffrées sur 16 paramétrées et 23 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "tags": [
+    "presidentielle_2027",
+    "philippe",
+    "etude"
+  ],
+  "reform": {
+    "allocation_enfant": {
+      "montant_par_enfant": 350.0,
+      "age_maximum": 20,
+      "remplace_af": true,
+      "remplace_cf": true,
+      "remplace_ars": false,
+      "par_famille": false,
+      "degressivite_part_ir": 0.5,
+      "plancher_par_enfant": 0.0
+    },
+    "heures_sup_exoneration_salariale": 1.0,
+    "heures_sup_exoneration_csg_crds": 0.0,
+    "heures_sup_plafond_heures": 94.0
+  }
+}

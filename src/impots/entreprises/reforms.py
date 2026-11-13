@@ -116,6 +116,25 @@ class FirmReformSpec(BaseModel):
         "threshold without its rate is not a policy, so they move together or not at "
         "all. At most two tranches, matching the statute's own shape.",
     )
+    impots_production_baisse: Annotated[float, Field(ge=0, le=200e9)] | None = Field(
+        default=None,
+        description="Une enveloppe de baisse des impôts de production, en euros par an (but "
+        "21, étape 2). Les seuls impôts de production que le moteur porte sont la CVAE et la "
+        "C3S : la baisse est répartie entre elles (`impots_production_part_cvae`, au prorata "
+        "de leur rendement par défaut) et traduite, sur la population de la passe, en un "
+        "facteur du barème de la CVAE et un taux de C3S tels que leur rendement statique "
+        "baisse de l'enveloppe. Son coût est l'enveloppe par construction (D-380), le "
+        "facteur de la CVAE réglé sur la passe au millionième ; ce qu'elle apprend est qui y gagne, le retour "
+        "d'IS de la déductibilité (D-347) et la dette. Une enveloppe au-delà de ce que la "
+        "CVAE et la C3S rapportent est refusée : la CFE, la taxe foncière des entreprises, "
+        "le versement mobilité et les autres impôts de production ne sont pas dans le "
+        "moteur. Pas avec les boutons de la CVAE ni `c3s_taux`, qu'elle règle déjà.")
+    impots_production_part_cvae: Annotated[float, Field(ge=0.0, le=1.0)] | None = Field(
+        default=None,
+        description="La part de l'enveloppe portée par la CVAE, le reste par la C3S. Sans "
+        "elle, le prorata de leur rendement sur la population de la passe. L'hypothèse de "
+        "traduction ; sa plage va de 0 (toute la baisse sur la C3S) à 1 (toute sur la "
+        "CVAE), dans la limite de ce que chacune rapporte.")
     cebge_prorogation_largeur: Annotated[float, Field(gt=0, le=1_000_000_000)] | None = Field(
         default=None,
         description="Revive the CEBGE in a year where the tree no longer carries it, with "
@@ -151,6 +170,18 @@ class FirmReformSpec(BaseModel):
                     f"cvae_echelle avec {moved} : le facteur règle déjà le barème entier, "
                     f"ce plafond et ce dégrèvement compris ; lequel l'emporterait serait "
                     f"l'ordre des écritures, pas une politique.")
+        if self.impots_production_part_cvae is not None \
+                and self.impots_production_baisse is None:
+            raise ValueError("impots_production_part_cvae sans impots_production_baisse : "
+                             "une part de rien.")
+        if self.impots_production_baisse is not None:
+            moved = [knob for knob in ("cvae_echelle", "cvae_taux_max", "cvae_degrevement",
+                                       "c3s_taux")
+                     if getattr(self, knob) is not None]
+            if moved:
+                raise ValueError(
+                    f"impots_production_baisse avec {moved} : l'enveloppe règle déjà le "
+                    f"barème de la CVAE et le taux de la C3S.")
         if self.cebge_prorogation_largeur is not None and len(
                 self.cebge_seuils_et_taux or ()) != len(CEBGE_TRANCHE_PATHS):
             raise ValueError(
@@ -230,6 +261,11 @@ def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
     property `test_no_mutation` keeps honest on the household side and does the
     same here.
     """
+    if spec.impots_production_baisse is not None:
+        raise ValueError(
+            "une enveloppe d'impôts de production se traduit sur la population de la passe "
+            "(`traduire_enveloppe`, que `runner.run` appelle) avant d'être une réforme : "
+            "son facteur dépend de ce que la CVAE et la C3S y rapportent.")
     start = periods.instant(f"{year}-01-01")
     instant = f"{year}-01-01"
     reform_name = f"impots-firm-reform:{name}"
@@ -296,6 +332,8 @@ def _knob_paths(knob: str) -> tuple[tuple[str, ...], ...]:
         return (SCALAR_KNOBS[knob],)
     if knob == "cvae_echelle":
         return CVAE_SCHEDULE
+    if knob in ("impots_production_baisse", "impots_production_part_cvae"):
+        return (*CVAE_SCHEDULE, SCALAR_KNOBS["c3s_taux"])
     if knob in ("cebge_seuils_et_taux", "cebge_prorogation_largeur"):
         return (*(path for paths in CEBGE_TRANCHE_PATHS for path in paths),
                 ("cebge", "lissage", "largeur"))
@@ -384,3 +422,50 @@ def verify_scales(system: Any, spec: FirmReformSpec, year: int) -> None:
             "les paramètres appliqués ne correspondent pas à la réforme demandée — "
             + "; ".join(problems)
         )
+
+
+class EnveloppeError(ValueError):
+    """Une enveloppe d'impôts de production qui ne se traduit pas sur ce que le moteur porte."""
+
+
+def traduire_enveloppe(spec: FirmReformSpec, cvae_loi: float, c3s_loi: float,
+                       c3s_taux_loi: float) -> tuple[FirmReformSpec, dict[str, float]]:
+    """L'enveloppe de `spec` traduite en un facteur du barème de la CVAE et un taux de C3S,
+    sur ce que les deux rapportent dans la population de la passe (`cvae_loi`, `c3s_loi`, en
+    euros pondérés) : la réforme, sans l'enveloppe, et la traduction, pour le rapport.
+
+    La règle, une hypothèse dite : la baisse est répartie entre la CVAE et la C3S, au prorata
+    de leur rendement sans `impots_production_part_cvae`, et chacune baisse de sa part, à
+    proportion — un facteur sur tout le barème de la CVAE (ses taux et son dégrèvement,
+    comme `cvae_echelle`), une baisse du taux de la C3S. La C3S est linéaire dans son taux ;
+    la CVAE ne l'est qu'à l'arrondi de ses taux au centième près, et `runner.run` règle son
+    facteur sur la passe jusqu'au millionième de son rendement. Refusée au-delà de ce que
+    chacune rapporte : le moteur ne porte pas les autres impôts de production."""
+    baisse = float(spec.impots_production_baisse or 0.0)
+    total = cvae_loi + c3s_loi
+    if baisse > total * (1 + 1e-9):
+        raise EnveloppeError(
+            f"une baisse de {baisse / 1e9:.2f} Md€ des impôts de production : la CVAE et la "
+            f"C3S, les seuls que le moteur porte, rapportent {total / 1e9:.2f} Md€ sur cette "
+            f"population. La CFE, la taxe foncière des entreprises, le versement mobilité et "
+            f"les autres n'y sont pas ; le reste de l'enveloppe ne se traduirait en rien.")
+    part = (spec.impots_production_part_cvae if spec.impots_production_part_cvae is not None
+            else (cvae_loi / total if total > 0 else 0.0))
+    baisse_cvae, baisse_c3s = part * baisse, (1.0 - part) * baisse
+    for nom, cut, rendement in (("CVAE", baisse_cvae, cvae_loi), ("C3S", baisse_c3s, c3s_loi)):
+        if cut > rendement * (1 + 1e-9):
+            raise EnveloppeError(
+                f"la part de l'enveloppe portée par la {nom}, {cut / 1e9:.2f} Md€, dépasse ce "
+                f"qu'elle rapporte sur cette population, {rendement / 1e9:.2f} Md€.")
+    fields = spec.model_dump(exclude_none=True)
+    fields.pop("impots_production_baisse", None)
+    fields.pop("impots_production_part_cvae", None)
+    echelle = 1.0 - baisse_cvae / cvae_loi if cvae_loi > 0 else 1.0
+    taux = c3s_taux_loi * (1.0 - baisse_c3s / c3s_loi) if c3s_loi > 0 else c3s_taux_loi
+    fields["cvae_echelle"] = max(0.0, min(1.0, echelle))
+    fields["c3s_taux"] = max(0.0, taux)
+    traduction = {"enveloppe_eur": baisse, "part_cvae": part, "baisse_cvae_eur": baisse_cvae,
+                  "baisse_c3s_eur": baisse_c3s, "cvae_echelle": fields["cvae_echelle"],
+                  "c3s_taux": fields["c3s_taux"], "cvae_loi_eur": cvae_loi,
+                  "c3s_loi_eur": c3s_loi}
+    return FirmReformSpec.model_validate(fields), traduction

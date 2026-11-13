@@ -1,0 +1,57 @@
+case: pres2027_ruffin_credit_impot_domicile_travail
+pre_registered: '2026-11-12T14:17:53+00:00'
+commit: cbd842dca3eaf71957f19bac28f1cc2bf09bd090
+scenario: pres2027_ruffin_credit_impot_domicile_travail
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 16213020651.967041
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 200000000.0
+  rationale: 'Classe « menages » (D-321). Mesure des ménages sur une large assiette
+    (salaires, CSG, quotient familial) : le moteur retrouve ses agrégats à quelques
+    pour cent. Le juge chiffre peut-être une autre année que 2026 (la croissance nominale
+    en écarte de 3 % par an) et contre la continuité des politiques, pas le droit
+    gelé.'
+note: 'François Ruffin (Debout !), programme relevé le 2026-11-12 — Crédit d''impôt
+  pour les trajets domicile-travail, remise à plat des frais kilométriques et avantages
+  véhicules : « « Avec un taux de couverture des déplacements autour de 30%, ce crédit
+  d''impôt permettrait à des gros rouleurs aux revenus moyens d''être remboursés d''environ
+  700€en 2026 » » (https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf,
+  2026-10-21). Un crédit d''impôt de 30 % des frais de trajet domicile-travail de
+  chaque salarié (« autour de 30 % », plage de 25 à 35 %), sur les frais qu''impute
+  la population (D-383), sans franchise ni plafond ni condition de revenu : les «
+  gros rouleurs aux revenus moyens » ne sont pas définis. La remise à plat des frais
+  kilométriques et des avantages en nature des véhicules n''est pas lue ; les frais
+  réels déclarés restent. Contre le droit de 2026.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

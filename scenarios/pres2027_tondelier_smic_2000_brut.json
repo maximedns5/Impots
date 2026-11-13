@@ -1,0 +1,16 @@
+{
+  "name": "pres2027_tondelier_smic_2000_brut",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Marine Tondelier (Les Écologistes), programme relevé le 2026-11-12 — SMIC à 2 000 € brut par mois dès 2027 : « « Augmenter le salaire minimum à 2000€ brut par mois dès 2027 » » (https://marinetondelier.fr/s/livret-travail.pdf, 2026-11-04)",
+  "note": "Le SMIC porté à 2 000 € bruts par mois. Le bouton est un coefficient sur le SMIC horaire brut de chaque mois de 2026, qui en porte deux : 12,02 € de janvier à mai (1 823,03 € bruts par mois), 12,31 € de juin à décembre (1 867,02 €), 1 848,69 € en moyenne. Le coefficient retenu, 1,0818, donne 2 000 € bruts par mois en moyenne sur l'année ; la plage va de 1,0712 (2 000 € bruts atteints depuis le SMIC de juin) à 1,0971 (depuis celui de janvier). La diffusion au-dessus du nouveau SMIC, entre 1 et 1,5 SMIC dans le privé, est une hypothèse déclarée (D-380) : le profil à un an avec effets fixes d'entreprise de Koubi et Lhommeau (Insee, Les salaires en France 2007), le plus large des quatre publiés, à l'échelle 0 pour la valeur du candidat (le premier jour, la loi seule relève les salaires horaires sous le nouveau SMIC), sa plage allant jusqu'à 1 (le profil entier). La mesure se mesure contre le SMIC de l'arbre de 2026. Le coût ne compte pas le salaire que paie un employeur privé ; il compte celui que paie l'État employeur (les agents publics relevés au SMIC), les cotisations, la CSG et l'impôt qui montent, la prime d'activité qui bouge, et les allègements généraux, qui suivent le SMIC : un SMIC relevé les élargit aussi pour les salaires qui ne bougent pas.",
+  "tags": [
+    "presidentielle_2027",
+    "tondelier"
+  ],
+  "reform": {
+    "smic_revalorisation": 1.0818,
+    "smic_diffusion_profil": "annee_avec_effets_fixes",
+    "smic_diffusion_echelle": 0.0
+  }
+}

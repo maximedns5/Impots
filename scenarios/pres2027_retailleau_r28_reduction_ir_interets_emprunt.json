@@ -1,0 +1,21 @@
+{
+  "name": "pres2027_retailleau_r28_reduction_ir_interets_emprunt",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-12 — Réduction d'IR sur les intérêts d'emprunt de la résidence principale : « « 50 % des intérêts annuels lorsque le foyer fiscal compte un enfant mineur, 75 % s'il en compte deux, et 100 % s'il en compte trois ou plus » » (https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf, 2026-04-28)",
+  "note": "Une réduction d'impôt de 50 % des intérêts annuels de l'emprunt de la résidence principale avec un enfant mineur à charge, 75 % avec deux, 100 % à partir de trois ; rien sans enfant mineur. Plafonnée à 400 € plus 400 € par enfant mineur (le plafond borne la réduction, hypothèse de D-383), hors du plafond global des niches. Les intérêts sont ceux qu'impute la population aux accédants (18,64 Md€ en 2024, D-383). La durée du prêt et une date d'achat ne sont pas lues. Une réduction, non un crédit : elle s'arrête à l'impôt. Pas de plage : le candidat dit ses taux et ses plafonds. Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "retailleau"
+  ],
+  "reform": {
+    "interets_emprunt_taux": [
+      0.0,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "interets_emprunt_plafond": 400.0,
+    "interets_emprunt_plafond_par_enfant": 400.0
+  }
+}

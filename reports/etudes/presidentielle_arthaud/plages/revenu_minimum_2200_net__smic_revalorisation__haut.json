@@ -1,0 +1,70 @@
+{
+  "programme": "arthaud",
+  "mesure": "revenu_minimum_2200_net",
+  "champ": "smic_revalorisation",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "smic_revalorisation": 1.5245,
+      "smic_diffusion_profil": "annee_avec_effets_fixes",
+      "smic_diffusion_echelle": 0.0
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 83380634733.23676,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.02705945885303107,
+      0.053820225507986263,
+      0.08028559703853144,
+      0.10645883412402757,
+      0.1323431614512658,
+      0.15794176811176475,
+      0.18325780799468583,
+      0.208294400175409,
+      0.23305462929981946,
+      0.25754154596435397
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-12",
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
+}

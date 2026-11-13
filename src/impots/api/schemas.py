@@ -19,6 +19,7 @@ from typing import Annotated, Any, Literal, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from impots.api.prestations_neuves import RIA, AllocationEnfant, GarantieAutonomie
 from impots.entreprises.reforms import FirmReformSpec
 from impots.predictif.transformations import TRANSFORMATIONS
 
@@ -957,6 +958,224 @@ class ReformSpec(BaseModel):
     accise_electricite: Annotated[float, Field(ge=0.0, le=200.0)] | None = None
     accise_gaz: Annotated[float, Field(ge=0.0, le=200.0)] | None = None
     """EUR per MWh."""
+    # --- Les prestations neuves des programmes (but 21, étape 3) ----------------------
+    # Un groupe de champs par prestation que la loi n'a pas (`api.prestations_neuves`) :
+    # `None`, la loi n'en porte aucune variable et le groupe coûte 0 €. Les formules, ce
+    # que chacune remplace et son non-recours : `engine.prestations_neuves`.
+    ria: RIA | None = None
+    """Le revenu d'incitation à l'activité, individuel, à la place du RSA, de la prime
+    d'activité et de l'ASS (Retailleau, r15)."""
+    allocation_enfant: AllocationEnfant | None = None
+    """Une allocation par enfant dès le premier (le revenu familial de Retailleau, r27 ;
+    l'allocation familiale unique de Philippe, p11)."""
+    garantie_autonomie: GarantieAutonomie | None = None
+    """La garantie d'autonomie des jeunes, différentielle à un seuil (Mélenchon)."""
+
+    @model_validator(mode="after")
+    def _check_prestations_neuves(self) -> ReformSpec:
+        """Un bouton d'une prestation qu'une prestation neuve remplace n'écrirait plus dans
+        rien : la réforme qui pose les deux est refusée (but 21, étape 3)."""
+        from impots.api.prestations_neuves import boutons_morts
+
+        morts = boutons_morts(self)
+        if morts:
+            raise ValueError(
+                f"{', '.join(morts)} : ces boutons règlent une prestation que la prestation "
+                f"neuve posée par la même réforme remplace ; ils ne bougeraient rien.")
+        return self
+
+    # --- Les boutons des programmes de 2027 qui changent une formule (but 21, étape 2) ---
+    # Ce que chacun fait et ne fait pas : `impots.engine.boutons_programmes`.
+    pfu_supprime: bool | None = None
+    """Le prélèvement forfaitaire unique supprimé : chaque foyer imposé comme s'il cochait la
+    case 2OP, ses revenus du capital au barème (abattement de 40 % sur les dividendes, CSG
+    déductible). False est le droit. Pas avec `pfu_taux`. Les prélèvements sociaux ne
+    bougent pas ; la population ne porte que le capital qu'impute D-248."""
+    ir_exoneration_jeunes_age: Annotated[int, Field(ge=18, le=40)] | None = None
+    """L'âge, au 1er janvier de l'année des revenus, sous lequel les salaires sont exonérés
+    d'impôt sur le revenu (30 : « les moins de 30 ans »). Avec son plafond."""
+    ir_exoneration_jeunes_plafond_smic: Annotated[float, Field(ge=0.0, le=20.0)] | None = None
+    """Le plafond de l'exonération, en SMIC bruts annuels : la part du salaire imposable qui
+    correspond aux premiers euros bruts jusqu'à lui est exonérée, le reste imposé (un
+    abattement, pas une falaise). 0 n'exonère rien."""
+    reduction_impot_familles_montant: Annotated[float, Field(ge=0, le=20_000)] | None = None
+    """Une réduction d'impôt par foyer, en euros, pour un foyer qui a au moins
+    `reduction_impot_familles_enfants_min` personnes à charge et un déclarant au moins avec
+    un revenu d'activité. Elle s'arrête à l'impôt dû."""
+    reduction_impot_familles_enfants_min: Annotated[int, Field(ge=1, le=10)] | None = None
+    indexations: dict[str, dict[int, Annotated[float, Field(ge=0.5, le=2.0)]]] | None = None
+    """L'indexation année par année : pour chaque prestation de
+    `boutons_programmes.INDEXATIONS` (rsa, prime_activite, prestations_familiales, aah,
+    minimum_vieillesse, aides_logement, pensions), un coefficient par année sur ce que le
+    droit porte à la date légale de sa revalorisation de cette année-là. 1 laisse le droit.
+    Une passe de l'année Y applique, dans l'ordre, les coefficients des années jusqu'à Y."""
+    cvec_montant: Annotated[float, Field(ge=0, le=1_000)] | None = None
+    """La contribution de vie étudiante et de campus, en euros par étudiant non boursier du
+    supérieur (105 € en 2025-2026). 0 la supprime. Le format d'entrée ne porte pas les
+    étudiants du supérieur et les boursiers : sur un ménage le bouton ne bouge rien. Une
+    passe sur la population qui le règle les impute (`population.menages`, calés sur le
+    SIES)."""
+
+    # --- Les boutons qui lisent les données de ménages imputées (but 21, étape 4) -------
+    # Une passe sur la population qui en règle un impute les données de ménages
+    # (`population.menages`) ; sur un ménage, ils lisent ce que le ménage porte. Ce que
+    # chacun fait et ne fait pas : `impots.engine.boutons_programmes`.
+    pensions_alimentaires_exonerees: bool | None = None
+    """Les pensions alimentaires perçues (1AO à 1DO) sortent du revenu imposable du parent
+    qui les reçoit, entières ou jusqu'au plafond par enfant. False est le droit."""
+    pensions_alimentaires_plafond_par_enfant: Annotated[
+        float, Field(ge=0, le=100_000)] | None = None
+    """Le plafond de la pension exonérée, en euros par an et par personne à charge du foyer
+    (None : toute la pension). Exige `pensions_alimentaires_exonerees`."""
+    interets_emprunt_taux: list[Annotated[float, Field(ge=0.0, le=1.0)]] | None = Field(
+        default=None, min_length=1, max_length=8)
+    """Une réduction d'impôt égale à un taux des intérêts d'emprunt de la résidence
+    principale : un taux par nombre d'enfants mineurs à charge, de zéro enfant au dernier
+    (qui vaut au-delà). [0, 0.2] : rien sans enfant, 20 % dès le premier."""
+    interets_emprunt_plafond: Annotated[float, Field(ge=0, le=50_000)] | None = None
+    """Le plafond de la réduction, en euros par foyer (None : pas de plafond)."""
+    interets_emprunt_plafond_par_enfant: Annotated[float, Field(ge=0, le=10_000)] | None = None
+    """Ce que chaque enfant mineur à charge ajoute au plafond, en euros."""
+    credit_trajets_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """Un crédit d'impôt égal à ce taux des frais de trajet domicile-travail de chaque
+    personne, au-delà de la franchise et dans la limite du plafond."""
+    credit_trajets_franchise: Annotated[float, Field(ge=0, le=50_000)] | None = None
+    """Les frais de l'année, en euros, en deçà desquels rien n'est remboursé (0 par
+    défaut)."""
+    credit_trajets_plafond: Annotated[float, Field(ge=0, le=50_000)] | None = None
+    """Le crédit au plus, en euros par personne (None : pas de plafond)."""
+    heures_sup_exoneration_salariale: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """La part exonérée des cotisations salariales des heures supplémentaires que la loi
+    laisse, au-delà de sa réduction (11,31 % du brut au plus). 1 : toutes."""
+    heures_sup_exoneration_csg_crds: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """La part exonérée de la CSG et de la CRDS sur la rémunération des heures."""
+    heures_sup_exoneration_patronale: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """La part exonérée des cotisations patronales sur la rémunération des heures, nettes des
+    allègements, dans le privé."""
+    heures_sup_franchise_heures: Annotated[float, Field(ge=0, le=1_000)] | None = None
+    """Les premières heures supplémentaires de l'année, que l'exonération ne touche pas."""
+    heures_sup_plafond_heures: Annotated[float, Field(ge=0, le=2_000)] | None = None
+    """Les heures exonérées au plus par an, après la franchise (None : toutes)."""
+
+    @model_validator(mode="after")
+    def _check_boutons_menages(self) -> ReformSpec:
+        """Une borne d'heures sans exonération ne borne rien : refusée."""
+        from impots.engine.boutons_programmes import HEURES_SUP_BORNES, HEURES_SUP_TAUX
+
+        bornes = [b for b in HEURES_SUP_BORNES if getattr(self, b) is not None]
+        if bornes and not any(getattr(self, t) is not None for t in HEURES_SUP_TAUX):
+            raise ValueError(f"{', '.join(bornes)} sans exonération des heures "
+                             f"supplémentaires ({', '.join(HEURES_SUP_TAUX)}) : ne borne rien.")
+        if (self.pensions_alimentaires_plafond_par_enfant is not None
+                and not self.pensions_alimentaires_exonerees):
+            raise ValueError("« pensions_alimentaires_plafond_par_enfant » exige "
+                             "« pensions_alimentaires_exonerees » à vrai.")
+        return self
+
+    @model_validator(mode="after")
+    def _check_boutons_programmes(self) -> ReformSpec:
+        """Les boutons du but 21 qui vont par deux, et ceux qui portent le même montant
+        qu'un autre bouton (D-298, D-301)."""
+        from impots.engine.boutons_programmes import (
+            ANNEES_INDEXATION,
+            FORMULE_KNOBS,
+            INDEXATIONS,
+        )
+
+        for knob, partners in FORMULE_KNOBS.items():
+            if getattr(self, knob) is None:
+                continue
+            for partner in partners:
+                if getattr(self, partner) is None:
+                    raise ValueError(f"« {knob} » sans « {partner} » : l'un ne se dit pas "
+                                     f"sans l'autre.")
+        if self.pfu_supprime is not None and self.pfu_taux is not None:
+            raise ValueError("« pfu_supprime » et « pfu_taux » : un taux d'un PFU supprimé "
+                             "ne se lirait nulle part. L'un ou l'autre.")
+        if self.indexations is not None:
+            inconnues = sorted(set(self.indexations) - set(INDEXATIONS))
+            if inconnues or not self.indexations:
+                raise ValueError(f"indexations : {inconnues or 'aucune prestation'} ; "
+                                 f"connues : {sorted(INDEXATIONS)}")
+            low, high = ANNEES_INDEXATION
+            for prestation, par_annee in self.indexations.items():
+                hors = sorted(y for y in par_annee if not low <= y <= high)
+                if hors or not par_annee:
+                    raise ValueError(f"indexations de {prestation} : années {hors or 'aucune'}"
+                                     f", hors de [{low}, {high}]")
+            meme_montant = {
+                "prime_activite": ("ppa_montant_de_base", "ppa_revalorisation_avril",
+                                   "ppa_revalorisation_portee"),
+                "aides_logement": ("al_revalorisation_octobre", "al_revalorisation_portee"),
+                "rsa": ("rsa_montant_de_base",),
+                "prestations_familiales": ("bmaf",),
+            }
+            for prestation, knobs in meme_montant.items():
+                if prestation not in self.indexations:
+                    continue
+                for knob in knobs:
+                    if getattr(self, knob) is not None:
+                        raise ValueError(
+                            f"« indexations.{prestation} » et « {knob} » portent le même "
+                            f"montant : l'un ou l'autre, pas les deux.")
+        return self
+
+    # --- Les salaires (but 21, étape 4) ------------------------------------------------
+    # Ils ne règlent pas l'impôt : la passe de la population relève les salaires de
+    # l'année chiffrée (`population.salaires`) et chiffre la réforme sur eux ; le coût
+    # retire le salaire que paie un employeur privé et compte celui que paie l'État. Un
+    # ménage seul, dont le salaire est donné, les refuse (`engine.reforms.make_reform`).
+    smic_revalorisation: Annotated[float, Field(ge=0.5, le=2.0)] | None = Field(
+        default=None,
+        description="Coefficient sur le SMIC horaire brut de chaque mois de l'année "
+        "chiffrée (1,10 le relève de 10 %). Le premier jour, la loi seule relève au "
+        "nouveau SMIC les salaires horaires entre l'ancien et le nouveau, et dans la même "
+        "proportion ceux qui étaient sous l'ancien (apprentis, jeunes) ; l'arbre réformé "
+        "porte le nouveau SMIC (allègements, prime d'activité). Rien au-dessus sans la "
+        "diffusion, une hypothèse (D-380).",
+    )
+    smic_diffusion_profil: Literal[
+        "trimestre_sans_effets_fixes", "trimestre_avec_effets_fixes",
+        "annee_sans_effets_fixes", "annee_avec_effets_fixes"] | None = Field(
+        default=None,
+        description="HYPOTHÈSE DÉCLARÉE, jamais calée : la diffusion d'une hausse du SMIC "
+        "aux salaires horaires du privé entre 1 et 1,5 SMIC, selon l'une des quatre "
+        "estimations publiées de Koubi et Lhommeau (Insee, Les salaires en France 2007, "
+        "figure 11 ; `margins.SMIC_DIFFUSION_PROFILS`) : une élasticité par tranche de 0,1 "
+        "SMIC, de 0,07 à 1,19 selon l'horizon et la tranche, zéro au-delà de 1,5 SMIC. Exige "
+        "`smic_revalorisation`.",
+    )
+    smic_diffusion_echelle: Annotated[float, Field(ge=0.0, le=1.0)] | None = Field(
+        default=None,
+        description="L'échelle de la diffusion : 0, la loi seule ; 1, le profil publié "
+        "(la valeur quand le profil est donné sans elle). La plage d'une mesure va de l'un "
+        "à l'autre. Exige `smic_diffusion_profil`.",
+    )
+    point_indice_revalorisation: Annotated[float, Field(ge=0.5, le=2.0)] | None = Field(
+        default=None,
+        description="Coefficient sur la valeur du point d'indice de la fonction publique "
+        "(1,10 la relève de 10 %) : il multiplie le traitement indiciaire des titulaires, "
+        "brut sur 1,195 (le taux de prime du moteur, `TAUX_DE_PRIME`) ; leurs primes ne "
+        "bougent pas. L'État, les collectivités et les hôpitaux paient la hausse.",
+    )
+    point_indice_contractuels: Annotated[float, Field(ge=0.0, le=1.0)] | None = Field(
+        default=None,
+        description="La part du salaire des contractuels de la fonction publique qui suit "
+        "le point (0 quand on ne la règle pas : aucune part publiée ; un contractuel payé "
+        "sur une grille indiciaire la suit en entier). Exige "
+        "`point_indice_revalorisation`.",
+    )
+
+    @model_validator(mode="after")
+    def _check_salaires(self) -> ReformSpec:
+        """Un bouton de diffusion sans la hausse qu'il diffuse ne dit rien : refusé."""
+        for bouton, exige in (("smic_diffusion_profil", "smic_revalorisation"),
+                              ("smic_diffusion_echelle", "smic_diffusion_profil"),
+                              ("point_indice_contractuels", "point_indice_revalorisation")):
+            if getattr(self, bouton) is not None and getattr(self, exige) is None:
+                raise ValueError(f"« {bouton} » exige « {exige} » : il en règle la "
+                                 f"diffusion, et sans elle ne bouge rien.")
+        return self
 
     @field_validator("tva_postes")
     @classmethod
@@ -1256,6 +1475,7 @@ class ResultRows(BaseModel):
     aide_logement: float | None = None
     reduction_loyer_solidarite: float | None = None
     ars: float | None = None
+    paje: float | None = None
     aah: float | None = None
     mva: float | None = None
     """The AAH, and the majoration pour la vie autonome that rides on it. Zero for a
@@ -1268,6 +1488,14 @@ class ResultRows(BaseModel):
     aefa: float | None = None
     cf: float | None = None
     asf: float | None = None
+    ria: float | None = None
+    allocation_enfant: float | None = None
+    garantie_autonomie: float | None = None
+    """The new benefits of the programmes (but 21, étape 3): zero unless the reform poses
+    their group, the law having none of them."""
+    cvec: float | None = None
+    """The CVEC, POSITIVE, paid by a student of higher education who holds no grant: zero
+    for a household of the input format, which declares no student."""
     ifi: float | None = None
     """Impôt sur la fortune immobilière, POSITIVE. Zero for all but ~186 000 foyers
     nationally, and zero for any foyer with no income whatever its wealth — the

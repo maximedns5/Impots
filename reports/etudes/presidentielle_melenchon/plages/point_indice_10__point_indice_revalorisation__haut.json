@@ -1,0 +1,69 @@
+{
+  "programme": "melenchon",
+  "mesure": "point_indice_10",
+  "champ": "point_indice_revalorisation",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "point_indice_revalorisation": 1.15,
+      "point_indice_contractuels": 0.0
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 17495271134.538025,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.005677728058826492,
+      0.011292783279915009,
+      0.01684585746895806,
+      0.022337634795243977,
+      0.027768791875949717,
+      0.03313999785950528,
+      0.03845191450803531,
+      0.043705196278892355,
+      0.04890049040528943,
+      0.054038436976042714
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-12",
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
+}

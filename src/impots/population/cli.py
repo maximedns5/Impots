@@ -954,12 +954,24 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
     # The consumption imputed for a year past the national accounts follows the prices
     # of the same set that ages the incomes (D-323).
     prix_au_dela = None
+    menages_facteurs = None
     if vieillissement is not None:
         from impots import hypotheses
+        from impots.population import menages
 
         prix_au_dela = dict(hypotheses.jeu(vieillissement["jeu"]).prix)
+        # The households' data are imputed on the frame brought back to 2024, then aged
+        # by the same factors (but 21, étape 4): only from a 2024 vintage.
+        if vieillissement["de"] == menages.YEAR:
+            menages_facteurs = {"wage": vieillissement["facteur_salaires"],
+                                "price": vieillissement["facteur_prix"]}
+    # The imputed capital ages with the frame, on its wage index, as in the service's aged
+    # view (D-249, D-388).
+    capital_index = (vieillissement["facteur_salaires"] if vieillissement is not None
+                     else None)
     priced = scenarios_module.mechanical_price(
-        scenario, frame=frame, households=args.sample, prix_au_dela=prix_au_dela)
+        scenario, frame=frame, households=args.sample, prix_au_dela=prix_au_dela,
+        menages_facteurs=menages_facteurs, capital_index=capital_index)
 
     try:
         path = chiffrages_module.register(
@@ -1573,10 +1585,11 @@ def _liberer() -> None:
     gc.collect()
 
 
-#: What the passes of the trajectory and of the annual path can impute: the capital and the
-#: consumption, each whenever the reform moves it. Not the sick pay, which the CCSS gives for
-#: 2024 alone (D-305, D-306), nor the niches, a calibration these paths never ran.
-CHEMIN_POSSIBLES = ("capital", "consommation")
+#: What the passes of the trajectory and of the annual path can impute: the capital, the
+#: consumption and the households' data of the but 21 (D-396), each whenever the reform moves
+#: it. Not the sick pay, which the CCSS gives for 2024 alone (D-305, D-306), nor the niches,
+#: a calibration these paths never ran.
+CHEMIN_POSSIBLES = ("capital", "consommation", "menages")
 
 
 def _chemin_pass(pop: object, year: int, reform: object, *, capital: bool, index: float,
@@ -1600,13 +1613,26 @@ def _chemin_pass(pop: object, year: int, reform: object, *, capital: bool, index
     # Where the consumption's euros come from follows the view (D-328); whether it is
     # imputed at all is the policy's, which `_consommation` agrees with.
     kwargs = {**imputed.runner(), **_consommation(reform, year, view, uprating, vintage),
-              **({"capital_index": index} if imputed.capital else {})}
+              **({"capital_index": index} if imputed.capital else {}),
+              **({"menages_facteurs": _menages_facteurs(year, view, uprating)}
+                 if imputed.menages else {})}
     result = population_run(pop, year=year, reform=reform, tier="full", sample=sample,
                             **kwargs)
     agg = agg_mod.aggregate(result.households)
     guards.refuse_zero_confiant(reform.model_dump(exclude_none=True), imputed.noms(),
                                 agg.totals, chemin=chemin)
     return guards.cout_calcule(agg.reform_cost, chemin=chemin)
+
+
+def _menages_facteurs(year: int, view: str, uprating: object) -> dict[str, float]:
+    """What aged the frame of a pass of the annual path, which the households' data read
+    when they are imputed (but 21, étape 4) : the frame's factors in the aged view, none in
+    the frozen one, whose frame is the vintage's — as the service does (D-396)."""
+    from impots.population import menages
+
+    if view == "figee":
+        return {"wage": 1.0, "price": 1.0}
+    return menages.facteurs_de(uprating, year)
 
 
 def _consommation(reform: object, year: int, view: str, uprating: object,
@@ -1703,7 +1729,9 @@ def cmd_etude(args: argparse.Namespace) -> int:
     if why:
         print(why, file=sys.stderr)
         return 1
-    print(f"{study.page} : la page est celle de ses rapports." if study.page.exists() else
+    print(f"« {study.nom} » : chiffrée, puis refusée, sans page : {study.refus}"
+          if study.refus else
+          f"{study.page} : la page est celle de ses rapports." if study.page.exists() else
           f"« {study.nom} » : ni rapports ni page, ses passes n'ont pas tourné.")
     return 0
 

@@ -325,7 +325,13 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
     """
     frame = service.population_frame()
     started = time.perf_counter()
-    result, agg = service.run_population(request, frame)
+    # The vintage's frame, as the service's frozen view prices it: the imputed capital and
+    # the households' data do not age (index and factors of 1), whatever the year
+    # (D-249, D-383, D-394). Without them, a reform of 2026 that imputes them was refused.
+    imputed = service.imputations_of(request)
+    result, agg = service.run_population(
+        request, frame, **({"capital_index": 1.0} if imputed.capital else {}),
+        **({"menages_facteurs": {"wage": 1.0, "price": 1.0}} if imputed.menages else {}))
     summary = service.baseline_summary()
     behavioural = (
         service.behavioural(request, frame, agg, result)

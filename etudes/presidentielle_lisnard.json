@@ -3,12 +3,13 @@
   "titre": "David Lisnard : la part chiffrée du programme, en trois réponses",
   "texte": "programme",
   "programme": "lisnard",
-  "preenregistrement": "D-350",
+  "preenregistrement": "D-394",
   "cadre": "central",
   "millesime_entreprises": "2023",
   "scenarios": [
     {
       "scenario": "pres2027_lisnard_programme"
     }
-  ]
+  ],
+  "dette_annoncee": true
 }

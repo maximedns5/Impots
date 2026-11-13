@@ -28025,3 +28025,802 @@ portent les trois réponses.
 **Ce qui reste au propriétaire.** Une lecture séparée de la dette « si les économies
 annoncées sont tenues » (76 mesures de dépense et de chaîne), jamais additionnée au
 chiffrage ni au verdict (D-319) : à accepter ou à refuser avant le lancement.
+
+## D-380 — Le but 21 lancé : les décisions du propriétaire, le tableau d'avant
+
+**Les décisions, le 12 novembre.** La lecture séparée de la dette « si les économies
+annoncées sont tenues » (étape 5) est acceptée : la variante « dépense publique » de
+Mésange lit les mesures de dépense et de chaîne que le candidat chiffre, à côté du
+chiffrage, jamais additionnée au coût ni au verdict (D-319), et marquée comme annoncée par
+le candidat. Le SMIC relevé (étape 4) : le premier jour, la loi seule relève les salaires
+sous le nouveau seuil ; la diffusion au-dessus est une hypothèse déclarée, avec une plage
+tirée d'une source publiée, montrée comme telle. Une enveloppe traduite en bouton (étape
+2) est notée à part du juge : son coût est l'enveloppe par construction.
+
+**Le tableau d'avant**, écrit avant tout relevé et tout chiffrage par
+`python -m impots.couverture_programmes` dans `docs/presidentielle/couverture_avant.md` :
+321 mesures relevées sur 24 programmes, 13 chiffrées (4 %), 109 vagues (34 %), 199
+refusées par une porte (62 %), les mêmes comptes que D-379. Le module ne chiffre rien ; il
+compte les champs des fichiers.
+
+**L'ordre.** Le relevé est refait d'abord, candidat par candidat, chaque mesure avec sa
+source datée ; le tableau de couverture du relevé à jour est commité avant tout chiffrage.
+Les étapes 2 à 4 se développent ensuite en parallèle, chacune dans son worktree ; chaque
+mesure neuve est préenregistrée, commitée et poussée avant son premier calcul.
+
+## D-381 — Le relevé des 24 programmes au 12 novembre, avant tout chiffrage du but 21
+
+**Ce qui est fait.** Quatre relevés en parallèle, six candidats chacun, depuis les sources
+primaires (site du candidat ou du parti, programme, propositions de loi, discours,
+entretiens), chaque mesure avec sa citation, son URL, sa date et son type. Aucun bloc
+`chiffrage` n'est touché, aucune porte n'est ajoutée. Les cinq programmes vides ont des
+mesures : Batho 6, Bouamrane 4, Durif 4, Egger 2, Lalanne 8, presque toutes vagues.
+
+**Le tableau du relevé** (`docs/presidentielle/couverture_releve.md`), commité avant tout
+chiffrage : 525 mesures relevées (321 avant), 13 chiffrées (2 %), 165 vagues (31 %), 347
+refusées par une porte (66 %). Les portes les plus lourdes : la dépense publique 113, une
+donnée des ménages 39, les retraites 27, les salaires 25, la chaîne 24, une prestation
+hors du moteur 23, la transmission 19. Les grandes hausses : Mélenchon 40 → 64 (son
+programme du 6 novembre), Dupont-Aignan 30 → 59, Zemmour 3 → 33 (le plan budgétaire de
+son parti, sur une page non datée, lue le 12 novembre), Tondelier 21 → 39.
+
+**La règle des montants déclarés.** Un montant déclaré est un montant annuel (D-319). Onze
+ne le sont pas et perdent leur champ `declare`, leur montant restant écrit dans le
+paramètre : les totaux sur plusieurs années (Attal 150 et 100 Md€, Becht 10 et 10,
+Glucksmann 200, Le Pen 140 et 15), une recette d'une seule année (Glucksmann 50), et les
+montants compris dans un autre déjà déclaré (Lisnard l26, Retailleau r35, Zemmour 140, la
+somme de ses lignes). Un montant dont le candidat ne dit pas l'horizon reste lu comme
+annuel : la page le dira comme une hypothèse.
+
+**Ce qui se chiffrera sans porte nouvelle.** Trois mesures ont un bouton qui existe (la
+CSG d'activité à zéro chez Zemmour, les allocations familiales universelles et le plafond
+du quotient familial chez Dupont-Aignan), rangées pour l'instant sous `bouton_hors_but` ;
+la suppression du CIR de Mélenchon se chiffre par le bouton du CIR de la couche des
+entreprises, sa réaffectation restant de la dépense. Chacune sera préenregistrée.
+
+**Ce que les relevés ont vu sans le lire.** Les résumés de recherche ont montré trois
+chiffrages de tiers, ni ouverts ni utilisés : une tranche à 60 % chiffrée par l'Institut
+Montaigne en 2022 (pour un autre candidat), une estimation anonyme de 15 Md€ de la
+tranche de Tondelier, déjà préenregistrée (D-321), et un avis de l'OFCE sans montant sur
+la CSG de Glucksmann. Ils sont dits ici pour qu'un préenregistrement qui toucherait ces
+mesures le sache.
+
+**Les sources fragiles.** Le programme de Tondelier est derrière une protection anti-robot ;
+trois de ses mesures n'ont que francais.rt.com pour source. Platret n'a aucune source
+primaire. Les scénarios et définitions des études sont régénérés (date et comptes du
+relevé) ; aucun rapport n'est relancé.
+
+## D-382 — Les prestations neuves des programmes, en réformes OpenFisca (but 21, étape 3)
+
+**Le fait.** Trois prestations que la loi n'a pas sont codées en variables OpenFisca,
+chacune ajoutée au système par la réforme qui pose son groupe de champs de `ReformSpec`
+(`ria`, `allocation_enfant`, `garantie_autonomie` ; `api.prestations_neuves`), et par elle
+seule.
+La loi de référence n'en porte aucune variable : un groupe à `None` coûte exactement 0 €,
+et une réforme qui n'en pose aucun garde le `prestations_sociales` de la loi. Chaque
+prestation a une formule datée du 1er janvier de l'année chiffrée, entre dans le revenu
+disponible par `prestations_sociales`, a sa ligne au registre (une ligne `projet`, nulle là
+où la variable n'existe pas), un champ de la réponse de l'API, sa place dans
+`STATE_TRANSFERS` et dans `UNMAPPED` (« transfert »). Les formules et leur documentation
+sont dans `engine.prestations_neuves`. Aucune mesure de candidat n'a tourné sur la
+population : chacune se préenregistre avant son premier calcul.
+
+**Dans chaque groupe, deux sortes de champs.** Ceux du candidat (un montant, un taux, un
+âge, ce que la prestation remplace) n'ont pas de défaut, sauf le plafond du RIA (`None`,
+« pas de plafond »), qu'un `model_dump(exclude_none=True)` doit pouvoir relire. Ceux de la
+traduction, ce que le candidat ne dit pas, ont un défaut qui est une hypothèse dite.
+
+**Le revenu d'incitation à l'activité (`ria`)**, Retailleau r15. Individuel et mensuel :
+`max(0, socle + insertion × justifie − taux × activité − taux_autres × remplacement)`, nul
+au-delà du plafond de revenus d'activité, de 18 à 65 ans. Activité : salaire net et
+douzième du revenu d'indépendant ; remplacement : chômage et pension nets, déduits à 100 %
+(hypothèse : le socle est celui d'une personne « sans activité et sans revenu »).
+L'insertion va à qui travaille et, par hypothèse, à qui touche une allocation chômage ou
+se déclare chômeur : la population ne porte pas les quinze heures de formation ou de
+recherche. Il remplace, par drapeau, le RSA, la prime d'activité et l'ASS, et la prime de
+Noël s'éteint avec eux. Il laisse les aides au logement et les prestations familiales, et
+n'entre dans les ressources d'aucune. Mesuré sur l'échantillon de test : l'aide au
+logement d'un ancien allocataire du RSA baisse, la neutralisation de ses ressources tombant
+avec le RSA ; un effet de la règle, pas du code. Non lus : la « situation régulière ».
+
+**L'allocation par enfant (`allocation_enfant`)**, une formule pour deux mesures : le
+revenu familial de Retailleau r27 (240 € par enfant de moins de 18 ans dès le premier, 480 €
+pour le troisième, à la place des AF, du complément familial et de l'ARS) et l'allocation
+familiale unique de Philippe p11 (350 € par mois dès le premier enfant). Par famille, l'aîné
+premier ; `par_famille` lit le montant une fois par famille. La dégressivité « en fonction
+de l'impôt sur le revenu » de Philippe n'a pas de barème : `degressivite_part_ir` (la part
+de l'impôt du foyer du demandeur, un douzième par mois, au-dessus d'un plancher par enfant)
+la rend chiffrable, et c'est une traduction, à dire comme telle. L'allocation n'est ni
+imposable ni frappée de CRDS, et n'entre pas dans les ressources du RSA, de la prime ni des
+aides au logement : sur un couple modeste de trois enfants, la prime d'activité monte de
+3 482 € quand les AF sortent de ses ressources. Le quotient familial et la réduction pour
+frais de scolarité que le revenu familial remplace ont leurs boutons ; le supplément
+familial de traitement, les bourses, les majorations du RSA pour enfant et la condition de
+cinq ans de résidence et d'activité ne sont pas lus.
+
+**La garantie d'autonomie des jeunes (`garantie_autonomie`)**, Mélenchon. Individuelle,
+différentielle : `max(0, seuil − ressources propres du mois)`, de 18 ans à la veille de 25
+(hypothèse : le candidat dit « les jeunes »), sans les ressources des parents ni les
+prestations de la famille. Elle ne remplace rien et n'entre dans aucune base de ressources.
+
+**Le non-recours, une hypothèse chacun.** Le RIA et la garantie sont servis en espérance
+avec la loi du RSA (`recours.LOI_PROCHE` : τ = 79 €, p_max = 0,6892, le déflateur du
+RSA), sur leur droit sommé par famille ; leur droit reste à côté (`ria_droit`,
+`garantie_autonomie_droit`). Un ancien bénéficiaire de la prime recourt donc au RIA comme
+un allocataire du RSA, plus souvent qu'à la prime : un biais à dire. L'allocation par
+enfant est à recours 1, comme les AF dans le moteur.
+
+**Les plages** sont celles du schéma, larges comme celles de B1 : montants de 0 à 5 000 €
+par mois, taux de 0 à 1, âges bornés ; celles d'une mesure se posent dans son fragment.
+
+**L'assurance chômage n'a pas de bouton.** La population porte un montant annuel par
+chômeur au sens du BIT, tiré et calé sur la masse de l'Unédic et versé sur ses mois sans
+salaire : ni durée d'indemnisation écoulée, ni salaire de référence, ni motif de fin de
+contrat, ni âge à l'ouverture des droits. Les règles des programmes (Philippe p14, 12 mois
+sous 50 ans ; Retailleau r17 ; l'abrogation de Mélenchon ; Attal a11, sans règle) restent
+refusées, porte « prestations hors du modèle ».
+
+**Aucun nombre ne bouge.** Une réforme sans groupe a le système d'avant ; les rapports
+gardent leur commit. Sur l'échantillon de test (`tests/fixtures/eec_sample.parquet`), à des
+valeurs d'aucun candidat, le garde des secteurs reconstitue le coût à 1,53 € près sur
+84 M€. Le numéro de cette entrée est à revoir à la jonction des étapes.
+
+## D-383 — Les données de ménages vieillies, et les boutons qui les lisent (but 21, étape 4)
+
+**Les imputations de l'étape 4** (`population.menages`, commit 2c2ed19), une calibration :
+chaque total est celui de sa source par construction, et sa `Figure` est dépensée. Sur la
+population entière de 2024 : les heures supplémentaires exonérées (1GH-1JH, 20,31 Md€ au
+champ de l'enquête, 11,91 M de lignes contre 11,95), tirées uniformément parmi les salariés
+hors gérants (probabilité 0,431), au salaire horaire et à la quotité, sous les 7 500 € du
+CGI, prises dans la part exonérée des salaires sans en changer le total ; les frais de
+trajet de chaque salarié, loi log-normale (médiane 978 €, σ du logarithme 1,269), déclarés
+en frais réels au-delà de la déduction de 10 % (1AK-1DK, 32,85 Md€, 5,46 M) ; les pensions
+alimentaires perçues par les parents isolés (5,55 Md€, 1,16 M contre 1,19), versées pour un
+mineur (4,84 Md€) et pour un majeur (4,24 Md€) ; les frais de garde des moins de six ans
+(4,61 Md€, 2,34 M d'enfants contre 2,33) ; les intérêts d'emprunt des accédants (compte du
+logement 2024, 18,64 Md€ ; 7,21 M de ménages contre 7,09, nombre non calé).
+
+**Ce qui s'y ajoute.** Les étudiants du supérieur (2 965 000, SIES, Note Flash n° 19,
+juillet 2024) tirés parmi les 18-25 ans inactifs ou payés sous 10 600 € par an
+(probabilité 0,839 ; 2,99 M tirés), puis les boursiers sur critères sociaux (679 044, Note
+Flash n° 24, septembre 2024), les plus modestes d'abord. Hypothèses : pas d'étudiant de plus
+de 25 ans, et la bourse lit le revenu par personne du ménage, pas celui des parents d'un
+étudiant parti. La CVEC qu'ils paient vaut 231 M€ à 100 € contre un produit de 170 M€ en
+2023-2024 (amendement n° 103 au PLF 2025, contexte, jamais calé) : 36 % de trop, parce que
+le compte des inscrits contient les STS et CPGE des lycées, les contrats de
+professionnalisation et les autres que la CVEC ne frappe pas. Une suppression serait
+surestimée d'autant ; un préenregistrement le dira. Et la rémunération brute des heures
+supplémentaires, que lit leur bouton. Les frais réels étaient calés sur une bissection
+qui s'arrêtait sur une marche : sur 1 500 ménages, un déclarant pèse 0,2 % du total, et la
+population ramenée à 2024 par division le manquait de 0,2 %, refusée ; σ est pris sous la
+cible et les frais des déclarants relevés d'un facteur k ≥ 1 (exact, `test_menages`).
+
+**Le vieillissement : imputer sur 2024, puis vieillir.** Une passe d'une autre année reçoit
+la population vieillie et ses facteurs (`menages.facteurs_de`, `runner(menages_facteurs)`,
+passés par la commande des préenregistrements, `scenarios` et l'API) ; l'imputation se fait
+sur la population ramenée à 2024, calée sur les totaux de 2024, et chaque montant vieillit
+avec l'indice de la colonne monétaire la plus proche, une hypothèse dite (`INDICES`) :
+salaires pour les heures supplémentaires, les frais de trajet et les frais réels (pour que
+la part de ceux qui passent leur déduction reste celle de 2024 ; le barème kilométrique
+suit plutôt les prix) et les frais de garde ; prix pour les pensions alimentaires (indexées
+par les juges) et les intérêts d'emprunt (fixes pour un prêt en cours ; faute d'un indice
+des taux). Les nombres ne vieillissent pas. Pourquoi pas l'inverse, imputer sur la
+population vieillie et caler sur un total vieilli : c'est le même calage aux seuils près,
+et les seuils sont nominaux et de 2024 (les 7 500 €, les bornes de la déduction) ; les
+appliquer aux revenus de 2027 changerait qui a des heures et qui déclare ses frais, sans
+source pour le dire. Imputer sur 2024 garde aussi les mêmes ménages d'une année à
+l'autre, comme le vieillissement garde ménages, poids et âges. Tenu par
+`test_an_aged_population_is_imputed_on_2024_and_aged_by_its_indices`. Sans facteurs, une
+autre année est refusée par le runner (la politique d'imputation ne refuse plus l'année).
+
+**Les boutons**, chacun une formule datée du 1er janvier de l'année chiffrée (avant, celle
+du droit : sans date, la pension défiscalisée baissait le revenu fiscal de référence de
+N-2, donc le taux de CSG des pensions et l'ARS, et le garde refusait la passe de 18 M€ sur
+1 500 ménages), nul à `None`, tenu sur des ménages types (`test_boutons_menages`) :
+
+* `pensions_alimentaires_exonerees` (booléen) et `pensions_alimentaires_plafond_par_enfant`
+  (0 à 100 000 € par personne à charge) : la pension sort des revenus imposés comme des
+  pensions ; les prestations qui la comptent ne bougent pas. Ouvre Attal a22 et Mélenchon
+  (sans plafond) ; Tondelier reste vague (plafond non chiffré).
+* `interets_emprunt_taux` (un taux de 0 à 1 par nombre d'enfants mineurs à charge, 1 à 8
+  valeurs), `interets_emprunt_plafond` (0 à 50 000 €) et `..._plafond_par_enfant` (0 à
+  10 000 €) : une réduction, plafonnée (le plafond borne la réduction, hypothèse), hors du
+  plafond global. Ouvre Retailleau r28 ; la durée n'est pas lue (la population ne porte
+  pas la date du prêt), et le relevé n'en dit pas.
+* `credit_trajets_taux` (0 à 1), `credit_trajets_franchise` et `credit_trajets_plafond` (0 à
+  50 000 €) : un crédit par personne sur les frais de trajet imputés, que les frais réels
+  ne remplacent pas. Ouvre Ruffin en partie : « autour de 30 % » a son taux, mais les
+  « gros rouleurs aux revenus moyens » n'ont ni franchise ni condition de revenu ; à 30 %
+  des 52,4 Md€ de frais extrapolés, le crédit dépasse de loin les 0,5 Md€ déclarés.
+* `heures_sup_exoneration_salariale`, `..._csg_crds`, `..._patronale` (0 à 1),
+  `heures_sup_franchise_heures` (0 à 1 000) et `heures_sup_plafond_heures` (0 à 2 000) : sur
+  la rémunération des heures au-delà de la franchise et dans le plafond, la part dite de ce
+  que la loi laisse des cotisations salariales (au-delà des 11,31 % du brut que la réduction
+  de CSS art. D. 241-21 ôte déjà, et qu'openfisca ne porte pas : chez un non-cadre du privé,
+  rien ne reste), de la CSG et de la CRDS, et des cotisations patronales nettes (le privé
+  seul). Le net imposable gagné reste exonéré d'impôt. Non portée : la déduction forfaitaire
+  patronale (la taille de l'entreprise). Ouvre Dupont-Aignan nd08 (net égal au brut, 300 h ;
+  la CSG y entre-t-elle : à dire au préenregistrement), Retailleau r13 (salariales et
+  patronales au-delà de 1 623 h : une franchise de 16 h, CSG et CRDS maintenues) et
+  l'exonération de Philippe p10 sur deux heures par semaine (un plafond) ; pas les heures
+  neuves de p10, ni l'annualisation r14, ni les 35 heures de Mélenchon, qui ne se portent
+  pas sur des heures imputées.
+* `cvec_montant` n'est plus refusé sur une passe : il impute les étudiants. Ouvre Le Pen
+  lp26. La CVEC entre au registre (`cvec`), au garde (prélèvement : elle va aux Crous, un
+  biais dit comme la RLS, D-374) et au canal macro comme non couverte (aucune variante).
+
+Une passe qui règle un de ces boutons impute les données de ménages
+(`imputations.MENAGES_KNOBS`) ; sans elles, le runner la refuse. Sur 1 500 ménages vieillis
+de 2024 à 2026, à des valeurs d'aucun candidat, le garde reconstitue chaque coût, et une
+exonération nulle coûte 0 € exactement (`tests/lourds.txt`). Une passe qui impute les
+données de ménages fait payer la CVEC aux étudiants dans la référence aussi.
+
+**Les élargissements du garde de l'étape 4.** L'ASPA (transferts) et la CSG du chômage
+(prélèvements, variante csg de Mésange) ne déplacent l'impulsion d'une étude que si la
+réforme les bouge. Dans les douze rapports de première année commités (PLF 2027 art. 2, 3,
+74 APL et prime ; Attal, Labib, Le Pen, Lisnard, Mélenchon, Retailleau, Roussel,
+Tondelier), le delta de `csg_chomage` est 0,0 exactement : leur impulsion ne change pas.
+L'ASPA n'y est pas rapportée, mais ses ressources (salaire brut, retraite brute, chômage
+net, les paramètres de l'ASPA) ne bougent sous aucune de leurs réformes. Dans les
+trajectoires, dont les rapports ne gardent pas les deltas, une réforme qui baisse le
+revenu fiscal de référence (art. 3, Attal a16, Retailleau r19, Lisnard l1) bouge, à partir
+de l'année N+2, le taux de CSG du chômage : ce petit mouvement entre désormais dans la
+variante csg, qu'il n'atteignait pas. L'ordre de grandeur : l'impulsion de l'art. 3 en vue
+figée diffère de 7,8 k€ entre la première et la troisième année. Rien n'est relancé. La
+CSG des pensions bouge de même et n'est dans aucune liste : un trou d'avant, que les
+boutons de cette entrée évitent en datant leurs formules, et que ceux de l'étape 2
+(exonération des jeunes) n'évitent pas.
+
+## D-384 — Vingt-trois mesures des programmes préenregistrées avant le juge (lot 1)
+
+**Les cas.** Vingt-trois mesures que les boutons du but 21 ouvrent (étapes 2 à 4, D-382)
+reçoivent leur chiffrage dans `programmes/*.json` et leur scénario par `--ecrire`, sans
+aucun calcul. Elles sont préenregistrées ici, avec leur tolérance et leur pronostic, avant
+leur première passe, comme celles de D-321 : `impots chiffrage register`, droit de 2026,
+population vieillie aux hypothèses du PLF 2027, 20 000 ménages. Le juge reste le chiffrage
+de l'Institut Montaigne, attendu au premier trimestre 2027 ; aucun chiffrage de tiers de
+ces mesures n'est lu (D-381 dit ce que les relevés ont vu sans le lire).
+
+**Les traductions, dites dans la note de chaque mesure.** Le SMIC : un coefficient sur le
+SMIC horaire brut, calé pour que le niveau annoncé soit atteint en moyenne sur 2026 ; un net
+annoncé passe en brut à 79,16 % ; un niveau sans net ni brut est lu brut, le net en haut de
+la plage ; la valeur du candidat est la loi seule, la diffusion au-dessus du SMIC (Koubi et
+Lhommeau, Dares) restant dans la plage, de 0 à 1 (D-380). Le point d'indice se mesure contre
+le point gelé du droit ; « l'inflation » vaut 2,1 %, celle des hypothèses du PLF 2027. Une
+indexation se mesure contre l'indexation légale sur les prix : seule la hausse au-delà
+compte, posée à l'année 2025 pour porter toute l'année 2026. L'allocation familiale unique
+de Philippe est lue par enfant ; la lire par famille la diviserait environ par deux.
+
+**Deux classes de tolérance neuves**, écrites dans le script :
+
+* salaires, 40 % ou 200 M€ : le salaire horaire vient de l'enquête Emploi, le public est
+  imputé, la diffusion est une hypothèse, et le coût public tient à une convention que le
+  juge peut ne pas partager ;
+* prestation neuve, 50 % ou 2 Md€ : un recours supposé, des conditions que la population
+  ne porte pas, et un coût net qui est l'écart de deux masses de 20 à 60 Md€.
+
+**Le pronostic, avant toute passe.** Coût mécanique de 2026, en Md€, positif quand l'État
+perd ; une fourchette raisonnée sur l'assiette publiée, sans calcul.
+
+| candidat | mesure | classe | pronostic |
+|---|---|---|---|
+| Mélenchon | SMIC à 1 700 € nets | salaires | +15 à +40 |
+| Glucksmann | SMIC à 1 700 € nets | salaires | +15 à +40 |
+| Tondelier | SMIC à 2 000 € bruts | salaires | +6 à +18 |
+| Kazib | SMIC à 2 000 € | salaires | +6 à +18 |
+| Ruffin | SMIC à 1 600 € nets | salaires | +7 à +22 |
+| Arthaud | 2 200 € nets au moins (le SMIC seul) | salaires | +40 à +90 |
+| Labib | 2 200 € au moins (le SMIC seul) | salaires | +20 à +50 |
+| Bouamrane | 150 € de plus aux bas salaires | salaires | +6 à +18 |
+| Roussel | SMIC +15 % | salaires | +15 à +38 |
+| Mélenchon | point d'indice +10 % | salaires | +6 à +13 |
+| Tondelier | point d'indice sur l'inflation | salaires | +1,5 à +3,5 |
+| Dupont-Aignan | point d'indice sur l'inflation | salaires | +1,5 à +3,5 |
+| Mélenchon | pensions, famille, logement +10 % | ménages | +25 à +42 |
+| Tondelier | APL +10 % | ménages | +1,2 à +3 |
+| Mélenchon | garantie d'autonomie, 1 337 € | prestation neuve | +20 à +45 |
+| Mélenchon | PFU supprimé | haut | −1,5 à −7 |
+| Le Pen | IR des moins de 30 ans, 4 SMIC | ménages | +2 à +5 |
+| Philippe | allocation familiale unique | prestation neuve | +20 à +45 |
+| Retailleau | revenu d'incitation à l'activité | prestation neuve | −5 à +25 |
+| Retailleau | revenu familial | prestation neuve | +8 à +22 |
+| Zemmour | CSG d'activité supprimée | ménages | +75 à +100 |
+| Dupont-Aignan | allocations familiales universelles | ménages | +0,5 à +1,2 |
+| Dupont-Aignan | plafond du quotient à 3 000 € | haut | +1,5 à +4,5 |
+
+La réfutation qui se lirait : deux SMIC de même niveau (Mélenchon et Glucksmann) à deux
+coûts différents ; une mesure à zéro, signe d'un bouton qui ne mord pas sur la population ;
+le SMIC dont le coût ne monte pas avec le niveau.
+
+**Ce qui n'était pas aveugle.** En mettant au point le garde des secteurs (étape 4), le
+point d'indice a tourné une fois à +10 %, la valeur de Mélenchon, sur 1 500 ménages ; rien
+n'en a été gardé, et ce nombre n'est pas lu ici. Le pronostic de cette mesure vient de
+l'assiette publiée, comme les autres.
+
+**Ce qui reste refusé**, faute d'un bouton fidèle : la suppression du CIR (la créance est
+hors du coût des entreprises, D-222), la réduction d'impôt des familles de Philippe (sans
+sa condition de trois ans), la garde d'enfants de Retailleau (un autre plafond), le SMIC
+net de Dupont-Aignan (une baisse de cotisations salariales autour du SMIC), les enveloppes
+d'impôts de production de 20 à 50 Md€ (au-delà de la CVAE et de la C3S), les indexations
+égales à la référence (Dupont-Aignan), l'année blanche d'Attal (sans seuil de pension).
+Les mesures qui attendent les boutons des données imputées viennent dans un second lot.
+
+## D-385 — Le garde des secteurs refuse un cas du lot 1 : la CSG des retraites
+
+**Le fait.** L'enregistrement des cas de D-384, sur `026f7b2`, s'est arrêté au neuvième :
+l'exonération d'impôt des moins de 30 ans (Le Pen). Le garde des secteurs a refusé le coût
+annoncé, 9,743 Md€, contre 9,714 Md€ reconstitués, un écart de 28,9 M€ (0,30 %). Les huit
+cas d'avant sont enregistrés. Mesuré sur 3 000 ménages, l'écart est la CSG des retraites :
+le bouton retire les salaires exonérés du revenu fiscal de référence, et le taux de CSG
+d'une pension se lit sur ce revenu ; la ligne `csg_retraite` n'était pas une recette du
+garde. Elle l'est, et elle passe par la variante « csg » du canal macro, comme
+`csg_chomage` (étape 4). Aucun coût ne change : le coût est la variation du revenu
+disponible, qui la portait déjà.
+
+**Ce qui n'est plus aveugle.** Le message du garde a donné le coût du cas avant qu'il soit
+enregistré : 9,74 Md€, au-dessus du pronostic de D-384 (2 à 5 Md€). Le pronostic et la
+tolérance sont commités et ne bougent pas. La règle du bouton n'est pas touchée après ce
+nombre : la part exonérée sort du revenu fiscal de référence, comme le bouton l'écrivait
+avant la première passe ; la loi fait l'inverse pour les heures supplémentaires (CGI, art.
+1417, IV), et ce choix, qui touche les droits liés au revenu, sera dit dans le résultat.
+Les quinze cas qui restent sont enregistrés sur le commit de cette entrée.
+
+## D-386 — D-385 corrigée : la réforme commence l'année qu'elle chiffre
+
+**Ce qui était faux dans D-385.** Avec la CSG des retraites parmi les recettes du garde, le
+cas de Le Pen a été refusé dans l'autre sens : 39,1 M€ de trop. Décomposé sur 3 000
+ménages, le mouvement de la CSG des pensions est surtout sa part déductible, qui ne touche
+aucun revenu disponible : les pensions de la population sont déclarées, nettes de cette
+part (D-176). La compter, c'est compter une recette qu'aucun ménage ne paie. Elle ressort.
+
+**La cause.** Le taux de CSG d'une pension ou d'une allocation chômage de 2026 se lit sur
+le revenu fiscal de référence de 2024. La formule de l'exonération des jeunes, sans date,
+changeait aussi les revenus de 2024 : une réforme de 2026 réécrivait le passé. Elle et la
+réduction d'impôt des familles commencent maintenant l'année qu'elles chiffrent, comme les
+boutons des données de ménages de D-383 ; un test tient la règle, vu échouer avant. Le
+garde reconstitue le cas à 162 € près sur 3 000 ménages.
+
+**Ce que cela change.** Le coût du cas perd ce que la CSG du chômage et la part non
+déductible de celle des pensions prenaient à tort, quelques dizaines de millions sur près de
+dix milliards. Le pronostic et la tolérance de D-384 ne bougent pas ; D-385 dit le nombre vu
+avant l'enregistrement. Les quinze cas qui restent sont enregistrés sur le commit qui porte
+cette entrée et la jonction de D-383.
+
+## D-387 — Les pensions indexées : la pension et la PAJE dans le garde des secteurs
+
+**Le fait.** Les cas de Le Pen (les moins de 30 ans) et de Mélenchon (le point d'indice)
+sont enregistrés sur `f8f2740`. Le suivant, la hausse de 10 % des pensions et des
+prestations de Mélenchon, est refusé par le garde : le coût de 32,7 Md€ n'avait presque
+rien pour le reconstituer. Les pensions sont des données de la population ; le bouton les
+multiplie dans la passe de la réforme, et aucun instrument ne les portait.
+
+**Le correctif, sans toucher au coût.** La pension imposable entre dans les transferts : les
+régimes de base et complémentaires sont dans les administrations publiques, l'État au
+sens du garde la paie. Ce que la pension rend et que le ménage sent entre dans les
+recettes : la CSG non déductible, la CRDS et la CASA (`prelevements_pensions`) ; la part
+déductible ne touche aucun revenu disponible (D-386). La PAJE, qui suit la base des
+allocations familiales, a sa ligne au registre, comme l'ARS (D-376), et entre dans les
+transferts. Sur 3 000 ménages, le garde reconstitue le cas des pensions à 473 € près, et
+celui des jeunes à 162 €. La passe dit aussi que l'ASPA baisse de 1,2 Md€ quand les
+pensions montent : le minimum vieillesse est différentiel, et le coût le compte.
+
+**Ce qui n'est plus aveugle.** Le coût du cas, 32,7 Md€, était dans le message du garde ;
+il est dans le pronostic de D-384 (25 à 42 Md€). Rien n'a été réglé après lui : le
+correctif ne change que la reconstitution. Les treize cas qui restent sont enregistrés sur
+le commit de cette entrée.
+
+## D-388 — Le capital imputé vieillit aussi dans le chemin des cas enregistrés
+
+**Le fait.** Sur `ae0c176`, trois cas de plus sont enregistrés : la hausse de 10 % des
+pensions et des prestations, le SMIC à 1 700 € net et la garantie d'autonomie des jeunes
+de Mélenchon. Le suivant, la suppression du PFU, est refusé avant toute passe : l'assiette
+du capital imputé décrit les revenus 2024, une passe de 2026 doit la vieillir par un indice
+déclaré, et le chemin de `impots chiffrage register` n'en passait aucun (D-248, D-249).
+Le service le passait déjà ; la CLI des cas, non, parce qu'aucun cas enregistré avant le
+but 21 ne touchait le capital une autre année que 2024.
+
+**Le correctif.** `scenarios.mechanical_price` prend l'indice, et la CLI lui donne le
+facteur de salaires du jeu qui vieillit la population, comme la vue vieillie du service.
+L'indice ne va qu'à une passe qui impute le capital. Un test le tient, vu échouer sur le
+code d'avant. Le refus portait sur l'absence d'un indice, pas sur un nombre : aucun coût
+n'a été vu, et les cas déjà enregistrés ne touchent pas le capital, ils ne changent pas.
+Les cas qui restent sont enregistrés sur le commit de cette entrée.
+
+## D-389 — La suppression du PFU : la plus-value reste dans le revenu du ménage
+
+**Le fait.** Sur `485fed0`, la suppression du PFU de Mélenchon est refusée par le garde des
+secteurs : le coût rapporté, −33,8 Md€, n'est reconstitué qu'à −14,4 Md€ par les postes.
+Sur 3 000 ménages de 2024, le revenu disponible perd ce que l'impôt prend, et en plus la
+plus-value imputée en 3VG. OpenFisca lit le capital du revenu disponible sur les
+plus-values « hors RNI » du RFR ; au barème, la case 2OP fait entrer 3VG, 3UA, 3TJ et 3VT
+dans le RNI, et les sort de cette liste. Le ménage les a pourtant touchées : l'option ne
+change que l'impôt. La perte de 19,4 Md€ n'était prise par personne.
+
+**Le correctif.** Le bouton `pfu_supprime` redéfinit `plus_values_base_large` : la formule
+d'OpenFisca, plus ces quatre cases pour un foyer au barème. Au PFU, rien ne change ; le
+droit de référence ne coche jamais 2OP. Un test tient le ménage type, une plus-value de
+100 000 € : sa perte de revenu disponible est la hausse de ses impôts, à l'euro, quand elle
+la dépassait de 100 000 € sur le code d'avant. Sur la population, le garde tient.
+
+**Ce qui n'est plus aveugle.** Deux nombres ont été vus avant l'enregistrement. Le coût
+faux, −33,8 Md€, dans le message du garde ; et la hausse de l'impôt sur le revenu,
++14,7 Md€ sur l'échantillon de 2024, dans le diagnostic. Tous deux sont hors du pronostic
+de D-384 (−1,5 à −7 Md€), écrit pour un PFU dont les revenus imputés ne comptent ni
+l'assurance vie ni les plus-values d'avant 2018. Rien n'est réglé après eux : ni la
+tolérance, ni la mesure. Le résultat le dira contre le pronostic, tel qu'il est. Les cas
+qui restent sont enregistrés sur le commit de cette entrée.
+
+## D-390 — Le revenu familial de Retailleau : la réduction pour frais de scolarité reste
+
+**Le fait.** Sur `59d845b`, trois cas sont enregistrés : la suppression du PFU de
+Mélenchon, l'allocation familiale unique de Philippe et le revenu d'incitation à l'activité
+de Retailleau. Le suivant, le revenu familial de Retailleau, est refusé après sa passe par
+le garde du zéro confiant (D-064, D-075) : la traduction de D-384 retirait aussi la
+réduction d'impôt pour frais de scolarité, dont la population ne déclare pas les cases
+7EA, 7EC et 7EF. Son retrait y vaudrait zéro faute d'assiette, et le garde le refuse.
+
+**Le choix.** Les trois boutons sortent de la traduction, dans le programme et le
+scénario ; la note le dit. Imputer les cases depuis l'âge des enfants serait une
+imputation neuve pour une réduction de quelques centaines de millions, dans une mesure qui
+se compte en dizaines de milliards : elle ne vaut pas l'étape. Le chiffrage porte donc
+quatre des douze dispositifs remplacés, et non cinq. Le pronostic et la tolérance de D-384
+ne changent pas.
+
+**Ce qui reste aveugle.** Le garde refuse sans donner de coût : rien du cas n'a été vu. Les
+cas qui restent sont enregistrés sur le commit de cette entrée.
+
+## D-391 — Le lot 1 enregistré : vingt sur vingt-trois dans leur pronostic
+
+**Le fait.** Les vingt-trois cas de D-384 sont enregistrés, sur `f8f2740` (deux), `ae0c176`
+(trois), `485fed0`, `59d845b` (trois) et `32e2ee2` (sept) ; chacun garde son commit. Entre
+eux, quatre correctifs, tous dits avant le cas qu'ils débloquaient : la réforme commence
+l'année qu'elle chiffre (D-386), la pension et la PAJE dans le garde (D-387), l'indice du
+capital (D-388), la plus-value sans PFU (D-389) ; et une traduction réduite (D-390).
+`reports/programmes_presidentielle.md` est rendu de nouveau. Le juge reste à venir.
+
+**Contre le pronostic**, coût mécanique de 2026, en Md€ :
+
+| mesure | pronostic | coût | |
+|---|---|---:|---|
+| SMIC à 1 700 € nets, Mélenchon et Glucksmann | +15 à +40 | +30,3 | dedans |
+| SMIC à 2 000 € bruts, Tondelier et Kazib | +6 à +18 | +15,5 | dedans |
+| SMIC à 1 600 € nets, Ruffin | +7 à +22 | +17,7 | dedans |
+| 2 200 € nets, Arthaud | +40 à +90 | +78,9 | dedans |
+| 2 200 €, Labib | +20 à +50 | +35,3 | dedans |
+| 150 € aux bas salaires, Bouamrane | +6 à +18 | +15,4 | dedans |
+| SMIC +15 %, Roussel | +15 à +38 | +28,2 | dedans |
+| point d'indice +10 %, Mélenchon | +6 à +13 | +11,5 | dedans |
+| point d'indice sur l'inflation, Tondelier et Dupont-Aignan | +1,5 à +3,5 | +2,4 | dedans |
+| pensions, famille, logement +10 %, Mélenchon | +25 à +42 | +32,7 | dedans |
+| APL +10 %, Tondelier | +1,2 à +3 | +1,3 | dedans |
+| garantie d'autonomie, Mélenchon | +20 à +45 | +35,4 | dedans |
+| PFU supprimé, Mélenchon | −1,5 à −7 | −14,4 | dehors |
+| IR des moins de 30 ans, Le Pen | +2 à +5 | +9,6 | dehors |
+| allocation familiale unique, Philippe | +20 à +45 | +45,6 | dehors, au bord |
+| revenu d'incitation à l'activité, Retailleau | −5 à +25 | +5,8 | dedans |
+| revenu familial, Retailleau | +8 à +22 | +20,3 | dedans |
+| CSG d'activité supprimée, Zemmour | +75 à +100 | +95,2 | dedans |
+| allocations familiales universelles, Dupont-Aignan | +0,5 à +1,2 | +0,9 | dedans |
+| plafond du quotient à 3 000 €, Dupont-Aignan | +1,5 à +4,5 | +2,3 | dedans |
+
+Aucune des réfutations de D-384 ne se lit : les deux SMIC à 1 700 € nets ont le même coût,
+comme les deux à 2 000 € bruts et les deux points d'indice ; aucun cas n'est à zéro ; le
+coût du SMIC monte avec le niveau, de 15,5 (2 000 € bruts) à 17,7 (1 600 € nets, 2 021 €
+bruts), 28,2 (+15 %), 30,3 et 78,9 Md€.
+
+**Les trois dehors, sans rien régler après eux.**
+
+* Le PFU : les revenus du capital imputés (D-248) passent au barème au taux marginal de
+  chaque foyer, et la CDHR ne rend que la part qu'elle prenait au PFU. Le pronostic lisait
+  l'assiette du seul PFU, sans la progressivité qu'elle rencontre au barème. Le coût a été
+  vu avant l'enregistrement (D-389) ; il est celui que le garde reconstituait alors.
+* L'IR des moins de 30 ans : la traduction sort aussi les salaires exonérés du RFR, que
+  la loi y garde pour les heures supplémentaires, et l'exonération porte sur tous les
+  revenus d'activité jusqu'à 4 SMIC, au-delà de ce que le pronostic comptait. Le coût a été
+  vu avant l'enregistrement (D-386), à +9,7 Md€.
+* L'allocation familiale unique : lue par enfant, comme D-384 le disait ; 0,6 Md€ au-delà
+  de la fourchette, dans la tolérance de la classe (50 % ou 2 Md€) de toute borne.
+
+**Ce qui reste.** Le second lot, les mesures que les boutons des données imputées ouvrent ;
+puis la série des études et la lecture des économies annoncées (étape 5). La comparaison au
+juge se fera à sa publication, avec les tolérances de D-384, inchangées.
+
+## D-392 — Huit mesures des données imputées préenregistrées avant le juge (lot 2)
+
+**Les cas.** Les boutons de l'étape 4 (D-383) ouvrent huit mesures, que leur porte
+`donnee_menages` ou `bouton_hors_but` refusait. Elles reçoivent leur chiffrage dans
+`programmes/*.json` et leur scénario par `--ecrire`, sans aucun calcul, et sont
+préenregistrées ici comme celles de D-384 : droit de 2026, population vieillie aux
+hypothèses du PLF 2027, 20 000 ménages, données de ménages imputées sur 2024 puis
+vieillies. Toutes sont de la classe des ménages (25 % ou 200 M€). Le juge reste celui de
+D-384 ; aucun chiffrage de tiers de ces mesures n'est lu.
+
+**Les traductions, dites dans la note de chaque mesure.** Les pensions alimentaires
+(Attal, Mélenchon) : toutes celles qu'impute la population, perçues par les parents isolés,
+sans plafond. Les heures supplémentaires : celles qu'impute la population, déjà faites ;
+aucune heure neuve n'est comptée. Dupont-Aignan : cotisations salariales, CSG et CRDS
+(« le net sera égal au brut »), 300 heures. Retailleau r13 : salariales et patronales,
+CSG maintenue, une franchise de 16 heures. Philippe p10 : salariales, deux heures par
+semaine sur 47 semaines, 94 heures. Les intérêts d'emprunt (Retailleau r28) : 50, 75 et
+100 % selon les enfants mineurs, plafond de 400 € plus 400 € par enfant. Le crédit trajet
+(Ruffin) : 30 % des frais de chaque salarié, sans franchise ni plafond ; les « gros
+rouleurs aux revenus moyens » ne sont pas définis. La CVEC (Le Pen) : supprimée, sur les
+étudiants imputés.
+
+**Le pronostic, avant toute passe.** Coût mécanique de 2026, en Md€, positif quand l'État
+perd ; une fourchette raisonnée sur les totaux de D-383, sans calcul.
+
+| candidat | mesure | pronostic |
+|---|---|---|
+| Attal | pensions alimentaires défiscalisées | +0,3 à +0,9 |
+| Mélenchon | pensions alimentaires défiscalisées | +0,3 à +0,9 |
+| Dupont-Aignan | heures supplémentaires, net égal au brut | +1,3 à +3 |
+| Retailleau | zéro cotisation au-delà de 1 623 h | +2,5 à +6 |
+| Philippe | deux heures par semaine exonérées | +0,05 à +0,6 |
+| Retailleau | réduction sur les intérêts d'emprunt | +1,5 à +4 |
+| Ruffin | crédit d'impôt trajet à 30 % | +13 à +19 |
+| Le Pen | CVEC supprimée | +0,2 à +0,28 |
+
+Le raisonnement. Les pensions : 5,55 Md€ chez des parents isolés souvent non imposables,
+à un taux moyen de 5 à 15 %. Les heures : 20,3 Md€ de rémunération en 2024 ; la CSG et la
+CRDS en prennent 9,5 %, les cotisations salariales presque rien au-delà de la réduction
+légale ; les patronales nettes des allègements, de 15 à 30 % dans le privé. Les intérêts :
+7,2 M d'accédants, la moitié avec un enfant mineur, une réduction plafonnée de 800 à
+1 600 €, que l'impôt dû arrête. Les trajets : 30 % des 52,4 Md€ de frais de tous les
+salariés, vieillis de deux ans. La CVEC : 231 M€ à 100 €, à 105 €, 36 % de trop (D-383).
+
+La réfutation qui se lirait : les deux pensions alimentaires à deux coûts différents ; une
+mesure à zéro, signe d'un bouton qui ne mord pas ; Philippe au-dessus de Dupont-Aignan,
+dont les heures et les prélèvements contiennent les siens.
+
+**Ce qui reste refusé.** Les heures neuves (Philippe p10, l'annualisation de Retailleau
+r14, les 35 heures de Mélenchon), les pensions alimentaires de Tondelier (plafond non
+chiffré), la majoration de pension de Dupont-Aignan (nd39), la baisse globale de 21 Md€ de
+Retailleau (r23), sans partage dit entre ses postes.
+
+## D-393 — Le lot 2 enregistré : cinq sur huit dans leur pronostic
+
+**Le fait.** Les huit cas de D-392 sont enregistrés sur `cbd842d`, d'une traite, sans garde
+ni correctif. `reports/programmes_presidentielle.md` est rendu de nouveau.
+
+**Contre le pronostic**, coût mécanique de 2026, en Md€ :
+
+| mesure | pronostic | coût | |
+|---|---|---:|---|
+| pensions alimentaires, Attal et Mélenchon | +0,3 à +0,9 | +0,22 | dehors, dessous |
+| heures supplémentaires, Dupont-Aignan | +1,3 à +3 | +2,27 | dedans |
+| zéro cotisation au-delà de 1 623 h, Retailleau | +2,5 à +6 | +4,62 | dedans |
+| deux heures par semaine exonérées, Philippe | +0,05 à +0,6 | +0,001 | dehors, dessous |
+| intérêts d'emprunt, Retailleau | +1,5 à +4 | +1,60 | dedans, au bord |
+| crédit d'impôt trajet, Ruffin | +13 à +19 | +16,2 | dedans |
+| CVEC supprimée, Le Pen | +0,2 à +0,28 | +0,24 | dedans |
+
+Les réfutations de D-392 : les deux pensions alimentaires ont le même coût ; Philippe
+reste sous Dupont-Aignan. Philippe est presque à zéro, sans l'être : le bouton mord, et ce
+qu'il exonère est presque vide. La loi de 2026 ôte déjà des cotisations salariales des
+heures supplémentaires jusqu'à 11,31 % du brut (D-383) ; chez un non-cadre du privé, rien
+ne reste, et les cotisations salariales seules, sur 94 heures, ne laissent qu'un million.
+Le pronostic comptait un reste que la loi ne laisse pas. Lue ainsi, la mesure exonère ce qui
+l'est déjà ; une lecture avec la CSG (le haut de sa plage) ou avec les patronales serait
+une autre mesure, que le texte ne dit pas.
+
+Les pensions alimentaires : 0,22 Md€ sur une assiette de 5,8 Md€, un taux moyen de 4 %,
+sous les 5 à 15 % du pronostic. Les parents isolés qui les reçoivent sont pour beaucoup non
+imposables, ou dans la décote, que la pension sortie du revenu ne fait que creuser.
+
+**Ce qui n'est pas aveugle.** Rien n'a été vu avant l'enregistrement : aucune passe de ces
+mesures n'a tourné hors de celle-ci. La CVEC reste surestimée de 36 % (D-383), dans le
+coût. La comparaison au juge se fera à sa publication, avec les tolérances de D-392.
+
+## D-394 — La série du but 21 préenregistrée : vingt et une lignes, seize programmes
+
+**Ce qui tourne.** Les dix-huit études (`etudes/*.json`) : le PLF et le PLFSS, et une étude
+par programme qui chiffre une mesure, seize au lieu de huit (Arthaud, Bouamrane,
+Dupont-Aignan, Glucksmann, Kazib, Philippe, Ruffin et Zemmour s'ajoutent). Chaque
+programme passe en une seule passe, ses mesures chiffrées ensemble, à la valeur du
+candidat, et chacun de ses points de plage. Cadre central, population de 2024, millésime
+d'entreprises 2023, sur le commit qui porte cette entrée. 21 premières années, 183 points
+de plage et 21 chemins annuels : la série tourne sur deux files, dans un worktree figé,
+une étude après l'autre dans chaque file ; rien d'autre ne tourne.
+
+**Deux correctifs avant elle** (`fe6316d`), sans nombre publié en jeu : les taux marginaux
+lisent la réforme sans ses boutons de salaire, comme sans la TVA (D-323), donc aux
+salaires du cadre ; la route `/population/simulate` chiffre la population de 2024 avec un
+indice du capital et des facteurs de ménages de 1, comme la vue figée du service. Sans
+eux, les premières années des programmes au SMIC ou aux données imputées étaient
+refusées. Chacun a son test, vu échouer sur le code d'avant.
+
+**La lecture « si les économies annoncées sont tenues »** (étape 5, accordée par le
+propriétaire, D-380) est ouverte dans chaque étude de programme (`dette_annoncee`). Elle se
+lit sur le rapport, sans passe : à côté de la dette, jamais additionnée au chiffrage ni au
+verdict (D-319). Elle n'a pas de pronostic : elle ne lit que des montants du candidat.
+
+**L'ordre, étude par étude** (D-350, D-372). La série d'avant est celle du but 19
+(`601b442`), figée par `impots etude avant` depuis `main`, où rapports et scénarios vont
+ensemble ; ses rapports sont retirés, `impots etude lancer <nom>` les refait.
+
+**La première année est mesurée, pas pronostiquée** (D-372) : sur ce code, à 20 000
+ménages, avant cette entrée. Une première mesure des lignes d'entreprises avait pris la
+population d'entreprises de test, faute du millésime que `lancer` donne ; refaite sur
+2023, elle retrouve à l'euro le PLF art. 15 et Lisnard. Un écart de plus de 0,1 % dans
+la série dirait qu'elle n'a pas tourné sur ce code.
+
+**Le pronostic** porte sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance « lue »), en points de
+PIB, et sur le verdict du Monte-Carlo (seuils de D-345). Une ligne dont les mesures n'ont
+pas changé garde son Δb d'avant, mis à l'échelle du coût, ±15 % (±20 % pour la prime et
+les APL) et son verdict. Une ligne neuve ou changée n'a pas d'avant : son Δb est le coût
+fois 0,05 à 0,22 point par Md€, l'étendue des huit études d'avant (0,064 pour Attal à
+0,195 pour Labib) élargie d'un quart ; son verdict, « hausse » ou « dépend », jamais
+« baisse » pour un coût positif de plus de 7 Md€.
+
+| ligne | coût mesuré | Δb, pronostic | verdict |
+|---|---:|---|---|
+| PLF art. 2 | +2,62 | +0,32 à +0,43 | dépend |
+| PLF art. 3 | −1,10 | −0,20 à −0,14 | dépend |
+| PLF art. 15 | −7,05 | −0,25 à −0,19 | baisse |
+| PLFSS, prime | −0,56 | −0,19 à −0,13 | baisse |
+| PLFSS, APL | −0,07 | −0,08 à −0,05 | baisse |
+| Attal | +66,18 | +3,60 à +4,87 | dépend |
+| Lisnard | +36,19 | +4,84 à +6,55 | dépend ou hausse |
+| Arthaud | +74,24 | +3,71 à +16,33 | hausse ou dépend |
+| Bouamrane | +15,32 | +0,77 à +3,37 | hausse ou dépend |
+| Dupont-Aignan | +7,36 | +0,37 à +1,62 | hausse ou dépend |
+| Glucksmann | +29,74 | +1,49 à +6,54 | hausse ou dépend |
+| Kazib | +15,44 | +0,77 à +3,40 | hausse ou dépend |
+| Labib | +57,37 | +2,87 à +12,62 | hausse ou dépend |
+| Le Pen | +21,41 | +1,07 à +4,71 | hausse ou dépend |
+| Mélenchon | +88,98 | +4,45 à +19,58 | hausse ou dépend |
+| Philippe | +46,57 | +2,33 à +10,25 | hausse ou dépend |
+| Retailleau | +48,89 | +2,44 à +10,76 | hausse ou dépend |
+| Roussel | +32,97 | +1,65 à +7,25 | hausse ou dépend |
+| Ruffin | +33,16 | +1,66 à +7,30 | hausse ou dépend |
+| Tondelier | +18,17 | +0,91 à +4,00 | hausse ou dépend |
+| Zemmour | +91,69 | +4,58 à +20,17 | hausse ou dépend |
+
+Les coûts de la prime et des APL sont ceux de la série (+0,56 et +0,07 au rapport, où le
+signe est celui de la recette). Attal change de 0,5 Md€ : les pensions alimentaires (lot
+2) et les données de ménages qu'elles font imputer. Les fourchettes des lignes neuves sont
+larges, et le disent : aucune étude d'avant ne portait le SMIC, une prestation neuve ou
+une pension indexée, dont les canaux de la boucle (salaires publics, transferts) ne sont
+pas ceux de l'impôt.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Le résultat va dans une nouvelle
+D-entrée, avec les études avant et après et l'écart au pronostic.
+
+## D-395 — La CRDS du chômage dans le garde ; la série de D-394 relancée
+
+**Le fait.** La série de D-394, lancée sur `5679147`, s'est arrêtée au point haut de la
+plage du SMIC de Tondelier (2 000 € bruts, diffusion pleine) : le garde des secteurs
+reconstituait +5,118 Md€ pour un coût de +5,126 Md€, 8,1 M€ de trop, 0,16 % du net. Le
+revenu disponible se décompose à l'euro ; la passe relève le chômage net de 97,0 M€, et
+la ligne `csg_chomage` n'en tient que 89,1 : un SMIC plus haut exonère une part de plus
+de l'allocation de CSG et de CRDS (le plancher qui ne la fait pas passer sous le SMIC), et
+la CRDS du chômage, +7,9 M€ sur 3 000 ménages, n'était dans aucun instrument.
+
+**Le correctif.** La ligne `csg_chomage` porte la CRDS avec la CSG. La population des
+tests ne porte pas d'allocation exonérée : un test n'y verrait rien, et l'effet est
+mesuré une fois, ici (D-335), sur la passe qui l'a montré. Aucun enregistrement de
+`chiffrages_preregistres/` n'est touché : le coût est le revenu disponible, que la ligne
+ne change pas ; elle change ce que le garde reconstitue et ce que la boucle lit comme CSG.
+
+**La série relancée.** Arrêtée après vingt minutes, ses rapports retirés, elle repart en
+entier sur le commit de cette entrée, sur deux files : un rapport d'un autre code ne se
+mêle pas à elle. Le pronostic et les coûts de D-394 ne changent pas ; la première année
+mesurée là reste celle que la série doit retrouver à 0,1 % près, la ligne ne touchant
+pas le coût. Rien n'a été lu des rapports arrêtés, sinon le coût du point de plage que le
+message du garde donnait.
+
+## D-396 — Le chemin annuel impute les données de ménages ; sept études reprises
+
+**Le fait.** Sur `aa22293`, le chemin annuel de Mélenchon est refusé avant sa première
+passe : il n'imputait que le capital et la consommation (`CHEMIN_POSSIBLES`), et les
+pensions alimentaires défiscalisées demandent les données de ménages de l'étape 4. Le même
+refus attend les six autres études dont une mesure du lot 2 lit ces données : Attal,
+Dupont-Aignan, Le Pen, Philippe, Retailleau et Ruffin.
+
+**Le correctif.** Le chemin annuel les impute, avec les facteurs qui ont vieilli son cadre
+chaque année : ceux du jeu dans la vue vieillie, aucun dans la vue figée, comme le service
+(D-383). Un test le tient, vu échouer sur le code d'avant.
+
+**La série ne repart pas en entier.** Le correctif ne touche que le chemin annuel d'une
+réforme qui demande ces données, refusé jusqu'ici : il ne change aucun nombre d'une passe
+déjà faite. Les premières années et les points de plage de ces sept études, qui passent
+par le service, restent sur `aa22293` ; leur chemin annuel tourne sur le commit de cette
+entrée, joint au premier par une passe témoin (D-335) qui doit redonner son rapport. Les
+onze autres études restent entières sur `aa22293`. Le pronostic de D-394 ne change pas.
+
+## D-397 — La série du but 21 : ce qu'elle redonne contre D-394
+
+**Ce qui a tourné.** Les dix-huit études de D-394. Onze entières sur `aa22293` (D-395), sur
+deux files, de 15 h 48 à 23 h 59 UTC le 12 novembre ; sept (Mélenchon, Le Pen, Retailleau,
+Ruffin, Attal, Dupont-Aignan, Philippe) finissent leur chemin annuel sur `d4f3f7f` (D-396),
+et deux autres aussi : Zemmour, dont le chemin a été tué par manque de mémoire (deux
+chemins de front sur 15 Go), et Roussel, dont le chemin tournait quand le conteneur a
+redémarré, vers minuit. Chacune est jointe à son premier commit par une passe témoin qui a
+redonné son rapport (D-335). La reprise a tourné sur une seule file, de 0 h 14 à 5 h 11.
+
+**La première année** est retrouvée pour les vingt et une lignes, au million près : la
+série a tourné sur le code de D-394.
+
+**Le résultat**, Δb₂₀₃₅ à θ½ (vue vieillie, persistance « lue »), en points de PIB.
+
+| ligne | coût | Δb | pronostic Δb | verdict | tenu |
+|---|---:|---:|---|---|---|
+| PLF art. 2 | +2,62 | +0,373 | +0,32 à +0,43 | dépend | oui |
+| PLF art. 3 | −1,10 | −0,170 | −0,20 à −0,14 | dépend | oui |
+| PLF art. 15 | −7,05 | −0,220 | −0,25 à −0,19 | baisse | oui |
+| PLFSS, prime | −0,56 | −0,162 | −0,19 à −0,13 | baisse | oui |
+| PLFSS, APL | −0,07 | −0,067 | −0,08 à −0,05 | baisse | oui |
+| Attal | +66,18 | +4,283 | +3,60 à +4,87 | dépend | oui |
+| Lisnard | +36,19 | +5,699 | +4,84 à +6,55 | dépend | oui |
+| Labib | +57,37 | +5,581 | +2,87 à +12,62 | hausse | oui |
+| Le Pen | +21,41 | +2,997 | +1,07 à +4,71 | dépend | oui |
+| Ruffin | +33,16 | +2,713 | +1,66 à +7,30 | dépend | oui |
+| Tondelier | +18,17 | +2,597 | +0,91 à +4,00 | hausse | oui |
+| Zemmour | +91,69 | +12,235 | +4,58 à +20,17 | dépend | oui |
+| Arthaud | +74,24 | +3,411 | +3,71 à +16,33 | dépend | Δb non |
+| Bouamrane | +15,32 | +0,488 | +0,77 à +3,37 | dépend | Δb non |
+| Glucksmann | +29,74 | +0,984 | +1,49 à +6,54 | dépend | Δb non |
+| Kazib | +15,44 | +0,492 | +0,77 à +3,40 | dépend | Δb non |
+| Roussel | +32,97 | +1,430 | +1,65 à +7,25 | dépend | Δb non |
+| Mélenchon | +88,98 | +27,537 | +4,45 à +19,58 | hausse | Δb non |
+| Philippe | +46,57 | +11,729 | +2,33 à +10,25 | hausse | Δb non |
+| Retailleau | +48,89 | +11,396 | +2,44 à +10,76 | hausse | Δb non |
+| Dupont-Aignan | +7,36 | refusé | +0,37 à +1,62 | — | — |
+
+Sur quarante pronostics (Δb et verdict, vingt lignes chiffrées), trente-deux tiennent :
+les vingt verdicts, et douze Δb sur vingt. Les sept lignes d'avant tiennent toutes.
+
+**Les huit Δb manqués vont tous dans le sens que D-394 craignait.** Les programmes dont le
+coût est surtout le SMIC (Arthaud, Bouamrane, Glucksmann, Kazib, et Roussel) pèsent de
+0,03 à 0,05 point par Md€ : un SMIC relevé rend des cotisations, de la CSG et de l'impôt
+que la boucle garde, et ses salaires publics relancent l'activité ; la fourchette, prise
+sur des études d'impôt, commençait à 0,05. Ceux dont le coût est surtout une prestation
+neuve ou une pension indexée (Mélenchon, Philippe, Retailleau) pèsent de 0,23 à 0,31 point
+par Md€ : un transfert ne rend presque rien, et la persistance le garde ; la fourchette
+s'arrêtait à 0,22. D-394 disait que ces canaux ne sont pas ceux de l'impôt ; le résultat
+le mesure, et le pronostic manqué n'est pas réécrit.
+
+**Dupont-Aignan est refusé, pas manqué** : son chemin annuel s'arrête au garde de
+monotonie (D-217, D-224), dans la vue figée, θ tenu chaque année : Δb à θ (+0,01889) sort
+de sa boîte (+0,01705 à +0,01849). Un effet n'est pas monotone en son θ ; tracer la boîte
+à ses coins serait faux. L'étude n'a pas de page ; la page des 24 le dit.
+
+**Les décompositions archivées** (choix du propriétaire). Celles de D-354, qui disent ce
+que pèsent E1 et E2 pour Attal, Retailleau et Mélenchon, ont été chiffrées sur leurs
+programmes du but 19 ; les programmes ont grandi, et leurs pages refusaient de les lire.
+Elles passent dans `reports/decomposition_but19/`, gardées ; les pages s'écrivent sans
+elles, et la décomposition est refaite dans un but suivant.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345.
+
+## D-398 — Dupont-Aignan refusé, et dit refusé ; le site des dix-sept études
+
+**Le diagnostic.** Le chemin annuel de Dupont-Aignan a tourné une seconde fois, hors
+série, le garde relâché et son rapport écrit à part (une passe d'essai, rien n'entre dans
+`reports/`). La boîte θ porte trois lignes : l'élasticité du revenu imposable de tous, celle
+du décile du haut, le multiplicateur. Sous les persistances « lue » et « éteinte », Δb à θ
+est dans sa boîte, dans les quatre lectures. Sous la persistance « tenue », il en sort
+dans trois sur quatre, au-dessus de tous les coins : en 2035, vue figée, θ tenu chaque
+année, +1,889 point contre +1,849 au plus haut coin (tous les θ à zéro). Un effet de ce
+paquet n'est donc pas monotone en son θ sous cette persistance ; l'imputation des données
+de ménages de D-396 ne dépend pas de θ et n'y est pour rien. Le garde fait ce que D-217 et
+D-224 lui demandent : il refuse plutôt que de tracer une boîte fausse. Le chercher est un
+travail à part, laissé à un but suivant.
+
+**Le refus dit.** Une définition d'étude peut porter `refus`, sa raison et l'entrée qui la
+dit : le site liste l'étude « chiffrée, puis refusée », la page des 24 marque « refusée »,
+et le parcours de la dette la saute. `preenregistrer_programmes.py` l'écrit pour
+Dupont-Aignan. Sans lui, le site disait « ses passes n'ont pas tourné », ce qui est faux.
+
+**Le parcours suit les programmes grandis.** Le point de plage du droit au brut d'Attal
+chiffre la mesure seule ; son chemin annuel porte aussi, depuis le lot 2, les pensions
+alimentaires : la page montre les deux nombres et dit l'écart, au lieu d'affirmer leur
+égalité. La CVEC, que la boucle ne lit pas (étape 4), a sa famille dans la comparaison
+des candidats.
+
+**Ce qui est publié.** Dix-sept études et leurs pages, la page des 24, le parcours et la
+comparaison, construits depuis les rapports commités ; `site verifier` et `site
+publiable` sont verts. Aucun nombre de la série n'est touché.

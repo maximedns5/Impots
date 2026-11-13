@@ -1,0 +1,24 @@
+{
+  "name": "pres2027_melenchon_indexation_pensions_prestations_10",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 — Indexation des pensions, allocations familiales et APL, hausse de 10 % : « « nous indexerons toutes les pensions, allocations familiales et APL, qui seront rehaussées de 10 % (8 milliards d'euros) » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf, 2026-10-14)",
+  "note": "La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : l'indexation qu'elle promet est celle du droit, et ne coûte rien ; la hausse de 10 % est la mesure. Trois coefficients de 1,10 sur ce que le droit porte : les pensions de retraite de la population (des données, multipliées au 1er janvier), la base mensuelle des allocations familiales (au 1er avril) et les paramètres des aides au logement révisés en octobre. Ils sont posés à la date légale de 2025 pour que toute l'année chiffrée porte la hausse, comme les boutons « portée » (D-301). Le candidat dit « allocations familiales » : la base mensuelle porte aussi le complément familial, l'allocation de soutien familial, l'allocation de rentrée scolaire et l'allocation de base de la PAJE, qui montent avec elles ; c'est la traduction qui ne choisit pas entre les prestations familiales. Les pensions d'invalidité et les autres prestations ne bougent pas. Plages : du droit (1) à 10 % prolongé de la moitié de l'écart (1,15).",
+  "tags": [
+    "presidentielle_2027",
+    "melenchon"
+  ],
+  "reform": {
+    "indexations": {
+      "pensions": {
+        "2025": 1.1
+      },
+      "prestations_familiales": {
+        "2025": 1.1
+      },
+      "aides_logement": {
+        "2025": 1.1
+      }
+    }
+  }
+}

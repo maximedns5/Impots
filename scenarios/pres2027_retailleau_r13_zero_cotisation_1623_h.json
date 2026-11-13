@@ -1,0 +1,16 @@
+{
+  "name": "pres2027_retailleau_r13_zero_cotisation_1623_h",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-12 — Seuil « zéro cotisation » : aucune cotisation sociale (salariale ou patronale) au-delà de 1 623 h par an ; CSG et CRDS maintenues ; exonération d'IR des heures supplémentaires maintenue : « « Nous proposons de libérer le temps de travail en supprimant toutes les cotisations sociales au‑delà de 1 623 heures par an » » (https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf, 2026-01-09)",
+  "note": "« Toutes les cotisations sociales au-delà de 1 623 heures par an » : les heures supplémentaires imputées (D-383) comptent depuis la durée légale, 1 607 h ; les 16 premières de l'année restent soumises (une franchise), la plage descend à 0 pour la lecture de Public Sénat (« au-delà de 1 607 heures »). Les cotisations salariales que la loi laisse au-delà de sa réduction, et les patronales nettes des allègements, dans le privé ; la CSG et la CRDS sont maintenues, comme l'exonération d'impôt. Pas de plafond d'heures. La déduction forfaitaire patronale des petites entreprises n'est pas portée. Seules les heures déjà faites ; l'annualisation (r14) n'est pas lue. Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "retailleau"
+  ],
+  "reform": {
+    "heures_sup_exoneration_salariale": 1.0,
+    "heures_sup_exoneration_patronale": 1.0,
+    "heures_sup_franchise_heures": 16.0
+  }
+}

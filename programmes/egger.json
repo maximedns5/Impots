@@ -4,12 +4,51 @@
   "parti": "Solution démocratique",
   "statut": "declare",
   "statut_source": {
-    "citation": "Pas de citation directe. L'inventaire relève : candidate déclarée, annonce par communiqué le 20/04/2026 ; elle figure parmi les déclarés de la liste LCP.",
-    "url": "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-deja-en-lice-et-des-pretendants-436373",
-    "date": "2026-10-14",
-    "type": "presse"
+    "citation": "« Clara Egger est candidate à l'élection présidentielle de 2027 sous les couleurs de Solution Démocratique. »",
+    "url": "https://solutiondemocratique.fr/clara-egger/",
+    "date": "2026-11-04",
+    "type": "programme"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
-  "mesures": []
+  "mesures": [
+    {
+      "id": "loi_de_finances_referendum",
+      "categorie": "regle_budgetaire",
+      "libelle": "Aucun déficit sans consentement des électeurs : loi de finances soumise chaque année à référendum",
+      "parametre": "une procédure, sans taux ni trajectoire",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Aucun déficit ne pourra être inscrit dans la loi de finances sans le consentement explicite des électeurs. Chaque année, la loi de finances adoptée par le Parlement sera soumise à référendum. »",
+          "url": "https://solutiondemocratique.fr/wp-content/uploads/2026/11/Programme-de-Solution-Democratique-a-lelection-presidentielle-2027.pdf",
+          "date": "2026-11-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une procédure de vote du budget, sans montant de déficit, taux ni trajectoire."
+      }
+    },
+    {
+      "id": "retraites_referendum",
+      "categorie": "retraites",
+      "libelle": "Réformes des retraites soumises à référendum ; enquête sur les régimes spéciaux",
+      "parametre": "aucun âge, durée ni taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« le président veillera donc à ce que les principales réformes soient systématiquement expliquées et soumises à référendum »",
+          "url": "https://solutiondemocratique.fr/wp-content/uploads/2026/11/Programme-de-Solution-Democratique-a-lelection-presidentielle-2027.pdf",
+          "date": "2026-11-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun paramètre de retraite n'est énoncé : une procédure et une enquête."
+      }
+    }
+  ]
 }

@@ -52,12 +52,13 @@
         "cotisations_employeur": 495839083850.7933,
         "retraite_imposable": 375594704964.09766,
         "chomage_brut": 35817945206.790634,
+        "prelevements_pensions": 9690592684.339106,
         "csg_deductible": 74049149384.70259,
         "csg_imposable": 26134993910.656338,
         "crds": 5444790402.126446,
         "csg_ij": 0.0,
         "csg_retraite": 24154697466.321297,
-        "csg_chomage": 863796165.3605144,
+        "csg_chomage": 932912240.5763961,
         "csg_non_salarie": 5353359549.061754,
         "revenus_non_salaries": 72319790001.052,
         "revenus_non_salaries_hors_gerants": 72319790001.052,
@@ -76,9 +77,17 @@
         "ppa": 8841678977.471668,
         "rsa": 12287731424.294605,
         "aide_logement": 12295373801.207432,
+        "reduction_loyer_solidarite": 863965268.4745662,
         "aefa": 510363651.9515339,
         "cf": 1317987826.7895987,
         "asf": 9473576364.313063,
+        "ars": 1801939123.5208163,
+        "aspa": 5773854024.496484,
+        "paje": 3529242732.9251904,
+        "ria": 0.0,
+        "allocation_enfant": 0.0,
+        "garantie_autonomie": 0.0,
+        "cvec": 0.0,
         "crds_pfam": -141058833.60766396,
         "crds_logement": -61785767.41838334,
         "crds_mini": -44208393.899346456,
@@ -87,7 +96,9 @@
         "ppa_droit": 16868135237.0024,
         "crds_mini_droit": -84340673.98831266,
         "aefa_droit": 714444909.6675737,
-        "revenu_disponible_droit": 1349301859046.2822
+        "revenu_disponible_droit": 1349301859046.2822,
+        "ria_droit": 0.0,
+        "garantie_autonomie_droit": 0.0
       },
       "totals_reform": {
         "salaire_brut": 1103767158935.7903,
@@ -98,12 +109,13 @@
         "cotisations_employeur": 495839083850.7933,
         "retraite_imposable": 375594704964.09766,
         "chomage_brut": 35817945206.790634,
+        "prelevements_pensions": 9690592684.339106,
         "csg_deductible": 53141154285.86648,
         "csg_imposable": 18730078989.164448,
         "crds": 5444790402.126446,
         "csg_ij": 0.0,
         "csg_retraite": 24154697466.321297,
-        "csg_chomage": 863796165.3605144,
+        "csg_chomage": 932912240.5763961,
         "csg_non_salarie": 3840453416.600072,
         "revenus_non_salaries": 72319790001.052,
         "revenus_non_salaries_hors_gerants": 72319790001.052,
@@ -122,9 +134,17 @@
         "ppa": 8274038069.615198,
         "rsa": 12269735518.977749,
         "aide_logement": 12216363637.357174,
+        "reduction_loyer_solidarite": 856713624.2110754,
         "aefa": 511581770.8188842,
         "cf": 1317987826.7895987,
         "asf": 9461680341.140484,
+        "ars": 1799757884.5958645,
+        "aspa": 5773854024.496484,
+        "paje": 3529242732.9251904,
+        "ria": 0.0,
+        "allocation_enfant": 0.0,
+        "garantie_autonomie": 0.0,
+        "cvec": 0.0,
         "crds_pfam": -140966721.51795906,
         "crds_logement": -61388723.45780958,
         "crds_mini": -41370189.39833916,
@@ -133,7 +153,9 @@
         "ppa_droit": 15793937859.87966,
         "crds_mini_droit": -78969687.38581683,
         "aefa_droit": 712930261.7096651,
-        "revenu_disponible_droit": 1378418585755.4912
+        "revenu_disponible_droit": 1378418585755.4912,
+        "ria_droit": 0.0,
+        "garantie_autonomie_droit": 0.0
       },
       "deltas": {
         "salaire_brut": 0.0,
@@ -144,6 +166,7 @@
         "cotisations_employeur": 0.0,
         "retraite_imposable": 0.0,
         "chomage_brut": 0.0,
+        "prelevements_pensions": 0.0,
         "csg_deductible": -20907995098.836113,
         "csg_imposable": -7404914921.49189,
         "crds": 0.0,
@@ -168,9 +191,17 @@
         "ppa": -567640907.8564701,
         "rsa": -17995905.316856384,
         "aide_logement": -79010163.85025787,
+        "reduction_loyer_solidarite": -7251644.263490796,
         "aefa": 1218118.8673502803,
         "cf": 0.0,
         "asf": -11896023.172578812,
+        "ars": -2181238.9249517918,
+        "aspa": 0.0,
+        "paje": 0.0,
+        "ria": 0.0,
+        "allocation_enfant": 0.0,
+        "garantie_autonomie": 0.0,
+        "cvec": 0.0,
         "crds_pfam": 92112.08970490098,
         "crds_logement": 397043.9605737552,
         "crds_mini": 2838204.501007296,
@@ -179,7 +210,9 @@
         "ppa_droit": -1074197377.1227398,
         "crds_mini_droit": 5370986.602495834,
         "aefa_droit": -1514647.9579086304,
-        "revenu_disponible_droit": 29116726709.208984
+        "revenu_disponible_droit": 29116726709.208984,
+        "ria_droit": 0.0,
+        "garantie_autonomie_droit": 0.0
       },
       "reform_cost": 29638087869.98291,
       "deciles": [
@@ -810,7 +843,7 @@
           ],
           "parameters_vintage": "8 rows [consumption_by_instrument,employment_by_instrument,investment_by_instrument,multiplier_by_instrument,multiplier_dispersion,multiplier_regime_shift,primary_balance_by_instrument,real_income_by_instrument]",
           "grade": "illustrative",
-          "covered_share": 0.9779086709243704,
+          "covered_share": 0.9776112861435978,
           "instruments": [
             "csg",
             "impot_sur_le_revenu"
@@ -831,18 +864,20 @@
           "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
           "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
           "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+          "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
           "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
           "asf": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+          "ars": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
           "crds_pfam": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
           "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
         }
       },
       "niche_blind_spot": null,
       "timings": {
-        "build_s": 6.49,
-        "baseline_s": 39.46,
-        "reform_s": 42.34,
-        "total_s": 96.74
+        "build_s": 7.35,
+        "baseline_s": 47.59,
+        "reform_s": 47.86,
+        "total_s": 111.36
       }
     },
     "entreprises": {
@@ -1769,14 +1804,14 @@
       },
       "cir": null,
       "timings": {
-        "baseline_s": 0.022,
-        "reform_s": 0.012,
-        "total_s": 0.155
+        "baseline_s": 0.018,
+        "reform_s": 0.006,
+        "total_s": 0.088
       }
     }
   },
-  "computed": "2026-11-11",
-  "commit": "601b4423890c7d130a10d6278339b1a65ea4b145",
+  "computed": "2026-11-12",
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
   "dirty": false,
-  "where": "conteneur cloud, 15 Go, 4 cœurs"
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
 }

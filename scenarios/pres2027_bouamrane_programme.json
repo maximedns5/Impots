@@ -1,0 +1,17 @@
+{
+  "name": "pres2027_bouamrane_programme",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Karim Bouamrane (PS), programme relevé le 2026-11-12 — la part chiffrée : hausse_salaires_150",
+  "note": "1 mesures chiffrées sur 1 paramétrées et 4 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "tags": [
+    "presidentielle_2027",
+    "bouamrane",
+    "etude"
+  ],
+  "reform": {
+    "smic_revalorisation": 1.0811,
+    "smic_diffusion_profil": "annee_avec_effets_fixes",
+    "smic_diffusion_echelle": 0.0
+  }
+}

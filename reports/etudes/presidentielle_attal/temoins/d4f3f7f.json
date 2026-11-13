@@ -1,0 +1,79 @@
+{
+  "etude": "presidentielle_attal",
+  "passe": "plages/a16_droit_au_brut__cotisations_salariales_retraite_echelle__bas.json",
+  "reference": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "commit": "d4f3f7ff6e0eb097a32b7e9a76c86baf4ff73504",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
+  "computed": "2026-11-13",
+  "identique": true,
+  "ecarts": [],
+  "rapport": {
+    "programme": "attal",
+    "mesure": "a16_droit_au_brut",
+    "champ": "cotisations_salariales_retraite_echelle",
+    "point": "bas",
+    "request": {
+      "spending": {
+        "rule": "gele_en_volume"
+      },
+      "growth": {
+        "name": "Croissance réelle 1 %, prix 2 %",
+        "real": 0.01,
+        "prices": 0.02
+      },
+      "rate": {
+        "name": "Taux implicite tenu à son niveau de 2025",
+        "kind": "implicite_tenu"
+      },
+      "horizon": 10,
+      "theta": {
+        "common": 0.5
+      },
+      "uprating": {
+        "wage": 0.03,
+        "source": "3 % ronds, le rythme du PIB nominal du scénario"
+      },
+      "behavioural": false,
+      "macro": false,
+      "reform": {
+        "cotisations_salariales_retraite_echelle": 0.0
+      },
+      "firm_reform": null
+    },
+    "appel": "/predictif/simulate",
+    "dette_absente": null,
+    "response": {
+      "mechanical_first_year_eur": 85010128841.11353,
+      "years": [
+        2026,
+        2027,
+        2028,
+        2029,
+        2030,
+        2031,
+        2032,
+        2033,
+        2034,
+        2035
+      ],
+      "delta": [
+        0.027588277431882302,
+        0.05487202537291225,
+        0.08185460533092681,
+        0.108539341708211,
+        0.134929522211082,
+        0.16102839825495274,
+        0.1868391853649245,
+        0.21236506357195717,
+        0.2376091778046665,
+        0.26257463827679595
+      ],
+      "population_view": "vieillie"
+    },
+    "computed": "2026-11-13",
+    "commit": "d4f3f7ff6e0eb097a32b7e9a76c86baf4ff73504",
+    "dirty": false,
+    "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
+  }
+}

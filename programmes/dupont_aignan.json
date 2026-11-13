@@ -9,26 +9,32 @@
     "date": "2026-09-19",
     "type": "discours"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
       "id": "nd01_carburants_40_centimes",
       "categorie": "energie_carburants",
       "libelle": "Baisse de 40 centimes par litre du prix des carburants",
-      "parametre": "CEE −17 c ; suppression de la TVA sur la TICPE −13 c ; plafonnement des marges des raffineurs −10 c",
+      "parametre": "CEE −17 c ; suppression de la TVA sur la TICPE −13 c (4 Md€, contre 6 Md€ dans la version du 27/10/2026) ; plafonnement des marges des raffineurs −10 c",
       "precision": "parametree",
       "sources": [
         {
-          "citation": "Baisser de 40 centimes le prix des carburants (suppression des certificats d'économies d'énergie (CEE) : 17 centimes ; suppression de la TVA sur la taxe (6 milliards d'euros de coût) : 13 centimes ; plafonnement des marges des raffineurs : 10 centimes)",
+          "citation": "Baisser de 40 centimes le prix des carburants (suppression des certificats d'économies d'énergie (CEE) : 17 centimes; suppression de la TVA sur la taxe (4 milliards d'euros de coût) : 13 centimes ; […]",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         },
         {
           "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
           "url": "https://www.dupontaignan.fr/actualite/20-mesures-pour-retablir-lordre-et-defendre-la-justice-sociale/",
           "date": "2026-10-23",
+          "type": "programme"
+        },
+        {
+          "citation": "Supprimer la TVA sur la TICPE (suppression de la taxe sur la taxe) afin de faire baisser le prix du carburant",
+          "url": "https://www.debout-la-france.fr/projet/transport-automobilistes/",
+          "date": "2026-10-15",
           "type": "programme"
         }
       ],
@@ -37,13 +43,13 @@
         "raison": "Un bouquet de prix : les certificats d'économies d'énergie et les marges des distributeurs ne sont pas des taxes. Seule la TVA sur l'accise en est une, et la couche consommation la calcule sur le prix accise comprise (R2) sans bouton pour l'en retirer ; le bouquet ne se chiffre pas en partie."
       },
       "declare": {
-        "montant_eur": 6000000000.0,
+        "montant_eur": 4000000000.0,
         "sens": "baisse_prelevements",
-        "horizon": "non énoncé (coût de la seule suppression de la TVA sur la TICPE)",
+        "horizon": "non énoncé (coût de la seule suppression de la TVA sur la TICPE ; 6 Md€ dans la version du 27/10/2026)",
         "source": {
-          "citation": "Baisser de 40 centimes le prix des carburants (suppression des certificats d'économies d'énergie (CEE) : 17 centimes ; suppression de la TVA sur la taxe (6 milliards d'euros de coût) : 13 centimes ; plafonnement des marges des raffineurs : 10 centimes)",
+          "citation": "Baisser de 40 centimes le prix des carburants (suppression des certificats d'économies d'énergie (CEE) : 17 centimes; suppression de la TVA sur la taxe (4 milliards d'euros de coût) : 13 centimes ; […]",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -52,13 +58,19 @@
       "id": "nd02_electricite_moitie",
       "categorie": "energie_carburants",
       "libelle": "Prix de l'électricité divisé par deux par la sortie du marché européen",
-      "parametre": "−50 %",
+      "parametre": "−50 % ; tarif réglementé national de 10 c/kWh (100 €/MWh) garanti",
       "precision": "parametree",
       "sources": [
         {
           "citation": "Réduction de 50 % du prix de l'électricité par la sortie du marché européen",
           "url": "https://www.dupontaignan.fr/actualite/20-mesures-pour-retablir-lordre-et-defendre-la-justice-sociale/",
           "date": "2026-10-23",
+          "type": "programme"
+        },
+        {
+          "citation": "Fixant un tarif réglementé national (un tarif de 10 centimes d'euro/ kWh, soit 100 € le MWh, sera garanti contractuellement).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -77,7 +89,7 @@
         {
           "citation": "Réduire de 20 % le prix du gaz en rétablissant un monopole public de distribution et en supprimant les CEE.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -100,9 +112,9 @@
           "type": "programme"
         },
         {
-          "citation": "Abroger la TVA sur une liste de 50 produits de première nécessité",
+          "citation": "TVA à zéro sur une liste de 50 produits de première nécessité et réduire les frais bancaires, notamment les frais cachés.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -115,13 +127,13 @@
       "id": "nd05_capital_nouveau_ne",
       "categorie": "retraites",
       "libelle": "Capital de 10 000 € par nouveau-né français, placé dans un fonds souverain de capitalisation et bloqué jusqu'à 60 ans",
-      "parametre": "10 000 € ; rendement net de 4 % ; à 60 ans, 500 € par mois et un capital de 100 000 €",
+      "parametre": "10 000 € ; rendement net de 4 % ; à 60 ans, au moins 400 € par mois (500 € dans la version du 27/10/2026) et un capital de 100 000 € constants",
       "precision": "parametree",
       "sources": [
         {
           "citation": "Doter chaque nouveau-né français d'un capital de 10 000 euros qui sera bloqué jusqu'à sa retraite et qui sera géré par un fonds public de capitalisation français",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         },
         {
@@ -141,6 +153,12 @@
           "url": "https://www.cnews.fr/france/2026-09-19/presidentielle-2027-depuis-son-fief-de-yerres-nicolas-dupont-aignan-se-lance-dans",
           "date": "2026-09-19",
           "type": "discours"
+        },
+        {
+          "citation": "À 60 ans, en tenant compte de l'inflation et avec un rendement net de 4 %, le citoyen français disposerait d'un minimum de retraite complémentaire de 400 euros par mois et d'un capital de 100 000 euros constants.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -154,7 +172,7 @@
         "source": {
           "citation": "Cette mesure coûtera environ 6 milliards d'euros par an à l'État.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -173,9 +191,9 @@
           "type": "programme"
         },
         {
-          "citation": "Pas de citation relevée par l'inventaire : la page Économie dit trois mois de charges patronales sur un CDI.",
+          "citation": "Exonérer de charges patronales : Le premier emploi en CDI d'un jeune de moins de 26 ans pendant trois mois",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -188,13 +206,13 @@
       "id": "nd07_exoneration_chomeur_longue_duree",
       "categorie": "csg_cotisations",
       "libelle": "Exonération de charges pour le CDI d'un chômeur de longue durée",
-      "parametre": "« pendant deux ans, le CDI d'un chômeur de longue durée (5 ans) » ; ailleurs, sur la même page : « exonérer de charges pendant 5 ans »",
+      "parametre": "Exonération de charges patronales pendant deux ans du CDI d'un chômeur de longue durée (5 ans) ; la version du 27/10/2026 disait aussi « pendant 5 ans »",
       "precision": "parametree",
       "sources": [
         {
-          "citation": "exonérer de charges pendant 5 ans le CDI d'un chômeur de longue durée",
+          "citation": "Exonérer de charges patronales : […] Le CDI d'un chômeur de longue durée (5 ans) pour insérer les personnes en extrême difficulté sociale pendant deux ans",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -207,19 +225,36 @@
       "id": "nd08_heures_supplementaires",
       "categorie": "csg_cotisations",
       "libelle": "Défiscalisation des heures supplémentaires",
-      "parametre": "Au-delà de 1 607 h par an, dans la limite de 100 h par an, sur les cotisations salariales",
+      "parametre": "Au-delà de 1 607 h par an, dans la limite de 300 h par an (100 h dans la version du 27/10/2026), sur les cotisations salariales",
       "precision": "parametree",
       "sources": [
         {
-          "citation": "au-delà de 1 607 h/an pour un temps plein, chaque heure effectuée sera défiscalisée dans la limite de 100 heures/an. Cette défiscalisation concernera les cotisations salariales (le net sera égal au brut).",
+          "citation": "au-delà de 1 607 h/an pour un temps plein, chaque heure effectuée sera défiscalisée dans la limite de 300 heures/an. Cette défiscalisation concernera les cotisations salariales (le net sera égal au brut).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "donnee_menages",
-        "raison": "La population ne porte pas les heures travaillées au-delà de 1 607 h par an."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "heures_sup_exoneration_salariale": 1.0,
+          "heures_sup_exoneration_csg_crds": 1.0,
+          "heures_sup_plafond_heures": 300.0
+        },
+        "plages": [
+          {
+            "champ": "heures_sup_exoneration_csg_crds",
+            "min": 0.0,
+            "max": 1.0
+          },
+          {
+            "champ": "heures_sup_plafond_heures",
+            "min": 100.0,
+            "max": 300.0
+          }
+        ],
+        "note": "Les heures supplémentaires imputées (D-383), au-delà de la durée légale, donc de 1 607 h pour un temps plein : pas de franchise. « Le net sera égal au brut » : les cotisations salariales que la loi laisse au-delà de sa réduction, la CSG et la CRDS ; la CSG n'est pas une cotisation, et la plage va de 0 (les cotisations seules) à 1. 300 heures par an au plus (100 dans la version du 27 octobre 2026, le bas de la plage). L'impôt sur le revenu des heures est déjà exonéré jusqu'à 7 500 € ; les cotisations patronales ne bougent pas. Seules les heures déjà faites : celles qu'une exonération ferait faire ne sont pas comptées. Contre le droit de 2026."
       }
     },
     {
@@ -232,7 +267,7 @@
         {
           "citation": "Supprimer les droits de succession sur la résidence principale et sur les 100 premiers hectares de terres agricoles, doubler les plafonds d'exonération des donations, exonérer de 90 % la valeur des titres d'une entreprise transmise",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         },
         {
@@ -251,13 +286,19 @@
       "id": "nd10_participation_gaullienne",
       "categorie": "entreprises",
       "libelle": "« Participation gaullienne »",
-      "parametre": "IS −1 point par tranche de 5 % d'actionnariat salarié, dans la limite de 10 points ; participation exonérée de forfait social",
+      "parametre": "IS −1 point par tranche de 5 % d'actionnariat salarié, dans la limite de 10 points ; participation exonérée de forfait social ; la page « Produire en France » (13/10/2026) dit 1 point pour 2 % d'actionnariat, la page Économie 1 point pour 5 %",
       "precision": "parametree",
       "sources": [
         {
           "citation": "baisser le taux d'IS de 1 % pour 5 % d'actionnariat salarié supplémentaire, dans une limite de 10 points de baisse d'IS",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
+          "type": "programme"
+        },
+        {
+          "citation": "Relancer la participation gaullienne des salariés et baisser le taux d'IS de 1% pour chaque 2% d'actionnariat salarié (dans la limite de 10 points de baisse d'IS).",
+          "url": "https://www.debout-la-france.fr/projet/produire-en-france/",
+          "date": "2026-10-13",
           "type": "programme"
         }
       ],
@@ -272,7 +313,7 @@
         "source": {
           "citation": "coût : 1 milliard d'euros",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -281,13 +322,19 @@
       "id": "nd11_is_benefices_reinvestis",
       "categorie": "entreprises",
       "libelle": "IS divisé par deux sur les bénéfices réinvestis en France",
-      "parametre": "÷2, ou suramortissement",
+      "parametre": "Crédit d'impôt de production : IS réduit de moitié sur les bénéfices réinvestis en France (le suramortissement n'est plus cité)",
       "precision": "parametree",
       "sources": [
         {
-          "citation": "division par 2 de l'IS pour les bénéfices réinvestis en France ou suramortissement",
+          "citation": "Accorder un crédit d'impôt production pour les entreprises qui réinvestissent leurs bénéfices sur le sol français.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
+          "type": "programme"
+        },
+        {
+          "citation": "Accorder un crédit d'impôt de production pour les entreprises qui réinvestissent leurs bénéfices sur le sol Français (réduction de moitié de l'impôt sur les sociétés).",
+          "url": "https://www.debout-la-france.fr/projet/produire-en-france/",
+          "date": "2026-10-13",
           "type": "programme"
         }
       ],
@@ -306,7 +353,7 @@
         {
           "citation": "Baisser les impôts de production",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         },
         {
@@ -331,7 +378,7 @@
         {
           "citation": "Créer un grand fonds d'investissement et de relocalisation doté de 4 milliards d'euros par an et piloté par la Caisse des dépôts et consignations",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -346,7 +393,7 @@
         "source": {
           "citation": "Créer un grand fonds d'investissement et de relocalisation doté de 4 milliards d'euros par an et piloté par la Caisse des dépôts et consignations",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -373,7 +420,7 @@
     {
       "id": "nd15_indexation_pensions",
       "categorie": "retraites",
-      "libelle": "Maintien de l'indexation des pensions",
+      "libelle": "Réindexation des pensions sur l'inflation",
       "parametre": "Indexation sur l'inflation",
       "precision": "parametree",
       "sources": [
@@ -382,11 +429,17 @@
           "url": "https://www.dupontaignan.fr/actualite/liberons-la-france-%c2%b7-discours-de-rentree-de-nicolas-dupont-aignan/",
           "date": "2026-09-19",
           "type": "discours"
+        },
+        {
+          "citation": "Réindexer les pensions de retraite et les traitements des fonctionnaires sur l'inflation, car l'État doit respecter son engagement vis-à-vis des Français qui ont cotisé toute leur vie professionnelle.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
+          "type": "programme"
         }
       ],
       "refus": {
         "porte": "indexation",
-        "raison": "L'indexation des pensions d'année en année n'est pas dans le moteur, dont les pensions sont des données."
+        "raison": "La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : le droit de 2026 l'indexe déjà, et elle ne coûte rien contre lui. Son effet n'existe que contre un gel, que le droit de la référence n'a pas."
       }
     },
     {
@@ -403,9 +456,9 @@
           "type": "programme"
         },
         {
-          "citation": "Pas de citation relevée par l'inventaire : la page Économie pose une condition de 5 ans de résidence et chiffre la mesure à 5 Md€.",
+          "citation": "Couper les pompes aspirantes migratoires et économiser 5 milliards d'euros (conditionner les aides sociales non contributives à 5 ans de résidence pour tout étranger, supprimer l'AME, lutter contre les fraudes aux mineurs isolés).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -418,9 +471,9 @@
         "sens": "economie_depense",
         "horizon": "non énoncé",
         "source": {
-          "citation": "Pas de citation relevée par l'inventaire : la page Économie pose une condition de 5 ans de résidence et chiffre la mesure à 5 Md€.",
+          "citation": "Couper les pompes aspirantes migratoires et économiser 5 milliards d'euros (conditionner les aides sociales non contributives à 5 ans de résidence pour tout étranger, supprimer l'AME, lutter contre les fraudes aux mineurs isolés).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -435,7 +488,7 @@
         {
           "citation": "Sortir de l'UE et économiser ainsi les 15 milliards d'euros de notre solde contributeur.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -450,7 +503,7 @@
         "source": {
           "citation": "Sortir de l'UE et économiser ainsi les 15 milliards d'euros de notre solde contributeur.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -465,7 +518,7 @@
         {
           "citation": "Mettre fin aux aides à l'Ukraine (7 milliards d'euros par an en comptant les aides de la France et la quote-part des aides de l'UE dues par la France).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -480,7 +533,7 @@
         "source": {
           "citation": "Mettre fin aux aides à l'Ukraine (7 milliards d'euros par an en comptant les aides de la France et la quote-part des aides de l'UE dues par la France).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -495,7 +548,7 @@
         {
           "citation": "Mettre fin au scandale de la fraude sociale avec les millions de cartes Vitale excédentaires et les retraites payées à des morts à l'étranger pour économiser 20 milliards d'euros.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -510,7 +563,7 @@
         "source": {
           "citation": "Mettre fin au scandale de la fraude sociale avec les millions de cartes Vitale excédentaires et les retraites payées à des morts à l'étranger pour économiser 20 milliards d'euros.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -519,13 +572,13 @@
       "id": "nd20_aides_eolien_solaire",
       "categorie": "energie_carburants",
       "libelle": "Suppression des aides à l'éolien et au solaire (annulation du décret PPE3)",
-      "parametre": "12 Md€",
+      "parametre": "10 Md€ (12 Md€ dans la version du 27/10/2026)",
       "precision": "parametree",
       "sources": [
         {
-          "citation": "Supprimer les aides de l'État à l'installation des éoliennes et des panneaux solaires en annulant le décret sur la PPE3 (12 milliards d'euros économisés).",
+          "citation": "Supprimer les aides de l'État à l'installation des éoliennes et des panneaux solaires en annulant le décret sur la PPE3 (10 milliards d'euros économisés).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -534,13 +587,13 @@
         "raison": "Le soutien aux renouvelables est une dépense publique que le moteur ne microsimule pas."
       },
       "declare": {
-        "montant_eur": 12000000000.0,
+        "montant_eur": 10000000000.0,
         "sens": "economie_depense",
         "horizon": "non énoncé",
         "source": {
-          "citation": "Supprimer les aides de l'État à l'installation des éoliennes et des panneaux solaires en annulant le décret sur la PPE3 (12 milliards d'euros économisés).",
+          "citation": "Supprimer les aides de l'État à l'installation des éoliennes et des panneaux solaires en annulant le décret sur la PPE3 (10 milliards d'euros économisés).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -549,13 +602,13 @@
       "id": "nd21_millefeuille_agences",
       "categorie": "depense_publique",
       "libelle": "Millefeuille administratif et agences",
-      "parametre": "40 Md€ par an au bout de 5 ans, dont agences 20 Md€ au bout de 3 ans, échelon régional, intercommunalités et CESE 10 Md€, associations 10 Md€",
+      "parametre": "40 Md€ par an au bout de 5 ans : agences 20 Md€ au bout de 3 ans ; échelon régional, intercommunalités et CESE 10 Md€ au bout de 3 ans ; subventions aux associations « clientélistes et immigrationnistes » 10 Md€ au bout de 3 ans",
       "precision": "parametree",
       "sources": [
         {
           "citation": "il est possible d'économiser 40 milliards par an au terme de 5 ans, soit un peu plus de 2 %.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -570,7 +623,7 @@
         "source": {
           "citation": "il est possible d'économiser 40 milliards par an au terme de 5 ans, soit un peu plus de 2 %.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -585,7 +638,7 @@
         {
           "citation": "Renforcer le pôle financier de Bercy de lutte contre la fraude fiscale, principalement les carrousels sur la TVA, avec un objectif de 20 milliards d'euros.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -600,7 +653,7 @@
         "source": {
           "citation": "Renforcer le pôle financier de Bercy de lutte contre la fraude fiscale, principalement les carrousels sur la TVA, avec un objectif de 20 milliards d'euros.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -609,13 +662,13 @@
       "id": "nd23_multinationales_chiffre_affaires",
       "categorie": "entreprises",
       "libelle": "Imposition des multinationales au prorata du chiffre d'affaires réalisé en France",
-      "parametre": "+15 Md€ au bout de 5 ans",
+      "parametre": "+10 Md€ au bout de 5 ans (15 Md€ dans la version du 27/10/2026)",
       "precision": "parametree",
       "sources": [
         {
-          "citation": "Imposant le bénéfice consolidé des multinationales au prorata du chiffre d'affaires réalisé dans le pays (recettes supplémentaires de 15 milliards d'euros au bout de 5 ans).",
+          "citation": "Imposant le bénéfice consolidé des multinationales au prorata du chiffre d'affaires réalisé dans le pays (recettes supplémentaires de 10 milliards d'euros au bout de 5 ans).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -624,13 +677,13 @@
         "raison": "Le bénéfice consolidé mondial et la part du chiffre d'affaires réalisée en France ne sont pas dans les données des entreprises."
       },
       "declare": {
-        "montant_eur": 15000000000.0,
+        "montant_eur": 10000000000.0,
         "sens": "recette",
         "horizon": "au bout de 5 ans",
         "source": {
-          "citation": "Imposant le bénéfice consolidé des multinationales au prorata du chiffre d'affaires réalisé dans le pays (recettes supplémentaires de 15 milliards d'euros au bout de 5 ans).",
+          "citation": "Imposant le bénéfice consolidé des multinationales au prorata du chiffre d'affaires réalisé dans le pays (recettes supplémentaires de 10 milliards d'euros au bout de 5 ans).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -645,7 +698,7 @@
         {
           "citation": "Créant une taxe antidumping (recettes supplémentaires de 5 milliards d'euros au bout de 5 ans).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
@@ -660,7 +713,7 @@
         "source": {
           "citation": "Créant une taxe antidumping (recettes supplémentaires de 5 milliards d'euros au bout de 5 ans).",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -675,13 +728,13 @@
         {
           "citation": "Cet emprunt à 0 % pour nos investissements publics permettra d'économiser au terme des 5 ans 10 milliards d'euros par an des intérêts d'emprunt.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       ],
       "refus": {
         "porte": "chaine",
-        "raison": "Le taux de la dette est une hypothèse du calcul de la dette, pas une réforme du moteur."
+        "raison": "Le taux de la dette est une hypothèse du calcul de la dette, pas une réforme du moteur ; l'économie annoncée porte sur les intérêts, pas sur la dépense primaire."
       },
       "declare": {
         "montant_eur": 10000000000.0,
@@ -690,7 +743,7 @@
         "source": {
           "citation": "Cet emprunt à 0 % pour nos investissements publics permettra d'économiser au terme des 5 ans 10 milliards d'euros par an des intérêts d'emprunt.",
           "url": "https://www.debout-la-france.fr/projet/economie-travail/",
-          "date": "2026-10-27",
+          "date": "2026-11-10",
           "type": "programme"
         }
       }
@@ -788,6 +841,622 @@
       "refus": {
         "porte": "hors_champ",
         "raison": "La taxe n'est qu'un projet : la retirer ne change rien au droit de 2026, sur lequel le moteur chiffre."
+      }
+    },
+    {
+      "id": "nd31_smic_1600_net",
+      "categorie": "salaires_smic",
+      "libelle": "SMIC à 1 600 € net, compensé par une baisse des cotisations salariales",
+      "parametre": "SMIC net à 1 600 € (+98 €), hausse compensée par une baisse dégressive des cotisations salariales, 2,5 millions de salariés",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Augmenter le SMIC à 1600 euros net (98 euros supplémentaires) en compensant cette hausse par une baisse proportionnelle des cotisations salariales pour ne pas pénaliser les entreprises.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
+          "type": "programme"
+        },
+        {
+          "citation": "Je propose le SMIC à 1600 euros net en baissant les cotisations salariales !",
+          "url": "https://www.dupontaignan.fr/actualite/je-propose-le-smic-a-1600-euros-net-en-baissant-les-cotisations-salariales-%c2%b7-france-2/",
+          "date": "2026-11-06",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "bouton_hors_but",
+        "raison": "Le net du SMIC monte par une baisse des cotisations salariales « pour ne pas pénaliser les entreprises » : le brut ne bouge pas. Le bouton du SMIC relève le brut, payé par l'employeur, ce que la mesure exclut ; celui des cotisations salariales (cotisations_salariales_retraite_echelle) est uniforme sur tous les salaires, quand la baisse vise les 2,5 millions de salariés au SMIC, dégressive sans pente dite. Il manque un bouton de baisse des cotisations salariales autour du SMIC."
+      }
+    },
+    {
+      "id": "nd32_indexation_point_indice",
+      "categorie": "salaires_smic",
+      "libelle": "Réindexation des traitements des fonctionnaires sur l'inflation",
+      "parametre": "Indexation du point d'indice sur l'inflation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Réindexer les pensions de retraite et les traitements des fonctionnaires sur l'inflation",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "point_indice_revalorisation": 1.021,
+          "point_indice_contractuels": 0.0
+        },
+        "plages": [
+          {
+            "champ": "point_indice_revalorisation",
+            "min": 1.0,
+            "max": 1.0315
+          },
+          {
+            "champ": "point_indice_contractuels",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Le point d'indice indexé sur l'inflation : la première année, il monte de l'inflation de l'année. L'inflation de 2026 est celle des hypothèses du PLFSS 2027 (annexe B, IPC hors tabac : 2,1 %), les hypothèses de la population vieillie des cas (plf2027). Plage du point : du droit (1, le point gelé) à 2,1 % prolongé de la moitié de l'écart (1,0315). Le bouton multiplie le traitement indiciaire des fonctionnaires titulaires, leur brut sur 1,195 (le taux de prime du moteur) ; leurs primes ne bougent pas. La part du salaire des contractuels qui suit le point n'est pas publiée : 0 pour la valeur retenue, la plage allant jusqu'à 1 (tous payés sur une grille indiciaire). La mesure se mesure contre le droit de 2026, où le point est gelé depuis le 1er janvier 2024 : il n'a pas d'indexation légale. Le coût compte le salaire que paient l'État, les collectivités et les hôpitaux, moins les cotisations, la CSG et l'impôt qui en reviennent ; les collectivités sont comptées comme l'État, leur compensation éventuelle ne change pas le coût public."
+      }
+    },
+    {
+      "id": "nd33_cumul_emploi_retraite",
+      "categorie": "retraites",
+      "libelle": "Cumul emploi-retraite rétabli entre 62 et 67 ans",
+      "parametre": "Entre 62 et 67 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Rétablir la possibilité du cumul emploi-retraite entre 62 et 67 ans.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Les droits à la retraite et leur cumul avec un emploi : la population ne vieillit pas en âge et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "nd34_livret_a",
+      "categorie": "patrimoine_capital",
+      "libelle": "Taux du Livret A supérieur à l'inflation",
+      "parametre": "Aucun écart à l'inflation n'est donné",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Garantir les revenus de l'épargne populaire en instaurant un taux supérieur à l'inflation pour le Livret A.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Un taux « supérieur à l'inflation » sans dire de combien."
+      }
+    },
+    {
+      "id": "nd35_taxe_donnees_personnelles",
+      "categorie": "entreprises",
+      "libelle": "Taxe sur l'exploitation des données personnelles",
+      "parametre": "+5 Md€ par an au bout de 5 ans ; ni taux ni assiette",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Créant une taxe sur l'exploitation des données personnelles (recettes supplémentaires de 5 milliards d'euros par an au terme de 5 ans).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "enveloppe",
+        "raison": "Un montant de recettes sans taux ni assiette : le candidat dit combien, pas comment."
+      },
+      "declare": {
+        "montant_eur": 5000000000.0,
+        "sens": "recette",
+        "horizon": "par an au terme de 5 ans",
+        "source": {
+          "citation": "Créant une taxe sur l'exploitation des données personnelles (recettes supplémentaires de 5 milliards d'euros par an au terme de 5 ans).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd36_recherche_3_pct",
+      "categorie": "depense_publique",
+      "libelle": "Recherche à 3 % du PIB",
+      "parametre": "3 % du PIB dès 2029 (2,2 % aujourd'hui selon le candidat)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "L'objectif sera de passer la barre des 3 % dès 2029.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-11-10",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      }
+    },
+    {
+      "id": "nd37_allocations_familiales_indexation",
+      "categorie": "prestations",
+      "libelle": "Allocations familiales revalorisées et indexées sur l'inflation",
+      "parametre": "Indexation sur l'inflation ; revalorisation immédiate sans montant",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Revaloriser immédiatement les allocations familiales et les indexer sur l'inflation.",
+          "url": "https://www.debout-la-france.fr/projet/famille/",
+          "date": "2026-06-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "indexation",
+        "raison": "La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : le droit de 2026 l'indexe déjà, et elle ne coûte rien contre lui. Son effet n'existe que contre un gel, que le droit de la référence n'a pas. La revalorisation « immédiate » n'a pas de montant."
+      }
+    },
+    {
+      "id": "nd38_allocations_familiales_universelles",
+      "categorie": "prestations",
+      "libelle": "Universalité des allocations familiales",
+      "parametre": "Fin de la modulation selon le revenu",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Rétablir l'universalité des allocations familiales.",
+          "url": "https://www.debout-la-france.fr/projet/famille/",
+          "date": "2026-06-09",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "af_modulation_taux_tranche_2": 1.0,
+          "af_modulation_taux_tranche_3": 1.0
+        },
+        "plages": [
+          {
+            "champ": "af_modulation_taux_tranche_2",
+            "min": 0.5,
+            "max": 1.0
+          },
+          {
+            "champ": "af_modulation_taux_tranche_3",
+            "min": 0.25,
+            "max": 1.0
+          }
+        ],
+        "note": "La modulation des allocations familiales selon le revenu, depuis 2015, est levée : les deux tranches de revenus au-dessus des plafonds reçoivent le montant plein (1 au lieu de 0,5 et 0,25), majorations pour âge et forfait compris. Plages : du droit de 2026 à la mesure. Contre le droit de 2026."
+      }
+    },
+    {
+      "id": "nd39_majoration_pension_trois_enfants",
+      "categorie": "ir",
+      "libelle": "Exonération d'IR des majorations de pension pour trois enfants",
+      "parametre": "Exonération rétablie",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "En rétablissant l'exonération d'impôt sur le revenu sur les compléments de retraite versés aux personnes ayant élevé trois enfants ou plus.",
+          "url": "https://www.debout-la-france.fr/projet/famille/",
+          "date": "2026-06-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne distingue pas, dans les pensions déclarées, la majoration pour trois enfants."
+      }
+    },
+    {
+      "id": "nd40_plafond_quotient_familial",
+      "categorie": "ir",
+      "libelle": "Plafond du quotient familial à 3 000 € par demi-part",
+      "parametre": "3 000 € par demi-part",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "En revalorisant le quotient familial à 3 000 € par demi-part.",
+          "url": "https://www.debout-la-france.fr/projet/famille/",
+          "date": "2026-06-09",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "plafond_qf_demi_part": 3000.0
+        },
+        "plages": [
+          {
+            "champ": "plafond_qf_demi_part",
+            "min": 1807.0,
+            "max": 3596.5
+          }
+        ],
+        "note": "Le plafond général de l'avantage procuré par chaque demi-part passe de 1 807 € à 3 000 €. Les plafonds particuliers (le premier enfant d'un parent isolé, la personne seule, les veufs) ne sont pas dits et restent ceux de 2026. Plage : du droit de 2026 à 3 000 € prolongés de la moitié de l'écart. Contre le droit de 2026."
+      }
+    },
+    {
+      "id": "nd41_part_enfant_handicape",
+      "categorie": "ir",
+      "libelle": "Part fiscale entière pour un enfant handicapé dès le premier",
+      "parametre": "Une part au lieu d'une demi-part, dès le premier enfant handicapé",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "En octroyant une part fiscale complète aux familles ayant un enfant en situation de handicap dès le premier enfant.",
+          "url": "https://www.debout-la-france.fr/projet/famille/",
+          "date": "2026-06-09",
+          "type": "programme"
+        },
+        {
+          "citation": "Accorder une part fiscale complète à tout foyer ayant un enfant en situation de handicap, dès la première personne à charge.",
+          "url": "https://www.debout-la-france.fr/projet/handicap/",
+          "date": "2026-10-08",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne dit pas quel enfant à charge est handicapé."
+      }
+    },
+    {
+      "id": "nd42_abattement_successoral",
+      "categorie": "patrimoine_capital",
+      "libelle": "Abattement successoral en ligne directe réévalué et indexé",
+      "parametre": "Aucun nouveau montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "En réévaluant puis en indexant sur l'inflation l'abattement successoral en ligne directe, bloqué depuis de nombreuses années à 100 000 € pour chaque enfant.",
+          "url": "https://www.debout-la-france.fr/projet/famille/",
+          "date": "2026-06-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une réévaluation sans nouveau montant."
+      }
+    },
+    {
+      "id": "nd43_taxe_fonciere_familles_nombreuses",
+      "categorie": "autre",
+      "libelle": "Exonération temporaire de taxe foncière pour les familles nombreuses après l'achat",
+      "parametre": "Ni durée ni seuil de famille nombreuse",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Exonérer temporairement, au moyen d'une prise en charge par l'État, la taxe foncière pour les familles nombreuses durant les années qui suivent l'achat de leur résidence principale.",
+          "url": "https://www.debout-la-france.fr/projet/famille/",
+          "date": "2026-06-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une exonération « temporaire » sans durée."
+      }
+    },
+    {
+      "id": "nd44_ptz_plafond",
+      "categorie": "autre",
+      "libelle": "Prêt à taux zéro élargi",
+      "parametre": "Plafond relevé de 100 000 € ; part du PTZ dans l'emprunt relevée sans taux",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Élargir les conditions d'accès du Prêt à Taux Zéro (PTZ) : Augmenter le plafond de 100 000 euros.",
+          "url": "https://www.debout-la-france.fr/projet/logement/",
+          "date": "2026-09-30",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte ni les emprunts des ménages ni les achats de logement."
+      }
+    },
+    {
+      "id": "nd45_apl_accession",
+      "categorie": "prestations",
+      "libelle": "APL « accession » réintroduite",
+      "parametre": "Barème non donné",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Réintroduire l'Aide Personnalisée au Logement (APL) « Accession » en se fondant sur les critères de revenus afin de faciliter l'accès à la propriété pour tous et sur tout le territoire.",
+          "url": "https://www.debout-la-france.fr/projet/logement/",
+          "date": "2026-09-30",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une aide nommée sans barème."
+      }
+    },
+    {
+      "id": "nd46_donations_plafond",
+      "categorie": "patrimoine_capital",
+      "libelle": "Donations : +100 000 € d'abattement par enfant ou petit-enfant, rappel à 10 ans",
+      "parametre": "+100 000 € par enfant ou petit-enfant ; délai entre deux donations de 15 à 10 ans (la page Économie dit « doubler les plafonds », nd09)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Encourager la transmission des biens immobiliers en augmentant le plafond des donations exonérées de droits de 100 000 euros supplémentaires par enfant ou petit enfant et en réduisant de 15 à 10 ans le délai minimum entre deux donations.",
+          "url": "https://www.debout-la-france.fr/projet/logement/",
+          "date": "2026-09-30",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Les droits de donation demandent un module de transmission que le moteur n'a pas."
+      }
+    },
+    {
+      "id": "nd47_ifi_residence_principale",
+      "categorie": "patrimoine_capital",
+      "libelle": "Résidence principale exclue de l'IFI",
+      "parametre": "Exclusion totale (abattement de 100 %)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Exclure la résidence principale de l'Impôt sur la Fortune Immobilière (IFI).",
+          "url": "https://www.debout-la-france.fr/projet/logement/",
+          "date": "2026-09-30",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "patrimoine",
+        "raison": "La population ne porte pas le patrimoine immobilier des ménages, assiette de l'IFI."
+      }
+    },
+    {
+      "id": "nd48_plus_values_immobilieres",
+      "categorie": "patrimoine_capital",
+      "libelle": "Exonération des plus-values immobilières après 10 ans",
+      "parametre": "10 ans au lieu de 22 (IR) et 30 (prélèvements sociaux)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Ramener à 10 ans l'impôt sur les plus-values immobilières et et les prélèvements sociaux pour fluidifier le marché immobilier.",
+          "url": "https://www.debout-la-france.fr/projet/logement/",
+          "date": "2026-09-30",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte pas les plus-values immobilières ni la durée de détention."
+      }
+    },
+    {
+      "id": "nd49_apl_indexation",
+      "categorie": "prestations",
+      "libelle": "APL maintenues et indexées sur l'inflation",
+      "parametre": "Indexation sur l'inflation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Maintenir et indexer sur l'inflation le niveau des aides personnalisées au logement (APL), réduites par Emmanuel Macron.",
+          "url": "https://www.debout-la-france.fr/projet/logement/",
+          "date": "2026-09-30",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "indexation",
+        "raison": "La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : le droit de 2026 l'indexe déjà, et elle ne coûte rien contre lui. Son effet n'existe que contre un gel, que le droit de la référence n'a pas."
+      }
+    },
+    {
+      "id": "nd50_garantie_loyers_impayes",
+      "categorie": "prestations",
+      "libelle": "Garantie universelle des loyers impayés",
+      "parametre": "Financée par les locataires à 1 % du loyer chaque mois",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Mettre en place une garantie universelle des loyers impayés pour sécuriser les propriétaires et encourager la mise en location , financée par les locataires à hauteur de 1% du loyer chaque mois.",
+          "url": "https://www.debout-la-france.fr/projet/logement/",
+          "date": "2026-09-30",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Une assurance neuve, que le moteur ne porte pas."
+      }
+    },
+    {
+      "id": "nd51_avantage_pinel",
+      "categorie": "ir",
+      "libelle": "Avantage fiscal de type Pinel rétabli",
+      "parametre": "Ni taux ni plafond",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Rétablir un avantage fiscal type Pinel pour relancer le marché du neuf .",
+          "url": "https://www.debout-la-france.fr/projet/logement/",
+          "date": "2026-09-30",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Un avantage nommé sans taux ni plafond."
+      }
+    },
+    {
+      "id": "nd52_aah_300",
+      "categorie": "prestations",
+      "libelle": "AAH revalorisée d'environ 300 € pour le handicap lourd",
+      "parametre": "+300 € environ, pour l'aligner sur le seuil de pauvreté (environ 1 337 €)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Revaloriser l'Allocation aux Adultes Handicapés (AAH) d'environ 300 euros pour les personnes en situation de handicap lourd, afin de l'aligner sur le seuil de pauvreté fixé à environ 1 337 €.",
+          "url": "https://www.debout-la-france.fr/projet/handicap/",
+          "date": "2026-10-08",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne distingue pas le handicap lourd parmi les allocataires de l'AAH."
+      }
+    },
+    {
+      "id": "nd53_complement_ressources",
+      "categorie": "prestations",
+      "libelle": "Complément de ressources de l'AAH rétabli",
+      "parametre": "Rétablissement du complément supprimé en 2019 (environ 80 € selon le candidat)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Rétablir le complément de ressources, allocation qui était versée jusqu'en 2019 aux personnes en situation de handicap lourd.",
+          "url": "https://www.debout-la-france.fr/projet/handicap/",
+          "date": "2026-10-08",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Une prestation que le moteur ne porte pas, réservée à un handicap lourd que la population ne distingue pas."
+      }
+    },
+    {
+      "id": "nd54_exoneration_travailleur_handicape",
+      "categorie": "csg_cotisations",
+      "libelle": "Exonération de cotisations patronales pour l'embauche d'un travailleur handicapé",
+      "parametre": "Incapacité supérieure à 50 %, pendant les deux premières années",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Exonérer de cotisations patronales les entreprises recrutant un salarié reconnu travailleur handicapé avec un taux d'incapacité permanente supérieur à 50 %, pendant les deux premières années d'embauche.",
+          "url": "https://www.debout-la-france.fr/projet/handicap/",
+          "date": "2026-10-08",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne dit pas quel salarié est reconnu travailleur handicapé ni depuis quand il est embauché."
+      }
+    },
+    {
+      "id": "nd55_dons_communes_rurales",
+      "categorie": "ir",
+      "libelle": "Réduction d'impôt de 66 % pour les dons aux communes de moins de 1 000 habitants",
+      "parametre": "66 %, dans la limite de 7 500 €",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Créer un fond de sauvegarde du patrimoine rural qui ouvrirait une déduction fiscale de 66%, dans une limite de 7 500 €, pour les dons aux communes de moins de 1000 habitants.",
+          "url": "https://www.debout-la-france.fr/projet/equilibre-territoire-monde-rural/",
+          "date": "2026-02-16",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Ces dons n'existent pas encore : la population ne porte pas les dons qu'ils attireraient."
+      }
+    },
+    {
+      "id": "nd56_tascom",
+      "categorie": "entreprises",
+      "libelle": "Hausse de la taxe sur les surfaces commerciales",
+      "parametre": "Aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Augmenter la Taxe sur les grandes surfaces commerciales (TASCOM) et reverser le produit fiscal à un fond d'aide à l'installation de commerces de proximité en zone rurale.",
+          "url": "https://www.debout-la-france.fr/projet/equilibre-territoire-monde-rural/",
+          "date": "2026-02-16",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une hausse sans taux."
+      }
+    },
+    {
+      "id": "nd57_cotisations_agricoles",
+      "categorie": "csg_cotisations",
+      "libelle": "Suppression des cotisations sociales agricoles, remplacées par une taxe sur la grande distribution",
+      "parametre": "Suppression ; taxe de remplacement « très légère », sans taux",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Supprimer les cotisations sociales agricoles qui pèsent sur nos exploitations afin de rendre nos productions plus compétitives face à la concurrence européenne et remplacer leurs produits par une très légère taxe sur la grande distribution.",
+          "url": "https://www.debout-la-france.fr/projet/agriculture/",
+          "date": "2026-02-16",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "dimension_entreprises",
+        "raison": "Les cotisations du secteur agricole, et une taxe de remplacement sans taux, ne sont pas dans le modèle."
+      }
+    },
+    {
+      "id": "nd58_retraites_agricoles",
+      "categorie": "retraites",
+      "libelle": "Retraites agricoles alignées sur le régime général, au moins le minimum vieillesse",
+      "parametre": "Au moins le minimum vieillesse",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "en alignant les régimes de retraite agricole sur le régime général afin de garantir une retraite digne (égale au minimum vieillesse).",
+          "url": "https://www.debout-la-france.fr/projet/agriculture/",
+          "date": "2026-02-16",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Les droits à la retraite par régime : les pensions de la population sont des données."
+      }
+    },
+    {
+      "id": "nd59_droits_douane_compensateurs",
+      "categorie": "tva_consommation",
+      "libelle": "Droits de douane compensateurs",
+      "parametre": "Aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Établir des droits de douane compensateurs pour limiter les importations déloyales , à l'exemple de la politique américaine de taxation à 100% des véhicules électriques chinois.",
+          "url": "https://www.debout-la-france.fr/projet/produire-en-france/",
+          "date": "2026-10-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Des droits de douane sans taux ni périmètre."
       }
     }
   ]

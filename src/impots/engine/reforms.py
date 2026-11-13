@@ -37,6 +37,7 @@ from typing import TYPE_CHECKING, Any
 from openfisca_core import periods
 from openfisca_core.reforms import Reform
 
+from impots.engine.boutons_programmes import appliquer_formules, appliquer_indexations
 from impots.parameters import (
     differs,
     reactivate_bracket,
@@ -330,12 +331,15 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "plafond_global_niches": PATH_PLAFOND_GLOBAL_NICHES,
     # Capital income (D-249).
     "pfu_taux": PATH_PFU,
+    # La CVEC (but 21, étape 2) : un paramètre que l'arbre d'openfisca ne porte pas, et que
+    # `boutons_programmes.ajouter_cvec` ajoute au droit de référence. 0 la supprime.
+    "cvec_montant": ("cvec", "montant"),
 }
 
 #: Knobs that move the taxation of capital income. Read back by `verify_capital`, the
 #: guard 9 of PHASE11_SPEC §10, and claimed by the dividend channel C10.
 CAPITAL_KNOBS = frozenset({"pfu_taux", "csg_capital_taux_global",
-                           "prelevement_solidarite_capital"})
+                           "prelevement_solidarite_capital", "pfu_supprime"})
 
 #: Knobs that multiply every active rate of a set of scales by one factor (D-320). The
 #: employee's retirement contributions are five scales, each by tranche of the PSS; a
@@ -445,12 +449,20 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
     — one household, which has no consumption — they would be dead, so they are refused.
     """
     from impots import consommation
+    from impots.engine import prestations_neuves
 
     if consommation.touche(spec):
         raise ValueError(
             "la TVA et les accises se chiffrent sur la population, avec la consommation "
             "imputée : un ménage seul n'a pas de consommation, et ces boutons n'y "
             "bougeraient rien (D-323)")
+    from impots.population import salaires
+
+    if salaires.touche(spec):
+        raise ValueError(
+            "le SMIC et le point d'indice se chiffrent sur la population, dont la passe "
+            "réformée relève les salaires (`population.salaires`) : le salaire d'un ménage "
+            "seul est donné, et ces boutons n'y bougeraient rien (but 21, étape 4)")
     start = periods.instant(f"{year}-01-01")
     instant = f"{year}-01-01"
     reform_name = f"impots-user-reform:{name}"
@@ -483,9 +495,15 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                     coefficient = getattr(spec, knob, None)
                     if coefficient is not None:
                         _apply_revalorisation(parameters, knob, coefficient, year)
+                appliquer_indexations(parameters, spec, year)
                 return parameters
 
             self.modify_parameters(modifier_function=modify)
+            # The new benefits of the programmes (but 21, étape 3): variables, not
+            # parameters, added only when the reform poses their group.
+            prestations_neuves.appliquer(self, spec, year)
+            # Les boutons qui changent une formule, pas un paramètre (but 21, étape 2).
+            appliquer_formules(self, spec, year)
 
     return UserReform
 

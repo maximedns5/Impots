@@ -92,6 +92,19 @@ RENTIER = {"adults": [{"salaire_brut_annuel": 30_000, "annee_naissance": 1975}],
 DEUX_SMIC = {"adults": [{"salaire_brut_annuel": 45_000, "annee_naissance": 1990}]}
 TROIS_SMIC = {"adults": [{"salaire_brut_annuel": 60_000, "annee_naissance": 1990}]}
 
+#: Les boutons du but 21, étape 2. Un salarié de 26 ans en 2026 : sous 30 ans, son salaire
+#: sort de l'impôt jusqu'au plafond ; 40 000 EUR bruts font environ 1,8 SMIC, si bien qu'un
+#: plafond d'un SMIC n'en exonère qu'une part.
+JEUNE_SALARIE = {"adults": [{"salaire_brut_annuel": 40_000, "annee_naissance": 2000}]}
+#: Un foyer aisé qui déclare des dividendes : au barème, à sa tranche de 41 %, ils paient plus
+#: qu'au PFU, même abattus de 40 %. Un foyer modeste paierait moins.
+RENTIER_AISE = {"adults": [{"salaire_brut_annuel": 200_000, "annee_naissance": 1975}],
+                "capital": {"dividendes": 100_000.0}}
+#: Un salarié et deux enfants, imposable : la réduction des familles lui rend son impôt,
+#: jusqu'au montant.
+FAMILLE_IMPOSABLE = {"adults": [{"salaire_brut_annuel": 60_000, "annee_naissance": 1985}],
+                     "children": [{"annee_naissance": 2012}, {"annee_naissance": 2015}]}
+
 # --- IFI households ------------------------------------------------------------------
 # Every one carries INCOME, and that is not decoration: the plafonnement caps IFI plus
 # income tax at 75 % of income, so a wealthy foyer with no salary owes NO IFI and every
@@ -254,6 +267,24 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
     "qf_parts_enf3_et_sup": (COUPLE_3_ENFANTS, None, "ir", 1.5, -1),
     "plafond_qf_parent_isole": (PARENT_ISOLE_AISE, None, "ir", 2_000.0, +1),
     "cotisations_salariales_retraite_echelle": (MODESTE, None, "revenu_disponible", 0.5, +1),
+    # --- the programmes of 2027, but 21 étape 2 : les boutons de formule ----------------
+    # Ceux qui vont par deux se donnent ensemble : la valeur est alors la réforme entière.
+    "pfu_supprime": (RENTIER_AISE, None, "ir", True, +1),
+    "ir_exoneration_jeunes_age": (
+        JEUNE_SALARIE, None, "ir",
+        {"ir_exoneration_jeunes_age": 30, "ir_exoneration_jeunes_plafond_smic": 4.0}, -1),
+    "ir_exoneration_jeunes_plafond_smic": (
+        JEUNE_SALARIE, None, "ir",
+        {"ir_exoneration_jeunes_age": 30, "ir_exoneration_jeunes_plafond_smic": 1.0}, -1),
+    "reduction_impot_familles_montant": (
+        FAMILLE_IMPOSABLE, None, "ir",
+        {"reduction_impot_familles_montant": 3_000.0,
+         "reduction_impot_familles_enfants_min": 2}, -1),
+    "reduction_impot_familles_enfants_min": (
+        FAMILLE_IMPOSABLE, None, "ir",
+        {"reduction_impot_familles_montant": 500.0,
+         "reduction_impot_familles_enfants_min": 1}, -1),
+    "indexations": (LOGE_SEUL, None, "rsa", {"indexations": {"rsa": {2026: 1.10}}}, +1),
     "plafond_global_niches": (
         {**NICHE_FOYER, "children": [{"annee_naissance": 2019},
                                      {"annee_naissance": 2021},
@@ -272,6 +303,11 @@ YEARS: dict[str, int] = {
         "csg_pensions_imposable_taux_plein", "csg_pensions_imposable_taux_median",
         "qf_parts_enf1", "qf_parts_enf2", "qf_parts_enf3_et_sup", "plafond_qf_parent_isole",
         "cotisations_salariales_retraite_echelle"), 2026),
+    # Et ceux du but 21, étape 2.
+    **dict.fromkeys((
+        "pfu_supprime", "ir_exoneration_jeunes_age", "ir_exoneration_jeunes_plafond_smic",
+        "reduction_impot_familles_montant", "reduction_impot_familles_enfants_min",
+        "indexations", "cvec_montant"), 2026),
     "allegement_general_t_min": 2026,
     "allegement_general_t_delta_moins_de_50": 2026,
     "allegement_general_t_delta_50_et_plus": 2026,
@@ -318,6 +354,133 @@ EXEMPT: dict[str, str] = {
         "quinquies, 1). `HouseholdInput` ne porte aucune IJ. Vérifié sur les mêmes 40 "
         "ménages : la porter à 0,5 fait entrer dans les salaires la moitié de leur part ALD, "
         "nette de CSG, et rien sans elles (test_ij_moteur.py). La correction 22 la lit (D-312)."
+    ),
+    # Les boutons des données de ménages (but 21, étape 4, D-383).
+    "pensions_alimentaires_exonerees": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les pensions "
+        "alimentaires perçues, 1AO à 1DO) : la population l'impute (but 21, étape 4, "
+        "D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_alimony_leaves_the_taxable_income_up_to_the_ceiling_per_child), et "
+        "sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "pensions_alimentaires_plafond_par_enfant": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les pensions "
+        "alimentaires perçues, 1AO à 1DO) : la population l'impute (but 21, étape 4, "
+        "D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_alimony_leaves_the_taxable_income_up_to_the_ceiling_per_child), et "
+        "sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "interets_emprunt_taux": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les intérêts d'emprunt "
+        "de la résidence principale) : la population l'impute (but 21, étape 4, D-383), "
+        "et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_interest_reduction_reads_the_minors_and_stops_at_its_ceiling), et sur "
+        "la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "interets_emprunt_plafond": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les intérêts d'emprunt "
+        "de la résidence principale) : la population l'impute (but 21, étape 4, D-383), "
+        "et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_interest_reduction_reads_the_minors_and_stops_at_its_ceiling), et sur "
+        "la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "interets_emprunt_plafond_par_enfant": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les intérêts d'emprunt "
+        "de la résidence principale) : la population l'impute (but 21, étape 4, D-383), "
+        "et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_interest_reduction_reads_the_minors_and_stops_at_its_ceiling), et sur "
+        "la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "credit_trajets_taux": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les frais de trajet "
+        "domicile-travail) : la population l'impute (but 21, étape 4, D-383), et aucun "
+        "ménage exprimable ne fait bouger ce bouton. Vérifié sur une simulation qui "
+        "écrit la donnée (test_boutons_menages.py, "
+        "test_the_commuting_credit_is_its_rate_above_the_threshold_within_the_ceiling), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "credit_trajets_franchise": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les frais de trajet "
+        "domicile-travail) : la population l'impute (but 21, étape 4, D-383), et aucun "
+        "ménage exprimable ne fait bouger ce bouton. Vérifié sur une simulation qui "
+        "écrit la donnée (test_boutons_menages.py, "
+        "test_the_commuting_credit_is_its_rate_above_the_threshold_within_the_ceiling), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "credit_trajets_plafond": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les frais de trajet "
+        "domicile-travail) : la population l'impute (but 21, étape 4, D-383), et aucun "
+        "ménage exprimable ne fait bouger ce bouton. Vérifié sur une simulation qui "
+        "écrit la donnée (test_boutons_menages.py, "
+        "test_the_commuting_credit_is_its_rate_above_the_threshold_within_the_ceiling), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_exoneration_salariale": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_salaried_exemption_takes_only_what_the_law_leaves), et sur la "
+        "population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_exoneration_csg_crds": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_overtime_exemption_takes_its_share_of_the_hours_beyond_the_threshold), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_exoneration_patronale": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_overtime_exemption_takes_its_share_of_the_hours_beyond_the_threshold), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_franchise_heures": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_overtime_exemption_takes_its_share_of_the_hours_beyond_the_threshold), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_plafond_heures": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_overtime_exemption_takes_its_share_of_the_hours_beyond_the_threshold), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "cvec_montant": (
+        "La CVEC (but 21, étape 2), qu'openfisca ne porte pas et que le moteur ajoute au droit. "
+        "Elle lit deux entrées d'un individu, `etudiant_superieur` et `boursier_superieur`, "
+        "que `HouseholdInput` ne porte pas : aucun ménage exprimable ne la fait bouger. "
+        "Vérifié sur une simulation qui écrit ces entrées (test_boutons_programmes.py) : un "
+        "étudiant non boursier paie 105 EUR en 2026, que la porter à 0 lui rend au revenu "
+        "disponible, et un boursier ne paie rien. La population ne les porte pas non plus, "
+        "et une passe qui règle le bouton est refusée."
     ),
     "csg_ij_taux": (
         "Le taux de CSG des IJ (CSS art. L. 136-8). `HouseholdInput` ne porte aucune IJ. "

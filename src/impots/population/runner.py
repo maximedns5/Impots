@@ -84,8 +84,9 @@ def households_par_lots(population: pl.DataFrame | Path, lots: int, **kwargs: An
     # The niches are drawn with the probability « published claimants / weighted foyers
     # of the bracket » (`niches.impute`): a lot that weighs a quarter of France would draw
     # four times too many (but 19, étape 1). Each lot then weighs all France while it runs,
-    # and its households take their own weight back after.
-    rescale = bool(kwargs.get("impute_niches"))
+    # and its households take their own weight back after. The households' data of
+    # `population.menages` the same: each total is calibrated on the lot's weights.
+    rescale = bool(kwargs.get("impute_niches") or kwargs.get("impute_menages"))
     total = _household_weight(frame) if rescale else 1.0
     parts = []
     for k in range(lots):
@@ -304,7 +305,15 @@ def _extract(
     # negative, reported as a positive receipt like the salary's CSG rows.
     individu_index = index_for["individu"]
     for key, names in (("csg_retraite", ("csg_deductible_retraite", "csg_imposable_retraite")),
-                       ("csg_chomage", ("csg_deductible_chomage", "csg_imposable_chomage"))):
+                       # The CSG and the CRDS: a raised SMIC exempts more of a benefit from
+                       # both, and the CRDS alone held no instrument (D-395).
+                       ("csg_chomage", ("csg_deductible_chomage", "csg_imposable_chomage",
+                                        "crds_chomage")),
+                       # What the state takes back on a pension and the household feels:
+                       # the pensions are declared net of the deductible CSG (D-176), so
+                       # only these move disposable income (D-387).
+                       ("prelevements_pensions", ("csg_imposable_retraite", "crds_retraite",
+                                                  "casa"))):
         array = sum(built.calculate(name, add=True) for name in names)
         results[key] = -_to_households(array.astype(np.float64), individu_index,
                                        n_households)
@@ -373,7 +382,14 @@ def _extract(
                 (monthly > 0.5).astype(np.float64), famille_index, n_households
             )
 
+    variables = built.simulation.tax_benefit_system.variables
     for row in outputs.rows_for(tier):
+        # A variable of the project's that this system does not carry reads zero, as in
+        # `outputs.extract`: the new benefits of a programme exist only in the reform that
+        # poses them (but 21, étape 3).
+        if row.projet and row.variable not in variables:
+            results[row.key] = np.zeros(n_households)
+            continue
         array = sum(built.calculate(name, add=row.period == "month")
                     for name in (row.variable, *row.extra))
         if row.entity == "menage":
@@ -475,7 +491,13 @@ def _serve_in_expectation(results: dict[str, np.ndarray], built: Any,
 
     famille = recours.colonnes(built)
     unclaimed = np.zeros(n_households)
-    for key in SERVED:
+    # The new benefits a reform poses are served too, each with the law of the benefit
+    # closest to it (`recours.LOI_PROCHE`, but 21, étape 3). Where the system does not
+    # carry one, the law above all, it is zero, and so is its entitlement.
+    for key in recours.LOI_PROCHE:
+        if f"{key}_droit" not in famille:
+            results[f"{key}_droit"] = results[key]
+    for key in (*SERVED, *(k for k in recours.LOI_PROCHE if f"{k}_droit" in famille)):
         droit = _to_households(famille[f"{key}_droit"], famille_index, n_households)
         paid = _to_households(famille[f"{key}_servi"], famille_index, n_households)
         # The registry's own read and the month-by-month one must be the same euros:
@@ -560,6 +582,49 @@ def _impute_capital(built: Any, frame: pl.DataFrame, year: int,
     return {case: base * index for case, base in bases.items()}
 
 
+def _salaires_payes(built: Any, reformed_built: Any, frame: pl.DataFrame
+                    ) -> dict[str, np.ndarray]:
+    """Per ménage, base and reform, the wage bills a reform of the salaries moves
+    (`aggregate.SALAIRES_PAYES`): the gross pay of the private earners, which their
+    employers pay and the state does not, and the gross and labour cost of the public
+    ones, which the state pays. Each with its `_hors_champ` column, as the other wage-borne
+    amounts (étape « extrapolation »)."""
+    from impots.population.aggregate import SALAIRES_PAYES
+
+    public = (frame["secteur_public"].fill_null(False).to_numpy().astype(bool)
+              if "secteur_public" in frame.columns else np.zeros(frame.height, dtype=bool))
+    gerant = (frame["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"])
+              .fill_null(False).to_numpy() if "regime_non_salarie" in frame.columns
+              else np.zeros(frame.height, dtype=bool))
+    hors_champ = np.where(gerant, 0.0, margins.EXTRAPOLATION_SALARIES.value - 1.0)
+    n_households = built.household_ids.size
+    index = np.searchsorted(built.household_ids,
+                            frame["household_id"].to_numpy().astype(str))
+    out: dict[str, np.ndarray] = {}
+    for suffix, sim in (("", built), ("_reform", reformed_built)):
+        # `salaire_brut` as the registry reads it (`engine.outputs`): the base, the
+        # traitement and the public primes.
+        brut = sum(np.asarray(sim.calculate(name, add=True), dtype=np.float64)
+                   for name in ("salaire_de_base", "remuneration_principale",
+                                "primes_fonction_publique"))
+        super_brut = np.asarray(sim.calculate("salaire_super_brut", add=True),
+                                dtype=np.float64)
+        # And the CSG compensation allowance, paid on the traitement, which the salaire
+        # imposable holds and neither the brut nor the super-brut does.
+        hors_brut = sum(np.asarray(sim.calculate(name, add=True), dtype=np.float64)
+                        for name in (*REMUNERATION_HORS_BRUT,
+                                     "indemnite_compensatrice_csg"))
+        par_cle = {SALAIRES_PAYES[0]: np.where(public, 0.0, brut),
+                   SALAIRES_PAYES[1]: np.where(public, brut, 0.0),
+                   SALAIRES_PAYES[2]: np.where(public, super_brut, 0.0),
+                   SALAIRES_PAYES[3]: np.where(public, hors_brut, 0.0)}
+        for key, per_person in par_cle.items():
+            out[f"{key}{suffix}"] = _to_households(per_person, index, n_households)
+            out[f"{key}{HORS_CHAMP}{suffix}"] = _to_households(
+                per_person * hors_champ, index, n_households)
+    return out
+
+
 def _rake_top_tail(built: Any, frame: pl.DataFrame, year: int) -> tuple[pl.DataFrame, Any]:
     """Rake the income distribution's upper tail onto DGFiP n° 41's fractiles (L1, D-121).
 
@@ -605,6 +670,8 @@ def run(
     impute_consommation: bool = False,
     prix_au_dela: dict[int, float] | None = None,
     annee_consommation: int | None = None,
+    impute_menages: bool = False,
+    menages_facteurs: dict[str, float] | None = None,
 ) -> RunResult:
     """Run the population through current law and, optionally, one reform.
 
@@ -632,6 +699,20 @@ def run(
     employees, from the CCSS of May 2026 (D-305). A calibration again —
     `margins.SICK_PAY_BY_BRANCH` — and a frame transformation, so it costs no pass. It is
     refused for another year, by `population.ij`, before any pass.
+
+    `impute_menages` hands out the households' data the programmes' measures need (but 21,
+    étape 4): overtime, commuting costs and frais réels, alimony received and paid,
+    childcare under six, the interest on a main-residence loan, each calibrated on the
+    published total it names (`population.menages`, spent). A frame transformation, no
+    pass; its childcare replaces the niches' case 7GA when both run. For another year than
+    2024, `menages_facteurs` says what aged the frame (wage and price factors from 2024,
+    `menages.facteurs_de`): the imputation runs on the frame brought back to 2024 and its
+    amounts age with the index of `menages.INDICES`. Without them, refused.
+
+    A reform of the SMIC or of the point d'indice (`population.salaires`) changes the
+    salaries of the priced year: the reformed pass is built on the population whose
+    salaries it raises, on a tree that carries the new SMIC, and the households frame
+    carries the wage bills the cost needs (`SALAIRES_PAYES`).
     """
     from impots import consommation as conso_module
 
@@ -639,6 +720,20 @@ def run(
         raise WiringError(
             "la réforme règle la TVA ou une accise, que seule la consommation imputée "
             "porte : demander l'imputation « consommation » (D-323)")
+    from impots.population.imputations import menages_knobs
+
+    lus = sorted(set(reform.model_dump(exclude_none=True)) & menages_knobs()
+                 if reform is not None else ())
+    if lus and not impute_menages:
+        raise WiringError(
+            f"{', '.join(lus)} sur la population sans les données de ménages : ni les "
+            f"heures supplémentaires, ni les frais de trajet, ni les pensions alimentaires, "
+            f"ni les intérêts d'emprunt, ni les étudiants du supérieur n'y sont, et le coût "
+            f"serait un zéro qui se lirait comme un chiffrage. Demander l'imputation "
+            f"« menages » (but 21, étape 4).")
+    if menages_facteurs is not None and not impute_menages:
+        raise ValueError("facteurs des données de ménages sans leur imputation : ils "
+                         "vieillissent les montants imputés, et ne se donnent qu'avec elle")
     conso_reform = reform
     if reform is not None and conso_module.touche(reform):
         reform = conso_module.sans_consommation(reform)
@@ -670,9 +765,25 @@ def run(
         from impots.population import ij as ij_module
 
         frame = ij_module.impute(frame, year)
+    menages_stats = None
+    if impute_menages:
+        from impots.population import menages as menages_module
+
+        started = time.perf_counter()
+        # A `MenagesError` is a `ValueError`: each path refuses it as it refuses the others.
+        frame, menages_stats = menages_module.impute(frame, year, facteurs=menages_facteurs)
+        menages_timing = round(time.perf_counter() - started, 2)
+    from impots.population import salaires as salaires_module
+
+    salary_reform = salaires_module.touche(reform)
+    reform_frame, salary_stats = frame, None
+    if salary_reform:
+        reform_frame, salary_stats = salaires_module.appliquer(frame, reform, year)
 
     guards: dict[str, Any] = {}
     timings: dict[str, float] = {}
+    if menages_stats is not None:
+        timings["menages_s"] = menages_timing
 
     started = time.perf_counter()
     built = build_simulation(frame, baseline(), year)
@@ -702,6 +813,11 @@ def run(
     if impute_niches:
         started = time.perf_counter()
         niche_bases = _impute_niches(built, frame, year)
+        if impute_menages:
+            # The childcare `population.menages` imputes, child by child, replaces the
+            # niches' 7GA, drawn by decile without looking at the children's ages.
+            niche_bases = {case: base for case, base in niche_bases.items()
+                           if case not in menages_module.REMPLACE_NICHES}
         built = build_simulation(frame, baseline(), year, niche_bases,
                                  capital_bases=capital_bases)
         timings["impute_s"] = round(time.perf_counter() - started, 2)
@@ -719,8 +835,24 @@ def run(
     columns: dict[str, np.ndarray] = dict(baseline_rows)
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
+        # Les pensions sont des données : leur indexation multiplie la pension de la passe
+        # de la réforme, et d'elle seule (but 21, étape 2).
+        from impots.engine.boutons_programmes import facteur_pensions
+
+        pension_factor = facteur_pensions(reform, year)
+        if pension_factor != 1.0:
+            reform_frame = reform_frame.with_columns(
+                pl.col("pension_annuelle") * pension_factor)
+        if not salary_reform:
+            system = reformed_for(reform, year)
+        else:
+            tree = salaires_module.sans_salaires(reform)
+            system = baseline() if tree.is_empty() else reformed_for(tree, year)
+            if reform.smic_revalorisation is not None:
+                system = salaires_module.reforme_smic(system, reform.smic_revalorisation,
+                                                      year)
         reformed_built = build_simulation(
-            frame, reformed_for(reform, year), year, niche_bases,
+            reform_frame, system, year, niche_bases,
             capital_bases=capital_bases)
         reform_guards: dict[str, Any] = {}
         reform_rows = _extract(reformed_built, frame, tier, reform_guards)
@@ -742,6 +874,8 @@ def run(
         persons = persons.with_columns(pl.Series(
             "salaire_super_brut_reform",
             reformed_built.calculate("salaire_super_brut", add=True).astype(np.float64)))
+        if salary_reform:
+            columns.update(_salaires_payes(built, reformed_built, frame))
     for key in [k for k in columns if k.startswith(CSG_DEDUCTIBLE_NS)]:
         del columns[key]
     baseline_rows.pop(CSG_DEDUCTIBLE_NS, None)
@@ -805,6 +939,10 @@ def run(
     n_households, n_persons = built.household_ids.size, built.n_persons
     built = reformed_built = None
     gc.collect()
+    if salary_stats is not None:
+        guards["salaires"] = salary_stats
+    if menages_stats is not None:
+        guards["menages"] = menages_stats
     return RunResult(
         households=households,
         year=year,

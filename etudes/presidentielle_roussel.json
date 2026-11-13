@@ -3,12 +3,13 @@
   "titre": "Fabien Roussel : la part chiffrée du programme, en trois réponses",
   "texte": "programme",
   "programme": "roussel",
-  "preenregistrement": "D-350",
+  "preenregistrement": "D-394",
   "cadre": "central",
   "millesime_entreprises": "2023",
   "scenarios": [
     {
       "scenario": "pres2027_roussel_programme"
     }
-  ]
+  ],
+  "dette_annoncee": true
 }

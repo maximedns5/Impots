@@ -1,0 +1,22 @@
+{
+  "name": "pres2027_dupont_aignan_programme",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Nicolas Dupont-Aignan (Debout la France (DLF)), programme relevé le 2026-11-12 — la part chiffrée : nd08_heures_supplementaires, nd32_indexation_point_indice, nd38_allocations_familiales_universelles, nd40_plafond_quotient_familial",
+  "note": "4 mesures chiffrées sur 51 paramétrées et 59 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "tags": [
+    "presidentielle_2027",
+    "dupont_aignan",
+    "etude"
+  ],
+  "reform": {
+    "plafond_qf_demi_part": 3000.0,
+    "af_modulation_taux_tranche_2": 1.0,
+    "af_modulation_taux_tranche_3": 1.0,
+    "heures_sup_exoneration_salariale": 1.0,
+    "heures_sup_exoneration_csg_crds": 1.0,
+    "heures_sup_plafond_heures": 300.0,
+    "point_indice_revalorisation": 1.021,
+    "point_indice_contractuels": 0.0
+  }
+}

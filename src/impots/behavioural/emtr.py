@@ -202,6 +202,23 @@ def _computed_on(cached: pl.DataFrame, frame_print: str) -> bool:
     return FRAME in cached.columns and bool((cached[FRAME] == frame_print).all())
 
 
+def arbre(reform: Any) -> Any:
+    """The reform the tree of marginal rates reads: without the knobs the runner prices on
+    the population and no tree carries. A consumption tax is priced at constant volumes on
+    the imputed consumption (D-323, D-328); a SMIC or a point d'indice raises the salaries
+    of the reform pass (`population.salaires`), which the tree of one household does not, so
+    the rates are read at the frame's salaries (but 21, D-394). Built with them, the tree
+    refused the reform."""
+    from impots import consommation
+    from impots.population import salaires
+
+    if consommation.touche(reform):
+        reform = consommation.sans_consommation(reform)
+    if salaires.touche(reform):
+        reform = salaires.sans_salaires(reform)
+    return reform
+
+
 def compute(
     population: pl.DataFrame | Path,
     year: int = 2024,
@@ -220,13 +237,7 @@ def compute(
     None when it is the vintage as built. `seed` draws the sample: another seed is another
     sample of the same size (D-284).
     """
-    # The tree's marginal rates do not see a consumption tax, priced at constant volumes on
-    # the imputed consumption: the reform the tree reads is the spec without those knobs,
-    # as the runner hands it (D-323, D-328). Built with them, the tree refused the reform.
-    from impots import consommation
-
-    if consommation.touche(reform):
-        reform = consommation.sans_consommation(reform)
+    reform = arbre(reform)
     frame = _priced(population, sample, seed)
     frame_print = fingerprint(frame)
 

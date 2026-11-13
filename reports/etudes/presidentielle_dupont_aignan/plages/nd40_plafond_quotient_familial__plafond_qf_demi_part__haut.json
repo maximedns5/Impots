@@ -1,0 +1,68 @@
+{
+  "programme": "dupont_aignan",
+  "mesure": "nd40_plafond_quotient_familial",
+  "champ": "plafond_qf_demi_part",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "plafond_qf_demi_part": 3596.5
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 3137925332.56958,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.0010183487052144446,
+      0.0020254565051758266,
+      0.0030214474811049996,
+      0.0040064443445697595,
+      0.004980568452601863,
+      0.005943939822650179,
+      0.006896677147367303,
+      0.007838897809232748,
+      0.008770717895015157,
+      0.00969225221007508
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-12",
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
+}

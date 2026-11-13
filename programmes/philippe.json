@@ -9,7 +9,7 @@
     "date": "2024-09-04",
     "type": "entretien"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -23,6 +23,12 @@
           "citation": "« retour du déficit public à 2% à l'issue du prochain quinquennat en 2032, contre 5% actuellement » (texte de l'article)",
           "url": "https://www.lagazettefrance.fr/article/edouard-philippe-refute-promettre-aux-francais-du-sang-et-des-larmes",
           "date": "2026-06-30",
+          "type": "entretien"
+        },
+        {
+          "citation": "ramener « significativement » le déficit « en dessous de la barrière des 3%, c'est-à-dire 2% » à la fin de son quinquennat (texte de l'article)",
+          "url": "https://www.lagazettefrance.fr/article/edouard-philippe-veut-aider-les-familles-des-le-premier-enfant-et-via-une-reduction-d-impot",
+          "date": "2026-10-08",
           "type": "entretien"
         }
       ],
@@ -68,11 +74,28 @@
           "url": "https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe",
           "date": "2025-11-06",
           "type": "reseau_social"
+        },
+        {
+          "citation": "« rappelant sa proposition de supprimer 50 milliards d'impôts de production contre une baisse équivalentes d'aides aux entreprises » (texte de l'article)",
+          "url": "https://lcp.fr/actualites/chomage-edouard-philippe-veut-abaisser-la-duree-d-indemnisation-a-douze-mois-maximum",
+          "date": "2026-08-27",
+          "type": "entretien"
         }
       ],
       "refus": {
         "porte": "enveloppe",
-        "raison": "Une enveloppe de 50 Md€ par an de baisse des impôts de production, sans dire quels impôts baissent ni de combien chacun."
+        "raison": "Une enveloppe de 50 Md€ par an sans dire de combien baisse chaque impôt. Le bouton de l'enveloppe (impots_production_baisse) ne la répartit qu'entre la CVAE et la C3S, les seuls impôts de production du moteur, qui rapportent moins de 50 Md€ en 2026 : il la refuse. La CFE, citée, et la taxe foncière des entreprises n'y sont pas."
+      },
+      "declare": {
+        "montant_eur": 50000000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "par an (« 250 milliards pour un quinquennat ») ; gagée par une baisse de 50 Md€ par an des aides aux entreprises (p19)",
+        "source": {
+          "citation": "« un deal à 50 milliards d'euros de baisse d'impôts d'un côté et de baisse de dépenses de l'autre », soit « 250 milliards pour un quinquennat »",
+          "url": "https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe",
+          "date": "2025-11-06",
+          "type": "reseau_social"
+        }
       }
     },
     {
@@ -199,6 +222,12 @@
           "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-pour-son-premier-meeting-edouard-philippe-joue-la-carte-du-bon-pere-de-famille-qui-veut-preparer-lavenir-de-nos-enfants",
           "date": "2026-07-05",
           "type": "discours"
+        },
+        {
+          "citation": "« J'assume de dire aux retraités qu'il faudra contribuer davantage au financement de notre système social. »",
+          "url": "https://horizonsleparti.fr/discours-dedouard-philippe-lors-de-son-grand-meeting-a-ladidas-arena-5-juillet-2026/",
+          "date": "2026-07-05",
+          "type": "discours"
         }
       ],
       "refus": {
@@ -218,11 +247,34 @@
           "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
           "date": "2026-10-09",
           "type": "entretien"
+        },
+        {
+          "citation": "« travailler deux heures de plus par semaine, c'est 1.000 euros de plus par an »",
+          "url": "https://www.lagazettefrance.fr/article/edouard-philippe-veut-aider-les-familles-des-le-premier-enfant-et-via-une-reduction-d-impot",
+          "date": "2026-10-08",
+          "type": "entretien"
         }
       ],
-      "refus": {
-        "porte": "donnee_menages",
-        "raison": "Les heures travaillées ne sont pas dans la population : le moteur ne sait pas qui ferait deux heures de plus, ni comment les exonérer."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "heures_sup_exoneration_salariale": 1.0,
+          "heures_sup_exoneration_csg_crds": 0.0,
+          "heures_sup_plafond_heures": 94.0
+        },
+        "plages": [
+          {
+            "champ": "heures_sup_plafond_heures",
+            "min": 88.0,
+            "max": 104.0
+          },
+          {
+            "champ": "heures_sup_exoneration_csg_crds",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "« Exonérer de cotisations sociales les salariés qui accepteraient de travailler deux heures supplémentaires par semaine » : sur les heures supplémentaires imputées (D-383), les deux premières de chaque semaine travaillée, 94 heures par an sur 47 semaines (plage de 44 à 52 semaines). Les cotisations salariales que la loi laisse au-delà de sa réduction ; la CSG et la CRDS restent, la plage va jusqu'à les exonérer. Les patronales ne bougent pas : le texte parle des salariés. Seules les heures déjà faites : les deux heures neuves que la mesure veut faire faire, et les 1 000 € par an qu'elles rapporteraient, ne sont pas comptées. Contre le droit de 2026."
       }
     },
     {
@@ -237,18 +289,43 @@
           "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
           "date": "2026-10-08",
           "type": "entretien"
+        },
+        {
+          "citation": "« une allocation familiale unique qui permet de verser 350 € dès le premier enfant »",
+          "url": "https://www.lagazettefrance.fr/article/edouard-philippe-veut-aider-les-familles-des-le-premier-enfant-et-via-une-reduction-d-impot",
+          "date": "2026-10-08",
+          "type": "entretien"
         }
       ],
-      "refus": {
-        "porte": "prestations_hors_modele",
-        "raison": "Une allocation unique dès le premier enfant, dégressive selon l'impôt, est une prestation neuve : les allocations familiales du moteur commencent au deuxième enfant et se modulent par plafonds de ressources."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "allocation_enfant": {
+            "montant_par_enfant": 350.0,
+            "age_maximum": 20,
+            "remplace_af": true,
+            "remplace_cf": true,
+            "remplace_ars": false,
+            "par_famille": false,
+            "degressivite_part_ir": 0.5,
+            "plancher_par_enfant": 0.0
+          }
+        },
+        "plages": [
+          {
+            "champ": "allocation_enfant.degressivite_part_ir",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Une prestation neuve (D-382) : 350 € par mois pour chaque enfant à charge dès le premier, à la place des allocations familiales (avec leur majoration pour âge et leur forfait) et du complément familial, que « unique » fond ; l'allocation de rentrée scolaire reste. Hypothèses : par enfant, comme le dit « dès le premier enfant » (l'autre lecture, 350 € par famille, coûterait bien moins et n'est pas la valeur retenue) ; jusqu'à la veille de 20 ans, l'âge des allocations familiales. « Dégressif en fonction de l'impôt sur le revenu » n'a pas de barème : l'allocation annuelle de la famille baisse de la moitié de l'impôt de son foyer (un douzième par mois), sans plancher ; la plage va de 0 (pas de dégressivité) à 1 (un euro d'allocation par euro d'impôt). Ni imposable ni dans les ressources des minima et des aides au logement (D-382). Contre le droit de 2026."
       }
     },
     {
       "id": "p12_reduction_impot_familles",
       "categorie": "ir",
-      "libelle": "Réduction d'impôt pour les familles actives avec enfants (selon le JDN : au deuxième, puis au troisième enfant)",
-      "parametre": "≈ 3 000 €",
+      "libelle": "Réduction d'impôt pour les familles qui travaillent, pendant les trois années qui suivent chaque naissance",
+      "parametre": "≈ 3 000 € par an pendant 3 ans après la naissance ; les foyers qui paient moins de 3 000 € d'IR n'en paient plus",
       "precision": "parametree",
       "sources": [
         {
@@ -256,11 +333,17 @@
           "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
           "date": "2026-10-08",
           "type": "entretien"
+        },
+        {
+          "citation": "« une réduction d'impôt d'environ 3.000 euros, ce qui permet aux classes moyennes qui travaillent de ne pas payer d'impôt sur le revenu pendant les trois années qui suivront la naissance d'un enfant »",
+          "url": "https://www.lagazettefrance.fr/article/edouard-philippe-veut-aider-les-familles-des-le-premier-enfant-et-via-une-reduction-d-impot",
+          "date": "2026-10-08",
+          "type": "entretien"
         }
       ],
       "refus": {
         "porte": "bouton_hors_but",
-        "raison": "Une réduction d'impôt neuve pour les familles actives avec enfants, que le moteur n'a pas."
+        "raison": "Le bouton de la réduction d'impôt des familles (reduction_impot_familles_montant, _enfants_min) donne le montant à tout foyer qui travaille et a des enfants, chaque année ; la mesure ne vaut que pendant les trois années qui suivent une naissance. Il manque au bouton une condition sur l'âge du plus jeune enfant : le chiffrer sans elle chiffrerait une autre mesure, bien plus large."
       }
     },
     {
@@ -351,6 +434,12 @@
           "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-pour-son-premier-meeting-edouard-philippe-joue-la-carte-du-bon-pere-de-famille-qui-veut-preparer-lavenir-de-nos-enfants",
           "date": "2026-07-05",
           "type": "discours"
+        },
+        {
+          "citation": "« il faut baisser les dépenses sociales, supprimer les niches fiscales, avant de songer à augmenter les impôts de ceux qui travaillent. »",
+          "url": "https://horizonsleparti.fr/discours-dedouard-philippe-lors-de-son-grand-meeting-a-ladidas-arena-5-juillet-2026/",
+          "date": "2026-07-05",
+          "type": "discours"
         }
       ],
       "refus": {
@@ -386,6 +475,118 @@
           "date": "2026-09-17",
           "type": "discours"
         }
+      }
+    },
+    {
+      "id": "p19_baisse_aides_entreprises",
+      "categorie": "depense_publique",
+      "libelle": "« Deal » : baisse des aides aux entreprises, contrepartie de la baisse des impôts de production (p3)",
+      "parametre": "50 Md€ par an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un deal à 50 milliards d'euros de baisse d'impôts d'un côté et de baisse de dépenses de l'autre », soit « 250 milliards pour un quinquennat »",
+          "url": "https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe",
+          "date": "2025-11-06",
+          "type": "reseau_social"
+        },
+        {
+          "citation": "« rappelant sa proposition de supprimer 50 milliards d'impôts de production contre une baisse équivalentes d'aides aux entreprises » (texte de l'article)",
+          "url": "https://lcp.fr/actualites/chomage-edouard-philippe-veut-abaisser-la-duree-d-indemnisation-a-douze-mois-maximum",
+          "date": "2026-08-27",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Des aides aux entreprises baissées sans dispositif désigné : la dépense n'est qu'un scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 50000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an ; contrepartie de p3",
+        "source": {
+          "citation": "« un deal à 50 milliards d'euros de baisse d'impôts d'un côté et de baisse de dépenses de l'autre », soit « 250 milliards pour un quinquennat »",
+          "url": "https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe",
+          "date": "2025-11-06",
+          "type": "reseau_social"
+        }
+      }
+    },
+    {
+      "id": "p20_arrets_travail",
+      "categorie": "depense_publique",
+      "libelle": "Arrêts de travail : jours de carence d'ordre public non indemnisés pour les arrêts ponctuels ; délai incompressible entre arrêt maladie et rupture conventionnelle",
+      "parametre": "1 à 2 jours de carence ; délai de 3, 5 ou 6 mois",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« le premier jour, les deux premiers jours ne seront pas indemnisés lorsque c'est un arrêt ponctuel »",
+          "url": "https://lcp.fr/actualites/chomage-edouard-philippe-veut-abaisser-la-duree-d-indemnisation-a-douze-mois-maximum",
+          "date": "2026-08-27",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le moteur porte l'impôt des indemnités journalières, pas les arrêts ni leur carence : c'est une dépense qu'il ne microsimule pas."
+      }
+    },
+    {
+      "id": "p21_remuneration_enseignants",
+      "categorie": "depense_publique",
+      "libelle": "Revalorisation des enseignants sur le quinquennat, financée par la baisse du nombre d'élèves",
+      "parametre": "+20 % de la rémunération moyenne sur le quinquennat",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« une augmentation de 20% de la rémunération moyenne des enseignants » (entretien au Figaro, cité par LCP)",
+          "url": "https://lcp.fr/actualites/presidentielle-salaires-des-enseignants-sanctions-pour-les-parents-ce-que-propose",
+          "date": "2026-08-24",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le traitement des enseignants est un salaire public : la population ne les distingue pas, et ses salaires sont des données."
+      }
+    },
+    {
+      "id": "p22_donations_vivant",
+      "categorie": "patrimoine_capital",
+      "libelle": "Donations du vivant aux enfants et petits-enfants « massivement » facilitées",
+      "parametre": "aucun abattement ni montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« augmenter massivement la capacité d'effectuer, du vivant des personnes, les donations aux enfants, aux petits-enfants »",
+          "url": "https://lcp.fr/actualites/chomage-edouard-philippe-veut-abaisser-la-duree-d-indemnisation-a-douze-mois-maximum",
+          "date": "2026-08-27",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni abattement ni barème énoncés."
+      }
+    },
+    {
+      "id": "p23_plan_fret_ferroviaire",
+      "categorie": "depense_publique",
+      "libelle": "Grand plan fret ferroviaire",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Nous devrons mettre en oeuvre un grand plan fret ferroviaire pour faire disparaître des millions de camions de nos routes »",
+          "url": "https://horizonsleparti.fr/discours-dedouard-philippe-lors-de-son-grand-meeting-a-ladidas-arena-5-juillet-2026/",
+          "date": "2026-07-05",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni montant ni calendrier d'investissement."
       }
     }
   ]

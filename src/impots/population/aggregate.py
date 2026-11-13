@@ -32,7 +32,7 @@ N_DECILES = 10
 INSTRUMENTS = (
     "salaire_brut", "salaire_super_brut", "salaire_net", "salaire_imposable",
     "cotisations_salariales", "cotisations_employeur",
-    "retraite_imposable", "chomage_brut",
+    "retraite_imposable", "chomage_brut", "prelevements_pensions",
     "csg_deductible", "csg_imposable", "crds", "csg_ij", "csg_retraite", "csg_chomage",
     "csg_non_salarie", "revenus_non_salaries", "revenus_non_salaries_hors_gerants",
     "allegement_general", "allegement_bandeau_maladie", "allegement_bandeau_famille",
@@ -41,12 +41,17 @@ INSTRUMENTS = (
     "ir",
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",
     "af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite", "aefa", "cf", "asf",
-    "ars",
+    "ars", "aspa", "paje",
+    # The new benefits of the programmes (but 21, étape 3): zero unless a reform poses them.
+    "ria", "allocation_enfant", "garantie_autonomie",
+    # The CVEC (but 21, étape 4): zero unless the students are imputed.
+    "cvec",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
     # The full-take-up entitlements, beside the expected payments that carry the plain
     # names (but 19, étape 4, `runner._serve_in_expectation`): read by the lines that
     # compare an entitlement through the Drees bridge, never summed into a cost.
     "rsa_droit", "ppa_droit", "crds_mini_droit", "aefa_droit", "revenu_disponible_droit",
+    "ria_droit", "garantie_autonomie_droit",
     # The consumption taxes, only when the consumption is imputed (D-323): receipts the
     # state collects that disposable income, taken before indirect taxes, does not show.
     "tva_menages", "accises_energie", "consommation_imputee",
@@ -82,8 +87,17 @@ ASSIS_SUR_LES_SALAIRES = (
 )
 #: The suffix of the runner's per-ménage extrapolation columns.
 HORS_CHAMP = "_hors_champ"
+#: The wage bills a reform of the salaries moves (`population.salaires`, but 21, étape 4),
+#: which the runner writes only for such a reform: the private earners' gross pay, which
+#: their employers pay, and the public earners' gross pay and labour cost, which the state
+#: pays, with the résidence allowance and the SFT its super-brut holds and its brut does
+#: not (`runner.REMUNERATION_HORS_BRUT`). Carried to France's employees like every
+#: wage-borne amount.
+SALAIRES_PAYES = ("salaire_brut_prive", "salaire_brut_public", "salaire_super_brut_public",
+                  "remuneration_hors_brut_public")
 #: Which carried column each total reads; the disposable incomes by their net wages.
 _PORTE_PAR = {**{name: name for name in ASSIS_SUR_LES_SALAIRES},
+              **{name: name for name in SALAIRES_PAYES},
               "revenu_disponible": "salaire_net", "revenu_disponible_droit": "salaire_net"}
 #: The setting a page reads to say the hypothesis; off, the totals are the survey's.
 EXTRAPOLER_SALARIES = True
@@ -267,7 +281,33 @@ def _employer_contribution_delta(frame: pl.DataFrame, weights: np.ndarray) -> fl
     return paid_reform - paid
 
 
-def _public_cost(deltas: dict[str, float], employer_delta: float) -> float | None:
+def salaires_payes(frame: pl.DataFrame, weights: np.ndarray) -> dict[str, float]:
+    """The changes of `SALAIRES_PAYES`, extrapolated; empty for a frame without them (every
+    reform that leaves the salaries where they are)."""
+    if not all(f"{name}_reform" in frame.columns for name in SALAIRES_PAYES):
+        return {}
+    return {name: extrapole(frame, f"{name}_reform", weights) - extrapole(frame, name, weights)
+            for name in SALAIRES_PAYES}
+
+
+def _salary_terms(payes: dict[str, float]) -> tuple[float, float]:
+    """(what the cost takes off Δ disposable income, the state's wage bill for the guard).
+
+    A raised private wage reaches the households' disposable income, and its employer, not
+    the state, pays it: it comes off the cost. A raised public wage the state pays, and the
+    contributions its employers pay on it go to the state itself: they are not a receipt,
+    so the employer term's public part is given back. The guard counts as a state expense
+    the public labour cost and the allowances the super-brut holds beside the gross pay
+    (they reach the disposable income, and the employer term counted them as a receipt)."""
+    if not payes:
+        return 0.0, 0.0
+    employeur_public = payes["salaire_super_brut_public"] - payes["salaire_brut_public"]
+    return (payes["salaire_brut_prive"] - employeur_public,
+            payes["salaire_super_brut_public"] + payes["remuneration_hors_brut_public"])
+
+
+def _public_cost(deltas: dict[str, float], employer_delta: float,
+                 salary_term: float = 0.0) -> float | None:
     """What the reform costs the public finances, both sides of it.
 
     Households gain what the state gives up, so Δ disposable income is a cost as it
@@ -279,7 +319,7 @@ def _public_cost(deltas: dict[str, float], employer_delta: float) -> float | Non
     if household is None and not employer_delta and not any(
             name in deltas for name in CONSOMMATION):
         return None
-    return (household or 0.0) - employer_delta - conso
+    return (household or 0.0) - employer_delta - conso - salary_term
 
 
 def aggregate(result_households: pl.DataFrame) -> Aggregates:
@@ -307,12 +347,14 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
                 deltas[name] = totals_reform[name] - totals[name]
     # AFTER the deltas exist, not before: computed above, `cost` read an empty dict
     # and came back None for every reform without an employer term.
-    cost = _public_cost(deltas, employer_delta)
+    salary_term, public_wages = _salary_terms(salaires_payes(frame, weights)
+                                              if has_reform else {})
+    cost = _public_cost(deltas, employer_delta, salary_term)
     cost_droit = None
     if cost is not None and "revenu_disponible_droit" in deltas:
         cost_droit = _public_cost(
             {**deltas, "revenu_disponible": deltas["revenu_disponible_droit"]},
-            employer_delta)
+            employer_delta, salary_term)
 
     units = consumption_units(
         frame["n_aged_14_plus"].to_numpy(), frame["n_children_under_14"].to_numpy()
@@ -328,7 +370,8 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
             reform_cost=cost, reform_cost_droit=cost_droit,
             balance=(
                 sector_balance(deltas, reform_cost=cost,
-                               employer_contribution_delta=employer_delta)
+                               employer_contribution_delta=employer_delta,
+                  public_wage_delta=public_wages)
                 if cost is not None else {}
             ),
         )
@@ -406,7 +449,8 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
         reform_cost=cost, reform_cost_droit=cost_droit,
         balance=(
             sector_balance(deltas, reform_cost=cost,
-                           employer_contribution_delta=employer_delta)
+                           employer_contribution_delta=employer_delta,
+              public_wage_delta=public_wages)
             if cost is not None else {}
         ),
     )

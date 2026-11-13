@@ -73,6 +73,9 @@ INSTRUMENT_MAP = {
     # The CSG of the non-salariés (but 19, étape 2): the same levy, read by the same
     # Mésange variant as the CSG on wages.
     "csg_non_salarie": "csg",
+    # The CSG on the unemployment benefit (but 21, étape 4): the SMIC sets its exemption.
+    "csg_chomage": "csg",
+    "prelevements_pensions": "csg",
     "cotisations_salariales": "cotisations_salaries",
     "employer_contributions": "cotisations_employeurs",
     # The consumption taxes, when the consumption is imputed (D-323, D-327): the household
@@ -100,6 +103,13 @@ UNMAPPED = {
     "ars": "transfert",
     "crds_pfam": "transfert",
     "crds_mini": "transfert",
+    # The new benefits of the programmes (but 21, étape 3): transfers like the others.
+    "ria": "transfert",
+    "allocation_enfant": "transfert",
+    "garantie_autonomie": "transfert",
+    "aspa": "transfert",
+    "retraite_imposable": "transfert",
+    "paje": "transfert",
     "impot_societes": "fiscalité des entreprises",
     "contribution_sociale_is": "fiscalité des entreprises",
     "cebge": "fiscalité des entreprises",
@@ -107,6 +117,8 @@ UNMAPPED = {
     "c3s": "fiscalité des entreprises",
     # Zero unless capital income is imputed (D-248), and no knob moves it yet.
     "prelevements_sociaux_capital": "revenus du capital",
+    # Zero unless the households' data are imputed (but 21, étape 4): the students' levy.
+    "cvec": "contribution étudiante",
 }
 
 UNMAPPED_REASONS = {
@@ -132,6 +144,12 @@ UNMAPPED_REASONS = {
         "propre dans Mésange, et aucune ne leur est encore associée : M4 dira si celle "
         "de la CSG les porte. D'ici là, la boucle d'une réforme qui ne bouge qu'eux est "
         "absente, pas nulle (D-248)."
+    ),
+    "contribution étudiante": (
+        "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux "
+        "établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur "
+        "le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une "
+        "réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
     ),
 }
 

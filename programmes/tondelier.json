@@ -9,14 +9,14 @@
     "date": "2026-09-21",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
       "id": "taxe_zucman",
       "categorie": "patrimoine_capital",
       "libelle": "Taxe Zucman",
-      "parametre": "2 % au-delà de 100 M€ de patrimoine",
+      "parametre": "2 % au-delà de 100 M€ de patrimoine ; impôt plancher différentiel (2 % du patrimoine, tous impôts confondus)",
       "precision": "parametree",
       "sources": [
         {
@@ -26,9 +26,15 @@
           "type": "programme"
         },
         {
-          "citation": "pas de citation verbatim relevée",
+          "citation": "pas de citation verbatim (paraphrase : « un prélèvement de 2 % sur les patrimoines de plus de 100 millions d'euros »)",
           "url": "https://www.parlons-politique.fr/elections/ce-que-le-programme-ecologiste-de-marine-tondelier-changerait-pour-les-retraites-le-nucleaire-et-les-impots_23570/",
           "date": "2026-07-13",
+          "type": "programme"
+        },
+        {
+          "citation": "« un impôt plancher sur les grandes fortunes, un impôt minimal, différentiel, qui ne vise que ceux qui par leur suroptimisation fiscale paient moins de 2% de leur patrimoine en impôts »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
           "type": "programme"
         }
       ],
@@ -41,8 +47,8 @@
       "id": "isf_climatique",
       "categorie": "patrimoine_capital",
       "libelle": "Rétablir l'impôt sur la fortune, « ISF climatique »",
-      "parametre": "aucun barème",
-      "precision": "vague",
+      "parametre": "seuil d'entrée à 1,3 M€ ; assiette de l'IFI étendue aux placements financiers, aux biens meubles et aux crypto-actifs (amendement I-47 du groupe au PLF 2027) ; volet climatique sans barème",
+      "precision": "parametree",
       "sources": [
         {
           "citation": "« rétablir la fiscalité sur la grande fortune » (programme, cité par RT)",
@@ -55,11 +61,23 @@
           "url": "https://entrevue.fr/elections/marine-tondelier-presente-le-programme-des-ecologistes-pour-2027/",
           "date": "2026-07-13",
           "type": "programme"
+        },
+        {
+          "citation": "« un vrai ISF, avec un seuil d'entrée à 1,3 Millions d'euros de patrimoine, et un volet climatique modulant le barème selon l'empreinte carbone des investissements »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
+        },
+        {
+          "citation": "« transformer l'impôt sur la fortune immobilière (IFI) en un impôt sur la fortune personnelle » (amendement n° I-47 du groupe Écologiste et Social au PLF 2027, rejeté)",
+          "url": "https://www.assemblee-nationale.fr/dyn/17/amendements/3210A/AN/47",
+          "date": "2026-10-05",
+          "type": "proposition_de_loi"
         }
       ],
       "refus": {
-        "porte": "vague",
-        "raison": "Ni barème ni seuil de l'impôt sur la fortune ne sont énoncés."
+        "porte": "patrimoine",
+        "raison": "La population ne porte pas le patrimoine financier et immobilier des ménages, et le volet climatique n'a pas de barème."
       }
     },
     {
@@ -138,7 +156,7 @@
       "precision": "parametree",
       "sources": [
         {
-          "citation": "pas de citation verbatim (paraphrase AFP)",
+          "citation": "pas de citation verbatim (paraphrase AFP : « reverser cette somme à environ six millions de ménages via un chèque de 450 euros »)",
           "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
           "date": "2026-09-30",
           "type": "discours"
@@ -147,15 +165,32 @@
       "refus": {
         "porte": "prestations_hors_modele",
         "raison": "Un chèque carburant est une prestation neuve, dont le moteur ne porte ni le montant ni le ciblage des quelque 6 millions de ménages."
+      },
+      "declare": {
+        "montant_eur": 2800000000.0,
+        "sens": "depense",
+        "horizon": "contre-budget pour 2027 : le produit attendu de la taxe pétrolière (2,8 Md€), reversé en chèques",
+        "source": {
+          "citation": "pas de citation verbatim (paraphrase AFP : « reverser cette somme à environ six millions de ménages via un chèque de 450 euros »)",
+          "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
+          "date": "2026-09-30",
+          "type": "discours"
+        }
       }
     },
     {
       "id": "contribution_gros_heritages",
       "categorie": "patrimoine_capital",
       "libelle": "Contribution additionnelle sur les gros héritages",
-      "parametre": "10 % au-delà de 4 M€ ; 10 points de plus au-delà de 13 M€ (le programme parle de deux tranches, top 1 % et top 0,1 %)",
+      "parametre": "10 % au-delà de 4 M€ ; 10 points de plus au-delà de 13 M€",
       "precision": "parametree",
       "sources": [
+        {
+          "citation": "« Une contribution pour les générations futures de 10% sur les héritages dépassant 4 millions d'euros et de 10% supplémentaires sur les héritages dépassant 13 millions d'euros »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
+        },
         {
           "citation": "« contribution exceptionnelle de 10% sur les héritages supérieurs à 4 millions d'euros »",
           "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
@@ -182,12 +217,12 @@
       "declare": {
         "montant_eur": 15000000000.0,
         "sens": "recette",
-        "horizon": "par an, pour la contribution, le pacte Dutreil et le démembrement ensemble",
+        "horizon": "par an en régime de croisière, pour la contribution et la remise à plat des avantages fiscaux des successions (pacte Dutreil, démembrement)",
         "source": {
-          "citation": "« 15 milliards d'euros par an »",
-          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
-          "date": "2026-08-27",
-          "type": "discours"
+          "citation": "« A cette condition, le rendement pourrait atteindre 15 milliards d'euros par an en régime de croisière. »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
         }
       }
     },
@@ -195,9 +230,15 @@
       "id": "pacte_dutreil_50",
       "categorie": "patrimoine_capital",
       "libelle": "Pacte Dutreil",
-      "parametre": "exonération ramenée de 75 % à 50 %",
+      "parametre": "abattement passé à 50 % au-delà de 50 M€ ; suppression de la réduction additionnelle de 50 % des droits pour une donation avant 70 ans",
       "precision": "parametree",
       "sources": [
+        {
+          "citation": "« La diminution des niches fiscales comme le pacte Dutreil pour passer l'abattement à 50% au-delà de 50 millions d'euros et supprimer le dispositif de réduction additionnelle des droits de 50% en cas de donation avant 70 ans »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
+        },
         {
           "citation": "pas de citation verbatim (paraphrase AFP)",
           "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
@@ -218,6 +259,12 @@
       "precision": "vague",
       "sources": [
         {
+          "citation": "« la suppression des avantages fiscaux liés au démembrement de propriété »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
+        },
+        {
           "citation": "pas de citation verbatim (paraphrase AFP)",
           "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
           "date": "2026-08-27",
@@ -226,7 +273,7 @@
       ],
       "refus": {
         "porte": "vague",
-        "raison": "Aucun avantage visé ni barème n'est énoncé."
+        "raison": "Les avantages fiscaux supprimés ne sont pas nommés, ni le barème qui les remplacerait."
       }
     },
     {
@@ -252,9 +299,15 @@
       "id": "plus_values_latentes",
       "categorie": "patrimoine_capital",
       "libelle": "Taxation des plus-values latentes",
-      "parametre": "au-delà de 4 M€ ; taux non donné",
+      "parametre": "au barème actuel, sur les héritages de plus de 4 M€, avec report d'imposition transféré aux héritiers jusqu'à la revente et déduction des droits de mutation",
       "precision": "parametree",
       "sources": [
+        {
+          "citation": "« Une taxation des plus-values latentes, au barème actuel, avec report d'imposition transféré aux héritiers jusqu'à la revente […] pour les héritages supérieurs à 4 millions d'euros »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
+        },
         {
           "citation": "pas de citation verbatim (paraphrase AFP)",
           "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
@@ -263,8 +316,8 @@
         }
       ],
       "refus": {
-        "porte": "patrimoine",
-        "raison": "Les plus-values latentes demandent le patrimoine des ménages, que la population ne porte pas, et le taux n'est pas donné."
+        "porte": "transmission",
+        "raison": "La taxe frappe les plus-values latentes à la transmission des héritages de plus de 4 M€ : le moteur n'a pas de module des transmissions, et la population ne porte pas ces plus-values."
       }
     },
     {
@@ -279,6 +332,12 @@
           "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
           "date": "2026-07-14",
           "type": "programme"
+        },
+        {
+          "citation": "« créer une nouvelle tranche d'imposition à 60 % pour les revenu supérieurs à 250 000 € par an » (amendement n° 1065 du groupe Écologiste et Social au PLF 2026, qui portait aussi 41 % à 45 % et 45 % à 50 % ; pas le programme lui-même)",
+          "url": "https://www.assemblee-nationale.fr/dyn/17/amendements/2247/AN/1065",
+          "date": "2026-01-09",
+          "type": "proposition_de_loi"
         }
       ],
       "chiffrage": {
@@ -325,57 +384,75 @@
       "id": "exit_tax",
       "categorie": "patrimoine_capital",
       "libelle": "Extension de l'exit tax",
-      "parametre": "aucun paramètre",
-      "precision": "vague",
+      "parametre": "rétablir l'exit tax : délai de taxation porté de deux à quinze ans après le départ (amendement I-462 du groupe au PLF 2027, adopté en première lecture)",
+      "precision": "parametree",
       "sources": [
         {
           "citation": "« étendre les conditions de l'exit tax afin de maintenir une contribution fiscale des émigrés fiscaux » (programme, cité par RT)",
           "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
           "date": "2026-07-14",
           "type": "programme"
+        },
+        {
+          "citation": "« Cet amendement du groupe Ecologiste et Social, présenté en commun par les groupes appartenant au Nouveau Front Populaire, vise à rétablir l'exit tax. »",
+          "url": "https://www.assemblee-nationale.fr/dyn/17/amendements/3210A/AN/462",
+          "date": "2026-10-08",
+          "type": "proposition_de_loi"
         }
       ],
       "refus": {
-        "porte": "vague",
-        "raison": "Ni seuil, ni durée, ni taux de l'exit tax étendue ne sont énoncés."
+        "porte": "patrimoine",
+        "raison": "L'exit tax frappe les plus-values latentes des contribuables qui quittent la France, que la population ne porte pas."
       }
     },
     {
       "id": "tva_verte",
       "categorie": "tva_consommation",
       "libelle": "« TVA verte »",
-      "parametre": "aucun taux",
-      "precision": "vague",
+      "parametre": "20 % sur les biens et services à fort impact (comme l'aérien) ; 5,5 % sur ceux de la transition (comme le train, le bio, la réparation)",
+      "precision": "parametree",
       "sources": [
         {
           "citation": "« TVA verte »",
           "url": "https://entrevue.fr/elections/marine-tondelier-presente-le-programme-des-ecologistes-pour-2027/",
           "date": "2026-07-13",
           "type": "programme"
+        },
+        {
+          "citation": "« une TVA écologique : à 20% sur les biens et services à fort impact environnemental, comme le trafic aérien ; réduite à 5,5% sur ceux qui contribuent à la transition, comme le train, le bio ou les services de réparation »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
         }
       ],
       "refus": {
-        "porte": "vague",
-        "raison": "Aucun taux ni produit visé n'est énoncé."
+        "porte": "consommation",
+        "raison": "Les biens visés ne sont donnés que par exemples (« comme »), et le bio ou la réparation ne sont pas des postes de la consommation que la population porte."
       }
     },
     {
       "id": "fiscalite_transports",
       "categorie": "tva_consommation",
       "libelle": "Fiscalité des transports : renchérir l'aérien, favoriser le rail",
-      "parametre": "aucun taux",
-      "precision": "vague",
+      "parametre": "tarifs de solidarité de la taxe sur les billets d'avion relevés, de 20 € à 3 000 € selon la destination, la classe et l'aviation d'affaires (amendement I-3551 du groupe au PLF 2027, rejeté)",
+      "precision": "parametree",
       "sources": [
         {
           "citation": "pas de citation verbatim relevée dans cet article ; résumé d'un blog non daté (biosphere.ouvaton.org), cité en appui : « Hausse de la fiscalité des billets d'avion »",
           "url": "https://entrevue.fr/elections/marine-tondelier-presente-le-programme-des-ecologistes-pour-2027/",
           "date": "2026-07-13",
           "type": "programme"
+        },
+        {
+          "citation": "« Cet amendement relève le tarif de solidarité de la taxe sur le transport aérien de passagers, en concentrant l'effort sur les longs trajets, les classes supérieures et l'aviation d'affaires. »",
+          "url": "https://www.assemblee-nationale.fr/dyn/17/amendements/3210A/AN/3551",
+          "date": "2026-10-10",
+          "type": "proposition_de_loi"
         }
       ],
       "refus": {
-        "porte": "vague",
-        "raison": "Aucun taux ni tarif n'est énoncé."
+        "porte": "secteur",
+        "raison": "Le transport aérien de passagers et sa taxe de solidarité ne sont pas une assiette du modèle."
       }
     },
     {
@@ -409,6 +486,12 @@
           "url": "https://www.parlons-politique.fr/elections/ce-que-le-programme-ecologiste-de-marine-tondelier-changerait-pour-les-retraites-le-nucleaire-et-les-impots_23570/",
           "date": "2026-07-13",
           "type": "programme"
+        },
+        {
+          "citation": "« Bloquer les prix des produits alimentaires qui subiraient une inflation anormale. »",
+          "url": "https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf",
+          "date": "2026-09-12",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -439,9 +522,15 @@
       "id": "plan_climat",
       "categorie": "depense_publique",
       "libelle": "Plan climat",
-      "parametre": "environ 10 Md€",
+      "parametre": "environ 10 Md€ dès 2027 (rail, RER métropolitains, vélo, leasing social, outre-mer, biodiversité, MaPrimeRénov', fonds vert, bâti scolaire, sécurité civile)",
       "precision": "parametree",
       "sources": [
+        {
+          "citation": "« Celle-ci ne peut pas attendre et doit commencer dès 2027 par des gestes forts qui s'élèvent à 10 milliards d'euros. »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
+        },
         {
           "citation": "« un plan climat à hauteur de l'urgence et donc de l'ordre de dix milliards d'euros » (Eva Sas)",
           "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
@@ -456,12 +545,12 @@
       "declare": {
         "montant_eur": 10000000000.0,
         "sens": "depense",
-        "horizon": "contre-budget pour 2027",
+        "horizon": "contre-budget pour 2027 ; comprend MaPrimeRénov', le fonds vert et la part de l'État du bâti scolaire",
         "source": {
-          "citation": "« un plan climat à hauteur de l'urgence et donc de l'ordre de dix milliards d'euros » (Eva Sas)",
-          "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
-          "date": "2026-09-30",
-          "type": "discours"
+          "citation": "« Celle-ci ne peut pas attendre et doit commencer dès 2027 par des gestes forts qui s'élèvent à 10 milliards d'euros. »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
         }
       }
     },
@@ -469,9 +558,15 @@
       "id": "renovation_ecoles",
       "categorie": "depense_publique",
       "libelle": "Rénovation thermique des écoles",
-      "parametre": "4 Md€ par an pendant 10 ans dès 2027, moitié État, moitié collectivités",
+      "parametre": "2 Md€ par an de l'État dès 2027, chaque euro de l'État déclenchant un euro des collectivités (besoin total 4 Md€ par an sur 10 ans) ; compris dans les 10 Md€ du plan climat",
       "precision": "parametree",
       "sources": [
+        {
+          "citation": "« un investissement de 2 milliards d'euros par an de la part de l'Etat est à notre sens nécessaire dès 2027 avec le principe que chaque euro investi par l'Etat déclenche l'investissement d'un euro par les collectivités »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
+        },
         {
           "citation": "« Une 'grande transmission' qui doit financer la 'grande transition' » (Tondelier)",
           "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
@@ -482,26 +577,21 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
-      },
-      "declare": {
-        "montant_eur": 4000000000.0,
-        "sens": "depense",
-        "horizon": "par an pendant 10 ans dès 2027, moitié État, moitié collectivités",
-        "source": {
-          "citation": "« Une 'grande transmission' qui doit financer la 'grande transition' » (Tondelier)",
-          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
-          "date": "2026-08-27",
-          "type": "discours"
-        }
       }
     },
     {
       "id": "fonds_vert_maprimerenov",
       "categorie": "depense_publique",
       "libelle": "Fonds vert et MaPrimeRénov'",
-      "parametre": "fonds vert +1,9 Md€ ; MaPrimeRénov' +1,4 Md€",
+      "parametre": "fonds vert +1,9 Md€ ; MaPrimeRénov' +1,4 Md€ ; compris dans les 10 Md€ du plan climat",
       "precision": "parametree",
       "sources": [
+        {
+          "citation": "« La rénovation des logements en augmentant MaPrimeRénov de +1,4 Md€ » ; « Le rétablissement du Fonds vert […] (+1,9 Md€) »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
+        },
         {
           "citation": "« Ces dépenses publiques ne peuvent pas être baissées en 2027 » (Eva Sas)",
           "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
@@ -512,16 +602,425 @@
       "refus": {
         "porte": "depense_publique",
         "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
+      }
+    },
+    {
+      "id": "smic_2000_brut",
+      "categorie": "salaires_smic",
+      "libelle": "SMIC à 2 000 € brut par mois dès 2027",
+      "parametre": "2 000 € brut mensuels, dès 2027",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Augmenter le salaire minimum à 2000€ brut par mois dès 2027 »",
+          "url": "https://marinetondelier.fr/s/livret-travail.pdf",
+          "date": "2026-11-04",
+          "type": "programme"
+        },
+        {
+          "citation": "« La candidate écologiste entend porter le Smic à 2 000 euros brut par mois dès 2027. »",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-que-proposent-les-candidats-pour-augmenter-les-salaires",
+          "date": "2026-10-30",
+          "type": "presse"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "smic_revalorisation": 1.0818,
+          "smic_diffusion_profil": "annee_avec_effets_fixes",
+          "smic_diffusion_echelle": 0.0
+        },
+        "plages": [
+          {
+            "champ": "smic_revalorisation",
+            "min": 1.0712,
+            "max": 1.0971
+          },
+          {
+            "champ": "smic_diffusion_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Le SMIC porté à 2 000 € bruts par mois. Le bouton est un coefficient sur le SMIC horaire brut de chaque mois de 2026, qui en porte deux : 12,02 € de janvier à mai (1 823,03 € bruts par mois), 12,31 € de juin à décembre (1 867,02 €), 1 848,69 € en moyenne. Le coefficient retenu, 1,0818, donne 2 000 € bruts par mois en moyenne sur l'année ; la plage va de 1,0712 (2 000 € bruts atteints depuis le SMIC de juin) à 1,0971 (depuis celui de janvier). La diffusion au-dessus du nouveau SMIC, entre 1 et 1,5 SMIC dans le privé, est une hypothèse déclarée (D-380) : le profil à un an avec effets fixes d'entreprise de Koubi et Lhommeau (Insee, Les salaires en France 2007), le plus large des quatre publiés, à l'échelle 0 pour la valeur du candidat (le premier jour, la loi seule relève les salaires horaires sous le nouveau SMIC), sa plage allant jusqu'à 1 (le profil entier). La mesure se mesure contre le SMIC de l'arbre de 2026. Le coût ne compte pas le salaire que paie un employeur privé ; il compte celui que paie l'État employeur (les agents publics relevés au SMIC), les cotisations, la CSG et l'impôt qui montent, la prime d'activité qui bouge, et les allègements généraux, qui suivent le SMIC : un SMIC relevé les élargit aussi pour les salaires qui ne bougent pas."
+      }
+    },
+    {
+      "id": "baisse_is_taux_reduit_taxe_salaires",
+      "categorie": "entreprises",
+      "libelle": "Baisse du taux réduit de l'IS et de la taxe sur les salaires pour les TPE, PME et associations",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« comme un ajustement à la baisse du taux réduit de l'impôt sur les sociétés et de la taxe sur les salaires »",
+          "url": "https://marinetondelier.fr/s/livret-travail.pdf",
+          "date": "2026-11-04",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le taux réduit visé ni le barème de la taxe sur les salaires ne sont énoncés."
+      }
+    },
+    {
+      "id": "point_indice_inflation",
+      "categorie": "salaires_smic",
+      "libelle": "Point d'indice indexé sur l'inflation ; +10 % pour les fonctionnaires",
+      "parametre": "indexation du point d'indice sur l'inflation ; +10 % pour les fonctionnaires autres que les enseignants (presse)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Améliorer le traitement des fonctionnaires par l'indexation du point d'indice sur l'inflation »",
+          "url": "https://marinetondelier.fr/s/livret-travail.pdf",
+          "date": "2026-11-04",
+          "type": "programme"
+        },
+        {
+          "citation": "« La rémunération des enseignants sera augmentée de 15 %, et de 10% pour les autres fonctionnaires, avec une réindexation de leur point d'indice sur l'inflation. »",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-que-proposent-les-candidats-pour-augmenter-les-salaires",
+          "date": "2026-10-30",
+          "type": "presse"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "point_indice_revalorisation": 1.021,
+          "point_indice_contractuels": 0.0
+        },
+        "plages": [
+          {
+            "champ": "point_indice_revalorisation",
+            "min": 1.0,
+            "max": 1.1
+          },
+          {
+            "champ": "point_indice_contractuels",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Le point d'indice indexé sur l'inflation, ce que dit le programme : la première année, il monte de l'inflation de l'année. L'inflation de 2026 est celle des hypothèses du PLFSS 2027 (annexe B, IPC hors tabac : 2,1 %), les hypothèses de la population vieillie des cas (plf2027). La presse ajoute +10 % pour les fonctionnaires autres que les enseignants (+15 % en cinq ans pour ceux-ci, une mesure à part) : c'est le haut de la plage du point (1,10), qui va du droit (1, le point gelé) à cette lecture, appliquée à tous les titulaires, enseignants compris. Le bouton multiplie le traitement indiciaire des fonctionnaires titulaires, leur brut sur 1,195 (le taux de prime du moteur) ; leurs primes ne bougent pas. La part du salaire des contractuels qui suit le point n'est pas publiée : 0 pour la valeur retenue, la plage allant jusqu'à 1 (tous payés sur une grille indiciaire). La mesure se mesure contre le droit de 2026, où le point est gelé depuis le 1er janvier 2024 : il n'a pas d'indexation légale. Le coût compte le salaire que paient l'État, les collectivités et les hôpitaux, moins les cotisations, la CSG et l'impôt qui en reviennent ; les collectivités sont comptées comme l'État, leur compensation éventuelle ne change pas le coût public."
+      }
+    },
+    {
+      "id": "salaires_enseignants_15",
+      "categorie": "salaires_smic",
+      "libelle": "Salaires des enseignants +15 % en cinq ans, en plus de l'inflation",
+      "parametre": "+15 % en 5 ans, en plus de l'inflation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Réhabiliter les métiers de l'Education nationale en augmentant les salaires des enseignant·es de 15% en 5 ans (en plus de l'inflation). »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-rentree.pdf",
+          "date": "2026-08-31",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Les enseignants ne sont pas distingués dans les salaires de la population, et la hausse est étalée sur cinq ans."
+      }
+    },
+    {
+      "id": "exonerations_cotisations_conditionnees",
+      "categorie": "csg_cotisations",
+      "libelle": "Exonérations de cotisations conditionnées à la hausse des salaires de moins de 2 000 € net",
+      "parametre": "condition sans taux ni barème",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« en conditionnant les exonérations de cotisations sociales à l'augmentation des salarié·es gagnant moins de 2000 € net/mois »",
+          "url": "https://marinetondelier.fr/s/livret-travail.pdf",
+          "date": "2026-11-04",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "La condition (une augmentation, sans taux) ne dit ni quelles exonérations tombent ni de combien."
+      }
+    },
+    {
+      "id": "apl_plus_10",
+      "categorie": "prestations",
+      "libelle": "Revalorisation des APL de 10 %",
+      "parametre": "+10 % ; mécanisme anti-répercussion sur les loyers non décrit",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Revaloriser les APL de 10 % avec un mécanisme empêchant la répercussion sur les montants des loyers. »",
+          "url": "https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf",
+          "date": "2026-09-12",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "al_revalorisation_portee": 1.1
+        },
+        "plages": [
+          {
+            "champ": "al_revalorisation_portee",
+            "min": 1.0,
+            "max": 1.15
+          }
+        ],
+        "note": "Les paramètres des aides au logement que le droit révise en octobre (loyers plafonds, forfaits de charges, équivalences de loyer, participation minimale) relevés de 10 %, portés sur toute l'année chiffrée (D-301). La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : les 10 % s'ajoutent à elle. Le mécanisme contre la répercussion sur les loyers n'est pas décrit ; les loyers ne bougent pas, ce qu'il viserait. Plage : du droit (1) à 10 % prolongé de la moitié de l'écart (1,15)."
+      }
+    },
+    {
+      "id": "allocations_familiales_premier_enfant",
+      "categorie": "prestations",
+      "libelle": "Allocations familiales d'un même montant dès le premier enfant",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Réformer les allocations familiales pour attribuer un même montant dès le premier enfant. »",
+          "url": "https://marinetondelier.fr/s/livret-enfance-vf.pdf",
+          "date": "2026-09-17",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le montant par enfant n'est pas énoncé."
+      }
+    },
+    {
+      "id": "pensions_alimentaires_defiscalisees",
+      "categorie": "ir",
+      "libelle": "Pensions alimentaires défiscalisées pour le parent qui les perçoit, sous plafond",
+      "parametre": "plafond par enfant non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Défiscaliser les pensions alimentaires pour les parents qui les perçoivent avec un plafond par enfant et par an. »",
+          "url": "https://marinetondelier.fr/s/livret-enfance-vf.pdf",
+          "date": "2026-09-17",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le plafond par enfant et par an n'est pas chiffré."
+      }
+    },
+    {
+      "id": "credit_impot_precarite_energetique",
+      "categorie": "energie_carburants",
+      "libelle": "Crédit d'impôt automatisé remplaçant le chèque énergie",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Mettre en place un crédit d'impôt automatisé pour les personnes en situation de précarité en remplacement des chèques énergie. »",
+          "url": "https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf",
+          "date": "2026-09-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le montant ni les conditions de revenu du crédit d'impôt ne sont énoncés."
+      }
+    },
+    {
+      "id": "taxes_electricite",
+      "categorie": "energie_carburants",
+      "libelle": "Baisse des taxes sur l'électricité, harmonisation avec le gaz",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Faire baisser la facture d'électricité en la découplant du prix du gaz, en réduisant les taxes sur l'électricité et en harmonisant la fiscalité du gaz et de l'électricité. »",
+          "url": "https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf",
+          "date": "2026-09-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le tarif d'accise visé ni le sens de l'harmonisation ne sont énoncés."
+      }
+    },
+    {
+      "id": "assurance_chomage_indexation",
+      "categorie": "prestations",
+      "libelle": "Allocations chômage indexées sur l'inflation, réformes depuis 2017 abrogées",
+      "parametre": "indexation sur l'inflation ; abrogation des réformes adoptées depuis 2017",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Abroger les réformes régressives adoptées depuis 2017, notamment celle sur l'allocation de retour à l'emploi » ; « Indexer le niveau des allocations sur l'inflation »",
+          "url": "https://marinetondelier.fr/s/livret-travail.pdf",
+          "date": "2026-11-04",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "L'assurance chômage n'est pas une prestation que le moteur porte."
+      }
+    },
+    {
+      "id": "conge_second_parent_16_semaines",
+      "categorie": "prestations",
+      "libelle": "Congé d'accueil de l'enfant de 16 semaines à 100 % pour chaque parent",
+      "parametre": "16 semaines à 100 % du salaire de base ; congé de naissance à 80 % et trois mois par parent",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« rendre obligatoire et aligner le congé d'accueil de l'enfant entre la mère et le second parent avec 16 semaines rémunérées à 100% du salaire mensuel de base »",
+          "url": "https://marinetondelier.fr/s/livret-travail.pdf",
+          "date": "2026-11-04",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Les indemnités de congé de maternité, de paternité et de naissance ne sont pas portées par le moteur."
+      }
+    },
+    {
+      "id": "cantine_1_euro",
+      "categorie": "depense_publique",
+      "libelle": "Cantine à 1 euro, repas à 1 euro à l'université",
+      "parametre": "1 € le repas",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Rétablir le dispositif des cantines à 1 euro et harmoniser l'accès au repas à un euro par jour à l'université »",
+          "url": "https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf",
+          "date": "2026-09-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
+      }
+    },
+    {
+      "id": "ticket_climat",
+      "categorie": "depense_publique",
+      "libelle": "Ticket climat mensuel à tarif unique, gratuit pour les jeunes et les ménages précaires",
+      "parametre": "aucun tarif",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Créer un ticket climat mensuel à tarif unique pour les transports en commun hors TGV, avec la gratuité pour les jeunes et les ménages précaires. »",
+          "url": "https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf",
+          "date": "2026-09-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le tarif unique ni le coût pour l'État ne sont énoncés."
+      }
+    },
+    {
+      "id": "frais_kilometriques_tous_modes",
+      "categorie": "ir",
+      "libelle": "Barème de frais kilométriques commun à tous les modes de transport",
+      "parametre": "aucun barème",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Mieux rembourser les trajets domicile-travail, avec un barème de frais kilométriques commun à tous les modes de transport. »",
+          "url": "https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf",
+          "date": "2026-09-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le barème n'est pas énoncé."
+      }
+    },
+    {
+      "id": "credit_impot_velo",
+      "categorie": "ir",
+      "libelle": "Crédit d'impôt pour l'achat d'un vélo électrique",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Aider à l'achat d'un vélo électrique grâce à un crédit d'impôt. »",
+          "url": "https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf",
+          "date": "2026-09-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le taux ni le plafond du crédit d'impôt ne sont énoncés."
+      }
+    },
+    {
+      "id": "parc_social_voitures_electriques",
+      "categorie": "depense_publique",
+      "libelle": "Parc social de voitures électriques",
+      "parametre": "1 million de véhicules en cinq ans ; +1 Md€ de leasing social en 2027, compris dans le plan climat",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Créer un parc social de voitures électriques avec 1 million de véhicules accessibles à tous en cinq ans »",
+          "url": "https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf",
+          "date": "2026-09-12",
+          "type": "programme"
+        },
+        {
+          "citation": "« L'augmentation du leasing social pour que les classes populaires et les classes moyennes puissent bénéficier d'une voiture électrique (+1Md€) »",
+          "url": "https://marinetondelier.fr/s/dossierpresse-budget2027.pdf",
+          "date": "2026-08-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
+      }
+    },
+    {
+      "id": "violences_3_md",
+      "categorie": "depense_publique",
+      "libelle": "3 Md€ contre les violences faites aux femmes et aux enfants",
+      "parametre": "3 Md€ (horizon non précisé)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Dédier 3 milliards d'euros à la lutte contre les violences faites aux femmes et aux enfants »",
+          "url": "https://marinetondelier.fr/blog/21-priorites-gouverner-ensemble-demain",
+          "date": "2026-04-17",
+          "type": "programme"
+        },
+        {
+          "citation": "« Adopter une loi intégrale pour lutter contre les violences sexistes et sexuelles incluant les violences sexuelles sur mineur·es dotée de 3 milliards d'euros. »",
+          "url": "https://marinetondelier.fr/s/livret-enfance-vf.pdf",
+          "date": "2026-09-17",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense du calcul de la dette."
       },
       "declare": {
-        "montant_eur": 3300000000.0,
+        "montant_eur": 3000000000.0,
         "sens": "depense",
-        "horizon": "2027 : 1,9 Md€ de fonds vert et 1,4 Md€ de MaPrimeRénov'",
+        "horizon": "non précisé par le candidat (« dotée de 3 milliards d'euros ») : ni annuel ni pluriannuel n'est dit",
         "source": {
-          "citation": "« Ces dépenses publiques ne peuvent pas être baissées en 2027 » (Eva Sas)",
-          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
-          "date": "2026-08-27",
-          "type": "discours"
+          "citation": "« Dédier 3 milliards d'euros à la lutte contre les violences faites aux femmes et aux enfants »",
+          "url": "https://marinetondelier.fr/blog/21-priorites-gouverner-ensemble-demain",
+          "date": "2026-04-17",
+          "type": "programme"
         }
       }
     }

@@ -1,0 +1,15 @@
+{
+  "name": "pres2027_dupont_aignan_nd32_indexation_point_indice",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Nicolas Dupont-Aignan (Debout la France (DLF)), programme relevé le 2026-11-12 — Réindexation des traitements des fonctionnaires sur l'inflation : « Réindexer les pensions de retraite et les traitements des fonctionnaires sur l'inflation » (https://www.debout-la-france.fr/projet/economie-travail/, 2026-11-10)",
+  "note": "Le point d'indice indexé sur l'inflation : la première année, il monte de l'inflation de l'année. L'inflation de 2026 est celle des hypothèses du PLFSS 2027 (annexe B, IPC hors tabac : 2,1 %), les hypothèses de la population vieillie des cas (plf2027). Plage du point : du droit (1, le point gelé) à 2,1 % prolongé de la moitié de l'écart (1,0315). Le bouton multiplie le traitement indiciaire des fonctionnaires titulaires, leur brut sur 1,195 (le taux de prime du moteur) ; leurs primes ne bougent pas. La part du salaire des contractuels qui suit le point n'est pas publiée : 0 pour la valeur retenue, la plage allant jusqu'à 1 (tous payés sur une grille indiciaire). La mesure se mesure contre le droit de 2026, où le point est gelé depuis le 1er janvier 2024 : il n'a pas d'indexation légale. Le coût compte le salaire que paient l'État, les collectivités et les hôpitaux, moins les cotisations, la CSG et l'impôt qui en reviennent ; les collectivités sont comptées comme l'État, leur compensation éventuelle ne change pas le coût public.",
+  "tags": [
+    "presidentielle_2027",
+    "dupont_aignan"
+  ],
+  "reform": {
+    "point_indice_revalorisation": 1.021,
+    "point_indice_contractuels": 0.0
+  }
+}

@@ -263,12 +263,12 @@ Les portes, de celle qui ouvrirait le plus d'articles à celle qui en ouvrirait 
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dans `reports/etudes/plfss2027/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `601b442` ; ce qu'elle disait est figé dans `reports/etudes/plfss2027/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| art. 74 du PLF, la prime d'activité | -870 M€ → -557 M€ | -0,26 pt → -0,16 pt | baisse → baisse |
-| art. 74 du PLF, les aides au logement | -78 M€ → -72 M€ | -0,07 pt → -0,07 pt | baisse → baisse |
+| art. 74 du PLF, la prime d'activité | -557 M€ → -557 M€ | -0,16 pt → -0,16 pt | baisse → baisse |
+| art. 74 du PLF, les aides au logement | -72 M€ → -72 M€ | -0,07 pt → -0,07 pt | baisse → baisse |
 
 Ce qui touche chaque ligne :
 
@@ -279,7 +279,7 @@ Là où une seule correction touche une ligne, l'écart avant → après est ce 
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `aa22293`, conteneur cloud, 15 Go, 4 cœurs, deux files. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 

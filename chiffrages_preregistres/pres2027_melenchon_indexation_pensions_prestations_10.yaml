@@ -1,0 +1,63 @@
+case: pres2027_melenchon_indexation_pensions_prestations_10
+pre_registered: '2026-11-12T13:30:28+00:00'
+commit: ae0c176952b564b90a9cfa1cdbab5b64d812adda
+scenario: pres2027_melenchon_indexation_pensions_prestations_10
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 32719147561.403076
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 200000000.0
+  rationale: 'Classe « menages » (D-321). Mesure des ménages sur une large assiette
+    (salaires, CSG, quotient familial) : le moteur retrouve ses agrégats à quelques
+    pour cent. Le juge chiffre peut-être une autre année que 2026 (la croissance nominale
+    en écarte de 3 % par an) et contre la continuité des politiques, pas le droit
+    gelé.'
+note: 'Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 —
+  Indexation des pensions, allocations familiales et APL, hausse de 10 % : « « nous
+  indexerons toutes les pensions, allocations familiales et APL, qui seront rehaussées
+  de 10 % (8 milliards d''euros) » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf,
+  2026-10-14). La mesure se mesure contre l''indexation légale sur les prix, la référence
+  du but 21 : l''indexation qu''elle promet est celle du droit, et ne coûte rien ;
+  la hausse de 10 % est la mesure. Trois coefficients de 1,10 sur ce que le droit
+  porte : les pensions de retraite de la population (des données, multipliées au 1er
+  janvier), la base mensuelle des allocations familiales (au 1er avril) et les paramètres
+  des aides au logement révisés en octobre. Ils sont posés à la date légale de 2025
+  pour que toute l''année chiffrée porte la hausse, comme les boutons « portée » (D-301).
+  Le candidat dit « allocations familiales » : la base mensuelle porte aussi le complément
+  familial, l''allocation de soutien familial, l''allocation de rentrée scolaire et
+  l''allocation de base de la PAJE, qui montent avec elles ; c''est la traduction
+  qui ne choisit pas entre les prestations familiales. Les pensions d''invalidité
+  et les autres prestations ne bougent pas. Plages : du droit (1) à 10 % prolongé
+  de la moitié de l''écart (1,15).'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

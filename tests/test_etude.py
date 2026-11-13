@@ -36,6 +36,19 @@ def test_every_study_is_unrun_or_rendered_exactly(nom: str) -> None:
     assert etude.definition(nom).drift() is None
 
 
+def test_a_refused_study_has_its_reports_and_no_page(tmp_path) -> None:
+    """D-398. Une étude refusée a tourné : ses rapports sont là, sans chemin annuel ni
+    page. Une page à côté d'elle dirait ce qu'aucun rapport ne dit."""
+    study = etude.definition("presidentielle_dupont_aignan")
+    assert study.refus and "D-398" in study.refus
+    assert any(study.rapports.glob("premiere_annee_*.json"))
+    assert not any(study.rapports.glob("predictif_*.json"))
+    assert not study.page.exists()
+    page = tmp_path / "page.md"
+    page.write_text("# une page\n", encoding="utf-8")
+    assert "étude refusée" in etude.replace(study, page=page).drift()
+
+
 def test_the_plf_study_is_the_command_s() -> None:
     study = etude.definition("plf2027")
     # In docs/etudes/ with every study since D-304, where the site reads them.

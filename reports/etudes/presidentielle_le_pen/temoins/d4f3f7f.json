@@ -1,0 +1,81 @@
+{
+  "etude": "presidentielle_le_pen",
+  "passe": "plages/lp20_tva_energie__tva_postes.energie__bas.json",
+  "reference": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "commit": "d4f3f7ff6e0eb097a32b7e9a76c86baf4ff73504",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
+  "computed": "2026-11-13",
+  "identique": true,
+  "ecarts": [],
+  "rapport": {
+    "programme": "le_pen",
+    "mesure": "lp20_tva_energie",
+    "champ": "tva_postes.energie",
+    "point": "bas",
+    "request": {
+      "spending": {
+        "rule": "gele_en_volume"
+      },
+      "growth": {
+        "name": "Croissance réelle 1 %, prix 2 %",
+        "real": 0.01,
+        "prices": 0.02
+      },
+      "rate": {
+        "name": "Taux implicite tenu à son niveau de 2025",
+        "kind": "implicite_tenu"
+      },
+      "horizon": 10,
+      "theta": {
+        "common": 0.5
+      },
+      "uprating": {
+        "wage": 0.03,
+        "source": "3 % ronds, le rythme du PIB nominal du scénario"
+      },
+      "behavioural": false,
+      "macro": false,
+      "reform": {
+        "tva_postes": {
+          "energie": 0.0
+        }
+      },
+      "firm_reform": null
+    },
+    "appel": "/predictif/simulate",
+    "dette_absente": null,
+    "response": {
+      "mechanical_first_year_eur": 16055607573.215286,
+      "years": [
+        2026,
+        2027,
+        2028,
+        2029,
+        2030,
+        2031,
+        2032,
+        2033,
+        2034,
+        2035
+      ],
+      "delta": [
+        0.005210515053978737,
+        0.01036351453815132,
+        0.015459633330401124,
+        0.020499499300598023,
+        0.025483733387954066,
+        0.030412949677527834,
+        0.03528775547588214,
+        0.040108751385908414,
+        0.04487653138082326,
+        0.049591682877350385
+      ],
+      "population_view": "vieillie"
+    },
+    "computed": "2026-11-13",
+    "commit": "d4f3f7ff6e0eb097a32b7e9a76c86baf4ff73504",
+    "dirty": false,
+    "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
+  }
+}

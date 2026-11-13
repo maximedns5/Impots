@@ -41,7 +41,9 @@ ETUDES = ("presidentielle_attal", "presidentielle_labib", "presidentielle_le_pen
           "presidentielle_roussel", "presidentielle_tondelier")
 #: Ce que la boucle ne lit pas, par famille de `shocks.UNMAPPED`.
 FAMILLES = {"transfert": "prestations", "fiscalité des entreprises": "impôts des entreprises",
-            "revenus du capital": "prélèvements sur le capital"}
+            "revenus du capital": "prélèvements sur le capital",
+            # La CVEC (but 21, étape 4) : sans variante dans Mésange, non lue par la boucle.
+            "contribution étudiante": "contribution étudiante"}
 #: Des sources publiques du même engagement, quand celle du programme relevé n'est pas
 #: lisible partout : (programme, mesure) → [(url, texte)]. La source relevée reste dans
 #: `programmes/*.json` ; une entrée dont la mesure ou la source relevée a changé est refusée.

@@ -76,6 +76,7 @@ from openfisca_core.simulation_builder import SimulationBuilder
 from impots import decomposition
 from impots.engine.outputs import LIGHT_ROWS
 from impots.engine.situations import pin_benefit_history, pin_rfr_n_2
+from impots.population.salaires import PRIMES_REFORME, SALAIRE_REFORME
 
 #: Years of income history written behind the simulated year. Two, because the
 #: longest reference window is the aide au logement's rolling twelve months
@@ -450,7 +451,8 @@ CATEGORIE_PUBLIQUE = {"etat": "public_titulaire_etat",
                       "hospitaliere": "public_titulaire_hospitaliere"}
 
 
-def public_service(frame: pl.DataFrame, monthly_gross: np.ndarray, tax_benefit_system: Any
+def public_service(frame: pl.DataFrame, monthly_gross: np.ndarray, tax_benefit_system: Any,
+                   monthly_primes: np.ndarray | None = None
                    ) -> tuple[Any, np.ndarray, np.ndarray]:
     """(categorie_salarie, salaire_de_base, traitement_indiciaire_brut), monthly, per person.
 
@@ -461,7 +463,12 @@ def public_service(frame: pl.DataFrame, monthly_gross: np.ndarray, tax_benefit_s
     traitement), so the gross pay the frame carries is split as TIB = gross / (1 + rate);
     a non-titular agent keeps a salaire de base under `public_non_titulaire`. A frame
     without the public columns is refused if it carries a public earner, rather than read
-    as all private (D-346)."""
+    as all private (D-346).
+
+    `monthly_primes`, the titulars' primes when the caller knows them (the reformed year of
+    a raised point d'indice, `population.salaires`, whose primes do not follow the point):
+    the traitement is then the gross pay less them, and the caller writes them on
+    `primes_fonction_publique`."""
     from openfisca_france.model.base import TAUX_DE_PRIME
 
     possible = tax_benefit_system.variables["categorie_salarie"].possible_values
@@ -480,9 +487,41 @@ def public_service(frame: pl.DataFrame, monthly_gross: np.ndarray, tax_benefit_s
         for key, name in CATEGORIE_PUBLIQUE.items():
             names[titular & (side == key)] = name
         names[public & ~titular] = "public_non_titulaire"
-        tib = np.where(titular, monthly_gross / (1.0 + TAUX_DE_PRIME), 0.0)
+        tib = np.where(titular, monthly_gross / (1.0 + TAUX_DE_PRIME) if monthly_primes
+                       is None else monthly_gross - monthly_primes, 0.0)
         monthly_gross = np.where(titular, 0.0, monthly_gross)
     return possible.encode(names.astype(str)), monthly_gross, tib
+
+
+def _set_menages_inputs(simulation: Any, tax_benefit_system: Any, year: int,
+                        frame: pl.DataFrame, foyer_ids: Any) -> None:
+    """The columns of `population.menages` an openfisca variable reads: a person's on the
+    person, a foyer's (carried by its principal declarant) summed onto the foyer, the
+    childcare costs case by case (`menages.garde_par_foyer`). Nothing for a frame without
+    them."""
+    from impots.population import menages
+
+    years = tuple(str(year - offset) for offset in range(HISTORY_YEARS, -1, -1))
+    for column, (variable, entity) in menages.ENTREES_OPENFISCA.items():
+        if column not in frame.columns:
+            continue
+        if variable not in tax_benefit_system.variables:
+            raise WiringError(f"{variable} n'est pas une variable d'openfisca")
+        values = frame[column].fill_null(0.0).to_numpy().astype(np.float64)
+        if tax_benefit_system.variables[variable].value_type is bool:
+            values = values > 0.5
+        if entity == "foyer_fiscal":
+            values = (frame.select("foyer_id").with_columns(pl.Series("v", values))
+                      .group_by("foyer_id").agg(pl.col("v").sum()).sort("foyer_id")["v"]
+                      .to_numpy())
+            if values.shape != (foyer_ids.size,):
+                raise WiringError(f"{column} ne s'aligne pas sur les foyers")
+        for period in years:
+            simulation.set_input(variable, period, values)
+    if menages.FRAIS_GARDE in frame.columns:
+        for case, values in menages.garde_par_foyer(frame, foyer_ids).items():
+            for period in years:
+                simulation.set_input(case, period, values)
 
 
 def build_simulation(
@@ -553,6 +592,16 @@ def build_simulation(
                                        worked=True)
     split = [public_service(frame, pay, tax_benefit_system) for pay in salary_by_month]
     categorie = split[0][0]
+    # The reformed salaries of the priced year (`population.salaires`, but 21): the years of
+    # the history keep the salaries before, which the housing aid of N-2 reads.
+    split_current, primes_current = split, None
+    if SALAIRE_REFORME in frame.columns:
+        primes_current = monthly_by_month(frame, frame[PRIMES_REFORME].to_numpy(),
+                                          worked=True)
+        split_current = [public_service(frame, pay, tax_benefit_system, primes)
+                         for pay, primes in zip(monthly_by_month(
+                             frame, frame[SALAIRE_REFORME].to_numpy(), worked=True),
+                             primes_current, strict=True)]
     # Pensions and unemployment benefit are monthly individual inputs too. Leaving
     # them out is not a visible failure: the simulation runs, every guard passes,
     # and 14 M pensioners simply appear to live on nothing — which then shows up
@@ -623,8 +672,12 @@ def build_simulation(
                 simulation.set_input("heures_remunerees_volume", period, share * full_month)
             if excluded is not None:
                 simulation.set_input(EXCLUDED_FROM_ALLEGEMENTS, period, excluded)
-            simulation.set_input("salaire_de_base", period, split[month - 1][1])
-            simulation.set_input("traitement_indiciaire_brut", period, split[month - 1][2])
+            pay = split_current if offset == 0 else split
+            simulation.set_input("salaire_de_base", period, pay[month - 1][1])
+            simulation.set_input("traitement_indiciaire_brut", period, pay[month - 1][2])
+            if offset == 0 and primes_current is not None:
+                simulation.set_input("primes_fonction_publique", period,
+                                     primes_current[month - 1])
             simulation.set_input("categorie_salarie", period, categorie)
             simulation.set_input("retraite_brute", period, monthly_pension)
             # Failure mode #4. `pension_annuelle` is calibrated on DECLARED pensions,
@@ -681,6 +734,10 @@ def build_simulation(
             (pl.col("departement") + "01").fill_null("00000"))["departement"])
         for offset in range(HISTORY_YEARS, -1, -1):
             simulation.set_input("depcom_foyer", str(year - offset), depcom_foyer)
+
+    # The households' data `population.menages` imputes, when the run asked for it (but 21,
+    # étape 4), on every year of the history as the earnings are.
+    _set_menages_inputs(simulation, tax_benefit_system, year, frame, foyer_ids)
 
     if niche_bases:
         _set_niche_inputs(

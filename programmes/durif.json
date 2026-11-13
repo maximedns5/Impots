@@ -4,12 +4,89 @@
   "parti": "Indépendant (« Grand Monarque »)",
   "statut": "declare",
   "statut_source": {
-    "citation": "Pas de citation directe. L'inventaire relève : candidat déclaré dans une vidéo sur les réseaux sociaux le 23/08/2026, d'après Wikipédia, qui cite Le Figaro et RTL du 25/08/2026 (non lus).",
-    "url": "https://fr.wikipedia.org/wiki/Candidatures_%C3%A0_l%27%C3%A9lection_pr%C3%A9sidentielle_fran%C3%A7aise_de_2027",
-    "date": "2026-08-25",
-    "type": "presse"
+    "citation": "« Le 23 août 2026, jour de ses 57 ans, il annonce sa candidature à l'élection présidentielle de 2027. » (site de campagne)",
+    "url": "https://elvita2027.com/",
+    "date": "2026-08-23",
+    "type": "programme"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
-  "mesures": []
+  "mesures": [
+    {
+      "id": "suppression_fiscalite",
+      "categorie": "autre",
+      "libelle": "Suppression de la fiscalité",
+      "parametre": "« Fiscalite supprimee » : aucun impôt nommé, ni calendrier",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Zero Impot Fiscalite supprimee »",
+          "url": "https://elvita2027.com/documents/Programme_Sylvain_Pierre_Durif_2027Presidentielle.pdf",
+          "date": "2026-09-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le programme ne dit ni quels prélèvements sont supprimés, ni quand, ni ce qui finance l'État."
+      }
+    },
+    {
+      "id": "dettes_effacees",
+      "categorie": "regle_budgetaire",
+      "libelle": "Effacement des dettes",
+      "parametre": "aucun montant ; dettes publiques ou privées non précisées",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Zero Agio Dettes effacees »",
+          "url": "https://elvita2027.com/documents/Programme_Sylvain_Pierre_Durif_2027Presidentielle.pdf",
+          "date": "2026-09-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le programme ne dit pas quelles dettes, ni par quel moyen."
+      }
+    },
+    {
+      "id": "sante_gratuite",
+      "categorie": "depense_publique",
+      "libelle": "Santé « naturelle et gratuite »",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Zero Bobo Sante naturelle et gratuite »",
+          "url": "https://elvita2027.com/documents/Programme_Sylvain_Pierre_Durif_2027Presidentielle.pdf",
+          "date": "2026-09-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le reste à charge supprimé ni son coût ne sont énoncés."
+      }
+    },
+    {
+      "id": "precarite_annihilee",
+      "categorie": "prestations",
+      "libelle": "Fin de la précarité",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Zero Clodo Precarite annihilee »",
+          "url": "https://elvita2027.com/documents/Programme_Sylvain_Pierre_Durif_2027Presidentielle.pdf",
+          "date": "2026-09-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucune prestation ni montant n'est énoncé."
+      }
+    }
+  ]
 }

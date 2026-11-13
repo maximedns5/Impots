@@ -2,15 +2,53 @@
   "name": "pres2027_retailleau_programme",
   "year": 2026,
   "created": "2026-11-02",
-  "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-01 — la part chiffrée : r19_gains_rendus_moitie, r21_c3s_cvae_forfait_social_cfe",
-  "note": "2 mesures chiffrées sur 29 paramétrées et 33 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-12 — la part chiffrée : r13_zero_cotisation_1623_h, r15_revenu_incitation_activite, r19_gains_rendus_moitie, r21_c3s_cvae_forfait_social_cfe, r27_revenu_familial, r28_reduction_ir_interets_emprunt",
+  "note": "6 mesures chiffrées sur 37 paramétrées et 41 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
   "tags": [
     "presidentielle_2027",
     "retailleau",
     "etude"
   ],
   "reform": {
-    "cotisations_salariales_retraite_echelle": 0.87
+    "qf_parts_enf1": 0.0,
+    "qf_parts_enf2": 0.0,
+    "qf_parts_enf3_et_sup": 0.0,
+    "cotisations_salariales_retraite_echelle": 0.87,
+    "ria": {
+      "socle": 300.0,
+      "insertion": 250.0,
+      "taux_revenus_activite": 0.3,
+      "plafond_revenus_activite": 1833.0,
+      "remplace_rsa": true,
+      "remplace_ppa": true,
+      "remplace_ass": true,
+      "age_minimum": 18,
+      "age_maximum": 65,
+      "insertion_demandeurs_emploi": true,
+      "taux_autres_revenus": 1.0
+    },
+    "allocation_enfant": {
+      "montant_par_enfant": 240.0,
+      "montant_troisieme_enfant": 480.0,
+      "age_maximum": 18,
+      "remplace_af": true,
+      "remplace_cf": true,
+      "remplace_ars": true,
+      "par_famille": false,
+      "degressivite_part_ir": 0.0,
+      "plancher_par_enfant": 0.0
+    },
+    "interets_emprunt_taux": [
+      0.0,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "interets_emprunt_plafond": 400.0,
+    "interets_emprunt_plafond_par_enfant": 400.0,
+    "heures_sup_exoneration_salariale": 1.0,
+    "heures_sup_exoneration_patronale": 1.0,
+    "heures_sup_franchise_heures": 16.0
   },
   "firm_reform": {
     "c3s_taux": 0.0,

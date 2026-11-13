@@ -9,14 +9,14 @@
     "date": "2026-10-15",
     "type": "entretien"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
       "id": "lp01_economies_nettes",
       "categorie": "regle_budgetaire",
       "libelle": "Plan d'économies nettes",
-      "parametre": "140 Md€ nets d'ici 2032 par rapport à 2026",
+      "parametre": "140 Md€ nets d'ici 2032 par rapport à 2026 — montant annoncé : 140 Md€ (total net d'ici 2032 par rapport à 2026, sur le quinquennat ; la candidate ne donne pas d'annuel (montant non annualisé)) ; non lu comme montant annuel : un total d'ici 2032, dont les lignes sont déclarées une à une (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -153,6 +153,12 @@
         {
           "citation": "« 9 milliards d'euros sur notre contribution à l'Union européenne » (J. Bardella)",
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        },
+        {
+          "citation": "Pas de citation directe. Texte de l'AFP (La Gazette France) : une baisse de la contribution nette à l'Union de « -8,9 milliards nets »",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
         }
@@ -313,6 +319,12 @@
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
+        },
+        {
+          "citation": "« 30 milliards » (de baisse d'impôts)",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
         }
       ],
       "refus": {
@@ -324,7 +336,7 @@
       "id": "lp14_droits_nouveaux",
       "categorie": "depense_publique",
       "libelle": "« Droits nouveaux »",
-      "parametre": "15 Md€ provisionnés, plus des hausses pour l'outre-mer, la recherche et l'éducation",
+      "parametre": "15 Md€ provisionnés, plus des hausses pour l'outre-mer, la recherche et l'éducation — montant annoncé : 15 Md€ (15 Md€ « provisionnés » sur la trajectoire, calendrier non dit (montant non annualisé)) ; non lu comme montant annuel : une provision sans calendrier (D-381).",
       "precision": "parametree",
       "sources": [
         {
@@ -400,6 +412,12 @@
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
+        },
+        {
+          "citation": "entre 15 et 20 milliards d'économies à terme",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
         }
       ],
       "refus": {
@@ -453,7 +471,7 @@
       ],
       "refus": {
         "porte": "enveloppe",
-        "raison": "Un montant de 20 Md€ sans dire quels impôts de production baissent, ni de combien chacun."
+        "raison": "Une enveloppe de 20 Md€ sans dire quels impôts de production baissent. Le bouton de l'enveloppe (impots_production_baisse) ne la répartit qu'entre la CVAE et la C3S, les seuls impôts de production du moteur, qui rapportent moins de 20 Md€ en 2026 : il la refuse. La CFE, la taxe foncière des entreprises et les autres n'y sont pas."
       },
       "declare": {
         "montant_eur": 20000000000.0,
@@ -518,9 +536,20 @@
           "type": "discours"
         }
       ],
-      "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "Exonérer d'IR les revenus des moins de 30 ans demande une exonération par âge au sein du foyer, que le moteur n'a pas."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "ir_exoneration_jeunes_age": 30,
+          "ir_exoneration_jeunes_plafond_smic": 4.0
+        },
+        "plages": [
+          {
+            "champ": "ir_exoneration_jeunes_plafond_smic",
+            "min": 0.0,
+            "max": 6.0
+          }
+        ],
+        "note": "Les salaires des moins de 30 ans au 1er janvier de l'année des revenus sortent du revenu imposable jusqu'à 4 SMIC bruts annuels. « Jusqu'à quatre fois le Smic » se lit comme un abattement : le salaire au-delà reste imposé, sans falaise (l'autre lecture, tout imposé au-delà, n'est pas codée). Le SMIC est brut, le candidat ne le dit pas ; 4 SMIC nets feraient 3,17 SMIC bruts, dans la plage. Les revenus des non-salariés, le chômage et les pensions ne sont pas exonérés ; les prestations, qui lisent le salaire entier, ne bougent pas. Un jeune rattaché au foyer de ses parents allège l'impôt de ce foyer. Plage du plafond : de 0 (la mesure retirée) à 4 SMIC prolongés de la moitié de l'écart (6). Contre le droit de 2026."
       }
     },
     {
@@ -656,9 +685,13 @@
           "type": "discours"
         }
       ],
-      "refus": {
-        "porte": "bouton_hors_but",
-        "raison": "La CVEC, contribution des étudiants, n'est pas un prélèvement que le moteur calcule."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "cvec_montant": 0.0
+        },
+        "plages": [],
+        "note": "La contribution de vie étudiante et de campus supprimée, sur les étudiants du supérieur et les boursiers qu'impute la population (D-383). Le compte des inscrits contient ceux que la CVEC ne frappe pas : à 100 €, l'imputation donne 231 M€ contre un produit de 170 M€ en 2023-2024, 36 % de trop, et la suppression en est surestimée d'autant. Contre le droit de 2026, 105 €."
       }
     },
     {
@@ -671,6 +704,12 @@
         {
           "citation": "cesser les subventionnements à perte des énergies intermittentes",
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        },
+        {
+          "citation": "cesser les subventionnements à perte des énergies intermittentes",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
         }
@@ -690,6 +729,12 @@
         {
           "citation": "au financement des voitures propres",
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        },
+        {
+          "citation": "au financement des voitures propres",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
         }
@@ -787,11 +832,74 @@
           "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
           "date": "2026-10-06",
           "type": "discours"
+        },
+        {
+          "citation": "La BCE doit intervenir pour que les pays de l'Eurozone dégagent des marges de manœuvre financières",
+          "url": "https://www.lagazettefrance.fr/article/140-milliards-d-economies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
         }
       ],
       "refus": {
         "porte": "vague",
         "raison": "Un appel à la BCE, sans paramètre."
+      }
+    },
+    {
+      "id": "lp34_gel_taxes_tabac",
+      "categorie": "tva_consommation",
+      "libelle": "Gel des taxes sur le tabac et fin de l'indexation de leur prix sur l'inflation",
+      "parametre": "Gel (hausse nulle) de l'accise sur les tabacs ; désindexation sur l'inflation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "le gel des taxes sur le tabac et la désindexation du prix sur l'inflation",
+          "url": "https://www.publicsenat.fr/actualites/politique/marine-le-pen-defend-le-gel-des-taxes-sur-le-tabac-dans-une-lettre-aux-buralistes",
+          "date": "2026-09-07",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "L'accise sur les tabacs n'est pas dans la couche consommation, qui ne porte que la TVA du poste tabac."
+      }
+    },
+    {
+      "id": "lp35_ptz_troisieme_enfant",
+      "categorie": "autre",
+      "libelle": "Prêt à taux zéro pour les parents à partir du troisième enfant",
+      "parametre": "Taux zéro, dès le troisième enfant ; plafond et durée non dits (amendement de J.-P. Tanguy au PLF 2027)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de LCP : « Jean-Philippe Tanguy a d'ailleurs proposé un amendement afin de proposer un prêt à taux zéro aux parents à partir de leur troisième enfant »",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte ni les emprunts des ménages ni leurs taux."
+      }
+    },
+    {
+      "id": "lp36_hausse_salaires_exoneree",
+      "categorie": "salaires_smic",
+      "libelle": "Hausse de 10 % des salaires exonérée de cotisations patronales",
+      "parametre": "+10 % de salaire, la hausse exonérée de cotisations patronales ; plafond non dit dans la source",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de l'AFP : « Marine Le Pen veut de son côté inciter les entreprises à augmenter les salaires de 10% en exonérant cette hausse de cotisations patronales »",
+          "url": "https://www.sudradio.fr/societe/salaires-carburants-mobilisations-le-pouvoir-dachat-simpose-dans-la-campagne",
+          "date": "2026-09-15",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Une incitation facultative : le moteur ne sait pas quels employeurs augmenteraient leurs salaires de 10 %."
       }
     }
   ]

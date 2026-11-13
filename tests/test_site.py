@@ -77,8 +77,24 @@ def test_the_site_is_built_where_it_is_asked(tmp_path, monkeypatch) -> None:
 # --- what a page says, and how ------------------------------------------------------
 
 
+def _chiffrees() -> list[etude.Etude]:
+    """Les études dont les passes ont toutes tourné : une étude refusée (D-398) n'a pas de
+    chemin annuel, donc ni page ni entrée à commit."""
+    return [s for s in etude.definitions() if not s.refus]
+
+
 def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
-    for study in etude.definitions():
+    refusees = [s for s in etude.definitions() if s.refus]
+    assert [s.nom for s in refusees] == ["presidentielle_dupont_aignan"]
+    for study in refusees:
+        # Listée « chiffrée, puis refusée », avec sa raison, sans page ni lien (D-398).
+        assert f"{study.nom}.html" not in built
+        assert f'href="{study.nom}.html"' not in built["index.html"]
+        assert (f"<li><strong>{html.escape(study.titre)}</strong> — chiffrée, puis refusée : "
+                f"{html.escape(study.refus)}</li>") in built["index.html"]
+        assert "ses\npasses n'ont pas tourné" not in built["index.html"].split(
+            html.escape(study.titre))[1].split("</li>")[0]
+    for study in _chiffrees():
         assert f"{study.nom}.html" in built
         assert f'<a href="{study.nom}.html">{html.escape(study.titre)}</a>' \
             in built["index.html"]
@@ -90,14 +106,24 @@ def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(buil
     index = built["index.html"]
     # Le message suit les rapports : présent s'ils tiennent sur plusieurs commits, absent
     # quand une série les a tous chiffrés sur un seul (D-338).
-    commits = {s.load()[0]["first"]["commit"] for s in etude.definitions()}
+    # Une étude dont le chemin a tourné sur un autre commit que sa première année, joint
+    # par une passe témoin (D-335), porte ses deux commits : la série du but 21 en a deux
+    # (aa22293 et d4f3f7f, D-396, D-397).
+    joined = {s.nom: [c for c, _ in s.load()[0]["commits"]] for s in _chiffrees()}
+    commits = {c for cs in joined.values() for c in cs}
     warned = "Les études n'ont pas été chiffrées sur le même code" in index
     assert warned == (len(commits) > 1)
     assert ("ne se compare donc pas à celui d'une autre" in index) == warned
-    for study in etude.definitions():
+    for study in _chiffrees():
         entry = index.split(f'<a href="{study.nom}.html">')[1].split("</li>")[0]
-        commit = study.load()[0]["first"]["commit"]
-        assert f"sur le commit <code>{commit[:7]}</code>" in entry, study.nom
+        first = study.load()[0]["first"]["commit"]
+        assert joined[study.nom][0] == first, study.nom
+        if len(joined[study.nom]) == 1:
+            assert f"sur le commit <code>{first[:7]}</code>" in entry, study.nom
+        else:
+            shown = ", ".join(f"<code>{c[:7]}</code>" for c in joined[study.nom])
+            assert f"sur les commits {shown}, joints par une passe témoin" in entry, \
+                study.nom
 
 
 def test_no_study_page_runs_a_script(built, monkeypatch) -> None:
@@ -135,7 +161,7 @@ def test_each_badge_says_its_layer_and_links_to_the_legend(built) -> None:
 
 
 def test_each_absent_answer_says_its_reason_on_the_site(built) -> None:
-    for study in etude.definitions():
+    for study in _chiffrees():
         page = built[f"{study.nom}.html"]
         for entry in study.load():
             response = entry["response"]

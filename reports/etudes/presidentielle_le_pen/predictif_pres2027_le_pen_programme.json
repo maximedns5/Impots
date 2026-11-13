@@ -128,31 +128,31 @@
     "annee": 2035,
     "vues": {
       "vieillie": {
-        "p_hausse": 0.7465,
+        "p_hausse": 0.791,
         "quantiles": {
-          "q05": -0.007767286915111615,
-          "q50": 0.01564147740096522,
-          "q95": 0.042390327588047505
+          "q05": -0.014437620340725021,
+          "q50": 0.031274151890399615,
+          "q95": 0.07813985445330696
         },
         "sobol": {
           "multiplicateur_macro": {
-            "premier_ordre": 0.9755122030391521,
-            "total": 0.9799911412864251
+            "premier_ordre": 0.9733816271278642,
+            "total": 0.978405168060056
           }
         },
         "evaluations": 6000
       },
       "figee": {
-        "p_hausse": 0.75,
+        "p_hausse": 0.7975,
         "quantiles": {
-          "q05": -0.005991003185955701,
-          "q50": 0.013445082507291706,
-          "q95": 0.03617703057145083
+          "q05": -0.008716141926936816,
+          "q50": 0.023468356225251452,
+          "q95": 0.05793216551279334
         },
         "sobol": {
           "multiplicateur_macro": {
-            "premier_ordre": 0.975791070715745,
-            "total": 0.9802991371162614
+            "premier_ordre": 0.9738660576397268,
+            "total": 0.978977360329392
           }
         },
         "evaluations": 6000
@@ -167,22 +167,22 @@
     },
     "decomposition": {
       "vieillie": {
-        "cout": 0.042390327588047505,
-        "denominateur": -0.0037664496822960025,
-        "retroaction": -0.02375636523106328,
-        "total": 0.014867512674688221
+        "cout": 0.07813985445330696,
+        "denominateur": -0.00799393962073136,
+        "retroaction": -0.04017885764175522,
+        "total": 0.02996705719082038
       },
       "figee": {
-        "cout": 0.03617703057145083,
-        "denominateur": -0.0028879499704541622,
-        "retroaction": -0.02049933481598054,
-        "total": 0.012789745785016127
+        "cout": 0.05793216551279334,
+        "denominateur": -0.004828532885799097,
+        "retroaction": -0.030596827188905218,
+        "total": 0.022506805438089028
       }
     },
     "taux_marche": {
       "taux": 0.035,
-      "vieillie": 0.01629253976624412,
-      "figee": 0.014052831538120092
+      "vieillie": 0.032721303818783465,
+      "figee": 0.024699887441415047
     },
     "variante_salariale": {
       "sources": {
@@ -192,59 +192,59 @@
       "non_variees": [],
       "boite": {
         "vieillie": {
-          "theta": 0.012455057202884312,
+          "theta": 0.02993302557088251,
           "corners": [
             [
               "multiplicateur_macro = 0",
-              0.03575089787584518
+              0.06943627230396965
             ],
             [
               "multiplicateur_macro = 1",
-              -0.004715915763775058
+              -0.0037178581632215657
             ]
           ]
         },
         "figee": {
-          "theta": 0.01041531698156617,
+          "theta": 0.021818888027738792,
           "corners": [
             [
               "multiplicateur_macro = 0",
-              0.030216446623963833
+              0.05099033834450539
             ],
             [
               "multiplicateur_macro = 1",
-              -0.0038304330052478797
+              -0.0019184665967277859
             ]
           ]
         }
       },
       "monte_carlo": {
         "vieillie": {
-          "p_hausse": 0.703,
+          "p_hausse": 0.8055,
           "quantiles": {
-            "q05": -0.008542807551452236,
-            "q50": 0.013228193602093263,
-            "q95": 0.042390327588047505
+            "q05": -0.014417869983544862,
+            "q50": 0.031240067597124166,
+            "q95": 0.07813985445330696
           },
           "sobol": {
             "multiplicateur_macro": {
-              "premier_ordre": 0.9778811287472797,
-              "total": 0.9820867625646286
+              "premier_ordre": 0.9730527408659003,
+              "total": 0.9781650586905396
             }
           },
           "evaluations": 6000
         },
         "figee": {
-          "p_hausse": 0.701,
+          "p_hausse": 0.8125,
           "quantiles": {
-            "q05": -0.006752904165080942,
-            "q50": 0.011069987180236107,
-            "q95": 0.03617703057145083
+            "q05": -0.008925410198119887,
+            "q50": 0.022780121462670166,
+            "q95": 0.05793216551279334
           },
           "sobol": {
             "multiplicateur_macro": {
-              "premier_ordre": 0.9786045862799483,
-              "total": 0.9827688413993696
+              "premier_ordre": 0.9740402743152804,
+              "total": 0.9792221150958482
             }
           },
           "evaluations": 6000
@@ -254,9 +254,9 @@
   },
   "scenario": "pres2027_le_pen_programme",
   "titre": "pres2027_le_pen_programme",
-  "source": "Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-01 — la part chiffrée : lp20_tva_energie, lp22_part_pleine_2e_enfant",
+  "source": "Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-12 — la part chiffrée : lp20_tva_energie, lp21_ir_moins_30_ans, lp22_part_pleine_2e_enfant, lp26_suppression_cvec",
   "reference": "reconduit",
-  "computed": "2026-11-11",
+  "computed": "2026-11-13",
   "spending_name": "Dépenses gelées en volume",
   "growth_name": "Croissance réelle 1 %, prix 2 %",
   "rate_name": "Taux implicite tenu à son niveau de 2025",
@@ -271,8 +271,8 @@
     {
       "year": 2026,
       "basis": "legislated",
-      "mechanical_frozen_eur": 13378130586.281967,
-      "mechanical_aged_eur": 13968135196.660172,
+      "mechanical_frozen_eur": 21407867145.596436,
+      "mechanical_aged_eur": 23359172620.269745,
       "reference": 1.168580725548546,
       "reform_aged": null,
       "delta_aged": null,
@@ -280,22 +280,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378130586.281967,
+          "cost_eur": 21407867145.596436,
           "impulses": {
-            "impot_sur_le_revenu": 2085043090.2124634,
-            "tva": 11293087490.005356
+            "impot_sur_le_revenu": 9878565302.948761,
+            "tva": 11293049878.172363
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 13968135196.660172,
+          "cost_eur": 23359172620.269745,
           "impulses": {
-            "impot_sur_le_revenu": 2327819687.8869934,
-            "tva": 11640315490.58107
+            "impot_sur_le_revenu": 11482640269.443573,
+            "tva": 11640280456.087616
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -304,8 +308,8 @@
     {
       "year": 2027,
       "basis": "legislated",
-      "mechanical_frozen_eur": 13378130616.602264,
-      "mechanical_aged_eur": 14332486370.74376,
+      "mechanical_frozen_eur": 21425011836.720474,
+      "mechanical_aged_eur": 24492719828.02211,
       "reference": 1.1746928799602263,
       "reform_aged": null,
       "delta_aged": null,
@@ -313,22 +317,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378130616.602264,
+          "cost_eur": 21425011836.720474,
           "impulses": {
-            "impot_sur_le_revenu": 2085043090.212494,
-            "tva": 11293087490.00534
+            "impot_sur_le_revenu": 9895710035.005112,
+            "tva": 11293049878.172379
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 14332486370.74376,
+          "cost_eur": 24492719828.02211,
           "impulses": {
-            "impot_sur_le_revenu": 2459364564.2871704,
-            "tva": 11873121800.392685
+            "impot_sur_le_revenu": 12383381855.945938,
+            "tva": 11873086065.209366
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -337,8 +345,8 @@
     {
       "year": 2028,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 13378113497.72728,
-      "mechanical_aged_eur": 14713802108.029465,
+      "mechanical_frozen_eur": 21424727777.402344,
+      "mechanical_aged_eur": 25668132733.424225,
       "reference": 1.1753885794969483,
       "reform_aged": null,
       "delta_aged": null,
@@ -346,22 +354,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378113497.72728,
+          "cost_eur": 21424727777.402344,
           "impulses": {
-            "impot_sur_le_revenu": 2085026013.7861328,
-            "tva": 11293087490.005356
+            "impot_sur_le_revenu": 9895425945.366714,
+            "tva": 11293049878.172363
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 14713802108.029465,
+          "cost_eur": 25668132733.424225,
           "impulses": {
-            "impot_sur_le_revenu": 2603217932.2697144,
-            "tva": 12110584236.400558
+            "impot_sur_le_revenu": 13321332927.85849,
+            "tva": 12110547786.51358
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -370,8 +382,8 @@
     {
       "year": 2029,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 13378130592.345932,
-      "mechanical_aged_eur": 15106016377.462158,
+      "mechanical_frozen_eur": 21425011818.527847,
+      "mechanical_aged_eur": 26901471289.471375,
       "reference": 1.1707805732317031,
       "reform_aged": null,
       "delta_aged": null,
@@ -379,22 +391,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378130592.345932,
+          "cost_eur": 21425011818.527847,
           "impulses": {
-            "impot_sur_le_revenu": 2085043090.212494,
-            "tva": 11293087490.005356
+            "impot_sur_le_revenu": 9895710035.005112,
+            "tva": 11293049878.172379
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 15106016377.462158,
+          "cost_eur": 26901471289.471375,
           "impulses": {
-            "impot_sur_le_revenu": 2753218813.7385864,
-            "tva": 12352797594.043701
+            "impot_sur_le_revenu": 14312460676.74524,
+            "tva": 12352758742.243835
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -403,8 +419,8 @@
     {
       "year": 2030,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 13378130592.346176,
-      "mechanical_aged_eur": 15508224012.388702,
+      "mechanical_frozen_eur": 21425011818.52809,
+      "mechanical_aged_eur": 28188966312.77475,
       "reference": 1.1609798413129486,
       "reform_aged": null,
       "delta_aged": null,
@@ -412,22 +428,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378130592.346176,
+          "cost_eur": 21425011818.52809,
           "impulses": {
-            "impot_sur_le_revenu": 2085043090.212494,
-            "tva": 11293087490.005356
+            "impot_sur_le_revenu": 9895710035.005112,
+            "tva": 11293049878.172379
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 15508224012.388702,
+          "cost_eur": 28188966312.77475,
           "impulses": {
-            "impot_sur_le_revenu": 2908429557.6468964,
-            "tva": 12599794497.19046
+            "impot_sur_le_revenu": 15352900490.335464,
+            "tva": 12599813917.088715
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -436,8 +456,8 @@
     {
       "year": 2031,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 13378130592.345932,
-      "mechanical_aged_eur": 15918279214.001938,
+      "mechanical_frozen_eur": 21425011818.528336,
+      "mechanical_aged_eur": 29536988910.302765,
       "reference": 1.146095619682319,
       "reform_aged": null,
       "delta_aged": null,
@@ -445,22 +465,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378130592.345932,
+          "cost_eur": 21425011818.528336,
           "impulses": {
-            "impot_sur_le_revenu": 2085043090.212494,
-            "tva": 11293087490.005356
+            "impot_sur_le_revenu": 9895710035.005112,
+            "tva": 11293049878.172379
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 15918279214.001938,
+          "cost_eur": 29536988910.302765,
           "impulses": {
-            "impot_sur_le_revenu": 3066488857.1880035,
-            "tva": 12851790387.134262
+            "impot_sur_le_revenu": 16448886295.63182,
+            "tva": 12851850616.843048
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -469,8 +493,8 @@
     {
       "year": 2032,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 13378113497.72728,
-      "mechanical_aged_eur": 16330213890.111084,
+      "mechanical_frozen_eur": 21424727771.338165,
+      "mechanical_aged_eur": 30950060295.088852,
       "reference": 1.1262354244680892,
       "reform_aged": null,
       "delta_aged": null,
@@ -478,22 +502,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378113497.72728,
+          "cost_eur": 21424727771.338165,
           "impulses": {
-            "impot_sur_le_revenu": 2085026013.7861328,
-            "tva": 11293087490.005356
+            "impot_sur_le_revenu": 9895425945.366714,
+            "tva": 11293049878.172394
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 16330213890.111084,
+          "cost_eur": 30950060295.088852,
           "impulses": {
-            "impot_sur_le_revenu": 3221387670.977844,
-            "tva": 13108826194.876953
+            "impot_sur_le_revenu": 17604920768.13817,
+            "tva": 13108887629.179916
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -502,8 +530,8 @@
     {
       "year": 2033,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 13378130592.345932,
-      "mechanical_aged_eur": 16743279184.75058,
+      "mechanical_frozen_eur": 21425011818.52809,
+      "mechanical_aged_eur": 32424028731.45833,
       "reference": 1.1015050760584795,
       "reform_aged": null,
       "delta_aged": null,
@@ -511,22 +539,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378130592.345932,
+          "cost_eur": 21425011818.52809,
           "impulses": {
-            "impot_sur_le_revenu": 2085043090.212494,
-            "tva": 11293087490.005356
+            "impot_sur_le_revenu": 9895710035.005112,
+            "tva": 11293049878.172379
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 16743279184.75058,
+          "cost_eur": 32424028731.45833,
           "impulses": {
-            "impot_sur_le_revenu": 3372276526.6169434,
-            "tva": 13371002718.774506
+            "impot_sur_le_revenu": 18816711354.899353,
+            "tva": 13371065381.763504
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -535,8 +567,8 @@
     {
       "year": 2034,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 13378130592.346176,
-      "mechanical_aged_eur": 17160550369.778397,
+      "mechanical_frozen_eur": 21425011818.52809,
+      "mechanical_aged_eur": 33957122064.06317,
       "reference": 1.0720087228588424,
       "reform_aged": null,
       "delta_aged": null,
@@ -544,22 +576,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378130592.346176,
+          "cost_eur": 21425011818.52809,
           "impulses": {
-            "impot_sur_le_revenu": 2085043090.212494,
-            "tva": 11293087490.005356
+            "impot_sur_le_revenu": 9895710035.005112,
+            "tva": 11293049878.172379
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 17160550369.778397,
+          "cost_eur": 33957122064.06317,
           "impulses": {
-            "impot_sur_le_revenu": 3522127566.3081055,
-            "tva": 13638422773.149979
+            "impot_sur_le_revenu": 20082378843.83783,
+            "tva": 13638491179.948914
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -568,8 +604,8 @@
     {
       "year": 2035,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 13378130592.345932,
-      "mechanical_aged_eur": 17598193839.14621,
+      "mechanical_frozen_eur": 21425011818.528336,
+      "mechanical_aged_eur": 35558361907.5462,
       "reference": 1.0378488647367168,
       "reform_aged": null,
       "delta_aged": null,
@@ -577,22 +613,26 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 13378130592.345932,
+          "cost_eur": 21425011818.528336,
           "impulses": {
-            "impot_sur_le_revenu": 2085043090.212494,
-            "tva": 11293087490.005356
+            "impot_sur_le_revenu": 9895710035.005112,
+            "tva": 11293049878.172379
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 17598193839.14621,
+          "cost_eur": 35558361907.5462,
           "impulses": {
-            "impot_sur_le_revenu": 3687002616.597046,
-            "tva": 13911191228.613007
+            "impot_sur_le_revenu": 21410848857.65799,
+            "tva": 13911261003.547913
           },
-          "uncovered": {},
+          "uncovered": {
+            "cvec": "La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+          },
           "canaux": {},
           "c1_floor_share": null
         }
@@ -611,7 +651,9 @@
     "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
     "Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange dit « erroné » (folio 108, D-336)."
   ],
-  "absent": {},
+  "absent": {
+    "rétroaction, instruments non couverts": "cvec : La CVEC n'a pas de variante dans Mésange : elle est versée aux Crous et aux établissements, qui la dépensent pour les étudiants, et l'emprunter à l'impôt sur le revenu supposerait une recette de l'État qu'elle n'est pas. La boucle d'une réforme qui ne bouge qu'elle est absente, pas nulle (but 21, étape 4)."
+  },
   "theta": {
     "autofinancement_poids_tresor_eco": 0.5,
     "dividend_elasticity_firm_owners": 0.5,
@@ -657,56 +699,56 @@
         "persistence": "lue",
         "every_year": {
           "vieillie": {
-            "theta": 0.014867512674688221,
+            "theta": 0.02996705719082038,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.03826718658341455
+                0.06960053210285122
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.004301125428330721
+                -0.005595724674065217
               ]
             ]
           },
           "figee": {
-            "theta": 0.012789745785016127,
+            "theta": 0.022506805438089028,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.032674749595091646
+                0.05179356318498751
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.003358227903156319
+                -0.0030926218398541483
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.015000272976004592,
+            "theta": 0.027670461131358515,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.038997818256164773
+                0.06445855999889671
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.0045305938915616295
+                -0.004719946443615175
               ]
             ]
           },
           "figee": {
-            "theta": 0.014327569950996155,
+            "theta": 0.025228896494106534,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.037366614061409065
+                0.05915329930827529
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.004378962512835871
+                -0.004433475539358467
               ]
             ]
           }
@@ -716,56 +758,56 @@
         "persistence": "eteint",
         "every_year": {
           "vieillie": {
-            "theta": 0.036373575798169355,
+            "theta": 0.06678602004695544,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.041986968162595284
+                0.07670846000284737
               ],
               [
                 "multiplicateur_macro = 1",
-                0.0321482571178231
+                0.05779857501878172
               ]
             ]
           },
           "figee": {
-            "theta": 0.03162342630732895,
+            "theta": 0.05119945292988359,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.035903901656937354
+                0.057227448474582054
               ],
               [
                 "multiplicateur_macro = 1",
-                0.028566691427619473
+                0.04623836792955904
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.03685058546229203,
+            "theta": 0.06239265294486396,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.04276215690558405
+                0.07109168217454864
               ],
               [
                 "multiplicateur_macro = 1",
-                0.03243991376022848
+                0.05492427351640572
               ]
             ]
           },
           "figee": {
-            "theta": 0.03528153963425029,
+            "theta": 0.05713405470872979,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.04096399193529554
+                0.06518947348343773
               ],
               [
                 "multiplicateur_macro = 1",
-                0.0310603324208083
+                0.05030981550540292
               ]
             ]
           }
@@ -775,56 +817,56 @@
         "persistence": "tenu",
         "every_year": {
           "vieillie": {
-            "theta": 0.011791920998162064,
+            "theta": 0.025006269203962317,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.0392578569849118
+                0.06963710197351403
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.004678632119371917
+                -0.008455470934931819
               ]
             ]
           },
           "figee": {
-            "theta": 0.010000438204097462,
+            "theta": 0.01846898376094841,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.03360268078339512
+                0.05213506289995218
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.003627233944384134
+                -0.005043233967509053
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.011909888581023154,
+            "theta": 0.022970968107753897,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.040061828957769
+                0.06474345642075496
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.004846842811253582
+                -0.007184028033011991
               ]
             ]
           },
           "figee": {
-            "theta": 0.0113595273593734,
+            "theta": 0.020890033663927055,
             "corners": [
               [
                 "multiplicateur_macro = 0",
-                0.03841340274719163
+                0.059536782904768604
               ],
               [
                 "multiplicateur_macro = 1",
-                -0.004644940158420541
+                -0.006529819221024136
               ]
             ]
           }
@@ -832,9 +874,9 @@
       }
     ]
   },
-  "commit": "601b4423890c7d130a10d6278339b1a65ea4b145",
+  "commit": "d4f3f7ff6e0eb097a32b7e9a76c86baf4ff73504",
   "dirty": false,
-  "where": "conteneur cloud, 15 Go, 4 cœurs",
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
   "annees": null,
   "persistence": null,
   "side_by_side": [
@@ -844,73 +886,73 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1704373416557161,
-          "delta_aged": 0.0018566161071700282,
-          "reform_frozen": 1.170363495909163,
-          "delta_frozen": 0.0017827703606170253
+          "reform_aged": 1.1714919124937382,
+          "delta_aged": 0.0029111869451921013,
+          "reform_frozen": 1.1712729259791346,
+          "delta_frozen": 0.0026922004305884872
         },
         {
           "year": 2027,
-          "reform_aged": 1.1763444329826742,
-          "delta_aged": 0.0016515530224479047,
-          "reform_frozen": 1.1762344546214716,
-          "delta_frozen": 0.0015415746612452708
+          "reform_aged": 1.1775036606909008,
+          "delta_aged": 0.0028107807306745336,
+          "reform_frozen": 1.1771788900097846,
+          "delta_frozen": 0.002486010049558285
         },
         {
           "year": 2028,
-          "reform_aged": 1.178032601563794,
-          "delta_aged": 0.002644022066845775,
-          "reform_frozen": 1.177835634534063,
-          "delta_frozen": 0.0024470550371147315
+          "reform_aged": 1.1803295103207876,
+          "delta_aged": 0.004940930823839285,
+          "reform_frozen": 1.1796959400029725,
+          "delta_frozen": 0.004307360506024205
         },
         {
           "year": 2029,
-          "reform_aged": 1.1747650826709162,
-          "delta_aged": 0.003984509439213024,
-          "reform_frozen": 1.1744358866709337,
-          "delta_frozen": 0.003655313439230534
+          "reform_aged": 1.1786798209887082,
+          "delta_aged": 0.007899247757005012,
+          "reform_frozen": 1.1775506282885828,
+          "delta_frozen": 0.006770055056879665
         },
         {
           "year": 2030,
-          "reform_aged": 1.166511801027341,
-          "delta_aged": 0.005531959714392354,
-          "reform_frozen": 1.1660042852724042,
-          "delta_frozen": 0.00502444395945556
+          "reform_aged": 1.1722477802877542,
+          "delta_aged": 0.011267938974805602,
+          "reform_frozen": 1.1704460890683461,
+          "delta_frozen": 0.009466247755397506
         },
         {
           "year": 2031,
-          "reform_aged": 1.1534093316237335,
-          "delta_aged": 0.007313711941414391,
-          "reform_frozen": 1.1526774853016124,
-          "delta_frozen": 0.006581865619293303
+          "reform_aged": 1.1608770522789356,
+          "delta_aged": 0.014781432596616462,
+          "reform_frozen": 1.158258765749292,
+          "delta_frozen": 0.012163146066972885
         },
         {
           "year": 2032,
-          "reform_aged": 1.135375744473071,
-          "delta_aged": 0.009140320004981772,
-          "reform_frozen": 1.1343741385258594,
-          "delta_frozen": 0.008138714057770224
+          "reform_aged": 1.144643200236368,
+          "delta_aged": 0.01840777576827879,
+          "reform_frozen": 1.1410512760189067,
+          "delta_frozen": 0.014815851550817438
         },
         {
           "year": 2033,
-          "reform_aged": 1.1125146665645609,
-          "delta_aged": 0.011009590506081413,
-          "reform_frozen": 1.111198395854729,
-          "delta_frozen": 0.009693319796249433
+          "reform_aged": 1.123652204976549,
+          "delta_aged": 0.02214712891806947,
+          "reform_frozen": 1.1189293647228018,
+          "delta_frozen": 0.01742428866432233
         },
         {
           "year": 2034,
-          "reform_aged": 1.0849278382352137,
-          "delta_aged": 0.012919115376371249,
-          "reform_frozen": 1.0832528574190163,
-          "delta_frozen": 0.011244134560173924
+          "reform_aged": 1.098008628478743,
+          "delta_aged": 0.02599990561990051,
+          "reform_frozen": 1.0919967203968157,
+          "delta_frozen": 0.019987997537973312
         },
         {
           "year": 2035,
-          "reform_aged": 1.052716377411405,
-          "delta_aged": 0.014867512674688221,
-          "reform_frozen": 1.050638610521733,
-          "delta_frozen": 0.012789745785016127
+          "reform_aged": 1.0678159219275372,
+          "delta_aged": 0.02996705719082038,
+          "reform_frozen": 1.0603556701748058,
+          "delta_frozen": 0.022506805438089028
         }
       ],
       "conventions": [
@@ -918,16 +960,16 @@
         "Au-delà de trois ans : Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux."
       ],
       "gdp_gap_aged": [
-        0.0015185722250442713,
-        0.003116192820489232,
-        0.003372881971217364,
-        0.003508454531273852,
-        0.00364181399149236,
-        0.003615226089030629,
-        0.003587711634095652,
-        0.0035586366304591905,
-        0.003528312613783113,
-        0.003498880680480881
+        0.0027366816601915073,
+        0.005645759704050663,
+        0.006178171023286002,
+        0.006343982252892122,
+        0.006503326273754859,
+        0.006638686649826791,
+        0.0067782208430135745,
+        0.0069213110927978634,
+        0.007066799802520467,
+        0.007214780943136728
       ]
     },
     {
@@ -936,89 +978,89 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1704373416557161,
-          "delta_aged": 0.0018566161071700282,
-          "reform_frozen": 1.170363495909163,
-          "delta_frozen": 0.0017827703606170253
+          "reform_aged": 1.1714919124937382,
+          "delta_aged": 0.0029111869451921013,
+          "reform_frozen": 1.1712729259791346,
+          "delta_frozen": 0.0026922004305884872
         },
         {
           "year": 2027,
-          "reform_aged": 1.1763444329826742,
-          "delta_aged": 0.0016515530224479047,
-          "reform_frozen": 1.1762344546214716,
-          "delta_frozen": 0.0015415746612452708
+          "reform_aged": 1.1775036606909008,
+          "delta_aged": 0.0028107807306745336,
+          "reform_frozen": 1.1771788900097846,
+          "delta_frozen": 0.002486010049558285
         },
         {
           "year": 2028,
-          "reform_aged": 1.178032601563794,
-          "delta_aged": 0.002644022066845775,
-          "reform_frozen": 1.177835634534063,
-          "delta_frozen": 0.0024470550371147315
+          "reform_aged": 1.1803295103207876,
+          "delta_aged": 0.004940930823839285,
+          "reform_frozen": 1.1796959400029725,
+          "delta_frozen": 0.004307360506024205
         },
         {
           "year": 2029,
-          "reform_aged": 1.181864127872768,
-          "delta_aged": 0.011083554641064808,
-          "reform_frozen": 1.1812374787968334,
-          "delta_frozen": 0.010456905565130237
+          "reform_aged": 1.1903375276508361,
+          "delta_aged": 0.019556954419132966,
+          "reform_frozen": 1.1882349536417005,
+          "delta_frozen": 0.01745438040999736
         },
         {
           "year": 2030,
-          "reform_aged": 1.1764373958645777,
-          "delta_aged": 0.015457554551629116,
-          "reform_frozen": 1.1753532632108006,
-          "delta_frozen": 0.014373421897851957
+          "reform_aged": 1.1882748163767085,
+          "delta_aged": 0.027294975063759885,
+          "reform_frozen": 1.18468400804552,
+          "delta_frozen": 0.023704166732571474
         },
         {
           "year": 2031,
-          "reform_aged": 1.1658652130232605,
-          "delta_aged": 0.019769593340941416,
-          "reform_frozen": 1.1642230609614375,
-          "delta_frozen": 0.01812744127911836
+          "reform_aged": 1.1811779302261163,
+          "delta_aged": 0.03508231054379718,
+          "reform_frozen": 1.1757841666307012,
+          "delta_frozen": 0.029688546948382077
         },
         {
           "year": 2032,
-          "reform_aged": 1.1502532183301455,
-          "delta_aged": 0.02401779386205627,
-          "reform_frozen": 1.1479597708212206,
-          "delta_frozen": 0.021724346353131363
+          "reform_aged": 1.1691606443506999,
+          "delta_aged": 0.042925219882610666,
+          "reform_frozen": 1.1616576686250417,
+          "delta_frozen": 0.0354222441569525
         },
         {
           "year": 2033,
-          "reform_aged": 1.1297071178785378,
-          "delta_aged": 0.028202041820058366,
-          "reform_frozen": 1.1266743936980441,
-          "delta_frozen": 0.025169317639564648
+          "reform_aged": 1.1523269720207308,
+          "delta_aged": 0.050821895962251284,
+          "reform_frozen": 1.1424183938936918,
+          "delta_frozen": 0.04091331783521235
         },
         {
           "year": 2034,
-          "reform_aged": 1.1043299570482505,
-          "delta_aged": 0.03232123418940813,
-          "reform_frozen": 1.1004761097705165,
-          "delta_frozen": 0.028467386911674053
+          "reform_aged": 1.130783480825571,
+          "delta_aged": 0.0587747579667286,
+          "reform_frozen": 1.1181785270954199,
+          "delta_frozen": 0.04616980423657746
         },
         {
           "year": 2035,
-          "reform_aged": 1.0742224405348861,
-          "delta_aged": 0.036373575798169355,
-          "reform_frozen": 1.0694722910440457,
-          "delta_frozen": 0.03162342630732895
+          "reform_aged": 1.1046348847836722,
+          "delta_aged": 0.06678602004695544,
+          "reform_frozen": 1.0890483176666004,
+          "delta_frozen": 0.05119945292988359
         }
       ],
       "conventions": [
         "Au-delà de trois ans : Effet macro éteint après trois ans."
       ],
       "gdp_gap_aged": [
-        0.0015185722250442713,
-        0.003116192820489232,
-        0.003372881971217364,
-        -1.9778987808416342e-05,
-        -1.7661922467083364e-05,
-        -1.7940260030586498e-05,
-        -1.975440579194371e-05,
-        -2.3531209107382813e-05,
-        -2.8400946303322837e-05,
-        -3.0867679985624565e-05
+        0.0027366816601915073,
+        0.005645759704050663,
+        0.006178171023286002,
+        0.000305256097324384,
+        0.0003061867780855288,
+        0.00030989335057301224,
+        0.000313125149411205,
+        0.0003170194661842953,
+        0.0003193506467465826,
+        0.00031982824726805627
       ]
     },
     {
@@ -1027,89 +1069,89 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1704373416557161,
-          "delta_aged": 0.0018566161071700282,
-          "reform_frozen": 1.170363495909163,
-          "delta_frozen": 0.0017827703606170253
+          "reform_aged": 1.1714919124937382,
+          "delta_aged": 0.0029111869451921013,
+          "reform_frozen": 1.1712729259791346,
+          "delta_frozen": 0.0026922004305884872
         },
         {
           "year": 2027,
-          "reform_aged": 1.1763444329826742,
-          "delta_aged": 0.0016515530224479047,
-          "reform_frozen": 1.1762344546214716,
-          "delta_frozen": 0.0015415746612452708
+          "reform_aged": 1.1775036606909008,
+          "delta_aged": 0.0028107807306745336,
+          "reform_frozen": 1.1771788900097846,
+          "delta_frozen": 0.002486010049558285
         },
         {
           "year": 2028,
-          "reform_aged": 1.178032601563794,
-          "delta_aged": 0.002644022066845775,
-          "reform_frozen": 1.177835634534063,
-          "delta_frozen": 0.0024470550371147315
+          "reform_aged": 1.1803295103207876,
+          "delta_aged": 0.004940930823839285,
+          "reform_frozen": 1.1796959400029725,
+          "delta_frozen": 0.004307360506024205
         },
         {
           "year": 2029,
-          "reform_aged": 1.1747298535150312,
-          "delta_aged": 0.003949280283328083,
-          "reform_frozen": 1.1744064798953446,
-          "delta_frozen": 0.003625906663641487
+          "reform_aged": 1.1783905978839198,
+          "delta_aged": 0.007610024652216607,
+          "reform_frozen": 1.1773047689932135,
+          "delta_frozen": 0.00652419576151031
         },
         {
           "year": 2030,
-          "reform_aged": 1.1662359894376662,
-          "delta_aged": 0.00525614812471753,
-          "reform_frozen": 1.165751337203857,
-          "delta_frozen": 0.004771495890908417
+          "reform_aged": 1.1713218756583785,
+          "delta_aged": 0.010342034345429907,
+          "reform_frozen": 1.1696560395589897,
+          "delta_frozen": 0.008676198246041045
         },
         {
           "year": 2031,
-          "reform_aged": 1.152659893023118,
-          "delta_aged": 0.0065642733407988985,
-          "reform_frozen": 1.151979375814854,
-          "delta_frozen": 0.00588375613253489
+          "reform_aged": 1.1592347459839785,
+          "delta_aged": 0.013139126301659365,
+          "reform_frozen": 1.1568589003312137,
+          "delta_frozen": 0.010763280648894646
         },
         {
           "year": 2032,
-          "reform_aged": 1.1341081190080426,
-          "delta_aged": 0.007872694539953429,
-          "reform_frozen": 1.1331981087684087,
-          "delta_frozen": 0.006962684300319433
+          "reform_aged": 1.1422382780928053,
+          "delta_aged": 0.016002853624716096,
+          "reform_frozen": 1.1390210879210616,
+          "delta_frozen": 0.012785663452972384
         },
         {
           "year": 2033,
-          "reform_aged": 1.1106857106110548,
-          "delta_aged": 0.00918063455257534,
-          "reform_frozen": 1.109513426204048,
-          "delta_frozen": 0.008008350145568555
+          "reform_aged": 1.1204393487105149,
+          "delta_aged": 0.0189342726520354,
+          "reform_frozen": 1.116248865419875,
+          "delta_frozen": 0.014743789361395532
         },
         {
           "year": 2034,
-          "reform_aged": 1.0824957453333566,
-          "delta_aged": 0.010487022474514163,
-          "reform_frozen": 1.0810295960063412,
-          "delta_frozen": 0.009020873147498776
+          "reform_aged": 1.093943559064923,
+          "delta_aged": 0.0219348362060805,
+          "reform_frozen": 1.0886467450744686,
+          "delta_frozen": 0.016638022215626158
         },
         {
           "year": 2035,
-          "reform_aged": 1.0496407857348788,
-          "delta_aged": 0.011791920998162064,
-          "reform_frozen": 1.0478493029408142,
-          "delta_frozen": 0.010000438204097462
+          "reform_aged": 1.062855133940679,
+          "delta_aged": 0.025006269203962317,
+          "reform_frozen": 1.0563178484976652,
+          "delta_frozen": 0.01846898376094841
         }
       ],
       "conventions": [
         "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année."
       ],
       "gdp_gap_aged": [
-        0.0015185722250442713,
-        0.003116192820489232,
-        0.003372881971217364,
-        0.0033649020767554604,
-        0.0033570674389662583,
-        0.003348849395416002,
-        0.0033392820036262116,
-        0.0033276265036902997,
-        0.0033141610664348875,
-        0.0033009528471830115
+        0.0027366816601915073,
+        0.005645759704050663,
+        0.006178171023286002,
+        0.006304415572379434,
+        0.0064319837874394796,
+        0.006560785534254239,
+        0.006691418701548184,
+        0.00682338080518423,
+        0.0069554635442693295,
+        0.007087816891439686
       ]
     }
   ]

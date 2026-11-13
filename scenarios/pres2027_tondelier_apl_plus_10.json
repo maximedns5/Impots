@@ -1,0 +1,14 @@
+{
+  "name": "pres2027_tondelier_apl_plus_10",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Marine Tondelier (Les Écologistes), programme relevé le 2026-11-12 — Revalorisation des APL de 10 % : « « Revaloriser les APL de 10 % avec un mécanisme empêchant la répercussion sur les montants des loyers. » » (https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf, 2026-09-12)",
+  "note": "Les paramètres des aides au logement que le droit révise en octobre (loyers plafonds, forfaits de charges, équivalences de loyer, participation minimale) relevés de 10 %, portés sur toute l'année chiffrée (D-301). La mesure se mesure contre l'indexation légale sur les prix, la référence du but 21 : les 10 % s'ajoutent à elle. Le mécanisme contre la répercussion sur les loyers n'est pas décrit ; les loyers ne bougent pas, ce qu'il viserait. Plage : du droit (1) à 10 % prolongé de la moitié de l'écart (1,15).",
+  "tags": [
+    "presidentielle_2027",
+    "tondelier"
+  ],
+  "reform": {
+    "al_revalorisation_portee": 1.1
+  }
+}

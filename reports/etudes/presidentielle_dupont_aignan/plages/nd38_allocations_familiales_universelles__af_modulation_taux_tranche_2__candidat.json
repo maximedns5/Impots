@@ -1,0 +1,69 @@
+{
+  "programme": "dupont_aignan",
+  "mesure": "nd38_allocations_familiales_universelles",
+  "champ": "af_modulation_taux_tranche_2",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "af_modulation_taux_tranche_2": 1.0,
+      "af_modulation_taux_tranche_3": 1.0
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 953943950.7844238,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.0003095827606365287,
+      0.0006157482335971132,
+      0.000918534140152083,
+      0.001217977785190616,
+      0.0015141160618172833,
+      0.001806985455896859,
+      0.0020966220505498345,
+      0.002383061530597752,
+      0.0026663391869605757,
+      0.002946489921003659
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-12",
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
+}

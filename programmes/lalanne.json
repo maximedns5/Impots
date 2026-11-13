@@ -9,7 +9,160 @@
     "date": "2026-08-19",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
-  "mesures": []
+  "mesures": [
+    {
+      "id": "baisse_impots_carburants",
+      "categorie": "energie_carburants",
+      "libelle": "Baisse radicale des impôts, surtout des taxes sur les carburants",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Baisse radicale des impôts et surtout des taxes sur les carburants. »",
+          "url": "https://dieudolalanne2027.com/programme/",
+          "date": "2026-07-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni l'impôt, ni la taxe, ni l'ampleur de la baisse ne sont énoncés."
+      }
+    },
+    {
+      "id": "gratuite_transports_publics",
+      "categorie": "depense_publique",
+      "libelle": "Gratuité des transports publics",
+      "parametre": "gratuité",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Mise en place de la gratuité des transports publics. »",
+          "url": "https://dieudolalanne2027.com/programme/",
+          "date": "2026-07-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les recettes des transports publics sont celles des autorités organisatrices, une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "baisse_charges_tpe_pme",
+      "categorie": "csg_cotisations",
+      "libelle": "Baisse des cotisations des TPE, PME et artisans",
+      "parametre": "aucun taux ni seuil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Soutien aux TPE/PME et artisans : Baisse drastique des charges et fin de la concurrence déloyale des multinationales. »",
+          "url": "https://dieudolalanne2027.com/programme/",
+          "date": "2026-07-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni les cotisations visées, ni le taux de la baisse, ni la taille des entreprises ne sont énoncés."
+      }
+    },
+    {
+      "id": "salaire_elus_salaire_moyen",
+      "categorie": "depense_publique",
+      "libelle": "Salaire des élus aligné sur le salaire moyen ; salaire des hauts fonctionnaires réduit",
+      "parametre": "élus : salaire moyen des Français ; hauts fonctionnaires : baisse sans montant",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Chasse au gaspillage : alignement du salaire de tous les élus sur le salaire moyen des Français, et réduction du salaire annuel des hauts fonctionnaires. »",
+          "url": "https://dieudolalanne2027.com/programme/",
+          "date": "2026-07-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La rémunération des élus et des fonctionnaires est une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "nationalisations",
+      "categorie": "autre",
+      "libelle": "Nationalisations et récupération du patrimoine cédé",
+      "parametre": "aucun périmètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Nationalisation des entreprises à vocation sociale et assurant un profit à l'État. »",
+          "url": "https://dieudolalanne2027.com/programme/",
+          "date": "2026-07-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun périmètre chiffré ni paramètre fiscal n'est énoncé."
+      }
+    },
+    {
+      "id": "retour_franc_banque_de_france",
+      "categorie": "regle_budgetaire",
+      "libelle": "Retour au franc et reprise en main de la Banque de France",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Souveraineté monétaire : Retour au Franc et reprise en main de la Banque de France. »",
+          "url": "https://dieudolalanne2027.com/programme/",
+          "date": "2026-07-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une sortie de l'euro, sans règle de financement de la dette ni taux de conversion."
+      }
+    },
+    {
+      "id": "frexit",
+      "categorie": "autre",
+      "libelle": "Sortie de l'Union européenne et de la PAC",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Frexit organisé : Sortie de l'Union Européenne pour retrouver la maîtrise de nos lois et de nos frontières. »",
+          "url": "https://dieudolalanne2027.com/programme/",
+          "date": "2026-07-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "La contribution au budget de l'Union et les aides de la PAC qui en dépendent ne sont pas chiffrées par le candidat."
+      }
+    },
+    {
+      "id": "fin_subventions_pays_en_guerre",
+      "categorie": "depense_publique",
+      "libelle": "Fin des subventions aux pays en guerre",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Fin des subventions allouées à des pays en guerre pour soutenir un pays contre un autre. »",
+          "url": "https://dieudolalanne2027.com/programme/",
+          "date": "2026-07-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni les crédits visés ni leur montant ne sont énoncés."
+      }
+    }
+  ]
 }

@@ -188,7 +188,11 @@ def test_every_knob_of_the_cases_grafts_to_its_whole_tree() -> None:
     base = system.baseline()
     for bouton, (_, _, _, valeur, _) in sorted(CASES.items()):
         annee = YEARS.get(bouton, 2024)
-        reforme = system.reformed_for(ReformSpec(**{bouton: valeur}), annee)
+        # Une valeur qui porte sa propre clé est la réforme entière (les boutons qui vont
+        # par deux, et `indexations`, but 21) : la convention de `test_knobs._spec`.
+        spec = (ReformSpec(**valeur) if isinstance(valeur, dict) and bouton in valeur
+                else ReformSpec(**{bouton: valeur}))
+        reforme = system.reformed_for(spec, annee)
         for instant in (f"{annee - 2}-10-01", f"{annee}-01-01", f"{annee}-04-01",
                         f"{annee}-07-01", f"{annee}-12-01", f"{annee + 1}-01-01"):
             assert repr(reforme.get_parameters_at_instant(instant)) == \

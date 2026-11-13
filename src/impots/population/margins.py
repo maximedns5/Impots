@@ -949,3 +949,218 @@ HLM_RENT_PER_M2: dict[str, Figure] = {
                             "SDES, Datalab Essentiel, RPLS au 1er janvier 2024, tableau 4",
                             RPLS_2024_URL, "calibration"),
 }
+
+
+# --------------------------------------------------------------------------- #
+# Les données de ménages qui manquent aux mesures des programmes (but 21, étape 4).
+#
+# Chacune est dépensée par `population.menages` quand l'imputation « menages » tourne :
+# le total de la population est alors celui de la source par construction, et ne prouve
+# rien. Hors de cette imputation, aucune passe ne les lit. Les montants des cases de la
+# 2042 sont relus dans l'export manifesté par `menages.declare`, qui refuse un écart.
+# --------------------------------------------------------------------------- #
+DECLARATIONS_2042_URL = "https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/"
+_DECLARATIONS_2042 = ("DGFiP, « L'impôt sur le revenu : les déclarations nationales » (2042), "
+                      "revenus 2024, export manifesté dgfip_ir_2042_nat_export_2026-10-15.csv")
+
+HEURES_SUP_DECLAREES = Figure(
+    value=21_830_734_658.0, unit="EUR", year=2024,
+    scope="Heures supplémentaires et jours de RTT exonérés, cases 1GH, 1HH, 1IH et 1JH : "
+          "12 845 079 lignes déclarées (17 996 526 307 + 3 673 534 276 + 139 444 727 + "
+          "21 229 348 €), montants imposables, plafonnés à 7 500 € par personne (CGI art. 81 "
+          "quater)",
+    source=_DECLARATIONS_2042, url=DECLARATIONS_2042_URL, use="calibration",
+    caveat="Dépensé par `menages` : le nombre de lignes fixe la probabilité d'en avoir, le "
+           "montant fixe les heures communes. Qui en a est un tirage uniforme parmi les "
+           "salariés (hors gérants), faute d'une ventilation publiée par catégorie ; le "
+           "montant suit le salaire horaire et la quotité. Il est pris dans la part exonérée "
+           "des salaires (`DECLARED_TAXABLE_WAGES`) qui le portait uniformément : le total "
+           "exonéré ne bouge pas, sa répartition oui. Ramené au champ de l'enquête "
+           "(`CHAMP_SALARIES_ENQUETE`), comme les salaires déclarés.",
+)
+
+FRAIS_REELS_DECLARES = Figure(
+    value=35_305_956_076.0, unit="EUR", year=2024,
+    scope="Frais réels déclarés, cases 1AK, 1BK, 1CK et 1DK : 5 865 157 lignes "
+          "(26 539 791 171 + 8 642 079 803 + 111 571 774 + 12 513 328 €)",
+    source=_DECLARATIONS_2042, url=DECLARATIONS_2042_URL, use="calibration",
+    caveat="Dépensé deux fois par `menages` (le nombre et le montant fixent les deux "
+           "paramètres de la loi des frais de trajet). Hypothèses : les frais réels sont des "
+           "frais de trajet (la DGFiP ne publie pas leur partage avec les repas et le reste), "
+           "un salarié les déclare quand ils dépassent sa déduction de 10 %, et les frais de "
+           "trajet suivent une loi log-normale indépendante du salaire, au prorata du temps "
+           "travaillé. Les frais des salariés qui ne les déclarent pas sont l'extrapolation "
+           "de cette loi, pas une mesure.",
+)
+
+PENSIONS_ALIMENTAIRES_PERCUES = Figure(
+    value=5_546_058_472.0, unit="EUR", year=2024,
+    scope="Pensions alimentaires perçues, cases 1AO, 1BO, 1CO et 1DO (4 976 928 051 + "
+          "254 310 707 + 226 562 679 + 88 257 035 €) ; 1 188 110 lignes de déclarants (1AO "
+          "et 1BO)",
+    source=_DECLARATIONS_2042, url=DECLARATIONS_2042_URL, use="calibration",
+    caveat="Dépensé par `menages`. Hypothèse : toutes vont à un parent isolé qui a un "
+           "enfant à charge, au prorata du nombre d'enfants ; celles qu'un enfant majeur ou "
+           "un ex-conjoint sans enfant reçoit (les cases des personnes à charge en sont une "
+           "part) y sont rangées aussi.",
+)
+
+PENSIONS_ALIMENTAIRES_VERSEES: dict[str, Figure] = {
+    "mineurs": Figure(
+        value=4_839_954_764.0, unit="EUR", year=2024,
+        scope="Pensions alimentaires versées hors enfants majeurs, cases 6GU et 6GP "
+              "(4 461 395 237 + 378 559 527 €), 1 179 768 lignes",
+        source=_DECLARATIONS_2042, url=DECLARATIONS_2042_URL, use="calibration",
+        caveat="Dépensé par `menages`. Hypothèse : le déclarant d'un foyer d'une personne "
+               "seule, sans personne à charge, de 25 à 64 ans ; un montant égal pour tous.",
+    ),
+    "majeurs": Figure(
+        value=4_244_229_881.0, unit="EUR", year=2024,
+        scope="Pensions alimentaires versées aux enfants majeurs, cases 6EL, 6EM, 6GI et "
+              "6GJ (3 396 214 775 + 734 659 015 + 94 304 601 + 19 051 490 €), 846 045 "
+              "foyers (lignes 6EL et 6GI)",
+        source=_DECLARATIONS_2042, url=DECLARATIONS_2042_URL, use="calibration",
+        caveat="Dépensé par `menages`. Hypothèse : le déclarant de 45 à 70 ans d'un foyer "
+               "sans personne à charge (l'enfant majeur imposé à part n'y est plus) ; un "
+               "montant égal pour tous.",
+    ),
+}
+
+FRAIS_GARDE_DECLARES = Figure(
+    value=4_608_728_876.0, unit="EUR", year=2024,
+    scope="Frais de garde des enfants de moins de six ans, cases 7GA, 7GB, 7GC et leurs "
+          "résidences alternées 7GE, 7GF, 7GG : 2 329 279 enfants, 4 608 728 876 € déclarés "
+          "(avant le plafond de 3 500 € par enfant)",
+    source=_DECLARATIONS_2042, url=DECLARATIONS_2042_URL, use="calibration",
+    caveat="Dépensé par `menages`, qui remplace alors la case 7GA de l'imputation des "
+           "niches. Hypothèses : un enfant de moins de six ans à charge dont tous les adultes "
+           "du foyer ont un revenu d'activité ; des frais tirés d'une loi gamma de forme 2 "
+           "(aucune dispersion publiée), si bien que la part au-dessus du plafond est une "
+           "hypothèse ; la résidence alternée comptée comme une garde entière.",
+)
+
+EMPLOI_DOMICILE_DECLARE = Figure(
+    value=15_371_040_389.0, unit="EUR", year=2024,
+    scope="Dépenses d'emploi d'un salarié à domicile, case 7DB, 5 190 857 foyers",
+    source=_DECLARATIONS_2042, url=DECLARATIONS_2042_URL, use="context",
+    caveat="Non imputé par `menages` : la case 7DB l'est déjà par `niches`, sur la table "
+           "par décile de la DGFiP (`NICHE_CREDITS_BY_DECILE`). Ce total sert de second "
+           "regard sur cette imputation (`menages.ecart_emploi_domicile`), pas de cible.",
+)
+
+CSL_2024_URL = ("https://www.statistiques.developpement-durable.gouv.fr/media/8830/"
+                "download?inline")
+INTERETS_EMPRUNT_RESIDENCE_PRINCIPALE = Figure(
+    value=18_644_048_797.75541, unit="EUR", year=2024,
+    scope="Intérêts des emprunts des propriétaires occupants accédants, poste OEP5 du "
+          "compte des producteurs de service de logement, 2024, en millions d'euros "
+          "(18 644,05), France entière",
+    source="SDES, Compte du logement 2024 (novembre 2025), séries longues relatives aux "
+           "dépenses courantes, feuille T21",
+    url=CSL_2024_URL, use="calibration",
+    caveat="Dépensé par `menages`. Hypothèses : chaque ménage « primo_accedant » de la "
+           "population en paie ; le montant suit le revenu d'activité et de remplacement du "
+           "ménage (le prêt est accordé sur le revenu, la norme du HCSF plafonne l'effort à "
+           "35 %) et décroît avec l'âge de la personne de référence (un prêt ancien a moins "
+           "d'intérêts) ; aucune distribution publiée ne le dit.",
+)
+
+ACCEDANTS = Figure(
+    value=7_087_000.0, unit="count", year=2024,
+    scope="Résidences principales occupées par des propriétaires accédants, France entière, "
+          "au 1er juillet 2024",
+    source="SDES, Rapport du compte du logement 2024, figure 2.1",
+    url=("https://www.statistiques.developpement-durable.gouv.fr/rapport-du-compte-du-"
+         "logement-2024"),
+    use="context",
+    caveat="Comparé au nombre pondéré de ménages « primo_accedant » de la population, qui "
+           "vient de l'enquête Emploi et de la marge des statuts d'occupation : l'écart est "
+           "rapporté, pas calé.",
+)
+
+# Les étudiants du supérieur et les boursiers, que la CVEC lit (Le Pen lp26 ; but 21,
+# étape 4, suite). La population ne les distingue pas : `menages` les impute, calés ici.
+ETUDIANTS_SUPERIEUR = Figure(
+    value=2_965_000.0, unit="count", year=2024,
+    scope="Étudiants inscrits dans l'enseignement supérieur, France métropolitaine et DROM, "
+          "rentrée 2023 (année universitaire 2023-2024), toutes formations, apprentis "
+          "compris",
+    source="MESR-SIES, Note Flash n° 19, juillet 2024, « Les effectifs étudiants dans "
+           "l'enseignement supérieur en 2023-2024 »",
+    url=("https://enseignementsup-recherche.gouv.fr/sites/default/files/2024-07/"
+         "nf-sies-2024-19-33906.pdf"),
+    use="calibration",
+    caveat="Dépensé par `menages` : le nombre de personnes tirées. Le compte contient les "
+           "STS et les CPGE des lycées (219 000 et 82 000), les contrats de "
+           "professionnalisation et d'autres que la CVEC ne frappe pas : la population ne "
+           "les sépare pas, et la CVEC qu'elle lit dépasse ce que la contribution rapporte "
+           "(`CVEC_PERCUE`, contexte). Qui est étudiant est un tirage (hypothèse dite dans "
+           "`menages`).",
+)
+
+BOURSIERS_CRITERES_SOCIAUX = Figure(
+    value=679_044.0, unit="count", year=2024,
+    scope="Étudiants ayant perçu une bourse sur critères sociaux du MESR, année "
+          "universitaire 2023-2024, France hors Polynésie et Nouvelle-Calédonie (tous "
+          "échelons, 0bis à 7)",
+    source="MESR-SIES, Note Flash n° 24, septembre 2024, « Les boursiers sur critères "
+           "sociaux en 2023-2024 », système AGLAE (extraction du 15 mars 2024)",
+    url=("https://enseignementsup-recherche.gouv.fr/sites/default/files/2024-09/"
+         "nf-sies-2024-24-34681.pdf"),
+    use="calibration",
+    caveat="Dépensé par `menages` : le nombre de boursiers tirés parmi les étudiants "
+           "imputés, les plus modestes d'abord (le revenu par personne de leur ménage ; "
+           "hypothèse : la bourse lit le revenu des parents, que le ménage d'un étudiant "
+           "parti de chez eux ne porte pas).",
+)
+
+CVEC_PERCUE = Figure(
+    value=170_000_000.0, unit="EUR", year=2024,
+    scope="Produit de la CVEC en 2023-2024, au montant de 100 €, « en faveur des "
+          "établissements d'enseignement supérieur et à destination du réseau des œuvres "
+          "universitaires »",
+    source="Assemblée nationale, amendement n° 103 au projet de loi de finances pour 2025 "
+           "(exposé sommaire) ; un montant rond, non relu dans un document du ministère",
+    url="https://www.assemblee-nationale.fr/dyn/17/amendements/0324A/AN/103.pdf",
+    use="context",
+    caveat="Rapporté contre la CVEC que la population impute, jamais calé : l'écart dit "
+           "ce que le compte des étudiants inscrits contient de non assujettis.",
+)
+
+# --------------------------------------------------------------------------- #
+# Les salaires que la population distingue (but 21, étape 4) : la diffusion d'une hausse
+# du SMIC aux salaires au-dessus, une hypothèse déclarée (D-380).
+# --------------------------------------------------------------------------- #
+#: L'élasticité du salaire horaire de base à une hausse de 1 % du SMIC, par tranche de
+#: salaire en multiples du SMIC (bornes basses 1,0 à 1,4, tranches de 0,1), selon quatre
+#: estimations : à un trimestre ou à un an, sans ou avec effets fixes d'entreprise. Koubi et
+#: Lhommeau (Dares), « Les effets de diffusion de court terme des hausses du Smic dans les
+#: grilles salariales des entreprises de dix salariés ou plus sur la période 2000-2005 »,
+#: Insee, Les salaires en France, édition 2007, figure 11. Au-delà de 1,5 SMIC, le texte dit
+#: l'effet « faible » et l'estimation à un trimestre non significative : zéro ici.
+SMIC_DIFFUSION_URL = "https://www.insee.fr/fr/statistiques/fichier/1373191/salfra07ae.pdf"
+SMIC_DIFFUSION_PROFILS: dict[str, tuple[float, float, float, float, float]] = {
+    "trimestre_sans_effets_fixes": (0.382, 0.188, 0.148, 0.108, 0.070),
+    "trimestre_avec_effets_fixes": (0.392, 0.202, 0.155, 0.116, 0.069),
+    "annee_sans_effets_fixes": (0.473, 0.358, 0.287, 0.271, 0.311),
+    "annee_avec_effets_fixes": (1.188, 0.796, 0.520, 0.357, 0.490),
+}
+SMIC_DIFFUSION_TRANCHES = (1.0, 1.1, 1.2, 1.3, 1.4, 1.5)
+
+SMIC_DIFFUSION = Figure(
+    value=0.473, unit="ratio", year=2005,
+    scope="Élasticité à un an du salaire horaire de base entre 1 et 1,1 SMIC à une hausse "
+          "du SMIC, sans effets fixes d'entreprise ; entreprises de dix salariés ou plus du "
+          "secteur marchand non agricole, 2000-2005 (enquête Acemo)",
+    source="Koubi et Lhommeau (Dares), Insee, Les salaires en France, édition 2007, "
+           "figure 11",
+    url=SMIC_DIFFUSION_URL, use="context",
+    caveat="Une hypothèse déclarée, jamais calée (D-380) : le premier jour, la loi seule "
+           "relève les salaires sous le nouveau seuil ; la diffusion au-dessus, quand on la "
+           "demande, suit l'un des quatre profils publiés, dont la plage va de 0,07 (à un "
+           "trimestre, entre 1,4 et 1,5 SMIC) à 1,19 (à un an avec effets fixes, entre 1 et "
+           "1,1 SMIC). Des grilles de 2000-2005, du privé seul ; le rapport du groupe "
+           "d'experts SMIC de novembre 2025 n'en publie pas de plus récente et redit "
+           "qu'« une fois que le SMIC augmente, les salaires des travailleurs légèrement "
+           "supérieurs au SMIC finissent par augmenter également ».",
+)

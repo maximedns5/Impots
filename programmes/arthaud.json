@@ -9,14 +9,14 @@
     "date": "2026-08-26",
     "type": "presse"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
       "id": "revenu_minimum_2200_net",
       "categorie": "salaires_smic",
-      "libelle": "Revenu minimum de 2 200 € net",
-      "parametre": "2 200 € net par mois",
+      "libelle": "SMIC et revenu minimum à 2 200 € net",
+      "parametre": "2 200 € net par mois ; le dépliant du 3 novembre 2026 écrit « le SMIC à 2 200 € »",
       "precision": "parametree",
       "sources": [
         {
@@ -24,11 +24,34 @@
           "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
           "date": "2026-07-06",
           "type": "programme"
+        },
+        {
+          "citation": "« Exigeons L'AUGMENTATION des salaires, des retraites et des pensions, le SMIC à 2 200 € et leur INDEXATION sur l'inflation. »",
+          "url": "https://lutte-ouvriere.org/medias/document/fichiers/2026/11/Depliant-NA-3nov.pdf",
+          "date": "2026-11-03",
+          "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "salaires",
-        "raison": "Le moteur ne déplace pas la distribution des salaires, et le SMIC n'est pas un de ses boutons."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "smic_revalorisation": 1.5033,
+          "smic_diffusion_profil": "annee_avec_effets_fixes",
+          "smic_diffusion_echelle": 0.0
+        },
+        "plages": [
+          {
+            "champ": "smic_revalorisation",
+            "min": 1.4886,
+            "max": 1.5245
+          },
+          {
+            "champ": "smic_diffusion_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Le SMIC porté à 2 200 € nets par mois. Le bouton est un coefficient sur le SMIC horaire brut de chaque mois de 2026, qui en porte deux : 12,02 € de janvier à mai (1 823,03 € bruts par mois), 12,31 € de juin à décembre (1 867,02 €), 1 848,69 € en moyenne. Le coefficient retenu, 1,5033, donne 2 200 € nets par mois en moyenne sur l'année ; la plage va de 1,4886 (2 200 € nets atteints depuis le SMIC de juin) à 1,5245 (depuis celui de janvier). Le net est le brut moins les prélèvements salariaux d'un non-cadre sous le plafond (vieillesse 7,30 %, Agirc-Arrco et CEG 4,01 %, CSG et CRDS 9,70 % sur 98,25 % du brut), soit 79,16 % du brut, sans mutuelle ni prévoyance. Le revenu minimum des retraités et des allocataires au même niveau n'a pas de bouton : seul le SMIC est chiffré, une partie de la mesure. La diffusion au-dessus du nouveau SMIC, entre 1 et 1,5 SMIC dans le privé, est une hypothèse déclarée (D-380) : le profil à un an avec effets fixes d'entreprise de Koubi et Lhommeau (Insee, Les salaires en France 2007), le plus large des quatre publiés, à l'échelle 0 pour la valeur du candidat (le premier jour, la loi seule relève les salaires horaires sous le nouveau SMIC), sa plage allant jusqu'à 1 (le profil entier). La mesure se mesure contre le SMIC de l'arbre de 2026. Le coût ne compte pas le salaire que paie un employeur privé ; il compte celui que paie l'État employeur (les agents publics relevés au SMIC), les cotisations, la CSG et l'impôt qui montent, la prime d'activité qui bouge, et les allègements généraux, qui suivent le SMIC : un SMIC relevé les élargit aussi pour les salaires qui ne bougent pas."
       }
     },
     {
@@ -42,6 +65,12 @@
           "citation": "« Nous devons imposer une augmentation massive des salaires, des allocations et des pensions et leur indexation sur la hausse des prix : quand les prix montent, notre salaire doit suivre ! »",
           "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
           "date": "2026-07-06",
+          "type": "programme"
+        },
+        {
+          "citation": "« Exigeons L'AUGMENTATION des salaires, des retraites et des pensions, le SMIC à 2 200 € et leur INDEXATION sur l'inflation. »",
+          "url": "https://lutte-ouvriere.org/medias/document/fichiers/2026/11/Depliant-NA-3nov.pdf",
+          "date": "2026-11-03",
           "type": "programme"
         }
       ],
@@ -62,6 +91,12 @@
           "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
           "date": "2026-07-06",
           "type": "programme"
+        },
+        {
+          "citation": "« Contre le chômage et la précarité, RÉPARTITION DU TRAVAIL ENTRE TOUS, sans perte de salaire ! »",
+          "url": "https://lutte-ouvriere.org/medias/document/fichiers/2026/11/Depliant-NA-3nov.pdf",
+          "date": "2026-11-03",
+          "type": "programme"
         }
       ],
       "refus": {
@@ -80,6 +115,12 @@
           "citation": "« Levée du secret commercial et du secret des affaires pour rendre publics les comptes de ces grandes entreprises, y compris ceux qui sont cachés ! »",
           "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
           "date": "2026-07-06",
+          "type": "programme"
+        },
+        {
+          "citation": "« Il faut supprimer le secret commercial et bancaire ! »",
+          "url": "https://lutte-ouvriere.org/medias/document/fichiers/2026/11/Depliant-NA-3nov.pdf",
+          "date": "2026-11-03",
           "type": "programme"
         }
       ],

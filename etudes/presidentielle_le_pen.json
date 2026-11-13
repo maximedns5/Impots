@@ -3,12 +3,13 @@
   "titre": "Marine Le Pen : la part chiffrée du programme, en trois réponses",
   "texte": "programme",
   "programme": "le_pen",
-  "preenregistrement": "D-350",
+  "preenregistrement": "D-394",
   "cadre": "central",
   "millesime_entreprises": "2023",
   "scenarios": [
     {
       "scenario": "pres2027_le_pen_programme"
     }
-  ]
+  ],
+  "dette_annoncee": true
 }

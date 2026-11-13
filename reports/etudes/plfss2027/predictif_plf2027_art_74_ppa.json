@@ -120,7 +120,7 @@
   "titre": "plf2027_art_74_ppa",
   "source": "PLF 2027 (AN, texte n° 3210), art. 74 — Maîtrise de l'évolution des aides personnelles au logement et de la prime d'activité. Volet prime d'activité : la revalorisation du sixième alinéa de l'article L. 842-3 du code de la sécurité sociale n'est pas appliquée en 2027. EN MIROIR : le scénario chiffre la revalorisation que l'article suspend, 2,1 % au 1er avril, et l'article en est l'opposé (D-298).",
   "reference": "reconduit",
-  "computed": "2026-11-11",
+  "computed": "2026-11-12",
   "spending_name": "Dépenses gelées en volume",
   "growth_name": "Croissance réelle 1 %, prix 2 %",
   "rate_name": "Taux implicite tenu à son niveau de 2025",
@@ -691,9 +691,9 @@
       }
     ]
   },
-  "commit": "601b4423890c7d130a10d6278339b1a65ea4b145",
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
   "dirty": false,
-  "where": "conteneur cloud, 15 Go, 4 cœurs",
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
   "annees": null,
   "persistence": null,
   "side_by_side": [

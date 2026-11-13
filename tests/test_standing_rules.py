@@ -237,12 +237,6 @@ def test_existence_is_read_from_the_evaluated_tree_not_the_editable_one() -> Non
 def test_every_knob_either_moves_an_outcome_or_says_why_not() -> None:
     """No knob may ship without a household on which it demonstrably moves something."""
     import knob_cases
-    from impots.engine.reforms import (
-        ECHELLE_KNOBS,
-        PLAFOND_KNOBS,
-        REVALORISATION_KNOBS,
-        SCALAR_KNOBS,
-    )
 
     # PLAFOND_KNOBS autant que SCALAR_KNOBS, depuis D-151. Ne quantifier que sur les
     # leviers scalaires laissait les deux plafonds de bandeau hors de toute règle de
@@ -254,8 +248,17 @@ def test_every_knob_either_moves_an_outcome_or_says_why_not() -> None:
     # interdit de laisser hors de la règle.
     # Et ECHELLE_KNOBS depuis D-320 : un quatrième, vu absent de ces deux tests le jour
     # où il est entré.
+    # Et FORMULE_KNOBS depuis le but 21 (étape 2) : un cinquième registre.
+    from impots.engine.boutons_programmes import FORMULE_KNOBS
+    from impots.engine.reforms import (
+        ECHELLE_KNOBS,
+        PLAFOND_KNOBS,
+        REVALORISATION_KNOBS,
+        SCALAR_KNOBS,
+    )
+
     knobs = (set(SCALAR_KNOBS) | set(PLAFOND_KNOBS) | set(REVALORISATION_KNOBS)
-             | set(ECHELLE_KNOBS))
+             | set(ECHELLE_KNOBS) | set(FORMULE_KNOBS))
     covered = set(knob_cases.CASES) | set(knob_cases.EXEMPT)
     missing = sorted(knobs - covered)
     assert not missing, (

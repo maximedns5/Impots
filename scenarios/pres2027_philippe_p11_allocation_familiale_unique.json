@@ -1,0 +1,23 @@
+{
+  "name": "pres2027_philippe_p11_allocation_familiale_unique",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Édouard Philippe (Horizons), programme relevé le 2026-11-12 — Allocation familiale unique dès le premier enfant, dégressive selon l'IR : « « une allocation familiale unique de 350 euros par mois dès le premier enfant, dont le montant serait ensuite dégressif en fonction de l'impôt sur le revenu » (texte de l'article) » (https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ, 2026-10-08)",
+  "note": "Une prestation neuve (D-382) : 350 € par mois pour chaque enfant à charge dès le premier, à la place des allocations familiales (avec leur majoration pour âge et leur forfait) et du complément familial, que « unique » fond ; l'allocation de rentrée scolaire reste. Hypothèses : par enfant, comme le dit « dès le premier enfant » (l'autre lecture, 350 € par famille, coûterait bien moins et n'est pas la valeur retenue) ; jusqu'à la veille de 20 ans, l'âge des allocations familiales. « Dégressif en fonction de l'impôt sur le revenu » n'a pas de barème : l'allocation annuelle de la famille baisse de la moitié de l'impôt de son foyer (un douzième par mois), sans plancher ; la plage va de 0 (pas de dégressivité) à 1 (un euro d'allocation par euro d'impôt). Ni imposable ni dans les ressources des minima et des aides au logement (D-382). Contre le droit de 2026.",
+  "tags": [
+    "presidentielle_2027",
+    "philippe"
+  ],
+  "reform": {
+    "allocation_enfant": {
+      "montant_par_enfant": 350.0,
+      "age_maximum": 20,
+      "remplace_af": true,
+      "remplace_cf": true,
+      "remplace_ars": false,
+      "par_famille": false,
+      "degressivite_part_ir": 0.5,
+      "plancher_par_enfant": 0.0
+    }
+  }
+}

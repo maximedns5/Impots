@@ -1,0 +1,16 @@
+{
+  "nom": "presidentielle_dupont_aignan",
+  "titre": "Nicolas Dupont-Aignan : la part chiffrée du programme, en trois réponses",
+  "texte": "programme",
+  "programme": "dupont_aignan",
+  "preenregistrement": "D-394",
+  "cadre": "central",
+  "millesime_entreprises": "2023",
+  "scenarios": [
+    {
+      "scenario": "pres2027_dupont_aignan_programme"
+    }
+  ],
+  "dette_annoncee": true,
+  "refus": "son chemin annuel sort de la boîte θ sous la persistance « tenue » : un effet n'y est pas monotone en son θ, et la boîte relue à ses coins serait fausse (D-217, D-224, D-398)."
+}

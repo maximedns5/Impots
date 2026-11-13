@@ -23,6 +23,16 @@ from knob_cases import CASES, EXEMPT, YEARS
 #: The daily-allowance knobs (D-306), with a value far from the law's.
 IJ_KNOBS = {"ij_at_mp_part_exoneree": 0.0, "ij_ald_part_exoneree": 0.5,
             "csg_ij_taux": 0.15}
+#: Et la CVEC (but 21, étape 2), que le format d'entrée ne peut pas faire payer.
+SANS_ENTREE = {**IJ_KNOBS, "cvec_montant": 0.0}
+
+
+def _spec(knob: str, value) -> ReformSpec:
+    """La réforme d'un cas : la valeur seule, ou, pour les boutons qui vont par deux, la
+    réforme entière qu'elle nomme (but 21, étape 2)."""
+    if isinstance(value, dict) and knob in value:
+        return ReformSpec(**value)
+    return ReformSpec(**{knob: value})
 
 pytestmark = pytest.mark.slow
 
@@ -42,7 +52,7 @@ def test_each_knob_moves_its_output(knob: str):
     household, niches, output, value, sign = CASES[knob]
     year = YEARS.get(knob, 2024)
     before = _rows(household, niches, None, year)[output]
-    after = _rows(household, niches, ReformSpec(**{knob: value}), year)[output]
+    after = _rows(household, niches, _spec(knob, value), year)[output]
     moved = after - before
     assert abs(moved) > 0.5, (
         f"{knob} moved nothing: {output} stayed at {before}. Either the household does "
@@ -60,7 +70,7 @@ def test_each_knob_leaves_the_baseline_alone(knob: str):
     household, niches, output, value, _ = CASES[knob]
     year = YEARS.get(knob, 2024)
     before = _rows(household, niches, None, year)[output]
-    _rows(household, niches, ReformSpec(**{knob: value}), year)
+    _rows(household, niches, _spec(knob, value), year)
     assert _rows(household, niches, None, year)[output] == pytest.approx(before)
 
 
@@ -74,14 +84,16 @@ def test_each_exempt_knob_really_cannot_be_moved(knob: str):
     turn the exemption into a case.
     """
     smic = {"adults": [{"salaire_brut_annuel": 22_000, "annee_naissance": 1990}]}
-    if knob in IJ_KNOBS:
-        # The wire carries no daily allowance (D-306): the knob moves nothing it can say.
-        before = _rows(smic, None, None)
-        after = _rows(smic, None, ReformSpec(**{knob: IJ_KNOBS[knob]}))
+    if knob in SANS_ENTREE:
+        # The wire carries no daily allowance (D-306), and no student (but 21): the knob
+        # moves nothing it can say.
+        year = YEARS.get(knob, 2024)
+        before = _rows(smic, None, None, year)
+        after = _rows(smic, None, ReformSpec(**{knob: SANS_ENTREE[knob]}), year)
         for row in ("ir", "revenu_disponible"):
             assert after[row] == pytest.approx(before[row]), (
-                f"{knob} now moves a household — the wire format must carry daily "
-                f"allowances, so replace the exemption with a real case")
+                f"{knob} now moves a household — the wire format must carry its input "
+                f"(daily allowances, students), so replace the exemption with a real case")
         return
     if knob not in ("allegement_general_taux_50_et_plus",
                     "allegement_general_t_delta_50_et_plus"):
@@ -106,11 +118,14 @@ def test_the_registry_and_the_knob_list_agree():
     voit pas. Deux registres d'un seul contrat, dont un invisible à la porte : c'est
     exactement la forme décrite par D-151, rencontrée en la corrigeant.
     """
+    from impots.engine.boutons_programmes import FORMULE_KNOBS
     from impots.engine.reforms import ECHELLE_KNOBS, PLAFOND_KNOBS, REVALORISATION_KNOBS
 
+    # Et FORMULE_KNOBS depuis le but 21 : un cinquième registre, celui des boutons qui
+    # changent une formule ou une donnée plutôt qu'un paramètre.
     assert set(CASES) | set(EXEMPT) == (
         set(SCALAR_KNOBS) | set(PLAFOND_KNOBS) | set(REVALORISATION_KNOBS)
-        | set(ECHELLE_KNOBS))
+        | set(ECHELLE_KNOBS) | set(FORMULE_KNOBS))
 
 
 def test_the_allegement_rows_exist_because_the_gross_row_hides_them():

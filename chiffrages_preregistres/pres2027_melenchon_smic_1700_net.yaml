@@ -1,0 +1,69 @@
+case: pres2027_melenchon_smic_1700_net
+pre_registered: '2026-11-12T13:31:56+00:00'
+commit: ae0c176952b564b90a9cfa1cdbab5b64d812adda
+scenario: pres2027_melenchon_smic_1700_net
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 30326694912.85678
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.4
+  absolute_eur: 200000000.0
+  rationale: 'Classe « salaires » (D-384). Mesure d''un salaire (le SMIC, le point
+    d''indice) : le salaire horaire est tiré de l''enquête Emploi, le secteur public
+    et les titulaires sont imputés, la diffusion au-dessus du SMIC est une hypothèse
+    déclarée (D-380), et le coût public tient à une convention que le juge peut ne
+    pas partager (le brut ou le super-brut des agents publics, les allègements qui
+    suivent le SMIC pour les salaires qui ne bougent pas).'
+note: 'Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 —
+  SMIC à 1 700 € net : « « Ces mesures d''urgence sociale doivent être complétées
+  par une hausse du SMIC à 1 700 euros net. » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf,
+  2026-10-14). Le SMIC mensuel porté à 1 700 € nets, « immédiatement ». Le bouton
+  est un coefficient sur le SMIC horaire brut de chaque mois de 2026, qui en porte
+  deux : 12,02 € de janvier à mai (1 823,03 € bruts par mois), 12,31 € de juin à décembre
+  (1 867,02 €), 1 848,69 € en moyenne. Le coefficient retenu, 1,1617, donne 1 700
+  € nets par mois en moyenne sur l''année ; la plage va de 1,1503 (1 700 € nets atteints
+  depuis le SMIC de juin) à 1,178 (depuis celui de janvier). Le net est le brut moins
+  les prélèvements salariaux d''un non-cadre sous le plafond (vieillesse 7,30 %, Agirc-Arrco
+  et CEG 4,01 %, CSG et CRDS 9,70 % sur 98,25 % du brut), soit 79,16 % du brut, sans
+  mutuelle ni prévoyance. La diffusion au-dessus du nouveau SMIC, entre 1 et 1,5 SMIC
+  dans le privé, est une hypothèse déclarée (D-380) : le profil à un an avec effets
+  fixes d''entreprise de Koubi et Lhommeau (Insee, Les salaires en France 2007), le
+  plus large des quatre publiés, à l''échelle 0 pour la valeur du candidat (le premier
+  jour, la loi seule relève les salaires horaires sous le nouveau SMIC), sa plage
+  allant jusqu''à 1 (le profil entier). La mesure se mesure contre le SMIC de l''arbre
+  de 2026. Le coût ne compte pas le salaire que paie un employeur privé ; il compte
+  celui que paie l''État employeur (les agents publics relevés au SMIC), les cotisations,
+  la CSG et l''impôt qui montent, la prime d''activité qui bouge, et les allègements
+  généraux, qui suivent le SMIC : un SMIC relevé les élargit aussi pour les salaires
+  qui ne bougent pas.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

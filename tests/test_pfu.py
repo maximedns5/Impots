@@ -174,3 +174,61 @@ def test_the_first_year_ages_the_capital_with_the_frame(monkeypatch, view, expec
                                view=service.FIRST_YEAR_VIEW if view == "vieillie"
                                else service.FROZEN_VIEW)
     assert seen["index"] == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("index, expected", [(1.03 ** 2, 1.03 ** 2), (None, None)])
+def test_the_registered_case_ages_the_capital_like_the_service(monkeypatch, index,
+                                                                expected):
+    """The mechanical pricing of a registered case hands the runner the wage index that
+    aged its frame, as the service's aged view does; the PFU of 2026 was refused for want
+    of it (D-388)."""
+    from impots import scenarios
+    from impots.population import runner
+
+    seen = {}
+
+    def run(frame, **kwargs):
+        seen["index"] = kwargs.get("capital_index")
+        raise RuntimeError("arrêt après le passage de l'indice")
+
+    monkeypatch.setattr(runner, "run", run)
+    with pytest.raises(RuntimeError, match="arrêt"):
+        scenarios._priced(ReformSpec(pfu_taux=0.0), 2026, frame="frame",
+                          capital_index=index, chemin="test")
+    assert seen["index"] == (pytest.approx(expected) if expected else None)
+
+
+def test_the_population_route_prices_the_vintage_s_capital_and_households(monkeypatch):
+    """`/population/simulate` prices the vintage's frame, the service's frozen view: a
+    reform of 2026 that imputes the capital or the households' data is handed an index and
+    factors of 1, not refused for want of them (D-394)."""
+    from impots.api import main
+    from impots.api.schemas import PopulationSimulateRequest
+
+    seen = {}
+
+    def run_population(request, frame, **kwargs):
+        seen.update(kwargs)
+        raise RuntimeError("arrêt après le passage des facteurs")
+
+    monkeypatch.setattr(service, "population_frame", lambda: "frame")
+    monkeypatch.setattr(service, "run_population", run_population)
+    request = PopulationSimulateRequest(
+        year=2026, reform=ReformSpec(pfu_supprime=True, pensions_alimentaires_exonerees=True))
+    with pytest.raises(RuntimeError, match="arrêt"):
+        main.population_simulate.__wrapped__(request)
+    assert seen == {"capital_index": 1.0, "menages_facteurs": {"wage": 1.0, "price": 1.0}}
+
+
+def test_the_marginal_rates_read_a_smic_reform_without_its_salary_knobs() -> None:
+    """The tree of one household refuses a SMIC; the marginal rates read the reform without
+    it, as they read it without a consumption tax (D-394)."""
+    from impots.behavioural import emtr
+    from impots.engine.system import reformed_for
+
+    reform = ReformSpec(smic_revalorisation=1.1, pfu_supprime=True)
+    with pytest.raises(ValueError, match="SMIC"):
+        reformed_for(reform, 2026)
+    lue = emtr.arbre(reform)
+    assert lue.smic_revalorisation is None and lue.pfu_supprime is True
+    reformed_for(lue, 2026)

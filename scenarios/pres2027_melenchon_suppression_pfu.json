@@ -1,0 +1,14 @@
+{
+  "name": "pres2027_melenchon_suppression_pfu",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-12 — Suppression du PFU (« flat tax ») : « « suppression de la flat tax pour que le capital ne soit pas moins imposé que le travail (9 milliards d'euros) » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf, 2026-10-14)",
+  "note": "Le prélèvement forfaitaire unique supprimé : chaque foyer est imposé comme s'il cochait la case 2OP, ses revenus du capital au barème de l'impôt sur le revenu (abattement de 40 % sur les dividendes, CSG déductible). Les prélèvements sociaux ne changent pas ; « imposer les revenus du capital comme ceux du travail » ne dit pas d'autre taux. Le capital est celui qu'impute la population (D-248) : ni l'assurance vie, ni les plus-values d'avant 2018. Contre le droit de 2026. Pas de plage : la mesure est un oui ou un non.",
+  "tags": [
+    "presidentielle_2027",
+    "melenchon"
+  ],
+  "reform": {
+    "pfu_supprime": true
+  }
+}

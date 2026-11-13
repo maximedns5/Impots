@@ -9,7 +9,7 @@
     "date": "2026-09-17",
     "type": "entretien"
   },
-  "releve": "2026-11-01",
+  "releve": "2026-11-12",
   "annee": 2026,
   "mesures": [
     {
@@ -67,6 +67,886 @@
       "refus": {
         "porte": "donnee_menages",
         "raison": "La population ne porte ni la nationalité ni le titre de séjour, et le moteur ne retire pas de ménages de son échantillon."
+      }
+    },
+    {
+      "id": "ez4_suppression_csg_activite",
+      "categorie": "csg_cotisations",
+      "libelle": "Suppression de la CSG sur les revenus d'activité",
+      "parametre": "CSG d'activité à 0 ; « 10 % de hausse de revenus pour tous les actifs »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "10 % de hausse de revenus pour tous les actifs avec la suppression de la CSG",
+          "url": "https://www.ericzemmour.fr/priorites",
+          "date": "2026-11-12",
+          "type": "programme"
+        },
+        {
+          "citation": "Supprimer la CSG d'activité pour que tous les actifs de ce pays gagnent 10 % de salaire en plus.",
+          "url": "https://www.sudradio.fr/sud-radio/sarah-knafo-il-faut-supprimer-800-000-postes-dans-la-fonction-publique-administrative",
+          "date": "2026-10-16",
+          "type": "entretien"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "csg_activite_deductible": 0.0,
+          "csg_activite_imposable": 0.0
+        },
+        "plages": [
+          {
+            "champ": "csg_activite_deductible",
+            "min": 0.0,
+            "max": 0.068
+          },
+          {
+            "champ": "csg_activite_imposable",
+            "min": 0.0,
+            "max": 0.024
+          }
+        ],
+        "note": "La CSG sur les revenus d'activité à zéro, ses deux parts : la déductible (6,8 %) et l'imposable (2,4 %). L'impôt sur le revenu en reprend une part, la part déductible ne venant plus en déduction. La CSG des revenus de remplacement et du capital, et la CRDS, ne bougent pas. Plages : de la mesure (0) au droit de 2026. Contre le droit de 2026."
+      }
+    },
+    {
+      "id": "ez5_carburants_40_centimes",
+      "categorie": "energie_carburants",
+      "libelle": "Baisse de 40 centimes des taxes sur les carburants, suppression des certificats d'économies d'énergie",
+      "parametre": "−40 c par litre, entre l'accise et les CEE sans répartition dite",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "40 centimes de baisse de taxes sur les carburants",
+          "url": "https://www.ericzemmour.fr/priorites",
+          "date": "2026-11-12",
+          "type": "programme"
+        },
+        {
+          "citation": "Pas de citation directe. Texte de Sud Radio : baisser les taxes sur les carburants et supprimer les certificats d'économie d'énergie, pour un litre d'essence à « 1,80 € du litre »",
+          "url": "https://www.sudradio.fr/sud-radio/sarah-knafo-il-faut-supprimer-800-000-postes-dans-la-fonction-publique-administrative",
+          "date": "2026-10-16",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "prix",
+        "raison": "La baisse mêle l'accise et les certificats d'économies d'énergie sans dire la part de chacun ; les certificats sont une obligation des fournisseurs, lue dans les prix (D-323)."
+      }
+    },
+    {
+      "id": "ez6_fin_droits_succession",
+      "categorie": "patrimoine_capital",
+      "libelle": "Suppression des droits de succession",
+      "parametre": "Suppression (taux 0)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "la fin des droits de succession et de l'impôt sur la fortune",
+          "url": "https://www.ericzemmour.fr/priorites",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Les droits de succession demandent un module de transmission que le moteur n'a pas."
+      }
+    },
+    {
+      "id": "ez7_fin_ifi",
+      "categorie": "patrimoine_capital",
+      "libelle": "Suppression de l'impôt sur la fortune immobilière",
+      "parametre": "Suppression (taux 0)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "la fin des droits de succession et de l'impôt sur la fortune",
+          "url": "https://www.ericzemmour.fr/priorites",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "patrimoine",
+        "raison": "La population ne porte pas le patrimoine immobilier des ménages, assiette de l'IFI."
+      }
+    },
+    {
+      "id": "ez8_preference_nationale_prestations",
+      "categorie": "prestations",
+      "libelle": "Prestations non contributives, allocations familiales et logement social réservés aux Français",
+      "parametre": "Condition de nationalité ; 15 à 20 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Réserver les aides sociales non-contributives, les allocations familiales et le logement social aux Français.",
+          "url": "https://www.ericzemmour.fr/priorites",
+          "date": "2026-11-12",
+          "type": "programme"
+        },
+        {
+          "citation": "Limitation des prestations sociales non contributives (RSA, APL, allocations familiales…) aux citoyens français.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte pas la nationalité des membres du ménage."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an (fourchette de 15 à 20 Md€ ; le bas est retenu)",
+        "source": {
+          "citation": "Limitation des prestations sociales non contributives (RSA, APL, allocations familiales…) aux citoyens français.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez9_suppression_ame",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de l'aide médicale d'État",
+      "parametre": "Suppression ; 1,3 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Supprimer l'AME qui soigne les clandestins avec votre argent.",
+          "url": "https://www.ericzemmour.fr/priorites",
+          "date": "2026-11-12",
+          "type": "programme"
+        },
+        {
+          "citation": "Fin de l'aide médicale d'État.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "L'AME est une dépense de soins que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 1300000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Fin de l'aide médicale d'État.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez10_places_prison",
+      "categorie": "depense_publique",
+      "libelle": "Construction de 100 000 places de prison",
+      "parametre": "100 000 places en 24 mois",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "construction de 100 000 places de prison en 24 mois",
+          "url": "https://www.ericzemmour.fr/priorites",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense d'investissement public, que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "ez11_rsa_trois_ans",
+      "categorie": "prestations",
+      "libelle": "RSA limité à trois ans pour les bénéficiaires en capacité de travailler",
+      "parametre": "Durée maximale de 3 ans ; 4,8 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Limitation à trois ans de l'allocation RSA pour les bénéficiaires en capacité de travailler.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte ni l'ancienneté dans le RSA ni la capacité de travailler."
+      },
+      "declare": {
+        "montant_eur": 4800000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Limitation à trois ans de l'allocation RSA pour les bénéficiaires en capacité de travailler.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez12_non_remplacement_fonctionnaires",
+      "categorie": "depense_publique",
+      "libelle": "Non-remplacement de 800 000 départs dans la fonction publique administrative",
+      "parametre": "800 000 départs non remplacés sur le quinquennat ; 40 Md€ par an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Non-remplacement de 800 000 départs administratifs sur l'ensemble du quinquennat, sur 2,3 millions de départs naturels.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        },
+        {
+          "citation": "il faut supprimer 800 000 postes dans la fonction publique administrative, ce qui rapportera 40 milliards d'économies par an.",
+          "url": "https://www.sudradio.fr/sud-radio/sarah-knafo-il-faut-supprimer-800-000-postes-dans-la-fonction-publique-administrative",
+          "date": "2026-10-16",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 40000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "il faut supprimer 800 000 postes dans la fonction publique administrative, ce qui rapportera 40 milliards d'économies par an.",
+          "url": "https://www.sudradio.fr/sud-radio/sarah-knafo-il-faut-supprimer-800-000-postes-dans-la-fonction-publique-administrative",
+          "date": "2026-10-16",
+          "type": "entretien"
+        }
+      }
+    },
+    {
+      "id": "ez13_ia_administration",
+      "categorie": "depense_publique",
+      "libelle": "Gains de productivité de l'intelligence artificielle dans l'administration",
+      "parametre": "5 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Gains de productivité de l'intelligence artificielle dans les fonctions administratives (estimation calculée à partir du rapport IGF-IGAS 2025).",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 5000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Gains de productivité de l'intelligence artificielle dans les fonctions administratives (estimation calculée à partir du rapport IGF-IGAS 2025).",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez14_fraude_sociale",
+      "categorie": "prestations",
+      "libelle": "Lutte contre la fraude sociale, retrait des aides aux délinquants",
+      "parametre": "2 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Lutte contre la fraude sociale et retrait des aides sociales pour les délinquants et criminels.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le moteur calcule les droits, pas la fraude, et la population ne porte pas les condamnations : un objectif d'économies n'est qu'un scénario de dépense."
+      },
+      "declare": {
+        "montant_eur": 2000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an (fourchette de 2 à 3 Md€ ; le bas est retenu)",
+        "source": {
+          "citation": "Lutte contre la fraude sociale et retrait des aides sociales pour les délinquants et criminels.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez15_enr_intermittentes",
+      "categorie": "energie_carburants",
+      "libelle": "Fin du soutien public aux énergies renouvelables intermittentes",
+      "parametre": "8 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Fin de l'engagement de soutien public aux énergies renouvelables intermittentes.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 8000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Fin de l'engagement de soutien public aux énergies renouvelables intermittentes.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez16_politique_ville",
+      "categorie": "depense_publique",
+      "libelle": "Fin de la politique de la Ville",
+      "parametre": "8 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Fin de la politique de la Ville.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 8000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Fin de la politique de la Ville.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez17_anah",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de l'Anah",
+      "parametre": "6 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression de l'Agence nationale de l'habitat (Anah).",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 6000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression de l'Agence nationale de l'habitat (Anah).",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez18_ademe",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de l'Ademe",
+      "parametre": "3,4 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression de l'Agence de l'environnement et de la maîtrise de l'énergie (Ademe), hors dispositifs de soutien aux renouvelables déjà comptabilisés à la ligne 6.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 3400000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression de l'Agence de l'environnement et de la maîtrise de l'énergie (Ademe), hors dispositifs de soutien aux renouvelables déjà comptabilisés à la ligne 6.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez19_france_travail",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de la mise en relation de France Travail",
+      "parametre": "4 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression de la mission de mise en relation entre l'offre et la demande d'emploi de France Travail.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 4000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression de la mission de mise en relation entre l'offre et la demande d'emploi de France Travail.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez20_ars",
+      "categorie": "depense_publique",
+      "libelle": "Suppression des agences régionales de santé",
+      "parametre": "1 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression des agences régionales de santé (ARS).",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 1000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression des agences régionales de santé (ARS).",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez21_autres_agences",
+      "categorie": "depense_publique",
+      "libelle": "Suppression d'autres agences et structures (Arcom…)",
+      "parametre": "1 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression d'autres agences et structures publiques inutiles ou nuisibles : Arcom, Conseil national du bruit, Haut Conseil à l'égalité, Observatoire de la laïcité, Haut Comité pour le logement…",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 1000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression d'autres agences et structures publiques inutiles ou nuisibles : Arcom, Conseil national du bruit, Haut Conseil à l'égalité, Observatoire de la laïcité, Haut Comité pour le logement…",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez22_cese",
+      "categorie": "depense_publique",
+      "libelle": "Suppression du CESE et des Ceser",
+      "parametre": "0,066 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression du CESE et des Ceser.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 66000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression du CESE et des Ceser.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez23_aide_developpement",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de l'aide publique au développement et de l'AFD",
+      "parametre": "14 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression de l'aide publique au développement et de l'Agence française de développement.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 14000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression de l'aide publique au développement et de l'Agence française de développement.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez24_budget_ue",
+      "categorie": "depense_publique",
+      "libelle": "Retour au budget de l'UE d'avant le Covid",
+      "parametre": "14 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Retour au budget de l'UE pré-Covid et économies sur la dotation française.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 14000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Retour au budget de l'UE pré-Covid et économies sur la dotation française.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez25_etudiants_etrangers",
+      "categorie": "depense_publique",
+      "libelle": "Fin de la gratuité des études pour les étudiants étrangers",
+      "parametre": "4 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Fin de la gratuité des études pour les étudiants étrangers.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 4000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Fin de la gratuité des études pour les étudiants étrangers.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez26_visas",
+      "categorie": "depense_publique",
+      "libelle": "Augmentation du coût des visas",
+      "parametre": "0,7 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Augmentation du coût des visas.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "enveloppe",
+        "raison": "Un montant de recettes sans tarif des visas : le candidat dit combien, pas comment."
+      },
+      "declare": {
+        "montant_eur": 700000000.0,
+        "sens": "recette",
+        "horizon": "par an",
+        "source": {
+          "citation": "Augmentation du coût des visas.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez27_hebergement_urgence",
+      "categorie": "depense_publique",
+      "libelle": "Hébergement d'urgence interdit aux étrangers en situation irrégulière",
+      "parametre": "0,7 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Interdiction de l'hébergement d'urgence aux étrangers en situation irrégulière.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 700000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Interdiction de l'hébergement d'urgence aux étrangers en situation irrégulière.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez28_aide_juridictionnelle",
+      "categorie": "depense_publique",
+      "libelle": "Aide juridictionnelle réservée aux Français",
+      "parametre": "0,1 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Aide juridictionnelle réservée aux Français.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 100000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Aide juridictionnelle réservée aux Français.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez29_audiovisuel_public",
+      "categorie": "depense_publique",
+      "libelle": "Privatisation de l'audiovisuel public",
+      "parametre": "4 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Privatisation de l'audiovisuel public.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 4000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an, plus des cessions d'actifs non chiffrées",
+        "source": {
+          "citation": "Privatisation de l'audiovisuel public.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez30_subventions_associations",
+      "categorie": "depense_publique",
+      "libelle": "Suppression des subventions aux associations « politisées »",
+      "parametre": "1 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression des subventions aux associations politisées.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 1000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an (fourchette de 1 à 2 Md€ ; le bas est retenu)",
+        "source": {
+          "citation": "Suppression des subventions aux associations politisées.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez31_subventions_presse",
+      "categorie": "depense_publique",
+      "libelle": "Suppression des subventions à la presse",
+      "parametre": "0,2 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression des subventions à la presse.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 200000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression des subventions à la presse.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez32_subventions_syndicats",
+      "categorie": "depense_publique",
+      "libelle": "Suppression des subventions aux syndicats",
+      "parametre": "0,1 Md€ par an (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression des subventions aux syndicats.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense que le moteur ne microsimule pas : elle n'entre qu'en scénario du calcul de la dette."
+      },
+      "declare": {
+        "montant_eur": 100000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression des subventions aux syndicats.",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "ez33_plan_140_md",
+      "categorie": "regle_budgetaire",
+      "libelle": "Plan de 140 Md€ d'économies par an",
+      "parametre": "140 Md€ par an « au minimum », somme des 24 mesures (plan de Sarah Knafo, secrétaire générale de Reconquête, sur budget2027.fr, page non datée consultée le 12/11/2026) — montant annoncé : 140 Md€ (par an, au minimum ; total des 24 mesures du plan, qui sont aussi déclarées une à une) ; non lu comme montant annuel : le total des 24 lignes, déclarées une à une (D-381).",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "140 Md€ d'économies par an, au minimum",
+          "url": "https://www.budget2027.fr/",
+          "date": "2026-11-12",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Un effort d'ensemble est une trajectoire de dépense du calcul de la dette ; ses lignes chiffrées sont relevées une à une."
       }
     }
   ]

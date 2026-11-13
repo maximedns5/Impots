@@ -323,6 +323,11 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
     listed: list[str] = []
     codes: set[str] = set()
     for study in studies:
+        if study.refus:
+            # Its passes ran, and a guard refused its path (D-398): not unrun, refused.
+            listed.append(f'<li><strong>{html.escape(study.titre)}</strong> — '
+                          f"chiffrée, puis refusée : {html.escape(study.refus)}</li>")
+            continue
         why = study.drift()
         if why:
             raise SiteError(f"« {study.nom} » : {why} Le site ne lit qu'une étude à jour.")

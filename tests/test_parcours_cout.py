@@ -22,12 +22,13 @@ def test_la_page_tient_ses_promesses(page: parcours.Page) -> None:
 def test_attal_pas_a_pas_porte_les_nombres_du_rapport(page: parcours.Page) -> None:
     rep = cout.lire(cout.ATTAL)
     m, f = cout.menages_entreprises(rep)
-    # Le coût de la série de D-373, et ses deux couches, lus dans le rapport.
-    assert cout.md(cout.cout_total(rep)) == "+65,69 Md€"
-    for texte in ("+65,69 Md€", cout.md(m["reform_cost"]), cout.md(f["reform_cost"]),
+    # Le coût de la série de D-397, et ses deux couches, lus dans le rapport : 65,69 Md€
+    # et 20,28 points sur celle de D-373 ; les pensions alimentaires s'ajoutent.
+    assert cout.md(cout.cout_total(rep)) == "+66,18 Md€"
+    for texte in ("+66,18 Md€", cout.md(m["reform_cost"]), cout.md(f["reform_cost"]),
                   cout.md(m["deltas"]["salaire_net"]), cout.md(-m["deltas"]["ir"])):
         assert texte in page.corps
-    assert "+20,28 pt" in page.corps  # la dette sans boucle (D-373)
+    assert "+20,45 pt" in page.corps  # la dette sans boucle (D-397)
 
 
 def test_la_prime_est_lue_en_miroir(page: parcours.Page) -> None:
@@ -42,7 +43,13 @@ def test_les_juges_et_ce_que_vaut_la_note(page: parcours.Page) -> None:
     assert "<strong>3 sur 5</strong>" in page.corps
     bas, haut = cout.clopper_pearson(3, 5)
     assert round(bas, 3) == 0.147 and round(haut, 3) == 0.947  # « 15 % à 95 % », BUT.md
-    assert "6 sur 9" in page.corps and "13 mesures" in page.corps
+    # 44 mesures en attente de juge : les enregistrements des programmes de D-394
+    # (13 sur la série du but 19).
+    from impots import preregistration as pr
+
+    attente = [n for n in pr.available() if pr.load(n).comparator is None]
+    assert len(attente) == 44 and all(n.startswith("pres2027_") for n in attente)
+    assert "6 sur 9" in page.corps and f"{len(attente)} mesures" in page.corps
 
 
 def test_le_curseur_choisit_des_points_des_plages(page: parcours.Page) -> None:
@@ -65,9 +72,13 @@ def test_nombres_a_la_francaise() -> None:
 
 
 def test_le_tableau_de_passage_porte_chaque_convention(page: parcours.Page) -> None:
-    """Constat 4 : chaque nombre de la mesure, avec sa convention, lu dans les fichiers."""
+    """Constat 4 : chaque nombre de la mesure, avec sa convention, lu dans les fichiers.
+    Sur la série du but 21 (D-397), les ménages du programme d'Attal portent aussi les
+    pensions alimentaires : +61,73, +63,14, +66,40 et +68,02 Md€ sur celle du but 19 ;
+    le préenregistré ne bouge pas."""
     attal = [r[2] for r in cout.passage_attal()]
-    for texte in ("+61,73 Md€", "+63,14 Md€", "+66,40 Md€", "+68,02 Md€", "+75,66 Md€"):
+    for texte in ("+62,27 Md€", "+63,63 Md€", "+66,93 Md€", "+68,59 Md€", "+63,59 Md€",
+                  "+75,66 Md€"):
         assert any(texte in x for x in attal), texte
     ppa, _ = cout.passage_ppa()
     for texte in ("−1\u202f056 M€", "−560 M€", "−557 M€", "−493 M€", "−791 M€", "−952 M€",

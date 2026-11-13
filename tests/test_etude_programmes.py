@@ -28,11 +28,23 @@ def _studies() -> list[etude.Etude]:
     return [s for s in etude.definitions() if s.programme is not None]
 
 
+def _chiffrees() -> list[etude.Etude]:
+    """Les études de programme dont les passes ont toutes tourné : une étude refusée
+    (D-398) n'a pas de chemin annuel, donc pas de page."""
+    return [s for s in _studies() if not s.refus]
+
+
 def test_every_programme_with_a_priced_measure_has_its_study() -> None:
-    """GARDE. Huit études, une par candidat dont une mesure se chiffre, et aucune autre."""
+    """GARDE. Seize études, une par candidat dont une mesure se chiffre, et aucune autre
+    (D-394) ; une seule est refusée, Dupont-Aignan (D-398)."""
     chiffres = sorted(s for s in pg.lister() if pg.charger(s).chiffrees())
     assert sorted(s.programme for s in _studies()) == chiffres
-    assert len(chiffres) == 8
+    assert len(chiffres) == 16
+    assert [s.programme for s in _studies() if s.refus] == ["dupont_aignan"]
+    # La refusée n'a pas de chemin annuel : ses rapports ne se lisent pas en page.
+    refusee = etude.definition("presidentielle_dupont_aignan")
+    with pytest.raises(etude.EtudeError, match="predictif_pres2027_dupont_aignan_programme"):
+        refusee.load()
 
 
 def test_the_committed_scenarios_and_studies_are_the_generated_ones() -> None:
@@ -150,17 +162,19 @@ def test_a_range_report_that_is_not_the_study_s_is_refused(tmp_path) -> None:
         report = {"programme": "roussel", "mesure": mesure, "champ": champ,
                   "point": point, "commit": "abc", "dirty": False, "where": "essai",
                   "request": etude.plage_request("central", "roussel", mesure, champ, point)}
-        reports[point] = report
+        reports[mesure, champ, point] = report
         (tmp_path / etude.PLAGES / etude.plage_name(mesure, champ, point)).write_text(
             json.dumps(report), encoding="utf-8")
-    assert len(study.load_plages()) == 3
+    # Roussel porte deux mesures chiffrées en plage depuis D-394 : six points.
+    assert len(study.points()) == 6
+    assert len(study.load_plages()) == len(study.points())
     # A point on another commit is read only if a witness joins it to the first (D-335).
     assert study.commits({"abc"}) == [("abc", None)]
     with pytest.raises(etude.EtudeError, match="impots etude temoin"):
         study.commits({"abc", "autre"})
     mesure, champ, _ = study.points()[0]
-    faux = {**reports["bas"], "request": {**reports["bas"]["request"], "theta":
-                                          {"common": 0.9}}}
+    bas = reports[mesure, champ, "bas"]
+    faux = {**bas, "request": {**bas["request"], "theta": {"common": 0.9}}}
     (tmp_path / etude.PLAGES / etude.plage_name(mesure, champ, "bas")).write_text(
         json.dumps(faux), encoding="utf-8")
     with pytest.raises(etude.EtudeError, match="pas le point de l'étude"):
@@ -180,7 +194,11 @@ def test_the_candidates_page_lists_the_24_with_their_coverage() -> None:
         row = next(line for line in text.splitlines() if line.startswith(f"| {p.candidat} ("))
         c = p.couverture()
         assert f"| {c['mesures']} | {c['parametrees']} | {c['chiffrees']} |" in row
-        assert ("| oui |" in row) == bool(p.chiffrees())
+        refusee = any(s.programme == slug and s.refus for s in _studies())
+        assert ("| oui |" in row) == (bool(p.chiffrees()) and not refusee)
+        assert ("| refusée |" in row) == refusee
+    assert "| refusée |" in next(line for line in text.splitlines()
+                                 if line.startswith("| Nicolas Dupont-Aignan ("))
     assert "Md€" not in text
 
 
@@ -198,7 +216,7 @@ def test_an_amount_on_the_candidates_page_without_its_etage_is_refused(monkeypat
 
 @pytest.fixture(scope="module")
 def pages() -> dict[str, tuple[etude.Etude, str]]:
-    return {s.programme: (s, s.render(s.load())) for s in _studies()}
+    return {s.programme: (s, s.render(s.load())) for s in _chiffrees()}
 
 
 def test_every_page_says_its_debt_is_not_the_programme_s(pages) -> None:
@@ -246,8 +264,14 @@ def test_the_announced_layer_stays_apart(pages) -> None:
     """La couche annoncée a sa section, et ni l'en-bref ni la part chiffrée ne la lisent."""
     for slug, (_, text) in pages.items():
         assert "## Ce que le candidat annonce, à part" in text
-        assert "annonc" not in text.split("## La part chiffrée")[1].split(
-            "## Ce que bouge")[0].lower(), slug
+        part = text.split("## La part chiffrée")[1].split("## Ce que bouge")[0]
+        # La dette « si les économies annoncées sont tenues » a sa sous-section, à côté de
+        # la dette (D-380) : la part chiffrée ne lit l'annonce nulle part ailleurs.
+        titre = "### La dette en 2035, si les économies annoncées sont tenues"
+        if titre in part:
+            debut = part.index(titre)
+            part = part[:debut] + part[part.index("### L'écart", debut):]
+        assert "annonc" not in part.lower(), slug
 
 
 def test_a_mixed_part_shows_both_layers(pages) -> None:
@@ -263,13 +287,14 @@ def test_the_debt_without_activity_is_the_cost_without_the_loop(pages) -> None:
     boucle » de la décomposition (D-349), pas le coin θ = 0 de la boîte, qui met le
     multiplicateur au bas de sa fourchette publiée et non à zéro : chez Attal, 18,30
     points à l'étape 1, quand le coin en donnait 13,95 ; 20,28 sur les rapports de la
-    série du but 19 (D-373), au coût de 65,69 Md€."""
+    série du but 19 (D-373), au coût de 65,69 Md€ ; 20,45 sur ceux du but 21 (D-397), au
+    coût de 66,18 Md€, les pensions alimentaires s'ajoutant."""
     study, text = pages["attal"]
     path = json.loads(next(study.rapports.glob("predictif_*.json")).read_text("utf-8"))
     cout = path["lectures"]["decomposition"]["vieillie"]["cout"]
-    assert f"{cout * 100:.2f}" == "20.28"
+    assert f"{cout * 100:.2f}" == "20.45"
     head = text.split("## En bref")[0]
-    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 20,28 points" in head
+    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 20,45 points" in head
     assert "13,95" not in head
     for slug, (_, page) in pages.items():
         assert "Sans aucun effet sur l'activité" in page.split("## En bref")[0], slug
@@ -290,15 +315,29 @@ def test_the_employees_contributions_say_the_model_s_choice_not_a_missing_study(
 
 
 def test_the_fan_says_what_the_debt_does_not_read(pages) -> None:
-    """But 20. L'éventail de Labib prête un multiplicateur publié aux accises sur
-    l'énergie, que la boucle de la dette ne lit pas : la page le dit à côté de lui, avec
-    leur part de la première année, et nulle part ailleurs ce paragraphe n'apparaît."""
-    text = pages["labib"][1]
-    section = text.split("**L'effet sur l'économie**")[1].split("### 3.")[0]
-    assert "**Ce que l'éventail compte et que la dette ne lit pas.**" in section
-    assert "les accises sur l'énergie, 15,75 Md€ des 22,92 Md€" in section
-    for slug in ("le_pen", "roussel", "tondelier", "melenchon", "lisnard"):
-        assert "que la dette ne lit pas" not in pages[slug][1], slug
+    """But 20. Un éventail qui prête un multiplicateur publié aux accises sur l'énergie,
+    que la boucle de la dette ne lit pas, le dit à côté de lui, avec leur part de la
+    première année. Depuis la série du but 21 (D-397), l'éventail de Labib est refusé : son
+    SMIC pousse les cotisations des employeurs en sens contraire de ses baisses, et aucune
+    page commitée ne porte plus le paragraphe. Il est tenu sur le rapport commité de
+    Labib, lu par un éventail qui compterait toutes ses mesures."""
+    import types
+
+    study, text = pages["labib"]
+    section = text.split("### 2.")[1].split("### 3.")[0]
+    assert "**Éventail macro : refusé.**" in section
+    for slug, (_, page) in pages.items():
+        assert "que la dette ne lit pas" not in page, slug
+    path = json.loads(next(study.rapports.glob("predictif_*.json")).read_text("utf-8"))
+    entry = {"path": path}
+    impulses, _ = study._impulses(entry)
+    n = etude.Nombres()
+    paragraph = n.resolve(study._eventail_hors_boucle(
+        n, entry, types.SimpleNamespace(instruments=list(impulses))))
+    assert paragraph.startswith("**Ce que l'éventail compte et que la dette ne lit pas.**")
+    assert "les accises sur l'énergie, 15,75 Md€ des 62,46 Md€" in paragraph
+    assert study._eventail_hors_boucle(
+        n, entry, types.SimpleNamespace(instruments=["tva"])) == ""
 
 
 def test_the_employees_contributions_say_the_bias_beside_the_headline(pages) -> None:

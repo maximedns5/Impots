@@ -596,7 +596,8 @@ def imputes_capital(request: Any) -> bool:
 def run_population(request: Any, frame: Any,
                     capital_index: float | None = None,
                     annee_consommation: int | None = None,
-                    prix_consommation: dict[int, float] | None = None) -> tuple[Any, Any]:
+                    prix_consommation: dict[int, float] | None = None,
+                    menages_facteurs: dict[str, float] | None = None) -> tuple[Any, Any]:
     """The quick-tier pass and its aggregate: `(run, aggregate)`. Shared by
     `/population/simulate` and `/predictif/simulate`. `capital_index` ages the imputed
     capital to the year, when the frame was aged to it (D-249)."""
@@ -617,6 +618,11 @@ def run_population(request: Any, frame: Any,
             impute_niches=imputed.niches, impute_capital=imputed.capital,
             impute_consommation=imputed.consommation,
             **({"impute_ij": True} if imputed.ij else {}),
+            **({"impute_menages": True} if imputed.menages else {}),
+            # What aged the frame from 2024, which the households' data age by (but 21,
+            # étape 4); without it, a year other than 2024 refuses them.
+            **({"menages_facteurs": menages_facteurs}
+               if imputed.menages and menages_facteurs is not None else {}),
             capital_index=capital_index if imputed.capital else None,
             annee_consommation=(int(POPULATION_VINTAGE) if annee_consommation is None
                                 else annee_consommation),
@@ -986,8 +992,15 @@ def price_households(request: PopulationSimulateRequest, *, uprating: Any,
               "prix_consommation": (consommation.prix_du_cadre(uprating, request.year)
                                     if aged else None)}
              if imputed.consommation else {})
+    # The households' data age with the frame: by its factors in the aged view, not at all
+    # in the frozen one, whose frame is the vintage's (but 21, étape 4).
+    from impots.population import menages as menages_module
+
+    facteurs = (menages_module.facteurs_de(uprating, request.year) if aged
+                else {"wage": 1.0, "price": 1.0})
     result, agg = run_population(
-        request, frame, **({"capital_index": index} if imputed.capital else {}), **conso)
+        request, frame, **({"capital_index": index} if imputed.capital else {}), **conso,
+        **({"menages_facteurs": facteurs} if imputed.menages else {}))
     if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
         raise ServiceError(status_code=500, detail="la réforme n'a pas de coût calculé")
     # The EMTR caches are keyed on the frame priced: the aged view's on its uprating, the
