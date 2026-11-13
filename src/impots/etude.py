@@ -1012,6 +1012,108 @@ class _Programme:
     def sources(self, w: Any, where: str) -> None:
         count = len(self.study.points())
         w(f"* `{where}/{PLAGES}/`, les {count} points des plages")
+        if self.study.mesures:
+            w(f"* `{where}/{MESURES}/<mesure>/`, la première année et le chemin de chaque "
+              f"mesure seule")
+
+    def mesures_seules(self, w: Any, n: Nombres, entries: list[dict[str, Any]],
+                       last: int) -> None:
+        """Each priced measure alone (but 22): its first year's cost, vue figée and vue
+        vieillie, its Δb at θ½, its three lowest deciles; then their sum, the part, and the
+        part minus the sum, « interaction », said on its line and given to no measure."""
+
+        chiffrees = self.programme.chiffrees()
+        if len(chiffrees) == 1:
+            w("## Chaque mesure seule, et leur interaction")
+            w("")
+            w("Le programme n'a qu'une mesure chiffrée : la part chiffrée est cette mesure "
+              "seule, et ses nombres sont ceux de plus haut. Il n'y a ni somme des mesures "
+              "ni interaction.")
+            w("")
+            return
+        if not self.study.mesures:
+            return
+        entry = entries[0]
+        w("## Chaque mesure seule, et leur interaction")
+        w("")
+        w(f"Chaque mesure chiffrée passe aussi seule, en entier : sa première année et son "
+          f"chemin annuel jusqu'en {last}, dans le cadre de la part chiffrée, sur la même "
+          f"population et le même code. La part chiffrée n'est pas la somme de ses mesures : "
+          f"deux mesures se rencontrent dans le barème, dans les prestations sous condition "
+          f"de ressources, dans la boucle macro, et dans la dette, que chacune creuse sur le "
+          f"PIB que l'autre a changé. L'écart, la part chiffrée moins la somme des mesures, "
+          f"est dit sur sa ligne, « interaction » : il n'est réparti entre aucune mesure.")
+        w("")
+        if entry["mesures"] is None:
+            raison = entry["mesures_absentes"]
+            w(f"**Les mesures seules : absentes, et la raison est donnée.** "
+              f"{raison[:1].upper()}{raison[1:]}. Les rapports de cette page viennent d'une "
+              f"série qui ne les avait pas.")
+            w("")
+            return
+        year, vintage = entry["scenario"].year, entry["response"].meta.vintage
+        w(f"Le coût de la première année est mécanique : en vue figée, sur la population de "
+          f"{vintage} au droit de {year}, comme la part chiffrée plus haut ; en vue "
+          f"vieillie, sur la population vieillie jusqu'en {year}, la première année du "
+          f"chemin annuel. La dette est en points de PIB, à θ½, vue vieillie, sous la "
+          f"persistance « lue ». Les déciles sont ceux du niveau de vie des ménages : ce "
+          f"que les trois premiers y gagnent en tout, et leur part de ce que gagnent tous "
+          f"les ménages (ou perdent, si la mesure leur prend) ; une mesure des seules "
+          f"entreprises n'en a pas.")
+        w("")
+        w(f"| mesure | coût {year}, vue figée | coût {year}, vue vieillie | Δ dette {last}, "
+          f"à θ½ | gain des déciles 1 à 3 | leur part |")
+        w("|---|---|---|---|---|---|")
+        libelles = {m.id: m.libelle for m in chiffrees}
+        lignes = [lecture_seule(e) for e in entry["mesures"]]
+        programme = lecture_seule(entry)
+        for seule, lue_ in zip(entry["mesures"], lignes, strict=True):
+            w(self._ligne(n, amounts(libelles[seule["mesure"]], "programme", n), lue_))
+        somme = {"figee": sum(x["figee"] for x in lignes),
+                 "vieillie": sum(x["vieillie"] for x in lignes),
+                 "dette": sum(x["dette"] for x in lignes),
+                 "etage": plus_haut(x["etage"] for x in lignes),
+                 "bas": sum(x["bas"] or 0.0 for x in lignes),
+                 "menages": sum(x["menages"] or 0.0 for x in lignes)}
+        if all(x["bas"] is None for x in lignes):
+            somme["bas"] = somme["menages"] = None
+        w(self._ligne(n, "**somme des mesures**", somme))
+        w(self._ligne(n, "**la part chiffrée**", programme))
+        interaction = {
+            "figee": programme["figee"] - somme["figee"],
+            "vieillie": programme["vieillie"] - somme["vieillie"],
+            "dette": programme["dette"] - somme["dette"],
+            "etage": plus_haut((programme["etage"], somme["etage"])),
+            "bas": (None if programme["bas"] is None
+                    else programme["bas"] - (somme["bas"] or 0.0)),
+            "menages": None}
+        w(self._ligne(n, "**interaction**, la part moins la somme", interaction))
+        w("")
+        w("Chaque ligne se lit dans ses deux rapports : la première année (le coût en vue "
+          "figée, les déciles) et le chemin annuel (le coût en vue vieillie, la dette).")
+        w("")
+        where = _relative(self.study.rapports)
+        for seule in entry["mesures"]:
+            folder = f"{where}/{self.study.dossier(seule['name'])}"
+            w(f"* {amounts(libelles[seule['mesure']], 'programme', n)} : "
+              f"`{folder}premiere_annee_{seule['name']}.json`, "
+              f"`{folder}predictif_{seule['name']}.json`")
+        w(f"* la part chiffrée : `{where}/premiere_annee_{entry['name']}.json`, "
+          f"`{where}/predictif_{entry['name']}.json`")
+        w("")
+
+    @staticmethod
+    def _ligne(n: Nombres, label: str, x: dict[str, Any]) -> str:
+        from impots import fiche
+        from impots.reporting import pct_fr
+
+        bas = "—" if x["bas"] is None else n(fiche._eur(x["bas"]), "L2")
+        part = ("—" if x["bas"] is None or x["menages"] is None
+                or abs(x["menages"]) < MENAGES_TOUCHES
+                else n(pct_fr(x["bas"] / x["menages"]), "L2"))
+        return (f"| {label} | {n(fiche._eur(x['figee']), 'L2')} | "
+                f"{n(fiche._eur(x['vieillie']), 'L2')} | "
+                f"{n(_points(x['dette']), x['etage'], conditionnel=True)} | {bas} | {part} |")
 
     def _plages(self, w: Any, n: Nombres, reports: list[dict[str, Any]]) -> None:
         from impots import fiche
@@ -1207,6 +1309,36 @@ class _Programme:
         w("")
         w(f"*{couches[-1]['statut']}*")
         w("")
+
+
+#: Below this, in euros, what the households gain in all is no base for a share of it.
+MENAGES_TOUCHES = 1e6
+#: The layers a debt rests on, lowest first (`debt_etage`).
+ETAGES_DETTE = ("L2", "L3", "L4")
+
+
+def plus_haut(etages: Any) -> str:
+    """The highest layer of several debts: a sum rests on the highest of its terms."""
+    return max(etages, key=ETAGES_DETTE.index)
+
+
+def dette_lue(rows: list[dict[str, Any]]) -> float:
+    """Δb at θ½ a page leads with: vue vieillie, under « lue » when the path draws it."""
+    return next(r for r in verdict_rows(rows) if r["view"] == "vieillie")["theta"]
+
+
+def lecture_seule(entry: dict[str, Any]) -> dict[str, Any]:
+    """What the measure-by-measure table reads of an entry (but 22): the first year's cost
+    vue figée (its report) and vue vieillie (its path's first year), Δb at θ½, and what the
+    three lowest deciles of the households gain, beside what they all gain, in euros, None
+    for a reply without deciles (the firms')."""
+    rows = getattr(entry["response"], "deciles", None) or []
+    masses = [(r.decile, entry["sign"] * r.mean_delta * r.n_households) for r in rows]
+    return {"figee": entry["cost"],
+            "vieillie": entry["sign"] * float(entry["path"]["years"][0]["mechanical_aged_eur"]),
+            "dette": dette_lue(entry["debt"]), "etage": debt_etage(entry["path"]),
+            "bas": sum(m for d, m in masses if d <= 3) if masses else None,
+            "menages": sum(m for _, m in masses) if masses else None}
 
 
 START_PLUS_ONE = 2026
@@ -1967,6 +2099,8 @@ class Etude:
                 texte.official(w, n, entry)
             else:
                 self._official(w, n, entry)
+        if hasattr(texte, "mesures_seules"):
+            texte.mesures_seules(w, n, entries, last)
         texte.refusals(w, entries, n)
         if read and (self.rapports / AVANT).exists():
             self._avant(w, n, entries, json.loads((self.rapports / AVANT).read_text(
