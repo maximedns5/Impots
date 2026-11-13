@@ -355,6 +355,124 @@ EXEMPT: dict[str, str] = {
         "ménages : la porter à 0,5 fait entrer dans les salaires la moitié de leur part ALD, "
         "nette de CSG, et rien sans elles (test_ij_moteur.py). La correction 22 la lit (D-312)."
     ),
+    # Les boutons des données de ménages (but 21, étape 4, D-383).
+    "pensions_alimentaires_exonerees": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les pensions "
+        "alimentaires perçues, 1AO à 1DO) : la population l'impute (but 21, étape 4, "
+        "D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_alimony_leaves_the_taxable_income_up_to_the_ceiling_per_child), et "
+        "sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "pensions_alimentaires_plafond_par_enfant": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les pensions "
+        "alimentaires perçues, 1AO à 1DO) : la population l'impute (but 21, étape 4, "
+        "D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_alimony_leaves_the_taxable_income_up_to_the_ceiling_per_child), et "
+        "sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "interets_emprunt_taux": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les intérêts d'emprunt "
+        "de la résidence principale) : la population l'impute (but 21, étape 4, D-383), "
+        "et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_interest_reduction_reads_the_minors_and_stops_at_its_ceiling), et sur "
+        "la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "interets_emprunt_plafond": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les intérêts d'emprunt "
+        "de la résidence principale) : la population l'impute (but 21, étape 4, D-383), "
+        "et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_interest_reduction_reads_the_minors_and_stops_at_its_ceiling), et sur "
+        "la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "interets_emprunt_plafond_par_enfant": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les intérêts d'emprunt "
+        "de la résidence principale) : la population l'impute (but 21, étape 4, D-383), "
+        "et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur une "
+        "simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_interest_reduction_reads_the_minors_and_stops_at_its_ceiling), et sur "
+        "la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "credit_trajets_taux": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les frais de trajet "
+        "domicile-travail) : la population l'impute (but 21, étape 4, D-383), et aucun "
+        "ménage exprimable ne fait bouger ce bouton. Vérifié sur une simulation qui "
+        "écrit la donnée (test_boutons_menages.py, "
+        "test_the_commuting_credit_is_its_rate_above_the_threshold_within_the_ceiling), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "credit_trajets_franchise": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les frais de trajet "
+        "domicile-travail) : la population l'impute (but 21, étape 4, D-383), et aucun "
+        "ménage exprimable ne fait bouger ce bouton. Vérifié sur une simulation qui "
+        "écrit la donnée (test_boutons_menages.py, "
+        "test_the_commuting_credit_is_its_rate_above_the_threshold_within_the_ceiling), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "credit_trajets_plafond": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les frais de trajet "
+        "domicile-travail) : la population l'impute (but 21, étape 4, D-383), et aucun "
+        "ménage exprimable ne fait bouger ce bouton. Vérifié sur une simulation qui "
+        "écrit la donnée (test_boutons_menages.py, "
+        "test_the_commuting_credit_is_its_rate_above_the_threshold_within_the_ceiling), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_exoneration_salariale": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_salaried_exemption_takes_only_what_the_law_leaves), et sur la "
+        "population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_exoneration_csg_crds": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_overtime_exemption_takes_its_share_of_the_hours_beyond_the_threshold), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_exoneration_patronale": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_overtime_exemption_takes_its_share_of_the_hours_beyond_the_threshold), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_franchise_heures": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_overtime_exemption_takes_its_share_of_the_hours_beyond_the_threshold), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
+    "heures_sup_plafond_heures": (
+        "Une donnée de ménage que `HouseholdInput` ne porte pas (les heures "
+        "supplémentaires et leur rémunération) : la population l'impute (but 21, étape "
+        "4, D-383), et aucun ménage exprimable ne fait bouger ce bouton. Vérifié sur "
+        "une simulation qui écrit la donnée (test_boutons_menages.py, "
+        "test_the_overtime_exemption_takes_its_share_of_the_hours_beyond_the_threshold), "
+        "et sur la population où une passe qui règle le bouton l'impute "
+        "(test_each_knob_imputes_the_households_data)."
+    ),
     "cvec_montant": (
         "La CVEC (but 21, étape 2), qu'openfisca ne porte pas et que le moteur ajoute au droit. "
         "Elle lit deux entrées d'un individu, `etudiant_superieur` et `boursier_superieur`, "

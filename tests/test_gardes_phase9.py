@@ -41,7 +41,10 @@ def catalogue(sweep):
 
 #: Les modules écrits après le gel du balayage (D-335 : pas de banc de mutations sans
 #: demande). Leurs refus sont tenus par leurs propres tests, pas par le balayage.
-AFTER_THE_SWEEP = {"src/impots/predictif/montecarlo.py", "src/impots/predictif/rejouer.py"}
+AFTER_THE_SWEEP = {"src/impots/predictif/montecarlo.py", "src/impots/predictif/rejouer.py",
+                   # La dette « si les économies annoncées sont tenues » (but 21, D-380) :
+                   # ses refus sont tenus par tests/test_annonce.py.
+                   "src/impots/predictif/annonce.py"}
 
 
 def test_every_module_of_predictif_is_swept(sweep) -> None:
