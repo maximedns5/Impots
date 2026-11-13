@@ -76,6 +76,11 @@ def test_the_part_is_every_priced_measure_households_and_firms_together() -> Non
 def test_a_study_s_passes_are_its_first_year_its_ranges_then_its_path() -> None:
     study = etude.definition("presidentielle_lisnard")
     reports = [r for r, _ in study.passes("essai")]
+    # Les mesures seules viennent après les passes de la part (but 22).
+    seules = [r for r in reports if r.startswith("mesures/")]
+    assert reports[len(reports) - len(seules):] == seules
+    assert len(seules) == 2 * len(pg.charger("lisnard").chiffrees())
+    reports = reports[:len(reports) - len(seules)]
     assert reports[0] == "premiere_annee_pres2027_lisnard_programme.json"
     assert reports[-1] == "predictif_pres2027_lisnard_programme.json"
     plages = reports[1:-1]
