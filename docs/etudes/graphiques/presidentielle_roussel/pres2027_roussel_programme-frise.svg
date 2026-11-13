@@ -13,7 +13,7 @@
 .g-s1{stroke:#3987e5}.g-s2{stroke:#d95926}.g-s3{stroke:#199e70}.g-s4{stroke:#9085e9}
 .g-f1{fill:#3987e5}.g-f2{fill:#d95926}.g-f3{fill:#199e70}.g-f4{fill:#9085e9}
 .g-bande{fill:#3987e5;fill-opacity:.24}.g-plus{fill:#3987e5}.g-moins{fill:#e66767}
-.g-total{fill:#c3c2b7}.g-lien{stroke:#8f8b80}}
+.g-total{fill:#6b6862}.g-lien{stroke:#8f8b80}}
 text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <rect class="g-fond" fill="#fcfcfb" x="0" y="0" width="360" height="377"/>
 <text class="g-encre" fill="#1d1d1b" x="12" y="20" text-anchor="start" font-size="15" font-weight="600">Les mesures chiffrées dans le temps, et</text>

@@ -13,7 +13,7 @@
 .g-s1{stroke:#3987e5}.g-s2{stroke:#d95926}.g-s3{stroke:#199e70}.g-s4{stroke:#9085e9}
 .g-f1{fill:#3987e5}.g-f2{fill:#d95926}.g-f3{fill:#199e70}.g-f4{fill:#9085e9}
 .g-bande{fill:#3987e5;fill-opacity:.24}.g-plus{fill:#3987e5}.g-moins{fill:#e66767}
-.g-total{fill:#c3c2b7}.g-lien{stroke:#8f8b80}}
+.g-total{fill:#6b6862}.g-lien{stroke:#8f8b80}}
 text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <rect class="g-fond" fill="#fcfcfb" x="0" y="0" width="360" height="691"/>
 <text class="g-encre" fill="#1d1d1b" x="12" y="20" text-anchor="start" font-size="15" font-weight="600">Le solde, la dette et le PIB, de 2026 à</text>
@@ -55,7 +55,7 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <text class="g-doux" fill="#52514e" x="52" y="331" text-anchor="middle" font-size="12">2026</text>
 <text class="g-doux" fill="#52514e" x="150" y="331" text-anchor="middle" font-size="12">2029</text>
 <text class="g-doux" fill="#52514e" x="248" y="331" text-anchor="middle" font-size="12">2032</text>
-<text class="g-doux" fill="#52514e" x="346" y="331" text-anchor="middle" font-size="12">2035</text>
+<text class="g-doux" fill="#52514e" x="346" y="331" text-anchor="end" font-size="12">2035</text>
 <text class="g-encre" fill="#1d1d1b" x="12" y="361" text-anchor="start" font-weight="600">La dette (Δb)</text>
 <text class="g-doux" fill="#52514e" x="348" y="361" text-anchor="end" font-size="12">points de PIB</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="483" x2="346" y2="483"/>
@@ -80,7 +80,7 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <text class="g-doux" fill="#52514e" x="52" y="501" text-anchor="middle" font-size="12">2026</text>
 <text class="g-doux" fill="#52514e" x="150" y="501" text-anchor="middle" font-size="12">2029</text>
 <text class="g-doux" fill="#52514e" x="248" y="501" text-anchor="middle" font-size="12">2032</text>
-<text class="g-doux" fill="#52514e" x="346" y="501" text-anchor="middle" font-size="12">2035</text>
+<text class="g-doux" fill="#52514e" x="346" y="501" text-anchor="end" font-size="12">2035</text>
 <text class="g-encre" fill="#1d1d1b" x="12" y="531" text-anchor="start" font-weight="600">Le PIB</text>
 <text class="g-doux" fill="#52514e" x="348" y="531" text-anchor="end" font-size="12">écart au PIB de référence, en %</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="653" x2="346" y2="653"/>
@@ -105,6 +105,6 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <text class="g-doux" fill="#52514e" x="52" y="671" text-anchor="middle" font-size="12">2026</text>
 <text class="g-doux" fill="#52514e" x="150" y="671" text-anchor="middle" font-size="12">2029</text>
 <text class="g-doux" fill="#52514e" x="248" y="671" text-anchor="middle" font-size="12">2032</text>
-<text class="g-doux" fill="#52514e" x="346" y="671" text-anchor="middle" font-size="12">2035</text>
+<text class="g-doux" fill="#52514e" x="346" y="671" text-anchor="end" font-size="12">2035</text>
 <text class="g-doux" fill="#52514e" x="348" y="683" text-anchor="end" font-size="12">année</text>
 </svg>

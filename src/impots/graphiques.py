@@ -60,7 +60,7 @@ STYLE = """
 .g-s1{stroke:#3987e5}.g-s2{stroke:#d95926}.g-s3{stroke:#199e70}.g-s4{stroke:#9085e9}
 .g-f1{fill:#3987e5}.g-f2{fill:#d95926}.g-f3{fill:#199e70}.g-f4{fill:#9085e9}
 .g-bande{fill:#3987e5;fill-opacity:.24}.g-plus{fill:#3987e5}.g-moins{fill:#e66767}
-.g-total{fill:#c3c2b7}.g-lien{stroke:#8f8b80}}
+.g-total{fill:#6b6862}.g-lien{stroke:#8f8b80}}
 text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
 """
 
@@ -105,9 +105,11 @@ def _e(text: str) -> str:
 
 
 def _ticks(low: float, high: float, count: int = 4) -> list[float]:
-    """Des graduations rondes qui couvrent [low, high], zéro compris quand il y est."""
-    if high <= low:
-        high, low = low + 1e-12, low - 1e-12
+    """Des graduations rondes qui couvrent [low, high], zéro compris quand il y est. Une
+    série plate (une ligne sans boucle macro n'a pas d'écart de PIB) garde une échelle
+    lisible autour de sa valeur."""
+    if high - low < 1e-6:
+        low, high = low - 0.1, high + 0.1
     raw = (high - low) / count
     magnitude = 10 ** math.floor(math.log10(raw))
     step = next(m * magnitude for m in (1, 2, 2.5, 5, 10) if m * magnitude >= raw)
@@ -517,8 +519,8 @@ def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
         corps.append(_ligne(52, y, LARGEUR - 14, y, "g-axe", "#8a877f"))
         for a in years:
             if (a - first) % 3 == 0 or a == last:
-                corps.append(_texte(x(a), y + 18, str(a), ancre="middle", classe="g-doux",
-                                    taille=12))
+                corps.append(_texte(x(a), y + 18, str(a), ancre="end" if a == last
+                                    else "middle", classe="g-doux", taille=12))
         y += 34
     corps.append(_texte(LARGEUR - 12, y - 4, "année", ancre="end", classe="g-doux",
                         taille=12))
@@ -774,8 +776,8 @@ def annoncee(annees: Sequence[int], parts: dict[float, Sequence[float]], *, iden
     y = top + height
     for a in years:
         if (a - first) % 3 == 0 or a == last:
-            corps.append(_texte(x(a), y + 18, str(a), ancre="middle", classe="g-doux",
-                                taille=12))
+            corps.append(_texte(x(a), y + 18, str(a), ancre="end" if a == last
+                                else "middle", classe="g-doux", taille=12))
     corps.append(_texte(LARGEUR - 12, y + 34, "année", ancre="end", classe="g-doux",
                         taille=12))
     y += 42
