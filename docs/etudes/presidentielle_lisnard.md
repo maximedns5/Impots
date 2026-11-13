@@ -36,7 +36,7 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ![Ce que chaque décile y gagne ou y perd en 2026](graphiques/presidentielle_lisnard/pres2027_lisnard_programme-deciles.svg)
 
-*Source du graphique : `reports/etudes/presidentielle_lisnard/premiere_annee_pres2027_lisnard_programme.json` ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/presidentielle_lisnard/premiere_annee_pres2027_lisnard_programme.json` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2, la simulation mécanique ; les déciles sont ceux de la population (L1).*
 
 La part chiffrée coûte **36,19 Md€** la première année (2026) : +29,64 Md€ pour les ménages, sur la population de 2024 au droit de 2026, et +6,55 Md€ pour les entreprises, sur celles de 2023.
 
@@ -69,7 +69,7 @@ Population d'entreprises synthétique : effectifs et agrégats par secteur × ta
 
 ![Du coût de 2026 à la dette de 2035](graphiques/presidentielle_lisnard/pres2027_lisnard_programme-cascade.svg)
 
-*Source du graphique : `reports/etudes/presidentielle_lisnard/premiere_annee_pres2027_lisnard_programme.json` et `reports/etudes/presidentielle_lisnard/predictif_pres2027_lisnard_programme.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/presidentielle_lisnard/premiere_annee_pres2027_lisnard_programme.json` et `reports/etudes/presidentielle_lisnard/predictif_pres2027_lisnard_programme.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour le coût mécanique, L3 pour les comportements, L4 pour la dette, sous hypothèses.*
 
 La bande et l'éventail ne lisent que la part des ménages : aucun canal des comportements ne lit une réforme des entreprises, et aucune variante de Mésange ne porte leurs impôts. La dette, plus bas, compte les deux parts.
 
@@ -99,7 +99,7 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 ![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/presidentielle_lisnard/pres2027_lisnard_programme-trajectoire.svg)
 
-*Source du graphique : `reports/etudes/presidentielle_lisnard/predictif_pres2027_lisnard_programme.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte, et la variante de `reports/macro/variante_depense_publique.json` lue par `impots.predictif.annonce` ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/presidentielle_lisnard/predictif_pres2027_lisnard_programme.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`. Ses nombres reposent sur : L4, sous hypothèses : le cadre nommé en bas de page, et θ.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -146,6 +146,10 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 ### La dette en 2035, si les économies annoncées sont tenues
 
+![La dette de 2026 à 2035, si ce qui est annoncé est tenu](graphiques/presidentielle_lisnard/pres2027_lisnard_programme-annoncee.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_lisnard/predictif_pres2027_lisnard_programme.json`, `programmes/lisnard.json` et `reports/macro/variante_depense_publique.json`, lus par `impots.predictif.annonce` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L4 pour la part chiffrée, sous hypothèses ; annoncé pour le reste.*
+
 **Une lecture à part : annoncée par le candidat, non vérifiée.** La dette plus haut est celle de la part chiffrée ; les économies de dépense que le programme annonce, que l'outil ne microsimule pas, n'y entrent pas, et ses dépenses non plus (D-319). Ici, les montants par an que le candidat attache lui-même à ses mesures de dépense publique sont lus par la variante « dépense publique » de Mésange, son effet sur le PIB et sur le solde, et s'ajoutent à la dette de la part chiffrée. Ni le coût de la part chiffrée ni le verdict ne les lisent (D-380).
 
 | mesure | montant annoncé, par an | sens | calendrier annoncé |
@@ -180,7 +184,7 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 ![Les mesures chiffrées dans le temps, et leurs plages](graphiques/presidentielle_lisnard/pres2027_lisnard_programme-frise.svg)
 
-*Source du graphique : `programmes/lisnard.json` et `reports/etudes/presidentielle_lisnard/plages/`, ses 18 points de plage ; tracé par `impots.graphiques`.*
+*Source du graphique : `programmes/lisnard.json` et `reports/etudes/presidentielle_lisnard/plages/`, ses 18 points de plage ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour les coûts ; la valeur du candidat est celle du programme, le bas et le haut des hypothèses.*
 
 ### Baisse de la CSG sur les revenus d'activité
 

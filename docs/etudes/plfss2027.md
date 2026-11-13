@@ -34,7 +34,7 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ![Ce que chaque décile y gagne ou y perd en 2026](graphiques/plfss2027/plf2027_art_74_ppa-deciles.svg)
 
-*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_ppa.json` ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_ppa.json` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2, la simulation mécanique ; les déciles sont ceux de la population (L1).*
 
 La mesure rapporte **557 M€** la première année, chiffrée en 2026, sur la population de 2024 au droit de 2026.
 
@@ -59,7 +59,7 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 ![Du coût de 2026 à la dette de 2035](graphiques/plfss2027/plf2027_art_74_ppa-cascade.svg)
 
-*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_ppa.json` et `reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_ppa.json` et `reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour le coût mécanique, L3 pour les comportements, L2 pour la dette, sous hypothèses.*
 
 **Bande comportementale : aucune, et la raison est donnée.** Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.
 
@@ -78,7 +78,7 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 ![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/plfss2027/plf2027_art_74_ppa-trajectoire.svg)
 
-*Source du graphique : `reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2, sous hypothèses : le cadre nommé en bas de page, et θ.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -132,7 +132,7 @@ La première année de cette étude, sur le code de l'étude, chiffre -557 M€,
 
 ![Ce que chaque décile y gagne ou y perd en 2026](graphiques/plfss2027/plf2027_art_74_apl-deciles.svg)
 
-*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_apl.json` ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_apl.json` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2, la simulation mécanique ; les déciles sont ceux de la population (L1).*
 
 La mesure rapporte **72 M€** la première année, chiffrée en 2026, sur la population de 2024 au droit de 2026.
 
@@ -157,7 +157,7 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 ![Du coût de 2026 à la dette de 2035](graphiques/plfss2027/plf2027_art_74_apl-cascade.svg)
 
-*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_apl.json` et `reports/etudes/plfss2027/predictif_plf2027_art_74_apl.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_apl.json` et `reports/etudes/plfss2027/predictif_plf2027_art_74_apl.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour le coût mécanique, L3 pour les comportements, L2 pour la dette, sous hypothèses.*
 
 **Bande comportementale : aucune, et la raison est donnée.** Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.
 
@@ -176,7 +176,7 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 ![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/plfss2027/plf2027_art_74_apl-trajectoire.svg)
 
-*Source du graphique : `reports/etudes/plfss2027/predictif_plf2027_art_74_apl.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/plfss2027/predictif_plf2027_art_74_apl.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2, sous hypothèses : le cadre nommé en bas de page, et θ.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|

@@ -1108,7 +1108,9 @@ class _Programme:
         return graphiques.frise(
             mesures, debut=years[0], fin=years[-1], ident=f"{entry['name']}-frise",
             source=f"`programmes/{self.programme.slug}.json` et `{where}/{PLAGES}/`, ses "
-                   f"{len(self.study.points())} points de plage")
+                   f"{len(self.study.points())} points de plage",
+            etages="L2 pour les coûts ; la valeur du candidat est celle du programme, le "
+                   "bas et le haut des hypothèses")
 
     def _mesures(self, w: Any, n: Nombres) -> None:
         p, c = self.programme, self.programme.couverture()
@@ -1165,6 +1167,21 @@ class _Programme:
         w(f"### La dette en {year}, si les économies annoncées sont tenues"
           + (" et les dépenses annoncées faites" if depenses else ""))
         w("")
+        if lues and "vieillie" in lectures[0]["vues"]:
+            from impots import graphiques
+
+            where = _relative(self.study.rapports)
+            graphique(w, n, self.study.nom, graphiques.annoncee(
+                lectures[0]["annees"],
+                {lecture["part"]: lecture["vues"]["vieillie"]["avec_annonce"]
+                 for lecture in lectures},
+                ident=f"{entry['name']}-annoncee",
+                source=f"`{where}/predictif_{entry['name']}.json`, `programmes/"
+                       f"{self.programme.slug}.json` et `reports/macro/"
+                       f"variante_depense_publique.json`, lus par "
+                       f"`impots.predictif.annonce`",
+                etages=f"{debt_etage(path)} pour la part chiffrée, sous hypothèses ; "
+                       f"annoncé pour le reste"))
         w("**Une lecture à part : annoncée par le candidat, non vérifiée.** La dette plus "
           "haut est celle de la part chiffrée ; les économies de dépense que le programme "
           "annonce, que l'outil ne microsimule pas, n'y entrent pas, et ses dépenses non "
@@ -1828,22 +1845,6 @@ class Etude:
             written.append(self.graphiques / name)
         return written
 
-    def _annonce_dette(self, entry: dict[str, Any]) -> list[float] | None:
-        """The debt « si les économies annoncées sont tenues », year by year, vue
-        vieillie, the whole of what is announced (D-380): the line the trajectory draws
-        beside the debt, when the page reads it and the programme announces something."""
-        texte = self.texte_lu()
-        if not (self.dette_annoncee and hasattr(texte, "dette_annoncee")
-                and entry["sign"] == 1):
-            return None
-        from impots.predictif import annonce
-
-        lecture = annonce.lire(entry["path"], texte.programme, PARTS_ANNONCEES[-1],
-                               variante=annonce.lue(), views=("vieillie",))
-        if not lecture["mesures"]:
-            return None
-        return lecture["vues"]["vieillie"]["avec_annonce"]
-
     def lines(self, entries: list[dict[str, Any]]) -> tuple[list[str], Nombres]:
         """The page's Markdown lines, each number a token of `Nombres` that says what it
         rests on: the page and the site are one text (D-304)."""
@@ -1963,7 +1964,9 @@ class Etude:
             w("")
             graphique(w, n, self.nom, graphiques.deciles(
                 entry, ident=f"{entry['name']}-deciles",
-                source=f"`{where}/premiere_annee_{entry['name']}.json`"))
+                source=f"`{where}/premiere_annee_{entry['name']}.json`",
+                etages="L2, la simulation mécanique ; les déciles sont ceux de la "
+                       "population (L1)"))
             self._first(w, n, entry, texte)
             w("")
             w("### 2. Avec les comportements et l'économie")
@@ -1971,19 +1974,19 @@ class Etude:
             graphique(w, n, self.nom, graphiques.cascade(
                 entry, ident=f"{entry['name']}-cascade",
                 source=f"`{where}/premiere_annee_{entry['name']}.json` et "
-                       f"`{where}/predictif_{entry['name']}.json` (sa décomposition, D-349)"))
+                       f"`{where}/predictif_{entry['name']}.json` (sa décomposition, D-349)",
+                etages=f"L2 pour le coût mécanique, L3 pour les comportements, "
+                       f"{debt_etage(entry['path'])} pour la dette, sous hypothèses"))
             self._second(w, n, entry)
             w(f"### 3. La dette en {last}")
             w("")
-            annoncee = self._annonce_dette(entry)
             graphique(w, n, self.nom, graphiques.trajectoire(
-                entry, ident=f"{entry['name']}-trajectoire", annonce=annoncee,
+                entry, ident=f"{entry['name']}-trajectoire",
                 source=f"`{where}/predictif_{entry['name']}.json`, rejoué année par année "
                        f"par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et "
-                       f"chaque coin de sa boîte"
-                       + (", et la variante de `reports/macro/variante_depense_publique.json`"
-                          f" lue par `impots.predictif.annonce`"
-                          if annoncee is not None else "")))
+                       f"chaque coin de sa boîte",
+                etages=f"{debt_etage(entry['path'])}, sous hypothèses : le cadre nommé en "
+                       f"bas de page, et θ"))
             self._third(w, n, entry)
             if self.dette_annoncee and hasattr(texte, "dette_annoncee"):
                 texte.dette_annoncee(w, n, entry)

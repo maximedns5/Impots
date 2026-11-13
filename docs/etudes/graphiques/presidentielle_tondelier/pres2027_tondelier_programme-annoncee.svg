@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 385" width="360" height="385" role="img" aria-labelledby="pres2027_tondelier_programme-annoncee-t pres2027_tondelier_programme-annoncee-d" font-size="13">
+<title id="pres2027_tondelier_programme-annoncee-t">La dette de 2026 à 2035, si ce qui est annoncé est tenu</title>
+<desc id="pres2027_tondelier_programme-annoncee-d">Δ dette de 2026 à 2035, vue vieillie, à θ½, persistance lue. part réalisée 0 % : +0,45 pt en 2026, +2,60 pt en 2035 ; part réalisée 50 % : +0,36 pt en 2026, +3,55 pt en 2035 ; part réalisée 100 % : +0,28 pt en 2026, +4,49 pt en 2035.</desc>
+<style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
+.g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
+.g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
+.g-f1{fill:#2a78d6}.g-f2{fill:#eb6834}.g-f3{fill:#1baf7a}.g-f4{fill:#6250d6}
+.g-bande{fill:#2a78d6;fill-opacity:.16}.g-plus{fill:#2a78d6}.g-moins{fill:#e34948}
+.g-total{fill:#52514e}.g-lien{stroke:#8a877f}.g-sur{fill:#ffffff}
+@media (prefers-color-scheme: dark){
+.g-fond{fill:#1a1a19}.g-encre{fill:#ece9e2}.g-doux{fill:#c3c2b7}
+.g-axe{stroke:#8f8b80}.g-grille{stroke:#33322f}.g-zero{stroke:#c3c2b7}
+.g-s1{stroke:#3987e5}.g-s2{stroke:#d95926}.g-s3{stroke:#199e70}.g-s4{stroke:#9085e9}
+.g-f1{fill:#3987e5}.g-f2{fill:#d95926}.g-f3{fill:#199e70}.g-f4{fill:#9085e9}
+.g-bande{fill:#3987e5;fill-opacity:.24}.g-plus{fill:#3987e5}.g-moins{fill:#e66767}
+.g-total{fill:#c3c2b7}.g-lien{stroke:#8f8b80}}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
+<rect class="g-fond" fill="#fcfcfb" x="0" y="0" width="360" height="385"/>
+<text class="g-encre" fill="#1d1d1b" x="12" y="20" text-anchor="start" font-size="15" font-weight="600">La dette de 2026 à 2035, si ce qui est</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="39" text-anchor="start" font-size="15" font-weight="600">annoncé est tenu</text>
+<text class="g-doux" fill="#52514e" x="12" y="58" text-anchor="start">Annoncé par le candidat, non vérifié ; jamais</text>
+<text class="g-doux" fill="#52514e" x="12" y="75" text-anchor="start">additionné au coût ni au verdict. Vue vieillie, à</text>
+<text class="g-doux" fill="#52514e" x="12" y="92" text-anchor="start">θ½, persistance « lue ».</text>
+<line class="g-zero" stroke="#52514e" stroke-width="3" x1="12" y1="119" x2="34" y2="119"/>
+<text class="g-encre" fill="#1d1d1b" x="38" y="123" text-anchor="start">la part chiffrée seule</text>
+<line class="g-s4" stroke="#6250d6" stroke-width="3" stroke-dasharray="6 4" x1="12" y1="137" x2="34" y2="137"/>
+<text class="g-encre" fill="#1d1d1b" x="38" y="141" text-anchor="start">50 % de l&#x27;annoncé réalisé</text>
+<line class="g-s4" stroke="#6250d6" stroke-width="3" stroke-dasharray="8 3 2 3" x1="12" y1="155" x2="34" y2="155"/>
+<text class="g-encre" fill="#1d1d1b" x="38" y="159" text-anchor="start">100 % de l&#x27;annoncé réalisé</text>
+<text class="g-doux" fill="#52514e" x="348" y="183" text-anchor="end" font-size="12">Δ dette, points de PIB</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="343" x2="346" y2="343"/>
+<text class="g-doux" fill="#52514e" x="46" y="347" text-anchor="end" font-size="12">0,0</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="293" x2="346" y2="293"/>
+<text class="g-doux" fill="#52514e" x="46" y="297" text-anchor="end" font-size="12">2,0</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="243" x2="346" y2="243"/>
+<text class="g-doux" fill="#52514e" x="46" y="247" text-anchor="end" font-size="12">4,0</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="193" x2="346" y2="193"/>
+<text class="g-doux" fill="#52514e" x="46" y="197" text-anchor="end" font-size="12">6,0</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="1.2" x1="52" y1="343" x2="346" y2="343"/>
+<polyline class="g-zero" stroke="#52514e" fill="none" stroke-width="2.5" points="52,331.9 84.7,325.5 117.3,320 150,313.7 182.7,307.7 215.3,301.3 248,295.1 280.7,289.2 313.3,283.5 346,278.1"><title>part réalisée 0 %, 2035 : +2,60 pt</title></polyline>
+<polyline class="g-s4" stroke="#6250d6" fill="none" stroke-width="2.5" stroke-dasharray="6 4" points="52,333.9 84.7,327.6 117.3,320.2 150,311 182.7,301.7 215.3,292 248,282.4 280.7,273 313.3,263.6 346,254.4"><title>part réalisée 50 %, 2035 : +3,55 pt</title></polyline>
+<polyline class="g-s4" stroke="#6250d6" fill="none" stroke-width="2.5" stroke-dasharray="8 3 2 3" points="52,335.9 84.7,329.8 117.3,320.3 150,308.4 182.7,295.8 215.3,282.8 248,269.8 280.7,256.8 313.3,243.7 346,230.7"><title>part réalisée 100 %, 2035 : +4,49 pt</title></polyline>
+<text class="g-encre" fill="#1d1d1b" x="344" y="226.7" text-anchor="end" font-size="12" font-weight="600">+4,49 pt</text>
+<text class="g-encre" fill="#1d1d1b" x="344" y="250.4" text-anchor="end" font-size="12" font-weight="600">+3,55 pt</text>
+<text class="g-encre" fill="#1d1d1b" x="344" y="274.1" text-anchor="end" font-size="12" font-weight="600">+2,60 pt</text>
+<text class="g-doux" fill="#52514e" x="52" y="361" text-anchor="middle" font-size="12">2026</text>
+<text class="g-doux" fill="#52514e" x="150" y="361" text-anchor="middle" font-size="12">2029</text>
+<text class="g-doux" fill="#52514e" x="248" y="361" text-anchor="middle" font-size="12">2032</text>
+<text class="g-doux" fill="#52514e" x="346" y="361" text-anchor="middle" font-size="12">2035</text>
+<text class="g-doux" fill="#52514e" x="348" y="377" text-anchor="end" font-size="12">année</text>
+</svg>

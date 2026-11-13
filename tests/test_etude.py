@@ -87,6 +87,8 @@ def test_the_command_says_the_drift(tmp_path, monkeypatch, capsys) -> None:
     raw = json.loads((etude.DEFINITIONS / "plf2027.json").read_text(encoding="utf-8"))
     page = tmp_path / "ETUDE_PLF2027.md"
     shutil.copy(study.page, page)
+    # The page's graphics live beside it (but 22): they move with it.
+    shutil.copytree(study.graphiques, tmp_path / "graphiques" / "plf2027")
     raw.update(page=str(page), rapports=str(study.rapports))
     (tmp_path / "plf2027.json").write_text(json.dumps(raw), encoding="utf-8")
     monkeypatch.setattr(etude, "DEFINITIONS", tmp_path)

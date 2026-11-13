@@ -75,7 +75,7 @@ class GraphiqueError(ValueError):
 def fr(value: float, decimales: int = 2, *, signe: bool = True) -> str:
     """Un nombre à la française : virgule décimale, espace fine insécable entre les
     milliers, le moins typographique."""
-    text = f"{abs(value):,.{decimales}f}".replace(",", " ").replace(".", ",")
+    text = f"{abs(value):,.{decimales}f}".replace(",", "\u202f").replace(".", ",")
     if round(value, decimales) == 0:
         return text
     return ("−" if value < 0 else "+" if signe else "") + text
@@ -83,15 +83,15 @@ def fr(value: float, decimales: int = 2, *, signe: bool = True) -> str:
 
 def points(value: float) -> str:
     """Une part de PIB en points : 0,0428 → « +4,28 pt »."""
-    return f"{fr(value * 100)} pt"
+    return f"{fr(value * 100)}\u00a0pt"
 
 
 def milliards(value: float) -> str:
-    return f"{fr(value / 1e9)} Md€"
+    return f"{fr(value / 1e9)}\u00a0Md€"
 
 
 def euros(value: float) -> str:
-    return f"{fr(value, 0)} €"
+    return f"{fr(value, 0)}\u00a0€"
 
 
 def _c(value: float) -> str:
@@ -149,10 +149,17 @@ class Graphique:
     svg: str
     #: Les nombres tracés, par nom : ce qu'un test tient contre le rapport.
     nombres: dict[str, Any] = field(default_factory=dict)
+    #: Ce sur quoi ses nombres reposent, les étages de la page (D-304) : un nombre du
+    #: graphique n'a pas son badge, sa légende le dit pour tous.
+    etages: str = ""
 
     def legende(self) -> str:
-        """La ligne de la page sous le graphique : sa source et le module qui le trace."""
-        return f"*Source du graphique : {self.source} ; tracé par `{MODULE}`.*"
+        """La ligne de la page sous le graphique : sa source, le module qui le trace, et
+        l'étage de ses nombres."""
+        if not self.etages:
+            raise GraphiqueError(f"{self.fichier} : un graphique sans l'étage de ses nombres")
+        return (f"*Source du graphique : {self.source} ; tracé par `{MODULE}`. Ses nombres "
+                f"reposent sur : {self.etages}.*")
 
 
 def _svg(ident: str, hauteur: float, titre: str, desc: str, corps: list[str]) -> str:
@@ -318,7 +325,8 @@ def _cascade_panneau(corps: list[str], y: float, titre: str, marches: list[tuple
     return y + 40
 
 
-def cascade(entry: dict[str, Any], *, ident: str, source: str) -> Graphique | None:
+def cascade(entry: dict[str, Any], *, ident: str, source: str,
+            etages: str = "") -> Graphique | None:
     nombres = cascade_nombres(entry)
     if nombres is None:
         return None
@@ -340,7 +348,7 @@ def cascade(entry: dict[str, Any], *, ident: str, source: str) -> Graphique | No
             + " ; ".join(f"{label} {points(v)}" for label, v in nombres["dette"])
             + f" ; Δ dette {points(nombres['dette_total'])}.")
     return Graphique(f"{ident}.svg", titre, source, _svg(ident, y, titre, desc, corps),
-                     nombres)
+                     nombres, etages)
 
 
 # --------------------------------------------------------------------------- #
@@ -349,6 +357,15 @@ def cascade(entry: dict[str, Any], *, ident: str, source: str) -> Graphique | No
 INDICATEURS = (("solde", "Le solde public", "points de PIB, + l'améliore"),
                ("dette", "La dette (Δb)", "points de PIB"),
                ("pib", "Le PIB", "écart au PIB de référence, en %"))
+
+
+def rejouable(path: dict[str, Any]) -> bool:
+    """Whether a path carries what the replay reads, year by year: a report since D-336
+    (`rejeu`, its box rows) that draws the persistence « lue ». An older report renders
+    the page it always did, without a trajectory."""
+    rejeu = path.get("rejeu") or {}
+    return ("box_rows" in rejeu and bool(path.get("theta_box"))
+            and any(p.get("persistence") == "lue" for p in path.get("side_by_side") or []))
 
 
 def trajectoire_nombres(entry: dict[str, Any],
@@ -415,7 +432,9 @@ def trajectoire_nombres(entry: dict[str, Any],
 
 
 def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
-                annonce: Sequence[float] | None = None) -> Graphique:
+                annonce: Sequence[float] | None = None, etages: str = "") -> Graphique | None:
+    if not rejouable(entry["path"]):
+        return None
     nombres = trajectoire_nombres(entry, annonce)
     years = nombres["annees"]
     first, last = years[0], years[-1]
@@ -446,7 +465,7 @@ def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
     x = Echelle(first, last, 52, LARGEUR - 14)
     for name, label, unite in INDICATEURS:
         lignes = {k: v[name] for k, v in nombres["series"].items()}
-        valeurs = [v * (100 if name != "pib" else 100) for s in lignes.values() for v in s]
+        valeurs = [v * 100 for serie in lignes.values() for v in serie]
         valeurs += [v * 100 for lo_hi in nombres["bande"][name] for v in lo_hi]
         if name == "dette" and nombres["annonce"] is not None:
             valeurs += [v * 100 for v in nombres["annonce"]]
@@ -518,11 +537,11 @@ def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
                f". Si les économies annoncées sont tenues : "
                f"{points(nombres['annonce'][-1])} en {last}."))
     return Graphique(f"{ident}.svg", titre, source, _svg(ident, y, titre, desc, corps),
-                     nombres)
+                     nombres, etages)
 
 
 def _valeur(name: str, value: float) -> str:
-    return points(value) if name != "pib" else f"{fr(value * 100)} %"
+    return points(value) if name != "pib" else f"{fr(value * 100)}\u00a0%"
 
 
 # --------------------------------------------------------------------------- #
@@ -538,7 +557,8 @@ def deciles_nombres(entry: dict[str, Any]) -> list[tuple[int, float]] | None:
     return [(int(r.decile), entry["sign"] * float(r.mean_delta)) for r in rows]
 
 
-def deciles(entry: dict[str, Any], *, ident: str, source: str) -> Graphique | None:
+def deciles(entry: dict[str, Any], *, ident: str, source: str,
+            etages: str = "") -> Graphique | None:
     nombres = deciles_nombres(entry)
     if nombres is None:
         return None
@@ -594,7 +614,7 @@ def deciles(entry: dict[str, Any], *, ident: str, source: str) -> Graphique | No
     desc = (f"Le gain moyen par ménage en {year}, par décile de niveau de vie : "
             + " ; ".join(f"D{d} {euros(v)}" for d, v in nombres) + ".")
     return Graphique(f"{ident}.svg", titre, source, _svg(ident, y, titre, desc, corps),
-                     {"deciles": nombres})
+                     {"deciles": nombres}, etages)
 
 
 # --------------------------------------------------------------------------- #
@@ -615,7 +635,7 @@ class Mesure:
 
 
 def frise(mesures: Sequence[Mesure], *, debut: int, fin: int, ident: str,
-          source: str) -> Graphique | None:
+          source: str, etages: str = "") -> Graphique | None:
     """Une ligne par mesure chiffrée : les années où elle s'applique, de l'année du
     scénario à la fin du chemin, ou ses seules `annees` ; et, sous elle, chaque plage, ses
     trois points (bas, candidat, haut) avec leur coût de la première année."""
@@ -689,4 +709,79 @@ def frise(mesures: Sequence[Mesure], *, debut: int, fin: int, ident: str,
             f"{point} {valeur} {milliards(cout)}" for point, valeur, cout in p.points)
             for p in m.plages) for m in mesures) + "."
     return Graphique(f"{ident}.svg", titre, source, _svg(ident, y, titre, desc, corps),
-                     {"mesures": nombres})
+                     {"mesures": nombres}, etages)
+
+
+# --------------------------------------------------------------------------- #
+# 5. la dette si les économies annoncées sont tenues, à part (D-380)
+# --------------------------------------------------------------------------- #
+#: Une part réalisée, sa couleur et son trait : la part chiffrée seule est la dette du
+#: rapport, en gris ; ce qui est annoncé, en violet, tiretés distincts.
+PARTS = {0.0: ("g-zero", "#52514e", ""), 0.5: ("g-s4", "#6250d6", "6 4"),
+         1.0: ("g-s4", "#6250d6", "8 3 2 3")}
+
+
+def annoncee(annees: Sequence[int], parts: dict[float, Sequence[float]], *, ident: str,
+             source: str, etages: str = "") -> Graphique:
+    """La dette de la part chiffrée (part réalisée nulle, la dette du rapport) et la même
+    si une part de ce que le candidat annonce est réalisée, année par année, vue
+    vieillie, à θ½, persistance « lue » : une lecture à part, jamais le verdict."""
+    years = [int(a) for a in annees]
+    if any(len(v) != len(years) for v in parts.values()):
+        raise GraphiqueError(f"{ident} : une part n'a pas une valeur par année.")
+    first, last = years[0], years[-1]
+    titre = f"La dette de {first} à {last}, si ce qui est annoncé est tenu"
+    corps: list[str] = []
+    y = _titre(corps, titre, "Annoncé par le candidat, non vérifié ; jamais additionné au "
+                             "coût ni au verdict. Vue vieillie, à θ½, persistance « lue ».")
+    for part, (classe, couleur, tirets) in PARTS.items():
+        if part not in parts:
+            continue
+        corps.append(_ligne(12, y + 6, 34, y + 6, classe, couleur, 3, tirets))
+        label = ("la part chiffrée seule" if part == 0 else
+                 f"{fr(part * 100, 0, signe=False)}\u00a0% de l'annoncé réalisé")
+        corps.append(_texte(38, y + 10, label))
+        y += 18
+    y += 6
+    x = Echelle(first, last, 52, LARGEUR - 14)
+    valeurs = [v * 100 for serie in parts.values() for v in serie]
+    ticks = _ticks(min(0.0, *valeurs), max(0.0, *valeurs))
+    corps.append(_texte(LARGEUR - 12, y + 10, "Δ dette, points de PIB", ancre="end",
+                        classe="g-doux", taille=12))
+    top, height = y + 20, 150
+    s_ = Echelle(ticks[0], ticks[-1], top + height, top)
+    for t in ticks:
+        corps.append(_ligne(52, s_(t), LARGEUR - 14, s_(t), "g-grille", "#e4e1da"))
+        corps.append(_texte(46, s_(t) + 4, fr(t, 1).replace("+", ""), ancre="end",
+                            classe="g-doux", taille=12))
+    corps.append(_ligne(52, s_(0), LARGEUR - 14, s_(0), "g-axe", "#8a877f", 1.2))
+    for part, serie in sorted(parts.items()):
+        classe, couleur, tirets = PARTS[part]
+        pts = " ".join(f"{_c(x(a))},{_c(s_(v * 100))}" for a, v in
+                       zip(years, serie, strict=True))
+        dash = f' stroke-dasharray="{tirets}"' if tirets else ""
+        corps.append(f'<polyline class="{classe}" stroke="{couleur}" fill="none" '
+                     f'stroke-width="2.5"{dash} points="{pts}"><title>part réalisée '
+                     f'{fr(part * 100, 0, signe=False)} %, {last} : {_e(points(serie[-1]))}'
+                     f'</title></polyline>')
+    ends = sorted(((serie[-1], part) for part, serie in parts.items()), reverse=True)
+    last_y = -1e9
+    for value, _part in ends:
+        ty = max(s_(value * 100) + 4, last_y + 15)
+        corps.append(_texte(LARGEUR - 16, ty - 8, points(value), ancre="end", gras=True,
+                            taille=12))
+        last_y = ty
+    y = top + height
+    for a in years:
+        if (a - first) % 3 == 0 or a == last:
+            corps.append(_texte(x(a), y + 18, str(a), ancre="middle", classe="g-doux",
+                                taille=12))
+    corps.append(_texte(LARGEUR - 12, y + 34, "année", ancre="end", classe="g-doux",
+                        taille=12))
+    y += 42
+    desc = (f"Δ dette de {first} à {last}, vue vieillie, à θ½, persistance lue. "
+            + " ; ".join(f"part réalisée {fr(part * 100, 0, signe=False)} % : "
+                         f"{points(serie[0])} en {first}, {points(serie[-1])} en {last}"
+                         for part, serie in sorted(parts.items())) + ".")
+    return Graphique(f"{ident}.svg", titre, source, _svg(ident, y, titre, desc, corps),
+                     {"parts": {k: list(v) for k, v in parts.items()}}, etages)

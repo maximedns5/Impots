@@ -36,7 +36,7 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ![Ce que chaque décile y gagne ou y perd en 2026](graphiques/presidentielle_roussel/pres2027_roussel_programme-deciles.svg)
 
-*Source du graphique : `reports/etudes/presidentielle_roussel/premiere_annee_pres2027_roussel_programme.json` ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/presidentielle_roussel/premiere_annee_pres2027_roussel_programme.json` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2, la simulation mécanique ; les déciles sont ceux de la population (L1).*
 
 La mesure coûte **32,97 Md€** la première année (2026), sur la population de 2024 au droit de 2026.
 
@@ -61,7 +61,7 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 ![Du coût de 2026 à la dette de 2035](graphiques/presidentielle_roussel/pres2027_roussel_programme-cascade.svg)
 
-*Source du graphique : `reports/etudes/presidentielle_roussel/premiere_annee_pres2027_roussel_programme.json` et `reports/etudes/presidentielle_roussel/predictif_pres2027_roussel_programme.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/presidentielle_roussel/premiere_annee_pres2027_roussel_programme.json` et `reports/etudes/presidentielle_roussel/predictif_pres2027_roussel_programme.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour le coût mécanique, L3 pour les comportements, L4 pour la dette, sous hypothèses.*
 
 **Bande comportementale : aucune, et la raison est donnée.** Cette réforme est plus grande que celles sur lesquelles les élasticités ont été estimées : la bande est une extrapolation, élargie et signalée comme telle.
 
@@ -78,7 +78,7 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 ![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/presidentielle_roussel/pres2027_roussel_programme-trajectoire.svg)
 
-*Source du graphique : `reports/etudes/presidentielle_roussel/predictif_pres2027_roussel_programme.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/presidentielle_roussel/predictif_pres2027_roussel_programme.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`. Ses nombres reposent sur : L4, sous hypothèses : le cadre nommé en bas de page, et θ.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -146,7 +146,7 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 ![Les mesures chiffrées dans le temps, et leurs plages](graphiques/presidentielle_roussel/pres2027_roussel_programme-frise.svg)
 
-*Source du graphique : `programmes/roussel.json` et `reports/etudes/presidentielle_roussel/plages/`, ses 6 points de plage ; tracé par `impots.graphiques`.*
+*Source du graphique : `programmes/roussel.json` et `reports/etudes/presidentielle_roussel/plages/`, ses 6 points de plage ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour les coûts ; la valeur du candidat est celle du programme, le bas et le haut des hypothèses.*
 
 ### TVA sur les carburants
 

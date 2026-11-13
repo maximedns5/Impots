@@ -36,7 +36,7 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ![Ce que chaque décile y gagne ou y perd en 2026](graphiques/presidentielle_zemmour/pres2027_zemmour_programme-deciles.svg)
 
-*Source du graphique : `reports/etudes/presidentielle_zemmour/premiere_annee_pres2027_zemmour_programme.json` ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/presidentielle_zemmour/premiere_annee_pres2027_zemmour_programme.json` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2, la simulation mécanique ; les déciles sont ceux de la population (L1).*
 
 La mesure coûte **91,69 Md€** la première année (2026), sur la population de 2024 au droit de 2026.
 
@@ -61,7 +61,7 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 ![Du coût de 2026 à la dette de 2035](graphiques/presidentielle_zemmour/pres2027_zemmour_programme-cascade.svg)
 
-*Source du graphique : `reports/etudes/presidentielle_zemmour/premiere_annee_pres2027_zemmour_programme.json` et `reports/etudes/presidentielle_zemmour/predictif_pres2027_zemmour_programme.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/presidentielle_zemmour/premiere_annee_pres2027_zemmour_programme.json` et `reports/etudes/presidentielle_zemmour/predictif_pres2027_zemmour_programme.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour le coût mécanique, L3 pour les comportements, L4 pour la dette, sous hypothèses.*
 
 **Une fois les comportements pris en compte**, la mesure coûte de +88,16 Md€ à +90,48 Md€, central +89,33 Md€ (bande **extrapolée** : la réforme sort de l'étendue des variations sur lesquelles les élasticités publiées ont été estimées), pour +91,69 Md€ sans eux.
 
@@ -80,7 +80,7 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 ![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/presidentielle_zemmour/pres2027_zemmour_programme-trajectoire.svg)
 
-*Source du graphique : `reports/etudes/presidentielle_zemmour/predictif_pres2027_zemmour_programme.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte, et la variante de `reports/macro/variante_depense_publique.json` lue par `impots.predictif.annonce` ; tracé par `impots.graphiques`.*
+*Source du graphique : `reports/etudes/presidentielle_zemmour/predictif_pres2027_zemmour_programme.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`. Ses nombres reposent sur : L4, sous hypothèses : le cadre nommé en bas de page, et θ.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -124,6 +124,10 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 | figée | +11,75 pt | de -0,00 pt à +23,54 pt | 86 % | dépend |
 
 ### La dette en 2035, si les économies annoncées sont tenues
+
+![La dette de 2026 à 2035, si ce qui est annoncé est tenu](graphiques/presidentielle_zemmour/pres2027_zemmour_programme-annoncee.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_zemmour/predictif_pres2027_zemmour_programme.json`, `programmes/zemmour.json` et `reports/macro/variante_depense_publique.json`, lus par `impots.predictif.annonce` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L4 pour la part chiffrée, sous hypothèses ; annoncé pour le reste.*
 
 **Une lecture à part : annoncée par le candidat, non vérifiée.** La dette plus haut est celle de la part chiffrée ; les économies de dépense que le programme annonce, que l'outil ne microsimule pas, n'y entrent pas, et ses dépenses non plus (D-319). Ici, les montants par an que le candidat attache lui-même à ses mesures de dépense publique sont lus par la variante « dépense publique » de Mésange, son effet sur le PIB et sur le solde, et s'ajoutent à la dette de la part chiffrée. Ni le coût de la part chiffrée ni le verdict ne les lisent (D-380).
 
@@ -179,7 +183,7 @@ Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut
 
 ![Les mesures chiffrées dans le temps, et leurs plages](graphiques/presidentielle_zemmour/pres2027_zemmour_programme-frise.svg)
 
-*Source du graphique : `programmes/zemmour.json` et `reports/etudes/presidentielle_zemmour/plages/`, ses 6 points de plage ; tracé par `impots.graphiques`.*
+*Source du graphique : `programmes/zemmour.json` et `reports/etudes/presidentielle_zemmour/plages/`, ses 6 points de plage ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour les coûts ; la valeur du candidat est celle du programme, le bas et le haut des hypothèses.*
 
 ### Suppression de la CSG sur les revenus d'activité
 

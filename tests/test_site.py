@@ -137,8 +137,22 @@ def test_no_study_page_runs_a_script(built, monkeypatch) -> None:
 
 
 def _body(text: str) -> str:
-    """A page's main text without its legend and footer, which describe the badges."""
-    return text.split('<section id="etages">')[0]
+    """A page's main text without its legend and footer, which describe the badges, and
+    without its graphics (but 22): a graphic's numbers carry no badge each, its caption
+    says what they rest on, which `test_each_graphic_says_its_source_and_its_etage`
+    holds."""
+    text = text.split('<section id="etages">')[0]
+    return re.sub(r"<svg.*?</svg>", "", text, flags=re.S)
+
+
+def test_each_graphic_says_its_source_and_its_etage(built) -> None:
+    for name in ("plf2027.html", "plfss2027.html", "presidentielle_attal.html"):
+        figures = re.findall(r'<figure class="graphique">.*?</figure>', built[name], re.S)
+        assert figures, name
+        for figure in figures:
+            caption = figure.split("<figcaption>")[1]
+            assert "Source du graphique" in caption and "reposent sur" in caption
+            assert "<code>reports/" in caption and "impots.graphiques" in caption
 
 
 @pytest.mark.parametrize("name", ["index.html", "plf2027.html", "plfss2027.html"])
@@ -185,7 +199,11 @@ def test_the_page_is_the_study_s_text(built) -> None:
         lambda m: re.sub(r"<a class=\"etage[^>]*>.*?</a>", "", m[0]), built["plfss2027.html"])))
     for line in lines:
         plain = re.sub(r"\*\*|`", "", n.resolve(line)).strip("*# >|-")
-        if plain and not line.startswith(("<!--", "|")):
+        image = re.fullmatch(r"!\[[^\]]*\]\(([^)]+)\)", line)
+        if image:
+            # A graphic's line is not text: the site carries the SVG it names (but 22).
+            assert n.graphiques[image[1]].svg.strip() in built["plfss2027.html"]
+        elif plain and not line.startswith(("<!--", "|")):
             assert plain.strip() in text, plain[:80]
 
 
