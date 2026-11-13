@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 1061" width="360" height="1061" role="img" aria-labelledby="pres2027_melenchon_programme-frise-t pres2027_melenchon_programme-frise-d" font-size="13">
+<title id="pres2027_melenchon_programme-frise-t">Les mesures chiffrées dans le temps, et leurs plages</title>
+<desc id="pres2027_melenchon_programme-frise-d">Les mesures chiffrées : Point d&#x27;indice des fonctionnaires +10 %, de 2026 à 2035, plage point_indice_revalorisation : bas 1 0,00 Md€, candidat 1,1 +11,69 Md€, haut 1,15 +17,50 Md€, plage point_indice_contractuels : bas 0 +11,69 Md€, candidat 0 +11,69 Md€, haut 1 +14,24 Md€ ; Indexation des pensions, allocations familiales et APL, hausse de 10 %, de 2026 à 2035, plage indexations.pensions.2025 : bas 1 +3,68 Md€, candidat 1,1 +32,94 Md€, haut 1,15 +47,48 Md€, plage indexations.prestations_familiales.2025 : bas 1 +30,58 Md€, candidat 1,1 +32,94 Md€, haut 1,15 +34,13 Md€, plage indexations.aides_logement.2025 : bas 1 +31,66 Md€, candidat 1,1 +32,94 Md€, haut 1,15 +33,56 Md€ ; SMIC à 1 700 € net, de 2026 à 2035, plage smic_revalorisation : bas 1,1503 +28,37 Md€, candidat 1,1617 +30,45 Md€, haut 1,178 +33,41 Md€, plage smic_diffusion_echelle : bas 0 +30,45 Md€, candidat 0 +30,45 Md€, haut 1 +11,39 Md€ ; Garantie d&#x27;autonomie des jeunes, de 2026 à 2035, plage garantie_autonomie.age_maximum : bas 21 +17,14 Md€, candidat 25 +35,32 Md€, haut 30 +43,58 Md€ ; Suppression du PFU (« flat tax »), de 2026 à 2035 ; Fin des exonérations de cotisations au-dessus de 2 SMIC, de 2026 à 2035, plage allegement_general_plafond : bas 1,5 −24,19 Md€, candidat 2 −7,04 Md€, haut 3 0,00 Md€ ; Défiscalisation des pensions alimentaires, de 2026 à 2035.</desc>
+<style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
+.g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
+.g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
+.g-f1{fill:#2a78d6}.g-f2{fill:#eb6834}.g-f3{fill:#1baf7a}.g-f4{fill:#6250d6}
+.g-bande{fill:#2a78d6;fill-opacity:.16}.g-plus{fill:#2a78d6}.g-moins{fill:#e34948}
+.g-total{fill:#52514e}.g-lien{stroke:#8a877f}.g-sur{fill:#ffffff}
+@media (prefers-color-scheme: dark){
+.g-fond{fill:#1a1a19}.g-encre{fill:#ece9e2}.g-doux{fill:#c3c2b7}
+.g-axe{stroke:#8f8b80}.g-grille{stroke:#33322f}.g-zero{stroke:#c3c2b7}
+.g-s1{stroke:#3987e5}.g-s2{stroke:#d95926}.g-s3{stroke:#199e70}.g-s4{stroke:#9085e9}
+.g-f1{fill:#3987e5}.g-f2{fill:#d95926}.g-f3{fill:#199e70}.g-f4{fill:#9085e9}
+.g-bande{fill:#3987e5;fill-opacity:.24}.g-plus{fill:#3987e5}.g-moins{fill:#e66767}
+.g-total{fill:#c3c2b7}.g-lien{stroke:#8f8b80}}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
+<rect class="g-fond" fill="#fcfcfb" x="0" y="0" width="360" height="1061"/>
+<text class="g-encre" fill="#1d1d1b" x="12" y="20" text-anchor="start" font-size="15" font-weight="600">Les mesures chiffrées dans le temps, et</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="39" text-anchor="start" font-size="15" font-weight="600">leurs plages</text>
+<text class="g-doux" fill="#52514e" x="12" y="58" text-anchor="start">La barre : les années où la mesure s&#x27;applique, de</text>
+<text class="g-doux" fill="#52514e" x="12" y="75" text-anchor="start">2026 à 2035. Dessous : le coût de 2026 de chaque</text>
+<text class="g-doux" fill="#52514e" x="12" y="92" text-anchor="start">point de plage.</text>
+<circle class="g-f2" fill="#eb6834" cx="18" cy="119" r="4"/>
+<text class="g-encre" fill="#1d1d1b" x="26" y="123" text-anchor="start">bas, haut</text>
+<rect class="g-f1" fill="#2a78d6" x="92" y="114" width="10" height="10" transform="rotate(0)"/>
+<text class="g-encre" fill="#1d1d1b" x="106" y="123" text-anchor="start">valeur du candidat</text>
+<text class="g-doux" fill="#52514e" x="30.6" y="147" text-anchor="middle" font-size="12">2026</text>
+<text class="g-doux" fill="#52514e" x="130.2" y="147" text-anchor="middle" font-size="12">2029</text>
+<text class="g-doux" fill="#52514e" x="229.8" y="147" text-anchor="middle" font-size="12">2032</text>
+<text class="g-doux" fill="#52514e" x="329.4" y="147" text-anchor="middle" font-size="12">2035</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="171" text-anchor="start" font-weight="600">Point d&#x27;indice des fonctionnaires +10 %</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="177" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="177" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="177" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="177" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="177" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="177" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="177" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="177" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="177" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="177" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="205" text-anchor="start" font-size="12">plage « point_indice_revalorisation »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="217" x2="283.4" y2="217"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="217" r="5"><title>bas (1) : 0,00 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="237" text-anchor="middle" font-size="12">0,00 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="209.7" y="212" width="10" height="10"><title>candidat (1,1) : +11,69 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="214.7" y="251" text-anchor="middle" font-size="12">+11,69 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="217" r="5"><title>haut (1,15) : +17,50 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="237" text-anchor="middle" font-size="12">+17,50 Md€</text>
+<text class="g-doux" fill="#52514e" x="12" y="271" text-anchor="start" font-size="12">plage « point_indice_contractuels »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="283" x2="283.4" y2="283"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="283" r="5"><title>bas (0) : +11,69 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="303" text-anchor="middle" font-size="12">+11,69 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="71.6" y="278" width="10" height="10"><title>candidat (0) : +11,69 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="76.6" y="317" text-anchor="middle" font-size="12">+11,69 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="283" r="5"><title>haut (1) : +14,24 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="303" text-anchor="middle" font-size="12">+14,24 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="341" text-anchor="start" font-weight="600">Indexation des pensions, allocations familiales et</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="357" text-anchor="start" font-weight="600">APL, hausse de 10 %</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="363" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="363" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="363" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="363" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="363" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="363" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="363" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="363" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="363" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="363" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="391" text-anchor="start" font-size="12">plage « indexations.pensions.2025 »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="403" x2="283.4" y2="403"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="403" r="5"><title>bas (1) : +3,68 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="423" text-anchor="middle" font-size="12">+3,68 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="209.8" y="398" width="10" height="10"><title>candidat (1,1) : +32,94 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="214.8" y="437" text-anchor="middle" font-size="12">+32,94 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="403" r="5"><title>haut (1,15) : +47,48 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="423" text-anchor="middle" font-size="12">+47,48 Md€</text>
+<text class="g-doux" fill="#52514e" x="12" y="457" text-anchor="start" font-size="12">plage « indexations.prestations_familiales.2025…</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="469" x2="283.4" y2="469"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="469" r="5"><title>bas (1) : +30,58 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="489" text-anchor="middle" font-size="12">+30,58 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="209" y="464" width="10" height="10"><title>candidat (1,1) : +32,94 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="214" y="503" text-anchor="middle" font-size="12">+32,94 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="469" r="5"><title>haut (1,15) : +34,13 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="489" text-anchor="middle" font-size="12">+34,13 Md€</text>
+<text class="g-doux" fill="#52514e" x="12" y="523" text-anchor="start" font-size="12">plage « indexations.aides_logement.2025 »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="535" x2="283.4" y2="535"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="535" r="5"><title>bas (1) : +31,66 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="555" text-anchor="middle" font-size="12">+31,66 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="211" y="530" width="10" height="10"><title>candidat (1,1) : +32,94 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="216" y="569" text-anchor="middle" font-size="12">+32,94 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="535" r="5"><title>haut (1,15) : +33,56 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="555" text-anchor="middle" font-size="12">+33,56 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="593" text-anchor="start" font-weight="600">SMIC à 1 700 € net</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="599" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="599" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="599" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="599" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="599" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="599" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="599" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="599" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="599" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="599" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="627" text-anchor="start" font-size="12">plage « smic_revalorisation »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="639" x2="283.4" y2="639"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="639" r="5"><title>bas (1,1503) : +28,37 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="659" text-anchor="middle" font-size="12">+28,37 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="157.2" y="634" width="10" height="10"><title>candidat (1,1617) : +30,45 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="162.2" y="673" text-anchor="middle" font-size="12">+30,45 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="639" r="5"><title>haut (1,178) : +33,41 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="659" text-anchor="middle" font-size="12">+33,41 Md€</text>
+<text class="g-doux" fill="#52514e" x="12" y="693" text-anchor="start" font-size="12">plage « smic_diffusion_echelle »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="705" x2="283.4" y2="705"/>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="705" r="5"><title>bas (0) : +30,45 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="725" text-anchor="middle" font-size="12">+30,45 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="278.4" y="700" width="10" height="10"><title>candidat (0) : +30,45 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="283.4" y="739" text-anchor="middle" font-size="12">+30,45 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="705" r="5"><title>haut (1) : +11,39 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="725" text-anchor="middle" font-size="12">+11,39 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="763" text-anchor="start" font-weight="600">Garantie d&#x27;autonomie des jeunes</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="769" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="769" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="769" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="769" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="769" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="769" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="769" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="769" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="769" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="769" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="797" text-anchor="start" font-size="12">plage « garantie_autonomie.age_maximum »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="809" x2="283.4" y2="809"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="809" r="5"><title>bas (21) : +17,14 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="829" text-anchor="middle" font-size="12">+17,14 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="213.8" y="804" width="10" height="10"><title>candidat (25) : +35,32 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="218.8" y="843" text-anchor="middle" font-size="12">+35,32 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="809" r="5"><title>haut (30) : +43,58 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="829" text-anchor="middle" font-size="12">+43,58 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="867" text-anchor="start" font-weight="600">Suppression du PFU (« flat tax »)</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="873" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="873" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="873" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="873" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="873" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="873" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="873" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="873" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="873" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="873" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="12" y="905" text-anchor="start" font-weight="600">Fin des exonérations de cotisations au-dessus de 2</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="921" text-anchor="start" font-weight="600">SMIC</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="927" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="927" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="927" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="927" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="927" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="927" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="927" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="927" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="927" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="927" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="955" text-anchor="start" font-size="12">plage « allegement_general_plafond »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="967" x2="283.4" y2="967"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="967" r="5"><title>bas (1,5) : −24,19 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="987" text-anchor="middle" font-size="12">−24,19 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="218.2" y="962" width="10" height="10"><title>candidat (2) : −7,04 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="223.2" y="1001" text-anchor="middle" font-size="12">−7,04 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="967" r="5"><title>haut (3) : 0,00 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="987" text-anchor="middle" font-size="12">0,00 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="1025" text-anchor="start" font-weight="600">Défiscalisation des pensions alimentaires</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="1031" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="1031" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="1031" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="1031" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="1031" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="1031" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="1031" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="1031" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="1031" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="1031" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="348" y="1051" text-anchor="end" font-size="12">coût de 2026, milliards d&#x27;euros</text>
+</svg>

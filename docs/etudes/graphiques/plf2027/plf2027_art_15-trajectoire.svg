@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 691" width="360" height="691" role="img" aria-labelledby="plf2027_art_15-trajectoire-t plf2027_art_15-trajectoire-d" font-size="13">
+<title id="plf2027_art_15-trajectoire-t">Le solde, la dette et le PIB, de 2026 à 2035</title>
+<desc id="plf2027_art_15-trajectoire-d">De 2026 à 2035, à θ½, vue vieillie, persistance lue. Le solde public : 0,00 pt en 2026, 0,00 pt en 2035, la boîte θ de 0,00 pt à 0,00 pt en 2035. La dette (Δb) : 0,00 pt en 2026, −0,22 pt en 2035, la boîte θ de −0,22 pt à −0,22 pt en 2035. Le PIB : 0,00 % en 2026, 0,00 % en 2035, la boîte θ de 0,00 % à 0,00 % en 2035. Δ dette en 2035, par persistance et vue : lue, vieillie −0,22 pt ; lue, figée −0,20 pt ; éteinte, vieillie −0,22 pt ; éteinte, figée −0,20 pt ; tenue, vieillie −0,22 pt ; tenue, figée −0,20 pt.</desc>
+<style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
+.g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
+.g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
+.g-f1{fill:#2a78d6}.g-f2{fill:#eb6834}.g-f3{fill:#1baf7a}.g-f4{fill:#6250d6}
+.g-bande{fill:#2a78d6;fill-opacity:.16}.g-plus{fill:#2a78d6}.g-moins{fill:#e34948}
+.g-total{fill:#52514e}.g-lien{stroke:#8a877f}.g-sur{fill:#ffffff}
+@media (prefers-color-scheme: dark){
+.g-fond{fill:#1a1a19}.g-encre{fill:#ece9e2}.g-doux{fill:#c3c2b7}
+.g-axe{stroke:#8f8b80}.g-grille{stroke:#33322f}.g-zero{stroke:#c3c2b7}
+.g-s1{stroke:#3987e5}.g-s2{stroke:#d95926}.g-s3{stroke:#199e70}.g-s4{stroke:#9085e9}
+.g-f1{fill:#3987e5}.g-f2{fill:#d95926}.g-f3{fill:#199e70}.g-f4{fill:#9085e9}
+.g-bande{fill:#3987e5;fill-opacity:.24}.g-plus{fill:#3987e5}.g-moins{fill:#e66767}
+.g-total{fill:#c3c2b7}.g-lien{stroke:#8f8b80}}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
+<rect class="g-fond" fill="#fcfcfb" x="0" y="0" width="360" height="691"/>
+<text class="g-encre" fill="#1d1d1b" x="12" y="20" text-anchor="start" font-size="15" font-weight="600">Le solde, la dette et le PIB, de 2026 à</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="39" text-anchor="start" font-size="15" font-weight="600">2035</text>
+<text class="g-doux" fill="#52514e" x="12" y="58" text-anchor="start">À θ½ ; la bande est la boîte θ, vue vieillie,</text>
+<text class="g-doux" fill="#52514e" x="12" y="75" text-anchor="start">persistance « lue ». Trait épais : vue vieillie ;</text>
+<text class="g-doux" fill="#52514e" x="12" y="92" text-anchor="start">fin : vue figée.</text>
+<line class="g-s1" stroke="#2a78d6" stroke-width="3" x1="12" y1="119" x2="34" y2="119"/>
+<text class="g-encre" fill="#1d1d1b" x="38" y="123" text-anchor="start">persistance lue</text>
+<line class="g-s2" stroke="#eb6834" stroke-width="3" stroke-dasharray="6 4" x1="151" y1="119" x2="173" y2="119"/>
+<text class="g-encre" fill="#1d1d1b" x="177" y="123" text-anchor="start">persistance éteinte</text>
+<line class="g-s3" stroke="#1baf7a" stroke-width="3" stroke-dasharray="2 3" x1="12" y1="137" x2="34" y2="137"/>
+<text class="g-encre" fill="#1d1d1b" x="38" y="141" text-anchor="start">persistance tenue</text>
+<rect class="g-bande" fill="#2a78d6" fill-opacity=".16" x="12" y="153" width="22" height="10"/>
+<text class="g-encre" fill="#1d1d1b" x="38" y="163" text-anchor="start">boîte θ, du plus bas au plus haut coin</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="191" text-anchor="start" font-weight="600">Le solde public</text>
+<text class="g-doux" fill="#52514e" x="348" y="191" text-anchor="end" font-size="12">points de PIB, + l&#x27;améliore</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="313" x2="346" y2="313"/>
+<text class="g-doux" fill="#52514e" x="46" y="317" text-anchor="end" font-size="12">0,0</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="275.7" x2="346" y2="275.7"/>
+<text class="g-doux" fill="#52514e" x="46" y="279.7" text-anchor="end" font-size="12">0,1</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="238.3" x2="346" y2="238.3"/>
+<text class="g-doux" fill="#52514e" x="46" y="242.3" text-anchor="end" font-size="12">0,2</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="201" x2="346" y2="201"/>
+<text class="g-doux" fill="#52514e" x="46" y="205" text-anchor="end" font-size="12">0,3</text>
+<line class="g-zero" stroke="#52514e" stroke-width="1.2" x1="52" y1="313" x2="346" y2="313"/>
+<polygon class="g-bande" fill="#2a78d6" fill-opacity=".16" points="52,313 84.7,223.3 117.3,313 150,313 182.7,313 215.3,313 248,313 280.7,313 313.3,313 346,313 346,313 313.3,313 280.7,313 248,313 215.3,313 182.7,313 150,313 117.3,313 84.7,223.3 52,313"/>
+<polyline class="g-s2" stroke="#eb6834" fill="none" stroke-width="1.2" stroke-dasharray="6 4" stroke-linejoin="round" points="52,313 84.7,230 117.3,313 150,313 182.7,313 215.3,313 248,313 280.7,313 313.3,313 346,313"><title>Le solde public, vue figée, persistance éteinte, 2035 : 0,00 pt</title></polyline>
+<polyline class="g-s3" stroke="#1baf7a" fill="none" stroke-width="1.2" stroke-dasharray="2 3" stroke-linejoin="round" points="52,313 84.7,230 117.3,313 150,313 182.7,313 215.3,313 248,313 280.7,313 313.3,313 346,313"><title>Le solde public, vue figée, persistance tenue, 2035 : 0,00 pt</title></polyline>
+<polyline class="g-s1" stroke="#2a78d6" fill="none" stroke-width="1.2" stroke-linejoin="round" points="52,313 84.7,230 117.3,313 150,313 182.7,313 215.3,313 248,313 280.7,313 313.3,313 346,313"><title>Le solde public, vue figée, persistance lue, 2035 : 0,00 pt</title></polyline>
+<polyline class="g-s2" stroke="#eb6834" fill="none" stroke-width="2.5" stroke-dasharray="6 4" stroke-linejoin="round" points="52,313 84.7,223.3 117.3,313 150,313 182.7,313 215.3,313 248,313 280.7,313 313.3,313 346,313"><title>Le solde public, vue vieillie, persistance éteinte, 2035 : 0,00 pt</title></polyline>
+<polyline class="g-s3" stroke="#1baf7a" fill="none" stroke-width="2.5" stroke-dasharray="2 3" stroke-linejoin="round" points="52,313 84.7,223.3 117.3,313 150,313 182.7,313 215.3,313 248,313 280.7,313 313.3,313 346,313"><title>Le solde public, vue vieillie, persistance tenue, 2035 : 0,00 pt</title></polyline>
+<polyline class="g-s1" stroke="#2a78d6" fill="none" stroke-width="2.5" stroke-linejoin="round" points="52,313 84.7,223.3 117.3,313 150,313 182.7,313 215.3,313 248,313 280.7,313 313.3,313 346,313"><title>Le solde public, vue vieillie, persistance lue, 2035 : 0,00 pt</title></polyline>
+<circle class="g-f1" fill="#2a78d6" cx="346" cy="313" r="4"/>
+<text class="g-encre" fill="#1d1d1b" x="340" y="305" text-anchor="end" font-size="12" font-weight="600">0,00 pt</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="1" x1="52" y1="313" x2="346" y2="313"/>
+<text class="g-doux" fill="#52514e" x="52" y="331" text-anchor="middle" font-size="12">2026</text>
+<text class="g-doux" fill="#52514e" x="150" y="331" text-anchor="middle" font-size="12">2029</text>
+<text class="g-doux" fill="#52514e" x="248" y="331" text-anchor="middle" font-size="12">2032</text>
+<text class="g-doux" fill="#52514e" x="346" y="331" text-anchor="middle" font-size="12">2035</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="361" text-anchor="start" font-weight="600">La dette (Δb)</text>
+<text class="g-doux" fill="#52514e" x="348" y="361" text-anchor="end" font-size="12">points de PIB</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="483" x2="346" y2="483"/>
+<text class="g-doux" fill="#52514e" x="46" y="487" text-anchor="end" font-size="12">−0,30</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="445.7" x2="346" y2="445.7"/>
+<text class="g-doux" fill="#52514e" x="46" y="449.7" text-anchor="end" font-size="12">−0,20</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="408.3" x2="346" y2="408.3"/>
+<text class="g-doux" fill="#52514e" x="46" y="412.3" text-anchor="end" font-size="12">−0,10</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="371" x2="346" y2="371"/>
+<text class="g-doux" fill="#52514e" x="46" y="375" text-anchor="end" font-size="12">0,00</text>
+<line class="g-zero" stroke="#52514e" stroke-width="1.2" x1="52" y1="371" x2="346" y2="371"/>
+<polygon class="g-bande" fill="#2a78d6" fill-opacity=".16" points="52,371 84.7,460.7 117.3,459.7 150,458.8 182.7,457.8 215.3,456.8 248,455.9 280.7,454.9 313.3,454 346,453.1 346,453.1 313.3,454 280.7,454.9 248,455.9 215.3,456.8 182.7,457.8 150,458.8 117.3,459.7 84.7,460.7 52,371"/>
+<polyline class="g-s2" stroke="#eb6834" fill="none" stroke-width="1.2" stroke-dasharray="6 4" stroke-linejoin="round" points="52,371 84.7,454 117.3,453 150,452.1 182.7,451.2 215.3,450.4 248,449.5 280.7,448.6 313.3,447.8 346,446.9"><title>La dette (Δb), vue figée, persistance éteinte, 2035 : −0,20 pt</title></polyline>
+<polyline class="g-s3" stroke="#1baf7a" fill="none" stroke-width="1.2" stroke-dasharray="2 3" stroke-linejoin="round" points="52,371 84.7,454 117.3,453 150,452.1 182.7,451.2 215.3,450.4 248,449.5 280.7,448.6 313.3,447.8 346,446.9"><title>La dette (Δb), vue figée, persistance tenue, 2035 : −0,20 pt</title></polyline>
+<polyline class="g-s1" stroke="#2a78d6" fill="none" stroke-width="1.2" stroke-linejoin="round" points="52,371 84.7,454 117.3,453 150,452.1 182.7,451.2 215.3,450.4 248,449.5 280.7,448.6 313.3,447.8 346,446.9"><title>La dette (Δb), vue figée, persistance lue, 2035 : −0,20 pt</title></polyline>
+<polyline class="g-s2" stroke="#eb6834" fill="none" stroke-width="2.5" stroke-dasharray="6 4" stroke-linejoin="round" points="52,371 84.7,460.7 117.3,459.7 150,458.8 182.7,457.8 215.3,456.8 248,455.9 280.7,454.9 313.3,454 346,453.1"><title>La dette (Δb), vue vieillie, persistance éteinte, 2035 : −0,22 pt</title></polyline>
+<polyline class="g-s3" stroke="#1baf7a" fill="none" stroke-width="2.5" stroke-dasharray="2 3" stroke-linejoin="round" points="52,371 84.7,460.7 117.3,459.7 150,458.8 182.7,457.8 215.3,456.8 248,455.9 280.7,454.9 313.3,454 346,453.1"><title>La dette (Δb), vue vieillie, persistance tenue, 2035 : −0,22 pt</title></polyline>
+<polyline class="g-s1" stroke="#2a78d6" fill="none" stroke-width="2.5" stroke-linejoin="round" points="52,371 84.7,460.7 117.3,459.7 150,458.8 182.7,457.8 215.3,456.8 248,455.9 280.7,454.9 313.3,454 346,453.1"><title>La dette (Δb), vue vieillie, persistance lue, 2035 : −0,22 pt</title></polyline>
+<circle class="g-f1" fill="#2a78d6" cx="346" cy="453.1" r="4"/>
+<text class="g-encre" fill="#1d1d1b" x="340" y="471.1" text-anchor="end" font-size="12" font-weight="600">−0,22 pt</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="1" x1="52" y1="483" x2="346" y2="483"/>
+<text class="g-doux" fill="#52514e" x="52" y="501" text-anchor="middle" font-size="12">2026</text>
+<text class="g-doux" fill="#52514e" x="150" y="501" text-anchor="middle" font-size="12">2029</text>
+<text class="g-doux" fill="#52514e" x="248" y="501" text-anchor="middle" font-size="12">2032</text>
+<text class="g-doux" fill="#52514e" x="346" y="501" text-anchor="middle" font-size="12">2035</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="531" text-anchor="start" font-weight="600">Le PIB</text>
+<text class="g-doux" fill="#52514e" x="348" y="531" text-anchor="end" font-size="12">écart au PIB de référence, en %</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="653" x2="346" y2="653"/>
+<text class="g-doux" fill="#52514e" x="46" y="657" text-anchor="end" font-size="12">0,00</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="597" x2="346" y2="597"/>
+<text class="g-doux" fill="#52514e" x="46" y="601" text-anchor="end" font-size="12">0,00</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="597" x2="346" y2="597"/>
+<text class="g-doux" fill="#52514e" x="46" y="601" text-anchor="end" font-size="12">0,00</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="541" x2="346" y2="541"/>
+<text class="g-doux" fill="#52514e" x="46" y="545" text-anchor="end" font-size="12">0,00</text>
+<line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="541" x2="346" y2="541"/>
+<text class="g-doux" fill="#52514e" x="46" y="545" text-anchor="end" font-size="12">0,00</text>
+<line class="g-zero" stroke="#52514e" stroke-width="1.2" x1="52" y1="597" x2="346" y2="597"/>
+<polygon class="g-bande" fill="#2a78d6" fill-opacity=".16" points="52,597 84.7,597 117.3,597 150,597 182.7,597 215.3,597 248,597 280.7,597 313.3,597 346,597 346,597 313.3,597 280.7,597 248,597 215.3,597 182.7,597 150,597 117.3,597 84.7,597 52,597"/>
+<polyline class="g-s2" stroke="#eb6834" fill="none" stroke-width="1.2" stroke-dasharray="6 4" stroke-linejoin="round" points="52,597 84.7,597 117.3,597 150,597 182.7,597 215.3,597 248,597 280.7,597 313.3,597 346,597"><title>Le PIB, vue figée, persistance éteinte, 2035 : 0,00 %</title></polyline>
+<polyline class="g-s3" stroke="#1baf7a" fill="none" stroke-width="1.2" stroke-dasharray="2 3" stroke-linejoin="round" points="52,597 84.7,597 117.3,597 150,597 182.7,597 215.3,597 248,597 280.7,597 313.3,597 346,597"><title>Le PIB, vue figée, persistance tenue, 2035 : 0,00 %</title></polyline>
+<polyline class="g-s1" stroke="#2a78d6" fill="none" stroke-width="1.2" stroke-linejoin="round" points="52,597 84.7,597 117.3,597 150,597 182.7,597 215.3,597 248,597 280.7,597 313.3,597 346,597"><title>Le PIB, vue figée, persistance lue, 2035 : 0,00 %</title></polyline>
+<polyline class="g-s2" stroke="#eb6834" fill="none" stroke-width="2.5" stroke-dasharray="6 4" stroke-linejoin="round" points="52,597 84.7,597 117.3,597 150,597 182.7,597 215.3,597 248,597 280.7,597 313.3,597 346,597"><title>Le PIB, vue vieillie, persistance éteinte, 2035 : 0,00 %</title></polyline>
+<polyline class="g-s3" stroke="#1baf7a" fill="none" stroke-width="2.5" stroke-dasharray="2 3" stroke-linejoin="round" points="52,597 84.7,597 117.3,597 150,597 182.7,597 215.3,597 248,597 280.7,597 313.3,597 346,597"><title>Le PIB, vue vieillie, persistance tenue, 2035 : 0,00 %</title></polyline>
+<polyline class="g-s1" stroke="#2a78d6" fill="none" stroke-width="2.5" stroke-linejoin="round" points="52,597 84.7,597 117.3,597 150,597 182.7,597 215.3,597 248,597 280.7,597 313.3,597 346,597"><title>Le PIB, vue vieillie, persistance lue, 2035 : 0,00 %</title></polyline>
+<circle class="g-f1" fill="#2a78d6" cx="346" cy="597" r="4"/>
+<text class="g-encre" fill="#1d1d1b" x="340" y="589" text-anchor="end" font-size="12" font-weight="600">0,00 %</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="1" x1="52" y1="653" x2="346" y2="653"/>
+<text class="g-doux" fill="#52514e" x="52" y="671" text-anchor="middle" font-size="12">2026</text>
+<text class="g-doux" fill="#52514e" x="150" y="671" text-anchor="middle" font-size="12">2029</text>
+<text class="g-doux" fill="#52514e" x="248" y="671" text-anchor="middle" font-size="12">2032</text>
+<text class="g-doux" fill="#52514e" x="346" y="671" text-anchor="middle" font-size="12">2035</text>
+<text class="g-doux" fill="#52514e" x="348" y="683" text-anchor="end" font-size="12">année</text>
+</svg>

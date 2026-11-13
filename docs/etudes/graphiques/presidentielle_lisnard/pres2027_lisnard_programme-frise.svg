@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 695" width="360" height="695" role="img" aria-labelledby="pres2027_lisnard_programme-frise-t pres2027_lisnard_programme-frise-d" font-size="13">
+<title id="pres2027_lisnard_programme-frise-t">Les mesures chiffrées dans le temps, et leurs plages</title>
+<desc id="pres2027_lisnard_programme-frise-d">Les mesures chiffrées : Baisse de la CSG sur les revenus d&#x27;activité, de 2026 à 2035, plage csg_activite_deductible : bas 3,92 % +37,06 Md€, candidat 4,88 % +27,42 Md€, haut 6,8 % +8,13 Md€, plage csg_activite_imposable : bas 0 % +48,02 Md€, candidat 1,72 % +27,42 Md€, haut 2,4 % +19,29 Md€ ; Suppression de la C3S et, « le cas échéant », de la CVAE, de 2026 à 2035, plage c3s_taux : bas 0 % +6,55 Md€, candidat 0 % +6,55 Md€, haut 0,16 % +2,55 Md€, plage cvae_echelle : bas 0 +6,55 Md€, candidat 0 +6,55 Md€, haut 1 +4,00 Md€ ; Déplafonnement du quotient familial, de 2026 à 2035, plage plafond_qf_demi_part : bas 1 807 € +0,49 Md€, candidat 100 000 € +4,14 Md€, haut 100 000 € +4,14 Md€, plage plafond_qf_parent_isole : bas 4 262 € +3,93 Md€, candidat 100 000 € +4,14 Md€, haut 100 000 € +4,14 Md€.</desc>
+<style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
+.g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
+.g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
+.g-f1{fill:#2a78d6}.g-f2{fill:#eb6834}.g-f3{fill:#1baf7a}.g-f4{fill:#6250d6}
+.g-bande{fill:#2a78d6;fill-opacity:.16}.g-plus{fill:#2a78d6}.g-moins{fill:#e34948}
+.g-total{fill:#52514e}.g-lien{stroke:#8a877f}.g-sur{fill:#ffffff}
+@media (prefers-color-scheme: dark){
+.g-fond{fill:#1a1a19}.g-encre{fill:#ece9e2}.g-doux{fill:#c3c2b7}
+.g-axe{stroke:#8f8b80}.g-grille{stroke:#33322f}.g-zero{stroke:#c3c2b7}
+.g-s1{stroke:#3987e5}.g-s2{stroke:#d95926}.g-s3{stroke:#199e70}.g-s4{stroke:#9085e9}
+.g-f1{fill:#3987e5}.g-f2{fill:#d95926}.g-f3{fill:#199e70}.g-f4{fill:#9085e9}
+.g-bande{fill:#3987e5;fill-opacity:.24}.g-plus{fill:#3987e5}.g-moins{fill:#e66767}
+.g-total{fill:#c3c2b7}.g-lien{stroke:#8f8b80}}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
+<rect class="g-fond" fill="#fcfcfb" x="0" y="0" width="360" height="695"/>
+<text class="g-encre" fill="#1d1d1b" x="12" y="20" text-anchor="start" font-size="15" font-weight="600">Les mesures chiffrées dans le temps, et</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="39" text-anchor="start" font-size="15" font-weight="600">leurs plages</text>
+<text class="g-doux" fill="#52514e" x="12" y="58" text-anchor="start">La barre : les années où la mesure s&#x27;applique, de</text>
+<text class="g-doux" fill="#52514e" x="12" y="75" text-anchor="start">2026 à 2035. Dessous : le coût de 2026 de chaque</text>
+<text class="g-doux" fill="#52514e" x="12" y="92" text-anchor="start">point de plage.</text>
+<circle class="g-f2" fill="#eb6834" cx="18" cy="119" r="4"/>
+<text class="g-encre" fill="#1d1d1b" x="26" y="123" text-anchor="start">bas, haut</text>
+<rect class="g-f1" fill="#2a78d6" x="92" y="114" width="10" height="10" transform="rotate(0)"/>
+<text class="g-encre" fill="#1d1d1b" x="106" y="123" text-anchor="start">valeur du candidat</text>
+<text class="g-doux" fill="#52514e" x="30.6" y="147" text-anchor="middle" font-size="12">2026</text>
+<text class="g-doux" fill="#52514e" x="130.2" y="147" text-anchor="middle" font-size="12">2029</text>
+<text class="g-doux" fill="#52514e" x="229.8" y="147" text-anchor="middle" font-size="12">2032</text>
+<text class="g-doux" fill="#52514e" x="329.4" y="147" text-anchor="middle" font-size="12">2035</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="171" text-anchor="start" font-weight="600">Baisse de la CSG sur les revenus d&#x27;activité</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="177" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="177" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="177" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="177" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="177" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="177" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="177" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="177" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="177" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="177" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="205" text-anchor="start" font-size="12">plage « csg_activite_deductible »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="217" x2="283.4" y2="217"/>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="217" r="5"><title>bas (3,92 %) : +37,06 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="237" text-anchor="middle" font-size="12">+37,06 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="209.5" y="212" width="10" height="10"><title>candidat (4,88 %) : +27,42 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="214.5" y="251" text-anchor="middle" font-size="12">+27,42 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="217" r="5"><title>haut (6,8 %) : +8,13 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="237" text-anchor="middle" font-size="12">+8,13 Md€</text>
+<text class="g-doux" fill="#52514e" x="12" y="271" text-anchor="start" font-size="12">plage « csg_activite_imposable »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="283" x2="283.4" y2="283"/>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="283" r="5"><title>bas (0 %) : +48,02 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="303" text-anchor="middle" font-size="12">+48,02 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="130.1" y="278" width="10" height="10"><title>candidat (1,72 %) : +27,42 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="135.1" y="317" text-anchor="middle" font-size="12">+27,42 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="283" r="5"><title>haut (2,4 %) : +19,29 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="303" text-anchor="middle" font-size="12">+19,29 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="341" text-anchor="start" font-weight="600">Suppression de la C3S et, « le cas échéant », de</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="357" text-anchor="start" font-weight="600">la CVAE</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="363" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="363" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="363" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="363" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="363" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="363" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="363" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="363" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="363" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="363" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="391" text-anchor="start" font-size="12">plage « c3s_taux »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="403" x2="283.4" y2="403"/>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="403" r="5"><title>bas (0 %) : +6,55 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="423" text-anchor="middle" font-size="12">+6,55 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="278.4" y="398" width="10" height="10"><title>candidat (0 %) : +6,55 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="283.4" y="437" text-anchor="middle" font-size="12">+6,55 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="403" r="5"><title>haut (0,16 %) : +2,55 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="423" text-anchor="middle" font-size="12">+2,55 Md€</text>
+<text class="g-doux" fill="#52514e" x="12" y="457" text-anchor="start" font-size="12">plage « cvae_echelle »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="469" x2="283.4" y2="469"/>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="469" r="5"><title>bas (0) : +6,55 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="489" text-anchor="middle" font-size="12">+6,55 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="278.4" y="464" width="10" height="10"><title>candidat (0) : +6,55 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="283.4" y="503" text-anchor="middle" font-size="12">+6,55 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="469" r="5"><title>haut (1) : +4,00 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="489" text-anchor="middle" font-size="12">+4,00 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="527" text-anchor="start" font-weight="600">Déplafonnement du quotient familial</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="533" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="533" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="533" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="533" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="533" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="533" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="533" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="533" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="533" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="533" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="561" text-anchor="start" font-size="12">plage « plafond_qf_demi_part »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="573" x2="283.4" y2="573"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="573" r="5"><title>bas (1 807 €) : +0,49 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="593" text-anchor="middle" font-size="12">+0,49 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="278.4" y="568" width="10" height="10"><title>candidat (100 000 €) : +4,14 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="283.4" y="607" text-anchor="middle" font-size="12">+4,14 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="573" r="5"><title>haut (100 000 €) : +4,14 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="593" text-anchor="middle" font-size="12">+4,14 Md€</text>
+<text class="g-doux" fill="#52514e" x="12" y="627" text-anchor="start" font-size="12">plage « plafond_qf_parent_isole »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="639" x2="283.4" y2="639"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="639" r="5"><title>bas (4 262 €) : +3,93 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="659" text-anchor="middle" font-size="12">+3,93 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="278.4" y="634" width="10" height="10"><title>candidat (100 000 €) : +4,14 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="283.4" y="673" text-anchor="middle" font-size="12">+4,14 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="639" r="5"><title>haut (100 000 €) : +4,14 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="659" text-anchor="middle" font-size="12">+4,14 Md€</text>
+<text class="g-doux" fill="#52514e" x="348" y="685" text-anchor="end" font-size="12">coût de 2026, milliards d&#x27;euros</text>
+</svg>

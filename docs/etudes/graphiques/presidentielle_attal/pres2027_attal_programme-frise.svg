@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 463" width="360" height="463" role="img" aria-labelledby="pres2027_attal_programme-frise-t pres2027_attal_programme-frise-d" font-size="13">
+<title id="pres2027_attal_programme-frise-t">Les mesures chiffrées dans le temps, et leurs plages</title>
+<desc id="pres2027_attal_programme-frise-d">Les mesures chiffrées : « Droit au brut » : hausse du net par suppression de cotisations, financée par des économies sur le modèle social, de 2026 à 2035, plage cotisations_salariales_retraite_echelle : bas 0 +85,01 Md€, candidat 0,22 +66,40 Md€, haut 1 0,00 Md€ ; Suppression de la CVAE ; IS maintenu à 25 % ; poursuite de la baisse des impôts de production, de 2026 à 2035, plage cvae_echelle : bas 0 +2,55 Md€, candidat 0 +2,55 Md€, haut 1 0,00 Md€ ; Défiscaliser les pensions alimentaires perçues pour les enfants, de 2026 à 2035.</desc>
+<style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
+.g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
+.g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
+.g-f1{fill:#2a78d6}.g-f2{fill:#eb6834}.g-f3{fill:#1baf7a}.g-f4{fill:#6250d6}
+.g-bande{fill:#2a78d6;fill-opacity:.16}.g-plus{fill:#2a78d6}.g-moins{fill:#e34948}
+.g-total{fill:#52514e}.g-lien{stroke:#8a877f}.g-sur{fill:#ffffff}
+@media (prefers-color-scheme: dark){
+.g-fond{fill:#1a1a19}.g-encre{fill:#ece9e2}.g-doux{fill:#c3c2b7}
+.g-axe{stroke:#8f8b80}.g-grille{stroke:#33322f}.g-zero{stroke:#c3c2b7}
+.g-s1{stroke:#3987e5}.g-s2{stroke:#d95926}.g-s3{stroke:#199e70}.g-s4{stroke:#9085e9}
+.g-f1{fill:#3987e5}.g-f2{fill:#d95926}.g-f3{fill:#199e70}.g-f4{fill:#9085e9}
+.g-bande{fill:#3987e5;fill-opacity:.24}.g-plus{fill:#3987e5}.g-moins{fill:#e66767}
+.g-total{fill:#c3c2b7}.g-lien{stroke:#8f8b80}}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
+<rect class="g-fond" fill="#fcfcfb" x="0" y="0" width="360" height="463"/>
+<text class="g-encre" fill="#1d1d1b" x="12" y="20" text-anchor="start" font-size="15" font-weight="600">Les mesures chiffrées dans le temps, et</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="39" text-anchor="start" font-size="15" font-weight="600">leurs plages</text>
+<text class="g-doux" fill="#52514e" x="12" y="58" text-anchor="start">La barre : les années où la mesure s&#x27;applique, de</text>
+<text class="g-doux" fill="#52514e" x="12" y="75" text-anchor="start">2026 à 2035. Dessous : le coût de 2026 de chaque</text>
+<text class="g-doux" fill="#52514e" x="12" y="92" text-anchor="start">point de plage.</text>
+<circle class="g-f2" fill="#eb6834" cx="18" cy="119" r="4"/>
+<text class="g-encre" fill="#1d1d1b" x="26" y="123" text-anchor="start">bas, haut</text>
+<rect class="g-f1" fill="#2a78d6" x="92" y="114" width="10" height="10" transform="rotate(0)"/>
+<text class="g-encre" fill="#1d1d1b" x="106" y="123" text-anchor="start">valeur du candidat</text>
+<text class="g-doux" fill="#52514e" x="30.6" y="147" text-anchor="middle" font-size="12">2026</text>
+<text class="g-doux" fill="#52514e" x="130.2" y="147" text-anchor="middle" font-size="12">2029</text>
+<text class="g-doux" fill="#52514e" x="229.8" y="147" text-anchor="middle" font-size="12">2032</text>
+<text class="g-doux" fill="#52514e" x="329.4" y="147" text-anchor="middle" font-size="12">2035</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="171" text-anchor="start" font-weight="600">« Droit au brut » : hausse du net par suppression</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="187" text-anchor="start" font-weight="600">de cotisations, financée par des économies sur le…</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="193" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="193" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="193" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="193" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="193" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="193" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="193" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="193" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="193" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="193" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="221" text-anchor="start" font-size="12">plage « cotisations_salariales_retraite_echelle…</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="233" x2="283.4" y2="233"/>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="233" r="5"><title>bas (0) : +85,01 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="253" text-anchor="middle" font-size="12">+85,01 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="233.2" y="228" width="10" height="10"><title>candidat (0,22) : +66,40 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="238.2" y="267" text-anchor="middle" font-size="12">+66,40 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="233" r="5"><title>haut (1) : 0,00 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="253" text-anchor="middle" font-size="12">0,00 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="291" text-anchor="start" font-weight="600">Suppression de la CVAE ; IS maintenu à 25 % ;</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="307" text-anchor="start" font-weight="600">poursuite de la baisse des impôts de production</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="313" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="313" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="313" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="313" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="313" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="313" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="313" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="313" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="313" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="313" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="341" text-anchor="start" font-size="12">plage « cvae_echelle »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="353" x2="283.4" y2="353"/>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="353" r="5"><title>bas (0) : +2,55 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="373" text-anchor="middle" font-size="12">+2,55 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="278.4" y="348" width="10" height="10"><title>candidat (0) : +2,55 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="283.4" y="387" text-anchor="middle" font-size="12">+2,55 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="353" r="5"><title>haut (1) : 0,00 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="373" text-anchor="middle" font-size="12">0,00 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="411" text-anchor="start" font-weight="600">Défiscaliser les pensions alimentaires perçues</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="427" text-anchor="start" font-weight="600">pour les enfants</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="433" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="433" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="433" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="433" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="433" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="433" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="433" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="433" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="433" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="433" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="348" y="453" text-anchor="end" font-size="12">coût de 2026, milliards d&#x27;euros</text>
+</svg>

@@ -34,6 +34,10 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ### 1. Ce qu'il coûte, et qui y gagne
 
+![Ce que chaque décile y gagne ou y perd en 2026](graphiques/presidentielle_retailleau/pres2027_retailleau_programme-deciles.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_retailleau/premiere_annee_pres2027_retailleau_programme.json` ; tracé par `impots.graphiques`.*
+
 La part chiffrée coûte **48,89 Md€** la première année (2026) : +42,34 Md€ pour les ménages, sur la population de 2024 au droit de 2026, et +6,55 Md€ pour les entreprises, sur celles de 2023.
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
@@ -63,6 +67,10 @@ Population d'entreprises synthétique : effectifs et agrégats par secteur × ta
 
 ### 2. Avec les comportements et l'économie
 
+![Du coût de 2026 à la dette de 2035](graphiques/presidentielle_retailleau/pres2027_retailleau_programme-cascade.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_retailleau/premiere_annee_pres2027_retailleau_programme.json` et `reports/etudes/presidentielle_retailleau/predictif_pres2027_retailleau_programme.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`.*
+
 La bande et l'éventail ne lisent que la part des ménages : aucun canal des comportements ne lit une réforme des entreprises, et aucune variante de Mésange ne porte leurs impôts. La dette, plus bas, compte les deux parts.
 
 **Bande comportementale : aucune, et la raison est donnée.** Ce n'est pas faute d'une étude publiée : les cotisations à la charge des salariés baissent le salaire net horaire comme la CSG, et l'outil chiffre la réponse des heures à la CSG sur les revenus d'activité (le canal de l'offre de travail, Bargain, Orsini et Peichl). C'est un choix du modèle de n'ouvrir ce canal qu'à la CSG (D-220) : une seule variation du salaire net par personne y suffit, l'assiette de la CSG étant presque tout le brut, quand celle des cotisations de retraite est en partie plafonnée ; le canal n'a pas été étendu aux cotisations. La mesure reste donc mécanique.
@@ -77,6 +85,10 @@ Ce que la chaîne ne lit pas, et pourquoi :
 * **R&D et CIR** — C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette.
 
 ### 3. La dette en 2035
+
+![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/presidentielle_retailleau/pres2027_retailleau_programme-trajectoire.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_retailleau/predictif_pres2027_retailleau_programme.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte, et la variante de `reports/macro/variante_depense_publique.json` lue par `impots.predictif.annonce` ; tracé par `impots.graphiques`.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -164,6 +176,10 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 ## Ce que bouge chaque paramètre
 
 Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035, un calcul rapide qui ne refait pas chaque année. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le calcul complet chiffre année par année avec les comportements et la boucle macro. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
+
+![Les mesures chiffrées dans le temps, et leurs plages](graphiques/presidentielle_retailleau/pres2027_retailleau_programme-frise.svg)
+
+*Source du graphique : `programmes/retailleau.json` et `reports/etudes/presidentielle_retailleau/plages/`, ses 15 points de plage ; tracé par `impots.graphiques`.*
 
 ### Seuil « zéro cotisation » : aucune cotisation sociale (salariale ou patronale) au-delà de 1 623 h par an ; CSG et CRDS maintenues ; exonération d'IR des heures supplémentaires maintenue
 

@@ -115,6 +115,23 @@ def body(lines: list[str], n: etude.Nombres) -> str:
         if not line.strip() or line.startswith("<!--"):
             i += 1
             continue
+        image = re.fullmatch(r"!\[([^\]]*)\]\(([^)\s]+)\)", line)
+        if image:
+            # A graphic of the page (but 22): its SVG inline, the line under it its
+            # caption. The SVG is the one the page's reports draw, never read from disk.
+            figure = getattr(n, "graphiques", {}).get(image[2])
+            if figure is None:
+                raise SiteError(f"une image que la page ne trace pas : « {image[2]} »")
+            i += 1
+            while i < len(lines) and not lines[i].strip():
+                i += 1
+            caption = ""
+            if i < len(lines) and lines[i].startswith("*Source du graphique"):
+                caption = f"<figcaption>{_text(lines[i].strip('*'), n)}</figcaption>"
+                i += 1
+            out.append(f'<figure class="graphique">\n{figure.svg.strip()}\n{caption}'
+                       f"</figure>")
+            continue
         heading = re.match(r"(#{1,3}) (.*)", line)
         if heading:
             level = len(heading[1])
@@ -207,7 +224,7 @@ def publiable() -> str | None:
     return None
 
 
-_SKIP = {"a", "h1", "h2", "h3", "code", "th", "td", "title", "dt", "span", "label",
+_SKIP = {"svg", "a", "h1", "h2", "h3", "code", "th", "td", "title", "dt", "span", "label",
          "option", "script", "style", "summary"}
 
 
@@ -299,6 +316,10 @@ code { font-size: .85em; overflow-wrap: anywhere; }
 a.terme { text-decoration-style: dotted; }
 main, p, li, dd { overflow-wrap: break-word; }
 .cite { overflow-wrap: anywhere; }
+figure.graphique { margin: 1.2rem 0 1.6rem; }
+figure.graphique svg { display: block; width: 100%; height: auto; max-width: 36rem;
+  border: 1px solid var(--trait); border-radius: .3rem; }
+figure.graphique figcaption { color: var(--doux); font-size: .85rem; margin-top: .4rem; }
 @media (max-width: 560px) {
   body { font-size: 16px; }
   dl { grid-template-columns: 1fr; }

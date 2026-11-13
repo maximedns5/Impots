@@ -32,6 +32,10 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ### 1. Ce qu'il coûte, et qui y gagne
 
+![Ce que chaque décile y gagne ou y perd en 2026](graphiques/plfss2027/plf2027_art_74_ppa-deciles.svg)
+
+*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_ppa.json` ; tracé par `impots.graphiques`.*
+
 La mesure rapporte **557 M€** la première année, chiffrée en 2026, sur la population de 2024 au droit de 2026.
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
@@ -53,6 +57,10 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 ### 2. Avec les comportements et l'économie
 
+![Du coût de 2026 à la dette de 2035](graphiques/plfss2027/plf2027_art_74_ppa-cascade.svg)
+
+*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_ppa.json` et `reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`.*
+
 **Bande comportementale : aucune, et la raison est donnée.** Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.
 
 **Éventail macro : refusé.** Aucun instrument de cette réforme n'a de multiplicateur publié : il n'y a pas de trajectoire macro à tracer.
@@ -67,6 +75,10 @@ Ce que la chaîne ne lit pas, et pourquoi :
 * **multiplicateur macro** — aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat.
 
 ### 3. La dette en 2035
+
+![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/plfss2027/plf2027_art_74_ppa-trajectoire.svg)
+
+*Source du graphique : `reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -118,6 +130,10 @@ La première année de cette étude, sur le code de l'étude, chiffre -557 M€,
 
 ### 1. Ce qu'il coûte, et qui y gagne
 
+![Ce que chaque décile y gagne ou y perd en 2026](graphiques/plfss2027/plf2027_art_74_apl-deciles.svg)
+
+*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_apl.json` ; tracé par `impots.graphiques`.*
+
 La mesure rapporte **72 M€** la première année, chiffrée en 2026, sur la population de 2024 au droit de 2026.
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
@@ -139,6 +155,10 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 ### 2. Avec les comportements et l'économie
 
+![Du coût de 2026 à la dette de 2035](graphiques/plfss2027/plf2027_art_74_apl-cascade.svg)
+
+*Source du graphique : `reports/etudes/plfss2027/premiere_annee_plf2027_art_74_apl.json` et `reports/etudes/plfss2027/predictif_plf2027_art_74_apl.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`.*
+
 **Bande comportementale : aucune, et la raison est donnée.** Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.
 
 **Éventail macro : refusé.** Aucun instrument de cette réforme n'a de multiplicateur publié : il n'y a pas de trajectoire macro à tracer.
@@ -153,6 +173,10 @@ Ce que la chaîne ne lit pas, et pourquoi :
 * **multiplicateur macro** — aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat.
 
 ### 3. La dette en 2035
+
+![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/plfss2027/plf2027_art_74_apl-trajectoire.svg)
+
+*Source du graphique : `reports/etudes/plfss2027/predictif_plf2027_art_74_apl.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|

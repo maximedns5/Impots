@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 459" width="360" height="459" role="img" aria-labelledby="pres2027_ruffin_programme-frise-t pres2027_ruffin_programme-frise-d" font-size="13">
+<title id="pres2027_ruffin_programme-frise-t">Les mesures chiffrées dans le temps, et leurs plages</title>
+<desc id="pres2027_ruffin_programme-frise-d">Les mesures chiffrées : Crédit d&#x27;impôt pour les trajets domicile-travail, remise à plat des frais kilométriques et avantages véhicules, de 2026 à 2035, plage credit_trajets_taux : bas 25 % +13,78 Md€, candidat 30 % +16,53 Md€, haut 35 % +19,29 Md€ ; SMIC à 1 600 €, de 2026 à 2035, plage smic_revalorisation : bas 1,0826 +15,64 Md€, candidat 1,0933 +17,67 Md€, haut 1,1087 +20,59 Md€, plage smic_diffusion_echelle : bas 0 +17,67 Md€, candidat 0 +17,67 Md€, haut 1 +5,95 Md€.</desc>
+<style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
+.g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
+.g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
+.g-f1{fill:#2a78d6}.g-f2{fill:#eb6834}.g-f3{fill:#1baf7a}.g-f4{fill:#6250d6}
+.g-bande{fill:#2a78d6;fill-opacity:.16}.g-plus{fill:#2a78d6}.g-moins{fill:#e34948}
+.g-total{fill:#52514e}.g-lien{stroke:#8a877f}.g-sur{fill:#ffffff}
+@media (prefers-color-scheme: dark){
+.g-fond{fill:#1a1a19}.g-encre{fill:#ece9e2}.g-doux{fill:#c3c2b7}
+.g-axe{stroke:#8f8b80}.g-grille{stroke:#33322f}.g-zero{stroke:#c3c2b7}
+.g-s1{stroke:#3987e5}.g-s2{stroke:#d95926}.g-s3{stroke:#199e70}.g-s4{stroke:#9085e9}
+.g-f1{fill:#3987e5}.g-f2{fill:#d95926}.g-f3{fill:#199e70}.g-f4{fill:#9085e9}
+.g-bande{fill:#3987e5;fill-opacity:.24}.g-plus{fill:#3987e5}.g-moins{fill:#e66767}
+.g-total{fill:#c3c2b7}.g-lien{stroke:#8f8b80}}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
+<rect class="g-fond" fill="#fcfcfb" x="0" y="0" width="360" height="459"/>
+<text class="g-encre" fill="#1d1d1b" x="12" y="20" text-anchor="start" font-size="15" font-weight="600">Les mesures chiffrées dans le temps, et</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="39" text-anchor="start" font-size="15" font-weight="600">leurs plages</text>
+<text class="g-doux" fill="#52514e" x="12" y="58" text-anchor="start">La barre : les années où la mesure s&#x27;applique, de</text>
+<text class="g-doux" fill="#52514e" x="12" y="75" text-anchor="start">2026 à 2035. Dessous : le coût de 2026 de chaque</text>
+<text class="g-doux" fill="#52514e" x="12" y="92" text-anchor="start">point de plage.</text>
+<circle class="g-f2" fill="#eb6834" cx="18" cy="119" r="4"/>
+<text class="g-encre" fill="#1d1d1b" x="26" y="123" text-anchor="start">bas, haut</text>
+<rect class="g-f1" fill="#2a78d6" x="92" y="114" width="10" height="10" transform="rotate(0)"/>
+<text class="g-encre" fill="#1d1d1b" x="106" y="123" text-anchor="start">valeur du candidat</text>
+<text class="g-doux" fill="#52514e" x="30.6" y="147" text-anchor="middle" font-size="12">2026</text>
+<text class="g-doux" fill="#52514e" x="130.2" y="147" text-anchor="middle" font-size="12">2029</text>
+<text class="g-doux" fill="#52514e" x="229.8" y="147" text-anchor="middle" font-size="12">2032</text>
+<text class="g-doux" fill="#52514e" x="329.4" y="147" text-anchor="middle" font-size="12">2035</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="171" text-anchor="start" font-weight="600">Crédit d&#x27;impôt pour les trajets domicile-travail,</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="187" text-anchor="start" font-weight="600">remise à plat des frais kilométriques et avantage…</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="193" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="193" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="193" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="193" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="193" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="193" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="193" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="193" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="193" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="193" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="221" text-anchor="start" font-size="12">plage « credit_trajets_taux »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="233" x2="283.4" y2="233"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="233" r="5"><title>bas (25 %) : +13,78 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="253" text-anchor="middle" font-size="12">+13,78 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="175" y="228" width="10" height="10"><title>candidat (30 %) : +16,53 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="180" y="267" text-anchor="middle" font-size="12">+16,53 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="233" r="5"><title>haut (35 %) : +19,29 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="253" text-anchor="middle" font-size="12">+19,29 Md€</text>
+<text class="g-encre" fill="#1d1d1b" x="12" y="291" text-anchor="start" font-weight="600">SMIC à 1 600 €</text>
+<rect class="g-f1" fill="#2a78d6" x="15.3" y="297" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="48.5" y="297" width="30.5" height="10" rx="2"><title>2027 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="81.7" y="297" width="30.5" height="10" rx="2"><title>2028 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="114.9" y="297" width="30.5" height="10" rx="2"><title>2029 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="148.1" y="297" width="30.5" height="10" rx="2"><title>2030 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="181.3" y="297" width="30.5" height="10" rx="2"><title>2031 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="214.5" y="297" width="30.5" height="10" rx="2"><title>2032 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="247.7" y="297" width="30.5" height="10" rx="2"><title>2033 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="280.9" y="297" width="30.5" height="10" rx="2"><title>2034 : s'applique</title></rect>
+<rect class="g-f1" fill="#2a78d6" x="314.1" y="297" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
+<text class="g-doux" fill="#52514e" x="12" y="325" text-anchor="start" font-size="12">plage « smic_revalorisation »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="337" x2="283.4" y2="337"/>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="337" r="5"><title>bas (1,0826) : +15,64 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="357" text-anchor="middle" font-size="12">+15,64 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="156.6" y="332" width="10" height="10"><title>candidat (1,0933) : +17,67 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="161.6" y="371" text-anchor="middle" font-size="12">+17,67 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="337" r="5"><title>haut (1,1087) : +20,59 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="357" text-anchor="middle" font-size="12">+20,59 Md€</text>
+<text class="g-doux" fill="#52514e" x="12" y="391" text-anchor="start" font-size="12">plage « smic_diffusion_echelle »</text>
+<line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="403" x2="283.4" y2="403"/>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="403" r="5"><title>bas (0) : +17,67 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="423" text-anchor="middle" font-size="12">+17,67 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="278.4" y="398" width="10" height="10"><title>candidat (0) : +17,67 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="283.4" y="437" text-anchor="middle" font-size="12">+17,67 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="403" r="5"><title>haut (1) : +5,95 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="423" text-anchor="middle" font-size="12">+5,95 Md€</text>
+<text class="g-doux" fill="#52514e" x="348" y="449" text-anchor="end" font-size="12">coût de 2026, milliards d&#x27;euros</text>
+</svg>

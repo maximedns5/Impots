@@ -34,6 +34,10 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ### 1. Ce qu'il coûte, et qui y gagne
 
+![Ce que chaque décile y gagne ou y perd en 2026](graphiques/presidentielle_le_pen/pres2027_le_pen_programme-deciles.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_le_pen/premiere_annee_pres2027_le_pen_programme.json` ; tracé par `impots.graphiques`.*
+
 La mesure coûte **21,41 Md€** la première année (2026), sur la population de 2024 au droit de 2026.
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
@@ -54,6 +58,10 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 
 ### 2. Avec les comportements et l'économie
+
+![Du coût de 2026 à la dette de 2035](graphiques/presidentielle_le_pen/pres2027_le_pen_programme-cascade.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_le_pen/premiere_annee_pres2027_le_pen_programme.json` et `reports/etudes/presidentielle_le_pen/predictif_pres2027_le_pen_programme.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`.*
 
 **Bande comportementale : aucune, et la raison est donnée.** Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.
 
@@ -76,6 +84,10 @@ Ce que la chaîne ne lit pas, et pourquoi :
 * **R&D et CIR** — C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette.
 
 ### 3. La dette en 2035
+
+![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/presidentielle_le_pen/pres2027_le_pen_programme-trajectoire.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_le_pen/predictif_pres2027_le_pen_programme.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte, et la variante de `reports/macro/variante_depense_publique.json` lue par `impots.predictif.annonce` ; tracé par `impots.graphiques`.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -157,6 +169,10 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 ## Ce que bouge chaque paramètre
 
 Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035, un calcul rapide qui ne refait pas chaque année. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le calcul complet chiffre année par année avec les comportements et la boucle macro. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
+
+![Les mesures chiffrées dans le temps, et leurs plages](graphiques/presidentielle_le_pen/pres2027_le_pen_programme-frise.svg)
+
+*Source du graphique : `programmes/le_pen.json` et `reports/etudes/presidentielle_le_pen/plages/`, ses 9 points de plage ; tracé par `impots.graphiques`.*
 
 ### Baisse de la TVA sur l'énergie et les carburants
 
