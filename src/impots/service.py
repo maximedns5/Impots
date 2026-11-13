@@ -960,8 +960,9 @@ def price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
     return SimpleNamespace(
         cost=households.cost + firm.cost, inputs=households.inputs,
         impulse=households.impulse,
-        prelevements={**getattr(households, "prelevements", {}),
-                      **creations_firm_levies(firm.deltas)},
+        prelevements=(None if getattr(households, "prelevements", {}) is None
+                      else {**getattr(households, "prelevements", {}),
+                            **creations_firm_levies(firm.deltas)}),
         uncovered=({**households.uncovered, **dict.fromkeys(firm.deltas, FIRM_NO_VARIANT)}
                    if macro else {}),
         view=view, note=" ".join(n for n in (households.note, firm.note) if n),
@@ -1042,7 +1043,7 @@ def creations_firm_levies(deltas: dict[str, float]) -> dict[str, float]:
     return {name: float(deltas[name]) for name in names if deltas.get(name)}
 
 
-def creations_household_levies(frame: Any) -> dict[str, float]:
+def creations_household_levies(frame: Any) -> dict[str, float] | None:
     """The households' levies on capital the channel reads (the PFU, the social levies
     on capital income), reform minus baseline, extrapolated like every total. The
     households' aggregate does not total them — the PFU is a « dont » of `ir`, and the
@@ -1052,6 +1053,9 @@ def creations_household_levies(frame: Any) -> dict[str, float]:
     from impots.population.aggregate import extrapole
     from impots.predictif import creations
 
+    if frame is None:
+        # No household frame kept: not read, never zero — the channel refuses such a pass.
+        return None
     weights = frame["weight"].to_numpy().astype(np.float64)
     out = {}
     for name in creations.charger().instruments_menages:

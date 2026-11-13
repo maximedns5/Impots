@@ -208,3 +208,26 @@ des effets opposés, au signe près et au même chiffre.
   même convention que la dette, qui divise aussi les euros figés par le PIB du scénario.
 * Il ne tire rien au Monte-Carlo : le verdict de D-345 lit les tirages sans ce canal tant
   que sa loi n'est pas déclarée.
+
+## 6. Dans le code
+
+* `src/impots/predictif/creations.py` : la fonction pure (`effet`), la lecture des seuls
+  instruments (`prelevements`), la productivité à θ (`productivite_a`, ligne θ
+  `productivite_creations`), le refus d'un rapport sans D-entrée
+  (`charger(exiger_entree=True)`).
+* `src/impots/predictif/parameters/creations_entreprises.yaml` : les valeurs, leurs plages
+  et leurs sources ; `preenregistrement` y nommera la D-entrée.
+* `chaine.run(creations=…)` : les recettes du canal au solde primaire, son PIB au
+  dénominateur, la dette sans lui (`delta_sans_creations`) et sa boîte (c = 0, c = 1).
+* `annuel.build(creations=…)` : le canal dans chaque chemin et dans la boîte θ ; le rapport
+  porte la clé `creations` (paramètres, prélèvements lus, effet, boîte, dette sans le
+  canal par persistance et par vue) et `lectures.creations_sans_canal` ; le rejeu
+  (`rejouer.chemin`) relit le canal, donc le Monte-Carlo et le verdict aussi.
+* `impots predictif --creations` : refusé tant que la D-entrée n'est pas nommée.
+* Les passes portent leurs prélèvements (`Priced.prelevements`) : les impôts de la couche
+  entreprises tels qu'elle les chiffre, le PFU et les prélèvements sociaux du capital lus
+  à part sur le cadre des ménages (`service.creations_household_levies`), sans toucher à
+  l'agrégat ni au garde des secteurs.
+* Ce qui n'est pas branché : `impots etude lancer` ne passe pas encore `--creations`, ni
+  `/predictif/simulate`, ni la grille et les plages (première année reportée). Les pages
+  ne montrent pas encore la dette sans le canal ; c'est le chantier A ou la suite.
