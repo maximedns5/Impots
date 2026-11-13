@@ -1001,8 +1001,8 @@ entre la somme des mesures et le programme est montré, comme une interaction, j
 réparti en silence ; (3) un canal de créations d'entreprises, symétrique, qu'une hausse
 comme une baisse des prélèvements sur les entreprises et le capital fait jouer, chiffré
 sur une élasticité publiée qu'il nomme, avec un coefficient de productivité des
-entreprises nouvelles réglé entre 0 et 1, une boîte θ à lui et un défaut à 0 tant que sa
-source ne redonne pas un total publié ; il n'entre pas dans le verdict sans cela. Chaque
+entreprises nouvelles réglé entre 0 et 1, une boîte θ à lui, et qui entre dans la dette
+publiée, la dette sans lui montrée à côté (décision du propriétaire, ci-dessous). Chaque
 nombre nouveau qui se compare à un juge est préenregistré avant sa passe ; aucune
 tolérance ne change. Preuve attendue : les graphiques en ligne, vus au téléphone ; une
 page de programme lue mesure par mesure ; le canal des entreprises et sa source, ou le
@@ -1011,20 +1011,20 @@ impact et des lourds ; l'URL de la PR et le SHA du merge. Ou s'arrêter après 6
 disant quels graphiques et quelles mesures manquent.
 ```
 
-Les décisions à prendre avant de lancer :
+Les décisions du propriétaire, le 13 novembre 2026 :
 
-* **Les graphiques** : du SVG écrit par le code depuis les rapports, sans bibliothèque ni
-  serveur, ou une bibliothèque de graphiques chargée par la page. Le premier se vérifie
-  comme le reste du site (`site verifier`) ; le second est plus riche, mais la page
-  dépend d'un tiers.
-* **Les mesures seules** : une passe complète par mesure (première année, chemin annuel,
-  points de plage) multiplie la série, environ 44 chemins de plus ; ou la première année
-  et les déciles seuls par mesure, le chemin annuel restant celui du programme.
-* **Les créations d'entreprises** : le canal joue dans les deux sens, pour tous les
-  candidats, sur la même élasticité ; il ne lit pas qui propose la mesure. S'il n'existe
-  pas de source qui chiffre la réponse des créations à un taux et redonne un total
-  publié, le coefficient reste un curseur du lecteur, affiché à part, à 0 par défaut, et
-  la dette publiée ne le lit pas. Le propriétaire dit s'il accepte cette règle.
+* **Les graphiques** : du SVG écrit par le code depuis les rapports commités, sans
+  bibliothèque ni serveur ; ils se vérifient comme le reste du site (`site verifier`).
+* **Les mesures seules** : chacune passe en entier, première année, chemin annuel et
+  points de plage, environ 44 chemins de plus que la série du but 21.
+* **Les créations d'entreprises entrent dans la dette publiée dès ce but**, avec une
+  valeur centrale choisie, même sans source qui redonne un total publié. Le canal joue
+  dans les deux sens, pour tous les candidats, sur la même élasticité, sans lire qui
+  propose la mesure. Pour que le choix reste lisible et réversible : l'élasticité et le
+  coefficient de productivité central sont nommés, avec leur source et leur plage, dans
+  une D-entrée préenregistrée avant la première passe ; le coefficient a sa boîte θ, de 0
+  à 1 ; chaque page dit que sa dette lit une hypothèse non validée, et montre à côté la
+  dette sans ce canal.
 
 **Ce qui reste du but 21** : le chemin refusé de Dupont-Aignan (un effet non monotone en
 θ sous la persistance « tenue », D-398) ; les décompositions E1/E2 archivées ; la page de
