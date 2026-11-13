@@ -1,0 +1,10 @@
+{
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "scenarios": {
+    "pres2027_kazib_programme": {
+      "cout": 15444320949.573944,
+      "dette": 0.0049239426962370825,
+      "selon_theta": "dépend de θ"
+    }
+  }
+}

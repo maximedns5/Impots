@@ -1,0 +1,10 @@
+{
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "scenarios": {
+    "pres2027_arthaud_programme": {
+      "cout": 74240851083.38803,
+      "dette": 0.034114012564797624,
+      "selon_theta": "dépend de θ"
+    }
+  }
+}

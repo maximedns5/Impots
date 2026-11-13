@@ -28861,3 +28861,95 @@ dette lit une hypothèse non validée et montre la dette sans ce canal.
 **Ce qui n'est pas lu.** Aucun chiffrage de tiers des programmes ou des mesures (règle
 des préenregistrements aveugles). La source du canal des entreprises est une élasticité
 de la littérature, pas le chiffrage d'un programme.
+
+## D-401 — Les graphiques, les mesures seules et le canal des créations, écrits
+
+**Les graphiques** (chantier A). `impots.graphiques` écrit du SVG pur, sans bibliothèque
+ni script (décision du propriétaire), depuis les seuls rapports commités : mêmes rapports,
+mêmes octets. Chaque page porte, en tête de sa section, les déciles de la première année,
+la cascade du coût de 2026 à la dette de 2035 (D-349), la trajectoire de 2026 à 2035 (le
+solde, la dette, le PIB, par vue et par persistance, la boîte θ en bande), la frise des
+mesures d'un programme et de leurs plages, et, sous la lecture annoncée, à part (D-380),
+la dette si ce qui est annoncé est tenu. Les SVG s'écrivent à côté de la page
+(`docs/etudes/graphiques/<étude>/`), que le Markdown référence ; le site les reprend en
+ligne. `etude verifier` et `site verifier` refusent un SVG absent, en trop, ou qui ne
+redonne pas ses rapports ; la trajectoire rejoue le chemin du rapport et refuse un écart
+de plus de 1e-9. Vu au téléphone (iPhone 13), clair et sombre : aucun débordement.
+
+**Les mesures seules** (chantier B). Une étude de programme porte ses mesures (`mesures`),
+chacune sur le scénario de son cas (`pres2027_<slug>_<id>`) ; ses passes ajoutent la
+première année puis le chemin annuel de chaque mesure, sous `mesures/<id>/`. La page a une
+section « Chaque mesure seule, et leur interaction » : chaque mesure, leur somme, la part
+chiffrée, et l'interaction, la part moins la somme, jamais répartie. Pas de passe pour un
+programme d'une seule mesure (sa part est cette mesure) ni pour Dupont-Aignan (D-398) ;
+les points de plage chiffrent déjà la mesure seule. Les trois mesures des entreprises
+reçoivent leur scénario seul ; aucun cas de `chiffrages_preregistres/` n'est touché.
+
+**Le canal des créations d'entreprises** (chantiers C et D). `predictif.creations` : la
+variation des prélèvements sur les entreprises et le capital passe en points d'un taux
+apparent, prélèvement sur profit ; le taux d'entrée y répond par une élasticité ; chaque
+cohorte d'entrants survit, monte en charge et pèse une taille et une productivité
+relatives ; l'écart de valeur ajoutée va au PIB et, au taux de prélèvements, aux
+recettes, dans la dette comme la boucle de Mésange. Le canal ne lit que des instruments,
+jamais qui propose une mesure : une hausse et une baisse de même montant donnent des effets
+opposés. Instruments lus, sur décision du propriétaire du 13 novembre 2026 : l'IS, sa
+contribution sociale, la CEBGE, la CVAE et la C3S (lues euro pour euro comme l'IS), le PFU
+et les prélèvements sociaux du capital, et les cotisations patronales nettes des
+allègements, qui sont aussi dans la boucle de Mésange : ce double compte est un choix du
+propriétaire, dit sur chaque page. La productivité relative a sa ligne θ, de 0 à 1 ; la
+dette sans le canal est calculée à côté et montrée sur la page et sur la trajectoire.
+`impots etude lancer` passe `--creations` au chemin annuel de chaque ligne ; la première
+année (sans dette) et les plages (mécaniques) ne le lisent pas ; un chemin d'avant le canal
+ne reprend pas dans une série qui le lit. La note : `docs/diagnostics/`, le fichier
+`creations_entreprises.md`.
+
+**Ce qui est tenu.** Les tests légers de chaque chantier ; 782 verts à la jointure. Aucun
+nombre publié n'a changé : les pages commitées, d'avant le canal, se vérifient telles
+quelles.
+
+## D-402 — La série du but 22 préenregistrée : le canal, les mesures seules
+
+**Le canal, ses paramètres** (décision du propriétaire, D-400 : dans la dette publiée,
+sans source qui redonne un total publié ; une hypothèse non validée, dite sur chaque
+page). Élasticité ε = 0,20 point de taux d'entrée par point de taux, plage 0,043 à 0,356 :
+Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 (p. 40
+du PDF) et p. 21-22, du premier quartile à la médiane du taux effectif, le milieu de
+l'intra-groupe et des variables instrumentales (D-245) ; appliquée à un taux apparent,
+prélèvement sur profit (b = 0,092 du PIB : l'IS de 2024 sur 25,825 %, Insee, comptes
+nationaux 2025, t. 3.217), non au taux effectif des auteurs, que le projet ne reconstruit
+pas (D-247). La plage est une sensibilité dite à côté. Productivité relative c = 0,5, sa
+boîte θ de 0 à 1 : aucune source ne la chiffre pour des entrants marginaux. Fixes, et
+choisis, non vérifiés sur un document : la survie annuelle (0,90), la montée en charge
+(linéaire sur 5 ans), la taille relative à maturité (0,10), la part des sociétés dans le
+PIB (0,60). Le Monte-Carlo du verdict lit le canal à c = 0,5, sans le tirer.
+
+**Ce qui tourne.** Toute la série, sur le commit qui porte cette entrée : les dix-sept
+études de D-397 (Dupont-Aignan reste refusée, D-398), cadre central, population de 2024,
+millésime d'entreprises 2023 ; leurs premières années, leurs points de plage, leurs
+chemins annuels, avec le canal ; et les 35 mesures seules de dix programmes, première
+année et chemin annuel. Deux files ; une étude qu'un manque de mémoire arrête reprend
+ensuite, seule, sur le même commit. La série d'avant est celle du but 21, figée par
+`impots etude avant` ; ses rapports sont retirés.
+
+**Le pronostic.** Δb₂₀₃₅ à θ½, vue vieillie, persistance « lue », en points de PIB.
+
+* La première année de chaque ligne est celle de D-397, à 0,1 % près : ni le canal ni les
+  graphiques n'y touchent.
+* Δb sans le canal est celui de D-397, à 1e-6 point près : le code ne change rien d'autre
+  au chemin.
+* L'écart du canal, Δb avec moins Δb sans, a le signe de la variation des prélèvements
+  qu'il lit, en 2026 : positif quand ils montent (moins de créations, moins de recettes),
+  négatif quand ils baissent ; par Md€ de cette variation, de 0,01 à 0,05 point ; une ligne
+  dont la variation est sous 1 Md€ s'écarte de moins de 0,05 point.
+* Les verdicts de D-397 tiennent, sauf où l'écart du canal fait passer P(hausse) d'un côté
+  d'un seuil de D-345 ; la page le dit.
+* Chaque mesure seule : Δb par Md€ de sa première année de 0,04 à 0,22 pour un impôt des
+  ménages (IR, CSG, TVA, PFU, quotient), de 0 à 0,10 pour le SMIC et le point d'indice,
+  de 0,15 à 0,35 pour une prestation ou une pension, de −0,05 à 0,25 pour un impôt des
+  entreprises ; une mesure qui rapporte suit la même règle au signe près.
+* L'interaction, la part moins la somme de ses mesures : sous 10 % de la part pour le coût
+  de la première année, sous 20 % pour Δb.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Le résultat va dans une nouvelle
+D-entrée, avec la série d'avant, l'écart au pronostic et le coût du canal.

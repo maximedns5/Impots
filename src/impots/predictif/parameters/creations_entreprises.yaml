@@ -10,7 +10,7 @@
 # [lu] : lu sur un fichier du manifeste ; [à manifester] : à vérifier sur le document
 # avant la D-entrée.
 
-preenregistrement: null   # la D-entrée qui fixe ces valeurs, « D-4xx », une fois commitée
+preenregistrement: D-402   # la D-entrée qui fixe ces valeurs (but 22)
 
 elasticite:
   # Points de taux d'entrée (entrées de l'année sur entreprises actives, en %) par point
