@@ -43,8 +43,11 @@ en volume (note 70) : ailleurs, la lecture est refusée.
 
 from __future__ import annotations
 
+import json
 import re
+import sys
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -118,6 +121,30 @@ def mesures(programme: Any) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]
         lues.append({"id": m.id, "libelle": m.libelle, "porte": porte, "sens": d.sens,
                      "montant_eur": d.montant_eur, "horizon": d.horizon})
     return lues, non_lues
+
+
+#: Les lignes de la variante, écrites une fois depuis le magasin (`tables`) et commitées :
+#: une page se rend depuis les rapports seuls, sans les PDF de `data/raw/` qui ne sont pas
+#: dans git (le site se vérifie sur un runner sans données, D-399).
+RAPPORT = Path(__file__).resolve().parents[3] / "reports" / "macro" / (
+    f"variante_{VARIANTE}.json")
+
+
+def lue() -> dict[str, Any]:
+    """Les lignes de la variante, depuis leur rapport commité : ce que les pages lisent."""
+    if not RAPPORT.exists():
+        raise AnnonceError(f"{RAPPORT.name} manque : `python -m impots.predictif.annonce "
+                           f"ecrire` l'écrit depuis le magasin macro.")
+    return json.loads(RAPPORT.read_text(encoding="utf-8"))["variante"]
+
+
+def ecrire() -> Path:
+    """Le rapport des lignes de la variante, depuis le magasin (les PDF de `data/raw/`)."""
+    RAPPORT.parent.mkdir(parents=True, exist_ok=True)
+    RAPPORT.write_text(json.dumps(
+        {"source": "le magasin macro, `annonce.tables()` (D-214, D-380, D-399)",
+         "variante": tables()}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return RAPPORT
 
 
 def tables(store: Any = None) -> dict[str, Any]:
@@ -217,3 +244,9 @@ def lire(payload: Mapping[str, Any], programme: Any, part: float, *,
         "theta": theta.get(rejouer.MACRO_ROW), "persistence": persistence,
         "annees": years, "vues": vues,
     }
+
+
+if __name__ == "__main__":
+    if sys.argv[1:] != ["ecrire"]:
+        raise SystemExit("usage : python -m impots.predictif.annonce ecrire")
+    print(f"-> {ecrire()}")
