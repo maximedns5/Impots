@@ -708,6 +708,10 @@ class Nombres:
 
     def __init__(self) -> None:
         self.items: list[Nombre] = []
+        #: The page's graphics (but 22), by the path its Markdown gives them, relative to
+        #: the page: the page refers to each, `ecrire` writes them beside it, the site
+        #: inlines them.
+        self.graphiques: dict[str, Any] = {}
 
     def __call__(self, texte: Any, etage: str, *, conditionnel: bool = False) -> str:
         if etage not in ETAGES:
@@ -729,6 +733,24 @@ def amounts(text: str, etage: str, n: Nombres) -> str:
     """`text` with each amount it quotes made a number of `etage`: an article's title or a
     triage's reason quotes the law's amounts, and says where they come from."""
     return AMOUNT.sub(lambda m: n(m[0], etage), text)
+
+
+GRAPHIQUES = "graphiques"
+
+
+def graphique(w: Any, n: Nombres, nom: str, figure: Any) -> None:
+    """A graphic at the head of its section (but 22): the image, then the line that says
+    its source. Nothing when the reports do not carry what it draws."""
+    if figure is None:
+        return
+    key = f"{GRAPHIQUES}/{nom}/{figure.fichier}"
+    if key in n.graphiques:
+        raise EtudeError(f"deux graphiques de la page s'écrivent dans {key}")
+    n.graphiques[key] = figure
+    w(f"![{figure.titre}]({key})")
+    w("")
+    w(figure.legende())
+    w("")
 
 
 def debt_etage(path: dict[str, Any]) -> str:
@@ -993,7 +1015,7 @@ class _Programme:
         w("")
 
     def refusals(self, w: Any, entries: list[dict[str, Any]], n: Nombres) -> None:
-        self._plages(w, n, entries[0]["plages"])
+        self._plages(w, n, entries[0]["plages"], entries[0])
         self._mesures(w, n)
         self._annonce(w, n)
 
@@ -1001,7 +1023,8 @@ class _Programme:
         count = len(self.study.points())
         w(f"* `{where}/{PLAGES}/`, les {count} points des plages")
 
-    def _plages(self, w: Any, n: Nombres, reports: list[dict[str, Any]]) -> None:
+    def _plages(self, w: Any, n: Nombres, reports: list[dict[str, Any]],
+                entry: dict[str, Any] | None = None) -> None:
         from impots import fiche
         from impots import programmes as pg
 
@@ -1019,6 +1042,8 @@ class _Programme:
           "règle seul, les autres restant à la valeur du candidat.")
         w("")
         by_key = {(r["mesure"], r["champ"], r["point"]): r for r in reports}
+        if entry is not None:
+            graphique(w, n, self.study.nom, self._frise(by_key, entry))
         for m in self.programme.chiffrees():
             w(f"### {amounts(m.libelle, 'programme', n)}")
             w("")
@@ -1056,6 +1081,34 @@ class _Programme:
                       f"valeur du candidat est celle de la part chiffrée, que le calcul "
                       f"complet chiffre chaque année sous le droit de cette année (D-254).")
                     w("")
+
+    def _frise(self, by_key: dict[tuple[str, str, str], dict[str, Any]],
+               entry: dict[str, Any]) -> Any:
+        """The measures in time (but 22): when each applies, the scenario's year to the
+        path's end or its `annees` alone, and each range's three points with their cost."""
+        from impots import graphiques
+        from impots import programmes as pg
+
+        mesures = []
+        for m in self.programme.chiffrees():
+            plages = []
+            for plage in m.chiffrage.plages:
+                points = []
+                for point in POINTS:
+                    valeur = (pg._lire(m.chiffrage.reforme, plage.champ) if point == "candidat"
+                              else plage.min if point == "bas" else plage.max)
+                    r = by_key[(m.id, plage.champ, point)]
+                    points.append((point, valeur_lue(plage.champ, valeur),
+                                   float(r["response"]["mechanical_first_year_eur"])))
+                plages.append(graphiques.Plage(plage.champ, tuple(points)))
+            mesures.append(graphiques.Mesure(m.libelle, tuple(entry["path"].get("annees")
+                                                               or ()), tuple(plages)))
+        where = _relative(self.study.rapports)
+        years = [int(r["year"]) for r in entry["path"]["years"]]
+        return graphiques.frise(
+            mesures, debut=years[0], fin=years[-1], ident=f"{entry['name']}-frise",
+            source=f"`programmes/{self.programme.slug}.json` et `{where}/{PLAGES}/`, ses "
+                   f"{len(self.study.points())} points de plage")
 
     def _mesures(self, w: Any, n: Nombres) -> None:
         p, c = self.programme, self.programme.couverture()
@@ -1747,8 +1800,49 @@ class Etude:
 
     def render(self, entries: list[dict[str, Any]]) -> str:
         """The Markdown page: the lines, each number resolved to its text."""
+        return self.rendu(entries)[0]
+
+    def rendu(self, entries: list[dict[str, Any]]) -> tuple[str, dict[str, str]]:
+        """The Markdown page and its graphics (but 22), each SVG by its file name."""
         lines, n = self.lines(entries)
-        return "\n".join(n.resolve(line) for line in lines)
+        return ("\n".join(n.resolve(line) for line in lines),
+                {Path(key).name: figure.svg for key, figure in n.graphiques.items()})
+
+    @property
+    def graphiques(self) -> Path:
+        """Where the page's graphics are written: beside it, one directory per study."""
+        return self.page.parent / GRAPHIQUES / self.nom
+
+    def ecrire(self) -> list[Path]:
+        """The page and its graphics, from the committed reports; a graphic no longer
+        drawn is removed."""
+        text, figures = self.rendu(self.load())
+        self.page.parent.mkdir(parents=True, exist_ok=True)
+        self.page.write_text(text, encoding="utf-8")
+        self.graphiques.mkdir(parents=True, exist_ok=True)
+        for stale in {p.name for p in self.graphiques.glob("*.svg")} - set(figures):
+            (self.graphiques / stale).unlink()
+        written = [self.page]
+        for name, svg in sorted(figures.items()):
+            (self.graphiques / name).write_text(svg, encoding="utf-8")
+            written.append(self.graphiques / name)
+        return written
+
+    def _annonce_dette(self, entry: dict[str, Any]) -> list[float] | None:
+        """The debt « si les économies annoncées sont tenues », year by year, vue
+        vieillie, the whole of what is announced (D-380): the line the trajectory draws
+        beside the debt, when the page reads it and the programme announces something."""
+        texte = self.texte_lu()
+        if not (self.dette_annoncee and hasattr(texte, "dette_annoncee")
+                and entry["sign"] == 1):
+            return None
+        from impots.predictif import annonce
+
+        lecture = annonce.lire(entry["path"], texte.programme, PARTS_ANNONCEES[-1],
+                               variante=annonce.lue(), views=("vieillie",))
+        if not lecture["mesures"]:
+            return None
+        return lecture["vues"]["vieillie"]["avec_annonce"]
 
     def lines(self, entries: list[dict[str, Any]]) -> tuple[list[str], Nombres]:
         """The page's Markdown lines, each number a token of `Nombres` that says what it
@@ -1854,6 +1948,9 @@ class Etude:
               f"l'effet macro de chaque {unit} ; « selon θ » lit toutes les vues et toutes "
               f"les persistances.")
         w("")
+        from impots import graphiques
+
+        where = _relative(self.rapports)
         for entry in entries:
             w(texte.heading(entry, n))
             w("")
@@ -1864,13 +1961,29 @@ class Etude:
                 w("")
             w("### 1. Ce qu'il coûte, et qui y gagne")
             w("")
+            graphique(w, n, self.nom, graphiques.deciles(
+                entry, ident=f"{entry['name']}-deciles",
+                source=f"`{where}/premiere_annee_{entry['name']}.json`"))
             self._first(w, n, entry, texte)
             w("")
             w("### 2. Avec les comportements et l'économie")
             w("")
+            graphique(w, n, self.nom, graphiques.cascade(
+                entry, ident=f"{entry['name']}-cascade",
+                source=f"`{where}/premiere_annee_{entry['name']}.json` et "
+                       f"`{where}/predictif_{entry['name']}.json` (sa décomposition, D-349)"))
             self._second(w, n, entry)
             w(f"### 3. La dette en {last}")
             w("")
+            annoncee = self._annonce_dette(entry)
+            graphique(w, n, self.nom, graphiques.trajectoire(
+                entry, ident=f"{entry['name']}-trajectoire", annonce=annoncee,
+                source=f"`{where}/predictif_{entry['name']}.json`, rejoué année par année "
+                       f"par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et "
+                       f"chaque coin de sa boîte"
+                       + (", et la variante de `reports/macro/variante_depense_publique.json`"
+                          f" lue par `impots.predictif.annonce`"
+                          if annoncee is not None else "")))
             self._third(w, n, entry)
             if self.dette_annoncee and hasattr(texte, "dette_annoncee"):
                 texte.dette_annoncee(w, n, entry)
@@ -2739,20 +2852,40 @@ class Etude:
         study whose passes have not run has neither reports nor page; a run one has both;
         a refused one (D-398) has its reports and no page, its path refused by a guard."""
         reports = self.rapports.exists() and any(self.rapports.glob("*.json"))
+        figures_there = ({p.name for p in self.graphiques.iterdir()}
+                         if self.graphiques.exists() else set())
         if self.refus:
             if self.page.exists():
                 return (f"{_relative(self.page)} existe pour une étude refusée : son chemin "
                         f"annuel n'a pas de rapport, et la page dirait ce qu'aucun ne dit.")
+            if figures_there:
+                return (f"{_relative(self.graphiques)} porte des graphiques pour une étude "
+                        f"refusée : aucun rapport ne les tient.")
             return None
         if not reports and not self.page.exists():
+            if figures_there:
+                return (f"{_relative(self.graphiques)} porte des graphiques sans rapports "
+                        f"ni page.")
             return None
         if not self.page.exists():
             return f"{_relative(self.page)} n'existe pas : `impots etude ecrire {self.nom}`."
         if not reports:
             return (f"{_relative(self.page)} existe sans les rapports de "
                     f"{_relative(self.rapports)} : la page dirait ce qu'aucun rapport ne dit.")
-        where = difference(self.page.read_text(encoding="utf-8"), self.render(self.load()))
-        return None if where is None else f"{_relative(self.page)}, {where}."
+        text, figures = self.rendu(self.load())
+        where = difference(self.page.read_text(encoding="utf-8"), text)
+        if where is not None:
+            return f"{_relative(self.page)}, {where}."
+        if figures_there != set(figures):
+            return (f"{_relative(self.graphiques)} porte {sorted(figures_there - set(figures))}"
+                    f" en trop et manque {sorted(set(figures) - figures_there)} : `impots "
+                    f"etude ecrire {self.nom}`.")
+        for name, svg in sorted(figures.items()):
+            where = difference((self.graphiques / name).read_text(encoding="utf-8"), svg)
+            if where is not None:
+                return (f"{_relative(self.graphiques / name)}, {where} : le graphique ne "
+                        f"redonne pas ses rapports.")
+        return None
 
 
 def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:

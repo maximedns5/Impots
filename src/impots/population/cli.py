@@ -1717,10 +1717,9 @@ def cmd_etude(args: argparse.Namespace) -> int:
             print(f"-> {study.figer_avant()}")
             return 0
         if args.action == "ecrire":
-            text = study.render(study.load())
-            study.page.parent.mkdir(parents=True, exist_ok=True)
-            study.page.write_text(text, encoding="utf-8")
-            print(f"-> {study.page} ({len(text.splitlines())} lignes)")
+            page, *figures = study.ecrire()
+            print(f"-> {page} ({len(page.read_text(encoding='utf-8').splitlines())} lignes, "
+                  f"{len(figures)} graphiques)")
             return 0
         why = study.drift()
     except etude.EtudeError as error:

@@ -53,7 +53,7 @@ STYLE = """
 .g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
 .g-f1{fill:#2a78d6}.g-f2{fill:#eb6834}.g-f3{fill:#1baf7a}.g-f4{fill:#6250d6}
 .g-bande{fill:#2a78d6;fill-opacity:.16}.g-plus{fill:#2a78d6}.g-moins{fill:#e34948}
-.g-total{fill:#52514e}.g-lien{stroke:#8a877f}
+.g-total{fill:#52514e}.g-lien{stroke:#8a877f}.g-sur{fill:#ffffff}
 @media (prefers-color-scheme: dark){
 .g-fond{fill:#1a1a19}.g-encre{fill:#ece9e2}.g-doux{fill:#c3c2b7}
 .g-axe{stroke:#8f8b80}.g-grille{stroke:#33322f}.g-zero{stroke:#c3c2b7}
@@ -170,7 +170,7 @@ def _svg(ident: str, hauteur: float, titre: str, desc: str, corps: list[str]) ->
 
 def _texte(x: float, y: float, text: str, *, ancre: str = "start", classe: str = "g-encre",
            taille: int = POLICE, gras: bool = False) -> str:
-    fill = "#52514e" if classe == "g-doux" else "#1d1d1b"
+    fill = {"g-doux": "#52514e", "g-sur": "#ffffff"}.get(classe, "#1d1d1b")
     weight = ' font-weight="600"' if gras else ""
     size = "" if taille == POLICE else f' font-size="{taille}"'
     return (f'<text class="{classe}" fill="{fill}" x="{_c(x)}" y="{_c(y)}" '
@@ -233,10 +233,10 @@ def cascade_nombres(entry: dict[str, Any]) -> dict[str, Any] | None:
     if entry["kind"] == "mixte":
         menages = sign * float(response.reform_cost)
         marches += [("ménages, mécanique", menages),
-                    ("entreprises, mécanique", sign * float(entry["firms"].reform_cost))]
+                    ("entreprises, mécan.", sign * float(entry["firms"].reform_cost))]
     elif entry["kind"] == "entreprises":
         menages = None
-        marches.append(("entreprises, mécanique", entry["cost"]))
+        marches.append(("entreprises, mécan.", entry["cost"]))
     else:
         menages = entry["cost"]
         marches.append(("coût mécanique", menages))
@@ -268,7 +268,7 @@ def _cascade_panneau(corps: list[str], y: float, titre: str, marches: list[tuple
         bornes.append(cumul)
     bornes.append(total[1])
     ticks = _ticks(min(bornes), max(bornes))
-    x = Echelle(ticks[0], ticks[-1], 150, LARGEUR - 18)
+    x = Echelle(ticks[0], ticks[-1], 156, LARGEUR - 18)
     rang, haut = 30, 18
     hauteur = rang * (len(marches) + 1)
     for t in ticks:
@@ -291,18 +291,28 @@ def _cascade_panneau(corps: list[str], y: float, titre: str, marches: list[tuple
             nxt = depart + value
             corps.append(_ligne(x(nxt), top + haut, x(nxt), top + rang, "g-lien", "#8a877f",
                                 1, "2 2"))
-        corps.append(_texte(10, top + 13, _court(label, 20), gras=last))
+        corps.append(_texte(10, top + 13, _court(label, 22), gras=last))
         valeur = format_(value)
-        right = max(a, b)
-        if right + 6 + 7.2 * len(valeur) <= LARGEUR - 4:
-            corps.append(_texte(right + 4, top + 13, valeur, classe="g-doux"))
+        right, left, size = max(a, b), min(a, b), 7.0 * len(valeur)
+        if right + 6 + size <= LARGEUR - 4:
+            corps.append(_texte(right + 4, top + 13, valeur, classe="g-doux", taille=12))
+        elif right - left >= size + 8:
+            corps.append(_texte(right - 4, top + 13, valeur, ancre="end", classe="g-sur",
+                                taille=12, gras=True))
+        elif left - 6 - size >= 156:
+            corps.append(_texte(left - 4, top + 13, valeur, ancre="end", classe="g-doux",
+                                taille=12))
         else:
-            corps.append(_texte(min(a, b) - 4, top + 13, valeur, ancre="end",
-                                classe="g-doux"))
+            corps.append(_texte(LARGEUR - 4, top + 13, valeur, ancre="end",
+                                classe="g-doux", taille=12))
     y += hauteur + 4
     corps.append(_ligne(x(ticks[0]), y, x(ticks[-1]), y, "g-axe", "#8a877f"))
-    for t in ticks[:: max(1, len(ticks) // 4)]:
-        corps.append(_texte(x(t), y + 15, format_(t).replace("+", ""), ancre="middle",
+    pas = ticks[1] - ticks[0]
+    echelle = 1e9 if format_ is milliards else 100.0
+    decimales = 0 if pas * (1 / 1e9 if format_ is milliards else 100) >= 1 else 1
+    for t in ticks[:: 2 if len(ticks) > 5 else 1]:
+        texte = fr(t / echelle if format_ is milliards else t * echelle, decimales)
+        corps.append(_texte(x(t), y + 15, texte.replace("+", ""), ancre="middle",
                             classe="g-doux", taille=12))
     corps.append(_texte(LARGEUR - 10, y + 31, unite, ancre="end", classe="g-doux", taille=12))
     return y + 40
@@ -317,7 +327,7 @@ def cascade(entry: dict[str, Any], *, ident: str, source: str) -> Graphique | No
     y = _titre(corps, titre, "Chaque barre part où la précédente s'arrête ; la barre grise "
                              "est le total.")
     y = _cascade_panneau(corps, y, f"Le coût de {nombres['premiere']}", nombres["cout"],
-                         (f"coût de {nombres['premiere']}", nombres["cout_total"]),
+                         (f"total {nombres['premiere']}", nombres["cout_total"]),
                          milliards, f"milliards d'euros de {nombres['premiere']}")
     y = _cascade_panneau(corps, y, f"La dette en {nombres['annee']}, à θ½, vue vieillie",
                          nombres["dette"], (f"Δ dette {nombres['annee']}",
@@ -488,9 +498,9 @@ def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
         corps.append(_ligne(52, y, LARGEUR - 14, y, "g-axe", "#8a877f"))
         for a in years:
             if (a - first) % 3 == 0 or a == last:
-                corps.append(_texte(x(a), y + 15, str(a), ancre="middle", classe="g-doux",
+                corps.append(_texte(x(a), y + 18, str(a), ancre="middle", classe="g-doux",
                                     taille=12))
-        y += 30
+        y += 34
     corps.append(_texte(LARGEUR - 12, y - 4, "année", ancre="end", classe="g-doux",
                         taille=12))
     y += 4
@@ -577,7 +587,7 @@ def deciles(entry: dict[str, Any], *, ident: str, source: str) -> Graphique | No
                             classe="g-doux", taille=12))
     corps.append(_texte(LARGEUR - 12, y + 31, f"euros par ménage et par an, {year}",
                         ancre="end", classe="g-doux", taille=12))
-    y += 40
+    y += 52
     corps.append(_texte(12, y - 4, "D1 : le dixième le plus modeste ; D10 : le plus aisé.",
                         classe="g-doux", taille=12))
     y += 6
@@ -631,7 +641,10 @@ def frise(mesures: Sequence[Mesure], *, debut: int, fin: int, ident: str,
     nombres = []
     for mesure in mesures:
         y += 4
-        for line in _couper(mesure.libelle, 50)[:2]:
+        lignes = _couper(mesure.libelle, 50)
+        if len(lignes) > 2:
+            lignes = [lignes[0], _court(lignes[1] + " " + lignes[2], 50)]
+        for line in lignes:
             corps.append(_texte(12, y + 12, line, gras=True))
             y += 16
         annees = mesure.annees or tuple(range(debut, fin + 1))
