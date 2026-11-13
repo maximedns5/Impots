@@ -11,5 +11,23 @@
       "scenario": "pres2027_tondelier_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "tranche_ir_60",
+      "scenario": "pres2027_tondelier_tranche_ir_60"
+    },
+    {
+      "mesure": "smic_2000_brut",
+      "scenario": "pres2027_tondelier_smic_2000_brut"
+    },
+    {
+      "mesure": "point_indice_inflation",
+      "scenario": "pres2027_tondelier_point_indice_inflation"
+    },
+    {
+      "mesure": "apl_plus_10",
+      "scenario": "pres2027_tondelier_apl_plus_10"
+    }
+  ]
 }

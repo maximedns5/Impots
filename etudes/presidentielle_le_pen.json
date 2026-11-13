@@ -11,5 +11,23 @@
       "scenario": "pres2027_le_pen_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "lp20_tva_energie",
+      "scenario": "pres2027_le_pen_lp20_tva_energie"
+    },
+    {
+      "mesure": "lp21_ir_moins_30_ans",
+      "scenario": "pres2027_le_pen_lp21_ir_moins_30_ans"
+    },
+    {
+      "mesure": "lp22_part_pleine_2e_enfant",
+      "scenario": "pres2027_le_pen_lp22_part_pleine_2e_enfant"
+    },
+    {
+      "mesure": "lp26_suppression_cvec",
+      "scenario": "pres2027_le_pen_lp26_suppression_cvec"
+    }
+  ]
 }

@@ -11,5 +11,35 @@
       "scenario": "pres2027_melenchon_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "point_indice_10",
+      "scenario": "pres2027_melenchon_point_indice_10"
+    },
+    {
+      "mesure": "indexation_pensions_prestations_10",
+      "scenario": "pres2027_melenchon_indexation_pensions_prestations_10"
+    },
+    {
+      "mesure": "smic_1700_net",
+      "scenario": "pres2027_melenchon_smic_1700_net"
+    },
+    {
+      "mesure": "garantie_autonomie_jeunes",
+      "scenario": "pres2027_melenchon_garantie_autonomie_jeunes"
+    },
+    {
+      "mesure": "suppression_pfu",
+      "scenario": "pres2027_melenchon_suppression_pfu"
+    },
+    {
+      "mesure": "exonerations_au_dela_2_smic",
+      "scenario": "pres2027_melenchon_exonerations_au_dela_2_smic"
+    },
+    {
+      "mesure": "defiscalisation_pensions_alimentaires",
+      "scenario": "pres2027_melenchon_defiscalisation_pensions_alimentaires"
+    }
+  ]
 }

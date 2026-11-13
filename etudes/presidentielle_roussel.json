@@ -11,5 +11,15 @@
       "scenario": "pres2027_roussel_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "tva_carburants_5_5",
+      "scenario": "pres2027_roussel_tva_carburants_5_5"
+    },
+    {
+      "mesure": "smic_plus_15",
+      "scenario": "pres2027_roussel_smic_plus_15"
+    }
+  ]
 }

@@ -11,5 +11,31 @@
       "scenario": "pres2027_retailleau_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "r13_zero_cotisation_1623_h",
+      "scenario": "pres2027_retailleau_r13_zero_cotisation_1623_h"
+    },
+    {
+      "mesure": "r15_revenu_incitation_activite",
+      "scenario": "pres2027_retailleau_r15_revenu_incitation_activite"
+    },
+    {
+      "mesure": "r19_gains_rendus_moitie",
+      "scenario": "pres2027_retailleau_r19_gains_rendus_moitie"
+    },
+    {
+      "mesure": "r21_c3s_cvae_forfait_social_cfe",
+      "scenario": "pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe"
+    },
+    {
+      "mesure": "r27_revenu_familial",
+      "scenario": "pres2027_retailleau_r27_revenu_familial"
+    },
+    {
+      "mesure": "r28_reduction_ir_interets_emprunt",
+      "scenario": "pres2027_retailleau_r28_reduction_ir_interets_emprunt"
+    }
+  ]
 }

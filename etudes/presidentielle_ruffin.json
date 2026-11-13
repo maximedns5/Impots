@@ -11,5 +11,15 @@
       "scenario": "pres2027_ruffin_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "credit_impot_domicile_travail",
+      "scenario": "pres2027_ruffin_credit_impot_domicile_travail"
+    },
+    {
+      "mesure": "smic_1600",
+      "scenario": "pres2027_ruffin_smic_1600"
+    }
+  ]
 }

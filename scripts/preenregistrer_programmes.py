@@ -251,12 +251,50 @@ def etudes() -> list[tuple[str, dict, dict]]:
         }
         if slug in REFUS:
             definition["refus"] = REFUS[slug]
+        elif len(chiffrees) > 1:
+            # Chaque mesure passe aussi seule, en entier (but 22) : sur le scénario de son
+            # cas. Un programme d'une seule mesure n'en a pas : sa part est cette mesure
+            # seule, et la passer deux fois redonnerait les mêmes nombres. Une étude
+            # refusée garde son refus, sans passe nouvelle (D-398).
+            definition["mesures"] = [
+                {"mesure": m.id, "scenario": etude.scenario_de_la_mesure(slug, m.id)}
+                for m in chiffrees]
         out.append((slug, scenario, definition))
+    return out
+
+
+#: Le jour où les scénarios seuls des mesures des entreprises sont écrits (but 22).
+CREATION_MESURES_ENTREPRISES = "2026-11-13"
+
+
+def scenarios_des_mesures_entreprises() -> list[dict]:
+    """Le scénario seul de chaque mesure des entreprises qu'une étude passe seule (but 22).
+    Une mesure des ménages a celui de son cas (`--ecrire`) ; une mesure des entreprises
+    n'avait que sa réforme, `reforms/<cas>.json` : son scénario la porte telle quelle, sans
+    réforme des ménages, pour que la première année et le chemin annuel la chiffrent."""
+    from impots import programmes as pg
+
+    out = []
+    for slug, _, definition in etudes():
+        p = pg.charger(slug)
+        for seule in definition.get("mesures", []):
+            m = next(x for x in p.chiffrees() if x.id == seule["mesure"])
+            if m.chiffrage.couche != "entreprises":
+                continue
+            out.append({"name": seule["scenario"], "year": p.annee,
+                        "created": CREATION_MESURES_ENTREPRISES, "source": source(p, m),
+                        "note": m.chiffrage.note,
+                        "tags": ["presidentielle_2027", slug, "mesure_seule"],
+                        "reform": {}, "firm_reform": dict(m.chiffrage.reforme)})
     return out
 
 
 def ecrire_etudes() -> list[Path]:
     ecrits = []
+    for doc in scenarios_des_mesures_entreprises():
+        path = ROOT / "scenarios" / f"{doc['name']}.json"
+        path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        ecrits.append(path)
     for _, scenario, definition in etudes():
         for path, doc in ((ROOT / "scenarios" / f"{scenario['name']}.json", scenario),
                           (ETUDES / f"{definition['nom']}.json", definition)):
