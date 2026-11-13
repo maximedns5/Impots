@@ -28840,3 +28840,24 @@ le magasin, par `python -m impots.predictif.annonce ecrire`, dans
 un fichier de données ; les pages les y lisent (`annonce.lue()`). Un test tient le rapport
 égal au magasin, là où les données sont. Sans les fichiers hors de git, `site verifier` et
 `site publiable` sont verts. Aucun nombre ne change : la page est la même.
+
+## D-400 — Le but 22 lancé : graphiques, mesures seules, créations d'entreprises
+
+**Le but** (BUT.md, but 22) : chaque étude se lit d'abord en graphiques, mesure par mesure
+et année par année. Trois chantiers, chacun dans son worktree, joints un à un sur
+`claude/but22` : (A) les graphiques en SVG, écrits par le code depuis les seuls rapports
+commités ; (B) chaque mesure chiffrée d'un programme passe aussi seule, en entier ; (C) un
+canal de créations d'entreprises, symétrique, avec un coefficient de productivité de 0 à
+1, qui entre dans la dette publiée.
+
+**Les décisions du propriétaire**, le 13 novembre 2026 : le SVG plutôt qu'une
+bibliothèque ; les mesures seules en entier, chemin annuel compris ; le canal des
+entreprises dans la dette publiée dès ce but, même sans source qui redonne un total
+publié. Les garde-fous de ce dernier choix sont écrits dans le but : l'élasticité et le
+coefficient central nommés, avec leur source et leur plage, dans une D-entrée
+préenregistrée avant la première passe ; une boîte θ de 0 à 1 ; chaque page dit que sa
+dette lit une hypothèse non validée et montre la dette sans ce canal.
+
+**Ce qui n'est pas lu.** Aucun chiffrage de tiers des programmes ou des mesures (règle
+des préenregistrements aveugles). La source du canal des entreprises est une élasticité
+de la littérature, pas le chiffrage d'un programme.
