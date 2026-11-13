@@ -45,15 +45,45 @@ def test_a_rise_and_a_cut_of_the_same_size_give_opposite_effects() -> None:
 
 
 def test_the_channel_reads_the_levies_on_firms_and_capital_only() -> None:
-    """No levy on firms or capital: zero, whatever else the reform moves. The employer
-    contributions, already in Mésange's loop, and the CDHR are not read."""
-    household = {"ir": -30e9, "csg_deductible": 4e9, "employer_contributions": -8e9,
+    """No levy on firms or capital and no employer contribution: zero, whatever else the
+    reform moves. The CDHR is not read, nor the gross `cotisations_employeur`."""
+    household = {"ir": -30e9, "csg_deductible": 4e9, "cotisations_employeur": -8e9,
                  "cdhr": -1e9, "tva_menages": 2e9}
     assert creations.prelevements(household, PARAMS) == 0.0
     zero = _effet(0.0)
     assert set(zero.pib) == {0.0} and set(zero.recettes) == {0.0}
-    both = {"impot_societes": -2e9, "cvae": -1e9, "pfu": 0.5e9, **household}
-    assert creations.prelevements(both, PARAMS) == pytest.approx(-2.5e9)
+    both = {"impot_societes": -2e9, "cvae": -1e9, "pfu": 0.5e9,
+            "cotisations_employeurs": -3e9, **household}
+    assert creations.prelevements(both, PARAMS) == pytest.approx(-5.5e9)
+
+
+def test_the_instruments_the_channel_reads_are_held() -> None:
+    """The owner's decisions of 13 November 2026: the employer contributions move the
+    channel, beside the IS, its contribution, the CEBGE, the production taxes, the PFU and
+    the social levies on capital. A change of this list is a change of the channel."""
+    assert PARAMS.instruments_entreprises == (
+        "impot_societes", "contribution_sociale_is", "cebge", "cvae", "c3s")
+    assert PARAMS.instruments_menages == (
+        "pfu", "prelevements_sociaux_capital", creations.COTISATIONS_EMPLOYEURS)
+    assert creations.COTISATIONS_EMPLOYEURS == "cotisations_employeurs"
+    assert "Mésange" in creations.DOUBLE_COMPTE and "propriétaire" in creations.DOUBLE_COMPTE
+
+
+def test_a_cut_of_employer_contributions_moves_the_channel_as_a_rise_does_opposite() -> None:
+    """A cut of the employer contributions makes companies, a rise unmakes as many, in the
+    pure channel and in the debt."""
+    cut = creations.prelevements({"cotisations_employeurs": -10e9}, PARAMS)
+    rise = creations.prelevements({"cotisations_employeurs": +10e9}, PARAMS)
+    assert cut == -10e9 and rise == +10e9
+    down, up = _effet(cut), _effet(rise)
+    assert all(g > 0 for g in down.pib)
+    assert np.allclose(down.pib, -np.array(up.pib), rtol=0, atol=1e-15)
+    lowered = _build(HALF, {"cotisations_employeurs": -10e9}, channel=True).aged
+    lifted = _build(HALF, {"cotisations_employeurs": +10e9}, channel=True).aged
+    fall = lowered.delta[-1] - lowered.delta_sans_creations[-1]
+    lift = lifted.delta[-1] - lifted.delta_sans_creations[-1]
+    assert fall < 0 < lift
+    assert lift == pytest.approx(-fall, rel=0.02)
 
 
 def test_the_effect_is_monotone_in_its_theta_and_off_at_zero() -> None:
@@ -89,7 +119,6 @@ def test_the_order_of_magnitude_of_a_ten_billion_cut_of_the_is() -> None:
 def test_the_declared_file_names_its_sources_and_no_report_reads_it_before_its_entry() -> None:
     assert PARAMS.elasticite == creations.Plage(centre=0.20, bas=0.043, haut=0.356)
     assert (PARAMS.productivite.bas, PARAMS.productivite.haut) == (0.0, 1.0)
-    assert "employer_contributions" not in PARAMS.instruments
     assert creations.depuis(creations.instantane(PARAMS)) == PARAMS
     text = creations.FICHIER.read_text(encoding="utf-8")
     assert "Da Rin, Di Giacomo et Sembenelli" in text and "tableau 4 p. 40" in text
@@ -208,5 +237,11 @@ def test_the_service_reads_the_levies_reform_minus_baseline() -> None:
     assert service.creations_household_levies(frame) == {"pfu": pytest.approx(90.0)}
     firm = {"impot_societes": -3e9, "cebge": 0.0, "prelevements_entreprise": -3e9}
     assert service.creations_firm_levies(firm) == {"impot_societes": -3e9}
+    # The employer contributions paid, net of the allègements, as the guard and the loop
+    # read them: never the gross column, which does not move with an allègement.
+    gross = frame.with_columns(pl.lit(10.0).alias("cotisations_employeur"),
+                               pl.lit(0.0).alias("cotisations_employeur_reform"))
+    assert service.creations_household_levies(gross, employer_contribution_delta=-4e9) == {
+        "pfu": pytest.approx(90.0), "cotisations_employeurs": -4e9}
     # A pass that kept no household frame is not read, rather than read as no levy.
     assert service.creations_household_levies(None) is None

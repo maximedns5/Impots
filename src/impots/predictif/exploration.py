@@ -71,8 +71,9 @@ class Priced:
     """Behaviour was asked for a firm reform alone, which no household channel reads: the
     path says so where `inputs` is None, rather than « non demandé » (D-268)."""
     prelevements: Mapping[str, float] | None = None
-    """The pass's deltas of the levies on firms and capital, euros, RECEIPTS POSITIVE, by
-    instrument: what the company-creations channel reads (but 22); None when not kept."""
+    """The pass's deltas of the levies on firms and capital, and of the employer
+    contributions paid, euros, RECEIPTS POSITIVE, by instrument: what the company-creations
+    channel reads (but 22); None when not kept."""
 
 
 def trajectory(at: Theta, priced: Priced, reform: Any, *, start: Start, horizon: int,

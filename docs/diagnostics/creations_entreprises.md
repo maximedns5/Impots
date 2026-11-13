@@ -95,9 +95,13 @@ Le tableau et la page sont à lire sur le document avant d'être cités dans la 
   effectif de prélèvement sur le profit, euro pour euro : une convention, dite.
 * **Cotisations employeurs.** Elles sont dans la boucle de Mésange, dont la variante
   « cotisations employeurs » porte déjà la réponse de l'activité au coût du travail, y
-  compris par les entreprises qui naissent ou disparaissent. Les ajouter ici les
-  compterait deux fois. Le canal ne les lit pas ; c'est le point que le propriétaire
-  peut reprendre.
+  compris par les entreprises qui naissent ou disparaissent. Le propriétaire a décidé le
+  13 novembre 2026 qu'elles font jouer le canal, comme l'IS : celles que la passe porte,
+  effectivement payées, nettes des allègements (`employer_contribution_delta`, que le garde
+  des secteurs et la boucle lisent ; jamais `cotisations_employeur`, brut des
+  allègements), converties en points de taux apparent comme les autres. Elles sont donc
+  comptées deux fois, par la boucle et par le canal : c'est un choix du propriétaire, que
+  chaque page dit.
 * **Dividendes et plus-values.** Le taux virtuel de l'IPP joint l'IS et le PFU ; Da Rin
   et al. ne lisent que l'IS. Le canal lit le PFU (la part de l'IR qu'est le prélèvement
   forfaitaire, `pfu` dans la passe) et les prélèvements sociaux du capital, ajoutés à la
@@ -134,7 +138,8 @@ national sous une condition, D-247 (M3) la calcule et la trouve manquée.
 Pour chaque année t de 2026 à 2035, la passe donne ΔP_t, la variation en euros des
 prélèvements sur les entreprises et le capital, RECETTES POSITIVES (une hausse est
 positive) : l'IS, sa contribution sociale, la CEBGE, la CVAE et la C3S de la couche
-entreprises, plus le PFU et les prélèvements sociaux du capital des ménages. Le canal ne
+entreprises, plus le PFU, les prélèvements sociaux du capital et les cotisations
+patronales nettes des allègements de la passe des ménages (décision du 13 novembre). Le canal ne
 lit que ces montants : ni le nom du candidat, ni le sens de la mesure.
 
 1. **Le taux apparent.** Δτ_t = 100 × ΔP_t / (b × Y_t), en points, b l'assiette en part
@@ -202,7 +207,8 @@ des effets opposés, au signe près et au même chiffre.
 * Il ne double pas `pib_is` : cet indice (Gechert et Heimberger) contient déjà les
   sociétés que l'IS fait naître (garde 7, D-247) et reste hors de la dette ; une page ne
   les additionne pas.
-* Il ne lit pas les cotisations employeurs (§1.5), ni la CDHR, ni la R&D (C9).
+* Il ne lit ni la CDHR, ni la R&D (C9). Il lit les cotisations patronales, que la boucle
+  lit aussi : un double compte décidé et dit (§1.5).
 * Il tient l'assiette en part du PIB : dans la vue figée, dont les euros ne suivent pas
   le PIB, un euro de 2035 pèse donc moins en taux apparent qu'un euro de 2026. C'est la
   même convention que la dette, qui divise aussi les euros figés par le PIB du scénario.
@@ -228,6 +234,13 @@ des effets opposés, au signe près et au même chiffre.
   entreprises tels qu'elle les chiffre, le PFU et les prélèvements sociaux du capital lus
   à part sur le cadre des ménages (`service.creations_household_levies`), sans toucher à
   l'agrégat ni au garde des secteurs.
-* Ce qui n'est pas branché : `impots etude lancer` ne passe pas encore `--creations`, ni
-  `/predictif/simulate`, ni la grille et les plages (première année reportée). Les pages
-  ne montrent pas encore la dette sans le canal ; c'est le chantier A ou la suite.
+* `impots etude lancer` passe `--creations` au chemin annuel de chaque ligne d'étude
+  (programme, PLF, PLFSS, mesures seules) ; la première année (la réponse du simulateur,
+  sans dette) et les plages (mécaniques, sans comportement ni boucle, que le canal refuse)
+  ne le lisent pas : le verdict et la boîte θ se lisent sur le chemin annuel, qui porte
+  aussi la première année reportée avec le canal. Ni `/predictif/simulate`, ni la grille.
+* La page d'étude dit, là où elle donne Δb et le verdict, que la dette lit une hypothèse
+  non validée, et donne la dette sans le canal à côté, la productivité et sa boîte θ,
+  l'élasticité et sa source, les instruments lus et le double compte ; la trajectoire
+  porte la dette sans le canal en trait distinct. Un rapport d'avant le canal rend sa page
+  comme avant.

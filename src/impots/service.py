@@ -1027,7 +1027,9 @@ def price_households(request: PopulationSimulateRequest, *, uprating: Any,
         impulse, uncovered = dict(built.by_instrument), built.reasons()
     return SimpleNamespace(cost=float(agg.reform_cost), inputs=inputs, impulse=impulse,
                            uncovered=uncovered, view=view,
-                           prelevements=creations_household_levies(result.households),
+                           prelevements=creations_household_levies(
+                               result.households,
+                               employer_contribution_delta=agg.employer_contribution_delta),
                            note=(first_year_note(request.year, uprating)
                                  if view == FIRST_YEAR_VIEW
                                  else frozen_year_note(request.year)),
@@ -1043,11 +1045,16 @@ def creations_firm_levies(deltas: dict[str, float]) -> dict[str, float]:
     return {name: float(deltas[name]) for name in names if deltas.get(name)}
 
 
-def creations_household_levies(frame: Any) -> dict[str, float] | None:
-    """The households' levies on capital the channel reads (the PFU, the social levies
-    on capital income), reform minus baseline, extrapolated like every total. The
-    households' aggregate does not total them — the PFU is a « dont » of `ir`, and the
-    sector guard is not this channel's — so they are read here, apart, and only for it."""
+def creations_household_levies(frame: Any, *, employer_contribution_delta: float = 0.0
+                               ) -> dict[str, float] | None:
+    """The household pass's levies the channel reads, reform minus baseline, extrapolated
+    like every total: the PFU and the social levies on capital income, read here apart —
+    the PFU is a « dont » of `ir`, and the households' aggregate does not total them — and
+    the employer contributions actually paid, net of the allègements, the very
+    `employer_contribution_delta` the sector guard and Mésange's loop read (owner's
+    decision of 13 November 2026: they move the channel too, a double count with the loop
+    that the page says). `cotisations_employeur` is gross of the allègements and is never
+    read (D-039)."""
     import numpy as np
 
     from impots.population.aggregate import extrapole
@@ -1059,6 +1066,10 @@ def creations_household_levies(frame: Any) -> dict[str, float] | None:
     weights = frame["weight"].to_numpy().astype(np.float64)
     out = {}
     for name in creations.charger().instruments_menages:
+        if name == creations.COTISATIONS_EMPLOYEURS:
+            if employer_contribution_delta:
+                out[name] = float(employer_contribution_delta)
+            continue
         if name in frame.columns and f"{name}_reform" in frame.columns:
             delta = (extrapole(frame, f"{name}_reform", weights)
                      - extrapole(frame, name, weights))

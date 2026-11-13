@@ -79,11 +79,19 @@ assiette_part_pib:
 instruments:
   # Ce que le canal lit de la passe, en euros, recettes positives. Rien d'autre : ni le
   # nom du candidat, ni le sens de la mesure.
+  #
+  # Décisions du propriétaire du 13 novembre 2026 :
+  # * les cotisations patronales font jouer le canal, comme l'IS. Ce sont celles que la
+  #   passe des ménages porte, effectivement payées, nettes des allègements, comme le garde
+  #   des secteurs et la boucle macro les comptent (`employer_contribution_delta`, jamais
+  #   `cotisations_employeur`, brut des allègements). Elles sont aussi dans la boucle de
+  #   Mésange, dont la variante « cotisations employeurs » porte déjà la réponse de
+  #   l'activité au coût du travail : ce double compte est un choix du propriétaire, que
+  #   chaque page dit ;
+  # * le PFU et les prélèvements sociaux du capital restent lus ; la CVAE et la C3S sont
+  #   lues euro pour euro comme l'IS. Conventions, dites sur la page.
   entreprises: [impot_societes, contribution_sociale_is, cebge, cvae, c3s]
-  menages: [pfu, prelevements_sociaux_capital]
+  menages: [pfu, prelevements_sociaux_capital, cotisations_employeurs]
   exclus:
-    employer_contributions: >
-      Dans la boucle de Mésange, dont la variante porte déjà la réponse de l'activité au
-      coût du travail : les lire ici les compterait deux fois.
     cdhr: >
       Elle porte sur tout le revenu des hauts revenus, pas sur le capital seul.

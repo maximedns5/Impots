@@ -11,7 +11,8 @@ THE PATH, year t, in shares of the reference's GDP Y_t:
 
 1. ΔP_t, the change of the levies on firms and capital the pass priced, euros, RECEIPTS
    POSITIVE (a rise is positive): the firm layer's IS, its social contribution, the CEBGE,
-   the CVAE, the C3S; the households' PFU and social levies on capital.
+   the CVAE, the C3S; the households' PFU and social levies on capital; and the employer
+   contributions actually paid, net of the allègements (`COTISATIONS_EMPLOYEURS`).
 2. The apparent rate, Δτ_t = 100 ΔP_t / (b Y_t), points, b the profit base as a share of
    GDP — not the authors' TMEE, which the project cannot rebuild (D-247).
 3. The entry rate, Δe_t = −ε Δτ_t, points, ε the slope of Da Rin, Di Giacomo and Sembenelli.
@@ -19,6 +20,13 @@ THE PATH, year t, in shares of the reference's GDP Y_t:
    Δe_s / 100 × S^(t−s) × min(1, (t − s + 1) / M) × r × c — survival S, ramp-up, relative size
    at maturity, relative productivity c.
 5. The GDP: y_t = that sum × s_VA. The receipts: y_t × ρ, ρ the start's receipts ratio.
+
+THE EMPLOYER CONTRIBUTIONS, A DOUBLE COUNT SAID. The owner decided on 13 November 2026
+that they move the channel, like the IS. They are also in Mésange's loop, whose
+« cotisations employeurs » variant already carries the activity's response to the labour
+cost: the channel counts them a second time, by the owner's choice, and every page says so
+(`DOUBLE_COMPTE`). The production taxes (CVAE, C3S) are read euro for euro like the IS,
+and the PFU and the social levies on capital stay in: conventions, said.
 
 READS INSTRUMENTS ONLY. Neither a candidate's name nor the direction of a measure: the
 effect is linear in ΔP, so a rise and a cut of the same size give opposite effects of the
@@ -54,9 +62,26 @@ CONVENTION = (
     "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des "
     "prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la "
     "pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur "
-    "leur taux effectif ; les sociétés nouvelles survivent, montent en charge et produisent "
+    "leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la "
+    "boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent "
     "à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; "
     "la dette sans ce canal est donnée à côté.")
+#: The employer contributions the channel reads: those actually paid, net of the
+#: allègements, as the sector guard and Mésange's loop count them
+#: (`aggregate.employer_contribution_delta`), never the gross `cotisations_employeur`.
+COTISATIONS_EMPLOYEURS = "cotisations_employeurs"
+#: What a page says of them beside the channel (owner's decision, 13 November 2026).
+DOUBLE_COMPTE = (
+    "Les cotisations patronales font jouer le canal, comme l'IS : elles sont aussi dans "
+    "la boucle macro de Mésange, dont la variante « cotisations employeurs » porte déjà la "
+    "réponse de l'activité au coût du travail. Ce double compte est un choix du "
+    "propriétaire (13 novembre 2026), dit ici plutôt que caché.")
+#: The conventions of the other instruments, said beside the list.
+CONVENTIONS_INSTRUMENTS = (
+    "Les impôts de production (CVAE, C3S) sont lus euro pour euro comme l'IS, faute "
+    "d'une estimation publiée de la réponse des créations à ces impôts ; le PFU et les "
+    "prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, "
+    "comme le taux virtuel de l'IPP qui joint l'IS et le PFU.")
 #: The reason the chain's « créations d'entreprises » carries when the channel is read.
 RAISON_DANS_LA_DETTE = (
     "Canal ouvert dans la dette (but 22), hypothèse non validée : C8 reste l'indice de la "
