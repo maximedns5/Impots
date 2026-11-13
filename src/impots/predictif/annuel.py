@@ -60,7 +60,7 @@ from impots.dette.scenarios import GrowthScenario, RateScenario
 from impots.predictif import chaine, comportement, exploration, retroaction
 from impots.predictif import theta as theta_module
 from impots.predictif.exploration import MONOTONE_SLACK, Priced
-from impots.predictif.theta import MACRO_ROW, Theta, ThetaError
+from impots.predictif.theta import CREATIONS_ROW, MACRO_ROW, Theta, ThetaError
 from impots.uprating import Uprating
 
 VIEWS = ("figee", "vieillie")
@@ -200,6 +200,11 @@ class Rapport:
     """What the replay reads beside the headline (D-349): the decomposition, Mésange's
     alternative wage formation with its box and distribution, the added debt at a
     market rate; None without the loop."""
+    creations: dict[str, Any] | None = None
+    """The company-creations channel when the paths read it (but 22): its parameters, by
+    persistence and view its effect year by year, its box, and the DEBT WITHOUT IT, which
+    every page shows beside the debt that reads an unvalidated hypothesis; None when the
+    paths do not read it."""
 
     @property
     def aged(self) -> chaine.Trajectoire:
@@ -247,6 +252,8 @@ class Rapport:
             extra["monte_carlo"] = self.monte_carlo
         if self.lectures is not None:
             extra["lectures"] = self.lectures
+        if self.creations is not None:
+            extra["creations"] = self.creations
         return {
             **extra,
             "scenario": self.scenario, "titre": self.titre, "source": self.source,
@@ -292,12 +299,14 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
           store: Any = None, macro_store: Any = None,
           firm_note: str | None = None, commit: str | None = None,
           dirty: bool | None = None, where: str | None = None,
-          annees: tuple[int, ...] = ()) -> Rapport:
+          annees: tuple[int, ...] = (), creations: Any = None) -> Rapport:
     """The debt paths from the priced years. No carry: every year must be priced.
 
     With `behavioural` or `macro`, every year must carry its whole pass (`YearPrice.passes`)
     and `reform` the reform the channels claim knobs from. With a firm layer, `firm_note`
-    names how it was priced, and is refused without one."""
+    names how it was priced, and is refused without one. `creations`, the channel's
+    `creations.Parametres`, puts the company-creations channel in every path (but 22):
+    each year's passes must carry their levies, and its θ joins the box."""
     check_coherence(uprating, growth)
     if not prices:
         raise DebtError("aucune année chiffrée : un rapport sans chiffrage n'a rien à dire")
@@ -324,6 +333,30 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
         if looped and len(prices) > retroaction.max_horizon(macro_store) else [None])
 
     claimed_store = store if store is not None else comportement.load()
+    variations: dict[str, dict[int, float]] = {}
+    if creations is not None:
+        from impots.predictif import creations as creations_module
+
+        if not whole:
+            raise DebtError("créations d'entreprises sans comportement ni boucle : le canal "
+                            "lit les prélèvements de chaque passe entière (but 22)")
+        bare = sorted({p.year for p in prices for one in p.passes.values()
+                       if getattr(one, "prelevements", None) is None})
+        if bare:
+            raise DebtError(f"créations d'entreprises demandées, et les passes de {bare} ne "
+                            f"portent pas leurs prélèvements : elles se liraient comme des "
+                            f"années qui n'en changent aucun")
+        variations = {view: {p.year: creations_module.prelevements(
+            p.passes[view].prelevements, creations) for p in prices} for view in VIEWS}
+
+    def canal(view: str, at: Theta) -> Any:
+        """The view's creations channel at `at`, or None when the paths do not read it."""
+        if creations is None:
+            return None
+        from impots.predictif import creations as creations_module
+
+        return creations_module.Canal(variations=variations[view],
+                                      theta=at.for_row(CREATIONS_ROW), params=creations)
 
     def receipts_at(at: Theta, cost: float, one: Priced) -> comportement.AtTheta:
         """A corner's receipts, its box collapsed to them, as the explorer reads one."""
@@ -387,7 +420,8 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
     def path(view: str, persistence: str | None) -> chaine.Trajectoire:
         return chaine.run(start, horizon=len(prices), costs=at_theta(view), spending=spending,
                           growth=growth, rate=rate, theta=theta, securities=securities,
-                          store=store, persistence=persistence, macro_store=macro_store)
+                          store=store, persistence=persistence, macro_store=macro_store,
+                          creations=canal(view, theta))
 
     paths = tuple(Path(persistence=p, aged=path("vieillie", p), frozen=path("figee", p))
                   for p in persistences)
@@ -400,7 +434,7 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
                 at, prices[0].passes[view], reform, start=start, horizon=len(prices),
                 spending=spending, growth=growth, rate=rate, store=claimed_store,
                 macro_store=macro_store, persistence=persistence,
-                securities=securities).delta[-1]
+                securities=securities, creations=creations).delta[-1]
         # A corner's costs do not depend on the persistence: priced once per view.
         key = (view, tuple(sorted(at.rows.items())), at.common)
         if key not in at_corner:
@@ -408,7 +442,8 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
         return chaine.run(start, horizon=len(prices), costs=at_corner[key],
                           spending=spending, growth=growth, rate=rate, theta=at,
                           securities=securities, store=claimed_store,
-                          persistence=persistence, macro_store=macro_store).delta[-1]
+                          persistence=persistence, macro_store=macro_store,
+                          creations=canal(view, at)).delta[-1]
 
     box = None
     if whole:
@@ -417,6 +452,8 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
                 else [])
         if macro and looped:
             keys.append(MACRO_ROW)
+        if creations is not None:
+            keys.append(CREATIONS_ROW)
         if keys:
             box = _theta_box(keys, paths, year=prices[-1].year, theta=theta, debt=debt)
     statistiques = rejeu = monte = lectures = None
@@ -429,6 +466,14 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
                      if behavioural else ()),
             store=claimed_store, macro_store=macro_store, statistiques=statistiques,
             box_rows=box["rows"] if box else [])
+        if creations is not None:
+            from impots.predictif import creations as creations_module
+
+            rejeu["creations"] = {
+                "theta": theta.for_row(CREATIONS_ROW),
+                "parametres": creations_module.instantane(creations),
+                "variations": {view: [variations[view][p.year] for p in prices]
+                               for view in VIEWS}}
         if box:
             from impots.predictif import montecarlo
 
@@ -440,12 +485,35 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
             monte = montecarlo.run(payload)
             if looped:
                 lectures = _lectures(payload, {k: theta.for_row(k) for k in box["rows"]})
+    channel = (_creations_reading(creations, paths, variations) if creations is not None
+               else None)
     return Rapport(scenario=scenario, titre=titre, source=source, reference=reference,
                    computed=computed, start=start, prices=tuple(prices), paths=paths,
                    uprating_note=uprating_note, behavioural=behavioural, macro=macro,
                    firm_note=firm_note, theta_box=box, commit=commit, dirty=dirty,
                    where=where, annees=tuple(annees), statistiques=statistiques,
-                   rejeu=rejeu, monte_carlo=monte, lectures=lectures)
+                   rejeu=rejeu, monte_carlo=monte, lectures=lectures, creations=channel)
+
+
+def _creations_reading(params: Any, paths: tuple[Path, ...],
+                       variations: dict[str, dict[int, float]]) -> dict[str, Any]:
+    """The channel as the report carries it (but 22): the declared parameters and the
+    D-entry that fixed them, the levies it read, and by persistence and view its effect,
+    its box and the debt without it."""
+    from impots.predictif import creations as creations_module
+
+    return {
+        "convention": creations_module.CONVENTION,
+        "parametres": creations_module.instantane(params),
+        "prelevements_eur": {view: {str(y): v for y, v in by_year.items()}
+                             for view, by_year in variations.items()},
+        "chemins": [{
+            "persistence": path.persistence,
+            **{view: {**drawn.creations,
+                      "delta_sans_creations": list(drawn.delta_sans_creations)}
+               for view, drawn in (("vieillie", path.aged), ("figee", path.frozen))},
+        } for path in paths],
+    }
 
 
 #: The market rate the added debt is charged at, in sensitivity: a declared hypothesis,
@@ -469,6 +537,12 @@ def _lectures(payload: dict[str, Any], theta: dict[str, float]) -> dict[str, Any
         out["taux_marche"][view] = float(rejouer.at_theta(
             payload, theta, view=view, persistence=rejouer.READ,
             marginal=TAUX_MARCHE).delta[-1])
+    if payload["rejeu"].get("creations"):
+        # The debt without the company-creations channel, at θ, beside the headline that
+        # reads it (but 22): the same replay, the channel left out.
+        out["creations_sans_canal"] = {view: float(rejouer.at_theta(
+            payload, theta, view=view, persistence=rejouer.READ,
+            creations=False).delta[-1]) for view in views}
     tables = payload["rejeu"]["macro"]["instruments"] if payload["rejeu"]["macro"] else {}
     if any("pib_salariale" in t for t in tables.values()):
         out["variante_salariale"] = {

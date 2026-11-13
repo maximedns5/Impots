@@ -960,6 +960,8 @@ def price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
     return SimpleNamespace(
         cost=households.cost + firm.cost, inputs=households.inputs,
         impulse=households.impulse,
+        prelevements={**getattr(households, "prelevements", {}),
+                      **creations_firm_levies(firm.deltas)},
         uncovered=({**households.uncovered, **dict.fromkeys(firm.deltas, FIRM_NO_VARIANT)}
                    if macro else {}),
         view=view, note=" ".join(n for n in (households.note, firm.note) if n),
@@ -1024,10 +1026,41 @@ def price_households(request: PopulationSimulateRequest, *, uprating: Any,
         impulse, uncovered = dict(built.by_instrument), built.reasons()
     return SimpleNamespace(cost=float(agg.reform_cost), inputs=inputs, impulse=impulse,
                            uncovered=uncovered, view=view,
+                           prelevements=creations_household_levies(result.households),
                            note=(first_year_note(request.year, uprating)
                                  if view == FIRST_YEAR_VIEW
                                  else frozen_year_note(request.year)),
                            deciles=list(agg.deciles))
+
+
+def creations_firm_levies(deltas: dict[str, float]) -> dict[str, float]:
+    """The firm layer's deltas the company-creations channel reads (but 22), euros,
+    receipts positive: the layer reports each tax's reform minus baseline."""
+    from impots.predictif import creations
+
+    names = creations.charger().instruments_entreprises
+    return {name: float(deltas[name]) for name in names if deltas.get(name)}
+
+
+def creations_household_levies(frame: Any) -> dict[str, float]:
+    """The households' levies on capital the channel reads (the PFU, the social levies
+    on capital income), reform minus baseline, extrapolated like every total. The
+    households' aggregate does not total them — the PFU is a « dont » of `ir`, and the
+    sector guard is not this channel's — so they are read here, apart, and only for it."""
+    import numpy as np
+
+    from impots.population.aggregate import extrapole
+    from impots.predictif import creations
+
+    weights = frame["weight"].to_numpy().astype(np.float64)
+    out = {}
+    for name in creations.charger().instruments_menages:
+        if name in frame.columns and f"{name}_reform" in frame.columns:
+            delta = (extrapole(frame, f"{name}_reform", weights)
+                     - extrapole(frame, name, weights))
+            if delta:
+                out[name] = float(delta)
+    return out
 
 
 def predictif_hypotheses(request: Any) -> Any:

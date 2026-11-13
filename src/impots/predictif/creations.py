@@ -16,7 +16,7 @@ THE PATH, year t, in shares of the reference's GDP Y_t:
    GDP — not the authors' TMEE, which the project cannot rebuild (D-247).
 3. The entry rate, Δe_t = −ε Δτ_t, points, ε the slope of Da Rin, Di Giacomo and Sembenelli.
 4. The cohorts: cohort s adds to year t ≥ s, as a share of the companies' value added,
-   Δe_s / 100 × σ^(t−s) × min(1, (t − s + 1) / M) × r × c — survival, ramp-up, relative size
+   Δe_s / 100 × S^(t−s) × min(1, (t − s + 1) / M) × r × c — survival S, ramp-up, relative size
    at maturity, relative productivity c.
 5. The GDP: y_t = that sum × s_VA. The receipts: y_t × ρ, ρ the start's receipts ratio.
 
@@ -42,10 +42,12 @@ from typing import Any
 
 import yaml
 
+from impots.predictif.theta import CREATIONS_ROW
+
 FICHIER = Path(__file__).resolve().parent / "parameters" / "creations_entreprises.yaml"
 
 #: The channel's θ row, named beside the household rows and the multiplier.
-LIGNE_THETA = "productivite_creations"
+LIGNE_THETA = CREATIONS_ROW
 
 #: What every path that reads the channel says beside its debt (but 22).
 CONVENTION = (
@@ -143,6 +145,34 @@ def charger(chemin: Path | None = None, *, exiger_entree: bool = False) -> Param
         instruments_entreprises=tuple(data["instruments"]["entreprises"]),
         instruments_menages=tuple(data["instruments"]["menages"]),
         preenregistrement=str(entree) if entree else None)
+
+
+def instantane(params: Parametres) -> dict[str, Any]:
+    """The parameters as a report carries them, so that a replay reads no file."""
+    return {"elasticite": vars(params.elasticite).copy(),
+            "productivite": vars(params.productivite).copy(),
+            "survie_annuelle": params.survie_annuelle,
+            "montee_en_charge_ans": params.montee_en_charge_ans,
+            "taille_relative": params.taille_relative,
+            "part_va_societes_pib": params.part_va_societes_pib,
+            "assiette_part_pib": params.assiette_part_pib,
+            "instruments_entreprises": list(params.instruments_entreprises),
+            "instruments_menages": list(params.instruments_menages),
+            "preenregistrement": params.preenregistrement}
+
+
+def depuis(data: Mapping[str, Any]) -> Parametres:
+    """`instantane` read back."""
+    return Parametres(
+        elasticite=Plage(**data["elasticite"]), productivite=Plage(**data["productivite"]),
+        survie_annuelle=float(data["survie_annuelle"]),
+        montee_en_charge_ans=int(data["montee_en_charge_ans"]),
+        taille_relative=float(data["taille_relative"]),
+        part_va_societes_pib=float(data["part_va_societes_pib"]),
+        assiette_part_pib=float(data["assiette_part_pib"]),
+        instruments_entreprises=tuple(data["instruments_entreprises"]),
+        instruments_menages=tuple(data["instruments_menages"]),
+        preenregistrement=data.get("preenregistrement"))
 
 
 def productivite_a(theta: float, params: Parametres) -> float:
