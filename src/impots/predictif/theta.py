@@ -45,6 +45,10 @@ from impots.behavioural.store import Parameter, Store
 #: The θ of the macro multiplier, named beside the behavioural rows (D-218). Not a row of
 #: the behavioural store: its range is the Mésange centre ∓ one IMK standard deviation.
 MACRO_ROW = "multiplicateur_macro"
+#: The θ of the company-creations channel's relative productivity, 0 to 1 (but 22). Not a
+#: row of the behavioural store either: no verifier vouches for it, it is a declared
+#: hypothesis (`predictif.creations`).
+CREATIONS_ROW = "productivite_creations"
 
 
 class ThetaError(ValueError):
@@ -121,7 +125,7 @@ class Theta:
         apply the common θ instead — refused by name (the D-092 lesson: refuse what is
         not recognised)."""
         unknown = sorted(set(self.rows) - {k for k, p in store.parameters.items()
-                                           if p.is_open} - {MACRO_ROW})
+                                           if p.is_open} - {MACRO_ROW, CREATIONS_ROW})
         if unknown:
             raise ThetaError(f"θ pour des lignes inconnues ou fixes : {unknown}")
 

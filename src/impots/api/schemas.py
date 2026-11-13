@@ -2687,6 +2687,9 @@ class PredictifReportResponse(BaseModel):
     """Beside the headline (D-349): the decomposition, the alternative wage formation,
     the added debt at a market rate."""
     """The distribution of Δb at the last year under declared laws (D-336)."""
+    creations: dict[str, Any] | None = None
+    """The company-creations channel and the debt without it, when the paths read it
+    (but 22)."""
     commit: str | None = None
     dirty: bool | None = None
     where: str | None = None

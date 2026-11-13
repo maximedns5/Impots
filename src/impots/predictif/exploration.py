@@ -70,12 +70,15 @@ class Priced:
     behaviour_asked: bool = False
     """Behaviour was asked for a firm reform alone, which no household channel reads: the
     path says so where `inputs` is None, rather than « non demandé » (D-268)."""
+    prelevements: Mapping[str, float] | None = None
+    """The pass's deltas of the levies on firms and capital, euros, RECEIPTS POSITIVE, by
+    instrument: what the company-creations channel reads (but 22); None when not kept."""
 
 
 def trajectory(at: Theta, priced: Priced, reform: Any, *, start: Start, horizon: int,
                spending: SpendingScenario, growth: GrowthScenario, rate: RateScenario,
                store: Store, macro_store: Any = None, persistence: str | None = None,
-               securities: list[Any] | None = None) -> Any:
+               securities: list[Any] | None = None, creations: Any = None) -> Any:
     """The chain's path for one view of one bundle at `at`: the first year priced, the
     rest carried. The evaluator reads Δb_T off it; the search, the §7 indices."""
     first = start.year + 1
@@ -91,9 +94,24 @@ def trajectory(at: Theta, priced: Priced, reform: Any, *, start: Start, horizon:
         impulses=({first: dict(priced.impulse)} if priced.impulse is not None else None),
         uncovered=dict(priced.uncovered),
         behaviour_asked=getattr(priced, "behaviour_asked", False))
+    canal = None
+    if creations is not None:
+        # The company-creations channel (but 22), its first year carried like the cost.
+        from impots.predictif import creations as creations_module
+        from impots.predictif.theta import CREATIONS_ROW
+
+        if priced.prelevements is None:
+            raise chaine.DebtError("créations d'entreprises demandées, et la passe ne porte "
+                                   "pas ses prélèvements : elle se lirait comme une "
+                                   "réforme qui n'en change aucun")
+        canal = creations_module.Canal(
+            variations={first: creations_module.prelevements(priced.prelevements,
+                                                             creations)},
+            theta=at.for_row(CREATIONS_ROW), params=creations)
     return chaine.run(start, horizon=horizon, costs=costs, spending=spending,
                       growth=growth, rate=rate, theta=at, securities=securities,
-                      store=store, persistence=persistence, macro_store=macro_store)
+                      store=store, persistence=persistence, macro_store=macro_store,
+                      creations=canal)
 
 
 def corner_label(corner: Theta, keys: list[str]) -> str:

@@ -37,6 +37,8 @@ import numpy as np
 
 #: The key of the multiplier's θ, as `theta.MACRO_ROW`.
 MACRO_ROW = "multiplicateur_macro"
+#: The key of the creations channel's θ, as `theta.CREATIONS_ROW` (but 22).
+CREATIONS_ROW = "productivite_creations"
 READ = "lue"
 PERSISTENCES = ("lue", "eteint", "tenu")
 VIEWS = {"vieillie": "mechanical_aged_eur", "figee": "mechanical_frozen_eur"}
@@ -234,13 +236,18 @@ BOUCLES = ("complete", "denominateur", "aucune")
 def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
            z: Any, persistence: str | None, variante: str | None = None,
            boucle: str = "complete", marginal: float | None = None,
-           ajout: Mapping[str, Sequence[Any]] | None = None) -> Chemin:
+           ajout: Mapping[str, Sequence[Any]] | None = None,
+           creations: bool = True) -> Chemin:
     """One view's Δb path at the row values `values` and the multiplier shift `z`. With
     `variante`, the multiplier reads Mésange's alternative wage formation; `boucle` keeps
     the whole loop, its GDP gap alone, or none; `marginal` charges the added debt at
     another rate than the report's (D-349). `ajout` adds, year by year, a primary
     balance, a feedback and a GDP gap the report does not hold (« primaire »,
-    « retroaction », « pib », shares of GDP): the announced savings, read apart (D-380)."""
+    « retroaction », « pib », shares of GDP): the announced savings, read apart (D-380).
+    A report whose `rejeu` carries « creations » reads the company-creations channel
+    (but 22) in every reading, its receipts in the primary balance and its GDP in the
+    gap, at the θ of `values` or the report's; `creations=False` gives the debt without
+    it."""
     if boucle not in BOUCLES:
         raise ReplayError(f"boucle « {boucle} » inconnue ({BOUCLES})")
     rejeu = _rejeu(payload)
@@ -276,6 +283,11 @@ def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
             phi = [0.0] * horizon
     else:
         gap = phi = [0.0] * horizon
+    if creations and rejeu.get("creations"):
+        firms = _creations(rejeu, view=view, values=values, gdp=gdp, years=years,
+                           carried=carried)
+        primary = [p + r for p, r in zip(primary, firms.recettes, strict=True)]
+        gap = [g + m for g, m in zip(gap, firms.pib, strict=True)]
     if ajout is not None:
         if boucle != "complete":
             raise ReplayError("un ajout se lit sur la boucle complète seule")
@@ -289,6 +301,21 @@ def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
         delta.append((refs[k] + debt) / (1.0 + gap[k]) - refs[k])
     return Chemin(years=years, reference=tuple(refs), delta=delta, gdp_gap=gap,
                   feedback=phi, primary=primary)
+
+
+def _creations(rejeu: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
+               gdp: Sequence[float], years: Sequence[int], carried: bool) -> Any:
+    """The creations channel as `chaine.run` reads it, from the report alone."""
+    from impots.predictif import creations as module
+
+    block = rejeu["creations"]
+    params = module.depuis(block["parametres"])
+    c = module.productivite_a(values.get(module.LIGNE_THETA, block["theta"]), params)
+    variations = [float(v) for v in block["variations"][view]]
+    if carried:
+        variations = [variations[0] / gdp[0] * y for y in gdp]
+    return module.effet(variations, gdp, years, c=c, params=params,
+                        receipts_ratio=rejeu["start"]["receipts_ratio"])
 
 
 def _rejeu(payload: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -307,6 +334,8 @@ def theta_values(payload: Mapping[str, Any], theta: Mapping[str, float]) -> tupl
     multiplier, every claimed row named."""
     rejeu = _rejeu(payload)
     values = {key: value_at(row, theta[key]) for key, row in rejeu["lignes"].items()}
+    if CREATIONS_ROW in theta:
+        values[CREATIONS_ROW] = float(theta[CREATIONS_ROW])
     z = 2.0 * float(theta[MACRO_ROW]) - 1.0 if MACRO_ROW in theta else 0.0
     return values, z
 

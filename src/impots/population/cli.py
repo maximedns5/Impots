@@ -1478,6 +1478,15 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                               layers={"menages": households, "entreprises": firms})
 
     years = list(range(start.year + 1, start.year + 1 + args.horizon))
+    creations_params = None
+    if getattr(args, "creations", False):
+        from impots.predictif import creations as creations_module
+
+        try:
+            creations_params = creations_module.charger(exiger_entree=True)
+        except creations_module.CreationsError as error:
+            print(str(error), file=sys.stderr)
+            return 1
     store = macro_store = None
     if whole:
         from impots.behavioural.store import load as load_store
@@ -1497,6 +1506,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                 # of the measure's kind, a firm reform alone (D-288).
                 return Priced(cost=0.0, impulse={} if args.macro else None,
                               layers={"menages": 0.0, "entreprises": 0.0},
+                              prelevements={},
                               behaviour_asked=args.behavioural)
             print(f"  {year} · {view} · passe du simulateur…", flush=True)
             _liberer()
@@ -1511,6 +1521,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
                           uncovered=dict(first.uncovered),
                           layers=getattr(first, "layers", None),
+                          prelevements=getattr(first, "prelevements", None),
                           behaviour_asked=getattr(first, "behaviour_asked", False))
     try:
         prices = annuel.price_years(years, price,
@@ -1525,7 +1536,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             persistence=args.persistence, store=store, macro_store=macro_store,
             firm_note=(service.firm_report_note(scenario.firm_reform, years) if firm_part
                        else None), commit=commit, dirty=dirty, where=args.ou,
-            annees=scenario.annees)
+            annees=scenario.annees, creations=creations_params)
     except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
             maturite.MaturityError, retroaction.FeedbackError) as error:
         print(str(error), file=sys.stderr)
@@ -2326,6 +2337,11 @@ def build_parser() -> argparse.ArgumentParser:
                            help="the GDP → receipts loop, one impulse per year (D-236)")
     predictif.add_argument("--ou", help="where the passes run, which the report says "
                            "(D-275)")
+    predictif.add_argument(
+        "--creations", action="store_true",
+        help="Le canal des créations d'entreprises dans la dette (but 22) : refusé tant "
+             "que sa D-entrée préenregistrée n'est pas nommée dans son fichier de "
+             "paramètres. La dette sans lui est portée à côté.")
     predictif.add_argument("--persistence", choices=["lue", "eteint", "tenu"],
                            help="past three years with the loop; all three side by side if absent")
     predictif.set_defaults(func=cmd_predictif)
