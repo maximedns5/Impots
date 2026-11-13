@@ -161,13 +161,13 @@ def test_the_store_s_rows_are_the_ones_mesange_prints() -> None:
 def test_the_page_shows_it_beside_the_debt_and_changes_nothing_else() -> None:
     """D-319, D-380. Sous son titre, après la dette de la part chiffrée et avant l'écart au
     chiffrage officiel ; à 0 %, la dette du tableau ; le reste de la page, en-bref et
-    verdict compris, est celui de la page sans la lecture. Éteinte par défaut : les pages
-    publiées ne la portent pas avant la série du but."""
+    verdict compris, est celui de la page sans la lecture. Ouverte dans chaque étude de
+    programme depuis la série du but 21 (D-394) : la page publiée la porte."""
     study = etude.definition("presidentielle_retailleau")
-    assert study.dette_annoncee is False
+    assert study.dette_annoncee is True
     entries = study.load()
-    sans = study.render(entries)
-    avec = etude.replace(study, dette_annoncee=True).render(entries)
+    sans = etude.replace(study, dette_annoncee=False).render(entries)
+    avec = study.render(entries)
     titre = "### La dette en 2035, si les économies annoncées sont tenues"
     assert titre not in sans
     debut = avec.index(titre)

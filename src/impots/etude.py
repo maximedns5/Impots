@@ -2736,8 +2736,14 @@ class Etude:
 
     def drift(self) -> str | None:
         """Why the committed page is not what the committed reports render, or None. A
-        study whose passes have not run has neither reports nor page; a run one has both."""
+        study whose passes have not run has neither reports nor page; a run one has both;
+        a refused one (D-398) has its reports and no page, its path refused by a guard."""
         reports = self.rapports.exists() and any(self.rapports.glob("*.json"))
+        if self.refus:
+            if self.page.exists():
+                return (f"{_relative(self.page)} existe pour une étude refusée : son chemin "
+                        f"annuel n'a pas de rapport, et la page dirait ce qu'aucun ne dit.")
+            return None
         if not reports and not self.page.exists():
             return None
         if not self.page.exists():

@@ -1729,7 +1729,9 @@ def cmd_etude(args: argparse.Namespace) -> int:
     if why:
         print(why, file=sys.stderr)
         return 1
-    print(f"{study.page} : la page est celle de ses rapports." if study.page.exists() else
+    print(f"« {study.nom} » : chiffrée, puis refusée, sans page : {study.refus}"
+          if study.refus else
+          f"{study.page} : la page est celle de ses rapports." if study.page.exists() else
           f"« {study.nom} » : ni rapports ni page, ses passes n'ont pas tourné.")
     return 0
 
