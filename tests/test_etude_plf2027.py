@@ -115,7 +115,11 @@ def test_the_annual_paths_take_the_study_s_frame_field_for_field(study) -> None:
         args = cli.build_parser().parse_args(study.annual_argv(name, where="ici"))
         assert args.func is cli.cmd_predictif and args.scenario == name
         assert args.out_dir == str(study.rapports) and args.ou == "ici"
-        assert _frame(args) == {**_frame(frame), "dir": str(study.scenarios)}
+        # The frame, field for field; and the company-creations channel, which every
+        # study line reads since the but 22 (D-400), the frame's own command not.
+        assert not frame.creations and args.creations
+        assert _frame(args) == {**_frame(frame), "dir": str(study.scenarios),
+                                "creations": True}
         assert args.behavioural and args.macro and args.horizon == 10
 
 

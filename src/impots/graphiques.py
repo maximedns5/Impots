@@ -43,6 +43,8 @@ POLICE = 13
 TOLERANCE_REJEU = 1e-9
 PERSISTANCES = {"lue": "lue", "eteint": "éteinte", "tenu": "tenue"}
 VUES = {"vieillie": "vieillie", "figee": "figée"}
+#: Le trait de la dette sans le canal des créations d'entreprises (but 22, D-400).
+SANS_CANAL = "2 2 8 2"
 #: Une persistance, sa couleur et son trait ; la vue figée est en traits plus fins.
 SERIES = {"lue": ("g-s1", "#2a78d6", ""), "eteint": ("g-s2", "#eb6834", "6 4"),
           "tenu": ("g-s3", "#1baf7a", "2 3")}
@@ -425,6 +427,18 @@ def trajectoire_nombres(entry: dict[str, Any],
         bande[name] = [(min(col), max(col)) for col in zip(*per, strict=True)]
     out = {"annees": years, "series": series, "bande": bande, "coins": len(coins),
            "annonce": None}
+    if path.get("creations") is not None:
+        # The debt without the company-creations channel (but 22, D-400), vue vieillie,
+        # persistance « lue », at θ: the replay with the channel left out, refused unless
+        # it gives again the path the chain drew beside the debt.
+        sans = rejouer.at_theta(path, theta, view="vieillie", persistence="lue",
+                                creations=False).delta
+        chemin = next(c for c in path["creations"]["chemins"] if c["persistence"] == "lue")
+        for k, want in enumerate(chemin["vieillie"]["delta_sans_creations"]):
+            if abs(float(sans[k]) - want) > TOLERANCE_REJEU:
+                raise GraphiqueError(f"{entry['name']} : le rejeu ne redonne pas la dette "
+                                     f"sans le canal des créations, {years[k]}.")
+        out["sans_canal"] = [sign * float(v) for v in sans]
     if annonce is not None:
         if len(annonce) != len(years):
             raise GraphiqueError(f"{entry['name']} : la dette annoncée n'a pas une valeur "
@@ -463,6 +477,11 @@ def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
         corps.append(_ligne(12, y + 6, 34, y + 6, "g-s4", "#6250d6", 3, "8 3 2 3"))
         corps.append(_texte(38, y + 10, "si les économies annoncées sont tenues"))
         y += 18
+    sans_canal = nombres.get("sans_canal")
+    if sans_canal is not None:
+        corps.append(_ligne(12, y + 6, 34, y + 6, "g-zero", "#52514e", 2, SANS_CANAL))
+        corps.append(_texte(38, y + 10, "dette sans le canal des créations"))
+        y += 18
     y += 6
     x = Echelle(first, last, 52, LARGEUR - 14)
     for name, label, unite in INDICATEURS:
@@ -471,6 +490,8 @@ def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
         valeurs += [v * 100 for lo_hi in nombres["bande"][name] for v in lo_hi]
         if name == "dette" and nombres["annonce"] is not None:
             valeurs += [v * 100 for v in nombres["annonce"]]
+        if name == "dette" and sans_canal is not None:
+            valeurs += [v * 100 for v in sans_canal]
         ticks = _ticks(min([0.0, *valeurs]), max([0.0, *valeurs]))
         corps.append(_texte(12, y + 14, label, gras=True))
         corps.append(_texte(LARGEUR - 12, y + 14, unite, ancre="end", classe="g-doux",
@@ -509,6 +530,14 @@ def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
                          f'stroke-width="2.5" stroke-dasharray="8 3 2 3" points="{pts}">'
                          f"<title>Si les économies annoncées sont tenues, {last} : "
                          f"{_e(points(nombres['annonce'][-1]))}</title></polyline>")
+        if name == "dette" and sans_canal is not None:
+            pts = " ".join(f"{_c(x(a))},{_c(s(v * 100))}" for a, v in
+                           zip(years, sans_canal, strict=True))
+            corps.append(f'<polyline class="g-zero" stroke="#52514e" fill="none" '
+                         f'stroke-width="2" stroke-dasharray="{SANS_CANAL}" '
+                         f'points="{pts}"><title>Sans le canal des créations '
+                         f"d'entreprises, vue vieillie, persistance lue, {last} : "
+                         f"{_e(points(sans_canal[-1]))}</title></polyline>")
         tete = lignes[("lue", "vieillie")][-1]
         corps.append(f'<circle class="g-f1" fill="#2a78d6" cx="{_c(x(last))}" '
                      f'cy="{_c(s(tete * 100))}" r="4"/>')
@@ -537,7 +566,11 @@ def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
                          for (p, v), serie in nombres["series"].items())
             + ("." if nombres["annonce"] is None else
                f". Si les économies annoncées sont tenues : "
-               f"{points(nombres['annonce'][-1])} en {last}."))
+               f"{points(nombres['annonce'][-1])} en {last}.")
+            + ("" if sans_canal is None else
+               f" La dette lit le canal des créations d'entreprises, une hypothèse non "
+               f"validée ; sans lui : {points(sans_canal[-1])} en {last}, vue vieillie, "
+               f"persistance lue."))
     return Graphique(f"{ident}.svg", titre, source, _svg(ident, y, titre, desc, corps),
                      nombres, etages)
 

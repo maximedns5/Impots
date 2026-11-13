@@ -82,6 +82,18 @@ CONVENTIONS_INSTRUMENTS = (
     "d'une estimation publiée de la réponse des créations à ces impôts ; le PFU et les "
     "prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, "
     "comme le taux virtuel de l'IPP qui joint l'IS et le PFU.")
+#: The source of the slope, as a page names it beside its centre and range.
+SOURCE_ELASTICITE = (
+    "Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 "
+    "et pages 21 et 22 : le milieu de leurs estimations en variables instrumentales et "
+    "intra-groupe, lu sur un taux apparent et non sur leur taux effectif (D-245, D-247)")
+#: What a page calls each instrument the channel reads.
+LIBELLES = {
+    "impot_societes": "l'IS", "contribution_sociale_is": "sa contribution sociale",
+    "cebge": "la CEBGE", "cvae": "la CVAE", "c3s": "la C3S", "pfu": "le PFU",
+    "prelevements_sociaux_capital": "les prélèvements sociaux du capital",
+    COTISATIONS_EMPLOYEURS: "les cotisations patronales, nettes des allègements",
+}
 #: The reason the chain's « créations d'entreprises » carries when the channel is read.
 RAISON_DANS_LA_DETTE = (
     "Canal ouvert dans la dette (but 22), hypothèse non validée : C8 reste l'indice de la "

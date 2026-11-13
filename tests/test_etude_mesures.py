@@ -170,6 +170,7 @@ def test_the_series_resumes_after_the_measures_already_there(roussel, monkeypatc
 
     first = json.loads((roussel.rapports / roussel.witness_pass()).read_text("utf-8"))
     _mesure(roussel, roussel.mesures[0], 0.6)
+    _avec_canal(roussel)
     monkeypatch.setattr(recherche, "code_state", lambda root: (first["commit"], False))
     monkeypatch.setattr(etude.Etude, "preregistered", lambda self: None)
     ran = []
@@ -185,6 +186,35 @@ def test_the_series_resumes_after_the_measures_already_there(roussel, monkeypatc
     ran.clear()
     assert roussel.launch("essai") == 1
     assert ran == []
+
+
+def _avec_canal(study: etude.Etude) -> None:
+    """Chaque chemin déjà là, marqué comme lisant le canal des créations d'entreprises :
+    les chemins d'une série le lisent depuis le but 22 (D-400)."""
+    for path in study.rapports.rglob("predictif_*.json"):
+        report = json.loads(path.read_text("utf-8"))
+        path.write_text(json.dumps({**report, "creations": {"chemins": []}}),
+                        encoding="utf-8")
+
+
+def test_a_path_without_the_channel_does_not_resume_into_a_series_that_reads_it(
+        roussel, monkeypatch) -> None:
+    """Les chemins de la série lisent le canal (`--creations`) : un chemin d'avant lui,
+    déjà là, ne se mêle pas à eux sous un même verdict ; la série se relance entière."""
+    from impots.predictif import recherche
+
+    first = json.loads((roussel.rapports / roussel.witness_pass()).read_text("utf-8"))
+    monkeypatch.setattr(recherche, "code_state", lambda root: (first["commit"], False))
+    monkeypatch.setattr(etude.Etude, "preregistered", lambda self: None)
+    ran = []
+    monkeypatch.setattr(etude.subprocess, "run",
+                        lambda command, **_: ran.append(command) or
+                        type("R", (), {"returncode": 0})())
+    assert roussel.launch("essai") == 1
+    assert ran == []
+    _avec_canal(roussel)
+    assert roussel.launch("essai") == 0
+    assert all("--creations" in c for c in ran if "predictif" in c)
 
 
 def _definition(tmp_path, **change) -> etude.Etude:

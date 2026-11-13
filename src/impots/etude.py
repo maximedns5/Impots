@@ -546,6 +546,43 @@ def lectures(entries: list[dict[str, Any]]) -> bool:
     return read == {True}
 
 
+def creations_lues(entries: list[dict[str, Any]]) -> bool:
+    """Whether a study's paths read the company-creations channel (but 22, D-400): all of
+    them, or none, a series before it, whose page renders as it always did. One page does
+    not read half its debts with the channel and half without."""
+    read = {entry["path"].get("creations") is not None for entry in entries}
+    if len(read) > 1:
+        raise EtudeError("les chemins de l'étude ne sont pas d'une même série : les uns "
+                         "lisent le canal des créations d'entreprises, les autres non. La "
+                         "série se relance entière.")
+    return read == {True}
+
+
+def sans_canal(entry: dict[str, Any]) -> dict[tuple[str, str], tuple[float, float]]:
+    """(persistence, view) → (Δb at the last year with the company-creations channel,
+    without it), at θ, the measure's in mirror. With the channel, the debt the verdict
+    reads; without, the very path the chain drew beside it (`delta_sans_creations`), which
+    the report's reading at θ (`lectures.creations_sans_canal`) must give again."""
+    path, sign = entry["path"], entry["sign"]
+    year = path["years"][-1]["year"]
+    drawn = {(row["persistence"], row["view"]): row["theta"] for row in entry["debt"]}
+    out = {}
+    for chemin in path["creations"]["chemins"]:
+        for view in VIEWS:
+            if view not in chemin:
+                continue
+            key = (chemin["persistence"], view)
+            out[key] = (drawn[key], sign * chemin[view]["delta_sans_creations"][-1])
+    read = (path.get("lectures") or {}).get("creations_sans_canal") or {}
+    for view, value in read.items():
+        if abs(sign * value - out[(LUE, view)][1]) > 1e-9:
+            raise EtudeError(f"{entry['name']} : la dette sans le canal des créations, "
+                             f"{year}, vue « {view} », n'est pas la même dans le chemin "
+                             f"({out[(LUE, view)][1]:+.9f}) et dans sa lecture à θ "
+                             f"({sign * value:+.9f}).")
+    return out
+
+
 def verdict_mc(entry: dict[str, Any], monte: dict[str, Any] | None = None) -> str:
     """The Monte-Carlo verdict of a path (D-345), the measure's in mirror: its rise is the
     scenario's fall, to the first order as the rest (D-298)."""
@@ -1582,12 +1619,16 @@ class Etude:
     def annual_argv(self, name: str, *, where: str) -> list[str]:
         """`impots predictif` for `name`: the annual command of the frame's request, with
         this scenario, this directory and this place, its report in the scenario's folder
-        (`dossier`)."""
+        (`dossier`). Every study line reads the company-creations channel (but 22, D-400):
+        the annual path carries `--creations`, and so its debt, its first year carried, its
+        box θ and its verdict read it; the command is refused until the channel's D-entry
+        is named. The first year (the simulator's reply, no debt) and the range points
+        (mechanical, which the channel does not read) do not."""
         annual = _script("etude_annuelle")
         lire_cadre(self.cadre)
         command = annual.argv(self.cadre, where=where, requests=CADRES,
                               scenarios=self.scenarios,
-                              out=self.rapports / self.dossier(name))
+                              out=self.rapports / self.dossier(name), creations=True)
         if command[1] != annual.name(self.cadre):
             raise EtudeError(f"la commande de l'étude ne nomme pas son scénario en "
                              f"deuxième : {command[:3]}")
@@ -1653,6 +1694,12 @@ class Etude:
         joined = self.joined()
         for name in sorted(there):
             report = _read(self.rapports / name)
+            if Path(name).name.startswith("predictif_") and "creations" not in report:
+                # Every annual path now reads the company-creations channel (but 22): one
+                # written before it would stand, under one verdict, beside paths that do.
+                return (f"{name} ne lit pas le canal des créations d'entreprises, et les "
+                        f"chemins de la série le lisent : un rapport n'est pas écrasé en "
+                        f"silence, ni mêlé à une autre série. La série se relance entière.")
             on = report.get("commit")
             if not on or report.get("dirty") is not False:
                 return (f"{name} ne nomme pas un commit dont il a chiffré le code : un rapport "
@@ -1901,6 +1948,7 @@ class Etude:
             # D-349), or the interaction would mix two codes of the loop.
             generation(entries + seules)
             lectures(entries + seules)
+            creations_lues(entries + seules)
         # One study reads on one code, or on commits a witness pass joins to the first: on
         # each, the pass replayed gave its report again (D-335, D-336).
         joined = self.commits(commits, reports)
@@ -2111,14 +2159,19 @@ class Etude:
         w("## En bref")
         w("")
         read = lectures(entries)
+        canal = creations_lues(entries)
+        # The debt without the company-creations channel, beside the debt that reads it
+        # (but 22, D-400): a column only when the paths read it.
+        sans_col = " sans le canal des créations |" if canal else ""
+        sans_sep = "---|" if canal else ""
         if read:
             w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
-              f"officiel | dette en {last}, à θ½ | verdict | selon θ |")
-            w("|---|---|---|---|---|---|")
+              f"officiel | dette en {last}, à θ½ |{sans_col} verdict | selon θ |")
+            w(f"|---|---|---|---|{sans_sep}---|---|")
         else:
             w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
-              f"officiel | dette en {last}, à θ½ | selon θ |")
-            w("|---|---|---|---|---|")
+              f"officiel | dette en {last}, à θ½ |{sans_col} selon θ |")
+            w(f"|---|---|---|---|{sans_sep}---|")
         for entry in entries:
             grade = entry["grade"]
             # The grade is of the number preregistered then, not of this series': the
@@ -2141,9 +2194,27 @@ class Etude:
                     " (" + n(f"{rise:.0%}".replace("%", "\u202f%"), debt_etage(entry["path"]),
                              conditionnel=True) + " des tirages en hausse)")
                 mc = f"{verdict_mc(entry)}{p_text} | "
+            sans = ""
+            if canal:
+                without = sans_canal(entry).get((entry["debt"][0]["persistence"],
+                                                 entry["debt"][0]["view"]))
+                sans = (" — |" if without is None else
+                        f" {n(_points(without[1]), debt_etage(entry['path']), conditionnel=True)} |")
             w(f"| {texte.label(entry)} | {n(fiche._eur(entry['cost']), 'L2')} | {official} | "
-              f"{lead} | {mc}{verdict(entry['debt'])} |")
+              f"{lead} |{sans} {mc}{verdict(entry['debt'])} |")
         w("")
+        if canal:
+            w(f"**La dette lit le canal des créations d'entreprises, une hypothèse non "
+              f"validée** (décision du propriétaire, D-400) : ce qu'une hausse ou une baisse "
+              f"des prélèvements sur les entreprises et le capital, cotisations patronales "
+              f"comprises, fait aux sociétés qui se créent, et ce qu'elles produisent. Aucune "
+              f"source ne redonne ce total. La dette, le verdict et « selon θ » le lisent ; "
+              f"la colonne « sans le canal » donne la dette sans lui, à θ½, sur les mêmes "
+              f"passes. Le canal, ses paramètres et ses sources sont dits avec la dette de "
+              f"chaque {getattr(texte, 'unite', 'article')}."
+              + (" Les points de plage, chiffrés sans comportement ni boucle, ne le lisent "
+                 "pas." if self.programme is not None else ""))
+            w("")
         if read:
             from impots.predictif import montecarlo
 
@@ -2789,6 +2860,8 @@ class Etude:
             w(f"**Le verdict**, lu sur le Monte-Carlo (D-345) : "
               f"{VERDICTS_MC[verdict_mc(entry)].format(year=year, haut=haut)}.")
             w("")
+        if path.get("creations") is not None:
+            self._creations(w, n, entry, etage)
         reserves = self._reserves(n, entry, sans_boucle=True)
         if reserves:
             w("**Ce que la boucle lit, et ce que l'outil ne mesure pas.** "
@@ -2806,6 +2879,79 @@ class Etude:
         self._monte_carlo(w, n, entry, etage)
         if path.get("lectures") is not None:
             self._lectures(w, n, entry, etage)
+
+    @staticmethod
+    def _creations(w: Any, n: Nombres, entry: dict[str, Any], etage: str) -> None:
+        """The company-creations channel beside the debt that reads it (but 22, D-400):
+        that it is an unvalidated hypothesis, the debt without it, its central productivity
+        and its box θ, its elasticity and its source, the instruments it reads and the
+        double count of the employer contributions with the loop. In mirror, the measure's:
+        every Δb turned over."""
+        from impots.predictif import creations
+
+        path, sign = entry["path"], entry["sign"]
+        block = path["creations"]
+        params = block["parametres"]
+        year = path["years"][-1]["year"]
+
+        def points(value: float) -> str:
+            return n(_points(value), etage, conditionnel=True)
+
+        def nombre(value: float) -> str:
+            return n(format(value, "g").replace(".", ","), "hypothèse")
+
+        w("**Les créations d'entreprises, une hypothèse non validée.** La dette de cette "
+          "page lit le canal des créations d'entreprises, par décision du propriétaire "
+          "(D-400) : les variations des prélèvements sur les entreprises et le capital "
+          "déplacent le taux d'entrée des sociétés, qui survivent, montent en charge et "
+          "produisent ; leurs recettes entrent au solde, leur activité au PIB. Aucune "
+          "source ne redonne ce total. La dette sans ce canal, sur les mêmes passes, est "
+          "donnée à côté.")
+        w("")
+        lus = sans_canal(entry)
+        w(f"| persistance | vue | Δ dette {year}, à θ½ | sans le canal | ce que le canal "
+          f"y change |")
+        w("|---|---|---|---|---|")
+        for (persistence, view), (avec, sans) in lus.items():
+            if persistence != LUE and any(p == LUE for p, _ in lus):
+                continue
+            w(f"| {persistence or '—'} | {VIEWS[view]} | {points(avec)} | {points(sans)} | "
+              f"{points(avec - sans)} |")
+        w("")
+        lue_ = next((c for c in block["chemins"] if c["persistence"] == LUE),
+                    block["chemins"][0])
+        boite = lue_["vieillie"]["boite"]
+        ends = sorted((sign * boite["c0"], sign * boite["c1"]))
+        prod = params["productivite"]
+        w(f"La productivité relative des sociétés nouvelles, rapportée à la société "
+          f"moyenne, est la ligne θ du canal : {nombre(prod['centre'])} au centre (θ½), de "
+          f"{nombre(prod['bas'])}, le canal éteint, à {nombre(prod['haut'])}. Aucune source "
+          f"ne la chiffre pour les sociétés qu'un impôt fait naître ou disparaître. Sa "
+          f"boîte, toutes les autres lignes à θ½, va de {points(ends[0])} à "
+          f"{points(ends[1])} en {year}, vue vieillie, persistance "
+          f"« {lue_['persistence'] or '—'} ». Le Monte-Carlo du verdict lit le canal à "
+          f"sa productivité centrale, sans la tirer : sa loi n'est pas déclarée.")
+        w("")
+        ela = params["elasticite"]
+        w(f"L'élasticité : {nombre(ela['centre'])} point de taux d'entrée par point de "
+          f"taux apparent de prélèvement sur le profit, de {nombre(ela['bas'])} à "
+          f"{nombre(ela['haut'])} ; {creations.SOURCE_ELASTICITE}. Survie annuelle "
+          f"{nombre(params['survie_annuelle'])}, montée en charge sur "
+          f"{nombre(params['montee_en_charge_ans'])} ans, taille relative à maturité "
+          f"{nombre(params['taille_relative'])}, valeur ajoutée des sociétés "
+          f"{nombre(params['part_va_societes_pib'])} du PIB, assiette "
+          f"{nombre(params['assiette_part_pib'])} du PIB"
+          + (f" ; les valeurs fixées par {params['preenregistrement']}."
+             if params.get("preenregistrement") else "."))
+        w("")
+        names = [*params["instruments_entreprises"], *params["instruments_menages"]]
+        w(f"Les instruments lus, en euros de prélèvement, recettes positives, rien "
+          f"d'autre (ni le nom de qui propose la mesure, ni son sens) : "
+          f"{_et([creations.LIBELLES.get(i, f'`{i}`') for i in names])}. "
+          + (f"{creations.DOUBLE_COMPTE} " if creations.COTISATIONS_EMPLOYEURS in names
+             else "")
+          + creations.CONVENTIONS_INSTRUMENTS)
+        w("")
 
     def _monte_carlo(self, w: Any, n: Nombres, entry: dict[str, Any], etage: str) -> None:
         """The distribution of Δb under declared laws, beside the box (D-336, decision 6):

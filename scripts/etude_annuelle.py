@@ -88,8 +88,10 @@ def scenario(key: str, reports: Path = REPORTS) -> dict[str, Any]:
 
 
 def argv(key: str, *, where: str, requests: Path = REQUESTS,
-         scenarios: Path = SCENARIOS, out: Path = OUT) -> list[str]:
-    """`impots predictif` for `key`, in the frame of the study's committed request."""
+         scenarios: Path = SCENARIOS, out: Path = OUT, creations: bool = False) -> list[str]:
+    """`impots predictif` for `key`, in the frame of the study's committed request. With
+    `creations`, the company-creations channel in the debt (but 22): what every study line
+    passes (`etude.Etude.annual_argv`); the annual study of D-275 keeps its command."""
     request = json.loads((requests / f"{key}.json").read_text(encoding="utf-8"))
     theta = request["theta"]
     if theta.get("rows"):
@@ -120,6 +122,7 @@ def argv(key: str, *, where: str, requests: Path = REQUESTS,
         "--wage", repr(uprating["wage"]), "--hypothesis-source", uprating["source"],
         *(["--behavioural"] if request.get("behavioural") else []),
         *(["--macro"] if request.get("macro") else []),
+        *(["--creations"] if creations else []),
         "--out-dir", str(out), "--ou", where,
     ]
 
