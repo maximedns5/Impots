@@ -387,7 +387,8 @@ def test_the_first_year_is_priced_on_the_aged_population_and_says_so(
     def run(request, frame):
         passed.append(frame)
         return (SimpleNamespace(households=None),
-                SimpleNamespace(reform_cost=5e9, deciles=[]))
+                SimpleNamespace(reform_cost=5e9, deciles=[],
+                                employer_contribution_delta=0.0))
 
     monkeypatch.setattr(service, "population_frame", lambda: population)
     monkeypatch.setattr(service, "run_population", run)
@@ -445,7 +446,8 @@ def test_the_behavioural_pass_on_the_aged_population_keys_its_caches_on_the_upra
 
     monkeypatch.setattr(service, "population_frame", lambda: population)
     monkeypatch.setattr(service, "run_population", lambda request, frame: (
-        SimpleNamespace(households=None), SimpleNamespace(reform_cost=5e9, deciles=[])))
+        SimpleNamespace(households=None), SimpleNamespace(reform_cost=5e9, deciles=[],
+                                employer_contribution_delta=0.0)))
     monkeypatch.setattr(emtr_module, "cached", cached)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     response = client.post("/predictif/simulate", json=_payload(behavioural=True))
@@ -477,7 +479,8 @@ def test_the_frozen_view_keys_its_emtr_caches_on_the_frame_it_prices(monkeypatch
 
     monkeypatch.setattr(service, "population_frame", lambda: population)
     monkeypatch.setattr(service, "run_population", lambda request, frame: (
-        SimpleNamespace(households=None), SimpleNamespace(reform_cost=5e9, deciles=[])))
+        SimpleNamespace(households=None), SimpleNamespace(reform_cost=5e9, deciles=[],
+                                employer_contribution_delta=0.0)))
     monkeypatch.setattr(emtr_module, "cached", cached)
     uprating = Uprating(wage=0.03, price=0.02, source=WAGES["source"], base_year=2024)
     year = service.YearPass(reform=ReformSpec(decote_taux=0.4), year=2027, behavioural=True)
