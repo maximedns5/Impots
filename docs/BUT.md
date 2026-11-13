@@ -978,6 +978,58 @@ travail ouverte aux cotisations des salariés comme à la CSG ; la sensibilité 
 chaque bouton contre son total publié, mesurée pour la seule prime d'activité ; le contrôle
 des prestations contre le simulateur de la CAF ; et les juges du passé.
 
+### But 22 — Voir comment chaque nombre se forme, mesure par mesure, dans le temps
+
+Le constat du propriétaire, le 13 novembre 2026, sur le site du but 21 : les pages disent
+tout, mais par du texte, long à lire ; on ne voit ni comment un nombre se forme, ni comment
+il évolue d'année en année. Une étude chiffre un programme en un bloc : le lecteur ne sait
+pas ce que pèse chaque mesure, pour les finances publiques et pour les ménages. Et ce
+qu'une mesure fait aux entreprises qui se créent n'entre nulle part : C8 n'est qu'un
+indice illustratif, jamais une recette (D-221, D-244).
+
+```
+/goal Chaque étude se lit d'abord en graphiques, mesure par mesure et année par année, et
+c'est mergé dans main. Dans l'ordre : (1) les graphiques, tirés des seuls rapports
+commités, statiques et lisibles au téléphone : la cascade d'un coût (mécanique,
+comportements, boucle macro, dette), la trajectoire de 2026 à 2035 (solde, dette, PIB,
+par vue et par persistance, avec la boîte θ), la part de chaque décile, et une frise des
+mesures dans le temps (quand chacune s'applique, quand elle monte en charge) ; chaque
+graphique dit sa source et le fichier qui le calcule, et un test le tient contre son
+rapport ; (2) chaque mesure chiffrée d'un programme passe aussi seule : sa première
+année, son chemin annuel et ses déciles, à côté de la passe du programme entier ; l'écart
+entre la somme des mesures et le programme est montré, comme une interaction, jamais
+réparti en silence ; (3) un canal de créations d'entreprises, symétrique, qu'une hausse
+comme une baisse des prélèvements sur les entreprises et le capital fait jouer, chiffré
+sur une élasticité publiée qu'il nomme, avec un coefficient de productivité des
+entreprises nouvelles réglé entre 0 et 1, une boîte θ à lui et un défaut à 0 tant que sa
+source ne redonne pas un total publié ; il n'entre pas dans le verdict sans cela. Chaque
+nombre nouveau qui se compare à un juge est préenregistré avant sa passe ; aucune
+tolérance ne change. Preuve attendue : les graphiques en ligne, vus au téléphone ; une
+page de programme lue mesure par mesure ; le canal des entreprises et sa source, ou le
+refus motivé de son niveau ; les D-entrées ; la sortie verte des tests ciblés, de make
+impact et des lourds ; l'URL de la PR et le SHA du merge. Ou s'arrêter après 60 tours, en
+disant quels graphiques et quelles mesures manquent.
+```
+
+Les décisions à prendre avant de lancer :
+
+* **Les graphiques** : du SVG écrit par le code depuis les rapports, sans bibliothèque ni
+  serveur, ou une bibliothèque de graphiques chargée par la page. Le premier se vérifie
+  comme le reste du site (`site verifier`) ; le second est plus riche, mais la page
+  dépend d'un tiers.
+* **Les mesures seules** : une passe complète par mesure (première année, chemin annuel,
+  points de plage) multiplie la série, environ 44 chemins de plus ; ou la première année
+  et les déciles seuls par mesure, le chemin annuel restant celui du programme.
+* **Les créations d'entreprises** : le canal joue dans les deux sens, pour tous les
+  candidats, sur la même élasticité ; il ne lit pas qui propose la mesure. S'il n'existe
+  pas de source qui chiffre la réponse des créations à un taux et redonne un total
+  publié, le coefficient reste un curseur du lecteur, affiché à part, à 0 par défaut, et
+  la dette publiée ne le lit pas. Le propriétaire dit s'il accepte cette règle.
+
+**Ce qui reste du but 21** : le chemin refusé de Dupont-Aignan (un effet non monotone en
+θ sous la persistance « tenue », D-398) ; les décompositions E1/E2 archivées ; la page de
+comparaison ouverte aux seize programmes.
+
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
