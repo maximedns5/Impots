@@ -28729,3 +28729,69 @@ déjà faite. Les premières années et les points de plage de ces sept études,
 par le service, restent sur `aa22293` ; leur chemin annuel tourne sur le commit de cette
 entrée, joint au premier par une passe témoin (D-335) qui doit redonner son rapport. Les
 onze autres études restent entières sur `aa22293`. Le pronostic de D-394 ne change pas.
+
+## D-397 — La série du but 21 : ce qu'elle redonne contre D-394
+
+**Ce qui a tourné.** Les dix-huit études de D-394. Onze entières sur `aa22293` (D-395), sur
+deux files, de 15 h 48 à 23 h 59 UTC le 12 novembre ; sept (Mélenchon, Le Pen, Retailleau,
+Ruffin, Attal, Dupont-Aignan, Philippe) finissent leur chemin annuel sur `d4f3f7f` (D-396),
+et deux autres aussi : Zemmour, dont le chemin a été tué par manque de mémoire (deux
+chemins de front sur 15 Go), et Roussel, dont le chemin tournait quand le conteneur a
+redémarré, vers minuit. Chacune est jointe à son premier commit par une passe témoin qui a
+redonné son rapport (D-335). La reprise a tourné sur une seule file, de 0 h 14 à 5 h 11.
+
+**La première année** est retrouvée pour les vingt et une lignes, au million près : la
+série a tourné sur le code de D-394.
+
+**Le résultat**, Δb₂₀₃₅ à θ½ (vue vieillie, persistance « lue »), en points de PIB.
+
+| ligne | coût | Δb | pronostic Δb | verdict | tenu |
+|---|---:|---:|---|---|---|
+| PLF art. 2 | +2,62 | +0,373 | +0,32 à +0,43 | dépend | oui |
+| PLF art. 3 | −1,10 | −0,170 | −0,20 à −0,14 | dépend | oui |
+| PLF art. 15 | −7,05 | −0,220 | −0,25 à −0,19 | baisse | oui |
+| PLFSS, prime | −0,56 | −0,162 | −0,19 à −0,13 | baisse | oui |
+| PLFSS, APL | −0,07 | −0,067 | −0,08 à −0,05 | baisse | oui |
+| Attal | +66,18 | +4,283 | +3,60 à +4,87 | dépend | oui |
+| Lisnard | +36,19 | +5,699 | +4,84 à +6,55 | dépend | oui |
+| Labib | +57,37 | +5,581 | +2,87 à +12,62 | hausse | oui |
+| Le Pen | +21,41 | +2,997 | +1,07 à +4,71 | dépend | oui |
+| Ruffin | +33,16 | +2,713 | +1,66 à +7,30 | dépend | oui |
+| Tondelier | +18,17 | +2,597 | +0,91 à +4,00 | hausse | oui |
+| Zemmour | +91,69 | +12,235 | +4,58 à +20,17 | dépend | oui |
+| Arthaud | +74,24 | +3,411 | +3,71 à +16,33 | dépend | Δb non |
+| Bouamrane | +15,32 | +0,488 | +0,77 à +3,37 | dépend | Δb non |
+| Glucksmann | +29,74 | +0,984 | +1,49 à +6,54 | dépend | Δb non |
+| Kazib | +15,44 | +0,492 | +0,77 à +3,40 | dépend | Δb non |
+| Roussel | +32,97 | +1,430 | +1,65 à +7,25 | dépend | Δb non |
+| Mélenchon | +88,98 | +27,537 | +4,45 à +19,58 | hausse | Δb non |
+| Philippe | +46,57 | +11,729 | +2,33 à +10,25 | hausse | Δb non |
+| Retailleau | +48,89 | +11,396 | +2,44 à +10,76 | hausse | Δb non |
+| Dupont-Aignan | +7,36 | refusé | +0,37 à +1,62 | — | — |
+
+Sur quarante pronostics (Δb et verdict, vingt lignes chiffrées), trente-deux tiennent :
+les vingt verdicts, et douze Δb sur vingt. Les sept lignes d'avant tiennent toutes.
+
+**Les huit Δb manqués vont tous dans le sens que D-394 craignait.** Les programmes dont le
+coût est surtout le SMIC (Arthaud, Bouamrane, Glucksmann, Kazib, et Roussel) pèsent de
+0,03 à 0,05 point par Md€ : un SMIC relevé rend des cotisations, de la CSG et de l'impôt
+que la boucle garde, et ses salaires publics relancent l'activité ; la fourchette, prise
+sur des études d'impôt, commençait à 0,05. Ceux dont le coût est surtout une prestation
+neuve ou une pension indexée (Mélenchon, Philippe, Retailleau) pèsent de 0,23 à 0,31 point
+par Md€ : un transfert ne rend presque rien, et la persistance le garde ; la fourchette
+s'arrêtait à 0,22. D-394 disait que ces canaux ne sont pas ceux de l'impôt ; le résultat
+le mesure, et le pronostic manqué n'est pas réécrit.
+
+**Dupont-Aignan est refusé, pas manqué** : son chemin annuel s'arrête au garde de
+monotonie (D-217, D-224), dans la vue figée, θ tenu chaque année : Δb à θ (+0,01889) sort
+de sa boîte (+0,01705 à +0,01849). Un effet n'est pas monotone en son θ ; tracer la boîte
+à ses coins serait faux. L'étude n'a pas de page ; la page des 24 le dit.
+
+**Les décompositions archivées** (choix du propriétaire). Celles de D-354, qui disent ce
+que pèsent E1 et E2 pour Attal, Retailleau et Mélenchon, ont été chiffrées sur leurs
+programmes du but 19 ; les programmes ont grandi, et leurs pages refusaient de les lire.
+Elles passent dans `reports/decomposition_but19/`, gardées ; les pages s'écrivent sans
+elles, et la décomposition est refaite dans un but suivant.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345.

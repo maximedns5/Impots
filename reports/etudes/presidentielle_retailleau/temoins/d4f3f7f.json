@@ -1,0 +1,81 @@
+{
+  "etude": "presidentielle_retailleau",
+  "passe": "plages/r13_zero_cotisation_1623_h__heures_sup_franchise_heures__bas.json",
+  "reference": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "commit": "d4f3f7ff6e0eb097a32b7e9a76c86baf4ff73504",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
+  "computed": "2026-11-13",
+  "identique": true,
+  "ecarts": [],
+  "rapport": {
+    "programme": "retailleau",
+    "mesure": "r13_zero_cotisation_1623_h",
+    "champ": "heures_sup_franchise_heures",
+    "point": "bas",
+    "request": {
+      "spending": {
+        "rule": "gele_en_volume"
+      },
+      "growth": {
+        "name": "Croissance réelle 1 %, prix 2 %",
+        "real": 0.01,
+        "prices": 0.02
+      },
+      "rate": {
+        "name": "Taux implicite tenu à son niveau de 2025",
+        "kind": "implicite_tenu"
+      },
+      "horizon": 10,
+      "theta": {
+        "common": 0.5
+      },
+      "uprating": {
+        "wage": 0.03,
+        "source": "3 % ronds, le rythme du PIB nominal du scénario"
+      },
+      "behavioural": false,
+      "macro": false,
+      "reform": {
+        "heures_sup_exoneration_salariale": 1.0,
+        "heures_sup_exoneration_patronale": 1.0,
+        "heures_sup_franchise_heures": 0.0
+      },
+      "firm_reform": null
+    },
+    "appel": "/predictif/simulate",
+    "dette_absente": null,
+    "response": {
+      "mechanical_first_year_eur": 6376249063.35376,
+      "years": [
+        2026,
+        2027,
+        2028,
+        2029,
+        2030,
+        2031,
+        2032,
+        2033,
+        2034,
+        2035
+      ],
+      "delta": [
+        0.002069279632117338,
+        0.004115717799255236,
+        0.0061395666338537325,
+        0.008141075485222693,
+        0.010120490950263017,
+        0.012078056903849,
+        0.01401401452887474,
+        0.01592860234596971,
+        0.017822056242885465,
+        0.019694609503557947
+      ],
+      "population_view": "vieillie"
+    },
+    "computed": "2026-11-13",
+    "commit": "d4f3f7ff6e0eb097a32b7e9a76c86baf4ff73504",
+    "dirty": false,
+    "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
+  }
+}

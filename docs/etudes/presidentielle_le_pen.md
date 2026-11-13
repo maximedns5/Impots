@@ -4,13 +4,13 @@
 
 ## Ce que dit cette étude
 
-La part chiffrée du programme coûte 13,38 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +235 € par an dans le dixième le plus modeste à +656 € dans le dixième le plus aisé. L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 1,49 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 75 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu et la TVA. Sans aucun effet sur l'activité, la dette serait plus haute de 4,24 points de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+La part chiffrée du programme coûte 21,41 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +240 € par an dans le dixième le plus modeste à +1 852 € dans le dixième le plus aisé. L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus haute de 3,00 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 79 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu et la TVA. Sans aucun effet sur l'activité, la dette serait plus haute de 7,81 points de PIB : le coût seul, sans la boucle macro. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
-Marine Le Pen, Rassemblement national (RN), a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 01/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
+Marine Le Pen, Rassemblement national (RN), a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 12/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
 
 | mesures relevées | dont qui énoncent un paramètre | chiffrées par l'outil | part des mesures paramétrées |
 |---|---|---|---|
-| 33 | 22 | 2 | 9 % |
+| 36 | 25 | 4 | 16 % |
 
 Pour la part chiffrée, ces mesures ensemble, trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les comportements et l'économie pris en compte ; ce qu'elle fait à la dette en 2035. **La dette porte sur la seule part du programme que l'outil chiffre, pas sur le programme : les mesures refusées, dites plus bas une à une avec leur « porte » (ce qui manque à l'outil pour les chiffrer), n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient à l'outil (D-319).**
 
@@ -20,7 +20,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
 |---|---|---|---|---|---|
-| la part chiffrée (2 mesures sur 22 paramétrées, 33 relevées) | +13,38 Md€ | — | +1,49 pt | dépend (75 % des tirages en hausse) | dépend de θ |
+| la part chiffrée (4 mesures sur 25 paramétrées, 36 relevées) | +21,41 Md€ | — | +3,00 pt | dépend (79 % des tirages en hausse) | dépend de θ |
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -28,26 +28,26 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 ## La part chiffrée
 
-*Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-01 — la part chiffrée : lp20_tva_energie, lp22_part_pleine_2e_enfant*
+*Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-12 — la part chiffrée : lp20_tva_energie, lp21_ir_moins_30_ans, lp22_part_pleine_2e_enfant, lp26_suppression_cvec*
 
-2 mesures chiffrées sur 22 paramétrées et 33 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.
+4 mesures chiffrées sur 25 paramétrées et 36 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.
 
 ### 1. Ce qu'il coûte, et qui y gagne
 
-La mesure coûte **13,38 Md€** la première année (2026), sur la population de 2024 au droit de 2026.
+La mesure coûte **21,41 Md€** la première année (2026), sur la population de 2024 au droit de 2026.
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
 |---|---|---|---|---|---|
-| 1 | 3 105 392 | 9 086 € | +235 € | 100 % | 0 % |
-| 2 | 3 106 035 | 14 127 € | +278 € | 100 % | 0 % |
-| 3 | 3 105 379 | 17 504 € | +306 € | 100 % | 0 % |
-| 4 | 3 104 866 | 20 518 € | +346 € | 100 % | 0 % |
-| 5 | 3 104 805 | 23 184 € | +392 € | 100 % | 0 % |
-| 6 | 3 105 390 | 25 938 € | +444 € | 100 % | 0 % |
-| 7 | 3 105 062 | 29 037 € | +516 € | 100 % | 0 % |
-| 8 | 3 105 369 | 32 966 € | +528 € | 100 % | 0 % |
-| 9 | 3 105 660 | 38 679 € | +606 € | 100 % | 0 % |
-| 10 | 3 105 795 | 57 952 € | +656 € | 100 % | 0 % |
+| 1 | 3 105 439 | 8 733 € | +240 € | 100 % | 0 % |
+| 2 | 3 105 989 | 14 008 € | +292 € | 100 % | 0 % |
+| 3 | 3 105 379 | 17 392 € | +332 € | 100 % | 0 % |
+| 4 | 3 104 866 | 20 386 € | +380 € | 100 % | 0 % |
+| 5 | 3 104 805 | 23 095 € | +450 € | 100 % | 0 % |
+| 6 | 3 105 390 | 25 856 € | +556 € | 100 % | 0 % |
+| 7 | 3 105 062 | 28 962 € | +734 € | 100 % | 0 % |
+| 8 | 3 106 224 | 32 877 € | +862 € | 100 % | 0 % |
+| 9 | 3 104 805 | 38 656 € | +1 196 € | 100 % | 0 % |
+| 10 | 3 105 795 | 57 879 € | +1 852 € | 100 % | 0 % |
 
 Les déciles sont ceux du niveau de vie de la population simulée. Toute structure
 plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
@@ -57,14 +57,14 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 **Bande comportementale : aucune, et la raison est donnée.** Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.
 
-**L'effet sur l'économie**, l'éventail macro (la fourchette de ce que des multiplicateurs publiés disent du PIB et de l'emploi), **dans l'étendue des estimations**, le choc ne dépassant pas ceux sur lesquels les multiplicateurs ont été estimés ; 100 % de la mesure a un multiplicateur publié ; conjoncture supposée normale, ni récession ni surchauffe :
+**L'effet sur l'économie**, l'éventail macro (la fourchette de ce que des multiplicateurs publiés disent du PIB et de l'emploi), **dans l'étendue des estimations**, le choc ne dépassant pas ceux sur lesquels les multiplicateurs ont été estimés ; 99 % de la mesure a un multiplicateur publié ; conjoncture supposée normale, ni récession ni surchauffe :
 
-* **PIB, à 1 an** : [-5,72 Md€ ; +15,11 Md€], central +5,00 Md€
-* **PIB, à 2 ans** : [-735 M€ ; +18,86 Md€], central +9,14 Md€
-* **PIB, à 3 ans** : [-693 M€ ; +20,98 Md€], central +10,01 Md€
-* **emploi, à 1 an** : [-20,47 ; +50,95] milliers ETP, central +16,14
-* **emploi, à 2 ans** : [-7,79 ; +113,48] milliers ETP, central +53,56
-* **emploi, à 3 ans** : [-6,65 ; +153,11] milliers ETP, central +72,58
+* **PIB, à 1 an** : [-5,46 Md€ ; +21,27 Md€], central +7,90 Md€
+* **PIB, à 2 ans** : [+3,37 Md€ ; +28,67 Md€], central +15,73 Md€
+* **PIB, à 3 ans** : [+3,67 Md€ ; +29,83 Md€], central +17,12 Md€
+* **emploi, à 1 an** : [-17,80 ; +61,14] milliers ETP, central +22,57
+* **emploi, à 2 ans** : [+14,52 ; +156,74] milliers ETP, central +84,53
+* **emploi, à 3 ans** : [+24,67 ; +214,32] milliers ETP, central +120,45
 
 > Couche macro (L4) : ordre de grandeur et composition, pas une prévision. L'éventail des estimations crédibles pour un même choc est large — la dispersion entre études publiées est du même ordre que la valeur centrale elle-même. C'est une propriété de la littérature, pas de ce modèle.
 
@@ -79,8 +79,8 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
-| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | vieillie | +1,49 pt | de -0,43 pt à +3,83 pt |
-| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | +1,28 pt | de -0,34 pt à +3,27 pt |
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | vieillie | +3,00 pt | de -0,56 pt à +6,96 pt |
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | +2,25 pt | de -0,31 pt à +5,18 pt |
 
 En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sous cette persistance, son effet sur la dette en 2035 **dépend de θ** : son signe change d'un coin de la boîte, ou d'une vue, à l'autre.
 
@@ -90,40 +90,69 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
-| Effet macro éteint après trois ans | vieillie | +3,64 pt | de +3,21 pt à +4,20 pt |
-| Effet macro éteint après trois ans | figée | +3,16 pt | de +2,86 pt à +3,59 pt |
-| Effet macro tenu au niveau de la troisième année | vieillie | +1,18 pt | de -0,47 pt à +3,93 pt |
-| Effet macro tenu au niveau de la troisième année | figée | +1,00 pt | de -0,36 pt à +3,36 pt |
+| Effet macro éteint après trois ans | vieillie | +6,68 pt | de +5,78 pt à +7,67 pt |
+| Effet macro éteint après trois ans | figée | +5,12 pt | de +4,62 pt à +5,72 pt |
+| Effet macro tenu au niveau de la troisième année | vieillie | +2,50 pt | de -0,85 pt à +6,96 pt |
+| Effet macro tenu au niveau de la troisième année | figée | +1,85 pt | de -0,50 pt à +5,21 pt |
 
 **La distribution, à côté de la boîte.** La boîte dit jusqu'où Δb va quand chaque effet parcourt sa fourchette publiée : ce n'est pas une probabilité. Le Monte-Carlo en est une, sous des lois déclarées : Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes. (ρ = 0,8, 2000 tirages, persistance « lue », D-336). D'autres lois donneraient une autre réponse.
 
 | vue | P(hausse de la dette en 2035) | quantile 5 % | médiane | quantile 95 % | ce qui pèse le plus (Sobol, total) |
 |---|---|---|---|---|---|
-| vieillie | 75 % | -0,78 pt | +1,56 pt | +4,24 pt | le multiplicateur 0,98 |
-| figée | 75 % | -0,60 pt | +1,34 pt | +3,62 pt | le multiplicateur 0,98 |
+| vieillie | 79 % | -1,44 pt | +3,13 pt | +7,81 pt | le multiplicateur 0,98 |
+| figée | 80 % | -0,87 pt | +2,35 pt | +5,79 pt | le multiplicateur 0,98 |
 
 **D'où vient Δb.** La dette de 2035 en trois marches, à θ½ sous la persistance « lue » : le coût après comportements, sans la boucle macro ; ce que le PIB plus haut ou plus bas change au seul ratio, comme dénominateur ; ce que les recettes induites par l'activité y changent. Les trois font la ligne du tableau (D-349).
 
 | vue | le coût, sans boucle | le PIB, dénominateur | les recettes induites | Δ dette 2035 |
 |---|---|---|---|---|
-| vieillie | +4,24 pt | -0,38 pt | -2,38 pt | +1,49 pt |
-| figée | +3,62 pt | -0,29 pt | -2,05 pt | +1,28 pt |
+| vieillie | +7,81 pt | -0,80 pt | -4,02 pt | +3,00 pt |
+| figée | +5,79 pt | -0,48 pt | -3,06 pt | +2,25 pt |
 
-**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : +1,63 pt en vue vieillie, contre +1,49 pt ; +1,41 pt en vue figée, contre +1,28 pt.
+**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : +3,27 pt en vue vieillie, contre +3,00 pt ; +2,47 pt en vue figée, contre +2,25 pt.
 
 **Si les salaires se forment autrement.** Mésange publie une sensibilité de ses variantes à la formation des salaires (folios 137 et 138) : une courbe de Phillips pour les cotisations employeurs et la TVA, un super-brut visé pour les cotisations salariés, la CSG et l'IR. Le multiplicateur y est recentré, à écart-type, persistance et recettes induites par point de PIB inchangés ; Mésange n'imprime pas le solde de la variante, que la page suppose proportionnel au PIB (D-349). C'est une sensibilité, hors du verdict.
 
 | vue | Δ dette 2035, à θ½ | aux coins de la boîte | P(hausse) | verdict |
 |---|---|---|---|---|
-| vieillie | +1,25 pt | de -0,47 pt à +3,58 pt | 70 % | dépend |
-| figée | +1,04 pt | de -0,38 pt à +3,02 pt | 70 % | dépend |
+| vieillie | +2,99 pt | de -0,37 pt à +6,94 pt | 81 % | dépend |
+| figée | +2,18 pt | de -0,19 pt à +5,10 pt | 81 % | dépend |
+
+### La dette en 2035, si les économies annoncées sont tenues et les dépenses annoncées faites
+
+**Une lecture à part : annoncée par le candidat, non vérifiée.** La dette plus haut est celle de la part chiffrée ; les économies de dépense que le programme annonce, que l'outil ne microsimule pas, n'y entrent pas, et ses dépenses non plus (D-319). Ici, les montants par an que le candidat attache lui-même à ses mesures de dépense publique sont lus par la variante « dépense publique » de Mésange, son effet sur le PIB et sur le solde, et s'ajoutent à la dette de la part chiffrée. Ni le coût de la part chiffrée ni le verdict ne les lisent (D-380).
+
+| mesure | montant annoncé, par an | sens | calendrier annoncé |
+|---|---|---|---|
+| Économies sur l'immigration et « priorité nationale » | +29,00 Md€ | économie | année pleine (15 Md€ la première année) |
+| Baisse de la contribution française à l'UE | +9,00 Md€ | économie | non énoncé |
+| « Réorganisation de l'État » | +20,70 Md€ | économie | dès 2027 |
+| Suppression de la quasi-totalité des agences | +3,40 Md€ | économie | 2027 |
+| Collectivités : fin du « millefeuille », suppression des EPCI et des métropoles | +8,20 Md€ | économie | 2027 |
+| Permis de conduire gratuit | +700 M€ | dépense | par an |
+
+| part réalisée | solde annoncé, par an | Δ dette 2035, vue vieillie | Δ dette 2035, vue figée |
+|---|---|---|---|
+| 0 % | +0 € | +3,00 pt | +2,25 pt |
+| 50 % | +34,80 Md€ | -2,09 pt | -2,86 pt |
+| 100 % | +69,60 Md€ | -7,24 pt | -8,03 pt |
+
+À θ½, sous la persistance « lue ». À une part réalisée nulle, la ligne est la dette de la part chiffrée, plus haut ; le solde est positif quand il améliore les comptes publics.
+
+**Ce que la variante suppose.** La variante « dépense publique » de Mésange est un composite, pas un instrument (D-214, page 106 du PDF) : 8 % d'investissement public, 25 % de rémunérations publiques, 9 % de prestations en nature, 12 % de consommations intermédiaires, 46 % de prestations sociales en espèces. La lire suppose que chaque euro annoncé tombe sur la dépense dans ces proportions, quoi que la mesure dise ; les transferts n'ont pas de variante à eux, et une économie sur les prestations lit la même moyenne. Montant atteint dès la première année du chemin et tenu en part du PIB de cette année-là : le calendrier que le candidat énonce est montré, pas lu. Choc de la variante en volume, lu comme des euros : prix de la réforme tenus constants (D-214, condition 4). Ligne de solde lue sous la dépense gelée en volume seule (note 70, D-214). Variantes superposées : Mésange est linéaire (D-230), et ce qu'annonce le candidat s'ajoute à la part chiffrée sans interaction.
+
+**Pas lues** — hors de la dépense publique : sa porte relève d'un autre module (retraites, prestations, salaires, entreprises) : Âge légal à 60 ou 62 ans selon le début de carrière ; Économies sur les retraites ; « Prime d'activité étudiante ».
+
+*Annoncé par le candidat, non vérifié ; jamais additionné au coût de l'outil ni au verdict (D-319, D-380).*
 
 ### L'écart au chiffrage officiel
 
 La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une, avant que le juge ne publie. Le juge est le chiffrage des programmes de l'Institut Montaigne, attendu au premier trimestre 2027.
 
 * `pres2027_le_pen_lp20_tva_energie`, enregistré le 2026-11-02 : +11,64 Md€ en 2026, tolérance de 30 % ou 200 M€ ; le juge n'a pas publié.
+* `pres2027_le_pen_lp21_ir_moins_30_ans`, enregistré le 2026-11-12 : +9,61 Md€ en 2026, tolérance de 25 % ou 200 M€ ; le juge n'a pas publié.
 * `pres2027_le_pen_lp22_part_pleine_2e_enfant`, enregistré le 2026-11-01 : +2,83 Md€ en 2026, tolérance de 25 % ou 200 M€ ; le juge n'a pas publié.
+* `pres2027_le_pen_lp26_suppression_cvec`, enregistré le 2026-11-12 : +236 M€ en 2026, tolérance de 25 % ou 200 M€ ; le juge n'a pas publié.
 
 ## Ce que bouge chaque paramètre
 
@@ -141,6 +170,18 @@ Ce que l'outil en lit : La TVA de l'électricité, du gaz, du fioul et des carbu
 | le candidat | 5,5 % | +11,64 Md€ | +3,60 pt |
 | le haut | 20 % | +0 € | +0,00 pt |
 
+### Exonération d'impôt sur le revenu des moins de 30 ans
+
+*Le programme : Jusqu'à 4 SMIC.*
+
+Ce que l'outil en lit : Les salaires des moins de 30 ans au 1er janvier de l'année des revenus sortent du revenu imposable jusqu'à 4 SMIC bruts annuels. « Jusqu'à quatre fois le Smic » se lit comme un abattement : le salaire au-delà reste imposé, sans falaise (l'autre lecture, tout imposé au-delà, n'est pas codée). Le SMIC est brut, le candidat ne le dit pas ; 4 SMIC nets feraient 3,17 SMIC bruts, dans la plage. Les revenus des non-salariés, le chômage et les pensions ne sont pas exonérés ; les prestations, qui lisent le salaire entier, ne bougent pas. Un jeune rattaché au foyer de ses parents allège l'impôt de ce foyer. Plage du plafond : de 0 (la mesure retirée) à 4 SMIC prolongés de la moitié de l'écart (6). Contre le droit de 2026.
+
+| `ir_exoneration_jeunes_plafond_smic` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
+|---|---|---|---|
+| le bas | 0 | +1,48 Md€ | +0,46 pt |
+| le candidat | 4 | +10,12 Md€ | +3,13 pt |
+| le haut | 6 | +10,41 Md€ | +3,21 pt |
+
 ### Part fiscale pleine dès le deuxième enfant
 
 *Le programme : Une part au lieu d'une demi-part.*
@@ -153,13 +194,19 @@ Ce que l'outil en lit : Le deuxième enfant apporte une part entière au lieu d'
 | le candidat | 1 | +2,33 Md€ | +0,72 pt |
 | le haut | 1,25 | +3,31 Md€ | +1,02 pt |
 
+### Suppression de la CVEC
+
+*Le programme : Suppression (105 €).*
+
+Ce que l'outil en lit : La contribution de vie étudiante et de campus supprimée, sur les étudiants du supérieur et les boursiers qu'impute la population (D-383). Le compte des inscrits contient ceux que la CVEC ne frappe pas : à 100 €, l'imputation donne 231 M€ contre un produit de 170 M€ en 2023-2024, 36 % de trop, et la suppression en est surestimée d'autant. Contre le droit de 2026, 105 €.
+
 ## Le programme, mesure par mesure
 
 Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure à zéro : sa « porte » dit ce qui manque à l'outil, ce qu'il devrait savoir faire pour la chiffrer. Une mesure vague n'énonce ni taux ni montant.
 
 | mesure | ce que dit le candidat | sort | pourquoi |
 |---|---|---|---|
-| Plan d'économies nettes | 140 Md€ nets d'ici 2032 par rapport à 2026 | refusée : une hypothèse du calcul de la dette (`chaine`) | Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour le calcul de la dette, pas une réforme que le moteur chiffre. |
+| Plan d'économies nettes | 140 Md€ nets d'ici 2032 par rapport à 2026 — montant annoncé : 140 Md€ (total net d'ici 2032 par rapport à 2026, sur le quinquennat ; la candidate ne donne pas d'annuel (montant non annualisé)) ; non lu comme montant annuel : un total d'ici 2032, dont les lignes sont déclarées une à une (D-381). | refusée : une hypothèse du calcul de la dette (`chaine`) | Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour le calcul de la dette, pas une réforme que le moteur chiffre. |
 | Déficit sous 3 % | Sous 3 % du PIB en 2030, l'essentiel de l'effort sur les 3 premières années | refusée : une hypothèse du calcul de la dette (`chaine`) | Un objectif de solde est une trajectoire du calcul de la dette, pas une réforme que le moteur chiffre. |
 | Équilibre primaire | En 18 mois | refusée : une hypothèse du calcul de la dette (`chaine`) | Un objectif de solde est une trajectoire du calcul de la dette, pas une réforme que le moteur chiffre. |
 | Trajectoire de dette | 121 % du PIB en 2027, 112 % en 2032 | refusée : une hypothèse du calcul de la dette (`chaine`) | Une cible de dette est ce que le calcul de la dette donne, pas une réforme qu'il prend en entrée. |
@@ -172,19 +219,19 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 | Réduction des effectifs publics | Au moins 200 000 postes en cinq ans (collectivités, agences, organismes) | refusée : la dépense publique (`depense_publique`) | Les effectifs publics sont une dépense que le moteur ne microsimule pas. |
 | Centralisation des recettes de TVA ; pas de dépense reconduite sans visa | Non chiffré | vague | Une organisation des finances publiques, sans taux ni montant. |
 | Baisse nette d'impôts sur le quinquennat | 30 Md€ ; pas de ventilation officielle publiée | refusée : un montant sans règle de calcul (`enveloppe`) | Un montant de baisses d'impôts sur le quinquennat, sans dire lesquelles ni de combien. |
-| « Droits nouveaux » | 15 Md€ provisionnés, plus des hausses pour l'outre-mer, la recherche et l'éducation | refusée : la dépense publique (`depense_publique`) | Une provision de dépense sans règle de calcul, que le moteur ne microsimule pas. |
+| « Droits nouveaux » | 15 Md€ provisionnés, plus des hausses pour l'outre-mer, la recherche et l'éducation — montant annoncé : 15 Md€ (15 Md€ « provisionnés » sur la trajectoire, calendrier non dit (montant non annualisé)) ; non lu comme montant annuel : une provision sans calendrier (D-381). | refusée : la dépense publique (`depense_publique`) | Une provision de dépense sans règle de calcul, que le moteur ne microsimule pas. |
 | Âge légal à 60 ou 62 ans selon le début de carrière | Début avant 20 ans : départ à 60 ans avec 40 annuités. Après 20 ans : montée progressive jusqu'à 62 ans avec 42 annuités. Détails attendus le 17/11/2026 | refusée : les droits à la retraite (`retraites`) | L'âge légal et la durée d'assurance : la population ne vieillit pas en âge et ses pensions sont des données. |
 | Suppression des cotisations retraite et chômage des seniors qui continuent à travailler | Seniors ayant dépassé l'âge de la retraite et ayant tous leurs trimestres | refusée : les droits à la retraite (`retraites`) | La cible, qui a passé l'âge légal avec tous ses trimestres, demande des durées d'assurance que la population ne porte pas. |
 | Économies sur les retraites | 15 à 20 Md€ « à terme », par des « corrections de mesures injustes » (non détaillées) | refusée : les droits à la retraite (`retraites`) | Une enveloppe d'économies sur des pensions, que la population porte comme des données, sans dire quelles règles changent. |
 | Pilier de capitalisation | Non chiffré | vague | Une intention, sans taux, ni montant, ni règle. |
-| Baisse des impôts de production | 20 Md€ | refusée : un montant sans règle de calcul (`enveloppe`) | Un montant de 20 Md€ sans dire quels impôts de production baissent, ni de combien chacun. |
+| Baisse des impôts de production | 20 Md€ | refusée : un montant sans règle de calcul (`enveloppe`) | Une enveloppe de 20 Md€ sans dire quels impôts de production baissent. Le bouton de l'enveloppe (impots_production_baisse) ne la répartit qu'entre la CVAE et la C3S, les seuls impôts de production du moteur, qui rapportent moins de 20 Md€ en 2026 : il la refuse. La CFE, la taxe foncière des entreprises et les autres n'y sont pas. |
 | Baisse de la TVA sur l'énergie et les carburants | De 20 % à 5,5 % | chiffrée | La TVA de l'électricité, du gaz, du fioul et des carburants (le groupe « energie » de la couche consommation) passe de 20 % à 5,5 %, à volumes constants et répercutée en entier dans les prix (D-323). Le bois de chauffage, déjà à 10 %, et la chaleur de réseau ne bougent pas. Plage de 0 à 20 % (la mesure retirée). |
-| Exonération d'impôt sur le revenu des moins de 30 ans | Jusqu'à 4 SMIC | refusée : un réglage que le moteur n'a pas encore (`bouton_hors_but`) | Exonérer d'IR les revenus des moins de 30 ans demande une exonération par âge au sein du foyer, que le moteur n'a pas. |
+| Exonération d'impôt sur le revenu des moins de 30 ans | Jusqu'à 4 SMIC | chiffrée | Les salaires des moins de 30 ans au 1er janvier de l'année des revenus sortent du revenu imposable jusqu'à 4 SMIC bruts annuels. « Jusqu'à quatre fois le Smic » se lit comme un abattement : le salaire au-delà reste imposé, sans falaise (l'autre lecture, tout imposé au-delà, n'est pas codée). Le SMIC est brut, le candidat ne le dit pas ; 4 SMIC nets feraient 3,17 SMIC bruts, dans la plage. Les revenus des non-salariés, le chômage et les pensions ne sont pas exonérés ; les prestations, qui lisent le salaire entier, ne bougent pas. Un jeune rattaché au foyer de ses parents allège l'impôt de ce foyer. Plage du plafond : de 0 (la mesure retirée) à 4 SMIC prolongés de la moitié de l'écart (6). Contre le droit de 2026. |
 | Part fiscale pleine dès le deuxième enfant | Une part au lieu d'une demi-part | chiffrée | Le deuxième enfant apporte une part entière au lieu d'une demi-part, dans le cas général ; le premier et le troisième ne bougent pas. Plage de 0,5 (la mesure retirée) à 1,25. |
 | Relèvement du plafond d'exonération des dons familiaux de sommes d'argent | Non chiffré | vague | Un relèvement de plafond qui ne dit pas jusqu'où. |
 | « Prime d'activité étudiante » | Paramètres non donnés | vague | Une prestation nommée, sans montant ni règle d'éligibilité. |
 | Permis de conduire gratuit | Jeunes au casier judiciaire vierge, demande faite dans leur dix-huitième année | refusée : la dépense publique (`depense_publique`) | Une dépense nouvelle de l'État, que le moteur ne microsimule pas. |
-| Suppression de la CVEC | Suppression (105 €) | refusée : un réglage que le moteur n'a pas encore (`bouton_hors_but`) | La CVEC, contribution des étudiants, n'est pas un prélèvement que le moteur calcule. |
+| Suppression de la CVEC | Suppression (105 €) | chiffrée | La contribution de vie étudiante et de campus supprimée, sur les étudiants du supérieur et les boursiers qu'impute la population (D-383). Le compte des inscrits contient ceux que la CVEC ne frappe pas : à 100 €, l'imputation donne 231 M€ contre un produit de 170 M€ en 2023-2024, 36 % de trop, et la suppression en est surestimée d'autant. Contre le droit de 2026, 105 €. |
 | Fin des subventions aux énergies intermittentes | Non chiffré par la candidate | vague | Une intention sans montant ni calendrier. |
 | Prêt à taux zéro pour les voitures propres (piste) | « réfléchissant » | vague | Une piste à l'étude, sans taux ni montant. |
 | Taxation exceptionnelle des surprofits (TotalEnergies) | Temporaire, liée à une crise ; pas de taux | vague | Une taxe exceptionnelle sans taux ni assiette. |
@@ -192,14 +239,19 @@ Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une m
 | Fin du financement des aides non contributives pour les étrangers | Non chiffré dans la source 2026 | vague | Une intention qui ne dit ni quelles aides ni quels étrangers. |
 | Fin de l'aide financière à l'Ukraine | Arrêt ; aucun calendrier vérifié | vague | Un arrêt sans calendrier ni montant. |
 | Appel à une intervention de la BCE sur les taux | aucun | vague | Un appel à la BCE, sans paramètre. |
+| Gel des taxes sur le tabac et fin de l'indexation de leur prix sur l'inflation | Gel (hausse nulle) de l'accise sur les tabacs ; désindexation sur l'inflation | refusée : la consommation (`consommation`) | L'accise sur les tabacs n'est pas dans la couche consommation, qui ne porte que la TVA du poste tabac. |
+| Prêt à taux zéro pour les parents à partir du troisième enfant | Taux zéro, dès le troisième enfant ; plafond et durée non dits (amendement de J.-P. Tanguy au PLF 2027) | refusée : une donnée des ménages (`donnee_menages`) | La population ne porte ni les emprunts des ménages ni leurs taux. |
+| Hausse de 10 % des salaires exonérée de cotisations patronales | +10 % de salaire, la hausse exonérée de cotisations patronales ; plafond non dit dans la source | refusée : la distribution des salaires (`salaires`) | Une incitation facultative : le moteur ne sait pas quels employeurs augmenteraient leurs salaires de 10 %. |
 
 Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait le moins :
 
 * 8 mesures — la dépense publique, que le moteur ne simule pas ménage par ménage : elle n'entre dans la dette que comme une hypothèse de dépense (`depense_publique`).
 * 5 mesures — une hypothèse du calcul de la dette année par année, pas une réforme : règle budgétaire, trajectoire de déficit (`chaine`).
 * 3 mesures — les droits à la retraite (âges, durées, régimes) : la population ne vieillit pas en âge et ses pensions sont des données (`retraites`).
-* 2 mesures — un réglage que le moteur n'a pas encore et qui reste à écrire (l'imposition des revenus du capital au barème, une exonération par âge…) (`bouton_hors_but`).
 * 2 mesures — une règle : le candidat dit combien (un montant global), pas comment (un taux, un seuil, une assiette) (`enveloppe`).
+* 1 mesure — la consommation et le parc : TVA par taux, accises, véhicules (`consommation`).
+* 1 mesure — une donnée des ménages : plus-values, épargne, logement (`donnee_menages`).
+* 1 mesure — la distribution des salaires : SMIC, point d'indice, indexation des salaires (`salaires`).
 
 ## Ce que le candidat annonce, à part
 
@@ -215,21 +267,26 @@ Le programme annonce lui-même un montant pour 11 de ses mesures. Ces montants n
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `12e769c` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_le_pen/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `601b442` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_le_pen/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée (2 mesures sur 22 paramétrées, 33 relevées) | +13,97 Md€ → +13,38 Md€ | +1,56 pt → +1,49 pt | dépend de θ → dépend |
+| la part chiffrée (4 mesures sur 25 paramétrées, 36 relevées) | +13,38 Md€ → +21,41 Md€ | +1,49 pt → +3,00 pt | dépend de θ → dépend |
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée (2 mesures sur 22 paramétrées, 33 relevées)** : le secteur public modélisé statut par statut (D-346), la TVA des ménages lue dans Mésange sans la part que les administrations se paient (D-348), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (4 mesures sur 25 paramétrées, 36 relevées)** : le secteur public modélisé statut par statut (D-346), la TVA des ménages lue dans Mésange sans la part que les administrations se paient (D-348), le verdict lu sur le Monte-Carlo (D-345).
 
 Là où une seule correction touche une ligne, l'écart avant → après est ce qu'elle pèse (D-352) ; ailleurs, les corrections ne se séparent pas sans un calcul refait sans chacune, qui n'est pas fait.
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `601b442`, conteneur cloud, 15 Go, 4 cœurs. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur 2 commits, conteneur cloud, 15 Go, 4 cœurs, deux files ; chaque rapport nomme le sien. Un commit après le premier rejoint l'étude quand sa passe témoin, `plages/lp20_tva_energie__tva_postes.energie__bas.json` rejouée sur lui, redonne son rapport à l'identique, hors date, commit et lieu (D-335) :
+
+* `aa22293`, le premier.
+* `d4f3f7f`, rejoint par `reports/etudes/presidentielle_le_pen/temoins/d4f3f7f.json`, témoin du 2026-11-13.
+
+Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
@@ -244,4 +301,4 @@ Le secteur public est modélisé statut par statut (D-346) : un titulaire est pa
 Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
 
 * `reports/etudes/presidentielle_le_pen/premiere_annee_pres2027_le_pen_programme.json`, `reports/etudes/presidentielle_le_pen/predictif_pres2027_le_pen_programme.json`
-* `reports/etudes/presidentielle_le_pen/plages/`, les 6 points des plages
+* `reports/etudes/presidentielle_le_pen/plages/`, les 9 points des plages

@@ -1,0 +1,73 @@
+{
+  "programme": "melenchon",
+  "mesure": "garantie_autonomie_jeunes",
+  "champ": "garantie_autonomie.age_maximum",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "garantie_autonomie": {
+        "seuil": 1337.0,
+        "age_minimum": 18,
+        "age_maximum": 25,
+        "taux_ressources": 1.0
+      }
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 35317810010.991455,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.011461664088179946,
+      0.02279681013848278,
+      0.03400683470325738,
+      0.045093118919198094,
+      0.05605702867750684,
+      0.06689991479217938,
+      0.07762311316643311,
+      0.08822794495729713,
+      0.0987157167383863,
+      0.10908772066087846
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-12",
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
+}
