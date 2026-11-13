@@ -886,7 +886,7 @@ d'impôt imputés par défaut ; une boucle macro pour les impôts des entreprise
 propriétaire rouvre D-246 ; une incertitude qui tire l'erreur mesurée par la grille ; puis
 les juges du passé, sur un modèle dont l'erreur est connue et expliquée.
 
-### But 21 — Les programmes des candidats, chiffrés sur la population (D-379)
+### But 21 — Les programmes des candidats, chiffrés sur la population (fait, D-379 à D-398)
 
 Le compte des 24 fichiers de `programmes/`, le 12 novembre : 321 mesures relevées, 13
 chiffrées (4 %), 109 vagues (34 %), 199 refusées par une porte (62 %). Cinq candidats n'ont
@@ -956,6 +956,18 @@ Les décisions à prendre avant de lancer :
   à part du juge, comme une mesure dont le chiffre est déjà connu.
 * **Le SMIC** (étape 4) : le premier jour, la loi seule relève les salaires sous le
   nouveau seuil ; la diffusion au-dessus est une hypothèse, avec sa plage, ou un refus.
+
+**Fait, le 13 novembre 2026 (D-379 à D-398).** Les 24 programmes relevés à nouveau : 525
+mesures, 44 chiffrées (13 avant), 165 vagues, 316 refusées par une porte
+(`docs/presidentielle/couverture_avant.md` et `couverture_apres.md`). 31 mesures neuves
+préenregistrées avant le juge et enregistrées, 25 dans leur pronostic (D-391, D-393).
+Les dix-huit études refaites, seize programmes dont huit neufs, chacun en une passe, la
+dette « si les économies annoncées sont tenues » à côté (D-380) : 32 pronostics sur 40,
+les 20 verdicts (D-397). Dupont-Aignan est refusé par le garde de monotonie, et le site le
+dit (D-398). Restent fermées : les portes de la dépense publique, des retraites, des
+successions et du patrimoine, d'une donnée des ménages que la population ne porte pas
+(résidence, heures neuves), des prix et de la chaîne de la dette ; et deux travaux
+laissés : le chemin refusé de Dupont-Aignan, les décompositions E1/E2 archivées.
 
 **Ce qui viendrait ensuite.** Les modules qui manquent : les retraites (22 mesures, dix
 candidats ; des âges fins et des droits), les successions et le patrimoine (17 mesures ; le

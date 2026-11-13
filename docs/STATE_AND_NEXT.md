@@ -1,5 +1,27 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-13 update adds D-379 to D-398: goal 21, done once merged. The 24 programmes
+were surveyed again (525 measures, from 321), and the coverage table written before any
+pricing (`docs/presidentielle/couverture_avant.md`, `couverture_apres.md`): 44 measures
+priced, from 13. New knobs (formula knobs, year-by-year indexation, a production-tax
+envelope), new benefits coded as OpenFisca reforms (RIA, family allowance, youth
+guarantee), households' data imputed and calibrated on named totals (overtime, commuting
+costs, alimony, mortgage interest, childcare, students), and the SMIC and point d'indice
+on the population, with a declared diffusion. 31 measures were preregistered before the
+judge (D-384, D-392) and registered: 25 within their prognosis (D-391, D-393). On the way,
+guard fixes, each tested: reforms start the year they price (D-386), pensions and PAJE in
+the sector guard (D-387), the capital index on the registration path (D-388), a capital
+gain kept in disposable income without the PFU (D-389), the unemployment CRDS (D-395),
+households' data on the annual path (D-396). The series reran: 18 studies, 16 programmes
+(8 new), each programme in one pass with an « if announced savings are kept » reading
+beside its debt, never added (D-380). First years to the million; 32 of 40 prognoses held,
+all 20 verdicts; the 8 Δb misses go one way (SMIC programmes weigh less on the debt,
+transfer programmes more than the band taken from tax studies, D-397). Dupont-Aignan's
+path is refused by the monotonicity guard under « tenue » persistence, and the site says
+so (D-398). The E1/E2 decompositions of goal 16 are archived, to redo. Next: the owner
+merges the goal 21 PR and republishes the site; then the refused path, the
+decompositions, the retirement and estate modules (BUT.md).
+
 The 2026-11-12 update adds D-375 to D-378: goal 20, done once merged. The site carries a
 public path of eight pages and a comparison page (`src/impots/parcours/`, published by
 `impots site construire` as `site/parcours-*.html`): one household, simulated France, the
