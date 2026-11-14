@@ -365,7 +365,10 @@ def fermer(etat: Etat, prec: Etat, entrees: Entrees, k: int) -> None:
     etat.copier_contributions("apu_depenses_primaires", depenses)
     etat.copier_contributions("interets_nets", interets)
     zero = np.zeros(etat.n)
-    cles = set(recettes) | set(depenses) | set(interets)
+    # Les clés dans un ordre fixe (trié) : l'ordre d'un ensemble change d'un processus à
+    # l'autre (`PYTHONHASHSEED`), et avec lui le dernier bit des sommes de B9 et de la
+    # dette (D-411, corrigé par D-412).
+    cles = sorted(set(recettes) | set(depenses) | set(interets))
     b9 = {c: recettes.get(c, zero) - depenses.get(c, zero) - interets.get(c, zero)
           for c in cles}
     etat.copier_contributions("b9", b9)
@@ -374,7 +377,7 @@ def fermer(etat: Etat, prec: Etat, entrees: Entrees, k: int) -> None:
     etat.copier_contributions("dette_ouverture", ouverture)
     flux = _somme_par_cle(etat, ("sfa", "ecart_millesime_dette", "ecart_eurostat"),
                           (1.0, 1.0, 1.0))
-    cles_dette = set(ouverture) | set(b9) | set(flux)
+    cles_dette = sorted(set(ouverture) | set(b9) | set(flux))
     etat.copier_contributions("dette", {
         c: ouverture.get(c, zero) - b9.get(c, zero) + flux.get(c, zero) for c in cles_dette})
     etat.fixer("ratio_dette", etat["dette"] / etat["pib"])
