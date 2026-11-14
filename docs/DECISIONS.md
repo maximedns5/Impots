@@ -30718,3 +30718,110 @@ branches). Les lourds du jumeau, chacun dans son processus : la page dans Chromi
 * Les cellules réelles à recouper sur la population entière, là où elle est.
 * La convention « parts_premiere_annee » sur la page : à décider avec le propriétaire,
   qui l'a voulue sur demande (D-414).
+
+## D-419 — La page « Le jumeau » refaite, le calcul dans un Worker ; la commande de manifeste
+
+**Ce qui est codé** (branche `claude/but23-page`, partie de `claude/but23-cadre`,
+f3541d1). Deux tâches. Aucune équation des blocs n'est touchée, aucun nombre ne change.
+
+**1. La page, les graphiques d'abord** (demande du propriétaire). En haut, le choix : le
+candidat ou la loi hypothétique, le mode, la vue et, dans le mode structurel, la
+convention. Tout de suite après, les huit graphiques dans l'ordre de `navigateur.SERIES`
+(dette, solde, PIB, emploi, créations et fermetures de sociétés, exportations et
+importations), en cartes, l'écart de 2035 dans le titre de chacune, ses nombres derrière
+« Les nombres » ; puis les déciles. Les curseurs θ sont dans un panneau à côté des
+graphiques à partir de 64rem de large, collant, replié au téléphone ; ils sont regroupés
+par famille de blocs (macro : `mesange`, `investissement` ; entreprises : `naissances`,
+`creations`, `fermetures`, `productivite`, `implantation` ; commerce extérieur ; ménages et
+travail : `emploi`, `salaires`, `consommation` ; un bloc inconnu fait sa propre famille),
+chaque groupe repliable et ouvert s'il porte un θ lu. Chaque curseur dit en clair le début
+de sa définition ; la définition entière, la source, les trois ancres et la valeur au
+réglage sont derrière « détail ». Le texte long (les deux modes, les entrées) passe en
+bas, dans « Comment lire cette page ». Les familles sont de la présentation (`page.js`).
+
+**Le calcul hors du fil principal.** Pyodide tourne dans un Web Worker. La page
+télécharge `pyodide.js` avec `fetch(…, {integrity})`, la même empreinte sha384 qu'avant
+(un fichier changé sur le CDN n'est pas exécuté), et crée le Worker depuis un Blob qui
+porte ce fichier vérifié suivi de `jumeau-calcul.js`, servi avec le site (cinquième
+fichier de la page). Un Worker né d'un Blob hérite de la politique de sécurité de la
+page ; elle gagne `worker-src blob:` et rien d'autre. Mesuré une fois dans Chromium : du
+Worker, un `fetch` hors du CDN et un `importScripts` hors du CDN sont refusés, le CDN
+répond ; un Worker créé depuis une URL du site est refusé (`worker-src`). Le Worker
+reçoit le paquet et les entrées de la page et rend le texte de `calculer_json` tel quel.
+
+**La convention de dix ans** (D-414, décidée ici pour la page, D-416 l'avait laissée au
+propriétaire, qui la demande). `Session.calculer` prend `convention` (seule
+« parts_premiere_annee » est connue, une autre est refusée) ; elle ne s'applique qu'au
+rapport d'un candidat dans le mode structurel, le seul qui lise ses ventilations, et le
+résultat le dit (`convention`, `conventions` : par axe, les années calculées qu'elle a
+ventilées, et la définition de `mesures.TEXTE_CONVENTION`). La case est cochée par
+défaut : le programme d'Attal, de Lisnard ou de Le Pen tourne jusqu'en 2035. Chaque
+nombre d'une année ventilée (l'écart, ses parts, la variante, l'écart de 2035 du titre,
+les déciles de cette année ; pas la référence) porte la marque c, qui renvoie à sa
+définition affichée au-dessus des graphiques ; chaque graphique grise ces années. Là où
+elle n'a pas de parts (Retailleau : cotisations non ventilées ; Mélenchon : le Smic ; la
+vue vieillie), les années restent absentes et la page affiche le refus et chaque
+« non porté » sans qu'on clique, comme avant. Décochée, la page redonne le refus de D-412.
+
+**Les temps**, mesurés une fois (Chromium de la machine, site servi en local, CDN par le
+proxy) : premier affichage 3,7 à 4,2 s (Pyodide et numpy 2,4 à 2,9 s, paquet et session
+0,7 s), comme avant. Recalcul : 35 à 70 ms dans le mode réduit ; 520 à 890 ms dans le
+mode structurel (le programme d'Attal sur dix ans avec la convention, ou une loi
+hypothétique), contre 560 à 710 ms avant pour la seule année 2026. Le fil principal :
+avant, chaque recalcul structurel y était une tâche longue de 734 et 769 ms (la page
+figée) ; après, aucune tâche longue (plus de 50 ms) pendant les dix-huit réglages du test.
+Le site sert 1,09 Mo (le script 23 ko, le Worker 2 ko, la page 20 ko).
+
+**Les captures** (deviceScaleFactor 1, hors git) : grand écran 1440 × 900 et téléphone
+390 × 844, le haut et la page entière, le panneau des θ ouvert au téléphone. À 390 px, la
+largeur du document est 390 : aucun défilement horizontal, panneau ouvert ou non.
+
+**2. La commande de manifeste** (D-416 ; décision du responsable : elle part du manifeste
+existant). `impots population manifest` (`cli.manifest_raw`) garde chaque entrée telle
+quelle : URL, date, licence, `provenance`, `capture`, `normalization`,
+`normalized_sha256`. Elle revérifie l'empreinte de chaque fichier manifesté présent, sur
+ses octets normalisés quand l'entrée déclare une normalisation (le contrat de `donnees
+check`, `donnees.empreinte` et `attendu` : les deux PDF de l'IMK, D-159, dont le sha256
+brut n'est pas celui du fichier présent). Une empreinte qui change est un refus nommé
+(fichier, attendue, sur disque) : rien n'est écrit ni déplacé, la commande sort en 1. Elle
+n'ajoute que les fichiers neufs déclarés dans `KNOWN_SOURCES` (licence « unknown », sauf
+un troisième élément du tuple), ne met en quarantaine qu'un fichier ni manifesté ni
+déclaré, garde l'entrée d'un fichier absent du worktree et le dit, n'écrit rien quand il
+n'y a rien à ajouter. Un seul cas change une entrée : une entrée en quarantaine, sans URL,
+que `KNOWN_SOURCES` déclare désormais en sort avec son URL (la libération de D-028,
+gardée). `--raw` désigne le `data/raw`. `ingest.write_manifest`, qui ne servait qu'à
+l'ancienne commande, est retiré.
+
+**L'essai sur une copie** du `data/raw` de ce worktree (les fichiers en liens, le
+manifeste copié ; jamais l'original), 2,4 s : le premier passage, avant la prise en compte
+de la normalisation, refusait par leur nom les deux PDF de l'IMK, sans rien écrire. Après :
+142 fichiers revérifiés (l'archive JORF comprise), les 93 entrées dont le fichier n'est
+pas ici gardées et listées, rien à ajouter, le manifeste inchangé au bit (même sha256).
+Un fichier non déclaré ajouté à la copie part en quarantaine avec son entrée sans URL ; les
+235 entrées d'avant restent égales.
+
+**Les tests.** `test_jumeau_navigateur.py`, un de plus : la convention sur le programme
+d'Attal, dix ans, chaque nombre égal au bit à `trajectoire.calculer` sur la mesure du
+rapport entier avec la convention, le mode réduit inchangé, le refus de Retailleau dit ;
+il échoue sur le code d'avant. `test_provenance.py`, un de plus, sur un mini `data/raw`
+dans `tmp_path` (entrée gardée champ par champ, fichier neuf déclaré, orphelin en
+quarantaine, entrée absente gardée, rien d'écrit au second passage, empreinte changée
+refusée) ; il échoue sur le code d'avant. `test_jumeau_page.py` (lourd, seul, 23 s) : une
+étape de plus (la convention décochée) ; 1 419 nombres affichés égaux à la trajectoire
+Python, 1 398 au bit, le plus grand écart relatif 1,0e-15 (2e-16 avant, la convention
+ajoutant neuf années de calcul structurel) ; les marques sur les neuf années d'après 2026
+dans chaque série calculée et sur chaque cellule qu'elles touchent ; sans la convention,
+le refus de D-412 et aucune marque ; à 390 px, pas de défilement horizontal. `pytest -m
+"not lourd and not chrono" -n 2` sur `test_site.py`, `test_jumeau_navigateur.py`,
+`test_provenance.py`, `test_donnees.py`, `test_identifiants.py` : 92 passent. `site
+construire`, `site verifier`, `site publiable` passent ; `node ui/check.mjs` passe ; `ruff
+check src tests scripts` est propre. Ni `make impact` ni `make full`.
+
+**Ce qui reste.**
+
+* La convention n'est pas un chiffrage : une passe par année resterait la mesure juste
+  (D-412, D-414). La page la coche par défaut ; le propriétaire peut préférer l'inverse.
+* Le recalcul structurel sur dix ans prend 0,5 à 0,9 s ; la page ne fige plus, mais la
+  cible de 50 ms (D-414) reste manquée.
+* La licence d'un fichier neuf n'est connue que si `KNOWN_SOURCES` la porte ; aucune n'y
+  est encore écrite.
