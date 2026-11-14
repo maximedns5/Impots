@@ -69,9 +69,11 @@ def _mesure(study: etude.Etude, seule: etude.MesureSeule, k: float) -> None:
 
 @pytest.fixture
 def roussel(tmp_path) -> etude.Etude:
-    """L'étude de Roussel sur une copie de ses rapports commités, sans mesures seules."""
+    """L'étude de Roussel sur une copie de ses rapports commités, sans mesures seules :
+    depuis D-403, le dépôt porte celles de la série du but 22, que la copie laisse."""
     study = etude.definition("presidentielle_roussel")
-    shutil.copytree(study.rapports, tmp_path / "roussel")
+    shutil.copytree(study.rapports, tmp_path / "roussel",
+                    ignore=shutil.ignore_patterns(etude.MESURES))
     return etude.replace(study, rapports=tmp_path / "roussel")
 
 
@@ -203,6 +205,12 @@ def test_a_path_without_the_channel_does_not_resume_into_a_series_that_reads_it(
     déjà là, ne se mêle pas à eux sous un même verdict ; la série se relance entière."""
     from impots.predictif import recherche
 
+    # Un chemin d'avant le canal : les rapports commités le lisent depuis D-403, la copie
+    # le leur retire.
+    for path in roussel.rapports.rglob("predictif_*.json"):
+        report = json.loads(path.read_text("utf-8"))
+        report.pop("creations", None)
+        path.write_text(json.dumps(report), encoding="utf-8")
     first = json.loads((roussel.rapports / roussel.witness_pass()).read_text("utf-8"))
     monkeypatch.setattr(recherche, "code_state", lambda root: (first["commit"], False))
     monkeypatch.setattr(etude.Etude, "preregistered", lambda self: None)

@@ -94,9 +94,12 @@ def rapports() -> tuple[dict[str, Any], ...]:
 
 def charge(data: dict[str, Any]) -> dict[str, Any]:
     """Ce que `rejouer.chemin` lit d'un rapport, et rien d'autre : le rejeu, et par année le
-    coût des deux vues avec les impulsions et les statistiques des canaux."""
+    coût des deux vues avec les impulsions et les statistiques des canaux ; le canal des
+    créations d'entreprises quand le rapport le porte (but 22)."""
     rejeu = {k: data["rejeu"][k] for k in ("start", "cadre", "looped", "behavioural", "lignes",
                                             "macro", "box_rows")}
+    if data["rejeu"].get("creations"):
+        rejeu["creations"] = data["rejeu"]["creations"]
     years = []
     for row in data["years"]:
         stats = {vue: {"impulses": s.get("impulses") or {}, "canaux": s.get("canaux")}

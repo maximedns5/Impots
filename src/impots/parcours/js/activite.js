@@ -8,6 +8,7 @@
 (function (root) {
   "use strict";
   const MACRO_ROW = "multiplicateur_macro";
+  const CREATIONS_ROW = "productivite_creations";
   const READ = "lue";
   const SALARIALE = "salariale";
   const VIEWS = { vieillie: "mechanical_aged_eur", figee: "mechanical_frozen_eur" };
@@ -132,6 +133,42 @@
     return [gap, balance];
   }
 
+  // --- le canal des créations d'entreprises (but 22) -----------------------------------------
+  // `creations.productivite_a` puis `creations.effet`, lus dans `rejeu.creations` comme
+  // `rejouer._creations` : c à θ par le centre déclaré, puis par année le PIB que les
+  // cohortes ajoutent et les recettes qu'il rend, en part du PIB de référence.
+  function productiviteA(theta, p) {
+    const t = +theta;
+    if (!(t >= 0.0 && t <= 1.0)) throw new Error(`θ = ${t} hors de [0 ; 1] : refusé plutôt qu'écrêté`);
+    const q = p.productivite;
+    if (t <= 0.5) return q.centre - (1.0 - 2.0 * t) * (q.centre - q.bas);
+    return q.centre + (2.0 * t - 1.0) * (q.haut - q.centre);
+  }
+
+  function creations(rejeu, view, values, gdp) {
+    const block = rejeu.creations;
+    const p = block.parametres;
+    const theta = values && CREATIONS_ROW in values ? values[CREATIONS_ROW] : block.theta;
+    const c = productiviteA(theta, p);
+    const variations = block.variations[view].map(Number);
+    if (variations.length !== gdp.length) throw new Error("années, PIB et variations de longueurs différentes");
+    const slope = p.elasticite.centre;
+    const rate = variations.map((v, k) => 100.0 * v / (p.assiette_part_pib * gdp[k]));
+    const entry = rate.map((t) => -slope * t);
+    const weight = p.taille_relative * c;
+    const ramp = p.montee_en_charge_ans;
+    const pib = [];
+    for (let t = 0; t < gdp.length; t++) {
+      let share = 0;
+      for (let s = 0; s <= t; s++) {
+        share += entry[s] / 100.0 * p.survie_annuelle ** (t - s) * Math.min(1.0, (t - s + 1) / ramp);
+      }
+      pib.push(share * weight * p.part_va_societes_pib);
+    }
+    const rho = rejeu.start.receipts_ratio;
+    return { pib, recettes: pib.map((g) => g * rho) };
+  }
+
   // --- la dette (`rejouer.reference_path`, `rejouer.chemin`) -----------------------------
   function referencePath(rejeu, start, horizon) {
     const cadre = rejeu.cadre;
@@ -188,18 +225,29 @@
       gap = new Array(horizon).fill(0.0);
       phi = new Array(horizon).fill(0.0);
     }
+    // Le canal entre dans toutes les lectures, ajouté en dernier dans l'ordre de
+    // `rejouer.chemin` : ses recettes après le solde et la rétroaction, son PIB après
+    // l'écart de la boucle ; `creations: false` donne la dette sans lui.
+    let extra = new Array(horizon).fill(0.0), more = new Array(horizon).fill(0.0);
+    if (rejeu.creations && opts.creations !== false) {
+      const firms = creations(rejeu, view, values, gdp);
+      extra = firms.recettes;
+      more = firms.pib;
+    }
     let debt = 0.0;
     const delta = [];
     for (let k = 0; k < horizon; k++) {
-      debt = debt * (1.0 + marginal) / (1.0 + nominal) - (primary[k] + phi[k]);
-      delta.push((refs[k] + debt) / (1.0 + gap[k]) - refs[k]);
+      debt = debt * (1.0 + marginal) / (1.0 + nominal) - (primary[k] + phi[k] + extra[k]);
+      delta.push((refs[k] + debt) / (1.0 + gap[k] + more[k]) - refs[k]);
     }
+    gap = gap.map((g, k) => g + more[k]);
     return { years, reference: refs, delta, gap, feedback: phi, gdp };
   }
 
   function thetaValues(lignes, theta) {
     const values = {};
     for (const [key, row] of Object.entries(lignes)) values[key] = valueAt(row, theta[key]);
+    if (CREATIONS_ROW in theta) values[CREATIONS_ROW] = +theta[CREATIONS_ROW];
     const z = MACRO_ROW in theta ? 2.0 * +theta[MACRO_ROW] - 1.0 : 0.0;
     return [values, z];
   }
@@ -222,7 +270,7 @@
   const md = (v) => signe(v / 1e9, 2) + " Md€";
   const pt = (v) => signe(v * 100, 2) + " pt";
 
-  const api = { MACRO_ROW, READ, SALARIALE, VIEWS, BOUCLES, RECETTES, valueAt, canaux, receipts,
+  const api = { MACRO_ROW, CREATIONS_ROW, READ, productiviteA, creations, SALARIALE, VIEWS, BOUCLES, RECETTES, valueAt, canaux, receipts,
     interpolated, readHorizon, loop, referencePath, chemin, thetaValues, atTheta, decomposition,
     nombre, signe, md, pt };
   if (typeof module !== "undefined" && module.exports) module.exports = api;

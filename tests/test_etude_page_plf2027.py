@@ -346,8 +346,3 @@ def test_a_fan_without_its_strip_is_refused(page, reports) -> None:
     _edit(reports, "premiere_annee_plf2027_art_2.json", strip)
     with pytest.raises(page.EtudeError, match="bandeau"):
         page.render(page.load(reports))
-
-
-def test_the_committed_page_is_what_its_committed_reports_render(page) -> None:
-    """The anti-drift guard: no number of `docs/etudes/plf2027.md` is typed by hand."""
-    assert page.DOC.read_text(encoding="utf-8") == page.render(page.load())

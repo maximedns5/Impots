@@ -46,7 +46,7 @@ def test_the_committed_site_is_the_studies_build() -> None:
     (lambda d: (d / "plfss2027.html").write_text(
         re.sub(r"-0,\d\d pt", "-9,99 pt", (d / "plfss2027.html").read_text(encoding="utf-8"),
                count=1), encoding="utf-8"), "-9,99 pt"),
-    (lambda d: (d / "plf2027.html").unlink(), "manque ['plf2027.html']"),
+    (lambda d: (d / "plfss2027.html").unlink(), "manque ['plfss2027.html']"),
     (lambda d: (d / "vieux.html").write_text("x", encoding="utf-8"), "['vieux.html'] en trop"),
 ])
 def test_a_site_that_is_not_the_studies_build_is_refused(tmp_path, change, needle) -> None:
@@ -59,7 +59,7 @@ def test_the_command_says_the_drift(tmp_path, monkeypatch, capsys) -> None:
     copy = _copy(tmp_path)
     monkeypatch.setattr(site, "SITE", copy)
     assert cli.main(["site", "verifier"]) == 0
-    page = copy / "plf2027.html"
+    page = copy / "plfss2027.html"
     page.write_text(page.read_text(encoding="utf-8").replace("L2", "L1", 1), encoding="utf-8")
     assert cli.main(["site", "verifier"]) == 1
     assert "ligne" in capsys.readouterr().err
@@ -79,8 +79,13 @@ def test_the_site_is_built_where_it_is_asked(tmp_path, monkeypatch) -> None:
 
 def _chiffrees() -> list[etude.Etude]:
     """Les études dont les passes ont toutes tourné : une étude refusée (D-398) n'a pas de
-    chemin annuel, donc ni page ni entrée à commit."""
-    return [s for s in etude.definitions() if not s.refus]
+    chemin annuel, donc ni page ni entrée à commit ; une étude que la série du but 22 n'a
+    pas refaite (D-403) n'a ni rapports ni page."""
+    return [s for s in etude.definitions() if not s.refus and s.page.exists()]
+
+
+def _non_refaites() -> list[etude.Etude]:
+    return [s for s in etude.definitions() if not s.refus and not s.page.exists()]
 
 
 def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
@@ -98,6 +103,14 @@ def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
         assert f"{study.nom}.html" in built
         assert f'<a href="{study.nom}.html">{html.escape(study.titre)}</a>' \
             in built["index.html"]
+    for study in _non_refaites():
+        # Sans rapport ni page, listée comme non tournée, sans lien (D-403).
+        assert not any(study.rapports.glob("*.json")), study.nom
+        assert f"{study.nom}.html" not in built
+        entry = built["index.html"].split(
+            f"<li><strong>{html.escape(study.titre)}</strong> — ")[1].split("</li>")[0]
+        assert re.sub(r"<[^>]+>", "", entry) == (
+            f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné.")
 
 
 def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(built) -> None:
@@ -146,7 +159,8 @@ def _body(text: str) -> str:
 
 
 def test_each_graphic_says_its_source_and_its_etage(built) -> None:
-    for name in ("plf2027.html", "plfss2027.html", "presidentielle_attal.html"):
+    # Le PLF 2027 n'est pas refait au but 22 (D-403) : le PLFSS tient la page d'une loi.
+    for name in ("plfss2027.html", "presidentielle_attal.html"):
         figures = re.findall(r'<figure class="graphique">.*?</figure>', built[name], re.S)
         assert figures, name
         for figure in figures:
@@ -155,7 +169,8 @@ def test_each_graphic_says_its_source_and_its_etage(built) -> None:
             assert "<code>reports/" in caption and "impots.graphiques" in caption
 
 
-@pytest.mark.parametrize("name", ["index.html", "plf2027.html", "plfss2027.html"])
+@pytest.mark.parametrize("name", ["index.html", "plfss2027.html",
+                                  "presidentielle_lisnard.html"])
 def test_every_amount_on_the_site_carries_its_etage(built, name) -> None:
     """Fails if a number reaches the site without its badge: remove every badged number,
     and no euro, point or share is left in the text."""

@@ -104,35 +104,13 @@ def test_the_script_is_the_engine(tmp_path) -> None:
     assert out["worst"] < 1e-12
 
 
-def test_la_taxe_carbone_de_labib_n_est_pas_lue() -> None:
-    """Constat 1 de la relecture : est lu ce qui a sa table dans le rapport ; l'impulsion
-    « taxe_carbone » de Labib n'en a pas, et sa raison est celle du code."""
-    labib = next(r for r in activite.rapports() if "labib" in r["chemin"])
-    data = labib["data"]
-    assert "taxe_carbone" not in data["rejeu"]["macro"]["instruments"]
-    assert activite.impulsions_non_lues(data, "figee")["taxe_carbone"] == pytest.approx(
-        data["years"][0]["statistiques"]["figee"]["impulses"]["taxe_carbone"])
-    assert activite.non_lus(data)["taxe_carbone"] == activite.retroaction.CARBON
-    corps = activite.page().corps
-    assert "Hausse de la taxe carbone de 1 pt de PIB" in corps
-    assert activite.retroaction.CARBON in corps.replace("&#x27;", "'")
-    # Le Pen et Roussel n'ont pas d'impulsion sans table : leur TVA est lue.
+def test_la_tva_de_le_pen_et_roussel_est_lue() -> None:
+    """Le Pen et Roussel n'ont pas d'impulsion sans table : leur TVA est lue. Les deux
+    tests bâtis sur la taxe carbone de Labib sont retirés avec sa page (D-403) : aucune
+    étude refaite au but 22 ne porte d'impulsion sans table."""
     for nom in ("le_pen", "roussel"):
         r = next(r for r in activite.rapports() if nom in r["chemin"])
         assert not activite.impulsions_non_lues(r["data"])
-
-
-def test_les_impulsions_sans_table_sont_celles_que_rejouer_ignore() -> None:
-    """La boucle du moteur, sur un rapport, ne voit que les impulsions qui ont une table :
-    retirer celles qui n'en ont pas ne change rien."""
-    labib = next(r for r in activite.rapports() if "labib" in r["chemin"])["data"]
-    impulses = [row["statistiques"]["vieillie"]["impulses"] for row in labib["years"]]
-    gdp, _, _ = rejouer.reference_path(labib["rejeu"], labib["rejeu"]["start"], len(impulses))
-    tables = labib["rejeu"]["macro"]["instruments"]
-    gardees = [{k: v for k, v in y.items() if k in tables} for y in impulses]
-    a = rejouer.loop(impulses, gdp, labib["rejeu"]["macro"], 0.0, rejouer.READ)
-    b = rejouer.loop(gardees, gdp, labib["rejeu"]["macro"], 0.0, rejouer.READ)
-    assert [list(x) for x in a] == [list(x) for x in b]
 
 
 COTISATIONS_PDF = activite.mesange.RAW / activite.mesange.SOURCE_FILE

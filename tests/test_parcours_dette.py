@@ -174,3 +174,46 @@ def test_la_reference_est_comparee_au_gouvernement() -> None:
     assert "plus favorable que celui du gouvernement" in corps
     assert "119,30" in corps and "116,86" in corps
     assert "n'est pas dans les données du dépôt" in corps
+
+
+def _etude(racine, nom: str, rapport: bool, refus: str | None = None) -> None:
+    definition = {"nom": nom, "titre": f"{nom.title()} : le programme",
+                  "scenarios": [{"scenario": f"pres2027_{nom}_programme"}]}
+    if refus:
+        definition["refus"] = refus
+    (racine / "etudes").mkdir(exist_ok=True)
+    (racine / "etudes" / f"presidentielle_{nom}.json").write_text(
+        json.dumps({**definition, "nom": f"presidentielle_{nom}"}), encoding="utf-8")
+    if rapport:
+        dossier = racine / "reports" / "etudes" / f"presidentielle_{nom}"
+        dossier.mkdir(parents=True)
+        (dossier / f"predictif_pres2027_{nom}_programme.json").write_text(
+            json.dumps({"rejeu": {"start": {}}, "lectures": {"x": 1}}), encoding="utf-8")
+
+
+def test_une_etude_sans_rapport_est_sautee_et_dite_non_refaite(tmp_path, monkeypatch) -> None:
+    """D-403 : la série du but 22 a été arrêtée ; une étude préenregistrée sans aucun
+    rapport n'arrête plus la page, qui la dit non refaite. Une refusée (D-398) reste hors
+    de la liste, et une étude dont le rapport manque à moitié reste refusée."""
+    _etude(tmp_path, "attal", True)
+    _etude(tmp_path, "labib", False)
+    _etude(tmp_path, "dupont_aignan", True, refus="refusée")
+    monkeypatch.setattr(dette, "ROOT", tmp_path)
+    monkeypatch.setattr(dette, "ETUDES", tmp_path / "etudes")
+    dette.etudes.cache_clear()
+    try:
+        assert [e["nom"] for e in dette.etudes()] == ["presidentielle_attal"]
+        assert [e["nom"] for e in dette.non_refaites()] == ["presidentielle_labib"]
+        html = dette._non_refaites_html()
+        assert "Labib" in html and "non refaite au but 22 (D-403)" in html
+        assert "Dupont" not in html
+    finally:
+        dette.etudes.cache_clear()
+
+
+def test_la_page_dit_les_etudes_non_refaites() -> None:
+    absentes = dette.non_refaites()
+    corps = dette.page().corps
+    assert ("non refaite au but 22 (D-403)" in corps) == bool(absentes)
+    for e in absentes:
+        assert e["candidat"] in corps
