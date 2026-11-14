@@ -2131,6 +2131,15 @@
       "description": "Eurostat irt_lt_mcby_m, la même série mensuelle, France, 2009-01→2025-12, en % : recoupe la moyenne annuelle. Champ 'updated' = 2026-11-12. But 23, lot 5, D-410.",
       "quarantined": false,
       "provenance": "API de diffusion Eurostat, URL de requête stable."
+    },
+    "Freemium_jorf_global_20261108-140000.tar.gz": {
+      "url": "https://echanges.dila.gouv.fr/OPENDATA/JORF/Freemium_jorf_global_20261108-140000.tar.gz",
+      "quarantined": false,
+      "sha256": "6e09df4105f15b62ff363c74c39637e1c9007a801aa8cca2f4bbeddb27edeb1a",
+      "bytes": 1754209938,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DILA, archive complète du Journal officiel (JORF) au format XML, version du 8 novembre 2026 : texte publié de chaque article, sous son identifiant JORFARTI. Lue par scripts/jumeau_jorf_*.py pour vérifier la base des mesures votées (D-413)."
     }
   }
 }
