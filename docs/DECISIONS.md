@@ -30062,3 +30062,112 @@ JavaScript).
   PR du but, pas ici. `ruff check .` signale 22 erreurs dans
   `docs/audit_but14/chaine_min.py`, héritées et hors du jumeau ; `src`, `tests` et
   `scripts` sont propres.
+
+## D-412 — La jonction du lot 5 : l'état publié complet, le pas déterministe, les rapports
+
+**La jonction** (branche `claude/but23-cadre`). La branche du lot 5
+(`claude/but23-histoire`, D-410) y est fusionnée. Deux conflits : le manifeste, l'union
+des entrées (234 fichiers : 227 et 226, dont 219 communs), et `DECISIONS.md`, D-407 à
+D-411 dans l'ordre. `champs.py` (le groupe « impots », les libellés de `sfa`,
+`ecart_millesime_dette` et `ecart_eurostat`), `CADRE.md` (§2, §6), `historique.py` et le
+correctif de `comptes.sfa_publie` se sont fusionnés sans conflit. Les sept fichiers que
+le lot 5 a téléchargés (t. 3.105, t. 6.208, créations et défaillances de la BDM, chômage
+et OAT d'Eurostat) sont reliés dans `data/raw`, hors git, leurs sha256 vérifiés.
+
+**L'état publié complet.** `etat_initial(annee)` écrit, de 2010 à 2025, les champs des
+lots 2 à 4 qu'une série de `jumeau.series` porte exactement, chacun avec sa source au
+registre :
+
+| champ | ce qui est écrit |
+|---|---|
+| `emploi_total`, `emploi_salarie` | t. 6.208 et 6.210, ligne _T, milliers |
+| `chomage` | Eurostat une_rt_a, 15-74 ans, milliers |
+| `population_active` | leur somme, la convention du lot 4 (Mésange, p. 24) |
+| `salaire_moyen` | D1 de la t. 1.105 sur l'emploi salarié, la définition du lot 4 |
+| `solde_exterieur` | P6 − P7 de la t. 1.101 |
+| `contribution_solde_exterieur` | la formule du bloc `commerce`, t. 1.101 et 1.103 |
+
+Le chômage d'Eurostat n'est pas celui de l'enquête Emploi qui fait la référence du lot 4
+(t. 302) : 2 331 contre 2 342,8 milliers en 2024, 2 300 contre 2 296 en 2023, 2 451
+contre 2 451,2 en 2025. Même concept (BIT ; l'enquête ne compte aucun chômeur au-delà de
+74 ans), deux publications : écrit, et l'écart dit. La contribution du solde extérieur
+redonne la variation des volumes de la t. 1.102 aux prix de l'année d'avant à 2e-6 du
+PIB au plus, l'arrondi des indices.
+
+**Ce qui n'est pas forcé dans un champ voisin** va au groupe neuf « histoire » (lot 5),
+hors de toute identité : les volumes chaînés du PIB et des onze emplois qui ont un prix,
+les salaires bruts et le salaire brut moyen (D11 par tête, 40 897 € en 2024, contre
+55 388 € de D1 par tête), le taux de chômage, les créations d'entreprises (ensemble,
+micro-entrepreneurs, classiques, EI hors micro), les défaillances et l'OAT à dix ans. Les
+créations d'entreprises, micro compris, ne sont pas les créations de sociétés du lot 2 ;
+les défaillances ne sont pas ses fermetures. **Restent absents** : le stock, les
+créations et les fermetures de sociétés, les sorties induites, la productivité (aucune
+série) ; la FBCF des seules SNF (la t. 1.101 les publie avec les EI) ; la demande
+mondiale, les prix relatifs et le solde courant (lot 3, aucune série). Les créations de
+sociétés au sens de l'Insee seraient les classiques moins les EI hors micro, mais le
+champ du lot 2 est la population de ses cellules, dont le recouvrement avec Sirene n'est
+pas établi : à trancher avec le lot 6.
+
+Les identités tiennent comme avant. Le modèle structurel depuis l'état publié de 2025
+(données synthétiques) donne le même Δb et le même PIB au bit avec ou sans ces champs au
+départ : l'amorce du point fixe de la première année, qui les lit, ne change rien.
+
+**Le pas déterministe.** `pas.fermer` itérait les clés (origine, mesure) de B9, du solde
+primaire et de la dette dans l'ordre d'un ensemble, qui change avec `PYTHONHASHSEED` :
+le dernier bit de B9, de la dette et du ratio changeait d'un processus à l'autre (D-411).
+Les clés sont triées. `test_jumeau_determinisme.py` fait tourner le modèle structurel
+complet (quatre mesures, θ½) dans trois sous-processus de graines 0, 1 et 2 et compare
+au bit chaque champ de chaque état et la décomposition de Δb : rouge sur l'ancien code,
+vert après, en 8 s. Seul le dernier bit bouge : la chaîne retrouvée tient à 1e-9.
+
+**`Mesure.depuis_rapport` et ce que les rapports portent.** Le rapport du chemin annuel
+(`predictif_*.json`) ne porte, par année, que le coût, les impulsions et la somme des
+prélèvements du canal des créations : ni impôt par impôt, ni décile. Le rapport de la
+première année (`premiere_annee_*.json`) porte, pour cette année et pour la population
+figée (son coût est celui du chemin figé au bit, dans les 46 paires commitées), les
+écarts par impôt de la passe des entreprises et le gain moyen par décile de la passe des
+ménages. Avec `premiere_annee=`, la mesure prend :
+
+* `entreprises` : les cinq impôts du canal (IS, contribution sociale sur l'IS, CEBGE,
+  CVAE, C3S), en Md€, recettes positives, quand leur somme est celle des prélèvements du
+  chemin à l'euro près. Sinon la différence est faite des prélèvements des ménages que le
+  lot 2 lit aussi (cotisations patronales nettes, PFU, prélèvements sociaux du capital),
+  que le rapport ne ventile pas : absent (Retailleau, −4,301 Md€ de cotisations ; les
+  hausses du Smic) ;
+* `menages` : mean_delta × n_households par décile, sauf pour une réforme du Smic : le
+  Smic réel efficace du bloc des salaires n'est pas la revalorisation de la requête sans
+  hypothèse ;
+* pour la première année et la vue figée seules. Les autres années et la vue vieillie
+  restent absentes ; `Mesure.non_portes` dit chaque absence et sa raison. Un rapport de
+  première année d'un autre commit, d'un autre scénario, d'une autre année ou d'un autre
+  coût est refusé.
+
+Pour que l'absent ne se lise pas comme un zéro, deux refus s'ajoutent aux blocs des lots
+2 et 4 : `chocs_entreprises` refuse une année de la trajectoire où la mesure porte des
+prélèvements agrégés sans ventilation quand elle en ventile d'autres ; `verifier_menages`
+refuse une année où la mesure coûte sans choc par décile quand elle en porte d'autres, et
+ne juge plus que les années de la trajectoire. Aucun nombre existant ne change.
+
+`test_jumeau_depuis_rapport.py`, sur les rapports commités : le programme d'Attal donne
+ses cinq impôts (la CVAE à −3,282 Md€) et ses déciles (58,46 Md€ en tout) pour 2026 ; le
+modèle structurel complet tourne sur 2026, identités tenues, les signaux du lot 2 étant
+ceux de la passe ; sur dix ans, le lot 2 refuse 2027 à 2029, et pour la TVA sur
+l'énergie de Le Pen le lot 4 refuse 2027 à 2035. Retailleau, Mélenchon (Smic) et la vue
+vieillie gardent leurs absences.
+
+**Les tests.** `pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`,
+`test_rejouer.py`, `test_creations_canal.py`, `test_dependances.py`,
+`test_gardes_phase9.py`, `test_donnees.py` et `test_dette*.py` : 365 verts, 4 sautés (les
+cellules de ménages et le bulletin de l'AFT, absents de ce checkout) ; `ruff check src
+tests scripts` propre. Ni `make impact` ni les tests lourds ici.
+
+**Ce qui reste.**
+
+* Les rapports d'études ne portent la ventilation que de leur première année figée :
+  pour faire tourner le modèle structurel sur dix ans, il faut que la chaîne écrive, par
+  année et par vue, les prélèvements par impôt (ménages compris) et les déciles. C'est un
+  changement des rapports, donc des passes : à décider.
+* Le Smic réel efficace d'une réforme du Smic, pour le bloc des salaires : sa définition
+  à partir de la requête est à écrire et à sourcer.
+* Les champs restés absents (créations et fermetures de sociétés, FBCF des seules SNF,
+  demande mondiale, prix relatifs, solde courant) attendent leurs séries, au lot 6.
