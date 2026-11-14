@@ -173,3 +173,48 @@ def test_la_mesure_d_un_rapport_allege_est_celle_du_rapport_entier(session) -> N
                       "commit", "non_portes"):
             assert getattr(entiere, champ) == getattr(allegee, champ), champ
     assert np.isfinite(sum(entiere.couts.values()))
+
+
+def test_la_convention_porte_un_programme_jusqu_en_2035(session, donnees) -> None:
+    """D-419 : dans le mode structurel, la convention « parts_premiere_annee » (D-414)
+    fait tourner le programme d'Attal sur dix ans ; chaque nombre est celui de
+    `trajectoire.calculer` sur la mesure du rapport entier avec la convention, au bit, et
+    chaque année qu'elle ventile est rendue. Le mode réduit ne la lit pas ; là où elle n'a
+    pas de parts (Retailleau), les années restent absentes et la raison est dite."""
+    cle = "pres2027_attal_programme"
+    choix = {"mode": "structurel", "vue": "figee", "candidat": cle,
+             "convention": "parts_premiere_annee"}
+    theta = {**_theta(session, choix), "idees_creations": 0.9, "survie_creations": 0.3}
+    sortie = session.calculer({**choix, "theta": theta})
+    assert sortie["refus"] is None and sortie["calculees"] == list(navigateur.ANNEES)
+    assert sortie["convention"] == "parts_premiere_annee"
+    assert sortie["conventions"]["annees"] == list(navigateur.ANNEES[1:])
+    assert set(sortie["conventions"]["axes"]) == {"entreprises", "menages"}
+    c = donnees["candidats"][cle]
+    racine = site_jumeau.etude.ROOT / c["rapport"]
+    payload = json.loads(racine.read_text(encoding="utf-8"))
+    premiere = json.loads(racine.with_name(racine.name.replace("predictif_", "premiere_"
+                                                               "annee_")).read_text())
+    m = Mesure.depuis_rapport(payload, vue="figee", identifiant=cle, libelle=c["libelle"],
+                              auteur=c["auteur"], rapport=c["rapport"],
+                              premiere_annee=premiere, convention="parts_premiere_annee")
+    depart = navigateur.etat_depuis_dict(donnees["entrees"]["depart_publie"])
+    blocs, boucles = ordre_structurel(depart, session.population, session.cellules)
+    traj = calculer(depart, entrees=Entrees.depuis_rejeu(payload["rejeu"], navigateur.ANNEES),
+                    mesures=[m], theta=theta, blocs=blocs, boucles=boucles)
+    s = sortie["series"]
+    assert s["dette"]["ecart"] == [100.0 * float(x[0]) for x in traj.delta_b]
+    assert s["pib"]["ecart"] == [100.0 * float(x[0]) for x in traj.ecart_pib]
+    assert s["emploi_total"]["ecart"] == [_attendu_additif(traj, "emploi_total", k)
+                                          for k in range(10)]
+    assert sortie["deciles"]["annees"]["2035"]["euros_par_menage"][0] != 0.0
+    # Le mode réduit ne lit pas les ventilations : la convention n'y change rien.
+    reduit = {**choix, "mode": "reduit"}
+    avec = session.calculer({**reduit, "theta": _theta(session, reduit)})
+    sans = session.calculer({**reduit, "convention": None, "theta": _theta(session, reduit)})
+    assert avec["convention"] is None and avec["series"] == sans["series"]
+    # Des cotisations non ventilées : pas de parts, les années absentes, dit.
+    ret = {**choix, "candidat": "pres2027_retailleau_programme"}
+    sortie = session.calculer({**ret, "theta": _theta(session, ret)})
+    assert sortie["calculees"] == [] and sortie["conventions"] is None
+    assert "parts_premiere_annee" in sortie["mesure"]["non_portes"]["entreprises"]
