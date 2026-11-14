@@ -295,6 +295,16 @@ IMPOTS_3217: tuple[tuple[str, str], ...] = (
 )
 for _nom, _lib in IMPOTS_3217:
     _ajouter(Champ(f"impot_{_nom}", _lib, MDE, "", f"{T3217} (histoire)", 5, "impots"))
+#: Les cotisations effectives reçues par les APU, par payeur (t. 7.301), que la t. 3.217
+#: somme avec celles des non-salariés : le rejeu de l'histoire en lit chaque payeur
+#: (`rejeu_histoire.etat_publie`, D-421) ; l'état publié du cadre ne les porte pas.
+COTISATIONS_7301: tuple[tuple[str, str, str], ...] = (
+    ("cotisations_employeurs", "Cotisations effectives à la charge des employeurs", "D611"),
+    ("cotisations_salaries", "Cotisations effectives obligatoires des salariés", "D613CE"))
+for _nom, _lib, _code in COTISATIONS_7301:
+    _ajouter(Champ(f"impot_{_nom}", _lib, MDE, f"{_code} S13",
+                   "Insee, comptes nationaux annuels base 2020, t. 7.301 (millésime 2025) "
+                   "(histoire)", 5, "impots"))
 
 # --------------------------------------------------------------------- lots 2 à 4
 for _nom, _lib, _unite, _lot in (

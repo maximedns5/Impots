@@ -27,7 +27,7 @@
 #   de l'archive), ou la confirmation antérieure sur codes.droit.org (D-410).
 #
 # Les instruments (vocabulaire fermé, `votees.INSTRUMENTS`) : ir, ir_capital, csg,
-# cotisations_employeurs, cotisations_salaries, is, impots_production, tva,
+# cotisations_employeurs, cotisations_salaries, cice, is, impots_production, tva,
 # accises_energie, taxe_habitation, patrimoine, transmission, prestations, retraites,
 # remunerations, autres_impots. Les statuts (`votees.STATUTS`) : en_vigueur, remplacee
 # (par une mesure suivante, `suite`), temporaire, suspendue, abrogee, abrogee_avant_effet,
@@ -179,6 +179,8 @@ mesures:
     article: "30"
     codification: CGI, art. 235 ter ZAA
     annee_effet: 2011
+    etapes:
+      - {date: 2011-12-31, quoi: "contribution de 5 %, exercices clos à compter du 31 décembre 2011"}
     parametres:
       - {quoi: "taux de la contribution, en pourcentage de l'IS dû", avant: néant, apres: "5 % (chiffre d'affaires supérieur à 250 000 000 €)"}
       - {quoi: "exercices concernés", avant: néant, apres: "clos du 31 décembre 2011 au 30 décembre 2013 ; prorogée jusqu'au 30 décembre 2015 (loi n° 2012-1509, art. 30), puis 2016 (loi n° 2014-891, art. 15)"}
@@ -418,11 +420,14 @@ mesures:
   - id: lfr2012_3_cice
     gouvernement: ayrault_2
     intitule: Crédit d'impôt pour la compétitivité et l'emploi (CICE)
-    instrument: cotisations_employeurs
+    instrument: cice
     texte: {nature: loi, numero: 2012-1510, date: 2012-12-29, intitule: loi de finances rectificative pour 2012}
     article: "66"
     codification: CGI, art. 244 quater C
     annee_effet: 2013
+    etapes:
+      - {date: 2013-01-01, quoi: "taux de 4 % sur les rémunérations versées en 2013"}
+      - {date: 2014-01-01, quoi: "taux de 6 %"}
     parametres:
       - {quoi: "taux sur les rémunérations n'excédant pas 2,5 SMIC", avant: néant, apres: "4 % en 2013, 6 % à partir de 2014"}
     statut: remplacee
@@ -532,6 +537,9 @@ mesures:
     article: "16"
     codification: CGI, art. 235 ter ZAA
     annee_effet: 2013
+    etapes:
+      - {date: 2013-12-31, quoi: "taux de 10,7 %, exercices clos à compter du 31 décembre 2013"}
+      - {date: 2016-12-31, quoi: "contribution éteinte, exercices clos à compter du 31 décembre 2016 (loi n° 2014-891, art. 15)"}
     parametres:
       - {quoi: "taux de la contribution (chiffre d'affaires supérieur à 250 000 000 €)", avant: "5 %", apres: "10,7 %"}
       - {quoi: "exercices concernés", avant: "clos du 31 décembre 2011 au 30 décembre 2015 (prorogation de la loi n° 2012-1509, art. 30)", apres: "taux de 10,7 % pour les exercices clos à compter du 31 décembre 2013 ; contribution prorogée jusqu'au 30 décembre 2016 (loi n° 2014-891, art. 15)"}
@@ -712,7 +720,7 @@ mesures:
   - id: lfi2017_cice_7
     gouvernement: cazeneuve
     intitule: Taux du CICE porté à 7 %
-    instrument: cotisations_employeurs
+    instrument: cice
     texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
     article: "72"
     codification: CGI, art. 244 quater C
@@ -752,6 +760,9 @@ mesures:
     texte: {nature: loi, numero: 2017-1640, date: 2017-12-01, intitule: première loi de finances rectificative pour 2017}
     article: "1"
     annee_effet: 2017
+    etapes:
+      - {date: 2017-12-31, quoi: "contributions de 15 % et 15 %, exercices clos à compter du 31 décembre 2017"}
+      - {date: 2018-12-31, quoi: "contributions éteintes, exercices clos à compter du 31 décembre 2018"}
     parametres:
       - {quoi: "contribution exceptionnelle (chiffre d'affaires d'au moins 1 000 000 000 €)", avant: néant, apres: "15 % de l'IS"}
       - {quoi: "contribution additionnelle (chiffre d'affaires d'au moins 3 000 000 000 €)", avant: néant, apres: "15 % de l'IS en plus"}
@@ -809,6 +820,10 @@ mesures:
     article: "5"
     codification: CGI, art. 1414 C
     annee_effet: 2018
+    etapes:
+      - {date: 2018-01-01, quoi: "dégrèvement de 30 %, impositions établies au titre de 2018"}
+      - {date: 2019-01-01, quoi: "dégrèvement de 65 %, impositions établies au titre de 2019"}
+      - {date: 2020-01-01, quoi: "dégrèvement de 100 %, impositions établies au titre de 2020"}
     parametres:
       - {quoi: "dégrèvement, sous un revenu fiscal de référence de 27 000 € pour une part (plus 8 000 € pour chacune des deux demi-parts suivantes, 6 000 € au-delà)", avant: néant, apres: "30 % en 2018, 65 % en 2019, 100 % en 2020"}
     statut: remplacee
@@ -827,6 +842,12 @@ mesures:
     article: "84"
     codification: CGI, art. 219
     annee_effet: 2018
+    etapes:
+      - {date: 2018-01-01, quoi: "28 % jusqu'à 500 000 € de bénéfice, exercices ouverts à compter du 1er janvier 2018"}
+      - {date: 2019-01-01, quoi: "31 % au-delà, exercices ouverts à compter du 1er janvier 2019"}
+      - {date: 2020-01-01, quoi: "28 %, exercices ouverts à compter du 1er janvier 2020"}
+      - {date: 2021-01-01, quoi: "26,5 %, exercices ouverts à compter du 1er janvier 2021"}
+      - {date: 2022-01-01, quoi: "25 %, exercices ouverts à compter du 1er janvier 2022"}
     parametres:
       - {quoi: "taux normal", avant: "28 % puis 33,33 % (trajectoire de 2017)", apres: "28 % jusqu'à 500 000 € et 33,33 % au-delà en 2018 ; 31 % au-delà en 2019 ; 28 % en 2020 ; 26,5 % en 2021 ; 25 % en 2022"}
     statut: en_vigueur
@@ -839,11 +860,14 @@ mesures:
   - id: lfi2018_cice_6_suppression
     gouvernement: philippe_2
     intitule: CICE ramené à 6 % puis supprimé
-    instrument: cotisations_employeurs
+    instrument: cice
     texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
     article: "86"
     codification: CGI, art. 244 quater C
     annee_effet: 2018
+    etapes:
+      - {date: 2018-01-01, quoi: "taux de 6 % sur les rémunérations versées à compter du 1er janvier 2018"}
+      - {date: 2019-01-01, quoi: "crédit d'impôt supprimé pour les rémunérations versées à compter du 1er janvier 2019"}
     parametres:
       - {quoi: "taux du CICE", avant: "7 %", apres: "6 % en 2018 ; supprimé pour les rémunérations versées à partir du 1er janvier 2019"}
     statut: en_vigueur
@@ -895,6 +919,29 @@ mesures:
         - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339150
       lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
 
+  - id: lfss2018_cotisations_salariales
+    gouvernement: philippe_2
+    intitule: Suppression des cotisations salariales maladie et chômage
+    instrument: cotisations_salaries
+    texte: {nature: loi, numero: 2017-1836, date: 2017-12-30, intitule: loi de financement de la sécurité sociale pour 2018}
+    article: "8"
+    codification: CSS, art. L. 241-2 ; code du travail, art. L. 5422-9
+    annee_effet: 2018
+    date_effet: 2018-01-01
+    etapes:
+      - {date: 2018-01-01, quoi: "cotisation d'assurance maladie à la charge des seuls employeurs (CSS, art. L. 241-2) ; contribution salariale d'assurance chômage prise en charge à hauteur de 1,45 point (art. 8, VI, 1°)"}
+      - {date: 2018-10-01, quoi: "contribution salariale d'assurance chômage prise en charge à hauteur de 2,40 points (art. 8, VI, 2°)"}
+    parametres:
+      - {quoi: "cotisation salariale maladie", avant: "0,75 %", apres: supprimée au 1er janvier 2018}
+      - {quoi: "cotisation salariale d'assurance chômage", avant: "2,40 %", apres: "0,95 % au 1er janvier 2018, supprimée au 1er octobre 2018"}
+    statut: en_vigueur
+    note: "Le volet des cotisations de lfss2018_csg_cotisations (même article), sous son instrument (D-421) : la base ne datait la baisse des cotisations salariales qu'à la CSG."
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339150
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
   - id: lfss2018_cice_allegements
     gouvernement: philippe_2
     intitule: Le CICE transformé en baisse pérenne de cotisations patronales
@@ -904,15 +951,19 @@ mesures:
     codification: CSS, art. L. 241-2-1 et L. 241-13
     annee_effet: 2019
     date_effet: 2019-01-01
+    etapes:
+      - {date: 2019-01-01, quoi: "cotisation patronale d'assurance maladie réduite de 6 points ; réduction générale étendue à la retraite complémentaire"}
+      - {date: 2019-10-01, quoi: "réduction générale étendue aux contributions patronales d'assurance chômage (loi n° 2018-1203, art. 8, IX)"}
     parametres:
       - {quoi: "cotisation patronale d'assurance maladie sur les rémunérations n'excédant pas 2,5 SMIC", avant: "taux de droit commun", apres: "réduit de 6 points (CSS, art. L. 241-2-1)"}
       - {quoi: "réduction générale", avant: "hors retraite complémentaire et chômage", apres: "étendue aux cotisations patronales de retraite complémentaire et aux contributions patronales d'assurance chômage"}
-    note: "Le calendrier de l'extension de la réduction générale (une partie au 1er octobre 2019) a été modifié par la LFSS 2019, dont l'article n'est pas identifié ici."
+    note: "Le calendrier de l'extension de la réduction générale aux contributions patronales d'assurance chômage a été modifié par la LFSS 2019 (loi n° 2018-1203, art. 8, IX, A : le coefficient qui les porte s'ajoute du 1er octobre au 31 décembre 2019), lue au JO (D-421)."
     statut: en_vigueur
     verification:
       statut: vérifiée
       sources:
         - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339151
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037847662
       lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
 
   - id: mues_2018_pepa
@@ -1067,6 +1118,11 @@ mesures:
     article: "16"
     codification: CGI, art. 1407 et 1414 C
     annee_effet: 2020
+    etapes:
+      - {date: 2020-01-01, quoi: "foyers sous les plafonds : dégrèvement de 100 % (impositions de 2020, art. 16, VII, A)"}
+      - {date: 2021-01-01, quoi: "autres foyers : exonération de 30 % (impositions de 2021, art. 16, VII, B)"}
+      - {date: 2022-01-01, quoi: "autres foyers : exonération de 65 % (impositions de 2022, art. 16, VII, D)"}
+      - {date: 2023-01-01, quoi: "taxe d'habitation sur les résidences principales supprimée (impositions de 2023, art. 16, VII, E)"}
     parametres:
       - {quoi: "foyers sous les plafonds de 2018", avant: "dégrèvement de 65 % (2019)", apres: "dégrèvement de 100 % en 2020"}
       - {quoi: "autres foyers", avant: aucun allègement, apres: "exonération de 30 % en 2021, 65 % en 2022, suppression en 2023"}
@@ -1086,6 +1142,9 @@ mesures:
     article: "39"
     codification: CGI, art. 219
     annee_effet: 2020
+    etapes:
+      - {date: 2020-01-01, quoi: "31 % au-delà de 500 000 €, exercices ouverts en 2020"}
+      - {date: 2021-01-01, quoi: "27,5 %, exercices ouverts à compter du 1er janvier 2021"}
     parametres:
       - {quoi: "taux normal au-delà de 500 000 € de bénéfice", avant: "28 % en 2020 (trajectoire de 2018)", apres: "31 % en 2020, 27,5 % en 2021, 25 % en 2022"}
     statut: en_vigueur

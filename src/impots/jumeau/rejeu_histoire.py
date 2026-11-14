@@ -1,6 +1,20 @@
 """Le jumeau rejoue l'histoire de la France (but 23, lot 6) : ce qui y entre, les fenêtres,
 les cibles et leurs tolérances, préenregistrés dans D-417 avant tout calcul.
 
+LA RÉVISION « rejeu_histoire_r2 » (D-421, `CAS`). Le premier juge (D-420) a tourné sur
+fe9434f, qui seul le refait. Les fenêtres, les cibles, les tolérances, les θ estimés et
+les deux naïfs ne changent pas ; ce qui change, après le diagnostic de D-421 :
+
+* les cotisations des employeurs et des salariés lisent chacune leur ligne, D611 et
+  D613CE du compte des APU (t. 7.301), au lieu de se partager à parts égales la ligne
+  des cotisations effectives de la t. 3.217 ; les cotisations des non-salariés n'entrent
+  dans aucune famille (aucun instrument de la base) ;
+* le CICE est un instrument à part (`cice`) : ses mesures datent la seule ligne des
+  subventions, plus celle des cotisations patronales ;
+* une mesure étalée compte chaque année où le droit change (`MesureVotee.annees_effet`) ;
+* la demande mondiale adressée à la France (OCDE) entre au commerce, en écart à sa
+  propre tendance de l'estimation (`ecarts_demande_mondiale`).
+
 AUCUN MONTANT OFFICIEL DE MESURE N'ENTRE (D-359 à D-361). Les évaluations préalables des
 PLF et des PLFSS sont des juges mis de côté ; la base des mesures votées ne porte que le
 droit (`jumeau.votees`). Ce qui entre est LU DANS LES COMPTES PUBLIÉS, et la base des
@@ -20,9 +34,8 @@ chaque année t rejouée, Y_t le PIB de la référence (la tendance, `Tendance.c
 
       ΔT_{F,t} = Σ_{s < u ≤ t} w_{F,u} (τ_u − τ_{u−1}) · (B_s / PIB_s) · Y_t
 
-  w_{F,u} vaut 1 quand l'instrument de F est voté en u, 0 sinon ; deux familles qui se
-  partagent une ligne (les cotisations employeurs et salariés, sur les cotisations
-  effectives) se la partagent à parts égales les années où les deux sont votées. ΔT entre
+  w_{F,u} vaut 1 quand un instrument de F a une année d'effet en u, 0 sinon (D-417 ; les
+  années d'effet d'une mesure étalée, D-421). ΔT entre
   au compte des APU, catégorie de la famille, au signe du moteur (−ΔT : une hausse est un
   gain) ; sur l'instrument de Mésange que lisent les blocs (−ΔT, signe expansionniste) ;
   aux ménages par décile (−ΔT réparti selon la variable des cellules que la famille
@@ -52,9 +65,20 @@ LES EXOGÈNES OBSERVÉS (`exogenes_publies`), les mêmes pour le jumeau et le na
   volume sur les années de l'estimation, jamais celles du test ; de même pour l'emploi
   (`ajout` de sa cible : la référence du cadre tient l'emploi du départ constant).
 
-CE QUI MANQUE, ET COMMENT C'EST TRAITÉ. La demande mondiale adressée à la France : aucune
-série publiée n'est manifestée ; elle reste au sentier de la tendance (écart nul). Les
-prix du pétrole et des importations : aucun bloc ne porte un choc de prix étranger (le
+LA DEMANDE MONDIALE (D-421). L'indice XMKT de l'OCDE, W ; pour la fenêtre partie de s,
+l'écart que lit le bloc `commerce` (`DemandeMondiale`) est
+
+      d_t = (W_t / W_s) / (1 + g_W)^(t − s) − 1
+
+g_W la croissance moyenne de W sur les années notées de l'estimation, comme celle du PIB
+de la tendance : la référence fait croître les échanges comme le PIB de la tendance, qui
+porte déjà la croissance moyenne des marchés et la perte de parts de marché ; seul
+l'écart de la demande à sa tendance entre. Il entre dans la variante, sous la mesure
+observée `observe_demande_mondiale` : la référence de la trajectoire, qui est le naïf,
+reste à la tendance, et le naïf mécanique n'a pas de bloc du commerce ; elle ne change
+ni l'un ni l'autre.
+
+CE QUI MANQUE, ET COMMENT C'EST TRAITÉ. Les prix du pétrole et des importations : aucun bloc ne porte un choc de prix étranger (le
 commerce, D-408) ; ils n'entrent que par le déflateur imposé. La démographie : la
 population active de la référence est celle du départ (Mésange, p. 40) ; la tendance de
 l'emploi le corrige pour la cible de l'emploi seulement. Les défaillances : le jumeau ne
@@ -68,6 +92,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 from typing import Any
 
 import numpy as np
@@ -98,6 +123,9 @@ ESTIMES = ("jumeau_consommation_profil", "jumeau_emploi_elasticite_cout",
            "commerce_elasticite_prix_importations", "investissement_accelerateur",
            "investissement_cout_capital")
 A_PRIORI = 1.0
+#: Le cas que ce code rejoue, et la D-entrée qui le préenregistre ; le premier juge
+#: (« rejeu_histoire », D-417, D-420) se refait sur fe9434f.
+CAS, DECISION = "rejeu_histoire_r2", "D-421"
 #: Durée de vie moyenne de la dette, en années (choisie, non vérifiée).
 DUREE_VIE_DETTE = 8.0
 #: Les statuts d'une mesure qui n'a jamais eu d'effet.
@@ -174,12 +202,8 @@ class Famille:
     impulsion: str | None = None
     deciles: tuple[str, ...] = ()
     entreprise: str | None = None
-    groupe: str | None = None
-    """Les familles d'un même groupe se partagent leurs lignes, à parts égales les années
-    où plusieurs sont votées."""
 
 
-COTISATIONS = (("impot_cotisations_effectives", 1.0),)
 FAMILLES: tuple[Famille, ...] = (
     Famille("tva", "TVA", (("impot_tva", 1.0),), "c_menages", frozenset({"tva"}),
             "apu_r_d2", impulsion="tva", deciles=("tva",)),
@@ -192,19 +216,24 @@ FAMILLES: tuple[Famille, ...] = (
     Famille("csg", "CSG et CRDS", (("impot_csg", 1.0), ("impot_crds", 1.0)), "pib",
             frozenset({"csg"}), "apu_r_d5", impulsion="csg",
             deciles=("csg_crds_salaires",)),
-    Famille("cotisations_employeurs", "Cotisations employeurs", COTISATIONS,
-            "remunerations", frozenset({"cotisations_employeurs"}), "apu_r_d61",
-            impulsion="cotisations_employeurs", entreprise="cotisations_employeurs",
-            groupe="cotisations"),
-    Famille("cotisations_salaries", "Cotisations salariés", COTISATIONS, "remunerations",
+    # Les cotisations effectives par payeur, D611 et D613CE (t. 7.301, D-421) : D-417 les
+    # lisait sur leur somme (t. 3.217), partagée à parts égales les années où les deux
+    # instruments étaient votés, et entière à celui des deux qui l'était seul.
+    Famille("cotisations_employeurs", "Cotisations employeurs",
+            (("impot_cotisations_employeurs", 1.0),), "remunerations",
+            frozenset({"cotisations_employeurs"}), "apu_r_d61",
+            impulsion="cotisations_employeurs", entreprise="cotisations_employeurs"),
+    Famille("cotisations_salaries", "Cotisations salariés",
+            (("impot_cotisations_salaries", 1.0),), "remunerations",
             frozenset({"cotisations_salaries"}), "apu_r_d61",
-            impulsion="cotisations_salaries", deciles=("cotisations_salariales",),
-            groupe="cotisations"),
+            impulsion="cotisations_salaries", deciles=("cotisations_salariales",)),
     # Le CICE : une subvention (D3) dans les comptes publiés, de 2013 à 2018, que les
     # dépenses observées portent déjà au compte des APU ; la famille n'en porte que le
-    # signal du coût du travail, sans second choc sur le compte (catégorie None).
+    # signal du coût du travail, sans second choc sur le compte (catégorie None). Ses
+    # mesures sont de l'instrument `cice` (D-421) : D-417 les rangeait aux cotisations
+    # employeurs, dont elles votaient la ligne sans la changer.
     Famille("subventions_cice", "Subventions sur la production (CICE)",
-            (("apu_d_d3", -1.0),), "remunerations", frozenset({"cotisations_employeurs"}),
+            (("apu_d_d3", -1.0),), "remunerations", frozenset({"cice"}),
             None, impulsion="cotisations_employeurs", entreprise="cotisations_employeurs"),
     Famille("is", "Impôt sur les sociétés, avant crédits", (("impot_is", 1.0),),
             "ebe_revenu_mixte", frozenset({"is"}), "apu_r_d5", entreprise="impot_societes"),
@@ -239,19 +268,16 @@ def taux_apparent(famille: Famille, etat: Etat) -> float:
 
 
 def annees_votees(instruments: frozenset[str], votees: Sequence[Any]) -> frozenset[int]:
-    """Les années d'effet des mesures votées d'un instrument (hors celles sans effet)."""
-    return frozenset(m.annee_effet for m in votees
-                     if m.instrument in instruments and m.statut not in SANS_EFFET)
+    """Les années d'effet des mesures votées d'un instrument (hors celles sans effet) :
+    chaque année où une mesure étalée change le droit (`annees_effet`, D-421)."""
+    return frozenset(a for m in votees
+                     if m.instrument in instruments and m.statut not in SANS_EFFET
+                     for a in m.annees_effet)
 
 
 def poids(famille: Famille, annee: int, votees: Sequence[Any]) -> float:
-    if annee not in annees_votees(famille.instruments, votees):
-        return 0.0
-    if famille.groupe is None:
-        return 1.0
-    votees_groupe = [f for f in FAMILLES if f.groupe == famille.groupe
-                     and annee in annees_votees(f.instruments, votees)]
-    return 1.0 / len(votees_groupe)
+    """w_{F,u} : 1 l'année d'effet d'un instrument de la famille, 0 sinon."""
+    return 1.0 if annee in annees_votees(famille.instruments, votees) else 0.0
 
 
 def _cle(cellules: Any, variables: Sequence[str]) -> list[float]:
@@ -286,7 +312,7 @@ def chocs_observes(fenetre: Fenetre, publies: Mapping[int, Etat],
         if not any(delta.values()):
             continue
         attribuees = sorted(m.id for m in votees if m.instrument in famille.instruments
-                            and s < m.annee_effet <= fenetre.fin
+                            and any(s < a <= fenetre.fin for a in m.annees_effet)
                             and m.statut not in SANS_EFFET)
         mesures.append(Mesure(
             identifiant=f"observe_{famille.nom}",
@@ -327,6 +353,24 @@ class Exogenes:
     oat: Mapping[int, float]
     """En fraction (0,02 = 2 %)."""
     sfa: Mapping[int, float]
+    demande_mondiale: Mapping[int, float] = dataclass_field(default_factory=dict)
+    """W, l'indice de la demande mondiale adressée à la France (OCDE), par année (D-421) ;
+    vide, la demande reste au sentier de la tendance."""
+    croissance_demande_mondiale: float = 0.0
+    """g_W, sa croissance moyenne sur les années notées de l'estimation."""
+
+
+def etat_publie(annee: int) -> Etat:
+    """L'état publié de l'année (`historique.etat_initial`), plus les cotisations
+    effectives des employeurs et des salariés du compte des APU (t. 7.301, D-421), que
+    lisent les familles des cotisations ; l'état publié du cadre n'en change pas."""
+    from impots.jumeau import historique, series
+
+    etat = historique.etat_initial(annee)
+    for nom, serie in (("impot_cotisations_employeurs", "cotisations_employeurs_apu"),
+                       ("impot_cotisations_salaries", "cotisations_salaries_apu")):
+        etat.ecrire(nom, ("publie", ""), series.lire(serie)[annee])
+    return etat
 
 
 def exogenes_publies(schema: Schema = SCHEMA) -> Exogenes:
@@ -341,10 +385,41 @@ def exogenes_publies(schema: Schema = SCHEMA) -> Exogenes:
     indice = series.lire("indice_prix_pib")
     oat = series.lire("taux_oat_10ans")
     annees = sorted({a for f in (*schema.estimation, *schema.test) for a in f.annees})
+    w = series.lire("demande_mondiale")
+    gw = float(np.mean([w[a] / w[a - 1] - 1.0 for a in estimation]))
     return Exogenes(croissance_tendance=g, croissance_emploi=ge,
                     prix={a: indice[a] / indice[a - 1] - 1.0 for a in annees},
                     oat={a: oat[a] / 100.0 for a in annees},
-                    sfa={a: _valeur(historique.etat_initial(a), "sfa") for a in annees})
+                    sfa={a: _valeur(historique.etat_initial(a), "sfa") for a in annees},
+                    demande_mondiale=dict(w), croissance_demande_mondiale=gw)
+
+
+#: La mesure observée qui porte la demande mondiale dans la variante du jumeau (D-421) :
+#: la référence, qui est le naïf, reste à la tendance.
+DEMANDE_MONDIALE = "observe_demande_mondiale"
+
+
+def mesure_demande_mondiale(fenetre: Fenetre) -> Mesure:
+    """Une mesure observée sans choc sur le compte : la clé sous laquelle le bloc
+    `commerce` inscrit l'écart de la demande mondiale (`DemandeMondiale.mesure`)."""
+    return Mesure(identifiant=DEMANDE_MONDIALE,
+                  libelle="Demande mondiale adressée à la France (OCDE, XMKT), écart à sa "
+                          "tendance de l'estimation",
+                  auteur="OCDE, Economic Outlook n° 119", origine=OBSERVE,
+                  annees=fenetre.annees)
+
+
+def ecarts_demande_mondiale(fenetre: Fenetre, exogenes: Exogenes) -> dict[int, float]:
+    """d_t = (W_t / W_s) / (1 + g_W)^(t − s) − 1 pour chaque année de la fenêtre (le
+    docstring du module) ; vide sans série."""
+    w, s = exogenes.demande_mondiale, fenetre.depart
+    if not w:
+        return {}
+    manquantes = [a for a in (s, *fenetre.annees) if a not in w]
+    if manquantes:
+        raise app.ApprentissageError(f"demande mondiale absente en {manquantes}")
+    g = exogenes.croissance_demande_mondiale
+    return {a: w[a] / w[s] / (1.0 + g) ** (a - s) - 1.0 for a in fenetre.annees}
 
 
 def entrees(fenetre: Fenetre, exogenes: Exogenes, depart: Etat) -> Entrees:
@@ -358,7 +433,8 @@ def entrees(fenetre: Fenetre, exogenes: Exogenes, depart: Etat) -> Entrees:
                    * len(annees), prix=tuple(exogenes.prix[a] for a in annees),
                    regle_depense="part_pib_constante", croissance_depense=None,
                    taux_reference=tuple(taux), taux_marginal=exogenes.oat[annees[0]],
-                   noms={"histoire": f"rejeu {fenetre.depart}–{fenetre.fin} (D-417)"})
+                   noms={"histoire": f"rejeu {fenetre.depart}–{fenetre.fin} ({CAS}, "
+                                     f"{DECISION})"})
 
 
 class AjustementObserve:
@@ -403,6 +479,7 @@ def simulateur(*, population: Any, cellules: Any, exogenes: Exogenes,
     calculent une fois (elles ne dépendent pas de θ), les blocs à chaque appel (ils
     gardent des grandeurs par état, `menages._garde`)."""
     from impots.jumeau.blocs import ordre_structurel
+    from impots.jumeau.blocs.commerce import TENDANCE, Commerce, DemandeMondiale
     from impots.jumeau.blocs.entreprises import charger as charger_entreprises
     from impots.jumeau.blocs.menages import charger as charger_menages
     from impots.jumeau.blocs.tendance import Tendance
@@ -424,9 +501,16 @@ def simulateur(*, population: Any, cellules: Any, exogenes: Exogenes,
 
     def simuler(fenetre: Fenetre, theta: Mapping[str, Any]) -> Any:
         depart, e, mesures = preparer(fenetre)
+        menages = menages_au_depart(p_menages, depart)
+        ecarts = ecarts_demande_mondiale(fenetre, exogenes)
+        scenario = (DemandeMondiale(f"OCDE XMKT, écart à sa tendance depuis {fenetre.depart}",
+                                    ecarts, mesure=DEMANDE_MONDIALE) if ecarts else TENDANCE)
+        commerce = Commerce(demande_mondiale=scenario, boucle_prix=menages.part_marchande)
         blocs, boucles = ordre_structurel(depart, population, cellules,
-                                          entreprises=p_entreprises,
-                                          menages=menages_au_depart(p_menages, depart))
+                                          entreprises=p_entreprises, menages=menages,
+                                          commerce=commerce)
+        if ecarts:
+            mesures = [*mesures, mesure_demande_mondiale(fenetre)]
         blocs.append(AjustementObserve(exogenes.sfa))
         return calculer(depart, entrees=e, mesures=mesures, theta=theta, blocs=blocs,
                         boucles=boucles)

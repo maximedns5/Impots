@@ -2140,6 +2140,16 @@
       "downloaded": "2026-11-14",
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "DILA, archive complète du Journal officiel (JORF) au format XML, version du 8 novembre 2026 : texte publié de chaque article, sous son identifiant JORFARTI. Lue par scripts/jumeau_jorf_*.py pour vérifier la base des mesures votées (D-413)."
+    },
+    "ocde_eo119_xmkt_fra_2009_2025.csv": {
+      "url": "https://sdmx.oecd.org/public/rest/data/OECD.ECO.MAD,DSD_EO@DF_EO,/FRA.XMKT.A?startPeriod=2009&endPeriod=2025&format=csvfilewithlabels",
+      "sha256": "e475814b8c0f29609a9b51867272f1a95ca029d8b8c814b7570229f7433bfa60",
+      "bytes": 4847,
+      "downloaded": "2026-11-14",
+      "licence": "OCDE — Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "description": "OCDE, Economic Outlook n° 119 (flux OECD.ECO.MAD:DSD_EO@DF_EO 1.5), France, mesure XMKT « Export market for goods and services, volume in USD » : la demande mondiale adressée à la France, importations des partenaires pondérées par leur part dans les exportations françaises, dollars au change, volumes chaînés, référence 2021, annuel, 2009→2025, export CSV du SDMX. L'exogène du bloc commerce dans le rejeu de l'histoire (but 23, D-421).",
+      "quarantined": false,
+      "provenance": "API SDMX publique de l'OCDE, requête bornée en dates. L'OCDE remplace l'Economic Outlook deux fois par an (le flux change de numéro) : la somme de contrôle est celle du 14 novembre 2026, n° 119."
     }
   }
 }

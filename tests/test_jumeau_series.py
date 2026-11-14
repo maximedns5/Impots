@@ -118,3 +118,24 @@ def test_les_creations_et_les_defaillances_recoupent_leurs_totaux(recoupements) 
     ecarts = recoupements["defaillances"]
     assert all(0 < ecarts[a] < 0.01 * total[a] for a in series.ANNEES), ecarts
     assert total[2021] < 30_000 < 60_000 < total[2025]
+
+
+def test_les_cotisations_par_payeur_somment_a_la_t3217(recoupements) -> None:
+    """D611 + D613 de la t. 7.301 égalent les cotisations effectives de la t. 3.217, au
+    centième imprimé près (D-421) ; en 2018, les cotisations salariales baissent (la
+    suppression des cotisations maladie et chômage) quand celles des employeurs montent,
+    et c'est en 2019 que celles des employeurs baissent (le CICE converti)."""
+    assert max(abs(e) for e in recoupements["cotisations_effectives"].values()) < 0.01
+    emp, sal = (series.lire(n) for n in ("cotisations_employeurs_apu",
+                                         "cotisations_salaries_apu"))
+    assert sal[2018] < sal[2017] and emp[2018] > emp[2017]
+    assert emp[2019] < emp[2018]
+
+
+def test_la_demande_mondiale_de_l_ocde_se_lit() -> None:
+    """XMKT de l'Economic Outlook n° 119, de 2009 à 2025 : la chute de 2020 et le rebond
+    de 2021 y sont (D-421)."""
+    dm = series.lire("demande_mondiale")
+    assert sorted(dm) == list(range(2009, 2026))
+    assert dm[2020] < 0.95 * dm[2019] and dm[2021] > 1.05 * dm[2020]
+    assert all(v > 0 for v in dm.values())

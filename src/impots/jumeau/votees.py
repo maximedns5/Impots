@@ -35,8 +35,8 @@ GOUVERNEMENTS = DOSSIER / "gouvernements.yaml"
 MESURES = DOSSIER / "mesures_votees.yaml"
 
 INSTRUMENTS = frozenset({
-    "ir", "ir_capital", "csg", "cotisations_employeurs", "cotisations_salaries", "is",
-    "impots_production", "tva", "accises_energie", "taxe_habitation", "patrimoine",
+    "ir", "ir_capital", "csg", "cotisations_employeurs", "cotisations_salaries", "cice",
+    "is", "impots_production", "tva", "accises_energie", "taxe_habitation", "patrimoine",
     "transmission", "prestations", "retraites", "remunerations", "autres_impots"})
 STATUTS = frozenset({"en_vigueur", "remplacee", "temporaire", "suspendue", "abrogee",
                      "abrogee_avant_effet", "censuree"})
@@ -99,6 +99,15 @@ class Verification:
 
 
 @dataclass(frozen=True)
+class Etape:
+    """Une étape d'une mesure étalée, datée par le texte (D-421) : le jour où le
+    paramètre que dit `quoi` prend sa nouvelle valeur."""
+
+    date: dt.date
+    quoi: str
+
+
+@dataclass(frozen=True)
 class MesureVotee:
     id: str
     gouvernement: str
@@ -114,6 +123,44 @@ class MesureVotee:
     date_effet: dt.date | None = None
     suite: str | None = None
     note: str | None = None
+    etapes: tuple[Etape, ...] = ()
+    """Les étapes d'une mesure étalée, dans l'ordre (D-421) ; vide pour une mesure d'une
+    seule date, `date_effet` ou le 1er janvier de `annee_effet`."""
+
+    @property
+    def annees_effet(self) -> tuple[int, ...]:
+        """Les années où la mesure change le droit appliqué (D-421) : l'année de chaque
+        étape, et l'année qui suit une étape entrée en vigueur après le 1er janvier (sa
+        première année pleine). Une étape remplacée avant son effet n'est pas une étape."""
+        dates = ([e.date for e in self.etapes] if self.etapes
+                 else [self.date_effet or dt.date(self.annee_effet, 1, 1)])
+        annees = {d.year for d in dates} | {d.year + 1 for d in dates
+                                            if (d.month, d.day) != (1, 1)}
+        return tuple(sorted(annees))
+
+
+def _etapes(valeur: Any, m: dict[str, Any], ou: str) -> tuple[Etape, ...]:
+    """Les étapes d'une mesure : des dates croissantes, la première dans l'année d'effet
+    (et le jour de `date_effet` s'il est dit), chacune avec ce qu'elle change."""
+    if valeur is None:
+        return ()
+    if not isinstance(valeur, list) or not valeur:
+        raise VoteesError(f"{ou} : etapes est une liste non vide de {{date, quoi}}")
+    etapes = []
+    for i, e in enumerate(valeur):
+        if not isinstance(e, dict) or set(e) != {"date", "quoi"} or not str(
+                e["quoi"]).strip():
+            raise VoteesError(f"{ou}.etapes[{i}] : {{date, quoi}}, quoi non vide")
+        etapes.append(Etape(_date(e["date"], f"{ou}.etapes[{i}]"), str(e["quoi"])))
+    dates = [e.date for e in etapes]
+    if dates != sorted(set(dates)):
+        raise VoteesError(f"{ou} : étapes non strictement croissantes {dates}")
+    if dates[0].year != int(m["annee_effet"]):
+        raise VoteesError(f"{ou} : première étape en {dates[0].year}, année d'effet "
+                          f"{m['annee_effet']}")
+    if m.get("date_effet") is not None and m["date_effet"] != dates[0]:
+        raise VoteesError(f"{ou} : date_effet {m['date_effet']}, première étape {dates[0]}")
+    return tuple(etapes)
 
 
 def _lire(chemin: Path) -> dict[str, Any]:
@@ -263,7 +310,8 @@ def mesures() -> tuple[MesureVotee, ...]:
             codification=m.get("codification"),
             date_effet=None if m.get("date_effet") is None
             else _date(m["date_effet"], f"{ou}.date_effet"),
-            suite=m.get("suite"), note=m.get("note")))
+            suite=m.get("suite"), note=m.get("note"),
+            etapes=_etapes(m.get("etapes"), m, ou)))
     ids = [m.id for m in sortie]
     if len(set(ids)) != len(ids):
         raise VoteesError("un identifiant de mesure deux fois")

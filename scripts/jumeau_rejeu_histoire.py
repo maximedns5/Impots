@@ -1,6 +1,9 @@
 """Le jumeau rejoue l'histoire (but 23, lot 6) : estimer sur 2011-2017, noter sur 2018-2019
-et 2022-2024, comme D-417 le préenregistre. À lancer seulement après le commit poussé de
-D-417 ; le rapport porte son commit et refuse un arbre modifié.
+et 2022-2024, comme D-417 le préenregistre. Ce code rejoue la révision
+« rejeu_histoire_r2 » (D-421, `rejeu_histoire.CAS`) : à lancer seulement après le commit
+poussé de D-421 et sa relecture ; le rapport porte son commit et refuse un arbre modifié.
+Le premier juge (D-417, D-420, `reports/jumeau/rejeu_histoire.json`) se refait sur
+fe9434f, et ce script refuse de l'écraser.
 
     PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py [--sortie reports/jumeau/...]
 
@@ -18,8 +21,8 @@ import subprocess
 from pathlib import Path
 
 from impots.jumeau import apprentissage as app
-from impots.jumeau import historique, thetas, votees
 from impots.jumeau import rejeu_histoire as rh
+from impots.jumeau import thetas, votees
 from impots.jumeau.blocs.entreprises import population_depuis
 from impots.jumeau.cellules import Cellules
 
@@ -53,31 +56,37 @@ def _note(note: app.Note) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sortie", type=Path,
-                        default=RACINE / "reports" / "jumeau" / "rejeu_histoire.json")
+                        default=RACINE / "reports" / "jumeau" / f"{rh.CAS}.json")
     args = parser.parse_args()
+    if args.sortie.resolve() == (RACINE / "reports" / "jumeau"
+                                 / "rejeu_histoire.json").resolve():
+        raise SystemExit("le rapport du premier juge (D-420) reste ; la révision s'écrit "
+                         f"sous son nom, {rh.CAS}.json")
     commit = _commit()
     exogenes = rh.exogenes_publies()
     cellules, base = Cellules.lire(), votees.mesures()
     simuler = rh.simulateur(population=population_depuis(), cellules=cellules,
-                            exogenes=exogenes, observateur=historique.etat_initial,
+                            exogenes=exogenes, observateur=rh.etat_publie,
                             votees=base)
     mecanique = rh.simulateur_mecanique(exogenes=exogenes, cellules=cellules,
-                                        observateur=historique.etat_initial, votees=base)
+                                        observateur=rh.etat_publie, votees=base)
     cibles = rh.cibles(100.0 * exogenes.croissance_emploi)
     fixes = {k: 0.5 for k in thetas.REGISTRE if k not in rh.ESTIMES}
-    estimation = app.estimer(app.residus(rh.SCHEMA, simuler, historique.etat_initial,
+    estimation = app.estimer(app.residus(rh.SCHEMA, simuler, rh.etat_publie,
                                          cibles), rh.ESTIMES, fixes, a_priori=rh.A_PRIORI)
     notes = {}
     for nom, periode, theta in (("estimation", "estimation", estimation.theta),
                                 ("test", "test", estimation.theta),
                                 ("test_theta_demi", "test",
                                  dict.fromkeys(thetas.REGISTRE, 0.5))):
-        note, _ = app.evaluer(periode, rh.SCHEMA, theta, simuler, historique.etat_initial,
+        note, _ = app.evaluer(periode, rh.SCHEMA, theta, simuler, rh.etat_publie,
                               cibles, rh.NON_NOTEES, mecanique)
         notes[nom] = _note(note)
-    rapport = {"decision": "D-417", "commit": commit,
+    rapport = {"decision": rh.DECISION, "cas": rh.CAS, "commit": commit,
                "exogenes": {"croissance_tendance": exogenes.croissance_tendance,
-                            "croissance_emploi": exogenes.croissance_emploi},
+                            "croissance_emploi": exogenes.croissance_emploi,
+                            "croissance_demande_mondiale":
+                                exogenes.croissance_demande_mondiale},
                "estimation": {"theta": {k: estimation.theta[k] for k in rh.ESTIMES},
                               "ecarts_types": dict(estimation.ecarts_types),
                               "identifies": list(estimation.identifies),

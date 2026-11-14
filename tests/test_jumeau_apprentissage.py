@@ -252,9 +252,9 @@ def test_un_taux_apparent_ne_compte_que_les_annees_votees():
     fenetre = F(2010, 2013, (2011, 2012, 2013))
     tva = {2010: 5.0, 2011: 5.5, 2012: 6.5, 2013: 6.0}
     publies = {a: _publie(a, tva=t, d62=20.0 + a - 2010) for a, t in tva.items()}
-    votees = [SimpleNamespace(id="tva_2012", instrument="tva", annee_effet=2012,
+    votees = [SimpleNamespace(id="tva_2012", instrument="tva", annees_effet=(2012,),
                               statut="en_vigueur"),
-              SimpleNamespace(id="tva_2013_censuree", instrument="tva", annee_effet=2013,
+              SimpleNamespace(id="tva_2013_censuree", instrument="tva", annees_effet=(2013,),
                               statut="censuree")]
     pib = [101.0, 102.0, 103.0]
     mesures = rh.chocs_observes(fenetre, publies, pib, votees, CELLULES)
@@ -279,17 +279,72 @@ def test_un_taux_apparent_ne_compte_que_les_annees_votees():
         assert sum(dep.menages[a]["deciles"]) == pytest.approx(dep.chocs[a]["apu_d_d62"])
 
 
-def test_deux_familles_d_un_groupe_se_partagent_une_annee():
-    votees = [SimpleNamespace(id="e", instrument="cotisations_employeurs",
-                              annee_effet=2015, statut="en_vigueur"),
-              SimpleNamespace(id="s", instrument="cotisations_salaries",
-                              annee_effet=2015, statut="en_vigueur"),
-              SimpleNamespace(id="s2", instrument="cotisations_salaries",
-                              annee_effet=2016, statut="en_vigueur")]
-    emp, sal = (next(f for f in rh.FAMILLES if f.nom == n)
-                for n in ("cotisations_employeurs", "cotisations_salaries"))
-    assert rh.poids(emp, 2015, votees) == rh.poids(sal, 2015, votees) == 0.5
-    assert (rh.poids(emp, 2016, votees), rh.poids(sal, 2016, votees)) == (0.0, 1.0)
+def _publie_cotisations(annee, *, employeurs, salaries, d3):
+    e = Etat(annee, 1, publie=True)
+    valeurs = {"pib": 100.0, "c_menages": 50.0, "remunerations": 50.0,
+               "ebe_revenu_mixte": 30.0, "impot_cotisations_employeurs": employeurs,
+               "impot_cotisations_salaries": salaries,
+               **{nom: 1.0 for nom, *_ in APU_DEPENSES}, "apu_d_d3": d3}
+    valeurs["impot_cotisations_effectives"] = employeurs + salaries   # la t. 3.217
+    for nom, v in valeurs.items():
+        e.ecrire(nom, ("publie", ""), v)
+    return e
+
+
+def test_chaque_payeur_de_cotisations_lit_sa_ligne_et_le_cice_la_sienne():
+    """D-421 : en 2018, les cotisations salariales baissent, celles des employeurs non ; le
+    CICE baisse (sa subvention D3). Les entreprises ne reçoivent que le CICE, les ménages
+    la baisse de leurs cotisations. Sous D-417, la mesure du CICE (rangée aux cotisations
+    employeurs) votait la ligne commune des cotisations, et la baisse salariale allait aux
+    entreprises."""
+    fenetre = F(2017, 2019, (2018, 2019))
+    publies = {2017: _publie_cotisations(2017, employeurs=20.0, salaries=8.0, d3=3.0),
+               2018: _publie_cotisations(2018, employeurs=20.0, salaries=7.0, d3=2.5),
+               2019: _publie_cotisations(2019, employeurs=18.5, salaries=7.0, d3=1.0)}
+    votees = [SimpleNamespace(id="cice", instrument="cice", annee_effet=2018,
+                              annees_effet=(2018, 2019), statut="en_vigueur"),
+              SimpleNamespace(id="sal", instrument="cotisations_salaries", annee_effet=2018,
+                              annees_effet=(2018, 2019), statut="en_vigueur"),
+              SimpleNamespace(id="emp", instrument="cotisations_employeurs",
+                              annee_effet=2019, annees_effet=(2019,), statut="en_vigueur")]
+    pib = [100.0, 100.0]
+    par_nom = {m.identifiant: m for m in rh.chocs_observes(fenetre, publies, pib, votees,
+                                                            CELLULES)}
+    emp = par_nom["observe_cotisations_employeurs"]
+    sal = par_nom["observe_cotisations_salaries"]
+    cice = par_nom["observe_subventions_cice"]
+    # Les employeurs : rien en 2018, −1,5 en 2019 (taux 40 % → 37 % sur D1/PIB = ½).
+    assert emp.entreprises[2018]["cotisations_employeurs"] == pytest.approx(0.0)
+    assert emp.entreprises[2019]["cotisations_employeurs"] == pytest.approx(-1.5)
+    # Les salariés : −1 dès 2018, aux ménages, rien aux entreprises.
+    assert sal.entreprises is None
+    assert sum(sal.menages[2018]["deciles"]) == pytest.approx(1.0)
+    assert sal.chocs[2018]["apu_r_d61"] == pytest.approx(1.0)
+    # Le CICE : +0,5 puis +2 de prélèvements nets, aux entreprises seules.
+    assert cice.entreprises[2018]["cotisations_employeurs"] == pytest.approx(0.5)
+    assert cice.entreprises[2019]["cotisations_employeurs"] == pytest.approx(2.0)
+    assert cice.chocs == {}
+
+
+def test_une_mesure_etalee_compte_chacune_de_ses_annees():
+    votees = [SimpleNamespace(id="is", instrument="is", statut="en_vigueur",
+                              annees_effet=(2018, 2019, 2020, 2021, 2022))]
+    famille = next(f for f in rh.FAMILLES if f.nom == "is")
+    assert [rh.poids(famille, a, votees) for a in range(2017, 2024)] == [
+        0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0]
+
+
+def test_l_ecart_de_demande_mondiale_est_a_sa_propre_tendance():
+    exo = rh.Exogenes(croissance_tendance=0.01, croissance_emploi=0.0, prix={}, oat={},
+                      sfa={}, demande_mondiale={2017: 100.0, 2018: 106.0, 2019: 104.0},
+                      croissance_demande_mondiale=0.04)
+    d = rh.ecarts_demande_mondiale(F(2017, 2019, (2018, 2019)), exo)
+    assert d[2018] == pytest.approx(1.06 / 1.04 - 1.0)
+    assert d[2019] == pytest.approx(1.04 / 1.04 ** 2 - 1.0)
+    sans = dataclasses.replace(exo, demande_mondiale={})
+    assert rh.ecarts_demande_mondiale(F(2017, 2019, (2018, 2019)), sans) == {}
+    with pytest.raises(app.ApprentissageError, match="demande mondiale absente"):
+        rh.ecarts_demande_mondiale(F(2016, 2019, (2017, 2018, 2019)), exo)
 
 
 def test_une_mesure_observee_porte_son_origine():
@@ -311,4 +366,35 @@ def test_les_exogenes_publies_se_chargent():
     annees = {a for f in (*rh.SCHEMA.estimation, *rh.SCHEMA.test) for a in f.annees}
     assert set(exo.prix) == set(exo.oat) == set(exo.sfa) == annees
     assert 0.0 < exo.croissance_tendance < 0.03
+    assert 0.01 < exo.croissance_demande_mondiale < 0.06
     assert all(-0.01 < v < 0.1 for v in exo.oat.values())
+
+
+def test_les_chocs_observes_de_2018_ne_donnent_plus_aux_entreprises_la_baisse_salariale():
+    """D-421, sur les entrées réelles (aucun jumeau ne tourne) : la fenêtre 2017 → 2019.
+    En 2018, aucune mesure des cotisations patronales n'a d'effet : les entreprises ne
+    reçoivent rien sur cette ligne (D-417 leur donnait la baisse de la t. 3.217, −16 Md€,
+    celle des salariés) ; les ménages reçoivent la baisse de leurs cotisations (LFSS 2018,
+    art. 8), que D-417 ne datait qu'à la CSG."""
+    from impots.jumeau import series, votees
+    from impots.jumeau.cellules import FICHIER, Cellules
+
+    manquants = [f for f in series.FICHIERS if not (series.comptes.RAW / f).exists()]
+    if manquants:
+        pytest.skip(f"séries absentes de data/raw : {manquants}")
+    if not FICHIER.exists():
+        pytest.skip(f"{FICHIER} absent (`scripts/jumeau_cellules.py`)")
+    cellules = Cellules.lire()
+    fenetre = rh.SCHEMA.test[0]
+    publies = {a: rh.etat_publie(a) for a in (fenetre.depart, *fenetre.annees)}
+    e = rh.entrees(fenetre, rh.exogenes_publies(), publies[fenetre.depart])
+    pib = [Tendance(publies[fenetre.depart]).chemin(e, k)[0] for k in range(len(e.annees))]
+    par_nom = {m.identifiant: m for m in rh.chocs_observes(fenetre, publies, pib,
+                                                            votees.mesures(), cellules)}
+    emp = par_nom["observe_cotisations_employeurs"]
+    assert emp.entreprises[2018]["cotisations_employeurs"] == 0.0
+    assert emp.entreprises[2019]["cotisations_employeurs"] < -15.0
+    sal = par_nom["observe_cotisations_salaries"]
+    assert sal.chocs[2018]["apu_r_d61"] > 10.0           # une baisse : un coût
+    cice = par_nom["observe_subventions_cice"]
+    assert cice.entreprises[2019]["cotisations_employeurs"] > 15.0

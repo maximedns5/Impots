@@ -17,7 +17,14 @@ CE QUE CHAQUE SÉRIE PORTE, et ce qu'elle n'est pas :
   (Eurostat irt_lt_mcby_a, le critère de convergence) ;
 * les créations d'entreprises (Insee, BDM, méthode 2022 : l'année est la somme des douze
   mois bruts, ce que l'Insee publie comme nombre annuel) et les défaillances (Banque de
-  France, reprises par la BDM : l'année est le cumul brut glissant de décembre).
+  France, reprises par la BDM : l'année est le cumul brut glissant de décembre) ;
+* les cotisations sociales effectives reçues par les APU, à la charge des employeurs
+  (D611) et des salariés (D613CE), lues dans le compte des APU (t. 7.301) : la t. 3.217
+  n'en publie que la somme avec celles des non-salariés (D-421) ;
+* la demande mondiale adressée à la France en volume (OCDE, Economic Outlook n° 119,
+  « Export market for goods and services, volume », XMKT, dollars de 2021 chaînés) : la
+  somme des importations des partenaires pondérées par leur part dans les exportations
+  françaises (D-421).
 
 CHAQUE SÉRIE RECOUPE SON TOTAL PUBLIÉ (`recoupements`), et l'écart est dit, jamais
 absorbé : les secteurs d'une table contre son total, la t. 3.217 contre la t. 3.201,
@@ -57,11 +64,13 @@ BDM_DEFAILLANCES = "insee_bdm_defaillances_entreprises_2009_2025.xml"
 EUROSTAT_CHOMAGE = "eurostat_une_rt_a_fr_2009_2025.json"
 EUROSTAT_OAT = "eurostat_irt_lt_mcby_a_fr_2009_2025.json"
 EUROSTAT_OAT_MOIS = "eurostat_irt_lt_mcby_m_fr_2009_2025.json"
+T7301 = comptes.APU_FILE
+OCDE_EO = "ocde_eo119_xmkt_fra_2009_2025.csv"
 
 #: Tous les fichiers que ce module ouvre, pour les tests qui en dépendent.
 FICHIERS = (T1102_1103, T3105, T3217, T6205, T6208, T6210, BDM_CREATIONS,
             BDM_DEFAILLANCES, EUROSTAT_CHOMAGE, EUROSTAT_OAT, EUROSTAT_OAT_MOIS,
-            comptes.TOTALS_FILE, comptes.SFA_FILE)
+            comptes.TOTALS_FILE, comptes.SFA_FILE, T7301, OCDE_EO)
 
 #: La moitié de la dernière décimale imprimée : au millième de milliard (t. 1.10x),
 #: au centième (t. 3.217), au dixième (t. 3.105, et les milliers de personnes de 6.208).
@@ -233,6 +242,28 @@ def _decembre(fichier: str, idbank: str) -> dict[int, float]:
     return {a: serie[f"{a}-12"] for a in ANNEES}
 
 
+def _ocde_eo(fichier: str, mesure: str, pays: str) -> dict[int, float]:
+    """Une série annuelle de l'Economic Outlook de l'OCDE, export CSV du SDMX (une
+    observation par ligne), de 2009 à 2025 ; une année absente ou deux fois est refusée."""
+    import csv
+
+    _sourcer(fichier)
+    with (comptes.RAW / fichier).open(encoding="utf-8-sig", newline="") as f:
+        lignes = [r for r in csv.DictReader(f)
+                  if r["MEASURE"] == mesure and r["REF_AREA"] == pays and r["FREQ"] == "A"]
+    out: dict[int, float] = {}
+    for r in lignes:
+        a = int(r["TIME_PERIOD"])
+        if a in out:
+            raise SerieError(f"{fichier} {mesure} {pays} {a} : deux observations")
+        out[a] = _nombre(float(r["OBS_VALUE"]) if r["OBS_VALUE"] else None,
+                         f"{fichier} {mesure} {a}")
+    manquants = [a for a in range(PREMIERE - 1, DERNIERE + 1) if a not in out]
+    if manquants:
+        raise SerieError(f"{fichier} {mesure} {pays} : années absentes {manquants}")
+    return {a: out[a] for a in range(PREMIERE - 1, DERNIERE + 1)}
+
+
 # ------------------------------------------------------------------ le registre
 _REGISTRE: dict[str, Serie] = {}
 
@@ -371,6 +402,22 @@ _serie("defaillances", "Défaillances d'entreprises, tous secteurs", "unités pa
        f"idbank {DEFAILLANCES_TOTAL} (cumul brut sur 12 mois, décembre)",
        functools.partial(_decembre, BDM_DEFAILLANCES, DEFAILLANCES_TOTAL))
 
+# Les cotisations effectives reçues par les APU, par payeur (t. 7.301, ressources) : la
+# t. 3.217 publie leur somme avec les cotisations des non-salariés, D611 + D613.
+_serie("cotisations_employeurs_apu", "D611, cotisations effectives à la charge des "
+       "employeurs, reçues par les APU", MDE, INSEE_CN, T7301, "t. 7.301 S13 D611",
+       functools.partial(_ligne_code, T7301, "T_7301", "D611"))
+_serie("cotisations_salaries_apu", "D613CE, cotisations effectives obligatoires à la "
+       "charge des salariés, reçues par les APU", MDE, INSEE_CN, T7301,
+       "t. 7.301 S13 D613CE", functools.partial(_ligne_code, T7301, "T_7301", "D613CE"))
+_serie("cotisations_menages_apu", "D613, cotisations effectives à la charge des ménages "
+       "(salariés et non-salariés), reçues par les APU", MDE, INSEE_CN, T7301,
+       "t. 7.301 S13 D613", functools.partial(_ligne_code, T7301, "T_7301", "D613"))
+
+_serie("demande_mondiale", "Demande mondiale adressée à la France, en volume",
+       "dollars de 2021, volumes chaînés", "OCDE, Economic Outlook n° 119", OCDE_EO,
+       "EO XMKT FRA A", functools.partial(_ocde_eo, OCDE_EO, "XMKT", "FRA"))
+
 SERIES: dict[str, Serie] = dict(_REGISTRE)
 
 
@@ -456,4 +503,10 @@ def recoupements() -> dict[str, dict[int, float]]:
     secteurs = [_decembre(BDM_DEFAILLANCES, i) for i in DEFAILLANCES_SECTEURS]
     total = lire("defaillances")
     out["defaillances"] = {a: total[a] - sum(s[a] for s in secteurs) for a in ANNEES}
+
+    # Les cotisations effectives par payeur (t. 7.301) contre leur somme (t. 3.217).
+    employeurs, menages = lire("cotisations_employeurs_apu"), lire("cotisations_menages_apu")
+    effectives = lire("impot_cotisations_effectives")
+    out["cotisations_effectives"] = {a: effectives[a] - employeurs[a] - menages[a]
+                                     for a in ANNEES}
     return out

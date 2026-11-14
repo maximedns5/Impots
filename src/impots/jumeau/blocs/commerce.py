@@ -425,10 +425,17 @@ def chemins(p: Parametres, *, tau: Sequence[Any], d: Sequence[Any],
 @dataclass(frozen=True)
 class DemandeMondiale:
     """Un scénario nommé : l'écart relatif de la demande mondiale adressée à la France au
-    sentier de la tendance, par année. « tendance » : nul chaque année."""
+    sentier de la tendance, par année. « tendance » : nul chaque année.
+
+    `mesure` : la clé qui porte l'écart. « » (par défaut), la référence : le scénario est
+    celui de la trajectoire entière. Une mesure : l'écart n'entre que dans la variante,
+    sous cette mesure, qui doit être parmi celles de la trajectoire ; la référence reste
+    à la tendance (le rejeu de l'histoire, D-421 : le naïf est la référence, et ne reçoit
+    pas la demande observée)."""
 
     nom: str
     ecarts: Mapping[int, float] = field(default_factory=dict)
+    mesure: str = ""
 
     def ecart(self, annee: int) -> float:
         if self.nom == TENDANCE.nom and not self.ecarts:
@@ -478,6 +485,10 @@ class Commerce:
     def preparer(self, entrees: Entrees, mesures: Sequence[Any]) -> None:
         for annee in entrees.annees:
             self.scenario.ecart(annee)
+        cle = self.scenario.mesure
+        if cle and cle not in {m.identifiant for m in mesures}:
+            raise CommerceError(f"scénario de demande mondiale « {self.scenario.nom} » "
+                                f"porté par la mesure « {cle} », absente de la trajectoire")
         inconnues = sorted(set(self.impots_production) - {m.identifiant for m in mesures})
         if inconnues:
             raise CommerceError(f"impôts sur la production pour des mesures absentes : "
@@ -574,7 +585,7 @@ class Commerce:
                 tau, d = f["cles"][m]["tau"], f["cles"][m]["d"]
             else:
                 tau = [f["couts"][j].get(m, 0.0) / f["pib"][j] + zero for j in range(k + 1)]
-                d = [(self.scenario.ecart(a) if m == "" else 0.0) + zero
+                d = [(self.scenario.ecart(a) if m == self.scenario.mesure else 0.0) + zero
                      for a in f["annees"]]
             if boucle:
                 chemin = [*(s[m] for s in f["salariaux"]), salariaux[m]]
@@ -600,8 +611,10 @@ class Commerce:
         demandes = [*f["demandes"], self._demandes(ctx.courant)]
         salariaux = (self._couts_salariaux(ctx, ctx.courant, k, f["s_w"])
                      if self.boucle is not None else None)
+        portee = self.scenario.mesure
+        actif = not portee or portee in {x.identifiant for x in ctx.mesures}
         cles = ({""} | {m for c in f["couts"] for m in c} | {m for dm in demandes for m in dm}
-                | set(salariaux or ()))
+                | set(salariaux or ()) | ({portee} if portee and actif else set()))
         zero = np.zeros(ctx.n)
         out: dict[str, dict[str, Any]] = {c: {} for c in self.ecrit}
         # Les sommes sur les clés des prix et de la compétitivité, aux années k et k − 1,
@@ -647,7 +660,8 @@ class Commerce:
         out["prix_importations"] = {"": p_m}
         if self.boucle is not None:
             out["prix_c_menages"] = {"": prix * (1.0 + tot["pc"][0]) / (1.0 + tot["pc"][1])}
-        out["demande_mondiale"] = {"": 1.0 + self.scenario.ecart(ctx.annee) + zero}
+        out["demande_mondiale"] = {"": 1.0 + (self.scenario.ecart(ctx.annee) if actif
+                                              else 0.0) + zero}
         out["prix_relatifs"] = {"": 1.0 + tot["compet"][0]}
         x_t = sum(solde_part for solde_part in _total(ctx, "exportations", out, self.nom))
         m_t = sum(solde_part for solde_part in _total(ctx, "importations", out, self.nom))

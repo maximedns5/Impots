@@ -31050,3 +31050,238 @@ moins d'un point ». Le reste est dans le pronostic.
 **Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune entrée. Une révision
 (le canal des créations, une demande mondiale manifestée, les mesures étalées datées
 chaque année) serait un nouveau préenregistrement, sous un nouveau nom ; cette note reste.
+
+## D-421 — La révision du jumeau préenregistrée : « rejeu_histoire_r2 », avant tout calcul
+
+**Ce qui est fait** (branche `claude/but23-revision`, partie de `claude/but23-apprentissage`
+à c266daf). Le diagnostic des créations de D-420, trois défauts corrigés, la demande
+mondiale manifestée et branchée, les mesures étalées datées chaque année, une proposition
+d'histoire plus longue, et ce préenregistrement. **Le jumeau n'a tourné sur aucune année
+réelle et aucune erreur n'a été calculée** : les entrées des quatre fenêtres ont été
+construites (`chocs_observes`, l'écart de demande mondiale), et les refus des blocs
+(`preparer`) appelés. Le premier juge (D-417, D-420, `reports/jumeau/rejeu_histoire.json`)
+reste, et se refait sur fe9434f ; le script refuse d'écrire sur son rapport.
+
+### 1. Les créations : ce que le bloc reçoit, et pourquoi il oscille
+
+Le bloc `naissances` (pas `creations`, qui n'est pas dans le mode structurel) écrit
+ΔE_t = −ε · 100 P_t / (b Y_t) · N₀ / 100, P_t la somme des signaux des entreprises de
+l'année (IS, production, cotisations patronales, capital), b = 0,092 le profit imposable
+en part du PIB. La cible est la croissance des créations : sur un niveau de référence
+constant, elle répond à la **variation d'une année sur l'autre** de P. Le signe est le
+bon (une baisse de prélèvement fait des créations). Ce que P valait sous D-417, et ce
+qu'il vaut ici (Md€, recettes positives, fenêtre du test) :
+
+| année | D-417 : P | dont cotisations | dont CICE | dont IS | révision : P |
+|---|---|---|---|---|---|
+| 2018 | −15,46 | −16,24 | +5,30 | −4,52 | +0,78 |
+| 2019 | −7,26 | −27,09 | +21,28 | −1,46 | −0,72 |
+| 2022 | 0,00 | — | — | 0,00 | +14,70 |
+| 2023 | −3,98 | — | — | 0,00 | +11,65 |
+| 2024 | −5,00 | — | — | 0,00 | +11,14 |
+
+L'oscillation de 2018 et 2019 (+15,9 puis −13,1 points) vient de **trois défauts de
+l'entrée**, non du bloc :
+
+* **Le CICE votait la ligne des cotisations.** Ses mesures étaient de l'instrument
+  `cotisations_employeurs` ; leurs années (2013, 2017, 2018) comptaient la variation de la
+  ligne des cotisations effectives sans la changer. En 2018, c'est la baisse des
+  cotisations salariales (LFSS 2018, art. 8) qui y passait : −16,24 Md€ donnés aux
+  entreprises, quand celles des employeurs ont monté (D611 : 258,1 → 264,3 Md€).
+* **Une ligne commune, partagée à parts égales.** La t. 3.217 ne publie que la somme des
+  cotisations effectives ; en 2019, employeurs et salariés votés, chacun en recevait la
+  moitié : la moitié de l'allègement qui remplace le CICE, quand la fin du CICE (sa
+  subvention, D3) comptait en entier. Le compte des APU (t. 7.301) publie chaque payeur,
+  D611 et D613CE, qui somment à la t. 3.217 avec D613NSI (au centième près, testé).
+* **La baisse salariale de 2018 n'était datée qu'à la CSG** (la base rangeait l'article 8
+  à l'instrument `csg`) : les ménages recevaient la hausse de la CSG sans la baisse de
+  leurs cotisations.
+
+Corrigés : un instrument `cice` (CGI, art. 244 quater C : un crédit d'impôt, pas une
+cotisation) pour les trois mesures du CICE, sa conversion (LFSS 2018, art. 9) restant aux
+cotisations patronales ; les familles des cotisations lisent D611 et D613CE ; le volet des
+cotisations de l'article 8 est une mesure à part (`lfss2018_cotisations_salariales`). Le
+test (`test_chaque_payeur_de_cotisations_lit_sa_ligne_et_le_cice_la_sienne`, synthétique)
+échoue sur c266daf ; `test_les_chocs_observes_de_2018_…` tient, sur les entrées réelles,
+un signal des cotisations patronales nul en 2018 (−16,24 sous D-417).
+
+Ce qui est **un choix de modèle**, et reste : la réponse au niveau du taux apparent (Da
+Rin et al.), qui fait réagir la croissance des créations à sa variation annuelle ; les
+cotisations patronales dans le signal des naissances, rapportées au profit imposable
+(b = 0,092), le double compte décidé par le propriétaire (D-401) : 1 Md€ de prélèvement
+en plus retire 1,2 point de croissance aux créations ; la variation entière du taux
+apparent les années votées, le cycle compris (D-417). C'est ce dernier qui pèse en
+2022 : le taux apparent de l'IS sur l'EBE passe de 7,00 à 8,59 %, l'année de la dernière
+étape de la baisse de l'IS (25 %), qui est désormais votée (§ 3) ; +14,7 Md€ d'IS entrent,
+pour les entreprises et pour le compte des APU, et y restent en 2023 et 2024. **C'est la
+question ouverte de cette révision** (ci-dessous).
+
+### 2. La demande mondiale adressée à la France
+
+OCDE, Economic Outlook n° 119, mesure XMKT (« Export market for goods and services,
+volume », dollars de 2021 chaînés : les importations des partenaires pondérées par leur
+part dans les exportations françaises), France, annuel, 2009→2025 :
+`data/raw/ocde_eo119_xmkt_fra_2009_2025.csv`, requête SDMX bornée, CC BY 4.0, déclarée à
+`KNOWN_SOURCES` et au manifeste (sha256 e475814b…bfa60), lue par
+`series.lire("demande_mondiale")`. L'OCDE est retenue pour sa requête stable, qui se
+refait ; les séries de la Banque de France, de la DG Trésor et du CEPII n'ont pas été
+cherchées plus loin. L'Economic Outlook est remplacé deux fois par an : c'est le n° 119
+qui entre, lu le 14 novembre 2026 (aucune année au-delà de 2024 n'entre).
+
+Elle entre au bloc `commerce` (`DemandeMondiale`) en écart à sa propre tendance de
+l'estimation, d_t = (W_t / W_s) / (1 + g_W)^(t − s) − 1, g_W = 3,71 % la croissance
+moyenne de 2011 à 2017 : la référence fait croître les échanges comme le PIB de la
+tendance (1,20 %), qui porte déjà la croissance moyenne des marchés et la perte de parts
+de marché ; compter l'écart de 2,5 points entre les deux la compterait deux fois. Les
+écarts (%) : 2018 +0,22, 2019 −0,87 ; 2022 +2,91, 2023 −0,22, 2024 −1,63 (depuis 2017 et
+2021) ; sur l'estimation, de −0,97 à +2,27. L'écart entre dans la variante, sous une
+mesure observée sans choc sur le compte (`observe_demande_mondiale`,
+`DemandeMondiale.mesure`) : le scénario « » du bloc l'aurait mis dans la référence de la
+trajectoire, qui est le naïf, et l'aurait donné au jumeau comme au naïf. La référence
+reste à la tendance ; le naïf mécanique n'a pas de bloc du commerce. Un test le tient
+(`test_une_demande_mondiale_portee_par_une_mesure_…`).
+
+### 3. Les mesures étalées, datées chaque année
+
+`MesureVotee.etapes` : chaque date où le texte change le paramètre appliqué, relue dans
+l'archive du JO de la DILA (du 8 novembre 2026, extraite de nouveau : 29 593
+enregistrements, comme D-413) ; aucun montant. `annees_effet` : l'année de chaque étape,
+et l'année qui suit une étape entrée en vigueur après le 1er janvier (sa première année
+pleine ; une règle, appliquée aussi aux `date_effet` existantes). Une étape remplacée
+avant son effet n'en est pas une.
+
+| mesure | années d'effet | lu au JO |
+|---|---|---|
+| CICE (LFR 2012-3, art. 66) | 2013 (4 %), 2014 (6 %) | III, B |
+| CICE (LFI 2018, art. 86) | 2018 (6 %), 2019 (supprimé) | V, A et B |
+| conversion (LFSS 2018, art. 9) | 2019, 1er oct. 2019 → 2020 | V ; LFSS 2019, art. 8, IX |
+| cotisations salariales (LFSS 2018, art. 8) | 1er janv., 1er oct. 2018 → 2019 | I 9°, VI |
+| taxe d'habitation (LFI 2018, art. 5) | 2018, 2019, 2020 | III, 1 à 3 |
+| taxe d'habitation (LFI 2020, art. 16) | 2020, 2021, 2022, 2023 | VII, A, B, D, E |
+| IS à 25 % (LFI 2018, art. 84) | 2018 à 2022 | III, A à D |
+| IS des grandes entreprises (LFI 2020, art. 39) | 2020, 2021 | IX |
+| contribution de 5 % (LFR 2011-4, art. 30) | clos au 31 déc. 2011 → 2011, 2012 | I |
+| contribution à 10,7 % (LFI 2014, art. 16) | 2013, 2014 ; fin 2016, 2017 | II ; 2014-891 |
+| contributions de 2017 (LFR 2017-1, art. 1) | 2017 à 2019 (fin au 31 déc. 2018) | I |
+
+La CVAE était déjà datée chaque année où la loi la change (2021, 2023, 2024) ; 2022 n'en
+est pas une, et les étapes de 2025 à 2027 de la LFI 2024 ont été remplacées avant leur
+effet. La trajectoire carbone de 2019 à 2022 a été supprimée par la LFI 2019 avant effet.
+La C3S de 2016 (LFSS 2016) n'est pas dans la base : un manque dit, sur l'estimation
+seulement. 96 mesures vérifiées (95 et le volet de l'article 8) ; le décompte du test
+change. Les années votées, par famille, de la fenêtre du test : l'IS gagne 2021 et 2022,
+la taxe d'habitation 2019, 2021, 2022 et 2023, les cotisations salariales 2018 ; les
+cotisations patronales perdent 2018 (et 2013 sur l'estimation).
+
+### 4. Plus d'histoire pour les θ : une proposition, non faite
+
+D-420 : aucun θ identifié, chaque écart-type approché à 0,50, celui de l'a priori seul ;
+l'information des chocs de 2011 à 2017 est presque nulle. Allonger l'estimation ne vaut
+que si les chocs y sont plus grands ; ils le sont de 1995 à 2007 (la TVA à 20,6 % en
+1995 et à 19,6 % en 2000, la bascule de la CSG de 1997-1998, la surtaxe de l'IS de 1995
+à 2005, les allègements Aubry et Fillon de 1998 à 2005, les baisses de l'IR de 2000 à
+2003, la part salaires de la taxe professionnelle supprimée de 1999 à 2003).
+
+* **Étape zéro, sans aucune erreur : mesurer l'identifiabilité.** L'écart-type approché
+  ne dépend que de la jacobienne des sorties du jumeau en θ, pas des données publiées :
+  le calculer sur les fenêtres envisagées dit, avant tout, si l'allongement apporte. Une
+  passe d'essai (sept θ, une jacobienne par fenêtre) : de l'ordre d'une heure.
+* **1996 → 2009, la borne des données** : la t. 3.217 commence en 1995 (les familles
+  d'impôts), la dette de Maastricht de l'Insee aussi ; les emplois, les revenus, l'emploi,
+  les salaires et le compte des APU remontent à 1949 (la t. 3.201 à 1959), la demande
+  mondiale de l'OCDE à 1970. Manquent : l'ajustement flux-stocks avant 2009 (la t. 3.105
+  commence en 2009 ; la variation de la dette moins le déficit, un calcul dit), le
+  chômage BIT avant 2003 (Eurostat ; les séries longues de l'Insee, depuis 1975, à
+  manifester), les créations avant 2009 (une autre méthode de l'Insee : la cible n'y est
+  pas comparable, elle resterait notée depuis 2011). Le code : `series.PREMIERE` et
+  `historique` à paramétrer, quelques heures. **La base des mesures** de 1995 à 2009 :
+  de 80 à 100 mesures (les barèmes de l'IR chaque année, la TVA, la CSG et la CRDS, l'IS
+  et ses contributions, les allègements, la taxe professionnelle, la taxe d'habitation,
+  l'ISF, les droits de succession de 2007, la PPE, les retraites de 1993 et 2003),
+  vérifiées sur la même archive en reculant `DEPUIS` (sa profondeur avant 2009 est à
+  vérifier à l'extraction) : l'effort de D-410 et D-413, deux lots. Les fenêtres :
+  1996 → 1999, 1999 → 2003, 2003 → 2007, 2010 → 2014, 2014 → 2017 ;
+  2008 et 2009 exclus comme 2020 et 2021 ; 18 années notées au lieu de 7.
+* **1978 → 1995** : sans t. 3.217, les familles se liraient dans les Statistiques des
+  recettes publiques de l'OCDE (par impôt, depuis 1965), un lecteur et ses recoupements
+  à écrire ; la dette avant 1995, une autre table ; 80 mesures de plus ; deux lots
+  encore. Les structures du jumeau (les cellules de 2023 et 2024, le TES de 2023, les
+  profils de Mésange de 2017) y sont anachroniques : l'écart grandit avec le recul.
+
+Soit, de l'étape zéro au bout de 1996-2009, quatre lots environ ; à ne lancer que si
+l'étape zéro donne au moins un θ sous 0,25.
+
+### 5. Le préenregistrement de la révision
+
+**Le nom du cas** : `rejeu_histoire_r2` (`rejeu_histoire.CAS`), son rapport
+`reports/jumeau/rejeu_histoire_r2.json`. **Ce qui change** : les §§ 1 à 3, rien
+d'autre. **Ce qui ne change pas** : le schéma (estimation 2010 → 2014 et 2014 → 2017,
+test 2017 → 2019 et 2021 → 2024, 2020 et 2021 exclus), les douze cibles, leurs
+métriques et leurs tolérances, les sept θ estimés et les quatorze à ½, l'a priori, le
+critère, le seuil d'identification (0,25), les deux naïfs et la règle « le jumeau bat ».
+Le naïf ne reçoit ni les chocs ni la demande mondiale : **ses REQM redonnent celles de
+D-420 à 1e-9 près**, un contrôle. Le naïf mécanique reçoit les chocs corrigés.
+
+**La question ouverte, à trancher à la relecture, avant le calcul.** L'étape de 2022 de
+la baisse de l'IS fait entrer la hausse cyclique du taux apparent de l'IS (+14,7 Md€),
+par la règle de D-417. (a) La garder : la règle ne change pas, c'est ce qui est
+préenregistré ci-dessous. (b) Ne compter, une année votée, que la part de la variation
+dans le sens que la loi donne (une baisse votée ne fait pas une hausse) : un sens lu dans
+la loi, sans montant ; elle annulerait au moins l'IS de 2022, et changerait ce
+pronostic. Choisir (b) amende cette entrée avant tout calcul.
+
+**L'aveugle est percé** plus encore qu'en D-417 : le pronostic est écrit en connaissant
+les erreurs année par année de D-420 et les entrées de la révision, sans qu'aucune erreur
+du jumeau révisé n'ait été calculée.
+
+Le pronostic sur le test, aux θ estimés (REQM en points ; N celle de D-420) :
+
+| cible | tol. | jumeau | naïf méca. | N | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|
+| PIB | 1,0 | [0,9 ; 1,4] | 0,831 | 0,831 | non | non | non |
+| emploi | 0,8 | [0,75 ; 1,05] | 0,858 | 0,858 | non, de peu | non | non |
+| chômage | 0,8 | [0,6 ; 0,9] | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | [3,2 ; 3,9] | 3,870 | 3,870 | oui | oui | oui (a) |
+| importations | 4,0 | [3,0 ; 3,8] | 3,773 | 3,773 | oui | oui | oui (a) |
+| D2 | 0,4 | [0,45 ; 0,65] | [0,5 ; 0,6] | 0,645 | non | oui | non |
+| D5 | 0,5 | [0,35 ; 0,6] | [0,3 ; 0,55] | 0,424 | oui, de peu | non | non (b) |
+| D61 | 0,4 | [0,15 ; 0,4] | [0,15 ; 0,35] | 0,983 | oui | oui | non |
+| recettes | 0,8 | [1,0 ; 1,5] | [0,95 ; 1,4] | 1,301 | non | oui, de peu | non (b) |
+| solde | 1,0 | [0,35 ; 0,75] | [0,4 ; 0,75] | 1,361 | oui | oui | oui, de peu (c) |
+| dette | 3,0 | [1,6 ; 2,8] | [1,1 ; 2,0] | 4,393 | oui | oui | non |
+| créations | 10 | [7 ; 12] | 4,310 | 4,310 | oui, de peu (d) | non | non |
+
+(a) La demande mondiale : +2,9 % en 2022 rapproche du publié les échanges du rebond ; la
+baisse de 2023 (−3,1 points d'écart) les en éloigne, moins. (b) L'IS cyclique de 2022
+gardé en 2023 et 2024 (+0,55 point de PIB) creuse la surestimation des recettes de ces
+deux années, pour le jumeau comme pour le naïf mécanique. (c) Le PIB du jumeau, plus bas
+en 2024, rapproche son solde du publié, que les recettes de (b) en éloignent. (d) La
+croissance des créations : de petits écarts en 2018 et 2019 (le défaut corrigé), mais
+une chute de 15 à 17 points en 2022 (l'IS de (b)) et une hausse en 2023 (la CVAE) ; le
+naïf, à zéro, reste bien meilleur. Tenue par la taille de la tolérance, non par la
+dynamique.
+
+Soit **8 cibles sur 12 tenues par le jumeau** (de 6 à 10 ; 7 sous D-420), 6 par le naïf
+(exactement), **9 par le naïf mécanique** (de 8 à 10), le naïf battu sur 7 (de 5 à 8),
+et **le naïf mécanique battu sur 3** (de 1 à 4 : les échanges, par la demande mondiale,
+et le solde). L'estimation : aucun θ identifié (au plus un) ; chacun à moins de 0,15 de
+½ ; J final entre 95 et 100 % de J à θ½ ; à θ½, le test tient les mêmes cibles, chaque
+REQM à moins de 5 % de celle aux θ estimés.
+
+### Ce qui tourne ensuite, après relecture
+
+`PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py`, sur le commit qui porte cette
+entrée poussée (ou son amendement), vers `reports/jumeau/rejeu_histoire_r2.json`. Le
+résultat va dans une nouvelle D-entrée, contre ce pronostic ; aucune tolérance, aucune
+fenêtre, aucune entrée ne change après le premier calcul ; D-417 et D-420 restent.
+
+### Les tests
+
+`test_jumeau_apprentissage.py` (+4 : chaque payeur sa ligne et le CICE la sienne ; une
+mesure étalée compte chacune de ses années ; l'écart de demande mondiale à la main ; les
+chocs réels de 2018 sans la baisse salariale aux entreprises), `test_jumeau_votees.py`
+(+2 : les années d'effet lues au JO, des étapes mal datées refusées ; 96 vérifiées),
+`test_jumeau_series.py` (+2 : D611 + D613 égalent la t. 3.217, la demande mondiale se
+lit), `test_jumeau_commerce.py` (+1 : la demande portée par une mesure laisse la
+référence à la tendance). Avec `test_jumeau*.py` : 216 verts, 1 sauté ; `ruff check src
+tests scripts` propre.

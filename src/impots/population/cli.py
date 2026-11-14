@@ -258,6 +258,13 @@ KNOWN_SOURCES: dict[str, tuple[str, str]] = {
         "DILA, archive complète du Journal officiel (JORF) en XML, version du 8 novembre "
         "2026 ; lue par scripts/jumeau_jorf_*.py pour vérifier les mesures votées (D-413).",
     ),
+    "ocde_eo119_xmkt_fra_2009_2025.csv": (
+        "https://sdmx.oecd.org/public/rest/data/OECD.ECO.MAD,DSD_EO@DF_EO,/FRA.XMKT.A"
+        "?startPeriod=2009&endPeriod=2025&format=csvfilewithlabels",
+        "OCDE, Economic Outlook n° 119 : demande mondiale adressée à la France en volume "
+        "(XMKT, « Export market for goods and services »), 2009→2025 ; l'exogène du "
+        "commerce dans le rejeu de l'histoire (D-421).",
+    ),
 }
 
 

@@ -302,6 +302,28 @@ def test_la_demande_mondiale_monte_les_exportations_de_la_reference() -> None:
         assert etat["demande_mondiale"][0] == 1.01
 
 
+def test_une_demande_mondiale_portee_par_une_mesure_laisse_la_reference_a_la_tendance():
+    """D-421 : sous une mesure, l'écart de demande mondiale n'entre que dans la variante,
+    et y fait ce que le scénario « » fait à la référence ; la référence (le naïf du rejeu
+    de l'histoire) n'en reçoit rien. Sans la mesure dans la trajectoire, refusé."""
+    ecarts = {a: 0.01 for a in YEARS}
+    porte = Mesure(identifiant="dm", libelle="demande", auteur="test", origine="observe",
+                   annees=tuple(YEARS))
+    traj = _calcul([porte], _theta(), commerce=Commerce(
+        demande_mondiale=DemandeMondiale("plus_un", ecarts, mesure="dm")))
+    scenario = _calcul([], _theta(), commerce=Commerce(
+        demande_mondiale=DemandeMondiale("plus_un", ecarts)))
+    for k, (ref, var) in enumerate(zip(traj.reference, traj.variante, strict=True)):
+        assert ("commerce", "dm") not in ref.de("exportations")
+        assert ref["demande_mondiale"][0] == 1.0 and var["demande_mondiale"][0] == 1.01
+        xbar = ref.de("exportations")[("tendance", "")][0]
+        attendu = scenario.reference[k].de("exportations")[("commerce", "")][0]
+        assert abs(var.de("exportations")[("commerce", "dm")][0] - attendu) < 1e-9 * xbar
+    with pytest.raises(CommerceError, match="absente de la trajectoire"):
+        _calcul([], _theta(), commerce=Commerce(
+            demande_mondiale=DemandeMondiale("plus_un", ecarts, mesure="dm")))
+
+
 # --------------------------------------------------------------------------- #
 # 6. la comparaison aux variantes de Mésange
 # --------------------------------------------------------------------------- #

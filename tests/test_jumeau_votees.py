@@ -83,9 +83,10 @@ def test_aucune_mesure_ne_porte_de_montant() -> None:
 
 
 #: Le décompte de D-413 : les 70 mesures de D-410, relues au Journal officiel, et les 25
-#: ajoutées, toutes relues au même endroit. Un ajout ou un déclassement change ce décompte
-#: et la D-entrée qui le dit.
-VERIFIEES, NON_VERIFIEES = 95, 0
+#: ajoutées, toutes relues au même endroit ; plus, en D-421, le volet des cotisations
+#: salariales de la LFSS 2018 (art. 8) sous son instrument. Un ajout ou un déclassement
+#: change ce décompte et la D-entrée qui le dit.
+VERIFIEES, NON_VERIFIEES = 96, 0
 
 
 def test_chaque_mesure_dit_sa_verification_et_sa_source() -> None:
@@ -144,3 +145,34 @@ def test_les_ajouts_de_d413_y_sont() -> None:
     assert {par_id[i].annee_effet for i in vus} == set(range(2010, 2027)) - {2012, 2013}
     assert {"chomage_2019", "chomage_2023", "aah_deconjugalisation",
             "lfss2015_modulation_af", "lfi2026_holdings", "lfi2026_cdhr"} <= set(par_id)
+
+
+def test_les_mesures_etalees_portent_chacune_de_leurs_annees() -> None:
+    """D-421 : chaque année où la loi change le droit appliqué, lue au JO ; une étape
+    entrée en vigueur après le 1er janvier compte aussi l'année qui suit."""
+    par_id = {m.id: m for m in votees.mesures()}
+    assert par_id["lfi2018_is_25"].annees_effet == (2018, 2019, 2020, 2021, 2022)
+    assert par_id["lfi2018_th_degrevement"].annees_effet == (2018, 2019, 2020)
+    assert par_id["lfi2020_th_suppression"].annees_effet == (2020, 2021, 2022, 2023)
+    assert par_id["lfi2018_cice_6_suppression"].annees_effet == (2018, 2019)
+    assert par_id["lfss2018_cotisations_salariales"].annees_effet == (2018, 2019)
+    assert par_id["lfss2018_cice_allegements"].annees_effet == (2019, 2020)
+    assert par_id["lfi2023_cvae"].annees_effet == (2023,)
+    # Le CICE est un instrument à part, et sa conversion reste aux cotisations patronales.
+    assert {m.id for m in votees.mesures() if m.instrument == "cice"} == {
+        "lfr2012_3_cice", "lfi2017_cice_7", "lfi2018_cice_6_suppression"}
+    assert par_id["lfss2018_cice_allegements"].instrument == "cotisations_employeurs"
+
+
+def test_des_etapes_mal_datees_sont_refusees() -> None:
+    base = {"annee_effet": 2018}
+    with pytest.raises(votees.VoteesError, match="non strictement croissantes"):
+        votees._etapes([{"date": dt.date(2019, 1, 1), "quoi": "b"},
+                        {"date": dt.date(2018, 1, 1), "quoi": "a"}], base, "x")
+    with pytest.raises(votees.VoteesError, match="année d'effet"):
+        votees._etapes([{"date": dt.date(2019, 1, 1), "quoi": "a"}], base, "x")
+    with pytest.raises(votees.VoteesError, match="date_effet"):
+        votees._etapes([{"date": dt.date(2018, 1, 1), "quoi": "a"}],
+                       {**base, "date_effet": dt.date(2018, 10, 1)}, "x")
+    with pytest.raises(votees.VoteesError, match="quoi non vide"):
+        votees._etapes([{"date": dt.date(2018, 1, 1), "quoi": " "}], base, "x")
