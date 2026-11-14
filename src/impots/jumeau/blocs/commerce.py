@@ -79,7 +79,7 @@ et chaque profil est la réponse à un choc permanent (comme le bloc `mesange`).
        ŷ_j = (ΔPIB_j − ΔPIB^prix_j) / Y_j                l'écart du PIB en volume
        csu_j = (ΔD1^sal_j − s_W Y_j ŷ_j) / Y_j            le coût salarial unitaire en
                                                          part du PIB, s_W = π D1/PIB
-       ln p^VA_k = (α / s_W) Σ_s Δ(csu_s − τ_s) π_θ(h) + Σ_s Δŷ_s D(h)
+       ln p^VA_k = (alpha / s_W) Σ_s Δ(csu_s − τ_s) π_θ(h) + Σ_s Δŷ_s D(h)
        ln p^D_k = κ_D Σ_s Δ(csu_s − τ_s) π_θ(h) + Σ_s Δŷ_s D(h) + κ^M_D P^M_k
        ln p^X_k = κ_X Σ_s Δ(csu_s − τ_s) π_θ(h) + Σ_s Δŷ_s D(h) + κ^M_X P^M_k
        p̂c_k = (1 − μ_C) ln p^D_k + μ_C P^M_k
@@ -87,8 +87,8 @@ et chaque profil est la réponse à un choc permanent (comme le bloc `mesange`).
    ΔD1^sal la masse salariale marchande que le bloc `salaires` écrit (l'emploi et le
    salaire par tête) ; le coût salarial unitaire de Mésange, la masse super-brute sur la
    valeur ajoutée en volume (p. 70), s'en déduit, la productivité comprise. p^VA, le prix
-   de valeur ajoutée : le « price setting » de Mésange, pva = α (w − e) + (1 − α) ck
-   (p. 22), α = 0,543 la part des salaires dans la valeur ajoutée des quatre branches
+   de valeur ajoutée : le « price setting » de Mésange, pva = alpha (w − e) + (1 − alpha) ck
+   (p. 22), alpha = 0,543 la part des salaires dans la valeur ajoutée des quatre branches
    marchandes (p. 70 et 71, pondérée par leur valeur ajoutée, p. 69 note 55) ; le coût du
    capital n'y bouge pas. D(h) la ligne « Demande (+1 %) » des prix de production (p. 72),
    les tensions, nulles à long terme. π_θ la diffusion (θ « commerce_prix_diffusion » :
