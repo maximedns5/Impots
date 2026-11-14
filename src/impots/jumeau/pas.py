@@ -35,7 +35,7 @@ from typing import Any, Protocol
 
 import numpy as np
 
-from impots.jumeau import identites
+from impots.jumeau import canaux, identites
 from impots.jumeau.champs import DEPENSES, EMPLOIS_EN_VOLUME, FERMES, RECETTES, REGISTRE
 from impots.jumeau.champs import champ as definition
 from impots.jumeau.etat import ChampAbsent, Cle, Etat
@@ -131,7 +131,8 @@ class Modele:
 
     REFUSÉ À LA CONSTRUCTION : un champ inconnu du registre ; un bloc qui écrit un champ
     que le cadre ferme ; un champ non additif écrit par deux blocs ; un bloc qui lit un
-    champ qu'aucun bloc antérieur n'écrit, hors d'une boucle déclarée qui l'écrit."""
+    champ qu'aucun bloc antérieur n'écrit, hors d'une boucle déclarée qui l'écrit ; un
+    canal de Mésange porté par deux blocs (`canaux.portes`)."""
 
     def __init__(self, blocs: Sequence[Bloc],
                  boucles: Sequence[Sequence[str]] = ()) -> None:
@@ -186,6 +187,15 @@ class Modele:
                                        f"l'écrivent ({ecrits[nom]}, {bloc.nom})")
                     ecrits.setdefault(nom, bloc.nom)
         self.ecrits = dict(ecrits)
+        # Un canal de Mésange porté deux fois est un double compte (§4 bis, D-406).
+        porteurs: dict[str, str] = {}
+        for bloc in blocs:
+            for canal in canaux.portes(bloc):
+                if canal in porteurs:
+                    raise PasError(f"canal « {canal} » porté deux fois ({porteurs[canal]}, "
+                                   f"{bloc.nom}) : c'est un double compte")
+                porteurs[canal] = bloc.nom
+        self.canaux = porteurs
 
 
 # --------------------------------------------------------------------------- #

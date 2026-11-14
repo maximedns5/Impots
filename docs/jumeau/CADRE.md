@@ -156,6 +156,9 @@ variantes publiées de Mésange (`insee_G2017-04_mesange.pdf`), écart dit, jama
   D-entrée et s'arrête sur ce point.
 * Chaque paramètre a une source publiée nommée, ou il est dit « choisi, non vérifié » et
   porte un θ ; aucun chiffrage de tiers des programmes n'est lu.
+* Un déflateur est un champ non additif, à un seul écrivain : un bloc qui écrit le prix
+  d'un emploi le prend à la tendance, `Tendance(depart, laisse=(...))` (D-408). Le
+  registre des canaux est `jumeau/canaux.py` ; `mesange` les porte tous.
 
 ## 5. Les mesures
 

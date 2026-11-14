@@ -1991,6 +1991,15 @@
       "licence": "Licence Ouverte / Etalab",
       "description": "INSEE, « Les comptes de la Nation en 2025 » (base 2020), tableau 1.105 « Produit intérieur brut : les trois approches à prix courants », 1949→2025, milliards d'euros : l'approche revenus (D1, B2A3G, D2, D3). L'identité des revenus de l'état initial du jumeau (but 23, lot 1, D-405).",
       "quarantined": false
+    },
+    "bdf_wp736_2019_fr_bdf.pdf": {
+      "url": "https://www.banque-france.fr/system/files/2023-04/wp736.pdf",
+      "sha256": "9cb47d186ab3557300983f90a16ce99bcd70d71e7736067215fb250a75fbc5e2",
+      "bytes": 2912819,
+      "downloaded": "2026-11-14",
+      "licence": "unknown",
+      "description": "Banque de France, Lemoine, Turunen, Chahad et al., « The FR-BDF Model and an Assessment of Monetary Policy Transmission in France », Working Paper 736, octobre 2019. §4.6.4 : élasticités-prix de long terme des exportations (table 4.6.20, 1,27) et des importations hors énergie (table 4.6.21, 1,11), bornes hautes des θ du commerce (D-408).",
+      "quarantined": false
     }
   }
 }

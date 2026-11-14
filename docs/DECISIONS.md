@@ -29279,3 +29279,120 @@ multiplicateurs se comparent, écart dit.
   (K61 et KX comptés deux fois, D-405), avec son test et son effet sur le backtest dit.
 
 Chaque lot rend sa D-entrée et ses tests, sans PR ; la jonction et les PR viennent ensuite.
+
+## D-408 — Le commerce extérieur codé : un bloc structurel, le TES et Mésange, écart dit
+
+**Ce qui est codé** (lot 3 du but 23, branche `claude/but23-commerce`, D-406). Un bloc,
+`jumeau/blocs/commerce.py`, ses valeurs dans `jumeau/parametres/commerce.yaml`, chacune
+avec son document, sa page et son tableau, ses deux θ dans `thetas.py`. Il porte à la place
+de Mésange trois canaux du registre `jumeau/canaux.py` (créé ici) : « exportations »,
+« importations », « prix_echanges ». Les équations, dans la docstring du bloc, pour chaque
+mesure m (et « » pour le scénario), h l'âge d'un choc en années :
+
+* le choc de coût, en part du PIB : τ = (I^cot − T^D29) / Y, les impulsions
+  « cotisations_employeurs » (uniforme et ciblée) moins la hausse des impôts sur la
+  production, que le bloc reçoit par mesure (`impots_production`) ;
+* les prix de production : ln p^X = −κ_X Σ Δτ π(h), ln p^D = −κ_D Σ Δτ π(h). κ, le modèle
+  de prix de Leontief du TES A38 2023SD : un choc égal au PIB, réparti au prorata de la
+  valeur ajoutée des branches hors OZ et PZ, propagé par (I − A_d)⁻¹ ; κ_X = 0,8649
+  pondéré par les exportations, κ_D = 0,8917 par les emplois intérieurs. π(h), la
+  diffusion d'un coût dans les prix de production : la ligne « Salaires » de Mésange
+  (G2017-04, p. 72) sur sa valeur de long terme ;
+* les exportations : ξ = Σ [ε_dm(h) Δd + (s_X(θ)/0,73) ε_c(h) Δc], c = −ln p^X, la
+  compétitivité ex ante de Mésange (prix étrangers sur prix de production, p. 77) ;
+  ε_dm et ε_c, Mésange p. 79 ;
+* les importations : a = (Σ_u μ_u ΔU_u + μ_X X̄ ξ) / M̄, ζ = Σ [η(h) Δa + (s_M(θ)/0,35)
+  ε_m(h) Δq], q = ln p^D ; η et ε_m, Mésange p. 85 ; μ_u le contenu en importations de
+  chaque emploi, direct et par les consommations intermédiaires importées : ménages
+  0,2483, APU 0,1169, ISBLSM 0,1086, FBCF 0,3116, objets de valeur 0,4893, exportations
+  0,3315, au prix d'acquisition ;
+* les prix des échanges : ln P^X = Σ ρ_X(h) Δ ln p^X, ln P^M = Σ ρ_M(h) Δ ln p^D, la ligne
+  « Prix domestiques » de Mésange (p. 87 et 91) ;
+* ΔX = X̄[(1 + ξ)(1 + P^X) − 1] et ΔM = M̄[(1 + ζ)(1 + P^M) − 1] sur les emplois, X̄ et M̄
+  les niveaux de la tendance ; les déflateurs, le solde extérieur (B11), la demande
+  mondiale, la compétitivité-prix et la contribution du solde à la croissance en volume.
+
+Mésange imprime T, 1, 2, 5 ans et le long terme : h = 1 lit « 1 an », puis
+l'interpolation linéaire, le long terme atteint à dix ans (choisi, non vérifié). La
+demande mondiale est un scénario nommé, l'écart au sentier de la tendance : « tendance »
+la fait croître comme le PIB en volume (le compte central de Mésange, p. 101).
+
+**Les θ.** `commerce_elasticite_prix_exportations` : 0,6 (Mésange 2010, rappelé par
+G2017-04 p. 78), 0,73 (p. 79), 1,27 (FR-BDF, WP 736, table 4.6.20) ;
+`commerce_elasticite_prix_importations` : 0,29 (services exposés, p. 84), 0,35 (p. 85),
+1,11 (FR-BDF, table 4.6.21). Chaque borne est publiée ; leur choix comme plage ne l'est
+pas, et FR-BDF mesure l'élasticité au prix d'exportation relatif, pas au prix de
+production : la borne haute est donc large. Le profil de Mésange est mis à l'échelle.
+Choisis, non vérifiés et dits dans le YAML : l'horizon de dix ans, les branches hors choc
+(Mésange réserve sa variante aux branches marchandes, p. 108), le contenu des stocks
+(celui de la demande intérieure finale, 0,2283 : le TES ne donne pas le leur).
+
+**La source ajoutée.** FR-BDF n'était pas dans `data/raw` : téléchargé chez la Banque de
+France (`bdf_wp736_2019_fr_bdf.pdf`) et ajouté au manifeste. Aucun chiffrage de tiers
+n'est lu.
+
+**Trois écarts au cadre, au plus juste.**
+
+* Le `Modele` refuse un canal porté deux fois (`canaux.portes` : `mesange` les porte
+  tous, un bloc structurel ceux de son `remplace`), six lignes dans `pas.py`. Le mode
+  structurel du commerce ne tourne donc pas avec `mesange` ; le réduit reste intact.
+* Un déflateur n'a qu'un écrivain : `Tendance(depart, laisse=...)` laisse au commerce les
+  prix des exportations et des importations ; sans cela, le modèle refuse. Une ligne dans
+  `CADRE.md` §4 bis.
+* La demande demandait « X, M et leurs prix, pas le PIB ». Le cadre ne ferme pas le PIB
+  comme la somme des emplois : c'est un champ additif écrit par les blocs, et l'identité
+  des emplois refuserait un ΔX sans PIB. Le bloc écrit donc ΔX − ΔM sur le PIB et sur les
+  revenus non ventilés, exactement ce qu'il ajoute aux emplois, sans équation de PIB
+  propre. Une fermeture du PIB par le cadre en mode structurel est à décider à la
+  jonction des lots 2 à 4.
+
+Deux champs ajoutés au registre, section du lot 3 : `solde_exterieur` et
+`contribution_solde_exterieur`. Le bloc écrit aussi `demande_mondiale` et
+`prix_relatifs` ; `solde_courant` reste absent (revenus primaires et secondaires).
+
+**La comparaison aux variantes de Mésange**, linéarisée, θ½, en % d'écart au compte
+central à 1, 2, 3, 5 et 10 ans, sans demande intérieure (le lot 4) :
+
+* demande mondiale +1 % (p. 126) : exportations 0,80 0,87 0,90 0,96 1,00 contre 0,72
+  0,73 0,69 0,61 0,49 ; importations 0,33 0,34 0,34 0,34 0,33 contre 0,42 0,52 0,51 0,47
+  0,42 ; prix nuls contre +0,04 à +0,51. Mésange évince à terme par les prix et les
+  salaires, que le bloc ne porte pas ; ses importations suivent aussi la demande
+  intérieure ;
+* cotisations employeurs −1 point de PIB (p. 108) : exportations 0,08 0,21 0,30 0,41
+  0,58 contre 0,18 0,47 0,67 0,96 1,25 ; prix des exportations −0,14 −0,32 −0,39 −0,47
+  −0,63 contre −0,28 −0,65 −0,82 −1,02 −1,25 ; importations 0,02 à −0,08 contre 0,32 à
+  1,10. Le bloc fait la moitié de Mésange sur les exportations et leur prix : le coût
+  passe par le TES seul, sans la boucle prix-salaires ni la baisse du chômage. À θ = 1,
+  les exportations font 0,14 à 1,02. Les importations de Mésange montent par la demande.
+
+Le test ne tient que le sens des exportations et de leur prix ; l'écart est dit ici, pas
+forcé.
+
+**Les tests** (`tests/test_jumeau_commerce.py`, 14, en vingt-cinq secondes, un worker) :
+les profils de Mésange et les bornes de FR-BDF relus dans les PDF, les contenus et κ
+recalculés sur le TES (à 5e-5, l'arrondi du YAML ; sautés, avec leur raison, sans les
+fichiers) ; les identités à chaque pas, référence et variante, à quatre θ dont un axe de
+quatre tirages, trois mesures et un scénario ; une hausse des coûts qui baisse les
+exportations en volume et une baisse qui les monte, d'autant plus que θ est haut, les
+importations rangées par le leur ; le prix d'exportation de la première année au
+centime de la formule ; ΔM la première et la deuxième année égal à η(h) fois le contenu
+du TES ; le double compte avec `mesange`, un déflateur à deux écrivains et un canal
+inconnu refusés ; un θ ou une année de scénario manquants refusés. `test_jumeau.py` reste
+vert (50) ; `test_jumeau_historique.py` est sauté dans ce checkout, faute des tables.
+
+**Les temps**, mesurés une fois : dix ans, référence et variante, deux mesures, 38 ms à
+n = 1 et 103 ms à n = 2 000, lecture du YAML comprise.
+
+**Ce qui reste.**
+
+* Au lot 5, pour la calibration (lot 6) : les exportations et importations de biens et
+  services en valeur et en volume, et leurs déflateurs (t. 1.101 et 1.103, 2010 à 2024) ;
+  la demande mondiale adressée à la France (Banque de France ou DG Trésor, en volume) ;
+  les prix étrangers à l'exportation et à l'importation ; les cotisations employeurs et
+  les impôts sur la production (D29) par année (t. 3.217) ; le TES de chaque année pour
+  les contenus.
+* À la jonction : une `Mesure` ne porte pas les impôts sur la production seuls (D2 mêle
+  la TVA) ; le bloc les reçoit par mesure, en attendant le format de `Mesure.entreprises`
+  du lot 2. La fermeture du PIB en mode structurel, ci-dessus.
+* Le bloc ne porte ni un choc de prix étrangers ou de change, ni les recettes induites,
+  ni l'effet non ventilé du canal des créations sur les importations.

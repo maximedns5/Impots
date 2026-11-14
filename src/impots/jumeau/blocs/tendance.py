@@ -54,7 +54,14 @@ class Tendance:
              "sfa", "ecart_millesime_dette", "ecart_eurostat")
     thetas: tuple[str, ...] = ()
 
-    def __init__(self, depart: Etat) -> None:
+    def __init__(self, depart: Etat, *, laisse: tuple[str, ...] = ()) -> None:
+        # Les déflateurs qu'un autre bloc écrit (le commerce, pour les prix des
+        # échanges) : un champ non additif n'a qu'un écrivain.
+        etrangers = sorted(set(laisse) - {f"prix_{n}" for n in EMPLOIS_EN_VOLUME})
+        if etrangers:
+            raise ValueError(f"la tendance ne laisse que des déflateurs : {etrangers}")
+        self.laisse = tuple(laisse)
+        self.ecrit = tuple(c for c in Tendance.ecrit if c not in self.laisse)
         if depart.n != 1 and not all(np.all(depart[n] == depart[n][0])
                                      for n in ("pib", *RECETTES, *DEPENSES)):
             raise ValueError("un départ qui varie selon les tirages n'est pas une référence")
@@ -87,6 +94,7 @@ class Tendance:
                     for n, p in self.recettes.items()})
         out.update({n: {"": s * y * p} for n, p in self.depenses.items()})
         prix = 1.0 + ctx.entrees.prix[ctx.k]
-        out.update({f"prix_{n}": {"": prix} for n in EMPLOIS_EN_VOLUME})
+        out.update({f"prix_{n}": {"": prix} for n in EMPLOIS_EN_VOLUME
+                    if f"prix_{n}" not in self.laisse})
         out.update({n: {"": 0.0} for n in NULS})
         return out
