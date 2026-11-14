@@ -48,6 +48,9 @@ MODULES_LOCAUX: frozenset[str] = frozenset({
     "impact_fichiers", "memoire", "test_etude_page_plf2027",
     # `tests/test_secteur_public.py`, dont test_decomposition reprend la population (D-354)
     "test_secteur_public",
+    # `tests/test_rejouer.py` et `tests/test_creations_canal.py`, dont les passes
+    # synthétiques servent au canal des créations et au jumeau (D-401, D-405)
+    "test_rejouer", "test_creations_canal",
 })
 
 #: Les racines que l'on scanne par défaut. `src/` est le minimum ; `tests/` et `scripts/`

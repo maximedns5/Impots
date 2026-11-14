@@ -340,10 +340,11 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
         if not whole:
             raise DebtError("créations d'entreprises sans comportement ni boucle : le canal "
                             "lit les prélèvements de chaque passe entière (but 22)")
-        bare = sorted({p.year for p in prices for one in p.passes.values()
-                       if getattr(one, "prelevements", None) is None})
-        if bare:
-            raise DebtError(f"créations d'entreprises demandées, et les passes de {bare} ne "
+        sans_prelevements = sorted({p.year for p in prices for one in p.passes.values()
+                                    if getattr(one, "prelevements", None) is None})
+        if sans_prelevements:
+            raise DebtError(f"créations d'entreprises demandées, et les passes de "
+                            f"{sans_prelevements} ne "
                             f"portent pas leurs prélèvements : elles se liraient comme des "
                             f"années qui n'en changent aucun")
         variations = {view: {p.year: creations_module.prelevements(
