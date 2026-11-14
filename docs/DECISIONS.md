@@ -30560,3 +30560,100 @@ propre. Ni `make full`, ni `make impact`, ni les tests lourds ici.
   première année est tenue sur dix ans, et ce n'est pas un chiffrage ; une passe par
   année resterait la mesure juste (D-412).
 * La cible de 50 ms à n = 1.
+
+## D-415 — Les curseurs du jumeau dans le navigateur : Pyodide, la page « Le jumeau »
+
+**La façon** (lot 7 du but 23, branche `claude/but23-curseurs`, partie de
+`claude/but23-cadre` à 178265c). D-404 : les curseurs tournent dans le navigateur, sur le
+site statique, sans serveur de calcul. Le pas n'est pas porté en JavaScript : la page
+charge Pyodide (CPython compilé en WebAssembly) et numpy, écrit dans le système de
+fichiers du navigateur les modules de `impots` que le jumeau importe, et appelle le même
+code que les tests. Les équations du mode structurel vont encore changer (accélérateur,
+boucle prix-salaires, recettes induites, en parallèle) : rien n'est à retraduire, et
+`site verifier` refuse un site dont le paquet servi n'est plus le code du dépôt.
+
+**Ce qui est codé.**
+
+* `jumeau.navigateur`, le module que la page exécute. `Session(donnees)` lit les entrées
+  une fois ; `calculer(réglage)` fait une trajectoire : un candidat (un programme, une
+  mesure seule ou un volet de texte, par `Mesure.depuis_rapport`) ou une loi
+  hypothétique (`Mesure.hypothese`, l'un des cinq instruments des variantes de Mésange,
+  un montant en Md€ par an, ses années) ; le mode réduit (`ordre_lot1`, depuis le départ
+  des rapports, leur cadre, leur persistance, leur canal des créations) ou structurel
+  (`ordre_structurel`, depuis l'état publié de 2025) ; les θ du registre, sans défaut :
+  un θ lu et non donné est refusé. Elle rend, année par année de 2026 à 2035, la dette
+  (Δb, les deux ratios, la décomposition de `Trajectoire.decomposition`), le solde (B9),
+  le PIB, l'emploi, les créations et fermetures de sociétés, les exportations et les
+  importations, chacun avec ses deux niveaux et son écart décomposé par (bloc, mesure) ;
+  et, dans le mode structurel, par décile, l'écart du revenu disponible par ménage
+  (`gagnants`), sa part statique et sa part dynamique, les parts de gagnants et de
+  perdants. Un champ qu'aucun bloc du mode n'écrit est `None` et la page le dit absent ;
+  une année que le modèle refuse (D-412 : un rapport ne ventile que sa première année
+  figée) n'est pas calculée, la raison est affichée, les années d'avant le sont.
+* La loi hypothétique reprend les chocs de `comparaison` (D-411) au montant dit, le choc
+  aux ménages au prorata des cellules, l'impulsion quand la boucle des études lit
+  l'instrument (impôt sur le revenu, TVA, cotisations employeurs ; pas la dépense ni
+  l'investissement publics, comme dans les études, `retroaction.covers`). Elle porte
+  l'avertissement de `Mesure.avertissement`.
+* `reports/jumeau/entrees_navigateur.json`, écrit une fois depuis les données hors git
+  par `python -m impots.jumeau.navigateur ecrire`, comme D-399 : l'état publié de 2025
+  (chaque contribution, relu au bit), les cinquante cellules de ménages de 2024, les 57
+  cellules d'entreprises de 2023 et les tables de Mésange des trois instruments couverts.
+  Des sommes pondérées par groupe, aucune donnée individuelle. Un test le tient égal aux
+  données, là où elles sont.
+* `impots.site_jumeau` : `site construire` écrit `jumeau.html`, `jumeau.js`,
+  `jumeau-donnees.json` (ces entrées, et de chacun des 46 rapports d'étude commités ce que
+  `depuis_rapport` lit, `alleger`) et `jumeau-paquet.json` (les sources). Le paquet est
+  relevé en faisant tourner la page en Python dans un processus neuf, sur ses cinq
+  chemins : 42 modules et 4 fichiers de paramètres ; refusé si un module importe autre
+  chose que numpy et yaml, ou lit un fichier hors du paquet. Un seul obstacle :
+  `jumeau.gagnants` importait le seuil d'indifférence de `population.aggregate`, qui
+  charge polars ; le seuil (10 €) y est écrit, un test le tient égal. Aucun nombre ne
+  change.
+
+**La sécurité (D-295).** Le site reste statique : rien ne tourne côté serveur, rien ne
+quitte la page. Pyodide 0.29.5 (16 septembre 2026 ; CPython 3.13.2, numpy 2.2.5, PyYAML
+6.0.2, la version de Python du dépôt) est chargé depuis `cdn.jsdelivr.net`, à cette
+version : `pyodide.js` est vérifié par son empreinte (SRI, sha384), les paquets par Pyodide
+contre les empreintes de son fichier de verrouillage. Le servir avec le site mettrait
+15 Mo de binaires dans `site/`, que `site.write` ne sait pas écrire ; le CDN ne voit que
+les téléchargements. La page déclare une politique de sécurité du contenu :
+`connect-src` à elle-même et au CDN, aucun formulaire, aucun script en ligne.
+
+**Le poids et les temps**, mesurés une fois (Chromium de la machine, profil neuf, site
+servi en local, le CDN par le proxy) : le site sert 1,02 Mo (233 ko compressés : le
+paquet 554 ko, les données 436 ko, la page et le script 33 ko) ; le CDN 15,2 Mo (environ
+9 Mo compressés : WebAssembly 8,6 Mo, bibliothèque standard 2,4 Mo, numpy 2,8 Mo). Le
+chargement : Pyodide et ses paquets 2,6 s, le paquet et la session 0,8 s, le premier
+affichage à 4,2 s. Le recalcul après un curseur : 35 à 50 ms dans le mode réduit (26 ms
+en Python natif) ; 350 à 420 ms dans le mode structurel sur dix ans pour une loi
+hypothétique (200 ms natif) ; 610 à 660 ms pour un programme dans le mode structurel,
+dont l'essentiel est fait des neuf constructions du modèle que coûtent les refus des
+années non ventilées.
+
+**Les tests.** `test_jumeau_navigateur.py` (9, 16 s, sans navigateur) : l'état relu au
+bit ; les entrées commitées égales aux données ; à θ½, le mode réduit redonne Δb₂₀₃₅ que
+publie chacune des études, dans les deux vues, à 1e-12 ; la session rend au bit les
+nombres de `trajectoire.calculer` (mode structurel, θ déplacés ; mode réduit) ; un θ
+manquant refusé ; les années non ventilées absentes ; la mesure d'un rapport allégé
+égale à celle du rapport entier. `test_jumeau_page.py` (lourd, `tests/lourds.txt`, 20 s,
+lit le CDN) : Chromium exécute la page, règle un programme, le mode, la vue, la loi
+hypothétique et huit θ ; à chaque réglage, chacun des 866 nombres affichés (leur valeur
+exacte, `data-v`) égale la trajectoire calculée en Python sans la session, 860 au bit,
+les autres à 2e-16 en relatif (numpy en WebAssembly) ; à 390 px de large, la page ne
+défile pas en largeur. `test_site.py` connaît la page à script de cette décision.
+`site construire`, `site verifier` et `site publiable` passent ; `ruff check src tests
+scripts` est propre ; `node ui/check.mjs` passe (la page de l'API n'est pas touchée).
+
+**Ce qui reste.**
+
+* Chaque changement du code du jumeau demande `site construire` : le paquet servi en
+  est la copie, et `site verifier` le dit. C'est voulu ; les branches du mode structurel
+  devront le faire avant leur PR.
+* Le mode structurel d'un programme ne va pas au-delà de 2026 tant que les rapports ne
+  ventilent que leur première année (D-412) : la page le dit, sans rien dessiner.
+* La valeur d'un paramètre au réglage n'est affichée que pour les lignes dont les trois
+  ancres publiées sont des nombres ; les autres (le multiplicateur, le profil de
+  consommation, l'offre de travail) renvoient à leur définition.
+* Le calcul tourne dans le fil principal de la page : un recalcul structurel la fige une
+  demi-seconde. Un Web Worker l'en sortirait, sans changer un nombre.

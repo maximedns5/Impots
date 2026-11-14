@@ -419,11 +419,22 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         intro += (f'\n<p><a href="{parcours.PAGES[0][1]}">Refaire le chemin d\'un nombre</a> : '
                   "huit pages, du ménage au verdict, chacune avec sa donnée, le lien de sa "
                   "source et le fichier qui la calcule.</p>")
+    from impots import site_jumeau
+
+    if site_jumeau.present():
+        # The twin's cursors run in the browser, by decision (D-404, D-415).
+        pages = site_jumeau.build()
+        files.update(pages)
+        scripted.add(site_jumeau.PAGE)
+        intro += (f'\n<p><a href="{site_jumeau.PAGE}">Le jumeau</a> : le jumeau numérique de '
+                  "la France, dans le navigateur ; un programme, une mesure ou une loi "
+                  "hypothétique, et chaque paramètre incertain sur un curseur, de 2026 à "
+                  "2035.</p>")
     files["index.html"] = _page(TITLE, intro + "\n<ul class=\"etudes\">\n"
                                 + "\n".join(listed) + "\n</ul>")
     for name, text in files.items():
-        # The explorer runs a script by decision (D-343), and the parcours pages that give
-        # a cursor (D-375); no other page does.
+        # The explorer runs a script by decision (D-343), the parcours pages that give
+        # a cursor (D-375), and the twin (D-415); no other page does.
         if name not in scripted and "<script" in text.lower():
             raise SiteError(f"{name} porte un script : le site se lit sans en exécuter.")
     return files
