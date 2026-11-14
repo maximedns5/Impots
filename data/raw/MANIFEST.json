@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09",
+  "generated": "2026-11-14",
   "files": {
     "Dictionnaire_EEC_2024.pdf": {
       "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
@@ -2150,6 +2150,51 @@
       "description": "OCDE, Economic Outlook n° 119 (flux OECD.ECO.MAD:DSD_EO@DF_EO 1.5), France, mesure XMKT « Export market for goods and services, volume in USD » : la demande mondiale adressée à la France, importations des partenaires pondérées par leur part dans les exportations françaises, dollars au change, volumes chaînés, référence 2021, annuel, 2009→2025, export CSV du SDMX. L'exogène du bloc commerce dans le rejeu de l'histoire (but 23, D-421).",
       "quarantined": false,
       "provenance": "API SDMX publique de l'OCDE, requête bornée en dates. L'OCDE remplace l'Economic Outlook deux fois par an (le flux change de numéro) : la somme de contrôle est celle du 14 novembre 2026, n° 119."
+    },
+    "gechert_havranek_irsova_kolcunova_2021_capital_labor_substitution.pdf": {
+      "url": "https://meta-analysis.cz/sigma/sigma.pdf",
+      "quarantined": false,
+      "sha256": "0376895befc6a8b37a796a5cb8246b033480b8dc802a0d6c1206bd51f760cd32",
+      "bytes": 2237700,
+      "downloaded": "2026-11-14",
+      "licence": "Document de travail des auteurs — accès ouvert",
+      "description": "Gechert, Havranek, Irsova et Kolcunova, « Measuring Capital-Labor Substitution: The Importance of Method Choices and Publication Bias », version du 28 avril 2021 (Review of Economic Dynamics 45, 2022). Tableau 9, p. 35 du PDF : l'élasticité de substitution de la meilleure pratique, 0,30, IC à 95 % (−0,01 ; 0,60). L'a priori de l'élasticité de l'investissement au coût du capital du jumeau (D-424)."
+    },
+    "imbs_mejean_2010_trade_elasticities.pdf": {
+      "url": "https://www.frbsf.org/Imbs.pdf",
+      "quarantined": false,
+      "sha256": "a7cc96841d668aa0808eb958ba67a0139d8a0de52632e51f41f9693a80c82cae",
+      "bytes": 994253,
+      "downloaded": "2026-11-14",
+      "licence": "Document de travail — accès ouvert",
+      "description": "Imbs et Méjean, « Trade Elasticities », document de travail, septembre 2010 (Review of International Economics 25(2), 2017). Tableaux 2 et 4, p. 34 et 35 du PDF : les élasticités-prix agrégées de la France, importations −3,198 et −3,133, exportations −3,493 et −3,821, avec leurs écarts-types ; une comparaison des élasticités du commerce (D-424)."
+    },
+    "iza_dp7698_2013_bargain_peichl_labor_supply_survey.pdf": {
+      "url": "https://docs.iza.org/dp7698.pdf",
+      "quarantined": false,
+      "sha256": "1efffd875ff61bcf183e6c092fdd851c6cafdbb23cb8cb9a2c7c1cd95a99b2ec",
+      "bytes": 279145,
+      "downloaded": "2026-11-14",
+      "licence": "IZA Discussion Paper — accès ouvert",
+      "description": "Bargain et Peichl, « Steady-State Labor Supply Elasticities: A Survey », IZA DP n° 7698, octobre 2013. p. 10 du PDF : les moyennes des élasticités publiées par groupe (femmes en couple 0,43, hommes 0,12, femmes seules 0,23), sans dispersion chiffrée ; une comparaison de l'offre de travail (D-424)."
+    },
+    "iza_dp7958_2014_lichter_peichl_siegloch_labor_demand.pdf": {
+      "url": "https://docs.iza.org/dp7958.pdf",
+      "quarantined": false,
+      "sha256": "771f6a13ddd0bf302f4643a75b26a74cffb0a3514cbbd7a67f0e99b9b001e913",
+      "bytes": 478390,
+      "downloaded": "2026-11-14",
+      "licence": "IZA Discussion Paper — accès ouvert",
+      "description": "Lichter, Peichl et Siegloch, « The Own-Wage Elasticity of Labor Demand: A Meta-Regression Analysis », IZA DP n° 7958, février 2014. p. 22 du PDF (folio 19) : l'estimation préférée, −0,246, dans [−0,072 ; −0,446]. L'a priori de l'élasticité de l'emploi à son coût du jumeau (D-424)."
+    },
+    "tinbergen_dp02029_2002_nijkamp_poot_wage_curve.pdf": {
+      "url": "https://papers.tinbergen.nl/02029.pdf",
+      "quarantined": false,
+      "sha256": "c8d9995fee88bcc91c9a407cc170172e747075588a703e217b1ec29f569f5c91",
+      "bytes": 362513,
+      "downloaded": "2026-11-14",
+      "licence": "Tinbergen Institute Discussion Paper — accès ouvert",
+      "description": "Nijkamp et Poot, « The Last Word on the Wage Curve? », Tinbergen Institute DP 02-029/3 (2002 ; Journal of Economic Surveys 19(3), 2005). Tableau 4, p. 33 du PDF : l'élasticité de la courbe des salaires corrigée du biais de publication, −0,077 (e.-t. 0,006), l'hétérogénéité entre études s = 0,070. L'a priori des salaires sur le chômage du jumeau (D-424)."
     }
   }
 }

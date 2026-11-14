@@ -47,6 +47,16 @@ finies en un seul appel du simulateur, les θ perturbés sur l'axe des tirages (
 L'écart-type approché de chaque θ est la racine de la diagonale de (JᵀJ)⁻¹ au point
 trouvé ; un θ d'écart-type au-delà de `IDENTIFIE` est dit non identifié : il reste
 estimé, mais l'a priori le porte.
+
+LES A PRIORI DE LA LITTÉRATURE (D-424). `estimer(..., lois=...)` remplace le terme
+((θ_i − ½) / ½)² par (r_i(θ_i))², r_i le résidu de la loi de θ_i (`a_priori.Loi`, une
+normale à deux écarts-types, μ_i et s_i± tirés d'une estimation publiée du paramètre) ;
+chaque θ estimé doit avoir sa loi, une loi absente est refusée par son nom. Sans `lois`,
+le critère est celui de D-417, au bit près. Un θ est alors dit identifié si son
+écart-type approché est sous `IDENTIFIE` × s_i / ½, s_i l'écart-type de sa loi au point
+trouvé (s₋ ou s₊, du côté où la jacobienne est prise) : les données en apportent au moins
+trois fois l'information de l'a priori, la règle de D-417 (0,25 pour un a priori de ½),
+qu'un a priori serré ne remplit pas à lui seul.
 """
 
 from __future__ import annotations
@@ -411,19 +421,24 @@ class Estimation:
     ecarts_types: Mapping[str, float]
     iterations: int
     a_priori: float
+    ecarts_a_priori: Mapping[str, float] = field(default_factory=dict)
+    """L'écart-type de la loi de chaque θ estimé, au point trouvé, du côté où la
+    jacobienne est prise (s₋ ou s₊) ; vide : ½ (D-417)."""
 
     @property
     def identifies(self) -> tuple[str, ...]:
-        return tuple(k for k in self.estimes if self.ecarts_types[k] < IDENTIFIE)
+        return tuple(k for k in self.estimes if self.ecarts_types[k]
+                     < IDENTIFIE * self.ecarts_a_priori.get(k, 0.5) / 0.5)
 
 
 def estimer(fonction: Callable[[Mapping[str, Any]], np.ndarray], estimes: Sequence[str],
             fixes: Mapping[str, float], *, a_priori: float = 1.0,
             depart: Mapping[str, float] | None = None, iterations: int = 40,
-            tolerance: float = 1e-10) -> Estimation:
+            tolerance: float = 1e-10, lois: Mapping[str, Any] | None = None) -> Estimation:
     """Le Levenberg-Marquardt projeté sur [0 ; 1]^p (docstring du module). `fonction` rend
     les résidus (n, m) pour des θ sur n tirages ; `fixes` les θ qui ne sont pas estimés
-    (à ½ dans D-417). Le départ est ½ pour chaque θ estimé, sauf `depart`."""
+    (à ½ dans D-417). Le départ est ½ pour chaque θ estimé, sauf `depart`. `lois` : une
+    loi par θ estimé (`a_priori.Loi`, D-424) au lieu de N(½ ; ½)."""
     estimes = tuple(estimes)
     p = len(estimes)
     if not p or len(set(estimes)) != p:
@@ -436,6 +451,17 @@ def estimer(fonction: Callable[[Mapping[str, Any]], np.ndarray], estimes: Sequen
     if a_priori < 0:
         raise ApprentissageError(f"poids de l'a priori {a_priori} négatif")
     racine = np.sqrt(a_priori)
+    if lois is not None:
+        sans = [k for k in estimes if k not in lois]
+        if sans:
+            raise ApprentissageError(f"θ estimés sans loi a priori : {sans}")
+        choisies = [lois[k] for k in estimes]
+
+    def prior_de(points: np.ndarray) -> np.ndarray:
+        if lois is None:
+            return (points - 0.5) / 0.5
+        return np.column_stack([loi.residu(points[:, i])
+                                for i, loi in enumerate(choisies)])
 
     def lot(points: np.ndarray) -> np.ndarray:
         """Les résidus augmentés de l'a priori, (len(points), m + p)."""
@@ -446,7 +472,7 @@ def estimer(fonction: Callable[[Mapping[str, Any]], np.ndarray], estimes: Sequen
         r = np.atleast_2d(np.asarray(fonction(theta), dtype=float))
         if r.shape[0] != n:
             r = np.broadcast_to(r, (n, r.shape[1]))
-        prior = racine * (points - 0.5) / 0.5
+        prior = racine * prior_de(points)
         out = np.hstack([r, prior])
         if not np.all(np.isfinite(out)):
             raise ApprentissageError("résidus non finis : le simulateur a refusé ou divergé")
@@ -488,6 +514,9 @@ def estimer(fonction: Callable[[Mapping[str, Any]], np.ndarray], estimes: Sequen
         if deplacement < 1e-7:
             break
     jtj = jac.T @ jac
+    # la pente de l'a priori seul, du côté de la jacobienne : 1 / s de la loi au point
+    pas = np.where(x + PAS_DIFFERENCES <= 1.0, PAS_DIFFERENCES, -PAS_DIFFERENCES)
+    pente = np.diag(prior_de(x + np.diag(pas)) - prior_de(x[None, :])) / pas
     try:
         covariance = np.linalg.inv(jtj)
         ecarts = np.sqrt(np.clip(np.diag(covariance), 0.0, None))
@@ -497,4 +526,7 @@ def estimer(fonction: Callable[[Mapping[str, Any]], np.ndarray], estimes: Sequen
     theta.update({k: float(v) for k, v in zip(estimes, x, strict=True)})
     return Estimation(theta=theta, estimes=estimes, cout=cout, cout_initial=cout_initial,
                       ecarts_types=dict(zip(estimes, map(float, ecarts), strict=True)),
-                      iterations=faites, a_priori=a_priori)
+                      iterations=faites, a_priori=a_priori,
+                      ecarts_a_priori={} if lois is None else
+                      {k: float(1.0 / abs(v)) for k, v in zip(estimes, pente,
+                                                               strict=True)})

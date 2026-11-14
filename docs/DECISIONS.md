@@ -31876,3 +31876,166 @@ contre 0,627).
 et D-421 restent. La dynamique du jumeau bat le naïf mécanique sur 3 cibles, dont deux par
 la demande mondiale ; sur l'activité, l'emploi, le chômage et les finances publiques,
 elle ne fait pas mieux que les chocs observés seuls.
+
+## D-424 — Les a priori des θ resserrés sur la littérature publiée, θ par θ
+
+**Ce qui est fait** (branche `claude/but23-apriori`, partie de `claude/but23-revision` à
+dce2439). D-421 et D-423 l'ont mesuré : l'histoire budgétaire agrégée n'identifie aucun
+θ (une information d'au plus 0,1 pour 12 requis) ; ce qui porte les θ est l'a priori, et
+celui de D-417 est le même pour tous, gaussien en ½ d'écart-type ½. Chaque θ du registre
+(22) reçoit ici sa loi, tirée d'une estimation publiée du paramètre de son bloc, ou garde
+celle de D-417 quand aucune source ne le chiffre, dit. **Aucun calcul n'a tourné sur
+l'histoire réelle** : le rejeu avec ces lois sera un nouveau cas préenregistré, plus
+tard, avec la piste 2. `rejeu_histoire`, son script et le rapport de D-423 ne changent
+pas ; sans lois, `estimer` redonne D-417 au bit près (testé).
+
+**Le code.** `jumeau/parametres/a_priori.yaml` : une entrée par θ du registre (un θ
+manquant ou en trop est refusé par son nom), l'estimation, son écart-type, la source
+(document, page du PDF, tableau), le calcul, et ce qui a été écarté (`comparaison`).
+`jumeau/a_priori.py` : la plage de chaque θ est lue dans les paramètres des blocs (pas
+recopiée) ; une estimation m d'écart-type s passe par l'inverse θ(v) de l'application
+θ → paramètre (linéaire par morceaux par le centre, prolongée au-delà des bornes par la
+pente de sa moitié) : μ = θ(m), s₋ et s₊ les distances de μ à θ(m ∓ s). La loi est une
+normale à deux écarts-types, exacte quand m est au centre (où la pente change), approchée
+sinon. `apprentissage.estimer(..., lois=...)` remplace ((θ − ½) / ½)² par le résidu de
+la loi ; un θ estimé sans loi est refusé. Un θ est dit identifié si son écart-type
+approché est sous 0,25 × s / ½, s l'écart-type de sa loi au point, du côté où la
+jacobienne est prise : la règle de D-417 (les données apportent au moins trois fois
+l'information de l'a priori), qu'un a priori serré ne remplit plus à lui seul.
+
+**Les règles du choix.** (1) Une source n'entre que si son paramètre est celui du bloc ;
+une autre grandeur est dite, pas utilisée. (2) Une méta-analyse d'abord, puis une
+estimation française, puis Mésange (G2017-04) et ses t. (3) L'écart-type : la dispersion
+entre études quand la source la publie, sinon celui de l'estimation, sinon la
+demi-largeur de l'intervalle à 95 % sur 1,96. (4) La plage ne change pas, même quand la
+source en sort : μ sort alors de [0 ; 1], l'estimation reste dans la boîte et l'a priori
+la pousse vers la borne. Aucun chiffrage de tiers des programmes n'est lu.
+
+**Les sources téléchargées**, dans `data/raw`, déclarées à `KNOWN_SOURCES` et ajoutées
+au manifeste par `impots population manifest` (D-419 ; 236 → 241 entrées, les 143
+fichiers présents vérifiés) : Lichter, Peichl et Siegloch (IZA DP 7958, 2014) ; Bargain et
+Peichl (IZA DP 7698, 2013) ; Nijkamp et Poot (Tinbergen DP 02-029/3, 2002) ; Gechert,
+Havranek, Irsova et Kolcunova (version d'avril 2021) ; Imbs et Méjean (document de travail
+de 2010). Ils sont dans ce worktree seulement, pas dans `data/raw` du dépôt principal.
+
+### Le tableau
+
+Plage : les valeurs à θ = 0, ½ et 1. Les sept θ que le rejeu estime (D-417) sont
+marqués *.
+
+Les paramètres, leurs plages et les sources :
+
+| θ | paramètre | plage | source |
+|---|---|---|---|
+| multiplicateur | c_i(h) ∓ sd_i | ∓ 1 sd | IMK WP 117 (D-336), par construction |
+| exportations * | s_X, long terme | 0,60 ; 0,73 ; 1,27 | Mésange, p. 77, t = 5,5 |
+| importations * | s_M, long terme | 0,29 ; 0,35 ; 1,11 | Mésange, p. 83, t = 6,5 et 3,6 |
+| emploi * | η, au coût réel | 0,31 ; 0,44 ; 0,52 | Lichter et al. (2014), p. 22 |
+| salaires * | b, facteur | 0,5 ; 1 ; 1,278 | Nijkamp et Poot (2002), tableau 4 |
+| coût du capital * | ε_K | 0,37 ; 0,44 ; 0,48 | Gechert et al. (2021), tableau 9 |
+| accélérateur * | β₀ (β₁ suit) | 0,852 ; 1,19 ; 1,528 | Mésange, p. 44, t = 6,9 |
+| implantation | a₁, au TMEE | 0 ; 0,478 ; 0,730 | Devereux et Lockwood, tableau 2 |
+| femmes en couple | heures, C7 | −0,028 ; 0,09 ; 0,208 | BOP (IZA DP 6735), tableau F.1 |
+| hommes en couple | heures, C7 | 0,001 ; 0,065 ; 0,129 | BOP, tableau F.3 |
+| femmes seules | heures, C7 | 0,066 ; 0,15 ; 0,273 | BOP, tableau F.5 |
+| hommes seuls | heures, C7 | 0,047 ; 0,14 ; 0,233 | BOP, tableau F.7 |
+
+Les estimations et les lois (μ ; s₋ / s₊, un seul écart quand ils sont égaux) :
+
+| θ | estimation (e.-t.) | loi sur θ | plage proposée |
+|---|---|---|---|
+| multiplicateur | c_i(h) (sd_i) | 0,5 ; 0,5 | — |
+| exportations * | 0,73 (0,133) | 0,5 ; 0,51 / 0,12 | (a) |
+| importations * | 0,35 (0,061) | 0,5 ; 0,51 / 0,04 | (b) |
+| emploi * | 0,246 (0,095) | −0,25 ; 0,37 | 0,07 ; 0,44 ; 0,52 |
+| salaires * | 0,467 (0,426) | −0,03 ; 0,43 | 0 ; 1 ; 1,278 |
+| coût du capital * | 0,30 (0,156) | −0,5 ; 1,11 / 1,19 | 0 ; 0,44 ; 0,60 |
+| accélérateur * | 1,19 (0,173) | 0,5 ; 0,255 | — |
+| implantation | 0,478 (0,128) | 0,5 ; 0,13 / 0,26 | — |
+| femmes en couple | 0,09 (0,042) | 0,5 ; 0,18 | (c) |
+| hommes en couple | 0,065 (0,018) | 0,5 ; 0,14 | — |
+| femmes seules | 0,15 (0,044) | 0,5 ; 0,26 / 0,18 | — |
+| hommes seuls | 0,14 (0,035) | 0,5 ; 0,19 | — |
+
+Les calculs, dans le YAML et refaits par les tests :
+
+* **Les exportations.** Les deux branches de Mésange ont le même t (0,77 et 0,81, t =
+  5,5) : l'écart-type relatif de l'agrégat est au plus 1/5,5, la covariance n'étant pas
+  publiée (un majorant, les deux erreurs parfaitement corrélées) ; 0,73 / 5,5 = 0,133.
+* **Les importations.** 0,44 (t = 6,5) et 0,29 (t = 3,6), pondérés par leurs parts de
+  2014 (64 % et 20 %, l'énergie à zéro) : 0,0594 en somme des écarts-types, mis à
+  l'échelle de 0,35 : 0,061.
+* **L'emploi.** L'estimation préférée de la méta-régression, l'élasticité de long terme à
+  production constante corrigée du biais de publication, −0,246 dans [−0,072 ; −0,446] :
+  (0,446 − 0,072) / 3,92 = 0,095. Mésange imprime 0,44 marqué (***), sans t.
+* **Les salaires.** La courbe des salaires corrigée du biais de publication, −0,077
+  (0,006), l'hétérogénéité entre études 0,070 (le tableau 4, lu sur l'image : sa police
+  ne s'extrait pas ; le texte de la p. 22 redonne −0,077). Une élasticité e est une
+  semi-élasticité e / u ; au chômage BIT moyen de 1989 à 2014, la période d'estimation de
+  Mésange, 9,154 % (t. 302 de l'Insee) : 0,00841 par point, soit b = 0,00841 / 0,018 =
+  0,467 du profil de Mésange (−0,018 agrégé) ; l'écart-type, √(0,006² + 0,070²) / 9,154 /
+  0,018 = 0,426. La courbe des salaires est estimée sur des marchés locaux, la
+  semi-élasticité de Mésange est agrégée : la même grandeur, mesurée autrement, dit.
+* **Le coût du capital.** Dans Mésange, l'élasticité de l'investissement au coût du
+  capital est celle de la demande de facteurs à son coût (p. 39 et 44), le σ d'une CES :
+  la méta-analyse de l'élasticité de substitution, la meilleure pratique, 0,30 dans
+  (−0,01 ; 0,60), 0,156.
+* **L'offre de travail.** La moyenne des deux années de Bargain, Orsini et Peichl est le
+  centre du magasin ; l'écart-type, s² = (s₉₈² + s₀₁²) / 2 + ((e₉₈ − e₀₁) / 2)²,
+  l'incertitude de chaque année plus leur désaccord, que l'article attribue à
+  l'identification (la convention de D-220 pour la somme des élasticités d'un couple).
+
+(a) Le haut de la plage (FR-BDF, 1,27, sur un autre prix) est à 4 écarts-types de
+Mésange : une plage à ∓ 1,96 écart-type serait 0,47 ; 0,73 ; 0,99. (b) De même, FR-BDF
+(1,11) est à 12 écarts-types : 0,23 ; 0,35 ; 0,47. (c) La moyenne de 90 élasticités
+publiées pour les femmes en couple (Bargain et Peichl 2013, p. 10) est 0,43, au-dessus de
+la borne haute (0,208) ; sans dispersion chiffrée, elle n'entre pas dans la loi.
+
+**Écartée, une autre grandeur.** Imbs et Méjean (tableaux 2 et 4) : pour la France,
+−3,20 et −3,13 aux importations, −3,49 et −3,82 aux exportations, des élasticités de
+substitution structurelles agrégées des secteurs, cinq à dix fois les élasticités de
+long terme d'une équation macroéconomique (l'« énigme des élasticités ») ; prises pour
+le paramètre du bloc, elles mettraient μ près de 3,4.
+
+### Les θ restés sans source, à la loi de D-417
+
+La productivité des créations, la diffusion des prix (le centre de Mésange sans
+écart-type, les bornes choisies), le profil de la consommation (deux profils publiés,
+Mésange et l'Insee de juin 2019, ni l'un ni l'autre avec un écart-type ; aucune
+méta-analyse française trouvée), la pente des propensions entre déciles (aucune
+propension marginale au revenu par décile publiée avec un écart-type ; celles de la
+Banque de France et de l'Insee portent sur la richesse), la part de l'emploi public (une
+convention de Mésange), et les cinq θ de la démographie des entreprises (les idées, les
+fermetures, la survie, la montée en charge, la taille : choisis, non vérifiés, D-402 et
+D-407 ; le centre de la survie est un taux observé, non une estimation). Soit 10 θ sur
+22 ; 11 reçoivent une loi tirée d'une source, et le multiplicateur garde ½ ± ½, qui est
+sa source.
+
+### Ce que ces lois diraient de l'estimation, avant tout calcul
+
+Sans aucune information des données (ce que l'étape zéro mesure pour l'histoire de 2011
+à 2017), le mode a posteriori est le mode de la loi ramené dans la boîte (testé sur
+synthétique) : parmi les sept θ du rejeu, l'élasticité de l'emploi, les salaires et le
+coût du capital iraient à θ = 0 (0,31, 0,5 et 0,37, le bas de leur plage) ; les échanges
+et l'accélérateur à ½, plus serrés ; le profil de la consommation à ½. Les trois θ
+poussés à 0 sont ceux dont la littérature sort de la plage par le bas : **la plage, pas
+l'a priori, devient la contrainte**, et c'est la décision que les plages proposées
+ci-dessus demandent au propriétaire. Aucune n'est changée ici.
+
+### Ce qui reste à décider
+
+* Les plages proposées (l'emploi, les salaires, le coût du capital ; les deux échanges,
+  resserrées) : elles changent les curseurs et les études, qui lisent la plage.
+* L'emploi et le coût du capital : Mésange impose une même élasticité aux deux ; la
+  littérature les place toutes deux plus bas (0,25 et 0,30), sans changer leur égalité.
+* Le prochain rejeu de l'histoire avec ces lois, un nouveau cas préenregistré.
+
+**Les tests.** `tests/test_jumeau_a_priori.py`, 20 tests, 20 s : une loi par θ du
+registre et la loi de D-417 pour les sans-source ; l'inverse de l'application du bloc,
+une plage décroissante comprise ; les lois à la main ; sans données, θ au mode de sa loi
+et à la borne quand le mode sort de la boîte ; une loi large redonne D-417 au bit près ;
+un a priori serré n'identifie pas à lui seul ; un θ estimé sans loi refusé ; les nombres
+relus dans les PDF, les cellules de Bargain, Orsini et Peichl et la t. 302. Avec
+`pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_provenance.py`
+et `test_donnees.py` : 301 verts, 1 sauté (les cellules absentes de ce worktree, D-416).
+`ruff check src tests scripts` propre. Ni `make impact` ni `make full`.

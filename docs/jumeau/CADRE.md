@@ -273,6 +273,12 @@ sans source le dit (« choisie, non vérifiée »), comme D-402. θ se règle de
 tirage Monte-Carlo prend θ sur l'axe des tirages. Les θ de tous les blocs vivent dans un
 registre unique, `jumeau/thetas.py`, que les curseurs lisent.
 
+Chaque θ a aussi une loi a priori (D-424), `jumeau/a_priori.py` et
+`jumeau/parametres/a_priori.yaml` : une estimation publiée du paramètre et son écart-type,
+passées par l'application θ → paramètre du bloc ; un θ sans source publiée garde la loi
+large de D-417, N(½ ; ½). L'estimation sur l'histoire (`apprentissage.estimer`) les lit
+quand on les lui donne ; la plage, elle, ne change pas.
+
 ## 8. Les performances, et le navigateur
 
 Le pas ne lit aucun fichier et n'utilise ni pandas ni OpenFisca. Les cibles, mesurées une

@@ -270,6 +270,51 @@ KNOWN_SOURCES: dict[str, tuple[str, ...]] = {
         "(XMKT, « Export market for goods and services »), 2009→2025 ; l'exogène du "
         "commerce dans le rejeu de l'histoire (D-421).",
     ),
+    # Les a priori des θ du jumeau tirés de la littérature (D-424).
+    "iza_dp7958_2014_lichter_peichl_siegloch_labor_demand.pdf": (
+        "https://docs.iza.org/dp7958.pdf",
+        "Lichter, Peichl et Siegloch, « The Own-Wage Elasticity of Labor Demand: A "
+        "Meta-Regression Analysis », IZA DP n° 7958, février 2014. p. 22 du PDF (folio "
+        "19) : l'estimation préférée, −0,246, dans [−0,072 ; −0,446]. L'a priori de "
+        "l'élasticité de l'emploi à son coût du jumeau (D-424).",
+        "IZA Discussion Paper — accès ouvert",
+    ),
+    "iza_dp7698_2013_bargain_peichl_labor_supply_survey.pdf": (
+        "https://docs.iza.org/dp7698.pdf",
+        "Bargain et Peichl, « Steady-State Labor Supply Elasticities: A Survey », IZA DP "
+        "n° 7698, octobre 2013. p. 10 du PDF : les moyennes des élasticités publiées par "
+        "groupe (femmes en couple 0,43, hommes 0,12, femmes seules 0,23), sans "
+        "dispersion chiffrée ; une comparaison de l'offre de travail (D-424).",
+        "IZA Discussion Paper — accès ouvert",
+    ),
+    "tinbergen_dp02029_2002_nijkamp_poot_wage_curve.pdf": (
+        "https://papers.tinbergen.nl/02029.pdf",
+        "Nijkamp et Poot, « The Last Word on the Wage Curve? », Tinbergen Institute DP "
+        "02-029/3 (2002 ; Journal of Economic Surveys 19(3), 2005). Tableau 4, p. 33 du "
+        "PDF : l'élasticité de la courbe des salaires corrigée du biais de publication, "
+        "−0,077 (e.-t. 0,006), l'hétérogénéité entre études s = 0,070. L'a priori des "
+        "salaires sur le chômage du jumeau (D-424).",
+        "Tinbergen Institute Discussion Paper — accès ouvert",
+    ),
+    "gechert_havranek_irsova_kolcunova_2021_capital_labor_substitution.pdf": (
+        "https://meta-analysis.cz/sigma/sigma.pdf",
+        "Gechert, Havranek, Irsova et Kolcunova, « Measuring Capital-Labor Substitution: "
+        "The Importance of Method Choices and Publication Bias », version du 28 avril "
+        "2021 (Review of Economic Dynamics 45, 2022). Tableau 9, p. 35 du PDF : "
+        "l'élasticité de substitution de la meilleure pratique, 0,30, IC à 95 % "
+        "(−0,01 ; 0,60). L'a priori de l'élasticité de l'investissement au coût du "
+        "capital du jumeau (D-424).",
+        "Document de travail des auteurs — accès ouvert",
+    ),
+    "imbs_mejean_2010_trade_elasticities.pdf": (
+        "https://www.frbsf.org/Imbs.pdf",
+        "Imbs et Méjean, « Trade Elasticities », document de travail, septembre 2010 "
+        "(Review of International Economics 25(2), 2017). Tableaux 2 et 4, p. 34 et 35 "
+        "du PDF : les élasticités-prix agrégées de la France, importations −3,198 et "
+        "−3,133, exportations −3,493 et −3,821, avec leurs écarts-types ; une "
+        "comparaison des élasticités du commerce (D-424).",
+        "Document de travail — accès ouvert",
+    ),
 }
 
 
