@@ -29279,3 +29279,129 @@ multiplicateurs se comparent, écart dit.
   (K61 et KX comptés deux fois, D-405), avec son test et son effet sur le backtest dit.
 
 Chaque lot rend sa D-entrée et ses tests, sans PR ; la jonction et les PR viennent ensuite.
+
+## D-407 — Les entreprises du jumeau : cinq blocs structurels, leurs sources, leurs θ
+
+**Ce qui est codé** (`src/impots/jumeau/blocs/`, branche `claude/but23-entreprises`, lot 2
+du but 23, D-406). Six blocs, dans l'ordre de leurs lectures (`entreprises.ordre_lot2`),
+chacun avec ses équations et leurs sources dans sa docstring, ses valeurs dans
+`jumeau/parametres/entreprises.yaml` (chacune avec son document et sa page), ses θ
+enregistrés dans la section du lot 2 de `thetas.py`. Tout est linéaire dans les chocs :
+une hausse et une baisse de même montant donnent des écarts opposés.
+
+* `chocs_entreprises` : les variations de prélèvements de chaque mesure, par impôt, en
+  quatre signaux (IS, sa contribution et la CEBGE ; CVAE et C3S ; cotisations patronales
+  nettes ; PFU et prélèvements sociaux du capital), lus sur `Mesure.entreprises`,
+  {année : {impôt : Md€ ou {taille : Md€}}}, recettes positives. Une mesure qui ne porte
+  que l'agrégat du lot 1 (`prelevements`) est refusée : un agrégat ne se ventile pas sans
+  hypothèse. `mesure_entreprises` déclare une loi hypothétique et son choc sur le compte
+  des APU (D5, D29 ou D61).
+* `naissances` (canal « creations_entreprises ») : ΔE = −ε Δτ N₀/100, Δτ = 100 ΔP/(b Y),
+  ε = 0,20 et b = 0,092 (Da Rin, Di Giacomo et Sembenelli 2011, tableau 4 p. 40, D-402),
+  les instruments de D-401 ; la référence crée (e₀ + δ) N₀/100 sociétés par an, e₀ =
+  7,61 % (même article, tableau 3 p. 39, la France), δ le θ « idées et start-up ».
+* `fermetures` (« fermetures_entreprises ») : un hasard de sortie selon l'âge, S_j = 0,90
+  jusqu'à cinq ans (D-402), puis h_o = 6,53 %, calculé pour que le stock soit stationnaire
+  au taux e₀ ; et selon la marge : ΔX = Σ_c (e₀/100) β (−Δm_c) N_c, Δm_c le choc de la
+  cellule en points de sa valeur ajoutée, réparti selon la taille que la mesure donne,
+  sinon selon l'assiette (résultat, valeur ajoutée, valeur ajoutée moins résultat). Le
+  stock et les fermetures bouclent : N_t = N_{t−1} + créations − fermetures.
+* `productivite` (« productivite_demographie ») : ΔVA = v̄ r c [Σ entrantes S(a)
+  rampe(a) − Σ sortantes induites (1 − h_o)^a], v̄ = s_VA Y / N₀ ; c le θ de D-402 ; ΔY au
+  PIB, ρ ΔY au solde, et l'indice de productivité des sociétés. Sans sortie et avec
+  S(a) = 0,9^a à tout âge, c'est l'équation de D-402.
+* `investissement` (« investissement_cout_du_capital », que `mesange` porte aussi) :
+  l'équation estimée de Mésange (G2017-04, p. 44 du PDF), trimestrielle, l'accélérateur
+  hors du bloc : Δx_q = 0,22 Δx_{q−2} − 0,06 (x_{q−1} + ε_K Δck_{q−1}), ε_K = 0,44 ; le
+  coût d'usage de Mésange (p. 42), dont la fiscalité est (D51 + D292 − D39)/knet : l'IS,
+  la CVAE et la C3S y entrent, pas les cotisations ; Δck = ΔP/(knet u), u = 0,01/0,065
+  (p. 134 : 100 points de base font 6,5 % de coût du capital) ; knet = 3 083,8 Md€ fin
+  2024 (Insee, t. 8.202, manifestée ici) ; ΔK = (1 − δ) ΔK + ΔI, δ = 7,77 % (I/K de 2024
+  moins la croissance de knet de 2014 à 2024) ; ΔY = s_K (ΔK/knet) Y, s_K la part de
+  l'EBE et du revenu mixte du départ. ΔI va à la FBCF des SNF, ΔY − ΔI aux emplois non
+  ventilés : un PIB potentiel, la demande étant au lot 4.
+* `implantation` (« implantation ») : k^f_t = 0,676 k^f_{t−1} − a₁ ΔTMEE_t, le capital des
+  filiales américaines selon le TMEE (Devereux et Lockwood 2006, tableau 2, col. 1, p. 25,
+  manifesté ici ; le Devereux et Griffith de 1998 n'a pu être téléchargé, l'IFS ne le
+  sert plus) ; ΔTMEE = κ ΔP_IS/(b Y), κ = 0,917, calculé par la méthode de l'OCDE du dépôt
+  (`entreprises.taux_effectifs`) à 25,825 % ± 1 point ; ΔK = s_f k^f knet, s_f = 0,16, la
+  part de la valeur ajoutée sous contrôle étranger (Insee, Les entreprises en France 2023,
+  fiche 3.2, figure 1, manifestée ici) ; seul l'IS y joue.
+
+**Les θ.** Quatre lignes nouvelles et une reprise : `idees_creations` (δ, −1 à +1 point
+de taux d'entrée, centre 0 : choisie, non vérifiée) ; `fermetures_marges` (β, 0 à 0,06
+par point de marge, centre 0,03 : choisie, non vérifiée) ; `investissement_cout_capital`
+(ε_K, 0,37, 0,44, 0,48 : l'estimation libre, la calibration et Mésange 2010, même page) ;
+`implantation_tmee` (a₁, 0, 0,478, 0,730 : la sensibilité disparue après 2009 selon
+Hanappi, Millot et Turban, OCDE 2023, tableau 1 col. 4 p. 24 ; Devereux et Lockwood ; plus
+1,96 écart type) ; `productivite_creations`, le c de D-402. Restent fixes, comme D-402 les
+a fixés, et choisis, non vérifiés : la survie des jeunes, l'âge de maturité, la montée en
+charge, la taille relative (appliquée aussi aux sortantes), la part des sociétés dans le
+PIB ; et s_f, la part du capital étranger lue sur celle de la valeur ajoutée. Ils n'ont pas
+de θ : en donner un ou les sourcer (SINE, DynEmp, comptes de secteur) est à décider.
+
+**Le cadre touché, au plus juste** (CADRE.md §4 bis). `jumeau/canaux.py` est le registre
+des canaux, ma section seulement (un dict nom → description) ; un bloc déclare `porte` et
+`remplace` ; `Modele` appelle `canaux.verifier` et refuse un canal inconnu ou porté deux
+fois, en le nommant avec ses deux blocs (deux lignes dans `pas.py`). `mesange` porte
+« investissement_cout_du_capital » et `creations` « creations_entreprises » (une ligne
+chacun). Dans `champs.py`, les champs du lot 2 seulement : stock, créations et fermetures
+deviennent additifs (une contribution par mesure, la référence sous « ») ; s'ajoutent
+`sorties_induites` et les quatre signaux. Ni le pas, ni les identités, ni l'état ne
+changent. Le choix de granularité : `mesange` porte l'investissement pour tous ses
+instruments, alors qu'il n'a ni variante d'IS ni de CVAE ; le refus est donc prudent, et
+une granularité par instrument est à décider si l'on veut Mésange et `investissement`
+ensemble.
+
+**Le PIB du scénario.** Les blocs du lot 2 rapportent tout à Y_t = Y_départ Π (1 + g),
+pas au PIB de la référence calculée : la clé « » s'écrit à l'identique dans la référence
+et la variante, et δ(θ) déplace les niveaux de la référence sans créer d'écart.
+
+**Les ordres de grandeur**, à θ½, cellules de 2023 (2,72 millions de sociétés), départ et
+scénario synthétiques des tests (PIB de 2 990 Md€, 1 % et 1,8 %), une hausse permanente
+de 10 Md€ dès 2026 : 19 200 créations de moins par an pour chaque impôt (D-401 les lit
+euro pour euro) ; en 2035, l'écart de PIB est de −0,57 % pour l'IS (productivité −0,13,
+investissement −0,20, implantation −0,25), −0,31 % pour la CVAE, −0,11 % pour les
+cotisations, et Δb₂₀₃₅ de −0,32, −1,76 et −2,48 points (le choc statique seul : −2,9).
+Recoupement, non forcé : Gechert et Heimberger (`pib_is`, D-402) donnent 0,19 % de PIB à
+dix ans par point d'IS, soit de l'ordre de −0,67 % pour les 3,5 points de taux apparent
+que cette hausse fait en 2026.
+
+**Mésange, linéarisé** (`investissement.comparer_mesange`). Sous la variante de taux
+(+6,5 % de coût du capital, p. 134), le bloc à θ½ donne −0,26, −0,94, −1,49, −2,16, −2,73
+et −2,86 % d'investissement à 1, 2, 3, 5, 10 ans et à long terme ; Mésange imprime −0,58,
+−2,48, −3,36, −4,07, −5,02 et −6,29 ; sans sa valeur ajoutée (l'accélérateur, unitaire à
+long terme : une approximation), −0,34, −1,69, −2,35, −2,79, −3,05 et −2,31. Le bloc est
+en deçà à court terme (Mésange a 1,19 Δva et 0,65 Δva_{t−1} dans son court terme) et
+au-delà à long terme de 0,55 point, probablement par les prix : le coût réel du capital
+est déflaté par le prix de la valeur ajoutée, qui monte de 6,64 % à long terme dans la
+variante. L'écart est dit ; aucun coefficient n'est réglé dessus.
+
+**Les tests** (`tests/test_jumeau_entreprises.py`, 18, dix secondes) : les identités du
+cadre et le compte des sociétés sur cinq tirages et des θ sur l'axe, avec trois mesures
+dont une ventilée par taille ; la référence stationnaire ; chaque bloc dans les deux sens
+pour l'IS, la CVAE et les cotisations, une hausse l'opposé exact d'une baisse, et zéro
+où un impôt n'est pas lu (les cotisations pour l'investissement, tout sauf l'IS pour
+l'implantation) ; θ = 0 et θ = 1 bornent chaque bloc, de façon monotone, et θ = 0 éteint
+les canaux qui ont un zéro ; le double compte refusé (`mesange` avec `investissement`,
+`creations` avec `naissances`) ; la table de Mésange ci-dessus ; les refus ; knet relu sur
+la t. 8.202 et les signes sur les cellules de 2023 (sautés, avec leur raison, sans elles).
+Les tests du lot 1 restent verts (69) : le bloc `creations`, mode compatible, redonne la
+chaîne. Temps, mesuré une fois sur les cellules de 2023 (médiane de sept, quatre cœurs) :
+dix ans, référence et variante, les blocs du cadre et du lot 2, 38 ms à n = 1 et 118 ms à
+n = 2 000.
+
+**Les sources ajoutées au manifeste** : la t. 8.202 de l'Insee, la fiche 3.2 des
+Entreprises en France 2023 et Devereux et Lockwood (2006). Le manuscrit de Da Rin et al.
+manque toujours (D-401) ; ses chiffres sont ceux de M0 (D-245).
+
+**Ce qui reste.** Les rapports ne portent pas encore leurs prélèvements par impôt :
+`Mesure.depuis_rapport` ne remplit pas `entreprises`, et les études ne passent pas encore
+par le mode structurel. Pour la calibration (lot 6), il faut au lot 5 : les créations de
+sociétés par an (Insee, Sirene, hors micro-entrepreneurs, et par secteur), les cessations
+et les défaillances (Banque de France, par taille), la survie des cohortes (SINE 2014 et
+2018), la FBCF des SNF et knet (t. 8.202, 1978-2024), le compte des SNF (t. 7.101 : EBE,
+D51, D29, D39), le stock d'IDE entrant et le capital des filiales étrangères (Banque de
+France, Ofats). À décider : un θ ou une source pour les valeurs fixes de D-402 ; la
+granularité des canaux de Mésange ; si les cotisations patronales font toujours jouer
+les créations et les sorties quand Mésange tourne (le double compte de D-401).
