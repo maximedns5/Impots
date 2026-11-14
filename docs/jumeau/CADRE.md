@@ -233,7 +233,10 @@ de l'année, les déciles selon le coût des ménages ; ce n'est pas une passe, 
 année qu'elle touche le dit (`Mesure.conventions`). Elle est refusée là où les parts
 n'existent pas (une réforme du Smic, des cotisations non ventilées) : l'absence reste. Une loi hypothétique, pour les
 curseurs, se déclare directement (`Mesure.hypothese`) et le dit sur chaque nombre qu'elle
-touche. Le jumeau ne relance jamais OpenFisca dans un pas.
+touche. Pour rejouer l'histoire (lot 6, D-417), une troisième origine, `observe` : un
+choc lu dans les comptes publiés (la variation d'un taux apparent ou d'une dépense), daté
+par la base des mesures votées, sans aucun montant officiel de mesure
+(`jumeau.rejeu_histoire`). Le jumeau ne relance jamais OpenFisca dans un pas.
 
 ## 6. Les identités vérifiées à chaque pas
 

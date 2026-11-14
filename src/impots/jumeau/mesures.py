@@ -14,12 +14,15 @@ statiques par année, en Md€ :
   sur demande, par la convention nommée « parts_premiere_annee » (`CONVENTION_PARTS`,
   D-414), portée sur chaque nombre qu'elle touche (`Mesure.conventions`).
 
-DEUX ORIGINES, et aucune autre. `depuis_rapport` lit le choc d'une passe déjà faite sur la
+TROIS ORIGINES, et aucune autre. `depuis_rapport` lit le choc d'une passe déjà faite sur la
 population, une fois, et garde son rapport et son commit : son coût mécanique et ses
 recettes de comportement à θ (les statistiques suffisantes des canaux, D-336), que le
 rapport ne ventile pas entre catégories et qui vont donc sur « mesures_non_ventilees ».
 `hypothese` déclare une loi directement, pour les curseurs : chaque trajectoire qui la lit
-le dit (`Mesure.avertissement`). Le jumeau ne relance jamais OpenFisca dans un pas.
+le dit (`Mesure.avertissement`). `OBSERVE` (lot 6, D-417) porte un choc lu dans les
+comptes publiés pour rejouer l'histoire (`jumeau.rejeu_histoire`) : la variation d'un
+taux apparent ou d'une dépense, datée par la base des mesures votées, sans aucun montant
+officiel de mesure. Le jumeau ne relance jamais OpenFisca dans un pas.
 """
 
 from __future__ import annotations
@@ -36,7 +39,7 @@ from impots.predictif import rejouer
 CATEGORIES = tuple(c for c in (*RECETTES, *DEPENSES)
                    if c not in ("solde_induit", "mesures_non_ventilees"))
 INSTRUMENTS = tuple(i.removeprefix("impulsion_") for i in IMPULSIONS)
-RAPPORT, HYPOTHESE = "rapport", "hypothese"
+RAPPORT, HYPOTHESE, OBSERVE = "rapport", "hypothese", "observe"
 EURO = 1e9
 """Les rapports sont en euros, le jumeau en Md€."""
 
@@ -82,8 +85,9 @@ class Mesure:
     def __post_init__(self) -> None:
         if not self.identifiant:
             raise MesureError("une mesure sans identifiant ne se décompose pas")
-        if self.origine not in (RAPPORT, HYPOTHESE):
-            raise MesureError(f"origine « {self.origine} » : « rapport » ou « hypothese »")
+        if self.origine not in (RAPPORT, HYPOTHESE, OBSERVE):
+            raise MesureError(f"origine « {self.origine} » : « rapport », « hypothese » ou "
+                              f"« observe »")
         if self.origine == RAPPORT and not (self.rapport and self.commit):
             raise MesureError(f"mesure « {self.identifiant} » tirée d'un rapport sans son "
                               f"rapport et son commit : son choc ne se retrouverait pas")
@@ -106,6 +110,10 @@ class Mesure:
             return (f"Loi hypothétique « {self.libelle} » ({self.identifiant}) : déclarée "
                     f"directement, sans passe sur la population ; chaque nombre qu'elle "
                     f"touche est une hypothèse.")
+        if self.origine == OBSERVE:
+            return (f"Choc observé « {self.libelle} » ({self.identifiant}) : lu dans les "
+                    f"comptes publiés et daté par la base des mesures votées (D-417), "
+                    f"sans passe sur la population ni montant officiel de mesure.")
         return None
 
     @classmethod

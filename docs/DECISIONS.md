@@ -30718,3 +30718,222 @@ branches). Les lourds du jumeau, chacun dans son processus : la page dans Chromi
 * Les cellules réelles à recouper sur la population entière, là où elle est.
 * La convention « parts_premiere_annee » sur la page : à décider avec le propriétaire,
   qui l'a voulue sur demande (D-414).
+
+## D-417 — Le juge de l'histoire préenregistré : ce qui entre, les périodes, la note
+
+**Ce qui est codé** (lot 6 du but 23, branche `claude/but23-apprentissage`, partie de
+`claude/but23-cadre` à f3541d1). `jumeau/apprentissage.py`, générique : les fenêtres et
+le schéma (estimation et test, années exclues), les cibles, le rejeu d'une fenêtre, la
+note et le naïf, l'estimation. `jumeau/rejeu_histoire.py` : ce qui entre dans le jumeau
+pour rejouer l'histoire, le schéma, les θ estimés, les cibles et leurs tolérances, le
+simulateur (le modèle structurel complet, `blocs.ordre_structurel`, depuis l'état publié
+du départ). `scripts/jumeau_rejeu_histoire.py` fera tourner le tout ; il n'a pas tourné.
+Hors de ces fichiers : une troisième origine de mesure, `observe` (`mesures.py`, et
+`CADRE.md` §5, qui disait deux origines), pour qu'un choc lu dans les comptes ne se dise
+ni « rapport » ni « loi hypothétique ». **Le jumeau n'a tourné sur aucune année réelle et
+aucune erreur sur l'histoire n'a été calculée** : les entrées réelles ont seulement été
+construites, et les refus des blocs (`preparer`) appelés, pour savoir qu'elles entrent.
+
+### Ce qui entre dans le jumeau, sans aucun montant officiel de mesure
+
+Les évaluations préalables restent des juges mis de côté (D-359 à D-361) ; la base des
+mesures votées ne porte aucun montant (D-410). Ce qui entre est lu dans les comptes, et
+la base ne sert qu'à dater et à attribuer.
+
+**Les recettes, par famille d'impôts.** Pour une fenêtre partie de l'année s, le taux
+apparent de la famille F, τ_u = Σ s_l T_{l,u} / B_u (T_l les lignes publiées, s_l leur
+signe, B la base) ; une variation ne compte que l'année u où la base porte une mesure
+d'un instrument de F, d'effet en u (hors les mesures censurées ou abrogées avant leur
+effet). Le choc de l'année t, Y_t le PIB de la référence :
+
+    ΔT_{F,t} = Σ_{s < u ≤ t} w_{F,u} (τ_u − τ_{u−1}) · (B_s / PIB_s) · Y_t
+
+w vaut 1 l'année votée, ½ quand les cotisations employeurs et salariés, qui se partagent
+la ligne des cotisations effectives, le sont toutes deux, 0 sinon. ΔT va au compte des
+APU, sur l'instrument de Mésange que lisent les blocs, aux ménages par décile (au prorata
+de la variable des cellules, comme `comparaison.mesure`) et aux entreprises (lot 2).
+
+| famille | lignes (t. 3.217, sauf mention) | base | instruments votés | canal |
+|---|---|---|---|---|
+| TVA | TVA | C ménages | tva | D2, tva, déciles TVA |
+| TICPE | TICPE | C ménages | accises_energie | D2, taxe carbone, accises |
+| IR | IRPP avant crédits | PIB | ir, ir_capital | D5, IR, déciles IR |
+| CSG | CSG, CRDS | PIB | csg | D5, CSG, déciles CSG |
+| cot. employeurs | cotisations effectives | D1 | cotisations_employeurs | D61, lot 2 |
+| cot. salariés | cotisations effectives | D1 | cotisations_salaries | D61, déciles |
+| CICE | D3 de la t. 3.201, signe − | D1 | cotisations_employeurs | coût du travail seul |
+| IS | IS avant crédits | EBE | is | D5, lot 2 |
+| production | CVAE, CFE, TP, C3S | PIB | impots_production | D2, lot 2 (CVAE) |
+| taxe d'habitation | TH | PIB | taxe_habitation | D5, déciles du revenu |
+| ISF et IFI | ISF/IFI | PIB | patrimoine | D5 seul |
+| transmission | DMTG | PIB | transmission | D91 seul |
+
+Les crédits d'impôt sont des dépenses dans les comptes (le CICE une subvention, D3 : 33 à
+60 Md€ de 2011 à 2017, 40,6 en 2019), et l'IS de la t. 3.217 est avant crédits : la
+famille du CICE ne porte que le signal du coût du travail, sans second choc sur le
+compte. N'entrent pas, faute d'instrument dans la base : tabacs, droits d'enregistrement,
+taxe foncière, taxe sur les salaires, audiovisuel, accises sur l'électricité.
+
+**Les dépenses primaires**, chacune des treize lignes de la t. 3.201 : ΔG_{j,t} = G_{j,t}
+− (G_{j,s} / PIB_s) Y_t. La référence tenant la dépense en part constante du PIB, la
+dépense du jumeau est la dépense publiée (l'« effort en dépense » : la dépense au-delà de
+la croissance de la tendance). Les prestations (D62) vont aux ménages par décile selon
+leurs pensions, allocations chômage et prestations ; P2, D1, D29, D632 et P51g entrent
+dans les emplois par la demande publique. Le code ne lit aucune équation de la dépense
+publique au-delà de ces chocs : le bloc de l'emploi public, en parallèle, n'y change rien.
+
+**Les exogènes observés, les mêmes pour le jumeau et le naïf.** Le déflateur du PIB
+(t. 1.103), imposé : le jumeau ne prévoit pas l'inflation, elle lui est donnée. La dette
+de référence se charge à r_t = r_{t−1} + (OAT_t − r_{t−1}) / 8, r_s le taux implicite
+publié du départ, l'OAT à dix ans d'Eurostat, 8 ans une durée de vie moyenne de la dette
+choisie, non vérifiée ; le taux marginal, l'OAT de la première année. L'ajustement
+flux-stocks publié (bloc `ajustement_observe`). La croissance réelle de la tendance, la
+moyenne publiée de 2011 à 2017 (1,20 % par an), et celle de l'emploi (0,57 % par an),
+ajoutée à sa cible, la référence du cadre tenant l'emploi du départ constant.
+
+**Ce qui manque, et comment c'est traité.**
+
+* La demande mondiale adressée à la France : aucune série manifestée ; elle reste au
+  sentier de la tendance. C'est la première erreur attendue sur les échanges.
+* Le pétrole et les prix d'importation : aucun bloc ne porte un choc de prix étranger
+  (D-408) ; ils n'entrent que par le déflateur imposé.
+* La démographie : la population active de la référence est celle du départ.
+* Les étapes suivantes d'une mesure étalée : la base date une mesure par son année
+  d'effet ; la suppression de la taxe d'habitation n'y est qu'en 2018 et 2020, celle de
+  la CVAE en 2023 et 2024, et les réformes de 2022 à 2024 y sont rares (de 2021 à 2024,
+  seules l'IR, la production et la dépense entrent). Le reste est tenu pour non
+  discrétionnaire.
+* La réponse des taux apparents au cycle, les années votées, entre avec la mesure :
+  c'est une fuite de la cible des recettes vers l'entrée, dite. Celle de l'IR, voté
+  chaque année, est presque entière.
+* Les défaillances ne sont pas notées : le jumeau ne les calcule pas, ses fermetures ne
+  sont pas des défaillances (D-412). Les dépenses non plus : elles sont l'entrée.
+
+### Les périodes, et 2020-2021
+
+| période | fenêtres (départ publié → fin) | années notées |
+|---|---|---|
+| estimation | 2010 → 2014 ; 2014 → 2017 | 2011 à 2017 |
+| test | 2017 → 2019 ; 2021 → 2024 | 2018, 2019, 2022, 2023, 2024 |
+
+**2020 et 2021 sont exclus**, ni rejoués ni notés : aucun bloc ne porte un confinement,
+et y imposer des chocs observés ferait du choc la réponse. La seconde fenêtre du test
+part de l'état publié de 2021 ; aucune donnée d'après 2017 n'entre dans l'estimation, et
+le test ne voit des années de test que les entrées ci-dessus. Le schéma refuse une année
+notée des deux côtés et une fenêtre qui rejoue une année exclue.
+
+### Les cibles, la métrique, les tolérances
+
+Pour chaque cible, l'erreur de l'année notée e_t = jumeau_t − publié_t ; la métrique, la
+REQM sur les années notées de la période ; la cible est **tenue** si REQM ≤ tolérance.
+La même fonction de l'état se lit des deux côtés (les créations exceptées).
+
+| cible | grandeur | tolérance | raison |
+|---|---|---|---|
+| PIB | croissance en volume | 1,0 pt | l'erreur des prévisions à un an hors crise |
+| emploi | croissance de l'emploi intérieur total | 0,8 pt | ±1 pt autour de la tendance |
+| chômage | chômeurs sur emploi plus chômeurs | 0,8 pt | l'écart que le débat lit |
+| exportations | croissance en volume | 4,0 pts | la volatilité des échanges |
+| importations | croissance en volume | 4,0 pts | la volatilité des échanges |
+| D2 | en % du PIB | 0,4 pt | un dixième de la catégorie |
+| D5 | en % du PIB | 0,5 pt | l'IS, volatil, y est |
+| D61 | en % du PIB | 0,4 pt | un vingtième de la catégorie |
+| recettes hors intérêts | en % du PIB | 0,8 pt | les trois, moins leur compensation |
+| solde (B9) | en % du PIB | 1,0 pt | un dérapage, au sens des lois de programmation |
+| dette | en % du PIB | 3,0 pts | trois ans d'erreur de solde d'un point |
+| créations | croissance (voir ci-dessous) | 10 pts | leur volatilité |
+
+Les créations : celles de sociétés du jumeau contre les créations d'entreprises
+classiques publiées (hors micro-entrepreneurs), un recouvrement que D-412 laissait à
+trancher et qui n'est pas établi : la cible le dit.
+
+Les tolérances sont des choix ronds, dits, non vérifiés sur un document ; aucune ne
+change après le premier calcul. **Le chiffre du premier juge** (`BUT.md`) : la part des
+douze cibles tenues sur le test.
+
+### L'estimation
+
+Les θ de `rejeu_histoire.ESTIMES`, chacun dans sa boîte [0 ; 1], jamais au-delà des
+plages publiées : le profil de la consommation, l'élasticité de l'emploi à son coût, le
+facteur des salaires sur le chômage, les deux élasticités-prix des échanges,
+l'accélérateur et le coût du capital de l'investissement. Les quatorze autres restent à
+½ (l'offre de travail, la pente des propensions, la diffusion des prix, les cinq θ de la
+démographie des entreprises, l'implantation ; le multiplicateur de Mésange et la
+productivité des créations ne sont pas dans le mode structurel). Le critère :
+
+    J(θ) = Σ_{fenêtres, cibles, t} (e_t(θ) / tol_c)² + Σ_i ((θ_i − ½) / ½)²
+
+des moindres carrés pondérés par l'inverse du carré des tolérances, pénalisés vers ½ :
+le mode d'une vraisemblance gaussienne d'écart-type la tolérance, sous un a priori
+gaussien en ½ d'écart-type ½. Un Levenberg-Marquardt projeté sur la boîte, la jacobienne
+par différences finies en un appel (les θ perturbés sur l'axe des tirages). Un θ dont
+l'écart-type approché, √diag (JᵀJ)⁻¹, dépasse 0,25 est dit non identifié.
+
+### Le naïf
+
+La référence de la même trajectoire : la croissance de la tendance, les recettes et les
+dépenses en part constante du PIB, l'emploi et le chômage du départ, et les mêmes prix,
+taux, ajustement et tendance de l'emploi que le jumeau. Le jumeau le **bat** sur une cible
+si sa REQM est strictement plus petite. Un jumeau qui ne bat pas le naïf le dit, cible
+par cible. Le test se note aussi à θ½, pour dire ce que l'estimation apporte.
+
+### Le pronostic, écrit avant tout calcul
+
+**L'aveugle est percé**, comme en D-360 : celui qui préenregistre connaît de mémoire,
+dans leurs grandes lignes, les séries de 2018 à 2024 (le rebond de 2022, la baisse du
+chômage, le CICE converti en 2019) ; les tolérances et ce pronostic sont écrits avec
+cette connaissance, sans qu'aucune erreur du jumeau ni du naïf n'ait été calculée.
+
+Sur le test, aux θ estimés (REQM attendues, en points) :
+
+| cible | jumeau | naïf | tenue | naïf battu |
+|---|---|---|---|---|
+| PIB | [0,8 ; 1,3] | [0,6 ; 1,0] | non, de peu | non (a) |
+| emploi | [0,5 ; 0,9] | [0,4 ; 0,8] | oui | non |
+| chômage | [0,5 ; 0,9] | [0,4 ; 0,8] | oui | non |
+| exportations | [3,0 ; 4,2] | [3,0 ; 4,2] | oui, de peu | oui, de moins de 0,2 pt |
+| importations | [3,0 ; 4,2] | [3,0 ; 4,2] | oui, de peu | non |
+| D2 | [0,3 ; 0,7] | [0,4 ; 0,9] | non | oui (la CVAE de 2023) |
+| D5 | [0,2 ; 0,5] | [0,4 ; 0,9] | oui | oui (la CSG de 2018, l'IR) |
+| D61 | [0,1 ; 0,4] | [0,7 ; 1,4] | oui | oui (les cotisations de 2018 et 2019) |
+| recettes | [0,3 ; 0,8] | [0,6 ; 1,2] | oui | oui |
+| solde | [0,3 ; 0,9] | [0,9 ; 1,6] | oui | oui (la dépense est l'entrée) |
+| dette | [1,0 ; 2,8] | [2,5 ; 5,0] | oui | oui |
+| créations | [7 ; 15] | [7 ; 15] | non | non, à moins d'un point |
+
+(a) La dépense publiée de 2022, en baisse sur sa part de 2021 (la fin des aides de la
+crise sanitaire), lui retire de la croissance l'année du rebond.
+
+Soit **9 cibles sur 12 tenues** par le jumeau (de 7 à 10), 5 par le naïf (de 4 à 7), et
+le naïf battu sur 7 (de 6 à 8), presque tout l'avantage venant des recettes, du solde et
+de la dette, où les chocs observés entrent : sur l'activité, l'emploi et les échanges,
+le jumeau ne bat pas le naïf. L'estimation : au plus deux θ sur sept identifiés ; le
+profil de la consommation et l'accélérateur au-dessus de ½ (la consolidation de 2012 et
+2013 sous une croissance faible pousse les multiplicateurs vers le haut), les cinq
+autres à moins de 0,15 de ½ ; J final entre 80 et 100 % de J à θ½. À θ½, le test tient
+le même nombre de cibles, chaque REQM à moins de 10 % de celle aux θ estimés.
+
+### Les tests, sur données synthétiques seulement
+
+`tests/test_jumeau_apprentissage.py`, 12 tests, 10 s : le schéma de D-417 disjoint, et
+un schéma qui note deux fois ou rejoue 2020 refusé ; un jumeau analytique retrouve ses
+vrais θ à 1e-5, s'arrête à la borne quand le vrai θ est hors de la boîte, et laisse à ½,
+non identifié, un θ sans effet ; le modèle structurel complet sur les données
+synthétiques des lots 2 à 4 (trois variantes de Mésange dont le montant change de signe
+d'une année à l'autre) retrouve à 0,01 près les trois θ d'une histoire qu'il a lui-même
+écrite (le profil de la consommation à 0,8, l'élasticité de l'emploi à 0,3, les salaires
+à 0,7), puis la note sur des années disjointes tient les douze cibles, le naïf battu d'un
+facteur dix au moins sur le PIB, l'emploi, le chômage, le solde, la dette et D61 ; la
+note et le naïf se calculent à la main ; un taux apparent ne compte que ses années
+votées (pas une mesure censurée), la dépense du jumeau redevient la publiée, les signes
+sont ceux du moteur ; les exogènes publiés se chargent. Avec `test_jumeau*.py` : 208
+verts, ces 12 compris, 1 sauté ; `ruff check src tests scripts` propre.
+
+### Ce qui tourne ensuite, après relecture
+
+`PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py`, sur le commit qui porte cette
+entrée poussée : l'estimation, la note de l'estimation et du test aux θ estimés, le test
+à θ½, dans `reports/jumeau/rejeu_histoire.json`. Le résultat va dans une nouvelle
+D-entrée, contre ce pronostic ; aucune tolérance, aucune fenêtre, aucune entrée ne
+change après le premier calcul. Un correctif de code que le rejeu révélerait est une
+révision, sous un nouveau nom, et cette note reste.
