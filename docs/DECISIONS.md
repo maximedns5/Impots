@@ -29492,7 +29492,7 @@ D-410 laissait 58 mesures sur 70 écrites de mémoire. Chacune est relue ici sur
 publié au Journal officiel, article par article : la loi (numéro, date de signature,
 nature), l'article cité, les paramètres avant et après, la date d'effet. Un script lit
 l'archive du Journal officiel que publie la DILA (`Freemium_jorf_global_20261108-140000`,
-1,75 Go, echanges.dila.gouv.fr/OPENDATA/JORF, hors git, dans `/home/user/dila_jorf`) et
+1,75 Go, echanges.dila.gouv.fr/OPENDATA/JORF, hors git, dans `data/raw`) et
 en garde les articles des lois signées depuis juin 2009 et des décrets nommés (assurance
 chômage, prime d'activité, revenu de solidarité active, ordonnance de 2017 sur le
 prélèvement à la source) : 29 593 enregistrements. Chaque paramètre est cherché dans
@@ -29619,3 +29619,8 @@ Aucun nombre d'étude ne change : la base n'est lue par aucune passe.
   revalorisations annuelles des prestations, manquent.
 * Les articles codifiés (`codification`) ne sont pas relus en version consolidée ; un
   « avant » fixé par décret reste dit comme tel.
+* **Refaire la vérification** : `scripts/jumeau_jorf_extraire.py` puis
+  `scripts/jumeau_jorf_verifier.py` (leurs docstrings disent l'URL, la date et la
+  commande) ; l'archive est manifestée dans `data/raw/MANIFEST.json`, entrée ajoutée à la
+  main comme les fichiers d'Eurostat de D-410 (`impots population manifest` la mettrait
+  en quarantaine, faute d'entrée dans `KNOWN_SOURCES`).
