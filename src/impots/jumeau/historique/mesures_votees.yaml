@@ -1,0 +1,1020 @@
+# La base des mesures fiscales et sociales votées, de 2010 à 2026, par gouvernement
+# (but 23, lot 5, D-410). Lue par `jumeau/votees.py`.
+#
+# CE QUE LA BASE PORTE : le droit voté. Pour chaque mesure, le texte (loi, ordonnance ou
+# décret, son numéro et sa date de promulgation ou de signature), l'article, l'instrument,
+# les paramètres que le texte change (avant, après) et l'année d'effet. Le gouvernement
+# est celui en fonction à la date du texte, selon la frise de `gouvernements.yaml` (une
+# loi de finances préparée par un gouvernement et promulguée sous le suivant est au
+# suivant ; la note le dit).
+#
+# CE QU'ELLE NE PORTE PAS, ET NE DOIT JAMAIS PORTER : ce que la mesure a coûté ou
+# rapporté. Aucun montant budgétaire, aucune évaluation préalable de PLF ou de PLFSS,
+# aucun chiffrage de tiers : ce sont les juges du passé (D-359 à D-361), que le lot 6
+# préenregistrera avant de les ouvrir. Les seuls montants sont des paramètres du droit
+# (un seuil, un plafond, un abattement), écrits en euros entiers. Un test le vérifie.
+#
+# LA VÉRIFICATION, dite mesure par mesure (`verification`) :
+# * « codes.droit.org » : l'article et la loi sont confirmés sur l'export de la base de
+#   Légifrance que publie codes.droit.org (mis à jour le 31 octobre 2026 pour le CGI) :
+#   la version en vigueur de l'article codifié porte la loi et l'article cités, ou son
+#   texte les nomme ;
+# * « mémoire » : écrit de mémoire, Légifrance n'étant pas joignable depuis la session du
+#   14 novembre 2026 (refus 403). Le numéro d'article est le premier à relire.
+#
+# Les instruments (vocabulaire fermé, `votees.INSTRUMENTS`) : ir, ir_capital, csg,
+# cotisations_employeurs, cotisations_salaries, is, impots_production, tva,
+# accises_energie, taxe_habitation, patrimoine, transmission, prestations, retraites,
+# remunerations, autres_impots. Les statuts (`votees.STATUTS`) : en_vigueur, remplacee
+# (par une mesure suivante, `suite`), temporaire, suspendue, abrogee, abrogee_avant_effet,
+# censuree.
+
+mesures:
+
+  # ------------------------------------------------------------------ Fillon II
+  - id: lfi2010_taxe_professionnelle
+    gouvernement: fillon_2
+    intitule: Suppression de la taxe professionnelle, remplacée par la contribution économique territoriale
+    instrument: impots_production
+    texte: {nature: loi, numero: 2009-1673, date: 2009-12-30, intitule: loi de finances pour 2010}
+    article: "2"
+    codification: CGI, art. 1447-0, 1586 ter et suivants
+    annee_effet: 2010
+    parametres:
+      - {quoi: "taxe professionnelle", avant: "assise sur les valeurs locatives et, jusqu'en 2009, les équipements et biens mobiliers", apres: supprimée}
+      - {quoi: "cotisation foncière des entreprises (CFE)", avant: néant, apres: "assise sur les valeurs locatives foncières"}
+      - {quoi: "cotisation sur la valeur ajoutée des entreprises (CVAE)", avant: néant, apres: "1,5 % de la valeur ajoutée, taux effectif progressif selon le chiffre d'affaires (nul sous 500 000 €)"}
+    statut: remplacee
+    verification: mémoire
+
+  - id: retraites_2010_age_legal
+    gouvernement: fillon_2
+    intitule: Relèvement de l'âge d'ouverture des droits à la retraite de 60 à 62 ans
+    instrument: retraites
+    texte: {nature: loi, numero: 2010-1330, date: 2010-11-09, intitule: loi portant réforme des retraites}
+    article: "18"
+    codification: CSS, art. L. 161-17-2
+    annee_effet: 2011
+    date_effet: 2011-07-01
+    parametres:
+      - {quoi: "âge d'ouverture des droits", avant: 60 ans, apres: "62 ans, relevé de 4 mois par génération à partir des assurés nés le 1er juillet 1951 (accéléré à 5 mois par la LFSS 2012)"}
+    statut: remplacee
+    verification: mémoire
+
+  - id: retraites_2010_taux_plein
+    gouvernement: fillon_2
+    intitule: Relèvement de l'âge d'annulation de la décote de 65 à 67 ans
+    instrument: retraites
+    texte: {nature: loi, numero: 2010-1330, date: 2010-11-09, intitule: loi portant réforme des retraites}
+    article: "20"
+    codification: CSS, art. L. 351-8
+    annee_effet: 2016
+    parametres:
+      - {quoi: "âge du taux plein automatique", avant: 65 ans, apres: "67 ans, au même rythme que l'âge d'ouverture"}
+    statut: en_vigueur
+    verification: mémoire
+
+  # ------------------------------------------------------------------ Fillon III
+  - id: lfi2011_tranche_41
+    gouvernement: fillon_3
+    intitule: Taux marginal de l'impôt sur le revenu porté de 40 à 41 % et prélèvements forfaitaires relevés d'un point
+    instrument: ir
+    texte: {nature: loi, numero: 2010-1657, date: 2010-12-29, intitule: loi de finances pour 2011}
+    article: "6"
+    codification: CGI, art. 197 et 117 quater
+    annee_effet: 2011
+    parametres:
+      - {quoi: "taux de la dernière tranche du barème", avant: 40 %, apres: 41 %}
+      - {quoi: "prélèvement forfaitaire libératoire sur les dividendes", avant: 18 %, apres: 19 %}
+    statut: remplacee
+    verification: mémoire
+
+  - id: lfr2011_isf_bouclier
+    gouvernement: fillon_3
+    intitule: Réforme de l'ISF et suppression du bouclier fiscal
+    instrument: patrimoine
+    texte: {nature: loi, numero: 2011-900, date: 2011-07-29, intitule: loi de finances rectificative pour 2011}
+    article: "1 et 30"
+    codification: CGI, art. 885 A et 885 U (anciens) ; art. 1649-0 A (abrogé)
+    annee_effet: 2011
+    parametres:
+      - {quoi: "seuil d'assujettissement à l'ISF", avant: "800 000 €", apres: "1 300 000 €"}
+      - {quoi: "barème de l'ISF", avant: "six tranches de 0,55 % à 1,80 %", apres: "0,25 % du patrimoine taxable sous 3 000 000 €, 0,50 % au-delà, sur la totalité"}
+      - {quoi: "bouclier fiscal (droit à restitution au-delà de 50 % des revenus)", avant: en vigueur, apres: "supprimé à compter de 2013"}
+    statut: remplacee
+    verification: mémoire
+
+  - id: lfi2012_cehr
+    gouvernement: fillon_3
+    intitule: Contribution exceptionnelle sur les hauts revenus
+    instrument: ir
+    texte: {nature: loi, numero: 2011-1977, date: 2011-12-28, intitule: loi de finances pour 2012}
+    article: "2"
+    codification: CGI, art. 223 sexies
+    annee_effet: 2012
+    parametres:
+      - {quoi: "taux sur le revenu fiscal de référence d'un célibataire entre 250 000 € et 500 000 €", avant: néant, apres: 3 %}
+      - {quoi: "taux au-delà de 500 000 € (célibataire ; seuils doublés pour un couple)", avant: néant, apres: 4 %}
+    statut: en_vigueur
+    note: Présentée comme temporaire, jusqu'au retour du déficit sous 3 % du PIB ; toujours en vigueur.
+    verification: mémoire
+
+  - id: lfr2011_4_tva_7
+    gouvernement: fillon_3
+    intitule: Taux réduit de TVA de 5,5 % porté à 7 % pour la plupart des biens et services
+    instrument: tva
+    texte: {nature: loi, numero: 2011-1978, date: 2011-12-28, intitule: loi de finances rectificative pour 2011}
+    article: "13"
+    codification: CGI, art. 278 bis et 279
+    annee_effet: 2012
+    date_effet: 2012-01-01
+    parametres:
+      - {quoi: "taux intermédiaire de TVA (restauration, travaux dans les logements, transports, hébergement)", avant: "5,5 %", apres: "7 %"}
+    statut: remplacee
+    suite: lfr2012_3_tva_2014
+    verification: mémoire
+
+  - id: lfr2011_4_contribution_is_5
+    gouvernement: fillon_3
+    intitule: Contribution exceptionnelle de 5 % sur l'impôt sur les sociétés des grandes entreprises
+    instrument: is
+    texte: {nature: loi, numero: 2011-1978, date: 2011-12-28, intitule: loi de finances rectificative pour 2011}
+    article: "30"
+    codification: CGI, art. 235 ter ZAA
+    annee_effet: 2011
+    parametres:
+      - {quoi: "taux de la contribution, en pourcentage de l'IS dû", avant: néant, apres: "5 % (chiffre d'affaires supérieur à 250 000 000 €)"}
+      - {quoi: "exercices concernés", avant: néant, apres: "clos du 31 décembre 2011 au 30 décembre 2013, prorogée ensuite"}
+    statut: temporaire
+    suite: lfi2014_contribution_is_10_7
+    verification: mémoire
+
+  - id: lfr2012_tva_sociale
+    gouvernement: fillon_3
+    intitule: TVA sociale, hausse du taux normal en contrepartie d'une baisse des cotisations familiales
+    instrument: tva
+    texte: {nature: loi, numero: 2012-354, date: 2012-03-14, intitule: loi de finances rectificative pour 2012}
+    article: "2"
+    codification: CGI, art. 278
+    annee_effet: 2012
+    date_effet: 2012-10-01
+    parametres:
+      - {quoi: "taux normal de TVA", avant: "19,6 %", apres: "21,2 %"}
+      - {quoi: "cotisation patronale d'allocations familiales", avant: "5,4 %", apres: "exonération totale jusqu'à 2,1 SMIC, dégressive jusqu'à 2,4 SMIC"}
+    statut: abrogee_avant_effet
+    suite: lfr2012_2_abrogation_tva_sociale
+    verification: mémoire
+
+  - id: lfr2012_ttf
+    gouvernement: fillon_3
+    intitule: Taxe sur les transactions financières
+    instrument: autres_impots
+    texte: {nature: loi, numero: 2012-354, date: 2012-03-14, intitule: loi de finances rectificative pour 2012}
+    article: "5"
+    codification: CGI, art. 235 ter ZD
+    annee_effet: 2012
+    date_effet: 2012-08-01
+    parametres:
+      - {quoi: "taux sur les acquisitions d'actions de sociétés françaises cotées (capitalisation supérieure à 1 000 000 000 €)", avant: néant, apres: "0,1 % voté ; 0,2 % à l'entrée en vigueur (loi de finances rectificative d'août 2012) ; 0,3 % depuis 2017"}
+    statut: en_vigueur
+    verification: mémoire
+
+  # ------------------------------------------------------------------ Ayrault II
+  - id: lfr2012_2_abrogation_tva_sociale
+    gouvernement: ayrault_2
+    intitule: Abrogation de la TVA sociale avant son entrée en vigueur
+    instrument: tva
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "1"
+    annee_effet: 2012
+    parametres:
+      - {quoi: "taux normal de TVA au 1er octobre 2012", avant: "21,2 % (voté)", apres: "19,6 % (maintenu)"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfr2012_2_heures_sup
+    gouvernement: ayrault_2
+    intitule: Suppression de l'exonération des heures supplémentaires de la loi TEPA
+    instrument: cotisations_salaries
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "3"
+    codification: CGI, art. 81 quater ; CSS, art. L. 241-17 et L. 241-18
+    annee_effet: 2012
+    date_effet: 2012-08-01
+    parametres:
+      - {quoi: "exonération d'impôt sur le revenu des heures supplémentaires", avant: totale, apres: "supprimée (heures effectuées à compter du 1er août 2012)"}
+      - {quoi: "réduction de cotisations salariales sur les heures supplémentaires", avant: "21,5 % de la rémunération majorée", apres: "supprimée au 1er septembre 2012"}
+      - {quoi: "déduction forfaitaire patronale", avant: toutes entreprises, apres: entreprises de moins de 20 salariés}
+    statut: remplacee
+    suite: mues_2018_heures_sup
+    verification: mémoire
+
+  - id: lfr2012_2_contribution_isf
+    gouvernement: ayrault_2
+    intitule: Contribution exceptionnelle sur la fortune pour 2012
+    instrument: patrimoine
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "4"
+    annee_effet: 2012
+    parametres:
+      - {quoi: "contribution due en 2012 par les redevables de l'ISF", avant: néant, apres: "calculée sur l'ancien barème de 0,55 % à 1,80 %, sous déduction de l'ISF 2012"}
+    statut: temporaire
+    verification: mémoire
+
+  - id: lfr2012_2_successions
+    gouvernement: ayrault_2
+    intitule: Abattement des droits de mutation en ligne directe abaissé et rappel fiscal allongé
+    instrument: transmission
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "5"
+    codification: CGI, art. 779 et 784
+    annee_effet: 2012
+    date_effet: 2012-08-17
+    parametres:
+      - {quoi: "abattement par parent et par enfant", avant: "159 325 €", apres: "100 000 €"}
+      - {quoi: "délai de rappel des donations antérieures", avant: 10 ans, apres: 15 ans}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfr2012_2_contribution_dividendes
+    gouvernement: ayrault_2
+    intitule: Contribution additionnelle à l'impôt sur les sociétés de 3 % sur les montants distribués
+    instrument: is
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "6"
+    codification: CGI, art. 235 ter ZCA
+    annee_effet: 2012
+    parametres:
+      - {quoi: "taux sur les dividendes distribués", avant: néant, apres: 3 %}
+    statut: abrogee
+    note: Invalidée par le Conseil constitutionnel (décision n° 2017-660 QPC du 6 octobre 2017) et abrogée par la loi de finances pour 2018.
+    verification: mémoire
+
+  - id: lfi2013_tranche_45
+    gouvernement: ayrault_2
+    intitule: Tranche à 45 % du barème de l'impôt sur le revenu
+    instrument: ir
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "3"
+    codification: CGI, art. 197
+    annee_effet: 2013
+    parametres:
+      - {quoi: "taux de la dernière tranche", avant: "41 %", apres: "45 % au-delà de 150 000 € par part (revenus 2012)"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfi2013_plafond_qf
+    gouvernement: ayrault_2
+    intitule: Plafond de l'avantage du quotient familial abaissé
+    instrument: ir
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "4"
+    codification: CGI, art. 197
+    annee_effet: 2013
+    parametres:
+      - {quoi: "plafond par demi-part", avant: "2 336 €", apres: "2 000 € (revenus 2012)"}
+    statut: remplacee
+    suite: lfi2014_plafond_qf
+    verification: mémoire
+
+  - id: lfi2013_bareme_capital
+    gouvernement: ayrault_2
+    intitule: Revenus du capital imposés au barème progressif
+    instrument: ir_capital
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "9 et 10"
+    codification: CGI, art. 117 quater, 125 A, 150-0 D
+    annee_effet: 2013
+    parametres:
+      - {quoi: "dividendes et intérêts", avant: "prélèvement forfaitaire libératoire optionnel (21 % et 24 %)", apres: "barème progressif, avec un prélèvement à la source non libératoire"}
+      - {quoi: "plus-values de cession de valeurs mobilières", avant: "taux proportionnel de 19 %", apres: "barème progressif, avec abattements pour durée de détention"}
+    statut: remplacee
+    suite: lfi2018_pfu
+    verification: mémoire
+
+  - id: lfi2013_isf_bareme
+    gouvernement: ayrault_2
+    intitule: Rétablissement d'un barème progressif de l'ISF et de son plafonnement
+    instrument: patrimoine
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "13"
+    codification: CGI, art. 885 U et 885 V bis (anciens)
+    annee_effet: 2013
+    parametres:
+      - {quoi: "barème", avant: "0,25 % et 0,50 % sur la totalité", apres: "cinq tranches de 0,50 % à 1,50 % au-delà de 800 000 € (seuil d'assujettissement 1 300 000 €)"}
+      - {quoi: "plafonnement", avant: néant, apres: "impôts du foyer limités à 75 % de ses revenus"}
+    statut: remplacee
+    suite: lfi2018_ifi
+    verification: mémoire
+
+  - id: lfi2013_charges_financieres
+    gouvernement: ayrault_2
+    intitule: Limitation de la déductibilité des charges financières nettes
+    instrument: is
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "23"
+    codification: CGI, art. 212 bis
+    annee_effet: 2012
+    parametres:
+      - {quoi: "part déductible des charges financières nettes supérieures à 3 000 000 €", avant: totale, apres: "85 % (exercices 2012 et 2013), 75 % ensuite"}
+    statut: remplacee
+    verification: mémoire
+
+  - id: lfr2012_3_cice
+    gouvernement: ayrault_2
+    intitule: Crédit d'impôt pour la compétitivité et l'emploi (CICE)
+    instrument: cotisations_employeurs
+    texte: {nature: loi, numero: 2012-1510, date: 2012-12-29, intitule: loi de finances rectificative pour 2012}
+    article: "66"
+    codification: CGI, art. 244 quater C
+    annee_effet: 2013
+    parametres:
+      - {quoi: "taux sur les rémunérations n'excédant pas 2,5 SMIC", avant: néant, apres: "4 % en 2013, 6 % à partir de 2014"}
+    statut: remplacee
+    suite: lfi2018_cice_6_suppression
+    verification: mémoire
+
+  - id: lfr2012_3_tva_2014
+    gouvernement: ayrault_2
+    intitule: Taux de TVA relevés au 1er janvier 2014
+    instrument: tva
+    texte: {nature: loi, numero: 2012-1510, date: 2012-12-29, intitule: loi de finances rectificative pour 2012}
+    article: "68"
+    codification: CGI, art. 278 et 279
+    annee_effet: 2014
+    date_effet: 2014-01-01
+    parametres:
+      - {quoi: "taux normal", avant: "19,6 %", apres: "20 %"}
+      - {quoi: "taux intermédiaire", avant: "7 %", apres: "10 %"}
+      - {quoi: "taux réduit", avant: "5,5 %", apres: "5 % voté, maintenu à 5,5 % par la loi de finances pour 2014"}
+    statut: en_vigueur
+    verification: codes.droit.org (CGI, art. 278, version en vigueur modifiée par la loi n° 2012-1510, art. 68)
+
+  - id: lfss2013_casa
+    gouvernement: ayrault_2
+    intitule: Contribution additionnelle de solidarité pour l'autonomie (CASA) sur les pensions
+    instrument: csg
+    texte: {nature: loi, numero: 2012-1404, date: 2012-12-17, intitule: loi de financement de la sécurité sociale pour 2013}
+    article: "17"
+    codification: CASF, art. L. 14-10-4
+    annee_effet: 2013
+    date_effet: 2013-04-01
+    parametres:
+      - {quoi: "taux sur les pensions de retraite et d'invalidité des retraités imposables", avant: néant, apres: "0,3 %"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: retraites_2014_duree
+    gouvernement: ayrault_2
+    intitule: Allongement de la durée d'assurance requise pour le taux plein
+    instrument: retraites
+    texte: {nature: loi, numero: 2014-40, date: 2014-01-20, intitule: loi garantissant l'avenir et la justice du système de retraites}
+    article: "2"
+    codification: CSS, art. L. 161-17-3
+    annee_effet: 2020
+    parametres:
+      - {quoi: "durée d'assurance pour le taux plein", avant: "166 trimestres (génération 1955)", apres: "un trimestre de plus toutes les trois générations à partir de la génération 1958, jusqu'à 172 trimestres pour la génération 1973"}
+    statut: remplacee
+    suite: lfrss2023_age_64
+    verification: mémoire
+
+  - id: lfi2014_plafond_qf
+    gouvernement: ayrault_2
+    intitule: Plafond de l'avantage du quotient familial abaissé à nouveau
+    instrument: ir
+    texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
+    article: "4"
+    codification: CGI, art. 197
+    annee_effet: 2014
+    parametres:
+      - {quoi: "plafond par demi-part", avant: "2 000 €", apres: "1 500 € (revenus 2013)"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfi2014_taxe_hautes_remunerations
+    gouvernement: ayrault_2
+    intitule: Taxe exceptionnelle de solidarité sur les hautes rémunérations
+    instrument: remunerations
+    texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
+    article: "15"
+    annee_effet: 2014
+    parametres:
+      - {quoi: "taux, dû par l'entreprise, sur la fraction des rémunérations individuelles supérieure à 1 000 000 €", avant: néant, apres: "50 %, plafonnée à 5 % du chiffre d'affaires"}
+      - {quoi: "rémunérations concernées", avant: néant, apres: "attribuées en 2013 et 2014"}
+    statut: temporaire
+    verification: mémoire
+
+  - id: lfi2014_contribution_is_10_7
+    gouvernement: ayrault_2
+    intitule: Contribution exceptionnelle sur l'impôt sur les sociétés portée à 10,7 %
+    instrument: is
+    texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
+    article: "16"
+    codification: CGI, art. 235 ter ZAA
+    annee_effet: 2013
+    parametres:
+      - {quoi: "taux de la contribution (chiffre d'affaires supérieur à 250 000 000 €)", avant: "5 %", apres: "10,7 %"}
+      - {quoi: "exercices concernés", avant: clos jusqu'au 30 décembre 2013, apres: clos jusqu'au 30 décembre 2015}
+    statut: temporaire
+    verification: mémoire
+
+  # ------------------------------------------------------------------ Valls I et II
+  - id: lfrss2014_pacte_allegements
+    gouvernement: valls_1
+    intitule: Pacte de responsabilité, allègements de cotisations patronales
+    instrument: cotisations_employeurs
+    texte: {nature: loi, numero: 2014-892, date: 2014-08-08, intitule: loi de financement rectificative de la sécurité sociale pour 2014}
+    article: "2"
+    codification: CSS, art. L. 241-13 et L. 241-6-1
+    annee_effet: 2015
+    date_effet: 2015-01-01
+    parametres:
+      - {quoi: "réduction générale au niveau du SMIC", avant: "cotisations de sécurité sociale en partie exonérées", apres: "plus aucune cotisation recouvrée par l'URSSAF au niveau du SMIC, hors accidents du travail"}
+      - {quoi: "cotisation patronale d'allocations familiales", avant: "5,25 %", apres: "3,45 % pour les rémunérations n'excédant pas 1,6 SMIC"}
+    statut: remplacee
+    verification: mémoire
+
+  - id: lfrss2014_c3s
+    gouvernement: valls_1
+    intitule: Abattement d'assiette sur la contribution sociale de solidarité des sociétés
+    instrument: impots_production
+    texte: {nature: loi, numero: 2014-892, date: 2014-08-08, intitule: loi de financement rectificative de la sécurité sociale pour 2014}
+    article: "3"
+    codification: CSS, art. L. 651-3
+    annee_effet: 2015
+    parametres:
+      - {quoi: "abattement sur le chiffre d'affaires soumis à la C3S", avant: "760 000 €", apres: "3 250 000 €"}
+    statut: remplacee
+    verification: mémoire
+
+  - id: lfrss2014_reduction_salariale_censuree
+    gouvernement: valls_1
+    intitule: Réduction dégressive des cotisations salariales des bas salaires
+    instrument: cotisations_salaries
+    texte: {nature: loi, numero: 2014-892, date: 2014-08-08, intitule: loi de financement rectificative de la sécurité sociale pour 2014}
+    article: "1"
+    annee_effet: 2015
+    parametres:
+      - {quoi: "réduction des cotisations salariales jusqu'à 1,3 SMIC", avant: néant, apres: "censurée avant d'entrer en vigueur"}
+    statut: censuree
+    note: Décision du Conseil constitutionnel n° 2014-698 DC du 6 août 2014.
+    verification: mémoire
+
+  - id: lfr2014_reduction_ir
+    gouvernement: valls_1
+    intitule: Réduction exceptionnelle d'impôt sur le revenu des ménages modestes
+    instrument: ir
+    texte: {nature: loi, numero: 2014-891, date: 2014-08-08, intitule: loi de finances rectificative pour 2014}
+    article: "1"
+    annee_effet: 2014
+    parametres:
+      - {quoi: "réduction d'impôt sur les revenus de 2013", avant: néant, apres: "350 € pour une personne seule, 700 € pour un couple, sous un plafond de revenu fiscal de référence"}
+    statut: temporaire
+    verification: mémoire
+
+  - id: lfi2015_tranche_5_5
+    gouvernement: valls_2
+    intitule: Suppression de la première tranche du barème à 5,5 %
+    instrument: ir
+    texte: {nature: loi, numero: 2014-1654, date: 2014-12-29, intitule: loi de finances pour 2015}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2015
+    parametres:
+      - {quoi: "tranche à 5,5 %", avant: "de 6 011 € à 11 991 € par part", apres: "supprimée ; la tranche à 14 % commence à 9 690 € (revenus 2014)"}
+      - {quoi: "décote", avant: "la moitié de la différence entre 1 016 € et l'impôt", apres: "différence entre 1 135 € (personne seule) ou 1 870 € (couple) et l'impôt"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: loi_rebsamen_prime_activite
+    gouvernement: valls_2
+    intitule: Prime d'activité, en remplacement du RSA activité et de la prime pour l'emploi
+    instrument: prestations
+    texte: {nature: loi, numero: 2015-994, date: 2015-08-17, intitule: loi relative au dialogue social et à l'emploi}
+    article: "57"
+    codification: CSS, art. L. 841-1 et suivants
+    annee_effet: 2016
+    date_effet: 2016-01-01
+    parametres:
+      - {quoi: "prime pour l'emploi et RSA activité", avant: en vigueur, apres: "remplacés par la prime d'activité, prestation mensuelle des travailleurs modestes"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfss2016_pacte_famille
+    gouvernement: valls_2
+    intitule: Baisse de la cotisation d'allocations familiales étendue jusqu'à 3,5 SMIC
+    instrument: cotisations_employeurs
+    texte: {nature: loi, numero: 2015-1702, date: 2015-12-21, intitule: loi de financement de la sécurité sociale pour 2016}
+    article: "7"
+    codification: CSS, art. L. 241-6-1
+    annee_effet: 2016
+    date_effet: 2016-04-01
+    parametres:
+      - {quoi: "champ du taux réduit de 3,45 %", avant: "rémunérations n'excédant pas 1,6 SMIC", apres: "rémunérations n'excédant pas 3,5 SMIC"}
+    statut: remplacee
+    verification: mémoire
+
+  # ------------------------------------------------------------------ Cazeneuve
+  - id: lfi2017_pas
+    gouvernement: cazeneuve
+    intitule: Prélèvement à la source de l'impôt sur le revenu
+    instrument: ir
+    texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
+    article: "60"
+    codification: CGI, art. 204 A et suivants
+    annee_effet: 2019
+    date_effet: 2019-01-01
+    parametres:
+      - {quoi: "recouvrement de l'impôt sur le revenu", avant: "l'année qui suit celle des revenus", apres: "retenue à la source ou acompte, l'année des revenus"}
+    statut: en_vigueur
+    note: Entrée en vigueur prévue au 1er janvier 2018, reportée au 1er janvier 2019 par l'ordonnance n° 2017-1390 du 22 septembre 2017.
+    verification: mémoire
+
+  - id: lfi2017_is_28
+    gouvernement: cazeneuve
+    intitule: Trajectoire de baisse du taux normal de l'impôt sur les sociétés à 28 %
+    instrument: is
+    texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
+    article: "11"
+    codification: CGI, art. 219
+    annee_effet: 2017
+    parametres:
+      - {quoi: "taux normal", avant: "33,33 %", apres: "28 % sur les 75 000 premiers euros de bénéfice des PME en 2017, étendu par paliers à toutes les entreprises en 2020"}
+    statut: remplacee
+    suite: lfi2018_is_25
+    verification: mémoire
+
+  - id: lfi2017_cice_7
+    gouvernement: cazeneuve
+    intitule: Taux du CICE porté à 7 %
+    instrument: cotisations_employeurs
+    texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
+    article: "72"
+    codification: CGI, art. 244 quater C
+    annee_effet: 2017
+    parametres:
+      - {quoi: "taux du CICE", avant: "6 %", apres: "7 % (rémunérations versées à partir du 1er janvier 2017)"}
+    statut: remplacee
+    suite: lfi2018_cice_6_suppression
+    verification: mémoire
+
+  - id: lfi2017_reduction_ir_20
+    gouvernement: cazeneuve
+    intitule: Réduction d'impôt sur le revenu de 20 % pour les foyers modestes
+    instrument: ir
+    texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2017
+    parametres:
+      - {quoi: "réduction de l'impôt", avant: néant, apres: "20 % pour un revenu fiscal de référence n'excédant pas 18 500 € pour une part, dégressive jusqu'à 20 500 €"}
+    statut: remplacee
+    verification: mémoire
+
+  # ------------------------------------------------------------------ Philippe II
+  - id: lfr2017_contribution_is
+    gouvernement: philippe_2
+    intitule: Contributions exceptionnelle et additionnelle sur l'impôt sur les sociétés des très grandes entreprises
+    instrument: is
+    texte: {nature: loi, numero: 2017-1640, date: 2017-12-01, intitule: première loi de finances rectificative pour 2017}
+    article: "1"
+    annee_effet: 2017
+    parametres:
+      - {quoi: "contribution exceptionnelle (chiffre d'affaires d'au moins 1 000 000 000 €)", avant: néant, apres: "15 % de l'IS"}
+      - {quoi: "contribution additionnelle (chiffre d'affaires d'au moins 3 000 000 000 €)", avant: néant, apres: "15 % de l'IS en plus"}
+      - {quoi: "exercices concernés", avant: néant, apres: "clos du 31 décembre 2017 au 30 décembre 2018"}
+    statut: temporaire
+    verification: mémoire
+
+  - id: lfi2018_pfu
+    gouvernement: philippe_2
+    intitule: Prélèvement forfaitaire unique sur les revenus du capital
+    instrument: ir_capital
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "28"
+    codification: CGI, art. 200 A
+    annee_effet: 2018
+    parametres:
+      - {quoi: "imposition des dividendes, intérêts et plus-values mobilières", avant: barème progressif, apres: "12,8 % d'impôt sur le revenu, soit 30 % avec les prélèvements sociaux de 17,2 %, sauf option globale pour le barème"}
+    statut: en_vigueur
+    verification: codes.droit.org (CGI, art. 223 sexies, version en vigueur modifiée par la loi n° 2017-1837, art. 28)
+
+  - id: lfi2018_ifi
+    gouvernement: philippe_2
+    intitule: L'ISF remplacé par l'impôt sur la fortune immobilière (IFI)
+    instrument: patrimoine
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "31"
+    codification: CGI, art. 964 à 983
+    annee_effet: 2018
+    date_effet: 2018-01-01
+    parametres:
+      - {quoi: "assiette", avant: "patrimoine net (ISF)", apres: "patrimoine immobilier net"}
+      - {quoi: "seuil et barème", avant: "1 300 000 € ; 0,50 % à 1,50 %", apres: "inchangés"}
+    statut: en_vigueur
+    verification: codes.droit.org (CGI, art. 964 et 977, versions en vigueur modifiées par la loi n° 2017-1837, art. 31)
+
+  - id: lfi2018_th_degrevement
+    gouvernement: philippe_2
+    intitule: Dégrèvement de la taxe d'habitation sur la résidence principale pour 80 % des foyers
+    instrument: taxe_habitation
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "5"
+    codification: CGI, art. 1414 C
+    annee_effet: 2018
+    parametres:
+      - {quoi: "dégrèvement, sous un revenu fiscal de référence de 27 000 € pour une part (plus 8 000 € pour chacune des deux demi-parts suivantes, 6 000 € au-delà)", avant: néant, apres: "30 % en 2018, 65 % en 2019, 100 % en 2020"}
+    statut: remplacee
+    suite: lfi2020_th_suppression
+    verification: mémoire
+
+  - id: lfi2018_is_25
+    gouvernement: philippe_2
+    intitule: Trajectoire de baisse du taux normal de l'impôt sur les sociétés à 25 %
+    instrument: is
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "84"
+    codification: CGI, art. 219
+    annee_effet: 2018
+    parametres:
+      - {quoi: "taux normal", avant: "28 % puis 33,33 % (trajectoire de 2017)", apres: "28 % jusqu'à 500 000 € et 33,33 % au-delà en 2018 ; 31 % au-delà en 2019 ; 28 % en 2020 ; 26,5 % en 2021 ; 25 % en 2022"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfi2018_cice_6_suppression
+    gouvernement: philippe_2
+    intitule: CICE ramené à 6 % puis supprimé
+    instrument: cotisations_employeurs
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "86"
+    codification: CGI, art. 244 quater C
+    annee_effet: 2018
+    parametres:
+      - {quoi: "taux du CICE", avant: "7 %", apres: "6 % en 2018 ; supprimé pour les rémunérations versées à partir du 1er janvier 2019"}
+    statut: en_vigueur
+    suite: lfss2018_cice_allegements
+    verification: mémoire
+
+  - id: lfi2018_composante_carbone
+    gouvernement: philippe_2
+    intitule: Trajectoire de la composante carbone et convergence de la fiscalité du gazole et de l'essence
+    instrument: accises_energie
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "16"
+    codification: Code des douanes, art. 265
+    annee_effet: 2018
+    parametres:
+      - {quoi: "valeur de la tonne de dioxyde de carbone", avant: "30,50 € en 2017", apres: "44,60 € en 2018, 55 € en 2019, 65,40 € en 2020, 75,80 € en 2021, 86,20 € en 2022"}
+    statut: remplacee
+    note: La hausse prévue au 1er janvier 2019 a été annulée (loi de finances pour 2019) ; la valeur reste 44,60 €.
+    verification: mémoire
+
+  - id: lfss2018_csg_cotisations
+    gouvernement: philippe_2
+    intitule: Hausse de la CSG et suppression des cotisations salariales maladie et chômage
+    instrument: csg
+    texte: {nature: loi, numero: 2017-1836, date: 2017-12-30, intitule: loi de financement de la sécurité sociale pour 2018}
+    article: "8"
+    codification: CSS, art. L. 136-8
+    annee_effet: 2018
+    date_effet: 2018-01-01
+    parametres:
+      - {quoi: "CSG sur les revenus d'activité", avant: "7,5 %", apres: "9,2 %"}
+      - {quoi: "CSG sur les pensions au taux normal", avant: "6,6 %", apres: "8,3 %"}
+      - {quoi: "CSG sur les revenus du patrimoine et de placement", avant: "8,2 %", apres: "9,9 %"}
+      - {quoi: "cotisation salariale maladie", avant: "0,75 %", apres: supprimée au 1er janvier 2018}
+      - {quoi: "cotisation salariale d'assurance chômage", avant: "2,40 %", apres: "0,95 % au 1er janvier 2018, supprimée au 1er octobre 2018"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfss2018_cice_allegements
+    gouvernement: philippe_2
+    intitule: Le CICE transformé en baisse pérenne de cotisations patronales
+    instrument: cotisations_employeurs
+    texte: {nature: loi, numero: 2017-1836, date: 2017-12-30, intitule: loi de financement de la sécurité sociale pour 2018}
+    article: "9"
+    codification: CSS, art. L. 241-2-1 et L. 241-13
+    annee_effet: 2019
+    date_effet: 2019-01-01
+    parametres:
+      - {quoi: "cotisation patronale d'assurance maladie sur les rémunérations n'excédant pas 2,5 SMIC", avant: "13 %", apres: "7 % (réduction de 6 points)"}
+      - {quoi: "réduction générale", avant: "hors retraite complémentaire et chômage", apres: "étendue aux contributions d'assurance chômage et de retraite complémentaire au 1er octobre 2019"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: mues_2018_pepa
+    gouvernement: philippe_2
+    intitule: Prime exceptionnelle de pouvoir d'achat exonérée
+    instrument: remunerations
+    texte: {nature: loi, numero: 2018-1213, date: 2018-12-24, intitule: loi portant mesures d'urgence économiques et sociales}
+    article: "1"
+    annee_effet: 2019
+    parametres:
+      - {quoi: "exonération d'impôt et de cotisations d'une prime versée du 11 décembre 2018 au 31 mars 2019", avant: néant, apres: "jusqu'à 1 000 € par salarié rémunéré moins de 3 SMIC"}
+    statut: temporaire
+    verification: mémoire
+
+  - id: mues_2018_heures_sup
+    gouvernement: philippe_2
+    intitule: Heures supplémentaires exonérées d'impôt sur le revenu et de cotisations salariales
+    instrument: cotisations_salaries
+    texte: {nature: loi, numero: 2018-1213, date: 2018-12-24, intitule: loi portant mesures d'urgence économiques et sociales}
+    article: "2"
+    codification: CGI, art. 81 quater ; CSS, art. L. 241-17
+    annee_effet: 2019
+    date_effet: 2019-01-01
+    parametres:
+      - {quoi: "exonération d'impôt sur le revenu des heures supplémentaires", avant: néant, apres: "dans la limite de 5 000 € par an"}
+      - {quoi: "réduction des cotisations salariales sur les heures supplémentaires", avant: "prévue au 1er septembre 2019 (LFSS 2019)", apres: "avancée au 1er janvier 2019"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: mues_2018_csg_pensions
+    gouvernement: philippe_2
+    intitule: Taux de CSG de 6,6 % rétabli pour les pensions des foyers modestes
+    instrument: csg
+    texte: {nature: loi, numero: 2018-1213, date: 2018-12-24, intitule: loi portant mesures d'urgence économiques et sociales}
+    article: "3"
+    codification: CSS, art. L. 136-8
+    annee_effet: 2019
+    parametres:
+      - {quoi: "CSG sur les pensions sous un seuil de revenu fiscal de référence", avant: "8,3 %", apres: "6,6 %"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: decret_2018_prime_activite
+    gouvernement: philippe_2
+    intitule: Revalorisation exceptionnelle de la prime d'activité au niveau du SMIC
+    instrument: prestations
+    texte: {nature: décret, numero: 2018-1197, date: 2018-12-21, intitule: décret portant revalorisation exceptionnelle de la prime d'activité}
+    article: "1"
+    annee_effet: 2019
+    date_effet: 2019-01-01
+    parametres:
+      - {quoi: "bonification individuelle", avant: "montant maximal au niveau de 1,2 SMIC", apres: "relevée de 90 € par mois au niveau du SMIC"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfss2019_heures_sup_cotisations
+    gouvernement: philippe_2
+    intitule: Réduction des cotisations salariales d'assurance vieillesse sur les heures supplémentaires
+    instrument: cotisations_salaries
+    texte: {nature: loi, numero: 2018-1203, date: 2018-12-22, intitule: loi de financement de la sécurité sociale pour 2019}
+    article: "7"
+    codification: CSS, art. L. 241-17
+    annee_effet: 2019
+    parametres:
+      - {quoi: "cotisations salariales d'assurance vieillesse sur les heures supplémentaires", avant: dues, apres: "réduites, au taux fixé par décret"}
+    statut: en_vigueur
+    verification: codes.droit.org (CSS, art. L. 241-17, version en vigueur modifiée par la loi n° 2018-1203, art. 7)
+
+  - id: lfss2019_revalorisation_0_3
+    gouvernement: philippe_2
+    intitule: Revalorisation des pensions et des prestations limitée à 0,3 %
+    instrument: prestations
+    texte: {nature: loi, numero: 2018-1203, date: 2018-12-22, intitule: loi de financement de la sécurité sociale pour 2019}
+    article: "68"
+    annee_effet: 2019
+    parametres:
+      - {quoi: "revalorisation des pensions de retraite et des prestations familiales en 2019 et 2020", avant: "l'inflation", apres: "0,3 % par an"}
+    statut: temporaire
+    note: La loi de financement pour 2020 a rétabli l'indexation sur l'inflation pour les pensions inférieures à 2 000 € par mois.
+    verification: mémoire
+
+  - id: tsn_2019
+    gouvernement: philippe_2
+    intitule: Taxe sur les services numériques et trajectoire de l'IS des grandes entreprises
+    instrument: is
+    texte: {nature: loi, numero: 2019-759, date: 2019-07-24, intitule: loi portant création d'une taxe sur les services numériques et modification de la trajectoire de baisse de l'impôt sur les sociétés}
+    article: "1 et 4"
+    codification: CGI, art. 299 et suivants
+    annee_effet: 2019
+    parametres:
+      - {quoi: "taxe sur les services numériques (chiffre d'affaires mondial de 750 000 000 € et français de 25 000 000 €)", avant: néant, apres: "3 % du produit de la publicité ciblée et des places de marché"}
+      - {quoi: "taux normal de l'IS en 2019 pour un chiffre d'affaires d'au moins 250 000 000 €", avant: "31 %", apres: "33,33 %"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfi2020_ir_11
+    gouvernement: philippe_2
+    intitule: Taux de la deuxième tranche de l'impôt sur le revenu ramené de 14 à 11 %
+    instrument: ir
+    texte: {nature: loi, numero: 2019-1479, date: 2019-12-28, intitule: loi de finances pour 2020}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2020
+    parametres:
+      - {quoi: "taux de la deuxième tranche", avant: "14 %", apres: "11 % (revenus 2020, appliqué par le prélèvement à la source dès janvier 2020)"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfi2020_th_suppression
+    gouvernement: philippe_2
+    intitule: Suppression de la taxe d'habitation sur les résidences principales
+    instrument: taxe_habitation
+    texte: {nature: loi, numero: 2019-1479, date: 2019-12-28, intitule: loi de finances pour 2020}
+    article: "16"
+    codification: CGI, art. 1407 et 1414 C
+    annee_effet: 2020
+    parametres:
+      - {quoi: "foyers sous les plafonds de 2018", avant: "dégrèvement de 65 % (2019)", apres: "dégrèvement de 100 % en 2020"}
+      - {quoi: "autres foyers", avant: aucun allègement, apres: "exonération de 30 % en 2021, 65 % en 2022, suppression en 2023"}
+      - {quoi: "ressources des collectivités", avant: taxe d'habitation, apres: "part départementale de la taxe foncière aux communes, fraction de TVA aux départements et aux intercommunalités"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfi2020_is_grandes_entreprises
+    gouvernement: philippe_2
+    intitule: Trajectoire de l'IS des entreprises d'au moins 250 000 000 € de chiffre d'affaires
+    instrument: is
+    texte: {nature: loi, numero: 2019-1479, date: 2019-12-28, intitule: loi de finances pour 2020}
+    article: "39"
+    codification: CGI, art. 219
+    annee_effet: 2020
+    parametres:
+      - {quoi: "taux normal au-delà de 500 000 € de bénéfice", avant: "28 % en 2020 (trajectoire de 2018)", apres: "31 % en 2020, 27,5 % en 2021, 25 % en 2022"}
+    statut: en_vigueur
+    verification: mémoire
+
+  # ------------------------------------------------------------------ Castex
+  - id: lfi2021_cvae_regions
+    gouvernement: castex
+    intitule: Baisse des impôts de production, suppression de la part régionale de la CVAE
+    instrument: impots_production
+    texte: {nature: loi, numero: 2020-1721, date: 2020-12-29, intitule: loi de finances pour 2021}
+    article: "8"
+    codification: CGI, art. 1586 ter, 1586 sexies et 1647 B sexies
+    annee_effet: 2021
+    parametres:
+      - {quoi: "taux de la CVAE", avant: "1,5 %", apres: "0,75 %"}
+      - {quoi: "plafonnement de la contribution économique territoriale", avant: "3 % de la valeur ajoutée", apres: "2 %"}
+    statut: remplacee
+    suite: lfi2023_cvae
+    verification: codes.droit.org (CGI, art. 1586 sexies, version en vigueur modifiée par la loi n° 2020-1721, art. 8)
+
+  - id: lfi2021_valeurs_locatives
+    gouvernement: castex
+    intitule: Valeurs locatives des établissements industriels divisées par deux
+    instrument: impots_production
+    texte: {nature: loi, numero: 2020-1721, date: 2020-12-29, intitule: loi de finances pour 2021}
+    article: "29"
+    codification: CGI, art. 1499
+    annee_effet: 2021
+    parametres:
+      - {quoi: "taux d'intérêt appliqué au prix de revient des établissements industriels (taxe foncière et CFE)", avant: "8 % (sol) et 12 % (constructions)", apres: "4 % et 6 %"}
+    statut: en_vigueur
+    verification: codes.droit.org (CGI, art. 1499, version en vigueur modifiée par la loi n° 2020-1721, art. 29)
+
+  # ------------------------------------------------------------------ Borne
+  - id: lfr2022_audiovisuel
+    gouvernement: borne
+    intitule: Suppression de la contribution à l'audiovisuel public
+    instrument: autres_impots
+    texte: {nature: loi, numero: 2022-1157, date: 2022-08-16, intitule: loi de finances rectificative pour 2022}
+    article: "1"
+    annee_effet: 2022
+    parametres:
+      - {quoi: "contribution à l'audiovisuel public", avant: "138 € par foyer redevable de la taxe d'habitation (métropole, 2022)", apres: supprimée dès 2022}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfr2022_heures_sup
+    gouvernement: borne
+    intitule: Plafond d'exonération des heures supplémentaires relevé
+    instrument: ir
+    texte: {nature: loi, numero: 2022-1157, date: 2022-08-16, intitule: loi de finances rectificative pour 2022}
+    article: "4"
+    codification: CGI, art. 81 quater
+    annee_effet: 2022
+    parametres:
+      - {quoi: "plafond annuel d'exonération d'impôt sur le revenu", avant: "5 000 €", apres: "7 500 €"}
+    statut: en_vigueur
+    verification: codes.droit.org (CGI, art. 81 quater, version en vigueur modifiée par la loi n° 2022-1157, art. 4)
+
+  - id: pouvoir_achat_2022_ppv
+    gouvernement: borne
+    intitule: Prime de partage de la valeur
+    instrument: remunerations
+    texte: {nature: loi, numero: 2022-1158, date: 2022-08-16, intitule: loi portant mesures d'urgence pour la protection du pouvoir d'achat}
+    article: "1"
+    annee_effet: 2022
+    parametres:
+      - {quoi: "exonération de cotisations d'une prime versée par l'employeur", avant: "prime exceptionnelle limitée à 1 000 € (2 000 € avec accord)", apres: "jusqu'à 3 000 € par an, 6 000 € avec un accord d'intéressement ; exonérée d'impôt jusqu'au 31 décembre 2023 sous 3 SMIC"}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfi2023_cvae
+    gouvernement: borne
+    intitule: Suppression de la CVAE en deux ans
+    instrument: impots_production
+    texte: {nature: loi, numero: 2022-1726, date: 2022-12-30, intitule: loi de finances pour 2023}
+    article: "55"
+    codification: CGI, art. 1586 ter, 1586 quater et 1647 B sexies
+    annee_effet: 2023
+    parametres:
+      - {quoi: "taux de la CVAE", avant: "0,75 %", apres: "0,375 % en 2023, suppression en 2024"}
+      - {quoi: "plafonnement de la contribution économique territoriale", avant: "2 % de la valeur ajoutée", apres: "1,625 % en 2023"}
+    statut: remplacee
+    suite: lfi2024_cvae_etalement
+    verification: codes.droit.org (CGI, art. 1586 ter et 1647 B sexies, versions en vigueur modifiées par la loi n° 2022-1726, art. 55)
+
+  - id: lfrss2023_age_64
+    gouvernement: borne
+    intitule: Relèvement de l'âge d'ouverture des droits à la retraite de 62 à 64 ans
+    instrument: retraites
+    texte: {nature: loi, numero: 2023-270, date: 2023-04-14, intitule: loi de financement rectificative de la sécurité sociale pour 2023}
+    article: "10"
+    codification: CSS, art. L. 161-17-2 et L. 161-17-3
+    annee_effet: 2023
+    date_effet: 2023-09-01
+    parametres:
+      - {quoi: "âge d'ouverture des droits", avant: 62 ans, apres: "64 ans, relevé de 3 mois par génération à partir des assurés nés le 1er septembre 1961"}
+      - {quoi: "durée d'assurance pour le taux plein", avant: "172 trimestres pour la génération 1973", apres: "172 trimestres dès la génération 1965"}
+    statut: suspendue
+    suite: lfss2026_suspension_retraites
+    verification: codes.droit.org (CSS, art. L. 161-17-2 et L. 161-17-3, versions en vigueur modifiées par la loi n° 2023-270, art. 10)
+
+  - id: lfrss2023_regimes_speciaux
+    gouvernement: borne
+    intitule: Fermeture des principaux régimes spéciaux de retraite aux nouveaux embauchés
+    instrument: retraites
+    texte: {nature: loi, numero: 2023-270, date: 2023-04-14, intitule: loi de financement rectificative de la sécurité sociale pour 2023}
+    article: "1"
+    annee_effet: 2023
+    date_effet: 2023-09-01
+    parametres:
+      - {quoi: "affiliation des agents recrutés à partir du 1er septembre 2023 (RATP, industries électriques et gazières, Banque de France, clercs de notaire, Conseil économique, social et environnemental)", avant: régime spécial, apres: régime général}
+    statut: en_vigueur
+    verification: mémoire
+
+  - id: lfi2024_cvae_etalement
+    gouvernement: borne
+    intitule: Suppression de la CVAE étalée jusqu'en 2027
+    instrument: impots_production
+    texte: {nature: loi, numero: 2023-1322, date: 2023-12-29, intitule: loi de finances pour 2024}
+    article: "79"
+    codification: CGI, art. 1586 quater
+    annee_effet: 2024
+    parametres:
+      - {quoi: "taux de la CVAE", avant: "suppression en 2024", apres: "0,28 % en 2024, 0,19 % en 2025, 0,09 % en 2026, suppression en 2027"}
+    statut: remplacee
+    note: La loi de finances pour 2025 a de nouveau reporté la baisse ; le calendrier en vigueur est à lire dans l'art. 1586 quater du CGI.
+    verification: mémoire
+
+  # ------------------------------------------------------------------ Bayrou
+  - id: lfi2025_cdhr
+    gouvernement: bayrou
+    intitule: Contribution différentielle sur les hauts revenus
+    instrument: ir
+    texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
+    article: "10"
+    codification: CGI, art. 224
+    annee_effet: 2025
+    note: Le projet a été déposé par le gouvernement Barnier (PLF 2025, AN n° 324) ; la loi est promulguée sous le gouvernement Bayrou.
+    parametres:
+      - {quoi: "imposition minimale du revenu (impôt sur le revenu et CEHR comprises)", avant: néant, apres: "20 % pour un revenu fiscal de référence supérieur à 250 000 € (personne seule) ou 500 000 € (couple), revenus 2025"}
+    statut: temporaire
+    verification: codes.droit.org (CGI, art. 224, version en vigueur modifiée par la loi n° 2025-127, art. 10)
+
+  - id: lfi2025_cebge
+    gouvernement: bayrou
+    intitule: Contribution exceptionnelle sur les bénéfices des grandes entreprises
+    instrument: is
+    texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
+    article: "48"
+    annee_effet: 2025
+    note: Le projet a été déposé par le gouvernement Barnier ; la loi est promulguée sous le gouvernement Bayrou.
+    parametres:
+      - {quoi: "taux, en pourcentage de l'IS dû, pour un chiffre d'affaires d'au moins 1 000 000 000 €", avant: néant, apres: "20,6 % (jusqu'à 3 000 000 000 €) et 41,2 % au-delà, premier exercice clos à compter du 31 décembre 2025"}
+    statut: temporaire
+    verification: mémoire
+
+  - id: lfss2025_allegements
+    gouvernement: bayrou
+    intitule: Refonte des allègements généraux de cotisations patronales
+    instrument: cotisations_employeurs
+    texte: {nature: loi, numero: 2025-199, date: 2025-02-28, intitule: loi de financement de la sécurité sociale pour 2025}
+    article: "18"
+    codification: CSS, art. L. 241-13
+    annee_effet: 2025
+    parametres:
+      - {quoi: "seuil du taux réduit de cotisation d'assurance maladie", avant: "2,5 SMIC", apres: "2,25 SMIC au 1er janvier 2025"}
+      - {quoi: "seuil du taux réduit de cotisation d'allocations familiales", avant: "3,5 SMIC", apres: "3,3 SMIC au 1er janvier 2025"}
+      - {quoi: "réduction générale", avant: "dégressive jusqu'à 1,6 SMIC, plus les deux taux réduits", apres: "réduction dégressive unique jusqu'à 3 SMIC au 1er janvier 2026, les taux réduits supprimés"}
+    statut: en_vigueur
+    verification: codes.droit.org (CSS, art. L. 241-13, version en vigueur modifiée par la loi n° 2025-199, art. 18)
+
+  # ------------------------------------------------------------------ Lecornu II
+  - id: lfss2026_suspension_retraites
+    gouvernement: lecornu_2
+    intitule: Suspension du relèvement de l'âge d'ouverture des droits à la retraite
+    instrument: retraites
+    texte: {nature: loi, numero: 2025-1403, date: 2025-12-30, intitule: loi de financement de la sécurité sociale pour 2026}
+    article: non identifié (texte consolidé lu, article de la loi non relu)
+    codification: CSS, art. L. 161-17-2
+    annee_effet: 2026
+    parametres:
+      - {quoi: "âge d'ouverture des droits des assurés nés du 1er janvier 1963 au 31 mars 1965", avant: "62 ans et 9 mois (1963), 63 ans (1964), 63 ans et 3 mois (1965)", apres: "62 ans et 9 mois"}
+      - {quoi: "âge des générations suivantes", avant: "+3 mois par génération jusqu'à 64 ans pour la génération 1968", apres: "63 ans pour les assurés nés d'avril à décembre 1965, puis +3 mois par génération jusqu'à 64 ans pour la génération 1969"}
+    statut: en_vigueur
+    verification: codes.droit.org (CSS, art. L. 161-17-2, texte en vigueur, qui nomme la loi n° 2025-1403)
