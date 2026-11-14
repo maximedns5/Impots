@@ -27,6 +27,13 @@ prix, taux et ajustement flux-stocks que le jumeau) ; le jumeau BAT LE NAÏF si 
 strictement plus petite. La note de la période : la part des cibles tenues, et la part où
 le jumeau bat le naïf. Un jumeau qui ne bat pas le naïf le dit.
 
+LE NAÏF MÉCANIQUE (amendement de D-417), un second point de comparaison : la même
+trajectoire, les mêmes exogènes ET les mêmes chocs, sans aucun bloc de comportement ni de
+bouclage (le choc entre au compte des APU et à la dette, rien d'autre ne bouge), donné
+par un second simulateur. Une cible dont le champ n'est pas écrit sans comportement
+(l'emploi, le chômage, les créations) y prend la valeur du naïf : sans comportement,
+rien ne la bouge. Ce que le jumeau gagne sur lui est la seule valeur de sa dynamique.
+
 L'ESTIMATION. Les θ estimés minimisent, dans la boîte [0 ; 1] de chacun (jamais au-delà
 des plages publiées) :
 
@@ -50,7 +57,7 @@ from typing import Any
 
 import numpy as np
 
-from impots.jumeau.etat import Etat
+from impots.jumeau.etat import ChampAbsent, Etat
 
 
 class ApprentissageError(ValueError):
@@ -186,6 +193,7 @@ class Rejeu:
     jumeau: Mapping[str, Mapping[int, np.ndarray]]
     naif: Mapping[str, Mapping[int, np.ndarray]]
     publie: Mapping[str, Mapping[int, float]]
+    mecanique: Mapping[str, Mapping[int, np.ndarray]] = field(default_factory=dict)
 
 
 def _serie(cible: Cible, etats: Mapping[int, Etat], depart: Etat, annees: Sequence[int],
@@ -197,7 +205,8 @@ def _serie(cible: Cible, etats: Mapping[int, Etat], depart: Etat, annees: Sequen
 
 
 def rejouer(fenetre: Fenetre, theta: Mapping[str, Any], simulateur: Simulateur,
-            observateur: Observateur, cibles: Sequence[Cible]) -> Rejeu:
+            observateur: Observateur, cibles: Sequence[Cible],
+            mecanique: Simulateur | None = None) -> Rejeu:
     trajectoire = simulateur(fenetre, theta)
     if tuple(trajectoire.annees) != fenetre.annees:
         raise ApprentissageError(f"le simulateur rend {trajectoire.annees}, la fenêtre "
@@ -212,7 +221,18 @@ def rejouer(fenetre: Fenetre, theta: Mapping[str, Any], simulateur: Simulateur,
         naif[c.nom] = _serie(c, reference, depart, fenetre.notees, c.jumeau, c.ajout)
         obs = _serie(c, publies, depart, fenetre.notees, c.publie or c.jumeau, 0.0)
         publie[c.nom] = {a: float(np.asarray(v).reshape(-1)[0]) for a, v in obs.items()}
-    return Rejeu(fenetre, jumeau, naif, publie)
+    meca: dict[str, dict[int, np.ndarray]] = {}
+    if mecanique is not None:
+        sans = mecanique(fenetre, theta)
+        if tuple(sans.annees) != fenetre.annees:
+            raise ApprentissageError(f"le naïf mécanique rend {sans.annees}")
+        etats = dict(zip(sans.annees, sans.variante, strict=True))
+        for c in cibles:
+            try:
+                meca[c.nom] = _serie(c, etats, depart, fenetre.notees, c.jumeau, c.ajout)
+            except ChampAbsent:
+                meca[c.nom] = dict(naif[c.nom])
+    return Rejeu(fenetre, jumeau, naif, publie, meca)
 
 
 # --------------------------------------------------------------------------- #
@@ -226,6 +246,8 @@ class LigneNote:
     erreurs_naif: Mapping[int, float]
     reqm: float
     reqm_naif: float
+    erreurs_mecanique: Mapping[int, float] | None = None
+    reqm_mecanique: float | None = None
 
     @property
     def tenue(self) -> bool:
@@ -238,6 +260,14 @@ class LigneNote:
     @property
     def bat_naif(self) -> bool:
         return self.reqm < self.reqm_naif
+
+    @property
+    def mecanique_tenu(self) -> bool | None:
+        return None if self.reqm_mecanique is None else self.reqm_mecanique <= self.tolerance
+
+    @property
+    def bat_mecanique(self) -> bool | None:
+        return None if self.reqm_mecanique is None else self.reqm < self.reqm_mecanique
 
 
 @dataclass(frozen=True)
@@ -257,6 +287,14 @@ class Note:
     @property
     def battues(self) -> int:
         return sum(ligne.bat_naif for ligne in self.lignes)
+
+    @property
+    def mecanique_tenues(self) -> int:
+        return sum(bool(ligne.mecanique_tenu) for ligne in self.lignes)
+
+    @property
+    def battues_mecanique(self) -> int:
+        return sum(bool(ligne.bat_mecanique) for ligne in self.lignes)
 
     @property
     def part_tenue(self) -> float:
@@ -283,6 +321,8 @@ def noter(periode: str, rejeux: Sequence[Rejeu], cibles: Sequence[Cible],
     for c in cibles:
         erreurs: dict[int, float] = {}
         naif: dict[int, float] = {}
+        meca: dict[int, float] = {}
+        avec_meca = all(c.nom in r.mecanique for r in rejeux)
         for r in rejeux:
             for a in r.fenetre.notees:
                 if a in erreurs:
@@ -290,20 +330,28 @@ def noter(periode: str, rejeux: Sequence[Rejeu], cibles: Sequence[Cible],
                 obs = r.publie[c.nom][a]
                 erreurs[a] = _scalaire(r.jumeau[c.nom][a], c.nom) - obs
                 naif[a] = _scalaire(r.naif[c.nom][a], c.nom) - obs
+                if avec_meca:
+                    meca[a] = _scalaire(r.mecanique[c.nom][a], c.nom) - obs
         e, en = np.array(list(erreurs.values())), np.array(list(naif.values()))
         lignes.append(LigneNote(cible=c.nom, tolerance=c.tolerance,
                                 erreurs=dict(sorted(erreurs.items())),
                                 erreurs_naif=dict(sorted(naif.items())),
                                 reqm=float(np.sqrt(np.mean(e ** 2))),
-                                reqm_naif=float(np.sqrt(np.mean(en ** 2)))))
+                                reqm_naif=float(np.sqrt(np.mean(en ** 2))),
+                                erreurs_mecanique=dict(sorted(meca.items()))
+                                if avec_meca else None,
+                                reqm_mecanique=float(np.sqrt(np.mean(
+                                    np.array(list(meca.values())) ** 2)))
+                                if avec_meca else None))
     return Note(periode=periode, lignes=tuple(lignes), non_notees=dict(non_notees or {}))
 
 
 def evaluer(periode: str, schema: Schema, theta: Mapping[str, Any], simulateur: Simulateur,
             observateur: Observateur, cibles: Sequence[Cible],
-            non_notees: Mapping[str, str] | None = None) -> tuple[Note, tuple[Rejeu, ...]]:
+            non_notees: Mapping[str, str] | None = None,
+            mecanique: Simulateur | None = None) -> tuple[Note, tuple[Rejeu, ...]]:
     """Rejoue les fenêtres d'une période à θ et les note."""
-    rejeux = tuple(rejouer(f, theta, simulateur, observateur, cibles)
+    rejeux = tuple(rejouer(f, theta, simulateur, observateur, cibles, mecanique)
                    for f in schema.fenetres(periode))
     return noter(periode, rejeux, cibles, non_notees), rejeux
 

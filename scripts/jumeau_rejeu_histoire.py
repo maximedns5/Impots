@@ -6,7 +6,8 @@ D-417 ; le rapport porte son commit et refuse un arbre modifié.
 
 Ce qui tourne, dans l'ordre : l'estimation des θ de `rejeu_histoire.ESTIMES` (les autres
 à ½) ; la note de l'estimation et celle du test aux θ estimés ; la note du test à θ½,
-pour dire ce que l'estimation apporte. Rien d'autre.
+pour dire ce que l'estimation apporte ; chaque note contre le naïf et contre le naïf
+mécanique (l'amendement de D-417). Rien d'autre.
 """
 
 from __future__ import annotations
@@ -36,11 +37,15 @@ def _commit() -> str:
 
 def _note(note: app.Note) -> dict:
     return {"periode": note.periode, "tenues": note.tenues, "naif_tenues": note.naif_tenues,
-            "battues": note.battues, "cibles": len(note.lignes),
+            "battues": note.battues, "mecanique_tenues": note.mecanique_tenues,
+            "battues_mecanique": note.battues_mecanique, "cibles": len(note.lignes),
             "non_notees": dict(note.non_notees),
             "lignes": [{"cible": ligne.cible, "tolerance": ligne.tolerance,
                         "reqm": ligne.reqm, "reqm_naif": ligne.reqm_naif,
+                        "reqm_mecanique": ligne.reqm_mecanique,
                         "tenue": ligne.tenue, "bat_naif": ligne.bat_naif,
+                        "bat_mecanique": ligne.bat_mecanique,
+                        "erreurs_mecanique": ligne.erreurs_mecanique,
                         "erreurs": ligne.erreurs, "erreurs_naif": ligne.erreurs_naif}
                        for ligne in note.lignes]}
 
@@ -52,9 +57,12 @@ def main() -> None:
     args = parser.parse_args()
     commit = _commit()
     exogenes = rh.exogenes_publies()
-    simuler = rh.simulateur(population=population_depuis(), cellules=Cellules.lire(),
+    cellules, base = Cellules.lire(), votees.mesures()
+    simuler = rh.simulateur(population=population_depuis(), cellules=cellules,
                             exogenes=exogenes, observateur=historique.etat_initial,
-                            votees=votees.mesures())
+                            votees=base)
+    mecanique = rh.simulateur_mecanique(exogenes=exogenes, cellules=cellules,
+                                        observateur=historique.etat_initial, votees=base)
     cibles = rh.cibles(100.0 * exogenes.croissance_emploi)
     fixes = {k: 0.5 for k in thetas.REGISTRE if k not in rh.ESTIMES}
     estimation = app.estimer(app.residus(rh.SCHEMA, simuler, historique.etat_initial,
@@ -65,7 +73,7 @@ def main() -> None:
                                 ("test_theta_demi", "test",
                                  dict.fromkeys(thetas.REGISTRE, 0.5))):
         note, _ = app.evaluer(periode, rh.SCHEMA, theta, simuler, historique.etat_initial,
-                              cibles, rh.NON_NOTEES)
+                              cibles, rh.NON_NOTEES, mecanique)
         notes[nom] = _note(note)
     rapport = {"decision": "D-417", "commit": commit,
                "exogenes": {"croissance_tendance": exogenes.croissance_tendance,

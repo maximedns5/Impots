@@ -416,3 +416,28 @@ def simulateur(*, population: Any, cellules: Any, exogenes: Exogenes,
         return calculer(depart, entrees=e, mesures=mesures, theta=theta, blocs=blocs,
                         boucles=boucles)
     return simuler
+
+
+def simulateur_mecanique(*, exogenes: Exogenes, observateur: app.Observateur,
+                         votees: Sequence[Any], cellules: Any) -> app.Simulateur:
+    """Le naïf mécanique (amendement de D-417) : la tendance, les chocs observés au compte
+    des APU (bloc `mesures`) et l'ajustement flux-stocks publié, sans aucun bloc de
+    comportement ni de bouclage ; les mêmes entrées que `simulateur`."""
+    from impots.jumeau.blocs.mesures import Mesures
+    from impots.jumeau.blocs.tendance import Tendance
+    from impots.jumeau.trajectoire import calculer
+
+    preparees: dict[Fenetre, tuple[Any, ...]] = {}
+
+    def simuler(fenetre: Fenetre, theta: Mapping[str, Any]) -> Any:
+        if fenetre not in preparees:
+            publies = {a: observateur(a) for a in (fenetre.depart, *fenetre.annees)}
+            depart = publies[fenetre.depart]
+            e = entrees(fenetre, exogenes, depart)
+            pib = [Tendance(depart).chemin(e, k)[0] for k in range(len(e.annees))]
+            preparees[fenetre] = (depart, e, chocs_observes(fenetre, publies, pib, votees,
+                                                            cellules))
+        depart, e, mesures = preparees[fenetre]
+        blocs = [Tendance(depart), Mesures(), AjustementObserve(exogenes.sfa)]
+        return calculer(depart, entrees=e, mesures=mesures, theta=theta, blocs=blocs)
+    return simuler

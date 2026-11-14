@@ -153,6 +153,15 @@ def _mesures(annees, entrees):
     return out
 
 
+def _mecanique(fenetre, theta):
+    """Le naïf mécanique : la tendance et les chocs au compte des APU, rien d'autre."""
+    from impots.jumeau.blocs.mesures import Mesures
+
+    e = _entrees(fenetre.annees)
+    return calculer(DEPART, entrees=e, mesures=_mesures(fenetre.annees, e), theta=theta,
+                    blocs=[Tendance(DEPART), Mesures()])
+
+
 def _simuler(fenetre, theta):
     e = _entrees(fenetre.annees)
     blocs, boucles = ordre_structurel(DEPART, POPULATION, CELLULES)
@@ -186,13 +195,21 @@ def test_le_modele_structurel_retrouve_ses_vrais_theta(histoire_synthetique):
     # Noté sur le test, aux θ estimés : chaque cible tenue, le naïf calculé et battu là
     # où les chocs bougent la cible.
     note, _ = app.evaluer("test", SCHEMA_SYNTHETIQUE, est.theta, _simuler,
-                          histoire_synthetique, CIBLES)
+                          histoire_synthetique, CIBLES, mecanique=_mecanique)
     assert note.tenues == len(CIBLES)
     for ligne in note.lignes:
         assert ligne.reqm < 0.05 * ligne.tolerance, ligne.cible
     for nom in ("pib_volume", "emploi", "chomage", "solde", "dette", "recettes_d61"):
         ligne = note.ligne(nom)
         assert ligne.reqm_naif > 10 * ligne.reqm and ligne.bat_naif, nom
+    # Le naïf mécanique : sans comportement, l'activité est celle du naïf ; les chocs
+    # entrent au compte, le jumeau le bat par sa seule dynamique.
+    for nom in ("pib_volume", "emploi", "chomage", "creations"):
+        ligne = note.ligne(nom)
+        assert ligne.reqm_mecanique == pytest.approx(ligne.reqm_naif, abs=1e-9), nom
+    assert note.ligne("recettes_d61").reqm_mecanique != pytest.approx(
+        note.ligne("recettes_d61").reqm_naif)
+    assert note.ligne("solde").bat_mecanique and note.battues_mecanique >= 5
 
 
 # --------------------------------------------------------------------------- #

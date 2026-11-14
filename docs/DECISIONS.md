@@ -30929,11 +30929,47 @@ votées (pas une mesure censurée), la dépense du jumeau redevient la publiée,
 sont ceux du moteur ; les exogènes publiés se chargent. Avec `test_jumeau*.py` : 208
 verts, ces 12 compris, 1 sauté ; `ruff check src tests scripts` propre.
 
+### L'amendement de la relecture : le naïf mécanique, avant tout calcul
+
+Le responsable, à la relecture, avant que rien ne tourne : sans un second point de
+comparaison, la note des recettes, du solde et de la dette serait en partie mécanique,
+les chocs observés y redonnant presque les recettes publiées des années votées, que le
+naïf ne reçoit pas. S'ajoute donc le **naïf mécanique** : la même trajectoire, les mêmes
+exogènes et les mêmes chocs observés, sans aucun bloc de comportement ni de bouclage
+(`rejeu_histoire.simulateur_mecanique` : la tendance, le bloc `mesures`, l'ajustement
+flux-stocks ; le choc entre au compte des APU et à la dette, rien d'autre ne bouge).
+Une cible dont le champ n'y est pas écrit (l'emploi, le chômage, les créations) y prend
+la valeur du naïf : sans comportement, rien ne la bouge. **Ce que le jumeau gagne sur le
+naïf mécanique est la seule valeur de sa dynamique : c'est le chiffre qui compte
+d'abord.** Le naïf de plus haut reste, les tolérances et le reste ne changent pas.
+
+Le pronostic du naïf mécanique, sur le test, aux mêmes θ :
+
+| cible | naïf mécanique | tenue | le jumeau le bat |
+|---|---|---|---|
+| PIB, emploi, chômage | celles du naïf | oui | non |
+| exportations | celle du naïf | oui, de peu | oui, de moins de 0,2 pt |
+| importations | celle du naïf | oui, de peu | non |
+| D2 | [0,3 ; 0,7] | non | non, à moins de 0,1 pt |
+| D5 | [0,2 ; 0,5] | oui | non, à moins de 0,1 pt |
+| D61 | [0,1 ; 0,4] | oui | oui, à moins de 0,1 pt |
+| recettes | [0,3 ; 0,8] | oui | non, à moins de 0,1 pt |
+| solde | [0,3 ; 0,8] | oui | non (b) |
+| dette | [0,8 ; 2,5] | oui | non (b) |
+| créations | celle du naïf | non | non |
+
+(b) Le jumeau retire de la croissance en 2022 (a) : moins de recettes induites et un PIB
+plus bas, donc un solde et une dette plus loin du publié que sans comportement.
+
+Soit **10 cibles sur 12 tenues par le naïf mécanique** (de 8 à 11), et le jumeau qui le
+bat sur **2** (de 0 à 4) : au pronostic, la dynamique du jumeau n'apporte presque rien
+sur cette histoire, et ce qu'il gagne sur le naïf de plus haut vient des chocs observés.
+
 ### Ce qui tourne ensuite, après relecture
 
 `PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py`, sur le commit qui porte cette
 entrée poussée : l'estimation, la note de l'estimation et du test aux θ estimés, le test
-à θ½, dans `reports/jumeau/rejeu_histoire.json`. Le résultat va dans une nouvelle
-D-entrée, contre ce pronostic ; aucune tolérance, aucune fenêtre, aucune entrée ne
-change après le premier calcul. Un correctif de code que le rejeu révélerait est une
+à θ½, chacune contre les deux naïfs, dans `reports/jumeau/rejeu_histoire.json`. Le
+résultat va dans une nouvelle D-entrée, contre ce pronostic ; aucune tolérance, aucune
+fenêtre, aucune entrée ne change après le premier calcul. Un correctif de code que le rejeu révélerait est une
 révision, sous un nouveau nom, et cette note reste.
