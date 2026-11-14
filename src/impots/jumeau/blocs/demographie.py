@@ -15,8 +15,9 @@ LA SURVIE (une cohorte, âge a ≥ 0, S(0) = 1) :
     1/e₀ = Σ_{a < A} S_j^a + S_j^A / h_o   (le stock est stationnaire au taux e₀)
 
 S_j(θ_survie) de 0,85 à 0,93, centre 0,90, et A = 5 ans (D-402, SINE, choisis, non
-vérifiés) ; e₀ = 7,61 % (Da Rin, Di Giacomo et Sembenelli 2011, tableau 3 p. 39 : la
-France) ; h_o s'en calcule, 6,53 % au centre.
+vérifiés) ; e₀ = 10,47 %, les créations de sociétés de 2024 (Insee) sur les sociétés à
+l'IS (DGFiP), D-426 et D-427 (7,61 % avant, Da Rin et al. 2011, tableau 3 p. 39) ; h_o
+s'en calcule, 10,82 % au centre.
 
 1. NAISSANCES (canal « creations_entreprises »). Pour la mesure m :
 

@@ -26,13 +26,19 @@ naissances:
       Lue sur un taux apparent, pas sur leur TMEE (D-247). Avant D-427 : 0,20 (0,043 à
       0,356), fixe, une sensibilité.
   taux_entree_base:
-    # e₀, % par an : les entrées de l'année sur les entreprises actives, en France.
-    valeur: 7.61
+    # e₀, % par an : les créations de sociétés de l'année sur les sociétés à l'IS.
+    valeur: 10.47
     source: >
-      Da Rin, Di Giacomo et Sembenelli (2011), tableau 3 p. 39 du PDF : le taux d'entrée
-      moyen de la France par pays et branche, 7,61 %, lu par M0 de la phase 11 (D-245) ;
-      le manuscrit n'est pas dans data/raw de ce worktree (D-401 : le serveur le sert
-      altéré). Il fixe aussi, à l'état stationnaire, le hasard des installées (ci-dessous).
+      Décision du propriétaire du 14 novembre 2026 (D-427), sur la lecture de niveau de
+      D-426 (`reports/jumeau/microdonnees.json`, champ « delta ») : en 2024, 284 564
+      créations de sociétés en France entière, tous secteurs, données brutes (Insee, BDM,
+      CREATIONS-ENTREPRISES-METHODE-2022, TYPE-ENT_PM, somme des quatre trimestres) sur
+      2 718 400 entreprises à l'IS (DGFiP, Statistiques n° 39, tableau 2, nombre de
+      redevables), 10,47 % ; 10,43 % en 2023 (269 905 sur 2 588 200). Le numérateur et le
+      dénominateur ne sont pas de la même source (des sociétés créées sur des redevables
+      de l'IS), dit. Avant D-427 : 7,61 %, Da Rin, Di Giacomo et Sembenelli (2011),
+      tableau 3 p. 39, la France par pays et branche, 1997-2004 (D-245). Il fixe aussi, à
+      l'état stationnaire, le hasard des installées (ci-dessous).
   idees:
     # δ, points de taux d'entrée ajoutés chaque année au taux de référence : le dynamisme
     # d'entrée hors fiscalité (idées, start-up). θ_idees ; centre 0, le scénario.
@@ -41,7 +47,8 @@ naissances:
     haut: 1.0
     source: >
       Choisie, non vérifiée : un point de taux d'entrée de part et d'autre du taux de
-      référence. À régler au lot 6 sur les séries de créations de l'Insee (lot 5).
+      référence. Avec e₀ recalé sur l'Insee (D-427), la lecture de niveau de D-426
+      (δ = +2,86 au taux de 7,61 %) tombe à 0 : la plage reste −1 à +1 autour.
   survie_jeunes:
     # S_j, la survie annuelle d'une société avant l'âge de maturité. θ_survie ; le centre
     # est la valeur de D-402.

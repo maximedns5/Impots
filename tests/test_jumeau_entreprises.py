@@ -153,6 +153,21 @@ def test_sans_mesure_la_reference_est_stationnaire_a_theta_idees_un_demi(pop) ->
     assert np.allclose(traj.niveaux("productivite_moyenne")[0], 1.0)
 
 
+def test_le_taux_d_entree_de_reference_est_celui_de_l_insee_et_de_la_dgfip() -> None:
+    """D-427 : e₀ = 10,47 %, les créations de sociétés de 2024 sur les sociétés à l'IS
+    (la lecture de niveau de D-426), au lieu des 7,61 % de Da Rin et al. ; le hasard des
+    installées s'en recalcule à la main, 10,82 % au centre (6,53 % avant)."""
+    p = charger()
+    assert p.taux_entree_base == 10.47
+    niveau = json.loads((Path(__file__).resolve().parents[1] / "reports" / "jumeau"
+                         / "microdonnees.json").read_text(encoding="utf-8"))["delta"]
+    assert niveau["taux_entree"]["2024"] == pytest.approx(p.taux_entree_base, abs=5e-3)
+    jeunes = sum(0.9 ** a for a in range(5))
+    h = 0.9 ** 5 / (100.0 / 10.47 - jeunes)
+    assert float(p.hasard_installees(np.array([0.9]))[0]) == pytest.approx(h, abs=1e-15)
+    assert h == pytest.approx(0.10823, abs=1e-5)
+
+
 # --------------------------------------------------------------------------- #
 # 2. les signes, dans les deux sens
 # --------------------------------------------------------------------------- #

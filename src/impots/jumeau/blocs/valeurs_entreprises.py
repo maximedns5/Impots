@@ -227,8 +227,8 @@ def lignes(Ligne: Any) -> dict[str, Any]:
               "chaque année, hors fiscalité (idées, start-up nouvelles)",
               "points de taux d'entrée", p.idees,
               "θ = 1 : une économie qui crée plus de sociétés que le scénario",
-              "choisie, non vérifiée (D-407) ; à régler au lot 6 sur les créations de "
-              "l'Insee", False),
+              "choisie, non vérifiée (D-407) ; autour de e₀ recalé sur l'Insee et la DGFiP "
+              "(D-426, D-427)", False),
         ligne(ELASTICITE_ROW, "naissances",
               "ε dans ΔE_t = −ε Δτ_t N₀ / 100, Δτ_t = 100 ΔP_t / (b Y_t) : les points de "
               "taux d'entrée par point de taux apparent de prélèvement sur le profit",
