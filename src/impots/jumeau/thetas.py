@@ -96,8 +96,22 @@ ELASTICITE_PRIX_IMPORTATIONS = Ligne(
             "Banque de France, FR-BDF, WP 736, table 4.6.21 (1,11, hors énergie, sur le "
             "prix d'exportation relatif au prix d'importation)"),
     verifiee=True)
+PRIX_DIFFUSION = Ligne(
+    cle="commerce_prix_diffusion", bloc="commerce",
+    definition=("π_θ(h) dans ln p^D_k = −κ_D Σ_s Δ(τ_s − csu_s) π_θ(k − s + 1) + … : la "
+                "diffusion d'un coût (cotisations, impôts sur la production, coûts "
+                "salariaux unitaires) dans les prix de production, en mode structurel "
+                "(D-414) ; π_θ = π(h/2) + 2θ (π(h) − π(h/2)) si θ ≤ ½, π(h) + (2θ − 1) "
+                "(1 − π(h)) sinon, π le profil de Mésange sur sa valeur de long terme"),
+    unite="sans dimension", a_zero="π(h/2), à mi-vitesse (choisie, non vérifiée)",
+    a_demi="π(h), Mésange p. 72", a_un="1, immédiate (choisie, non vérifiée)",
+    direction="θ = 1 : les prix suivent le plus vite les coûts",
+    source=("Insee, Mésange G2017-04, p. 72, ligne « Salaires (+1 %) » rapportée à son "
+            "long terme ; les bornes choisies, non vérifiées"),
+    verifiee=False)
 REGISTRE.update({ELASTICITE_PRIX_EXPORTATIONS.cle: ELASTICITE_PRIX_EXPORTATIONS,
-                 ELASTICITE_PRIX_IMPORTATIONS.cle: ELASTICITE_PRIX_IMPORTATIONS})
+                 ELASTICITE_PRIX_IMPORTATIONS.cle: ELASTICITE_PRIX_IMPORTATIONS,
+                 PRIX_DIFFUSION.cle: PRIX_DIFFUSION})
 
 # --------------------------------------------------------------------- lot 4, ménages
 #: Les θ des blocs des ménages (D-409) ; leurs bornes sont dans

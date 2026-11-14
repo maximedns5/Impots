@@ -25,8 +25,15 @@ vaut un point du PIB de référence Y_t (`Tendance.chemin`), X_t = 0,01 Y_t :
 
 LES LIGNES, à 1, 2, 5 et 10 ans : le PIB en volume (l'indice chaîné de
 `croissance_volume_pib`, variante sur référence, en %), l'emploi salarié marchand (en
-milliers ; le bloc `emploi` écrit l'écart de l'emploi marchand) et le solde primaire des APU
-(en points de PIB : variante moins référence du solde sur le PIB).
+milliers ; le bloc `emploi` écrit l'écart de l'emploi marchand), le solde primaire des APU
+(en points de PIB : variante moins référence du solde sur le PIB) et, depuis D-414,
+l'investissement des entreprises (la FBCF des SNF, en %, en volume : le bloc
+`investissement` écrit des volumes aux prix du scénario ; Mésange imprime les SNF et EI).
+
+LA VARIANTE SALARIALE DE MÉSANGE (D-349) : pour l'IR, les cotisations employeurs et la
+TVA, Mésange imprime aussi le PIB sous une autre formation des salaires (Phillips, ou un
+super-brut visé), à 1, 5 et 10 ans (`macro.mesange.sensibilite_salariale`) ; elle se met
+à côté, comme référence de la sensibilité du PIB à la boucle prix-salaires.
 """
 
 from __future__ import annotations
@@ -48,7 +55,9 @@ VARIANTES = ("impot_sur_le_revenu", "cotisations_employeurs", "tva",
 HORIZONS = (1, 2, 5, 10)
 LIGNES = {"pib": ("gdp", "PIB en volume, %"),
           "emploi": ("emploi_milliers", "emploi salarié marchand, milliers"),
-          "solde": ("solde_primaire_pts_pib", "solde primaire des APU, points de PIB")}
+          "solde": ("solde_primaire_pts_pib", "solde primaire des APU, points de PIB"),
+          "investissement": ("investissement_entreprises",
+                             "investissement des entreprises, %")}
 #: La composition de la variante de dépense publique (Mésange G2017-04, p. 106).
 COMPOSITION_DEPENSE = {"apu_d_p51g": 0.08, "apu_d_d1": 0.25, "apu_d_d632": 0.09,
                        "apu_d_p2": 0.12, "apu_d_d62": 0.46}
@@ -106,9 +115,11 @@ def reponses(traj: Trajectoire) -> dict[str, np.ndarray]:
     volume = np.cumprod(1.0 + g_var[:, 0]) / np.cumprod(1.0 + g_ref[:, 0]) - 1.0
     sp_ref, sp_var = traj.niveaux("solde_primaire")
     y_ref, y_var = traj.niveaux("pib")
+    i_ref, _ = traj.niveaux("fbcf_snf")
     return {"pib": 100.0 * volume,
             "emploi": traj.difference("emploi_salarie")[:, 0],
-            "solde": 100.0 * (sp_var[:, 0] / y_var[:, 0] - sp_ref[:, 0] / y_ref[:, 0])}
+            "solde": 100.0 * (sp_var[:, 0] / y_var[:, 0] - sp_ref[:, 0] / y_ref[:, 0]),
+            "investissement": 100.0 * traj.difference("fbcf_snf")[:, 0] / i_ref[:, 0]}
 
 
 def comparer(depart: Any, entrees: Entrees, population: Any, cellules: Any, *,

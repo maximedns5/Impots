@@ -85,14 +85,21 @@ salaires:
     chomage: [-0.61, -1.09, -1.83, -1.98]
     productivite: [0.45, 0.77, 0.99, 1.00]
     smic: [0.22, 0.27, 0.15, 0.12]
+    prix: [0.59, 1.08, 1.05, 1.00]
   non_qualifie:
     chomage: [-0.43, -0.80, -1.40, -1.49]
     productivite: [0.47, 0.77, 0.97, 1.00]
     smic: [0.26, 0.40, 0.47, 0.48]
+    prix: [0.70, 1.11, 1.02, 1.00]
   source_profils: "Mésange, p. 65 (folio 64), « Élasticités du salaire moyen des
     travailleurs qualifiés (non qualifiés) des branches marchandes », lignes « Taux de
     chômage (+1 point) » (semi-élasticités, en %), « Productivité apparente (+1 %) »,
-    « Smic réel efficace (+1 %) », colonnes 1 an, 2 ans, 5 ans, LT"
+    « Smic réel efficace (+1 %) », « Prix (+1 % sur les prix de VA et l'IPC) »,
+    colonnes 1 an, 2 ans, 5 ans, LT. La ligne des prix n'est lue qu'en mode structurel,
+    avec la boucle prix-salaires (D-414) : l'indexation de long terme unitaire sur les
+    prix de valeur ajoutée est une contrainte de Mésange (p. 64, folio 63), le court
+    terme passe par l'IPC ; le bloc lit l'écart du prix de production intérieur, les deux
+    prix bougeant ensemble dans la variante qu'imprime la ligne"
   echelle_chomage:
     # θ : un facteur sur le profil de la semi-élasticité au chômage.
     centre: 1.0

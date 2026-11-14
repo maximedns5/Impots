@@ -8,6 +8,10 @@ figée de cette année. La mesure en prend ce qu'il porte, cette année et cette
 seules ; le reste est absent, dit dans `non_portes`, et les blocs des lots 2 et 4
 refusent une année de la trajectoire qui n'a pas sa ventilation plutôt que d'y lire un
 zéro. Sur la ventilation portée, le modèle structurel complet tourne, identités tenues.
+
+Sur demande, la convention nommée « parts_premiere_annee » (D-414) ventile les années
+suivantes aux parts de la première ; elle se nomme sur chaque année qu'elle touche, et
+elle est refusée là où les parts n'existent pas.
 """
 
 from __future__ import annotations
@@ -22,7 +26,7 @@ from impots.jumeau import identites, thetas
 from impots.jumeau.blocs import ordre_structurel
 from impots.jumeau.blocs.entreprises import EntreprisesError, population_depuis
 from impots.jumeau.blocs.menages import MenagesError, menages_depuis_deciles
-from impots.jumeau.mesures import Mesure, MesureError
+from impots.jumeau.mesures import CONVENTION_PARTS, Mesure, MesureError
 from impots.jumeau.pas import Entrees
 from impots.jumeau.trajectoire import calculer, depart_depuis_start
 from test_jumeau_entreprises import FIXTURE, PARTS
@@ -129,3 +133,71 @@ def test_les_annees_sans_ventilation_sont_refusees() -> None:
         _structurel(_mesure("presidentielle_le_pen/mesures/lp20_tva_energie/"
                             "predictif_pres2027_le_pen_lp20_tva_energie.json"),
                     list(range(2026, 2036)))
+
+
+# --------------------------------------------------------------------------- #
+# La convention « parts_premiere_annee » (D-414)
+# --------------------------------------------------------------------------- #
+def test_la_convention_ventile_chaque_annee_aux_parts_de_la_premiere() -> None:
+    """Chaque année du chemin, le total du rapport aux parts de la première année : les
+    impôts somment aux prélèvements de l'année, les déciles suivent le coût des ménages ;
+    chaque année touchée porte le nom de la convention."""
+    m = _mesure(ATTAL, convention=CONVENTION_PARTS)
+    annees = list(range(2026, 2036))
+    assert sorted(m.entreprises) == annees and sorted(m.menages) == annees
+    assert m.conventions == {axe: dict.fromkeys(annees[1:], CONVENTION_PARTS)
+                             for axe in ("entreprises", "menages")}
+    assert m.non_portes == {}
+    premiere = m.entreprises[2026]
+    total = sum(premiere.values())
+    cout = {a: m.couts[a] + m.prelevements[a] for a in annees}
+    for a in annees[1:]:
+        assert sum(m.entreprises[a].values()) == pytest.approx(m.prelevements[a],
+                                                               abs=1e-12)
+        for i, v in premiere.items():
+            assert m.entreprises[a][i] == pytest.approx(v / total * m.prelevements[a],
+                                                        abs=1e-12)
+        np.testing.assert_allclose(m.menages[a]["deciles"], np.array(
+            m.menages[2026]["deciles"]) * cout[a] / cout[2026], rtol=1e-12)
+    # Le coût des ménages de la première année est celui de leur passe, aux 59 € près
+    # que la passe des entreprises coûte hors des cinq impôts du canal.
+    assert cout[2026] == pytest.approx(63.629, abs=1e-3)
+    # Sans la convention, rien ne change (D-412).
+    assert set(_mesure(ATTAL).entreprises) == {2026}
+
+
+def test_le_modele_structurel_tourne_dix_ans_avec_la_convention() -> None:
+    """Le programme d'Attal, rapport commité réel, sur dix ans : le modèle structurel
+    complet tourne, identités tenues à 1e-9, Δb décomposé sans reste."""
+    m = _mesure(ATTAL, convention=CONVENTION_PARTS)
+    traj = _structurel(m, list(range(2026, 2036)))
+    prec = None
+    for etat in traj.variante:
+        residus = identites.verifier(etat, prec)
+        assert max(float(np.max(np.abs(r))) for r in residus.values()) < 1e-9
+        prec = etat
+    parts = traj.decomposition(2035)
+    assert np.max(np.abs(sum(parts.values()) - traj.delta_b[-1])) < 1e-12
+    production = m.entreprises[2028]["cvae"] + m.entreprises[2028]["c3s"]
+    assert traj.variante[2].par_mesure("prelevements_production")["programme"][0] == \
+        pytest.approx(production, abs=1e-12)
+
+
+def test_la_convention_est_refusee_la_ou_les_parts_n_existent_pas() -> None:
+    """Retailleau (cotisations non ventilées) et le Smic de Mélenchon : pas de parts, la
+    convention ne fait aucun nombre, et l'absence reste dite ; une convention inconnue
+    est refusée."""
+    retailleau = _mesure("presidentielle_retailleau/"
+                         "predictif_pres2027_retailleau_programme.json",
+                         convention=CONVENTION_PARTS)
+    assert retailleau.entreprises is None and set(retailleau.menages) == {2026}
+    assert retailleau.conventions == {}
+    assert "pas de parts" in retailleau.non_portes["entreprises"]
+    assert "ne sépare pas" in retailleau.non_portes["menages"]
+    smic = _mesure("presidentielle_melenchon/mesures/smic_1700_net/"
+                   "predictif_pres2027_melenchon_smic_1700_net.json",
+                   convention=CONVENTION_PARTS)
+    assert smic.menages is None and smic.conventions == {}
+    assert "smic_revalorisation" in smic.non_portes["menages"]
+    with pytest.raises(MesureError, match="convention « autre » inconnue"):
+        _mesure(ATTAL, convention="autre")

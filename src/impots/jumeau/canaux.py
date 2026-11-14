@@ -141,6 +141,24 @@ CANAUX.update({
 })
 DE_MESANGE.add("demande_publique")
 
+# --------------------------------------------------------------------- mode structurel (D-414)
+CANAUX.update({
+    "investissement_accelerateur": (
+        "l'investissement des entreprises selon la valeur ajoutée, l'effet accélérateur et "
+        "l'indexation de long terme : l'équation d'investissement de Mésange, p. 44 (bloc "
+        "`investissement`, mode structurel)"),
+    "prix_production": (
+        "les prix de production et de consommation selon les coûts salariaux unitaires et "
+        "la demande, et leur retour sur les salaires, la consommation réelle et la "
+        "compétitivité : la boucle prix-salaires de Mésange (bloc `commerce`, mode "
+        "structurel)"),
+    "recettes_induites_profits": (
+        "l'impôt sur les sociétés sur les profits que l'activité induite fait (bloc "
+        "`recettes_induites`)"),
+})
+DE_MESANGE.update({"investissement_accelerateur", "prix_production",
+                   "recettes_induites_profits"})
+
 
 def declares(bloc: Any) -> tuple[tuple[str, str], ...]:
     """Les paires (canal, instrument) qu'un bloc porte : les siennes et celles de Mésange

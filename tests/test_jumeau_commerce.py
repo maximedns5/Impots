@@ -169,8 +169,10 @@ def test_les_contenus_et_les_transmissions_sont_ceux_du_tes() -> None:
     lu = lire_tes()
     for cle, valeur in DOC["tes"]["contenu_importations"].items():
         assert abs(lu["contenu_importations"][cle] - valeur) <= 5e-5, cle
-    for cle, valeur in DOC["tes"]["transmission_couts"].items():
-        assert abs(lu["transmission_couts"][cle] - valeur) <= 5e-5, cle
+    for groupe in ("transmission_couts", "transmission_importations"):
+        for cle, valeur in DOC["tes"][groupe].items():
+            assert abs(lu[groupe][cle] - valeur) <= 5e-5, (groupe, cle)
+    assert P.kappa_md == DOC["tes"]["transmission_importations"]["demande_interieure"]
     table = tes.load("2023SD")
     direct = (table.imported_final_uses["consommation_finale_menages"].sum()
               / (table.final_uses["consommation_finale_menages"].sum()

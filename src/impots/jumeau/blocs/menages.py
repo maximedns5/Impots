@@ -59,8 +59,20 @@ choisie). Le coin fiscalo-social s'indexe unitairement à long terme (p. 64, sig
 45) : une cotisation salariale déplace le salaire brut d'autant, une cotisation
 employeur reste sur le coût ; son profil d'ajustement, que Mésange n'imprime pas, est
 celui de la productivité (choisi). « smic » est le Smic réel efficace de la mesure (une
-fraction, `Mesure.menages[annee]["smic"]`). Les prix sont ceux du scénario : ni la
-boucle prix-salaires ni l'indexation aux prix ne sont modélisées.
+fraction, `Mesure.menages[annee]["smic"]`). Sans la boucle prix-salaires, les prix sont
+ceux du scénario.
+
+LA BOUCLE PRIX-SALAIRES (mode structurel, `prix=True`, D-414). Le bloc `commerce` écrit,
+par mesure, l'écart du prix de valeur ajoutée p̂va et celui de la consommation p̂c. Alors :
+
+    ŵ_k += L[p̂va, S_prix]_k            l'indexation aux prix (Mésange, p. 65, ligne
+                                        « Prix (+1 % sur les prix de VA et l'IPC) » :
+                                        unitaire à long terme sur la valeur ajoutée, p. 64)
+    ĉ_j = ŵ_j + τ̂_j − p̂va_j            le coût réel du travail (bloc `emploi`, p. 22)
+    ŷ_j = (ΔPIB_j − ΔPIB^prix_j) / Y_j  l'activité en volume, pour les trois blocs
+
+et la consommation suit le revenu réel (bloc `consommation`, ci-dessous). Le profil des
+prix pondère qualifiés et non qualifiés comme les autres (0,69 / 0,31).
 
 La masse salariale se répartit (`revenus_cellules`) : la part de l'emploi, π D1 ê, entre
 les cellules au prorata de leurs chômeurs (ceux qui trouvent ou perdent l'emploi) ; la
@@ -88,7 +100,21 @@ réponse de la consommation au chômage (épargne de précaution, Mésange p. 34
 consommation de référence de la cellule. Le bloc écrit ΔC = Σ_c ΔC_c sur la consommation
 des ménages (le cadre en ferme le PIB, D-411), la TVA et les accises t ΔC (t, leur taux
 moyen dans les cellules) en D2 des APU et en impôts sur la production, le reste en
-EBE : les identités des emplois et des revenus tiennent. Il ne retranche pas les
+EBE : les identités des emplois et des revenus tiennent.
+
+Avec la boucle prix-salaires (D-414), au premier ordre, P_c les prestations hors chômage
+(pensions et prestations) de la cellule, RD_c son revenu disponible de référence :
+
+    ΔRD^nom_{c,j} = ΔRD_{c,j} + p̂c_j P_{c,j}         les prestations hors chômage
+                                                    indexées sur le prix de la
+                                                    consommation (Mésange, p. 100)
+    ΔRD^réel_{c,j} = ΔRD^nom_{c,j} − p̂c_j RD_{c,j}    le revenu réel, que PMC lit
+    ΔC^nom_c = ΔC^vol_c + p̂c_k C_{c,k}               la consommation en valeur
+
+p̂c_k Σ_c P_c en dépense des APU (D62), p̂c_k Σ_c C_c en part prix du PIB
+(`effet_prix_pib`) ; la TVA et les accises sur ΔC^nom. Les allocations chômage par
+chômeur ne suivent pas le salaire (Mésange les indexe sur le salaire moyen, p. 100 : un
+écart de second ordre, dit). Il ne retranche pas les
 importations : c'est le lot 3, qui le fait sur la consommation que ce bloc écrit. Il écrit aussi le revenu
 disponible et la consommation de chaque décile, référence comprise : les montants des
 cellules en part du PIB de 2024, fois Y_k.
@@ -144,6 +170,7 @@ class Parametres:
     salaires_chomage: np.ndarray
     salaires_productivite: np.ndarray
     salaires_smic: np.ndarray
+    salaires_prix: np.ndarray
     echelle_chomage: dict[str, float]
     references: dict[int, dict[str, float]]
     part_marchande: float
@@ -188,7 +215,8 @@ def charger(chemin: Path = PARAMETRES, offre: Path = OFFRE) -> Parametres:
         emploi_cout_nq=np.asarray(e["non_qualifie"]["cout_reel"], dtype=float),
         sigma=borne(e["elasticite_cout"]),
         salaires_chomage=mele(s, "chomage"), salaires_productivite=mele(s, "productivite"),
-        salaires_smic=mele(s, "smic"), echelle_chomage=borne(s["echelle_chomage"]),
+        salaires_smic=mele(s, "smic"), salaires_prix=mele(s, "prix"),
+        echelle_chomage=borne(s["echelle_chomage"]),
         references=refs, part_marchande=float(e["part_marchande_salaries"]["valeur"]),
         non_salaries=float(e["non_salaries_sur_salaries_marchands"]["valeur"]),
         conso_centre=np.asarray(c["elasticite_revenu"]["centre"], dtype=float),
@@ -248,6 +276,7 @@ class Structure:
     taux_d5: np.ndarray
     rd_pib: np.ndarray
     conso_pib: np.ndarray
+    prestations_pib: np.ndarray
     apc: float
     apc_decile: np.ndarray
     kappa_max: float
@@ -288,7 +317,8 @@ def structure(cel: Cellules, pib_cellules: float) -> Structure:
     return Structure(
         menages=cel["menages"], part_chomeurs=cel["chomeurs"] / cel.total("chomeurs"),
         part_super_brut=sb / total_sb, rho=rho, taux_d61=d61, taux_d5=d5,
-        rd_pib=rd / 1e9 / pib_cellules, conso_pib=conso / 1e9 / pib_cellules, apc=apc,
+        rd_pib=rd / 1e9 / pib_cellules, conso_pib=conso / 1e9 / pib_cellules,
+        prestations_pib=(cel["retraite"] + cel["prestations"]) / 1e9 / pib_cellules, apc=apc,
         apc_decile=apc_d, kappa_max=min(1.0, kappa_max),
         taux_conso=float((cel["tva"] + cel["accises"]).sum() / conso.sum()),
         allocation_sur_salaire=allocation / salaire_moyen,
@@ -351,17 +381,24 @@ class Ecarts:
     d_pa: np.ndarray
     d_tot: np.ndarray
     d_u: np.ndarray
+    pva: np.ndarray
+    pc: np.ndarray
 
 
 def ecarts(etat: Etat, mesure: str, ref: Reference, params: Parametres) -> Ecarts:
+    """Les écarts d'une mesure lus sur un état. ŷ est un volume : le PIB nominal moins sa
+    part prix (`effet_prix_pib`) ; les écarts des prix de production et de consommation
+    sont ceux de la boucle prix-salaires (D-414), nuls sans elle (champs absents)."""
     n = etat.n
     return Ecarts(
-        y=_de(etat, "pib", mesure, n) / ref.pib,
+        y=(_de(etat, "pib", mesure, n) - _de(etat, "effet_prix_pib", mesure, n)) / ref.pib,
         e=_de(etat, "emploi_salarie", mesure, n) / ref.emploi_marchand,
         w=_de(etat, "salaire_moyen", mesure, n) / (params.part_marchande * ref.salaire),
         d_pa=_de(etat, "population_active", mesure, n),
         d_tot=_de(etat, "emploi_total", mesure, n),
-        d_u=_de(etat, "chomage", mesure, n))
+        d_u=_de(etat, "chomage", mesure, n),
+        pva=_de(etat, "ecart_prix_valeur_ajoutee", mesure, n),
+        pc=_de(etat, "ecart_prix_consommation", mesure, n))
 
 
 def chomage_points(ec: Ecarts, ref: Reference) -> np.ndarray:
@@ -422,9 +459,16 @@ class _Base:
 
     nom: str
 
-    def __init__(self, cellules: Cellules, params: Parametres | None = None) -> None:
+    #: Les champs de la boucle prix-salaires qu'un bloc lit en mode structurel (D-414).
+    lit_prix: tuple[str, ...] = ()
+
+    def __init__(self, cellules: Cellules, params: Parametres | None = None, *,
+                 prix: bool = False) -> None:
         self.params = params if params is not None else charger()
         self.cellules = cellules
+        self.prix = prix
+        if prix:
+            self.lit = (*type(self).lit, *self.lit_prix)
         self.st = structure(cellules, self.params.pib_cellules)
         p = self.params
         self.poids = poids_interpolation(p.horizons, HORIZON_MAX)
@@ -432,7 +476,8 @@ class _Base:
             ("emploi_va", p.emploi_va), ("emploi_cout", p.emploi_cout),
             ("emploi_cout_nq", p.emploi_cout_nq), ("salaires_chomage", p.salaires_chomage),
             ("salaires_productivite", p.salaires_productivite),
-            ("salaires_smic", p.salaires_smic), ("conso_chomage", p.conso_chomage))}
+            ("salaires_smic", p.salaires_smic), ("salaires_prix", p.salaires_prix),
+            ("conso_chomage", p.conso_chomage))}
         self._memo: dict[tuple[Any, ...], tuple[Any, Any]] = {}
         self._fixes: dict[Any, Any] = {}
         self._fixes_de: tuple[Any, Any] | None = None
@@ -506,6 +551,7 @@ class Emploi(_Base):
     ecrit = CHAMPS_TRAVAIL
     thetas = (thetas.EMPLOI_COUT, *thetas.OFFRE_TRAVAIL)
     remplace = ("emploi",)
+    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee")
 
     def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
         self._debut(ctx)
@@ -527,7 +573,9 @@ class Emploi(_Base):
                    for j in range(k + 1)]
             cible = [self._impulsion(ctx, j, "cotisations_employeurs_ciblees", ident)
                      for j in range(k + 1)]
-            cout = [ec.w + t for ec, t in zip(chemin, tau, strict=True)]
+            # Le coût réel du travail : le coût nominal déflaté par le prix de valeur
+            # ajoutée, nul sans la boucle prix-salaires (D-414).
+            cout = [ec.w + t - ec.pva for ec, t in zip(chemin, tau, strict=True)]
             e_k = (retard([ec.y for ec in chemin], tb["emploi_va"])
                    + echelle * (retard(cout, tb["emploi_cout"])
                                 + retard(cible, tb["emploi_cout_nq"])))
@@ -549,6 +597,7 @@ class Salaires(_Base):
              "apu_d_d62")
     thetas = (thetas.SALAIRES_CHOMAGE,)
     remplace = ("salaires",)
+    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee")
 
     def preparer(self, entrees: Entrees, mesures: Sequence[Any]) -> None:
         verifier_menages(mesures, entrees.annees)
@@ -575,6 +624,9 @@ class Salaires(_Base):
                    + retard(prod, tb["salaires_productivite"])
                    + retard(coin, tb["salaires_productivite"])
                    + retard(smic, tb["salaires_smic"]))
+            if self.prix:
+                # L'indexation aux prix (Mésange, p. 65) : la boucle prix-salaires.
+                w_k = w_k + retard([ec.pva for ec in chemin], tb["salaires_prix"])
             w_k = np.zeros(ctx.n) + w_k
             out["salaire_moyen"][ident] = p.part_marchande * ref.salaire * w_k
             # La masse de l'année, avec l'emploi de l'année et ce salaire.
@@ -636,9 +688,13 @@ class Consommation(_Base):
              *CONSO)
     thetas = (thetas.CONSOMMATION_PROFIL, thetas.CONSOMMATION_PENTE)
     remplace = ("consommation_menages",)
+    lit_prix = ("effet_prix_pib", "ecart_prix_consommation")
 
-    def __init__(self, cellules: Cellules, params: Parametres | None = None) -> None:
-        super().__init__(cellules, params)
+    def __init__(self, cellules: Cellules, params: Parametres | None = None, *,
+                 prix: bool = False) -> None:
+        super().__init__(cellules, params, prix=prix)
+        if prix:
+            self.ecrit = (*Consommation.ecrit, "effet_prix_pib", "apu_d_d62")
         self.indicatrices = np.stack([self.st.decile == d for d in range(N_DECILES)]
                                      ).astype(float)
 
@@ -682,16 +738,36 @@ class Consommation(_Base):
             rds = [self._rd(ctx, j, m) for j in range(k + 1)]
             du = [self._du(ctx, j, ident) for j in range(k + 1)]
             dc = c_ref_cellules * (retard(du, self.tables["conso_chomage"]) / 100.0)
+            if self.prix:
+                # La boucle prix-salaires (D-414) : les prestations hors chômage indexées
+                # sur le prix de la consommation, et la consommation qui suit le revenu
+                # réel, ΔRD + p̂c P − p̂c RD, linéarisé.
+                reel = [self._garde(ctx, j, ("reel", ident), lambda j=j, rd=rd, m=ident: (
+                    rd + np.outer(st.prestations_pib - st.rd_pib, self._ref(ctx, j).pib)
+                    * self._ecarts(ctx, j, m).pc)) for j, rd in enumerate(rds)]
+                pc = self._ecarts(ctx, k, ident).pc
+                indexees = np.outer(st.prestations_pib, ref.pib) * pc
+            else:
+                reel, pc, indexees = rds, None, None
             precedent = 0.0
-            for j, rd in enumerate(rds):
+            for j, rd in enumerate(reel):
                 dc = dc + (rd - precedent) * pmc[k - j][st.decile]
                 precedent = rd
+            nominal = rds[-1]
+            if pc is not None:
+                # La consommation en valeur : son volume, plus le prix sur la consommation
+                # de référence (au premier ordre, comme tout le modèle).
+                effet = c_ref_cellules * pc
+                dc = dc + effet
+                nominal = nominal + indexees
+                out["effet_prix_pib"][ident] = effet.sum(axis=0)
+                out["apu_d_d62"][ident] = indexees.sum(axis=0)
             total = dc.sum(axis=0)
             out["c_menages"][ident] = total
             out["impots_production"][ident] = st.taux_conso * total
             out["apu_r_d2"][ident] = st.taux_conso * total
             out["ebe_revenu_mixte"][ident] = (1.0 - st.taux_conso) * total
-            rd_d = self.indicatrices @ rds[-1]
+            rd_d = self.indicatrices @ nominal
             c_d = self.indicatrices @ dc
             for d in range(N_DECILES):
                 out[RDB[d]][ident] = rd_d[d]
@@ -703,12 +779,13 @@ class Consommation(_Base):
 ORDRE = ("consommation", "emploi", "salaires")
 
 
-def blocs_menages(cellules: Cellules, params: Parametres | None = None
-                  ) -> tuple[list[Any], tuple[str, ...]]:
-    """Les trois blocs des ménages dans leur ordre, et la boucle qui les lie."""
+def blocs_menages(cellules: Cellules, params: Parametres | None = None, *,
+                  prix: bool = False) -> tuple[list[Any], tuple[str, ...]]:
+    """Les trois blocs des ménages dans leur ordre, et la boucle qui les lie ; avec
+    `prix`, ils lisent la boucle prix-salaires du mode structurel (D-414)."""
     params = params if params is not None else charger()
-    return ([Consommation(cellules, params), Emploi(cellules, params),
-             Salaires(cellules, params)], ORDRE)
+    return ([Consommation(cellules, params, prix=prix), Emploi(cellules, params, prix=prix),
+             Salaires(cellules, params, prix=prix)], ORDRE)
 
 
 __all__ = [

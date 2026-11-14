@@ -55,6 +55,9 @@ MODULES_LOCAUX: frozenset[str] = frozenset({
     # dont le départ, la population et les cellules synthétiques servent aux tests du
     # commerce, des ménages et du modèle structurel (D-408, D-409, D-411)
     "test_jumeau", "test_jumeau_entreprises", "test_jumeau_menages",
+    # et `tests/test_jumeau_structurel.py`, dont les helpers servent aux tests du mode
+    # structurel complété (D-414)
+    "test_jumeau_structurel",
 })
 
 #: Les racines que l'on scanne par défaut. `src/` est le minimum ; `tests/` et `scripts/`

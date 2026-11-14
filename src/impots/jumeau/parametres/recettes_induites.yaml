@@ -1,0 +1,51 @@
+# Les valeurs du bloc `recettes_induites` (mode structurel, D-414).
+#
+# Chaque taux est un taux apparent : un impôt de la t. 3.217 sur sa base des comptes
+# nationaux, la même année. Le bloc ne porte que ce qu'aucun autre bloc ne porte : l'IS sur
+# les profits que l'activité induite fait. La TVA et les accises sur la consommation
+# induite (bloc `consommation`), les cotisations, la CSG, la CRDS et l'IR sur la masse
+# salariale induite (bloc `salaires`) sont déjà portés, aux taux moyens des cellules de
+# ménages : les reprendre ici les compterait deux fois. Leurs taux apparents sont écrits
+# plus bas, pour la comparaison seulement (D-414).
+
+impot_societes:
+  taux:
+    # (IS avant crédits d'impôt + contribution sociale sur les bénéfices) / (EBE et revenu
+    # mixte bruts), 2024 : (67,955 + 1,166) / 1 036,606.
+    valeur: 0.06668
+    annee: 2024
+    source: >
+      Insee, comptes nationaux base 2020, t. 3.217 (millésime 2025), lignes « Impôt sur
+      les sociétés (IS), avant crédits d'impôt » (67,955 Md€) et « Contribution sociale
+      sur les bénéfices des sociétés » (1,166 Md€), 2024 [lu] ; t. 1.105 (millésime
+      2025), B2A3G, 2024, 1 036,606 Md€ [lu]. Avant crédits d'impôt : les crédits (CIR,
+      ex-CICE) ne suivent pas le profit. La base est l'EBE et le revenu mixte de toute
+      l'économie, celle du champ que le bloc lit ; sur l'EBE des seules sociétés le taux
+      serait plus haut, sur une base plus étroite (une convention, dite).
+  origines:
+    # Les contributions qui font le profit induit d'une mesure : la valeur ajoutée
+    # marchande que les blocs de la demande écrivent hors des salaires et des impôts sur
+    # les produits, moins la masse salariale que le bloc `salaires` en retire. Le PIB
+    # potentiel de l'investissement, de l'implantation et de la démographie n'y est pas :
+    # ces blocs écrivent déjà ρ ΔY sur le solde.
+    ebe_revenu_mixte: [consommation, salaires, investissement]
+    revenus_non_ventiles: [commerce, demande_publique]
+
+comparaison:
+  # Les taux apparents de la t. 3.217 des recettes induites déjà portées, 2024, pour la
+  # comparaison aux taux moyens des cellules (D-414) ; le bloc ne les lit pas.
+  tva_accises_sur_consommation:
+    valeur: 0.17372
+    source: >
+      t. 3.217 (millésime 2025), 2024 : TVA 207,753 + TICPE 30,188 + TICFE 4,786 + TICGN
+      3,179 + autres taxes sur l'énergie 0,979 + tabacs 13,662 + alcools 4,749 = 265,296
+      Md€, sur la consommation des ménages, t. 1.101, P3 S14B, 1 527,123 Md€ [lu]. Une
+      borne haute : la TVA porte aussi sur l'investissement des ménages et une part des
+      achats des APU.
+  cotisations_csg_sur_d1:
+    valeur: 0.38892
+    source: >
+      t. 3.217 (millésime 2025), 2024 : cotisations sociales effectives 432,389 + CSG
+      153,148 Md€ = 585,537, sur D1, t. 1.105, 1 505,528 Md€ [lu]. Une borne haute : la
+      CSG porte aussi sur les pensions, les allocations et le capital, et les cotisations
+      sur les revenus des non-salariés.
