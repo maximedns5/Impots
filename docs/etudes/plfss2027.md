@@ -15,10 +15,12 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 ## En bref
 
-| article | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
-|---|---|---|---|---|---|
-| art. 74 du PLF, la prime d'activité | -557 M€ | -332 M€ ; noté sur -887 M€, chiffre de son préenregistrement, hors de la tolérance | -0,16 pt | baisse (0 % des tirages en hausse) | baisse |
-| art. 74 du PLF, les aides au logement | -72 M€ | -101 M€ ; noté sur -78 M€, chiffre de son préenregistrement, dans la tolérance | -0,07 pt | baisse (0 % des tirages en hausse) | baisse |
+| article | la première année | le chiffrage officiel | dette en 2035, à θ½ | sans le canal des créations | verdict | selon θ |
+|---|---|---|---|---|---|---|
+| art. 74 du PLF, la prime d'activité | -557 M€ | -332 M€ ; noté sur -887 M€, chiffre de son préenregistrement, hors de la tolérance | -0,16 pt | -0,16 pt | baisse (0 % des tirages en hausse) | baisse |
+| art. 74 du PLF, les aides au logement | -72 M€ | -101 M€ ; noté sur -78 M€, chiffre de son préenregistrement, dans la tolérance | -0,07 pt | -0,07 pt | baisse (0 % des tirages en hausse) | baisse |
+
+**La dette lit le canal des créations d'entreprises, une hypothèse non validée** (décision du propriétaire, D-400) : ce qu'une hausse ou une baisse des prélèvements sur les entreprises et le capital, cotisations patronales comprises, fait aux sociétés qui se créent, et ce qu'elles produisent. Aucune source ne redonne ce total. La dette, le verdict et « selon θ » le lisent ; la colonne « sans le canal » donne la dette sans lui, à θ½, sur les mêmes passes. Le canal, ses paramètres et ses sources sont dits avec la dette de chaque article.
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -69,7 +71,7 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 * **IS et investissement des entreprises** — aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis.
 * **transferts** — Mésange n'a pas de variante de transfert.
-* **créations d'entreprises** — C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221).
+* **créations d'entreprises** — Canal ouvert dans la dette (but 22), hypothèse non validée : C8 reste l'indice de la couche entreprises.
 * **R&D et CIR** — C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette.
 * **rétroaction PIB → recettes** — aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat.
 * **multiplicateur macro** — aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat.
@@ -88,6 +90,19 @@ Ce que la chaîne ne lit pas, et pourquoi :
 En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sous cette persistance, elle **baisse la dette** en 2035, à θ½ comme à chaque coin de la boîte, dans les deux vues.
 
 **Le verdict**, lu sur le Monte-Carlo (D-345) : elle **baisse la dette** en 2035 dans au moins 90 % des tirages, vue vieillie.
+
+**Les créations d'entreprises, une hypothèse non validée.** La dette de cette page lit le canal des créations d'entreprises, par décision du propriétaire (D-400) : les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée des sociétés, qui survivent, montent en charge et produisent ; leurs recettes entrent au solde, leur activité au PIB. Aucune source ne redonne ce total. La dette sans ce canal, sur les mêmes passes, est donnée à côté.
+
+| persistance | vue | Δ dette 2035, à θ½ | sans le canal | ce que le canal y change |
+|---|---|---|---|---|
+| lue | vieillie | -0,16 pt | -0,16 pt | +0,00 pt |
+| lue | figée | -0,25 pt | -0,25 pt | +0,00 pt |
+
+La productivité relative des sociétés nouvelles, rapportée à la société moyenne, est la ligne θ du canal : 0,5 au centre (θ½), de 0, le canal éteint, à 1. Aucune source ne la chiffre pour les sociétés qu'un impôt fait naître ou disparaître. Sa boîte, toutes les autres lignes à θ½, va de -0,16 pt à -0,16 pt en 2035, vue vieillie, persistance « lue ». Le Monte-Carlo du verdict lit le canal à sa productivité centrale, sans la tirer : sa loi n'est pas déclarée.
+
+L'élasticité : 0,2 point de taux d'entrée par point de taux apparent de prélèvement sur le profit, de 0,043 à 0,356 ; Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 et pages 21 et 22 : le milieu de leurs estimations en variables instrumentales et intra-groupe, lu sur un taux apparent et non sur leur taux effectif (D-245, D-247). Survie annuelle 0,9, montée en charge sur 5 ans, taille relative à maturité 0,1, valeur ajoutée des sociétés 0,6 du PIB, assiette 0,092 du PIB ; les valeurs fixées par D-402.
+
+Les instruments lus, en euros de prélèvement, recettes positives, rien d'autre (ni le nom de qui propose la mesure, ni son sens) : l'IS, sa contribution sociale, la CEBGE, la CVAE, la C3S, le PFU, les prélèvements sociaux du capital et les cotisations patronales, nettes des allègements. Les cotisations patronales font jouer le canal, comme l'IS : elles sont aussi dans la boucle macro de Mésange, dont la variante « cotisations employeurs » porte déjà la réponse de l'activité au coût du travail. Ce double compte est un choix du propriétaire (13 novembre 2026), dit ici plutôt que caché. Les impôts de production (CVAE, C3S) sont lus euro pour euro comme l'IS, faute d'une estimation publiée de la réponse des créations à ces impôts ; le PFU et les prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, comme le taux virtuel de l'IPP qui joint l'IS et le PFU.
 
 **Les sensibilités, hors du verdict.** Les deux persistances que les pages lisaient avant la persistance « lue » (D-336), sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
 
@@ -167,7 +182,7 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 * **IS et investissement des entreprises** — aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis.
 * **transferts** — Mésange n'a pas de variante de transfert.
-* **créations d'entreprises** — C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221).
+* **créations d'entreprises** — Canal ouvert dans la dette (but 22), hypothèse non validée : C8 reste l'indice de la couche entreprises.
 * **R&D et CIR** — C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette.
 * **rétroaction PIB → recettes** — aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat.
 * **multiplicateur macro** — aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat.
@@ -186,6 +201,19 @@ Ce que la chaîne ne lit pas, et pourquoi :
 En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sous cette persistance, elle **baisse la dette** en 2035, à θ½ comme à chaque coin de la boîte, dans les deux vues.
 
 **Le verdict**, lu sur le Monte-Carlo (D-345) : elle **baisse la dette** en 2035 dans au moins 90 % des tirages, vue vieillie.
+
+**Les créations d'entreprises, une hypothèse non validée.** La dette de cette page lit le canal des créations d'entreprises, par décision du propriétaire (D-400) : les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée des sociétés, qui survivent, montent en charge et produisent ; leurs recettes entrent au solde, leur activité au PIB. Aucune source ne redonne ce total. La dette sans ce canal, sur les mêmes passes, est donnée à côté.
+
+| persistance | vue | Δ dette 2035, à θ½ | sans le canal | ce que le canal y change |
+|---|---|---|---|---|
+| lue | vieillie | -0,07 pt | -0,07 pt | +0,00 pt |
+| lue | figée | -0,07 pt | -0,07 pt | +0,00 pt |
+
+La productivité relative des sociétés nouvelles, rapportée à la société moyenne, est la ligne θ du canal : 0,5 au centre (θ½), de 0, le canal éteint, à 1. Aucune source ne la chiffre pour les sociétés qu'un impôt fait naître ou disparaître. Sa boîte, toutes les autres lignes à θ½, va de -0,07 pt à -0,07 pt en 2035, vue vieillie, persistance « lue ». Le Monte-Carlo du verdict lit le canal à sa productivité centrale, sans la tirer : sa loi n'est pas déclarée.
+
+L'élasticité : 0,2 point de taux d'entrée par point de taux apparent de prélèvement sur le profit, de 0,043 à 0,356 ; Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 et pages 21 et 22 : le milieu de leurs estimations en variables instrumentales et intra-groupe, lu sur un taux apparent et non sur leur taux effectif (D-245, D-247). Survie annuelle 0,9, montée en charge sur 5 ans, taille relative à maturité 0,1, valeur ajoutée des sociétés 0,6 du PIB, assiette 0,092 du PIB ; les valeurs fixées par D-402.
+
+Les instruments lus, en euros de prélèvement, recettes positives, rien d'autre (ni le nom de qui propose la mesure, ni son sens) : l'IS, sa contribution sociale, la CEBGE, la CVAE, la C3S, le PFU, les prélèvements sociaux du capital et les cotisations patronales, nettes des allègements. Les cotisations patronales font jouer le canal, comme l'IS : elles sont aussi dans la boucle macro de Mésange, dont la variante « cotisations employeurs » porte déjà la réponse de l'activité au coût du travail. Ce double compte est un choix du propriétaire (13 novembre 2026), dit ici plutôt que caché. Les impôts de production (CVAE, C3S) sont lus euro pour euro comme l'IS, faute d'une estimation publiée de la réponse des créations à ces impôts ; le PFU et les prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, comme le taux virtuel de l'IPP qui joint l'IS et le PFU.
 
 **Les sensibilités, hors du verdict.** Les deux persistances que les pages lisaient avant la persistance « lue » (D-336), sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
 
@@ -287,7 +315,7 @@ Les portes, de celle qui ouvrirait le plus d'articles à celle qui en ouvrirait 
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `601b442` ; ce qu'elle disait est figé dans `reports/etudes/plfss2027/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `aa22293` ; ce qu'elle disait est figé dans `reports/etudes/plfss2027/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
@@ -303,7 +331,7 @@ Là où une seule correction touche une ligne, l'écart avant → après est ce 
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `aa22293`, conteneur cloud, 15 Go, 4 cœurs, deux files. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `5a68669`, conteneur cloud, 15 Go, 4 cœurs, deux files. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
