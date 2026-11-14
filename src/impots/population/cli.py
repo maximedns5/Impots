@@ -193,6 +193,71 @@ KNOWN_SOURCES: dict[str, tuple[str, str]] = {
         "DGFiP Statistiques n° 39 — données des figures. The fiscal control totals: "
         "IS-liable firm count, résultat fiscal and bénéfices by size and by sector.",
     ),
+    # Les sources du jumeau manifestées à la main (D-410, D-413), déclarées ici pour que
+    # `impots population manifest` les garde au lieu de les mettre en quarantaine (D-416).
+    "eurostat_gov_10dd_edpt3_fr_sfa.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "gov_10dd_edpt3?format=JSON&geo=FR&sector=S13&unit=MIO_EUR&na_item=GD_CH"
+        "&na_item=B9_T3&na_item=F_ASS&na_item=ORADJ&na_item=K61&na_item=KX&na_item=YA3",
+        "Eurostat gov_10dd_edpt3, passage du déficit à la variation de la dette, France, "
+        "S13, M€ : B9_T3, GD_CH et les cinq composantes de l'ajustement flux-stocks, "
+        "2021→2025 (D-163, D-340).",
+    ),
+    "eurostat_irt_lt_mcby_a_fr_2009_2025.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "irt_lt_mcby_a?format=JSON&geo=FR&sinceTimePeriod=2009&untilTimePeriod=2025",
+        "Eurostat irt_lt_mcby_a, France : rendement de l'OAT à dix ans (critère de "
+        "Maastricht), moyenne annuelle en %, 2009→2025 (D-410).",
+    ),
+    "eurostat_irt_lt_mcby_m_fr_2009_2025.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "irt_lt_mcby_m?format=JSON&geo=FR&sinceTimePeriod=2009-01"
+        "&untilTimePeriod=2025-12",
+        "Eurostat irt_lt_mcby_m, la même série mensuelle, France, 2009-01→2025-12 : "
+        "recoupe la moyenne annuelle (D-410).",
+    ),
+    "eurostat_une_rt_a_fr_2009_2025.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "une_rt_a?format=JSON&geo=FR&age=Y15-74&unit=PC_ACT&unit=THS_PER&sex=T&sex=M"
+        "&sex=F&sinceTimePeriod=2009&untilTimePeriod=2025",
+        "Eurostat une_rt_a, France, 15-74 ans : taux de chômage BIT et milliers de "
+        "chômeurs, ensemble, hommes et femmes, 2009→2025 (D-410).",
+    ),
+    "insee_bdm_001768695_ipc_hors_tabac_annuel.xml": (
+        "https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/001768695",
+        "Insee, BDM 001768695 : IPC base 2015, variations annuelles, ensemble des ménages, "
+        "France, hors tabac, série arrêtée ; l'indice légal des pensions (D-362).",
+    ),
+    "insee_bdm_creations_entreprises_2009_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/"
+        "010755537+010755410+011811817+011811818?startPeriod=2009-01&endPeriod=2025-12",
+        "Insee, BDM : créations mensuelles brutes d'entreprises, France, 2009-01→2025-12, "
+        "ensemble, micro, individuelles hors micro, classiques (D-410).",
+    ),
+    "insee_bdm_defaillances_entreprises_2009_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/"
+        "001656093+001656094+001656095+001656096+001656097+001656098+001656099"
+        "+001656100+001656101+001656102+001656103+001656104"
+        "?startPeriod=2009-12&endPeriod=2025-12",
+        "Insee, BDM (source Banque de France) : défaillances d'entreprises, cumul brut sur "
+        "12 mois, France, 2009-12→2025-12, tous secteurs et onze secteurs (D-410).",
+    ),
+    "insee_cn2025_t3105_passage_deficit_dette.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8988843/t_3105_fr.xlsx",
+        "Insee, comptes nationaux base 2020, t. 3.105, passage du déficit des APU à la "
+        "variation de leur dette, millésime 2025, 2009→2025 (D-410).",
+    ),
+    "insee_cn2025_t6208_emploi_total_branches.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8988823/T_6208_fr.xlsx",
+        "Insee, comptes nationaux base 2020, t. 6.208, emploi intérieur total par branche, "
+        "millésime 2025, 1949→2025 ; la ligne « _T » (D-410).",
+    ),
+    "Freemium_jorf_global_20261108-140000.tar.gz": (
+        "https://echanges.dila.gouv.fr/OPENDATA/JORF/"
+        "Freemium_jorf_global_20261108-140000.tar.gz",
+        "DILA, archive complète du Journal officiel (JORF) en XML, version du 8 novembre "
+        "2026 ; lue par scripts/jumeau_jorf_*.py pour vérifier les mesures votées (D-413).",
+    ),
 }
 
 
