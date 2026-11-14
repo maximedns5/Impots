@@ -133,3 +133,47 @@ def test_les_impots_de_la_t3217_sont_dans_l_etat_et_absents_quand_ils_n_existent
         assert presents == attendus
     assert historique.etat_initial(2021).present("impot_audiovisuel")
     assert not historique.etat_initial(2022).present("impot_audiovisuel")
+
+
+def test_les_champs_des_lots_2_a_4_que_les_series_portent_sont_ecrits() -> None:
+    """D-412 : l'emploi, le chômage, la population active, la rémunération moyenne (D1
+    par salarié, la définition du lot 4), le solde des échanges et la contribution du
+    solde extérieur sont écrits depuis les séries publiées ; les créations de sociétés,
+    les fermetures, la FBCF des seules SNF et le reste du monde hors échanges restent
+    absents ; les séries sans champ exact sont au groupe « histoire »."""
+    etat = historique.etat_initial(2024)
+    assert etat["emploi_total"][0] == pytest.approx(30591.9, abs=1e-9)
+    assert etat["emploi_salarie"][0] == pytest.approx(27181.7, abs=1e-9)
+    # Eurostat, 15-74 ans ; l'enquête Emploi (t. 302, la référence du lot 4) en compte
+    # 2 342,8 milliers : 11,8 milliers d'écart entre les deux publications, dit.
+    assert etat["chomage"][0] == pytest.approx(2331.0, abs=1e-9)
+    assert etat["population_active"][0] == pytest.approx(30591.9 + 2331.0, abs=1e-9)
+    assert etat["salaire_moyen"][0] == pytest.approx(
+        etat["remunerations"][0] * 1e6 / 27181.7, rel=1e-12)
+    assert etat["salaire_brut_moyen"][0] == pytest.approx(
+        series.lire("salaire_moyen")[2024], rel=1e-12)
+    assert etat["salaire_brut_moyen"][0] < etat["salaire_moyen"][0]
+    assert etat["solde_exterieur"][0] == pytest.approx(
+        etat["exportations"][0] - etat["importations"][0], abs=1e-12)
+    for nom in ("creations_societes", "fermetures_societes", "stock_societes",
+                "investissement_entreprises", "demande_mondiale", "prix_relatifs",
+                "solde_courant"):
+        assert not etat.present(nom), nom
+    assert etat["creations_entreprises"][0] == pytest.approx(1_111_238, abs=1e-9)
+    assert etat["defaillances"][0] == pytest.approx(66_106, abs=1e-9)
+    assert etat["volume_exportations"][0] == pytest.approx(
+        series.lire("volume_exportations")[2024], abs=1e-12)
+
+
+@pytest.mark.parametrize("annee", [2010, 2020, 2024])
+def test_la_contribution_du_solde_exterieur_est_celle_des_volumes_publies(annee) -> None:
+    """La formule du bloc `commerce` sur la t. 1.101 et la t. 1.103 redonne la variation
+    des volumes de la t. 1.102 aux prix de l'année d'avant, à l'arrondi des indices
+    (au plus 2e-6 du PIB de 2010 à 2025)."""
+    etat = historique.etat_initial(annee)
+    vol = {n: series.lire(f"volume_{n}") for n in ("exportations", "importations")}
+    ind = {n: series.lire(f"indice_prix_{n}") for n in ("exportations", "importations")}
+    pib = series.lire("pib")
+    attendu = sum(s * (vol[n][annee] - vol[n][annee - 1]) * ind[n][annee - 1] / 100
+                  for n, s in (("exportations", 1), ("importations", -1))) / pib[annee - 1]
+    assert etat["contribution_solde_exterieur"][0] == pytest.approx(attendu, abs=5e-6)

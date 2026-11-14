@@ -45,6 +45,19 @@ sur celui de l'année d'avant ; la variation des stocks n'a pas d'indice publié
 prix est absent, comme celui de l'effet non ventilé, nul sur l'histoire. La croissance
 du PIB en volume est celle que publie la t. 1.102, pas celle que le cadre chaînerait :
 sans prix des stocks, la formule du cadre ne se calcule pas sur l'histoire.
+
+LES CHAMPS DES LOTS 2 À 4 (D-412). Ceux qu'une série publiée porte exactement sont
+écrits, chacun avec sa source au registre : l'emploi intérieur total et salarié (t. 6.208
+et 6.210), les chômeurs BIT (Eurostat, 15-74 ans ; l'enquête Emploi n'en compte aucun
+au-delà), la population active (leur somme, la convention du lot 4), la rémunération
+moyenne par salarié (D1 de la t. 1.105 sur l'emploi salarié, la définition du lot 4), le
+solde des échanges (P6 − P7) et la contribution du solde extérieur à la croissance (la
+formule du bloc `commerce`, sur la t. 1.101 et la t. 1.103). Ceux qu'aucune série ne
+porte restent absents : le stock, les créations et les fermetures de sociétés, les
+sorties induites, la productivité (lot 2), la FBCF des seules sociétés non financières
+(la t. 1.101 les publie avec les EI), la demande mondiale, les prix relatifs, le solde
+courant (lot 3). Les séries sans champ exact (créations d'entreprises, défaillances,
+salaire brut moyen, taux de chômage, OAT, volumes) vont au groupe ``histoire``.
 """
 
 from __future__ import annotations
@@ -54,7 +67,13 @@ import json
 from typing import Any
 
 from impots.dette import comptes
-from impots.jumeau.champs import APU_DEPENSES, APU_RECETTES, EMPLOIS_PUBLIES, IMPOTS_3217
+from impots.jumeau.champs import (
+    APU_DEPENSES,
+    APU_RECETTES,
+    EMPLOIS_PUBLIES,
+    IMPOTS_3217,
+    REGISTRE,
+)
 from impots.jumeau.etat import Etat
 
 PREMIERE, DERNIERE = 2010, 2025
@@ -264,6 +283,7 @@ def etat_initial(annee: int) -> Etat:
     etat.fixer("ratio_dette", etat["dette"] / etat["pib"])
     etat.fixer("taux_implicite", etat["interets_nets"] / etat["dette_ouverture"])
     _prix_et_impots(etat, annee)
+    _series_des_lots(etat, annee)
     return etat
 
 
@@ -282,3 +302,51 @@ def _prix_et_impots(etat: Etat, annee: int) -> None:
         valeurs = series.lire(f"impot_{nom}")
         if annee in valeurs:
             etat.ecrire(f"impot_{nom}", PUBLIE, valeurs[annee])
+
+
+#: Les champs du groupe ``histoire`` lus tels quels dans une série de `jumeau.series`,
+#: {champ : série}. Les volumes sont `volume_<emploi>`, du même nom des deux côtés.
+SERIES_HISTOIRE = {"salaires_bruts": "salaires_bruts",
+                   "salaire_brut_moyen": "salaire_moyen", "taux_chomage": "taux_chomage",
+                   "creations_entreprises": "creations_entreprises",
+                   "creations_micro": "creations_micro",
+                   "creations_classiques": "creations_classiques",
+                   "creations_ei_hors_micro": "creations_ei_hors_micro",
+                   "defaillances": "defaillances", "taux_oat_10ans": "taux_oat_10ans"}
+
+
+def _poser(etat: Etat, nom: str, valeur: float) -> None:
+    if REGISTRE[nom].additif:
+        etat.ecrire(nom, PUBLIE, valeur)
+    else:
+        etat.fixer(nom, valeur)
+
+
+def _series_des_lots(etat: Etat, annee: int) -> None:
+    """Les champs des lots 2 à 4 qu'une série publiée porte exactement, et le groupe
+    ``histoire`` (D-412). Ce que le module ne dit pas ici reste absent."""
+    from impots.jumeau import series
+
+    emploi_total = series.lire("emploi_total")[annee]
+    emploi_salarie = series.lire("emploi_salarie")[annee]
+    chomeurs = series.lire("chomeurs")[annee]
+    _poser(etat, "emploi_total", emploi_total)
+    _poser(etat, "emploi_salarie", emploi_salarie)
+    _poser(etat, "chomage", chomeurs)
+    _poser(etat, "population_active", emploi_total + chomeurs)
+    # D1 en Md€, l'emploi en milliers : des euros par salarié, comme le lot 4.
+    _poser(etat, "salaire_moyen", float(etat["remunerations"][0]) * 1e6 / emploi_salarie)
+
+    x, m = float(etat["exportations"][0]), float(etat["importations"][0])
+    _poser(etat, "solde_exterieur", x - m)
+    avant = _t1101()[annee - 1]
+    volume = ((x / float(etat["prix_exportations"][0]) - avant["P6|"])
+              - (m / float(etat["prix_importations"][0]) - avant["P7|"]))
+    _poser(etat, "contribution_solde_exterieur", volume / avant["B1GQ|"])
+
+    _poser(etat, "volume_pib", series.lire("volume_pib")[annee])
+    for nom, _, _, _ in EMPLOIS_PUBLIES:
+        if nom != "var_stocks":
+            _poser(etat, f"volume_{nom}", series.lire(f"volume_{nom}")[annee])
+    for champ, serie in SERIES_HISTOIRE.items():
+        _poser(etat, champ, series.lire(serie)[annee])

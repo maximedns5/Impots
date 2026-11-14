@@ -31,7 +31,9 @@ LES GROUPES, et ce qu'ils somment (les identités sont dans `identites`) :
   est resté celui du lot 1.
 
 Les champs des lots 2 à 4 (travail, entreprises, reste du monde) sont au registre et
-restent absents tant que leur lot ne les écrit pas.
+restent absents tant que leur lot ne les écrit pas. Sur l'histoire, l'état publié écrit
+ceux qu'une série publiée porte exactement (D-412) ; les séries sans champ exact vont au
+groupe ``histoire`` (lot 5), jamais dans un champ voisin.
 """
 
 from __future__ import annotations
@@ -347,8 +349,9 @@ _ajouter(
           "B11", f"{T1101} (P6 − P7) ; le bloc `commerce` (projection)", 3, "lot3"),
     Champ("contribution_solde_exterieur", "Contribution du solde extérieur à la "
           "croissance du PIB en volume", "ratio", "", "le bloc `commerce` : (X_t/p^X_t − "
-          "X_{t−1}) − (M_t/p^M_t − M_{t−1}), sur le PIB de l'année précédente", 3, "lot3",
-          additif=False),
+          "X_{t−1}) − (M_t/p^M_t − M_{t−1}), sur le PIB de l'année précédente ; histoire "
+          "(D-412) : la même formule, X, M et le PIB de la t. 1.101, p^X et p^M de la "
+          "t. 1.103", 3, "lot3", additif=False),
 )
 
 # --------------------------------------------------------------------- lot 4, ménages
@@ -357,16 +360,22 @@ _ajouter(
 #: de chaque mesure linéarisé autour d'elle (le modèle est linéaire, comme Mésange), ce
 #: qui fait la décomposition par mesure.
 LOT4_SOURCE = "lot 4, blocs des ménages (D-409) ; référence : menages.yaml"
+T6208 = "Insee, comptes nationaux annuels base 2020, t. 6.208 (millésime 2025)"
+T6210 = "Insee, comptes nationaux annuels base 2020, t. 6.210 (millésime 2025)"
 _ajouter(
     Champ("population_active", "Population active (emploi intérieur et chômeurs BIT)",
-          "milliers", "", LOT4_SOURCE, 4, "travail"),
-    Champ("emploi_total", "Emploi intérieur total", "milliers", "", LOT4_SOURCE, 4,
+          "milliers", "", f"{LOT4_SOURCE} ; histoire (D-412) : emploi_total + chomage", 4,
           "travail"),
-    Champ("emploi_salarie", "Emploi intérieur salarié", "milliers", "", LOT4_SOURCE, 4,
-          "travail"),
-    Champ("chomage", "Chômeurs au sens du BIT", "milliers", "", LOT4_SOURCE, 4, "travail"),
+    Champ("emploi_total", "Emploi intérieur total", "milliers", "",
+          f"{LOT4_SOURCE} ; histoire (D-412) : {T6208} _T", 4, "travail"),
+    Champ("emploi_salarie", "Emploi intérieur salarié", "milliers", "",
+          f"{LOT4_SOURCE} ; histoire (D-412) : {T6210} _T", 4, "travail"),
+    Champ("chomage", "Chômeurs au sens du BIT", "milliers", "",
+          f"{LOT4_SOURCE} ; histoire (D-412) : Eurostat une_rt_a, France, 15-74 ans, "
+          "THS_PER", 4, "travail"),
     Champ("salaire_moyen", "Rémunération moyenne par salarié (D1 par tête)",
-          "€ courants", "D1", LOT4_SOURCE, 4, "travail"),
+          "€ courants", "D1", f"{LOT4_SOURCE} ; histoire (D-412) : D1 de la t. 1.105 sur "
+          f"l'emploi salarié de la {T6210}", 4, "travail"),
 )
 #: Le revenu disponible et la consommation des ménages par décile de niveau de vie, au
 #: champ de la population (revenu disponible d'OpenFisca, hors loyers imputés et hors
@@ -379,6 +388,46 @@ for _d in DECILES_MENAGES:
         Champ(f"conso_d{_d:02d}", f"Consommation des ménages du décile {_d}", MDE,
               "P3 (champ de l'enquête Budget de famille)", LOT4_SOURCE, 4,
               "menages_conso"))
+
+# --------------------------------------------------------------------- lot 5 : l'histoire
+#: Les séries publiées de `jumeau.series` qu'aucun champ des lots 2 à 4 ne porte
+#: exactement, en champs distincts de l'état publié (D-412), hors de toute identité,
+#: absents en projection tant qu'aucun bloc ne les écrit. Une série n'est pas forcée
+#: dans un champ voisin : les créations d'entreprises (micro-entrepreneurs compris) ne
+#: sont pas les créations de sociétés du lot 2, les défaillances ne sont pas ses
+#: fermetures, le salaire brut (D11) par tête n'est pas la rémunération (D1) par tête.
+CN2025 = "Insee, comptes nationaux annuels base 2020 (millésime 2025)"
+BDM = "Insee, BDM"
+HISTOIRE: tuple[tuple[str, str, str, str, bool], ...] = (
+    # (nom, libellé, unité, source, additif)
+    ("volume_pib", "PIB en volume chaîné", "Md€ 2020 chaînés", f"{CN2025}, t. 1.102 B1GQ",
+     False),
+    *((f"volume_{_n}", f"{_l}, volume chaîné", "Md€ 2020 chaînés",
+       f"{CN2025}, t. 1.102 {_c} {_s}" if _s else f"{CN2025}, t. 1.102 {_c}", False)
+      for _n, _l, _c, _s in EMPLOIS_PUBLIES if _n != "var_stocks"),
+    ("salaires_bruts", "Salaires et traitements bruts (D11)", MDE,
+     f"{CN2025}, t. 6.205 _T", True),
+    ("salaire_brut_moyen", "Salaire brut moyen par tête (D11 sur l'emploi salarié)",
+     "€ courants", f"{CN2025}, t. 6.205 _T sur t. 6.210 _T (D-362)", False),
+    ("taux_chomage", "Taux de chômage au sens du BIT, 15-74 ans", "%",
+     "Eurostat une_rt_a, France, PC_ACT", False),
+    ("creations_entreprises", "Créations d'entreprises, ensemble (micro compris)",
+     "unités", f"{BDM}, idbank 010755537, somme des douze mois bruts", True),
+    ("creations_micro", "Créations de micro-entrepreneurs", "unités",
+     f"{BDM}, idbank 010755410, somme des douze mois bruts", True),
+    ("creations_classiques", "Créations d'entreprises classiques (sociétés et EI hors "
+     "micro)", "unités", f"{BDM}, idbank 011811818, somme des douze mois bruts", True),
+    ("creations_ei_hors_micro", "Créations d'entrepreneurs individuels hors micro",
+     "unités", f"{BDM}, idbank 011811817, somme des douze mois bruts", True),
+    ("defaillances", "Défaillances d'entreprises, tous secteurs", "unités",
+     "Banque de France, via la BDM, idbank 001656101, cumul sur douze mois de décembre",
+     True),
+    ("taux_oat_10ans", "Rendement de l'OAT à dix ans, moyenne annuelle", "%",
+     "Eurostat irt_lt_mcby_a, France, MCBY", False),
+)
+for _nom, _lib, _unite, _source, _additif in HISTOIRE:
+    _ajouter(Champ(_nom, _lib, _unite, "", f"{_source} (histoire, D-412)", 5, "histoire",
+                   additif=_additif))
 
 REGISTRE: dict[str, Champ] = dict(_REGISTRE)
 

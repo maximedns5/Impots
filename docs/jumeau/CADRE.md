@@ -72,7 +72,12 @@ l'année (la variation du stock et B9) et l'écart interne de cette table.
 **Le travail** (lot 4) : population active, emploi total et salarié, chômage, salaire
 moyen par tête. **Les entreprises** (lot 2) : stock de sociétés, créations, fermetures,
 productivité moyenne, investissement. **Le reste du monde** (lot 3) : demande mondiale,
-prix relatifs, exportations, importations, solde courant.
+prix relatifs, exportations, importations, solde courant. Sur l'histoire (D-412), l'état
+publié écrit ceux qu'une série de `jumeau.series` porte exactement (l'emploi, le chômage,
+la population active, la rémunération moyenne par salarié, le solde des échanges et sa
+contribution à la croissance) ; une série sans champ exact (les créations d'entreprises,
+micro compris, les défaillances, le salaire brut par tête, les volumes, l'OAT) va au
+groupe `histoire`, jamais dans un champ voisin, et les autres champs restent absents.
 
 **Un champ non calculé est absent, pas nul.** L'état porte un masque : un champ que
 personne n'a écrit est absent, et une identité ou un graphique qui le lit refuse en le
