@@ -24,10 +24,12 @@ import numpy as np
 from impots.jumeau.blocs.menages import Parametres, charger, reference, revenus_cellules, structure
 from impots.jumeau.cellules import Cellules
 from impots.jumeau.etat import Etat
-from impots.population.aggregate import INDIFFERENCE_EUR
 
-#: Le seuil d'indifférence, en euros par ménage et par an, celui des rapports.
-SEUIL = INDIFFERENCE_EUR
+#: Le seuil d'indifférence, en euros par ménage et par an, celui des rapports
+#: (`population.aggregate.INDIFFERENCE_EUR`, qu'un test tient égal) : écrit ici, parce que
+#: ce module tourne dans le navigateur (D-415), où `population` et polars ne se chargent
+#: pas.
+SEUIL = 10.0
 
 
 @dataclass(frozen=True)
