@@ -30171,3 +30171,144 @@ tests scripts` propre. Ni `make impact` ni les tests lourds ici.
   à partir de la requête est à écrire et à sourcer.
 * Les champs restés absents (créations et fermetures de sociétés, FBCF des seules SNF,
   demande mondiale, prix relatifs, solde courant) attendent leurs séries, au lot 6.
+
+## D-413 — Les mesures votées relues au Journal officiel : 95 vérifiées, 19 corrections
+
+### La méthode
+
+D-410 laissait 58 mesures sur 70 écrites de mémoire. Chacune est relue ici sur le texte
+publié au Journal officiel, article par article : la loi (numéro, date de signature,
+nature), l'article cité, les paramètres avant et après, la date d'effet. Un script lit
+l'archive du Journal officiel que publie la DILA (`Freemium_jorf_global_20261108-140000`,
+1,75 Go, echanges.dila.gouv.fr/OPENDATA/JORF, hors git, dans `data/raw`) et
+en garde les articles des lois signées depuis juin 2009 et des décrets nommés (assurance
+chômage, prime d'activité, revenu de solidarité active, ordonnance de 2017 sur le
+prélèvement à la source) : 29 593 enregistrements. Chaque paramètre est cherché dans
+l'article ; un article qui ne le porte pas est un article faux.
+
+**La source citée.** L'URL est celle de l'article au JO sur Légifrance
+(`/jorf/article_jo/JORFARTI…`) : l'archive porte le même identifiant, et le texte lu est
+celui de cette URL. Pour chacune des 95 mesures, le numéro, la date et la nature du
+texte de la base sont recoupés contre ceux de l'archive : aucun écart. Le lecteur
+(`votees._verification`) refuse une mesure « vérifiée » sans URL et une « non vérifiée »
+sans raison ; les douze mesures confirmées en D-410 sur codes.droit.org gardent cette
+confirmation en note.
+
+**Les sources.** Joignables : l'archive de la DILA (utilisée), codes.droit.org,
+assemblee-nationale.fr, senat.fr (lu pour le seul numéro de la loi de finances pour
+2026, n° 2026-103 du 19 février 2026), bofip.impots.gouv.fr, conseil-constitutionnel.fr,
+data.gouv.fr. Refusées : legifrance.gouv.fr (403), urssaf.fr, legislation.cnav.fr et
+boss.gouv.fr (connexion refusée par le réseau de la session), api.piste.gouv.fr (404, et
+l'API demande une clé). service-public.fr n'a pas servi.
+
+**Ce qui n'a pas été lu.** Aucune évaluation préalable, aucun tome des voies et moyens,
+aucun rapport de la Cour des comptes ou du HCFP, aucun chiffrage de tiers. Les lois de
+finances et de financement mêlent le droit et des montants (articles d'équilibre, états
+législatifs, rapports annexés) : des recherches plein texte en ont affiché quelques
+fragments ; rien n'en a été relevé, et la base ne porte que le droit.
+
+### Le décompte
+
+**95 mesures, 95 vérifiées, aucune non vérifiée** : les 70 de D-410 et 25 ajoutées. Un
+test le tient (`VERIFIEES, NON_VERIFIEES = 95, 0`). Vérifiée veut dire : la loi,
+l'article et les paramètres « après » sont dans l'article lu. Un « avant » fixé par
+décret ou par une loi antérieure à l'archive (la loi de finances pour 2009, la
+convention d'assurance chômage de 2017) est dit tel dans le paramètre ou la note.
+
+### Les corrections (avant → après)
+
+1. `lfi2014_plafond_qf` : article 4 → **3** (l'article 4 porte sur la retraite
+   supplémentaire).
+2. `lfr2022_audiovisuel` : article 1 → **6** (l'article 1 porte sur les titres-restaurant).
+3. `lfss2026_suspension_retraites` : article « non identifié » → **105**.
+4. `lfss2019_revalorisation_0_3` : « 0,3 % en 2019 et 2020 » → 0,3 % au titre de 2019 ;
+   la mention de 2020 est censurée (décision n° 2018-776 DC). 2020 relève de la LFSS
+   2020, art. 81 (mesure ajoutée : 0,3 %, sauf les pensions jusqu'à 2 000 €).
+5. `lfi2018_composante_carbone` : « tonne de CO2 à 44,60 € en 2018 … 86,20 € en
+   2022 » → la loi ne fixe pas la valeur de la tonne, mais des tarifs : gazole 59,40,
+   64,76, 70,12, 75,47 et 78,23 € l'hectolitre de 2018 à 2022 ; la loi de finances pour
+   2019 (n° 2018-1317, art. 64) supprime les colonnes de 2019 à 2022.
+6. `decret_2018_prime_activite` : « bonification relevée de 90 € au niveau du SMIC » →
+   bonification maximale de 12,782 % à 29,101 % du montant forfaitaire, atteinte à 120
+   fois le SMIC horaire au lieu de 95 (CSS, art. D. 843-2).
+7. `lfrss2023_regimes_speciaux` : les industries électriques et gazières et la Banque de
+   France retirées de la liste : l'article 1 ferme la RATP, les clercs et employés de
+   notaire et le CESE ; les deux autres régimes sont réglementaires.
+8. `lfr2012_tva_sociale` : « 5,4 % ; exonération jusqu'à 2,1 SMIC, dégressive jusqu'à
+   2,4 SMIC » → nulle sous un premier seuil, croissante jusqu'à un second, seuils fixés
+   par décret ; la note ajoute que le prélèvement social sur le capital, porté de 3,4 à
+   5,4 % par le même article, n'est pas abrogé en août 2012.
+9. `lfrss2014_pacte_allegements` : « plus aucune cotisation URSSAF au SMIC, hors
+   accidents du travail » → réduction générale étendue au FNAL, à la contribution de
+   solidarité pour l'autonomie et, sous un taux fixé par arrêté, aux accidents du
+   travail ; allocations familiales « 3,45 % » → réduites de 1,8 point (3,45 %).
+10. `lfss2018_cice_allegements` : maladie « 13 % → 7 % » → réduite de 6 points (le taux
+    de droit commun est réglementaire) ; « au 1er octobre 2019 » retiré : cette date
+    vient de la LFSS 2019, dont l'article n'est pas identifié.
+11. `lfi2014_contribution_is_10_7` : « exercices clos jusqu'au 30 décembre 2013 → 2015 »,
+    prêté à la loi de finances pour 2014 → la prorogation à 2015 est de la loi de
+    finances pour 2013 (art. 30), celle à 2016 de la LFR d'août 2014 (art. 15).
+12. `lfr2011_4_contribution_is_5` : « prorogée ensuite » → les deux prorogations nommées.
+13. `lfr2011_isf_bouclier` : bouclier « supprimé à compter de 2013 » → appliqué pour la
+    dernière fois aux revenus de 2010 (droit à restitution acquis au 1er janvier 2012).
+14. `lfi2011_tranche_41` : le même article porte le taux des plus-values mobilières de 16
+    à 19 % (CGI, art. 200 B) : paramètre ajouté.
+15. `lfr2012_ttf` : 0,4 % depuis 2025 ajouté (loi n° 2025-127, art. 98), avec les
+    articles des relèvements de 2012 et de 2017.
+16. `lfi2023_cvae` : plafonnement « 1,625 % en 2023 » → 1,625 % en 2023, 1,25 % ensuite.
+17. `retraites_2010_age_legal` : 62 ans atteints dès la génération 1955 et 5 mois par
+    génération par la LFSS 2012 (n° 2011-1906, art. 88), source ajoutée.
+18. `lfi2024_cvae_etalement` : la note vague sur le report → `suite` vers la mesure
+    ajoutée de la loi de finances pour 2025 (art. 62).
+19. `lfi2020_ir_11` : les seuils du barème ajoutés ; `lfi2015_tranche_5_5` et lui
+    renvoient au barème suivant.
+
+Dix-sept corrections portent sur les mesures de mémoire, deux (3 et 16) sur les douze
+confirmées en D-410. Tout le reste est confirmé tel que D-410 l'avait écrit : les 41
+autres mesures de mémoire portent la bonne loi, le bon article et les bons paramètres,
+et aucune loi, aucun numéro ni aucune date de texte n'était faux.
+
+### Ce qui a été ajouté (25 mesures)
+
+* **La CSG sur le capital.** La LFSS 2019 (n° 2018-1203, art. 26) la ramène de 9,9 à
+  9,2 % en refondant les prélèvements sociaux ; **la LFSS 2026 (n° 2025-1403, art. 12)
+  la porte à 10,6 %**, les revenus fonciers, les plus-values immobilières, l'épargne
+  logement, l'assurance vie et les rentes restant à 9,2 %. C'est la loi que D-410
+  cherchait.
+* **Les barèmes de l'IR**, une mesure par loi de finances de 2010 à 2026 (13, plus ceux
+  de 2015 et de 2020 déjà dans la base), chaînés par `suite` : les quatre ou cinq seuils
+  et le plafond du quotient familial, avant et après. Les lois pour 2012 et 2013 n'ont
+  pas d'article de revalorisation : le gel est l'absence de l'article.
+* **Les lois de finances pour 2025 et 2026** : le report de la suppression de la CVAE à
+  2030 et la contribution complémentaire de 47,4 % (2025, art. 62), la TTF à 0,4 %
+  (2025, art. 98), la CDHR prorogée jusqu'à un déficit sous 3 % (2026, art. 2), la
+  contribution sur les bénéfices étendue à un second exercice (2026, art. 12), la taxe
+  de 20 % sur les actifs non professionnels des holdings patrimoniales (2026, art. 7).
+* **L'assurance chômage** : le décret n° 2019-797 (130 jours travaillés sur 24 mois,
+  dégressivité de 0,7 au 183e jour) et le décret n° 2023-33 (durée affectée de 0,75).
+* **La dépense sociale** : la modulation des allocations familiales (LFSS 2015, art.
+  85), la revalorisation de 2020 (LFSS 2020, art. 81), l'AAH sans les ressources du
+  conjoint (loi n° 2022-1158, art. 10).
+
+### Les tests
+
+`test_jumeau_votees.py` (10, verts en neuf secondes) : le décompte, la source de chaque
+mesure vérifiée, le refus d'une vérification incomplète, les corrections et les ajouts.
+Aucun nombre d'étude ne change : la base n'est lue par aucune passe.
+
+### Ce qui reste
+
+* **Les lois de finances pour 2022 et 2024** n'ont ici que leur barème (et la CVAE pour
+  2024) ; la LFSS 2026 n'a que la suspension et la CSG. Les autres mesures de ces lois
+  sont à choisir contre ce que le lot 6 rejouera.
+* **L'assurance chômage** : le salaire journalier de référence (décrets n° 2021-346 et
+  2021-1251) et les règles de 2024 et 2025 ne sont pas écrits.
+* **La dépense** : les revalorisations du RSA, de l'ASPA et de l'AAH, et les
+  revalorisations annuelles des prestations, manquent.
+* Les articles codifiés (`codification`) ne sont pas relus en version consolidée ; un
+  « avant » fixé par décret reste dit comme tel.
+* **Refaire la vérification** : `scripts/jumeau_jorf_extraire.py` puis
+  `scripts/jumeau_jorf_verifier.py` (leurs docstrings disent l'URL, la date et la
+  commande) ; l'archive est manifestée dans `data/raw/MANIFEST.json`, entrée ajoutée à la
+  main comme les fichiers d'Eurostat de D-410 (`impots population manifest` la mettrait
+  en quarantaine, faute d'entrée dans `KNOWN_SOURCES`).

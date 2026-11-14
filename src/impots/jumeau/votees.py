@@ -41,6 +41,9 @@ INSTRUMENTS = frozenset({
 STATUTS = frozenset({"en_vigueur", "remplacee", "temporaire", "suspendue", "abrogee",
                      "abrogee_avant_effet", "censuree"})
 NATURES = frozenset({"loi", "ordonnance", "décret"})
+#: Le statut de vérification d'une mesure (D-413) : « vérifiée » sur une source primaire,
+#: dont l'URL est donnée ; « non vérifiée », avec la raison.
+VERIFICATIONS = frozenset({"vérifiée", "non vérifiée"})
 #: Les clés et les mots qu'une base de droit voté ne porte pas : ceux d'un chiffrage.
 CLES_INTERDITES = frozenset({"montant", "cout", "coût", "rendement", "chiffrage",
                              "recette", "recettes", "impact", "cout_budgetaire"})
@@ -83,6 +86,19 @@ class Texte:
 
 
 @dataclass(frozen=True)
+class Verification:
+    statut: str
+    """« vérifiée » ou « non vérifiée »."""
+    sources: tuple[str, ...]
+    """Les URL de la source primaire lue (le Journal officiel, un code consolidé)."""
+    lu_sur: str | None = None
+    """Où le texte a été lu quand l'URL n'était pas joignable (l'archive de la DILA)."""
+    raison: str | None = None
+    """Pourquoi une mesure n'est pas vérifiée."""
+    note: str | None = None
+
+
+@dataclass(frozen=True)
 class MesureVotee:
     id: str
     gouvernement: str
@@ -93,7 +109,7 @@ class MesureVotee:
     annee_effet: int
     parametres: tuple[dict[str, str], ...]
     statut: str
-    verification: str
+    verification: Verification
     codification: str | None = None
     date_effet: dt.date | None = None
     suite: str | None = None
@@ -188,6 +204,23 @@ def _sans_chiffrage(valeur: Any, ou: str) -> None:
                           f"« {valeur} » : un montant budgétaire n'entre pas dans la base")
 
 
+def _verification(valeur: Any, ou: str) -> Verification:
+    if not isinstance(valeur, dict) or valeur.get("statut") not in VERIFICATIONS:
+        raise VoteesError(f"{ou} : verification sans statut parmi {sorted(VERIFICATIONS)}")
+    inconnues = set(valeur) - {"statut", "sources", "lu_sur", "raison", "note"}
+    if inconnues:
+        raise VoteesError(f"{ou} : clés de verification inconnues {sorted(inconnues)}")
+    sources = tuple(valeur.get("sources") or ())
+    if valeur["statut"] == "vérifiée":
+        if not sources or not all(isinstance(u, str) and u.startswith("https://")
+                                  for u in sources):
+            raise VoteesError(f"{ou} : vérifiée sans URL de source")
+    elif not str(valeur.get("raison") or "").strip():
+        raise VoteesError(f"{ou} : non vérifiée sans raison")
+    return Verification(valeur["statut"], sources, valeur.get("lu_sur"),
+                        valeur.get("raison"), valeur.get("note"))
+
+
 @functools.cache
 def mesures() -> tuple[MesureVotee, ...]:
     """Les mesures votées, vérifiées : texte daté, article, gouvernement de la frise,
@@ -226,7 +259,7 @@ def mesures() -> tuple[MesureVotee, ...]:
             texte=Texte(texte["nature"], str(texte["numero"]), date_texte,
                         texte["intitule"]),
             article=str(m["article"]), annee_effet=int(m["annee_effet"]),
-            parametres=parametres, statut=m["statut"], verification=m["verification"],
+            parametres=parametres, statut=m["statut"], verification=_verification(m.get("verification"), ou),
             codification=m.get("codification"),
             date_effet=None if m.get("date_effet") is None
             else _date(m["date_effet"], f"{ou}.date_effet"),

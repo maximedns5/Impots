@@ -3,7 +3,8 @@
 Des faits juridiques versionnés, lus sans données : la base se lit, chaque mesure a son
 texte, sa date et son article, et est rangée sous le gouvernement en fonction à la date
 de son texte ; aucune ne porte de montant budgétaire ; la frise couvre chaque jour de
-2010 à aujourd'hui, sans trou ni chevauchement, et finit sur le mandat de 2027.
+2010 à aujourd'hui, sans trou ni chevauchement, et finit sur le mandat de 2027. Chaque
+mesure dit si elle est vérifiée sur une source primaire, et laquelle (D-413).
 """
 
 from __future__ import annotations
@@ -79,3 +80,67 @@ def test_aucune_mesure_ne_porte_de_montant() -> None:
         votees._sans_chiffrage([{"parametres": [{"apres": "un coût de 3 Md€"}]}], "x")
     with pytest.raises(votees.VoteesError, match="clé « cout »"):
         votees._sans_chiffrage({"cout": 1}, "x")
+
+
+#: Le décompte de D-413 : les 70 mesures de D-410, relues au Journal officiel, et les 25
+#: ajoutées, toutes relues au même endroit. Un ajout ou un déclassement change ce décompte
+#: et la D-entrée qui le dit.
+VERIFIEES, NON_VERIFIEES = 95, 0
+
+
+def test_chaque_mesure_dit_sa_verification_et_sa_source() -> None:
+    mesures = votees.mesures()
+    for m in mesures:
+        v = m.verification
+        assert v.statut in votees.VERIFICATIONS, m.id
+        if v.statut == "vérifiée":
+            assert v.sources, m.id
+            assert all(u.startswith("https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI")
+                       for u in v.sources), m.id
+        else:
+            assert v.raison and v.raison.strip(), m.id
+    statuts = [m.verification.statut for m in mesures]
+    assert (statuts.count("vérifiée"), statuts.count("non vérifiée")) == (
+        VERIFIEES, NON_VERIFIEES)
+
+
+def test_une_verification_incomplete_est_refusee() -> None:
+    with pytest.raises(votees.VoteesError, match="vérifiée sans URL"):
+        votees._verification({"statut": "vérifiée", "sources": []}, "x")
+    with pytest.raises(votees.VoteesError, match="vérifiée sans URL"):
+        votees._verification({"statut": "vérifiée", "sources": ["codes.droit.org"]}, "x")
+    with pytest.raises(votees.VoteesError, match="sans raison"):
+        votees._verification({"statut": "non vérifiée"}, "x")
+    with pytest.raises(votees.VoteesError, match="sans statut"):
+        votees._verification("mémoire", "x")
+
+
+def test_les_corrections_de_d413_tiennent() -> None:
+    """Les articles et les paramètres corrigés sur le Journal officiel (D-413)."""
+    par_id = {m.id: m for m in votees.mesures()}
+    assert par_id["lfi2014_plafond_qf"].article == "3"
+    assert par_id["lfr2022_audiovisuel"].article == "6"
+    assert par_id["lfss2026_suspension_retraites"].article == "105"
+    revalo = par_id["lfss2019_revalorisation_0_3"].parametres[0]["apres"]
+    assert "2019" in revalo and "2020" not in revalo
+    carbone = par_id["lfi2018_composante_carbone"].parametres[0]
+    assert "gazole" in carbone["quoi"] and "44,60" not in carbone["apres"]
+    assert "29,101 %" in par_id["decret_2018_prime_activite"].parametres[0]["apres"]
+    assert "0,4 %" in par_id["lfr2012_ttf"].parametres[0]["apres"]
+
+
+def test_les_ajouts_de_d413_y_sont() -> None:
+    par_id = {m.id: m for m in votees.mesures()}
+    csg = par_id["lfss2026_csg_patrimoine"]
+    assert (csg.texte.numero, csg.article) == ("2025-1403", "12")
+    assert csg.parametres[0]["avant"] == "9,2 %" and csg.parametres[0]["apres"] == "10,6 %"
+    assert par_id["lfss2019_csg_patrimoine"].suite == "lfss2026_csg_patrimoine"
+    # La chaîne des barèmes de l'impôt sur le revenu, de 2010 à 2026, sans trou.
+    suivant, vus = "bareme_2010", []
+    while suivant is not None:
+        vus.append(suivant)
+        suivant = par_id[suivant].suite
+    assert vus[-1] == "bareme_2026" and par_id["bareme_2026"].statut == "en_vigueur"
+    assert {par_id[i].annee_effet for i in vus} == set(range(2010, 2027)) - {2012, 2013}
+    assert {"chomage_2019", "chomage_2023", "aah_deconjugalisation",
+            "lfss2015_modulation_af", "lfi2026_holdings", "lfi2026_cdhr"} <= set(par_id)
