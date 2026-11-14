@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09",
+  "generated": "2026-11-14",
   "files": {
     "Dictionnaire_EEC_2024.pdf": {
       "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
@@ -2150,6 +2150,36 @@
       "description": "OCDE, Economic Outlook n° 119 (flux OECD.ECO.MAD:DSD_EO@DF_EO 1.5), France, mesure XMKT « Export market for goods and services, volume in USD » : la demande mondiale adressée à la France, importations des partenaires pondérées par leur part dans les exportations françaises, dollars au change, volumes chaînés, référence 2021, annuel, 2009→2025, export CSV du SDMX. L'exogène du bloc commerce dans le rejeu de l'histoire (but 23, D-421).",
       "quarantined": false,
       "provenance": "API SDMX publique de l'OCDE, requête bornée en dates. L'OCDE remplace l'Economic Outlook deux fois par an (le flux change de numéro) : la somme de contrôle est celle du 14 novembre 2026, n° 119."
+    },
+    "insee_bdm_creations_region_secteur_arretee_2000_2021.xml": {
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/CREATIONS-ENTREPRISES/T..TYPE-ENT_HAE+TYPE-ENT_TOTAL......BRUT.?startPeriod=1990-Q1&endPeriod=2025-Q4",
+      "quarantined": false,
+      "sha256": "58ece3f90b1d319e3babee6286ec05bff63ea9b8e4fcc3654bf09e6f1c71e920",
+      "bytes": 3465189,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, BDM, flux CREATIONS-ENTREPRISES (séries arrêtées, ancienne méthode) : créations trimestrielles brutes hors micro-entrepreneurs et ensemble, par région et secteur, 2000-T1→2021-T4 ; le placebo des créations (D-425).",
+      "provenance": "API SDMX de la BDM, requête par clé bornée en dates. La BDM republie les séries (révisions des derniers trimestres) : la somme de contrôle est celle du 14 novembre 2026."
+    },
+    "insee_bdm_creations_region_secteur_m2022_2012_2025.xml": {
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/CREATIONS-ENTREPRISES-METHODE-2022/T..TYPE-ENT_PM+TYPE-ENT_TOTAL+TYPE-ENT_HAE......BRUT.?startPeriod=2000-Q1&endPeriod=2025-Q4",
+      "quarantined": false,
+      "sha256": "df4acf2fe475dfbe8cfcdd5c538206b7adaf9909f3600d2b1260a8442618ed2d",
+      "bytes": 3679869,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, BDM, flux CREATIONS-ENTREPRISES-METHODE-2022 : créations trimestrielles brutes d'entreprises (sociétés, hors micro-entrepreneurs, ensemble), par région et secteur (A10, A21), 2012-T1→2025-T4 ; le panneau des créations (D-425).",
+      "provenance": "API SDMX de la BDM, requête par clé bornée en dates. La BDM republie les séries (révisions des derniers trimestres) : la somme de contrôle est celle du 14 novembre 2026. Les observations de 2023 portent OBS_STATUS=\"U\", que la réponse ne documente pas ; 2023 est l'année du guichet unique de l'INPI."
+    },
+    "insee_bdm_defaillances_region_secteur_1990_2025.xml": {
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/DEFAILLANCES-ENTREPRISES/T..NOMBRE_DEFAILLANCES.....BRUT.?startPeriod=1990-Q1&endPeriod=2025-Q4",
+      "quarantined": false,
+      "sha256": "b5f28ce0207ecc7e3fc5fb62f7743f2f8ce741c165a4788b658eab021fb5ed86",
+      "bytes": 3641401,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, BDM (source Banque de France), flux DEFAILLANCES-ENTREPRISES : défaillances trimestrielles brutes par date de jugement, par région et secteur, et par département (ensemble), 1990-T1→2025-T4 ; le panneau des défaillances (D-425).",
+      "provenance": "API SDMX de la BDM, requête par clé bornée en dates. La BDM republie les séries (révisions des derniers trimestres) : la somme de contrôle est celle du 14 novembre 2026."
     }
   }
 }
