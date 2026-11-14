@@ -315,6 +315,31 @@ KNOWN_SOURCES: dict[str, tuple[str, ...]] = {
         "comparaison des élasticités du commerce (D-424).",
         "Document de travail — accès ouvert",
     ),
+    "insee_bdm_creations_region_secteur_m2022_2012_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/CREATIONS-ENTREPRISES-METHODE-2022/"
+        "T..TYPE-ENT_PM+TYPE-ENT_TOTAL+TYPE-ENT_HAE......BRUT.?startPeriod=2000-Q1"
+        "&endPeriod=2025-Q4",
+        "Insee, BDM, flux CREATIONS-ENTREPRISES-METHODE-2022 : créations trimestrielles "
+        "brutes d'entreprises (sociétés, hors micro-entrepreneurs, ensemble), par région et "
+        "secteur (A10, A21), 2012-T1→2025-T4 ; le panneau des créations (D-425).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
+    "insee_bdm_creations_region_secteur_arretee_2000_2021.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/CREATIONS-ENTREPRISES/"
+        "T..TYPE-ENT_HAE+TYPE-ENT_TOTAL......BRUT.?startPeriod=1990-Q1&endPeriod=2025-Q4",
+        "Insee, BDM, flux CREATIONS-ENTREPRISES (séries arrêtées, ancienne méthode) : "
+        "créations trimestrielles brutes hors micro-entrepreneurs et ensemble, par région "
+        "et secteur, 2000-T1→2021-T4 ; le placebo des créations (D-425).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
+    "insee_bdm_defaillances_region_secteur_1990_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/DEFAILLANCES-ENTREPRISES/"
+        "T..NOMBRE_DEFAILLANCES.....BRUT.?startPeriod=1990-Q1&endPeriod=2025-Q4",
+        "Insee, BDM (source Banque de France), flux DEFAILLANCES-ENTREPRISES : défaillances "
+        "trimestrielles brutes par date de jugement, par région et secteur, et par "
+        "département (ensemble), 1990-T1→2025-T4 ; le panneau des défaillances (D-425).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
 }
 
 

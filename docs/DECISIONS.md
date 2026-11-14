@@ -32039,3 +32039,268 @@ relus dans les PDF, les cellules de Bargain, Orsini et Peichl et la t. 302. Avec
 `pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_provenance.py`
 et `test_donnees.py` : 301 verts, 1 sauté (les cellules absentes de ce worktree, D-416).
 `ruff check src tests scripts` propre. Ni `make impact` ni `make full`.
+
+## D-425 — Les θ des entreprises et de l'emploi sur des données fines : préenregistrement
+
+**Pourquoi.** L'histoire agrégée n'identifie aucun θ (D-421, l'étape zéro : information au
+plus 0,1 pour 12 requis). Au lieu de sept années nationales, des panneaux par région,
+secteur et année, et des réformes qui touchent certains secteurs plus que d'autres
+(branche `claude/but23-microdonnees`, partie de `claude/but23-revision` à dce2439).
+**Aucune régression n'a tourné sur les vraies données** : les panneaux ont été construits
+et comptés, les doses calculées (`scripts/jumeau_microdonnees.py --decrire`), les
+estimateurs testés sur des panneaux synthétiques. Aucun montant officiel d'une réforme,
+aucune évaluation préalable, aucun chiffrage de tiers n'entre.
+
+### 1. Les données (manifestées, `KNOWN_SOURCES`, `manifest` parti du manifeste)
+
+* **Créations de sociétés** : Insee, BDM, flux CREATIONS-ENTREPRISES-METHODE-2022,
+  trimestres bruts sommés par année, l'indicateur des sociétés (TYPE-ENT_PM), 13 régions
+  métropolitaines × 10 secteurs (BE, FZ, G, H, I, JZ, LZ, MN, OQ, RU ; la finance KZ hors
+  du panneau, faute d'Ésane), 2012 à 2025 ; la Corse n'a que BE et FZ (122 cellules).
+  Les observations de 2023 portent un statut « U » que la réponse ne documente pas
+  (l'année du guichet unique de l'INPI). Pour le placebo : le flux arrêté de l'ancienne
+  méthode, hors micro-entrepreneurs (TYPE-ENT_HAE), 2000 à 2021.
+* **Défaillances** : Insee, BDM (source Banque de France), par date de jugement,
+  trimestres bruts sommés, 13 régions × 9 secteurs (BE, FZ, G, H, I, JZ, LZ, MN, PQS ;
+  l'agriculture et la finance hors du panneau), 1990 à 2025. Le département n'est publié
+  par secteur que pour quatre regroupements (créations) ou pas du tout (défaillances) :
+  la région est la maille fine commune.
+* **Emploi salarié** : Insee, t. 6.210 (millésime 2025), 30 branches marchandes A38 (BZ,
+  CA à CM, DZ, EZ, FZ, GZ, HZ, IZ, JA, JB, JC, LZ, MA, MB, MC, NZ, RZ, SZ ; hors
+  agriculture, finance, branches non marchandes et ménages employeurs), 2003 à 2024.
+* **Les expositions**, déjà au manifeste : Ésane 2023 par secteur (a10, a21, a88) et
+  catégorie (micro, PME, ETI-GE) : VA, frais de personnel (FP), EBE, CA, EQTP, nombre ;
+  les centiles 5 à 99 du salaire net EQTP de 2024 et sa moyenne (Insee Première n° 2079) ;
+  D11/D1 des SNF en 2023 (t. 7.101) ; les bénéfices déclarés à l'IS en 2024 (DGFiP, n° 39,
+  tableau 2) pour κ.
+
+Trois fichiers ajoutés : `insee_bdm_creations_region_secteur_m2022_2012_2025.xml`,
+`insee_bdm_creations_region_secteur_arretee_2000_2021.xml`,
+`insee_bdm_defaillances_region_secteur_1990_2025.xml` (requêtes SDMX bornées, lues le 14
+novembre 2026). Rien n'a été refusé par le réseau.
+
+### 2. Les doses : une exposition fois un paramètre voté
+
+Pour chaque secteur u et année t, nulles sous le droit de 2012, négatives pour une baisse
+(`microdonnees.doses`). Les paramètres sont des taux et des seuils, chacun rattaché à sa
+mesure de la base (`PARAMETRES`, `MESURES_DES_PARAMETRES`) ; un test vérifie que chaque
+année où un paramètre change est une année d'effet de sa mesure.
+
+* **Travail**, L_u,t en fraction du coût du travail : −g [r_t a_u(k_t) + 1,8 % f_u,t].
+  r_t : le CICE (4 % en 2013, 6 % de 2014 à 2016, 7 % en 2017, 6 % en 2018), puis la
+  cotisation maladie réduite de 6 points sur la même assiette (2019 à 2025) ; k_t = 2,5
+  SMIC (2,25 en 2025). f : la part de la masse salariale sous le seuil du taux réduit
+  d'allocations familiales (1,6 SMIC en 2015 ; 3,5 SMIC à partir du 1er avril 2016, trois
+  quarts de l'écart en 2016 ; 3,3 en 2025). g = D11/D1 = 0,763. a_u(k) : la part de la
+  masse salariale brute sous k SMIC, la distribution nationale des centiles de 2024 mise
+  à l'échelle du coût du travail par EQTP du secteur (Ésane), rapportée au SMIC net moyen
+  de 2024 (1 403,29 €). **Une hypothèse** : la forme de la distribution est commune aux
+  secteurs ; seul le niveau change. Non modélisés : l'extension de la réduction générale
+  de 2015 (FNAL, CSA, AT) et celles de 2019 (retraite complémentaire, chômage), dont la
+  base ne porte pas le coefficient ; la C3S de 2015-2016 ; la fiscalité du CICE et de la
+  baisse de cotisation dans l'IS.
+* **IS** : Σ_c n_c (t_c,t − 33,33 %) κ EBE⁺_u,c, t_c le taux normal de la catégorie (micro
+  et PME : 28 % de 2017 à 2020, 26,5 % en 2021, 25 % ensuite ; ETI et GE, lues au barème
+  au-delà de 500 000 € de bénéfice : 31 % en 2019 et 2020, 27,5 % en 2021, 25 % ensuite),
+  n_c la part du profit au taux normal (Insee Analyses n° 112 : 0,486 pour les micro,
+  0,923 pour les PME, 1 pour les ETI et GE), κ = 0,668 (283,95 Md€ de bénéfices sur l'EBE
+  d'Ésane hors agriculture et finance). Hors dose : les contributions sur l'IS des grandes
+  entreprises (2011 à 2019, 2025), réservées aux chiffres d'affaires que la catégorie
+  ETI-GE ne sépare pas.
+* **CVAE** : Σ_c (m_t − 1) τ(CA_c/N_c) VA_u,c, τ le barème progressif de 2010 (CGI, art.
+  1586 quinquies) au chiffre d'affaires moyen de la catégorie, m_t le taux voté sur 1,5 %
+  (0,5 en 2021-2022, 0,25 en 2023, 0,187 en 2024, 0,275 en 2025 avec la contribution
+  complémentaire de 47,4 %). Hors dose : les valeurs locatives industrielles de 2021.
+* Trois doses : `travail` = L ; `marge` = 100 (L FP + IS + CVAE)/VA, en points de
+  valeur ajoutée (le Δm du bloc `fermetures`) ; `taux` = 100 (L FP + IS + CVAE)/(κ EBE),
+  en points de taux apparent sur le profit imposable (le Δτ du bloc `naissances`, qui
+  compte les cotisations comme D-401). Des composantes (travail, profit) pour les
+  variantes.
+
+Ce que les doses valent (secteurs des panneaux) : `marge` de −1,3 (LZ) à −3,8 (I) points
+de VA en 2016, de −3,7 (OQ) à −5,5 (H) en 2024 ; `taux` de −13 (LZ) à −40 (I) points en
+2024 ; `travail` de −2,8 % (JZ) à −4,9 % (I) en 2019, et sur les branches de −0,5 % (CD,
+la cokéfaction) à −4,9 % (IZ, SZ). Les effets fixes d'année absorbent le chemin commun :
+**seuls les écarts entre secteurs identifient**, de l'ordre d'un demi-point de VA pour
+`marge`, de 7 points pour `taux`, de 0,8 point pour `travail`.
+
+### 3. Les estimateurs (`jumeau/microdonnees.py`)
+
+Moindres carrés à effets fixes, projetés par projections alternées ; la variance groupée
+CR1 (G/(G−1) (n−1)/(n−K), K les régresseurs plus le rang des effets fixes) ; le bootstrap
+sauvage groupé, 9 999 tirages, graine 20261114 : poids de Webb (six points) pour 9 ou 10
+grappes, de Rademacher pour 30 ; la p-valeur sous H₀ (résidus contraints, WCR) et
+l'écart-type des tirages sans contrainte (WCU). **L'écart-type retenu** est le plus grand
+des deux (CR1, WCU). Tests synthétiques (`tests/test_jumeau_microdonnees.py`) : un β connu
+retrouvé sur 40 panneaux, l'écart-type annoncé entre 0,6 et 1,8 fois la dispersion
+observée ; le WCR rejette 7,5 % au seuil de 10 % sous H₀ sur 200 panneaux (le test en
+exige moins de 16 % sur 150) ; projections et CR1 égaux aux indicatrices à 1e-9.
+
+### 4. Les spécifications, figées
+
+y le logarithme du nombre ; une cellule sans nombre positif une année de l'échantillon est
+retirée entière (aucune ne l'est). 2020 et 2021 sont exclues partout (les aides de la
+crise sanitaire, comme D-417).
+
+| nom | y | dose | années | effets fixes | grappes |
+|---|---|---|---|---|---|
+| F1 | défaillances | marge | 2010-19, 2022-25 | région×secteur, région×année | 9 |
+| C1 | créations, sociétés | taux | 2012-19, 2022-25 | région×secteur, région×année | 10 |
+| E1 | emploi salarié | travail | 2003-19, 2022-24 | branche, année | 30 |
+
+Les grappes : les secteurs (F1, C1), les branches (E1). n = 1 638, 1 464 et 600. Les tests
+de robustesse, pour chacun : **l'avance** (la dose de t + 2 ajoutée, les années où elle se
+lit ; son coefficient doit être nul) ; **le placebo** (2003 à 2009, une période sans les
+réformes de la dose, la dose de t + 8 : les doses de 2011 à 2017 posées sur 2003 à 2009 ;
+pour C1, sur la série hors micro-entrepreneurs de l'ancienne méthode ; l'unification des
+allègements Fillon, de 2003 à 2005, y est, hors dose : un placebo imparfait, dit) ; **les
+tendances** (une tendance linéaire par cellule région×secteur, par branche pour E1) ;
+**jusqu'en 2019** (ni la crise, ni la CVAE) ; pour C1, **sans 2023** ; pour F1 et C1, la
+variante **des composantes** (travail et profit séparés). Une variante est une spécification
+à part, dite comme telle.
+
+**La traduction.** F1 : log X = … + β D, Δ log h = β(−Δm) dans le bloc : β est le
+coefficient, sur `fermetures_marges` (0 ; 0,03 ; 0,06), θ = β/0,06. C1 : Δ log E = Δe/e₀
+et Δe = −ε Δτ : ε = −7,61 c, sur la plage de sensibilité de `naissances.elasticite`
+(0,043 ; 0,20 ; 0,356), qui n'est pas une ligne θ (θ dit par la même règle par morceaux).
+E1 : log E = … − η c : η = −b, sur `jumeau_emploi_elasticite_cout` (0,31 ; 0,44 ; 0,52).
+**Identifié** : σ_θ = écart-type / pente du morceau < 0,25 (D-417). **Retenu** (assez pour
+proposer une plage) : identifié, du signe attendu (β, ε, η positifs), l'avance et le
+placebo non rejetés au seuil de 10 % (WCR). Une estimation hors de la plage est proposée,
+la plage ne change pas ici.
+
+**δ (`idees_creations`)** ne s'estime pas par ce plan : un décalage national du taux
+d'entrée est dans les effets d'année. Il se lit en niveau, sans erreur-type : les
+créations de sociétés de la France entière (BDM) sur le nombre d'entreprises à l'IS
+(DGFiP, 2 718 400 en 2024, et 2023 par sa variation de 5,03 %), moins e₀ = 7,61. Une
+lecture de définitions autant que de comportement (e₀ vient d'Amadeus, 1997-2004) ; elle
+n'identifie rien au sens de D-417.
+
+### 5. Le pronostic, avant tout calcul
+
+* **F1** : β entre −0,05 et +0,10, l'écart-type entre 0,02 et 0,06 : σ_θ de 0,3 à 1,0,
+  **non identifié** (trois chances sur quatre). Les écarts de dose entre secteurs sont
+  petits ; la construction et l'hébergement-restauration portent la reprise des
+  défaillances de 2022 à 2025 (la fin des aides), un risque de confusion.
+* **C1** : ε positif, entre 0 et 0,6, l'écart-type entre 0,02 et 0,10 : σ_θ de 0,06 à
+  0,3, **identifié** plutôt que non (trois chances sur cinq), mais la dose `taux` est
+  faite surtout de l'inverse de la marge (EBE/VA) : les secteurs à faible marge reçoivent
+  la plus forte dose, et l'immobilier (LZ, la plus faible) a vu ses créations de sociétés
+  suivre les taux d'intérêt. L'avance ou le placebo rejetés une fois sur deux ; **retenu,
+  une chance sur trois**.
+* **E1** : η entre −0,5 et +1,5, l'écart-type entre 0,15 et 0,5 : σ_θ au-delà de 0,6,
+  **non identifié** (neuf chances sur dix). Les branches à bas salaires (IZ, NZ, SZ, GZ)
+  croissaient avant 2013 : l'avance rejetée une fois sur deux, η réduit par les tendances.
+* **δ** : un taux d'entrée des sociétés de 9 à 11 %, δ de +1,5 à +3,5, hors de la plage
+  (−1 ; +1) : proposé à la décision du propriétaire (recaler e₀ ou élargir δ), pas changé.
+* Soit **au plus un θ identifié sur trois**, et **aucun retenu** le plus probablement.
+
+### Ce qui tourne ensuite
+
+`PYTHONPATH=src python scripts/jumeau_microdonnees.py` sur le commit qui porte cette
+entrée (le script refuse sans elle), vers `reports/jumeau/microdonnees.json` :
+coefficients, écarts-types, tailles, aucune donnée individuelle. Le résultat va dans
+D-426. Aucune spécification, aucun seuil, aucune dose ne change après le premier calcul.
+L'investissement par secteur (t. 8.202, comptes de branche) n'est pas dans ce plan.
+
+## D-426 — Les données fines estimées : ε petit, identifié ; β et η non ; contre D-425
+
+**Ce qui a tourné.** `scripts/jumeau_microdonnees.py`, sur 223b9f9 (D-425 à dcb4545,
+poussé avant), vers `reports/jumeau/microdonnees.json` : coefficients, écarts-types,
+tailles et doses par secteur, aucune donnée individuelle. **Un premier calcul, sur
+dcb4545, s'est arrêté** à F1_tendances sur le refus de colinéarité de l'estimateur, après
+F1, F1_avance et F1_placebo : une tendance par cellule région×secteur est colinéaire aux
+effets région×année, la somme des tendances d'une région en étant une. Le correctif ôte la
+tendance du premier secteur de chaque région, la normalisation du même modèle (223b9f9) ;
+rien d'autre ne change, et les trois premiers résultats sont redonnés à l'identique. Aucune
+spécification, aucun seuil, aucune dose n'a changé après le premier calcul.
+
+### Les coefficients
+
+L'écart-type est le plus grand de CR1 et du bootstrap sans contrainte (D-425) ; p la
+p-valeur du bootstrap sauvage restreint (Webb pour 9 et 10 secteurs, Rademacher pour 30
+branches), 9 999 tirages.
+
+| spécification | coefficient | écart-type | p (WCR) | traduit |
+|---|---|---|---|---|
+| F1 défaillances, `marge` | −0,0335 | 0,0401 | 0,44 | β = −0,034 ; θ = −0,56 ± 0,67 |
+| F1_avance : t / t + 2 | −0,027 / −0,019 | 0,052 / 0,062 | 0,67 / 0,74 | |
+| F1_placebo (t + 8, 2003-2009) | −0,025 | 0,093 | 0,77 | |
+| F1_tendances | −0,046 | 0,045 | 0,37 | |
+| F1_2019 | −0,039 | 0,054 | 0,57 | |
+| F1_composantes : travail / profit | −0,038 / −0,028 | 0,046 / 0,056 | 0,55 / 0,59 | |
+| C1 créations, `taux` | +0,00731 | 0,00668 | 0,28 | ε = −0,056 ± 0,051 |
+| C1_avance : t / t + 2 | +0,0032 / +0,0114 | 0,0063 / 0,0137 | 0,58 / 0,36 | |
+| C1_placebo (hors micro, ancienne méthode) | −0,0003 | 0,0035 | 0,93 | |
+| C1_tendances | −0,0045 | 0,0054 | 0,45 | ε = +0,034 ± 0,041 |
+| C1_2019 | +0,0014 | 0,0047 | 0,74 | ε = −0,011 ± 0,036 |
+| C1_sans_2023 | +0,0064 | 0,0064 | 0,32 | ε = −0,049 ± 0,049 |
+| C1_composantes : travail / profit | +0,0053 / +0,0141 | 0,0068 / 0,0146 | 0,44 / 0,35 | |
+| E1 emploi, `travail` | −3,63 | 2,98 | 0,25 | η = 3,63 ± 2,98 |
+| E1_avance : t / t + 2 | −1,62 / −1,87 | 1,60 / 2,45 | 0,34 / 0,42 | |
+| E1_placebo (t + 8, 2003-2009) | −1,18 | 2,00 | 0,54 | |
+| E1_tendances | +0,07 | 0,62 | 0,91 | η = −0,07 ± 0,62 |
+| E1_2019 | −2,92 | 2,69 | 0,28 | |
+
+n = 1 638 (F1), 1 464 (C1), 600 (E1) ; aucune cellule retirée. CR1 et le bootstrap
+diffèrent de 5 à 20 % ; le bootstrap est le plus petit partout, l'écart-type retenu est
+donc CR1.
+
+### Sur l'échelle des θ
+
+* **`fermetures_marges` (β ; 0 ; 0,03 ; 0,06)** : β = −0,034 ± 0,040, θ = −0,56 ± 0,67.
+  **Non identifié** (σ_θ = 0,67). Le signe est contraire à l'attendu, sans être
+  significatif ; l'intervalle à 95 % (−0,11 ; +0,05) couvre toute la plage : les
+  défaillances par secteur ne disent rien de β. Aucune proposition.
+* **`naissances.elasticite` (ε ; 0,043 ; 0,20 ; 0,356, une sensibilité, pas une ligne
+  θ)** : ε = −0,056 ± 0,051, θ = −0,31 ± 0,16 par la règle des lignes. **Identifié**
+  (σ_θ = 0,16 < 0,25), **non retenu** : le signe n'est pas l'attendu (D-425). L'avance et
+  le placebo ne sont pas rejetés (p = 0,36 et 0,93). Toutes les variantes sont petites,
+  de −0,107 ± 0,111 (la seule part du profit) à +0,034 ± 0,041 (les tendances).
+  L'intervalle à 95 % de la spécification principale, (−0,16 ; +0,04), exclut le centre
+  de 0,20 à cinq écarts-types et s'arrête à la borne basse (0,044). **Proposé, non fait** :
+  le centre à la borne basse actuelle (0,043, l'estimateur intra-groupe de Da Rin et al.)
+  et la borne basse à 0, ou ε fait ligne θ sur (0 ; 0,043 ; 0,20). **Ce que cela ne dit
+  pas** : l'estimation compare des secteurs ; une réponse commune à tous, au climat fiscal
+  national, est dans les effets d'année et lui échappe. La dose porte la convention de
+  D-401 (les cotisations au numérateur du taux apparent) et une distribution des salaires
+  de forme commune ; la seule part du profit (IS et CVAE) donne le même ordre, moins
+  précis.
+* **`jumeau_emploi_elasticite_cout` (η ; 0,31 ; 0,44 ; 0,52)** : η = 3,63 ± 2,98, θ = 20 ±
+  19. **Non identifié**, et absurde en niveau : les écarts de dose entre branches (moins
+  d'un point de coût du travail) sont petits devant les tendances propres des branches ;
+  avec une tendance par branche, η = −0,07 ± 0,62. Aucune proposition.
+* **δ (`idees_creations`, −1 ; 0 ; +1)**, lu en niveau, sans erreur-type : 284 564
+  créations de sociétés en 2024 sur 2 718 400 entreprises à l'IS, 10,47 % ; 269 905 sur
+  2 588 200 en 2023, 10,43 % : δ = +2,86 et +2,82, **hors de la plage**. **Proposé, non
+  fait** : réconcilier e₀ (7,61 %, Amadeus de 1997 à 2004) avec le taux de l'Insee et de
+  la DGFiP (près de 10,4 %), soit e₀ recalé et δ centré sur 0, soit la plage de δ portée
+  à +3. La lecture mêle définitions (des sociétés créées sur des redevables de l'IS) et
+  comportement ; elle n'identifie rien au sens de D-417.
+
+### Contre le pronostic de D-425
+
+| | pronostic | résultat |
+|---|---|---|
+| F1 : β, écart-type | −0,05 à +0,10 ; 0,02 à 0,06 | −0,034 ; 0,040 |
+| F1 : identifié | non (3 chances sur 4) | non |
+| C1 : ε, écart-type | 0 à 0,6 ; 0,02 à 0,10 | −0,056 (hors) ; 0,051 |
+| C1 : identifié, retenu | oui (3 sur 5) ; une chance sur 3 | oui ; non (le signe) |
+| C1 : avance ou placebo rejetés | une fois sur deux | non |
+| E1 : η, écart-type | −0,5 à +1,5 ; 0,15 à 0,5 | 3,63 (hors) ; 2,98 (hors) |
+| E1 : identifié | non (9 sur 10) | non |
+| δ | +1,5 à +3,5 | +2,86 |
+| θ identifiés, retenus | au plus un sur trois ; aucun | un (ε) ; aucun |
+
+Le pronostic se trompe sur le signe de ε (attendu positif, par confusion avec les
+secteurs à faible marge), et sous-estime l'imprécision de E1 d'un facteur six.
+
+### Ce qui ne change pas, ce qui reste
+
+Aucune plage, aucun θ, aucun bloc ne change : les propositions (ε, δ) attendent le
+propriétaire. L'investissement par secteur n'a pas été estimé. Ce que les données fines
+apportent aux θ des entreprises est limité par la maille publiée : neuf ou dix secteurs à
+la région, des doses dont l'écart entre secteurs est petit (un demi-point de valeur
+ajoutée), et aucune variation par taille d'entreprise dans les séries. Les sources plus
+fines (Sirene ou les liasses par unité légale, la DSN par établissement) sont des données
+individuelles, hors de ce dépôt.
