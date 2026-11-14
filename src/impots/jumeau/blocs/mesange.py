@@ -37,7 +37,7 @@ from typing import Any
 
 import numpy as np
 
-from impots.jumeau import thetas
+from impots.jumeau import canaux, thetas
 from impots.jumeau.champs import IMPULSIONS
 from impots.jumeau.pas import Contexte, Entrees
 from impots.predictif import rejouer, retroaction
@@ -53,10 +53,10 @@ class Mesange:
     lit = IMPULSIONS
     ecrit = ("pib", "emplois_non_ventiles", "revenus_non_ventiles", "solde_induit")
     thetas = (MACRO_ROW,)
-    porte = ("investissement_cout_du_capital",)
-    """Ses multiplicateurs portent la réponse de l'investissement au coût du capital de
-    ses instruments (Mésange, éq. d'investissement, p. 44 du PDF) : un bloc structurel
-    qui la porte aussi est refusé avec lui (`canaux`, D-407)."""
+    porte = tuple(sorted(canaux.DE_MESANGE))
+    """Ses multiplicateurs portent les canaux de Mésange (l'investissement par le coût du
+    capital, p. 44 du PDF ; le commerce ; ...) : un bloc structurel qui en porte un aussi
+    est refusé avec lui (`canaux`, D-407 à D-409)."""
 
     def __init__(self, persistance: str | None, *, variante: str | None = None,
                  tables: Mapping[str, Any] | None = None) -> None:

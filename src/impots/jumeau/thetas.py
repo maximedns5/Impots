@@ -72,6 +72,33 @@ PRODUCTIVITE_CREATIONS = Ligne(
 REGISTRE: dict[str, Ligne] = {MULTIPLICATEUR.cle: MULTIPLICATEUR,
                               PRODUCTIVITE_CREATIONS.cle: PRODUCTIVITE_CREATIONS}
 
+# --------------------------------------------------------------------- lot 3, commerce
+ELASTICITE_PRIX_EXPORTATIONS = Ligne(
+    cle="commerce_elasticite_prix_exportations", bloc="commerce",
+    definition=("s_X(θ) dans ξ_t = Σ_s [ε_dm(h) Δd_s + (s_X(θ)/0,73) ε_c(h) Δc_s] : "
+                "l'élasticité de long terme du volume des exportations à la compétitivité-"
+                "prix ; le profil ε_c(h) de Mésange est mis à l'échelle, linéaire par "
+                "morceaux en θ par le centre"),
+    unite="sans dimension", a_zero="0,6", a_demi="0,73", a_un="1,27",
+    direction="θ = 1 : les exportations répondent le plus aux coûts",
+    source=("Insee, Mésange G2017-04, p. 79 (0,73) et p. 78 (0,6, Mésange 2010) ; Banque "
+            "de France, FR-BDF, WP 736, table 4.6.20 (1,27, sur le prix d'exportation "
+            "relatif, non sur le prix de production)"),
+    verifiee=True)
+ELASTICITE_PRIX_IMPORTATIONS = Ligne(
+    cle="commerce_elasticite_prix_importations", bloc="commerce",
+    definition=("s_M(θ) dans ζ_t = Σ_s [η(h) Δa_s + (s_M(θ)/0,35) ε_m(h) Δq_s] : "
+                "l'élasticité de long terme du volume des importations au prix de "
+                "production intérieur relatif aux prix étrangers"),
+    unite="sans dimension", a_zero="0,29", a_demi="0,35", a_un="1,11",
+    direction="θ = 1 : les importations répondent le plus aux prix",
+    source=("Insee, Mésange G2017-04, p. 85 (0,35) et p. 84 (0,29, services exposés) ; "
+            "Banque de France, FR-BDF, WP 736, table 4.6.21 (1,11, hors énergie, sur le "
+            "prix d'exportation relatif au prix d'importation)"),
+    verifiee=True)
+REGISTRE.update({ELASTICITE_PRIX_EXPORTATIONS.cle: ELASTICITE_PRIX_EXPORTATIONS,
+                 ELASTICITE_PRIX_IMPORTATIONS.cle: ELASTICITE_PRIX_IMPORTATIONS})
+
 
 def ligne_comportement(cle: str, row: Mapping[str, Any]) -> Ligne:
     """Une ligne du comportement des ménages, telle qu'un rapport la porte."""

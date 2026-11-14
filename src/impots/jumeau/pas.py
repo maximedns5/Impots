@@ -132,7 +132,7 @@ class Modele:
     REFUSÉ À LA CONSTRUCTION : un champ inconnu du registre ; un bloc qui écrit un champ
     que le cadre ferme ; un champ non additif écrit par deux blocs ; un bloc qui lit un
     champ qu'aucun bloc antérieur n'écrit, hors d'une boucle déclarée qui l'écrit ; un
-    canal porté par deux blocs (`canaux`, CADRE.md §4 bis, D-407)."""
+    canal porté par deux blocs (`canaux.verifier`, CADRE.md §4 bis, D-407 à D-409)."""
 
     def __init__(self, blocs: Sequence[Bloc],
                  boucles: Sequence[Sequence[str]] = ()) -> None:

@@ -303,6 +303,16 @@ for _nom, (_lib, _code, _) in SIGNAUX_ENTREPRISES.items():
                    f"{LOT2} : le choc statique des mesures par impôt (recettes positives)",
                    2, "signaux_entreprises"))
 
+# --------------------------------------------------------------------- lot 3, commerce
+_ajouter(
+    Champ("solde_exterieur", "Solde des échanges extérieurs de biens et services", MDE,
+          "B11", f"{T1101} (P6 − P7) ; le bloc `commerce` (projection)", 3, "lot3"),
+    Champ("contribution_solde_exterieur", "Contribution du solde extérieur à la "
+          "croissance du PIB en volume", "ratio", "", "le bloc `commerce` : (X_t/p^X_t − "
+          "X_{t−1}) − (M_t/p^M_t − M_{t−1}), sur le PIB de l'année précédente", 3, "lot3",
+          additif=False),
+)
+
 REGISTRE: dict[str, Champ] = dict(_REGISTRE)
 
 
