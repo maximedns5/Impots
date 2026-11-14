@@ -51,6 +51,10 @@ MODULES_LOCAUX: frozenset[str] = frozenset({
     # `tests/test_rejouer.py` et `tests/test_creations_canal.py`, dont les passes
     # synthétiques servent au canal des créations et au jumeau (D-401, D-405)
     "test_rejouer", "test_creations_canal",
+    # `tests/test_jumeau.py`, `test_jumeau_entreprises.py` et `test_jumeau_menages.py`,
+    # dont le départ, la population et les cellules synthétiques servent aux tests du
+    # commerce, des ménages et du modèle structurel (D-408, D-409, D-411)
+    "test_jumeau", "test_jumeau_entreprises", "test_jumeau_menages",
 })
 
 #: Les racines que l'on scanne par défaut. `src/` est le minimum ; `tests/` et `scripts/`
