@@ -30973,3 +30973,80 @@ entrée poussée : l'estimation, la note de l'estimation et du test aux θ estim
 résultat va dans une nouvelle D-entrée, contre ce pronostic ; aucune tolérance, aucune
 fenêtre, aucune entrée ne change après le premier calcul. Un correctif de code que le
 rejeu révélerait est une révision, sous un nouveau nom, et cette note reste.
+
+## D-420 — Le jumeau noté sur l'histoire : 7 cibles sur 12, et sa dynamique n'apporte rien
+
+**Ce qui a tourné.** `scripts/jumeau_rejeu_histoire.py`, sur `fe9434f` poussé, après le
+préenregistrement de D-417 et son amendement (le naïf mécanique, `5cb7f4d`). Le rapport :
+`reports/jumeau/rejeu_histoire.json`. Deux lancements s'étaient arrêtés avant tout nombre,
+sur deux refus du code : `menages.yaml` ne porte les niveaux d'emploi de référence que
+pour 2024 et 2025 (ils sont lus dans l'état publié du départ, `menages_au_depart` :
+l'emploi des comptes, les chômeurs d'Eurostat) ; l'état publié du départ ne porte pas les
+créations de sociétés du jumeau (leur niveau de départ est celui de sa référence de la
+première année). Deux commits, `8786ea4` et `fe9434f`, poussés avant le troisième
+lancement. Ni tolérance, ni fenêtre, ni entrée n'a changé.
+
+**L'estimation.** Sept itérations ; J passe de 85,24 à 85,13 (99,9 %). Aucun θ n'est
+identifié : chaque écart-type approché vaut 0,50, celui de l'a priori seul. Les θ
+estimés : profil de la consommation 0,428, élasticité de l'emploi 0,597, salaires 0,399,
+exportations 0,526, importations 0,498, accélérateur 0,464, coût du capital 0,477. Les
+chocs observés de 2011 à 2017 ne disent rien des paramètres du jumeau. Sur l'estimation,
+8 cibles tenues (le naïf 6, le naïf mécanique 8).
+
+**Le test, aux θ estimés** (REQM en points ; J le jumeau, N le naïf, M le naïf
+mécanique ; « tenue » pour le jumeau) :
+
+| cible | tol. | J | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 1,034 | 0,831 | 0,831 | non | non | non |
+| emploi | 0,8 | 0,902 | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,696 | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | 3,855 | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,899 | 3,773 | 3,773 | oui | non | non |
+| D2 | 0,4 | 0,554 | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,316 | 0,424 | 0,291 | oui | oui | non |
+| D61 | 0,4 | 0,263 | 0,983 | 0,266 | oui | oui | oui |
+| recettes | 0,8 | 1,091 | 1,301 | 0,994 | non | oui | non |
+| solde | 1,0 | 0,536 | 1,361 | 0,534 | oui | oui | non |
+| dette | 3,0 | 2,816 | 4,393 | 2,035 | oui | oui | non |
+| créations | 10 | 10,600 | 4,310 | 4,310 | non | non | non |
+
+**Le chiffre du premier juge : 7 cibles sur 12 tenues hors de la période d'estimation.**
+Le naïf en tient 6, le naïf mécanique 9. Le jumeau bat le naïf sur 7 cibles, et le naïf
+mécanique sur 2 seulement, d'un rien : les exportations de 0,015 point, D61 de 0,003.
+**Ce que la dynamique du jumeau apporte sur cette histoire est nul** : tout son avantage
+sur le naïf vient des chocs observés, que le naïf mécanique reçoit aussi, et le
+comportement l'éloigne du publié sur le PIB, l'emploi, le chômage, les importations, le
+solde (de 0,002), la dette (de 0,78 point) et les créations. À θ½, le test donne les
+mêmes tenues et les mêmes victoires, chaque REQM à moins de 1,3 % de celle aux θ estimés.
+
+**Contre le pronostic.** Les totaux tiennent dans leurs bandes : 7 tenues pour 9 annoncées
+(de 7 à 10, au bord), 6 pour le naïf (de 4 à 7), le naïf battu sur 7 (7), 9 pour le naïf
+mécanique (de 8 à 11), le jumeau qui le bat sur 2 (2), et ce sont les deux annoncées.
+L'estimation : aucun θ identifié (au plus deux), J à 99,9 % (de 80 à 100 %), le test à θ½
+identique ; mais le profil de la consommation et l'accélérateur sont sous ½, pas au-dessus.
+Cible par cible, manqués : l'emploi, à 0,902 hors de [0,5 ; 0,9] et non tenu (annoncé
+tenu), le naïf à 0,858 hors de [0,4 ; 0,8] ; les recettes, à 1,091 hors de [0,3 ; 0,8] et
+non tenues (annoncées tenues), le naïf à 1,301 hors de [0,6 ; 1,2], le naïf mécanique à
+0,994 hors de [0,3 ; 0,8] et non tenu ; la dette à 2,816, juste hors de [1,0 ; 2,8] ; les
+créations, le naïf à 4,31 hors de [7 ; 15] et le jumeau plus loin de 6,3 points, pas « à
+moins d'un point ». Le reste est dans le pronostic.
+
+**Ce qui surprend.**
+
+* **Les créations du jumeau s'agitent** : +15,9 points d'erreur en 2018, −13,1 en 2019,
+  +11,5 en 2023, quand les créations classiques publiées bougent peu (le naïf, à zéro, est
+  à 4,3). Le canal des créations répond fort aux chocs observés de l'IS, des cotisations et
+  de la CVAE ; c'est le premier bloc à relire.
+* **Les recettes de 2023 et 2024** : le jumeau et le naïf mécanique les surestiment de
+  1,5 à 1,7 point de PIB. La chute du taux apparent de la TVA, de l'IS et de D2 (+0,75 et
+  +0,90 en 2023 et 2024) n'est pas votée, donc pas entrée : ni les chocs ni le comportement
+  ne la portent.
+* **L'activité de 2022 et 2023** : le PIB manque de 1,7 et 1,1 point, l'emploi de 1,7 en
+  2022, comme annoncé (le rebond, la dépense en baisse) ; 2023 est plus loin que prévu.
+* **L'estimation ne bouge rien** : les chocs de 2011 à 2017 sont trop petits, devant les
+  écarts à la tendance, pour qu'un θ se lise sur l'histoire. L'a priori fait tout.
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune entrée. Une révision
+(le canal des créations, une demande mondiale manifestée, les mesures étalées datées
+chaque année) serait un nouveau préenregistrement, sous un nouveau nom ; cette note reste.
