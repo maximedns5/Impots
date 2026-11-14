@@ -168,15 +168,19 @@ def test_les_identites_tiennent_et_db_se_decompose(theta) -> None:
         prec = etat
     parts = traj.decomposition(ANNEES[-1])
     assert np.max(np.abs(sum(parts.values()) - traj.delta_b[-1])) < 1e-12
+    # Le sens se lit sur le PIB en volume : depuis la boucle prix-salaires (D-414), le PIB
+    # nominal porte l'effet des prix, et une baisse des cotisations, qui baisse les prix,
+    # peut baisser le PIB nominal en montant son volume.
+    fin = traj.variante[-1]
     for v in ("impot_sur_le_revenu", "cotisations_employeurs", "depense_publique",
               "baisse_is"):
-        assert np.all(traj.variante[-1].par_mesure("pib")[v] > 0.0)
+        assert np.all(fin.par_mesure("pib")[v] - fin.par_mesure("effet_prix_pib")[v] > 0.0)
 
 
 def test_le_point_fixe_converge() -> None:
     depart = _depart()
     blocs, _ = ordre_structurel(depart, POPULATION, CELLULES)
-    commerce = blocs[-1]
+    commerce = next(b for b in blocs if b.nom == "commerce")
     appels: collections.Counter = collections.Counter()
     contribue = commerce.contribue
 
