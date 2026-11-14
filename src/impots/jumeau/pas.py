@@ -315,7 +315,7 @@ def fermer(etat: Etat, prec: Etat, entrees: Entrees, k: int) -> None:
     etat.copier_contributions("solde_primaire",
                               {c: b9[c] + interets.get(c, zero) for c in cles})
     etat.copier_contributions("dette_ouverture", ouverture)
-    flux = _somme_par_cle(etat, ("sfa", "ecart_millesime_dette", "arrondi_dette"),
+    flux = _somme_par_cle(etat, ("sfa", "ecart_millesime_dette", "ecart_eurostat"),
                           (1.0, 1.0, 1.0))
     cles_dette = set(ouverture) | set(b9) | set(flux)
     etat.copier_contributions("dette", {

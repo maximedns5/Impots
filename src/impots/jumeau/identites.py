@@ -82,7 +82,7 @@ def _dette(etat: Etat, precedent: Etat | None = None) -> dict[str, np.ndarray]:
 
     ouverture = lu("dette_ouverture")
     out = {"dette": lu("dette") - (ouverture - lu("b9") + lu("sfa")
-                                   + lu("ecart_millesime_dette") + lu("arrondi_dette"))}
+                                   + lu("ecart_millesime_dette") + lu("ecart_eurostat"))}
     if precedent is not None:
         out["dette.continuite"] = ouverture - _lire(precedent, "dette", "dette")
     return out

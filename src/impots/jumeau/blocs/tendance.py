@@ -34,7 +34,7 @@ from impots.jumeau.pas import Contexte
 #: Ce que la référence écrit nul : ni effet induit, ni mesure, ni écart publié.
 NULS = ("emplois_non_ventiles", "ventilation_emplois", "arrondi_emplois",
         "revenus_non_ventiles", "arrondi_revenus", "solde_induit", "mesures_non_ventilees",
-        "sfa", "ecart_millesime_dette", "arrondi_dette")
+        "sfa", "ecart_millesime_dette", "ecart_eurostat")
 
 
 def _parts(etat: Etat, noms: tuple[str, ...]) -> tuple[dict[str, float], float]:
@@ -51,7 +51,7 @@ class Tendance:
     lit: tuple[str, ...] = ()
     ecrit = (*EMPLOIS, "pib", *REVENUS, *RECETTES, *DEPENSES,
              *(f"prix_{n}" for n in EMPLOIS_EN_VOLUME),
-             "sfa", "ecart_millesime_dette", "arrondi_dette")
+             "sfa", "ecart_millesime_dette", "ecart_eurostat")
     thetas: tuple[str, ...] = ()
 
     def __init__(self, depart: Etat) -> None:

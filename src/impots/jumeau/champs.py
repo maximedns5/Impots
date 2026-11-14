@@ -11,7 +11,7 @@ LES GROUPES, et ce qu'ils somment (les identités sont dans `identites`) :
   nommé et jamais un résidu silencieux : ``emplois_non_ventiles`` (l'effet sur le PIB
   qu'un bloc publie sans le ventiler entre les emplois : Mésange et le canal des
   créations n'impriment que la ligne du PIB), ``ventilation_emplois`` (l'écart publié
-  entre les totaux P3 et P51G de la t. 1.101 et la somme de leurs secteurs, de 0,1 et
+  entre les totaux P3 et P51G de la t. 1.101 et la somme de leurs secteurs, de 0,12 et
   0,09 Md€ en 2023 et 2024, sous l'arrondi ailleurs) et ``arrondi_emplois`` (le PIB publié
   moins la somme des totaux publiés, au millième de milliard). Les deux derniers sont lus
   sur l'histoire et nuls en projection.
@@ -24,7 +24,8 @@ LES GROUPES, et ce qu'ils somment (les identités sont dans `identites`) :
 * ``dette`` — Maastricht, fin d'année. ``sfa`` est l'ajustement flux-stocks d'Eurostat
   (F_ASS + ORADJ + YA3, D-405) ; ``ecart_millesime_dette`` l'écart entre les deux
   publications qui portent l'identité (la variation du stock de l'Insee et GD_CH
-  d'Eurostat, B9 de l'Insee et B9_T3 d'Eurostat) ; ``arrondi_dette`` l'arrondi d'Eurostat.
+  d'Eurostat, B9 de l'Insee et B9_T3 d'Eurostat) ; ``ecart_eurostat`` l'écart interne de
+  la table d'Eurostat (GD_CH − B9_T3 moins l'ajustement), de l'ordre du dixième de million.
 
 Les champs des lots 2 à 4 (travail, entreprises, reste du monde) sont au registre et
 restent absents tant que leur lot ne les écrit pas.
@@ -229,8 +230,8 @@ _ajouter(
     Champ("ecart_millesime_dette", "Écart entre l'Insee et Eurostat sur ΔD et B9", MDE,
           "ΔGD − GD_CH + B9 + B9_T3", f"{DETTE}, {T3201} et {EUROSTAT} ; {PROJECTION}", 1,
           "dette"),
-    Champ("arrondi_dette", "GD_CH − B9_T3 moins l'ajustement d'Eurostat", MDE, "",
-          f"{EUROSTAT}, au dixième de million ; {PROJECTION}", 1, "dette"),
+    Champ("ecart_eurostat", "GD_CH − B9_T3 moins l'ajustement d'Eurostat", MDE, "",
+          f"{EUROSTAT}, l'écart interne de ses postes publiés ; {PROJECTION}", 1, "dette"),
     Champ("ratio_dette", "Dette sur PIB", "ratio", "", "le cadre", 1, "ratios",
           additif=False, ferme=True),
     Champ("taux_implicite", "Intérêts nets sur la dette d'ouverture", "ratio", "",

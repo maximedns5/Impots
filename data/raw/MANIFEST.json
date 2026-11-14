@@ -1982,6 +1982,15 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Insee, Emploi, chômage, revenus du travail, édition 2026, fiche 2.1, figure 1 : personnes en emploi (enquête Emploi, logement ordinaire), 29 187 000 en 2024 (étape haut, champ des salariés)",
       "quarantined": false
+    },
+    "insee_cn2025_t1105_pib_trois_approches.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988797/T_1105_fr.xlsx",
+      "sha256": "6799d776e81788a7395ec27e01f8046520db076e2a2a29c5523269096b76dc3f",
+      "bytes": 23920,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab",
+      "description": "INSEE, « Les comptes de la Nation en 2025 » (base 2020), tableau 1.105 « Produit intérieur brut : les trois approches à prix courants », 1949→2025, milliards d'euros : l'approche revenus (D1, B2A3G, D2, D3). L'identité des revenus de l'état initial du jumeau (but 23, lot 1, D-405).",
+      "quarantined": false
     }
   }
 }
