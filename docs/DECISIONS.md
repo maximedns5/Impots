@@ -30719,7 +30719,7 @@ branches). Les lourds du jumeau, chacun dans son processus : la page dans Chromi
 * La convention « parts_premiere_annee » sur la page : à décider avec le propriétaire,
   qui l'a voulue sur demande (D-414).
 
-## D-419 — La page « Le jumeau » refaite, le calcul dans un Worker ; la commande de manifeste
+## D-419 — La page « Le jumeau » refaite, le calcul dans un Worker ; la commande manifest
 
 **Ce qui est codé** (branche `claude/but23-page`, partie de `claude/but23-cadre`,
 f3541d1). Deux tâches. Aucune équation des blocs n'est touchée, aucun nombre ne change.
