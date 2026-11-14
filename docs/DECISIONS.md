@@ -29279,3 +29279,31 @@ multiplicateurs se comparent, écart dit.
   (K61 et KX comptés deux fois, D-405), avec son test et son effet sur le backtest dit.
 
 Chaque lot rend sa D-entrée et ses tests, sans PR ; la jonction et les PR viennent ensuite.
+
+## D-410 — L'histoire du jumeau : les séries, le SFA d'avant 2021, les mesures votées
+
+### Le pronostic du backtest de la dette, écrit avant de corriger `comptes.sfa_publie`
+
+**Le correctif.** `comptes.sfa_publie` somme les cinq postes F_ASS, ORADJ, K61, KX et YA3
+de la t. 3 d'Eurostat ; ORADJ contient déjà K61 et KX (D-405). L'ajustement devient
+F_ASS + ORADJ + YA3, qui redonne GD_CH − B9_T3 à l'écart interne de la table près. Le
+backtest de §6.1 (D-341, D-342) est rejoué après le correctif, même fenêtre 2021→2025,
+même tolérance (±0,10 pt), mêmes fichiers. Les entrées lues avant tout résidu, en M€ :
+K61 + KX vaut +294 (2021), +483,5 (2022), −510 (2023), +375,1 (2024), +0,9 (2025),
+soit +0,012, +0,018, −0,018, +0,013 et +0,000 pt de PIB : ce sont, à 0,001 pt près, les
+« erreurs propres » de 2021 à 2024 du tableau de D-341.
+
+**Ce qui restera, par l'arithmétique.** Le ratio publié de fin 2020 dépasse la dette sur
+le PIB du millésime de 0,010 pt, celui de 2021 de 0,006 pt ; ensuite ils sont égaux. Le
+départ porte donc +0,010 pt, l'arrivée de 2021 −0,006, et le terme de millésime de 2025
+(D-341 : +0,0118 pt) reste. Le pronostic, en points de PIB :
+
+1. cinq années dans la bande de ±0,10 pt ;
+2. résidu de 2021 dans [+0,002 ; +0,006] ; de 2022 à 2024 dans [+0,005 ; +0,012] ; de
+   2025 dans [−0,007 ; −0,001] : il change de signe ;
+3. erreurs propres de 2023 et de 2024 sous 0,001 pt en valeur absolue ; celle de 2025
+   dans [−0,013 ; −0,011], opposée au terme de millésime à 0,0002 pt près ;
+4. le test du constat d'octobre (D-342, résidu 2025 dans [+0,015 ; +0,025]) ne tient plus
+   sur l'ajustement corrigé : il a été écrit sur la somme à cinq postes. Il est gardé tel
+   quel sur cette somme, recalculée dans le test et nommée comme le double compte qu'elle
+   est ; un test neuf tient le pronostic ci-dessus.
