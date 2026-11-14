@@ -29307,3 +29307,30 @@ départ porte donc +0,010 pt, l'arrivée de 2021 −0,006, et le terme de millé
    sur l'ajustement corrigé : il a été écrit sur la somme à cinq postes. Il est gardé tel
    quel sur cette somme, recalculée dans le test et nommée comme le double compte qu'elle
    est ; un test neuf tient le pronostic ci-dessus.
+
+### Le résultat du backtest corrigé
+
+`comptes.SFA_COMPOSANTES` vaut désormais F_ASS, ORADJ et YA3. Le backtest rejoué :
+
+| an | sfa | résidu (D-341) | erreur propre (D-341) |
+|---|---|---|---|
+| 2021 | −0,0088 % | +0,0038 pt (+0,0155) | +0,0038 (+0,0155) |
+| 2022 | +0,0362 % | +0,0094 pt (+0,0389) | +0,0058 (+0,0240) |
+| 2023 | −0,1522 % | +0,0089 pt (+0,0190) | −0,0000 (−0,0180) |
+| 2024 | +1,1492 % | +0,0087 pt (+0,0314) | −0,0000 (+0,0128) |
+| 2025 | +0,0810 % | −0,0031 pt (+0,0196) | −0,0118 (−0,0118) |
+
+**Contre le pronostic : les quatre points tenus.** Cinq années dans la bande ; 2021 dans
+[+0,002 ; +0,006], 2022 à 2024 dans [+0,005 ; +0,012], 2025 dans [−0,007 ; −0,001] ; les
+erreurs propres de 2023 et 2024 nulles au millième de point, celle de 2025 à −0,0118,
+opposée au terme de millésime. Le backtest ne mesure plus le double compte : son résidu
+n'est plus que l'écart du ratio publié de 2020 et 2021 au millésime (+0,010 et +0,006 pt)
+et l'écart de millésime de 2025 entre l'Insee et Eurostat.
+
+**Les tests.** `test_dette_comptes.py` : un test neuf tient que l'ajustement redonne
+GD_CH − B9_T3 de sa table à 0,5 M€ près (rouge sur l'ancien code, de −510 à +483,5 M€),
+un autre le pronostic ci-dessus (rouge sur l'ancien code) ; le constat d'octobre de D-342
+est gardé, ses bornes inchangées, sur la somme à cinq postes recalculée dans le test.
+Dans `test_jumeau_historique.py`, le test du lot 1 qui montrait le double compte tient
+maintenant l'égalité de `sfa_publie` et de l'ajustement du cadre. Aucune étude ne lit
+`sfa_publie` : seul le backtest de §6.1 bouge.

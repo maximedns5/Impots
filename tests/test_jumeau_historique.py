@@ -9,8 +9,6 @@ est lu, et ce qui le cause est vérifié ici (D-405).
 
 from __future__ import annotations
 
-import json
-
 import numpy as np
 import pytest
 
@@ -68,24 +66,16 @@ def test_les_ecarts_publies_sont_ce_qu_ils_disent() -> None:
         variation - eurostat["GD_CH"], abs=1e-9)
 
 
-def test_l_ajustement_de_comptes_compte_deux_fois_k61_et_kx() -> None:
-    """ORADJ, le total des ajustements, contient K61 et KX : `comptes.sfa_publie`, qui
-    somme les cinq postes, les compte deux fois. L'ajustement du cadre est F_ASS + ORADJ +
-    YA3, et l'identité de la dette le tient à 1e-9 (test ci-dessus)."""
-    donnees = json.loads((comptes.RAW / comptes.SFA_FILE).read_text(encoding="utf-8"))
-    postes = donnees["dimension"]["na_item"]["category"]["index"]
-    temps = donnees["dimension"]["time"]["category"]["index"]
-
-    def lu(poste, annee):
-        return float(donnees["value"].get(str(postes[poste] * len(temps)
-                                               + temps[str(annee)]), 0.0)) / 1e3
-
+def test_l_ajustement_de_comptes_est_celui_du_cadre() -> None:
+    """ORADJ, le total des ajustements, contient K61 et KX : `comptes.sfa_publie` les
+    comptait deux fois (D-405) ; corrigé par D-410, il est F_ASS + ORADJ + YA3, l'ajustement
+    du cadre, à 1e-9 près. Sur l'ancienne somme, l'écart valait K61 + KX, de −510 à
+    +483,5 M€ selon l'année."""
     publie = comptes.sfa_publie(AVEC_SFA)
     pib = comptes.gdp(AVEC_SFA)
     for annee in AVEC_SFA:
         sfa = historique.etat_initial(annee)["sfa"][0]
-        assert publie[annee] * pib[annee] / 1e9 == pytest.approx(
-            sfa + lu("K61", annee) + lu("KX", annee), abs=1e-9)
+        assert publie[annee] * pib[annee] / 1e9 == pytest.approx(sfa, abs=1e-9)
 
 
 def test_le_jumeau_part_de_2025_comme_la_chaine() -> None:

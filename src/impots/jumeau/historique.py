@@ -18,8 +18,8 @@ CE QUE LES COMPTES PUBLIÉS NE BOUCLENT PAS, ET CE QUE LE CADRE EN FAIT (D-405).
   totaux (de 0,12 et 0,09 Md€ en tout) : ``ventilation_emplois``, le total publié moins la
   somme publiée de ses secteurs ;
 * l'ajustement d'Eurostat est F_ASS + ORADJ + YA3 : ORADJ, le total des ajustements,
-  contient déjà K61 et KX, et la somme des cinq de `comptes.SFA_COMPOSANTES` les compte
-  deux fois ; ``ecart_eurostat`` est GD_CH − B9_T3 moins cet ajustement, l'écart interne
+  contient déjà K61 et KX (`comptes.SFA_COMPOSANTES`, corrigé par D-410) ;
+  ``ecart_eurostat`` est GD_CH − B9_T3 moins cet ajustement, l'écart interne
   de la table : de −0,1 à +0,3 million, il dépasse en 2023 l'arrondi de ses cinq postes
   imprimés au dixième de million, parce que ces postes sont eux-mêmes des totaux de
   postes arrondis ; il n'est donc borné par aucun arrondi, il est lu et dit (D-405) ;
