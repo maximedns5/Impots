@@ -31795,3 +31795,84 @@ Le lourd de la page, seul dans son processus (`test_jumeau_page.py`), passe en 2
 
 **Ce qui reste.** La révision de D-420 (D-421) se fait ailleurs ; elle se joindra à son
 tour. Les points ouverts de D-416 à D-420 restent ouverts, aucun n'est tranché ici.
+
+## D-423 — La révision du jumeau notée sur l'histoire : 9 cibles sur 12, contre D-421
+
+**Ce qui a tourné.** `scripts/jumeau_rejeu_histoire.py`, cas `rejeu_histoire_r2`, sur
+`8119f63` poussé (D-421 et son amendement : le choix (b), le jumeau de la jonction D-422,
+l'étape zéro), en une fois, en moins d'une minute. Le rapport :
+`reports/jumeau/rejeu_histoire_r2.json` ; celui de D-420 reste. Ni tolérance, ni
+fenêtre, ni entrée, ni réglage n'a changé après le calcul.
+
+**Le contrôle d'abord.** Les REQM du naïf redonnent celles de D-420 exactement (écart
+nul, sur l'estimation, le test et le test à θ½) : la fusion et la révision ne touchent
+pas la référence.
+
+**L'estimation.** Cinq itérations ; J passe de 85,72 à 85,59 (99,8 %). Aucun θ
+identifié, chaque écart-type entre 0,494 et 0,500, comme l'étape zéro le disait. Les θ :
+profil de la consommation 0,401, élasticité de l'emploi 0,639, salaires 0,464,
+exportations 0,528, importations 0,493, accélérateur 0,494, coût du capital 0,476. Sur
+l'estimation, 8 cibles tenues (le naïf 6, le naïf mécanique 8) ; le PIB y passe de 0,672
+(D-420) à 0,481.
+
+**Le test, aux θ estimés** (REQM en points ; J le jumeau, N le naïf, M le naïf
+mécanique ; « tenue » pour le jumeau ; P la bande du pronostic amendé de D-421) :
+
+| cible | tol. | J | P | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,940 | [0,85 ; 1,4] | 0,831 | 0,831 | oui * | non | non |
+| emploi | 0,8 | 0,882 | [0,85 ; 1,15] | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,723 | [0,65 ; 0,95] | 0,627 | 0,627 | oui * | non | non |
+| exportations | 4,0 | 3,524 | [3,2 ; 3,9] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,0 ; 3,8] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,45 ; 0,65] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,364 | [0,25 ; 0,5] | 0,424 | 0,349 | oui | oui | non |
+| D61 | 0,4 | 0,225 | [0,15 ; 0,4] | 0,983 | 0,283 | oui | oui | oui * |
+| recettes | 0,8 | 1,073 | [0,85 ; 1,3] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,639 | [0,35 ; 0,8] | 1,361 | 0,627 | oui | oui | non * |
+| dette | 3,0 | 2,926 | [2,0 ; 3,6] | 4,393 | 2,359 | oui * | oui | non |
+| créations | 10 | 5,647 | [4,5 ; 7,5] | 4,310 | 4,310 | oui | non | non |
+
+(* : à l'inverse du pronostic amendé.)
+
+**Le chiffre de la révision : 9 cibles sur 12 tenues hors de la période d'estimation**
+(7 sous D-420). Le naïf en tient 6, le naïf mécanique 9. Le jumeau bat le naïf sur 8
+cibles et le naïf mécanique sur 3 : les exportations (de 0,35 point), les importations
+(de 0,50) et D61 (de 0,06). À θ½, le test donne les mêmes tenues et les mêmes victoires,
+chaque REQM à moins de 1 % de celle aux θ estimés.
+
+**Contre le pronostic amendé.** Chaque REQM du jumeau et du naïf mécanique est dans sa
+bande, et les totaux dans les leurs : 9 tenues pour 6 annoncées (de 5 à 9, au bord), 6
+pour le naïf (exactement), 9 pour le naïf mécanique (9), le naïf battu sur 8 (8), le
+naïf mécanique sur 3 (3) ; aucun θ identifié, J à 99,8 %, chaque θ à moins de 0,15 de ½,
+le test à θ½ identique. Manqués, cible par cible : trois tenues annoncées « non » de peu
+sont tenues de peu, le PIB (0,940), le chômage (0,723) et la dette (2,926) ; le naïf
+mécanique est battu sur D61 (annoncé non) et pas sur le solde (annoncé oui de peu : 0,639
+contre 0,627).
+
+**Ce qui surprend, et ce qui ne surprend pas.**
+
+* **Les créations ne s'agitent plus en 2018 et 2019** (−3,9 et −2,7 points d'erreur au
+  lieu de +15,9 et −13,1) : c'était le défaut de l'entrée. Reste 2023, +11,5, identique à
+  D-420 : la CVAE réduite fait monter les créations du jumeau quand les créations
+  classiques publiées baissent de 7,4 %. Le naïf, à zéro, reste meilleur (4,31 contre
+  5,65).
+* **La demande mondiale fait tout le gain sur les échanges**, comme annoncé : les
+  exportations de 2022 passent de −7,9 à −5,5 points d'erreur, celles de 2023 de −1,2 à
+  −3,5 (la demande en retrait, les exportations françaises non). Le naïf mécanique n'a
+  pas de bloc du commerce : ce gain est celui d'une équation du jumeau sur un exogène
+  observé, pas celui des chocs budgétaires.
+* **Le PIB** : 2022 se rapproche (−1,08 contre −1,68), 2023 s'éloigne (−1,39 contre
+  −1,09) ; la REQM passe sous la tolérance (0,940) sans battre le naïf (0,831).
+* **La dette** reste plus loin que celle du naïf mécanique (2,93 contre 2,36) : en 2023 et
+  2024, le comportement abaisse le PIB et le solde du jumeau sous ceux du naïf mécanique.
+* **Les recettes de 2023 et 2024** restent surestimées de 1,4 et 1,6 point de PIB : le
+  choix (b) ôte l'IS cyclique de 2022 que la datation aurait importé, mais la chute non
+  votée des taux apparents de la TVA et de l'IS de ces années reste hors de l'entrée.
+* **L'estimation ne bouge toujours rien** : l'étape zéro l'avait mesuré avant le calcul
+  (information au plus 0,1 pour 12 requis).
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune entrée ; D-417, D-420
+et D-421 restent. La dynamique du jumeau bat le naïf mécanique sur 3 cibles, dont deux par
+la demande mondiale ; sur l'activité, l'emploi, le chômage et les finances publiques,
+elle ne fait pas mieux que les chocs observés seuls.
