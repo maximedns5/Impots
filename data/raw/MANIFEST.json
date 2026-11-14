@@ -2045,6 +2045,24 @@
       "licence": "unknown",
       "description": "Banque de France, Lemoine, Turunen, Chahad et al., « The FR-BDF Model and an Assessment of Monetary Policy Transmission in France », Working Paper 736, octobre 2019. §4.6.4 : élasticités-prix de long terme des exportations (table 4.6.20, 1,27) et des importations hors énergie (table 4.6.21, 1,11), bornes hautes des θ du commerce (D-408).",
       "quarantined": false
+    },
+    "insee_eec2025_t302_chomage_bit.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8977299/EEC_T302.xlsx",
+      "sha256": "0ec9012029c94795350d81ffd7a3b511bcc8281e913a4860c62d81e058245d81",
+      "bytes": 37679,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, enquête Emploi en continu, séries longues, t. 302 : chômage et taux de chômage BIT en moyenne annuelle, 1975 à 2025 (2 342,8 milliers et 7,4 % en 2024 ; 2 451,2 et 7,7 % en 2025) ; niveaux de référence du jumeau, lot 4 (D-409)",
+      "quarantined": false
+    },
+    "insee_ndc_2019_06_dossier_pouvoir_achat_consommation.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4176734/062019_dossier1.pdf",
+      "sha256": "ed745919e29d0d940b90b6f680a0f8f11e229403c96dc79f46f17973e9f18aea",
+      "bytes": 349153,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, Note de conjoncture de juin 2019, dossier « Quel lien entre pouvoir d'achat et consommation des ménages en France aujourd'hui ? », tableau 3 p. 34 : effet cumulé d'un choc de 1 % de pouvoir d'achat sur la consommation ; borne du profil de la consommation du jumeau, lot 4 (D-409)",
+      "quarantined": false
     }
   }
 }

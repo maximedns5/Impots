@@ -68,6 +68,20 @@ CANAUX.update({
 })
 DE_MESANGE.update({"exportations", "importations", "prix_echanges"})
 
+# --------------------------------------------------------------------- lot 4 (D-409)
+CANAUX.update({
+    "consommation_menages": (
+        "la consommation des ménages selon leur revenu disponible, et l'épargne : la ligne "
+        "« Consommation des ménages » des variantes de Mésange (bloc `consommation`)"),
+    "emploi": (
+        "l'emploi salarié marchand selon la valeur ajoutée et le coût du travail, le "
+        "chômage : la ligne « Emploi salarié marchand » des variantes (bloc `emploi`)"),
+    "salaires": (
+        "la formation des salaires (WS) et la masse salariale qui en revient aux ménages "
+        "et aux APU (bloc `salaires`)"),
+})
+DE_MESANGE.update({"consommation_menages", "emploi", "salaires"})
+
 
 def declares(bloc: Any) -> tuple[str, ...]:
     """Les canaux qu'un bloc porte, les siens et ceux de Mésange qu'il remplace ; un nom

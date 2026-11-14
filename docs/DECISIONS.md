@@ -29534,3 +29534,162 @@ n = 1 et 103 ms à n = 2 000, lecture du YAML comprise.
   du lot 2. La fermeture du PIB en mode structurel, ci-dessus.
 * Le bloc ne porte ni un choc de prix étrangers ou de change, ni les recettes induites,
   ni l'effet non ventilé du canal des créations sur les importations.
+
+## D-409 — Les ménages du jumeau : cellules, emploi, salaires, consommation (lot 4)
+
+**Ce qui est codé** (branche `claude/but23-menages`, lot 4 du but 23, D-406). Les
+cellules de ménages (`jumeau/cellules.py`), trois blocs structurels dans une boucle
+simultanée (`jumeau/blocs/menages.py` : `consommation`, `emploi`, `salaires`), les
+gagnants et les perdants par cellule (`jumeau/gagnants.py`), le registre des canaux
+(`jumeau/canaux.py`), les valeurs et leurs sources (`jumeau/parametres/menages.yaml`),
+les θ dans la section du lot 4 de `thetas.py`, les champs du lot 4 dans `champs.py`.
+
+**Les cellules : dix déciles de niveau de vie fois cinq types de ménage.** Le décile,
+parce que les chocs statiques des mesures arrivent par décile (les rapports portent
+`mean_delta` et `n_households`, §5), que la propension à consommer en dépend et que les
+gagnants se lisent ainsi ; le type (seul, monoparental, couple sans ou avec enfants,
+complexe), parce que c'est la typologie que l'Insee publie, que les élasticités d'offre
+de travail sont par configuration familiale (C7) et que l'exposition aux prestations et
+au chômage en dépend. Un découpage plus fin viderait des cellules. Elles sont construites
+une fois (`scripts/jumeau_cellules.py`, détaché) : une passe de référence au droit de
+2024, tier « full », niches, capital, indemnités journalières et consommation imputés,
+sur un sous-échantillon PPS de 30 000 ménages (64 992 personnes ; jamais toute la
+population), puis `construire` ; écrites hors git (`data/processed/
+jumeau_cellules_2024.json`, avec son manifeste : commit, graine, empreinte de la
+population). Mesuré une fois : 92 s, pic de 4,59 Go, au-dessus des 4 Go visés (la passe
+seule ; un essai sur 1 000 ménages tient en 0,49 Go). Toutes les cellules sont pleines
+(54 805 ménages au moins).
+
+**Les recoupements, tolérances écrites avant le premier calcul** (`cellules.TOLERANCE_*`,
+jamais retouchées) : contre la passe, 1e-9 (la construction, test léger) ; contre la
+population entière, 2 % pour une masse ou un compte large, 8 % pour le chômage, ses
+allocations et les revenus non salariés (un sous-échantillon dix fois plus petit) ;
+contre l'agrégat publié, celles de `reconcile.TOLERANCE`, 2 % pour une marge de
+calibration, 15 % pour une distribution. Un essai à 1 000 ménages a tourné avant la
+passe retenue : les tolérances étaient écrites, et n'ont pas bougé. Résultat (30 000) :
+
+* contre la population : salaires bruts −0,41 %, pensions −0,42 %, ménages 0, personnes
+  −0,32 %, en emploi −0,40 %, salariés −0,44 %, allocations chômage +1,05 %, chômeurs
+  +2,04 %, revenus non salariés −1,46 % ; tout tient ;
+* contre le publié : salaires bruts / D11 au champ de l'enquête −0,16 %, pensions
+  déclarées −0,42 %, Unédic +1,05 %, revenus non salariés (Insee Première 2114) −1,46 %,
+  ménages (recensement 2023) −0,71 %, emploi (enquête Emploi 2024) −1,998 %, sous les 2 %
+  de justesse, la population elle-même étant à −1,6 % ; médiane du niveau de vie
+  (Filosofi 2023, lue comme le milieu des déciles 5 et 6) −4,2 % ; tout tient ;
+* dits sans verdict, écarts de la population et non des cellules : l'IR contre ses
+  recettes nettes +4,8 %, les chômeurs contre le BIT 2024 +6,4 %.
+
+Les cellules font 1 347 Md€ de revenu disponible et 1 072 Md€ de consommation (enquête
+Budget de famille 2017, TF106, portée aux comptes de 2024) : une propension moyenne de
+0,796, de 1,72 au premier décile à 0,59 au dernier. Le premier décile consomme plus que
+son revenu disponible de la passe ; l'Insee le trouve aussi, moins fort (−13,4 %
+d'épargne au premier quintile en 2011, Note de conjoncture de juin 2019, p. 27).
+
+**Les équations**, écrites dans la docstring de `blocs/menages.py` avec leurs pages, et
+leurs valeurs dans `menages.yaml`. Un modèle linéaire en écarts, comme Mésange : chaque
+bloc écrit la référence sous « » et l'écart de chaque mesure, et un profil cumulé R(h)
+publié se lit par l'opérateur de retard L[z, R]_k = Σ_j (z_j − z_{j−1}) R(k − j + 1).
+
+* `emploi` : ê = L[ŷ, R_va] + (η/0,44) (L[ŵ + τ̂, R_c] + L[τ̂ᶜ, R_c^NQ]), les profils de
+  l'emploi qualifié et non qualifié de Mésange (G2017-04, p. 48), pondérés 0,69 et 0,31
+  (p. 40) ; τ̂ les cotisations employeurs de la mesure, uniformes ou ciblées (le profil des
+  non-qualifiés seuls, une borne basse de l'allègement ciblé) ; les non-salariés suivent
+  l'emploi salarié marchand (p. 40) ; l'offre, PA ŵ Σ_g s_g ε_g, les quatre élasticités de
+  C7 pondérées par la masse salariale des groupes dans les cellules ; ΔU = ΔPA − ΔE.
+  L'offre ne répond qu'au salaire que la dynamique forme : la réponse au changement
+  d'impôt de la mesure est déjà dans ses recettes (C7, `mesures_non_ventilees`) ;
+* `salaires` : une courbe WS, ŵ = b L[Δu, S_u]/100 + L[p̂, S_p] + L[κ̂, S_p] +
+  L[smic, S_smic], les profils p. 65 (chômage, productivité, Smic réel efficace) ; le
+  coin fiscalo-social indexé unitairement à long terme (p. 64, σ_W = 1 note 45, p. 62) :
+  une cotisation salariale déplace le salaire brut, une cotisation employeur reste sur le
+  coût ; son profil, non imprimé, celui de la productivité. La masse salariale ΔD1 =
+  π D1 (ê + ŵ) va en rémunérations et sort de l'EBE ; elle se répartit entre les
+  cellules (l'emploi au prorata des chômeurs, le salaire au prorata du super-brut), chaque
+  cellule à ses taux moyens de cotisations (D61), de CSG, CRDS et IR (D5) et de revenu
+  disponible ; les allocations chômage, β_b W ΔU (D62), l'allocation moyenne par chômeur
+  des cellules rapportée à la rémunération moyenne ;
+* `consommation` : ΔRD de chaque cellule (le choc par décile de la mesure, réparti au
+  prorata des ménages, plus la dynamique), PMC_d(h) = e(h) [APC + κ (APC_d − APC)],
+  ΔC = Σ_j ΔΔRD_j PMC(k − j + 1) + C L[Δu, Q_u]/100 (l'épargne de précaution, p. 34) ;
+  ΔC sur la consommation et le PIB, la TVA et les accises au taux moyen des cellules en
+  D2, le reste en EBE. Le revenu et la consommation par décile sont écrits, référence
+  comprise (les cellules en part du PIB de 2024, 2 935,236 Md€, t. 1.101).
+
+**Les θ, huit** : η, l'élasticité de long terme de l'emploi à son coût (0,31 ; 0,44
+Mésange p. 39 ; 0,52 ; bornes Bunel et L'Horty 2012) ; b, le facteur de la
+semi-élasticité des salaires au chômage (0,5 choisie, non vérifiée ; 1, Mésange 2017 ;
+1,28, Mésange 2010, p. 64) ; les quatre élasticités de C7, sous leurs clés du magasin ;
+e(h), le profil de la consommation (θ½ Mésange p. 34 ; l'autre borne, Insee, Note de
+conjoncture de juin 2019, tableau 3 p. 34, plus lente et à 0,8 à long terme) ; q, la
+pente des propensions entre déciles, choisie, non vérifiée : aucune propension marginale
+par décile publiée pour la France n'a été trouvée (le sens seul est sourcé, même Note,
+p. 33 et 35) ; κ = q κ_max, κ_max = 0,221 sur les cellules réelles, le plus grand κ qui
+garde chaque PMC de long terme sous un. Deux conventions sans θ, dites : le long terme
+de Mésange placé à dix ans, et le profil d'ajustement du coin fiscalo-social.
+
+**Les sources téléchargées** et ajoutées au manifeste : Insee, enquête Emploi, séries
+longues, t. 302 (chômeurs BIT, 2 342,8 milliers en 2024, 2 451,2 en 2025) ; Insee, Note
+de conjoncture de juin 2019, dossier sur le pouvoir d'achat et la consommation. Lus sur
+place : Mésange, les t. 6.208 et 6.210, `labour_supply.yaml`, `margins`. Aucun chiffrage
+de tiers des programmes n'est lu.
+
+**Le double compte refusé.** `canaux.py` porte la section du lot 4 (« consommation_
+menages », « emploi », « salaires ») ; chaque bloc structurel déclare `remplace`, le bloc
+`mesange` porte tous les canaux du registre, et `Modele` refuse un canal porté deux fois
+(`canaux.verifier`, `DoubleCompte`). Le cadre est touché au plus juste : une ligne dans
+`Modele.__init__` et sa docstring. Une mesure qui porte une impulsion sur un instrument
+des ménages (IR, CSG, cotisations salariés, TVA, taxe carbone) sans choc par décile est
+refusée avant le premier pas : son canal de la consommation serait un zéro.
+
+**Les tests.** `tests/test_jumeau_menages.py`, 20 légers, sur des cellules synthétiques
+(12 s) : les identités du §6 à chaque pas avec les trois blocs, à θ = 0, ½, 1 et sur un
+axe de quatre tirages, Δb décomposé sans reste ; la référence indépendante de θ ; la
+consommation de chaque décile égale à PMC_d(1) ΔRD_d plus le terme du chômage la
+première année (à 1e-8, la tolérance du point fixe), positive, et les PMC décroissantes ;
+θ = 0 et θ = 1 qui bornent la consommation, la pente plate à q = 0 et à un au plus à
+q = 1 ; une hausse du coût du travail qui baisse l'emploi et monte le chômage à trois θ,
+l'élasticité qui borne la perte ; un Smic plus haut qui monte les salaires et baisse
+l'emploi ; le double compte et les mesures mal formées refusés ; θ manquant refusé ; les
+gagnants par cellule qui somment au revenu par décile de l'état à 1e-9 ; la construction
+exacte des cellules et leur relecture. `tests/test_jumeau_cellules.py`, lourd (il lit la
+population, ajouté à `tests/lourds.txt`) : les recoupements ci-dessus et les cellules
+pleines. Les tests du lot 1 restent verts : `pytest -m "not lourd and not chrono" -n 1
+tests/test_jumeau_menages.py tests/test_jumeau.py tests/test_jumeau_historique.py`, 89
+passés.
+
+**La comparaison au mode réduit, écart dit, jamais forcé.** Une baisse d'IR d'un point de
+PIB, permanente, depuis le départ synthétique, θ½ : PIB +0,40, +0,76, +0,81, +0,86, +0,78 %
+à 1, 2, 3, 5, 10 ans, contre 0,41, 0,83, 0,88, 0,81, 0,87 dans la variante de Mésange ;
+emploi salarié +25, +74, +98, +101, +81 milliers contre 24, 109, 174, 184, 181. Une baisse
+des cotisations employeurs d'un point : PIB +0,05 à +0,10 % contre 0,20 à 1,29, emploi
++70 à +161 milliers contre 83 à 318. L'écart vient de ce que les lots 2 et 3 portent
+(l'investissement, la compétitivité et les importations) et de ce que le lot 4 ne porte
+pas : la boucle prix-salaires (les prix sont ceux du scénario), la variante Phillips.
+
+**Les temps**, mesurés une fois : une trajectoire de dix ans, référence et variante, les
+blocs du lot 1 et ceux des ménages, une mesure, 0,12 s à n = 1 et 0,70 s à n = 2 000.
+La cible de 2 s tient ; celle de 50 ms non : la moitié du temps est l'écriture par le
+cadre des trente champs du lot 4, six fois par an au point fixe, que ce lot ne touche
+pas.
+
+**Ce qui reste, ou est à décider.**
+
+* La variante Phillips de la formation des salaires (encadré 10) n'est pas codée : seule
+  la WS centrale ; la boucle prix-salaires et l'indexation aux prix non plus.
+* Le choc statique d'une mesure sur D1 et l'EBE (une cotisation employeur baisse D1 à
+  salaire donné) n'est ventilé ni par le bloc `mesures` ni ici ; les importations de la
+  consommation sont au lot 3 ; l'allègement ciblé est une borne basse.
+* Les taux des cellules sont moyens, pas marginaux ; les cellules sont celles de 2024,
+  portées en part du PIB ; le revenu disponible est celui du champ de la population, pas
+  B6 des comptes.
+* Les séries qu'il faut au lot 5 pour la calibration (lot 6), annuelles, 2010 à 2024 :
+  l'emploi salarié marchand et non marchand et l'emploi total (t. 6.208, 6.210), les
+  chômeurs et la population active BIT (t. 302 et ses voisines), le salaire moyen par
+  tête et D1 (t. 1.105, 6.205), le Smic brut et l'IPC, la consommation des ménages en
+  valeur et en volume, leur revenu disponible brut et leur taux d'épargne (t. 7.401 et
+  1.103), les cotisations sociales et la CSG sur les salaires (t. 3.217), les
+  allocations chômage (D62) ; et, s'ils existent, le revenu et la consommation par
+  décile des comptes nationaux distribués de l'Insee, que ce lot n'a pas trouvés
+  manifestés.
+* La pente des propensions entre déciles reste choisie : une source publiée qui les
+  chiffre pour la France la remplacerait.

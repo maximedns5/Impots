@@ -99,6 +99,69 @@ ELASTICITE_PRIX_IMPORTATIONS = Ligne(
 REGISTRE.update({ELASTICITE_PRIX_EXPORTATIONS.cle: ELASTICITE_PRIX_EXPORTATIONS,
                  ELASTICITE_PRIX_IMPORTATIONS.cle: ELASTICITE_PRIX_IMPORTATIONS})
 
+# --------------------------------------------------------------------- lot 4, ménages
+#: Les θ des blocs des ménages (D-409) ; leurs bornes sont dans
+#: `jumeau/parametres/menages.yaml`, avec leurs sources.
+EMPLOI_COUT = "jumeau_emploi_elasticite_cout"
+SALAIRES_CHOMAGE = "jumeau_salaires_chomage"
+CONSOMMATION_PROFIL = "jumeau_consommation_profil"
+CONSOMMATION_PENTE = "jumeau_consommation_pente_deciles"
+#: Les quatre lignes de C7, sous les clés du magasin comportemental.
+OFFRE_TRAVAIL = ("labour_supply_married_women", "labour_supply_married_men",
+                 "labour_supply_single_women", "labour_supply_single_men")
+_PAR_THETA = ("v(θ) = centre − (1 − 2θ)(centre − bas) si θ ≤ ½, centre + (2θ − 1)(haut − "
+              "centre) sinon")
+REGISTRE.update({ligne.cle: ligne for ligne in (
+    Ligne(cle=EMPLOI_COUT, bloc="emploi",
+          definition=("η dans ê_k = Σ_j Δŷ_j R_va(h) + (η/0,44) Σ_j Δĉ_j R_c(h), h = k − j + "
+                      "1 : l'élasticité de long terme de l'emploi salarié marchand à son "
+                      f"coût réel, en valeur absolue ; {_PAR_THETA}"),
+          unite="sans dimension", a_zero="0,31", a_demi="0,44 (Mésange)", a_un="0,52",
+          direction="θ = 1 : l'emploi répond le plus à son coût",
+          source=("Mésange (G2017-04), p. 39 et encadré 5 p. 41 ; bornes, Bunel et L'Horty "
+                  "(2012), tableau 7"), verifiee=True),
+    Ligne(cle=SALAIRES_CHOMAGE, bloc="salaires",
+          definition=("b dans ŵ_k = b Σ_j Δu_j S_u(h)/100 + … : le facteur sur le profil de "
+                      "la semi-élasticité du salaire au taux de chômage de Mésange (−1,98 "
+                      f"et −1,49 à long terme) ; {_PAR_THETA}"),
+          unite="sans dimension", a_zero="0,5 (choisie, non vérifiée)",
+          a_demi="1 (Mésange 2017, −0,018 agrégé)", a_un="1,2778 (Mésange 2010, −0,023)",
+          direction="θ = 1 : les salaires réagissent le plus au chômage",
+          source="Mésange (G2017-04), p. 64 et 65 ; la borne basse choisie, non vérifiée",
+          verifiee=False),
+    Ligne(cle=CONSOMMATION_PROFIL, bloc="consommation",
+          definition=("e(h) dans PMC_d(h) = e(h) [APC + κ (APC_d − APC)] : l'élasticité "
+                      "cumulée de la consommation au revenu disponible réel à h ans ; à "
+                      "chaque horizon, bas et haut les deux profils publiés ; "
+                      f"{_PAR_THETA}"),
+          unite="sans dimension", a_zero="min(Mésange, Insee 2019) : 0,46 ; 0,6 ; 0,7 ; 0,8",
+          a_demi="Mésange : 0,46 ; 0,85 ; 0,98 ; 1,00", a_un="max : 0,5 ; 0,85 ; 0,98 ; 1,00",
+          direction="θ = 1 : la consommation suit le plus vite et le plus loin le revenu",
+          source=("Mésange (G2017-04), p. 34 ; Insee, Note de conjoncture de juin 2019, "
+                  "dossier, tableau 3 p. 34"), verifiee=True),
+    Ligne(cle=CONSOMMATION_PENTE, bloc="consommation",
+          definition=("q dans κ = q κ_max, PMC_d(h) = e(h) [APC + κ (APC_d − APC)] : la pente "
+                      "des propensions marginales entre les déciles ; κ_max, le plus grand κ "
+                      "qui garde chaque PMC de long terme sous un, calculé sur les cellules ; "
+                      f"{_PAR_THETA}"),
+          unite="sans dimension", a_zero="0 (même propension pour tous)", a_demi="½",
+          a_un="1 (la pente des propensions moyennes, bornée)",
+          direction="θ = 1 : les modestes consomment le plus de leur surcroît de revenu",
+          source=("choisie, non vérifiée ; le sens : Insee, Note de conjoncture de juin "
+                  "2019, p. 33 et 35"), verifiee=False),
+)})
+for _cle in OFFRE_TRAVAIL:
+    REGISTRE[_cle] = Ligne(
+        cle=_cle, bloc="emploi",
+        definition=("ε_g dans ΔPA_k = PA Σ_g s_g ε_g ŵ_k : l'élasticité des heures du groupe "
+                    "g au salaire brut (C7), s_g sa part dans la masse salariale des "
+                    "cellules ; la valeur à θ est `predictif.theta.value_at` sur la ligne du "
+                    "magasin"),
+        unite="sans dimension", a_zero="la borne basse du magasin", a_demi="le centre",
+        a_un="la borne haute", direction="θ = 1 : l'offre de travail répond le plus",
+        source=("Bargain, Orsini et Peichl, IZA DP 6735 (2012), annexe F ; "
+                "behavioural/parameters/labour_supply.yaml"), verifiee=True)
+
 
 def ligne_comportement(cle: str, row: Mapping[str, Any]) -> Ligne:
     """Une ligne du comportement des ménages, telle qu'un rapport la porte."""

@@ -253,11 +253,6 @@ _ajouter(Champ("prelevements_entreprises", "Variation des prélèvements sur les
 
 # --------------------------------------------------------------------- lots 2 à 4
 for _nom, _lib, _unite, _lot in (
-        ("population_active", "Population active", "milliers", 4),
-        ("emploi_total", "Emploi total", "milliers", 4),
-        ("emploi_salarie", "Emploi salarié", "milliers", 4),
-        ("chomage", "Chômeurs", "milliers", 4),
-        ("salaire_moyen", "Salaire moyen par tête", "€ courants", 4),
         ("demande_mondiale", "Demande mondiale adressée à la France", "indice", 3),
         ("prix_relatifs", "Prix relatifs à l'exportation", "indice", 3),
         ("solde_courant", "Solde courant", MDE, 3)):
@@ -312,6 +307,35 @@ _ajouter(
           "X_{t−1}) − (M_t/p^M_t − M_{t−1}), sur le PIB de l'année précédente", 3, "lot3",
           additif=False),
 )
+
+# --------------------------------------------------------------------- lot 4, ménages
+#: Les champs du lot 4 (D-409), écrits par les blocs `consommation`, `emploi` et
+#: `salaires` (`blocs/menages.py`). Additifs : la référence sous la mesure « », l'écart
+#: de chaque mesure linéarisé autour d'elle (le modèle est linéaire, comme Mésange), ce
+#: qui fait la décomposition par mesure.
+LOT4_SOURCE = "lot 4, blocs des ménages (D-409) ; référence : menages.yaml"
+_ajouter(
+    Champ("population_active", "Population active (emploi intérieur et chômeurs BIT)",
+          "milliers", "", LOT4_SOURCE, 4, "travail"),
+    Champ("emploi_total", "Emploi intérieur total", "milliers", "", LOT4_SOURCE, 4,
+          "travail"),
+    Champ("emploi_salarie", "Emploi intérieur salarié", "milliers", "", LOT4_SOURCE, 4,
+          "travail"),
+    Champ("chomage", "Chômeurs au sens du BIT", "milliers", "", LOT4_SOURCE, 4, "travail"),
+    Champ("salaire_moyen", "Rémunération moyenne par salarié (D1 par tête)",
+          "€ courants", "D1", LOT4_SOURCE, 4, "travail"),
+)
+#: Le revenu disponible et la consommation des ménages par décile de niveau de vie, au
+#: champ de la population (revenu disponible d'OpenFisca, hors loyers imputés et hors
+#: revenus du patrimoine non imputés ; consommation de l'enquête Budget de famille).
+DECILES_MENAGES = tuple(range(1, 11))
+for _d in DECILES_MENAGES:
+    _ajouter(
+        Champ(f"rdb_d{_d:02d}", f"Revenu disponible des ménages du décile {_d}", MDE,
+              "B6 (champ de la population)", LOT4_SOURCE, 4, "menages_rdb"),
+        Champ(f"conso_d{_d:02d}", f"Consommation des ménages du décile {_d}", MDE,
+              "P3 (champ de l'enquête Budget de famille)", LOT4_SOURCE, 4,
+              "menages_conso"))
 
 REGISTRE: dict[str, Champ] = dict(_REGISTRE)
 
