@@ -25,7 +25,10 @@ LES DEUX MODES.
   rapport porte. C'est la chaîne des études : à θ½, Δb₂₀₃₅ est celui qu'elles publient.
 * STRUCTUREL : le modèle complet (`ordre_structurel`), depuis l'état publié de 2025, sous
   le même cadre. Un rapport ne ventile que sa première année figée (D-412) : les années
-  que le modèle refuse ne sont pas calculées, et la page dit pourquoi.
+  que le modèle refuse ne sont pas calculées, et la page dit pourquoi. Avec la convention
+  « parts_premiere_annee » (D-414, `choix["convention"]`, D-419), les années suivantes
+  sont ventilées aux parts de la première là où ces parts existent ; chaque année qu'elle
+  fait est rendue (`conventions`), et la page la marque à côté de chaque nombre.
 
 Un champ qu'aucun bloc n'écrit dans un mode est absent : `None`, jamais zéro.
 """
@@ -273,18 +276,18 @@ class Session:
         self._mesures: dict[tuple[str, str], Any] = {}
 
     # ---------------------------------------------------------------- mesures
-    def mesure(self, cle: str, vue: str) -> Any:
+    def mesure(self, cle: str, vue: str, convention: str | None = None) -> Any:
         from impots.jumeau.mesures import Mesure
 
         if cle not in self.candidats:
             raise NavigateurError(f"candidat « {cle} » inconnu")
-        if (cle, vue) not in self._mesures:
+        if (cle, vue, convention) not in self._mesures:
             c = self.candidats[cle]
-            self._mesures[(cle, vue)] = Mesure.depuis_rapport(
+            self._mesures[(cle, vue, convention)] = Mesure.depuis_rapport(
                 c["payload"], vue=vue, identifiant=cle, libelle=c["libelle"],
                 auteur=c["auteur"], rapport=c["rapport"],
-                premiere_annee=c["premiere_annee"])
-        return self._mesures[(cle, vue)]
+                premiere_annee=c["premiere_annee"], convention=convention)
+        return self._mesures[(cle, vue, convention)]
 
     def hypothese(self, spec: Mapping[str, Any]) -> Any:
         """Une loi hypothétique : un instrument, un montant (Md€ par an, coût pour les
@@ -367,19 +370,31 @@ class Session:
                 for cle, ligne in thetas.registre(mesures).items()]
 
     def calculer(self, choix: Mapping[str, Any]) -> dict[str, Any]:
-        """La trajectoire d'un réglage : {mode, vue, candidat | hypothese, theta}. θ n'a
-        pas de défaut : un θ que le modèle lit et que le réglage ne donne pas est refusé
-        (`thetas.lire`), et la page le dit."""
+        """La trajectoire d'un réglage : {mode, vue, candidat | hypothese, theta,
+        convention}. θ n'a pas de défaut : un θ que le modèle lit et que le réglage ne
+        donne pas est refusé (`thetas.lire`), et la page le dit.
+
+        `convention` (« parts_premiere_annee », D-414) ne s'applique qu'au rapport d'un
+        candidat dans le mode structurel, le seul qui lise ses ventilations ; le mode
+        réduit et une loi hypothétique ne la lisent pas, et `convention` rendu le dit
+        (None)."""
         from impots.jumeau.blocs.entreprises import EntreprisesError
         from impots.jumeau.blocs.menages import MenagesError
+        from impots.jumeau.mesures import CONVENTION_PARTS
         from impots.jumeau.trajectoire import calculer
 
         mode, vue = choix.get("mode", "reduit"), choix.get("vue", "vieillie")
         if mode not in MODES or vue not in VUES:
             raise NavigateurError(f"mode « {mode} » ou vue « {vue} » inconnus")
+        convention = choix.get("convention") or None
+        if convention not in (None, CONVENTION_PARTS):
+            raise NavigateurError(f"convention « {convention} » inconnue "
+                                  f"({CONVENTION_PARTS})")
         cle = choix.get("candidat") or None
+        if not (cle and mode == "structurel"):
+            convention = None
         if cle:
-            mesure = self.mesure(cle, vue)
+            mesure = self.mesure(cle, vue, convention)
         elif choix.get("hypothese"):
             mesure = self.hypothese(choix["hypothese"])
         else:
@@ -399,7 +414,8 @@ class Session:
                 "auteur": mesure.auteur, "origine": mesure.origine,
                 "rapport": mesure.rapport, "commit": mesure.commit,
                 "non_portes": dict(mesure.non_portes)},
-            "annees": list(ANNEES), "thetas": registre, "refus": None, "calculees": []}
+            "annees": list(ANNEES), "thetas": registre, "refus": None, "calculees": [],
+            "convention": convention, "conventions": None}
         annees = len(ANNEES)
         while True:
             try:
@@ -425,6 +441,7 @@ class Session:
             out["avertissements"] = [a for a in (mesure.avertissement,) if a]
             return out
         out["calculees"] = list(traj.annees)
+        out["conventions"] = _conventions(mesure, traj.annees)
         out["avertissements"] = list(traj.avertissements)
         out["series"] = _series(traj)
         # Les années refusées sont absentes : None, sur toute la longueur de la page.
@@ -440,6 +457,21 @@ class Session:
                                      "les gagnants et les perdants se lisent dans le mode "
                                      "structurel"})
         return out
+
+
+def _conventions(mesure: Any, calculees: Sequence[int]) -> dict[str, Any] | None:
+    """Les années calculées qu'une convention nommée a ventilées, par axe, et sa
+    définition : la page les marque à côté de chaque nombre de ces années (D-414)."""
+    from impots.jumeau.mesures import TEXTE_CONVENTION
+
+    axes = {axe: sorted(a for a in annees if a in calculees)
+            for axe, annees in (mesure.conventions or {}).items()}
+    axes = {axe: a for axe, a in axes.items() if a}
+    if not axes:
+        return None
+    noms = sorted({mesure.conventions[axe][a] for axe, a_ in axes.items() for a in a_})
+    return {"noms": noms, "definition": TEXTE_CONVENTION, "axes": axes,
+            "annees": sorted({a for a_ in axes.values() for a in a_})}
 
 
 def _tronquer(entrees: Any, k: int) -> Any:

@@ -5,12 +5,14 @@ numpy, chargés depuis un CDN à une version fixée, exécutent le paquet `impot
 servi avec le site. Aucun portage : la page fait tourner le code que les tests font
 tourner, et `site verifier` refuse un site dont le paquet n'est plus celui du dépôt.
 
-LE SITE NE CALCULE RIEN DE NEUF, ICI NON PLUS. `construire` écrit quatre fichiers :
+LE SITE NE CALCULE RIEN DE NEUF, ICI NON PLUS. `construire` écrit cinq fichiers :
 
 * `jumeau.html`, la page, lisible sans script (ce qu'elle fait, d'où viennent ses
   entrées, ce qu'elle ne fait pas) ;
-* `jumeau.js`, son script : il charge Pyodide, écrit le paquet dans le système de
-  fichiers du navigateur, puis appelle `navigateur.Session.calculer` à chaque réglage ;
+* `jumeau.js`, son script : il vérifie `pyodide.js` par son empreinte et lance le calcul
+  dans un Web Worker, puis dessine ce qu'il rend à chaque réglage (D-419) ;
+* `jumeau-calcul.js`, le script du Worker : il charge Pyodide, écrit le paquet dans le
+  système de fichiers du navigateur, puis appelle `navigateur.Session.calculer` ;
 * `jumeau-paquet.json`, les sources des modules de `impots` que la page importe et les
   fichiers de paramètres qu'ils lisent, relevés en faisant tourner la page en Python
   (`paquet`) ; un module qui importerait autre chose que numpy et yaml est refusé ;
@@ -39,8 +41,8 @@ from impots import etude
 
 ICI = Path(__file__).resolve().parent
 SRC = ICI.parents[1]
-PAGE, SCRIPT, PAQUET, DONNEES = ("jumeau.html", "jumeau.js", "jumeau-paquet.json",
-                                 "jumeau-donnees.json")
+PAGE, SCRIPT, CALCUL, PAQUET, DONNEES = ("jumeau.html", "jumeau.js", "jumeau-calcul.js",
+                                         "jumeau-paquet.json", "jumeau-donnees.json")
 #: Pyodide 0.29.5 (16 septembre 2026) : CPython 3.13.2, numpy 2.2.5, PyYAML 6.0.2.
 PYODIDE = "0.29.5"
 PYODIDE_URL = f"https://cdn.jsdelivr.net/pyodide/v{PYODIDE}/full/"
@@ -50,8 +52,11 @@ PYODIDE_SRI = "sha384-VR47TfKeAmT7vMej7bwOVg0tHTQLLGMSIpsXtFMCZG5OpKZSIXoSLtGY//
 PAQUETS_PYODIDE = ("numpy", "pyyaml")
 #: Ce que le paquet peut importer hors de la bibliothèque standard.
 TIERS = frozenset({"numpy", "yaml"})
+#: `worker-src blob:` : le Worker du calcul naît d'un Blob que le script de la page
+#: compose (`pyodide.js` vérifié, puis `jumeau-calcul.js`), et hérite ainsi de cette
+#: politique ; aucun autre Worker, aucun cadre.
 CSP = ("default-src 'none'; script-src 'self' https://cdn.jsdelivr.net "
-       "'wasm-unsafe-eval'; connect-src 'self' https://cdn.jsdelivr.net; "
+       "'wasm-unsafe-eval'; worker-src blob:; connect-src 'self' https://cdn.jsdelivr.net; "
        "style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; "
        "form-action 'none'")
 
@@ -154,6 +159,8 @@ print(json.dumps({"modules": modules, "lus": sorted(lus), "tiers": tiers}))
 PARCOURS = [
     {"mode": "reduit", "vue": "vieillie", "candidat": "*"},
     {"mode": "structurel", "vue": "figee", "candidat": "*"},
+    {"mode": "structurel", "vue": "figee", "candidat": "*",
+     "convention": "parts_premiere_annee"},
     {"mode": "reduit", "hypothese": {"instrument": "impot_sur_le_revenu", "montant": 10,
                                      "debut": 2026, "fin": 2035}},
     {"mode": "structurel", "hypothese": {"instrument": "depense_publique", "montant": 10,
@@ -202,6 +209,8 @@ def paquet(d: dict[str, Any] | None = None) -> dict[str, Any]:
 # --------------------------------------------------------------------------- #
 def _corps(d: dict[str, Any]) -> str:
     esc = html.escape
+    from impots.jumeau.mesures import CONVENTION_PARTS
+
     groupes: dict[str, list[tuple[str, str]]] = {}
     for scenario, c in d["candidats"].items():
         groupes.setdefault(c["groupe"], []).append((scenario, c["libelle"]))
@@ -225,91 +234,145 @@ def _corps(d: dict[str, Any]) -> str:
     sources = "".join(f"<li><strong>{esc(k)}</strong> : {esc(v)}</li>"
                       for k, v in d["entrees"]["sources"].items())
     return f"""<h1>Le jumeau</h1>
-<p>Le jumeau numérique de la France avance l'économie année par année, de 2026 à 2035,
-avec et sans une mesure, et montre la différence. Chaque paramètre incertain est un
-curseur θ, de 0 à 1 : θ = 1 est partout la réponse la plus forte de l'économie, θ = ½ le
-centre publié. Les nombres sont calculés ici, dans ce navigateur, par le code même du
-dépôt (<code>impots.jumeau</code>), à chaque mouvement d'un curseur.</p>
-<p>Deux modes. Le mode <strong>réduit</strong> est la chaîne des études : à θ½, il redonne
-la dette que publie la page de chaque étude. Le mode <strong>structurel</strong> est le
-jumeau : les entreprises, le commerce extérieur, les ménages, depuis l'état publié de
-2025. Un rapport d'étude ne ventile, par impôt et par décile, que sa première année et sa
-vue figée : au-delà, le mode structurel refuse plutôt que de lire un zéro, et la page le
-dit. Un champ qu'aucun bloc n'écrit est dit absent, jamais dessiné à zéro.</p>
+<p class="chapeau">L'économie de 2026 à 2035, avec et sans la mesure choisie : l'écart,
+calculé dans ce navigateur par le code du dépôt, à chaque curseur.</p>
 <noscript><p class="absent">Cette page calcule dans le navigateur : sans script, elle ne
 montre rien. Les études restent lisibles sur leurs pages.</p></noscript>
 <form id="reglages" class="jumeau-reglages">
+<div class="ligne-choix">
 <fieldset><legend>Ce qui entre</legend>
 <p><label><input type="radio" name="entree" value="candidat" id="entree-candidat" checked>
-une mesure chiffrée par une étude</label>
+une mesure chiffrée</label>
 <label><input type="radio" name="entree" value="hypothese" id="entree-hypothese">
 une loi hypothétique</label></p>
-<p id="bloc-candidat"><label for="candidat">Le programme ou la mesure</label>
+<p id="bloc-candidat"><label for="candidat" class="cache">Le programme ou la mesure</label>
 <select id="candidat">{options}</select></p>
 <div id="bloc-hypothese" hidden>
 <p><label for="h-instrument">Impôt ou dépense</label>
 <select id="h-instrument">{instruments}</select></p>
-<p><label for="h-montant">Coût pour les APU, Md€ par an (négatif : une hausse d'impôt ou une
-baisse de dépense)</label> <input id="h-montant" type="number" step="0.5" value="10"></p>
-<p><label for="h-debut">De</label> <select id="h-debut">{debut}</select>
+<p><label for="h-montant">Md€ par an de coût pour les APU</label>
+<input id="h-montant" type="number" step="0.5" value="10">
+<label for="h-debut">de</label> <select id="h-debut">{debut}</select>
 <label for="h-fin">à</label> <select id="h-fin">{fin}</select></p>
-<p class="note">Une loi hypothétique est déclarée, pas chiffrée sur la population : ses
-chocs sont ceux de la variante de Mésange de l'instrument, au montant dit, répartis entre
-les déciles au prorata des cellules de ménages.</p>
+<p class="note">Négatif : une hausse d'impôt ou une baisse de dépense. Déclarée, pas
+chiffrée sur la population : les chocs de la variante de Mésange de l'instrument, au
+montant dit.</p>
 </div>
 </fieldset>
 <fieldset><legend>Le modèle</legend>
-<p><label><input type="radio" name="mode" value="reduit" id="mode-reduit" checked> réduit
-(les études)</label> <label><input type="radio" name="mode" value="structurel"
+<p><label><input type="radio" name="mode" value="reduit" id="mode-reduit" checked>
+réduit (les études)</label> <label><input type="radio" name="mode" value="structurel"
 id="mode-structurel"> structurel (le jumeau)</label></p>
 <p><label for="vue">Population</label> <select id="vue"><option value="vieillie">vieillie
 à chaque année</option><option value="figee">figée en 2026</option></select></p>
+<p id="bloc-convention" hidden><label><input type="checkbox" id="convention"
+value="{CONVENTION_PARTS}" checked> au-delà de 2026, la convention
+« {CONVENTION_PARTS} »</label></p>
 </fieldset>
+</div>
 </form>
 <p id="etat" class="etat" role="status">Chargement de Python dans le navigateur…</p>
-<section id="messages"></section>
-<h2>Les θ</h2>
-<p>Chaque curseur dit sa définition, sa source et sa valeur au réglage ; un θ que le mode
-choisi ne lit pas est grisé.</p>
-<section id="thetas" class="thetas"></section>
-<h2>La trajectoire</h2>
-<p>Chaque graphique trace l'écart entre la variante et la référence, chaque année, et sa
-décomposition par bloc et par mesure ; le tableau sous lui donne les nombres exacts et les
-deux niveaux.</p>
-<section id="series"></section>
+<section id="messages" class="messages"></section>
+<div class="jumeau-grille">
+<div class="jumeau-resultats">
+<section id="series" class="series"></section>
 <h2>Gagnants et perdants, par décile de niveau de vie</h2>
-<section id="deciles"></section>
-<h2>D'où viennent les entrées</h2>
+<section id="deciles" class="deciles"></section>
+</div>
+<aside class="jumeau-panneau">
+<details id="panneau-thetas"><summary>Les curseurs θ</summary>
+<p class="note">De 0 à 1 : θ = 1 est la réponse la plus forte de l'économie, θ = ½ le
+centre publié. Un θ que le mode ne lit pas est grisé.</p>
+<div id="thetas" class="thetas"></div>
+</details>
+</aside>
+</div>
+<details class="apropos"><summary>Comment lire cette page, d'où viennent ses
+entrées</summary>
+<p>Chaque graphique trace l'écart entre la variante et la référence, chaque année, et sa
+décomposition par bloc et par mesure (les barres) ; « Les nombres » donne les valeurs
+exactes et les deux niveaux.</p>
+<p>Deux modes. Le mode <strong>réduit</strong> est la chaîne des études : à θ½, il redonne
+la dette que publie la page de chaque étude. Le mode <strong>structurel</strong> est le
+jumeau : les entreprises, le commerce extérieur, les ménages, depuis l'état publié de
+2025. Un rapport d'étude ne ventile, par impôt et par décile, que sa première année et sa
+vue figée (D-412). Au-delà, le mode structurel applique, si elle est cochée, la convention
+« {CONVENTION_PARTS} » (D-414) : le total de chaque année du chemin annuel aux parts de
+la première année figée. Ce n'est pas une passe ; chaque nombre qu'elle fait est marqué
+<span class="conv">c</span>. Là où ces parts n'existent pas (une réforme du Smic, des
+cotisations que le rapport ne ventile pas, la vue vieillie), les années restent absentes
+et la page dit pourquoi. Un champ qu'aucun bloc n'écrit est dit absent, jamais dessiné à
+zéro.</p>
 <ul>{sources}</ul>
 <p>Les rapports des études, commités, pour chaque mesure ; le code de
 <code>impots.jumeau</code>, servi avec la page (<code>{PAQUET}</code>) ; Python et numpy,
 par Pyodide {PYODIDE}, chargé depuis <code>cdn.jsdelivr.net</code> et vérifié par son
-empreinte. Rien ne quitte la page : ni réglage, ni nombre.</p>
+empreinte, dans un fil de calcul à part (un Web Worker) : la page ne fige pas pendant un
+calcul. Rien ne quitte la page : ni réglage, ni nombre.</p>
+</details>
 """
 
 
 STYLE = """
-.jumeau-reglages fieldset{border:1px solid var(--trait);border-radius:.3rem;margin:.8rem 0;padding:.3rem .8rem;min-width:0}
+main{max-width:86rem}
+.chapeau{margin:.2rem 0 .6rem;color:var(--doux)}
+.jumeau-reglages .ligne-choix{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:0 .8rem}
+.jumeau-reglages fieldset{border:1px solid var(--trait);border-radius:.3rem;margin:.4rem 0;padding:.1rem .7rem;min-width:0;font-size:.92rem}
+.jumeau-reglages p{margin:.35rem 0}
 #candidat,#h-instrument{width:100%}
-.jumeau-reglages label{margin-right:.8rem}
+.jumeau-reglages label{margin-right:.6rem}
 .jumeau-reglages select,.jumeau-reglages input[type=number]{max-width:100%}
-.etat{font-family:system-ui,sans-serif;font-size:.9rem;color:var(--doux)}
-.thetas{display:grid;gap:.5rem}
-.theta{border-top:1px solid var(--trait);padding-top:.4rem}
-.theta.non-lu{opacity:.5}
-.theta .ligne{display:grid;grid-template-columns:minmax(0,1fr) minmax(7rem,14rem) 6.5rem;gap:.2rem .8rem;align-items:center}
-.theta input{width:100%}
-.theta small{display:block;color:var(--doux);font-size:.8rem;overflow-wrap:anywhere}
-.serie{margin:1.2rem 0}
-.serie svg,.deciles svg{display:block;width:100%;height:auto;max-width:40rem}
-.legende{display:flex;flex-wrap:wrap;gap:.2rem .8rem;font:.78rem/1.3 system-ui,sans-serif;padding:0;list-style:none}
+#h-montant{width:5rem}
+.cache{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.etat{font-family:system-ui,sans-serif;font-size:.85rem;color:var(--doux);margin:.3rem 0}
+body.calcule .series,body.calcule .deciles{opacity:.55;transition:opacity .2s .15s}
+.messages{font-size:.88rem}
+.messages p{border-left:3px solid var(--l3);padding-left:.6rem;margin:.3rem 0}
+.messages p.note{border-left:0;padding-left:0}
+.messages .refus{border-left-color:var(--l4)}
+.messages details{margin:.3rem 0}
+.messages p.convention{border-left-color:var(--l1)}
+.conv{font:600 .7rem/1 system-ui,sans-serif;padding:0 .2rem;border-radius:.2rem;background:var(--l1);color:var(--texte);text-decoration:none}
+sup .conv{margin-left:.1rem}
+.jumeau-grille{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem}
+.jumeau-panneau{order:-1}
+.jumeau-panneau>details>summary{font:600 1rem system-ui,sans-serif;cursor:pointer;padding:.35rem 0}
+.series{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr));gap:.4rem 1.2rem}
+.serie{margin:.4rem 0;min-width:0}
+.serie h3{font-size:.98rem;margin:.4rem 0 .2rem}
+.serie h3 small{display:block;font-weight:400;font-size:.76rem;color:var(--doux)}
+.serie h3 .fin{float:right;font-weight:400;font-size:.85rem;font-variant-numeric:tabular-nums}
+.serie svg,.deciles svg{display:block;width:100%;height:auto}
+.deciles svg{max-width:44rem}
+.legende{display:flex;flex-wrap:wrap;gap:.1rem .7rem;font:.74rem/1.3 system-ui,sans-serif;padding:0;margin:.2rem 0;list-style:none;overflow-wrap:anywhere}
 .legende i{display:inline-block;width:.7rem;height:.7rem;margin-right:.25rem;vertical-align:-.05rem}
-.serie table,.deciles table{font-size:.8rem}
+.legende i.trait{background:currentColor;height:.15rem;vertical-align:.2rem}
+.legende i.point{background:currentColor;border-radius:50%;width:.45rem;height:.45rem;vertical-align:.05rem}
+.serie details summary,.deciles details summary{font:.8rem system-ui,sans-serif;color:var(--doux);cursor:pointer}
+.serie table,.deciles table{font-size:.78rem}
 td.v{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 td.abs{color:var(--doux);font-style:italic}
-.messages p{border-left:3px solid var(--l3);padding-left:.6rem}
-.note{color:var(--doux);font-size:.9rem}
-@media (max-width:560px){.theta .ligne{grid-template-columns:1fr}}
+.thetas{display:grid;gap:.2rem}
+.groupe{border-top:1px solid var(--trait)}
+.groupe>summary{font:600 .9rem system-ui,sans-serif;cursor:pointer;padding:.35rem 0}
+.groupe .compte{font-weight:400;color:var(--doux);font-size:.8rem}
+.theta{padding:.25rem 0 .35rem;font-size:.86rem;line-height:1.3}
+.theta.non-lu{opacity:.5}
+.theta label{display:block}
+.theta .curseur{display:grid;grid-template-columns:minmax(0,1fr) 4.6rem;gap:.5rem;align-items:center}
+.theta input{width:100%;margin:0}
+.theta output{font:.8rem system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.theta .detail summary{font:.74rem system-ui,sans-serif;color:var(--doux);cursor:pointer}
+.theta .detail code{font-size:.72rem}
+.theta small{display:block;color:var(--doux);font-size:.76rem;overflow-wrap:anywhere;margin:.15rem 0}
+.apropos{margin:1.5rem 0;font-size:.92rem}
+.apropos summary{font:600 .95rem system-ui,sans-serif;cursor:pointer}
+.note{color:var(--doux);font-size:.85rem}
+@media (min-width:64rem){
+.jumeau-grille{grid-template-columns:minmax(0,1fr) 21rem}
+.jumeau-panneau{order:0;position:sticky;top:.5rem;align-self:start;max-height:calc(100vh - 1rem);overflow-y:auto;border-left:1px solid var(--trait);padding-left:.9rem}
+}
+@media (max-width:40rem){.jumeau-reglages .ligne-choix{grid-template-columns:minmax(0,1fr)}}
 """
 
 
@@ -317,9 +380,8 @@ def page(d: dict[str, Any]) -> str:
     from impots import site
 
     corps = _corps(d)
-    main = (corps + f'\n<script src="{PYODIDE_URL}pyodide.js" integrity="{PYODIDE_SRI}" '
-            f'crossorigin="anonymous"></script>\n'
-            f'<script src="{SCRIPT}" data-pyodide="{PYODIDE_URL}" '
+    main = (corps + f'\n<script src="{SCRIPT}" data-pyodide="{PYODIDE_URL}" '
+            f'data-sri="{PYODIDE_SRI}" data-calcul="{CALCUL}" '
             f'data-paquets="{" ".join(PAQUETS_PYODIDE)}"></script>')
     text = site._page(f"Le jumeau — {site.TITLE}", main)
     return (text.replace("</head>", f'<meta http-equiv="Content-Security-Policy" '
@@ -334,6 +396,7 @@ def build() -> dict[str, str]:
     d = donnees()
     texte = json.dumps(d, ensure_ascii=False, separators=(",", ":"))
     return {PAGE: page(d), SCRIPT: (ICI / "page.js").read_text(encoding="utf-8"),
+            CALCUL: (ICI / "calcul.js").read_text(encoding="utf-8"),
             PAQUET: json.dumps(paquet(d), ensure_ascii=False, separators=(",", ":")),
             DONNEES: texte}
 
