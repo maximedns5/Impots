@@ -28953,3 +28953,49 @@ ensuite, seule, sur le même commit. La série d'avant est celle du but 21, fig�
 **Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
 `chiffrages_preregistres/`, les seuils de D-345. Le résultat va dans une nouvelle
 D-entrée, avec la série d'avant, l'écart au pronostic et le coût du canal.
+
+## D-404 — Le jumeau numérique : le projet réorienté, le but 23 validé, le cadre écrit
+
+**La demande du propriétaire, le 14 novembre 2026.** La série du but 22 durait depuis
+plus d'un jour ; il l'a arrêtée (D-403, sur `claude/but22`). Son constat : le projet fait
+des études, alors que le but est le modèle. Il veut un jumeau numérique de la France :
+une population de ménages et d'entreprises qui avance année par année, où l'on fait
+entrer les mesures des candidats, ou une loi hypothétique, pour voir ce qu'elles
+déclenchent ; des paramètres θ de 0 à 1 sur ce qui est incertain (productivité, idées et
+start-up nouvelles, commerce extérieur, implantation d'usines selon la fiscalité,
+fermetures d'entreprises) ; une démarche mathématique, cohérente, apprise sur l'histoire
+de la France ; la suite des gouvernements, un candidat partant de l'état que laisse le
+précédent ; plus tard, un indice de tenue des promesses. Tant que les programmes sont
+incomplets, plus de passes de plusieurs jours.
+
+**Les quatre décisions, validées le même jour.**
+
+1. Deux juges, l'histoire d'abord : l'erreur du jumeau quand il rejoue 2010 à 2024 avec
+   les réformes votées, estimé sur une période et noté sur une autre, préenregistré ;
+   puis les chiffrages officiels, inchangés. La règle de priorité de `BUT.md` met le
+   jumeau en tête et les études en dernier.
+2. « Pas un modèle qui donne un point » reste : le jumeau donne des trajectoires selon θ.
+3. Le but 22 est clos tel quel (D-403) ; sa branche reste, sans PR. Le but 23 part de
+   son dernier commit, parce que le canal des créations y devient un bloc.
+4. Les curseurs tournent dans le navigateur, sur le site statique, sans serveur.
+
+**Le but 23, en sept lots** (`BUT.md`) : le cadre, les entreprises, le commerce, les
+ménages, l'histoire, l'apprentissage et le juge du passé, les curseurs. Chaque lot est un
+but au sens de `CLAUDE.md`, avec sa branche `claude/but23-<lot>` et sa PR. Le cadre passe
+d'abord ; les lots 2 à 5 partent en parallèle sur ses conventions.
+
+**Le cadre, écrit avant d'être codé** (`docs/jumeau/CADRE.md`). Un état en comptabilité
+nationale (emplois et revenus du PIB, compte des APU, dette Maastricht, travail,
+entreprises, reste du monde), sur un axe de tirages ; un pas annuel où des blocs
+déclarés ajoutent des contributions gardées à part, et où le cadre seul ferme les comptes ;
+cinq identités vérifiées à 1e-9 du PIB à chaque pas ; un champ non calculé absent, jamais
+nul ; les mesures entrées par leur choc statique, calculé une fois sur la population, et
+jamais OpenFisca dans un pas. Le choix qui porte le reste : séparer le choc statique, cher
+et calculé une fois, de la dynamique, rapide et rejouée à chaque θ ; c'est ce qui fait
+tenir une trajectoire de dix ans en moins de 50 ms. La chaîne actuelle des études doit
+s'y retrouver comme un cas particulier, à 1e-9 près : c'est la preuve que le cadre ne
+change rien à ce qui est déjà mesuré.
+
+**Ce qui ne change pas.** Les règles de `CLAUDE.md`, les tolérances, les chiffrages
+préenregistrés, `calibrate.py` fermé. Les D-400 à D-403 sont sur `claude/but22`, qui n'est
+pas dans `main` ; elles y entreront avec cette branche.

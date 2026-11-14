@@ -6,6 +6,37 @@ des trois chiffres de « Comment on sait que ça marche » attend. Il ne remplac
 `docs/DECISIONS.md`, qui dit pourquoi chaque choix a été fait, ni `docs/STATE_AND_NEXT.md`,
 qui dit où l'on en est.
 
+## L'orientation, depuis le 14 novembre 2026 : le jumeau numérique (D-404)
+
+Le propriétaire, le 14 novembre 2026 : les études ne sont pas le but ; le modèle l'est. On
+construit un **jumeau numérique de la France** : un modèle mathématique de son économie et
+de ses finances publiques, qui avance année par année sur une population de ménages et
+d'entreprises, et où l'on fait entrer une mesure, un programme ou une loi hypothétique
+pour voir ce qu'il déclenche, chaîne par chaîne, jusqu'à la dette, aux entreprises qui se
+créent ou ferment, à l'emploi, au commerce extérieur et aux ménages. Ce qui est incertain
+est un paramètre θ réglé de 0 à 1, défini mathématiquement et sourcé : la productivité, le
+taux d'idées et de start-up nouvelles, l'ouverture au commerce, l'implantation d'usines
+selon la fiscalité, la fermeture des entreprises. Le modèle tient ses identités comptables
+à chaque pas, et il est appris sur l'histoire de la France : il doit retrouver ce qui
+s'est passé quand on lui donne les réformes réellement votées. Il connaît la suite des
+gouvernements : un candidat part de l'état que laisse le précédent. Il répond en
+secondes, pas en jours. Plus tard, une fois le jumeau fait, un indice de tenue des
+promesses corrigera ce qu'un programme dit de lui-même (ce n'est pas maintenant).
+
+Les études deviennent un usage du modèle. Tant que les candidats n'ont pas publié toutes
+leurs mesures, on ne lance plus de passes de plusieurs jours sur des programmes
+provisoires. Le chantier est le but 23, en sept lots. Les quatre décisions de D-404 :
+
+* **Deux juges, l'histoire d'abord.** Le premier : l'erreur du jumeau quand il rejoue
+  l'histoire (2010 à 2024) avec les réformes votées, notée sur des séries publiées et
+  préenregistrée comme les chiffrages ; le second : les chiffrages officiels, inchangés.
+* **Pas un point.** Le jumeau donne des trajectoires selon θ, jamais une prévision
+  unique ; « Ce qui n'est pas le but » tient.
+* **Le but 22 est clos tel quel** : douze études refaites, la série arrêtée par le
+  propriétaire, dit en D-403 ; sa branche reste, sans PR.
+* **Les curseurs tournent dans le navigateur**, sur le site statique, sans serveur de
+  calcul.
+
 ## Pour qui
 
 **Les journalistes et les citoyens.** Quelqu'un lit qu'un gouvernement, un parti ou un
@@ -41,7 +72,18 @@ article refusé n'est pas un article à zéro.
 3. **Puis, si le propriétaire le décide, l'API en ligne.** La passe de sécurité est faite
    (D-295) : restent les clés, les origines, les limites et l'hébergement.
 
-## Comment on sait que ça marche : les chiffrages officiels retrouvés
+## Comment on sait que ça marche : l'histoire retrouvée, puis les chiffrages officiels
+
+**Le premier juge, depuis D-404 : l'histoire.** Le jumeau part de l'état de la France
+d'une année passée, reçoit les réformes réellement votées ensuite, et sa trajectoire est
+comparée aux séries publiées (PIB, recettes par impôt, solde, dette, emploi, créations et
+défaillances d'entreprises, échanges extérieurs). Les paramètres s'estiment sur une
+période et se notent sur une autre, jamais sur la même. Chaque note est préenregistrée,
+avec sa tolérance, avant son calcul. Le chiffre : la part des séries tenues dans leur
+tolérance, hors de la période d'estimation (aujourd'hui : **aucune**, le jumeau n'existe
+pas).
+
+**Le second juge : les chiffrages officiels**, tel qu'avant.
 
 Le juge est extérieur : l'évaluation préalable que le gouvernement publie avec un texte
 de finances réel. Pour chaque article chiffrable, un cas est préenregistré avant
@@ -81,6 +123,7 @@ reste noté. Un refus préenregistré est une limite ; un refus improvisé est u
 
 * Un modèle prédictif qui donnerait un point. L'outil est un simulateur en étages, qui
   dit ce que chaque étage permet de croire.
+* Des passes de plusieurs jours sur des programmes encore provisoires (D-404).
 * Chiffrer tout un PLF. Refuser un article hors de la structure ou des données est une
   réponse ; un zéro confiant n'en est pas une.
 * Une instance publique de l'API sans la décision du propriétaire et ses réglages : la
@@ -90,9 +133,11 @@ reste noté. Un refus préenregistré est une limite ; un refus improvisé est u
 
 Entre deux travaux, prendre celui qui fait monter, dans cet ordre :
 
-1. le nombre de cas notés dans la tolérance, sans toucher aux tolérances ;
-2. le nombre d'études publiées qui portent les trois réponses ;
-3. la couverture, en articles et en euros.
+1. le jumeau : ses identités tenues, puis la part de l'histoire qu'il retrouve hors de sa
+   période d'estimation (D-404) ;
+2. le nombre de cas notés dans la tolérance, sans toucher aux tolérances ;
+3. la couverture, en articles et en euros ;
+4. le nombre d'études publiées qui portent les trois réponses.
 
 Un travail qui n'en fait monter aucun (un canal de plus, une précision de plus sur une
 étude déjà publiée) se justifie par ce qu'il débloque pour l'un des trois, dans sa
@@ -1029,6 +1074,43 @@ Les décisions du propriétaire, le 13 novembre 2026 :
 **Ce qui reste du but 21** : le chemin refusé de Dupont-Aignan (un effet non monotone en
 θ sous la persistance « tenue », D-398) ; les décompositions E1/E2 archivées ; la page de
 comparaison ouverte aux seize programmes.
+
+### But 23 — Le jumeau numérique de la France (validé le 14 novembre 2026, D-404)
+
+Ce que le propriétaire a demandé est dans « L'orientation » en tête de ce document. Le
+but se livre en sept lots ; chacun est un but au sens de `CLAUDE.md`, avec sa branche
+`claude/but23-<lot>` et sa PR. Le cadre (lot 1) passe d'abord : il fixe les conventions
+que les autres branchent (`docs/jumeau/CADRE.md`). Les lots 2 à 5 partent ensuite en
+parallèle ; 6 et 7 s'appuient sur eux.
+
+1. **Le cadre** : l'état de l'économie, le pas annuel, les blocs, les identités
+   comptables, la dette ; la chaîne actuelle retrouvée comme un cas particulier.
+2. **Les entreprises** : naissances, survie, fermetures, productivité, implantation
+   selon la fiscalité ; le canal du but 22 y devient un bloc.
+3. **Le commerce extérieur** : exportations et importations selon les prix, les coûts et
+   la fiscalité.
+4. **Les ménages** : emploi, salaires, consommation, épargne, sur la population.
+5. **L'histoire** : les séries de 2010 à 2024 et la base des mesures votées, par
+   gouvernement.
+6. **L'apprentissage et le juge du passé** : estimer, rejouer, noter, préenregistré.
+7. **Les curseurs** : choisir des mesures, régler θ, voir les trajectoires, dans le
+   navigateur.
+
+```
+/goal Le jumeau numérique de la France existe, appris et noté sur l'histoire, manipulable
+dans le navigateur, et c'est mergé dans main, lot par lot. Un état de l'économie (comptes
+nationaux, APU, dette, ménages, entreprises, échanges) avance année par année sous des
+blocs aux équations écrites et sourcées ; ses identités tiennent à 1e-9 à chaque pas, et
+un test le prouve ; la chaîne des études actuelles se retrouve comme un cas particulier.
+Chaque paramètre incertain est un θ de 0 à 1, défini, sourcé, avec sa plage. Le jumeau
+rejoue 2010 à 2024 avec les réformes votées, estimé sur une période et noté sur l'autre,
+chaque note préenregistrée avant son calcul. Une mesure, un programme ou une loi
+hypothétique s'y branche par son choc statique, calculé une fois sur la population ; une
+trajectoire de dix ans se calcule en moins d'une seconde. Preuve attendue : par lot, la
+D-entrée, les tests verts, la PR et le SHA du merge ; à la fin, la page des curseurs en
+ligne et la note sur l'histoire. Ou s'arrêter après 60 tours par lot, en disant ce qui
+manque.
+```
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
