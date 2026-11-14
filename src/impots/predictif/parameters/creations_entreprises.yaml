@@ -15,17 +15,25 @@ preenregistrement: D-402   # la D-entrée qui fixe ces valeurs (but 22)
 elasticite:
   # Points de taux d'entrée (entrées de l'année sur entreprises actives, en %) par point
   # de taux apparent de prélèvement sur le profit. Fixe dans la chaîne ; la plage est une
-  # sensibilité dite à côté, pas une ligne θ.
-  centre: 0.20
-  bas: 0.043
-  haut: 0.356
+  # sensibilité dite à côté, pas une ligne θ des études (elle l'est dans le jumeau).
+  # Décision du propriétaire du 14 novembre 2026 (D-427) : le centre à l'intra-groupe de
+  # Da Rin et al., la borne basse à 0, la borne haute au milieu de D-402.
+  centre: 0.043
+  bas: 0.0
+  haut: 0.20
   source: >
-    Da Rin, Di Giacomo et Sembenelli, « Entrepreneurship, firm entry, and the taxation of
-    corporate income: Evidence from Europe », Journal of Public Economics 95 (2011),
-    1048-1066 ; manuscrit accepté au manifeste, tableau 4 p. 40, p. 21-22 : 0,880 (VI) et
-    0,107 (intra-groupe) point de taux d'entrée du premier quartile (27,57 %) à la médiane
-    (30,04 %) du TMEE, soit 0,356 et 0,043 par point ; le centre est leur milieu (M0 de la
-    phase 11, R4, D-245) [lu]. Appliqué à un taux apparent, pas au TMEE des auteurs (D-247).
+    Décision du propriétaire du 14 novembre 2026 (D-427). Le centre, 0,043 :
+    Da Rin, Di Giacomo et Sembenelli, « Entrepreneurship, firm entry, and the taxation
+    of corporate income: Evidence from Europe », Journal of Public Economics 95 (2011),
+    1048-1066 ;
+    manuscrit accepté au manifeste, tableau 4 p. 40, p. 21-22 : 0,107 point de taux
+    d'entrée en intra-groupe du premier quartile (27,57 %) à la médiane (30,04 %) du TMEE,
+    soit 0,043 par point (M0 de la phase 11, D-245) [lu]. Il est dans l'intervalle à 95 %
+    de l'estimation française entre secteurs de D-426 (−0,056, de −0,16 à +0,04, au
+    bord), qui exclut l'ancien centre (0,20) ; la borne haute, 0,20, est le milieu des
+    variables instrumentales (0,356) et de l'intra-groupe de Da Rin et al. (D-402) ; la
+    borne basse, 0, aucune réponse. Appliqué à un taux apparent, pas au TMEE des auteurs
+    (D-247). Avant D-427 : 0,20 (0,043 à 0,356), D-402.
 
 productivite:
   # c, la productivité d'une société nouvelle rapportée à la société moyenne : la ligne θ

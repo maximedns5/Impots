@@ -2948,7 +2948,7 @@ class Etude:
         ela = params["elasticite"]
         w(f"L'élasticité : {nombre(ela['centre'])} point de taux d'entrée par point de "
           f"taux apparent de prélèvement sur le profit, de {nombre(ela['bas'])} à "
-          f"{nombre(ela['haut'])} ; {creations.SOURCE_ELASTICITE}. Survie annuelle "
+          f"{nombre(ela['haut'])} ; {creations.source_elasticite(ela['centre'])}. Survie annuelle "
           f"{nombre(params['survie_annuelle'])}, montée en charge sur "
           f"{nombre(params['montee_en_charge_ans'])} ans, taille relative à maturité "
           f"{nombre(params['taille_relative'])}, valeur ajoutée des sociétés "

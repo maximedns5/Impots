@@ -106,13 +106,25 @@ def test_the_page_names_the_productivity_its_box_the_elasticity_and_the_instrume
     lo, hi = sorted((boite["c0"], boite["c1"]))
     assert f"de {etude._points(lo)} à {etude._points(hi)} en 2035" in text
     assert "0,5 au centre (θ½), de 0, le canal éteint, à 1" in text
-    assert "L'élasticité : 0,2 point de taux d'entrée" in text
-    assert "de 0,043 à 0,356" in text and creations.SOURCE_ELASTICITE in text
+    assert "L'élasticité : 0,043 point de taux d'entrée" in text
+    assert "de 0 à 0,2" in text and creations.SOURCE_ELASTICITE in text
     listed = text[text.index("Les instruments lus"):]
     assert all(name in listed for name in INSTRUMENTS)
     assert creations.DOUBLE_COMPTE in listed and "Mésange" in listed
     assert creations.CONVENTIONS_INSTRUMENTS in listed
     assert set(creations.LIBELLES) == set(PARAMS.instruments)
+
+
+def test_a_report_written_before_d427_names_the_source_of_its_own_slope(synthetique) -> None:
+    """A report carries its ε (`instantane`) : one written at the centre of D-402 says the
+    source of 0,20, not that of today's centre (D-427)."""
+    payload = json.loads(json.dumps(synthetique))
+    payload["creations"]["parametres"]["elasticite"] = {"centre": 0.20, "bas": 0.043,
+                                                        "haut": 0.356}
+    text = _section(_entry(payload))
+    assert "L'élasticité : 0,2 point de taux d'entrée" in text and "de 0,043 à 0,356" in text
+    assert creations.SOURCE_ELASTICITE_D402 in text
+    assert creations.SOURCE_ELASTICITE not in text
 
 
 def test_a_path_whose_two_readings_of_the_debt_without_the_channel_differ_is_refused(

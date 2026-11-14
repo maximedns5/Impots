@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 from itertools import pairwise
+from pathlib import Path
 
 import numpy as np
 import polars as pl
@@ -100,24 +101,51 @@ def test_the_effect_is_monotone_in_its_theta_and_off_at_zero() -> None:
 
 def test_the_order_of_magnitude_of_a_ten_billion_cut_of_the_is() -> None:
     """The research note, by hand: 10 Md€ over b Y = 0,092 × 3 000 Md€ is 3,62 points of
-    apparent rate, 0,72 point of entry rate; at c = ½ the GDP gap is about 0,05 % in 2030
-    and 0,10 % in 2035, and the receipts about 2 Md€ in 2035."""
+    apparent rate; at the centre of D-427, ε = 0,043, 0,156 point of entry rate; at c = ½
+    the GDP gap is about 0,011 % in 2030 and 0,022 % in 2035, and the receipts about
+    0,45 Md€ in 2035 — at the 0,20 of D-402, 0,72 point, 0,05 %, 0,10 % and 2 Md€."""
     cut = _effet(-10e9)
     assert cut.taux_apparent[0] == pytest.approx(-100 * 10e9 / (0.092 * 3_000e9))
-    assert cut.taux_entree[0] == pytest.approx(0.20 * 3.6232, rel=1e-4)
+    assert cut.taux_entree[0] == pytest.approx(0.043 * 3.6232, rel=1e-4)
     # Cohort sum at 2035, by hand: Σ_k 0,9^k min(1, (k+1)/5) for k = 0..9.
     weights = sum(0.9 ** k * min(1.0, (k + 1) / 5) for k in range(10))
     assert cut.pib[-1] == pytest.approx(cut.taux_entree[0] / 100 * weights * 0.10 * 0.5
                                         * 0.60, rel=1e-9)
-    assert 0.0004 < cut.pib[4] < 0.0006 and 0.0009 < cut.pib[-1] < 0.0012
-    assert 1.5e9 < cut.recettes[-1] * GDP[-1] < 2.5e9
-    # The research's sensitivity on ε moves it, its centre is the headline.
-    assert _effet(-10e9, elasticite=0.356).pib[-1] > cut.pib[-1] > _effet(
-        -10e9, elasticite=0.043).pib[-1]
+    assert 0.0001 < cut.pib[4] < 0.00012 and 0.0002 < cut.pib[-1] < 0.00024
+    assert 0.40e9 < cut.recettes[-1] * GDP[-1] < 0.50e9
+    before = _effet(-10e9, elasticite=0.20)
+    assert 0.0004 < before.pib[4] < 0.0006 and 0.0009 < before.pib[-1] < 0.0012
+    assert 1.5e9 < before.recettes[-1] * GDP[-1] < 2.5e9
+    # The sensitivity on ε moves it, its centre is the headline.
+    assert _effet(-10e9, elasticite=PARAMS.elasticite.haut).pib[-1] > cut.pib[-1] > _effet(
+        -10e9, elasticite=PARAMS.elasticite.bas).pib[-1] == 0.0
+
+
+#: An Attal study published with the channel at the 0,20 of D-402 (the CVAE abolished).
+ATTAL_A18 = (Path(__file__).resolve().parents[1] / "reports" / "etudes"
+             / "presidentielle_attal" / "mesures" / "a18_suppression_cvae"
+             / "predictif_pres2027_attal_a18_suppression_cvae.json")
+
+
+def test_a_published_study_replayed_at_the_declared_slope_gives_d427s_debt() -> None:
+    """D-427: the committed report, replayed from its own fields at the slope the file
+    declares, gives Δb 2035 at θ½, aged view, persistence « lue », +0,2354 point; at the
+    0,20 it carries (D-402), the published +0,2000 to the bit."""
+    payload = json.loads(ATTAL_A18.read_text(encoding="utf-8"))
+    theta = {**dict.fromkeys(payload["rejeu"]["lignes"], 0.5), MACRO_ROW: 0.5,
+             CREATIONS_ROW: 0.5}
+    lue = next(s for s in payload["side_by_side"] if s["persistence"] == "lue")
+    carried = payload["rejeu"]["creations"]["parametres"]["elasticite"]
+    assert carried == {"centre": 0.20, "bas": 0.043, "haut": 0.356}
+    before = rejouer.at_theta(payload, theta, view="vieillie", persistence="lue").delta
+    assert before[-1] == lue["years"][-1]["delta_aged"]
+    payload["rejeu"]["creations"]["parametres"]["elasticite"] = vars(PARAMS.elasticite)
+    after = rejouer.at_theta(payload, theta, view="vieillie", persistence="lue").delta
+    assert after[-1] == pytest.approx(0.002353733480370712, abs=1e-12)
 
 
 def test_the_declared_file_names_its_sources_and_no_report_reads_it_before_its_entry() -> None:
-    assert PARAMS.elasticite == creations.Plage(centre=0.20, bas=0.043, haut=0.356)
+    assert PARAMS.elasticite == creations.Plage(centre=0.043, bas=0.0, haut=0.20)
     assert (PARAMS.productivite.bas, PARAMS.productivite.haut) == (0.0, 1.0)
     assert creations.depuis(creations.instantane(PARAMS)) == PARAMS
     text = creations.FICHIER.read_text(encoding="utf-8")

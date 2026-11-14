@@ -82,11 +82,28 @@ CONVENTIONS_INSTRUMENTS = (
     "d'une estimation publiée de la réponse des créations à ces impôts ; le PFU et les "
     "prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, "
     "comme le taux virtuel de l'IPP qui joint l'IS et le PFU.")
-#: The source of the slope, as a page names it beside its centre and range.
+#: The source of the slope, as a page names it beside its centre and range: the owner's
+#: centre of 14 November 2026 (D-427), Da Rin et al.'s within estimate.
 SOURCE_ELASTICITE = (
+    "Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 "
+    "et pages 21 et 22 : leur estimation intra-groupe au centre, le milieu de leurs "
+    "estimations en variables instrumentales et intra-groupe en borne haute, lus sur un "
+    "taux apparent et non sur leur taux effectif (D-245, D-247) ; le centre est dans "
+    "l'intervalle de confiance de l'estimation française entre secteurs (D-426), décision "
+    "du propriétaire (D-427)")
+#: The source of the slope of a report written before D-427, at the centre of D-402.
+SOURCE_ELASTICITE_D402 = (
     "Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 "
     "et pages 21 et 22 : le milieu de leurs estimations en variables instrumentales et "
     "intra-groupe, lu sur un taux apparent et non sur leur taux effectif (D-245, D-247)")
+#: The centre of D-402, which the reports written before D-427 carry.
+CENTRE_D402 = 0.20
+
+
+def source_elasticite(centre: float) -> str:
+    """The source a page names beside the slope a report carries: the reports written
+    before D-427 carry the centre of D-402, and say its source, not today's."""
+    return SOURCE_ELASTICITE_D402 if float(centre) == CENTRE_D402 else SOURCE_ELASTICITE
 #: What a page calls each instrument the channel reads.
 LIBELLES = {
     "impot_societes": "l'IS", "contribution_sociale_is": "sa contribution sociale",
