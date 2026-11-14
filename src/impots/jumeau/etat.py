@@ -10,11 +10,17 @@ l'a écrite (ou « depart », « publie »), la mesure son identifiant (« » po
 champ non additif (un ratio, un indice de prix) a une valeur et un seul écrivain.
 
 Chaque valeur est un tableau numpy de forme (n,), n le nombre de tirages.
+
+LA SOMME D'UN CHAMP ADDITIF SE FAIT À LA LECTURE (D-411) : une écriture garde sa
+contribution et marque le champ ; sa valeur est recalculée la première fois qu'on la lit,
+dans l'ordre des contributions, comme avant (le même nombre au bit près). Les
+contributions sont indexées par origine, pour que le point fixe retire celles d'un bloc
+sans parcourir tout l'état. C'est de la plomberie : aucun nombre ne change.
 """
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 
 import numpy as np
 
@@ -38,7 +44,7 @@ class EtatError(ValueError):
 class Etat:
     """Une année de l'économie, sur n tirages."""
 
-    __slots__ = ("annee", "contributions", "n", "publie", "valeurs")
+    __slots__ = ("_origines", "_sales", "annee", "contributions", "n", "publie", "valeurs")
 
     def __init__(self, annee: int, n: int, *, publie: bool = False) -> None:
         if n < 1:
@@ -49,9 +55,16 @@ class Etat:
         """Vrai pour un état lu dans les tables publiées (`historique`)."""
         self.valeurs: dict[str, np.ndarray] = {}
         self.contributions: dict[str, dict[Cle, np.ndarray]] = {}
+        self._sales: set[str] = set()
+        """Les champs additifs dont la somme est à refaire."""
+        self._origines: dict[str, set[str]] = {}
+        """origine → les champs où elle a une contribution."""
 
     # ----------------------------------------------------------------- lecture
     def __getitem__(self, nom: str) -> np.ndarray:
+        if nom in self._sales:
+            self._sales.discard(nom)
+            self.valeurs[nom] = _somme(self.contributions[nom].values(), self.n)
         try:
             return self.valeurs[nom]
         except KeyError:
@@ -64,7 +77,8 @@ class Etat:
 
     def de(self, nom: str) -> dict[Cle, np.ndarray]:
         """Les contributions d'un champ additif, par (origine, mesure)."""
-        self[nom]
+        if nom not in self.valeurs:
+            self[nom]
         if not definition(nom).additif:
             raise EtatError(f"« {nom} » n'est pas additif : il n'a pas de contributions")
         return self.contributions[nom]
@@ -81,12 +95,16 @@ class Etat:
 
     # ----------------------------------------------------------------- écriture
     def _tableau(self, valeur: object, nom: str) -> np.ndarray:
-        tableau = np.asarray(valeur, dtype=float)
-        if tableau.ndim == 0:
-            tableau = np.full(self.n, float(tableau))
-        if tableau.shape != (self.n,):
-            raise EtatError(f"« {nom} » de forme {tableau.shape}, attendu ({self.n},)")
-        if not np.all(np.isfinite(tableau)):
+        if type(valeur) is np.ndarray and valeur.dtype == np.float64 \
+                and valeur.shape == (self.n,):
+            tableau = valeur  # ce que `np.asarray(valeur, dtype=float)` rendrait
+        else:
+            tableau = np.asarray(valeur, dtype=float)
+            if tableau.ndim == 0:
+                tableau = np.full(self.n, float(tableau))
+            if tableau.shape != (self.n,):
+                raise EtatError(f"« {nom} » de forme {tableau.shape}, attendu ({self.n},)")
+        if not np.isfinite(tableau).all():
             raise EtatError(f"« {nom} » non fini en {self.annee} : aucun NaN ne circule")
         return tableau
 
@@ -94,9 +112,64 @@ class Etat:
         """Ajoute (ou remplace) la contribution `cle` d'un champ additif."""
         if not definition(nom).additif:
             raise EtatError(f"« {nom} » n'est pas additif : `fixer`, pas `ecrire`")
-        parts = self.contributions.setdefault(nom, {})
+        parts = self.contributions.get(nom)
+        if parts is None:
+            parts = self.contributions[nom] = {}
         parts[cle] = self._tableau(valeur, nom)
-        self.valeurs[nom] = _somme(parts.values(), self.n)
+        self._marquer(nom, (cle,))
+
+    def ecrire_origine(self, origine: str, nom: str, parts: Mapping[str, object]) -> list:
+        """Les contributions (origine, mesure) d'un champ additif, d'un coup ; rend les
+        tableaux écrits, dont l'appelant vérifie qu'ils sont finis (`verifier_finis`) :
+        le chemin rapide de `ecrire`, pour un bloc qui écrit tout un champ (D-411)."""
+        contributions = self.contributions.get(nom)
+        if contributions is None:
+            contributions = self.contributions[nom] = {}
+        if nom not in self.valeurs:
+            self.valeurs[nom] = _VIDE
+        self._sales.add(nom)
+        champs = self._origines.get(origine)
+        if champs is None:
+            self._origines[origine] = {nom}
+        else:
+            champs.add(nom)
+        n = (self.n,)
+        ecrits = []
+        for mesure, valeur in parts.items():
+            if type(valeur) is np.ndarray and valeur.dtype == np.float64 \
+                    and valeur.shape == n:
+                tableau = valeur
+            else:
+                tableau = np.asarray(valeur, dtype=float)
+                if tableau.ndim == 0:
+                    tableau = np.full(self.n, float(tableau))
+                if tableau.shape != n:
+                    raise EtatError(f"« {nom} » de forme {tableau.shape}, attendu "
+                                    f"({self.n},)")
+            contributions[(origine, mesure)] = tableau
+            ecrits.append(tableau)
+        return ecrits
+
+    def verifier_finis(self, noms: Sequence[str], tableaux: Sequence[list]) -> None:
+        """Aucun NaN ne circule : les tableaux écrits par `ecrire_origine`, d'un seul
+        test ; le premier champ fautif nommé."""
+        tous = [t for liste in tableaux for t in liste]
+        if tous and not np.isfinite(np.concatenate(tous)).all():
+            for nom, liste in zip(noms, tableaux, strict=True):
+                if any(not np.isfinite(t).all() for t in liste):
+                    raise EtatError(f"« {nom} » non fini en {self.annee} : aucun NaN ne "
+                                    f"circule")
+
+    def _marquer(self, nom: str, cles: Iterable[Cle]) -> None:
+        if nom not in self.valeurs:
+            self.valeurs[nom] = _VIDE
+        self._sales.add(nom)
+        for origine, _ in cles:
+            champs = self._origines.get(origine)
+            if champs is None:
+                self._origines[origine] = {nom}
+            else:
+                champs.add(nom)
 
     def declarer(self, nom: str) -> None:
         """Rend présent un champ additif qu'un bloc écrit sans contribution cette année :
@@ -109,12 +182,11 @@ class Etat:
 
     def retirer(self, origine: str) -> None:
         """Retire toutes les contributions d'une origine (une itération du point fixe)."""
-        for nom, parts in self.contributions.items():
-            cles = [c for c in parts if c[0] == origine]
-            if cles:
-                for c in cles:
-                    del parts[c]
-                self.valeurs[nom] = _somme(parts.values(), self.n)
+        for nom in self._origines.pop(origine, ()):
+            parts = self.contributions[nom]
+            for c in [c for c in parts if c[0] == origine]:
+                del parts[c]
+            self._sales.add(nom)
 
     def fixer(self, nom: str, valeur: object) -> None:
         """La valeur d'un champ non additif."""
@@ -123,8 +195,15 @@ class Etat:
         self.valeurs[nom] = self._tableau(valeur, nom)
 
     def copier_contributions(self, nom: str, source: Mapping[Cle, np.ndarray]) -> None:
+        ancien = self.contributions.get(nom, {})
+        for origine in {c[0] for c in ancien}:
+            self._origines.get(origine, set()).discard(nom)
         self.contributions[nom] = {c: v for c, v in source.items()}
-        self.valeurs[nom] = _somme(self.contributions[nom].values(), self.n)
+        self._marquer(nom, self.contributions[nom])
+
+
+#: La valeur d'un champ additif écrit, que sa première lecture calculera.
+_VIDE = np.zeros(0)
 
 
 def _somme(valeurs: Iterable[np.ndarray], n: int) -> np.ndarray:

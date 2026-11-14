@@ -52,6 +52,9 @@ from impots.jumeau.champs import (
 from impots.jumeau.champs import champ as definition
 from impots.jumeau.etat import ChampAbsent, Cle, Etat
 
+#: Le registre, réduit à ce que l'écriture d'un bloc consulte à chaque champ.
+ADDITIFS = {nom: c.additif for nom, c in REGISTRE.items()}
+SIGNES_EMPLOIS = tuple((nom, REGISTRE[nom].signe) for nom in EMPLOIS)
 #: Les origines dont la dette se charge au taux de référence.
 ORIGINES_REFERENCE = frozenset({"depart", "publie", "tendance"})
 TOLERANCE_POINT_FIXE = 1e-10
@@ -278,24 +281,29 @@ def _ecrire(etat: Etat, bloc: Bloc, contributions: Mapping[str, Mapping[str, Any
     if inattendus:
         raise PasError(f"bloc « {bloc.nom} » : écrit {inattendus}, non déclarés")
     etat.retirer(bloc.nom)
+    vides: dict[str, Any] = {}
+    noms, ecrits = [], []
+    presents = etat.valeurs
     for nom in bloc.ecrit:
-        parts = contributions.get(nom, {})
-        if REGISTRE[nom].additif:
-            etat.declarer(nom)
-            for mesure, valeur in parts.items():
-                etat.ecrire(nom, (bloc.nom, mesure), valeur)
+        parts = contributions.get(nom, vides)
+        if ADDITIFS[nom]:
+            if nom not in presents:
+                etat.declarer(nom)
+            if parts:
+                noms.append(nom)
+                ecrits.append(etat.ecrire_origine(bloc.nom, nom, parts))
         else:
             if set(parts) != {""}:
                 raise PasError(f"bloc « {bloc.nom} » : « {nom} » n'est pas additif, une "
                                f"seule valeur, sous la clé « »")
             etat.fixer(nom, parts[""])
+    etat.verifier_finis(noms, ecrits)
     if ferme_pib:
         # Le PIB du bloc structurel, fermé par le cadre : la somme signée de ses
         # emplois, par mesure, sous son origine (D-411).
         pib: dict[str, Any] = {}
-        for nom in EMPLOIS:
-            signe = REGISTRE[nom].signe
-            for mesure, valeur in contributions.get(nom, {}).items():
+        for nom, signe in SIGNES_EMPLOIS:
+            for mesure, valeur in contributions.get(nom, vides).items():
                 pib[mesure] = pib[mesure] + signe * valeur if mesure in pib \
                     else signe * valeur
         etat.declarer("pib")
@@ -320,13 +328,14 @@ def _tourner(etat: Etat, groupe: Sequence[Bloc], ctx: Contexte, boucle: bool,
             ctx.bloc = bloc
             _ecrire(etat, bloc, bloc.contribue(ctx), bloc.nom in modele.pib_par_le_cadre)
         ctx.bloc = None
-        apres = {c: etat[c].copy() for c in champs}
+        # Les champs de la boucle, empilés : un seul calcul vectorisé de l'écart relatif
+        # de chacun (le même nombre, et le même premier pire, qu'un calcul par champ).
+        apres = np.stack([etat[c] for c in champs])
         if avant is not None:
-            ecarts = {c: np.max(np.abs(apres[c] - avant[c])
-                                / np.maximum(np.abs(apres[c]), 1.0)) for c in champs}
-            pire = max(ecarts, key=ecarts.get)
-            ecart = ecarts[pire]
-            if ecarts[pire] <= TOLERANCE_POINT_FIXE:
+            ecarts = np.max(np.abs(apres - avant) / np.maximum(np.abs(apres), 1.0), axis=1)
+            rang = int(np.argmax(ecarts))
+            pire, ecart = champs[rang], float(ecarts[rang])
+            if ecart <= TOLERANCE_POINT_FIXE:
                 ctx.amorce = {}
                 return
         avant = apres

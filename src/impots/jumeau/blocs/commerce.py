@@ -247,6 +247,47 @@ def lire_tes(millesime: str = "2023SD", raw: Path | None = None) -> dict[str, An
 # --------------------------------------------------------------------------- #
 # les chemins, purs
 # --------------------------------------------------------------------------- #
+def _cumul(chemin: Sequence[Any], prof: Sequence[float], j: int) -> Any:
+    """Σ_{s ≤ j} Δchemin_s prof(j − s + 1)."""
+    total = 0.0
+    for s in range(j + 1):
+        pas_ = chemin[s] - (chemin[s - 1] if s else 0.0)
+        total = total + pas_ * prof[j - s]
+    return total
+
+
+def _courbe(p: Parametres, cle: str, k: int, signe: float = 1.0) -> list[float]:
+    return [signe * profil(p.profils[cle], h, p.horizon_lt) for h in range(1, k + 1)]
+
+
+def chemins_prix(p: Parametres, *, tau: Sequence[Any], d: Sequence[Any], sx: Any
+                 ) -> dict[str, list[Any]]:
+    """Les équations 2, 3 et 5 pour une clé, années 0 à k : ce qui ne dépend que des coûts
+    et de la demande mondiale (les prix, la compétitivité, les exportations)."""
+    k = len(tau)
+    pr = p.profils
+    diffusion = [profil(pr["prix_production_salaires"], h, p.horizon_lt)
+                 / pr["prix_production_salaires"][-1] for h in range(1, k + 1)]
+    p_x = [-p.kappa_x * _cumul(tau, diffusion, j) for j in range(k)]
+    p_d = [-p.kappa_d * _cumul(tau, diffusion, j) for j in range(k)]
+    compet = [-v for v in p_x]
+    e_dm = _courbe(p, "exportations_demande_mondiale", k)
+    e_c = _courbe(p, "exportations_competitivite", k)
+    xi = [_cumul(d, e_dm, j) + sx / p.bornes_x[1] * _cumul(compet, e_c, j) for j in range(k)]
+    rho_x = _courbe(p, "prix_exportations_domestiques", k)
+    rho_m = _courbe(p, "prix_importations_domestiques", k)
+    return {"p_x": p_x, "p_d": p_d, "compet": compet, "xi": xi,
+            "prix_x": [_cumul(p_x, rho_x, j) for j in range(k)],
+            "prix_m": [_cumul(p_d, rho_m, j) for j in range(k)]}
+
+
+def _demande_importee(p: Parametres, prix: Mapping[str, list[Any]], demande: Sequence[Any],
+                      x_base: Sequence[Any], m_base: Sequence[Any]) -> list[Any]:
+    """a_j = (Σ_u μ_u ΔU_u + μ_X X̄ ξ) / M̄, j = 0 … k."""
+    return [(demande[j] + p.contenus["exportations"] * x_base[j] * prix["xi"][j]) / m_base[j]
+            for j in range(len(demande))]
+
+
 def chemins(p: Parametres, *, tau: Sequence[Any], d: Sequence[Any],
             demande: Sequence[Any], x_base: Sequence[Any], m_base: Sequence[Any],
             sx: Any, sm: Any) -> dict[str, list[Any]]:
@@ -254,37 +295,15 @@ def chemins(p: Parametres, *, tau: Sequence[Any], d: Sequence[Any],
     d l'écart de demande mondiale, `demande` Σ_u μ_u ΔU_u (Md€), X̄ et M̄ les niveaux de
     la tendance, sx et sm les élasticités-prix de long terme à θ."""
     k = len(tau)
-    pr = p.profils
-    lt = p.horizon_lt
-    diffusion = [profil(pr["prix_production_salaires"], h, lt)
-                 / pr["prix_production_salaires"][-1] for h in range(1, k + 1)]
-
-    def cumul(chemin: Sequence[Any], prof: Sequence[float], j: int) -> Any:
-        """Σ_{s ≤ j} Δchemin_s prof(j − s + 1)."""
-        total = 0.0
-        for s in range(j + 1):
-            pas_ = chemin[s] - (chemin[s - 1] if s else 0.0)
-            total = total + pas_ * prof[j - s]
-        return total
-
-    def courbe(cle: str, signe: float = 1.0) -> list[float]:
-        return [signe * profil(pr[cle], h, lt) for h in range(1, k + 1)]
-
-    p_x = [-p.kappa_x * cumul(tau, diffusion, j) for j in range(k)]
-    p_d = [-p.kappa_d * cumul(tau, diffusion, j) for j in range(k)]
-    compet = [-v for v in p_x]
-    e_dm, e_c = courbe("exportations_demande_mondiale"), courbe("exportations_competitivite")
-    xi = [cumul(d, e_dm, j) + sx / p.bornes_x[1] * cumul(compet, e_c, j) for j in range(k)]
-    a = [(demande[j] + p.contenus["exportations"] * x_base[j] * xi[j]) / m_base[j]
-         for j in range(k)]
-    eta = courbe("importations_demande")
-    e_m = courbe("importations_prix", -1.0)
-    zeta = [cumul(a, eta, j) + sm / p.bornes_m[1] * cumul(p_d, e_m, j) for j in range(k)]
-    rho_x, rho_m = courbe("prix_exportations_domestiques"), courbe(
-        "prix_importations_domestiques")
-    return {"p_x": p_x, "p_d": p_d, "compet": compet, "xi": xi, "zeta": zeta,
-            "prix_x": [cumul(p_x, rho_x, j) for j in range(k)],
-            "prix_m": [cumul(p_d, rho_m, j) for j in range(k)]}
+    prix = chemins_prix(p, tau=tau, d=d, sx=sx)
+    a = _demande_importee(p, prix, demande, x_base, m_base)
+    eta = _courbe(p, "importations_demande", k)
+    e_m = _courbe(p, "importations_prix", k, -1.0)
+    zeta = [_cumul(a, eta, j) + sm / p.bornes_m[1] * _cumul(prix["p_d"], e_m, j)
+            for j in range(k)]
+    return {"p_x": prix["p_x"], "p_d": prix["p_d"], "compet": prix["compet"],
+            "xi": prix["xi"], "zeta": zeta, "prix_x": prix["prix_x"],
+            "prix_m": prix["prix_m"]}
 
 
 # --------------------------------------------------------------------------- #
@@ -329,6 +348,7 @@ class Commerce:
         self.scenario = demande_mondiale
         self.impots_production = {m: dict(v) for m, v in (impots_production or {}).items()}
         self.p = parametres or charger()
+        self._fixe: dict[str, Any] | None = None
 
     def preparer(self, entrees: Entrees, mesures: Sequence[Any]) -> None:
         for annee in entrees.annees:
@@ -338,21 +358,29 @@ class Commerce:
             raise CommerceError(f"impôts sur la production pour des mesures absentes : "
                                 f"{inconnues}")
 
-    def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
+    def _demandes(self, etat: Any) -> dict[str, Any]:
+        """Σ_u μ_u ΔU_u par clé : les écarts des emplois intérieurs d'un état, pondérés par
+        leur contenu en importations (hors tendance et hors ce bloc)."""
+        dem: dict[str, Any] = {}
+        for usage, cle in USAGES.items():
+            for (origine, m), v in etat.de(usage).items():
+                if origine not in NON_ECARTS and origine != self.nom:
+                    dem[m] = dem.get(m, 0.0) + self.p.contenus[cle] * v
+        return dem
+
+    def _annee(self, ctx: Contexte) -> dict[str, Any]:
+        """Ce que les itérations du point fixe d'une année ne changent pas : θ, les
+        coûts, la demande des années passées, les PIB et les niveaux de la tendance, et,
+        par clé, les prix et les exportations (`chemins_prix`). Calculé à la première
+        itération de l'année, gardé sous l'état et θ qui le portent : de la plomberie,
+        les mêmes nombres au bit près (D-411)."""
+        if self._fixe is not None and self._fixe["courant"] is ctx.courant \
+                and self._fixe["theta"] is ctx.theta:
+            return self._fixe
         k = ctx.k
-        sx = a_theta(thetas.lire(ctx.theta, self.thetas[0], ctx.n), self.p.bornes_x)
-        sm = a_theta(thetas.lire(ctx.theta, self.thetas[1], ctx.n), self.p.bornes_m)
-        for nom in self.lit:
-            ctx.lire(nom)
         etats = [ctx.passe(j) for j in range(k)] + [ctx.courant]
         annees = [ctx.annee - k + j for j in range(k + 1)]
-        pib = [ctx.pib_reference(j) for j in range(k + 1)]
-        x_base = [e.de("exportations")[("tendance", "")] for e in etats]
-        m_base = [e.de("importations")[("tendance", "")] for e in etats]
-
-        # Les écarts par clé : coûts, demande intérieure pondérée par son contenu.
         couts: list[dict[str, Any]] = []
-        demandes: list[dict[str, Any]] = []
         for e, annee in zip(etats, annees, strict=True):
             c: dict[str, Any] = {}
             for nom in COUTS:
@@ -362,29 +390,56 @@ class Commerce:
                 if annee in par_an:
                     c[m] = c.get(m, 0.0) - float(par_an[annee])
             couts.append(c)
-            dem: dict[str, Any] = {}
-            for usage, cle in USAGES.items():
-                for (origine, m), v in e.de(usage).items():
-                    if origine not in NON_ECARTS and origine != self.nom:
-                        dem[m] = dem.get(m, 0.0) + self.p.contenus[cle] * v
-            demandes.append(dem)
-        cles = {""} | {m for c in couts for m in c} | {m for dm in demandes for m in dm}
+        self._fixe = {
+            "courant": ctx.courant, "theta": ctx.theta, "annees": annees, "couts": couts,
+            "sx": a_theta(thetas.lire(ctx.theta, self.thetas[0], ctx.n), self.p.bornes_x),
+            "sm": a_theta(thetas.lire(ctx.theta, self.thetas[1], ctx.n), self.p.bornes_m),
+            "pib": [ctx.pib_reference(j) for j in range(k + 1)],
+            "x_base": [e.de("exportations")[("tendance", "")] for e in etats],
+            "m_base": [e.de("importations")[("tendance", "")] for e in etats],
+            "demandes": [self._demandes(e) for e in etats[:-1]],
+            "eta": _courbe(self.p, "importations_demande", k + 1),
+            "e_m": _courbe(self.p, "importations_prix", k + 1, -1.0),
+            "cles": {}}
+        return self._fixe
+
+    def _cle(self, f: dict[str, Any], m: str, zero: np.ndarray, k: int) -> dict[str, Any]:
+        """τ, d, les prix et les exportations d'une clé, et le terme de prix de ζ_k."""
+        if m not in f["cles"]:
+            tau = [f["couts"][j].get(m, 0.0) / f["pib"][j] + zero for j in range(k + 1)]
+            d = [(self.scenario.ecart(a) if m == "" else 0.0) + zero for a in f["annees"]]
+            prix = chemins_prix(self.p, tau=tau, d=d, sx=f["sx"])
+            f["cles"][m] = {"tau": tau, "d": d, "prix": prix,
+                            "actif": any(np.any(v) for v in (*tau, *d)), "terme_prix": (
+                f["sm"] / self.p.bornes_m[1] * _cumul(prix["p_d"], f["e_m"], k))}
+        return f["cles"][m]
+
+    def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
+        k = ctx.k
+        for nom in self.lit:
+            ctx.lire(nom)
+        f = self._annee(ctx)
+        x_base, m_base = f["x_base"], f["m_base"]
+        demandes = [*f["demandes"], self._demandes(ctx.courant)]
+        cles = {""} | {m for c in f["couts"] for m in c} | {m for dm in demandes for m in dm}
         zero = np.zeros(ctx.n)
         out: dict[str, dict[str, Any]] = {c: {} for c in self.ecrit}
-        tot = {"prix_x": [zero] * (k + 1), "prix_m": [zero] * (k + 1),
-               "compet": [zero] * (k + 1)}
+        # Les sommes sur les clés des prix et de la compétitivité, aux années k et k − 1,
+        # les seules que le bloc lit.
+        tot = {nom: [zero, zero] for nom in ("prix_x", "prix_m", "compet")}
         for m in sorted(cles):
-            tau = [couts[j].get(m, 0.0) / pib[j] + zero for j in range(k + 1)]
-            d = [(self.scenario.ecart(a) if m == "" else 0.0) + zero for a in annees]
             dem = [demandes[j].get(m, 0.0) + zero for j in range(k + 1)]
-            if not any(np.any(v) for v in (*tau, *d, *dem)):
+            cle = self._cle(f, m, zero, k)
+            if not cle["actif"] and not any(np.any(v) for v in dem):
                 continue
-            ch = chemins(self.p, tau=tau, d=d, demande=dem, x_base=x_base, m_base=m_base,
-                         sx=sx, sm=sm)
+            prix = cle["prix"]
             for nom in tot:
-                tot[nom] = [t + v for t, v in zip(tot[nom], ch[nom], strict=True)]
-            dx = x_base[k] * ((1.0 + ch["xi"][k]) * (1.0 + ch["prix_x"][k]) - 1.0)
-            dm_ = m_base[k] * ((1.0 + ch["zeta"][k]) * (1.0 + ch["prix_m"][k]) - 1.0)
+                tot[nom] = [tot[nom][0] + prix[nom][k],
+                            tot[nom][1] + (prix[nom][k - 1] if k else zero)]
+            a = _demande_importee(self.p, prix, dem, x_base, m_base)
+            zeta_k = _cumul(a, f["eta"], k) + cle["terme_prix"]
+            dx = x_base[k] * ((1.0 + prix["xi"][k]) * (1.0 + prix["prix_x"][k]) - 1.0)
+            dm_ = m_base[k] * ((1.0 + zeta_k) * (1.0 + prix["prix_m"][k]) - 1.0)
             out["exportations"][m] = dx
             out["importations"][m] = dm_
             out["revenus_non_ventiles"][m] = dx - dm_
@@ -400,13 +455,12 @@ class Commerce:
         out["solde_exterieur"] = solde
 
         prix = 1.0 + ctx.entrees.prix[k]
-        precedent = (lambda nom: tot[nom][k - 1]) if k else (lambda nom: zero)
-        p_x = prix * (1.0 + tot["prix_x"][k]) / (1.0 + precedent("prix_x"))
-        p_m = prix * (1.0 + tot["prix_m"][k]) / (1.0 + precedent("prix_m"))
+        p_x = prix * (1.0 + tot["prix_x"][0]) / (1.0 + tot["prix_x"][1])
+        p_m = prix * (1.0 + tot["prix_m"][0]) / (1.0 + tot["prix_m"][1])
         out["prix_exportations"] = {"": p_x}
         out["prix_importations"] = {"": p_m}
         out["demande_mondiale"] = {"": 1.0 + self.scenario.ecart(ctx.annee) + zero}
-        out["prix_relatifs"] = {"": 1.0 + tot["compet"][k]}
+        out["prix_relatifs"] = {"": 1.0 + tot["compet"][0]}
         x_t = sum(solde_part for solde_part in _total(ctx, "exportations", out, self.nom))
         m_t = sum(solde_part for solde_part in _total(ctx, "importations", out, self.nom))
         volume = ((x_t / p_x - ctx.prec["exportations"])
