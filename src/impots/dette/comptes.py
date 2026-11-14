@@ -265,11 +265,17 @@ def sfa_implied_by_identity(years: list[int]) -> dict[int, ImpliedSfa]:
 
 SFA_FILE = "eurostat_gov_10dd_edpt3_fr_sfa.json"
 
-#: Les cinq composantes publiées de l'ajustement flux-stocks. Leur SOMME est l'ajustement,
-#: et c'est ce qui en fait une mesure INDÉPENDANTE plutôt qu'une resoustraction : elle
-#: diffère de `GD_CH − B9_T3` de 0,3 à 0,5 md€, et cet écart est la sortie du piège de
-#: D-148. Reconstruire le SFA par la différence rendrait le backtest tautologique.
-SFA_COMPOSANTES: tuple[str, ...] = ("F_ASS", "ORADJ", "K61", "KX", "YA3")
+#: Les trois composantes publiées de l'ajustement flux-stocks, dont la SOMME est
+#: l'ajustement : les acquisitions nettes d'actifs financiers (F_ASS), le total des
+#: autres ajustements (ORADJ) et l'écart statistique (YA3). C'est une mesure lue poste à
+#: poste, pas une resoustraction de `GD_CH − B9_T3` (le piège de D-148), et elle redonne
+#: cette différence à l'écart interne de la table près (au plus 0,3 M€).
+#:
+#: K61 et KX n'y sont pas, et c'est le correctif de D-410 : ce sont des lignes « dont »
+#: d'ORADJ, déjà comptées dans son total. La somme à cinq postes les comptait deux fois,
+#: de −510 à +483,5 M€ selon l'année, et l'écart de 0,3 à 0,5 md€ qu'on lisait comme la
+#: preuve d'une mesure indépendante était ce double compte (D-405).
+SFA_COMPOSANTES: tuple[str, ...] = ("F_ASS", "ORADJ", "YA3")
 
 
 def sfa_publie(years: list[int]) -> dict[int, float]:

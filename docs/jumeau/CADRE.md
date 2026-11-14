@@ -36,9 +36,9 @@ la ventilation publiée (les totaux P3 et P51G moins la somme de leurs secteurs 
 millième de milliard). Les deux derniers sont lus sur l'histoire, nuls en projection.
 Chaque composante a sa valeur et son déflateur (indice, année précédente = 1). Le PIB en
 volume se chaîne comme l'Insee : sa croissance est la somme des croissances en volume des
-composantes pondérées par leurs parts nominales de l'année précédente. Au lot 1, les
-déflateurs et le volume ne sont calculés qu'en projection ; l'histoire (t. 1.103) est au
-lot 5.
+composantes pondérées par leurs parts nominales de l'année précédente. Sur l'histoire
+(lot 5, D-410), les prix sont lus dans la t. 1.103 et la croissance du PIB en volume dans
+la t. 1.102 ; la variation des stocks n'a pas d'indice publié, et son prix est absent.
 
 **Les revenus** (Insee, t. 1.105) : PIB = D1 (rémunérations) + EBE et revenu mixte +
 (D2 − D3) + l'effet non ventilé + l'arrondi publié. La France n'imprime pas d'écart
@@ -52,8 +52,9 @@ corrigé par D-405) :
 * recettes hors intérêts reçus : les quatorze lignes de la table (production, revenus de
   la propriété hors intérêts, D2, D5, D91, D733, D61, D995, transferts), plus deux champs
   nommés, l'effet induit sur le solde qu'un bloc publie sans le ventiler (Mésange, le
-  canal des créations) et le choc d'une mesure que son rapport ne ventile pas ; le détail
-  par impôt de la t. 3.217 en sous-champs est au lot 5 ;
+  canal des créations) et le choc d'une mesure que son rapport ne ventile pas ; les
+  principaux impôts de la t. 3.217 sont des sous-champs de l'histoire (lot 5, D-410),
+  hors de toute identité : la table n'imprime que les principaux ;
 * dépenses primaires : les treize lignes de la table (P2, D1, D29, D4 hors D41, D5, D62,
   D632, D3, D73, D7, D9, P51g, autres acquisitions). La consommation finale des APU (P3)
   n'est pas une ligne de leur compte : elle est un emploi du PIB, pas une dépense ;
@@ -62,10 +63,11 @@ corrigé par D-405) :
 
 **La dette** (Maastricht) : D_t = D_{t−1} − B9_t + SFA_t ; ratio b_t = D_t / PIB_t ; taux
 implicite = intérêts nets_t / D_{t−1}. Le SFA est un champ nommé : lu pour l'histoire chez
-Eurostat, F_ASS + ORADJ + YA3 (D-405), publié de 2021 à 2025 seulement dans le fichier
-manifesté ; nul en projection, par une convention dite. Deux champs de publication s'y
-ajoutent, lus sur l'histoire et nuls en projection : l'écart de millésime entre l'Insee et
-Eurostat (la variation du stock et B9) et l'écart interne de la table d'Eurostat.
+Eurostat, F_ASS + ORADJ + YA3 (D-405), de 2021 à 2025, et dans la t. 3.105 de l'Insee, la
+somme de ses groupes (1) à (5), de 2010 à 2020 (D-410) ; nul en projection, par une
+convention dite. Deux champs de publication s'y ajoutent, lus sur l'histoire et nuls en
+projection : l'écart de millésime entre la dette de l'Insee et la table de passage de
+l'année (la variation du stock et B9) et l'écart interne de cette table.
 
 **Le travail** (lot 4) : population active, emploi total et salarié, chômage, salaire
 moyen par tête. **Les entreprises** (lot 2) : stock de sociétés, créations, fermetures,
@@ -227,9 +229,8 @@ Toutes à 1e-9 × PIB près, sur chaque tirage :
 **Sur l'histoire, les identités se vérifient d'abord sur les données publiées** :
 `etat_initial(annee)`, de 2010 à 2025, lu dans les tables manifestées, doit les tenir avec
 ses écarts de publication, chacun lu et nommé (§2). Si les comptes publiés ne bouclent pas
-comme le cadre le dit, c'est le cadre qu'on corrige : D-405 dit ce qui l'a été. L'identité
-de la dette refuse de 2010 à 2020, en nommant le SFA, tant que le lot 5 n'apporte pas sa
-série.
+comme le cadre le dit, c'est le cadre qu'on corrige : D-405 dit ce qui l'a été. Depuis le
+lot 5 (D-410), l'identité de la dette tient aussi de 2010 à 2020, sur la t. 3.105.
 
 ## 7. Les θ
 

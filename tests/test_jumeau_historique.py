@@ -1,23 +1,23 @@
-"""But 23, lot 1 — l'état publié de 2010 à 2025 tient les identités du cadre (CADRE.md §6).
+"""But 23, lots 1 et 5 — l'état publié de 2010 à 2025 tient les identités du cadre
+(CADRE.md §6).
 
-`etat_initial(annee)` lit les tables manifestées de l'Insee et d'Eurostat. Les identités
-des emplois, des revenus, du compte des APU et des contributions tiennent à 1e-9 du PIB
-chaque année ; celle de la dette, de 2021 à 2025, où Eurostat publie l'ajustement
-flux-stocks, et refuse avant, en nommant « sfa ». Chaque écart publié que le cadre nomme
-est lu, et ce qui le cause est vérifié ici (D-405).
+`etat_initial(annee)` lit les tables manifestées de l'Insee et d'Eurostat. Les cinq
+identités, celle de la dette comprise, tiennent à 1e-9 du PIB chaque année : de 2021 à
+2025 sur la table de passage d'Eurostat, de 2010 à 2020 sur celle de l'Insee (t. 3.105,
+lot 5, D-410), qui a fini les refus « sfa ». Chaque écart publié que le cadre nomme est
+lu, et ce qui le cause est vérifié ici (D-405, D-410).
 """
 
 from __future__ import annotations
-
-import json
 
 import numpy as np
 import pytest
 
 from impots.dette import comptes
 from impots.dette.reference import start_from_accounts
-from impots.jumeau import historique, identites
+from impots.jumeau import historique, identites, series
 from impots.jumeau.blocs import ordre_lot1
+from impots.jumeau.champs import EMPLOIS_PUBLIES, IMPOTS_3217
 from impots.jumeau.pas import Entrees
 from impots.jumeau.trajectoire import calculer
 from impots.predictif import annuel, rejouer
@@ -28,22 +28,16 @@ AVEC_SFA = [2021, 2022, 2023, 2024, 2025]
 pytestmark = pytest.mark.skipif(
     not all((comptes.RAW / f).exists() for f in (
         comptes.PIB_FILE, comptes.TOTALS_FILE, comptes.APU_FILE, comptes.DETTE_FILE,
-        comptes.SFA_FILE, historique.PIB_REVENUS_FILE)),
-    reason="les tables de l'Insee et d'Eurostat ne sont pas dans ce checkout (data/raw est "
-           "ignoré ; `impots data fetch`)")
-
-SANS_DETTE = ("emplois", "revenus", "apu", "contributions")
-
+        comptes.SFA_FILE, historique.PIB_REVENUS_FILE, *series.FICHIERS)),
+    reason="les tables de l'Insee, d'Eurostat et de la BDM ne sont pas dans ce checkout "
+           "(data/raw est ignoré ; `impots data fetch`)")
 
 @pytest.mark.parametrize("annee", ANNEES)
 def test_l_etat_publie_tient_les_identites(annee) -> None:
+    """Les cinq identités, dette comprise, chaque année de 2010 à 2025 (D-410)."""
     etat = historique.etat_initial(annee)
-    if annee in AVEC_SFA:
-        residus = identites.verifier(etat)
-    else:
-        residus = identites.verifier(etat, identites=SANS_DETTE)
-        with pytest.raises(identites.IdentiteIncalculable, match="« sfa »"):
-            identites.verifier(etat, identites=("dette",))
+    residus = identites.verifier(etat)
+    assert {r.split(".")[0] for r in residus} >= {"emplois", "revenus", "apu", "dette"}
     assert max(abs(float(r[0])) for r in residus.values()) < 1e-9
     assert etat["pib"][0] > 1_900 and 0.8 < etat["ratio_dette"][0] < 1.2
 
@@ -68,24 +62,16 @@ def test_les_ecarts_publies_sont_ce_qu_ils_disent() -> None:
         variation - eurostat["GD_CH"], abs=1e-9)
 
 
-def test_l_ajustement_de_comptes_compte_deux_fois_k61_et_kx() -> None:
-    """ORADJ, le total des ajustements, contient K61 et KX : `comptes.sfa_publie`, qui
-    somme les cinq postes, les compte deux fois. L'ajustement du cadre est F_ASS + ORADJ +
-    YA3, et l'identité de la dette le tient à 1e-9 (test ci-dessus)."""
-    donnees = json.loads((comptes.RAW / comptes.SFA_FILE).read_text(encoding="utf-8"))
-    postes = donnees["dimension"]["na_item"]["category"]["index"]
-    temps = donnees["dimension"]["time"]["category"]["index"]
-
-    def lu(poste, annee):
-        return float(donnees["value"].get(str(postes[poste] * len(temps)
-                                               + temps[str(annee)]), 0.0)) / 1e3
-
+def test_l_ajustement_de_comptes_est_celui_du_cadre() -> None:
+    """ORADJ, le total des ajustements, contient K61 et KX : `comptes.sfa_publie` les
+    comptait deux fois (D-405) ; corrigé par D-410, il est F_ASS + ORADJ + YA3, l'ajustement
+    du cadre, à 1e-9 près. Sur l'ancienne somme, l'écart valait K61 + KX, de −510 à
+    +483,5 M€ selon l'année."""
     publie = comptes.sfa_publie(AVEC_SFA)
     pib = comptes.gdp(AVEC_SFA)
     for annee in AVEC_SFA:
         sfa = historique.etat_initial(annee)["sfa"][0]
-        assert publie[annee] * pib[annee] / 1e9 == pytest.approx(
-            sfa + lu("K61", annee) + lu("KX", annee), abs=1e-9)
+        assert publie[annee] * pib[annee] / 1e9 == pytest.approx(sfa, abs=1e-9)
 
 
 def test_le_jumeau_part_de_2025_comme_la_chaine() -> None:
@@ -105,3 +91,45 @@ def test_le_jumeau_part_de_2025_comme_la_chaine() -> None:
                       theta={}, blocs=ordre_lot1(depart, persistance="lue", boucle=False))
     reference, _ = jumeau.niveaux("ratio_dette")
     assert np.max(np.abs(reference[:, 0] - np.array(attendu))) < 1e-9
+
+
+def test_l_ajustement_d_avant_2021_est_celui_de_l_insee() -> None:
+    """De 2010 à 2020, l'ajustement est la somme des groupes (1) à (5) de la t. 3.105, la
+    table somme exactement (écart interne nul), et l'écart à la dette de l'Insee est
+    l'arrondi au dixième de la table, sauf en 2014 : −0,64 Md€, où la variation de la
+    table et celle du stock divergent. C'est un constat de ce millésime (D-410)."""
+    sfa = series.lire("sfa_insee")
+    etats = {a: historique.etat_initial(a) for a in range(2010, 2021)}
+    for annee, etat in etats.items():
+        assert etat["sfa"][0] == pytest.approx(sfa[annee], abs=1e-12)
+        assert abs(etat["ecart_eurostat"][0]) < 1e-9
+    hors_arrondi = sorted(a for a, e in etats.items()
+                          if abs(e["ecart_millesime_dette"][0]) > 0.1)
+    assert hors_arrondi == [2014]
+    assert etats[2014]["ecart_millesime_dette"][0] == pytest.approx(-0.638, abs=0.001)
+
+
+def test_les_prix_et_le_volume_sont_ceux_des_tables() -> None:
+    """Chaque emploi a son prix (l'indice de la t. 1.103 sur celui de l'année d'avant),
+    sauf la variation des stocks, qui n'a pas d'indice publié : absente, pas 1. La
+    croissance du PIB en volume est celle de la t. 1.102 (2020 : −7,44 %)."""
+    etat = historique.etat_initial(2020)
+    for nom, _, _, _ in EMPLOIS_PUBLIES:
+        assert etat.present(f"prix_{nom}") == (nom != "var_stocks")
+    assert etat["croissance_volume_pib"][0] == pytest.approx(-0.0744, abs=5e-5)
+    indice = series.lire("indice_prix_c_menages")
+    assert historique.etat_initial(2023)["prix_c_menages"][0] == pytest.approx(
+        indice[2023] / indice[2022], abs=1e-12)
+
+
+def test_les_impots_de_la_t3217_sont_dans_l_etat_et_absents_quand_ils_n_existent_pas() -> None:
+    """Les principaux impôts de la t. 3.217 sont des sous-champs de l'état publié ; la
+    contribution à l'audiovisuel public, supprimée en 2022, y est absente ensuite."""
+    for annee in (2010, 2025):
+        etat = historique.etat_initial(annee)
+        presents = {nom for nom, _ in IMPOTS_3217 if etat.present(f"impot_{nom}")}
+        attendus = {nom for nom, _ in IMPOTS_3217} - ({"audiovisuel"} if annee == 2025
+                                                      else set())
+        assert presents == attendus
+    assert historique.etat_initial(2021).present("impot_audiovisuel")
+    assert not historique.etat_initial(2022).present("impot_audiovisuel")
