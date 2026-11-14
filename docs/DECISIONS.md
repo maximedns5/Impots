@@ -29252,3 +29252,30 @@ et lit les chocs par décile. Lot 5 : les séries de 2010 à 2024, l'ajustement 
 d'avant 2021, les déflateurs publiés et le chaînage sur l'histoire, la t. 3.217, la base
 des mesures votées. Lot 6 : l'estimation et le juge du passé. Lot 7 : les curseurs, le
 pas en JavaScript ou par Pyodide, tenu égal à celui-ci.
+
+## D-406 — Les lots 2 à 5 lancés en parallèle ; le mode structurel ne double pas Mésange
+
+**Le lot 1 accepté** (D-405) avec ses corrections du cadre, et joint à `claude/but22`
+(D-403) ; les cinq gardes rouges héritées réparées, aucun nombre changé.
+
+**Une règle avant de lancer, écrite dans `CADRE.md` §4 bis.** Les lots 2 à 4 portent par
+des équations des canaux que `mesange` porte déjà par ses multiplicateurs : un choc
+d'investissement, d'emploi ou de commerce compterait deux fois. Chaque bloc structurel
+déclare les canaux qu'il remplace, et le modèle refuse un canal porté deux fois. Le mode
+réduit reste, qui retrouve les études ; le mode structurel est le jumeau ; leurs
+multiplicateurs se comparent, écart dit.
+
+**Les quatre lots, chacun sur sa branche, partie de `claude/but23-cadre`.**
+
+* Lot 2, `claude/but23-entreprises`, D-407 : créations, survie et fermetures,
+  productivité des entrants, investissement par le coût du capital, implantation selon le
+  taux effectif ; les cellules d'entreprises existantes comme population.
+* Lot 3, `claude/but23-commerce`, D-408 : exportations et importations, demande mondiale,
+  prix relatifs et coûts, contenu en importations des emplois par le TES.
+* Lot 4, `claude/but23-menages`, D-409 : emploi, salaires, consommation et épargne par
+  cellules de ménages, et les gagnants et perdants année par année.
+* Lot 5, `claude/but23-histoire`, D-410 : les séries de 2010 à 2024, le SFA avant 2021, la
+  base des mesures votées par gouvernement, et la correction de `comptes.sfa_publie`
+  (K61 et KX comptés deux fois, D-405), avec son test et son effet sur le backtest dit.
+
+Chaque lot rend sa D-entrée et ses tests, sans PR ; la jonction et les PR viennent ensuite.

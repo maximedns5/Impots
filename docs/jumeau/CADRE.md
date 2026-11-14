@@ -131,6 +131,32 @@ déclarée qui l'écrit, est refusé à la construction, pas au calcul.
 * `creations` : le canal du but 22 (`predictif.creations`), tel quel, en bloc. Le lot 2 le
   remplacera.
 
+## 4 bis. Les modes réduit et structurel, et les lots en parallèle (D-406)
+
+**Deux façons de porter un canal, jamais les deux.** Le bloc `mesange` est réduit : il
+passe d'une impulsion au PIB et au solde par des multiplicateurs publiés. Les lots 2 à 4
+écrivent des blocs structurels (investissement, créations et fermetures, implantation,
+commerce, emploi, salaires, consommation) qui portent les mêmes canaux par leurs
+équations. Chaque bloc structurel déclare les canaux de Mésange qu'il remplace
+(`remplace = {...}`, des noms du registre `jumeau/canaux.py`, que le premier lot qui en a
+besoin crée). Le `Modele` refuse à la construction un canal porté deux fois : c'est le
+double compte. Les deux modes restent : le réduit, qui retrouve la chaîne des études, et
+le structurel, qui est le jumeau. Comparer les deux est une preuve de cohérence : les
+multiplicateurs du structurel, linéarisés autour de la référence, se mettent à côté des
+variantes publiées de Mésange (`insee_G2017-04_mesange.pdf`), écart dit, jamais forcé.
+
+**Les règles des lots en parallèle.**
+
+* Un lot écrit ses blocs dans `jumeau/blocs/<nom>.py`, ses valeurs dans
+  `jumeau/parametres/<lot>.yaml` (chacune avec sa source, page ou tableau), ses θ dans
+  ses blocs, enregistrés dans `thetas.py` par une ligne dans la section de son lot.
+* Il ne touche, dans `champs.py`, que les champs de son lot ; un champ d'un autre lot
+  qu'il lui faut, il le lit, et s'il manque, il le demande dans sa D-entrée.
+* Il ne modifie ni le pas, ni les identités, ni l'état : s'il le faut, il l'écrit dans sa
+  D-entrée et s'arrête sur ce point.
+* Chaque paramètre a une source publiée nommée, ou il est dit « choisi, non vérifié » et
+  porte un θ ; aucun chiffrage de tiers des programmes n'est lu.
+
 ## 5. Les mesures
 
 Une `Mesure` porte un identifiant, un libellé, son auteur (gouvernement, candidat, loi
