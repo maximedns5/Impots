@@ -125,3 +125,9 @@ def tirages(theta: Mapping[str, Any]) -> int:
     if len(longueurs) > 1:
         raise ThetaError(f"θ sur des axes de tirages de longueurs {sorted(longueurs)}")
     return longueurs.pop() if longueurs else 1
+
+
+# --------------------------------------------------------------------- lot 2 (D-407)
+from impots.jumeau.blocs.valeurs_entreprises import lignes as _lignes_lot2  # noqa: E402
+
+REGISTRE.update(_lignes_lot2(Ligne))

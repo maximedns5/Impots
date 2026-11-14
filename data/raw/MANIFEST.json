@@ -1991,6 +1991,33 @@
       "licence": "Licence Ouverte / Etalab",
       "description": "INSEE, « Les comptes de la Nation en 2025 » (base 2020), tableau 1.105 « Produit intérieur brut : les trois approches à prix courants », 1949→2025, milliards d'euros : l'approche revenus (D1, B2A3G, D2, D3). L'identité des revenus de l'état initial du jumeau (but 23, lot 1, D-405).",
       "quarantined": false
+    },
+    "insee_cn2024_t8202_patrimoine_snf.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8574720/T_8202.xlsx",
+      "sha256": "3b367ffb16cfbb7019af4425732d7ac72476517b3bf9b88d7b03e19b09d811fd",
+      "bytes": 24112,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE comptes nationaux annuels base 2020, comptes de patrimoine 2024, tableau 8.202 — compte de patrimoine des sociétés non financières (S11), fin d'année, 1978-2024, Md€. Ligne N11N, actifs fixes nets : 3 083,792 Md€ en 2024, le knet du coût du capital de Mésange (but 23, lot 2, bloc investissement, D-407).",
+      "quarantined": false
+    },
+    "insee_entfra2023_fiche3_2_multinationales.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/7678556/ENTFRA23-F16.pdf",
+      "sha256": "13b24620c0ffab49785bd2d38b46565a1f6a8195559fcd24724a0a760d4baa9d",
+      "bytes": 128323,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE, Les entreprises en France, édition 2023 (Insee Références), fiche 3.2 « Mondialisation et firmes multinationales », p. 84-85. Figure 1 : les firmes multinationales sous contrôle étranger font 16,0 % de la valeur ajoutée au coût des facteurs des secteurs principalement marchands non agricoles et non financiers en 2021 (Ésane 2021). But 23, lot 2, bloc implantation (D-407).",
+      "quarantined": false
+    },
+    "devereux_lockwood_2006_foreign_owned_capital.pdf": {
+      "url": "https://oxfordtax.web.ox.ac.uk/sitefiles/devereux-lockwood-taxes-and-the-size-of-the-foreign-owned-capital-stock-which-1y9d1ifqcl.pdf",
+      "sha256": "5f364c6dc9e643d5a5b0106bc3428718ded6426dd36d646b7eb4e17598f10bde",
+      "bytes": 218200,
+      "downloaded": "2026-11-14",
+      "licence": "© les auteurs — copie de travail pour usage propre avec mention",
+      "description": "Devereux et Lockwood, « Taxes and the size of the foreign-owned capital stock: which tax rates matter? », document de travail, avril 2006 (Oxford University Centre for Business Taxation). Tableau 2 p. 25 (PDF) : ln K des filiales américaines sur le TMEE (−0,478, t = 3,72) et ln K retardé (0,676), 19 pays de l'OCDE, 1985-1998 ; p. 19 : 1 point de TMEE en moins, +0,5 % de capital à court terme, +1,5 % à long terme. But 23, lot 2, bloc implantation (D-407).",
+      "quarantined": false
     }
   }
 }

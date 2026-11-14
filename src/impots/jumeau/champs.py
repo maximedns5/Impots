@@ -258,16 +258,50 @@ for _nom, _lib, _unite, _lot in (
         ("emploi_salarie", "Emploi salarié", "milliers", 4),
         ("chomage", "Chômeurs", "milliers", 4),
         ("salaire_moyen", "Salaire moyen par tête", "€ courants", 4),
-        ("stock_societes", "Stock de sociétés", "unités", 2),
-        ("creations_societes", "Créations de sociétés", "unités", 2),
-        ("fermetures_societes", "Fermetures de sociétés", "unités", 2),
-        ("productivite_moyenne", "Productivité moyenne", "indice", 2),
-        ("investissement_entreprises", "Investissement des entreprises", MDE, 2),
         ("demande_mondiale", "Demande mondiale adressée à la France", "indice", 3),
         ("prix_relatifs", "Prix relatifs à l'exportation", "indice", 3),
         ("solde_courant", "Solde courant", MDE, 3)):
     _ajouter(Champ(_nom, _lib, _unite, "", f"lot {_lot} (absent au lot 1)", _lot,
                    f"lot{_lot}", additif=_unite == MDE))
+
+# --------------------------------------------------------------------- lot 2
+#: Les entreprises (D-407), écrites par les blocs de `jumeau/blocs/entreprises.py`,
+#: `demographie.py`, `investissement.py` et `implantation.py`. Les comptes de sociétés
+#: sont additifs : la référence (clé « ») et l'écart de chaque mesure se somment.
+LOT2 = "but 23, lot 2 (D-407)"
+_ajouter(
+    Champ("stock_societes", "Stock de sociétés en fin d'année", "unités", "",
+          f"{LOT2} : la population des cellules d'entreprises (millésime 2023), puis "
+          "N_t = N_(t−1) + créations − fermetures", 2, "lot2"),
+    Champ("creations_societes", "Créations de sociétés", "unités", "",
+          f"{LOT2} : le taux d'entrée de référence, plus l'écart de Da Rin et al. (2011)",
+          2, "lot2"),
+    Champ("fermetures_societes", "Fermetures de sociétés", "unités", "",
+          f"{LOT2} : N_(t−1) + créations − N_t", 2, "lot2"),
+    Champ("sorties_induites", "Fermetures dues aux marges après impôt, écart", "unités",
+          "", f"{LOT2} : le hasard de sortie des installées selon leur marge", 2, "lot2"),
+    Champ("productivite_moyenne", "Productivité des sociétés, à facteurs donnés",
+          "indice", "", f"{LOT2} : 1 + l'écart de valeur ajoutée de la démographie sur "
+          "celle des sociétés du scénario", 2, "lot2", additif=False),
+    Champ("investissement_entreprises", "FBCF des sociétés non financières", MDE,
+          "P51G S11", f"{LOT2} : la référence (la part de la FBCF des SNF au départ), plus "
+          "l'écart du coût du capital et de l'implantation", 2, "lot2"),
+)
+#: Les signaux du lot 2 : les variations de prélèvements que lisent ses blocs, Md€,
+#: RECETTES POSITIVES (une hausse est positive), écrites depuis `Mesure.entreprises`.
+SIGNAUX_ENTREPRISES = {
+    "prelevements_is": ("IS, contribution sociale sur l'IS et CEBGE", "D51 S11",
+                        ("impot_societes", "contribution_sociale_is", "cebge")),
+    "prelevements_production": ("CVAE et C3S", "D29 S11", ("cvae", "c3s")),
+    "cotisations_patronales": ("Cotisations patronales, nettes des allègements", "D611",
+                               ("cotisations_employeurs",)),
+    "prelevements_capital_menages": ("PFU et prélèvements sociaux du capital", "D5 S14",
+                                     ("pfu", "prelevements_sociaux_capital")),
+}
+for _nom, (_lib, _code, _) in SIGNAUX_ENTREPRISES.items():
+    _ajouter(Champ(_nom, f"Variation des prélèvements : {_lib}", MDE, _code,
+                   f"{LOT2} : le choc statique des mesures par impôt (recettes positives)",
+                   2, "signaux_entreprises"))
 
 REGISTRE: dict[str, Champ] = dict(_REGISTRE)
 
