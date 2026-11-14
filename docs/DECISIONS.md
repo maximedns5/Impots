@@ -29334,3 +29334,152 @@ est gardé, ses bornes inchangées, sur la somme à cinq postes recalculée dans
 Dans `test_jumeau_historique.py`, le test du lot 1 qui montrait le double compte tient
 maintenant l'égalité de `sfa_publie` et de l'ajustement du cadre. Aucune étude ne lit
 `sfa_publie` : seul le backtest de §6.1 bouge.
+
+### Les séries de 2010 à 2025, et leurs sources
+
+`src/impots/jumeau/series.py` lit, de 2010 à 2025, des séries publiées, chacune avec son
+producteur, son fichier manifesté et son code (`SERIES`, 77 séries), et les recoupe
+contre un total publié (`recoupements`). Sept fichiers téléchargés le 14 novembre et
+manifestés dans `data/raw/MANIFEST.json` (hors git) ; les autres l'étaient déjà.
+
+| série | source, code | fichier |
+|---|---|---|
+| emplois du PIB (13), valeur, volume, prix | Insee, t. 1.101 à 1.103 | déjà manifesté |
+| principaux impôts (22 lignes, de la TVA aux PO) | Insee, t. 3.217 | déjà manifesté |
+| déficit, ajustement flux-stocks, variation de la dette | Insee, t. 3.105 | **neuf** |
+| emploi intérieur total | Insee, t. 6.208, « _T » | **neuf** |
+| emploi salarié, salaires bruts (D11) | Insee, t. 6.210 et 6.205 | déjà manifestés |
+| salaire brut moyen par tête | le quotient des deux (D-362) | — |
+| taux de chômage et chômeurs, BIT, 15-74 ans | Eurostat, une_rt_a | **neuf** |
+| taux de l'OAT à dix ans, moyenne annuelle | Eurostat, irt_lt_mcby_a (et _m) | **neufs** |
+| créations d'entreprises (ensemble, micro, classiques) | BDM, 010755537… | **neuf** |
+| défaillances (total, onze secteurs) | Banque de France, BDM, 001656101 | **neuf** |
+
+La consommation des ménages, l'investissement par secteur institutionnel, les
+exportations et les importations sont les lignes de la t. 1.101 que l'état publié
+portait déjà ; leurs prix et volumes sont ajoutés. La Dares (hors d'atteinte du réseau
+de la session) et la DGFiP ne sont pas utilisées : l'emploi, le chômage et les impôts
+viennent des comptes nationaux et d'Eurostat, sur le même millésime que l'état.
+
+**Ce que les recoupements disent**, chacun figé dans `tests/test_jumeau_series.py` :
+
+* les indices de prix sont 100 × valeur / volume à l'arrondi des trois tables, sauf pour
+  les APU : leur consommation en 2023 et 2024 (+0,004 et −0,067 point d'indice), leur
+  investissement en 2023 et 2024 (+0,096 et +0,486), les années où les secteurs de la
+  t. 1.101 ne somment pas à leurs totaux (D-405), et leur consommation de 2015, au bord
+  de l'arrondi (−0,0007 pour 0,00066) ;
+* la t. 3.217 redonne le D5 et le D91 de la t. 3.201 au millième, et son D2, moins les
+  impôts de l'Union européenne, depuis 2019 ; de 2010 à 2018, elle le dépasse de 54 à 67
+  millions par an, un écart de ce millésime, lu et non expliqué ;
+* la t. 3.105 somme exactement ; son déficit est −B9 de la t. 3.201 au dixième près ; son
+  ajustement est celui d'Eurostat de 2021 à 2025 à 0,04 Md€ près ;
+* l'emploi et les salaires somment leurs cinq grandes branches à l'arrondi ; hommes et
+  femmes somment l'ensemble des chômeurs au millier près ; les créations, micro plus
+  classiques, l'ensemble exactement ;
+* la moyenne annuelle de l'OAT est celle de ses douze mois aux arrondis près, sauf 2025
+  (−0,016 point) : la table annuelle date de février 2026, la mensuelle de novembre ;
+* les défaillances de tous secteurs dépassent la somme des onze secteurs de 66 à 431 par
+  an, moins de 1 % : les entreprises dont le secteur n'est pas connu.
+
+### L'état publié de 2010 à 2025 : la dette tient, les prix et les impôts y sont
+
+**L'ajustement d'avant 2021.** Eurostat ne publie la table de passage de la France que de
+2021 à 2025 (gov_10dd_edpt3 ; gov_10dd_edpt1 porte la dette et le déficit, pas
+l'ajustement, et le tirer de leur différence serait le piège de D-148). L'Insee publie la
+sienne, la t. 3.105, de 2009 à 2025, au millésime de la t. 3.201 et de la dette. De 2010
+à 2020, `sfa` est la somme de ses cinq groupes imprimés, (1) à (5) ; l'écart interne de
+la table est nul ; l'écart à la dette de l'Insee est l'arrondi au dixième (moins de
+0,08 Md€), sauf en 2014 : −0,64 Md€, où la variation de la table et celle du stock
+divergent. De 2021 à 2025, Eurostat reste la source, inchangée. **Les cinq identités, la
+dette comprise, tiennent à 1e-9 du PIB chaque année de 2010 à 2025** : fini les refus
+« sfa ». Le champ de l'écart interne garde son nom du lot 1, `ecart_eurostat` ; sa
+définition dit qu'il porte la table de l'année, d'Eurostat ou de l'Insee.
+
+**Les prix et le volume.** `prix_<emploi>` est l'indice de la t. 1.103 sur celui de
+l'année d'avant ; la variation des stocks n'a pas d'indice publié, et son prix est
+absent. La croissance du PIB en volume est celle de la t. 1.102 : sans prix des stocks,
+la formule de chaînage du cadre ne se calcule pas sur l'histoire. Calculée avec la
+contribution des stocks de la t. 1.102, elle s'écarte de la croissance publiée de moins
+de 0,03 point : un essai, pas un test.
+
+**Les impôts.** Les 22 lignes de la t. 3.217 sont des sous-champs de l'état publié
+(`champs.IMPOTS_3217`, groupe « impots », lot 5), hors de toute identité : la table
+n'imprime que les principaux impôts. Un impôt qui n'existe pas une année y est absent :
+la contribution à l'audiovisuel public à partir de 2022.
+
+**Ce que ce lot a touché hors de ses fichiers**, et pourquoi : `champs.py` (le groupe des
+impôts, et les libellés et sources de `sfa`, `ecart_millesime_dette` et
+`ecart_eurostat`, sans changer leur rôle), `historique.py` et `CADRE.md` (§2 et §6 : la
+dette tient avant 2021). Ni le pas, ni les identités, ni l'état.
+
+### La base des mesures votées, par gouvernement
+
+`src/impots/jumeau/historique/mesures_votees.yaml`, lu par `jumeau/votees.py` : **70
+mesures**, de la suppression de la taxe professionnelle (loi du 30 décembre 2009) à la
+suspension du relèvement de l'âge de la retraite (LFSS 2026, loi n° 2025-1403), sous
+**onze gouvernements** de la frise. Les grandes réformes que le lot 6 rejouera y sont :
+les hausses d'impôts de 2011 à 2014 (CEHR, tranche à 45 %, quotient familial, revenus du
+capital au barème, ISF, TVA, contributions sur l'IS), le CICE et le pacte de
+responsabilité, le PFU et l'IFI, la suppression de la taxe d'habitation, l'IS de 33⅓ à
+25 %, la baisse des impôts de production de 2021, la suppression de la CVAE et son
+étalement, les réformes des retraites de 2010, 2014 et 2023, la CSG de 2018 et les
+mesures d'urgence de décembre 2018.
+
+**Les règles.** Pour chaque mesure : le texte (nature, numéro, date), l'article, la
+codification, l'instrument (seize, vocabulaire fermé), les paramètres que le texte change
+(avant, après), l'année d'effet, le statut (en vigueur, remplacée et par quoi, temporaire,
+suspendue, abrogée, censurée). Le gouvernement est celui en fonction à la date du texte ;
+le lecteur le vérifie sur la frise (la loi de finances pour 2025, déposée par le
+gouvernement Barnier, est au gouvernement Bayrou, et la note le dit). **Aucun montant
+budgétaire** : le lecteur refuse une clé ou un mot de chiffrage, une unité en millions ou
+en milliards ; les seuls montants sont des paramètres du droit, en euros entiers.
+
+**Ce qui n'a pas été lu.** Aucune évaluation préalable, aucun tome des voies et moyens,
+aucun chiffrage de tiers. Les PDF d'évaluations préalables des PLF 2026 et 2027 et du
+PLFSS 2026, et les voies et moyens des PLF 2025 et 2026, sont dans `data/raw` : ils n'ont
+pas été ouverts. Des PLF 2025 à 2027 et du PLFSS 2027 déposés, seul l'en-tête a été lu,
+pour le nom du Premier ministre.
+
+**La vérification, dite mesure par mesure.** Légifrance refuse la session (403). Douze
+mesures sont confirmées sur l'export de la base de Légifrance que publie codes.droit.org
+(CGI à jour au 31 octobre 2026, CSS) : la version en vigueur de l'article codifié porte
+la loi et l'article cités, ou son texte nomme la loi ; c'est ainsi qu'a été lue la
+suspension de 2026 (CSS, art. L. 161-17-2), dont l'article de la loi n'est pas
+identifié. Les 58 autres sont écrites de mémoire et le disent (`verification:
+mémoire`) : leurs numéros d'article sont à relire sur le Journal officiel avant que le
+lot 6 ne s'en serve.
+
+### La frise des gouvernements
+
+`src/impots/jumeau/historique/gouvernements.yaml` : seize gouvernements, de Fillon II
+(2007) à Lecornu II (en fonction : le PLF et le PLFSS 2027 sont présentés en son nom), et
+quatre mandats présidentiels jusqu'au 13 mai 2027. Un gouvernement court de la nomination
+de son Premier ministre à la veille de celle du suivant : les affaires courantes sont au
+gouvernement démissionnaire, et la frise couvre chaque jour sans trou ni chevauchement.
+Le mandat suivant est `a_venir` : son premier jour, le 14 mai 2027, est celui où un
+candidat se branche sur l'état que laisse le gouvernement en fonction.
+
+### Les tests
+
+`pytest -m "not lourd and not chrono" -n 1` sur `test_jumeau_historique.py` (22),
+`test_jumeau_series.py` (8), `test_jumeau_votees.py` (6), `test_dette_comptes.py` (20),
+`test_jumeau.py` et `test_dette.py` : 131 verts, plus `test_donnees.py`,
+`test_provenance.py` et `test_charter.py` (54). Aucun test lourd : le plus long lit ses
+tables en une douzaine de secondes. Le correctif de `sfa_publie` est le seul nombre
+changé hors du jumeau ; aucune étude ne le lit.
+
+### Ce qui manque, et ce qui est à décider
+
+* **Relire les articles** des 58 mesures écrites de mémoire sur le Journal officiel, dès
+  qu'une session joint Légifrance ; et compléter la base : les indexations annuelles du
+  barème, les autres mesures des lois de finances pour 2022, 2024 et 2026 et de la LFSS
+  2026 (la CSG sur les revenus du patrimoine est à 10,6 % dans le CSS en vigueur, sans que
+  la loi qui l'a portée soit identifiée ici), l'assurance chômage (décrets de 2019 et
+  2021), les mesures de dépense.
+* **Les champs des lots 2 et 4** (emploi, chômage, salaire moyen, créations) ne sont pas
+  écrits dans l'état publié : leurs définitions sont à ces lots, qui peuvent les lire
+  dans `jumeau.series`. Les créations y sont des entreprises, micro-entrepreneurs
+  compris ; les « créations de sociétés » du registre n'ont pas de série ici.
+* **L'investissement par branche** n'est pas lu : l'investissement par secteur est celui
+  des secteurs institutionnels de la t. 1.101.
+* **2025** est dans toutes les séries ; 2026 dans aucune (rien d'annuel n'est publié).
