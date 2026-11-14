@@ -142,6 +142,31 @@ investissement:
     # Le coefficient de Δie_{t−2}.
     valeur: 0.22
     source: Mésange (G2017-04), p. 44 du PDF, l'équation de Δie, terme 0,22 Δie_{t−2} [lu].
+  accelerateur_contemporain:
+    # β₀ dans Δie_q = … + β₀ Δva_q + β₁ Δva_{q−1} − 0,06 (ie − va − 0,44 (ck − pva))_{q−1} :
+    # l'effet accélérateur, la réponse de court terme de l'investissement à la valeur
+    # ajoutée de l'année. θ_accélérateur, avec β₁ : bas et haut à ∓ 1,96 écart type,
+    # l'écart type du coefficient sur son t de Student (1,19 / 6,9 = 0,1725).
+    centre: 1.19
+    bas: 0.852
+    haut: 1.528
+    source: >
+      Insee, Mésange (G2017-04), équation de l'investissement des entreprises non
+      financières, p. 44 du PDF (folio 43) [lu] : « 1,19 Δva_t », t = 6,9 ; la variable
+      instrumentée par les autres postes de la demande (même page). Les bornes sont celles
+      du coefficient seul ; Mésange ne publie pas la covariance de β₀ et β₁, et θ les
+      déplace ensemble (choisi, dit).
+  accelerateur_retarde:
+    # β₁, le coefficient de Δva_{q−1} ; θ_accélérateur, avec β₀.
+    centre: 0.65
+    bas: 0.354
+    haut: 0.946
+    source: >
+      Mésange (G2017-04), p. 44 du PDF [lu] : « 0,65 Δva_{t−1} », t = 4,3 ; écart type
+      0,65 / 4,3 = 0,1512, bornes à ∓ 1,96 écart type. À long terme, l'investissement
+      s'indexe unitairement sur la valeur ajoutée (le terme à correction d'erreur, même
+      page) ; le bloc redonne la ligne « Valeur ajoutée (+1 %) » de la p. 45 à 1, 2 et 5
+      ans : 1,795, 2,011 et 1,381 contre 1,79, 2,00 et 1,36.
   hausse_cout_par_point_de_taux:
     # Le coût du capital monte de 6,5 % pour 100 points de base de taux réel : le niveau
     # du taux du coût d'usage, R + tdec + prime + fisca, est 0,01 / 0,065 = 0,1538.

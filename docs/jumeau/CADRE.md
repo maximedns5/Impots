@@ -187,8 +187,15 @@ Le registre est `jumeau/canaux.py` (D-407) : un bloc déclare `porte`, ses canau
 La demande des APU d'une mesure (ses achats : P2, D1, D29, D632, P51g) entre dans les
 emplois par le bloc comptable `demande_publique` (canal « demande_publique », que les
 variantes de dépense de Mésange portent en mode réduit). Le modèle structurel complet est
-`blocs.ordre_structurel` : tendance, mesures, demande publique, les six blocs des
-entreprises, puis la boucle de la consommation, de l'emploi, des salaires et du commerce.
+`blocs.ordre_structurel` : tendance, mesures, demande publique, les blocs des
+entreprises, puis la boucle de l'investissement, de la consommation, de l'emploi, des
+salaires et du commerce, puis les recettes induites. Depuis D-414, il porte trois canaux
+de plus, que les multiplicateurs de Mésange portent en mode réduit : l'accélérateur de
+l'investissement (« investissement_accelerateur »), la boucle prix-salaires
+(« prix_production » : le prix de valeur ajoutée et celui de la consommation selon les
+coûts salariaux unitaires, que lisent les salaires, l'emploi et la consommation) et l'IS
+sur les profits induits (« recettes_induites_profits »). Les blocs qui lisent l'activité
+y lisent un volume : le PIB nominal moins sa part prix (`effet_prix_pib`).
 
 **Les règles des lots en parallèle.**
 

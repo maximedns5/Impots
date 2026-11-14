@@ -353,6 +353,22 @@ _ajouter(
           "(D-412) : la même formule, X, M et le PIB de la t. 1.101, p^X et p^M de la "
           "t. 1.103", 3, "lot3", additif=False),
 )
+#: La boucle prix-salaires du mode structurel (D-414) : les écarts des prix d'une mesure,
+#: en fraction (ln p ≈ p − 1), additifs entre les mesures comme tout écart linéarisé, et
+#: la part du PIB nominal qui est un effet de prix, pour que les blocs qui lisent
+#: l'activité lisent un volume.
+_ajouter(
+    Champ("ecart_prix_valeur_ajoutee", "Écart du prix de la valeur ajoutée marchande à "
+          "la référence", "fraction", "", "le bloc `commerce` en mode structurel : les "
+          "coûts salariaux unitaires et la demande, le « price setting » de Mésange, p. 22 "
+          "et 70 (D-414)", 3, "lot3"),
+    Champ("ecart_prix_consommation", "Écart du prix de la consommation des ménages à la "
+          "référence", "fraction", "", "le bloc `commerce` en mode structurel : "
+          "(1 − μ_C) p^D + μ_C P^M, l'équation (PC) de Mésange, p. 24 (D-414)", 3, "lot3"),
+    Champ("effet_prix_pib", "Part de l'écart du PIB nominal qui est un effet de prix", MDE,
+          "", "les blocs `consommation` et `commerce` en mode structurel : la valeur des "
+          "emplois moins leur volume aux prix du scénario (D-414)", 3, "lot3"),
+)
 
 # --------------------------------------------------------------------- lot 4, ménages
 #: Les champs du lot 4 (D-409), écrits par les blocs `consommation`, `emploi` et

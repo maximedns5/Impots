@@ -70,6 +70,8 @@ class Parametres:
     elasticite_cout: Plage
     rappel_trimestriel: float
     retard_trimestriel: float
+    accelerateur_contemporain: Plage
+    accelerateur_retarde: Plage
     hausse_cout_par_point_de_taux: float
     signaux_investissement: tuple[str, ...]
     capital_net_2024: float
@@ -177,6 +179,8 @@ def charger(chemin: Path | None = None) -> Parametres:
         elasticite_cout=plage(i["elasticite_cout"]),
         rappel_trimestriel=v(i["rappel_trimestriel"]),
         retard_trimestriel=v(i["retard_trimestriel"]),
+        accelerateur_contemporain=plage(i["accelerateur_contemporain"]),
+        accelerateur_retarde=plage(i["accelerateur_retarde"]),
         hausse_cout_par_point_de_taux=v(i["hausse_cout_par_point_de_taux"]),
         signaux_investissement=tuple(i["signaux"]),
         capital_net_2024=v(i["capital_net_2024"]), capital_net_2014=v(i["capital_net_2014"]),
@@ -193,6 +197,7 @@ def charger(chemin: Path | None = None) -> Parametres:
 IDEES_ROW = "idees_creations"
 FERMETURES_ROW = "fermetures_marges"
 INVESTISSEMENT_ROW = "investissement_cout_capital"
+ACCELERATEUR_ROW = "investissement_accelerateur"
 IMPLANTATION_ROW = "implantation_tmee"
 SURVIE_ROW = "survie_creations"
 MONTEE_ROW = "montee_en_charge_creations"
@@ -255,6 +260,22 @@ def lignes(Ligne: Any) -> dict[str, Any]:
               p.elasticite_cout, "θ = 1 : l'investissement répond le plus",
               "Insee, Mésange (G2017-04), p. 44 du PDF : −0,44 calibrée, −0,37 libre, "
               "−0,48 Mésange 2010", True),
+        Ligne(cle=ACCELERATEUR_ROW, bloc="investissement",
+              definition=("β₀(θ), β₁(θ) dans Δie_q = 0,22 Δie_{q−2} + β₀ Δva_q + β₁ Δva_{q−1} "
+                          "− 0,06 (ie − va + ε_K ck)_{q−1} : l'effet accélérateur, la "
+                          "réponse de court terme de l'investissement des SNF à la valeur "
+                          "ajoutée ; les deux coefficients bougent ensemble"),
+              unite="sans dimension",
+              a_zero=f"{fr(p.accelerateur_contemporain.bas)} et "
+                     f"{fr(p.accelerateur_retarde.bas)}",
+              a_demi=f"{fr(p.accelerateur_contemporain.centre)} et "
+                     f"{fr(p.accelerateur_retarde.centre)} (Mésange)",
+              a_un=f"{fr(p.accelerateur_contemporain.haut)} et "
+                   f"{fr(p.accelerateur_retarde.haut)}",
+              direction="θ = 1 : l'investissement répond le plus à l'activité",
+              source=("Insee, Mésange (G2017-04), p. 44 du PDF : 1,19 (t = 6,9) et 0,65 "
+                      "(t = 4,3) ; bornes à ∓ 1,96 écart type de chaque coefficient, leur "
+                      "covariance n'étant pas publiée"), verifiee=True),
         ligne(IMPLANTATION_ROW, "implantation",
               "a₁ dans ln K_f,t = 0,676 ln K_f,t−1 − a₁ TMEE_t : la semi-élasticité de "
               "court terme du capital des multinationales au taux effectif moyen",

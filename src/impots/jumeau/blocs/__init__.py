@@ -28,20 +28,25 @@ def ordre_lot1(depart: Any, *, persistance: str | None, boucle: bool = True,
     return blocs
 
 
-#: La boucle simultanée du modèle structurel : la consommation fait le PIB, le PIB
-#: l'emploi, l'emploi et les salaires le revenu, la demande les importations, qui
-#: retranchent au PIB que la consommation lit (D-411).
-BOUCLE_STRUCTURELLE = ("consommation", "emploi", "salaires", "commerce")
+#: La boucle simultanée du modèle structurel : l'investissement suit la valeur ajoutée
+#: (l'accélérateur), la consommation fait le PIB, le PIB l'emploi, l'emploi et les
+#: salaires le revenu, la demande les importations, qui retranchent au PIB que la
+#: consommation lit, et le commerce fait les prix que les salaires, la consommation et
+#: l'emploi lisent (la boucle prix-salaires) (D-411, D-414).
+BOUCLE_STRUCTURELLE = ("investissement", "consommation", "emploi", "salaires", "commerce")
 
 
 def ordre_structurel(depart: Any, population: Any, cellules: Any, *,
                      entreprises: Any | None = None, menages: Any | None = None,
                      commerce: Any | None = None) -> tuple[list[Any], list[tuple[str, ...]]]:
-    """Le modèle structurel complet (D-411) : `tendance` (qui laisse au commerce les prix
-    des échanges), `mesures`, la demande publique, les blocs des entreprises (lot 2), puis
-    la boucle des ménages (lot 4) et du commerce (lot 3). Sans `mesange` : chaque canal
-    est porté une fois, par une équation. Rend les blocs et leur boucle."""
-    from impots.jumeau.blocs.commerce import PRIX, Commerce
+    """Le modèle structurel complet (D-411, complété par D-414) : `tendance` (qui laisse au
+    commerce les prix des échanges et de la consommation), `mesures`, la demande publique,
+    les blocs des entreprises (lot 2), puis la boucle de l'investissement (l'accélérateur),
+    des ménages (lot 4) et du commerce (lot 3, la boucle prix-salaires), et les recettes
+    induites sur les profits. Sans `mesange` : chaque canal est porté une fois, par une
+    équation. Rend les blocs et leur boucle. Un `commerce` donné doit porter la boucle
+    prix-salaires (`Commerce(boucle_prix=...)`)."""
+    from impots.jumeau.blocs.commerce import Commerce
     from impots.jumeau.blocs.demande_publique import DemandePublique
     from impots.jumeau.blocs.demographie import Fermetures, Naissances, Productivite
     from impots.jumeau.blocs.entreprises import ChocsEntreprises
@@ -49,14 +54,23 @@ def ordre_structurel(depart: Any, population: Any, cellules: Any, *,
     from impots.jumeau.blocs.implantation import Implantation
     from impots.jumeau.blocs.investissement import Investissement
     from impots.jumeau.blocs.menages import blocs_menages
+    from impots.jumeau.blocs.menages import charger as charger_menages
     from impots.jumeau.blocs.mesures import Mesures
+    from impots.jumeau.blocs.recettes_induites import RecettesInduites
     from impots.jumeau.blocs.tendance import Tendance
 
     p = entreprises if entreprises is not None else charger_entreprises()
-    du_menage, _ = blocs_menages(cellules, menages)
+    pm = menages if menages is not None else charger_menages()
+    du_menage, _ = blocs_menages(cellules, pm, prix=True)
+    commerce = commerce if commerce is not None else Commerce(
+        boucle_prix=pm.part_marchande)
+    if getattr(commerce, "boucle", None) is None:
+        raise ValueError("le modèle structurel complet lit la boucle prix-salaires : "
+                         "`Commerce(boucle_prix=...)` (D-414)")
     blocs: list[Any] = [
-        Tendance(depart, laisse=PRIX), Mesures(), DemandePublique(), ChocsEntreprises(),
-        Naissances(population, p), Fermetures(population, p), Productivite(population, p),
-        Investissement(p), Implantation(p), *du_menage,
-        commerce if commerce is not None else Commerce()]
+        Tendance(depart, laisse=commerce.prix), Mesures(), DemandePublique(),
+        ChocsEntreprises(), Naissances(population, p), Fermetures(population, p),
+        Productivite(population, p), Implantation(p),
+        Investissement(p, accelerateur=True, prix=True), *du_menage, commerce,
+        RecettesInduites()]
     return blocs, [BOUCLE_STRUCTURELLE]

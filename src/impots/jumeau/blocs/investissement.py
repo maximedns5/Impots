@@ -50,6 +50,32 @@ emplois non ventilés (l'investissement prend sa place parmi les emplois, à PIB
 donné : le reste est un effet d'offre sans emploi désigné, dit), ρ ΔY sur l'effet induit
 sur le solde. Le PIB, ΔI + (ΔY − ΔI), est fermé par le cadre (D-411).
 
+4. L'ACCÉLÉRATEUR (mode structurel, `accelerateur=True`, D-414). La même équation de
+   Mésange (p. 44), avec la valeur ajoutée qui bouge :
+
+       Δie_q = 0,22 Δie_{q−2} + β₀ Δva_q + β₁ Δva_{q−1} − 0,06 (ie − va + ε_K ck)_{q−1}
+
+   β₀ = 1,19 (t = 6,9) et β₁ = 0,65 (t = 4,3), θ_accélérateur les déplace ensemble de
+   ∓ 1,96 écart type (`entreprises.yaml`). Linéaire : la réponse à un échelon de va au
+   premier trimestre est β₀ R₀ + β₁ R₁ + R_ec (`reponse_valeur_ajoutee`), R₀ et R₁ celles
+   des deux termes de court terme, R_ec celle de la correction d'erreur, qui tend vers un
+   (l'indexation unitaire de long terme) ; la moyenne annuelle redonne la ligne « Valeur
+   ajoutée (+1 %) » de la p. 45 : 1,795, 2,011 et 1,381 à 1, 2 et 5 ans contre 1,79,
+   2,00 et 1,36. Pour la mesure m :
+
+       ŷ_{m,j} = (ΔPIB_{m,j} − ΔPIB^prix_{m,j}) / Y_j       l'écart du PIB en volume
+       ΔI^a_{m,t} = I_t Σ_{j ≤ t} (ŷ_{m,j} − ŷ_{m,j−1}) R_va(t − j)
+
+   la valeur ajoutée des branches marchandes de Mésange lue comme le PIB en volume (une
+   approximation, dite) ; ΔPIB^prix le champ `effet_prix_pib` de la boucle prix-salaires.
+   ΔI^a est une demande : il va sur la FBCF des SNF et l'investissement des entreprises,
+   et, en revenu, sur l'EBE (une production marchande, dont les salaires se prennent par
+   le bloc `salaires`) ; il n'entre pas au capital du PIB potentiel (équation 3) : à court
+   terme la production suit la demande, et l'offre qu'il ajouterait serait comptée deux
+   fois. Le bloc lit le PIB de l'année : il tourne dans la boucle simultanée
+   (`blocs.BOUCLE_STRUCTURELLE`). Canal « investissement_accelerateur », pour tout
+   instrument : avec `mesange`, refusé.
+
 COMPARAISON À MÉSANGE (`comparer_mesange`) : sous la variante de taux (+6,5 % de coût du
 capital), le bloc donne −ε_K 6,5 R(h) ; Mésange imprime l'investissement des SNF, effet
 accélérateur compris. L'écart est dit dans D-407, jamais forcé.
@@ -64,6 +90,7 @@ import numpy as np
 
 from impots.jumeau import canaux
 from impots.jumeau.blocs.entreprises import (
+    ACCELERATEUR_ROW,
     INVESTISSEMENT_ROW,
     Parametres,
     chemins,
@@ -98,6 +125,27 @@ def reponse_unitaire(rappel: float, retard: float, annees: int = HORIZON_MAX
     return tuple(float(serie[4 * h:4 * h + 4].mean()) for h in range(annees))
 
 
+@lru_cache(maxsize=8)
+def reponse_valeur_ajoutee(rappel: float, retard: float, annees: int = HORIZON_MAX
+                           ) -> tuple[tuple[float, ...], tuple[float, ...], tuple[float, ...]]:
+    """(R₀, R₁, R_ec), h = 0, 1, … : les moyennes annuelles de ie pour un échelon va = 1 au
+    premier trimestre de l'année 0, par terme de l'équation (β₀ Δva_q, β₁ Δva_{q−1}, la
+    correction d'erreur −rappel (ie − va)_{q−1}) ; la réponse est β₀ R₀ + β₁ R₁ + R_ec."""
+    trimestres = 4 * annees
+    out = []
+    for terme in range(3):
+        ie = np.zeros(trimestres + 3)
+        for q in range(trimestres):
+            i = q + 3
+            forcage = (1.0 if (terme == 0 and q == 0) or (terme == 1 and q == 1) else 0.0)
+            va_prec = 1.0 if (terme == 2 and q >= 1) else 0.0
+            ie[i] = (ie[i - 1] + retard * (ie[i - 2] - ie[i - 3]) + forcage
+                     - rappel * (ie[i - 1] - va_prec))
+        serie = ie[3:3 + trimestres]
+        out.append(tuple(float(serie[4 * h:4 * h + 4].mean()) for h in range(annees)))
+    return out[0], out[1], out[2]
+
+
 def comparer_mesange(p: Parametres, theta: float = 0.5) -> dict[str, dict[str, float]]:
     """Le bloc, linéarisé, sous la variante de taux de Mésange : la réponse de
     l'investissement (%), celle de Mésange, et celle de Mésange moins sa valeur ajoutée
@@ -122,12 +170,56 @@ class Investissement:
     porte: tuple[str, ...] = ()
     remplace = ("investissement_cout_du_capital",)
 
-    def __init__(self, parametres: Parametres) -> None:
+    def __init__(self, parametres: Parametres, *, accelerateur: bool = False,
+                 prix: bool = False) -> None:
         self.p = parametres
-        self.lit = tuple(parametres.signaux_investissement)
+        self.signaux = tuple(parametres.signaux_investissement)
+        self.lit = self.signaux
         self.instruments = {"investissement_cout_du_capital": canaux.des_signaux(self.lit)}
         self.r = np.array(reponse_unitaire(parametres.rappel_trimestriel,
                                            parametres.retard_trimestriel))
+        self.accelerateur = accelerateur
+        if accelerateur:
+            # La valeur ajoutée de l'année : le PIB, et sa part prix si la boucle
+            # prix-salaires tourne (D-414).
+            self.lit = (*self.signaux, "pib", *(("effet_prix_pib",) if prix else ()))
+            self.ecrit = (*Investissement.ecrit, "ebe_revenu_mixte")
+            self.thetas = (INVESTISSEMENT_ROW, ACCELERATEUR_ROW)
+            self.remplace = (*Investissement.remplace, "investissement_accelerateur")
+            self.r_va = tuple(np.array(r) for r in reponse_valeur_ajoutee(
+                parametres.rappel_trimestriel, parametres.retard_trimestriel))
+        self.prix = prix
+        self._passe: dict[tuple[int, str], np.ndarray] = {}
+
+    def volume(self, ctx: Contexte, j: int, m: str) -> np.ndarray:
+        """ŷ_{m,j} : l'écart du PIB en volume de la mesure m à l'année j, part du PIB de
+        référence. Une année passée ne change plus : gardée le temps d'une trajectoire."""
+        if j < ctx.k and (j, m) in self._passe:
+            return self._passe[(j, m)]
+        etat = ctx.courant if j == ctx.k else ctx.passe(j)
+        pib = etat.par_mesure("pib").get(m, 0.0)
+        prix = (etat.par_mesure("effet_prix_pib").get(m, 0.0)
+                if self.prix and etat.present("effet_prix_pib") else 0.0)
+        y = np.zeros(ctx.n) + (pib - prix) / ctx.pib_reference(j)
+        if j < ctx.k:
+            self._passe[(j, m)] = y
+        return y
+
+    def accelere(self, ctx: Contexte, m: str, beta0: np.ndarray, beta1: np.ndarray
+                 ) -> np.ndarray:
+        """ΔI^a_{m,k}, Md€ : la réponse de l'investissement à la valeur ajoutée."""
+        k = ctx.k
+        if k >= len(self.r_va[0]):
+            raise ValueError(f"trajectoire de {k + 1} ans au-delà de {len(self.r_va[0])}")
+        r0, r1, rec = self.r_va
+        total = np.zeros(ctx.n)
+        precedent: Any = 0.0
+        for j in range(k + 1):
+            y = self.volume(ctx, j, m)
+            h = k - j
+            total = total + (y - precedent) * (beta0 * r0[h] + beta1 * r1[h] + rec[h])
+            precedent = y
+        return total * part_depart(ctx, "fbcf_snf") * pib_scenario(ctx, k)
 
     def chemin(self, ctx: Contexte, signaux: list[np.ndarray], eps: np.ndarray
                ) -> tuple[list[np.ndarray], list[np.ndarray]]:
@@ -154,12 +246,14 @@ class Investissement:
 
     def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
         p, k = self.p, ctx.k
+        if k == 0:
+            self._passe.clear()
         eps = p.elasticite_cout.a(lire_theta(ctx, INVESTISSEMENT_ROW))
         y = pib_scenario(ctx, k)
         s_k, rho = part_capital(ctx), taux_prelevements(ctx)
         out: dict[str, dict[str, Any]] = {n: {} for n in self.ecrit}
         out["investissement_entreprises"][""] = part_depart(ctx, "fbcf_snf") * y
-        for m, signaux in chemins(ctx, self.lit).items():
+        for m, signaux in chemins(ctx, self.signaux).items():
             di, dk = self.chemin(ctx, signaux, eps)
             dy = s_k * dk[k] / (p.capital_part_pib * y) * y
             out["fbcf_snf"][m] = di[k]
@@ -167,4 +261,13 @@ class Investissement:
             out["emplois_non_ventiles"][m] = dy - di[k]
             out["revenus_non_ventiles"][m] = dy
             out["solde_induit"][m] = rho * dy
+        if self.accelerateur:
+            t = lire_theta(ctx, ACCELERATEUR_ROW)
+            beta0, beta1 = p.accelerateur_contemporain.a(t), p.accelerateur_retarde.a(t)
+            for m in ctx.mesures:
+                ident = m.identifiant
+                da = self.accelere(ctx, ident, beta0, beta1)
+                for nom in ("fbcf_snf", "investissement_entreprises"):
+                    out[nom][ident] = out[nom].get(ident, 0.0) + da
+                out["ebe_revenu_mixte"][ident] = da
         return out

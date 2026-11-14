@@ -53,6 +53,29 @@ mesange:
     usage: >-
       le profil de diffusion d'un coût dans les prix de production, rapporté à sa valeur
       de long terme : π(h) = valeur(h) / valeur(LT)
+  prix_production_demande:
+    libelle: "Demande (+1 %)"
+    page: 72
+    tableau: "Élasticités des prix de production du secteur marchand"
+    valeurs: [0.03, 0.08, 0.10, 0.06, 0.00]
+    usage: >-
+      les tensions sur les capacités dans le court terme des prix de production (sans
+      effet de long terme, même page), lues en mode structurel seulement (D-414) : la
+      demande adressée aux branches lue comme l'écart du PIB en volume
+  part_travail_valeur_ajoutee:
+    # α dans le « price setting » pva = α (w − e) + (1 − α) ck (p. 22) : la part des coûts
+    # salariaux dans le prix de valeur ajoutée à long terme, la boucle prix-salaires
+    # (D-414). La moyenne des quatre branches marchandes, pondérée par leur valeur
+    # ajoutée de 2015 (DAI 13 %, NRJ 3 %, DSE 27 %, DSA 34 %, p. 69 note 55) : (0,65 × 13
+    # + 0,40 × 3 + 0,65 × 27 + 0,43 × 34) / 77.
+    valeur: 0.543
+    page: 70
+    texte: >-
+      les relations de long terme des prix de production (p. 70 et 71) : 0,65 sur les
+      salaires et 0,35 sur le coût du capital dans la valeur ajoutée en DAI et DSE, 0,4 et
+      0,6 en NRJ, 0,43 et 0,57 en DSA ; « l'élasticité des prix de production aux coûts de
+      chacun des facteurs (travail et capital) correspond à la part de leur rémunération
+      dans la valeur ajoutée de la branche » (p. 71)
   elasticite_prix_exportations_2010:
     valeur: 0.6
     page: 78
@@ -91,6 +114,16 @@ thetas:
     a_zero: 0.29   # Mésange 2017, services exposés, p. 84
     a_demi: 0.35   # Mésange 2017, importations marchandes, p. 85
     a_un: 1.11     # FR-BDF, WP 736, table 4.6.21
+
+  commerce_prix_diffusion:
+    # La boucle prix-salaires (mode structurel, D-414) : la vitesse de diffusion d'un coût
+    # dans les prix de production, π_θ(h). θ½, le profil de Mésange (p. 72) ; θ = 0, le
+    # même à mi-vitesse, π(h/2) ; θ = 1, la diffusion immédiate du modèle de prix du TES,
+    # π = 1. Les deux bornes sont choisies, non vérifiées : Mésange n'imprime pas l'écart
+    # type de ses profils.
+    a_zero: mi-vitesse
+    a_demi: Mésange
+    a_un: immédiate
 
 conventions:
   # Choisies, non vérifiées : aucune source ne les chiffre.
@@ -136,3 +169,12 @@ tes:
   transmission_couts:
     exportations: 0.8649
     demande_interieure: 0.8917
+  definition_transmission_importations: >-
+    κ^M = Δp pondéré pour un prix des importations plus haut d'un (100 %) : les
+    consommations intermédiaires importées de chaque branche par unité de production,
+    propagées par Δp = m L ; pondéré comme κ. Lu en mode structurel seulement, par la
+    boucle prix-salaires (D-414) : les prix d'importation suivent les prix de production
+    français (Mésange, p. 91), et renchérissent les intrants
+  transmission_importations:
+    exportations: 0.2983
+    demande_interieure: 0.1579

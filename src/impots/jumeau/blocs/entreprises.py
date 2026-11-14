@@ -49,6 +49,7 @@ import numpy as np
 
 from impots.jumeau import thetas
 from impots.jumeau.blocs.valeurs_entreprises import (
+    ACCELERATEUR_ROW,
     FERMETURES_ROW,
     IDEES_ROW,
     IMPLANTATION_ROW,
@@ -302,7 +303,7 @@ def ordre_lot2(depart: Any, population_: Population, *, parametres: Parametres |
     return blocs
 
 
-__all__ = ["CREATIONS_ROW", "FERMETURES_ROW", "IDEES_ROW", "IMPLANTATION_ROW",
+__all__ = ["ACCELERATEUR_ROW", "CREATIONS_ROW", "FERMETURES_ROW", "IDEES_ROW", "IMPLANTATION_ROW",
            "INVESTISSEMENT_ROW", "MONTEE_ROW", "SURVIE_ROW", "TAILLE_ROW",
            "ChocsEntreprises", "Parametres", "Population", "charger", "mesure_entreprises",
            "ordre_lot2", "population_depuis"]
