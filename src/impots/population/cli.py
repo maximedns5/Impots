@@ -10,15 +10,18 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 
 from impots import service
 from impots.api.schemas import ReformSpec
 from impots.identifiants import millesime
 from impots.population import aggregate as aggregate_module
+from impots.population import ingest
 from impots.population import reconcile as reconcile_module
 from impots.population.build import PROCESSED, build
-from impots.population.ingest import RAW, write_manifest
+from impots.population.ingest import RAW
 from impots.population.runner import RUNS_DIR, run
 
 #: Limitations stated in the reconciliation report and in the UI. Measured, not
@@ -89,11 +92,13 @@ def _print_aggregates(agg: aggregate_module.Aggregates) -> None:
               "of household disposable income")
 
 
-#: Raw inputs whose canonical URL is known. Anything in data/raw/ that is NOT here
-#: gets manifested with a null url and an explicit "not reproducible" note, because
-#: an unmanifested file that backs a figure is exactly the gap D-026 closes: a
-#: checksum without a URL proves the file has not changed, not where it came from.
-KNOWN_SOURCES: dict[str, tuple[str, str]] = {
+#: Raw inputs whose canonical URL is known: (url, description[, licence]). A file in
+#: data/raw/ that is neither in the manifest nor here gets manifested with a null url
+#: and an explicit "not reproducible" note, and quarantined, because an unmanifested
+#: file that backs a figure is exactly the gap D-026 closes: a checksum without a URL
+#: proves the file has not changed, not where it came from. The manifest itself stays
+#: the record: `manifest` adds from here, it never rewrites from here (D-419).
+KNOWN_SOURCES: dict[str, tuple[str, ...]] = {
     "insee_cn2025_t7301_compte_administrations_publiques_S13.xlsx": (
         "https://www.insee.fr/fr/statistiques/fichier/8988833/T_7301_fr.xlsx",
         "INSEE, comptes nationaux annuels base 2020, tableau 7.301 — compte des "
@@ -268,53 +273,143 @@ KNOWN_SOURCES: dict[str, tuple[str, str]] = {
 }
 
 
-def cmd_manifest(_: argparse.Namespace) -> int:
-    """Re-record the checksums of every raw input, named or not."""
-    known = {
-        "FD_EEC_2024.parquet": (
-            "https://www.insee.fr/fr/statistiques/fichier/8632441/FD_EEC_2024.parquet",
-            "Enquête Emploi en Continu 2024, fichier détail",
-        ),
-        "Varmod_EEC_2024.csv": (
-            "https://www.insee.fr/fr/statistiques/fichier/8632441/Varmod_EEC_2024.csv",
-            "Dictionnaire des variables et modalités de l'EEC 2024",
-        ),
-    }
-    from impots.population.ingest import QUARANTINE
+#: The two EEC files of Phase 1, sourced like KNOWN_SOURCES.
+EEC_SOURCES: dict[str, tuple[str, str]] = {
+    "FD_EEC_2024.parquet": (
+        "https://www.insee.fr/fr/statistiques/fichier/8632441/FD_EEC_2024.parquet",
+        "Enquête Emploi en Continu 2024, fichier détail",
+    ),
+    "Varmod_EEC_2024.csv": (
+        "https://www.insee.fr/fr/statistiques/fichier/8632441/Varmod_EEC_2024.csv",
+        "Dictionnaire des variables et modalités de l'EEC 2024",
+    ),
+}
+UNSOURCED = ("Source URL not recorded, so nothing computed from this file is reproducible "
+             "by a third party. Quarantined under data/raw/_unsourced/ (D-028): the "
+             "checksum still tracks it, and pipeline code refuses to open it. Re-source it "
+             "if something needs it.")
 
-    known = {**known, **KNOWN_SOURCES}
-    QUARANTINE.mkdir(parents=True, exist_ok=True)
-    candidates = [f for f in RAW.iterdir() if f.is_file() and f.name != "MANIFEST.json"]
-    candidates += [f for f in QUARANTINE.iterdir() if f.is_file()]
 
-    entries, quarantined, released = [], 0, 0
-    for file in sorted(candidates, key=lambda f: f.name):
-        sourced = file.name in known
-        # A sourced file belongs in data/raw/; an unsourced one belongs out of the way,
-        # so that its presence in the tree can never be mistaken for provenance (D-028).
-        # Adding a URL to KNOWN_SOURCES releases it on the next run.
-        target = (RAW if sourced else QUARANTINE) / file.name
-        if file != target:
-            file.rename(target)
-            released += sourced
-            quarantined += not sourced
-        url, description = known.get(file.name, (None, (
-            "Source URL not recorded, so nothing computed from this file is "
-            "reproducible by a third party. Quarantined under data/raw/_unsourced/ "
-            "(D-028): the checksum still tracks it, and pipeline code refuses to open "
-            "it. Re-source it if something needs it."
-        )))
-        entries.append({"filename": file.name, "path": target, "url": url,
-                        "quarantined": not sourced,
-                        "licence": "Licence Ouverte / Etalab 2.0" if url else "unknown",
-                        "description": description})
-    path = write_manifest(entries)
-    sourced_count = sum(1 for e in entries if e["url"])
-    print(f"wrote {path} with {len(entries)} inputs, {sourced_count} sourced")
-    if quarantined:
-        print(f"  moved {quarantined} unsourced file(s) to data/raw/_unsourced/")
-    if released:
-        print(f"  released {released} newly-sourced file(s) back to data/raw/")
+@dataclass
+class ManifestRun:
+    """What `manifest` did, or refused to do, on one data/raw (D-419)."""
+
+    refused: list[str] = field(default_factory=list)
+    added: list[str] = field(default_factory=list)
+    quarantined: list[str] = field(default_factory=list)
+    released: list[str] = field(default_factory=list)
+    verified: list[str] = field(default_factory=list)
+    absent: list[str] = field(default_factory=list)
+    written: bool = False
+
+
+def manifest_raw(raw: Path, *, known: dict[str, tuple[str, ...]] | None = None
+                 ) -> ManifestRun:
+    """Bring `raw/MANIFEST.json` up to date FROM ITSELF (D-419, after D-416).
+
+    The manifest is the record, not something rebuilt from KNOWN_SOURCES: every entry
+    is kept as it stands (URL, download date, licence, provenance, normalization). The
+    sha256 of every manifested file present is recomputed and checked (on its normalized
+    bytes when the entry declares a normalization, D-159); a digest that
+    changed is a named refusal and nothing is written or moved (the vintage moved, or
+    the file is not the one recorded: resolve it deliberately, D-004). A file present
+    and not manifested is added if KNOWN_SOURCES declares it, and quarantined
+    (D-028) otherwise. A manifested file absent from this tree keeps its entry and is
+    reported. The one entry that changes is a quarantined one whose file KNOWN_SOURCES
+    now declares: it gets its URL and leaves the quarantine (D-028's release)."""
+    known = {**EEC_SOURCES, **KNOWN_SOURCES} if known is None else known
+    quarantine = raw / "_unsourced"
+    path = raw / "MANIFEST.json"
+    old = (json.loads(path.read_text(encoding="utf-8")) if path.exists()
+           else {"generated": None, "files": {}})
+    files: dict[str, dict] = {name: dict(entry) for name, entry in old["files"].items()}
+    present: dict[str, Path] = {}
+    for folder in (raw, quarantine):
+        if folder.exists():
+            for f in folder.iterdir():
+                if f.is_file() and f.name != "MANIFEST.json":
+                    if f.name in present:
+                        raise ValueError(f"{f.name} is both in {raw} and in {quarantine}")
+                    present[f.name] = f
+    run = ManifestRun()
+    for name, entry in files.items():
+        f = present.get(name)
+        if f is None:
+            run.absent.append(name)
+            continue
+        if entry.get("normalization"):
+            # A re-stamped publisher (D-159): judged on the normalized digest, the
+            # contract `impots donnees check` uses (`donnees.empreinte`, `attendu`).
+            from impots import donnees
+
+            e = ingest.ManifestEntry(filename=name, **entry)
+            actual, expected = donnees.empreinte(f.read_bytes(), e), donnees.attendu(e)
+        else:
+            actual, expected = ingest.sha256_of(f), entry["sha256"]
+        if actual != expected:
+            run.refused.append(f"{name}: manifested {expected}, on disk {actual}")
+        else:
+            run.verified.append(name)
+    if run.refused:
+        return run
+    today = date.today().isoformat()
+    moves: list[tuple[Path, Path]] = []
+    for name, f in sorted(present.items()):
+        entry = files.get(name)
+        if entry is not None:
+            if not entry.get("url") and entry.get("quarantined") and name in known:
+                url, description, *licence = known[name]
+                entry.update(url=url, description=description, quarantined=False)
+                if licence:
+                    entry["licence"] = licence[0]
+                moves.append((f, raw / name))
+                run.released.append(name)
+            continue
+        sourced = name in known
+        url, description, *licence = known.get(name, (None, UNSOURCED))
+        files[name] = {"url": url, "quarantined": not sourced,
+                       "sha256": ingest.sha256_of(f), "bytes": f.stat().st_size,
+                       "downloaded": today, "licence": licence[0] if licence else "unknown",
+                       "description": description}
+        if sourced:
+            run.added.append(name)
+            moves.append((f, raw / name))
+        else:
+            run.quarantined.append(name)
+            moves.append((f, quarantine / name))
+    if not (run.added or run.quarantined or run.released):
+        return run
+    for source, target in moves:
+        if source != target:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            source.rename(target)
+    path.write_text(json.dumps({"generated": today, "files": files}, indent=2,
+                               ensure_ascii=False) + "\n", encoding="utf-8")
+    run.written = True
+    return run
+
+
+def cmd_manifest(args: argparse.Namespace) -> int:
+    """Check the raw inputs against the manifest and add the new ones (D-419)."""
+    raw = Path(args.raw) if getattr(args, "raw", None) else RAW
+    run = manifest_raw(raw)
+    if run.refused:
+        print(f"refused: {len(run.refused)} manifested file(s) no longer match their "
+              f"sha256; nothing written, nothing moved. Resolve each deliberately "
+              f"(D-004, D-419):", file=sys.stderr)
+        for line in run.refused:
+            print(f"  {line}", file=sys.stderr)
+        return 1
+    print(f"{raw / 'MANIFEST.json'}: {len(run.verified)} file(s) checked against their "
+          f"sha256" + ("" if run.written else ", nothing to add"))
+    for label, names in (("added (declared in KNOWN_SOURCES)", run.added),
+                         ("quarantined to _unsourced/ (neither manifested nor declared)",
+                          run.quarantined),
+                         ("released from _unsourced/ (now declared)", run.released),
+                         ("manifested but absent from this tree, entry kept", run.absent)):
+        if names:
+            print(f"  {len(names)} {label}: {', '.join(names[:8])}"
+                  + (" …" if len(names) > 8 else ""))
     return 0
 
 
@@ -2076,7 +2171,10 @@ def build_parser() -> argparse.ArgumentParser:
     population = subcommands.add_parser("population", help="the L1 synthetic population")
     actions = population.add_subparsers(dest="action", required=True)
 
-    manifest = actions.add_parser("manifest", help="record checksums of the raw inputs")
+    manifest = actions.add_parser(
+        "manifest", help="check the raw inputs against the manifest, add the new ones")
+    manifest.add_argument("--raw", default=None,
+                          help="the data/raw to work on (default: the repository's)")
     manifest.set_defaults(func=cmd_manifest)
 
     builder = actions.add_parser("build", help="build the population parquet")

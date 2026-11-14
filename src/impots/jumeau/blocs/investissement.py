@@ -68,6 +68,8 @@ sur le solde. Le PIB, ΔI + (ΔY − ΔI), est fermé par le cadre (D-411).
 
    la valeur ajoutée des branches marchandes de Mésange lue comme le PIB en volume (une
    approximation, dite) ; ΔPIB^prix le champ `effet_prix_pib` de la boucle prix-salaires.
+   En mode structurel, la valeur ajoutée non marchande des APU (`va_non_marchande`, D-418)
+   en est retranchée.
    ΔI^a est une demande : il va sur la FBCF des SNF et l'investissement des entreprises,
    et, en revenu, sur l'EBE (une production marchande, dont les salaires se prennent par
    le bloc `salaires`) ; il n'entre pas au capital du PIB potentiel (équation 3) : à court
@@ -182,7 +184,8 @@ class Investissement:
         if accelerateur:
             # La valeur ajoutée de l'année : le PIB, et sa part prix si la boucle
             # prix-salaires tourne (D-414).
-            self.lit = (*self.signaux, "pib", *(("effet_prix_pib",) if prix else ()))
+            self.lit = (*self.signaux, "pib",
+                        *(("effet_prix_pib", "va_non_marchande") if prix else ()))
             self.ecrit = (*Investissement.ecrit, "ebe_revenu_mixte")
             self.thetas = (INVESTISSEMENT_ROW, ACCELERATEUR_ROW)
             self.remplace = (*Investissement.remplace, "investissement_accelerateur")
@@ -200,7 +203,10 @@ class Investissement:
         pib = etat.par_mesure("pib").get(m, 0.0)
         prix = (etat.par_mesure("effet_prix_pib").get(m, 0.0)
                 if self.prix and etat.present("effet_prix_pib") else 0.0)
-        y = np.zeros(ctx.n) + (pib - prix) / ctx.pib_reference(j)
+        # La valeur ajoutée marchande : sans celle des APU (D-418).
+        nm = (etat.par_mesure("va_non_marchande").get(m, 0.0)
+              if self.prix and etat.present("va_non_marchande") else 0.0)
+        y = np.zeros(ctx.n) + (pib - prix - nm) / ctx.pib_reference(j)
         if j < ctx.k:
             self._passe[(j, m)] = y
         return y

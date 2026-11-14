@@ -103,7 +103,9 @@ et chaque profil est la réponse à un choc permanent (comme le bloc `mesange`).
    que lisent l'emploi (le coût réel), les salaires (l'indexation) et la consommation
    (le revenu réel) ; le déflateur de la consommation des ménages, que la tendance lui
    laisse ; la part prix de ΔX − ΔM (`effet_prix_pib`). Les importations de la
-   consommation se lisent en volume (sa part prix retranchée). Les prix de l'investissement
+   consommation se lisent en volume (sa part prix retranchée). ŷ est l'activité
+   marchande : la valeur ajoutée non marchande des APU (`va_non_marchande`) en est
+   retranchée (D-418). Les prix de l'investissement
    et de la consommation des APU restent ceux du scénario : ces blocs écrivent des volumes.
 
 LES HORIZONS. Mésange imprime T, 1 an, 2 ans, 5 ans et le long terme : h = 1 lit « 1 an »,
@@ -477,7 +479,8 @@ class Commerce:
         self.prix = PRIX
         if boucle_prix is not None:
             self.prix = (*PRIX, "prix_c_menages")
-            self.lit = (*Commerce.lit, "pib", "remunerations", "effet_prix_pib")
+            self.lit = (*Commerce.lit, "pib", "remunerations", "effet_prix_pib",
+                        "va_non_marchande")
             self.ecrit = (*Commerce.ecrit, *BOUCLE)
             self.thetas = (*Commerce.thetas, thetas.PRIX_DIFFUSION.cle)
             self.remplace = (*Commerce.remplace, "prix_production")
@@ -517,6 +520,9 @@ class Commerce:
         y_ref = ctx.pib_reference(j)
         pib = etat.par_mesure("pib")
         prix = etat.par_mesure("effet_prix_pib") if etat.present("effet_prix_pib") else {}
+        # L'activité marchande : sans la valeur ajoutée des APU (D-418).
+        nm = (etat.par_mesure("va_non_marchande") if etat.present("va_non_marchande")
+              else {})
         d1: dict[str, Any] = {}
         for (origine, m), v in etat.de("remunerations").items():
             if origine == "salaires":
@@ -525,7 +531,7 @@ class Commerce:
         out = {}
         for mesure in ctx.mesures:
             m = mesure.identifiant
-            y = zero + (pib.get(m, 0.0) - prix.get(m, 0.0)) / y_ref
+            y = zero + (pib.get(m, 0.0) - prix.get(m, 0.0) - nm.get(m, 0.0)) / y_ref
             out[m] = (zero + d1.get(m, 0.0) / y_ref - s_w * y, y)
         return out
 

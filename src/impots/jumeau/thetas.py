@@ -176,6 +176,20 @@ for _cle in OFFRE_TRAVAIL:
         source=("Bargain, Orsini et Peichl, IZA DP 6735 (2012), annexe F ; "
                 "behavioural/parameters/labour_supply.yaml"), verifiee=True)
 
+#: L'emploi public (D-418) : la part de ΔD1 des APU d'une mesure qui fait des emplois.
+EMPLOI_PUBLIC_PART = "jumeau_emploi_public_part"
+REGISTRE[EMPLOI_PUBLIC_PART] = Ligne(
+    cle=EMPLOI_PUBLIC_PART, bloc="emploi_public",
+    definition=("s dans ΔE_pub = s ΔD1 / W_pub, ΔD1^traitements = (1 − s) ΔD1 : la part "
+                "des rémunérations des APU d'une mesure qui fait des emplois publics, au "
+                "salaire moyen public W_pub, plutôt que des hausses de traitement ; "
+                f"s(θ) = θ ({_PAR_THETA}) ; une mesure qui porte sa part ne lit pas θ"),
+    unite="sans dimension", a_zero="0, tout en traitements (choisie, non vérifiée)",
+    a_demi="½ (Mésange, note 75)", a_un="1, tout en emplois (choisie, non vérifiée)",
+    direction="θ = 1 : l'emploi répond le plus",
+    source=("Mésange (G2017-04), p. 106, note 75, la convention de sa variante de dépense "
+            "publique ; les bornes choisies, non vérifiées"), verifiee=False)
+
 
 def ligne_comportement(cle: str, row: Mapping[str, Any]) -> Ligne:
     """Une ligne du comportement des ménages, telle qu'un rapport la porte."""

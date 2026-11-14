@@ -4,7 +4,10 @@ Le site construit est servi en local ; Chromium (Playwright, celui de la machine
 la page, Pyodide et numpy depuis le CDN, puis on règle des curseurs comme un lecteur :
 un programme dans le mode réduit, le multiplicateur déplacé ; le mode structurel et la
 vue figée, trois θ déplacés ; une loi hypothétique de dépense publique dans le mode
-structurel ; une baisse d'impôt sur le revenu dans le mode réduit. À chaque réglage, chaque
+structurel ; une baisse d'impôt sur le revenu dans le mode réduit. Le mode structurel
+d'un programme porte la convention « parts_premiere_annee » (D-414, D-419) jusqu'en 2035,
+chaque année qu'elle ventile marquée ; sans elle, les années d'après 2026 sont refusées. Le
+calcul tourne dans un Web Worker (D-419). À chaque réglage, chaque
 nombre que la page affiche (sa valeur exacte, `data-v`) doit être celui de
 `trajectoire.calculer` en Python, aux mêmes θ, à 1e-12 près en relatif ; un nombre que la
 page dit absent doit l'être en Python. Puis la page à 390 px de large : aucun défilement
@@ -47,7 +50,14 @@ const { chromium } = require(process.argv[1]);
 const url = process.argv[2], etapes = JSON.parse(process.argv[3]), captures = process.argv[4];
 (async () => {
   const navigateur = await chromium.launch();
-  const page = await navigateur.newPage({ viewport: { width: 1100, height: 900 } });
+  const page = await navigateur.newPage({ viewport: { width: 1100, height: 900 },
+                                           deviceScaleFactor: 1 });
+  // Le fil principal ne doit plus figer pendant un calcul : ses tâches longues, relevées.
+  await page.addInitScript(() => {
+    window.__longues = [];
+    new PerformanceObserver((l) => { for (const e of l.getEntries()) window.__longues.push(e.duration); })
+      .observe({ type: "longtask", buffered: true });
+  });
   const erreurs = [];
   page.on("pageerror", (e) => erreurs.push(e.message));
   page.on("console", (m) => { if (m.type() === "error") erreurs.push(m.text()); });
@@ -65,7 +75,9 @@ const url = process.argv[2], etapes = JSON.parse(process.argv[3]), captures = pr
         const nom = tr.dataset.ligne === "part" ? "part:" + tr.dataset.part : tr.dataset.ligne;
         lignes[nom] = [...tr.querySelectorAll("td")].map((td) => td.dataset.v);
       }
-      series[s.id.slice(2)] = { lignes, absent: !!s.querySelector("[data-absent]") };
+      const marquees = [...s.querySelectorAll("thead th[data-convention]")].map((th) => Number(th.dataset.annee));
+      const cellules = [...s.querySelectorAll("tr[data-ligne] td[data-convention]")].length;
+      series[s.id.slice(2)] = { lignes, absent: !!s.querySelector("[data-absent]"), marquees, cellules };
     }
     const deciles = [...document.querySelectorAll("#deciles tr[data-decile]")].map(
       (tr) => [...tr.querySelectorAll("td")].map((td) => td.dataset.v));
@@ -73,6 +85,8 @@ const url = process.argv[2], etapes = JSON.parse(process.argv[3]), captures = pr
     return { choix: window.jumeau.dernier.choix, series, deciles,
              annee_deciles: annee ? annee.value : null,
              refus: (document.querySelector("[data-refus]") || {}).textContent || null,
+             conventions: window.jumeau.dernier.resultat.conventions,
+             definition: !!document.getElementById("def-convention"),
              erreur: window.jumeau.erreur || null };
   });
   const sorties = [];
@@ -83,6 +97,7 @@ const url = process.argv[2], etapes = JSON.parse(process.argv[3]), captures = pr
       const t = Date.now();
       if (action.choisir) await page.selectOption("#" + action.choisir[0], action.choisir[1]);
       if (action.cocher) await page.check("#" + action.cocher);
+      if (action.decocher) await page.uncheck("#" + action.decocher);
       if (action.remplir) {
         await page.fill("#" + action.remplir[0], String(action.remplir[1]));
         await page.dispatchEvent("#" + action.remplir[0], "change");
@@ -95,7 +110,8 @@ const url = process.argv[2], etapes = JSON.parse(process.argv[3]), captures = pr
       temps.push({ action, mur_ms: Date.now() - t,
                    calcul_ms: await page.evaluate(() => window.jumeau.temps.at(-1)) });
     }
-    sorties.push({ ...(await lire()), temps });
+    const longues = await page.evaluate(() => window.__longues.splice(0));
+    sorties.push({ ...(await lire()), temps, longue_max_ms: Math.max(0, ...longues) });
     await page.screenshot({ path: `${captures}/etape-${sorties.length}.png`, fullPage: true });
   }
   await page.setViewportSize({ width: 390, height: 844 });
@@ -115,6 +131,7 @@ ETAPES = [
     [{"cocher": "mode-structurel"}, {"choisir": ["vue", "figee"]},
      {"theta": ["idees_creations", 0.9]}, {"theta": ["jumeau_emploi_elasticite_cout", 0.2]},
      {"theta": ["survie_creations", 0.3]}],
+    [{"decocher": "convention"}],
     [{"cocher": "entree-hypothese"}, {"choisir": ["h-instrument", "depense_publique"]},
      {"remplir": ["h-montant", 12.5]}, {"choisir": ["h-debut", "2027"]},
      {"choisir": ["h-fin", "2033"]}, {"theta": ["commerce_elasticite_prix_exportations", 0.1]}],
@@ -169,7 +186,8 @@ def _trajectoire(donnees, choix):
         m = Mesure.depuis_rapport(payload, vue=choix["vue"], identifiant=choix["candidat"],
                                   libelle=c["libelle"], auteur=c["auteur"],
                                   rapport=c["rapport"],
-                                  premiere_annee=json.loads(premiere.read_text()))
+                                  premiere_annee=json.loads(premiere.read_text()),
+                                  convention=choix.get("convention"))
         rejeu, persistance = payload["rejeu"], payload["lectures"]["persistence"]
         boucle, creations = rejeu["looped"], bool(rejeu.get("creations"))
     else:
@@ -270,7 +288,9 @@ def test_la_page_affiche_les_nombres_du_jumeau(serveur) -> None:
                           / site_jumeau.DONNEES).read_text(encoding="utf-8"))
     attendus = [
         {"mode": "reduit", "vue": "vieillie", "candidat": ATTAL},
-        {"mode": "structurel", "vue": "figee", "candidat": ATTAL},
+        {"mode": "structurel", "vue": "figee", "candidat": ATTAL,
+         "convention": "parts_premiere_annee"},
+        {"mode": "structurel", "vue": "figee", "candidat": ATTAL, "convention": None},
         {"mode": "structurel", "vue": "figee", "hypothese": {
             "instrument": "depense_publique", "montant": 12.5, "debut": 2027, "fin": 2033}},
         {"mode": "reduit", "vue": "figee", "hypothese": {
@@ -285,11 +305,24 @@ def test_la_page_affiche_les_nombres_du_jumeau(serveur) -> None:
             assert choix.get(cle) == valeur, (cle, choix.get(cle))
         total += _verifier(donnees, sortie)
     assert r["sorties"][0]["choix"]["theta"]["multiplicateur_macro"] == 0.8
-    assert r["sorties"][1]["refus"] and "D-412" in r["sorties"][1]["refus"]
+    # La convention : dix ans, chaque année d'après la première marquée dans chaque série
+    # calculée (l'écart, ses parts, la variante), sa définition affichée ; sans elle, le
+    # refus de D-412.
+    avec, sans = r["sorties"][1], r["sorties"][2]
+    assert avec["refus"] is None and avec["definition"]
+    assert avec["conventions"]["annees"] == list(navigateur.ANNEES[1:])
+    for champ, s in avec["series"].items():
+        if not s["absent"]:
+            assert s["marquees"] == list(navigateur.ANNEES[1:]), champ
+            assert s["cellules"] == 9 * (len(s["lignes"]) - 1), champ
+    assert sans["refus"] and "D-412" in sans["refus"] and not sans["definition"]
+    assert all(not s["marquees"] for s in sans["series"].values())
+    assert r["sorties"][3]["conventions"] is None
     assert r["telephone"]["largeur"] <= r["telephone"]["fenetre"] == 390, r["telephone"]
     print(f"\n{total} nombres égaux, {sum(e == 0 for e in ECARTS)} au bit, écart relatif "
           f"maximal {max(ECARTS):.1e} ; chargement {json.dumps(r['chargement'])}")
     for i, sortie in enumerate(r["sorties"], 1):
-        print(f"étape {i} : " + " ; ".join(f"{t['action']} {t['calcul_ms']:.0f} ms "
+        print(f"étape {i} (tâche longue du fil principal : {sortie['longue_max_ms']:.0f} ms) : "
+              + " ; ".join(f"{t['action']} {t['calcul_ms']:.0f} ms "
                                              f"({t['mur_ms']} ms au mur)"
                                              for t in sortie["temps"]))

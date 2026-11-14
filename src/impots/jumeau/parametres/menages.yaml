@@ -160,3 +160,35 @@ normalisation:
     valeur: 2935.236
     source: "Insee, comptes nationaux base 2020, t. 1.101 (millésime 2025), PIB de 2024,
       Md€ : les montants des cellules (euros de 2024) deviennent des parts du PIB"
+
+emploi_public:
+  # Le bloc `emploi_public` (D-418) : la part de ΔD1 des APU d'une mesure qui fait des
+  # emplois, et la rémunération d'un emploi public.
+  part_emplois:
+    # θ : s dans ΔD1^emplois = s ΔD1, ΔD1^traitements = (1 − s) ΔD1 ; s(θ) = θ.
+    centre: 0.5
+    bas: 0.0
+    haut: 1.0
+    source: "centre : Mésange, p. 106 (folio 105), note 75 : « La hausse des rémunérations
+      est réalisée à 50 % sur l'emploi public et à 50 % sur le salaire par tête », la
+      convention de sa variante de dépense publique ; bornes choisies, non vérifiées :
+      tout en traitements (θ = 0, un point d'indice) et tout en emplois (θ = 1, des
+      créations de postes au salaire moyen). Une mesure qui porte sa part
+      (`Mesure.part_emplois_publics`) ne lit pas θ"
+  remuneration_relative:
+    # W_pub / W, la rémunération (D1) d'un emploi public sur la rémunération moyenne du
+    # jumeau (D1 de la t. 1.105 sur l'emploi salarié de la t. 6.210), en 2024.
+    valeur: 0.94737
+    calcul: "W_pub = (D11 des branches OZ, PZ, QA, QB / leur emploi salarié) × (D1 / D11
+      des APU) = (92,938 + 75,165 + 71,797 + 55,156) Md€ / (2 535,1 + 1 931,6 + 1 697,9 +
+      2 147,7) milliers × 363,038 / 245,586 = 35 496,3 € × 1,478252 = 52 472,5 € ; W =
+      1 505,528 Md€ / 27 181,7 milliers = 55 387,6 € ; W_pub / W = 0,94737"
+    source: "Insee, comptes nationaux base 2020 (millésime 2025), 2024 : t. 6.205 (salaires
+      et traitements bruts par branche, D11) et t. 6.210 (emploi intérieur salarié par
+      branche), les quatre branches que `part_marchande_salaries` prend pour le
+      non-marchand ; t. 7.301 (compte des APU, S13) pour D1 (363,038 Md€, celui de la
+      t. 3.201) et D11 (245,586 Md€), cotisations imputées (D122) comprises, comme le D1
+      des APU que le jumeau porte ; t. 1.105 (D1) et t. 6.210 (_T) pour W. Les quatre
+      branches comptent aussi des salariés privés (cliniques, enseignement privé,
+      associations) : leur D11 par tête, celui de l'administration publique seule (OZ,
+      36 660,5 €) en diffère de 3 %"

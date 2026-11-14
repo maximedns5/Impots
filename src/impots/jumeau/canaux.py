@@ -159,6 +159,16 @@ CANAUX.update({
 DE_MESANGE.update({"investissement_accelerateur", "prix_production",
                    "recettes_induites_profits"})
 
+# --------------------------------------------------------------------- emploi public (D-418)
+CANAUX.update({
+    "emploi_public": (
+        "les emplois publics que font les rémunérations des APU d'une mesure, leur revenu "
+        "aux ménages et leurs prélèvements : la variante de dépense publique de Mésange, "
+        "la moitié de ses rémunérations en emplois (p. 106, note 75), ou le bloc "
+        "`emploi_public`"),
+})
+DE_MESANGE.add("emploi_public")
+
 
 def declares(bloc: Any) -> tuple[tuple[str, str], ...]:
     """Les paires (canal, instrument) qu'un bloc porte : les siennes et celles de Mésange
