@@ -1991,6 +1991,74 @@
       "licence": "Licence Ouverte / Etalab",
       "description": "INSEE, « Les comptes de la Nation en 2025 » (base 2020), tableau 1.105 « Produit intérieur brut : les trois approches à prix courants », 1949→2025, milliards d'euros : l'approche revenus (D1, B2A3G, D2, D3). L'identité des revenus de l'état initial du jumeau (but 23, lot 1, D-405).",
       "quarantined": false
+    },
+    "insee_cn2025_t3105_passage_deficit_dette.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988843/t_3105_fr.xlsx",
+      "sha256": "964ccff6ff8ca50d00b8031b337bfcf94fa7e92056946d73e3a1594d36745234",
+      "bytes": 26429,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE, comptes nationaux annuels base 2020, tableau 3.105 « Passage du déficit des administrations publiques (S13) à la variation de leur dette au sens de Maastricht », millésime 2025 (page « Dette et déficit publics au sens de Maastricht en 2025 »), 2009→2025, milliards d'euros au dixième : déficit D, acquisitions nettes d'actifs (1), passifs hors dette (2), changements de volume (3), comptes à recevoir/à payer (4), écart B9nf − B9f (5), variation de la dette. L'ajustement flux-stocks de l'état publié du jumeau de 2010 à 2020, même millésime que la t. 3.201 et la dette de l'Insee (but 23, lot 5, D-410).",
+      "quarantined": false
+    },
+    "insee_cn2025_t6208_emploi_total_branches.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988823/T_6208_fr.xlsx",
+      "sha256": "5c7c2415a861b2de2cec8c90aed55cc5f2b4fa7a5c5a0ee4ad68c34c31ae1723",
+      "bytes": 53342,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE, comptes nationaux annuels base 2020, tableau 6.208 « Emploi intérieur total par branche en nombre de personnes (38 postes) », millésime 2025, 1949→2025, milliers de personnes ; ligne « _T » total des branches. Série de l'emploi du jumeau (but 23, lot 5, D-410). Supersède pour cet usage insee_cn2024_t6208_emploi_par_branche_a38.xlsx (millésime 2024).",
+      "quarantined": false
+    },
+    "insee_bdm_creations_entreprises_2009_2025.xml": {
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/010755537+010755410+011811817+011811818?startPeriod=2009-01&endPeriod=2025-12",
+      "sha256": "fd030f854043f4ee9e4f97d19e19e36407692e22ea9e459aa9568aa4f90327ac",
+      "bytes": 75505,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE, Banque de données macroéconomiques, flux CREATIONS-ENTREPRISES-METHODE-2022, nombre mensuel brut de créations d'entreprises, France, 2009-01→2025-12 (SDMX) : ensemble (010755537), micro-entrepreneurs (010755410), entrepreneurs individuels hors micro (011811817), entreprises classiques (011811818). L'année est la somme des douze mois bruts. But 23, lot 5, D-410.",
+      "quarantined": false,
+      "provenance": "API SDMX de la BDM, requête par idbank bornée en dates. La BDM republie chaque mois les séries (révisions des derniers mois) : la somme de contrôle est celle du 14 novembre 2026."
+    },
+    "insee_bdm_defaillances_entreprises_2009_2025.xml": {
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/001656093+001656094+001656095+001656096+001656097+001656098+001656099+001656100+001656101+001656102+001656103+001656104?startPeriod=2009-12&endPeriod=2025-12",
+      "sha256": "5793359f3618befb14350264dddb5c11641c9b44bfbf3fe0becca73cffed5f5b",
+      "bytes": 238262,
+      "downloaded": "2026-11-14",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE, Banque de données macroéconomiques, flux DEFAILLANCES-ENTREPRISES (source Banque de France, fichier FIBEN), nombre de défaillances d'entreprises par date de jugement, cumul brut glissant sur 12 mois, France, 2009-12→2025-12 (SDMX) : tous secteurs (001656101) et les onze secteurs. L'année est la valeur de décembre. But 23, lot 5, D-410.",
+      "quarantined": false,
+      "provenance": "API SDMX de la BDM, requête par idbank bornée en dates ; la somme de contrôle est celle du 14 novembre 2026."
+    },
+    "eurostat_une_rt_a_fr_2009_2025.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_a?format=JSON&geo=FR&age=Y15-74&unit=PC_ACT&unit=THS_PER&sex=T&sex=M&sex=F&sinceTimePeriod=2009&untilTimePeriod=2025",
+      "sha256": "b3f81ffbfe660faffae2d43cde3f7b69a31d21c672bba0d4b2c9af283d850df4",
+      "bytes": 4990,
+      "downloaded": "2026-11-14",
+      "licence": "Eurostat — réutilisation autorisée avec mention de la source",
+      "description": "Eurostat une_rt_a « Unemployment by sex and age – annual data », France, 15-74 ans, taux (% de la population active) et milliers de chômeurs, ensemble, hommes et femmes, 2009→2025 (enquête sur les forces de travail, sens BIT). Champ 'updated' = 2026-11-06. But 23, lot 5, D-410.",
+      "quarantined": false,
+      "provenance": "API de diffusion Eurostat, URL de requête stable ; le champ 'updated' porte la date de publication."
+    },
+    "eurostat_irt_lt_mcby_a_fr_2009_2025.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/irt_lt_mcby_a?format=JSON&geo=FR&sinceTimePeriod=2009&untilTimePeriod=2025",
+      "sha256": "f1615eb91b437fe2be7e81c11a79daeee6e2bb2eca8dce9bf8e2aa94b02c6465",
+      "bytes": 3045,
+      "downloaded": "2026-11-14",
+      "licence": "Eurostat — réutilisation autorisée avec mention de la source",
+      "description": "Eurostat irt_lt_mcby_a « EMU convergence criterion series – annual data », France : rendement des obligations d'État à dix ans (OAT 10 ans, critère de Maastricht), moyenne annuelle en %, 2009→2025. Champ 'updated' = 2026-02-25. But 23, lot 5, D-410.",
+      "quarantined": false,
+      "provenance": "API de diffusion Eurostat, URL de requête stable."
+    },
+    "eurostat_irt_lt_mcby_m_fr_2009_2025.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/irt_lt_mcby_m?format=JSON&geo=FR&sinceTimePeriod=2009-01&untilTimePeriod=2025-12",
+      "sha256": "d6b316a858d4f64a5ec771a64aecea8114b5a3e5644a0f5761210329f82f93b0",
+      "bytes": 12039,
+      "downloaded": "2026-11-14",
+      "licence": "Eurostat — réutilisation autorisée avec mention de la source",
+      "description": "Eurostat irt_lt_mcby_m, la même série mensuelle, France, 2009-01→2025-12, en % : recoupe la moyenne annuelle. Champ 'updated' = 2026-11-12. But 23, lot 5, D-410.",
+      "quarantined": false,
+      "provenance": "API de diffusion Eurostat, URL de requête stable."
     }
   }
 }

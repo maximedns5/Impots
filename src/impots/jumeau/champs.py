@@ -22,10 +22,13 @@ LES GROUPES, et ce qu'ils somment (les identités sont dans `identites`) :
   à ligne, hors intérêts : les intérêts nets (D41 versés moins reçus) sont un champ à
   part, que le cadre calcule en projection. B9 = recettes − dépenses − intérêts nets.
 * ``dette`` — Maastricht, fin d'année. ``sfa`` est l'ajustement flux-stocks d'Eurostat
-  (F_ASS + ORADJ + YA3, D-405) ; ``ecart_millesime_dette`` l'écart entre les deux
-  publications qui portent l'identité (la variation du stock de l'Insee et GD_CH
-  d'Eurostat, B9 de l'Insee et B9_T3 d'Eurostat) ; ``ecart_eurostat`` l'écart interne de
-  la table d'Eurostat (GD_CH − B9_T3 moins l'ajustement), de l'ordre du dixième de million.
+  (F_ASS + ORADJ + YA3, D-405) de 2021 à 2025, et celui de l'Insee avant (la somme des
+  groupes (1) à (5) de la t. 3.105, D-410) ; ``ecart_millesime_dette`` l'écart entre les
+  deux publications qui portent l'identité (la variation du stock de l'Insee et celle de
+  la table de passage, B9 de l'Insee et le déficit de la table) ; ``ecart_eurostat``
+  l'écart interne de la table de passage (sa variation moins son déficit moins son
+  ajustement), de l'ordre du dixième de million chez Eurostat, nul à la t. 3.105. Le nom
+  est resté celui du lot 1.
 
 Les champs des lots 2 à 4 (travail, entreprises, reste du monde) sont au registre et
 restent absents tant que leur lot ne les écrit pas.
@@ -42,6 +45,7 @@ T1105 = "Insee, comptes nationaux annuels base 2020, t. 1.105 (millésime 2025)"
 T3201 = "Insee, comptes nationaux annuels base 2020, t. 3.201 (millésime 2025)"
 DETTE = "Insee, dette trimestrielle de Maastricht des APU, détail (fin d'année)"
 EUROSTAT = "Eurostat, gov_10dd_edpt3 (notification EDP, France)"
+T3105 = "Insee, comptes nationaux annuels base 2020, t. 3.105 (millésime 2025)"
 PROJECTION = "nul en projection, par convention : un écart de publication ne se projette pas"
 
 
@@ -225,13 +229,16 @@ _ajouter(
           "GD", f"{DETTE} ; le cadre (projection)", 1, "dette", ferme=True),
     Champ("dette", "Dette de Maastricht en fin d'année", MDE, "GD",
           f"{DETTE} ; le cadre (projection)", 1, "dette", ferme=True),
-    Champ("sfa", "Ajustement flux-stocks", MDE, "F_ASS + ORADJ + YA3",
-          f"{EUROSTAT}, 2021 à 2025 ; nul en projection, par convention", 1, "dette"),
-    Champ("ecart_millesime_dette", "Écart entre l'Insee et Eurostat sur ΔD et B9", MDE,
-          "ΔGD − GD_CH + B9 + B9_T3", f"{DETTE}, {T3201} et {EUROSTAT} ; {PROJECTION}", 1,
+    Champ("sfa", "Ajustement flux-stocks", MDE, "F_ASS + ORADJ + YA3 ; (1) à (5)",
+          f"{EUROSTAT}, 2021 à 2025 ; {T3105}, 2010 à 2020 (D-410) ; nul en projection, "
+          "par convention", 1, "dette"),
+    Champ("ecart_millesime_dette", "Écart entre la dette de l'Insee et la table de "
+          "passage sur ΔD et B9", MDE, "ΔGD − GD_CH + B9 + B9_T3",
+          f"{DETTE}, {T3201} et la table de passage de l'année ; {PROJECTION}", 1,
           "dette"),
-    Champ("ecart_eurostat", "GD_CH − B9_T3 moins l'ajustement d'Eurostat", MDE, "",
-          f"{EUROSTAT}, l'écart interne de ses postes publiés ; {PROJECTION}", 1, "dette"),
+    Champ("ecart_eurostat", "Écart interne de la table de passage (variation moins "
+          "déficit moins ajustement)", MDE, "",
+          f"{EUROSTAT} (2021 à 2025), {T3105} (2010 à 2020) ; {PROJECTION}", 1, "dette"),
     Champ("ratio_dette", "Dette sur PIB", "ratio", "", "le cadre", 1, "ratios",
           additif=False, ferme=True),
     Champ("taux_implicite", "Intérêts nets sur la dette d'ouverture", "ratio", "",
@@ -250,6 +257,42 @@ _ajouter(Champ("prelevements_entreprises", "Variation des prélèvements sur les
                "entreprises et le capital", MDE, "", "le choc statique des mesures, les "
                "instruments de `predictif.creations` (recettes positives)", 1,
                "signaux"))
+
+# --------------------------------------------------------------------- lot 5 : les impôts
+T3217 = "Insee, comptes nationaux annuels base 2020, t. 3.217 (millésime 2025)"
+#: Les principaux impôts de la t. 3.217, en sous-champs de l'histoire (lot 5, D-410) :
+#: (nom, libellé exact de la ligne). Ils ne somment pas aux catégories du compte des APU,
+#: la table n'imprimant que les principaux ; ils ne sont dans aucune identité, et un impôt
+#: qui n'existe pas une année (case vide) y est absent. En projection, ils restent absents
+#: tant qu'aucun bloc ne les écrit.
+IMPOTS_3217: tuple[tuple[str, str], ...] = (
+    ("tva", "Taxe sur la valeur ajoutée (TVA) (D211)"),
+    ("ticpe", "Accises sur les produits énergétiques (TICPE)"),
+    ("tabacs", "Accises sur les tabacs"),
+    ("droits_enregistrement",
+     "Droits d'enregistrement (sur transactions immobilières et autres)"),
+    ("taxe_salaires", "Taxe sur les salaires"),
+    ("taxe_fonciere", "Taxe foncière"),
+    ("cfe", "Cotisation foncière des entreprises"),
+    ("cvae", "Cotisation sur la valeur ajoutée des entreprises"),
+    ("taxe_professionnelle", "Taxe professionnelle (TP)"),
+    ("c3s", "Contribution sociale de solidarité des sociétés"),
+    ("csg", "Contribution sociale généralisée (CSG) (**)"),
+    ("crds", "Contribution au remboursement de la dette sociale (CRDS) (**)"),
+    ("ir", "Impôt sur le revenu des personnes physiques (IRPP), avant crédits d'impôt"),
+    ("is", "Impôt sur les sociétés (IS), avant crédits d'impôt"),
+    ("credits_is_imputes", "Crédits d'impôt sur l'IS : utilisés en déduction de l'impôt dû"),
+    ("credits_is_restitues",
+     "Crédits d'impôt sur l'IS : au-delà de l'impôt dû, payés par l'administration"),
+    ("taxe_habitation", "Taxe d'habitation"),
+    ("isf_ifi", "Impôt sur la fortune (IFI, ex ISF)"),
+    ("audiovisuel", "Contribution à l'audiovisuel public"),
+    ("dmtg", "Droits de mutation à titre gratuit"),
+    ("cotisations_effectives", "Cotisations sociales effectives"),
+    ("prelevements_obligatoires", "Prélèvements obligatoires = (I)+(II)+(III)+(IV)"),
+)
+for _nom, _lib in IMPOTS_3217:
+    _ajouter(Champ(f"impot_{_nom}", _lib, MDE, "", f"{T3217} (histoire)", 5, "impots"))
 
 # --------------------------------------------------------------------- lots 2 à 4
 for _nom, _lib, _unite, _lot in (

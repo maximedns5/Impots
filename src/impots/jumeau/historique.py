@@ -6,7 +6,10 @@ Lu dans les tables manifestées, chaque fichier ouvert une fois par processus :
 * Insee t. 3.201 (le compte consolidé des APU, ligne à ligne, et ses totaux) ;
 * la dette de Maastricht de fin d'année de l'Insee (`dette.comptes.debt`, unités
   vérifiées par `check_units`) ;
-* l'ajustement flux-stocks d'Eurostat (gov_10dd_edpt3), quand l'année y est publiée.
+* l'ajustement flux-stocks d'Eurostat (gov_10dd_edpt3) de 2021 à 2025, et celui de
+  l'Insee (t. 3.105, le passage du déficit à la dette) de 2010 à 2020 (lot 5, D-410) ;
+* les indices de prix (t. 1.103) et le volume chaîné du PIB (t. 1.102), et les
+  principaux impôts (t. 3.217), par `jumeau.series` (lot 5, D-410).
 
 CE QUE LES COMPTES PUBLIÉS NE BOUCLENT PAS, ET CE QUE LE CADRE EN FAIT (D-405). Chaque
 écart est un champ nommé, LU dans les publications, jamais un résidu silencieux :
@@ -26,10 +29,22 @@ CE QUE LES COMPTES PUBLIÉS NE BOUCLENT PAS, ET CE QUE LE CADRE EN FAIT (D-405).
   ``ecart_millesime_dette`` est l'écart entre l'Insee et Eurostat sur la
   variation du stock et sur B9 (0,35 Md€ en 2025, où le stock de l'Insee est plus récent).
 
-Ce qui manque reste absent : Eurostat ne publie l'ajustement que de 2021 à 2025 dans le
-fichier manifesté, et l'identité de la dette refuse, en nommant « sfa », de 2010 à 2020 ;
-le lot 5 apporte la série. Les déflateurs (t. 1.103) et le chaînage du volume sur
-l'histoire sont aussi au lot 5.
+L'AJUSTEMENT D'AVANT 2021 (D-410). Eurostat ne publie la table de passage de la France
+que de 2021 à 2025 ; l'Insee publie la sienne, la t. 3.105, de 2009 à 2025, au même
+millésime que la t. 3.201 et que la dette. De 2010 à 2020, ``sfa`` est la somme de ses
+cinq groupes imprimés, (1) à (5) ; ``ecart_eurostat`` (le nom du lot 1) y est l'écart
+interne de la table, sa variation moins son déficit moins l'ajustement (nul : la table
+somme exactement) ; ``ecart_millesime_dette`` est la variation du stock de l'Insee moins
+celle de la table, plus B9 et le déficit de la table : quelques centièmes de milliard,
+l'arrondi au dixième, sauf 2014 (−0,63 Md€, où la table et le stock divergent).
+De 2021 à 2025, la table d'Eurostat est gardée, imprimée au dixième de million ; la
+t. 3.105 la recoupe à l'arrondi près (`series.recoupements`).
+
+LES PRIX ET LE VOLUME (D-410). ``prix_<emploi>`` est l'indice de la t. 1.103 de l'année
+sur celui de l'année d'avant ; la variation des stocks n'a pas d'indice publié, et son
+prix est absent, comme celui de l'effet non ventilé, nul sur l'histoire. La croissance
+du PIB en volume est celle que publie la t. 1.102, pas celle que le cadre chaînerait :
+sans prix des stocks, la formule du cadre ne se calcule pas sur l'histoire.
 """
 
 from __future__ import annotations
@@ -39,7 +54,7 @@ import json
 from typing import Any
 
 from impots.dette import comptes
-from impots.jumeau.champs import APU_DEPENSES, APU_RECETTES, EMPLOIS_PUBLIES
+from impots.jumeau.champs import APU_DEPENSES, APU_RECETTES, EMPLOIS_PUBLIES, IMPOTS_3217
 from impots.jumeau.etat import Etat
 
 PREMIERE, DERNIERE = 2010, 2025
@@ -235,10 +250,35 @@ def etat_initial(annee: int) -> Etat:
     eurostat = _eurostat().get(annee)
     if eurostat is not None:
         sfa = eurostat["F_ASS"] + eurostat["ORADJ"] + eurostat["YA3"]
-        ecrire("sfa", sfa)
-        ecrire("ecart_eurostat", eurostat["GD_CH"] - eurostat["B9_T3"] - sfa)
-        ecrire("ecart_millesime_dette", (stocks[annee] - stocks[annee - 1])
-               - eurostat["GD_CH"] + (apu["b9"] + eurostat["B9_T3"]))
+        variation, deficit = eurostat["GD_CH"], eurostat["B9_T3"]
+    else:
+        from impots.jumeau import series
+
+        sfa = series.lire("sfa_insee")[annee]
+        variation = series.lire("variation_dette")[annee]
+        deficit = series.lire("deficit_maastricht")[annee]
+    ecrire("sfa", sfa)
+    ecrire("ecart_eurostat", variation - deficit - sfa)
+    ecrire("ecart_millesime_dette", (stocks[annee] - stocks[annee - 1])
+           - variation + (apu["b9"] + deficit))
     etat.fixer("ratio_dette", etat["dette"] / etat["pib"])
     etat.fixer("taux_implicite", etat["interets_nets"] / etat["dette_ouverture"])
+    _prix_et_impots(etat, annee)
     return etat
+
+
+def _prix_et_impots(etat: Etat, annee: int) -> None:
+    """Les prix des emplois, le volume du PIB et les principaux impôts de l'année (D-410)."""
+    from impots.jumeau import series
+
+    for nom, _, _, _ in EMPLOIS_PUBLIES:
+        if nom == "var_stocks":
+            continue                       # aucun indice publié : le prix est absent
+        indice = series.lire(f"indice_prix_{nom}")
+        etat.fixer(f"prix_{nom}", indice[annee] / indice[annee - 1])
+    volume = series.lire("volume_pib")
+    etat.fixer("croissance_volume_pib", volume[annee] / volume[annee - 1] - 1.0)
+    for nom, _ in IMPOTS_3217:
+        valeurs = series.lire(f"impot_{nom}")
+        if annee in valeurs:
+            etat.ecrire(f"impot_{nom}", PUBLIE, valeurs[annee])
