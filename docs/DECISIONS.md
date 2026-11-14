@@ -30171,3 +30171,251 @@ tests scripts` propre. Ni `make impact` ni les tests lourds ici.
   à partir de la requête est à écrire et à sourcer.
 * Les champs restés absents (créations et fermetures de sociétés, FBCF des seules SNF,
   demande mondiale, prix relatifs, solde courant) attendent leurs séries, au lot 6.
+
+## D-414 — Le mode structurel complété : accélérateur, prix-salaires, IS induit, dix ans
+
+**Ce qui est codé** (branche `claude/but23-structure`, partie de `claude/but23-cadre`,
+178265c). Les trois manques que le tableau de D-411 met à côté de Mésange, chacun dans le
+bloc qui en a la charge, ses équations et leurs sources dans sa docstring, ses valeurs
+dans le YAML de son lot ; puis la ventilation sur dix ans, par une convention nommée.
+Trois canaux s'ajoutent au registre et à `DE_MESANGE` (les multiplicateurs de Mésange les
+portent en mode réduit) : « investissement_accelerateur », « prix_production »,
+« recettes_induites_profits ». Chacun est porté une fois en mode structurel, pour tout
+instrument, et refusé à côté de `mesange` (`DoubleCompte`). Le pas, les identités et
+l'état ne changent pas ; le mode réduit non plus.
+
+**1. L'accélérateur** (`investissement`, `accelerateur=True`). L'équation estimée de
+Mésange (G2017-04, p. 44), dont le lot 2 avait gardé la partie coût du capital, avec la
+valeur ajoutée qui bouge : Δie_q = 0,22 Δie_{q−2} + β₀ Δva_q + β₁ Δva_{q−1} − 0,06 (ie −
+va + ε_K ck)_{q−1}. Linéaire : la réponse à un échelon de va est β₀ R₀ + β₁ R₁ + R_ec, la
+correction d'erreur tendant vers un (l'indexation unitaire de long terme) ; la moyenne
+annuelle redonne la ligne « Valeur ajoutée (+1 %) » de la p. 45, 1,795, 2,011 et 1,381 à
+1, 2 et 5 ans contre 1,79, 2,00 et 1,36. va est lue comme l'écart du PIB en volume de la
+mesure (une approximation de la valeur ajoutée marchande, dite). ΔI^a est une demande :
+FBCF des SNF et EBE ; il n'entre pas au capital du PIB potentiel, que la production suit
+la demande à court terme. Le bloc lit le PIB de l'année : il entre dans la boucle
+simultanée, qui devient investissement, consommation, emploi, salaires, commerce. θ
+`investissement_accelerateur` : β₀ = 0,852, 1,19, 1,528 et β₁ = 0,354, 0,65, 0,946, à
+∓ 1,96 écart type de chaque coefficient (t = 6,9 et 4,3, même page) ; Mésange ne publie
+pas leur covariance, et θ les déplace ensemble (choisi, dit).
+
+**2. La boucle prix-salaires** (`commerce`, `boucle_prix=π` ; `consommation`, `emploi`,
+`salaires`, `prix=True`). Pour chaque mesure, années j ≤ k, Y_j le PIB de référence :
+
+* l'activité en volume, ŷ_j = (ΔPIB_j − ΔPIB^prix_j) / Y_j, que lisent désormais
+  l'emploi, les salaires, l'investissement et le commerce ; le nouveau champ
+  `effet_prix_pib` est la part prix du PIB nominal (consommation et échanges) ;
+* le coût salarial unitaire en part du PIB, csu_j = (ΔD1^sal_j − s_W Y_j ŷ_j) / Y_j, la
+  masse salariale marchande du bloc `salaires`, s_W = π D1/PIB du départ ; c'est le csu de
+  Mésange, la masse super-brute sur la valeur ajoutée en volume (p. 70) ;
+* le prix de valeur ajoutée, le « price setting » de Mésange (p. 22, pva = α (w − e) +
+  (1 − α) ck) : ln p^VA_k = (α / s_W) Σ Δ(csu − τ) π_θ(h) + Σ Δŷ D(h), α = 0,543 la part
+  des salaires dans la valeur ajoutée des quatre branches marchandes (p. 70 et 71,
+  pondérées par leur valeur ajoutée de 2015, p. 69 note 55), τ le choc de coût des
+  cotisations et des impôts sur la production du lot 3, D(h) la ligne « Demande (+1 %) »
+  des prix de production (p. 72 : les tensions, nulles à long terme) ;
+* les prix de production, par le TES comme au lot 3, plus les intrants importés : ln p^D_k
+  = κ_D Σ Δ(csu − τ) π_θ(h) + Σ Δŷ D(h) + κ^M_D P^M_k, de même p^X avec κ_X et κ^M_X ; les
+  prix d'importation suivent les prix français (ρ_M, p. 91) et renchérissent les intrants,
+  κ^M = 0,1579 et 0,2983 (Δp = m L sur le TES A38 2023SD, recalculé par le test du lot 3),
+  résolu année par année ;
+* le prix de la consommation, l'équation (PC) de Mésange (p. 24) : p̂c = (1 − μ_C) p^D +
+  μ_C P^M, μ_C = 0,2483, sans les taxes : une TVA de la mesure reste un revenu rendu aux
+  ménages, comme avant, la compter dans les prix la compterait deux fois ; le commerce
+  écrit le déflateur de la consommation des ménages, que la tendance lui laisse ;
+* le retour des prix : les salaires s'indexent sur p^VA par la ligne « Prix (+1 % sur
+  les prix de VA et l'IPC) » de la p. 65 (0,59, 1,08, 1,05, 1,00 pour les qualifiés,
+  0,70, 1,11, 1,02, 1,00 pour les autres, pondérés 0,69 / 0,31 ; unitaire à long terme,
+  p. 64) ; l'emploi lit le coût réel, ŵ + τ̂ − p̂^VA (p. 22) ; la consommation lit le
+  revenu réel, ΔRD + p̂c P − p̂c RD, les prestations hors chômage P indexées sur le prix de
+  la consommation (p. 100), leur surcroît en dépense des APU (D62), et s'écrit en valeur,
+  ΔC^vol + p̂c C ; la compétitivité, par p^X et p^D dans les équations du lot 3 ;
+* θ `commerce_prix_diffusion` : π_θ, la diffusion d'un coût dans les prix, π(h/2) à
+  θ = 0 (mi-vitesse), le profil « Salaires » de Mésange (p. 72) à θ½, 1 à θ = 1
+  (immédiate, le modèle de prix du TES) ; les deux bornes sont choisies, non vérifiées.
+  Il ne joue qu'en mode structurel : le lot 3 seul garde son profil et ses nombres.
+
+Restent aux prix du scénario, dit : l'investissement et la consommation des APU (leurs
+blocs écrivent des volumes) ; les allocations chômage par chômeur, que Mésange indexe sur
+le salaire moyen (un écart de second ordre). Le coût du capital ne bouge pas avec les prix
+(pinv et pva bougent ensemble, ck − pva ne change pas).
+
+**3. Les recettes induites** (`recettes_induites`, après la boucle). Vérifié d'abord ce
+qui est porté, pour ne rien compter deux fois : la TVA et les accises sur la consommation
+induite, par `consommation`, au taux moyen des cellules, 11,30 % (le taux apparent de la
+t. 3.217 de 2024, TVA et accises sur l'énergie, les tabacs et les alcools, 265,296 Md€ sur
+la consommation des ménages de la t. 1.101, est 17,37 % : une borne haute, la TVA portant
+aussi sur l'investissement des ménages et des achats des APU) ; les cotisations, la CSG,
+la CRDS et l'IR sur la masse salariale induite, par `salaires`, qui la répartit entre les
+ménages et les APU aux taux des cellules, 35,10 % en D61 et 11,95 % en D5 du super-brut
+(le taux apparent des cotisations effectives et de la CSG de 2024 sur D1, 38,89 %, est
+une borne haute : la CSG porte aussi sur les pensions et le capital). Ces deux-là ne sont
+pas reprises : le taux des cellules tient la répartition entre ménages et APU. Le PIB
+potentiel de l'investissement, de l'implantation et de la démographie porte déjà ρ ΔY.
+Ne manquait que l'IS sur les profits induits : ΔIS = τ_IS Π, τ_IS = 6,668 %, l'IS avant
+crédits et la contribution sociale sur les bénéfices de 2024 (t. 3.217, 67,955 + 1,166
+Md€) sur l'EBE et le revenu mixte de 2024 (t. 1.105, 1 036,606 Md€) ; Π, le profit
+marchand induit : l'EBE qu'écrivent la consommation, l'investissement (l'accélérateur)
+et les salaires (en moins), et les revenus non ventilés du commerce et de la demande
+publique. Une base large (le revenu mixte y est), un IS payé l'année même : dits, sans θ.
+
+**4. La ventilation sur dix ans : la convention « parts_premiere_annee »** (décision du
+responsable : une convention nommée, pas une passe nouvelle ; `Mesure.depuis_rapport(...,
+convention="parts_premiere_annee")`, `mesures.etendre`). Chaque année t > 1 du chemin,
+dans sa vue, le total du rapport est ventilé aux parts de la première année figée :
+P_{i,t} = (P_{i,1} / P_1) P_t pour les cinq impôts du canal, P_t la somme des prélèvements
+du chemin ; G_{d,t} = (G_{d,1} / C^m_1) C^m_t pour les déciles, C^m_t le coût des ménages,
+le coût du chemin moins celui des entreprises (−P_t) quand la première année a leur passe,
+le coût du chemin sinon (il porte aussi ce que la passe des entreprises coûte hors des
+cinq impôts : 59 € en 2026 pour Attal). Chaque année et chaque axe qu'elle touche sont
+nommés dans `Mesure.conventions` ; `non_portes` ne dit plus « annees ». Elle est refusée là
+où les parts n'existent pas, et l'absence reste, dite : une réforme du Smic (les ménages),
+des cotisations non ventilées (Retailleau : les entreprises, et les ménages, dont le coût
+ne se sépare plus de celui des entreprises), la vue vieillie, un total de première année
+nul. Sans la convention, rien ne change (le test de D-412 refuse toujours 2027 à 2035). Le
+programme d'Attal tourne sur dix ans dans le modèle structurel complet, identités à 4e-16
+du PIB au plus, Δb décomposé sans reste ; Retailleau et le Smic de Mélenchon gardent leurs
+absences.
+
+**Le cadre touché, au plus juste.** `champs.py`, section du lot 3 : `ecart_prix_valeur_
+ajoutee`, `ecart_prix_consommation`, `effet_prix_pib` ; `canaux.py`, une section ;
+`thetas.py`, la ligne de diffusion (celle de l'accélérateur dans la section du lot 2) ;
+`blocs.ordre_structurel`, l'investissement dans la boucle et les recettes induites après
+elle ; `Mesure.conventions` ; `dependances.MODULES_LOCAUX`, l'aide de test
+`test_jumeau_structurel`. Deux tests existants suivent les mécanismes, sans masquer : le
+sens des variantes de `test_jumeau_structurel` se lit sur le PIB en volume (une baisse des
+cotisations baisse les prix, et à θ = 0 son PIB nominal de 2035 est de −6,3 Md€ pour un
+volume en hausse) ; le compteur du point fixe y cherche le commerce par son nom, les
+recettes induites le suivant. Le test du TES du lot 3 relit aussi κ^M.
+
+**À côté de Mésange, refait** (`scripts/jumeau_comparaison_mesange.py`, mêmes variantes,
+même départ, même scénario, θ½, 1, 2, 5 et 10 ans). Une comparaison de cohérence, pas un
+juge : rien n'est préenregistré, aucun paramètre n'est réglé dessus. Avant (D-411) /
+après / Mésange :
+
+PIB en volume, en % :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 0,26/0,30/0,41 | 0,50/0,57/0,83 | 0,62/0,66/0,81 | 0,67/0,64/0,87 |
+| cotisations | 0,08/0,14/0,20 | 0,20/0,34/0,55 | 0,44/0,66/0,97 | 0,75/1,04/1,29 |
+| TVA | 0,27/0,31/0,32 | 0,51/0,58/0,66 | 0,64/0,67/0,81 | 0,68/0,66/0,78 |
+| inv. public | 0,64/0,73/1,31 | 0,70/0,81/1,38 | 0,78/0,80/0,93 | 0,81/0,77/0,57 |
+| dép. publique | 0,59/0,67/0,78 | 0,73/0,84/1,06 | 0,82/0,85/0,86 | 0,86/0,82/0,53 |
+
+Emploi salarié marchand, en milliers :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 16/19/24 | 48/57/109 | 72/82/184 | 70/72/181 |
+| cotisations | 72/66/83 | 162/153/210 | 212/219/316 | 227/232/318 |
+| TVA | 17/19/32 | 50/58/118 | 75/84/113 | 72/74/69 |
+| inv. public | 40/47/92 | 87/103/198 | 90/100/91 | 85/87/45 |
+| dép. publique | 37/43/33 | 85/100/94 | 96/107/44 | 90/92/−8 |
+
+Dégradation du solde primaire des APU, en points de PIB (le solde baisse d'autant) :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 0,91/0,89/0,81 | 0,80/0,76/0,50 | 0,72/0,66/0,51 | 0,71/0,67/0,50 |
+| cotisations | 0,88/0,91/0,72 | 0,73/0,81/0,42 | 0,54/0,63/0,24 | 0,36/0,45/0,17 |
+| TVA | 0,91/0,89/0,80 | 0,79/0,75/0,36 | 0,71/0,65/0,37 | 0,70/0,66/0,44 |
+| inv. public | 0,88/0,82/0,49 | 0,78/0,71/0,26 | 0,74/0,67/0,70 | 0,75/0,70/0,82 |
+| dép. publique | 0,87/0,84/0,53 | 0,75/0,70/0,32 | 0,69/0,63/0,54 | 0,70/0,66/0,68 |
+
+Investissement des entreprises, en % (la ligne est neuve ; avant, zéro partout : aucune
+de ces variantes ne touche le coût du capital) :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 0/0,54/0,81 | 0/1,10/2,01 | 0/1,03/1,32 | 0/0,73/1,13 |
+| cotisations | 0/0,18/0,41 | 0/0,47/1,33 | 0/0,91/2,00 | 0/1,22/2,00 |
+| TVA | 0/0,55/0,62 | 0/1,13/1,77 | 0/1,06/1,81 | 0/0,75/1,32 |
+| inv. public | 0/1,33/3,06 | 0/1,64/3,54 | 0/1,17/1,17 | 0/0,85/0,33 |
+| dép. publique | 0/1,22/1,28 | 0/1,69/2,14 | 0/1,27/0,84 | 0/0,91/0,01 |
+
+La variante salariale de Mésange (D-349), le PIB à 1, 5 et 10 ans, jumeau / Mésange
+central / Mésange alternatif : IR (super-brut visé) 0,30 / 0,41 / 0,41, 0,66 / 0,81 /
+0,77, 0,64 / 0,87 / 0,65 ; cotisations employeurs (Phillips) 0,14 / 0,20 / 0,29, 0,66 /
+0,97 / 0,84, 1,04 / 1,29 / 0,85 ; TVA (Phillips) 0,31 / 0,32 / 0,31, 0,67 / 0,81 / 0,81,
+0,66 / 0,78 / 1,04. Mésange n'en publie pas pour les deux variantes de dépense.
+
+**Ce qui a bougé, et les écarts qui restent.** Le sens est partout celui de Mésange, et le
+test ne tient que lui. (a) *Le court terme* monte de 0,04 à 0,14 point de PIB : c'est
+l'accélérateur, dont l'investissement redonne à 5 et 11 % près celui de Mésange la première
+année pour la dépense publique et la TVA. Il reste en deçà pour l'investissement public
+(1,33 % contre 3,06 % la première année, PIB 0,73 contre 1,31) : son PIB de la première
+année est plus bas que celui de Mésange, le TES retranchant 31 % de la FBCF en
+importations, et l'accélérateur le multiplie. (b) *L'éviction* apparaît, faible : le PIB
+de dix ans passe sous son plus haut (IR 0,66 à 0,64, dépense publique 0,85 à 0,82,
+investissement public 0,81 à 0,77), l'emploi aussi (dépense publique 107 à 92 milliers),
+contre 0,86 à 0,53 et 44 à −8 dans Mésange. Les prix y montent quatre à cinq fois moins :
+pour la dépense publique, le prix de valeur ajoutée fait +0,11, +0,35, +0,44 % à 2, 5 et
+10 ans contre +0,59, +1,51, +2,03, et le salaire marchand +0,60, +1,15, +1,27 contre
++1,34, +2,85, +2,89. La boucle est la même (α, l'indexation unitaire, les intrants
+importés), son moteur non : le chômage baisse deux fois moins à deux ans (−0,32 point
+contre −0,61), Mésange mettant la moitié des rémunérations publiques de la variante en
+emplois publics (p. 106, note 75), que le jumeau ne porte pas (la demande publique écrit
+D1 aux APU, sans emploi ni revenu des ménages). Le salaire formé suit donc moins, et les
+prix avec lui ; les exportations perdent 0,21 % en volume à dix ans, contre 1,27 %. (c)
+*La baisse des cotisations* rejoint Mésange : 1,04 contre 1,29 à dix ans (0,75 avant). Les
+prix y baissent (prix de valeur ajoutée −1,51 %, de la consommation −0,88 % à dix ans), les
+salaires aussi, par l'indexation (−0,37 %), comme Mésange le dit (p. 109 : « les prix et
+les salaires continuent de diminuer ») ; les exportations montent de 0,68 % en volume. (d)
+*Le solde* : l'IS induit rend de −0,3 à +0,6 Md€ ; le reste de l'écart au solde de Mésange
+(jusqu'à 0,45 point à deux ans) suit celui du PIB et des recettes que Mésange modélise
+par équation (l'IR sur sa base, avec ses élasticités de court terme, p. 96). Celui de la
+baisse des cotisations se dégrade de 0,08 point de plus à deux ans : les prix et les
+salaires baissent, et avec eux, en valeur, la TVA et les prélèvements sur la masse
+salariale, quand la dépense du scénario ne suit pas les prix (seules les prestations hors
+chômage les suivent). (e) *La TVA*
+ne passe pas par les prix, choisi et dit : sa variante Phillips de Mésange (1,04 à dix ans)
+la fait diverger de la centrale, ce que le jumeau ne peut pas montrer. Les θ bornent sans
+renverser : la dépense publique à dix ans fait 0,75 à θ = 0 partout, 0,71 à θ = 1 partout
+(l'éviction la plus forte, 0,67 à cinq ans), 0,77 et 0,85 à la diffusion seule à 1 et 0.
+
+**Les temps**, mesurés une fois, médiane de sept, quatre cœurs, sur les données réelles :
+le modèle structurel complet, dix ans, référence et variante, une mesure. Le code de D-412,
+sur la même machine : 159 ms à n = 1, 1,00 s à n = 2 000 ; celui-ci : 273 ms et 1,67 s. Le
+point fixe itère autant (16 à 17 fois par an dans la variante, deux dans la référence) ;
+chaque itération coûte plus, le commerce refaisant les prix de l'année et
+l'investissement relisant le volume. Deux gardes de plomberie (le revenu réel des années
+passées, les profils déjà lus) ont pris 34 ms et 0,32 s, les mêmes nombres au bit (8 382
+valeurs et contributions d'une trajectoire à quatre mesures et quatre θ). **La cible de
+2 s tient, celle de 50 ms non** (déjà manquée par D-411) : c'est le lot 7 ou un point fixe
+accéléré.
+
+**Les tests.** `tests/test_jumeau_structure.py`, 15 légers, en 14 s : l'accélérateur qui
+redonne la ligne de la p. 45 au centième près, son sens dans les deux sens et θ qui le
+borne la première année ; la boucle prix-salaires, une relance qui monte les prix de valeur
+ajoutée et de la consommation et les salaires, une restriction qui les baisse, les
+prestations indexées, une baisse des cotisations qui baisse les prix et ceux des
+exportations, θ de diffusion qui borne, l'équation (PC) à 1e-9 sur le déflateur ; l'IS
+induit égal au taux fois le profit à 1e-12, son sens dans les deux sens, les origines qui
+excluent le PIB potentiel ; les trois canaux portés une fois et refusés à côté de
+`mesange` ; les identités à 1e-9 à θ = 0, ½, 1 et sur un axe de cinq tirages, Δb décomposé à
+1e-12. `test_jumeau_depuis_rapport.py`, trois de plus : la convention sur le rapport
+d'Attal, le modèle structurel sur dix ans avec elle, les refus. Sur le code d'avant, ces
+tests échouent tous : ni les champs, ni les canaux, ni la convention n'existaient. La
+chaîne retrouvée en mode réduit (`test_jumeau`, `test_rejouer`, `test_creations_canal`) et
+le déterminisme (`test_jumeau_determinisme`) tiennent. `pytest -m "not lourd and not
+chrono" -n 2` sur `test_jumeau*.py`, `test_rejouer.py`, `test_creations_canal.py`,
+`test_dependances.py`, `test_gardes_phase9.py` : 251 verts, un sauté (les cellules de
+ménages, lourd, faute de la population dans ce checkout) ; `ruff check src tests scripts`
+propre. Ni `make full`, ni `make impact`, ni les tests lourds ici.
+
+**Ce qui reste.**
+
+* La demande publique ne porte ni l'emploi public ni le revenu des ménages des
+  rémunérations publiques d'une mesure : c'est le premier écart restant à Mésange sur les
+  variantes de dépense, et un bloc à écrire (avec sa source : la règle de Mésange, la
+  moitié en emplois, p. 106).
+* La TVA et les accises d'une mesure ne passent pas par les prix ; les prix de
+  l'investissement et de la consommation des APU restent ceux du scénario ; les
+  allocations chômage ne suivent pas le salaire.
+* Les bornes du θ de diffusion sont choisies ; la covariance des deux coefficients de
+  l'accélérateur n'est pas publiée.
+* La convention est une convention : la structure des prélèvements et des gagnants de la
+  première année est tenue sur dix ans, et ce n'est pas un chiffrage ; une passe par
+  année resterait la mesure juste (D-412).
+* La cible de 50 ms à n = 1.

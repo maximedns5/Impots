@@ -107,13 +107,13 @@ Avec la boucle prix-salaires (D-414), au premier ordre, P_c les prestations hors
 
     ΔRD^nom_{c,j} = ΔRD_{c,j} + p̂c_j P_{c,j}         les prestations hors chômage
                                                     indexées sur le prix de la
-                                                    consommation (Mésange, p. 99)
+                                                    consommation (Mésange, p. 100)
     ΔRD^réel_{c,j} = ΔRD^nom_{c,j} − p̂c_j RD_{c,j}    le revenu réel, que PMC lit
     ΔC^nom_c = ΔC^vol_c + p̂c_k C_{c,k}               la consommation en valeur
 
 p̂c_k Σ_c P_c en dépense des APU (D62), p̂c_k Σ_c C_c en part prix du PIB
 (`effet_prix_pib`) ; la TVA et les accises sur ΔC^nom. Les allocations chômage par
-chômeur ne suivent pas le salaire (Mésange les indexe sur le salaire moyen, p. 99 : un
+chômeur ne suivent pas le salaire (Mésange les indexe sur le salaire moyen, p. 100 : un
 écart de second ordre, dit). Il ne retranche pas les
 importations : c'est le lot 3, qui le fait sur la consommation que ce bloc écrit. Il écrit aussi le revenu
 disponible et la consommation de chaque décile, référence comprise : les montants des
