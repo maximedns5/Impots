@@ -29693,3 +29693,168 @@ pas.
   manifestés.
 * La pente des propensions entre déciles reste choisie : une source publiée qui les
   chiffre pour la France la remplacerait.
+
+## D-411 — La jonction des lots 2 à 4 : le cadre ferme le PIB, le modèle structurel complet
+
+**La jonction** (branche `claude/but23-cadre`, D-406). Les branches des lots 2
+(`claude/but23-entreprises`, D-407), 3 (`claude/but23-commerce`, D-408) et 4
+(`claude/but23-menages`, D-409) y sont fusionnées, dans cet ordre ; le lot 5 (D-410, en
+cours) le sera plus tard. Les conflits : `jumeau/canaux.py`, créé par chaque lot avec une
+interface à lui (`verifier` et `CanalError` au lot 2, `portes` et `CanalInconnu` au 3,
+`DoubleCompte` au 4), devient un registre commun, une section par lot, les trois erreurs
+sous `CanalError` ; `pas.py`, un seul appel à `canaux.verifier` ; `champs.py`, les
+sections des trois lots, les champs réservés des lots 2 et 4 retirés de la liste des
+absents ; `thetas.py`, les sections des lots 3 et 4 ; `DECISIONS.md`, D-407, D-408,
+D-409 dans l'ordre ; le manifeste, l'union des entrées. Le test du commerce attend
+`DoubleCompte` au lieu de `PasError`, message inchangé. Les fichiers que les lots ont
+téléchargés (t. 8.202, 7.101, 7.201, fiche 3.2, Devereux et Lockwood, FR-BDF, t. 302 de
+l'enquête Emploi, Note de conjoncture de 2019), les cellules de ménages de 2024 et celles
+d'entreprises de 2023 sont reliés dans `data/` par des liens, hors git. La garde des
+dépendances lisait `test_jumeau`, `test_jumeau_entreprises` et `test_jumeau_menages`, aides
+de test, comme des paquets : ils sont déclarés modules locaux.
+
+**Les quatre décisions, prises par le responsable du projet, écrites dans `CADRE.md`
+§4 bis.**
+
+1. *Qui ferme le PIB en mode structurel : le cadre, par la somme des emplois.* Pour chaque
+   bloc structurel (`canaux.structurel` : il porte un canal et n'est pas réduit), le pas
+   écrit le PIB de son origine, la somme signée de ses emplois, par mesure, dès que le
+   bloc a tourné, pour que les blocs suivants et le point fixe la lisent ; un bloc
+   structurel qui écrit `pib` est refusé à la construction. Le commerce, la consommation,
+   la productivité, l'investissement et l'implantation ne l'écrivent plus ; leurs effets
+   d'offre sans emploi désigné (la productivité des entrantes, le PIB potentiel de
+   l'investissement et de l'implantation hors leur FBCF) restent sur
+   `emplois_non_ventiles`, et leur docstring le dit. La tendance, `mesange`, `creations`
+   (`canaux.REDUITS`) et les blocs sans canal écrivent leur PIB eux-mêmes : en mode
+   réduit, rien ne change, et la chaîne des études est retrouvée à 4,4e-16 comme avant
+   (`test_jumeau`, `test_rejouer`, `test_creations_canal`).
+2. *Les canaux par instrument.* Le double compte se juge sur la paire (canal,
+   instrument). `mesange` porte les canaux de Mésange (`DE_MESANGE` : l'investissement par
+   le coût du capital, la consommation, l'emploi, les salaires, les exportations, les
+   importations, les prix des échanges, la demande publique) pour ses seuls instruments,
+   les neuf variantes publiées de `macro.mesange.VARIANTS` ; un bloc structurel pour ceux
+   qu'il lit (`instruments`), sinon pour tous. L'investissement, lu sur l'IS, la CVAE et
+   la C3S, tourne donc avec `mesange` ; le test du lot 2 qui refusait les deux ensemble
+   suit la décision, et refuse un investissement lu sur les cotisations employeurs, que
+   Mésange porte.
+3. *Les cotisations patronales et les créations, en mode réduit.* La démographie des
+   entreprises et l'implantation ne sont pas des canaux de Mésange. Le canal des créations
+   (D-401) lit les cotisations à côté de la variante cotisations : ce n'est pas le même
+   canal, on le garde, dit comme D-401 (un test tient les deux paires).
+4. *Les performances* : ci-dessous.
+
+**Le modèle structurel complet** (`blocs.ordre_structurel`) : `tendance` (qui laisse au
+commerce les prix des échanges), `mesures`, `demande_publique`, les six blocs du lot 2,
+puis une boucle simultanée, la consommation, l'emploi, les salaires et le commerce (les
+importations retranchent au PIB que l'emploi lit). Sans `mesange` : chaque canal du
+registre est porté une fois. Un bloc manquait pour comparer une dépense publique : rien ne
+portait dans les emplois les achats des APU qu'une mesure inscrit sur leur compte.
+`demande_publique` est comptable, sans θ : ΔP2 + ΔD1 + ΔD29 + ΔD632 sur la consommation des
+APU (la production non marchande à ses coûts, les transferts en nature de produits
+marchands), ΔP51g sur leur FBCF ; ΔD1 en rémunérations, ΔD29 en impôts sur la
+production, le reste en revenus non ventilés. Il porte le canal « demande_publique », de
+Mésange, que ses variantes de dépense portent en mode réduit.
+
+**Les tests** (`tests/test_jumeau_structurel.py`, 12, dix secondes, données
+synthétiques) : le modèle se construit, chaque canal porté une fois, et `mesange` y est
+refusé ; les paires de la décision 3 ; un instrument inconnu refusé ; un bloc structurel
+qui écrit le PIB refusé ; le PIB de chaque bloc structurel égal à la somme de ses emplois
+à 1e-12 ; les identités à 1e-9 à θ = 0, ½, 1 et sur un axe de cinq tirages, avec quatre
+mesures (IR, cotisations, dépense publique, IS), et Δb décomposé à 1e-12 ; le point fixe
+qui converge (deux itérations par an dans la référence, quinze dans la variante, jamais
+cent) ; la FBCF des APU égale au choc, euro pour euro ; le sens des cinq variantes.
+
+**À côté de Mésange.** Une comparaison de cohérence, pas un juge : rien n'est
+préenregistré, aucun paramètre n'est réglé dessus. `jumeau.comparaison` et
+`scripts/jumeau_comparaison_mesange.py` : le modèle structurel complet, θ½, depuis l'état
+publié de 2025 (cellules d'entreprises de 2023, de ménages de 2024 ; scénario choisi :
+1 % de croissance réelle, 2 % de prix, 2,5 % de taux), un choc permanent d'un point du PIB
+de référence, dans la convention expansionniste ; l'IR et la TVA rendus aux déciles au
+prorata de l'IR et de la TVA des cellules, la dépense publique composée comme Mésange
+(p. 106), ses prestations en espèces aux déciles au prorata des pensions, du chômage et
+des prestations. Jumeau / Mésange, à 1, 2, 5 et 10 ans :
+
+PIB en volume, en % :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 0,26 / 0,41 | 0,50 / 0,83 | 0,62 / 0,81 | 0,67 / 0,87 |
+| cotisations employeurs | 0,08 / 0,20 | 0,20 / 0,55 | 0,44 / 0,97 | 0,75 / 1,29 |
+| TVA | 0,27 / 0,32 | 0,51 / 0,66 | 0,64 / 0,81 | 0,68 / 0,78 |
+| investissement public | 0,64 / 1,31 | 0,70 / 1,38 | 0,78 / 0,93 | 0,81 / 0,57 |
+| dépense publique | 0,59 / 0,78 | 0,73 / 1,06 | 0,82 / 0,86 | 0,86 / 0,53 |
+
+Emploi salarié marchand, en milliers :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 16 / 24 | 48 / 109 | 72 / 184 | 70 / 181 |
+| cotisations employeurs | 72 / 83 | 162 / 210 | 212 / 316 | 227 / 318 |
+| TVA | 17 / 32 | 50 / 118 | 75 / 113 | 72 / 69 |
+| investissement public | 40 / 92 | 87 / 198 | 90 / 91 | 85 / 45 |
+| dépense publique | 37 / 33 | 85 / 94 | 96 / 44 | 90 / −8 |
+
+Solde primaire des APU, en points de PIB :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | −0,91 / −0,81 | −0,80 / −0,50 | −0,72 / −0,51 | −0,71 / −0,50 |
+| cotisations employeurs | −0,88 / −0,72 | −0,73 / −0,42 | −0,54 / −0,24 | −0,36 / −0,17 |
+| TVA | −0,91 / −0,80 | −0,79 / −0,36 | −0,71 / −0,37 | −0,70 / −0,44 |
+| investissement public | −0,88 / −0,49 | −0,78 / −0,26 | −0,74 / −0,70 | −0,75 / −0,82 |
+| dépense publique | −0,87 / −0,53 | −0,75 / −0,32 | −0,69 / −0,54 | −0,70 / −0,68 |
+
+Les écarts, et ce qui les fait. (a) *Pas d'accélérateur* : l'investissement des
+entreprises ne répond qu'au coût du capital (D-407) ; dans Mésange il monte de 2 à 3,5 %
+la deuxième année des variantes de demande. C'est l'essentiel du demi-multiplicateur
+de l'investissement public à un et deux ans, et une part de celui de l'IR. (b) *Pas de
+boucle prix-salaires* (D-409) : les prix sont ceux du scénario. Mésange évince à long
+terme par les salaires et les prix (le PIB de la dépense publique retombe à 0,53, son
+emploi à −8 milliers) ; le jumeau n'évince pas, et dépasse Mésange à dix ans sur les
+deux variantes de dépense. Une baisse de TVA n'y baisse pas les prix : elle est un revenu
+rendu aux ménages. La baisse des cotisations n'y passe que par le coût du travail et le
+TES (D-408 : la moitié des prix de Mésange), d'où un PIB et un emploi plus bas. (c) *Les
+importations* : le contenu du TES retranche le quart de la consommation et le tiers de
+la FBCF (D-408) ; le lot 4 seul faisait 0,40 et 0,76 de PIB pour l'IR à un et deux ans
+(D-409, départ synthétique).
+(d) *Le solde* : le jumeau rend moins de recettes induites que Mésange, de 0,1 à 0,5 point
+jusqu'à cinq ans ; à dix ans, sur les deux variantes de dépense, Mésange le rejoint par
+l'éviction. Ce que le jumeau rend : la TVA et les accises sur la consommation, les
+cotisations et l'IR sur la masse salariale, les allocations chômage, ρ ΔY sur l'offre ; ni
+l'IS ni les impôts sur l'EBE induit, ni l'effet des prix sur les recettes. Le sens est
+partout celui de Mésange ; un test ne tient que lui.
+
+**Les temps** (décision 4), mesurés une fois, médiane de sept, quatre cœurs (charge de 1
+à 2 : le lot 5 tourne à côté) : le modèle structurel complet, dix ans, référence et
+variante, une mesure, sur les données réelles. Avant : 301 ms à n = 1, 1,24 s à
+n = 2 000 ; après : 158 ms et 0,98 s. La plomberie du cadre : l'état somme un champ
+additif à sa lecture et non à chaque écriture, dans l'ordre de ses contributions ; il
+indexe les contributions par origine, pour que le point fixe retire celles d'un bloc sans
+parcourir l'état ; le pas écrit un champ d'un coup, teste les NaN d'un seul calcul par
+bloc et mesure l'écart du point fixe en un calcul vectorisé. Le commerce garde, le temps
+des itérations d'une année, ce qu'elles ne changent pas. Aucun nombre ne change : les
+12 772 valeurs et contributions d'une trajectoire complète (trois mesures, θ½ et un axe
+de quatre tirages) sont égales au bit près avant et après, à graine de hachage égale, et
+les tests passent. **La cible de 2 s tient ; celle de 50 ms à n = 1 non.** Le coût est
+le point fixe : quinze itérations par an dans la variante, à 1e-10, d'environ une
+milliseconde chacune, presque toute de Python (le commerce 0,2 ms, les trois blocs des
+ménages 0,35, l'écriture et la fermeture par le cadre le reste). L'atteindre demande
+d'accélérer le point fixe (Aitken, Anderson) ou de fondre la boucle en un calcul, ce qui
+change les nombres sous la tolérance : c'est à décider, ou au lot 7 (le pas en
+JavaScript).
+
+**Ce qui reste.**
+
+* La jonction du lot 5 (D-410), quand il sera rendu.
+* Le mode structurel n'a ni accélérateur, ni boucle prix-salaires, ni recettes induites
+  sur les profits : ce sont les trois écarts à Mésange ci-dessus, chacun un travail.
+* Les rapports ne portent ni leurs chocs par impôt (`Mesure.entreprises`) ni par décile
+  (`Mesure.menages`) : `depuis_rapport` ne les remplit pas, et les études ne passent pas
+  encore par le mode structurel (D-407, D-409).
+* La fermeture des comptes somme les clés de B9 et de la dette dans l'ordre d'un
+  ensemble : d'un processus à l'autre, leur dernier bit peut changer (`PYTHONHASHSEED`).
+  Hérité du lot 1, aucun test ne le voit ; le trier est un commit à part, qui le dira.
+* `make impact` et les tests lourds (dont `test_jumeau_cellules.py`) tournent avant la
+  PR du but, pas ici. `ruff check .` signale 22 erreurs dans
+  `docs/audit_but14/chaine_min.py`, héritées et hors du jumeau ; `src`, `tests` et
+  `scripts` sont propres.
