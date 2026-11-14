@@ -13,7 +13,10 @@ les deux naïfs ne changent pas ; ce qui change, après le diagnostic de D-421 :
   subventions, plus celle des cotisations patronales ;
 * une mesure étalée compte chaque année où le droit change (`MesureVotee.annees_effet`) ;
 * la demande mondiale adressée à la France (OCDE) entre au commerce, en écart à sa
-  propre tendance de l'estimation (`ecarts_demande_mondiale`).
+  propre tendance de l'estimation (`ecarts_demande_mondiale`) ;
+* (l'amendement) la variation d'une année votée ne compte que dans le sens de la loi
+  (`variation_comptee`, `MesureVotee.sens`) ; le jumeau est celui de la jonction D-422
+  (l'emploi public de D-418 compris).
 
 AUCUN MONTANT OFFICIEL DE MESURE N'ENTRE (D-359 à D-361). Les évaluations préalables des
 PLF et des PLFSS sont des juges mis de côté ; la base des mesures votées ne porte que le
@@ -35,7 +38,11 @@ chaque année t rejouée, Y_t le PIB de la référence (la tendance, `Tendance.c
       ΔT_{F,t} = Σ_{s < u ≤ t} w_{F,u} (τ_u − τ_{u−1}) · (B_s / PIB_s) · Y_t
 
   w_{F,u} vaut 1 quand un instrument de F a une année d'effet en u, 0 sinon (D-417 ; les
-  années d'effet d'une mesure étalée, D-421). ΔT entre
+  années d'effet d'une mesure étalée, D-421). LE CHOIX (b) DE D-421 AMENDÉ, un choix de
+  modèle : la variation de l'année votée ne compte que dans le sens que la loi donne
+  (`variation_comptee` : une baisse votée ne fait pas une hausse ; un barème seulement
+  indexé ne fait rien ; des mesures de sens contraires, ou mixtes, comptent la variation
+  entière). Moins du cycle entre ainsi par les années votées ; il en reste. ΔT entre
   au compte des APU, catégorie de la famille, au signe du moteur (−ΔT : une hausse est un
   gain) ; sur l'instrument de Mésange que lisent les blocs (−ΔT, signe expansionniste) ;
   aux ménages par décile (−ΔT réparti selon la variable des cellules que la famille
@@ -280,6 +287,31 @@ def poids(famille: Famille, annee: int, votees: Sequence[Any]) -> float:
     return 1.0 if annee in annees_votees(famille.instruments, votees) else 0.0
 
 
+def sens_votes(famille: Famille, annee: int, votees: Sequence[Any]) -> frozenset[str]:
+    """Les sens des mesures de la famille qui ont effet en `annee` (`sens_en`)."""
+    return frozenset(x for m in votees
+                     if m.instrument in famille.instruments and m.statut not in SANS_EFFET
+                     for x in m.sens_en(annee))
+
+
+def variation_comptee(famille: Famille, annee: int, variation: float,
+                      votees: Sequence[Any]) -> float:
+    """La part de τ_u − τ_{u−1} qui entre (D-421 amendé, le choix (b)) : rien une année
+    sans mesure ; la variation entière si les mesures de l'année sont de sens contraires
+    ou mixtes ; seulement sa part dans le sens voté si toutes vont dans le même sens
+    (une baisse votée ne fait pas une hausse, ni l'inverse) ; rien si elles ne font que
+    reconduire le droit (neutre : un barème indexé). Le τ porte le signe du prélèvement
+    (`Famille.lignes`), et le sens est celui du prélèvement."""
+    if poids(famille, annee, votees) == 0.0:
+        return 0.0
+    sens = sens_votes(famille, annee, votees) - {"neutre"}
+    if not sens:
+        return 0.0
+    if "mixte" in sens or sens == {"hausse", "baisse"}:
+        return variation
+    return max(variation, 0.0) if sens == {"hausse"} else min(variation, 0.0)
+
+
 def _cle(cellules: Any, variables: Sequence[str]) -> list[float]:
     valeurs = sum(np.asarray(cellules.par_decile(v), dtype=float) for v in variables)
     total = float(np.sum(valeurs))
@@ -307,7 +339,7 @@ def chocs_observes(fenetre: Fenetre, publies: Mapping[int, Etat],
         part_base = _valeur(depart, famille.base) / pib_s
         cumul, delta = 0.0, {}
         for a, y in zip(annees, pib_reference, strict=True):
-            cumul += poids(famille, a, votees) * (taux[a] - taux[a - 1])
+            cumul += variation_comptee(famille, a, taux[a] - taux[a - 1], votees)
             delta[a] = cumul * part_base * float(y)
         if not any(delta.values()):
             continue

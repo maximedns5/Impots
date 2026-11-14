@@ -14,6 +14,12 @@
 # préenregistrera avant de les ouvrir. Les seuls montants sont des paramètres du droit
 # (un seuil, un plafond, un abattement), écrits en euros entiers. Un test le vérifie.
 #
+# LE SENS (`sens`, D-421 amendé), dit pour chaque mesure d'un prélèvement : hausse ou baisse
+# du paramètre appliqué d'une année à l'autre, tel que le texte le fixe ; mixte, des
+# paramètres en sens contraires ; neutre, un barème indexé ou une date de recouvrement.
+# Une étape peut dire le sien (la fin d'une contribution temporaire). Lu dans les
+# paramètres ci-dessous, relus au JO ; aucun montant.
+#
 # LA VÉRIFICATION, dite mesure par mesure (`verification`, D-413) :
 # * `statut` : « vérifiée » quand la loi, l'article, les paramètres et la date d'effet ont
 #   été relus sur une source primaire ; « non vérifiée » sinon, avec la `raison` ;
@@ -40,6 +46,7 @@ mesures:
     gouvernement: fillon_2
     intitule: Suppression de la taxe professionnelle, remplacée par la contribution économique territoriale
     instrument: impots_production
+    sens: baisse
     texte: {nature: loi, numero: 2009-1673, date: 2009-12-30, intitule: loi de finances pour 2010}
     article: "2"
     codification: CGI, art. 1447-0, 1586 ter et suivants
@@ -96,6 +103,7 @@ mesures:
     gouvernement: fillon_3
     intitule: Taux marginal de l'impôt sur le revenu porté de 40 à 41 % et prélèvements forfaitaires relevés d'un point
     instrument: ir
+    sens: hausse
     texte: {nature: loi, numero: 2010-1657, date: 2010-12-29, intitule: loi de finances pour 2011}
     article: "6"
     codification: CGI, art. 197 et 117 quater
@@ -115,6 +123,7 @@ mesures:
     gouvernement: fillon_3
     intitule: Réforme de l'ISF et suppression du bouclier fiscal
     instrument: patrimoine
+    sens: mixte
     texte: {nature: loi, numero: 2011-900, date: 2011-07-29, intitule: loi de finances rectificative pour 2011}
     article: "1 et 30"
     codification: CGI, art. 885 A et 885 U (anciens) ; art. 1649-0 A (abrogé)
@@ -137,6 +146,7 @@ mesures:
     gouvernement: fillon_3
     intitule: Contribution exceptionnelle sur les hauts revenus
     instrument: ir
+    sens: hausse
     texte: {nature: loi, numero: 2011-1977, date: 2011-12-28, intitule: loi de finances pour 2012}
     article: "2"
     codification: CGI, art. 223 sexies
@@ -156,6 +166,7 @@ mesures:
     gouvernement: fillon_3
     intitule: Taux réduit de TVA de 5,5 % porté à 7 % pour la plupart des biens et services
     instrument: tva
+    sens: hausse
     texte: {nature: loi, numero: 2011-1978, date: 2011-12-28, intitule: loi de finances rectificative pour 2011}
     article: "13"
     codification: CGI, art. 278 bis et 279
@@ -175,6 +186,7 @@ mesures:
     gouvernement: fillon_3
     intitule: Contribution exceptionnelle de 5 % sur l'impôt sur les sociétés des grandes entreprises
     instrument: is
+    sens: hausse
     texte: {nature: loi, numero: 2011-1978, date: 2011-12-28, intitule: loi de finances rectificative pour 2011}
     article: "30"
     codification: CGI, art. 235 ter ZAA
@@ -198,6 +210,7 @@ mesures:
     gouvernement: fillon_3
     intitule: TVA sociale, hausse du taux normal en contrepartie d'une baisse des cotisations familiales
     instrument: tva
+    sens: hausse
     texte: {nature: loi, numero: 2012-354, date: 2012-03-14, intitule: loi de finances rectificative pour 2012}
     article: "2"
     codification: CGI, art. 278
@@ -240,6 +253,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Abrogation de la TVA sociale avant son entrée en vigueur
     instrument: tva
+    sens: neutre
     texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
     article: "1"
     annee_effet: 2012
@@ -256,6 +270,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Suppression de l'exonération des heures supplémentaires de la loi TEPA
     instrument: cotisations_salaries
+    sens: hausse
     texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
     article: "3"
     codification: CGI, art. 81 quater ; CSS, art. L. 241-17 et L. 241-18
@@ -277,6 +292,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Contribution exceptionnelle sur la fortune pour 2012
     instrument: patrimoine
+    sens: hausse
     texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
     article: "4"
     annee_effet: 2012
@@ -293,6 +309,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Abattement des droits de mutation en ligne directe abaissé et rappel fiscal allongé
     instrument: transmission
+    sens: hausse
     texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
     article: "5"
     codification: CGI, art. 779 et 784
@@ -312,6 +329,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Contribution additionnelle à l'impôt sur les sociétés de 3 % sur les montants distribués
     instrument: is
+    sens: hausse
     texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
     article: "6"
     codification: CGI, art. 235 ter ZCA
@@ -330,6 +348,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Tranche à 45 % du barème de l'impôt sur le revenu
     instrument: ir
+    sens: hausse
     texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
     article: "3"
     codification: CGI, art. 197
@@ -347,6 +366,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Plafond de l'avantage du quotient familial abaissé
     instrument: ir
+    sens: hausse
     texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
     article: "4"
     codification: CGI, art. 197
@@ -365,6 +385,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Revenus du capital imposés au barème progressif
     instrument: ir_capital
+    sens: hausse
     texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
     article: "9 et 10"
     codification: CGI, art. 117 quater, 125 A, 150-0 D
@@ -385,6 +406,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Rétablissement d'un barème progressif de l'ISF et de son plafonnement
     instrument: patrimoine
+    sens: hausse
     texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
     article: "13"
     codification: CGI, art. 885 U et 885 V bis (anciens)
@@ -404,6 +426,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Limitation de la déductibilité des charges financières nettes
     instrument: is
+    sens: hausse
     texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
     article: "23"
     codification: CGI, art. 212 bis
@@ -421,6 +444,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Crédit d'impôt pour la compétitivité et l'emploi (CICE)
     instrument: cice
+    sens: baisse
     texte: {nature: loi, numero: 2012-1510, date: 2012-12-29, intitule: loi de finances rectificative pour 2012}
     article: "66"
     codification: CGI, art. 244 quater C
@@ -442,6 +466,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Taux de TVA relevés au 1er janvier 2014
     instrument: tva
+    sens: hausse
     texte: {nature: loi, numero: 2012-1510, date: 2012-12-29, intitule: loi de finances rectificative pour 2012}
     article: "68"
     codification: CGI, art. 278 et 279
@@ -463,6 +488,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Contribution additionnelle de solidarité pour l'autonomie (CASA) sur les pensions
     instrument: csg
+    sens: hausse
     texte: {nature: loi, numero: 2012-1404, date: 2012-12-17, intitule: loi de financement de la sécurité sociale pour 2013}
     article: "17"
     codification: CASF, art. L. 14-10-4
@@ -499,6 +525,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Plafond de l'avantage du quotient familial abaissé à nouveau
     instrument: ir
+    sens: hausse
     texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
     article: "3"
     codification: CGI, art. 197
@@ -533,13 +560,14 @@ mesures:
     gouvernement: ayrault_2
     intitule: Contribution exceptionnelle sur l'impôt sur les sociétés portée à 10,7 %
     instrument: is
+    sens: hausse
     texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
     article: "16"
     codification: CGI, art. 235 ter ZAA
     annee_effet: 2013
     etapes:
       - {date: 2013-12-31, quoi: "taux de 10,7 %, exercices clos à compter du 31 décembre 2013"}
-      - {date: 2016-12-31, quoi: "contribution éteinte, exercices clos à compter du 31 décembre 2016 (loi n° 2014-891, art. 15)"}
+      - {date: 2016-12-31, quoi: "contribution éteinte, exercices clos à compter du 31 décembre 2016 (loi n° 2014-891, art. 15)", sens: baisse}
     parametres:
       - {quoi: "taux de la contribution (chiffre d'affaires supérieur à 250 000 000 €)", avant: "5 %", apres: "10,7 %"}
       - {quoi: "exercices concernés", avant: "clos du 31 décembre 2011 au 30 décembre 2015 (prorogation de la loi n° 2012-1509, art. 30)", apres: "taux de 10,7 % pour les exercices clos à compter du 31 décembre 2013 ; contribution prorogée jusqu'au 30 décembre 2016 (loi n° 2014-891, art. 15)"}
@@ -557,6 +585,7 @@ mesures:
     gouvernement: valls_1
     intitule: Pacte de responsabilité, allègements de cotisations patronales
     instrument: cotisations_employeurs
+    sens: baisse
     texte: {nature: loi, numero: 2014-892, date: 2014-08-08, intitule: loi de financement rectificative de la sécurité sociale pour 2014}
     article: "2"
     codification: CSS, art. L. 241-13 et L. 241-6-1
@@ -576,6 +605,7 @@ mesures:
     gouvernement: valls_1
     intitule: Abattement d'assiette sur la contribution sociale de solidarité des sociétés
     instrument: impots_production
+    sens: baisse
     texte: {nature: loi, numero: 2014-892, date: 2014-08-08, intitule: loi de financement rectificative de la sécurité sociale pour 2014}
     article: "3"
     codification: CSS, art. L. 651-3
@@ -593,6 +623,7 @@ mesures:
     gouvernement: valls_1
     intitule: Réduction dégressive des cotisations salariales des bas salaires
     instrument: cotisations_salaries
+    sens: baisse
     texte: {nature: loi, numero: 2014-892, date: 2014-08-08, intitule: loi de financement rectificative de la sécurité sociale pour 2014}
     article: "1"
     annee_effet: 2015
@@ -610,6 +641,7 @@ mesures:
     gouvernement: valls_1
     intitule: Réduction exceptionnelle d'impôt sur le revenu des ménages modestes
     instrument: ir
+    sens: baisse
     texte: {nature: loi, numero: 2014-891, date: 2014-08-08, intitule: loi de finances rectificative pour 2014}
     article: "1"
     annee_effet: 2014
@@ -626,6 +658,7 @@ mesures:
     gouvernement: valls_2
     intitule: Suppression de la première tranche du barème à 5,5 %
     instrument: ir
+    sens: baisse
     texte: {nature: loi, numero: 2014-1654, date: 2014-12-29, intitule: loi de finances pour 2015}
     article: "2"
     codification: CGI, art. 197
@@ -664,6 +697,7 @@ mesures:
     gouvernement: valls_2
     intitule: Baisse de la cotisation d'allocations familiales étendue jusqu'à 3,5 SMIC
     instrument: cotisations_employeurs
+    sens: baisse
     texte: {nature: loi, numero: 2015-1702, date: 2015-12-21, intitule: loi de financement de la sécurité sociale pour 2016}
     article: "7"
     codification: CSS, art. L. 241-6-1
@@ -683,6 +717,7 @@ mesures:
     gouvernement: cazeneuve
     intitule: Prélèvement à la source de l'impôt sur le revenu
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
     article: "60"
     codification: CGI, art. 204 A et suivants
@@ -703,6 +738,7 @@ mesures:
     gouvernement: cazeneuve
     intitule: Trajectoire de baisse du taux normal de l'impôt sur les sociétés à 28 %
     instrument: is
+    sens: baisse
     texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
     article: "11"
     codification: CGI, art. 219
@@ -721,6 +757,7 @@ mesures:
     gouvernement: cazeneuve
     intitule: Taux du CICE porté à 7 %
     instrument: cice
+    sens: baisse
     texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
     article: "72"
     codification: CGI, art. 244 quater C
@@ -739,6 +776,7 @@ mesures:
     gouvernement: cazeneuve
     intitule: Réduction d'impôt sur le revenu de 20 % pour les foyers modestes
     instrument: ir
+    sens: baisse
     texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
     article: "2"
     codification: CGI, art. 197
@@ -757,12 +795,13 @@ mesures:
     gouvernement: philippe_2
     intitule: Contributions exceptionnelle et additionnelle sur l'impôt sur les sociétés des très grandes entreprises
     instrument: is
+    sens: hausse
     texte: {nature: loi, numero: 2017-1640, date: 2017-12-01, intitule: première loi de finances rectificative pour 2017}
     article: "1"
     annee_effet: 2017
     etapes:
       - {date: 2017-12-31, quoi: "contributions de 15 % et 15 %, exercices clos à compter du 31 décembre 2017"}
-      - {date: 2018-12-31, quoi: "contributions éteintes, exercices clos à compter du 31 décembre 2018"}
+      - {date: 2018-12-31, quoi: "contributions éteintes, exercices clos à compter du 31 décembre 2018", sens: baisse}
     parametres:
       - {quoi: "contribution exceptionnelle (chiffre d'affaires d'au moins 1 000 000 000 €)", avant: néant, apres: "15 % de l'IS"}
       - {quoi: "contribution additionnelle (chiffre d'affaires d'au moins 3 000 000 000 €)", avant: néant, apres: "15 % de l'IS en plus"}
@@ -778,6 +817,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Prélèvement forfaitaire unique sur les revenus du capital
     instrument: ir_capital
+    sens: baisse
     texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
     article: "28"
     codification: CGI, art. 200 A
@@ -796,6 +836,7 @@ mesures:
     gouvernement: philippe_2
     intitule: L'ISF remplacé par l'impôt sur la fortune immobilière (IFI)
     instrument: patrimoine
+    sens: baisse
     texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
     article: "31"
     codification: CGI, art. 964 à 983
@@ -816,6 +857,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Dégrèvement de la taxe d'habitation sur la résidence principale pour 80 % des foyers
     instrument: taxe_habitation
+    sens: baisse
     texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
     article: "5"
     codification: CGI, art. 1414 C
@@ -838,6 +880,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Trajectoire de baisse du taux normal de l'impôt sur les sociétés à 25 %
     instrument: is
+    sens: baisse
     texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
     article: "84"
     codification: CGI, art. 219
@@ -861,6 +904,7 @@ mesures:
     gouvernement: philippe_2
     intitule: CICE ramené à 6 % puis supprimé
     instrument: cice
+    sens: hausse
     texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
     article: "86"
     codification: CGI, art. 244 quater C
@@ -882,6 +926,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Trajectoire de la composante carbone et convergence de la fiscalité du gazole et de l'essence
     instrument: accises_energie
+    sens: hausse
     texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
     article: "16"
     codification: Code des douanes, art. 265
@@ -901,6 +946,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Hausse de la CSG et suppression des cotisations salariales maladie et chômage
     instrument: csg
+    sens: hausse
     texte: {nature: loi, numero: 2017-1836, date: 2017-12-30, intitule: loi de financement de la sécurité sociale pour 2018}
     article: "8"
     codification: CSS, art. L. 136-8
@@ -923,6 +969,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Suppression des cotisations salariales maladie et chômage
     instrument: cotisations_salaries
+    sens: baisse
     texte: {nature: loi, numero: 2017-1836, date: 2017-12-30, intitule: loi de financement de la sécurité sociale pour 2018}
     article: "8"
     codification: CSS, art. L. 241-2 ; code du travail, art. L. 5422-9
@@ -946,6 +993,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Le CICE transformé en baisse pérenne de cotisations patronales
     instrument: cotisations_employeurs
+    sens: baisse
     texte: {nature: loi, numero: 2017-1836, date: 2017-12-30, intitule: loi de financement de la sécurité sociale pour 2018}
     article: "9"
     codification: CSS, art. L. 241-2-1 et L. 241-13
@@ -986,6 +1034,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Heures supplémentaires exonérées d'impôt sur le revenu et de cotisations salariales
     instrument: cotisations_salaries
+    sens: baisse
     texte: {nature: loi, numero: 2018-1213, date: 2018-12-24, intitule: loi portant mesures d'urgence économiques et sociales}
     article: "2"
     codification: CGI, art. 81 quater ; CSS, art. L. 241-17
@@ -1005,6 +1054,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Taux de CSG de 6,6 % rétabli pour les pensions des foyers modestes
     instrument: csg
+    sens: baisse
     texte: {nature: loi, numero: 2018-1213, date: 2018-12-24, intitule: loi portant mesures d'urgence économiques et sociales}
     article: "3"
     codification: CSS, art. L. 136-8
@@ -1039,6 +1089,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Réduction des cotisations salariales d'assurance vieillesse sur les heures supplémentaires
     instrument: cotisations_salaries
+    sens: baisse
     texte: {nature: loi, numero: 2018-1203, date: 2018-12-22, intitule: loi de financement de la sécurité sociale pour 2019}
     article: "7"
     codification: CSS, art. L. 241-17
@@ -1075,6 +1126,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Taxe sur les services numériques et trajectoire de l'IS des grandes entreprises
     instrument: is
+    sens: hausse
     texte: {nature: loi, numero: 2019-759, date: 2019-07-24, intitule: loi portant création d'une taxe sur les services numériques et modification de la trajectoire de baisse de l'impôt sur les sociétés}
     article: "1 et 4"
     codification: CGI, art. 299 et suivants
@@ -1094,6 +1146,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Taux de la deuxième tranche de l'impôt sur le revenu ramené de 14 à 11 %
     instrument: ir
+    sens: baisse
     texte: {nature: loi, numero: 2019-1479, date: 2019-12-28, intitule: loi de finances pour 2020}
     article: "2"
     codification: CGI, art. 197
@@ -1114,6 +1167,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Suppression de la taxe d'habitation sur les résidences principales
     instrument: taxe_habitation
+    sens: baisse
     texte: {nature: loi, numero: 2019-1479, date: 2019-12-28, intitule: loi de finances pour 2020}
     article: "16"
     codification: CGI, art. 1407 et 1414 C
@@ -1138,6 +1192,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Trajectoire de l'IS des entreprises d'au moins 250 000 000 € de chiffre d'affaires
     instrument: is
+    sens: baisse
     texte: {nature: loi, numero: 2019-1479, date: 2019-12-28, intitule: loi de finances pour 2020}
     article: "39"
     codification: CGI, art. 219
@@ -1159,6 +1214,7 @@ mesures:
     gouvernement: castex
     intitule: Baisse des impôts de production, suppression de la part régionale de la CVAE
     instrument: impots_production
+    sens: baisse
     texte: {nature: loi, numero: 2020-1721, date: 2020-12-29, intitule: loi de finances pour 2021}
     article: "8"
     codification: CGI, art. 1586 ter, 1586 sexies et 1647 B sexies
@@ -1179,6 +1235,7 @@ mesures:
     gouvernement: castex
     intitule: Valeurs locatives des établissements industriels divisées par deux
     instrument: impots_production
+    sens: baisse
     texte: {nature: loi, numero: 2020-1721, date: 2020-12-29, intitule: loi de finances pour 2021}
     article: "29"
     codification: CGI, art. 1499
@@ -1214,6 +1271,7 @@ mesures:
     gouvernement: borne
     intitule: Plafond d'exonération des heures supplémentaires relevé
     instrument: ir
+    sens: baisse
     texte: {nature: loi, numero: 2022-1157, date: 2022-08-16, intitule: loi de finances rectificative pour 2022}
     article: "4"
     codification: CGI, art. 81 quater
@@ -1248,6 +1306,7 @@ mesures:
     gouvernement: borne
     intitule: Suppression de la CVAE en deux ans
     instrument: impots_production
+    sens: baisse
     texte: {nature: loi, numero: 2022-1726, date: 2022-12-30, intitule: loi de finances pour 2023}
     article: "55"
     codification: CGI, art. 1586 ter, 1586 quater et 1647 B sexies
@@ -1307,6 +1366,7 @@ mesures:
     gouvernement: borne
     intitule: Suppression de la CVAE étalée jusqu'en 2027
     instrument: impots_production
+    sens: baisse
     texte: {nature: loi, numero: 2023-1322, date: 2023-12-29, intitule: loi de finances pour 2024}
     article: "79"
     codification: CGI, art. 1586 quater
@@ -1328,6 +1388,7 @@ mesures:
     gouvernement: bayrou
     intitule: Contribution différentielle sur les hauts revenus
     instrument: ir
+    sens: hausse
     texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
     article: "10"
     codification: CGI, art. 224
@@ -1348,6 +1409,7 @@ mesures:
     gouvernement: bayrou
     intitule: Contribution exceptionnelle sur les bénéfices des grandes entreprises
     instrument: is
+    sens: hausse
     texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
     article: "48"
     annee_effet: 2025
@@ -1366,6 +1428,7 @@ mesures:
     gouvernement: bayrou
     intitule: Refonte des allègements généraux de cotisations patronales
     instrument: cotisations_employeurs
+    sens: hausse
     texte: {nature: loi, numero: 2025-199, date: 2025-02-28, intitule: loi de financement de la sécurité sociale pour 2025}
     article: "18"
     codification: CSS, art. L. 241-13
@@ -1415,6 +1478,7 @@ mesures:
     gouvernement: fillon_2
     intitule: Barème de l'impôt sur le revenu des revenus de 2009
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2009-1673, date: 2009-12-30, intitule: loi de finances pour 2010}
     article: "18"
     codification: CGI, art. 197
@@ -1433,6 +1497,7 @@ mesures:
     gouvernement: fillon_3
     intitule: Barème de l'impôt sur le revenu des revenus de 2010, reconduit pour 2011 et 2012
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2010-1657, date: 2010-12-29, intitule: loi de finances pour 2011}
     article: "2"
     codification: CGI, art. 197
@@ -1452,6 +1517,7 @@ mesures:
     gouvernement: ayrault_2
     intitule: Barème de l'impôt sur le revenu des revenus de 2013
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
     article: "2"
     codification: CGI, art. 197
@@ -1469,6 +1535,7 @@ mesures:
     gouvernement: valls_2
     intitule: Barème de l'impôt sur le revenu des revenus de 2015
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2015-1785, date: 2015-12-29, intitule: loi de finances pour 2016}
     article: "2"
     codification: CGI, art. 197
@@ -1487,6 +1554,7 @@ mesures:
     gouvernement: cazeneuve
     intitule: Barème de l'impôt sur le revenu des revenus de 2016
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
     article: "2"
     codification: CGI, art. 197
@@ -1505,6 +1573,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Barème de l'impôt sur le revenu des revenus de 2017
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
     article: "2"
     codification: CGI, art. 197
@@ -1523,6 +1592,7 @@ mesures:
     gouvernement: philippe_2
     intitule: Barème de l'impôt sur le revenu des revenus de 2018
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2018-1317, date: 2018-12-28, intitule: loi de finances pour 2019}
     article: "2"
     codification: CGI, art. 197
@@ -1541,6 +1611,7 @@ mesures:
     gouvernement: castex
     intitule: Barème de l'impôt sur le revenu des revenus de 2020
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2020-1721, date: 2020-12-29, intitule: loi de finances pour 2021}
     article: "2"
     codification: CGI, art. 197
@@ -1559,6 +1630,7 @@ mesures:
     gouvernement: castex
     intitule: Barème de l'impôt sur le revenu des revenus de 2021
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2021-1900, date: 2021-12-30, intitule: loi de finances pour 2022}
     article: "2"
     codification: CGI, art. 197
@@ -1577,6 +1649,7 @@ mesures:
     gouvernement: borne
     intitule: Barème de l'impôt sur le revenu des revenus de 2022
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2022-1726, date: 2022-12-30, intitule: loi de finances pour 2023}
     article: "2"
     codification: CGI, art. 197
@@ -1595,6 +1668,7 @@ mesures:
     gouvernement: borne
     intitule: Barème de l'impôt sur le revenu des revenus de 2023
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2023-1322, date: 2023-12-29, intitule: loi de finances pour 2024}
     article: "2"
     codification: CGI, art. 197
@@ -1613,6 +1687,7 @@ mesures:
     gouvernement: bayrou
     intitule: Barème de l'impôt sur le revenu des revenus de 2024
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
     article: "2"
     codification: CGI, art. 197
@@ -1631,6 +1706,7 @@ mesures:
     gouvernement: lecornu_2
     intitule: Barème de l'impôt sur le revenu des revenus de 2025
     instrument: ir
+    sens: neutre
     texte: {nature: loi, numero: 2026-103, date: 2026-02-19, intitule: loi de finances pour 2026}
     article: "4"
     codification: CGI, art. 197
@@ -1650,6 +1726,7 @@ mesures:
     gouvernement: philippe_2
     intitule: CSG sur les revenus du patrimoine ramenée à 9,2 %, les prélèvements sociaux sur le capital refondus
     instrument: csg
+    sens: baisse
     texte: {nature: loi, numero: 2018-1203, date: 2018-12-22, intitule: loi de financement de la sécurité sociale pour 2019}
     article: "26"
     codification: CSS, art. L. 136-8
@@ -1668,6 +1745,7 @@ mesures:
     gouvernement: lecornu_2
     intitule: CSG sur les revenus du patrimoine et de placement portée à 10,6 %
     instrument: csg
+    sens: hausse
     texte: {nature: loi, numero: 2025-1403, date: 2025-12-30, intitule: loi de financement de la sécurité sociale pour 2026}
     article: "12"
     codification: CSS, art. L. 136-8
@@ -1688,6 +1766,7 @@ mesures:
     gouvernement: bayrou
     intitule: Suppression de la CVAE reportée à 2030 et contribution complémentaire
     instrument: impots_production
+    sens: hausse
     texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
     article: "62"
     codification: CGI, art. 1586 quater
@@ -1723,6 +1802,7 @@ mesures:
     gouvernement: lecornu_2
     intitule: Contribution différentielle sur les hauts revenus prorogée
     instrument: ir
+    sens: hausse
     texte: {nature: loi, numero: 2026-103, date: 2026-02-19, intitule: loi de finances pour 2026}
     article: "2"
     codification: CGI, art. 224
@@ -1740,6 +1820,7 @@ mesures:
     gouvernement: lecornu_2
     intitule: Contribution exceptionnelle sur les bénéfices des grandes entreprises étendue à un second exercice
     instrument: is
+    sens: hausse
     texte: {nature: loi, numero: 2026-103, date: 2026-02-19, intitule: loi de finances pour 2026}
     article: "12"
     annee_effet: 2026
@@ -1756,6 +1837,7 @@ mesures:
     gouvernement: lecornu_2
     intitule: Taxe sur les actifs non affectés à une activité opérationnelle des sociétés holdings patrimoniales
     instrument: patrimoine
+    sens: hausse
     texte: {nature: loi, numero: 2026-103, date: 2026-02-19, intitule: loi de finances pour 2026}
     article: "7"
     codification: CGI, art. 235 ter C

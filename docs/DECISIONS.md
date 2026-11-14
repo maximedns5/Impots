@@ -31649,6 +31649,110 @@ lit), `test_jumeau_commerce.py` (+1 : la demande portée par une mesure laisse l
 référence à la tendance). Avec `test_jumeau*.py` : 216 verts, 1 sauté ; `ruff check src
 tests scripts` propre.
 
+### L'amendement de la relecture, avant tout calcul
+
+Le responsable, à la relecture, rien n'ayant tourné : **le choix (b)**, **le jumeau à
+jour** (la fusion de `claude/but23-cadre`, a99241a : l'emploi public de D-418, la page de
+D-419, la jonction D-422), **l'étape zéro** faite, et le pronostic révisé en conséquence.
+Les fenêtres, les cibles, les tolérances, les θ estimés, l'a priori et les deux naïfs ne
+changent pas.
+
+**Le choix (b), un choix de modèle.** Une année votée, la variation du taux apparent ne
+compte que dans le sens que la loi donne (`rejeu_histoire.variation_comptee`) : une
+baisse votée ne fait pas une hausse, une hausse votée pas une baisse ; un barème
+seulement indexé, ou une date de recouvrement (`neutre`), ne fait rien ; des mesures de
+sens contraires la même année, ou une mesure `mixte`, comptent la variation entière,
+comme D-417. Le sens est lu dans les paramètres de la base, relus au JO, sans montant :
+`sens` pour chacune des 76 mesures d'un prélèvement (`votees.PRELEVEMENTS`, un refus à la
+lecture s'il manque), et pour une étape qui va contre sa mesure (la fin des contributions
+sur l'IS de 2014 et de 2017, des baisses). C'est un filtre sur le cycle, pas sa
+suppression : la part cyclique qui va dans le sens voté entre encore. Ce qu'il change aux
+entrées du test (Md€) : l'IS de 2022 (baisse votée, taux apparent en hausse) n'entre
+plus, ni ses +14,7 à +16,1 Md€ de 2022 à 2024 ; l'IR, voté chaque année par son barème,
+n'entre plus les années où le barème n'est qu'indexé (2019, 2021, 2023, 2024) ni en
+2018 et 2022 où la hausse du taux apparent va contre les baisses votées. Les signaux des
+entreprises redeviennent, de 2022 à 2024, ceux de D-417 (0, −3,98, −5,00) ; les recettes
+observées du test, en points de PIB : 2018 −0,02, 2019 −1,10, 2022 −0,11, 2023 −0,36,
+2024 −0,39 (D-417 : −0,10, −1,04, +0,19, −0,15, −0,33).
+
+**Le jumeau à jour.** Le modèle est celui de la jonction D-422 : le bloc de l'emploi
+public (D-418) dans `ordre_structurel` ; les rémunérations des APU des dépenses observées
+y font des emplois publics, et l'activité que lisent les blocs marchands n'a plus la
+valeur ajoutée des APU. Le premier juge a tourné avant ; son effet sur l'histoire n'est
+pas connu. Un seul conflit de fusion, `DECISIONS.md`, rangé D-421 puis D-422 ; 239 tests
+verts.
+
+**L'étape zéro : l'identifiabilité, une propriété du modèle.** La jacobienne des sorties
+notées du jumeau en θ, à θ½, divisée par les tolérances, sur les fenêtres de
+l'estimation, chacun des sept θ perturbé de 0,001 sur l'axe des tirages : aucune valeur
+publiée de cible n'y entre, aucune erreur n'est calculée (les entrées, elles, sont les
+chocs observés). L'écart-type approché est √diag (JᵀJ + 4 I)⁻¹, 4 I l'a priori (0,50 seul).
+Une passe d'essai de quelques secondes (`scratchpad`, hors rapports).
+
+| θ | information, 2011-2017 | σ | chocs × 3 | chocs × 10 | test |
+|---|---|---|---|---|---|
+| profil de la consommation | 0,002 | 0,500 | 0,499 | 0,491 | 0,499 |
+| élasticité de l'emploi au coût | 0,099 | 0,494 | 0,454 | 0,280 | 0,499 |
+| salaires et chômage | 0,013 | 0,499 | 0,493 | 0,436 | 0,500 |
+| élasticité-prix des exportations | 0,013 | 0,499 | 0,493 | 0,445 | 0,500 |
+| élasticité-prix des importations | 0,025 | 0,498 | 0,486 | 0,390 | 0,500 |
+| accélérateur | 0,027 | 0,498 | 0,491 | 0,428 | 0,498 |
+| coût du capital | 0,000 | 0,500 | 0,500 | 0,499 | 0,500 |
+
+Identifier un θ (σ < 0,25) demande une information d'au moins 12 ; la plus forte est
+0,099. L'information croît comme le carré de la taille des chocs (× 8,7 pour des chocs
+triplés, × 99 décuplés) : même des chocs dix fois plus grands n'identifient rien. **1996
+→ 2009, envisagé** : la base des mesures et les séries d'avant 2010 n'existent pas, la
+jacobienne ne s'y calcule donc pas ; elle s'y projette. Les variations annuelles des
+taux apparents des familles, toutes années comptées comme votées (un majorant), sont de
+0,83 point de PIB en moyenne quadratique de 1996 à 2007 contre 0,32 de 2011 à 2017
+(× 2,6 ; la bascule de la CSG de 1997-1998, qui s'annule pour moitié avec les cotisations
+salariales, en fait l'essentiel). Onze années notées de plus à 2,6 fois la taille :
+l'information de l'élasticité de l'emploi monterait de 0,099 à environ 1,15, σ à 0,44.
+**L'histoire longue n'identifierait aucun θ** : la proposition du § 4 ne vaut pas ses
+quatre lots tant que les chocs budgétaires sont la seule source d'identification ; elle
+est retirée. Ce que les θ attendent est ailleurs (des chocs non budgétaires, des
+données d'entreprises ou de ménages, un a priori plus serré pris dans la littérature).
+
+**Le pronostic révisé**, sur le test, aux θ estimés (REQM en points ; N et la colonne du
+naïf mécanique où elle ne change pas, celles de D-420 ; il remplace celui de plus haut) :
+
+| cible | tol. | jumeau | naïf méca. | N | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|
+| PIB | 1,0 | [0,85 ; 1,4] | 0,831 | 0,831 | non | non | non |
+| emploi | 0,8 | [0,85 ; 1,15] | 0,858 | 0,858 | non (a) | non | non |
+| chômage | 0,8 | [0,65 ; 0,95] | 0,627 | 0,627 | non, de peu (a) | non | non |
+| exportations | 4,0 | [3,2 ; 3,9] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | [3,0 ; 3,8] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | [0,45 ; 0,65] | [0,5 ; 0,6] | 0,645 | non | oui | non |
+| D5 | 0,5 | [0,25 ; 0,5] | [0,25 ; 0,45] | 0,424 | oui | oui | non, de peu |
+| D61 | 0,4 | [0,15 ; 0,4] | [0,15 ; 0,35] | 0,983 | oui | oui | non |
+| recettes | 0,8 | [0,85 ; 1,3] | [0,8 ; 1,2] | 1,301 | non | oui | non |
+| solde | 1,0 | [0,35 ; 0,8] | [0,45 ; 0,8] | 1,361 | oui | oui | oui, de peu |
+| dette | 3,0 | [2,0 ; 3,6] | [1,8 ; 2,8] | 4,393 | non, de peu (b) | oui | non |
+| créations | 10 | [4,5 ; 7,5] | 4,310 | 4,310 | oui (c) | non | non |
+
+(a) Les rémunérations des APU des dépenses observées baissent en part du PIB en 2022 et
+2023 (l'inflation) : le bloc de l'emploi public en retire des emplois, là où le jumeau en
+manque déjà. (b) La demande mondiale, en retrait de 2023 et 2024, abaisse le PIB de la
+fin de fenêtre, et la dette en part du PIB monte. (c) Sans l'IS de 2022, les créations ne
+s'agitent plus que par la CVAE de 2023 ; elles restent loin du naïf.
+
+Soit **6 cibles sur 12 tenues par le jumeau** (de 5 à 9 ; 7 sous D-420), 6 par le naïf
+(exactement), **9 par le naïf mécanique** (de 8 à 10), le naïf battu sur 8 (de 6 à 9), et
+**le naïf mécanique battu sur 3** (de 1 à 4 : les deux échanges, par la demande
+mondiale, et le solde). L'estimation : **aucun θ identifié** (l'étape zéro le dit
+d'avance ; chaque σ entre 0,49 et 0,50), chacun à moins de 0,15 de ½, J final entre 98
+et 100 % de J à θ½, et le test à θ½ aux mêmes tenues, chaque REQM à moins de 3 %.
+Contrôle, d'abord : les REQM du naïf redonnent celles de D-420 à 1e-9 près ; si la fusion
+les change (sa référence porte le bloc de l'emploi public), l'écart est dit, et rien
+n'est réglé.
+
+Tests : `test_jumeau_apprentissage.py` (+1 : une année votée ne compte que le sens de la
+loi ; les chocs synthétiques disent leur sens), `test_jumeau_votees.py` (+1 : chaque
+mesure d'un prélèvement dit son sens, une fin de contribution est une baisse, un barème
+indexé neutre).
+
 ## D-422 — La jonction de D-417 à D-420 : l'histoire, l'emploi public, la page
 
 **La jonction** (branche `claude/but23-cadre`, partie de f3541d1). Trois branches, toutes

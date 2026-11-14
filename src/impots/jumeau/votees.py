@@ -41,6 +41,16 @@ INSTRUMENTS = frozenset({
 STATUTS = frozenset({"en_vigueur", "remplacee", "temporaire", "suspendue", "abrogee",
                      "abrogee_avant_effet", "censuree"})
 NATURES = frozenset({"loi", "ordonnance", "décret"})
+#: Le sens d'une mesure sur le prélèvement (D-421, amendé) : « hausse » ou « baisse » du
+#: paramètre appliqué d'une année à l'autre, tel que le texte le fixe ; « mixte » quand il
+#: en change plusieurs en sens contraires ; « neutre » quand il le reconduit (un barème
+#: indexé, une date de recouvrement). Lu dans les paramètres, jamais dans un montant.
+SENS = frozenset({"hausse", "baisse", "mixte", "neutre"})
+#: Les instruments des prélèvements : leurs mesures disent leur sens.
+PRELEVEMENTS = frozenset({
+    "ir", "ir_capital", "csg", "cotisations_employeurs", "cotisations_salaries", "cice",
+    "is", "impots_production", "tva", "accises_energie", "taxe_habitation", "patrimoine",
+    "transmission"})
 #: Le statut de vérification d'une mesure (D-413) : « vérifiée » sur une source primaire,
 #: dont l'URL est donnée ; « non vérifiée », avec la raison.
 VERIFICATIONS = frozenset({"vérifiée", "non vérifiée"})
@@ -101,10 +111,12 @@ class Verification:
 @dataclass(frozen=True)
 class Etape:
     """Une étape d'une mesure étalée, datée par le texte (D-421) : le jour où le
-    paramètre que dit `quoi` prend sa nouvelle valeur."""
+    paramètre que dit `quoi` prend sa nouvelle valeur, et son sens s'il diffère de celui
+    de la mesure (la fin d'une contribution temporaire)."""
 
     date: dt.date
     quoi: str
+    sens: str | None = None
 
 
 @dataclass(frozen=True)
@@ -126,6 +138,16 @@ class MesureVotee:
     etapes: tuple[Etape, ...] = ()
     """Les étapes d'une mesure étalée, dans l'ordre (D-421) ; vide pour une mesure d'une
     seule date, `date_effet` ou le 1er janvier de `annee_effet`."""
+    sens: str | None = None
+    """Le sens sur le prélèvement (`SENS`), dit pour chaque instrument de `PRELEVEMENTS`."""
+
+    def sens_en(self, annee: int) -> frozenset[str]:
+        """Les sens des étapes qui ont effet en `annee` (l'année de l'étape, et la
+        suivante pour une étape entrée en vigueur après le 1er janvier)."""
+        dates = ([(e.date, e.sens or self.sens) for e in self.etapes] if self.etapes
+                 else [(self.date_effet or dt.date(self.annee_effet, 1, 1), self.sens)])
+        return frozenset(sens for d, sens in dates if sens is not None and (
+            d.year == annee or (d.year + 1 == annee and (d.month, d.day) != (1, 1))))
 
     @property
     def annees_effet(self) -> tuple[int, ...]:
@@ -148,10 +170,13 @@ def _etapes(valeur: Any, m: dict[str, Any], ou: str) -> tuple[Etape, ...]:
         raise VoteesError(f"{ou} : etapes est une liste non vide de {{date, quoi}}")
     etapes = []
     for i, e in enumerate(valeur):
-        if not isinstance(e, dict) or set(e) != {"date", "quoi"} or not str(
-                e["quoi"]).strip():
-            raise VoteesError(f"{ou}.etapes[{i}] : {{date, quoi}}, quoi non vide")
-        etapes.append(Etape(_date(e["date"], f"{ou}.etapes[{i}]"), str(e["quoi"])))
+        if not isinstance(e, dict) or not {"date", "quoi"} <= set(e) <= {
+                "date", "quoi", "sens"} or not str(e["quoi"]).strip():
+            raise VoteesError(f"{ou}.etapes[{i}] : {{date, quoi, sens ?}}, quoi non vide")
+        if e.get("sens") is not None and e["sens"] not in SENS:
+            raise VoteesError(f"{ou}.etapes[{i}] : sens « {e['sens']} » hors {sorted(SENS)}")
+        etapes.append(Etape(_date(e["date"], f"{ou}.etapes[{i}]"), str(e["quoi"]),
+                            e.get("sens")))
     dates = [e.date for e in etapes]
     if dates != sorted(set(dates)):
         raise VoteesError(f"{ou} : étapes non strictement croissantes {dates}")
@@ -286,6 +311,10 @@ def mesures() -> tuple[MesureVotee, ...]:
             raise VoteesError(f"{ou} : sans article")
         if m["instrument"] not in INSTRUMENTS:
             raise VoteesError(f"{ou} : instrument « {m['instrument']} » hors vocabulaire")
+        if m.get("sens") is not None and m["sens"] not in SENS:
+            raise VoteesError(f"{ou} : sens « {m['sens']} » hors {sorted(SENS)}")
+        if m["instrument"] in PRELEVEMENTS and m.get("sens") is None:
+            raise VoteesError(f"{ou} : une mesure de prélèvement dit son sens ({sorted(SENS)})")
         if m["statut"] not in STATUTS:
             raise VoteesError(f"{ou} : statut « {m['statut']} » hors vocabulaire")
         parametres = tuple(m["parametres"])
@@ -311,7 +340,7 @@ def mesures() -> tuple[MesureVotee, ...]:
             date_effet=None if m.get("date_effet") is None
             else _date(m["date_effet"], f"{ou}.date_effet"),
             suite=m.get("suite"), note=m.get("note"),
-            etapes=_etapes(m.get("etapes"), m, ou)))
+            etapes=_etapes(m.get("etapes"), m, ou), sens=m.get("sens")))
     ids = [m.id for m in sortie]
     if len(set(ids)) != len(ids):
         raise VoteesError("un identifiant de mesure deux fois")

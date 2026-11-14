@@ -176,3 +176,21 @@ def test_des_etapes_mal_datees_sont_refusees() -> None:
                        {**base, "date_effet": dt.date(2018, 10, 1)}, "x")
     with pytest.raises(votees.VoteesError, match="quoi non vide"):
         votees._etapes([{"date": dt.date(2018, 1, 1), "quoi": " "}], base, "x")
+
+
+def test_chaque_mesure_d_un_prelevement_dit_son_sens() -> None:
+    """D-421 amendé : le sens, lu dans les paramètres ; une fin de contribution est une
+    baisse ; un barème indexé est neutre."""
+    par_id = {m.id: m for m in votees.mesures()}
+    for m in par_id.values():
+        if m.instrument in votees.PRELEVEMENTS:
+            assert m.sens in votees.SENS, m.id
+    assert par_id["lfi2018_is_25"].sens_en(2022) == {"baisse"}
+    assert par_id["bareme_2023"].sens_en(2023) == {"neutre"}
+    contribution = par_id["lfi2014_contribution_is_10_7"]
+    assert contribution.sens_en(2014) == {"hausse"}
+    assert contribution.sens_en(2016) == contribution.sens_en(2017) == {"baisse"}
+    assert par_id["lfi2018_cice_6_suppression"].sens_en(2019) == {"hausse"}
+    with pytest.raises(votees.VoteesError, match="sens"):
+        votees._etapes([{"date": dt.date(2018, 1, 1), "quoi": "a", "sens": "plus"}],
+                       {"annee_effet": 2018}, "x")

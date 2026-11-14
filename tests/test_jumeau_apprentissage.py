@@ -235,6 +235,14 @@ def test_la_note_se_calcule():
             r2, jumeau={"x": {2022: np.array([1.0, 2.0])}}),), (c,))
 
 
+
+def _votee(id_, instrument, annees, sens, statut="en_vigueur"):
+    """Une mesure votée synthétique : ses années d'effet et son sens (D-421)."""
+    return SimpleNamespace(id=id_, instrument=instrument, annee_effet=annees[0],
+                           annees_effet=tuple(annees), statut=statut,
+                           sens_en=lambda a: frozenset({sens}) if a in annees else frozenset())
+
+
 # --------------------------------------------------------------------------- #
 # 4. les chocs observés
 # --------------------------------------------------------------------------- #
@@ -252,10 +260,8 @@ def test_un_taux_apparent_ne_compte_que_les_annees_votees():
     fenetre = F(2010, 2013, (2011, 2012, 2013))
     tva = {2010: 5.0, 2011: 5.5, 2012: 6.5, 2013: 6.0}
     publies = {a: _publie(a, tva=t, d62=20.0 + a - 2010) for a, t in tva.items()}
-    votees = [SimpleNamespace(id="tva_2012", instrument="tva", annees_effet=(2012,),
-                              statut="en_vigueur"),
-              SimpleNamespace(id="tva_2013_censuree", instrument="tva", annees_effet=(2013,),
-                              statut="censuree")]
+    votees = [_votee("tva_2012", "tva", (2012,), "hausse"),
+              _votee("tva_2013_censuree", "tva", (2013,), "hausse", statut="censuree")]
     pib = [101.0, 102.0, 103.0]
     mesures = rh.chocs_observes(fenetre, publies, pib, votees, CELLULES)
     noms = [m.identifiant for m in mesures]
@@ -301,12 +307,9 @@ def test_chaque_payeur_de_cotisations_lit_sa_ligne_et_le_cice_la_sienne():
     publies = {2017: _publie_cotisations(2017, employeurs=20.0, salaries=8.0, d3=3.0),
                2018: _publie_cotisations(2018, employeurs=20.0, salaries=7.0, d3=2.5),
                2019: _publie_cotisations(2019, employeurs=18.5, salaries=7.0, d3=1.0)}
-    votees = [SimpleNamespace(id="cice", instrument="cice", annee_effet=2018,
-                              annees_effet=(2018, 2019), statut="en_vigueur"),
-              SimpleNamespace(id="sal", instrument="cotisations_salaries", annee_effet=2018,
-                              annees_effet=(2018, 2019), statut="en_vigueur"),
-              SimpleNamespace(id="emp", instrument="cotisations_employeurs",
-                              annee_effet=2019, annees_effet=(2019,), statut="en_vigueur")]
+    votees = [_votee("cice", "cice", (2018, 2019), "hausse"),
+              _votee("sal", "cotisations_salaries", (2018, 2019), "baisse"),
+              _votee("emp", "cotisations_employeurs", (2019,), "baisse")]
     pib = [100.0, 100.0]
     par_nom = {m.identifiant: m for m in rh.chocs_observes(fenetre, publies, pib, votees,
                                                             CELLULES)}
@@ -324,6 +327,22 @@ def test_chaque_payeur_de_cotisations_lit_sa_ligne_et_le_cice_la_sienne():
     assert cice.entreprises[2018]["cotisations_employeurs"] == pytest.approx(0.5)
     assert cice.entreprises[2019]["cotisations_employeurs"] == pytest.approx(2.0)
     assert cice.chocs == {}
+
+
+def test_une_annee_votee_ne_compte_que_le_sens_de_la_loi():
+    """Le choix (b) de D-421 amendé : une baisse votée ne fait pas une hausse ; un barème
+    indexé (neutre) ne fait rien ; deux mesures de sens contraires comptent tout."""
+    is_ = next(f for f in rh.FAMILLES if f.nom == "is")
+    baisse = [_votee("b", "is", (2022,), "baisse")]
+    assert rh.variation_comptee(is_, 2022, +0.016, baisse) == 0.0
+    assert rh.variation_comptee(is_, 2022, -0.004, baisse) == -0.004
+    assert rh.variation_comptee(is_, 2023, -0.004, baisse) == 0.0
+    assert rh.variation_comptee(is_, 2022, +0.016, [_votee("n", "is", (2022,), "neutre")]) == 0.0
+    deux = [*baisse, _votee("h", "is", (2022,), "hausse")]
+    assert rh.variation_comptee(is_, 2022, +0.016, deux) == 0.016
+    assert rh.variation_comptee(is_, 2022, +0.016, [_votee("m", "is", (2022,), "mixte")]) == 0.016
+    hausse = [_votee("h", "is", (2022,), "hausse")]
+    assert rh.variation_comptee(is_, 2022, -0.004, hausse) == 0.0
 
 
 def test_une_mesure_etalee_compte_chacune_de_ses_annees():
