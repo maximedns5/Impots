@@ -53,6 +53,9 @@ from impots.jumeau.blocs.valeurs_entreprises import (
     IDEES_ROW,
     IMPLANTATION_ROW,
     INVESTISSEMENT_ROW,
+    MONTEE_ROW,
+    SURVIE_ROW,
+    TAILLE_ROW,
     EntreprisesError,
     Parametres,
     charger,
@@ -292,5 +295,6 @@ def ordre_lot2(depart: Any, population_: Population, *, parametres: Parametres |
 
 
 __all__ = ["CREATIONS_ROW", "FERMETURES_ROW", "IDEES_ROW", "IMPLANTATION_ROW",
-           "INVESTISSEMENT_ROW", "ChocsEntreprises", "Parametres", "Population",
-           "charger", "mesure_entreprises", "ordre_lot2", "population_depuis"]
+           "INVESTISSEMENT_ROW", "MONTEE_ROW", "SURVIE_ROW", "TAILLE_ROW",
+           "ChocsEntreprises", "Parametres", "Population", "charger", "mesure_entreprises",
+           "ordre_lot2", "population_depuis"]

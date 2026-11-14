@@ -34,9 +34,12 @@ class Plage:
     haut: float
 
     def __post_init__(self) -> None:
-        if not self.bas <= self.centre <= self.haut:
+        # θ = 1 est la réponse la plus forte : selon la valeur, elle est la plus haute (une
+        # élasticité) ou la plus basse (une montée en charge, plus courte quand elle est
+        # plus forte). La plage est monotone, le centre entre ses bornes.
+        if not (self.bas <= self.centre <= self.haut or self.bas >= self.centre >= self.haut):
             raise EntreprisesError(f"plage [{self.bas} ; {self.centre} ; {self.haut}] "
-                                   f"non ordonnée")
+                                   f"non monotone")
 
     def a(self, theta: np.ndarray) -> np.ndarray:
         """La valeur à θ, par le centre : bas à 0, centre à ½, haut à 1."""
@@ -53,11 +56,12 @@ class Parametres:
     taux_entree_base: float
     """e₀, en % par an."""
     idees: Plage
-    survie_jeunes: float
+    survie_jeunes: Plage
     age_maturite: int
-    montee_en_charge_ans: int
-    taille_relative: float
-    part_va_societes_pib: float
+    montee_en_charge_ans: Plage
+    taille_relative: Plage
+    va_s11_2024: float
+    va_s12_2024: float
     assiette_part_pib: float
     signaux_naissances: tuple[str, ...]
     semi_elasticite_marge: Plage
@@ -79,13 +83,17 @@ class Parametres:
     part_etrangere: float
 
     def __post_init__(self) -> None:
-        if not 0.0 < self.survie_jeunes < 1.0:
-            raise EntreprisesError(f"survie {self.survie_jeunes} hors de ]0 ; 1[")
-        if self.hasard_installees <= 0.0 or self.hasard_installees >= 1.0:
-            raise EntreprisesError(
-                f"le taux d'entrée {self.taux_entree_base} % et la survie des jeunes ne "
-                f"laissent pas d'état stationnaire (hasard des installées "
-                f"{self.hasard_installees:.4f})")
+        for sj in (self.survie_jeunes.bas, self.survie_jeunes.haut):
+            if not 0.0 < sj < 1.0:
+                raise EntreprisesError(f"survie {sj} hors de ]0 ; 1[")
+            h = float(self.hasard_installees(np.array([sj]))[0])
+            if not 0.0 < h < 1.0:
+                raise EntreprisesError(
+                    f"le taux d'entrée {self.taux_entree_base} % et la survie des jeunes "
+                    f"{sj} ne laissent pas d'état stationnaire (hasard des installées "
+                    f"{h:.4f})")
+        if min(self.montee_en_charge_ans.bas, self.montee_en_charge_ans.haut) < 1.0:
+            raise EntreprisesError("montée en charge d'au moins un an")
         for groupe in (self.signaux_naissances, self.signaux_fermetures,
                        self.signaux_investissement, self.signaux_implantation):
             inconnus = sorted(set(groupe) - set(SIGNAUX_ENTREPRISES))
@@ -99,20 +107,26 @@ class Parametres:
             raise EntreprisesError("les élasticités se donnent en valeur absolue : le "
                                    "signe est porté par les équations")
 
-    @property
-    def hasard_installees(self) -> float:
-        """h_o, tel que le stock soit stationnaire au taux d'entrée e₀ :
-        1/e₀ = Σ_{a < A} S^a + S^A / h_o."""
-        jeunes = sum(self.survie_jeunes ** a for a in range(self.age_maturite))
+    def hasard_installees(self, sj: np.ndarray) -> np.ndarray:
+        """h_o, tel que le stock soit stationnaire au taux d'entrée e₀, pour la survie des
+        jeunes S_j (un tableau sur les tirages) : 1/e₀ = Σ_{a < A} S_j^a + S_j^A / h_o."""
+        jeunes = sum(sj ** a for a in range(self.age_maturite))
         reste = 100.0 / self.taux_entree_base - jeunes
-        return self.survie_jeunes ** self.age_maturite / reste if reste > 0 else -1.0
+        return np.where(reste > 0, sj ** self.age_maturite / np.where(reste > 0, reste, 1.0),
+                        -1.0)
 
-    def survie(self, age: int) -> float:
+    def survie(self, age: int, sj: np.ndarray) -> np.ndarray:
         """S(a), la part d'une cohorte encore active à l'âge a (S(0) = 1)."""
         a, maturite = int(age), self.age_maturite
         if a <= maturite:
-            return self.survie_jeunes ** a
-        return self.survie_jeunes ** maturite * (1.0 - self.hasard_installees) ** (a - maturite)
+            return sj ** a
+        return sj ** maturite * (1.0 - self.hasard_installees(sj)) ** (a - maturite)
+
+    @property
+    def part_va_societes_pib(self) -> float:
+        """s_VA : la valeur ajoutée brute des sociétés non financières et financières sur
+        le PIB, en 2024 (t. 7.101, 7.201, 1.101)."""
+        return (self.va_s11_2024 + self.va_s12_2024) / self.pib_2024
 
     @property
     def capital_part_pib(self) -> float:
@@ -149,11 +163,12 @@ def charger(chemin: Path | None = None) -> Parametres:
     n, f, i, m = d["naissances"], d["fermetures"], d["investissement"], d["implantation"]
     return Parametres(
         elasticite=plage(n["elasticite"]), taux_entree_base=v(n["taux_entree_base"]),
-        idees=plage(n["idees"]), survie_jeunes=v(n["survie_jeunes"]),
+        idees=plage(n["idees"]), survie_jeunes=plage(n["survie_jeunes"]),
         age_maturite=int(v(n["age_maturite"])),
-        montee_en_charge_ans=int(v(n["montee_en_charge_ans"])),
-        taille_relative=v(n["taille_relative"]),
-        part_va_societes_pib=v(n["part_va_societes_pib"]),
+        montee_en_charge_ans=plage(n["montee_en_charge_ans"]),
+        taille_relative=plage(n["taille_relative"]),
+        va_s11_2024=v(n["valeur_ajoutee_s11_2024"]),
+        va_s12_2024=v(n["valeur_ajoutee_s12_2024"]),
         assiette_part_pib=v(n["assiette_part_pib"]),
         signaux_naissances=tuple(n["signaux"]),
         semi_elasticite_marge=plage(f["semi_elasticite_marge"]),
@@ -179,6 +194,9 @@ IDEES_ROW = "idees_creations"
 FERMETURES_ROW = "fermetures_marges"
 INVESTISSEMENT_ROW = "investissement_cout_capital"
 IMPLANTATION_ROW = "implantation_tmee"
+SURVIE_ROW = "survie_creations"
+MONTEE_ROW = "montee_en_charge_creations"
+TAILLE_ROW = "taille_creations"
 
 
 def lignes(Ligne: Any) -> dict[str, Any]:
@@ -211,6 +229,26 @@ def lignes(Ligne: Any) -> dict[str, Any]:
               "θ = 1 : les sorties répondent le plus aux marges",
               "choisie, non vérifiée (D-407) ; à régler au lot 6 sur les défaillances",
               False),
+        ligne(SURVIE_ROW, "fermetures",
+              "S_j dans S(a) = S_j^a (a ≤ A), S_j^A (1 − h_o)^(a − A) sinon : la survie "
+              "annuelle des jeunes sociétés ; h_o s'en recalcule (stock stationnaire)",
+              "par an", p.survie_jeunes,
+              "θ = 1 : les sociétés nouvelles survivent le plus",
+              "choisie, non vérifiée : D-402 (SINE, 0,6^(1/5), à manifester), sa plage "
+              "0,85 à 0,93", False),
+        ligne(MONTEE_ROW, "productivite",
+              "M dans min(1, (a + 1)/M) : la montée en charge des entrantes, en années",
+              "ans", p.montee_en_charge_ans,
+              "θ = 1 : la montée en charge la plus rapide",
+              "choisie, non vérifiée : D-402 (Haltiwanger et al. 2013, DynEmp, à "
+              "manifester), sa plage 3 à 8 ans", False),
+        ligne(TAILLE_ROW, "productivite",
+              "r dans ΔVA = v̄ r c [...] : la valeur ajoutée d'une société à la marge, à "
+              "maturité, sur la société moyenne (entrantes et sortantes)",
+              "sans dimension", p.taille_relative,
+              "θ = 1 : les sociétés à la marge les plus grandes",
+              "choisie, non vérifiée : D-402 (SINE, DynEmp, à manifester ; IPP n° 47, "
+              "tableau 2.2 (c)), sa plage 0,05 à 0,20", False),
         ligne(INVESTISSEMENT_ROW, "investissement",
               "ε_K dans x* = −ε_K (ck − pva) : l'élasticité de long terme de l'investissement "
               "des SNF au coût réel du capital (valeur absolue)", "sans dimension",

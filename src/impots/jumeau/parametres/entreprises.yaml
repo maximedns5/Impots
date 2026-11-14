@@ -38,33 +38,49 @@ naissances:
       Choisie, non vérifiée : un point de taux d'entrée de part et d'autre du taux de
       référence. À régler au lot 6 sur les séries de créations de l'Insee (lot 5).
   survie_jeunes:
-    # S, la survie annuelle d'une société avant l'âge de maturité.
-    valeur: 0.90
+    # S_j, la survie annuelle d'une société avant l'âge de maturité. θ_survie ; le centre
+    # est la valeur de D-402.
+    centre: 0.90
+    bas: 0.85
+    haut: 0.93
     source: >
       [D-402] Insee, enquête SINE : environ six entreprises sur dix actives cinq ans après
-      leur création, 0,6^(1/5) ≈ 0,90 par an [à manifester] ; choisie, non vérifiée.
+      leur création, 0,6^(1/5) ≈ 0,90 par an [à manifester] ; la plage est celle de D-402.
+      Choisie, non vérifiée.
   age_maturite:
     # A, l'âge (ans) où le hasard passe de 1 − S à celui des installées.
     valeur: 5
     source: >
       [D-402] le « cinq ans » de SINE ; choisi, non vérifié.
   montee_en_charge_ans:
-    valeur: 5
+    # M, en années. θ_montée ; θ = 1 est la montée la plus rapide (la réponse la plus
+    # forte), d'où bas > haut. Le centre est la valeur de D-402.
+    centre: 5
+    bas: 8
+    haut: 3
     source: >
       [D-402] Haltiwanger, Jarmin et Miranda (REStat 2013), OCDE DynEmp [à manifester] ;
-      choisie, non vérifiée.
+      la plage est celle de D-402. Choisie, non vérifiée.
   taille_relative:
     # r, la valeur ajoutée d'une société à la marge, à maturité, sur la société moyenne.
-    valeur: 0.10
+    # θ_taille ; le centre est la valeur de D-402, la plage aussi.
+    centre: 0.10
+    bas: 0.05
+    haut: 0.20
     source: >
       [D-402] Insee SINE, OCDE DynEmp [à manifester] ; recoupé par le rapport IPP n° 47,
       tableau 2.2 (c) [lu]. Choisie, non vérifiée. Le lot 2 l'applique aussi aux
       sortantes induites (des sociétés à la marge, comme les entrantes).
-  part_va_societes_pib:
-    valeur: 0.60
-    source: >
-      [D-402] valeur ajoutée des sociétés non financières et financières dans le PIB,
-      Insee, comptes de secteur [à manifester] ; choisie, non vérifiée.
+  # s_VA, la part des sociétés dans le PIB, se lit (`charger`) : (S11 + S12) / PIB de
+  # 2024 = (1 528,512 + 97,269) / 2 935,236 = 0,5539, au lieu des 0,60 de D-402. Le PIB
+  # est `investissement.pib_2024`. Les comptes de secteur sont du millésime 2026 (publiés
+  # en mai 2026), le PIB du millésime 2025 : un écart de révision de l'ordre du millième.
+  valeur_ajoutee_s11_2024:
+    valeur: 1528.512
+    source: Insee, comptes nationaux base 2020, t. 7.101, S11, B1G, 2024 [lu].
+  valeur_ajoutee_s12_2024:
+    valeur: 97.269
+    source: Insee, comptes nationaux base 2020, t. 7.201, S12, B1G, 2024 [lu].
   assiette_part_pib:
     # b, le profit imposable en part du PIB : le taux apparent est 100 ΔP / (b Y).
     valeur: 0.092

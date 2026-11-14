@@ -63,7 +63,12 @@ START = {"year": 2025, "gdp_eur": 2.99e12, "receipts_ratio": 0.51, "spending_rat
          "debt_ratio": 1.15}
 ANNEES = tuple(range(2026, 2036))
 LOT2 = (CREATIONS_ROW, "idees_creations", "fermetures_marges",
-        "investissement_cout_capital", "implantation_tmee")
+        "investissement_cout_capital", "implantation_tmee", "survie_creations",
+        "montee_en_charge_creations", "taille_creations")
+#: Les θ dont θ = 0 n'éteint pas le canal : leur borne basse est une valeur publiée ou
+#: choisie, pas zéro.
+SANS_ZERO = ("investissement_cout_capital", "survie_creations",
+             "montee_en_charge_creations", "taille_creations")
 INSTRUMENTS = ("impot_societes", "cvae", "cotisations_employeurs")
 #: (bloc, champ) : ce que chaque bloc fait, et les impôts qu'il lit.
 LECTURES = {"naissances": ("creations_societes", set(INSTRUMENTS)),
@@ -136,10 +141,12 @@ def test_les_identites_tiennent_avec_le_lot_2_sur_un_axe_de_tirages(pop) -> None
 
 
 def test_sans_mesure_la_reference_est_stationnaire_a_theta_idees_un_demi(pop) -> None:
-    """Le hasard des installées se calcule pour tenir le stock au taux e₀."""
-    traj = _calculer(pop, [], _theta())
-    stock = traj.niveaux("stock_societes")[0][:, 0]
+    """Le hasard des installées se calcule pour tenir le stock au taux e₀, quelle que
+    soit la survie des jeunes."""
+    traj = _calculer(pop, [], _theta(survie_creations=np.array([0.0, 0.5, 1.0])))
+    stock = traj.niveaux("stock_societes")[0]
     assert np.max(np.abs(stock - pop.stock)) < 1e-6
+    traj = _calculer(pop, [], _theta())
     p = charger()
     assert np.allclose(traj.niveaux("creations_societes")[0][:, 0],
                        p.taux_entree_base / 100 * pop.stock)
@@ -190,6 +197,10 @@ def test_une_mesure_ventilee_par_taille_change_les_sorties_pas_les_creations(pop
     ("fermetures_marges", "fermetures", "sorties_induites"),
     ("investissement_cout_capital", "investissement", "pib"),
     ("implantation_tmee", "implantation", "pib"),
+    ("survie_creations", "productivite", "pib"),
+    ("survie_creations", "fermetures", "stock_societes"),
+    ("montee_en_charge_creations", "productivite", "pib"),
+    ("taille_creations", "productivite", "pib"),
 ])
 def test_theta_zero_et_un_bornent_chaque_bloc(pop, cle, bloc, champ) -> None:
     grille = np.linspace(0.0, 1.0, 9)
@@ -198,7 +209,7 @@ def test_theta_zero_et_un_bornent_chaque_bloc(pop, cle, bloc, champ) -> None:
     assert np.all(np.diff(effet, axis=1) >= -1e-12), "monotone en θ"
     assert np.all(effet[:, 1:-1] <= effet[:, [-1]] + 1e-12)
     assert np.all(effet[:, 1:-1] >= effet[:, [0]] - 1e-12)
-    if cle != "investissement_cout_capital":  # 0,37 à θ = 0 : Mésange n'a pas de zéro
+    if cle not in SANS_ZERO:
         assert not np.any(effet[:, 0]), "θ = 0 éteint le canal"
 
 
@@ -277,7 +288,8 @@ def test_un_agregat_non_ventile_est_refuse(pop) -> None:
 def test_les_lignes_theta_du_lot_2_sont_au_registre() -> None:
     for cle in LOT2:
         assert cle in thetas.REGISTRE
-    for cle in ("idees_creations", "fermetures_marges"):
+    for cle in ("idees_creations", "fermetures_marges", "survie_creations",
+                "montee_en_charge_creations", "taille_creations"):
         assert not thetas.REGISTRE[cle].verifiee  # choisies, non vérifiées
 
 
@@ -300,6 +312,29 @@ def test_le_capital_net_se_relit_sur_la_table_8202() -> None:
     valeurs = yaml.safe_load(FICHIER.read_text(encoding="utf-8"))["investissement"]
     assert n11n["2024"] == valeurs["capital_net_2024"]["valeur"]
     assert n11n["2014"] == valeurs["capital_net_2014"]["valeur"]
+
+
+T7101 = RAW / "insee_cn2025_t7101_compte_snf.xlsx"
+T7201 = RAW / "insee_cn2025_t7201_compte_sf_en.xlsx"
+
+
+@pytest.mark.skipif(not (T7101.exists() and T7201.exists()), reason="les comptes des "
+                    "sociétés de l'Insee (t. 7.101, 7.201) ne sont pas dans ce checkout "
+                    "(data/raw est ignoré ; `impots data fetch`)")
+def test_la_part_des_societes_dans_le_pib_se_relit_sur_les_comptes_de_secteur() -> None:
+    import openpyxl
+
+    def b1g_2024(chemin):
+        lignes = list(openpyxl.load_workbook(chemin, read_only=True, data_only=True)
+                      .worksheets[1].iter_rows(values_only=True))
+        annees = lignes[3]
+        return dict(zip(annees, next(r for r in lignes if r[0] == "B1G"),
+                        strict=True))["2024"]
+
+    valeurs = yaml.safe_load(FICHIER.read_text(encoding="utf-8"))["naissances"]
+    assert b1g_2024(T7101) == valeurs["valeur_ajoutee_s11_2024"]["valeur"]
+    assert b1g_2024(T7201) == valeurs["valeur_ajoutee_s12_2024"]["valeur"]
+    assert abs(charger().part_va_societes_pib - 0.5539) < 1e-4
 
 
 @pytest.mark.skipif(not CELLULES_2023.exists(), reason="les cellules de 2023 ne sont pas "

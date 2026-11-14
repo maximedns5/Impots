@@ -14,8 +14,9 @@ LA SURVIE (une cohorte, âge a ≥ 0, S(0) = 1) :
     S(a) = S_j^A (1 − h_o)^(a − A)   sinon
     1/e₀ = Σ_{a < A} S_j^a + S_j^A / h_o   (le stock est stationnaire au taux e₀)
 
-S_j = 0,90 et A = 5 ans (D-402, SINE, choisis, non vérifiés) ; e₀ = 7,61 % (Da Rin, Di
-Giacomo et Sembenelli 2011, tableau 3 p. 39 : la France) ; h_o = 6,53 % s'en calcule.
+S_j(θ_survie) de 0,85 à 0,93, centre 0,90, et A = 5 ans (D-402, SINE, choisis, non
+vérifiés) ; e₀ = 7,61 % (Da Rin, Di Giacomo et Sembenelli 2011, tableau 3 p. 39 : la
+France) ; h_o s'en calcule, 6,53 % au centre.
 
 1. NAISSANCES (canal « creations_entreprises »). Pour la mesure m :
 
@@ -54,7 +55,10 @@ Giacomo et Sembenelli 2011, tableau 3 p. 39 : la France) ; h_o = 6,53 % s'en cal
     ΔY_{k,t} = ΔVA_{k,t} ;  recettes induites = ρ ΔY_{k,t}
     productivité moyenne_t = 1 + Σ_k ΔVA_{k,t} / (s_VA Y_t)
 
-   r = 0,10 la taille relative à maturité, M = 5 ans, s_VA = 0,60 (D-402) ; c(θ) la
+   r(θ_taille) la taille relative à maturité, 0,05 à 0,20, centre 0,10 ; M(θ_montée) la
+   montée en charge, 8 à 3 ans, centre 5 (D-402, choisies, non vérifiées) ; s_VA = 0,554,
+   la valeur ajoutée des sociétés (S11 + S12) sur le PIB de 2024 (Insee, t. 7.101, 7.201
+   et 1.101), au lieu des 0,60 de D-402 ; c(θ) la
    productivité relative des sociétés à la marge, entrantes ou sortantes, de 0 à 1, centre
    0,5 : la ligne θ « productivite_creations » de D-402 (0 : une activité seulement
    déplacée ; 1 : la productivité moyenne). ρ le taux de prélèvements du départ. Avec
@@ -76,6 +80,9 @@ from impots.jumeau.blocs.entreprises import (
     CREATIONS_ROW,
     FERMETURES_ROW,
     IDEES_ROW,
+    MONTEE_ROW,
+    SURVIE_ROW,
+    TAILLE_ROW,
     Parametres,
     Population,
     chemins,
@@ -129,7 +136,7 @@ def ecarts_entrees(ctx: Contexte, p: Parametres, pop: Population
 class Fermetures:
     nom = "fermetures"
     ecrit = ("sorties_induites", "stock_societes", "fermetures_societes")
-    thetas = (FERMETURES_ROW,)
+    thetas = (FERMETURES_ROW, SURVIE_ROW)
     remplace: tuple[str, ...] = ()
     porte = ("fermetures_entreprises",)
 
@@ -178,18 +185,20 @@ class Fermetures:
         return (p.taux_entree_base / 100.0) * beta * (-(marge * pop.societes[:, None])
                                                       .sum(axis=0))
 
-    def stock(self, entrees: list[np.ndarray], sorties: list[np.ndarray], t: int
-              ) -> np.ndarray:
+    def stock(self, entrees: list[np.ndarray], sorties: list[np.ndarray], t: int,
+              sj: np.ndarray) -> np.ndarray:
         p = self.p
-        survie_o = 1.0 - p.hasard_installees
+        survie_o = 1.0 - p.hasard_installees(sj)
         total = 0.0
         for u in range(t + 1):
-            total = total + entrees[u] * p.survie(t - u) - sorties[u] * survie_o ** (t - u)
+            total = (total + entrees[u] * p.survie(t - u, sj)
+                     - sorties[u] * survie_o ** (t - u))
         return np.zeros_like(entrees[0]) + total
 
     def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
         p, pop, k = self.p, self.pop, ctx.k
         beta = p.semi_elasticite_marge.a(lire_theta(ctx, FERMETURES_ROW))
+        sj = p.survie_jeunes.a(lire_theta(ctx, SURVIE_ROW))
         entrees = ecarts_entrees(ctx, p, pop)
         signaux = chemins(ctx, p.signaux_fermetures)
         cles = sorted(set(entrees) | set(signaux) | {""})
@@ -199,8 +208,8 @@ class Fermetures:
             de = entrees.get(cle, [zero] * (k + 1))
             dx = ([self.induites(ctx, cle, j, beta) for j in range(k + 1)] if cle in signaux
                   else [zero] * (k + 1))
-            maintenant = self.stock(de, dx, k)
-            avant = self.stock(de, dx, k - 1) if k else zero
+            maintenant = self.stock(de, dx, k, sj)
+            avant = self.stock(de, dx, k - 1, sj) if k else zero
             if cle == "":
                 maintenant, avant = maintenant + pop.stock, avant + pop.stock
                 creees = de[k] + _base(p, pop)
@@ -217,7 +226,7 @@ class Productivite:
     ecrit = ("pib", "emplois_non_ventiles", "revenus_non_ventiles", "solde_induit",
              "productivite_moyenne")
     lit = ("creations_societes", "sorties_induites")
-    thetas = (CREATIONS_ROW,)
+    thetas = (CREATIONS_ROW, SURVIE_ROW, MONTEE_ROW, TAILLE_ROW)
     remplace: tuple[str, ...] = ()
     porte = ("productivite_demographie",)
 
@@ -231,9 +240,12 @@ class Productivite:
         va_societes = p.part_va_societes_pib * y
         par_societe = va_societes / pop.stock
         rho = taux_prelevements(ctx)
+        sj = p.survie_jeunes.a(lire_theta(ctx, SURVIE_ROW))
+        montee = p.montee_en_charge_ans.a(lire_theta(ctx, MONTEE_ROW))
+        taille = p.taille_relative.a(lire_theta(ctx, TAILLE_ROW))
         entrees = ecarts_entrees(ctx, p, pop)
         sorties = chemins(ctx, ("sorties_induites",))
-        survie_o = 1.0 - p.hasard_installees
+        survie_o = 1.0 - p.hasard_installees(sj)
         out: dict[str, dict[str, Any]] = {n: {} for n in self.ecrit}
         total = np.zeros(ctx.n)
         zero = np.zeros(ctx.n)
@@ -242,9 +254,10 @@ class Productivite:
             dx = sorties.get(cle, [zero] * (k + 1))
             poids = zero
             for u in range(k + 1):
-                rampe = min(1.0, (k - u + 1) / p.montee_en_charge_ans)
-                poids = poids + de[u] * p.survie(k - u) * rampe - dx[u] * survie_o ** (k - u)
-            dva = par_societe * p.taille_relative * c * poids
+                rampe = np.minimum(1.0, (k - u + 1) / montee)
+                poids = (poids + de[u] * p.survie(k - u, sj) * rampe
+                         - dx[u] * survie_o ** (k - u))
+            dva = par_societe * taille * c * poids
             if not np.any(dva) and cle == "":
                 continue
             out["pib"][cle] = dva
