@@ -1,5 +1,17 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-14 update adds D-405: goal 23, lot 1, the frame of the digital twin
+(`src/impots/jumeau/`, `docs/jumeau/CADRE.md`): field registry, state with absent fields
+and contributions by block and measure, the five identities at 1e-9 of GDP, the annual
+step with its fixed point and the accounts closed by the frame alone, reference and
+variant, measures from a report or declared, the θ registry, and the published state of
+2010 to 2025. The chain is found again (Δb equal to `rejouer.chemin` to 4e-16), Δb
+decomposes by block and measure without remainder, and a ten-year path takes 22 ms
+(n = 1) and 56 ms (n = 2 000). The published accounts forced four corrections to the frame
+(printing rounding, the 2023-2024 sector split, the SFA as F_ASS + ORADJ + YA3 —
+`comptes.sfa_publie` double-counts K61 and KX — and the 2025 vintage gap); the SFA before
+2021 is missing, and the debt identity refuses those years by name. Next: lots 2 to 5.
+
 The 2026-11-13 update adds D-379 to D-398: goal 21, done once merged. The 24 programmes
 were surveyed again (525 measures, from 321), and the coverage table written before any
 pricing (`docs/presidentielle/couverture_avant.md`, `couverture_apres.md`): 44 measures

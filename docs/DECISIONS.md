@@ -28999,3 +28999,101 @@ change rien à ce qui est déjà mesuré.
 **Ce qui ne change pas.** Les règles de `CLAUDE.md`, les tolérances, les chiffrages
 préenregistrés, `calibrate.py` fermé. Les D-400 à D-403 sont sur `claude/but22`, qui n'est
 pas dans `main` ; elles y entreront avec cette branche.
+
+## D-405 — Le cadre du jumeau codé : la chaîne retrouvée, l'histoire lue, le cadre corrigé
+
+**Ce qui est codé** (`src/impots/jumeau/`, branche `claude/but23-cadre`, lot 1 du but 23,
+D-404). Le registre des champs (`champs.py`) : unité, code SEC, source, lot ; les champs
+des lots 2 à 4 y sont, absents. L'état (`etat.py`) : un tableau par champ sur l'axe des
+tirages, un champ non écrit absent et refusé par son nom, chaque champ additif gardé par
+contribution, sous la clé (origine, mesure). Les cinq identités du §6 (`identites.py`), à
+1e-9 du PIB sur chaque tirage, qui refusent un champ absent plutôt que de le lire nul.
+Le pas (`pas.py`) : les entrées nommées, les blocs dans l'ordre d'un `Modele` qui refuse
+à la construction un champ inconnu, une lecture sans écrivain antérieur, un champ fermé
+écrit par un bloc ; le point fixe de Gauss-Seidel des boucles déclarées (1e-10, cent
+itérations, sinon le bloc et le champ nommés) ; la fermeture des comptes par le cadre
+seul ; les identités et la continuité de la dette. La référence et la variante, leur
+différence et la décomposition de Δb (`trajectoire.py`) ; `Mesure.depuis_rapport` et
+`Mesure.hypothese` (`mesures.py`) ; le registre des θ (`thetas.py`) ; `etat_initial`
+(`historique.py`). Les blocs `tendance`, `mesures`, `mesange` et `creations`, leurs
+équations dans leur docstring.
+
+**La chaîne retrouvée.** Sur les passes synthétiques de `test_rejouer` et de
+`test_creations_canal`, Δb du jumeau est `rejouer.chemin` à 4,4e-16 au plus : quatre θ,
+trois persistances, deux vues ; un axe de quatre tirages ; la première année reportée ;
+sans la boucle, sous une autre règle de dépense, et à un taux marginal de 3,5 % ; puis le
+canal des créations à quatre θ, avec et sans lui. Depuis l'état publié de 2025, la
+référence du jumeau est celle de `rejouer` depuis `start_from_accounts(2025)` à 1e-9.
+
+**Les intérêts, par origine.** La dette de fin d'année se décompose par (origine, mesure)
+comme tout champ additif : la part de référence (le départ et `tendance`) est chargée au
+taux de référence, toute autre au taux marginal du scénario ; c'est l'arithmétique de
+`chaine.run`, et chaque mesure porte les intérêts de sa propre dette. Δb se décompose
+alors sans reste : la part de la clé c est (ΔD_c − b^r ΔY_c) / Y, sa dette ajoutée moins
+ce que son PIB retire au ratio comme dénominateur. Sur trois mesures (deux de rapports,
+une hypothétique) et trois tirages, la somme redonne Δb à 1e-12.
+
+**L'histoire lue, et le cadre corrigé** (§6 : « c'est le cadre qu'on corrige »). Les
+identités des emplois, des revenus, du compte des APU et des contributions tiennent à
+1e-9 du PIB chaque année de 2010 à 2025, celle de la dette de 2021 à 2025. Pour y
+arriver, quatre constats, chacun écrit dans `CADRE.md` et dans `etat_initial` :
+
+* les tables de l'Insee sont imprimées au millième de milliard : la somme des totaux de la
+  t. 1.101 et celle des revenus de la t. 1.105 s'écartent du PIB d'un ou deux millièmes.
+  L'écart est un champ lu, l'arrondi, refusé au-delà de la moitié du millième de chaque
+  terme imprimé ; la France n'imprime aucun écart statistique entre ses trois approches,
+  et celui de la spécification est remplacé par cet arrondi. La t. 1.105 est manifestée ;
+* en 2023 et 2024, les secteurs de P3 et de P51G de la t. 1.101 ne somment pas à leurs
+  totaux (0,124 et 0,090 Md€ ; la consommation des APU de 2024 dépasse de 0,441 la somme
+  de ses parts individuelle et collective). Le champ « ventilation_emplois » porte le
+  total publié moins la somme publiée de ses secteurs ; ailleurs, il est sous l'arrondi ;
+* l'ajustement flux-stocks d'Eurostat est F_ASS + ORADJ + YA3, qui redonne GD_CH − B9_T3.
+  ORADJ, le total des ajustements, contient déjà K61 et KX : `comptes.sfa_publie`, qui
+  somme les cinq postes, les compte deux fois (de 0,001 à 0,51 Md€ en valeur absolue
+  selon l'année ; un test le montre). Ce module n'est pas touché ici : son correctif change le backtest de la
+  dette, et c'est un travail à part. L'écart interne de la table d'Eurostat (−0,1 à +0,3
+  million) dépasse en 2023 l'arrondi de ses cinq postes : ce sont des totaux de postes
+  arrondis, et le champ est lu sans borne ;
+* l'écart de millésime entre l'Insee et Eurostat sur la variation de la dette vaut
+  0,354 Md€ en 2025 (le stock de l'Insee est plus récent ; B9 est le même), moins d'un
+  millième les autres années : un champ lu, nul en projection.
+
+Ce qui reste absent, et refusé par son nom : l'ajustement flux-stocks de 2010 à 2020,
+que le fichier manifesté ne publie pas ; l'identité de la dette refuse ces années en
+nommant « sfa ». Le lot 5 apporte la série.
+
+**Les autres écarts à la spécification**, écrits dans `CADRE.md` :
+
+* les emplois suivent la t. 1.101 telle qu'elle publie : ISBLSM, objets de valeur et
+  sociétés financières en plus ; les APU, la t. 3.201 ligne à ligne, hors intérêts, et les
+  intérêts nets à part ; la consommation finale des APU est un emploi, pas une ligne de
+  leur compte. Le détail par impôt de la t. 3.217 et les déflateurs de l'histoire
+  (t. 1.103) sont au lot 5 ;
+* quatre champs nommés que la spécification n'avait pas, écrits par les blocs qui
+  n'impriment que le PIB ou le solde : les emplois et les revenus non ventilés (Mésange et
+  le canal des créations), l'effet induit sur le solde, et le choc d'une mesure que son
+  rapport ne ventile pas entre recettes et dépenses (un rapport porte son coût et ses
+  recettes de comportement, pas leurs catégories) ;
+* un bloc rend ses contributions par mesure, `{champ: {mesure: tableau}}`, ce qui fait la
+  décomposition par mesure ; il peut refuser avant le premier pas (`preparer`) ; une
+  boucle se déclare au `Modele`. `mesange` refuse une autre règle de dépense que « gelée
+  en volume », comme `retroaction` : la boucle est absente, pas nulle ;
+* `parametres/` n'est pas créé : les valeurs des blocs du lot 1 sont celles que portent
+  les rapports (D-336) et le fichier du canal (D-402) ; les entrées sont dans `pas.py`.
+
+**Les temps**, mesurés une fois (pas de test, D-335), sur la machine du worktree (4 cœurs,
+charge près de 2), médiane de sept : une trajectoire de dix ans, référence et variante,
+les quatre blocs, une mesure de rapport, 22 ms à n = 1 et 56 ms à n = 2 000. Les cibles du
+§8 sont 50 ms et 2 s.
+
+**Les tests** : `tests/test_jumeau.py` (50) et `tests/test_jumeau_historique.py` (19, lus
+sur les tables, en six secondes ; sautés, avec leur raison, sans elles). Aucun nombre
+publié ne change : rien de `predictif`, de `dette` ni des rapports n'est modifié.
+
+**Ce qui reste aux lots 2 à 7.** Lot 2 : les entreprises, et le canal des créations
+remplacé. Lot 3 : le commerce extérieur, qui ventile une part de l'effet non ventilé
+entre X et M. Lot 4 : les ménages, emploi, salaires, consommation, qui ventile le reste
+et lit les chocs par décile. Lot 5 : les séries de 2010 à 2024, l'ajustement flux-stocks
+d'avant 2021, les déflateurs publiés et le chaînage sur l'histoire, la t. 3.217, la base
+des mesures votées. Lot 6 : l'estimation et le juge du passé. Lot 7 : les curseurs, le
+pas en JavaScript ou par Pyodide, tenu égal à celui-ci.

@@ -26,28 +26,46 @@ mention contraire), chacune un tableau numpy de forme `(n,)`, n le nombre de tir
 un calcul simple). Chaque champ a son unité, son code de comptabilité nationale (SEC 2010)
 et sa source dans `jumeau/champs.py`, qui est le registre unique.
 
-**Les emplois du PIB** (Insee, comptes nationaux, T_1101) :
-PIB = C_ménages + C_APU + FBCF_sociétés + FBCF_ménages + FBCF_APU + ΔStocks + X − M.
+**Les emplois du PIB** (Insee, comptes nationaux, t. 1.101, par secteur, comme la table
+les publie ; corrigé par D-405) : PIB = C_ménages + C_ISBLSM + C_APU + FBCF des sociétés
+non financières, des sociétés financières, des APU, des ménages et des ISBLSM + objets de
+valeur + ΔStocks + X − M + trois champs nommés : l'effet sur le PIB qu'un bloc écrit sans
+le ventiler entre les emplois (Mésange et le canal des créations n'impriment que le PIB),
+la ventilation publiée (les totaux P3 et P51G moins la somme de leurs secteurs : 0,12 et
+0,09 Md€ en 2023 et 2024) et l'arrondi publié (le PIB moins la somme des totaux, au
+millième de milliard). Les deux derniers sont lus sur l'histoire, nuls en projection.
 Chaque composante a sa valeur et son déflateur (indice, année précédente = 1). Le PIB en
 volume se chaîne comme l'Insee : sa croissance est la somme des croissances en volume des
-composantes pondérées par leurs parts nominales de l'année précédente.
+composantes pondérées par leurs parts nominales de l'année précédente. Au lot 1, les
+déflateurs et le volume ne sont calculés qu'en projection ; l'histoire (t. 1.103) est au
+lot 5.
 
-**Les revenus** : PIB = D1 (rémunérations) + EBE et revenu mixte + (D2 − D3) + écart
-statistique. L'écart statistique est un champ nommé, lu dans les données pour l'histoire,
-tenu constant en part du PIB en projection : jamais un résidu silencieux.
+**Les revenus** (Insee, t. 1.105) : PIB = D1 (rémunérations) + EBE et revenu mixte +
+(D2 − D3) + l'effet non ventilé + l'arrondi publié. La France n'imprime pas d'écart
+statistique entre ses trois approches annuelles (D-405) : le champ du cadre est l'arrondi,
+lu, refusé au-delà de la moitié du millième de chaque terme imprimé ; jamais un résidu
+silencieux.
 
-**Les administrations publiques** (S13, Insee t. 3.201 et 3.217) :
+**Les administrations publiques** (S13, Insee t. 3.201, consolidée, ligne à ligne ;
+corrigé par D-405) :
 
-* recettes : impôts sur la production (D2, dont TVA), impôts courants sur le revenu et le
-  patrimoine (D5 : IR, CSG, IS…), cotisations sociales (D61), impôts en capital (D91),
-  autres recettes ; le détail par impôt de t. 3.217 en sous-champs ;
-* dépenses : consommation (C_APU), prestations (D62, D632), subventions (D3), intérêts
-  nets (D41, emplois moins ressources, `dette.comptes`), FBCF_APU, autres ;
-* solde B9 = recettes − dépenses ; solde primaire = B9 + intérêts nets.
+* recettes hors intérêts reçus : les quatorze lignes de la table (production, revenus de
+  la propriété hors intérêts, D2, D5, D91, D733, D61, D995, transferts), plus deux champs
+  nommés, l'effet induit sur le solde qu'un bloc publie sans le ventiler (Mésange, le
+  canal des créations) et le choc d'une mesure que son rapport ne ventile pas ; le détail
+  par impôt de la t. 3.217 en sous-champs est au lot 5 ;
+* dépenses primaires : les treize lignes de la table (P2, D1, D29, D4 hors D41, D5, D62,
+  D632, D3, D73, D7, D9, P51g, autres acquisitions). La consommation finale des APU (P3)
+  n'est pas une ligne de leur compte : elle est un emploi du PIB, pas une dépense ;
+* intérêts nets (D41, emplois moins ressources, `dette.comptes`), un champ à part ;
+* B9 = recettes − dépenses primaires − intérêts nets ; solde primaire = B9 + intérêts nets.
 
 **La dette** (Maastricht) : D_t = D_{t−1} − B9_t + SFA_t ; ratio b_t = D_t / PIB_t ; taux
-implicite = intérêts nets_t / D_{t−1}. Le SFA est un champ nommé (lu pour l'histoire,
-Eurostat ; nul en projection, par une convention dite).
+implicite = intérêts nets_t / D_{t−1}. Le SFA est un champ nommé : lu pour l'histoire chez
+Eurostat, F_ASS + ORADJ + YA3 (D-405), publié de 2021 à 2025 seulement dans le fichier
+manifesté ; nul en projection, par une convention dite. Deux champs de publication s'y
+ajoutent, lus sur l'histoire et nuls en projection : l'écart de millésime entre l'Insee et
+Eurostat (la variation du stock et B9) et l'écart interne de la table d'Eurostat.
 
 **Le travail** (lot 4) : population active, emploi total et salarié, chômage, salaire
 moyen par tête. **Les entreprises** (lot 2) : stock de sociétés, créations, fermetures,
@@ -72,7 +90,10 @@ nommant. Aucun NaN ne circule.
    point fixe de Gauss-Seidel : tolérance 1e-10 en relatif, 100 itérations au plus ; un
    pas qui ne converge pas refuse, avec le bloc et le champ en cause.
 4. **Le cadre ferme les comptes**, et lui seul : les sommes de recettes et de dépenses,
-   B9, la dette, les ratios, le taux implicite, le PIB chaîné. Aucun bloc ne les écrit.
+   les intérêts nets, B9, la dette, les ratios, le taux implicite, le PIB chaîné. Aucun
+   bloc ne les écrit. Les intérêts se chargent par origine : la part de référence de la
+   dette (le départ et `tendance`) au taux de référence de l'année, toute autre part au
+   taux marginal du scénario, comme `chaine.run` (D-405).
 5. **Les identités sont vérifiées** (§6) ; une identité violée arrête le pas.
 
 Deux trajectoires se calculent toujours ensemble, la **référence** (sans les mesures) et
@@ -87,13 +108,18 @@ Un bloc est un module de `src/impots/jumeau/blocs/` qui déclare :
 * `lit` et `ecrit` : les champs qu'il lit et ceux auxquels il ajoute une contribution ;
 * `thetas` : ses paramètres incertains, chacun une ligne θ (§7) ;
 * ses **équations**, écrites dans sa docstring, avec leurs sources (document et page) ;
-* `contribue(ctx) -> dict[champ, tableau]` : ses contributions de l'année.
+* `contribue(ctx) -> dict[champ, dict[mesure, tableau]]` : ses contributions de l'année,
+  par mesure (« » pour aucune), ce qui fait la décomposition par mesure (D-405) ;
+* au besoin, `preparer(entrees, mesures)` : ses refus, avant le premier pas.
+
+Une boucle simultanée se déclare au `Modele`, par les noms de ses blocs, qui se suivent.
+Un bloc lit librement les années passées de sa trajectoire et le PIB de la référence.
 
 **Une contribution est additive et gardée à part.** Plusieurs blocs peuvent écrire le même
 champ : le cadre somme leurs contributions et garde chacune, par bloc et par mesure. C'est
 ce qui fait les cascades « comment le nombre se forme » du but 22, à chaque année. Un
-bloc qui lit un champ qu'aucun bloc antérieur ni le cadre n'a écrit est refusé à la
-construction, pas au calcul.
+bloc qui lit un champ de l'année qu'aucun bloc antérieur n'a écrit, hors d'une boucle
+déclarée qui l'écrit, est refusé à la construction, pas au calcul.
 
 **Les blocs du lot 1**, le minimum pour que le cadre tourne et retrouve la chaîne :
 
@@ -134,8 +160,10 @@ Toutes à 1e-9 × PIB près, sur chaque tirage :
 
 **Sur l'histoire, les identités se vérifient d'abord sur les données publiées** :
 `etat_initial(annee)`, de 2010 à 2025, lu dans les tables manifestées, doit les tenir avec
-son écart statistique publié. Si les comptes publiés ne bouclent pas comme le cadre le
-dit, c'est le cadre qu'on corrige.
+ses écarts de publication, chacun lu et nommé (§2). Si les comptes publiés ne bouclent pas
+comme le cadre le dit, c'est le cadre qu'on corrige : D-405 dit ce qui l'a été. L'identité
+de la dette refuse de 2010 à 2020, en nommant le SFA, tant que le lot 5 n'apporte pas sa
+série.
 
 ## 7. Les θ
 
@@ -170,6 +198,10 @@ src/impots/jumeau/
   blocs/          tendance, mesures, mesange, creations ; puis ceux des lots 2 à 4
   parametres/     les valeurs des blocs, en YAML, chacune avec sa source
 ```
+
+Les entrées exogènes (`Entrees`) sont dans `pas.py`. Le lot 1 n'écrit pas `parametres/` :
+ses blocs lisent les valeurs que portent les rapports (D-336) et le fichier du canal des
+créations (`predictif/parameters/`) ; le premier lot qui en a d'autres le crée.
 
 ## 10. Ce que le lot 1 doit prouver
 
