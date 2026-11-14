@@ -308,8 +308,18 @@ def _cumul(chemin: Sequence[Any], prof: Sequence[float], j: int) -> Any:
     return total
 
 
+#: Les profils déjà lus, sous les paramètres qui les portent : de la plomberie, les mêmes
+#: nombres (D-414). Une liste rendue n'est jamais modifiée par l'appelant.
+_COURBES: dict[tuple[int, str, int, float], tuple[Parametres, list[float]]] = {}
+
+
 def _courbe(p: Parametres, cle: str, k: int, signe: float = 1.0) -> list[float]:
-    return [signe * profil(p.profils[cle], h, p.horizon_lt) for h in range(1, k + 1)]
+    garde = _COURBES.get((id(p), cle, k, signe))
+    if garde is not None and garde[0] is p:
+        return garde[1]
+    courbe = [signe * profil(p.profils[cle], h, p.horizon_lt) for h in range(1, k + 1)]
+    _COURBES[(id(p), cle, k, signe)] = (p, courbe)
+    return courbe
 
 
 def diffusion(p: Parametres, k: int, theta: Any = None) -> list[Any]:
@@ -317,7 +327,7 @@ def diffusion(p: Parametres, k: int, theta: Any = None) -> list[Any]:
     « Salaires » de Mésange sur sa valeur de long terme. Avec θ (la boucle prix-salaires,
     D-414) : π_θ, de π(h/2) à θ = 0 (mi-vitesse) à 1 à θ = 1 (immédiate), par π(h) à θ½."""
     pr = p.profils["prix_production_salaires"]
-    base = [profil(pr, h, p.horizon_lt) / pr[-1] for h in range(1, k + 1)]
+    base = [v / pr[-1] for v in _courbe(p, "prix_production_salaires", k)]
     if theta is None:
         return base
     xs = (0.0, 1.0, 2.0, 5.0, float(p.horizon_lt))

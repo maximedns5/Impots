@@ -742,11 +742,9 @@ class Consommation(_Base):
                 # La boucle prix-salaires (D-414) : les prestations hors chômage indexées
                 # sur le prix de la consommation, et la consommation qui suit le revenu
                 # réel, ΔRD + p̂c P − p̂c RD, linéarisé.
-                reel = []
-                for j, rd in enumerate(rds):
-                    pc_j = self._ecarts(ctx, j, ident).pc
-                    y_j = self._ref(ctx, j).pib
-                    reel.append(rd + np.outer(st.prestations_pib - st.rd_pib, y_j) * pc_j)
+                reel = [self._garde(ctx, j, ("reel", ident), lambda j=j, rd=rd, m=ident: (
+                    rd + np.outer(st.prestations_pib - st.rd_pib, self._ref(ctx, j).pib)
+                    * self._ecarts(ctx, j, m).pc)) for j, rd in enumerate(rds)]
                 pc = self._ecarts(ctx, k, ident).pc
                 indexees = np.outer(st.prestations_pib, ref.pib) * pc
             else:
