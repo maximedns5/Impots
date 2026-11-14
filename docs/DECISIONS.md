@@ -30657,3 +30657,64 @@ scripts` est propre ; `node ui/check.mjs` passe (la page de l'API n'est pas touc
   consommation, l'offre de travail) renvoient à leur définition.
 * Le calcul tourne dans le fil principal de la page : un recalcul structurel la fige une
   demi-seconde. Un Web Worker l'en sortirait, sans changer un nombre.
+
+## D-416 — La jonction des lots 6 et 7 : le JO, le mode structurel complété, la page
+
+**La jonction** (branche `claude/but23-cadre`, partie de 178265c). Trois branches y sont
+fusionnées, dans cet ordre : `claude/but23-histoire` (D-413 ; seuls ses trois commits
+d'après 2ea7834 sont neufs), `claude/but23-structure` (D-414) et `claude/but23-curseurs`
+(D-415), les deux dernières parties de 178265c. Un seul conflit à chaque fusion :
+`DECISIONS.md`, résolu en gardant D-411 à D-415 dans l'ordre. Le code s'est fusionné
+sans conflit : la base des mesures (`votees.py`, `mesures_votees.yaml`) n'est touchée
+que par la première, les blocs et `mesures.py` que par la deuxième, la page et
+`navigateur.py` que par la troisième.
+
+**Le manifeste**, en union : l'entrée de l'archive JORF de la DILA, ajoutée à la main
+dans le worktree de la branche du JO sans y être commitée, rejoint les 234 entrées du
+cadre (235). Les deux autres branches n'ajoutaient rien. L'archive (1,75 Go) est reliée
+dans `data/raw` par un lien symbolique, hors git ; aucun autre fichier n'y manquait.
+
+**Les sources déclarées.** Les dix fichiers manifestés à la main par le jumeau sont dans
+`KNOWN_SOURCES` (`population/cli.py`), leur URL celle du manifeste : les quatre
+d'Eurostat (gov_10dd_edpt3, irt_lt_mcby_a et _m, une_rt_a), les trois de la BDM (IPC hors
+tabac, créations, défaillances), les t. 3.105 et 6.208 de 2025 et l'archive JORF.
+`impots population manifest`, essayé sur une copie de `data/raw` (pas sur le vrai) :
+les dix restent hors quarantaine, avec leur sha256 et leur URL. La commande ne télécharge
+rien ; elle rehache chaque fichier, l'archive comprise (16 s pour tout).
+
+**Ce que l'essai montre d'autre, à décider.** La commande ne garde pas le manifeste :
+elle le réécrit depuis `KNOWN_SOURCES` seul, qui n'a que 28 entrées. Sur la copie, elle
+met en quarantaine 115 des 142 fichiers présents, sourcés au manifeste mais absents de
+`KNOWN_SOURCES` (les PLF, la DGFiP, l'Insee, les études : tout ce qui a été manifesté à
+la main depuis D-028), efface leur URL, retire les 93 entrées dont le fichier n'est pas
+dans ce worktree, remet la date de téléchargement au jour, met la licence Etalab à tous
+(Eurostat compris) et perd les champs `provenance`, `normalization` et
+`normalized_sha256` (D-159, deux fichiers de l'IMK). Ce n'est pas propre au jumeau. Deux
+voies : déclarer les 132 autres sources dans `KNOWN_SOURCES`, ou faire partir la commande
+du manifeste existant et n'y ajouter que les fichiers neufs. Rien n'est changé ici ; il
+ne faut pas relancer la commande sur un vrai `data/raw` d'ici là.
+
+**Le site.** `site construire` après la fusion : le paquet que la page sert copie les
+modules fusionnés, 48 fichiers au lieu de 46 (`recettes_induites.py` et son YAML) ;
+`jumeau-donnees.json` et les autres pages ne changent pas, et les entrées commitées du
+navigateur (`reports/jumeau/entrees_navigateur.json`) n'ont pas eu à être réécrites, leur
+test les tient égales aux données. `site verifier` et `site publiable` passent ;
+`node ui/check.mjs` passe. La page n'emploie pas la convention « parts_premiere_annee »
+(D-414, sur demande) : le mode structurel d'un programme s'y arrête toujours à 2026.
+
+**Les tests.** `pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`,
+`test_rejouer.py`, `test_creations_canal.py`, `test_dependances.py`,
+`test_gardes_phase9.py`, `test_donnees.py`, `test_dette*.py`, `test_site.py` et
+`test_provenance.py` : 422 passent, 4 sautés, en 2 min 23 s. Les sautés le disent : les
+cellules réelles et la population ne sont pas dans ce worktree (`test_jumeau_cellules`),
+le bulletin AFT n° 435 non plus (trois de `test_dette_maturite`, absent aussi des trois
+branches). Les lourds du jumeau, chacun dans son processus : la page dans Chromium
+(`test_jumeau_page.py`) passe en 23 s ; les cellules sont sautées, faute de population.
+`ruff check src tests scripts` est propre. Ni `make impact` ni `make full`.
+
+**Ce qui reste.**
+
+* Le manifeste et sa commande, ci-dessus : au propriétaire.
+* Les cellules réelles à recouper sur la population entière, là où elle est.
+* La convention « parts_premiere_annee » sur la page : à décider avec le propriétaire,
+  qui l'a voulue sur demande (D-414).
