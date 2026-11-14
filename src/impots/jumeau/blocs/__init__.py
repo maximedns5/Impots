@@ -40,7 +40,8 @@ def ordre_structurel(depart: Any, population: Any, cellules: Any, *,
                      entreprises: Any | None = None, menages: Any | None = None,
                      commerce: Any | None = None) -> tuple[list[Any], list[tuple[str, ...]]]:
     """Le modèle structurel complet (D-411, complété par D-414 et D-418) : `tendance` (qui
-    laisse au commerce les prix des échanges et de la consommation), `mesures`, la demande
+    laisse au commerce les prix des échanges et de la consommation, et à l'emploi public
+    celui de la consommation des APU), `mesures`, la demande
     publique et l'emploi public qu'en font les rémunérations des APU (D-418), les blocs
     des entreprises (lot 2), puis la boucle de l'investissement (l'accélérateur), des
     ménages (lot 4) et du commerce (lot 3, la boucle prix-salaires), et les recettes
@@ -69,7 +70,8 @@ def ordre_structurel(depart: Any, population: Any, cellules: Any, *,
         raise ValueError("le modèle structurel complet lit la boucle prix-salaires : "
                          "`Commerce(boucle_prix=...)` (D-414)")
     blocs: list[Any] = [
-        Tendance(depart, laisse=commerce.prix), Mesures(), DemandePublique(),
+        Tendance(depart, laisse=(*commerce.prix, "prix_c_apu")), Mesures(),
+        DemandePublique(),
         EmploiPublic(cellules, pm),
         ChocsEntreprises(), Naissances(population, p), Fermetures(population, p),
         Productivite(population, p), Implantation(p),

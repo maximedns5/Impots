@@ -221,3 +221,46 @@ def test_les_identites_tiennent_avec_l_emploi_public(theta) -> None:
         prec = etat
     parts = traj.decomposition(ANNEES[-1])
     assert np.max(np.abs(sum(parts.values()) - traj.delta_b[-1])) < 1e-12
+
+
+# --------------------------------------------------------------------------- #
+# 5. les traitements : un prix de la production non marchande, pas un volume
+# --------------------------------------------------------------------------- #
+def _volume_c_apu(traj):
+    """Le volume chaîné de la consommation des APU depuis le départ, variante sur
+    référence, moins un, (années, n) : la formule du cadre, C_k / prix_k − C_(k−1)."""
+    out = []
+    for cote in (traj.reference, traj.variante):
+        niveau, precedent, serie = np.ones(cote[0].n), _depart(), []
+        for etat in cote:
+            niveau = niveau * (etat["c_apu"] / etat["prix_c_apu"]) / precedent["c_apu"]
+            serie.append(niveau)
+            precedent = etat
+        out.append(np.array(serie))
+    return out[1] / out[0] - 1.0
+
+
+def test_les_traitements_font_un_prix_et_les_emplois_un_volume() -> None:
+    """Un axe de trois tirages de la part, 0, ½, 1 : le volume de la consommation des APU
+    ne bouge pas des traitements (à 0, il est celui de la référence à 1e-12) et monte avec
+    la part des emplois ; le déflateur porte les traitements, par la formule du bloc à
+    1e-12, et la référence garde celui de la tendance, au bit."""
+    m = _remunerations()
+    traj = _calcul(_theta(0.5, np.array([0.0, 0.5, 1.0])), mesures=[m])
+    precedent = _depart()
+    for k, (r, v) in enumerate(zip(traj.reference, traj.variante, strict=True)):
+        assert np.array_equal(r["prix_c_apu"], np.full(3, 1.0 + _entrees().prix[k]))
+        t = v["remunerations_publiques_traitements"]
+        assert np.allclose(t, D1 * np.array([1.0, 0.5, 0.0]), rtol=1e-12)
+        t_prec = (precedent["remunerations_publiques_traitements"]
+                  if precedent.present("remunerations_publiques_traitements") else 0.0)
+        attendu = ((1.0 + _entrees().prix[k]) * (v["c_apu"] / (v["c_apu"] - t))
+                   / (precedent["c_apu"] / (precedent["c_apu"] - t_prec)))
+        assert np.allclose(v["prix_c_apu"], attendu, rtol=1e-12)
+        precedent = v
+    volume = _volume_c_apu(traj)
+    assert np.max(np.abs(volume[:, 0])) < 1e-12, "les traitements ne sont pas un volume"
+    assert np.all(np.diff(volume, axis=1) > 0.0), "θ borne : plus d'emplois, plus de volume"
+    for v in traj.variante:
+        rel = v["c_apu"] / (v["c_apu"] - v["remunerations_publiques_traitements"])
+        assert rel[0] > rel[1] > rel[2] == 1.0, "le prix relatif, C / (C − T)"

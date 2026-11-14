@@ -147,9 +147,22 @@ rémunérations, que `demande_publique` porte : pas de double compte. Et l'activ
 les blocs marchands est marchande : ŷ retranche la valeur ajoutée non marchande
 (`va_non_marchande`, ΔD1 + ΔD29), ê l'emploi public ; sans quoi ΔD1 ferait aussi des
 emplois marchands. Canal « emploi_public », de Mésange (`remplace`) : avec `mesange`,
-refusé. Le volume de la consommation des APU reste celui que ses prix du scénario donnent :
-la part des traitements, un prix de la production non marchande dans les comptes et dans
-Mésange (p. 107), y est un volume (dit dans D-418).
+refusé.
+
+Les traitements sont un prix, pas un volume : la production non marchande se mesure en
+volume par ses facteurs, et une hausse de traitement en est le prix (les comptes, et
+Mésange, p. 106-107). La tendance laisse au bloc le déflateur de la consommation des APU
+(`Tendance(..., laisse=("prix_c_apu", ...))`, comme elle laisse au commerce celui des
+ménages), et le bloc l'écrit, T_k = Σ_m ΔD1^t la somme des traitements des mesures, C_k la
+consommation des APU de l'année :
+
+    prix_c_apu_k = (1 + π_k) [C_k / (C_k − T_k)] / [C_{k−1} / (C_{k−1} − T_{k−1})]
+
+Le volume que le cadre en tire, C_k / prix − C_{k−1}, vaut exactement (1 + e_{k−1})
+[(C_k − T_k) / (1 + π_k) − (C_{k−1} − T_{k−1})], 1 + e = C / (C − T) le prix relatif de la
+production non marchande : les traitements n'y sont plus, les emplois y restent. Sans
+traitements, 1 + π_k, celui de la tendance, au bit. Le champ est non additif et a un
+écrivain : un prix de l'état, pas un écart par mesure, comme `prix_c_menages`.
 
 UNE MESURE SANS CHOC PAR DÉCILE, mais avec une impulsion sur un instrument des ménages
 (IR, CSG, cotisations salariés, TVA, taxe carbone), est refusée avant le premier pas : son
@@ -712,10 +725,10 @@ class EmploiPublic(_Base):
     Ses équations sont dans la docstring du module."""
 
     nom = "emploi_public"
-    lit = ("apu_d_d1",)
+    lit = ("apu_d_d1", "c_apu")
     ecrit = ("emploi_public", "emploi_salarie", "emploi_total", "chomage",
              "remunerations_publiques_emplois", "remunerations_publiques_traitements",
-             "apu_r_d61", "apu_r_d5")
+             "apu_r_d61", "apu_r_d5", "prix_c_apu")
     thetas = (thetas.EMPLOI_PUBLIC_PART,)
     remplace = ("emploi_public",)
 
@@ -732,6 +745,7 @@ class EmploiPublic(_Base):
         ref = self._ref(ctx, ctx.k)
         out: dict[str, dict[str, Any]] = {c: {} for c in self.ecrit}
         out["emploi_public"][""] = ref.emploi_salarie - ref.emploi_marchand
+        out["prix_c_apu"] = {"": self.deflateur(ctx, 0.0)}
         if not ctx.mesures:
             return out
         ctx.lire("apu_d_d1")
@@ -755,7 +769,25 @@ class EmploiPublic(_Base):
                                                     np.zeros(ctx.n) + traitements)
             out["apu_r_d61"][ident] = st.taux_d61 @ d1_c
             out["apu_r_d5"][ident] = st.taux_d5 @ d1_c
+        traitements = sum(out["remunerations_publiques_traitements"].values(),
+                          np.zeros(ctx.n))
+        out["prix_c_apu"] = {"": self.deflateur(ctx, traitements)}
         return out
+
+    def deflateur(self, ctx: Contexte, traitements: Any) -> Any:
+        """Le déflateur de la consommation des APU, année sur année : celui du scénario,
+        fois le prix relatif de la production non marchande que les traitements font,
+        1 + e_k = C_k / (C_k − T_k), sur celui de l'an passé (D-418). Le volume que le
+        cadre en tire, C_k / prix − C_{k−1}, est exactement (1 + e_{k−1}) [(C_k − T_k) /
+        (1 + π_k) − (C_{k−1} − T_{k−1})] : les traitements n'y sont plus. Sans eux,
+        1 + π_k, celui de la tendance, au bit."""
+        prix = 1.0 + ctx.entrees.prix[ctx.k]
+        t_prec = (ctx.prec["remunerations_publiques_traitements"]
+                  if ctx.prec.present("remunerations_publiques_traitements") else 0.0)
+        if np.all(np.asarray(traitements) == 0.0) and np.all(np.asarray(t_prec) == 0.0):
+            return prix
+        c, c_prec = ctx.lire("c_apu"), ctx.prec["c_apu"]
+        return prix * (c / (c - traitements)) / (c_prec / (c_prec - t_prec))
 
 
 def verifier_menages(mesures: Sequence[Any], annees: Sequence[int] | None = None) -> None:

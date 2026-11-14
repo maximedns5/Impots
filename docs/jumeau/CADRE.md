@@ -200,7 +200,11 @@ le bloc `emploi_public` (canal « emploi_public ») fait des emplois publics de 
 rémunérations des APU d'une mesure qui en paie (θ, ou la part que la mesure porte), les
 met dans l'emploi et le chômage, leur rémunération dans le revenu des ménages et leurs
 prélèvements dans les recettes ; et l'activité que lisent les blocs marchands est
-marchande : la valeur ajoutée des APU (`va_non_marchande`) en est retranchée.
+marchande : la valeur ajoutée des APU (`va_non_marchande`) en est retranchée. La part
+des traitements est un prix de la production non marchande, pas un volume : la tendance
+laisse au bloc le déflateur de la consommation des APU (`prix_c_apu`), qu'il écrit, un
+champ non additif à un écrivain, comme celui des ménages que le commerce écrit ; le
+volume du PIB que le cadre chaîne ne compte plus les traitements.
 
 **Les règles des lots en parallèle.**
 
