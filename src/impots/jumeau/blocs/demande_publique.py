@@ -20,6 +20,15 @@ production non marchande, ne bouge pas avec une mesure : elle n'est pas lue. Les
 dépenses (prestations en espèces D62, subventions D3, transferts) ne sont pas des emplois :
 elles passent par les revenus (le choc par décile des ménages, lot 4).
 
+La valeur ajoutée non marchande (D-418). ΔD1 + ΔD29 est la part de la production non
+marchande des APU qui est leur valeur ajoutée : elle est au PIB, mais pas à la valeur
+ajoutée marchande. Le bloc l'écrit à part (`va_non_marchande`), pour que les blocs qui
+lisent l'activité marchande (l'emploi salarié marchand, les salaires par la productivité,
+l'accélérateur, les coûts salariaux unitaires et les tensions du commerce) ne la lisent
+pas : un emploi que ΔD1 paie est un emploi public (bloc `emploi_public`), pas un emploi
+marchand que la production appellerait, et le compter aux deux serait le double compte.
+ΔP2, ΔD632 et ΔP51g restent des achats aux producteurs marchands, qui les lisent.
+
 Canal « demande_publique », de Mésange (`remplace`), pour tout instrument : avec `mesange`,
 refusé. Le PIB est fermé par le cadre (D-411).
 """
@@ -38,12 +47,15 @@ VERS_REVENUS = {"apu_d_p2": "revenus_non_ventiles", "apu_d_d1": "remunerations",
                 "apu_d_d29": "impots_production", "apu_d_d632": "revenus_non_ventiles",
                 "apu_d_p51g": "revenus_non_ventiles"}
 
+#: Les dépenses qui sont la valeur ajoutée des APU (D-418).
+NON_MARCHANDE = ("apu_d_d1", "apu_d_d29")
+
 
 class DemandePublique:
     nom = "demande_publique"
     lit = tuple(VERS_EMPLOIS)
     ecrit = ("c_apu", "fbcf_apu", "remunerations", "impots_production",
-             "revenus_non_ventiles")
+             "revenus_non_ventiles", "va_non_marchande")
     thetas: tuple[str, ...] = ()
     remplace = ("demande_publique",)
 
@@ -54,7 +66,10 @@ class DemandePublique:
             for (origine, m), v in ctx.courant.de(depense).items():
                 if origine != "mesures" or m == "":
                     continue
-                for champ_ in (VERS_EMPLOIS[depense], VERS_REVENUS[depense]):
+                champs_ = (VERS_EMPLOIS[depense], VERS_REVENUS[depense])
+                if depense in NON_MARCHANDE:
+                    champs_ = (*champs_, "va_non_marchande")
+                for champ_ in champs_:
                     parts = out[champ_]
                     parts[m] = parts[m] + v if m in parts else v
         return out

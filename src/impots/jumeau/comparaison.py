@@ -28,7 +28,12 @@ LES LIGNES, à 1, 2, 5 et 10 ans : le PIB en volume (l'indice chaîné de
 milliers ; le bloc `emploi` écrit l'écart de l'emploi marchand), le solde primaire des APU
 (en points de PIB : variante moins référence du solde sur le PIB) et, depuis D-414,
 l'investissement des entreprises (la FBCF des SNF, en %, en volume : le bloc
-`investissement` écrit des volumes aux prix du scénario ; Mésange imprime les SNF et EI).
+`investissement` écrit des volumes aux prix du scénario ; Mésange imprime les SNF et EI) ;
+depuis D-418, le taux de chômage (en points : variante moins référence de U / PA) et le
+prix de la consommation des ménages (en %, le déflateur chaîné). L'emploi salarié
+marchand est l'emploi salarié moins l'emploi public que le bloc `emploi_public` y met
+(D-418). Mésange imprime ces deux lignes dans chaque tableau ; `macro.mesange.printed_row`
+les lit sur la page de la variante.
 
 LA VARIANTE SALARIALE DE MÉSANGE (D-349) : pour l'IR, les cotisations employeurs et la
 TVA, Mésange imprime aussi le PIB sous une autre formation des salaires (Phillips, ou un
@@ -49,13 +54,18 @@ from impots.jumeau.blocs.tendance import Tendance
 from impots.jumeau.mesures import HYPOTHESE, Mesure
 from impots.jumeau.pas import Entrees
 from impots.jumeau.trajectoire import Trajectoire, calculer
+from impots.macro.mesange import HORIZONS as HORIZONS_MESANGE
+from impots.macro.mesange import printed_row
 
 VARIANTES = ("impot_sur_le_revenu", "cotisations_employeurs", "tva",
              "investissement_public", "depense_publique")
 HORIZONS = (1, 2, 5, 10)
 LIGNES = {"pib": ("gdp", "PIB en volume, %"),
           "emploi": ("emploi_milliers", "emploi salarié marchand, milliers"),
+          "chomage": ("Taux de chômage", "taux de chômage, points"),
           "solde": ("solde_primaire_pts_pib", "solde primaire des APU, points de PIB"),
+          "prix": ("Prix de la consommation des ménages",
+                   "prix de la consommation des ménages, %"),
           "investissement": ("investissement_entreprises",
                              "investissement des entreprises, %")}
 #: La composition de la variante de dépense publique (Mésange G2017-04, p. 106).
@@ -109,17 +119,40 @@ def mesure(variante: str, pib: Sequence[float], annees: Sequence[int],
                   entreprises=entreprises)
 
 
+def _chaine(traj: Trajectoire, champ: str) -> np.ndarray:
+    """L'écart en % d'un niveau chaîné : la croissance (ou le déflateur de l'année sur
+    l'année précédente) cumulée, variante sur référence."""
+    ref, var = traj.niveaux(champ)
+    return 100.0 * (np.cumprod(var[:, 0]) / np.cumprod(ref[:, 0]) - 1.0)
+
+
 def reponses(traj: Trajectoire) -> dict[str, np.ndarray]:
-    """Les trois lignes, par année, au premier tirage."""
+    """Les lignes, par année, au premier tirage."""
     g_ref, g_var = traj.niveaux("croissance_volume_pib")
     volume = np.cumprod(1.0 + g_var[:, 0]) / np.cumprod(1.0 + g_ref[:, 0]) - 1.0
     sp_ref, sp_var = traj.niveaux("solde_primaire")
     y_ref, y_var = traj.niveaux("pib")
     i_ref, _ = traj.niveaux("fbcf_snf")
+    u_ref, u_var = traj.niveaux("chomage")
+    pa_ref, pa_var = traj.niveaux("population_active")
+    emploi = traj.difference("emploi_salarie")[:, 0]
+    if all(e.present("emploi_public") for e in traj.variante):
+        emploi = emploi - traj.difference("emploi_public")[:, 0]
     return {"pib": 100.0 * volume,
-            "emploi": traj.difference("emploi_salarie")[:, 0],
+            "emploi": emploi,
+            "chomage": 100.0 * (u_var[:, 0] / pa_var[:, 0] - u_ref[:, 0] / pa_ref[:, 0]),
             "solde": 100.0 * (sp_var[:, 0] / y_var[:, 0] - sp_ref[:, 0] / y_ref[:, 0]),
+            "prix": _chaine(traj, "prix_c_menages"),
             "investissement": 100.0 * traj.difference("fbcf_snf")[:, 0] / i_ref[:, 0]}
+
+
+def publiee(variante: Any, ligne: str, horizon: int) -> float:
+    """La ligne de Mésange à l'horizon : une ligne de `macro.mesange.ROWS` par sa clé, une
+    autre par le libellé que le tableau imprime (`macro.mesange.printed_row`)."""
+    cle = LIGNES[ligne][0]
+    if cle in variante.rows:
+        return float(variante.at(cle, str(horizon)))
+    return float(printed_row(variante, cle)[HORIZONS_MESANGE.index(str(horizon))])
 
 
 def comparer(depart: Any, entrees: Entrees, population: Any, cellules: Any, *,
@@ -138,7 +171,6 @@ def comparer(depart: Any, entrees: Entrees, population: Any, cellules: Any, *,
                         theta=dict.fromkeys(thetas.REGISTRE, theta), blocs=blocs,
                         boucles=boucles)
         r = reponses(traj)
-        out[v] = {ligne: [(float(r[ligne][h - 1]),
-                           float(publiees[v].at(LIGNES[ligne][0], str(h))))
+        out[v] = {ligne: [(float(r[ligne][h - 1]), publiee(publiees[v], ligne, h))
                           for h in HORIZONS] for ligne in LIGNES}
     return out

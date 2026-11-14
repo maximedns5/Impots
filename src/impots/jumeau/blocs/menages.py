@@ -119,6 +119,38 @@ importations : c'est le lot 3, qui le fait sur la consommation que ce bloc écri
 disponible et la consommation de chaque décile, référence comprise : les montants des
 cellules en part du PIB de 2024, fois Y_k.
 
+BLOC `emploi_public` (D-418, mode structurel). Les rémunérations des APU d'une mesure,
+ΔD1 (t. 3.201), sont déjà au PIB : `demande_publique` les met dans la consommation des
+APU et dans les rémunérations, la production non marchande à ses coûts. Rien ne les
+portait ni dans l'emploi ni dans le revenu des ménages. Pour la mesure m, l'année k :
+
+    s = part_m,k si la mesure la porte, s(θ) = θ sinon     la part des emplois
+    ΔD1^e = s ΔD1,  ΔD1^t = (1 − s) ΔD1                     emplois, traitements
+    W_pub,k = r W_k                                          la rémunération d'un emploi
+    ΔE_pub = ΔD1^e / W_pub,k ;  ΔE_sal = ΔE_tot = ΔE_pub ;  ΔU = −ΔE_pub ;  ΔPA = 0
+    ΔD1_c = (ΔD1^e) c^chômeurs + (ΔD1^t) c^super-brut         par cellule
+    ΔD61 = Σ_c t61_c ΔD1_c ;  ΔD5 = Σ_c t5_c ΔD1_c ;  ΔRD_c += ρ_c ΔD1_c
+
+r = 0,94737 (`menages.yaml`, emploi_public) : la rémunération par tête des quatre branches
+non marchandes de `part_marchande_salaries` (D11 de la t. 6.205 sur l'emploi de la
+t. 6.210, 2024), au rapport D1 / D11 des APU (t. 7.301), sur W de 2024. s(θ) : ½ au
+centre, la convention de Mésange pour sa variante de dépense (p. 106, note 75), 0 et 1
+aux bornes, choisies. Une mesure qui porte des créations de postes ou un point d'indice
+dit sa part (`Mesure.part_emplois_publics` : 1 ou la part de ses postes, 0 pour un point
+d'indice) et ne lit pas θ. Les emplois publics sont pris sur le chômage (la population
+active ne bouge qu'avec le salaire marchand), entrent dans l'emploi total et salarié et
+font baisser le chômage, que lisent les salaires (WS), la consommation (l'épargne de
+précaution) et les allocations chômage ; leur rémunération va aux cellules comme la masse
+salariale marchande, aux mêmes taux (les traitements au prorata du super-brut : les
+cellules ne distinguent pas les agents publics). Le bloc n'écrit ni le PIB ni les
+rémunérations, que `demande_publique` porte : pas de double compte. Et l'activité que lisent
+les blocs marchands est marchande : ŷ retranche la valeur ajoutée non marchande
+(`va_non_marchande`, ΔD1 + ΔD29), ê l'emploi public ; sans quoi ΔD1 ferait aussi des
+emplois marchands. Canal « emploi_public », de Mésange (`remplace`) : avec `mesange`,
+refusé. Le volume de la consommation des APU reste celui que ses prix du scénario donnent :
+la part des traitements, un prix de la production non marchande dans les comptes et dans
+Mésange (p. 107), y est un volume (dit dans D-418).
+
 UNE MESURE SANS CHOC PAR DÉCILE, mais avec une impulsion sur un instrument des ménages
 (IR, CSG, cotisations salariés, TVA, taxe carbone), est refusée avant le premier pas : son
 canal de la consommation serait un zéro qui se lirait comme un chiffrage.
@@ -151,6 +183,9 @@ CHAMPS_TRAVAIL = ("population_active", "emploi_total", "emploi_salarie", "chomag
 RDB = tuple(f"rdb_d{d:02d}" for d in DECILES_MENAGES)
 CONSO = tuple(f"conso_d{d:02d}" for d in DECILES_MENAGES)
 CLES_MENAGES = frozenset({"deciles", "smic"})
+#: Ce que les trois blocs lisent de l'emploi public en mode structurel (D-418).
+LIT_PUBLIC = ("va_non_marchande", "emploi_public", "remunerations_publiques_emplois",
+              "remunerations_publiques_traitements")
 
 
 class MenagesError(ValueError):
@@ -181,6 +216,8 @@ class Parametres:
     pente: dict[str, float]
     pib_cellules: float
     offre: dict[str, dict[str, Any]]
+    part_emplois_publics: dict[str, float]
+    remuneration_publique_relative: float
 
 
 def charger(chemin: Path = PARAMETRES, offre: Path = OFFRE) -> Parametres:
@@ -206,7 +243,7 @@ def charger(chemin: Path = PARAMETRES, offre: Path = OFFRE) -> Parametres:
         v = lignes[cle]["value"]
         offre_rows[groupe] = {"cle": cle, "low": v["low"], "central": v["central"],
                               "high": v["high"], "un": lignes[cle]["theta"]["un"]}
-    e, s, c = p["emploi"], p["salaires"], p["consommation"]
+    e, s, c, ep = p["emploi"], p["salaires"], p["consommation"], p["emploi_public"]
     refs = {int(a): {k: float(x) for k, x in v.items()}
             for a, v in e["references"].items() if str(a).isdigit()}
     return Parametres(
@@ -224,7 +261,8 @@ def charger(chemin: Path = PARAMETRES, offre: Path = OFFRE) -> Parametres:
         conso_chomage=np.asarray(c["chomage"]["valeur"], dtype=float),
         pente=borne(c["pente_deciles"]),
         pib_cellules=float(p["normalisation"]["pib_annee_cellules"]["valeur"]),
-        offre=offre_rows)
+        offre=offre_rows, part_emplois_publics=borne(ep["part_emplois"]),
+        remuneration_publique_relative=float(ep["remuneration_relative"]["valeur"]))
 
 
 #: L'horizon le plus long qu'une trajectoire lit, en années.
@@ -383,22 +421,33 @@ class Ecarts:
     d_u: np.ndarray
     pva: np.ndarray
     pc: np.ndarray
+    publiques_emplois: np.ndarray
+    publiques_traitements: np.ndarray
 
 
 def ecarts(etat: Etat, mesure: str, ref: Reference, params: Parametres) -> Ecarts:
     """Les écarts d'une mesure lus sur un état. ŷ est un volume : le PIB nominal moins sa
     part prix (`effet_prix_pib`) ; les écarts des prix de production et de consommation
-    sont ceux de la boucle prix-salaires (D-414), nuls sans elle (champs absents)."""
+    sont ceux de la boucle prix-salaires (D-414), nuls sans elle (champs absents).
+
+    ŷ est l'activité MARCHANDE : la valeur ajoutée non marchande des APU (ΔD1 + ΔD29, que
+    `demande_publique` écrit à part) en est retranchée, et ê est l'emploi salarié
+    marchand, l'emploi public (bloc `emploi_public`) retranché de l'emploi salarié
+    (D-418) ; nuls tous deux sans le bloc."""
     n = etat.n
     return Ecarts(
-        y=(_de(etat, "pib", mesure, n) - _de(etat, "effet_prix_pib", mesure, n)) / ref.pib,
-        e=_de(etat, "emploi_salarie", mesure, n) / ref.emploi_marchand,
+        y=(_de(etat, "pib", mesure, n) - _de(etat, "effet_prix_pib", mesure, n)
+           - _de(etat, "va_non_marchande", mesure, n)) / ref.pib,
+        e=(_de(etat, "emploi_salarie", mesure, n) - _de(etat, "emploi_public", mesure, n))
+        / ref.emploi_marchand,
         w=_de(etat, "salaire_moyen", mesure, n) / (params.part_marchande * ref.salaire),
         d_pa=_de(etat, "population_active", mesure, n),
         d_tot=_de(etat, "emploi_total", mesure, n),
         d_u=_de(etat, "chomage", mesure, n),
         pva=_de(etat, "ecart_prix_valeur_ajoutee", mesure, n),
-        pc=_de(etat, "ecart_prix_consommation", mesure, n))
+        pc=_de(etat, "ecart_prix_consommation", mesure, n),
+        publiques_emplois=_de(etat, "remunerations_publiques_emplois", mesure, n),
+        publiques_traitements=_de(etat, "remunerations_publiques_traitements", mesure, n))
 
 
 def chomage_points(ec: Ecarts, ref: Reference) -> np.ndarray:
@@ -416,15 +465,28 @@ def choc_menages(mesure: Any, annee: int) -> Mapping[str, Any]:
     return menages.get(annee, {})
 
 
+def remunerations_publiques_cellules(st: Structure, emplois: Any, traitements: Any
+                                    ) -> np.ndarray:
+    """ΔD1 des APU par cellule, (50, n), Md€ (D-418) : la part des emplois au prorata des
+    chômeurs des cellules (les emplois créés sont pris sur le chômage, comme ceux du
+    secteur marchand), celle des traitements au prorata de leur salaire super-brut (les
+    cellules ne distinguent pas les agents publics : une approximation, dite)."""
+    return (np.outer(st.part_chomeurs, np.asarray(emplois, dtype=float))
+            + np.outer(st.part_super_brut, np.asarray(traitements, dtype=float)))
+
+
 def revenus_cellules(etat: Etat, mesure: Any, ref: Reference, params: Parametres,
                      st: Structure) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """(ΔRD par cellule, ΔD1 par cellule, ΔB), de forme (50, n), (50, n) et (n,), Md€ :
     l'écart du revenu disponible de chaque cellule à une année, le choc statique de la
-    mesure et ce que la dynamique de l'emploi et des salaires lui apporte."""
+    mesure et ce que la dynamique de l'emploi et des salaires lui apporte, rémunérations
+    publiques de la mesure comprises (D-418)."""
     ec = ecarts(etat, mesure.identifiant, ref, params)
     pi_d1 = params.part_marchande * ref.d1
     d1_c = (np.outer(st.part_chomeurs, pi_d1 * ec.e)
-            + np.outer(st.part_super_brut, pi_d1 * ec.w))
+            + np.outer(st.part_super_brut, pi_d1 * ec.w)
+            + remunerations_publiques_cellules(st, ec.publiques_emplois,
+                                               ec.publiques_traitements))
     db = st.allocation_sur_salaire * ref.salaire * ec.d_u * 1e3 / 1e9
     rd = st.rho[:, None] * d1_c + np.outer(st.part_chomeurs, db)
     choc = choc_menages(mesure, etat.annee).get("deciles")
@@ -459,7 +521,8 @@ class _Base:
 
     nom: str
 
-    #: Les champs de la boucle prix-salaires qu'un bloc lit en mode structurel (D-414).
+    #: Les champs qu'un bloc lit en mode structurel : la boucle prix-salaires (D-414) et
+    #: l'emploi public (D-418).
     lit_prix: tuple[str, ...] = ()
 
     def __init__(self, cellules: Cellules, params: Parametres | None = None, *,
@@ -551,7 +614,7 @@ class Emploi(_Base):
     ecrit = CHAMPS_TRAVAIL
     thetas = (thetas.EMPLOI_COUT, *thetas.OFFRE_TRAVAIL)
     remplace = ("emploi",)
-    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee")
+    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee", *LIT_PUBLIC)
 
     def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
         self._debut(ctx)
@@ -597,7 +660,7 @@ class Salaires(_Base):
              "apu_d_d62")
     thetas = (thetas.SALAIRES_CHOMAGE,)
     remplace = ("salaires",)
-    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee")
+    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee", *LIT_PUBLIC)
 
     def preparer(self, entrees: Entrees, mesures: Sequence[Any]) -> None:
         verifier_menages(mesures, entrees.annees)
@@ -640,6 +703,58 @@ class Salaires(_Base):
             out["apu_r_d5"][ident] = st.taux_d5 @ d1_c
             out["apu_d_d62"][ident] = (st.allocation_sur_salaire * ref.salaire
                                        * chemin[-1].d_u * 1e3 / 1e9)
+        return out
+
+
+class EmploiPublic(_Base):
+    """Le bloc `emploi_public` (D-418) : les emplois que font les rémunérations des APU
+    d'une mesure. Hors de la boucle : il ne lit que le choc de la mesure et la référence.
+    Ses équations sont dans la docstring du module."""
+
+    nom = "emploi_public"
+    lit = ("apu_d_d1",)
+    ecrit = ("emploi_public", "emploi_salarie", "emploi_total", "chomage",
+             "remunerations_publiques_emplois", "remunerations_publiques_traitements",
+             "apu_r_d61", "apu_r_d5")
+    thetas = (thetas.EMPLOI_PUBLIC_PART,)
+    remplace = ("emploi_public",)
+
+    def part(self, ctx: Contexte, mesure: Any) -> np.ndarray:
+        """s, la part de ΔD1 de l'année qui fait des emplois : celle que la mesure porte,
+        sinon θ."""
+        portee = (getattr(mesure, "part_emplois_publics", None) or {}).get(ctx.annee)
+        if portee is not None:
+            return np.full(ctx.n, float(portee))
+        return self._theta(ctx, thetas.EMPLOI_PUBLIC_PART, self.params.part_emplois_publics)
+
+    def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
+        p, st = self.params, self.st
+        ref = self._ref(ctx, ctx.k)
+        out: dict[str, dict[str, Any]] = {c: {} for c in self.ecrit}
+        out["emploi_public"][""] = ref.emploi_salarie - ref.emploi_marchand
+        if not ctx.mesures:
+            return out
+        ctx.lire("apu_d_d1")
+        d1 = {m: v for (origine, m), v in ctx.courant.de("apu_d_d1").items()
+              if origine == "mesures" and m != ""}
+        # La rémunération d'un emploi public, € par an : W_pub = r W_k.
+        w_pub = p.remuneration_publique_relative * ref.salaire
+        for m in ctx.mesures:
+            ident = m.identifiant
+            if ident not in d1:
+                continue
+            s = self.part(ctx, m)
+            emplois, traitements = s * d1[ident], (1.0 - s) * d1[ident]
+            d_pub = emplois * 1e9 / w_pub / 1e3
+            for champ_, v in (("emploi_public", d_pub), ("emploi_salarie", d_pub),
+                              ("emploi_total", d_pub), ("chomage", -d_pub),
+                              ("remunerations_publiques_emplois", emplois),
+                              ("remunerations_publiques_traitements", traitements)):
+                out[champ_][ident] = np.zeros(ctx.n) + v
+            d1_c = remunerations_publiques_cellules(st, np.zeros(ctx.n) + emplois,
+                                                    np.zeros(ctx.n) + traitements)
+            out["apu_r_d61"][ident] = st.taux_d61 @ d1_c
+            out["apu_r_d5"][ident] = st.taux_d5 @ d1_c
         return out
 
 
@@ -688,7 +803,7 @@ class Consommation(_Base):
              *CONSO)
     thetas = (thetas.CONSOMMATION_PROFIL, thetas.CONSOMMATION_PENTE)
     remplace = ("consommation_menages",)
-    lit_prix = ("effet_prix_pib", "ecart_prix_consommation")
+    lit_prix = ("effet_prix_pib", "ecart_prix_consommation", *LIT_PUBLIC)
 
     def __init__(self, cellules: Cellules, params: Parametres | None = None, *,
                  prix: bool = False) -> None:
@@ -792,6 +907,7 @@ __all__ = [
     "TYPES",
     "Consommation",
     "Emploi",
+    "EmploiPublic",
     "Salaires",
     "blocs_menages",
     "charger",

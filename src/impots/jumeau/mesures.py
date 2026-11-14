@@ -78,6 +78,10 @@ class Mesure:
     conventions: Mapping[str, Mapping[int, str]] = field(default_factory=dict)
     """{"entreprises" | "menages" : {année : convention}} : les nombres qu'une
     convention nommée a faits, et non le rapport (D-414)."""
+    part_emplois_publics: Mapping[int, float] = field(default_factory=dict)
+    """{année : s} : la part de ΔD1 des APU de l'année qui fait des emplois publics,
+    quand la mesure la porte elle-même (D-418) : 1 pour des créations de postes, 0 pour
+    un point d'indice (tout en traitements). Absente, le bloc `emploi_public` lit θ."""
 
     def __post_init__(self) -> None:
         if not self.identifiant:
@@ -99,6 +103,13 @@ class Mesure:
                                   f"de Mésange inconnus {inconnus}")
         if self.report not in (None, rejouer.CARRY):
             raise MesureError(f"convention de report « {self.report} » inconnue")
+        for annee, part in self.part_emplois_publics.items():
+            if not 0.0 <= float(part) <= 1.0:
+                raise MesureError(f"mesure « {self.identifiant} », {annee} : part des "
+                                  f"emplois publics {part} hors de [0 ; 1]")
+            if not (self.chocs.get(annee) or {}).get("apu_d_d1"):
+                raise MesureError(f"mesure « {self.identifiant} », {annee} : une part des "
+                                  f"emplois publics sans rémunérations des APU (apu_d_d1)")
 
     @property
     def avertissement(self) -> str | None:
@@ -176,15 +187,19 @@ class Mesure:
                   prelevements: Mapping[int, float] | None = None,
                   macro: Mapping[str, Any] | None = None,
                   creations: Mapping[str, Any] | None = None,
-                  auteur: str = "loi hypothétique") -> Mesure:
-        """Une loi déclarée directement, en Md€ ; ses années sont celles de ses chocs."""
+                  auteur: str = "loi hypothétique",
+                  part_emplois_publics: Mapping[int, float] | None = None) -> Mesure:
+        """Une loi déclarée directement, en Md€ ; ses années sont celles de ses chocs.
+        `part_emplois_publics`, la part de ses rémunérations des APU qui fait des emplois
+        (D-418), quand la loi la dit."""
         annees = sorted({*chocs, *(impulsions or {}), *(prelevements or {})})
         if not annees:
             raise MesureError(f"loi hypothétique « {identifiant} » sans aucun choc")
         return cls(identifiant=identifiant, libelle=libelle, auteur=auteur,
                    origine=HYPOTHESE, annees=tuple(annees), chocs=dict(chocs),
                    impulsions=dict(impulsions or {}), prelevements=dict(prelevements or {}),
-                   macro=macro, creations=creations)
+                   macro=macro, creations=creations,
+                   part_emplois_publics=dict(part_emplois_publics or {}))
 
 
 #: La vue dont la première année est la passe du rapport `premiere_annee_*.json` : la

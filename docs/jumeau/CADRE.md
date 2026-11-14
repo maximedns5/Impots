@@ -195,7 +195,12 @@ l'investissement (« investissement_accelerateur »), la boucle prix-salaires
 (« prix_production » : le prix de valeur ajoutée et celui de la consommation selon les
 coûts salariaux unitaires, que lisent les salaires, l'emploi et la consommation) et l'IS
 sur les profits induits (« recettes_induites_profits »). Les blocs qui lisent l'activité
-y lisent un volume : le PIB nominal moins sa part prix (`effet_prix_pib`).
+y lisent un volume : le PIB nominal moins sa part prix (`effet_prix_pib`). Depuis D-418,
+le bloc `emploi_public` (canal « emploi_public ») fait des emplois publics de la part des
+rémunérations des APU d'une mesure qui en paie (θ, ou la part que la mesure porte), les
+met dans l'emploi et le chômage, leur rémunération dans le revenu des ménages et leurs
+prélèvements dans les recettes ; et l'activité que lisent les blocs marchands est
+marchande : la valeur ajoutée des APU (`va_non_marchande`) en est retranchée.
 
 **Les règles des lots en parallèle.**
 
