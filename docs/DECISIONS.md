@@ -32039,3 +32039,105 @@ entrée (le script refuse sans elle), vers `reports/jumeau/microdonnees.json` :
 coefficients, écarts-types, tailles, aucune donnée individuelle. Le résultat va dans
 D-426. Aucune spécification, aucun seuil, aucune dose ne change après le premier calcul.
 L'investissement par secteur (t. 8.202, comptes de branche) n'est pas dans ce plan.
+
+## D-426 — Les données fines estimées : ε petit, identifié ; β et η non ; contre D-425
+
+**Ce qui a tourné.** `scripts/jumeau_microdonnees.py`, sur 223b9f9 (D-425 à dcb4545,
+poussé avant), vers `reports/jumeau/microdonnees.json` : coefficients, écarts-types,
+tailles et doses par secteur, aucune donnée individuelle. **Un premier calcul, sur
+dcb4545, s'est arrêté** à F1_tendances sur le refus de colinéarité de l'estimateur, après
+F1, F1_avance et F1_placebo : une tendance par cellule région×secteur est colinéaire aux
+effets région×année, la somme des tendances d'une région en étant une. Le correctif ôte la
+tendance du premier secteur de chaque région, la normalisation du même modèle (223b9f9) ;
+rien d'autre ne change, et les trois premiers résultats sont redonnés à l'identique. Aucune
+spécification, aucun seuil, aucune dose n'a changé après le premier calcul.
+
+### Les coefficients
+
+L'écart-type est le plus grand de CR1 et du bootstrap sans contrainte (D-425) ; p la
+p-valeur du bootstrap sauvage restreint (Webb pour 9 et 10 secteurs, Rademacher pour 30
+branches), 9 999 tirages.
+
+| spécification | coefficient | écart-type | p (WCR) | traduit |
+|---|---|---|---|---|
+| F1 défaillances, `marge` | −0,0335 | 0,0401 | 0,44 | β = −0,034 ; θ = −0,56 ± 0,67 |
+| F1_avance : t / t + 2 | −0,027 / −0,019 | 0,052 / 0,062 | 0,67 / 0,74 | |
+| F1_placebo (t + 8, 2003-2009) | −0,025 | 0,093 | 0,77 | |
+| F1_tendances | −0,046 | 0,045 | 0,37 | |
+| F1_2019 | −0,039 | 0,054 | 0,57 | |
+| F1_composantes : travail / profit | −0,038 / −0,028 | 0,046 / 0,056 | 0,55 / 0,59 | |
+| C1 créations, `taux` | +0,00731 | 0,00668 | 0,28 | ε = −0,056 ± 0,051 |
+| C1_avance : t / t + 2 | +0,0032 / +0,0114 | 0,0063 / 0,0137 | 0,58 / 0,36 | |
+| C1_placebo (hors micro, ancienne méthode) | −0,0003 | 0,0035 | 0,93 | |
+| C1_tendances | −0,0045 | 0,0054 | 0,45 | ε = +0,034 ± 0,041 |
+| C1_2019 | +0,0014 | 0,0047 | 0,74 | ε = −0,011 ± 0,036 |
+| C1_sans_2023 | +0,0064 | 0,0064 | 0,32 | ε = −0,049 ± 0,049 |
+| C1_composantes : travail / profit | +0,0053 / +0,0141 | 0,0068 / 0,0146 | 0,44 / 0,35 | |
+| E1 emploi, `travail` | −3,63 | 2,98 | 0,25 | η = 3,63 ± 2,98 |
+| E1_avance : t / t + 2 | −1,62 / −1,87 | 1,60 / 2,45 | 0,34 / 0,42 | |
+| E1_placebo (t + 8, 2003-2009) | −1,18 | 2,00 | 0,54 | |
+| E1_tendances | +0,07 | 0,62 | 0,91 | η = −0,07 ± 0,62 |
+| E1_2019 | −2,92 | 2,69 | 0,28 | |
+
+n = 1 638 (F1), 1 464 (C1), 600 (E1) ; aucune cellule retirée. CR1 et le bootstrap
+diffèrent de 5 à 20 % ; le bootstrap est le plus petit partout, l'écart-type retenu est
+donc CR1.
+
+### Sur l'échelle des θ
+
+* **`fermetures_marges` (β ; 0 ; 0,03 ; 0,06)** : β = −0,034 ± 0,040, θ = −0,56 ± 0,67.
+  **Non identifié** (σ_θ = 0,67). Le signe est contraire à l'attendu, sans être
+  significatif ; l'intervalle à 95 % (−0,11 ; +0,05) couvre toute la plage : les
+  défaillances par secteur ne disent rien de β. Aucune proposition.
+* **`naissances.elasticite` (ε ; 0,043 ; 0,20 ; 0,356, une sensibilité, pas une ligne
+  θ)** : ε = −0,056 ± 0,051, θ = −0,31 ± 0,16 par la règle des lignes. **Identifié**
+  (σ_θ = 0,16 < 0,25), **non retenu** : le signe n'est pas l'attendu (D-425). L'avance et
+  le placebo ne sont pas rejetés (p = 0,36 et 0,93). Toutes les variantes sont petites,
+  de −0,107 ± 0,111 (la seule part du profit) à +0,034 ± 0,041 (les tendances).
+  L'intervalle à 95 % de la spécification principale, (−0,16 ; +0,04), exclut le centre
+  de 0,20 à cinq écarts-types et s'arrête à la borne basse (0,044). **Proposé, non fait** :
+  le centre à la borne basse actuelle (0,043, l'estimateur intra-groupe de Da Rin et al.)
+  et la borne basse à 0, ou ε fait ligne θ sur (0 ; 0,043 ; 0,20). **Ce que cela ne dit
+  pas** : l'estimation compare des secteurs ; une réponse commune à tous, au climat fiscal
+  national, est dans les effets d'année et lui échappe. La dose porte la convention de
+  D-401 (les cotisations au numérateur du taux apparent) et une distribution des salaires
+  de forme commune ; la seule part du profit (IS et CVAE) donne le même ordre, moins
+  précis.
+* **`jumeau_emploi_elasticite_cout` (η ; 0,31 ; 0,44 ; 0,52)** : η = 3,63 ± 2,98, θ = 20 ±
+  19. **Non identifié**, et absurde en niveau : les écarts de dose entre branches (moins
+  d'un point de coût du travail) sont petits devant les tendances propres des branches ;
+  avec une tendance par branche, η = −0,07 ± 0,62. Aucune proposition.
+* **δ (`idees_creations`, −1 ; 0 ; +1)**, lu en niveau, sans erreur-type : 284 564
+  créations de sociétés en 2024 sur 2 718 400 entreprises à l'IS, 10,47 % ; 269 905 sur
+  2 588 200 en 2023, 10,43 % : δ = +2,86 et +2,82, **hors de la plage**. **Proposé, non
+  fait** : réconcilier e₀ (7,61 %, Amadeus de 1997 à 2004) avec le taux de l'Insee et de
+  la DGFiP (près de 10,4 %), soit e₀ recalé et δ centré sur 0, soit la plage de δ portée
+  à +3. La lecture mêle définitions (des sociétés créées sur des redevables de l'IS) et
+  comportement ; elle n'identifie rien au sens de D-417.
+
+### Contre le pronostic de D-425
+
+| | pronostic | résultat |
+|---|---|---|
+| F1 : β, écart-type | −0,05 à +0,10 ; 0,02 à 0,06 | −0,034 ; 0,040 |
+| F1 : identifié | non (3 chances sur 4) | non |
+| C1 : ε, écart-type | 0 à 0,6 ; 0,02 à 0,10 | −0,056 (hors) ; 0,051 |
+| C1 : identifié, retenu | oui (3 sur 5) ; une chance sur 3 | oui ; non (le signe) |
+| C1 : avance ou placebo rejetés | une fois sur deux | non |
+| E1 : η, écart-type | −0,5 à +1,5 ; 0,15 à 0,5 | 3,63 (hors) ; 2,98 (hors) |
+| E1 : identifié | non (9 sur 10) | non |
+| δ | +1,5 à +3,5 | +2,86 |
+| θ identifiés, retenus | au plus un sur trois ; aucun | un (ε) ; aucun |
+
+Le pronostic se trompe sur le signe de ε (attendu positif, par confusion avec les
+secteurs à faible marge), et sous-estime l'imprécision de E1 d'un facteur six.
+
+### Ce qui ne change pas, ce qui reste
+
+Aucune plage, aucun θ, aucun bloc ne change : les propositions (ε, δ) attendent le
+propriétaire. L'investissement par secteur n'a pas été estimé. Ce que les données fines
+apportent aux θ des entreprises est limité par la maille publiée : neuf ou dix secteurs à
+la région, des doses dont l'écart entre secteurs est petit (un demi-point de valeur
+ajoutée), et aucune variation par taille d'entreprise dans les séries. Les sources plus
+fines (Sirene ou les liasses par unité légale, la DSN par établissement) sont des données
+individuelles, hors de ce dépôt.
