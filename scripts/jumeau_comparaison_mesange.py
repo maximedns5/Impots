@@ -3,7 +3,7 @@
 Une comparaison de cohérence, pas un juge : rien n'est préenregistré ni réglé dessus. Lit
 l'état publié de 2025, les cellules d'entreprises de 2023 et de ménages de 2024 et le
 document de Mésange (hors git, `make data` et `scripts/jumeau_cellules.py`), et imprime le
-tableau en Markdown.
+tableau en Markdown, avec la variante salariale de Mésange (D-349) pour le PIB (D-414).
 
     PYTHONPATH=src python scripts/jumeau_comparaison_mesange.py [θ]
 """
@@ -46,6 +46,19 @@ def main(theta: float = 0.5) -> None:
             cases = " | ".join(f"{j:+.2f} / {m:+.2f}" if ligne != "emploi"
                                else f"{j:+.0f} / {m:+.0f}" for j, m in table[v][ligne])
             print(f"| {v} | {cases} |")
+    # La variante salariale de Mésange (D-349), le PIB à 1, 5 et 10 ans : la référence de
+    # la sensibilité du PIB à la formation des salaires.
+    salariale = mesange.sensibilite_salariale()
+    print("\nPIB en volume, % : jumeau / Mésange central / Mésange, variante salariale\n")
+    print("| variante | 1 an | 5 ans | 10 ans |\n|---|---|---|---|")
+    for v in VARIANTES:
+        if v not in salariale:
+            print(f"| {v} | (pas de variante salariale publiée) | | |")
+            continue
+        jumeau = dict(zip(HORIZONS, (j for j, _ in table[v]["pib"]), strict=True))
+        cases = " | ".join(f"{jumeau[h]:+.2f} / {salariale[v]['central'][str(h)]:+.2f} / "
+                           f"{salariale[v]['alternative'][str(h)]:+.2f}" for h in (1, 5, 10))
+        print(f"| {v} ({salariale[v]['table']}) | {cases} |")
 
 
 if __name__ == "__main__":
