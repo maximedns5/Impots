@@ -41,3 +41,4 @@ tests/test_boutons_menages.py::test_a_knob_on_the_households_data_balances_on_an
 tests/test_boutons_menages.py::test_a_knob_on_the_households_data_balances_on_an_aged_population[cvec]  # passe de 1 500 ménages vieillis
 tests/test_boutons_menages.py::test_a_knob_on_the_households_data_balances_on_an_aged_population[rien]  # passe de 1 500 ménages vieillis
 tests/test_jumeau_cellules.py::test_les_cellules_recoupent_la_population_et_les_agregats_publies  # lit la population entière (D-409)
+tests/test_jumeau_page.py::test_la_page_affiche_les_nombres_du_jumeau  # Chromium et Pyodide, 20 s, lit le CDN (D-415)
