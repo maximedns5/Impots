@@ -32304,3 +32304,138 @@ la région, des doses dont l'écart entre secteurs est petit (un demi-point de v
 ajoutée), et aucune variation par taille d'entreprise dans les séries. Les sources plus
 fines (Sirene ou les liasses par unité légale, la DSN par établissement) sont des données
 individuelles, hors de ce dépôt.
+
+## D-427 — La jonction de D-421 à D-426 ; ε, e₀ et trois plages décidés ; études en attente
+
+**La jonction** (branche `claude/but23-cadre`). `claude/but23-revision` (dce2439, D-421 et
+D-423) puis `claude/but23-apriori` (D-424) en avance rapide ; `claude/but23-microdonnees`
+(D-425, D-426) fusionnée : les D-entrées dans l'ordre numérique, `MANIFEST.json` et
+`KNOWN_SOURCES` en union (241 → 244 entrées). Les neuf fichiers téléchargés par ces
+branches sont reliés dans `data/raw` (hors git), leurs sommes de contrôle vérifiées.
+Après la jonction, `test_jumeau*.py`, `test_provenance.py` et `test_donnees.py` : 311
+verts, 1 sauté ; ruff propre.
+
+**Les décisions du propriétaire, 14 novembre 2026.**
+
+* **(a) ε, l'élasticité des créations aux prélèvements** : (0 ; 0,043 ; 0,20) à θ = 0,
+  ½ et 1, au lieu de 0,20 fixe sur (0,043 ; 0,356). La raison, D-426 : l'estimation
+  française entre secteurs, −0,056 ± 0,051, a un intervalle à 95 % (−0,16 ; +0,04) qui
+  exclut 0,20 à cinq écarts-types et touche 0,043, l'intra-groupe de Da Rin et al. ;
+  0,20, le milieu de D-402, reste la borne haute. Dans le canal des études
+  (`predictif/parameters/creations_entreprises.yaml`), ε reste fixe à son centre, la
+  plage une sensibilité dite. Dans le jumeau, ε devient une ligne θ,
+  `elasticite_creations`, que le bloc `naissances` lit ; sa loi a priori suit les règles
+  de D-424 : l'estimation 0,043 (Da Rin et al., un panneau national, la grandeur du
+  bloc), et, faute de l'écart-type de cet effet marginal (la covariance du TMEE et de son
+  carré n'est pas publiée), celui de D-426, 0,051 : μ = ½, s₋ = 0,593, s₊ = 0,162. Ce
+  choix de l'écart-type est le mien, dit, à confirmer ; D-426 entre en `comparaison`,
+  pas comme estimation (une réponse entre secteurs, les effets d'année absorbant la
+  réponse nationale : la règle (1)).
+* **(b) e₀** : 10,47 % au lieu de 7,61 %. La lecture de niveau de D-426
+  (`reports/jumeau/microdonnees.json`, champ « delta ») : 284 564 créations de sociétés
+  en 2024, France entière, tous secteurs, brutes, la somme des quatre trimestres (Insee,
+  BDM, CREATIONS-ENTREPRISES-METHODE-2022, TYPE-ENT_PM), sur 2 718 400 entreprises à
+  l'IS (DGFiP, Statistiques n° 39, tableau 2) ; 10,43 % en 2023 (269 905 sur 2 588 200).
+  Numérateur et dénominateur de deux sources, dit. δ (θ idées) garde −1 à +1 autour ; sa
+  lecture de niveau tombe de +2,86 à 0. Le hasard des installées, qui tient le stock
+  stationnaire au taux e₀, passe de 6,53 % à 10,82 % au centre.
+* **(c) trois plages du jumeau élargies vers le bas** (D-424) : l'élasticité de l'emploi
+  à son coût (0,07 ; 0,44 ; 0,52, au lieu de 0,31), les salaires au chômage (0 ; 1 ;
+  1,278, au lieu de 0,5), le coût du capital (0 ; 0,44 ; 0,60, au lieu de 0,37 et
+  0,48). Les modes de D-424 y sont désormais dans la boîte : 0,238, 0,234 et 0,341, au
+  lieu de −0,25, −0,03 et −0,5. La garde ε_K > 0 devient ε_K ≥ 0. Les plages du commerce
+  ne changent pas.
+
+Le rejeu de l'histoire (D-423) n'est pas refait : son rapport garde son commit. Les a
+priori ne sont pas lus par une passe nouvelle.
+
+### Les études publiées : NON réécrites, ε est figé dans les rapports
+
+Le canal des créations entre dans la dette publiée des études depuis D-400. Chaque
+rapport porte ses paramètres (`instantane`) : `rejeu.creations.parametres` et
+`creations.parametres`, où ε vaut 0,20. `rejouer`, le parcours (`dette.js`,
+`activite.js`) et `etude ecrire` lisent ε là, jamais dans le fichier déclaré ; et le
+rapport porte aussi tout ce qui en dérive : les chemins (`years`, `side_by_side`), la
+boîte (`theta_box`), le Monte-Carlo, les lectures, les chemins du canal. Changer ε
+publié, c'est réécrire ces champs dans 45 rapports de passes : **arrêté avant**, comme
+demandé, pour décision. Ce qui est fait : le fichier déclaré porte le nouvel ε (la
+prochaine passe le lira) ; une page tirée d'un rapport à 0,20 cite la source de D-402
+(`creations.source_elasticite`), pas celle de D-427, de sorte que `etude ecrire` sur les
+rapports commités reste vrai. `site construire` ne change que `jumeau-paquet.json`.
+
+**Le contrôle.** Le rejeu des 45 rapports d'études qui portent le canal, depuis leurs
+seuls champs, au ε qu'ils portent, redonne leurs chemins publiés à l'écart nul (toutes
+années, trois persistances, deux vues) : le critère de 1e-12 tient.
+
+**Ce que le nouvel ε donnerait**, rejoué depuis les rapports, non publié : Δb 2035 à θ½,
+vue vieillie, persistance « lue », en points de PIB (publié → à ε = 0,043 ; sans le
+canal entre parenthèses).
+
+| étude | publié | ε = 0,043 | sans le canal |
+|---|---|---|---|
+| Attal, programme | +4,2384 | +4,2730 | +4,2825 |
+| Attal, a18 suppression de la CVAE | +0,2000 | +0,2354 | +0,2450 |
+| Bouamrane, programme | −0,0157 | +0,3797 | +0,4881 |
+| Kazib, programme | −0,0158 | +0,3830 | +0,4924 |
+| Lisnard, programme | +5,4904 | +5,6541 | +5,6989 |
+| Lisnard, l4 C3S et CVAE | +1,3981 | +1,5615 | +1,6063 |
+| Mélenchon, programme | +26,7838 | +27,3752 | +27,5375 |
+| Mélenchon, exonérations au-delà de 2 Smic | −0,0729 | −0,2900 | −0,3494 |
+| Mélenchon, point d'indice +10 % | +8,8447 | +8,4472 | +8,3385 |
+| Mélenchon, Smic à 1 700 € net | −0,0412 | +0,7631 | +0,9840 |
+| Mélenchon, suppression du PFU | −2,3783 | −2,0634 | −1,9771 |
+| Retailleau, programme | +10,9930 | +11,3095 | +11,3963 |
+| Retailleau, r13 zéro cotisation à 1 623 h | +0,0471 | +0,1927 | +0,2326 |
+| Retailleau, r21 C3S, CVAE, forfait social, CFE | +1,3981 | +1,5615 | +1,6063 |
+| Roussel, programme | +0,4809 | +1,2254 | +1,4298 |
+| Roussel, Smic +15 % | −0,0364 | +0,7080 | +0,9124 |
+| Ruffin, programme | +2,1302 | +2,5872 | +2,7126 |
+| Ruffin, Smic à 1 600 € | −0,0196 | +0,4371 | +0,5624 |
+| Tondelier, programme | +2,1885 | +2,5091 | +2,5970 |
+| Tondelier, point d'indice à l'inflation | +1,8484 | +1,7667 | +1,7443 |
+| Tondelier, Smic à 2 000 € brut | −0,0158 | +0,3830 | +0,4924 |
+
+Les 25 autres rapports ne bougent pas (aucun prélèvement sur les entreprises ou le
+capital). Six signes à θ½ changent, tous des hausses du Smic (Bouamrane, Kazib, et les
+mesures Smic de Mélenchon, Roussel, Ruffin et Tondelier) : le canal y faisait passer la
+dette sous zéro ; le verdict de ces pages est donc à relire.
+
+**La voie proposée.** Un script de recalcul, sans passe, qui réécrit chaque rapport
+depuis ses propres champs : ε remplacé dans les deux instantanés, puis les chemins, la
+boîte, le Monte-Carlo (sa graine est dans le rapport), les lectures et les chemins du
+canal refaits par `rejouer`, `montecarlo.run` et `annuel._lectures`, avec un champ qui
+dit le recalcul (D-427, l'ε d'avant, le commit) et garde le commit de la passe. Son
+contrôle : au ε d'avant, il réécrit chaque rapport octet pour octet. Puis `etude ecrire`
+des études, `site construire`, `site verifier`, `site publiable`, `node ui/check.mjs`.
+L'autre voie, que `etude ecrire` relise ε dans le fichier déclaré et refasse la dette
+à la volée, laisserait les rapports dire 0,20 sous des pages qui disent 0,043.
+
+### Ce qui reste à décider
+
+* **θ_survie n'est plus monotone avec e₀ = 10,47 %.** Une survie des jeunes plus haute
+  monte le hasard des installées qui tient le stock stationnaire, et l'emporte à dix
+  ans : en 2035, pour une baisse d'IS de 10 Md€, le PIB de la productivité vaut 1,4804 à
+  θ = 0, 1,4775 à ½, 1,4697 à 1, un maximum à θ = 0,125 ; le stock, 17 121, 17 212 et
+  17 210, un maximum à 0,75. Deux cas de
+  `test_jumeau_entreprises.py::test_theta_zero_et_un_bornent_chaque_bloc` échouent ; ils
+  ne sont pas retouchés. Ils passent à 7,61 %. Des voies : h_o tenu à sa valeur du
+  centre (stationnaire au centre seul), une plage de survie plus étroite, ou une boîte de
+  θ_survie lue sur une grille plutôt qu'aux bornes.
+* Le recalcul des 45 rapports d'études, ci-dessus.
+* L'écart-type de la loi a priori de ε (celui de D-426).
+
+**Les tests.** Tenus et vus échouer sur le code d'avant : le calcul à la main du canal au
+nouveau centre ; le Δb 2035 de l'étude Attal a18 rejouée à l'ε déclaré, +0,2354 point
+(contre +0,2000 publié, redonné au bit à 0,20) ; la page d'un rapport à 0,20 cite la
+source de D-402 ; les lois a priori à la main (l'emploi, le coût du capital, les
+salaires, ε) ; ε borne les créations et les éteint à θ = 0, le coût du capital aussi ; à
+θ = 0, une baisse d'IS ne fait plus rien au volume du PIB structurel, et une hausse des
+cotisations finit par monter les rémunérations (b = 0) ; e₀, son accord avec le rapport
+de D-426 et h_o à la main. Avec `pytest -m "not lourd and not chrono" -n 2` sur
+`test_jumeau*.py`, `test_rejouer.py`, `test_creations_canal.py`, `test_etude*.py`,
+`test_parcours*.py`, `test_annonce.py`, `test_site.py`, `test_dependances.py`,
+`test_gardes_phase9.py`, `test_provenance.py`, `test_donnees.py`, `test_dette*.py` : 785
+verts, 4 sautés, **2 rouges** (θ_survie, ci-dessus). `test_jumeau_page.py`, seul : vert.
+`site construire` (seul `jumeau-paquet.json` change), `site verifier`, `site publiable`,
+`node ui/check.mjs`, `ruff check src tests scripts` passent. Ni `make impact` ni `make
+full`.
