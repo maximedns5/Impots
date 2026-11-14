@@ -196,12 +196,24 @@ class Rejeu:
     mecanique: Mapping[str, Mapping[int, np.ndarray]] = field(default_factory=dict)
 
 
-def _serie(cible: Cible, etats: Mapping[int, Etat], depart: Etat, annees: Sequence[int],
+def _serie(cible: Cible, etats: Mapping[int, Etat], depart: Any, annees: Sequence[int],
            fonction: Valeur, ajout: float) -> dict[int, np.ndarray]:
     out = {}
     for a in annees:
         out[a] = fonction(etats[a], etats.get(a - 1, depart)) + ajout
     return out
+
+
+class _Repli:
+    """L'état publié du départ, côté modèle : un champ que la publication ne porte pas
+    (les créations de sociétés du jumeau) se lit dans la référence de la première année,
+    le niveau de départ du modèle (une convention, dite dans D-420)."""
+
+    def __init__(self, depart: Etat, premiere: Etat) -> None:
+        self.depart, self.premiere = depart, premiere
+
+    def __getitem__(self, nom: str) -> np.ndarray:
+        return self.depart[nom] if self.depart.present(nom) else self.premiere[nom]
 
 
 def rejouer(fenetre: Fenetre, theta: Mapping[str, Any], simulateur: Simulateur,
@@ -215,10 +227,11 @@ def rejouer(fenetre: Fenetre, theta: Mapping[str, Any], simulateur: Simulateur,
     reference = dict(zip(trajectoire.annees, trajectoire.reference, strict=True))
     publies = {a: observateur(a) for a in (fenetre.depart, *fenetre.annees)}
     depart = publies[fenetre.depart]
+    repli = _Repli(depart, reference[fenetre.annees[0]])
     jumeau, naif, publie = {}, {}, {}
     for c in cibles:
-        jumeau[c.nom] = _serie(c, variante, depart, fenetre.notees, c.jumeau, c.ajout)
-        naif[c.nom] = _serie(c, reference, depart, fenetre.notees, c.jumeau, c.ajout)
+        jumeau[c.nom] = _serie(c, variante, repli, fenetre.notees, c.jumeau, c.ajout)
+        naif[c.nom] = _serie(c, reference, repli, fenetre.notees, c.jumeau, c.ajout)
         obs = _serie(c, publies, depart, fenetre.notees, c.publie or c.jumeau, 0.0)
         publie[c.nom] = {a: float(np.asarray(v).reshape(-1)[0]) for a, v in obs.items()}
     meca: dict[str, dict[int, np.ndarray]] = {}
@@ -229,7 +242,7 @@ def rejouer(fenetre: Fenetre, theta: Mapping[str, Any], simulateur: Simulateur,
         etats = dict(zip(sans.annees, sans.variante, strict=True))
         for c in cibles:
             try:
-                meca[c.nom] = _serie(c, etats, depart, fenetre.notees, c.jumeau, c.ajout)
+                meca[c.nom] = _serie(c, etats, repli, fenetre.notees, c.jumeau, c.ajout)
             except ChampAbsent:
                 meca[c.nom] = dict(naif[c.nom])
     return Rejeu(fenetre, jumeau, naif, publie, meca)
