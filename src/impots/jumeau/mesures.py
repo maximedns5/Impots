@@ -8,8 +8,9 @@ statiques par année, en Md€ :
   `shocks.Impulse.by_instrument`) ;
 * sur les prélèvements des entreprises et du capital que lit le canal des créations
   (`prelevements`, recettes positives) ;
-* sur les ménages par décile et les entreprises par taille (`menages`, `entreprises`),
-  portés pour les lots 4 et 2, que le lot 1 ne lit pas.
+* sur les ménages par décile et les entreprises par impôt (`menages`, `entreprises`),
+  portés pour les lots 4 et 2, que le lot 1 ne lit pas ; un rapport ne les porte que
+  pour sa première année et sa vue figée (`ventilations`, D-412).
 
 DEUX ORIGINES, et aucune autre. `depuis_rapport` lit le choc d'une passe déjà faite sur la
 population, une fois, et garde son rapport et son commit : son coût mécanique et ses
@@ -65,9 +66,13 @@ class Mesure:
     report: str | None = None
     """« part_pib_constante » : la première année tenue en part du PIB de référence."""
     menages: Mapping[int, Any] | None = None
+    """{année : {"deciles": 10 Md€, gain des ménages positif}} (lot 4)."""
     entreprises: Mapping[int, Any] | None = None
+    """{année : {impôt : Md€, recettes positives}} (lot 2, `blocs.entreprises`)."""
     rapport: str | None = None
     commit: str | None = None
+    non_portes: Mapping[str, str] = field(default_factory=dict)
+    """Ce que le rapport ne porte pas, et pourquoi : absent, jamais un zéro (D-412)."""
 
     def __post_init__(self) -> None:
         if not self.identifiant:
@@ -101,9 +106,16 @@ class Mesure:
     @classmethod
     def depuis_rapport(cls, payload: Mapping[str, Any], *, vue: str, identifiant: str,
                        libelle: str, auteur: str, rapport: str,
-                       commit: str | None = None) -> Mesure:
+                       commit: str | None = None,
+                       premiere_annee: Mapping[str, Any] | None = None) -> Mesure:
         """La mesure d'un rapport du chemin annuel, ou d'une première année reportée
-        (`annuel.carried_payload`), dans la vue `vue` ; ce que `rejouer.chemin` lit."""
+        (`annuel.carried_payload`), dans la vue `vue` ; ce que `rejouer.chemin` lit.
+
+        Avec `premiere_annee`, le rapport de la première année de la même étude
+        (`premiere_annee_*.json`), elle porte aussi, pour cette année seule, les chocs
+        par impôt des entreprises (`entreprises`) et par décile des ménages (`menages`),
+        quand ce rapport les porte (`ventilations`, D-412). Ce qu'il ne porte pas reste
+        absent, et `non_portes` dit pourquoi."""
         if vue not in rejouer.VIEWS:
             raise MesureError(f"vue « {vue} » inconnue ({sorted(rejouer.VIEWS)})")
         rejeu = rejouer._rejeu(payload)
@@ -128,9 +140,13 @@ class Mesure:
         if creations:
             variations = [float(v) / EURO for v in creations["variations"][vue]]
             prelevements = dict(zip(sorted(stats), variations, strict=True))
+        entreprises, menages, non_portes = ventilations(
+            payload, premiere_annee, vue=vue, premiere=premiere, annees=annees,
+            prelevements=prelevements)
         return cls(identifiant=identifiant, libelle=libelle, auteur=auteur,
                    origine=RAPPORT, annees=annees, impulsions=impulsions,
                    prelevements=prelevements, couts=couts, canaux=canaux,
+                   entreprises=entreprises, menages=menages, non_portes=non_portes,
                    lignes=dict(rejeu["lignes"]), macro=rejeu["macro"] if rejeu["looped"]
                    else None, creations=dict(creations["parametres"]) if creations
                    else None, report=report, rapport=rapport,
@@ -152,3 +168,122 @@ class Mesure:
                    origine=HYPOTHESE, annees=tuple(annees), chocs=dict(chocs),
                    impulsions=dict(impulsions or {}), prelevements=dict(prelevements or {}),
                    macro=macro, creations=creations)
+
+
+#: La vue dont la première année est la passe du rapport `premiere_annee_*.json` : la
+#: population figée de l'année (son coût est, à l'euro près, celui du chemin figé).
+VUE_PREMIERE_ANNEE = "figee"
+#: L'écart toléré entre deux nombres de la même passe, en euros : ils sont égaux au bit
+#: dans les rapports commités ; un écart plus grand dit que ce n'est pas la même passe.
+EURO_PRES = 1.0
+
+
+def _passes(premiere_annee: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
+    """Les passes du rapport de la première année, {"menages" | "entreprises" : réponse,
+    requête} : une réponse mixte en porte deux, les autres une."""
+    sorte, reponse, requete = (premiere_annee.get("kind"), premiere_annee["response"],
+                               premiere_annee["request"])
+    if sorte == "mixte":
+        return {k: {"reponse": reponse[k], "requete": requete[k]}
+                for k in ("menages", "entreprises")}
+    if sorte in ("menages", "entreprises"):
+        return {sorte: {"reponse": reponse, "requete": requete}}
+    raise MesureError(f"rapport de première année de sorte « {sorte} » inconnue")
+
+
+def ventilations(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] | None, *,
+                 vue: str, premiere: int, annees: tuple[int, ...],
+                 prelevements: Mapping[int, float]
+                 ) -> tuple[dict[int, Any] | None, dict[int, Any] | None, dict[str, str]]:
+    """Les chocs par impôt des entreprises et par décile des ménages qu'un rapport porte
+    (D-412), et ce qu'il ne porte pas.
+
+    CE QUE LES RAPPORTS PORTENT. Le rapport du chemin annuel (`predictif_*.json`) ne
+    porte, par année, que le coût, les impulsions et la somme des prélèvements que lit le
+    canal des créations ; ni impôt par impôt, ni décile. Le rapport de la première année
+    (`premiere_annee_*.json`) porte, pour cette année et pour la population figée, les
+    écarts par impôt de la passe des entreprises (`deltas`, recettes positives, en euros)
+    et le gain moyen par décile de la passe des ménages (`deciles`). Donc :
+
+    * seule la première année, et seule la vue figée, sont ventilées ; les autres années
+      et la vue vieillie restent absentes ;
+    * les entreprises : les impôts que le rapport nomme pour le canal des créations
+      (`instruments_entreprises` : IS, contribution sociale sur l'IS, CEBGE, CVAE, C3S),
+      en Md€, quand la somme des prélèvements du chemin, cette année-là, est la leur à
+      l'euro près. Sinon, la différence est faite des prélèvements des ménages que le
+      lot 2 lit aussi (cotisations patronales nettes des allègements, PFU, prélèvements
+      sociaux du capital), que le rapport ne ventile pas : les entreprises restent
+      absentes, et le lot 2 refuse la mesure plutôt que de lire un zéro ;
+    * les ménages : mean_delta × n_households par décile (`menages_depuis_deciles`).
+      Une réforme du Smic laisse les ménages absents : le Smic réel efficace que lit le
+      bloc des salaires n'est pas la revalorisation de la requête sans hypothèse.
+
+    Le rapport de la première année doit être celui de la même passe : même commit, même
+    scénario, même année, et son coût celui du chemin figé à l'euro près ; sinon refusé.
+    """
+    non_portes: dict[str, str] = {}
+    if premiere_annee is None:
+        texte = ("le rapport du chemin annuel ne porte ni ses prélèvements par impôt ni "
+                 "ses chocs par décile ; le rapport de la première année n'est pas fourni")
+        return None, None, {"entreprises": texte, "menages": texte}
+    if premiere_annee.get("commit") != payload.get("commit"):
+        raise MesureError(f"première année au commit {premiere_annee.get('commit')}, "
+                          f"chemin au commit {payload.get('commit')} : pas la même passe")
+    if premiere_annee.get("scenario") != payload.get("scenario"):
+        raise MesureError(f"première année du scénario « {premiere_annee.get('scenario')} »"
+                          f", chemin de « {payload.get('scenario')} »")
+    passes = _passes(premiere_annee)
+    for nom, passe in passes.items():
+        if int(passe["requete"]["year"]) != premiere:
+            raise MesureError(f"passe des {nom} de {passe['requete']['year']}, chemin "
+                              f"commençant en {premiere}")
+    cout = sum(float(p["reponse"]["reform_cost"]) for p in passes.values())
+    figee = float(payload["years"][0]["mechanical_frozen_eur"])
+    if abs(cout - figee) > EURO_PRES:
+        raise MesureError(f"première année de coût {cout:.0f} €, chemin figé de "
+                          f"{figee:.0f} € en {premiere} : pas la même passe")
+    if len(annees) > 1:
+        non_portes["annees"] = (f"{annees[1]} à {annees[-1]} : le rapport ne ventile que sa "
+                                f"première année, {premiere}")
+    if vue != VUE_PREMIERE_ANNEE:
+        texte = (f"la première année ventilée est la passe de la population figée ; la vue "
+                 f"« {vue} » n'a pas de ventilation publiée")
+        return None, None, {**non_portes, "entreprises": texte, "menages": texte}
+
+    entreprises = None
+    creations = (payload.get("rejeu") or {}).get("creations")
+    if not creations or premiere not in prelevements:
+        non_portes["entreprises"] = ("le rapport ne porte pas la somme des prélèvements de "
+                                     "sa première année : rien à recouper")
+    else:
+        noms = list(creations["parametres"]["instruments_entreprises"])
+        deltas = (passes["entreprises"]["reponse"]["deltas"] if "entreprises" in passes
+                  else {})
+        par_impot = {i: float(deltas.get(i, 0.0) or 0.0) for i in noms}
+        reste = prelevements[premiere] * EURO - sum(par_impot.values())
+        if abs(reste) > EURO_PRES:
+            non_portes["entreprises"] = (
+                f"{reste / EURO:+.3f} Md€ de prélèvements des ménages que lit le lot 2 "
+                f"(cotisations patronales nettes, PFU, prélèvements sociaux du capital) en "
+                f"{premiere}, que le rapport ne ventile pas")
+        else:
+            entreprises = {premiere: {i: v / EURO for i, v in par_impot.items()}}
+
+    menages = None
+    if "menages" not in passes:
+        non_portes["menages"] = "la première année n'a pas de passe des ménages"
+    else:
+        from impots.jumeau.blocs.menages import menages_depuis_deciles
+
+        requete = passes["menages"]["requete"]
+        smic = sorted(k for k in (requete.get("reform") or {}) if k.startswith("smic"))
+        deciles = passes["menages"]["reponse"].get("deciles")
+        if smic:
+            non_portes["menages"] = (f"réforme du Smic ({', '.join(smic)}) : le Smic réel "
+                                     f"efficace du bloc des salaires ne se lit pas sans "
+                                     f"hypothèse dans la requête")
+        elif not deciles:
+            non_portes["menages"] = "la passe des ménages ne porte pas ses déciles"
+        else:
+            menages = {premiere: {"deciles": menages_depuis_deciles(deciles)}}
+    return entreprises, menages, non_portes

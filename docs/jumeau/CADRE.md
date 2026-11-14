@@ -216,7 +216,10 @@ hypothétique), ses années d'effet, et ses **chocs statiques par année** :
   impôt (pour le lot 2), quand le rapport les porte.
 
 Le choc statique vient **d'une passe déjà faite sur la population**, une fois, et il porte
-son rapport et son commit (`Mesure.depuis_rapport`). Une loi hypothétique, pour les
+son rapport et son commit (`Mesure.depuis_rapport`). Les chocs par impôt et par décile ne
+sont publiés que dans le rapport de la première année, pour la population figée : la
+mesure les prend pour cette année et cette vue, le reste est absent (`non_portes`), et
+les lots 2 et 4 refusent une année de la trajectoire sans sa ventilation (D-412). Une loi hypothétique, pour les
 curseurs, se déclare directement (`Mesure.hypothese`) et le dit sur chaque nombre qu'elle
 touche. Le jumeau ne relance jamais OpenFisca dans un pas.
 

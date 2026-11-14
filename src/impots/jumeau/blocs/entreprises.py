@@ -222,6 +222,14 @@ class ChocsEntreprises:
                     f"mesure « {m.identifiant} » : des prélèvements agrégés (le signal du "
                     f"canal du lot 1) sans leur ventilation par impôt ; les blocs du lot 2 "
                     f"lisent chaque impôt et ne devinent pas la ventilation")
+            sans = sorted(a for a in entrees.annees if (m.prelevements or {}).get(a)
+                          and a not in (m.entreprises or {}))
+            if m.entreprises and sans:
+                raise EntreprisesError(
+                    f"mesure « {m.identifiant} » : des prélèvements par impôt en "
+                    f"{sorted(m.entreprises)}, des prélèvements agrégés sans ventilation "
+                    f"en {sans} (un rapport qui ne ventile que sa première année, D-412) : "
+                    f"le lot 2 n'y lirait qu'un zéro")
             if m.entreprises and m.report:
                 raise EntreprisesError(f"mesure « {m.identifiant} » : une première année "
                                        f"reportée n'est pas lue par le lot 2")

@@ -551,7 +551,7 @@ class Salaires(_Base):
     remplace = ("salaires",)
 
     def preparer(self, entrees: Entrees, mesures: Sequence[Any]) -> None:
-        verifier_menages(mesures)
+        verifier_menages(mesures, entrees.annees)
 
     def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
         self._debut(ctx)
@@ -591,9 +591,13 @@ class Salaires(_Base):
         return out
 
 
-def verifier_menages(mesures: Sequence[Any]) -> None:
+def verifier_menages(mesures: Sequence[Any], annees: Sequence[int] | None = None) -> None:
     """Les refus du lot 4, avant le premier pas : un choc aux ménages mal formé ; une
-    impulsion sur un instrument des ménages sans choc par décile."""
+    impulsion sur un instrument des ménages sans choc par décile ; une mesure qui porte
+    des chocs par décile certaines années et, une année de la trajectoire où elle coûte,
+    n'en porte pas (un rapport qui ne ventile que sa première année, D-412). Avec
+    `annees`, seules les années de la trajectoire sont jugées."""
+    dans = (lambda a: True) if annees is None else set(annees).__contains__
     for m in mesures:
         menages = getattr(m, "menages", None) or {}
         for annee, choc in menages.items():
@@ -604,7 +608,19 @@ def verifier_menages(mesures: Sequence[Any]) -> None:
             if "deciles" in choc and len(choc["deciles"]) != N_DECILES:
                 raise MenagesError(f"mesure « {m.identifiant} », {annee} : "
                                    f"{len(choc['deciles'])} déciles, pas {N_DECILES}")
+        if menages:
+            sans = sorted(a for a in getattr(m, "annees", ()) if dans(a)
+                          and "deciles" not in menages.get(a, {})
+                          and ((getattr(m, "couts", None) or {}).get(a)
+                               or (getattr(m, "chocs", None) or {}).get(a)))
+            if sans:
+                raise MenagesError(
+                    f"mesure « {m.identifiant} » : un choc par décile en "
+                    f"{sorted(menages)}, aucun en {sans} où elle coûte : le canal de la "
+                    f"consommation y serait un zéro")
         for annee, impulsions in (m.impulsions or {}).items():
+            if not dans(annee):
+                continue
             touches = sorted(i for i in INSTRUMENTS_MENAGES if impulsions.get(i))
             if touches and "deciles" not in menages.get(annee, {}):
                 raise MenagesError(
@@ -627,7 +643,7 @@ class Consommation(_Base):
                                      ).astype(float)
 
     def preparer(self, entrees: Entrees, mesures: Sequence[Any]) -> None:
-        verifier_menages(mesures)
+        verifier_menages(mesures, entrees.annees)
 
     def pmc(self, ctx: Any) -> np.ndarray:
         """PMC_d(h) pour h = 1 … k + 1 : forme (k + 1, 10, n)."""
