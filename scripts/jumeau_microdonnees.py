@@ -63,12 +63,18 @@ def panneau_regional(series: dict, expo: dict, k: m.Constantes, annees: list[int
     X = np.array(xs)
     noms = [f"{nom}{'' if d == 0 else f'_t{d:+d}'}" for nom, d in doses]
     if tendances:
-        cellules = sorted({c for c, _ in tend})
+        # une tendance par cellule, moins celle du premier secteur de chaque région : la
+        # somme des tendances d'une région est dans ses effets région×année
+        toutes = sorted({c for c, _ in tend})
+        premieres = {min(c for c in toutes if c.split("|")[0] == r)
+                     for r in {c.split("|")[0] for c in toutes}}
+        cellules = [c for c in toutes if c not in premieres]
         T = np.zeros((len(tend), len(cellules)))
         for i, (c, a) in enumerate(tend):
-            T[i, cellules.index(c)] = a - annees[0]
-        X = np.column_stack([X, T[:, 1:]])
-        noms += [f"tendance_{c}" for c in cellules[1:]]
+            if c in cellules:
+                T[i, cellules.index(c)] = a - annees[0]
+        X = np.column_stack([X, T])
+        noms += [f"tendance_{c}" for c in cellules]
     return {"y": np.array(ys), "X": X, "noms": noms, "effets": [fe1, fe2],
             "grappe": grappe, "retirees": retirees, "n_doses": len(doses)}
 
