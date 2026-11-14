@@ -10,7 +10,9 @@ statiques par année, en Md€ :
   (`prelevements`, recettes positives) ;
 * sur les ménages par décile et les entreprises par impôt (`menages`, `entreprises`),
   portés pour les lots 4 et 2, que le lot 1 ne lit pas ; un rapport ne les porte que
-  pour sa première année et sa vue figée (`ventilations`, D-412).
+  pour sa première année et sa vue figée (`ventilations`, D-412) ; les années suivantes,
+  sur demande, par la convention nommée « parts_premiere_annee » (`CONVENTION_PARTS`,
+  D-414), portée sur chaque nombre qu'elle touche (`Mesure.conventions`).
 
 DEUX ORIGINES, et aucune autre. `depuis_rapport` lit le choc d'une passe déjà faite sur la
 population, une fois, et garde son rapport et son commit : son coût mécanique et ses
@@ -73,6 +75,9 @@ class Mesure:
     commit: str | None = None
     non_portes: Mapping[str, str] = field(default_factory=dict)
     """Ce que le rapport ne porte pas, et pourquoi : absent, jamais un zéro (D-412)."""
+    conventions: Mapping[str, Mapping[int, str]] = field(default_factory=dict)
+    """{"entreprises" | "menages" : {année : convention}} : les nombres qu'une
+    convention nommée a faits, et non le rapport (D-414)."""
 
     def __post_init__(self) -> None:
         if not self.identifiant:
@@ -107,7 +112,8 @@ class Mesure:
     def depuis_rapport(cls, payload: Mapping[str, Any], *, vue: str, identifiant: str,
                        libelle: str, auteur: str, rapport: str,
                        commit: str | None = None,
-                       premiere_annee: Mapping[str, Any] | None = None) -> Mesure:
+                       premiere_annee: Mapping[str, Any] | None = None,
+                       convention: str | None = None) -> Mesure:
         """La mesure d'un rapport du chemin annuel, ou d'une première année reportée
         (`annuel.carried_payload`), dans la vue `vue` ; ce que `rejouer.chemin` lit.
 
@@ -115,7 +121,13 @@ class Mesure:
         (`premiere_annee_*.json`), elle porte aussi, pour cette année seule, les chocs
         par impôt des entreprises (`entreprises`) et par décile des ménages (`menages`),
         quand ce rapport les porte (`ventilations`, D-412). Ce qu'il ne porte pas reste
-        absent, et `non_portes` dit pourquoi."""
+        absent, et `non_portes` dit pourquoi.
+
+        Avec `convention="parts_premiere_annee"` (D-414), les années suivantes sont
+        ventilées aux parts de la première (`etendre`), et `conventions` le dit pour
+        chaque année et chaque axe qu'elle touche."""
+        if convention not in (None, CONVENTION_PARTS):
+            raise MesureError(f"convention « {convention} » inconnue ({CONVENTION_PARTS})")
         if vue not in rejouer.VIEWS:
             raise MesureError(f"vue « {vue} » inconnue ({sorted(rejouer.VIEWS)})")
         rejeu = rejouer._rejeu(payload)
@@ -143,11 +155,16 @@ class Mesure:
         entreprises, menages, non_portes = ventilations(
             payload, premiere_annee, vue=vue, premiere=premiere, annees=annees,
             prelevements=prelevements)
+        conventions: dict[str, dict[int, str]] = {}
+        if convention is not None:
+            entreprises, menages, non_portes, conventions = etendre(
+                entreprises, menages, non_portes, premiere_annee, premiere=premiere,
+                annees=annees, couts=couts, prelevements=prelevements)
         return cls(identifiant=identifiant, libelle=libelle, auteur=auteur,
                    origine=RAPPORT, annees=annees, impulsions=impulsions,
                    prelevements=prelevements, couts=couts, canaux=canaux,
                    entreprises=entreprises, menages=menages, non_portes=non_portes,
-                   lignes=dict(rejeu["lignes"]), macro=rejeu["macro"] if rejeu["looped"]
+                   conventions=conventions, lignes=dict(rejeu["lignes"]), macro=rejeu["macro"] if rejeu["looped"]
                    else None, creations=dict(creations["parametres"]) if creations
                    else None, report=report, rapport=rapport,
                    commit=commit or payload.get("commit"))
@@ -287,3 +304,107 @@ def ventilations(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] |
         else:
             menages = {premiere: {"deciles": menages_depuis_deciles(deciles)}}
     return entreprises, menages, non_portes
+
+
+#: La convention de ventilation des années suivantes (D-414) : chaque année du chemin,
+#: le total du rapport est ventilé par impôt et par décile aux parts de la première.
+CONVENTION_PARTS = "parts_premiere_annee"
+TEXTE_CONVENTION = (
+    "ventilé par la convention « parts_premiere_annee » (D-414) : le total de l'année du "
+    "chemin annuel aux parts de la première année figée, pas une passe")
+
+
+def etendre(entreprises: dict[int, Any] | None, menages: dict[int, Any] | None,
+            non_portes: dict[str, str], premiere_annee: Mapping[str, Any] | None, *,
+            premiere: int, annees: tuple[int, ...], couts: Mapping[int, float],
+            prelevements: Mapping[int, float]
+            ) -> tuple[dict[int, Any] | None, dict[int, Any] | None, dict[str, str],
+                       dict[str, dict[int, str]]]:
+    """La convention « parts_premiere_annee » (D-414), décidée par le responsable du
+    projet à la place d'une passe nouvelle par année.
+
+    LES TOTAUX DE CHAQUE ANNÉE sont ceux que le chemin annuel porte, dans la vue de la
+    mesure : P_t, la somme des prélèvements du canal des créations (recettes positives),
+    et le coût des ménages : C^m_t = coût_t + P_t quand la première année a une passe des
+    entreprises (le coût, signe du moteur, moins celui des entreprises, −P_t ; il porte
+    aussi ce que la passe des entreprises coûte hors des cinq impôts du canal, 59 € en
+    2026 pour le programme d'Attal), C^m_t = coût_t sinon (les prélèvements sont alors
+    ceux des ménages, dans leur coût).
+
+    LES PARTS sont celles de la première année figée : s_i = P_{i,1} / P_1 pour l'impôt i,
+    g_d = G_{d,1} / C^m_1 pour le décile d (G le choc par décile). Pour t > 1 :
+
+        P_{i,t} = s_i P_t,      G_{d,t} = g_d C^m_t
+
+    Ce n'est pas une passe : la structure des prélèvements et des gagnants d'une année
+    est tenue sur dix ans. Chaque nombre qu'elle fait est nommé dans `conventions`. Elle
+    est REFUSÉE là où les parts n'existent pas, et ce qui manque reste absent, dit dans
+    `non_portes` : une première année sans ventilation (une réforme du Smic, des
+    cotisations que le rapport ne ventile pas, la vue vieillie, un rapport sans sa
+    première année), un total de la première année nul quand une année suivante ne l'est
+    pas, un coût des ménages que le chemin ne sépare pas de celui des entreprises."""
+    conventions: dict[str, dict[int, str]] = {}
+    non_portes = dict(non_portes)
+    suivantes = [a for a in annees if a != premiere]
+    if not suivantes:
+        return entreprises, menages, non_portes, conventions
+    refus: list[str] = []
+
+    if entreprises is None:
+        refus.append("entreprises")
+        non_portes["entreprises"] = (f"{non_portes.get('entreprises', '')} ; la convention "
+                                     f"« {CONVENTION_PARTS} » n'a pas de parts").lstrip(" ;")
+    else:
+        total = sum(entreprises[premiere].values())
+        if total == 0.0 and any(prelevements.get(a, 0.0) for a in suivantes):
+            refus.append("entreprises")
+            non_portes["entreprises"] = (f"prélèvements nuls en {premiere}, pas en "
+                                         f"{suivantes} : pas de parts pour la convention")
+            entreprises = {premiere: entreprises[premiere]}
+        else:
+            parts = {i: (v / total if total else 0.0)
+                     for i, v in entreprises[premiere].items()}
+            entreprises = {premiere: entreprises[premiere], **{
+                a: {i: s * prelevements.get(a, 0.0) for i, s in parts.items()}
+                for a in suivantes}}
+            conventions["entreprises"] = dict.fromkeys(suivantes, CONVENTION_PARTS)
+
+    if menages is None:
+        refus.append("menages")
+        non_portes["menages"] = (f"{non_portes.get('menages', '')} ; la convention "
+                                 f"« {CONVENTION_PARTS} » n'a pas de parts").lstrip(" ;")
+    else:
+        passes = _passes(premiere_annee) if premiere_annee else {}
+        deciles = list(menages[premiere]["deciles"])
+        if "entreprises" in passes and entreprises is None:
+            # Des prélèvements des ménages mêlés à ceux des entreprises (des cotisations
+            # patronales que le rapport ne ventile pas) : le coût des ménages de chaque
+            # année ne se sépare pas de celui des entreprises.
+            cout = None
+        elif "entreprises" in passes:
+            cout = {a: couts[a] + prelevements.get(a, 0.0) for a in annees}
+        else:
+            cout = dict(couts)
+        if cout is None:
+            refus.append("menages")
+            non_portes["menages"] = (
+                "le chemin ne sépare pas, après la première année, le coût des ménages de "
+                "celui des entreprises (leurs prélèvements ne sont pas ventilés) : pas de "
+                "total pour la convention")
+        elif cout[premiere] == 0.0 and any(cout[a] for a in suivantes):
+            refus.append("menages")
+            non_portes["menages"] = (f"coût des ménages nul en {premiere}, pas en "
+                                     f"{suivantes} : pas de parts pour la convention")
+        else:
+            echelle = {a: (cout[a] / cout[premiere] if cout[premiere] else 0.0)
+                       for a in suivantes}
+            menages = {premiere: menages[premiere], **{
+                a: {"deciles": [g * echelle[a] for g in deciles]} for a in suivantes}}
+            conventions["menages"] = dict.fromkeys(suivantes, CONVENTION_PARTS)
+
+    if conventions:
+        non_portes.pop("annees", None)
+        if refus:
+            non_portes["annees"] = (f"{suivantes[0]} à {suivantes[-1]} : {', '.join(refus)} "
+                                    f"sans parts, absents ; le reste {TEXTE_CONVENTION}")
+    return entreprises, menages, non_portes, conventions

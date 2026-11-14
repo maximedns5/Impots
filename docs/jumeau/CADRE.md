@@ -226,7 +226,12 @@ Le choc statique vient **d'une passe déjà faite sur la population**, une fois,
 son rapport et son commit (`Mesure.depuis_rapport`). Les chocs par impôt et par décile ne
 sont publiés que dans le rapport de la première année, pour la population figée : la
 mesure les prend pour cette année et cette vue, le reste est absent (`non_portes`), et
-les lots 2 et 4 refusent une année de la trajectoire sans sa ventilation (D-412). Une loi hypothétique, pour les
+les lots 2 et 4 refusent une année de la trajectoire sans sa ventilation (D-412). Sur
+demande, une convention nommée, « parts_premiere_annee » (D-414), ventile chaque année
+suivante du chemin aux parts de la première : les impôts selon la somme des prélèvements
+de l'année, les déciles selon le coût des ménages ; ce n'est pas une passe, et chaque
+année qu'elle touche le dit (`Mesure.conventions`). Elle est refusée là où les parts
+n'existent pas (une réforme du Smic, des cotisations non ventilées) : l'absence reste. Une loi hypothétique, pour les
 curseurs, se déclare directement (`Mesure.hypothese`) et le dit sur chaque nombre qu'elle
 touche. Le jumeau ne relance jamais OpenFisca dans un pas.
 
