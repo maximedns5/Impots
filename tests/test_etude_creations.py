@@ -9,8 +9,8 @@ avant (les pages commitées, tenues par `impots etude verifier` et `test_site`).
 
 Deux sortes de rapports factices, aucune passe sur la population réelle : un chemin
 synthétique qui lit un canal non nul (les passes de `test_rejouer`), et les rapports
-commités de Roussel, chacun augmenté d'un canal aux prélèvements nuls, qui se rejoue donc
-à l'identique.
+commités de Le Pen (D-403), chacun augmenté d'un canal aux prélèvements nuls, qui se
+rejoue donc à l'identique.
 """
 
 from __future__ import annotations
@@ -140,7 +140,7 @@ def test_the_trajectory_draws_the_debt_without_the_channel(synthetique) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# une page entière : les rapports de Roussel, chacun augmenté d'un canal nul
+# une page entière : les rapports de Le Pen, chacun augmenté d'un canal nul
 # --------------------------------------------------------------------------- #
 def _canal_nul(path: dict) -> dict:
     """Le chemin, lisant un canal aux prélèvements nuls : son effet est nul, la dette sans
@@ -165,20 +165,31 @@ def _canal_nul(path: dict) -> dict:
 
 
 @pytest.fixture
-def roussel(tmp_path) -> etude.Etude:
-    study = etude.definition("presidentielle_roussel")
-    shutil.copytree(study.rapports, tmp_path / "roussel")
-    return etude.replace(study, rapports=tmp_path / "roussel")
+def partie(tmp_path) -> etude.Etude:
+    """Le Pen sur une copie de ses rapports commités, la part seule, son chemin rendu
+    tel qu'avant le canal. Depuis D-403, le dépôt porte ceux de la série du but 22, qui
+    le lisent ; la copie retire les blocs du canal, et les mesures seules. Le Pen, parce
+    que son canal ne lit aucune variation (D-403) : sans lui, son chemin se rejoue à
+    l'identique (Roussel, d'avant, ne le fait plus)."""
+    study = etude.definition("presidentielle_le_pen")
+    shutil.copytree(study.rapports, tmp_path / "partie",
+                    ignore=shutil.ignore_patterns(etude.MESURES))
+    for path in (tmp_path / "partie").glob("predictif_*.json"):
+        report = json.loads(path.read_text("utf-8"))
+        report.pop("creations", None)
+        report["rejeu"].pop("creations", None)
+        path.write_text(json.dumps(report), encoding="utf-8")
+    return etude.replace(study, rapports=tmp_path / "partie")
 
 
-def test_a_page_whose_paths_read_the_channel_says_so_beside_its_debt(roussel) -> None:
-    before = roussel.render(roussel.load())
+def test_a_page_whose_paths_read_the_channel_says_so_beside_its_debt(partie) -> None:
+    before = partie.render(partie.load())
     assert "canal des créations" not in before
-    for path in roussel.rapports.glob("predictif_*.json"):
+    for path in partie.rapports.glob("predictif_*.json"):
         path.write_text(json.dumps(_canal_nul(json.loads(path.read_text("utf-8")))),
                         encoding="utf-8")
-    entries = roussel.load()
-    page, figures = roussel.rendu(entries)
+    entries = partie.load()
+    page, figures = partie.rendu(entries)
     assert "sans le canal des créations |" in page
     assert "**La dette lit le canal des créations d'entreprises, une hypothèse non " \
            "validée** (décision du propriétaire, D-400)" in page
@@ -193,8 +204,8 @@ def test_a_page_whose_paths_read_the_channel_says_so_beside_its_debt(roussel) ->
     assert page.splitlines()[:4] == before.splitlines()[:4]
 
 
-def test_a_study_half_read_with_the_channel_is_refused(roussel) -> None:
-    entries = roussel.load()
+def test_a_study_half_read_with_the_channel_is_refused(partie) -> None:
+    entries = partie.load()
     mixed = [entries[0], {**entries[0], "path": {**entries[0]["path"], "creations": {}}}]
     with pytest.raises(etude.EtudeError, match="canal des créations"):
         etude.creations_lues(mixed)

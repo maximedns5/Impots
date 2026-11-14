@@ -17,8 +17,9 @@ import pytest
 from impots import etude, graphiques, site
 
 #: Un programme mixte sans bande (Attal), un avec bande et canaux (Lisnard), une loi en
-#: trois articles dont un des entreprises (PLF 2027), une loi en miroir (PLFSS 2027).
-ETUDES = ("presidentielle_attal", "presidentielle_lisnard", "plf2027", "plfss2027")
+#: miroir (PLFSS 2027). Le PLF 2027, une loi en trois articles dont un des entreprises,
+#: n'est pas refait au but 22 (D-403).
+ETUDES = ("presidentielle_attal", "presidentielle_lisnard", "plfss2027")
 
 
 @pytest.fixture(scope="module")
@@ -187,11 +188,13 @@ def test_un_svg_qui_ne_redonne_pas_ses_rapports_est_refuse(tmp_path) -> None:
 
 
 def test_le_site_porte_chaque_graphique_en_ligne(chargees) -> None:
-    study, entries = chargees["plf2027"]
+    # Sur le PLFSS depuis D-403 (deux articles, trois graphiques chacun) : le PLF 2027,
+    # qui en portait huit, n'est pas refait au but 22.
+    study, entries = chargees["plfss2027"]
     lines, n = study.lines(entries)
     html = site.body(lines, n)
-    assert html.count('<figure class="graphique">') == len(n.graphiques) == 8
-    assert html.count("<figcaption>") == 8 and "![" not in html
+    assert html.count('<figure class="graphique">') == len(n.graphiques) == 6
+    assert html.count("<figcaption>") == 6 and "![" not in html
     for figure in n.graphiques.values():
         assert figure.svg.strip() in html
     # Aucun terme de la méthode n'est lié à l'intérieur d'un SVG.

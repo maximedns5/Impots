@@ -804,15 +804,28 @@ def graphique(w: Any, n: Nombres, nom: str, figure: Any) -> None:
 
 def debt_etage(path: dict[str, Any]) -> str:
     """The highest layer a path's debt rests on: L4 when the macro loop entered it, L3
-    when a behavioural channel did, L2 when it is the mechanical path alone (D-304)."""
+    when a behavioural channel did, L2 when it is the mechanical path alone (D-304). The
+    company-creations channel (but 22) enters only when it reads a levy that moves: with
+    every variation it reads at zero, in both views, its θ row is in the box and moves
+    nothing, and the layer is said without it (D-403)."""
     from impots.predictif.chaine import MACRO_CHANNELS
-    from impots.predictif.theta import MACRO_ROW
+    from impots.predictif.theta import CREATIONS_ROW, MACRO_ROW
 
     closed = path.get("closed") or {}
     if not any(channel in closed for channel in MACRO_CHANNELS):
         return "L4"
     rows = (path.get("theta_box") or {}).get("rows") or []
+    if not creations_entrees(path):
+        rows = [row for row in rows if row != CREATIONS_ROW]
     return "L3" if any(row != MACRO_ROW for row in rows) else "L2"
+
+
+def creations_entrees(path: dict[str, Any]) -> bool:
+    """Whether the company-creations channel moved a path: it reads one levy variation at
+    least that is not zero, in one view or the other (`rejeu.creations.variations`)."""
+    block = (path.get("rejeu") or {}).get("creations") or {}
+    return any(float(v) != 0.0 for values in (block.get("variations") or {}).values()
+               for v in values)
 
 
 def _deciles(w: Any, n: Nombres, response: Any) -> None:

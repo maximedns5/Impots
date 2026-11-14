@@ -12,6 +12,23 @@ decomposes by block and measure without remainder, and a ten-year path takes 22 
 `comptes.sfa_publie` double-counts K61 and KX — and the 2025 vintage gap); the SFA before
 2021 is missing, and the debt identity refuses those years by name. Next: lots 2 to 5.
 
+The 2026-11-14 update adds D-399 to D-403: goal 22, stopped by the owner. The studies
+gained SVG graphics, measures priced alone, and a company-creations channel in the debt, a
+declared unvalidated hypothesis (D-400 to D-402). The preregistered series (D-402) was
+stopped mid-way: 12 of 17 studies are complete and published (PLFSS 2027 and 11
+programmes, 33 measures alone); Labib (cut), the PLF 2027, Arthaud, Glucksmann and Zemmour
+are not rerun, have no page, and the site says so. First years and the debt without the
+channel are those of D-397 exactly; the channel lowers the debt of the nine lines whose
+levies fall, by 0.016 to 0.035 point per bn€, within its prognosis; all verdicts hold;
+24 of 33 measures alone fall in their band (the four SMIC slightly lower the debt, the two
+point d'indice weigh 0.8 point per bn€). The public path now replays the channel (its
+scripts held to the engine as before) and skips a study without reports. Two goal-22
+defects fixed, no number moved: the debt's layer no longer counts a creations channel that
+reads no variation (PLFSS back to L2), and the replay adds the channel in the chain's
+order, giving every report's Δb to the bit. Tests built on the unrun studies are moved to
+present ones or withdrawn, each said (D-403). Next:
+the project turns to the digital twin, goal 23 (D-404, branch `claude/but23-cadre`).
+
 The 2026-11-13 update adds D-379 to D-398: goal 21, done once merged. The 24 programmes
 were surveyed again (525 measures, from 321), and the coverage table written before any
 pricing (`docs/presidentielle/couverture_avant.md`, `couverture_apres.md`): 44 measures

@@ -49,13 +49,14 @@ def test_a_refused_study_has_its_reports_and_no_page(tmp_path) -> None:
     assert "étude refusée" in etude.replace(study, page=page).drift()
 
 
-def test_the_plf_study_is_the_command_s() -> None:
-    study = etude.definition("plf2027")
+def test_a_law_study_is_the_command_s() -> None:
+    # Sur le PLFSS depuis D-403 : la page du PLF 2027 n'est pas refaite au but 22.
+    study = etude.definition("plfss2027")
     # In docs/etudes/ with every study since D-304, where the site reads them.
-    assert study.page == etude.ROOT / "docs" / "etudes" / "plf2027.md"
+    assert study.page == etude.ROOT / "docs" / "etudes" / "plfss2027.md"
     assert study.page.read_text(encoding="utf-8").splitlines()[2] == (
-        "<!-- Généré par `impots etude ecrire plf2027` depuis reports/etude_plf2027/ ; ne "
-        "pas éditer à la main. -->")
+        "<!-- Généré par `impots etude ecrire plfss2027` depuis reports/etudes/plfss2027/ ; "
+        "ne pas éditer à la main. -->")
 
 
 def _copy(study: etude.Etude, tmp_path: Path, change) -> etude.Etude:
@@ -65,8 +66,8 @@ def _copy(study: etude.Etude, tmp_path: Path, change) -> etude.Etude:
 
 
 def test_a_modified_page_is_refused(tmp_path) -> None:
-    study = etude.definition("plf2027")
-    one = _copy(study, tmp_path, lambda text: text.replace("Md€", "M€", 1))
+    study = etude.definition("plfss2027")
+    one = _copy(study, tmp_path, lambda text: text.replace(" M€", " k€", 1))
     assert "ligne" in one.drift()
     short = _copy(study, tmp_path, lambda text: text.rsplit("\n", 3)[0])
     assert "lignes au lieu de" in short.drift()
@@ -74,7 +75,7 @@ def test_a_modified_page_is_refused(tmp_path) -> None:
 
 def test_a_page_without_its_reports_and_reports_without_their_page_are_refused(
         tmp_path) -> None:
-    study = etude.definition("plf2027")
+    study = etude.definition("plfss2027")
     alone = etude.replace(study, rapports=tmp_path / "rien")
     assert "sans les rapports" in alone.drift()
     reports = etude.replace(study, page=tmp_path / "absente.md")
@@ -83,19 +84,19 @@ def test_a_page_without_its_reports_and_reports_without_their_page_are_refused(
 
 def test_the_command_says_the_drift(tmp_path, monkeypatch, capsys) -> None:
     """`impots etude verifier` exits 1 on a modified page, 0 on the committed one."""
-    study = etude.definition("plf2027")
-    raw = json.loads((etude.DEFINITIONS / "plf2027.json").read_text(encoding="utf-8"))
-    page = tmp_path / "ETUDE_PLF2027.md"
+    study = etude.definition("plfss2027")
+    raw = json.loads((etude.DEFINITIONS / "plfss2027.json").read_text(encoding="utf-8"))
+    page = tmp_path / "ETUDE_PLFSS2027.md"
     shutil.copy(study.page, page)
     # The page's graphics live beside it (but 22): they move with it.
-    shutil.copytree(study.graphiques, tmp_path / "graphiques" / "plf2027")
+    shutil.copytree(study.graphiques, tmp_path / "graphiques" / "plfss2027")
     raw.update(page=str(page), rapports=str(study.rapports))
-    (tmp_path / "plf2027.json").write_text(json.dumps(raw), encoding="utf-8")
+    (tmp_path / "plfss2027.json").write_text(json.dumps(raw), encoding="utf-8")
     monkeypatch.setattr(etude, "DEFINITIONS", tmp_path)
-    assert cli.main(["etude", "verifier", "plf2027"]) == 0
+    assert cli.main(["etude", "verifier", "plfss2027"]) == 0
     page.write_text(page.read_text(encoding="utf-8").replace("θ½", "θ⅓", 1),
                     encoding="utf-8")
-    assert cli.main(["etude", "verifier", "plf2027"]) == 1
+    assert cli.main(["etude", "verifier", "plfss2027"]) == 1
     assert "ligne" in capsys.readouterr().err
 
 
@@ -703,9 +704,10 @@ def test_a_frame_that_is_not_d_289_s_is_refused_by_the_page(plfss, monkeypatch,
 
 def test_an_amount_without_its_etage_is_refused(monkeypatch) -> None:
     """Fails if an article's title or a triage's reason could quote an amount the page
-    shows bare: the art. 3's title quotes 3 000 €."""
+    shows bare: the PLFSS's published figure quotes 2,3 % (the PLF 2027's art. 3, which
+    quoted 3 000 €, is not rerun at goal 22, D-403)."""
     monkeypatch.setattr(etude, "amounts", lambda text, etage, n: text)
-    study = etude.definition("plf2027")
+    study = etude.definition("plfss2027")
     with pytest.raises(etude.EtudeError, match="sans son étage"):
         study.lines(study.load())
 
@@ -716,9 +718,8 @@ def test_a_number_of_an_unknown_etage_is_refused() -> None:
 
 
 @pytest.mark.parametrize("report, expected", [
-    ("reports/etude_plf2027/predictif_plf2027_art_2.json", "L4"),
-    ("reports/etude_plf2027/predictif_plf2027_art_3.json", "L4"),
-    ("reports/etude_plf2027/predictif_plf2027_art_15.json", "L2"),
+    # Depuis D-403, la boucle entrée se tient sur Attal : le PLF 2027 n'est pas refait.
+    ("reports/etudes/presidentielle_attal/predictif_pres2027_attal_programme.json", "L4"),
     ("reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json", "L2"),
     ("reports/etudes/plfss2027/predictif_plf2027_art_74_apl.json", "L2"),
 ])
@@ -737,6 +738,24 @@ def test_a_debt_with_a_channel_and_no_loop_rests_on_l3() -> None:
     assert etude.debt_etage({"closed": closed, "theta_box": {"rows": [MACRO_ROW]}}) == "L2"
 
 
+def test_the_creations_channel_raises_the_layer_only_when_it_moves() -> None:
+    """D-403 : le canal des créations (but 22) met sa ligne θ dans la boîte de tout chemin
+    qui le lit. Sans variation des prélèvements qu'il lit, il ne pèse rien, et la dette
+    reste sur son étage ; quand il pèse, elle monte en L3."""
+    from impots.predictif.chaine import MACRO_CHANNELS
+    from impots.predictif.theta import CREATIONS_ROW, MACRO_ROW
+
+    closed = {channel: "absente" for channel in MACRO_CHANNELS}
+
+    def path(variation: float) -> dict:
+        return {"closed": closed, "theta_box": {"rows": [MACRO_ROW, CREATIONS_ROW]},
+                "rejeu": {"creations": {"variations": {"vieillie": [0.0, variation],
+                                                       "figee": [0.0, 0.0]}}}}
+
+    assert etude.debt_etage(path(0.0)) == "L2"
+    assert etude.debt_etage(path(-2.5e9)) == "L3"
+
+
 def _etages(study: etude.Etude, start: str) -> list[tuple[str, bool]]:
     """(étage, conditional) of each number on the page's first line opening with `start`."""
     lines, n = study.lines(study.load())
@@ -748,15 +767,19 @@ def _etages(study: etude.Etude, start: str) -> list[tuple[str, bool]]:
 @pytest.mark.parametrize("nom, start, expected", [
     ("plfss2027", "| 1 | ", ["L1", "L1", "L2", "L2", "L2"]),
     # The cost, the published figure, the figure noted when preregistered (D-378), the
-    # debt and the share of draws in which it rises.
-    ("plfss2027", "| art. 74 du PLF, la prime", ["L2", "publié", "L2", "L2", "L2"]),
+    # debt, the debt without the company-creations channel (but 22, D-403) and the share
+    # of draws in which it rises.
+    ("plfss2027", "| art. 74 du PLF, la prime", ["L2", "publié", "L2", "L2", "L2", "L2"]),
     ("plfss2027", "Enregistré le", ["L2", "publié", "publié", "L2", "L2", "déclaré"]),
     ("plfss2027", "| Effet macro éteint après trois ans | figée", ["L2", "L2", "L2"]),
     ("plfss2027", "Le projet de loi", ["texte", "texte"]),
-    ("plf2027", "**Une fois les comportements", ["L3", "L3", "L3", "L2"]),
-    ("plf2027", "* **PIB, à 1 an**", ["L4"]),
-    ("plf2027", "| Effet macro éteint après trois ans | figée", ["L4", "L4", "L4"]),
-    ("plf2027", "## Art. 3 ", ["texte"]),
+    # Les cas du PLF 2027, non refait au but 22, se tiennent sur Lisnard (D-403) ; le
+    # titre d'un article qui cite un montant (« texte ») devient celui du programme.
+    ("presidentielle_lisnard", "**Une fois les comportements", ["L3", "L3", "L3", "L2"]),
+    ("presidentielle_lisnard", "* **PIB, à 1 an**", ["L4"]),
+    ("presidentielle_lisnard", "| Effet macro éteint après trois ans | figée",
+     ["L4", "L4", "L4"]),
+    ("presidentielle_lisnard", "*Le programme : ", ["programme", "programme"]),
 ])
 def test_each_answer_says_its_layer(nom, start, expected) -> None:
     found = _etages(etude.definition(nom), start)

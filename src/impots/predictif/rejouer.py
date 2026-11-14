@@ -283,24 +283,28 @@ def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
             phi = [0.0] * horizon
     else:
         gap = phi = [0.0] * horizon
-    if creations and rejeu.get("creations"):
-        firms = _creations(rejeu, view=view, values=values, gdp=gdp, years=years,
-                           carried=carried)
-        primary = [p + r for p, r in zip(primary, firms.recettes, strict=True)]
-        gap = [g + m for g, m in zip(gap, firms.pib, strict=True)]
     if ajout is not None:
         if boucle != "complete":
             raise ReplayError("un ajout se lit sur la boucle complète seule")
         primary = [p + a for p, a in zip(primary, ajout["primaire"], strict=True)]
         phi = [p + a for p, a in zip(phi, ajout["retroaction"], strict=True)]
         gap = [g + a for g, a in zip(gap, ajout["pib"], strict=True)]
+    # The creations channel is added last, in `chaine.run`'s order (`reform_path`): its
+    # receipts after the primary balance and the feedback, its GDP after the loop's gap,
+    # so that the replay gives the report's Δb to the bit (D-403).
+    extra = more = [0.0] * horizon
+    if creations and rejeu.get("creations"):
+        firms = _creations(rejeu, view=view, values=values, gdp=gdp, years=years,
+                           carried=carried)
+        extra, more = list(firms.recettes), list(firms.pib)
     debt = 0.0
     delta = []
     for k in range(horizon):
-        debt = debt * (1.0 + marginal) / (1.0 + nominal) - (primary[k] + phi[k])
-        delta.append((refs[k] + debt) / (1.0 + gap[k]) - refs[k])
-    return Chemin(years=years, reference=tuple(refs), delta=delta, gdp_gap=gap,
-                  feedback=phi, primary=primary)
+        debt = debt * (1.0 + marginal) / (1.0 + nominal) - (primary[k] + phi[k] + extra[k])
+        delta.append((refs[k] + debt) / (1.0 + gap[k] + more[k]) - refs[k])
+    return Chemin(years=years, reference=tuple(refs), delta=delta,
+                  gdp_gap=[g + m for g, m in zip(gap, more, strict=True)], feedback=phi,
+                  primary=[p + e for p, e in zip(primary, extra, strict=True)])
 
 
 def _creations(rejeu: Mapping[str, Any], *, view: str, values: Mapping[str, Any],

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 385" width="360" height="385" role="img" aria-labelledby="pres2027_tondelier_programme-annoncee-t pres2027_tondelier_programme-annoncee-d" font-size="13">
 <title id="pres2027_tondelier_programme-annoncee-t">La dette de 2026 à 2035, si ce qui est annoncé est tenu</title>
-<desc id="pres2027_tondelier_programme-annoncee-d">Δ dette de 2026 à 2035, vue vieillie, à θ½, persistance lue. part réalisée 0 % : +0,45 pt en 2026, +2,60 pt en 2035 ; part réalisée 50 % : +0,36 pt en 2026, +3,55 pt en 2035 ; part réalisée 100 % : +0,28 pt en 2026, +4,49 pt en 2035.</desc>
+<desc id="pres2027_tondelier_programme-annoncee-d">Δ dette de 2026 à 2035, vue vieillie, à θ½, persistance lue. part réalisée 0 % : +0,44 pt en 2026, +2,19 pt en 2035 ; part réalisée 50 % : +0,36 pt en 2026, +3,14 pt en 2035 ; part réalisée 100 % : +0,27 pt en 2026, +4,08 pt en 2035.</desc>
 <style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
 .g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
 .g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
@@ -37,12 +37,12 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="193" x2="346" y2="193"/>
 <text class="g-doux" fill="#52514e" x="46" y="197" text-anchor="end" font-size="12">6,0</text>
 <line class="g-axe" stroke="#8a877f" stroke-width="1.2" x1="52" y1="343" x2="346" y2="343"/>
-<polyline class="g-zero" stroke="#52514e" fill="none" stroke-width="2.5" points="52,331.9 84.7,325.5 117.3,320 150,313.7 182.7,307.7 215.3,301.3 248,295.1 280.7,289.2 313.3,283.5 346,278.1"><title>part réalisée 0 %, 2035 : +2,60 pt</title></polyline>
-<polyline class="g-s4" stroke="#6250d6" fill="none" stroke-width="2.5" stroke-dasharray="6 4" points="52,333.9 84.7,327.6 117.3,320.2 150,311 182.7,301.7 215.3,292 248,282.4 280.7,273 313.3,263.6 346,254.4"><title>part réalisée 50 %, 2035 : +3,55 pt</title></polyline>
-<polyline class="g-s4" stroke="#6250d6" fill="none" stroke-width="2.5" stroke-dasharray="8 3 2 3" points="52,335.9 84.7,329.8 117.3,320.3 150,308.4 182.7,295.8 215.3,282.8 248,269.8 280.7,256.8 313.3,243.7 346,230.7"><title>part réalisée 100 %, 2035 : +4,49 pt</title></polyline>
-<text class="g-encre" fill="#1d1d1b" x="344" y="226.7" text-anchor="end" font-size="12" font-weight="600">+4,49 pt</text>
-<text class="g-encre" fill="#1d1d1b" x="344" y="250.4" text-anchor="end" font-size="12" font-weight="600">+3,55 pt</text>
-<text class="g-encre" fill="#1d1d1b" x="344" y="274.1" text-anchor="end" font-size="12" font-weight="600">+2,60 pt</text>
+<polyline class="g-zero" stroke="#52514e" fill="none" stroke-width="2.5" points="52,332.1 84.7,326.2 117.3,321.5 150,316.1 182.7,311.4 215.3,306.2 248,301.4 280.7,296.8 313.3,292.5 346,288.3"><title>part réalisée 0 %, 2035 : +2,19 pt</title></polyline>
+<polyline class="g-s4" stroke="#6250d6" fill="none" stroke-width="2.5" stroke-dasharray="6 4" points="52,334.1 84.7,328.4 117.3,321.6 150,313.5 182.7,305.4 215.3,297 248,288.7 280.7,280.6 313.3,272.6 346,264.6"><title>part réalisée 50 %, 2035 : +3,14 pt</title></polyline>
+<polyline class="g-s4" stroke="#6250d6" fill="none" stroke-width="2.5" stroke-dasharray="8 3 2 3" points="52,336.1 84.7,330.5 117.3,321.8 150,310.9 182.7,299.5 215.3,287.8 248,276.1 280.7,264.4 313.3,252.7 346,240.9"><title>part réalisée 100 %, 2035 : +4,08 pt</title></polyline>
+<text class="g-encre" fill="#1d1d1b" x="344" y="236.9" text-anchor="end" font-size="12" font-weight="600">+4,08 pt</text>
+<text class="g-encre" fill="#1d1d1b" x="344" y="260.6" text-anchor="end" font-size="12" font-weight="600">+3,14 pt</text>
+<text class="g-encre" fill="#1d1d1b" x="344" y="284.3" text-anchor="end" font-size="12" font-weight="600">+2,19 pt</text>
 <text class="g-doux" fill="#52514e" x="52" y="361" text-anchor="middle" font-size="12">2026</text>
 <text class="g-doux" fill="#52514e" x="150" y="361" text-anchor="middle" font-size="12">2029</text>
 <text class="g-doux" fill="#52514e" x="248" y="361" text-anchor="middle" font-size="12">2032</text>

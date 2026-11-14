@@ -28954,6 +28954,161 @@ ensuite, seule, sur le même commit. La série d'avant est celle du but 21, fig�
 `chiffrages_preregistres/`, les seuils de D-345. Le résultat va dans une nouvelle
 D-entrée, avec la série d'avant, l'écart au pronostic et le coût du canal.
 
+## D-403 — La série du but 22 arrêtée : douze études sur dix-sept, contre D-402
+
+**L'arrêt.** Le propriétaire a arrêté la série de D-402 le 14 novembre vers 15 h 20 : trop
+longue. Le projet se réoriente vers le jumeau numérique (but 23, D-404, écrite sur la
+branche `claude/but23-cadre`). Rien n'est relancé. Les rapports écrits sont publiés pour
+les études complètes, et pour elles seules.
+
+**Ce qui a tourné.** Sur `5a68669`, qui porte D-402, deux files à partir du 13 novembre à
+12 h 49 UTC. Trois chemins sont tués par manque de mémoire (`BrokenProcessPool` : deux
+chemins de front sur 15 Go) : Tondelier à 20 h 02, Lisnard à 21 h 12, Attal à 21 h 13. Le
+conteneur redémarre ensuite. La reprise tourne sur une seule file, à partir de 23 h 58, et
+saute les rapports déjà écrits sur le même commit, comme le lanceur le prévoit ; elle finit
+les trois. Aucune passe témoin : tout est sur un seul commit.
+
+* **Complètes** (toutes leurs passes, rc = 0) : le PLFSS 2027 (prime et APL), Mélenchon,
+  Retailleau, Le Pen, Roussel, Philippe, Ruffin, Kazib, Bouamrane, Attal, Tondelier,
+  Lisnard. Douze études, treize lignes, 33 mesures seules de neuf programmes ; Kazib et
+  Bouamrane n'en ont pas.
+* **Non refaites** : Labib, coupée par l'arrêt (20 rapports sur 21, le chemin de la mesure
+  seule « revenu minimum à 2 200 € » manque ; aucun n'est publié) ; le PLF 2027, Arthaud,
+  Glucksmann et Zemmour, qui n'ont pas tourné. Leurs pages et leurs graphiques sont
+  retirés, leurs rapports d'avant l'étaient à `5a68669` ; leurs gels `avant/serie.json`
+  restent. Le site les dit « préenregistrée (D-402), ses passes n'ont pas tourné », la
+  dette et la comparaison du parcours « non refaite au but 22 (D-403) ».
+* Dupont-Aignan reste refusé (D-398).
+
+**Le résultat contre D-402**, pour ce qui est calculé seulement. Δb₂₀₃₅ à θ½, vue vieillie,
+persistance « lue », en points de PIB ; « sans » est le même chemin rejoué sans le canal
+(`rejouer.chemin`, `creations=False`) ; la variation est celle des prélèvements que le
+canal lit, en 2026, vue vieillie.
+
+| ligne | coût | Δb | sans | canal | variation | par Md€ | verdict |
+|---|---:|---:|---:|---:|---:|---:|---|
+| PLFSS, prime | −0,56 | −0,162 | −0,162 | 0 | 0 | — | baisse |
+| PLFSS, APL | −0,07 | −0,067 | −0,067 | 0 | 0 | — | baisse |
+| Mélenchon | +88,98 | +26,784 | +27,537 | −0,754 | −23,31 | 0,032 | hausse |
+| Retailleau | +48,89 | +10,993 | +11,396 | −0,403 | −11,65 | 0,035 | hausse |
+| Philippe | +46,57 | +11,729 | +11,729 | 0 | 0 | — | hausse |
+| Attal | +66,18 | +4,238 | +4,283 | −0,044 | −2,68 | 0,016 | dépend |
+| Lisnard | +36,19 | +5,490 | +5,699 | −0,208 | −6,87 | 0,030 | dépend |
+| Le Pen | +21,41 | +2,997 | +2,997 | 0 | 0 | — | dépend |
+| Ruffin | +33,16 | +2,130 | +2,713 | −0,582 | −18,26 | 0,032 | dépend |
+| Tondelier | +18,17 | +2,189 | +2,597 | −0,408 | −13,18 | 0,031 | hausse |
+| Roussel | +32,97 | +0,481 | +1,430 | −0,949 | −29,49 | 0,032 | dépend |
+| Kazib | +15,44 | −0,016 | +0,492 | −0,508 | −15,98 | 0,032 | dépend |
+| Bouamrane | +15,32 | −0,016 | +0,488 | −0,504 | −15,84 | 0,032 | dépend |
+
+* **La première année** est celle de D-397 à l'euro près, sur les treize lignes : tenu.
+* **Δb sans le canal** est celui de D-397 à l'identique, écart nul : tenu.
+* **L'écart du canal** a le signe de la variation partout, négatif : les prélèvements
+  lus baissent sur les neuf lignes qui en ont, et la dette avec. Par Md€ de variation, de
+  0,016 (Attal) à 0,035 (Retailleau), dans 0,01 à 0,05 ; les quatre lignes sans variation
+  ne s'écartent pas : tenu sur les treize.
+* **Les verdicts de D-397 tiennent** tous, Monte-Carlo et « selon θ ». Le plus proche d'un
+  seuil, Lisnard, passe de 88,85 % à 88,15 % des tirages en hausse : « dépend » reste.
+* **Les mesures seules**, Δb par Md€ de leur première année : 24 sur 33 dans leur
+  fourchette. Les impôts des ménages, cotisations salariales comprises : 14 sur 16. Manquent
+  la tranche d'IR à 60 % de Tondelier, qui rapporte 0,92 Md€ et monte pourtant la dette de
+  0,013 point (le coût après comportements la baisse de 0,227 point ; la boucle reprend
+  0,240), et la CVEC de Le Pen, 0,27 pour 0,04 à 0,22, que D-402 ne classait pas : on la
+  lit ici avec les impôts des ménages. Les impôts des entreprises, cotisations patronales
+  comprises : 5 sur 5. Les prestations et pensions : 5 sur 6, le revenu familial de
+  Retailleau à 0,351 pour 0,35 au plus. Le SMIC et le point d'indice : 0 sur 6. Les quatre
+  SMIC baissent un peu la dette, de −0,0010 à −0,0014 point par Md€ pour 0 à 0,10 ; les
+  deux points d'indice la montent de 0,79 à 0,80 point par Md€. Le pronostic manqué n'est
+  pas réécrit.
+* **L'interaction**, la part moins la somme de ses mesures, sur les neuf programmes : au
+  plus 4,0 % de la part pour le coût (Le Pen), sous 10 %, et 5,2 % pour Δb (Le Pen), sous
+  20 % : tenu.
+
+Sur les six pronostics, cinq tiennent sur ce qui est calculé ; celui des mesures seules
+manque sur neuf mesures sur 33.
+
+**Ce que le canal lit des SMIC.** Le gros du canal vient des programmes du SMIC (Roussel,
+Kazib, Bouamrane, Mélenchon, Ruffin, Tondelier) : les cotisations patronales nettes des
+allègements baissent quand le SMIC monte (Kazib : +1,38 Md€ de cotisations brutes, +17,61
+d'allègement général), et le canal le lit comme un prélèvement sur les entreprises qui
+baisse. C'est la convention de D-400 et D-402 (cotisations nettes, double compte dit) ; le
+résultat la montre, sans la changer.
+
+**Deux défauts du but 22, corrigés** (aucun nombre de la série ne bouge) :
+
+* **L'étage de la dette.** `etude.debt_etage` mettait une dette en L3 dès que la boîte θ
+  portait une ligne autre que le multiplicateur. Or tout chemin qui lit le canal y met
+  `productivite_creations`. La dette du PLFSS, où le canal ne lit aucune variation, passait
+  de L2 à L3 : l'étage disait entré un canal qui ne pèse rien. Critère retenu, le plus
+  direct : la ligne du canal compte quand une variation des prélèvements qu'il lit
+  (`rejeu.creations.variations`, l'une ou l'autre vue) n'est pas nulle. Le PLFSS reste en
+  L2 ; un chemin où le canal pèse passe en L3. Un test le tient, vu échouer sur le code
+  d'avant.
+* **L'ordre des sommes du rejeu.** `rejouer.chemin` ajoutait les recettes du canal au solde
+  avant la rétroaction, et son PIB à l'écart avant le 1 ; `chaine.run` les ajoute en
+  dernier. Δb rejoué différait du rapport au dernier bit, et la garde « au bit » de
+  `test_annonce` tombait sur neuf programmes. Le rejeu suit maintenant l'ordre de la chaîne
+  et redonne Δb des 46 chemins (13 lignes, 33 mesures) à l'identique.
+
+**Le parcours lit le canal** (pas un nombre de la série) :
+
+* la dette et le verdict sautent une étude sans rapport et la disent non refaite. La
+  comparaison prend les programmes qui ont leurs deux rapports, sans Labib en dur ;
+* les scripts de la dette, de l'activité, des comportements et du verdict
+  (`parcours/js/dette.js`, `activite.js`) portent le canal à l'identique de `rejouer`, son
+  ordre compris. Les tests « le script est le moteur » et le Monte-Carlo rejoué repassent
+  à leurs tolérances d'origine ;
+* le garde de `parcours.dette.central` comparait Δb au total de sa décomposition à
+  l'égalité exacte. Ce total a été écrit dans les rapports par le rejeu d'avant la
+  correction, et diffère de Δb au dernier bit (2,2e-16 au plus). Le garde tolère donc
+  1e-12, qui n'est pas une tolérance de chiffrage.
+
+**Les nombres d'avant tenus en dur**, mis à jour sur cette série :
+
+* la dette sans boucle d'Attal passe de +20,45 à +20,41 points (comparaison, coût pas à
+  pas, page d'Attal) ;
+* sur la ligne du verdict, Lisnard passe de 88,85 % à 88,15 % des tirages en hausse ;
+* la ligne de la prime au PLFSS porte un nombre de plus, la dette sans le canal.
+
+**Les tests bâtis sur une étude non refaite**, réécrits ou retirés :
+
+* ceux qui tiennent un mécanisme général passent sur une étude présente. Sur le PLFSS : la
+  commande et la page d'une loi, la page modifiée refusée, la dérive, le montant sans
+  étage (« 2,3 % » du chiffre publié, au lieu des « 3 000 € » de l'art. 3), le site de
+  test. Sur Lisnard : chaque réponse dit son étage, le titre d'un article (« texte »)
+  devenant la ligne du programme (« programme »). Sur Attal : la boucle entrée (L4). Sur
+  Lisnard : la non-lecture vue vieillie (+6,26 Md€ non lus ; Labib en avait +13,86). Les
+  pages de programmes ne lisent que les études qui ont leur page ;
+* ceux qui prenaient le dépôt pour fixture lisent une copie. Roussel, sans ses mesures
+  seules et, pour la reprise, sans le canal. Le Pen, sans les blocs du canal : son canal ne
+  lit aucune variation, son chemin se rejoue donc à l'identique sans lui, ce que celui de
+  Roussel ne fait plus ;
+* sont retirés, faute d'une étude refaite qui porte le cas :
+  * la page commitée du PLF 2027 rendue par ses rapports
+    (`test_etude_page_plf2027.py`, le garde anti-dérive de cette page) ;
+  * les huit graphiques en ligne du PLF, désormais tenus sur les six du PLFSS ;
+  * la taxe carbone de Labib non lue, et les impulsions sans table que `rejouer` ignore
+    (`test_parcours_activite`, `test_parcours_comparer`) ;
+  * l'éventail qui compte les accises que la dette ne lit pas
+    (`test_etude_programmes`).
+
+  Ils reviendront quand le PLF 2027 et Labib seront refaits. La TVA de Le Pen et de
+  Roussel, lue, reste tenue.
+
+**Ce qui reste rouge, d'avant cette entrée.** À `5a68669` déjà, sans rapport en cause :
+
+* `test_gardes_phase9` : un identifiant de mutation en double,
+  `predictif/annuel:build:si:bare`, et `predictif/creations.py` hors du balayage ;
+* `test_dependances` : `test_etude_creations` et `test_creations_canal` importent un
+  autre fichier de test, non déclaré.
+
+Ni l'un ni l'autre n'est touché ici.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Les pages des douze études et le site
+sont écrits depuis les rapports commités ; `etude verifier`, `site verifier` et `site
+publiable` sont verts.
+
 ## D-404 — Le jumeau numérique : le projet réorienté, le but 23 validé, le cadre écrit
 
 **La demande du propriétaire, le 14 novembre 2026.** La série du but 22 durait depuis

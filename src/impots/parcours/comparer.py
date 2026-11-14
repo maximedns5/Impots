@@ -20,7 +20,7 @@ from typing import Any
 
 from impots import etude as et
 from impots import programmes as pg
-from impots.parcours import Page, ParcoursError, activite, fichier, lien, source
+from impots.parcours import ROOT, Page, ParcoursError, activite, fichier, lien, source
 from impots.parcours.cout import (
     _json_script,
     b,
@@ -35,7 +35,8 @@ from impots.parcours.cout import (
     tableau,
 )
 
-#: Les huit programmes, dans l'ordre où le site les liste.
+#: Les huit programmes du but 19, dans l'ordre où le site les liste ; la page compare ceux
+#: dont la série a écrit les rapports (`presentes`), et dit les autres (D-403).
 ETUDES = ("presidentielle_attal", "presidentielle_labib", "presidentielle_le_pen",
           "presidentielle_lisnard", "presidentielle_melenchon", "presidentielle_retailleau",
           "presidentielle_roussel", "presidentielle_tondelier")
@@ -70,6 +71,36 @@ def _chemin(nom: str, genre: str) -> str:
     etude_ = lire(f"etudes/{nom}.json")
     (scen,) = [s["scenario"] for s in etude_["scenarios"]]
     return f"reports/etudes/{nom}/{genre}_{scen}.json"
+
+
+#: Ce que la page dit d'un programme sans rapport : la série du but 22 a été arrêtée avant
+#: lui (D-403), et ses rapports d'avant ont été retirés.
+NON_REFAITE = "non refaite au but 22 (D-403)"
+
+
+def presentes() -> tuple[list[str], list[str]]:
+    """(les études d'`ETUDES` qui ont leurs deux rapports, celles qui n'en ont aucun) ;
+    une étude qui n'en a qu'un est refusée : la série l'aurait laissée à moitié."""
+    la, absentes = [], []
+    for nom in ETUDES:
+        there = [(ROOT / _chemin(nom, genre)).exists()
+                 for genre in ("premiere_annee", "predictif")]
+        if all(there):
+            la.append(nom)
+        elif not any(there):
+            absentes.append(nom)
+        else:
+            raise ParcoursError(f"{nom} : un seul de ses deux rapports est dans le dépôt.")
+    return la, absentes
+
+
+def _absentes_html(absentes: list[str]) -> str:
+    if not absentes:
+        return ""
+    noms = ", ".join(e(lire(f"etudes/{nom}.json")["titre"].split(" :")[0])
+                     for nom in absentes)
+    return (f"<p>Faute de rapport, la page ne compare pas {noms} : "
+            f"{e(NON_REFAITE)}.</p>")
 
 
 def _instruments(impulses: dict[str, float]) -> str:
@@ -310,16 +341,17 @@ def _menus(cands: list[dict[str, Any]], cells: dict[str, dict[str, str]],
               "menu est grisé dans l'autre.</p>"
             + '<table class="deux"><thead><tr><th></th><th>premier</th><th>second</th></tr>'
             f"</thead><tbody>{rows}</tbody></table>"
-            "<noscript><p>Sans JavaScript, les menus ne changent pas ce tableau : les huit "
+            "<noscript><p>Sans JavaScript, les menus ne changent pas ce tableau : les "
             "programmes sont tous dans les tableaux ci-dessous.</p></noscript>")
 
 
 def page() -> Page:
-    cands = [candidat(n) for n in ETUDES]
+    noms, absentes = presentes()
+    cands = [candidat(n) for n in noms]
     cells = {c["nom"]: _cellules(c) for c in cands}
     commits = {c["commit"] for c in cands}
     if len(commits) != 1:
-        raise ParcoursError("les huit programmes ne viennent pas d'une même série.")
+        raise ParcoursError("les programmes ne viennent pas d'une même série.")
     serie = cands[0]
     par_nom = {c["nom"]: c for c in cands}
     attal = par_nom["presidentielle_attal"]
@@ -398,7 +430,8 @@ vieillie, la même identité pour tous ({lien("dette", "page 6")}). Pour Attal :
 {b(md(attal["cout"]), "L2")} la première année, {b(pt(attal["sans_boucle"]), "L2", True)}
 de dette en 2035 sans boucle.</p>
 
-<h2 id="les-huit">Les huit programmes</h2>
+<h2 id="les-programmes">Les {len(cands)} programmes</h2>
+{_absentes_html(absentes)}
 {t1}
 <p>Le coût d'un euro rendu aux trois premiers déciles divise le coût de la première année
 <em>pour les ménages</em> par ce que gagnent, ensemble, les ménages des trois premiers
