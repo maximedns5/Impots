@@ -2,8 +2,10 @@
 financières par le coût d'usage du capital, avec l'équation estimée de Mésange.
 
 Canal « investissement_cout_du_capital » : `mesange` le porte aussi par ses
-multiplicateurs (son équation d'investissement est dans ses variantes), et les deux ne
-tournent jamais ensemble (`canaux`, CADRE.md §4 bis).
+multiplicateurs (son équation d'investissement est dans ses variantes), mais pour ses seuls
+instruments. Le bloc le porte pour ceux qu'il lit (l'IS, la CVAE et la C3S, que Mésange n'a
+pas) : les deux tournent ensemble sans double compte, et un bloc qui lirait les cotisations
+employeurs serait refusé avec `mesange` (`canaux`, D-411).
 
 SOURCES : Insee, Mésange (G2017-04) [lu] — le coût d'usage, p. 42 du PDF ; l'équation
 d'investissement, p. 44 du PDF (folio 43) ; la variante de taux, p. 134 ; Insee, comptes
@@ -43,9 +45,10 @@ de patrimoine 2024, t. 8.202 (knet) ; comptes nationaux 2025, t. 1.101 (PIB, FBC
    la part du capital du départ, EBE et revenu mixte sur eux plus D1 (t. 1.105).
 
 Le bloc écrit ΔI sur la FBCF des SNF et sur l'investissement des entreprises (la
-référence, I_t, sous la clé « »), ΔY sur le PIB et les revenus non ventilés, ΔY − ΔI sur
-les emplois non ventilés (l'investissement prend sa place parmi les emplois, à PIB
-potentiel donné), ρ ΔY sur l'effet induit sur le solde.
+référence, I_t, sous la clé « »), ΔY sur les revenus non ventilés, ΔY − ΔI sur les
+emplois non ventilés (l'investissement prend sa place parmi les emplois, à PIB potentiel
+donné : le reste est un effet d'offre sans emploi désigné, dit), ρ ΔY sur l'effet induit
+sur le solde. Le PIB, ΔI + (ΔY − ΔI), est fermé par le cadre (D-411).
 
 COMPARAISON À MÉSANGE (`comparer_mesange`) : sous la variante de taux (+6,5 % de coût du
 capital), le bloc donne −ε_K 6,5 R(h) ; Mésange imprime l'investissement des SNF, effet
@@ -59,6 +62,7 @@ from typing import Any
 
 import numpy as np
 
+from impots.jumeau import canaux
 from impots.jumeau.blocs.entreprises import (
     INVESTISSEMENT_ROW,
     Parametres,
@@ -112,7 +116,7 @@ def comparer_mesange(p: Parametres, theta: float = 0.5) -> dict[str, dict[str, f
 
 class Investissement:
     nom = "investissement"
-    ecrit = ("fbcf_snf", "investissement_entreprises", "pib", "emplois_non_ventiles",
+    ecrit = ("fbcf_snf", "investissement_entreprises", "emplois_non_ventiles",
              "revenus_non_ventiles", "solde_induit")
     thetas = (INVESTISSEMENT_ROW,)
     porte: tuple[str, ...] = ()
@@ -121,6 +125,7 @@ class Investissement:
     def __init__(self, parametres: Parametres) -> None:
         self.p = parametres
         self.lit = tuple(parametres.signaux_investissement)
+        self.instruments = {"investissement_cout_du_capital": canaux.des_signaux(self.lit)}
         self.r = np.array(reponse_unitaire(parametres.rappel_trimestriel,
                                            parametres.retard_trimestriel))
 
@@ -159,7 +164,6 @@ class Investissement:
             dy = s_k * dk[k] / (p.capital_part_pib * y) * y
             out["fbcf_snf"][m] = di[k]
             out["investissement_entreprises"][m] = di[k]
-            out["pib"][m] = dy
             out["emplois_non_ventiles"][m] = dy - di[k]
             out["revenus_non_ventiles"][m] = dy
             out["solde_induit"][m] = rho * dy

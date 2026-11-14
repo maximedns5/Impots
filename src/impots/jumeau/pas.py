@@ -11,7 +11,12 @@ identités.
 3. les BLOCS tournent dans l'ordre du `Modele`. Une boucle simultanée, déclarée comme
    telle, se résout par point fixe de Gauss-Seidel : tolérance 1e-10 en relatif, 100
    itérations au plus ; sinon le pas refuse en nommant le bloc et le champ ;
-4. le CADRE FERME LES COMPTES, et lui seul (`fermer`) : les recettes et les dépenses
+4. le CADRE FERME LES COMPTES, et lui seul (`fermer`). Le PIB d'abord, pour un bloc
+   structurel (D-411) : la somme signée des emplois qu'il écrit, par mesure, sous son
+   origine, dès qu'il a tourné (les blocs suivants et le point fixe la lisent) ; aucun
+   bloc structurel n'écrit `pib`, et seuls la tendance, les blocs réduits (`mesange`,
+   `creations`, qui n'impriment que la ligne du PIB) et les blocs sans canal l'écrivent
+   eux-mêmes. Puis, à la fin du pas : les recettes et les dépenses
    primaires, les intérêts nets aux taux du scénario, B9, le solde primaire, la dette
    d'ouverture et de fin d'année, le ratio, le taux implicite, la croissance du PIB en
    volume chaînée ;
@@ -36,7 +41,14 @@ from typing import Any, Protocol
 import numpy as np
 
 from impots.jumeau import canaux, identites
-from impots.jumeau.champs import DEPENSES, EMPLOIS_EN_VOLUME, FERMES, RECETTES, REGISTRE
+from impots.jumeau.champs import (
+    DEPENSES,
+    EMPLOIS,
+    EMPLOIS_EN_VOLUME,
+    FERMES,
+    RECETTES,
+    REGISTRE,
+)
 from impots.jumeau.champs import champ as definition
 from impots.jumeau.etat import ChampAbsent, Cle, Etat
 
@@ -132,7 +144,11 @@ class Modele:
     REFUSÉ À LA CONSTRUCTION : un champ inconnu du registre ; un bloc qui écrit un champ
     que le cadre ferme ; un champ non additif écrit par deux blocs ; un bloc qui lit un
     champ qu'aucun bloc antérieur n'écrit, hors d'une boucle déclarée qui l'écrit ; un
-    canal porté par deux blocs (`canaux.verifier`, CADRE.md §4 bis, D-407 à D-409)."""
+    canal porté par deux blocs pour un même instrument (`canaux.verifier`, CADRE.md §4 bis,
+    D-411) ; un bloc structurel qui écrit `pib`, que le cadre ferme pour lui (D-411).
+
+    `pib_par_le_cadre` : les blocs structurels qui écrivent des emplois, dont le cadre
+    ferme le PIB."""
 
     def __init__(self, blocs: Sequence[Bloc],
                  boucles: Sequence[Sequence[str]] = ()) -> None:
@@ -144,6 +160,13 @@ class Modele:
             raise PasError(f"noms réservés à l'origine des contributions : {reserves}")
         self.blocs = tuple(blocs)
         self.canaux = canaux.verifier(blocs)
+        structurels = [b for b in blocs if canaux.structurel(b)]
+        for bloc in structurels:
+            if "pib" in bloc.ecrit:
+                raise PasError(f"bloc structurel « {bloc.nom} » : écrit « pib », que le "
+                               f"cadre ferme comme la somme de ses emplois (D-411)")
+        self.pib_par_le_cadre = frozenset(
+            b.nom for b in structurels if set(b.ecrit) & set(EMPLOIS))
         position = {b.nom: i for i, b in enumerate(blocs)}
         groupes: list[list[Bloc]] = []
         dans_boucle: dict[str, int] = {}
@@ -168,7 +191,7 @@ class Modele:
                         if any(b.nom in dans_boucle for b in g)}
         ecrits: dict[str, str] = {}
         for g, groupe in enumerate(self.groupes):
-            dans_groupe = {c for b in groupe for c in b.ecrit}
+            dans_groupe = {c for b in groupe for c in self.ecrit_par(b)}
             for bloc in groupe:
                 for nom in (*bloc.lit, *bloc.ecrit):
                     definition(nom)
@@ -182,12 +205,19 @@ class Modele:
                         raise PasError(f"bloc « {bloc.nom} » : lit « {nom} », qu'aucun "
                                        f"bloc antérieur n'écrit")
             for bloc in groupe:
-                for nom in bloc.ecrit:
+                for nom in self.ecrit_par(bloc):
                     if not REGISTRE[nom].additif and nom in ecrits:
                         raise PasError(f"« {nom} » n'est pas additif et deux blocs "
                                        f"l'écrivent ({ecrits[nom]}, {bloc.nom})")
                     ecrits.setdefault(nom, bloc.nom)
         self.ecrits = dict(ecrits)
+
+    def ecrit_par(self, bloc: Bloc) -> tuple[str, ...]:
+        """Les champs où un bloc a des contributions : les siens, et le PIB que le cadre
+        ferme pour lui."""
+        if bloc.nom in self.pib_par_le_cadre:
+            return (*bloc.ecrit, "pib")
+        return tuple(bloc.ecrit)
 
 
 # --------------------------------------------------------------------------- #
@@ -242,7 +272,8 @@ class Contexte:
 # --------------------------------------------------------------------------- #
 # le pas
 # --------------------------------------------------------------------------- #
-def _ecrire(etat: Etat, bloc: Bloc, contributions: Mapping[str, Mapping[str, Any]]) -> None:
+def _ecrire(etat: Etat, bloc: Bloc, contributions: Mapping[str, Mapping[str, Any]],
+            ferme_pib: bool = False) -> None:
     inattendus = sorted(set(contributions) - set(bloc.ecrit))
     if inattendus:
         raise PasError(f"bloc « {bloc.nom} » : écrit {inattendus}, non déclarés")
@@ -258,36 +289,51 @@ def _ecrire(etat: Etat, bloc: Bloc, contributions: Mapping[str, Mapping[str, Any
                 raise PasError(f"bloc « {bloc.nom} » : « {nom} » n'est pas additif, une "
                                f"seule valeur, sous la clé « »")
             etat.fixer(nom, parts[""])
+    if ferme_pib:
+        # Le PIB du bloc structurel, fermé par le cadre : la somme signée de ses
+        # emplois, par mesure, sous son origine (D-411).
+        pib: dict[str, Any] = {}
+        for nom in EMPLOIS:
+            signe = REGISTRE[nom].signe
+            for mesure, valeur in contributions.get(nom, {}).items():
+                pib[mesure] = pib[mesure] + signe * valeur if mesure in pib \
+                    else signe * valeur
+        etat.declarer("pib")
+        for mesure, valeur in pib.items():
+            etat.ecrire("pib", (bloc.nom, mesure), valeur)
 
 
-def _tourner(etat: Etat, groupe: Sequence[Bloc], ctx: Contexte, boucle: bool) -> None:
+def _tourner(etat: Etat, groupe: Sequence[Bloc], ctx: Contexte, boucle: bool,
+             modele: Modele) -> None:
     if not boucle:
         ctx.bloc = groupe[0]
-        _ecrire(etat, groupe[0], groupe[0].contribue(ctx))
+        _ecrire(etat, groupe[0], groupe[0].contribue(ctx),
+                groupe[0].nom in modele.pib_par_le_cadre)
         ctx.bloc = None
         return
-    champs = [c for b in groupe for c in b.ecrit]
+    champs = list(dict.fromkeys(c for b in groupe for c in modele.ecrit_par(b)))
     ctx.amorce = {c: (ctx.prec[c] if ctx.prec.present(c) else np.zeros(ctx.n))
                   for c in champs}
     avant = None
     for _ in range(ITERATIONS_MAX):
         for bloc in groupe:
             ctx.bloc = bloc
-            _ecrire(etat, bloc, bloc.contribue(ctx))
+            _ecrire(etat, bloc, bloc.contribue(ctx), bloc.nom in modele.pib_par_le_cadre)
         ctx.bloc = None
         apres = {c: etat[c].copy() for c in champs}
         if avant is not None:
             ecarts = {c: np.max(np.abs(apres[c] - avant[c])
                                 / np.maximum(np.abs(apres[c]), 1.0)) for c in champs}
             pire = max(ecarts, key=ecarts.get)
+            ecart = ecarts[pire]
             if ecarts[pire] <= TOLERANCE_POINT_FIXE:
                 ctx.amorce = {}
                 return
         avant = apres
-    auteur = next(b.nom for b in groupe if pire in b.ecrit)
+    auteur = next(b.nom for b in groupe if pire in modele.ecrit_par(b))
     raise NonConvergence(f"point fixe sans convergence en {etat.annee} après "
                          f"{ITERATIONS_MAX} itérations : bloc « {auteur} », champ « {pire} » "
-                         f"(écart relatif {ecarts[pire]:.3e})")
+                         f"(écart relatif {ecart:.3e})")
 
 
 def _somme_par_cle(etat: Etat, noms: Sequence[str], signes: Sequence[float]
@@ -348,7 +394,7 @@ def pas(prec: Etat, *, annee: int, k: int, entrees: Entrees, mesures: Sequence[A
                    courant=etat, historique=historique, reference=reference,
                    mesures=mesures, depart=depart)
     for g, groupe in enumerate(modele.groupes):
-        _tourner(etat, groupe, ctx, g in modele.boucles)
+        _tourner(etat, groupe, ctx, g in modele.boucles, modele)
     fermer(etat, prec, entrees, k)
     identites.verifier(etat, prec)
     return etat

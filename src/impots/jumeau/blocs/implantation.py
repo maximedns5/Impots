@@ -29,9 +29,9 @@ sensibilité disparue après 2009 selon Hanappi et al., à 0,730, le centre plus
 type) ; s_f = 0,16, la part de la valeur ajoutée sous contrôle étranger, qui tient lieu
 de sa part du capital (choisie, non vérifiée) ; knet, δ, s_K comme `investissement`.
 
-Le bloc écrit ΔI sur la FBCF des SNF et l'investissement des entreprises, ΔY sur le PIB
-et les revenus non ventilés, ΔY − ΔI sur les emplois non ventilés, ρ ΔY sur l'effet
-induit sur le solde. Linéaire dans P_IS ; la CVAE, la C3S et les cotisations n'y jouent
+Le bloc écrit ΔI sur la FBCF des SNF et l'investissement des entreprises, ΔY sur les
+revenus non ventilés, ΔY − ΔI sur les emplois non ventilés (un effet d'offre sans emploi
+désigné, dit), ρ ΔY sur l'effet induit sur le solde ; le cadre ferme le PIB (D-411). Linéaire dans P_IS ; la CVAE, la C3S et les cotisations n'y jouent
 pas (dit, et tenu par un test).
 """
 
@@ -55,7 +55,7 @@ from impots.jumeau.pas import Contexte
 
 class Implantation:
     nom = "implantation"
-    ecrit = ("fbcf_snf", "investissement_entreprises", "pib", "emplois_non_ventiles",
+    ecrit = ("fbcf_snf", "investissement_entreprises", "emplois_non_ventiles",
              "revenus_non_ventiles", "solde_induit")
     thetas = (IMPLANTATION_ROW,)
     porte = ("implantation",)
@@ -89,7 +89,6 @@ class Implantation:
             dy = s_k * dk[k] / p.capital_part_pib
             out["fbcf_snf"][m] = di
             out["investissement_entreprises"][m] = di
-            out["pib"][m] = dy
             out["emplois_non_ventiles"][m] = dy - di
             out["revenus_non_ventiles"][m] = dy
             out["solde_induit"][m] = rho * dy

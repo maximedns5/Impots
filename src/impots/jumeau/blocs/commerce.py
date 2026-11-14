@@ -65,9 +65,9 @@ et chaque profil est la réponse à un choc permanent (comme le bloc `mesange`).
 
        ΔX = X̄_k [(1 + ξ_k)(1 + P^X_k) − 1],   ΔM = M̄_k [(1 + ζ_k)(1 + P^M_k) − 1]
 
-   ΔX sur les exportations, ΔM sur les importations, ΔX − ΔM sur le PIB et sur les
-   revenus non ventilés : le PIB bouge par ses emplois, d'autant que le solde extérieur,
-   sans équation de PIB propre. Les déflateurs (année précédente = 1) :
+   ΔX sur les exportations, ΔM sur les importations, ΔX − ΔM sur les revenus non
+   ventilés : le PIB bouge par ses emplois, d'autant que le solde extérieur, et c'est le
+   cadre qui le ferme, comme la somme des emplois (D-411) ; le bloc n'écrit pas le PIB. Les déflateurs (année précédente = 1) :
    p^X_k = (1 + prix_k)(1 + Σ_m P^X_{m,k}) / (1 + Σ_m P^X_{m,k−1}), de même p^M ; la
    tendance les laisse au bloc (`Tendance(..., laisse=PRIX)`). Le solde extérieur
    X − M, la demande mondiale (1 + d), la compétitivité-prix (1 + Σ_m c_m) et la
@@ -316,7 +316,7 @@ TENDANCE = DemandeMondiale("tendance")
 class Commerce:
     nom = "commerce"
     lit = (*USAGES, "exportations", "importations", *COUTS)
-    ecrit = ("exportations", "importations", "pib", "revenus_non_ventiles", *PRIX,
+    ecrit = ("exportations", "importations", "revenus_non_ventiles", *PRIX,
              "solde_exterieur", "demande_mondiale", "prix_relatifs",
              "contribution_solde_exterieur")
     thetas = (thetas.ELASTICITE_PRIX_EXPORTATIONS.cle,
@@ -387,7 +387,6 @@ class Commerce:
             dm_ = m_base[k] * ((1.0 + ch["zeta"][k]) * (1.0 + ch["prix_m"][k]) - 1.0)
             out["exportations"][m] = dx
             out["importations"][m] = dm_
-            out["pib"][m] = dx - dm_
             out["revenus_non_ventiles"][m] = dx - dm_
 
         # Le solde extérieur, par clé, toutes origines (le bloc compris).

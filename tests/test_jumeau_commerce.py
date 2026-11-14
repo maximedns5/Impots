@@ -37,7 +37,7 @@ from impots.jumeau.blocs.commerce import (
 from impots.jumeau.blocs.mesange import Mesange
 from impots.jumeau.blocs.mesures import Mesures
 from impots.jumeau.blocs.tendance import Tendance
-from impots.jumeau.canaux import CanalInconnu, DoubleCompte
+from impots.jumeau.canaux import TOUS, CanalInconnu, DoubleCompte
 from impots.jumeau.mesures import Mesure
 from impots.jumeau.pas import Entrees, Modele, PasError
 from impots.jumeau.thetas import ELASTICITE_PRIX_EXPORTATIONS as TX
@@ -278,7 +278,7 @@ def test_le_double_compte_avec_mesange_est_refuse() -> None:
     with pytest.raises(CanalInconnu, match="teleportation"):
         Modele([Tendance(depart), Mesures(), Fautif()])
     modele = Modele(blocs_structurels(depart, Commerce()))
-    assert modele.canaux == dict.fromkeys(Commerce.remplace, "commerce")
+    assert modele.canaux == {(c, TOUS): "commerce" for c in Commerce.remplace}
 
 
 def test_un_theta_ou_un_scenario_manquant_est_refuse() -> None:

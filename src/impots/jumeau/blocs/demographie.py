@@ -63,8 +63,9 @@ France) ; h_o s'en calcule, 6,53 % au centre.
    0,5 : la ligne θ « productivite_creations » de D-402 (0 : une activité seulement
    déplacée ; 1 : la productivité moyenne). ρ le taux de prélèvements du départ. Avec
    S(a) = S_j^a pour tout âge et sans sortie induite, c'est l'équation de D-402.
-   Le bloc écrit ΔY sur le PIB et sur les emplois et les revenus non ventilés, ρ ΔY sur
-   l'effet induit sur le solde, et l'indice de productivité (non additif).
+   Le bloc écrit ΔY sur les emplois et les revenus non ventilés (un effet d'offre sans
+   emploi désigné, dit ; le cadre en ferme le PIB, D-411), ρ ΔY sur l'effet induit sur
+   le solde, et l'indice de productivité (non additif).
 
 TOUT EST LINÉAIRE dans les signaux : une hausse et une baisse de même montant donnent des
 écarts opposés ; θ ne change que la pente, de façon monotone.
@@ -223,7 +224,7 @@ class Fermetures:
 
 class Productivite:
     nom = "productivite"
-    ecrit = ("pib", "emplois_non_ventiles", "revenus_non_ventiles", "solde_induit",
+    ecrit = ("emplois_non_ventiles", "revenus_non_ventiles", "solde_induit",
              "productivite_moyenne")
     lit = ("creations_societes", "sorties_induites")
     thetas = (CREATIONS_ROW, SURVIE_ROW, MONTEE_ROW, TAILLE_ROW)
@@ -260,7 +261,6 @@ class Productivite:
             dva = par_societe * taille * c * poids
             if not np.any(dva) and cle == "":
                 continue
-            out["pib"][cle] = dva
             out["emplois_non_ventiles"][cle] = dva
             out["revenus_non_ventiles"][cle] = dva
             out["solde_induit"][cle] = rho * dva

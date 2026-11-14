@@ -86,10 +86,10 @@ consommation au revenu réel (Mésange p. 34 au centre, Insee 2019 tableau 3 l'a
 borne) ; APC, APC_d les propensions moyennes des cellules ; κ = q κ_max, q(θ) ; Q_u la
 réponse de la consommation au chômage (épargne de précaution, Mésange p. 34) ; C_{c,k} la
 consommation de référence de la cellule. Le bloc écrit ΔC = Σ_c ΔC_c sur la consommation
-des ménages et sur le PIB, la TVA et les accises t ΔC (t, leur taux moyen dans les
-cellules) en D2 des APU et en impôts sur la production, le reste en EBE : les identités
-des emplois et des revenus tiennent. Il ne retranche pas les importations : c'est le
-lot 3, qui le fera sur la consommation que ce bloc écrit. Il écrit aussi le revenu
+des ménages (le cadre en ferme le PIB, D-411), la TVA et les accises t ΔC (t, leur taux
+moyen dans les cellules) en D2 des APU et en impôts sur la production, le reste en
+EBE : les identités des emplois et des revenus tiennent. Il ne retranche pas les
+importations : c'est le lot 3, qui le fait sur la consommation que ce bloc écrit. Il écrit aussi le revenu
 disponible et la consommation de chaque décile, référence comprise : les montants des
 cellules en part du PIB de 2024, fois Y_k.
 
@@ -616,7 +616,7 @@ def verifier_menages(mesures: Sequence[Any]) -> None:
 class Consommation(_Base):
     nom = "consommation"
     lit = ("pib", "salaire_moyen", *CHAMPS_TRAVAIL)
-    ecrit = ("c_menages", "pib", "impots_production", "ebe_revenu_mixte", "apu_r_d2", *RDB,
+    ecrit = ("c_menages", "impots_production", "ebe_revenu_mixte", "apu_r_d2", *RDB,
              *CONSO)
     thetas = (thetas.CONSOMMATION_PROFIL, thetas.CONSOMMATION_PENTE)
     remplace = ("consommation_menages",)
@@ -672,7 +672,6 @@ class Consommation(_Base):
                 precedent = rd
             total = dc.sum(axis=0)
             out["c_menages"][ident] = total
-            out["pib"][ident] = total
             out["impots_production"][ident] = st.taux_conso * total
             out["apu_r_d2"][ident] = st.taux_conso * total
             out["ebe_revenu_mixte"][ident] = (1.0 - st.taux_conso) * total

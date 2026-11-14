@@ -54,9 +54,11 @@ class Mesange:
     ecrit = ("pib", "emplois_non_ventiles", "revenus_non_ventiles", "solde_induit")
     thetas = (MACRO_ROW,)
     porte = tuple(sorted(canaux.DE_MESANGE))
+    instruments = dict.fromkeys(porte, canaux.INSTRUMENTS_MESANGE)
     """Ses multiplicateurs portent les canaux de Mésange (l'investissement par le coût du
-    capital, p. 44 du PDF ; le commerce ; ...) : un bloc structurel qui en porte un aussi
-    est refusé avec lui (`canaux`, D-407 à D-409)."""
+    capital, p. 44 du PDF ; la consommation, l'emploi, les salaires, le commerce), pour
+    les seuls instruments dont il publie une variante : un bloc structurel qui porte une
+    même paire est refusé avec lui (`canaux`, D-411)."""
 
     def __init__(self, persistance: str | None, *, variante: str | None = None,
                  tables: Mapping[str, Any] | None = None) -> None:

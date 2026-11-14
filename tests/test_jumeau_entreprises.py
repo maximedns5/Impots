@@ -21,6 +21,7 @@ firm_cells.json`) et un départ synthétique :
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -233,16 +234,28 @@ def test_theta_idees_deplace_la_reference_pas_la_mesure_seule(pop) -> None:
 def test_un_canal_porte_deux_fois_est_refuse(pop) -> None:
     depart = depart_depuis_start(START, PARTS)
     p = charger()
-    with pytest.raises(canaux.CanalError, match="investissement_cout_du_capital"):
+    # Par instrument (D-411) : Mésange n'a pas de variante d'IS, de CVAE ni de C3S, et
+    # l'investissement par ces impôts tourne avec lui ; lu sur les cotisations
+    # employeurs, que Mésange porte, il est refusé.
+    ensemble = Modele([Tendance(depart), Mesures(), Mesange("lue"), ChocsEntreprises(),
+                       Investissement(p)])
+    assert ensemble.canaux[("investissement_cout_du_capital", "impot_societes")] == \
+        "investissement"
+    assert ensemble.canaux[("investissement_cout_du_capital", "tva")] == "mesange"
+    sur_cotisations = replace(p, signaux_investissement=("cotisations_patronales",))
+    with pytest.raises(canaux.DoubleCompte, match=r"investissement_cout_du_capital.*"
+                       r"cotisations_employeurs"):
         Modele([Tendance(depart), Mesures(), Mesange("lue"), ChocsEntreprises(),
-                Investissement(p)])
+                Investissement(sur_cotisations)])
     with pytest.raises(canaux.CanalError, match="creations_entreprises"):
         Modele([Tendance(depart), Mesures(), Creations(), ChocsEntreprises(),
                 Naissances(pop, p)])
     # Mésange et la démographie ne portent pas le même canal.
     modele = Modele([Tendance(depart), Mesures(), Mesange("lue"), ChocsEntreprises(),
                      Naissances(pop, p), Fermetures(pop, p), Productivite(pop, p)])
-    assert modele.canaux["investissement_cout_du_capital"] == "mesange"
+    assert modele.canaux[("investissement_cout_du_capital", "cotisations_employeurs")] \
+        == "mesange"
+    assert modele.canaux[("creations_entreprises", canaux.TOUS)] == "naissances"
 
 
 def test_un_canal_inconnu_est_refuse() -> None:

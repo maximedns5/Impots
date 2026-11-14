@@ -146,9 +146,42 @@ multiplicateurs du structurel, linéarisés autour de la référence, se mettent
 variantes publiées de Mésange (`insee_G2017-04_mesange.pdf`), écart dit, jamais forcé.
 Le registre est `jumeau/canaux.py` (D-407) : un bloc déclare `porte`, ses canaux, et
 `remplace`, ceux de Mésange qu'il porte à sa place ; `Modele` appelle `canaux.verifier`.
-Au lot 2, `mesange` porte « investissement_cout_du_capital » et `creations`
-« creations_entreprises » ; les blocs des entreprises, l'un ou l'autre de ces canaux et
-trois nouveaux (fermetures, productivité de la démographie, implantation).
+
+**Les quatre règles de la jonction des lots 2 à 4 (D-411).**
+
+1. *Qui ferme le PIB.* En mode structurel, le cadre, par la somme des emplois (C ménages
+   + C APU + FBCF + ΔStocks + X − M, et les autres emplois de §2) : pour chaque bloc
+   structurel (un bloc qui porte un canal et n'est pas réduit, `canaux.structurel`), le
+   PIB de son origine est la somme signée des emplois qu'il écrit, par mesure, calculée
+   par le cadre dès que le bloc a tourné, pour que les blocs suivants et le point fixe la
+   lisent. Aucun bloc structurel n'écrit `pib` : le `Modele` le refuse. Un effet d'offre
+   sans emploi désigné (la productivité des entrantes, la part du PIB potentiel de
+   l'investissement et de l'implantation qui n'est pas leur FBCF) va sur le champ nommé
+   `emplois_non_ventiles`, jamais caché, et le bloc le dit. La tendance, les blocs réduits
+   (`mesange`, `creations`, `canaux.REDUITS`, qui n'impriment que la ligne du PIB) et les
+   blocs sans canal écrivent leur PIB eux-mêmes : en mode réduit, rien ne change, et la
+   chaîne des études se retrouve à 1e-9.
+2. *Un canal se porte par instrument.* Le double compte se juge sur la paire (canal,
+   instrument). `mesange` porte les canaux de Mésange (`DE_MESANGE`) pour ses seuls
+   instruments, ceux dont il publie une variante (`macro.mesange.VARIANTS`) ; un bloc
+   structurel porte les siens pour les instruments qu'il lit (`instruments`), ou pour
+   tous (`TOUS`, le défaut, pour un bloc de la demande). L'investissement par l'IS, la
+   CVAE et la C3S tourne donc avec `mesange`, qui n'en a pas de variante ; lu sur les
+   cotisations employeurs, il serait refusé. Le refus reste total pour une même paire.
+3. *Les cotisations patronales et les créations, en mode réduit.* Mésange ne porte ni la
+   démographie des entreprises ni l'implantation : ces canaux ne sont pas dans
+   `DE_MESANGE`. Le canal des créations (D-401) lit les cotisations à côté de la variante
+   cotisations de Mésange ; ce n'est pas le même canal, on le garde, et c'est dit.
+4. *Les performances.* Le cadre somme un champ additif à sa lecture, pas à chaque
+   écriture, retire les contributions d'un bloc par un index des origines, écrit un champ
+   d'un coup et teste l'écart du point fixe en un calcul vectorisé ; les mêmes nombres au
+   bit près. Les temps mesurés sont dans D-411.
+
+La demande des APU d'une mesure (ses achats : P2, D1, D29, D632, P51g) entre dans les
+emplois par le bloc comptable `demande_publique` (canal « demande_publique », que les
+variantes de dépense de Mésange portent en mode réduit). Le modèle structurel complet est
+`blocs.ordre_structurel` : tendance, mesures, demande publique, les six blocs des
+entreprises, puis la boucle de la consommation, de l'emploi, des salaires et du commerce.
 
 **Les règles des lots en parallèle.**
 
@@ -162,8 +195,7 @@ trois nouveaux (fermetures, productivité de la démographie, implantation).
 * Chaque paramètre a une source publiée nommée, ou il est dit « choisi, non vérifié » et
   porte un θ ; aucun chiffrage de tiers des programmes n'est lu.
 * Un déflateur est un champ non additif, à un seul écrivain : un bloc qui écrit le prix
-  d'un emploi le prend à la tendance, `Tendance(depart, laisse=(...))` (D-408). Le
-  registre des canaux est `jumeau/canaux.py` ; `mesange` les porte tous.
+  d'un emploi le prend à la tendance, `Tendance(depart, laisse=(...))` (D-408).
 
 ## 5. Les mesures
 
@@ -229,7 +261,11 @@ src/impots/jumeau/
   mesures.py      Mesure, depuis_rapport, hypothese
   thetas.py       le registre des θ
   historique.py   etat_initial(annee), 2010 à 2025, depuis les tables manifestées
-  blocs/          tendance, mesures, mesange, creations ; puis ceux des lots 2 à 4
+  canaux.py       le registre des canaux, par instrument, et le refus du double compte
+  cellules.py     les cellules de ménages (lot 4) ; gagnants.py, gagnants et perdants
+  comparaison.py  le modèle structurel complet à côté des variantes de Mésange (D-411)
+  blocs/          tendance, mesures, mesange, creations ; ceux des lots 2 à 4, la
+                  demande publique ; ordre_lot1 et ordre_structurel
   parametres/     les valeurs des blocs, en YAML, chacune avec sa source
 ```
 
