@@ -382,6 +382,20 @@ class AjustementObserve:
 # --------------------------------------------------------------------------- #
 # le simulateur
 # --------------------------------------------------------------------------- #
+def menages_au_depart(params: Any, depart: Etat) -> Any:
+    """Les paramètres des ménages, avec les niveaux d'emploi de l'année de départ lus dans
+    l'état publié (`menages.yaml` ne les porte que pour 2024 et 2025) : l'emploi salarié
+    et total des comptes (t. 6.210, 6.208), les chômeurs BIT d'Eurostat (D-412 : pas
+    l'enquête Emploi de la référence du lot 4 ; écart dit)."""
+    import dataclasses
+
+    niveaux = {"emploi_salarie": _valeur(depart, "emploi_salarie"),
+               "emploi_total": _valeur(depart, "emploi_total"),
+               "chomeurs": _valeur(depart, "chomage")}
+    return dataclasses.replace(params, references={**params.references,
+                                                   depart.annee: niveaux})
+
+
 def simulateur(*, population: Any, cellules: Any, exogenes: Exogenes,
                observateur: app.Observateur, votees: Sequence[Any]) -> app.Simulateur:
     """(fenêtre, θ) → la trajectoire du modèle structurel complet depuis l'état publié du
@@ -411,7 +425,8 @@ def simulateur(*, population: Any, cellules: Any, exogenes: Exogenes,
     def simuler(fenetre: Fenetre, theta: Mapping[str, Any]) -> Any:
         depart, e, mesures = preparer(fenetre)
         blocs, boucles = ordre_structurel(depart, population, cellules,
-                                          entreprises=p_entreprises, menages=p_menages)
+                                          entreprises=p_entreprises,
+                                          menages=menages_au_depart(p_menages, depart))
         blocs.append(AjustementObserve(exogenes.sfa))
         return calculer(depart, entrees=e, mesures=mesures, theta=theta, blocs=blocs,
                         boucles=boucles)

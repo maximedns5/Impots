@@ -30971,5 +30971,5 @@ sur cette histoire, et ce qu'il gagne sur le naïf de plus haut vient des chocs 
 entrée poussée : l'estimation, la note de l'estimation et du test aux θ estimés, le test
 à θ½, chacune contre les deux naïfs, dans `reports/jumeau/rejeu_histoire.json`. Le
 résultat va dans une nouvelle D-entrée, contre ce pronostic ; aucune tolérance, aucune
-fenêtre, aucune entrée ne change après le premier calcul. Un correctif de code que le rejeu révélerait est une
-révision, sous un nouveau nom, et cette note reste.
+fenêtre, aucune entrée ne change après le premier calcul. Un correctif de code que le
+rejeu révélerait est une révision, sous un nouveau nom, et cette note reste.
