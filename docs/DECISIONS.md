@@ -31413,3 +31413,46 @@ moins d'un point ». Le reste est dans le pronostic.
 **Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune entrée. Une révision
 (le canal des créations, une demande mondiale manifestée, les mesures étalées datées
 chaque année) serait un nouveau préenregistrement, sous un nouveau nom ; cette note reste.
+
+## D-422 — La jonction de D-417 à D-420 : l'histoire, l'emploi public, la page
+
+**La jonction** (branche `claude/but23-cadre`, partie de f3541d1). Trois branches, toutes
+parties de f3541d1, y sont fusionnées dans cet ordre : `claude/but23-apprentissage`
+(D-417, D-420), `claude/but23-emploi-public` (D-418) et `claude/but23-page` (D-419). La
+première passe sans conflit. Aux deux autres, `DECISIONS.md` seul en code et en texte,
+résolu en rangeant les entrées dans l'ordre des numéros : D-417, D-418, D-419, D-420 ;
+aucune n'est retouchée. `CADRE.md` (§4 bis par D-418, §5 par D-417), `mesures.py` (les
+deux branches), `navigateur.py`, `menages.py` et `cli.py` se sont fusionnés seuls :
+chacun des trois derniers n'est touché que par une branche. La troisième fusion a un
+second conflit, `site/jumeau-paquet.json`, un fichier généré : il n'est pas résolu à la
+main, `site construire` le refait.
+
+**Le manifeste et `data/raw`.** Les manifestes des trois worktrees ont les mêmes 235
+entrées que celui du cadre, sans écart : l'union est le manifeste du cadre. Aucune des
+trois branches n'a téléchargé de fichier qui manquerait ici ; rien n'est relié.
+
+**Le rejeu de l'histoire** (`reports/jumeau/rejeu_histoire.json`, D-420) a tourné sur
+`fe9434f`, avant le bloc d'emploi public (D-418) et la page (D-419) ; le rapport le dit
+(`commit`) et rien de la fusion ne prétend le contraire. Il n'est pas relancé : sur
+l'arbre joint, où l'activité que lisent les blocs marchands n'a plus la valeur ajoutée
+des APU, ses nombres pourraient changer, et ce serait un nouveau préenregistrement. Son
+test (`test_jumeau_apprentissage.py`, sur synthétique) passe sur l'arbre joint ; aucun
+test ne relit le rapport.
+
+**Le site.** `site construire` sur l'arbre joint : seul `jumeau-paquet.json` diffère de
+celui de chaque branche ; il copie les modules joints (`navigateur.py` de D-419,
+`menages.py` et `mesures.py` de D-418, vérifiés égaux aux sources). La page, son Worker
+(`jumeau-calcul.js`) et `jumeau-donnees.json` sont ceux de D-419, inchangés. `site
+verifier`, `site publiable` et `node ui/check.mjs` passent.
+
+**Les tests.** `pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`,
+`test_rejouer.py`, `test_creations_canal.py`, `test_dependances.py`,
+`test_gardes_phase9.py`, `test_donnees.py`, `test_dette*.py`, `test_site.py`,
+`test_provenance.py` et `test_identifiants.py` : 466 passent, 4 sautés, en 2 min 33 s.
+Les sautés sont ceux de D-416 : les cellules et la population absentes de ce worktree
+(`test_jumeau_cellules`), le bulletin AFT non manifesté (trois de `test_dette_maturite`).
+Le lourd de la page, seul dans son processus (`test_jumeau_page.py`), passe en 26 s.
+`ruff check src tests scripts` est propre. Ni `make impact` ni `make full`.
+
+**Ce qui reste.** La révision de D-420 (D-421) se fait ailleurs ; elle se joindra à son
+tour. Les points ouverts de D-416 à D-420 restent ouverts, aucun n'est tranché ici.
