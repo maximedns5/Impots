@@ -30840,16 +30840,17 @@ année).
 
 **Les écarts qui restent, et ce qui les fait.**
 
-* *Les traitements comptés en volume.* Le jumeau garde la consommation des APU aux prix
-  du scénario : la part des traitements, (1 − s) ΔD1, 0,125 point de PIB à θ½, y est un
-  volume. Dans les comptes et dans Mésange, c'est un prix de la production non marchande
+* *Les traitements comptés en volume* (porté depuis, ci-dessous : « La part des
+  traitements en prix »). Le jumeau gardait la consommation des APU aux prix du scénario :
+  la part des traitements, (1 − s) ΔD1, 0,125 point de PIB à θ½, y était un volume.
+  Dans les comptes et dans Mésange, c'est un prix de la production non marchande
   (p. 107 : la dépense joue « de manière indirecte et donc différée » par « les salaires
   publics en prix, par exemple si on augmente le point d'indice » ; p. 106, la ligne
   « Prix de production », 0,32 la première année, contre 0,15 pour la production
   marchande). Le PIB en volume du jumeau en est majoré d'autant : 0,68 contre 0,78, il
   ferait de l'ordre de 0,55.
-  Le porter demande un prix de la consommation des APU par mesure, que la tendance fixe
-  aujourd'hui : un changement du cadre, **à décider**.
+  Le porter demandait un prix de la consommation des APU par mesure, que la tendance
+  fixait : un changement du cadre, décidé par le responsable, ci-dessous.
 * *L'activité marchande plus faible.* La valeur ajoutée marchande de la mesure fait 0,43,
   0,61, 0,67 et 0,64 % (le PIB en volume moins sa part prix et la valeur ajoutée des APU)
   contre 0,75, 1,06, 0,72 et 0,28 dans Mésange (« VA du secteur marchand », p. 106) ; la
@@ -30915,8 +30916,61 @@ verts, un sauté (les cellules de ménages, faute de population dans ce worktree
 
 **Ce qui reste.**
 
-* Les traitements en prix de la production non marchande (ci-dessus) : à décider.
 * Le contenu en importations de la consommation des APU, moyen, appliqué à ΔD1.
 * Les bornes de θ sont choisies ; la part de 50 % est la convention d'une variante de
   Mésange, non une estimation.
 * L'éviction faible et le chômage des autres variantes, de D-414.
+
+**La part des traitements en prix** (décision du responsable, après le premier rapport :
+une hausse de traitement n'est pas un volume, comme Mésange, p. 106-107). Le plus simple et
+le plus lisible : la voie qu'a prise le commerce pour le prix de la consommation des
+ménages (D-414). La tendance laisse au bloc `emploi_public` le déflateur de la
+consommation des APU (`Tendance(..., laisse=(..., "prix_c_apu"))`), champ non additif à
+un écrivain, et le bloc l'écrit, T_k les traitements des mesures de l'année, C_k la
+consommation des APU (que `demande_publique` a écrite avant lui) :
+
+    prix_c_apu_k = (1 + π_k) [C_k / (C_k − T_k)] / [C_{k−1} / (C_{k−1} − T_{k−1})]
+
+Le volume que le cadre chaîne (`pas.fermer`, C_k / prix − C_{k−1}) vaut exactement
+(1 + e_{k−1}) [(C_k − T_k) / (1 + π_k) − (C_{k−1} − T_{k−1})], 1 + e = C / (C − T) le prix
+relatif de la production non marchande : les traitements n'y sont plus, les emplois y
+restent ; sans traitements, le déflateur est celui de la tendance au bit. Un champ de prix
+additif dédié aurait demandé de changer la formule du volume dans le cadre ; ici le cadre
+ne change pas, et `CADRE.md` §4 bis le dit. Le prix relatif monte la première année des
+traitements et reste ensuite (C et T croissent ensemble) : le PIB en volume perd la part
+des traitements en niveau. Rien d'autre ne lit ce déflateur : les blocs marchands lisaient
+déjà l'activité sans la valeur ajoutée des APU. Le mode réduit n'en voit rien (la tendance
+y écrit le déflateur) ; les quatre autres variantes ne changent pas, au bit près.
+
+La ligne « dépense publique », PIB en volume, en %, D-414 / premier temps de D-418 / après
+/ Mésange (les autres lignes ne changent pas : emploi, chômage, solde, prix et
+investissement sont ceux du tableau ci-dessus) :
+
+| horizon | D-414 | D-418, premier temps | après | Mésange |
+|---|---|---|---|---|
+| 1 an | 0,67 | 0,68 | 0,55 | 0,78 |
+| 2 ans | 0,84 | 0,85 | 0,72 | 1,06 |
+| 5 ans | 0,85 | 0,88 | 0,75 | 0,86 |
+| 10 ans | 0,82 | 0,84 | 0,72 | 0,53 |
+
+La part des traitements en est retirée, 0,13 point la première année, comme attendu.
+L'écart à Mésange s'élargit à court terme (0,55 contre 0,78, 0,72 contre 1,06) : c'est
+celui de l'activité marchande, dit ci-dessus, qui n'était plus masqué par un volume
+compté en trop ; à dix ans, le jumeau reste au-dessus (0,72 contre 0,53), l'éviction
+faible. θ borne : à la seule part, 0,41, 0,60, 0,65, 0,62 à θ = 0 (tout en traitements :
+le PIB ne garde que le revenu des ménages) et 0,70, 0,85, 0,86, 0,81 à θ = 1 (tout en
+emplois, le volume de D-418 premier temps) ; tous les θ ensemble, 0,39, 0,47, 0,51, 0,54
+et 0,71, 0,78, 0,61, 0,65.
+
+Un test de plus dans `test_jumeau_emploi_public.py` (15 en tout, 14 s) : sur un axe de
+trois tirages de la part, le volume chaîné de la consommation des APU depuis le départ
+égal à celui de la référence à 1e-12 quand tout est traitement, et croissant avec la part ;
+le déflateur égal à la formule à 1e-12, celui de la référence à celui de la tendance au
+bit ; le prix relatif C / (C − T) décroissant, un à θ = 1. Rouge sur le premier temps (le
+déflateur y était celui de la tendance), vert après. Les identités à 1e-9 (θ = 0, ½, 1 et
+cinq tirages), le mode réduit (`test_jumeau`, `test_rejouer`) et le déterminisme tiennent :
+`pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_rejouer.py`,
+`test_dependances.py` et `test_site.py`, 280 verts, un sauté ; `ruff` propre. `site
+construire` (le paquet seul change), `site verifier`, `site publiable` passent ; la page
+dans Chromium (`test_jumeau_page.py`) passe en 22 s. Rien de tout cela n'est un juge : une
+comparaison de cohérence, aucun paramètre réglé dessus.
