@@ -35,7 +35,7 @@ from typing import Any, Protocol
 
 import numpy as np
 
-from impots.jumeau import identites
+from impots.jumeau import canaux, identites
 from impots.jumeau.champs import DEPENSES, EMPLOIS_EN_VOLUME, FERMES, RECETTES, REGISTRE
 from impots.jumeau.champs import champ as definition
 from impots.jumeau.etat import ChampAbsent, Cle, Etat
@@ -131,7 +131,9 @@ class Modele:
 
     REFUSÉ À LA CONSTRUCTION : un champ inconnu du registre ; un bloc qui écrit un champ
     que le cadre ferme ; un champ non additif écrit par deux blocs ; un bloc qui lit un
-    champ qu'aucun bloc antérieur n'écrit, hors d'une boucle déclarée qui l'écrit."""
+    champ qu'aucun bloc antérieur n'écrit, hors d'une boucle déclarée qui l'écrit.
+    Et un canal de Mésange porté par deux blocs, le réduit et un structurel ou deux
+    structurels (`canaux.verifier`, CADRE.md §4 bis, D-409)."""
 
     def __init__(self, blocs: Sequence[Bloc],
                  boucles: Sequence[Sequence[str]] = ()) -> None:
@@ -141,6 +143,7 @@ class Modele:
         reserves = {"depart", "publie", "cadre"}
         if reserves & set(noms):
             raise PasError(f"noms réservés à l'origine des contributions : {reserves}")
+        canaux.verifier(blocs)
         self.blocs = tuple(blocs)
         position = {b.nom: i for i, b in enumerate(blocs)}
         groupes: list[list[Bloc]] = []
