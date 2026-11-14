@@ -1,5 +1,7 @@
 """Les blocs du jumeau (CADRE.md §4). Lot 1 : `tendance`, `mesures`, `mesange`,
-`creations`, dans cet ordre (`ordre_lot1`)."""
+`creations`, dans cet ordre (`ordre_lot1`). Lot 2, les entreprises (D-407) :
+`chocs_entreprises`, `naissances`, `fermetures`, `productivite`, `investissement`,
+`implantation` (`entreprises.ordre_lot2`)."""
 
 from __future__ import annotations
 

@@ -144,6 +144,11 @@ double compte. Les deux modes restent : le réduit, qui retrouve la chaîne des 
 le structurel, qui est le jumeau. Comparer les deux est une preuve de cohérence : les
 multiplicateurs du structurel, linéarisés autour de la référence, se mettent à côté des
 variantes publiées de Mésange (`insee_G2017-04_mesange.pdf`), écart dit, jamais forcé.
+Le registre est `jumeau/canaux.py` (D-407) : un bloc déclare `porte`, ses canaux, et
+`remplace`, ceux de Mésange qu'il porte à sa place ; `Modele` appelle `canaux.verifier`.
+Au lot 2, `mesange` porte « investissement_cout_du_capital » et `creations`
+« creations_entreprises » ; les blocs des entreprises, l'un ou l'autre de ces canaux et
+trois nouveaux (fermetures, productivité de la démographie, implantation).
 
 **Les règles des lots en parallèle.**
 

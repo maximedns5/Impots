@@ -53,6 +53,10 @@ class Mesange:
     lit = IMPULSIONS
     ecrit = ("pib", "emplois_non_ventiles", "revenus_non_ventiles", "solde_induit")
     thetas = (MACRO_ROW,)
+    porte = ("investissement_cout_du_capital",)
+    """Ses multiplicateurs portent la réponse de l'investissement au coût du capital de
+    ses instruments (Mésange, éq. d'investissement, p. 44 du PDF) : un bloc structurel
+    qui la porte aussi est refusé avec lui (`canaux`, D-407)."""
 
     def __init__(self, persistance: str | None, *, variante: str | None = None,
                  tables: Mapping[str, Any] | None = None) -> None:

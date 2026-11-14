@@ -49,6 +49,7 @@ class Creations:
     lit = ("prelevements_entreprises",)
     ecrit = ("pib", "emplois_non_ventiles", "revenus_non_ventiles", "solde_induit")
     thetas = (CREATIONS_ROW,)
+    porte = ("creations_entreprises",)
 
     def __init__(self, parametres: canal.Parametres | None = None) -> None:
         self.parametres = parametres
