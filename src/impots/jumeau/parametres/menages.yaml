@@ -38,13 +38,15 @@ emploi:
     # θ : l'élasticité de long terme de l'emploi agrégé à son coût, en valeur absolue ; le
     # profil pondéré de Mésange est mis à l'échelle de σ(θ) / 0,44.
     centre: 0.44
-    bas: 0.31
+    bas: 0.07
     haut: 0.52
     source: "centre : Mésange, p. 39 (folio 38) et encadré 5, p. 41 : « l'élasticité de la
-      demande de travail à son coût (0,44 en valeur absolue) » ; bornes : Bunel et
-      L'Horty (Fiscal Studies 33(3), 2012), tableau 7 (TEPP 2012-12, p. 20-21), −0,31
-      (régression quantile, postes) et −0,52 (MCO, ETP), les bornes de C2 dans
-      behavioural/parameters/employer_contributions.yaml"
+      demande de travail à son coût (0,44 en valeur absolue) » ; haut : Bunel et L'Horty
+      (Fiscal Studies 33(3), 2012), tableau 7 (TEPP 2012-12, p. 20-21), −0,52 (MCO, ETP) ;
+      bas : Lichter, Peichl et Siegloch (IZA DP 7958, 2014), p. 22 du PDF, la borne
+      basse de l'intervalle de leur estimation préférée, −0,072, arrondie à 0,07 (D-424 ;
+      décision du propriétaire du 14 novembre 2026, D-427 ; avant : 0,31, Bunel et
+      L'Horty, régression quantile, postes)"
   references:
     # Les niveaux de l'année de départ, en milliers. La population active est l'emploi
     # intérieur total plus les chômeurs BIT, la convention de Mésange (u = 1 − E/n, p. 24).
@@ -103,12 +105,14 @@ salaires:
   echelle_chomage:
     # θ : un facteur sur le profil de la semi-élasticité au chômage.
     centre: 1.0
-    bas: 0.5
+    bas: 0.0
     haut: 1.2778
     source: "centre : Mésange 2017, semi-élasticité agrégée −0,018 (p. 64, folio 63) ;
-      haut : Mésange 2010, −0,023 (même page), 0,023 / 0,018 ; bas : choisie, non
-      vérifiée, la moitié, la littérature concluant à une baisse du paramètre sans le
-      chiffrer pour la France (p. 64, note 48 : WEO d'avril 2013, Blanchard et al. 2015)"
+      haut : Mésange 2010, −0,023 (même page), 0,023 / 0,018 ; bas : 0, aucune réponse
+      des salaires au chômage, décision du propriétaire du 14 novembre 2026 (D-427) sur
+      D-424 : la courbe des salaires corrigée du biais de publication (Nijkamp et Poot,
+      Tinbergen DP 02-029/3, tableau 4) donne b = 0,47 ± 0,43, sous l'ancienne borne
+      basse (0,5, choisie, non vérifiée)"
   coin_fiscalo_social:
     source: "Mésange, p. 64 (folio 63) : indexation unitaire de la rémunération au coin
       fiscalo-social à long terme ; note 45 (p. 62) : σW = 1. Le salaire super-net visé ne

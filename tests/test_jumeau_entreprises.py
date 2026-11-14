@@ -63,13 +63,12 @@ PARTS = {"c_menages": 0.52, "c_isbl": 0.02, "c_apu": 0.24, "fbcf_snf": 0.13,
 START = {"year": 2025, "gdp_eur": 2.99e12, "receipts_ratio": 0.51, "spending_ratio": 0.53,
          "debt_ratio": 1.15}
 ANNEES = tuple(range(2026, 2036))
-LOT2 = (CREATIONS_ROW, "idees_creations", "fermetures_marges",
+LOT2 = (CREATIONS_ROW, "idees_creations", "elasticite_creations", "fermetures_marges",
         "investissement_cout_capital", "implantation_tmee", "survie_creations",
         "montee_en_charge_creations", "taille_creations")
 #: Les θ dont θ = 0 n'éteint pas le canal : leur borne basse est une valeur publiée ou
-#: choisie, pas zéro.
-SANS_ZERO = ("investissement_cout_capital", "survie_creations",
-             "montee_en_charge_creations", "taille_creations")
+#: choisie, pas zéro. Le coût du capital et l'élasticité des créations vont à 0 (D-427).
+SANS_ZERO = ("survie_creations", "montee_en_charge_creations", "taille_creations")
 INSTRUMENTS = ("impot_societes", "cvae", "cotisations_employeurs")
 #: (bloc, champ) : ce que chaque bloc fait, et les impôts qu'il lit.
 LECTURES = {"naissances": ("creations_societes", set(INSTRUMENTS)),
@@ -195,6 +194,7 @@ def test_une_mesure_ventilee_par_taille_change_les_sorties_pas_les_creations(pop
 # --------------------------------------------------------------------------- #
 @pytest.mark.parametrize("cle,bloc,champ", [
     (CREATIONS_ROW, "productivite", "pib"),
+    ("elasticite_creations", "naissances", "creations_societes"),
     ("fermetures_marges", "fermetures", "sorties_induites"),
     ("investissement_cout_capital", "investissement", "pib"),
     ("implantation_tmee", "implantation", "pib"),

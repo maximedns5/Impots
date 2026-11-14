@@ -105,7 +105,8 @@ class Parametres:
         if manquantes:
             raise EntreprisesError(f"signaux de fermetures sans clé de répartition "
                                    f"{manquantes}")
-        if self.elasticite_cout.bas <= 0 or self.semi_elasticite_tmee.bas < 0:
+        if (self.elasticite_cout.bas < 0 or self.semi_elasticite_tmee.bas < 0
+                or self.elasticite.bas < 0):
             raise EntreprisesError("les élasticités se donnent en valeur absolue : le "
                                    "signe est porté par les équations")
 
@@ -195,6 +196,7 @@ def charger(chemin: Path | None = None) -> Parametres:
 # les θ du lot 2 (enregistrés dans `thetas.py`, section du lot 2)
 # --------------------------------------------------------------------------- #
 IDEES_ROW = "idees_creations"
+ELASTICITE_ROW = "elasticite_creations"
 FERMETURES_ROW = "fermetures_marges"
 INVESTISSEMENT_ROW = "investissement_cout_capital"
 ACCELERATEUR_ROW = "investissement_accelerateur"
@@ -227,6 +229,14 @@ def lignes(Ligne: Any) -> dict[str, Any]:
               "θ = 1 : une économie qui crée plus de sociétés que le scénario",
               "choisie, non vérifiée (D-407) ; à régler au lot 6 sur les créations de "
               "l'Insee", False),
+        ligne(ELASTICITE_ROW, "naissances",
+              "ε dans ΔE_t = −ε Δτ_t N₀ / 100, Δτ_t = 100 ΔP_t / (b Y_t) : les points de "
+              "taux d'entrée par point de taux apparent de prélèvement sur le profit",
+              "points de taux d'entrée par point de taux apparent", p.elasticite,
+              "θ = 1 : les créations répondent le plus aux prélèvements",
+              "Da Rin, Di Giacomo et Sembenelli (2011), tableau 4 p. 40, l'intra-groupe au "
+              "centre, le milieu de D-402 en haut ; D-426, l'estimation française entre "
+              "secteurs (−0,056 ± 0,051) ; décision du propriétaire, D-427", True),
         ligne(FERMETURES_ROW, "fermetures",
               "β dans ΔX_t = Σ_c (e₀/100) β (−Δm_{c,t}) N_c : la variation relative du "
               "hasard de sortie des installées par point de marge après impôt perdu",
@@ -258,8 +268,9 @@ def lignes(Ligne: Any) -> dict[str, Any]:
               "ε_K dans x* = −ε_K (ck − pva) : l'élasticité de long terme de l'investissement "
               "des SNF au coût réel du capital (valeur absolue)", "sans dimension",
               p.elasticite_cout, "θ = 1 : l'investissement répond le plus",
-              "Insee, Mésange (G2017-04), p. 44 du PDF : −0,44 calibrée, −0,37 libre, "
-              "−0,48 Mésange 2010", True),
+              "Insee, Mésange (G2017-04), p. 44 du PDF : −0,44 calibrée ; bornes, Gechert "
+              "et al. (2021), tableau 9, IC à 95 % de 0,30 (−0,01 ; 0,60), décision du "
+              "propriétaire (D-424, D-427)", True),
         Ligne(cle=ACCELERATEUR_ROW, bloc="investissement",
               definition=("β₀(θ), β₁(θ) dans Δie_q = 0,22 Δie_{q−2} + β₀ Δva_q + β₁ Δva_{q−1} "
                           "− 0,06 (ie − va + ε_K ck)_{q−1} : l'effet accélérateur, la "

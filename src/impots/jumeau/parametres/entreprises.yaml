@@ -11,15 +11,20 @@
 naissances:
   elasticite:
     # ε, points de taux d'entrée par point de taux apparent de prélèvement sur le profit.
-    # Fixe au centre, comme D-402 ; la plage est une sensibilité, pas une ligne θ.
-    centre: 0.20
-    bas: 0.043
-    haut: 0.356
+    # θ_élasticité (D-427) : la plage est une ligne θ, plus une sensibilité fixe au centre.
+    centre: 0.043
+    bas: 0.0
+    haut: 0.20
     source: >
-      Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4
-      p. 40 du PDF et p. 21-22, du premier quartile à la médiane du TMEE ; le milieu des
-      variables instrumentales (0,356) et de l'intra-groupe (0,043) (M0 de la phase 11,
-      D-245 ; D-402). Lue sur un taux apparent, pas sur leur TMEE (D-247).
+      Décision du propriétaire du 14 novembre 2026 (D-427). Le centre : Da Rin, Di
+      Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 p. 40 du
+      PDF et p. 21-22, du premier quartile à la médiane du TMEE, l'estimation
+      intra-groupe, 0,043 (M0 de la phase 11, D-245). Il est dans l'intervalle à 95 % de
+      l'estimation française entre secteurs de D-426 (ε = −0,056 ± 0,051, de −0,16 à
+      +0,04), qui exclut l'ancien centre ; le haut, 0,20, le milieu des variables
+      instrumentales (0,356) et de l'intra-groupe (D-402) ; le bas, 0, aucune réponse.
+      Lue sur un taux apparent, pas sur leur TMEE (D-247). Avant D-427 : 0,20 (0,043 à
+      0,356), fixe, une sensibilité.
   taux_entree_base:
     # e₀, % par an : les entrées de l'année sur les entreprises actives, en France.
     valeur: 7.61
@@ -127,13 +132,18 @@ investissement:
     # ε_K : l'élasticité de long terme de l'investissement des SNF au coût réel du capital,
     # en valeur absolue. θ_investissement.
     centre: 0.44
-    bas: 0.37
-    haut: 0.48
+    bas: 0.0
+    haut: 0.60
     source: >
       Insee, Mésange (G2017-04), équation de l'investissement des entreprises non
       financières, p. 44 du PDF (folio 43) [lu] : « L'élasticité de long terme de
-      l'investissement au coût réel du capital est calibrée à −0,44 » ; l'estimation libre
-      donne −0,37 et la version précédente −0,48 (même page).
+      l'investissement au coût réel du capital est calibrée à −0,44 », le centre ;
+      l'estimation libre donne −0,37 et la version précédente −0,48 (même page), les
+      bornes d'avant. Les bornes, décision du propriétaire du 14 novembre 2026 (D-427)
+      sur D-424 : Gechert, Havranek, Irsova et Kolcunova (version d'avril 2021 ; Review
+      of Economic Dynamics 45, 2022), tableau 9, p. 35 du PDF, l'élasticité de
+      substitution de la meilleure pratique, 0,30, IC à 95 % (−0,01 ; 0,60) : haut 0,60,
+      bas 0 (aucune réponse ; la borne de l'intervalle, −0,01, ramenée à 0).
   rappel_trimestriel:
     # La force de rappel du terme à correction d'erreur, par trimestre.
     valeur: 0.06

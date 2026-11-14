@@ -130,18 +130,20 @@ REGISTRE.update({ligne.cle: ligne for ligne in (
           definition=("η dans ê_k = Σ_j Δŷ_j R_va(h) + (η/0,44) Σ_j Δĉ_j R_c(h), h = k − j + "
                       "1 : l'élasticité de long terme de l'emploi salarié marchand à son "
                       f"coût réel, en valeur absolue ; {_PAR_THETA}"),
-          unite="sans dimension", a_zero="0,31", a_demi="0,44 (Mésange)", a_un="0,52",
+          unite="sans dimension", a_zero="0,07", a_demi="0,44 (Mésange)", a_un="0,52",
           direction="θ = 1 : l'emploi répond le plus à son coût",
-          source=("Mésange (G2017-04), p. 39 et encadré 5 p. 41 ; bornes, Bunel et L'Horty "
-                  "(2012), tableau 7"), verifiee=True),
+          source=("Mésange (G2017-04), p. 39 et encadré 5 p. 41 ; haut, Bunel et L'Horty "
+                  "(2012), tableau 7 ; bas, Lichter, Peichl et Siegloch (2014), p. 22 "
+                  "(D-424, D-427)"), verifiee=True),
     Ligne(cle=SALAIRES_CHOMAGE, bloc="salaires",
           definition=("b dans ŵ_k = b Σ_j Δu_j S_u(h)/100 + … : le facteur sur le profil de "
                       "la semi-élasticité du salaire au taux de chômage de Mésange (−1,98 "
                       f"et −1,49 à long terme) ; {_PAR_THETA}"),
-          unite="sans dimension", a_zero="0,5 (choisie, non vérifiée)",
+          unite="sans dimension", a_zero="0 (aucune réponse au chômage)",
           a_demi="1 (Mésange 2017, −0,018 agrégé)", a_un="1,2778 (Mésange 2010, −0,023)",
           direction="θ = 1 : les salaires réagissent le plus au chômage",
-          source="Mésange (G2017-04), p. 64 et 65 ; la borne basse choisie, non vérifiée",
+          source=("Mésange (G2017-04), p. 64 et 65 ; la borne basse, 0, décision du "
+                  "propriétaire sur Nijkamp et Poot (2002), tableau 4 (D-424, D-427)"),
           verifiee=False),
     Ligne(cle=CONSOMMATION_PROFIL, bloc="consommation",
           definition=("e(h) dans PMC_d(h) = e(h) [APC + κ (APC_d − APC)] : l'élasticité "

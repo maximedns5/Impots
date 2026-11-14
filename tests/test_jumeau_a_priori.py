@@ -68,11 +68,12 @@ def test_theta_de_inverse_l_application_du_bloc(plage):
 
 def test_les_lois_se_calculent_a_la_main():
     z = 1.0 / (2.0 * 1.96)
-    # l'emploi : Lichter et al., 0,246 ± 0,0954, sous la plage (0,31 ; 0,44 ; 0,52)
+    # l'emploi : Lichter et al., 0,246 ± 0,0954, dans la plage élargie de D-427
+    # (0,07 ; 0,44 ; 0,52) ; sous l'ancienne (0,31), le mode était à −0,25
     loi = LOIS[thetas.EMPLOI_COUT]
-    assert loi.moyenne == pytest.approx(0.5 - (0.44 - 0.246) / 0.26, abs=1e-12)
-    assert loi.ecart_bas == pytest.approx(0.0954 / 0.26, abs=1e-12)
-    assert loi.ecart_haut == pytest.approx(0.0954 / 0.26, abs=1e-12)
+    assert loi.moyenne == pytest.approx(0.5 - (0.44 - 0.246) / 0.74, abs=1e-12)
+    assert loi.ecart_bas == pytest.approx(0.0954 / 0.74, abs=1e-12)
+    assert loi.ecart_haut == pytest.approx(0.0954 / 0.74, abs=1e-12)
     # l'accélérateur : la plage est déjà ∓ 1,96 écart-type de β₀ (1,19 / 6,9)
     loi = LOIS["investissement_accelerateur"]
     assert loi.moyenne == pytest.approx(0.5)
@@ -86,11 +87,19 @@ def test_les_lois_se_calculent_a_la_main():
     # les importations : très serrée au-dessus du centre (FR-BDF à 1,11)
     loi = LOIS[thetas.ELASTICITE_PRIX_IMPORTATIONS.cle]
     assert loi.ecart_haut == pytest.approx(0.0613 / (2 * 0.76), abs=1e-9)
-    # le coût du capital : Gechert et al., 0,30, sous la plage, mode à −½
+    # le coût du capital : Gechert et al., 0,30, dans la plage de D-427 (0 ; 0,44 ;
+    # 0,60) ; sous l'ancienne (0,37 ; 0,44 ; 0,48), le mode était à −½
     loi = LOIS["investissement_cout_capital"]
-    assert loi.moyenne == pytest.approx(-0.5, abs=1e-12)
-    # les salaires : la courbe des salaires, b = 0,4673, mode juste sous 0
-    assert LOIS[thetas.SALAIRES_CHOMAGE].moyenne == pytest.approx(0.4673 - 0.5, abs=1e-12)
+    assert loi.moyenne == pytest.approx(0.5 - (0.44 - 0.30) / 0.88, abs=1e-12)
+    # les salaires : la courbe des salaires, b = 0,4673, sur (0 ; 1 ; 1,2778) : b / 2 ;
+    # sous l'ancienne borne basse (0,5), le mode était juste sous 0
+    assert LOIS[thetas.SALAIRES_CHOMAGE].moyenne == pytest.approx(0.4673 / 2, abs=1e-12)
+    # l'élasticité des créations (D-427) : 0,043 au centre, l'écart-type de D-426 ; une
+    # pente par moitié, 0,043 sous le centre, 0,157 au-dessus
+    loi = LOIS["elasticite_creations"]
+    assert loi.moyenne == pytest.approx(0.5, abs=1e-12)
+    assert loi.ecart_bas == pytest.approx(0.051 / (2 * 0.043), abs=1e-12)
+    assert loi.ecart_haut == pytest.approx(0.051 / (2 * 0.157), abs=1e-12)
     # le multiplicateur : par construction, la loi de D-417
     assert LOIS["multiplicateur_macro"].moyenne == 0.5
     assert LOIS["multiplicateur_macro"].ecart_type == 0.5

@@ -231,7 +231,14 @@ def test_une_hausse_du_cout_du_travail_baisse_l_emploi(t) -> None:
     emploi = _ecart("emploi_salarie", traj)[:, 0]
     assert np.all(emploi < 0.0)
     assert np.all(_ecart("chomage", traj)[:, 0] > 0.0)
-    assert np.all(_ecart("remunerations", traj)[:, 0] < 0.0)
+    remunerations = _ecart("remunerations", traj)[:, 0]
+    if t > 0.0:
+        assert np.all(remunerations < 0.0)
+    else:
+        # À θ = 0, b = 0 depuis D-427 : les salaires ne répondent plus au chômage, et la
+        # masse des rémunérations, cotisations comprises, finit plus haute (+0,07 la
+        # dernière année) ; avec l'ancienne borne (b = 0,5), elle baissait chaque année.
+        assert remunerations[0] < 0.0 < remunerations[-1]
 
 
 def test_l_elasticite_au_cout_borne_la_perte_d_emploi() -> None:

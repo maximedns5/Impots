@@ -173,6 +173,27 @@ jumeau_emploi_public_part:
 
 idees_creations:
   sans_source: "Choisie, non vérifiée (D-407) : aucune estimation publiée."
+elasticite_creations:
+  estimation: 0.043
+  ecart_type: 0.051
+  source: >
+    Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4
+    p. 40 du PDF et p. 21-22 : l'estimation intra-groupe, +0,107 point de taux d'entrée
+    du premier quartile (27,57 %) à la médiane (30,04 %) du TMEE, 0,043 par point (M0 de
+    la phase 11, D-245), le centre décidé par le propriétaire (D-427). Un panneau
+    national, la grandeur du bloc (une réponse de l'entrée au taux national).
+  calcul: >
+    L'écart-type de cet effet marginal n'est pas publié : il combine le coefficient du
+    TMEE et celui de son carré (−0,886 (0,16) et +0,015), dont la covariance n'est pas
+    imprimée. Est pris celui de l'estimation française de D-426, 0,051 (C1, CR1, 1 464
+    cellules région × secteur × année), la seule précision mesurée sur ε pour la France ;
+    un choix, dit (D-427). Loi sur θ : μ = ½, s₋ = 0,593, s₊ = 0,162.
+  comparaison: >
+    D-426 : ε = −0,056 ± 0,051, une estimation entre secteurs (les effets d'année
+    absorbent la réponse nationale) : une autre grandeur au sens de la règle (1), dite,
+    non utilisée comme estimation ; son intervalle à 95 % (−0,16 ; +0,04) touche le
+    centre. Les variables instrumentales de Da Rin et al. (0,356 par point) : l'ancienne
+    borne haute, au-dessus de la plage.
 fermetures_marges:
   sans_source: >
     Choisie, non vérifiée (D-407) : aucune estimation de la réponse des sorties des

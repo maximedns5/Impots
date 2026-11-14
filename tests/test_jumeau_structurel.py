@@ -172,9 +172,14 @@ def test_les_identites_tiennent_et_db_se_decompose(theta) -> None:
     # nominal porte l'effet des prix, et une baisse des cotisations, qui baisse les prix,
     # peut baisser le PIB nominal en montant son volume.
     fin = traj.variante[-1]
-    for v in ("impot_sur_le_revenu", "cotisations_employeurs", "depense_publique",
-              "baisse_is"):
+    for v in ("impot_sur_le_revenu", "cotisations_employeurs", "depense_publique"):
         assert np.all(fin.par_mesure("pib")[v] - fin.par_mesure("effet_prix_pib")[v] > 0.0)
+    # Une baisse d'IS à θ = 0 ne fait rien depuis D-427 : l'élasticité des créations et
+    # celle de l'investissement au coût du capital y valent 0, comme l'implantation et les
+    # fermetures ; ailleurs, son volume monte.
+    volume = fin.par_mesure("pib")["baisse_is"] - fin.par_mesure("effet_prix_pib")["baisse_is"]
+    nul = np.broadcast_to(np.asarray(theta) == 0.0, np.shape(volume))
+    assert np.all(volume[nul] == 0.0) and np.all(volume[~nul] > 0.0)
 
 
 def test_le_point_fixe_converge() -> None:

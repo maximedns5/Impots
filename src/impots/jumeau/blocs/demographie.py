@@ -23,8 +23,9 @@ France) ; h_o s'en calcule, 6,53 % au centre.
     Δτ_{m,t} = 100 Σ_{s ∈ N} P_{s,m,t} / (b Y_t)       points de taux apparent
     ΔE_{m,t} = −ε Δτ_{m,t} N₀ / 100                       sociétés créées en plus
 
-   et pour la référence, E_t = (e₀ + δ(θ_idées)) N₀ / 100 ; ΔE_{«»,t} = δ N₀ / 100. ε =
-   0,20 (Da Rin et al. 2011, tableau 4 p. 40 et p. 21-22, D-402), b = 0,092 (D-402),
+   et pour la référence, E_t = (e₀ + δ(θ_idées)) N₀ / 100 ; ΔE_{«»,t} = δ N₀ / 100.
+   ε(θ_élasticité) de 0 à 0,20, centre 0,043 (Da Rin et al. 2011, tableau 4 p. 40 et
+   p. 21-22, l'intra-groupe ; D-426 ; D-427 : une ligne θ), b = 0,092 (D-402),
    N les signaux de D-401 : l'IS, la CVAE et la C3S, les cotisations patronales nettes
    (comptées aussi par Mésange quand il tourne : le double compte décidé par le
    propriétaire, D-401), le PFU et les prélèvements sociaux du capital. δ(θ) : θ_idées,
@@ -79,6 +80,7 @@ import numpy as np
 
 from impots.jumeau.blocs.entreprises import (
     CREATIONS_ROW,
+    ELASTICITE_ROW,
     FERMETURES_ROW,
     IDEES_ROW,
     MONTEE_ROW,
@@ -105,7 +107,7 @@ def _base(p: Parametres, pop: Population) -> float:
 class Naissances:
     nom = "naissances"
     ecrit = ("creations_societes",)
-    thetas = (IDEES_ROW,)
+    thetas = (IDEES_ROW, ELASTICITE_ROW)
     remplace: tuple[str, ...] = ()
     porte = ("creations_entreprises",)
 
@@ -116,11 +118,12 @@ class Naissances:
     def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
         p, n0 = self.p, self.pop.stock
         delta = p.idees.a(lire_theta(ctx, IDEES_ROW))
+        epsilon = p.elasticite.a(lire_theta(ctx, ELASTICITE_ROW))
         out: dict[str, Any] = {"": _base(p, self.pop) + delta / 100.0 * n0}
         y = pib_scenario(ctx, ctx.k)
         for m, chemin in chemins(ctx, self.lit).items():
             taux = 100.0 * chemin[ctx.k] / (p.assiette_part_pib * y)
-            out[m] = -p.elasticite.centre * taux * n0 / 100.0
+            out[m] = -epsilon * taux * n0 / 100.0
         return {"creations_societes": out}
 
 

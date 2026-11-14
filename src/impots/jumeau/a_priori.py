@@ -113,6 +113,7 @@ def plages() -> dict[str, tuple[float, float, float]]:
            thetas.EMPLOI_COUT: triple(m.sigma),
            thetas.SALAIRES_CHOMAGE: triple(m.echelle_chomage),
            "investissement_cout_capital": plage(e.elasticite_cout),
+           "elasticite_creations": plage(e.elasticite),
            "investissement_accelerateur": plage(e.accelerateur_contemporain),
            "implantation_tmee": plage(e.semi_elasticite_tmee)}
     for ligne in m.offre.values():
