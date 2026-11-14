@@ -393,6 +393,24 @@ _ajouter(
           "€ courants", "D1", f"{LOT4_SOURCE} ; histoire (D-412) : D1 de la t. 1.105 sur "
           f"l'emploi salarié de la {T6210}", 4, "travail"),
 )
+#: L'emploi public d'une mesure (D-418), écrit par le bloc `emploi_public`
+#: (`blocs/menages.py`), et la valeur ajoutée non marchande qu'écrit `demande_publique` :
+#: la part du PIB que les blocs de l'activité marchande ne lisent pas.
+EMPLOI_PUBLIC_SOURCE = "le bloc `emploi_public` (D-418) ; menages.yaml, section emploi_public"
+_ajouter(
+    Champ("emploi_public", "Emploi salarié non marchand (branches OZ, PZ, QA, QB)",
+          "milliers", "", f"{EMPLOI_PUBLIC_SOURCE} ; référence : (1 − π) de l'emploi "
+          "salarié, π la part marchande de menages.yaml", 4, "travail"),
+    Champ("remunerations_publiques_emplois", "Rémunérations des APU d'une mesure qui "
+          "font des emplois", MDE, "D1 S13", f"{EMPLOI_PUBLIC_SOURCE} : s ΔD1", 4,
+          "emploi_public"),
+    Champ("remunerations_publiques_traitements", "Rémunérations des APU d'une mesure qui "
+          "relèvent les traitements", MDE, "D1 S13", f"{EMPLOI_PUBLIC_SOURCE} : (1 − s) ΔD1",
+          4, "emploi_public"),
+    Champ("va_non_marchande", "Valeur ajoutée non marchande des APU d'une mesure", MDE,
+          "B1G S13", "le bloc `demande_publique` (D-418) : ΔD1 + ΔD29 des APU, la part de "
+          "leur production non marchande qui est leur valeur ajoutée", 4, "emploi_public"),
+)
 #: Le revenu disponible et la consommation des ménages par décile de niveau de vie, au
 #: champ de la population (revenu disponible d'OpenFisca, hors loyers imputés et hors
 #: revenus du patrimoine non imputés ; consommation de l'enquête Budget de famille).

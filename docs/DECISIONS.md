@@ -30974,6 +30974,262 @@ résultat va dans une nouvelle D-entrée, contre ce pronostic ; aucune toléranc
 fenêtre, aucune entrée ne change après le premier calcul. Un correctif de code que le
 rejeu révélerait est une révision, sous un nouveau nom, et cette note reste.
 
+## D-418 — L'emploi public : les rémunérations des APU d'une mesure font des emplois
+
+**Ce qui est codé** (branche `claude/but23-emploi-public`, partie de `claude/but23-cadre`,
+f3541d1). Le premier écart restant de D-414 : Mésange met la moitié des rémunérations
+publiques de sa variante de dépense en emplois publics (G2017-04, p. 106, note 75 : « La
+hausse des rémunérations est réalisée à 50 % sur l'emploi public et à 50 % sur le salaire
+par tête ») ; le jumeau ne le portait pas. Un bloc, `emploi_public` (`blocs/menages.py`),
+dans le modèle structurel complet, après `demande_publique`, hors de la boucle (il ne lit
+que le choc de la mesure et la référence). Un canal neuf, « emploi_public », au registre
+et à `DE_MESANGE` (sa variante de dépense le porte en mode réduit) : porté une fois en
+mode structurel, pour tout instrument, refusé à côté de `mesange` (`DoubleCompte`).
+
+**Ce qui était déjà porté, vérifié d'abord.** ΔD1 des APU d'une mesure est au PIB :
+`demande_publique` l'écrit en consommation des APU (la production non marchande à ses
+coûts) et en rémunérations (D-411) ; le cadre en ferme le PIB. Il n'allait ni à l'emploi
+ni au revenu des ménages. Mais il allait, par le PIB, à l'activité que lisent les blocs
+marchands : l'emploi salarié marchand (ŷ, par la ligne « Valeur ajoutée » de Mésange,
+p. 48), les salaires (la productivité ŷ − ê), l'accélérateur et les coûts salariaux
+unitaires du commerce. ΔD1 faisait donc des emplois marchands, comme une demande adressée
+aux entreprises. Avec des emplois publics, ce serait le double compte : le même euro
+paierait un poste public et appellerait un emploi marchand.
+
+**Les équations**, pour la mesure m, l'année k (docstring du module, valeurs et sources
+dans `menages.yaml`, section `emploi_public`) :
+
+    s = part_m,k si la mesure la porte, sinon s(θ) = θ
+    ΔD1^e = s ΔD1,  ΔD1^t = (1 − s) ΔD1                  les emplois, les traitements
+    ΔE_pub = ΔD1^e / W_pub,k,  W_pub,k = r W_k            W_k = D1_k / E_sal, le lot 4
+    ΔE_sal = ΔE_tot = ΔE_pub ;  ΔU = −ΔE_pub ;  ΔPA = 0
+    ΔD1_c = ΔD1^e c^chômeurs + ΔD1^t c^super-brut          par cellule de ménages
+    ΔRD_c += ρ_c ΔD1_c ;  ΔD61 = Σ t61_c ΔD1_c ;  ΔD5 = Σ t5_c ΔD1_c
+
+Les emplois publics entrent dans l'emploi total et salarié et sont pris sur le chômage ;
+le chômage les fait lire aux salaires (WS), à la consommation (l'épargne de précaution) et
+aux allocations chômage (D62), comme ceux du secteur marchand. Leur rémunération va aux
+cellules comme la masse salariale marchande, aux taux moyens de chaque cellule (le revenu
+disponible, les cotisations, la CSG, la CRDS et l'IR) : les emplois au prorata des
+chômeurs des cellules, les traitements au prorata de leur super-brut (les cellules ne
+distinguent pas les agents publics, une approximation, dite). Le bloc n'écrit ni le PIB ni
+les rémunérations. `demande_publique` écrit à part ΔD1 + ΔD29, la valeur ajoutée des APU
+(`va_non_marchande`, un champ neuf) ; l'activité que lisent l'emploi, les salaires,
+l'investissement et le commerce en est retranchée, et l'emploi marchand est l'emploi
+salarié moins l'emploi public (`emploi_public`, un champ neuf, référence (1 − π) E_sal).
+ΔP2, ΔD632 et ΔP51g restent des achats aux producteurs marchands, lus comme avant.
+
+**Le salaire public, r = 0,94737** (2024). W_pub = D11 par tête des quatre branches que
+`part_marchande_salaries` prend pour le non-marchand (OZ, PZ, QA, QB : 295,056 Md€ de la
+t. 6.205 sur 8 312,3 milliers de la t. 6.210, 35 496 €), au rapport D1 / D11 des APU
+(t. 7.301 : 363,038 / 245,586 ; le D1 est celui de la t. 3.201, cotisations imputées
+comprises, comme le D1 des APU que le jumeau porte), 52 472 € ; W = D1 de la t. 1.105 sur
+l'emploi salarié de la t. 6.210, 55 388 € (D-412). Ni la t. 6.208 ni la t. 3.201 seules
+ne suffisent : la première n'a pas de rémunérations, la seconde pas d'effectifs. Les
+quatre branches comptent des salariés privés ; l'administration publique seule (OZ) a un
+D11 par tête plus haut de 3 %. Un recoupement, non un réglage : à θ½, la variante de
+dépense fait 69,7 milliers d'emplois publics ; Mésange en impute à long terme 26 − (−42)
+= 68 milliers (p. 107 : « L'emploi salarié marchand baisse de 42 000, pour une hausse de
+l'emploi total (y compris public) de 26 000 »), non-salariés compris.
+
+**Le θ, `jumeau_emploi_public_part`** : s(θ) = θ, ½ au centre (la convention de Mésange
+pour sa variante, non une mesure), 0 (tout en traitements) et 1 (tout en emplois) aux
+bornes, choisies, non vérifiées. **Une mesure qui porte sa part** la dit
+(`Mesure.part_emplois_publics`, {année : s}, dans [0 ; 1], refusée sans ΔD1 cette
+année-là) et ne lit pas θ : 1 pour des créations de postes (ou la part de ses postes
+dans son coût de rémunérations), 0 pour un point d'indice, 100 % traitement.
+`Mesure.hypothese` la prend. Un rapport d'étude qui relève le point d'indice ne porte
+pas de D1 des APU : son coût est non ventilé et la hausse des traitements est déjà dans
+son choc par décile, que la passe des ménages a chiffré ; le bloc n'y fait rien, et rien
+n'est compté deux fois.
+
+**À côté de Mésange, refait** (`scripts/jumeau_comparaison_mesange.py`, mêmes variantes,
+même départ, même scénario, θ½, 1, 2, 5 et 10 ans). Une comparaison de cohérence, pas un
+juge : rien n'est préenregistré, aucun paramètre n'est réglé dessus. Deux lignes
+s'ajoutent, que Mésange imprime dans chaque tableau (`macro.mesange.printed_row`) : le
+taux de chômage et le prix de la consommation des ménages. Les quatre variantes sans
+rémunérations publiques (IR, cotisations, TVA, investissement public) ne changent pas, au
+bit près ; leurs lignes de D-414 tiennent. La dépense publique, avant (D-414, le code de
+f3541d1) / après / Mésange :
+
+| dépense publique | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| PIB vol., % | 0,67/0,68/0,78 | 0,84/0,85/1,06 | 0,85/0,88/0,86 | 0,82/0,84/0,53 |
+| emploi march., milliers | 43/24/33 | 100/58/94 | 107/56/44 | 92/44/−8 |
+| chômage, − pts | 0,13/0,27/0,36 | 0,32/0,37/0,61 | 0,30/0,32/0,41 | 0,24/0,27/0,19 |
+| solde, − pts de PIB | 0,84/0,71/0,53 | 0,70/0,59/0,32 | 0,63/0,52/0,54 | 0,66/0,55/0,68 |
+| prix conso., % | 0,03/0,03/0,20 | 0,09/0,09/0,58 | 0,22/0,23/1,42 | 0,26/0,29/1,88 |
+| invest. SNF, % | 1,22/0,78/1,28 | 1,69/1,20/2,14 | 1,27/0,97/0,84 | 0,91/0,68/0,01 |
+
+(Le chômage et le solde baissent : les nombres sont ceux de la baisse.) Après, en plus :
+69,7 milliers d'emplois publics chaque année ; l'emploi total monte de
+98, 138, 136 et 121 milliers (avant : 50, 119, 126, 109).
+
+Le taux de chômage et le prix de la consommation des quatre autres variantes, jumeau
+(avant = après) / Mésange, lignes neuves :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR, chômage | −0,06/−0,10 | −0,18/−0,45 | −0,24/−0,77 | −0,19/−0,75 |
+| cotisations, chômage | −0,26/−0,35 | −0,60/−0,87 | −0,83/−1,32 | −0,86/−1,33 |
+| TVA, chômage | −0,06/−0,13 | −0,18/−0,49 | −0,24/−0,47 | −0,20/−0,29 |
+| inv. public, chômage | −0,14/−0,38 | −0,32/−0,83 | −0,28/−0,38 | −0,23/−0,19 |
+| IR, prix | 0,02/0,04 | 0,05/0,21 | 0,16/0,35 | 0,20/0,14 |
+| cotisations, prix | −0,29/−0,36 | −0,56/−0,70 | −0,71/−1,09 | −0,88/−1,32 |
+| TVA, prix | 0,02/−1,48 | 0,05/−1,58 | 0,16/−1,30 | 0,21/−0,89 |
+| inv. public, prix | 0,04/0,31 | 0,10/0,92 | 0,22/1,86 | 0,25/2,25 |
+
+**Ce qui a bougé.** (a) *Le chômage* de la dépense publique baisse deux fois plus la
+première année (0,27 point contre 0,13 ; Mésange 0,36) : les 69,7 milliers de postes.
+(b) *L'emploi marchand* baisse (24 milliers contre 43 la première année ; 44 contre 92 à
+dix ans) : c'est le double compte retiré. Une passe d'essai, l'emploi public sans retirer
+la valeur ajoutée des APU de l'activité marchande, donne 43, 99, 93 et 75 milliers
+d'emplois marchands et un chômage de −0,33, −0,50, −0,43, −0,35 : de 19 à 41 milliers
+d'emplois marchands que ΔD1 aurait appelés en plus de ses postes. L'accélérateur, qui lit
+la même activité, perd de même (0,78 % contre 1,22 % la première année). (c) *Le solde*
+se dégrade moins, de 0,11 à 0,13 point : les cotisations, la CSG et l'IR sur les
+rémunérations publiques (3,40 Md€ en 2026, 0,11 point de PIB) et les allocations chômage
+des chômeurs embauchés. (d) *Le PIB* monte à peine (0,68 contre 0,67) : moins d'activité
+marchande, plus de revenu des ménages (la consommation, en valeur, +0,55 % la première
+année).
+
+**Les écarts qui restent, et ce qui les fait.**
+
+* *Les traitements comptés en volume* (porté depuis, ci-dessous : « La part des
+  traitements en prix »). Le jumeau gardait la consommation des APU aux prix du scénario :
+  la part des traitements, (1 − s) ΔD1, 0,125 point de PIB à θ½, y était un volume.
+  Dans les comptes et dans Mésange, c'est un prix de la production non marchande
+  (p. 107 : la dépense joue « de manière indirecte et donc différée » par « les salaires
+  publics en prix, par exemple si on augmente le point d'indice » ; p. 106, la ligne
+  « Prix de production », 0,32 la première année, contre 0,15 pour la production
+  marchande). Le PIB en volume du jumeau en est majoré d'autant : 0,68 contre 0,78, il
+  ferait de l'ordre de 0,55.
+  Le porter demandait un prix de la consommation des APU par mesure, que la tendance
+  fixait : un changement du cadre, décidé par le responsable, ci-dessous.
+* *L'activité marchande plus faible.* La valeur ajoutée marchande de la mesure fait 0,43,
+  0,61, 0,67 et 0,64 % (le PIB en volume moins sa part prix et la valeur ajoutée des APU)
+  contre 0,75, 1,06, 0,72 et 0,28 dans Mésange (« VA du secteur marchand », p. 106) ; la
+  consommation des ménages 0,55, 1,00, 1,29, 1,39 % en valeur contre 0,69, 1,35, 1,85,
+  1,63 en volume. C'est la consommation des prestations et des revenus (le profil de
+  Mésange y est le même, p. 34 ; le revenu rendu est celui des cellules, aux taux des
+  cellules) et le contenu en importations du TES : celui de la consommation des APU
+  (11,69 %, D-408) s'applique à toute la consommation des APU, ΔD1 compris, qui n'en a
+  pas (0,03 point de PIB la première année). D'où l'emploi marchand sous Mésange les deux
+  premières années (24 et 58 milliers contre 33 et 94), et le chômage (0,37 point à deux
+  ans contre 0,61) ; l'offre de travail du jumeau, qui suit le salaire marchand, en
+  reprend 8 à 35 milliers.
+* *L'éviction reste faible.* Les prix de la consommation font 0,09, 0,23, 0,29 % à 2, 5
+  et 10 ans contre 0,58, 1,42, 1,88 ; le salaire marchand 0,66, 1,27, 1,42 % contre 1,34,
+  2,85, 2,89 (« Salaire nominal brut »). Le chômage, moteur de la boucle, baisse plus
+  qu'avant, mais l'emploi marchand moins : le salaire marchand monte de 0,06, 0,12 et 0,15
+  point de plus qu'avant à 2, 5 et 10 ans (D-414 : 0,60, 1,15, 1,27), les prix de 0,03 à
+  dix ans. Le PIB de dix ans reste au-dessus (0,84
+  contre 0,53), l'emploi marchand aussi (44 contre −8). La boucle et ses limites sont
+  celles de D-414, et c'est le prochain écart.
+* *Les autres variantes*, inchangées : le chômage du jumeau baisse moins que dans Mésange
+  partout, comme son emploi marchand (D-414) ; la TVA ne passe pas par les prix, choisi et
+  dit (D-414 e), d'où la ligne des prix de la TVA, de signe opposé à Mésange.
+
+**θ borne, sans renverser.** La dépense publique à la seule part : à θ = 0, 0,08, 0,21,
+0,23, 0,19 point de chômage en moins, 26, 67, 81, 71 milliers d'emplois marchands, un PIB
+de 0,66, 0,85, 0,90, 0,88, un solde dégradé de 0,75, 0,64, 0,57, 0,59 ; à θ = 1, 0,47,
+0,53, 0,41, 0,35 point, 139,4 milliers de postes, 21, 49, 32, 17 milliers d'emplois
+marchands (l'éviction par le salaire), un PIB de 0,70, 0,85, 0,86, 0,81, un solde de
+0,66, 0,54, 0,48, 0,51. Tous les θ ensemble : un PIB de 0,64, 0,72, 0,76, 0,79 à θ = 0 et
+de 0,71, 0,78, 0,61, 0,65 à θ = 1.
+
+**Le cadre touché, au plus juste.** `champs.py` : `emploi_public`,
+`remunerations_publiques_emplois`, `remunerations_publiques_traitements`,
+`va_non_marchande` ; `canaux.py`, une section ; `thetas.py`, une ligne ;
+`Mesure.part_emplois_publics` ; `blocs.ordre_structurel`, le bloc après la demande
+publique ; `demande_publique`, le champ de la valeur ajoutée ; l'emploi, les salaires, la
+consommation (`ecarts`, `revenus_cellules`), l'investissement et le commerce, en mode
+structurel, la lecture de l'activité marchande ; `macro.mesange.printed_row`, une ligne
+imprimée d'une variante ; `CADRE.md` §4 bis. Le mode réduit ne lit rien de neuf. La page
+du jumeau sert une copie du paquet : `site construire` le recopie (`jumeau-paquet.json`
+seul change) ; `site verifier` et `site publiable` passent. Le θ neuf y apparaît avec les
+autres, par le registre.
+
+**Les tests.** `tests/test_jumeau_emploi_public.py`, 14 légers, en 13 s, sur les données
+synthétiques du mode structurel : le bloc à la main à θ = 0, ½, 1 (ΔE_pub = s ΔD1 / (r W)
+à 1e-12, l'emploi et le chômage d'autant, la population active intacte, les deux parts
+qui somment ΔD1, les prélèvements aux taux des cellules) ; r relu sur les comptes ; le
+sens sur un axe de trois tirages de la part (l'emploi monte, le chômage et son taux
+baissent, ½ entre les bornes) ; la part portée par la mesure, des postes et un point
+d'indice, qui ne lit pas θ ; les refus de `Mesure` ; le canal porté une fois et refusé à
+côté de `mesange` ; ni PIB ni rémunérations écrits par le bloc ; ŷ et ê qui retranchent
+la valeur ajoutée des APU et l'emploi public ; les identités à 1e-9 à θ = 0, ½, 1 et sur
+un axe de cinq tirages, avec quatre mesures (la dépense publique, des postes, un point
+d'indice, une part à θ), Δb décomposé à 1e-12. Sur le code d'avant, ils échouent tous :
+ni le bloc ni ses champs n'existaient. La chaîne retrouvée en mode réduit (`test_jumeau`,
+`test_rejouer`) et le déterminisme (`test_jumeau_determinisme`, dont les mesures portent
+la dépense publique) tiennent. `pytest -m "not lourd and not chrono" -n 2` sur
+`test_jumeau*.py`, `test_rejouer.py`, `test_dependances.py` et `test_site.py` : 279
+verts, un sauté (les cellules de ménages, faute de population dans ce worktree), en
+2 min 11 s ; `ruff check src tests scripts` propre ; la page dans Chromium
+(`test_jumeau_page.py`, lourd) passe en 23 s. Ni `make full` ni `make impact`.
+
+**Ce qui reste.**
+
+* Le contenu en importations de la consommation des APU, moyen, appliqué à ΔD1.
+* Les bornes de θ sont choisies ; la part de 50 % est la convention d'une variante de
+  Mésange, non une estimation.
+* L'éviction faible et le chômage des autres variantes, de D-414.
+
+**La part des traitements en prix** (décision du responsable, après le premier rapport :
+une hausse de traitement n'est pas un volume, comme Mésange, p. 106-107). Le plus simple et
+le plus lisible : la voie qu'a prise le commerce pour le prix de la consommation des
+ménages (D-414). La tendance laisse au bloc `emploi_public` le déflateur de la
+consommation des APU (`Tendance(..., laisse=(..., "prix_c_apu"))`), champ non additif à
+un écrivain, et le bloc l'écrit, T_k les traitements des mesures de l'année, C_k la
+consommation des APU (que `demande_publique` a écrite avant lui) :
+
+    prix_c_apu_k = (1 + π_k) [C_k / (C_k − T_k)] / [C_{k−1} / (C_{k−1} − T_{k−1})]
+
+Le volume que le cadre chaîne (`pas.fermer`, C_k / prix − C_{k−1}) vaut exactement
+(1 + e_{k−1}) [(C_k − T_k) / (1 + π_k) − (C_{k−1} − T_{k−1})], 1 + e = C / (C − T) le prix
+relatif de la production non marchande : les traitements n'y sont plus, les emplois y
+restent ; sans traitements, le déflateur est celui de la tendance au bit. Un champ de prix
+additif dédié aurait demandé de changer la formule du volume dans le cadre ; ici le cadre
+ne change pas, et `CADRE.md` §4 bis le dit. Le prix relatif monte la première année des
+traitements et reste ensuite (C et T croissent ensemble) : le PIB en volume perd la part
+des traitements en niveau. Rien d'autre ne lit ce déflateur : les blocs marchands lisaient
+déjà l'activité sans la valeur ajoutée des APU. Le mode réduit n'en voit rien (la tendance
+y écrit le déflateur) ; les quatre autres variantes ne changent pas, au bit près.
+
+La ligne « dépense publique », PIB en volume, en %, D-414 / premier temps de D-418 / après
+/ Mésange (les autres lignes ne changent pas : emploi, chômage, solde, prix et
+investissement sont ceux du tableau ci-dessus) :
+
+| horizon | D-414 | D-418, premier temps | après | Mésange |
+|---|---|---|---|---|
+| 1 an | 0,67 | 0,68 | 0,55 | 0,78 |
+| 2 ans | 0,84 | 0,85 | 0,72 | 1,06 |
+| 5 ans | 0,85 | 0,88 | 0,75 | 0,86 |
+| 10 ans | 0,82 | 0,84 | 0,72 | 0,53 |
+
+La part des traitements en est retirée, 0,13 point la première année, comme attendu.
+L'écart à Mésange s'élargit à court terme (0,55 contre 0,78, 0,72 contre 1,06) : c'est
+celui de l'activité marchande, dit ci-dessus, qui n'était plus masqué par un volume
+compté en trop ; à dix ans, le jumeau reste au-dessus (0,72 contre 0,53), l'éviction
+faible. θ borne : à la seule part, 0,41, 0,60, 0,65, 0,62 à θ = 0 (tout en traitements :
+le PIB ne garde que le revenu des ménages) et 0,70, 0,85, 0,86, 0,81 à θ = 1 (tout en
+emplois, le volume de D-418 premier temps) ; tous les θ ensemble, 0,39, 0,47, 0,51, 0,54
+et 0,71, 0,78, 0,61, 0,65.
+
+Un test de plus dans `test_jumeau_emploi_public.py` (15 en tout, 14 s) : sur un axe de
+trois tirages de la part, le volume chaîné de la consommation des APU depuis le départ
+égal à celui de la référence à 1e-12 quand tout est traitement, et croissant avec la part ;
+le déflateur égal à la formule à 1e-12, celui de la référence à celui de la tendance au
+bit ; le prix relatif C / (C − T) décroissant, un à θ = 1. Rouge sur le premier temps (le
+déflateur y était celui de la tendance), vert après. Les identités à 1e-9 (θ = 0, ½, 1 et
+cinq tirages), le mode réduit (`test_jumeau`, `test_rejouer`) et le déterminisme tiennent :
+`pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_rejouer.py`,
+`test_dependances.py` et `test_site.py`, 280 verts, un sauté ; `ruff` propre. `site
+construire` (le paquet seul change), `site verifier`, `site publiable` passent ; la page
+dans Chromium (`test_jumeau_page.py`) passe en 22 s. Rien de tout cela n'est un juge : une
+comparaison de cohérence, aucun paramètre réglé dessus.
+
 ## D-420 — Le jumeau noté sur l'histoire : 7 cibles sur 12, et sa dynamique n'apporte rien
 
 **Ce qui a tourné.** `scripts/jumeau_rejeu_histoire.py`, sur `fe9434f` poussé, après le

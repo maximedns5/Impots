@@ -3,7 +3,8 @@
 Une comparaison de cohérence, pas un juge : rien n'est préenregistré ni réglé dessus. Lit
 l'état publié de 2025, les cellules d'entreprises de 2023 et de ménages de 2024 et le
 document de Mésange (hors git, `make data` et `scripts/jumeau_cellules.py`), et imprime le
-tableau en Markdown, avec la variante salariale de Mésange (D-349) pour le PIB (D-414).
+tableau en Markdown, avec la variante salariale de Mésange (D-349) pour le PIB (D-414) ;
+depuis D-418, le taux de chômage et le prix de la consommation, et l'emploi public.
 
     PYTHONPATH=src python scripts/jumeau_comparaison_mesange.py [θ]
 """
