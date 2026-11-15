@@ -34173,7 +34173,7 @@ de route. Les tests légers des fichiers touchés tiennent ce qui change ; aucun
 publié ne change, chaque rapport garde son commit.
 
 
-## D-462 — Le moteur rapide : ce qu'une passe refait, et la conception du moteur incrémental
+## D-462 — Ce qu'une passe refait, et la conception du moteur incrémental
 
 **La question du propriétaire** : refait-on toute la population, et l'extrapolation à la
 France, à chaque mesure ? **Non pour la population, oui pour presque tout le reste.**
@@ -34306,3 +34306,63 @@ référence, une passe de l'ancien droit courant, environ 50 s, une seule fois.
 
 **La machine.** Environ 20 min accordées par le propriétaire (D-445), détachée, un seul
 processus, aucune autre passe lourde lancée en même temps par ce volet.
+
+## D-464 — Le moteur rapide redonne les nombres à l'euro, mais manque les 10 s
+
+La comparaison de D-463, au commit `18f6ed2`, le 15 novembre, détachée, un seul processus :
+environ 4 min de machine sur la population réelle, 1 min sur la fixture.
+
+**Les nombres : aucun écart.** Sur la population de test, les trois réformes : chaque
+colonne de chaque ménage (400 ménages, droit courant et réforme), chaque personne et chaque
+taux marginal identiques à l'ancien moteur, écart nul. Sur la population réelle, contre
+les trois rapports « mesure seule » commités : 93, 86 et 91 grandeurs comparées (le coût
+mécanique, les 55 écarts par ligne, la bande et les canaux des comportements, le PIB de la
+boucle macro, les trois nombres des dix déciles), **toutes à écart nul**, pas seulement
+dans la tolérance : −917 469 815,7627 € pour la tranche à 60 %, 1 328 354 568,6270 € pour
+les aides au logement, 5 198 684 093,5322 € pour la TVA des carburants, les rapports. Le
+contrôle des 200 ménages hors crible n'a jamais bougé (écart 0,00 €) : aucun repli. Le
+pronostic des nombres est tenu.
+
+**Le crible.** La tranche à 60 % touche 86 ménages sur 20 000 (ceux dont les revenus
+bruts dépassent 245 000 €) ; les aides au logement, 13 227 (tous les non-propriétaires,
+deux tiers, et non quatre sur dix comme le pronostic le disait) ; la TVA, aucun.
+
+**Le temps**, appel de la mesure (`etude.first_year`), une mesure jamais chiffrée dans le
+processus (les taux de sa réforme pas en cache), la référence sur disque, mesuré dans une
+passe d'essai juste après la comparaison, machine partagée :
+
+| Mesure | Rapport | Moteur rapide | Pronostic | Population, comportements |
+|---|---|---|---|---|
+| Tranche à 60 % | 174,7 s | 53,8 s | 8 s | 9,8 s, 43,5 s |
+| Aides au logement + 10 % | 111,3 s | 64,1 s | 25 s | 47,5 s, 16,6 s |
+| TVA des carburants | 40,6 s | 1,2 s | 3 s | 0,4 s, 0,5 s |
+
+La première mesure d'une année paie la référence : 56 s, une fois (l'ancien droit courant
+des 20 000 ménages). Les tables de la boucle macro coûtent 7 s au premier appel d'un
+processus. La même mesure chiffrée une seconde fois prend 9,0 s et 54,8 s : elle lit ses
+taux marginaux dans le cache, ce qui n'est pas un gain du moteur rapide et n'est pas
+compté comme tel.
+
+**Le pronostic du temps est manqué sur deux mesures, et la cible de 10 s aussi.** La TVA
+passe sous la seconde : le droit courant n'est plus refait, et rien d'autre ne tournait.
+La tranche à 60 % gagne un facteur 3, pas 20 : une simulation coûte 4 à 5 s quel que soit
+son nombre de ménages (la construction, et l'historique mois par mois des aides au
+logement de D-462), et les comportements en font huit (quatre échantillons, le revenu et
+le revenu plus 100 €), même sur 286 ménages. Les aides au logement gagnent un facteur 1,7
+seulement : leur crible garde deux ménages sur trois, et la passe réduite sur 13 427
+ménages a coûté 48 à 54 s, plus que les 41,7 s de la passe entière du rapport, sur une
+machine plus chargée ce jour-là (charge moyenne de 4 pour 4 cœurs).
+
+**Ce qui reste à faire pour passer sous 10 s**, sans changer un nombre : les huit
+simulations des taux marginaux en une seule (les ménages des quatre échantillons
+dédoublonnés, le revenu et le revenu plus 100 € côte à côte sous deux identifiants), ce
+qui ramènerait la tranche à 60 % vers 15 s ; un crible des aides au logement plus fin
+que « non propriétaire » (un loyer et des ressources sous le plafond de sortie), à
+vérifier par le même contrôle ; et un processus qui garde l'arbre, les références et les
+tables macro entre deux passes, au lieu du processus neuf de chaque passe d'une étude.
+Le chemin annuel, qui refait vingt passes dont dix identiques, n'est pas touché ici.
+
+**Ce qui change.** Rien de publié : le moteur rapide n'est pris que sous
+`IMPOTS_MOTEUR=rapide`, et l'ancien chemin reste celui des études tant que le propriétaire
+n'a pas décidé de basculer. `tests/test_incremental.py` tient l'égalité ménage par ménage
+sur la fixture (les aides au logement, la référence lue) et le crible du barème.
