@@ -328,6 +328,17 @@ def _bref(lines: list[str]) -> list[str]:
     return lines[start + 1:end]
 
 
+def redirection(cible: str) -> str:
+    """Une page qui mène à une autre, sans script : une ancienne adresse gardée."""
+    c = html.escape(cible)
+    return ("<!doctype html>\n<html lang=\"fr\">\n<head>\n<meta charset=\"utf-8\">\n"
+            f'<meta http-equiv="refresh" content="0; url={c}">\n'
+            f'<link rel="canonical" href="{c}">\n<meta name="robots" content="noindex">\n'
+            f"<title>Cette page a changé d'adresse</title>\n</head>\n<body>\n"
+            f'<p>Cette page a changé d\'adresse : <a href="{c}">{c}</a>.</p>\n'
+            "</body>\n</html>\n")
+
+
 def _bref_plie(bref: str) -> str:
     """L'« en bref » d'une étude dans la liste (D-451) : son tableau, et les phrases qui
     le lisent repliées ; elles se répètent d'une étude à l'autre."""
@@ -363,16 +374,20 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
     for study in studies:
         if study.refus:
             # Its passes ran, and a guard refused its path (D-398): not unrun, refused.
+            # Dit en mots d'abord ; la raison exacte, repliée (D-452, remarque A4).
             listed.append(f'<li><strong>{html.escape(study.titre)}</strong> — '
-                          f"chiffrée, puis refusée : {html.escape(study.refus)}</li>")
+                          "chiffrée, mais pas publiée : un contrôle de cohérence du modèle "
+                          "a refusé son résultat. <details><summary>La raison exacte"
+                          f"</summary><p>{html.escape(study.refus)}</p></details></li>")
             continue
         why = study.drift()
         if why:
             raise SiteError(f"« {study.nom} » : {why} Le site ne lit qu'une étude à jour.")
         if not study.page.exists():
             listed.append(f'<li><strong>{html.escape(study.titre)}</strong> — '
-                          f"préenregistrée ({html.escape(study.preenregistrement)}), ses "
-                          f"passes n'ont pas tourné.</li>")
+                          "pas chiffrée dans la série actuelle : son chiffrage a été annoncé "
+                          f"d'avance ({html.escape(study.preenregistrement)}), mais ses "
+                          "calculs n'ont pas été relancés.</li>")
             continue
         entries = study.load()
         lines, n = study.lines(entries)
@@ -448,6 +463,11 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
 
     files["index.html"] = _page(TITLE, site_accueil.accueil(studies, set(files)), large=True,
                                 liens=False)
+    # Les anciennes adresses du parcours (but 20) mènent à leur étape (D-452) : un lien
+    # publié ne casse pas.
+    for ancien, nouveau in parcours.ANCIENNES.items():
+        if nouveau in files and ancien not in files:
+            files[ancien] = redirection(nouveau)
     presentes = set(files)
     for name, text in list(files.items()):
         if not name.endswith(".html"):

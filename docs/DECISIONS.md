@@ -34241,3 +34241,43 @@ chemin et l'échelle de lecture (M2).
 étapes 3 à 9 est encore celui d'avant (formules, noms de fichiers, P5, P6, P8, P9) ; les
 noms de code des ménages types de l'étape 4 (P2) ; les lignes d'état opaques de la liste
 des études (A4), que les tests tiennent mot pour mot.
+
+## D-452 — Les réglages du chemin dits pour un débutant, les anciennes adresses gardées
+
+**Le fait.** Après D-451, les sections à curseur des étapes restaient celles d'avant :
+une formule à la place de l'idée, des noms de fichiers, des curseurs nommés « C1,
+eti_all », une dette de référence sans sa source, la copule et les indices de Sobol
+nommés sans être dits (le lecteur novice, passe 1 : P5, P6, P8, P9) ; le tableau des
+ménages types portait leurs noms de code (P2) ; la liste des études, des lignes d'état
+opaques (A4) ; la page du calage, des noms de code et un graphique à deux gris (Po4, Po5).
+
+**Ce qui change.** Chaque section à curseur des étapes 3 à 9 s'ouvre sur un titre et
+l'idée en mots, puis la portée du réglage (ce qu'il change, ce qu'il ne change pas) ;
+la prose de calcul d'avant se replie sous les réglages, « Comment ce calcul est fait »
+(`parcours.replier`, `chemin.a_vous`). Les éléments que les scripts lisent restent en
+place. Les curseurs des comportements disent qui réagit et la fourchette publiée ; leurs
+colonnes, ce que la réaction rapporte ; ceux du verdict, la corrélation et l'incertitude
+du multiplicateur en mots, et ce qui fait varier le résultat par ce qu'il mesure, plus par
+le nom de son fichier. La dette de référence de 2026 et celle de 2025 publiée sont des
+chiffres sourcés. Les tableaux longs (la grille entière, ses mots, les mêmes nombres sans
+script) se replient. Les ménages types sont nommés en français, leur fichier en petit.
+La table des totaux calés dit ce qu'un total calé prouve (rien) au lieu du nom de sa
+constante ; le graphique des taux marginaux prend deux couleurs franches, dit son unité
+(des millions de foyers) et ce qu'est un taux marginal.
+
+**La liste des études** dit une étude refusée « chiffrée, mais pas publiée : un contrôle
+de cohérence du modèle a refusé son résultat », la raison exacte repliée dessous, et une
+étude non refaite « pas chiffrée dans la série actuelle », avec son préenregistrement.
+Les tests de `test_site.py` qui tenaient l'ancien texte mot pour mot tiennent la même
+propriété : listée, avec sa raison et son préenregistrement, sans page ni lien.
+
+**Les anciennes adresses** du parcours (`parcours-1-menage.html` à
+`parcours-8-erreur.html`) sont des pages de redirection statiques, sans script, vers
+leur étape (`parcours.ANCIENNES`) : aucun lien publié ne casse.
+
+**L'échelle de lecture** lit 2035 dans un rapport commité : le PIB de 2025
+(`rejeu.start.gdp_eur`) porté dix ans au rythme nominal du cadre central
+(`rejeu.cadre.growth`, celui d'`etudes/cadres/central.json`), la même arithmétique que le
+rejeu de la dette ; un point de PIB y vaut environ 30 Md€ en 2025 et 40 Md€ en 2035. La
+méthode, l'accueil et le chemin ne reprennent plus les limites que D-451 a corrigées.
+Aucun nombre publié ne change.

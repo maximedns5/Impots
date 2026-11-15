@@ -312,7 +312,16 @@
     }
 
     function nom(groupe) {
-      return groupe === MACRO_ROW ? "le multiplicateur" : `les lignes de ${groupe}.yaml`;
+      const GROUPES = { eti: "la réponse du revenu déclaré", labour_supply: "l'offre de travail",
+        employer_contributions: "l'emploi et le coût du travail",
+        self_financing: "l'autofinancement des baisses de cotisations",
+        dividends: "les dividendes",
+        corporate_tax_growth: "l'impôt sur les sociétés et la croissance",
+        firm_creation: "les créations d'entreprises", patrimoine: "le patrimoine déclaré",
+        production_tax: "l'investissement et les impôts de production",
+        rd_cir: "la R&D et son crédit d'impôt" };
+      if (groupe === MACRO_ROW) return "le multiplicateur";
+      return GROUPES[groupe] || `les réactions de l'article ${groupe}`;
     }
 
     function calcule(recalcul) {

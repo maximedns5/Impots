@@ -55,6 +55,17 @@ PAGES: tuple[tuple[str, str, str], ...] = (
 #: Les pages sans curseur, par décision : celle qu'on cite (D-375), et les deux étapes
 #: qui décrivent des données plutôt qu'une hypothèse (D-451).
 SANS_CURSEUR = {"erreur", "sources", "population"}
+#: Les adresses du parcours d'avant (but 20), et l'étape où elles mènent (D-452).
+ANCIENNES: dict[str, str] = {
+    "parcours-1-menage.html": "parcours-4-baremes.html",
+    "parcours-2-france.html": "parcours-3-calage.html",
+    "parcours-3-cout.html": "parcours-5-mesure.html",
+    "parcours-4-comportements.html": "parcours-6-comportements.html",
+    "parcours-5-activite.html": "parcours-7-bouclage.html",
+    "parcours-6-dette.html": "parcours-8-dette.html",
+    "parcours-7-verdict.html": "parcours-9-verdict.html",
+    "parcours-8-erreur.html": "parcours-10-limites.html",
+}
 #: Le nombre d'étapes du chemin ; la page qui compare vient après.
 N_ETAPES = 10
 
@@ -123,9 +134,46 @@ def _mots(texte: str) -> int:
     return len(re.sub(r"<[^>]+>", " ", texte).split())
 
 
-def replier(corps: str) -> str:
+_PROSE = re.compile(r"(?<!<noscript>)<p\b[^>]*>.*?</p>", flags=re.S)
+
+
+def _a_vous(s: str, debut: int, a_vous: tuple[str, str] | None) -> str:
+    """Une section à curseur, pour un débutant (D-452) : un titre et l'idée en mots
+    d'abord, la portée du curseur ; la prose de calcul d'avant (formules, fichiers),
+    repliée sous les réglages. Les éléments que le script lit gardent leur place."""
+    from impots import site_composants as c
+
+    if a_vous is None:
+        return f'<section class="a-vous">{s}</section>'
+    titre, intro = a_vous
+    tete, reste = s[:debut], s[debut:]
+    premier = re.search(r"<input|<select", reste)
+    avant, apres = (reste[:premier.start()], reste[premier.start():]) if premier else (
+        reste, "")
+    pliees: list[str] = []
+
+    def plier(m: re.Match) -> str:
+        bloc = m[0]
+        if re.search(r'\bid="|<input|<select|<output|<button', bloc):
+            return bloc
+        pliees.append(bloc)
+        return ""
+
+    avant = _PROSE.sub(plier, avant)
+    # Après les réglages aussi, la prose sans cible du script et les listes se replient.
+    apres = _PROSE.sub(plier, apres)
+    apres = re.sub(r"<(ul|ol)\b(?![^>]*\bid=)[^>]*>.*?</\1>", plier, apres, flags=re.S)
+    h2 = re.match(r"<h2([^>]*)>", tete)
+    return ('<section class="a-vous">' + f"<h2{h2[1] if h2 else ''}>{html.escape(titre)}</h2>"
+            + intro + avant + apres
+            + (c.detail("Comment ce calcul est fait", "".join(pliees)) if pliees else "")
+            + "</section>")
+
+
+def replier(corps: str, a_vous: tuple[str, str] | None = None) -> str:
     """Le corps d'une page d'avant, rangé (D-451) : les sections qui donnent la main au
-    lecteur (un curseur, un choix) restent ouvertes ; les autres se replient, chacune
+    lecteur (un curseur, un choix) restent ouvertes, réécrites pour un débutant quand
+    l'étape donne `a_vous` (titre, introduction en HTML) ; les autres se replient, chacune
     sous son titre, avec son temps de lecture. Rien n'est retiré : tout se lit en un clic,
     et chaque ancre reste celle de la section."""
     from impots import site_composants as c
@@ -136,11 +184,16 @@ def replier(corps: str) -> str:
     if tete.strip():
         repliees.append(c.detail("Pour commencer", tete,
                                  note=f"{max(1, round(_mots(tete) / 220))} min"))
+    premier = True
     for s in sections:
         m = re.match(r'<h2(?: id="([^"]*)")?[^>]*>(.*?)</h2>', s, flags=re.S)
         interactif = re.search(r'<input[^>]*type="range"|<select', s) is not None
         if m is None or interactif:
-            ouvertes.append(f'<section class="a-vous">{s}</section>' if interactif else s)
+            if interactif and m is not None:
+                ouvertes.append(_a_vous(s, m.end(), a_vous if premier else None))
+                premier = False
+            else:
+                ouvertes.append(f'<section class="a-vous">{s}</section>' if interactif else s)
             continue
         titre = html.unescape(re.sub(r"<[^>]+>", "", m[2]))
         bloc = c.detail(titre, s[m.end():], note=f"{max(1, round(_mots(s) / 220))} min")
@@ -181,7 +234,8 @@ def build() -> dict[str, str]:
         _check(module, page)
         if index < N_ETAPES:
             assert chemin.ETAPES[index].fichier == name, name
-            main = (chemin.tete(index, page.prouve) + replier(page.corps)
+            main = (chemin.tete(index, page.prouve)
+                    + replier(page.corps, chemin.a_vous(module))
                     + chemin.suite(index))
         else:
             main = (chemin.barre(-1) + f"<h1>{html.escape(titre)}</h1>\n"

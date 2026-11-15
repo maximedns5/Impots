@@ -434,3 +434,115 @@ def hub() -> str:
             + f"<p>Un même exemple traverse les étapes : {fil}</p>"
             + c.note_source(f'Les chiffres s\'ouvrent sur leur provenance ; l\'étude entière : '
                             f'<a href="{ATTAL_PAGE}">Gabriel Attal</a>.'))
+
+
+# --- Les sections à curseur, dites pour un débutant (D-452) ---------------------------
+
+def _portee(change: str, ne_change_pas: str) -> str:
+    return ('<div class="curseur-portee"><div><b>Ce que le réglage change</b>' + change
+            + '</div><div class="ne-change-pas"><b>Ce qu\'il ne change pas</b>'
+            + ne_change_pas + "</div></div>")
+
+
+def _reference_2026() -> str:
+    pred = _lire(ATTAL_PRED)
+    r = pred["years"][0]
+    d = pred["rejeu"]["start"]
+    depart = c.chiffre(f"{d['debt_ratio'] * 100:.2f} %".replace(".", ","), Provenance(
+        "La dette publique de 2025, au sens de Maastricht, en part du PIB : le départ de "
+        "toutes les études.", rapport=ATTAL_PRED, champ="rejeu.start.debt_ratio",
+        commit=pred["commit"], source=("Insee, dette de Maastricht des APU",
+                                       "https://www.insee.fr/fr/statistiques/fichier/"
+                                       "9035065/dette.xlsx")))
+    ref = c.chiffre(f"{r['reference'] * 100:.2f} %".replace(".", ","), Provenance(
+        f"La dette de référence de {r['year']}, sans réforme : celle de 2025 portée un an "
+        "par l'identité comptable (intérêts au taux de 2025, croissance et prix du cadre, "
+        "solde primaire de 2025 avec la dépense gelée en volume).", rapport=ATTAL_PRED,
+        champ=f"years[0].reference", commit=pred["commit"]))
+    return depart, ref
+
+
+def a_vous(module: str) -> tuple[str, str] | None:
+    """Le titre et l'introduction en mots de la section à curseur d'une étape."""
+    if module == "france":
+        from impots.parcours import france
+
+        rows, _ = _grille()
+        t, n = france.compte(rows, 2024)
+        return ("À vous : la France simulée contre la vraie",
+                "<p>Chaque ligne compare un total de la population simulée (l'impôt qu'elle "
+                "paie, les foyers de chaque tranche, les prestations, le niveau de vie) à son "
+                "total publié. L'écart admis, la <strong>tolérance</strong>, est écrit avant "
+                f"le calcul. En 2024, {t} lignes sur {n} tiennent la leur. Choisissez une "
+                "année pour la voir.</p>"
+                + _portee("l'année montrée : 2022, 2023 ou 2024", "la population : il n'y "
+                          "en a qu'une, celle de 2024, ramenée en arrière pour 2022 et 2023")
+                + '<p class="boutons">'
+                + renvoi("population-france.html", "La population face à la France, en détail")
+                + "</p>")
+    if module == "menage":
+        return ("À vous : un salaire, une situation",
+                "<p>Choisissez une situation et un salaire : le tableau suit la loi de 2024 "
+                "ligne par ligne, du coût pour l'employeur au revenu disponible du ménage. "
+                "Chaque point du curseur a été calculé d'avance par le moteur.</p>"
+                + _portee("le ménage montré", "la loi, celle de 2024"))
+    if module == "cout":
+        return ("À vous : tourner un bouton",
+                "<p>Une mesure est souvent un bouton qu'on tourne : la part des cotisations "
+                "de retraite qu'on garde, le taux de TVA sur l'énergie. Chaque position du "
+                "curseur est un calcul déjà fait sur toute la population ; le coût affiché "
+                "est celui des ménages en 2026, la population vieillie à cette année.</p>"
+                + _portee("le coût pour les ménages, à chaque position chiffrée", "le reste "
+                          "de la loi ; les réactions des gens et de l'économie (étapes 6 et 7)"))
+    if module == "comportements":
+        return ("À vous : la force de chaque réaction",
+                "<p>Chaque curseur règle une réaction mesurée par un article publié : à "
+                "gauche, le bas de la fourchette que l'article donne ; à droite, le haut ; "
+                "au milieu, sa valeur centrale. Le tableau dit, année par année, ce que la "
+                "réaction ajoute au budget ou lui retire. Une <strong>recette positive "
+                "réduit le coût</strong> : si l'impôt baisse et que les gens déclarent un "
+                "peu plus de revenu, une partie de la baisse revient au budget.</p>"
+                + _portee("le coût après comportements de l'étude choisie, et sa dette en "
+                          "2035", "le coût mécanique (étape 5) ; ce que l'activité rend, "
+                          "tenu au milieu de sa fourchette (étape 7)"))
+    if module == "activite":
+        return ("À vous : la force du multiplicateur",
+                "<p>Une baisse d'impôt relance un peu l'activité, et l'activité plus haute "
+                "rend une partie du coût en impôts. Combien ? Le modèle Mésange de l'Insee "
+                "et de la DG Trésor donne une valeur centrale ; les autres études publiées "
+                "s'en écartent. Le curseur va du bas de cet écart (θ = 0) à son haut "
+                "(θ = 1). La <strong>persistance</strong> dit combien de temps l'effet "
+                "dure : lu dans Mésange jusqu'à dix ans (le réglage des études), éteint "
+                "après trois ans, ou tenu à son niveau de la troisième année.</p>"
+                + _portee("ce que l'activité rend chaque année, donc la dette de 2035 de "
+                          "l'étude choisie", "le coût de chaque année (étape 5) ; les "
+                          "réactions des gens, tenues au milieu (étape 6)"))
+    if module == "dette":
+        depart, ref = _reference_2026()
+        return ("À vous : changer le cadre économique",
+                "<p>La dette se compte en part du PIB : un PIB qui grandit plus vite la "
+                "fait baisser. Les curseurs changent la croissance et les prix des dix "
+                "années ; le gouvernement publie, pour 2025 à 2029, une croissance de 0,7 à "
+                "1,3 % par an et des prix de 1,5 à 1,6 % (PLF 2026), et la page signale "
+                f"quand on en sort. La dette de référence, sans réforme, part de la dette "
+                f"publiée de 2025, {depart} du PIB, et vaut {ref} en 2026.</p>"
+                + _portee("la dette de référence, et l'écart de dette que la mesure y "
+                          "ajoute, année par année", "le coût de la mesure chaque année, "
+                          "calculé une fois sur la population (étape 5)"))
+    if module == "verdict":
+        return ("À vous : le seuil et les hypothèses du tirage",
+                "<p>Le verdict compte, sur 2 000 tirages des paramètres incertains, la part "
+                "où la dette de 2035 monte. Trois réglages. <strong>Le seuil</strong> : à "
+                "90 %, il faut neuf tirages sur dix dans le même sens pour dire « hausse » "
+                "ou « baisse » ; sinon, « dépend ». <strong>La corrélation</strong> des "
+                "réactions tirées d'un même article : à 0,8, elles bougent presque "
+                "ensemble (si l'une tombe haut, l'autre aussi) ; à 0, chacune de son côté. "
+                "<strong>L'incertitude du multiplicateur</strong> : × 1, l'écart entre les "
+                "études publiées ; × 2, deux fois plus large. Le tableau dit aussi quelle "
+                "hypothèse pèse le plus : la part de la variation du résultat qui vient "
+                "d'elle seule (« premier ordre ») ou d'elle avec les autres "
+                "(« total »).</p>"
+                + _portee("la part des tirages en hausse, le verdict et la fourchette de la "
+                          "dette de l'étude choisie", "le coût et la dette au centre ; "
+                          "les tirages eux-mêmes, faits une fois avec la même graine"))
+    return None

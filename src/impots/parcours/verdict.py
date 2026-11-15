@@ -159,12 +159,25 @@ def _lois_html(e: dict[str, Any]) -> str:
         + "<th>\u03c3</th></tr></thead><tbody>" + mrows + "</tbody></table>\n")
 
 
+#: Les fichiers du magasin, dits par ce qu'ils mesurent (D-452, remarque P9).
+GROUPES = {"eti": "la réponse du revenu déclaré", "labour_supply": "l'offre de travail",
+           "employer_contributions": "l'emploi et le coût du travail",
+           "self_financing": "l'autofinancement des baisses de cotisations",
+           "dividends": "les dividendes", "corporate_tax_growth": "l'impôt sur les sociétés et la croissance",
+           "firm_creation": "les créations d'entreprises", "patrimoine": "le patrimoine déclaré",
+           "production_tax": "l'investissement et les impôts de production",
+           "rd_cir": "la R&D et son crédit d'impôt"}
+
+
+def groupe(name: str) -> str:
+    return GROUPES.get(name, f"les réactions de l'article {name}")
+
+
 def _sobol_rows(e: dict[str, Any]) -> str:
     vues = e["data"]["monte_carlo"]["vues"]
     rows = []
     for name in e["data"]["monte_carlo"]["groupes"]:
-        label = ("le multiplicateur" if name == rejouer.MACRO_ROW
-                 else f"les lignes de {name}.yaml")
+        label = "le multiplicateur" if name == rejouer.MACRO_ROW else groupe(name)
         cells = "".join(
             f'<td class="num">{fr(vues[v]["sobol"][name]["premier_ordre"], 3)}</td>'
             f'<td class="num">{fr(vues[v]["sobol"][name]["total"], 3)}</td>'
@@ -393,20 +406,22 @@ def _curseurs(liste: list[dict[str, Any]], seuil: float) -> str:
         f"{options}</select><span></span></div>\n"
         + curseur("v-seuil", "le seuil du verdict", 0.5, 0.99, 0.01, seuil, pct(seuil, 0))
         + "\n"
-        + curseur("v-rho", "ρ, la corrélation des lignes d'un article", 0, 0.95, 0.05,
+        + curseur("v-rho", "la corrélation des réactions d'un même article (ρ)", 0, 0.95, 0.05,
                   m0["rho"], fr(m0["rho"], 2))
         + "\n"
-        + curseur("v-sigma", "\u03c3 du multiplicateur, multiplié par", 0, 2, 0.05, 1.0,
+        + curseur("v-sigma", "l'incertitude du multiplicateur (\u03c3), multipliée par", 0, 2, 0.05, 1.0,
                   "×\u202f" + fr(1.0, 2))
         + "\n"
         '<p><button type="button" id="v-retour">revenir aux lois et au seuil déclarés'
         "</button></p>\n"
         '<p id="v-verdict" aria-live="polite"></p>\n'
         '<p id="v-pourquoi"></p>\n'
-        '<table><thead><tr><th>vue</th><th>P(hausse)</th><th>quantiles 5 · 50 · 95 %</th>'
+        '<table><thead><tr><th>vue</th><th>tirages en hausse</th><th>dette de 2035 : bas (5 %) · '
+        'médiane · haut (95 %)</th>'
         '</tr></thead><tbody id="v-vues"></tbody></table>\n'
-        '<table><thead><tr><th>entrée</th><th>premier ordre, vieillie</th>'
-        '<th>total, vieillie</th></tr></thead><tbody id="v-sobol"></tbody></table>\n'
+        '<table><thead><tr><th>ce qui fait varier le résultat</th><th>sa part, seule '
+        '(premier ordre)</th><th>avec les autres (total)</th></tr></thead>'
+        '<tbody id="v-sobol"></tbody></table>\n'
         "</div>\n")
 
 

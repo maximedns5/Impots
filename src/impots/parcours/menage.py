@@ -354,7 +354,7 @@ def _description(menage: dict[str, Any]) -> str:
 def _types(d: dict[str, Any]) -> str:
     noms = list(TYPES)
     tete = "".join(f"<th>{html.escape(_description(d['types'][n]['menage']))}<br>"
-                   f"{fichier(f'tests/golden/{n}.yaml', n)}</th>" for n in noms)
+                   f"<small>{fichier(f'tests/golden/{n}.yaml', 'le cas, dans le dépôt')}</small></th>" for n in noms)
     rows = [_ligne(key, libelle, sens, [_cellule(key, sens, d["types"][n]["valeurs"])
                                          for n in noms]) for key, libelle, sens in _lignes(d)]
     return (f"<table><thead><tr><th>ligne</th>{tete}</tr></thead><tbody>"

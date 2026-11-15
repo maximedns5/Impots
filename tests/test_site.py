@@ -96,9 +96,12 @@ def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
         # Listée « chiffrée, puis refusée », avec sa raison, sans page ni lien (D-398).
         assert f"{study.nom}.html" not in built
         assert f'href="{study.nom}.html"' not in built["etudes.html"]
-        assert (f"<li><strong>{html.escape(study.titre)}</strong> — chiffrée, puis refusée : "
-                f"{html.escape(study.refus)}</li>") in built["etudes.html"]
-        assert "ses\npasses n'ont pas tourné" not in built["etudes.html"].split(
+        # Dite en mots, la raison exacte repliée dessous (D-452) : listée, avec sa raison.
+        entry = built["etudes.html"].split(
+            f"<li><strong>{html.escape(study.titre)}</strong> — ")[1].split("</li>")[0]
+        assert entry.startswith("chiffrée, mais pas publiée")
+        assert html.escape(study.refus) in entry
+        assert "calculs n'ont pas été relancés" not in built["etudes.html"].split(
             html.escape(study.titre))[1].split("</li>")[0]
     for study in _chiffrees():
         assert f"{study.nom}.html" in built
@@ -111,7 +114,8 @@ def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
         entry = built["etudes.html"].split(
             f"<li><strong>{html.escape(study.titre)}</strong> — ")[1].split("</li>")[0]
         assert re.sub(r"<[^>]+>", "", entry) == (
-            f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné.")
+            f"pas chiffrée dans la série actuelle : son chiffrage a été annoncé d'avance "
+            f"({study.preenregistrement}), mais ses calculs n'ont pas été relancés.")
 
 
 def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(built) -> None:
@@ -252,7 +256,8 @@ def test_an_unrun_study_is_listed_without_a_page(tmp_path) -> None:
     assert "futur.html" not in files
     # The first D-xxx of a page links to the method page (D-357): read the text.
     text = re.sub(r"<[^>]+>", "", files["etudes.html"])
-    assert f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné" in text
+    assert (f"annoncé d'avance ({study.preenregistrement}), mais ses calculs n'ont pas "
+            "été relancés") in text
 
 
 def test_a_table_without_its_header_line_is_refused() -> None:
