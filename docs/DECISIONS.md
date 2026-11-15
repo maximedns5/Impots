@@ -33678,3 +33678,146 @@ du rapport, sans test dédié (D-335). `pytest -m "not lourd and not chrono" -n 
 tests/test_jumeau*.py`, sur l'arbre de cette entrée : 276 verts, en 2 min 54 s ; `ruff
 check` propre sur `src/impots/jumeau`, le script et les deux tests touchés. Ni
 `make impact`, ni les lourds, ni `make full`.
+
+## D-439 — Le quatrième rejeu noté : b identifié, le naïf mécanique battu sur 4 cibles
+
+**Ce qui a tourné.** `scripts/jumeau_rejeu_histoire.py`, cas `rejeu_histoire_r4`, sur
+877bba9 poussé (D-438), une fois, détaché, en moins d'une minute. Le rapport :
+`reports/jumeau/rejeu_histoire_r4.json` ; ceux de r1, r2 et r3 restent. Ni tolérance, ni
+fenêtre, ni cible, ni entrée, ni loi, ni règle de lecture du critère n'a changé après le
+calcul.
+
+**Le contrôle d'abord.** Les REQM du naïf et du naïf mécanique redonnent celles de r3
+exactement (écart nul), sur l'estimation, le test et le test à θ½.
+
+**L'estimation.** Cinq itérations ; J passe de 89,16 à 85,07 (95,4 %). **Aucun θ
+identifié par l'histoire** (la règle de D-428), chaque σ égal au s de sa loi au point à
+1 % près.
+
+| θ | mode de la loi | estimé | en paramètre | écart, en s de la loi | σ | s au point |
+|---|---|---|---|---|---|---|
+| profil de la consommation | 0,500 | 0,392 | — | −0,22 | 0,496 | 0,500 |
+| emploi | 0,238 | 0,268 | η = 0,268 | +0,24 | 0,127 | 0,129 |
+| salaires (D-438) | 0,506 | 0,496 | b = 0,198 | −0,05 | 0,091 | 0,091 |
+| exportations | 0,500 | 0,502 | 0,732 | +0,01 | 0,123 | 0,123 |
+| importations | 0,500 | 0,500 | 0,350 | −0,00 | 0,041 | 0,041 |
+| accélérateur | 0,500 | 0,498 | — | −0,01 | 0,255 | 0,255 |
+| coût du capital | 0,341 | 0,322 | ε_K = 0,284 | −0,10 | 0,179 | 0,179 |
+
+L'histoire ne déplace b que de 0,05 s₋ (0,198 contre 0,210 : r3 le tirait de même vers le
+bas) ; le s au point de b, 0,091, mêle s₋ et s₊ : la jacobienne, de 0,496 à 0,516,
+enjambe le mode. Sur l'estimation, le jumeau tient 8 cibles (le naïf 6, le naïf
+mécanique 8), bat le naïf sur 10 et le naïf mécanique sur 8, comme r3 ; les créations y
+font 6,525, celle que D-436 annonçait.
+
+**Le test, aux θ estimés, avec 2023** (REQM en points ; P la bande de D-438 ; N et M
+identiques à r3) :
+
+| cible | tol. | r4 | P | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,941 | [0,90 ; 1,00] | 0,831 | 0,831 | oui | non | non |
+| emploi | 0,8 | 0,895 | [0,86 ; 0,96] | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,763 | [0,72 ; 0,86] | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | 3,525 | [3,45 ; 3,62] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,20 ; 3,35] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,54 ; 0,59] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,365 | [0,34 ; 0,39] | 0,424 | 0,349 | oui | oui | non |
+| D61 | 0,4 | 0,230 | [0,20 ; 0,26] | 0,983 | 0,283 | oui | oui | oui |
+| recettes | 0,8 | 1,078 | [1,03 ; 1,12] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,642 | [0,60 ; 0,69] | 1,361 | 0,627 | oui | oui | non |
+| dette | 3,0 | 2,926 | [2,70 ; 3,20] | 4,393 | 2,359 | oui | oui | non |
+| créations | 10 | 4,273 | [4,24 ; 4,30] | 4,310 | 4,310 | oui | oui | oui |
+
+**9 cibles sur 12 tenues**, le naïf 6, le naïf mécanique 9 ; **le naïf battu sur 9, le
+naïf mécanique sur 4** (les deux échanges, D61, les créations).
+
+**Le test sans 2023** (2018, 2019, 2022, 2024) :
+
+| cible | r4 | P | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|
+| PIB en volume | 0,787 | [0,75 ; 0,87] | 0,904 | 0,904 | oui | oui | oui |
+| emploi | 0,928 | [0,90 ; 0,99] | 0,931 | 0,931 | non | oui | oui |
+| chômage | 0,786 | [0,74 ; 0,89] | 0,648 | 0,648 | oui | non | non |
+| exportations | 3,521 | [3,45 ; 3,60] | 4,281 | 4,281 | oui | oui | oui |
+| importations | 3,656 | [3,58 ; 3,73] | 4,156 | 4,156 | oui | oui | oui |
+| D2 | 0,513 | [0,49 ; 0,54] | 0,589 | 0,495 | non | oui | non |
+| D5 | 0,402 | [0,38 ; 0,42] | 0,447 | 0,387 | oui | oui | non |
+| D61 | 0,188 | [0,16 ; 0,21] | 1,087 | 0,273 | oui | oui | oui |
+| recettes | 0,966 | [0,92 ; 1,01] | 1,198 | 0,856 | non | oui | non |
+| solde | 0,717 | [0,68 ; 0,76] | 1,316 | 0,688 | oui | oui | non |
+| dette | 2,694 | [2,50 ; 2,95] | 4,143 | 2,208 | oui | oui | non |
+| créations | 3,002 | [2,95 ; 3,03] | 3,067 | 3,067 | oui | oui | oui |
+
+9 tenues, le naïf 4, le naïf mécanique 7 ; **le naïf battu sur 11, le naïf mécanique sur
+6** (le PIB, l'emploi, les deux échanges, D61, les créations). 2023 retire au jumeau le
+PIB et l'emploi : sa croissance y est de 1,40 point sous la publiée (le naïf, 0,43),
+celle de l'emploi de 0,75 (le naïf, 0,46).
+
+**À θ½** (b = 0,20) : les mêmes tenues et les mêmes victoires qu'aux θ estimés (9 ; 9 et
+4) ; chaque REQM à moins de 2,5 % (le chômage, 0,744 contre 0,763).
+
+### Le critère du but (D-431), lu comme D-438 l'a préenregistré
+
+* **Un θ identifié** : **b, oui.** σ = 0,091, contre le seuil de sa loi de D-424 sur la
+  plage du calcul, du côté de θ estimé (0,496, sous μ = 0,667) : s₋ / 2 = 0,282 ; aussi
+  sous s₊ / 2 = 0,133. En unités du paramètre, D-435 : 0,091 contre 0,213. Il l'est par
+  les données fines, le panneau W1 ; l'histoire ne l'identifie pas (σ égal au s de sa loi
+  de D-435). **Le rapport compte aussi les importations** (`critere_but.identifies`) :
+  c'est un artefact de la règle écrite, à dire et à ne pas compter. θ estimé tombe à
+  2e-4 sous le mode, la loi de D-424 y a deux écarts (0,511 dessous, 0,040 dessus), σ =
+  0,041 est pris du côté de la jacobienne (au-dessus) et la règle le compare au s du
+  dessous ; du côté de la jacobienne (la règle de D-428), 0,041 contre 0,020 : non
+  identifié. Le verdict n'en dépend pas ; la règle n'est pas changée après le calcul.
+* **Le naïf mécanique battu sur plus de 3 cibles du test** : **4 avec 2023, 6 sans.**
+* **Le critère est atteint, à la lettre** (`critere_but.atteint`). Ce qu'il faut dire
+  avec : **la quatrième victoire avec 2023 est celle des créations, de 0,037 point sur
+  une tolérance de 10.** Les erreurs du jumeau y sont celles du naïf en 2022, 2023 et
+  2024 (la CVAE sortie des naissances, D-436) ; il perd 2018 (−3,07 contre −2,93) et
+  gagne 2019 (−4,22 contre −4,50, la bascule du CICE en baisse de cotisations, que les
+  naissances lisent). Une seule année porte la victoire. Sans 2023, les créations
+  battent M aussi (3,002 contre 3,067). Les trois autres victoires sont celles de r3.
+
+**Contre le pronostic.** Chaque REQM du test, avec et sans 2023, dans sa bande ; chaque
+tenue, chaque « bat N » et chaque « bat M » avec 2023 comme annoncés, les totaux
+exactement (9, 6, 9, 9, 4) ; les θ, b compris (0,496 dans [0,44 ; 0,52], 0,198 dans
+[0,18 ; 0,21]), leurs σ, J et son rapport dans leurs bandes ; aucun θ identifié par
+l'histoire ; le test à θ½ comme annoncé ; le contrôle ; b identifié contre D-424 ; le
+critère atteint. **Manqués** : sans 2023, l'emploi bat N et M (0,928 contre 0,931),
+annoncé « non, de peu » ; d'où N battu sur 11 (annoncé 10) et M sur 6 (annoncé 5), dans
+leurs bandes ; « les six autres non » identifiés : le rapport compte les importations,
+l'artefact ci-dessus.
+
+### r1, r2, r3, r4 côte à côte (le test avec 2023, aux θ estimés)
+
+| cible | r1 (D-420) | r2 (D-423) | r3 (D-429) | r4 | N | M |
+|---|---|---|---|---|---|---|
+| PIB en volume | 1,034 | 0,940 | 0,940 | 0,941 | 0,831 | 0,831 |
+| emploi | 0,902 | 0,882 | 0,894 | 0,895 | 0,858 | 0,858 |
+| chômage | 0,696 | 0,723 | 0,759 | 0,763 | 0,627 | 0,627 |
+| exportations | 3,855 | 3,524 | 3,524 | 3,525 | 3,870 | 3,870 |
+| importations | 3,899 | 3,271 | 3,271 | 3,271 | 3,773 | 3,773 |
+| D2 | 0,554 | 0,564 | 0,564 | 0,564 | 0,645 | 0,539 |
+| D5 | 0,316 | 0,364 | 0,364 | 0,365 | 0,424 | 0,349 |
+| D61 | 0,263 | 0,225 | 0,227 | 0,230 | 0,983 | 0,283 |
+| recettes | 1,091 | 1,073 | 1,076 | 1,078 | 1,301 | 0,959 |
+| solde | 0,536 | 0,639 | 0,643 | 0,642 | 1,361 | 0,627 |
+| dette | 2,816 | 2,926 | 2,927 | 2,926 | 4,393 | 2,359 |
+| créations | 10,600 | 5,647 | 4,481 | 4,273 | 4,310 | 4,310 |
+| tenues (N 6, M 9) | 7 | 9 | 9 | 9 | | |
+| bat N, bat M | 7, 2 | 8, 3 | 8, 3 | 9, 4 | | |
+
+Les θ : r1 et r2 sous N(½ ; ½), r3 sous les lois de D-424, r4 sous celles de D-424 et la
+loi de b de D-435 ; aucun identifié par l'histoire dans aucun des quatre. b : 0,399 et
+0,464 sur (0,5 ; 1 ; 1,2778), soit 0,90 et 0,96 en paramètre ; 0,382 en r3, 0,198 en r4.
+
+**Ce que r4 dit.** Le jumeau est appris, au sens du but : b, la réponse des salaires au
+chômage, vient de données françaises (le panneau W1) et sa loi est près de cinq fois
+plus serrée que celle de la littérature ; il est cinq fois plus petit que dans Mésange.
+**Sur l'histoire, cela ne change presque rien** : chaque REQM du test bouge de moins de
+0,005 de r3 à r4, sauf les créations (−0,208, D-436). La dynamique bat le naïf mécanique sur
+4 cibles, une de plus qu'en r3, et cette victoire est la plus étroite des quatre ;
+l'activité, l'emploi et le chômage restent derrière lui avec 2023, comme dans les trois
+rejeux d'avant. L'histoire budgétaire de 2011 à 2017 n'identifie toujours aucun θ.
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible, aucune entrée,
+aucune loi ; D-420, D-423, D-429 et D-438 restent. Le rapport porte 877bba9.
