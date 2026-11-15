@@ -285,9 +285,17 @@ def compute(
 
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
-        columns["emtr_reform"], columns["emtr_ir_reform"] = _rate(
-            frame, reformed_for(reform, year), year, earners, step, guards, "reform"
-        )
+        from impots.engine import incremental
+
+        if incremental.actif():  # by difference, on the households it can touch (D-462)
+            columns["emtr_reform"], columns["emtr_ir_reform"] = incremental.taux_reforme(
+                frame, reformed_for(reform, year), year, earners, step, guards,
+                {"emtr": columns["emtr"], "emtr_ir": columns["emtr_ir"]}, reform,
+                per_household["household_id"].to_numpy())
+        else:
+            columns["emtr_reform"], columns["emtr_ir_reform"] = _rate(
+                frame, reformed_for(reform, year), year, earners, step, guards, "reform"
+            )
         timings["reform_s"] = round(time.perf_counter() - started, 2)
 
     households = per_household.with_columns(
