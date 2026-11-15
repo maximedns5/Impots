@@ -127,7 +127,10 @@ const url = process.argv[2], etapes = JSON.parse(process.argv[3]), captures = pr
 
 ATTAL = "pres2027_attal_programme"
 ETAPES = [
-    [{"choisir": ["candidat", ATTAL]}, {"theta": ["multiplicateur_macro", 0.8]}],
+    # La page s'ouvre sur une loi simple, dans le jumeau, population figée (D-459) : la
+    # première étape choisit la mesure d'étude, la chaîne des études et la vue vieillie.
+    [{"cocher": "entree-candidat"}, {"cocher": "mode-reduit"}, {"choisir": ["vue", "vieillie"]},
+     {"choisir": ["candidat", ATTAL]}, {"theta": ["multiplicateur_macro", 0.8]}],
     [{"cocher": "mode-structurel"}, {"choisir": ["vue", "figee"]},
      {"theta": ["idees_creations", 0.9]}, {"theta": ["jumeau_emploi_elasticite_cout", 0.2]},
      {"theta": ["survie_creations", 0.3]}],

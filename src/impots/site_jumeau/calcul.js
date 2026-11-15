@@ -7,7 +7,9 @@
  *
  * Il ne calcule rien lui-même : il charge Pyodide et numpy, écrit le paquet que la page lui
  * passe dans le système de fichiers de Pyodide, puis, à chaque réglage, appelle
- * `navigateur.calculer_json` et rend son texte, tel quel.
+ * `navigateur.calculer_json` et rend son texte, tel quel ; à la demande, la portée des
+ * curseurs et la plage des résultats, `navigateur.portee_json` (D-459), une trajectoire
+ * vectorisée sur les tirages.
  */
 "use strict";
 let py = null;
@@ -25,13 +27,13 @@ self.onmessage = async (ev) => {
       }
       py.globals.set("texte", m.donnees);
       py.runPython("import sys, json\nsys.path.insert(0, '/jumeau')\n" +
-        "from impots.jumeau.navigateur import Session, calculer_json\n" +
+        "from impots.jumeau.navigateur import Session, calculer_json, portee_json\n" +
         "S = Session(json.loads(texte))\ndel texte");
       self.postMessage({ type: "pret", pyodide_ms: t1 - t0, paquet_ms: performance.now() - t1 });
-    } else if (m.type === "calculer") {
+    } else if (m.type === "calculer" || m.type === "portee") {
       const t0 = performance.now();
       py.globals.set("reglage", m.reglage);
-      const texte = py.runPython("calculer_json(S, reglage)");
+      const texte = py.runPython(m.type === "portee" ? "portee_json(S, reglage)" : "calculer_json(S, reglage)");
       self.postMessage({ type: "resultat", id: m.id, texte, calcul_ms: performance.now() - t0 });
     }
   } catch (e) {

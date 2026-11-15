@@ -34315,3 +34315,71 @@ Po4 et Po5 portent sur `parcours-2-france.html`, au volet `chemin`.
 `#construction`, `#vieillissement`, `#poids`, `#structure` ; `population-france.html#calee`,
 `#verifiee`, `#ecarts` ; `population-comme-moi.html#choisir` ; `cellules.html#menages`,
 `#entreprises`, `#telecharger`.
+
+## D-459 — La page « Le jumeau » refaite : le pas annuel, la portée des curseurs, les plages
+
+**Le volet `jumeau` du but 25** (D-445). La page montrait dix courbes, vingt-trois curseurs
+de 0 à 1 et un texte replié ; le lecteur novice (passe 1, J1 à J12) n'y voyait ni ce
+qu'est le jumeau, ni ce que change un curseur. Elle est refaite en cinq temps : le pas
+annuel, ce que la mesure fait, la portée des curseurs, qui y gagne, ce que le jumeau sait.
+Le calcul reste dans le Worker (D-419) ; aucun nombre publié ne change.
+
+**Le pas annuel.** Un schéma des blocs (la mesure, les APU, la dette, le PIB, les
+ménages, les entreprises, le reste du monde) et de leurs canaux, chaque flèche portant
+l'écart de l'année, son épaisseur rapportée à la plus grande de la mesure ; une année au
+curseur ou « faire tourner ». Dessous, les trois identités de l'année, lues dans l'état
+(`navigateur._comptes`, nouveau) : les emplois du PIB sommés à son écart, B9 = recettes −
+dépenses − intérêts, D_t = D_{t−1} − B9 + SFA ; chacune dit si elle tient.
+
+**La portée et les plages** (`navigateur.Session.portee`). Une seule trajectoire,
+vectorisée sur les tirages (CADRE.md §8) : le tirage 0 est le réglage ; puis, pour chaque
+θ lu, lui à chaque point de sa boîte (0 et 1, ou la grille de D-427), les autres au
+réglage ; puis 200 tirages de tous les θ selon leurs lois (`a_priori`, D-424, D-438 ;
+la loi large de D-417 pour une ligne du magasin que porte une mesure), tronquées à
+[0 ; 1] par rejet, graine fixée (20261115). La portée d'un θ : l'écart, à l'horizon, de
+ses points au tirage 0, pour la dette, le solde, le PIB et l'emploi ; la plage d'une
+courbe : les quantiles 5, 25, 75 et 95 % des tirages, chaque année. Chaque curseur dit
+d'où vient sa loi (littérature, données fines, par construction, sans source), s'il est
+identifié (b seul, par les données fines ; les importations, que le rapport de r4
+compte, ne le sont pas : l'artefact de D-439, dit sur la page), sa valeur en paramètre,
+et, quand il est sans effet, quel canal s'ouvrirait. Un curseur bougé : l'écart au
+défaut (chaque θ à ½) s'affiche en clair, et le défaut reste en pointillé.
+
+**Pourquoi les courbes bougeaient.** Pas de bruit : à réglage égal, le jumeau redonne le
+même nombre. (1) Les échelles se recalaient à chaque calcul, sur trois graduations : un
+écart de 0,003 remplissait le cadre, et un curseur faisait sauter l'axe. Elles sont
+désormais graduées et ne font que s'élargir pour une même entrée. (2) Le dénominateur :
+Δb = (ΔD − b^r ΔY)/Y ; la courbe dit les deux parts (`effets`). (3) Les recettes
+induites montent en quelques années (le profil de Mésange) : l'écart de solde est grand
+la première année puis se resserre. (4) La première année : un rapport ne ventile que
+2026 et la vue figée (D-412) ; la convention de D-414 ou rien. (5) Les couleurs suivaient
+le rang de chaque bloc dans le graphique : chaque bloc a désormais la sienne, et son nom.
+
+**Les retours du lecteur.** J1 : le nom du candidat dans chaque option et en titre ; la
+page s'ouvre sur une loi simple (dépense publique, 10 Md€ par an), dans le jumeau,
+population figée, plutôt que sur un candidat. J2 : un refus est dit en mots (ce qui
+manque, pourquoi, quoi essayer, et que c'est une limite du jumeau), le texte exact
+replié. J3 : pour une mesure d'étude, la chaîne des études est calculée à côté et l'écart
+expliqué (la part du coût qui revient en recettes, et les blocs qui y mettent ; Attal :
+66 % dans la chaîne, environ 0 % dans le jumeau, où les salaires reprennent ce que la
+consommation rapporte). J4 à J11 : couleurs fixes, noms en français, unités dites,
+gagnants et perdants visibles par défaut, l'écart au défaut collé en haut au téléphone.
+J7 : aucun défaut trouvé ; un curseur des entreprises est nul pour une loi qui ne
+touche pas leurs prélèvements (sur les cotisations employeurs, l'élasticité des
+créations porte de −0,37 à +0,10 pt de dette en 2035), et la page le dit. J12 : Pyodide
+0.29.5 avec numpy pèse environ 15 Mo (le noyau WebAssembly, la bibliothèque standard,
+la roue de numpy) ; le vendoriser alourdirait le dépôt d'autant à chaque version : non
+fait, à décider.
+
+**Mesuré une fois** (Chromium, cette machine partagée) : Pyodide chargé en 4 à 6 s ; une
+trajectoire du jumeau dans le navigateur, sous la seconde (D-419 tient) ; la portée,
+200 tirages et une cinquantaine de points, 3,5 à 5 s, une fois par entrée, après le
+premier dessin. Le système visuel de `chemin` (D-450) est repris : la page large, ses
+jetons de couleur.
+
+**Les tests.** `test_jumeau_navigateur` : un test nouveau, la portée redonne au tirage 0
+les écarts que la page trace, un θ poussé à un bout redonne son calcul seul, les deux
+parts de Δb et les emplois bouclent ; 13 verts. `test_jumeau_page` (lourd, non lancé) :
+sa première étape choisit la mesure, la chaîne des études et la vue vieillie, la page
+ne s'ouvrant plus sur elles ; il tient la même propriété. `site verifier` et
+`node ui/check.mjs` verts.

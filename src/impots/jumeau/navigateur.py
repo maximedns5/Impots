@@ -80,6 +80,24 @@ SERIES = (
 )
 
 
+#: La plage des résultats : tant de tirages des θ selon leurs lois, d'une graine fixée,
+#: pour que la page redonne la même plage à chaque visite (D-459).
+TIRAGES = 200
+GRAINE = 20261115
+
+#: D'où vient la loi d'un θ (`a_priori.yaml`, D-424, D-438) : une estimation publiée du
+#: paramètre, une loi donnée par construction sur θ, des données fines, ou la loi large
+#: de D-417 faute de source ; une ligne du magasin comportemental que porte la mesure
+#: n'a pas d'entrée : sa plage est publiée, pas sa loi, elle garde la loi large.
+ORIGINES_LOI = {
+    "litterature": "une estimation publiée du paramètre",
+    "construction": "par construction : la dispersion publiée qui définit θ",
+    "donnees_fines": "les données fines du projet, combinées à la littérature",
+    "large": "aucune estimation publiée : la loi large, N(½ ; ½)",
+    "magasin": "la plage du magasin comportemental, sans loi publiée : la loi large",
+}
+
+
 class NavigateurError(ValueError):
     """Une entrée que la page ne peut pas faire tourner."""
 
@@ -374,25 +392,26 @@ class Session:
         lus = {t for b in blocs for t in b.thetas}
         if any(b.nom == "mesures" for b in blocs):
             lus |= {k for m in mesures for k in (m.lignes or {})}
-        return [{"cle": cle, "bloc": ligne.bloc, "definition": ligne.definition,
-                 "unite": ligne.unite, "a_zero": ligne.a_zero, "a_demi": ligne.a_demi,
-                 "a_un": ligne.a_un, "direction": ligne.direction, "source": ligne.source,
-                 "verifiee": ligne.verifiee, "lu": cle in lus}
-                for cle, ligne in thetas.registre(mesures).items()]
+        appris = (self.donnees.get("juge") or {}).get("thetas", {})
+        out = []
+        for cle, ligne in thetas.registre(mesures).items():
+            loi = loi_de(cle)
+            out.append({"cle": cle, "bloc": ligne.bloc, "definition": ligne.definition,
+                        "unite": ligne.unite, "a_zero": ligne.a_zero,
+                        "a_demi": ligne.a_demi, "a_un": ligne.a_un,
+                        "direction": ligne.direction, "source": ligne.source,
+                        "verifiee": ligne.verifiee, "lu": cle in lus,
+                        "monotone": ligne.monotone,
+                        "loi": {"moyenne": loi.moyenne, "ecart_bas": loi.ecart_bas,
+                                "ecart_haut": loi.ecart_haut,
+                                "origine": origine_loi(cle)},
+                        "histoire": appris.get(cle)})
+        return out
 
-    def calculer(self, choix: Mapping[str, Any]) -> dict[str, Any]:
-        """La trajectoire d'un réglage : {mode, vue, candidat | hypothese, theta,
-        convention}. θ n'a pas de défaut : un θ que le modèle lit et que le réglage ne
-        donne pas est refusé (`thetas.lire`), et la page le dit.
-
-        `convention` (« parts_premiere_annee », D-414) ne s'applique qu'au rapport d'un
-        candidat dans le mode structurel, le seul qui lise ses ventilations ; le mode
-        réduit et une loi hypothétique ne la lisent pas, et `convention` rendu le dit
-        (None)."""
-        from impots.jumeau.blocs.entreprises import EntreprisesError
-        from impots.jumeau.blocs.menages import MenagesError
+    def _contexte(self, choix: Mapping[str, Any]) -> dict[str, Any]:
+        """Ce que `calculer` et `portee` lisent d'un réglage : la mesure, le modèle, les θ
+        du registre et ceux que le réglage donne."""
         from impots.jumeau.mesures import CONVENTION_PARTS
-        from impots.jumeau.trajectoire import calculer
 
         mode, vue = choix.get("mode", "reduit"), choix.get("vue", "vieillie")
         if mode not in MODES or vue not in VUES:
@@ -414,39 +433,125 @@ class Session:
         registre = self.thetas(mode, [mesure], blocs)
         donne = choix.get("theta") or {}
         theta = {t["cle"]: float(donne[t["cle"]]) for t in registre if t["cle"] in donne}
+        return {"mode": mode, "vue": vue, "cle": cle, "convention": convention,
+                "mesure": mesure, "depart": depart, "entrees": entrees, "blocs": blocs,
+                "boucles": boucles, "registre": registre, "theta": theta}
+
+    def _derouler(self, ctx: Mapping[str, Any], theta: Mapping[str, Any]
+                  ) -> tuple[Any, str | None]:
+        """La trajectoire d'un contexte sous θ (scalaires ou tableaux de tirages), et le
+        refus qui a raccourci ses années (D-412), ou None."""
+        from impots.jumeau.blocs.entreprises import EntreprisesError
+        from impots.jumeau.blocs.menages import MenagesError
+        from impots.jumeau.trajectoire import calculer
+
+        refus: str | None = None
+        annees, blocs = len(ANNEES), ctx["blocs"]
+        while True:
+            try:
+                traj = calculer(ctx["depart"], entrees=_tronquer(ctx["entrees"], annees),
+                                mesures=[ctx["mesure"]], theta=theta, blocs=blocs,
+                                boucles=ctx["boucles"])
+                return traj, refus
+            except (EntreprisesError, MenagesError) as e:
+                # Les refus de D-412 : une année que la mesure ne ventile pas. Les années
+                # d'avant se calculent ; celles-ci restent absentes, la raison dite.
+                if refus is None:
+                    refus = str(e)
+                annees -= 1
+                if annees == 0:
+                    return None, refus
+                blocs = self._modele(ctx["mode"], ctx["mesure"], ctx["cle"])[2]
+            except ValueError as e:
+                return None, f"{type(e).__name__} : {e}"
+
+    def portee(self, choix: Mapping[str, Any], tirages: int = TIRAGES,
+               graine: int = GRAINE) -> dict[str, Any]:
+        """La portée de chaque curseur et la plage des résultats, pour un réglage (D-459).
+
+        Une seule trajectoire, vectorisée sur l'axe des tirages (CADRE.md §8) : le tirage
+        0 est le réglage donné ; puis, pour chaque θ que le modèle lit, les autres à leur
+        réglage, lui à chaque point où se lit sa boîte (0 et 1, ou la grille d'une ligne
+        non monotone, D-427) ; puis `tirages` tirages de tous les θ ensemble, chacun selon
+        sa loi (`a_priori`, D-424, D-438), tronquée à [0 ; 1] par rejet. La portée d'un θ
+        est l'écart, à l'horizon, du plus bas et du plus haut de ses points au tirage 0 ;
+        la plage d'une série, les quantiles de 5 à 95 % des tirages, chaque année."""
+        ctx = self._contexte(choix)
+        lus = [t for t in ctx["registre"] if t["lu"]]
+        manque = [t["cle"] for t in lus if t["cle"] not in ctx["theta"]]
+        if manque:
+            raise NavigateurError(f"θ sans réglage : {manque} ; ils n'ont pas de défaut")
+        lignes = thetas.registre([ctx["mesure"]])
+        base = {t["cle"]: ctx["theta"][t["cle"]] for t in lus}
+        colonnes: dict[str, list[float]] = {c: [v] for c, v in base.items()}
+        points: list[tuple[str, float]] = []
+        for t in lus:
+            for x in thetas.points_de_boite(lignes[t["cle"]]):
+                points.append((t["cle"], float(x)))
+                for c in colonnes:
+                    colonnes[c].append(float(x) if c == t["cle"] else base[c])
+        rng = np.random.default_rng(graine)
+        lois = {t["cle"]: loi_de(t["cle"]) for t in lus}
+        for c in colonnes:
+            colonnes[c].extend(_tirer(lois[c], tirages, rng).tolist())
+        theta = {c: np.asarray(v, dtype=float) for c, v in colonnes.items()}
+        traj, refus = self._derouler(ctx, theta)
+        out: dict[str, Any] = {"mode": ctx["mode"], "vue": ctx["vue"],
+                               "candidat": ctx["cle"], "tirages": tirages,
+                               "graine": graine, "refus": refus, "annees": list(ANNEES),
+                               "calculees": [], "indicateurs": {}, "thetas": []}
+        if traj is None:
+            return out
+        out["calculees"] = list(traj.annees)
+        k = len(traj.annees) - 1
+        debut = 1 + len(points)
+        q = np.array([5, 25, 50, 75, 95], dtype=float)
+        for cle, libelle, unite, valeurs in _indicateurs(traj):
+            tirs = valeurs[:, debut:]
+            out["indicateurs"][cle] = {
+                "libelle": libelle, "unite": unite,
+                "defaut": [float(x) for x in valeurs[:, 0]],
+                "quantiles": [int(x) for x in q],
+                "bande": [[float(x) for x in np.percentile(tirs[a], q)]
+                          for a in range(len(traj.annees))]}
+        for t in lus:
+            idx = [1 + i for i, (c, _) in enumerate(points) if c == t["cle"]]
+            effets = {}
+            for cle, _l, _u, valeurs in _indicateurs(traj):
+                lu = valeurs[k, idx] - valeurs[k, 0]
+                effets[cle] = {"points": [float(x) for x in lu],
+                               "bas": float(lu.min()), "haut": float(lu.max())}
+            out["thetas"].append({"cle": t["cle"], "theta": base[t["cle"]],
+                                  "points": [x for c, x in points if c == t["cle"]],
+                                  "effets": effets})
+        return out
+
+    def calculer(self, choix: Mapping[str, Any]) -> dict[str, Any]:
+        """La trajectoire d'un réglage : {mode, vue, candidat | hypothese, theta,
+        convention}. θ n'a pas de défaut : un θ que le modèle lit et que le réglage ne
+        donne pas est refusé (`thetas.lire`), et la page le dit.
+
+        `convention` (« parts_premiere_annee », D-414) ne s'applique qu'au rapport d'un
+        candidat dans le mode structurel, le seul qui lise ses ventilations ; le mode
+        réduit et une loi hypothétique ne la lisent pas, et `convention` rendu le dit
+        (None)."""
+        ctx = self._contexte(choix)
+        mesure, registre, theta = ctx["mesure"], ctx["registre"], ctx["theta"]
         lignes = thetas.registre([mesure])
         for t in registre:
             t["theta"] = theta.get(t["cle"])
             t["valeur"] = (None if t["theta"] is None else
                            valeur_a(lignes[t["cle"]], t["theta"], [mesure]))
         out: dict[str, Any] = {
-            "mode": mode, "vue": vue, "candidat": cle, "mesure": {
+            "mode": ctx["mode"], "vue": ctx["vue"], "candidat": ctx["cle"], "mesure": {
                 "identifiant": mesure.identifiant, "libelle": mesure.libelle,
                 "auteur": mesure.auteur, "origine": mesure.origine,
                 "rapport": mesure.rapport, "commit": mesure.commit,
                 "non_portes": dict(mesure.non_portes)},
             "annees": list(ANNEES), "thetas": registre, "refus": None, "calculees": [],
-            "convention": convention, "conventions": None}
-        annees = len(ANNEES)
-        while True:
-            try:
-                traj = calculer(depart, entrees=_tronquer(entrees, annees), mesures=[mesure],
-                                theta=theta, blocs=blocs, boucles=boucles)
-                break
-            except (EntreprisesError, MenagesError) as refus:
-                # Les refus de D-412 : une année que la mesure ne ventile pas. Les années
-                # d'avant se calculent ; celles-ci restent absentes, la raison dite.
-                if out["refus"] is None:
-                    out["refus"] = str(refus)
-                annees -= 1
-                if annees == 0:
-                    traj = None
-                    break
-                blocs = self._modele(mode, mesure, cle)[2]
-            except ValueError as refus:
-                out["refus"] = f"{type(refus).__name__} : {refus}"
-                traj = None
-                break
+            "convention": ctx["convention"], "conventions": None}
+        traj, out["refus"] = self._derouler(ctx, theta)
+        mode, depart = ctx["mode"], ctx["depart"]
         if traj is None:
             out["series"], out["deciles"] = {}, {"absent": out["refus"]}
             out["avertissements"] = [a for a in (mesure.avertissement,) if a]
@@ -455,6 +560,7 @@ class Session:
         out["conventions"] = _conventions(mesure, traj.annees)
         out["avertissements"] = list(traj.avertissements)
         out["series"] = _series(traj)
+        out["comptes"] = _comptes(traj, len(ANNEES))
         # Les années refusées sont absentes : None, sur toute la longueur de la page.
         manque = [None] * (len(ANNEES) - len(traj.annees))
         for serie in out["series"].values():
@@ -468,6 +574,53 @@ class Session:
                                      "les gagnants et les perdants se lisent dans le mode "
                                      "structurel"})
         return out
+
+
+def loi_de(cle: str) -> Any:
+    """La loi de θ (D-424) ; la loi large de D-417 pour une ligne hors du registre."""
+    from impots.jumeau import a_priori
+
+    return a_priori.lois().get(cle, a_priori.LARGE)
+
+
+def origine_loi(cle: str) -> str:
+    """Une clé de `ORIGINES_LOI`."""
+    from impots.jumeau import a_priori
+
+    d = a_priori.lire().get(cle)
+    if d is None:
+        return "magasin"
+    if "sans_source" in d:
+        return "large"
+    if "theta" in d:
+        return "construction"
+    return "donnees_fines" if "panel" in d else "litterature"
+
+
+def _tirer(loi: Any, n: int, rng: Any) -> np.ndarray:
+    """n tirages de la normale à deux écarts-types de `loi`, tronquée à [0 ; 1] par
+    rejet ; refusé plutôt qu'écrêté si la loi tombe presque toute hors de la plage."""
+    out = np.empty(0)
+    for _ in range(200):
+        z = rng.standard_normal(4 * n)
+        x = loi.moyenne + z * np.where(z < 0, loi.ecart_bas, loi.ecart_haut)
+        out = np.concatenate([out, x[(x >= 0.0) & (x <= 1.0)]])
+        if out.size >= n:
+            return out[:n]
+    raise NavigateurError(f"loi {loi} : presque toute hors de [0 ; 1]")
+
+
+def _indicateurs(traj: Any) -> list[tuple[str, str, str, np.ndarray]]:
+    """Les résultats principaux, de forme (années, tirages), sur la convention de
+    `_series` : la dette en points de PIB, le solde en Md€, le PIB en % de celui de la
+    référence, l'emploi en milliers quand le mode l'écrit."""
+    out = [("dette", "Dette publique", "points de PIB", 100.0 * np.asarray(traj.delta_b)),
+           ("solde", "Solde des APU (B9)", "Md€", np.asarray(traj.difference("b9"))),
+           ("pib", "PIB", "% du PIB de référence", 100.0 * np.asarray(traj.ecart_pib))]
+    if all(e.present("emploi_total") for e in (*traj.reference, *traj.variante)):
+        out.append(("emploi_total", "Emploi intérieur total", "milliers",
+                    np.asarray(traj.difference("emploi_total"))))
+    return out
 
 
 def _conventions(mesure: Any, calculees: Sequence[int]) -> dict[str, Any] | None:
@@ -545,6 +698,15 @@ def _series(traj: Any) -> dict[str, Any]:
                         100.0 * _nombre(x))
             s["decomposition"] = {c: v for c, v in parts.items() if any(v)}
             s["niveaux"] = "% du PIB"
+            # Δb = (ΔD − b^r ΔY) / Y : la dette ajoutée, et ce que le PIB plus haut retire
+            # au ratio comme dénominateur (D-459). Les deux se somment à l'écart.
+            s["effets"] = {"dette_ajoutee": [], "denominateur": []}
+            for e_r, e_v in zip(traj.reference, traj.variante, strict=True):
+                y, b_r = _nombre(e_v["pib"]), _nombre(e_r["dette"]) / _nombre(e_r["pib"])
+                s["effets"]["dette_ajoutee"].append(
+                    100.0 * (_nombre(e_v["dette"]) - _nombre(e_r["dette"])) / y)
+                s["effets"]["denominateur"].append(
+                    -100.0 * b_r * (_nombre(e_v["pib"]) - _nombre(e_r["pib"])) / y)
         elif champ == "pib":
             pib_ref = [_nombre(e["pib"]) for e in traj.reference]
             s = _additif(traj, "pib", [100.0 / y for y in pib_ref])
@@ -562,6 +724,58 @@ def _series(traj: Any) -> dict[str, Any]:
                            "nul")
         out[champ] = s
     return out
+
+
+#: Les comptes de l'année que la page montre autour du schéma du pas annuel (D-459) :
+#: les emplois du PIB par grand poste, le compte des APU, la dette. (clé, libellé, champs)
+POSTES_EMPLOIS = (
+    ("c_menages", "Consommation des ménages", ("c_menages",)),
+    ("c_apu", "Consommation des APU", ("c_apu",)),
+    ("fbcf", "Investissement (FBCF)", ("fbcf_snf", "fbcf_sf", "fbcf_apu", "fbcf_menages",
+                                       "fbcf_isbl")),
+    ("exportations", "Exportations", ("exportations",)),
+    ("importations", "Importations (en moins)", ("importations",)),
+    ("non_ventile", "Effet sur le PIB non ventilé", ("emplois_non_ventiles",)),
+    ("autres", "Autres emplois (ISBLSM, stocks, objets de valeur)",
+     ("c_isbl", "var_stocks", "objets_valeur", "ventilation_emplois", "arrondi_emplois")),
+)
+COMPTES = (("pib", "PIB"), ("apu_recettes", "Recettes des APU"),
+           ("apu_depenses_primaires", "Dépenses primaires des APU"),
+           ("interets_nets", "Intérêts nets"), ("b9", "Solde (B9)"),
+           ("dette_ouverture", "Dette en début d'année"), ("sfa", "Ajustement stock-flux"),
+           ("dette", "Dette en fin d'année"), ("remunerations", "Rémunérations (D1)"),
+           ("emploi_total", "Emploi (milliers)"), ("chomage", "Chômeurs (milliers)"))
+
+
+def _comptes(traj: Any, longueur: int) -> dict[str, Any]:
+    """Par année, l'écart variante − référence des comptes du pas : chaque poste des
+    emplois du PIB (Md€, signé comme dans l'identité : les importations en moins), le
+    compte des APU et la dette ; None quand un champ est absent d'un côté. L'identité
+    des emplois (leur somme est l'écart du PIB) se lit dans `residu_emplois`."""
+    def ecart(r: Etat, v: Etat, champ: str) -> float | None:
+        if not (r.present(champ) and v.present(champ)):
+            return None
+        return _nombre(v[champ] - r[champ])
+
+    manque = [None] * (longueur - len(traj.annees))
+    postes: dict[str, list[float | None]] = {c: [] for c, _l, _ch in POSTES_EMPLOIS}
+    comptes: dict[str, list[float | None]] = {c: [] for c, _l in COMPTES}
+    residu: list[float | None] = []
+    for r, v in zip(traj.reference, traj.variante, strict=True):
+        somme = 0.0
+        for cle, _l, champs in POSTES_EMPLOIS:
+            x = [ecart(r, v, c) for c in champs]
+            x = [y * REGISTRE[c].signe for y, c in zip(x, champs, strict=True)
+                 if y is not None]
+            postes[cle].append(sum(x) if x else None)
+            somme += sum(x)
+        for cle, _l in COMPTES:
+            comptes[cle].append(ecart(r, v, cle))
+        residu.append(None if comptes["pib"][-1] is None else comptes["pib"][-1] - somme)
+    return {"postes": {c: v + manque for c, v in postes.items()},
+            "libelles_postes": {c: lib for c, lib, _ch in POSTES_EMPLOIS},
+            "comptes": {c: v + manque for c, v in comptes.items()},
+            "libelles": dict(COMPTES), "residu_emplois": residu + manque}
 
 
 def _deciles(traj: Any, depart: Etat, cellules: Any) -> dict[str, Any]:
@@ -593,6 +807,11 @@ def _deciles(traj: Any, depart: Etat, cellules: Any) -> dict[str, Any]:
             "part_gagnants": [float(x) for x in gagne / par_decile],
             "part_perdants": [float(x) for x in perd / par_decile]}
     return {"seuil": SEUIL, "annees": annees}
+
+
+def portee_json(session: Session, texte: str) -> str:
+    """La portée des curseurs d'un réglage, en JSON (D-459)."""
+    return json.dumps(session.portee(json.loads(texte)), ensure_ascii=False)
 
 
 def calculer_json(session: Session, texte: str) -> str:
