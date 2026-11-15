@@ -96,10 +96,26 @@ instruments:
   #   Mésange, dont la variante « cotisations employeurs » porte déjà la réponse de
   #   l'activité au coût du travail : ce double compte est un choix du propriétaire, que
   #   chaque page dit ;
-  # * le PFU et les prélèvements sociaux du capital restent lus ; la CVAE et la C3S sont
-  #   lues euro pour euro comme l'IS. Conventions, dites sur la page.
-  entreprises: [impot_societes, contribution_sociale_is, cebge, cvae, c3s]
+  # * le PFU et les prélèvements sociaux du capital restent lus. Conventions, dites sur
+  #   la page.
+  #
+  # Décision du propriétaire du 15 novembre 2026 (D-440, après D-436 dans le jumeau) : la
+  # CVAE et la C3S ne sont plus lues. Elles l'étaient euro pour euro comme l'IS (D-401) ;
+  # la loi ne les fait pas payer à une société qui entre (`exclus`, ci-dessous).
+  entreprises: [impot_societes, contribution_sociale_is, cebge]
   menages: [pfu, prelevements_sociaux_capital, cotisations_employeurs]
   exclus:
+    cvae: >
+      D-440 (D-436). Due par le redevable qui exerce l'activité au 1er janvier de l'année
+      d'imposition (CGI, art. 1586 octies, I) : rien l'année de la création ; ensuite, un
+      taux nul sous 500 000 € de chiffre d'affaires (art. 1586 quater, I, a), le minimum
+      de cotisation au-delà seulement (art. 1586 septies). Loi n° 2009-1673, art. 2
+      (JORFARTI000021557915) ; loi n° 2022-1726, art. 55 (JORFARTI000046845693), qui
+      divise les taux et garde le seuil. La société à la marge du canal fait, à maturité,
+      environ 150 k€ de chiffre d'affaires (D-436) : sous le seuil.
+    c3s: >
+      D-440 (D-436). Due au-delà de 760 000 € de chiffre d'affaires seulement, puis après
+      un abattement de 3,25 M€ (loi n° 2014-892, art. 3, JORFARTI000029349740) et de
+      19 M€ (loi n° 2015-1702, art. 9, JORFARTI000031663476 ; CSS, art. L. 651-3).
     cdhr: >
       Elle porte sur tout le revenu des hauts revenus, pas sur le capital seul.

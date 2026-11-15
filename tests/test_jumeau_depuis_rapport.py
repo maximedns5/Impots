@@ -201,3 +201,101 @@ def test_la_convention_est_refusee_la_ou_les_parts_n_existent_pas() -> None:
     assert "smic_revalorisation" in smic.non_portes["menages"]
     with pytest.raises(MesureError, match="convention « autre » inconnue"):
         _mesure(ATTAL, convention="autre")
+
+
+# --------------------------------------------------------------------------- #
+# Les impôts des entreprises que le canal ne lit plus (D-440, D-443)
+# --------------------------------------------------------------------------- #
+#: Les six rapports refaits sans passe par D-440, la CVAE et la C3S sorties de ΔP.
+REFAITS_D440 = (
+    ATTAL,
+    "presidentielle_attal/mesures/a18_suppression_cvae/"
+    "predictif_pres2027_attal_a18_suppression_cvae.json",
+    "presidentielle_lisnard/predictif_pres2027_lisnard_programme.json",
+    "presidentielle_lisnard/mesures/l4_suppression_c3s_cvae/"
+    "predictif_pres2027_lisnard_l4_suppression_c3s_cvae.json",
+    "presidentielle_retailleau/predictif_pres2027_retailleau_programme.json",
+    "presidentielle_retailleau/mesures/r21_c3s_cvae_forfait_social_cfe/"
+    "predictif_pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe.json",
+)
+
+
+def _d401(payload: dict) -> dict:
+    """Le rapport d'avant D-440, reconstitué depuis sa marque : ΔP d'avant, et la CVAE et
+    la C3S rendues à la liste du canal."""
+    marque = payload["recalcul"]["instruments"]
+    rejeu = json.loads(json.dumps(payload["rejeu"]))
+    rejeu["creations"]["variations"] = marque["variations_avant"]
+    liste = rejeu["creations"]["parametres"]["instruments_entreprises"]
+    liste.extend(marque["retires"])
+    recalcul = {k: v for k, v in payload["recalcul"].items() if k != "instruments"}
+    return {**payload, "rejeu": rejeu, "recalcul": recalcul}
+
+
+@pytest.mark.parametrize("chemin", REFAITS_D440)
+def test_les_six_rapports_refaits_se_lisent_comme_avant_d440(chemin: str) -> None:
+    """D-443 : sur les six rapports de D-440, le jumeau retrouve les impôts des
+    entreprises, CVAE et C3S comprises, et le coût des ménages d'avant D-440, au bit ; le
+    canal des créations, lui, lit ΔP de D-440. La lecture tient sans la marque du
+    recalcul (une passe à venir, qui ne somme plus ces deux impôts) : par la couche des
+    entreprises, à quelques centaines d'euros près. Le rapport allégé de la page « Le
+    jumeau » se lit de même."""
+    from impots.jumeau.navigateur import alleger
+
+    payload, premiere, rapport = _paire(chemin)
+    marque = payload["recalcul"]["instruments"]
+    assert marque["retires"] == ["cvae", "c3s"]
+    avant = _d401(payload)
+    sans_marque = {**payload, "recalcul": avant["recalcul"]}
+    leger = alleger(payload, premiere)
+    for vue in ("figee", "vieillie"):
+        for convention in (None, CONVENTION_PARTS):
+            def lire(p: dict, prem: dict = premiere, vue: str = vue,
+                     convention: str | None = convention) -> Mesure:
+                return Mesure.depuis_rapport(p, vue=vue, identifiant="x", libelle="x",
+                                             auteur="x", rapport=rapport,
+                                             premiere_annee=prem, convention=convention)
+
+            m, d401 = lire(payload), lire(avant)
+            for champ in ("annees", "prelevements", "couts", "canaux", "entreprises",
+                          "menages", "non_portes", "conventions", "impulsions"):
+                assert getattr(m, champ) == getattr(d401, champ), (vue, convention, champ)
+            assert m.prelevements == {a: v / 1e9 for a, v in zip(
+                m.annees, marque["variations_avant"][vue], strict=True)}
+            assert d401.prelevements_canal is None
+            assert m.prelevements_canal == {a: v / 1e9 for a, v in zip(
+                m.annees, payload["rejeu"]["creations"]["variations"][vue], strict=True)}
+            couche = lire(sans_marque)
+            assert couche.prelevements_canal == m.prelevements_canal
+            if m.entreprises is not None:
+                # La couche porte aussi ce qu'elle coûte hors des cinq impôts (59 € en
+                # 2026 chez Attal) : quelques centaines d'euros au plus.
+                assert couche.entreprises[2026] == m.entreprises[2026]
+                for a in m.annees:
+                    assert couche.prelevements[a] == pytest.approx(m.prelevements[a],
+                                                                   abs=1e-6)
+            allege = lire(leger["payload"], leger["premiere_annee"])
+            for champ in ("prelevements", "prelevements_canal", "entreprises", "menages",
+                          "non_portes"):
+                assert getattr(allege, champ) == getattr(m, champ), (vue, champ)
+    figee = _mesure(chemin, convention=CONVENTION_PARTS)
+    if figee.entreprises is not None:
+        assert set(figee.entreprises[2026]) == {
+            "impot_societes", "contribution_sociale_is", "cebge", "cvae", "c3s"}
+        cvae = premiere["response"].get("entreprises", premiere["response"])["deltas"]["cvae"]
+        assert figee.entreprises[2026]["cvae"] == cvae / 1e9
+
+
+def test_le_cout_des_menages_d_attal_et_de_lisnard_redevient_celui_d_avant_d440() -> None:
+    """Les nombres de D-443 : en 2026, vue figée, le coût des ménages d'Attal 63,629 Md€
+    (66,911 lu à tort sur ΔP de D-440), celui de Lisnard 29,638 (38,209) ; les impôts des
+    entreprises, −2,552 et −6,547 Md€ (et non +0,730 et +2,024, l'IS induit seul)."""
+    for chemin, menages, entreprises in (
+            (ATTAL, 63.629, -2.552),
+            ("presidentielle_lisnard/predictif_pres2027_lisnard_programme.json", 29.638,
+             -6.547)):
+        m = _mesure(chemin, convention=CONVENTION_PARTS)
+        assert m.couts[2026] + m.prelevements[2026] == pytest.approx(menages, abs=1e-3)
+        assert sum(m.entreprises[2026].values()) == pytest.approx(entreprises, abs=1e-3)
+        assert sum(m.entreprises[2027].values()) == pytest.approx(m.prelevements[2027],
+                                                                  abs=1e-12)

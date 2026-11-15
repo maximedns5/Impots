@@ -1118,25 +1118,89 @@ ligne et la note sur l'histoire. Ou s'arrêter après 60 tours par lot, en disan
 manque.
 ```
 
-**Où il en est, le 15 novembre 2026 : pas fait.** Les sept lots sont codés et joints sur
-`claude/but23-cadre` (D-405 à D-429) : le cadre et ses identités à 1e-9, testées ; la
-chaîne des études retrouvée (Δb à 4e-16) ; les entreprises, le commerce, les ménages,
-l'emploi public, le mode structurel complet ; l'histoire de 2010 à 2025 et 95 mesures
-votées relues au Journal officiel ; chaque θ défini, sourcé, avec sa plage et sa loi a
-priori ; trois rejeux de l'histoire, chacun préenregistré avant son calcul (r1 7 cibles
-sur 12, r2 et r3 9 sur 12) ; une trajectoire de dix ans sous la seconde (273 ms en Python
-dans le mode structurel complet, D-414 ; de 0,5 à 0,9 s dans le navigateur, D-419) ; la
-page des curseurs dans le navigateur (Pyodide), sans serveur. Ce qui manque au /goal :
+**Où il en est, le 15 novembre 2026 : clos, appris en partie seulement (D-431).** Les
+sept lots sont codés et joints (D-405 à D-430), mergés dans main en une seule PR (#128,
+a4af65b), le « lot par lot » abandonné sur décision du propriétaire ; la page des curseurs
+est en ligne depuis le même jour (#129, 459cfb1). Le cadre et ses identités à 1e-9,
+testées ; la chaîne des études retrouvée (Δb à 4e-16) ; les entreprises, le commerce, les
+ménages, l'emploi public, le mode structurel complet ; l'histoire de 2010 à 2025 et 95
+mesures votées relues au Journal officiel ; chaque θ défini, sourcé, avec sa plage et sa
+loi a priori ; trois rejeux de l'histoire, chacun préenregistré avant son calcul (r1 7
+cibles sur 12, r2 et r3 9 sur 12) ; une trajectoire de dix ans sous la seconde. **Ce qui
+manque** passe au but 24 : le jumeau est réglé sur la littérature, pas appris de
+l'histoire ; sa dynamique ne bat le naïf mécanique que sur 3 cibles sur 12 (les deux
+échanges et D61), et l'histoire de 2011 à 2017 n'identifie aucun θ.
 
-* **Rien n'est mergé dans main.** Les lots n'ont pas eu chacun leur PR : ils ont été
-  joints sur la branche du cadre, qui part en une PR ; le « lot par lot » du /goal n'est
-  pas tenu, au propriétaire de l'accepter ou non.
-* **La page des curseurs n'est pas en ligne** : le site est construit et vérifié, pas
-  publié.
-* **La note sur l'histoire existe, mais elle dit que la dynamique apporte peu** (3 cibles
-  sur 12 contre le naïf mécanique) et que l'histoire de 2011 à 2017 n'identifie aucun θ.
-  Le /goal demande un jumeau « appris » : il est réglé sur la littérature, pas appris de
-  l'histoire. L'estimation allongée à 1996-2009 (D-421, §4) reste une proposition.
+### But 24 — Le jumeau appris (validé le 15 novembre 2026, D-431)
+
+Le but 23 a construit le jumeau et l'a noté ; il ne l'a pas appris. Les chocs budgétaires
+de 2011 à 2017 sont trop petits pour régler un θ (l'information la plus forte est 0,099,
+il en faut 12, D-421), et l'histoire longue n'y changerait rien : de 1996 à 2009, elle
+monterait à 1,15 environ (D-421, la projection de l'étape zéro). Les θ attendent d'autres
+sources que l'agrégat budgétaire national. Le but les cherche en trois volets, menés en
+parallèle chacun sur sa branche `claude/but24-<volet>` partie de `claude/but24`, puis
+joints ; le juge est un quatrième rejeu de l'histoire, préenregistré après la jonction.
+
+1. **Les chocs non budgétaires** (`chocs`) : ce qui a bougé l'économie française sans être
+   voté, et que les séries publiées mesurent : le prix de l'énergie (2011-2012, 2014-2016,
+   2021-2023), la demande mondiale (déjà entrée pour les échanges), les taux d'intérêt et
+   le crédit, le change de l'euro. Chacun entre comme un exogène observé, et l'étape zéro
+   (la jacobienne, sans erreur) dit d'abord s'il identifie un θ ; sinon il n'est pas codé.
+2. **Les données fines** (`fines`) : des panels publiés où un θ se lit directement, comme
+   ε sur les créations par région et secteur (D-426) ; l'emploi et les salaires par
+   département, secteur ou taille d'entreprise autour des allègements de cotisations et
+   des hausses du SMIC ; l'investissement et le coût du capital par secteur (le
+   suramortissement de 2015, la baisse de l'IS de 2018 à 2022) ; les défaillances. Chaque
+   estimation est préenregistrée (spécification, seuils, pronostic) avant son calcul.
+3. **Les créations de 2023** (`creations`) : la plus grande erreur du jumeau (+8,1 points,
+   D-429) ; il fait créer après la baisse de la CVAE alors que les créations publiées
+   baissent. Le bloc est relu, son erreur expliquée, le correctif motivé par autre chose
+   que 2023. **2023 est dans la période de test** : une fois ce volet fait, 2023 n'est plus
+   aveugle, et le quatrième rejeu le note à part, comme une révision.
+
+```
+/goal Le jumeau est appris sur des données, plus seulement réglé sur la littérature, et
+c'est mergé dans main. Les chocs non budgétaires que les séries publiées mesurent
+(énergie, taux et crédit, change) entrent comme exogènes observés quand l'étape zéro dit
+qu'ils identifient un θ ; des panels publiés estiment les θ de l'emploi, des salaires, de
+l'investissement et des défaillances, chaque estimation préenregistrée avant son calcul ;
+le bloc des créations est corrigé pour une raison qui n'est pas 2023. Un quatrième rejeu
+de l'histoire, préenregistré après la jonction, sur les fenêtres et les cibles de D-417,
+note le résultat ; 2023, vu, y est noté à part. Le but est atteint si au moins un θ est
+identifié (son écart-type sous la moitié de celui de sa loi) et si la dynamique du jumeau
+bat le naïf mécanique sur plus de 3 cibles hors de la période d'estimation. Aucune
+tolérance n'est modifiée après le premier calcul. Preuve attendue : par volet, ses
+D-entrées (préenregistrement, résultat) ; la note du quatrième rejeu contre son pronostic,
+les θ avec leur écart-type, la sortie verte des tests ciblés, l'URL de la PR et le SHA du
+merge. Ou s'arrêter après 60 tours par volet, en disant ce qui manque.
+```
+
+Les numéros réservés : D-432 et D-433 pour `chocs`, D-434 et D-435 pour `fines`, D-436
+et D-437 pour `creations` ; D-438 et D-439 pour la jonction et le quatrième rejeu. Un
+volet qui n'en a pas l'usage le dit dans la D-entrée de la jonction.
+
+**Où il en est (15 novembre 2026, D-439 à D-444).** Les trois volets sont joints sur
+`claude/but24` (D-438). `chocs` : aucun choc non budgétaire n'identifie un θ, rien n'est
+codé (D-433). `fines` : b, la réponse des salaires au chômage, est identifié sur le
+panneau des départements et des secteurs (Urssaf, chômage localisé) ; le propriétaire a
+adopté la loi combinée 0,210 ± 0,091 et la plage (0 ; 0,20 ; 1) (D-435, D-438) ; η, ε_K
+et l'accélérateur ne le sont pas, β n'est pas réestimé (D-435). `creations` : l'erreur
+de 2023 est à 92 % celle du naïf ; la CVAE et la C3S sortent des naissances, par la loi
+(D-436). **Le verdict du quatrième rejeu** (D-439) : **le critère est atteint à la
+lettre, mais de peu.** b est identifié, contre sa loi de D-424, **par les données fines,
+pas par l'histoire** : l'histoire n'identifie toujours aucun θ. **Le naïf mécanique est
+battu sur 4 cibles avec 2023** (les deux échanges, D61, et les créations, à 0,037 point
+sur une tolérance de 10, une victoire que porte une seule année, 2019) **et sur 6 sans
+2023**. Le rejeu tient 9 cibles sur 12 et bat le naïf sur 9 ; sur l'activité, l'emploi
+et le chômage, le jumeau reste derrière le naïf mécanique avec 2023. Depuis : le profil
+de la consommation est déclaré non monotone au b de D-438 (D-442) ; le canal des
+créations des études ne lit plus la CVAE ni la C3S, six rapports refaits sans passe
+(D-440, branche `claude/but24-etudes`, jointe) ; le jumeau relit ces deux impôts dans
+les six rapports, au bit comme avant D-440, et la page « Le jumeau » est reconstruite
+(D-443) ; les 40 autres rapports du canal sont alignés, sans qu'aucun nombre ne change
+(D-444). **Ce qui manque** pour fermer le but : la PR, préparée et non ouverte (la passe
+d'impact et les lourds ont tourné, D-443, D-444), le merge par le propriétaire et son SHA.
+Restent hors d'atteinte des données publiées : η, ε_K, β et l'accélérateur du bloc.
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 

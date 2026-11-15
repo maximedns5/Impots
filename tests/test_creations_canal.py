@@ -55,15 +55,34 @@ def test_the_channel_reads_the_levies_on_firms_and_capital_only() -> None:
     assert set(zero.pib) == {0.0} and set(zero.recettes) == {0.0}
     both = {"impot_societes": -2e9, "cvae": -1e9, "pfu": 0.5e9,
             "cotisations_employeurs": -3e9, **household}
-    assert creations.prelevements(both, PARAMS) == pytest.approx(-5.5e9)
+    # The CVAE is not read (D-440): -2 + 0,5 - 3.
+    assert creations.prelevements(both, PARAMS) == pytest.approx(-4.5e9)
+
+
+def test_the_cvae_and_the_c3s_make_no_company_the_is_does() -> None:
+    """D-440, after D-436: the law makes neither the CVAE nor the C3S paid by a company
+    that enters (CGI, art. 1586 octies and 1586 quater; CSS, art. L. 651-3). A cut of 4 Md€
+    of either makes no company; the same cut of the IS makes, the first year, by hand,
+    ε × 100 × 4 Md€ / (b Y) = 0,043 × 400 / (0,092 × 3 000) points of entry rate."""
+    for name in ("cvae", "c3s"):
+        assert creations.prelevements({name: -4e9}, PARAMS) == 0.0
+        none = _effet(creations.prelevements({name: -4e9}, PARAMS))
+        assert set(none.taux_entree) == {0.0} and set(none.pib) == {0.0}
+    assert set(creations.PRODUCTION) == {"cvae", "c3s"}
+    assert not set(creations.PRODUCTION) & set(PARAMS.instruments)
+    cut = _effet(creations.prelevements({"impot_societes": -4e9, "cvae": -4e9,
+                                         "c3s": -4e9}, PARAMS))
+    assert cut.taux_entree[0] == pytest.approx(0.043 * 400 / (0.092 * 3_000), rel=1e-12)
+    assert cut.pib[-1] > 0
 
 
 def test_the_instruments_the_channel_reads_are_held() -> None:
     """The owner's decisions of 13 November 2026: the employer contributions move the
-    channel, beside the IS, its contribution, the CEBGE, the production taxes, the PFU and
-    the social levies on capital. A change of this list is a change of the channel."""
+    channel, beside the IS, its contribution, the CEBGE, the PFU and
+    the social levies on capital; not the CVAE nor the C3S since D-440. A change of this
+    list is a change of the channel."""
     assert PARAMS.instruments_entreprises == (
-        "impot_societes", "contribution_sociale_is", "cebge", "cvae", "c3s")
+        "impot_societes", "contribution_sociale_is", "cebge")
     assert PARAMS.instruments_menages == (
         "pfu", "prelevements_sociaux_capital", creations.COTISATIONS_EMPLOYEURS)
     assert creations.COTISATIONS_EMPLOYEURS == "cotisations_employeurs"
@@ -128,16 +147,28 @@ ATTAL_A18 = (Path(__file__).resolve().parents[1] / "reports" / "etudes"
 
 
 def test_a_published_study_carries_d427s_slope_and_its_debt() -> None:
-    """D-427: the Attal study rewritten without a pass at the slope the file declares
-    publishes Δb 2035 at θ½, aged view, persistence « lue », +0,2354 point; replayed at
-    the 0,20 it carried (D-402), the +0,2000 published before."""
+    """D-427, then D-440: the Attal study rewritten without a pass, at the slope the file
+    declares and without the CVAE, publishes Δb 2035 at θ½, aged view, persistence
+    « lue », +0,2475 point, above the +0,2450 without the channel: what is left of it is
+    the IS the abolition induces, a rise. With the CVAE read (D-427), +0,2354; at the 0,20
+    of D-402 as well, the +0,2000 published before."""
     payload = json.loads(ATTAL_A18.read_text(encoding="utf-8"))
     theta = {**dict.fromkeys(payload["rejeu"]["lignes"], 0.5), MACRO_ROW: 0.5,
              CREATIONS_ROW: 0.5}
     lue = next(s for s in payload["side_by_side"] if s["persistence"] == "lue")
     assert payload["rejeu"]["creations"]["parametres"]["elasticite"] == vars(
         PARAMS.elasticite)
-    assert lue["years"][-1]["delta_aged"] == pytest.approx(0.002353733480370712, abs=1e-12)
+    assert "cvae" not in payload["rejeu"]["creations"]["parametres"][
+        "instruments_entreprises"]
+    assert lue["years"][-1]["delta_aged"] == pytest.approx(0.002475268250772489, abs=1e-12)
+    sans = rejouer.at_theta(payload, theta, view="vieillie", persistence="lue",
+                            creations=False).delta
+    assert sans[-1] == pytest.approx(0.002450, abs=5e-7)
+    assert sans[-1] < lue["years"][-1]["delta_aged"]
+    payload["rejeu"]["creations"]["variations"] = payload["recalcul"]["instruments"][
+        "variations_avant"]
+    with_cvae = rejouer.at_theta(payload, theta, view="vieillie", persistence="lue").delta
+    assert with_cvae[-1] == pytest.approx(0.002353733480370712, abs=1e-12)
     before = payload["recalcul"]["elasticite_avant"]
     assert before == {"centre": 0.20, "bas": 0.043, "haut": 0.356}
     payload["rejeu"]["creations"]["parametres"]["elasticite"] = before
@@ -198,7 +229,8 @@ def test_the_debt_without_the_channel_is_the_debt_of_today() -> None:
         today.aged.delta[-1], abs=1e-12)
     chemin = payload["creations"]["chemins"][0]["vieillie"]
     assert chemin["delta_sans_creations"] == pytest.approx(list(today.aged.delta))
-    assert payload["creations"]["prelevements_eur"]["vieillie"]["2026"] == -10e9
+    # The IS of CUT, not its CVAE (D-440).
+    assert payload["creations"]["prelevements_eur"]["vieillie"]["2026"] == -8e9
     assert creations.CONVENTION in payload["conventions"]
     assert "Baisse" not in json.dumps(payload["creations"]["parametres"])
 

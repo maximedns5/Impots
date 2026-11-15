@@ -32756,3 +32756,1399 @@ commit qui date un enregistrement, absent d'un clone superficiel
 D-420, D-423 et D-429 gardent leur commit. `BUT.md` porte le chiffre du premier juge et
 dit le but 23 pas fait : rien n'est mergé, la page des curseurs n'est pas en ligne, la
 dynamique ne bat le naïf mécanique que sur 3 cibles.
+
+## D-431 — Le but 23 clos, le but 24 validé : le jumeau appris, en trois volets
+
+**Le but 23 est clos.** Le propriétaire a mergé la PR unique (#128, a4af65b), le « lot par
+lot » de son /goal abandonné par sa décision ; la page des curseurs est en ligne (le
+workflow `site`, run 43698452867, sur 459cfb1). Un premier run de publication, sur a4af65b,
+s'était arrêté au relevé du paquet du jumeau, qui comptait `_distutils_hack`, chargé au
+démarrage par un `.pth` de setuptools, comme un import de la page ; le relevé ne compte
+plus que ce qui est importé après le démarrage (#129), aucun nombre ne change. Ce que le
+but 23 ne fait pas, le jumeau appris de l'histoire, passe au but 24.
+
+**Le but 24, validé le 15 novembre 2026** (`BUT.md`) : trouver des sources qui
+identifient les θ, puisque l'agrégat budgétaire national n'en identifie aucun (D-420,
+D-423, D-429). **L'histoire longue n'en fait pas partie** : la projection de son étape
+zéro (D-421) donne une information d'environ 1,15 pour l'élasticité de l'emploi de 1996 à
+2009, quand il en faut 12 ; elle avait été retirée, elle le reste. Trois volets, chacun
+sur sa branche partie de `claude/but24`, menés en parallèle par des agents qui ne lancent
+aucune passe sur la population entière :
+
+* **`chocs`** : les chocs non budgétaires mesurés par des séries publiées (énergie, taux
+  et crédit, change), chacun soumis d'abord à l'étape zéro ; seul celui qui identifie un θ
+  est codé. D-432, D-433.
+* **`fines`** : des panels publiés où un θ se lit (l'emploi, les salaires,
+  l'investissement, les défaillances), comme ε en D-426. D-434, D-435.
+* **`creations`** : le bloc des créations relu sur son erreur de 2023 (+8,1 points, la
+  CVAE) ; le correctif se motive par autre chose que 2023, et 2023, devenu vu, est noté à
+  part au quatrième rejeu. D-436, D-437.
+
+**Le juge** est un quatrième rejeu (`rejeu_histoire_r4`), préenregistré après la jonction
+(D-438, D-439), sur les fenêtres, les cibles et les tolérances de D-417. **Le critère**,
+fixé ici avant tout calcul : au moins un θ identifié, son écart-type sous la moitié de
+celui de sa loi a priori, et la dynamique du jumeau qui bat le naïf mécanique sur plus de
+3 cibles hors de la période d'estimation (r3 : aucun θ, 3 cibles).
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible de D-417 ; les
+rapports de r1, r2 et r3 gardent leur commit ; les études ne sont pas refaites.
+
+## D-432 — Les chocs non budgétaires préenregistrés : recensement, étape zéro, pronostic
+
+**Ce qui est fait** (but 24, volet `chocs`, branche `claude/but24-chocs`, partie de
+`claude/but24` à 0ff12ec). Le recensement des chocs que des séries publiées mesurent de
+2010 à 2024, le canal du jumeau par lequel chacun entrerait et le θ qu'il pourrait
+identifier ; trois séries téléchargées et manifestées ; le code d'une passe d'essai
+(`scratchpad`, hors rapports), écrit et compilé, **pas lancé** : aucune jacobienne n'a été
+calculée avec ces chocs, aucune erreur du jumeau non plus. Le critère, les fenêtres et le
+pronostic sont écrits ici avant le calcul ; le résultat ira dans D-433.
+
+### 1. Le recensement
+
+Un choc n'identifie un θ que s'il passe par une équation que gouverne une ligne θ. Un choc
+sans canal, ou dont le canal serait une équation que le jumeau n'a pas, est écarté ; aucun
+canal n'est inventé : chacun des retenus entre par une équation de Mésange (G2017-04) que
+le jumeau porte déjà, aux coefficients que Mésange imprime.
+
+| choc | série | canal du jumeau | θ visés | sort |
+|---|---|---|---|---|
+| pétrole | Brent en euros (Insee) | prix d'importation (p. 91) | export., conso. | retenu |
+| énergie importée | déflateur des importations | aucun : endogène | — | écarté (a) |
+| énergie consommée | IPC énergie | aucun : endogène | — | écarté (b) |
+| taux souverain | OAT à dix ans | intérêts de la dette | aucun | écarté (c) |
+| crédit | crédits aux SNF (BdF) | coût d'usage (p. 42) | coût du capital | retenu |
+| change | HCI réel (BCE) | compétitivité (p. 79 à 91) | export., import. | retenu |
+
+(a) Dans Mésange, le prix des importations d'énergie se forme sur le baril et les prix
+domestiques (p. 89 à 91) : c'est une sortie, pas un exogène ; l'imposer remplacerait une
+équation du modèle par la série qu'elle doit expliquer. Le jumeau ne distingue d'ailleurs
+pas l'énergie dans ses importations. Le baril, l'exogène de cette équation, est retenu à
+sa place. (b) L'IPC de l'énergie est un prix de la consommation que le jumeau calcule
+(p̂c, l'équation (PC), p. 24) ; la consommation d'énergie de Mésange (son prix relatif,
+p. 31) n'est pas un bloc du jumeau, dont la consommation est agrégée : il faudrait un
+canal nouveau. (c) L'OAT entre déjà, la même pour le jumeau et les deux naïfs (D-417), à
+la charge d'intérêts de la dette, qu'aucun θ ne gouverne. Le taux qui porte un θ est celui
+du coût d'usage, R10aréel + prime (Mésange p. 42-43), où la prime est l'écart des crédits
+aux entreprises à l'OAT : leur somme est le taux des crédits, déflaté ; l'OAT y entre par
+lui, pas une seconde fois. Le taux réel à trois mois de la consommation de Mésange (−0,05
+à un an pour un point, p. 34) et le taux réel à dix ans de l'investissement des ménages
+(p. 37) n'ont pas de bloc dans le jumeau : écartés, faute de canal. La demande mondiale
+est déjà entrée (D-421) ; elle reste ce qu'elle est.
+
+**Les séries**, dans `data/raw`, déclarées à `KNOWN_SOURCES` et ajoutées au manifeste par
+`impots population manifest` (151 fichiers présents vérifiés, 3 ajoutés), lues le 15
+novembre 2026 :
+
+* `bce_mir_fr_credits_snf_fixation_plus_1an_2009_2025.csv` : statistiques MIR, compilées
+  par la Banque de France et publiées par la BCE, MIR.M.FR.B.A2A.K.R.A.2240.EUR.N, le taux
+  des crédits nouveaux aux sociétés non financières, hors découverts et crédits
+  renouvelables, à taux fixé pour plus d'un an, mensuel ; l'année est la moyenne des douze
+  mois (sha256 a79e3ade…7f808). Mésange lit « les crédits hors découverts à plus de deux
+  ans » de la Banque de France ; la série harmonisée la plus proche, dit.
+* `bce_exr_hci_fr_h03_nrd0_2009_2025.csv` : BCE, EXR.A.H03.FRF.NRD0.A, l'indicateur de
+  compétitivité harmonisé réel de la France contre la zone euro et le grand groupe de
+  partenaires, déflaté par les déflateurs du PIB, annuel (527de0db…e56ef). Le déflateur
+  du PIB est celui que le jumeau reçoit imposé : un HCI déflaté par lui mesure les prix
+  étrangers en euros relativement au scénario de prix du jumeau.
+* `insee_bdm_010002078_brent_euros_2009_2025.xml` : Insee, BDM 010002078, le Brent en
+  euros par baril, mensuel, moyenne des douze mois (c505c194…46df3b).
+
+### 2. Comment chacun entre, comme exogène observé
+
+Chacun entre comme la demande mondiale (D-421) : une mesure observée sans choc sur le
+compte (`observe_taux_credit`, `observe_change`, `observe_baril`), dans la variante
+seulement ; la référence, qui est le naïf, reste au scénario, et le naïf mécanique n'a ni
+investissement ni commerce. Pour la fenêtre partie de s, chaque série x en écart à sa
+tendance de l'estimation, x̃_t = x_t − x_s − g (t − s), g = (x_2017 − x_2010) / 7 la
+variation moyenne sur les années notées de 2011 à 2017 (la règle de D-421 : la référence
+porte déjà les effets moyens de la période).
+
+* **Le crédit** : r_t = R_t − π_t, R le taux des crédits, π la croissance du prix de la
+  FBCF des SNF (t. 1.103 ; Mésange déflate par le glissement des prix d'investissement).
+  Au bloc `investissement`, le coût d'usage : Δck_t = r̃_t / u, u = 0,01 / 0,065 (la
+  variante de taux de Mésange, p. 134, déjà dans `entreprises.yaml`) ; soit le signal
+  r̃_t · knet_t, que le bloc traite comme un prélèvement sur le capital. Puis l'équation de
+  la p. 44, ε_K (θ « coût du capital »), le capital et le PIB potentiel, et l'accélérateur
+  sur l'activité qui en vient.
+* **Le change** : f_t = −ln (H_t / H_s), détendu, les prix étrangers en euros sur le
+  déflateur du PIB. Au bloc `commerce` : la compétitivité-prix des exportations
+  (c += f, l'équation 3, p. 79, s_X(θ)) ; les prix d'exportation et d'importation par la
+  ligne « Prix étrangers (+1 %) » (p. 87 : 0,12, 0,17, 0,20, 0,23, 0,23 ; p. 91 : 0,12,
+  0,21, 0,25, 0,23, 0,22, aux horizons T, 1, 2, 5 ans et LT) ; les importations en volume
+  par la ligne « Prix d'importations (+1 %) » (p. 85, s_M(θ)) appliquée à ce prix
+  d'importation ; et, par la boucle prix-salaires (D-414), les intrants importés
+  (κ^M) dans les prix de production et le prix de la consommation p̂c (μ_C).
+* **Le baril** : b_t = ln (B_t / B_s) − ln (P_t / P_s), détendu, B le Brent en euros, P
+  le déflateur du PIB. Au prix des importations par la ligne « Prix du baril (+1 %) »
+  (p. 91 : 0,05, 0,07, 0,08, 0,08, 0,08), puis la même boucle (κ^M, μ_C) ; aucune réponse
+  des volumes d'importation (l'élasticité-prix des importations d'énergie est nulle,
+  p. 84, D-424).
+
+Les écarts (points de taux ; % pour le change et le baril), fenêtre 2010 → 2014, puis
+2014 → 2017 : r̃ −0,22, +0,47, +1,00, +1,22 ; −0,08, −0,91, −1,22 ; f +0,29, +2,58,
++0,25, −0,70 ; +3,66, +1,46, +0,68 ; b de l'ordre de +30 en 2012 et de −45 en 2016.
+(Ceux-ci sont lus sur les séries, avant tout calcul du jumeau.)
+
+### 3. L'étape zéro, et le critère
+
+Comme D-421 et D-428 : la jacobienne des sorties notées du jumeau (pas des erreurs) en θ,
+divisée par les tolérances de D-417, sur les deux fenêtres de l'estimation de D-417
+(2010 → 2014, 2014 → 2017 ; 2011 à 2017 notées), les chocs budgétaires observés et la
+demande mondiale de r3 compris, plus les trois chocs ; chacun des huit θ de D-428 (les
+sept estimés et ε) perturbé de 0,001 sur l'axe des tirages, les autres à ½. Aucune valeur
+publiée de cible n'y entre. Quatre points : ½ vers le haut et vers le bas ; le mode de
+chaque loi de D-424 ramené dans [0 ; 1] (ε à ½), vers le haut (le point de D-428) et vers
+le bas. L'information d'un θ, diag (JᵀJ) ; l'écart-type approché, √diag (JᵀJ + P)⁻¹.
+
+* **Le critère de D-421** : à ½, P = 4 I, un θ est identifié si σ < 0,25, soit une
+  information d'au moins 12 environ.
+* **Le critère du but** (D-424, D-431) : au mode, P = diag (1 / s²), s l'écart de la loi
+  du côté de la perturbation ; un θ est identifié si σ < s / 2, d'un côté au moins, soit
+  une information d'au moins 3 / s² environ.
+
+Un choc n'est codé (D-433) que si, avec lui, un θ au moins est identifié sous le critère
+du but ; s'il ne l'est que sous celui de D-421, c'est dit, et il n'est pas codé. Cinq
+cas : les chocs budgétaires seuls, qui doivent redonner l'étape zéro de D-428 à 1 % près
+(un contrôle ; sinon l'écart est dit, et rien n'est réglé), chacun des trois chocs
+ajouté seul, et les trois ensemble, le cas qui compte. Une variante sans la tendance
+retirée (g = 0) est dite à côté ; elle ne décide rien. Aucun seuil, aucune série, aucune
+fenêtre ne change après le premier calcul.
+
+### 4. Le pronostic, avant tout calcul
+
+L'aveugle est percé : les séries ci-dessus sont lues, et D-428 donne l'information des
+chocs budgétaires ; aucune jacobienne avec ces chocs n'a été calculée. L'ordre de
+grandeur : un écart de change de 3 % rapporte aux exportations, par la dérivée en θ du
+haut de la plage (1,08 par unité de θ sur 0,73), de 1 à 1,5 point de croissance une ou
+deux années, à rapporter à une tolérance de 4 ; un point de taux réel, sur les deux ou
+trois dernières années d'une fenêtre, quelques dixièmes de point de PIB.
+
+Au mode, vers le haut, les trois chocs ensemble (D-428 entre parenthèses) :
+
+| θ | information | requis 3 / s² | σ | s | identifié |
+|---|---|---|---|---|---|
+| profil de la consommation | [0,002 ; 0,3] (0,002) | 12 | [0,49 ; 0,50] | 0,500 | non |
+| emploi | [1,5 ; 2,5] (1,633) | 180 | [0,125 ; 0,128] | 0,129 | non |
+| salaires | [0,3 ; 0,8] (0,333) | 66 | [0,208 ; 0,213] | 0,213 | non |
+| exportations | [0,2 ; 2,5] (0,013) | 199 | [0,120 ; 0,123] | 0,123 | non |
+| importations | [0,02 ; 0,3] (0,026) | 1 845 | 0,040 | 0,040 | non |
+| accélérateur | [0,02 ; 0,4] (0,029) | 46 | [0,25 ; 0,255] | 0,255 | non |
+| coût du capital | [0,1 ; 3,0] (0,024) | 69 | [0,195 ; 0,208] | 0,208 | non |
+| ε, non estimé | [5,5 ; 7,0] (5,971) | 114 | [0,148 ; 0,152] | 0,162 | non |
+
+Ce que les chocs apportent, au pronostic : le change aux exportations (de 0,013 à quelques
+dixièmes, l'information la plus multipliée), le crédit au coût du capital (de 0,024 à
+environ 1), le baril presque rien (moins de 0,2 à tout θ : son effet passe par 0,07 du
+prix d'importation, puis par les intrants). À ½ (le critère de D-421), aucun θ n'atteint
+12 ; ε reste le plus informé (environ 6). Sans la tendance retirée, les informations du
+change et du crédit montent d'un facteur 1 à 3, sans rien identifier. **Aucun θ identifié,
+sous l'un ou l'autre critère** (neuf chances sur dix au moins) ; le plus grand rapport de
+l'information à ce que le but requiert reste sous 10 %. **D-433 ne coderait alors
+rien** : les trois séries restent manifestées, aucun exogène n'entre au jumeau, et le
+quatrième rejeu (D-438, D-439) ne reçoit rien de ce volet.
+
+### Ce qui tourne ensuite
+
+La passe d'essai, sur le commit poussé qui porte cette entrée, avec et sans la tendance
+retirée ; quelques minutes. Le résultat va dans D-433, contre ce pronostic. Ni `CAS`, ni
+les cibles, ni les tolérances, ni les fenêtres de D-417 ne changent ; aucun rejeu de
+l'histoire n'est lancé. `src/impots/population/cli.py` (`KNOWN_SOURCES`) et
+`data/raw/MANIFEST.json` sont les seuls fichiers changés ; aucun nombre du modèle ne
+bouge, aucun test n'est dû (D-335).
+
+## D-433 — Les chocs non budgétaires à l'étape zéro : aucun θ identifié, rien n'est codé
+
+**Ce qui a tourné.** La passe d'essai de D-432 (`scratchpad`, hors rapports), sur 928fac6
+poussé, deux fois : les écarts à la tendance de l'estimation (le cas préenregistré), puis
+sans la tendance retirée (la variante dite). Vingt secondes chacune. Ni série, ni seuil,
+ni fenêtre, ni point de la jacobienne n'a changé après le premier calcul ; aucun rejeu de
+l'histoire n'a été lancé, aucune erreur du jumeau calculée.
+
+**Le contrôle d'abord.** Les chocs budgétaires seuls redonnent l'étape zéro de D-428 au
+millième près, sur les trois points qu'elle publiait (au mode, vers le haut : 0,002,
+1,633, 0,333, 0,013, 0,026, 0,029, 0,024 et 5,971) : le code de la passe porte le jumeau
+de r3, et ses deux blocs étendus ne changent rien sans les chocs.
+
+**L'information au mode, vers le haut** (le point de D-428), chacun des chocs ajouté seul,
+puis les trois ensemble ; σ, s et l'identification pour le cas des trois :
+
+| θ | budget | + crédit | + change | + baril | les trois | σ | s | requis |
+|---|---|---|---|---|---|---|---|---|
+| profil de la consommation | 0,002 | 0,002 | 0,002 | 0,002 | 0,002 | 0,500 | 0,500 | 12 |
+| emploi | 1,633 | 1,634 | 1,452 | 1,812 | 1,643 | 0,127 | 0,129 | 181 |
+| salaires | 0,333 | 0,333 | 0,182 | 0,376 | 0,235 | 0,212 | 0,213 | 66 |
+| exportations | 0,013 | 0,013 | 0,883 | 0,269 | 1,365 | 0,122 | 0,123 | 199 |
+| importations | 0,026 | 0,026 | 0,188 | 0,300 | 0,548 | 0,040 | 0,040 | 1 845 |
+| accélérateur | 0,029 | 0,029 | 0,021 | 0,042 | 0,037 | 0,255 | 0,255 | 46 |
+| coût du capital | 0,024 | 0,082 | 0,024 | 0,025 | 0,082 | 0,208 | 0,208 | 69 |
+| ε, non estimé | 5,971 | 5,971 | 5,971 | 5,971 | 5,971 | 0,151 | 0,162 | 114 |
+
+Au mode vers le bas (s₋), les trois chocs : le profil de la consommation 0,169 (σ
+0,490), les exportations 0,079 (0,505 pour s₋ = 0,510), les importations 0,003, le coût
+du capital 0,082 (0,177 pour 0,177, requis 96) ; les autres comme vers le haut. À ½ (le
+critère de D-421, 12 requis), l'information la plus forte est celle de ε, 5,97 (σ 0,317),
+puis l'emploi vers le bas, 2,10 (σ 0,406) ; les exportations 1,26 (σ 0,438).
+
+**Aucun θ n'est identifié, ni sous le critère du but ni sous celui de D-421**, avec les
+trois chocs comme avec chacun. Le plus grand rapport de l'information à ce que le but
+requiert est celui de ε (5,2 %) ; parmi les sept θ estimés, l'emploi (0,9 %) et les
+exportations (0,7 %). **Rien n'est codé** : aucun exogène nouveau n'entre au jumeau, et
+le quatrième rejeu (D-438, D-439) ne reçoit rien de ce volet.
+
+**Sans la tendance retirée** (la variante, qui ne décide rien), au mode vers le haut, les
+trois chocs : les exportations 3,55 (σ 0,120), les importations 1,01, le coût du capital
+0,045, l'emploi 1,25, les salaires 0,07 ; le change seul porte les exportations à 2,91.
+Rien n'est identifié non plus.
+
+**Contre le pronostic.** Tenus : aucun θ identifié sous l'un ou l'autre critère ; chaque σ
+dans sa bande ; l'information au mode du profil de la consommation, de l'emploi, des
+exportations, de l'accélérateur et de ε dans la sienne ; ε le plus informé à ½ ; le plus
+grand rapport sous 10 % ; le contrôle. Manqués : les salaires, 0,235 sous [0,3 ; 0,8] ;
+les importations, 0,548 au-dessus de [0,02 ; 0,3] ; le coût du capital, 0,082 sous
+[0,1 ; 3,0], et « environ 1 » annoncé pour le crédit ; le baril, annoncé à moins de 0,2
+à tout θ, ajoute 0,27 aux importations, 0,26 aux exportations et 0,18 à l'emploi ; sans
+la tendance, le change multiplie l'information des exportations par 3,3, et le crédit
+divise celle du coût du capital par 1,8, hors du facteur « 1 à 3 » annoncé. Une erreur de
+description dans D-432 : les écarts du baril qu'elle cite (+30 en 2012, −45 en 2016) ne
+sont ni ceux d'avant la tendance retirée (+35 et −64) ni ceux de la règle
+préenregistrée, qui a tourné (+42 et −56 ; la tendance est de −3,8 % par an) ; la règle
+n'a pas changé. Les écarts du crédit et du change cités sont ceux qui ont tourné.
+
+**Ce qui surprend.**
+
+* **Le crédit ne se voit presque pas, et c'est la structure du bloc.** Un point de taux
+  réel déplace bien l'investissement des SNF (−1,2 % en 2014, +1,0 % en 2017, à θ½),
+  mais le PIB de moins de 0,02 % : le bloc `investissement` met le coût d'usage dans
+  l'offre (le capital et le PIB potentiel, D-407 : « l'investissement prend sa place
+  parmi les emplois, à PIB potentiel donné ») et ne porte la demande que par
+  l'accélérateur ; et aucune des douze cibles de D-417 ne lit l'investissement. Avec des
+  fenêtres de trois et quatre ans, le capital n'a pas le temps de bouger.
+* **Le change retire de l'information à l'emploi et aux salaires** (de 1,63 à 1,45, de
+  0,33 à 0,18) : l'information est le carré d'une dérivée totale, et la réponse au change
+  y entre avec le signe contraire de celle des chocs budgétaires, sur les mêmes années.
+* **Le baril informe les échanges par les prix intérieurs** : le prix d'importation
+  renchérit les intrants (κ^M), le prix intérieur monte, et les importations répondent par
+  l'élasticité s_M que le bloc applique au prix intérieur ; aucune réponse des volumes au
+  baril lui-même n'est entrée, comme préenregistré.
+
+**Ce qui ne change pas.** Ni `CAS`, ni les cibles, ni les tolérances, ni les fenêtres de
+D-417 ; aucun nombre du modèle. Les trois séries restent déclarées à `KNOWN_SOURCES` et
+au manifeste (D-432), pour qui reprendrait la passe ; le code de la passe reste hors du
+dépôt, ses équations écrites dans D-432. Ce que les θ de l'investissement attendent n'est
+pas un choc de plus mais une cible qui lise l'investissement, ou des données fines (le
+volet `fines`) ; une cible nouvelle serait une décision du propriétaire, pas de ce volet.
+
+**Les tests.** Aucun nombre ne change, aucun test dédié (D-335).
+`pytest -m "not lourd and not chrono" -n 1 tests/test_provenance.py tests/test_donnees.py`
+(les fichiers qui lisent `KNOWN_SOURCES` et le manifeste) : 47 verts, en 13 s ; `ruff
+check` propre sur `cli.py`. Ni `make impact` ni `make full`.
+
+## D-434 — Les données fines du but 24 : emploi, salaires, investissement ; avant calcul
+
+**Pourquoi.** D-426 a identifié ε sur les créations par région et secteur ; η et β non, et
+l'investissement n'avait pas été estimé. Le but 24 (D-431) cherche les θ que l'histoire
+agrégée n'identifie pas sur des panneaux publiés (branche `claude/but24-fines`, partie de
+`claude/but24` à 0ff12ec). **Aucune régression n'a tourné sur un résultat** : les
+panneaux ont été lus et comptés, les doses calculées, la variation des régresseurs après
+les effets fixes mesurée (`scripts/jumeau_microdonnees_d434.py --decrire`), les
+estimateurs testés sur des panneaux synthétiques. Aucun montant officiel d'une réforme,
+aucune évaluation préalable, aucun chiffrage de tiers n'entre.
+
+### 1. Les sources (manifestées, `KNOWN_SOURCES`, `manifest` parti du manifeste)
+
+* **Urssaf, open data** : établissements, effectifs salariés moyens annuels et masse
+  salariale (assiette déplafonnée) du secteur privé, régime général, par département ×
+  secteur NA17i, 1998 à 2025 (`urssaf_dep_na17i_effectifs_masse_1998_2025.csv`, ODbL).
+  96 départements métropolitains × 14 secteurs (C1, C2-C5, C3, C4, DE, FZ, GZ, HZ, IZ,
+  JZ, KZ, LZ, MNb, RU) ; hors panneau, les intérimaires (MNa, comptés à l'agence) et OQ
+  (le privé non lucratif, hors du CICE, qui avait le CITS). L'Urssaf signale un champ
+  modifié au premier trimestre 2017 et les apprentis inclus depuis 2023 : des ruptures
+  nationales, que les effets d'année absorbent si elles touchent les cellules de même.
+* **Insee, BDM, TAUX-CHOMAGE** : les taux de chômage localisés trimestriels CVS par
+  département, 1990 à 2025 (`insee_bdm_taux_chomage_localise_1990_2025.xml`), la moyenne
+  des quatre trimestres.
+* **Insee, comptes nationaux 2025** : la FBCF par branche A38 (t. 6.301 à 6.303), la
+  valeur ajoutée par branche (t. 6.201 à 6.203), la consommation de capital fixe par
+  branche (t. 6.461 et 6.462), 1959 à 2025. Déjà au manifeste : Ésane 2023, la
+  distribution des salaires de 2024 (Insee Première n° 2079), les t. 7.101 et 8.202.
+
+**Écartés.** Les défaillances : aucune source nouvelle ne porte plus que D-426 (la Banque
+de France ne publie le secteur qu'à la région, que la BDM a déjà) ; β n'est pas
+réestimé. L'investissement par catégorie de taille (Ésane, une seule année, sans
+série) ; le suramortissement de 2015 à 2017 (il faudrait la part des équipements
+industriels dans la FBCF de chaque branche, que les t. 6.301 à 6.303 ne séparent pas :
+**il n'est pas dans la dose**, il est dit). Les données individuelles (DSN, liasses,
+Sirene) sont hors du dépôt. Rien n'a été refusé par le réseau.
+
+### 2. Les doses et les panneaux
+
+* **`travail` d'une cellule** (E2, W1) : la dose de D-425, −g [r_t a(k_t) + 1,8 % f_t],
+  où les parts a et f de la masse salariale sous les seuils sont celles de la
+  distribution nationale de 2024 mise à l'échelle du **salaire par tête de la cellule**
+  (masse sur effectif, 2010 à 2012, avant le CICE) rapporté à celui de l'ensemble des
+  cellules. **Deux hypothèses** : la forme de la distribution est commune ; le salaire
+  par tête (et non en EQTP) sous-estime le salaire horaire des cellules à temps partiel.
+  Après les effets cellule, département×année et secteur×année, il reste à la dose un
+  écart-type de 0,0015 (0,0207 brut) : seule l'interaction département × secteur des
+  niveaux de salaire, par la non-linéarité de a, identifie. C'est peu.
+* **`cout_capital` d'une branche** (K1) : Δck_u,t = (ΔIS + ΔCVAE)_u,t / (knet_u u), la
+  baisse de l'IS et de la CVAE de `doses` (D-425 ; M€ de 2023 sur Ésane), u = 0,1538 le
+  taux du coût d'usage du bloc, knet_u = R × CCF_u,2022, R = 11,05 le capital net des SNF
+  sur leur CCF en 2022 (t. 8.202, N11N ; t. 7.101, P51C, publiée jusqu'en 2022 seulement
+  dans ce millésime). **Une hypothèse** : la même durée de vie du capital dans toutes les
+  branches. La dose est la réponse du bloc à ε_K = 1 : D_u,t = Σ_{j ≤ t} (Δck_u,j −
+  Δck_u,j−1) R(t − j), R = `investissement.reponse_unitaire` (négative), de sorte que
+  log(I/VA) monte de ε_K D. Elle vaut, en 2025, de 0,001 (MB) à 0,144 (CB) ; après les
+  effets de branche et d'année, un écart-type de 0,0095. Hors dose : le CICE (un coût du
+  travail), le suramortissement.
+* **Les panneaux.** E2 et W1 : 1 344 cellules, aucune retirée, n = 28 224 ; les grappes,
+  les 96 départements (Rademacher). K1 et K2 : les 30 branches marchandes de D-425 moins
+  l'immobilier (LZ, dont la FBCF est surtout le logement des ménages), 29 grappes
+  (Rademacher), n = 609 (K1) et 493 (K2). L'estimateur, CR1, le bootstrap sauvage (9 999
+  tirages, graine 20261114) et l'écart-type retenu (le plus grand de CR1 et du bootstrap
+  sans contrainte) sont ceux de D-425. 2020 et 2021 sont exclues partout. Une tendance
+  par cellule entre par projection (`projeter_tendances`), testée égale aux indicatrices.
+
+### 3. Les spécifications, figées
+
+Années : 2003 à 2019 et 2022 à 2025, sauf mention.
+
+| nom | y | régresseurs (le premier d'intérêt) | effets fixes |
+|---|---|---|---|
+| E2 | log effectif | `travail` | cellule, dép.×année, secteur×année |
+| W1 | log (masse / effectif) | chômage du dép. (pts), `travail` | cellule, secteur×année |
+| K1 | log (I / VA), en volume | `cout_capital` | branche, année |
+| K2 | Δ log I, en volume | Δ log VA en t, t − 1, t − 2 | branche, année |
+
+K2 sur 2003 à 2019 (les retards ne touchent pas 2020 et 2021).
+
+Les variantes, chacune une spécification à part : **l'avance** (le régresseur en t + 2
+ajouté, années jusqu'en 2023 ; pour K2, Δ log VA en t + 2, 2003 à 2017) ; **le placebo**
+(E2 : 2003 à 2009, la dose de t + 8 ; la convergence des garanties mensuelles du SMIC de
+2003 à 2005, hors dose, y est : un placebo imparfait, dit. K1 : 2003 à 2011, la dose de
+t + 14, celle de 2017 à 2025) ; **les tendances** (par cellule pour E2 et W1, par
+branche pour K1) ; **jusqu'en 2019** (E2, W1, K1) ; E2 **sans secteur×année** (des effets
+d'année : la variation entre secteurs, comme E1, moins propre) ; W1 **au retard** (le
+chômage de t − 1 au lieu de t) et **avec région×année** ; K2 **avec 2024 et 2025** et
+**sans retards**.
+
+### 4. La traduction en θ, le critère
+
+* **E2 → η** (`jumeau_emploi_elasticite_cout`, 0,07 ; 0,44 ; 0,52) : η = −c, la dose
+  étant en fraction du coût du travail. L'estimation compare des cellules : elle porte
+  l'effet de substitution et un effet d'échelle (une cellule moins chère gagne des parts
+  de marché sur les autres), que le bloc, à production donnée, n'a pas ; elle majore η.
+* **W1 → b** (`jumeau_salaires_chomage`, 0 ; 1 ; 1,2778) : b = −γ / 0,018, γ la
+  semi-élasticité du salaire par tête au chômage local par point, 0,018 celle de Mésange
+  agrégée (p. 64, D-424). La même grandeur que la courbe des salaires de D-424, mesurée
+  en niveau sur des marchés locaux ; le bloc l'applique à un profil dynamique.
+* **K1 → ε_K** (`investissement_cout_capital`, 0 ; 0,44 ; 0,60) : ε_K = c, directement
+  (la dose est la réponse du bloc à ε_K = 1).
+* **K2 → θ_accélérateur** (`investissement_accelerateur`) : le coefficient de Δ log VA en
+  t est la réponse de l'investissement l'année d'un échelon de la valeur ajoutée, que le
+  bloc donne à β₀ R₀(0) + β₁ R₁(0) + R_ec(0) (`reponse_valeur_ajoutee`) : 1,2256 ;
+  1,7945 ; 2,3635 à θ = 0, ½ et 1, la plage de la traduction. Le choc d'une année tombe
+  au premier trimestre dans le bloc, tout au long de l'année dans les données : une
+  approximation, dite. Une valeur ajoutée qui monte avec l'investissement de la branche
+  (la simultanéité) biaise vers le haut ; l'erreur de mesure et l'agrégation annuelle,
+  vers le bas.
+
+**Le critère, celui du but** : θ̂ et σ_θ = écart-type / pente du morceau où tombe
+l'estimation (`vers_theta`) ; **identifié** si σ_θ < s / 2, s l'écart-type de la loi de
+D-424 (`a_priori.lois`, aux plages de D-427) du côté où tombe θ̂ (`critere_d434`). En
+unités du paramètre, sur le morceau sous le centre : η, σ < 0,0477 ; b, σ < 0,213, soit
+σ_γ < 0,0038 par point ; ε_K, σ < 0,078 (0,091 entre 0,30 et 0,44) ; la réponse de
+l'accélérateur, σ < 0,145. **Retenu** (assez pour proposer une loi) : identifié, du
+signe attendu (η, b, ε_K positifs ; la réponse de l'accélérateur positive), l'avance
+non rejetée au seuil de 10 % (WCR), et pour E2 et K1 le placebo non rejeté. Une
+estimation hors de la plage est proposée telle quelle ; rien n'est adopté ici.
+
+### 5. Le pronostic, avant tout calcul
+
+* **E2** : η entre −0,5 et +2, l'écart-type entre 0,3 et 1,5 (la dose ne garde qu'un
+  écart-type de 0,0015) : **non identifié** (19 chances sur 20).
+* **W1** : γ entre −0,012 et +0,002 par point (b de −0,1 à 0,67), l'écart-type entre
+  0,0015 et 0,005 : **identifié une chance sur deux** ; le biais de composition (les
+  bas salaires perdent leur emploi les premiers dans un département qui se dégrade)
+  pousse γ vers zéro. L'avance rejetée une fois sur trois (le chômage est persistant).
+  Retenu, deux chances sur cinq.
+* **K1** : ε_K entre −1 et +2, l'écart-type entre 0,4 et 1,5 : **non identifié** (19 sur
+  20) ; la baisse de l'IS de 2018 à 2022 suit la sortie de crise, et les branches
+  industrielles, les plus dosées, ont eu le suramortissement.
+* **K2** : la réponse entre 0,3 et 1,2 (θ sous 0, l'atténuation l'emporte), l'écart-type
+  entre 0,10 et 0,25 : **identifié deux chances sur cinq** ; l'avance rejetée une fois
+  sur deux (la capacité installée précède la valeur ajoutée).
+* Soit **un θ identifié sur quatre** le plus probablement (b ou l'accélérateur), et au
+  plus un retenu.
+
+### Ce qui tourne ensuite
+
+`PYTHONPATH=src python scripts/jumeau_microdonnees_d434.py` sur le commit qui porte cette
+entrée (le script refuse sans elle), détaché, vers `reports/jumeau/microdonnees_d434.json` :
+coefficients, écarts-types, tailles, aucune donnée individuelle. Le résultat va dans
+D-435, avec, pour chaque θ identifié, une loi proposée au propriétaire, non adoptée dans
+`thetas.py` ni `a_priori.py`. Aucune spécification, aucun seuil, aucune dose ne change
+après le premier calcul ; seul un correctif de normalisation ou de plomberie, dit.
+
+**Les tests.** `tests/test_jumeau_microdonnees_d434.py` (6 tests) : la dose d'une cellule
+égale celle de D-425 ; la tendance par cellule égale les indicatrices ; la dose du coût
+du capital est la réponse du bloc, et refuse une année hors de ses chocs ; le critère
+lit le côté de la loi ; le chômage localisé et l'Urssaf se lisent comme publiés. Avec
+`test_jumeau_microdonnees.py` : 16 verts. `ruff` propre sur les fichiers touchés.
+
+## D-435 — Les données fines estimées : b identifié et retenu, l'accélérateur hors plage
+
+**Ce qui a tourné.** `scripts/jumeau_microdonnees_d434.py`, sur c7cdb86 (D-434, poussé
+avant), détaché, vers `reports/jumeau/microdonnees_d434.json` : coefficients,
+écarts-types, tailles, la variation des régresseurs, aucune donnée individuelle. Un seul
+calcul, qui ne s'est pas arrêté ; aucune spécification, aucun seuil, aucune dose n'a
+changé. Aucune cellule ni branche retirée.
+
+### Les coefficients
+
+L'écart-type est le plus grand de CR1 et du bootstrap sans contrainte (D-425 ; CR1
+partout, le bootstrap de 5 à 10 % plus petit) ; p la p-valeur du bootstrap sauvage
+restreint (Rademacher, 96 départements ou 29 branches), 9 999 tirages.
+
+| spécification | coefficient | écart-type | p (WCR) |
+|---|---|---|---|
+| E2 emploi, `travail` | +1,459 | 2,772 | 0,58 |
+| E2_avance : t / t + 2 | −2,004 / +4,069 | 2,490 / 1,840 | 0,40 / 0,02 |
+| E2_placebo (t + 8, 2003-2009) | +1,967 | 1,748 | 0,21 |
+| E2_tendances | +0,291 | 1,572 | 0,84 |
+| E2_2019 | +2,036 | 2,282 | 0,34 |
+| E2_sans_secteur_annee | −7,927 | 0,855 | 0,00 |
+| W1 salaires, chômage (par point) | −0,00356 | 0,00168 | 0,04 |
+| W1_avance : t / t + 2 | −0,00250 / +0,00030 | 0,00151 / 0,00155 | 0,10 / 0,85 |
+| W1_retard (t − 1) | −0,00378 | 0,00163 | 0,02 |
+| W1_tendances | −0,00139 | 0,00175 | 0,42 |
+| W1_region_annee | −0,00200 | 0,00127 | 0,10 |
+| W1_2019 | −0,00117 | 0,00165 | 0,49 |
+| K1 investissement, `cout_capital` | −0,21 | 4,09 | 0,99 |
+| K1_avance : t / t + 2 | +20,6 / −11,7 | 16,5 / 12,7 | 0,26 / 0,49 |
+| K1_placebo (t + 14, 2003-2011) | +2,56 | 1,80 | 0,09 |
+| K1_tendances | −2,11 | 5,01 | 0,97 |
+| K1_2019 | +17,1 | 9,6 | 0,04 |
+| K2 accélérateur, Δ log VA en t | +0,0523 | 0,0820 | 0,52 |
+| K2_avance : t / t + 2 | +0,0536 / +0,3206 | 0,1062 / 0,0850 | 0,64 / 0,10 |
+| K2_2025 | +0,0485 | 0,0965 | 0,67 |
+| K2_sans_retards | +0,0480 | 0,0878 | 0,60 |
+
+n = 28 224 (E2, W1 ; 25 536 avec l'avance, 22 848 jusqu'en 2019, 9 408 au placebo), 609
+(K1), 493 (K2). La p-valeur de l'avance de K2 est 0,0952, sous le seuil.
+
+### Sur l'échelle des θ, contre le critère
+
+* **`jumeau_salaires_chomage` (b ; 0 ; 1 ; 1,2778)** : b = 0,198 ± 0,094, θ = 0,099 ±
+  0,047 ; le seuil, la moitié de s₋ = 0,213 de la loi de D-424, 0,107. **Identifié**
+  (σ_θ = 0,047), du signe attendu, l'avance non rejetée (p = 0,85) : **retenu**. La
+  semi-élasticité, −0,36 % de salaire par tête par point de chômage, est le cinquième
+  de celle de Mésange (−1,8 %) et à 8,6 écarts-types sous elle ; à 2,9 écarts-types sous
+  la courbe de Nijkamp et Poot ramenée à l'échelle (0,467, D-424), dont elle est dans la
+  dispersion entre études (0,43). **Elle n'est pas robuste** : avec une tendance par
+  cellule, b = 0,077 ± 0,097 ; avec les effets région×année, 0,111 ± 0,071 ; jusqu'en
+  2019, 0,065 ± 0,091 ; au chômage de t − 1, 0,210 ± 0,091 ; avec l'avance, 0,139 ±
+  0,084. Toutes sous 0,25, aucune au-dessus de 0,33 à deux écarts-types : le signe et
+  l'ordre (petit) tiennent, le niveau moins. Le salaire par tête porte un biais de
+  composition (les bas salaires sortent les premiers quand le chômage monte), qui tire γ
+  vers zéro : b est plutôt un minorant.
+* **`investissement_accelerateur`** : la réponse de l'année, 0,052 ± 0,082, contre 1,7945
+  au centre du bloc et 1,2256 à θ = 0 : θ = −1,03 ± 0,072, le seuil 0,128. **Identifié**
+  au sens du critère, **non retenu** : l'avance est rejetée (p = 0,095, son coefficient
+  0,32 ± 0,085, six fois celui de l'année). La valeur ajoutée d'une branche ne précède
+  pas son investissement : elle le suit. Ce que cela dit : entre branches, à effets
+  d'année donnés, l'investissement ne répond pas dans l'année à la valeur ajoutée propre
+  de la branche ; l'accélérateur de Mésange est celui de la demande agrégée, que les
+  effets d'année absorbent ici. La grandeur n'est pas celle du bloc (la règle (1) de
+  D-424) ; elle ne dit rien contre β₀ = 1,19.
+* **`jumeau_emploi_elasticite_cout` (η)** : η = −1,46 ± 2,77, θ = −2,07 ± 3,75. **Non
+  identifié** ; l'avance est rejetée (p = 0,02). Sans les effets secteur×année, η = 7,9 ±
+  0,9, absurde en niveau (la variation entre secteurs, comme E1). Aucune proposition.
+* **`investissement_cout_capital` (ε_K)** : ε_K = −0,21 ± 4,09, θ = −0,24 ± 4,65. **Non
+  identifié** ; jusqu'en 2019, +17 ± 10 : la dose de 2017 à 2019 est minuscule (un
+  écart-type de 0,0009 après les effets) ; le placebo est rejeté (p = 0,094). Aucune
+  proposition.
+
+### Les lois proposées au propriétaire (rien n'est adopté)
+
+* **b, proposé** : la loi de W1 dans `a_priori.yaml` à la place de celle de Nijkamp et
+  Poot, l'estimation 0,198, l'écart-type 0,094 : sur θ, μ = 0,099, s = 0,047 (au lieu de
+  0,234 ; 0,213). Ou, si la règle (2) de D-424 (la méta-analyse avant l'estimation
+  française) doit tenir, les deux combinées par leurs précisions : 0,210 ± 0,091, μ =
+  0,105, s = 0,046 ; la loi est la même à 0,006 près. **La plage** : le centre (Mésange,
+  b = 1) est à 8,6 écarts-types de l'estimation ; une plage (0 ; 0,20 ; 1) mettrait θ = ½
+  sur elle et garderait Mésange en haut. Elle change les curseurs et les études, qui
+  lisent la plage : décision du propriétaire, comme les plages de D-427.
+* **L'accélérateur, proposé sans recommandation de l'adopter** : la borne basse de β₀
+  portée à 0,155 (la valeur où le bloc redonne la réponse estimée) ; recommandé :
+  ne rien changer, la grandeur n'étant pas celle du bloc et l'avance rejetée ; D-434 en
+  `comparaison` seulement.
+
+### Ce que b changerait dans le jumeau
+
+Le bloc `salaires` fait ŵ = b Σ Δu S_u(h)/100 : à b = 0,2 au lieu de 1, le salaire répond
+cinq fois moins au chômage. Une mesure qui crée du chômage (une hausse du coût du
+travail, une baisse de la dépense) ne le résorbe presque plus par la modération des
+salaires : l'emploi revient plus lentement à son niveau, la boucle prix-salaires désinfle
+moins, les recettes assises sur les salaires baissent moins à court terme et le chômage
+pèse plus longtemps. Une mesure qui le réduit (une baisse de cotisations) laisse plus
+de son effet en emplois, moins en hausses de salaires. Le signe des effets ne change
+pas ; leur persistance, oui. **Rien n'a tourné pour le chiffrer** : ni le rejeu de
+l'histoire (la jonction et le quatrième rejeu, D-438 et D-439), ni une étude. Si le
+propriétaire adopte la loi, le quatrième rejeu la lira ; b est l'un des sept θ estimés
+de D-417.
+
+### Contre le pronostic de D-434
+
+| | pronostic | résultat |
+|---|---|---|
+| E2 : η, écart-type | −0,5 à +2 ; 0,3 à 1,5 | −1,46 (hors) ; 2,77 (hors) |
+| E2 : identifié | non (19 sur 20) | non |
+| W1 : γ, écart-type | −0,012 à +0,002 ; 0,0015 à 0,005 | −0,0036 ; 0,0017 |
+| W1 : identifié, retenu | une sur deux ; deux sur cinq | oui ; oui |
+| W1 : avance rejetée | une fois sur trois | non |
+| K1 : ε_K, écart-type | −1 à +2 ; 0,4 à 1,5 | −0,21 ; 4,09 (hors) |
+| K1 : identifié | non (19 sur 20) | non |
+| K2 : réponse, écart-type | 0,3 à 1,2 ; 0,10 à 0,25 | 0,052 (hors) ; 0,082 (hors) |
+| K2 : identifié ; avance rejetée | deux sur cinq ; une sur deux | oui ; oui |
+| θ identifiés, retenus | un sur quatre ; au plus un | deux (b, l'accélérateur) ; un (b) |
+
+Le pronostic sous-estime l'imprécision des doses (E2 et K1, deux à trois fois) et
+surestime l'accélérateur entre branches (atténué presque à zéro, non à 0,3).
+
+### Ce qui ne change pas, ce qui reste
+
+Aucune plage, aucune loi, aucun θ, aucun bloc ne change : `thetas.py`, `a_priori.py` et
+`a_priori.yaml` sont intacts ; les propositions attendent le propriétaire. Le critère du
+but (au moins un θ identifié, son écart-type sous la moitié de celui de sa loi) est rempli
+par b sur ce volet ; il reste au quatrième rejeu de dire si la dynamique bat le naïf.
+β (les défaillances), η et ε_K restent non identifiés par les données publiées à la
+maille du département, du secteur et de la branche ; le suramortissement n'est pas
+estimé. Les rapports de D-426 gardent leur commit.
+
+**Les tests.** `pytest -m "not lourd and not chrono" -n 1` sur
+`tests/test_jumeau_microdonnees_d434.py` et `tests/test_jumeau_microdonnees.py` : 16
+verts. Aucun nombre du jumeau ne change : rien d'autre n'est relancé. Ni `make impact`
+ni `make full`.
+
+## D-436 — Les créations de 2023 relues : la CVAE, 0,64 point ; elle sort des naissances
+
+**Ce qui est fait** (branche `claude/but24-creations`, partie de `claude/but24`, 0ff12ec).
+Le diagnostic de l'erreur de 2023 des créations dans le rejeu r3 (D-429), puis un
+correctif motivé par la loi, non par 2023, avec son test et son effet sur l'estimation.
+Aucun rejeu de l'histoire n'est lancé ; ni `CAS`, ni les cibles, ni les tolérances, ni
+les fenêtres de D-417 ne changent. Les sorties lues : la fenêtre du test 2021-2024 rejouée
+aux θ de r3, en 2 s, sur les cellules (aucune passe sur la population), pour 2023 seule ;
+la ligne des créations du rapport r3, dont les erreurs des autres années du test,
+commitées depuis D-429, n'ont servi à rien ici ; aucune n'est recalculée.
+
+### Le diagnostic
+
+**La cible.** La croissance des créations d'entreprises classiques (Insee, BDM, idbank
+011811818) : les sociétés et les entrepreneurs individuels hors micro, **sans aucun
+micro-entrepreneur** (667 446 créations en 2023, 63 % du total, hors champ). En 2023 :
+384 030 contre 414 863, −7,43 % ; les sociétés, 269 905 contre 293 158, −7,93 % (70 % de
+la cible) ; les EI classiques, 114 125 contre 121 705, −6,23 %. Le jumeau la compare à la
+croissance de ses créations de sociétés : un champ plus étroit que la cible (les EI
+classiques n'y sont pas), dit, non corrigé (la cible est de D-417).
+
+**La décomposition de l'erreur de 2023**, +8,071 points (D-429), complète :
+
+| part | points | d'où |
+|---|---:|---|
+| la référence plate | +7,432 | E = (e₀ + δ) N₀ / 100 ne bouge pas : l'erreur du naïf |
+| la CVAE (`lfi2023_cvae`) | +0,694 | la ligne de la CVAE, 9,002 → 5,203 Md€ |
+| la CFE, dans la même famille | −0,017 | 6,540 → 7,093 Md€ |
+| la C3S, dans la même famille | −0,039 | 4,274 → 4,810 Md€ |
+| l'IS, les cotisations, le CICE, le capital | 0 | aucune mesure d'effet en 2023 |
+| **total** | **+8,071** | |
+
+**La mesure, le canal, l'incidence.** Une seule mesure entre : `lfi2023_cvae` (loi
+n° 2022-1726, art. 55, le taux de la CVAE divisé par deux), qui date la famille « impôts
+de production » (`rejeu_histoire.FAMILLES`). Le taux apparent de la famille, sur le PIB,
+passe de 0,7466 % à 0,6036 %, −0,1430 point (la CVAE −0,1556, la CFE +0,0039, la C3S
++0,0087 : la mesure est une baisse, la variation entière de la famille compte) ; sur le
+PIB de la tendance, ΔP = −3,976 Md€, au signal `prelevements_production`. Le bloc
+`naissances` le lit comme un prélèvement sur le profit, euro pour euro comme l'IS
+(D-401, D-407) : Δτ = 100 ΔP / (b Y) = −1,555 point de taux apparent, ΔE = −ε Δτ N₀ / 100
+= +1 817 sociétés à ε = 0,043, sur 284 614, **+0,638 %**. La CVAE n'est lue par aucun
+autre chemin des créations : les fermetures, la productivité et l'investissement la
+lisent, mais n'écrivent pas `creations_societes`.
+
+**Ce que cela dit.** La « plus grande erreur du jumeau » (D-429, BUT.md) est à 92 % celle
+du naïf : rien dans le jumeau ne fait bouger les créations hors de la fiscalité votée, et
+leur baisse publiée de 2023 n'en vient pas. La CVAE ne fait que 0,64 point, sous le
+dixième de la tolérance (10). Aucun correctif du bloc ne ramène 2023 sous le naïf.
+
+### Le correctif : la CVAE et la C3S sortent des naissances, par la loi
+
+**La raison, hors de 2023.** Le canal applique ε, mesuré par Da Rin et al. sur l'impôt sur
+les bénéfices, aux prélèvements qu'une société paierait. La loi ne fait payer ni la CVAE
+ni la C3S à une société qui entre, ni à la société à la marge que le bloc fait entrer :
+
+* la CVAE est due « par le redevable qui exerce l'activité au 1er janvier de l'année
+  d'imposition » (CGI, art. 1586 octies, I) : rien l'année de la création ; ensuite, son
+  taux est « nul » sous 500 000 € de chiffre d'affaires (art. 1586 quater, I, a), et le
+  minimum de cotisation ne s'applique qu'au-delà (art. 1586 septies). Loi n° 2009-1673,
+  art. 2 (JORFARTI000021557915) ; la loi n° 2022-1726, art. 55 (JORFARTI000046845693),
+  divise les taux des tranches b à e et garde le seuil ;
+* la C3S n'est due qu'au-delà de 760 000 € de chiffre d'affaires, puis après un
+  abattement de 3,25 M€ (loi n° 2014-892, art. 3, JORFARTI000029349740) et de 19 M€
+  (loi n° 2015-1702, art. 9, JORFARTI000031663476 ; CSS, art. L. 651-3) ;
+* la société à la marge a, à maturité, r = 0,10 de la valeur ajoutée moyenne (D-402) :
+  60 k€ en 2024 (s_VA Y / N₀ = 598 k€), environ 150 k€ de chiffre d'affaires au rapport
+  VA / CA des cellules micro de 2023 (0,41) ; 290 k€ à r = 0,20, le haut de la plage.
+  La société micro moyenne à l'IS fait déjà 265 k€. Seuls les secteurs à VA / CA de
+  0,22 (le commerce, l'extraction), au haut de la plage de r, le passeraient, de peu.
+
+Textes lus dans l'archive du JO de la DILA (`Freemium_jorf_global_20261108-140000`,
+manifestée, D-413), extraits par `scripts/jumeau_jorf_extraire.py` hors du dépôt.
+
+**Ce qui change.** `jumeau/parametres/entreprises.yaml` : `naissances.signaux` perd
+`prelevements_production` (la CVAE et la C3S), la raison et ses sources à côté ; la
+docstring de `blocs/demographie.py` le dit. Les fermetures gardent le signal : les
+installées paient ces impôts, et leurs marges en répondent. Rien d'autre : ni ε, ni e₀,
+ni le canal des études (`predictif.creations`), ni la base des mesures.
+
+**Un écart à D-401, dit.** D-401 lisait la CVAE et la C3S euro pour euro comme l'IS, une
+décision du propriétaire du 13 novembre 2026 pour le canal des études, que D-407 a reprise
+dans le jumeau. Le jumeau s'en écarte ici, sur la loi ; le canal des études la garde. Un
+retour se fait en remettant une ligne du fichier.
+
+### Le test
+
+`test_la_cvae_et_la_c3s_ne_font_pas_creer_l_is_si` (`tests/test_jumeau_entreprises.py`) :
+une baisse de 4 Md€ de CVAE ou de C3S ne fait aucune création, et garde ses sorties
+induites ; la même baisse d'IS fait, année par année, 0,043 × 4 N₀ / (0,092 Y_t) sociétés,
+calculé à la main. `LECTURES` dit que les naissances ne lisent plus la CVAE, ce que
+`test_chaque_bloc_a_le_signe_attendu_dans_les_deux_sens[cvae]` tient. **Vus échouer sur
+le code d'avant** (le fichier et le module remis par `git stash`) : ces deux-là, et eux
+seuls. Un changement de test motivé : le test des mesures ventilées par taille portait sur
+la CVAE, dont les naissances ne font plus rien, et son égalité des créations serait vide ;
+il porte sur l'IS, et dit que la création bouge.
+
+### L'effet sur l'estimation (2011-2017), aux θ de r3, non réestimés
+
+Seule la mesure `lfrss2014_c3s` (l'abattement de 3,25 M€, effet en 2015) passait par le
+signal sur l'estimation : 798 créations de plus, de 2015 à 2017, qui s'en vont. REQM des
+créations **6,555 → 6,525** (le naïf 7,113) ; l'erreur de 2015, 4,940 → 4,660, celles de
+2016 et 2017 à 0,003 près. Les autres cibles bougent de 2e-4 au plus (l'emploi
+0,2423 → 0,2424, le chômage 0,6255 → 0,6257, la dette 4,3625 → 4,3627) : 8 tenues, 10
+victoires sur le naïf, 8 sur le naïf mécanique, comme r3. Le rejeu redonne d'abord la REQM
+de r3 sur le code d'avant, 6,5546, le contrôle.
+
+**2023, vu.** Après le correctif, le jumeau ne fait plus rien aux créations en 2023 :
+l'erreur est celle du naïf, +7,432. Ce volet rend 2023 vu ; le quatrième rejeu le note à
+part (D-431). Rien n'est réglé sur 2018, 2019, 2022 ni 2024, ni calculé.
+
+### Les études
+
+**Aucun des 46 rapports d'études qui portent le canal ne change** : leur canal est
+`predictif.creations`, dont les instruments (`instruments_entreprises`, la CVAE et la C3S
+comprises) sont dans `predictif/parameters/creations_entreprises.yaml` et dans
+l'instantané de chaque rapport, que ce correctif ne touche pas. La même raison vaudrait
+pour eux (Attal a18, la suppression de la CVAE, et Lisnard l4, la C3S et la CVAE, y ont
+tout leur canal ; Attal, Lisnard et Retailleau, programmes et r21, une part) ; leurs
+variations sont agrégées, sans l'impôt, et ne se ventilent pas sans passe : **à décider
+par le propriétaire**, puisque D-401 est sa décision. **La page « Le jumeau »**, en mode
+structurel, lit `entreprises.yaml` : les créations des candidats à CVAE ou C3S y changent
+au prochain `site construire` (la jonction).
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible, aucun θ ; r1, r2
+et r3 gardent leur commit. D-437 n'a pas d'usage : rien n'exige un second temps.
+
+## D-438 — La jonction du but 24 et le quatrième rejeu préenregistré : « rejeu_histoire_r4 »
+
+**Ce qui est fait** (branche `claude/but24`, partie de 0ff12ec). Les trois volets joints,
+une fusion chacun : `claude/but24-chocs` (7b49c1a), `claude/but24-fines` (1c1159b),
+`claude/but24-creations` (2ee2001). La loi et la plage de b adoptées (9448658). Le cas
+`rejeu_histoire_r4` (`rejeu_histoire.CAS`, son rapport
+`reports/jumeau/rejeu_histoire_r4.json`) et ce préenregistrement. **Le jumeau n'a tourné
+sur aucune année notée contre le publié** depuis r3 : aucune erreur de r4 n'est calculée.
+Les rapports de D-420 (fe9434f), de D-423 (8119f63) et de D-429 (a399c47) restent ; le
+script refuse de les écraser (`rejeu_histoire.CAS_PRECEDENTS`).
+
+### La jonction
+
+* **`chocs`** : sans conflit. Trois séries au manifeste et à `KNOWN_SOURCES` ; aucun
+  exogène codé (D-433).
+* **`fines`** : deux conflits, résolus en union. `data/raw/MANIFEST.json` garde les trois
+  entrées de `chocs` puis les cinq de `fines` (244 + 3 + 5 = 252 fichiers) ;
+  `docs/DECISIONS.md` garde D-432 à D-435 dans l'ordre. `KNOWN_SOURCES` s'est fusionné
+  seul, les huit sources y sont. Le panneau, son script, son rapport et ses tests entrent.
+* **`creations`** : un conflit, `docs/DECISIONS.md`, D-436 après D-435. Les naissances ne
+  lisent plus la CVAE ni la C3S.
+* Les huit fichiers téléchargés par les volets sont reliés dans `data/raw` (hors git).
+* **Les numéros** : D-437 n'a pas d'usage, `creations` le dit (D-436) ; `chocs` n'a codé
+  aucun exogène et n'a rien à reprendre ici.
+* **Les tests après chaque fusion** (`-m "not lourd and not chrono" -n 1`) : après `fines`,
+  `test_provenance.py`, `test_donnees.py` (les fichiers qui lisent le manifeste et
+  `KNOWN_SOURCES`, touchés par `chocs` et `fines`), `test_jumeau_microdonnees_d434.py`,
+  `test_jumeau_microdonnees.py` : 63 verts ; après `creations`,
+  `test_jumeau_entreprises.py` : 27 verts.
+
+### La loi de b, décision du propriétaire du 15 novembre 2026
+
+La loi combinée de D-435, la méta-analyse de Nijkamp et Poot (0,4673 ± 0,4264) et le
+panneau W1 (0,19756 ± 0,09356, `microdonnees_d434.json`) par leurs précisions :
+**b = 0,20995 ± 0,09139**, soit 0,210 ± 0,091 ; **la plage (0 ; 0,20 ; 1)** au lieu de
+(0 ; 1 ; 1,2778) : θ = ½ sur l'estimation, Mésange 2017 en haut, Mésange 2010 sort.
+
+* **La traduction en θ.** D-435 écrivait μ = 0,105, s = 0,046 : c'est la loi sur
+  l'ancienne plage, où b = 0,21 tombe sous le centre (1), à la pente 2. Sur la plage
+  adoptée, la même loi du paramètre passe par deux pentes, 0,4 sous le centre et 1,6
+  au-dessus : **μ = 0,5062, s₋ = 0,2098, s₊ = 0,0571** (`a_priori.loi_depuis`, la règle
+  de D-424). La loi est celle que le propriétaire a décidée, sur le paramètre ; θ la suit.
+* **Où.** `menages.yaml` (`salaires.echelle_chomage`, que `a_priori.plages` et le bloc
+  lisent) ; `a_priori.yaml` (l'estimation combinée, ses deux composantes `panel` et
+  `meta_analyse`, la source de W1 : Urssaf et chômage localisé de l'Insee, D-434) ;
+  `thetas.py` (la ligne du registre : 0 ; 0,20 ; 1, et ses sources) ; la docstring de
+  `a_priori.py`. La ligne reste « non vérifiée » : le centre est une estimation du dépôt,
+  la borne basse une décision.
+* **Le test.** `test_la_loi_de_b_est_celle_de_d435_sur_la_plage_du_proprietaire`
+  (`test_jumeau_a_priori.py`) : la plage, la composante W1 contre le rapport de D-435,
+  la combinaison par les précisions, la loi sur θ à la main. **Vu échouer sur le code
+  d'avant** (la plage (0 ; 1 ; 1,2778)), comme
+  `test_le_facteur_des_salaires_vient_du_chomage_de_l_insee`, qui lit désormais la
+  composante de la méta-analyse.
+* **Deux tests ajustés, chacun avec sa raison écrite.**
+  `test_theta_zero_et_un_bornent_la_consommation` (`test_jumeau_menages.py`) mettait
+  tous les θ à ½, donc b = 1 ; à b = 0,20, la consommation à θ = 1 passe sous celle de
+  θ½ de 0,13 % au plus de la 3e à la 9e année. Mesuré : l'écart s'inverse quand b
+  descend (positif à b = 1 et 0,6, négatif à 0,2 et 0) ; la boucle des salaires sur le
+  chômage ne rend plus le surcroît de demande en revenu. Ce n'est pas une borne du bloc
+  mais de l'équilibre : le test garde son assertion et fixe b = 1, sous lequel il a été
+  écrit ; la propriété perdue est dite ici. Dans
+  `test_les_lois_du_registre_entrent_dans_l_estimation` (`test_jumeau_a_priori.py`),
+  sans données, l'estimation s'arrête à 3e-6 du mode de la loi de b (le pas de la
+  jacobienne, 0,02, enjambe un mode aux deux écarts de 0,21 et 0,057) ; la précision
+  reste 1e-6 pour une loi symétrique et croît avec l'écart des deux demi-écarts.
+* **Ce que ce changement déplace d'autre.** La page « Le jumeau » :
+  `site/jumeau-paquet.json` porte `menages.yaml` et l'ancienne plage ; le curseur de b
+  et les sorties du mode structurel changent au prochain `site construire`, comme D-436
+  pour les créations.
+  Les rapports qui portent la loi ou la plage : `rejeu_histoire_r3.json` (la loi de
+  D-424), `microdonnees_d434.json` (la plage et la loi de D-424, et θ = 0,099) ; ils
+  gardent leur commit. Les études ne lisent pas b : le canal prédictif n'a pas de
+  courbe des salaires ; aucun rapport d'étude ne change. Dans le jumeau, θ½ veut dire
+  b = 0,20 et non plus 1 : tout ce qui est calculé « à θ½ » change (le test à θ½ du
+  rejeu, la page, le mode structurel des études s'il tournait).
+
+### Ce qui change depuis r3 (D-428, D-429)
+
+* **La loi et la plage de b**, ci-dessus.
+* **Les naissances sans la CVAE ni la C3S** (D-436 ; le propriétaire accepte l'écart à
+  D-401) : sur l'estimation, seule la C3S de 2015 passait par elles (D-436 : REQM des
+  créations 6,555 → 6,525 aux θ de r3) ; au test, la CVAE de 2023 et de 2024.
+* **Aucun exogène nouveau** (D-433) ; **aucune cible nouvelle** : le propriétaire garde
+  D-417 et refuse une cible d'investissement.
+
+**Ce qui ne change pas** : les fenêtres (estimation 2010 → 2014 et 2014 → 2017, test
+2017 → 2019 et 2021 → 2024, 2020 et 2021 exclus), les douze cibles, leurs métriques et
+leurs tolérances, les entrées (les chocs budgétaires observés, la demande mondiale, le
+choix (b) de D-421), les sept θ estimés, les lois de D-424 des six autres, le poids de
+l'a priori, le critère, les deux naïfs et la règle « le jumeau bat ».
+
+**Le contrôle.** Le naïf et le naïf mécanique ne lisent ni b ni les naissances : **leurs
+REQM redonnent celles de r3 à 1e-9 près** (D-420 et D-423), sur l'estimation et le
+test, avec 2023. Si l'une bouge, l'écart est dit et rien n'est réglé.
+
+### 2023, noté à part
+
+D-436 a lu l'erreur des créations de 2023 et la dit après correctif (+7,432, celle du
+naïf) ; 2023 n'est plus aveugle. **Le test se note deux fois** : avec 2023, le test de
+D-417, la note officielle ; **sans 2023** (`rejeu_histoire.SCHEMA_SANS_2023`) : la même
+fenêtre 2021 → 2024, rejouée de même, 2023 non noté, pour les douze cibles, le jumeau et
+les deux naïfs, aux θ estimés (rapport : `notes.test_sans_2023`). Le test à θ½ se note
+avec 2023 seulement. Une victoire ou une tenue qui n'existe qu'avec 2023 est dite.
+
+### Le critère du but (D-431), comment r4 le lit
+
+* **Un θ identifié, son écart-type sous la moitié du s de sa loi de D-424.** Lu sur
+  l'estimation de r4 : pour chaque θ estimé, σ, l'écart-type approché de r4, contre
+  s / 2, s l'écart de **la loi de D-424 de ce θ, sur la plage du calcul**, du côté où
+  tombe θ estimé (`critere_but` du rapport). Pour six θ, c'est la loi de r3. **Pour b**,
+  la loi de D-424 est la méta-analyse seule (0,4673 ± 0,4264), sur la plage
+  (0 ; 0,20 ; 1) : μ = 0,667, s₋ = 0,565, s₊ = 0,266 ; le seuil, sous μ, 0,282. La loi
+  du calcul (D-435) porte le panneau W1 : **b compte comme identifié par les données
+  fines**, contre la loi de D-424, si σ de r4 passe sous ce seuil ; l'histoire n'y
+  ajoute presque rien. D'après D-435, en unités du paramètre : 0,094 pour W1 seul, 0,091
+  combiné, contre 0,4264 / 2 = 0,213 ; c'est la même lecture, dite sans la plage.
+  **Contre sa propre loi** (D-435), la règle de D-428 (`Estimation.identifies`) dit si
+  l'histoire identifie b ; ce n'est pas le critère, et c'est dit à part.
+* **La dynamique bat le naïf mécanique sur plus de 3 cibles hors de l'estimation** : le
+  « bat M » du test aux θ estimés, **avec 2023 et sans 2023, les deux au-dessus de 3**.
+  Un gain qui ne tiendrait que par l'année vue ne compte pas ; un gain qui ne tiendrait
+  que sans elle non plus.
+* **Le but est atteint si les deux tiennent** (`critere_but.atteint`) ; sinon, il ne
+  l'est pas, et ce qui manque est dit.
+
+### L'aveugle, percé
+
+Le pronostic est écrit en connaissant les erreurs année par année de r3 (D-429, son
+rapport), D-436 (l'erreur de 2023 après correctif) et D-435, sans qu'aucune erreur de r4
+n'ait été calculée. Ce que r3 donne d'avance, à ses θ, sans 2023 (la projection :
+les erreurs de r3 sur 2018, 2019, 2022 et 2024) : le jumeau tient 9 cibles, le naïf 4, le
+naïf mécanique 7 ; le jumeau bat N sur 11 et M sur 6 (le PIB, l'emploi de 0,004, les
+deux échanges, D61, les créations). Les créations de r4, de la même projection : 2023 à
++7,432 (D-436), 2024 entre −2,730 (r3) et −2,868 (le naïf : la CVAE de 2024 sort aussi),
+les autres années de r3 : **REQM de 4,255 à 4,273 avec 2023, contre 4,310 pour les deux
+naïfs ; de 2,970 à 3,002 sans 2023, contre 3,067**.
+
+### Le pronostic
+
+**L'estimation.** Les θ (départ ½) : le profil de la consommation dans [0,35 ; 0,45] ;
+l'emploi dans [0,24 ; 0,31] ; **b dans [0,44 ; 0,52]** (le paramètre de 0,18 à 0,21 :
+r3 tirait b sous le mode de sa loi de 0,2 s) ; le coût du capital dans [0,29 ; 0,36] ;
+les exportations dans [0,48 ; 0,53], les importations dans [0,495 ; 0,505],
+l'accélérateur dans [0,47 ; 0,52]. Chaque σ à moins de 3 % du s de sa loi au point,
+sauf b : σ de b entre 0,057 et 0,21 (selon le côté du mode où tombe θ et que le pas de
+la jacobienne enjambe). **Aucun θ identifié par l'histoire** (la règle de D-428). J au
+départ entre 86 et 92 (90,99 en r3 ; le terme de l'a priori de b à ½ passe de 1,6 à
+presque 0), J final entre 82 et 88, de 92 à 98 % de J au départ.
+
+**Le test, aux θ estimés, avec 2023** (REQM en points ; r3 celle de D-429 ; N et M
+attendus identiques à r3) :
+
+| cible | tol. | r3 | jumeau r4 | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,940 | [0,90 ; 1,00] | 0,831 | 0,831 | oui | non | non |
+| emploi | 0,8 | 0,894 | [0,86 ; 0,96] | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,759 | [0,72 ; 0,86] | 0,627 | 0,627 | oui, de peu | non | non |
+| exportations | 4,0 | 3,524 | [3,45 ; 3,62] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,20 ; 3,35] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,54 ; 0,59] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,364 | [0,34 ; 0,39] | 0,424 | 0,349 | oui | oui | non |
+| D61 | 0,4 | 0,227 | [0,20 ; 0,26] | 0,983 | 0,283 | oui | oui | oui |
+| recettes | 0,8 | 1,076 | [1,03 ; 1,12] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,643 | [0,60 ; 0,69] | 1,361 | 0,627 | oui | oui | non |
+| dette | 3,0 | 2,927 | [2,70 ; 3,20] | 4,393 | 2,359 | oui, de peu | oui | non |
+| créations | 10 | 4,481 | [4,24 ; 4,30] | 4,310 | 4,310 | oui | oui | oui |
+
+Soit **9 cibles tenues par le jumeau** (de 8 à 10), 6 par le naïf et 9 par le naïf
+mécanique (exactement) ; **le naïf battu sur 9** (de 8 à 10) ; **le naïf mécanique sur
+4** (de 3 à 5 : les deux échanges, D61 et, nouvelles, les créations, de 0,01 à 0,07).
+
+**Le test sans 2023** (N et M, les REQM de r3 sans 2023, attendues exactement) :
+
+| cible | jumeau r4 | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|
+| PIB en volume | [0,75 ; 0,87] | 0,904 | 0,904 | oui | oui | oui |
+| emploi | [0,90 ; 0,99] | 0,931 | 0,931 | non | non, de peu | non, de peu |
+| chômage | [0,74 ; 0,89] | 0,648 | 0,648 | oui, de peu | non | non |
+| exportations | [3,45 ; 3,60] | 4,281 | 4,281 | oui | oui | oui |
+| importations | [3,58 ; 3,73] | 4,156 | 4,156 | oui | oui | oui |
+| D2 | [0,49 ; 0,54] | 0,589 | 0,495 | non | oui | non |
+| D5 | [0,38 ; 0,42] | 0,447 | 0,387 | oui | oui | non |
+| D61 | [0,16 ; 0,21] | 1,087 | 0,273 | oui | oui | oui |
+| recettes | [0,92 ; 1,01] | 1,198 | 0,856 | non | oui | non |
+| solde | [0,68 ; 0,76] | 1,316 | 0,688 | oui | oui | non |
+| dette | [2,50 ; 2,95] | 4,143 | 2,208 | oui | oui | non |
+| créations | [2,95 ; 3,03] | 3,067 | 3,067 | oui | oui | oui |
+
+Soit 9 tenues (de 8 à 10), N 4 et M 7 (exactement), **N battu sur 10** (de 10 à 11),
+**M sur 5** (de 4 à 6) : l'emploi, que r3 battait de 0,004 sans 2023, le perd avec un b
+plus faible (le chômage s'y résorbe moins vite).
+
+**Le test à θ½** (b = 0,20 désormais) : les mêmes tenues et les mêmes victoires qu'aux
+θ estimés, chaque REQM à moins de 5 % ; l'emploi et le chômage les plus exposés.
+
+**Le critère.** **b identifié** contre sa loi de D-424 (σ ≤ 0,21 contre un seuil de
+0,282 ; par les données fines, l'histoire n'y ajoutant presque rien) ; les six autres
+non. **M battu sur 4 avec 2023, 5 sans** : **le critère atteint, deux chances sur
+trois** ; la quatrième victoire avec 2023, celle des créations, tient à quelques
+centièmes, et vient du correctif de D-436, motivé par la loi, non par 2023 (sans 2023,
+les créations battent M aussi). Si elle manque, le critère n'est pas atteint : r4
+n'aurait que les trois victoires de r3.
+
+Ce que ce pronostic dit d'avance : **r4 n'apprend rien de plus de l'histoire** ; ce qui
+change sa note vient de ce que la jonction met dans le jumeau (b des données fines, les
+naissances relues), non du rejeu.
+
+### Ce qui tourne ensuite
+
+`PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py`, détaché, sur le commit poussé
+qui porte cette entrée, vers `reports/jumeau/rejeu_histoire_r4.json`. Le résultat va
+dans D-439, contre ce pronostic, avec r1 à r4 côte à côte ; aucune tolérance, fenêtre,
+cible, entrée, loi ni règle de lecture du critère ne change après le calcul.
+
+**Les tests.** La loi de b change un nombre : son test, vu échouer sur le code d'avant
+(ci-dessus). Le cas, le schéma sans 2023 et la lecture du critère sont de la plomberie
+du rapport, sans test dédié (D-335). `pytest -m "not lourd and not chrono" -n 1
+tests/test_jumeau*.py`, sur l'arbre de cette entrée : 276 verts, en 2 min 54 s ; `ruff
+check` propre sur `src/impots/jumeau`, le script et les deux tests touchés. Ni
+`make impact`, ni les lourds, ni `make full`.
+
+## D-439 — Le quatrième rejeu noté : b identifié, le naïf mécanique battu sur 4 cibles
+
+**Ce qui a tourné.** `scripts/jumeau_rejeu_histoire.py`, cas `rejeu_histoire_r4`, sur
+877bba9 poussé (D-438), une fois, détaché, en moins d'une minute. Le rapport :
+`reports/jumeau/rejeu_histoire_r4.json` ; ceux de r1, r2 et r3 restent. Ni tolérance, ni
+fenêtre, ni cible, ni entrée, ni loi, ni règle de lecture du critère n'a changé après le
+calcul.
+
+**Le contrôle d'abord.** Les REQM du naïf et du naïf mécanique redonnent celles de r3
+exactement (écart nul), sur l'estimation, le test et le test à θ½.
+
+**L'estimation.** Cinq itérations ; J passe de 89,16 à 85,07 (95,4 %). **Aucun θ
+identifié par l'histoire** (la règle de D-428), chaque σ égal au s de sa loi au point à
+1 % près.
+
+| θ | mode de la loi | estimé | en paramètre | écart, en s de la loi | σ | s au point |
+|---|---|---|---|---|---|---|
+| profil de la consommation | 0,500 | 0,392 | — | −0,22 | 0,496 | 0,500 |
+| emploi | 0,238 | 0,268 | η = 0,268 | +0,24 | 0,127 | 0,129 |
+| salaires (D-438) | 0,506 | 0,496 | b = 0,198 | −0,05 | 0,091 | 0,091 |
+| exportations | 0,500 | 0,502 | 0,732 | +0,01 | 0,123 | 0,123 |
+| importations | 0,500 | 0,500 | 0,350 | −0,00 | 0,041 | 0,041 |
+| accélérateur | 0,500 | 0,498 | — | −0,01 | 0,255 | 0,255 |
+| coût du capital | 0,341 | 0,322 | ε_K = 0,284 | −0,10 | 0,179 | 0,179 |
+
+L'histoire ne déplace b que de 0,05 s₋ (0,198 contre 0,210 : r3 le tirait de même vers le
+bas) ; le s au point de b, 0,091, mêle s₋ et s₊ : la jacobienne, de 0,496 à 0,516,
+enjambe le mode. Sur l'estimation, le jumeau tient 8 cibles (le naïf 6, le naïf
+mécanique 8), bat le naïf sur 10 et le naïf mécanique sur 8, comme r3 ; les créations y
+font 6,525, celle que D-436 annonçait.
+
+**Le test, aux θ estimés, avec 2023** (REQM en points ; P la bande de D-438 ; N et M
+identiques à r3) :
+
+| cible | tol. | r4 | P | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,941 | [0,90 ; 1,00] | 0,831 | 0,831 | oui | non | non |
+| emploi | 0,8 | 0,895 | [0,86 ; 0,96] | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,763 | [0,72 ; 0,86] | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | 3,525 | [3,45 ; 3,62] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,20 ; 3,35] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,54 ; 0,59] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,365 | [0,34 ; 0,39] | 0,424 | 0,349 | oui | oui | non |
+| D61 | 0,4 | 0,230 | [0,20 ; 0,26] | 0,983 | 0,283 | oui | oui | oui |
+| recettes | 0,8 | 1,078 | [1,03 ; 1,12] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,642 | [0,60 ; 0,69] | 1,361 | 0,627 | oui | oui | non |
+| dette | 3,0 | 2,926 | [2,70 ; 3,20] | 4,393 | 2,359 | oui | oui | non |
+| créations | 10 | 4,273 | [4,24 ; 4,30] | 4,310 | 4,310 | oui | oui | oui |
+
+**9 cibles sur 12 tenues**, le naïf 6, le naïf mécanique 9 ; **le naïf battu sur 9, le
+naïf mécanique sur 4** (les deux échanges, D61, les créations).
+
+**Le test sans 2023** (2018, 2019, 2022, 2024) :
+
+| cible | r4 | P | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|
+| PIB en volume | 0,787 | [0,75 ; 0,87] | 0,904 | 0,904 | oui | oui | oui |
+| emploi | 0,928 | [0,90 ; 0,99] | 0,931 | 0,931 | non | oui | oui |
+| chômage | 0,786 | [0,74 ; 0,89] | 0,648 | 0,648 | oui | non | non |
+| exportations | 3,521 | [3,45 ; 3,60] | 4,281 | 4,281 | oui | oui | oui |
+| importations | 3,656 | [3,58 ; 3,73] | 4,156 | 4,156 | oui | oui | oui |
+| D2 | 0,513 | [0,49 ; 0,54] | 0,589 | 0,495 | non | oui | non |
+| D5 | 0,402 | [0,38 ; 0,42] | 0,447 | 0,387 | oui | oui | non |
+| D61 | 0,188 | [0,16 ; 0,21] | 1,087 | 0,273 | oui | oui | oui |
+| recettes | 0,966 | [0,92 ; 1,01] | 1,198 | 0,856 | non | oui | non |
+| solde | 0,717 | [0,68 ; 0,76] | 1,316 | 0,688 | oui | oui | non |
+| dette | 2,694 | [2,50 ; 2,95] | 4,143 | 2,208 | oui | oui | non |
+| créations | 3,002 | [2,95 ; 3,03] | 3,067 | 3,067 | oui | oui | oui |
+
+9 tenues, le naïf 4, le naïf mécanique 7 ; **le naïf battu sur 11, le naïf mécanique sur
+6** (le PIB, l'emploi, les deux échanges, D61, les créations). 2023 retire au jumeau le
+PIB et l'emploi : sa croissance y est de 1,40 point sous la publiée (le naïf, 0,43),
+celle de l'emploi de 0,75 (le naïf, 0,46).
+
+**À θ½** (b = 0,20) : les mêmes tenues et les mêmes victoires qu'aux θ estimés (9 ; 9 et
+4) ; chaque REQM à moins de 2,5 % (le chômage, 0,744 contre 0,763).
+
+### Le critère du but (D-431), lu comme D-438 l'a préenregistré
+
+* **Un θ identifié** : **b, oui.** σ = 0,091, contre le seuil de sa loi de D-424 sur la
+  plage du calcul, du côté de θ estimé (0,496, sous μ = 0,667) : s₋ / 2 = 0,282 ; aussi
+  sous s₊ / 2 = 0,133. En unités du paramètre, D-435 : 0,091 contre 0,213. Il l'est par
+  les données fines, le panneau W1 ; l'histoire ne l'identifie pas (σ égal au s de sa loi
+  de D-435). **Le rapport compte aussi les importations** (`critere_but.identifies`) :
+  c'est un artefact de la règle écrite, à dire et à ne pas compter. θ estimé tombe à
+  2e-4 sous le mode, la loi de D-424 y a deux écarts (0,511 dessous, 0,040 dessus), σ =
+  0,041 est pris du côté de la jacobienne (au-dessus) et la règle le compare au s du
+  dessous ; du côté de la jacobienne (la règle de D-428), 0,041 contre 0,020 : non
+  identifié. Le verdict n'en dépend pas ; la règle n'est pas changée après le calcul.
+* **Le naïf mécanique battu sur plus de 3 cibles du test** : **4 avec 2023, 6 sans.**
+* **Le critère est atteint, à la lettre** (`critere_but.atteint`). Ce qu'il faut dire
+  avec : **la quatrième victoire avec 2023 est celle des créations, de 0,037 point sur
+  une tolérance de 10.** Les erreurs du jumeau y sont celles du naïf en 2022, 2023 et
+  2024 (la CVAE sortie des naissances, D-436) ; il perd 2018 (−3,07 contre −2,93) et
+  gagne 2019 (−4,22 contre −4,50, la bascule du CICE en baisse de cotisations, que les
+  naissances lisent). Une seule année porte la victoire. Sans 2023, les créations
+  battent M aussi (3,002 contre 3,067). Les trois autres victoires sont celles de r3.
+
+**Contre le pronostic.** Chaque REQM du test, avec et sans 2023, dans sa bande ; chaque
+tenue, chaque « bat N » et chaque « bat M » avec 2023 comme annoncés, les totaux
+exactement (9, 6, 9, 9, 4) ; les θ, b compris (0,496 dans [0,44 ; 0,52], 0,198 dans
+[0,18 ; 0,21]), leurs σ, J et son rapport dans leurs bandes ; aucun θ identifié par
+l'histoire ; le test à θ½ comme annoncé ; le contrôle ; b identifié contre D-424 ; le
+critère atteint. **Manqués** : sans 2023, l'emploi bat N et M (0,928 contre 0,931),
+annoncé « non, de peu » ; d'où N battu sur 11 (annoncé 10) et M sur 6 (annoncé 5), dans
+leurs bandes ; « les six autres non » identifiés : le rapport compte les importations,
+l'artefact ci-dessus.
+
+### r1, r2, r3, r4 côte à côte (le test avec 2023, aux θ estimés)
+
+| cible | r1 (D-420) | r2 (D-423) | r3 (D-429) | r4 | N | M |
+|---|---|---|---|---|---|---|
+| PIB en volume | 1,034 | 0,940 | 0,940 | 0,941 | 0,831 | 0,831 |
+| emploi | 0,902 | 0,882 | 0,894 | 0,895 | 0,858 | 0,858 |
+| chômage | 0,696 | 0,723 | 0,759 | 0,763 | 0,627 | 0,627 |
+| exportations | 3,855 | 3,524 | 3,524 | 3,525 | 3,870 | 3,870 |
+| importations | 3,899 | 3,271 | 3,271 | 3,271 | 3,773 | 3,773 |
+| D2 | 0,554 | 0,564 | 0,564 | 0,564 | 0,645 | 0,539 |
+| D5 | 0,316 | 0,364 | 0,364 | 0,365 | 0,424 | 0,349 |
+| D61 | 0,263 | 0,225 | 0,227 | 0,230 | 0,983 | 0,283 |
+| recettes | 1,091 | 1,073 | 1,076 | 1,078 | 1,301 | 0,959 |
+| solde | 0,536 | 0,639 | 0,643 | 0,642 | 1,361 | 0,627 |
+| dette | 2,816 | 2,926 | 2,927 | 2,926 | 4,393 | 2,359 |
+| créations | 10,600 | 5,647 | 4,481 | 4,273 | 4,310 | 4,310 |
+| tenues (N 6, M 9) | 7 | 9 | 9 | 9 | | |
+| bat N, bat M | 7, 2 | 8, 3 | 8, 3 | 9, 4 | | |
+
+Les θ : r1 et r2 sous N(½ ; ½), r3 sous les lois de D-424, r4 sous celles de D-424 et la
+loi de b de D-435 ; aucun identifié par l'histoire dans aucun des quatre. b : 0,399 et
+0,464 sur (0,5 ; 1 ; 1,2778), soit 0,90 et 0,96 en paramètre ; 0,382 en r3, 0,198 en r4.
+
+**Ce que r4 dit.** Le jumeau est appris, au sens du but : b, la réponse des salaires au
+chômage, vient de données françaises (le panneau W1) et sa loi est près de cinq fois
+plus serrée que celle de la littérature ; il est cinq fois plus petit que dans Mésange.
+**Sur l'histoire, cela ne change presque rien** : chaque REQM du test bouge de moins de
+0,005 de r3 à r4, sauf les créations (−0,208, D-436). La dynamique bat le naïf mécanique sur
+4 cibles, une de plus qu'en r3, et cette victoire est la plus étroite des quatre ;
+l'activité, l'emploi et le chômage restent derrière lui avec 2023, comme dans les trois
+rejeux d'avant. L'histoire budgétaire de 2011 à 2017 n'identifie toujours aucun θ.
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible, aucune entrée,
+aucune loi ; D-420, D-423, D-429 et D-438 restent. Le rapport porte 877bba9.
+
+## D-440 — Les études sans la CVAE ni la C3S dans le canal : six rapports refaits sans passe
+
+**La décision du propriétaire, 15 novembre 2026.** Le correctif de D-436 s'applique aux
+études : la CVAE et la C3S ne font plus jouer le canal des créations
+(`predictif.creations`). D-401 les lisait euro pour euro comme l'IS, sur décision du
+propriétaire du 13 novembre 2026 ; D-436 les a retirées des naissances du jumeau, et
+laissait le canal des études à cette décision. Branche `claude/but24-etudes`, partie de
+`claude/but24-creations` (2ee2001). Ni `src/impots/jumeau/` ni aucun rejeu ne sont
+touchés.
+
+**La raison, celle de D-436, citée.** ε est mesuré sur l'impôt sur les bénéfices, qu'une
+société paierait ; la loi ne fait payer ni la CVAE ni la C3S à une société qui entre :
+
+* la CVAE est due « par le redevable qui exerce l'activité au 1er janvier de l'année
+  d'imposition » (CGI, art. 1586 octies, I) : rien l'année de la création ; ensuite, son
+  taux est nul sous 500 000 € de chiffre d'affaires (art. 1586 quater, I, a), le minimum
+  de cotisation ne joue qu'au-delà (art. 1586 septies). Loi n° 2009-1673, art. 2
+  (JORFARTI000021557915) ; loi n° 2022-1726, art. 55 (JORFARTI000046845693) ;
+* la C3S n'est due qu'au-delà de 760 000 € de chiffre d'affaires, puis après un
+  abattement de 3,25 M€ (loi n° 2014-892, art. 3, JORFARTI000029349740) et de 19 M€
+  (loi n° 2015-1702, art. 9, JORFARTI000031663476 ; CSS, art. L. 651-3) ;
+* la société à la marge du canal fait, à maturité, environ 150 k€ de chiffre d'affaires
+  (D-436) : sous les deux seuils.
+
+**Le correctif.** `predictif/parameters/creations_entreprises.yaml` : les instruments des
+entreprises sont l'IS, sa contribution sociale et la CEBGE ; la CVAE et la C3S passent
+sous `exclus`, chacune avec sa raison et ses textes. `creations.PRODUCTION` les nomme ;
+la docstring et la convention de la page le disent (`CONVENTIONS_INSTRUMENTS`) ; un
+rapport qui les porte encore garde la convention de D-401
+(`CONVENTIONS_INSTRUMENTS_D401`, `conventions_instruments`). Ce qu'une réforme de ces
+impôts induit sur l'IS reste lu : la CVAE se déduit du résultat imposable, sa
+suppression monte l'IS, et le canal le lit comme toute hausse d'IS. Les prochaines passes
+le liront ainsi, par `service.creations_firm_levies`, sans autre changement.
+
+### La voie : un recalcul, sans passe
+
+Un rapport porte ΔP sommé sur ses instruments (`rejeu.creations.variations`), pas impôt
+par impôt ; le rapport de la première année ventile, mais sa seule première année. Mais
+un instrument isolé suffit : la couche entreprises est une passe sur ses cellules (le
+millésime 2023 des études), sans la population, de quelques secondes ; elle redonne
+chaque impôt par année et par vue (`service.firm_first_year`, comme le chemin annuel l'a
+appelée). `scripts/recaler_creations.py --instruments` la refait pour chaque rapport dont
+le scénario a une réforme des entreprises, et ne l'écrit qu'après deux contrôles :
+
+* le coût de la couche, chaque année et dans chaque vue, est celui que le rapport porte
+  (`mechanical_by_layer`), **au bit près** ; tenu pour les six ;
+* pour une mesure sans réforme des ménages (Attal a18, Lisnard l4, Retailleau r21), ΔP
+  est la somme des cinq impôts de la couche, à 1e-9 relatif près.
+
+Les montants de la CVAE et de la C3S sortent de ΔP (`recalcul.retirer`), les deux
+instantanés perdent les deux instruments, et chaque nombre est refait par le rejeu depuis
+les champs du rapport, comme en D-427 : les chemins, la boîte, le Monte-Carlo, les
+lectures, le canal (`prelevements_eur` compris). Le champ `recalcul` garde la marque de
+D-427 et reçoit `instruments` : la décision, la date, les instruments retirés, ΔP
+d'avant (`variations_avant`) et le commit de la passe. La page le dit, sous l'élasticité.
+
+**Le contrôle.** Avant : `--controle` redonne les 46 rapports à leur ε, comme en D-427.
+Après : chacun des six refaits se redonne à l'octet près ; ΔP d'avant remis avec ses
+deux instruments, le rejeu redonne à l'octet près le rapport de D-427 commité (2ee2001),
+pour les six. Les 40 autres sont inchangés à l'octet près (`git status`) : aucun de
+leurs scénarios n'a de réforme des entreprises. Aucune tolérance n'est nouvelle. Le tout
+prend 4,5 s.
+
+**Six rapports touchés, et eux seuls** : Attal, programme et a18 ; Lisnard, programme et
+l4 ; Retailleau, programme et r21. La CVAE et la C3S retirées, en 2026, vue vieillie :
+−3,45 Md€ chez Attal, −9,00 Md€ chez Lisnard et Retailleau ; ΔP passe de −2,68 à
++0,77 Md€ (Attal), de −6,87 à +2,12 Md€ (Lisnard, l4, r21), de −11,65 à −2,65 Md€
+(Retailleau, programme) : ce qui reste des mesures de production est la hausse d'IS
+qu'elles induisent.
+
+**Ancien → nouveau**, Δb 2035 à θ½, persistance « lue », en points de PIB (sans le canal,
+inchangé, entre parenthèses) :
+
+| étude | vieillie, avant | vieillie, après | figée, avant | figée, après | sans le canal |
+|---|---|---|---|---|---|
+| Attal, programme | +4,2730 | +4,2850 | +3,5068 | +3,5178 | +4,2825 |
+| Attal, a18 suppression de la CVAE | +0,2354 | +0,2475 | +0,2169 | +0,2281 | +0,2450 |
+| Lisnard, programme | +5,6541 | +5,7107 | +4,5787 | +4,6285 | +5,6989 |
+| Lisnard, l4 C3S et CVAE | +1,5615 | +1,6181 | +1,3209 | +1,3706 | +1,6063 |
+| Retailleau, programme | +11,3095 | +11,3672 | +10,7616 | +10,8123 | +11,3963 |
+| Retailleau, r21 C3S, CVAE… | +1,5615 | +1,6181 | +1,3209 | +1,3706 | +1,6063 |
+
+Chez a18, l4 et r21, et dans le programme d'Attal, la dette avec le canal passe au-dessus
+de la dette sans lui : le canal ne lit plus que l'IS induit, une hausse, qui fait moins de
+sociétés. La dette d'Attal sans boucle, +20,44 → +20,46 points.
+
+**Les verdicts et les étages.** Aucun verdict ne change, ni celui de la boîte ni celui du
+Monte-Carlo : Attal « dépend » (la boîte, vue vieillie, de −4,06 à +15,78 points avant,
+de −4,04 à +15,78 après) ; Lisnard et Retailleau, programmes, et les trois mesures,
+« hausse » à chaque coin. Les probabilités d'une hausse qui bougent : Attal, programme,
+vieillie, 0,647 → 0,6475 ; Lisnard, programme, 0,8865 → 0,889 (vieillie) et 0,8955 →
+0,8975 (figée) ; les autres restent à 1,000 ou ne bougent pas. Aucun étage ne change : sur
+le site, chacune des trois pages compte les mêmes nombres par étage qu'avant.
+
+**Le site.** `etude ecrire` d'Attal, de Lisnard et de Retailleau, `site construire`,
+`site verifier`, `node ui/check.mjs` passent. Changent : les trois pages et leurs
+graphiques, l'accueil, six pages du parcours (le coût, les comportements, l'activité, la
+dette, le verdict, comparer), et les deux fichiers de la page « Le jumeau » :
+`jumeau-paquet.json` (il embarque `predictif/creations.py`, et les fichiers du jumeau que
+D-436 a changés) et `jumeau-donnees.json` (les rapports des six).
+
+### Ce qui reste à décider
+
+**Le jumeau lit ΔP comme le total des impôts des entreprises.** `jumeau.mesures`
+(`ventilations`, `etendre`, D-414) ventile ΔP du chemin aux impôts que le rapport nomme
+(`instruments_entreprises`), et en déduit le coût des ménages, C^m_t = coût_t + P_t. Sur
+les six rapports refaits, il ne voit plus ni la CVAE ni la C3S, et le coût des ménages
+d'Attal en 2026 passe de 63,63 à 66,91 Md€ : faux. `tests/test_jumeau_depuis_rapport.py`
+le dit, quatre rouges, verts sur les rapports d'avant ; ils ne sont pas retouchés. La
+réparation est dans `jumeau.mesures` (lire `recalcul.instruments.variations_avant` et
+les instruments retirés quand le rapport les porte), hors de cette branche par consigne ;
+elle est aussi celle des passes à venir, qui ne sommeront plus ces deux impôts. Tant
+qu'elle n'est pas faite, la page « Le jumeau » lit faux ces six candidats : **la branche
+ne se fusionne pas avant**, à décider par le propriétaire, avec la jonction du but 24.
+
+**Les 40 autres rapports** gardent la CVAE et la C3S dans leur liste d'instruments, où
+elles valent zéro, et leur page la convention de D-401 (une seule page par étude ; aucune
+des neuf autres n'a de réforme des entreprises). Les aligner, sans qu'aucun nombre ne
+change, comme D-427 l'a fait pour ε, est à décider.
+
+**Les tests.** Tenus et vus échouer sur le code d'avant : une baisse de 4 Md€ de CVAE ou
+de C3S ne fait aucune création, la même baisse d'IS fait 0,043 × 400 / (0,092 × 3 000)
+points de taux d'entrée (`test_the_cvae_and_the_c3s_make_no_company_the_is_does`) ;
+l'étude Attal a18 publie +0,2475 et redonne +0,2354 avec ΔP d'avant, +0,2000 à ε = 0,20 ;
+les six rapports portent la marque et ΔP d'avant, redonnent les nombres de D-427, et les
+40 autres non (`tests/test_recalcul.py`). Changements de tests motivés : la liste des
+instruments ; ΔP de deux exemples qui portaient de la CVAE (−5,5 → −4,5 Md€, −10 → −8
+Md€) ; la page synthétique ne nomme plus la CVAE ; la dette d'Attal sans boucle, +20,46
+(`test_etude_programmes`, `test_parcours_cout`, `test_parcours_comparer`) ; le
+Monte-Carlo de Lisnard, 88,90 % (`test_parcours_verdict`). Avec `pytest -m "not lourd and
+not chrono" -n 4` sur `test_creations_canal.py`, `test_recalcul.py`, `test_rejouer.py`,
+`test_etude*.py`, `test_parcours*.py`, `test_annonce.py`, `test_site.py`,
+`test_dependances.py`, `test_gardes_phase9.py`, `test_provenance.py`, `test_dette*.py` :
+534 verts, 3 sautés ; `test_jumeau*.py` : les quatre rouges dits. `ruff check src tests
+scripts` propre. Ni `make impact` ni `make full`.
+
+## D-442 — Le profil de la consommation déclaré non monotone, au b de D-438
+
+**Le constat** (D-438, en adoptant la loi de b) : au b par défaut, 0,20, la consommation
+des ménages après une baisse d'IR à θ = 1 du profil e(h) passe sous celle de θ½, de 0,13 %
+au plus de la 3e à la 9e année. La boucle des salaires sur le chômage, petite à b = 0,20,
+ne rend plus le surcroît de demande en revenu : c'est une propriété de l'équilibre, pas une
+borne du bloc, qui reste monotone à b = 1. D-438 avait fixé b = 1 dans le test pour qu'il
+passe ; le propriétaire a décidé, le 15 novembre 2026, de déclarer plutôt la ligne non
+monotone, comme θ_survie en D-427.
+
+**Ce qui change.** `thetas.CONSOMMATION_PROFIL` porte sa raison dans `non_monotone` ; sa
+boîte se lit sur la grille. Le test de la consommation garde sa première partie (le bloc,
+à b = 1, monotone et borné par ses bouts) et y ajoute l'équilibre au b par défaut : la
+boîte sur la grille contient chaque valeur de la grille, et les deux bouts seuls ne la
+bornent pas. Sans la déclaration, il échoue ; avec elle, il passe. Le test des
+déclarations (`test_jumeau_entreprises.py`) compte désormais deux lignes.
+
+**Ce qui ne change pas.** Aucun nombre : la boîte ne sert qu'à la lecture des curseurs, et
+aucun rapport ne la porte ; r4 (D-439) garde son commit. Tests des ménages, des
+entreprises et du navigateur : 57 verts ; ruff propre.
+
+## D-443 — Le jumeau relit les impôts des entreprises que le canal ne lit plus (D-440)
+
+**Le défaut** (D-440, « Ce qui reste à décider »). `jumeau.mesures` lisait ΔP, la somme
+des instruments du canal des créations (`rejeu.creations.variations`), comme le total des
+impôts des entreprises : il les ventilait à la première année sur les impôts que le
+rapport nomme (`instruments_entreprises`), aux années suivantes par la convention de
+D-414, et en déduisait le coût des ménages, C^m_t = coût_t + P_t. Depuis D-440, six
+rapports ne somment plus la CVAE ni la C3S dans ΔP, ni ne les nomment : Attal (programme,
+a18), Lisnard (programme, l4), Retailleau (programme, r21). Le jumeau y perdait les deux
+impôts et y lisait l'IS induit comme le tout. Quatre tests de
+`tests/test_jumeau_depuis_rapport.py`, rouges depuis D-440, le disaient ; ils ne sont
+pas retouchés.
+
+**La jonction.** `claude/but24-etudes` (bb4bad5, avec 05b8f87) est fusionnée dans
+`claude/but24` (5e1d2f4) : un seul conflit, `docs/DECISIONS.md`, D-440 placée entre D-439
+et D-442, aucune ligne perdue de part ni d'autre (vérifié par `diff`). Les deux fichiers
+de la page « Le jumeau » n'ont pas eu de conflit ; ils sont reconstruits ci-dessous.
+
+**La lecture réparée.** Deux grandeurs, au lieu d'une. `Mesure.prelevements` est P, les
+prélèvements des entreprises et du capital de la passe, la CVAE et la C3S comprises : ce
+que les lots 2 et 4 ventilent, et dont `etendre` déduit le coût des ménages.
+`Mesure.prelevements_canal` est ΔP, ce que lit le canal des créations, quand il diffère :
+le bloc `mesures` l'écrit au signal `prelevements_entreprises`, que lit le bloc
+`creations`. Les créations suivent donc D-440 ; le reste redevient ce qu'il était.
+`mesures.prelevements_lus` fait P, par vue et par année, en trois cas :
+
+* le canal lit encore la CVAE et la C3S (les 40 autres rapports, la convention de
+  D-401) : P = ΔP, comme avant ;
+* le rapport porte la somme d'avant (`recalcul.instruments`, D-440) et les instruments
+  retirés couvrent les deux : P = `variations_avant`, la somme que la passe a faite ;
+* sinon (une passe qui ne les a jamais sommées, sans marque de recalcul) : la couche des
+  entreprises du chemin, P_t = −`mechanical_by_layer[vue]["entreprises"]_t` quand elle
+  bouge, ΔP_t sinon. Elle porte aussi ce que la couche coûte hors des cinq impôts (59 €
+  en 2026 chez Attal) ; elle ne porte pas les prélèvements des ménages que ΔP somme (PFU,
+  cotisations patronales nettes), qui ne se séparent pas de ΔP année par année : là où
+  il y en a (Retailleau, 4,301 Md€ de cotisations en 2026), le recoupement de la première
+  année laisse la ventilation absente, comme avant, et le lot 2 refuse la mesure.
+
+À la première année, `ventilations` recoupe ΔP avec les impôts que le canal nomme, à
+l'euro près (l'écart est de 2,4e-7 € sur les six), et ventile ceux-là plus la CVAE et la
+C3S (`predictif.creations.PRODUCTION`), lues dans les `deltas` de la passe des
+entreprises. `navigateur.alleger` garde pour la page `recalcul.instruments` (les retirés,
+ΔP d'avant) et `mechanical_by_layer` : la page lit comme le rapport entier.
+
+**Chiffre à chiffre.** Sur les six, dans les deux vues, avec et sans la convention, la
+mesure lue sur le rapport de D-440 est celle que le code d'avant lisait sur le rapport
+d'avant D-440 (2ee2001), au bit, champ par champ (années, P, coûts, canaux, impôts,
+déciles, `non_portes`, conventions, impulsions) ; seuls diffèrent `creations` (la liste
+des instruments du canal) et `prelevements_canal`, égal à ΔP de D-440 au bit. Sur les 40
+autres, rien ne change, au bit (184 lectures comparées). En 2026, vue figée :
+
+| rapport | C^m d'avant D-440 | lu à tort (D-440) | réparé | impôts des entreprises |
+|---|---|---|---|---|
+| Attal, programme | 63,6292 | 66,9110 | 63,6292 | −2,5521 (à tort +0,7297) |
+| Attal, a18 | 0,0000 | 3,2818 | 0,0000 | −2,5521 (+0,7297) |
+| Lisnard, programme | 29,6381 | 38,2091 | 29,6381 | −6,5474 (+2,0237) |
+| Lisnard, l4 ; Retailleau, r21 | 0,0000 | 8,5711 | 0,0000 | −6,5474 (+2,0237) |
+
+En Md€ ; en 2027, par la convention, Attal 63,5863 (66,8681 à tort), Lisnard 29,6265
+(38,1976). Retailleau, programme : impôts et coût des ménages absents, avant comme après
+(ses cotisations ne sont pas ventilées) ; P redevient −11,65 Md€ en 2026, vue vieillie.
+La CVAE d'Attal, de Lisnard et de Retailleau (r21) en 2026 : −3,2818 Md€, de la passe.
+La voie de la couche, essayée sur les six en retirant leur marque : P à 505 € au plus de
+la somme d'avant (Attal, vue vieillie), la ventilation de 2026 identique ; Retailleau,
+programme, à part (ses cotisations, ci-dessus).
+
+**Les tests.** Les quatre de `test_jumeau_depuis_rapport.py` repassent, sans
+modification. Nouveaux, dans le même fichier, vus échouer sur le code d'avant (11 rouges,
+les 4 et les 7 nouveaux) : pour chacun des six, le rapport d'avant reconstitué depuis sa
+marque (ΔP d'avant, la CVAE et la C3S rendues à la liste) se lit comme le rapport, au
+bit, ΔP de D-440 est ce que lit le canal, la voie de la couche tient à 1e-6 Md€, et le
+rapport allégé de la page se lit de même ; les nombres d'Attal et de Lisnard ci-dessus.
+`pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_site*.py`,
+`test_creations_canal.py`, `test_recalcul.py` : 367 verts avant la reconstruction du
+site, 3 rouges de `test_site.py` (le site commité n'était pas celui du code), verts
+après. `ruff check src tests scripts` propre.
+
+**Le site.** `site construire`, `site verifier`, `site publiable` et `node ui/check.mjs`
+passent. Changent `site/jumeau-paquet.json` (les fichiers du jumeau : la lecture réparée,
+la plage de b de D-438 dans `menages.yaml`, la déclaration de D-442 dans `thetas.py`) et
+`site/jumeau-donnees.json` (la marque et les couches des rapports). Aucune autre page.
+
+**Ce qui ne change pas.** Aucun rapport : ni ceux des études (D-440), ni ceux du jumeau
+(r4, D-439, garde 877bba9 : le rejeu de l'histoire ne lit pas les études). Aucune
+tolérance.
+
+**La passe avant la PR** (D-309, D-335), une fois, sur fa61eaf, `-n 2`, détachée. Le
+relevé d'impact est celui du worktree du but 23 (a4e6cd7, mergé par la PR #128 ; il
+diffère d'`origin/main` par un seul fichier, `site_jumeau/__init__.py`, de 459cfb1).
+`make impact JOBS=2` : ruff propre ; la passe parallèle, 4 766 verts, 21 sautés, aucun
+rouge, en 41 min 21 s ; les 29 lourds de `tests/lourds.txt`, tous retenus, chacun dans
+son processus (`tests/memoire.py lancer --impact`) : 29 verts, aucun sauté, de 6 s
+(`test_jumeau_cellules`) à 6 min 38 s (chaque forme de réforme sur la population
+entière), la page dans Chromium en 25 s ; 5 chronomètres verts. Les lourds n'ont pas
+été relancés une seconde fois : l'impact les avait tous retenus. **Les 21 sautés**, ceux
+de D-430, aucun lourd : l'annexe 9 du PLFSS 2027, hors du dépôt par règle ; le bulletin
+AFT n° 435, non manifesté ici (trois de `test_dette_maturite`) ; le PDF de Da Rin et al.
+(2011) absent de `data/raw` (`test_taux_effectifs`) ; pas de distribution des taux
+marginaux dans l'artefact de référence (deux de `test_behavioural`) ; treize boutons sans
+contrôle négatif écrit (`test_knobs`) ; le commit qui date un enregistrement, absent d'un
+clone superficiel (`test_validation_predictif`). Pas de `make full`.
+
+## D-444 — Les 40 autres rapports alignés sur D-440 : la CVAE et la C3S hors des listes
+
+**La décision du propriétaire, 15 novembre 2026** (relayée par la coordination du but 24,
+sur le point que D-440 laissait à décider). Les 40 rapports d'études qui portent le canal
+des créations sans réforme des entreprises listaient encore la CVAE et la C3S parmi ses
+instruments, où elles valaient zéro chaque année, et leurs pages gardaient la convention
+de D-401. Ils sont alignés sur D-440, sans qu'aucun nombre ne change, comme D-427 l'a
+fait pour ε.
+
+**La voie.** `recalcul.aligner`, appelé par `scripts/recaler_creations.py --aligner` :
+les deux instantanés (`rejeu.creations.parametres`, `creations.parametres`) perdent les
+deux instruments ; `recalcul.instruments` reçoit la décision, la date, les retirés,
+`nombres_refaits` faux, ΔP d'avant (égal à ΔP) et le commit de la passe. Rien n'est
+refait par le rejeu : un rejeu redonnerait la première année reportée, le Monte-Carlo et
+les lectures à 3e-12 près seulement (D-427), et aucun nombre ne doit bouger. Le script
+refuse un rapport dont le scénario a une réforme des entreprises qui fait bouger la CVAE
+ou la C3S (la couche entreprises, `retraits`, comme en D-440) : aucun des 40.
+
+**Le contrôle**, écrit avant d'écrire chaque rapport, dans le script : le rapport aligné,
+ses deux listes rendues et sa marque retirée, redonne le fichier commité à l'octet près ;
+puis, refait à son ε, il se redonne (`recalcul.controle`). Les 40 le tiennent (« 40
+rapports alignés, chacun contrôlé »). Un second contrôle, hors du dépôt, feuille par
+feuille contre le commit d'avant : 40 rapports changés, 54 475 feuilles comparées ;
+écarts aux seuls champs permis (les deux listes, 40 fois chacune ; `recalcul.instruments`,
+nouveau) ; **aucun autre écart.** La lecture du jumeau (D-443) redonne, sur les 46
+rapports, dans les deux vues, avec et sans la convention de D-414, la même mesure qu'avant
+l'alignement (184 lectures), hors de la liste du canal et de `prelevements_canal`, qui
+vaut désormais ΔP sur les 40.
+
+**Les 46 rapports du canal** sont désormais tous sans la CVAE ni la C3S : 6 refaits
+(D-440), 40 alignés. Les rapports comptés : l'article 74 du PLF 2027 (APL, prime
+d'activité) ; Attal (a16, a22) ; Bouamrane, Kazib, Philippe, Roussel, Ruffin, Tondelier,
+Le Pen, Mélenchon (programmes et mesures) ; Lisnard (l1, l20) ; Retailleau (r13, r15,
+r19, r27, r28).
+
+**La convention de D-401 n'a plus de raison d'être écrite.** Aucun rapport ne liste plus
+ces deux impôts : `creations.CONVENTIONS_INSTRUMENTS_D401` et `conventions_instruments`
+sont retirées, la page dit `CONVENTIONS_INSTRUMENTS` ; une page dont un rapport les
+listerait encore est refusée (`EtudeError`, « à aligner »), plutôt que de dire une
+convention fausse. Leurs libellés restent : les pages disent les retirés. Le texte de la
+marque sur la page, pour un alignement : « La CVAE et la C3S ont été retirées de la liste
+du canal sans passe nouvelle (D-444, décision du propriétaire) : elles y valaient zéro
+chaque année, aucun nombre de la page ne change. » La lecture du jumeau garde son premier
+cas (un canal qui les lit) : c'est celui d'une loi déclarée.
+
+**Les pages et le site.** `etude ecrire` des douze études : changent les neuf pages sans
+réforme des entreprises (PLFSS 2027, Bouamrane, Kazib, Le Pen, Mélenchon, Philippe,
+Roussel, Ruffin, Tondelier : la marque dite, la liste et la convention de D-440) ; celles
+d'Attal, de Lisnard et de Retailleau ne changent pas (la section suit le programme, déjà
+refait). `site construire`, `site verifier`, `site publiable` et `node ui/check.mjs`
+(63 vérifications) passent ; changent les neuf pages, trois pages du parcours qui
+embarquent des rapports (comportements, activité, dette : les listes seules) et les deux
+fichiers de la page « Le jumeau ».
+
+**Les tests.** Changements motivés par la décision : `test_recalcul.py`, les 40 portent
+la marque de D-444, ΔP d'avant égal à ΔP, plus de CVAE ni de C3S dans leurs listes (le
+test disait l'état de D-440, `marque is None`) ; `test_etude_creations.py`, la constante
+retirée, l'assertion garde son sens (la page ne dit pas « euro pour euro comme l'IS »).
+Aucun nombre ne change : pas de test nouveau qui en tienne un. Tests légers des fichiers
+touchés (`test_recalcul`, `test_etude_creations`, `test_creations_canal`,
+`test_jumeau_depuis_rapport`, `test_jumeau_navigateur`, `test_site`) : 121 verts ; ruff
+propre.
+
+**La passe d'impact relancée** sur 9eeeab7 (D-309), les rapports, le code et les
+D-entrées ayant changé : `make impact JOBS=2`, ruff propre ; 4 766 verts, 21 sautés (les
+mêmes, mêmes raisons qu'en D-443), aucun rouge, en 41 min 36 s (l'impact a tout rejoué :
+presque chaque test lit `DECISIONS.md` ou un rapport) ; les 29 lourds, chacun dans son
+processus, verts, aucun sauté ; 5 chronomètres verts.
+
+**Ce qui ne change pas.** Aucun nombre d'aucun rapport, aucune tolérance, aucun verdict,
+aucun étage ; chaque rapport garde son commit de passe.

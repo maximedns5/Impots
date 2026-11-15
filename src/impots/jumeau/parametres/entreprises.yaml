@@ -103,8 +103,17 @@ naissances:
     # Les signaux du lot 2 (`champs.SIGNAUX_ENTREPRISES`) que le taux apparent somme :
     # ceux de D-401 (décision du propriétaire du 13 novembre 2026), cotisations patronales
     # comprises, que la boucle de Mésange porte aussi : un double compte décidé et dit.
+    # Sans la CVAE ni la C3S (`prelevements_production`) depuis D-436 : la loi n'en fait
+    # rien payer à la société qui entre. La CVAE est due par qui exerce au 1er janvier
+    # (CGI, art. 1586 octies, I), à un taux nul sous 500 000 € de chiffre d'affaires
+    # (art. 1586 quater, I, a), sans minimum sous ce seuil (art. 1586 septies) : loi
+    # n° 2009-1673, art. 2, seuil inchangé par la loi n° 2022-1726, art. 55. La C3S
+    # n'est due qu'au-delà de 760 000 € de chiffre d'affaires, puis abat 3,25 M€ (loi
+    # n° 2014-892, art. 3) et 19 M€ (loi n° 2015-1702, art. 9 ; CSS, art. L. 651-3). La
+    # société à la marge du bloc a, à maturité, r = 0,10 de la valeur ajoutée moyenne,
+    # environ 60 k€ et 150 k€ de chiffre d'affaires (VA/CA = 0,41 des cellules micro de
+    # 2023), sous les deux seuils sur toute la plage de r. Les fermetures le gardent.
     - prelevements_is
-    - prelevements_production
     - cotisations_patronales
     - prelevements_capital_menages
 

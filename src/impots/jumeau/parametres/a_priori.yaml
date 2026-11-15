@@ -89,23 +89,45 @@ jumeau_emploi_elasticite_cout:
     L'Horty (2012), les bornes actuelles 0,31 et 0,52.
 
 jumeau_salaires_chomage:
-  estimation: 0.4673
-  ecart_type: 0.4264
+  estimation: 0.20995
+  ecart_type: 0.09139
   source: >
-    Nijkamp et Poot, Tinbergen Institute DP 02-029/3 (2002 ; Journal of Economic Surveys
-    19(3), 2005), tableau 4, p. 33 du PDF : l'élasticité de la courbe des salaires au taux
-    de chômage corrigée du biais de publication (208 estimations), −0,077 (e.-t. 0,006),
-    l'hétérogénéité entre études σ = 0,070.
+    Décision du propriétaire du 15 novembre 2026 (D-435, D-438) : la courbe des salaires
+    du panneau W1 et celle de la méta-analyse de Nijkamp et Poot, combinées par leurs
+    précisions (la règle (2) : la méta-analyse n'est pas écartée par l'estimation
+    française), 0,210 ± 0,091. W1 (D-434, D-435, `reports/jumeau/microdonnees_d434.json`,
+    commit c7cdb86) : le log du salaire par tête sur le taux de chômage localisé du
+    département, effets cellule et secteur × année, 1 344 cellules département × secteur
+    NA17i, 2003 à 2019 et 2022 à 2025 ; Urssaf, open data, effectifs et masse salariale du
+    secteur privé ; Insee, BDM, TAUX-CHOMAGE.
   calcul: >
-    Une élasticité e au taux de chômage u (en points) est une semi-élasticité e / u ; au
-    taux de chômage BIT moyen de la période d'estimation de Mésange, 1989-2014, 9,154 %
-    (Insee, t. 302, ligne Total), −0,077 / 9,154 = −0,00841 par point ; le facteur b sur
-    le profil de Mésange (−0,018 agrégé, p. 64) : 0,00841 / 0,018 = 0,4673. L'écart-type :
-    √(0,006² + 0,070²) / 9,154 / 0,018 = 0,4264.
+    W1 : γ = −0,003556 (e.-t. 0,001684) par point ; b = −γ / 0,018 (Mésange agrégé,
+    p. 64) = 0,19756 ± 0,09356. Nijkamp et Poot : 0,4673 ± 0,4264 (ci-dessous). Les
+    précisions 1 / s² : 114,2 et 5,5 ; b = 0,20995, s = (114,2 + 5,5)^−½ = 0,09139.
+  panel:
+    estimation: 0.19756
+    ecart_type: 0.09356
+  meta_analyse:
+    estimation: 0.4673
+    ecart_type: 0.4264
+    source: >
+      Nijkamp et Poot, Tinbergen Institute DP 02-029/3 (2002 ; Journal of Economic
+      Surveys 19(3), 2005), tableau 4, p. 33 du PDF : l'élasticité de la courbe des
+      salaires au taux de chômage corrigée du biais de publication (208 estimations),
+      −0,077 (e.-t. 0,006), l'hétérogénéité entre études σ = 0,070.
+    calcul: >
+      Une élasticité e au taux de chômage u (en points) est une semi-élasticité e / u ; au
+      taux de chômage BIT moyen de la période d'estimation de Mésange, 1989-2014, 9,154 %
+      (Insee, t. 302, ligne Total), −0,077 / 9,154 = −0,00841 par point ; le facteur b sur
+      le profil de Mésange (−0,018 agrégé, p. 64) : 0,00841 / 0,018 = 0,4673.
+      L'écart-type : √(0,006² + 0,070²) / 9,154 / 0,018 = 0,4264. La loi de D-424 à
+      D-435.
   comparaison: >
     Mésange (p. 63) : −0,020 et −0,015 à long terme, marqués (**) et (***), sans t
-    imprimé. La courbe des salaires est estimée sur des marchés locaux du travail ; la
-    semi-élasticité de Mésange est agrégée : la même grandeur, mesurée autrement.
+    imprimé ; à 8,6 écarts-types de W1. Les variantes de W1 (D-435) : avec une tendance
+    par cellule 0,077 ± 0,097, avec région × année 0,111 ± 0,071, jusqu'en 2019 0,065 ±
+    0,091, au chômage de t − 1 0,210 ± 0,091 : le signe et l'ordre tiennent, le niveau
+    moins ; le salaire par tête porte un biais de composition qui tire b vers zéro.
 
 jumeau_consommation_profil:
   sans_source: >

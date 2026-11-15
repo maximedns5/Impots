@@ -200,11 +200,31 @@ def test_une_baisse_d_impot_monte_la_consommation_selon_la_propension_du_decile(
 
 
 def test_theta_zero_et_un_bornent_la_consommation() -> None:
-    profils = [_jumeau([_baisse_ir()], _theta(0.5, **{thetas.CONSOMMATION_PROFIL: t}))[0]
+    """Le bloc : à b = 1 (Mésange, θ = 1 sur la plage de D-438), la consommation croît
+    avec le profil e(h), et θ = 0 et 1 la bornent. L'équilibre : au b par défaut (0,20,
+    θ½ de D-438), la boucle des salaires sur le chômage rend moins de revenu, et la
+    consommation à θ = 1 passe sous celle de θ½ ; la ligne est déclarée non monotone
+    (D-442), sa boîte se lit sur la grille et contient chaque valeur de la grille, et la
+    déclaration n'est pas de trop : ses deux bouts seuls ne la bornent pas."""
+    profils = [_jumeau([_baisse_ir()], _theta(0.5, **{thetas.CONSOMMATION_PROFIL: t,
+                                                      thetas.SALAIRES_CHOMAGE: 1.0}))[0]
                for t in (0.0, 0.5, 1.0)]
     dc = [_ecart("c_menages", t)[:, 0] for t in profils]
     assert np.all(dc[0] <= dc[1] + 1e-12) and np.all(dc[1] <= dc[2] + 1e-12)
     assert np.all(dc[0] > 0.0) and dc[2][-1] > dc[0][-1]
+    ligne = thetas.REGISTRE[thetas.CONSOMMATION_PROFIL]
+    assert not ligne.monotone and "grille" in ligne.non_monotone
+    assert thetas.points_de_boite(ligne) == thetas.GRILLE
+    effet = np.stack([
+        _ecart("c_menages", _jumeau([_baisse_ir()],
+                                    _theta(0.5, **{thetas.CONSOMMATION_PROFIL: t}))[0])[:, 0]
+        for t in thetas.GRILLE], axis=1)  # années × θ, au b par défaut
+    bas, haut = thetas.boite(ligne, effet)
+    assert np.all(effet >= bas[:, None] - 1e-12) and np.all(effet <= haut[:, None] + 1e-12)
+    bouts = effet[:, [0, -1]]
+    hors = ((effet > bouts.max(axis=1, keepdims=True) + 1e-12)
+            | (effet < bouts.min(axis=1, keepdims=True) - 1e-12))
+    assert np.any(hors), "déclarée non monotone, et ses bouts la bornent"
     # La pente : à θ = 0, la même propension pour tous ; à θ = 1, la plus forte sous un.
     bloc = Consommation(CELLULES, PARAMS)
 

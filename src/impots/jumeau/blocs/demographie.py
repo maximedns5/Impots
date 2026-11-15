@@ -27,9 +27,13 @@ s'en calcule, 10,82 % au centre.
    et pour la référence, E_t = (e₀ + δ(θ_idées)) N₀ / 100 ; ΔE_{«»,t} = δ N₀ / 100.
    ε(θ_élasticité) de 0 à 0,20, centre 0,043 (Da Rin et al. 2011, tableau 4 p. 40 et
    p. 21-22, l'intra-groupe ; D-426 ; D-427 : une ligne θ), b = 0,092 (D-402),
-   N les signaux de D-401 : l'IS, la CVAE et la C3S, les cotisations patronales nettes
-   (comptées aussi par Mésange quand il tourne : le double compte décidé par le
-   propriétaire, D-401), le PFU et les prélèvements sociaux du capital. δ(θ) : θ_idées,
+   N les signaux de D-401 : l'IS, les cotisations patronales nettes (comptées aussi par
+   Mésange quand il tourne : le double compte décidé par le propriétaire, D-401), le PFU
+   et les prélèvements sociaux du capital. La CVAE et la C3S n'y sont plus (D-436) : la
+   loi n'en fait rien payer à la société qui entre (la CVAE due par qui exerce au
+   1er janvier, à un taux nul sous 500 000 € de chiffre d'affaires ; la C3S au-delà de
+   760 000 €, puis de ses abattements), et la société à la marge reste sous ces seuils
+   à maturité (r) ; elles restent dans F, les fermetures. δ(θ) : θ_idées,
    de −1 à +1 point, choisi, non vérifié.
 
 2. FERMETURES (canal « fermetures_entreprises »). Pour la mesure m et la cellule c :

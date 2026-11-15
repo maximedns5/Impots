@@ -1,5 +1,33 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-15 update adds D-431 to D-444: goal 23 closed and merged (PR #128), goal 24,
+« the learnt twin », in three strands joined on `claude/but24`, one PR prepared, not
+opened. **The strands.** Non-budget shocks (D-432, D-433: energy prices, interest rates
+and credit, the euro exchange rate) identify no θ at step zero, so none is coded.
+Fine-grained data (D-434, D-435): b, the response of wages to unemployment, is identified
+on the department × sector panel (Urssaf, local unemployment), and the owner adopted the
+combined law 0.210 ± 0.091 and the range (0; 0.20; 1), five times tighter than the
+literature and five times smaller than Mésange's; η, ε_K and the accelerator are not
+identified, β is not re-estimated. Creations in 2023 (D-436): 92 % of the twin's error is
+the naive's; the CVAE and the C3S leave the births block, by the law (a new company pays
+neither). D-437 had no use. **The fourth replay** (D-438 preregistered, D-439 scored):
+the criterion is met to the letter, narrowly. b is identified by the fine data, not by
+history, which still identifies no θ; the mechanical naive is beaten on 4 targets with
+2023 (exports, imports, D61, and creations by 0.037 point on a tolerance of 10, carried
+by one year, 2019) and on 6 without 2023; 9 targets of 12 held, the naive beaten on 9.
+Activity, employment and unemployment stay behind the mechanical naive with 2023.
+**After.** The consumption profile is declared non-monotone at the b of D-438 (D-442).
+The studies' creations channel no longer reads the CVAE nor the C3S (D-440): six reports
+(Attal, Lisnard, Retailleau: programme and one measure each) recomputed without a pass,
+no verdict and no tier moves. The twin had read the channel's ΔP as the firms' total
+tax: it now reads the pass's own sum (`recalcul.instruments`), or the firm layer for a
+future pass, and the six read bit for bit as before D-440 outside the channel (Attal's
+2026 household cost 63.63 bn€, not 66.91); the « Le jumeau » page is rebuilt (D-443).
+The 40 other reports of the channel, where the two taxes were zero, are aligned on
+D-440 by the owner's decision, not a number moved, checked byte for byte (D-444). `make
+impact` and the 29 heavy tests ran once before the PR: green, the 21 skips of D-430
+(D-443). **What is left.** The owner opens and merges the PR.
+
 The 2026-11-15 update adds D-406 to D-430: goal 23, the digital twin, all seven lots
 coded and joined on `claude/but23-cadre`, one PR prepared, not merged; the goal is not
 done. **The lots.** Firms (D-407: births, survival, closures, productivity, location; the

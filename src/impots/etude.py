@@ -2968,8 +2968,30 @@ class Etude:
                  "de leur commit." if recalcul.get("nombres_refaits", True) else
                  "Aucun prélèvement sur les entreprises ou le capital ne bouge ici : "
                  "aucun nombre de la page n'en dépend."))
+            retires = recalcul.get("instruments")
+            if retires and retires.get("nombres_refaits", True):
+                quoi = _et([creations.LIBELLES.get(i, f"`{i}`") for i in retires["retires"]])
+                w("")
+                w(f"{quoi[0].upper()}{quoi[1:]} ont été retirées du canal sans passe nouvelle ({retires['decision']}, "
+                  f"décision du propriétaire) : leurs montants, année par année, redonnés "
+                  f"par la couche entreprises, sont sortis des prélèvements que le canal "
+                  f"lit, et la dette, sa boîte et sa distribution refaites depuis les "
+                  f"champs du rapport ; ce que la mesure induit sur l'IS reste lu.")
+            elif retires:
+                quoi = _et([creations.LIBELLES.get(i, f"`{i}`") for i in retires["retires"]])
+                w("")
+                w(f"{quoi[0].upper()}{quoi[1:]} ont été retirées de la liste du canal sans "
+                  f"passe nouvelle ({retires['decision']}, décision du propriétaire) : "
+                  f"elles y valaient zéro chaque année, aucun nombre de la page ne change.")
         w("")
         names = [*params["instruments_entreprises"], *params["instruments_menages"]]
+        if set(creations.PRODUCTION) & set(names):
+            # Plus aucun rapport ne les liste (D-440, D-444) : la convention de D-401,
+            # qu'une page dirait à côté, n'est plus écrite nulle part.
+            raise EtudeError(f"un rapport qui lit encore "
+                             f"{_et([creations.LIBELLES[i] for i in creations.PRODUCTION])} dans "
+                             f"le canal : à aligner (D-444, `recaler_creations.py "
+                             f"--aligner`)")
         w(f"Les instruments lus, en euros de prélèvement, recettes positives, rien "
           f"d'autre (ni le nom de qui propose la mesure, ni son sens) : "
           f"{_et([creations.LIBELLES.get(i, f'`{i}`') for i in names])}. "

@@ -26,6 +26,14 @@ N(½ ; ½), et le jumeau de la jonction D-427 (ε = 0,043 au centre, ligne θ
 du capital élargies vers le bas ; la survie déclarée non monotone). Un θ est dit
 identifié contre l'écart-type de sa loi (`Estimation.identifies`, D-424).
 
+LA RÉVISION « rejeu_histoire_r4 » (D-438), après la jonction des trois volets du but 24.
+Les entrées, les fenêtres, les cibles, les tolérances, les sept θ estimés et les deux
+naïfs sont ceux de r3 ; changent : la loi et la plage de b (`jumeau_salaires_chomage`),
+la décision du propriétaire sur D-435 (0,210 ± 0,091 sur (0 ; 0,20 ; 1)) ; les naissances
+sans la CVAE ni la C3S (D-436). Aucun exogène nouveau (D-433), aucune cible nouvelle.
+2023, vu par D-436, est noté à part : le test se note aussi sans 2023
+(`SCHEMA_SANS_2023`, la même fenêtre 2021 → 2024 rejouée, 2023 non noté).
+
 AUCUN MONTANT OFFICIEL DE MESURE N'ENTRE (D-359 à D-361). Les évaluations préalables des
 PLF et des PLFSS sont des juges mis de côté ; la base des mesures votées ne porte que le
 droit (`jumeau.votees`). Ce qui entre est LU DANS LES COMPTES PUBLIÉS, et la base des
@@ -130,6 +138,12 @@ SCHEMA = Schema(
                 Fenetre(2014, 2017, (2015, 2016, 2017))),
     test=(Fenetre(2017, 2019, (2018, 2019)), Fenetre(2021, 2024, (2022, 2023, 2024))),
     exclues=(2020, 2021))
+#: Le test sans 2023 (D-438) : 2023 est vu depuis D-436 ; la fenêtre 2021 → 2024 est
+#: rejouée de même, 2023 n'y est pas noté.
+SCHEMA_SANS_2023 = Schema(
+    estimation=SCHEMA.estimation,
+    test=(SCHEMA.test[0], Fenetre(2021, 2024, (2022, 2024))),
+    exclues=SCHEMA.exclues)
 
 #: Les θ estimés : ceux des canaux de la demande et des échanges que les chocs observés
 #: excitent. Les autres restent à ½.
@@ -140,10 +154,11 @@ ESTIMES = ("jumeau_consommation_profil", "jumeau_emploi_elasticite_cout",
 A_PRIORI = 1.0
 #: Le cas que ce code rejoue, et la D-entrée qui le préenregistre ; le premier juge
 #: (« rejeu_histoire », D-417, D-420) se refait sur fe9434f, la deuxième révision
-#: (« rejeu_histoire_r2 », D-421, D-423) sur 8119f63.
-CAS, DECISION = "rejeu_histoire_r3", "D-428"
+#: (« rejeu_histoire_r2 », D-421, D-423) sur 8119f63, la troisième (« rejeu_histoire_r3 »,
+#: D-428, D-429) sur a399c47.
+CAS, DECISION = "rejeu_histoire_r4", "D-438"
 #: Les rapports des cas précédents, que ce code n'écrase pas.
-CAS_PRECEDENTS = ("rejeu_histoire", "rejeu_histoire_r2")
+CAS_PRECEDENTS = ("rejeu_histoire", "rejeu_histoire_r2", "rejeu_histoire_r3")
 #: Durée de vie moyenne de la dette, en années (choisie, non vérifiée).
 DUREE_VIE_DETTE = 8.0
 #: Les statuts d'une mesure qui n'a jamais eu d'effet.

@@ -136,11 +136,16 @@ def alleger(payload: Mapping[str, Any], premiere: Mapping[str, Any] | None
     """Ce que `Mesure.depuis_rapport` et le mode réduit lisent d'un rapport du chemin
     annuel et de sa première année, et rien d'autre."""
     def ligne(y: Mapping[str, Any]) -> dict[str, Any]:
-        return {"year": y["year"], "mechanical_frozen_eur": y["mechanical_frozen_eur"],
-                "mechanical_aged_eur": y["mechanical_aged_eur"],
-                "statistiques": {v: {"impulses": s.get("impulses"),
-                                     "canaux": s.get("canaux")}
-                                 for v, s in y["statistiques"].items()}}
+        out = {"year": y["year"], "mechanical_frozen_eur": y["mechanical_frozen_eur"],
+               "mechanical_aged_eur": y["mechanical_aged_eur"],
+               "statistiques": {v: {"impulses": s.get("impulses"),
+                                    "canaux": s.get("canaux")}
+                                for v, s in y["statistiques"].items()}}
+        if y.get("mechanical_by_layer") is not None:
+            # Le coût de la couche des entreprises : les impôts que le canal ne lit plus
+            # (D-440), quand le rapport n'en porte pas la somme d'avant (D-443).
+            out["mechanical_by_layer"] = y["mechanical_by_layer"]
+        return out
 
     out: dict[str, Any] = {
         "payload": {"rejeu": payload["rejeu"], "years": [ligne(y) for y in payload["years"]],
@@ -148,6 +153,12 @@ def alleger(payload: Mapping[str, Any], premiere: Mapping[str, Any] | None
                     "commit": payload.get("commit"), "scenario": payload.get("scenario"),
                     "persistence": payload["lectures"]["persistence"]},
         "premiere_annee": None}
+    instruments = (payload.get("recalcul") or {}).get("instruments")
+    if instruments:
+        # La somme d'avant des instruments retirés du canal (D-440), que lit
+        # `mesures.prelevements_lus` (D-443).
+        out["payload"]["recalcul"] = {"instruments": {
+            k: instruments[k] for k in ("retires", "variations_avant")}}
     if premiere is not None:
         def reponse(r: Mapping[str, Any]) -> dict[str, Any]:
             deciles = r.get("deciles")

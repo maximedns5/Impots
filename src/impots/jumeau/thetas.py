@@ -147,10 +147,15 @@ REGISTRE.update({ligne.cle: ligne for ligne in (
                       "la semi-élasticité du salaire au taux de chômage de Mésange (−1,98 "
                       f"et −1,49 à long terme) ; {_PAR_THETA}"),
           unite="sans dimension", a_zero="0 (aucune réponse au chômage)",
-          a_demi="1 (Mésange 2017, −0,018 agrégé)", a_un="1,2778 (Mésange 2010, −0,023)",
+          a_demi=("0,20 (la courbe des salaires du panneau W1, Urssaf et chômage localisé "
+                  "de l'Insee, combinée à Nijkamp et Poot : 0,210 ± 0,091)"),
+          a_un="1 (Mésange 2017, −0,018 agrégé)",
           direction="θ = 1 : les salaires réagissent le plus au chômage",
-          source=("Mésange (G2017-04), p. 64 et 65 ; la borne basse, 0, décision du "
-                  "propriétaire sur Nijkamp et Poot (2002), tableau 4 (D-424, D-427)"),
+          source=("Mésange (G2017-04), p. 64 et 65 ; le centre, D-435 (le panneau W1, "
+                  "Urssaf, open data, effectifs et masse salariale par département × "
+                  "NA17i ; Insee, BDM, TAUX-CHOMAGE) et Nijkamp et Poot (2002), tableau "
+                  "4 ; la plage (0 ; 0,20 ; 1), décision du propriétaire du 15 novembre "
+                  "2026 (D-427, D-435, D-438)"),
           verifiee=False),
     Ligne(cle=CONSOMMATION_PROFIL, bloc="consommation",
           definition=("e(h) dans PMC_d(h) = e(h) [APC + κ (APC_d − APC)] : l'élasticité "
@@ -161,7 +166,13 @@ REGISTRE.update({ligne.cle: ligne for ligne in (
           a_demi="Mésange : 0,46 ; 0,85 ; 0,98 ; 1,00", a_un="max : 0,5 ; 0,85 ; 0,98 ; 1,00",
           direction="θ = 1 : la consommation suit le plus vite et le plus loin le revenu",
           source=("Mésange (G2017-04), p. 34 ; Insee, Note de conjoncture de juin 2019, "
-                  "dossier, tableau 3 p. 34"), verifiee=True),
+                  "dossier, tableau 3 p. 34"), verifiee=True,
+          non_monotone=(
+              "e(h) joue deux fois : il fait suivre la consommation au revenu, et, par la "
+              "boucle des salaires sur le chômage, le surcroît de demande rend moins de "
+              "revenu quand b est petit ; à b = 0,20 (D-438), la consommation à θ = 1 "
+              "passe sous celle de θ½ de 0,13 % au plus de la 3e à la 9e année (D-442). "
+              "Sa boîte se lit sur la grille.")),
     Ligne(cle=CONSOMMATION_PENTE, bloc="consommation",
           definition=("q dans κ = q κ_max, PMC_d(h) = e(h) [APC + κ (APC_d − APC)] : la pente "
                       "des propensions marginales entre les déciles ; κ_max, le plus grand κ "

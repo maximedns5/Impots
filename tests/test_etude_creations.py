@@ -24,7 +24,7 @@ from impots import etude, graphiques
 from impots.predictif import creations
 from test_creations_canal import CUT, HALF, PARAMS, _build
 
-INSTRUMENTS = ("l'IS", "sa contribution sociale", "la CEBGE", "la CVAE", "la C3S",
+INSTRUMENTS = ("l'IS", "sa contribution sociale", "la CEBGE",
                "le PFU", "les prélèvements sociaux du capital",
                "les cotisations patronales, nettes des allègements")
 
@@ -110,9 +110,14 @@ def test_the_page_names_the_productivity_its_box_the_elasticity_and_the_instrume
     assert "de 0 à 0,2" in text and creations.SOURCE_ELASTICITE in text
     listed = text[text.index("Les instruments lus"):]
     assert all(name in listed for name in INSTRUMENTS)
+    # The CVAE and the C3S are no longer read (D-440): not in the list, said beside it.
+    assert "CVAE" not in listed[:listed.index(creations.DOUBLE_COMPTE)]
     assert creations.DOUBLE_COMPTE in listed and "Mésange" in listed
     assert creations.CONVENTIONS_INSTRUMENTS in listed
-    assert set(creations.LIBELLES) == set(PARAMS.instruments)
+    # The convention of D-401 is no longer written anywhere (D-444: no report lists them).
+    assert "euro pour euro comme l'IS" not in listed
+    # Their labels stay, for the pages that say them retired (D-440, D-444).
+    assert set(creations.LIBELLES) == set(PARAMS.instruments) | set(creations.PRODUCTION)
 
 
 def test_a_report_written_before_d427_names_the_source_of_its_own_slope(synthetique) -> None:

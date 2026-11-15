@@ -20,6 +20,15 @@ names them; the test holds both.
 A report whose levies on firms and capital are zero every year does not read ε
 (`concerne`): its parameters say the new slope, and no number of it is rewritten — none
 depends on ε, the channel being zero at every slope.
+
+INSTRUMENTS THE CHANNEL STOPS READING (D-440). The owner took the CVAE and the C3S out of
+the channel (`creations.PRODUCTION`). A report carries ΔP summed over its instruments, not
+each one; the firm layer that priced them is a pass on the firm cells, of seconds, which
+gives back each tax by year and view (`scripts/recaler_creations.py --instruments`, which
+checks it gives back the firm layer's cost the report carries, to the bit). `retirer`
+takes those amounts out of ΔP, drops the instruments from both snapshots and refits every
+number from the report's own fields, as `recalculer` does; `recalcul.instruments` says it
+and keeps ΔP before, so that the report before is replayed from the report after.
 """
 
 from __future__ import annotations
@@ -27,7 +36,7 @@ from __future__ import annotations
 import copy
 import itertools
 import json
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 from impots.predictif import creations, montecarlo, rejouer
@@ -109,6 +118,15 @@ def recalculer(payload: Mapping[str, Any], elasticite: Mapping[str, float] | Non
         if elasticite is not None:
             out["recalcul"] = _marque(avant, rejeu, decision, date, out, nul=True)
         return out
+    _refaire(out)
+    if elasticite is not None:
+        out["recalcul"] = _marque(avant, rejeu, decision, date, out, nul=False)
+    return out
+
+
+def _refaire(out: dict[str, Any]) -> None:
+    """Every number the replay derives from the channel, refitted in place."""
+    rejeu = out["rejeu"]
     theta = _theta(out)
     side = bool(out.get("side_by_side"))
     chemins = ([(s["persistence"], s["years"]) for s in out["side_by_side"]] if side
@@ -171,8 +189,86 @@ def recalculer(payload: Mapping[str, Any], elasticite: Mapping[str, float] | Non
                                     "c0": ends[0.0], "c1": ends[1.0]},
                           "delta_sans_creations": drawn["delta_sans_creations"]})
 
-    if elasticite is not None:
-        out["recalcul"] = _marque(avant, rejeu, decision, date, out, nul=False)
+
+def retirer(payload: Mapping[str, Any], retraits: Mapping[str, Sequence[float]],
+            instruments: Sequence[str], *, decision: str, date: str) -> dict[str, Any]:
+    """The report without `instruments` in the channel (D-440): `retraits[view]`, their
+    sum by year priced, euros, receipts positive, taken out of ΔP; the instruments dropped
+    from both snapshots; every number refitted at the report's own slope."""
+    out = copy.deepcopy(dict(payload))
+    rejeu = out.get("rejeu") or {}
+    if not rejeu.get("creations") or "creations" not in out:
+        raise RecalculError("rapport sans le canal des créations : rien à recalculer")
+    block = rejeu["creations"]
+    snapshots = (block["parametres"], out["creations"]["parametres"])
+    lus = [*snapshots[0]["instruments_entreprises"], *snapshots[0]["instruments_menages"]]
+    if not instruments or not set(instruments) <= set(lus):
+        raise RecalculError(f"instruments {list(instruments)} : pas tous lus par le rapport")
+    if out.get("carry") is not None:
+        raise RecalculError("un rapport reporté ne porte pas ses chemins")
+    if (out.get("recalcul") or {}).get("instruments"):
+        raise RecalculError("des instruments ont déjà été retirés de ce rapport")
+    avant = copy.deepcopy(block["variations"])
+    if set(retraits) != set(avant):
+        raise RecalculError(f"vues {sorted(retraits)} contre {sorted(avant)}")
+    for view, values in avant.items():
+        if len(retraits[view]) != len(values):
+            raise RecalculError(f"vue « {view} » : {len(retraits[view])} années retirées "
+                                f"pour {len(values)}")
+        block["variations"][view] = [float(v) - float(r)
+                                     for v, r in zip(values, retraits[view], strict=True)]
+    years = [str(r["year"]) for r in out["years"]]
+    out["creations"]["prelevements_eur"] = {
+        view: dict(zip(years, values, strict=True))
+        for view, values in block["variations"].items()}
+    for snapshot in snapshots:
+        for key in ("instruments_entreprises", "instruments_menages"):
+            snapshot[key] = [i for i in snapshot[key] if i not in instruments]
+    _refaire(out)
+    marque = dict(out.get("recalcul") or {})
+    marque["instruments"] = {
+        "decision": decision, "date": date, "retires": list(instruments),
+        "objet": ("des instruments retirés du canal des créations, sans passe : leurs "
+                  "montants, année par année, redonnés par la couche entreprises, sortis "
+                  "des prélèvements du canal ; les chemins, la boîte, le Monte-Carlo, les "
+                  "lectures et le canal refaits par le rejeu depuis les champs du rapport ; "
+                  "la passe reste celle de « commit »"),
+        "variations_avant": avant, "commit_passe": out.get("commit")}
+    out["recalcul"] = marque
+    return out
+
+
+def aligner(payload: Mapping[str, Any], instruments: Sequence[str], *, decision: str,
+            date: str) -> dict[str, Any]:
+    """The report without `instruments` in the channel's lists, where they were zero
+    (D-444): the lists of both snapshots lose them and `recalcul.instruments` says it;
+    no number is touched, not even refitted, for none moves. The caller checks they were
+    zero (no firm reform in the scenario: `scripts/recaler_creations.py --aligner`)."""
+    out = copy.deepcopy(dict(payload))
+    rejeu = out.get("rejeu") or {}
+    if not rejeu.get("creations") or "creations" not in out:
+        raise RecalculError("rapport sans le canal des créations : rien à aligner")
+    if (out.get("recalcul") or {}).get("instruments"):
+        raise RecalculError("des instruments ont déjà été retirés de ce rapport")
+    block = rejeu["creations"]
+    snapshots = (block["parametres"], out["creations"]["parametres"])
+    for snapshot in snapshots:
+        lus = [*snapshot["instruments_entreprises"], *snapshot["instruments_menages"]]
+        if not instruments or not set(instruments) <= set(lus):
+            raise RecalculError(f"instruments {list(instruments)} : pas tous lus par le "
+                                f"rapport")
+        for key in ("instruments_entreprises", "instruments_menages"):
+            snapshot[key] = [i for i in snapshot[key] if i not in instruments]
+    marque = dict(out.get("recalcul") or {})
+    marque["instruments"] = {
+        "decision": decision, "date": date, "retires": list(instruments),
+        "objet": ("des instruments retirés de la liste du canal des créations, sans "
+                  "passe : ils y valaient zéro chaque année, aucun nombre ne change ; la "
+                  "passe reste celle de « commit »"),
+        "nombres_refaits": False,
+        "variations_avant": copy.deepcopy(block["variations"]),
+        "commit_passe": out.get("commit")}
+    out["recalcul"] = marque
     return out
 
 
@@ -184,10 +280,14 @@ def _marque(avant: Mapping[str, float], rejeu: Mapping[str, Any], decision: str 
              else "l'élasticité du canal des créations, changée sans passe : les chemins, "
              "la boîte, le Monte-Carlo, les lectures et le canal refaits par le rejeu "
              "depuis les champs du rapport ; la passe reste celle de « commit »")
-    return {"decision": decision, "date": date, "objet": objet, "nombres_refaits": not nul,
-            "elasticite_avant": dict(avant),
-            "elasticite": dict(rejeu["creations"]["parametres"]["elasticite"]),
-            "commit_passe": out.get("commit")}
+    marque = {"decision": decision, "date": date, "objet": objet,
+              "nombres_refaits": not nul, "elasticite_avant": dict(avant),
+              "elasticite": dict(rejeu["creations"]["parametres"]["elasticite"]),
+              "commit_passe": out.get("commit")}
+    instruments = (out.get("recalcul") or {}).get("instruments")
+    if instruments:
+        marque["instruments"] = instruments
+    return marque
 
 
 def ecarts(a: Any, b: Any, chemin: str = "") -> list[tuple[str, Any, Any]]:
