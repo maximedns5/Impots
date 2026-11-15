@@ -34426,3 +34426,48 @@ pour les taux), la TVA en 1,2 s, les aides au logement en 45 s (le crible inchan
 taux en une simulation au lieu de deux). La référence est recalculée une fois (le code
 du moteur a changé, son empreinte aussi), environ 56 s. La passe tient dans les 15 min de
 machine qui restent : environ 4 min, détachée, un seul processus.
+
+### Résultat
+
+La comparaison, au commit `dbbf7a0`, le 15 novembre, détachée, un seul processus (2 min
+18 s de machine) : **les trois mesures redonnent les rapports à écart nul**, 93, 86 et 91
+grandeurs, comme en D-464 ; le contrôle n'a jamais bougé, aucun crible démenti. Le
+pronostic des nombres est tenu.
+
+Un profil de la tranche à 60 % sur ce commit (passe d'essai) a montré deux pertes de
+plomberie : 11,6 s (sous profileur) à reconstruire huit fois l'arbre réformé pour lire la
+première tranche changée, et 3 s à retirer les autres échantillons à chaque appel des
+taux. Les deux sont calculés une fois par passe au commit `7caf97c` (mémoïsation seule) ;
+la même comparaison y a été relancée (1 min 49 s de machine) : de nouveau écart nul
+partout, et les temps ci-dessous.
+
+| Mesure | Rapport | D-464 | `dbbf7a0` | `7caf97c` | Pronostic |
+|---|---|---|---|---|---|
+| Tranche à 60 % | 174,7 s | 53,8 s | 15,6 s | **14,4 s** | 10 s |
+| Aides au logement + 10 % | 111,3 s | 64,1 s | 61,4 s | **46,8 s** | 45 s |
+| TVA des carburants | 40,6 s | 1,2 s | 0,8 s | **0,8 s** | 1,2 s |
+
+Temps d'une mesure jamais chiffrée dans le processus, la référence sur disque, les taux
+de sa réforme hors du cache (ceux qu'une passe précédente avait écrits ont été sortis du
+dossier avant chaque mesure). La référence, recalculée parce que le code du moteur a
+changé : 52 s puis 40 s, une fois.
+
+**La cible de 10 s est atteinte pour la TVA, manquée pour les deux autres**, et le
+pronostic de la tranche à 60 % aussi (14,4 s contre 10 s). Ce qui reste, pour la tranche
+à 60 % : 5,3 s pour la passe de la population (une simulation de 286 ménages, presque
+tout en coût fixe), 8,8 s pour les comportements (une simulation de 1 780 ménages, le
+revenu et le revenu plus 100 € des 890 ménages criblés ou de contrôle, et la lecture des
+quatre échantillons). Pour les aides au logement : 32 s pour la passe sur 13 427 ménages,
+15 s pour les taux sur environ 5 000. Le facteur gagné depuis les rapports : 12 pour la
+tranche à 60 %, 2,4 pour les aides au logement, 50 pour la TVA.
+
+**Ce qui passerait sous 10 s, sans changer un nombre, et n'est pas fait** : la passe de
+la population et les taux marginaux dans une même simulation (un coût fixe de moins,
+environ 3 s, ce qui mettrait la tranche à 60 % vers 11 s) ; moins de ménages de contrôle,
+ce qui toucherait à la garantie de D-462 et se décide ; pour les aides au logement, un
+crible tiré d'un calcul et non des données du cadre (aucune donnée du cadre ne sépare un
+ménage loin de l'aide d'un ménage qui y entre), ou une simulation plus légère ; et, pour
+une étude entière, un processus qui garde la référence, l'arbre et les tables macro
+entre les passes (7 s à la première mesure d'un processus), et la vue figée du chemin
+annuel calculée une fois. Le moteur rapide reste sous `IMPOTS_MOTEUR=rapide` : basculer
+les études reste au propriétaire.
