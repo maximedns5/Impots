@@ -31,6 +31,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from impots import site_composants as composants
 from impots.site_population import agregats as _agregats
 
 ICI = Path(__file__).resolve().parent
@@ -40,7 +41,7 @@ MENAGES_TYPES = ROOT / "reports" / "parcours" / "menages.json"
 
 PAGE, FRANCE, COMME_MOI, CELLULES = ("population.html", "population-france.html",
                                      "population-comme-moi.html", "cellules.html")
-STYLE, SCRIPT = "population.css", "population-comme-moi.js"
+SCRIPT = "population-comme-moi.js"
 FICHIERS_CELLULES = ("cellules-menages.csv", "cellules-menages.json",
                      "cellules-entreprises.csv", "cellules-entreprises.json")
 #: Les points d'entrée que d'autres pages peuvent citer : (page#ancre) → ce qu'on y lit.
@@ -216,9 +217,9 @@ def barres(lignes: list[tuple[str, float, float | None]], fmt, titre: str,
 
 
 def chiffre(valeur: str, libelle: str, note: str = "") -> str:
-    return (f'<div class="chiffre"><span class="grand">{valeur}</span>'
-            f'<span class="quoi">{libelle}</span>'
-            + (f'<span class="note">{note}</span>' if note else "") + "</div>")
+    return (f'<div class="stat"><span class="stat-v">{valeur}</span>'
+            f'<span class="stat-l">{libelle}</span>'
+            + (f'<span class="stat-n">{note}</span>' if note else "") + "</div>")
 
 
 def tableau(entetes: list[str], lignes: list[list[str]], legende: str = "",
@@ -238,7 +239,7 @@ def nav(ici: str) -> str:
              (CELLULES, "Les cellules publiées"))
     items = "".join(f'<li><a href="{p}"' + (' aria-current="page"' if p == ici else "")
                     + f">{e(t)}</a></li>" for p, t in pages)
-    return f'<nav class="pop-nav" aria-label="La population"><ol>{items}</ol></nav>'
+    return f'<nav class="pastilles numerotees" aria-label="La population"><ol>{items}</ol></nav>'
 
 
 # --------------------------------------------------------------------------- #
@@ -314,8 +315,9 @@ def fichiers_cellules(d: dict[str, Any]) -> dict[str, str]:
 # population.html
 # --------------------------------------------------------------------------- #
 def _etape(n: int, titre: str, grand: str, texte: str, source_html: str) -> str:
-    return (f'<li class="etape"><span class="num" aria-hidden="true">{n}</span>'
-            f'<div><h3>{titre}</h3><p class="grand-etape">{grand}</p><p>{texte}</p>'
+    return (f'<li class="etape f-donnees"><span class="etape-n" aria-hidden="true">{n}</span>'
+            f'<div class="etape-corps"><h3>{titre}</h3><p class="etape-grand">{grand}</p>'
+            f'<p>{texte}</p>'
             f'<p class="note-source">{source_html}</p></div></li>')
 
 
@@ -451,7 +453,7 @@ def page_population(d: dict[str, Any]) -> str:
     out += ['<section id="construction"><h2>Comment elle est faite, pas à pas</h2>',
             "<p>Sept étapes, de l'enquête aux cellules. Chacune dit sa source et le "
             "fichier du dépôt qui la fait.</p>",
-            f'<ol class="flux">{"".join(etapes)}</ol>',
+            f'<ol class="etapes">{"".join(etapes)}</ol>',
             f'<p id="vieillissement" class="encadre"><strong>Le vieillissement.</strong> '
             f"Les études publiées vieillissent la population de {v['de']} jusqu'à "
             f"{v['de'] + v['horizon'] + 1} au plus : {e(v['source'])}. Ce sont des "
@@ -557,7 +559,7 @@ def page_population(d: dict[str, Any]) -> str:
             f"{NBSP}000 personnes en emploi travaillent dans le secteur public.</p>",
             "<h3>Le niveau de vie, par dixième des ménages</h3>", _deciles(d),
             "</section>",
-            f'<p class="suite">Suite : <a href="{FRANCE}">ressemble-t-elle à la France ?</a>'
+            f'<p class="a-suivre">Suite : <a href="{FRANCE}">ressemble-t-elle à la France ?</a>'
             f' · <a href="{COMME_MOI}">un ménage comme le mien</a></p>']
     return "\n".join(out)
 
@@ -673,7 +675,7 @@ def page_france(d: dict[str, Any]) -> str:
            "a été ajustée pour les reproduire. Les retrouver montre que l'ajustement a "
            "tourné, rien de plus. Ils ne comptent jamais comme une vérification.</p>",
            tableau(["Total", "Publié", "Population", "Écart", "Source"], calees,
-                   "Les totaux calés, sur la population entière de 2024", "chiffres"),
+                   "Les totaux calés, sur la population entière de 2024", "nombres"),
            '<p class="note-source">L\'écart sur les ménages vient de ce qu\'un ménage est '
            "ici un logement interrogé un trimestre, pour l'Insee un logement. "
            f"{fichier('src/impots/population/margins.py', 'population/margins.py')}</p>"
@@ -705,14 +707,26 @@ def page_france(d: dict[str, Any]) -> str:
     out += ['<section id="ecarts"><h2>Où elle s\'écarte, et pourquoi</h2>',
             "<p>Ce que la population fait mal, ou ne sait pas faire. Rien de ceci n'est "
             "corrigé en retouchant un total : on effacerait la ligne qui le montre.</p>",
-            "<h3>Les lignes hors de leur tolérance</h3><ul class=\"ecarts-dits\">"]
+            "<h3>Les lignes hors de leur tolérance</h3>",
+            # Ce que l'écart fait aux études n'est calculé par rien : un ordre de grandeur
+            # au premier ordre, dit comme tel (D-468).
+            composants.garde("Ce que ça fait aux études : un ordre de grandeur, pas un "
+                             "résultat",
+                    "<p>Les phrases marquées « non calculé » lisent l'écart au premier "
+                    "ordre : si le coût d'une mesure proportionnelle suit la base que porte "
+                    "la population, un écart d'un quart sur la base en donne autant sur le "
+                    "coût. Aucune passe ne les a chiffrées ; elles disent dans quel sens "
+                    "et de combien, à peu près, une étude pourrait se tromper, rien de "
+                    "plus.</p>"),
+            "<ul class=\"ecarts-dits\">"]
     for x in hors:
         out.append(f"<li><strong>{e(x['ligne'])}</strong> <span class=\"hors\">"
                    f"{pct(x['ecart'], 0, True)}</span> — "
                    + (e(CAUSES[x["id"]]) if x["id"] in CAUSES else
                       'sa cause : <a href="parcours-2-france.html">la France simulée</a>.')
-                   + (f' <span class="aux-etudes">Pour les études : {e(ETUDES[x["id"]])}'
-                      "</span>" if x["id"] in ETUDES else "") + "</li>")
+                   + (' <span class="aux-etudes"><b class="non-calcule">non calculé</b> '
+                      f'Pour les études, au premier ordre : {e(ETUDES[x["id"]])}</span>'
+                      if x["id"] in ETUDES else "") + "</li>")
     out += ["</ul><h3>Les limites de construction</h3><ul class=\"ecarts-dits\">",
             "<li><strong>Aucun revenu n'est observé.</strong> Chaque euro est tiré d'une "
             "distribution publiée et calé sur un total : le niveau est juste par "
@@ -740,7 +754,7 @@ def page_france(d: dict[str, Any]) -> str:
             f"peu de ménages.</li></ul>",
             f'<p class="note-source">Les causes : les entrées de décision D-363 à D-371, '
             f"et {fichier('reports/reconciliation.md')}.</p></section>",
-            f'<p class="suite">Suite : <a href="{COMME_MOI}">un ménage comme le mien</a> · '
+            f'<p class="a-suivre">Suite : <a href="{COMME_MOI}">un ménage comme le mien</a> · '
             f'<a href="{CELLULES}">les cellules publiées</a></p>']
     return "\n".join(out)
 
@@ -789,7 +803,7 @@ def page_comme_moi(d: dict[str, Any]) -> str:
         '<input id="enfants" type="number" min="0" max="6" value="2" inputmode="numeric">',
         '<label for="revenu">Ce que le ménage a pour vivre, par mois <span class="aide">'
         "(après impôts, allocations comprises)</span></label>"
-        '<div class="curseur"><input id="revenu" type="range" min="500" max="15000" '
+        '<div class="curseur-ligne"><input id="revenu" type="range" min="500" max="15000" '
         'step="100" value="3500"><output id="revenu-dit" for="revenu">3 500 € par mois'
         "</output></div></form>",
         '<div id="resultat" aria-live="polite"><p class="sans-script">Cette partie '
@@ -894,7 +908,7 @@ def page_cellules(d: dict[str, Any]) -> str:
         '<a href="#telecharger">télécharger</a>.</p>',
         tableau(["n°", "Dixième", "Type", "Ménages", "Personnes", "Revenu disponible",
                  "Salaires bruts", "Retraites", "Prestations", "Impôt sur le revenu",
-                 "TVA"], corps, "Par ménage, euros de 2024 par an", "chiffres serre"),
+                 "TVA"], corps, "Par ménage, euros de 2024 par an", "nombres serre"),
         "<h3>Ce que chaque variable veut dire</h3>", f"<dl class=\"definitions\">{defs}</dl>",
         "<h3>D'où elles viennent</h3>",
         f"<p>Une passe de la loi de {cm['annee']} sur {_entier(cm['echantillon'])} ménages "
@@ -902,7 +916,7 @@ def page_cellules(d: dict[str, Any]) -> str:
         f"{e(', '.join(cm['imputations']))}, faite le {cm['construites']} au commit "
         f"<code>{cm['commit'][:7]}</code> (D-409). Chaque total est recoupé aux totaux "
         "publiés, avec une tolérance écrite avant :</p>",
-        tableau(["Recoupement", "Écart", "Tolérance", "Source"], recoup, "", "chiffres"),
+        tableau(["Recoupement", "Écart", "Tolérance", "Source"], recoup, "", "nombres"),
         f'<p class="note-source">'
         f'{fichier("src/impots/jumeau/cellules.py", "jumeau/cellules.py")}'
         f" · {fichier('reports/jumeau/entrees_navigateur.json')}</p></section>",
@@ -916,7 +930,7 @@ def page_cellules(d: dict[str, Any]) -> str:
         f"absentes ou complétées, et dites dans le fichier JSON.</p>",
         '<div class="grille-2">', par_section, par_taille, "</div>",
         tableau(["Secteur", "Taille", "Entreprises", "Chiffre d'affaires", "Valeur ajoutée",
-                 "Résultat", "Part en perte"], corps_f, "Les 57 cellules", "chiffres serre"),
+                 "Résultat", "Part en perte"], corps_f, "Les 57 cellules", "nombres serre"),
         f"<dl class=\"definitions\">{defs_f}</dl>",
         f'<p class="note-source">Sources : {srcs}. Le résultat fiscal vaut '
         f"{_dec(f['fiscal_sur_comptable'], 2)} fois le résultat comptable, en moyenne. "
@@ -961,10 +975,8 @@ def build() -> dict[str, str]:
         # La légende des étages de confiance parle des nombres d'étude : ces pages n'en
         # portent pas.
         texte = texte.replace(f"\n{site._legend()}\n", "\n")
-        files[nom] = texte.replace('<link rel="stylesheet" href="style.css">',
-                                   '<link rel="stylesheet" href="style.css">\n'
-                                   f'<link rel="stylesheet" href="{STYLE}">')
-    files[STYLE] = (ICI / "population.css").read_text(encoding="utf-8")
+        # Les composants de ces pages sont dans la feuille commune (D-468).
+        files[nom] = texte
     files[SCRIPT] = (ICI / "comme_moi.js").read_text(encoding="utf-8")
     files.update(fichiers_cellules(d))
     return files

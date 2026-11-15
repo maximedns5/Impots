@@ -22,10 +22,9 @@ import html
 from collections.abc import Callable
 from typing import Any
 
-from impots import etude
+from impots import etude, site_composants
 
 INDEX = "mesure.html"
-CSS = "mesure.css"
 
 
 def lien(programme: str, mesure: str) -> str:
@@ -70,7 +69,7 @@ def _m(text: str, etage: str = "programme") -> str:
 
 
 def _source(fichier: str, champ: str, commit: str) -> str:
-    return (f'<p class="source">Source : <code>{_e(fichier)}</code> · champ '
+    return (f'<p class="note-source"><code>{_e(fichier)}</code> · champ '
             f"<code>{_e(champ)}</code> · commit <code>{_e(commit[:7])}</code></p>")
 
 
@@ -357,20 +356,21 @@ def _provenance(corps: str) -> str:
     texte et se replie en fin d'étape : « D'où viennent ces nombres » (but 25, D-457)."""
     import re
 
-    sources = re.findall(r'<p class="source">.*?</p>', corps, re.S)
+    sources = re.findall(r'<p class="note-source">.*?</p>', corps, re.S)
     if not sources:
         return corps
-    corps = re.sub(r'<p class="source">.*?</p>', "", corps, flags=re.S)
+    corps = re.sub(r'<p class="note-source">.*?</p>', "", corps, flags=re.S)
     corps = corps.replace("<br></figcaption>", "</figcaption>")
     return (corps + '<details class="sm-prov"><summary>D\'où viennent ces nombres</summary>'
             + "".join(sources) + "</details>")
 
 
+FLECHE = f'<div class="flux-fleche">{site_composants._FLECHE}</div>'
 HAUT = '<p class="sm-haut"><a href="#contenu">↑ Retour en haut</a></p>'
 
 
 def _etape(k: int, corps: str, phrase: str) -> str:
-    return (f'<section class="sm-etape" id="etape-{k}"><h2><span class="sm-num">{k}</span>'
+    return (f'<section class="sm-etape" id="etape-{k}"><h2><span class="etape-n">{k}</span>'
             f"{_e(ETAPES[k - 1])}</h2><p class=\"sm-phrase\">{phrase}</p>"
             f"{_provenance(corps)}{HAUT}</section>")
 
@@ -391,7 +391,7 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
     out.append(f'<p class="sm-fil"><a href="{INDEX}">Une mesure pas à pas</a> &rsaquo; '
                f'<a href="{INDEX}#{programme.slug}">{_e(programme.candidat)}</a></p>')
     out.append(f"<h1>{_m(m.libelle)}</h1>")
-    out.append(f'<p class="sm-chapeau">Une mesure du programme de {_e(programme.candidat)}'
+    out.append(f'<p class="chapeau">Une mesure du programme de {_e(programme.candidat)}'
                f", suivie de son texte au coût qu'en publie l'étude, en sept étapes. Chaque "
                f"nombre dit son étage de confiance et sa source : le rapport, le champ, le "
                f"commit.</p>")
@@ -426,24 +426,24 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
     codes = "; ".join(f"<code>{_e(champ)}</code> = {_e(etude.valeur_lue(champ, v))}"
                       for champ, v in feuilles)
     schema = (
-        '<div class="sm-flux">'
-        f'<div class="sm-boite"><span class="sm-tag">ce que dit le candidat</span>'
-        f"<strong>{_m(m.parametre)}</strong>{citations}</div>"
-        '<div class="sm-fleche" aria-hidden="true">→</div>'
-        f'<div class="sm-boite"><span class="sm-tag">le réglage du moteur</span>'
-        f"<ul>{params}</ul>"
+        '<figure class="flux"><div class="flux-grille">'
+        '<div class="flux-col flux-entree"><p class="flux-col-titre">Ce que dit le candidat'
+        f'</p><div class="flux-boite"><b>{_m(m.parametre)}</b>{citations}</div></div>'
+        + FLECHE +
+        '<div class="flux-col flux-fait"><p class="flux-col-titre">Le réglage du moteur</p>'
+        f'<div class="flux-boite"><ul>{params}</ul>'
         + (f'<p class="sm-petit">Plage réglable : </p><ul>{plages}</ul>' if plages else "")
-        + "</div>"
-        '<div class="sm-fleche" aria-hidden="true">→</div>'
-        f'<div class="sm-boite"><span class="sm-tag">la couche qu\'il touche</span>'
-        f"<strong>{'les ménages' if ch.couche == 'menages' else 'les entreprises'}"
-        f"</strong><p class=\"sm-petit\">dès {year}"
+        + "</div></div>" + FLECHE +
+        '<div class="flux-col flux-sortie"><p class="flux-col-titre">La couche qu\'il '
+        "touche</p><div class=\"flux-boite\">"
+        f"<b>{'les ménages' if ch.couche == 'menages' else 'les entreprises'}"
+        f"</b><span>dès {year}"
         + (f", les années {', '.join(map(str, path['annees']))}" if path.get("annees")
-           else f", jusqu'en {etude.LAST_YEAR}") + "</p></div></div>")
+           else f", jusqu'en {etude.LAST_YEAR}") + "</span></div></div></div></figure>")
     note = (f'<p class="sm-note"><strong>La traduction</strong> : {_m(ch.note, "hypothèse")}</p>'
             if ch.note else "")
     out.append(_etape(1, schema + note + (
-        f'<p class="source">Source : <code>programmes/{_e(programme.slug)}.json</code> · '
+        f'<p class="note-source"><code>programmes/{_e(programme.slug)}.json</code> · '
         f"mesure <code>{_e(m.id)}</code> · relevé du {_e(programme.releve)} · les "
         f"réglages, par leur nom dans le moteur : {codes}</p>"),
         "Le texte du candidat devient un ou deux nombres que le moteur sait lire. Tout ce "
@@ -729,7 +729,7 @@ def pages(study: etude.Etude, entries: list[dict[str, Any]],
 def index(listes: list[tuple[Any, etude.Etude, list[tuple[Any, dict[str, Any]]]]]) -> str:
     """Le choix : un candidat, puis une de ses mesures."""
     out = ["<h1>Une mesure pas à pas</h1>",
-           '<p class="sm-chapeau">Choisissez un candidat, puis une de ses mesures : sa page '
+           '<p class="chapeau">Choisissez un candidat, puis une de ses mesures : sa page '
            "la suit de ce que dit le texte au coût qu'en publie l'étude, en sept étapes, "
            "chacune avec son schéma et sa source. Seules les mesures chiffrées seules, avec "
            "leurs deux rapports, y sont.</p>",
@@ -890,7 +890,7 @@ def cascade_etude(entry: dict[str, Any], ident: str) -> str:
                    f"de {c['premiere']} : mécanique, puis ce que les comportements y "
                    f"changent quand une étude publiée le permet.", "")]
     out.append(
-        f'<div class="sm-pont"><b class="sm-pont-tag">Le pont</b> Ce coût, chaque année de '
+        f'<div class="encadre"><b class="encadre-tag">Le pont</b> Ce coût, chaque année de '
         f"{c['premiere']} à {c['annee']}, s'ajoute à la dette ; rapporté au PIB de "
         f"{c['annee']}, il la monterait de {_badge(etude._points(sans), etage, True)} "
         f"si l'activité ne bougeait pas. C'est la première marche ci-dessous.</div>")
@@ -1137,7 +1137,7 @@ def _chapeau(lines: list[str], n: etude.Nombres,
         garde.append(ph)
         if "conclut" in ph or "verdict" in ph or len(garde) >= 5:
             break
-    return f'<p class="sm-chapeau">{text(" ".join(garde), n)}</p>'
+    return f'<p class="chapeau">{text(" ".join(garde), n)}</p>'
 
 
 def part_chiffree(study: etude.Etude) -> str:
@@ -1159,7 +1159,7 @@ def part_chiffree(study: etude.Etude) -> str:
              f'<span class="sm-p-ref" style="width:{w[1]:.1f}%"></span>'
              f'<span class="sm-p-vag" style="width:{w[2]:.1f}%"></span></div>')
     return (f'<aside class="garde" role="note"><b>Ce verdict ne porte que sur {ch} mesure'
-            f'{"s" if ch > 1 else ""} sur {total}.</b>{barre}<span class="sm-legende">'
+            f'{"s" if ch > 1 else ""} sur {total}.</b>{barre}<span class="legende">'
             f'<i class="sm-p-ch"></i> chiffrées ({ch}) <i class="sm-p-ref"></i> refusées '
             f'par l\'outil ({autres}) <i class="sm-p-vag"></i> sans montant ({vagues})'
             f"</span>Il ne dit pas ce que le programme entier fait à la dette : les "
@@ -1219,7 +1219,7 @@ def page_etude(study: etude.Etude, entries: list[dict[str, Any]], lines: list[st
     plages = plages_etude(study, entries)
     if plages:
         presentes.add("plages")
-    out.append('<nav class="sm-toc" aria-label="Sur cette page"><ol>' + "".join(
+    out.append('<nav class="pastilles" aria-label="Sur cette page"><ol>' + "".join(
         f'<li><a href="#{i}">{_e(t)}</a></li>' for i, t in SECTIONS if i in presentes)
         + "</ol></nav>")
     out.append(resume(study, entries, lines, n, text, body))
@@ -1298,7 +1298,7 @@ def comparer(etudes_: list[tuple[etude.Etude, list[dict[str, Any]], list[str], e
             f"</span></span></td><td>{_badge(_eur(lu['figee']), 'L2')}</td>"
             f"<td>{_badge(etude._points(lu['dette']), lu['etage'], True)}</td>"
             f"<td>{verdict}</td></tr>")
-    table = ('<div class="sm-table"><table><thead><tr><th>candidat</th><th>mesures '
+    table = ('<div class="defile"><table><thead><tr><th>candidat</th><th>mesures '
              "chiffrées</th><th>coût 2026</th><th>dette 2035, à θ½</th><th>verdict</th>"
              f"</tr></thead><tbody>{''.join(lignes)}</tbody></table></div>")
     garde = ('<aside class="garde" role="note"><b>Ce qui ne se compare pas.</b>'
@@ -1309,7 +1309,7 @@ def comparer(etudes_: list[tuple[etude.Etude, list[dict[str, Any]], list[str], e
              "coût peuvent peser différemment sur la dette.</li><li>Les études n'ont pas "
              "toutes tourné sur le même code : chaque page dit le sien.</li></ul></aside>")
     return ("<h1>Comparer les candidats</h1>"
-            '<p class="sm-chapeau">Ce que chaque étude chiffre d\'un programme, ce que '
+            '<p class="chapeau">Ce que chaque étude chiffre d\'un programme, ce que '
             "cette part coûte la première année et ce qu'elle fait à la dette en 2035. "
             "Ce qui se compare : le sens et l'ordre de grandeur, pour la part chiffrée. "
             "Ce qui ne se compare pas est dit juste dessous.</p>"
@@ -1318,135 +1318,5 @@ def comparer(etudes_: list[tuple[etude.Etude, list[dict[str, Any]], list[str], e
             "pas à pas</a>.</p>")
 
 
-STYLE = """\
-:root { --sm-plus: #1f6fb2; --sm-moins: #c2502d; --sm-neutre: #d9d5cc;
-  --sm-carte: #f3f1ec; --sm-accent: #1f4e8c; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --sm-plus: #6aa8e0; --sm-moins: #e8845f; --sm-neutre: #45423c; --sm-carte: #26241f;
-  --sm-accent: #8fb3e6; } }
-:root[data-theme="dark"] { --sm-plus: #6aa8e0; --sm-moins: #e8845f; --sm-neutre: #45423c;
-  --sm-carte: #26241f; --sm-accent: #8fb3e6; }
-.sm-chapeau { font-size: 1.08rem; color: var(--doux); }
-.sm-fil { font: .85rem system-ui, sans-serif; color: var(--doux); }
-.sm-cartes { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
-  gap: .6rem; margin: 1rem 0; }
-.sm-carte { background: var(--sm-carte); border-radius: .5rem; padding: .7rem .8rem; }
-.sm-carte > span:first-child { display: block; font: .8rem/1.3 system-ui, sans-serif;
-  color: var(--doux); margin-bottom: .3rem; }
-.sm-verdict { grid-column: 1 / -1; font: 600 1.15rem/1.4 system-ui, sans-serif; }
-.sm-carte .nombre { font: 600 1.25rem/1.2 system-ui, sans-serif; }
-.sm-sommaire { font: .92rem system-ui, sans-serif; columns: 2 14rem; padding-left: 1.4rem; }
-.sm-etape { border-left: 3px solid var(--trait); padding: .2rem 0 1rem 1rem;
-  margin: 2rem 0 0; }
-.sm-etape h2 { display: flex; gap: .6rem; align-items: center; margin-top: 0; }
-.sm-num { flex: none; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid;
-  place-items: center; background: var(--sm-accent); color: var(--fond); font-size: 1rem; }
-.sm-phrase { color: var(--doux); }
-.sm-gros { font: 600 1.15rem/1.35 system-ui, sans-serif; }
-.sm-flux { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: .5rem;
-  align-items: stretch; }
-.sm-boite { background: var(--sm-carte); border-radius: .5rem; padding: .7rem; }
-.sm-boite ul { padding-left: 1.1rem; margin: .3rem 0; }
-.sm-tag { display: block; font: .75rem system-ui, sans-serif; text-transform: uppercase;
-  letter-spacing: .04em; color: var(--doux); margin-bottom: .3rem; }
-.sm-fleche { align-self: center; font-size: 1.4rem; color: var(--doux); }
-.sm-cite { margin: .5rem 0 0; font-size: .9rem; }
-.sm-cite footer { font: .78rem system-ui, sans-serif; }
-.sm-petit { font: .85rem/1.4 system-ui, sans-serif; color: var(--doux); }
-.sm-note { font-size: .95rem; }
-.sm-deux { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
-.sm-deux > div { background: var(--sm-carte); border-radius: .5rem; padding: .7rem; }
-.sm-deux span { display: block; font: .82rem system-ui, sans-serif; color: var(--doux); }
-p.source { font: .78rem/1.4 system-ui, sans-serif; color: var(--doux); margin: .4rem 0; }
-.sm-fig { margin: 1rem 0; }
-.sm-fig figcaption, .sm-lire { font: .85rem/1.45 system-ui, sans-serif; color: var(--doux);
-  max-width: 36rem; }
-svg.sm { display: block; width: 100%; max-width: 36rem; height: auto;
-  font: 13px system-ui, sans-serif; }
-.sm-encre { fill: var(--texte); paint-order: stroke; stroke: var(--fond);
-  stroke-width: 3px; } .sm-doux { fill: var(--doux); font-size: 12px; }
-.sm-sur { fill: #fff; font-weight: 600; }
-.sm-plus { fill: var(--sm-plus); } .sm-moins { fill: var(--sm-moins); }
-.sm-neutre { fill: var(--sm-neutre); }
-.sm-l-plus { fill: var(--sm-plus); font-weight: 600; }
-.sm-l-moins { fill: var(--sm-moins); font-weight: 600; }
-.sm-zero { stroke: var(--texte); stroke-width: 1.2; }
-.sm-grille { stroke: var(--trait); stroke-width: .8; }
-.sm-repere { stroke: var(--doux); stroke-dasharray: 2 3; }
-.sm-l1 { stroke: var(--sm-plus); stroke-width: 3; }
-.sm-l2 { stroke: var(--sm-moins); stroke-width: 2; stroke-dasharray: 6 4; }
-.sm-intervalle { stroke: var(--sm-plus); stroke-width: 3; stroke-linecap: round; }
-.sm-point { fill: var(--fond); stroke: var(--sm-plus); stroke-width: 2.5; }
-.sm-couches { list-style: none; padding: 0; }
-.sm-couche { display: grid; grid-template-columns: 3rem 1fr; gap: .7rem;
-  padding: .6rem 0; border-bottom: 1px solid var(--trait); }
-.sm-niv { font: 600 .85rem system-ui, sans-serif; background: var(--sm-carte);
-  border-radius: .3rem; text-align: center; padding: .3rem 0; align-self: start; }
-.sm-mesures { list-style: none; padding: 0; }
-.sm-mesures li { display: flex; justify-content: space-between; gap: .8rem;
-  align-items: center; padding: .6rem .2rem; border-bottom: 1px solid var(--trait); }
-.sm-nom { display: grid; gap: .15rem; }
-.sm-nom > span { font: .85rem system-ui, sans-serif; color: var(--doux); }
-.sm-nom > a { font: 600 .88rem system-ui, sans-serif; }
-.sm-cout { flex: none; }
-.sm-resume { border: 1px solid var(--trait); border-radius: .6rem; padding: .2rem 1rem 1rem;
-  margin: 1rem 0 2rem; }
-.sm-ligne h3 { font-size: 1rem; margin-bottom: 0; }
-.sm-retour { margin-top: 2rem; font-family: system-ui, sans-serif; }
-.sm-toc ol { display: flex; flex-wrap: wrap; gap: .3rem .5rem; list-style: none; padding: 0;
-  font: .88rem var(--sans, system-ui); }
-.sm-toc a { display: inline-block; padding: .3rem .6rem; border: 1px solid var(--trait);
-  border-radius: 999px; text-decoration: none; }
-.sm-bloc { margin: 2.2rem 0 0; }
-.sm-haut { text-align: right; font: .82rem var(--sans, system-ui); margin: .6rem 0 0; }
-.sm-haut a { color: var(--doux); }
-.sm-prov { font: .8rem var(--sans, system-ui); color: var(--doux); margin: .6rem 0; }
-.sm-prov summary { cursor: pointer; }
-.sm-pont { background: var(--surface-2, var(--sm-carte)); border-left: 4px solid var(--sm-plus);
-  padding: .6rem .8rem; border-radius: 0 .4rem .4rem 0; margin: .8rem 0; }
-.sm-pont-tag { display: block; font: 600 .75rem var(--sans, system-ui);
-  text-transform: uppercase; letter-spacing: .05em; color: var(--doux); }
-.sm-c-cout { fill: var(--serie-1, var(--sm-plus)); }
-.sm-c-comp { fill: var(--serie-2, #b7791f); }
-.sm-c-act { fill: var(--serie-3, #2f855a); }
-.sm-c-act2 { fill: var(--serie-4, #6b46c1); }
-.sm-c-total { fill: var(--encre, var(--texte)); }
-.sm-bande { fill: var(--sm-plus); opacity: .15; }
-.sm-l3 { stroke: var(--serie-2, #b7791f); stroke-width: 2; stroke-dasharray: 6 4; }
-.sm-l4 { stroke: var(--serie-3, #2f855a); stroke-width: 2; stroke-dasharray: 2 3; }
-.sm-point-plein { fill: var(--sm-plus); }
-.sm-multiples { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: 1rem; }
-.sm-couts { list-style: none; padding: 0; }
-.sm-couts li { display: flex; justify-content: space-between; gap: 1rem; padding: .5rem 0;
-  border-bottom: 1px solid var(--trait); }
-.sm-couts li > span:first-child { font-size: .95rem; }
-.sm-couts .sm-v { flex: none; white-space: nowrap; }
-.sm-mcartes { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: .8rem; }
-.sm-mcarte { background: var(--surface, var(--sm-carte)); border: 1px solid var(--trait);
-  border-radius: .6rem; padding: .8rem 1rem; }
-.sm-mcarte h3 { margin: 0 0 .5rem; font-size: 1.05rem; }
-.sm-mcarte dl { display: grid; grid-template-columns: max-content 1fr; gap: .25rem .7rem;
-  margin: 0 0 .6rem; font-size: .92rem; }
-.sm-mcarte dt { color: var(--doux); font: .82rem var(--sans, system-ui); }
-.sm-suivre { font: 600 .9rem var(--sans, system-ui); }
-.sm-part { display: flex; height: .9rem; border-radius: .3rem; overflow: hidden;
-  margin: .5rem 0 .3rem; background: var(--sm-neutre); }
-.sm-p-ch { background: var(--sm-plus); } .sm-p-ref { background: var(--sm-moins); }
-.sm-p-vag { background: var(--sm-neutre); }
-.sm-legende { display: block; font: .8rem var(--sans, system-ui); color: var(--doux);
-  margin-bottom: .4rem; }
-.sm-legende i { display: inline-block; width: .8rem; height: .8rem; border-radius: .2rem;
-  vertical-align: -.1rem; margin-left: .4rem; }
-.sm-refus { font-size: .92rem; }
-.sm-table { overflow-x: auto; }
-.sm-table table { display: table; width: 100%; }
-.sm-frac { display: block; font: .85rem var(--sans, system-ui); white-space: nowrap; }
-.sm-table .sm-part { width: 6rem; height: .5rem; margin: .2rem 0 0; }
-@media (max-width: 640px) {
-  .sm-flux { grid-template-columns: 1fr; }
-  .sm-fleche { transform: rotate(90deg); justify-self: center; }
-  .sm-deux { grid-template-columns: 1fr; }
-  .sm-sommaire { columns: 1; } }
-"""
+# Les composants de ces pages sont dans la feuille commune (D-468) :
+# src/impots/site_textes/style.css, décrite dans docs/site/DESIGN.md.

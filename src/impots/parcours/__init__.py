@@ -50,7 +50,7 @@ PAGES: tuple[tuple[str, str, str], ...] = (
     ("dette", "parcours-8-dette.html", "La dette"),
     ("verdict", "parcours-9-verdict.html", "Le verdict"),
     ("erreur", "parcours-10-limites.html", "Ce que le modèle ne sait pas"),
-    ("comparer", "parcours-comparer.html", "Comparer deux candidats"),
+    ("comparer", "comparer-candidats.html", "Comparer deux candidats"),
 )
 #: Les pages sans curseur, par décision : celle qu'on cite (D-375), et les deux étapes
 #: qui décrivent des données plutôt qu'une hypothèse (D-451).
@@ -65,6 +65,8 @@ ANCIENNES: dict[str, str] = {
     "parcours-6-dette.html": "parcours-8-dette.html",
     "parcours-7-verdict.html": "parcours-9-verdict.html",
     "parcours-8-erreur.html": "parcours-10-limites.html",
+    # La page qui comparait deux candidats est fondue dans celle du volet `mesure` (D-468).
+    "parcours-comparer.html": "comparer-candidats.html",
 }
 #: Le nombre d'étapes du chemin ; la page qui compare vient après.
 N_ETAPES = 10
@@ -238,10 +240,9 @@ def build() -> dict[str, str]:
                     + replier(page.corps, chemin.a_vous(module))
                     + chemin.suite(index))
         else:
-            main = (chemin.barre(-1) + f"<h1>{html.escape(titre)}</h1>\n"
-                    + chemin.c.garde("Ce que cette page établit",
-                                     f"<p>{html.escape(page.prouve)}</p>")
-                    + replier(page.corps))
+            # « Comparer deux candidats » n'est plus une page : son tableau à deux choix
+            # va dans `comparer-candidats.html`, la page du volet `mesure` (D-468).
+            continue
         if page.script:
             main += f"\n<script>\n{page.script}\n</script>"
         text = site._page(f"{titre} — {site.TITLE}", main, large=True)
@@ -253,6 +254,22 @@ def build() -> dict[str, str]:
         files[name] = text
     files[CHEMIN] = site._page(f"Le chemin — {site.TITLE}", chemin.hub(), large=True)
     return files
+
+
+def comparer_section() -> tuple[str, str]:
+    """Le tableau « deux candidats, côte à côte » et son script, pour la page qui compare
+    les candidats (`site_mesure.COMPARER`), et sa feuille (D-468)."""
+    page = importlib.import_module("impots.parcours.comparer").page()
+    _check("comparer", page)
+    main = (chemin_garde(page.prouve) + replier(page.corps)
+            + (f"\n<script>\n{page.script}\n</script>" if page.script else ""))
+    return main, STYLE + page.style
+
+
+def chemin_garde(prouve: str) -> str:
+    from impots.parcours import chemin
+
+    return chemin.c.garde("Ce que ce tableau établit", f"<p>{html.escape(prouve)}</p>")
 
 
 #: La page qui montre les dix étapes d'un coup d'œil.

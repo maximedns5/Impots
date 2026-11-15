@@ -279,7 +279,8 @@ _NAV = "<!--navigation-->"
 RAYONS: tuple[tuple[str, str], ...] = (
     ("parcours-", "chemin.html"), ("presidentielle", "etudes.html"),
     ("plf", "etudes.html"), ("jumeau", "jumeau.html"), ("population", "population.html"),
-    ("mesure", "mesure.html"),
+    ("mesure", "mesure.html"), ("cellules", "population.html"),
+    ("comparer-candidats", "etudes.html"),
 )
 
 
@@ -319,13 +320,6 @@ def _page(title: str, main: str, pied: str = "", liens: bool = True,
 
 
 STYLE = (TEXTES / "style.css").read_text(encoding="utf-8")
-
-
-def _mesure_css(page: str) -> str:
-    """The pages of the volet `mesure` (but 25) add their own sheet to the site's."""
-    return page.replace('<link rel="stylesheet" href="style.css">',
-                        '<link rel="stylesheet" href="style.css">\n'
-                        f'<link rel="stylesheet" href="{site_mesure.CSS}">', 1)
 
 
 def _bref(lines: list[str]) -> list[str]:
@@ -380,7 +374,6 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
     codes: set[str] = set()
     listes: list = []
     compares: list = []
-    files[site_mesure.CSS] = site_mesure.STYLE
     for study in studies:
         if study.refus:
             # Its passes ran, and a guard refused its path (D-398): not unrun, refused.
@@ -411,7 +404,7 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         # The study's page (but 25, D-456): its summary first, then its detail as the
         # study writes it, each trajectory with why its curves move.
         main = site_mesure.page_etude(study, entries, lines, n, _text, body)
-        files[f"{study.nom}.html"] = _mesure_css(_page(f"{study.titre} — {TITLE}", main, pied))
+        files[f"{study.nom}.html"] = (_page(f"{study.titre} — {TITLE}", main, pied))
         compares.append((study, entries, lines, n))
         mesures = site_mesure.mesures_de(study, entries)
         if mesures:
@@ -419,7 +412,7 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
 
             listes.append((pg.charger(study.programme), study, mesures))
             for name, text in site_mesure.pages(
-                    study, entries, lambda t, c: _mesure_css(_page(f"{t} — {TITLE}", c))
+                    study, entries, lambda t, c: (_page(f"{t} — {TITLE}", c))
             ).items():
                 files[name] = text
         listed.append(f'<li><h2><a href="{study.nom}.html">{html.escape(study.titre)}</a>'
@@ -441,7 +434,7 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
                   "Chaque étude ne chiffre qu'une part du programme, dite à côté de chaque "
                   "nombre ; la dette et le verdict dépendent de ce que la boucle macro sait "
                   "lire, qui n'est pas le même d'un candidat à l'autre. Ce qui se compare, "
-                  "et comment : <a href=\"parcours-comparer.html\">comparer deux "
+                  "et comment : <a href=\"comparer-candidats.html\">comparer deux "
                   "candidats</a>.</p></aside>")
     if len(codes) > 1:
         # The studies ran on different code (D-336): a reader is told before comparing.
@@ -461,10 +454,10 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
                   "pourquoi pas le reste.</p>")
     if sum(1 for c in compares if c[0].programme) > 1:
         # The candidates side by side (but 25, volet mesure, D-457).
-        files[site_mesure.COMPARER] = _mesure_css(_page(
+        files[site_mesure.COMPARER] = (_page(
             f"Comparer les candidats — {TITLE}", site_mesure.comparer(compares, _text), large=True))
     if listes:
-        files[site_mesure.INDEX] = _mesure_css(_page(f"Une mesure pas à pas — {TITLE}",
+        files[site_mesure.INDEX] = (_page(f"Une mesure pas à pas — {TITLE}",
                                                      site_mesure.index(listes)))
         intro += (f'\n<p><a href="{site_mesure.INDEX}">Une mesure pas à pas</a> : un '
                   "candidat, une de ses mesures, et comment elle devient un nombre, du texte "
@@ -483,6 +476,20 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         pages = parcours.build()
         files.update(pages)
         scripted |= set(pages)
+        if site_mesure.COMPARER in files:
+            # Deux pages comparaient les candidats ; celle du volet `mesure` reste, et
+            # reçoit le tableau à deux choix du parcours (D-468).
+            section, style = parcours.comparer_section()
+            files[site_mesure.COMPARER] = (
+                files[site_mesure.COMPARER]
+                .replace("</head>", f"<style>{style}</style>\n</head>", 1)
+                .replace(f"\n{_legend()}\n</main>", f"\n<section id=\"comparer-deux\">"
+                         f"{section}</section>\n{_legend()}\n</main>", 1))
+            files[site_mesure.COMPARER] = files[site_mesure.COMPARER].replace(
+                "rien n'y est calculé, rien n'y tourne.",
+                "rien n'y est calculé ; le tableau à deux choix rejoue dans le navigateur "
+                "des nombres que les rapports portent déjà.")
+            scripted.add(site_mesure.COMPARER)
     from impots import site_jumeau
 
     if site_jumeau.present():

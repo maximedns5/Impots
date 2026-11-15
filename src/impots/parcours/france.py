@@ -305,7 +305,7 @@ def _calees() -> list[Any]:
 
 def table_calees(rows: list[dict[str, Any]]) -> str:
     out = []
-    for name, fig in _calees():
+    for _name, fig in _calees():
         out.append(f"<tr><td>{html.escape(_court(fig.scope))}</td>"
                    f'<td class="num">{_figure(fig)}</td><td>{fig.year}</td>'
                    f"<td>{lien_source(fig.url, _editeur(fig.source), fig.source)}</td>"

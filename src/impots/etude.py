@@ -3334,10 +3334,15 @@ def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
     w("")
     w("**Les verdicts de dette ne se comparent pas d'un candidat à l'autre.** Chacun porte "
       "sur une part différente du programme, et l'outil ne lit l'effet sur l'activité que "
-      "pour les impôts des ménages : une baisse de cotisations ou d'impôt sur le revenu en "
-      "regagne une partie par la croissance, une baisse d'impôt des entreprises ou "
-      "d'accises n'en regagne rien. Deux mesures de même montant peuvent donc peser "
-      "très différemment sur la dette, pour une raison qui tient à l'outil.")
+      "pour certains prélèvements : la boucle macroéconomique lit l'impôt sur le revenu, "
+      "la CSG, les cotisations des salariés et celles des employeurs, et la TVA ; le canal "
+      "des créations d'entreprises lit l'impôt sur les sociétés, sa contribution sociale, "
+      "la contribution exceptionnelle sur les bénéfices des grandes entreprises, les "
+      "cotisations des employeurs et les prélèvements sur les revenus du capital (le "
+      "prélèvement forfaitaire unique, les prélèvements sociaux). Une baisse de l'un d'eux "
+      "en regagne une partie par l'activité ; une baisse d'accises, de CVAE ou de C3S n'en "
+      "regagne rien (D-440). Deux mesures de même montant peuvent donc peser très "
+      "différemment sur la dette, pour une raison qui tient à l'outil.")
     w("")
     w("| candidat | mesures | paramétrées | chiffrées | étude | refusées, par porte |")
     w("|---|---|---|---|---|---|")

@@ -353,3 +353,272 @@ ul.etudes > li h2 { margin: var(--e2) 0; font-size: 1.3rem; }
 @media (prefers-reduced-motion: no-preference) {
   a, button, .carte, nav.suite a { transition: background-color .15s, border-color .15s, color .15s; } }
 @media print { .site-nav, nav.chemin-barre, nav.suite { display: none; } }
+
+/* ---- 5. Les composants des pages de la population et des mesures (D-468) ---------
+   Remontés des feuilles des volets `population` et `mesure` (D-453, D-456, D-457) :
+   une seule feuille, des jetons communs, chaque composant une fois. */
+
+/* Le chiffre clé : sa note, sous la légende (population) */
+.stat .stat-n { display: block; color: var(--encre-3); font-size: .78rem; line-height: 1.35;
+  margin-top: var(--e1); }
+/* L'étape d'une construction : son grand nombre (population) */
+.etape-corps .etape-grand { font: 700 1.1rem/1.3 var(--sans); color: var(--famille, var(--accent));
+  margin: 0 0 var(--e1); }
+.etape-corps .note-source { margin: var(--e1) 0 0; }
+
+/* L'encadré, ou le pont : un passage qui relie deux idées, ou qui les résume */
+.encadre { border-left: 4px solid var(--accent); background: var(--accent-doux);
+  padding: var(--e3) var(--e4); border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
+  margin: var(--e4) 0; }
+.encadre-tag { display: block; font: 600 .75rem var(--sans); text-transform: uppercase;
+  letter-spacing: .05em; color: var(--encre-2); }
+
+/* Les pastilles : le sommaire d'une page, ou les pages d'une série */
+nav.pastilles ol { display: flex; flex-wrap: wrap; gap: var(--e2); list-style: none;
+  padding: 0; margin: var(--e4) 0 0; font: .86rem/1.3 var(--sans); counter-reset: p; }
+nav.pastilles li { counter-increment: p; }
+nav.pastilles a { display: inline-block; padding: .35rem .7rem; border: 1px solid var(--trait);
+  border-radius: 999px; text-decoration: none; color: var(--encre-2); }
+nav.pastilles a:hover { border-color: var(--accent); color: var(--encre); }
+nav.pastilles.numerotees a::before { content: counter(p) ". "; }
+nav.pastilles a[aria-current] { background: var(--accent); border-color: var(--accent);
+  color: var(--papier); font-weight: 600; }
+
+/* La légende d'un graphique fait main, et ses pastilles de couleur */
+:is(p, span).legende { display: block; font: .8rem var(--sans); color: var(--encre-2); margin: var(--e1) 0 var(--e2); }
+:is(p, span).legende i { display: inline-block; width: .8rem; height: .8rem; border-radius: .2rem;
+  vertical-align: -.1rem; margin-left: .4rem; }
+.cle-plein, .cle-cible, .cle-bande { display: inline-block; vertical-align: middle;
+  margin: 0 .2rem 0 .6rem; }
+.cle-plein { width: 1rem; height: .7rem; background: var(--accent); border-radius: .15rem; }
+.cle-cible { width: 3px; height: 1rem; background: var(--encre); }
+.cle-bande { width: 1.4rem; height: .8rem; background: var(--vert-doux); border: 1px solid var(--vert); }
+
+/* Un tableau qui défile dans son cadre */
+.defile { overflow-x: auto; max-width: 100%; }
+.defile > table { display: table; background: none; margin: var(--e2) 0; }
+.defile > table.large { width: 100%; }
+table.nombres td { font-variant-numeric: tabular-nums; }
+table.serre { font: .8rem/1.3 var(--sans); }
+table.serre td, table.serre th { padding: .25rem .4rem; white-space: nowrap; }
+caption { text-align: left; font: 600 .9rem var(--sans); padding: .3rem 0; }
+.grille-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e5); align-items: start; }
+:is(figure.barres, figure.colonnes, figure.pyramide, figure.ecarts, figure.frise) {
+  margin: var(--e4) 0; }
+:is(figure.barres, figure.colonnes, figure.pyramide, figure.ecarts, figure.frise) > figcaption {
+  font: 600 .9rem/1.35 var(--sans); color: var(--encre); margin: 0 0 var(--e2); }
+
+/* Les barres avec cible : la valeur simulée, le trait de la valeur publiée */
+.barres .barre { display: grid; grid-template-columns: minmax(7rem, 38%) 1fr; gap: .1rem .6rem;
+  align-items: center; font: .85rem/1.3 var(--sans); margin: .35rem 0; }
+.barre .piste { position: relative; height: .9rem; background: var(--trait); border-radius: .2rem; }
+.barre .plein { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: .2rem; }
+.barre .cible { position: absolute; top: -.25rem; bottom: -.25rem; width: 3px; margin-left: -1.5px;
+  background: var(--encre); }
+.barre .valeur { grid-column: 2; font-variant-numeric: tabular-nums; color: var(--encre); }
+.barre .dit { color: var(--encre-2); }
+
+/* Les colonnes : une distribution (le poids des ménages) */
+.cols { display: flex; align-items: flex-end; gap: .25rem; height: 12rem;
+  border-bottom: 1px solid var(--encre-2); padding-top: 1.2rem; }
+.col { flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-end; height: 100%; position: relative; min-width: 0; }
+.col .baton { width: 100%; background: var(--accent); border-radius: .2rem .2rem 0 0; }
+.col .n, .col .lib { font: .68rem var(--sans); color: var(--encre-2); white-space: nowrap;
+  writing-mode: vertical-rl; transform: rotate(180deg); }
+.col .n { margin-bottom: .2rem; }
+.col .lib { position: absolute; top: 100%; margin-top: .25rem; }
+figure.colonnes { padding-bottom: 3.6rem; }
+
+/* La pyramide des âges */
+.pyramide .rang { display: grid; grid-template-columns: 1fr 3.2rem 1fr; align-items: center;
+  height: .95rem; }
+.pyramide .g, .pyramide .d { display: flex; height: .8rem; }
+.pyramide .g { justify-content: flex-end; }
+.pyramide .g span { background: var(--serie-1); }
+.pyramide .d span { background: var(--serie-2); }
+.pyramide .age { text-align: center; font: .68rem var(--sans); color: var(--encre-2); }
+
+/* L'écart contre sa tolérance : la bande admise, le point de l'écart */
+.ecarts .ecart { display: grid; grid-template-columns: minmax(8rem, 36%) 1fr 7.5rem;
+  gap: .6rem; align-items: center; font: .83rem/1.3 var(--sans);
+  border-bottom: 1px solid var(--trait); padding: .3rem 0; }
+.ecart .piste { position: relative; height: 1.1rem; }
+.ecart .bande { position: absolute; top: 0; bottom: 0; background: var(--vert-doux);
+  border-left: 1px solid var(--vert); border-right: 1px solid var(--vert); }
+.ecart .zero { position: absolute; left: 50%; top: -.1rem; bottom: -.1rem; width: 1px;
+  background: var(--encre-2); }
+span.point { position: absolute; top: 50%; width: .8rem; height: .8rem; margin: -.4rem 0 0 -.4rem;
+  border-radius: 50%; border: 2px solid var(--papier); }
+span.point.statique { position: static; display: inline-block; margin: 0 .2rem 0 .6rem;
+  vertical-align: middle; }
+span.point.tient { background: var(--vert); }
+span.point.hors { background: var(--rouge); border-radius: .1rem; transform: rotate(45deg); }
+span.point.deborde { outline: 2px solid var(--rouge); outline-offset: 1px; }
+.valeur.tient { color: var(--vert); font-weight: 600; }
+.valeur.hors, span.hors { color: var(--rouge); font-weight: 600; }
+.ecart .valeur .dit { display: block; font-weight: 400; color: var(--encre-2); font-size: .75rem; }
+ul.ecarts-dits li { margin: .5rem 0; }
+.aux-etudes { display: block; font-size: .9rem; color: var(--encre-2); }
+
+/* La carte de chaleur : un tableau dont le fond dit la valeur (--p, en %) */
+table.chaleur { font: .85rem var(--sans); display: table; background: none; }
+table.chaleur td { text-align: center; font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--accent) var(--p), var(--papier));
+  border: 2px solid var(--papier); min-width: 4.2rem; }
+table.chaleur td.fonce { color: var(--papier); font-weight: 600; }
+table.chaleur th { font-size: .78rem; text-align: center; }
+
+/* La frise : une même suite d'années, colonne par colonne */
+.frise table { display: table; background: none; width: 100%; table-layout: fixed;
+  font: .82rem/1.35 var(--sans); }
+.frise td { text-align: center; vertical-align: top; border: 1px solid var(--trait); }
+.frise th, .frise td { padding: .25rem .2rem; overflow-wrap: anywhere; }
+.frise td span { display: block; font-variant-numeric: tabular-nums; }
+.frise .foyer { font-size: 1rem; }
+.frise tbody tr:first-child td { background: var(--accent-doux); }
+
+/* Les définitions, les téléchargements, la suite d'une série de pages */
+dl.definitions { font-size: .9rem; }
+dl.definitions dt { font-weight: 600; }
+ul.telecharger li { margin: .4rem 0; }
+p.a-suivre { font-weight: 600; font-size: .95rem; border-top: 1px solid var(--trait);
+  padding-top: var(--e4); margin-top: var(--e6); }
+
+/* Un ménage comme le mien : le formulaire, le curseur simple, l'échelle des dixièmes */
+form.traits { display: grid; grid-template-columns: max-content 1fr; gap: .7rem 1rem;
+  align-items: center; background: var(--surface); border: 1px solid var(--trait);
+  border-radius: var(--rayon); padding: var(--e4); }
+form.traits select, form.traits input[type=number] { font: inherit; padding: .35rem; max-width: 16rem; }
+form.traits .aide { display: block; font-size: .8rem; color: var(--encre-2); }
+.curseur-ligne { display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; }
+.curseur-ligne input { flex: 1; min-width: 10rem; accent-color: var(--accent); }
+.curseur-ligne output { font: 700 1.1rem var(--sans); color: var(--accent); }
+.resultat-tete { font-size: 1.05rem; margin: var(--e5) 0 var(--e2); }
+.resultat-tete strong { color: var(--accent); }
+.compte-menage { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e4); }
+.compte-menage h3 { font-size: 1rem; margin: .2rem 0 .4rem; }
+.compte-menage table, table.cas { width: 100%; max-width: 30rem; display: table; background: none; font-size: .88rem; }
+.compte-menage td:last-child, table.cas td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.dixiemes { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; margin: .6rem 0;
+  font: .72rem var(--sans); }
+.dixiemes span { background: var(--accent-doux); text-align: center; padding: .4rem 0; border-radius: .2rem; }
+.dixiemes span.ici { background: var(--accent); color: var(--papier); font-weight: 700; }
+.sans-script { color: var(--encre-2); }
+
+/* Les pages d'une mesure : la section numérotée, son schéma, ses couches */
+.sm-fil { font-size: .85rem; color: var(--encre-2); }
+.sm-etape { border-left: 3px solid var(--trait); padding: .2rem 0 1rem 1rem; margin: var(--e6) 0 0; }
+.sm-etape h2 { display: flex; gap: .6rem; align-items: center; margin-top: 0; }
+.sm-etape h2 .etape-n { flex: none; box-shadow: none; }
+.sm-phrase, .sm-petit { color: var(--encre-2); }
+.sm-petit { font-size: .85rem; line-height: 1.4; }
+.sm-gros { font: 600 1.15rem/1.35 var(--sans); }
+.flux-boite ul { padding-left: 1.1rem; margin: .3rem 0; }
+.sm-cite { margin: .5rem 0 0; font-size: .9rem; }
+.sm-cite footer { font-size: .78rem; }
+.sm-note { font-size: .95rem; }
+.sm-deux { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.sm-deux > div { background: var(--surface-2); border-radius: var(--rayon-petit); padding: .7rem; }
+.sm-deux span { display: block; font-size: .82rem; color: var(--encre-2); }
+.sm-fig { margin: var(--e4) 0; }
+.sm-fig figcaption, .sm-lire { font-size: .85rem; line-height: 1.45; color: var(--encre-2); max-width: 36rem; }
+.sm-sommaire { font-size: .92rem; columns: 2 14rem; padding-left: 1.4rem; }
+.sm-resume { border: 1px solid var(--trait); border-radius: var(--rayon); padding: .2rem 1rem 1rem;
+  margin: var(--e4) 0 var(--e6); }
+.sm-ligne h3 { font-size: 1rem; margin-bottom: 0; }
+.sm-retour { margin-top: var(--e6); }
+.sm-bloc { margin: 2.2rem 0 0; }
+.sm-haut { text-align: right; font-size: .82rem; margin: .6rem 0 0; }
+.sm-haut a { color: var(--encre-2); }
+.sm-prov { font-size: .8rem; color: var(--encre-2); margin: .6rem 0; }
+.sm-prov summary { cursor: pointer; }
+.sm-refus { font-size: .92rem; }
+/* Les couches du coût, chacune avec sa source */
+.sm-couches { list-style: none; padding: 0; }
+.sm-couche { display: grid; grid-template-columns: 3rem 1fr; gap: .7rem; padding: .6rem 0;
+  border-bottom: 1px solid var(--trait); }
+.sm-niv { font: 600 .85rem var(--sans); background: var(--surface-2); border-radius: .3rem;
+  text-align: center; padding: .3rem 0; align-self: start; }
+.sm-couts { list-style: none; padding: 0; }
+.sm-couts li { display: flex; justify-content: space-between; gap: 1rem; padding: .5rem 0;
+  border-bottom: 1px solid var(--trait); }
+.sm-couts li > span:first-child { font-size: .95rem; }
+.sm-couts .sm-v { flex: none; white-space: nowrap; }
+.sm-mesures { list-style: none; padding: 0; }
+.sm-mesures li { display: flex; justify-content: space-between; gap: .8rem; align-items: center;
+  padding: .6rem .2rem; border-bottom: 1px solid var(--trait); }
+.sm-nom { display: grid; gap: .15rem; }
+.sm-nom > span { font-size: .85rem; color: var(--encre-2); }
+.sm-nom > a { font-weight: 600; font-size: .88rem; }
+.sm-cout { flex: none; }
+/* Les cartes de mesure : le résumé d'une étude, d'une page, d'un candidat */
+.sm-cartes { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: .6rem; margin: var(--e4) 0; }
+.sm-carte { background: var(--surface-2); border-radius: var(--rayon-petit); padding: .7rem .8rem; }
+.sm-carte > span:first-child { display: block; font-size: .8rem; line-height: 1.3;
+  color: var(--encre-2); margin-bottom: .3rem; }
+.sm-verdict { grid-column: 1 / -1; font: 600 1.15rem/1.4 var(--sans); }
+.sm-carte .nombre { font-size: 1.25rem; line-height: 1.2; }
+.sm-mcartes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: .8rem; }
+.sm-mcarte { background: var(--surface); border: 1px solid var(--trait); border-radius: var(--rayon);
+  padding: .8rem 1rem; }
+.sm-mcarte h3 { margin: 0 0 .5rem; font-size: 1.05rem; }
+.sm-mcarte dl { grid-template-columns: max-content 1fr; gap: .25rem .7rem; margin: 0 0 .6rem;
+  font-size: .92rem; }
+.sm-mcarte dt { color: var(--encre-2); font-size: .82rem; }
+.sm-suivre { font-weight: 600; font-size: .9rem; }
+/* La barre de part chiffrée : chiffrée, refusée, non chiffrable */
+.sm-part { display: flex; height: .9rem; border-radius: .3rem; overflow: hidden;
+  margin: .5rem 0 .3rem; background: var(--trait-fort); }
+.sm-p-ch { background: var(--serie-1); } .sm-p-ref { background: var(--perte); }
+.sm-p-vag { background: var(--trait-fort); }
+.sm-frac { display: block; font-size: .85rem; white-space: nowrap; }
+.defile .sm-part { width: 6rem; height: .5rem; margin: .2rem 0 0; }
+/* Les petits multiples : trois panneaux côte à côte, deux ou trois séries chacun */
+.sm-multiples { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--e4); }
+/* Les graphiques SVG des pages de mesure */
+svg.sm { display: block; width: 100%; max-width: 36rem; height: auto; font: 13px var(--sans); }
+.sm-encre { fill: var(--encre); paint-order: stroke; stroke: var(--papier); stroke-width: 3px; }
+.sm-doux { fill: var(--encre-2); font-size: 12px; }
+.sm-sur { fill: #fff; font-weight: 600; }
+.sm-plus { fill: var(--serie-1); } .sm-moins { fill: var(--perte); }
+.sm-neutre { fill: var(--trait-fort); }
+.sm-l-plus { fill: var(--serie-1); font-weight: 600; }
+.sm-l-moins { fill: var(--perte); font-weight: 600; }
+.sm-zero { stroke: var(--encre); stroke-width: 1.2; }
+.sm-grille { stroke: var(--trait); stroke-width: .8; }
+.sm-repere { stroke: var(--encre-2); stroke-dasharray: 2 3; }
+.sm-l1 { stroke: var(--serie-1); stroke-width: 3; }
+.sm-l2 { stroke: var(--perte); stroke-width: 2; stroke-dasharray: 6 4; }
+.sm-l3 { stroke: var(--serie-2); stroke-width: 2; stroke-dasharray: 6 4; }
+.sm-l4 { stroke: var(--serie-3); stroke-width: 2; stroke-dasharray: 2 3; }
+.sm-intervalle { stroke: var(--serie-1); stroke-width: 3; stroke-linecap: round; }
+.sm-point { fill: var(--papier); stroke: var(--serie-1); stroke-width: 2.5; }
+.sm-point-plein { fill: var(--serie-1); }
+.sm-bande { fill: var(--serie-1); opacity: .15; }
+.sm-c-cout { fill: var(--serie-1); } .sm-c-comp { fill: var(--serie-2); }
+.sm-c-act { fill: var(--serie-3); } .sm-c-act2 { fill: var(--serie-4); }
+.sm-c-total { fill: var(--encre); }
+
+@media (max-width: 640px) {
+  .grille-2, .compte-menage, .sm-deux { grid-template-columns: 1fr; }
+  form.traits { grid-template-columns: 1fr; }
+  .ecarts .ecart { grid-template-columns: 1fr 5.5rem; }
+  .ecarts .ecart .etiquette { grid-column: 1 / -1; }
+  .barres .barre { grid-template-columns: 1fr; }
+  .barre .valeur { grid-column: 1; }
+  .cols { height: 9rem; }
+  .frise table { font-size: .7rem; }
+  .sm-sommaire { columns: 1; } }
+
+/* « Non calculé » : une lecture au premier ordre, dite comme telle (D-468) */
+b.non-calcule { display: inline-block; font: 700 .66rem/1.2 var(--sans); letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ocre); background: var(--ocre-doux);
+  border: 1px solid var(--ocre); border-radius: 4px; padding: .1rem .3rem; margin-right: .3rem;
+  vertical-align: .1em; }
+.aux-etudes:has(b.non-calcule) { border-left: 3px solid var(--ocre); padding-left: var(--e2);
+  margin-top: var(--e1); font-style: italic; }
+.etape-corps > p { max-width: 46rem; }

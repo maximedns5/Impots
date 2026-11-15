@@ -34486,3 +34486,80 @@ comprise pour Attal seul, par la page 3 du parcours ; le jumeau et ses curseurs,
 **Le rapport** : `reports/lecteur/passe1.md`, ses captures dans
 `reports/lecteur/captures/passe1/` (19 PNG, 2,5 Mo). Rien n'est calculé : les valeurs du
 jumeau citées sont celles que la page affiche, lues au curseur.
+
+## D-468 — La jonction des volets du site : cinq branches, une feuille, un chemin lié
+
+**Ce qui est joint** (but 25, la jonction), sur `claude/but25` (f40424b), par fusions
+`--no-ff`, sans rebase, dans l'ordre du chemin : `chemin` (ccda1ef), `population`
+(91ee86f), `jumeau` (8e622fc), `mesure` (c81d00c), `lecteur` (776bbf0, ses rapports et
+D-466 seulement). Le volet `moteur` tourne encore : il n'est pas joint, et ne touche
+aucune page. Les données sont reliées fichier par fichier depuis le worktree du but 24.
+
+**Les conflits.** `docs/DECISIONS.md` à chaque fusion : chaque volet ajoutait ses entrées
+à la fin ; elles sont gardées toutes, rangées par numéro (D-450 à D-453, D-456, D-457,
+D-459, D-466), et un `comm` contre le fichier de chaque branche ne trouve aucune ligne
+perdue. Les D-450 et D-451 que `jumeau` avait reprises de `chemin` ne sont pas doublées.
+Les pages de `site/` (deux à la fusion de `population`, une à celle de `jumeau`, 29 à
+celle de `mesure`) sont reconstruites par `impots site construire`. `src/impots/site.py`
+et les tests se sont fusionnés sans conflit.
+
+**Une feuille.** `population.css` et `mesure.css` n'existent plus : leurs composants sont
+dans la feuille commune (section 5 de `style.css`), sur les jetons communs, et décrits
+dans `docs/site/DESIGN.md`. Ce qui doublait un composant commun le reprend : le chiffre
+clé de la population et ceux du jumeau sont des `stat`, les étapes de construction des
+`etapes`, le schéma d'une mesure un `flux`, ses sources des notes de source, les deux
+sommaires en pastilles des `pastilles`, le pont de la cascade et l'encadré de la
+population un même `encadre`. Les composants propres gardent leur forme : barres avec
+cible, colonnes, pyramide, écart contre tolérance, carte de chaleur, frise (population) ;
+couches, cartes de mesure, barre de part chiffrée, petits multiples, graphiques SVG
+(mesure). Trois collisions de noms entre feuilles sont levées (`.compte`, `.legende`,
+`.point` du jumeau) ; une perte se dessine en `--perte`. Ce qui change à l'œil, voulu :
+les pages de la population passent à la largeur commune et leurs chiffres clés au serif
+commun ; le débordement de la population au téléphone (466 px pour 390) et ceux du
+jumeau (1 418 px pour 1 280, 607 pour 390 : les tuiles de chiffres et leur `nowrap`)
+disparaissent.
+
+**Le chemin lié.** L'étape de la population mène à `population.html#en-bref`, puis en
+pastilles à `#construction`, `#poids`, `population-france.html#calee`, `#ecarts`,
+`population-comme-moi.html#choisir` et `cellules.html` ; l'étape d'une mesure à
+`mesure.html` et à la page pas à pas du fil rouge, le « droit au brut » d'Attal ; le
+bouclage et la dette au jumeau ; le calage, déjà, à `population-france.html`. La
+navigation suit l'ordre du chemin (la population, une mesure, le jumeau). Un renvoi
+peut porter une ancre : `si-page` lit le nom de la page sans elle.
+
+**Une page pour comparer.** `comparer-candidats.html` (volet `mesure`) reste ;
+`parcours-comparer.html` est une redirection statique vers elle
+(`parcours.ANCIENNES`), et son tableau à deux choix y est repris, avec son script,
+sous la liste des candidats (`parcours.comparer_section`). Les liens suivent.
+
+**Une phrase rendue juste.** La page des programmes disait que l'outil ne lit l'effet sur
+l'activité que pour les impôts des ménages. Les rapports commités disent autre chose :
+la boucle macroéconomique lit l'impôt sur le revenu, la CSG, les cotisations des
+salariés et des employeurs, et la TVA (`rejeu.macro.instruments`, union des rapports
+prédictifs) ; le canal des créations lit l'IS, sa contribution sociale, la CEBGE, les
+cotisations des employeurs, le PFU et les prélèvements sociaux du capital
+(`rejeu.creations.parametres`). La phrase le dit ; les accises, la CVAE et la C3S
+restent hors de la boucle (D-440).
+
+**Des ordres de grandeur dits comme tels.** Les phrases « pour les études » des écarts de
+`population-france.html` sont des lectures au premier ordre que rien n'a calculées. Chacune
+porte une pastille « non calculé » et une mise en garde les précède ; aucune ne prend l'air
+d'un résultat.
+
+**Vérifié.** `site construire`, `site verifier`, `site publiable` et `node ui/check.mjs`
+verts ; ruff propre (quatre avis des volets corrigés). Captures de 26 pages à 1 280 et à 390
+px, et de quatre en thème sombre : aucun débordement, aucune erreur de console ; les
+captures d'avant la feuille unifiée et d'après, comparées côte à côte. Les tests légers des
+fichiers touchés par les volets (776) : 774 verts au premier tour ; deux de `test_site`
+tombent, tenus depuis : un identifiant de section doublé sur `comparer-candidats.html`
+(corrigé), et la page qui compare porte désormais un script, celui du tableau à deux
+choix venu du parcours : le test l'ajoute à la liste des pages qui en portent, la même
+propriété ; `test_site` repassé, 22 verts. Aucun nombre publié ne change : rien n'est
+recalculé, les pages lisent les mêmes rapports. Pas de `make impact` ni de lourds : la
+passe d'avant la PR viendra avec l'accord du propriétaire.
+
+**Ce qui reste.** Joindre `moteur` quand il aura fini. Le graphique des dettes de
+`comparer-candidats.html` écrit ses libellés trop grands sur ordinateur (un SVG étiré,
+d'avant la jonction). Les schémas des pages pas à pas restent à la mesure du texte
+(42 rem), serrés en trois colonnes. Pyodide n'est toujours pas vendorisé (D-459, J12) :
+à décider. La seconde passe du lecteur novice, sur le site joint.

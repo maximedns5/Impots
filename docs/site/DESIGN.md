@@ -60,8 +60,39 @@ provenance s'affiche en ligne. Un même nombre deux fois sur une page prend une 
 Un lien vers une page d'un autre volet qui n'existe peut-être pas encore :
 `<span class="si-page" data-page="x.html">…</span>` ; `site.build` le retire tant que la
 page n'est pas construite. La navigation (`site.NAV`) fait de même : une entrée n'est
-montrée que si sa page est construite. Les volets `population` et `mesure` y sont déjà
-(`population.html`, `mesure.html`) ; un autre nom se change là.
+montrée que si sa page est construite. Elle suit l'ordre du chemin : la population, une
+mesure pas à pas, le jumeau, puis les études et la méthode.
+
+## Les composants des pages de la population et des mesures (D-468)
+
+Les volets `population` et `mesure` avaient chacun leur feuille (`population.css`,
+`mesure.css`) ; à la jonction, tout est dans la feuille commune (section 5), sur les
+jetons communs, et ce qui doublait un composant commun le reprend : le chiffre clé de la
+population est un `stat` (sa note en `stat-n`), ses étapes de construction un `etapes`
+(leur grand nombre en `etape-grand`), le schéma d'une mesure un `flux`, ses sources des
+`note_source`, son chapeau le `chapeau` commun. Les classes `sm-` sont celles des pages
+d'une mesure et des études.
+
+| classe | rendu | quand |
+|---|---|---|
+| `p.encadre` (`b.encadre-tag`) | un passage bordé d'accent | le pont d'une cascade, un « est-ce bon ? » |
+| `nav.pastilles` (`.numerotees`) | des liens en pastilles | le sommaire d'une page, les pages d'une série, les renvois d'une étape du chemin |
+| `.legende` (`i`, `.cle-plein`, `.cle-cible`, `.cle-bande`) | la légende d'un graphique fait main | sous les barres, les écarts, la part chiffrée |
+| `div.defile > table` | un tableau qui défile dans son cadre | tout tableau large |
+| `figure.barres > .barre` (`.piste`, `.plein`, `.cible`, `.valeur`) | une barre par ligne, le trait de la valeur publiée | simulé contre publié |
+| `figure.colonnes > .cols > .col` | des colonnes, leurs libellés verticaux | une distribution (les poids) |
+| `figure.pyramide > .rang` (`.g`, `.age`, `.d`) | la pyramide des âges | deux séries opposées |
+| `figure.ecarts > .ecart` (`.bande`, `.zero`, `.point.tient`/`.hors`) | l'écart contre sa tolérance | une grille de vérification |
+| `table.chaleur` (`--p` par cellule) | une carte de chaleur | une table de parts |
+| `figure.frise` | une suite d'années, colonne par colonne | le vieillissement |
+| `.dixiemes`, `form.traits`, `.curseur-ligne`, `.compte` | l'échelle des dixièmes, le formulaire | « un ménage comme le mien » |
+| `.sm-etape` (h2 avec `.etape-n`) | une section numérotée | les sept étapes d'une mesure |
+| `.sm-couches > .sm-couche` (`.sm-niv`) | le coût couche par couche, chaque couche sa source | une mesure, une étude |
+| `.sm-cartes > .sm-carte`, `.sm-mcartes > .sm-mcarte` | les cartes de mesure | le résumé d'une étude, d'un candidat |
+| `.sm-part` (`.sm-p-ch`, `.sm-p-ref`, `.sm-p-vag`) | la barre de part chiffrée | chiffrées, refusées, non chiffrables |
+| `.sm-multiples` | les petits multiples | trois panneaux de deux ou trois séries |
+| `svg.sm` (`.sm-l1` à `.sm-l4`, `.sm-plus`, `.sm-moins`, `.sm-c-*`) | les graphiques SVG d'une mesure | séries dans l'ordre des jetons ; une perte en `--perte` |
+| `b.non-calcule` dans `.aux-etudes` | une pastille ocre « non calculé » | une lecture au premier ordre que rien n'a chiffrée, sous une `garde` qui le dit |
 
 ## Les règles
 

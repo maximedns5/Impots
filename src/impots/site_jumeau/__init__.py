@@ -297,12 +297,12 @@ adversaires simples : le <em>naïf</em> (l'année suivante ressemble à la derni
 <em>naïf mécanique</em> (le même, plus l'effet comptable des mesures votées, sans aucun
 comportement).</p>
 <div class="chiffres">
-<p class="chiffre"><b>{j["tenues"]} sur {j["cibles"]}</b><span>cibles tenues dans leur
-tolérance écrite d'avance (le naïf mécanique : {j["mecanique_tenues"]})</span></p>
-<p class="chiffre"><b>{j["battues_mecanique"]} sur {j["cibles"]}</b><span>cibles où il fait
-mieux que le naïf mécanique : la dynamique n'apporte quelque chose que là</span></p>
-<p class="chiffre"><b>{n_id} curseur{"s" if n_id > 1 else ""}</b><span>identifié{"s" if n_id > 1 else ""}, et par des
-données fines, pas par l'histoire ; aucun n'est appris de l'histoire seule</span></p>
+<div class="stat"><span class="stat-v">{j["tenues"]} sur {j["cibles"]}</span><span class="stat-l">cibles tenues dans leur
+tolérance écrite d'avance (le naïf mécanique : {j["mecanique_tenues"]})</span></div>
+<div class="stat"><span class="stat-v">{j["battues_mecanique"]} sur {j["cibles"]}</span><span class="stat-l">cibles où il fait
+mieux que le naïf mécanique : la dynamique n'apporte quelque chose que là</span></div>
+<div class="stat"><span class="stat-v">{n_id} curseur{"s" if n_id > 1 else ""}</span><span class="stat-l">identifié{"s" if n_id > 1 else ""}, et par des
+données fines, pas par l'histoire ; aucun n'est appris de l'histoire seule</span></div>
 </div>
 <p><strong>Mieux que le naïf mécanique</strong> : {esc(mieux)}.
 <strong>Moins bien que lui</strong> : {esc(moins)} ; l'activité, l'emploi et le chômage
@@ -591,10 +591,6 @@ td.abs{color:var(--doux);font-style:italic}
 .theta.change{background:var(--l3)}
 .axe-portee{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:1rem;font:.74rem system-ui,sans-serif;color:var(--doux)}
 .axe-portee svg{display:block;width:100%;height:1.2rem}
-.chiffres{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:.6rem;margin:.6rem 0}
-.chiffre{margin:0;border:1px solid var(--trait);border-radius:.4rem;padding:.5rem .7rem}
-.chiffre b{display:block;font:700 1.5rem system-ui,sans-serif}
-.chiffre span{font-size:.84rem;color:var(--doux)}
 table.juge{font-size:.8rem}
 td.oui{color:var(--j-men);font-weight:600}
 td.non{color:var(--doux)}

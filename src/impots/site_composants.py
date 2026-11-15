@@ -94,7 +94,7 @@ def carte(titre: str, texte: str, href: str = "", surtitre: str = "",
     HTML déjà échappé."""
     t = (f'<a class="carte-lien" href="{esc(href)}">{esc(titre)}</a>' if href
          else esc(titre))
-    return (f'<article class="carte">'
+    return ('<article class="carte">'
             + (f'<p class="surtitre">{esc(surtitre)}</p>' if surtitre else "")
             + f"<h3>{t}</h3><p>{texte}</p>"
             + (f'<p class="carte-pied">{esc(pied)}</p>' if pied else "") + "</article>")

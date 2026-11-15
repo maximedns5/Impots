@@ -78,14 +78,14 @@
       D.libelles[type].toLowerCase() + " », vous ressemblez à ceux du <strong>" +
       (r.decile + 1) + (r.decile === 0 ? "er" : "e") + " dixième</strong> : <strong>" +
       mille(m) + "</strong> de ménages, dans la cellule n° " + (i + 1) + ".</p>" +
-      '<div class="echelle" aria-label="Les dix dixièmes de ce type, du plus modeste au ' +
+      '<div class="dixiemes" aria-label="Les dix dixièmes de ce type, du plus modeste au ' +
       'plus aisé">' + echelle + "</div>" +
       '<p class="note-source">Leur niveau de vie moyen : ' + eur(r.niveaux[r.decile]) +
       ". Un ménage de cette cellule compte en moyenne " +
       (D.cellules.personnes[i] / m).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) +
       " personnes, dont " + (D.cellules.en_emploi[i] / m).toLocaleString("fr-FR",
         { maximumFractionDigits: 1 }) + " en emploi.</p>" +
-      '<div class="compte"><div><h3>Ce qu\'ils gagnent et reçoivent, par an</h3><table>' +
+      '<div class="compte-menage"><div><h3>Ce qu\'ils gagnent et reçoivent, par an</h3><table>' +
       ligne("Salaires bruts", moyenne("salaire_brut", i)) +
       ligne("Retraites", moyenne("retraite", i)) +
       ligne("Allocations chômage", moyenne("chomage_brut", i)) +

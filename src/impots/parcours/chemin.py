@@ -14,8 +14,8 @@ import html
 import json
 import re
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 from impots import site_composants as c
 from impots.site_composants import Provenance
@@ -347,20 +347,45 @@ CHIFFRES: dict[str, Callable[[], str]] = {
     "activite": _chiffres_bouclage, "dette": _chiffres_dette, "verdict": _chiffres_verdict,
 }
 
-#: Les pages d'un autre volet qu'une étape annonce ; montrées quand elles existent.
-RENVOIS: dict[str, tuple[str, str]] = {
-    "population": ("population.html", "Qui sont les ménages simulés, en détail"),
-    "cout": ("mesure.html", "Une mesure pas à pas, de bout en bout"),
-    "activite": ("jumeau.html", "Le jumeau : faire tourner la boucle soi-même"),
-    "dette": ("jumeau.html", "Le jumeau : changer le cadre, de 2026 à 2035"),
+#: Les pages d'un autre volet qu'une étape annonce ; montrées quand elles existent. La
+#: première est le bouton ; les suivantes, des pastilles vers leurs sections (D-468).
+RENVOIS: dict[str, tuple[tuple[str, str], ...]] = {
+    "population": (
+        ("population.html#en-bref", "Qui sont les ménages simulés, en détail"),
+        ("population.html#construction", "Comment elle est construite"),
+        ("population.html#poids", "Ce que pèse un ménage"),
+        ("population-france.html#calee", "Ce qui est calé"),
+        ("population-france.html#ecarts", "Où elle s'écarte de la France"),
+        ("population-comme-moi.html#choisir", "Un ménage comme le mien"),
+        ("cellules.html", "Les cellules publiées")),
+    "cout": (
+        ("mesure.html", "Une mesure pas à pas, de bout en bout"),
+        ("mesure-attal-a16_droit_au_brut.html", "Le fil rouge : le « droit au brut » "
+         "d'Attal, pas à pas")),
+    "activite": (("jumeau.html", "Le jumeau : faire tourner la boucle soi-même"),),
+    "dette": (("jumeau.html", "Le jumeau : changer le cadre, de 2026 à 2035"),),
 }
 
 
 def renvoi(page: str, texte: str) -> str:
     """Un lien vers la page d'un autre volet, que le site retire si elle n'est pas
-    construite (`site.build`)."""
-    return (f'<span class="si-page" data-page="{esc(page)}"><a class="bouton" '
+    construite (`site.build`). `page` peut porter une ancre."""
+    return (f'<span class="si-page" data-page="{esc(page.split("#")[0])}"><a class="bouton" '
             f'href="{esc(page)}">{esc(texte)} →</a></span>')
+
+
+def renvois(module: str) -> str:
+    """Le bouton d'une étape vers la page d'un autre volet, et ses sections en pastilles."""
+    liens = RENVOIS.get(module, ())
+    if not liens:
+        return ""
+    out = f'<p class="boutons">{renvoi(*liens[0])}</p>'
+    if len(liens) > 1:
+        out += ('<nav class="pastilles" aria-label="Pour aller plus loin"><ol>'
+                + "".join(f'<li><span class="si-page" data-page="{esc(p.split("#")[0])}">'
+                          f'<a href="{esc(p)}">{esc(t)}</a></span></li>' for p, t in liens[1:])
+                + "</ol></nav>")
+    return out
 
 
 # --- Ce que build() met autour de chaque page ---------------------------------------
@@ -378,7 +403,6 @@ def barre(index: int) -> str:
 
 def tete(index: int, prouve: str) -> str:
     e = ETAPES[index]
-    renv = RENVOIS.get(e.module)
     return (barre(index)
             + f'<p class="surtitre">Étape {index + 1} sur {len(ETAPES)} · {esc(e.court)}</p>'
             + f"<h1>{esc(e.titre)}</h1>"
@@ -387,7 +411,7 @@ def tete(index: int, prouve: str) -> str:
             + (CHIFFRES[e.module]() if e.module in CHIFFRES else "")
             + (c.echelle() if e.module in ("cout", "dette") else "")
             + c.garde("En une phrase", f"<p>{esc(prouve)}</p>")
-            + (f'<p class="boutons">{renvoi(*renv)}</p>' if renv else ""))
+            + renvois(e.module))
 
 
 def suite(index: int) -> str:
@@ -401,7 +425,7 @@ def suite(index: int) -> str:
         parts.append(f'<a class="apres" href="{n.fichier}"><small>Étape {index + 2} →</small>'
                      f"<b>{esc(n.titre)}</b></a>")
     else:
-        parts.append('<a class="apres" href="parcours-comparer.html"><small>Et ensuite →'
+        parts.append('<a class="apres" href="comparer-candidats.html"><small>Et ensuite →'
                      "</small><b>Comparer deux candidats</b></a>")
     return '<nav class="suite" aria-label="Étape suivante">' + "".join(parts) + "</nav>"
 
@@ -458,7 +482,7 @@ def _reference_2026() -> str:
         f"La dette de référence de {r['year']}, sans réforme : celle de 2025 portée un an "
         "par l'identité comptable (intérêts au taux de 2025, croissance et prix du cadre, "
         "solde primaire de 2025 avec la dépense gelée en volume).", rapport=ATTAL_PRED,
-        champ=f"years[0].reference", commit=pred["commit"]))
+        champ="years[0].reference", commit=pred["commit"]))
     return depart, ref
 
 

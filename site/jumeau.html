@@ -105,10 +105,6 @@ td.abs{color:var(--doux);font-style:italic}
 .theta.change{background:var(--l3)}
 .axe-portee{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:1rem;font:.74rem system-ui,sans-serif;color:var(--doux)}
 .axe-portee svg{display:block;width:100%;height:1.2rem}
-.chiffres{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:.6rem;margin:.6rem 0}
-.chiffre{margin:0;border:1px solid var(--trait);border-radius:.4rem;padding:.5rem .7rem}
-.chiffre b{display:block;font:700 1.5rem system-ui,sans-serif}
-.chiffre span{font-size:.84rem;color:var(--doux)}
 table.juge{font-size:.8rem}
 td.oui{color:var(--j-men);font-weight:600}
 td.non{color:var(--doux)}
@@ -261,12 +257,12 @@ adversaires simples : le <em>naïf</em> (l'année suivante ressemble à la derni
 <em>naïf <a class="terme" href="methode.html#mecanique">mécanique</a></em> (le même, plus l'effet comptable des mesures votées, sans aucun
 comportement).</p>
 <div class="chiffres">
-<p class="chiffre"><b>9 sur 12</b><span>cibles tenues dans leur
-tolérance écrite d'avance (le naïf mécanique : 9)</span></p>
-<p class="chiffre"><b>4 sur 12</b><span>cibles où il fait
-mieux que le naïf mécanique : la dynamique n'apporte quelque chose que là</span></p>
-<p class="chiffre"><b>1 curseur</b><span>identifié, et par des
-données fines, pas par l'histoire ; aucun n'est appris de l'histoire seule</span></p>
+<div class="stat"><span class="stat-v">9 sur 12</span><span class="stat-l">cibles tenues dans leur
+tolérance écrite d'avance (le naïf mécanique : 9)</span></div>
+<div class="stat"><span class="stat-v">4 sur 12</span><span class="stat-l">cibles où il fait
+mieux que le naïf mécanique : la dynamique n'apporte quelque chose que là</span></div>
+<div class="stat"><span class="stat-v">1 curseur</span><span class="stat-l">identifié, et par des
+données fines, pas par l'histoire ; aucun n'est appris de l'histoire seule</span></div>
 </div>
 <p><strong>Mieux que le naïf mécanique</strong> : exportations, importations, cotisations sociales (D61), créations d&#x27;entreprises.
 <strong>Moins bien que lui</strong> : PIB en volume, emploi, chômage, impôts sur la production et les produits (D2), impôts sur le revenu et le patrimoine (D5), recettes des APU, solde des APU, dette publique ; l'activité, l'emploi et le chômage
