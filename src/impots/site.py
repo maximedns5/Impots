@@ -430,6 +430,16 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
                   "la France, dans le navigateur ; un programme, une mesure ou une loi "
                   "hypothétique, et chaque paramètre incertain sur un curseur, de 2026 à "
                   "2035.</p>")
+    from impots import site_population
+
+    if site_population.present():
+        # The population pages (goal 25, D-453); one of them carries a script.
+        files.update(site_population.build())
+        scripted |= site_population.SCRIPTEES
+        intro += (f'\n<p><a href="{site_population.PAGE}">La population simulée</a> : '
+                  "d'où viennent les ménages de l'outil, ce qu'ils représentent, en quoi "
+                  "ils ressemblent à la France et en quoi ils s'en écartent ; un ménage "
+                  "comme le vôtre ; les cellules du jumeau, à télécharger.</p>")
     files["index.html"] = _page(TITLE, intro + "\n<ul class=\"etudes\">\n"
                                 + "\n".join(listed) + "\n</ul>")
     for name, text in files.items():

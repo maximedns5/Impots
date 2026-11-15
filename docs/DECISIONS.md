@@ -34172,3 +34172,37 @@ population hors de la comparaison du moteur, pas de `make impact` ni de lourds e
 de route. Les tests légers des fichiers touchés tiennent ce qui change ; aucun nombre
 publié ne change, chaque rapport garde son commit.
 
+
+## D-453 — La population montrée : quatre pages, les 107 cellules publiées
+
+**Ce qui est fait** (volet `population` du but 25). Quatre pages, construites par
+`impots site construire` depuis `reports/population/agregats.json`, que
+`python -m impots.site_population.agregats` écrit en deux secondes, sans passe, depuis la
+population de 2024 et son manifeste, le manifeste des cellules (D-409), les cellules
+d'entreprises (D-407), la grille de D-371 et le cadre central. `population.html` : la
+construction en sept étapes (l'enquête Emploi, les enfants créés, les revenus tirés puis
+calés, le calage des poids, les imputations, le vieillissement, les cellules), ce que
+pèse un ménage, la structure (âges, types, activité, logement, outre-mer, revenus,
+niveau de vie par dixième). `population-france.html` : le calé, le vérifié, les écarts et
+ce qu'ils font aux études. `population-comme-moi.html` : la cellule et le cas type les
+plus proches de trois traits, dans le navigateur. `cellules.html` : les 50 cellules des
+ménages et les 57 des entreprises, définies, sourcées, en CSV et en JSON.
+
+**Aucun nombre publié ne change.** Les écarts sont ceux de la grille, recopiés ; les
+cellules sont celles que le jumeau lit, au centime (`tests/test_site_population.py`).
+Les comptes de la population sont des sommes pondérées ; une tranche de poids de moins de
+vingt ménages de l'échantillon serait fondue (aucune ne l'est). Aucun enregistrement.
+
+**Ce qu'on y voit de neuf, dit franchement.** Les cellules ne rangent pas les ménages
+comme le calage : un enfant majeur chez ses parents y fait un ménage complexe (2,87 M,
+contre 1,12 M au recensement et au calage). La page le dit ; les cellules ne bougent pas.
+
+**Les retours du lecteur novice** (passe 1) : Po1 (la taille, le poids, les 20 000
+ménages des passes), Po2 (la population vue), Po3 (« est-ce bon ? », et ce que chaque
+écart fait aux études), Po6 (le vieillissement en image) sont traités sur ces pages ;
+Po4 et Po5 portent sur `parcours-2-france.html`, au volet `chemin`.
+
+**Les points d'entrée stables** (`site_population.ANCRES`) : `population.html#en-bref`,
+`#construction`, `#vieillissement`, `#poids`, `#structure` ; `population-france.html#calee`,
+`#verifiee`, `#ecarts` ; `population-comme-moi.html#choisir` ; `cellules.html#menages`,
+`#entreprises`, `#telecharger`.
