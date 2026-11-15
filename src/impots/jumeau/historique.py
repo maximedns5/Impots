@@ -46,6 +46,16 @@ prix est absent, comme celui de l'effet non ventilé, nul sur l'histoire. La cro
 du PIB en volume est celle que publie la t. 1.102, pas celle que le cadre chaînerait :
 sans prix des stocks, la formule du cadre ne se calcule pas sur l'histoire.
 
+L'HISTOIRE LONGUE, DE 1996 À 2009 (D-446). `etat_initial` lit aussi ces années, chaque
+série depuis 1995 (`series.lire(..., longue=True)`) ; la dette de l'Insee commence au
+quatrième trimestre de 1995, d'où 1996. L'ajustement flux-stocks n'y est imprimé nulle
+part (la t. 3.105 commence en 2009, la table d'Eurostat en 2021) : avant 2010, ``sfa`` est
+la variation du stock de la dette de l'Insee moins le déficit de la t. 3.201 (−B9), un
+calcul dit (`sfa_calcule`) ; ``ecart_eurostat`` et ``ecart_millesime_dette`` y sont nuls
+par construction. Sur les années où la t. 3.105 existe, ce calcul s'en écarte de
+``ecart_millesime_dette`` (testé). Les créations et les défaillances n'y sont pas (une
+autre méthode avant 2009, D-421) ; le chômage est celui de l'Insee (t. 302) avant 2009.
+
 LES CHAMPS DES LOTS 2 À 4 (D-412). Ceux qu'une série publiée porte exactement sont
 écrits, chacun avec sa source au registre : l'emploi intérieur total et salarié (t. 6.208
 et 6.210), les chômeurs BIT (Eurostat, 15-74 ans ; l'enquête Emploi n'en compte aucun
@@ -77,6 +87,8 @@ from impots.jumeau.champs import (
 from impots.jumeau.etat import Etat
 
 PREMIERE, DERNIERE = 2010, 2025
+#: La première année de l'histoire longue (D-446) : la dette commence fin 1995.
+PREMIERE_LONGUE = 1996
 PIB_REVENUS_FILE = "insee_cn2025_t1105_pib_trois_approches.xlsx"
 PUBLIE = ("publie", "")
 #: La moitié de la dernière décimale imprimée, en Md€.
@@ -177,8 +189,8 @@ def _t3201() -> dict[int, dict[str, float]]:
 
 @functools.lru_cache(maxsize=1)
 def _dette() -> dict[int, float]:
-    """La dette de fin d'année, Md€, de 2009 à 2025, unités vérifiées."""
-    annees = list(range(PREMIERE - 1, DERNIERE + 1))
+    """La dette de fin d'année, Md€, de 1995 à 2025, unités vérifiées."""
+    annees = list(range(PREMIERE_LONGUE - 1, DERNIERE + 1))
     comptes.check_units(annees)
     return {a: stock / 1e9 for a, (stock, _) in comptes.debt(annees).items()}
 
@@ -218,10 +230,27 @@ def _borne(valeur: float, termes: int, demi: float, quoi: str, annee: int) -> fl
     return valeur
 
 
+def _lire(nom: str, annee: int) -> dict[int, float]:
+    """La série de `jumeau.series`, longue (D-446) pour une année d'avant 2010."""
+    from impots.jumeau import series
+
+    return series.lire(nom, longue=annee < series.PREMIERE)
+
+
+def sfa_calcule(annee: int) -> dict[str, float]:
+    """L'ajustement flux-stocks d'une année sans table de passage (D-446) : la variation
+    du stock de dette de l'Insee moins le déficit de la t. 3.201, Md€ ; le déficit et la
+    variation avec lui."""
+    stocks, b9 = _dette(), _t3201()[annee]["b9"]
+    variation = stocks[annee] - stocks[annee - 1]
+    return {"sfa": variation + b9, "variation": variation, "deficit": -b9}
+
+
 def etat_initial(annee: int) -> Etat:
-    """L'état publié de `annee` : emplois, revenus, compte des APU, dette."""
-    if not PREMIERE <= annee <= DERNIERE:
-        raise HistoriqueError(f"{annee} hors de {PREMIERE}–{DERNIERE}")
+    """L'état publié de `annee` : emplois, revenus, compte des APU, dette ; de 1996 à
+    2009, l'histoire longue (D-446)."""
+    if not PREMIERE_LONGUE <= annee <= DERNIERE:
+        raise HistoriqueError(f"{annee} hors de {PREMIERE_LONGUE}–{DERNIERE}")
     etat = Etat(annee, 1, publie=True)
 
     def ecrire(nom: str, valeur: float) -> None:
@@ -270,6 +299,9 @@ def etat_initial(annee: int) -> Etat:
     if eurostat is not None:
         sfa = eurostat["F_ASS"] + eurostat["ORADJ"] + eurostat["YA3"]
         variation, deficit = eurostat["GD_CH"], eurostat["B9_T3"]
+    elif annee < PREMIERE:
+        calcul = sfa_calcule(annee)
+        sfa, variation, deficit = calcul["sfa"], calcul["variation"], calcul["deficit"]
     else:
         from impots.jumeau import series
 
@@ -289,17 +321,15 @@ def etat_initial(annee: int) -> Etat:
 
 def _prix_et_impots(etat: Etat, annee: int) -> None:
     """Les prix des emplois, le volume du PIB et les principaux impôts de l'année (D-410)."""
-    from impots.jumeau import series
-
     for nom, _, _, _ in EMPLOIS_PUBLIES:
         if nom == "var_stocks":
             continue                       # aucun indice publié : le prix est absent
-        indice = series.lire(f"indice_prix_{nom}")
+        indice = _lire(f"indice_prix_{nom}", annee)
         etat.fixer(f"prix_{nom}", indice[annee] / indice[annee - 1])
-    volume = series.lire("volume_pib")
+    volume = _lire("volume_pib", annee)
     etat.fixer("croissance_volume_pib", volume[annee] / volume[annee - 1] - 1.0)
     for nom, _ in IMPOTS_3217:
-        valeurs = series.lire(f"impot_{nom}")
+        valeurs = _lire(f"impot_{nom}", annee)
         if annee in valeurs:
             etat.ecrire(f"impot_{nom}", PUBLIE, valeurs[annee])
 
@@ -327,9 +357,9 @@ def _series_des_lots(etat: Etat, annee: int) -> None:
     ``histoire`` (D-412). Ce que le module ne dit pas ici reste absent."""
     from impots.jumeau import series
 
-    emploi_total = series.lire("emploi_total")[annee]
-    emploi_salarie = series.lire("emploi_salarie")[annee]
-    chomeurs = series.lire("chomeurs")[annee]
+    emploi_total = _lire("emploi_total", annee)[annee]
+    emploi_salarie = _lire("emploi_salarie", annee)[annee]
+    chomeurs = _lire("chomeurs", annee)[annee]
     _poser(etat, "emploi_total", emploi_total)
     _poser(etat, "emploi_salarie", emploi_salarie)
     _poser(etat, "chomage", chomeurs)
@@ -344,9 +374,11 @@ def _series_des_lots(etat: Etat, annee: int) -> None:
               - (m / float(etat["prix_importations"][0]) - avant["P7|"]))
     _poser(etat, "contribution_solde_exterieur", volume / avant["B1GQ|"])
 
-    _poser(etat, "volume_pib", series.lire("volume_pib")[annee])
+    _poser(etat, "volume_pib", _lire("volume_pib", annee)[annee])
     for nom, _, _, _ in EMPLOIS_PUBLIES:
         if nom != "var_stocks":
-            _poser(etat, f"volume_{nom}", series.lire(f"volume_{nom}")[annee])
+            _poser(etat, f"volume_{nom}", _lire(f"volume_{nom}", annee)[annee])
     for champ, serie in SERIES_HISTOIRE.items():
-        _poser(etat, champ, series.lire(serie)[annee])
+        if annee < PREMIERE and series.SERIES[serie].longue is None:
+            continue                       # les créations, les défaillances (D-446)
+        _poser(etat, champ, _lire(serie, annee)[annee])

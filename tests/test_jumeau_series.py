@@ -139,3 +139,29 @@ def test_la_demande_mondiale_de_l_ocde_se_lit() -> None:
     assert sorted(dm) == list(range(2009, 2026))
     assert dm[2020] < 0.95 * dm[2019] and dm[2021] > 1.05 * dm[2020]
     assert all(v > 0 for v in dm.values())
+
+
+def test_l_histoire_longue_recoupe_les_series_de_2010_et_remonte_a_1995() -> None:
+    """D-446 : chaque série longue redonne la série de 2010 à 2025 au bit près (le même
+    millésime, les mêmes fichiers ou des fichiers qui les recoupent), et commence en
+    1995 ; le chômage de l'Insee (t. 302) d'avant 2009 colle à Eurostat en 2009."""
+    longues = [n for n, s in series.SERIES.items() if s.longue is not None]
+    assert {"impot_tva", "taux_oat_10ans", "chomeurs", "demande_mondiale",
+            "cotisations_employeurs_apu", "volume_pib"} <= set(longues)
+    for nom in longues:
+        courte, longue = series.lire(nom), series.lire(nom, longue=True)
+        assert all(longue[a] == v for a, v in courte.items()), nom
+        if nom not in ("impot_cfe", "impot_cvae"):
+            assert min(longue) <= series.PREMIERE_LONGUE, nom
+    insee = series._t302("CHOM")
+    assert insee[2009] == 2656.4
+    assert abs(series.lire("chomeurs", longue=True)[2008] - insee[2008]) < 1e-12
+    eurostat = series._annuel_eurostat(series.EUROSTAT_CHOMAGE, "THS_PER", "T",
+                                       premiere=2009)
+    assert abs(insee[2009] - eurostat[2009]) < 0.5
+    with pytest.raises(series.SerieError, match="pas d'histoire longue"):
+        series.lire("creations_classiques", longue=True)
+    mois = series._eurostat_serie(series.EUROSTAT_OAT_MOIS_LONG, "MCBY")
+    oat = series.lire("taux_oat_10ans", longue=True)
+    assert all(abs(oat[a] - sum(mois[f"{a}-{m:02d}"] for m in range(1, 13)) / 12) < 0.006
+               for a in range(1995, 2010))

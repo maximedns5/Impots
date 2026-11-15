@@ -270,6 +270,27 @@ KNOWN_SOURCES: dict[str, tuple[str, ...]] = {
         "(XMKT, « Export market for goods and services »), 2009→2025 ; l'exogène du "
         "commerce dans le rejeu de l'histoire (D-421).",
     ),
+    # L'histoire longue, 1996 → 2017 (D-446) : les mêmes séries, au même millésime,
+    # reculées jusqu'à 1990 ; elles recoupent les fichiers de 2009 à 2025 au bit près.
+    "eurostat_irt_lt_mcby_a_fr_1990_2025.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "irt_lt_mcby_a?format=JSON&geo=FR&sinceTimePeriod=1990&untilTimePeriod=2025",
+        "Eurostat irt_lt_mcby_a, France : rendement de l'OAT à dix ans (critère de "
+        "Maastricht), moyenne annuelle en %, 1990→2025 (D-446).",
+    ),
+    "eurostat_irt_lt_mcby_m_fr_1990_2025.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "irt_lt_mcby_m?format=JSON&geo=FR&sinceTimePeriod=1990-01"
+        "&untilTimePeriod=2025-12",
+        "Eurostat irt_lt_mcby_m, la même série mensuelle, France, 1990-01→2025-12 : "
+        "recoupe la moyenne annuelle (D-446).",
+    ),
+    "ocde_eo119_xmkt_fra_1990_2025.csv": (
+        "https://sdmx.oecd.org/public/rest/data/OECD.ECO.MAD,DSD_EO@DF_EO,/FRA.XMKT.A"
+        "?startPeriod=1990&endPeriod=2025&format=csvfilewithlabels",
+        "OCDE, Economic Outlook n° 119 : demande mondiale adressée à la France en volume "
+        "(XMKT), 1990→2025 ; l'exogène du commerce de l'histoire longue (D-446).",
+    ),
     # Les chocs non budgétaires soumis à l'étape zéro du but 24 (D-432).
     "bce_mir_fr_credits_snf_fixation_plus_1an_2009_2025.csv": (
         "https://data-api.ecb.europa.eu/service/data/MIR/M.FR.B.A2A.K.R.A.2240.EUR.N"

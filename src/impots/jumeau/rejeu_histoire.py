@@ -145,6 +145,19 @@ SCHEMA_SANS_2023 = Schema(
     test=(SCHEMA.test[0], Fenetre(2021, 2024, (2022, 2024))),
     exclues=SCHEMA.exclues)
 
+#: L'histoire longue (D-446, préenregistrée avant tout calcul) : l'estimation reculée à
+#: 1996, les fenêtres de D-421 § 4 ; 2008 et 2009 exclus comme 2020 et 2021 (la crise
+#: financière : aucun bloc ne porte une crise du crédit) ; le test est celui de D-417.
+#: Les créations n'y sont notées que depuis 2011 (`CREATIONS_DEPUIS`) : avant 2009, une
+#: autre méthode de l'Insee, non comparable (D-421), et aucune série manifestée.
+SCHEMA_LONG = Schema(
+    estimation=(Fenetre(1996, 1999, (1997, 1998, 1999)),
+                Fenetre(1999, 2003, (2000, 2001, 2002, 2003)),
+                Fenetre(2003, 2007, (2004, 2005, 2006, 2007)),
+                *SCHEMA.estimation),
+    test=SCHEMA.test, exclues=(2008, 2009, *SCHEMA.exclues))
+CREATIONS_DEPUIS = 2011
+
 #: Les θ estimés : ceux des canaux de la demande et des échanges que les chocs observés
 #: excitent. Les autres restent à ½.
 ESTIMES = ("jumeau_consommation_profil", "jumeau_emploi_elasticite_cout",
@@ -427,7 +440,8 @@ def etat_publie(annee: int) -> Etat:
     etat = historique.etat_initial(annee)
     for nom, serie in (("impot_cotisations_employeurs", "cotisations_employeurs_apu"),
                        ("impot_cotisations_salaries", "cotisations_salaries_apu")):
-        etat.ecrire(nom, ("publie", ""), series.lire(serie)[annee])
+        etat.ecrire(nom, ("publie", ""),
+                    series.lire(serie, longue=annee < series.PREMIERE)[annee])
     return etat
 
 
@@ -436,14 +450,20 @@ def exogenes_publies(schema: Schema = SCHEMA) -> Exogenes:
     tendances sur les seules années notées de l'estimation."""
     from impots.jumeau import historique, series
 
-    volume, emploi = series.lire("volume_pib"), series.lire("emploi_total")
+    # L'histoire longue (D-446) : les séries depuis 1995 quand une fenêtre part avant 2010.
+    longue = min(f.depart for f in (*schema.estimation, *schema.test)) < series.PREMIERE
+
+    def lire(nom: str) -> dict[int, float]:
+        return series.lire(nom, longue=longue)
+
+    volume, emploi = lire("volume_pib"), lire("emploi_total")
     estimation = schema.annees("estimation")
     g = float(np.mean([volume[a] / volume[a - 1] - 1.0 for a in estimation]))
     ge = float(np.mean([emploi[a] / emploi[a - 1] - 1.0 for a in estimation]))
-    indice = series.lire("indice_prix_pib")
-    oat = series.lire("taux_oat_10ans")
+    indice = lire("indice_prix_pib")
+    oat = lire("taux_oat_10ans")
     annees = sorted({a for f in (*schema.estimation, *schema.test) for a in f.annees})
-    w = series.lire("demande_mondiale")
+    w = lire("demande_mondiale")
     gw = float(np.mean([w[a] / w[a - 1] - 1.0 for a in estimation]))
     return Exogenes(croissance_tendance=g, croissance_emploi=ge,
                     prix={a: indice[a] / indice[a - 1] - 1.0 for a in annees},

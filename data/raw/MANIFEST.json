@@ -2252,7 +2252,7 @@
       "downloaded": "2026-11-15",
       "licence": "Licence ouverte Etalab",
       "description": "Insee, BDM 010002078 : cours du pétrole brut Brent (Londres), prix au comptant en euros par baril, mensuel, 2009-01→2025-12 ; le prix du baril des prix d'importation de Mésange (D-432)."
-},
+    },
     "insee_bdm_taux_chomage_localise_1990_2025.xml": {
       "url": "https://www.bdm.insee.fr/series/sdmx/data/TAUX-CHOMAGE/T.TAUX_CHOMAGE_LOCALISE....?startPeriod=1990-Q1&endPeriod=2025-Q4",
       "quarantined": false,
@@ -2297,6 +2297,33 @@
       "downloaded": "2026-11-15",
       "licence": "Open Database License (ODbL)",
       "description": "Urssaf, open data : établissements employeurs, effectifs salariés moyens annuels et masse salariale annuelle (assiette déplafonnée) du secteur privé, régime général, par département × secteur NA17i, 1998→2025 ; les panneaux de l'emploi et des salaires (D-434)."
+    },
+    "eurostat_irt_lt_mcby_a_fr_1990_2025.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/irt_lt_mcby_a?format=JSON&geo=FR&sinceTimePeriod=1990&untilTimePeriod=2025",
+      "quarantined": false,
+      "sha256": "8f26ebf2e012259480b1dff252f8a70d98d37cfbcac219e124eb875f56ea1f81",
+      "bytes": 3748,
+      "downloaded": "2026-11-15",
+      "licence": "unknown",
+      "description": "Eurostat irt_lt_mcby_a, France : rendement de l'OAT à dix ans (critère de Maastricht), moyenne annuelle en %, 1990→2025 (D-446)."
+    },
+    "eurostat_irt_lt_mcby_m_fr_1990_2025.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/irt_lt_mcby_m?format=JSON&geo=FR&sinceTimePeriod=1990-01&untilTimePeriod=2025-12",
+      "quarantined": false,
+      "sha256": "809133c221a1aeb5f5f196813a712b124c29df4ee74919f1dc5cd621a1e15a5c",
+      "bytes": 22989,
+      "downloaded": "2026-11-15",
+      "licence": "unknown",
+      "description": "Eurostat irt_lt_mcby_m, la même série mensuelle, France, 1990-01→2025-12 : recoupe la moyenne annuelle (D-446)."
+    },
+    "ocde_eo119_xmkt_fra_1990_2025.csv": {
+      "url": "https://sdmx.oecd.org/public/rest/data/OECD.ECO.MAD,DSD_EO@DF_EO,/FRA.XMKT.A?startPeriod=1990&endPeriod=2025&format=csvfilewithlabels",
+      "quarantined": false,
+      "sha256": "ec1ab862dcbde4176a64f41367d8c97b12f066a4b5e999a81e3ad63f6b72c188",
+      "bytes": 9844,
+      "downloaded": "2026-11-15",
+      "licence": "unknown",
+      "description": "OCDE, Economic Outlook n° 119 : demande mondiale adressée à la France en volume (XMKT), 1990→2025 ; l'exogène du commerce de l'histoire longue (D-446)."
     }
   }
 }

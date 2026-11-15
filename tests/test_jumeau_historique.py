@@ -177,3 +177,30 @@ def test_la_contribution_du_solde_exterieur_est_celle_des_volumes_publies(annee)
     attendu = sum(s * (vol[n][annee] - vol[n][annee - 1]) * ind[n][annee - 1] / 100
                   for n, s in (("exportations", 1), ("importations", -1))) / pib[annee - 1]
     assert etat["contribution_solde_exterieur"][0] == pytest.approx(attendu, abs=5e-6)
+
+
+@pytest.mark.parametrize("annee", [1996, 1999, 2003, 2007])
+def test_l_histoire_longue_tient_les_identites(annee) -> None:
+    """D-446 : de 1996 à 2009, l'état publié tient les cinq identités à 1e-9 ; son
+    ajustement flux-stocks est la variation de la dette moins le déficit, sans écart ;
+    les créations et les défaillances n'y sont pas."""
+    etat = historique.etat_initial(annee)
+    residus = identites.verifier(etat)
+    assert max(abs(float(r[0])) for r in residus.values()) < 1e-9
+    calcul = historique.sfa_calcule(annee)
+    assert float(etat["sfa"][0]) == calcul["sfa"]
+    assert float(etat["ecart_eurostat"][0]) == 0.0
+    assert abs(float(etat["ecart_millesime_dette"][0])) < 1e-9
+    assert not etat.present("creations_classiques") and etat.present("taux_oat_10ans")
+    assert 0.55 < etat["ratio_dette"][0] < 0.7
+
+
+def test_l_ajustement_calcule_recoupe_la_t3105() -> None:
+    """D-446 : la variation de la dette moins le déficit redonne la t. 3.105 à 0,1 Md€
+    près de 2010 à 2020, sauf 2014 (−0,63 Md€, l'écart de millésime de D-410)."""
+    t3105 = series.lire("sfa_insee")
+    ecarts = {a: historique.sfa_calcule(a)["sfa"] - t3105[a] for a in range(2010, 2021)}
+    assert abs(ecarts.pop(2014) + 0.638) < 0.01
+    assert max(abs(e) for e in ecarts.values()) < 0.1
+    with pytest.raises(historique.HistoriqueError):
+        historique.etat_initial(1995)

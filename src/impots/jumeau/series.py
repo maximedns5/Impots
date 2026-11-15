@@ -36,6 +36,18 @@ Une valeur absente ou textuelle (« N.D. ») d'une année où la série doit exi
 refusée ; une case vide de la t. 3.217 est l'impôt qui n'existe pas cette année-là
 (la CVAE avant 2010, la taxe professionnelle après) : la série n'a pas cette année, elle
 n'y vaut pas zéro.
+
+L'HISTOIRE LONGUE (D-446). `lire(nom, longue=True)` rend la série depuis 1995 (l'année
+d'avant pour les volumes et les prix), pour les séries que leur source porte si loin :
+les tables des comptes nationaux (la t. 3.217 commence en 1995, les autres plus tôt), la
+dette, l'OAT et la demande mondiale (des fichiers de 1990 à 2025, au même millésime que
+ceux de 2009 à 2025, qu'ils recoupent au bit près). Le chômage d'avant 2009 est celui
+de l'Insee (t. 302, séries longues de l'enquête Emploi, 15 ans ou plus, moyenne
+annuelle) : Eurostat ne le publie qu'à partir de 2003, et les deux sources diffèrent en
+2009 de 0,4 millier ; à partir de 2009, Eurostat. L'ajustement flux-stocks d'avant 2009
+n'est imprimé nulle part (la t. 3.105 commence en 2009) : `historique` le calcule, la
+variation de la dette moins le déficit, un calcul dit. Les créations et les
+défaillances n'ont pas d'histoire longue ici (une autre méthode avant 2009, D-421).
 """
 
 from __future__ import annotations
@@ -52,6 +64,8 @@ from impots.jumeau.champs import IMPOTS_3217
 
 PREMIERE, DERNIERE = 2010, 2025
 ANNEES = tuple(range(PREMIERE, DERNIERE + 1))
+#: La première année de l'histoire longue (D-446) : celle de la t. 3.217 et de la dette.
+PREMIERE_LONGUE = 1995
 
 T1102_1103 = comptes.PIB_FILE
 T3105 = "insee_cn2025_t3105_passage_deficit_dette.xlsx"
@@ -66,11 +80,19 @@ EUROSTAT_OAT = "eurostat_irt_lt_mcby_a_fr_2009_2025.json"
 EUROSTAT_OAT_MOIS = "eurostat_irt_lt_mcby_m_fr_2009_2025.json"
 T7301 = comptes.APU_FILE
 OCDE_EO = "ocde_eo119_xmkt_fra_2009_2025.csv"
+#: Les fichiers de l'histoire longue (D-446), au même millésime.
+EUROSTAT_OAT_LONG = "eurostat_irt_lt_mcby_a_fr_1990_2025.json"
+EUROSTAT_OAT_MOIS_LONG = "eurostat_irt_lt_mcby_m_fr_1990_2025.json"
+OCDE_EO_LONG = "ocde_eo119_xmkt_fra_1990_2025.csv"
+INSEE_T302 = "insee_eec2025_t302_chomage_bit.xlsx"
+#: Avant cette année, le chômage de l'histoire longue est celui de l'Insee (t. 302).
+DEBUT_EUROSTAT_CHOMAGE = 2009
 
 #: Tous les fichiers que ce module ouvre, pour les tests qui en dépendent.
 FICHIERS = (T1102_1103, T3105, T3217, T6205, T6208, T6210, BDM_CREATIONS,
             BDM_DEFAILLANCES, EUROSTAT_CHOMAGE, EUROSTAT_OAT, EUROSTAT_OAT_MOIS,
-            comptes.TOTALS_FILE, comptes.SFA_FILE, T7301, OCDE_EO)
+            comptes.TOTALS_FILE, comptes.SFA_FILE, T7301, OCDE_EO, EUROSTAT_OAT_LONG,
+            EUROSTAT_OAT_MOIS_LONG, OCDE_EO_LONG, INSEE_T302)
 
 #: La moitié de la dernière décimale imprimée : au millième de milliard (t. 1.10x),
 #: au centième (t. 3.217), au dixième (t. 3.105, et les milliers de personnes de 6.208).
@@ -91,6 +113,8 @@ class Serie:
     code: str
     """Le code de la série chez son producteur : idbank, code de ligne, poste Eurostat."""
     lire: Callable[[], dict[int, float]]
+    longue: Callable[[], dict[int, float]] | None = None
+    """La même série depuis `PREMIERE_LONGUE` (D-446) ; None : pas d'histoire longue."""
 
 
 # ------------------------------------------------------------------ lecture des fichiers
@@ -147,8 +171,8 @@ def _lignes_libelle(fichier: str, onglet: str) -> dict[str, list[int]]:
     return places
 
 
-def _ligne_libelle(fichier: str, onglet: str, libelle: str, *, vide_absent: bool = False
-                   ) -> dict[int, float]:
+def _ligne_libelle(fichier: str, onglet: str, libelle: str, *, vide_absent: bool = False,
+                   premiere: int = PREMIERE) -> dict[int, float]:
     """La ligne de libellé exact `libelle` ; une case vide est une année sans la série si
     `vide_absent` (la t. 3.217), refusée sinon. « N.D. » est toujours refusé."""
     rows, colonnes = _feuille(fichier, onglet)
@@ -157,7 +181,7 @@ def _ligne_libelle(fichier: str, onglet: str, libelle: str, *, vide_absent: bool
         raise SerieError(f"{fichier} : {len(places.get(libelle, []))} ligne(s) "
                          f"« {libelle} », attendu 1 (libellé entier)")
     out = {}
-    for a in ANNEES:
+    for a in range(premiere, DERNIERE + 1):
         cellule = rows[places[libelle][0]][colonnes[a]]
         if vide_absent and cellule in (None, ""):
             continue
@@ -215,12 +239,14 @@ def _bdm(fichier: str) -> dict[str, dict[str, float]]:
     return out
 
 
-def _annuel_eurostat(fichier: str, *modalites: str) -> dict[int, float]:
+def _annuel_eurostat(fichier: str, *modalites: str, premiere: int = PREMIERE
+                     ) -> dict[int, float]:
     serie = _eurostat_serie(fichier, *modalites)
-    manquants = [a for a in ANNEES if str(a) not in serie]
+    annees = range(premiere, DERNIERE + 1)
+    manquants = [a for a in annees if str(a) not in serie]
     if manquants:
         raise SerieError(f"{fichier} {modalites} : années absentes {manquants}")
-    return {a: serie[str(a)] for a in ANNEES}
+    return {a: serie[str(a)] for a in annees}
 
 
 def _somme_mois(fichier: str, idbank: str) -> dict[int, float]:
@@ -242,7 +268,8 @@ def _decembre(fichier: str, idbank: str) -> dict[int, float]:
     return {a: serie[f"{a}-12"] for a in ANNEES}
 
 
-def _ocde_eo(fichier: str, mesure: str, pays: str) -> dict[int, float]:
+def _ocde_eo(fichier: str, mesure: str, pays: str, premiere: int = PREMIERE - 1
+             ) -> dict[int, float]:
     """Une série annuelle de l'Economic Outlook de l'OCDE, export CSV du SDMX (une
     observation par ligne), de 2009 à 2025 ; une année absente ou deux fois est refusée."""
     import csv
@@ -258,10 +285,37 @@ def _ocde_eo(fichier: str, mesure: str, pays: str) -> dict[int, float]:
             raise SerieError(f"{fichier} {mesure} {pays} {a} : deux observations")
         out[a] = _nombre(float(r["OBS_VALUE"]) if r["OBS_VALUE"] else None,
                          f"{fichier} {mesure} {a}")
-    manquants = [a for a in range(PREMIERE - 1, DERNIERE + 1) if a not in out]
+    manquants = [a for a in range(premiere, DERNIERE + 1) if a not in out]
     if manquants:
         raise SerieError(f"{fichier} {mesure} {pays} : années absentes {manquants}")
-    return {a: out[a] for a in range(PREMIERE - 1, DERNIERE + 1)}
+    return {a: out[a] for a in range(premiere, DERNIERE + 1)}
+
+
+#: La ligne « Total, Total » de la t. 302 de l'Insee (15 ans ou plus), par onglet.
+T302_ONGLETS = {"chomeurs": "CHOM", "taux_chomage": "TXCHOM"}
+
+
+def _t302(onglet: str) -> dict[int, float]:
+    """Le chômage BIT de l'Insee (t. 302), ensemble des 15 ans ou plus, de 1975 à 2025."""
+    _sourcer(INSEE_T302)
+    rows = comptes._rows(INSEE_T302, onglet)
+    entete = next((r for r in rows[:10] if r[1] == "Annuel"), None)
+    if entete is None:
+        raise SerieError(f"{INSEE_T302} {onglet} : en-tête « Annuel » absent")
+    lignes = [r for r in rows if r[0] == "Total" and r[1] == "Total"]
+    if len(lignes) != 1:
+        raise SerieError(f"{INSEE_T302} {onglet} : {len(lignes)} ligne(s) « Total, Total »")
+    return {int(c): _nombre(lignes[0][j], f"{INSEE_T302} {onglet} {c}")
+            for j, c in enumerate(entete) if isinstance(c, str) and c.isdigit()}
+
+
+def _chomage_long(nom: str, modalite: str) -> dict[int, float]:
+    """L'Insee (t. 302) avant 2009, Eurostat ensuite (le docstring du module)."""
+    insee = _t302(T302_ONGLETS[nom])
+    eurostat = _annuel_eurostat(EUROSTAT_CHOMAGE, modalite, "T",
+                                premiere=DEBUT_EUROSTAT_CHOMAGE)
+    return {**{a: insee[a] for a in range(PREMIERE_LONGUE, DEBUT_EUROSTAT_CHOMAGE)},
+            **eurostat}
 
 
 # ------------------------------------------------------------------ le registre
@@ -269,10 +323,11 @@ _REGISTRE: dict[str, Serie] = {}
 
 
 def _serie(nom: str, libelle: str, unite: str, producteur: str, fichier: str, code: str,
-           lire: Callable[[], dict[int, float]]) -> None:
+           lire: Callable[[], dict[int, float]],
+           longue: Callable[[], dict[int, float]] | None = None) -> None:
     if nom in _REGISTRE:
         raise ValueError(f"série « {nom} » déclarée deux fois")
-    _REGISTRE[nom] = Serie(nom, libelle, unite, producteur, fichier, code, lire)
+    _REGISTRE[nom] = Serie(nom, libelle, unite, producteur, fichier, code, lire, longue)
 
 
 INSEE_CN = "Insee, comptes nationaux annuels base 2020 (millésime 2025)"
@@ -299,9 +354,14 @@ for _nom, _total, _secteur in EMPLOIS_SERIES:
                T1102_1103, f"t. {_onglet[2]}.{_onglet[3:6]} {_code}",
                functools.partial(_ligne_code, T1102_1103, _onglet,
                                  _secteur or _total, apres=_total if _secteur else None,
-                                 premiere=PREMIERE - 1))
+                                 premiere=PREMIERE - 1),
+               functools.partial(_ligne_code, T1102_1103, _onglet,
+                                 _secteur or _total, apres=_total if _secteur else None,
+                                 premiere=PREMIERE_LONGUE - 1))
 _serie("var_stocks", "P52, valeur", MDE, INSEE_CN, T1102_1103, "t. 1.101 P52",
-       functools.partial(_ligne_code, T1102_1103, "T_1101 en niveau", "P52"))
+       functools.partial(_ligne_code, T1102_1103, "T_1101 en niveau", "P52"),
+       functools.partial(_ligne_code, T1102_1103, "T_1101 en niveau", "P52",
+                         premiere=PREMIERE_LONGUE))
 
 # Les principaux impôts, t. 3.217, Md€ courants : la liste est au registre des champs,
 # que `historique` écrit dans l'état publié (`champs.IMPOTS_3217`).
@@ -317,7 +377,9 @@ CATEGORIE_D91 = "Impôts en capital (D91r)"
 IMPOTS_UE = "dont impôts de l’Union européenne"
 for _nom, _libelle in IMPOTS_3217:
     _serie(f"impot_{_nom}", _libelle, MDE, INSEE_CN, T3217, f"t. 3.217 « {_libelle} »",
-           functools.partial(_ligne_libelle, T3217, "T_3217", _libelle, vide_absent=True))
+           functools.partial(_ligne_libelle, T3217, "T_3217", _libelle, vide_absent=True),
+           functools.partial(_ligne_libelle, T3217, "T_3217", _libelle, vide_absent=True,
+                             premiere=PREMIERE_LONGUE))
 
 # Le passage du déficit à la dette, t. 3.105, Md€ au dixième.
 T3105_DEFICIT = "Déficit des administrations publiques (*) - D"
@@ -351,36 +413,44 @@ _serie("sfa_insee", "Ajustement flux-stocks, (1) + … + (5)", MDE, INSEE_CN, T3
        "t. 3.105 (1) à (5)", sfa_insee)
 
 # Le travail : l'emploi intérieur (milliers de personnes) et les salaires bruts (Md€).
-_serie("emploi_total", "Emploi intérieur total", "milliers de personnes", INSEE_CN, T6208,
-       "t. 6.208 _T", functools.partial(_ligne_code, T6208, "T_6208 en niveau", "_T"))
-_serie("emploi_salarie", "Emploi intérieur salarié", "milliers de personnes", INSEE_CN,
-       T6210, "t. 6.210 _T",
-       functools.partial(_ligne_code, T6210, "T_6210 en niveau", "_T"))
-_serie("salaires_bruts", "Salaires et traitements bruts (D11)", MDE, INSEE_CN, T6205,
-       "t. 6.205 _T", functools.partial(_ligne_code, T6205, "T_6205 en niveau", "_T"))
+for _nom, _libelle, _fichier, _onglet in (
+        ("emploi_total", "Emploi intérieur total", T6208, "T_6208 en niveau"),
+        ("emploi_salarie", "Emploi intérieur salarié", T6210, "T_6210 en niveau"),
+        ("salaires_bruts", "Salaires et traitements bruts (D11)", T6205,
+         "T_6205 en niveau")):
+    _serie(_nom, _libelle, MDE if _nom == "salaires_bruts" else "milliers de personnes",
+           INSEE_CN, _fichier, f"t. {_onglet[2]}.{_onglet[3:6]} _T",
+           functools.partial(_ligne_code, _fichier, _onglet, "_T"),
+           functools.partial(_ligne_code, _fichier, _onglet, "_T",
+                             premiere=PREMIERE_LONGUE))
 
 
-def salaire_moyen() -> dict[int, float]:
+def salaire_moyen(longue: bool = False) -> dict[int, float]:
     """Le salaire brut moyen par tête, en euros par an : D11 (t. 6.205) sur l'emploi
     intérieur salarié (t. 6.210). Un quotient de deux séries publiées (D-362)."""
-    d11 = lire("salaires_bruts")
-    emploi = lire("emploi_salarie")
-    return {a: d11[a] * 1e9 / (emploi[a] * 1e3) for a in ANNEES}
+    d11 = lire("salaires_bruts", longue=longue)
+    emploi = lire("emploi_salarie", longue=longue)
+    return {a: d11[a] * 1e9 / (emploi[a] * 1e3) for a in d11}
 
 
 _serie("salaire_moyen", "Salaire brut moyen par tête (D11 / emploi salarié)", "€ par an",
-       INSEE_CN, T6205, "t. 6.205 _T / t. 6.210 _T", salaire_moyen)
+       INSEE_CN, T6205, "t. 6.205 _T / t. 6.210 _T", salaire_moyen,
+       functools.partial(salaire_moyen, longue=True))
 
 EUROSTAT = "Eurostat"
 _serie("taux_chomage", "Taux de chômage au sens du BIT, 15-74 ans", "% de la population "
        "active", EUROSTAT, EUROSTAT_CHOMAGE, "une_rt_a FR Y15-74 T PC_ACT",
-       functools.partial(_annuel_eurostat, EUROSTAT_CHOMAGE, "PC_ACT", "T"))
+       functools.partial(_annuel_eurostat, EUROSTAT_CHOMAGE, "PC_ACT", "T"),
+       functools.partial(_chomage_long, "taux_chomage", "PC_ACT"))
 _serie("chomeurs", "Chômeurs au sens du BIT, 15-74 ans", "milliers de personnes",
        EUROSTAT, EUROSTAT_CHOMAGE, "une_rt_a FR Y15-74 T THS_PER",
-       functools.partial(_annuel_eurostat, EUROSTAT_CHOMAGE, "THS_PER", "T"))
+       functools.partial(_annuel_eurostat, EUROSTAT_CHOMAGE, "THS_PER", "T"),
+       functools.partial(_chomage_long, "chomeurs", "THS_PER"))
 _serie("taux_oat_10ans", "Rendement de l'OAT à dix ans, moyenne annuelle", "%", EUROSTAT,
        EUROSTAT_OAT, "irt_lt_mcby_a FR MCBY",
-       functools.partial(_annuel_eurostat, EUROSTAT_OAT, "MCBY"))
+       functools.partial(_annuel_eurostat, EUROSTAT_OAT, "MCBY"),
+       functools.partial(_annuel_eurostat, EUROSTAT_OAT_LONG, "MCBY",
+                         premiere=PREMIERE_LONGUE))
 
 BDM = "Insee, BDM"
 CREATIONS = {"creations_entreprises": ("010755537", "Créations d'entreprises, ensemble"),
@@ -406,26 +476,35 @@ _serie("defaillances", "Défaillances d'entreprises, tous secteurs", "unités pa
 # t. 3.217 publie leur somme avec les cotisations des non-salariés, D611 + D613.
 _serie("cotisations_employeurs_apu", "D611, cotisations effectives à la charge des "
        "employeurs, reçues par les APU", MDE, INSEE_CN, T7301, "t. 7.301 S13 D611",
-       functools.partial(_ligne_code, T7301, "T_7301", "D611"))
+       functools.partial(_ligne_code, T7301, "T_7301", "D611"),
+       functools.partial(_ligne_code, T7301, "T_7301", "D611", premiere=PREMIERE_LONGUE))
 _serie("cotisations_salaries_apu", "D613CE, cotisations effectives obligatoires à la "
        "charge des salariés, reçues par les APU", MDE, INSEE_CN, T7301,
-       "t. 7.301 S13 D613CE", functools.partial(_ligne_code, T7301, "T_7301", "D613CE"))
+       "t. 7.301 S13 D613CE", functools.partial(_ligne_code, T7301, "T_7301", "D613CE"),
+       functools.partial(_ligne_code, T7301, "T_7301", "D613CE",
+                         premiere=PREMIERE_LONGUE))
 _serie("cotisations_menages_apu", "D613, cotisations effectives à la charge des ménages "
        "(salariés et non-salariés), reçues par les APU", MDE, INSEE_CN, T7301,
        "t. 7.301 S13 D613", functools.partial(_ligne_code, T7301, "T_7301", "D613"))
 
 _serie("demande_mondiale", "Demande mondiale adressée à la France, en volume",
        "dollars de 2021, volumes chaînés", "OCDE, Economic Outlook n° 119", OCDE_EO,
-       "EO XMKT FRA A", functools.partial(_ocde_eo, OCDE_EO, "XMKT", "FRA"))
+       "EO XMKT FRA A", functools.partial(_ocde_eo, OCDE_EO, "XMKT", "FRA"),
+       functools.partial(_ocde_eo, OCDE_EO_LONG, "XMKT", "FRA", PREMIERE_LONGUE))
 
 SERIES: dict[str, Serie] = dict(_REGISTRE)
 
 
-def lire(nom: str) -> dict[int, float]:
+def lire(nom: str, *, longue: bool = False) -> dict[int, float]:
     """La série `nom`, {année : valeur}, de 2010 à 2025 (moins les années où elle
-    n'existe pas, pour un impôt de la t. 3.217)."""
+    n'existe pas, pour un impôt de la t. 3.217) ; depuis 1995 si `longue` (D-446), une
+    série sans histoire longue refusée."""
     if nom not in SERIES:
         raise SerieError(f"série « {nom} » inconnue (jumeau/series.py)")
+    if longue:
+        if SERIES[nom].longue is None:
+            raise SerieError(f"série « {nom} » : pas d'histoire longue (D-446)")
+        return SERIES[nom].longue()
     return SERIES[nom].lire()
 
 

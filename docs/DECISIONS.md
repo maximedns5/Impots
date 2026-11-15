@@ -34152,3 +34152,177 @@ processus, verts, aucun sauté ; 5 chronomètres verts.
 
 **Ce qui ne change pas.** Aucun nombre d'aucun rapport, aucune tolérance, aucun verdict,
 aucun étage ; chaque rapport garde son commit de passe.
+
+## D-446 — L'histoire longue préenregistrée : 1996 → 2017, l'étape zéro seulement
+
+**Ce qui est fait** (branche `claude/but25-histoire`, partie de `origin/main` à 1f0c315).
+Le propriétaire demande l'histoire longue : estimer le jumeau sur 1996 → 2017 au lieu de
+2011 → 2017, pour voir si l'histoire identifie enfin un θ. D-421 (§ 4) l'avait proposée,
+puis **projetée** faute de données (une information d'environ 1,15 pour l'élasticité de
+l'emploi, à ½ vers le haut, quand il en faut 12) et retirée. La règle de D-421 reste :
+l'étape zéro d'abord, sur des données construites, et les lots suivants seulement si elle
+identifie au moins un θ. Ce qui est fait ici : le recensement de ce qui manquait, les
+séries reculées à 1995 (code et sources manifestées), l'archive du JO extraite de
+nouveau, et ce préenregistrement. **Rien n'a tourné** : aucune jacobienne, aucune sortie
+du jumeau sur une fenêtre d'avant 2010, aucune erreur. La base des mesures d'avant 2010
+n'est pas encore écrite : elle le sera après ce commit, sous la règle du § 3.
+
+### 1. Le recensement : ce qui manquait, ce qui est atteint
+
+| besoin, 1995-2009 | source | sort |
+|---|---|---|
+| familles d'impôts | Insee t. 3.217, depuis 1995 | déjà là, mêmes fichiers |
+| emplois, prix, volumes, revenus | t. 1.101 à 1.105, depuis 1949 | déjà là |
+| compte des APU, cotisations par payeur | t. 3.201 (1959), t. 7.301 (1949) | déjà là |
+| emploi, salaires | t. 6.205, 6.208, 6.210, depuis 1949 | déjà là |
+| dette de Maastricht | Insee, depuis le 4e trimestre de 1995 | déjà là : l'état dès 1996 |
+| OAT à dix ans | Eurostat irt_lt_mcby_a et _m, 1990 → 2025 | téléchargé, manifesté |
+| demande mondiale | OCDE, EO n° 119, XMKT, 1990 → 2025 | téléchargé, manifesté |
+| chômage BIT | Insee t. 302 (D-409), depuis 1975 | déjà là ; Eurostat dès 2003 |
+| ajustement flux-stocks | nulle part avant 2009 | calculé, dit |
+| créations | une autre méthode avant 2009 | non : notées depuis 2011 |
+| mesures votées 1995-2009 | archive du JO de la DILA | extraite ; base à écrire |
+
+* **L'OAT et la demande mondiale.** Les nouveaux fichiers sont du même millésime que ceux
+  de 2009 à 2025 (Eurostat, champ `updated` du 25 février et du 12 novembre 2026 ; OCDE,
+  flux DSD_EO 1.5, Economic Outlook 119) et les recoupent au bit près sur 2009-2025
+  (testé). `KNOWN_SOURCES` et le manifeste : 3 ajouts.
+* **Le chômage.** Eurostat ne publie le chômage BIT de la France qu'à partir de 2003 ;
+  avant 2009, c'est la t. 302 de l'Insee (enquête Emploi, 15 ans ou plus, moyenne
+  annuelle), une seule source pour toutes les fenêtres d'avant 2009. Elle colle à
+  Eurostat (15-74 ans) : 0,4 millier d'écart en 2009, ±0,5 de 2010 à 2021, le même taux.
+* **L'ajustement flux-stocks d'avant 2010** : la variation du stock de dette de l'Insee
+  moins le déficit de la t. 3.201 (`historique.sfa_calcule`). Sur les années où la
+  t. 3.105 existe, il la redonne à 0,1 Md€ près de 2010 à 2020, sauf 2014 (−0,64 Md€,
+  l'écart de millésime de D-410) ; testé.
+* **Le JO.** `scripts/jumeau_jorf_extraire.py` prend `--depuis` et `--jusqua` ; l'archive
+  du 8 novembre 2026 (celle de D-413) relue du 1er juin 1994 au 1er juin 2009 : les
+  lois, et les décrets et ordonnances dont le titre nomme une cotisation, la CSG ou la
+  CRDS, 25 604 enregistrements (`data/interim/jorf_1994_2009.jsonl`, hors git). Les lois
+  de finances, rectificatives et de financement de la sécurité sociale de 1996 à 2009 y
+  sont avec leurs articles (35 à 233 chacune), comme les lois Aubry (98-461, 2000-37),
+  Fillon (2003-47), TEPA (2007-1223), l'assurance maladie (2004-810) et l'ordonnance de
+  la CRDS (96-50). **Aucune source n'a manqué.**
+
+Le code : `series.lire(nom, longue=True)` rend une série depuis 1995 (1994 pour les prix
+et les volumes) quand sa source va si loin, et refuse les autres (créations,
+défaillances) ; `historique.etat_initial` lit de 1996 à 2025 ; `rejeu_histoire` lit
+l'histoire longue dès qu'une fenêtre part avant 2010. Les séries de 2010 à 2025 ne
+changent pas d'un bit (testé) ; les états publiés de 1996 à 2007 tiennent les cinq
+identités à 1e-9 (testé sur quatre années).
+
+### 2. Le schéma : ce qui change, ce qui ne change pas
+
+| période | fenêtres (départ publié → fin) | années notées |
+|---|---|---|
+| estimation | 1996 → 1999 ; 1999 → 2003 ; 2003 → 2007 | 1997 à 2007 |
+|  | 2010 → 2014 ; 2014 → 2017 | 2011 à 2017 |
+| test | 2017 → 2019 ; 2021 → 2024 (D-417) | 2018, 2019, 2022, 2023, 2024 |
+
+`rejeu_histoire.SCHEMA_LONG` : les fenêtres de D-421 § 4, 18 années notées au lieu de 7.
+**2008 et 2009 sont exclus** comme 2020 et 2021 : aucun bloc ne porte une crise du crédit
+ni un effondrement du commerce mondial, et y imposer les dépenses et les recettes
+observées ferait du choc la réponse ; la fenêtre 2010 → 2014 part de l'état publié de
+2010, comme sous D-417. **Les créations** ne sont notées que de 2011 à 2017
+(`CREATIONS_DEPUIS`) : leurs sorties n'entrent pas dans la jacobienne des fenêtres
+d'avant 2010.
+
+**Ce qui ne change pas** : le test (2018, 2019, 2022 à 2024), les douze cibles de D-417,
+leurs métriques et leurs tolérances, les entrées et leurs règles (les chocs budgétaires
+observés, le choix (b) de D-421, la demande mondiale, les exogènes), les sept θ estimés
+et ε, les lois de r4 (D-424, et celle de b de D-438), les deux critères. **Ce que la
+règle de D-417 change d'elle-même** : la tendance est la moyenne des années notées de
+l'estimation, désormais 18 ; lue sur les séries (aucun calcul du jumeau), 1,99 % par an
+pour le PIB (1,20 % sur 2011-2017), 0,94 % pour l'emploi (0,57 %), 5,81 % pour la demande
+mondiale (3,71 %). Sur les fenêtres de 2010 à 2017, la référence croît donc plus vite que
+le PIB publié, et la dépense observée, en part constante du PIB de la tendance, y devient
+un choc négatif plus grand qu'en r4 : c'est la règle, appliquée, et c'est dit.
+
+Les structures du jumeau (les cellules de 2023 et 2024, le TES de 2023, les profils de
+Mésange de 2017, les entreprises de 2023) sont anachroniques en 1996 (D-421) : elles ne
+changent pas. Un refus d'un bloc sur une fenêtre d'avant 2010 sera dit, pas contourné.
+
+### 3. La base des mesures d'avant 2010 : sa règle, avant de l'écrire
+
+Entre dans `mesures_votees.yaml` toute mesure d'un instrument d'une famille d'impôts du
+jumeau (`rejeu_histoire.FAMILLES` : TVA, accises sur l'énergie, IR, CSG et CRDS,
+cotisations des employeurs et des salariés, IS, impôts de production, taxe d'habitation,
+ISF, droits de succession et de donation), votée par une loi ou une ordonnance (un décret
+pour un taux de cotisation), qui change un taux, un barème, une assiette, un allègement
+ou une contribution de la famille, et **dont une année d'effet (`annees_effet`) tombe de
+1997 à 2007** : ce sont les seules que les fenêtres longues comptent (s < u ≤ t, s =
+1996). Chaque loi de finances de 1997 à 2007 donne une mesure du barème de l'IR, neutre
+quand il n'est qu'indexé. Le sens est lu dans les paramètres (D-421, le choix (b)) ; une
+étape qui va contre sa mesure dit le sien. Chaque mesure est relue dans l'extrait du JO,
+avec l'URL de son article (`JORFARTI`) ; une mesure qu'il ne porte pas est « non
+vérifiée », avec sa raison. Aucun montant (D-359 à D-361). Pour cela : la frise des
+gouvernements remonte à 1995 (Juppé à Fillon I), et l'année d'effet permise à 1995.
+**Le pronostic de la base** : de 45 à 90 mesures, toutes vérifiées sauf au plus cinq.
+Elle sert à dater et à attribuer, rien d'autre : ce qui entre reste lu dans les comptes.
+
+### 4. L'étape zéro, comme D-428 et D-433
+
+La jacobienne des sorties notées du jumeau (pas des erreurs) en θ, divisée par les
+tolérances de D-417, sur les cinq fenêtres de l'estimation de `SCHEMA_LONG` (les
+créations sur les deux dernières seulement), les chocs budgétaires observés et la demande
+mondiale compris. Chacun des huit θ (les sept de `ESTIMES` et ε) perturbé de 0,001 sur
+l'axe des tirages, les autres θ du registre à ½. Aucune valeur publiée de cible n'y entre.
+Quatre points : ½ vers le haut et vers le bas ; le mode de chaque loi de r4 ramené dans
+[0 ; 1], vers le haut et vers le bas. L'information d'un θ, diag (JᵀJ) ; l'écart-type
+approché, √diag (JᵀJ + P)⁻¹, la matrice entière des huit.
+
+* **Le critère du but** (D-424, D-428, D-431), **celui qui décide** : au mode, P = diag
+  (1 / s²), s l'écart de la loi de r4 du côté de la perturbation ; un θ est identifié par
+  l'histoire si σ < s / 2 d'un côté au moins (une information d'au moins 3 / s² environ).
+  Pour b, la loi est celle du calcul (D-435, D-438) : b est déjà identifié par les données
+  fines, la question est ce que l'histoire y ajoute.
+* **Le critère de D-421**, dit à côté : à ½, P = 4 I, σ < 0,25 (une information d'au
+  moins 12). Un θ qu'il est seul à identifier est dit, et ne compte pas (comme D-432).
+
+**Le point de comparaison** : le même calcul sur le schéma de D-417 (2011 à 2017), avec
+ses exogènes (1,20 %), le jumeau de r4. Il n'a jamais été publié pour r4 (D-428 et D-433
+portaient r3, avant la plage de b et les naissances de D-436) ; il est calculé ici, et
+D-433 (sa colonne « budget ») n'est qu'un repère pour les θ que r4 n'a pas changés.
+
+Aucun seuil, aucune fenêtre, aucun point, aucune règle de la base ne change après le
+premier calcul. Le résultat va dans D-447 ; la base des mesures, son code et le script de
+l'étape zéro (`scripts/jumeau_etape_zero_longue.py`, vers
+`reports/jumeau/etape_zero_longue.json`) sont commités avant qu'il tourne.
+
+### 5. Le pronostic, avant tout calcul
+
+**L'aveugle est percé** : D-421, D-428 et D-433 donnent l'information de 2011 à 2017 (r2,
+r3) et la projection de 1996 à 2007 ; les séries sont lues. Aucune jacobienne de r4 ni de
+l'histoire longue n'a été calculée, et la base des mesures n'est pas écrite. L'ordre de
+grandeur : l'information croît comme le carré des chocs et comme le nombre d'années ;
+onze années de plus, aux chocs de 1,5 à 2,6 fois ceux de 2011-2017 (D-421 : 2,6 en
+majorant ; le choix (b) et les seules années votées en retirent), plus la dépense de
+2011-2017 que la tendance plus rapide grossit : **l'information multipliée par 3 à 20**
+sur le schéma de D-417 de r4.
+
+Au mode, vers le haut (D-433, r3, entre parenthèses) :
+
+| θ | information | requis 3 / s² | identifié |
+|---|---|---|---|
+| profil de la consommation | [0,005 ; 0,2] (0,002) | 12 | non |
+| emploi | [5 ; 35] (1,633) | 181 | non |
+| salaires, b | [0,2 ; 8] (0,333, autre plage) | 923 | non |
+| exportations | [0,03 ; 0,5] (0,013) | 199 | non |
+| importations | [0,05 ; 0,6] (0,026) | 1 875 | non |
+| accélérateur | [0,08 ; 0,6] (0,029) | 46 | non |
+| coût du capital | [0,05 ; 0,5] (0,024) | 69 | non |
+| ε, non estimé | [3 ; 15] (5,971) | 114 | non |
+
+**Aucun θ identifié sous le critère du but** (19 chances sur 20) ; le plus grand rapport
+de l'information à ce qu'il requiert, celui de l'emploi, entre 3 et 20 % (0,9 % sur
+2011-2017 en r3). Au mode vers le bas, rien non plus. **Sous le critère de D-421**, à ½ :
+l'emploi vers le bas (2,112 en r3) monte entre 6 et 40, **identifié une chance sur deux**
+(σ sous 0,25 dès 12) ; ε vers le haut entre 3 et 15, une chance sur quatre ; les autres
+non. Soit **0 θ identifié** au sens qui décide (de 0 à 0), **1 au sens de D-421** (de 0 à
+2 : l'emploi, peut-être ε). Le schéma de D-417 de r4 : les θ que r4 n'a pas changés à
+moins de 20 % de D-433 ; b et ε autrement (sa plage, les naissances de D-436).
+
+**Ce qui suivrait.** Si aucun θ n'est identifié au sens du but, l'histoire longue
+s'arrête à l'étape zéro, une seconde fois, mais sur des données construites. Si un θ
+l'est, rien n'est lancé non plus : les lots suivants (l'estimation, la note) sont la
+décision du propriétaire.
