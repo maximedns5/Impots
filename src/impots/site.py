@@ -457,6 +457,12 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         pages = site_jumeau.build()
         files.update(pages)
         scripted.add(site_jumeau.PAGE)
+    from impots import site_population
+
+    if site_population.present():
+        # The population pages (goal 25, D-453); one of them carries a script.
+        files.update(site_population.build())
+        scripted |= site_population.SCRIPTEES
     files[ETUDES] = _page(f"Les études — {TITLE}", intro + "\n<ul class=\"etudes\">\n"
                           + "\n".join(listed) + "\n</ul>", large=True)
     from impots import site_accueil

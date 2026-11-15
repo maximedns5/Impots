@@ -146,9 +146,12 @@ def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(buil
 
 def test_no_study_page_runs_a_script(built, monkeypatch) -> None:
     # The explorer runs a script (D-343), and the parcours pages that give a cursor
-    # (D-375), and the twin (D-415), held by their own tests.
+    # (D-375), the twin (D-415), and « un ménage comme le mien » (D-453), held by their
+    # own tests.
+    from impots import site_population
+
     assert not any("<script" in text.lower() for name, text in built.items()
-                   if name not in (site.EXPLORER, "jumeau.html")
+                   if name not in (site.EXPLORER, "jumeau.html", *site_population.SCRIPTEES)
                    and not name.startswith("parcours-"))
     monkeypatch.setattr(site, "STYLE", "<script>alert(1)</script>")
     with pytest.raises(site.SiteError, match="script"):
