@@ -28,8 +28,9 @@ def test_attal_pas_a_pas_porte_les_nombres_du_rapport(page: parcours.Page) -> No
     for texte in ("+66,18 Md€", cout.md(m["reform_cost"]), cout.md(f["reform_cost"]),
                   cout.md(m["deltas"]["salaire_net"]), cout.md(-m["deltas"]["ir"])):
         assert texte in page.corps
-    # La dette sans boucle : +20,45 pt à D-397, +20,41 avec le canal des créations (D-403).
-    assert "+20,41 pt" in page.corps
+    # La dette sans boucle : +20,45 pt à D-397, +20,41 avec le canal des créations (D-403),
+    # +20,44 à son élasticité de D-427.
+    assert "+20,44 pt" in page.corps
 
 
 def test_la_prime_est_lue_en_miroir(page: parcours.Page) -> None:

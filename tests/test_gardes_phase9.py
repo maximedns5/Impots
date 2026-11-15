@@ -47,7 +47,10 @@ AFTER_THE_SWEEP = {"src/impots/predictif/montecarlo.py", "src/impots/predictif/r
                    "src/impots/predictif/annonce.py",
                    # Le canal des créations (but 22, D-401) : ses refus sont tenus par
                    # tests/test_creations_canal.py.
-                   "src/impots/predictif/creations.py"}
+                   "src/impots/predictif/creations.py",
+                   # Le recalcul sans passe des rapports (D-427) : ses refus et son
+                   # contrôle sont tenus par tests/test_recalcul.py.
+                   "src/impots/predictif/recalcul.py"}
 
 
 def test_every_module_of_predictif_is_swept(sweep) -> None:

@@ -295,13 +295,14 @@ def test_the_debt_without_activity_is_the_cost_without_the_loop(pages) -> None:
     points à l'étape 1, quand le coin en donnait 13,95 ; 20,28 sur les rapports de la
     série du but 19 (D-373), au coût de 65,69 Md€ ; 20,45 sur ceux du but 21 (D-397), au
     coût de 66,18 Md€, les pensions alimentaires s'ajoutant ; 20,41 sur ceux du but 22
-    (D-403), le canal des créations d'entreprises entrant dans la dette."""
+    (D-403), le canal des créations d'entreprises entrant dans la dette ; 20,44 à son
+    élasticité de D-427 (0,043 au lieu de 0,20)."""
     study, text = pages["attal"]
     path = json.loads(next(study.rapports.glob("predictif_*.json")).read_text("utf-8"))
     cout = path["lectures"]["decomposition"]["vieillie"]["cout"]
-    assert f"{cout * 100:.2f}" == "20.41"
+    assert f"{cout * 100:.2f}" == "20.44"
     head = text.split("## En bref")[0]
-    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 20,41 points" in head
+    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 20,44 points" in head
     assert "13,95" not in head
     for slug, (_, page) in pages.items():
         assert "Sans aucun effet sur l'activité" in page.split("## En bref")[0], slug

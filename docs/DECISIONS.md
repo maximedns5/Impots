@@ -32305,7 +32305,7 @@ ajoutée), et aucune variation par taille d'entreprise dans les séries. Les sou
 fines (Sirene ou les liasses par unité légale, la DSN par établissement) sont des données
 individuelles, hors de ce dépôt.
 
-## D-427 — La jonction de D-421 à D-426 ; ε, e₀ et trois plages décidés ; études en attente
+## D-427 — La jonction de D-421 à D-426 ; ε, e₀ et trois plages ; les études recalculées
 
 **La jonction** (branche `claude/but23-cadre`). `claude/but23-revision` (dce2439, D-421 et
 D-423) puis `claude/but23-apriori` (D-424) en avance rapide ; `claude/but23-microdonnees`
@@ -32328,7 +32328,8 @@ verts, 1 sauté ; ruff propre.
   de D-424 : l'estimation 0,043 (Da Rin et al., un panneau national, la grandeur du
   bloc), et, faute de l'écart-type de cet effet marginal (la covariance du TMEE et de son
   carré n'est pas publiée), celui de D-426, 0,051 : μ = ½, s₋ = 0,593, s₊ = 0,162. Ce
-  choix de l'écart-type est le mien, dit, à confirmer ; D-426 entre en `comparaison`,
+  choix de l'écart-type, proposé ici, est confirmé par le propriétaire (15 novembre
+  2026) ; D-426 entre en `comparaison`,
   pas comme estimation (une réponse entre secteurs, les effets d'année absorbant la
   réponse nationale : la règle (1)).
 * **(b) e₀** : 10,47 % au lieu de 7,61 %. La lecture de niveau de D-426
@@ -32349,29 +32350,44 @@ verts, 1 sauté ; ruff propre.
 Le rejeu de l'histoire (D-423) n'est pas refait : son rapport garde son commit. Les a
 priori ne sont pas lus par une passe nouvelle.
 
-### Les études publiées : NON réécrites, ε est figé dans les rapports
+### Les études publiées : recalculées sans passe
 
 Le canal des créations entre dans la dette publiée des études depuis D-400. Chaque
 rapport porte ses paramètres (`instantane`) : `rejeu.creations.parametres` et
-`creations.parametres`, où ε vaut 0,20. `rejouer`, le parcours (`dette.js`,
-`activite.js`) et `etude ecrire` lisent ε là, jamais dans le fichier déclaré ; et le
-rapport porte aussi tout ce qui en dérive : les chemins (`years`, `side_by_side`), la
-boîte (`theta_box`), le Monte-Carlo, les lectures, les chemins du canal. Changer ε
-publié, c'est réécrire ces champs dans 45 rapports de passes : **arrêté avant**, comme
-demandé, pour décision. Ce qui est fait : le fichier déclaré porte le nouvel ε (la
-prochaine passe le lira) ; une page tirée d'un rapport à 0,20 cite la source de D-402
-(`creations.source_elasticite`), pas celle de D-427, de sorte que `etude ecrire` sur les
-rapports commités reste vrai. `site construire` ne change que `jumeau-paquet.json`.
+`creations.parametres`, où ε valait 0,20, et tout ce qui en dérive : les chemins
+(`years`, `side_by_side`), la boîte (`theta_box`), le Monte-Carlo, les lectures, les
+chemins du canal. `rejouer`, le parcours (`dette.js`, `activite.js`) et `etude ecrire`
+lisent ε là, jamais dans le fichier déclaré. Un premier temps s'est arrêté avant de
+réécrire ces rapports ; le propriétaire a retenu la voie proposée (15 novembre 2026).
 
-**Le contrôle.** Le rejeu des 45 rapports d'études qui portent le canal, depuis leurs
-seuls champs, au ε qu'ils portent, redonne leurs chemins publiés à l'écart nul (toutes
-années, trois persistances, deux vues) : le critère de 1e-12 tient.
+**La voie.** `predictif.recalcul`, appelé par `scripts/recaler_creations.py` : chaque
+rapport qui lit le canal est refait depuis ses seuls champs, sans passe, à l'ε du fichier
+déclaré. ε est remplacé dans les deux instantanés ; les chemins, sous chaque persistance
+et dans les deux vues, la boîte (tous les ans chiffrés, et la première année reportée),
+le Monte-Carlo (`montecarlo.run`, sa graine fixe), les lectures (`annuel._lectures`) et
+les chemins du canal (`creations.effet`, sa boîte en c = 0 et 1) sont refaits par le
+rejeu. Un champ `recalcul` dit la décision, la date, l'ε d'avant et d'après, et garde le
+commit de la passe. Des 46 rapports d'études qui portent le canal, 21 ont des
+prélèvements sur les entreprises ou le capital qui bougent : leurs nombres sont refaits ;
+les 25 autres ne lisent pas ε (le canal y est nul à toute pente) : seuls leurs
+paramètres changent, et leur `recalcul` le dit (`nombres_refaits` faux). La page dit le
+recalcul à côté de l'élasticité.
 
-**Ce que le nouvel ε donnerait**, rejoué depuis les rapports, non publié : Δb 2035 à θ½,
-vue vieillie, persistance « lue », en points de PIB (publié → à ε = 0,043 ; sans le
-canal entre parenthèses).
+**Le contrôle, d'abord.** Au ε que chaque rapport portait, le rejeu redonne leurs
+chemins publiés à l'écart nul (toutes années, trois persistances, deux vues), et la
+réécriture redonne à l'octet près les chemins, la boîte des années chiffrées et les
+chemins du canal. Trois familles ne se redonnent qu'à 3e-12 relatif au pire : la boîte de
+la première année reportée (la chaîne l'a écrite par `exploration.trajectory`, non par le
+rejeu), le Monte-Carlo et les lectures (écrits par le rejeu d'avant D-403, qui ajoutait
+le canal ailleurs dans l'ordre des opérations). L'octet près n'y est donc pas tenable sans
+passe ; le contrôle les tient à 1e-11 relatif (`recalcul.AU_PRES`, `TOLERANCE_AU_PRES`),
+fixé après avoir vu ces écarts, et dit ici. Après la réécriture, chacun des 21 rapports
+refaits se redonne à l'octet près, et l'aller-retour (à 0,20 puis à 0,043) aussi.
 
-| étude | publié | ε = 0,043 | sans le canal |
+**Ancien → nouveau**, Δb 2035 à θ½, vue vieillie, persistance « lue », en points de PIB
+(sans le canal entre parenthèses) :
+
+| étude | avant (ε = 0,20) | après (ε = 0,043) | sans le canal |
 |---|---|---|---|
 | Attal, programme | +4,2384 | +4,2730 | +4,2825 |
 | Attal, a18 suppression de la CVAE | +0,2000 | +0,2354 | +0,2450 |
@@ -32395,47 +32411,62 @@ canal entre parenthèses).
 | Tondelier, point d'indice à l'inflation | +1,8484 | +1,7667 | +1,7443 |
 | Tondelier, Smic à 2 000 € brut | −0,0158 | +0,3830 | +0,4924 |
 
-Les 25 autres rapports ne bougent pas (aucun prélèvement sur les entreprises ou le
-capital). Six signes à θ½ changent, tous des hausses du Smic (Bouamrane, Kazib, et les
-mesures Smic de Mélenchon, Roussel, Ruffin et Tondelier) : le canal y faisait passer la
-dette sous zéro ; le verdict de ces pages est donc à relire.
+**Les verdicts et les étages.** Aucun verdict ne change, ni celui de la boîte (le signe
+de Δb à θ et à chaque coin, dans les deux vues) ni celui du Monte-Carlo. Les six hausses
+du Smic (Bouamrane, Kazib, et les mesures Smic de Mélenchon, Roussel, Ruffin et
+Tondelier) passent au positif à θ½, mais restaient et restent « dépend de θ » ; leur
+probabilité d'une hausse passe de 0,51 à 0,58 environ. Les autres probabilités d'une
+hausse qui bougent : Attal, programme, 0,646 → 0,647 ; Lisnard, programme, 0,881 →
+0,886 ; Mélenchon, exonérations, 0,497 → 0,436 ; suppression du PFU, 0,136 → 0,171 ;
+Retailleau r13, 0,532 → 0,586 ; Roussel, programme, 0,549 → 0,603 ; Ruffin, programme,
+0,672 → 0,723 ; celles à 1,000 y restent. Aucun étage ne change : sur le site, chaque
+page refaite compte les mêmes nombres par étage, plus deux « hypothèse » (les deux ε de
+la phrase du recalcul).
 
-**La voie proposée.** Un script de recalcul, sans passe, qui réécrit chaque rapport
-depuis ses propres champs : ε remplacé dans les deux instantanés, puis les chemins, la
-boîte, le Monte-Carlo (sa graine est dans le rapport), les lectures et les chemins du
-canal refaits par `rejouer`, `montecarlo.run` et `annuel._lectures`, avec un champ qui
-dit le recalcul (D-427, l'ε d'avant, le commit) et garde le commit de la passe. Son
-contrôle : au ε d'avant, il réécrit chaque rapport octet pour octet. Puis `etude ecrire`
-des études, `site construire`, `site verifier`, `site publiable`, `node ui/check.mjs`.
-L'autre voie, que `etude ecrire` relise ε dans le fichier déclaré et refasse la dette
-à la volée, laisserait les rapports dire 0,20 sous des pages qui disent 0,043.
+**Le site.** `etude ecrire` des douze études publiées (neuf pages changent ; celles de
+Le Pen, Philippe et du PLFSS ne disent que le nouvel ε et que rien n'en dépend chez
+elles), `site construire`, `site verifier`, `site publiable`, `node ui/check.mjs` passent.
+Le schéma de l'API admet `recalcul`. `rejouer.Chemin` porte b_t de la réforme, que le
+rapport écrit (plomberie, aucun nombre ne change).
 
-### Ce qui reste à décider
+### θ_survie, non monotone : sa boîte se lit sur une grille
 
-* **θ_survie n'est plus monotone avec e₀ = 10,47 %.** Une survie des jeunes plus haute
-  monte le hasard des installées qui tient le stock stationnaire, et l'emporte à dix
-  ans : en 2035, pour une baisse d'IS de 10 Md€, le PIB de la productivité vaut 1,4804 à
-  θ = 0, 1,4775 à ½, 1,4697 à 1, un maximum à θ = 0,125 ; le stock, 17 121, 17 212 et
-  17 210, un maximum à 0,75. Deux cas de
-  `test_jumeau_entreprises.py::test_theta_zero_et_un_bornent_chaque_bloc` échouent ; ils
-  ne sont pas retouchés. Ils passent à 7,61 %. Des voies : h_o tenu à sa valeur du
-  centre (stationnaire au centre seul), une plage de survie plus étroite, ou une boîte de
-  θ_survie lue sur une grille plutôt qu'aux bornes.
-* Le recalcul des 45 rapports d'études, ci-dessus.
-* L'écart-type de la loi a priori de ε (celui de D-426).
+Avec e₀ = 10,47 %, θ_survie n'est plus monotone. Une survie des jeunes plus haute garde
+plus de jeunes sociétés et, par la stationnarité du stock au taux e₀, monte le hasard des
+installées ; le second effet l'emporte à dix ans : en 2035, pour une baisse d'IS de
+10 Md€, le PIB de la productivité vaut 1,4804 à θ = 0, 1,4775 à ½, 1,4697 à 1, un maximum
+à θ = 0,125 ; le stock, 17 121, 17 212 et 17 210, un maximum à 0,75 (à 7,61 %, monotone).
+Décision du propriétaire : une propriété du modèle, pas un défaut. Une ligne θ peut
+désormais déclarer sa non-monotonie, avec sa raison (`Ligne.non_monotone`) ; sa boîte se
+lit alors sur `thetas.GRILLE` (de 0 à 1 par huitièmes), celle des autres à leurs deux
+bouts (`thetas.points_de_boite`, `thetas.boite`). Seule la survie est déclarée.
+
+**Un changement de test motivé, pas un ajustement pour passer.**
+`test_theta_zero_et_un_bornent_chaque_bloc` supposait chaque ligne monotone ; il lit
+maintenant la déclaration. Une ligne monotone garde ses assertions telles quelles (les
+bouts bornent, l'effet croît) ; une ligne déclarée voit sa boîte de grille contenir chaque
+valeur de la grille, et ses deux bouts seuls ne pas la borner (la déclaration n'est pas
+de trop). Un test dit que seule la survie est déclarée. Aucune autre boîte θ du jumeau
+n'est lue : la page des curseurs n'en affiche pas, le rejeu de l'histoire et la
+comparaison lisent des θ, pas des boîtes.
 
 **Les tests.** Tenus et vus échouer sur le code d'avant : le calcul à la main du canal au
-nouveau centre ; le Δb 2035 de l'étude Attal a18 rejouée à l'ε déclaré, +0,2354 point
-(contre +0,2000 publié, redonné au bit à 0,20) ; la page d'un rapport à 0,20 cite la
-source de D-402 ; les lois a priori à la main (l'emploi, le coût du capital, les
-salaires, ε) ; ε borne les créations et les éteint à θ = 0, le coût du capital aussi ; à
-θ = 0, une baisse d'IS ne fait plus rien au volume du PIB structurel, et une hausse des
-cotisations finit par monter les rémunérations (b = 0) ; e₀, son accord avec le rapport
-de D-426 et h_o à la main. Avec `pytest -m "not lourd and not chrono" -n 2` sur
-`test_jumeau*.py`, `test_rejouer.py`, `test_creations_canal.py`, `test_etude*.py`,
-`test_parcours*.py`, `test_annonce.py`, `test_site.py`, `test_dependances.py`,
-`test_gardes_phase9.py`, `test_provenance.py`, `test_donnees.py`, `test_dette*.py` : 785
-verts, 4 sautés, **2 rouges** (θ_survie, ci-dessus). `test_jumeau_page.py`, seul : vert.
-`site construire` (seul `jumeau-paquet.json` change), `site verifier`, `site publiable`,
-`node ui/check.mjs`, `ruff check src tests scripts` passent. Ni `make impact` ni `make
-full`.
+nouveau centre ; l'étude Attal a18 publie +0,2354 point et redonne +0,2000 au ε d'avant ;
+chaque rapport d'étude porte le nouvel ε et son `recalcul`, se redonne par la réécriture
+(`tests/test_recalcul.py`, 49 tests, l'aller-retour compris) ; la page d'un rapport à
+0,20 cite la source de D-402 ; les lois a priori à la main (l'emploi, le coût du capital,
+les salaires, ε) ; ε borne les créations et les éteint à θ = 0, le coût du capital aussi ;
+à θ = 0, une baisse d'IS ne fait plus rien au volume du PIB structurel, et une hausse des
+cotisations finit par monter les rémunérations (b = 0) ; e₀, son accord avec le rapport de
+D-426 et h_o à la main ; la boîte de θ_survie sur la grille. Quatre tests de pages
+tenaient les nombres publiés d'avant et suivent les nouveaux : la dette d'Attal sans
+boucle, +20,41 → +20,44 points (`test_etude_programmes`, `test_parcours_comparer`,
+`test_parcours_cout`), et le Monte-Carlo de Lisnard, 88,15 % → 88,65 % des tirages
+(`test_parcours_verdict`) ; `recalcul.py` est rangé parmi les modules hors du banc de
+mutations, ses refus tenus par son test (`test_gardes_phase9`). Avec `pytest -m "not
+lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_rejouer.py`,
+`test_creations_canal.py`, `test_recalcul.py`, `test_etude*.py`, `test_parcours*.py`,
+`test_annonce.py`, `test_site.py`, `test_dependances.py`, `test_gardes_phase9.py`,
+`test_provenance.py`, `test_donnees.py`, `test_dette*.py` : 837 verts, 4 sautés.
+`test_jumeau_page.py` (Chromium), seul : vert. `ruff check src tests scripts` propre. Ni
+`make impact` ni `make full`.

@@ -100,8 +100,9 @@ def test_la_boite_et_le_verdict_s_expliquent_sur_la_ligne() -> None:
     pourquoi."""
     corps = verdict.page().corps
     assert "la boîte ne tire pas le multiplicateur au-delà de son coin" in corps
-    # 88,85 % à D-397 ; 88,15 % avec le canal des créations (D-403).
-    assert f"<strong>dépend</strong> : {pct(0.8815, 2)} des tirages" in corps
+    # 88,85 % à D-397 ; 88,15 % avec le canal des créations (D-403) ; 88,65 % à son
+    # élasticité de D-427.
+    assert f"<strong>dépend</strong> : {pct(0.8865, 2)} des tirages" in corps
 
 
 @needs_node
