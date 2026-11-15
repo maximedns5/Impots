@@ -33456,3 +33456,225 @@ au prochain `site construire` (la jonction).
 
 **Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible, aucun θ ; r1, r2
 et r3 gardent leur commit. D-437 n'a pas d'usage : rien n'exige un second temps.
+
+## D-438 — La jonction du but 24 et le quatrième rejeu préenregistré : « rejeu_histoire_r4 »
+
+**Ce qui est fait** (branche `claude/but24`, partie de 0ff12ec). Les trois volets joints,
+une fusion chacun : `claude/but24-chocs` (7b49c1a), `claude/but24-fines` (1c1159b),
+`claude/but24-creations` (2ee2001). La loi et la plage de b adoptées (9448658). Le cas
+`rejeu_histoire_r4` (`rejeu_histoire.CAS`, son rapport
+`reports/jumeau/rejeu_histoire_r4.json`) et ce préenregistrement. **Le jumeau n'a tourné
+sur aucune année notée contre le publié** depuis r3 : aucune erreur de r4 n'est calculée.
+Les rapports de D-420 (fe9434f), de D-423 (8119f63) et de D-429 (a399c47) restent ; le
+script refuse de les écraser (`rejeu_histoire.CAS_PRECEDENTS`).
+
+### La jonction
+
+* **`chocs`** : sans conflit. Trois séries au manifeste et à `KNOWN_SOURCES` ; aucun
+  exogène codé (D-433).
+* **`fines`** : deux conflits, résolus en union. `data/raw/MANIFEST.json` garde les trois
+  entrées de `chocs` puis les cinq de `fines` (244 + 3 + 5 = 252 fichiers) ;
+  `docs/DECISIONS.md` garde D-432 à D-435 dans l'ordre. `KNOWN_SOURCES` s'est fusionné
+  seul, les huit sources y sont. Le panneau, son script, son rapport et ses tests entrent.
+* **`creations`** : un conflit, `docs/DECISIONS.md`, D-436 après D-435. Les naissances ne
+  lisent plus la CVAE ni la C3S.
+* Les huit fichiers téléchargés par les volets sont reliés dans `data/raw` (hors git).
+* **Les numéros** : D-437 n'a pas d'usage, `creations` le dit (D-436) ; `chocs` n'a codé
+  aucun exogène et n'a rien à reprendre ici.
+* **Les tests après chaque fusion** (`-m "not lourd and not chrono" -n 1`) : après `fines`,
+  `test_provenance.py`, `test_donnees.py` (les fichiers qui lisent le manifeste et
+  `KNOWN_SOURCES`, touchés par `chocs` et `fines`), `test_jumeau_microdonnees_d434.py`,
+  `test_jumeau_microdonnees.py` : 63 verts ; après `creations`,
+  `test_jumeau_entreprises.py` : 27 verts.
+
+### La loi de b, décision du propriétaire du 15 novembre 2026
+
+La loi combinée de D-435, la méta-analyse de Nijkamp et Poot (0,4673 ± 0,4264) et le
+panneau W1 (0,19756 ± 0,09356, `microdonnees_d434.json`) par leurs précisions :
+**b = 0,20995 ± 0,09139**, soit 0,210 ± 0,091 ; **la plage (0 ; 0,20 ; 1)** au lieu de
+(0 ; 1 ; 1,2778) : θ = ½ sur l'estimation, Mésange 2017 en haut, Mésange 2010 sort.
+
+* **La traduction en θ.** D-435 écrivait μ = 0,105, s = 0,046 : c'est la loi sur
+  l'ancienne plage, où b = 0,21 tombe sous le centre (1), à la pente 2. Sur la plage
+  adoptée, la même loi du paramètre passe par deux pentes, 0,4 sous le centre et 1,6
+  au-dessus : **μ = 0,5062, s₋ = 0,2098, s₊ = 0,0571** (`a_priori.loi_depuis`, la règle
+  de D-424). La loi est celle que le propriétaire a décidée, sur le paramètre ; θ la suit.
+* **Où.** `menages.yaml` (`salaires.echelle_chomage`, que `a_priori.plages` et le bloc
+  lisent) ; `a_priori.yaml` (l'estimation combinée, ses deux composantes `panel` et
+  `meta_analyse`, la source de W1 : Urssaf et chômage localisé de l'Insee, D-434) ;
+  `thetas.py` (la ligne du registre : 0 ; 0,20 ; 1, et ses sources) ; la docstring de
+  `a_priori.py`. La ligne reste « non vérifiée » : le centre est une estimation du dépôt,
+  la borne basse une décision.
+* **Le test.** `test_la_loi_de_b_est_celle_de_d435_sur_la_plage_du_proprietaire`
+  (`test_jumeau_a_priori.py`) : la plage, la composante W1 contre le rapport de D-435,
+  la combinaison par les précisions, la loi sur θ à la main. **Vu échouer sur le code
+  d'avant** (la plage (0 ; 1 ; 1,2778)), comme
+  `test_le_facteur_des_salaires_vient_du_chomage_de_l_insee`, qui lit désormais la
+  composante de la méta-analyse.
+* **Deux tests ajustés, chacun avec sa raison écrite.**
+  `test_theta_zero_et_un_bornent_la_consommation` (`test_jumeau_menages.py`) mettait
+  tous les θ à ½, donc b = 1 ; à b = 0,20, la consommation à θ = 1 passe sous celle de
+  θ½ de 0,13 % au plus de la 3e à la 9e année. Mesuré : l'écart s'inverse quand b
+  descend (positif à b = 1 et 0,6, négatif à 0,2 et 0) ; la boucle des salaires sur le
+  chômage ne rend plus le surcroît de demande en revenu. Ce n'est pas une borne du bloc
+  mais de l'équilibre : le test garde son assertion et fixe b = 1, sous lequel il a été
+  écrit ; la propriété perdue est dite ici. Dans
+  `test_les_lois_du_registre_entrent_dans_l_estimation` (`test_jumeau_a_priori.py`),
+  sans données, l'estimation s'arrête à 3e-6 du mode de la loi de b (le pas de la
+  jacobienne, 0,02, enjambe un mode aux deux écarts de 0,21 et 0,057) ; la précision
+  reste 1e-6 pour une loi symétrique et croît avec l'écart des deux demi-écarts.
+* **Ce que ce changement déplace d'autre.** La page « Le jumeau » :
+  `site/jumeau-paquet.json` porte `menages.yaml` et l'ancienne plage ; le curseur de b
+  et les sorties du mode structurel changent au prochain `site construire`, comme D-436
+  pour les créations.
+  Les rapports qui portent la loi ou la plage : `rejeu_histoire_r3.json` (la loi de
+  D-424), `microdonnees_d434.json` (la plage et la loi de D-424, et θ = 0,099) ; ils
+  gardent leur commit. Les études ne lisent pas b : le canal prédictif n'a pas de
+  courbe des salaires ; aucun rapport d'étude ne change. Dans le jumeau, θ½ veut dire
+  b = 0,20 et non plus 1 : tout ce qui est calculé « à θ½ » change (le test à θ½ du
+  rejeu, la page, le mode structurel des études s'il tournait).
+
+### Ce qui change depuis r3 (D-428, D-429)
+
+* **La loi et la plage de b**, ci-dessus.
+* **Les naissances sans la CVAE ni la C3S** (D-436 ; le propriétaire accepte l'écart à
+  D-401) : sur l'estimation, seule la C3S de 2015 passait par elles (D-436 : REQM des
+  créations 6,555 → 6,525 aux θ de r3) ; au test, la CVAE de 2023 et de 2024.
+* **Aucun exogène nouveau** (D-433) ; **aucune cible nouvelle** : le propriétaire garde
+  D-417 et refuse une cible d'investissement.
+
+**Ce qui ne change pas** : les fenêtres (estimation 2010 → 2014 et 2014 → 2017, test
+2017 → 2019 et 2021 → 2024, 2020 et 2021 exclus), les douze cibles, leurs métriques et
+leurs tolérances, les entrées (les chocs budgétaires observés, la demande mondiale, le
+choix (b) de D-421), les sept θ estimés, les lois de D-424 des six autres, le poids de
+l'a priori, le critère, les deux naïfs et la règle « le jumeau bat ».
+
+**Le contrôle.** Le naïf et le naïf mécanique ne lisent ni b ni les naissances : **leurs
+REQM redonnent celles de r3 à 1e-9 près** (D-420 et D-423), sur l'estimation et le
+test, avec 2023. Si l'une bouge, l'écart est dit et rien n'est réglé.
+
+### 2023, noté à part
+
+D-436 a lu l'erreur des créations de 2023 et la dit après correctif (+7,432, celle du
+naïf) ; 2023 n'est plus aveugle. **Le test se note deux fois** : avec 2023, le test de
+D-417, la note officielle ; **sans 2023** (`rejeu_histoire.SCHEMA_SANS_2023`) : la même
+fenêtre 2021 → 2024, rejouée de même, 2023 non noté, pour les douze cibles, le jumeau et
+les deux naïfs, aux θ estimés (rapport : `notes.test_sans_2023`). Le test à θ½ se note
+avec 2023 seulement. Une victoire ou une tenue qui n'existe qu'avec 2023 est dite.
+
+### Le critère du but (D-431), comment r4 le lit
+
+* **Un θ identifié, son écart-type sous la moitié du s de sa loi de D-424.** Lu sur
+  l'estimation de r4 : pour chaque θ estimé, σ, l'écart-type approché de r4, contre
+  s / 2, s l'écart de **la loi de D-424 de ce θ, sur la plage du calcul**, du côté où
+  tombe θ estimé (`critere_but` du rapport). Pour six θ, c'est la loi de r3. **Pour b**,
+  la loi de D-424 est la méta-analyse seule (0,4673 ± 0,4264), sur la plage
+  (0 ; 0,20 ; 1) : μ = 0,667, s₋ = 0,565, s₊ = 0,266 ; le seuil, sous μ, 0,282. La loi
+  du calcul (D-435) porte le panneau W1 : **b compte comme identifié par les données
+  fines**, contre la loi de D-424, si σ de r4 passe sous ce seuil ; l'histoire n'y
+  ajoute presque rien. D'après D-435, en unités du paramètre : 0,094 pour W1 seul, 0,091
+  combiné, contre 0,4264 / 2 = 0,213 ; c'est la même lecture, dite sans la plage.
+  **Contre sa propre loi** (D-435), la règle de D-428 (`Estimation.identifies`) dit si
+  l'histoire identifie b ; ce n'est pas le critère, et c'est dit à part.
+* **La dynamique bat le naïf mécanique sur plus de 3 cibles hors de l'estimation** : le
+  « bat M » du test aux θ estimés, **avec 2023 et sans 2023, les deux au-dessus de 3**.
+  Un gain qui ne tiendrait que par l'année vue ne compte pas ; un gain qui ne tiendrait
+  que sans elle non plus.
+* **Le but est atteint si les deux tiennent** (`critere_but.atteint`) ; sinon, il ne
+  l'est pas, et ce qui manque est dit.
+
+### L'aveugle, percé
+
+Le pronostic est écrit en connaissant les erreurs année par année de r3 (D-429, son
+rapport), D-436 (l'erreur de 2023 après correctif) et D-435, sans qu'aucune erreur de r4
+n'ait été calculée. Ce que r3 donne d'avance, à ses θ, sans 2023 (la projection :
+les erreurs de r3 sur 2018, 2019, 2022 et 2024) : le jumeau tient 9 cibles, le naïf 4, le
+naïf mécanique 7 ; le jumeau bat N sur 11 et M sur 6 (le PIB, l'emploi de 0,004, les
+deux échanges, D61, les créations). Les créations de r4, de la même projection : 2023 à
++7,432 (D-436), 2024 entre −2,730 (r3) et −2,868 (le naïf : la CVAE de 2024 sort aussi),
+les autres années de r3 : **REQM de 4,255 à 4,273 avec 2023, contre 4,310 pour les deux
+naïfs ; de 2,970 à 3,002 sans 2023, contre 3,067**.
+
+### Le pronostic
+
+**L'estimation.** Les θ (départ ½) : le profil de la consommation dans [0,35 ; 0,45] ;
+l'emploi dans [0,24 ; 0,31] ; **b dans [0,44 ; 0,52]** (le paramètre de 0,18 à 0,21 :
+r3 tirait b sous le mode de sa loi de 0,2 s) ; le coût du capital dans [0,29 ; 0,36] ;
+les exportations dans [0,48 ; 0,53], les importations dans [0,495 ; 0,505],
+l'accélérateur dans [0,47 ; 0,52]. Chaque σ à moins de 3 % du s de sa loi au point,
+sauf b : σ de b entre 0,057 et 0,21 (selon le côté du mode où tombe θ et que le pas de
+la jacobienne enjambe). **Aucun θ identifié par l'histoire** (la règle de D-428). J au
+départ entre 86 et 92 (90,99 en r3 ; le terme de l'a priori de b à ½ passe de 1,6 à
+presque 0), J final entre 82 et 88, de 92 à 98 % de J au départ.
+
+**Le test, aux θ estimés, avec 2023** (REQM en points ; r3 celle de D-429 ; N et M
+attendus identiques à r3) :
+
+| cible | tol. | r3 | jumeau r4 | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,940 | [0,90 ; 1,00] | 0,831 | 0,831 | oui | non | non |
+| emploi | 0,8 | 0,894 | [0,86 ; 0,96] | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,759 | [0,72 ; 0,86] | 0,627 | 0,627 | oui, de peu | non | non |
+| exportations | 4,0 | 3,524 | [3,45 ; 3,62] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,20 ; 3,35] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,54 ; 0,59] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,364 | [0,34 ; 0,39] | 0,424 | 0,349 | oui | oui | non |
+| D61 | 0,4 | 0,227 | [0,20 ; 0,26] | 0,983 | 0,283 | oui | oui | oui |
+| recettes | 0,8 | 1,076 | [1,03 ; 1,12] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,643 | [0,60 ; 0,69] | 1,361 | 0,627 | oui | oui | non |
+| dette | 3,0 | 2,927 | [2,70 ; 3,20] | 4,393 | 2,359 | oui, de peu | oui | non |
+| créations | 10 | 4,481 | [4,24 ; 4,30] | 4,310 | 4,310 | oui | oui | oui |
+
+Soit **9 cibles tenues par le jumeau** (de 8 à 10), 6 par le naïf et 9 par le naïf
+mécanique (exactement) ; **le naïf battu sur 9** (de 8 à 10) ; **le naïf mécanique sur
+4** (de 3 à 5 : les deux échanges, D61 et, nouvelles, les créations, de 0,01 à 0,07).
+
+**Le test sans 2023** (N et M, les REQM de r3 sans 2023, attendues exactement) :
+
+| cible | jumeau r4 | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|
+| PIB en volume | [0,75 ; 0,87] | 0,904 | 0,904 | oui | oui | oui |
+| emploi | [0,90 ; 0,99] | 0,931 | 0,931 | non | non, de peu | non, de peu |
+| chômage | [0,74 ; 0,89] | 0,648 | 0,648 | oui, de peu | non | non |
+| exportations | [3,45 ; 3,60] | 4,281 | 4,281 | oui | oui | oui |
+| importations | [3,58 ; 3,73] | 4,156 | 4,156 | oui | oui | oui |
+| D2 | [0,49 ; 0,54] | 0,589 | 0,495 | non | oui | non |
+| D5 | [0,38 ; 0,42] | 0,447 | 0,387 | oui | oui | non |
+| D61 | [0,16 ; 0,21] | 1,087 | 0,273 | oui | oui | oui |
+| recettes | [0,92 ; 1,01] | 1,198 | 0,856 | non | oui | non |
+| solde | [0,68 ; 0,76] | 1,316 | 0,688 | oui | oui | non |
+| dette | [2,50 ; 2,95] | 4,143 | 2,208 | oui | oui | non |
+| créations | [2,95 ; 3,03] | 3,067 | 3,067 | oui | oui | oui |
+
+Soit 9 tenues (de 8 à 10), N 4 et M 7 (exactement), **N battu sur 10** (de 10 à 11),
+**M sur 5** (de 4 à 6) : l'emploi, que r3 battait de 0,004 sans 2023, le perd avec un b
+plus faible (le chômage s'y résorbe moins vite).
+
+**Le test à θ½** (b = 0,20 désormais) : les mêmes tenues et les mêmes victoires qu'aux
+θ estimés, chaque REQM à moins de 5 % ; l'emploi et le chômage les plus exposés.
+
+**Le critère.** **b identifié** contre sa loi de D-424 (σ ≤ 0,21 contre un seuil de
+0,282 ; par les données fines, l'histoire n'y ajoutant presque rien) ; les six autres
+non. **M battu sur 4 avec 2023, 5 sans** : **le critère atteint, deux chances sur
+trois** ; la quatrième victoire avec 2023, celle des créations, tient à quelques
+centièmes, et vient du correctif de D-436, motivé par la loi, non par 2023 (sans 2023,
+les créations battent M aussi). Si elle manque, le critère n'est pas atteint : r4
+n'aurait que les trois victoires de r3.
+
+Ce que ce pronostic dit d'avance : **r4 n'apprend rien de plus de l'histoire** ; ce qui
+change sa note vient de ce que la jonction met dans le jumeau (b des données fines, les
+naissances relues), non du rejeu.
+
+### Ce qui tourne ensuite
+
+`PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py`, détaché, sur le commit poussé
+qui porte cette entrée, vers `reports/jumeau/rejeu_histoire_r4.json`. Le résultat va
+dans D-439, contre ce pronostic, avec r1 à r4 côte à côte ; aucune tolérance, fenêtre,
+cible, entrée, loi ni règle de lecture du critère ne change après le calcul.
+
+**Les tests.** La loi de b change un nombre : son test, vu échouer sur le code d'avant
+(ci-dessus). Le cas, le schéma sans 2023 et la lecture du critère sont de la plomberie
+du rapport, sans test dédié (D-335). `pytest -m "not lourd and not chrono" -n 1
+tests/test_jumeau*.py`, sur l'arbre de cette entrée : 276 verts, en 2 min 54 s ; `ruff
+check` propre sur `src/impots/jumeau`, le script et les deux tests touchés. Ni
+`make impact`, ni les lourds, ni `make full`.
