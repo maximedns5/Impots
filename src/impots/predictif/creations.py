@@ -10,9 +10,10 @@ every parameter: `docs/diagnostics/creations_entreprises.md`; the values:
 THE PATH, year t, in shares of the reference's GDP Y_t:
 
 1. ΔP_t, the change of the levies on firms and capital the pass priced, euros, RECEIPTS
-   POSITIVE (a rise is positive): the firm layer's IS, its social contribution, the CEBGE,
-   the CVAE, the C3S; the households' PFU and social levies on capital; and the employer
-   contributions actually paid, net of the allègements (`COTISATIONS_EMPLOYEURS`).
+   POSITIVE (a rise is positive): the firm layer's IS, its social contribution, the CEBGE;
+   the households' PFU and social levies on capital; and the employer contributions
+   actually paid, net of the allègements (`COTISATIONS_EMPLOYEURS`). Not the CVAE nor the
+   C3S (`PRODUCTION`, below).
 2. The apparent rate, Δτ_t = 100 ΔP_t / (b Y_t), points, b the profit base as a share of
    GDP — not the authors' TMEE, which the project cannot rebuild (D-247).
 3. The entry rate, Δe_t = −ε Δτ_t, points, ε the slope of Da Rin, Di Giacomo and Sembenelli.
@@ -25,8 +26,17 @@ THE EMPLOYER CONTRIBUTIONS, A DOUBLE COUNT SAID. The owner decided on 13 Novembe
 that they move the channel, like the IS. They are also in Mésange's loop, whose
 « cotisations employeurs » variant already carries the activity's response to the labour
 cost: the channel counts them a second time, by the owner's choice, and every page says so
-(`DOUBLE_COMPTE`). The production taxes (CVAE, C3S) are read euro for euro like the IS,
-and the PFU and the social levies on capital stay in: conventions, said.
+(`DOUBLE_COMPTE`). The PFU and the social levies on capital stay in: conventions, said.
+
+THE PRODUCTION TAXES ARE NOT READ (owner's decision of 15 November 2026, D-440, after
+D-436 in the twin). D-401 read the CVAE and the C3S euro for euro like the IS. But ε is
+measured on a tax a company that enters pays, and the law makes neither paid by one: the
+CVAE is due by who carries on the activity on 1 January of the year (CGI, art. 1586
+octies, I), nothing the year of the creation, then at a zero rate under 500 000 € of
+turnover (art. 1586 quater, I, a); the C3S only above 760 000 € of turnover, after an
+abatement of 19 M€ (CSS, art. L. 651-3). The marginal company of the channel makes about
+150 k€ of turnover at maturity (D-436). A reform of these taxes still moves the channel
+through what it induces on the IS (the CVAE is deductible from its base).
 
 READS INSTRUMENTS ONLY. Neither a candidate's name nor the direction of a measure: the
 effect is linear in ΔP, so a rise and a cut of the same size give opposite effects of the
@@ -76,12 +86,32 @@ DOUBLE_COMPTE = (
     "la boucle macro de Mésange, dont la variante « cotisations employeurs » porte déjà la "
     "réponse de l'activité au coût du travail. Ce double compte est un choix du "
     "propriétaire (13 novembre 2026), dit ici plutôt que caché.")
+#: The production taxes the channel no longer reads (D-440): the law makes neither paid by
+#: a company that enters (module docstring).
+PRODUCTION = ("cvae", "c3s")
 #: The conventions of the other instruments, said beside the list.
 CONVENTIONS_INSTRUMENTS = (
+    "La CVAE et la C3S ne sont pas lues (D-440, décision du propriétaire) : la loi ne les "
+    "fait pas payer à une société qui entre, la CVAE étant due par qui exerce l'activité "
+    "au premier janvier de l'année, puis à un taux nul sous un seuil de chiffre "
+    "d'affaires, la C3S au-delà d'un seuil seulement, que la société nouvelle du canal "
+    "n'atteint pas (D-436) ; ce qu'une réforme de ces impôts induit sur l'IS reste lu. "
+    "Le PFU et les "
+    "prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, "
+    "comme le taux virtuel de l'IPP qui joint l'IS et le PFU.")
+#: Those of a report that still reads the production taxes (D-401, before D-440).
+CONVENTIONS_INSTRUMENTS_D401 = (
     "Les impôts de production (CVAE, C3S) sont lus euro pour euro comme l'IS, faute "
     "d'une estimation publiée de la réponse des créations à ces impôts ; le PFU et les "
     "prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, "
     "comme le taux virtuel de l'IPP qui joint l'IS et le PFU.")
+
+
+def conventions_instruments(names: Sequence[str]) -> str:
+    """What a page says beside the instruments a report carries: a report that still
+    lists the production taxes says the convention of D-401, not today's."""
+    return (CONVENTIONS_INSTRUMENTS_D401 if set(PRODUCTION) & set(names)
+            else CONVENTIONS_INSTRUMENTS)
 #: The source of the slope, as a page names it beside its centre and range: the owner's
 #: centre of 14 November 2026 (D-427), Da Rin et al.'s within estimate.
 SOURCE_ELASTICITE = (

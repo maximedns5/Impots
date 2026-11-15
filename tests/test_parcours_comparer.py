@@ -25,9 +25,9 @@ def test_attal_porte_les_nombres_de_ses_rapports() -> None:
     # But 21 (D-397) : les pensions alimentaires s'ajoutent ; 65,69 Md€ et 20,28 points
     # sur la série du but 19, deux mesures chiffrées sur vingt paramétrées. But 22
     # (D-403) : le canal des créations d'entreprises entre dans la dette, +20,45 → +20,41 ;
-    # à l'élasticité de D-427, +20,44.
+    # à l'élasticité de D-427, +20,44 ; sans la CVAE dans le canal (D-440), +20,46.
     assert comparer.md(c["cout"]) == "+66,18 Md€"
-    assert comparer.pt(c["sans_boucle"]) == "+20,44 pt"
+    assert comparer.pt(c["sans_boucle"]) == "+20,46 pt"
     assert (c["chiffrees"], c["parametrees"]) == (3, 21)
     # Ce que la boucle lit et ce qu'elle ne lit pas refont le coût.
     assert c["lu"] + c["non_lu"] == pytest.approx(c["cout"])
@@ -47,7 +47,7 @@ def test_les_huit_sont_la(page: parcours.Page) -> None:
         assert f'value="{nom}"' not in page.corps
     assert ("non refaite au but 22 (D-403)" in page.corps) == bool(absentes)
     assert "presidentielle_dupont_aignan" not in page.corps
-    assert "+66,18 Md€" in page.corps and "+20,44 pt" in page.corps
+    assert "+66,18 Md€" in page.corps and "+20,46 pt" in page.corps
 
 
 def test_le_verdict_n_est_pas_montre(page: parcours.Page) -> None:
