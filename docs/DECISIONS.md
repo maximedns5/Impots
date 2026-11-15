@@ -32945,3 +32945,138 @@ après le premier calcul ; seul un correctif de normalisation ou de plomberie, d
 du capital est la réponse du bloc, et refuse une année hors de ses chocs ; le critère
 lit le côté de la loi ; le chômage localisé et l'Urssaf se lisent comme publiés. Avec
 `test_jumeau_microdonnees.py` : 16 verts. `ruff` propre sur les fichiers touchés.
+
+## D-435 — Les données fines estimées : b identifié et retenu, l'accélérateur hors plage
+
+**Ce qui a tourné.** `scripts/jumeau_microdonnees_d434.py`, sur c7cdb86 (D-434, poussé
+avant), détaché, vers `reports/jumeau/microdonnees_d434.json` : coefficients,
+écarts-types, tailles, la variation des régresseurs, aucune donnée individuelle. Un seul
+calcul, qui ne s'est pas arrêté ; aucune spécification, aucun seuil, aucune dose n'a
+changé. Aucune cellule ni branche retirée.
+
+### Les coefficients
+
+L'écart-type est le plus grand de CR1 et du bootstrap sans contrainte (D-425 ; CR1
+partout, le bootstrap de 5 à 10 % plus petit) ; p la p-valeur du bootstrap sauvage
+restreint (Rademacher, 96 départements ou 29 branches), 9 999 tirages.
+
+| spécification | coefficient | écart-type | p (WCR) |
+|---|---|---|---|
+| E2 emploi, `travail` | +1,459 | 2,772 | 0,58 |
+| E2_avance : t / t + 2 | −2,004 / +4,069 | 2,490 / 1,840 | 0,40 / 0,02 |
+| E2_placebo (t + 8, 2003-2009) | +1,967 | 1,748 | 0,21 |
+| E2_tendances | +0,291 | 1,572 | 0,84 |
+| E2_2019 | +2,036 | 2,282 | 0,34 |
+| E2_sans_secteur_annee | −7,927 | 0,855 | 0,00 |
+| W1 salaires, chômage (par point) | −0,00356 | 0,00168 | 0,04 |
+| W1_avance : t / t + 2 | −0,00250 / +0,00030 | 0,00151 / 0,00155 | 0,10 / 0,85 |
+| W1_retard (t − 1) | −0,00378 | 0,00163 | 0,02 |
+| W1_tendances | −0,00139 | 0,00175 | 0,42 |
+| W1_region_annee | −0,00200 | 0,00127 | 0,10 |
+| W1_2019 | −0,00117 | 0,00165 | 0,49 |
+| K1 investissement, `cout_capital` | −0,21 | 4,09 | 0,99 |
+| K1_avance : t / t + 2 | +20,6 / −11,7 | 16,5 / 12,7 | 0,26 / 0,49 |
+| K1_placebo (t + 14, 2003-2011) | +2,56 | 1,80 | 0,09 |
+| K1_tendances | −2,11 | 5,01 | 0,97 |
+| K1_2019 | +17,1 | 9,6 | 0,04 |
+| K2 accélérateur, Δ log VA en t | +0,0523 | 0,0820 | 0,52 |
+| K2_avance : t / t + 2 | +0,0536 / +0,3206 | 0,1062 / 0,0850 | 0,64 / 0,10 |
+| K2_2025 | +0,0485 | 0,0965 | 0,67 |
+| K2_sans_retards | +0,0480 | 0,0878 | 0,60 |
+
+n = 28 224 (E2, W1 ; 25 536 avec l'avance, 22 848 jusqu'en 2019, 9 408 au placebo), 609
+(K1), 493 (K2). La p-valeur de l'avance de K2 est 0,0952, sous le seuil.
+
+### Sur l'échelle des θ, contre le critère
+
+* **`jumeau_salaires_chomage` (b ; 0 ; 1 ; 1,2778)** : b = 0,198 ± 0,094, θ = 0,099 ±
+  0,047 ; le seuil, la moitié de s₋ = 0,213 de la loi de D-424, 0,107. **Identifié**
+  (σ_θ = 0,047), du signe attendu, l'avance non rejetée (p = 0,85) : **retenu**. La
+  semi-élasticité, −0,36 % de salaire par tête par point de chômage, est le cinquième
+  de celle de Mésange (−1,8 %) et à 8,6 écarts-types sous elle ; à 2,9 écarts-types sous
+  la courbe de Nijkamp et Poot ramenée à l'échelle (0,467, D-424), dont elle est dans la
+  dispersion entre études (0,43). **Elle n'est pas robuste** : avec une tendance par
+  cellule, b = 0,077 ± 0,097 ; avec les effets région×année, 0,111 ± 0,071 ; jusqu'en
+  2019, 0,065 ± 0,091 ; au chômage de t − 1, 0,210 ± 0,091 ; avec l'avance, 0,139 ±
+  0,084. Toutes sous 0,25, aucune au-dessus de 0,33 à deux écarts-types : le signe et
+  l'ordre (petit) tiennent, le niveau moins. Le salaire par tête porte un biais de
+  composition (les bas salaires sortent les premiers quand le chômage monte), qui tire γ
+  vers zéro : b est plutôt un minorant.
+* **`investissement_accelerateur`** : la réponse de l'année, 0,052 ± 0,082, contre 1,7945
+  au centre du bloc et 1,2256 à θ = 0 : θ = −1,03 ± 0,072, le seuil 0,128. **Identifié**
+  au sens du critère, **non retenu** : l'avance est rejetée (p = 0,095, son coefficient
+  0,32 ± 0,085, six fois celui de l'année). La valeur ajoutée d'une branche ne précède
+  pas son investissement : elle le suit. Ce que cela dit : entre branches, à effets
+  d'année donnés, l'investissement ne répond pas dans l'année à la valeur ajoutée propre
+  de la branche ; l'accélérateur de Mésange est celui de la demande agrégée, que les
+  effets d'année absorbent ici. La grandeur n'est pas celle du bloc (la règle (1) de
+  D-424) ; elle ne dit rien contre β₀ = 1,19.
+* **`jumeau_emploi_elasticite_cout` (η)** : η = −1,46 ± 2,77, θ = −2,07 ± 3,75. **Non
+  identifié** ; l'avance est rejetée (p = 0,02). Sans les effets secteur×année, η = 7,9 ±
+  0,9, absurde en niveau (la variation entre secteurs, comme E1). Aucune proposition.
+* **`investissement_cout_capital` (ε_K)** : ε_K = −0,21 ± 4,09, θ = −0,24 ± 4,65. **Non
+  identifié** ; jusqu'en 2019, +17 ± 10 : la dose de 2017 à 2019 est minuscule (un
+  écart-type de 0,0009 après les effets) ; le placebo est rejeté (p = 0,094). Aucune
+  proposition.
+
+### Les lois proposées au propriétaire (rien n'est adopté)
+
+* **b, proposé** : la loi de W1 dans `a_priori.yaml` à la place de celle de Nijkamp et
+  Poot, l'estimation 0,198, l'écart-type 0,094 : sur θ, μ = 0,099, s = 0,047 (au lieu de
+  0,234 ; 0,213). Ou, si la règle (2) de D-424 (la méta-analyse avant l'estimation
+  française) doit tenir, les deux combinées par leurs précisions : 0,210 ± 0,091, μ =
+  0,105, s = 0,046 ; la loi est la même à 0,006 près. **La plage** : le centre (Mésange,
+  b = 1) est à 8,6 écarts-types de l'estimation ; une plage (0 ; 0,20 ; 1) mettrait θ = ½
+  sur elle et garderait Mésange en haut. Elle change les curseurs et les études, qui
+  lisent la plage : décision du propriétaire, comme les plages de D-427.
+* **L'accélérateur, proposé sans recommandation de l'adopter** : la borne basse de β₀
+  portée à 0,155 (la valeur où le bloc redonne la réponse estimée) ; recommandé :
+  ne rien changer, la grandeur n'étant pas celle du bloc et l'avance rejetée ; D-434 en
+  `comparaison` seulement.
+
+### Ce que b changerait dans le jumeau
+
+Le bloc `salaires` fait ŵ = b Σ Δu S_u(h)/100 : à b = 0,2 au lieu de 1, le salaire répond
+cinq fois moins au chômage. Une mesure qui crée du chômage (une hausse du coût du
+travail, une baisse de la dépense) ne le résorbe presque plus par la modération des
+salaires : l'emploi revient plus lentement à son niveau, la boucle prix-salaires désinfle
+moins, les recettes assises sur les salaires baissent moins à court terme et le chômage
+pèse plus longtemps. Une mesure qui le réduit (une baisse de cotisations) laisse plus
+de son effet en emplois, moins en hausses de salaires. Le signe des effets ne change
+pas ; leur persistance, oui. **Rien n'a tourné pour le chiffrer** : ni le rejeu de
+l'histoire (la jonction et le quatrième rejeu, D-438 et D-439), ni une étude. Si le
+propriétaire adopte la loi, le quatrième rejeu la lira ; b est l'un des sept θ estimés
+de D-417.
+
+### Contre le pronostic de D-434
+
+| | pronostic | résultat |
+|---|---|---|
+| E2 : η, écart-type | −0,5 à +2 ; 0,3 à 1,5 | −1,46 (hors) ; 2,77 (hors) |
+| E2 : identifié | non (19 sur 20) | non |
+| W1 : γ, écart-type | −0,012 à +0,002 ; 0,0015 à 0,005 | −0,0036 ; 0,0017 |
+| W1 : identifié, retenu | une sur deux ; deux sur cinq | oui ; oui |
+| W1 : avance rejetée | une fois sur trois | non |
+| K1 : ε_K, écart-type | −1 à +2 ; 0,4 à 1,5 | −0,21 ; 4,09 (hors) |
+| K1 : identifié | non (19 sur 20) | non |
+| K2 : réponse, écart-type | 0,3 à 1,2 ; 0,10 à 0,25 | 0,052 (hors) ; 0,082 (hors) |
+| K2 : identifié ; avance rejetée | deux sur cinq ; une sur deux | oui ; oui |
+| θ identifiés, retenus | un sur quatre ; au plus un | deux (b, l'accélérateur) ; un (b) |
+
+Le pronostic sous-estime l'imprécision des doses (E2 et K1, deux à trois fois) et
+surestime l'accélérateur entre branches (atténué presque à zéro, non à 0,3).
+
+### Ce qui ne change pas, ce qui reste
+
+Aucune plage, aucune loi, aucun θ, aucun bloc ne change : `thetas.py`, `a_priori.py` et
+`a_priori.yaml` sont intacts ; les propositions attendent le propriétaire. Le critère du
+but (au moins un θ identifié, son écart-type sous la moitié de celui de sa loi) est rempli
+par b sur ce volet ; il reste au quatrième rejeu de dire si la dynamique bat le naïf.
+β (les défaillances), η et ε_K restent non identifiés par les données publiées à la
+maille du département, du secteur et de la branche ; le suramortissement n'est pas
+estimé. Les rapports de D-426 gardent leur commit.
+
+**Les tests.** `pytest -m "not lourd and not chrono" -n 1` sur
+`tests/test_jumeau_microdonnees_d434.py` et `tests/test_jumeau_microdonnees.py` : 16
+verts. Aucun nombre du jumeau ne change : rien d'autre n'est relancé. Ni `make impact`
+ni `make full`.

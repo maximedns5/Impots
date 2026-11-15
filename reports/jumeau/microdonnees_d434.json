@@ -1,0 +1,1223 @@
+{
+ "cas": "microdonnees_d434",
+ "commit": "c7cdb8618c92702af91f2fa89c00e416e58f20b4",
+ "decision": "D-434",
+ "constantes": {
+  "g": 0.763022118766919,
+  "kappa": 0.6681305588563394,
+  "ratio_capital_ccf": 11.048107198054849,
+  "taux_usage": 0.15384615384615385,
+  "semi_elasticite_mesange": 0.018
+ },
+ "specifications": {
+  "E2": {
+   "theta": "emploi",
+   "n": 28224,
+   "grappes": 96,
+   "k_fe": 3652,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "dep_annee",
+    "sect_annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "travail": {
+     "coef": 1.4591992097322046,
+     "se_cr1": 2.7722911846662477,
+     "se_bootstrap": 2.5967643469902,
+     "se": 2.7722911846662477,
+     "p_cr1": 0.5998708369245425,
+     "p_wcr": 0.5760576057605761
+    }
+   }
+  },
+  "E2_avance": {
+   "theta": "emploi",
+   "n": 25536,
+   "grappes": 96,
+   "k_fe": 3432,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "dep_annee",
+    "sect_annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "travail": {
+     "coef": -2.004372859089926,
+     "se_cr1": 2.4900300226034227,
+     "se_bootstrap": 2.2996788551825325,
+     "se": 2.4900300226034227,
+     "p_cr1": 0.4228531899799213,
+     "p_wcr": 0.39573957395739573
+    },
+    "travail_t+2": {
+     "coef": 4.069200974764819,
+     "se_cr1": 1.840465647825284,
+     "se_bootstrap": 1.7151336266583572,
+     "se": 1.840465647825284,
+     "p_cr1": 0.029437822314566722,
+     "p_wcr": 0.0187018701870187
+    }
+   }
+  },
+  "E2_placebo": {
+   "theta": "emploi",
+   "n": 9408,
+   "grappes": 96,
+   "k_fe": 2112,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "dep_annee",
+    "sect_annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "travail_t+8": {
+     "coef": 1.9668495442123675,
+     "se_cr1": 1.7476665232383812,
+     "se_bootstrap": 1.5342616313940056,
+     "se": 1.7476665232383812,
+     "p_cr1": 0.2632485823927796,
+     "p_wcr": 0.2144214421442144
+    }
+   }
+  },
+  "E2_tendances": {
+   "theta": "emploi",
+   "n": 28224,
+   "grappes": 96,
+   "k_fe": 4996,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "dep_annee",
+    "sect_annee"
+   ],
+   "tendances": true,
+   "coefficients": {
+    "travail": {
+     "coef": 0.29068698204932364,
+     "se_cr1": 1.5717545969238849,
+     "se_bootstrap": 1.4211510908165703,
+     "se": 1.5717545969238849,
+     "p_cr1": 0.8536670199965319,
+     "p_wcr": 0.8351835183518351
+    }
+   }
+  },
+  "E2_2019": {
+   "theta": "emploi",
+   "n": 22848,
+   "grappes": 96,
+   "k_fe": 3212,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "dep_annee",
+    "sect_annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "travail": {
+     "coef": 2.036089790928773,
+     "se_cr1": 2.2820712197313955,
+     "se_bootstrap": 2.1298279066472268,
+     "se": 2.2820712197313955,
+     "p_cr1": 0.3745340560275007,
+     "p_wcr": 0.34443444344434443
+    }
+   }
+  },
+  "E2_sans_secteur_annee": {
+   "theta": "emploi",
+   "n": 28224,
+   "grappes": 96,
+   "k_fe": 3379,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "dep_annee",
+    "annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "travail": {
+     "coef": -7.926742173247127,
+     "se_cr1": 0.8554243148176632,
+     "se_bootstrap": 0.806359000466912,
+     "se": 0.8554243148176632,
+     "p_cr1": 6.111985934871221e-15,
+     "p_wcr": 0.0
+    }
+   }
+  },
+  "W1": {
+   "theta": "salaires",
+   "n": 28224,
+   "grappes": 96,
+   "k_fe": 1624,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "sect_annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "chomage": {
+     "coef": -0.0035560376847880346,
+     "se_cr1": 0.0016841132344901795,
+     "se_bootstrap": 0.0016259313512148065,
+     "se": 0.0016841132344901795,
+     "p_cr1": 0.037352432283513086,
+     "p_wcr": 0.03660366036603661
+    }
+   }
+  },
+  "W1_avance": {
+   "theta": "salaires",
+   "n": 25536,
+   "grappes": 96,
+   "k_fe": 1596,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "sect_annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "chomage": {
+     "coef": -0.0024968907655285527,
+     "se_cr1": 0.0015086501008937366,
+     "se_bootstrap": 0.001459863634649379,
+     "se": 0.0015086501008937366,
+     "p_cr1": 0.10121456974808996,
+     "p_wcr": 0.10161016101610161
+    },
+    "chomage_t+2": {
+     "coef": 0.00030131042075907813,
+     "se_cr1": 0.0015498287862278054,
+     "se_bootstrap": 0.0015067748155188842,
+     "se": 0.0015498287862278054,
+     "p_cr1": 0.8462658570421194,
+     "p_wcr": 0.8515851585158516
+    }
+   }
+  },
+  "W1_retard": {
+   "theta": "salaires",
+   "n": 28224,
+   "grappes": 96,
+   "k_fe": 1624,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "sect_annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "chomage_t-1": {
+     "coef": -0.003780999532057197,
+     "se_cr1": 0.001632131477000879,
+     "se_bootstrap": 0.001579754352988297,
+     "se": 0.001632131477000879,
+     "p_cr1": 0.022674619671907013,
+     "p_wcr": 0.021702170217021702
+    }
+   }
+  },
+  "W1_tendances": {
+   "theta": "salaires",
+   "n": 28224,
+   "grappes": 96,
+   "k_fe": 2968,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "sect_annee"
+   ],
+   "tendances": true,
+   "coefficients": {
+    "chomage": {
+     "coef": -0.001393558471625424,
+     "se_cr1": 0.0017449393802293673,
+     "se_bootstrap": 0.0016560531219831545,
+     "se": 0.0017449393802293673,
+     "p_cr1": 0.42649785856364497,
+     "p_wcr": 0.41794179417941796
+    }
+   }
+  },
+  "W1_region_annee": {
+   "theta": "salaires",
+   "n": 28224,
+   "grappes": 96,
+   "k_fe": 1909,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "sect_annee",
+    "region_annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "chomage": {
+     "coef": -0.0020037185495795384,
+     "se_cr1": 0.0012722984837237937,
+     "se_bootstrap": 0.0012149400801191208,
+     "se": 0.0012722984837237937,
+     "p_cr1": 0.11860844677931692,
+     "p_wcr": 0.10321032103210322
+    }
+   }
+  },
+  "W1_2019": {
+   "theta": "salaires",
+   "n": 22848,
+   "grappes": 96,
+   "k_fe": 1568,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "cellule",
+    "sect_annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "chomage": {
+     "coef": -0.0011714754753402886,
+     "se_cr1": 0.0016446075362400025,
+     "se_bootstrap": 0.0015823303263205984,
+     "se": 0.0016446075362400025,
+     "p_cr1": 0.4780167074639513,
+     "p_wcr": 0.49264926492649264
+    }
+   }
+  },
+  "K1": {
+   "theta": "cout_capital",
+   "n": 609,
+   "grappes": 29,
+   "k_fe": 49,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "branche",
+    "annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "dose": {
+     "coef": -0.21006386024280432,
+     "se_cr1": 4.0930024004749574,
+     "se_bootstrap": 3.873327623884434,
+     "se": 4.0930024004749574,
+     "p_cr1": 0.9594327868736389,
+     "p_wcr": 0.9915991599159916
+    }
+   }
+  },
+  "K1_avance": {
+   "theta": "cout_capital",
+   "n": 551,
+   "grappes": 29,
+   "k_fe": 47,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "branche",
+    "annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "dose": {
+     "coef": 20.551010898028196,
+     "se_cr1": 16.530490600542986,
+     "se_bootstrap": 15.669141519330578,
+     "se": 16.530490600542986,
+     "p_cr1": 0.22409698525995758,
+     "p_wcr": 0.2636263626362636
+    },
+    "dose_t+2": {
+     "coef": -11.650903237077985,
+     "se_cr1": 12.691403798461923,
+     "se_bootstrap": 12.018835288981098,
+     "se": 12.691403798461923,
+     "p_cr1": 0.36645140400779663,
+     "p_wcr": 0.48734873487348734
+    }
+   }
+  },
+  "K1_placebo": {
+   "theta": "cout_capital",
+   "n": 261,
+   "grappes": 29,
+   "k_fe": 37,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "branche",
+    "annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "dose_t+14": {
+     "coef": 2.5616154806238884,
+     "se_cr1": 1.8009387407351656,
+     "se_bootstrap": 1.6416354726663605,
+     "se": 1.8009387407351656,
+     "p_cr1": 0.16596205444687273,
+     "p_wcr": 0.09420942094209421
+    }
+   }
+  },
+  "K1_tendances": {
+   "theta": "cout_capital",
+   "n": 609,
+   "grappes": 29,
+   "k_fe": 78,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "annee"
+   ],
+   "tendances": true,
+   "coefficients": {
+    "dose": {
+     "coef": -2.113238246614424,
+     "se_cr1": 5.007535718009885,
+     "se_bootstrap": 4.607938835921332,
+     "se": 5.007535718009885,
+     "p_cr1": 0.676239290088718,
+     "p_wcr": 0.9654965496549655
+    }
+   }
+  },
+  "K1_2019": {
+   "theta": "cout_capital",
+   "n": 493,
+   "grappes": 29,
+   "k_fe": 45,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "branche",
+    "annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "dose": {
+     "coef": 17.077085422846977,
+     "se_cr1": 9.64670294615711,
+     "se_bootstrap": 9.032392724431512,
+     "se": 9.64670294615711,
+     "p_cr1": 0.08757452330859967,
+     "p_wcr": 0.0349034903490349
+    }
+   }
+  },
+  "K2": {
+   "theta": "accelerateur",
+   "n": 493,
+   "grappes": 29,
+   "k_fe": 45,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "branche",
+    "annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "dva": {
+     "coef": 0.05228081197996469,
+     "se_cr1": 0.08196944809582733,
+     "se_bootstrap": 0.07678496826402623,
+     "se": 0.08196944809582733,
+     "p_cr1": 0.5287802372480299,
+     "p_wcr": 0.5164516451645165
+    }
+   }
+  },
+  "K2_avance": {
+   "theta": "accelerateur",
+   "n": 435,
+   "grappes": 29,
+   "k_fe": 43,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "branche",
+    "annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "dva": {
+     "coef": 0.053639807227315865,
+     "se_cr1": 0.10617972419549819,
+     "se_bootstrap": 0.09908800811047075,
+     "se": 0.10617972419549819,
+     "p_cr1": 0.617386324108405,
+     "p_wcr": 0.6436643664366437
+    },
+    "dva_t+2": {
+     "coef": 0.32055210812676127,
+     "se_cr1": 0.0849481446027826,
+     "se_bootstrap": 0.07869013258092712,
+     "se": 0.0849481446027826,
+     "p_cr1": 0.0007686528205207206,
+     "p_wcr": 0.09520952095209521
+    }
+   }
+  },
+  "K2_2025": {
+   "theta": "accelerateur",
+   "n": 551,
+   "grappes": 29,
+   "k_fe": 47,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "branche",
+    "annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "dva": {
+     "coef": 0.048522684144956536,
+     "se_cr1": 0.09652901235924051,
+     "se_bootstrap": 0.09061584999677083,
+     "se": 0.09652901235924051,
+     "p_cr1": 0.6191240259004688,
+     "p_wcr": 0.666966696669667
+    }
+   }
+  },
+  "K2_sans_retards": {
+   "theta": "accelerateur",
+   "n": 493,
+   "grappes": 29,
+   "k_fe": 45,
+   "poids": "rademacher",
+   "retirees": 0,
+   "effets": [
+    "branche",
+    "annee"
+   ],
+   "tendances": false,
+   "coefficients": {
+    "dva": {
+     "coef": 0.04797289556511803,
+     "se_cr1": 0.08783956375595463,
+     "se_bootstrap": 0.08249866415673808,
+     "se": 0.08783956375595463,
+     "p_cr1": 0.5892937526292684,
+     "p_wcr": 0.5997599759975998
+    }
+   }
+  }
+ },
+ "theta": {
+  "jumeau_emploi_elasticite_cout": {
+   "eta": -1.4591992097322046,
+   "se": 2.7722911846662477,
+   "plage": [
+    0.07,
+    0.44,
+    0.52
+   ],
+   "loi_d424": {
+    "moyenne": 0.23783783783783785,
+    "ecart_bas": 0.12891891891891893,
+    "ecart_haut": 0.12891891891891888
+   },
+   "theta": -2.0664854185570336,
+   "se_theta": 3.7463394387381728,
+   "identifie": false,
+   "s_loi": 0.12891891891891893,
+   "seuil": 0.06445945945945947
+  },
+  "jumeau_salaires_chomage": {
+   "b": 0.19755764915489082,
+   "se": 0.09356184636056554,
+   "plage": [
+    0.0,
+    1.0,
+    1.2778
+   ],
+   "loi_d424": {
+    "moyenne": 0.23365000000000002,
+    "ecart_bas": 0.21320000000000006,
+    "ecart_haut": 0.21319999999999995
+   },
+   "theta": 0.09877882457744541,
+   "se_theta": 0.04678092318028277,
+   "identifie": true,
+   "s_loi": 0.21320000000000006,
+   "seuil": 0.10660000000000003
+  },
+  "investissement_cout_capital": {
+   "epsilon_K": -0.21006386024280432,
+   "se": 4.0930024004749574,
+   "plage": [
+    0.0,
+    0.44,
+    0.6
+   ],
+   "loi_d424": {
+    "moyenne": 0.3409090909090909,
+    "ecart_bas": 0.17681818181818176,
+    "ecart_haut": 0.2078409090909092
+   },
+   "theta": -0.23870893209409583,
+   "se_theta": 4.651139091448815,
+   "identifie": false,
+   "s_loi": 0.17681818181818176,
+   "seuil": 0.08840909090909088
+  },
+  "investissement_accelerateur": {
+   "reponse_annee_0": 0.05228081197996469,
+   "se": 0.08196944809582733,
+   "plage": [
+    1.2255505919999998,
+    1.7945047399999998,
+    2.363458888
+   ],
+   "loi_d424": {
+    "moyenne": 0.5,
+    "ecart_bas": 0.25517751479289924,
+    "ecart_haut": 0.2551775147928992
+   },
+   "theta": -1.0310758645000995,
+   "se_theta": 0.07203519684667747,
+   "identifie": true,
+   "s_loi": 0.25517751479289924,
+   "seuil": 0.12758875739644962
+  }
+ },
+ "description": {
+  "g": 0.763022118766919,
+  "ratio_capital_ccf": 11.048107198054849,
+  "taux_usage": 0.15384615384615385,
+  "panneaux": {
+   "E2": {
+    "theta": "emploi",
+    "n": 28224,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "dep_annee",
+     "sect_annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "travail": {
+      "ecart_type_brut": 0.020740785191600983,
+      "ecart_type_apres_effets": 0.0015180948164307626
+     }
+    }
+   },
+   "E2_avance": {
+    "theta": "emploi",
+    "n": 25536,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "dep_annee",
+     "sect_annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "travail": {
+      "ecart_type_brut": 0.0204978306454837,
+      "ecart_type_apres_effets": 0.0014979632076096917
+     },
+     "travail_t+2": {
+      "ecart_type_brut": 0.02066644192815849,
+      "ecart_type_apres_effets": 0.0015060771967190711
+     }
+    }
+   },
+   "E2_placebo": {
+    "theta": "emploi",
+    "n": 9408,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "dep_annee",
+     "sect_annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "travail_t+8": {
+      "ecart_type_brut": 0.018711049630039563,
+      "ecart_type_apres_effets": 0.0013925103395518244
+     }
+    }
+   },
+   "E2_tendances": {
+    "theta": "emploi",
+    "n": 28224,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "dep_annee",
+     "sect_annee"
+    ],
+    "tendances": true,
+    "regresseurs": {
+     "travail": {
+      "ecart_type_brut": 0.020740785191600983,
+      "ecart_type_apres_effets": 0.0007473701807010196
+     }
+    }
+   },
+   "E2_2019": {
+    "theta": "emploi",
+    "n": 22848,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "dep_annee",
+     "sect_annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "travail": {
+      "ecart_type_brut": 0.01968103080983368,
+      "ecart_type_apres_effets": 0.0014646776692008156
+     }
+    }
+   },
+   "E2_sans_secteur_annee": {
+    "theta": "emploi",
+    "n": 28224,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "dep_annee",
+     "annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "travail": {
+      "ecart_type_brut": 0.020740785191600983,
+      "ecart_type_apres_effets": 0.0032014707230321082
+     }
+    }
+   },
+   "W1": {
+    "theta": "salaires",
+    "n": 28224,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "sect_annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "chomage": {
+      "ecart_type_brut": 1.859248132054334,
+      "ecart_type_apres_effets": 0.40833897669487257
+     },
+     "travail": {
+      "ecart_type_brut": 0.020740785191600983,
+      "ecart_type_apres_effets": 0.002308523156917113
+     }
+    }
+   },
+   "W1_avance": {
+    "theta": "salaires",
+    "n": 25536,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "sect_annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "chomage": {
+      "ecart_type_brut": 1.857162593565479,
+      "ecart_type_apres_effets": 0.3965347761246816
+     },
+     "chomage_t+2": {
+      "ecart_type_brut": 1.8439672040073871,
+      "ecart_type_apres_effets": 0.3780281881145329
+     },
+     "travail": {
+      "ecart_type_brut": 0.0204978306454837,
+      "ecart_type_apres_effets": 0.002278573365325775
+     }
+    }
+   },
+   "W1_retard": {
+    "theta": "salaires",
+    "n": 28224,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "sect_annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "chomage_t-1": {
+      "ecart_type_brut": 1.872860756794214,
+      "ecart_type_apres_effets": 0.42520230673521403
+     },
+     "travail": {
+      "ecart_type_brut": 0.020740785191600983,
+      "ecart_type_apres_effets": 0.002308523156917113
+     }
+    }
+   },
+   "W1_tendances": {
+    "theta": "salaires",
+    "n": 28224,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "sect_annee"
+    ],
+    "tendances": true,
+    "regresseurs": {
+     "chomage": {
+      "ecart_type_brut": 1.859248132054334,
+      "ecart_type_apres_effets": 0.30825320904745523
+     },
+     "travail": {
+      "ecart_type_brut": 0.020740785191600983,
+      "ecart_type_apres_effets": 0.001135455911638946
+     }
+    }
+   },
+   "W1_region_annee": {
+    "theta": "salaires",
+    "n": 28224,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "sect_annee",
+     "region_annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "chomage": {
+      "ecart_type_brut": 1.859248132054334,
+      "ecart_type_apres_effets": 0.33147617366165133
+     },
+     "travail": {
+      "ecart_type_brut": 0.020740785191600983,
+      "ecart_type_apres_effets": 0.0018640814877662077
+     }
+    }
+   },
+   "W1_2019": {
+    "theta": "salaires",
+    "n": 22848,
+    "grappes": 96,
+    "retirees": 0,
+    "effets": [
+     "cellule",
+     "sect_annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "chomage": {
+      "ecart_type_brut": 1.8236065930949534,
+      "ecart_type_apres_effets": 0.37839311373200235
+     },
+     "travail": {
+      "ecart_type_brut": 0.01968103080983368,
+      "ecart_type_apres_effets": 0.0022294924206218546
+     }
+    }
+   },
+   "K1": {
+    "theta": "cout_capital",
+    "n": 609,
+    "grappes": 29,
+    "retirees": 0,
+    "effets": [
+     "branche",
+     "annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "dose": {
+      "ecart_type_brut": 0.019712941311201142,
+      "ecart_type_apres_effets": 0.00946056733799583
+     }
+    }
+   },
+   "K1_avance": {
+    "theta": "cout_capital",
+    "n": 551,
+    "grappes": 29,
+    "retirees": 0,
+    "effets": [
+     "branche",
+     "annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "dose": {
+      "ecart_type_brut": 0.011177844958433155,
+      "ecart_type_apres_effets": 0.005411810418286641
+     },
+     "dose_t+2": {
+      "ecart_type_brut": 0.018354735609402865,
+      "ecart_type_apres_effets": 0.008891858701310183
+     }
+    }
+   },
+   "K1_placebo": {
+    "theta": "cout_capital",
+    "n": 261,
+    "grappes": 29,
+    "retirees": 0,
+    "effets": [
+     "branche",
+     "annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "dose_t+14": {
+      "ecart_type_brut": 0.02527372252455479,
+      "ecart_type_apres_effets": 0.011179265037237688
+     }
+    }
+   },
+   "K1_tendances": {
+    "theta": "cout_capital",
+    "n": 609,
+    "grappes": 29,
+    "retirees": 0,
+    "effets": [
+     "annee"
+    ],
+    "tendances": true,
+    "regresseurs": {
+     "dose": {
+      "ecart_type_brut": 0.019712941311201142,
+      "ecart_type_apres_effets": 0.006320990151383751
+     }
+    }
+   },
+   "K1_2019": {
+    "theta": "cout_capital",
+    "n": 493,
+    "grappes": 29,
+    "retirees": 0,
+    "effets": [
+     "branche",
+     "annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "dose": {
+      "ecart_type_brut": 0.001570220276971309,
+      "ecart_type_apres_effets": 0.0009395798889293975
+     }
+    }
+   },
+   "K2": {
+    "theta": "accelerateur",
+    "n": 493,
+    "grappes": 29,
+    "retirees": 0,
+    "effets": [
+     "branche",
+     "annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "dva": {
+      "ecart_type_brut": 0.06570458912423263,
+      "ecart_type_apres_effets": 0.05711536604208183
+     },
+     "dva_t-1": {
+      "ecart_type_brut": 0.0680269220641878,
+      "ecart_type_apres_effets": 0.05996294743140068
+     },
+     "dva_t-2": {
+      "ecart_type_brut": 0.0694256688894871,
+      "ecart_type_apres_effets": 0.06112561563690082
+     }
+    }
+   },
+   "K2_avance": {
+    "theta": "accelerateur",
+    "n": 435,
+    "grappes": 29,
+    "retirees": 0,
+    "effets": [
+     "branche",
+     "annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "dva": {
+      "ecart_type_brut": 0.06833639201272726,
+      "ecart_type_apres_effets": 0.05915841930710452
+     },
+     "dva_t-1": {
+      "ecart_type_brut": 0.0708716599302986,
+      "ecart_type_apres_effets": 0.062136148411192416
+     },
+     "dva_t-2": {
+      "ecart_type_brut": 0.0730164628518981,
+      "ecart_type_apres_effets": 0.06405564626926138
+     },
+     "dva_t+2": {
+      "ecart_type_brut": 0.0662849950436616,
+      "ecart_type_apres_effets": 0.05746529358501604
+     }
+    }
+   },
+   "K2_2025": {
+    "theta": "accelerateur",
+    "n": 551,
+    "grappes": 29,
+    "retirees": 0,
+    "effets": [
+     "branche",
+     "annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "dva": {
+      "ecart_type_brut": 0.06463660786109489,
+      "ecart_type_apres_effets": 0.05699218895492436
+     },
+     "dva_t-1": {
+      "ecart_type_brut": 0.08088544054801784,
+      "ecart_type_apres_effets": 0.0726725811666767
+     },
+     "dva_t-2": {
+      "ecart_type_brut": 0.1034134006652466,
+      "ecart_type_apres_effets": 0.09482865799226761
+     }
+    }
+   },
+   "K2_sans_retards": {
+    "theta": "accelerateur",
+    "n": 493,
+    "grappes": 29,
+    "retirees": 0,
+    "effets": [
+     "branche",
+     "annee"
+    ],
+    "tendances": false,
+    "regresseurs": {
+     "dva": {
+      "ecart_type_brut": 0.06570458912423263,
+      "ecart_type_apres_effets": 0.05711536604208183
+     }
+    }
+   }
+  },
+  "doses_branches": {
+   "BZ": {
+    "2017": 0.00026,
+    "2019": 0.00168,
+    "2022": 0.0067,
+    "2025": 0.01413
+   },
+   "CA": {
+    "2017": 0.00068,
+    "2019": 0.00552,
+    "2022": 0.03849,
+    "2025": 0.08741
+   },
+   "CB": {
+    "2017": 0.00118,
+    "2019": 0.00966,
+    "2022": 0.06446,
+    "2025": 0.14351
+   },
+   "CC": {
+    "2017": 0.00101,
+    "2019": 0.00677,
+    "2022": 0.03036,
+    "2025": 0.06478
+   },
+   "CD": {
+    "2017": 5e-05,
+    "2019": 0.00194,
+    "2022": 0.03552,
+    "2025": 0.08871
+   },
+   "CE": {
+    "2017": 0.00021,
+    "2019": 0.0028,
+    "2022": 0.03228,
+    "2025": 0.07683
+   },
+   "CF": {
+    "2017": 2e-05,
+    "2019": 0.00197,
+    "2022": 0.03354,
+    "2025": 0.08035
+   },
+   "CG": {
+    "2017": 0.00069,
+    "2019": 0.00501,
+    "2022": 0.02971,
+    "2025": 0.06738
+   },
+   "CH": {
+    "2017": 0.00101,
+    "2019": 0.00649,
+    "2022": 0.02681,
+    "2025": 0.05741
+   },
+   "CI": {
+    "2017": 9e-05,
+    "2019": 0.001,
+    "2022": 0.01123,
+    "2025": 0.02743
+   },
+   "CJ": {
+    "2017": 0.00031,
+    "2019": 0.00282,
+    "2022": 0.02667,
+    "2025": 0.06439
+   },
+   "CK": {
+    "2017": 0.00089,
+    "2019": 0.00618,
+    "2022": 0.03482,
+    "2025": 0.07974
+   },
+   "CL": {
+    "2017": 4e-05,
+    "2019": 0.00124,
+    "2022": 0.02079,
+    "2025": 0.05098
+   },
+   "CM": {
+    "2017": 0.00086,
+    "2019": 0.00558,
+    "2022": 0.02321,
+    "2025": 0.0496
+   },
+   "DZ": {
+    "2017": 0.00026,
+    "2019": 0.00318,
+    "2022": 0.02993,
+    "2025": 0.06671
+   },
+   "EZ": {
+    "2017": 0.00036,
+    "2019": 0.00237,
+    "2022": 0.01056,
+    "2025": 0.02313
+   },
+   "FZ": {
+    "2017": 0.00229,
+    "2019": 0.01398,
+    "2022": 0.04297,
+    "2025": 0.08418
+   },
+   "GZ": {
+    "2017": 0.00187,
+    "2019": 0.01232,
+    "2022": 0.05426,
+    "2025": 0.1168
+   },
+   "HZ": {
+    "2017": 0.00023,
+    "2019": 0.00212,
+    "2022": 0.01871,
+    "2025": 0.04418
+   },
+   "IZ": {
+    "2017": 0.00151,
+    "2019": 0.00903,
+    "2022": 0.02414,
+    "2025": 0.04465
+   },
+   "JA": {
+    "2017": 0.00053,
+    "2019": 0.00356,
+    "2022": 0.01679,
+    "2025": 0.03685
+   },
+   "JB": {
+    "2017": 4e-05,
+    "2019": 0.00113,
+    "2022": 0.01582,
+    "2025": 0.03693
+   },
+   "JC": {
+    "2017": 0.00042,
+    "2019": 0.00301,
+    "2022": 0.01871,
+    "2025": 0.04373
+   },
+   "MA": {
+    "2017": 0.00136,
+    "2019": 0.00806,
+    "2022": 0.02013,
+    "2025": 0.03641
+   },
+   "MB": {
+    "2017": 0.0,
+    "2019": 2e-05,
+    "2022": 0.00046,
+    "2025": 0.00118
+   },
+   "MC": {
+    "2017": 0.00158,
+    "2019": 0.0093,
+    "2022": 0.02231,
+    "2025": 0.03971
+   },
+   "NZ": {
+    "2017": 0.00036,
+    "2019": 0.00251,
+    "2022": 0.01436,
+    "2025": 0.03287
+   },
+   "RZ": {
+    "2017": 0.00034,
+    "2019": 0.00217,
+    "2022": 0.00782,
+    "2025": 0.01577
+   },
+   "SZ": {
+    "2017": 0.00068,
+    "2019": 0.00414,
+    "2022": 0.01109,
+    "2025": 0.02002
+   }
+  }
+ }
+}
