@@ -154,9 +154,13 @@ def _menages(frame: pl.DataFrame) -> pl.DataFrame:
     return (frame.with_columns(pl.col("household_id").cast(pl.String))
             .group_by("household_id")
             .agg(*revenus, (pl.col("statut_occupation") == "proprietaire").all()
-                 .alias("proprietaire"))
+                 .alias("proprietaire"), pl.len().alias("taille"))
             .sort("household_id"))
 
+
+
+def _bruts(menages: pl.DataFrame) -> np.ndarray:
+    return sum(menages[c].to_numpy() for c in REVENUS_BRUTS if c in menages.columns)
 
 def seuil_bareme(reform: Any, year: int) -> float | None:
     """Le seuil de la première tranche du barème de l'IR que la réforme change, lu sur
@@ -200,8 +204,7 @@ def crible(reform: Any, year: int, frame: pl.DataFrame) -> np.ndarray | None:
         if seuil is not None:
             if seuil - MARGE_BAREME <= 0:
                 return None
-            total = sum(menages[c].to_numpy() for c in REVENUS_BRUTS if c in menages.columns)
-            touche |= total >= seuil - MARGE_BAREME
+            touche |= _bruts(menages) >= seuil - MARGE_BAREME
     return touche
 
 
@@ -254,7 +257,9 @@ def reforme(reform_frame: pl.DataFrame, frame: pl.DataFrame, system: Any, year: 
         guards["nbptr_min_reform"] = ref.nbptr_min
         return {k: v.copy() for k, v in ref.rows.items()}, ref.salaire_super_brut.copy()
     ids = ref.household_ids[passes]
-    sub_rows, sub_ssb, personnes, nbptr = passe(ids)
+    parts = [passe(ids)]
+    sub_rows = {k: np.concatenate([p[0][k] for p in parts]) for k in parts[0][0]}
+    nbptr = min(p[3] for p in parts)
     where = np.flatnonzero(passes)
     rows = {}
     ecart = 0.0
@@ -269,7 +274,8 @@ def reforme(reform_frame: pl.DataFrame, frame: pl.DataFrame, system: Any, year: 
         full[where] = sub_rows[key]
         rows[key] = full
     ssb = ref.salaire_super_brut.copy()
-    ssb[personnes] = sub_ssb
+    for _, sub_ssb, personnes, _ in parts:
+        ssb[personnes] = sub_ssb
     guards["moteur_rapide_ecart_controle"] = ecart
     if ecart > CONTROLE_EUROS:
         guards[REPLI] = (f"un ménage hors du crible bouge de {ecart:.2f} € : la réforme "
@@ -279,32 +285,112 @@ def reforme(reform_frame: pl.DataFrame, frame: pl.DataFrame, system: Any, year: 
     return rows, ssb
 
 
+SUFFIXE = "~b"
+#: Les taux de la réforme déjà calculés dans ce processus, pour l'union des échantillons
+#: d'une passe : (la clé, {ménage: (revenu, impôt, revenu + 100 €, impôt)}).
+_UNION: dict[str, Any] = {}
+
+
+class CribleDementi(RuntimeError):
+    """Un ménage hors du crible bouge : le moteur rapide refuse, il ne rend pas un nombre
+    faux (D-465)."""
+
+
+def _disposables_empiles(frame: pl.DataFrame, system: Any, year: int, step: float
+                         ) -> dict[str, tuple[float, float, float, float]]:
+    """Le revenu disponible et l'impôt de chaque ménage, au revenu et au revenu plus
+    `step` par actif, dans UNE simulation : le cadre et sa copie augmentée, côte à côte,
+    sous des identifiants distincts (les ménages sont indépendants dans le moteur)."""
+    from impots.behavioural.emtr import IR_VARIABLE, _bump
+    from impots.population.runner import _household_index, _to_households
+    from impots.population.to_openfisca import build_simulation
+
+    cles = ("household_id", "foyer_id", "famille_id")
+    base = frame.with_columns([pl.col(c).cast(pl.String) for c in cles])
+    decalage = int(base["person_id"].max()) + 1
+    haut = _bump(base, step).with_columns(
+        pl.col("person_id") + decalage, *[(pl.col(c) + SUFFIXE).alias(c) for c in cles])
+    both = pl.concat([base, haut]).sort("person_id")
+    simulation = build_simulation(both, system, year)
+    hid = np.asarray(simulation.household_ids).astype(str)
+    disposable = simulation.calculate("revenu_disponible").astype(np.float64)
+    index = _household_index(both, "foyer_id", simulation.household_ids)
+    tax = -_to_households(simulation.calculate(IR_VARIABLE).astype(np.float64), index,
+                          hid.size)
+    del simulation
+    gc.collect()
+    ids = np.unique(base["household_id"].to_numpy().astype(str))
+    a = np.searchsorted(hid, ids)
+    b = np.searchsorted(hid, np.char.add(ids, SUFFIXE))
+    return {i: (disposable[x], tax[x], disposable[y], tax[y])
+            for i, x, y in zip(ids, a, b, strict=True)}
+
+
 def taux_reforme(frame: pl.DataFrame, system: Any, year: int, earners: np.ndarray,
                  step: float, guards: dict[str, Any], base: dict[str, np.ndarray],
-                 reform: Any, household_ids: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """Les taux marginaux de la réforme par différence : calculés sur les ménages
-    criblés (et le contrôle), ceux de la loi ailleurs."""
-    from impots.behavioural.emtr import _rate
+                 reform: Any, household_ids: np.ndarray, autres: Any = None,
+                 seed: int | None = None) -> tuple[np.ndarray, np.ndarray]:
+    """Les taux marginaux de la réforme par différence (D-462, D-465) : calculés une fois
+    pour l'union des échantillons que la passe lira, dans une seule simulation, sur les
+    ménages criblés et 200 ménages de contrôle tirés hors du crible ; ceux de la loi
+    ailleurs. Un ménage de contrôle qui bouge arrête la passe (`CribleDementi`)."""
+    from impots.behavioural import channels
+    from impots.behavioural.emtr import C1_SAMPLES, _rate, _rate_from, fingerprint
+    from impots.behavioural.store import load as load_store
 
     touche = crible(reform, year, frame)
     ordre = _menages(frame)["household_id"].to_numpy()
     if touche is None or not np.array_equal(ordre, np.asarray(household_ids).astype(str)):
         guards["moteur_rapide_taux"] = "tous"
         return _rate(frame, system, year, earners, step, guards, "reform")
-    passes, controle = avec_controle(touche)
+    graines = (tuple(C1_SAMPLES) if autres is not None and seed in C1_SAMPLES
+               and channels._claimed(load_store(), reform, channels.C1_KEYS)
+               else (seed,))
+    cadres = {g: (frame if g == seed else autres(g)) for g in graines}
+    cle_union = json.dumps([id(system), year, step,
+                            [fingerprint(cadres[g]) for g in graines]])
+    if _UNION.get("cle") != cle_union:
+        dedans: set[str] = set()
+        dehors: set[str] = set()
+        morceaux = []
+        for g in graines:
+            m = _menages(cadres[g])["household_id"].to_numpy()
+            t = touche if g == seed else crible(reform, year, cadres[g])
+            if t is None:  # pragma: no cover - the same knobs, the same crible
+                raise CribleDementi("un échantillon sans crible")
+            dedans |= set(m[t])
+            dehors |= set(m[~t])
+            morceaux.append(cadres[g])
+        dehors -= dedans
+        rng = np.random.default_rng(CONTROLE_GRAINE)
+        pool = np.array(sorted(dehors))
+        controle = set(rng.choice(pool, size=min(CONTROLE, pool.size), replace=False)
+                       if pool.size else ())
+        voulus = pl.Series(sorted(dedans | controle))
+        union = (pl.concat(morceaux, how="diagonal_relaxed")
+                 .filter(pl.col("household_id").cast(pl.String).is_in(voulus))
+                 .unique("person_id", keep="first").sort("person_id"))
+        valeurs = (_disposables_empiles(union, system, year, step) if union.height
+                   else {})
+        _UNION.clear()
+        _UNION.update(cle=cle_union, valeurs=valeurs, controle=controle,
+                      menages=len(dedans))
+    valeurs, controle = _UNION["valeurs"], _UNION["controle"]
     guards["moteur_rapide_taux"] = int(touche.sum())
+    guards["moteur_rapide_taux_union"] = _UNION["menages"]
+    passes = np.array([i in valeurs for i in ordre], dtype=bool)
     total, ir = base["emtr"].copy(), base["emtr_ir"].copy()
     if not passes.any():
         return total, ir
-    keep = pl.col("household_id").cast(pl.String).is_in(pl.Series(ordre[passes]))
-    sub_total, sub_ir = _rate(frame.filter(keep), system, year, earners[passes], step,
-                              guards, "reform")
-    sur = controle[passes]
+    rangs = [valeurs[i] for i in ordre[passes]]
+    sub_total, sub_ir = _rate_from(*(np.array([r[k] for r in rangs]) for k in range(4)),
+                                   earners[passes], step, guards, "reform")
+    sur = np.array([i in controle for i in ordre[passes]], dtype=bool)
     for sub, ref in ((sub_total, total), (sub_ir, ir)):
         a, b = sub[sur], ref[passes][sur]
         faux = ~((a == b) | (np.isnan(a) & np.isnan(b)) | (np.abs(a - b) <= 1e-9))
         if faux.any():
-            guards[f"{REPLI}_taux"] = f"{int(faux.sum())} ménages hors du crible bougent"
-            return _rate(frame, system, year, earners, step, guards, "reform")
+            raise CribleDementi(f"{int(faux.sum())} ménages de contrôle hors du crible "
+                                f"changent de taux marginal sous la réforme")
     total[passes], ir[passes] = sub_total, sub_ir
     return total, ir

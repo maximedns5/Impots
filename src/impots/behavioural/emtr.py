@@ -129,6 +129,13 @@ def _rate(
     τ_IR = Δ income tax paid / step."""
     base, tax_base = _disposable(frame, system, year)
     bumped, tax_bumped = _disposable(_bump(frame, step), system, year)
+    return _rate_from(base, tax_base, bumped, tax_bumped, earners, step, guards, label)
+
+
+def _rate_from(base: np.ndarray, tax_base: np.ndarray, bumped: np.ndarray,
+               tax_bumped: np.ndarray, earners: np.ndarray, step: float,
+               guards: dict[str, Any], label: str) -> tuple[np.ndarray, np.ndarray]:
+    """`_rate`'s arithmetic, from the four arrays its two simulations give (D-465)."""
     extra = step * earners
     with np.errstate(divide="ignore", invalid="ignore"):
         rate = 1.0 - (bumped - base) / extra
@@ -291,7 +298,8 @@ def compute(
             columns["emtr_reform"], columns["emtr_ir_reform"] = incremental.taux_reforme(
                 frame, reformed_for(reform, year), year, earners, step, guards,
                 {"emtr": columns["emtr"], "emtr_ir": columns["emtr_ir"]}, reform,
-                per_household["household_id"].to_numpy())
+                per_household["household_id"].to_numpy(),
+                autres=lambda s: _priced(population, sample, s), seed=seed)
         else:
             columns["emtr_reform"], columns["emtr_ir_reform"] = _rate(
                 frame, reformed_for(reform, year), year, earners, step, guards, "reform"

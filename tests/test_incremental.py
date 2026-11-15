@@ -1,8 +1,9 @@
 """Le moteur rapide (D-462) redonne les nombres de l'ancien, ménage par ménage.
 
 Sur la population de test, une réforme des aides au logement : la référence lue sur
-disque, la réforme sur les ménages non propriétaires seuls, et chaque colonne de chaque
-ménage égale à celle de l'ancien moteur. Le crible du barème lit la première tranche
+disque, la réforme sur les ménages non propriétaires seuls, et chaque
+colonne de chaque ménage égale à celle de l'ancien moteur ; puis les taux marginaux,
+les deux variantes du revenu dans une seule simulation (D-465), égaux aux anciens. Le crible du barème lit la première tranche
 changée.
 """
 
@@ -65,3 +66,18 @@ def test_the_scale_crible_reads_the_first_bracket_changed() -> None:
     assert incremental.seuil_bareme(ReformSpec(ir_bareme=brackets), 2026) is None
     top = [*brackets[:5], {"threshold": 250_000.0, "rate": 0.6}]
     assert incremental.seuil_bareme(ReformSpec(ir_bareme=top), 2026) == 250_000.0
+
+
+def test_the_stacked_marginal_rates_are_the_old_ones(frame, monkeypatch) -> None:
+    from impots.behavioural import emtr
+    from impots.engine import incremental
+
+    reform = ReformSpec(al_revalorisation_portee=1.1)
+    monkeypatch.delenv(incremental.ENV, raising=False)
+    old = emtr.compute(frame, year=2026, reform=reform).households
+    monkeypatch.setenv(incremental.ENV, "rapide")
+    fast = emtr.compute(frame, year=2026, reform=reform)
+    assert 0 < fast.guards["moteur_rapide_taux"] < fast.households.height
+    for column in ("emtr_reform", "emtr_ir_reform"):
+        np.testing.assert_array_equal(fast.households[column].to_numpy(),
+                                      old[column].to_numpy(), err_msg=column)
