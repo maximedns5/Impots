@@ -34152,3 +34152,23 @@ processus, verts, aucun sauté ; 5 chronomètres verts.
 
 **Ce qui ne change pas.** Aucun nombre d'aucun rapport, aucune tolérance, aucun verdict,
 aucun étage ; chaque rapport garde son commit de passe.
+
+## D-445 — Le but 24 clos, le but 25 validé : le jumeau qu'on comprend, en six volets
+
+**Le but 24 est clos** : la PR #130 est mergée (1f0c315), le site republié depuis main.
+**L'histoire longue**, demandée par le propriétaire, est menée à part jusqu'à l'étape
+zéro (D-446, D-447, branche `claude/but25-histoire`) : aucun θ identifié.
+
+**Le but 25** (`BUT.md`) : refaire le site pour qu'on suive le chemin de pensée, et rendre
+le moteur assez rapide pour qu'on voie une mesure agir. Le propriétaire a décidé, le
+15 novembre 2026 : une refonte complète du site, pas une retouche ; la comparaison du
+moteur rapide à l'ancien sur la population de test et sur trois mesures, environ 20 min
+de machine, acceptée ; les six volets lancés ensemble (`chemin`, `population`, `mesure`,
+`jumeau`, `moteur`, `lecteur`). La publication des 50 cellules des ménages et des 57 des
+entreprises, décidée, entre dans `population`.
+
+**Ce qui ne tourne pas**, à la demande du propriétaire : aucune étude, aucune passe sur la
+population hors de la comparaison du moteur, pas de `make impact` ni de lourds en cours
+de route. Les tests légers des fichiers touchés tiennent ce qui change ; aucun nombre
+publié ne change, chaque rapport garde son commit.
+
