@@ -366,6 +366,46 @@ KNOWN_SOURCES: dict[str, tuple[str, ...]] = {
         "département (ensemble), 1990-T1→2025-T4 ; le panneau des défaillances (D-425).",
         "Licence Ouverte / Etalab 2.0",
     ),
+    # Les données fines du but 24, volet `fines` (D-434), lues le 15 novembre 2026.
+    "urssaf_dep_na17i_effectifs_masse_1998_2025.csv": (
+        "https://open.urssaf.fr/api/explore/v2.1/catalog/datasets/nombre-etab-effectifs-"
+        "salaries-et-masse-salariale-secteur-prive-dep-x-na17i/exports/csv?delimiter=%3B"
+        "&lang=fr",
+        "Urssaf, open data : établissements employeurs, effectifs salariés moyens annuels et "
+        "masse salariale annuelle (assiette déplafonnée) du secteur privé, régime général, "
+        "par département × secteur NA17i, 1998→2025 ; les panneaux de l'emploi et des "
+        "salaires (D-434).",
+        "Open Database License (ODbL)",
+    ),
+    "insee_bdm_taux_chomage_localise_1990_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/TAUX-CHOMAGE/T.TAUX_CHOMAGE_LOCALISE...."
+        "?startPeriod=1990-Q1&endPeriod=2025-Q4",
+        "Insee, BDM, flux TAUX-CHOMAGE : taux de chômage localisés trimestriels (CVS), par "
+        "département, région et France métropolitaine, 1990-T1→2025-T4 ; la courbe des "
+        "salaires (D-434).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
+    "insee_cn2025_t6301_6303_fbcf_branches.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8988825/T_6301_6303_fr.xlsx",
+        "Insee, comptes nationaux annuels 2025 (base 2020), t. 6.301 à 6.303 : la FBCF de "
+        "l'ensemble des secteurs par branche A38, à prix courants, en volume et ses prix, "
+        "1959→2025 ; le panneau de l'investissement (D-434).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
+    "insee_cn2025_t6201_6203_va_branches.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8988821/T_6201_6203_fr.xlsx",
+        "Insee, comptes nationaux annuels 2025 (base 2020), t. 6.201 à 6.203 : la valeur "
+        "ajoutée brute par branche A38, à prix courants, en volume et ses prix, 1949→2025 ; "
+        "le panneau de l'investissement (D-434).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
+    "insee_cn2025_t6461_6462_ccf_branches.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8988825/T_6461_6462_fr.xlsx",
+        "Insee, comptes nationaux annuels 2025 (base 2020), t. 6.461 et 6.462 : la "
+        "consommation de capital fixe par branche A38, 1959→2025 ; l'échelle du capital "
+        "des branches dans la dose du coût du capital (D-434).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
 }
 
 
