@@ -1943,3 +1943,1162 @@ mesures:
       sources:
         - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000046186750
       lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  # ======================================================== l'histoire longue, D-446
+  # Les mesures d'avant 2010 dont une année d'effet tombe de 1997 à 2007 (D-446, § 3),
+  # relues dans l'extrait de l'archive du JO de la DILA (data/interim/jorf_1994_2009.jsonl,
+  # `scripts/jumeau_jorf_extraire.py --depuis 1994-06-01 --jusqua 2009-06-01`).
+
+  - id: lfi1997_bareme_ir
+    gouvernement: juppe_2
+    intitule: Barème de l'impôt sur le revenu abaissé (réforme de 1997)
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 96-1181, date: 1996-12-30, intitule: "loi de finances pour 1997"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 1997
+    parametres:
+      - {quoi: "taux des six tranches (revenus de 1996)", avant: "12 %, 25 %, 35 %, 45 %, 50 %, 56,8 % (tranches de la loi n° 95-1346)", apres: "10,5 %, 24 %, 33 %, 43 %, 48 %, 54 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001153059
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "L'avant (les taux de 1996) n'est pas dans l'article lu : il est de la loi de finances pour 1996, relue dans l'extrait (art. 2)."
+
+  - id: lfi1998_bareme_ir
+    gouvernement: jospin
+    intitule: Barème de l'impôt sur le revenu indexé
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 97-1269, date: 1997-12-30, intitule: "loi de finances pour 1998"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 1998
+    parametres:
+      - {quoi: "taux des six tranches (revenus de 1997)", avant: "10,5 % à 54 %", apres: "10,5 % à 54 %, les limites des tranches relevées (25 890 F à 291 270 F)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001228285
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi1999_plafond_qf
+    gouvernement: jospin
+    intitule: Plafond de l'avantage du quotient familial abaissé
+    instrument: ir
+    sens: hausse
+    texte: {nature: loi, numero: 98-1266, date: 1998-12-30, intitule: "loi de finances pour 1999"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 1999
+    parametres:
+      - {quoi: "plafond de l'avantage par demi-part (premier alinéa du 2)", avant: "16 380 F", apres: "11 000 F (revenus de 1998)"}
+      - {quoi: "taux des tranches", avant: "10,5 % à 54 %", apres: "inchangés, les limites indexées"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001623144
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2000_bareme_ir
+    gouvernement: jospin
+    intitule: Barème de l'impôt sur le revenu indexé
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 99-1172, date: 1999-12-30, intitule: "loi de finances pour 2000"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2000
+    parametres:
+      - {quoi: "taux des six tranches (revenus de 1999)", avant: "10,5 % à 54 %", apres: "inchangés, les limites relevées (26 230 F à 295 070 F)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002210430
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2000_taux_ir
+    gouvernement: jospin
+    intitule: Taux des deux premières tranches de l'impôt sur le revenu abaissés
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2000-656, date: 2000-07-13, intitule: "loi de finances rectificative pour 2000"}
+    article: "1er"
+    codification: CGI, art. 197
+    annee_effet: 2000
+    parametres:
+      - {quoi: "taux des deux premières tranches (revenus de 1999)", avant: "10,5 % et 24 %", apres: "9,5 % et 23 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002492606
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2001_bareme_ir
+    gouvernement: jospin
+    intitule: Baisse des taux du barème de l'impôt sur le revenu, en deux étapes
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2000-1352, date: 2000-12-30, intitule: "loi de finances pour 2001"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2001
+    etapes:
+      - {date: 2001-01-01, quoi: "taux de 8,25 % à 53,25 % sur les revenus de 2000"}
+      - {date: 2002-01-01, quoi: "taux de nouveau abaissés sur les revenus de 2001"}
+    parametres:
+      - {quoi: "taux des six tranches", avant: "9,5 %, 23 %, 33 %, 43 %, 48 %, 54 %", apres: "8,25 %, 21,75 %, 31,75 %, 41,75 %, 47,25 %, 53,25 % (revenus de 2000), puis plus bas (revenus de 2001)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002225241
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2002_bareme_ir
+    gouvernement: jospin
+    intitule: Barème de l'impôt sur le revenu converti en euros et indexé
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2001-1275, date: 2001-12-28, intitule: "loi de finances pour 2002"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2002
+    parametres:
+      - {quoi: "limites des tranches", avant: "26 600 F à 299 200 F", apres: "4 121 € à 46 343 €"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001264428
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2002_reduction_ir
+    gouvernement: raffarin_2
+    intitule: Impôt sur le revenu de 2001 réduit de 5 %
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2002-1050, date: 2002-08-06, intitule: "loi de finances rectificative pour 2002"}
+    article: "1er"
+    codification: CGI, art. 197
+    annee_effet: 2002
+    parametres:
+      - {quoi: "impôt résultant du barème (revenus de 2001)", avant: "barème de la loi n° 2000-1352", apres: "réduit de 5 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002210902
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2003_bareme_ir
+    gouvernement: raffarin_2
+    intitule: Taux du barème de l'impôt sur le revenu abaissés de 1 %
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2002-1575, date: 2002-12-30, intitule: "loi de finances pour 2003"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2003
+    parametres:
+      - {quoi: "taux des six tranches (revenus de 2002)", avant: "barème de 2002 diminué de 5 %", apres: "7,05 %, 19,74 %, 29,14 %, 38,54 %, 43,94 %, 49,58 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001656493
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2004_bareme_ir
+    gouvernement: raffarin_2
+    intitule: Taux du barème de l'impôt sur le revenu abaissés de 3 %
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2003-1311, date: 2003-12-30, intitule: "loi de finances pour 2004"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2004
+    parametres:
+      - {quoi: "taux des six tranches (revenus de 2003)", avant: "7,05 % à 49,58 %", apres: "6,83 %, 19,14 %, 28,26 %, 37,38 %, 42,62 %, 48,09 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002053857
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2005_bareme_ir
+    gouvernement: raffarin_3
+    intitule: Barème de l'impôt sur le revenu indexé
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2004-1484, date: 2004-12-30, intitule: "loi de finances pour 2005"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2005
+    parametres:
+      - {quoi: "taux des six tranches (revenus de 2004)", avant: "6,83 % à 48,09 %", apres: "inchangés, les limites relevées (4 334 € à 48 747 €)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001072344
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2006_bareme_ir
+    gouvernement: villepin
+    intitule: Barème de l'impôt sur le revenu indexé
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2005-1719, date: 2005-12-30, intitule: "loi de finances pour 2006"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2006
+    parametres:
+      - {quoi: "taux des six tranches (revenus de 2005)", avant: "6,83 % à 48,09 %", apres: "inchangés, les limites relevées (4 412 € à 49 624 €)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002069727
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2006_reforme_bareme
+    gouvernement: villepin
+    intitule: Barème de l'impôt sur le revenu ramené à cinq tranches, l'abattement de 20 % intégré
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2005-1719, date: 2005-12-30, intitule: "loi de finances pour 2006"}
+    article: "75"
+    codification: CGI, art. 197
+    annee_effet: 2007
+    parametres:
+      - {quoi: "taux des tranches (revenus de 2006)", avant: "6,83 %, 19,14 %, 28,26 %, 37,38 %, 42,62 %, 48,09 %", apres: "5,5 %, 14 %, 30 %, 40 %"}
+      - {quoi: "taux du a de l'article 197 A", avant: "25 % et 18 %", apres: "20 % et 14,4 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001910423
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2007_bareme_ir
+    gouvernement: villepin
+    intitule: Barème de l'impôt sur le revenu indexé
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2006-1666, date: 2006-12-21, intitule: "loi de finances pour 2007"}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2007
+    parametres:
+      - {quoi: "taux des quatre tranches (revenus de 2006)", avant: "5,5 %, 14 %, 30 %, 40 %", apres: "inchangés, les limites relevées (5 614 € à 66 679 €)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002055257
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: ord1996_crds
+    gouvernement: juppe_2
+    intitule: Contribution au remboursement de la dette sociale
+    instrument: csg
+    sens: hausse
+    texte: {nature: ordonnance, numero: 96-50, date: 1996-01-24, intitule: "ordonnance relative au remboursement de la dette sociale"}
+    article: "19"
+    codification: ordonnance n° 96-50, art. 14 à 19
+    annee_effet: 1996
+    date_effet: 1996-02-01
+    parametres:
+      - {quoi: "taux de la contribution sur les revenus d'activité et de remplacement", avant: "néant", apres: "0,5 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001017849
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "La date du 1er février 1996 est celle des revenus d'activité, lue sur l'ordonnance (art. 14 à 18) ; l'article 19 fixe le taux."
+
+  - id: lfss1997_csg
+    gouvernement: juppe_2
+    intitule: Taux de la CSG relevé d'un point
+    instrument: csg
+    sens: hausse
+    texte: {nature: loi, numero: 96-1160, date: 1996-12-27, intitule: "loi de financement de la sécurité sociale pour 1997"}
+    article: "17"
+    codification: CSS, art. L. 136-8
+    annee_effet: 1997
+    parametres:
+      - {quoi: "taux de la contribution", avant: "2,4 %", apres: "3,40 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002184901
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfss1998_csg
+    gouvernement: jospin
+    intitule: Taux de la CSG porté à 7,5 %, en échange de la cotisation maladie des salariés
+    instrument: csg
+    sens: hausse
+    texte: {nature: loi, numero: 97-1164, date: 1997-12-19, intitule: "loi de financement de la sécurité sociale pour 1998"}
+    article: "5"
+    codification: CSS, art. L. 136-8
+    annee_effet: 1998
+    parametres:
+      - {quoi: "taux de la contribution sur les revenus d'activité", avant: "3,40 %", apres: "7,50 %"}
+      - {quoi: "taux sur les pensions et les allocations de chômage", avant: "3,40 %", apres: "6,2 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002306091
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: loi2004_csg
+    gouvernement: raffarin_3
+    intitule: CSG relevée sur les revenus du patrimoine et des jeux, assiette des revenus d'activité élargie
+    instrument: csg
+    sens: hausse
+    texte: {nature: loi, numero: 2004-810, date: 2004-08-13, intitule: "loi relative à l'assurance maladie"}
+    article: "72"
+    codification: CSS, art. L. 136-2 et L. 136-8
+    annee_effet: 2005
+    parametres:
+      - {quoi: "abattement pour frais professionnels", avant: "5 %", apres: "3 %"}
+      - {quoi: "taux sur les revenus du patrimoine et de placement", avant: "7,5 %", apres: "8,2 %"}
+      - {quoi: "taux sur les jeux", avant: "7,5 %", apres: "9,5 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002058251
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: decret1996_maladie_salaries
+    gouvernement: juppe_2
+    intitule: Cotisation maladie des salariés abaissée de 1,3 point
+    instrument: cotisations_salaries
+    sens: baisse
+    texte: {nature: décret, numero: 96-1167, date: 1996-12-26, intitule: "décret modifiant les taux de cotisations d'assurance maladie de certains assurés"}
+    article: "1er"
+    codification: CSS, art. D. 242-3
+    annee_effet: 1997
+    parametres:
+      - {quoi: "cotisation d'assurance maladie à la charge du salarié", avant: "6,80 %", apres: "5,50 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001410745
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: decret1997_maladie_salaries
+    gouvernement: jospin
+    intitule: Cotisation maladie des salariés abaissée de 4,75 points
+    instrument: cotisations_salaries
+    sens: baisse
+    texte: {nature: décret, numero: 97-1252, date: 1997-12-29, intitule: "décret modifiant les taux de cotisations d'assurance maladie et d'allocations familiales de certains assurés"}
+    article: "1er"
+    codification: CSS, art. D. 242-3
+    annee_effet: 1998
+    parametres:
+      - {quoi: "cotisation d'assurance maladie à la charge du salarié", avant: "5,50 %", apres: "0,75 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001807692
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: decret2005_vieillesse_salaries
+    gouvernement: villepin
+    intitule: Cotisation vieillesse plafonnée des salariés relevée
+    instrument: cotisations_salaries
+    sens: hausse
+    texte: {nature: décret, numero: 2005-1657, date: 2005-12-26, intitule: "décret relatif aux taux de la cotisation d'assurance vieillesse du régime général"}
+    article: "1er"
+    codification: CSS, art. D. 242-4
+    annee_effet: 2006
+    parametres:
+      - {quoi: "cotisation vieillesse plafonnée à la charge du salarié", avant: "6,55 %", apres: "6,65 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002468660
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: tepa_heures_sup_salaries
+    gouvernement: fillon_2
+    intitule: Heures supplémentaires exonérées de cotisations salariales
+    instrument: cotisations_salaries
+    sens: baisse
+    texte: {nature: loi, numero: 2007-1223, date: 2007-08-21, intitule: "loi en faveur du travail, de l'emploi et du pouvoir d'achat"}
+    article: "1er"
+    codification: CSS, art. L. 241-17
+    annee_effet: 2007
+    date_effet: 2007-10-01
+    parametres:
+      - {quoi: "cotisations salariales sur la rémunération des heures supplémentaires", avant: "dues", apres: "réduites, dans la limite des cotisations dues"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002078438
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "La date du 1er octobre 2007 est celle de l'article (VI), lue sur le même texte."
+
+  - id: lfi1996_ristourne
+    gouvernement: juppe_2
+    intitule: Réduction dégressive des cotisations patronales étendue à 1,33 SMIC, fusionnée avec l'exonération famille
+    instrument: cotisations_employeurs
+    sens: baisse
+    texte: {nature: loi, numero: 95-1346, date: 1995-12-30, intitule: "loi de finances pour 1996"}
+    article: "113"
+    codification: CSS, art. L. 241-13
+    annee_effet: 1996
+    date_effet: 1996-10-01
+    parametres:
+      - {quoi: "plafond de la réduction", avant: "SMIC majoré de 20 %", apres: "SMIC majoré de 33 % à compter du 1er octobre 1996"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002381551
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi1998_ristourne
+    gouvernement: jospin
+    intitule: Plafond de la réduction dégressive ramené à 1,3 SMIC
+    instrument: cotisations_employeurs
+    sens: hausse
+    texte: {nature: loi, numero: 97-1269, date: 1997-12-30, intitule: "loi de finances pour 1998"}
+    article: "115"
+    codification: CSS, art. L. 241-13
+    annee_effet: 1998
+    parametres:
+      - {quoi: "plafond de la réduction", avant: "SMIC majoré de 33 %", apres: "SMIC majoré de 30 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002399006
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: aubry1_aide_incitative
+    gouvernement: jospin
+    intitule: Aide incitative à la réduction du temps de travail, imputée sur les cotisations patronales
+    instrument: cotisations_employeurs
+    sens: baisse
+    texte: {nature: loi, numero: 98-461, date: 1998-06-13, intitule: "loi d'orientation et d'incitation relative à la réduction du temps de travail"}
+    article: "3"
+    codification: loi n° 98-461, art. 3
+    annee_effet: 1998
+    date_effet: 1998-06-15
+    parametres:
+      - {quoi: "aide aux entreprises qui réduisent leur durée du travail et embauchent", avant: "néant", apres: "aide forfaitaire par salarié, imputée sur les cotisations patronales"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001750206
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "La date est l'entrée en vigueur de la loi, le lendemain de sa publication au JO du 14 juin 1998."
+
+  - id: aubry2_allegement
+    gouvernement: jospin
+    intitule: Allègement de cotisations patronales des entreprises à trente-cinq heures
+    instrument: cotisations_employeurs
+    sens: baisse
+    texte: {nature: loi, numero: 2000-37, date: 2000-01-19, intitule: "loi relative à la réduction négociée du temps de travail"}
+    article: "21"
+    codification: CSS, art. L. 241-13-1
+    annee_effet: 2000
+    date_effet: 2000-01-21
+    parametres:
+      - {quoi: "allègement des cotisations patronales des entreprises à 35 heures", avant: "néant", apres: "allègement dégressif jusqu'à 1,8 SMIC, avec une part forfaitaire"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001905388
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "La date est l'entrée en vigueur de la loi, le lendemain de sa publication au JO du 20 janvier 2000."
+
+  - id: fillon_reduction_unifiee
+    gouvernement: raffarin_2
+    intitule: Réduction générale des cotisations patronales unifiée (réduction Fillon)
+    instrument: cotisations_employeurs
+    sens: mixte
+    texte: {nature: loi, numero: 2003-47, date: 2003-01-17, intitule: "loi relative aux salaires, au temps de travail et au développement de l'emploi"}
+    article: "9"
+    codification: CSS, art. L. 241-13
+    annee_effet: 2003
+    date_effet: 2003-07-01
+    etapes:
+      - {date: 2003-07-01, quoi: "réduction unifiée, coefficient et plafond de la première étape"}
+      - {date: 2004-07-01, quoi: "deuxième étape de la convergence"}
+      - {date: 2005-07-01, quoi: "coefficient maximal 0,26, nul à 1,7 SMIC"}
+    parametres:
+      - {quoi: "plafond de la réduction pour les entreprises hors 35 heures", avant: "1,3 SMIC", apres: "1,7 SMIC au 1er juillet 2005"}
+      - {quoi: "allègement des entreprises à 35 heures", avant: "jusqu'à 1,8 SMIC, avec une part forfaitaire", apres: "la réduction unifiée, sans part forfaitaire"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001825185
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Des paramètres en sens contraires (une extension pour les entreprises hors 35 heures, une baisse de l'allègement des entreprises à 35 heures) : mixte."
+
+  - id: lfi2005_reduction_fillon
+    gouvernement: raffarin_3
+    intitule: Point de sortie de la réduction Fillon ramené à 1,6 SMIC
+    instrument: cotisations_employeurs
+    sens: hausse
+    texte: {nature: loi, numero: 2004-1484, date: 2004-12-30, intitule: "loi de finances pour 2005"}
+    article: "129"
+    codification: CSS, art. L. 241-13
+    annee_effet: 2005
+    parametres:
+      - {quoi: "majoration du SMIC au-delà de laquelle le coefficient est nul", avant: "70 %", apres: "60 %, pour les rémunérations versées à compter du 1er janvier 2005"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001266589
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: decret2005_vieillesse_employeurs
+    gouvernement: villepin
+    intitule: Cotisation vieillesse plafonnée des employeurs relevée
+    instrument: cotisations_employeurs
+    sens: hausse
+    texte: {nature: décret, numero: 2005-1657, date: 2005-12-26, intitule: "décret relatif aux taux de la cotisation d'assurance vieillesse du régime général"}
+    article: "1er"
+    codification: CSS, art. D. 242-4
+    annee_effet: 2006
+    parametres:
+      - {quoi: "cotisation vieillesse plafonnée à la charge de l'employeur", avant: "8,20 %", apres: "8,30 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002468660
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2007_reduction_tpe
+    gouvernement: villepin
+    intitule: Réduction Fillon renforcée pour les employeurs de un à dix-neuf salariés
+    instrument: cotisations_employeurs
+    sens: baisse
+    texte: {nature: loi, numero: 2006-1666, date: 2006-12-21, intitule: "loi de finances pour 2007"}
+    article: "41"
+    codification: CSS, art. L. 241-13
+    annee_effet: 2007
+    date_effet: 2007-07-01
+    parametres:
+      - {quoi: "coefficient maximal de la réduction, employeurs de moins de vingt salariés", avant: "0,26", apres: "majoré, pour les rémunérations versées à compter du 1er juillet 2007"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001284561
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: tepa_heures_sup_employeurs
+    gouvernement: fillon_2
+    intitule: Déduction forfaitaire de cotisations patronales sur les heures supplémentaires
+    instrument: cotisations_employeurs
+    sens: baisse
+    texte: {nature: loi, numero: 2007-1223, date: 2007-08-21, intitule: "loi en faveur du travail, de l'emploi et du pouvoir d'achat"}
+    article: "1er"
+    codification: CSS, art. L. 241-18
+    annee_effet: 2007
+    date_effet: 2007-10-01
+    parametres:
+      - {quoi: "cotisations patronales sur les heures supplémentaires", avant: "dues", apres: "déduction forfaitaire par heure"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002078438
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: loi1997_contribution_temporaire_is
+    gouvernement: jospin
+    intitule: Contribution temporaire sur l'impôt sur les sociétés
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 97-1026, date: 1997-11-10, intitule: "loi portant mesures urgentes à caractère fiscal et financier"}
+    article: "1er"
+    codification: CGI, art. 235 ter ZB
+    annee_effet: 1997
+    etapes:
+      - {date: 1997-01-01, quoi: "15 % de l'IS, exercices clos en 1997 et 1998"}
+      - {date: 1999-01-01, quoi: "10 %, exercices clos en 1999", sens: baisse}
+      - {date: 2000-01-01, quoi: "fin de la contribution", sens: baisse}
+    parametres:
+      - {quoi: "taux de la contribution, en pourcentage de l'IS", avant: "néant", apres: "15 % (exercices clos en 1997 et 1998), 10 % (1999), rien ensuite"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000000977427
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfss2000_contribution_sociale_is
+    gouvernement: jospin
+    intitule: Contribution sociale sur les bénéfices des sociétés
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 99-1140, date: 1999-12-29, intitule: "loi de financement de la sécurité sociale pour 2000"}
+    article: "6"
+    codification: CGI, art. 235 ter ZC
+    annee_effet: 2000
+    parametres:
+      - {quoi: "taux de la contribution, en pourcentage de l'IS après abattement", avant: "néant", apres: "3,3 % (exercices clos à compter du 1er janvier 2000)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001436552
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2001_taux_reduit_pme
+    gouvernement: jospin
+    intitule: Taux réduit de l'impôt sur les sociétés des PME
+    instrument: is
+    sens: baisse
+    texte: {nature: loi, numero: 2000-1352, date: 2000-12-30, intitule: "loi de finances pour 2001"}
+    article: "7"
+    codification: CGI, art. 219
+    annee_effet: 2001
+    etapes:
+      - {date: 2001-01-01, quoi: "25 % pour les exercices ouverts en 2001"}
+      - {date: 2002-01-01, quoi: "15 % à compter de 2002"}
+    parametres:
+      - {quoi: "taux sur les premiers 250 000 F de bénéfice des PME", avant: "33 1/3 %", apres: "25 % (2001), 15 % (2002)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001447113
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2001_contribution_10
+    gouvernement: jospin
+    intitule: Contribution de 10 % sur l'impôt sur les sociétés réduite
+    instrument: is
+    sens: baisse
+    texte: {nature: loi, numero: 2000-1352, date: 2000-12-30, intitule: "loi de finances pour 2001"}
+    article: "9"
+    codification: CGI, art. 235 ter ZA
+    annee_effet: 2001
+    etapes:
+      - {date: 2001-01-01, quoi: "6 % pour les exercices clos en 2001"}
+      - {date: 2002-01-01, quoi: "3 % à compter de 2002"}
+    parametres:
+      - {quoi: "taux de la contribution", avant: "10 %", apres: "6 % (2001), 3 % (2002)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002425448
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2005_contribution_3
+    gouvernement: raffarin_3
+    intitule: Contribution de 3 % sur l'impôt sur les sociétés réduite puis supprimée
+    instrument: is
+    sens: baisse
+    texte: {nature: loi, numero: 2004-1484, date: 2004-12-30, intitule: "loi de finances pour 2005"}
+    article: "25"
+    codification: CGI, art. 235 ter ZA
+    annee_effet: 2005
+    etapes:
+      - {date: 2005-01-01, quoi: "1,5 % pour les exercices clos en 2005"}
+      - {date: 2006-01-01, quoi: "supprimée"}
+    parametres:
+      - {quoi: "taux de la contribution", avant: "3 %", apres: "1,5 % (2005), supprimée (2006)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002239393
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2004_plus_values_lt
+    gouvernement: raffarin_3
+    intitule: Taux des plus-values à long terme des sociétés abaissé
+    instrument: is
+    sens: baisse
+    texte: {nature: loi, numero: 2004-1485, date: 2004-12-30, intitule: "loi de finances rectificative pour 2004"}
+    article: "39"
+    codification: CGI, art. 219
+    annee_effet: 2005
+    etapes:
+      - {date: 2005-01-01, quoi: "15 %"}
+      - {date: 2006-01-01, quoi: "8 % sur les titres de participation"}
+      - {date: 2007-01-01, quoi: "0 %, une quote-part de 5 %"}
+    parametres:
+      - {quoi: "taux des plus-values à long terme", avant: "19 %", apres: "15 % (2005) ; titres de participation 8 % (2006), 0 % (2007)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001846801
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi1999_tp_salaires
+    gouvernement: jospin
+    intitule: Part salaires de la taxe professionnelle supprimée en cinq ans
+    instrument: impots_production
+    sens: mixte
+    texte: {nature: loi, numero: 98-1266, date: 1998-12-30, intitule: "loi de finances pour 1999"}
+    article: "44"
+    codification: CGI, art. 1467 et 1648 D
+    annee_effet: 1999
+    etapes:
+      - {date: 1999-01-01, quoi: "première étape"}
+      - {date: 2000-01-01, quoi: "deuxième étape"}
+      - {date: 2001-01-01, quoi: "troisième étape"}
+      - {date: 2002-01-01, quoi: "quatrième étape"}
+      - {date: 2003-01-01, quoi: "les salaires sortent de la base"}
+    parametres:
+      - {quoi: "salaires dans la base de la taxe professionnelle", avant: "18 % des salaires", apres: "réduits par étapes de 1999 à 2003, supprimés"}
+      - {quoi: "taux de la cotisation nationale de péréquation", avant: "1 %, 0,75 %, 0,5 %", apres: "2,35 %, 1,75 %, 1,15 % (1999), jusqu'à 3,4 %, 2,5 %, 1,6 % (2003)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001623148
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Des paramètres en sens contraires (la base allégée, la péréquation relevée) : mixte."
+
+  - id: lfi2003_tp_bnc
+    gouvernement: raffarin_2
+    intitule: Part des encaissements des titulaires de BNC dans la base de la taxe professionnelle
+    instrument: impots_production
+    sens: baisse
+    texte: {nature: loi, numero: 2002-1575, date: 2002-12-30, intitule: "loi de finances pour 2003"}
+    article: "26"
+    codification: CGI, art. 1467
+    annee_effet: 2003
+    etapes:
+      - {date: 2003-01-01, quoi: "9 %"}
+      - {date: 2004-01-01, quoi: "8 %"}
+      - {date: 2005-01-01, quoi: "6 %"}
+    parametres:
+      - {quoi: "part des encaissements (BNC de moins de cinq salariés)", avant: "10 %", apres: "9 % (2003), 8 % (2004), 6 % (2005)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001080724
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: loi2004_degrevement_investissements
+    gouvernement: raffarin_3
+    intitule: Dégrèvement de taxe professionnelle des investissements nouveaux
+    instrument: impots_production
+    sens: baisse
+    texte: {nature: loi, numero: 2004-804, date: 2004-08-09, intitule: "loi pour le soutien à la consommation et à l'investissement"}
+    article: "11"
+    codification: CGI, art. 1647 C quinquies
+    annee_effet: 2005
+    parametres:
+      - {quoi: "cotisation assise sur les immobilisations nouvelles", avant: "due", apres: "dégrevée au titre de 2005 à 2007"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002433627
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2006_plafonnement_va
+    gouvernement: villepin
+    intitule: Plafonnement de la taxe professionnelle à 3,5 % de la valeur ajoutée
+    instrument: impots_production
+    sens: baisse
+    texte: {nature: loi, numero: 2005-1719, date: 2005-12-30, intitule: "loi de finances pour 2006"}
+    article: "85"
+    codification: CGI, art. 1647 B sexies
+    annee_effet: 2007
+    parametres:
+      - {quoi: "taux de plafonnement", avant: "3,5 %, 3,8 % ou 4 % selon le chiffre d'affaires", apres: "3,5 % pour tous"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002070161
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi1999_tva_abonnements
+    gouvernement: jospin
+    intitule: TVA à 5,5 % sur les abonnements à l'électricité et au gaz
+    instrument: tva
+    sens: baisse
+    texte: {nature: loi, numero: 98-1266, date: 1998-12-30, intitule: "loi de finances pour 1999"}
+    article: "29"
+    codification: CGI, art. 279
+    annee_effet: 1999
+    parametres:
+      - {quoi: "taux sur les abonnements de gaz et d'électricité par réseaux", avant: "20,6 %", apres: "5,5 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001043142
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2000_tva_travaux
+    gouvernement: jospin
+    intitule: TVA à 5,5 % sur les travaux dans les logements
+    instrument: tva
+    sens: baisse
+    texte: {nature: loi, numero: 99-1172, date: 1999-12-30, intitule: "loi de finances pour 2000"}
+    article: "5"
+    codification: CGI, art. 279-0 bis
+    annee_effet: 1999
+    date_effet: 1999-09-15
+    parametres:
+      - {quoi: "taux sur les travaux d'amélioration et d'entretien des logements", avant: "20,6 %", apres: "5,5 %, jusqu'au 31 décembre 2002"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002210432
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "La date du 15 septembre 1999 est celle de l'article (II), lue sur le même texte."
+
+  - id: lfr2000_tva_taux_normal
+    gouvernement: jospin
+    intitule: Taux normal de la TVA abaissé d'un point
+    instrument: tva
+    sens: baisse
+    texte: {nature: loi, numero: 2000-656, date: 2000-07-13, intitule: "loi de finances rectificative pour 2000"}
+    article: "4"
+    codification: CGI, art. 278
+    annee_effet: 2000
+    date_effet: 2000-04-01
+    parametres:
+      - {quoi: "taux normal", avant: "20,60 %", apres: "19,60 % (TVA exigible à compter du 1er avril 2000)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002219282
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi1997_tipp
+    gouvernement: juppe_2
+    intitule: Tarifs de la taxe intérieure sur les produits pétroliers
+    instrument: accises_energie
+    sens: mixte
+    texte: {nature: loi, numero: 96-1181, date: 1996-12-30, intitule: "loi de finances pour 1997"}
+    article: "26"
+    codification: code des douanes, art. 265
+    annee_effet: 1997
+    date_effet: 1997-01-11
+    parametres:
+      - {quoi: "tarifs du tableau B", avant: "tarifs de 1996", apres: "tarifs au 11 janvier 1997 (tableau non lu)"}
+    statut: en_vigueur
+    verification:
+      statut: non vérifiée
+      raison: "le tarif est un tableau que l'archive du JO de la DILA ne reproduit pas (« Vous pouvez consulter le tableau dans le JO ») : les paramètres et le sens ne se lisent pas ; le sens « mixte » fait compter la variation entière, la règle de D-417 (D-446)"
+
+  - id: lfi1998_tipp
+    gouvernement: jospin
+    intitule: Tarifs de la taxe intérieure sur les produits pétroliers
+    instrument: accises_energie
+    sens: mixte
+    texte: {nature: loi, numero: 97-1269, date: 1997-12-30, intitule: "loi de finances pour 1998"}
+    article: "16"
+    codification: code des douanes, art. 265
+    annee_effet: 1998
+    date_effet: 1998-01-11
+    parametres:
+      - {quoi: "tarifs du tableau B", avant: "tarifs de 1997", apres: "tarifs au 11 janvier 1998 (tableau non lu)"}
+    statut: en_vigueur
+    verification:
+      statut: non vérifiée
+      raison: "le tarif est un tableau que l'archive du JO de la DILA ne reproduit pas (« Vous pouvez consulter le tableau dans le JO ») : les paramètres et le sens ne se lisent pas ; le sens « mixte » fait compter la variation entière, la règle de D-417 (D-446)"
+
+  - id: lfi1999_tipp
+    gouvernement: jospin
+    intitule: Tarifs de la taxe intérieure sur les produits pétroliers
+    instrument: accises_energie
+    sens: mixte
+    texte: {nature: loi, numero: 98-1266, date: 1998-12-30, intitule: "loi de finances pour 1999"}
+    article: "26"
+    codification: code des douanes, art. 265
+    annee_effet: 1999
+    date_effet: 1999-01-11
+    parametres:
+      - {quoi: "tarifs du tableau B", avant: "tarifs de 1998", apres: "tarifs au 11 janvier 1999 (tableau non lu)"}
+    statut: en_vigueur
+    verification:
+      statut: non vérifiée
+      raison: "le tarif est un tableau que l'archive du JO de la DILA ne reproduit pas (« Vous pouvez consulter le tableau dans le JO ») : les paramètres et le sens ne se lisent pas ; le sens « mixte » fait compter la variation entière, la règle de D-417 (D-446)"
+
+  - id: lfi2001_tipp_fioul
+    gouvernement: jospin
+    intitule: Tarif du fioul domestique de la taxe intérieure sur les produits pétroliers
+    instrument: accises_energie
+    sens: mixte
+    texte: {nature: loi, numero: 2000-1352, date: 2000-12-30, intitule: "loi de finances pour 2001"}
+    article: "12"
+    codification: code des douanes, art. 265
+    annee_effet: 2000
+    date_effet: 2000-09-21
+    parametres:
+      - {quoi: "tarif du fioul domestique", avant: "tarif de 2000", apres: "tarif au 21 septembre 2000 (tableau non lu)"}
+    statut: en_vigueur
+    verification:
+      statut: non vérifiée
+      raison: "le tarif est un tableau que l'archive du JO de la DILA ne reproduit pas (« Vous pouvez consulter le tableau dans le JO ») : les paramètres et le sens ne se lisent pas ; le sens « mixte » fait compter la variation entière, la règle de D-417 (D-446)"
+
+  - id: lfr2005_tipp_refaction
+    gouvernement: villepin
+    intitule: Tarifs du supercarburant et du gazole, réfaction modulable par les régions
+    instrument: accises_energie
+    sens: mixte
+    texte: {nature: loi, numero: 2005-1720, date: 2005-12-30, intitule: "loi de finances rectificative pour 2005"}
+    article: "84"
+    codification: code des douanes, art. 265
+    annee_effet: 2006
+    parametres:
+      - {quoi: "tarifs du supercarburant et du gazole", avant: "tarifs de 2005", apres: "tarifs modifiés (tableau non lu) ; réfaction de 1,77 € et 1,15 € par hectolitre en 2006"}
+    statut: en_vigueur
+    verification:
+      statut: non vérifiée
+      raison: "le tarif est un tableau que l'archive du JO de la DILA ne reproduit pas (« Vous pouvez consulter le tableau dans le JO ») : les paramètres et le sens ne se lisent pas ; le sens « mixte » fait compter la variation entière, la règle de D-417 (D-446)"
+
+  - id: lfi1997_isf_tarif
+    gouvernement: juppe_2
+    intitule: Tarif de l'impôt de solidarité sur la fortune
+    instrument: patrimoine
+    sens: mixte
+    texte: {nature: loi, numero: 96-1181, date: 1996-12-30, intitule: "loi de finances pour 1997"}
+    article: "25"
+    codification: CGI, art. 885 U
+    annee_effet: 1997
+    parametres:
+      - {quoi: "tarif", avant: "tarif de 1996", apres: "tarif modifié (tableau non lu)"}
+    statut: en_vigueur
+    verification:
+      statut: non vérifiée
+      raison: "le tarif est un tableau que l'archive du JO de la DILA ne reproduit pas (« Vous pouvez consulter le tableau dans le JO ») : les paramètres et le sens ne se lisent pas ; le sens « mixte » fait compter la variation entière, la règle de D-417 (D-446)"
+
+  - id: lfi1999_isf_tarif
+    gouvernement: jospin
+    intitule: Tarif de l'impôt de solidarité sur la fortune
+    instrument: patrimoine
+    sens: mixte
+    texte: {nature: loi, numero: 98-1266, date: 1998-12-30, intitule: "loi de finances pour 1999"}
+    article: "13"
+    codification: CGI, art. 885 U et 885 V ter
+    annee_effet: 1999
+    parametres:
+      - {quoi: "tarif", avant: "tarif de 1998", apres: "tarif modifié (tableau non lu)"}
+      - {quoi: "article 885 V ter", avant: "en vigueur", apres: "abrogé"}
+    statut: en_vigueur
+    verification:
+      statut: non vérifiée
+      raison: "le tarif est un tableau que l'archive du JO de la DILA ne reproduit pas (« Vous pouvez consulter le tableau dans le JO ») : les paramètres et le sens ne se lisent pas ; le sens « mixte » fait compter la variation entière, la règle de D-417 (D-446)"
+
+  - id: loi2003_isf_pactes
+    gouvernement: raffarin_2
+    intitule: Exonération partielle d'ISF des titres sous engagement de conservation
+    instrument: patrimoine
+    sens: baisse
+    texte: {nature: loi, numero: 2003-721, date: 2003-08-01, intitule: "loi pour l'initiative économique"}
+    article: "49"
+    codification: CGI, art. 885 I bis
+    annee_effet: 2004
+    parametres:
+      - {quoi: "part exonérée des titres sous engagement collectif de conservation", avant: "néant", apres: "50 %, ISF de 2004 et des années suivantes"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001632696
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2005_isf_tarif
+    gouvernement: raffarin_3
+    intitule: Tarif de l'impôt de solidarité sur la fortune, ses tranches indexées
+    instrument: patrimoine
+    sens: mixte
+    texte: {nature: loi, numero: 2004-1484, date: 2004-12-30, intitule: "loi de finances pour 2005"}
+    article: "17"
+    codification: CGI, art. 885 U
+    annee_effet: 2005
+    parametres:
+      - {quoi: "tarif", avant: "tarif de 2004", apres: "tarif réécrit (tableau non lu), limites des tranches indexées chaque année"}
+    statut: en_vigueur
+    verification:
+      statut: non vérifiée
+      raison: "le tarif est un tableau que l'archive du JO de la DILA ne reproduit pas (« Vous pouvez consulter le tableau dans le JO ») : les paramètres et le sens ne se lisent pas ; le sens « mixte » fait compter la variation entière, la règle de D-417 (D-446)"
+
+  - id: lfi2006_isf_salaries
+    gouvernement: villepin
+    intitule: Exonération de 75 % d'ISF des titres détenus par les salariés et les dirigeants
+    instrument: patrimoine
+    sens: baisse
+    texte: {nature: loi, numero: 2005-1719, date: 2005-12-30, intitule: "loi de finances pour 2006"}
+    article: "26"
+    codification: CGI, art. 885 I quater
+    annee_effet: 2006
+    parametres:
+      - {quoi: "part exonérée des titres", avant: "néant", apres: "75 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002467956
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2006_bouclier_fiscal
+    gouvernement: villepin
+    intitule: Droit à restitution des impositions au-delà de 60 % des revenus
+    instrument: patrimoine
+    sens: baisse
+    texte: {nature: loi, numero: 2005-1719, date: 2005-12-30, intitule: "loi de finances pour 2006"}
+    article: "74"
+    codification: CGI, art. 1er et 1649-0 A
+    annee_effet: 2007
+    parametres:
+      - {quoi: "impôts directs (IR, ISF, taxes foncière et d'habitation) au-delà de 60 % des revenus", avant: "dus", apres: "restitués, à compter des impositions de 2006 (restitutions en 2007)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001490625
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi1999_abattement_conjoint
+    gouvernement: jospin
+    intitule: Abattement du conjoint survivant relevé
+    instrument: transmission
+    sens: baisse
+    texte: {nature: loi, numero: 98-1266, date: 1998-12-30, intitule: "loi de finances pour 1999"}
+    article: "20"
+    codification: CGI, art. 779
+    annee_effet: 1999
+    etapes:
+      - {date: 1999-01-01, quoi: "400 000 F"}
+      - {date: 2000-01-01, quoi: "500 000 F"}
+    parametres:
+      - {quoi: "abattement sur la part du conjoint survivant", avant: "330 000 F", apres: "400 000 F (1999), 500 000 F (2000)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001812576
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "L'avant (330 000 F) n'est pas dans l'article lu ; le sens se lit sur l'après."
+
+  - id: lfi2004_donations_50
+    gouvernement: raffarin_2
+    intitule: Réduction de 50 % des droits de donation sans limite d'âge
+    instrument: transmission
+    sens: baisse
+    texte: {nature: loi, numero: 2003-1311, date: 2003-12-30, intitule: "loi de finances pour 2004"}
+    article: "17"
+    codification: CGI, art. 790
+    annee_effet: 2003
+    date_effet: 2003-09-25
+    parametres:
+      - {quoi: "réduction de droits de 50 % des donations en pleine propriété", avant: "selon l'âge du donateur", apres: "sans limite d'âge, du 25 septembre 2003 au 30 juin 2005"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000002453488
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: loi2003_donations_790a
+    gouvernement: raffarin_2
+    intitule: Donations d'entreprises exonérées sur option
+    instrument: transmission
+    sens: baisse
+    texte: {nature: loi, numero: 2003-721, date: 2003-08-01, intitule: "loi pour l'initiative économique"}
+    article: "45"
+    codification: CGI, art. 790 A
+    annee_effet: 2004
+    parametres:
+      - {quoi: "donations en pleine propriété de fonds ou de parts aux salariés", avant: "taxées", apres: "exonérées sur option, sous plafond"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001247355
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2005_abattement_succession
+    gouvernement: raffarin_3
+    intitule: Abattement de 50 000 € sur l'actif net successoral
+    instrument: transmission
+    sens: baisse
+    texte: {nature: loi, numero: 2004-1484, date: 2004-12-30, intitule: "loi de finances pour 2005"}
+    article: "14"
+    codification: CGI, art. 775 ter
+    annee_effet: 2005
+    parametres:
+      - {quoi: "abattement global en ligne directe", avant: "néant", apres: "50 000 €"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001458512
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: tepa_successions
+    gouvernement: fillon_2
+    intitule: Exonération du conjoint survivant, abattements relevés
+    instrument: transmission
+    sens: baisse
+    texte: {nature: loi, numero: 2007-1223, date: 2007-08-21, intitule: "loi en faveur du travail, de l'emploi et du pouvoir d'achat"}
+    article: "8"
+    codification: CGI, art. 775 ter, 777, 779, 796-0 bis
+    annee_effet: 2007
+    date_effet: 2007-08-22
+    parametres:
+      - {quoi: "droits de succession du conjoint survivant", avant: "taxés après abattement", apres: "exonérés"}
+      - {quoi: "abattement en ligne directe (art. 775 ter)", avant: "50 000 €", apres: "abrogé, l'abattement par enfant relevé"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001502171
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "La date est l'entrée en vigueur de la loi (publiée au JO du 22 août 2007)."
+
+  - id: lfr2000_th_regionale
+    gouvernement: jospin
+    intitule: Part régionale de la taxe d'habitation supprimée
+    instrument: taxe_habitation
+    sens: baisse
+    texte: {nature: loi, numero: 2000-656, date: 2000-07-13, intitule: "loi de finances rectificative pour 2000"}
+    article: "11"
+    codification: CGI, art. 1599 bis
+    annee_effet: 2000
+    parametres:
+      - {quoi: "taxe d'habitation perçue par les régions", avant: "votée par les régions", apres: "supprimée"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000001249309
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000

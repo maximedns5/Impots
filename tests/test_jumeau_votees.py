@@ -17,8 +17,9 @@ import yaml
 from impots.jumeau import votees
 
 
-def test_la_frise_couvre_chaque_jour_de_2010_a_aujourd_hui() -> None:
-    jour, fin = dt.date(2010, 1, 1), dt.date.today()
+def test_la_frise_couvre_chaque_jour_de_1995_a_aujourd_hui() -> None:
+    # D-446 : la frise remonte au 17 mai 1995 (l'histoire longue) ; elle partait de 2010.
+    jour, fin = dt.date(1995, 5, 17), dt.date.today()
     vus = set()
     while jour <= fin:
         vus.add(votees.gouvernement_au(jour).id)
@@ -85,8 +86,10 @@ def test_aucune_mesure_ne_porte_de_montant() -> None:
 #: Le décompte de D-413 : les 70 mesures de D-410, relues au Journal officiel, et les 25
 #: ajoutées, toutes relues au même endroit ; plus, en D-421, le volet des cotisations
 #: salariales de la LFSS 2018 (art. 8) sous son instrument. Un ajout ou un déclassement
-#: change ce décompte et la D-entrée qui le dit.
-VERIFIEES, NON_VERIFIEES = 96, 0
+#: change ce décompte et la D-entrée qui le dit. En D-446 : les 61 mesures d'avant 2010,
+#: 53 relues dans l'extrait de 1994 à 2009, 8 dont le tarif est un tableau que l'archive ne
+#: reproduit pas (la TIPP et l'ISF).
+VERIFIEES, NON_VERIFIEES = 149, 8
 
 
 def test_chaque_mesure_dit_sa_verification_et_sa_source() -> None:
@@ -194,3 +197,21 @@ def test_chaque_mesure_d_un_prelevement_dit_son_sens() -> None:
     with pytest.raises(votees.VoteesError, match="sens"):
         votees._etapes([{"date": dt.date(2018, 1, 1), "quoi": "a", "sens": "plus"}],
                        {"annee_effet": 2018}, "x")
+
+
+def test_l_histoire_longue_porte_ses_mesures_d_avant_2010() -> None:
+    """D-446 : la frise remonte à 1995 ; les mesures d'avant 2010 ont une année d'effet de
+    1997 à 2007 ; chaque famille du jumeau en a, et les grandes y sont, à leurs années."""
+    assert votees.gouvernement_au(dt.date(1996, 1, 24)).id == "juppe_2"
+    assert votees.gouvernement_au(dt.date(2000, 7, 13)).premier_ministre == "Lionel Jospin"
+    avant = {m.id: m for m in votees.mesures() if m.texte.date < dt.date(2009, 1, 1)}
+    assert len(avant) == 61
+    assert all(any(1997 <= a <= 2007 for a in m.annees_effet) for m in avant.values())
+    assert avant["lfss1998_csg"].annees_effet == (1998,)
+    assert avant["lfr2000_tva_taux_normal"].annees_effet == (2000, 2001)
+    assert avant["lfi1999_tp_salaires"].annees_effet == (1999, 2000, 2001, 2002, 2003)
+    assert avant["loi1997_contribution_temporaire_is"].sens_en(1999) == {"baisse"}
+    assert {m.instrument for m in avant.values()} == {
+        "ir", "csg", "cotisations_salaries", "cotisations_employeurs", "is",
+        "impots_production", "tva", "accises_energie", "patrimoine", "transmission",
+        "taxe_habitation"}

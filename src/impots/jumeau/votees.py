@@ -1,4 +1,5 @@
-"""Les mesures votées et la frise des gouvernements, de 2010 à 2027 (but 23, lot 5, D-410).
+"""Les mesures votées et la frise des gouvernements, de 2010 à 2027 (but 23, lot 5, D-410),
+et de 1995 à 2009 pour l'histoire longue (D-446).
 
 Deux fichiers de faits juridiques, versionnés à côté de ce module, dans
 `jumeau/historique/` : `gouvernements.yaml` (les présidents, les gouvernements, le mandat
@@ -305,7 +306,7 @@ def mesures() -> tuple[MesureVotee, ...]:
         texte = m["texte"]
         if texte.get("nature") not in NATURES:
             raise VoteesError(f"{ou} : nature « {texte.get('nature')} » hors {sorted(NATURES)}")
-        if not re.fullmatch(r"\d{4}-\d+", str(texte.get("numero", ""))):
+        if not re.fullmatch(r"(\d{2}){1,2}-\d+", str(texte.get("numero", ""))):
             raise VoteesError(f"{ou} : numéro de texte « {texte.get('numero')} »")
         if not str(m.get("article", "")).strip():
             raise VoteesError(f"{ou} : sans article")
@@ -327,7 +328,7 @@ def mesures() -> tuple[MesureVotee, ...]:
         if en_fonction.id != m["gouvernement"]:
             raise VoteesError(f"{ou} : texte du {date_texte}, sous {en_fonction.id}, rangé "
                               f"sous {m['gouvernement']}")
-        if not 2009 <= int(m["annee_effet"]) <= 2030:
+        if not 1995 <= int(m["annee_effet"]) <= 2030:       # 1995 : D-446
             raise VoteesError(f"{ou} : année d'effet {m['annee_effet']}")
         sortie.append(MesureVotee(
             id=m["id"], gouvernement=m["gouvernement"], intitule=m["intitule"],

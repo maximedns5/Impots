@@ -19,8 +19,21 @@
 # Vérification : dates de mémoire, Légifrance n'étant pas joignable depuis la session du
 # 14 novembre 2026 (403) ; le Premier ministre de 2025 et 2026 est lu sur les en-têtes des
 # PLF 2026 et 2027 et du PLFSS 2027 déposés (data/raw). À relire sur le JORF.
+#
+# L'HISTOIRE LONGUE (D-446) : la frise remonte au 17 mai 1995 (Jacques Chirac, Alain Juppé)
+# pour ranger les mesures votées de 1995 à 2009. Dates de mémoire comme les autres : les
+# décrets de nomination ne sont pas dans l'extrait du JO de D-446 (lois et décrets de
+# cotisations seulement). À relire sur le JORF.
 
 presidents:
+  - nom: Jacques Chirac
+    mandat: 1
+    debut: 1995-05-17
+    fin: 2002-05-16
+  - nom: Jacques Chirac
+    mandat: 2
+    debut: 2002-05-17
+    fin: 2007-05-15
   - nom: Nicolas Sarkozy
     debut: 2007-05-16
     fin: 2012-05-14
@@ -45,6 +58,62 @@ a_venir:
     l'état que laisse le gouvernement en fonction au 13 mai 2027.
 
 gouvernements:
+  - id: juppe_1
+    premier_ministre: Alain Juppé
+    president: Jacques Chirac
+    debut: 1995-05-17
+    fin: 1995-11-06
+    composition: 1995-05-18
+    demission: 1995-11-07
+  - id: juppe_2
+    premier_ministre: Alain Juppé
+    president: Jacques Chirac
+    debut: 1995-11-07
+    fin: 1997-06-01
+    composition: 1995-11-07
+    demission: 1997-06-02
+  - id: jospin
+    premier_ministre: Lionel Jospin
+    president: Jacques Chirac
+    debut: 1997-06-02
+    fin: 2002-05-05
+    composition: 1997-06-04
+    demission: 2002-05-06
+  - id: raffarin_1
+    premier_ministre: Jean-Pierre Raffarin
+    president: Jacques Chirac
+    debut: 2002-05-06
+    fin: 2002-06-16
+    composition: 2002-05-07
+    demission: 2002-06-17
+  - id: raffarin_2
+    premier_ministre: Jean-Pierre Raffarin
+    president: Jacques Chirac
+    debut: 2002-06-17
+    fin: 2004-03-30
+    composition: 2002-06-17
+    demission: 2004-03-30
+  - id: raffarin_3
+    premier_ministre: Jean-Pierre Raffarin
+    president: Jacques Chirac
+    debut: 2004-03-31
+    fin: 2005-05-30
+    composition: 2004-03-31
+    demission: 2005-05-31
+  - id: villepin
+    premier_ministre: Dominique de Villepin
+    president: Jacques Chirac
+    debut: 2005-05-31
+    fin: 2007-05-16
+    composition: 2005-06-02
+    demission: 2007-05-15
+  - id: fillon_1
+    premier_ministre: François Fillon
+    president: Nicolas Sarkozy
+    debut: 2007-05-17
+    fin: 2007-06-17
+    composition: 2007-05-18
+    demission: 2007-06-18
   - id: fillon_2
     premier_ministre: François Fillon
     president: Nicolas Sarkozy
