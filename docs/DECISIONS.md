@@ -34172,3 +34172,22 @@ population hors de la comparaison du moteur, pas de `make impact` ni de lourds e
 de route. Les tests légers des fichiers touchés tiennent ce qui change ; aucun nombre
 publié ne change, chaque rapport garde son commit.
 
+
+## D-466 — Le lecteur novice, première passe : le site d'avant la refonte
+
+**Ce qui a été lu** (but 25, volet `lecteur`), sur `claude/but25` (f40424b), le dossier
+`site/` servi en local et ouvert dans Chromium à 1280 px et à 390 px, en lecteur qui ne
+sait rien de la fiscalité ni de la macroéconomie, sans lire le code ni les D-entrées :
+l'accueil, les neuf pages du parcours, la liste des programmes, l'étude de Mélenchon en
+détail, celles de Retailleau et du PLFSS 2027 en survol, la méthode, et « Le jumeau »,
+curseurs bougés dans ses deux modes et avec une loi hypothétique.
+
+**Le décompte** : 50 remarques, 15 bloquantes, 31 gênantes, 4 mineures, et 5 qui
+marchent. Par volet : `chemin` 4, 12, 1 ; `population` 2, 4, 1 ; `mesure` 4, 9, 1 ;
+`jumeau` 5, 6, 1. Aux trois questions du but : la population, comprise à moitié (ni sa
+taille, ni un ménage, ni ce que ses écarts font aux études) ; une mesure devenue nombre,
+comprise pour Attal seul, par la page 3 du parcours ; le jumeau et ses curseurs, non.
+
+**Le rapport** : `reports/lecteur/passe1.md`, ses captures dans
+`reports/lecteur/captures/passe1/` (19 PNG, 2,5 Mo). Rien n'est calculé : les valeurs du
+jumeau citées sont celles que la page affiche, lues au curseur.
