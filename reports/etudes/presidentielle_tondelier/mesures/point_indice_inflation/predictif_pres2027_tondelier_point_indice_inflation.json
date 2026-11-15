@@ -181,9 +181,7 @@
         "instruments_entreprises": [
           "impot_societes",
           "contribution_sociale_is",
-          "cebge",
-          "cvae",
-          "c3s"
+          "cebge"
         ],
         "instruments_menages": [
           "pfu",
@@ -408,9 +406,7 @@
       "instruments_entreprises": [
         "impot_societes",
         "contribution_sociale_is",
-        "cebge",
-        "cvae",
-        "c3s"
+        "cebge"
       ],
       "instruments_menages": [
         "pfu",
@@ -2111,6 +2107,43 @@
       "bas": 0.0,
       "haut": 0.2
     },
-    "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161"
+    "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161",
+    "instruments": {
+      "decision": "D-444",
+      "date": "2026-11-15",
+      "retires": [
+        "cvae",
+        "c3s"
+      ],
+      "objet": "des instruments retirés de la liste du canal des créations, sans passe : ils y valaient zéro chaque année, aucun nombre ne change ; la passe reste celle de « commit »",
+      "nombres_refaits": false,
+      "variations_avant": {
+        "figee": [
+          2641561569.375244,
+          2641561569.3754883,
+          2641569135.3571777,
+          2641561569.3754883,
+          2641561569.3754883,
+          2641561569.3754883,
+          2641569135.3571777,
+          2641561569.3754883,
+          2641561569.3754883,
+          2641561569.3754883
+        ],
+        "vieillie": [
+          2801403683.286133,
+          2884893296.1591797,
+          2970410067.3935547,
+          3059282031.2875977,
+          3150311812.1381836,
+          3244092771.550537,
+          3340842619.4748535,
+          3440525824.1845703,
+          3541708610.510254,
+          3647488485.6035156
+        ]
+      },
+      "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161"
+    }
   }
 }

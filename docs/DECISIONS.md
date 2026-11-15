@@ -34064,3 +34064,85 @@ la plage de b de D-438 dans `menages.yaml`, la déclaration de D-442 dans `theta
 **Ce qui ne change pas.** Aucun rapport : ni ceux des études (D-440), ni ceux du jumeau
 (r4, D-439, garde 877bba9 : le rejeu de l'histoire ne lit pas les études). Aucune
 tolérance.
+
+**La passe avant la PR** (D-309, D-335), une fois, sur fa61eaf, `-n 2`, détachée. Le
+relevé d'impact est celui du worktree du but 23 (a4e6cd7, mergé par la PR #128 ; il
+diffère d'`origin/main` par un seul fichier, `site_jumeau/__init__.py`, de 459cfb1).
+`make impact JOBS=2` : ruff propre ; la passe parallèle, 4 766 verts, 21 sautés, aucun
+rouge, en 41 min 21 s ; les 29 lourds de `tests/lourds.txt`, tous retenus, chacun dans
+son processus (`tests/memoire.py lancer --impact`) : 29 verts, aucun sauté, de 6 s
+(`test_jumeau_cellules`) à 6 min 38 s (chaque forme de réforme sur la population
+entière), la page dans Chromium en 25 s ; 5 chronomètres verts. Les lourds n'ont pas
+été relancés une seconde fois : l'impact les avait tous retenus. **Les 21 sautés**, ceux
+de D-430, aucun lourd : l'annexe 9 du PLFSS 2027, hors du dépôt par règle ; le bulletin
+AFT n° 435, non manifesté ici (trois de `test_dette_maturite`) ; le PDF de Da Rin et al.
+(2011) absent de `data/raw` (`test_taux_effectifs`) ; pas de distribution des taux
+marginaux dans l'artefact de référence (deux de `test_behavioural`) ; treize boutons sans
+contrôle négatif écrit (`test_knobs`) ; le commit qui date un enregistrement, absent d'un
+clone superficiel (`test_validation_predictif`). Pas de `make full`.
+
+## D-444 — Les 40 autres rapports alignés sur D-440 : la CVAE et la C3S hors des listes
+
+**La décision du propriétaire, 15 novembre 2026** (relayée par la coordination du but 24,
+sur le point que D-440 laissait à décider). Les 40 rapports d'études qui portent le canal
+des créations sans réforme des entreprises listaient encore la CVAE et la C3S parmi ses
+instruments, où elles valaient zéro chaque année, et leurs pages gardaient la convention
+de D-401. Ils sont alignés sur D-440, sans qu'aucun nombre ne change, comme D-427 l'a
+fait pour ε.
+
+**La voie.** `recalcul.aligner`, appelé par `scripts/recaler_creations.py --aligner` :
+les deux instantanés (`rejeu.creations.parametres`, `creations.parametres`) perdent les
+deux instruments ; `recalcul.instruments` reçoit la décision, la date, les retirés,
+`nombres_refaits` faux, ΔP d'avant (égal à ΔP) et le commit de la passe. Rien n'est
+refait par le rejeu : un rejeu redonnerait la première année reportée, le Monte-Carlo et
+les lectures à 3e-12 près seulement (D-427), et aucun nombre ne doit bouger. Le script
+refuse un rapport dont le scénario a une réforme des entreprises qui fait bouger la CVAE
+ou la C3S (la couche entreprises, `retraits`, comme en D-440) : aucun des 40.
+
+**Le contrôle**, écrit avant d'écrire chaque rapport, dans le script : le rapport aligné,
+ses deux listes rendues et sa marque retirée, redonne le fichier commité à l'octet près ;
+puis, refait à son ε, il se redonne (`recalcul.controle`). Les 40 le tiennent (« 40
+rapports alignés, chacun contrôlé »). Un second contrôle, hors du dépôt, feuille par
+feuille contre le commit d'avant : 40 rapports changés, 54 475 feuilles comparées ;
+écarts aux seuls champs permis (les deux listes, 40 fois chacune ; `recalcul.instruments`,
+nouveau) ; **aucun autre écart.** La lecture du jumeau (D-443) redonne, sur les 46
+rapports, dans les deux vues, avec et sans la convention de D-414, la même mesure qu'avant
+l'alignement (184 lectures), hors de la liste du canal et de `prelevements_canal`, qui
+vaut désormais ΔP sur les 40.
+
+**Les 46 rapports du canal** sont désormais tous sans la CVAE ni la C3S : 6 refaits
+(D-440), 40 alignés. Les rapports comptés : l'article 74 du PLF 2027 (APL, prime
+d'activité) ; Attal (a16, a22) ; Bouamrane, Kazib, Philippe, Roussel, Ruffin, Tondelier,
+Le Pen, Mélenchon (programmes et mesures) ; Lisnard (l1, l20) ; Retailleau (r13, r15,
+r19, r27, r28).
+
+**La convention de D-401 n'a plus de raison d'être écrite.** Aucun rapport ne liste plus
+ces deux impôts : `creations.CONVENTIONS_INSTRUMENTS_D401` et `conventions_instruments`
+sont retirées, la page dit `CONVENTIONS_INSTRUMENTS` ; une page dont un rapport les
+listerait encore est refusée (`EtudeError`, « à aligner »), plutôt que de dire une
+convention fausse. Leurs libellés restent : les pages disent les retirés. Le texte de la
+marque sur la page, pour un alignement : « La CVAE et la C3S ont été retirées de la liste
+du canal sans passe nouvelle (D-444, décision du propriétaire) : elles y valaient zéro
+chaque année, aucun nombre de la page ne change. » La lecture du jumeau garde son premier
+cas (un canal qui les lit) : c'est celui d'une loi déclarée.
+
+**Les pages et le site.** `etude ecrire` des douze études : changent les neuf pages sans
+réforme des entreprises (PLFSS 2027, Bouamrane, Kazib, Le Pen, Mélenchon, Philippe,
+Roussel, Ruffin, Tondelier : la marque dite, la liste et la convention de D-440) ; celles
+d'Attal, de Lisnard et de Retailleau ne changent pas (la section suit le programme, déjà
+refait). `site construire`, `site verifier`, `site publiable` et `node ui/check.mjs`
+(63 vérifications) passent ; changent les neuf pages, trois pages du parcours qui
+embarquent des rapports (comportements, activité, dette : les listes seules) et les deux
+fichiers de la page « Le jumeau ».
+
+**Les tests.** Changements motivés par la décision : `test_recalcul.py`, les 40 portent
+la marque de D-444, ΔP d'avant égal à ΔP, plus de CVAE ni de C3S dans leurs listes (le
+test disait l'état de D-440, `marque is None`) ; `test_etude_creations.py`, la constante
+retirée, l'assertion garde son sens (la page ne dit pas « euro pour euro comme l'IS »).
+Aucun nombre ne change : pas de test nouveau qui en tienne un. Tests légers des fichiers
+touchés (`test_recalcul`, `test_etude_creations`, `test_creations_canal`,
+`test_jumeau_depuis_rapport`, `test_jumeau_navigateur`, `test_site`) : 121 verts ; ruff
+propre.
+
+**Ce qui ne change pas.** Aucun nombre d'aucun rapport, aucune tolérance, aucun verdict,
+aucun étage ; chaque rapport garde son commit de passe.

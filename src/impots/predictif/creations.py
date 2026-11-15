@@ -99,19 +99,6 @@ CONVENTIONS_INSTRUMENTS = (
     "Le PFU et les "
     "prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, "
     "comme le taux virtuel de l'IPP qui joint l'IS et le PFU.")
-#: Those of a report that still reads the production taxes (D-401, before D-440).
-CONVENTIONS_INSTRUMENTS_D401 = (
-    "Les impôts de production (CVAE, C3S) sont lus euro pour euro comme l'IS, faute "
-    "d'une estimation publiée de la réponse des créations à ces impôts ; le PFU et les "
-    "prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, "
-    "comme le taux virtuel de l'IPP qui joint l'IS et le PFU.")
-
-
-def conventions_instruments(names: Sequence[str]) -> str:
-    """What a page says beside the instruments a report carries: a report that still
-    lists the production taxes says the convention of D-401, not today's."""
-    return (CONVENTIONS_INSTRUMENTS_D401 if set(PRODUCTION) & set(names)
-            else CONVENTIONS_INSTRUMENTS)
 #: The source of the slope, as a page names it beside its centre and range: the owner's
 #: centre of 14 November 2026 (D-427), Da Rin et al.'s within estimate.
 SOURCE_ELASTICITE = (

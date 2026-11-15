@@ -44,8 +44,8 @@ def _lue(payload) -> float:
 
 def test_the_reports_the_production_taxes_moved_no_longer_read_them() -> None:
     """D-440: six reports, those whose firm reform moves the CVAE or the C3S, carry the
-    channel without them and say it; the forty others are as D-427 left them (their
-    production taxes did not move: nothing of theirs depends on the list)."""
+    channel without them and say it; D-444: the forty others, where they were zero, lose
+    them from their lists and say it, their ΔP and every number unchanged."""
     for chemin in RAPPORTS:
         payload = json.loads(chemin.read_text(encoding="utf-8"))
         marque = payload["recalcul"].get("instruments")
@@ -61,8 +61,10 @@ def test_the_reports_the_production_taxes_moved_no_longer_read_them() -> None:
                     for v, xs in payload["rejeu"]["creations"]["variations"].items()
                     } == payload["creations"]["prelevements_eur"]
         else:
-            assert marque is None
-            assert all(set(creations.PRODUCTION) <= set(i) for i in lus)
+            assert marque["decision"] == "D-444" and marque["nombres_refaits"] is False
+            assert marque["retires"] == list(creations.PRODUCTION)
+            assert all(not set(creations.PRODUCTION) & set(i) for i in lus)
+            assert marque["variations_avant"] == payload["rejeu"]["creations"]["variations"]
 
 
 def test_the_report_before_d440_is_given_back() -> None:

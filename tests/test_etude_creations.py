@@ -114,8 +114,9 @@ def test_the_page_names_the_productivity_its_box_the_elasticity_and_the_instrume
     assert "CVAE" not in listed[:listed.index(creations.DOUBLE_COMPTE)]
     assert creations.DOUBLE_COMPTE in listed and "Mésange" in listed
     assert creations.CONVENTIONS_INSTRUMENTS in listed
-    assert creations.CONVENTIONS_INSTRUMENTS_D401 not in listed
-    # Their labels stay, for the reports that still list them (D-401).
+    # The convention of D-401 is no longer written anywhere (D-444: no report lists them).
+    assert "euro pour euro comme l'IS" not in listed
+    # Their labels stay, for the pages that say them retired (D-440, D-444).
     assert set(creations.LIBELLES) == set(PARAMS.instruments) | set(creations.PRODUCTION)
 
 

@@ -18,6 +18,14 @@ cellules, redonne chaque impôt par année et par vue. Elle doit redonner, au bi
 coût de la couche que le rapport porte (`mechanical_by_layer`), et, pour une mesure sans
 réforme des ménages, ΔP lui-même : sinon rien n'est écrit. Les montants retirés sortent de
 ΔP (`recalcul.retirer`) ; un rapport sans réforme des entreprises n'est pas touché.
+
+    IMPOTS_FIRM_VINTAGE=2023 PYTHONPATH=src python scripts/recaler_creations.py --aligner
+
+D-444 : les rapports sans réforme des entreprises listent encore la CVAE et la C3S, où
+elles valent zéro ; elles sortent de leurs listes (`recalcul.aligner`), sans qu'aucun
+nombre ne bouge. Le contrôle, avant d'écrire : le rapport aligné, ses deux listes rendues
+et sa marque retirée, redonne le fichier commité à l'octet près, et il se redonne lui-même
+refait à son ε (`recalcul.controle`).
 """
 
 from __future__ import annotations
@@ -34,6 +42,7 @@ RACINE = Path(__file__).resolve().parents[1]
 ETUDES = RACINE / "reports" / "etudes"
 DECISION = "D-427"
 DECISION_INSTRUMENTS = "D-440"
+DECISION_ALIGNEMENT = "D-444"
 
 
 def rapports() -> list[Path]:
@@ -113,11 +122,51 @@ def retirer_instruments() -> int:
     return 0
 
 
+def aligner() -> int:
+    """D-444 : la CVAE et la C3S sortent des listes des rapports où elles valent zéro."""
+    instruments = creations.PRODUCTION
+    alignes = 0
+    for chemin in rapports():
+        texte = chemin.read_text(encoding="utf-8")
+        payload = json.loads(texte)
+        lus = payload["rejeu"]["creations"]["parametres"]["instruments_entreprises"]
+        if not set(instruments) & set(lus):
+            continue
+        montants = retraits(payload, instruments)
+        if montants is not None and any(v for vs in montants.values() for v in vs):
+            raise SystemExit(f"{chemin} : la CVAE ou la C3S y bouge, ce n'est pas un "
+                             f"alignement (D-440)")
+        aligne = recalcul.aligner(payload, instruments, decision=DECISION_ALIGNEMENT,
+                                  date=date.today().isoformat())
+        refait = recalcul.ecrire(aligne)
+        # Le contrôle : les listes rendues et la marque retirée, l'octet près ; puis le
+        # rapport aligné, refait à son ε, se redonne.
+        rendu = json.loads(refait)
+        for cle in ("rejeu", None):
+            bloc = (rendu[cle]["creations"] if cle else rendu["creations"])["parametres"]
+            source = (payload[cle]["creations"] if cle else payload["creations"])
+            bloc["instruments_entreprises"] = source["parametres"]["instruments_entreprises"]
+            bloc["instruments_menages"] = source["parametres"]["instruments_menages"]
+        del rendu["recalcul"]["instruments"]
+        if recalcul.ecrire(rendu) != texte:
+            raise SystemExit(f"{chemin} : aligné, il ne redonne pas le rapport commité")
+        fautes = recalcul.controle(refait)
+        if fautes:
+            raise SystemExit(f"{chemin} : aligné, il ne se redonne pas : {fautes[:3]}")
+        chemin.write_text(refait, encoding="utf-8")
+        alignes += 1
+        print(f"  -> {chemin.relative_to(RACINE)} : contrôle tenu, à l'octet")
+    print(f"{alignes} rapports alignés, chacun contrôlé")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--controle", action="store_true")
     ap.add_argument("--instruments", action="store_true",
                     help="retirer la CVAE et la C3S du canal (D-440)")
+    ap.add_argument("--aligner", action="store_true",
+                    help="les retirer des listes où elles valent zéro (D-444)")
     args = ap.parse_args()
     cible = vars(creations.charger().elasticite)
     fautes = [f for c in rapports() for f in controle(c)]
@@ -130,6 +179,8 @@ def main() -> int:
         return 0
     if args.instruments:
         return retirer_instruments()
+    if args.aligner:
+        return aligner()
     for chemin in rapports():
         payload = json.loads(chemin.read_text(encoding="utf-8"))
         porte = payload["rejeu"]["creations"]["parametres"]["elasticite"]

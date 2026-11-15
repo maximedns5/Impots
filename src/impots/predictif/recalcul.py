@@ -238,6 +238,40 @@ def retirer(payload: Mapping[str, Any], retraits: Mapping[str, Sequence[float]],
     return out
 
 
+def aligner(payload: Mapping[str, Any], instruments: Sequence[str], *, decision: str,
+            date: str) -> dict[str, Any]:
+    """The report without `instruments` in the channel's lists, where they were zero
+    (D-444): the lists of both snapshots lose them and `recalcul.instruments` says it;
+    no number is touched, not even refitted, for none moves. The caller checks they were
+    zero (no firm reform in the scenario: `scripts/recaler_creations.py --aligner`)."""
+    out = copy.deepcopy(dict(payload))
+    rejeu = out.get("rejeu") or {}
+    if not rejeu.get("creations") or "creations" not in out:
+        raise RecalculError("rapport sans le canal des créations : rien à aligner")
+    if (out.get("recalcul") or {}).get("instruments"):
+        raise RecalculError("des instruments ont déjà été retirés de ce rapport")
+    block = rejeu["creations"]
+    snapshots = (block["parametres"], out["creations"]["parametres"])
+    for snapshot in snapshots:
+        lus = [*snapshot["instruments_entreprises"], *snapshot["instruments_menages"]]
+        if not instruments or not set(instruments) <= set(lus):
+            raise RecalculError(f"instruments {list(instruments)} : pas tous lus par le "
+                                f"rapport")
+        for key in ("instruments_entreprises", "instruments_menages"):
+            snapshot[key] = [i for i in snapshot[key] if i not in instruments]
+    marque = dict(out.get("recalcul") or {})
+    marque["instruments"] = {
+        "decision": decision, "date": date, "retires": list(instruments),
+        "objet": ("des instruments retirés de la liste du canal des créations, sans "
+                  "passe : ils y valaient zéro chaque année, aucun nombre ne change ; la "
+                  "passe reste celle de « commit »"),
+        "nombres_refaits": False,
+        "variations_avant": copy.deepcopy(block["variations"]),
+        "commit_passe": out.get("commit")}
+    out["recalcul"] = marque
+    return out
+
+
 def _marque(avant: Mapping[str, float], rejeu: Mapping[str, Any], decision: str | None,
             date: str | None, out: Mapping[str, Any], *, nul: bool) -> dict[str, Any]:
     """The `recalcul` field: what changed, when, by which decision, on which pass."""

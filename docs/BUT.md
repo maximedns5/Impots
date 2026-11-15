@@ -1179,23 +1179,28 @@ Les numéros réservés : D-432 et D-433 pour `chocs`, D-434 et D-435 pour `fine
 et D-437 pour `creations` ; D-438 et D-439 pour la jonction et le quatrième rejeu. Un
 volet qui n'en a pas l'usage le dit dans la D-entrée de la jonction.
 
-**Où il en est (15 novembre 2026, D-439).** Les trois volets sont joints sur
+**Où il en est (15 novembre 2026, D-439 à D-444).** Les trois volets sont joints sur
 `claude/but24` (D-438). `chocs` : aucun choc non budgétaire n'identifie un θ, rien n'est
 codé (D-433). `fines` : b, la réponse des salaires au chômage, est identifié sur le
 panneau des départements et des secteurs (Urssaf, chômage localisé) ; le propriétaire a
 adopté la loi combinée 0,210 ± 0,091 et la plage (0 ; 0,20 ; 1) (D-435, D-438) ; η, ε_K
 et l'accélérateur ne le sont pas, β n'est pas réestimé (D-435). `creations` : l'erreur
 de 2023 est à 92 % celle du naïf ; la CVAE et la C3S sortent des naissances, par la loi
-(D-436). **Le quatrième rejeu** (D-439) tient 9 cibles sur 12, bat le naïf sur 9 et le
-naïf mécanique sur 4 (6 sans 2023) ; b est identifié contre sa loi de D-424, par les
-données fines. **Le critère est atteint à la lettre**, de peu : la quatrième victoire,
-celle des créations, est de 0,037 point sur 10 et tient à une année (2019). L'histoire
-n'identifie toujours aucun θ, et sur l'activité, l'emploi et le chômage le jumeau reste
-derrière le naïf mécanique. **Ce qui manque** pour fermer le but : la PR (`make impact`
-et les lourds d'abord, D-309, D-335), le merge par le propriétaire et son SHA ; la page
-« Le jumeau » reconstruite (`site construire` : la plage de b et les naissances) ; le
-canal des créations des études, que D-436 laisse à décider (en cours à part). Restent
-hors d'atteinte des données publiées : η, ε_K, β et l'accélérateur du bloc.
+(D-436). **Le verdict du quatrième rejeu** (D-439) : **le critère est atteint à la
+lettre, mais de peu.** b est identifié, contre sa loi de D-424, **par les données fines,
+pas par l'histoire** : l'histoire n'identifie toujours aucun θ. **Le naïf mécanique est
+battu sur 4 cibles avec 2023** (les deux échanges, D61, et les créations, à 0,037 point
+sur une tolérance de 10, une victoire que porte une seule année, 2019) **et sur 6 sans
+2023**. Le rejeu tient 9 cibles sur 12 et bat le naïf sur 9 ; sur l'activité, l'emploi
+et le chômage, le jumeau reste derrière le naïf mécanique avec 2023. Depuis : le profil
+de la consommation est déclaré non monotone au b de D-438 (D-442) ; le canal des
+créations des études ne lit plus la CVAE ni la C3S, six rapports refaits sans passe
+(D-440, branche `claude/but24-etudes`, jointe) ; le jumeau relit ces deux impôts dans
+les six rapports, au bit comme avant D-440, et la page « Le jumeau » est reconstruite
+(D-443) ; les 40 autres rapports du canal sont alignés, sans qu'aucun nombre ne change
+(D-444). **Ce qui manque** pour fermer le but : la PR, préparée et non ouverte (la passe
+d'impact et les lourds ont tourné, D-443, D-444), le merge par le propriétaire et son SHA.
+Restent hors d'atteinte des données publiées : η, ε_K, β et l'accélérateur du bloc.
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
