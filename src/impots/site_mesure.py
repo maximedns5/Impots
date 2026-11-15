@@ -1108,9 +1108,11 @@ def quel_cout(study: etude.Etude, entry: dict[str, Any]) -> str:
                    and abs(float(v)) >= 5e9),
                   key=lambda kv: -abs(kv[1]))[:2]
     for k, v in gros:
-        items.append((f"un seul module, {CHAMPS_LUS.get(k, k.replace('_', ' '))} : ce n'est "
-                      f"pas le coût, les autres modules le compensent en partie",
-                      _badge(_eur(entry["sign"] * v), "L2")))
+        sens = "en moins" if entry["sign"] * v < 0 else "en plus"
+        items.append((f"un seul module, « {CHAMPS_LUS.get(k, k.replace('_', ' '))} », "
+                      f"{sens} pour les ménages ; ce n'est pas le coût, les autres modules "
+                      f"le compensent en partie",
+                      _badge(_eur(abs(v)).replace("+", ""), "L2")))
     lis = "".join(f'<li><span>{a}</span><span class="sm-v">{b}</span></li>'
                   for a, b in items)
     return (f'<ul class="sm-couts">{lis}</ul><p class="sm-petit">Ailleurs sur le site, '
