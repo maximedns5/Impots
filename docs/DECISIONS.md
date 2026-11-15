@@ -34173,7 +34173,7 @@ de route. Les tests légers des fichiers touchés tiennent ce qui change ; aucun
 publié ne change, chaque rapport garde son commit.
 
 
-## D-456 — Une mesure pas à pas, les pages d'études résumées d'abord, les graduations exactes
+## D-456 — Une mesure pas à pas, les études résumées d'abord, les graduations exactes
 
 **Le volet `mesure` du but 25.** Une page par mesure seule d'un programme (34 pages, dix
 candidats), à une adresse stable, `mesure-<programme>-<mesure>.html`, que le parcours
