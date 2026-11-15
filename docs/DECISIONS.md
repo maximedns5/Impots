@@ -32756,3 +32756,39 @@ commit qui date un enregistrement, absent d'un clone superficiel
 D-420, D-423 et D-429 gardent leur commit. `BUT.md` porte le chiffre du premier juge et
 dit le but 23 pas fait : rien n'est mergé, la page des curseurs n'est pas en ligne, la
 dynamique ne bat le naïf mécanique que sur 3 cibles.
+
+## D-431 — Le but 23 clos, le but 24 validé : le jumeau appris, en trois volets
+
+**Le but 23 est clos.** Le propriétaire a mergé la PR unique (#128, a4af65b), le « lot par
+lot » de son /goal abandonné par sa décision ; la page des curseurs est en ligne (le
+workflow `site`, run 43698452867, sur 459cfb1). Un premier run de publication, sur a4af65b,
+s'était arrêté au relevé du paquet du jumeau, qui comptait `_distutils_hack`, chargé au
+démarrage par un `.pth` de setuptools, comme un import de la page ; le relevé ne compte
+plus que ce qui est importé après le démarrage (#129), aucun nombre ne change. Ce que le
+but 23 ne fait pas, le jumeau appris de l'histoire, passe au but 24.
+
+**Le but 24, validé le 15 novembre 2026** (`BUT.md`) : trouver des sources qui
+identifient les θ, puisque l'agrégat budgétaire national n'en identifie aucun (D-420,
+D-423, D-429). **L'histoire longue n'en fait pas partie** : la projection de son étape
+zéro (D-421) donne une information d'environ 1,15 pour l'élasticité de l'emploi de 1996 à
+2009, quand il en faut 12 ; elle avait été retirée, elle le reste. Trois volets, chacun
+sur sa branche partie de `claude/but24`, menés en parallèle par des agents qui ne lancent
+aucune passe sur la population entière :
+
+* **`chocs`** : les chocs non budgétaires mesurés par des séries publiées (énergie, taux
+  et crédit, change), chacun soumis d'abord à l'étape zéro ; seul celui qui identifie un θ
+  est codé. D-432, D-433.
+* **`fines`** : des panels publiés où un θ se lit (l'emploi, les salaires,
+  l'investissement, les défaillances), comme ε en D-426. D-434, D-435.
+* **`creations`** : le bloc des créations relu sur son erreur de 2023 (+8,1 points, la
+  CVAE) ; le correctif se motive par autre chose que 2023, et 2023, devenu vu, est noté à
+  part au quatrième rejeu. D-436, D-437.
+
+**Le juge** est un quatrième rejeu (`rejeu_histoire_r4`), préenregistré après la jonction
+(D-438, D-439), sur les fenêtres, les cibles et les tolérances de D-417. **Le critère**,
+fixé ici avant tout calcul : au moins un θ identifié, son écart-type sous la moitié de
+celui de sa loi a priori, et la dynamique du jumeau qui bat le naïf mécanique sur plus de
+3 cibles hors de la période d'estimation (r3 : aucun θ, 3 cibles).
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible de D-417 ; les
+rapports de r1, r2 et r3 gardent leur commit ; les études ne sont pas refaites.
