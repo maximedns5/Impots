@@ -104,15 +104,16 @@ salaires:
     prix bougeant ensemble dans la variante qu'imprime la ligne"
   echelle_chomage:
     # θ : un facteur sur le profil de la semi-élasticité au chômage.
-    centre: 1.0
+    centre: 0.20
     bas: 0.0
-    haut: 1.2778
-    source: "centre : Mésange 2017, semi-élasticité agrégée −0,018 (p. 64, folio 63) ;
-      haut : Mésange 2010, −0,023 (même page), 0,023 / 0,018 ; bas : 0, aucune réponse
-      des salaires au chômage, décision du propriétaire du 14 novembre 2026 (D-427) sur
-      D-424 : la courbe des salaires corrigée du biais de publication (Nijkamp et Poot,
-      Tinbergen DP 02-029/3, tableau 4) donne b = 0,47 ± 0,43, sous l'ancienne borne
-      basse (0,5, choisie, non vérifiée)"
+    haut: 1.0
+    source: "décision du propriétaire du 15 novembre 2026 (D-435, D-438). centre : 0,20,
+      la courbe des salaires du panneau W1 (Urssaf, effectifs et masse salariale par
+      département × secteur NA17i ; Insee, taux de chômage localisés), b = 0,198 ± 0,094,
+      combinée à celle de Nijkamp et Poot (Tinbergen DP 02-029/3, tableau 4) : 0,210 ±
+      0,091 ; haut : Mésange 2017, semi-élasticité agrégée −0,018 (p. 64, folio 63), à
+      8,6 écarts-types de W1 ; bas : 0, aucune réponse des salaires au chômage (D-427).
+      Avant D-438 : (0 ; 1 ; 1,2778), le haut Mésange 2010, −0,023 (même page)"
   coin_fiscalo_social:
     source: "Mésange, p. 64 (folio 63) : indexation unitaire de la rémunération au coin
       fiscalo-social à long terme ; note 45 (p. 62) : σW = 1. Le salaire super-net visé ne

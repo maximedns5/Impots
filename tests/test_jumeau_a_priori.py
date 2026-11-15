@@ -15,6 +15,7 @@ Aucun test ne fait tourner le jumeau sur une année réelle. On tient :
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -27,6 +28,7 @@ from impots.jumeau.blocs.commerce import a_theta
 from impots.macro import mesange as mesange_pdf
 
 RAW = mesange_pdf.RAW
+D434 = Path(__file__).parents[1] / "reports" / "jumeau" / "microdonnees_d434.json"
 LOIS = ap.lois()
 DOC = ap.lire()
 
@@ -91,9 +93,7 @@ def test_les_lois_se_calculent_a_la_main():
     # 0,60) ; sous l'ancienne (0,37 ; 0,44 ; 0,48), le mode était à −½
     loi = LOIS["investissement_cout_capital"]
     assert loi.moyenne == pytest.approx(0.5 - (0.44 - 0.30) / 0.88, abs=1e-12)
-    # les salaires : la courbe des salaires, b = 0,4673, sur (0 ; 1 ; 1,2778) : b / 2 ;
-    # sous l'ancienne borne basse (0,5), le mode était juste sous 0
-    assert LOIS[thetas.SALAIRES_CHOMAGE].moyenne == pytest.approx(0.4673 / 2, abs=1e-12)
+    # les salaires : la loi de D-435 sur la plage (0 ; 0,20 ; 1), le test qui suit
     # l'élasticité des créations (D-427) : 0,043 au centre, l'écart-type de D-426 ; une
     # pente par moitié, 0,043 sous le centre, 0,157 au-dessus
     loi = LOIS["elasticite_creations"]
@@ -103,6 +103,35 @@ def test_les_lois_se_calculent_a_la_main():
     # le multiplicateur : par construction, la loi de D-417
     assert LOIS["multiplicateur_macro"].moyenne == 0.5
     assert LOIS["multiplicateur_macro"].ecart_type == 0.5
+
+
+def test_la_loi_de_b_est_celle_de_d435_sur_la_plage_du_proprietaire():
+    """D-435, D-438 : la décision du propriétaire du 15 novembre 2026. b = 0,210 ± 0,091,
+    la courbe des salaires du panneau W1 (Urssaf, chômage localisé de l'Insee) et celle
+    de Nijkamp et Poot combinées par leurs précisions ; la plage (0 ; 0,20 ; 1). Avant :
+    Nijkamp et Poot seuls, 0,4673 ± 0,4264, sur (0 ; 1 ; 1,2778), μ = 0,234."""
+    import json
+
+    assert ap.plages()[thetas.SALAIRES_CHOMAGE] == (0.0, 0.20, 1.0)
+    d = DOC[thetas.SALAIRES_CHOMAGE]
+    w1 = json.loads(D434.read_text(encoding="utf-8"))["theta"][thetas.SALAIRES_CHOMAGE]
+    assert d["panel"]["estimation"] == pytest.approx(w1["b"], abs=1e-4)
+    assert d["panel"]["ecart_type"] == pytest.approx(w1["se"], abs=1e-4)
+    (b1, s1), (b2, s2) = ((c["estimation"], c["ecart_type"])
+                          for c in (d["panel"], d["meta_analyse"]))
+    p1, p2 = 1.0 / s1 ** 2, 1.0 / s2 ** 2
+    m, s = d["estimation"], d["ecart_type"]
+    assert m == pytest.approx((p1 * b1 + p2 * b2) / (p1 + p2), abs=1e-4)
+    assert s == pytest.approx((p1 + p2) ** -0.5, abs=1e-4)
+    assert (round(m, 3), round(s, 3)) == (0.210, 0.091)
+    # sur θ : au-dessus du centre, la pente 2 × 0,8 ; au-dessous, 2 × 0,2
+    loi = LOIS[thetas.SALAIRES_CHOMAGE]
+    assert loi.moyenne == pytest.approx(0.5 + (m - 0.20) / 1.6, abs=1e-12)
+    assert loi.ecart_haut == pytest.approx(s / 1.6, abs=1e-12)
+    assert loi.ecart_bas == pytest.approx(loi.moyenne - (0.5 - (0.20 - (m - s)) / 0.4),
+                                          abs=1e-12)
+    assert (loi.moyenne, loi.ecart_bas, loi.ecart_haut) == pytest.approx(
+        (0.5062, 0.2099, 0.0571), abs=1e-4)
 
 
 # --------------------------------------------------------------------------- #
@@ -169,8 +198,14 @@ def test_les_lois_du_registre_entrent_dans_l_estimation():
         n = max(np.size(v) for v in th.values())
         return np.zeros((n, 3))
     est = app.estimer(nulle, rh.ESTIMES, {}, lois=LOIS)
+    # L'estimation s'arrête quand le coût gagne moins de 1e-10 ; près du mode d'une loi
+    # à deux écarts inégaux, la jacobienne (un pas de 0,02) enjambe le mode et le
+    # dernier pas s'arrête plus loin. La loi de b (D-438 : 0,21 et 0,057), partie de ½
+    # sous son mode, s'arrête à 3e-6 du mode ; une loi symétrique, à 1e-6 comme avant.
     for k in rh.ESTIMES:
-        assert est.theta[k] == pytest.approx(min(1.0, max(0.0, LOIS[k].moyenne)), abs=1e-6)
+        ecart = 1e-6 + 2e-5 * abs(LOIS[k].ecart_bas - LOIS[k].ecart_haut)
+        assert est.theta[k] == pytest.approx(min(1.0, max(0.0, LOIS[k].moyenne)),
+                                             abs=ecart)
     assert not est.identifies
 
 
@@ -239,7 +274,7 @@ def test_le_facteur_des_salaires_vient_du_chomage_de_l_insee():
             if 1989 <= int(a) <= 2014]
     u = sum(taux) / len(taux)
     assert len(taux) == 26 and u == pytest.approx(9.154, abs=5e-4)
-    d = DOC[thetas.SALAIRES_CHOMAGE]
+    d = DOC[thetas.SALAIRES_CHOMAGE]["meta_analyse"]
     assert d["estimation"] == pytest.approx(0.077 / u / 0.018, abs=1e-4)
     assert d["ecart_type"] == pytest.approx(math.hypot(0.006, 0.070) / u / 0.018, abs=1e-4)
 

@@ -19,6 +19,13 @@ curseurs la lisent), l'estimation reste dans la boîte, et l'a priori la pousse 
 borne ; la D-entrée le dit. Un θ sans source garde la loi large de D-417, N(½ ; ½).
 
 Les plages ne sont pas recopiées : `plages` les lit dans les paramètres des blocs.
+
+UNE LOI TIRÉE DES DONNÉES. Celle de b (`jumeau_salaires_chomage`) n'est plus la seule
+littérature : depuis D-438, la décision du propriétaire du 15 novembre 2026 sur D-435, la
+courbe des salaires du panneau W1 (Urssaf et chômage localisé de l'Insee) combinée à la
+méta-analyse de Nijkamp et Poot par leurs précisions, 0,210 ± 0,091, sur la plage
+(0 ; 0,20 ; 1) : μ = 0,506, s₋ = 0,210, s₊ = 0,057 sur θ. Les deux composantes sont dans
+le YAML (`panel`, `meta_analyse`) ; `lois` ne lit que leur combinaison.
 """
 
 from __future__ import annotations

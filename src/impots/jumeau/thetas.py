@@ -147,10 +147,15 @@ REGISTRE.update({ligne.cle: ligne for ligne in (
                       "la semi-élasticité du salaire au taux de chômage de Mésange (−1,98 "
                       f"et −1,49 à long terme) ; {_PAR_THETA}"),
           unite="sans dimension", a_zero="0 (aucune réponse au chômage)",
-          a_demi="1 (Mésange 2017, −0,018 agrégé)", a_un="1,2778 (Mésange 2010, −0,023)",
+          a_demi=("0,20 (la courbe des salaires du panneau W1, Urssaf et chômage localisé "
+                  "de l'Insee, combinée à Nijkamp et Poot : 0,210 ± 0,091)"),
+          a_un="1 (Mésange 2017, −0,018 agrégé)",
           direction="θ = 1 : les salaires réagissent le plus au chômage",
-          source=("Mésange (G2017-04), p. 64 et 65 ; la borne basse, 0, décision du "
-                  "propriétaire sur Nijkamp et Poot (2002), tableau 4 (D-424, D-427)"),
+          source=("Mésange (G2017-04), p. 64 et 65 ; le centre, D-435 (le panneau W1, "
+                  "Urssaf, open data, effectifs et masse salariale par département × "
+                  "NA17i ; Insee, BDM, TAUX-CHOMAGE) et Nijkamp et Poot (2002), tableau "
+                  "4 ; la plage (0 ; 0,20 ; 1), décision du propriétaire du 15 novembre "
+                  "2026 (D-427, D-435, D-438)"),
           verifiee=False),
     Ligne(cle=CONSOMMATION_PROFIL, bloc="consommation",
           definition=("e(h) dans PMC_d(h) = e(h) [APC + κ (APC_d − APC)] : l'élasticité "

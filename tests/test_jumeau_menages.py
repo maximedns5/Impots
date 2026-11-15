@@ -200,7 +200,13 @@ def test_une_baisse_d_impot_monte_la_consommation_selon_la_propension_du_decile(
 
 
 def test_theta_zero_et_un_bornent_la_consommation() -> None:
-    profils = [_jumeau([_baisse_ir()], _theta(0.5, **{thetas.CONSOMMATION_PROFIL: t}))[0]
+    # Les salaires à b = 1 (Mésange), θ = 1 sur la plage de D-438 (0 ; 0,20 ; 1) : le b
+    # de θ½ sous lequel ce test a été écrit. À b = 0,20, le θ½ de D-438, la boucle des
+    # salaires sur le chômage ne rend plus le surcroît de demande en revenu, et la
+    # consommation à θ = 1 passe sous celle de θ½ de 0,13 % au plus de la 3e à la 9e
+    # année (D-438) : une propriété de l'équilibre, pas une borne du bloc.
+    profils = [_jumeau([_baisse_ir()], _theta(0.5, **{thetas.CONSOMMATION_PROFIL: t,
+                                                      thetas.SALAIRES_CHOMAGE: 1.0}))[0]
                for t in (0.0, 0.5, 1.0)]
     dc = [_ecart("c_menages", t)[:, 0] for t in profils]
     assert np.all(dc[0] <= dc[1] + 1e-12) and np.all(dc[1] <= dc[2] + 1e-12)
