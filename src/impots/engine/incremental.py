@@ -165,10 +165,18 @@ def _bruts(menages: pl.DataFrame) -> np.ndarray:
 def seuil_bareme(reform: Any, year: int) -> float | None:
     """Le seuil de la première tranche du barème de l'IR que la réforme change, lu sur
     l'arbre réformé et sur celui de la loi ; None quand rien ne change."""
+    bareme = json.dumps(reform.model_dump(mode="json")["ir_bareme"], sort_keys=True)
+    return _seuil_bareme(type(reform), bareme, year)
+
+
+@lru_cache(maxsize=64)
+def _seuil_bareme(kind: Any, bareme: str, year: int) -> float | None:
+    """`seuil_bareme`, une fois par barème et par année : l'arbre réformé coûte une
+    seconde à construire, et une passe le lit huit fois (D-465)."""
     from impots.engine.reforms import PATH_BAREME, resolve
     from impots.engine.system import baseline, reformed_for
 
-    spec = type(reform).model_validate({"ir_bareme": reform.ir_bareme})
+    spec = kind.model_validate({"ir_bareme": json.loads(bareme)})
     instant = f"{year}-01-01"
     loi = resolve(baseline().parameters, PATH_BAREME)(instant)
     neuf = resolve(reformed_for(spec, year).parameters, PATH_BAREME)(instant)
@@ -346,10 +354,12 @@ def taux_reforme(frame: pl.DataFrame, system: Any, year: int, earners: np.ndarra
     graines = (tuple(C1_SAMPLES) if autres is not None and seed in C1_SAMPLES
                and channels._claimed(load_store(), reform, channels.C1_KEYS)
                else (seed,))
-    cadres = {g: (frame if g == seed else autres(g)) for g in graines}
-    cle_union = json.dumps([id(system), year, step,
-                            [fingerprint(cadres[g]) for g in graines]])
-    if _UNION.get("cle") != cle_union:
+    # The union is computed once per pass: a later sample finds its own frame among the
+    # frames it was computed on, and the other samples are not drawn again.
+    cle_union = json.dumps([id(system), year, step, list(graines)])
+    if (_UNION.get("cle") != cle_union
+            or fingerprint(frame) not in _UNION.get("empreintes", ())):
+        cadres = {g: (frame if g == seed else autres(g)) for g in graines}
         dedans: set[str] = set()
         dehors: set[str] = set()
         morceaux = []
@@ -374,7 +384,8 @@ def taux_reforme(frame: pl.DataFrame, system: Any, year: int, earners: np.ndarra
                    else {})
         _UNION.clear()
         _UNION.update(cle=cle_union, valeurs=valeurs, controle=controle,
-                      menages=len(dedans))
+                      menages=len(dedans),
+                      empreintes={fingerprint(cadres[g]) for g in graines})
     valeurs, controle = _UNION["valeurs"], _UNION["controle"]
     guards["moteur_rapide_taux"] = int(touche.sum())
     guards["moteur_rapide_taux_union"] = _UNION["menages"]
