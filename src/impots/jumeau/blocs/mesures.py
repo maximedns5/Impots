@@ -71,7 +71,10 @@ class Mesures:
                         np.asarray(recettes, dtype=float) / EURO * echelle)
             for instrument, valeur in m.impulsions.get(lue, {}).items():
                 ajouter(f"impulsion_{instrument}", m.identifiant, valeur * echelle)
-            if lue in m.prelevements:
-                ajouter("prelevements_entreprises", m.identifiant,
-                        m.prelevements[lue] * echelle)
+            # Le canal des créations lit ses propres instruments : sans la CVAE ni la C3S
+            # depuis D-440, quand le rapport le dit (`prelevements_canal`, D-443).
+            canal = getattr(m, "prelevements_canal", None)
+            canal = m.prelevements if canal is None else canal
+            if lue in canal:
+                ajouter("prelevements_entreprises", m.identifiant, canal[lue] * echelle)
         return out

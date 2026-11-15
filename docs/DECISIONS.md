@@ -33978,3 +33978,89 @@ déclarations (`test_jumeau_entreprises.py`) compte désormais deux lignes.
 **Ce qui ne change pas.** Aucun nombre : la boîte ne sert qu'à la lecture des curseurs, et
 aucun rapport ne la porte ; r4 (D-439) garde son commit. Tests des ménages, des
 entreprises et du navigateur : 57 verts ; ruff propre.
+
+## D-443 — Le jumeau relit les impôts des entreprises que le canal ne lit plus (D-440)
+
+**Le défaut** (D-440, « Ce qui reste à décider »). `jumeau.mesures` lisait ΔP, la somme
+des instruments du canal des créations (`rejeu.creations.variations`), comme le total des
+impôts des entreprises : il les ventilait à la première année sur les impôts que le
+rapport nomme (`instruments_entreprises`), aux années suivantes par la convention de
+D-414, et en déduisait le coût des ménages, C^m_t = coût_t + P_t. Depuis D-440, six
+rapports ne somment plus la CVAE ni la C3S dans ΔP, ni ne les nomment : Attal (programme,
+a18), Lisnard (programme, l4), Retailleau (programme, r21). Le jumeau y perdait les deux
+impôts et y lisait l'IS induit comme le tout. Quatre tests de
+`tests/test_jumeau_depuis_rapport.py`, rouges depuis D-440, le disaient ; ils ne sont
+pas retouchés.
+
+**La jonction.** `claude/but24-etudes` (bb4bad5, avec 05b8f87) est fusionnée dans
+`claude/but24` (5e1d2f4) : un seul conflit, `docs/DECISIONS.md`, D-440 placée entre D-439
+et D-442, aucune ligne perdue de part ni d'autre (vérifié par `diff`). Les deux fichiers
+de la page « Le jumeau » n'ont pas eu de conflit ; ils sont reconstruits ci-dessous.
+
+**La lecture réparée.** Deux grandeurs, au lieu d'une. `Mesure.prelevements` est P, les
+prélèvements des entreprises et du capital de la passe, la CVAE et la C3S comprises : ce
+que les lots 2 et 4 ventilent, et dont `etendre` déduit le coût des ménages.
+`Mesure.prelevements_canal` est ΔP, ce que lit le canal des créations, quand il diffère :
+le bloc `mesures` l'écrit au signal `prelevements_entreprises`, que lit le bloc
+`creations`. Les créations suivent donc D-440 ; le reste redevient ce qu'il était.
+`mesures.prelevements_lus` fait P, par vue et par année, en trois cas :
+
+* le canal lit encore la CVAE et la C3S (les 40 autres rapports, la convention de
+  D-401) : P = ΔP, comme avant ;
+* le rapport porte la somme d'avant (`recalcul.instruments`, D-440) et les instruments
+  retirés couvrent les deux : P = `variations_avant`, la somme que la passe a faite ;
+* sinon (une passe qui ne les a jamais sommées, sans marque de recalcul) : la couche des
+  entreprises du chemin, P_t = −`mechanical_by_layer[vue]["entreprises"]_t` quand elle
+  bouge, ΔP_t sinon. Elle porte aussi ce que la couche coûte hors des cinq impôts (59 €
+  en 2026 chez Attal) ; elle ne porte pas les prélèvements des ménages que ΔP somme (PFU,
+  cotisations patronales nettes), qui ne se séparent pas de ΔP année par année : là où
+  il y en a (Retailleau, 4,301 Md€ de cotisations en 2026), le recoupement de la première
+  année laisse la ventilation absente, comme avant, et le lot 2 refuse la mesure.
+
+À la première année, `ventilations` recoupe ΔP avec les impôts que le canal nomme, à
+l'euro près (l'écart est de 2,4e-7 € sur les six), et ventile ceux-là plus la CVAE et la
+C3S (`predictif.creations.PRODUCTION`), lues dans les `deltas` de la passe des
+entreprises. `navigateur.alleger` garde pour la page `recalcul.instruments` (les retirés,
+ΔP d'avant) et `mechanical_by_layer` : la page lit comme le rapport entier.
+
+**Chiffre à chiffre.** Sur les six, dans les deux vues, avec et sans la convention, la
+mesure lue sur le rapport de D-440 est celle que le code d'avant lisait sur le rapport
+d'avant D-440 (2ee2001), au bit, champ par champ (années, P, coûts, canaux, impôts,
+déciles, `non_portes`, conventions, impulsions) ; seuls diffèrent `creations` (la liste
+des instruments du canal) et `prelevements_canal`, égal à ΔP de D-440 au bit. Sur les 40
+autres, rien ne change, au bit (184 lectures comparées). En 2026, vue figée :
+
+| rapport | C^m d'avant D-440 | lu à tort (D-440) | réparé | impôts des entreprises |
+|---|---|---|---|---|
+| Attal, programme | 63,6292 | 66,9110 | 63,6292 | −2,5521 (à tort +0,7297) |
+| Attal, a18 | 0,0000 | 3,2818 | 0,0000 | −2,5521 (+0,7297) |
+| Lisnard, programme | 29,6381 | 38,2091 | 29,6381 | −6,5474 (+2,0237) |
+| Lisnard, l4 ; Retailleau, r21 | 0,0000 | 8,5711 | 0,0000 | −6,5474 (+2,0237) |
+
+En Md€ ; en 2027, par la convention, Attal 63,5863 (66,8681 à tort), Lisnard 29,6265
+(38,1976). Retailleau, programme : impôts et coût des ménages absents, avant comme après
+(ses cotisations ne sont pas ventilées) ; P redevient −11,65 Md€ en 2026, vue vieillie.
+La CVAE d'Attal, de Lisnard et de Retailleau (r21) en 2026 : −3,2818 Md€, de la passe.
+La voie de la couche, essayée sur les six en retirant leur marque : P à 505 € au plus de
+la somme d'avant (Attal, vue vieillie), la ventilation de 2026 identique ; Retailleau,
+programme, à part (ses cotisations, ci-dessus).
+
+**Les tests.** Les quatre de `test_jumeau_depuis_rapport.py` repassent, sans
+modification. Nouveaux, dans le même fichier, vus échouer sur le code d'avant (11 rouges,
+les 4 et les 7 nouveaux) : pour chacun des six, le rapport d'avant reconstitué depuis sa
+marque (ΔP d'avant, la CVAE et la C3S rendues à la liste) se lit comme le rapport, au
+bit, ΔP de D-440 est ce que lit le canal, la voie de la couche tient à 1e-6 Md€, et le
+rapport allégé de la page se lit de même ; les nombres d'Attal et de Lisnard ci-dessus.
+`pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_site*.py`,
+`test_creations_canal.py`, `test_recalcul.py` : 367 verts avant la reconstruction du
+site, 3 rouges de `test_site.py` (le site commité n'était pas celui du code), verts
+après. `ruff check src tests scripts` propre.
+
+**Le site.** `site construire`, `site verifier`, `site publiable` et `node ui/check.mjs`
+passent. Changent `site/jumeau-paquet.json` (les fichiers du jumeau : la lecture réparée,
+la plage de b de D-438 dans `menages.yaml`, la déclaration de D-442 dans `thetas.py`) et
+`site/jumeau-donnees.json` (la marque et les couches des rapports). Aucune autre page.
+
+**Ce qui ne change pas.** Aucun rapport : ni ceux des études (D-440), ni ceux du jumeau
+(r4, D-439, garde 877bba9 : le rejeu de l'histoire ne lit pas les études). Aucune
+tolérance.
