@@ -134,6 +134,9 @@ def donnees() -> dict[str, Any]:
 # --------------------------------------------------------------------------- #
 RELEVE = r"""
 import json, sys
+# Ce que l'interpréteur a chargé avant la page n'est pas importé par elle : un `.pth` de
+# site-packages (le `_distutils_hack` de setuptools) charge son module au démarrage.
+au_demarrage = set(sys.modules)
 lus = set()
 def regarder(evenement, args):
     if evenement == "open" and args and isinstance(args[0], str):
@@ -152,7 +155,7 @@ modules = sorted(m.__file__ for n, m in list(sys.modules.items())
 import sysconfig
 sites = {sysconfig.get_paths()[k] for k in ("purelib", "platlib")}
 tiers = sorted({n.split(".")[0] for n, m in list(sys.modules.items())
-                if any(str(getattr(m, "__file__", None) or "").startswith(p) for p in sites)})
+                if n not in au_demarrage and any(str(getattr(m, "__file__", None) or "").startswith(p) for p in sites)})
 print(json.dumps({"modules": modules, "lus": sorted(lus), "tiers": tiers}))
 """
 #: Les réglages qui font passer la page par chacun de ses chemins.
