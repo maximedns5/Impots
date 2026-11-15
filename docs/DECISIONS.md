@@ -33822,6 +33822,142 @@ rejeux d'avant. L'histoire budgétaire de 2011 à 2017 n'identifie toujours aucu
 **Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible, aucune entrée,
 aucune loi ; D-420, D-423, D-429 et D-438 restent. Le rapport porte 877bba9.
 
+## D-440 — Les études sans la CVAE ni la C3S dans le canal : six rapports refaits sans passe
+
+**La décision du propriétaire, 15 novembre 2026.** Le correctif de D-436 s'applique aux
+études : la CVAE et la C3S ne font plus jouer le canal des créations
+(`predictif.creations`). D-401 les lisait euro pour euro comme l'IS, sur décision du
+propriétaire du 13 novembre 2026 ; D-436 les a retirées des naissances du jumeau, et
+laissait le canal des études à cette décision. Branche `claude/but24-etudes`, partie de
+`claude/but24-creations` (2ee2001). Ni `src/impots/jumeau/` ni aucun rejeu ne sont
+touchés.
+
+**La raison, celle de D-436, citée.** ε est mesuré sur l'impôt sur les bénéfices, qu'une
+société paierait ; la loi ne fait payer ni la CVAE ni la C3S à une société qui entre :
+
+* la CVAE est due « par le redevable qui exerce l'activité au 1er janvier de l'année
+  d'imposition » (CGI, art. 1586 octies, I) : rien l'année de la création ; ensuite, son
+  taux est nul sous 500 000 € de chiffre d'affaires (art. 1586 quater, I, a), le minimum
+  de cotisation ne joue qu'au-delà (art. 1586 septies). Loi n° 2009-1673, art. 2
+  (JORFARTI000021557915) ; loi n° 2022-1726, art. 55 (JORFARTI000046845693) ;
+* la C3S n'est due qu'au-delà de 760 000 € de chiffre d'affaires, puis après un
+  abattement de 3,25 M€ (loi n° 2014-892, art. 3, JORFARTI000029349740) et de 19 M€
+  (loi n° 2015-1702, art. 9, JORFARTI000031663476 ; CSS, art. L. 651-3) ;
+* la société à la marge du canal fait, à maturité, environ 150 k€ de chiffre d'affaires
+  (D-436) : sous les deux seuils.
+
+**Le correctif.** `predictif/parameters/creations_entreprises.yaml` : les instruments des
+entreprises sont l'IS, sa contribution sociale et la CEBGE ; la CVAE et la C3S passent
+sous `exclus`, chacune avec sa raison et ses textes. `creations.PRODUCTION` les nomme ;
+la docstring et la convention de la page le disent (`CONVENTIONS_INSTRUMENTS`) ; un
+rapport qui les porte encore garde la convention de D-401
+(`CONVENTIONS_INSTRUMENTS_D401`, `conventions_instruments`). Ce qu'une réforme de ces
+impôts induit sur l'IS reste lu : la CVAE se déduit du résultat imposable, sa
+suppression monte l'IS, et le canal le lit comme toute hausse d'IS. Les prochaines passes
+le liront ainsi, par `service.creations_firm_levies`, sans autre changement.
+
+### La voie : un recalcul, sans passe
+
+Un rapport porte ΔP sommé sur ses instruments (`rejeu.creations.variations`), pas impôt
+par impôt ; le rapport de la première année ventile, mais sa seule première année. Mais
+un instrument isolé suffit : la couche entreprises est une passe sur ses cellules (le
+millésime 2023 des études), sans la population, de quelques secondes ; elle redonne
+chaque impôt par année et par vue (`service.firm_first_year`, comme le chemin annuel l'a
+appelée). `scripts/recaler_creations.py --instruments` la refait pour chaque rapport dont
+le scénario a une réforme des entreprises, et ne l'écrit qu'après deux contrôles :
+
+* le coût de la couche, chaque année et dans chaque vue, est celui que le rapport porte
+  (`mechanical_by_layer`), **au bit près** ; tenu pour les six ;
+* pour une mesure sans réforme des ménages (Attal a18, Lisnard l4, Retailleau r21), ΔP
+  est la somme des cinq impôts de la couche, à 1e-9 relatif près.
+
+Les montants de la CVAE et de la C3S sortent de ΔP (`recalcul.retirer`), les deux
+instantanés perdent les deux instruments, et chaque nombre est refait par le rejeu depuis
+les champs du rapport, comme en D-427 : les chemins, la boîte, le Monte-Carlo, les
+lectures, le canal (`prelevements_eur` compris). Le champ `recalcul` garde la marque de
+D-427 et reçoit `instruments` : la décision, la date, les instruments retirés, ΔP
+d'avant (`variations_avant`) et le commit de la passe. La page le dit, sous l'élasticité.
+
+**Le contrôle.** Avant : `--controle` redonne les 46 rapports à leur ε, comme en D-427.
+Après : chacun des six refaits se redonne à l'octet près ; ΔP d'avant remis avec ses
+deux instruments, le rejeu redonne à l'octet près le rapport de D-427 commité (2ee2001),
+pour les six. Les 40 autres sont inchangés à l'octet près (`git status`) : aucun de
+leurs scénarios n'a de réforme des entreprises. Aucune tolérance n'est nouvelle. Le tout
+prend 4,5 s.
+
+**Six rapports touchés, et eux seuls** : Attal, programme et a18 ; Lisnard, programme et
+l4 ; Retailleau, programme et r21. La CVAE et la C3S retirées, en 2026, vue vieillie :
+−3,45 Md€ chez Attal, −9,00 Md€ chez Lisnard et Retailleau ; ΔP passe de −2,68 à
++0,77 Md€ (Attal), de −6,87 à +2,12 Md€ (Lisnard, l4, r21), de −11,65 à −2,65 Md€
+(Retailleau, programme) : ce qui reste des mesures de production est la hausse d'IS
+qu'elles induisent.
+
+**Ancien → nouveau**, Δb 2035 à θ½, persistance « lue », en points de PIB (sans le canal,
+inchangé, entre parenthèses) :
+
+| étude | vieillie, avant | vieillie, après | figée, avant | figée, après | sans le canal |
+|---|---|---|---|---|---|
+| Attal, programme | +4,2730 | +4,2850 | +3,5068 | +3,5178 | +4,2825 |
+| Attal, a18 suppression de la CVAE | +0,2354 | +0,2475 | +0,2169 | +0,2281 | +0,2450 |
+| Lisnard, programme | +5,6541 | +5,7107 | +4,5787 | +4,6285 | +5,6989 |
+| Lisnard, l4 C3S et CVAE | +1,5615 | +1,6181 | +1,3209 | +1,3706 | +1,6063 |
+| Retailleau, programme | +11,3095 | +11,3672 | +10,7616 | +10,8123 | +11,3963 |
+| Retailleau, r21 C3S, CVAE… | +1,5615 | +1,6181 | +1,3209 | +1,3706 | +1,6063 |
+
+Chez a18, l4 et r21, et dans le programme d'Attal, la dette avec le canal passe au-dessus
+de la dette sans lui : le canal ne lit plus que l'IS induit, une hausse, qui fait moins de
+sociétés. La dette d'Attal sans boucle, +20,44 → +20,46 points.
+
+**Les verdicts et les étages.** Aucun verdict ne change, ni celui de la boîte ni celui du
+Monte-Carlo : Attal « dépend » (la boîte, vue vieillie, de −4,06 à +15,78 points avant,
+de −4,04 à +15,78 après) ; Lisnard et Retailleau, programmes, et les trois mesures,
+« hausse » à chaque coin. Les probabilités d'une hausse qui bougent : Attal, programme,
+vieillie, 0,647 → 0,6475 ; Lisnard, programme, 0,8865 → 0,889 (vieillie) et 0,8955 →
+0,8975 (figée) ; les autres restent à 1,000 ou ne bougent pas. Aucun étage ne change : sur
+le site, chacune des trois pages compte les mêmes nombres par étage qu'avant.
+
+**Le site.** `etude ecrire` d'Attal, de Lisnard et de Retailleau, `site construire`,
+`site verifier`, `node ui/check.mjs` passent. Changent : les trois pages et leurs
+graphiques, l'accueil, six pages du parcours (le coût, les comportements, l'activité, la
+dette, le verdict, comparer), et les deux fichiers de la page « Le jumeau » :
+`jumeau-paquet.json` (il embarque `predictif/creations.py`, et les fichiers du jumeau que
+D-436 a changés) et `jumeau-donnees.json` (les rapports des six).
+
+### Ce qui reste à décider
+
+**Le jumeau lit ΔP comme le total des impôts des entreprises.** `jumeau.mesures`
+(`ventilations`, `etendre`, D-414) ventile ΔP du chemin aux impôts que le rapport nomme
+(`instruments_entreprises`), et en déduit le coût des ménages, C^m_t = coût_t + P_t. Sur
+les six rapports refaits, il ne voit plus ni la CVAE ni la C3S, et le coût des ménages
+d'Attal en 2026 passe de 63,63 à 66,91 Md€ : faux. `tests/test_jumeau_depuis_rapport.py`
+le dit, quatre rouges, verts sur les rapports d'avant ; ils ne sont pas retouchés. La
+réparation est dans `jumeau.mesures` (lire `recalcul.instruments.variations_avant` et
+les instruments retirés quand le rapport les porte), hors de cette branche par consigne ;
+elle est aussi celle des passes à venir, qui ne sommeront plus ces deux impôts. Tant
+qu'elle n'est pas faite, la page « Le jumeau » lit faux ces six candidats : **la branche
+ne se fusionne pas avant**, à décider par le propriétaire, avec la jonction du but 24.
+
+**Les 40 autres rapports** gardent la CVAE et la C3S dans leur liste d'instruments, où
+elles valent zéro, et leur page la convention de D-401 (une seule page par étude ; aucune
+des neuf autres n'a de réforme des entreprises). Les aligner, sans qu'aucun nombre ne
+change, comme D-427 l'a fait pour ε, est à décider.
+
+**Les tests.** Tenus et vus échouer sur le code d'avant : une baisse de 4 Md€ de CVAE ou
+de C3S ne fait aucune création, la même baisse d'IS fait 0,043 × 400 / (0,092 × 3 000)
+points de taux d'entrée (`test_the_cvae_and_the_c3s_make_no_company_the_is_does`) ;
+l'étude Attal a18 publie +0,2475 et redonne +0,2354 avec ΔP d'avant, +0,2000 à ε = 0,20 ;
+les six rapports portent la marque et ΔP d'avant, redonnent les nombres de D-427, et les
+40 autres non (`tests/test_recalcul.py`). Changements de tests motivés : la liste des
+instruments ; ΔP de deux exemples qui portaient de la CVAE (−5,5 → −4,5 Md€, −10 → −8
+Md€) ; la page synthétique ne nomme plus la CVAE ; la dette d'Attal sans boucle, +20,46
+(`test_etude_programmes`, `test_parcours_cout`, `test_parcours_comparer`) ; le
+Monte-Carlo de Lisnard, 88,90 % (`test_parcours_verdict`). Avec `pytest -m "not lourd and
+not chrono" -n 4` sur `test_creations_canal.py`, `test_recalcul.py`, `test_rejouer.py`,
+`test_etude*.py`, `test_parcours*.py`, `test_annonce.py`, `test_site.py`,
+`test_dependances.py`, `test_gardes_phase9.py`, `test_provenance.py`, `test_dette*.py` :
+534 verts, 3 sautés ; `test_jumeau*.py` : les quatre rouges dits. `ruff check src tests
+scripts` propre. Ni `make impact` ni `make full`.
+
 ## D-442 — Le profil de la consommation déclaré non monotone, au b de D-438
 
 **Le constat** (D-438, en adoptant la loi de b) : au b par défaut, 0,20, la consommation
