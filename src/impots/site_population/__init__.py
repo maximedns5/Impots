@@ -957,7 +957,7 @@ def build() -> dict[str, str]:
             f"<code>{d['population_sha256'][:12]}</code>), sans passe.</p>")
     files = {}
     for nom, (titre, main) in pages.items():
-        texte = site._page(f"{titre} — {site.TITLE}", main, pied, liens=False)
+        texte = site._page(f"{titre} — {site.TITLE}", main, pied, liens=False, large=True)
         # La légende des étages de confiance parle des nombres d'étude : ces pages n'en
         # portent pas.
         texte = texte.replace(f"\n{site._legend()}\n", "\n")
