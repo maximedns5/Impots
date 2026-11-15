@@ -34326,3 +34326,114 @@ moins de 20 % de D-433 ; b et ε autrement (sa plage, les naissances de D-436).
 s'arrête à l'étape zéro, une seconde fois, mais sur des données construites. Si un θ
 l'est, rien n'est lancé non plus : les lots suivants (l'estimation, la note) sont la
 décision du propriétaire.
+
+## D-447 — L'histoire longue à l'étape zéro : aucun θ identifié, sur des données construites
+
+**Ce qui a tourné.** `scripts/jumeau_etape_zero_longue.py`, sur c1ed8ca poussé (D-446, la
+base des mesures d'avant 2010 et le script commités avant), une fois, détaché, en moins
+de deux minutes. Le rapport : `reports/jumeau/etape_zero_longue.json`. Aucune série,
+aucun seuil, aucune fenêtre, aucun point, aucune règle de la base n'a changé après le
+calcul ; aucune erreur du jumeau n'a été calculée, aucune valeur publiée de cible lue ;
+aucun lot d'estimation n'est lancé.
+
+**La base des mesures** (commitée avant le calcul) : 61 mesures de 1995 à 2007, chacune
+avec une année d'effet de 1997 à 2007, de onze familles sur douze (le CICE n'existe pas
+avant 2013) : 14 barèmes et mesures de l'IR, 4 de la CSG et de la CRDS, 4 des
+cotisations des salariés, 9 des employeurs (Juppé, Aubry I et II, Fillon, TEPA), 6 de
+l'IS, 4 des impôts de production, 3 de la TVA, 5 de la TIPP, 6 de l'ISF, 5 des droits de
+succession et de donation, 1 de la taxe d'habitation. **53 vérifiées** dans l'extrait du
+JO (`scripts/jumeau_jorf_verifier.py` : aucun écart de numéro, de date ni de nature),
+**8 non vérifiées** : les tarifs de la TIPP (5) et de l'ISF (3) sont des tableaux que
+l'archive de la DILA ne reproduit pas (« Vous pouvez consulter le tableau dans le JO ») ;
+leur sens ne se lit pas, ils sont « mixtes », la variation entière (la règle de D-417).
+Le pronostic disait de 45 à 90 mesures (tenu) et au plus cinq non vérifiées (manqué :
+huit). La frise remonte au 17 mai 1995, de mémoire comme le reste (à relire au JORF) ;
+le numéro d'un texte d'avant 2000 (« 96-1181 ») est désormais permis. Les années votées
+et leurs sens, sur les fenêtres de D-417, ne changent pas (vérifié famille par famille) :
+r1 à r4 ne bougent pas.
+
+### Le résultat, au mode (le critère qui décide)
+
+L'information au mode vers le haut, sur le schéma de D-417 (r4) et sur l'histoire longue ;
+σ, le seuil s / 2 et l'identification sur l'histoire longue (vers le haut ; vers le bas
+quand il est plus favorable, marqué ↓) :
+
+| θ | D-417, r4 | longue | × | σ | s / 2 | requis | rapport | identifié |
+|---|---|---|---|---|---|---|---|---|
+| profil de la consommation ↓ | 0,061 | 1,128 | 18,5 | 0,443 | 0,250 | 12 | 9,4 % | non |
+| emploi | 1,477 | 8,746 | 5,9 | 0,120 | 0,064 | 181 | 4,8 % | non |
+| salaires, b ↓ | 0,246 | 6,273 | 25,5 | 0,186 | 0,105 | 68 | 9,2 % | non |
+| exportations | 0,012 | 0,050 | 4,1 | 0,123 | 0,061 | 199 | 0,03 % | non |
+| importations | 0,024 | 0,098 | 4,1 | 0,040 | 0,020 | 1 845 | 0,01 % | non |
+| accélérateur | 0,029 | 0,435 | 14,9 | 0,252 | 0,128 | 46 | 0,9 % | non |
+| coût du capital | 0,024 | 0,032 | 1,3 | 0,208 | 0,104 | 69 | 0,05 % | non |
+| ε, non estimé | 5,834 | 5,847 | 1,0 | 0,151 | 0,081 | 114 | 5,1 % | non |
+
+**Aucun θ n'est identifié par l'histoire longue sous le critère du but**, ni vers le haut
+ni vers le bas. Le plus grand rapport de l'information à ce qu'il requiert est 9,4 %
+(le profil de la consommation, vers le bas), puis b (9,2 %) et l'emploi (4,8 %) : il
+manque un facteur 10 au mieux, 20 pour l'emploi. Les σ restent près de l'écart de leur
+loi : l'emploi 0,120 contre 0,129, b vers le bas 0,186 contre 0,210, le profil de la
+consommation vers le bas 0,443 contre 0,500 ; les autres à 1 % près.
+
+**Sous le critère de D-421** (à ½, P = 4 I, σ < 0,25) : rien non plus, **de peu pour
+l'emploi vers le bas** : information 11,27 pour 12, σ = 0,258 contre 0,25. Puis b vers
+le haut (7,37, σ 0,298), ε vers le haut (5,85, σ 0,319, inchangé), le profil de la
+consommation vers le bas (1,07). Le seuil n'est pas relu après le calcul : non
+identifié ; et il ne compterait pas (D-446 § 4).
+
+**D'où vient l'information.** Au mode vers le haut, l'emploi tire 4,96 des trois fenêtres
+d'avant 2010 (dont 4,33 de 1996 → 1999, la fenêtre de la bascule de la CSG ; la
+décomposition par choc n'est pas calculée) et 3,79 des deux fenêtres de 2010 à 2017 ; b, 2,50
+d'avant 2010 et 3,76 de 2010 à 2017, contre 0,25 sous D-417. **Une part du gain,
+pour b plus de la moitié, un tiers pour l'emploi, ne vient pas des années
+anciennes mais de la tendance** : la règle
+de D-417 la prend sur les 18 années notées (1,99 % au lieu de 1,20 %), la référence de
+2011 à 2017 croît plus vite que le PIB publié, et la dépense observée y devient un choc
+négatif plus grand (D-446 § 2, annoncé). C'est une information sur la réponse du jumeau
+à des chocs plus grands, pas sur une histoire plus riche. ε n'en reçoit rien : les
+créations ne sont notées que depuis 2011.
+
+### Contre le pronostic de D-446
+
+* **Tenus** : aucun θ identifié sous le critère du but ; au mode vers le haut,
+  l'information du profil de la consommation (0,021 dans [0,005 ; 0,2]), de l'emploi
+  (8,75 dans [5 ; 35]), de b (6,27 dans [0,2 ; 8]), des exportations (0,050), des
+  importations (0,098), de l'accélérateur (0,435) et de ε (5,85) dans leurs bandes ; le
+  plus grand rapport (9,4 %) entre 3 et 20 % ; sous D-421, 0 θ, dans la bande de 0 à 2 ;
+  les θ que r4 n'a pas changés, sur le schéma de D-417, à moins de 20 % de D-433
+  (l'emploi 1,477 contre 1,633, −10 % ; les autres au millième).
+* **Manqués** : le coût du capital, 0,032 sous [0,05 ; 0,5] ; le multiplicateur « de 3
+  à 20 », manqué pour b (25), le coût du capital (1,3) et ε (1,0) ; le plus grand
+  rapport est celui du profil de la consommation vers le bas, non de l'emploi ; sous
+  D-421, l'emploi vers le bas, annoncé identifié une chance sur deux, ne l'est pas, à
+  0,008 près ; les mesures non vérifiées (8 pour au plus 5).
+
+### Ce que cela dit, et ce qui reste à décider
+
+**L'histoire longue n'identifie aucun θ**, cette fois sur des données construites et non
+plus projetées : D-421 projetait 1,15 d'information pour l'emploi à ½ vers le haut, elle
+est de 0,53 (à ½ vers le bas, 11,3). Les lots suivants (l'estimation et la note sur
+1996 → 2017) ne sont pas lancés : sous la règle de D-421, ils ne le seraient pas. Ce qui
+reste au propriétaire :
+
+* **Clore l'histoire longue** à l'étape zéro, ses séries, sa base et son script gardés.
+* **Ou** constater que l'emploi frôle le seuil de D-421 et que b et le profil de la
+  consommation gagnent un facteur 18 à 25, et décider si cela vaut l'estimation, en
+  sachant qu'une part de ce gain (un tiers pour l'emploi, plus de la moitié pour b) vient
+  de la tendance plus rapide, non des années
+  anciennes, et qu'aucun θ n'approche le critère du but.
+* **Relire au JORF** la frise de 1995 à 2007 et, dans le JO imprimé, les huit tarifs non
+  vérifiés ; un sens lu changerait les chocs de la TIPP et de l'ISF ; leur effet sur
+  l'information n'est pas mesuré ici.
+
+**Les tests** (D-335 : les séries longues, l'état publié d'avant 2010, la base et la
+frise changent des nombres) : `test_jumeau_series.py` (+1 : les séries longues recoupent
+celles de 2010 à 2025 au bit près ; le chômage de l'Insee colle à Eurostat en 2009),
+`test_jumeau_historique.py` (+2 : les identités de 1996 à 2007 ; l'ajustement calculé
+contre la t. 3.105), `test_jumeau_votees.py` (+1 : la base d'avant 2010 ; le décompte des
+vérifiées passe de 96, 0 à 149, 8, comme son commentaire le demande ; la frise est
+parcourue depuis le 17 mai 1995 au lieu du 1er janvier 2010, et le dit). Avec
+`test_jumeau_apprentissage.py`, `test_provenance.py` et `test_donnees.py` (`-m "not lourd
+and not chrono" -n 2`) : verts. Le script de l'étape zéro est de la plomberie, sans test
+dédié. Ni `make impact`, ni les lourds, ni `make full`.

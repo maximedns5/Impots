@@ -1,0 +1,984 @@
+{
+ "decision": "D-446",
+ "commit": "c1ed8ca1628674471c051f403f2e7a5317d8e61b",
+ "thetas": [
+  "jumeau_consommation_profil",
+  "jumeau_emploi_elasticite_cout",
+  "jumeau_salaires_chomage",
+  "commerce_elasticite_prix_exportations",
+  "commerce_elasticite_prix_importations",
+  "investissement_accelerateur",
+  "investissement_cout_capital",
+  "elasticite_creations"
+ ],
+ "pas": 0.001,
+ "schemas": {
+  "d417": {
+   "schema": "D-417, 2011 à 2017",
+   "exogenes": {
+    "croissance_tendance": 0.012016293707874302,
+    "croissance_emploi": 0.005728734774806351,
+    "croissance_demande_mondiale": 0.03711156876520426
+   },
+   "points": {
+    "demi_haut": {
+     "information": {
+      "jumeau_consommation_profil": 0.0017259652116175064,
+      "jumeau_emploi_elasticite_cout": 0.08739793241131392,
+      "jumeau_salaires_chomage": 0.21567216119841412,
+      "commerce_elasticite_prix_exportations": 0.010760746598592871,
+      "commerce_elasticite_prix_importations": 0.020864265898962564,
+      "investissement_accelerateur": 0.027769338721598456,
+      "investissement_cout_capital": 0.003115985979732433,
+      "elasticite_creations": 5.83400445184075
+     },
+     "ecart_type": {
+      "jumeau_consommation_profil": 0.49989276568211943,
+      "jumeau_emploi_elasticite_cout": 0.49467990427014424,
+      "jumeau_salaires_chomage": 0.48709260432618007,
+      "commerce_elasticite_prix_exportations": 0.49933496351987294,
+      "commerce_elasticite_prix_importations": 0.49871308863235014,
+      "investissement_accelerateur": 0.4982900980419234,
+      "investissement_cout_capital": 0.4998066384464192,
+      "elasticite_creations": 0.31888581442623964
+     },
+     "information_par_fenetre": {
+      "2010-2014": {
+       "jumeau_consommation_profil": 0.0012058136620809276,
+       "jumeau_emploi_elasticite_cout": 0.06670846564054492,
+       "jumeau_salaires_chomage": 0.01921664603247099,
+       "commerce_elasticite_prix_exportations": 0.007966543933334565,
+       "commerce_elasticite_prix_importations": 0.013996121235642362,
+       "investissement_accelerateur": 0.01706311133705327,
+       "investissement_cout_capital": 0.0030855503361417666,
+       "elasticite_creations": 4.905279484007045
+      },
+      "2014-2017": {
+       "jumeau_consommation_profil": 0.0005201515495365787,
+       "jumeau_emploi_elasticite_cout": 0.02068946677076898,
+       "jumeau_salaires_chomage": 0.19645551516594312,
+       "commerce_elasticite_prix_exportations": 0.0027942026652583093,
+       "commerce_elasticite_prix_importations": 0.00686814466332022,
+       "investissement_accelerateur": 0.010706227384545181,
+       "investissement_cout_capital": 3.0435643590667372e-05,
+       "elasticite_creations": 0.9287249678337045
+      }
+     },
+     "sorties": 84,
+     "x": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.5,
+      "jumeau_salaires_chomage": 0.5,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.5,
+      "elasticite_creations": 0.5
+     },
+     "s": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.5,
+      "jumeau_salaires_chomage": 0.5,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.5,
+      "elasticite_creations": 0.5
+     },
+     "requis": {
+      "jumeau_consommation_profil": 12.0,
+      "jumeau_emploi_elasticite_cout": 12.0,
+      "jumeau_salaires_chomage": 12.0,
+      "commerce_elasticite_prix_exportations": 12.0,
+      "commerce_elasticite_prix_importations": 12.0,
+      "investissement_accelerateur": 12.0,
+      "investissement_cout_capital": 12.0,
+      "elasticite_creations": 12.0
+     },
+     "seuil": {
+      "jumeau_consommation_profil": 0.25,
+      "jumeau_emploi_elasticite_cout": 0.25,
+      "jumeau_salaires_chomage": 0.25,
+      "commerce_elasticite_prix_exportations": 0.25,
+      "commerce_elasticite_prix_importations": 0.25,
+      "investissement_accelerateur": 0.25,
+      "investissement_cout_capital": 0.25,
+      "elasticite_creations": 0.25
+     },
+     "identifie": {
+      "jumeau_consommation_profil": false,
+      "jumeau_emploi_elasticite_cout": false,
+      "jumeau_salaires_chomage": false,
+      "commerce_elasticite_prix_exportations": false,
+      "commerce_elasticite_prix_importations": false,
+      "investissement_accelerateur": false,
+      "investissement_cout_capital": false,
+      "elasticite_creations": false
+     }
+    },
+    "demi_bas": {
+     "information": {
+      "jumeau_consommation_profil": 0.05806529046678849,
+      "jumeau_emploi_elasticite_cout": 1.8684530215508834,
+      "jumeau_salaires_chomage": 0.013491573085065718,
+      "commerce_elasticite_prix_exportations": 0.0006236626182727853,
+      "commerce_elasticite_prix_importations": 0.00013004293995626804,
+      "investissement_accelerateur": 0.02775885436658457,
+      "investissement_cout_capital": 0.02356460549172271,
+      "elasticite_creations": 0.43757153032678664
+     },
+     "ecart_type": {
+      "jumeau_consommation_profil": 0.49658653497747895,
+      "jumeau_emploi_elasticite_cout": 0.4131265416891953,
+      "jumeau_salaires_chomage": 0.4991991703455701,
+      "commerce_elasticite_prix_exportations": 0.4999629006363092,
+      "commerce_elasticite_prix_importations": 0.4999923006529962,
+      "investissement_accelerateur": 0.4983998801075297,
+      "investissement_cout_capital": 0.4986039729094897,
+      "elasticite_creations": 0.47470944236909535
+     },
+     "information_par_fenetre": {
+      "2010-2014": {
+       "jumeau_consommation_profil": 0.03366033087750814,
+       "jumeau_emploi_elasticite_cout": 1.4262003502136362,
+       "jumeau_salaires_chomage": 0.0012017293826671709,
+       "commerce_elasticite_prix_exportations": 0.00046171750335315104,
+       "commerce_elasticite_prix_importations": 8.723475243207122e-05,
+       "investissement_accelerateur": 0.017056682618437492,
+       "investissement_cout_capital": 0.023334435903530803,
+       "elasticite_creations": 0.3678948899537753
+      },
+      "2014-2017": {
+       "jumeau_consommation_profil": 0.02440495958928034,
+       "jumeau_emploi_elasticite_cout": 0.44225267133724716,
+       "jumeau_salaires_chomage": 0.012289843702398547,
+       "commerce_elasticite_prix_exportations": 0.00016194511491963434,
+       "commerce_elasticite_prix_importations": 4.2808187524196814e-05,
+       "investissement_accelerateur": 0.01070217174814709,
+       "investissement_cout_capital": 0.00023016958819191047,
+       "elasticite_creations": 0.06967664037301138
+      }
+     },
+     "sorties": 84,
+     "x": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.5,
+      "jumeau_salaires_chomage": 0.5,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.5,
+      "elasticite_creations": 0.5
+     },
+     "s": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.5,
+      "jumeau_salaires_chomage": 0.5,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.5,
+      "elasticite_creations": 0.5
+     },
+     "requis": {
+      "jumeau_consommation_profil": 12.0,
+      "jumeau_emploi_elasticite_cout": 12.0,
+      "jumeau_salaires_chomage": 12.0,
+      "commerce_elasticite_prix_exportations": 12.0,
+      "commerce_elasticite_prix_importations": 12.0,
+      "investissement_accelerateur": 12.0,
+      "investissement_cout_capital": 12.0,
+      "elasticite_creations": 12.0
+     },
+     "seuil": {
+      "jumeau_consommation_profil": 0.25,
+      "jumeau_emploi_elasticite_cout": 0.25,
+      "jumeau_salaires_chomage": 0.25,
+      "commerce_elasticite_prix_exportations": 0.25,
+      "commerce_elasticite_prix_importations": 0.25,
+      "investissement_accelerateur": 0.25,
+      "investissement_cout_capital": 0.25,
+      "elasticite_creations": 0.25
+     },
+     "identifie": {
+      "jumeau_consommation_profil": false,
+      "jumeau_emploi_elasticite_cout": false,
+      "jumeau_salaires_chomage": false,
+      "commerce_elasticite_prix_exportations": false,
+      "commerce_elasticite_prix_importations": false,
+      "investissement_accelerateur": false,
+      "investissement_cout_capital": false,
+      "elasticite_creations": false
+     }
+    },
+    "mode_haut": {
+     "information": {
+      "jumeau_consommation_profil": 0.0018127276257641066,
+      "jumeau_emploi_elasticite_cout": 1.4774733099771935,
+      "jumeau_salaires_chomage": 0.2461468788643171,
+      "commerce_elasticite_prix_exportations": 0.012201306694337692,
+      "commerce_elasticite_prix_importations": 0.023673497110613295,
+      "investissement_accelerateur": 0.02918491640380655,
+      "investissement_cout_capital": 0.024170695329970515,
+      "elasticite_creations": 5.834255542265975
+     },
+     "ecart_type": {
+      "jumeau_consommation_profil": 0.4998871592545824,
+      "jumeau_emploi_elasticite_cout": 0.12736580961452432,
+      "jumeau_salaires_chomage": 0.057095852048221304,
+      "commerce_elasticite_prix_exportations": 0.12285910078277568,
+      "commerce_elasticite_prix_importations": 0.040328174420106735,
+      "investissement_accelerateur": 0.25493699425141036,
+      "investissement_cout_capital": 0.20773297250754047,
+      "elasticite_creations": 0.1512010017971448
+     },
+     "information_par_fenetre": {
+      "2010-2014": {
+       "jumeau_consommation_profil": 0.00126569419415921,
+       "jumeau_emploi_elasticite_cout": 1.1436036925089341,
+       "jumeau_salaires_chomage": 0.042229180029129766,
+       "commerce_elasticite_prix_exportations": 0.008931591475625804,
+       "commerce_elasticite_prix_importations": 0.01563850126763201,
+       "investissement_accelerateur": 0.017958300794802862,
+       "investissement_cout_capital": 0.02393669040007688,
+       "elasticite_creations": 4.905507934904022
+      },
+      "2014-2017": {
+       "jumeau_consommation_profil": 0.0005470334316048967,
+       "jumeau_emploi_elasticite_cout": 0.3338696174682596,
+       "jumeau_salaires_chomage": 0.20391769883518732,
+       "commerce_elasticite_prix_exportations": 0.003269715218711897,
+       "commerce_elasticite_prix_importations": 0.008034995842981292,
+       "investissement_accelerateur": 0.011226615609003683,
+       "investissement_cout_capital": 0.00023400492989364486,
+       "elasticite_creations": 0.9287476073619534
+      }
+     },
+     "sorties": 84,
+     "x": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.23783783783783785,
+      "jumeau_salaires_chomage": 0.5062187499999999,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.3409090909090909,
+      "elasticite_creations": 0.5
+     },
+     "s": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.12891891891891888,
+      "jumeau_salaires_chomage": 0.05711875000000011,
+      "commerce_elasticite_prix_exportations": 0.12287037037037041,
+      "commerce_elasticite_prix_importations": 0.040328947368421075,
+      "investissement_accelerateur": 0.2551775147928992,
+      "investissement_cout_capital": 0.2078409090909092,
+      "elasticite_creations": 0.16242038216560506
+     },
+     "requis": {
+      "jumeau_consommation_profil": 12.0,
+      "jumeau_emploi_elasticite_cout": 180.50446316733263,
+      "jumeau_salaires_chomage": 919.525686141862,
+      "commerce_elasticite_prix_exportations": 198.7132928130548,
+      "commerce_elasticite_prix_importations": 1844.5374684979315,
+      "investissement_accelerateur": 46.071934467548914,
+      "investissement_cout_capital": 69.44791122672471,
+      "elasticite_creations": 113.72087658592854
+     },
+     "seuil": {
+      "jumeau_consommation_profil": 0.25,
+      "jumeau_emploi_elasticite_cout": 0.06445945945945944,
+      "jumeau_salaires_chomage": 0.028559375000000053,
+      "commerce_elasticite_prix_exportations": 0.061435185185185204,
+      "commerce_elasticite_prix_importations": 0.020164473684210538,
+      "investissement_accelerateur": 0.1275887573964496,
+      "investissement_cout_capital": 0.1039204545454546,
+      "elasticite_creations": 0.08121019108280253
+     },
+     "identifie": {
+      "jumeau_consommation_profil": false,
+      "jumeau_emploi_elasticite_cout": false,
+      "jumeau_salaires_chomage": false,
+      "commerce_elasticite_prix_exportations": false,
+      "commerce_elasticite_prix_importations": false,
+      "investissement_accelerateur": false,
+      "investissement_cout_capital": false,
+      "elasticite_creations": false
+     }
+    },
+    "mode_bas": {
+     "information": {
+      "jumeau_consommation_profil": 0.06094530756456544,
+      "jumeau_emploi_elasticite_cout": 1.4761781897240112,
+      "jumeau_salaires_chomage": 0.24636642401409067,
+      "commerce_elasticite_prix_exportations": 0.0007071541581086355,
+      "commerce_elasticite_prix_importations": 0.00014755249083036576,
+      "investissement_accelerateur": 0.02917386732917407,
+      "investissement_cout_capital": 0.02417063784593761,
+      "elasticite_creations": 0.4375903654143506
+     },
+     "ecart_type": {
+      "jumeau_consommation_profil": 0.4962511375024868,
+      "jumeau_emploi_elasticite_cout": 0.12737122539112491,
+      "jumeau_salaires_chomage": 0.20869160586009344,
+      "commerce_elasticite_prix_exportations": 0.5103381695757306,
+      "commerce_elasticite_prix_importations": 0.5108236169913289,
+      "investissement_accelerateur": 0.25493775743153596,
+      "investissement_cout_capital": 0.17675184315752496,
+      "elasticite_creations": 0.5520641552468298
+     },
+     "information_par_fenetre": {
+      "2010-2014": {
+       "jumeau_consommation_profil": 0.03506028519928793,
+       "jumeau_emploi_elasticite_cout": 1.1426704837811907,
+       "jumeau_salaires_chomage": 0.04225639725759006,
+       "commerce_elasticite_prix_exportations": 0.0005176492424541933,
+       "commerce_elasticite_prix_importations": 9.74714080045925e-05,
+       "investissement_accelerateur": 0.017951510701018362,
+       "investissement_cout_capital": 0.023936632869050612,
+       "elasticite_creations": 0.36791202677757673
+      },
+      "2014-2017": {
+       "jumeau_consommation_profil": 0.025885022365277507,
+       "jumeau_emploi_elasticite_cout": 0.3335077059428198,
+       "jumeau_salaires_chomage": 0.20411002675650058,
+       "commerce_elasticite_prix_exportations": 0.00018950491565444203,
+       "commerce_elasticite_prix_importations": 5.008108282577325e-05,
+       "investissement_accelerateur": 0.011222356628155699,
+       "investissement_cout_capital": 0.00023400497688699423,
+       "elasticite_creations": 0.06967833863677368
+      }
+     },
+     "sorties": 84,
+     "x": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.23783783783783785,
+      "jumeau_salaires_chomage": 0.5062187499999999,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.3409090909090909,
+      "elasticite_creations": 0.5
+     },
+     "s": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.12891891891891893,
+      "jumeau_salaires_chomage": 0.20981874999999994,
+      "commerce_elasticite_prix_exportations": 0.5103846153846155,
+      "commerce_elasticite_prix_importations": 0.5108333333333336,
+      "investissement_accelerateur": 0.25517751479289924,
+      "investissement_cout_capital": 0.17681818181818176,
+      "elasticite_creations": 0.5930232558139535
+     },
+     "requis": {
+      "jumeau_consommation_profil": 12.0,
+      "jumeau_emploi_elasticite_cout": 180.50446316733246,
+      "jumeau_salaires_chomage": 68.14479101026751,
+      "commerce_elasticite_prix_exportations": 11.5166483146112,
+      "commerce_elasticite_prix_importations": 11.496424665153315,
+      "investissement_accelerateur": 46.07193446754889,
+      "investissement_cout_capital": 95.95495668149172,
+      "elasticite_creations": 8.530565167243367
+     },
+     "seuil": {
+      "jumeau_consommation_profil": 0.25,
+      "jumeau_emploi_elasticite_cout": 0.06445945945945947,
+      "jumeau_salaires_chomage": 0.10490937499999997,
+      "commerce_elasticite_prix_exportations": 0.2551923076923078,
+      "commerce_elasticite_prix_importations": 0.2554166666666668,
+      "investissement_accelerateur": 0.12758875739644962,
+      "investissement_cout_capital": 0.08840909090909088,
+      "elasticite_creations": 0.29651162790697677
+     },
+     "identifie": {
+      "jumeau_consommation_profil": false,
+      "jumeau_emploi_elasticite_cout": false,
+      "jumeau_salaires_chomage": false,
+      "commerce_elasticite_prix_exportations": false,
+      "commerce_elasticite_prix_importations": false,
+      "investissement_accelerateur": false,
+      "investissement_cout_capital": false,
+      "elasticite_creations": false
+     }
+    }
+   },
+   "identifies_but": [],
+   "identifies_d421": [],
+   "rapport_au_requis": {
+    "jumeau_consommation_profil": 0.005078775630380453,
+    "jumeau_emploi_elasticite_cout": 0.008185245306691031,
+    "jumeau_salaires_chomage": 0.003615337582838432,
+    "commerce_elasticite_prix_exportations": 6.14027743828443e-05,
+    "commerce_elasticite_prix_importations": 1.2834641649730501e-05,
+    "investissement_accelerateur": 0.0006334640978525255,
+    "investissement_cout_capital": 0.00034804063798349674,
+    "elasticite_creations": 0.05130329379634669
+   }
+  },
+  "longue": {
+   "schema": "D-446, 1997 à 2007 et 2011 à 2017",
+   "exogenes": {
+    "croissance_tendance": 0.019926540942383775,
+    "croissance_emploi": 0.009359442213106164,
+    "croissance_demande_mondiale": 0.05813594748062304
+   },
+   "points": {
+    "demi_haut": {
+     "information": {
+      "jumeau_consommation_profil": 0.01959599177832194,
+      "jumeau_emploi_elasticite_cout": 0.5272509133877127,
+      "jumeau_salaires_chomage": 7.371808003269952,
+      "commerce_elasticite_prix_exportations": 0.04281076736961654,
+      "commerce_elasticite_prix_importations": 0.08376961564165772,
+      "investissement_accelerateur": 0.40866998913841895,
+      "investissement_cout_capital": 0.004185996308936006,
+      "elasticite_creations": 5.846094200742696
+     },
+     "ecart_type": {
+      "jumeau_consommation_profil": 0.49884291734536396,
+      "jumeau_emploi_elasticite_cout": 0.4707509141078321,
+      "jumeau_salaires_chomage": 0.2977596835495093,
+      "commerce_elasticite_prix_exportations": 0.49750249474038216,
+      "commerce_elasticite_prix_importations": 0.4951699545830916,
+      "investissement_accelerateur": 0.47823509322519747,
+      "investissement_cout_capital": 0.4997467004407898,
+      "elasticite_creations": 0.3186952898969223
+     },
+     "information_par_fenetre": {
+      "1996-1999": {
+       "jumeau_consommation_profil": 0.008502018601914617,
+       "jumeau_emploi_elasticite_cout": 0.2567690177101824,
+       "jumeau_salaires_chomage": 0.49650277179389735,
+       "commerce_elasticite_prix_exportations": 0.00933150764010048,
+       "commerce_elasticite_prix_importations": 0.013532878514095585,
+       "investissement_accelerateur": 0.008288294840483561,
+       "investissement_cout_capital": 0.000604697249847438,
+       "elasticite_creations": 0.0026029535864613
+      },
+      "1999-2003": {
+       "jumeau_consommation_profil": 0.004430176263750089,
+       "jumeau_emploi_elasticite_cout": 0.00742487893116095,
+       "jumeau_salaires_chomage": 2.3930745213136686,
+       "commerce_elasticite_prix_exportations": 0.00047856781557516453,
+       "commerce_elasticite_prix_importations": 0.001307956048052705,
+       "investissement_accelerateur": 0.0629193002920608,
+       "investissement_cout_capital": 0.00038135442550405434,
+       "elasticite_creations": 0.009302748874028002
+      },
+      "2003-2007": {
+       "jumeau_consommation_profil": 0.0006953169448317032,
+       "jumeau_emploi_elasticite_cout": 0.03340069910057201,
+       "jumeau_salaires_chomage": 0.6642116920972301,
+       "commerce_elasticite_prix_exportations": 0.003599389419540698,
+       "commerce_elasticite_prix_importations": 0.007628828239902239,
+       "investissement_accelerateur": 0.09145002219023844,
+       "investissement_cout_capital": 8.287465201774241e-11,
+       "elasticite_creations": 4.7003567250757336e-05
+      },
+      "2010-2014": {
+       "jumeau_consommation_profil": 0.003659083390823998,
+       "jumeau_emploi_elasticite_cout": 0.16844621624981262,
+       "jumeau_salaires_chomage": 2.4044624695328385,
+       "commerce_elasticite_prix_exportations": 0.02129014552265317,
+       "commerce_elasticite_prix_importations": 0.0426955341768466,
+       "investissement_accelerateur": 0.16563969338754525,
+       "investissement_cout_capital": 0.003168826961417179,
+       "elasticite_creations": 4.905400067413123
+      },
+      "2014-2017": {
+       "jumeau_consommation_profil": 0.0023093965770015403,
+       "jumeau_emploi_elasticite_cout": 0.06121010139598453,
+       "jumeau_salaires_chomage": 1.413556548532317,
+       "commerce_elasticite_prix_exportations": 0.008111156971747021,
+       "commerce_elasticite_prix_importations": 0.018604418662760545,
+       "investissement_accelerateur": 0.08037267842809087,
+       "investissement_cout_capital": 3.111758929268023e-05,
+       "elasticite_creations": 0.9287414273018341
+      }
+     },
+     "sorties": 205,
+     "x": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.5,
+      "jumeau_salaires_chomage": 0.5,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.5,
+      "elasticite_creations": 0.5
+     },
+     "s": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.5,
+      "jumeau_salaires_chomage": 0.5,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.5,
+      "elasticite_creations": 0.5
+     },
+     "requis": {
+      "jumeau_consommation_profil": 12.0,
+      "jumeau_emploi_elasticite_cout": 12.0,
+      "jumeau_salaires_chomage": 12.0,
+      "commerce_elasticite_prix_exportations": 12.0,
+      "commerce_elasticite_prix_importations": 12.0,
+      "investissement_accelerateur": 12.0,
+      "investissement_cout_capital": 12.0,
+      "elasticite_creations": 12.0
+     },
+     "seuil": {
+      "jumeau_consommation_profil": 0.25,
+      "jumeau_emploi_elasticite_cout": 0.25,
+      "jumeau_salaires_chomage": 0.25,
+      "commerce_elasticite_prix_exportations": 0.25,
+      "commerce_elasticite_prix_importations": 0.25,
+      "investissement_accelerateur": 0.25,
+      "investissement_cout_capital": 0.25,
+      "elasticite_creations": 0.25
+     },
+     "identifie": {
+      "jumeau_consommation_profil": false,
+      "jumeau_emploi_elasticite_cout": false,
+      "jumeau_salaires_chomage": false,
+      "commerce_elasticite_prix_exportations": false,
+      "commerce_elasticite_prix_importations": false,
+      "investissement_accelerateur": false,
+      "investissement_cout_capital": false,
+      "elasticite_creations": false
+     }
+    },
+    "demi_bas": {
+     "information": {
+      "jumeau_consommation_profil": 1.0677739586817816,
+      "jumeau_emploi_elasticite_cout": 11.271343900608649,
+      "jumeau_salaires_chomage": 0.4611824379196864,
+      "commerce_elasticite_prix_exportations": 0.002481198844436914,
+      "commerce_elasticite_prix_importations": 0.0005221221838498418,
+      "investissement_accelerateur": 0.4085284974813798,
+      "investissement_cout_capital": 0.031656555212944,
+      "elasticite_creations": 0.438478421572291
+     },
+     "ecart_type": {
+      "jumeau_consommation_profil": 0.4479626718033025,
+      "jumeau_emploi_elasticite_cout": 0.25833838417371924,
+      "jumeau_salaires_chomage": 0.47431607216919447,
+      "commerce_elasticite_prix_exportations": 0.4998677463127332,
+      "commerce_elasticite_prix_importations": 0.49997237666639643,
+      "investissement_accelerateur": 0.4796571994844311,
+      "investissement_cout_capital": 0.4982637475620391,
+      "elasticite_creations": 0.47466802839740596
+     },
+     "information_par_fenetre": {
+      "1996-1999": {
+       "jumeau_consommation_profil": 0.1664587509514634,
+       "jumeau_emploi_elasticite_cout": 5.489406179130544,
+       "jumeau_salaires_chomage": 0.031053493537563686,
+       "commerce_elasticite_prix_exportations": 0.0005408266226649558,
+       "commerce_elasticite_prix_importations": 8.434737291720338e-05,
+       "investissement_accelerateur": 0.008285523471396843,
+       "investissement_cout_capital": 0.004573019580492379,
+       "elasticite_creations": 0.00019525572148810757
+      },
+      "1999-2003": {
+       "jumeau_consommation_profil": 0.4542269036632842,
+       "jumeau_emploi_elasticite_cout": 0.1587103718683465,
+       "jumeau_salaires_chomage": 0.14973545151710074,
+       "commerce_elasticite_prix_exportations": 2.7736687274698544e-05,
+       "commerce_elasticite_prix_importations": 8.152335909122118e-06,
+       "investissement_accelerateur": 0.0628980515341223,
+       "investissement_cout_capital": 0.0028839947046063706,
+       "elasticite_creations": 0.0006978296240316036
+      },
+      "2003-2007": {
+       "jumeau_consommation_profil": 0.03702492933752066,
+       "jumeau_emploi_elasticite_cout": 0.7139082251487665,
+       "jumeau_salaires_chomage": 0.041553986002515406,
+       "commerce_elasticite_prix_exportations": 0.00020861147408994123,
+       "commerce_elasticite_prix_importations": 4.754934633345838e-05,
+       "investissement_accelerateur": 0.09142064168108946,
+       "investissement_cout_capital": 6.267400841871357e-10,
+       "elasticite_creations": 3.5258874901538336e-06
+      },
+      "2010-2014": {
+       "jumeau_consommation_profil": 0.2630173750472405,
+       "jumeau_emploi_elasticite_cout": 3.600891504560008,
+       "jumeau_salaires_chomage": 0.15041818649491828,
+       "commerce_elasticite_prix_exportations": 0.0012339213155868828,
+       "commerce_elasticite_prix_importations": 0.0002661143975396006,
+       "investissement_accelerateur": 0.1655813084271466,
+       "investissement_cout_capital": 0.023964213498650667,
+       "elasticite_creations": 0.3679039352888177
+      },
+      "2014-2017": {
+       "jumeau_consommation_profil": 0.14704599968227258,
+       "jumeau_emploi_elasticite_cout": 1.3084276199009766,
+       "jumeau_salaires_chomage": 0.08842132036758842,
+       "commerce_elasticite_prix_exportations": 0.000470102744820436,
+       "commerce_elasticite_prix_importations": 0.00011595873115045714,
+       "investissement_accelerateur": 0.08034297236762464,
+       "investissement_cout_capital": 0.00023532680245451362,
+       "elasticite_creations": 0.06967787505046348
+      }
+     },
+     "sorties": 205,
+     "x": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.5,
+      "jumeau_salaires_chomage": 0.5,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.5,
+      "elasticite_creations": 0.5
+     },
+     "s": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.5,
+      "jumeau_salaires_chomage": 0.5,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.5,
+      "elasticite_creations": 0.5
+     },
+     "requis": {
+      "jumeau_consommation_profil": 12.0,
+      "jumeau_emploi_elasticite_cout": 12.0,
+      "jumeau_salaires_chomage": 12.0,
+      "commerce_elasticite_prix_exportations": 12.0,
+      "commerce_elasticite_prix_importations": 12.0,
+      "investissement_accelerateur": 12.0,
+      "investissement_cout_capital": 12.0,
+      "elasticite_creations": 12.0
+     },
+     "seuil": {
+      "jumeau_consommation_profil": 0.25,
+      "jumeau_emploi_elasticite_cout": 0.25,
+      "jumeau_salaires_chomage": 0.25,
+      "commerce_elasticite_prix_exportations": 0.25,
+      "commerce_elasticite_prix_importations": 0.25,
+      "investissement_accelerateur": 0.25,
+      "investissement_cout_capital": 0.25,
+      "elasticite_creations": 0.25
+     },
+     "identifie": {
+      "jumeau_consommation_profil": false,
+      "jumeau_emploi_elasticite_cout": false,
+      "jumeau_salaires_chomage": false,
+      "commerce_elasticite_prix_exportations": false,
+      "commerce_elasticite_prix_importations": false,
+      "investissement_accelerateur": false,
+      "investissement_cout_capital": false,
+      "elasticite_creations": false
+     }
+    },
+    "mode_haut": {
+     "information": {
+      "jumeau_consommation_profil": 0.02060408559406407,
+      "jumeau_emploi_elasticite_cout": 8.746394028305575,
+      "jumeau_salaires_chomage": 6.267143530299712,
+      "commerce_elasticite_prix_exportations": 0.04989798192012907,
+      "commerce_elasticite_prix_importations": 0.09767411151399531,
+      "investissement_accelerateur": 0.43547008586657737,
+      "investissement_cout_capital": 0.03237503804227857,
+      "elasticite_creations": 5.8469068893162
+     },
+     "ecart_type": {
+      "jumeau_consommation_profil": 0.49875053398725144,
+      "jumeau_emploi_elasticite_cout": 0.12049724971420352,
+      "jumeau_salaires_chomage": 0.056544887827866305,
+      "commerce_elasticite_prix_exportations": 0.12282532840537748,
+      "commerce_elasticite_prix_importations": 0.04032583751546579,
+      "investissement_accelerateur": 0.2517054111618621,
+      "investissement_cout_capital": 0.20769833796984105,
+      "elasticite_creations": 0.1511794899331
+     },
+     "information_par_fenetre": {
+      "1996-1999": {
+       "jumeau_consommation_profil": 0.008764629375284503,
+       "jumeau_emploi_elasticite_cout": 4.324574252905025,
+       "jumeau_salaires_chomage": 0.19575404385015618,
+       "commerce_elasticite_prix_exportations": 0.01111932638943703,
+       "commerce_elasticite_prix_importations": 0.016001281755162838,
+       "investissement_accelerateur": 0.008738691962984949,
+       "investissement_cout_capital": 0.004646949368970847,
+       "elasticite_creations": 0.0027237694245487646
+      },
+      "1999-2003": {
+       "jumeau_consommation_profil": 0.004722244179612352,
+       "jumeau_emploi_elasticite_cout": 0.11166545591087026,
+       "jumeau_salaires_chomage": 1.6684085760052612,
+       "commerce_elasticite_prix_exportations": 0.0005494792675813416,
+       "commerce_elasticite_prix_importations": 0.0014874191294330181,
+       "investissement_accelerateur": 0.06656640317925619,
+       "investissement_cout_capital": 0.0029046266926180514,
+       "elasticite_creations": 0.00973468416083863
+      },
+      "2003-2007": {
+       "jumeau_consommation_profil": 0.0007259038637788029,
+       "jumeau_emploi_elasticite_cout": 0.524192182735375,
+       "jumeau_salaires_chomage": 0.6399684057273469,
+       "commerce_elasticite_prix_exportations": 0.004245364851485248,
+       "commerce_elasticite_prix_importations": 0.009036610720085606,
+       "investissement_accelerateur": 0.09866933439425855,
+       "investissement_cout_capital": 6.264587027384879e-10,
+       "elasticite_creations": 4.9814973590138326e-05
+      },
+      "2010-2014": {
+       "jumeau_consommation_profil": 0.003930162678676573,
+       "jumeau_emploi_elasticite_cout": 2.788369902685264,
+       "jumeau_salaires_chomage": 2.397612449333764,
+       "commerce_elasticite_prix_exportations": 0.02446159148268061,
+       "commerce_elasticite_prix_importations": 0.049272575460373336,
+       "investissement_accelerateur": 0.1758324510283229,
+       "investissement_cout_capital": 0.024584209008498337,
+       "elasticite_creations": 4.905634022246011
+      },
+      "2014-2017": {
+       "jumeau_consommation_profil": 0.0024611454967118397,
+       "jumeau_emploi_elasticite_cout": 0.9975922340690547,
+       "jumeau_salaires_chomage": 1.3654000553831815,
+       "commerce_elasticite_prix_exportations": 0.009522219928944859,
+       "commerce_elasticite_prix_importations": 0.021876224448940534,
+       "investissement_accelerateur": 0.08566320530175472,
+       "investissement_cout_capital": 0.0002392523457326449,
+       "elasticite_creations": 0.9287645985112123
+      }
+     },
+     "sorties": 205,
+     "x": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.23783783783783785,
+      "jumeau_salaires_chomage": 0.5062187499999999,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.3409090909090909,
+      "elasticite_creations": 0.5
+     },
+     "s": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.12891891891891888,
+      "jumeau_salaires_chomage": 0.05711875000000011,
+      "commerce_elasticite_prix_exportations": 0.12287037037037041,
+      "commerce_elasticite_prix_importations": 0.040328947368421075,
+      "investissement_accelerateur": 0.2551775147928992,
+      "investissement_cout_capital": 0.2078409090909092,
+      "elasticite_creations": 0.16242038216560506
+     },
+     "requis": {
+      "jumeau_consommation_profil": 12.0,
+      "jumeau_emploi_elasticite_cout": 180.50446316733263,
+      "jumeau_salaires_chomage": 919.525686141862,
+      "commerce_elasticite_prix_exportations": 198.7132928130548,
+      "commerce_elasticite_prix_importations": 1844.5374684979315,
+      "investissement_accelerateur": 46.071934467548914,
+      "investissement_cout_capital": 69.44791122672471,
+      "elasticite_creations": 113.72087658592854
+     },
+     "seuil": {
+      "jumeau_consommation_profil": 0.25,
+      "jumeau_emploi_elasticite_cout": 0.06445945945945944,
+      "jumeau_salaires_chomage": 0.028559375000000053,
+      "commerce_elasticite_prix_exportations": 0.061435185185185204,
+      "commerce_elasticite_prix_importations": 0.020164473684210538,
+      "investissement_accelerateur": 0.1275887573964496,
+      "investissement_cout_capital": 0.1039204545454546,
+      "elasticite_creations": 0.08121019108280253
+     },
+     "identifie": {
+      "jumeau_consommation_profil": false,
+      "jumeau_emploi_elasticite_cout": false,
+      "jumeau_salaires_chomage": false,
+      "commerce_elasticite_prix_exportations": false,
+      "commerce_elasticite_prix_importations": false,
+      "investissement_accelerateur": false,
+      "investissement_cout_capital": false,
+      "elasticite_creations": false
+     }
+    },
+    "mode_bas": {
+     "information": {
+      "jumeau_consommation_profil": 1.1284544986854959,
+      "jumeau_emploi_elasticite_cout": 8.73808270258273,
+      "jumeau_salaires_chomage": 6.273248964827151,
+      "commerce_elasticite_prix_exportations": 0.002891958542004843,
+      "commerce_elasticite_prix_importations": 0.0006087874358774743,
+      "investissement_accelerateur": 0.4353188881036934,
+      "investissement_cout_capital": 0.03237497542071936,
+      "elasticite_creations": 0.4385393839436662
+     },
+     "ecart_type": {
+      "jumeau_consommation_profil": 0.44269552454968963,
+      "jumeau_emploi_elasticite_cout": 0.12062477850241426,
+      "jumeau_salaires_chomage": 0.1858674466717051,
+      "commerce_elasticite_prix_exportations": 0.5102073850337567,
+      "commerce_elasticite_prix_importations": 0.5107958069741616,
+      "investissement_accelerateur": 0.251970336738918,
+      "investissement_cout_capital": 0.1767353056067607,
+      "elasticite_creations": 0.5519943854786474
+     },
+     "information_par_fenetre": {
+      "1996-1999": {
+       "jumeau_consommation_profil": 0.17016608428310964,
+       "jumeau_emploi_elasticite_cout": 4.320813581082091,
+       "jumeau_salaires_chomage": 0.19590711860504773,
+       "commerce_elasticite_prix_exportations": 0.0006444438650397078,
+       "commerce_elasticite_prix_importations": 9.97324449416327e-05,
+       "investissement_accelerateur": 0.008735752980993482,
+       "investissement_cout_capital": 0.004646944359497705,
+       "elasticite_creations": 0.00020431849913917424
+      },
+      "1999-2003": {
+       "jumeau_consommation_profil": 0.48582892619785023,
+       "jumeau_emploi_elasticite_cout": 0.11154669234288196,
+       "jumeau_salaires_chomage": 1.6703218782155385,
+       "commerce_elasticite_prix_exportations": 3.184659980473382e-05,
+       "commerce_elasticite_prix_importations": 9.270921407230753e-06,
+       "investissement_accelerateur": 0.0665438600724026,
+       "investissement_cout_capital": 0.002904629432659243,
+       "elasticite_creations": 0.0007302304865868006
+      },
+      "2003-2007": {
+       "jumeau_consommation_profil": 0.039818000950242315,
+       "jumeau_emploi_elasticite_cout": 0.5235653578903293,
+       "jumeau_salaires_chomage": 0.6406083554562046,
+       "commerce_elasticite_prix_exportations": 0.00024605092313523247,
+       "commerce_elasticite_prix_importations": 5.63239338439179e-05,
+       "investissement_accelerateur": 0.09863750176984835,
+       "investissement_cout_capital": 6.264585386965764e-10,
+       "elasticite_creations": 3.736780062291509e-06
+      },
+      "2010-2014": {
+       "jumeau_consommation_profil": 0.2775818385626523,
+       "jumeau_emploi_elasticite_cout": 2.7856273030756578,
+       "jumeau_salaires_chomage": 2.3998353886737496,
+       "commerce_elasticite_prix_exportations": 0.0014177318924156511,
+       "commerce_elasticite_prix_importations": 0.0003071084925133305,
+       "investissement_accelerateur": 0.17577030008459824,
+       "investissement_cout_capital": 0.0245841486074274,
+       "elasticite_creations": 0.3679214849805756
+      },
+      "2014-2017": {
+       "jumeau_consommation_profil": 0.1550596486916413,
+       "jumeau_emploi_elasticite_cout": 0.9965297681917645,
+       "jumeau_salaires_chomage": 1.3665762238766088,
+       "commerce_elasticite_prix_exportations": 0.0005518852616095177,
+       "commerce_elasticite_prix_importations": 0.0001363516431713623,
+       "investissement_accelerateur": 0.08563147319585061,
+       "investissement_cout_capital": 0.0002392523946764808,
+       "elasticite_creations": 0.06967961319730237
+      }
+     },
+     "sorties": 205,
+     "x": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.23783783783783785,
+      "jumeau_salaires_chomage": 0.5062187499999999,
+      "commerce_elasticite_prix_exportations": 0.5,
+      "commerce_elasticite_prix_importations": 0.5,
+      "investissement_accelerateur": 0.5,
+      "investissement_cout_capital": 0.3409090909090909,
+      "elasticite_creations": 0.5
+     },
+     "s": {
+      "jumeau_consommation_profil": 0.5,
+      "jumeau_emploi_elasticite_cout": 0.12891891891891893,
+      "jumeau_salaires_chomage": 0.20981874999999994,
+      "commerce_elasticite_prix_exportations": 0.5103846153846155,
+      "commerce_elasticite_prix_importations": 0.5108333333333336,
+      "investissement_accelerateur": 0.25517751479289924,
+      "investissement_cout_capital": 0.17681818181818176,
+      "elasticite_creations": 0.5930232558139535
+     },
+     "requis": {
+      "jumeau_consommation_profil": 12.0,
+      "jumeau_emploi_elasticite_cout": 180.50446316733246,
+      "jumeau_salaires_chomage": 68.14479101026751,
+      "commerce_elasticite_prix_exportations": 11.5166483146112,
+      "commerce_elasticite_prix_importations": 11.496424665153315,
+      "investissement_accelerateur": 46.07193446754889,
+      "investissement_cout_capital": 95.95495668149172,
+      "elasticite_creations": 8.530565167243367
+     },
+     "seuil": {
+      "jumeau_consommation_profil": 0.25,
+      "jumeau_emploi_elasticite_cout": 0.06445945945945947,
+      "jumeau_salaires_chomage": 0.10490937499999997,
+      "commerce_elasticite_prix_exportations": 0.2551923076923078,
+      "commerce_elasticite_prix_importations": 0.2554166666666668,
+      "investissement_accelerateur": 0.12758875739644962,
+      "investissement_cout_capital": 0.08840909090909088,
+      "elasticite_creations": 0.29651162790697677
+     },
+     "identifie": {
+      "jumeau_consommation_profil": false,
+      "jumeau_emploi_elasticite_cout": false,
+      "jumeau_salaires_chomage": false,
+      "commerce_elasticite_prix_exportations": false,
+      "commerce_elasticite_prix_importations": false,
+      "investissement_accelerateur": false,
+      "investissement_cout_capital": false,
+      "elasticite_creations": false
+     }
+    }
+   },
+   "identifies_but": [],
+   "identifies_d421": [],
+   "rapport_au_requis": {
+    "jumeau_consommation_profil": 0.09403787489045799,
+    "jumeau_emploi_elasticite_cout": 0.04845527847251858,
+    "jumeau_salaires_chomage": 0.09205764478582007,
+    "commerce_elasticite_prix_exportations": 0.00025111112738728056,
+    "commerce_elasticite_prix_importations": 5.295450138709325e-05,
+    "investissement_accelerateur": 0.009451960090221602,
+    "investissement_cout_capital": 0.00046617727546311165,
+    "elasticite_creations": 0.0514145429128681
+   }
+  }
+ },
+ "multiplicateur": {
+  "demi_haut": {
+   "jumeau_consommation_profil": 11.353642383068285,
+   "jumeau_emploi_elasticite_cout": 6.03276186107417,
+   "jumeau_salaires_chomage": 34.18061915041522,
+   "commerce_elasticite_prix_exportations": 3.978419803623541,
+   "commerce_elasticite_prix_importations": 4.01498025606657,
+   "investissement_accelerateur": 14.716590597836719,
+   "investissement_cout_capital": 1.3433938201786948,
+   "elasticite_creations": 1.0020722899685364
+  },
+  "demi_bas": {
+   "jumeau_consommation_profil": 18.389195164579682,
+   "jumeau_emploi_elasticite_cout": 6.032447040735884,
+   "jumeau_salaires_chomage": 34.18299964073018,
+   "commerce_elasticite_prix_exportations": 3.9784312410907665,
+   "commerce_elasticite_prix_importations": 4.014998307677645,
+   "investissement_accelerateur": 14.717051794945702,
+   "investissement_cout_capital": 1.3433942369229845,
+   "elasticite_creations": 1.0020725554170014
+  },
+  "mode_haut": {
+   "jumeau_consommation_profil": 11.366343901433604,
+   "jumeau_emploi_elasticite_cout": 5.919832168366267,
+   "jumeau_salaires_chomage": 25.46099125536478,
+   "commerce_elasticite_prix_exportations": 4.08956050119496,
+   "commerce_elasticite_prix_importations": 4.125884361639417,
+   "investissement_accelerateur": 14.92106675384479,
+   "investissement_cout_capital": 1.3394334585871455,
+   "elasticite_creations": 1.0021684595332812
+  },
+  "mode_bas": {
+   "jumeau_consommation_profil": 18.51585534275976,
+   "jumeau_emploi_elasticite_cout": 5.919395614574428,
+   "jumeau_salaires_chomage": 25.46308406241412,
+   "commerce_elasticite_prix_exportations": 4.089572986093606,
+   "commerce_elasticite_prix_importations": 4.12590416096309,
+   "investissement_accelerateur": 14.921535194217173,
+   "investissement_cout_capital": 1.339434053295398,
+   "elasticite_creations": 1.0021687372582277
+  }
+ },
+ "atteint": false
+}
