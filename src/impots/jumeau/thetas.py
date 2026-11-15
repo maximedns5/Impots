@@ -166,7 +166,13 @@ REGISTRE.update({ligne.cle: ligne for ligne in (
           a_demi="Mésange : 0,46 ; 0,85 ; 0,98 ; 1,00", a_un="max : 0,5 ; 0,85 ; 0,98 ; 1,00",
           direction="θ = 1 : la consommation suit le plus vite et le plus loin le revenu",
           source=("Mésange (G2017-04), p. 34 ; Insee, Note de conjoncture de juin 2019, "
-                  "dossier, tableau 3 p. 34"), verifiee=True),
+                  "dossier, tableau 3 p. 34"), verifiee=True,
+          non_monotone=(
+              "e(h) joue deux fois : il fait suivre la consommation au revenu, et, par la "
+              "boucle des salaires sur le chômage, le surcroît de demande rend moins de "
+              "revenu quand b est petit ; à b = 0,20 (D-438), la consommation à θ = 1 "
+              "passe sous celle de θ½ de 0,13 % au plus de la 3e à la 9e année (D-442). "
+              "Sa boîte se lit sur la grille.")),
     Ligne(cle=CONSOMMATION_PENTE, bloc="consommation",
           definition=("q dans κ = q κ_max, PMC_d(h) = e(h) [APC + κ (APC_d − APC)] : la pente "
                       "des propensions marginales entre les déciles ; κ_max, le plus grand κ "

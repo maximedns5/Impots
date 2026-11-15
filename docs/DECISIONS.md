@@ -33821,3 +33821,24 @@ rejeux d'avant. L'histoire budgétaire de 2011 à 2017 n'identifie toujours aucu
 
 **Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible, aucune entrée,
 aucune loi ; D-420, D-423, D-429 et D-438 restent. Le rapport porte 877bba9.
+
+## D-442 — Le profil de la consommation déclaré non monotone, au b de D-438
+
+**Le constat** (D-438, en adoptant la loi de b) : au b par défaut, 0,20, la consommation
+des ménages après une baisse d'IR à θ = 1 du profil e(h) passe sous celle de θ½, de 0,13 %
+au plus de la 3e à la 9e année. La boucle des salaires sur le chômage, petite à b = 0,20,
+ne rend plus le surcroît de demande en revenu : c'est une propriété de l'équilibre, pas une
+borne du bloc, qui reste monotone à b = 1. D-438 avait fixé b = 1 dans le test pour qu'il
+passe ; le propriétaire a décidé, le 15 novembre 2026, de déclarer plutôt la ligne non
+monotone, comme θ_survie en D-427.
+
+**Ce qui change.** `thetas.CONSOMMATION_PROFIL` porte sa raison dans `non_monotone` ; sa
+boîte se lit sur la grille. Le test de la consommation garde sa première partie (le bloc,
+à b = 1, monotone et borné par ses bouts) et y ajoute l'équilibre au b par défaut : la
+boîte sur la grille contient chaque valeur de la grille, et les deux bouts seuls ne la
+bornent pas. Sans la déclaration, il échoue ; avec elle, il passe. Le test des
+déclarations (`test_jumeau_entreprises.py`) compte désormais deux lignes.
+
+**Ce qui ne change pas.** Aucun nombre : la boîte ne sert qu'à la lecture des curseurs, et
+aucun rapport ne la porte ; r4 (D-439) garde son commit. Tests des ménages, des
+entreprises et du navigateur : 57 verts ; ruff propre.

@@ -268,11 +268,12 @@ def test_theta_zero_et_un_bornent_chaque_bloc(pop, cle, bloc, champ) -> None:
         assert not np.any(effet[:, 0]), "θ = 0 éteint le canal"
 
 
-def test_seule_la_survie_est_declaree_non_monotone() -> None:
-    """La non-monotonie se déclare dans la ligne θ, avec sa raison ; aucune autre ligne
-    du jumeau ne la porte, et leur boîte reste à leurs deux bouts."""
+def test_seules_la_survie_et_la_consommation_sont_declarees_non_monotones() -> None:
+    """La non-monotonie se déclare dans la ligne θ, avec sa raison : la survie (D-427) et
+    le profil de la consommation (D-442) ; aucune autre ligne du jumeau ne la porte, et
+    leur boîte reste à leurs deux bouts."""
     declarees = {c for c, ligne in thetas.REGISTRE.items() if not ligne.monotone}
-    assert declarees == {"survie_creations"}
+    assert declarees == {"survie_creations", thetas.CONSOMMATION_PROFIL}
     assert thetas.points_de_boite(thetas.REGISTRE["survie_creations"]) == thetas.GRILLE
     assert thetas.points_de_boite(thetas.REGISTRE[CREATIONS_ROW]) == (0.0, 1.0)
 
