@@ -18,6 +18,14 @@ les deux naïfs ne changent pas ; ce qui change, après le diagnostic de D-421 :
   (`variation_comptee`, `MesureVotee.sens`) ; le jumeau est celui de la jonction D-422
   (l'emploi public de D-418 compris).
 
+LA RÉVISION « rejeu_histoire_r3 » (D-428). Les entrées, les fenêtres, les cibles, les
+tolérances, les sept θ estimés et les deux naïfs sont ceux de r2 ; changent : l'a priori
+de chaque θ estimé, sa loi tirée de la littérature (`a_priori.lois`, D-424) au lieu de
+N(½ ; ½), et le jumeau de la jonction D-427 (ε = 0,043 au centre, ligne θ
+`elasticite_creations` ; e₀ = 10,47 % ; les plages de l'emploi, des salaires et du coût
+du capital élargies vers le bas ; la survie déclarée non monotone). Un θ est dit
+identifié contre l'écart-type de sa loi (`Estimation.identifies`, D-424).
+
 AUCUN MONTANT OFFICIEL DE MESURE N'ENTRE (D-359 à D-361). Les évaluations préalables des
 PLF et des PLFSS sont des juges mis de côté ; la base des mesures votées ne porte que le
 droit (`jumeau.votees`). Ce qui entre est LU DANS LES COMPTES PUBLIÉS, et la base des
@@ -131,8 +139,11 @@ ESTIMES = ("jumeau_consommation_profil", "jumeau_emploi_elasticite_cout",
            "investissement_cout_capital")
 A_PRIORI = 1.0
 #: Le cas que ce code rejoue, et la D-entrée qui le préenregistre ; le premier juge
-#: (« rejeu_histoire », D-417, D-420) se refait sur fe9434f.
-CAS, DECISION = "rejeu_histoire_r2", "D-421"
+#: (« rejeu_histoire », D-417, D-420) se refait sur fe9434f, la deuxième révision
+#: (« rejeu_histoire_r2 », D-421, D-423) sur 8119f63.
+CAS, DECISION = "rejeu_histoire_r3", "D-428"
+#: Les rapports des cas précédents, que ce code n'écrase pas.
+CAS_PRECEDENTS = ("rejeu_histoire", "rejeu_histoire_r2")
 #: Durée de vie moyenne de la dette, en années (choisie, non vérifiée).
 DUREE_VIE_DETTE = 8.0
 #: Les statuts d'une mesure qui n'a jamais eu d'effet.

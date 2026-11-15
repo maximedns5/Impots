@@ -32470,3 +32470,146 @@ lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_rejouer.py`,
 `test_provenance.py`, `test_donnees.py`, `test_dette*.py` : 837 verts, 4 sautés.
 `test_jumeau_page.py` (Chromium), seul : vert. `ruff check src tests scripts` propre. Ni
 `make impact` ni `make full`.
+
+## D-428 — Le troisième rejeu de l'histoire préenregistré : « rejeu_histoire_r3 »
+
+**Ce qui est fait** (branche `claude/but23-cadre`, partie de e8aafac). Le cas
+`rejeu_histoire_r3` (`rejeu_histoire.CAS`, son rapport
+`reports/jumeau/rejeu_histoire_r3.json`), l'étape zéro et ce préenregistrement. **Le
+jumeau n'a tourné sur aucune année notée contre le publié** : l'étape zéro lit ses seules
+sorties sur les fenêtres de l'estimation, aucune erreur n'est calculée. Les rapports de
+D-420 (fe9434f) et de D-423 (8119f63) restent ; le script refuse de les écraser
+(`rejeu_histoire.CAS_PRECEDENTS`).
+
+### Ce qui change depuis r2 (D-421, D-423)
+
+* **L'a priori** : chaque θ estimé sous sa loi de D-424 (`a_priori.lois`, passée à
+  `apprentissage.estimer`), au lieu de N(½ ; ½) pour tous. Six des sept θ estimés en ont
+  une tirée d'une source ; le profil de la consommation, sans source, garde N(½ ; ½).
+  Les autres θ restent fixés à ½, le mode de leur loi : chacune y est centrée, ε
+  compris.
+* **Le jumeau de la jonction D-427** : ε = 0,043 au centre (0 ; 0,043 ; 0,20), une ligne θ
+  (`elasticite_creations`), que le bloc `naissances` lit, au lieu de 0,20 fixe ;
+  e₀ = 10,47 % au lieu de 7,61 % ; les plages de l'emploi (0,07 ; 0,44 ; 0,52), des
+  salaires (0 ; 1 ; 1,278) et du coût du capital (0 ; 0,44 ; 0,60) élargies vers le bas ;
+  la survie déclarée non monotone (sans effet ici : le rejeu lit des θ, pas des boîtes).
+* **La règle d'identification** de D-424 : un θ est identifié si son écart-type approché
+  est sous s / 2, s celui de sa loi au point, du côté de la jacobienne ; soit des données
+  qui apportent au moins 3 / s² d'information. Un a priori serré n'identifie rien seul.
+
+**Ce qui ne change pas** : les fenêtres (estimation 2010 → 2014 et 2014 → 2017, test
+2017 → 2019 et 2021 → 2024, 2020 et 2021 exclus), les douze cibles, leurs métriques et
+leurs tolérances, les entrées (les chocs observés, la demande mondiale, le choix (b) de
+D-421), les sept θ estimés, le poids de l'a priori (1), le critère, les deux naïfs et la
+règle « le jumeau bat ». ε n'est pas ajouté aux θ estimés : la liste de D-417 ne change
+pas ; l'étape zéro dit ce qu'il aurait donné.
+
+**Le contrôle.** Le naïf ne reçoit ni les chocs ni la demande mondiale, et sa référence ne
+dépend pas de θ ; e₀ y tient le stock stationnaire : **ses REQM redonnent celles de D-420
+à 1e-9 près**, sur l'estimation, le test et le test à θ½. Le naïf mécanique n'a aucun bloc
+de comportement : ses REQM devraient redonner celles de D-423 au même près (un second
+contrôle, attendu, pas une condition). Si l'un ou l'autre bouge, l'écart est dit et rien
+n'est réglé.
+
+### L'étape zéro : l'identifiabilité avec les nouvelles lois
+
+La jacobienne des sorties notées du jumeau (pas des erreurs) en θ, divisée par les
+tolérances, sur les deux fenêtres de l'estimation ; chaque θ perturbé de 0,001 sur l'axe
+des tirages ; aucune valeur publiée de cible n'y entre. Trois points : ½ vers le haut
+(le point de D-421, dont elle redonne l'information, 0,099 pour l'emploi), ½ vers le bas
+(la moitié basse, celle que les plages élargies changent), et le mode de la loi ramené
+dans [0 ; 1], où l'estimation doit aller sans information (D-424). L'écart-type approché
+est √diag (JᵀJ + P)⁻¹, P = diag (1 / s²). Une passe d'essai de 4 secondes (`scratchpad`).
+
+| θ | info, mode | ½ haut | ½ bas | s de la loi | requis 3 / s² | σ | identifié |
+|---|---|---|---|---|---|---|---|
+| profil de la consommation | 0,002 | 0,002 | 0,065 | 0,500 | 12 | 0,500 | non |
+| emploi (mode 0,238) | 1,633 | 0,099 | 2,112 | 0,129 | 180 | 0,127 | non |
+| salaires (mode 0,234) | 0,333 | 0,013 | 0,171 | 0,213 | 66 | 0,212 | non |
+| exportations | 0,013 | 0,013 | 0,001 | 0,123 | 199 | 0,123 | non |
+| importations | 0,026 | 0,025 | 0,000 | 0,040 | 1 845 | 0,040 | non |
+| accélérateur | 0,029 | 0,027 | 0,027 | 0,255 | 46 | 0,255 | non |
+| coût du capital (mode 0,341) | 0,024 | 0,003 | 0,024 | 0,208 | 69 | 0,208 | non |
+| ε, non estimé | 5,971 | 5,970 | 0,448 | 0,162 | 114 | 0,151 | non |
+
+(Au mode, s est l'écart du haut ; celui des échanges vers le haut est 0,123 et 0,040,
+vers le bas 0,510 et 0,511.) **Aucun θ n'est identifié par les données et l'a priori
+ensemble.** Les plages élargies multiplient l'information de la moitié basse (l'emploi
+de 0,099 à 2,1, × 21 : la pente y est 2,8 fois plus forte, et le jumeau y est plus
+sensible ; le coût du capital × 8), sans l'approcher de ce que les lois serrées
+demandent : il faudrait 110 fois plus pour l'emploi. ε, s'il était estimé, aurait la
+plus forte information des huit (6,0, par la cible des créations), à 19 fois moins que
+requis. Ce que les lois changent : l'écart-type approché n'est plus 0,50 partout mais
+celui de la loi, à 2 % près. **Sous la règle absolue de D-417 (0,25), cinq θ seraient
+« identifiés »** (l'emploi, les salaires, les deux échanges, le coût du capital), par
+l'a priori seul ; c'est ce que la règle de D-424 refuse.
+
+### L'aveugle, percé
+
+Le pronostic est écrit en connaissant les erreurs année par année de D-420 et de D-423,
+le rapport de r2 et l'étape zéro, sans qu'aucune erreur de r3 n'ait été calculée. Ce
+que r2 donne d'avance : à θ½, r3 ne diffère de r2 que par ε et e₀ ; l'écart des
+créations du jumeau à celles du naïf y répond comme ε, soit 0,043 / 0,20 = 0,215 fois
+celui de r2. Appliqué aux erreurs de r2, cela donne une REQM des créations de 4,55 au
+test (5,65 en r2, 4,31 le naïf). Aux θ estimés, l'emploi, les salaires et le coût du
+capital vont près des modes de leurs lois (η ≈ 0,25, b ≈ 0,47, ε_K ≈ 0,30, les valeurs
+publiées), dans la moitié basse où le jumeau est le plus sensible : l'écart à r2 est
+plus grand qu'entre θ estimés et θ½ en r2 (moins de 1 %), de l'ordre de 0,1 point au
+plus sur l'emploi et le chômage, d'après l'information de l'étape zéro.
+
+### Le pronostic
+
+**L'estimation.** Les θ (départ ½) : le profil de la consommation dans [0,35 ; 0,50]
+(0,401 en r2, sa loi n'a pas changé) ; l'emploi dans [0,23 ; 0,32] (les données le
+tiraient vers le haut en r2) ; les salaires dans [0,20 ; 0,30] ; le coût du capital dans
+[0,31 ; 0,37] ; les exportations dans [0,48 ; 0,53], les importations dans
+[0,495 ; 0,505], l'accélérateur dans [0,47 ; 0,52]. Chaque écart-type approché à moins
+de 3 % de celui de sa loi au point ; **aucun θ identifié** ; chaque θ à moins de 0,08 du
+mode de sa loi ramené dans [0 ; 1]. J au départ entre 88 et 94 (85,72 en r2 : le terme
+de l'a priori à ½ vaut 6,3, les créations de l'estimation retirent environ 1,1), J final
+entre 84 et 89, de 92 à 97 % de J au départ.
+
+**Le test, aux θ estimés** (REQM en points ; r2 celle de D-423 ; N et M, le naïf et le
+naïf mécanique, attendus identiques à D-420 et D-423) :
+
+| cible | tol. | r2 | jumeau r3 | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,940 | [0,88 ; 1,02] | 0,831 | 0,831 | oui, de peu | non | non |
+| emploi | 0,8 | 0,882 | [0,80 ; 1,00] | 0,858 | 0,858 | non, de peu | non | non |
+| chômage | 0,8 | 0,723 | [0,62 ; 0,85] | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | 3,524 | [3,45 ; 3,60] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,20 ; 3,35] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,54 ; 0,59] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,364 | [0,34 ; 0,39] | 0,424 | 0,349 | oui | oui | non, de peu |
+| D61 | 0,4 | 0,225 | [0,20 ; 0,26] | 0,983 | 0,283 | oui | oui | oui |
+| recettes | 0,8 | 1,073 | [1,03 ; 1,12] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,639 | [0,60 ; 0,68] | 1,361 | 0,627 | oui | oui | non, de peu |
+| dette | 3,0 | 2,926 | [2,70 ; 3,15] | 4,393 | 2,359 | oui, de peu | oui | non |
+| créations | 10 | 5,647 | [4,30 ; 5,00] | 4,310 | 4,310 | oui | non | non |
+
+Soit **9 cibles sur 12 tenues par le jumeau** (de 8 à 10), 6 par le naïf (exactement), 9
+par le naïf mécanique (exactement) ; **le naïf battu sur 8** (de 7 à 9) et **le naïf
+mécanique sur 3** (de 2 à 5 : les deux échanges, par la demande mondiale, et D61 ; D5 et
+le solde sont à moins de 0,02 de lui). **Les créations** se rapprochent du naïf sans le
+battre : un ε près de cinq fois plus petit réduit la réponse du jumeau, dont le signe reste
+contraire au publié en 2023 (la CVAE). **Le test à θ½** : chaque REQM à moins de 1 % de
+celle de r2 à θ½, sauf les créations (de 4,3 à 5,0) ; contre le test aux θ estimés de r3,
+les mêmes tenues et les mêmes victoires, chaque REQM à moins de 10 % (l'emploi et le
+chômage sont les plus exposés).
+
+Ce que ce pronostic dit d'avance : **r3 n'apprend rien de l'histoire** ; ses θ sont ceux
+de la littérature, et ce qui change ses notes vient de ce que les lois et D-427 mettent
+dans le jumeau, non des données.
+
+### Ce qui tourne ensuite
+
+`PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py`, sur le commit poussé qui porte
+cette entrée, vers `reports/jumeau/rejeu_histoire_r3.json`. Le résultat va dans D-429,
+contre ce pronostic ; aucune tolérance, aucune fenêtre, aucune entrée, aucune loi ne
+change après le premier calcul ; D-420 et D-423 restent.
+
+**Les tests.** Aucun nombre du modèle ne change : le cas, le passage des lois et le refus
+d'écraser les rapports précédents sont de la plomberie, sans test dédié (D-335) ; les lois
+et leur emploi par `estimer` sont tenus par `test_jumeau_a_priori.py` (D-424).
+`pytest -m "not lourd and not chrono" -n 2 tests/test_jumeau*.py` : 267 verts, 1 sauté ;
+`ruff check src tests scripts` propre.
