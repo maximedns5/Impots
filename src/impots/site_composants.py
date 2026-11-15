@@ -190,3 +190,34 @@ def detail(titre: str, corps: str, ouvert: bool = False, note: str = "") -> str:
     n = f"<small>{esc(note)}</small>" if note else ""
     return (f'<details class="detail"{o}><summary>{esc(titre)}{n}</summary>'
             f'<div class="detail-corps">{corps}</div></details>')
+
+
+def echelle() -> str:
+    """L'échelle de lecture (D-451) : ce que vaut un point de PIB en euros, pour juger si
+    un nombre est grand. Le PIB de 2025 est celui que l'Insee publie (la page de la dette
+    le lit) ; 2035 est l'ordre de grandeur que la méthode donne, sous les hypothèses de
+    croissance des études."""
+    from impots.parcours import dette
+
+    d = dette.depart()
+    pib = d["gdp_eur"]
+    un = f"{pib / 100 / 1e9:.0f}"
+    pv = Provenance("Un centième du PIB de 2025 publié par l'Insee.",
+                    rapport="data/raw/MANIFEST.json",
+                    calcul=f"PIB 2025 de {pib / 1e9:,.0f} Md€".replace(",", " ")
+                    + " ÷ 100 (impots.parcours.dette.depart)",
+                    champ="files.insee_cn2025_pib_T1101_1103.xlsx",
+                    source=("Insee, comptes nationaux, T_1101",
+                            "https://www.insee.fr/fr/statistiques/fichier/8988797/"
+                            "T_1101_1103_fr.xlsx"))
+    q = Provenance("Ordre de grandeur d'un point de PIB de 2035, sous les hypothèses de "
+                   "croissance des études (croissance réelle 1 %, prix 2 %), que la méthode "
+                   "donne.", autres=(("Où", '<a href="methode.html#trois-reponses">la '
+                                            "méthode, les trois réponses</a>"),))
+    quarante = chiffre("40 Md€", q)
+    return ('<aside class="echelle" role="note"><b>Pour lire les nombres</b>'
+            f'<span class="echelle-regle"><span>1 point de PIB</span><span class="echelle-barre">'
+            f'</span><span>≈ {chiffre(un + " Md€", pv)} en 2025, ≈ {quarante} en 2035</span></span>'
+            f'<span class="echelle-plus">La dette publique de 2025 : '
+            f'{d["debt_ratio"] * 100:.0f} points de PIB ; un écart de dette de 1 point en '
+            "2035, c'est environ " + chiffre("40 Md€", q, cle="2") + " de dette en plus.</span></aside>")

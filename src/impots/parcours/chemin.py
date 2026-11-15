@@ -385,7 +385,8 @@ def tete(index: int, prouve: str) -> str:
             + f'<p class="chapeau">{e.chapeau}</p>'
             + c.flux(list(e.entre), list(e.fait), list(e.sort))
             + (CHIFFRES[e.module]() if e.module in CHIFFRES else "")
-            + c.garde("Ce que cette étape établit", f"<p>{esc(prouve)}</p>")
+            + (c.echelle() if e.module in ("cout", "dette") else "")
+            + c.garde("En une phrase", f"<p>{esc(prouve)}</p>")
             + (f'<p class="boutons">{renvoi(*renv)}</p>' if renv else ""))
 
 

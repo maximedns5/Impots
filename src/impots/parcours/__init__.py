@@ -98,6 +98,10 @@ def nom_publie(module: str) -> str:
 def lien(module: str, texte: str | None = None) -> str:
     """Un lien vers une autre page du parcours."""
     _, name, titre = next(p for p in PAGES if p[0] == module)
+    if texte and re.fullmatch(r"(la )?page \d", texte):
+        # Les pages d'avant se citaient par leur numéro ; le chemin a renuméroté (D-451).
+        numero = [m for m, _, _ in PAGES].index(module) + 1
+        texte = ("l'" if texte.startswith("la ") else "") + f"étape {numero}"
     return f'<a href="{name}">{html.escape(texte or titre)}</a>'
 
 
@@ -106,7 +110,7 @@ p.prouve{border-left:3px solid var(--l2);padding-left:.8rem;font-style:italic}
 .curseur{display:grid;grid-template-columns:minmax(0,1fr) minmax(8rem,16rem) 7rem;gap:.2rem .8rem;align-items:center;margin:.4rem 0}
 .curseur input,.curseur select{width:100%}
 .num{text-align:right;font-variant-numeric:tabular-nums}
-.a-vous{background:var(--surface);border:1px solid var(--trait);border-radius:var(--rayon);padding:.2rem 1rem 1rem;margin:1.5rem 0}
+.a-vous{--papier:var(--surface);background:var(--surface);border:1px solid var(--trait);border-radius:var(--rayon);padding:.2rem 1rem 1rem;margin:1.5rem 0}
 .a-vous>h2:first-child{margin-top:1rem}
 @media (max-width:560px){.curseur{grid-template-columns:1fr}}
 """

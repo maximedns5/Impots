@@ -82,7 +82,7 @@ def accueil(studies: list, presentes: set[str]) -> str:
         "<h2>Trois réponses par réforme</h2>"
         "<p>Exemple : la part chiffrée du programme de Gabriel Attal. Touchez un nombre pour "
         "voir d'où il vient.</p>"
-        f'<div class="cartes">{tuiles}</div>'
+        f'<div class="cartes">{tuiles}</div>' + c.echelle() +
         "<h2>Comment ça marche</h2>"
         + c.flux([("Des fichiers publics", "Insee, DGFiP, CAF, textes de loi, recherche")],
                  [("Une France simulée", "des ménages d'enquête, calés sur les totaux"),

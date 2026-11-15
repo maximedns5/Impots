@@ -34172,3 +34172,72 @@ population hors de la comparaison du moteur, pas de `make impact` ni de lourds e
 de route. Les tests légers des fichiers touchés tiennent ce qui change ; aucun nombre
 publié ne change, chaque rapport garde son commit.
 
+
+## D-450 — Le système visuel du site, l'accueil et la navigation (but 25, volet `chemin`)
+
+**Le fait.** Le site d'avant se lisait comme un dossier de relecture : une feuille de
+style de quarante lignes, un en-tête de deux liens, un accueil qui empilait douze tableaux
+et trois paragraphes répétés sous chacun (le lecteur novice, passe 1 : A1, A2, N1, N2).
+
+**Le système.** Une feuille commune (`src/impots/site_textes/style.css`, publiée en
+`site/style.css`) : des jetons de couleur en clair et en sombre, un serif pour les titres
+et la police du système pour le texte, des chiffres tabulaires, une échelle d'espacement.
+Des composants (`src/impots/site_composants.py`), sans script : la carte, l'étape
+numérotée, le schéma de flux (ce qui entre, ce qui est fait, ce qui sort), le chiffre
+sourcé (un nombre qui ouvre sa provenance par l'attribut `popover` : ce qu'il mesure, le
+rapport, le champ, le commit, l'étage, la source publique), le chiffre clé, le curseur
+avec sa portée (ce qu'il change, ce qu'il ne change pas, la plage publiée sous la piste),
+la note de source, la mise en garde, le détail replié, et l'échelle de lecture (un point
+de PIB en euros, A5). Le tout est décrit dans `docs/site/DESIGN.md` ; les volets
+`population`, `mesure` et `jumeau` le reprennent. Les anciens noms de couleur restent des
+alias.
+
+**Le gabarit.** `site._page` porte un en-tête avec la navigation du site (le chemin, la
+population, une mesure pas à pas, le jumeau, les études, la méthode), filtrée sur les
+pages construites : une entrée d'un autre volet apparaît quand sa page existe. Un lien
+`span.si-page` fait de même dans le corps d'une page. La légende des étages est repliée.
+
+**L'accueil** dit en une demi-minute ce qu'est le site, ses trois réponses sur un exemple
+(la part chiffrée du programme de Gabriel Attal : +66,18 Md€, +4,28 pt, 65 % des tirages
+en hausse, chacun ouvrant sa provenance), comment il marche en un schéma, et par où
+commencer. La liste des études passe à `etudes.html`, élargie (A6), et les phrases qui
+lisent chaque tableau s'y replient (A2). Les tests de `test_site.py` qui lisaient la
+liste sur `index.html` la lisent sur `etudes.html` ; l'accueil entre dans le test des
+montants sans étage, ses nombres étant des chiffres sourcés. Aucun nombre ne change.
+
+## D-451 — Le chemin en dix étapes, et la méthode remise d'accord avec les études
+
+**Le chemin.** Le parcours de huit pages devient un chemin de dix étapes, dans l'ordre où
+un nombre se fait : les sources, la population, le calage, les barèmes, une mesure, les
+comportements, le bouclage, la dette, le verdict, ce que le modèle ne sait pas
+(`src/impots/parcours/chemin.py`). Deux étapes sont neuves : les sources (le manifeste,
+compté par producteur, `parcours/sources.py`) et la population (observé, tiré, calé,
+`parcours/population.py`) ; les huit pages d'avant deviennent les étapes 3 à 10, sous de
+nouveaux noms de fichier. Chaque étape s'ouvre sur une question, un chapeau de deux
+phrases, son schéma, ses chiffres sourcés et la phrase qu'elle établit ; ses sections à
+curseur restent ouvertes, les autres se replient sous leur titre, avec leur temps de
+lecture (P1, P10). Rien n'est retiré : le texte d'avant se lit en un clic, ses ancres
+tiennent. Une page au PC passe de 5 600 à 16 600 px à 1 500 à 4 000 px. Une page,
+`chemin.html`, montre les dix étapes d'un coup d'œil et le fil rouge (Attal). Les renvois
+« page N » des textes d'avant suivent la nouvelle numérotation.
+
+**Les chiffres** des étapes sont lus dans les rapports commités par les fonctions des
+pages (`france.compte`, `cout.cout_total`, la décomposition et le Monte-Carlo du rapport
+prédictif d'Attal, le manifeste, `CROSSCHECK.md`), mis en forme comme elles ; les comptes
+de fichiers par producteur sont un agrégat dérivé du manifeste, qui le dit. Le PIB de
+2025 publié, divisé par cent, donne l'échelle de lecture. Aucun nombre publié ne change.
+
+**La méthode** (M1) disait que l'indexation des pensions, une hausse du SMIC et une
+mesure de dépense ne se chiffrent pas, et que les impôts des entreprises n'ont pas
+d'effet sur l'activité ; les études chiffrent les trois premières (D-384 : le SMIC
+horaire relevé et sa diffusion en plage, le point d'indice contre le point gelé,
+l'indexation au-delà de l'indexation légale) et lisent le canal des créations
+d'entreprises (D-400, D-401). La liste est réécrite juste ; ce qui ne se chiffre pas le
+reste (l'âge légal, la durée d'assurance, une économie annoncée sans paramètre, un
+blocage des prix, les successions, la fraude). La méthode s'ouvre sur le schéma du
+chemin et l'échelle de lecture (M2).
+
+**Ce qui reste**, des retours du lecteur novice : le texte des sections à curseur des
+étapes 3 à 9 est encore celui d'avant (formules, noms de fichiers, P5, P6, P8, P9) ; les
+noms de code des ménages types de l'étape 4 (P2) ; les lignes d'état opaques de la liste
+des études (A4), que les tests tiennent mot pour mot.

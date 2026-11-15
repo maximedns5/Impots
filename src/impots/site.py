@@ -328,12 +328,35 @@ def _bref(lines: list[str]) -> list[str]:
     return lines[start + 1:end]
 
 
+def _bref_plie(bref: str) -> str:
+    """L'« en bref » d'une étude dans la liste (D-451) : son tableau, et les phrases qui
+    le lisent repliées ; elles se répètent d'une étude à l'autre."""
+    from impots import site_composants as sc
+
+    fin = bref.find("</table>")
+    if fin < 0 or not bref[fin + 8:].strip():
+        return bref
+    return bref[:fin + 8] + sc.detail("Comment lire ce tableau", bref[fin + 8:])
+
+
 def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
     """Every file of the site, by name: the index, the style, a page per run study."""
     studies = etude.definitions() if studies is None else studies
     files: dict[str, str] = {"style.css": STYLE, ".nojekyll": ""}
     methode = (TEXTES / "methode.html").read_text(encoding="utf-8").replace(
         "{signaler}", _signaler())
+    from impots import site_composants as sc
+
+    # En tête de la méthode (D-451) : le chemin en un schéma et l'échelle de lecture.
+    bref = ('<p class="surtitre">Méthode et limites</p>'
+            + sc.flux([("Des fichiers publics", "Insee, DGFiP, CAF, recherche")],
+                      [("Une France simulée", "des ménages calés sur la France"),
+                       ("La loi, puis la réforme", "deux calculs, la différence"),
+                       ("Les réactions", "des gens et de l'économie")],
+                      [("Trois réponses", "le coût, le coût vrai, la dette en 2035")],
+                      legende='Chaque étape en détail : <a href="chemin.html">le chemin</a>.')
+            + sc.echelle())
+    methode = methode.replace("</p>", "</p>" + bref, 1)
     files[METHODE] = _page(f"Méthode et limites — {TITLE}", methode, liens=False)
     listed: list[str] = []
     codes: set[str] = set()
@@ -363,7 +386,7 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         files[f"{study.nom}.html"] = _page(f"{study.titre} — {TITLE}", body(lines, n), pied)
         listed.append(f'<li><h2><a href="{study.nom}.html">{html.escape(study.titre)}</a>'
                       f"</h2>\n<p>Chiffrée le {html.escape(entries[0]['first']['computed'])}, "
-                      f"{code}.</p>\n{body(_bref(lines), n)}</li>")
+                      f"{code}.</p>\n{_bref_plie(body(_bref(lines), n))}</li>")
     intro = ('<p class="surtitre">Les études</p><h1>Les réformes chiffrées</h1>\n'
              '<p class="chapeau">Chaque étude prend une réforme, ou les articles d\'un '
              "texte, et donne trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle "
@@ -420,7 +443,7 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         files.update(pages)
         scripted.add(site_jumeau.PAGE)
     files[ETUDES] = _page(f"Les études — {TITLE}", intro + "\n<ul class=\"etudes\">\n"
-                          + "\n".join(listed) + "\n</ul>")
+                          + "\n".join(listed) + "\n</ul>", large=True)
     from impots import site_accueil
 
     files["index.html"] = _page(TITLE, site_accueil.accueil(studies, set(files)), large=True,

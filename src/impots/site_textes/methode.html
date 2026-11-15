@@ -193,24 +193,32 @@ de la population, pas au résultat.</dd>
 
 <h2 id="limites">Ce que l'outil ne fait pas</h2>
 <ul>
-<li><strong>La dépense publique n'est pas simulée.</strong> Elle est un scénario (gelée en
-volume dans les études) ; une mesure de dépense, une économie annoncée ou une suppression
-de postes ne se chiffrent pas ici.</li>
-<li><strong>Les impôts des entreprises n'ont pas d'effet sur l'activité.</strong> Mésange
-ne publie pas de réponse à l'impôt sur les sociétés ni aux impôts de production : un euro
-d'impôt sur les sociétés rendu pèse sur la dette en entier, quand un euro de cotisations
-rendu aux ménages en revient en partie par la croissance. Une mesure des entreprises paraît
-donc plus coûteuse en dette qu'une mesure des ménages de même montant, sans que l'outil ait
-mesuré qu'elle rapporte moins de croissance.</li>
-<li><strong>Les retraites ne bougent pas.</strong> Les pensions sont des données de la
-population : l'âge légal, la durée d'assurance ou l'indexation des pensions ne se chiffrent
-pas.</li>
+<li><strong>La dépense publique n'est pas simulée comme un module.</strong> Elle est un
+scénario (gelée en volume dans les études). Une mesure de dépense se chiffre quand elle
+change un paramètre que la population porte : le point d'indice des fonctionnaires (les
+salaires publics des ménages, contre le point gelé du droit), ou une indexation des
+pensions et des prestations, comptée au-delà de l'indexation légale sur les prix. Une
+économie annoncée sans paramètre (des postes supprimés, une dépense réduite) ne se chiffre
+pas : la page d'un programme montre la dette « si les économies annoncées sont tenues »,
+comme une variante, à côté.</li>
+<li><strong>Les impôts des entreprises ne passent pas par Mésange.</strong> Mésange ne
+publie pas de réponse de l'activité à l'impôt sur les sociétés ni aux impôts de production.
+Un autre canal les relie à la croissance : les créations d'entreprises, une hypothèse que le
+propriétaire du projet a décidé de lire sans qu'elle soit validée. Une hausse des
+prélèvements sur les entreprises et le capital y freine les créations, une baisse les
+pousse ; chaque page d'étude donne la dette avec ce canal et sans lui.</li>
+<li><strong>Les règles des retraites ne bougent pas.</strong> Les pensions sont des
+données de la population : l'âge légal ou la durée d'assurance ne se chiffrent pas.
+Une revalorisation des pensions, elle, se chiffre comme une hausse des pensions versées
+au-delà de l'indexation légale.</li>
 <li><strong>Les successions et le patrimoine</strong> n'ont pas de module : les droits de
 succession ne se chiffrent pas.</li>
 <li><strong>Les comportements</strong> ne se chiffrent que là où une étude publiée donne
 une élasticité ; ailleurs, la bande est absente.</li>
-<li><strong>Les prix et les salaires</strong> ne réagissent pas à la mesure dans la
-simulation de la première année : une hausse du SMIC ou un blocage des prix ne se chiffrent
+<li><strong>Les prix et les salaires</strong> ne réagissent pas d'eux-mêmes à une mesure
+dans la simulation de la première année. Une hausse du SMIC se chiffre quand elle est la
+mesure : le SMIC horaire relevé, et sa diffusion aux salaires un peu au-dessus, qui est une
+hypothèse donnée en plage, de rien à la diffusion entière. Un blocage des prix ne se chiffre
 pas.</li>
 <li><strong>La fraude</strong> n'est pas simulée : l'outil calcule l'impôt dû, pas l'impôt
 recouvré.</li>

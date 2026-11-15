@@ -53,7 +53,8 @@ def test_la_page_ne_parle_pas_la_langue_du_depot():
     for mot in ("VERIFIE_PAR", "But 19", "but 19", "étape « al »"):
         assert mot not in texte, mot
     assert texte.index("qu'elle appelle L0") < texte.index("la loi codée : chaque taux")
-    assert "Le détail est sur la page 3" in texte
+    # Le chemin a renuméroté les pages (D-451) : la page du coût est l'étape 5.
+    assert "Le détail est sur l'étape 5" in texte
     assert "ne sont donc pas trois épreuves indépendantes" in texte
 
 
