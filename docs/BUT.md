@@ -80,8 +80,14 @@ comparée aux séries publiées (PIB, recettes par impôt, solde, dette, emploi,
 défaillances d'entreprises, échanges extérieurs). Les paramètres s'estiment sur une
 période et se notent sur une autre, jamais sur la même. Chaque note est préenregistrée,
 avec sa tolérance, avant son calcul. Le chiffre : la part des séries tenues dans leur
-tolérance, hors de la période d'estimation (aujourd'hui : **aucune**, le jumeau n'existe
-pas).
+tolérance, hors de la période d'estimation. Aujourd'hui : **9 cibles sur 12** au troisième
+rejeu (r3, D-429, estimé sur 2011-2017, noté sur 2018, 2019 et 2022 à 2024), comme au
+deuxième (D-423), 7 au premier (D-420). Le naïf (la tendance) en tient 6, le naïf
+mécanique (les seuls chocs votés, sans comportement) 9. **La dynamique du jumeau ne bat
+le naïf mécanique que sur 3 cibles** : les exportations et les importations, par la
+demande mondiale observée, et D61, d'un rien. Sur l'activité, l'emploi, le chômage et
+les finances publiques, elle ne fait pas mieux que les chocs seuls ; aucun θ n'est
+identifié par cette histoire, l'a priori porte tout (D-424).
 
 **Le second juge : les chiffrages officiels**, tel qu'avant.
 
@@ -1111,6 +1117,26 @@ D-entrée, les tests verts, la PR et le SHA du merge ; à la fin, la page des cu
 ligne et la note sur l'histoire. Ou s'arrêter après 60 tours par lot, en disant ce qui
 manque.
 ```
+
+**Où il en est, le 15 novembre 2026 : pas fait.** Les sept lots sont codés et joints sur
+`claude/but23-cadre` (D-405 à D-429) : le cadre et ses identités à 1e-9, testées ; la
+chaîne des études retrouvée (Δb à 4e-16) ; les entreprises, le commerce, les ménages,
+l'emploi public, le mode structurel complet ; l'histoire de 2010 à 2025 et 95 mesures
+votées relues au Journal officiel ; chaque θ défini, sourcé, avec sa plage et sa loi a
+priori ; trois rejeux de l'histoire, chacun préenregistré avant son calcul (r1 7 cibles
+sur 12, r2 et r3 9 sur 12) ; une trajectoire de dix ans sous la seconde (273 ms en Python
+dans le mode structurel complet, D-414 ; de 0,5 à 0,9 s dans le navigateur, D-419) ; la
+page des curseurs dans le navigateur (Pyodide), sans serveur. Ce qui manque au /goal :
+
+* **Rien n'est mergé dans main.** Les lots n'ont pas eu chacun leur PR : ils ont été
+  joints sur la branche du cadre, qui part en une PR ; le « lot par lot » du /goal n'est
+  pas tenu, au propriétaire de l'accepter ou non.
+* **La page des curseurs n'est pas en ligne** : le site est construit et vérifié, pas
+  publié.
+* **La note sur l'histoire existe, mais elle dit que la dynamique apporte peu** (3 cibles
+  sur 12 contre le naïf mécanique) et que l'histoire de 2011 à 2017 n'identifie aucun θ.
+  Le /goal demande un jumeau « appris » : il est réglé sur la littérature, pas appris de
+  l'histoire. L'estimation allongée à 1996-2009 (D-421, §4) reste une proposition.
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 

@@ -1,5 +1,42 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-15 update adds D-406 to D-430: goal 23, the digital twin, all seven lots
+coded and joined on `claude/but23-cadre`, one PR prepared, not merged; the goal is not
+done. **The lots.** Firms (D-407: births, survival, closures, productivity, location; the
+goal-22 creations channel becomes a block), foreign trade (D-408: one block on the 2023
+IOT and Mésange, gap stated), households (D-409: 50 cells, employment, wages,
+consumption, winners and losers), history (D-410, D-412: the published state of 2010 to
+2025, the pre-2021 SFA, the voted measures by government), joined in D-411 and D-412; the
+voted measures read again in the Journal officiel (D-413: 95 checked, 19 corrected, 25
+added); the structural mode completed (D-414: accelerator, price-wage loop, induced CIT,
+a ten-year convention), public employment (D-418); the cursors page in the browser
+(D-415, D-419: Pyodide, the computation in a Worker, no server). Each double-counted
+channel is refused against Mésange (`DoubleCompte`); identities hold at 1e-9 each step.
+**The twin.** 22 θ, each defined, sourced, with its range and, since D-424, a prior law
+taken from the published literature; ε (creations to levies) is a θ at (0; 0.043; 0.20),
+e₀ is 10.47 %, three ranges widened down, θ_survie declared non-monotone and its box read
+on a grid (D-427). The 46 study reports carrying the channel were recomputed without a
+pass at ε = 0.043: no verdict and no tier moves, the six SMIC rises turn positive at θ½
+and stay « depends on θ » (D-427). Fine-grained data (D-425, D-426) identify ε (small),
+not β nor η. A ten-year structural path takes 273 ms in Python (D-414), 0.5 to 0.9 s in
+the browser (D-419); the 50 ms target at n = 1 is missed. **The three replays of history**
+(estimated 2011-2017, scored 2018, 2019, 2022-2024; 2020-2021 excluded; each
+preregistered, D-417, D-421, D-428): r1 7 targets of 12 (D-420), r2 9 (D-423: the
+creations input fixed, world demand observed, phased measures dated), r3 9 (D-429: the
+priors of D-424, ε = 0.043). The naive trend holds 6, the mechanical naive (voted shocks,
+no behaviour) 9; the twin beats the mechanical naive on 3 targets only (exports and
+imports through world demand, D61 by a hair). No θ is identified by 2011-2017, under
+either prior: the prior carries everything. **The leads.** Creations in 2023 (+8 points,
+the CVAE cut) is the first block to read again; revenue in 2023-2024 is overestimated by
+1.4 to 1.6 points of GDP (the fall of apparent VAT and CIT rates is not voted, so not
+entered); a longer estimation window, 1996-2009 (D-421 §4, about four lots, to launch
+only if its step zero identifies a θ under 0.25), is proposed, not done. **What is
+left.** The owner merges (the lots did not get one PR each, as the /goal wanted), the site
+with the cursors page is published, the `parts_premiere_annee` convention on the page is
+confirmed or reversed (D-416, D-419), and one pass per year would replace the convention.
+`make impact` and the 29 heavy tests ran once before the PR, green after two goal-22
+tests were mended, no number moved (D-430).
+
 The 2026-11-14 update adds D-405: goal 23, lot 1, the frame of the digital twin
 (`src/impots/jumeau/`, `docs/jumeau/CADRE.md`): field registry, state with absent fields
 and contributions by block and measure, the five identities at 1e-9 of GDP, the annual

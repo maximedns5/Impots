@@ -32709,3 +32709,50 @@ l'a priori large ni sous les lois : l'étape zéro le disait, le calcul le confi
 
 **Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune entrée, aucune loi ;
 D-420, D-423 et D-428 restent. Le rapport porte a399c47.
+
+## D-430 — La PR du but 23 préparée : `make impact`, les lourds, deux rouges du but 22
+
+**Ce qui a tourné**, une fois, avant la PR (D-309, D-335), sur `claude/but23-cadre`, avec
+`-n 2` (la machine a 15 Go). La première fois, tout tourne : aucun relevé d'impact
+n'existait dans ce worktree. La population, les entreprises de 2023 et leur fixture sont
+reliées dans `data/processed` depuis le worktree du but 22, hors git ; `impots data check
+--profile tests` : 15 dépendances présentes et valides.
+
+* **La passe parallèle**, première fois, sur 0f51575 : 4 744 verts, 21 sautés, 3 rouges, en
+  40 min 28 s ; `make` s'est arrêté là.
+* **Les 29 lourds** de `tests/lourds.txt`, chacun dans son processus
+  (`tests/memoire.py lancer`) : 29 verts, aucun sauté. Les cellules du jumeau recoupent la
+  population entière (`test_jumeau_cellules`, sautée faute de population depuis D-416) ;
+  la page dans Chromium passe en 25 s.
+* **Après le correctif** (c27d582), `make impact` en entier : ruff propre ; 1 377 tests
+  rejoués, verts, 21 sautés ; des lourds que l'impact retient, 19 rejoués et verts, 8
+  inchangés depuis la passe d'avant ; 5 chronomètres verts. Pas de `make full`.
+
+**Les trois rouges, tous du but 22, entrés avec cette branche** ; chacun passe sur
+`origin/main` (160380e), où les rapports et l'ancienne passe sont encore là.
+
+* `test_page_explorer.py`, deux tests : `grille.crans` lisait les rapports de chaque étude
+  définie, et ceux du PLF 2027, retirés par D-402 et non refaits (D-403), manquaient. D-403
+  avait retiré les tests bâtis sur ces rapports, pas ceux de l'explorateur. Le correctif
+  est dans le code, pas dans le test : une étude sans aucun rapport n'a plus de cran, comme
+  le site ne lui fait pas de page (D-403) ; une étude à moitié là reste refusée.
+  L'explorateur est retiré (D-377) : aucun nombre publié ne change ; ses crans du PLF 2027
+  reviendront avec l'étude.
+* `test_recherche.py::test_the_frozen_view_is_priced_on_the_population_as_it_is` : son
+  faux agrégat n'avait pas `employer_contribution_delta`, que la passe des ménages lit
+  depuis le but 22 (le canal des créations, D-401). Le test d'abord : le champ est ajouté
+  à sa valeur par défaut, 0 ; aucune assertion n'est touchée.
+
+**Les 21 sautés, chacun avec sa raison**, aucun lourd : l'annexe 9 du PLFSS 2027, hors du
+dépôt par règle ; le bulletin AFT n° 435 (trois de `test_dette_maturite`), manifesté mais
+absent de la machine, et aft.gouv.fr renvoie un défi anti-robot à la session, `make data`
+ne le prépare pas ; le PDF de Da Rin et al. (2011), même cas (`test_taux_effectifs`) ; la
+distribution des taux marginaux absente de l'artefact de référence (deux de
+`test_behavioural`) ; treize boutons sans contrôle négatif écrit (`test_knobs`) ; le
+commit qui date un enregistrement, absent d'un clone superficiel
+(`test_validation_predictif`).
+
+**Ce qui ne change pas.** Aucun nombre, aucune tolérance, aucun rapport ; les rejeux de
+D-420, D-423 et D-429 gardent leur commit. `BUT.md` porte le chiffre du premier juge et
+dit le but 23 pas fait : rien n'est mergé, la page des curseurs n'est pas en ligne, la
+dynamique ne bat le naïf mécanique que sur 3 cibles.
