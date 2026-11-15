@@ -38,24 +38,35 @@ def accueil(studies: list, presentes: set[str]) -> str:
         etage="L2 : simulation mécanique"), cle="accueil")
     dette = chemin._deco("total", "Écart de dette publique en 2035, en points de PIB, une "
                          "fois les comportements et l'activité bouclés (vue vieillie, θ½).")
+    rendu = chemin._deco("retroaction", "Ce que l'activité rend au budget, accumulé "
+                         "jusqu'en 2035, en points de PIB (vue vieillie, θ½).")
+    accumule = chemin._deco("cout", "Le coût accumulé jusqu'en 2035, en points de PIB, "
+                            "avant ce que l'activité rend (vue vieillie, θ½).")
     part = c.chiffre(f"{a['p_hausse'] * 100:.0f} %", c.Provenance(
         "Part des tirages du Monte-Carlo où la dette de 2035 monte ; entre 10 % et 90 %, le "
         "verdict est « dépend ».", rapport=chemin.ATTAL_PRED,
         champ="monte_carlo.vues.vieillie.p_hausse", commit=a["pred_commit"],
         etage="L4, sous hypothèses"))
+    # Les trois réponses de docs/BUT.md, dans les mots des études et de la méthode (R1,
+    # D-469) : le coût ; le coût avec les comportements et l'économie ; la dette.
     reponses = (
-        ("1", "Ce qu'elle coûte, et qui y gagne", cout, "la première année, ménage par "
-         "ménage, à comportements inchangés", "parcours-5-mesure.html"),
-        ("2", "Ce qu'elle coûte vraiment", dette, "de dette en 2035, une fois les "
-         "réactions des gens et de l'économie prises en compte", "parcours-8-dette.html"),
-        ("3", "Hausse, baisse, ou ça dépend", part, "des tirages font monter la dette : "
-         "le verdict est « dépend »", "parcours-9-verdict.html"),
+        ("1", "Ce qu'elle coûte, et qui y gagne", cout, "la première année, à "
+         "comportements inchangés ; qui y gagne, décile par décile, sur la page de "
+         "l'étude", "parcours-5-mesure.html"),
+        ("2", "Ce qu'elle coûte avec les comportements et l'économie", rendu,
+         f"rendus au budget par l'activité d'ici 2035, sur {accumule} de coût accumulé. "
+         "Aucune réaction des gens n'est chiffrée pour ces mesures : la bande des "
+         "comportements est absente (pas nulle), et l'étude dit pourquoi",
+         "parcours-7-bouclage.html"),
+        ("3", "Ce qu'elle fait à la dette en 2035", dette, f"de dette en 2035. Verdict "
+         f"« dépend » : {part} des tirages la font monter : trop pour « baisse », trop peu pour « hausse »",
+         "parcours-8-dette.html"),
     )
     tuiles = "".join(
         f'<article class="carte"><p class="surtitre">réponse {n}</p><h3>'
         f'<a class="carte-lien" href="{href}">{esc(t)}</a></h3>'
         f'<p class="stat-v" style="font:700 1.9rem/1.1 var(--serif);color:var(--encre)">{v}'
-        f'</p><p>{esc(leg)}</p></article>'
+        f'</p><p>{leg}</p></article>'
         for n, t, v, leg, href in reponses)
     commencer = c.cartes(
         c.carte("Comprendre comment on chiffre", "Dix étapes, des fichiers publics au "

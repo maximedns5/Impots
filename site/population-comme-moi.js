@@ -77,7 +77,7 @@
       "</strong> par an et par unité de consommation. Parmi les ménages « " +
       D.libelles[type].toLowerCase() + " », vous ressemblez à ceux du <strong>" +
       (r.decile + 1) + (r.decile === 0 ? "er" : "e") + " dixième</strong> : <strong>" +
-      mille(m) + "</strong> de ménages, dans la cellule n° " + (i + 1) + ".</p>" +
+      mille(m) + "</strong>" + (m >= 1e6 ? " de" : "") + " ménages, dans la cellule n° " + (i + 1) + ".</p>" +
       '<div class="dixiemes" aria-label="Les dix dixièmes de ce type, du plus modeste au ' +
       'plus aisé">' + echelle + "</div>" +
       '<p class="note-source">Leur niveau de vie moyen : ' + eur(r.niveaux[r.decile]) +

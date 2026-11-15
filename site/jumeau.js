@@ -379,6 +379,20 @@
     return svg + "</svg>";
   }
 
+  /* Le réglage hors de sa propre plage (R13, D-469) : pas une erreur. La plage tire
+     chaque curseur selon sa loi publiée, dont le centre n'est pas toujours ½, et la
+     réponse n'est pas en ligne droite ; le défaut, lui, met chaque curseur au milieu de
+     sa boîte. Le milieu des tirages est dit. */
+  function horsPlage(v, q, dc, r) {
+    if (v == null || (v >= q[0] && v <= q[4])) return "";
+    const decentres = (r.thetas || []).filter((t) => t.lu && t.loi && Math.abs(t.loi.moyenne - 0.5) > 0.02)
+      .map((t) => `${esc(court(t).toLowerCase())} (centre ${fr(t.loi.moyenne, 2)})`);
+    return `<p class="note hors-plage" data-hors-plage><strong>Ce nombre est hors de sa plage, et ce n'est pas une erreur.</strong> ` +
+      `Le trait met chaque curseur à sa position choisie (au défaut, le milieu de sa boîte, ½) ; la plage, elle, tire chaque curseur selon sa loi publiée, ` +
+      `et le centre de cette loi n'est pas toujours ½` + (decentres.length ? ` : ${decentres.slice(0, 4).join(", ")}${decentres.length > 4 ? ", etc." : ""}` : "") +
+      `. Comme la réponse du modèle n'est pas en ligne droite, le milieu des tirages (${signe(q[2], dc)}) n'est pas le nombre de ce réglage (${signe(v, dc)}).</p>`;
+  }
+
   function pourquoi(champ, s, r, k) {
     const a = r.calculees[k];
     if (champ === "dette" && s.effets && s.effets.dette_ajoutee[k] != null)
@@ -410,7 +424,8 @@
       const vsDef = ds != null && Math.abs(v - ds) > 0.5 * Math.pow(10, -dc - 1) ? ` <span class="note">(défaut ${signe(ds, dc)})</span>` : "";
       html += `<p class="fin">${af} : <b data-v="${v}">${signe(v, dc)}</b> ${esc(s.unite)}${touche(af) ? marque() : ""}${vsDef}${plage}</p>`;
       html += courbe(champ, s, r, p, d);
-      html += `<ul class="legende"><li><i class="trait" style="color:var(--j-apu)"></i>le réglage choisi</li><li><i class="tirets"></i>le défaut (chaque curseur à ½)</li>${ind ? `<li><i class="bande"></i>50 % et 90 % des tirages des curseurs</li>` : ""}</ul>`;
+      html += `<ul class="legende"><li><i class="trait" style="color:var(--j-apu)"></i>le réglage choisi</li><li><i class="tirets"></i>le défaut (chaque curseur à ½)</li>${ind ? `<li><i class="bande"></i>50 % et 90 % des tirages, chaque curseur selon sa loi publiée</li>` : ""}</ul>`;
+      if (ind) html += horsPlage(v, ind.bande[kf], dc, r);
       const q = pourquoi(champ, s, r, k);
       if (q) html += `<p class="pourquoi">${q}</p>`;
       html += "</article>";
@@ -643,11 +658,11 @@
 
   /* Un refus du jumeau, dit en mots (J2) ; le texte exact reste à côté. */
   function refusEnMots(r, c) {
-    const jusque = r.calculees.length ? `au-delà de ${r.calculees[r.calculees.length - 1]}` : "pour aucune année";
-    if (r.mode !== "structurel") return `Le calcul s'arrête ${jusque}.`;
-    let s = `<strong>Le jumeau ne calcule pas cette mesure ${jusque}.</strong> Pour la faire tourner, il doit savoir, chaque année, quels impôts elle change et quels ménages elle touche. Le rapport de l'étude ne le dit que pour sa première année, sur la population figée en 2026 (D-412) : le jumeau ne devine pas le reste.`;
+    const fin = r.calculees.length ? r.calculees[r.calculees.length - 1] : null;
+    if (r.mode !== "structurel") return fin ? `Le calcul s'arrête après ${fin}.` : "Rien n'est calculé.";
+    let s = `<strong>${fin ? `Le jumeau ne calcule pas cette mesure au-delà de ${fin}.` : "Le jumeau ne calcule cette mesure pour aucune année."}</strong> Pour la faire tourner, il doit savoir, chaque année, quels impôts elle change et quels ménages elle touche. Le rapport de l'étude ne le dit que pour sa première année, sur la population figée en 2026 : le jumeau ne devine pas le reste.`;
     if (c.vue === "vieillie") s += " Choisissez la population <em>figée en 2026</em> : c'est la seule que le rapport ventile.";
-    else if (!c.convention) s += " Cochez la convention : elle répartit chaque année suivante comme la première (D-414).";
+    else if (!c.convention) s += " Cochez la convention : elle répartit chaque année suivante comme la première.";
     else s += " Même avec la convention, la ventilation manque ici : le rapport chiffre un total (une réforme du Smic, des cotisations non réparties par impôt) sans dire quels impôts il touche. <strong>C'est une limite du jumeau aujourd'hui, pas une erreur</strong> : la chaîne des études (réduit), qui n'a pas besoin de cette ventilation, la calcule.";
     return s;
   }
@@ -661,9 +676,11 @@
     const ds = r.series.dette.ecart[kf], dr = red.series.dette.ecart[kr];
     const part = (x, k) => { let m = 0, t = 0; for (let j = 0; j <= k; j++) { const pm = partMesure(x, j); if (pm == null) return null; m += pm; t += x.series.solde.ecart[j]; } return m ? 100 * (t - m) / -m : null; };
     const ps = part(r, kf), pr = part(red, kr);
-    return `<p class="comparaison" data-comparaison><strong>Pourquoi ce n'est pas le nombre de l'étude.</strong> En ${a}, le jumeau donne ${signe(ds, 2)} pt de dette ; la chaîne des études, celle que publie la page de l'étude, ${signe(dr, 2)} pt. ` +
-      (ps != null && pr != null ? `L'écart vient surtout de la part du coût qui revient en recettes par l'activité, de 2026 à ${a} : ${fr(pr, 0)} % dans la chaîne des études, qui applique les multiplicateurs moyens publiés pour l'économie française (Mésange) ; ${fr(ps, 0)} % dans le jumeau, qui la calcule bloc par bloc ; en ${a}, ses blocs y mettent : ${blocsSolde(r, kf)}. ` : "") +
-      `Les deux sont des modèles ; la page de l'étude garde le premier, et le jumeau dit ce qu'en pense le second${conv ? " (ses années marquées c sont réparties par convention)" : ""}.</p>`;
+    return `<div class="comparaison" data-comparaison><p><strong>Le chiffrage publié du site est celui de l'étude : ${signe(dr, 2)} pt de dette en ${a}</strong>, calculé par la chaîne des études, sur la population vieillie, à θ½. ` +
+      `Le jumeau donne ici ${signe(ds, 2)} pt : ce n'est pas un second chiffrage publié, c'est le même coût passé dans une autre hypothèse sur l'économie${conv ? " (ses années marquées c sont réparties par convention)" : ""}.</p>` +
+      `<p><strong>Ce que le jumeau ajoute.</strong> La chaîne des études applique au coût les multiplicateurs moyens publiés pour l'économie française (Mésange). Le jumeau, lui, fait répondre les salaires au chômage, la consommation au revenu de chaque groupe de ménages, l'emploi au coût du travail, bloc par bloc, avec ses curseurs.</p>` +
+      (ps != null && pr != null ? `<p><strong>Pourquoi ils divergent.</strong> Surtout par la part du coût qui revient en recettes par l'activité, de 2026 à ${a} : ${fr(pr, 0)} % dans la chaîne des études, ${fr(ps, 0)} % dans le jumeau ; en ${a}, ses blocs y mettent : ${blocsSolde(r, kf)}.</p>` : "") +
+      `<p>Lequel croire n'est pas tranché ici : le jumeau est jugé sur l'histoire (<a href="#juge">ce qu'il sait</a>), et il n'y bat pas encore partout la méthode naïve. Il sert à voir par où passe l'effet et ce qui le fait bouger.</p></div>`;
   }
 
   function blocsSolde(r, k) {
@@ -714,10 +731,50 @@
   }
 
   /* ---------------------------------------------------------- le chargement */
+  /* Ce que le jumeau (structurel) calcule de chaque mesure d'étude, relevé à la
+     construction de la page par les refus mêmes du modèle (J2, D-469) : un choix qu'il
+     refuse est grisé avant le clic, avec sa raison en une ligne et ce qu'on peut faire à
+     la place. */
+  const DISPO = (() => { try { return JSON.parse($("structurel-dispo").textContent || "{}"); } catch (e) { return {}; } })();
+  let basculeAuto = false;               // le mode réduit choisi par la page, pas par le lecteur
+  function regler() {
+    const ms = $("mode-structurel"), raison = $("raison-structurel");
+    const vieillie = $("vue").querySelector('option[value="vieillie"]');
+    const d = $("entree-candidat").checked ? DISPO[$("candidat").value] : null;
+    if (!d || !d.figee) { ms.disabled = false; vieillie.disabled = false; raison.hidden = true; return; }
+    if (!d.figee.avec) {
+      ms.disabled = true;
+      if (ms.checked) { $("mode-reduit").checked = true; $("vue").value = "vieillie"; basculeAuto = true; }
+      vieillie.disabled = false;
+      const opt = $("candidat").selectedOptions[0], groupe = opt && opt.parentElement;
+      const autres = groupe ? [...groupe.querySelectorAll("option")].filter((o) => o.value !== opt.value && DISPO[o.value] && DISPO[o.value].figee && DISPO[o.value].figee.avec) : [];
+      raison.innerHTML = `<strong>Le jumeau (structurel) ne calcule pas ce choix</strong>, grisé : ${esc(d.figee.raison)}. ` +
+        "À la place, la chaîne des études le calcule, choisie ici, sur la population vieillie : c'est le nombre de l'étude." +
+        (autres.length ? " Pour voir le jumeau tourner sur ce candidat, prenez une de ses mesures qu'il calcule : " +
+          autres.map((o) => `<button type="button" class="lien" data-cle="${esc(o.value)}">${esc(o.textContent.split(" — ").pop())}</button>`).join(", ") + "." : "");
+      raison.hidden = false;
+      for (const b of raison.querySelectorAll("button[data-cle]")) b.addEventListener("click", () => {
+        $("candidat").value = b.dataset.cle;
+        $("mode-structurel").checked = true;
+        $("vue").value = "figee";
+        montrer();
+        calculer();
+      });
+      return;
+    }
+    ms.disabled = false;
+    if (basculeAuto) { ms.checked = true; $("vue").value = "figee"; basculeAuto = false; }
+    vieillie.disabled = ms.checked;
+    if (ms.checked && $("vue").value === "vieillie") $("vue").value = "figee";
+    raison.innerHTML = ms.checked ? "La population vieillie est grisée pour le jumeau : " + esc(d.vieillie.raison || "") + "." : "";
+    raison.hidden = !ms.checked;
+  }
+
   function montrer() {
     const hyp = $("entree-hypothese").checked;
     $("bloc-hypothese").hidden = !hyp;
     $("bloc-candidat").hidden = hyp;
+    regler();
     $("bloc-convention").hidden = hyp || !$("mode-structurel").checked;
   }
 
@@ -752,8 +809,17 @@
     window.jumeau.chargement = { pyodide_ms: pret.pyodide_ms, paquet_ms: pret.paquet_ms,
       total_ms: performance.now() - t0 };
     window.jumeau.pret = true;
-    for (const id of ["candidat", "vue", "h-instrument", "h-montant", "h-debut", "h-fin", "convention"]) $(id).addEventListener("change", calculer);
-    for (const el of document.querySelectorAll('input[name="mode"], input[name="entree"]')) el.addEventListener("change", () => {
+    for (const id of ["vue", "h-instrument", "h-montant", "h-debut", "h-fin"]) $(id).addEventListener("change", calculer);
+    for (const id of ["candidat", "convention"]) $(id).addEventListener("change", () => { montrer(); calculer(); });
+    // Chaque modèle s'ouvre sur la population de son calcul (R12, D-469) : la chaîne des
+    // études sur la vieillie, celle des nombres publiés ; le jumeau sur la figée.
+    for (const el of document.querySelectorAll('input[name="mode"]')) el.addEventListener("change", () => {
+      basculeAuto = false;
+      $("vue").value = $("mode-reduit").checked ? "vieillie" : "figee";
+      montrer();
+      calculer();
+    });
+    for (const el of document.querySelectorAll('input[name="entree"]')) el.addEventListener("change", () => {
       montrer();
       calculer();
     });

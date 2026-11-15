@@ -34887,3 +34887,110 @@ passe d'avant la PR viendra avec l'accord du propriétaire.
 d'avant la jonction). Les schémas des pages pas à pas restent à la mesure du texte
 (42 rem), serrés en trois colonnes. Pyodide n'est toujours pas vendorisé (D-459, J12) :
 à décider. La seconde passe du lecteur novice, sur le site joint.
+
+## D-469 — Les corrections de la seconde lecture : le mode structurel dit ce qu'il refuse
+
+**Ce qui est fait** (but 25, sur `claude/but25`, après la fusion de D-467). Aucun nombre
+publié ne change : les pages montrent autrement ceux des rapports commités. Les remarques
+de `reports/lecteur/passe2.md` :
+
+* **R13, pas un défaut.** Attal en structurel, figée, convention : +17,02 pt de dette en
+  2035 au défaut, plage de 90 % de +17,06 à +19,64. La plage est juste : elle tire chaque
+  curseur selon sa loi publiée (`a_priori`), le défaut met chacun à ½, le milieu de sa
+  boîte. Deux lois ne sont pas centrées sur ½ (l'emploi au coût du travail, centre 0,24 ;
+  l'investissement au coût du capital, 0,34), et le profil de la consommation a son
+  minimum près de ½ (0 à ½ : +0,71 pt ; ½ à 1 : −0,01 pt). Tous les curseurs au centre de
+  leur loi : +18,45 pt, la médiane des tirages. La page le dit en mots sous chaque courbe
+  dont le nombre sort de sa plage, nomme les curseurs décentrés et donne la médiane ; la
+  légende dit « chaque curseur selon sa loi publiée », et la portée ne dit plus que ½ est
+  « le centre publié ».
+* **R12.** Chaque modèle s'ouvre sur la population de son calcul : la chaîne des études
+  sur la vieillie (Attal +4,28 pt, le nombre de l'étude), le jumeau sur la figée. Une note
+  sous les réglages dit que la chaîne sur la figée donne un autre nombre (+3,52 pt).
+* **J2, la bloquante.** Le mode structurel est grisé avant le clic pour une mesure qu'il
+  refuse, avec sa raison en une ligne ; la chaîne des études est choisie à sa place, et
+  les mesures du même candidat que le jumeau calcule sont proposées en boutons. En mode
+  structurel, la population vieillie est grisée, raison dite. Le relevé est fait à la
+  construction de la page (`site_jumeau.structurel`) par `Session.structurel`, qui lève
+  les refus des blocs (`preparer`) sans faire un pas. Sur les 46 mesures d'études, dans
+  les deux vues, avec et sans convention, il redonne les années de `calculer` (184 cas,
+  aucun écart) ; `test_jumeau_navigateur.py` en tient quatre.
+* **R15.** Sous un programme calculé par le jumeau : le chiffrage publié du site est
+  celui de l'étude, chaîne des études, vue vieillie, θ½ ; ce que le jumeau ajoute (les
+  salaires, la consommation, l'emploi répondent bloc par bloc au lieu des multiplicateurs
+  moyens de Mésange) ; pourquoi ils divergent (la part du coût qui revient par
+  l'activité). Lequel croire n'est pas tranché sur la page.
+* **R11.** Le panneau des réglages du jumeau n'est plus fixé en haut de l'écran.
+* **R1.** Les trois réponses de l'accueil sont celles de `docs/BUT.md`, des études et de
+  la méthode : le coût et qui y gagne (+66,18 Md€) ; le coût avec les comportements et
+  l'économie (−13,08 pt rendus par l'activité sur +20,46 pt de coût accumulé, la bande des
+  comportements absente) ; la dette en 2035 (+4,28 pt) et son verdict (« dépend », 65 %).
+  L'étape 7 du chemin attribue la boucle de Mésange à la chaîne des études, plus au jumeau.
+* **R4, vrai.** Le cadre des études suppose des prix à 2,0 % par an, hors du déflateur du
+  PLF 2026 (1,5 à 1,6 %), D-289. Au réglage des études, l'étape 8 le dit comme un fait
+  (« À savoir ») ; l'alerte reste pour un réglage déplacé hors des plages.
+* **R2.** Les pages d'études prennent l'échelle commune de l'accueil et du chemin
+  (`site_composants.echelle`) : ≈ 30 Md€ le point de PIB de 2025, ≈ 40 Md€ celui de 2035,
+  et un point de dette en 2035 ≈ 40 Md€. Une étude d'un autre départ garderait sa note.
+* **R6.** Page d'une mesure : un point de vue par graphique, dit dans son titre. Les
+  modules : le montant de chaque impôt et prestation, d'une couleur, ni coût ni gain ; les
+  comportements : le coût pour l'État ; le bouclage : la dette publique ; les couleurs de
+  la cascade des études (coût bleu, comportements ocre, PIB vert, recettes violet, total
+  noir).
+* **R8.** Page d'une mesure, étape 5 : « Pourquoi ce coût fait cette dette », lu dans les
+  rapports (`years[].mechanical_aged_eur`, `lectures.decomposition`, les impulsions et les
+  multiplicateurs de Mésange). Le Smic à 1 700 € : 30,45 à 25,48 Md€ par an, +7,62 pt
+  accumulés, l'activité en rend 6,86 pt (90 %), la boucle lisant une baisse de
+  cotisations des employeurs. Le point d'indice : 11,69 à 14,62 Md€, +3,64 pt accumulés,
+  l'activité en ajoute 4,81 pt : la boucle lit ses impulsions (impôt sur le revenu, CSG,
+  cotisations) comme des hausses de prélèvements, qui réduisent le PIB dans Mésange. Le
+  coût plus grand pèse moins parce qu'il passe par des impôts que la boucle lit comme une
+  baisse ; rien n'est ajouté que les rapports ne portent.
+* **R5.** « Comparer les candidats » : une colonne « 90 % des tirages » (les quantiles du
+  Monte-Carlo, vue vieillie) et « Pourquoi deux dettes proches ont des verdicts
+  différents », sur l'exemple que les rapports donnent (Tondelier +2,51 pt, 100 % en
+  hausse, contre Lisnard +5,71 pt, de −0,69 à +11,40 pt, « dépend »). Le graphique reste.
+* **Les mineures.** R7 (« l'étude tire 20 000 ménages de la population simulée ») ; R9
+  (libellés des modules et des instruments en français) ; R10 (« 589 000 ménages ») ; R16
+  (« pour aucune année », la convention nommée en mots, les D-412 et D-414 hors du texte
+  visible du refus).
+
+**J2, programme par programme.** Le mode structurel refuse une mesure quand ses
+prélèvements de 2026 contiennent des cotisations patronales nettes des allègements, du
+PFU ou des prélèvements sociaux du capital que le rapport de la première année ne répartit
+pas impôt par impôt (le bloc des entreprises, `chocs_entreprises`, refuse un agrégat), et
+il ne fait pas tourner une hausse du Smic (le bloc des salaires ne lit pas le Smic réel
+efficace sans hypothèse dans la requête). En 2026, vue figée, convention :
+
+| programme | prélèvements non répartis | Smic | ce qui les porte |
+|---|---:|---|---|
+| Kazib | −16,23 Md€ | oui | le Smic à 2 000 € |
+| Retailleau | −4,30 Md€ | non | r13, zéro cotisation de 16 à 23 h |
+| Roussel | −29,46 Md€ | oui | le Smic à +15 % |
+| Ruffin | −18,50 Md€ | oui | le Smic à 1 600 € |
+| Mélenchon | −24,41 Md€ | oui | Smic, point d'indice, PFU, exonérations |
+| Bouamrane | −16,09 Md€ | oui | la hausse des salaires de 150 € |
+| Tondelier | −13,61 Md€ | oui | Smic à 2 000 € brut, point d'indice |
+
+Dans la vue vieillie, aucune mesure ne tourne : la première année n'est répartie que sur
+la population figée. Ce qu'il faudrait, à décider par le propriétaire :
+
+1. **Répartir les prélèvements des ménages que lit le lot 2.** La passe des ménages porte
+   déjà, module par module, les cotisations des employeurs et les allègements ; il
+   faudrait que `mesures.ventilations` les range dans les impôts du bloc des entreprises
+   (une correspondance des modules aux instruments, écrite et testée). Cela suffirait à
+   Retailleau (ses ménages suivraient : leur coût se séparerait de celui des entreprises)
+   et aux mesures sans Smic de Mélenchon et de Tondelier (point d'indice, PFU,
+   exonérations).
+2. **Une hypothèse sur le Smic réel efficace** pour Kazib, Roussel, Ruffin, Mélenchon,
+   Bouamrane et Tondelier : la diffusion de la revalorisation aux salaires, déclarée dans
+   la requête ou fixée par une décision, que le bloc des salaires lirait.
+3. **La vue vieillie** : une passe de la première année sur la population vieillie, ou une
+   convention qui porte les parts de la figée aux totaux de la vieillie.
+
+Les trois changent le modèle ; rien n'en est fait ici.
+
+**Ce qui reste.** R3 (le détail replié des étapes reste la couche du relecteur), R14 (les
+étiquettes du schéma au téléphone), A7 et Me8 (étiquettes d'étage collées, sources en
+chemin de fichier), Me5, Me7, Po5, Po7, J11, J12 (Pyodide hors du dépôt, à décider).
+Captures : `reports/lecteur/captures/d469/`.

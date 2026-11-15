@@ -327,11 +327,17 @@
       if (pl && (prices < pl.prix[0] - 1e-9 || prices > pl.prix[1] + 1e-9)) {
         hors.push(`les prix (${pct(prices, 1)}, déflateur publié de ${pct(pl.prix[0], 1)} à ${pct(pl.prix[1], 1)})`);
       }
-      $("d-alerte").textContent = hors.length
-        ? `Attention : ${hors.join(" et ")} sortent des plages du PLF 2026 pour ${pl.annees[0]} à ${pl.annees[1]} (celles du PLF 2027 ne sont pas dans les données du dépôt). `
-          + `La dette de référence de ${fin} est ici de ${pct(vieillie.reference[n - 1], 1)} du PIB. Le rejeu ne refait pas `
-          + "le vieillissement des revenus : le coût de chaque année reste celui de la passe, et le nombre n'est qu'un ordre de grandeur."
-        : "";
+      // Le cadre des études lui-même sort des plages (les prix à 2 %, D-289) : au réglage
+      // des études, c'est un fait à dire, pas une alerte ; un réglage déplacé, une alerte.
+      const auCadre = Math.abs(real - base.growth.real) < 1e-9 && Math.abs(prices - base.growth.prices) < 1e-9;
+      $("d-alerte").textContent = !hors.length ? ""
+        : auCadre
+          ? `À savoir : le cadre des études suppose ${hors.join(" et ")}, hors des plages du PLF 2026 pour ${pl.annees[0]} à ${pl.annees[1]} `
+            + "(celles du PLF 2027 ne sont pas dans les données du dépôt). C'est l'hypothèse déclarée de toutes les études (D-289), pas une erreur de la page : "
+            + `la dette de référence de ${fin} y est de ${pct(vieillie.reference[n - 1], 1)} du PIB.`
+          : `Attention : ${hors.join(" et ")} sortent des plages du PLF 2026 pour ${pl.annees[0]} à ${pl.annees[1]} (celles du PLF 2027 ne sont pas dans les données du dépôt). `
+            + `La dette de référence de ${fin} est ici de ${pct(vieillie.reference[n - 1], 1)} du PIB. Le rejeu ne refait pas `
+            + "le vieillissement des revenus : le coût de chaque année reste celui de la passe, et le nombre n'est qu'un ordre de grandeur.";
       const tbody = $("d-marches");
       tbody.textContent = "";
       const r = rapport.decomposition.vieillie;

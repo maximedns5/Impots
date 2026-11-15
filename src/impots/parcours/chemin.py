@@ -116,8 +116,8 @@ ETAPES: tuple[Etape, ...] = (
     Etape("activite", "parcours-7-bouclage.html", "Bouclage",
           "Ce que l'économie rend au budget",
           "Une mesure qui rend de l'argent aux ménages fait monter l'activité, et l'activité "
-          "fait rentrer des impôts. Le jumeau lit cette boucle, impôt par impôt et année par "
-          "année, dans le modèle Mésange de l'Insee et de la DG Trésor.", "economie",
+          "fait rentrer des impôts. La chaîne des études lit cette boucle, impôt par impôt "
+          "et année par année, dans le modèle Mésange de l'Insee et de la DG Trésor.", "economie",
           (("Le coût, impôt par impôt", "étapes 5 et 6"),
            ("Les multiplicateurs publiés", "Mésange, et l'écart entre études")),
           (("Boucler, an par an", "l'activité rend une part du coût"),),

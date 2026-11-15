@@ -32,6 +32,7 @@ from __future__ import annotations
 import html
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -387,14 +388,21 @@ href="methode.html#mesange">Mésange</a> de l'instrument, au montant dit.</p>
 <p class="bascule"><label><input type="radio" name="mode" value="structurel"
 id="mode-structurel" checked> le jumeau (structurel)</label> <label><input type="radio"
 name="mode" value="reduit" id="mode-reduit"> la chaîne des études (réduit)</label></p>
+<p id="raison-structurel" class="raison-structurel" hidden></p>
 <p><label for="vue">Population</label> <select id="vue"><option value="figee"
 selected>figée en 2026</option><option value="vieillie">vieillie à chaque
 année</option></select>
 <span id="bloc-convention" hidden><label><input type="checkbox" id="convention"
-value="{CONVENTION_PARTS}" checked> au-delà de 2026, la convention
-« {CONVENTION_PARTS} »</label></span></p>
+value="{CONVENTION_PARTS}" checked> au-delà de 2026, répartir chaque année
+comme la première (une convention)</label></span></p>
 </fieldset>
 </form>
+<p class="note note-vue">Chaque modèle s'ouvre sur la population de son calcul : la
+chaîne des études sur la population vieillie, celle des nombres publiés des études ; le
+jumeau sur la population figée en 2026, la seule que les rapports répartissent par impôt et
+par décile. La chaîne des études sur la population figée donne un autre nombre que l'étude :
+la même mesure, sur les ménages de 2024 sans les faire vieillir.</p>
+<script type="application/json" id="structurel-dispo">{_json_script(d.get("structurel") or {})}</script>
 <p id="etat" class="etat" role="status">Chargement de Python dans le navigateur…</p>
 <section id="messages" class="messages"></section>
 
@@ -452,7 +460,9 @@ la consommation) se lit sur neuf points de 0 à 1, pas à ses deux bouts (D-427)
 <section id="portee" class="j-section" aria-labelledby="titre-portee">
 <h2 id="titre-portee"><span class="num">3</span> La portée de chaque curseur</h2>
 <p class="lead">Un curseur règle un paramètre incertain, de 0 (la réponse la plus faible
-de l'économie) à 1 (la plus forte) ; ½ est le centre publié. Pour chacun : sa plage, d'où
+de l'économie) à 1 (la plus forte) ; ½ est le milieu de sa boîte, et le défaut. Le
+centre de sa loi publiée n'est pas toujours ½ : il est dit dans son détail, et la plage
+grise des courbes tire chaque curseur selon cette loi. Pour chacun : sa plage, d'où
 vient sa loi, si les données le fixent, et de combien il déplace le résultat quand on le
 pousse d'un bout à l'autre, les autres restant à leur réglage.</p>
 <p class="portee-choix"><label for="indicateur">Résultat mesuré</label> <select
@@ -499,13 +509,17 @@ STYLE = """
 .sommaire{display:flex;flex-wrap:wrap;gap:.2rem 1.1rem;padding:0;margin:.4rem 0 1rem;list-style:none;counter-reset:s;font:.9rem system-ui,sans-serif}
 .sommaire li{counter-increment:s}
 .sommaire li::before{content:counter(s) " ";font-weight:700;color:var(--doux)}
-.jumeau-reglages{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:.4rem .9rem;position:sticky;top:0;z-index:2;background:var(--fond);padding:.3rem 0;border-bottom:1px solid var(--trait)}
+.jumeau-reglages{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:.4rem .9rem;background:var(--fond);padding:.3rem 0;border-bottom:1px solid var(--trait)}
 .jumeau-reglages fieldset{border:1px solid var(--trait);border-radius:.4rem;margin:0;padding:.15rem .7rem;min-width:0;font-size:.9rem}
 .jumeau-reglages legend{font:600 .8rem system-ui,sans-serif;color:var(--doux)}
 .jumeau-reglages p{margin:.3rem 0}
 .jumeau-reglages label{margin-right:.5rem}
 .jumeau-reglages select,.jumeau-reglages input[type=number]{max-width:100%}
 .jumeau-reglages .note{font-size:.78rem;margin:.2rem 0}
+.raison-structurel{font-size:.8rem;border-left:3px solid var(--j-dette);background:var(--l4);padding:.25rem .5rem}
+button.lien{background:none;border:0;padding:0;font:inherit;color:var(--lien,var(--accent));text-decoration:underline;cursor:pointer}
+input:disabled+*,label:has(input:disabled){opacity:.55}
+.note-vue{max-width:46rem}
 #candidat{width:100%}
 #h-montant{width:4.5rem}
 .cache{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
@@ -599,6 +613,8 @@ td.non{color:var(--doux)}
 .messages .refus{border-left:3px solid var(--j-dette);background:var(--l4);padding:.3rem .7rem;margin:.4rem 0}
 .messages .refus p{border:0;padding:0}
 .messages p.comparaison{border-left-color:var(--j-apu);background:var(--l1);padding:.4rem .7rem}
+.messages .comparaison{border-left:3px solid var(--j-apu);background:var(--l1);padding:.3rem .7rem;margin:.4rem 0}
+.messages .comparaison p{border:0;padding:0}
 .pastille{display:inline-block;width:.6rem;height:.6rem;border-radius:.15rem;margin-right:.2rem;vertical-align:-.02rem}
 .theta.sans-effet .barre{opacity:.35}
 @media (max-width:48rem){.ecart-defaut{position:sticky;top:0;z-index:1;background:var(--fond);padding:.3rem 0;border-bottom:1px solid var(--trait)}}
@@ -611,6 +627,11 @@ td.non{color:var(--doux)}
 .axe-portee>span:first-child{display:none}
 }
 """
+
+
+def _json_script(x: Any) -> str:
+    """Du JSON dans une balise <script> : rien qui la ferme."""
+    return json.dumps(x, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
 
 def page(d: dict[str, Any]) -> str:
@@ -628,9 +649,53 @@ def page(d: dict[str, Any]) -> str:
                      "le navigateur."))
 
 
+def raison_structurel(mesure: Any, vue: str) -> str:
+    """Pourquoi le mode structurel ne calcule aucune année d'une mesure d'étude, en une
+    ligne (J2, D-469), lue dans ce que la mesure ne porte pas (`non_portes`, D-412)."""
+    if vue != "figee":
+        return ("le rapport de l'étude ne répartit sa première année, par impôt et par "
+                "décile, que sur la population figée en 2026")
+    np_ = mesure.non_portes or {}
+    raisons = []
+    m = re.search(r"([+-]\d+(?:\.\d+)?) Md€ de prélèvements des ménages",
+                  np_.get("entreprises", ""))
+    if m:
+        montant = f"{abs(float(m.group(1))):.1f}".replace(".", ",")
+        raisons.append(f"{montant} Md€ de cotisations patronales, de PFU ou de "
+                       "prélèvements sur le capital, en 2026, que le rapport ne répartit "
+                       "pas impôt par impôt")
+    if "réforme du Smic" in np_.get("menages", ""):
+        raisons.append("une hausse du Smic, dont le jumeau ne sait pas lire l'effet sur "
+                       "les salaires sans une hypothèse que l'étude ne donne pas")
+    return " ; et ".join(raisons) or ("le rapport ne répartit pas ce qu'elle change impôt "
+                                      "par impôt et décile par décile")
+
+
+def structurel(d: dict[str, Any]) -> dict[str, Any]:
+    """Pour chaque mesure d'étude et chaque population, combien d'années le mode
+    structurel calcule, avec la convention et sans elle, et pourquoi il n'en calcule
+    aucune (J2, D-469) : la page grise le choix avant le clic. Les refus sont ceux du
+    modèle, levés sans faire un pas (`Session.structurel`)."""
+    from impots.jumeau import navigateur
+    from impots.jumeau.mesures import CONVENTION_PARTS
+
+    session = navigateur.Session(json.loads(json.dumps(d)))
+    out: dict[str, Any] = {}
+    for cle in d["candidats"]:
+        out[cle] = {}
+        for vue in navigateur.VUES:
+            avec, _ = session.structurel(cle, vue, CONVENTION_PARTS)
+            sans, _ = session.structurel(cle, vue, None)
+            out[cle][vue] = {"avec": avec, "sans": sans, "raison": None if avec else
+                             raison_structurel(session.mesure(cle, vue, CONVENTION_PARTS),
+                                               vue)}
+    return out
+
+
 def build() -> dict[str, str]:
     """Les fichiers de la page, par nom publié."""
     d = donnees()
+    d["structurel"] = structurel(d)
     texte = json.dumps(d, ensure_ascii=False, separators=(",", ":"))
     return {PAGE: page(d), SCRIPT: (ICI / "page.js").read_text(encoding="utf-8"),
             CALCUL: (ICI / "calcul.js").read_text(encoding="utf-8"),

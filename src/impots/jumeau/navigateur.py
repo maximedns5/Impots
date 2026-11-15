@@ -387,6 +387,32 @@ class Session:
         blocs, boucles = ordre_structurel(depart, self.population, self.cellules)
         return depart, entrees, blocs, boucles
 
+    def structurel(self, cle: str, vue: str, convention: str | None = None
+                   ) -> tuple[int, str | None]:
+        """Combien d'années le mode structurel calcule pour une mesure d'étude, et le
+        premier refus, sans faire un pas (J2, D-469) : les refus de D-412 sont ceux que
+        les blocs lèvent en se préparant (`preparer`), avant le premier pas ; on les lève
+        ici sur les mêmes années que `_derouler` essaie, de la dernière à la première.
+        La page s'en sert pour griser le mode avant le clic ; le calcul reste celui de
+        `calculer`, et `test_jumeau_navigateur.py` tient l'égalité des deux."""
+        from impots.jumeau.blocs.entreprises import EntreprisesError
+        from impots.jumeau.blocs.menages import MenagesError
+        from impots.jumeau.pas import Modele
+
+        mesure = self.mesure(cle, vue, convention)
+        _, entrees, blocs, boucles = self._modele("structurel", mesure, cle)
+        blocs = Modele(blocs, boucles).blocs
+        refus: str | None = None
+        for k in range(len(ANNEES), 0, -1):
+            try:
+                for b in blocs:
+                    if hasattr(b, "preparer"):
+                        b.preparer(_tronquer(entrees, k), [mesure])
+                return k, refus
+            except (EntreprisesError, MenagesError) as e:
+                refus = refus or str(e)
+        return 0, refus
+
     def thetas(self, mode: str, mesures: Sequence[Any], blocs: Sequence[Any]
                ) -> list[dict[str, Any]]:
         lus = {t for b in blocs for t in b.thetas}

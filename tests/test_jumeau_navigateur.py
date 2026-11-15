@@ -252,3 +252,21 @@ def test_la_portee_redonne_les_nombres_du_reglage(session, choix) -> None:
         assert s["effets"]["dette_ajoutee"][a] + s["effets"]["denominateur"][a] == pytest.approx(
             s["ecart"][a], abs=1e-9)
         assert abs(r["comptes"]["residu_emplois"][a]) < 1e-6
+
+
+@pytest.mark.parametrize("cle, vue, convention, attendu", [
+    ("pres2027_attal_programme", "figee", "parts_premiere_annee", 10),
+    ("pres2027_attal_programme", "figee", None, 1),
+    ("pres2027_attal_programme", "vieillie", "parts_premiere_annee", 0),
+    ("pres2027_roussel_programme", "figee", "parts_premiere_annee", 0),
+])
+def test_ce_que_le_structurel_calcule_se_dit_avant_le_calcul(session, cle, vue, convention,
+                                                             attendu) -> None:
+    """J2, D-469 : la page grise le mode structurel d'après `Session.structurel`, qui lève
+    les refus de D-412 sans faire un pas ; il rend le nombre d'années que `calculer`
+    calcule, et un refus quand il en manque."""
+    k, refus = session.structurel(cle, vue, convention)
+    choix = {"mode": "structurel", "vue": vue, "candidat": cle, "convention": convention}
+    sortie = session.calculer({**choix, "theta": _theta(session, choix)})
+    assert k == len(sortie["calculees"]) == attendu
+    assert (refus is None) == (attendu == 10)

@@ -296,7 +296,9 @@ def plage(ident: str, rows: list[tuple[str, float, float, float, str]], unite: s
 INSTRUMENTS_LUS = {
     "impot_sur_le_revenu": "impôt sur le revenu", "tva": "TVA", "csg": "CSG",
     "cotisations_employeurs": "cotisations des employeurs",
-    "cotisations_salariales": "cotisations des salariés", "impot_societes": "impôt sur "
+    "cotisations_salariales": "cotisations des salariés",
+    "cotisations_salaries": "cotisations des salariés", "depense_publique": "dépense publique",
+    "impot_societes": "impôt sur "
     "les sociétés", "prestations": "prestations", "taxe_carbone": "accises sur l'énergie",
 }
 CHAMPS_LUS = {
@@ -308,6 +310,13 @@ CHAMPS_LUS = {
     "rentrée", "cf": "complément familial", "asf": "soutien familial",
     "allegement_general": "allègement général", "prelevements_pensions": "prélèvements "
     "sur les pensions", "csg_retraite": "CSG des retraités",
+    "reduction_loyer_solidarite": "réduction de loyer de solidarité",
+    "retraite_imposable": "retraites imposables", "garantie_autonomie": "garantie "
+    "d'autonomie", "salaire_brut": "salaires bruts", "chomage_brut": "allocations "
+    "chômage", "credits_impot": "crédits d'impôt", "reductions": "réductions d'impôt",
+    "aefa": "aide exceptionnelle de fin d'année", "allocation_enfant": "allocation par "
+    "enfant", "tva_menages": "TVA payée par les ménages", "accises_energie": "accises sur "
+    "l'énergie",
 }
 #: Des totaux qui somment d'autres champs : la page ne les montre pas comme des modules.
 AGREGATS = {"revenu_disponible", "revenu_disponible_droit", "ir_avant_niches",
@@ -466,9 +475,10 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
                       f"Le nombre de ménages touchés est un agrégat dérivé : la part des "
                       f"gagnants et des perdants de chaque décile (<code>share_winners</code>, "
                       f"<code>share_losers</code>) fois ses ménages "
-                      f"(<code>n_households</code>). La population compte "
-                      f"{_fr(float(meta.get('sampled_households', 0)))} ménages simulés, "
-                      f"chacun pesant pour d'autres ; elle en représente "
+                      f"(<code>n_households</code>). L'étude tire "
+                      f"{_fr(float(meta.get('sampled_households', 0)))} ménages de la "
+                      f'<a href="population.html">population simulée</a>, chacun pesant '
+                      f"pour d'autres ; ils en représentent "
                       f"{_fr(float(meta.get('households', total)) / 1e6, 1)} millions.")
             + _source(fa, "response.deciles" if first["kind"] == "menages"
                       else "response.menages.deciles", commit_a))
@@ -479,20 +489,24 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
                       "population, puis on compare son revenu à celui de la loi en vigueur."))
 
     # 3. L'effet mécanique.
-    rows = [(CHAMPS_LUS.get(k, k.replace("_", " ")), v, _eur(v))
+    # Un seul point de vue par graphique (R6, D-469) : ici, le montant de chaque module,
+    # ni un coût ni un gain ; d'une seule couleur, le signe dit par le côté du zéro.
+    rows = [(CHAMPS_LUS.get(k, k.replace("_", " ")), v, _eur(v), "sm-neutre")
             for k, v in _modules(menages)]
     if ent is not None and abs(float(ent.get("reform_cost") or 0)) >= 1e6:
-        rows.append(("entreprises", -float(ent["reform_cost"]),
-                     _eur(-float(ent["reform_cost"]))))
+        rows.append(("prélèvements des entreprises", -float(ent["reform_cost"]),
+                     _eur(-float(ent["reform_cost"])), "sm-neutre"))
     corps = ""
     if rows:
         corps += _figure(
-            barres(f"{m.id}-modules", rows, "Ce que la mesure change, module par module",
-                   "milliards d'euros", 1e-9),
-            f"l'écart, en milliards d'euros de {year}, entre la loi modifiée et la loi en "
-            f"vigueur, pour chaque module du moteur que la mesure change ; un impôt qui "
-            f"baisse est négatif, une prestation qui monte positive. Personne ne change "
-            f"de comportement.",
+            barres(f"{m.id}-modules", rows, "Le montant de chaque impôt et prestation que "
+                   "la mesure change", "milliards d'euros", 1e-9),
+            f"un seul point de vue, celui du montant de chaque module du moteur : la loi "
+            f"modifiée moins la loi en vigueur, en milliards d'euros de {year}. À gauche du "
+            f"zéro, le montant baisse ; à droite, il monte. Ce n'est ni un coût ni un gain : "
+            f"un impôt qui baisse coûte à l'État et rend aux ménages, une prestation qui "
+            f"baisse fait l'inverse. Le coût pour l'État, tous modules sommés, est juste "
+            f"dessous. Personne ne change de comportement.",
             "")
         corps += _source(fa, "response.deltas" if first["kind"] == "menages"
                          else "response.menages.deltas", commit_a)
@@ -503,8 +517,9 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
               f'<div><span>vue vieillie : la population vieillie jusqu\'en {year}</span>'
               f'{_badge(_eur(lu["vieillie"]), "L2")}'
               + _source(fb, "years[0].mechanical_aged_eur", commit_b) + "</div></div>")
-    out.append(_etape(3, corps, "Le coût mécanique : ce que l'État perd ou gagne si personne "
-                      "ne change rien à sa vie. Deux vues, parce que la population date de "
+    out.append(_etape(3, corps, "Le coût mécanique, du point de vue de l'État : positif, "
+                      "il y perd ; négatif, il y gagne, si personne ne change rien à sa vie. "
+                      "Deux vues, parce que la population date de "
                       "2024 ; l'écart entre elles est celui du vieillissement."))
 
     # 4. Les comportements.
@@ -512,17 +527,19 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
     band = beh.get("band")
     canaux = [c for c in beh.get("channels") or [] if c.get("applies")]
     if band:
-        rows = [("mécanique", -float(beh["mechanical"]), _eur(-float(beh["mechanical"])))]
-        rows += [(c["label"], -float(c["central"] or 0), _eur(-float(c["central"] or 0)))
-                 for c in canaux]
-        rows.append(("après comportements", -float(band["p50"]), _eur(-float(band["p50"]))))
+        rows = [("mécanique", -float(beh["mechanical"]), _eur(-float(beh["mechanical"])),
+                 "sm-c-cout")]
+        rows += [(c["label"], -float(c["central"] or 0), _eur(-float(c["central"] or 0)),
+                  "sm-c-comp") for c in canaux]
+        rows.append(("après comportements", -float(band["p50"]), _eur(-float(band["p50"])),
+                     "sm-c-total"))
         corps = _figure(
-            barres(f"{m.id}-comportements", rows, "Le coût, avant et après les "
-                   "comportements", "milliards d'euros", 1e-9),
+            barres(f"{m.id}-comportements", rows, "Le coût pour l'État, avant et après "
+                   "les comportements", "milliards d'euros", 1e-9),
             f"le coût de la première année ({year}), en milliards d'euros : mécanique, ce que "
             f"chaque canal de comportement en rend ou en ajoute, et le coût central qui en "
-            f"résulte. Le signe est celui d'un coût : la recette perdue du rapport, "
-            f"inversée.", "")
+            f"résulte, du point de vue de l'État : positif, il y perd. Le coût mécanique "
+            f"(bleu), chaque canal (ocre), le coût après comportements (noir).", "")
         corps += (f'<p class="sm-note">L\'étendue : de {_badge(_eur(-float(band["p90"])), "L3")}'
                   f' à {_badge(_eur(-float(band["p10"])), "L3")} (p10 à p90 des élasticités). '
                   f"{_e(beh.get('grade_reason', ''))}</p>")
@@ -555,20 +572,24 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
         corps += _source(fa, "response.macro.jobs", commit_a)
     dec = ((path.get("lectures") or {}).get("decomposition") or {}).get("vieillie")
     if dec:
-        rows6 = [("le coût seul", float(dec["cout"]), etude._points(dec["cout"])),
+        rows6 = [("le coût seul", float(dec["cout"]), etude._points(dec["cout"]),
+                  "sm-c-cout"),
                  ("le PIB qui change", float(dec["denominateur"]),
-                  etude._points(dec["denominateur"])),
+                  etude._points(dec["denominateur"]), "sm-c-act"),
                  ("les recettes induites", float(dec["retroaction"]),
-                  etude._points(dec["retroaction"])),
-                 ("Δ dette", float(dec["total"]), etude._points(dec["total"]))]
+                  etude._points(dec["retroaction"]), "sm-c-act2"),
+                 ("Δ dette", float(dec["total"]), etude._points(dec["total"]), "sm-c-total")]
         corps += _figure(
-            barres(f"{m.id}-bouclage", rows6, "Du coût à la dette de 2035", "points de PIB",
-                   100.0),
-            f"la dette en {etude.LAST_YEAR}, en points de PIB, vue vieillie, à θ½ : ce que "
-            f"le coût y ajoute seul, puis ce qu'y changent le PIB plus grand ou plus petit et "
-            f"les recettes que l'activité induit. Les trois premières barres somment à la "
-            f"dernière.", "")
-        corps += _source(fb, "lectures.decomposition.vieillie", commit_b)
+            barres(f"{m.id}-bouclage", rows6, f"La dette publique de {etude.LAST_YEAR}, "
+                   "du coût au total", f"points de PIB de {etude.LAST_YEAR}", 100.0),
+            f"un seul point de vue, celui de la dette publique en {etude.LAST_YEAR}, en "
+            f"points de PIB, vue vieillie, à θ½ : positif, elle monte. Ce que le coût y "
+            f"ajoute seul (bleu), puis ce qu'y changent le PIB plus grand ou plus petit "
+            f"(vert) et les recettes que l'activité induit (violet), et la dette qui en "
+            f"résulte (noir). Les trois premières barres somment à la dernière.", "")
+        corps += _pourquoi_cette_dette(seule, dec, lu)
+        corps += _source(fb, "lectures.decomposition.vieillie ; years[].mechanical_aged_eur",
+                         commit_b)
     if not corps:
         corps = '<p class="sm-gros">Pas de bouclage macro lu pour cette mesure.</p>'
     out.append(_etape(5, corps, "Ce que la mesure fait à l'activité, lu dans Mésange, le "
@@ -749,6 +770,16 @@ def index(listes: list[tuple[Any, etude.Etude, list[tuple[Any, dict[str, Any]]]]
     return "\n".join(out)
 
 
+def _echelle_commune(start: dict[str, Any]) -> bool:
+    """L'étude part du PIB de l'échelle commune (`site_composants.echelle`) : même année,
+    même PIB ; sinon, sa propre note dit le sien."""
+    from impots.parcours import dette
+
+    d = dette.etudes()[0]["data"]["rejeu"]["start"]
+    return (start.get("year") == d.get("year")
+            and abs(float(start.get("gdp_eur") or 0) - float(d["gdp_eur"])) < 1.0)
+
+
 def _cellules(line: str) -> list[str]:
     return [c.strip() for c in line.strip()[1:-1].split("|")]
 
@@ -781,11 +812,16 @@ def resume(study: etude.Etude, entries: list[dict[str, Any]], lines: list[str],
     if study.programme is not None:
         out.append(f'<p class="sm-petit"><a href="{COMPARER}">Comparer aux autres '
                    "candidats</a> : ce qui se compare, et ce qui ne se compare pas.</p>")
-    gdp = float((entries[0]["path"].get("start") or {}).get("gdp_eur") or 0)
-    if gdp:
+    start = entries[0]["path"].get("start") or {}
+    gdp = float(start.get("gdp_eur") or 0)
+    if gdp and _echelle_commune(start):
+        # L'échelle commune du site (R2, D-469) : un point de PIB de 2025 pour les coûts,
+        # un point de PIB de 2035 pour la dette de 2035, la même que l'accueil et le chemin.
+        out.append(site_composants.echelle())
+    elif gdp:
         out.append(f'<p class="sm-note"><strong>Pour lire les points de PIB</strong> : un '
                    f"point de PIB, c'est environ {_badge(f'{_fr(gdp / 100 / 1e9)} Md€', 'publié')}"
-                   f" (le PIB de {entries[0]['path']['start']['year']}, divisé par cent)."
+                   f" (le PIB de {start['year']}, divisé par cent)."
                    "</p>")
     # Pour qui : le graphique des déciles de la première ligne, avec sa légende.
     name = entries[0]["name"]
@@ -843,6 +879,45 @@ def _section(ident: str, corps: str) -> str:
 
 def _instrument(nom: str) -> str:
     return INSTRUMENTS_LUS.get(nom, nom.replace("_", " "))
+
+
+def _pourquoi_cette_dette(seule: dict[str, Any], dec: dict[str, Any],
+                          lu: dict[str, Any]) -> str:
+    """Pourquoi le coût de la première année ne dit pas la dette de 2035 (R8, D-469) :
+    trois nombres des rapports, sans calcul nouveau. Le coût de chaque année, vue
+    vieillie (`years[].mechanical_aged_eur`), sa somme en points de PIB de 2035 (la
+    décomposition, `cout`), et ce que l'activité en rend ou y ajoute (`denominateur` +
+    `retroaction`), avec les prélèvements que la boucle lit comme freinant l'activité."""
+    years = seule["path"]["years"]
+    a0, a1 = years[0], years[-1]
+    c0 = seule["sign"] * float(a0["mechanical_aged_eur"])
+    c1 = seule["sign"] * float(a1["mechanical_aged_eur"])
+    act = float(dec["denominateur"]) + float(dec["retroaction"])
+    sans = float(dec["cout"])
+    etage = lu["etage"]
+    out = (f'<p class="sm-note"><strong>Pourquoi ce coût fait cette dette.</strong> La dette '
+           f"de {etude.LAST_YEAR} ne suit pas le coût de {a0['year']} : elle additionne le "
+           f"coût de chaque année, qui va ici de {_badge(_eur(c0), 'L2')} en {a0['year']} à "
+           f"{_badge(_eur(c1), 'L2')} en {a1['year']} (vue vieillie), soit "
+           f"{_badge(etude._points(sans), etage, True)} de PIB de {etude.LAST_YEAR} ; puis "
+           f"elle retranche ce que l'activité en rend, ou y ajoute ce qu'elle en retire. ")
+    if act > 0:
+        freinent = _freinent(seule)
+        out += (f"Ici, l'activité <em>ajoute</em> {_badge(etude._points(act), etage, True)}"
+                f" : la boucle lit la mesure comme une hausse de prélèvements")
+        out += (f" ({_e(', '.join(freinent))})" if freinent else "")
+        out += (", et une hausse de prélèvement, dans Mésange, réduit le PIB. Deux mesures "
+                "de même coût peuvent donc peser très différemment sur la dette, selon les "
+                "impôts par lesquels elles passent.</p>")
+    else:
+        part = -act / sans if sans else 0.0
+        out += (f"Ici, l'activité en rend {_badge(etude._points(-act), etage, True)}"
+                + (f", {part * 100:.0f} % du coût accumulé" if sans > 0 else "")
+                + " : la boucle lit la mesure comme une baisse de prélèvements, qui relève "
+                "le PIB dans Mésange, et le PIB plus haut rapporte des recettes. Deux "
+                "mesures de même coût peuvent donc peser très différemment sur la dette, "
+                "selon les impôts par lesquels elles passent.</p>")
+    return out
 
 
 def _freinent(entry: dict[str, Any]) -> list[str]:
@@ -1265,6 +1340,54 @@ def _bref_cellules(lines: list[str]) -> dict[str, str]:
     return dict(zip(_cellules(table[0]), _cellules(table[2]), strict=False))
 
 
+def _plage_tirages(lu: dict[str, Any]) -> str:
+    q = lu.get("quantiles")
+    if not q:
+        return "—"
+    return (f"{_badge(etude._points(q['q05']), lu['etage'], True)} à "
+            f"{_badge(etude._points(q['q95']), lu['etage'], True)}")
+
+
+def _pourquoi_verdicts(rangs: list[tuple[Any, ...]]) -> str:
+    """Pourquoi deux dettes proches ont des verdicts différents (R5, D-469) : le verdict
+    lit la part des tirages où la dette monte, pas la barre ; l'exemple est pris dans les
+    rapports, une dette plus haute « dépend » quand une plus basse est « hausse »."""
+    from impots.predictif import montecarlo
+
+    seuil = montecarlo.SEUIL_VERDICT
+    lus = [(r[0].candidat, r[2]) for r in rangs if r[2].get("p_hausse") is not None
+           and r[2].get("quantiles")]
+    exemple = ""
+    for a, la in lus:
+        for b, lb in lus:
+            if (lb["dette"] < la["dette"] and lb["p_hausse"] >= seuil
+                    and 1 - seuil < la["p_hausse"] < seuil and lb["dette"] > 0
+                    and la["quantiles"]["q05"] < 0):
+                exemple = (
+                    f" Ainsi {_e(b)} : {_badge(etude._points(lb['dette']), lb['etage'], True)}"
+                    f" à θ½, mais {lb['p_hausse'] * 100:.0f} % des tirages en hausse, de "
+                    f"{_badge(etude._points(lb['quantiles']['q05']), lb['etage'], True)} à "
+                    f"{_badge(etude._points(lb['quantiles']['q95']), lb['etage'], True)} : "
+                    f"« hausse ». {_e(a)} : "
+                    f"{_badge(etude._points(la['dette']), la['etage'], True)} à θ½, plus "
+                    f"haut, mais une plage de "
+                    f"{_badge(etude._points(la['quantiles']['q05']), la['etage'], True)} à "
+                    f"{_badge(etude._points(la['quantiles']['q95']), la['etage'], True)}, qui "
+                    f"passe sous zéro : {la['p_hausse'] * 100:.0f} % des tirages en hausse, "
+                    f"« dépend ».")
+                break
+        if exemple:
+            break
+    return ('<p class="sm-note"><strong>Pourquoi deux dettes proches ont des verdicts '
+            "différents.</strong> La barre est la dette au milieu des hypothèses (θ½). Le "
+            "verdict ne la lit pas : il lit la part des tirages des hypothèses où la dette "
+            f"monte. « Hausse » quand au moins {seuil * 100:.0f} % des tirages la font monter, "
+            f"« baisse » quand au moins {seuil * 100:.0f} % la font baisser, « dépend » entre "
+            "les deux. Une dette petite mais sûre peut donc être « hausse », une plus grande "
+            "mais incertaine « dépend » : la colonne « 90 % des tirages » dit l'incertitude."
+            + exemple + "</p>")
+
+
 def comparer(etudes_: list[tuple[etude.Etude, list[dict[str, Any]], list[str], etude.Nombres]],
              text: Callable[[str, etude.Nombres], str]) -> str:
     """Les candidats côte à côte (P11 du lecteur novice) : ce que chacun chiffre, ce que
@@ -1277,6 +1400,9 @@ def comparer(etudes_: list[tuple[etude.Etude, list[dict[str, Any]], list[str], e
             continue
         p = pg.charger(study.programme)
         lu = etude.lecture_seule(entries[0])
+        mc = ((entries[0]["path"].get("monte_carlo") or {}).get("vues") or {}).get(
+            "vieillie") or {}
+        lu = {**lu, "quantiles": mc.get("quantiles"), "p_hausse": mc.get("p_hausse")}
         rangs.append((p, study, lu, _bref_cellules(lines), n))
     rangs.sort(key=lambda r: -r[2]["dette"])
     rows = [(r[0].candidat, r[2]["dette"], etude._points(r[2]["dette"]),
@@ -1297,9 +1423,11 @@ def comparer(etudes_: list[tuple[etude.Etude, list[dict[str, Any]], list[str], e
             f'aria-hidden="true"><span class="sm-p-ch" style="width:{ch / total * 100:.1f}%">'
             f"</span></span></td><td>{_badge(_eur(lu['figee']), 'L2')}</td>"
             f"<td>{_badge(etude._points(lu['dette']), lu['etage'], True)}</td>"
+            f"<td>{_plage_tirages(lu)}</td>"
             f"<td>{verdict}</td></tr>")
     table = ('<div class="defile"><table><thead><tr><th>candidat</th><th>mesures '
-             "chiffrées</th><th>coût 2026</th><th>dette 2035, à θ½</th><th>verdict</th>"
+             "chiffrées</th><th>coût 2026</th><th>dette 2035, à θ½</th><th>90 % des tirages</th>"
+             "<th>verdict</th>"
              f"</tr></thead><tbody>{''.join(lignes)}</tbody></table></div>")
     garde = ('<aside class="garde" role="note"><b>Ce qui ne se compare pas.</b>'
              "<ul><li>Chaque ligne porte sur la seule part chiffrée d'un programme : "
@@ -1313,7 +1441,7 @@ def comparer(etudes_: list[tuple[etude.Etude, list[dict[str, Any]], list[str], e
             "cette part coûte la première année et ce qu'elle fait à la dette en 2035. "
             "Ce qui se compare : le sens et l'ordre de grandeur, pour la part chiffrée. "
             "Ce qui ne se compare pas est dit juste dessous.</p>"
-            + garde + figure + table
+            + garde + figure + _pourquoi_verdicts(rangs) + table
             + f'<p class="sm-petit">Le chemin d\'une mesure : <a href="{INDEX}">une mesure '
             "pas à pas</a>.</p>")
 
