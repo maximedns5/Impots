@@ -268,6 +268,15 @@ def apres(row: dict[str, Any], values: dict[str, Any], vue: str = VUE) -> float:
 # --------------------------------------------------------------------------- #
 # la page
 # --------------------------------------------------------------------------- #
+def _publiee(p: store.Parameter) -> str:
+    """La fourchette d'une ligne, en mots, pour un curseur (D-452)."""
+    def n(v: float) -> str:
+        return fr(v, 4).rstrip("0").rstrip(",")
+    if not p.is_open:
+        return f"valeur fixe : {n(p.central)}"
+    return f"publiée : {n(p.low)} à {n(p.high)}, centre {n(p.central)}"
+
+
 def _fourchette(p: store.Parameter) -> str:
     if not p.is_open:
         return f"{fr(p.central, 4).rstrip('0').rstrip(',')}, fixe"
@@ -378,9 +387,24 @@ def _mortes() -> str:
                              f"{esc(m['raison'])}</li>" for m in magasin()["mortes"]) + "</ul>")
 
 
+#: Qui réagit, en mots, pour les lignes que les curseurs montrent (D-452, remarque P5).
+GROUPES = {
+    "eti_all": "tous les foyers", "eti_top_decile": "les 10 % de foyers les plus aisés",
+    "labour_supply_married_men": "hommes en couple",
+    "labour_supply_married_women": "femmes en couple",
+    "labour_supply_single_men": "hommes seuls", "labour_supply_single_women": "femmes seules",
+    "employment_elasticity_smic": "emplois au voisinage du SMIC",
+    "autofinancement_poids_tresor_eco": "poids de la note du Trésor face à l'estimation "
+                                        "par l'emploi",
+}
+
+
 def _libelle_ligne(key: str) -> str:
     c = next((c for c in canaux() if key in c["lignes"]), None)
-    return f"{c['numero']}, {key}" if c else key
+    if c is None:
+        return key
+    groupe = GROUPES.get(key)
+    return f"{c['label']} : {groupe}" if groupe else f"{c['label']} ({key})"
 
 
 def _curseurs() -> tuple[str, list[dict[str, Any]]]:
@@ -399,7 +423,7 @@ def _curseurs() -> tuple[str, list[dict[str, Any]]]:
     rows = []
     for key in cles:
         p = lignes[key]["p"] if key in lignes else None
-        fourchette = f" ({_fourchette(p)})" if p is not None else ""
+        fourchette = f" <small>({_publiee(p)})</small>" if p is not None else ""
         rows.append(f'<div class="curseur"><label for="t-{key}">{esc(_libelle_ligne(key))}'
                     f"{fourchette}</label>"
                     f'<input type="range" id="t-{key}" data-ligne="{key}" min="0" max="1" '
@@ -523,7 +547,9 @@ def page() -> Page:
         f"multiplicateur à θ½ et persistance lue (le multiplicateur a sa page, {lien('activite')}"
         "). Un coût positif coûte au budget ; une recette positive lui rapporte.</p>\n"
         + curseurs
-        + _statique(etudes)
+        + '<details class="detail"><summary>Les mêmes nombres pour chaque étude, à θ = 0, '
+          "½ et 1, sans script</summary><div class=\"detail-corps\">" + _statique(etudes)
+        + "</div></details>\n"
         + "<h2>Ce que les comportements ne font pas</h2>\n"
         "<p>Aucun canal pour les transferts. Rien pour l'impôt sur les sociétés dans la dette : "
         "C8 et C9 sont des indices, jamais des recettes. Pas d'élasticité du revenu du capital, "

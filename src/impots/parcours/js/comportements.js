@@ -31,7 +31,8 @@
   const choix = document.getElementById("c-etude");
   const sortie = document.getElementById("c-resultat");
   const curseurs = [...ici.querySelectorAll("input[data-ligne]")];
-  const NOMS = { c1_eti: "C1", c7_labour_supply: "C7", c10_dividendes: "C10", c11_autofinancement: "C11" };
+  const NOMS = { c1_eti: "revenu déclaré", c7_labour_supply: "heures travaillées",
+    c10_dividendes: "dividendes", c11_autofinancement: "autofinancement" };
 
   function rendre() {
     const e = D.etudes[+choix.value];
@@ -58,8 +59,8 @@
     const cles = A.RECETTES.filter((c) => ans.some((a) => c in a.parts));
     const emplois = ans.some((a) => "emplois_c2" in a.parts);
     const tete = "<th>année</th><th>coût mécanique</th>"
-      + cles.map((c) => `<th>recette ${NOMS[c]}</th>`).join("")
-      + (emplois ? "<th>emplois C2 (indice)</th>" : "") + "<th>coût après comportements</th>";
+      + cles.map((c) => `<th>ce que rapporte : ${NOMS[c]}</th>`).join("")
+      + (emplois ? "<th>emplois près du SMIC (indice)</th>" : "") + "<th>coût après comportements</th>";
     const corps = ans.map((a) => `<tr><td>${a.year}</td><td class="num">${A.md(a.mecanique)}</td>`
       + cles.map((c) => `<td class="num">${A.md(a.parts[c])}</td>`).join("")
       + (emplois ? `<td class="num">${A.signe(a.parts.emplois_c2, 0)}</td>` : "")

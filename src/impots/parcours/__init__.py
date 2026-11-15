@@ -36,21 +36,38 @@ BRANCHE = "main"
 #: Les chiffrages d'avance du parcours, commités comme des rapports.
 RAPPORTS = ROOT / "reports" / "parcours"
 
-#: Les huit pages, dans l'ordre de la preuve (du plus sûr au moins sûr), puis la page qui
-#: compare deux candidats. (module, nom du fichier publié, titre court)
+#: Les dix étapes du chemin (but 25, D-451), dans l'ordre où un nombre se fait, puis la
+#: page qui compare deux candidats. (module, nom du fichier publié, titre court) ; les
+#: titres longs, les schémas et les chiffres de chaque étape sont dans `chemin.py`.
 PAGES: tuple[tuple[str, str, str], ...] = (
-    ("menage", "parcours-1-menage.html", "Un ménage"),
-    ("france", "parcours-2-france.html", "La France simulée"),
-    ("cout", "parcours-3-cout.html", "Le coût d'une mesure"),
-    ("comportements", "parcours-4-comportements.html", "Les comportements"),
-    ("activite", "parcours-5-activite.html", "L'activité"),
-    ("dette", "parcours-6-dette.html", "La dette"),
-    ("verdict", "parcours-7-verdict.html", "Le verdict"),
-    ("erreur", "parcours-8-erreur.html", "Où l'outil se trompe"),
+    ("sources", "parcours-1-sources.html", "Les sources"),
+    ("population", "parcours-2-population.html", "La population"),
+    ("france", "parcours-3-calage.html", "Le calage"),
+    ("menage", "parcours-4-baremes.html", "Les barèmes"),
+    ("cout", "parcours-5-mesure.html", "Une mesure"),
+    ("comportements", "parcours-6-comportements.html", "Les comportements"),
+    ("activite", "parcours-7-bouclage.html", "Le bouclage"),
+    ("dette", "parcours-8-dette.html", "La dette"),
+    ("verdict", "parcours-9-verdict.html", "Le verdict"),
+    ("erreur", "parcours-10-limites.html", "Ce que le modèle ne sait pas"),
     ("comparer", "parcours-comparer.html", "Comparer deux candidats"),
 )
-#: La page sans curseur, par décision : c'est celle qu'on cite (D-375).
-SANS_CURSEUR = {"erreur"}
+#: Les pages sans curseur, par décision : celle qu'on cite (D-375), et les deux étapes
+#: qui décrivent des données plutôt qu'une hypothèse (D-451).
+SANS_CURSEUR = {"erreur", "sources", "population"}
+#: Les adresses du parcours d'avant (but 20), et l'étape où elles mènent (D-452).
+ANCIENNES: dict[str, str] = {
+    "parcours-1-menage.html": "parcours-4-baremes.html",
+    "parcours-2-france.html": "parcours-3-calage.html",
+    "parcours-3-cout.html": "parcours-5-mesure.html",
+    "parcours-4-comportements.html": "parcours-6-comportements.html",
+    "parcours-5-activite.html": "parcours-7-bouclage.html",
+    "parcours-6-dette.html": "parcours-8-dette.html",
+    "parcours-7-verdict.html": "parcours-9-verdict.html",
+    "parcours-8-erreur.html": "parcours-10-limites.html",
+}
+#: Le nombre d'étapes du chemin ; la page qui compare vient après.
+N_ETAPES = 10
 
 
 class ParcoursError(ValueError):
@@ -92,40 +109,100 @@ def nom_publie(module: str) -> str:
 def lien(module: str, texte: str | None = None) -> str:
     """Un lien vers une autre page du parcours."""
     _, name, titre = next(p for p in PAGES if p[0] == module)
+    if texte and re.fullmatch(r"(la )?page \d", texte):
+        # Les pages d'avant se citaient par leur numéro ; le chemin a renuméroté (D-451).
+        numero = [m for m, _, _ in PAGES].index(module) + 1
+        texte = ("l'" if texte.startswith("la ") else "") + f"étape {numero}"
     return f'<a href="{name}">{html.escape(texte or titre)}</a>'
 
 
-def _navigation(index: int) -> str:
-    items = []
-    for i, (_, name, titre) in enumerate(PAGES):
-        numero = f"{i + 1}. " if i < 8 else ""
-        here = ' aria-current="page"' if i == index else ""
-        items.append(f'<li><a href="{name}"{here}>{numero}{html.escape(titre)}</a></li>')
-    return '<nav class="parcours"><ol>' + "".join(items) + "</ol></nav>"
-
-
-def _suivante(index: int) -> str:
-    parts = []
-    if index > 0:
-        _, name, titre = PAGES[index - 1]
-        parts.append(f'<a href="{name}">← {html.escape(titre)}</a>')
-    if index + 1 < len(PAGES):
-        _, name, titre = PAGES[index + 1]
-        parts.append(f'<a href="{name}">{html.escape(titre)} →</a>')
-    return '<p class="suite">' + " · ".join(parts) + "</p>"
-
-
 STYLE = """
-nav.parcours ol{display:flex;flex-wrap:wrap;gap:.2rem .9rem;padding:0;margin:1rem 0;list-style:none;font:.85rem/1.4 system-ui,sans-serif}
-nav.parcours a[aria-current]{font-weight:700;text-decoration:none}
 p.prouve{border-left:3px solid var(--l2);padding-left:.8rem;font-style:italic}
-p.suite{font-family:system-ui,sans-serif;font-size:.9rem;margin-top:2rem}
-a.source::after{content:" ↗";font-size:.8em}
 .curseur{display:grid;grid-template-columns:minmax(0,1fr) minmax(8rem,16rem) 7rem;gap:.2rem .8rem;align-items:center;margin:.4rem 0}
 .curseur input,.curseur select{width:100%}
 .num{text-align:right;font-variant-numeric:tabular-nums}
+.a-vous{--papier:var(--surface);background:var(--surface);border:1px solid var(--trait);border-radius:var(--rayon);padding:.2rem 1rem 1rem;margin:1.5rem 0}
+.a-vous>h2:first-child{margin-top:1rem}
 @media (max-width:560px){.curseur{grid-template-columns:1fr}}
 """
+
+_H2 = re.compile(r"(?=<h2[\s>])")
+
+
+def _mots(texte: str) -> int:
+    texte = re.sub(r"<(script|svg|style)\b.*?</\1>", " ", texte, flags=re.S)
+    return len(re.sub(r"<[^>]+>", " ", texte).split())
+
+
+_PROSE = re.compile(r"(?<!<noscript>)<p\b[^>]*>.*?</p>", flags=re.S)
+
+
+def _a_vous(s: str, debut: int, a_vous: tuple[str, str] | None) -> str:
+    """Une section à curseur, pour un débutant (D-452) : un titre et l'idée en mots
+    d'abord, la portée du curseur ; la prose de calcul d'avant (formules, fichiers),
+    repliée sous les réglages. Les éléments que le script lit gardent leur place."""
+    from impots import site_composants as c
+
+    if a_vous is None:
+        return f'<section class="a-vous">{s}</section>'
+    titre, intro = a_vous
+    tete, reste = s[:debut], s[debut:]
+    premier = re.search(r"<input|<select", reste)
+    avant, apres = (reste[:premier.start()], reste[premier.start():]) if premier else (
+        reste, "")
+    pliees: list[str] = []
+
+    def plier(m: re.Match) -> str:
+        bloc = m[0]
+        if re.search(r'\bid="|<input|<select|<output|<button', bloc):
+            return bloc
+        pliees.append(bloc)
+        return ""
+
+    avant = _PROSE.sub(plier, avant)
+    # Après les réglages aussi, la prose sans cible du script et les listes se replient.
+    apres = _PROSE.sub(plier, apres)
+    apres = re.sub(r"<(ul|ol)\b(?![^>]*\bid=)[^>]*>.*?</\1>", plier, apres, flags=re.S)
+    h2 = re.match(r"<h2([^>]*)>", tete)
+    return ('<section class="a-vous">' + f"<h2{h2[1] if h2 else ''}>{html.escape(titre)}</h2>"
+            + intro + avant + apres
+            + (c.detail("Comment ce calcul est fait", "".join(pliees)) if pliees else "")
+            + "</section>")
+
+
+def replier(corps: str, a_vous: tuple[str, str] | None = None) -> str:
+    """Le corps d'une page d'avant, rangé (D-451) : les sections qui donnent la main au
+    lecteur (un curseur, un choix) restent ouvertes, réécrites pour un débutant quand
+    l'étape donne `a_vous` (titre, introduction en HTML) ; les autres se replient, chacune
+    sous son titre, avec son temps de lecture. Rien n'est retiré : tout se lit en un clic,
+    et chaque ancre reste celle de la section."""
+    from impots import site_composants as c
+
+    morceaux = _H2.split(corps)
+    tete, sections = morceaux[0], morceaux[1:]
+    ouvertes, repliees = [], []
+    if tete.strip():
+        repliees.append(c.detail("Pour commencer", tete,
+                                 note=f"{max(1, round(_mots(tete) / 220))} min"))
+    premier = True
+    for s in sections:
+        m = re.match(r'<h2(?: id="([^"]*)")?[^>]*>(.*?)</h2>', s, flags=re.S)
+        interactif = re.search(r'<input[^>]*type="range"|<select', s) is not None
+        if m is None or interactif:
+            if interactif and m is not None:
+                ouvertes.append(_a_vous(s, m.end(), a_vous if premier else None))
+                premier = False
+            else:
+                ouvertes.append(f'<section class="a-vous">{s}</section>' if interactif else s)
+            continue
+        titre = html.unescape(re.sub(r"<[^>]+>", "", m[2]))
+        bloc = c.detail(titre, s[m.end():], note=f"{max(1, round(_mots(s) / 220))} min")
+        if m[1]:
+            bloc = bloc.replace('<details class="detail"', f'<details class="detail" id="{m[1]}"', 1)
+        repliees.append(bloc)
+    return ("".join(ouvertes)
+            + ('<h2 id="le-detail">Le détail de l\'étape</h2>' if repliees else "")
+            + "".join(repliees))
 
 
 def _check(module: str, page: Page) -> None:
@@ -147,27 +224,39 @@ def _check(module: str, page: Page) -> None:
 
 
 def build() -> dict[str, str]:
-    """Les pages du parcours, par nom de fichier publié."""
+    """Les pages du parcours, par nom de fichier publié, et la page du chemin."""
     from impots import site
+    from impots.parcours import chemin
 
     files: dict[str, str] = {}
     for index, (module, name, titre) in enumerate(PAGES):
         page = importlib.import_module(f"impots.parcours.{module}").page()
         _check(module, page)
-        numero = f"{index + 1}. " if index < 8 else ""
-        main = (_navigation(index) + f"\n<h1>{numero}{html.escape(titre)}</h1>\n"
-                f'<p class="prouve">Ce que cette page prouve : {html.escape(page.prouve)}</p>\n'
-                + page.corps + "\n" + _suivante(index))
+        if index < N_ETAPES:
+            assert chemin.ETAPES[index].fichier == name, name
+            main = (chemin.tete(index, page.prouve)
+                    + replier(page.corps, chemin.a_vous(module))
+                    + chemin.suite(index))
+        else:
+            main = (chemin.barre(-1) + f"<h1>{html.escape(titre)}</h1>\n"
+                    + chemin.c.garde("Ce que cette page établit",
+                                     f"<p>{html.escape(page.prouve)}</p>")
+                    + replier(page.corps))
         if page.script:
             main += f"\n<script>\n{page.script}\n</script>"
-        text = site._page(f"{titre} — {site.TITLE}", main)
+        text = site._page(f"{titre} — {site.TITLE}", main, large=True)
         text = text.replace("</head>", f"<style>{STYLE}{page.style}</style>\n</head>", 1)
         if page.script:
             text = text.replace("rien n'y est calculé, rien n'y tourne.",
                                 "rien n'y est calculé ; cette page rejoue dans le navigateur "
                                 "une arithmétique que le moteur a déjà.")
         files[name] = text
+    files[CHEMIN] = site._page(f"Le chemin — {site.TITLE}", chemin.hub(), large=True)
     return files
+
+
+#: La page qui montre les dix étapes d'un coup d'œil.
+CHEMIN = "chemin.html"
 
 
 def present() -> bool:
