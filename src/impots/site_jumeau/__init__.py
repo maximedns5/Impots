@@ -493,9 +493,8 @@ ni nombre.</p>
 
 
 STYLE = """
-main{max-width:76rem}
-:root{--j-mesure:#b5532a;--j-apu:#2a6fb0;--j-men:#3d8f5a;--j-ent:#8a5cb8;--j-ext:#4a8a98;--j-dette:#a33b52;--j-bande:rgba(120,115,105,.22)}
-@media (prefers-color-scheme: dark){:root{--j-mesure:#e08a5f;--j-apu:#76a9de;--j-men:#79c293;--j-ent:#b896e0;--j-ext:#86c1cd;--j-dette:#e07b92;--j-bande:rgba(200,195,185,.22)}}
+:root{--j-mesure:var(--ocre,#b5532a);--j-apu:var(--accent,#2a6fb0);--j-men:var(--vert,#3d8f5a);--j-ent:var(--violet,#8a5cb8);--j-ext:var(--serie-3,#4a8a98);--j-dette:var(--rouge,#a33b52);--j-bande:rgba(120,115,105,.22)}
+@media (prefers-color-scheme: dark){:root{--j-bande:rgba(200,195,185,.22)}}
 .chapeau{margin:.2rem 0 .8rem;font-size:1.08rem;max-width:44rem}
 .sommaire{display:flex;flex-wrap:wrap;gap:.2rem 1.1rem;padding:0;margin:.4rem 0 1rem;list-style:none;counter-reset:s;font:.9rem system-ui,sans-serif}
 .sommaire li{counter-increment:s}
@@ -625,7 +624,7 @@ def page(d: dict[str, Any]) -> str:
     main = (corps + f'\n<script src="{SCRIPT}" data-pyodide="{PYODIDE_URL}" '
             f'data-sri="{PYODIDE_SRI}" data-calcul="{CALCUL}" '
             f'data-paquets="{" ".join(PAQUETS_PYODIDE)}"></script>')
-    text = site._page(f"Le jumeau — {site.TITLE}", main)
+    text = site._page(f"Le jumeau — {site.TITLE}", main, large=True)
     return (text.replace("</head>", f'<meta http-equiv="Content-Security-Policy" '
                                     f'content="{CSP}">\n<style>{STYLE}</style>\n</head>', 1)
             .replace("rien n'y est calculé, rien n'y tourne.",

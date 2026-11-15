@@ -7,9 +7,8 @@
 <link rel="stylesheet" href="style.css">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src blob:; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <style>
-main{max-width:76rem}
-:root{--j-mesure:#b5532a;--j-apu:#2a6fb0;--j-men:#3d8f5a;--j-ent:#8a5cb8;--j-ext:#4a8a98;--j-dette:#a33b52;--j-bande:rgba(120,115,105,.22)}
-@media (prefers-color-scheme: dark){:root{--j-mesure:#e08a5f;--j-apu:#76a9de;--j-men:#79c293;--j-ent:#b896e0;--j-ext:#86c1cd;--j-dette:#e07b92;--j-bande:rgba(200,195,185,.22)}}
+:root{--j-mesure:var(--ocre,#b5532a);--j-apu:var(--accent,#2a6fb0);--j-men:var(--vert,#3d8f5a);--j-ent:var(--violet,#8a5cb8);--j-ext:var(--serie-3,#4a8a98);--j-dette:var(--rouge,#a33b52);--j-bande:rgba(120,115,105,.22)}
+@media (prefers-color-scheme: dark){:root{--j-bande:rgba(200,195,185,.22)}}
 .chapeau{margin:.2rem 0 .8rem;font-size:1.08rem;max-width:44rem}
 .sommaire{display:flex;flex-wrap:wrap;gap:.2rem 1.1rem;padding:0;margin:.4rem 0 1rem;list-style:none;counter-reset:s;font:.9rem system-ui,sans-serif}
 .sommaire li{counter-increment:s}
@@ -134,7 +133,7 @@ td.non{color:var(--doux)}
 <body>
 <a class="aller" href="#contenu">Aller au contenu</a>
 <header class="site-tete"><div class="site-tete-dedans"><a class="marque" href="index.html"><b>Impôts</b><span>une réforme, du ménage à la dette</span></a><nav class="site-nav" aria-label="Le site"><ul><li><a href="chemin.html">Le chemin</a></li><li><a href="jumeau.html" aria-current="page">Le jumeau</a></li><li><a href="etudes.html">Les études</a></li><li><a href="methode.html">Méthode</a></li></ul></nav></div></header>
-<main id="contenu">
+<main id="contenu" class="large">
 <h1>Le jumeau</h1>
 <p class="chapeau">Une économie de la France écrite en comptes nationaux, qui avance d'une
 année à la fois, de 2026 à 2035. On y fait entrer une mesure : il calcule l'économie
