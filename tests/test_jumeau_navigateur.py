@@ -218,3 +218,37 @@ def test_la_convention_porte_un_programme_jusqu_en_2035(session, donnees) -> Non
     sortie = session.calculer({**ret, "theta": _theta(session, ret)})
     assert sortie["calculees"] == [] and sortie["conventions"] is None
     assert "parts_premiere_annee" in sortie["mesure"]["non_portes"]["entreprises"]
+
+
+@pytest.mark.parametrize("choix", [
+    {"mode": "reduit", "vue": "vieillie", "candidat": "pres2027_le_pen_programme"},
+    {"mode": "structurel", "vue": "figee", "candidat": "pres2027_le_pen_programme",
+     "convention": "parts_premiere_annee"},
+    {"mode": "structurel", "vue": "figee", "hypothese": {
+        "instrument": "cotisations_employeurs", "montant": 10, "debut": 2026, "fin": 2035}},
+])
+def test_la_portee_redonne_les_nombres_du_reglage(session, choix) -> None:
+    """D-459 : la portée est une trajectoire vectorisée ; son tirage 0 redonne, au bit près
+    de l'arrondi du vectorisé, les écarts que la page trace ; un θ poussé à un bout redonne
+    le calcul seul de ce réglage ; chaque plage tient le défaut ; les comptes bouclent."""
+    r = session.calculer({**choix, "theta": {}})
+    theta = {t["cle"]: 0.5 for t in r["thetas"]}
+    r = session.calculer({**choix, "theta": theta})
+    p = session.portee({**choix, "theta": theta}, tirages=40)
+    assert p["calculees"] == r["calculees"]
+    for cle, ind in p["indicateurs"].items():
+        np.testing.assert_allclose(ind["defaut"], r["series"][cle]["ecart"][:len(r["calculees"])],
+                                   rtol=1e-9, atol=1e-9)
+        for q in ind["bande"]:
+            assert q == sorted(q)
+    k = len(r["calculees"]) - 1
+    lu = max(p["thetas"], key=lambda t: t["effets"]["dette"]["haut"] - t["effets"]["dette"]["bas"])
+    assert lu["effets"]["dette"]["haut"] > lu["effets"]["dette"]["bas"]
+    un = session.calculer({**choix, "theta": {**theta, lu["cle"]: lu["points"][-1]}})
+    assert un["series"]["dette"]["ecart"][k] - r["series"]["dette"]["ecart"][k] == pytest.approx(
+        lu["effets"]["dette"]["points"][-1], abs=1e-9)
+    s = r["series"]["dette"]
+    for a in range(k + 1):
+        assert s["effets"]["dette_ajoutee"][a] + s["effets"]["denominateur"][a] == pytest.approx(
+            s["ecart"][a], abs=1e-9)
+        assert abs(r["comptes"]["residu_emplois"][a]) < 1e-6
