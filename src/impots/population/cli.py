@@ -270,6 +270,32 @@ KNOWN_SOURCES: dict[str, tuple[str, ...]] = {
         "(XMKT, « Export market for goods and services »), 2009→2025 ; l'exogène du "
         "commerce dans le rejeu de l'histoire (D-421).",
     ),
+    # Les chocs non budgétaires soumis à l'étape zéro du but 24 (D-432).
+    "bce_mir_fr_credits_snf_fixation_plus_1an_2009_2025.csv": (
+        "https://data-api.ecb.europa.eu/service/data/MIR/M.FR.B.A2A.K.R.A.2240.EUR.N"
+        "?format=csvdata&startPeriod=2009-01&endPeriod=2025-12",
+        "BCE, statistiques MIR compilées par la Banque de France : taux des crédits "
+        "nouveaux aux sociétés non financières, hors découverts et crédits renouvelables, "
+        "fixation initiale du taux à plus d'un an, France, mensuel, 2009-01→2025-12 ; le "
+        "taux du coût d'usage du capital de Mésange (D-432).",
+        "BCE — réutilisation libre, source citée",
+    ),
+    "bce_exr_hci_fr_h03_nrd0_2009_2025.csv": (
+        "https://data-api.ecb.europa.eu/service/data/EXR/A.H03.FRF.NRD0.A"
+        "?format=csvdata&startPeriod=2009&endPeriod=2025",
+        "BCE : indicateur de compétitivité harmonisé réel de la France contre la zone euro "
+        "et le grand groupe de partenaires (HCI-40 et zone euro), déflaté par les "
+        "déflateurs du PIB, annuel, 2009→2025 ; le change de la compétitivité-prix (D-432).",
+        "BCE — réutilisation libre, source citée",
+    ),
+    "insee_bdm_010002078_brent_euros_2009_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/010002078"
+        "?startPeriod=2009-01&endPeriod=2025-12",
+        "Insee, BDM 010002078 : cours du pétrole brut Brent (Londres), prix au comptant en "
+        "euros par baril, mensuel, 2009-01→2025-12 ; le prix du baril des prix "
+        "d'importation de Mésange (D-432).",
+        "Licence ouverte Etalab",
+    ),
     # Les a priori des θ du jumeau tirés de la littérature (D-424).
     "iza_dp7958_2014_lichter_peichl_siegloch_labor_demand.pdf": (
         "https://docs.iza.org/dp7958.pdf",
