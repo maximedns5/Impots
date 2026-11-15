@@ -34172,3 +34172,39 @@ population hors de la comparaison du moteur, pas de `make impact` ni de lourds e
 de route. Les tests légers des fichiers touchés tiennent ce qui change ; aucun nombre
 publié ne change, chaque rapport garde son commit.
 
+
+## D-456 — Une mesure pas à pas, les pages d'études résumées d'abord, les graduations exactes
+
+**Le volet `mesure` du but 25.** Une page par mesure seule d'un programme (34 pages, dix
+candidats), à une adresse stable, `mesure-<programme>-<mesure>.html`, que le parcours
+peut viser ; `mesure.html` les liste par candidat (`mesure.html#<programme>`). Sept
+étapes, chacune avec son schéma : le texte du candidat et les paramètres qu'en reçoit le
+moteur ; les ménages touchés, par décile ; l'effet mécanique, module par module et dans
+ses deux vues ; les comportements, canal par canal ; l'activité (les emplois à 1, 2 et 3
+ans) et le bouclage (du coût à la dette de 2035) ; les gagnants et les perdants ; le
+coût couche par couche, chaque couche avec son rapport, son champ et son commit. Rien
+n'est calculé : les nombres publiés sont ceux de `etude.lecture_seule`, au même format ;
+le seul agrégat dérivé, les ménages touchés (la part des gagnants et des perdants de
+chaque décile fois ses ménages), le dit sous son graphique. Code :
+`src/impots/site_mesure.py`. Aucun script.
+
+**Les pages d'études** (les douze) s'ouvrent sur un résumé : les cellules du tableau «
+En bref », verdict d'abord, en cartes ; « pour qui », le graphique des déciles ; puis
+chaque mesure seule, son coût et le lien de sa page. Le détail, tel que l'étude l'écrit,
+suit sans changer. Sous chaque trajectoire, « pourquoi ça bouge » : les horizons de
+Mésange entre lesquels l'effet macro est interpolé, la persistance « éteinte » qui le
+coupe après trois ans (le saut de 2029 est une convention, pas du bruit), la boîte θ qui
+s'élargit.
+
+**Le diagnostic des graphiques.** Trois causes rendaient les courbes illisibles : six
+lignes et une bande dans trois petits panneaux ; le saut de la persistance « éteinte »,
+jamais dit ; des graduations fausses, `fr(t, 1)` sur un pas de 0,25, qui écrivait « −0,2
+» et « −0,8 » pour −0,25 et −0,75 (« −0,1 » pour −0,08 au PLFSS). Les graduations
+s'écrivent désormais avec les décimales qu'il leur faut (`graphiques.decimales`) ; huit
+SVG réécrits par `impots etude ecrire`, aucune page Markdown ni aucun nombre ne change.
+Les pages pas à pas tracent une courbe par vue, avec des repères aux années où la pente
+change pour une raison connue.
+
+**Ce qui reste.** Le système visuel du volet `chemin` n'était pas poussé : les pages
+portent leur feuille, `mesure.css`, à reprendre à la jonction. `site verifier`, `etude
+verifier` et `node ui/check.mjs` verts.

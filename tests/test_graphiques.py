@@ -202,3 +202,12 @@ def test_le_site_porte_chaque_graphique_en_ligne(chargees) -> None:
         part.split("</svg>")[0] for part in site.termes(html).split("<svg")[1:])
     with pytest.raises(site.SiteError, match="ne trace pas"):
         site.body(["![x](graphiques/ailleurs.svg)"], etude.Nombres())
+
+
+def test_graduations_ecrites_exactement() -> None:
+    """Un pas de 0,25 s'écrivait « −0,2 », « −0,8 » (D-456) : chaque graduation s'écrit
+    avec les décimales qu'il lui faut, et la même pour toutes."""
+    assert graphiques.decimales([-1.0, -0.75, -0.5, -0.25, 0.0]) == 2
+    assert graphiques.decimales([-0.1, -0.08, -0.06]) == 2
+    assert graphiques.decimales([0.0, 2.0, 4.0]) == 0
+    assert graphiques.decimales([0.0, 0.001, 0.002], 100.0) == 1

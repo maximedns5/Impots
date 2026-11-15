@@ -125,6 +125,16 @@ def _ticks(low: float, high: float, count: int = 4) -> list[float]:
     return out
 
 
+def decimales(ticks: Sequence[float], echelle: float = 1.0, plus: int = 3) -> int:
+    """Le moins de décimales qui écrit chaque graduation exactement (but 25, D-456) : un
+    pas de 0,25 s'écrit « −0,25 », pas « −0,2 » arrondi, qui faisait croire à une
+    échelle irrégulière."""
+    for d in range(plus + 1):
+        if all(abs(round(t * echelle, d) - t * echelle) < 1e-9 for t in ticks):
+            return d
+    return plus
+
+
 @dataclass
 class Echelle:
     """Une échelle linéaire, du domaine aux pixels."""
@@ -318,11 +328,10 @@ def _cascade_panneau(corps: list[str], y: float, titre: str, marches: list[tuple
                                 classe="g-doux", taille=12))
     y += hauteur + 4
     corps.append(_ligne(x(ticks[0]), y, x(ticks[-1]), y, "g-axe", "#8a877f"))
-    pas = ticks[1] - ticks[0]
     echelle = 1e9 if format_ is milliards else 100.0
-    decimales = 0 if pas * (1 / 1e9 if format_ is milliards else 100) >= 1 else 1
+    decimales_ = decimales(ticks, 1 / 1e9 if format_ is milliards else 100.0)
     for t in ticks[:: 2 if len(ticks) > 5 else 1]:
-        texte = fr(t / echelle if format_ is milliards else t * echelle, decimales)
+        texte = fr(t / echelle if format_ is milliards else t * echelle, decimales_)
         corps.append(_texte(x(t), y + 15, texte.replace("+", ""), ancre="middle",
                             classe="g-doux", taille=12))
     corps.append(_texte(LARGEUR - 10, y + 31, unite, ancre="end", classe="g-doux", taille=12))
@@ -500,8 +509,7 @@ def trajectoire(entry: dict[str, Any], *, ident: str, source: str,
         s = Echelle(ticks[0], ticks[-1], top + height, top)
         for t in ticks:
             corps.append(_ligne(52, s(t), LARGEUR - 14, s(t), "g-grille", "#e4e1da"))
-            corps.append(_texte(46, s(t) + 4, fr(t, 2 if abs(ticks[1] - ticks[0]) < 0.1
-                                                  else 1).replace("+", ""),
+            corps.append(_texte(46, s(t) + 4, fr(t, max(1, decimales(ticks))).replace("+", ""),
                                 ancre="end", classe="g-doux", taille=12))
         corps.append(_ligne(52, s(0), LARGEUR - 14, s(0), "g-zero", "#52514e", 1.2))
         bande = nombres["bande"][name]
@@ -787,7 +795,8 @@ def annoncee(annees: Sequence[int], parts: dict[float, Sequence[float]], *, iden
     s_ = Echelle(ticks[0], ticks[-1], top + height, top)
     for t in ticks:
         corps.append(_ligne(52, s_(t), LARGEUR - 14, s_(t), "g-grille", "#e4e1da"))
-        corps.append(_texte(46, s_(t) + 4, fr(t, 1).replace("+", ""), ancre="end",
+        corps.append(_texte(46, s_(t) + 4, fr(t, max(1, decimales(ticks))).replace("+", ""),
+                            ancre="end",
                             classe="g-doux", taille=12))
     corps.append(_ligne(52, s_(0), LARGEUR - 14, s_(0), "g-axe", "#8a877f", 1.2))
     for part, serie in sorted(parts.items()):

@@ -34,15 +34,15 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <text class="g-encre" fill="#1d1d1b" x="12" y="209" text-anchor="start" font-weight="600">Le solde public</text>
 <text class="g-doux" fill="#52514e" x="348" y="209" text-anchor="end" font-size="12">points de PIB, + l&#x27;améliore</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="331" x2="346" y2="331"/>
-<text class="g-doux" fill="#52514e" x="46" y="335" text-anchor="end" font-size="12">−1,0</text>
+<text class="g-doux" fill="#52514e" x="46" y="335" text-anchor="end" font-size="12">−1,00</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="303" x2="346" y2="303"/>
-<text class="g-doux" fill="#52514e" x="46" y="307" text-anchor="end" font-size="12">−0,8</text>
+<text class="g-doux" fill="#52514e" x="46" y="307" text-anchor="end" font-size="12">−0,75</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="275" x2="346" y2="275"/>
-<text class="g-doux" fill="#52514e" x="46" y="279" text-anchor="end" font-size="12">−0,5</text>
+<text class="g-doux" fill="#52514e" x="46" y="279" text-anchor="end" font-size="12">−0,50</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="247" x2="346" y2="247"/>
-<text class="g-doux" fill="#52514e" x="46" y="251" text-anchor="end" font-size="12">−0,2</text>
+<text class="g-doux" fill="#52514e" x="46" y="251" text-anchor="end" font-size="12">−0,25</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="219" x2="346" y2="219"/>
-<text class="g-doux" fill="#52514e" x="46" y="223" text-anchor="end" font-size="12">0,0</text>
+<text class="g-doux" fill="#52514e" x="46" y="223" text-anchor="end" font-size="12">0,00</text>
 <line class="g-zero" stroke="#52514e" stroke-width="1.2" x1="52" y1="219" x2="346" y2="219"/>
 <polygon class="g-bande" fill="#2a78d6" fill-opacity=".16" points="52,257.3 84.7,224.9 117.3,220.8 150,222.8 182.7,225.5 215.3,225.8 248,226.1 280.7,226.4 313.3,226.7 346,227 346,307.7 313.3,306.3 280.7,304.9 248,303.5 215.3,302 182.7,300.6 150,299.2 117.3,298.1 84.7,301.1 52,303.9"/>
 <polyline class="g-s2" stroke="#eb6834" fill="none" stroke-width="1.2" stroke-dasharray="6 4" stroke-linejoin="round" points="52,281.8 84.7,250.8 117.3,243.7 150,293.3 182.7,291.2 215.3,289.1 248,287 280.7,285 313.3,283.1 346,281.2"><title>Le solde public, vue figée, persistance éteinte, 2035 : −0,56 pt</title></polyline>
