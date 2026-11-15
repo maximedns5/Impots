@@ -34384,8 +34384,8 @@ identifié ; et il ne compterait pas (D-446 § 4).
 
 **D'où vient l'information.** Au mode vers le haut, l'emploi tire 4,96 des trois fenêtres
 d'avant 2010 (dont 4,33 de 1996 → 1999, la fenêtre de la bascule de la CSG ; la
-décomposition par choc n'est pas calculée) et 3,79 des deux fenêtres de 2010 à 2017 ; b, 2,50
-d'avant 2010 et 3,76 de 2010 à 2017, contre 0,25 sous D-417. **Une part du gain,
+décomposition par choc n'est pas calculée) et 3,79 des deux fenêtres de 2010 à 2017 ;
+b, 2,50 d'avant 2010 et 3,76 de 2010 à 2017, contre 0,25 sous D-417. **Une part du gain,
 pour b plus de la moitié, un tiers pour l'emploi, ne vient pas des années
 anciennes mais de la tendance** : la règle
 de D-417 la prend sur les 18 années notées (1,99 % au lieu de 1,20 %), la référence de
