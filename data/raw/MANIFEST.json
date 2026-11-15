@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-14",
+  "generated": "2026-11-15",
   "files": {
     "Dictionnaire_EEC_2024.pdf": {
       "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
@@ -2225,6 +2225,33 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Insee, BDM (source Banque de France), flux DEFAILLANCES-ENTREPRISES : défaillances trimestrielles brutes par date de jugement, par région et secteur, et par département (ensemble), 1990-T1→2025-T4 ; le panneau des défaillances (D-425).",
       "provenance": "API SDMX de la BDM, requête par clé bornée en dates. La BDM republie les séries (révisions des derniers trimestres) : la somme de contrôle est celle du 14 novembre 2026."
+    },
+    "bce_exr_hci_fr_h03_nrd0_2009_2025.csv": {
+      "url": "https://data-api.ecb.europa.eu/service/data/EXR/A.H03.FRF.NRD0.A?format=csvdata&startPeriod=2009&endPeriod=2025",
+      "quarantined": false,
+      "sha256": "527de0dbaebb1a44f2ebd53422a44ae14ef9a918a58f245e677bf174f59e56ef",
+      "bytes": 8571,
+      "downloaded": "2026-11-15",
+      "licence": "BCE — réutilisation libre, source citée",
+      "description": "BCE : indicateur de compétitivité harmonisé réel de la France contre la zone euro et le grand groupe de partenaires (HCI-40 et zone euro), déflaté par les déflateurs du PIB, annuel, 2009→2025 ; le change de la compétitivité-prix (D-432)."
+    },
+    "bce_mir_fr_credits_snf_fixation_plus_1an_2009_2025.csv": {
+      "url": "https://data-api.ecb.europa.eu/service/data/MIR/M.FR.B.A2A.K.R.A.2240.EUR.N?format=csvdata&startPeriod=2009-01&endPeriod=2025-12",
+      "quarantined": false,
+      "sha256": "a79e3adef5a3a2c530867020cabec571bb377fe2c21878ea1802ae78399f7808",
+      "bytes": 122353,
+      "downloaded": "2026-11-15",
+      "licence": "BCE — réutilisation libre, source citée",
+      "description": "BCE, statistiques MIR compilées par la Banque de France : taux des crédits nouveaux aux sociétés non financières, hors découverts et crédits renouvelables, fixation initiale du taux à plus d'un an, France, mensuel, 2009-01→2025-12 ; le taux du coût d'usage du capital de Mésange (D-432)."
+    },
+    "insee_bdm_010002078_brent_euros_2009_2025.xml": {
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/010002078?startPeriod=2009-01&endPeriod=2025-12",
+      "quarantined": false,
+      "sha256": "c505c194cdfa50da1494003dc308b42219c9e40165df0e9e7f32b8c62346df3b",
+      "bytes": 19804,
+      "downloaded": "2026-11-15",
+      "licence": "Licence ouverte Etalab",
+      "description": "Insee, BDM 010002078 : cours du pétrole brut Brent (Londres), prix au comptant en euros par baril, mensuel, 2009-01→2025-12 ; le prix du baril des prix d'importation de Mésange (D-432)."
     }
   }
 }

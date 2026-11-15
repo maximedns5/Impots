@@ -32792,3 +32792,166 @@ celui de sa loi a priori, et la dynamique du jumeau qui bat le naïf mécanique 
 
 **Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible de D-417 ; les
 rapports de r1, r2 et r3 gardent leur commit ; les études ne sont pas refaites.
+
+## D-432 — Les chocs non budgétaires préenregistrés : recensement, étape zéro, pronostic
+
+**Ce qui est fait** (but 24, volet `chocs`, branche `claude/but24-chocs`, partie de
+`claude/but24` à 0ff12ec). Le recensement des chocs que des séries publiées mesurent de
+2010 à 2024, le canal du jumeau par lequel chacun entrerait et le θ qu'il pourrait
+identifier ; trois séries téléchargées et manifestées ; le code d'une passe d'essai
+(`scratchpad`, hors rapports), écrit et compilé, **pas lancé** : aucune jacobienne n'a été
+calculée avec ces chocs, aucune erreur du jumeau non plus. Le critère, les fenêtres et le
+pronostic sont écrits ici avant le calcul ; le résultat ira dans D-433.
+
+### 1. Le recensement
+
+Un choc n'identifie un θ que s'il passe par une équation que gouverne une ligne θ. Un choc
+sans canal, ou dont le canal serait une équation que le jumeau n'a pas, est écarté ; aucun
+canal n'est inventé : chacun des retenus entre par une équation de Mésange (G2017-04) que
+le jumeau porte déjà, aux coefficients que Mésange imprime.
+
+| choc | série | canal du jumeau | θ visés | sort |
+|---|---|---|---|---|
+| pétrole | Brent en euros (Insee) | prix d'importation (p. 91) | export., conso. | retenu |
+| énergie importée | déflateur des importations | aucun : endogène | — | écarté (a) |
+| énergie consommée | IPC énergie | aucun : endogène | — | écarté (b) |
+| taux souverain | OAT à dix ans | intérêts de la dette | aucun | écarté (c) |
+| crédit | crédits aux SNF (BdF) | coût d'usage (p. 42) | coût du capital | retenu |
+| change | HCI réel (BCE) | compétitivité (p. 79 à 91) | export., import. | retenu |
+
+(a) Dans Mésange, le prix des importations d'énergie se forme sur le baril et les prix
+domestiques (p. 89 à 91) : c'est une sortie, pas un exogène ; l'imposer remplacerait une
+équation du modèle par la série qu'elle doit expliquer. Le jumeau ne distingue d'ailleurs
+pas l'énergie dans ses importations. Le baril, l'exogène de cette équation, est retenu à
+sa place. (b) L'IPC de l'énergie est un prix de la consommation que le jumeau calcule
+(p̂c, l'équation (PC), p. 24) ; la consommation d'énergie de Mésange (son prix relatif,
+p. 31) n'est pas un bloc du jumeau, dont la consommation est agrégée : il faudrait un
+canal nouveau. (c) L'OAT entre déjà, la même pour le jumeau et les deux naïfs (D-417), à
+la charge d'intérêts de la dette, qu'aucun θ ne gouverne. Le taux qui porte un θ est celui
+du coût d'usage, R10aréel + prime (Mésange p. 42-43), où la prime est l'écart des crédits
+aux entreprises à l'OAT : leur somme est le taux des crédits, déflaté ; l'OAT y entre par
+lui, pas une seconde fois. Le taux réel à trois mois de la consommation de Mésange (−0,05
+à un an pour un point, p. 34) et le taux réel à dix ans de l'investissement des ménages
+(p. 37) n'ont pas de bloc dans le jumeau : écartés, faute de canal. La demande mondiale
+est déjà entrée (D-421) ; elle reste ce qu'elle est.
+
+**Les séries**, dans `data/raw`, déclarées à `KNOWN_SOURCES` et ajoutées au manifeste par
+`impots population manifest` (151 fichiers présents vérifiés, 3 ajoutés), lues le 15
+novembre 2026 :
+
+* `bce_mir_fr_credits_snf_fixation_plus_1an_2009_2025.csv` : statistiques MIR, compilées
+  par la Banque de France et publiées par la BCE, MIR.M.FR.B.A2A.K.R.A.2240.EUR.N, le taux
+  des crédits nouveaux aux sociétés non financières, hors découverts et crédits
+  renouvelables, à taux fixé pour plus d'un an, mensuel ; l'année est la moyenne des douze
+  mois (sha256 a79e3ade…7f808). Mésange lit « les crédits hors découverts à plus de deux
+  ans » de la Banque de France ; la série harmonisée la plus proche, dit.
+* `bce_exr_hci_fr_h03_nrd0_2009_2025.csv` : BCE, EXR.A.H03.FRF.NRD0.A, l'indicateur de
+  compétitivité harmonisé réel de la France contre la zone euro et le grand groupe de
+  partenaires, déflaté par les déflateurs du PIB, annuel (527de0db…e56ef). Le déflateur
+  du PIB est celui que le jumeau reçoit imposé : un HCI déflaté par lui mesure les prix
+  étrangers en euros relativement au scénario de prix du jumeau.
+* `insee_bdm_010002078_brent_euros_2009_2025.xml` : Insee, BDM 010002078, le Brent en
+  euros par baril, mensuel, moyenne des douze mois (c505c194…46df3b).
+
+### 2. Comment chacun entre, comme exogène observé
+
+Chacun entre comme la demande mondiale (D-421) : une mesure observée sans choc sur le
+compte (`observe_taux_credit`, `observe_change`, `observe_baril`), dans la variante
+seulement ; la référence, qui est le naïf, reste au scénario, et le naïf mécanique n'a ni
+investissement ni commerce. Pour la fenêtre partie de s, chaque série x en écart à sa
+tendance de l'estimation, x̃_t = x_t − x_s − g (t − s), g = (x_2017 − x_2010) / 7 la
+variation moyenne sur les années notées de 2011 à 2017 (la règle de D-421 : la référence
+porte déjà les effets moyens de la période).
+
+* **Le crédit** : r_t = R_t − π_t, R le taux des crédits, π la croissance du prix de la
+  FBCF des SNF (t. 1.103 ; Mésange déflate par le glissement des prix d'investissement).
+  Au bloc `investissement`, le coût d'usage : Δck_t = r̃_t / u, u = 0,01 / 0,065 (la
+  variante de taux de Mésange, p. 134, déjà dans `entreprises.yaml`) ; soit le signal
+  r̃_t · knet_t, que le bloc traite comme un prélèvement sur le capital. Puis l'équation de
+  la p. 44, ε_K (θ « coût du capital »), le capital et le PIB potentiel, et l'accélérateur
+  sur l'activité qui en vient.
+* **Le change** : f_t = −ln (H_t / H_s), détendu, les prix étrangers en euros sur le
+  déflateur du PIB. Au bloc `commerce` : la compétitivité-prix des exportations
+  (c += f, l'équation 3, p. 79, s_X(θ)) ; les prix d'exportation et d'importation par la
+  ligne « Prix étrangers (+1 %) » (p. 87 : 0,12, 0,17, 0,20, 0,23, 0,23 ; p. 91 : 0,12,
+  0,21, 0,25, 0,23, 0,22, aux horizons T, 1, 2, 5 ans et LT) ; les importations en volume
+  par la ligne « Prix d'importations (+1 %) » (p. 85, s_M(θ)) appliquée à ce prix
+  d'importation ; et, par la boucle prix-salaires (D-414), les intrants importés
+  (κ^M) dans les prix de production et le prix de la consommation p̂c (μ_C).
+* **Le baril** : b_t = ln (B_t / B_s) − ln (P_t / P_s), détendu, B le Brent en euros, P
+  le déflateur du PIB. Au prix des importations par la ligne « Prix du baril (+1 %) »
+  (p. 91 : 0,05, 0,07, 0,08, 0,08, 0,08), puis la même boucle (κ^M, μ_C) ; aucune réponse
+  des volumes d'importation (l'élasticité-prix des importations d'énergie est nulle,
+  p. 84, D-424).
+
+Les écarts (points de taux ; % pour le change et le baril), fenêtre 2010 → 2014, puis
+2014 → 2017 : r̃ −0,22, +0,47, +1,00, +1,22 ; −0,08, −0,91, −1,22 ; f +0,29, +2,58,
++0,25, −0,70 ; +3,66, +1,46, +0,68 ; b de l'ordre de +30 en 2012 et de −45 en 2016.
+(Ceux-ci sont lus sur les séries, avant tout calcul du jumeau.)
+
+### 3. L'étape zéro, et le critère
+
+Comme D-421 et D-428 : la jacobienne des sorties notées du jumeau (pas des erreurs) en θ,
+divisée par les tolérances de D-417, sur les deux fenêtres de l'estimation de D-417
+(2010 → 2014, 2014 → 2017 ; 2011 à 2017 notées), les chocs budgétaires observés et la
+demande mondiale de r3 compris, plus les trois chocs ; chacun des huit θ de D-428 (les
+sept estimés et ε) perturbé de 0,001 sur l'axe des tirages, les autres à ½. Aucune valeur
+publiée de cible n'y entre. Quatre points : ½ vers le haut et vers le bas ; le mode de
+chaque loi de D-424 ramené dans [0 ; 1] (ε à ½), vers le haut (le point de D-428) et vers
+le bas. L'information d'un θ, diag (JᵀJ) ; l'écart-type approché, √diag (JᵀJ + P)⁻¹.
+
+* **Le critère de D-421** : à ½, P = 4 I, un θ est identifié si σ < 0,25, soit une
+  information d'au moins 12 environ.
+* **Le critère du but** (D-424, D-431) : au mode, P = diag (1 / s²), s l'écart de la loi
+  du côté de la perturbation ; un θ est identifié si σ < s / 2, d'un côté au moins, soit
+  une information d'au moins 3 / s² environ.
+
+Un choc n'est codé (D-433) que si, avec lui, un θ au moins est identifié sous le critère
+du but ; s'il ne l'est que sous celui de D-421, c'est dit, et il n'est pas codé. Cinq
+cas : les chocs budgétaires seuls, qui doivent redonner l'étape zéro de D-428 à 1 % près
+(un contrôle ; sinon l'écart est dit, et rien n'est réglé), chacun des trois chocs
+ajouté seul, et les trois ensemble, le cas qui compte. Une variante sans la tendance
+retirée (g = 0) est dite à côté ; elle ne décide rien. Aucun seuil, aucune série, aucune
+fenêtre ne change après le premier calcul.
+
+### 4. Le pronostic, avant tout calcul
+
+L'aveugle est percé : les séries ci-dessus sont lues, et D-428 donne l'information des
+chocs budgétaires ; aucune jacobienne avec ces chocs n'a été calculée. L'ordre de
+grandeur : un écart de change de 3 % rapporte aux exportations, par la dérivée en θ du
+haut de la plage (1,08 par unité de θ sur 0,73), de 1 à 1,5 point de croissance une ou
+deux années, à rapporter à une tolérance de 4 ; un point de taux réel, sur les deux ou
+trois dernières années d'une fenêtre, quelques dixièmes de point de PIB.
+
+Au mode, vers le haut, les trois chocs ensemble (D-428 entre parenthèses) :
+
+| θ | information | requis 3 / s² | σ | s | identifié |
+|---|---|---|---|---|---|
+| profil de la consommation | [0,002 ; 0,3] (0,002) | 12 | [0,49 ; 0,50] | 0,500 | non |
+| emploi | [1,5 ; 2,5] (1,633) | 180 | [0,125 ; 0,128] | 0,129 | non |
+| salaires | [0,3 ; 0,8] (0,333) | 66 | [0,208 ; 0,213] | 0,213 | non |
+| exportations | [0,2 ; 2,5] (0,013) | 199 | [0,120 ; 0,123] | 0,123 | non |
+| importations | [0,02 ; 0,3] (0,026) | 1 845 | 0,040 | 0,040 | non |
+| accélérateur | [0,02 ; 0,4] (0,029) | 46 | [0,25 ; 0,255] | 0,255 | non |
+| coût du capital | [0,1 ; 3,0] (0,024) | 69 | [0,195 ; 0,208] | 0,208 | non |
+| ε, non estimé | [5,5 ; 7,0] (5,971) | 114 | [0,148 ; 0,152] | 0,162 | non |
+
+Ce que les chocs apportent, au pronostic : le change aux exportations (de 0,013 à quelques
+dixièmes, l'information la plus multipliée), le crédit au coût du capital (de 0,024 à
+environ 1), le baril presque rien (moins de 0,2 à tout θ : son effet passe par 0,07 du
+prix d'importation, puis par les intrants). À ½ (le critère de D-421), aucun θ n'atteint
+12 ; ε reste le plus informé (environ 6). Sans la tendance retirée, les informations du
+change et du crédit montent d'un facteur 1 à 3, sans rien identifier. **Aucun θ identifié,
+sous l'un ou l'autre critère** (neuf chances sur dix au moins) ; le plus grand rapport de
+l'information à ce que le but requiert reste sous 10 %. **D-433 ne coderait alors
+rien** : les trois séries restent manifestées, aucun exogène n'entre au jumeau, et le
+quatrième rejeu (D-438, D-439) ne reçoit rien de ce volet.
+
+### Ce qui tourne ensuite
+
+La passe d'essai, sur le commit poussé qui porte cette entrée, avec et sans la tendance
+retirée ; quelques minutes. Le résultat va dans D-433, contre ce pronostic. Ni `CAS`, ni
+les cibles, ni les tolérances, ni les fenêtres de D-417 ne changent ; aucun rejeu de
+l'histoire n'est lancé. `src/impots/population/cli.py` (`KNOWN_SOURCES`) et
+`data/raw/MANIFEST.json` sont les seuls fichiers changés ; aucun nombre du modèle ne
+bouge, aucun test n'est dû (D-335).
