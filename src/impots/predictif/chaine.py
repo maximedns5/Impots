@@ -220,6 +220,12 @@ class Trajectoire:
     feedback_primary: tuple[float, ...] | None = None
     """φ_t, the loop's share of the reform's primary balance, when applied."""
     persistence: str | None = None
+    delta_sans_creations: tuple[float, ...] | None = None
+    """Δb_t without the company-creations channel, when the path reads it (but 22): the
+    debt of every path before the channel, on the same passes, shown beside."""
+    creations: dict[str, Any] | None = None
+    """The channel year by year (`creations.Effet.payload`), its θ and its box at the last
+    year (c = 0, which is the debt without it, and c = 1); None when not read."""
     delta_interest: tuple[float, ...] | None = None
     """The interest on the reform's extra debt, in points of the REFERENCE's GDP, year by
     year: m × ΔD_{t−1} over Y_t, the extra-debt path's own interest slice (§7)."""
@@ -268,7 +274,8 @@ class Trajectoire:
                                      self.reference_primary, self.delta_primary,
                                      self.delta_mechanical,
                                      *(s for s in (self.gdp_gap, self.feedback_primary,
-                                                   self.delta_interest)
+                                                   self.delta_interest,
+                                                   self.delta_sans_creations)
                                        if s is not None))):
             raise DebtError("séries de longueurs différentes : une trajectoire décalée "
                             "d'un an se tracerait sans erreur visible")
@@ -357,12 +364,16 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
         spending: SpendingScenario | None, growth: GrowthScenario | None,
         rate: RateScenario | None, theta: Theta | None,
         securities: list[Any] | None = None, store: Store | None = None,
-        persistence: str | None = None, macro_store: Any = None) -> Trajectoire:
+        persistence: str | None = None, macro_store: Any = None,
+        creations: Any = None) -> Trajectoire:
     """The reference path, the reform path, and the difference, under named scenarios
     and the θ the caller chose. `store` is the behavioural store the θ are read against
     (the shipped one by default) — the same one `comportement.evaluate` ran on.
     `persistence` and `macro_store` serve the GDP → receipts loop, asked for by giving
-    `costs.impulses`; the macro store defaults to the shipped one."""
+    `costs.impulses`; the macro store defaults to the shipped one. `creations`, a
+    `creations.Canal`, puts the company-creations channel in the debt (but 22): its
+    receipts join the reform's primary balance and its GDP gap the denominator, the way
+    the loop's do, and the path without it is computed beside on the same costs."""
     if rate is None:
         raise DebtError(
             "aucun scénario de taux nommé : la charge d'intérêts fait la boule de neige, "
@@ -449,14 +460,36 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
     applied = feedback.get(theta.for_row(MACRO_ROW)) if feedback else None
     zero = dict.fromkeys(years, 0.0)
 
+    # --- the company-creations channel, when the path reads it (but 22) ------------ #
+    channel = None
+    if creations is not None:
+        from impots.predictif import creations as creations_module
+
+        variations = fill(dict(creations.variations))
+
+        def channel_at(c: float) -> Any:
+            return creations_module.effet(
+                [variations[y] for y in years], [gdp[y] for y in years], years, c=c,
+                params=creations.params, receipts_ratio=start.receipts_ratio)
+
+        channel = channel_at(creations.c)
+    none = (0.0,) * len(years)
+
     def reform_path(primary: dict[int, float],
-                    loop: retroaction.Feedback | None) -> list[float]:
+                    loop: retroaction.Feedback | None,
+                    firms: Any = None) -> list[float]:
         """The reform's debt ratio: extra debt over reference GDP, the whole divided by
-        the reform's GDP gap (§4.4). Without the loop, the gap is zero."""
+        the reform's GDP gap (§4.4). Without the loop, the gap is zero. `firms`, the
+        creations channel's effect, adds its receipts and its GDP gap the same way;
+        by default the path's own, and `False` leaves it out."""
+        firms = channel if firms is None else firms or None
         phi = dict(zip(years, loop.balance, strict=True)) if loop else zero
-        gap = loop.gdp_gap if loop else (0.0,) * len(years)
-        raw = delta_path({y: primary[y] + phi[y] for y in years})
-        return [(b + d) / (1.0 + g) for b, d, g in zip(ref, raw, gap, strict=True)]
+        gap = loop.gdp_gap if loop else none
+        extra, more = (firms.recettes, firms.pib) if firms else (none, none)
+        raw = delta_path({y: primary[y] + phi[y] + e for y, e in zip(years, extra,
+                                                                     strict=True)})
+        return [(b + d) / (1.0 + g + m)
+                for b, d, g, m in zip(ref, raw, gap, more, strict=True)]
 
     def envelope(label: str, source: str, one: list[float], two: list[float]) -> Slice:
         return Slice(source=source, label=label,
@@ -478,10 +511,23 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
     reform = reform_path(base_primary, applied)
     delta = [r - b for r, b in zip(reform, ref, strict=True)]
     loop = dict(zip(years, applied.balance, strict=True)) if applied else zero
+    induced = dict(zip(years, channel.recettes, strict=True)) if channel else zero
     interest = [p.interest_ratio
-                for p in extra_debt({y: base_primary[y] + loop[y] for y in years})]
-    delta_primary = {y: base_primary[y] + (dict(zip(years, applied.balance, strict=True))[y]
-                                           if applied else 0.0) for y in years}
+                for p in extra_debt({y: base_primary[y] + loop[y] + induced[y]
+                                     for y in years})]
+    delta_primary = {y: base_primary[y] + loop[y] + induced[y] for y in years}
+    sans = creations_box = None
+    if channel is not None:
+        sans = [r - b for r, b in zip(reform_path(base_primary, applied, False), ref,
+                                      strict=True)]
+        ends = {c: reform_path(base_primary, applied, channel_at(c))[-1] - ref[-1]
+                for c in (0.0, 1.0)}
+        if not min(ends.values()) - 1e-12 <= delta[-1] <= max(ends.values()) + 1e-12:
+            raise ThetaError("créations d'entreprises : Δb à θ hors de sa boîte — un effet "
+                             "non monotone en son θ, refusé plutôt que tracé (D-217)")
+        creations_box = {**channel.payload(), "theta": creations.theta,
+                         "preenregistrement": creations.params.preenregistrement,
+                         "boite": {"theta": delta[-1], "c0": ends[0.0], "c1": ends[1.0]}}
     eventail = (envelope(EVENTAIL_LABEL, "eventail", reform_path(base_primary, feedback[0.0]),
                          reform_path(base_primary, feedback[1.0]))
                 if applied else Slice(source="eventail", label="Rétroaction macro",
@@ -507,6 +553,10 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
                                f"{retroaction.PERSISTENCE_LABELS[persistence]}.")
     if carried:
         conventions.append(CARRY_LABEL)
+    if channel is not None:
+        from impots.predictif.creations import CONVENTION as CREATIONS_CONVENTION
+
+        conventions.append(CREATIONS_CONVENTION)
     if applied:
         table = {**table, MACRO_ROW: applied.theta}
         closed = dict(CLOSED)
@@ -516,6 +566,10 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
     else:
         closed = {**CLOSED, **dict.fromkeys(MACRO_CHANNELS, feedback_reason)}
         absent = {"rétroaction": feedback_reason}
+    if channel is not None:
+        from impots.predictif.creations import RAISON_DANS_LA_DETTE
+
+        closed["créations d'entreprises"] = RAISON_DANS_LA_DETTE
     if costs.behavioural is None:
         absent.update({"bande": unread,
                        "θ": (THETA_NO_HOUSEHOLD_CHANNEL if costs.behaviour_asked
@@ -536,5 +590,7 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
         feedback_primary=applied.balance if applied else None,
         persistence=persistence if applied else None,
         delta_interest=tuple(interest),
+        delta_sans_creations=tuple(sans) if sans is not None else None,
+        creations=creations_box,
         closed=closed, absent=absent,
     )

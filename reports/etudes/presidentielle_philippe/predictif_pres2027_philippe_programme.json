@@ -105,8 +105,68 @@
       }
     },
     "box_rows": [
-      "multiplicateur_macro"
-    ]
+      "multiplicateur_macro",
+      "productivite_creations"
+    ],
+    "creations": {
+      "theta": 0.5,
+      "parametres": {
+        "elasticite": {
+          "centre": 0.043,
+          "bas": 0.0,
+          "haut": 0.2
+        },
+        "productivite": {
+          "centre": 0.5,
+          "bas": 0.0,
+          "haut": 1.0
+        },
+        "survie_annuelle": 0.9,
+        "montee_en_charge_ans": 5,
+        "taille_relative": 0.1,
+        "part_va_societes_pib": 0.6,
+        "assiette_part_pib": 0.092,
+        "instruments_entreprises": [
+          "impot_societes",
+          "contribution_sociale_is",
+          "cebge",
+          "cvae",
+          "c3s"
+        ],
+        "instruments_menages": [
+          "pfu",
+          "prelevements_sociaux_capital",
+          "cotisations_employeurs"
+        ],
+        "preenregistrement": "D-402"
+      },
+      "variations": {
+        "figee": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vieillie": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
   },
   "monte_carlo": {
     "objet": "distribution sous des lois déclarées",
@@ -163,7 +223,8 @@
   "lectures": {
     "persistence": "lue",
     "theta": {
-      "multiplicateur_macro": 0.5
+      "multiplicateur_macro": 0.5,
+      "productivite_creations": 0.5
     },
     "decomposition": {
       "vieillie": {
@@ -195,11 +256,19 @@
           "theta": 0.11729457602892812,
           "corners": [
             [
-              "multiplicateur_macro = 0",
+              "multiplicateur_macro = 0, productivite_creations = 0",
               0.11729669821397493
             ],
             [
-              "multiplicateur_macro = 1",
+              "multiplicateur_macro = 0, productivite_creations = 1",
+              0.11729669821397493
+            ],
+            [
+              "multiplicateur_macro = 1, productivite_creations = 0",
+              0.11729248247421786
+            ],
+            [
+              "multiplicateur_macro = 1, productivite_creations = 1",
               0.11729248247421786
             ]
           ]
@@ -208,11 +277,19 @@
           "theta": 0.12757535558158972,
           "corners": [
             [
-              "multiplicateur_macro = 0",
+              "multiplicateur_macro = 0, productivite_creations = 0",
               0.12757682315637564
             ],
             [
-              "multiplicateur_macro = 1",
+              "multiplicateur_macro = 0, productivite_creations = 1",
+              0.12757682315637564
+            ],
+            [
+              "multiplicateur_macro = 1, productivite_creations = 0",
+              0.1275738939827875
+            ],
+            [
+              "multiplicateur_macro = 1, productivite_creations = 1",
               0.1275738939827875
             ]
           ]
@@ -250,7 +327,573 @@
           "evaluations": 6000
         }
       }
+    },
+    "creations_sans_canal": {
+      "vieillie": 0.11729383479868827,
+      "figee": 0.12757474000803404
     }
+  },
+  "creations": {
+    "convention": "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté.",
+    "parametres": {
+      "elasticite": {
+        "centre": 0.043,
+        "bas": 0.0,
+        "haut": 0.2
+      },
+      "productivite": {
+        "centre": 0.5,
+        "bas": 0.0,
+        "haut": 1.0
+      },
+      "survie_annuelle": 0.9,
+      "montee_en_charge_ans": 5,
+      "taille_relative": 0.1,
+      "part_va_societes_pib": 0.6,
+      "assiette_part_pib": 0.092,
+      "instruments_entreprises": [
+        "impot_societes",
+        "contribution_sociale_is",
+        "cebge",
+        "cvae",
+        "c3s"
+      ],
+      "instruments_menages": [
+        "pfu",
+        "prelevements_sociaux_capital",
+        "cotisations_employeurs"
+      ],
+      "preenregistrement": "D-402"
+    },
+    "prelevements_eur": {
+      "figee": {
+        "2026": 0.0,
+        "2027": 0.0,
+        "2028": 0.0,
+        "2029": 0.0,
+        "2030": 0.0,
+        "2031": 0.0,
+        "2032": 0.0,
+        "2033": 0.0,
+        "2034": 0.0,
+        "2035": 0.0
+      },
+      "vieillie": {
+        "2026": 0.0,
+        "2027": 0.0,
+        "2028": 0.0,
+        "2029": 0.0,
+        "2030": 0.0,
+        "2031": 0.0,
+        "2032": 0.0,
+        "2033": 0.0,
+        "2034": 0.0,
+        "2035": 0.0
+      }
+    },
+    "chemins": [
+      {
+        "persistence": "lue",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.11729383479868827,
+            "c0": 0.11729383479868827,
+            "c1": 0.11729383479868827
+          },
+          "delta_sans_creations": [
+            0.014748765863684454,
+            0.028812715134864497,
+            0.04219647674384497,
+            0.054897569800123946,
+            0.06692795451846711,
+            0.07827676914671189,
+            0.0889650151957897,
+            0.09901014980928391,
+            0.1084437846979811,
+            0.11729383479868827
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.12757474000803404,
+            "c0": 0.12757474000803404,
+            "c1": 0.12757474000803404
+          },
+          "delta_sans_creations": [
+            0.015111647360535274,
+            0.029707171146949207,
+            0.043781401549036314,
+            0.05732027466430534,
+            0.07033051152586656,
+            0.08279716549143123,
+            0.09473803498239008,
+            0.10617020580440517,
+            0.11711038791919282,
+            0.12757474000803404
+          ]
+        }
+      },
+      {
+        "persistence": "eteint",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.11729623208444351,
+            "c0": 0.11729623208444351,
+            "c1": 0.11729623208444351
+          },
+          "delta_sans_creations": [
+            0.014748765863684454,
+            0.028812715134864497,
+            0.04219647674384497,
+            0.0548981153605117,
+            0.06692873972271363,
+            0.07827783098881591,
+            0.08896639187204514,
+            0.09901186022409014,
+            0.10844583463784918,
+            0.11729623208444351
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.1275765531578119,
+            "c0": 0.1275765531578119,
+            "c1": 0.1275765531578119
+          },
+          "delta_sans_creations": [
+            0.015111647360535274,
+            0.029707171146949207,
+            0.043781401549036314,
+            0.05732079455159189,
+            0.07033122690058069,
+            0.08279810476715332,
+            0.0947391938825608,
+            0.10617158413233363,
+            0.11711198380259358,
+            0.1275765531578119
+          ]
+        }
+      },
+      {
+        "persistence": "tenu",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.11729418755893573,
+            "c0": 0.11729418755893573,
+            "c1": 0.11729418755893573
+          },
+          "delta_sans_creations": [
+            0.014748765863684454,
+            0.028812715134864497,
+            0.04219647674384497,
+            0.05489757583464083,
+            0.06692796868529771,
+            0.07827682904529887,
+            0.08896513175085241,
+            0.09901033349778388,
+            0.10844404722501366,
+            0.11729418755893573
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.1275750360267509,
+            "c0": 0.1275750360267509,
+            "c1": 0.1275750360267509
+          },
+          "delta_sans_creations": [
+            0.015111647360535274,
+            0.029707171146949207,
+            0.043781401549036314,
+            0.05732028041352977,
+            0.07033052451222366,
+            0.08279722129008915,
+            0.09473814112517576,
+            0.10617036929114398,
+            0.1171106148458223,
+            0.1275750360267509
+          ]
+        }
+      }
+    ]
   },
   "scenario": "pres2027_philippe_programme",
   "titre": "pres2027_philippe_programme",
@@ -822,7 +1465,8 @@
     "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
     "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
     "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
-    "Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange dit « erroné » (folio 108, D-336)."
+    "Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange dit « erroné » (folio 108, D-336).",
+    "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté."
   ],
   "absent": {
     "rétroaction, instruments non couverts": "aefa : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; af : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; aide_logement : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; allocation_enfant : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; cf : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; crds_mini : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; crds_pfam : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; ppa : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; reduction_loyer_solidarite : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; rsa : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
@@ -854,7 +1498,7 @@
   "closed": {
     "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
     "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
-    "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+    "créations d'entreprises": "Canal ouvert dans la dette (but 22), hypothèse non validée : C8 reste l'indice de la couche entreprises ; le canal de la dette lit les euros de prélèvement, pas le taux normal seul, et la dette sans lui est donnée à côté.",
     "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
   },
   "uprating_note": "Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
@@ -865,7 +1509,8 @@
   "theta_box": {
     "year": 2035,
     "rows": [
-      "multiplicateur_macro"
+      "multiplicateur_macro",
+      "productivite_creations"
     ],
     "paths": [
       {
@@ -875,11 +1520,19 @@
             "theta": 0.11729383479868827,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.1172960171753048
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.1172960171753048
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.11729209441698973
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.11729209441698973
               ]
             ]
@@ -888,11 +1541,19 @@
             "theta": 0.12757474000803404,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.12757626333928385
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.12757626333928385
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.12757356636170147
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.12757356636170147
               ]
             ]
@@ -903,11 +1564,19 @@
             "theta": 0.1403729551389763,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.1403748125755082
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.1403748125755082
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.14037148848197667
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.14037148848197667
               ]
             ]
@@ -916,11 +1585,19 @@
             "theta": 0.14382672782136452,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.14382849648677265
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.14382849648677265
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.14382533107358997
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.14382533107358997
               ]
             ]
@@ -934,11 +1611,19 @@
             "theta": 0.11729623208444351,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.11729674011768898
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.11729674011768898
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.11729571335614941
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.11729571335614941
               ]
             ]
@@ -947,11 +1632,19 @@
             "theta": 0.1275765531578119,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.12757684800490088
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.12757684800490088
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.12757625578534548
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.12757625578534548
               ]
             ]
@@ -962,11 +1655,19 @@
             "theta": 0.14037505372947567,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.14037547182054588
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.14037547182054588
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.1403746251236424
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.1403746251236424
               ]
             ]
@@ -975,11 +1676,19 @@
             "theta": 0.14382872655932233,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.14382912449544594
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.14382912449544594
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.1438283186136835
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.1438283186136835
               ]
             ]
@@ -993,11 +1702,19 @@
             "theta": 0.11729418755893573,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.11729649468769066
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.11729649468769066
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.1172922683977522
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.1172922683977522
               ]
             ]
@@ -1006,11 +1723,19 @@
             "theta": 0.1275750360267509,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.12757666577975013
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.12757666577975013
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.12757370924991207
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.12757370924991207
               ]
             ]
@@ -1021,11 +1746,19 @@
             "theta": 0.14037328472218924,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.14037525921444183
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.14037525921444183
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.14037164997637763
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.14037164997637763
               ]
             ]
@@ -1034,11 +1767,19 @@
             "theta": 0.14382704193655504,
             "corners": [
               [
-                "multiplicateur_macro = 0",
+                "multiplicateur_macro = 0, productivite_creations = 0",
                 0.14382892201529085
               ],
               [
-                "multiplicateur_macro = 1",
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.14382892201529085
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.14382548520776517
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
                 0.14382548520776517
               ]
             ]
@@ -1047,7 +1788,7 @@
       }
     ]
   },
-  "commit": "d4f3f7ff6e0eb097a32b7e9a76c86baf4ff73504",
+  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
   "dirty": false,
   "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
   "annees": null,
@@ -1327,5 +2068,22 @@
         3.2260965657405426e-07
       ]
     }
-  ]
+  ],
+  "recalcul": {
+    "decision": "D-427",
+    "date": "2026-11-15",
+    "objet": "l'élasticité du canal des créations, changée sans passe ; aucun prélèvement sur les entreprises ou le capital ne bouge : aucun nombre ne change",
+    "nombres_refaits": false,
+    "elasticite_avant": {
+      "centre": 0.2,
+      "bas": 0.043,
+      "haut": 0.356
+    },
+    "elasticite": {
+      "centre": 0.043,
+      "bas": 0.0,
+      "haut": 0.2
+    },
+    "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161"
+  }
 }

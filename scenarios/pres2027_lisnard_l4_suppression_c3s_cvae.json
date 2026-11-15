@@ -1,0 +1,17 @@
+{
+  "name": "pres2027_lisnard_l4_suppression_c3s_cvae",
+  "year": 2026,
+  "created": "2026-11-13",
+  "source": "David Lisnard (Nouvelle Énergie), programme relevé le 2026-11-12 — Suppression de la C3S et, « le cas échéant », de la CVAE : « « La suppression de la C3S […] et, le cas échéant, de la CVAE […] représenterait 11,5 milliards d'euros » » (https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/, 2026-11-01)",
+  "note": "La C3S est supprimée (taux de 0,16 % en 2026 ramené à 0) et la CVAE aussi, sur le droit de 2026. Le candidat ne supprime la CVAE que « le cas échéant » : le choix retenu suit son chiffrage de 11,5 Md€, qui compte les deux impôts, et la plage de cvae_echelle couvre son maintien (1). La plage de la C3S va du droit de 2026 à 0, la borne du schéma. L'objectif d'impôts de production ramenés de 2 % à 1 % du PIB va au-delà de ces deux impôts (c'est la mesure « Baisse des impôts de production, à commencer par la C3S ») et n'est pas chiffré ici.",
+  "tags": [
+    "presidentielle_2027",
+    "lisnard",
+    "mesure_seule"
+  ],
+  "reform": {},
+  "firm_reform": {
+    "c3s_taux": 0.0,
+    "cvae_echelle": 0.0
+  }
+}

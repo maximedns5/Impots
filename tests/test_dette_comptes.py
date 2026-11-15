@@ -219,6 +219,41 @@ FENETRE = list(range(2021, 2026))
 TOLERANCE_61 = 0.0010
 
 
+def _eurostat_postes(annee: int) -> dict[str, float]:
+    """Les postes de la t. 3 d'Eurostat pour `annee`, en euros (le fichier est en M€)."""
+    import json
+
+    donnees = json.loads((comptes.RAW / comptes.SFA_FILE).read_text(encoding="utf-8"))
+    postes = donnees["dimension"]["na_item"]["category"]["index"]
+    temps = donnees["dimension"]["time"]["category"]["index"]
+    return {p: float(donnees["value"][str(i * len(temps) + temps[str(annee)])]) * 1e6
+            for p, i in postes.items()
+            if str(i * len(temps) + temps[str(annee)]) in donnees["value"]}
+
+
+def _sfa_cinq_postes(annees: list[int]) -> dict[int, float]:
+    """La somme à cinq postes (F_ASS + ORADJ + K61 + KX + YA3) que `sfa_publie` faisait
+    jusqu'à D-410, en points de PIB : K61 et KX y sont comptés deux fois. Gardée pour le
+    seul constat de D-342, qui a été mesuré sur elle."""
+    pib = comptes.gdp(annees)
+    return {a: sum(_eurostat_postes(a)[p] for p in ("F_ASS", "ORADJ", "K61", "KX", "YA3"))
+            / pib[a] for a in annees}
+
+
+@needs_files
+def test_the_published_sfa_is_the_change_in_debt_minus_the_deficit_of_its_table() -> None:
+    """D-410. L'ajustement de `sfa_publie` redonne GD_CH − B9_T3 de la même table à son
+    écart interne près (au plus 0,3 M€) : ORADJ contient K61 et KX, et les sommer à côté
+    les comptait deux fois (de −510 à +483,5 M€). Rouge sur la somme à cinq postes."""
+    sfa = comptes.sfa_publie(FENETRE)
+    pib = comptes.gdp(FENETRE)
+    for annee in FENETRE:
+        postes = _eurostat_postes(annee)
+        ecart = sfa[annee] * pib[annee] - (postes["GD_CH"] - postes["B9_T3"])
+        assert abs(ecart) <= 0.5e6, (
+            f"{annee} : ajustement moins GD_CH − B9_T3 = {ecart / 1e6:+.1f} M€")
+
+
 @needs_files
 def test_the_debt_identity_reproduces_the_published_path_2021_2025() -> None:
     """§6.1. Cinq années, un seul millésime, SFA reconstruit depuis ses composantes.
@@ -252,10 +287,15 @@ def test_the_2025_residual_is_the_vintage_term_left_by_the_october_notification(
     [+0,015 ; +0,025] pt, erreur propre et terme de millésime de somme nulle à 0,0002 pt.
     Ce test fige un CONSTAT de ce millésime. S'il casse, c'est que le millésime a changé :
     on le renomme sur une D-entrée neuve, on ne l'élargit pas.
+
+    CE CONSTAT PORTE SUR LA SOMME À CINQ POSTES de D-340, qui compte K61 et KX deux fois
+    (D-405, D-410) : elle est recalculée ici, telle que `sfa_publie` la faisait, pour que
+    le constat reste vrai de ce qu'il a mesuré. Le backtest sur l'ajustement corrigé est
+    le test suivant, préenregistré dans D-410.
     """
     from impots.dette.path import backtest
 
-    sfa = comptes.sfa_publie(FENETRE)
+    sfa = _sfa_cinq_postes(FENETRE)
     annees = comptes.realized_years(FENETRE, sfa=sfa)
     points = backtest(comptes.opening_ratio(FENETRE[0]), annees, tolerance=TOLERANCE_61)
 
@@ -279,6 +319,34 @@ def test_the_2025_residual_is_the_vintage_term_left_by_the_october_notification(
         f"l'erreur propre de 2025 ({epsilon:+.6f}) doit être l'opposé du terme de "
         f"millésime mesuré à part ({millesime:+.6f}) — sinon la cause nommée dans D-167 "
         f"n'est pas celle qui agit")
+
+
+@needs_files
+def test_the_corrected_backtest_holds_the_d410_prognosis() -> None:
+    """Le backtest sur l'ajustement corrigé, contre le pronostic de D-410, écrit et poussé
+    avant le correctif (3e4a05a). Sans le double compte, ce qui reste est l'écart du
+    ratio publié de 2020 et 2021 à la dette sur le PIB du millésime, puis le terme de
+    millésime de 2025. Les bornes sont celles du pronostic, en fractions de PIB."""
+    from impots.dette.path import backtest
+
+    sfa = comptes.sfa_publie(FENETRE)
+    annees = comptes.realized_years(FENETRE, sfa=sfa)
+    points = backtest(comptes.opening_ratio(FENETRE[0]), annees, tolerance=TOLERANCE_61)
+    residu = {p.year: p.residual for p in points}
+    facteur = {a.year: (1 + a.r) / (1 + a.g) for a in annees}
+    propre = {a: residu[a] - residu[a - 1] * facteur[a] for a in FENETRE[1:]}
+
+    assert all(p.within for p in points)
+    assert 0.00002 <= residu[2021] <= 0.00006, residu
+    assert all(0.00005 <= residu[a] <= 0.00012 for a in (2022, 2023, 2024)), residu
+    assert -0.00007 <= residu[2025] <= -0.00001, residu
+    assert abs(propre[2023]) < 0.00001 and abs(propre[2024]) < 0.00001, propre
+    assert -0.00013 <= propre[2025] <= -0.00011, propre
+    stocks = comptes.debt([2024, 2025])
+    implicite = ((stocks[2025][0] - stocks[2024][0])
+                 + comptes.apu_account([2025])[2025].net_lending_eur)
+    millesime = implicite / comptes.gdp([2025])[2025] - sfa[2025]
+    assert abs(propre[2025] + millesime) < 0.000002, (propre[2025], millesime)
 
 
 @needs_files

@@ -10,15 +10,18 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 
 from impots import service
 from impots.api.schemas import ReformSpec
 from impots.identifiants import millesime
 from impots.population import aggregate as aggregate_module
+from impots.population import ingest
 from impots.population import reconcile as reconcile_module
 from impots.population.build import PROCESSED, build
-from impots.population.ingest import RAW, write_manifest
+from impots.population.ingest import RAW
 from impots.population.runner import RUNS_DIR, run
 
 #: Limitations stated in the reconciliation report and in the UI. Measured, not
@@ -89,11 +92,13 @@ def _print_aggregates(agg: aggregate_module.Aggregates) -> None:
               "of household disposable income")
 
 
-#: Raw inputs whose canonical URL is known. Anything in data/raw/ that is NOT here
-#: gets manifested with a null url and an explicit "not reproducible" note, because
-#: an unmanifested file that backs a figure is exactly the gap D-026 closes: a
-#: checksum without a URL proves the file has not changed, not where it came from.
-KNOWN_SOURCES: dict[str, tuple[str, str]] = {
+#: Raw inputs whose canonical URL is known: (url, description[, licence]). A file in
+#: data/raw/ that is neither in the manifest nor here gets manifested with a null url
+#: and an explicit "not reproducible" note, and quarantined, because an unmanifested
+#: file that backs a figure is exactly the gap D-026 closes: a checksum without a URL
+#: proves the file has not changed, not where it came from. The manifest itself stays
+#: the record: `manifest` adds from here, it never rewrites from here (D-419).
+KNOWN_SOURCES: dict[str, tuple[str, ...]] = {
     "insee_cn2025_t7301_compte_administrations_publiques_S13.xlsx": (
         "https://www.insee.fr/fr/statistiques/fichier/8988833/T_7301_fr.xlsx",
         "INSEE, comptes nationaux annuels base 2020, tableau 7.301 — compte des "
@@ -193,56 +198,288 @@ KNOWN_SOURCES: dict[str, tuple[str, str]] = {
         "DGFiP Statistiques n° 39 — données des figures. The fiscal control totals: "
         "IS-liable firm count, résultat fiscal and bénéfices by size and by sector.",
     ),
+    # Les sources du jumeau manifestées à la main (D-410, D-413), déclarées ici pour que
+    # `impots population manifest` les garde au lieu de les mettre en quarantaine (D-416).
+    "eurostat_gov_10dd_edpt3_fr_sfa.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "gov_10dd_edpt3?format=JSON&geo=FR&sector=S13&unit=MIO_EUR&na_item=GD_CH"
+        "&na_item=B9_T3&na_item=F_ASS&na_item=ORADJ&na_item=K61&na_item=KX&na_item=YA3",
+        "Eurostat gov_10dd_edpt3, passage du déficit à la variation de la dette, France, "
+        "S13, M€ : B9_T3, GD_CH et les cinq composantes de l'ajustement flux-stocks, "
+        "2021→2025 (D-163, D-340).",
+    ),
+    "eurostat_irt_lt_mcby_a_fr_2009_2025.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "irt_lt_mcby_a?format=JSON&geo=FR&sinceTimePeriod=2009&untilTimePeriod=2025",
+        "Eurostat irt_lt_mcby_a, France : rendement de l'OAT à dix ans (critère de "
+        "Maastricht), moyenne annuelle en %, 2009→2025 (D-410).",
+    ),
+    "eurostat_irt_lt_mcby_m_fr_2009_2025.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "irt_lt_mcby_m?format=JSON&geo=FR&sinceTimePeriod=2009-01"
+        "&untilTimePeriod=2025-12",
+        "Eurostat irt_lt_mcby_m, la même série mensuelle, France, 2009-01→2025-12 : "
+        "recoupe la moyenne annuelle (D-410).",
+    ),
+    "eurostat_une_rt_a_fr_2009_2025.json": (
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+        "une_rt_a?format=JSON&geo=FR&age=Y15-74&unit=PC_ACT&unit=THS_PER&sex=T&sex=M"
+        "&sex=F&sinceTimePeriod=2009&untilTimePeriod=2025",
+        "Eurostat une_rt_a, France, 15-74 ans : taux de chômage BIT et milliers de "
+        "chômeurs, ensemble, hommes et femmes, 2009→2025 (D-410).",
+    ),
+    "insee_bdm_001768695_ipc_hors_tabac_annuel.xml": (
+        "https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/001768695",
+        "Insee, BDM 001768695 : IPC base 2015, variations annuelles, ensemble des ménages, "
+        "France, hors tabac, série arrêtée ; l'indice légal des pensions (D-362).",
+    ),
+    "insee_bdm_creations_entreprises_2009_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/"
+        "010755537+010755410+011811817+011811818?startPeriod=2009-01&endPeriod=2025-12",
+        "Insee, BDM : créations mensuelles brutes d'entreprises, France, 2009-01→2025-12, "
+        "ensemble, micro, individuelles hors micro, classiques (D-410).",
+    ),
+    "insee_bdm_defaillances_entreprises_2009_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/"
+        "001656093+001656094+001656095+001656096+001656097+001656098+001656099"
+        "+001656100+001656101+001656102+001656103+001656104"
+        "?startPeriod=2009-12&endPeriod=2025-12",
+        "Insee, BDM (source Banque de France) : défaillances d'entreprises, cumul brut sur "
+        "12 mois, France, 2009-12→2025-12, tous secteurs et onze secteurs (D-410).",
+    ),
+    "insee_cn2025_t3105_passage_deficit_dette.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8988843/t_3105_fr.xlsx",
+        "Insee, comptes nationaux base 2020, t. 3.105, passage du déficit des APU à la "
+        "variation de leur dette, millésime 2025, 2009→2025 (D-410).",
+    ),
+    "insee_cn2025_t6208_emploi_total_branches.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8988823/T_6208_fr.xlsx",
+        "Insee, comptes nationaux base 2020, t. 6.208, emploi intérieur total par branche, "
+        "millésime 2025, 1949→2025 ; la ligne « _T » (D-410).",
+    ),
+    "Freemium_jorf_global_20261108-140000.tar.gz": (
+        "https://echanges.dila.gouv.fr/OPENDATA/JORF/"
+        "Freemium_jorf_global_20261108-140000.tar.gz",
+        "DILA, archive complète du Journal officiel (JORF) en XML, version du 8 novembre "
+        "2026 ; lue par scripts/jumeau_jorf_*.py pour vérifier les mesures votées (D-413).",
+    ),
+    "ocde_eo119_xmkt_fra_2009_2025.csv": (
+        "https://sdmx.oecd.org/public/rest/data/OECD.ECO.MAD,DSD_EO@DF_EO,/FRA.XMKT.A"
+        "?startPeriod=2009&endPeriod=2025&format=csvfilewithlabels",
+        "OCDE, Economic Outlook n° 119 : demande mondiale adressée à la France en volume "
+        "(XMKT, « Export market for goods and services »), 2009→2025 ; l'exogène du "
+        "commerce dans le rejeu de l'histoire (D-421).",
+    ),
+    # Les a priori des θ du jumeau tirés de la littérature (D-424).
+    "iza_dp7958_2014_lichter_peichl_siegloch_labor_demand.pdf": (
+        "https://docs.iza.org/dp7958.pdf",
+        "Lichter, Peichl et Siegloch, « The Own-Wage Elasticity of Labor Demand: A "
+        "Meta-Regression Analysis », IZA DP n° 7958, février 2014. p. 22 du PDF (folio "
+        "19) : l'estimation préférée, −0,246, dans [−0,072 ; −0,446]. L'a priori de "
+        "l'élasticité de l'emploi à son coût du jumeau (D-424).",
+        "IZA Discussion Paper — accès ouvert",
+    ),
+    "iza_dp7698_2013_bargain_peichl_labor_supply_survey.pdf": (
+        "https://docs.iza.org/dp7698.pdf",
+        "Bargain et Peichl, « Steady-State Labor Supply Elasticities: A Survey », IZA DP "
+        "n° 7698, octobre 2013. p. 10 du PDF : les moyennes des élasticités publiées par "
+        "groupe (femmes en couple 0,43, hommes 0,12, femmes seules 0,23), sans "
+        "dispersion chiffrée ; une comparaison de l'offre de travail (D-424).",
+        "IZA Discussion Paper — accès ouvert",
+    ),
+    "tinbergen_dp02029_2002_nijkamp_poot_wage_curve.pdf": (
+        "https://papers.tinbergen.nl/02029.pdf",
+        "Nijkamp et Poot, « The Last Word on the Wage Curve? », Tinbergen Institute DP "
+        "02-029/3 (2002 ; Journal of Economic Surveys 19(3), 2005). Tableau 4, p. 33 du "
+        "PDF : l'élasticité de la courbe des salaires corrigée du biais de publication, "
+        "−0,077 (e.-t. 0,006), l'hétérogénéité entre études s = 0,070. L'a priori des "
+        "salaires sur le chômage du jumeau (D-424).",
+        "Tinbergen Institute Discussion Paper — accès ouvert",
+    ),
+    "gechert_havranek_irsova_kolcunova_2021_capital_labor_substitution.pdf": (
+        "https://meta-analysis.cz/sigma/sigma.pdf",
+        "Gechert, Havranek, Irsova et Kolcunova, « Measuring Capital-Labor Substitution: "
+        "The Importance of Method Choices and Publication Bias », version du 28 avril "
+        "2021 (Review of Economic Dynamics 45, 2022). Tableau 9, p. 35 du PDF : "
+        "l'élasticité de substitution de la meilleure pratique, 0,30, IC à 95 % "
+        "(−0,01 ; 0,60). L'a priori de l'élasticité de l'investissement au coût du "
+        "capital du jumeau (D-424).",
+        "Document de travail des auteurs — accès ouvert",
+    ),
+    "imbs_mejean_2010_trade_elasticities.pdf": (
+        "https://www.frbsf.org/Imbs.pdf",
+        "Imbs et Méjean, « Trade Elasticities », document de travail, septembre 2010 "
+        "(Review of International Economics 25(2), 2017). Tableaux 2 et 4, p. 34 et 35 "
+        "du PDF : les élasticités-prix agrégées de la France, importations −3,198 et "
+        "−3,133, exportations −3,493 et −3,821, avec leurs écarts-types ; une "
+        "comparaison des élasticités du commerce (D-424).",
+        "Document de travail — accès ouvert",
+    ),
+    "insee_bdm_creations_region_secteur_m2022_2012_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/CREATIONS-ENTREPRISES-METHODE-2022/"
+        "T..TYPE-ENT_PM+TYPE-ENT_TOTAL+TYPE-ENT_HAE......BRUT.?startPeriod=2000-Q1"
+        "&endPeriod=2025-Q4",
+        "Insee, BDM, flux CREATIONS-ENTREPRISES-METHODE-2022 : créations trimestrielles "
+        "brutes d'entreprises (sociétés, hors micro-entrepreneurs, ensemble), par région et "
+        "secteur (A10, A21), 2012-T1→2025-T4 ; le panneau des créations (D-425).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
+    "insee_bdm_creations_region_secteur_arretee_2000_2021.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/CREATIONS-ENTREPRISES/"
+        "T..TYPE-ENT_HAE+TYPE-ENT_TOTAL......BRUT.?startPeriod=1990-Q1&endPeriod=2025-Q4",
+        "Insee, BDM, flux CREATIONS-ENTREPRISES (séries arrêtées, ancienne méthode) : "
+        "créations trimestrielles brutes hors micro-entrepreneurs et ensemble, par région "
+        "et secteur, 2000-T1→2021-T4 ; le placebo des créations (D-425).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
+    "insee_bdm_defaillances_region_secteur_1990_2025.xml": (
+        "https://www.bdm.insee.fr/series/sdmx/data/DEFAILLANCES-ENTREPRISES/"
+        "T..NOMBRE_DEFAILLANCES.....BRUT.?startPeriod=1990-Q1&endPeriod=2025-Q4",
+        "Insee, BDM (source Banque de France), flux DEFAILLANCES-ENTREPRISES : défaillances "
+        "trimestrielles brutes par date de jugement, par région et secteur, et par "
+        "département (ensemble), 1990-T1→2025-T4 ; le panneau des défaillances (D-425).",
+        "Licence Ouverte / Etalab 2.0",
+    ),
 }
 
 
-def cmd_manifest(_: argparse.Namespace) -> int:
-    """Re-record the checksums of every raw input, named or not."""
-    known = {
-        "FD_EEC_2024.parquet": (
-            "https://www.insee.fr/fr/statistiques/fichier/8632441/FD_EEC_2024.parquet",
-            "Enquête Emploi en Continu 2024, fichier détail",
-        ),
-        "Varmod_EEC_2024.csv": (
-            "https://www.insee.fr/fr/statistiques/fichier/8632441/Varmod_EEC_2024.csv",
-            "Dictionnaire des variables et modalités de l'EEC 2024",
-        ),
-    }
-    from impots.population.ingest import QUARANTINE
+#: The two EEC files of Phase 1, sourced like KNOWN_SOURCES.
+EEC_SOURCES: dict[str, tuple[str, str]] = {
+    "FD_EEC_2024.parquet": (
+        "https://www.insee.fr/fr/statistiques/fichier/8632441/FD_EEC_2024.parquet",
+        "Enquête Emploi en Continu 2024, fichier détail",
+    ),
+    "Varmod_EEC_2024.csv": (
+        "https://www.insee.fr/fr/statistiques/fichier/8632441/Varmod_EEC_2024.csv",
+        "Dictionnaire des variables et modalités de l'EEC 2024",
+    ),
+}
+UNSOURCED = ("Source URL not recorded, so nothing computed from this file is reproducible "
+             "by a third party. Quarantined under data/raw/_unsourced/ (D-028): the "
+             "checksum still tracks it, and pipeline code refuses to open it. Re-source it "
+             "if something needs it.")
 
-    known = {**known, **KNOWN_SOURCES}
-    QUARANTINE.mkdir(parents=True, exist_ok=True)
-    candidates = [f for f in RAW.iterdir() if f.is_file() and f.name != "MANIFEST.json"]
-    candidates += [f for f in QUARANTINE.iterdir() if f.is_file()]
 
-    entries, quarantined, released = [], 0, 0
-    for file in sorted(candidates, key=lambda f: f.name):
-        sourced = file.name in known
-        # A sourced file belongs in data/raw/; an unsourced one belongs out of the way,
-        # so that its presence in the tree can never be mistaken for provenance (D-028).
-        # Adding a URL to KNOWN_SOURCES releases it on the next run.
-        target = (RAW if sourced else QUARANTINE) / file.name
-        if file != target:
-            file.rename(target)
-            released += sourced
-            quarantined += not sourced
-        url, description = known.get(file.name, (None, (
-            "Source URL not recorded, so nothing computed from this file is "
-            "reproducible by a third party. Quarantined under data/raw/_unsourced/ "
-            "(D-028): the checksum still tracks it, and pipeline code refuses to open "
-            "it. Re-source it if something needs it."
-        )))
-        entries.append({"filename": file.name, "path": target, "url": url,
-                        "quarantined": not sourced,
-                        "licence": "Licence Ouverte / Etalab 2.0" if url else "unknown",
-                        "description": description})
-    path = write_manifest(entries)
-    sourced_count = sum(1 for e in entries if e["url"])
-    print(f"wrote {path} with {len(entries)} inputs, {sourced_count} sourced")
-    if quarantined:
-        print(f"  moved {quarantined} unsourced file(s) to data/raw/_unsourced/")
-    if released:
-        print(f"  released {released} newly-sourced file(s) back to data/raw/")
+@dataclass
+class ManifestRun:
+    """What `manifest` did, or refused to do, on one data/raw (D-419)."""
+
+    refused: list[str] = field(default_factory=list)
+    added: list[str] = field(default_factory=list)
+    quarantined: list[str] = field(default_factory=list)
+    released: list[str] = field(default_factory=list)
+    verified: list[str] = field(default_factory=list)
+    absent: list[str] = field(default_factory=list)
+    written: bool = False
+
+
+def manifest_raw(raw: Path, *, known: dict[str, tuple[str, ...]] | None = None
+                 ) -> ManifestRun:
+    """Bring `raw/MANIFEST.json` up to date FROM ITSELF (D-419, after D-416).
+
+    The manifest is the record, not something rebuilt from KNOWN_SOURCES: every entry
+    is kept as it stands (URL, download date, licence, provenance, normalization). The
+    sha256 of every manifested file present is recomputed and checked (on its normalized
+    bytes when the entry declares a normalization, D-159); a digest that
+    changed is a named refusal and nothing is written or moved (the vintage moved, or
+    the file is not the one recorded: resolve it deliberately, D-004). A file present
+    and not manifested is added if KNOWN_SOURCES declares it, and quarantined
+    (D-028) otherwise. A manifested file absent from this tree keeps its entry and is
+    reported. The one entry that changes is a quarantined one whose file KNOWN_SOURCES
+    now declares: it gets its URL and leaves the quarantine (D-028's release)."""
+    known = {**EEC_SOURCES, **KNOWN_SOURCES} if known is None else known
+    quarantine = raw / "_unsourced"
+    path = raw / "MANIFEST.json"
+    old = (json.loads(path.read_text(encoding="utf-8")) if path.exists()
+           else {"generated": None, "files": {}})
+    files: dict[str, dict] = {name: dict(entry) for name, entry in old["files"].items()}
+    present: dict[str, Path] = {}
+    for folder in (raw, quarantine):
+        if folder.exists():
+            for f in folder.iterdir():
+                if f.is_file() and f.name != "MANIFEST.json":
+                    if f.name in present:
+                        raise ValueError(f"{f.name} is both in {raw} and in {quarantine}")
+                    present[f.name] = f
+    run = ManifestRun()
+    for name, entry in files.items():
+        f = present.get(name)
+        if f is None:
+            run.absent.append(name)
+            continue
+        if entry.get("normalization"):
+            # A re-stamped publisher (D-159): judged on the normalized digest, the
+            # contract `impots donnees check` uses (`donnees.empreinte`, `attendu`).
+            from impots import donnees
+
+            e = ingest.ManifestEntry(filename=name, **entry)
+            actual, expected = donnees.empreinte(f.read_bytes(), e), donnees.attendu(e)
+        else:
+            actual, expected = ingest.sha256_of(f), entry["sha256"]
+        if actual != expected:
+            run.refused.append(f"{name}: manifested {expected}, on disk {actual}")
+        else:
+            run.verified.append(name)
+    if run.refused:
+        return run
+    today = date.today().isoformat()
+    moves: list[tuple[Path, Path]] = []
+    for name, f in sorted(present.items()):
+        entry = files.get(name)
+        if entry is not None:
+            if not entry.get("url") and entry.get("quarantined") and name in known:
+                url, description, *licence = known[name]
+                entry.update(url=url, description=description, quarantined=False)
+                if licence:
+                    entry["licence"] = licence[0]
+                moves.append((f, raw / name))
+                run.released.append(name)
+            continue
+        sourced = name in known
+        url, description, *licence = known.get(name, (None, UNSOURCED))
+        files[name] = {"url": url, "quarantined": not sourced,
+                       "sha256": ingest.sha256_of(f), "bytes": f.stat().st_size,
+                       "downloaded": today, "licence": licence[0] if licence else "unknown",
+                       "description": description}
+        if sourced:
+            run.added.append(name)
+            moves.append((f, raw / name))
+        else:
+            run.quarantined.append(name)
+            moves.append((f, quarantine / name))
+    if not (run.added or run.quarantined or run.released):
+        return run
+    for source, target in moves:
+        if source != target:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            source.rename(target)
+    path.write_text(json.dumps({"generated": today, "files": files}, indent=2,
+                               ensure_ascii=False) + "\n", encoding="utf-8")
+    run.written = True
+    return run
+
+
+def cmd_manifest(args: argparse.Namespace) -> int:
+    """Check the raw inputs against the manifest and add the new ones (D-419)."""
+    raw = Path(args.raw) if getattr(args, "raw", None) else RAW
+    run = manifest_raw(raw)
+    if run.refused:
+        print(f"refused: {len(run.refused)} manifested file(s) no longer match their "
+              f"sha256; nothing written, nothing moved. Resolve each deliberately "
+              f"(D-004, D-419):", file=sys.stderr)
+        for line in run.refused:
+            print(f"  {line}", file=sys.stderr)
+        return 1
+    print(f"{raw / 'MANIFEST.json'}: {len(run.verified)} file(s) checked against their "
+          f"sha256" + ("" if run.written else ", nothing to add"))
+    for label, names in (("added (declared in KNOWN_SOURCES)", run.added),
+                         ("quarantined to _unsourced/ (neither manifested nor declared)",
+                          run.quarantined),
+                         ("released from _unsourced/ (now declared)", run.released),
+                         ("manifested but absent from this tree, entry kept", run.absent)):
+        if names:
+            print(f"  {len(names)} {label}: {', '.join(names[:8])}"
+                  + (" …" if len(names) > 8 else ""))
     return 0
 
 
@@ -1478,6 +1715,15 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                               layers={"menages": households, "entreprises": firms})
 
     years = list(range(start.year + 1, start.year + 1 + args.horizon))
+    creations_params = None
+    if getattr(args, "creations", False):
+        from impots.predictif import creations as creations_module
+
+        try:
+            creations_params = creations_module.charger(exiger_entree=True)
+        except creations_module.CreationsError as error:
+            print(str(error), file=sys.stderr)
+            return 1
     store = macro_store = None
     if whole:
         from impots.behavioural.store import load as load_store
@@ -1497,6 +1743,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                 # of the measure's kind, a firm reform alone (D-288).
                 return Priced(cost=0.0, impulse={} if args.macro else None,
                               layers={"menages": 0.0, "entreprises": 0.0},
+                              prelevements={},
                               behaviour_asked=args.behavioural)
             print(f"  {year} · {view} · passe du simulateur…", flush=True)
             _liberer()
@@ -1511,6 +1758,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
                           uncovered=dict(first.uncovered),
                           layers=getattr(first, "layers", None),
+                          prelevements=getattr(first, "prelevements", None),
                           behaviour_asked=getattr(first, "behaviour_asked", False))
     try:
         prices = annuel.price_years(years, price,
@@ -1525,7 +1773,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             persistence=args.persistence, store=store, macro_store=macro_store,
             firm_note=(service.firm_report_note(scenario.firm_reform, years) if firm_part
                        else None), commit=commit, dirty=dirty, where=args.ou,
-            annees=scenario.annees)
+            annees=scenario.annees, creations=creations_params)
     except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
             maturite.MaturityError, retroaction.FeedbackError) as error:
         print(str(error), file=sys.stderr)
@@ -1717,10 +1965,9 @@ def cmd_etude(args: argparse.Namespace) -> int:
             print(f"-> {study.figer_avant()}")
             return 0
         if args.action == "ecrire":
-            text = study.render(study.load())
-            study.page.parent.mkdir(parents=True, exist_ok=True)
-            study.page.write_text(text, encoding="utf-8")
-            print(f"-> {study.page} ({len(text.splitlines())} lignes)")
+            page, *figures = study.ecrire()
+            print(f"-> {page} ({len(page.read_text(encoding='utf-8').splitlines())} lignes, "
+                  f"{len(figures)} graphiques)")
             return 0
         why = study.drift()
     except etude.EtudeError as error:
@@ -1994,7 +2241,10 @@ def build_parser() -> argparse.ArgumentParser:
     population = subcommands.add_parser("population", help="the L1 synthetic population")
     actions = population.add_subparsers(dest="action", required=True)
 
-    manifest = actions.add_parser("manifest", help="record checksums of the raw inputs")
+    manifest = actions.add_parser(
+        "manifest", help="check the raw inputs against the manifest, add the new ones")
+    manifest.add_argument("--raw", default=None,
+                          help="the data/raw to work on (default: the repository's)")
     manifest.set_defaults(func=cmd_manifest)
 
     builder = actions.add_parser("build", help="build the population parquet")
@@ -2327,6 +2577,11 @@ def build_parser() -> argparse.ArgumentParser:
                            help="the GDP → receipts loop, one impulse per year (D-236)")
     predictif.add_argument("--ou", help="where the passes run, which the report says "
                            "(D-275)")
+    predictif.add_argument(
+        "--creations", action="store_true",
+        help="Le canal des créations d'entreprises dans la dette (but 22) : refusé tant "
+             "que sa D-entrée préenregistrée n'est pas nommée dans son fichier de "
+             "paramètres. La dette sans lui est portée à côté.")
     predictif.add_argument("--persistence", choices=["lue", "eteint", "tenu"],
                            help="past three years with the loop; all three side by side if absent")
     predictif.set_defaults(func=cmd_predictif)

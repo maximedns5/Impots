@@ -28840,3 +28840,3919 @@ le magasin, par `python -m impots.predictif.annonce ecrire`, dans
 un fichier de données ; les pages les y lisent (`annonce.lue()`). Un test tient le rapport
 égal au magasin, là où les données sont. Sans les fichiers hors de git, `site verifier` et
 `site publiable` sont verts. Aucun nombre ne change : la page est la même.
+
+## D-400 — Le but 22 lancé : graphiques, mesures seules, créations d'entreprises
+
+**Le but** (BUT.md, but 22) : chaque étude se lit d'abord en graphiques, mesure par mesure
+et année par année. Trois chantiers, chacun dans son worktree, joints un à un sur
+`claude/but22` : (A) les graphiques en SVG, écrits par le code depuis les seuls rapports
+commités ; (B) chaque mesure chiffrée d'un programme passe aussi seule, en entier ; (C) un
+canal de créations d'entreprises, symétrique, avec un coefficient de productivité de 0 à
+1, qui entre dans la dette publiée.
+
+**Les décisions du propriétaire**, le 13 novembre 2026 : le SVG plutôt qu'une
+bibliothèque ; les mesures seules en entier, chemin annuel compris ; le canal des
+entreprises dans la dette publiée dès ce but, même sans source qui redonne un total
+publié. Les garde-fous de ce dernier choix sont écrits dans le but : l'élasticité et le
+coefficient central nommés, avec leur source et leur plage, dans une D-entrée
+préenregistrée avant la première passe ; une boîte θ de 0 à 1 ; chaque page dit que sa
+dette lit une hypothèse non validée et montre la dette sans ce canal.
+
+**Ce qui n'est pas lu.** Aucun chiffrage de tiers des programmes ou des mesures (règle
+des préenregistrements aveugles). La source du canal des entreprises est une élasticité
+de la littérature, pas le chiffrage d'un programme.
+
+## D-401 — Les graphiques, les mesures seules et le canal des créations, écrits
+
+**Les graphiques** (chantier A). `impots.graphiques` écrit du SVG pur, sans bibliothèque
+ni script (décision du propriétaire), depuis les seuls rapports commités : mêmes rapports,
+mêmes octets. Chaque page porte, en tête de sa section, les déciles de la première année,
+la cascade du coût de 2026 à la dette de 2035 (D-349), la trajectoire de 2026 à 2035 (le
+solde, la dette, le PIB, par vue et par persistance, la boîte θ en bande), la frise des
+mesures d'un programme et de leurs plages, et, sous la lecture annoncée, à part (D-380),
+la dette si ce qui est annoncé est tenu. Les SVG s'écrivent à côté de la page
+(`docs/etudes/graphiques/<étude>/`), que le Markdown référence ; le site les reprend en
+ligne. `etude verifier` et `site verifier` refusent un SVG absent, en trop, ou qui ne
+redonne pas ses rapports ; la trajectoire rejoue le chemin du rapport et refuse un écart
+de plus de 1e-9. Vu au téléphone (iPhone 13), clair et sombre : aucun débordement.
+
+**Les mesures seules** (chantier B). Une étude de programme porte ses mesures (`mesures`),
+chacune sur le scénario de son cas (`pres2027_<slug>_<id>`) ; ses passes ajoutent la
+première année puis le chemin annuel de chaque mesure, sous `mesures/<id>/`. La page a une
+section « Chaque mesure seule, et leur interaction » : chaque mesure, leur somme, la part
+chiffrée, et l'interaction, la part moins la somme, jamais répartie. Pas de passe pour un
+programme d'une seule mesure (sa part est cette mesure) ni pour Dupont-Aignan (D-398) ;
+les points de plage chiffrent déjà la mesure seule. Les trois mesures des entreprises
+reçoivent leur scénario seul ; aucun cas de `chiffrages_preregistres/` n'est touché.
+
+**Le canal des créations d'entreprises** (chantiers C et D). `predictif.creations` : la
+variation des prélèvements sur les entreprises et le capital passe en points d'un taux
+apparent, prélèvement sur profit ; le taux d'entrée y répond par une élasticité ; chaque
+cohorte d'entrants survit, monte en charge et pèse une taille et une productivité
+relatives ; l'écart de valeur ajoutée va au PIB et, au taux de prélèvements, aux
+recettes, dans la dette comme la boucle de Mésange. Le canal ne lit que des instruments,
+jamais qui propose une mesure : une hausse et une baisse de même montant donnent des effets
+opposés. Instruments lus, sur décision du propriétaire du 13 novembre 2026 : l'IS, sa
+contribution sociale, la CEBGE, la CVAE et la C3S (lues euro pour euro comme l'IS), le PFU
+et les prélèvements sociaux du capital, et les cotisations patronales nettes des
+allègements, qui sont aussi dans la boucle de Mésange : ce double compte est un choix du
+propriétaire, dit sur chaque page. La productivité relative a sa ligne θ, de 0 à 1 ; la
+dette sans le canal est calculée à côté et montrée sur la page et sur la trajectoire.
+`impots etude lancer` passe `--creations` au chemin annuel de chaque ligne ; la première
+année (sans dette) et les plages (mécaniques) ne le lisent pas ; un chemin d'avant le canal
+ne reprend pas dans une série qui le lit. La note : `docs/diagnostics/`, le fichier
+`creations_entreprises.md`.
+
+**Ce qui est tenu.** Les tests légers de chaque chantier ; 782 verts à la jointure. Aucun
+nombre publié n'a changé : les pages commitées, d'avant le canal, se vérifient telles
+quelles.
+
+## D-402 — La série du but 22 préenregistrée : le canal, les mesures seules
+
+**Le canal, ses paramètres** (décision du propriétaire, D-400 : dans la dette publiée,
+sans source qui redonne un total publié ; une hypothèse non validée, dite sur chaque
+page). Élasticité ε = 0,20 point de taux d'entrée par point de taux, plage 0,043 à 0,356 :
+Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 (p. 40
+du PDF) et p. 21-22, du premier quartile à la médiane du taux effectif, le milieu de
+l'intra-groupe et des variables instrumentales (D-245) ; appliquée à un taux apparent,
+prélèvement sur profit (b = 0,092 du PIB : l'IS de 2024 sur 25,825 %, Insee, comptes
+nationaux 2025, t. 3.217), non au taux effectif des auteurs, que le projet ne reconstruit
+pas (D-247). La plage est une sensibilité dite à côté. Productivité relative c = 0,5, sa
+boîte θ de 0 à 1 : aucune source ne la chiffre pour des entrants marginaux. Fixes, et
+choisis, non vérifiés sur un document : la survie annuelle (0,90), la montée en charge
+(linéaire sur 5 ans), la taille relative à maturité (0,10), la part des sociétés dans le
+PIB (0,60). Le Monte-Carlo du verdict lit le canal à c = 0,5, sans le tirer.
+
+**Ce qui tourne.** Toute la série, sur le commit qui porte cette entrée : les dix-sept
+études de D-397 (Dupont-Aignan reste refusée, D-398), cadre central, population de 2024,
+millésime d'entreprises 2023 ; leurs premières années, leurs points de plage, leurs
+chemins annuels, avec le canal ; et les 35 mesures seules de dix programmes, première
+année et chemin annuel. Deux files ; une étude qu'un manque de mémoire arrête reprend
+ensuite, seule, sur le même commit. La série d'avant est celle du but 21, figée par
+`impots etude avant` ; ses rapports sont retirés.
+
+**Le pronostic.** Δb₂₀₃₅ à θ½, vue vieillie, persistance « lue », en points de PIB.
+
+* La première année de chaque ligne est celle de D-397, à 0,1 % près : ni le canal ni les
+  graphiques n'y touchent.
+* Δb sans le canal est celui de D-397, à 1e-6 point près : le code ne change rien d'autre
+  au chemin.
+* L'écart du canal, Δb avec moins Δb sans, a le signe de la variation des prélèvements
+  qu'il lit, en 2026 : positif quand ils montent (moins de créations, moins de recettes),
+  négatif quand ils baissent ; par Md€ de cette variation, de 0,01 à 0,05 point ; une ligne
+  dont la variation est sous 1 Md€ s'écarte de moins de 0,05 point.
+* Les verdicts de D-397 tiennent, sauf où l'écart du canal fait passer P(hausse) d'un côté
+  d'un seuil de D-345 ; la page le dit.
+* Chaque mesure seule : Δb par Md€ de sa première année de 0,04 à 0,22 pour un impôt des
+  ménages (IR, CSG, TVA, PFU, quotient), de 0 à 0,10 pour le SMIC et le point d'indice,
+  de 0,15 à 0,35 pour une prestation ou une pension, de −0,05 à 0,25 pour un impôt des
+  entreprises ; une mesure qui rapporte suit la même règle au signe près.
+* L'interaction, la part moins la somme de ses mesures : sous 10 % de la part pour le coût
+  de la première année, sous 20 % pour Δb.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Le résultat va dans une nouvelle
+D-entrée, avec la série d'avant, l'écart au pronostic et le coût du canal.
+
+## D-403 — La série du but 22 arrêtée : douze études sur dix-sept, contre D-402
+
+**L'arrêt.** Le propriétaire a arrêté la série de D-402 le 14 novembre vers 15 h 20 : trop
+longue. Le projet se réoriente vers le jumeau numérique (but 23, D-404, écrite sur la
+branche `claude/but23-cadre`). Rien n'est relancé. Les rapports écrits sont publiés pour
+les études complètes, et pour elles seules.
+
+**Ce qui a tourné.** Sur `5a68669`, qui porte D-402, deux files à partir du 13 novembre à
+12 h 49 UTC. Trois chemins sont tués par manque de mémoire (`BrokenProcessPool` : deux
+chemins de front sur 15 Go) : Tondelier à 20 h 02, Lisnard à 21 h 12, Attal à 21 h 13. Le
+conteneur redémarre ensuite. La reprise tourne sur une seule file, à partir de 23 h 58, et
+saute les rapports déjà écrits sur le même commit, comme le lanceur le prévoit ; elle finit
+les trois. Aucune passe témoin : tout est sur un seul commit.
+
+* **Complètes** (toutes leurs passes, rc = 0) : le PLFSS 2027 (prime et APL), Mélenchon,
+  Retailleau, Le Pen, Roussel, Philippe, Ruffin, Kazib, Bouamrane, Attal, Tondelier,
+  Lisnard. Douze études, treize lignes, 33 mesures seules de neuf programmes ; Kazib et
+  Bouamrane n'en ont pas.
+* **Non refaites** : Labib, coupée par l'arrêt (20 rapports sur 21, le chemin de la mesure
+  seule « revenu minimum à 2 200 € » manque ; aucun n'est publié) ; le PLF 2027, Arthaud,
+  Glucksmann et Zemmour, qui n'ont pas tourné. Leurs pages et leurs graphiques sont
+  retirés, leurs rapports d'avant l'étaient à `5a68669` ; leurs gels `avant/serie.json`
+  restent. Le site les dit « préenregistrée (D-402), ses passes n'ont pas tourné », la
+  dette et la comparaison du parcours « non refaite au but 22 (D-403) ».
+* Dupont-Aignan reste refusé (D-398).
+
+**Le résultat contre D-402**, pour ce qui est calculé seulement. Δb₂₀₃₅ à θ½, vue vieillie,
+persistance « lue », en points de PIB ; « sans » est le même chemin rejoué sans le canal
+(`rejouer.chemin`, `creations=False`) ; la variation est celle des prélèvements que le
+canal lit, en 2026, vue vieillie.
+
+| ligne | coût | Δb | sans | canal | variation | par Md€ | verdict |
+|---|---:|---:|---:|---:|---:|---:|---|
+| PLFSS, prime | −0,56 | −0,162 | −0,162 | 0 | 0 | — | baisse |
+| PLFSS, APL | −0,07 | −0,067 | −0,067 | 0 | 0 | — | baisse |
+| Mélenchon | +88,98 | +26,784 | +27,537 | −0,754 | −23,31 | 0,032 | hausse |
+| Retailleau | +48,89 | +10,993 | +11,396 | −0,403 | −11,65 | 0,035 | hausse |
+| Philippe | +46,57 | +11,729 | +11,729 | 0 | 0 | — | hausse |
+| Attal | +66,18 | +4,238 | +4,283 | −0,044 | −2,68 | 0,016 | dépend |
+| Lisnard | +36,19 | +5,490 | +5,699 | −0,208 | −6,87 | 0,030 | dépend |
+| Le Pen | +21,41 | +2,997 | +2,997 | 0 | 0 | — | dépend |
+| Ruffin | +33,16 | +2,130 | +2,713 | −0,582 | −18,26 | 0,032 | dépend |
+| Tondelier | +18,17 | +2,189 | +2,597 | −0,408 | −13,18 | 0,031 | hausse |
+| Roussel | +32,97 | +0,481 | +1,430 | −0,949 | −29,49 | 0,032 | dépend |
+| Kazib | +15,44 | −0,016 | +0,492 | −0,508 | −15,98 | 0,032 | dépend |
+| Bouamrane | +15,32 | −0,016 | +0,488 | −0,504 | −15,84 | 0,032 | dépend |
+
+* **La première année** est celle de D-397 à l'euro près, sur les treize lignes : tenu.
+* **Δb sans le canal** est celui de D-397 à l'identique, écart nul : tenu.
+* **L'écart du canal** a le signe de la variation partout, négatif : les prélèvements
+  lus baissent sur les neuf lignes qui en ont, et la dette avec. Par Md€ de variation, de
+  0,016 (Attal) à 0,035 (Retailleau), dans 0,01 à 0,05 ; les quatre lignes sans variation
+  ne s'écartent pas : tenu sur les treize.
+* **Les verdicts de D-397 tiennent** tous, Monte-Carlo et « selon θ ». Le plus proche d'un
+  seuil, Lisnard, passe de 88,85 % à 88,15 % des tirages en hausse : « dépend » reste.
+* **Les mesures seules**, Δb par Md€ de leur première année : 24 sur 33 dans leur
+  fourchette. Les impôts des ménages, cotisations salariales comprises : 14 sur 16. Manquent
+  la tranche d'IR à 60 % de Tondelier, qui rapporte 0,92 Md€ et monte pourtant la dette de
+  0,013 point (le coût après comportements la baisse de 0,227 point ; la boucle reprend
+  0,240), et la CVEC de Le Pen, 0,27 pour 0,04 à 0,22, que D-402 ne classait pas : on la
+  lit ici avec les impôts des ménages. Les impôts des entreprises, cotisations patronales
+  comprises : 5 sur 5. Les prestations et pensions : 5 sur 6, le revenu familial de
+  Retailleau à 0,351 pour 0,35 au plus. Le SMIC et le point d'indice : 0 sur 6. Les quatre
+  SMIC baissent un peu la dette, de −0,0010 à −0,0014 point par Md€ pour 0 à 0,10 ; les
+  deux points d'indice la montent de 0,79 à 0,80 point par Md€. Le pronostic manqué n'est
+  pas réécrit.
+* **L'interaction**, la part moins la somme de ses mesures, sur les neuf programmes : au
+  plus 4,0 % de la part pour le coût (Le Pen), sous 10 %, et 5,2 % pour Δb (Le Pen), sous
+  20 % : tenu.
+
+Sur les six pronostics, cinq tiennent sur ce qui est calculé ; celui des mesures seules
+manque sur neuf mesures sur 33.
+
+**Ce que le canal lit des SMIC.** Le gros du canal vient des programmes du SMIC (Roussel,
+Kazib, Bouamrane, Mélenchon, Ruffin, Tondelier) : les cotisations patronales nettes des
+allègements baissent quand le SMIC monte (Kazib : +1,38 Md€ de cotisations brutes, +17,61
+d'allègement général), et le canal le lit comme un prélèvement sur les entreprises qui
+baisse. C'est la convention de D-400 et D-402 (cotisations nettes, double compte dit) ; le
+résultat la montre, sans la changer.
+
+**Deux défauts du but 22, corrigés** (aucun nombre de la série ne bouge) :
+
+* **L'étage de la dette.** `etude.debt_etage` mettait une dette en L3 dès que la boîte θ
+  portait une ligne autre que le multiplicateur. Or tout chemin qui lit le canal y met
+  `productivite_creations`. La dette du PLFSS, où le canal ne lit aucune variation, passait
+  de L2 à L3 : l'étage disait entré un canal qui ne pèse rien. Critère retenu, le plus
+  direct : la ligne du canal compte quand une variation des prélèvements qu'il lit
+  (`rejeu.creations.variations`, l'une ou l'autre vue) n'est pas nulle. Le PLFSS reste en
+  L2 ; un chemin où le canal pèse passe en L3. Un test le tient, vu échouer sur le code
+  d'avant.
+* **L'ordre des sommes du rejeu.** `rejouer.chemin` ajoutait les recettes du canal au solde
+  avant la rétroaction, et son PIB à l'écart avant le 1 ; `chaine.run` les ajoute en
+  dernier. Δb rejoué différait du rapport au dernier bit, et la garde « au bit » de
+  `test_annonce` tombait sur neuf programmes. Le rejeu suit maintenant l'ordre de la chaîne
+  et redonne Δb des 46 chemins (13 lignes, 33 mesures) à l'identique.
+
+**Le parcours lit le canal** (pas un nombre de la série) :
+
+* la dette et le verdict sautent une étude sans rapport et la disent non refaite. La
+  comparaison prend les programmes qui ont leurs deux rapports, sans Labib en dur ;
+* les scripts de la dette, de l'activité, des comportements et du verdict
+  (`parcours/js/dette.js`, `activite.js`) portent le canal à l'identique de `rejouer`, son
+  ordre compris. Les tests « le script est le moteur » et le Monte-Carlo rejoué repassent
+  à leurs tolérances d'origine ;
+* le garde de `parcours.dette.central` comparait Δb au total de sa décomposition à
+  l'égalité exacte. Ce total a été écrit dans les rapports par le rejeu d'avant la
+  correction, et diffère de Δb au dernier bit (2,2e-16 au plus). Le garde tolère donc
+  1e-12, qui n'est pas une tolérance de chiffrage.
+
+**Les nombres d'avant tenus en dur**, mis à jour sur cette série :
+
+* la dette sans boucle d'Attal passe de +20,45 à +20,41 points (comparaison, coût pas à
+  pas, page d'Attal) ;
+* sur la ligne du verdict, Lisnard passe de 88,85 % à 88,15 % des tirages en hausse ;
+* la ligne de la prime au PLFSS porte un nombre de plus, la dette sans le canal.
+
+**Les tests bâtis sur une étude non refaite**, réécrits ou retirés :
+
+* ceux qui tiennent un mécanisme général passent sur une étude présente. Sur le PLFSS : la
+  commande et la page d'une loi, la page modifiée refusée, la dérive, le montant sans
+  étage (« 2,3 % » du chiffre publié, au lieu des « 3 000 € » de l'art. 3), le site de
+  test. Sur Lisnard : chaque réponse dit son étage, le titre d'un article (« texte »)
+  devenant la ligne du programme (« programme »). Sur Attal : la boucle entrée (L4). Sur
+  Lisnard : la non-lecture vue vieillie (+6,26 Md€ non lus ; Labib en avait +13,86). Les
+  pages de programmes ne lisent que les études qui ont leur page ;
+* ceux qui prenaient le dépôt pour fixture lisent une copie. Roussel, sans ses mesures
+  seules et, pour la reprise, sans le canal. Le Pen, sans les blocs du canal : son canal ne
+  lit aucune variation, son chemin se rejoue donc à l'identique sans lui, ce que celui de
+  Roussel ne fait plus ;
+* sont retirés, faute d'une étude refaite qui porte le cas :
+  * la page commitée du PLF 2027 rendue par ses rapports
+    (`test_etude_page_plf2027.py`, le garde anti-dérive de cette page) ;
+  * les huit graphiques en ligne du PLF, désormais tenus sur les six du PLFSS ;
+  * la taxe carbone de Labib non lue, et les impulsions sans table que `rejouer` ignore
+    (`test_parcours_activite`, `test_parcours_comparer`) ;
+  * l'éventail qui compte les accises que la dette ne lit pas
+    (`test_etude_programmes`).
+
+  Ils reviendront quand le PLF 2027 et Labib seront refaits. La TVA de Le Pen et de
+  Roussel, lue, reste tenue.
+
+**Ce qui reste rouge, d'avant cette entrée.** À `5a68669` déjà, sans rapport en cause :
+
+* `test_gardes_phase9` : un identifiant de mutation en double,
+  `predictif/annuel:build:si:bare`, et `predictif/creations.py` hors du balayage ;
+* `test_dependances` : `test_etude_creations` et `test_creations_canal` importent un
+  autre fichier de test, non déclaré.
+
+Ni l'un ni l'autre n'est touché ici.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Les pages des douze études et le site
+sont écrits depuis les rapports commités ; `etude verifier`, `site verifier` et `site
+publiable` sont verts.
+
+## D-404 — Le jumeau numérique : le projet réorienté, le but 23 validé, le cadre écrit
+
+**La demande du propriétaire, le 14 novembre 2026.** La série du but 22 durait depuis
+plus d'un jour ; il l'a arrêtée (D-403, sur `claude/but22`). Son constat : le projet fait
+des études, alors que le but est le modèle. Il veut un jumeau numérique de la France :
+une population de ménages et d'entreprises qui avance année par année, où l'on fait
+entrer les mesures des candidats, ou une loi hypothétique, pour voir ce qu'elles
+déclenchent ; des paramètres θ de 0 à 1 sur ce qui est incertain (productivité, idées et
+start-up nouvelles, commerce extérieur, implantation d'usines selon la fiscalité,
+fermetures d'entreprises) ; une démarche mathématique, cohérente, apprise sur l'histoire
+de la France ; la suite des gouvernements, un candidat partant de l'état que laisse le
+précédent ; plus tard, un indice de tenue des promesses. Tant que les programmes sont
+incomplets, plus de passes de plusieurs jours.
+
+**Les quatre décisions, validées le même jour.**
+
+1. Deux juges, l'histoire d'abord : l'erreur du jumeau quand il rejoue 2010 à 2024 avec
+   les réformes votées, estimé sur une période et noté sur une autre, préenregistré ;
+   puis les chiffrages officiels, inchangés. La règle de priorité de `BUT.md` met le
+   jumeau en tête et les études en dernier.
+2. « Pas un modèle qui donne un point » reste : le jumeau donne des trajectoires selon θ.
+3. Le but 22 est clos tel quel (D-403) ; sa branche reste, sans PR. Le but 23 part de
+   son dernier commit, parce que le canal des créations y devient un bloc.
+4. Les curseurs tournent dans le navigateur, sur le site statique, sans serveur.
+
+**Le but 23, en sept lots** (`BUT.md`) : le cadre, les entreprises, le commerce, les
+ménages, l'histoire, l'apprentissage et le juge du passé, les curseurs. Chaque lot est un
+but au sens de `CLAUDE.md`, avec sa branche `claude/but23-<lot>` et sa PR. Le cadre passe
+d'abord ; les lots 2 à 5 partent en parallèle sur ses conventions.
+
+**Le cadre, écrit avant d'être codé** (`docs/jumeau/CADRE.md`). Un état en comptabilité
+nationale (emplois et revenus du PIB, compte des APU, dette Maastricht, travail,
+entreprises, reste du monde), sur un axe de tirages ; un pas annuel où des blocs
+déclarés ajoutent des contributions gardées à part, et où le cadre seul ferme les comptes ;
+cinq identités vérifiées à 1e-9 du PIB à chaque pas ; un champ non calculé absent, jamais
+nul ; les mesures entrées par leur choc statique, calculé une fois sur la population, et
+jamais OpenFisca dans un pas. Le choix qui porte le reste : séparer le choc statique, cher
+et calculé une fois, de la dynamique, rapide et rejouée à chaque θ ; c'est ce qui fait
+tenir une trajectoire de dix ans en moins de 50 ms. La chaîne actuelle des études doit
+s'y retrouver comme un cas particulier, à 1e-9 près : c'est la preuve que le cadre ne
+change rien à ce qui est déjà mesuré.
+
+**Ce qui ne change pas.** Les règles de `CLAUDE.md`, les tolérances, les chiffrages
+préenregistrés, `calibrate.py` fermé. Les D-400 à D-403 sont sur `claude/but22`, qui n'est
+pas dans `main` ; elles y entreront avec cette branche.
+
+## D-405 — Le cadre du jumeau codé : la chaîne retrouvée, l'histoire lue, le cadre corrigé
+
+**Ce qui est codé** (`src/impots/jumeau/`, branche `claude/but23-cadre`, lot 1 du but 23,
+D-404). Le registre des champs (`champs.py`) : unité, code SEC, source, lot ; les champs
+des lots 2 à 4 y sont, absents. L'état (`etat.py`) : un tableau par champ sur l'axe des
+tirages, un champ non écrit absent et refusé par son nom, chaque champ additif gardé par
+contribution, sous la clé (origine, mesure). Les cinq identités du §6 (`identites.py`), à
+1e-9 du PIB sur chaque tirage, qui refusent un champ absent plutôt que de le lire nul.
+Le pas (`pas.py`) : les entrées nommées, les blocs dans l'ordre d'un `Modele` qui refuse
+à la construction un champ inconnu, une lecture sans écrivain antérieur, un champ fermé
+écrit par un bloc ; le point fixe de Gauss-Seidel des boucles déclarées (1e-10, cent
+itérations, sinon le bloc et le champ nommés) ; la fermeture des comptes par le cadre
+seul ; les identités et la continuité de la dette. La référence et la variante, leur
+différence et la décomposition de Δb (`trajectoire.py`) ; `Mesure.depuis_rapport` et
+`Mesure.hypothese` (`mesures.py`) ; le registre des θ (`thetas.py`) ; `etat_initial`
+(`historique.py`). Les blocs `tendance`, `mesures`, `mesange` et `creations`, leurs
+équations dans leur docstring.
+
+**La chaîne retrouvée.** Sur les passes synthétiques de `test_rejouer` et de
+`test_creations_canal`, Δb du jumeau est `rejouer.chemin` à 4,4e-16 au plus : quatre θ,
+trois persistances, deux vues ; un axe de quatre tirages ; la première année reportée ;
+sans la boucle, sous une autre règle de dépense, et à un taux marginal de 3,5 % ; puis le
+canal des créations à quatre θ, avec et sans lui. Depuis l'état publié de 2025, la
+référence du jumeau est celle de `rejouer` depuis `start_from_accounts(2025)` à 1e-9.
+
+**Les intérêts, par origine.** La dette de fin d'année se décompose par (origine, mesure)
+comme tout champ additif : la part de référence (le départ et `tendance`) est chargée au
+taux de référence, toute autre au taux marginal du scénario ; c'est l'arithmétique de
+`chaine.run`, et chaque mesure porte les intérêts de sa propre dette. Δb se décompose
+alors sans reste : la part de la clé c est (ΔD_c − b^r ΔY_c) / Y, sa dette ajoutée moins
+ce que son PIB retire au ratio comme dénominateur. Sur trois mesures (deux de rapports,
+une hypothétique) et trois tirages, la somme redonne Δb à 1e-12.
+
+**L'histoire lue, et le cadre corrigé** (§6 : « c'est le cadre qu'on corrige »). Les
+identités des emplois, des revenus, du compte des APU et des contributions tiennent à
+1e-9 du PIB chaque année de 2010 à 2025, celle de la dette de 2021 à 2025. Pour y
+arriver, quatre constats, chacun écrit dans `CADRE.md` et dans `etat_initial` :
+
+* les tables de l'Insee sont imprimées au millième de milliard : la somme des totaux de la
+  t. 1.101 et celle des revenus de la t. 1.105 s'écartent du PIB d'un ou deux millièmes.
+  L'écart est un champ lu, l'arrondi, refusé au-delà de la moitié du millième de chaque
+  terme imprimé ; la France n'imprime aucun écart statistique entre ses trois approches,
+  et celui de la spécification est remplacé par cet arrondi. La t. 1.105 est manifestée ;
+* en 2023 et 2024, les secteurs de P3 et de P51G de la t. 1.101 ne somment pas à leurs
+  totaux (0,124 et 0,090 Md€ ; la consommation des APU de 2024 dépasse de 0,441 la somme
+  de ses parts individuelle et collective). Le champ « ventilation_emplois » porte le
+  total publié moins la somme publiée de ses secteurs ; ailleurs, il est sous l'arrondi ;
+* l'ajustement flux-stocks d'Eurostat est F_ASS + ORADJ + YA3, qui redonne GD_CH − B9_T3.
+  ORADJ, le total des ajustements, contient déjà K61 et KX : `comptes.sfa_publie`, qui
+  somme les cinq postes, les compte deux fois (de 0,001 à 0,51 Md€ en valeur absolue
+  selon l'année ; un test le montre). Ce module n'est pas touché ici : son correctif change le backtest de la
+  dette, et c'est un travail à part. L'écart interne de la table d'Eurostat (−0,1 à +0,3
+  million) dépasse en 2023 l'arrondi de ses cinq postes : ce sont des totaux de postes
+  arrondis, et le champ est lu sans borne ;
+* l'écart de millésime entre l'Insee et Eurostat sur la variation de la dette vaut
+  0,354 Md€ en 2025 (le stock de l'Insee est plus récent ; B9 est le même), moins d'un
+  millième les autres années : un champ lu, nul en projection.
+
+Ce qui reste absent, et refusé par son nom : l'ajustement flux-stocks de 2010 à 2020,
+que le fichier manifesté ne publie pas ; l'identité de la dette refuse ces années en
+nommant « sfa ». Le lot 5 apporte la série.
+
+**Les autres écarts à la spécification**, écrits dans `CADRE.md` :
+
+* les emplois suivent la t. 1.101 telle qu'elle publie : ISBLSM, objets de valeur et
+  sociétés financières en plus ; les APU, la t. 3.201 ligne à ligne, hors intérêts, et les
+  intérêts nets à part ; la consommation finale des APU est un emploi, pas une ligne de
+  leur compte. Le détail par impôt de la t. 3.217 et les déflateurs de l'histoire
+  (t. 1.103) sont au lot 5 ;
+* quatre champs nommés que la spécification n'avait pas, écrits par les blocs qui
+  n'impriment que le PIB ou le solde : les emplois et les revenus non ventilés (Mésange et
+  le canal des créations), l'effet induit sur le solde, et le choc d'une mesure que son
+  rapport ne ventile pas entre recettes et dépenses (un rapport porte son coût et ses
+  recettes de comportement, pas leurs catégories) ;
+* un bloc rend ses contributions par mesure, `{champ: {mesure: tableau}}`, ce qui fait la
+  décomposition par mesure ; il peut refuser avant le premier pas (`preparer`) ; une
+  boucle se déclare au `Modele`. `mesange` refuse une autre règle de dépense que « gelée
+  en volume », comme `retroaction` : la boucle est absente, pas nulle ;
+* `parametres/` n'est pas créé : les valeurs des blocs du lot 1 sont celles que portent
+  les rapports (D-336) et le fichier du canal (D-402) ; les entrées sont dans `pas.py`.
+
+**Les temps**, mesurés une fois (pas de test, D-335), sur la machine du worktree (4 cœurs,
+charge près de 2), médiane de sept : une trajectoire de dix ans, référence et variante,
+les quatre blocs, une mesure de rapport, 22 ms à n = 1 et 56 ms à n = 2 000. Les cibles du
+§8 sont 50 ms et 2 s.
+
+**Les tests** : `tests/test_jumeau.py` (50) et `tests/test_jumeau_historique.py` (19, lus
+sur les tables, en six secondes ; sautés, avec leur raison, sans elles). Aucun nombre
+publié ne change : rien de `predictif`, de `dette` ni des rapports n'est modifié.
+
+**Ce qui reste aux lots 2 à 7.** Lot 2 : les entreprises, et le canal des créations
+remplacé. Lot 3 : le commerce extérieur, qui ventile une part de l'effet non ventilé
+entre X et M. Lot 4 : les ménages, emploi, salaires, consommation, qui ventile le reste
+et lit les chocs par décile. Lot 5 : les séries de 2010 à 2024, l'ajustement flux-stocks
+d'avant 2021, les déflateurs publiés et le chaînage sur l'histoire, la t. 3.217, la base
+des mesures votées. Lot 6 : l'estimation et le juge du passé. Lot 7 : les curseurs, le
+pas en JavaScript ou par Pyodide, tenu égal à celui-ci.
+
+## D-406 — Les lots 2 à 5 lancés en parallèle ; le mode structurel ne double pas Mésange
+
+**Le lot 1 accepté** (D-405) avec ses corrections du cadre, et joint à `claude/but22`
+(D-403) ; les cinq gardes rouges héritées réparées, aucun nombre changé.
+
+**Une règle avant de lancer, écrite dans `CADRE.md` §4 bis.** Les lots 2 à 4 portent par
+des équations des canaux que `mesange` porte déjà par ses multiplicateurs : un choc
+d'investissement, d'emploi ou de commerce compterait deux fois. Chaque bloc structurel
+déclare les canaux qu'il remplace, et le modèle refuse un canal porté deux fois. Le mode
+réduit reste, qui retrouve les études ; le mode structurel est le jumeau ; leurs
+multiplicateurs se comparent, écart dit.
+
+**Les quatre lots, chacun sur sa branche, partie de `claude/but23-cadre`.**
+
+* Lot 2, `claude/but23-entreprises`, D-407 : créations, survie et fermetures,
+  productivité des entrants, investissement par le coût du capital, implantation selon le
+  taux effectif ; les cellules d'entreprises existantes comme population.
+* Lot 3, `claude/but23-commerce`, D-408 : exportations et importations, demande mondiale,
+  prix relatifs et coûts, contenu en importations des emplois par le TES.
+* Lot 4, `claude/but23-menages`, D-409 : emploi, salaires, consommation et épargne par
+  cellules de ménages, et les gagnants et perdants année par année.
+* Lot 5, `claude/but23-histoire`, D-410 : les séries de 2010 à 2024, le SFA avant 2021, la
+  base des mesures votées par gouvernement, et la correction de `comptes.sfa_publie`
+  (K61 et KX comptés deux fois, D-405), avec son test et son effet sur le backtest dit.
+
+Chaque lot rend sa D-entrée et ses tests, sans PR ; la jonction et les PR viennent ensuite.
+
+## D-407 — Les entreprises du jumeau : cinq blocs structurels, leurs sources, leurs θ
+
+**Ce qui est codé** (`src/impots/jumeau/blocs/`, branche `claude/but23-entreprises`, lot 2
+du but 23, D-406). Six blocs, dans l'ordre de leurs lectures (`entreprises.ordre_lot2`),
+chacun avec ses équations et leurs sources dans sa docstring, ses valeurs dans
+`jumeau/parametres/entreprises.yaml` (chacune avec son document et sa page), ses θ
+enregistrés dans la section du lot 2 de `thetas.py`. Tout est linéaire dans les chocs :
+une hausse et une baisse de même montant donnent des écarts opposés.
+
+* `chocs_entreprises` : les variations de prélèvements de chaque mesure, par impôt, en
+  quatre signaux (IS, sa contribution et la CEBGE ; CVAE et C3S ; cotisations patronales
+  nettes ; PFU et prélèvements sociaux du capital), lus sur `Mesure.entreprises`,
+  {année : {impôt : Md€ ou {taille : Md€}}}, recettes positives. Une mesure qui ne porte
+  que l'agrégat du lot 1 (`prelevements`) est refusée : un agrégat ne se ventile pas sans
+  hypothèse. `mesure_entreprises` déclare une loi hypothétique et son choc sur le compte
+  des APU (D5, D29 ou D61).
+* `naissances` (canal « creations_entreprises ») : ΔE = −ε Δτ N₀/100, Δτ = 100 ΔP/(b Y),
+  ε = 0,20 et b = 0,092 (Da Rin, Di Giacomo et Sembenelli 2011, tableau 4 p. 40, D-402),
+  les instruments de D-401 ; la référence crée (e₀ + δ) N₀/100 sociétés par an, e₀ =
+  7,61 % (même article, tableau 3 p. 39, la France), δ le θ « idées et start-up ».
+* `fermetures` (« fermetures_entreprises ») : un hasard de sortie selon l'âge, 1 − S_j
+  jusqu'à cinq ans (S_j = 0,90 au centre, D-402), puis h_o, calculé pour chaque S_j afin
+  que le stock soit stationnaire au taux e₀ (6,53 % au centre) ; et selon la marge :
+  ΔX = Σ_c (e₀/100) β (−Δm_c) N_c, Δm_c le choc de la cellule en points de sa valeur
+  ajoutée, réparti selon la taille que la mesure donne, sinon selon l'assiette (résultat,
+  valeur ajoutée, valeur ajoutée moins résultat). Le stock et les fermetures bouclent :
+  N_t = N_{t−1} + créations − fermetures.
+* `productivite` (« productivite_demographie ») : ΔVA = v̄ r c [Σ entrantes S(a)
+  rampe(a) − Σ sortantes induites (1 − h_o)^a], v̄ = s_VA Y / N₀ ; c le θ de D-402 ; ΔY au
+  PIB, ρ ΔY au solde, et l'indice de productivité des sociétés. Sans sortie et avec
+  S(a) = 0,9^a à tout âge, c'est l'équation de D-402. s_VA = 0,554 se lit : la valeur
+  ajoutée brute des sociétés non financières et financières en 2024, 1 528,512 et 97,269
+  Md€ (Insee, t. 7.101 et 7.201, manifestées ici), sur le PIB de 2024 (t. 1.101) ; D-402
+  avait 0,60, à manifester. Les comptes de secteur sont publiés en mai 2026, le PIB en
+  2025 : un écart de révision de l'ordre du millième, dit.
+* `investissement` (« investissement_cout_du_capital », que `mesange` porte aussi) :
+  l'équation estimée de Mésange (G2017-04, p. 44 du PDF), trimestrielle, l'accélérateur
+  hors du bloc : Δx_q = 0,22 Δx_{q−2} − 0,06 (x_{q−1} + ε_K Δck_{q−1}), ε_K = 0,44 ; le
+  coût d'usage de Mésange (p. 42), dont la fiscalité est (D51 + D292 − D39)/knet : l'IS,
+  la CVAE et la C3S y entrent, pas les cotisations ; Δck = ΔP/(knet u), u = 0,01/0,065
+  (p. 134 : 100 points de base font 6,5 % de coût du capital) ; knet = 3 083,8 Md€ fin
+  2024 (Insee, t. 8.202, manifestée ici) ; ΔK = (1 − δ) ΔK + ΔI, δ = 7,77 % (I/K de 2024
+  moins la croissance de knet de 2014 à 2024) ; ΔY = s_K (ΔK/knet) Y, s_K la part de
+  l'EBE et du revenu mixte du départ. ΔI va à la FBCF des SNF, ΔY − ΔI aux emplois non
+  ventilés : un PIB potentiel, la demande étant au lot 4.
+* `implantation` (« implantation ») : k^f_t = 0,676 k^f_{t−1} − a₁ ΔTMEE_t, le capital des
+  filiales américaines selon le TMEE (Devereux et Lockwood 2006, tableau 2, col. 1, p. 25,
+  manifesté ici ; le Devereux et Griffith de 1998 n'a pu être téléchargé, l'IFS ne le
+  sert plus) ; ΔTMEE = κ ΔP_IS/(b Y), κ = 0,917, calculé par la méthode de l'OCDE du dépôt
+  (`entreprises.taux_effectifs`) à 25,825 % ± 1 point ; ΔK = s_f k^f knet, s_f = 0,16, la
+  part de la valeur ajoutée sous contrôle étranger (Insee, Les entreprises en France 2023,
+  fiche 3.2, figure 1, manifestée ici) ; seul l'IS y joue.
+
+**Les θ.** Sept lignes nouvelles et une reprise : `idees_creations` (δ, −1 à +1 point
+de taux d'entrée, centre 0 : choisie, non vérifiée) ; `fermetures_marges` (β, 0 à 0,06
+par point de marge, centre 0,03 : choisie, non vérifiée) ; `investissement_cout_capital`
+(ε_K, 0,37, 0,44, 0,48 : l'estimation libre, la calibration et Mésange 2010, même page) ;
+`implantation_tmee` (a₁, 0, 0,478, 0,730 : la sensibilité disparue après 2009 selon
+Hanappi, Millot et Turban, OCDE 2023, tableau 1 col. 4 p. 24 ; Devereux et Lockwood ; plus
+1,96 écart type) ; `productivite_creations`, le c de D-402. Puis, sur décision du
+coordinateur du but, une ligne pour chaque valeur fixe de D-402, centrée sur sa valeur
+pour que la chaîne actuelle ne bouge pas, sa plage celle que D-402 écrivait, choisie, non
+vérifiée : `survie_creations` (S_j, 0,85, 0,90, 0,93), `montee_en_charge_creations` (M, 8,
+5, 3 ans : θ = 1 la montée la plus rapide) et `taille_creations` (r, 0,05, 0,10, 0,20,
+appliquée aussi aux sortantes). La part des sociétés dans le PIB n'en a pas : elle se lit
+(ci-dessus). Restent fixes : l'âge de maturité (cinq ans, celui de SINE) et s_f, la part du
+capital étranger lue sur celle de la valeur ajoutée (choisie, non vérifiée). Le bloc
+`creations` du lot 1 lit ses valeurs dans le rapport de la mesure et ne lit pas ces lignes :
+la chaîne retrouvée reste à 4,4e-16 (tests du lot 1).
+
+**Le cadre touché, au plus juste** (CADRE.md §4 bis). `jumeau/canaux.py` est le registre
+des canaux, ma section seulement (un dict nom → description) ; un bloc déclare `porte` et
+`remplace` ; `Modele` appelle `canaux.verifier` et refuse un canal inconnu ou porté deux
+fois, en le nommant avec ses deux blocs (deux lignes dans `pas.py`). `mesange` porte
+« investissement_cout_du_capital » et `creations` « creations_entreprises » (une ligne
+chacun). Dans `champs.py`, les champs du lot 2 seulement : stock, créations et fermetures
+deviennent additifs (une contribution par mesure, la référence sous « ») ; s'ajoutent
+`sorties_induites` et les quatre signaux. Ni le pas, ni les identités, ni l'état ne
+changent. Le choix de granularité : `mesange` porte l'investissement pour tous ses
+instruments, alors qu'il n'a ni variante d'IS ni de CVAE ; le refus est donc prudent, et
+une granularité par instrument est à décider si l'on veut Mésange et `investissement`
+ensemble.
+
+**Le PIB du scénario.** Les blocs du lot 2 rapportent tout à Y_t = Y_départ Π (1 + g),
+pas au PIB de la référence calculée : la clé « » s'écrit à l'identique dans la référence
+et la variante, et δ(θ) déplace les niveaux de la référence sans créer d'écart.
+
+**Les ordres de grandeur**, à θ½, cellules de 2023 (2,72 millions de sociétés), départ et
+scénario synthétiques des tests (PIB de 2 990 Md€, 1 % et 1,8 %), une hausse permanente
+de 10 Md€ dès 2026 : 19 200 créations de moins par an pour chaque impôt (D-401 les lit
+euro pour euro) ; en 2035, l'écart de PIB est de −0,57 % pour l'IS (productivité −0,12,
+investissement −0,20, implantation −0,25), −0,31 % pour la CVAE, −0,11 % pour les
+cotisations, et Δb₂₀₃₅ de −0,34, −1,78 et −2,51 points (le choc statique seul : −2,9).
+Recoupement, non forcé : Gechert et Heimberger (`pib_is`, D-402) donnent 0,19 % de PIB à
+dix ans par point d'IS, soit de l'ordre de −0,67 % pour les 3,5 points de taux apparent
+que cette hausse fait en 2026.
+
+**Mésange, linéarisé** (`investissement.comparer_mesange`). Sous la variante de taux
+(+6,5 % de coût du capital, p. 134), le bloc à θ½ donne −0,26, −0,94, −1,49, −2,16, −2,73
+et −2,86 % d'investissement à 1, 2, 3, 5, 10 ans et à long terme ; Mésange imprime −0,58,
+−2,48, −3,36, −4,07, −5,02 et −6,29 ; sans sa valeur ajoutée (l'accélérateur, unitaire à
+long terme : une approximation), −0,34, −1,69, −2,35, −2,79, −3,05 et −2,31. Le bloc est
+en deçà à court terme (Mésange a 1,19 Δva et 0,65 Δva_{t−1} dans son court terme) et
+au-delà à long terme de 0,55 point, probablement par les prix : le coût réel du capital
+est déflaté par le prix de la valeur ajoutée, qui monte de 6,64 % à long terme dans la
+variante. L'écart est dit ; aucun coefficient n'est réglé dessus.
+
+**Les tests** (`tests/test_jumeau_entreprises.py`, 23, dix secondes) : les identités du
+cadre et le compte des sociétés sur cinq tirages et des θ sur l'axe, avec trois mesures dont
+une ventilée par taille ; la référence stationnaire, à toute survie ; chaque bloc dans les
+deux sens pour l'IS, la CVAE et les cotisations, une hausse l'opposé exact d'une baisse, et
+zéro où un impôt n'est pas lu (les cotisations pour l'investissement, tout sauf l'IS pour
+l'implantation) ; θ = 0 et θ = 1 bornent chaque bloc, de façon monotone, et θ = 0 éteint les
+canaux qui ont un zéro ; le double compte refusé (`mesange` avec `investissement`,
+`creations` avec `naissances`) ; la table de Mésange ci-dessus ; les refus ; knet relu sur
+la t. 8.202, la valeur ajoutée des sociétés sur les t. 7.101 et 7.201, et les signes sur les
+cellules de 2023 (sautés, avec leur raison, sans elles). Les tests du lot 1 restent verts
+(69) : le bloc `creations`, mode compatible, redonne la chaîne. Temps, mesuré une fois sur
+les cellules de 2023 (médiane de sept, quatre cœurs) : dix ans, référence et variante, les
+blocs du cadre et du lot 2, 40 ms à n = 1 et 128 ms à n = 2 000.
+
+**Les sources ajoutées au manifeste** : les t. 8.202, 7.101 et 7.201 de l'Insee (la
+7.201 dans sa version anglaise, la française n'étant pas servie), la fiche 3.2 des
+Entreprises en France 2023 et Devereux et Lockwood (2006). Le manuscrit de Da Rin et al.
+manque toujours (D-401) ; ses chiffres sont ceux de M0 (D-245).
+
+**Ce qui reste.** Les rapports ne portent pas encore leurs prélèvements par impôt :
+`Mesure.depuis_rapport` ne remplit pas `entreprises`, et les études ne passent pas encore
+par le mode structurel. Pour la calibration (lot 6), il faut au lot 5 : les créations de
+sociétés par an (Insee, Sirene, hors micro-entrepreneurs, et par secteur), les cessations
+et les défaillances (Banque de France, par taille), la survie des cohortes (SINE 2014 et
+2018), la FBCF des SNF et knet (t. 8.202, 1978-2024), le compte des SNF (t. 7.101 : EBE,
+D51, D29, D39), le stock d'IDE entrant et le capital des filiales étrangères (Banque de
+France, Ofats). Tranchées à la jonction des lots, dans le cadre, et non touchées ici : la
+granularité des canaux de Mésange (par instrument) ; si les cotisations patronales font
+toujours jouer les créations et les sorties quand Mésange tourne (le double compte de
+D-401).
+
+## D-408 — Le commerce extérieur codé : un bloc structurel, le TES et Mésange, écart dit
+
+**Ce qui est codé** (lot 3 du but 23, branche `claude/but23-commerce`, D-406). Un bloc,
+`jumeau/blocs/commerce.py`, ses valeurs dans `jumeau/parametres/commerce.yaml`, chacune
+avec son document, sa page et son tableau, ses deux θ dans `thetas.py`. Il porte à la place
+de Mésange trois canaux du registre `jumeau/canaux.py` (créé ici) : « exportations »,
+« importations », « prix_echanges ». Les équations, dans la docstring du bloc, pour chaque
+mesure m (et « » pour le scénario), h l'âge d'un choc en années :
+
+* le choc de coût, en part du PIB : τ = (I^cot − T^D29) / Y, les impulsions
+  « cotisations_employeurs » (uniforme et ciblée) moins la hausse des impôts sur la
+  production, que le bloc reçoit par mesure (`impots_production`) ;
+* les prix de production : ln p^X = −κ_X Σ Δτ π(h), ln p^D = −κ_D Σ Δτ π(h). κ, le modèle
+  de prix de Leontief du TES A38 2023SD : un choc égal au PIB, réparti au prorata de la
+  valeur ajoutée des branches hors OZ et PZ, propagé par (I − A_d)⁻¹ ; κ_X = 0,8649
+  pondéré par les exportations, κ_D = 0,8917 par les emplois intérieurs. π(h), la
+  diffusion d'un coût dans les prix de production : la ligne « Salaires » de Mésange
+  (G2017-04, p. 72) sur sa valeur de long terme ;
+* les exportations : ξ = Σ [ε_dm(h) Δd + (s_X(θ)/0,73) ε_c(h) Δc], c = −ln p^X, la
+  compétitivité ex ante de Mésange (prix étrangers sur prix de production, p. 77) ;
+  ε_dm et ε_c, Mésange p. 79 ;
+* les importations : a = (Σ_u μ_u ΔU_u + μ_X X̄ ξ) / M̄, ζ = Σ [η(h) Δa + (s_M(θ)/0,35)
+  ε_m(h) Δq], q = ln p^D ; η et ε_m, Mésange p. 85 ; μ_u le contenu en importations de
+  chaque emploi, direct et par les consommations intermédiaires importées : ménages
+  0,2483, APU 0,1169, ISBLSM 0,1086, FBCF 0,3116, objets de valeur 0,4893, exportations
+  0,3315, au prix d'acquisition ;
+* les prix des échanges : ln P^X = Σ ρ_X(h) Δ ln p^X, ln P^M = Σ ρ_M(h) Δ ln p^D, la ligne
+  « Prix domestiques » de Mésange (p. 87 et 91) ;
+* ΔX = X̄[(1 + ξ)(1 + P^X) − 1] et ΔM = M̄[(1 + ζ)(1 + P^M) − 1] sur les emplois, X̄ et M̄
+  les niveaux de la tendance ; les déflateurs, le solde extérieur (B11), la demande
+  mondiale, la compétitivité-prix et la contribution du solde à la croissance en volume.
+
+Mésange imprime T, 1, 2, 5 ans et le long terme : h = 1 lit « 1 an », puis
+l'interpolation linéaire, le long terme atteint à dix ans (choisi, non vérifié). La
+demande mondiale est un scénario nommé, l'écart au sentier de la tendance : « tendance »
+la fait croître comme le PIB en volume (le compte central de Mésange, p. 101).
+
+**Les θ.** `commerce_elasticite_prix_exportations` : 0,6 (Mésange 2010, rappelé par
+G2017-04 p. 78), 0,73 (p. 79), 1,27 (FR-BDF, WP 736, table 4.6.20) ;
+`commerce_elasticite_prix_importations` : 0,29 (services exposés, p. 84), 0,35 (p. 85),
+1,11 (FR-BDF, table 4.6.21). Chaque borne est publiée ; leur choix comme plage ne l'est
+pas, et FR-BDF mesure l'élasticité au prix d'exportation relatif, pas au prix de
+production : la borne haute est donc large. Le profil de Mésange est mis à l'échelle.
+Choisis, non vérifiés et dits dans le YAML : l'horizon de dix ans, les branches hors choc
+(Mésange réserve sa variante aux branches marchandes, p. 108), le contenu des stocks
+(celui de la demande intérieure finale, 0,2283 : le TES ne donne pas le leur).
+
+**La source ajoutée.** FR-BDF n'était pas dans `data/raw` : téléchargé chez la Banque de
+France (`bdf_wp736_2019_fr_bdf.pdf`) et ajouté au manifeste. Aucun chiffrage de tiers
+n'est lu.
+
+**Trois écarts au cadre, au plus juste.**
+
+* Le `Modele` refuse un canal porté deux fois (`canaux.portes` : `mesange` les porte
+  tous, un bloc structurel ceux de son `remplace`), six lignes dans `pas.py`. Le mode
+  structurel du commerce ne tourne donc pas avec `mesange` ; le réduit reste intact.
+* Un déflateur n'a qu'un écrivain : `Tendance(depart, laisse=...)` laisse au commerce les
+  prix des exportations et des importations ; sans cela, le modèle refuse. Une ligne dans
+  `CADRE.md` §4 bis.
+* La demande demandait « X, M et leurs prix, pas le PIB ». Le cadre ne ferme pas le PIB
+  comme la somme des emplois : c'est un champ additif écrit par les blocs, et l'identité
+  des emplois refuserait un ΔX sans PIB. Le bloc écrit donc ΔX − ΔM sur le PIB et sur les
+  revenus non ventilés, exactement ce qu'il ajoute aux emplois, sans équation de PIB
+  propre. Une fermeture du PIB par le cadre en mode structurel est à décider à la
+  jonction des lots 2 à 4.
+
+Deux champs ajoutés au registre, section du lot 3 : `solde_exterieur` et
+`contribution_solde_exterieur`. Le bloc écrit aussi `demande_mondiale` et
+`prix_relatifs` ; `solde_courant` reste absent (revenus primaires et secondaires).
+
+**La comparaison aux variantes de Mésange**, linéarisée, θ½, en % d'écart au compte
+central à 1, 2, 3, 5 et 10 ans, sans demande intérieure (le lot 4) :
+
+* demande mondiale +1 % (p. 126) : exportations 0,80 0,87 0,90 0,96 1,00 contre 0,72
+  0,73 0,69 0,61 0,49 ; importations 0,33 0,34 0,34 0,34 0,33 contre 0,42 0,52 0,51 0,47
+  0,42 ; prix nuls contre +0,04 à +0,51. Mésange évince à terme par les prix et les
+  salaires, que le bloc ne porte pas ; ses importations suivent aussi la demande
+  intérieure ;
+* cotisations employeurs −1 point de PIB (p. 108) : exportations 0,08 0,21 0,30 0,41
+  0,58 contre 0,18 0,47 0,67 0,96 1,25 ; prix des exportations −0,14 −0,32 −0,39 −0,47
+  −0,63 contre −0,28 −0,65 −0,82 −1,02 −1,25 ; importations 0,02 à −0,08 contre 0,32 à
+  1,10. Le bloc fait la moitié de Mésange sur les exportations et leur prix : le coût
+  passe par le TES seul, sans la boucle prix-salaires ni la baisse du chômage. À θ = 1,
+  les exportations font 0,14 à 1,02. Les importations de Mésange montent par la demande.
+
+Le test ne tient que le sens des exportations et de leur prix ; l'écart est dit ici, pas
+forcé.
+
+**Les tests** (`tests/test_jumeau_commerce.py`, 14, en vingt-cinq secondes, un worker) :
+les profils de Mésange et les bornes de FR-BDF relus dans les PDF, les contenus et κ
+recalculés sur le TES (à 5e-5, l'arrondi du YAML ; sautés, avec leur raison, sans les
+fichiers) ; les identités à chaque pas, référence et variante, à quatre θ dont un axe de
+quatre tirages, trois mesures et un scénario ; une hausse des coûts qui baisse les
+exportations en volume et une baisse qui les monte, d'autant plus que θ est haut, les
+importations rangées par le leur ; le prix d'exportation de la première année au
+centime de la formule ; ΔM la première et la deuxième année égal à η(h) fois le contenu
+du TES ; le double compte avec `mesange`, un déflateur à deux écrivains et un canal
+inconnu refusés ; un θ ou une année de scénario manquants refusés. `test_jumeau.py` reste
+vert (50) ; `test_jumeau_historique.py` est sauté dans ce checkout, faute des tables.
+
+**Les temps**, mesurés une fois : dix ans, référence et variante, deux mesures, 38 ms à
+n = 1 et 103 ms à n = 2 000, lecture du YAML comprise.
+
+**Ce qui reste.**
+
+* Au lot 5, pour la calibration (lot 6) : les exportations et importations de biens et
+  services en valeur et en volume, et leurs déflateurs (t. 1.101 et 1.103, 2010 à 2024) ;
+  la demande mondiale adressée à la France (Banque de France ou DG Trésor, en volume) ;
+  les prix étrangers à l'exportation et à l'importation ; les cotisations employeurs et
+  les impôts sur la production (D29) par année (t. 3.217) ; le TES de chaque année pour
+  les contenus.
+* À la jonction : une `Mesure` ne porte pas les impôts sur la production seuls (D2 mêle
+  la TVA) ; le bloc les reçoit par mesure, en attendant le format de `Mesure.entreprises`
+  du lot 2. La fermeture du PIB en mode structurel, ci-dessus.
+* Le bloc ne porte ni un choc de prix étrangers ou de change, ni les recettes induites,
+  ni l'effet non ventilé du canal des créations sur les importations.
+
+## D-409 — Les ménages du jumeau : cellules, emploi, salaires, consommation (lot 4)
+
+**Ce qui est codé** (branche `claude/but23-menages`, lot 4 du but 23, D-406). Les
+cellules de ménages (`jumeau/cellules.py`), trois blocs structurels dans une boucle
+simultanée (`jumeau/blocs/menages.py` : `consommation`, `emploi`, `salaires`), les
+gagnants et les perdants par cellule (`jumeau/gagnants.py`), le registre des canaux
+(`jumeau/canaux.py`), les valeurs et leurs sources (`jumeau/parametres/menages.yaml`),
+les θ dans la section du lot 4 de `thetas.py`, les champs du lot 4 dans `champs.py`.
+
+**Les cellules : dix déciles de niveau de vie fois cinq types de ménage.** Le décile,
+parce que les chocs statiques des mesures arrivent par décile (les rapports portent
+`mean_delta` et `n_households`, §5), que la propension à consommer en dépend et que les
+gagnants se lisent ainsi ; le type (seul, monoparental, couple sans ou avec enfants,
+complexe), parce que c'est la typologie que l'Insee publie, que les élasticités d'offre
+de travail sont par configuration familiale (C7) et que l'exposition aux prestations et
+au chômage en dépend. Un découpage plus fin viderait des cellules. Elles sont construites
+une fois (`scripts/jumeau_cellules.py`, détaché) : une passe de référence au droit de
+2024, tier « full », niches, capital, indemnités journalières et consommation imputés,
+sur un sous-échantillon PPS de 30 000 ménages (64 992 personnes ; jamais toute la
+population), puis `construire` ; écrites hors git (`data/processed/
+jumeau_cellules_2024.json`, avec son manifeste : commit, graine, empreinte de la
+population). Mesuré une fois : 92 s, pic de 4,59 Go, au-dessus des 4 Go visés (la passe
+seule ; un essai sur 1 000 ménages tient en 0,49 Go). Toutes les cellules sont pleines
+(54 805 ménages au moins).
+
+**Les recoupements, tolérances écrites avant le premier calcul** (`cellules.TOLERANCE_*`,
+jamais retouchées) : contre la passe, 1e-9 (la construction, test léger) ; contre la
+population entière, 2 % pour une masse ou un compte large, 8 % pour le chômage, ses
+allocations et les revenus non salariés (un sous-échantillon dix fois plus petit) ;
+contre l'agrégat publié, celles de `reconcile.TOLERANCE`, 2 % pour une marge de
+calibration, 15 % pour une distribution. Un essai à 1 000 ménages a tourné avant la
+passe retenue : les tolérances étaient écrites, et n'ont pas bougé. Résultat (30 000) :
+
+* contre la population : salaires bruts −0,41 %, pensions −0,42 %, ménages 0, personnes
+  −0,32 %, en emploi −0,40 %, salariés −0,44 %, allocations chômage +1,05 %, chômeurs
+  +2,04 %, revenus non salariés −1,46 % ; tout tient ;
+* contre le publié : salaires bruts / D11 au champ de l'enquête −0,16 %, pensions
+  déclarées −0,42 %, Unédic +1,05 %, revenus non salariés (Insee Première 2114) −1,46 %,
+  ménages (recensement 2023) −0,71 %, emploi (enquête Emploi 2024) −1,998 %, sous les 2 %
+  de justesse, la population elle-même étant à −1,6 % ; médiane du niveau de vie
+  (Filosofi 2023, lue comme le milieu des déciles 5 et 6) −4,2 % ; tout tient ;
+* dits sans verdict, écarts de la population et non des cellules : l'IR contre ses
+  recettes nettes +4,8 %, les chômeurs contre le BIT 2024 +6,4 %.
+
+Les cellules font 1 347 Md€ de revenu disponible et 1 072 Md€ de consommation (enquête
+Budget de famille 2017, TF106, portée aux comptes de 2024) : une propension moyenne de
+0,796, de 1,72 au premier décile à 0,59 au dernier. Le premier décile consomme plus que
+son revenu disponible de la passe ; l'Insee le trouve aussi, moins fort (−13,4 %
+d'épargne au premier quintile en 2011, Note de conjoncture de juin 2019, p. 27).
+
+**Les équations**, écrites dans la docstring de `blocs/menages.py` avec leurs pages, et
+leurs valeurs dans `menages.yaml`. Un modèle linéaire en écarts, comme Mésange : chaque
+bloc écrit la référence sous « » et l'écart de chaque mesure, et un profil cumulé R(h)
+publié se lit par l'opérateur de retard L[z, R]_k = Σ_j (z_j − z_{j−1}) R(k − j + 1).
+
+* `emploi` : ê = L[ŷ, R_va] + (η/0,44) (L[ŵ + τ̂, R_c] + L[τ̂ᶜ, R_c^NQ]), les profils de
+  l'emploi qualifié et non qualifié de Mésange (G2017-04, p. 48), pondérés 0,69 et 0,31
+  (p. 40) ; τ̂ les cotisations employeurs de la mesure, uniformes ou ciblées (le profil des
+  non-qualifiés seuls, une borne basse de l'allègement ciblé) ; les non-salariés suivent
+  l'emploi salarié marchand (p. 40) ; l'offre, PA ŵ Σ_g s_g ε_g, les quatre élasticités de
+  C7 pondérées par la masse salariale des groupes dans les cellules ; ΔU = ΔPA − ΔE.
+  L'offre ne répond qu'au salaire que la dynamique forme : la réponse au changement
+  d'impôt de la mesure est déjà dans ses recettes (C7, `mesures_non_ventilees`) ;
+* `salaires` : une courbe WS, ŵ = b L[Δu, S_u]/100 + L[p̂, S_p] + L[κ̂, S_p] +
+  L[smic, S_smic], les profils p. 65 (chômage, productivité, Smic réel efficace) ; le
+  coin fiscalo-social indexé unitairement à long terme (p. 64, σ_W = 1 note 45, p. 62) :
+  une cotisation salariale déplace le salaire brut, une cotisation employeur reste sur le
+  coût ; son profil, non imprimé, celui de la productivité. La masse salariale ΔD1 =
+  π D1 (ê + ŵ) va en rémunérations et sort de l'EBE ; elle se répartit entre les
+  cellules (l'emploi au prorata des chômeurs, le salaire au prorata du super-brut), chaque
+  cellule à ses taux moyens de cotisations (D61), de CSG, CRDS et IR (D5) et de revenu
+  disponible ; les allocations chômage, β_b W ΔU (D62), l'allocation moyenne par chômeur
+  des cellules rapportée à la rémunération moyenne ;
+* `consommation` : ΔRD de chaque cellule (le choc par décile de la mesure, réparti au
+  prorata des ménages, plus la dynamique), PMC_d(h) = e(h) [APC + κ (APC_d − APC)],
+  ΔC = Σ_j ΔΔRD_j PMC(k − j + 1) + C L[Δu, Q_u]/100 (l'épargne de précaution, p. 34) ;
+  ΔC sur la consommation et le PIB, la TVA et les accises au taux moyen des cellules en
+  D2, le reste en EBE. Le revenu et la consommation par décile sont écrits, référence
+  comprise (les cellules en part du PIB de 2024, 2 935,236 Md€, t. 1.101).
+
+**Les θ, huit** : η, l'élasticité de long terme de l'emploi à son coût (0,31 ; 0,44
+Mésange p. 39 ; 0,52 ; bornes Bunel et L'Horty 2012) ; b, le facteur de la
+semi-élasticité des salaires au chômage (0,5 choisie, non vérifiée ; 1, Mésange 2017 ;
+1,28, Mésange 2010, p. 64) ; les quatre élasticités de C7, sous leurs clés du magasin ;
+e(h), le profil de la consommation (θ½ Mésange p. 34 ; l'autre borne, Insee, Note de
+conjoncture de juin 2019, tableau 3 p. 34, plus lente et à 0,8 à long terme) ; q, la
+pente des propensions entre déciles, choisie, non vérifiée : aucune propension marginale
+par décile publiée pour la France n'a été trouvée (le sens seul est sourcé, même Note,
+p. 33 et 35) ; κ = q κ_max, κ_max = 0,221 sur les cellules réelles, le plus grand κ qui
+garde chaque PMC de long terme sous un. Deux conventions sans θ, dites : le long terme
+de Mésange placé à dix ans, et le profil d'ajustement du coin fiscalo-social.
+
+**Les sources téléchargées** et ajoutées au manifeste : Insee, enquête Emploi, séries
+longues, t. 302 (chômeurs BIT, 2 342,8 milliers en 2024, 2 451,2 en 2025) ; Insee, Note
+de conjoncture de juin 2019, dossier sur le pouvoir d'achat et la consommation. Lus sur
+place : Mésange, les t. 6.208 et 6.210, `labour_supply.yaml`, `margins`. Aucun chiffrage
+de tiers des programmes n'est lu.
+
+**Le double compte refusé.** `canaux.py` porte la section du lot 4 (« consommation_
+menages », « emploi », « salaires ») ; chaque bloc structurel déclare `remplace`, le bloc
+`mesange` porte tous les canaux du registre, et `Modele` refuse un canal porté deux fois
+(`canaux.verifier`, `DoubleCompte`). Le cadre est touché au plus juste : une ligne dans
+`Modele.__init__` et sa docstring. Une mesure qui porte une impulsion sur un instrument
+des ménages (IR, CSG, cotisations salariés, TVA, taxe carbone) sans choc par décile est
+refusée avant le premier pas : son canal de la consommation serait un zéro.
+
+**Les tests.** `tests/test_jumeau_menages.py`, 20 légers, sur des cellules synthétiques
+(12 s) : les identités du §6 à chaque pas avec les trois blocs, à θ = 0, ½, 1 et sur un
+axe de quatre tirages, Δb décomposé sans reste ; la référence indépendante de θ ; la
+consommation de chaque décile égale à PMC_d(1) ΔRD_d plus le terme du chômage la
+première année (à 1e-8, la tolérance du point fixe), positive, et les PMC décroissantes ;
+θ = 0 et θ = 1 qui bornent la consommation, la pente plate à q = 0 et à un au plus à
+q = 1 ; une hausse du coût du travail qui baisse l'emploi et monte le chômage à trois θ,
+l'élasticité qui borne la perte ; un Smic plus haut qui monte les salaires et baisse
+l'emploi ; le double compte et les mesures mal formées refusés ; θ manquant refusé ; les
+gagnants par cellule qui somment au revenu par décile de l'état à 1e-9 ; la construction
+exacte des cellules et leur relecture. `tests/test_jumeau_cellules.py`, lourd (il lit la
+population, ajouté à `tests/lourds.txt`) : les recoupements ci-dessus et les cellules
+pleines. Les tests du lot 1 restent verts : `pytest -m "not lourd and not chrono" -n 1
+tests/test_jumeau_menages.py tests/test_jumeau.py tests/test_jumeau_historique.py`, 89
+passés.
+
+**La comparaison au mode réduit, écart dit, jamais forcé.** Une baisse d'IR d'un point de
+PIB, permanente, depuis le départ synthétique, θ½ : PIB +0,40, +0,76, +0,81, +0,86, +0,78 %
+à 1, 2, 3, 5, 10 ans, contre 0,41, 0,83, 0,88, 0,81, 0,87 dans la variante de Mésange ;
+emploi salarié +25, +74, +98, +101, +81 milliers contre 24, 109, 174, 184, 181. Une baisse
+des cotisations employeurs d'un point : PIB +0,05 à +0,10 % contre 0,20 à 1,29, emploi
++70 à +161 milliers contre 83 à 318. L'écart vient de ce que les lots 2 et 3 portent
+(l'investissement, la compétitivité et les importations) et de ce que le lot 4 ne porte
+pas : la boucle prix-salaires (les prix sont ceux du scénario), la variante Phillips.
+
+**Les temps**, mesurés une fois : une trajectoire de dix ans, référence et variante, les
+blocs du lot 1 et ceux des ménages, une mesure, 0,12 s à n = 1 et 0,70 s à n = 2 000.
+La cible de 2 s tient ; celle de 50 ms non : la moitié du temps est l'écriture par le
+cadre des trente champs du lot 4, six fois par an au point fixe, que ce lot ne touche
+pas.
+
+**Ce qui reste, ou est à décider.**
+
+* La variante Phillips de la formation des salaires (encadré 10) n'est pas codée : seule
+  la WS centrale ; la boucle prix-salaires et l'indexation aux prix non plus.
+* Le choc statique d'une mesure sur D1 et l'EBE (une cotisation employeur baisse D1 à
+  salaire donné) n'est ventilé ni par le bloc `mesures` ni ici ; les importations de la
+  consommation sont au lot 3 ; l'allègement ciblé est une borne basse.
+* Les taux des cellules sont moyens, pas marginaux ; les cellules sont celles de 2024,
+  portées en part du PIB ; le revenu disponible est celui du champ de la population, pas
+  B6 des comptes.
+* Les séries qu'il faut au lot 5 pour la calibration (lot 6), annuelles, 2010 à 2024 :
+  l'emploi salarié marchand et non marchand et l'emploi total (t. 6.208, 6.210), les
+  chômeurs et la population active BIT (t. 302 et ses voisines), le salaire moyen par
+  tête et D1 (t. 1.105, 6.205), le Smic brut et l'IPC, la consommation des ménages en
+  valeur et en volume, leur revenu disponible brut et leur taux d'épargne (t. 7.401 et
+  1.103), les cotisations sociales et la CSG sur les salaires (t. 3.217), les
+  allocations chômage (D62) ; et, s'ils existent, le revenu et la consommation par
+  décile des comptes nationaux distribués de l'Insee, que ce lot n'a pas trouvés
+  manifestés.
+* La pente des propensions entre déciles reste choisie : une source publiée qui les
+  chiffre pour la France la remplacerait.
+
+## D-410 — L'histoire du jumeau : les séries, le SFA d'avant 2021, les mesures votées
+
+### Le pronostic du backtest de la dette, écrit avant de corriger `comptes.sfa_publie`
+
+**Le correctif.** `comptes.sfa_publie` somme les cinq postes F_ASS, ORADJ, K61, KX et YA3
+de la t. 3 d'Eurostat ; ORADJ contient déjà K61 et KX (D-405). L'ajustement devient
+F_ASS + ORADJ + YA3, qui redonne GD_CH − B9_T3 à l'écart interne de la table près. Le
+backtest de §6.1 (D-341, D-342) est rejoué après le correctif, même fenêtre 2021→2025,
+même tolérance (±0,10 pt), mêmes fichiers. Les entrées lues avant tout résidu, en M€ :
+K61 + KX vaut +294 (2021), +483,5 (2022), −510 (2023), +375,1 (2024), +0,9 (2025),
+soit +0,012, +0,018, −0,018, +0,013 et +0,000 pt de PIB : ce sont, à 0,001 pt près, les
+« erreurs propres » de 2021 à 2024 du tableau de D-341.
+
+**Ce qui restera, par l'arithmétique.** Le ratio publié de fin 2020 dépasse la dette sur
+le PIB du millésime de 0,010 pt, celui de 2021 de 0,006 pt ; ensuite ils sont égaux. Le
+départ porte donc +0,010 pt, l'arrivée de 2021 −0,006, et le terme de millésime de 2025
+(D-341 : +0,0118 pt) reste. Le pronostic, en points de PIB :
+
+1. cinq années dans la bande de ±0,10 pt ;
+2. résidu de 2021 dans [+0,002 ; +0,006] ; de 2022 à 2024 dans [+0,005 ; +0,012] ; de
+   2025 dans [−0,007 ; −0,001] : il change de signe ;
+3. erreurs propres de 2023 et de 2024 sous 0,001 pt en valeur absolue ; celle de 2025
+   dans [−0,013 ; −0,011], opposée au terme de millésime à 0,0002 pt près ;
+4. le test du constat d'octobre (D-342, résidu 2025 dans [+0,015 ; +0,025]) ne tient plus
+   sur l'ajustement corrigé : il a été écrit sur la somme à cinq postes. Il est gardé tel
+   quel sur cette somme, recalculée dans le test et nommée comme le double compte qu'elle
+   est ; un test neuf tient le pronostic ci-dessus.
+
+### Le résultat du backtest corrigé
+
+`comptes.SFA_COMPOSANTES` vaut désormais F_ASS, ORADJ et YA3. Le backtest rejoué :
+
+| an | sfa | résidu (D-341) | erreur propre (D-341) |
+|---|---|---|---|
+| 2021 | −0,0088 % | +0,0038 pt (+0,0155) | +0,0038 (+0,0155) |
+| 2022 | +0,0362 % | +0,0094 pt (+0,0389) | +0,0058 (+0,0240) |
+| 2023 | −0,1522 % | +0,0089 pt (+0,0190) | −0,0000 (−0,0180) |
+| 2024 | +1,1492 % | +0,0087 pt (+0,0314) | −0,0000 (+0,0128) |
+| 2025 | +0,0810 % | −0,0031 pt (+0,0196) | −0,0118 (−0,0118) |
+
+**Contre le pronostic : les quatre points tenus.** Cinq années dans la bande ; 2021 dans
+[+0,002 ; +0,006], 2022 à 2024 dans [+0,005 ; +0,012], 2025 dans [−0,007 ; −0,001] ; les
+erreurs propres de 2023 et 2024 nulles au millième de point, celle de 2025 à −0,0118,
+opposée au terme de millésime. Le backtest ne mesure plus le double compte : son résidu
+n'est plus que l'écart du ratio publié de 2020 et 2021 au millésime (+0,010 et +0,006 pt)
+et l'écart de millésime de 2025 entre l'Insee et Eurostat.
+
+**Les tests.** `test_dette_comptes.py` : un test neuf tient que l'ajustement redonne
+GD_CH − B9_T3 de sa table à 0,5 M€ près (rouge sur l'ancien code, de −510 à +483,5 M€),
+un autre le pronostic ci-dessus (rouge sur l'ancien code) ; le constat d'octobre de D-342
+est gardé, ses bornes inchangées, sur la somme à cinq postes recalculée dans le test.
+Dans `test_jumeau_historique.py`, le test du lot 1 qui montrait le double compte tient
+maintenant l'égalité de `sfa_publie` et de l'ajustement du cadre. Aucune étude ne lit
+`sfa_publie` : seul le backtest de §6.1 bouge.
+
+### Les séries de 2010 à 2025, et leurs sources
+
+`src/impots/jumeau/series.py` lit, de 2010 à 2025, des séries publiées, chacune avec son
+producteur, son fichier manifesté et son code (`SERIES`, 77 séries), et les recoupe
+contre un total publié (`recoupements`). Sept fichiers téléchargés le 14 novembre et
+manifestés dans `data/raw/MANIFEST.json` (hors git) ; les autres l'étaient déjà.
+
+| série | source, code | fichier |
+|---|---|---|
+| emplois du PIB (13), valeur, volume, prix | Insee, t. 1.101 à 1.103 | déjà manifesté |
+| principaux impôts (22 lignes, de la TVA aux PO) | Insee, t. 3.217 | déjà manifesté |
+| déficit, ajustement flux-stocks, variation de la dette | Insee, t. 3.105 | **neuf** |
+| emploi intérieur total | Insee, t. 6.208, « _T » | **neuf** |
+| emploi salarié, salaires bruts (D11) | Insee, t. 6.210 et 6.205 | déjà manifestés |
+| salaire brut moyen par tête | le quotient des deux (D-362) | — |
+| taux de chômage et chômeurs, BIT, 15-74 ans | Eurostat, une_rt_a | **neuf** |
+| taux de l'OAT à dix ans, moyenne annuelle | Eurostat, irt_lt_mcby_a (et _m) | **neufs** |
+| créations d'entreprises (ensemble, micro, classiques) | BDM, 010755537… | **neuf** |
+| défaillances (total, onze secteurs) | Banque de France, BDM, 001656101 | **neuf** |
+
+La consommation des ménages, l'investissement par secteur institutionnel, les
+exportations et les importations sont les lignes de la t. 1.101 que l'état publié
+portait déjà ; leurs prix et volumes sont ajoutés. La Dares (hors d'atteinte du réseau
+de la session) et la DGFiP ne sont pas utilisées : l'emploi, le chômage et les impôts
+viennent des comptes nationaux et d'Eurostat, sur le même millésime que l'état.
+
+**Ce que les recoupements disent**, chacun figé dans `tests/test_jumeau_series.py` :
+
+* les indices de prix sont 100 × valeur / volume à l'arrondi des trois tables, sauf pour
+  les APU : leur consommation en 2023 et 2024 (+0,004 et −0,067 point d'indice), leur
+  investissement en 2023 et 2024 (+0,096 et +0,486), les années où les secteurs de la
+  t. 1.101 ne somment pas à leurs totaux (D-405), et leur consommation de 2015, au bord
+  de l'arrondi (−0,0007 pour 0,00066) ;
+* la t. 3.217 redonne le D5 et le D91 de la t. 3.201 au millième, et son D2, moins les
+  impôts de l'Union européenne, depuis 2019 ; de 2010 à 2018, elle le dépasse de 54 à 67
+  millions par an, un écart de ce millésime, lu et non expliqué ;
+* la t. 3.105 somme exactement ; son déficit est −B9 de la t. 3.201 au dixième près ; son
+  ajustement est celui d'Eurostat de 2021 à 2025 à 0,04 Md€ près ;
+* l'emploi et les salaires somment leurs cinq grandes branches à l'arrondi ; hommes et
+  femmes somment l'ensemble des chômeurs au millier près ; les créations, micro plus
+  classiques, l'ensemble exactement ;
+* la moyenne annuelle de l'OAT est celle de ses douze mois aux arrondis près, sauf 2025
+  (−0,016 point) : la table annuelle date de février 2026, la mensuelle de novembre ;
+* les défaillances de tous secteurs dépassent la somme des onze secteurs de 66 à 431 par
+  an, moins de 1 % : les entreprises dont le secteur n'est pas connu.
+
+### L'état publié de 2010 à 2025 : la dette tient, les prix et les impôts y sont
+
+**L'ajustement d'avant 2021.** Eurostat ne publie la table de passage de la France que de
+2021 à 2025 (gov_10dd_edpt3 ; gov_10dd_edpt1 porte la dette et le déficit, pas
+l'ajustement, et le tirer de leur différence serait le piège de D-148). L'Insee publie la
+sienne, la t. 3.105, de 2009 à 2025, au millésime de la t. 3.201 et de la dette. De 2010
+à 2020, `sfa` est la somme de ses cinq groupes imprimés, (1) à (5) ; l'écart interne de
+la table est nul ; l'écart à la dette de l'Insee est l'arrondi au dixième (moins de
+0,08 Md€), sauf en 2014 : −0,64 Md€, où la variation de la table et celle du stock
+divergent. De 2021 à 2025, Eurostat reste la source, inchangée. **Les cinq identités, la
+dette comprise, tiennent à 1e-9 du PIB chaque année de 2010 à 2025** : fini les refus
+« sfa ». Le champ de l'écart interne garde son nom du lot 1, `ecart_eurostat` ; sa
+définition dit qu'il porte la table de l'année, d'Eurostat ou de l'Insee.
+
+**Les prix et le volume.** `prix_<emploi>` est l'indice de la t. 1.103 sur celui de
+l'année d'avant ; la variation des stocks n'a pas d'indice publié, et son prix est
+absent. La croissance du PIB en volume est celle de la t. 1.102 : sans prix des stocks,
+la formule de chaînage du cadre ne se calcule pas sur l'histoire. Calculée avec la
+contribution des stocks de la t. 1.102, elle s'écarte de la croissance publiée de moins
+de 0,03 point : un essai, pas un test.
+
+**Les impôts.** Les 22 lignes de la t. 3.217 sont des sous-champs de l'état publié
+(`champs.IMPOTS_3217`, groupe « impots », lot 5), hors de toute identité : la table
+n'imprime que les principaux impôts. Un impôt qui n'existe pas une année y est absent :
+la contribution à l'audiovisuel public à partir de 2022.
+
+**Ce que ce lot a touché hors de ses fichiers**, et pourquoi : `champs.py` (le groupe des
+impôts, et les libellés et sources de `sfa`, `ecart_millesime_dette` et
+`ecart_eurostat`, sans changer leur rôle), `historique.py` et `CADRE.md` (§2 et §6 : la
+dette tient avant 2021). Ni le pas, ni les identités, ni l'état.
+
+### La base des mesures votées, par gouvernement
+
+`src/impots/jumeau/historique/mesures_votees.yaml`, lu par `jumeau/votees.py` : **70
+mesures**, de la suppression de la taxe professionnelle (loi du 30 décembre 2009) à la
+suspension du relèvement de l'âge de la retraite (LFSS 2026, loi n° 2025-1403), sous
+**onze gouvernements** de la frise. Les grandes réformes que le lot 6 rejouera y sont :
+les hausses d'impôts de 2011 à 2014 (CEHR, tranche à 45 %, quotient familial, revenus du
+capital au barème, ISF, TVA, contributions sur l'IS), le CICE et le pacte de
+responsabilité, le PFU et l'IFI, la suppression de la taxe d'habitation, l'IS de 33⅓ à
+25 %, la baisse des impôts de production de 2021, la suppression de la CVAE et son
+étalement, les réformes des retraites de 2010, 2014 et 2023, la CSG de 2018 et les
+mesures d'urgence de décembre 2018.
+
+**Les règles.** Pour chaque mesure : le texte (nature, numéro, date), l'article, la
+codification, l'instrument (seize, vocabulaire fermé), les paramètres que le texte change
+(avant, après), l'année d'effet, le statut (en vigueur, remplacée et par quoi, temporaire,
+suspendue, abrogée, censurée). Le gouvernement est celui en fonction à la date du texte ;
+le lecteur le vérifie sur la frise (la loi de finances pour 2025, déposée par le
+gouvernement Barnier, est au gouvernement Bayrou, et la note le dit). **Aucun montant
+budgétaire** : le lecteur refuse une clé ou un mot de chiffrage, une unité en millions ou
+en milliards ; les seuls montants sont des paramètres du droit, en euros entiers.
+
+**Ce qui n'a pas été lu.** Aucune évaluation préalable, aucun tome des voies et moyens,
+aucun chiffrage de tiers. Les PDF d'évaluations préalables des PLF 2026 et 2027 et du
+PLFSS 2026, et les voies et moyens des PLF 2025 et 2026, sont dans `data/raw` : ils n'ont
+pas été ouverts. Des PLF 2025 à 2027 et du PLFSS 2027 déposés, seul l'en-tête a été lu,
+pour le nom du Premier ministre.
+
+**La vérification, dite mesure par mesure.** Légifrance refuse la session (403). Douze
+mesures sont confirmées sur l'export de la base de Légifrance que publie codes.droit.org
+(CGI à jour au 31 octobre 2026, CSS) : la version en vigueur de l'article codifié porte
+la loi et l'article cités, ou son texte nomme la loi ; c'est ainsi qu'a été lue la
+suspension de 2026 (CSS, art. L. 161-17-2), dont l'article de la loi n'est pas
+identifié. Les 58 autres sont écrites de mémoire et le disent (`verification:
+mémoire`) : leurs numéros d'article sont à relire sur le Journal officiel avant que le
+lot 6 ne s'en serve.
+
+### La frise des gouvernements
+
+`src/impots/jumeau/historique/gouvernements.yaml` : seize gouvernements, de Fillon II
+(2007) à Lecornu II (en fonction : le PLF et le PLFSS 2027 sont présentés en son nom), et
+quatre mandats présidentiels jusqu'au 13 mai 2027. Un gouvernement court de la nomination
+de son Premier ministre à la veille de celle du suivant : les affaires courantes sont au
+gouvernement démissionnaire, et la frise couvre chaque jour sans trou ni chevauchement.
+Le mandat suivant est `a_venir` : son premier jour, le 14 mai 2027, est celui où un
+candidat se branche sur l'état que laisse le gouvernement en fonction.
+
+### Les tests
+
+`pytest -m "not lourd and not chrono" -n 1` sur `test_jumeau_historique.py` (22),
+`test_jumeau_series.py` (8), `test_jumeau_votees.py` (6), `test_dette_comptes.py` (20),
+`test_jumeau.py` et `test_dette.py` : 131 verts, plus `test_donnees.py`,
+`test_provenance.py` et `test_charter.py` (54). Aucun test lourd : le plus long lit ses
+tables en une douzaine de secondes. Le correctif de `sfa_publie` est le seul nombre
+changé hors du jumeau ; aucune étude ne le lit.
+
+### Ce qui manque, et ce qui est à décider
+
+* **Relire les articles** des 58 mesures écrites de mémoire sur le Journal officiel, dès
+  qu'une session joint Légifrance ; et compléter la base : les indexations annuelles du
+  barème, les autres mesures des lois de finances pour 2022, 2024 et 2026 et de la LFSS
+  2026 (la CSG sur les revenus du patrimoine est à 10,6 % dans le CSS en vigueur, sans que
+  la loi qui l'a portée soit identifiée ici), l'assurance chômage (décrets de 2019 et
+  2021), les mesures de dépense.
+* **Les champs des lots 2 et 4** (emploi, chômage, salaire moyen, créations) ne sont pas
+  écrits dans l'état publié : leurs définitions sont à ces lots, qui peuvent les lire
+  dans `jumeau.series`. Les créations y sont des entreprises, micro-entrepreneurs
+  compris ; les « créations de sociétés » du registre n'ont pas de série ici.
+* **L'investissement par branche** n'est pas lu : l'investissement par secteur est celui
+  des secteurs institutionnels de la t. 1.101.
+* **2025** est dans toutes les séries ; 2026 dans aucune (rien d'annuel n'est publié).
+
+## D-411 — La jonction des lots 2 à 4 : le cadre ferme le PIB, le modèle structurel complet
+
+**La jonction** (branche `claude/but23-cadre`, D-406). Les branches des lots 2
+(`claude/but23-entreprises`, D-407), 3 (`claude/but23-commerce`, D-408) et 4
+(`claude/but23-menages`, D-409) y sont fusionnées, dans cet ordre ; le lot 5 (D-410, en
+cours) le sera plus tard. Les conflits : `jumeau/canaux.py`, créé par chaque lot avec une
+interface à lui (`verifier` et `CanalError` au lot 2, `portes` et `CanalInconnu` au 3,
+`DoubleCompte` au 4), devient un registre commun, une section par lot, les trois erreurs
+sous `CanalError` ; `pas.py`, un seul appel à `canaux.verifier` ; `champs.py`, les
+sections des trois lots, les champs réservés des lots 2 et 4 retirés de la liste des
+absents ; `thetas.py`, les sections des lots 3 et 4 ; `DECISIONS.md`, D-407, D-408,
+D-409 dans l'ordre ; le manifeste, l'union des entrées. Le test du commerce attend
+`DoubleCompte` au lieu de `PasError`, message inchangé. Les fichiers que les lots ont
+téléchargés (t. 8.202, 7.101, 7.201, fiche 3.2, Devereux et Lockwood, FR-BDF, t. 302 de
+l'enquête Emploi, Note de conjoncture de 2019), les cellules de ménages de 2024 et celles
+d'entreprises de 2023 sont reliés dans `data/` par des liens, hors git. La garde des
+dépendances lisait `test_jumeau`, `test_jumeau_entreprises` et `test_jumeau_menages`, aides
+de test, comme des paquets : ils sont déclarés modules locaux.
+
+**Les quatre décisions, prises par le responsable du projet, écrites dans `CADRE.md`
+§4 bis.**
+
+1. *Qui ferme le PIB en mode structurel : le cadre, par la somme des emplois.* Pour chaque
+   bloc structurel (`canaux.structurel` : il porte un canal et n'est pas réduit), le pas
+   écrit le PIB de son origine, la somme signée de ses emplois, par mesure, dès que le
+   bloc a tourné, pour que les blocs suivants et le point fixe la lisent ; un bloc
+   structurel qui écrit `pib` est refusé à la construction. Le commerce, la consommation,
+   la productivité, l'investissement et l'implantation ne l'écrivent plus ; leurs effets
+   d'offre sans emploi désigné (la productivité des entrantes, le PIB potentiel de
+   l'investissement et de l'implantation hors leur FBCF) restent sur
+   `emplois_non_ventiles`, et leur docstring le dit. La tendance, `mesange`, `creations`
+   (`canaux.REDUITS`) et les blocs sans canal écrivent leur PIB eux-mêmes : en mode
+   réduit, rien ne change, et la chaîne des études est retrouvée à 4,4e-16 comme avant
+   (`test_jumeau`, `test_rejouer`, `test_creations_canal`).
+2. *Les canaux par instrument.* Le double compte se juge sur la paire (canal,
+   instrument). `mesange` porte les canaux de Mésange (`DE_MESANGE` : l'investissement par
+   le coût du capital, la consommation, l'emploi, les salaires, les exportations, les
+   importations, les prix des échanges, la demande publique) pour ses seuls instruments,
+   les neuf variantes publiées de `macro.mesange.VARIANTS` ; un bloc structurel pour ceux
+   qu'il lit (`instruments`), sinon pour tous. L'investissement, lu sur l'IS, la CVAE et
+   la C3S, tourne donc avec `mesange` ; le test du lot 2 qui refusait les deux ensemble
+   suit la décision, et refuse un investissement lu sur les cotisations employeurs, que
+   Mésange porte.
+3. *Les cotisations patronales et les créations, en mode réduit.* La démographie des
+   entreprises et l'implantation ne sont pas des canaux de Mésange. Le canal des créations
+   (D-401) lit les cotisations à côté de la variante cotisations : ce n'est pas le même
+   canal, on le garde, dit comme D-401 (un test tient les deux paires).
+4. *Les performances* : ci-dessous.
+
+**Le modèle structurel complet** (`blocs.ordre_structurel`) : `tendance` (qui laisse au
+commerce les prix des échanges), `mesures`, `demande_publique`, les six blocs du lot 2,
+puis une boucle simultanée, la consommation, l'emploi, les salaires et le commerce (les
+importations retranchent au PIB que l'emploi lit). Sans `mesange` : chaque canal du
+registre est porté une fois. Un bloc manquait pour comparer une dépense publique : rien ne
+portait dans les emplois les achats des APU qu'une mesure inscrit sur leur compte.
+`demande_publique` est comptable, sans θ : ΔP2 + ΔD1 + ΔD29 + ΔD632 sur la consommation des
+APU (la production non marchande à ses coûts, les transferts en nature de produits
+marchands), ΔP51g sur leur FBCF ; ΔD1 en rémunérations, ΔD29 en impôts sur la
+production, le reste en revenus non ventilés. Il porte le canal « demande_publique », de
+Mésange, que ses variantes de dépense portent en mode réduit.
+
+**Les tests** (`tests/test_jumeau_structurel.py`, 12, dix secondes, données
+synthétiques) : le modèle se construit, chaque canal porté une fois, et `mesange` y est
+refusé ; les paires de la décision 3 ; un instrument inconnu refusé ; un bloc structurel
+qui écrit le PIB refusé ; le PIB de chaque bloc structurel égal à la somme de ses emplois
+à 1e-12 ; les identités à 1e-9 à θ = 0, ½, 1 et sur un axe de cinq tirages, avec quatre
+mesures (IR, cotisations, dépense publique, IS), et Δb décomposé à 1e-12 ; le point fixe
+qui converge (deux itérations par an dans la référence, quinze dans la variante, jamais
+cent) ; la FBCF des APU égale au choc, euro pour euro ; le sens des cinq variantes.
+
+**À côté de Mésange.** Une comparaison de cohérence, pas un juge : rien n'est
+préenregistré, aucun paramètre n'est réglé dessus. `jumeau.comparaison` et
+`scripts/jumeau_comparaison_mesange.py` : le modèle structurel complet, θ½, depuis l'état
+publié de 2025 (cellules d'entreprises de 2023, de ménages de 2024 ; scénario choisi :
+1 % de croissance réelle, 2 % de prix, 2,5 % de taux), un choc permanent d'un point du PIB
+de référence, dans la convention expansionniste ; l'IR et la TVA rendus aux déciles au
+prorata de l'IR et de la TVA des cellules, la dépense publique composée comme Mésange
+(p. 106), ses prestations en espèces aux déciles au prorata des pensions, du chômage et
+des prestations. Jumeau / Mésange, à 1, 2, 5 et 10 ans :
+
+PIB en volume, en % :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 0,26 / 0,41 | 0,50 / 0,83 | 0,62 / 0,81 | 0,67 / 0,87 |
+| cotisations employeurs | 0,08 / 0,20 | 0,20 / 0,55 | 0,44 / 0,97 | 0,75 / 1,29 |
+| TVA | 0,27 / 0,32 | 0,51 / 0,66 | 0,64 / 0,81 | 0,68 / 0,78 |
+| investissement public | 0,64 / 1,31 | 0,70 / 1,38 | 0,78 / 0,93 | 0,81 / 0,57 |
+| dépense publique | 0,59 / 0,78 | 0,73 / 1,06 | 0,82 / 0,86 | 0,86 / 0,53 |
+
+Emploi salarié marchand, en milliers :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 16 / 24 | 48 / 109 | 72 / 184 | 70 / 181 |
+| cotisations employeurs | 72 / 83 | 162 / 210 | 212 / 316 | 227 / 318 |
+| TVA | 17 / 32 | 50 / 118 | 75 / 113 | 72 / 69 |
+| investissement public | 40 / 92 | 87 / 198 | 90 / 91 | 85 / 45 |
+| dépense publique | 37 / 33 | 85 / 94 | 96 / 44 | 90 / −8 |
+
+Solde primaire des APU, en points de PIB :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | −0,91 / −0,81 | −0,80 / −0,50 | −0,72 / −0,51 | −0,71 / −0,50 |
+| cotisations employeurs | −0,88 / −0,72 | −0,73 / −0,42 | −0,54 / −0,24 | −0,36 / −0,17 |
+| TVA | −0,91 / −0,80 | −0,79 / −0,36 | −0,71 / −0,37 | −0,70 / −0,44 |
+| investissement public | −0,88 / −0,49 | −0,78 / −0,26 | −0,74 / −0,70 | −0,75 / −0,82 |
+| dépense publique | −0,87 / −0,53 | −0,75 / −0,32 | −0,69 / −0,54 | −0,70 / −0,68 |
+
+Les écarts, et ce qui les fait. (a) *Pas d'accélérateur* : l'investissement des
+entreprises ne répond qu'au coût du capital (D-407) ; dans Mésange il monte de 2 à 3,5 %
+la deuxième année des variantes de demande. C'est l'essentiel du demi-multiplicateur
+de l'investissement public à un et deux ans, et une part de celui de l'IR. (b) *Pas de
+boucle prix-salaires* (D-409) : les prix sont ceux du scénario. Mésange évince à long
+terme par les salaires et les prix (le PIB de la dépense publique retombe à 0,53, son
+emploi à −8 milliers) ; le jumeau n'évince pas, et dépasse Mésange à dix ans sur les
+deux variantes de dépense. Une baisse de TVA n'y baisse pas les prix : elle est un revenu
+rendu aux ménages. La baisse des cotisations n'y passe que par le coût du travail et le
+TES (D-408 : la moitié des prix de Mésange), d'où un PIB et un emploi plus bas. (c) *Les
+importations* : le contenu du TES retranche le quart de la consommation et le tiers de
+la FBCF (D-408) ; le lot 4 seul faisait 0,40 et 0,76 de PIB pour l'IR à un et deux ans
+(D-409, départ synthétique).
+(d) *Le solde* : le jumeau rend moins de recettes induites que Mésange, de 0,1 à 0,5 point
+jusqu'à cinq ans ; à dix ans, sur les deux variantes de dépense, Mésange le rejoint par
+l'éviction. Ce que le jumeau rend : la TVA et les accises sur la consommation, les
+cotisations et l'IR sur la masse salariale, les allocations chômage, ρ ΔY sur l'offre ; ni
+l'IS ni les impôts sur l'EBE induit, ni l'effet des prix sur les recettes. Le sens est
+partout celui de Mésange ; un test ne tient que lui.
+
+**Les temps** (décision 4), mesurés une fois, médiane de sept, quatre cœurs (charge de 1
+à 2 : le lot 5 tourne à côté) : le modèle structurel complet, dix ans, référence et
+variante, une mesure, sur les données réelles. Avant : 301 ms à n = 1, 1,24 s à
+n = 2 000 ; après : 158 ms et 0,98 s. La plomberie du cadre : l'état somme un champ
+additif à sa lecture et non à chaque écriture, dans l'ordre de ses contributions ; il
+indexe les contributions par origine, pour que le point fixe retire celles d'un bloc sans
+parcourir l'état ; le pas écrit un champ d'un coup, teste les NaN d'un seul calcul par
+bloc et mesure l'écart du point fixe en un calcul vectorisé. Le commerce garde, le temps
+des itérations d'une année, ce qu'elles ne changent pas. Aucun nombre ne change : les
+12 772 valeurs et contributions d'une trajectoire complète (trois mesures, θ½ et un axe
+de quatre tirages) sont égales au bit près avant et après, à graine de hachage égale, et
+les tests passent. **La cible de 2 s tient ; celle de 50 ms à n = 1 non.** Le coût est
+le point fixe : quinze itérations par an dans la variante, à 1e-10, d'environ une
+milliseconde chacune, presque toute de Python (le commerce 0,2 ms, les trois blocs des
+ménages 0,35, l'écriture et la fermeture par le cadre le reste). L'atteindre demande
+d'accélérer le point fixe (Aitken, Anderson) ou de fondre la boucle en un calcul, ce qui
+change les nombres sous la tolérance : c'est à décider, ou au lot 7 (le pas en
+JavaScript).
+
+**Ce qui reste.**
+
+* La jonction du lot 5 (D-410), quand il sera rendu.
+* Le mode structurel n'a ni accélérateur, ni boucle prix-salaires, ni recettes induites
+  sur les profits : ce sont les trois écarts à Mésange ci-dessus, chacun un travail.
+* Les rapports ne portent ni leurs chocs par impôt (`Mesure.entreprises`) ni par décile
+  (`Mesure.menages`) : `depuis_rapport` ne les remplit pas, et les études ne passent pas
+  encore par le mode structurel (D-407, D-409).
+* La fermeture des comptes somme les clés de B9 et de la dette dans l'ordre d'un
+  ensemble : d'un processus à l'autre, leur dernier bit peut changer (`PYTHONHASHSEED`).
+  Hérité du lot 1, aucun test ne le voit ; le trier est un commit à part, qui le dira.
+* `make impact` et les tests lourds (dont `test_jumeau_cellules.py`) tournent avant la
+  PR du but, pas ici. `ruff check .` signale 22 erreurs dans
+  `docs/audit_but14/chaine_min.py`, héritées et hors du jumeau ; `src`, `tests` et
+  `scripts` sont propres.
+
+## D-412 — La jonction du lot 5 : l'état publié complet, le pas déterministe, les rapports
+
+**La jonction** (branche `claude/but23-cadre`). La branche du lot 5
+(`claude/but23-histoire`, D-410) y est fusionnée. Deux conflits : le manifeste, l'union
+des entrées (234 fichiers : 227 et 226, dont 219 communs), et `DECISIONS.md`, D-407 à
+D-411 dans l'ordre. `champs.py` (le groupe « impots », les libellés de `sfa`,
+`ecart_millesime_dette` et `ecart_eurostat`), `CADRE.md` (§2, §6), `historique.py` et le
+correctif de `comptes.sfa_publie` se sont fusionnés sans conflit. Les sept fichiers que
+le lot 5 a téléchargés (t. 3.105, t. 6.208, créations et défaillances de la BDM, chômage
+et OAT d'Eurostat) sont reliés dans `data/raw`, hors git, leurs sha256 vérifiés.
+
+**L'état publié complet.** `etat_initial(annee)` écrit, de 2010 à 2025, les champs des
+lots 2 à 4 qu'une série de `jumeau.series` porte exactement, chacun avec sa source au
+registre :
+
+| champ | ce qui est écrit |
+|---|---|
+| `emploi_total`, `emploi_salarie` | t. 6.208 et 6.210, ligne _T, milliers |
+| `chomage` | Eurostat une_rt_a, 15-74 ans, milliers |
+| `population_active` | leur somme, la convention du lot 4 (Mésange, p. 24) |
+| `salaire_moyen` | D1 de la t. 1.105 sur l'emploi salarié, la définition du lot 4 |
+| `solde_exterieur` | P6 − P7 de la t. 1.101 |
+| `contribution_solde_exterieur` | la formule du bloc `commerce`, t. 1.101 et 1.103 |
+
+Le chômage d'Eurostat n'est pas celui de l'enquête Emploi qui fait la référence du lot 4
+(t. 302) : 2 331 contre 2 342,8 milliers en 2024, 2 300 contre 2 296 en 2023, 2 451
+contre 2 451,2 en 2025. Même concept (BIT ; l'enquête ne compte aucun chômeur au-delà de
+74 ans), deux publications : écrit, et l'écart dit. La contribution du solde extérieur
+redonne la variation des volumes de la t. 1.102 aux prix de l'année d'avant à 2e-6 du
+PIB au plus, l'arrondi des indices.
+
+**Ce qui n'est pas forcé dans un champ voisin** va au groupe neuf « histoire » (lot 5),
+hors de toute identité : les volumes chaînés du PIB et des onze emplois qui ont un prix,
+les salaires bruts et le salaire brut moyen (D11 par tête, 40 897 € en 2024, contre
+55 388 € de D1 par tête), le taux de chômage, les créations d'entreprises (ensemble,
+micro-entrepreneurs, classiques, EI hors micro), les défaillances et l'OAT à dix ans. Les
+créations d'entreprises, micro compris, ne sont pas les créations de sociétés du lot 2 ;
+les défaillances ne sont pas ses fermetures. **Restent absents** : le stock, les
+créations et les fermetures de sociétés, les sorties induites, la productivité (aucune
+série) ; la FBCF des seules SNF (la t. 1.101 les publie avec les EI) ; la demande
+mondiale, les prix relatifs et le solde courant (lot 3, aucune série). Les créations de
+sociétés au sens de l'Insee seraient les classiques moins les EI hors micro, mais le
+champ du lot 2 est la population de ses cellules, dont le recouvrement avec Sirene n'est
+pas établi : à trancher avec le lot 6.
+
+Les identités tiennent comme avant. Le modèle structurel depuis l'état publié de 2025
+(données synthétiques) donne le même Δb et le même PIB au bit avec ou sans ces champs au
+départ : l'amorce du point fixe de la première année, qui les lit, ne change rien.
+
+**Le pas déterministe.** `pas.fermer` itérait les clés (origine, mesure) de B9, du solde
+primaire et de la dette dans l'ordre d'un ensemble, qui change avec `PYTHONHASHSEED` :
+le dernier bit de B9, de la dette et du ratio changeait d'un processus à l'autre (D-411).
+Les clés sont triées. `test_jumeau_determinisme.py` fait tourner le modèle structurel
+complet (quatre mesures, θ½) dans trois sous-processus de graines 0, 1 et 2 et compare
+au bit chaque champ de chaque état et la décomposition de Δb : rouge sur l'ancien code,
+vert après, en 8 s. Seul le dernier bit bouge : la chaîne retrouvée tient à 1e-9.
+
+**`Mesure.depuis_rapport` et ce que les rapports portent.** Le rapport du chemin annuel
+(`predictif_*.json`) ne porte, par année, que le coût, les impulsions et la somme des
+prélèvements du canal des créations : ni impôt par impôt, ni décile. Le rapport de la
+première année (`premiere_annee_*.json`) porte, pour cette année et pour la population
+figée (son coût est celui du chemin figé au bit, dans les 46 paires commitées), les
+écarts par impôt de la passe des entreprises et le gain moyen par décile de la passe des
+ménages. Avec `premiere_annee=`, la mesure prend :
+
+* `entreprises` : les cinq impôts du canal (IS, contribution sociale sur l'IS, CEBGE,
+  CVAE, C3S), en Md€, recettes positives, quand leur somme est celle des prélèvements du
+  chemin à l'euro près. Sinon la différence est faite des prélèvements des ménages que le
+  lot 2 lit aussi (cotisations patronales nettes, PFU, prélèvements sociaux du capital),
+  que le rapport ne ventile pas : absent (Retailleau, −4,301 Md€ de cotisations ; les
+  hausses du Smic) ;
+* `menages` : mean_delta × n_households par décile, sauf pour une réforme du Smic : le
+  Smic réel efficace du bloc des salaires n'est pas la revalorisation de la requête sans
+  hypothèse ;
+* pour la première année et la vue figée seules. Les autres années et la vue vieillie
+  restent absentes ; `Mesure.non_portes` dit chaque absence et sa raison. Un rapport de
+  première année d'un autre commit, d'un autre scénario, d'une autre année ou d'un autre
+  coût est refusé.
+
+Pour que l'absent ne se lise pas comme un zéro, deux refus s'ajoutent aux blocs des lots
+2 et 4 : `chocs_entreprises` refuse une année de la trajectoire où la mesure porte des
+prélèvements agrégés sans ventilation quand elle en ventile d'autres ; `verifier_menages`
+refuse une année où la mesure coûte sans choc par décile quand elle en porte d'autres, et
+ne juge plus que les années de la trajectoire. Aucun nombre existant ne change.
+
+`test_jumeau_depuis_rapport.py`, sur les rapports commités : le programme d'Attal donne
+ses cinq impôts (la CVAE à −3,282 Md€) et ses déciles (58,46 Md€ en tout) pour 2026 ; le
+modèle structurel complet tourne sur 2026, identités tenues, les signaux du lot 2 étant
+ceux de la passe ; sur dix ans, le lot 2 refuse 2027 à 2029, et pour la TVA sur
+l'énergie de Le Pen le lot 4 refuse 2027 à 2035. Retailleau, Mélenchon (Smic) et la vue
+vieillie gardent leurs absences.
+
+**Les tests.** `pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`,
+`test_rejouer.py`, `test_creations_canal.py`, `test_dependances.py`,
+`test_gardes_phase9.py`, `test_donnees.py` et `test_dette*.py` : 365 verts, 4 sautés (les
+cellules de ménages et le bulletin de l'AFT, absents de ce checkout) ; `ruff check src
+tests scripts` propre. Ni `make impact` ni les tests lourds ici.
+
+**Ce qui reste.**
+
+* Les rapports d'études ne portent la ventilation que de leur première année figée :
+  pour faire tourner le modèle structurel sur dix ans, il faut que la chaîne écrive, par
+  année et par vue, les prélèvements par impôt (ménages compris) et les déciles. C'est un
+  changement des rapports, donc des passes : à décider.
+* Le Smic réel efficace d'une réforme du Smic, pour le bloc des salaires : sa définition
+  à partir de la requête est à écrire et à sourcer.
+* Les champs restés absents (créations et fermetures de sociétés, FBCF des seules SNF,
+  demande mondiale, prix relatifs, solde courant) attendent leurs séries, au lot 6.
+
+## D-413 — Les mesures votées relues au Journal officiel : 95 vérifiées, 19 corrections
+
+### La méthode
+
+D-410 laissait 58 mesures sur 70 écrites de mémoire. Chacune est relue ici sur le texte
+publié au Journal officiel, article par article : la loi (numéro, date de signature,
+nature), l'article cité, les paramètres avant et après, la date d'effet. Un script lit
+l'archive du Journal officiel que publie la DILA (`Freemium_jorf_global_20261108-140000`,
+1,75 Go, echanges.dila.gouv.fr/OPENDATA/JORF, hors git, dans `data/raw`) et
+en garde les articles des lois signées depuis juin 2009 et des décrets nommés (assurance
+chômage, prime d'activité, revenu de solidarité active, ordonnance de 2017 sur le
+prélèvement à la source) : 29 593 enregistrements. Chaque paramètre est cherché dans
+l'article ; un article qui ne le porte pas est un article faux.
+
+**La source citée.** L'URL est celle de l'article au JO sur Légifrance
+(`/jorf/article_jo/JORFARTI…`) : l'archive porte le même identifiant, et le texte lu est
+celui de cette URL. Pour chacune des 95 mesures, le numéro, la date et la nature du
+texte de la base sont recoupés contre ceux de l'archive : aucun écart. Le lecteur
+(`votees._verification`) refuse une mesure « vérifiée » sans URL et une « non vérifiée »
+sans raison ; les douze mesures confirmées en D-410 sur codes.droit.org gardent cette
+confirmation en note.
+
+**Les sources.** Joignables : l'archive de la DILA (utilisée), codes.droit.org,
+assemblee-nationale.fr, senat.fr (lu pour le seul numéro de la loi de finances pour
+2026, n° 2026-103 du 19 février 2026), bofip.impots.gouv.fr, conseil-constitutionnel.fr,
+data.gouv.fr. Refusées : legifrance.gouv.fr (403), urssaf.fr, legislation.cnav.fr et
+boss.gouv.fr (connexion refusée par le réseau de la session), api.piste.gouv.fr (404, et
+l'API demande une clé). service-public.fr n'a pas servi.
+
+**Ce qui n'a pas été lu.** Aucune évaluation préalable, aucun tome des voies et moyens,
+aucun rapport de la Cour des comptes ou du HCFP, aucun chiffrage de tiers. Les lois de
+finances et de financement mêlent le droit et des montants (articles d'équilibre, états
+législatifs, rapports annexés) : des recherches plein texte en ont affiché quelques
+fragments ; rien n'en a été relevé, et la base ne porte que le droit.
+
+### Le décompte
+
+**95 mesures, 95 vérifiées, aucune non vérifiée** : les 70 de D-410 et 25 ajoutées. Un
+test le tient (`VERIFIEES, NON_VERIFIEES = 95, 0`). Vérifiée veut dire : la loi,
+l'article et les paramètres « après » sont dans l'article lu. Un « avant » fixé par
+décret ou par une loi antérieure à l'archive (la loi de finances pour 2009, la
+convention d'assurance chômage de 2017) est dit tel dans le paramètre ou la note.
+
+### Les corrections (avant → après)
+
+1. `lfi2014_plafond_qf` : article 4 → **3** (l'article 4 porte sur la retraite
+   supplémentaire).
+2. `lfr2022_audiovisuel` : article 1 → **6** (l'article 1 porte sur les titres-restaurant).
+3. `lfss2026_suspension_retraites` : article « non identifié » → **105**.
+4. `lfss2019_revalorisation_0_3` : « 0,3 % en 2019 et 2020 » → 0,3 % au titre de 2019 ;
+   la mention de 2020 est censurée (décision n° 2018-776 DC). 2020 relève de la LFSS
+   2020, art. 81 (mesure ajoutée : 0,3 %, sauf les pensions jusqu'à 2 000 €).
+5. `lfi2018_composante_carbone` : « tonne de CO2 à 44,60 € en 2018 … 86,20 € en
+   2022 » → la loi ne fixe pas la valeur de la tonne, mais des tarifs : gazole 59,40,
+   64,76, 70,12, 75,47 et 78,23 € l'hectolitre de 2018 à 2022 ; la loi de finances pour
+   2019 (n° 2018-1317, art. 64) supprime les colonnes de 2019 à 2022.
+6. `decret_2018_prime_activite` : « bonification relevée de 90 € au niveau du SMIC » →
+   bonification maximale de 12,782 % à 29,101 % du montant forfaitaire, atteinte à 120
+   fois le SMIC horaire au lieu de 95 (CSS, art. D. 843-2).
+7. `lfrss2023_regimes_speciaux` : les industries électriques et gazières et la Banque de
+   France retirées de la liste : l'article 1 ferme la RATP, les clercs et employés de
+   notaire et le CESE ; les deux autres régimes sont réglementaires.
+8. `lfr2012_tva_sociale` : « 5,4 % ; exonération jusqu'à 2,1 SMIC, dégressive jusqu'à
+   2,4 SMIC » → nulle sous un premier seuil, croissante jusqu'à un second, seuils fixés
+   par décret ; la note ajoute que le prélèvement social sur le capital, porté de 3,4 à
+   5,4 % par le même article, n'est pas abrogé en août 2012.
+9. `lfrss2014_pacte_allegements` : « plus aucune cotisation URSSAF au SMIC, hors
+   accidents du travail » → réduction générale étendue au FNAL, à la contribution de
+   solidarité pour l'autonomie et, sous un taux fixé par arrêté, aux accidents du
+   travail ; allocations familiales « 3,45 % » → réduites de 1,8 point (3,45 %).
+10. `lfss2018_cice_allegements` : maladie « 13 % → 7 % » → réduite de 6 points (le taux
+    de droit commun est réglementaire) ; « au 1er octobre 2019 » retiré : cette date
+    vient de la LFSS 2019, dont l'article n'est pas identifié.
+11. `lfi2014_contribution_is_10_7` : « exercices clos jusqu'au 30 décembre 2013 → 2015 »,
+    prêté à la loi de finances pour 2014 → la prorogation à 2015 est de la loi de
+    finances pour 2013 (art. 30), celle à 2016 de la LFR d'août 2014 (art. 15).
+12. `lfr2011_4_contribution_is_5` : « prorogée ensuite » → les deux prorogations nommées.
+13. `lfr2011_isf_bouclier` : bouclier « supprimé à compter de 2013 » → appliqué pour la
+    dernière fois aux revenus de 2010 (droit à restitution acquis au 1er janvier 2012).
+14. `lfi2011_tranche_41` : le même article porte le taux des plus-values mobilières de 16
+    à 19 % (CGI, art. 200 B) : paramètre ajouté.
+15. `lfr2012_ttf` : 0,4 % depuis 2025 ajouté (loi n° 2025-127, art. 98), avec les
+    articles des relèvements de 2012 et de 2017.
+16. `lfi2023_cvae` : plafonnement « 1,625 % en 2023 » → 1,625 % en 2023, 1,25 % ensuite.
+17. `retraites_2010_age_legal` : 62 ans atteints dès la génération 1955 et 5 mois par
+    génération par la LFSS 2012 (n° 2011-1906, art. 88), source ajoutée.
+18. `lfi2024_cvae_etalement` : la note vague sur le report → `suite` vers la mesure
+    ajoutée de la loi de finances pour 2025 (art. 62).
+19. `lfi2020_ir_11` : les seuils du barème ajoutés ; `lfi2015_tranche_5_5` et lui
+    renvoient au barème suivant.
+
+Dix-sept corrections portent sur les mesures de mémoire, deux (3 et 16) sur les douze
+confirmées en D-410. Tout le reste est confirmé tel que D-410 l'avait écrit : les 41
+autres mesures de mémoire portent la bonne loi, le bon article et les bons paramètres,
+et aucune loi, aucun numéro ni aucune date de texte n'était faux.
+
+### Ce qui a été ajouté (25 mesures)
+
+* **La CSG sur le capital.** La LFSS 2019 (n° 2018-1203, art. 26) la ramène de 9,9 à
+  9,2 % en refondant les prélèvements sociaux ; **la LFSS 2026 (n° 2025-1403, art. 12)
+  la porte à 10,6 %**, les revenus fonciers, les plus-values immobilières, l'épargne
+  logement, l'assurance vie et les rentes restant à 9,2 %. C'est la loi que D-410
+  cherchait.
+* **Les barèmes de l'IR**, une mesure par loi de finances de 2010 à 2026 (13, plus ceux
+  de 2015 et de 2020 déjà dans la base), chaînés par `suite` : les quatre ou cinq seuils
+  et le plafond du quotient familial, avant et après. Les lois pour 2012 et 2013 n'ont
+  pas d'article de revalorisation : le gel est l'absence de l'article.
+* **Les lois de finances pour 2025 et 2026** : le report de la suppression de la CVAE à
+  2030 et la contribution complémentaire de 47,4 % (2025, art. 62), la TTF à 0,4 %
+  (2025, art. 98), la CDHR prorogée jusqu'à un déficit sous 3 % (2026, art. 2), la
+  contribution sur les bénéfices étendue à un second exercice (2026, art. 12), la taxe
+  de 20 % sur les actifs non professionnels des holdings patrimoniales (2026, art. 7).
+* **L'assurance chômage** : le décret n° 2019-797 (130 jours travaillés sur 24 mois,
+  dégressivité de 0,7 au 183e jour) et le décret n° 2023-33 (durée affectée de 0,75).
+* **La dépense sociale** : la modulation des allocations familiales (LFSS 2015, art.
+  85), la revalorisation de 2020 (LFSS 2020, art. 81), l'AAH sans les ressources du
+  conjoint (loi n° 2022-1158, art. 10).
+
+### Les tests
+
+`test_jumeau_votees.py` (10, verts en neuf secondes) : le décompte, la source de chaque
+mesure vérifiée, le refus d'une vérification incomplète, les corrections et les ajouts.
+Aucun nombre d'étude ne change : la base n'est lue par aucune passe.
+
+### Ce qui reste
+
+* **Les lois de finances pour 2022 et 2024** n'ont ici que leur barème (et la CVAE pour
+  2024) ; la LFSS 2026 n'a que la suspension et la CSG. Les autres mesures de ces lois
+  sont à choisir contre ce que le lot 6 rejouera.
+* **L'assurance chômage** : le salaire journalier de référence (décrets n° 2021-346 et
+  2021-1251) et les règles de 2024 et 2025 ne sont pas écrits.
+* **La dépense** : les revalorisations du RSA, de l'ASPA et de l'AAH, et les
+  revalorisations annuelles des prestations, manquent.
+* Les articles codifiés (`codification`) ne sont pas relus en version consolidée ; un
+  « avant » fixé par décret reste dit comme tel.
+* **Refaire la vérification** : `scripts/jumeau_jorf_extraire.py` puis
+  `scripts/jumeau_jorf_verifier.py` (leurs docstrings disent l'URL, la date et la
+  commande) ; l'archive est manifestée dans `data/raw/MANIFEST.json`, entrée ajoutée à la
+  main comme les fichiers d'Eurostat de D-410 (`impots population manifest` la mettrait
+  en quarantaine, faute d'entrée dans `KNOWN_SOURCES`).
+
+## D-414 — Le mode structurel complété : accélérateur, prix-salaires, IS induit, dix ans
+
+**Ce qui est codé** (branche `claude/but23-structure`, partie de `claude/but23-cadre`,
+178265c). Les trois manques que le tableau de D-411 met à côté de Mésange, chacun dans le
+bloc qui en a la charge, ses équations et leurs sources dans sa docstring, ses valeurs
+dans le YAML de son lot ; puis la ventilation sur dix ans, par une convention nommée.
+Trois canaux s'ajoutent au registre et à `DE_MESANGE` (les multiplicateurs de Mésange les
+portent en mode réduit) : « investissement_accelerateur », « prix_production »,
+« recettes_induites_profits ». Chacun est porté une fois en mode structurel, pour tout
+instrument, et refusé à côté de `mesange` (`DoubleCompte`). Le pas, les identités et
+l'état ne changent pas ; le mode réduit non plus.
+
+**1. L'accélérateur** (`investissement`, `accelerateur=True`). L'équation estimée de
+Mésange (G2017-04, p. 44), dont le lot 2 avait gardé la partie coût du capital, avec la
+valeur ajoutée qui bouge : Δie_q = 0,22 Δie_{q−2} + β₀ Δva_q + β₁ Δva_{q−1} − 0,06 (ie −
+va + ε_K ck)_{q−1}. Linéaire : la réponse à un échelon de va est β₀ R₀ + β₁ R₁ + R_ec, la
+correction d'erreur tendant vers un (l'indexation unitaire de long terme) ; la moyenne
+annuelle redonne la ligne « Valeur ajoutée (+1 %) » de la p. 45, 1,795, 2,011 et 1,381 à
+1, 2 et 5 ans contre 1,79, 2,00 et 1,36. va est lue comme l'écart du PIB en volume de la
+mesure (une approximation de la valeur ajoutée marchande, dite). ΔI^a est une demande :
+FBCF des SNF et EBE ; il n'entre pas au capital du PIB potentiel, que la production suit
+la demande à court terme. Le bloc lit le PIB de l'année : il entre dans la boucle
+simultanée, qui devient investissement, consommation, emploi, salaires, commerce. θ
+`investissement_accelerateur` : β₀ = 0,852, 1,19, 1,528 et β₁ = 0,354, 0,65, 0,946, à
+∓ 1,96 écart type de chaque coefficient (t = 6,9 et 4,3, même page) ; Mésange ne publie
+pas leur covariance, et θ les déplace ensemble (choisi, dit).
+
+**2. La boucle prix-salaires** (`commerce`, `boucle_prix=π` ; `consommation`, `emploi`,
+`salaires`, `prix=True`). Pour chaque mesure, années j ≤ k, Y_j le PIB de référence :
+
+* l'activité en volume, ŷ_j = (ΔPIB_j − ΔPIB^prix_j) / Y_j, que lisent désormais
+  l'emploi, les salaires, l'investissement et le commerce ; le nouveau champ
+  `effet_prix_pib` est la part prix du PIB nominal (consommation et échanges) ;
+* le coût salarial unitaire en part du PIB, csu_j = (ΔD1^sal_j − s_W Y_j ŷ_j) / Y_j, la
+  masse salariale marchande du bloc `salaires`, s_W = π D1/PIB du départ ; c'est le csu de
+  Mésange, la masse super-brute sur la valeur ajoutée en volume (p. 70) ;
+* le prix de valeur ajoutée, le « price setting » de Mésange (p. 22, pva = α (w − e) +
+  (1 − α) ck) : ln p^VA_k = (α / s_W) Σ Δ(csu − τ) π_θ(h) + Σ Δŷ D(h), α = 0,543 la part
+  des salaires dans la valeur ajoutée des quatre branches marchandes (p. 70 et 71,
+  pondérées par leur valeur ajoutée de 2015, p. 69 note 55), τ le choc de coût des
+  cotisations et des impôts sur la production du lot 3, D(h) la ligne « Demande (+1 %) »
+  des prix de production (p. 72 : les tensions, nulles à long terme) ;
+* les prix de production, par le TES comme au lot 3, plus les intrants importés : ln p^D_k
+  = κ_D Σ Δ(csu − τ) π_θ(h) + Σ Δŷ D(h) + κ^M_D P^M_k, de même p^X avec κ_X et κ^M_X ; les
+  prix d'importation suivent les prix français (ρ_M, p. 91) et renchérissent les intrants,
+  κ^M = 0,1579 et 0,2983 (Δp = m L sur le TES A38 2023SD, recalculé par le test du lot 3),
+  résolu année par année ;
+* le prix de la consommation, l'équation (PC) de Mésange (p. 24) : p̂c = (1 − μ_C) p^D +
+  μ_C P^M, μ_C = 0,2483, sans les taxes : une TVA de la mesure reste un revenu rendu aux
+  ménages, comme avant, la compter dans les prix la compterait deux fois ; le commerce
+  écrit le déflateur de la consommation des ménages, que la tendance lui laisse ;
+* le retour des prix : les salaires s'indexent sur p^VA par la ligne « Prix (+1 % sur
+  les prix de VA et l'IPC) » de la p. 65 (0,59, 1,08, 1,05, 1,00 pour les qualifiés,
+  0,70, 1,11, 1,02, 1,00 pour les autres, pondérés 0,69 / 0,31 ; unitaire à long terme,
+  p. 64) ; l'emploi lit le coût réel, ŵ + τ̂ − p̂^VA (p. 22) ; la consommation lit le
+  revenu réel, ΔRD + p̂c P − p̂c RD, les prestations hors chômage P indexées sur le prix de
+  la consommation (p. 100), leur surcroît en dépense des APU (D62), et s'écrit en valeur,
+  ΔC^vol + p̂c C ; la compétitivité, par p^X et p^D dans les équations du lot 3 ;
+* θ `commerce_prix_diffusion` : π_θ, la diffusion d'un coût dans les prix, π(h/2) à
+  θ = 0 (mi-vitesse), le profil « Salaires » de Mésange (p. 72) à θ½, 1 à θ = 1
+  (immédiate, le modèle de prix du TES) ; les deux bornes sont choisies, non vérifiées.
+  Il ne joue qu'en mode structurel : le lot 3 seul garde son profil et ses nombres.
+
+Restent aux prix du scénario, dit : l'investissement et la consommation des APU (leurs
+blocs écrivent des volumes) ; les allocations chômage par chômeur, que Mésange indexe sur
+le salaire moyen (un écart de second ordre). Le coût du capital ne bouge pas avec les prix
+(pinv et pva bougent ensemble, ck − pva ne change pas).
+
+**3. Les recettes induites** (`recettes_induites`, après la boucle). Vérifié d'abord ce
+qui est porté, pour ne rien compter deux fois : la TVA et les accises sur la consommation
+induite, par `consommation`, au taux moyen des cellules, 11,30 % (le taux apparent de la
+t. 3.217 de 2024, TVA et accises sur l'énergie, les tabacs et les alcools, 265,296 Md€ sur
+la consommation des ménages de la t. 1.101, est 17,37 % : une borne haute, la TVA portant
+aussi sur l'investissement des ménages et des achats des APU) ; les cotisations, la CSG,
+la CRDS et l'IR sur la masse salariale induite, par `salaires`, qui la répartit entre les
+ménages et les APU aux taux des cellules, 35,10 % en D61 et 11,95 % en D5 du super-brut
+(le taux apparent des cotisations effectives et de la CSG de 2024 sur D1, 38,89 %, est
+une borne haute : la CSG porte aussi sur les pensions et le capital). Ces deux-là ne sont
+pas reprises : le taux des cellules tient la répartition entre ménages et APU. Le PIB
+potentiel de l'investissement, de l'implantation et de la démographie porte déjà ρ ΔY.
+Ne manquait que l'IS sur les profits induits : ΔIS = τ_IS Π, τ_IS = 6,668 %, l'IS avant
+crédits et la contribution sociale sur les bénéfices de 2024 (t. 3.217, 67,955 + 1,166
+Md€) sur l'EBE et le revenu mixte de 2024 (t. 1.105, 1 036,606 Md€) ; Π, le profit
+marchand induit : l'EBE qu'écrivent la consommation, l'investissement (l'accélérateur)
+et les salaires (en moins), et les revenus non ventilés du commerce et de la demande
+publique. Une base large (le revenu mixte y est), un IS payé l'année même : dits, sans θ.
+
+**4. La ventilation sur dix ans : la convention « parts_premiere_annee »** (décision du
+responsable : une convention nommée, pas une passe nouvelle ; `Mesure.depuis_rapport(...,
+convention="parts_premiere_annee")`, `mesures.etendre`). Chaque année t > 1 du chemin,
+dans sa vue, le total du rapport est ventilé aux parts de la première année figée :
+P_{i,t} = (P_{i,1} / P_1) P_t pour les cinq impôts du canal, P_t la somme des prélèvements
+du chemin ; G_{d,t} = (G_{d,1} / C^m_1) C^m_t pour les déciles, C^m_t le coût des ménages,
+le coût du chemin moins celui des entreprises (−P_t) quand la première année a leur passe,
+le coût du chemin sinon (il porte aussi ce que la passe des entreprises coûte hors des
+cinq impôts : 59 € en 2026 pour Attal). Chaque année et chaque axe qu'elle touche sont
+nommés dans `Mesure.conventions` ; `non_portes` ne dit plus « annees ». Elle est refusée là
+où les parts n'existent pas, et l'absence reste, dite : une réforme du Smic (les ménages),
+des cotisations non ventilées (Retailleau : les entreprises, et les ménages, dont le coût
+ne se sépare plus de celui des entreprises), la vue vieillie, un total de première année
+nul. Sans la convention, rien ne change (le test de D-412 refuse toujours 2027 à 2035). Le
+programme d'Attal tourne sur dix ans dans le modèle structurel complet, identités à 4e-16
+du PIB au plus, Δb décomposé sans reste ; Retailleau et le Smic de Mélenchon gardent leurs
+absences.
+
+**Le cadre touché, au plus juste.** `champs.py`, section du lot 3 : `ecart_prix_valeur_
+ajoutee`, `ecart_prix_consommation`, `effet_prix_pib` ; `canaux.py`, une section ;
+`thetas.py`, la ligne de diffusion (celle de l'accélérateur dans la section du lot 2) ;
+`blocs.ordre_structurel`, l'investissement dans la boucle et les recettes induites après
+elle ; `Mesure.conventions` ; `dependances.MODULES_LOCAUX`, l'aide de test
+`test_jumeau_structurel`. Deux tests existants suivent les mécanismes, sans masquer : le
+sens des variantes de `test_jumeau_structurel` se lit sur le PIB en volume (une baisse des
+cotisations baisse les prix, et à θ = 0 son PIB nominal de 2035 est de −6,3 Md€ pour un
+volume en hausse) ; le compteur du point fixe y cherche le commerce par son nom, les
+recettes induites le suivant. Le test du TES du lot 3 relit aussi κ^M.
+
+**À côté de Mésange, refait** (`scripts/jumeau_comparaison_mesange.py`, mêmes variantes,
+même départ, même scénario, θ½, 1, 2, 5 et 10 ans). Une comparaison de cohérence, pas un
+juge : rien n'est préenregistré, aucun paramètre n'est réglé dessus. Avant (D-411) /
+après / Mésange :
+
+PIB en volume, en % :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 0,26/0,30/0,41 | 0,50/0,57/0,83 | 0,62/0,66/0,81 | 0,67/0,64/0,87 |
+| cotisations | 0,08/0,14/0,20 | 0,20/0,34/0,55 | 0,44/0,66/0,97 | 0,75/1,04/1,29 |
+| TVA | 0,27/0,31/0,32 | 0,51/0,58/0,66 | 0,64/0,67/0,81 | 0,68/0,66/0,78 |
+| inv. public | 0,64/0,73/1,31 | 0,70/0,81/1,38 | 0,78/0,80/0,93 | 0,81/0,77/0,57 |
+| dép. publique | 0,59/0,67/0,78 | 0,73/0,84/1,06 | 0,82/0,85/0,86 | 0,86/0,82/0,53 |
+
+Emploi salarié marchand, en milliers :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 16/19/24 | 48/57/109 | 72/82/184 | 70/72/181 |
+| cotisations | 72/66/83 | 162/153/210 | 212/219/316 | 227/232/318 |
+| TVA | 17/19/32 | 50/58/118 | 75/84/113 | 72/74/69 |
+| inv. public | 40/47/92 | 87/103/198 | 90/100/91 | 85/87/45 |
+| dép. publique | 37/43/33 | 85/100/94 | 96/107/44 | 90/92/−8 |
+
+Dégradation du solde primaire des APU, en points de PIB (le solde baisse d'autant) :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 0,91/0,89/0,81 | 0,80/0,76/0,50 | 0,72/0,66/0,51 | 0,71/0,67/0,50 |
+| cotisations | 0,88/0,91/0,72 | 0,73/0,81/0,42 | 0,54/0,63/0,24 | 0,36/0,45/0,17 |
+| TVA | 0,91/0,89/0,80 | 0,79/0,75/0,36 | 0,71/0,65/0,37 | 0,70/0,66/0,44 |
+| inv. public | 0,88/0,82/0,49 | 0,78/0,71/0,26 | 0,74/0,67/0,70 | 0,75/0,70/0,82 |
+| dép. publique | 0,87/0,84/0,53 | 0,75/0,70/0,32 | 0,69/0,63/0,54 | 0,70/0,66/0,68 |
+
+Investissement des entreprises, en % (la ligne est neuve ; avant, zéro partout : aucune
+de ces variantes ne touche le coût du capital) :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR | 0/0,54/0,81 | 0/1,10/2,01 | 0/1,03/1,32 | 0/0,73/1,13 |
+| cotisations | 0/0,18/0,41 | 0/0,47/1,33 | 0/0,91/2,00 | 0/1,22/2,00 |
+| TVA | 0/0,55/0,62 | 0/1,13/1,77 | 0/1,06/1,81 | 0/0,75/1,32 |
+| inv. public | 0/1,33/3,06 | 0/1,64/3,54 | 0/1,17/1,17 | 0/0,85/0,33 |
+| dép. publique | 0/1,22/1,28 | 0/1,69/2,14 | 0/1,27/0,84 | 0/0,91/0,01 |
+
+La variante salariale de Mésange (D-349), le PIB à 1, 5 et 10 ans, jumeau / Mésange
+central / Mésange alternatif : IR (super-brut visé) 0,30 / 0,41 / 0,41, 0,66 / 0,81 /
+0,77, 0,64 / 0,87 / 0,65 ; cotisations employeurs (Phillips) 0,14 / 0,20 / 0,29, 0,66 /
+0,97 / 0,84, 1,04 / 1,29 / 0,85 ; TVA (Phillips) 0,31 / 0,32 / 0,31, 0,67 / 0,81 / 0,81,
+0,66 / 0,78 / 1,04. Mésange n'en publie pas pour les deux variantes de dépense.
+
+**Ce qui a bougé, et les écarts qui restent.** Le sens est partout celui de Mésange, et le
+test ne tient que lui. (a) *Le court terme* monte de 0,04 à 0,14 point de PIB : c'est
+l'accélérateur, dont l'investissement redonne à 5 et 11 % près celui de Mésange la première
+année pour la dépense publique et la TVA. Il reste en deçà pour l'investissement public
+(1,33 % contre 3,06 % la première année, PIB 0,73 contre 1,31) : son PIB de la première
+année est plus bas que celui de Mésange, le TES retranchant 31 % de la FBCF en
+importations, et l'accélérateur le multiplie. (b) *L'éviction* apparaît, faible : le PIB
+de dix ans passe sous son plus haut (IR 0,66 à 0,64, dépense publique 0,85 à 0,82,
+investissement public 0,81 à 0,77), l'emploi aussi (dépense publique 107 à 92 milliers),
+contre 0,86 à 0,53 et 44 à −8 dans Mésange. Les prix y montent quatre à cinq fois moins :
+pour la dépense publique, le prix de valeur ajoutée fait +0,11, +0,35, +0,44 % à 2, 5 et
+10 ans contre +0,59, +1,51, +2,03, et le salaire marchand +0,60, +1,15, +1,27 contre
++1,34, +2,85, +2,89. La boucle est la même (α, l'indexation unitaire, les intrants
+importés), son moteur non : le chômage baisse deux fois moins à deux ans (−0,32 point
+contre −0,61), Mésange mettant la moitié des rémunérations publiques de la variante en
+emplois publics (p. 106, note 75), que le jumeau ne porte pas (la demande publique écrit
+D1 aux APU, sans emploi ni revenu des ménages). Le salaire formé suit donc moins, et les
+prix avec lui ; les exportations perdent 0,21 % en volume à dix ans, contre 1,27 %. (c)
+*La baisse des cotisations* rejoint Mésange : 1,04 contre 1,29 à dix ans (0,75 avant). Les
+prix y baissent (prix de valeur ajoutée −1,51 %, de la consommation −0,88 % à dix ans), les
+salaires aussi, par l'indexation (−0,37 %), comme Mésange le dit (p. 109 : « les prix et
+les salaires continuent de diminuer ») ; les exportations montent de 0,68 % en volume. (d)
+*Le solde* : l'IS induit rend de −0,3 à +0,6 Md€ ; le reste de l'écart au solde de Mésange
+(jusqu'à 0,45 point à deux ans) suit celui du PIB et des recettes que Mésange modélise
+par équation (l'IR sur sa base, avec ses élasticités de court terme, p. 96). Celui de la
+baisse des cotisations se dégrade de 0,08 point de plus à deux ans : les prix et les
+salaires baissent, et avec eux, en valeur, la TVA et les prélèvements sur la masse
+salariale, quand la dépense du scénario ne suit pas les prix (seules les prestations hors
+chômage les suivent). (e) *La TVA*
+ne passe pas par les prix, choisi et dit : sa variante Phillips de Mésange (1,04 à dix ans)
+la fait diverger de la centrale, ce que le jumeau ne peut pas montrer. Les θ bornent sans
+renverser : la dépense publique à dix ans fait 0,75 à θ = 0 partout, 0,71 à θ = 1 partout
+(l'éviction la plus forte, 0,67 à cinq ans), 0,77 et 0,85 à la diffusion seule à 1 et 0.
+
+**Les temps**, mesurés une fois, médiane de sept, quatre cœurs, sur les données réelles :
+le modèle structurel complet, dix ans, référence et variante, une mesure. Le code de D-412,
+sur la même machine : 159 ms à n = 1, 1,00 s à n = 2 000 ; celui-ci : 273 ms et 1,67 s. Le
+point fixe itère autant (16 à 17 fois par an dans la variante, deux dans la référence) ;
+chaque itération coûte plus, le commerce refaisant les prix de l'année et
+l'investissement relisant le volume. Deux gardes de plomberie (le revenu réel des années
+passées, les profils déjà lus) ont pris 34 ms et 0,32 s, les mêmes nombres au bit (8 382
+valeurs et contributions d'une trajectoire à quatre mesures et quatre θ). **La cible de
+2 s tient, celle de 50 ms non** (déjà manquée par D-411) : c'est le lot 7 ou un point fixe
+accéléré.
+
+**Les tests.** `tests/test_jumeau_structure.py`, 15 légers, en 14 s : l'accélérateur qui
+redonne la ligne de la p. 45 au centième près, son sens dans les deux sens et θ qui le
+borne la première année ; la boucle prix-salaires, une relance qui monte les prix de valeur
+ajoutée et de la consommation et les salaires, une restriction qui les baisse, les
+prestations indexées, une baisse des cotisations qui baisse les prix et ceux des
+exportations, θ de diffusion qui borne, l'équation (PC) à 1e-9 sur le déflateur ; l'IS
+induit égal au taux fois le profit à 1e-12, son sens dans les deux sens, les origines qui
+excluent le PIB potentiel ; les trois canaux portés une fois et refusés à côté de
+`mesange` ; les identités à 1e-9 à θ = 0, ½, 1 et sur un axe de cinq tirages, Δb décomposé à
+1e-12. `test_jumeau_depuis_rapport.py`, trois de plus : la convention sur le rapport
+d'Attal, le modèle structurel sur dix ans avec elle, les refus. Sur le code d'avant, ces
+tests échouent tous : ni les champs, ni les canaux, ni la convention n'existaient. La
+chaîne retrouvée en mode réduit (`test_jumeau`, `test_rejouer`, `test_creations_canal`) et
+le déterminisme (`test_jumeau_determinisme`) tiennent. `pytest -m "not lourd and not
+chrono" -n 2` sur `test_jumeau*.py`, `test_rejouer.py`, `test_creations_canal.py`,
+`test_dependances.py`, `test_gardes_phase9.py` : 251 verts, un sauté (les cellules de
+ménages, lourd, faute de la population dans ce checkout) ; `ruff check src tests scripts`
+propre. Ni `make full`, ni `make impact`, ni les tests lourds ici.
+
+**Ce qui reste.**
+
+* La demande publique ne porte ni l'emploi public ni le revenu des ménages des
+  rémunérations publiques d'une mesure : c'est le premier écart restant à Mésange sur les
+  variantes de dépense, et un bloc à écrire (avec sa source : la règle de Mésange, la
+  moitié en emplois, p. 106).
+* La TVA et les accises d'une mesure ne passent pas par les prix ; les prix de
+  l'investissement et de la consommation des APU restent ceux du scénario ; les
+  allocations chômage ne suivent pas le salaire.
+* Les bornes du θ de diffusion sont choisies ; la covariance des deux coefficients de
+  l'accélérateur n'est pas publiée.
+* La convention est une convention : la structure des prélèvements et des gagnants de la
+  première année est tenue sur dix ans, et ce n'est pas un chiffrage ; une passe par
+  année resterait la mesure juste (D-412).
+* La cible de 50 ms à n = 1.
+
+## D-415 — Les curseurs du jumeau dans le navigateur : Pyodide, la page « Le jumeau »
+
+**La façon** (lot 7 du but 23, branche `claude/but23-curseurs`, partie de
+`claude/but23-cadre` à 178265c). D-404 : les curseurs tournent dans le navigateur, sur le
+site statique, sans serveur de calcul. Le pas n'est pas porté en JavaScript : la page
+charge Pyodide (CPython compilé en WebAssembly) et numpy, écrit dans le système de
+fichiers du navigateur les modules de `impots` que le jumeau importe, et appelle le même
+code que les tests. Les équations du mode structurel vont encore changer (accélérateur,
+boucle prix-salaires, recettes induites, en parallèle) : rien n'est à retraduire, et
+`site verifier` refuse un site dont le paquet servi n'est plus le code du dépôt.
+
+**Ce qui est codé.**
+
+* `jumeau.navigateur`, le module que la page exécute. `Session(donnees)` lit les entrées
+  une fois ; `calculer(réglage)` fait une trajectoire : un candidat (un programme, une
+  mesure seule ou un volet de texte, par `Mesure.depuis_rapport`) ou une loi
+  hypothétique (`Mesure.hypothese`, l'un des cinq instruments des variantes de Mésange,
+  un montant en Md€ par an, ses années) ; le mode réduit (`ordre_lot1`, depuis le départ
+  des rapports, leur cadre, leur persistance, leur canal des créations) ou structurel
+  (`ordre_structurel`, depuis l'état publié de 2025) ; les θ du registre, sans défaut :
+  un θ lu et non donné est refusé. Elle rend, année par année de 2026 à 2035, la dette
+  (Δb, les deux ratios, la décomposition de `Trajectoire.decomposition`), le solde (B9),
+  le PIB, l'emploi, les créations et fermetures de sociétés, les exportations et les
+  importations, chacun avec ses deux niveaux et son écart décomposé par (bloc, mesure) ;
+  et, dans le mode structurel, par décile, l'écart du revenu disponible par ménage
+  (`gagnants`), sa part statique et sa part dynamique, les parts de gagnants et de
+  perdants. Un champ qu'aucun bloc du mode n'écrit est `None` et la page le dit absent ;
+  une année que le modèle refuse (D-412 : un rapport ne ventile que sa première année
+  figée) n'est pas calculée, la raison est affichée, les années d'avant le sont.
+* La loi hypothétique reprend les chocs de `comparaison` (D-411) au montant dit, le choc
+  aux ménages au prorata des cellules, l'impulsion quand la boucle des études lit
+  l'instrument (impôt sur le revenu, TVA, cotisations employeurs ; pas la dépense ni
+  l'investissement publics, comme dans les études, `retroaction.covers`). Elle porte
+  l'avertissement de `Mesure.avertissement`.
+* `reports/jumeau/entrees_navigateur.json`, écrit une fois depuis les données hors git
+  par `python -m impots.jumeau.navigateur ecrire`, comme D-399 : l'état publié de 2025
+  (chaque contribution, relu au bit), les cinquante cellules de ménages de 2024, les 57
+  cellules d'entreprises de 2023 et les tables de Mésange des trois instruments couverts.
+  Des sommes pondérées par groupe, aucune donnée individuelle. Un test le tient égal aux
+  données, là où elles sont.
+* `impots.site_jumeau` : `site construire` écrit `jumeau.html`, `jumeau.js`,
+  `jumeau-donnees.json` (ces entrées, et de chacun des 46 rapports d'étude commités ce que
+  `depuis_rapport` lit, `alleger`) et `jumeau-paquet.json` (les sources). Le paquet est
+  relevé en faisant tourner la page en Python dans un processus neuf, sur ses cinq
+  chemins : 42 modules et 4 fichiers de paramètres ; refusé si un module importe autre
+  chose que numpy et yaml, ou lit un fichier hors du paquet. Un seul obstacle :
+  `jumeau.gagnants` importait le seuil d'indifférence de `population.aggregate`, qui
+  charge polars ; le seuil (10 €) y est écrit, un test le tient égal. Aucun nombre ne
+  change.
+
+**La sécurité (D-295).** Le site reste statique : rien ne tourne côté serveur, rien ne
+quitte la page. Pyodide 0.29.5 (16 septembre 2026 ; CPython 3.13.2, numpy 2.2.5, PyYAML
+6.0.2, la version de Python du dépôt) est chargé depuis `cdn.jsdelivr.net`, à cette
+version : `pyodide.js` est vérifié par son empreinte (SRI, sha384), les paquets par Pyodide
+contre les empreintes de son fichier de verrouillage. Le servir avec le site mettrait
+15 Mo de binaires dans `site/`, que `site.write` ne sait pas écrire ; le CDN ne voit que
+les téléchargements. La page déclare une politique de sécurité du contenu :
+`connect-src` à elle-même et au CDN, aucun formulaire, aucun script en ligne.
+
+**Le poids et les temps**, mesurés une fois (Chromium de la machine, profil neuf, site
+servi en local, le CDN par le proxy) : le site sert 1,02 Mo (233 ko compressés : le
+paquet 554 ko, les données 436 ko, la page et le script 33 ko) ; le CDN 15,2 Mo (environ
+9 Mo compressés : WebAssembly 8,6 Mo, bibliothèque standard 2,4 Mo, numpy 2,8 Mo). Le
+chargement : Pyodide et ses paquets 2,6 s, le paquet et la session 0,8 s, le premier
+affichage à 4,2 s. Le recalcul après un curseur : 35 à 50 ms dans le mode réduit (26 ms
+en Python natif) ; 350 à 420 ms dans le mode structurel sur dix ans pour une loi
+hypothétique (200 ms natif) ; 610 à 660 ms pour un programme dans le mode structurel,
+dont l'essentiel est fait des neuf constructions du modèle que coûtent les refus des
+années non ventilées.
+
+**Les tests.** `test_jumeau_navigateur.py` (9, 16 s, sans navigateur) : l'état relu au
+bit ; les entrées commitées égales aux données ; à θ½, le mode réduit redonne Δb₂₀₃₅ que
+publie chacune des études, dans les deux vues, à 1e-12 ; la session rend au bit les
+nombres de `trajectoire.calculer` (mode structurel, θ déplacés ; mode réduit) ; un θ
+manquant refusé ; les années non ventilées absentes ; la mesure d'un rapport allégé
+égale à celle du rapport entier. `test_jumeau_page.py` (lourd, `tests/lourds.txt`, 20 s,
+lit le CDN) : Chromium exécute la page, règle un programme, le mode, la vue, la loi
+hypothétique et huit θ ; à chaque réglage, chacun des 866 nombres affichés (leur valeur
+exacte, `data-v`) égale la trajectoire calculée en Python sans la session, 860 au bit,
+les autres à 2e-16 en relatif (numpy en WebAssembly) ; à 390 px de large, la page ne
+défile pas en largeur. `test_site.py` connaît la page à script de cette décision.
+`site construire`, `site verifier` et `site publiable` passent ; `ruff check src tests
+scripts` est propre ; `node ui/check.mjs` passe (la page de l'API n'est pas touchée).
+
+**Ce qui reste.**
+
+* Chaque changement du code du jumeau demande `site construire` : le paquet servi en
+  est la copie, et `site verifier` le dit. C'est voulu ; les branches du mode structurel
+  devront le faire avant leur PR.
+* Le mode structurel d'un programme ne va pas au-delà de 2026 tant que les rapports ne
+  ventilent que leur première année (D-412) : la page le dit, sans rien dessiner.
+* La valeur d'un paramètre au réglage n'est affichée que pour les lignes dont les trois
+  ancres publiées sont des nombres ; les autres (le multiplicateur, le profil de
+  consommation, l'offre de travail) renvoient à leur définition.
+* Le calcul tourne dans le fil principal de la page : un recalcul structurel la fige une
+  demi-seconde. Un Web Worker l'en sortirait, sans changer un nombre.
+
+## D-416 — La jonction des lots 6 et 7 : le JO, le mode structurel complété, la page
+
+**La jonction** (branche `claude/but23-cadre`, partie de 178265c). Trois branches y sont
+fusionnées, dans cet ordre : `claude/but23-histoire` (D-413 ; seuls ses trois commits
+d'après 2ea7834 sont neufs), `claude/but23-structure` (D-414) et `claude/but23-curseurs`
+(D-415), les deux dernières parties de 178265c. Un seul conflit à chaque fusion :
+`DECISIONS.md`, résolu en gardant D-411 à D-415 dans l'ordre. Le code s'est fusionné
+sans conflit : la base des mesures (`votees.py`, `mesures_votees.yaml`) n'est touchée
+que par la première, les blocs et `mesures.py` que par la deuxième, la page et
+`navigateur.py` que par la troisième.
+
+**Le manifeste**, en union : l'entrée de l'archive JORF de la DILA, ajoutée à la main
+dans le worktree de la branche du JO sans y être commitée, rejoint les 234 entrées du
+cadre (235). Les deux autres branches n'ajoutaient rien. L'archive (1,75 Go) est reliée
+dans `data/raw` par un lien symbolique, hors git ; aucun autre fichier n'y manquait.
+
+**Les sources déclarées.** Les dix fichiers manifestés à la main par le jumeau sont dans
+`KNOWN_SOURCES` (`population/cli.py`), leur URL celle du manifeste : les quatre
+d'Eurostat (gov_10dd_edpt3, irt_lt_mcby_a et _m, une_rt_a), les trois de la BDM (IPC hors
+tabac, créations, défaillances), les t. 3.105 et 6.208 de 2025 et l'archive JORF.
+`impots population manifest`, essayé sur une copie de `data/raw` (pas sur le vrai) :
+les dix restent hors quarantaine, avec leur sha256 et leur URL. La commande ne télécharge
+rien ; elle rehache chaque fichier, l'archive comprise (16 s pour tout).
+
+**Ce que l'essai montre d'autre, à décider.** La commande ne garde pas le manifeste :
+elle le réécrit depuis `KNOWN_SOURCES` seul, qui n'a que 28 entrées. Sur la copie, elle
+met en quarantaine 115 des 142 fichiers présents, sourcés au manifeste mais absents de
+`KNOWN_SOURCES` (les PLF, la DGFiP, l'Insee, les études : tout ce qui a été manifesté à
+la main depuis D-028), efface leur URL, retire les 93 entrées dont le fichier n'est pas
+dans ce worktree, remet la date de téléchargement au jour, met la licence Etalab à tous
+(Eurostat compris) et perd les champs `provenance`, `normalization` et
+`normalized_sha256` (D-159, deux fichiers de l'IMK). Ce n'est pas propre au jumeau. Deux
+voies : déclarer les 132 autres sources dans `KNOWN_SOURCES`, ou faire partir la commande
+du manifeste existant et n'y ajouter que les fichiers neufs. Rien n'est changé ici ; il
+ne faut pas relancer la commande sur un vrai `data/raw` d'ici là.
+
+**Le site.** `site construire` après la fusion : le paquet que la page sert copie les
+modules fusionnés, 48 fichiers au lieu de 46 (`recettes_induites.py` et son YAML) ;
+`jumeau-donnees.json` et les autres pages ne changent pas, et les entrées commitées du
+navigateur (`reports/jumeau/entrees_navigateur.json`) n'ont pas eu à être réécrites, leur
+test les tient égales aux données. `site verifier` et `site publiable` passent ;
+`node ui/check.mjs` passe. La page n'emploie pas la convention « parts_premiere_annee »
+(D-414, sur demande) : le mode structurel d'un programme s'y arrête toujours à 2026.
+
+**Les tests.** `pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`,
+`test_rejouer.py`, `test_creations_canal.py`, `test_dependances.py`,
+`test_gardes_phase9.py`, `test_donnees.py`, `test_dette*.py`, `test_site.py` et
+`test_provenance.py` : 422 passent, 4 sautés, en 2 min 23 s. Les sautés le disent : les
+cellules réelles et la population ne sont pas dans ce worktree (`test_jumeau_cellules`),
+le bulletin AFT n° 435 non plus (trois de `test_dette_maturite`, absent aussi des trois
+branches). Les lourds du jumeau, chacun dans son processus : la page dans Chromium
+(`test_jumeau_page.py`) passe en 23 s ; les cellules sont sautées, faute de population.
+`ruff check src tests scripts` est propre. Ni `make impact` ni `make full`.
+
+**Ce qui reste.**
+
+* Le manifeste et sa commande, ci-dessus : au propriétaire.
+* Les cellules réelles à recouper sur la population entière, là où elle est.
+* La convention « parts_premiere_annee » sur la page : à décider avec le propriétaire,
+  qui l'a voulue sur demande (D-414).
+
+## D-417 — Le juge de l'histoire préenregistré : ce qui entre, les périodes, la note
+
+**Ce qui est codé** (lot 6 du but 23, branche `claude/but23-apprentissage`, partie de
+`claude/but23-cadre` à f3541d1). `jumeau/apprentissage.py`, générique : les fenêtres et
+le schéma (estimation et test, années exclues), les cibles, le rejeu d'une fenêtre, la
+note et le naïf, l'estimation. `jumeau/rejeu_histoire.py` : ce qui entre dans le jumeau
+pour rejouer l'histoire, le schéma, les θ estimés, les cibles et leurs tolérances, le
+simulateur (le modèle structurel complet, `blocs.ordre_structurel`, depuis l'état publié
+du départ). `scripts/jumeau_rejeu_histoire.py` fera tourner le tout ; il n'a pas tourné.
+Hors de ces fichiers : une troisième origine de mesure, `observe` (`mesures.py`, et
+`CADRE.md` §5, qui disait deux origines), pour qu'un choc lu dans les comptes ne se dise
+ni « rapport » ni « loi hypothétique ». **Le jumeau n'a tourné sur aucune année réelle et
+aucune erreur sur l'histoire n'a été calculée** : les entrées réelles ont seulement été
+construites, et les refus des blocs (`preparer`) appelés, pour savoir qu'elles entrent.
+
+### Ce qui entre dans le jumeau, sans aucun montant officiel de mesure
+
+Les évaluations préalables restent des juges mis de côté (D-359 à D-361) ; la base des
+mesures votées ne porte aucun montant (D-410). Ce qui entre est lu dans les comptes, et
+la base ne sert qu'à dater et à attribuer.
+
+**Les recettes, par famille d'impôts.** Pour une fenêtre partie de l'année s, le taux
+apparent de la famille F, τ_u = Σ s_l T_{l,u} / B_u (T_l les lignes publiées, s_l leur
+signe, B la base) ; une variation ne compte que l'année u où la base porte une mesure
+d'un instrument de F, d'effet en u (hors les mesures censurées ou abrogées avant leur
+effet). Le choc de l'année t, Y_t le PIB de la référence :
+
+    ΔT_{F,t} = Σ_{s < u ≤ t} w_{F,u} (τ_u − τ_{u−1}) · (B_s / PIB_s) · Y_t
+
+w vaut 1 l'année votée, ½ quand les cotisations employeurs et salariés, qui se partagent
+la ligne des cotisations effectives, le sont toutes deux, 0 sinon. ΔT va au compte des
+APU, sur l'instrument de Mésange que lisent les blocs, aux ménages par décile (au prorata
+de la variable des cellules, comme `comparaison.mesure`) et aux entreprises (lot 2).
+
+| famille | lignes (t. 3.217, sauf mention) | base | instruments votés | canal |
+|---|---|---|---|---|
+| TVA | TVA | C ménages | tva | D2, tva, déciles TVA |
+| TICPE | TICPE | C ménages | accises_energie | D2, taxe carbone, accises |
+| IR | IRPP avant crédits | PIB | ir, ir_capital | D5, IR, déciles IR |
+| CSG | CSG, CRDS | PIB | csg | D5, CSG, déciles CSG |
+| cot. employeurs | cotisations effectives | D1 | cotisations_employeurs | D61, lot 2 |
+| cot. salariés | cotisations effectives | D1 | cotisations_salaries | D61, déciles |
+| CICE | D3 de la t. 3.201, signe − | D1 | cotisations_employeurs | coût du travail seul |
+| IS | IS avant crédits | EBE | is | D5, lot 2 |
+| production | CVAE, CFE, TP, C3S | PIB | impots_production | D2, lot 2 (CVAE) |
+| taxe d'habitation | TH | PIB | taxe_habitation | D5, déciles du revenu |
+| ISF et IFI | ISF/IFI | PIB | patrimoine | D5 seul |
+| transmission | DMTG | PIB | transmission | D91 seul |
+
+Les crédits d'impôt sont des dépenses dans les comptes (le CICE une subvention, D3 : 33 à
+60 Md€ de 2011 à 2017, 40,6 en 2019), et l'IS de la t. 3.217 est avant crédits : la
+famille du CICE ne porte que le signal du coût du travail, sans second choc sur le
+compte. N'entrent pas, faute d'instrument dans la base : tabacs, droits d'enregistrement,
+taxe foncière, taxe sur les salaires, audiovisuel, accises sur l'électricité.
+
+**Les dépenses primaires**, chacune des treize lignes de la t. 3.201 : ΔG_{j,t} = G_{j,t}
+− (G_{j,s} / PIB_s) Y_t. La référence tenant la dépense en part constante du PIB, la
+dépense du jumeau est la dépense publiée (l'« effort en dépense » : la dépense au-delà de
+la croissance de la tendance). Les prestations (D62) vont aux ménages par décile selon
+leurs pensions, allocations chômage et prestations ; P2, D1, D29, D632 et P51g entrent
+dans les emplois par la demande publique. Le code ne lit aucune équation de la dépense
+publique au-delà de ces chocs : le bloc de l'emploi public, en parallèle, n'y change rien.
+
+**Les exogènes observés, les mêmes pour le jumeau et le naïf.** Le déflateur du PIB
+(t. 1.103), imposé : le jumeau ne prévoit pas l'inflation, elle lui est donnée. La dette
+de référence se charge à r_t = r_{t−1} + (OAT_t − r_{t−1}) / 8, r_s le taux implicite
+publié du départ, l'OAT à dix ans d'Eurostat, 8 ans une durée de vie moyenne de la dette
+choisie, non vérifiée ; le taux marginal, l'OAT de la première année. L'ajustement
+flux-stocks publié (bloc `ajustement_observe`). La croissance réelle de la tendance, la
+moyenne publiée de 2011 à 2017 (1,20 % par an), et celle de l'emploi (0,57 % par an),
+ajoutée à sa cible, la référence du cadre tenant l'emploi du départ constant.
+
+**Ce qui manque, et comment c'est traité.**
+
+* La demande mondiale adressée à la France : aucune série manifestée ; elle reste au
+  sentier de la tendance. C'est la première erreur attendue sur les échanges.
+* Le pétrole et les prix d'importation : aucun bloc ne porte un choc de prix étranger
+  (D-408) ; ils n'entrent que par le déflateur imposé.
+* La démographie : la population active de la référence est celle du départ.
+* Les étapes suivantes d'une mesure étalée : la base date une mesure par son année
+  d'effet ; la suppression de la taxe d'habitation n'y est qu'en 2018 et 2020, celle de
+  la CVAE en 2023 et 2024, et les réformes de 2022 à 2024 y sont rares (de 2021 à 2024,
+  seules l'IR, la production et la dépense entrent). Le reste est tenu pour non
+  discrétionnaire.
+* La réponse des taux apparents au cycle, les années votées, entre avec la mesure :
+  c'est une fuite de la cible des recettes vers l'entrée, dite. Celle de l'IR, voté
+  chaque année, est presque entière.
+* Les défaillances ne sont pas notées : le jumeau ne les calcule pas, ses fermetures ne
+  sont pas des défaillances (D-412). Les dépenses non plus : elles sont l'entrée.
+
+### Les périodes, et 2020-2021
+
+| période | fenêtres (départ publié → fin) | années notées |
+|---|---|---|
+| estimation | 2010 → 2014 ; 2014 → 2017 | 2011 à 2017 |
+| test | 2017 → 2019 ; 2021 → 2024 | 2018, 2019, 2022, 2023, 2024 |
+
+**2020 et 2021 sont exclus**, ni rejoués ni notés : aucun bloc ne porte un confinement,
+et y imposer des chocs observés ferait du choc la réponse. La seconde fenêtre du test
+part de l'état publié de 2021 ; aucune donnée d'après 2017 n'entre dans l'estimation, et
+le test ne voit des années de test que les entrées ci-dessus. Le schéma refuse une année
+notée des deux côtés et une fenêtre qui rejoue une année exclue.
+
+### Les cibles, la métrique, les tolérances
+
+Pour chaque cible, l'erreur de l'année notée e_t = jumeau_t − publié_t ; la métrique, la
+REQM sur les années notées de la période ; la cible est **tenue** si REQM ≤ tolérance.
+La même fonction de l'état se lit des deux côtés (les créations exceptées).
+
+| cible | grandeur | tolérance | raison |
+|---|---|---|---|
+| PIB | croissance en volume | 1,0 pt | l'erreur des prévisions à un an hors crise |
+| emploi | croissance de l'emploi intérieur total | 0,8 pt | ±1 pt autour de la tendance |
+| chômage | chômeurs sur emploi plus chômeurs | 0,8 pt | l'écart que le débat lit |
+| exportations | croissance en volume | 4,0 pts | la volatilité des échanges |
+| importations | croissance en volume | 4,0 pts | la volatilité des échanges |
+| D2 | en % du PIB | 0,4 pt | un dixième de la catégorie |
+| D5 | en % du PIB | 0,5 pt | l'IS, volatil, y est |
+| D61 | en % du PIB | 0,4 pt | un vingtième de la catégorie |
+| recettes hors intérêts | en % du PIB | 0,8 pt | les trois, moins leur compensation |
+| solde (B9) | en % du PIB | 1,0 pt | un dérapage, au sens des lois de programmation |
+| dette | en % du PIB | 3,0 pts | trois ans d'erreur de solde d'un point |
+| créations | croissance (voir ci-dessous) | 10 pts | leur volatilité |
+
+Les créations : celles de sociétés du jumeau contre les créations d'entreprises
+classiques publiées (hors micro-entrepreneurs), un recouvrement que D-412 laissait à
+trancher et qui n'est pas établi : la cible le dit.
+
+Les tolérances sont des choix ronds, dits, non vérifiés sur un document ; aucune ne
+change après le premier calcul. **Le chiffre du premier juge** (`BUT.md`) : la part des
+douze cibles tenues sur le test.
+
+### L'estimation
+
+Les θ de `rejeu_histoire.ESTIMES`, chacun dans sa boîte [0 ; 1], jamais au-delà des
+plages publiées : le profil de la consommation, l'élasticité de l'emploi à son coût, le
+facteur des salaires sur le chômage, les deux élasticités-prix des échanges,
+l'accélérateur et le coût du capital de l'investissement. Les quatorze autres restent à
+½ (l'offre de travail, la pente des propensions, la diffusion des prix, les cinq θ de la
+démographie des entreprises, l'implantation ; le multiplicateur de Mésange et la
+productivité des créations ne sont pas dans le mode structurel). Le critère :
+
+    J(θ) = Σ_{fenêtres, cibles, t} (e_t(θ) / tol_c)² + Σ_i ((θ_i − ½) / ½)²
+
+des moindres carrés pondérés par l'inverse du carré des tolérances, pénalisés vers ½ :
+le mode d'une vraisemblance gaussienne d'écart-type la tolérance, sous un a priori
+gaussien en ½ d'écart-type ½. Un Levenberg-Marquardt projeté sur la boîte, la jacobienne
+par différences finies en un appel (les θ perturbés sur l'axe des tirages). Un θ dont
+l'écart-type approché, √diag (JᵀJ)⁻¹, dépasse 0,25 est dit non identifié.
+
+### Le naïf
+
+La référence de la même trajectoire : la croissance de la tendance, les recettes et les
+dépenses en part constante du PIB, l'emploi et le chômage du départ, et les mêmes prix,
+taux, ajustement et tendance de l'emploi que le jumeau. Le jumeau le **bat** sur une cible
+si sa REQM est strictement plus petite. Un jumeau qui ne bat pas le naïf le dit, cible
+par cible. Le test se note aussi à θ½, pour dire ce que l'estimation apporte.
+
+### Le pronostic, écrit avant tout calcul
+
+**L'aveugle est percé**, comme en D-360 : celui qui préenregistre connaît de mémoire,
+dans leurs grandes lignes, les séries de 2018 à 2024 (le rebond de 2022, la baisse du
+chômage, le CICE converti en 2019) ; les tolérances et ce pronostic sont écrits avec
+cette connaissance, sans qu'aucune erreur du jumeau ni du naïf n'ait été calculée.
+
+Sur le test, aux θ estimés (REQM attendues, en points) :
+
+| cible | jumeau | naïf | tenue | naïf battu |
+|---|---|---|---|---|
+| PIB | [0,8 ; 1,3] | [0,6 ; 1,0] | non, de peu | non (a) |
+| emploi | [0,5 ; 0,9] | [0,4 ; 0,8] | oui | non |
+| chômage | [0,5 ; 0,9] | [0,4 ; 0,8] | oui | non |
+| exportations | [3,0 ; 4,2] | [3,0 ; 4,2] | oui, de peu | oui, de moins de 0,2 pt |
+| importations | [3,0 ; 4,2] | [3,0 ; 4,2] | oui, de peu | non |
+| D2 | [0,3 ; 0,7] | [0,4 ; 0,9] | non | oui (la CVAE de 2023) |
+| D5 | [0,2 ; 0,5] | [0,4 ; 0,9] | oui | oui (la CSG de 2018, l'IR) |
+| D61 | [0,1 ; 0,4] | [0,7 ; 1,4] | oui | oui (les cotisations de 2018 et 2019) |
+| recettes | [0,3 ; 0,8] | [0,6 ; 1,2] | oui | oui |
+| solde | [0,3 ; 0,9] | [0,9 ; 1,6] | oui | oui (la dépense est l'entrée) |
+| dette | [1,0 ; 2,8] | [2,5 ; 5,0] | oui | oui |
+| créations | [7 ; 15] | [7 ; 15] | non | non, à moins d'un point |
+
+(a) La dépense publiée de 2022, en baisse sur sa part de 2021 (la fin des aides de la
+crise sanitaire), lui retire de la croissance l'année du rebond.
+
+Soit **9 cibles sur 12 tenues** par le jumeau (de 7 à 10), 5 par le naïf (de 4 à 7), et
+le naïf battu sur 7 (de 6 à 8), presque tout l'avantage venant des recettes, du solde et
+de la dette, où les chocs observés entrent : sur l'activité, l'emploi et les échanges,
+le jumeau ne bat pas le naïf. L'estimation : au plus deux θ sur sept identifiés ; le
+profil de la consommation et l'accélérateur au-dessus de ½ (la consolidation de 2012 et
+2013 sous une croissance faible pousse les multiplicateurs vers le haut), les cinq
+autres à moins de 0,15 de ½ ; J final entre 80 et 100 % de J à θ½. À θ½, le test tient
+le même nombre de cibles, chaque REQM à moins de 10 % de celle aux θ estimés.
+
+### Les tests, sur données synthétiques seulement
+
+`tests/test_jumeau_apprentissage.py`, 12 tests, 10 s : le schéma de D-417 disjoint, et
+un schéma qui note deux fois ou rejoue 2020 refusé ; un jumeau analytique retrouve ses
+vrais θ à 1e-5, s'arrête à la borne quand le vrai θ est hors de la boîte, et laisse à ½,
+non identifié, un θ sans effet ; le modèle structurel complet sur les données
+synthétiques des lots 2 à 4 (trois variantes de Mésange dont le montant change de signe
+d'une année à l'autre) retrouve à 0,01 près les trois θ d'une histoire qu'il a lui-même
+écrite (le profil de la consommation à 0,8, l'élasticité de l'emploi à 0,3, les salaires
+à 0,7), puis la note sur des années disjointes tient les douze cibles, le naïf battu d'un
+facteur dix au moins sur le PIB, l'emploi, le chômage, le solde, la dette et D61 ; la
+note et le naïf se calculent à la main ; un taux apparent ne compte que ses années
+votées (pas une mesure censurée), la dépense du jumeau redevient la publiée, les signes
+sont ceux du moteur ; les exogènes publiés se chargent. Avec `test_jumeau*.py` : 208
+verts, ces 12 compris, 1 sauté ; `ruff check src tests scripts` propre.
+
+### L'amendement de la relecture : le naïf mécanique, avant tout calcul
+
+Le responsable, à la relecture, avant que rien ne tourne : sans un second point de
+comparaison, la note des recettes, du solde et de la dette serait en partie mécanique,
+les chocs observés y redonnant presque les recettes publiées des années votées, que le
+naïf ne reçoit pas. S'ajoute donc le **naïf mécanique** : la même trajectoire, les mêmes
+exogènes et les mêmes chocs observés, sans aucun bloc de comportement ni de bouclage
+(`rejeu_histoire.simulateur_mecanique` : la tendance, le bloc `mesures`, l'ajustement
+flux-stocks ; le choc entre au compte des APU et à la dette, rien d'autre ne bouge).
+Une cible dont le champ n'y est pas écrit (l'emploi, le chômage, les créations) y prend
+la valeur du naïf : sans comportement, rien ne la bouge. **Ce que le jumeau gagne sur le
+naïf mécanique est la seule valeur de sa dynamique : c'est le chiffre qui compte
+d'abord.** Le naïf de plus haut reste, les tolérances et le reste ne changent pas.
+
+Le pronostic du naïf mécanique, sur le test, aux mêmes θ :
+
+| cible | naïf mécanique | tenue | le jumeau le bat |
+|---|---|---|---|
+| PIB, emploi, chômage | celles du naïf | oui | non |
+| exportations | celle du naïf | oui, de peu | oui, de moins de 0,2 pt |
+| importations | celle du naïf | oui, de peu | non |
+| D2 | [0,3 ; 0,7] | non | non, à moins de 0,1 pt |
+| D5 | [0,2 ; 0,5] | oui | non, à moins de 0,1 pt |
+| D61 | [0,1 ; 0,4] | oui | oui, à moins de 0,1 pt |
+| recettes | [0,3 ; 0,8] | oui | non, à moins de 0,1 pt |
+| solde | [0,3 ; 0,8] | oui | non (b) |
+| dette | [0,8 ; 2,5] | oui | non (b) |
+| créations | celle du naïf | non | non |
+
+(b) Le jumeau retire de la croissance en 2022 (a) : moins de recettes induites et un PIB
+plus bas, donc un solde et une dette plus loin du publié que sans comportement.
+
+Soit **10 cibles sur 12 tenues par le naïf mécanique** (de 8 à 11), et le jumeau qui le
+bat sur **2** (de 0 à 4) : au pronostic, la dynamique du jumeau n'apporte presque rien
+sur cette histoire, et ce qu'il gagne sur le naïf de plus haut vient des chocs observés.
+
+### Ce qui tourne ensuite, après relecture
+
+`PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py`, sur le commit qui porte cette
+entrée poussée : l'estimation, la note de l'estimation et du test aux θ estimés, le test
+à θ½, chacune contre les deux naïfs, dans `reports/jumeau/rejeu_histoire.json`. Le
+résultat va dans une nouvelle D-entrée, contre ce pronostic ; aucune tolérance, aucune
+fenêtre, aucune entrée ne change après le premier calcul. Un correctif de code que le
+rejeu révélerait est une révision, sous un nouveau nom, et cette note reste.
+
+## D-418 — L'emploi public : les rémunérations des APU d'une mesure font des emplois
+
+**Ce qui est codé** (branche `claude/but23-emploi-public`, partie de `claude/but23-cadre`,
+f3541d1). Le premier écart restant de D-414 : Mésange met la moitié des rémunérations
+publiques de sa variante de dépense en emplois publics (G2017-04, p. 106, note 75 : « La
+hausse des rémunérations est réalisée à 50 % sur l'emploi public et à 50 % sur le salaire
+par tête ») ; le jumeau ne le portait pas. Un bloc, `emploi_public` (`blocs/menages.py`),
+dans le modèle structurel complet, après `demande_publique`, hors de la boucle (il ne lit
+que le choc de la mesure et la référence). Un canal neuf, « emploi_public », au registre
+et à `DE_MESANGE` (sa variante de dépense le porte en mode réduit) : porté une fois en
+mode structurel, pour tout instrument, refusé à côté de `mesange` (`DoubleCompte`).
+
+**Ce qui était déjà porté, vérifié d'abord.** ΔD1 des APU d'une mesure est au PIB :
+`demande_publique` l'écrit en consommation des APU (la production non marchande à ses
+coûts) et en rémunérations (D-411) ; le cadre en ferme le PIB. Il n'allait ni à l'emploi
+ni au revenu des ménages. Mais il allait, par le PIB, à l'activité que lisent les blocs
+marchands : l'emploi salarié marchand (ŷ, par la ligne « Valeur ajoutée » de Mésange,
+p. 48), les salaires (la productivité ŷ − ê), l'accélérateur et les coûts salariaux
+unitaires du commerce. ΔD1 faisait donc des emplois marchands, comme une demande adressée
+aux entreprises. Avec des emplois publics, ce serait le double compte : le même euro
+paierait un poste public et appellerait un emploi marchand.
+
+**Les équations**, pour la mesure m, l'année k (docstring du module, valeurs et sources
+dans `menages.yaml`, section `emploi_public`) :
+
+    s = part_m,k si la mesure la porte, sinon s(θ) = θ
+    ΔD1^e = s ΔD1,  ΔD1^t = (1 − s) ΔD1                  les emplois, les traitements
+    ΔE_pub = ΔD1^e / W_pub,k,  W_pub,k = r W_k            W_k = D1_k / E_sal, le lot 4
+    ΔE_sal = ΔE_tot = ΔE_pub ;  ΔU = −ΔE_pub ;  ΔPA = 0
+    ΔD1_c = ΔD1^e c^chômeurs + ΔD1^t c^super-brut          par cellule de ménages
+    ΔRD_c += ρ_c ΔD1_c ;  ΔD61 = Σ t61_c ΔD1_c ;  ΔD5 = Σ t5_c ΔD1_c
+
+Les emplois publics entrent dans l'emploi total et salarié et sont pris sur le chômage ;
+le chômage les fait lire aux salaires (WS), à la consommation (l'épargne de précaution) et
+aux allocations chômage (D62), comme ceux du secteur marchand. Leur rémunération va aux
+cellules comme la masse salariale marchande, aux taux moyens de chaque cellule (le revenu
+disponible, les cotisations, la CSG, la CRDS et l'IR) : les emplois au prorata des
+chômeurs des cellules, les traitements au prorata de leur super-brut (les cellules ne
+distinguent pas les agents publics, une approximation, dite). Le bloc n'écrit ni le PIB ni
+les rémunérations. `demande_publique` écrit à part ΔD1 + ΔD29, la valeur ajoutée des APU
+(`va_non_marchande`, un champ neuf) ; l'activité que lisent l'emploi, les salaires,
+l'investissement et le commerce en est retranchée, et l'emploi marchand est l'emploi
+salarié moins l'emploi public (`emploi_public`, un champ neuf, référence (1 − π) E_sal).
+ΔP2, ΔD632 et ΔP51g restent des achats aux producteurs marchands, lus comme avant.
+
+**Le salaire public, r = 0,94737** (2024). W_pub = D11 par tête des quatre branches que
+`part_marchande_salaries` prend pour le non-marchand (OZ, PZ, QA, QB : 295,056 Md€ de la
+t. 6.205 sur 8 312,3 milliers de la t. 6.210, 35 496 €), au rapport D1 / D11 des APU
+(t. 7.301 : 363,038 / 245,586 ; le D1 est celui de la t. 3.201, cotisations imputées
+comprises, comme le D1 des APU que le jumeau porte), 52 472 € ; W = D1 de la t. 1.105 sur
+l'emploi salarié de la t. 6.210, 55 388 € (D-412). Ni la t. 6.208 ni la t. 3.201 seules
+ne suffisent : la première n'a pas de rémunérations, la seconde pas d'effectifs. Les
+quatre branches comptent des salariés privés ; l'administration publique seule (OZ) a un
+D11 par tête plus haut de 3 %. Un recoupement, non un réglage : à θ½, la variante de
+dépense fait 69,7 milliers d'emplois publics ; Mésange en impute à long terme 26 − (−42)
+= 68 milliers (p. 107 : « L'emploi salarié marchand baisse de 42 000, pour une hausse de
+l'emploi total (y compris public) de 26 000 »), non-salariés compris.
+
+**Le θ, `jumeau_emploi_public_part`** : s(θ) = θ, ½ au centre (la convention de Mésange
+pour sa variante, non une mesure), 0 (tout en traitements) et 1 (tout en emplois) aux
+bornes, choisies, non vérifiées. **Une mesure qui porte sa part** la dit
+(`Mesure.part_emplois_publics`, {année : s}, dans [0 ; 1], refusée sans ΔD1 cette
+année-là) et ne lit pas θ : 1 pour des créations de postes (ou la part de ses postes
+dans son coût de rémunérations), 0 pour un point d'indice, 100 % traitement.
+`Mesure.hypothese` la prend. Un rapport d'étude qui relève le point d'indice ne porte
+pas de D1 des APU : son coût est non ventilé et la hausse des traitements est déjà dans
+son choc par décile, que la passe des ménages a chiffré ; le bloc n'y fait rien, et rien
+n'est compté deux fois.
+
+**À côté de Mésange, refait** (`scripts/jumeau_comparaison_mesange.py`, mêmes variantes,
+même départ, même scénario, θ½, 1, 2, 5 et 10 ans). Une comparaison de cohérence, pas un
+juge : rien n'est préenregistré, aucun paramètre n'est réglé dessus. Deux lignes
+s'ajoutent, que Mésange imprime dans chaque tableau (`macro.mesange.printed_row`) : le
+taux de chômage et le prix de la consommation des ménages. Les quatre variantes sans
+rémunérations publiques (IR, cotisations, TVA, investissement public) ne changent pas, au
+bit près ; leurs lignes de D-414 tiennent. La dépense publique, avant (D-414, le code de
+f3541d1) / après / Mésange :
+
+| dépense publique | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| PIB vol., % | 0,67/0,68/0,78 | 0,84/0,85/1,06 | 0,85/0,88/0,86 | 0,82/0,84/0,53 |
+| emploi march., milliers | 43/24/33 | 100/58/94 | 107/56/44 | 92/44/−8 |
+| chômage, − pts | 0,13/0,27/0,36 | 0,32/0,37/0,61 | 0,30/0,32/0,41 | 0,24/0,27/0,19 |
+| solde, − pts de PIB | 0,84/0,71/0,53 | 0,70/0,59/0,32 | 0,63/0,52/0,54 | 0,66/0,55/0,68 |
+| prix conso., % | 0,03/0,03/0,20 | 0,09/0,09/0,58 | 0,22/0,23/1,42 | 0,26/0,29/1,88 |
+| invest. SNF, % | 1,22/0,78/1,28 | 1,69/1,20/2,14 | 1,27/0,97/0,84 | 0,91/0,68/0,01 |
+
+(Le chômage et le solde baissent : les nombres sont ceux de la baisse.) Après, en plus :
+69,7 milliers d'emplois publics chaque année ; l'emploi total monte de
+98, 138, 136 et 121 milliers (avant : 50, 119, 126, 109).
+
+Le taux de chômage et le prix de la consommation des quatre autres variantes, jumeau
+(avant = après) / Mésange, lignes neuves :
+
+| variante | 1 an | 2 ans | 5 ans | 10 ans |
+|---|---|---|---|---|
+| IR, chômage | −0,06/−0,10 | −0,18/−0,45 | −0,24/−0,77 | −0,19/−0,75 |
+| cotisations, chômage | −0,26/−0,35 | −0,60/−0,87 | −0,83/−1,32 | −0,86/−1,33 |
+| TVA, chômage | −0,06/−0,13 | −0,18/−0,49 | −0,24/−0,47 | −0,20/−0,29 |
+| inv. public, chômage | −0,14/−0,38 | −0,32/−0,83 | −0,28/−0,38 | −0,23/−0,19 |
+| IR, prix | 0,02/0,04 | 0,05/0,21 | 0,16/0,35 | 0,20/0,14 |
+| cotisations, prix | −0,29/−0,36 | −0,56/−0,70 | −0,71/−1,09 | −0,88/−1,32 |
+| TVA, prix | 0,02/−1,48 | 0,05/−1,58 | 0,16/−1,30 | 0,21/−0,89 |
+| inv. public, prix | 0,04/0,31 | 0,10/0,92 | 0,22/1,86 | 0,25/2,25 |
+
+**Ce qui a bougé.** (a) *Le chômage* de la dépense publique baisse deux fois plus la
+première année (0,27 point contre 0,13 ; Mésange 0,36) : les 69,7 milliers de postes.
+(b) *L'emploi marchand* baisse (24 milliers contre 43 la première année ; 44 contre 92 à
+dix ans) : c'est le double compte retiré. Une passe d'essai, l'emploi public sans retirer
+la valeur ajoutée des APU de l'activité marchande, donne 43, 99, 93 et 75 milliers
+d'emplois marchands et un chômage de −0,33, −0,50, −0,43, −0,35 : de 19 à 41 milliers
+d'emplois marchands que ΔD1 aurait appelés en plus de ses postes. L'accélérateur, qui lit
+la même activité, perd de même (0,78 % contre 1,22 % la première année). (c) *Le solde*
+se dégrade moins, de 0,11 à 0,13 point : les cotisations, la CSG et l'IR sur les
+rémunérations publiques (3,40 Md€ en 2026, 0,11 point de PIB) et les allocations chômage
+des chômeurs embauchés. (d) *Le PIB* monte à peine (0,68 contre 0,67) : moins d'activité
+marchande, plus de revenu des ménages (la consommation, en valeur, +0,55 % la première
+année).
+
+**Les écarts qui restent, et ce qui les fait.**
+
+* *Les traitements comptés en volume* (porté depuis, ci-dessous : « La part des
+  traitements en prix »). Le jumeau gardait la consommation des APU aux prix du scénario :
+  la part des traitements, (1 − s) ΔD1, 0,125 point de PIB à θ½, y était un volume.
+  Dans les comptes et dans Mésange, c'est un prix de la production non marchande
+  (p. 107 : la dépense joue « de manière indirecte et donc différée » par « les salaires
+  publics en prix, par exemple si on augmente le point d'indice » ; p. 106, la ligne
+  « Prix de production », 0,32 la première année, contre 0,15 pour la production
+  marchande). Le PIB en volume du jumeau en est majoré d'autant : 0,68 contre 0,78, il
+  ferait de l'ordre de 0,55.
+  Le porter demandait un prix de la consommation des APU par mesure, que la tendance
+  fixait : un changement du cadre, décidé par le responsable, ci-dessous.
+* *L'activité marchande plus faible.* La valeur ajoutée marchande de la mesure fait 0,43,
+  0,61, 0,67 et 0,64 % (le PIB en volume moins sa part prix et la valeur ajoutée des APU)
+  contre 0,75, 1,06, 0,72 et 0,28 dans Mésange (« VA du secteur marchand », p. 106) ; la
+  consommation des ménages 0,55, 1,00, 1,29, 1,39 % en valeur contre 0,69, 1,35, 1,85,
+  1,63 en volume. C'est la consommation des prestations et des revenus (le profil de
+  Mésange y est le même, p. 34 ; le revenu rendu est celui des cellules, aux taux des
+  cellules) et le contenu en importations du TES : celui de la consommation des APU
+  (11,69 %, D-408) s'applique à toute la consommation des APU, ΔD1 compris, qui n'en a
+  pas (0,03 point de PIB la première année). D'où l'emploi marchand sous Mésange les deux
+  premières années (24 et 58 milliers contre 33 et 94), et le chômage (0,37 point à deux
+  ans contre 0,61) ; l'offre de travail du jumeau, qui suit le salaire marchand, en
+  reprend 8 à 35 milliers.
+* *L'éviction reste faible.* Les prix de la consommation font 0,09, 0,23, 0,29 % à 2, 5
+  et 10 ans contre 0,58, 1,42, 1,88 ; le salaire marchand 0,66, 1,27, 1,42 % contre 1,34,
+  2,85, 2,89 (« Salaire nominal brut »). Le chômage, moteur de la boucle, baisse plus
+  qu'avant, mais l'emploi marchand moins : le salaire marchand monte de 0,06, 0,12 et 0,15
+  point de plus qu'avant à 2, 5 et 10 ans (D-414 : 0,60, 1,15, 1,27), les prix de 0,03 à
+  dix ans. Le PIB de dix ans reste au-dessus (0,84
+  contre 0,53), l'emploi marchand aussi (44 contre −8). La boucle et ses limites sont
+  celles de D-414, et c'est le prochain écart.
+* *Les autres variantes*, inchangées : le chômage du jumeau baisse moins que dans Mésange
+  partout, comme son emploi marchand (D-414) ; la TVA ne passe pas par les prix, choisi et
+  dit (D-414 e), d'où la ligne des prix de la TVA, de signe opposé à Mésange.
+
+**θ borne, sans renverser.** La dépense publique à la seule part : à θ = 0, 0,08, 0,21,
+0,23, 0,19 point de chômage en moins, 26, 67, 81, 71 milliers d'emplois marchands, un PIB
+de 0,66, 0,85, 0,90, 0,88, un solde dégradé de 0,75, 0,64, 0,57, 0,59 ; à θ = 1, 0,47,
+0,53, 0,41, 0,35 point, 139,4 milliers de postes, 21, 49, 32, 17 milliers d'emplois
+marchands (l'éviction par le salaire), un PIB de 0,70, 0,85, 0,86, 0,81, un solde de
+0,66, 0,54, 0,48, 0,51. Tous les θ ensemble : un PIB de 0,64, 0,72, 0,76, 0,79 à θ = 0 et
+de 0,71, 0,78, 0,61, 0,65 à θ = 1.
+
+**Le cadre touché, au plus juste.** `champs.py` : `emploi_public`,
+`remunerations_publiques_emplois`, `remunerations_publiques_traitements`,
+`va_non_marchande` ; `canaux.py`, une section ; `thetas.py`, une ligne ;
+`Mesure.part_emplois_publics` ; `blocs.ordre_structurel`, le bloc après la demande
+publique ; `demande_publique`, le champ de la valeur ajoutée ; l'emploi, les salaires, la
+consommation (`ecarts`, `revenus_cellules`), l'investissement et le commerce, en mode
+structurel, la lecture de l'activité marchande ; `macro.mesange.printed_row`, une ligne
+imprimée d'une variante ; `CADRE.md` §4 bis. Le mode réduit ne lit rien de neuf. La page
+du jumeau sert une copie du paquet : `site construire` le recopie (`jumeau-paquet.json`
+seul change) ; `site verifier` et `site publiable` passent. Le θ neuf y apparaît avec les
+autres, par le registre.
+
+**Les tests.** `tests/test_jumeau_emploi_public.py`, 14 légers, en 13 s, sur les données
+synthétiques du mode structurel : le bloc à la main à θ = 0, ½, 1 (ΔE_pub = s ΔD1 / (r W)
+à 1e-12, l'emploi et le chômage d'autant, la population active intacte, les deux parts
+qui somment ΔD1, les prélèvements aux taux des cellules) ; r relu sur les comptes ; le
+sens sur un axe de trois tirages de la part (l'emploi monte, le chômage et son taux
+baissent, ½ entre les bornes) ; la part portée par la mesure, des postes et un point
+d'indice, qui ne lit pas θ ; les refus de `Mesure` ; le canal porté une fois et refusé à
+côté de `mesange` ; ni PIB ni rémunérations écrits par le bloc ; ŷ et ê qui retranchent
+la valeur ajoutée des APU et l'emploi public ; les identités à 1e-9 à θ = 0, ½, 1 et sur
+un axe de cinq tirages, avec quatre mesures (la dépense publique, des postes, un point
+d'indice, une part à θ), Δb décomposé à 1e-12. Sur le code d'avant, ils échouent tous :
+ni le bloc ni ses champs n'existaient. La chaîne retrouvée en mode réduit (`test_jumeau`,
+`test_rejouer`) et le déterminisme (`test_jumeau_determinisme`, dont les mesures portent
+la dépense publique) tiennent. `pytest -m "not lourd and not chrono" -n 2` sur
+`test_jumeau*.py`, `test_rejouer.py`, `test_dependances.py` et `test_site.py` : 279
+verts, un sauté (les cellules de ménages, faute de population dans ce worktree), en
+2 min 11 s ; `ruff check src tests scripts` propre ; la page dans Chromium
+(`test_jumeau_page.py`, lourd) passe en 23 s. Ni `make full` ni `make impact`.
+
+**Ce qui reste.**
+
+* Le contenu en importations de la consommation des APU, moyen, appliqué à ΔD1.
+* Les bornes de θ sont choisies ; la part de 50 % est la convention d'une variante de
+  Mésange, non une estimation.
+* L'éviction faible et le chômage des autres variantes, de D-414.
+
+**La part des traitements en prix** (décision du responsable, après le premier rapport :
+une hausse de traitement n'est pas un volume, comme Mésange, p. 106-107). Le plus simple et
+le plus lisible : la voie qu'a prise le commerce pour le prix de la consommation des
+ménages (D-414). La tendance laisse au bloc `emploi_public` le déflateur de la
+consommation des APU (`Tendance(..., laisse=(..., "prix_c_apu"))`), champ non additif à
+un écrivain, et le bloc l'écrit, T_k les traitements des mesures de l'année, C_k la
+consommation des APU (que `demande_publique` a écrite avant lui) :
+
+    prix_c_apu_k = (1 + π_k) [C_k / (C_k − T_k)] / [C_{k−1} / (C_{k−1} − T_{k−1})]
+
+Le volume que le cadre chaîne (`pas.fermer`, C_k / prix − C_{k−1}) vaut exactement
+(1 + e_{k−1}) [(C_k − T_k) / (1 + π_k) − (C_{k−1} − T_{k−1})], 1 + e = C / (C − T) le prix
+relatif de la production non marchande : les traitements n'y sont plus, les emplois y
+restent ; sans traitements, le déflateur est celui de la tendance au bit. Un champ de prix
+additif dédié aurait demandé de changer la formule du volume dans le cadre ; ici le cadre
+ne change pas, et `CADRE.md` §4 bis le dit. Le prix relatif monte la première année des
+traitements et reste ensuite (C et T croissent ensemble) : le PIB en volume perd la part
+des traitements en niveau. Rien d'autre ne lit ce déflateur : les blocs marchands lisaient
+déjà l'activité sans la valeur ajoutée des APU. Le mode réduit n'en voit rien (la tendance
+y écrit le déflateur) ; les quatre autres variantes ne changent pas, au bit près.
+
+La ligne « dépense publique », PIB en volume, en %, D-414 / premier temps de D-418 / après
+/ Mésange (les autres lignes ne changent pas : emploi, chômage, solde, prix et
+investissement sont ceux du tableau ci-dessus) :
+
+| horizon | D-414 | D-418, premier temps | après | Mésange |
+|---|---|---|---|---|
+| 1 an | 0,67 | 0,68 | 0,55 | 0,78 |
+| 2 ans | 0,84 | 0,85 | 0,72 | 1,06 |
+| 5 ans | 0,85 | 0,88 | 0,75 | 0,86 |
+| 10 ans | 0,82 | 0,84 | 0,72 | 0,53 |
+
+La part des traitements en est retirée, 0,13 point la première année, comme attendu.
+L'écart à Mésange s'élargit à court terme (0,55 contre 0,78, 0,72 contre 1,06) : c'est
+celui de l'activité marchande, dit ci-dessus, qui n'était plus masqué par un volume
+compté en trop ; à dix ans, le jumeau reste au-dessus (0,72 contre 0,53), l'éviction
+faible. θ borne : à la seule part, 0,41, 0,60, 0,65, 0,62 à θ = 0 (tout en traitements :
+le PIB ne garde que le revenu des ménages) et 0,70, 0,85, 0,86, 0,81 à θ = 1 (tout en
+emplois, le volume de D-418 premier temps) ; tous les θ ensemble, 0,39, 0,47, 0,51, 0,54
+et 0,71, 0,78, 0,61, 0,65.
+
+Un test de plus dans `test_jumeau_emploi_public.py` (15 en tout, 14 s) : sur un axe de
+trois tirages de la part, le volume chaîné de la consommation des APU depuis le départ
+égal à celui de la référence à 1e-12 quand tout est traitement, et croissant avec la part ;
+le déflateur égal à la formule à 1e-12, celui de la référence à celui de la tendance au
+bit ; le prix relatif C / (C − T) décroissant, un à θ = 1. Rouge sur le premier temps (le
+déflateur y était celui de la tendance), vert après. Les identités à 1e-9 (θ = 0, ½, 1 et
+cinq tirages), le mode réduit (`test_jumeau`, `test_rejouer`) et le déterminisme tiennent :
+`pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_rejouer.py`,
+`test_dependances.py` et `test_site.py`, 280 verts, un sauté ; `ruff` propre. `site
+construire` (le paquet seul change), `site verifier`, `site publiable` passent ; la page
+dans Chromium (`test_jumeau_page.py`) passe en 22 s. Rien de tout cela n'est un juge : une
+comparaison de cohérence, aucun paramètre réglé dessus.
+
+## D-419 — La page « Le jumeau » refaite, le calcul dans un Worker ; la commande manifest
+
+**Ce qui est codé** (branche `claude/but23-page`, partie de `claude/but23-cadre`,
+f3541d1). Deux tâches. Aucune équation des blocs n'est touchée, aucun nombre ne change.
+
+**1. La page, les graphiques d'abord** (demande du propriétaire). En haut, le choix : le
+candidat ou la loi hypothétique, le mode, la vue et, dans le mode structurel, la
+convention. Tout de suite après, les huit graphiques dans l'ordre de `navigateur.SERIES`
+(dette, solde, PIB, emploi, créations et fermetures de sociétés, exportations et
+importations), en cartes, l'écart de 2035 dans le titre de chacune, ses nombres derrière
+« Les nombres » ; puis les déciles. Les curseurs θ sont dans un panneau à côté des
+graphiques à partir de 64rem de large, collant, replié au téléphone ; ils sont regroupés
+par famille de blocs (macro : `mesange`, `investissement` ; entreprises : `naissances`,
+`creations`, `fermetures`, `productivite`, `implantation` ; commerce extérieur ; ménages et
+travail : `emploi`, `salaires`, `consommation` ; un bloc inconnu fait sa propre famille),
+chaque groupe repliable et ouvert s'il porte un θ lu. Chaque curseur dit en clair le début
+de sa définition ; la définition entière, la source, les trois ancres et la valeur au
+réglage sont derrière « détail ». Le texte long (les deux modes, les entrées) passe en
+bas, dans « Comment lire cette page ». Les familles sont de la présentation (`page.js`).
+
+**Le calcul hors du fil principal.** Pyodide tourne dans un Web Worker. La page
+télécharge `pyodide.js` avec `fetch(…, {integrity})`, la même empreinte sha384 qu'avant
+(un fichier changé sur le CDN n'est pas exécuté), et crée le Worker depuis un Blob qui
+porte ce fichier vérifié suivi de `jumeau-calcul.js`, servi avec le site (cinquième
+fichier de la page). Un Worker né d'un Blob hérite de la politique de sécurité de la
+page ; elle gagne `worker-src blob:` et rien d'autre. Mesuré une fois dans Chromium : du
+Worker, un `fetch` hors du CDN et un `importScripts` hors du CDN sont refusés, le CDN
+répond ; un Worker créé depuis une URL du site est refusé (`worker-src`). Le Worker
+reçoit le paquet et les entrées de la page et rend le texte de `calculer_json` tel quel.
+
+**La convention de dix ans** (D-414, décidée ici pour la page, D-416 l'avait laissée au
+propriétaire, qui la demande). `Session.calculer` prend `convention` (seule
+« parts_premiere_annee » est connue, une autre est refusée) ; elle ne s'applique qu'au
+rapport d'un candidat dans le mode structurel, le seul qui lise ses ventilations, et le
+résultat le dit (`convention`, `conventions` : par axe, les années calculées qu'elle a
+ventilées, et la définition de `mesures.TEXTE_CONVENTION`). La case est cochée par
+défaut : le programme d'Attal, de Lisnard ou de Le Pen tourne jusqu'en 2035. Chaque
+nombre d'une année ventilée (l'écart, ses parts, la variante, l'écart de 2035 du titre,
+les déciles de cette année ; pas la référence) porte la marque c, qui renvoie à sa
+définition affichée au-dessus des graphiques ; chaque graphique grise ces années. Là où
+elle n'a pas de parts (Retailleau : cotisations non ventilées ; Mélenchon : le Smic ; la
+vue vieillie), les années restent absentes et la page affiche le refus et chaque
+« non porté » sans qu'on clique, comme avant. Décochée, la page redonne le refus de D-412.
+
+**Les temps**, mesurés une fois (Chromium de la machine, site servi en local, CDN par le
+proxy) : premier affichage 3,7 à 4,2 s (Pyodide et numpy 2,4 à 2,9 s, paquet et session
+0,7 s), comme avant. Recalcul : 35 à 70 ms dans le mode réduit ; 520 à 890 ms dans le
+mode structurel (le programme d'Attal sur dix ans avec la convention, ou une loi
+hypothétique), contre 560 à 710 ms avant pour la seule année 2026. Le fil principal :
+avant, chaque recalcul structurel y était une tâche longue de 734 et 769 ms (la page
+figée) ; après, aucune tâche longue (plus de 50 ms) pendant les dix-huit réglages du test.
+Le site sert 1,09 Mo (le script 23 ko, le Worker 2 ko, la page 20 ko).
+
+**Les captures** (deviceScaleFactor 1, hors git) : grand écran 1440 × 900 et téléphone
+390 × 844, le haut et la page entière, le panneau des θ ouvert au téléphone. À 390 px, la
+largeur du document est 390 : aucun défilement horizontal, panneau ouvert ou non.
+
+**2. La commande de manifeste** (D-416 ; décision du responsable : elle part du manifeste
+existant). `impots population manifest` (`cli.manifest_raw`) garde chaque entrée telle
+quelle : URL, date, licence, `provenance`, `capture`, `normalization`,
+`normalized_sha256`. Elle revérifie l'empreinte de chaque fichier manifesté présent, sur
+ses octets normalisés quand l'entrée déclare une normalisation (le contrat de `donnees
+check`, `donnees.empreinte` et `attendu` : les deux PDF de l'IMK, D-159, dont le sha256
+brut n'est pas celui du fichier présent). Une empreinte qui change est un refus nommé
+(fichier, attendue, sur disque) : rien n'est écrit ni déplacé, la commande sort en 1. Elle
+n'ajoute que les fichiers neufs déclarés dans `KNOWN_SOURCES` (licence « unknown », sauf
+un troisième élément du tuple), ne met en quarantaine qu'un fichier ni manifesté ni
+déclaré, garde l'entrée d'un fichier absent du worktree et le dit, n'écrit rien quand il
+n'y a rien à ajouter. Un seul cas change une entrée : une entrée en quarantaine, sans URL,
+que `KNOWN_SOURCES` déclare désormais en sort avec son URL (la libération de D-028,
+gardée). `--raw` désigne le `data/raw`. `ingest.write_manifest`, qui ne servait qu'à
+l'ancienne commande, est retiré.
+
+**L'essai sur une copie** du `data/raw` de ce worktree (les fichiers en liens, le
+manifeste copié ; jamais l'original), 2,4 s : le premier passage, avant la prise en compte
+de la normalisation, refusait par leur nom les deux PDF de l'IMK, sans rien écrire. Après :
+142 fichiers revérifiés (l'archive JORF comprise), les 93 entrées dont le fichier n'est
+pas ici gardées et listées, rien à ajouter, le manifeste inchangé au bit (même sha256).
+Un fichier non déclaré ajouté à la copie part en quarantaine avec son entrée sans URL ; les
+235 entrées d'avant restent égales.
+
+**Les tests.** `test_jumeau_navigateur.py`, un de plus : la convention sur le programme
+d'Attal, dix ans, chaque nombre égal au bit à `trajectoire.calculer` sur la mesure du
+rapport entier avec la convention, le mode réduit inchangé, le refus de Retailleau dit ;
+il échoue sur le code d'avant. `test_provenance.py`, un de plus, sur un mini `data/raw`
+dans `tmp_path` (entrée gardée champ par champ, fichier neuf déclaré, orphelin en
+quarantaine, entrée absente gardée, rien d'écrit au second passage, empreinte changée
+refusée) ; il échoue sur le code d'avant. `test_jumeau_page.py` (lourd, seul, 23 s) : une
+étape de plus (la convention décochée) ; 1 419 nombres affichés égaux à la trajectoire
+Python, 1 398 au bit, le plus grand écart relatif 1,0e-15 (2e-16 avant, la convention
+ajoutant neuf années de calcul structurel) ; les marques sur les neuf années d'après 2026
+dans chaque série calculée et sur chaque cellule qu'elles touchent ; sans la convention,
+le refus de D-412 et aucune marque ; à 390 px, pas de défilement horizontal. `pytest -m
+"not lourd and not chrono" -n 2` sur `test_site.py`, `test_jumeau_navigateur.py`,
+`test_provenance.py`, `test_donnees.py`, `test_identifiants.py` : 92 passent. `site
+construire`, `site verifier`, `site publiable` passent ; `node ui/check.mjs` passe ; `ruff
+check src tests scripts` est propre. Ni `make impact` ni `make full`.
+
+**Ce qui reste.**
+
+* La convention n'est pas un chiffrage : une passe par année resterait la mesure juste
+  (D-412, D-414). La page la coche par défaut ; le propriétaire peut préférer l'inverse.
+* Le recalcul structurel sur dix ans prend 0,5 à 0,9 s ; la page ne fige plus, mais la
+  cible de 50 ms (D-414) reste manquée.
+* La licence d'un fichier neuf n'est connue que si `KNOWN_SOURCES` la porte ; aucune n'y
+  est encore écrite.
+
+## D-420 — Le jumeau noté sur l'histoire : 7 cibles sur 12, et sa dynamique n'apporte rien
+
+**Ce qui a tourné.** `scripts/jumeau_rejeu_histoire.py`, sur `fe9434f` poussé, après le
+préenregistrement de D-417 et son amendement (le naïf mécanique, `5cb7f4d`). Le rapport :
+`reports/jumeau/rejeu_histoire.json`. Deux lancements s'étaient arrêtés avant tout nombre,
+sur deux refus du code : `menages.yaml` ne porte les niveaux d'emploi de référence que
+pour 2024 et 2025 (ils sont lus dans l'état publié du départ, `menages_au_depart` :
+l'emploi des comptes, les chômeurs d'Eurostat) ; l'état publié du départ ne porte pas les
+créations de sociétés du jumeau (leur niveau de départ est celui de sa référence de la
+première année). Deux commits, `8786ea4` et `fe9434f`, poussés avant le troisième
+lancement. Ni tolérance, ni fenêtre, ni entrée n'a changé.
+
+**L'estimation.** Sept itérations ; J passe de 85,24 à 85,13 (99,9 %). Aucun θ n'est
+identifié : chaque écart-type approché vaut 0,50, celui de l'a priori seul. Les θ
+estimés : profil de la consommation 0,428, élasticité de l'emploi 0,597, salaires 0,399,
+exportations 0,526, importations 0,498, accélérateur 0,464, coût du capital 0,477. Les
+chocs observés de 2011 à 2017 ne disent rien des paramètres du jumeau. Sur l'estimation,
+8 cibles tenues (le naïf 6, le naïf mécanique 8).
+
+**Le test, aux θ estimés** (REQM en points ; J le jumeau, N le naïf, M le naïf
+mécanique ; « tenue » pour le jumeau) :
+
+| cible | tol. | J | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 1,034 | 0,831 | 0,831 | non | non | non |
+| emploi | 0,8 | 0,902 | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,696 | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | 3,855 | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,899 | 3,773 | 3,773 | oui | non | non |
+| D2 | 0,4 | 0,554 | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,316 | 0,424 | 0,291 | oui | oui | non |
+| D61 | 0,4 | 0,263 | 0,983 | 0,266 | oui | oui | oui |
+| recettes | 0,8 | 1,091 | 1,301 | 0,994 | non | oui | non |
+| solde | 1,0 | 0,536 | 1,361 | 0,534 | oui | oui | non |
+| dette | 3,0 | 2,816 | 4,393 | 2,035 | oui | oui | non |
+| créations | 10 | 10,600 | 4,310 | 4,310 | non | non | non |
+
+**Le chiffre du premier juge : 7 cibles sur 12 tenues hors de la période d'estimation.**
+Le naïf en tient 6, le naïf mécanique 9. Le jumeau bat le naïf sur 7 cibles, et le naïf
+mécanique sur 2 seulement, d'un rien : les exportations de 0,015 point, D61 de 0,003.
+**Ce que la dynamique du jumeau apporte sur cette histoire est nul** : tout son avantage
+sur le naïf vient des chocs observés, que le naïf mécanique reçoit aussi, et le
+comportement l'éloigne du publié sur le PIB, l'emploi, le chômage, les importations, le
+solde (de 0,002), la dette (de 0,78 point) et les créations. À θ½, le test donne les
+mêmes tenues et les mêmes victoires, chaque REQM à moins de 1,3 % de celle aux θ estimés.
+
+**Contre le pronostic.** Les totaux tiennent dans leurs bandes : 7 tenues pour 9 annoncées
+(de 7 à 10, au bord), 6 pour le naïf (de 4 à 7), le naïf battu sur 7 (7), 9 pour le naïf
+mécanique (de 8 à 11), le jumeau qui le bat sur 2 (2), et ce sont les deux annoncées.
+L'estimation : aucun θ identifié (au plus deux), J à 99,9 % (de 80 à 100 %), le test à θ½
+identique ; mais le profil de la consommation et l'accélérateur sont sous ½, pas au-dessus.
+Cible par cible, manqués : l'emploi, à 0,902 hors de [0,5 ; 0,9] et non tenu (annoncé
+tenu), le naïf à 0,858 hors de [0,4 ; 0,8] ; les recettes, à 1,091 hors de [0,3 ; 0,8] et
+non tenues (annoncées tenues), le naïf à 1,301 hors de [0,6 ; 1,2], le naïf mécanique à
+0,994 hors de [0,3 ; 0,8] et non tenu ; la dette à 2,816, juste hors de [1,0 ; 2,8] ; les
+créations, le naïf à 4,31 hors de [7 ; 15] et le jumeau plus loin de 6,3 points, pas « à
+moins d'un point ». Le reste est dans le pronostic.
+
+**Ce qui surprend.**
+
+* **Les créations du jumeau s'agitent** : +15,9 points d'erreur en 2018, −13,1 en 2019,
+  +11,5 en 2023, quand les créations classiques publiées bougent peu (le naïf, à zéro, est
+  à 4,3). Le canal des créations répond fort aux chocs observés de l'IS, des cotisations et
+  de la CVAE ; c'est le premier bloc à relire.
+* **Les recettes de 2023 et 2024** : le jumeau et le naïf mécanique les surestiment de
+  1,5 à 1,7 point de PIB. La chute du taux apparent de la TVA, de l'IS et de D2 (+0,75 et
+  +0,90 en 2023 et 2024) n'est pas votée, donc pas entrée : ni les chocs ni le comportement
+  ne la portent.
+* **L'activité de 2022 et 2023** : le PIB manque de 1,7 et 1,1 point, l'emploi de 1,7 en
+  2022, comme annoncé (le rebond, la dépense en baisse) ; 2023 est plus loin que prévu.
+* **L'estimation ne bouge rien** : les chocs de 2011 à 2017 sont trop petits, devant les
+  écarts à la tendance, pour qu'un θ se lise sur l'histoire. L'a priori fait tout.
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune entrée. Une révision
+(le canal des créations, une demande mondiale manifestée, les mesures étalées datées
+chaque année) serait un nouveau préenregistrement, sous un nouveau nom ; cette note reste.
+
+## D-421 — La révision du jumeau préenregistrée : « rejeu_histoire_r2 », avant tout calcul
+
+**Ce qui est fait** (branche `claude/but23-revision`, partie de `claude/but23-apprentissage`
+à c266daf). Le diagnostic des créations de D-420, trois défauts corrigés, la demande
+mondiale manifestée et branchée, les mesures étalées datées chaque année, une proposition
+d'histoire plus longue, et ce préenregistrement. **Le jumeau n'a tourné sur aucune année
+réelle et aucune erreur n'a été calculée** : les entrées des quatre fenêtres ont été
+construites (`chocs_observes`, l'écart de demande mondiale), et les refus des blocs
+(`preparer`) appelés. Le premier juge (D-417, D-420, `reports/jumeau/rejeu_histoire.json`)
+reste, et se refait sur fe9434f ; le script refuse d'écrire sur son rapport.
+
+### 1. Les créations : ce que le bloc reçoit, et pourquoi il oscille
+
+Le bloc `naissances` (pas `creations`, qui n'est pas dans le mode structurel) écrit
+ΔE_t = −ε · 100 P_t / (b Y_t) · N₀ / 100, P_t la somme des signaux des entreprises de
+l'année (IS, production, cotisations patronales, capital), b = 0,092 le profit imposable
+en part du PIB. La cible est la croissance des créations : sur un niveau de référence
+constant, elle répond à la **variation d'une année sur l'autre** de P. Le signe est le
+bon (une baisse de prélèvement fait des créations). Ce que P valait sous D-417, et ce
+qu'il vaut ici (Md€, recettes positives, fenêtre du test) :
+
+| année | D-417 : P | dont cotisations | dont CICE | dont IS | révision : P |
+|---|---|---|---|---|---|
+| 2018 | −15,46 | −16,24 | +5,30 | −4,52 | +0,78 |
+| 2019 | −7,26 | −27,09 | +21,28 | −1,46 | −0,72 |
+| 2022 | 0,00 | — | — | 0,00 | +14,70 |
+| 2023 | −3,98 | — | — | 0,00 | +11,65 |
+| 2024 | −5,00 | — | — | 0,00 | +11,14 |
+
+L'oscillation de 2018 et 2019 (+15,9 puis −13,1 points) vient de **trois défauts de
+l'entrée**, non du bloc :
+
+* **Le CICE votait la ligne des cotisations.** Ses mesures étaient de l'instrument
+  `cotisations_employeurs` ; leurs années (2013, 2017, 2018) comptaient la variation de la
+  ligne des cotisations effectives sans la changer. En 2018, c'est la baisse des
+  cotisations salariales (LFSS 2018, art. 8) qui y passait : −16,24 Md€ donnés aux
+  entreprises, quand celles des employeurs ont monté (D611 : 258,1 → 264,3 Md€).
+* **Une ligne commune, partagée à parts égales.** La t. 3.217 ne publie que la somme des
+  cotisations effectives ; en 2019, employeurs et salariés votés, chacun en recevait la
+  moitié : la moitié de l'allègement qui remplace le CICE, quand la fin du CICE (sa
+  subvention, D3) comptait en entier. Le compte des APU (t. 7.301) publie chaque payeur,
+  D611 et D613CE, qui somment à la t. 3.217 avec D613NSI (au centième près, testé).
+* **La baisse salariale de 2018 n'était datée qu'à la CSG** (la base rangeait l'article 8
+  à l'instrument `csg`) : les ménages recevaient la hausse de la CSG sans la baisse de
+  leurs cotisations.
+
+Corrigés : un instrument `cice` (CGI, art. 244 quater C : un crédit d'impôt, pas une
+cotisation) pour les trois mesures du CICE, sa conversion (LFSS 2018, art. 9) restant aux
+cotisations patronales ; les familles des cotisations lisent D611 et D613CE ; le volet des
+cotisations de l'article 8 est une mesure à part (`lfss2018_cotisations_salariales`). Le
+test (`test_chaque_payeur_de_cotisations_lit_sa_ligne_et_le_cice_la_sienne`, synthétique)
+échoue sur c266daf ; `test_les_chocs_observes_de_2018_…` tient, sur les entrées réelles,
+un signal des cotisations patronales nul en 2018 (−16,24 sous D-417).
+
+Ce qui est **un choix de modèle**, et reste : la réponse au niveau du taux apparent (Da
+Rin et al.), qui fait réagir la croissance des créations à sa variation annuelle ; les
+cotisations patronales dans le signal des naissances, rapportées au profit imposable
+(b = 0,092), le double compte décidé par le propriétaire (D-401) : 1 Md€ de prélèvement
+en plus retire 1,2 point de croissance aux créations ; la variation entière du taux
+apparent les années votées, le cycle compris (D-417). C'est ce dernier qui pèse en
+2022 : le taux apparent de l'IS sur l'EBE passe de 7,00 à 8,59 %, l'année de la dernière
+étape de la baisse de l'IS (25 %), qui est désormais votée (§ 3) ; +14,7 Md€ d'IS entrent,
+pour les entreprises et pour le compte des APU, et y restent en 2023 et 2024. **C'est la
+question ouverte de cette révision** (ci-dessous).
+
+### 2. La demande mondiale adressée à la France
+
+OCDE, Economic Outlook n° 119, mesure XMKT (« Export market for goods and services,
+volume », dollars de 2021 chaînés : les importations des partenaires pondérées par leur
+part dans les exportations françaises), France, annuel, 2009→2025 :
+`data/raw/ocde_eo119_xmkt_fra_2009_2025.csv`, requête SDMX bornée, CC BY 4.0, déclarée à
+`KNOWN_SOURCES` et au manifeste (sha256 e475814b…bfa60), lue par
+`series.lire("demande_mondiale")`. L'OCDE est retenue pour sa requête stable, qui se
+refait ; les séries de la Banque de France, de la DG Trésor et du CEPII n'ont pas été
+cherchées plus loin. L'Economic Outlook est remplacé deux fois par an : c'est le n° 119
+qui entre, lu le 14 novembre 2026 (aucune année au-delà de 2024 n'entre).
+
+Elle entre au bloc `commerce` (`DemandeMondiale`) en écart à sa propre tendance de
+l'estimation, d_t = (W_t / W_s) / (1 + g_W)^(t − s) − 1, g_W = 3,71 % la croissance
+moyenne de 2011 à 2017 : la référence fait croître les échanges comme le PIB de la
+tendance (1,20 %), qui porte déjà la croissance moyenne des marchés et la perte de parts
+de marché ; compter l'écart de 2,5 points entre les deux la compterait deux fois. Les
+écarts (%) : 2018 +0,22, 2019 −0,87 ; 2022 +2,91, 2023 −0,22, 2024 −1,63 (depuis 2017 et
+2021) ; sur l'estimation, de −0,97 à +2,27. L'écart entre dans la variante, sous une
+mesure observée sans choc sur le compte (`observe_demande_mondiale`,
+`DemandeMondiale.mesure`) : le scénario « » du bloc l'aurait mis dans la référence de la
+trajectoire, qui est le naïf, et l'aurait donné au jumeau comme au naïf. La référence
+reste à la tendance ; le naïf mécanique n'a pas de bloc du commerce. Un test le tient
+(`test_une_demande_mondiale_portee_par_une_mesure_…`).
+
+### 3. Les mesures étalées, datées chaque année
+
+`MesureVotee.etapes` : chaque date où le texte change le paramètre appliqué, relue dans
+l'archive du JO de la DILA (du 8 novembre 2026, extraite de nouveau : 29 593
+enregistrements, comme D-413) ; aucun montant. `annees_effet` : l'année de chaque étape,
+et l'année qui suit une étape entrée en vigueur après le 1er janvier (sa première année
+pleine ; une règle, appliquée aussi aux `date_effet` existantes). Une étape remplacée
+avant son effet n'en est pas une.
+
+| mesure | années d'effet | lu au JO |
+|---|---|---|
+| CICE (LFR 2012-3, art. 66) | 2013 (4 %), 2014 (6 %) | III, B |
+| CICE (LFI 2018, art. 86) | 2018 (6 %), 2019 (supprimé) | V, A et B |
+| conversion (LFSS 2018, art. 9) | 2019, 1er oct. 2019 → 2020 | V ; LFSS 2019, art. 8, IX |
+| cotisations salariales (LFSS 2018, art. 8) | 1er janv., 1er oct. 2018 → 2019 | I 9°, VI |
+| taxe d'habitation (LFI 2018, art. 5) | 2018, 2019, 2020 | III, 1 à 3 |
+| taxe d'habitation (LFI 2020, art. 16) | 2020, 2021, 2022, 2023 | VII, A, B, D, E |
+| IS à 25 % (LFI 2018, art. 84) | 2018 à 2022 | III, A à D |
+| IS des grandes entreprises (LFI 2020, art. 39) | 2020, 2021 | IX |
+| contribution de 5 % (LFR 2011-4, art. 30) | clos au 31 déc. 2011 → 2011, 2012 | I |
+| contribution à 10,7 % (LFI 2014, art. 16) | 2013, 2014 ; fin 2016, 2017 | II ; 2014-891 |
+| contributions de 2017 (LFR 2017-1, art. 1) | 2017 à 2019 (fin au 31 déc. 2018) | I |
+
+La CVAE était déjà datée chaque année où la loi la change (2021, 2023, 2024) ; 2022 n'en
+est pas une, et les étapes de 2025 à 2027 de la LFI 2024 ont été remplacées avant leur
+effet. La trajectoire carbone de 2019 à 2022 a été supprimée par la LFI 2019 avant effet.
+La C3S de 2016 (LFSS 2016) n'est pas dans la base : un manque dit, sur l'estimation
+seulement. 96 mesures vérifiées (95 et le volet de l'article 8) ; le décompte du test
+change. Les années votées, par famille, de la fenêtre du test : l'IS gagne 2021 et 2022,
+la taxe d'habitation 2019, 2021, 2022 et 2023, les cotisations salariales 2018 ; les
+cotisations patronales perdent 2018 (et 2013 sur l'estimation).
+
+### 4. Plus d'histoire pour les θ : une proposition, non faite
+
+D-420 : aucun θ identifié, chaque écart-type approché à 0,50, celui de l'a priori seul ;
+l'information des chocs de 2011 à 2017 est presque nulle. Allonger l'estimation ne vaut
+que si les chocs y sont plus grands ; ils le sont de 1995 à 2007 (la TVA à 20,6 % en
+1995 et à 19,6 % en 2000, la bascule de la CSG de 1997-1998, la surtaxe de l'IS de 1995
+à 2005, les allègements Aubry et Fillon de 1998 à 2005, les baisses de l'IR de 2000 à
+2003, la part salaires de la taxe professionnelle supprimée de 1999 à 2003).
+
+* **Étape zéro, sans aucune erreur : mesurer l'identifiabilité.** L'écart-type approché
+  ne dépend que de la jacobienne des sorties du jumeau en θ, pas des données publiées :
+  le calculer sur les fenêtres envisagées dit, avant tout, si l'allongement apporte. Une
+  passe d'essai (sept θ, une jacobienne par fenêtre) : de l'ordre d'une heure.
+* **1996 → 2009, la borne des données** : la t. 3.217 commence en 1995 (les familles
+  d'impôts), la dette de Maastricht de l'Insee aussi ; les emplois, les revenus, l'emploi,
+  les salaires et le compte des APU remontent à 1949 (la t. 3.201 à 1959), la demande
+  mondiale de l'OCDE à 1970. Manquent : l'ajustement flux-stocks avant 2009 (la t. 3.105
+  commence en 2009 ; la variation de la dette moins le déficit, un calcul dit), le
+  chômage BIT avant 2003 (Eurostat ; les séries longues de l'Insee, depuis 1975, à
+  manifester), les créations avant 2009 (une autre méthode de l'Insee : la cible n'y est
+  pas comparable, elle resterait notée depuis 2011). Le code : `series.PREMIERE` et
+  `historique` à paramétrer, quelques heures. **La base des mesures** de 1995 à 2009 :
+  de 80 à 100 mesures (les barèmes de l'IR chaque année, la TVA, la CSG et la CRDS, l'IS
+  et ses contributions, les allègements, la taxe professionnelle, la taxe d'habitation,
+  l'ISF, les droits de succession de 2007, la PPE, les retraites de 1993 et 2003),
+  vérifiées sur la même archive en reculant `DEPUIS` (sa profondeur avant 2009 est à
+  vérifier à l'extraction) : l'effort de D-410 et D-413, deux lots. Les fenêtres :
+  1996 → 1999, 1999 → 2003, 2003 → 2007, 2010 → 2014, 2014 → 2017 ;
+  2008 et 2009 exclus comme 2020 et 2021 ; 18 années notées au lieu de 7.
+* **1978 → 1995** : sans t. 3.217, les familles se liraient dans les Statistiques des
+  recettes publiques de l'OCDE (par impôt, depuis 1965), un lecteur et ses recoupements
+  à écrire ; la dette avant 1995, une autre table ; 80 mesures de plus ; deux lots
+  encore. Les structures du jumeau (les cellules de 2023 et 2024, le TES de 2023, les
+  profils de Mésange de 2017) y sont anachroniques : l'écart grandit avec le recul.
+
+Soit, de l'étape zéro au bout de 1996-2009, quatre lots environ ; à ne lancer que si
+l'étape zéro donne au moins un θ sous 0,25.
+
+### 5. Le préenregistrement de la révision
+
+**Le nom du cas** : `rejeu_histoire_r2` (`rejeu_histoire.CAS`), son rapport
+`reports/jumeau/rejeu_histoire_r2.json`. **Ce qui change** : les §§ 1 à 3, rien
+d'autre. **Ce qui ne change pas** : le schéma (estimation 2010 → 2014 et 2014 → 2017,
+test 2017 → 2019 et 2021 → 2024, 2020 et 2021 exclus), les douze cibles, leurs
+métriques et leurs tolérances, les sept θ estimés et les quatorze à ½, l'a priori, le
+critère, le seuil d'identification (0,25), les deux naïfs et la règle « le jumeau bat ».
+Le naïf ne reçoit ni les chocs ni la demande mondiale : **ses REQM redonnent celles de
+D-420 à 1e-9 près**, un contrôle. Le naïf mécanique reçoit les chocs corrigés.
+
+**La question ouverte, à trancher à la relecture, avant le calcul.** L'étape de 2022 de
+la baisse de l'IS fait entrer la hausse cyclique du taux apparent de l'IS (+14,7 Md€),
+par la règle de D-417. (a) La garder : la règle ne change pas, c'est ce qui est
+préenregistré ci-dessous. (b) Ne compter, une année votée, que la part de la variation
+dans le sens que la loi donne (une baisse votée ne fait pas une hausse) : un sens lu dans
+la loi, sans montant ; elle annulerait au moins l'IS de 2022, et changerait ce
+pronostic. Choisir (b) amende cette entrée avant tout calcul.
+
+**L'aveugle est percé** plus encore qu'en D-417 : le pronostic est écrit en connaissant
+les erreurs année par année de D-420 et les entrées de la révision, sans qu'aucune erreur
+du jumeau révisé n'ait été calculée.
+
+Le pronostic sur le test, aux θ estimés (REQM en points ; N celle de D-420) :
+
+| cible | tol. | jumeau | naïf méca. | N | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|
+| PIB | 1,0 | [0,9 ; 1,4] | 0,831 | 0,831 | non | non | non |
+| emploi | 0,8 | [0,75 ; 1,05] | 0,858 | 0,858 | non, de peu | non | non |
+| chômage | 0,8 | [0,6 ; 0,9] | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | [3,2 ; 3,9] | 3,870 | 3,870 | oui | oui | oui (a) |
+| importations | 4,0 | [3,0 ; 3,8] | 3,773 | 3,773 | oui | oui | oui (a) |
+| D2 | 0,4 | [0,45 ; 0,65] | [0,5 ; 0,6] | 0,645 | non | oui | non |
+| D5 | 0,5 | [0,35 ; 0,6] | [0,3 ; 0,55] | 0,424 | oui, de peu | non | non (b) |
+| D61 | 0,4 | [0,15 ; 0,4] | [0,15 ; 0,35] | 0,983 | oui | oui | non |
+| recettes | 0,8 | [1,0 ; 1,5] | [0,95 ; 1,4] | 1,301 | non | oui, de peu | non (b) |
+| solde | 1,0 | [0,35 ; 0,75] | [0,4 ; 0,75] | 1,361 | oui | oui | oui, de peu (c) |
+| dette | 3,0 | [1,6 ; 2,8] | [1,1 ; 2,0] | 4,393 | oui | oui | non |
+| créations | 10 | [7 ; 12] | 4,310 | 4,310 | oui, de peu (d) | non | non |
+
+(a) La demande mondiale : +2,9 % en 2022 rapproche du publié les échanges du rebond ; la
+baisse de 2023 (−3,1 points d'écart) les en éloigne, moins. (b) L'IS cyclique de 2022
+gardé en 2023 et 2024 (+0,55 point de PIB) creuse la surestimation des recettes de ces
+deux années, pour le jumeau comme pour le naïf mécanique. (c) Le PIB du jumeau, plus bas
+en 2024, rapproche son solde du publié, que les recettes de (b) en éloignent. (d) La
+croissance des créations : de petits écarts en 2018 et 2019 (le défaut corrigé), mais
+une chute de 15 à 17 points en 2022 (l'IS de (b)) et une hausse en 2023 (la CVAE) ; le
+naïf, à zéro, reste bien meilleur. Tenue par la taille de la tolérance, non par la
+dynamique.
+
+Soit **8 cibles sur 12 tenues par le jumeau** (de 6 à 10 ; 7 sous D-420), 6 par le naïf
+(exactement), **9 par le naïf mécanique** (de 8 à 10), le naïf battu sur 7 (de 5 à 8),
+et **le naïf mécanique battu sur 3** (de 1 à 4 : les échanges, par la demande mondiale,
+et le solde). L'estimation : aucun θ identifié (au plus un) ; chacun à moins de 0,15 de
+½ ; J final entre 95 et 100 % de J à θ½ ; à θ½, le test tient les mêmes cibles, chaque
+REQM à moins de 5 % de celle aux θ estimés.
+
+### Ce qui tourne ensuite, après relecture
+
+`PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py`, sur le commit qui porte cette
+entrée poussée (ou son amendement), vers `reports/jumeau/rejeu_histoire_r2.json`. Le
+résultat va dans une nouvelle D-entrée, contre ce pronostic ; aucune tolérance, aucune
+fenêtre, aucune entrée ne change après le premier calcul ; D-417 et D-420 restent.
+
+### Les tests
+
+`test_jumeau_apprentissage.py` (+4 : chaque payeur sa ligne et le CICE la sienne ; une
+mesure étalée compte chacune de ses années ; l'écart de demande mondiale à la main ; les
+chocs réels de 2018 sans la baisse salariale aux entreprises), `test_jumeau_votees.py`
+(+2 : les années d'effet lues au JO, des étapes mal datées refusées ; 96 vérifiées),
+`test_jumeau_series.py` (+2 : D611 + D613 égalent la t. 3.217, la demande mondiale se
+lit), `test_jumeau_commerce.py` (+1 : la demande portée par une mesure laisse la
+référence à la tendance). Avec `test_jumeau*.py` : 216 verts, 1 sauté ; `ruff check src
+tests scripts` propre.
+
+### L'amendement de la relecture, avant tout calcul
+
+Le responsable, à la relecture, rien n'ayant tourné : **le choix (b)**, **le jumeau à
+jour** (la fusion de `claude/but23-cadre`, a99241a : l'emploi public de D-418, la page de
+D-419, la jonction D-422), **l'étape zéro** faite, et le pronostic révisé en conséquence.
+Les fenêtres, les cibles, les tolérances, les θ estimés, l'a priori et les deux naïfs ne
+changent pas.
+
+**Le choix (b), un choix de modèle.** Une année votée, la variation du taux apparent ne
+compte que dans le sens que la loi donne (`rejeu_histoire.variation_comptee`) : une
+baisse votée ne fait pas une hausse, une hausse votée pas une baisse ; un barème
+seulement indexé, ou une date de recouvrement (`neutre`), ne fait rien ; des mesures de
+sens contraires la même année, ou une mesure `mixte`, comptent la variation entière,
+comme D-417. Le sens est lu dans les paramètres de la base, relus au JO, sans montant :
+`sens` pour chacune des 76 mesures d'un prélèvement (`votees.PRELEVEMENTS`, un refus à la
+lecture s'il manque), et pour une étape qui va contre sa mesure (la fin des contributions
+sur l'IS de 2014 et de 2017, des baisses). C'est un filtre sur le cycle, pas sa
+suppression : la part cyclique qui va dans le sens voté entre encore. Ce qu'il change aux
+entrées du test (Md€) : l'IS de 2022 (baisse votée, taux apparent en hausse) n'entre
+plus, ni ses +14,7 à +16,1 Md€ de 2022 à 2024 ; l'IR, voté chaque année par son barème,
+n'entre plus les années où le barème n'est qu'indexé (2019, 2021, 2023, 2024) ni en
+2018 et 2022 où la hausse du taux apparent va contre les baisses votées. Les signaux des
+entreprises redeviennent, de 2022 à 2024, ceux de D-417 (0, −3,98, −5,00) ; les recettes
+observées du test, en points de PIB : 2018 −0,02, 2019 −1,10, 2022 −0,11, 2023 −0,36,
+2024 −0,39 (D-417 : −0,10, −1,04, +0,19, −0,15, −0,33).
+
+**Le jumeau à jour.** Le modèle est celui de la jonction D-422 : le bloc de l'emploi
+public (D-418) dans `ordre_structurel` ; les rémunérations des APU des dépenses observées
+y font des emplois publics, et l'activité que lisent les blocs marchands n'a plus la
+valeur ajoutée des APU. Le premier juge a tourné avant ; son effet sur l'histoire n'est
+pas connu. Un seul conflit de fusion, `DECISIONS.md`, rangé D-421 puis D-422 ; 239 tests
+verts.
+
+**L'étape zéro : l'identifiabilité, une propriété du modèle.** La jacobienne des sorties
+notées du jumeau en θ, à θ½, divisée par les tolérances, sur les fenêtres de
+l'estimation, chacun des sept θ perturbé de 0,001 sur l'axe des tirages : aucune valeur
+publiée de cible n'y entre, aucune erreur n'est calculée (les entrées, elles, sont les
+chocs observés). L'écart-type approché est √diag (JᵀJ + 4 I)⁻¹, 4 I l'a priori (0,50 seul).
+Une passe d'essai de quelques secondes (`scratchpad`, hors rapports).
+
+| θ | information, 2011-2017 | σ | chocs × 3 | chocs × 10 | test |
+|---|---|---|---|---|---|
+| profil de la consommation | 0,002 | 0,500 | 0,499 | 0,491 | 0,499 |
+| élasticité de l'emploi au coût | 0,099 | 0,494 | 0,454 | 0,280 | 0,499 |
+| salaires et chômage | 0,013 | 0,499 | 0,493 | 0,436 | 0,500 |
+| élasticité-prix des exportations | 0,013 | 0,499 | 0,493 | 0,445 | 0,500 |
+| élasticité-prix des importations | 0,025 | 0,498 | 0,486 | 0,390 | 0,500 |
+| accélérateur | 0,027 | 0,498 | 0,491 | 0,428 | 0,498 |
+| coût du capital | 0,000 | 0,500 | 0,500 | 0,499 | 0,500 |
+
+Identifier un θ (σ < 0,25) demande une information d'au moins 12 ; la plus forte est
+0,099. L'information croît comme le carré de la taille des chocs (× 8,7 pour des chocs
+triplés, × 99 décuplés) : même des chocs dix fois plus grands n'identifient rien. **1996
+→ 2009, envisagé** : la base des mesures et les séries d'avant 2010 n'existent pas, la
+jacobienne ne s'y calcule donc pas ; elle s'y projette. Les variations annuelles des
+taux apparents des familles, toutes années comptées comme votées (un majorant), sont de
+0,83 point de PIB en moyenne quadratique de 1996 à 2007 contre 0,32 de 2011 à 2017
+(× 2,6 ; la bascule de la CSG de 1997-1998, qui s'annule pour moitié avec les cotisations
+salariales, en fait l'essentiel). Onze années notées de plus à 2,6 fois la taille :
+l'information de l'élasticité de l'emploi monterait de 0,099 à environ 1,15, σ à 0,44.
+**L'histoire longue n'identifierait aucun θ** : la proposition du § 4 ne vaut pas ses
+quatre lots tant que les chocs budgétaires sont la seule source d'identification ; elle
+est retirée. Ce que les θ attendent est ailleurs (des chocs non budgétaires, des
+données d'entreprises ou de ménages, un a priori plus serré pris dans la littérature).
+
+**Le pronostic révisé**, sur le test, aux θ estimés (REQM en points ; N et la colonne du
+naïf mécanique où elle ne change pas, celles de D-420 ; il remplace celui de plus haut) :
+
+| cible | tol. | jumeau | naïf méca. | N | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|
+| PIB | 1,0 | [0,85 ; 1,4] | 0,831 | 0,831 | non | non | non |
+| emploi | 0,8 | [0,85 ; 1,15] | 0,858 | 0,858 | non (a) | non | non |
+| chômage | 0,8 | [0,65 ; 0,95] | 0,627 | 0,627 | non, de peu (a) | non | non |
+| exportations | 4,0 | [3,2 ; 3,9] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | [3,0 ; 3,8] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | [0,45 ; 0,65] | [0,5 ; 0,6] | 0,645 | non | oui | non |
+| D5 | 0,5 | [0,25 ; 0,5] | [0,25 ; 0,45] | 0,424 | oui | oui | non, de peu |
+| D61 | 0,4 | [0,15 ; 0,4] | [0,15 ; 0,35] | 0,983 | oui | oui | non |
+| recettes | 0,8 | [0,85 ; 1,3] | [0,8 ; 1,2] | 1,301 | non | oui | non |
+| solde | 1,0 | [0,35 ; 0,8] | [0,45 ; 0,8] | 1,361 | oui | oui | oui, de peu |
+| dette | 3,0 | [2,0 ; 3,6] | [1,8 ; 2,8] | 4,393 | non, de peu (b) | oui | non |
+| créations | 10 | [4,5 ; 7,5] | 4,310 | 4,310 | oui (c) | non | non |
+
+(a) Les rémunérations des APU des dépenses observées baissent en part du PIB en 2022 et
+2023 (l'inflation) : le bloc de l'emploi public en retire des emplois, là où le jumeau en
+manque déjà. (b) La demande mondiale, en retrait de 2023 et 2024, abaisse le PIB de la
+fin de fenêtre, et la dette en part du PIB monte. (c) Sans l'IS de 2022, les créations ne
+s'agitent plus que par la CVAE de 2023 ; elles restent loin du naïf.
+
+Soit **6 cibles sur 12 tenues par le jumeau** (de 5 à 9 ; 7 sous D-420), 6 par le naïf
+(exactement), **9 par le naïf mécanique** (de 8 à 10), le naïf battu sur 8 (de 6 à 9), et
+**le naïf mécanique battu sur 3** (de 1 à 4 : les deux échanges, par la demande
+mondiale, et le solde). L'estimation : **aucun θ identifié** (l'étape zéro le dit
+d'avance ; chaque σ entre 0,49 et 0,50), chacun à moins de 0,15 de ½, J final entre 98
+et 100 % de J à θ½, et le test à θ½ aux mêmes tenues, chaque REQM à moins de 3 %.
+Contrôle, d'abord : les REQM du naïf redonnent celles de D-420 à 1e-9 près ; si la fusion
+les change (sa référence porte le bloc de l'emploi public), l'écart est dit, et rien
+n'est réglé.
+
+Tests : `test_jumeau_apprentissage.py` (+1 : une année votée ne compte que le sens de la
+loi ; les chocs synthétiques disent leur sens), `test_jumeau_votees.py` (+1 : chaque
+mesure d'un prélèvement dit son sens, une fin de contribution est une baisse, un barème
+indexé neutre).
+
+## D-422 — La jonction de D-417 à D-420 : l'histoire, l'emploi public, la page
+
+**La jonction** (branche `claude/but23-cadre`, partie de f3541d1). Trois branches, toutes
+parties de f3541d1, y sont fusionnées dans cet ordre : `claude/but23-apprentissage`
+(D-417, D-420), `claude/but23-emploi-public` (D-418) et `claude/but23-page` (D-419). La
+première passe sans conflit. Aux deux autres, `DECISIONS.md` seul en code et en texte,
+résolu en rangeant les entrées dans l'ordre des numéros : D-417, D-418, D-419, D-420 ;
+aucune n'est retouchée. `CADRE.md` (§4 bis par D-418, §5 par D-417), `mesures.py` (les
+deux branches), `navigateur.py`, `menages.py` et `cli.py` se sont fusionnés seuls :
+chacun des trois derniers n'est touché que par une branche. La troisième fusion a un
+second conflit, `site/jumeau-paquet.json`, un fichier généré : il n'est pas résolu à la
+main, `site construire` le refait.
+
+**Le manifeste et `data/raw`.** Les manifestes des trois worktrees ont les mêmes 235
+entrées que celui du cadre, sans écart : l'union est le manifeste du cadre. Aucune des
+trois branches n'a téléchargé de fichier qui manquerait ici ; rien n'est relié.
+
+**Le rejeu de l'histoire** (`reports/jumeau/rejeu_histoire.json`, D-420) a tourné sur
+`fe9434f`, avant le bloc d'emploi public (D-418) et la page (D-419) ; le rapport le dit
+(`commit`) et rien de la fusion ne prétend le contraire. Il n'est pas relancé : sur
+l'arbre joint, où l'activité que lisent les blocs marchands n'a plus la valeur ajoutée
+des APU, ses nombres pourraient changer, et ce serait un nouveau préenregistrement. Son
+test (`test_jumeau_apprentissage.py`, sur synthétique) passe sur l'arbre joint ; aucun
+test ne relit le rapport.
+
+**Le site.** `site construire` sur l'arbre joint : seul `jumeau-paquet.json` diffère de
+celui de chaque branche ; il copie les modules joints (`navigateur.py` de D-419,
+`menages.py` et `mesures.py` de D-418, vérifiés égaux aux sources). La page, son Worker
+(`jumeau-calcul.js`) et `jumeau-donnees.json` sont ceux de D-419, inchangés. `site
+verifier`, `site publiable` et `node ui/check.mjs` passent.
+
+**Les tests.** `pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`,
+`test_rejouer.py`, `test_creations_canal.py`, `test_dependances.py`,
+`test_gardes_phase9.py`, `test_donnees.py`, `test_dette*.py`, `test_site.py`,
+`test_provenance.py` et `test_identifiants.py` : 466 passent, 4 sautés, en 2 min 33 s.
+Les sautés sont ceux de D-416 : les cellules et la population absentes de ce worktree
+(`test_jumeau_cellules`), le bulletin AFT non manifesté (trois de `test_dette_maturite`).
+Le lourd de la page, seul dans son processus (`test_jumeau_page.py`), passe en 26 s.
+`ruff check src tests scripts` est propre. Ni `make impact` ni `make full`.
+
+**Ce qui reste.** La révision de D-420 (D-421) se fait ailleurs ; elle se joindra à son
+tour. Les points ouverts de D-416 à D-420 restent ouverts, aucun n'est tranché ici.
+
+## D-423 — La révision du jumeau notée sur l'histoire : 9 cibles sur 12, contre D-421
+
+**Ce qui a tourné.** `scripts/jumeau_rejeu_histoire.py`, cas `rejeu_histoire_r2`, sur
+`8119f63` poussé (D-421 et son amendement : le choix (b), le jumeau de la jonction D-422,
+l'étape zéro), en une fois, en moins d'une minute. Le rapport :
+`reports/jumeau/rejeu_histoire_r2.json` ; celui de D-420 reste. Ni tolérance, ni
+fenêtre, ni entrée, ni réglage n'a changé après le calcul.
+
+**Le contrôle d'abord.** Les REQM du naïf redonnent celles de D-420 exactement (écart
+nul, sur l'estimation, le test et le test à θ½) : la fusion et la révision ne touchent
+pas la référence.
+
+**L'estimation.** Cinq itérations ; J passe de 85,72 à 85,59 (99,8 %). Aucun θ
+identifié, chaque écart-type entre 0,494 et 0,500, comme l'étape zéro le disait. Les θ :
+profil de la consommation 0,401, élasticité de l'emploi 0,639, salaires 0,464,
+exportations 0,528, importations 0,493, accélérateur 0,494, coût du capital 0,476. Sur
+l'estimation, 8 cibles tenues (le naïf 6, le naïf mécanique 8) ; le PIB y passe de 0,672
+(D-420) à 0,481.
+
+**Le test, aux θ estimés** (REQM en points ; J le jumeau, N le naïf, M le naïf
+mécanique ; « tenue » pour le jumeau ; P la bande du pronostic amendé de D-421) :
+
+| cible | tol. | J | P | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,940 | [0,85 ; 1,4] | 0,831 | 0,831 | oui * | non | non |
+| emploi | 0,8 | 0,882 | [0,85 ; 1,15] | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,723 | [0,65 ; 0,95] | 0,627 | 0,627 | oui * | non | non |
+| exportations | 4,0 | 3,524 | [3,2 ; 3,9] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,0 ; 3,8] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,45 ; 0,65] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,364 | [0,25 ; 0,5] | 0,424 | 0,349 | oui | oui | non |
+| D61 | 0,4 | 0,225 | [0,15 ; 0,4] | 0,983 | 0,283 | oui | oui | oui * |
+| recettes | 0,8 | 1,073 | [0,85 ; 1,3] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,639 | [0,35 ; 0,8] | 1,361 | 0,627 | oui | oui | non * |
+| dette | 3,0 | 2,926 | [2,0 ; 3,6] | 4,393 | 2,359 | oui * | oui | non |
+| créations | 10 | 5,647 | [4,5 ; 7,5] | 4,310 | 4,310 | oui | non | non |
+
+(* : à l'inverse du pronostic amendé.)
+
+**Le chiffre de la révision : 9 cibles sur 12 tenues hors de la période d'estimation**
+(7 sous D-420). Le naïf en tient 6, le naïf mécanique 9. Le jumeau bat le naïf sur 8
+cibles et le naïf mécanique sur 3 : les exportations (de 0,35 point), les importations
+(de 0,50) et D61 (de 0,06). À θ½, le test donne les mêmes tenues et les mêmes victoires,
+chaque REQM à moins de 1 % de celle aux θ estimés.
+
+**Contre le pronostic amendé.** Chaque REQM du jumeau et du naïf mécanique est dans sa
+bande, et les totaux dans les leurs : 9 tenues pour 6 annoncées (de 5 à 9, au bord), 6
+pour le naïf (exactement), 9 pour le naïf mécanique (9), le naïf battu sur 8 (8), le
+naïf mécanique sur 3 (3) ; aucun θ identifié, J à 99,8 %, chaque θ à moins de 0,15 de ½,
+le test à θ½ identique. Manqués, cible par cible : trois tenues annoncées « non » de peu
+sont tenues de peu, le PIB (0,940), le chômage (0,723) et la dette (2,926) ; le naïf
+mécanique est battu sur D61 (annoncé non) et pas sur le solde (annoncé oui de peu : 0,639
+contre 0,627).
+
+**Ce qui surprend, et ce qui ne surprend pas.**
+
+* **Les créations ne s'agitent plus en 2018 et 2019** (−3,9 et −2,7 points d'erreur au
+  lieu de +15,9 et −13,1) : c'était le défaut de l'entrée. Reste 2023, +11,5, identique à
+  D-420 : la CVAE réduite fait monter les créations du jumeau quand les créations
+  classiques publiées baissent de 7,4 %. Le naïf, à zéro, reste meilleur (4,31 contre
+  5,65).
+* **La demande mondiale fait tout le gain sur les échanges**, comme annoncé : les
+  exportations de 2022 passent de −7,9 à −5,5 points d'erreur, celles de 2023 de −1,2 à
+  −3,5 (la demande en retrait, les exportations françaises non). Le naïf mécanique n'a
+  pas de bloc du commerce : ce gain est celui d'une équation du jumeau sur un exogène
+  observé, pas celui des chocs budgétaires.
+* **Le PIB** : 2022 se rapproche (−1,08 contre −1,68), 2023 s'éloigne (−1,39 contre
+  −1,09) ; la REQM passe sous la tolérance (0,940) sans battre le naïf (0,831).
+* **La dette** reste plus loin que celle du naïf mécanique (2,93 contre 2,36) : en 2023 et
+  2024, le comportement abaisse le PIB et le solde du jumeau sous ceux du naïf mécanique.
+* **Les recettes de 2023 et 2024** restent surestimées de 1,4 et 1,6 point de PIB : le
+  choix (b) ôte l'IS cyclique de 2022 que la datation aurait importé, mais la chute non
+  votée des taux apparents de la TVA et de l'IS de ces années reste hors de l'entrée.
+* **L'estimation ne bouge toujours rien** : l'étape zéro l'avait mesuré avant le calcul
+  (information au plus 0,1 pour 12 requis).
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune entrée ; D-417, D-420
+et D-421 restent. La dynamique du jumeau bat le naïf mécanique sur 3 cibles, dont deux par
+la demande mondiale ; sur l'activité, l'emploi, le chômage et les finances publiques,
+elle ne fait pas mieux que les chocs observés seuls.
+
+## D-424 — Les a priori des θ resserrés sur la littérature publiée, θ par θ
+
+**Ce qui est fait** (branche `claude/but23-apriori`, partie de `claude/but23-revision` à
+dce2439). D-421 et D-423 l'ont mesuré : l'histoire budgétaire agrégée n'identifie aucun
+θ (une information d'au plus 0,1 pour 12 requis) ; ce qui porte les θ est l'a priori, et
+celui de D-417 est le même pour tous, gaussien en ½ d'écart-type ½. Chaque θ du registre
+(22) reçoit ici sa loi, tirée d'une estimation publiée du paramètre de son bloc, ou garde
+celle de D-417 quand aucune source ne le chiffre, dit. **Aucun calcul n'a tourné sur
+l'histoire réelle** : le rejeu avec ces lois sera un nouveau cas préenregistré, plus
+tard, avec la piste 2. `rejeu_histoire`, son script et le rapport de D-423 ne changent
+pas ; sans lois, `estimer` redonne D-417 au bit près (testé).
+
+**Le code.** `jumeau/parametres/a_priori.yaml` : une entrée par θ du registre (un θ
+manquant ou en trop est refusé par son nom), l'estimation, son écart-type, la source
+(document, page du PDF, tableau), le calcul, et ce qui a été écarté (`comparaison`).
+`jumeau/a_priori.py` : la plage de chaque θ est lue dans les paramètres des blocs (pas
+recopiée) ; une estimation m d'écart-type s passe par l'inverse θ(v) de l'application
+θ → paramètre (linéaire par morceaux par le centre, prolongée au-delà des bornes par la
+pente de sa moitié) : μ = θ(m), s₋ et s₊ les distances de μ à θ(m ∓ s). La loi est une
+normale à deux écarts-types, exacte quand m est au centre (où la pente change), approchée
+sinon. `apprentissage.estimer(..., lois=...)` remplace ((θ − ½) / ½)² par le résidu de
+la loi ; un θ estimé sans loi est refusé. Un θ est dit identifié si son écart-type
+approché est sous 0,25 × s / ½, s l'écart-type de sa loi au point, du côté où la
+jacobienne est prise : la règle de D-417 (les données apportent au moins trois fois
+l'information de l'a priori), qu'un a priori serré ne remplit plus à lui seul.
+
+**Les règles du choix.** (1) Une source n'entre que si son paramètre est celui du bloc ;
+une autre grandeur est dite, pas utilisée. (2) Une méta-analyse d'abord, puis une
+estimation française, puis Mésange (G2017-04) et ses t. (3) L'écart-type : la dispersion
+entre études quand la source la publie, sinon celui de l'estimation, sinon la
+demi-largeur de l'intervalle à 95 % sur 1,96. (4) La plage ne change pas, même quand la
+source en sort : μ sort alors de [0 ; 1], l'estimation reste dans la boîte et l'a priori
+la pousse vers la borne. Aucun chiffrage de tiers des programmes n'est lu.
+
+**Les sources téléchargées**, dans `data/raw`, déclarées à `KNOWN_SOURCES` et ajoutées
+au manifeste par `impots population manifest` (D-419 ; 236 → 241 entrées, les 143
+fichiers présents vérifiés) : Lichter, Peichl et Siegloch (IZA DP 7958, 2014) ; Bargain et
+Peichl (IZA DP 7698, 2013) ; Nijkamp et Poot (Tinbergen DP 02-029/3, 2002) ; Gechert,
+Havranek, Irsova et Kolcunova (version d'avril 2021) ; Imbs et Méjean (document de travail
+de 2010). Ils sont dans ce worktree seulement, pas dans `data/raw` du dépôt principal.
+
+### Le tableau
+
+Plage : les valeurs à θ = 0, ½ et 1. Les sept θ que le rejeu estime (D-417) sont
+marqués *.
+
+Les paramètres, leurs plages et les sources :
+
+| θ | paramètre | plage | source |
+|---|---|---|---|
+| multiplicateur | c_i(h) ∓ sd_i | ∓ 1 sd | IMK WP 117 (D-336), par construction |
+| exportations * | s_X, long terme | 0,60 ; 0,73 ; 1,27 | Mésange, p. 77, t = 5,5 |
+| importations * | s_M, long terme | 0,29 ; 0,35 ; 1,11 | Mésange, p. 83, t = 6,5 et 3,6 |
+| emploi * | η, au coût réel | 0,31 ; 0,44 ; 0,52 | Lichter et al. (2014), p. 22 |
+| salaires * | b, facteur | 0,5 ; 1 ; 1,278 | Nijkamp et Poot (2002), tableau 4 |
+| coût du capital * | ε_K | 0,37 ; 0,44 ; 0,48 | Gechert et al. (2021), tableau 9 |
+| accélérateur * | β₀ (β₁ suit) | 0,852 ; 1,19 ; 1,528 | Mésange, p. 44, t = 6,9 |
+| implantation | a₁, au TMEE | 0 ; 0,478 ; 0,730 | Devereux et Lockwood, tableau 2 |
+| femmes en couple | heures, C7 | −0,028 ; 0,09 ; 0,208 | BOP (IZA DP 6735), tableau F.1 |
+| hommes en couple | heures, C7 | 0,001 ; 0,065 ; 0,129 | BOP, tableau F.3 |
+| femmes seules | heures, C7 | 0,066 ; 0,15 ; 0,273 | BOP, tableau F.5 |
+| hommes seuls | heures, C7 | 0,047 ; 0,14 ; 0,233 | BOP, tableau F.7 |
+
+Les estimations et les lois (μ ; s₋ / s₊, un seul écart quand ils sont égaux) :
+
+| θ | estimation (e.-t.) | loi sur θ | plage proposée |
+|---|---|---|---|
+| multiplicateur | c_i(h) (sd_i) | 0,5 ; 0,5 | — |
+| exportations * | 0,73 (0,133) | 0,5 ; 0,51 / 0,12 | (a) |
+| importations * | 0,35 (0,061) | 0,5 ; 0,51 / 0,04 | (b) |
+| emploi * | 0,246 (0,095) | −0,25 ; 0,37 | 0,07 ; 0,44 ; 0,52 |
+| salaires * | 0,467 (0,426) | −0,03 ; 0,43 | 0 ; 1 ; 1,278 |
+| coût du capital * | 0,30 (0,156) | −0,5 ; 1,11 / 1,19 | 0 ; 0,44 ; 0,60 |
+| accélérateur * | 1,19 (0,173) | 0,5 ; 0,255 | — |
+| implantation | 0,478 (0,128) | 0,5 ; 0,13 / 0,26 | — |
+| femmes en couple | 0,09 (0,042) | 0,5 ; 0,18 | (c) |
+| hommes en couple | 0,065 (0,018) | 0,5 ; 0,14 | — |
+| femmes seules | 0,15 (0,044) | 0,5 ; 0,26 / 0,18 | — |
+| hommes seuls | 0,14 (0,035) | 0,5 ; 0,19 | — |
+
+Les calculs, dans le YAML et refaits par les tests :
+
+* **Les exportations.** Les deux branches de Mésange ont le même t (0,77 et 0,81, t =
+  5,5) : l'écart-type relatif de l'agrégat est au plus 1/5,5, la covariance n'étant pas
+  publiée (un majorant, les deux erreurs parfaitement corrélées) ; 0,73 / 5,5 = 0,133.
+* **Les importations.** 0,44 (t = 6,5) et 0,29 (t = 3,6), pondérés par leurs parts de
+  2014 (64 % et 20 %, l'énergie à zéro) : 0,0594 en somme des écarts-types, mis à
+  l'échelle de 0,35 : 0,061.
+* **L'emploi.** L'estimation préférée de la méta-régression, l'élasticité de long terme à
+  production constante corrigée du biais de publication, −0,246 dans [−0,072 ; −0,446] :
+  (0,446 − 0,072) / 3,92 = 0,095. Mésange imprime 0,44 marqué (***), sans t.
+* **Les salaires.** La courbe des salaires corrigée du biais de publication, −0,077
+  (0,006), l'hétérogénéité entre études 0,070 (le tableau 4, lu sur l'image : sa police
+  ne s'extrait pas ; le texte de la p. 22 redonne −0,077). Une élasticité e est une
+  semi-élasticité e / u ; au chômage BIT moyen de 1989 à 2014, la période d'estimation de
+  Mésange, 9,154 % (t. 302 de l'Insee) : 0,00841 par point, soit b = 0,00841 / 0,018 =
+  0,467 du profil de Mésange (−0,018 agrégé) ; l'écart-type, √(0,006² + 0,070²) / 9,154 /
+  0,018 = 0,426. La courbe des salaires est estimée sur des marchés locaux, la
+  semi-élasticité de Mésange est agrégée : la même grandeur, mesurée autrement, dit.
+* **Le coût du capital.** Dans Mésange, l'élasticité de l'investissement au coût du
+  capital est celle de la demande de facteurs à son coût (p. 39 et 44), le σ d'une CES :
+  la méta-analyse de l'élasticité de substitution, la meilleure pratique, 0,30 dans
+  (−0,01 ; 0,60), 0,156.
+* **L'offre de travail.** La moyenne des deux années de Bargain, Orsini et Peichl est le
+  centre du magasin ; l'écart-type, s² = (s₉₈² + s₀₁²) / 2 + ((e₉₈ − e₀₁) / 2)²,
+  l'incertitude de chaque année plus leur désaccord, que l'article attribue à
+  l'identification (la convention de D-220 pour la somme des élasticités d'un couple).
+
+(a) Le haut de la plage (FR-BDF, 1,27, sur un autre prix) est à 4 écarts-types de
+Mésange : une plage à ∓ 1,96 écart-type serait 0,47 ; 0,73 ; 0,99. (b) De même, FR-BDF
+(1,11) est à 12 écarts-types : 0,23 ; 0,35 ; 0,47. (c) La moyenne de 90 élasticités
+publiées pour les femmes en couple (Bargain et Peichl 2013, p. 10) est 0,43, au-dessus de
+la borne haute (0,208) ; sans dispersion chiffrée, elle n'entre pas dans la loi.
+
+**Écartée, une autre grandeur.** Imbs et Méjean (tableaux 2 et 4) : pour la France,
+−3,20 et −3,13 aux importations, −3,49 et −3,82 aux exportations, des élasticités de
+substitution structurelles agrégées des secteurs, cinq à dix fois les élasticités de
+long terme d'une équation macroéconomique (l'« énigme des élasticités ») ; prises pour
+le paramètre du bloc, elles mettraient μ près de 3,4.
+
+### Les θ restés sans source, à la loi de D-417
+
+La productivité des créations, la diffusion des prix (le centre de Mésange sans
+écart-type, les bornes choisies), le profil de la consommation (deux profils publiés,
+Mésange et l'Insee de juin 2019, ni l'un ni l'autre avec un écart-type ; aucune
+méta-analyse française trouvée), la pente des propensions entre déciles (aucune
+propension marginale au revenu par décile publiée avec un écart-type ; celles de la
+Banque de France et de l'Insee portent sur la richesse), la part de l'emploi public (une
+convention de Mésange), et les cinq θ de la démographie des entreprises (les idées, les
+fermetures, la survie, la montée en charge, la taille : choisis, non vérifiés, D-402 et
+D-407 ; le centre de la survie est un taux observé, non une estimation). Soit 10 θ sur
+22 ; 11 reçoivent une loi tirée d'une source, et le multiplicateur garde ½ ± ½, qui est
+sa source.
+
+### Ce que ces lois diraient de l'estimation, avant tout calcul
+
+Sans aucune information des données (ce que l'étape zéro mesure pour l'histoire de 2011
+à 2017), le mode a posteriori est le mode de la loi ramené dans la boîte (testé sur
+synthétique) : parmi les sept θ du rejeu, l'élasticité de l'emploi, les salaires et le
+coût du capital iraient à θ = 0 (0,31, 0,5 et 0,37, le bas de leur plage) ; les échanges
+et l'accélérateur à ½, plus serrés ; le profil de la consommation à ½. Les trois θ
+poussés à 0 sont ceux dont la littérature sort de la plage par le bas : **la plage, pas
+l'a priori, devient la contrainte**, et c'est la décision que les plages proposées
+ci-dessus demandent au propriétaire. Aucune n'est changée ici.
+
+### Ce qui reste à décider
+
+* Les plages proposées (l'emploi, les salaires, le coût du capital ; les deux échanges,
+  resserrées) : elles changent les curseurs et les études, qui lisent la plage.
+* L'emploi et le coût du capital : Mésange impose une même élasticité aux deux ; la
+  littérature les place toutes deux plus bas (0,25 et 0,30), sans changer leur égalité.
+* Le prochain rejeu de l'histoire avec ces lois, un nouveau cas préenregistré.
+
+**Les tests.** `tests/test_jumeau_a_priori.py`, 20 tests, 20 s : une loi par θ du
+registre et la loi de D-417 pour les sans-source ; l'inverse de l'application du bloc,
+une plage décroissante comprise ; les lois à la main ; sans données, θ au mode de sa loi
+et à la borne quand le mode sort de la boîte ; une loi large redonne D-417 au bit près ;
+un a priori serré n'identifie pas à lui seul ; un θ estimé sans loi refusé ; les nombres
+relus dans les PDF, les cellules de Bargain, Orsini et Peichl et la t. 302. Avec
+`pytest -m "not lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_provenance.py`
+et `test_donnees.py` : 301 verts, 1 sauté (les cellules absentes de ce worktree, D-416).
+`ruff check src tests scripts` propre. Ni `make impact` ni `make full`.
+
+## D-425 — Les θ des entreprises et de l'emploi sur des données fines : préenregistrement
+
+**Pourquoi.** L'histoire agrégée n'identifie aucun θ (D-421, l'étape zéro : information au
+plus 0,1 pour 12 requis). Au lieu de sept années nationales, des panneaux par région,
+secteur et année, et des réformes qui touchent certains secteurs plus que d'autres
+(branche `claude/but23-microdonnees`, partie de `claude/but23-revision` à dce2439).
+**Aucune régression n'a tourné sur les vraies données** : les panneaux ont été construits
+et comptés, les doses calculées (`scripts/jumeau_microdonnees.py --decrire`), les
+estimateurs testés sur des panneaux synthétiques. Aucun montant officiel d'une réforme,
+aucune évaluation préalable, aucun chiffrage de tiers n'entre.
+
+### 1. Les données (manifestées, `KNOWN_SOURCES`, `manifest` parti du manifeste)
+
+* **Créations de sociétés** : Insee, BDM, flux CREATIONS-ENTREPRISES-METHODE-2022,
+  trimestres bruts sommés par année, l'indicateur des sociétés (TYPE-ENT_PM), 13 régions
+  métropolitaines × 10 secteurs (BE, FZ, G, H, I, JZ, LZ, MN, OQ, RU ; la finance KZ hors
+  du panneau, faute d'Ésane), 2012 à 2025 ; la Corse n'a que BE et FZ (122 cellules).
+  Les observations de 2023 portent un statut « U » que la réponse ne documente pas
+  (l'année du guichet unique de l'INPI). Pour le placebo : le flux arrêté de l'ancienne
+  méthode, hors micro-entrepreneurs (TYPE-ENT_HAE), 2000 à 2021.
+* **Défaillances** : Insee, BDM (source Banque de France), par date de jugement,
+  trimestres bruts sommés, 13 régions × 9 secteurs (BE, FZ, G, H, I, JZ, LZ, MN, PQS ;
+  l'agriculture et la finance hors du panneau), 1990 à 2025. Le département n'est publié
+  par secteur que pour quatre regroupements (créations) ou pas du tout (défaillances) :
+  la région est la maille fine commune.
+* **Emploi salarié** : Insee, t. 6.210 (millésime 2025), 30 branches marchandes A38 (BZ,
+  CA à CM, DZ, EZ, FZ, GZ, HZ, IZ, JA, JB, JC, LZ, MA, MB, MC, NZ, RZ, SZ ; hors
+  agriculture, finance, branches non marchandes et ménages employeurs), 2003 à 2024.
+* **Les expositions**, déjà au manifeste : Ésane 2023 par secteur (a10, a21, a88) et
+  catégorie (micro, PME, ETI-GE) : VA, frais de personnel (FP), EBE, CA, EQTP, nombre ;
+  les centiles 5 à 99 du salaire net EQTP de 2024 et sa moyenne (Insee Première n° 2079) ;
+  D11/D1 des SNF en 2023 (t. 7.101) ; les bénéfices déclarés à l'IS en 2024 (DGFiP, n° 39,
+  tableau 2) pour κ.
+
+Trois fichiers ajoutés : `insee_bdm_creations_region_secteur_m2022_2012_2025.xml`,
+`insee_bdm_creations_region_secteur_arretee_2000_2021.xml`,
+`insee_bdm_defaillances_region_secteur_1990_2025.xml` (requêtes SDMX bornées, lues le 14
+novembre 2026). Rien n'a été refusé par le réseau.
+
+### 2. Les doses : une exposition fois un paramètre voté
+
+Pour chaque secteur u et année t, nulles sous le droit de 2012, négatives pour une baisse
+(`microdonnees.doses`). Les paramètres sont des taux et des seuils, chacun rattaché à sa
+mesure de la base (`PARAMETRES`, `MESURES_DES_PARAMETRES`) ; un test vérifie que chaque
+année où un paramètre change est une année d'effet de sa mesure.
+
+* **Travail**, L_u,t en fraction du coût du travail : −g [r_t a_u(k_t) + 1,8 % f_u,t].
+  r_t : le CICE (4 % en 2013, 6 % de 2014 à 2016, 7 % en 2017, 6 % en 2018), puis la
+  cotisation maladie réduite de 6 points sur la même assiette (2019 à 2025) ; k_t = 2,5
+  SMIC (2,25 en 2025). f : la part de la masse salariale sous le seuil du taux réduit
+  d'allocations familiales (1,6 SMIC en 2015 ; 3,5 SMIC à partir du 1er avril 2016, trois
+  quarts de l'écart en 2016 ; 3,3 en 2025). g = D11/D1 = 0,763. a_u(k) : la part de la
+  masse salariale brute sous k SMIC, la distribution nationale des centiles de 2024 mise
+  à l'échelle du coût du travail par EQTP du secteur (Ésane), rapportée au SMIC net moyen
+  de 2024 (1 403,29 €). **Une hypothèse** : la forme de la distribution est commune aux
+  secteurs ; seul le niveau change. Non modélisés : l'extension de la réduction générale
+  de 2015 (FNAL, CSA, AT) et celles de 2019 (retraite complémentaire, chômage), dont la
+  base ne porte pas le coefficient ; la C3S de 2015-2016 ; la fiscalité du CICE et de la
+  baisse de cotisation dans l'IS.
+* **IS** : Σ_c n_c (t_c,t − 33,33 %) κ EBE⁺_u,c, t_c le taux normal de la catégorie (micro
+  et PME : 28 % de 2017 à 2020, 26,5 % en 2021, 25 % ensuite ; ETI et GE, lues au barème
+  au-delà de 500 000 € de bénéfice : 31 % en 2019 et 2020, 27,5 % en 2021, 25 % ensuite),
+  n_c la part du profit au taux normal (Insee Analyses n° 112 : 0,486 pour les micro,
+  0,923 pour les PME, 1 pour les ETI et GE), κ = 0,668 (283,95 Md€ de bénéfices sur l'EBE
+  d'Ésane hors agriculture et finance). Hors dose : les contributions sur l'IS des grandes
+  entreprises (2011 à 2019, 2025), réservées aux chiffres d'affaires que la catégorie
+  ETI-GE ne sépare pas.
+* **CVAE** : Σ_c (m_t − 1) τ(CA_c/N_c) VA_u,c, τ le barème progressif de 2010 (CGI, art.
+  1586 quinquies) au chiffre d'affaires moyen de la catégorie, m_t le taux voté sur 1,5 %
+  (0,5 en 2021-2022, 0,25 en 2023, 0,187 en 2024, 0,275 en 2025 avec la contribution
+  complémentaire de 47,4 %). Hors dose : les valeurs locatives industrielles de 2021.
+* Trois doses : `travail` = L ; `marge` = 100 (L FP + IS + CVAE)/VA, en points de
+  valeur ajoutée (le Δm du bloc `fermetures`) ; `taux` = 100 (L FP + IS + CVAE)/(κ EBE),
+  en points de taux apparent sur le profit imposable (le Δτ du bloc `naissances`, qui
+  compte les cotisations comme D-401). Des composantes (travail, profit) pour les
+  variantes.
+
+Ce que les doses valent (secteurs des panneaux) : `marge` de −1,3 (LZ) à −3,8 (I) points
+de VA en 2016, de −3,7 (OQ) à −5,5 (H) en 2024 ; `taux` de −13 (LZ) à −40 (I) points en
+2024 ; `travail` de −2,8 % (JZ) à −4,9 % (I) en 2019, et sur les branches de −0,5 % (CD,
+la cokéfaction) à −4,9 % (IZ, SZ). Les effets fixes d'année absorbent le chemin commun :
+**seuls les écarts entre secteurs identifient**, de l'ordre d'un demi-point de VA pour
+`marge`, de 7 points pour `taux`, de 0,8 point pour `travail`.
+
+### 3. Les estimateurs (`jumeau/microdonnees.py`)
+
+Moindres carrés à effets fixes, projetés par projections alternées ; la variance groupée
+CR1 (G/(G−1) (n−1)/(n−K), K les régresseurs plus le rang des effets fixes) ; le bootstrap
+sauvage groupé, 9 999 tirages, graine 20261114 : poids de Webb (six points) pour 9 ou 10
+grappes, de Rademacher pour 30 ; la p-valeur sous H₀ (résidus contraints, WCR) et
+l'écart-type des tirages sans contrainte (WCU). **L'écart-type retenu** est le plus grand
+des deux (CR1, WCU). Tests synthétiques (`tests/test_jumeau_microdonnees.py`) : un β connu
+retrouvé sur 40 panneaux, l'écart-type annoncé entre 0,6 et 1,8 fois la dispersion
+observée ; le WCR rejette 7,5 % au seuil de 10 % sous H₀ sur 200 panneaux (le test en
+exige moins de 16 % sur 150) ; projections et CR1 égaux aux indicatrices à 1e-9.
+
+### 4. Les spécifications, figées
+
+y le logarithme du nombre ; une cellule sans nombre positif une année de l'échantillon est
+retirée entière (aucune ne l'est). 2020 et 2021 sont exclues partout (les aides de la
+crise sanitaire, comme D-417).
+
+| nom | y | dose | années | effets fixes | grappes |
+|---|---|---|---|---|---|
+| F1 | défaillances | marge | 2010-19, 2022-25 | région×secteur, région×année | 9 |
+| C1 | créations, sociétés | taux | 2012-19, 2022-25 | région×secteur, région×année | 10 |
+| E1 | emploi salarié | travail | 2003-19, 2022-24 | branche, année | 30 |
+
+Les grappes : les secteurs (F1, C1), les branches (E1). n = 1 638, 1 464 et 600. Les tests
+de robustesse, pour chacun : **l'avance** (la dose de t + 2 ajoutée, les années où elle se
+lit ; son coefficient doit être nul) ; **le placebo** (2003 à 2009, une période sans les
+réformes de la dose, la dose de t + 8 : les doses de 2011 à 2017 posées sur 2003 à 2009 ;
+pour C1, sur la série hors micro-entrepreneurs de l'ancienne méthode ; l'unification des
+allègements Fillon, de 2003 à 2005, y est, hors dose : un placebo imparfait, dit) ; **les
+tendances** (une tendance linéaire par cellule région×secteur, par branche pour E1) ;
+**jusqu'en 2019** (ni la crise, ni la CVAE) ; pour C1, **sans 2023** ; pour F1 et C1, la
+variante **des composantes** (travail et profit séparés). Une variante est une spécification
+à part, dite comme telle.
+
+**La traduction.** F1 : log X = … + β D, Δ log h = β(−Δm) dans le bloc : β est le
+coefficient, sur `fermetures_marges` (0 ; 0,03 ; 0,06), θ = β/0,06. C1 : Δ log E = Δe/e₀
+et Δe = −ε Δτ : ε = −7,61 c, sur la plage de sensibilité de `naissances.elasticite`
+(0,043 ; 0,20 ; 0,356), qui n'est pas une ligne θ (θ dit par la même règle par morceaux).
+E1 : log E = … − η c : η = −b, sur `jumeau_emploi_elasticite_cout` (0,31 ; 0,44 ; 0,52).
+**Identifié** : σ_θ = écart-type / pente du morceau < 0,25 (D-417). **Retenu** (assez pour
+proposer une plage) : identifié, du signe attendu (β, ε, η positifs), l'avance et le
+placebo non rejetés au seuil de 10 % (WCR). Une estimation hors de la plage est proposée,
+la plage ne change pas ici.
+
+**δ (`idees_creations`)** ne s'estime pas par ce plan : un décalage national du taux
+d'entrée est dans les effets d'année. Il se lit en niveau, sans erreur-type : les
+créations de sociétés de la France entière (BDM) sur le nombre d'entreprises à l'IS
+(DGFiP, 2 718 400 en 2024, et 2023 par sa variation de 5,03 %), moins e₀ = 7,61. Une
+lecture de définitions autant que de comportement (e₀ vient d'Amadeus, 1997-2004) ; elle
+n'identifie rien au sens de D-417.
+
+### 5. Le pronostic, avant tout calcul
+
+* **F1** : β entre −0,05 et +0,10, l'écart-type entre 0,02 et 0,06 : σ_θ de 0,3 à 1,0,
+  **non identifié** (trois chances sur quatre). Les écarts de dose entre secteurs sont
+  petits ; la construction et l'hébergement-restauration portent la reprise des
+  défaillances de 2022 à 2025 (la fin des aides), un risque de confusion.
+* **C1** : ε positif, entre 0 et 0,6, l'écart-type entre 0,02 et 0,10 : σ_θ de 0,06 à
+  0,3, **identifié** plutôt que non (trois chances sur cinq), mais la dose `taux` est
+  faite surtout de l'inverse de la marge (EBE/VA) : les secteurs à faible marge reçoivent
+  la plus forte dose, et l'immobilier (LZ, la plus faible) a vu ses créations de sociétés
+  suivre les taux d'intérêt. L'avance ou le placebo rejetés une fois sur deux ; **retenu,
+  une chance sur trois**.
+* **E1** : η entre −0,5 et +1,5, l'écart-type entre 0,15 et 0,5 : σ_θ au-delà de 0,6,
+  **non identifié** (neuf chances sur dix). Les branches à bas salaires (IZ, NZ, SZ, GZ)
+  croissaient avant 2013 : l'avance rejetée une fois sur deux, η réduit par les tendances.
+* **δ** : un taux d'entrée des sociétés de 9 à 11 %, δ de +1,5 à +3,5, hors de la plage
+  (−1 ; +1) : proposé à la décision du propriétaire (recaler e₀ ou élargir δ), pas changé.
+* Soit **au plus un θ identifié sur trois**, et **aucun retenu** le plus probablement.
+
+### Ce qui tourne ensuite
+
+`PYTHONPATH=src python scripts/jumeau_microdonnees.py` sur le commit qui porte cette
+entrée (le script refuse sans elle), vers `reports/jumeau/microdonnees.json` :
+coefficients, écarts-types, tailles, aucune donnée individuelle. Le résultat va dans
+D-426. Aucune spécification, aucun seuil, aucune dose ne change après le premier calcul.
+L'investissement par secteur (t. 8.202, comptes de branche) n'est pas dans ce plan.
+
+## D-426 — Les données fines estimées : ε petit, identifié ; β et η non ; contre D-425
+
+**Ce qui a tourné.** `scripts/jumeau_microdonnees.py`, sur 223b9f9 (D-425 à dcb4545,
+poussé avant), vers `reports/jumeau/microdonnees.json` : coefficients, écarts-types,
+tailles et doses par secteur, aucune donnée individuelle. **Un premier calcul, sur
+dcb4545, s'est arrêté** à F1_tendances sur le refus de colinéarité de l'estimateur, après
+F1, F1_avance et F1_placebo : une tendance par cellule région×secteur est colinéaire aux
+effets région×année, la somme des tendances d'une région en étant une. Le correctif ôte la
+tendance du premier secteur de chaque région, la normalisation du même modèle (223b9f9) ;
+rien d'autre ne change, et les trois premiers résultats sont redonnés à l'identique. Aucune
+spécification, aucun seuil, aucune dose n'a changé après le premier calcul.
+
+### Les coefficients
+
+L'écart-type est le plus grand de CR1 et du bootstrap sans contrainte (D-425) ; p la
+p-valeur du bootstrap sauvage restreint (Webb pour 9 et 10 secteurs, Rademacher pour 30
+branches), 9 999 tirages.
+
+| spécification | coefficient | écart-type | p (WCR) | traduit |
+|---|---|---|---|---|
+| F1 défaillances, `marge` | −0,0335 | 0,0401 | 0,44 | β = −0,034 ; θ = −0,56 ± 0,67 |
+| F1_avance : t / t + 2 | −0,027 / −0,019 | 0,052 / 0,062 | 0,67 / 0,74 | |
+| F1_placebo (t + 8, 2003-2009) | −0,025 | 0,093 | 0,77 | |
+| F1_tendances | −0,046 | 0,045 | 0,37 | |
+| F1_2019 | −0,039 | 0,054 | 0,57 | |
+| F1_composantes : travail / profit | −0,038 / −0,028 | 0,046 / 0,056 | 0,55 / 0,59 | |
+| C1 créations, `taux` | +0,00731 | 0,00668 | 0,28 | ε = −0,056 ± 0,051 |
+| C1_avance : t / t + 2 | +0,0032 / +0,0114 | 0,0063 / 0,0137 | 0,58 / 0,36 | |
+| C1_placebo (hors micro, ancienne méthode) | −0,0003 | 0,0035 | 0,93 | |
+| C1_tendances | −0,0045 | 0,0054 | 0,45 | ε = +0,034 ± 0,041 |
+| C1_2019 | +0,0014 | 0,0047 | 0,74 | ε = −0,011 ± 0,036 |
+| C1_sans_2023 | +0,0064 | 0,0064 | 0,32 | ε = −0,049 ± 0,049 |
+| C1_composantes : travail / profit | +0,0053 / +0,0141 | 0,0068 / 0,0146 | 0,44 / 0,35 | |
+| E1 emploi, `travail` | −3,63 | 2,98 | 0,25 | η = 3,63 ± 2,98 |
+| E1_avance : t / t + 2 | −1,62 / −1,87 | 1,60 / 2,45 | 0,34 / 0,42 | |
+| E1_placebo (t + 8, 2003-2009) | −1,18 | 2,00 | 0,54 | |
+| E1_tendances | +0,07 | 0,62 | 0,91 | η = −0,07 ± 0,62 |
+| E1_2019 | −2,92 | 2,69 | 0,28 | |
+
+n = 1 638 (F1), 1 464 (C1), 600 (E1) ; aucune cellule retirée. CR1 et le bootstrap
+diffèrent de 5 à 20 % ; le bootstrap est le plus petit partout, l'écart-type retenu est
+donc CR1.
+
+### Sur l'échelle des θ
+
+* **`fermetures_marges` (β ; 0 ; 0,03 ; 0,06)** : β = −0,034 ± 0,040, θ = −0,56 ± 0,67.
+  **Non identifié** (σ_θ = 0,67). Le signe est contraire à l'attendu, sans être
+  significatif ; l'intervalle à 95 % (−0,11 ; +0,05) couvre toute la plage : les
+  défaillances par secteur ne disent rien de β. Aucune proposition.
+* **`naissances.elasticite` (ε ; 0,043 ; 0,20 ; 0,356, une sensibilité, pas une ligne
+  θ)** : ε = −0,056 ± 0,051, θ = −0,31 ± 0,16 par la règle des lignes. **Identifié**
+  (σ_θ = 0,16 < 0,25), **non retenu** : le signe n'est pas l'attendu (D-425). L'avance et
+  le placebo ne sont pas rejetés (p = 0,36 et 0,93). Toutes les variantes sont petites,
+  de −0,107 ± 0,111 (la seule part du profit) à +0,034 ± 0,041 (les tendances).
+  L'intervalle à 95 % de la spécification principale, (−0,16 ; +0,04), exclut le centre
+  de 0,20 à cinq écarts-types et s'arrête à la borne basse (0,044). **Proposé, non fait** :
+  le centre à la borne basse actuelle (0,043, l'estimateur intra-groupe de Da Rin et al.)
+  et la borne basse à 0, ou ε fait ligne θ sur (0 ; 0,043 ; 0,20). **Ce que cela ne dit
+  pas** : l'estimation compare des secteurs ; une réponse commune à tous, au climat fiscal
+  national, est dans les effets d'année et lui échappe. La dose porte la convention de
+  D-401 (les cotisations au numérateur du taux apparent) et une distribution des salaires
+  de forme commune ; la seule part du profit (IS et CVAE) donne le même ordre, moins
+  précis.
+* **`jumeau_emploi_elasticite_cout` (η ; 0,31 ; 0,44 ; 0,52)** : η = 3,63 ± 2,98, θ = 20 ±
+  19. **Non identifié**, et absurde en niveau : les écarts de dose entre branches (moins
+  d'un point de coût du travail) sont petits devant les tendances propres des branches ;
+  avec une tendance par branche, η = −0,07 ± 0,62. Aucune proposition.
+* **δ (`idees_creations`, −1 ; 0 ; +1)**, lu en niveau, sans erreur-type : 284 564
+  créations de sociétés en 2024 sur 2 718 400 entreprises à l'IS, 10,47 % ; 269 905 sur
+  2 588 200 en 2023, 10,43 % : δ = +2,86 et +2,82, **hors de la plage**. **Proposé, non
+  fait** : réconcilier e₀ (7,61 %, Amadeus de 1997 à 2004) avec le taux de l'Insee et de
+  la DGFiP (près de 10,4 %), soit e₀ recalé et δ centré sur 0, soit la plage de δ portée
+  à +3. La lecture mêle définitions (des sociétés créées sur des redevables de l'IS) et
+  comportement ; elle n'identifie rien au sens de D-417.
+
+### Contre le pronostic de D-425
+
+| | pronostic | résultat |
+|---|---|---|
+| F1 : β, écart-type | −0,05 à +0,10 ; 0,02 à 0,06 | −0,034 ; 0,040 |
+| F1 : identifié | non (3 chances sur 4) | non |
+| C1 : ε, écart-type | 0 à 0,6 ; 0,02 à 0,10 | −0,056 (hors) ; 0,051 |
+| C1 : identifié, retenu | oui (3 sur 5) ; une chance sur 3 | oui ; non (le signe) |
+| C1 : avance ou placebo rejetés | une fois sur deux | non |
+| E1 : η, écart-type | −0,5 à +1,5 ; 0,15 à 0,5 | 3,63 (hors) ; 2,98 (hors) |
+| E1 : identifié | non (9 sur 10) | non |
+| δ | +1,5 à +3,5 | +2,86 |
+| θ identifiés, retenus | au plus un sur trois ; aucun | un (ε) ; aucun |
+
+Le pronostic se trompe sur le signe de ε (attendu positif, par confusion avec les
+secteurs à faible marge), et sous-estime l'imprécision de E1 d'un facteur six.
+
+### Ce qui ne change pas, ce qui reste
+
+Aucune plage, aucun θ, aucun bloc ne change : les propositions (ε, δ) attendent le
+propriétaire. L'investissement par secteur n'a pas été estimé. Ce que les données fines
+apportent aux θ des entreprises est limité par la maille publiée : neuf ou dix secteurs à
+la région, des doses dont l'écart entre secteurs est petit (un demi-point de valeur
+ajoutée), et aucune variation par taille d'entreprise dans les séries. Les sources plus
+fines (Sirene ou les liasses par unité légale, la DSN par établissement) sont des données
+individuelles, hors de ce dépôt.
+
+## D-427 — La jonction de D-421 à D-426 ; ε, e₀ et trois plages ; les études recalculées
+
+**La jonction** (branche `claude/but23-cadre`). `claude/but23-revision` (dce2439, D-421 et
+D-423) puis `claude/but23-apriori` (D-424) en avance rapide ; `claude/but23-microdonnees`
+(D-425, D-426) fusionnée : les D-entrées dans l'ordre numérique, `MANIFEST.json` et
+`KNOWN_SOURCES` en union (241 → 244 entrées). Les neuf fichiers téléchargés par ces
+branches sont reliés dans `data/raw` (hors git), leurs sommes de contrôle vérifiées.
+Après la jonction, `test_jumeau*.py`, `test_provenance.py` et `test_donnees.py` : 311
+verts, 1 sauté ; ruff propre.
+
+**Les décisions du propriétaire, 14 novembre 2026.**
+
+* **(a) ε, l'élasticité des créations aux prélèvements** : (0 ; 0,043 ; 0,20) à θ = 0,
+  ½ et 1, au lieu de 0,20 fixe sur (0,043 ; 0,356). La raison, D-426 : l'estimation
+  française entre secteurs, −0,056 ± 0,051, a un intervalle à 95 % (−0,16 ; +0,04) qui
+  exclut 0,20 à cinq écarts-types et touche 0,043, l'intra-groupe de Da Rin et al. ;
+  0,20, le milieu de D-402, reste la borne haute. Dans le canal des études
+  (`predictif/parameters/creations_entreprises.yaml`), ε reste fixe à son centre, la
+  plage une sensibilité dite. Dans le jumeau, ε devient une ligne θ,
+  `elasticite_creations`, que le bloc `naissances` lit ; sa loi a priori suit les règles
+  de D-424 : l'estimation 0,043 (Da Rin et al., un panneau national, la grandeur du
+  bloc), et, faute de l'écart-type de cet effet marginal (la covariance du TMEE et de son
+  carré n'est pas publiée), celui de D-426, 0,051 : μ = ½, s₋ = 0,593, s₊ = 0,162. Ce
+  choix de l'écart-type, proposé ici, est confirmé par le propriétaire (15 novembre
+  2026) ; D-426 entre en `comparaison`,
+  pas comme estimation (une réponse entre secteurs, les effets d'année absorbant la
+  réponse nationale : la règle (1)).
+* **(b) e₀** : 10,47 % au lieu de 7,61 %. La lecture de niveau de D-426
+  (`reports/jumeau/microdonnees.json`, champ « delta ») : 284 564 créations de sociétés
+  en 2024, France entière, tous secteurs, brutes, la somme des quatre trimestres (Insee,
+  BDM, CREATIONS-ENTREPRISES-METHODE-2022, TYPE-ENT_PM), sur 2 718 400 entreprises à
+  l'IS (DGFiP, Statistiques n° 39, tableau 2) ; 10,43 % en 2023 (269 905 sur 2 588 200).
+  Numérateur et dénominateur de deux sources, dit. δ (θ idées) garde −1 à +1 autour ; sa
+  lecture de niveau tombe de +2,86 à 0. Le hasard des installées, qui tient le stock
+  stationnaire au taux e₀, passe de 6,53 % à 10,82 % au centre.
+* **(c) trois plages du jumeau élargies vers le bas** (D-424) : l'élasticité de l'emploi
+  à son coût (0,07 ; 0,44 ; 0,52, au lieu de 0,31), les salaires au chômage (0 ; 1 ;
+  1,278, au lieu de 0,5), le coût du capital (0 ; 0,44 ; 0,60, au lieu de 0,37 et
+  0,48). Les modes de D-424 y sont désormais dans la boîte : 0,238, 0,234 et 0,341, au
+  lieu de −0,25, −0,03 et −0,5. La garde ε_K > 0 devient ε_K ≥ 0. Les plages du commerce
+  ne changent pas.
+
+Le rejeu de l'histoire (D-423) n'est pas refait : son rapport garde son commit. Les a
+priori ne sont pas lus par une passe nouvelle.
+
+### Les études publiées : recalculées sans passe
+
+Le canal des créations entre dans la dette publiée des études depuis D-400. Chaque
+rapport porte ses paramètres (`instantane`) : `rejeu.creations.parametres` et
+`creations.parametres`, où ε valait 0,20, et tout ce qui en dérive : les chemins
+(`years`, `side_by_side`), la boîte (`theta_box`), le Monte-Carlo, les lectures, les
+chemins du canal. `rejouer`, le parcours (`dette.js`, `activite.js`) et `etude ecrire`
+lisent ε là, jamais dans le fichier déclaré. Un premier temps s'est arrêté avant de
+réécrire ces rapports ; le propriétaire a retenu la voie proposée (15 novembre 2026).
+
+**La voie.** `predictif.recalcul`, appelé par `scripts/recaler_creations.py` : chaque
+rapport qui lit le canal est refait depuis ses seuls champs, sans passe, à l'ε du fichier
+déclaré. ε est remplacé dans les deux instantanés ; les chemins, sous chaque persistance
+et dans les deux vues, la boîte (tous les ans chiffrés, et la première année reportée),
+le Monte-Carlo (`montecarlo.run`, sa graine fixe), les lectures (`annuel._lectures`) et
+les chemins du canal (`creations.effet`, sa boîte en c = 0 et 1) sont refaits par le
+rejeu. Un champ `recalcul` dit la décision, la date, l'ε d'avant et d'après, et garde le
+commit de la passe. Des 46 rapports d'études qui portent le canal, 21 ont des
+prélèvements sur les entreprises ou le capital qui bougent : leurs nombres sont refaits ;
+les 25 autres ne lisent pas ε (le canal y est nul à toute pente) : seuls leurs
+paramètres changent, et leur `recalcul` le dit (`nombres_refaits` faux). La page dit le
+recalcul à côté de l'élasticité.
+
+**Le contrôle, d'abord.** Au ε que chaque rapport portait, le rejeu redonne leurs
+chemins publiés à l'écart nul (toutes années, trois persistances, deux vues), et la
+réécriture redonne à l'octet près les chemins, la boîte des années chiffrées et les
+chemins du canal. Trois familles ne se redonnent qu'à 3e-12 relatif au pire : la boîte de
+la première année reportée (la chaîne l'a écrite par `exploration.trajectory`, non par le
+rejeu), le Monte-Carlo et les lectures (écrits par le rejeu d'avant D-403, qui ajoutait
+le canal ailleurs dans l'ordre des opérations). L'octet près n'y est donc pas tenable sans
+passe ; le contrôle les tient à 1e-11 relatif (`recalcul.AU_PRES`, `TOLERANCE_AU_PRES`),
+fixé après avoir vu ces écarts, et dit ici. Après la réécriture, chacun des 21 rapports
+refaits se redonne à l'octet près, et l'aller-retour (à 0,20 puis à 0,043) aussi.
+
+**Ancien → nouveau**, Δb 2035 à θ½, vue vieillie, persistance « lue », en points de PIB
+(sans le canal entre parenthèses) :
+
+| étude | avant (ε = 0,20) | après (ε = 0,043) | sans le canal |
+|---|---|---|---|
+| Attal, programme | +4,2384 | +4,2730 | +4,2825 |
+| Attal, a18 suppression de la CVAE | +0,2000 | +0,2354 | +0,2450 |
+| Bouamrane, programme | −0,0157 | +0,3797 | +0,4881 |
+| Kazib, programme | −0,0158 | +0,3830 | +0,4924 |
+| Lisnard, programme | +5,4904 | +5,6541 | +5,6989 |
+| Lisnard, l4 C3S et CVAE | +1,3981 | +1,5615 | +1,6063 |
+| Mélenchon, programme | +26,7838 | +27,3752 | +27,5375 |
+| Mélenchon, exonérations au-delà de 2 Smic | −0,0729 | −0,2900 | −0,3494 |
+| Mélenchon, point d'indice +10 % | +8,8447 | +8,4472 | +8,3385 |
+| Mélenchon, Smic à 1 700 € net | −0,0412 | +0,7631 | +0,9840 |
+| Mélenchon, suppression du PFU | −2,3783 | −2,0634 | −1,9771 |
+| Retailleau, programme | +10,9930 | +11,3095 | +11,3963 |
+| Retailleau, r13 zéro cotisation à 1 623 h | +0,0471 | +0,1927 | +0,2326 |
+| Retailleau, r21 C3S, CVAE, forfait social, CFE | +1,3981 | +1,5615 | +1,6063 |
+| Roussel, programme | +0,4809 | +1,2254 | +1,4298 |
+| Roussel, Smic +15 % | −0,0364 | +0,7080 | +0,9124 |
+| Ruffin, programme | +2,1302 | +2,5872 | +2,7126 |
+| Ruffin, Smic à 1 600 € | −0,0196 | +0,4371 | +0,5624 |
+| Tondelier, programme | +2,1885 | +2,5091 | +2,5970 |
+| Tondelier, point d'indice à l'inflation | +1,8484 | +1,7667 | +1,7443 |
+| Tondelier, Smic à 2 000 € brut | −0,0158 | +0,3830 | +0,4924 |
+
+**Les verdicts et les étages.** Aucun verdict ne change, ni celui de la boîte (le signe
+de Δb à θ et à chaque coin, dans les deux vues) ni celui du Monte-Carlo. Les six hausses
+du Smic (Bouamrane, Kazib, et les mesures Smic de Mélenchon, Roussel, Ruffin et
+Tondelier) passent au positif à θ½, mais restaient et restent « dépend de θ » ; leur
+probabilité d'une hausse passe de 0,51 à 0,58 environ. Les autres probabilités d'une
+hausse qui bougent : Attal, programme, 0,646 → 0,647 ; Lisnard, programme, 0,881 →
+0,886 ; Mélenchon, exonérations, 0,497 → 0,436 ; suppression du PFU, 0,136 → 0,171 ;
+Retailleau r13, 0,532 → 0,586 ; Roussel, programme, 0,549 → 0,603 ; Ruffin, programme,
+0,672 → 0,723 ; celles à 1,000 y restent. Aucun étage ne change : sur le site, chaque
+page refaite compte les mêmes nombres par étage, plus deux « hypothèse » (les deux ε de
+la phrase du recalcul).
+
+**Le site.** `etude ecrire` des douze études publiées (neuf pages changent ; celles de
+Le Pen, Philippe et du PLFSS ne disent que le nouvel ε et que rien n'en dépend chez
+elles), `site construire`, `site verifier`, `site publiable`, `node ui/check.mjs` passent.
+Le schéma de l'API admet `recalcul`. `rejouer.Chemin` porte b_t de la réforme, que le
+rapport écrit (plomberie, aucun nombre ne change).
+
+### θ_survie, non monotone : sa boîte se lit sur une grille
+
+Avec e₀ = 10,47 %, θ_survie n'est plus monotone. Une survie des jeunes plus haute garde
+plus de jeunes sociétés et, par la stationnarité du stock au taux e₀, monte le hasard des
+installées ; le second effet l'emporte à dix ans : en 2035, pour une baisse d'IS de
+10 Md€, le PIB de la productivité vaut 1,4804 à θ = 0, 1,4775 à ½, 1,4697 à 1, un maximum
+à θ = 0,125 ; le stock, 17 121, 17 212 et 17 210, un maximum à 0,75 (à 7,61 %, monotone).
+Décision du propriétaire : une propriété du modèle, pas un défaut. Une ligne θ peut
+désormais déclarer sa non-monotonie, avec sa raison (`Ligne.non_monotone`) ; sa boîte se
+lit alors sur `thetas.GRILLE` (de 0 à 1 par huitièmes), celle des autres à leurs deux
+bouts (`thetas.points_de_boite`, `thetas.boite`). Seule la survie est déclarée.
+
+**Un changement de test motivé, pas un ajustement pour passer.**
+`test_theta_zero_et_un_bornent_chaque_bloc` supposait chaque ligne monotone ; il lit
+maintenant la déclaration. Une ligne monotone garde ses assertions telles quelles (les
+bouts bornent, l'effet croît) ; une ligne déclarée voit sa boîte de grille contenir chaque
+valeur de la grille, et ses deux bouts seuls ne pas la borner (la déclaration n'est pas
+de trop). Un test dit que seule la survie est déclarée. Aucune autre boîte θ du jumeau
+n'est lue : la page des curseurs n'en affiche pas, le rejeu de l'histoire et la
+comparaison lisent des θ, pas des boîtes.
+
+**Les tests.** Tenus et vus échouer sur le code d'avant : le calcul à la main du canal au
+nouveau centre ; l'étude Attal a18 publie +0,2354 point et redonne +0,2000 au ε d'avant ;
+chaque rapport d'étude porte le nouvel ε et son `recalcul`, se redonne par la réécriture
+(`tests/test_recalcul.py`, 49 tests, l'aller-retour compris) ; la page d'un rapport à
+0,20 cite la source de D-402 ; les lois a priori à la main (l'emploi, le coût du capital,
+les salaires, ε) ; ε borne les créations et les éteint à θ = 0, le coût du capital aussi ;
+à θ = 0, une baisse d'IS ne fait plus rien au volume du PIB structurel, et une hausse des
+cotisations finit par monter les rémunérations (b = 0) ; e₀, son accord avec le rapport de
+D-426 et h_o à la main ; la boîte de θ_survie sur la grille. Quatre tests de pages
+tenaient les nombres publiés d'avant et suivent les nouveaux : la dette d'Attal sans
+boucle, +20,41 → +20,44 points (`test_etude_programmes`, `test_parcours_comparer`,
+`test_parcours_cout`), et le Monte-Carlo de Lisnard, 88,15 % → 88,65 % des tirages
+(`test_parcours_verdict`) ; `recalcul.py` est rangé parmi les modules hors du banc de
+mutations, ses refus tenus par son test (`test_gardes_phase9`). Avec `pytest -m "not
+lourd and not chrono" -n 2` sur `test_jumeau*.py`, `test_rejouer.py`,
+`test_creations_canal.py`, `test_recalcul.py`, `test_etude*.py`, `test_parcours*.py`,
+`test_annonce.py`, `test_site.py`, `test_dependances.py`, `test_gardes_phase9.py`,
+`test_provenance.py`, `test_donnees.py`, `test_dette*.py` : 837 verts, 4 sautés.
+`test_jumeau_page.py` (Chromium), seul : vert. `ruff check src tests scripts` propre. Ni
+`make impact` ni `make full`.
+
+## D-428 — Le troisième rejeu de l'histoire préenregistré : « rejeu_histoire_r3 »
+
+**Ce qui est fait** (branche `claude/but23-cadre`, partie de e8aafac). Le cas
+`rejeu_histoire_r3` (`rejeu_histoire.CAS`, son rapport
+`reports/jumeau/rejeu_histoire_r3.json`), l'étape zéro et ce préenregistrement. **Le
+jumeau n'a tourné sur aucune année notée contre le publié** : l'étape zéro lit ses seules
+sorties sur les fenêtres de l'estimation, aucune erreur n'est calculée. Les rapports de
+D-420 (fe9434f) et de D-423 (8119f63) restent ; le script refuse de les écraser
+(`rejeu_histoire.CAS_PRECEDENTS`).
+
+### Ce qui change depuis r2 (D-421, D-423)
+
+* **L'a priori** : chaque θ estimé sous sa loi de D-424 (`a_priori.lois`, passée à
+  `apprentissage.estimer`), au lieu de N(½ ; ½) pour tous. Six des sept θ estimés en ont
+  une tirée d'une source ; le profil de la consommation, sans source, garde N(½ ; ½).
+  Les autres θ restent fixés à ½, le mode de leur loi : chacune y est centrée, ε
+  compris.
+* **Le jumeau de la jonction D-427** : ε = 0,043 au centre (0 ; 0,043 ; 0,20), une ligne θ
+  (`elasticite_creations`), que le bloc `naissances` lit, au lieu de 0,20 fixe ;
+  e₀ = 10,47 % au lieu de 7,61 % ; les plages de l'emploi (0,07 ; 0,44 ; 0,52), des
+  salaires (0 ; 1 ; 1,278) et du coût du capital (0 ; 0,44 ; 0,60) élargies vers le bas ;
+  la survie déclarée non monotone (sans effet ici : le rejeu lit des θ, pas des boîtes).
+* **La règle d'identification** de D-424 : un θ est identifié si son écart-type approché
+  est sous s / 2, s celui de sa loi au point, du côté de la jacobienne ; soit des données
+  qui apportent au moins 3 / s² d'information. Un a priori serré n'identifie rien seul.
+
+**Ce qui ne change pas** : les fenêtres (estimation 2010 → 2014 et 2014 → 2017, test
+2017 → 2019 et 2021 → 2024, 2020 et 2021 exclus), les douze cibles, leurs métriques et
+leurs tolérances, les entrées (les chocs observés, la demande mondiale, le choix (b) de
+D-421), les sept θ estimés, le poids de l'a priori (1), le critère, les deux naïfs et la
+règle « le jumeau bat ». ε n'est pas ajouté aux θ estimés : la liste de D-417 ne change
+pas ; l'étape zéro dit ce qu'il aurait donné.
+
+**Le contrôle.** Le naïf ne reçoit ni les chocs ni la demande mondiale, et sa référence ne
+dépend pas de θ ; e₀ y tient le stock stationnaire : **ses REQM redonnent celles de D-420
+à 1e-9 près**, sur l'estimation, le test et le test à θ½. Le naïf mécanique n'a aucun bloc
+de comportement : ses REQM devraient redonner celles de D-423 au même près (un second
+contrôle, attendu, pas une condition). Si l'un ou l'autre bouge, l'écart est dit et rien
+n'est réglé.
+
+### L'étape zéro : l'identifiabilité avec les nouvelles lois
+
+La jacobienne des sorties notées du jumeau (pas des erreurs) en θ, divisée par les
+tolérances, sur les deux fenêtres de l'estimation ; chaque θ perturbé de 0,001 sur l'axe
+des tirages ; aucune valeur publiée de cible n'y entre. Trois points : ½ vers le haut
+(le point de D-421, dont elle redonne l'information, 0,099 pour l'emploi), ½ vers le bas
+(la moitié basse, celle que les plages élargies changent), et le mode de la loi ramené
+dans [0 ; 1], où l'estimation doit aller sans information (D-424). L'écart-type approché
+est √diag (JᵀJ + P)⁻¹, P = diag (1 / s²). Une passe d'essai de 4 secondes (`scratchpad`).
+
+| θ | info, mode | ½ haut | ½ bas | s de la loi | requis 3 / s² | σ | identifié |
+|---|---|---|---|---|---|---|---|
+| profil de la consommation | 0,002 | 0,002 | 0,065 | 0,500 | 12 | 0,500 | non |
+| emploi (mode 0,238) | 1,633 | 0,099 | 2,112 | 0,129 | 180 | 0,127 | non |
+| salaires (mode 0,234) | 0,333 | 0,013 | 0,171 | 0,213 | 66 | 0,212 | non |
+| exportations | 0,013 | 0,013 | 0,001 | 0,123 | 199 | 0,123 | non |
+| importations | 0,026 | 0,025 | 0,000 | 0,040 | 1 845 | 0,040 | non |
+| accélérateur | 0,029 | 0,027 | 0,027 | 0,255 | 46 | 0,255 | non |
+| coût du capital (mode 0,341) | 0,024 | 0,003 | 0,024 | 0,208 | 69 | 0,208 | non |
+| ε, non estimé | 5,971 | 5,970 | 0,448 | 0,162 | 114 | 0,151 | non |
+
+(Au mode, s est l'écart du haut ; celui des échanges vers le haut est 0,123 et 0,040,
+vers le bas 0,510 et 0,511.) **Aucun θ n'est identifié par les données et l'a priori
+ensemble.** Les plages élargies multiplient l'information de la moitié basse (l'emploi
+de 0,099 à 2,1, × 21 : la pente y est 2,8 fois plus forte, et le jumeau y est plus
+sensible ; le coût du capital × 8), sans l'approcher de ce que les lois serrées
+demandent : il faudrait 110 fois plus pour l'emploi. ε, s'il était estimé, aurait la
+plus forte information des huit (6,0, par la cible des créations), à 19 fois moins que
+requis. Ce que les lois changent : l'écart-type approché n'est plus 0,50 partout mais
+celui de la loi, à 2 % près. **Sous la règle absolue de D-417 (0,25), cinq θ seraient
+« identifiés »** (l'emploi, les salaires, les deux échanges, le coût du capital), par
+l'a priori seul ; c'est ce que la règle de D-424 refuse.
+
+### L'aveugle, percé
+
+Le pronostic est écrit en connaissant les erreurs année par année de D-420 et de D-423,
+le rapport de r2 et l'étape zéro, sans qu'aucune erreur de r3 n'ait été calculée. Ce
+que r2 donne d'avance : à θ½, r3 ne diffère de r2 que par ε et e₀ ; l'écart des
+créations du jumeau à celles du naïf y répond comme ε, soit 0,043 / 0,20 = 0,215 fois
+celui de r2. Appliqué aux erreurs de r2, cela donne une REQM des créations de 4,55 au
+test (5,65 en r2, 4,31 le naïf). Aux θ estimés, l'emploi, les salaires et le coût du
+capital vont près des modes de leurs lois (η ≈ 0,25, b ≈ 0,47, ε_K ≈ 0,30, les valeurs
+publiées), dans la moitié basse où le jumeau est le plus sensible : l'écart à r2 est
+plus grand qu'entre θ estimés et θ½ en r2 (moins de 1 %), de l'ordre de 0,1 point au
+plus sur l'emploi et le chômage, d'après l'information de l'étape zéro.
+
+### Le pronostic
+
+**L'estimation.** Les θ (départ ½) : le profil de la consommation dans [0,35 ; 0,50]
+(0,401 en r2, sa loi n'a pas changé) ; l'emploi dans [0,23 ; 0,32] (les données le
+tiraient vers le haut en r2) ; les salaires dans [0,20 ; 0,30] ; le coût du capital dans
+[0,31 ; 0,37] ; les exportations dans [0,48 ; 0,53], les importations dans
+[0,495 ; 0,505], l'accélérateur dans [0,47 ; 0,52]. Chaque écart-type approché à moins
+de 3 % de celui de sa loi au point ; **aucun θ identifié** ; chaque θ à moins de 0,08 du
+mode de sa loi ramené dans [0 ; 1]. J au départ entre 88 et 94 (85,72 en r2 : le terme
+de l'a priori à ½ vaut 6,3, les créations de l'estimation retirent environ 1,1), J final
+entre 84 et 89, de 92 à 97 % de J au départ.
+
+**Le test, aux θ estimés** (REQM en points ; r2 celle de D-423 ; N et M, le naïf et le
+naïf mécanique, attendus identiques à D-420 et D-423) :
+
+| cible | tol. | r2 | jumeau r3 | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,940 | [0,88 ; 1,02] | 0,831 | 0,831 | oui, de peu | non | non |
+| emploi | 0,8 | 0,882 | [0,80 ; 1,00] | 0,858 | 0,858 | non, de peu | non | non |
+| chômage | 0,8 | 0,723 | [0,62 ; 0,85] | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | 3,524 | [3,45 ; 3,60] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,20 ; 3,35] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,54 ; 0,59] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,364 | [0,34 ; 0,39] | 0,424 | 0,349 | oui | oui | non, de peu |
+| D61 | 0,4 | 0,225 | [0,20 ; 0,26] | 0,983 | 0,283 | oui | oui | oui |
+| recettes | 0,8 | 1,073 | [1,03 ; 1,12] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,639 | [0,60 ; 0,68] | 1,361 | 0,627 | oui | oui | non, de peu |
+| dette | 3,0 | 2,926 | [2,70 ; 3,15] | 4,393 | 2,359 | oui, de peu | oui | non |
+| créations | 10 | 5,647 | [4,30 ; 5,00] | 4,310 | 4,310 | oui | non | non |
+
+Soit **9 cibles sur 12 tenues par le jumeau** (de 8 à 10), 6 par le naïf (exactement), 9
+par le naïf mécanique (exactement) ; **le naïf battu sur 8** (de 7 à 9) et **le naïf
+mécanique sur 3** (de 2 à 5 : les deux échanges, par la demande mondiale, et D61 ; D5 et
+le solde sont à moins de 0,02 de lui). **Les créations** se rapprochent du naïf sans le
+battre : un ε près de cinq fois plus petit réduit la réponse du jumeau, dont le signe reste
+contraire au publié en 2023 (la CVAE). **Le test à θ½** : chaque REQM à moins de 1 % de
+celle de r2 à θ½, sauf les créations (de 4,3 à 5,0) ; contre le test aux θ estimés de r3,
+les mêmes tenues et les mêmes victoires, chaque REQM à moins de 10 % (l'emploi et le
+chômage sont les plus exposés).
+
+Ce que ce pronostic dit d'avance : **r3 n'apprend rien de l'histoire** ; ses θ sont ceux
+de la littérature, et ce qui change ses notes vient de ce que les lois et D-427 mettent
+dans le jumeau, non des données.
+
+### Ce qui tourne ensuite
+
+`PYTHONPATH=src python scripts/jumeau_rejeu_histoire.py`, sur le commit poussé qui porte
+cette entrée, vers `reports/jumeau/rejeu_histoire_r3.json`. Le résultat va dans D-429,
+contre ce pronostic ; aucune tolérance, aucune fenêtre, aucune entrée, aucune loi ne
+change après le premier calcul ; D-420 et D-423 restent.
+
+**Les tests.** Aucun nombre du modèle ne change : le cas, le passage des lois et le refus
+d'écraser les rapports précédents sont de la plomberie, sans test dédié (D-335) ; les lois
+et leur emploi par `estimer` sont tenus par `test_jumeau_a_priori.py` (D-424).
+`pytest -m "not lourd and not chrono" -n 2 tests/test_jumeau*.py` : 267 verts, 1 sauté ;
+`ruff check src tests scripts` propre.
+
+## D-429 — Le troisième rejeu noté sur l'histoire : 9 cibles sur 12, comme r2, contre D-428
+
+**Ce qui a tourné.** `scripts/jumeau_rejeu_histoire.py`, cas `rejeu_histoire_r3`, sur
+a399c47 poussé (D-428), en une fois, détaché, en moins d'une minute. Le rapport :
+`reports/jumeau/rejeu_histoire_r3.json` ; ceux de D-420 et de D-423 restent. Ni
+tolérance, ni fenêtre, ni entrée, ni loi, ni réglage n'a changé après le calcul.
+
+**Le contrôle d'abord.** Les REQM du naïf redonnent celles de D-420 exactement (écart
+nul, sur l'estimation, le test et le test à θ½). Celles du naïf mécanique redonnent
+celles de D-423 exactement, comme attendu.
+
+**L'estimation.** Six itérations ; J passe de 90,99 à 85,30 (93,7 %). **Aucun θ
+identifié**, chaque écart-type approché à moins de 1 % de celui de sa loi au point.
+
+| θ | mode de la loi | estimé | en paramètre | écart, en s de la loi | σ | s de la loi |
+|---|---|---|---|---|---|---|
+| profil de la consommation | 0,500 | 0,390 | — | −0,22 | 0,496 | 0,500 |
+| emploi | 0,238 | 0,273 | η = 0,272 (lu 0,246) | +0,27 | 0,127 | 0,129 |
+| salaires | 0,234 | 0,191 | b = 0,382 (lu 0,467) | −0,20 | 0,212 | 0,213 |
+| exportations | 0,500 | 0,502 | — | +0,01 | 0,123 | 0,123 |
+| importations | 0,500 | 0,500 | — | −0,01 | 0,041 | 0,041 |
+| accélérateur | 0,500 | 0,497 | — | −0,01 | 0,255 | 0,255 |
+| coût du capital | 0,341 | 0,322 | ε_K = 0,283 (lu 0,30) | −0,11 | 0,179 | 0,179 |
+
+Les données déplacent chaque θ de moins d'un tiers de l'écart-type de sa loi : les θ de
+r3 sont ceux de la littérature. Sur l'estimation, le jumeau tient 8 cibles (le naïf 6, le
+naïf mécanique 8), bat le naïf sur 10 et le naïf mécanique sur 8 (r2 : 9 et 7) : les
+créations y passent de 7,48 à 6,56, sous le naïf (7,11).
+
+**Le test, aux θ estimés** (REQM en points ; P la bande de D-428 ; N et M identiques à
+D-420 et D-423) :
+
+| cible | tol. | r3 | P | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,940 | [0,88 ; 1,02] | 0,831 | 0,831 | oui | non | non |
+| emploi | 0,8 | 0,894 | [0,80 ; 1,00] | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,759 | [0,62 ; 0,85] | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | 3,524 | [3,45 ; 3,60] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,20 ; 3,35] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,54 ; 0,59] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,364 | [0,34 ; 0,39] | 0,424 | 0,349 | oui | oui | non |
+| D61 | 0,4 | 0,227 | [0,20 ; 0,26] | 0,983 | 0,283 | oui | oui | oui |
+| recettes | 0,8 | 1,076 | [1,03 ; 1,12] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,643 | [0,60 ; 0,68] | 1,361 | 0,627 | oui | oui | non |
+| dette | 3,0 | 2,927 | [2,70 ; 3,15] | 4,393 | 2,359 | oui | oui | non |
+| créations | 10 | 4,481 | [4,30 ; 5,00] | 4,310 | 4,310 | oui | non | non |
+
+**9 cibles sur 12 tenues hors de la période d'estimation**, le naïf 6, le naïf mécanique
+9 ; le jumeau bat le naïf sur 8 et le naïf mécanique sur 3 (les deux échanges et D61).
+**À θ½**, les mêmes tenues et les mêmes victoires ; chaque REQM à moins de 0,2 % de celle
+de r2 à θ½, sauf les créations (4,481, la même qu'aux θ estimés) ; contre les θ estimés,
+au plus 4 % d'écart (le chômage, 0,729 contre 0,759).
+
+**Contre le pronostic.** Chaque REQM du test dans sa bande ; chaque tenue, chaque « bat N »
+et chaque « bat M » comme annoncés ; les totaux exactement (9, 6, 9, 8, 3) ; aucun θ
+identifié ; J au départ, J final et leur rapport dans leurs bandes ; le test à θ½ comme
+annoncé. **Manqués** : les salaires, 0,191 sous la bande [0,20 ; 0,30] ; le profil de la
+consommation à 0,110 du mode de sa loi, au-delà des 0,08 annoncés pour chaque θ (le
+pronostic se contredisait : sa bande [0,35 ; 0,50] admettait cet écart). Les créations,
+projetées à 4,55 par la règle de 0,215, font 4,48.
+
+### r1, r2, r3 côte à côte (le test, aux θ estimés)
+
+| cible | r1 (D-420) | r2 (D-423) | r3 | N | M |
+|---|---|---|---|---|---|
+| PIB en volume | 1,034 | 0,940 | 0,940 | 0,831 | 0,831 |
+| emploi | 0,902 | 0,882 | 0,894 | 0,858 | 0,858 |
+| chômage | 0,696 | 0,723 | 0,759 | 0,627 | 0,627 |
+| exportations | 3,855 | 3,524 | 3,524 | 3,870 | 3,870 |
+| importations | 3,899 | 3,271 | 3,271 | 3,773 | 3,773 |
+| D2 | 0,554 | 0,564 | 0,564 | 0,645 | 0,539 |
+| D5 | 0,316 | 0,364 | 0,364 | 0,424 | 0,349 |
+| D61 | 0,263 | 0,225 | 0,227 | 0,983 | 0,283 |
+| recettes | 1,091 | 1,073 | 1,076 | 1,301 | 0,959 |
+| solde | 0,536 | 0,639 | 0,643 | 1,361 | 0,627 |
+| dette | 2,816 | 2,926 | 2,927 | 4,393 | 2,359 |
+| créations | 10,600 | 5,647 | 4,481 | 4,310 | 4,310 |
+| tenues (N 6, M 9) | 7 | 9 | 9 | | |
+| bat N, bat M | 7, 2 | 8, 3 | 8, 3 | | |
+
+Les θ : r1 et r2 sous N(½ ; ½), r3 sous les lois de D-424 ; aucun identifié dans aucun
+des trois. L'emploi 0,597, 0,639, 0,273 ; les salaires 0,399, 0,464, 0,191 ; le coût du
+capital 0,477, 0,476, 0,322 ; les autres à 0,11 de ½ au plus.
+
+**Ce que r3 dit.** Mettre les θ à la littérature ne change presque rien à la note de
+l'histoire : l'emploi (+0,012) et le chômage (+0,036) s'éloignent un peu du publié avec
+une élasticité de l'emploi plus faible et des salaires moins sensibles au chômage, sans
+changer leurs tenues ; le reste bouge de moins de 0,005. Le seul gain est celui des
+créations (5,65 → 4,48), qui vient de ε = 0,043 (D-427), pas des données : la réponse du
+jumeau est près de cinq fois plus petite, il reste au-dessus du naïf (2023 : +8,1 points
+d'erreur, la CVAE). L'histoire budgétaire de 2011 à 2017 n'apprend rien aux θ, ni sous
+l'a priori large ni sous les lois : l'étape zéro le disait, le calcul le confirme.
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune entrée, aucune loi ;
+D-420, D-423 et D-428 restent. Le rapport porte a399c47.
+
+## D-430 — La PR du but 23 préparée : `make impact`, les lourds, deux rouges du but 22
+
+**Ce qui a tourné**, une fois, avant la PR (D-309, D-335), sur `claude/but23-cadre`, avec
+`-n 2` (la machine a 15 Go). La première fois, tout tourne : aucun relevé d'impact
+n'existait dans ce worktree. La population, les entreprises de 2023 et leur fixture sont
+reliées dans `data/processed` depuis le worktree du but 22, hors git ; `impots data check
+--profile tests` : 15 dépendances présentes et valides.
+
+* **La passe parallèle**, première fois, sur 0f51575 : 4 744 verts, 21 sautés, 3 rouges, en
+  40 min 28 s ; `make` s'est arrêté là.
+* **Les 29 lourds** de `tests/lourds.txt`, chacun dans son processus
+  (`tests/memoire.py lancer`) : 29 verts, aucun sauté. Les cellules du jumeau recoupent la
+  population entière (`test_jumeau_cellules`, sautée faute de population depuis D-416) ;
+  la page dans Chromium passe en 25 s.
+* **Après le correctif** (c27d582), `make impact` en entier : ruff propre ; 1 377 tests
+  rejoués, verts, 21 sautés ; des lourds que l'impact retient, 19 rejoués et verts, 8
+  inchangés depuis la passe d'avant ; 5 chronomètres verts. Pas de `make full`.
+
+**Les trois rouges, tous du but 22, entrés avec cette branche** ; chacun passe sur
+`origin/main` (160380e), où les rapports et l'ancienne passe sont encore là.
+
+* `test_page_explorer.py`, deux tests : `grille.crans` lisait les rapports de chaque étude
+  définie, et ceux du PLF 2027, retirés par D-402 et non refaits (D-403), manquaient. D-403
+  avait retiré les tests bâtis sur ces rapports, pas ceux de l'explorateur. Le correctif
+  est dans le code, pas dans le test : une étude sans aucun rapport n'a plus de cran, comme
+  le site ne lui fait pas de page (D-403) ; une étude à moitié là reste refusée.
+  L'explorateur est retiré (D-377) : aucun nombre publié ne change ; ses crans du PLF 2027
+  reviendront avec l'étude.
+* `test_recherche.py::test_the_frozen_view_is_priced_on_the_population_as_it_is` : son
+  faux agrégat n'avait pas `employer_contribution_delta`, que la passe des ménages lit
+  depuis le but 22 (le canal des créations, D-401). Le test d'abord : le champ est ajouté
+  à sa valeur par défaut, 0 ; aucune assertion n'est touchée.
+
+**Les 21 sautés, chacun avec sa raison**, aucun lourd : l'annexe 9 du PLFSS 2027, hors du
+dépôt par règle ; le bulletin AFT n° 435 (trois de `test_dette_maturite`), manifesté mais
+absent de la machine, et aft.gouv.fr renvoie un défi anti-robot à la session, `make data`
+ne le prépare pas ; le PDF de Da Rin et al. (2011), même cas (`test_taux_effectifs`) ; la
+distribution des taux marginaux absente de l'artefact de référence (deux de
+`test_behavioural`) ; treize boutons sans contrôle négatif écrit (`test_knobs`) ; le
+commit qui date un enregistrement, absent d'un clone superficiel
+(`test_validation_predictif`).
+
+**Ce qui ne change pas.** Aucun nombre, aucune tolérance, aucun rapport ; les rejeux de
+D-420, D-423 et D-429 gardent leur commit. `BUT.md` porte le chiffre du premier juge et
+dit le but 23 pas fait : rien n'est mergé, la page des curseurs n'est pas en ligne, la
+dynamique ne bat le naïf mécanique que sur 3 cibles.

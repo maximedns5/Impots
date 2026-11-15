@@ -348,6 +348,27 @@ def _pages(path: str) -> tuple[tuple[int, tuple[str, ...]], ...]:
     )
 
 
+def printed_row(variant: Variant, label: str, raw: Path | None = None
+                ) -> tuple[float, ...]:
+    """Another row of a variant's own table, by the label its left column prints, in
+    the expansionary convention (the whole table flips together, as in `load`). Read
+    from the page `load` kept for the variant; a label absent from that page, or printed
+    twice, is refused. Used by the twin's coherence table (D-418) for the unemployment
+    rate and the consumer price rows, which `ROWS` does not carry."""
+    path = (raw or RAW) / SOURCE_FILE
+    if not path.exists():
+        raise MesangeError(f"{path} not found — `impots data fetch {path.name}`")
+    lines = dict(_pages(str(path)))[variant.page]
+    target = _normalise(label)
+    found = [line for line in lines if line.startswith(target)
+             and re.match(r"\s*-?\d", line[len(target):])]
+    if len(found) != 1:
+        raise MesangeError(f"variant {variant.key!r}, p. {variant.page}: {len(found)} rows "
+                           f"{label!r}")
+    values = _numbers(found[0], target)
+    return values if variant.published_sign > 0 else tuple(-v for v in values)
+
+
 def table(row: str, raw: Path | None = None, absent_for: tuple[str, ...] | list[str] = (),
           ) -> tuple[dict[str, tuple[float, ...]], tuple[str, ...]]:
     """One row of every variant, as (values by instrument, horizons).

@@ -115,6 +115,23 @@ def body(lines: list[str], n: etude.Nombres) -> str:
         if not line.strip() or line.startswith("<!--"):
             i += 1
             continue
+        image = re.fullmatch(r"!\[([^\]]*)\]\(([^)\s]+)\)", line)
+        if image:
+            # A graphic of the page (but 22): its SVG inline, the line under it its
+            # caption. The SVG is the one the page's reports draw, never read from disk.
+            figure = getattr(n, "graphiques", {}).get(image[2])
+            if figure is None:
+                raise SiteError(f"une image que la page ne trace pas : « {image[2]} »")
+            i += 1
+            while i < len(lines) and not lines[i].strip():
+                i += 1
+            caption = ""
+            if i < len(lines) and lines[i].startswith("*Source du graphique"):
+                caption = f"<figcaption>{_text(lines[i].strip('*'), n)}</figcaption>"
+                i += 1
+            out.append(f'<figure class="graphique">\n{figure.svg.strip()}\n{caption}'
+                       f"</figure>")
+            continue
         heading = re.match(r"(#{1,3}) (.*)", line)
         if heading:
             level = len(heading[1])
@@ -207,7 +224,7 @@ def publiable() -> str | None:
     return None
 
 
-_SKIP = {"a", "h1", "h2", "h3", "code", "th", "td", "title", "dt", "span", "label",
+_SKIP = {"svg", "a", "h1", "h2", "h3", "code", "th", "td", "title", "dt", "span", "label",
          "option", "script", "style", "summary"}
 
 
@@ -299,6 +316,10 @@ code { font-size: .85em; overflow-wrap: anywhere; }
 a.terme { text-decoration-style: dotted; }
 main, p, li, dd { overflow-wrap: break-word; }
 .cite { overflow-wrap: anywhere; }
+figure.graphique { margin: 1.2rem 0 1.6rem; }
+figure.graphique svg { display: block; width: 100%; height: auto; max-width: 36rem;
+  border: 1px solid var(--trait); border-radius: .3rem; }
+figure.graphique figcaption { color: var(--doux); font-size: .85rem; margin-top: .4rem; }
 @media (max-width: 560px) {
   body { font-size: 16px; }
   dl { grid-template-columns: 1fr; }
@@ -398,11 +419,22 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         intro += (f'\n<p><a href="{parcours.PAGES[0][1]}">Refaire le chemin d\'un nombre</a> : '
                   "huit pages, du ménage au verdict, chacune avec sa donnée, le lien de sa "
                   "source et le fichier qui la calcule.</p>")
+    from impots import site_jumeau
+
+    if site_jumeau.present():
+        # The twin's cursors run in the browser, by decision (D-404, D-415).
+        pages = site_jumeau.build()
+        files.update(pages)
+        scripted.add(site_jumeau.PAGE)
+        intro += (f'\n<p><a href="{site_jumeau.PAGE}">Le jumeau</a> : le jumeau numérique de '
+                  "la France, dans le navigateur ; un programme, une mesure ou une loi "
+                  "hypothétique, et chaque paramètre incertain sur un curseur, de 2026 à "
+                  "2035.</p>")
     files["index.html"] = _page(TITLE, intro + "\n<ul class=\"etudes\">\n"
                                 + "\n".join(listed) + "\n</ul>")
     for name, text in files.items():
-        # The explorer runs a script by decision (D-343), and the parcours pages that give
-        # a cursor (D-375); no other page does.
+        # The explorer runs a script by decision (D-343), the parcours pages that give
+        # a cursor (D-375), and the twin (D-415); no other page does.
         if name not in scripted and "<script" in text.lower():
             raise SiteError(f"{name} porte un script : le site se lit sans en exécuter.")
     return files

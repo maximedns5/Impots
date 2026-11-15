@@ -1,0 +1,164 @@
+# La frise des gouvernements de la France, de 2010 à 2027 (but 23, lot 5, D-410).
+#
+# Des faits juridiques : les décrets de nomination du Premier ministre et de composition du
+# gouvernement, publiés au Journal officiel. Lus par `jumeau/votees.py`.
+#
+# LA CONVENTION, une seule, pour que la frise couvre chaque jour sans trou ni chevauchement :
+# un gouvernement court du jour de la nomination de son Premier ministre (`debut`) à la
+# veille de la nomination du suivant (`fin`). Entre une démission et la nomination suivante,
+# le gouvernement démissionnaire expédie les affaires courantes : il est encore celui de la
+# frise. Un Premier ministre renommé après une démission ouvre un nouveau gouvernement.
+# `composition` est la date du décret qui nomme les ministres ; `demission`, celle où le
+# président l'a acceptée. Le dernier gouvernement n'a pas de `fin` : il est en fonction au
+# dernier fait connu du dépôt.
+#
+# Les présidents courent de leur investiture à la veille de celle du suivant. Le mandat en
+# cours finit le 13 mai 2027 ; le suivant n'est pas connu (`a_venir`) : c'est là qu'un
+# candidat se branche sur l'état que laisse le dernier gouvernement.
+#
+# Vérification : dates de mémoire, Légifrance n'étant pas joignable depuis la session du
+# 14 novembre 2026 (403) ; le Premier ministre de 2025 et 2026 est lu sur les en-têtes des
+# PLF 2026 et 2027 et du PLFSS 2027 déposés (data/raw). À relire sur le JORF.
+
+presidents:
+  - nom: Nicolas Sarkozy
+    debut: 2007-05-16
+    fin: 2012-05-14
+  - nom: François Hollande
+    debut: 2012-05-15
+    fin: 2017-05-13
+  - nom: Emmanuel Macron
+    mandat: 1
+    debut: 2017-05-14
+    fin: 2022-05-13
+  - nom: Emmanuel Macron
+    mandat: 2
+    debut: 2022-05-14
+    fin: 2027-05-13
+
+a_venir:
+  evenement: élection présidentielle de 2027
+  fin_du_mandat_en_cours: 2027-05-13
+  premier_jour_du_successeur: 2027-05-14
+  note: >-
+    Le successeur et son gouvernement ne sont pas connus. Un programme de candidat part de
+    l'état que laisse le gouvernement en fonction au 13 mai 2027.
+
+gouvernements:
+  - id: fillon_2
+    premier_ministre: François Fillon
+    president: Nicolas Sarkozy
+    debut: 2007-06-18
+    fin: 2010-11-13
+    composition: 2007-06-19
+    demission: 2010-11-13
+  - id: fillon_3
+    premier_ministre: François Fillon
+    president: Nicolas Sarkozy
+    debut: 2010-11-14
+    fin: 2012-05-14
+    composition: 2010-11-14
+    demission: 2012-05-10
+  - id: ayrault_1
+    premier_ministre: Jean-Marc Ayrault
+    president: François Hollande
+    debut: 2012-05-15
+    fin: 2012-06-17
+    composition: 2012-05-16
+    demission: 2012-06-18
+  - id: ayrault_2
+    premier_ministre: Jean-Marc Ayrault
+    president: François Hollande
+    debut: 2012-06-18
+    fin: 2014-03-30
+    composition: 2012-06-21
+    demission: 2014-03-31
+  - id: valls_1
+    premier_ministre: Manuel Valls
+    president: François Hollande
+    debut: 2014-03-31
+    fin: 2014-08-24
+    composition: 2014-04-02
+    demission: 2014-08-25
+  - id: valls_2
+    premier_ministre: Manuel Valls
+    president: François Hollande
+    debut: 2014-08-25
+    fin: 2016-12-05
+    composition: 2014-08-26
+    demission: 2016-12-06
+  - id: cazeneuve
+    premier_ministre: Bernard Cazeneuve
+    president: François Hollande
+    debut: 2016-12-06
+    fin: 2017-05-14
+    composition: 2016-12-06
+    demission: 2017-05-10
+  - id: philippe_1
+    premier_ministre: Édouard Philippe
+    president: Emmanuel Macron
+    debut: 2017-05-15
+    fin: 2017-06-18
+    composition: 2017-05-17
+    demission: 2017-06-19
+  - id: philippe_2
+    premier_ministre: Édouard Philippe
+    president: Emmanuel Macron
+    debut: 2017-06-19
+    fin: 2020-07-02
+    composition: 2017-06-21
+    demission: 2020-07-03
+  - id: castex
+    premier_ministre: Jean Castex
+    president: Emmanuel Macron
+    debut: 2020-07-03
+    fin: 2022-05-15
+    composition: 2020-07-06
+    demission: 2022-05-16
+  - id: borne
+    premier_ministre: Élisabeth Borne
+    president: Emmanuel Macron
+    debut: 2022-05-16
+    fin: 2024-01-08
+    composition: 2022-05-20
+    demission: 2024-01-08
+  - id: attal
+    premier_ministre: Gabriel Attal
+    president: Emmanuel Macron
+    debut: 2024-01-09
+    fin: 2024-09-04
+    composition: 2024-01-11
+    demission: 2024-07-16
+  - id: barnier
+    premier_ministre: Michel Barnier
+    president: Emmanuel Macron
+    debut: 2024-09-05
+    fin: 2024-12-12
+    composition: 2024-09-21
+    demission: 2024-12-05
+    note: renversé par une motion de censure le 4 décembre 2024
+  - id: bayrou
+    premier_ministre: François Bayrou
+    president: Emmanuel Macron
+    debut: 2024-12-13
+    fin: 2025-09-08
+    composition: 2024-12-23
+    demission: 2025-09-09
+    note: la confiance refusée par l'Assemblée nationale le 8 septembre 2025
+  - id: lecornu_1
+    premier_ministre: Sébastien Lecornu
+    president: Emmanuel Macron
+    debut: 2025-09-09
+    fin: 2025-10-09
+    composition: 2025-10-05
+    demission: 2025-10-06
+  - id: lecornu_2
+    premier_ministre: Sébastien Lecornu
+    president: Emmanuel Macron
+    debut: 2025-10-10
+    fin: null
+    composition: 2025-10-12
+    demission: null
+    note: >-
+      en fonction au dernier fait connu du dépôt : le PLF 2027 (AN n° 3210) et le PLFSS
+      2027 (AN n° 3211) sont présentés en son nom

@@ -14,9 +14,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from datetime import date
 from pathlib import Path
-from typing import Any
 
 import polars as pl
 
@@ -140,28 +138,6 @@ def verified_path(filename: str) -> Path:
             "and record a decision if the vintage moved (D-004's policy)."
         )
     return path
-
-
-def write_manifest(entries: list[dict[str, Any]]) -> Path:
-    """(Re)write the manifest from files present in data/raw/."""
-    files: dict[str, Any] = {}
-    for entry in entries:
-        path = Path(entry.get("path") or (RAW / entry["filename"]))
-        files[entry["filename"]] = {
-            "url": entry.get("url"),
-            "quarantined": entry.get("quarantined", False),
-            "sha256": sha256_of(path),
-            "bytes": path.stat().st_size,
-            "downloaded": entry.get("downloaded", date.today().isoformat()),
-            "licence": entry["licence"],
-            "description": entry["description"],
-        }
-    MANIFEST_PATH.write_text(
-        json.dumps({"generated": date.today().isoformat(), "files": files},
-                   indent=2, ensure_ascii=False) + "\n",
-        encoding="utf-8",
-    )
-    return MANIFEST_PATH
 
 
 # --------------------------------------------------------------------------- #

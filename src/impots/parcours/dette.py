@@ -6,7 +6,7 @@ le solde primaire de la réforme et les recettes que l'activité induit ; le rat
 sur un PIB que la réforme déplace. Ses hypothèses se nomment une à une : le départ de
 2025 (publié), la croissance, les prix, la règle de dépense, le taux.
 
-La page lit les rapports prédictifs commités des huit études présidentielles
+La page lit les rapports prédictifs commités des études présidentielles refaites
 (`reports/etudes/presidentielle_*/predictif_*.json`) : leur départ (`rejeu.start`), leur
 trajectoire de référence (`years[].reference`), Δb chaque année sous la persistance lue
 (`side_by_side`), la décomposition en trois marches et le taux de marché
@@ -34,6 +34,9 @@ CADRE = "etudes/cadres/central.json"
 #: L'étude montrée d'abord : celle dont la page d'étude ouvre la série.
 PREMIERE = "presidentielle_attal"
 LUE = "lue"
+#: L'écart toléré entre Δb et le total de sa décomposition, en ratio de PIB : l'arrondi
+#: d'une somme dans un autre ordre, pas un écart de modèle (D-403).
+ARRONDI = 1e-12
 #: Les hypothèses que le gouvernement publie pour 2025 à 2029 : le rapport économique,
 #: social et financier annexé au PLF 2026, tableau 1 p. 64 (« Principaux indicateurs du
 #: scénario économique 2025-2029 »), le dernier du manifeste des données. Écrites ici,
@@ -113,18 +116,46 @@ def lire(chemin: str) -> Any:
     return json.loads((ROOT / chemin).read_text(encoding="utf-8"))
 
 
-@lru_cache(maxsize=1)
-def etudes() -> tuple[dict[str, Any], ...]:
-    """Les études présidentielles et leur rapport prédictif commité, Attal d'abord."""
+#: Ce que la page dit d'une étude préenregistrée sans rapport : la série du but 22 a été
+#: arrêtée avant elle (D-403), et ses rapports d'avant ont été retirés.
+NON_REFAITE = "non refaite au but 22 (D-403)"
+
+
+def _rapports(etude: dict[str, Any]) -> list[str]:
+    nom = etude["nom"]
+    return [f"reports/etudes/{nom}/predictif_{s['scenario']}.json" for s in etude["scenarios"]]
+
+
+def _presidentielles() -> list[dict[str, Any]]:
+    """Les définitions des études présidentielles, hors refusées (D-398) : leur chemin n'a
+    pas de dette à rejouer, et l'index le dit."""
     out = []
     for definition in sorted(ETUDES.glob("presidentielle_*.json")):
         etude = json.loads(definition.read_text(encoding="utf-8"))
+        if not etude.get("refus"):
+            out.append(etude)
+    return out
+
+
+def non_refaites() -> list[dict[str, str]]:
+    """Les études sans aucun rapport prédictif : préenregistrées, non refaites (D-403)."""
+    return [{"nom": e["nom"], "candidat": e["titre"].split(" :")[0]}
+            for e in _presidentielles()
+            if not any((ROOT / c).exists() for c in _rapports(e))]
+
+
+@lru_cache(maxsize=1)
+def etudes() -> tuple[dict[str, Any], ...]:
+    """Les études présidentielles et leur rapport prédictif commité, Attal d'abord. Une
+    étude sans aucun rapport est sautée (`non_refaites`, D-403) ; une étude à moitié
+    là est refusée."""
+    out = []
+    sautees = {e["nom"] for e in non_refaites()}
+    for etude in _presidentielles():
         nom = etude["nom"]
-        if etude.get("refus"):
-            # Its path was refused by a guard (D-398): no debt to replay; the index says so.
+        if nom in sautees:
             continue
-        for scenario in etude["scenarios"]:
-            chemin = f"reports/etudes/{nom}/predictif_{scenario['scenario']}.json"
+        for chemin in _rapports(etude):
             if not (ROOT / chemin).exists():
                 raise ParcoursError(f"{nom} : {chemin} manque ; la page ne lit que des "
                                     f"rapports commités.")
@@ -158,9 +189,12 @@ def depart() -> dict[str, float]:
 
 def charge(data: dict[str, Any]) -> dict[str, Any]:
     """Ce que le rejeu lit d'un rapport, et rien d'autre : `rejeu`, puis par année le coût
-    des deux vues, les canaux et les impulsions (`rejouer.chemin`)."""
+    des deux vues, les canaux et les impulsions (`rejouer.chemin`) ; le canal des créations
+    d'entreprises quand le rapport le porte (but 22)."""
     rejeu = {k: data["rejeu"][k] for k in ("start", "cadre", "looped", "behavioural",
                                           "lignes", "macro", "box_rows")}
+    if data["rejeu"].get("creations"):
+        rejeu["creations"] = data["rejeu"]["creations"]
     years = []
     for row in data["years"]:
         stats = {view: {"canaux": row["statistiques"][view].get("canaux"),
@@ -181,7 +215,11 @@ def central(data: dict[str, Any]) -> dict[str, Any]:
         raise ParcoursError(f"{data['scenario']} : lectures sous « {lectures['persistence']} ».")
     dernier = rows[-1]
     for view, key, _ in VUES:
-        if dernier[key] != lectures["decomposition"][view]["total"]:
+        # Δb vient de `chaine.run`, le total de la décomposition de `rejouer` : la série
+        # de D-402 l'a écrit avant que `rejouer` n'ajoute le canal des créations dans
+        # l'ordre de la chaîne (D-403), et les deux diffèrent au dernier bit (2,2e-16 au
+        # plus).
+        if abs(dernier[key] - lectures["decomposition"][view]["total"]) > ARRONDI:
             raise ParcoursError(f"{data['scenario']} : la décomposition ne redonne pas Δb "
                                 f"({view}) ; le rapport n'est pas d'une seule passe.")
     return {"annees": [r["year"] for r in rows],
@@ -499,6 +537,18 @@ def _limites_html(e0: dict[str, Any], c0: dict[str, Any]) -> str:
         "</ul>")
 
 
+def _non_refaites_html() -> str:
+    """Les études préenregistrées que la page ne rejoue pas, faute de rapport (D-403)."""
+    absentes = non_refaites()
+    if not absentes:
+        return ""
+    noms = ", ".join(esc(e["candidat"]) for e in absentes)
+    return (f"<p>{'Ne sont' if len(absentes) > 1 else 'N’est'} pas "
+            f"rejouée{'s' if len(absentes) > 1 else ''} ici, faute de rapport, "
+            f"{'les études' if len(absentes) > 1 else 'l’étude'} de {noms} : "
+            f"{esc(NON_REFAITE)}.</p>")
+
+
 def page() -> Page:
     liste = etudes()
     start = depart()
@@ -519,6 +569,7 @@ def page() -> Page:
         "comptable, la même pour toutes les études, sous des hypothèses qu'on peut nommer "
         "une à une. Cette page la montre sur les rapports commités des "
         f"{len(liste)} études présidentielles, {esc(e0['candidat'])} d'abord.</p>",
+        _non_refaites_html(),
         _depart_html(start, e0["data"]),
         _formule_html(),
         _reference_html(e0, cadre, c0),

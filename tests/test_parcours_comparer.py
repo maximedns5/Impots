@@ -23,9 +23,11 @@ def test_la_page_tient_ses_promesses(page: parcours.Page) -> None:
 def test_attal_porte_les_nombres_de_ses_rapports() -> None:
     c = comparer.candidat("presidentielle_attal")
     # But 21 (D-397) : les pensions alimentaires s'ajoutent ; 65,69 Md€ et 20,28 points
-    # sur la série du but 19, deux mesures chiffrées sur vingt paramétrées.
+    # sur la série du but 19, deux mesures chiffrées sur vingt paramétrées. But 22
+    # (D-403) : le canal des créations d'entreprises entre dans la dette, +20,45 → +20,41 ;
+    # à l'élasticité de D-427, +20,44.
     assert comparer.md(c["cout"]) == "+66,18 Md€"
-    assert comparer.pt(c["sans_boucle"]) == "+20,45 pt"
+    assert comparer.pt(c["sans_boucle"]) == "+20,44 pt"
     assert (c["chiffrees"], c["parametrees"]) == (3, 21)
     # Ce que la boucle lit et ce qu'elle ne lit pas refont le coût.
     assert c["lu"] + c["non_lu"] == pytest.approx(c["cout"])
@@ -34,12 +36,18 @@ def test_attal_porte_les_nombres_de_ses_rapports() -> None:
 
 def test_les_huit_sont_la(page: parcours.Page) -> None:
     # La page compare les huit programmes du but 19, pas les seize études du but 21 ; une
-    # étude refusée (D-398) n'y entre pas.
+    # étude refusée (D-398) n'y entre pas. Depuis D-403, ceux que la série du but 22 n'a
+    # pas refaits (Labib) sont dits, pas comparés.
     assert len(comparer.ETUDES) == 8
-    for nom in comparer.ETUDES:
+    la, absentes = comparer.presentes()
+    assert sorted(la + absentes) == sorted(comparer.ETUDES)
+    for nom in la:
         assert f'value="{nom}"' in page.corps
+    for nom in absentes:
+        assert f'value="{nom}"' not in page.corps
+    assert ("non refaite au but 22 (D-403)" in page.corps) == bool(absentes)
     assert "presidentielle_dupont_aignan" not in page.corps
-    assert "+66,18 Md€" in page.corps and "+20,45 pt" in page.corps
+    assert "+66,18 Md€" in page.corps and "+20,44 pt" in page.corps
 
 
 def test_le_verdict_n_est_pas_montre(page: parcours.Page) -> None:
@@ -94,28 +102,15 @@ def test_non_lu_une_definition_deux_vues() -> None:
     # But 21 (D-397) : +0,60, +0,93 et +13,90 Md€ sur la série du but 19.
     assert comparer.md(a["non_lu"]) == "+0,63 Md€"
     assert comparer.md(a["non_lu_vieillie"]) == "+0,95 Md€"
-    lab = comparer.candidat("presidentielle_labib")
-    assert comparer.md(lab["non_lu_vieillie"]) == "+13,86 Md€"
+    # D-403 : Labib (+13,86 Md€ non lus, vue vieillie) n'est pas refait au but 22 ;
+    # Lisnard, dont l'impôt des entreprises n'est pas lu, tient la vue vieillie à sa place.
+    lis = comparer.candidat("presidentielle_lisnard")
+    assert comparer.md(lis["non_lu"]) == "+5,86 Md€"
+    assert comparer.md(lis["non_lu_vieillie"]) == "+6,26 Md€"
 
 
 def test_un_candidat_ne_se_compare_pas_a_lui_meme(page: parcours.Page) -> None:
     assert "options[i].disabled" in page.script
-
-
-def test_labib_les_accises_ne_sont_pas_lues() -> None:
-    """Constat 1 : les accises de Labib (l'impulsion « taxe_carbone ») n'ont pas de table
-    dans le rapport ; elles ne sont pas « lues », et la raison est celle du code. Depuis
-    le but 21 (D-397), son SMIC à 2 200 € fait lire aussi les cotisations et l'impôt
-    (+7,17 Md€ lus, la TVA seule, sur la série du but 19)."""
-    c = comparer.candidat("presidentielle_labib")
-    assert "taxe_carbone" not in c["impulses"]
-    assert set(c["impulses"]) == {"tva", "cotisations_employeurs", "cotisations_salaries",
-                                  "csg", "impot_sur_le_revenu"}
-    assert comparer.md(c["lu"]) == "+41,49 Md€"
-    assert comparer.md(c["familles"]["accises sur l'énergie"]) == "+15,75 Md€"
-    assert c["lu"] + c["non_lu"] == pytest.approx(c["cout"])
-    from impots.predictif import retroaction
-    assert c["raisons"]["accises sur l'énergie"] == retroaction.CARBON
 
 
 def test_couverture_asymetrie_et_sources(page: parcours.Page) -> None:
@@ -125,3 +120,31 @@ def test_couverture_asymetrie_et_sources(page: parcours.Page) -> None:
     assert "ne s'ouvre que pour la\nCSG" in page.corps or "ne s'ouvre que pour la CSG" in page.corps
     assert "https://monvote2027.fr/candidat/tondelier" in page.corps
     assert "francais.rt.com" in page.corps
+
+
+def test_un_programme_sans_rapport_n_est_pas_compare_et_se_dit(tmp_path, monkeypatch) -> None:
+    """D-403 : la page compare les programmes qui ont leurs deux rapports et dit les autres,
+    non refaits au but 22 ; un programme à un seul rapport est refusé."""
+    import json
+
+    for nom, genres in (("attal", ("premiere_annee", "predictif")), ("labib", ()),
+                        ("roussel", ("predictif",))):
+        (tmp_path / "etudes").mkdir(exist_ok=True)
+        (tmp_path / "etudes" / f"presidentielle_{nom}.json").write_text(json.dumps(
+            {"titre": f"{nom.title()} : le programme",
+             "scenarios": [{"scenario": f"pres2027_{nom}_programme"}]}), encoding="utf-8")
+        for genre in genres:
+            rapport = (tmp_path / "reports" / "etudes" / f"presidentielle_{nom}"
+                       / f"{genre}_pres2027_{nom}_programme.json")
+            rapport.parent.mkdir(parents=True, exist_ok=True)
+            rapport.write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(comparer, "ROOT", tmp_path)
+    monkeypatch.setattr(comparer, "lire", lambda chemin: json.loads(
+        (tmp_path / chemin).read_text(encoding="utf-8")))
+    monkeypatch.setattr(comparer, "ETUDES", ("presidentielle_attal", "presidentielle_labib"))
+    assert comparer.presentes() == (["presidentielle_attal"], ["presidentielle_labib"])
+    html = comparer._absentes_html(["presidentielle_labib"])
+    assert "Labib" in html and "non refaite au but 22 (D-403)" in html
+    monkeypatch.setattr(comparer, "ETUDES", ("presidentielle_attal", "presidentielle_roussel"))
+    with pytest.raises(parcours.ParcoursError, match="un seul de ses deux rapports"):
+        comparer.presentes()

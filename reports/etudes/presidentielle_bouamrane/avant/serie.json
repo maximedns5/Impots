@@ -1,0 +1,10 @@
+{
+  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "scenarios": {
+    "pres2027_bouamrane_programme": {
+      "cout": 15315256868.352844,
+      "dette": 0.004881087499421177,
+      "selon_theta": "dépend de θ"
+    }
+  }
+}

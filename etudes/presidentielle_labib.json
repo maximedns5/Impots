@@ -3,7 +3,7 @@
   "titre": "Selma Labib : la part chiffrée du programme, en trois réponses",
   "texte": "programme",
   "programme": "labib",
-  "preenregistrement": "D-394",
+  "preenregistrement": "D-402",
   "cadre": "central",
   "millesime_entreprises": "2023",
   "scenarios": [
@@ -11,5 +11,15 @@
       "scenario": "pres2027_labib_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "suppression_tva_taxes_carburants",
+      "scenario": "pres2027_labib_suppression_tva_taxes_carburants"
+    },
+    {
+      "mesure": "revenu_minimum_2200",
+      "scenario": "pres2027_labib_revenu_minimum_2200"
+    }
+  ]
 }

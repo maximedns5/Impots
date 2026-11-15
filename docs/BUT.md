@@ -6,6 +6,37 @@ des trois chiffres de « Comment on sait que ça marche » attend. Il ne remplac
 `docs/DECISIONS.md`, qui dit pourquoi chaque choix a été fait, ni `docs/STATE_AND_NEXT.md`,
 qui dit où l'on en est.
 
+## L'orientation, depuis le 14 novembre 2026 : le jumeau numérique (D-404)
+
+Le propriétaire, le 14 novembre 2026 : les études ne sont pas le but ; le modèle l'est. On
+construit un **jumeau numérique de la France** : un modèle mathématique de son économie et
+de ses finances publiques, qui avance année par année sur une population de ménages et
+d'entreprises, et où l'on fait entrer une mesure, un programme ou une loi hypothétique
+pour voir ce qu'il déclenche, chaîne par chaîne, jusqu'à la dette, aux entreprises qui se
+créent ou ferment, à l'emploi, au commerce extérieur et aux ménages. Ce qui est incertain
+est un paramètre θ réglé de 0 à 1, défini mathématiquement et sourcé : la productivité, le
+taux d'idées et de start-up nouvelles, l'ouverture au commerce, l'implantation d'usines
+selon la fiscalité, la fermeture des entreprises. Le modèle tient ses identités comptables
+à chaque pas, et il est appris sur l'histoire de la France : il doit retrouver ce qui
+s'est passé quand on lui donne les réformes réellement votées. Il connaît la suite des
+gouvernements : un candidat part de l'état que laisse le précédent. Il répond en
+secondes, pas en jours. Plus tard, une fois le jumeau fait, un indice de tenue des
+promesses corrigera ce qu'un programme dit de lui-même (ce n'est pas maintenant).
+
+Les études deviennent un usage du modèle. Tant que les candidats n'ont pas publié toutes
+leurs mesures, on ne lance plus de passes de plusieurs jours sur des programmes
+provisoires. Le chantier est le but 23, en sept lots. Les quatre décisions de D-404 :
+
+* **Deux juges, l'histoire d'abord.** Le premier : l'erreur du jumeau quand il rejoue
+  l'histoire (2010 à 2024) avec les réformes votées, notée sur des séries publiées et
+  préenregistrée comme les chiffrages ; le second : les chiffrages officiels, inchangés.
+* **Pas un point.** Le jumeau donne des trajectoires selon θ, jamais une prévision
+  unique ; « Ce qui n'est pas le but » tient.
+* **Le but 22 est clos tel quel** : douze études refaites, la série arrêtée par le
+  propriétaire, dit en D-403 ; sa branche reste, sans PR.
+* **Les curseurs tournent dans le navigateur**, sur le site statique, sans serveur de
+  calcul.
+
 ## Pour qui
 
 **Les journalistes et les citoyens.** Quelqu'un lit qu'un gouvernement, un parti ou un
@@ -41,7 +72,24 @@ article refusé n'est pas un article à zéro.
 3. **Puis, si le propriétaire le décide, l'API en ligne.** La passe de sécurité est faite
    (D-295) : restent les clés, les origines, les limites et l'hébergement.
 
-## Comment on sait que ça marche : les chiffrages officiels retrouvés
+## Comment on sait que ça marche : l'histoire retrouvée, puis les chiffrages officiels
+
+**Le premier juge, depuis D-404 : l'histoire.** Le jumeau part de l'état de la France
+d'une année passée, reçoit les réformes réellement votées ensuite, et sa trajectoire est
+comparée aux séries publiées (PIB, recettes par impôt, solde, dette, emploi, créations et
+défaillances d'entreprises, échanges extérieurs). Les paramètres s'estiment sur une
+période et se notent sur une autre, jamais sur la même. Chaque note est préenregistrée,
+avec sa tolérance, avant son calcul. Le chiffre : la part des séries tenues dans leur
+tolérance, hors de la période d'estimation. Aujourd'hui : **9 cibles sur 12** au troisième
+rejeu (r3, D-429, estimé sur 2011-2017, noté sur 2018, 2019 et 2022 à 2024), comme au
+deuxième (D-423), 7 au premier (D-420). Le naïf (la tendance) en tient 6, le naïf
+mécanique (les seuls chocs votés, sans comportement) 9. **La dynamique du jumeau ne bat
+le naïf mécanique que sur 3 cibles** : les exportations et les importations, par la
+demande mondiale observée, et D61, d'un rien. Sur l'activité, l'emploi, le chômage et
+les finances publiques, elle ne fait pas mieux que les chocs seuls ; aucun θ n'est
+identifié par cette histoire, l'a priori porte tout (D-424).
+
+**Le second juge : les chiffrages officiels**, tel qu'avant.
 
 Le juge est extérieur : l'évaluation préalable que le gouvernement publie avec un texte
 de finances réel. Pour chaque article chiffrable, un cas est préenregistré avant
@@ -81,6 +129,7 @@ reste noté. Un refus préenregistré est une limite ; un refus improvisé est u
 
 * Un modèle prédictif qui donnerait un point. L'outil est un simulateur en étages, qui
   dit ce que chaque étage permet de croire.
+* Des passes de plusieurs jours sur des programmes encore provisoires (D-404).
 * Chiffrer tout un PLF. Refuser un article hors de la structure ou des données est une
   réponse ; un zéro confiant n'en est pas une.
 * Une instance publique de l'API sans la décision du propriétaire et ses réglages : la
@@ -90,9 +139,11 @@ reste noté. Un refus préenregistré est une limite ; un refus improvisé est u
 
 Entre deux travaux, prendre celui qui fait monter, dans cet ordre :
 
-1. le nombre de cas notés dans la tolérance, sans toucher aux tolérances ;
-2. le nombre d'études publiées qui portent les trois réponses ;
-3. la couverture, en articles et en euros.
+1. le jumeau : ses identités tenues, puis la part de l'histoire qu'il retrouve hors de sa
+   période d'estimation (D-404) ;
+2. le nombre de cas notés dans la tolérance, sans toucher aux tolérances ;
+3. la couverture, en articles et en euros ;
+4. le nombre d'études publiées qui portent les trois réponses.
 
 Un travail qui n'en fait monter aucun (un canal de plus, une précision de plus sur une
 étude déjà publiée) se justifie par ce qu'il débloque pour l'un des trois, dans sa
@@ -977,6 +1028,115 @@ les transferts et les impôts des entreprises, qui valent zéro aujourd'hui ; l'
 travail ouverte aux cotisations des salariés comme à la CSG ; la sensibilité du coût à
 chaque bouton contre son total publié, mesurée pour la seule prime d'activité ; le contrôle
 des prestations contre le simulateur de la CAF ; et les juges du passé.
+
+### But 22 — Voir comment chaque nombre se forme, mesure par mesure, dans le temps
+
+Le constat du propriétaire, le 13 novembre 2026, sur le site du but 21 : les pages disent
+tout, mais par du texte, long à lire ; on ne voit ni comment un nombre se forme, ni comment
+il évolue d'année en année. Une étude chiffre un programme en un bloc : le lecteur ne sait
+pas ce que pèse chaque mesure, pour les finances publiques et pour les ménages. Et ce
+qu'une mesure fait aux entreprises qui se créent n'entre nulle part : C8 n'est qu'un
+indice illustratif, jamais une recette (D-221, D-244).
+
+```
+/goal Chaque étude se lit d'abord en graphiques, mesure par mesure et année par année, et
+c'est mergé dans main. Dans l'ordre : (1) les graphiques, tirés des seuls rapports
+commités, statiques et lisibles au téléphone : la cascade d'un coût (mécanique,
+comportements, boucle macro, dette), la trajectoire de 2026 à 2035 (solde, dette, PIB,
+par vue et par persistance, avec la boîte θ), la part de chaque décile, et une frise des
+mesures dans le temps (quand chacune s'applique, quand elle monte en charge) ; chaque
+graphique dit sa source et le fichier qui le calcule, et un test le tient contre son
+rapport ; (2) chaque mesure chiffrée d'un programme passe aussi seule : sa première
+année, son chemin annuel et ses déciles, à côté de la passe du programme entier ; l'écart
+entre la somme des mesures et le programme est montré, comme une interaction, jamais
+réparti en silence ; (3) un canal de créations d'entreprises, symétrique, qu'une hausse
+comme une baisse des prélèvements sur les entreprises et le capital fait jouer, chiffré
+sur une élasticité publiée qu'il nomme, avec un coefficient de productivité des
+entreprises nouvelles réglé entre 0 et 1, une boîte θ à lui, et qui entre dans la dette
+publiée, la dette sans lui montrée à côté (décision du propriétaire, ci-dessous). Chaque
+nombre nouveau qui se compare à un juge est préenregistré avant sa passe ; aucune
+tolérance ne change. Preuve attendue : les graphiques en ligne, vus au téléphone ; une
+page de programme lue mesure par mesure ; le canal des entreprises et sa source, ou le
+refus motivé de son niveau ; les D-entrées ; la sortie verte des tests ciblés, de make
+impact et des lourds ; l'URL de la PR et le SHA du merge. Ou s'arrêter après 60 tours, en
+disant quels graphiques et quelles mesures manquent.
+```
+
+Les décisions du propriétaire, le 13 novembre 2026 :
+
+* **Les graphiques** : du SVG écrit par le code depuis les rapports commités, sans
+  bibliothèque ni serveur ; ils se vérifient comme le reste du site (`site verifier`).
+* **Les mesures seules** : chacune passe en entier, première année, chemin annuel et
+  points de plage, environ 44 chemins de plus que la série du but 21.
+* **Les créations d'entreprises entrent dans la dette publiée dès ce but**, avec une
+  valeur centrale choisie, même sans source qui redonne un total publié. Le canal joue
+  dans les deux sens, pour tous les candidats, sur la même élasticité, sans lire qui
+  propose la mesure. Pour que le choix reste lisible et réversible : l'élasticité et le
+  coefficient de productivité central sont nommés, avec leur source et leur plage, dans
+  une D-entrée préenregistrée avant la première passe ; le coefficient a sa boîte θ, de 0
+  à 1 ; chaque page dit que sa dette lit une hypothèse non validée, et montre à côté la
+  dette sans ce canal.
+
+**Ce qui reste du but 21** : le chemin refusé de Dupont-Aignan (un effet non monotone en
+θ sous la persistance « tenue », D-398) ; les décompositions E1/E2 archivées ; la page de
+comparaison ouverte aux seize programmes.
+
+### But 23 — Le jumeau numérique de la France (validé le 14 novembre 2026, D-404)
+
+Ce que le propriétaire a demandé est dans « L'orientation » en tête de ce document. Le
+but se livre en sept lots ; chacun est un but au sens de `CLAUDE.md`, avec sa branche
+`claude/but23-<lot>` et sa PR. Le cadre (lot 1) passe d'abord : il fixe les conventions
+que les autres branchent (`docs/jumeau/CADRE.md`). Les lots 2 à 5 partent ensuite en
+parallèle ; 6 et 7 s'appuient sur eux.
+
+1. **Le cadre** : l'état de l'économie, le pas annuel, les blocs, les identités
+   comptables, la dette ; la chaîne actuelle retrouvée comme un cas particulier.
+2. **Les entreprises** : naissances, survie, fermetures, productivité, implantation
+   selon la fiscalité ; le canal du but 22 y devient un bloc.
+3. **Le commerce extérieur** : exportations et importations selon les prix, les coûts et
+   la fiscalité.
+4. **Les ménages** : emploi, salaires, consommation, épargne, sur la population.
+5. **L'histoire** : les séries de 2010 à 2024 et la base des mesures votées, par
+   gouvernement.
+6. **L'apprentissage et le juge du passé** : estimer, rejouer, noter, préenregistré.
+7. **Les curseurs** : choisir des mesures, régler θ, voir les trajectoires, dans le
+   navigateur.
+
+```
+/goal Le jumeau numérique de la France existe, appris et noté sur l'histoire, manipulable
+dans le navigateur, et c'est mergé dans main, lot par lot. Un état de l'économie (comptes
+nationaux, APU, dette, ménages, entreprises, échanges) avance année par année sous des
+blocs aux équations écrites et sourcées ; ses identités tiennent à 1e-9 à chaque pas, et
+un test le prouve ; la chaîne des études actuelles se retrouve comme un cas particulier.
+Chaque paramètre incertain est un θ de 0 à 1, défini, sourcé, avec sa plage. Le jumeau
+rejoue 2010 à 2024 avec les réformes votées, estimé sur une période et noté sur l'autre,
+chaque note préenregistrée avant son calcul. Une mesure, un programme ou une loi
+hypothétique s'y branche par son choc statique, calculé une fois sur la population ; une
+trajectoire de dix ans se calcule en moins d'une seconde. Preuve attendue : par lot, la
+D-entrée, les tests verts, la PR et le SHA du merge ; à la fin, la page des curseurs en
+ligne et la note sur l'histoire. Ou s'arrêter après 60 tours par lot, en disant ce qui
+manque.
+```
+
+**Où il en est, le 15 novembre 2026 : pas fait.** Les sept lots sont codés et joints sur
+`claude/but23-cadre` (D-405 à D-429) : le cadre et ses identités à 1e-9, testées ; la
+chaîne des études retrouvée (Δb à 4e-16) ; les entreprises, le commerce, les ménages,
+l'emploi public, le mode structurel complet ; l'histoire de 2010 à 2025 et 95 mesures
+votées relues au Journal officiel ; chaque θ défini, sourcé, avec sa plage et sa loi a
+priori ; trois rejeux de l'histoire, chacun préenregistré avant son calcul (r1 7 cibles
+sur 12, r2 et r3 9 sur 12) ; une trajectoire de dix ans sous la seconde (273 ms en Python
+dans le mode structurel complet, D-414 ; de 0,5 à 0,9 s dans le navigateur, D-419) ; la
+page des curseurs dans le navigateur (Pyodide), sans serveur. Ce qui manque au /goal :
+
+* **Rien n'est mergé dans main.** Les lots n'ont pas eu chacun leur PR : ils ont été
+  joints sur la branche du cadre, qui part en une PR ; le « lot par lot » du /goal n'est
+  pas tenu, au propriétaire de l'accepter ou non.
+* **La page des curseurs n'est pas en ligne** : le site est construit et vérifié, pas
+  publié.
+* **La note sur l'histoire existe, mais elle dit que la dynamique apporte peu** (3 cibles
+  sur 12 contre le naïf mécanique) et que l'histoire de 2011 à 2017 n'identifie aucun θ.
+  Le /goal demande un jumeau « appris » : il est réglé sur la littérature, pas appris de
+  l'histoire. L'estimation allongée à 1996-2009 (D-421, §4) reste une proposition.
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 

@@ -1,0 +1,16 @@
+{
+  "name": "pres2027_attal_a18_suppression_cvae",
+  "year": 2026,
+  "created": "2026-11-13",
+  "source": "Gabriel Attal (Renaissance), programme relevé le 2026-11-12 — Suppression de la CVAE ; IS maintenu à 25 % ; poursuite de la baisse des impôts de production : « « Le taux de l'impôt sur les sociétés reste à 25 %. Il veut mener enfin à terme la suppression de la CVAE » (texte de la page) » (https://attalpresident.fr/programme/mesures/loi-de-stabilite-fiscale, 2026-08-27)",
+  "note": "La CVAE est supprimée sur le droit de 2026 (son barème mis à l'échelle 0). L'IS reste à 25 %, son taux de 2026 : aucun bouton à régler. La « poursuite de la baisse des impôts de production » n'a pas de taux et n'est pas chiffrée. La plage va de la suppression (0) au droit de 2026 (1).",
+  "tags": [
+    "presidentielle_2027",
+    "attal",
+    "mesure_seule"
+  ],
+  "reform": {},
+  "firm_reform": {
+    "cvae_echelle": 0.0
+  }
+}

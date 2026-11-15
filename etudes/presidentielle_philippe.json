@@ -3,7 +3,7 @@
   "titre": "Édouard Philippe : la part chiffrée du programme, en trois réponses",
   "texte": "programme",
   "programme": "philippe",
-  "preenregistrement": "D-394",
+  "preenregistrement": "D-402",
   "cadre": "central",
   "millesime_entreprises": "2023",
   "scenarios": [
@@ -11,5 +11,15 @@
       "scenario": "pres2027_philippe_programme"
     }
   ],
-  "dette_annoncee": true
+  "dette_annoncee": true,
+  "mesures": [
+    {
+      "mesure": "p10_exoneration_deux_heures",
+      "scenario": "pres2027_philippe_p10_exoneration_deux_heures"
+    },
+    {
+      "mesure": "p11_allocation_familiale_unique",
+      "scenario": "pres2027_philippe_p11_allocation_familiale_unique"
+    }
+  ]
 }

@@ -2687,12 +2687,18 @@ class PredictifReportResponse(BaseModel):
     """Beside the headline (D-349): the decomposition, the alternative wage formation,
     the added debt at a market rate."""
     """The distribution of Δb at the last year under declared laws (D-336)."""
+    creations: dict[str, Any] | None = None
+    """The company-creations channel and the debt without it, when the paths read it
+    (but 22)."""
     commit: str | None = None
     dirty: bool | None = None
     where: str | None = None
     annees: list[int] | None = None
     """The years the text applies the measure in, when it names them (D-288); absent
     from the reports before it."""
+    recalcul: dict[str, Any] | None = None
+    """When the creations slope was changed without a pass (D-427): the decision, the
+    date, the slope before and after, the pass's commit (`predictif.recalcul`)."""
 
     @model_validator(mode="after")
     def _check_report_paths(self) -> PredictifReportResponse:

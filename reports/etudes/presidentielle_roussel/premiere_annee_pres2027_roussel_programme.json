@@ -647,15 +647,15 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "build_s": 3.62,
-      "baseline_s": 37.6,
-      "reform_s": 42.64,
-      "consommation_s": 0.93,
-      "total_s": 94.74
+      "build_s": 2.72,
+      "baseline_s": 32.48,
+      "reform_s": 35.01,
+      "consommation_s": 0.13,
+      "total_s": 78.95
     }
   },
-  "computed": "2026-11-12",
-  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "computed": "2026-11-13",
+  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
   "dirty": false,
   "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
 }

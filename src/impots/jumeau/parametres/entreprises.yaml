@@ -1,0 +1,250 @@
+# Les valeurs des blocs des entreprises du jumeau — but 23, lot 2 (D-407).
+#
+# Chaque valeur porte sa source (document, page, tableau). [lu] : lu sur un fichier du
+# manifeste ; [D-402] : repris tel que D-402 l'a fixé, avec son statut ; « choisie, non
+# vérifiée » : aucune source ne la chiffre, et elle porte un θ. Une plage (bas, centre,
+# haut) est celle d'une ligne θ : θ = 0 donne `bas` (la réponse la plus faible), θ = ½
+# `centre`, θ = 1 `haut` (la plus forte) ; elle passe par le centre comme
+# `predictif.theta.value_at`. Le pas ne lit pas ce fichier : les blocs le lisent à leur
+# construction (`blocs.entreprises.charger`).
+
+naissances:
+  elasticite:
+    # ε, points de taux d'entrée par point de taux apparent de prélèvement sur le profit.
+    # θ_élasticité (D-427) : la plage est une ligne θ, plus une sensibilité fixe au centre.
+    centre: 0.043
+    bas: 0.0
+    haut: 0.20
+    source: >
+      Décision du propriétaire du 14 novembre 2026 (D-427). Le centre : Da Rin, Di
+      Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 p. 40 du
+      PDF et p. 21-22, du premier quartile à la médiane du TMEE, l'estimation
+      intra-groupe, 0,043 (M0 de la phase 11, D-245). Il est dans l'intervalle à 95 % de
+      l'estimation française entre secteurs de D-426 (ε = −0,056 ± 0,051, de −0,16 à
+      +0,04), qui exclut l'ancien centre ; le haut, 0,20, le milieu des variables
+      instrumentales (0,356) et de l'intra-groupe (D-402) ; le bas, 0, aucune réponse.
+      Lue sur un taux apparent, pas sur leur TMEE (D-247). Avant D-427 : 0,20 (0,043 à
+      0,356), fixe, une sensibilité.
+  taux_entree_base:
+    # e₀, % par an : les créations de sociétés de l'année sur les sociétés à l'IS.
+    valeur: 10.47
+    source: >
+      Décision du propriétaire du 14 novembre 2026 (D-427), sur la lecture de niveau de
+      D-426 (`reports/jumeau/microdonnees.json`, champ « delta ») : en 2024, 284 564
+      créations de sociétés en France entière, tous secteurs, données brutes (Insee, BDM,
+      CREATIONS-ENTREPRISES-METHODE-2022, TYPE-ENT_PM, somme des quatre trimestres) sur
+      2 718 400 entreprises à l'IS (DGFiP, Statistiques n° 39, tableau 2, nombre de
+      redevables), 10,47 % ; 10,43 % en 2023 (269 905 sur 2 588 200). Le numérateur et le
+      dénominateur ne sont pas de la même source (des sociétés créées sur des redevables
+      de l'IS), dit. Avant D-427 : 7,61 %, Da Rin, Di Giacomo et Sembenelli (2011),
+      tableau 3 p. 39, la France par pays et branche, 1997-2004 (D-245). Il fixe aussi, à
+      l'état stationnaire, le hasard des installées (ci-dessous).
+  idees:
+    # δ, points de taux d'entrée ajoutés chaque année au taux de référence : le dynamisme
+    # d'entrée hors fiscalité (idées, start-up). θ_idees ; centre 0, le scénario.
+    centre: 0.0
+    bas: -1.0
+    haut: 1.0
+    source: >
+      Choisie, non vérifiée : un point de taux d'entrée de part et d'autre du taux de
+      référence. Avec e₀ recalé sur l'Insee (D-427), la lecture de niveau de D-426
+      (δ = +2,86 au taux de 7,61 %) tombe à 0 : la plage reste −1 à +1 autour.
+  survie_jeunes:
+    # S_j, la survie annuelle d'une société avant l'âge de maturité. θ_survie ; le centre
+    # est la valeur de D-402.
+    centre: 0.90
+    bas: 0.85
+    haut: 0.93
+    source: >
+      [D-402] Insee, enquête SINE : environ six entreprises sur dix actives cinq ans après
+      leur création, 0,6^(1/5) ≈ 0,90 par an [à manifester] ; la plage est celle de D-402.
+      Choisie, non vérifiée.
+  age_maturite:
+    # A, l'âge (ans) où le hasard passe de 1 − S à celui des installées.
+    valeur: 5
+    source: >
+      [D-402] le « cinq ans » de SINE ; choisi, non vérifié.
+  montee_en_charge_ans:
+    # M, en années. θ_montée ; θ = 1 est la montée la plus rapide (la réponse la plus
+    # forte), d'où bas > haut. Le centre est la valeur de D-402.
+    centre: 5
+    bas: 8
+    haut: 3
+    source: >
+      [D-402] Haltiwanger, Jarmin et Miranda (REStat 2013), OCDE DynEmp [à manifester] ;
+      la plage est celle de D-402. Choisie, non vérifiée.
+  taille_relative:
+    # r, la valeur ajoutée d'une société à la marge, à maturité, sur la société moyenne.
+    # θ_taille ; le centre est la valeur de D-402, la plage aussi.
+    centre: 0.10
+    bas: 0.05
+    haut: 0.20
+    source: >
+      [D-402] Insee SINE, OCDE DynEmp [à manifester] ; recoupé par le rapport IPP n° 47,
+      tableau 2.2 (c) [lu]. Choisie, non vérifiée. Le lot 2 l'applique aussi aux
+      sortantes induites (des sociétés à la marge, comme les entrantes).
+  # s_VA, la part des sociétés dans le PIB, se lit (`charger`) : (S11 + S12) / PIB de
+  # 2024 = (1 528,512 + 97,269) / 2 935,236 = 0,5539, au lieu des 0,60 de D-402. Le PIB
+  # est `investissement.pib_2024`. Les comptes de secteur sont du millésime 2026 (publiés
+  # en mai 2026), le PIB du millésime 2025 : un écart de révision de l'ordre du millième.
+  valeur_ajoutee_s11_2024:
+    valeur: 1528.512
+    source: Insee, comptes nationaux base 2020, t. 7.101, S11, B1G, 2024 [lu].
+  valeur_ajoutee_s12_2024:
+    valeur: 97.269
+    source: Insee, comptes nationaux base 2020, t. 7.201, S12, B1G, 2024 [lu].
+  assiette_part_pib:
+    # b, le profit imposable en part du PIB : le taux apparent est 100 ΔP / (b Y).
+    valeur: 0.092
+    source: >
+      [D-402] Insee, comptes nationaux 2025, t. 3.217, IS avant crédits d'impôt de 2024,
+      69,47 Md€ [lu], sur 25,825 % : 269 Md€ ; sur le PIB de 2024.
+  signaux:
+    # Les signaux du lot 2 (`champs.SIGNAUX_ENTREPRISES`) que le taux apparent somme :
+    # ceux de D-401 (décision du propriétaire du 13 novembre 2026), cotisations patronales
+    # comprises, que la boucle de Mésange porte aussi : un double compte décidé et dit.
+    - prelevements_is
+    - prelevements_production
+    - cotisations_patronales
+    - prelevements_capital_menages
+
+fermetures:
+  semi_elasticite_marge:
+    # β : la variation relative du hasard de sortie des installées par point de marge
+    # après impôt perdu (marge en points de valeur ajoutée). θ_fermetures.
+    centre: 0.03
+    bas: 0.0
+    haut: 0.06
+    source: >
+      Choisie, non vérifiée : aucune estimation publiée de la réponse des sorties de
+      sociétés françaises à leurs prélèvements n'est au manifeste. θ = 0 éteint le canal.
+      À régler au lot 6 sur les défaillances (Banque de France) et les cessations (Insee).
+  signaux:
+    # Ce qui pèse sur la marge des sociétés : pas les prélèvements du capital des ménages.
+    - prelevements_is
+    - prelevements_production
+    - cotisations_patronales
+  cles_de_repartition:
+    # La part de chaque cellule (secteur × taille) dans le choc d'un signal, quand la
+    # mesure ne le ventile pas par taille : l'assiette de l'impôt dans la cellule.
+    # `resultat` le résultat courant avant impôts, `valeur_ajoutee` la valeur ajoutée,
+    # `va_moins_resultat` la valeur ajoutée moins le résultat (la masse salariale et ce
+    # qui l'accompagne : une approximation, choisie, non vérifiée).
+    prelevements_is: resultat
+    prelevements_production: valeur_ajoutee
+    cotisations_patronales: va_moins_resultat
+
+investissement:
+  elasticite_cout:
+    # ε_K : l'élasticité de long terme de l'investissement des SNF au coût réel du capital,
+    # en valeur absolue. θ_investissement.
+    centre: 0.44
+    bas: 0.0
+    haut: 0.60
+    source: >
+      Insee, Mésange (G2017-04), équation de l'investissement des entreprises non
+      financières, p. 44 du PDF (folio 43) [lu] : « L'élasticité de long terme de
+      l'investissement au coût réel du capital est calibrée à −0,44 », le centre ;
+      l'estimation libre donne −0,37 et la version précédente −0,48 (même page), les
+      bornes d'avant. Les bornes, décision du propriétaire du 14 novembre 2026 (D-427)
+      sur D-424 : Gechert, Havranek, Irsova et Kolcunova (version d'avril 2021 ; Review
+      of Economic Dynamics 45, 2022), tableau 9, p. 35 du PDF, l'élasticité de
+      substitution de la meilleure pratique, 0,30, IC à 95 % (−0,01 ; 0,60) : haut 0,60,
+      bas 0 (aucune réponse ; la borne de l'intervalle, −0,01, ramenée à 0).
+  rappel_trimestriel:
+    # La force de rappel du terme à correction d'erreur, par trimestre.
+    valeur: 0.06
+    source: Mésange (G2017-04), p. 44 du PDF, l'équation de Δie, terme −0,06 [lu].
+  retard_trimestriel:
+    # Le coefficient de Δie_{t−2}.
+    valeur: 0.22
+    source: Mésange (G2017-04), p. 44 du PDF, l'équation de Δie, terme 0,22 Δie_{t−2} [lu].
+  accelerateur_contemporain:
+    # β₀ dans Δie_q = … + β₀ Δva_q + β₁ Δva_{q−1} − 0,06 (ie − va − 0,44 (ck − pva))_{q−1} :
+    # l'effet accélérateur, la réponse de court terme de l'investissement à la valeur
+    # ajoutée de l'année. θ_accélérateur, avec β₁ : bas et haut à ∓ 1,96 écart type,
+    # l'écart type du coefficient sur son t de Student (1,19 / 6,9 = 0,1725).
+    centre: 1.19
+    bas: 0.852
+    haut: 1.528
+    source: >
+      Insee, Mésange (G2017-04), équation de l'investissement des entreprises non
+      financières, p. 44 du PDF (folio 43) [lu] : « 1,19 Δva_t », t = 6,9 ; la variable
+      instrumentée par les autres postes de la demande (même page). Les bornes sont celles
+      du coefficient seul ; Mésange ne publie pas la covariance de β₀ et β₁, et θ les
+      déplace ensemble (choisi, dit).
+  accelerateur_retarde:
+    # β₁, le coefficient de Δva_{q−1} ; θ_accélérateur, avec β₀.
+    centre: 0.65
+    bas: 0.354
+    haut: 0.946
+    source: >
+      Mésange (G2017-04), p. 44 du PDF [lu] : « 0,65 Δva_{t−1} », t = 4,3 ; écart type
+      0,65 / 4,3 = 0,1512, bornes à ∓ 1,96 écart type. À long terme, l'investissement
+      s'indexe unitairement sur la valeur ajoutée (le terme à correction d'erreur, même
+      page) ; le bloc redonne la ligne « Valeur ajoutée (+1 %) » de la p. 45 à 1, 2 et 5
+      ans : 1,795, 2,011 et 1,381 contre 1,79, 2,00 et 1,36.
+  hausse_cout_par_point_de_taux:
+    # Le coût du capital monte de 6,5 % pour 100 points de base de taux réel : le niveau
+    # du taux du coût d'usage, R + tdec + prime + fisca, est 0,01 / 0,065 = 0,1538.
+    valeur: 0.065
+    source: >
+      Mésange (G2017-04), variante « Hausse permanente des taux d'intérêt de 100 points de
+      base », p. 134 du PDF (folio 133) : « une hausse immédiate du coût du capital de
+      6,5 % environ » [lu]. Le coût d'usage est ck = pinv + ln(R + tdec + prime + fisca),
+      fisca = (D51 + D292 − D39) / knet (p. 42 du PDF) : l'IS et les impôts sur la
+      production des SNF y entrent, pas les cotisations (impôts sur la main-d'œuvre).
+  signaux:
+    - prelevements_is
+    - prelevements_production
+  capital_net_2024:
+    # knet, Md€, fin 2024 : actifs fixes nets des sociétés non financières (N11N).
+    valeur: 3083.792
+    source: Insee, comptes de patrimoine 2024, t. 8.202, ligne N11N, 2024 [lu].
+  capital_net_2014:
+    valeur: 2109.022
+    source: Insee, comptes de patrimoine 2024, t. 8.202, ligne N11N, 2014 [lu].
+  pib_2024:
+    valeur: 2935.236
+    source: Insee, comptes nationaux 2025, t. 1.101, PIB de 2024 [lu].
+  fbcf_snf_2024:
+    valeur: 359.089
+    source: Insee, comptes nationaux 2025, t. 1.101, P51G S11X14AA, 2024 [lu].
+  # Calculés de ces quatre valeurs par `charger` : knet / PIB (1,0506), I / K (0,1164),
+  # la croissance nominale moyenne de knet de 2014 à 2024 (3,87 %), et la dépréciation
+  # δ = I/K − g (7,77 %), celle qui tient le capital à l'état stationnaire sur la période.
+
+implantation:
+  semi_elasticite_tmee:
+    # a₁ : −∂ ln K_f / ∂ TMEE (TMEE en fraction), à court terme. θ_implantation.
+    centre: 0.478
+    bas: 0.0
+    haut: 0.7298
+    source: >
+      Devereux et Lockwood (2006), tableau 2, colonne 1, p. 25 du PDF [lu] : −0,478
+      (t = 3,72) ; haut = 0,478 + 1,96 × 0,478 / 3,72. Bas : Hanappi, Millot et Turban,
+      OCDE ECO/WKP(2023)18, tableau 1, colonne 4, p. 24 du PDF [lu] : la sensibilité de
+      l'investissement au TMEE disparaît après 2009 (−0,0786 + 0,0802).
+  persistance:
+    valeur: 0.676
+    source: Devereux et Lockwood (2006), tableau 2, colonne 1, ln K_{t−1}, p. 25 [lu].
+  tmee_par_point_de_taux:
+    # κ = ∂ TMEE / ∂ τ : le TMEE composite de la France à 25,825 % ± 1 point, par la
+    # méthode de l'annexe de l'OCDE (`entreprises.taux_effectifs`), les amortissements
+    # proportionnels au taux.
+    valeur: 0.9173
+    source: >
+      Calculé : `entreprises.taux_effectifs.reproduce`, OCDE, Corporate Tax Statistics
+      2026, annexe explicative et données France 2025, scénario fixe [lu] ; la méthode
+      redonne le TMEE composite publié à 0,08 point (D-247).
+  signaux:
+    # Le TMEE de l'OCDE ne porte que l'impôt sur le bénéfice.
+    - prelevements_is
+  part_etrangere:
+    # s_f, la part du capital sous contrôle étranger, approchée par sa part de la VA.
+    valeur: 0.160
+    source: >
+      Insee, Les entreprises en France, édition 2023, fiche 3.2, figure 1, p. 85 du
+      recueil [lu] : les multinationales sous contrôle étranger, 16,0 % de la valeur
+      ajoutée au coût des facteurs (Ésane 2021). La part du capital est approchée par
+      celle de la valeur ajoutée : choisie, non vérifiée.

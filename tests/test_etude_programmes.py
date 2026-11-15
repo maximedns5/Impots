@@ -30,8 +30,9 @@ def _studies() -> list[etude.Etude]:
 
 def _chiffrees() -> list[etude.Etude]:
     """Les études de programme dont les passes ont toutes tourné : une étude refusée
-    (D-398) n'a pas de chemin annuel, donc pas de page."""
-    return [s for s in _studies() if not s.refus]
+    (D-398) n'a pas de chemin annuel, donc pas de page ; une étude que la série du but 22
+    n'a pas refaite (D-403) n'a ni rapports ni page."""
+    return [s for s in _studies() if not s.refus and s.page.exists()]
 
 
 def test_every_programme_with_a_priced_measure_has_its_study() -> None:
@@ -76,6 +77,11 @@ def test_the_part_is_every_priced_measure_households_and_firms_together() -> Non
 def test_a_study_s_passes_are_its_first_year_its_ranges_then_its_path() -> None:
     study = etude.definition("presidentielle_lisnard")
     reports = [r for r, _ in study.passes("essai")]
+    # Les mesures seules viennent après les passes de la part (but 22).
+    seules = [r for r in reports if r.startswith("mesures/")]
+    assert reports[len(reports) - len(seules):] == seules
+    assert len(seules) == 2 * len(pg.charger("lisnard").chiffrees())
+    reports = reports[:len(reports) - len(seules)]
     assert reports[0] == "premiere_annee_pres2027_lisnard_programme.json"
     assert reports[-1] == "predictif_pres2027_lisnard_programme.json"
     plages = reports[1:-1]
@@ -288,13 +294,15 @@ def test_the_debt_without_activity_is_the_cost_without_the_loop(pages) -> None:
     multiplicateur au bas de sa fourchette publiée et non à zéro : chez Attal, 18,30
     points à l'étape 1, quand le coin en donnait 13,95 ; 20,28 sur les rapports de la
     série du but 19 (D-373), au coût de 65,69 Md€ ; 20,45 sur ceux du but 21 (D-397), au
-    coût de 66,18 Md€, les pensions alimentaires s'ajoutant."""
+    coût de 66,18 Md€, les pensions alimentaires s'ajoutant ; 20,41 sur ceux du but 22
+    (D-403), le canal des créations d'entreprises entrant dans la dette ; 20,44 à son
+    élasticité de D-427 (0,043 au lieu de 0,20)."""
     study, text = pages["attal"]
     path = json.loads(next(study.rapports.glob("predictif_*.json")).read_text("utf-8"))
     cout = path["lectures"]["decomposition"]["vieillie"]["cout"]
-    assert f"{cout * 100:.2f}" == "20.45"
+    assert f"{cout * 100:.2f}" == "20.44"
     head = text.split("## En bref")[0]
-    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 20,45 points" in head
+    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 20,44 points" in head
     assert "13,95" not in head
     for slug, (_, page) in pages.items():
         assert "Sans aucun effet sur l'activité" in page.split("## En bref")[0], slug
@@ -310,34 +318,8 @@ def test_the_employees_contributions_say_the_model_s_choice_not_a_missing_study(
         assert "aucune étude publiée ne le permet ici" not in head, slug
         assert "un choix du modèle" in head, slug
         assert etude.RAISON_OFFRE_DE_TRAVAIL in text, slug
-    for slug in ("labib", "roussel", "le_pen"):
+    for slug in ("roussel", "le_pen"):
         assert etude.RAISON_OFFRE_DE_TRAVAIL not in pages[slug][1], slug
-
-
-def test_the_fan_says_what_the_debt_does_not_read(pages) -> None:
-    """But 20. Un éventail qui prête un multiplicateur publié aux accises sur l'énergie,
-    que la boucle de la dette ne lit pas, le dit à côté de lui, avec leur part de la
-    première année. Depuis la série du but 21 (D-397), l'éventail de Labib est refusé : son
-    SMIC pousse les cotisations des employeurs en sens contraire de ses baisses, et aucune
-    page commitée ne porte plus le paragraphe. Il est tenu sur le rapport commité de
-    Labib, lu par un éventail qui compterait toutes ses mesures."""
-    import types
-
-    study, text = pages["labib"]
-    section = text.split("### 2.")[1].split("### 3.")[0]
-    assert "**Éventail macro : refusé.**" in section
-    for slug, (_, page) in pages.items():
-        assert "que la dette ne lit pas" not in page, slug
-    path = json.loads(next(study.rapports.glob("predictif_*.json")).read_text("utf-8"))
-    entry = {"path": path}
-    impulses, _ = study._impulses(entry)
-    n = etude.Nombres()
-    paragraph = n.resolve(study._eventail_hors_boucle(
-        n, entry, types.SimpleNamespace(instruments=list(impulses))))
-    assert paragraph.startswith("**Ce que l'éventail compte et que la dette ne lit pas.**")
-    assert "les accises sur l'énergie, 15,75 Md€ des 62,46 Md€" in paragraph
-    assert study._eventail_hors_boucle(
-        n, entry, types.SimpleNamespace(instruments=["tva"])) == ""
 
 
 def test_the_employees_contributions_say_the_bias_beside_the_headline(pages) -> None:
@@ -364,7 +346,7 @@ def test_the_taxable_income_and_the_income_tax_loop_say_a_double_count(pages) ->
     même réaction peut être comptée deux fois, et que l'outil ne le mesure pas."""
     for slug in ("tondelier", "lisnard"):
         assert "comptée deux fois" in pages[slug][1].split("## En bref")[0], slug
-    for slug in ("attal", "retailleau", "labib", "roussel"):
+    for slug in ("attal", "retailleau", "roussel"):
         assert "comptée deux fois" not in pages[slug][1], slug
 
 

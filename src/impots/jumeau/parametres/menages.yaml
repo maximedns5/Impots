@@ -1,0 +1,198 @@
+# Les valeurs des blocs des ménages du jumeau (but 23, lot 4, D-409).
+#
+# Chaque valeur a sa source (document, page, tableau) ; une valeur sans source le dit
+# (« choisie, non vérifiée ») et porte un θ. Les profils de Mésange sont ceux qu'il
+# imprime aux horizons « 1 an », « 2 ans », « 5 ans » et « LT » (la colonne « t », le
+# trimestre du choc, n'est pas lue : le pas est annuel). Mésange : Insee, document de
+# travail G2017-04, « Le modèle macroéconométrique Mésange : réestimation et nouveautés »,
+# fichier `insee_G2017-04_mesange.pdf` ; « p. » est la page du PDF, le folio imprimé est
+# un de moins.
+
+mesange: &mesange "Insee, Mésange (G2017-04), insee_G2017-04_mesange.pdf"
+
+horizons:
+  # Les horizons des profils, en années ; la colonne « LT » est placée à dix ans.
+  lus: [1, 2, 5, 10]
+  long_terme_a: 10
+  source: >
+    choisie, non vérifiée : Mésange imprime « LT » sans dire à quel horizon il est atteint ;
+    ses variantes (section 4) l'impriment à côté de « 10 ans », souvent égal à lui. Entre
+    deux horizons lus, l'interpolation est linéaire ; au-delà de dix ans, LT.
+
+emploi:
+  part_qualifies:
+    valeur: 0.69
+    source: "Mésange, p. 40 (folio 39) et note 26 : l'emploi qualifié fait 69 % de l'emploi
+      salarié marchand en 2015, le non qualifié 31 %"
+  # Élasticités de l'emploi salarié marchand en EQTP, cumulées, aux horizons lus.
+  qualifie:
+    valeur_ajoutee: [0.40, 0.88, 1.01, 1.00]
+    cout_reel: [-0.18, -0.33, -0.34, -0.33]
+  non_qualifie:
+    valeur_ajoutee: [0.42, 0.92, 1.03, 1.00]
+    cout_reel: [-0.18, -0.51, -0.71, -0.68]
+  source_profils: "Mésange, p. 48 (folio 47), « Élasticités de l'emploi qualifié » et
+    « … non qualifié », lignes « Valeur ajoutée (+1 %) » et « Coût réel du travail
+    efficace (+1 %) », colonnes 1 an, 2 ans, 5 ans, LT"
+  elasticite_cout:
+    # θ : l'élasticité de long terme de l'emploi agrégé à son coût, en valeur absolue ; le
+    # profil pondéré de Mésange est mis à l'échelle de σ(θ) / 0,44.
+    centre: 0.44
+    bas: 0.07
+    haut: 0.52
+    source: "centre : Mésange, p. 39 (folio 38) et encadré 5, p. 41 : « l'élasticité de la
+      demande de travail à son coût (0,44 en valeur absolue) » ; haut : Bunel et L'Horty
+      (Fiscal Studies 33(3), 2012), tableau 7 (TEPP 2012-12, p. 20-21), −0,52 (MCO, ETP) ;
+      bas : Lichter, Peichl et Siegloch (IZA DP 7958, 2014), p. 22 du PDF, la borne
+      basse de l'intervalle de leur estimation préférée, −0,072, arrondie à 0,07 (D-424 ;
+      décision du propriétaire du 14 novembre 2026, D-427 ; avant : 0,31, Bunel et
+      L'Horty, régression quantile, postes)"
+  references:
+    # Les niveaux de l'année de départ, en milliers. La population active est l'emploi
+    # intérieur total plus les chômeurs BIT, la convention de Mésange (u = 1 − E/n, p. 24).
+    2024:
+      emploi_salarie: 27181.7
+      emploi_total: 30623.3
+      chomeurs: 2342.8
+    2025:
+      emploi_salarie: 27133.2
+      emploi_total: 30574.8
+      chomeurs: 2451.2
+    source: "emploi salarié : Insee, comptes nationaux base 2020, t. 6.210 (millésime 2025),
+      ligne _T ; emploi total 2024 : t. 6.208 (millésime 2024), ligne _T ; emploi total
+      2025 : l'emploi salarié de 2025 plus les non-salariés de 2024 (30 623,3 − 27 181,7 =
+      3 441,6), la t. 6.208 du millésime 2025 n'étant pas manifestée ; chômeurs : Insee,
+      enquête Emploi, séries longues, t. 302 (insee_eec2025_t302_chomage_bit.xlsx), ligne
+      Total. Deux millésimes et deux concepts mêlés (emploi des comptes, chômage de
+      l'enquête), dits"
+  part_marchande_salaries:
+    valeur: 0.6942
+    source: "Insee, t. 6.210 (millésime 2025), 2024 : 1 − (2 535,1 + 1 931,6 + 1 697,9 +
+      2 147,7) / 27 181,7, les branches OZ, PZ, QA et QB (administration, enseignement,
+      santé, action sociale) prises pour le non-marchand, que Mésange tient exogène
+      (p. 40, folio 39)"
+  non_salaries_sur_salaries_marchands:
+    valeur: 0.1824
+    source: "Insee, t. 6.208 (millésime 2024) et t. 6.210 (millésime 2025), 2024 : 3 441,6 /
+      18 869,4 ; Mésange, p. 40 : l'emploi non salarié marchand « évoluant de concert avec
+      l'emploi salarié marchand »"
+  population_active_reference:
+    source: "Mésange, p. 40, note 27 : la population active est « supposée constante en
+      projection » dans le compte central ; la référence du jumeau la tient constante, au
+      taux de chômage de départ"
+
+salaires:
+  # Élasticités du salaire brut moyen par EQTP des branches marchandes, cumulées.
+  qualifie:
+    chomage: [-0.61, -1.09, -1.83, -1.98]
+    productivite: [0.45, 0.77, 0.99, 1.00]
+    smic: [0.22, 0.27, 0.15, 0.12]
+    prix: [0.59, 1.08, 1.05, 1.00]
+  non_qualifie:
+    chomage: [-0.43, -0.80, -1.40, -1.49]
+    productivite: [0.47, 0.77, 0.97, 1.00]
+    smic: [0.26, 0.40, 0.47, 0.48]
+    prix: [0.70, 1.11, 1.02, 1.00]
+  source_profils: "Mésange, p. 65 (folio 64), « Élasticités du salaire moyen des
+    travailleurs qualifiés (non qualifiés) des branches marchandes », lignes « Taux de
+    chômage (+1 point) » (semi-élasticités, en %), « Productivité apparente (+1 %) »,
+    « Smic réel efficace (+1 %) », « Prix (+1 % sur les prix de VA et l'IPC) »,
+    colonnes 1 an, 2 ans, 5 ans, LT. La ligne des prix n'est lue qu'en mode structurel,
+    avec la boucle prix-salaires (D-414) : l'indexation de long terme unitaire sur les
+    prix de valeur ajoutée est une contrainte de Mésange (p. 64, folio 63), le court
+    terme passe par l'IPC ; le bloc lit l'écart du prix de production intérieur, les deux
+    prix bougeant ensemble dans la variante qu'imprime la ligne"
+  echelle_chomage:
+    # θ : un facteur sur le profil de la semi-élasticité au chômage.
+    centre: 1.0
+    bas: 0.0
+    haut: 1.2778
+    source: "centre : Mésange 2017, semi-élasticité agrégée −0,018 (p. 64, folio 63) ;
+      haut : Mésange 2010, −0,023 (même page), 0,023 / 0,018 ; bas : 0, aucune réponse
+      des salaires au chômage, décision du propriétaire du 14 novembre 2026 (D-427) sur
+      D-424 : la courbe des salaires corrigée du biais de publication (Nijkamp et Poot,
+      Tinbergen DP 02-029/3, tableau 4) donne b = 0,47 ± 0,43, sous l'ancienne borne
+      basse (0,5, choisie, non vérifiée)"
+  coin_fiscalo_social:
+    source: "Mésange, p. 64 (folio 63) : indexation unitaire de la rémunération au coin
+      fiscalo-social à long terme ; note 45 (p. 62) : σW = 1. Le salaire super-net visé ne
+      dépend pas des cotisations : une cotisation salariale baisse le salaire brut d'autant
+      à long terme, une cotisation employeur reste sur le coût. Le profil de l'ajustement
+      n'est pas imprimé : celui de la productivité (choisi, non vérifié, sans θ propre :
+      il ne change que la vitesse, pas le long terme)"
+
+offre:
+  source: "les quatre lignes de C7 du magasin comportemental
+    (behavioural/parameters/labour_supply.yaml) : Bargain, Orsini et Peichl, IZA DP 6735
+    (2012), annexe F, tableaux F.1, F.3, F.5, F.7 ; pondérées par la part de chaque groupe
+    dans la masse salariale brute des cellules ; hors de l'échantillon de l'article,
+    élasticité nulle"
+
+consommation:
+  elasticite_revenu:
+    centre: [0.46, 0.85, 0.98, 1.00]
+    autre: [0.5, 0.6, 0.7, 0.8]
+    source: "centre : Mésange, p. 34 (folio 33), « Élasticités de la consommation totale des
+      ménages », ligne « Revenu disponible brut réel (+1 %) » ; autre borne : Insee, Note de
+      conjoncture de juin 2019, dossier « Quel lien entre pouvoir d'achat et consommation
+      des ménages en France aujourd'hui ? », tableau 3 p. 34, ligne « Total », colonnes
+      A+1, A+2, A+5, Long terme ; à chaque horizon, θ = 0 prend la plus basse des deux et
+      θ = 1 la plus haute"
+  chomage:
+    valeur: [-0.38, -0.18, -0.02, 0.00]
+    source: "Mésange, p. 34 (folio 33), même tableau, ligne « Taux de chômage (+1 point de
+      pourcentage) » : l'épargne de précaution"
+  pente_deciles:
+    # θ : la part q dans κ = q κ_max, PMC_d = e(h) [APC + κ (APC_d − APC)], APC la
+    # propension moyenne des cellules, APC_d celle du décile d. κ_max est calculé sur les
+    # cellules : le plus grand κ qui garde la PMC de long terme de chaque décile sous un.
+    centre: 0.5
+    bas: 0.0
+    haut: 1.0
+    source: "choisie, non vérifiée : aucune propension marginale par décile publiée pour la
+      France n'a été trouvée. Le sens est sourcé (Insee, Note de conjoncture de juin
+      2019, p. 33 et 35 : « une PMC plus forte pour les ménages les plus modestes »), pas
+      l'ampleur. q = 0 : la même propension pour tous ; q = 1 : la pente des propensions
+      moyennes des cellules, la plus forte qui ne donne à aucun décile une PMC de long terme
+      au-dessus de un (la propension moyenne du premier décile y dépasse un : sa
+      consommation de l'enquête Budget de famille est plus haute que son revenu
+      disponible de la passe ; prise telle quelle, elle ferait baisser son épargne sans
+      fin à chaque hausse de revenu)"
+
+normalisation:
+  pib_annee_cellules:
+    valeur: 2935.236
+    source: "Insee, comptes nationaux base 2020, t. 1.101 (millésime 2025), PIB de 2024,
+      Md€ : les montants des cellules (euros de 2024) deviennent des parts du PIB"
+
+emploi_public:
+  # Le bloc `emploi_public` (D-418) : la part de ΔD1 des APU d'une mesure qui fait des
+  # emplois, et la rémunération d'un emploi public.
+  part_emplois:
+    # θ : s dans ΔD1^emplois = s ΔD1, ΔD1^traitements = (1 − s) ΔD1 ; s(θ) = θ.
+    centre: 0.5
+    bas: 0.0
+    haut: 1.0
+    source: "centre : Mésange, p. 106 (folio 105), note 75 : « La hausse des rémunérations
+      est réalisée à 50 % sur l'emploi public et à 50 % sur le salaire par tête », la
+      convention de sa variante de dépense publique ; bornes choisies, non vérifiées :
+      tout en traitements (θ = 0, un point d'indice) et tout en emplois (θ = 1, des
+      créations de postes au salaire moyen). Une mesure qui porte sa part
+      (`Mesure.part_emplois_publics`) ne lit pas θ"
+  remuneration_relative:
+    # W_pub / W, la rémunération (D1) d'un emploi public sur la rémunération moyenne du
+    # jumeau (D1 de la t. 1.105 sur l'emploi salarié de la t. 6.210), en 2024.
+    valeur: 0.94737
+    calcul: "W_pub = (D11 des branches OZ, PZ, QA, QB / leur emploi salarié) × (D1 / D11
+      des APU) = (92,938 + 75,165 + 71,797 + 55,156) Md€ / (2 535,1 + 1 931,6 + 1 697,9 +
+      2 147,7) milliers × 363,038 / 245,586 = 35 496,3 € × 1,478252 = 52 472,5 € ; W =
+      1 505,528 Md€ / 27 181,7 milliers = 55 387,6 € ; W_pub / W = 0,94737"
+    source: "Insee, comptes nationaux base 2020 (millésime 2025), 2024 : t. 6.205 (salaires
+      et traitements bruts par branche, D11) et t. 6.210 (emploi intérieur salarié par
+      branche), les quatre branches que `part_marchande_salaries` prend pour le
+      non-marchand ; t. 7.301 (compte des APU, S13) pour D1 (363,038 Md€, celui de la
+      t. 3.201) et D11 (245,586 Md€), cotisations imputées (D122) comprises, comme le D1
+      des APU que le jumeau porte ; t. 1.105 (D1) et t. 6.210 (_T) pour W. Les quatre
+      branches comptent aussi des salariés privés (cliniques, enseignement privé,
+      associations) : leur D11 par tête, celui de l'administration publique seule (OZ,
+      36 660,5 €) en diffère de 3 %"

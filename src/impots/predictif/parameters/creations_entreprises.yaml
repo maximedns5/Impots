@@ -1,0 +1,105 @@
+# Le canal des créations d'entreprises dans la dette — but 22, chantier C (D-400).
+#
+# HYPOTHÈSE NON VALIDÉE. Aucune source ne redonne un total publié de ce canal : le
+# propriétaire a décidé qu'il entre dans la dette avec une valeur centrale choisie (but 22),
+# nommée, avec sa source et sa plage, dans une D-entrée préenregistrée avant la première
+# passe. Tant qu'elle n'est pas commitée, `preenregistrement` est vide et la chaîne refuse
+# de lire ce fichier dans un rapport (`creations.charger(exiger_entree=True)`).
+#
+# Le chemin, les sources et les raisons : docs/diagnostics/creations_entreprises.md.
+# [lu] : lu sur un fichier du manifeste ; [à manifester] : à vérifier sur le document
+# avant la D-entrée.
+
+preenregistrement: D-402   # la D-entrée qui fixe ces valeurs (but 22)
+
+elasticite:
+  # Points de taux d'entrée (entrées de l'année sur entreprises actives, en %) par point
+  # de taux apparent de prélèvement sur le profit. Fixe dans la chaîne ; la plage est une
+  # sensibilité dite à côté, pas une ligne θ des études (elle l'est dans le jumeau).
+  # Décision du propriétaire du 14 novembre 2026 (D-427) : le centre à l'intra-groupe de
+  # Da Rin et al., la borne basse à 0, la borne haute au milieu de D-402.
+  centre: 0.043
+  bas: 0.0
+  haut: 0.20
+  source: >
+    Décision du propriétaire du 14 novembre 2026 (D-427). Le centre, 0,043 :
+    Da Rin, Di Giacomo et Sembenelli, « Entrepreneurship, firm entry, and the taxation
+    of corporate income: Evidence from Europe », Journal of Public Economics 95 (2011),
+    1048-1066 ;
+    manuscrit accepté au manifeste, tableau 4 p. 40, p. 21-22 : 0,107 point de taux
+    d'entrée en intra-groupe du premier quartile (27,57 %) à la médiane (30,04 %) du TMEE,
+    soit 0,043 par point (M0 de la phase 11, D-245) [lu]. Il est dans l'intervalle à 95 %
+    de l'estimation française entre secteurs de D-426 (−0,056, de −0,16 à +0,04, au
+    bord), qui exclut l'ancien centre (0,20) ; la borne haute, 0,20, est le milieu des
+    variables instrumentales (0,356) et de l'intra-groupe de Da Rin et al. (D-402) ; la
+    borne basse, 0, aucune réponse. Appliqué à un taux apparent, pas au TMEE des auteurs
+    (D-247). Avant D-427 : 0,20 (0,043 à 0,356), D-402.
+
+productivite:
+  # c, la productivité d'une société nouvelle rapportée à la société moyenne : la ligne θ
+  # du canal, de 0 (aucune activité nouvelle) à 1 (la productivité moyenne). θ = 1 est la
+  # réponse la plus forte ; θ = ½ donne le centre.
+  centre: 0.5
+  bas: 0.0
+  haut: 1.0
+  source: >
+    Aucune source ne la chiffre pour des entrants marginaux. Foster, Haltiwanger et Krizan
+    (REStat 2006) et Foster, Haltiwanger et Syverson (AER 2008) : les entrants ne sont pas
+    plus productifs que les installés en moyenne, d'où la borne haute à 1 ; le centre est
+    le milieu de la boîte voulue par le but 22 [à manifester].
+
+survie_annuelle:
+  valeur: 0.90
+  plage: [0.85, 0.93]
+  source: >
+    Insee, enquête SINE : environ six entreprises sur dix (hors micro-entrepreneurs)
+    actives cinq ans après leur création, soit 0,6^(1/5) ≈ 0,90 par an [à manifester].
+
+montee_en_charge_ans:
+  valeur: 5
+  plage: [3, 8]
+  source: >
+    Rampe linéaire jusqu'à la taille de maturité : Haltiwanger, Jarmin et Miranda (REStat
+    2013), OCDE DynEmp (Criscuolo, Gal et Menon, 2014) [à manifester].
+
+taille_relative:
+  # En emploi, d'une société nouvelle à maturité rapportée à la société moyenne.
+  valeur: 0.10
+  plage: [0.05, 0.20]
+  source: >
+    Insee SINE, OCDE DynEmp [à manifester] ; recoupé par le rapport IPP n° 47, tableau
+    2.2 (c) : 0,053 point d'emploi pour 0,38 point de taux de création [lu].
+
+part_va_societes_pib:
+  valeur: 0.60
+  source: >
+    Valeur ajoutée des sociétés non financières et financières dans le PIB, Insee,
+    comptes de secteur [à manifester].
+
+assiette_part_pib:
+  # b : le profit imposable que suppose l'IS de 2024, en part du PIB de 2024.
+  valeur: 0.092
+  source: >
+    Insee, comptes nationaux 2025, tableau 3.217, IS avant crédits d'impôt de 2024,
+    69,47 Md€ [lu], au taux normal et sa contribution sociale (25,825 %) : 269 Md€ ; sur
+    un PIB de 2024 d'environ 2 920 Md€ [à manifester].
+
+instruments:
+  # Ce que le canal lit de la passe, en euros, recettes positives. Rien d'autre : ni le
+  # nom du candidat, ni le sens de la mesure.
+  #
+  # Décisions du propriétaire du 13 novembre 2026 :
+  # * les cotisations patronales font jouer le canal, comme l'IS. Ce sont celles que la
+  #   passe des ménages porte, effectivement payées, nettes des allègements, comme le garde
+  #   des secteurs et la boucle macro les comptent (`employer_contribution_delta`, jamais
+  #   `cotisations_employeur`, brut des allègements). Elles sont aussi dans la boucle de
+  #   Mésange, dont la variante « cotisations employeurs » porte déjà la réponse de
+  #   l'activité au coût du travail : ce double compte est un choix du propriétaire, que
+  #   chaque page dit ;
+  # * le PFU et les prélèvements sociaux du capital restent lus ; la CVAE et la C3S sont
+  #   lues euro pour euro comme l'IS. Conventions, dites sur la page.
+  entreprises: [impot_societes, contribution_sociale_is, cebge, cvae, c3s]
+  menages: [pfu, prelevements_sociaux_capital, cotisations_employeurs]
+  exclus:
+    cdhr: >
+      Elle porte sur tout le revenu des hauts revenus, pas sur le capital seul.

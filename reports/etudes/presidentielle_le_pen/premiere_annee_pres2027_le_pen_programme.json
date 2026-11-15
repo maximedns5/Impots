@@ -807,16 +807,16 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "menages_s": 1.83,
-      "build_s": 6.69,
-      "baseline_s": 36.07,
-      "reform_s": 38.16,
-      "consommation_s": 0.14,
-      "total_s": 109.43
+      "menages_s": 1.68,
+      "build_s": 7.01,
+      "baseline_s": 35.5,
+      "reform_s": 40.93,
+      "consommation_s": 0.35,
+      "total_s": 117.04
     }
   },
-  "computed": "2026-11-12",
-  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "computed": "2026-11-13",
+  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
   "dirty": false,
   "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
 }

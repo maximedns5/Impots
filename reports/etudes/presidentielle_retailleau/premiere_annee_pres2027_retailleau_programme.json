@@ -694,11 +694,11 @@
       },
       "niche_blind_spot": null,
       "timings": {
-        "menages_s": 2.15,
-        "build_s": 8.68,
-        "baseline_s": 45.35,
-        "reform_s": 43.67,
-        "total_s": 133.95
+        "menages_s": 2.03,
+        "build_s": 6.67,
+        "baseline_s": 37.23,
+        "reform_s": 37.23,
+        "total_s": 89.79
       }
     },
     "entreprises": {
@@ -1625,14 +1625,14 @@
       },
       "cir": null,
       "timings": {
-        "baseline_s": 0.011,
-        "reform_s": 0.006,
-        "total_s": 0.081
+        "baseline_s": 0.015,
+        "reform_s": 0.007,
+        "total_s": 0.091
       }
     }
   },
-  "computed": "2026-11-12",
-  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "computed": "2026-11-13",
+  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
   "dirty": false,
   "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
 }

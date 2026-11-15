@@ -181,3 +181,59 @@ def test_an_entry_in_an_unknown_shape_is_refused_rather_than_ignored(
 
     with pytest.raises(TypeError, match="retrieved"):
         load_manifest()
+
+
+def test_the_manifest_command_starts_from_the_manifest(tmp_path) -> None:
+    """D-419 (after D-416): `impots population manifest` keeps every entry as it stands,
+    checks every digest, adds only a file declared in KNOWN_SOURCES, quarantines only a
+    file neither manifested nor declared, keeps the entry of an absent file, and refuses
+    by name a digest that changed, writing nothing."""
+    import hashlib
+
+    from impots.population import cli
+
+    raw = tmp_path / "raw"
+    (raw / "_unsourced").mkdir(parents=True)
+
+    def fichier(nom: str, texte: str, ou: Path = raw) -> str:
+        (ou / nom).write_text(texte, encoding="utf-8")
+        return hashlib.sha256(texte.encode()).hexdigest()
+
+    garde = {"url": "https://ec.europa.eu/eurostat/x.tsv", "quarantined": False,
+             "sha256": fichier("eurostat.tsv", "a"), "bytes": 1, "downloaded": "2026-10-01",
+             "licence": "Eurostat — réutilisation autorisée avec mention de la source",
+             "description": "Eurostat", "provenance": "remise à la main",
+             "normalization": "pdf-stamp-v1",
+             "normalized_sha256": hashlib.sha256(b"a").hexdigest()}
+    absent = {"url": "https://www.insee.fr/y.xlsx", "quarantined": False, "sha256": "0" * 64,
+              "bytes": 9, "downloaded": "2026-09-01", "licence": "Licence Ouverte",
+              "description": "un fichier d'un autre worktree"}
+    (raw / "MANIFEST.json").write_text(json.dumps({"generated": "2026-10-01", "files": {
+        "eurostat.tsv": garde, "absent.xlsx": absent}}), encoding="utf-8")
+    fichier("neuf.xml", "b")
+    fichier("orphelin.csv", "c")
+    connus = {"neuf.xml": ("https://bdm.insee.fr/neuf", "une série neuve")}
+
+    run = cli.manifest_raw(raw, known=connus)
+    assert not run.refused and run.written
+    files = json.loads((raw / "MANIFEST.json").read_text(encoding="utf-8"))["files"]
+    assert files["eurostat.tsv"] == garde and files["absent.xlsx"] == absent
+    assert run.absent == ["absent.xlsx"] and run.verified == ["eurostat.tsv"]
+    assert files["neuf.xml"]["url"] == "https://bdm.insee.fr/neuf"
+    assert not files["neuf.xml"]["quarantined"] and (raw / "neuf.xml").exists()
+    assert files["orphelin.csv"]["url"] is None and files["orphelin.csv"]["quarantined"]
+    assert (raw / "_unsourced" / "orphelin.csv").exists() and not (raw / "orphelin.csv").exists()
+    assert (raw / "eurostat.tsv").exists()
+
+    # Rerun: nothing to add, nothing written.
+    avant = (raw / "MANIFEST.json").read_text(encoding="utf-8")
+    assert not cli.manifest_raw(raw, known=connus).written
+    assert (raw / "MANIFEST.json").read_text(encoding="utf-8") == avant
+
+    # A digest that changed: a named refusal, nothing written or moved.
+    fichier("eurostat.tsv", "a, changé")
+    fichier("autre.csv", "d")
+    run = cli.manifest_raw(raw, known=connus)
+    assert run.refused and run.refused[0].startswith("eurostat.tsv: manifested ")
+    assert not run.written and (raw / "autre.csv").exists()
+    assert (raw / "MANIFEST.json").read_text(encoding="utf-8") == avant

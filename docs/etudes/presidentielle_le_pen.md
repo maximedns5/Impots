@@ -18,9 +18,11 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 ## En bref
 
-| programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
-|---|---|---|---|---|---|
-| la part chiffrée (4 mesures sur 25 paramétrées, 36 relevées) | +21,41 Md€ | — | +3,00 pt | dépend (79 % des tirages en hausse) | dépend de θ |
+| programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | sans le canal des créations | verdict | selon θ |
+|---|---|---|---|---|---|---|
+| la part chiffrée (4 mesures sur 25 paramétrées, 36 relevées) | +21,41 Md€ | — | +3,00 pt | +3,00 pt | dépend (79 % des tirages en hausse) | dépend de θ |
+
+**La dette lit le canal des créations d'entreprises, une hypothèse non validée** (décision du propriétaire, D-400) : ce qu'une hausse ou une baisse des prélèvements sur les entreprises et le capital, cotisations patronales comprises, fait aux sociétés qui se créent, et ce qu'elles produisent. Aucune source ne redonne ce total. La dette, le verdict et « selon θ » le lisent ; la colonne « sans le canal » donne la dette sans lui, à θ½, sur les mêmes passes. Le canal, ses paramètres et ses sources sont dits avec la dette de chaque mesure. Les points de plage, chiffrés sans comportement ni boucle, ne le lisent pas.
 
 Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
@@ -33,6 +35,10 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 4 mesures chiffrées sur 25 paramétrées et 36 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.
 
 ### 1. Ce qu'il coûte, et qui y gagne
+
+![Ce que chaque décile y gagne ou y perd en 2026](graphiques/presidentielle_le_pen/pres2027_le_pen_programme-deciles.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_le_pen/premiere_annee_pres2027_le_pen_programme.json` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2, la simulation mécanique ; les déciles sont ceux de la population (L1).*
 
 La mesure coûte **21,41 Md€** la première année (2026), sur la population de 2024 au droit de 2026.
 
@@ -55,6 +61,10 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 ### 2. Avec les comportements et l'économie
 
+![Du coût de 2026 à la dette de 2035](graphiques/presidentielle_le_pen/pres2027_le_pen_programme-cascade.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_le_pen/premiere_annee_pres2027_le_pen_programme.json` et `reports/etudes/presidentielle_le_pen/predictif_pres2027_le_pen_programme.json` (sa décomposition, D-349) ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour le coût mécanique, L3 pour les comportements, L4 pour la dette, sous hypothèses.*
+
 **Bande comportementale : aucune, et la raison est donnée.** Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.
 
 **L'effet sur l'économie**, l'éventail macro (la fourchette de ce que des multiplicateurs publiés disent du PIB et de l'emploi), **dans l'étendue des estimations**, le choc ne dépassant pas ceux sur lesquels les multiplicateurs ont été estimés ; 99 % de la mesure a un multiplicateur publié ; conjoncture supposée normale, ni récession ni surchauffe :
@@ -72,10 +82,14 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 * **IS et investissement des entreprises** — aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis.
 * **transferts** — Mésange n'a pas de variante de transfert.
-* **créations d'entreprises** — C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221).
+* **créations d'entreprises** — Canal ouvert dans la dette (but 22), hypothèse non validée : C8 reste l'indice de la couche entreprises.
 * **R&D et CIR** — C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette.
 
 ### 3. La dette en 2035
+
+![Le solde, la dette et le PIB, de 2026 à 2035](graphiques/presidentielle_le_pen/pres2027_le_pen_programme-trajectoire.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_le_pen/predictif_pres2027_le_pen_programme.json`, rejoué année par année par `impots.predictif.rejouer`, qui redonne chacun de ses Δb et chaque coin de sa boîte ; tracé par `impots.graphiques`. Ses nombres reposent sur : L4, sous hypothèses : le cadre nommé en bas de page, et θ.*
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
@@ -85,6 +99,21 @@ Ce que la chaîne ne lit pas, et pourquoi :
 En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sous cette persistance, son effet sur la dette en 2035 **dépend de θ** : son signe change d'un coin de la boîte, ou d'une vue, à l'autre.
 
 **Le verdict**, lu sur le Monte-Carlo (D-345) : son effet sur la dette en 2035 **dépend des hypothèses** : moins de 90 % des tirages s'accordent sur son signe, vue vieillie.
+
+**Les créations d'entreprises, une hypothèse non validée.** La dette de cette page lit le canal des créations d'entreprises, par décision du propriétaire (D-400) : les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée des sociétés, qui survivent, montent en charge et produisent ; leurs recettes entrent au solde, leur activité au PIB. Aucune source ne redonne ce total. La dette sans ce canal, sur les mêmes passes, est donnée à côté.
+
+| persistance | vue | Δ dette 2035, à θ½ | sans le canal | ce que le canal y change |
+|---|---|---|---|---|
+| lue | vieillie | +3,00 pt | +3,00 pt | +0,00 pt |
+| lue | figée | +2,25 pt | +2,25 pt | +0,00 pt |
+
+La productivité relative des sociétés nouvelles, rapportée à la société moyenne, est la ligne θ du canal : 0,5 au centre (θ½), de 0, le canal éteint, à 1. Aucune source ne la chiffre pour les sociétés qu'un impôt fait naître ou disparaître. Sa boîte, toutes les autres lignes à θ½, va de +3,00 pt à +3,00 pt en 2035, vue vieillie, persistance « lue ». Le Monte-Carlo du verdict lit le canal à sa productivité centrale, sans la tirer : sa loi n'est pas déclarée.
+
+L'élasticité : 0,043 point de taux d'entrée par point de taux apparent de prélèvement sur le profit, de 0 à 0,2 ; Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4 et pages 21 et 22 : leur estimation intra-groupe au centre, le milieu de leurs estimations en variables instrumentales et intra-groupe en borne haute, lus sur un taux apparent et non sur leur taux effectif (D-245, D-247) ; le centre est dans l'intervalle de confiance de l'estimation française entre secteurs (D-426), décision du propriétaire (D-427). Survie annuelle 0,9, montée en charge sur 5 ans, taille relative à maturité 0,1, valeur ajoutée des sociétés 0,6 du PIB, assiette 0,092 du PIB ; les valeurs fixées par D-402.
+
+L'élasticité a été changée sans passe nouvelle (D-427, décision du propriétaire) : de 0,2 à 0,043. Aucun prélèvement sur les entreprises ou le capital ne bouge ici : aucun nombre de la page n'en dépend.
+
+Les instruments lus, en euros de prélèvement, recettes positives, rien d'autre (ni le nom de qui propose la mesure, ni son sens) : l'IS, sa contribution sociale, la CEBGE, la CVAE, la C3S, le PFU, les prélèvements sociaux du capital et les cotisations patronales, nettes des allègements. Les cotisations patronales font jouer le canal, comme l'IS : elles sont aussi dans la boucle macro de Mésange, dont la variante « cotisations employeurs » porte déjà la réponse de l'activité au coût du travail. Ce double compte est un choix du propriétaire (13 novembre 2026), dit ici plutôt que caché. Les impôts de production (CVAE, C3S) sont lus euro pour euro comme l'IS, faute d'une estimation publiée de la réponse des créations à ces impôts ; le PFU et les prélèvements sociaux du capital sont lus comme une charge sur le profit distribué, comme le taux virtuel de l'IPP qui joint l'IS et le PFU.
 
 **Les sensibilités, hors du verdict.** Les deux persistances que les pages lisaient avant la persistance « lue » (D-336), sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
 
@@ -120,6 +149,10 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 ### La dette en 2035, si les économies annoncées sont tenues et les dépenses annoncées faites
 
+![La dette de 2026 à 2035, si ce qui est annoncé est tenu](graphiques/presidentielle_le_pen/pres2027_le_pen_programme-annoncee.svg)
+
+*Source du graphique : `reports/etudes/presidentielle_le_pen/predictif_pres2027_le_pen_programme.json`, `programmes/le_pen.json` et `reports/macro/variante_depense_publique.json`, lus par `impots.predictif.annonce` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L4 pour la part chiffrée, sous hypothèses ; annoncé pour le reste.*
+
 **Une lecture à part : annoncée par le candidat, non vérifiée.** La dette plus haut est celle de la part chiffrée ; les économies de dépense que le programme annonce, que l'outil ne microsimule pas, n'y entrent pas, et ses dépenses non plus (D-319). Ici, les montants par an que le candidat attache lui-même à ses mesures de dépense publique sont lus par la variante « dépense publique » de Mésange, son effet sur le PIB et sur le solde, et s'ajoutent à la dette de la part chiffrée. Ni le coût de la part chiffrée ni le verdict ne les lisent (D-380).
 
 | mesure | montant annoncé, par an | sens | calendrier annoncé |
@@ -154,9 +187,37 @@ La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une
 * `pres2027_le_pen_lp22_part_pleine_2e_enfant`, enregistré le 2026-11-01 : +2,83 Md€ en 2026, tolérance de 25 % ou 200 M€ ; le juge n'a pas publié.
 * `pres2027_le_pen_lp26_suppression_cvec`, enregistré le 2026-11-12 : +236 M€ en 2026, tolérance de 25 % ou 200 M€ ; le juge n'a pas publié.
 
+## Chaque mesure seule, et leur interaction
+
+Chaque mesure chiffrée passe aussi seule, en entier : sa première année et son chemin annuel jusqu'en 2035, dans le cadre de la part chiffrée, sur la même population et le même code. La part chiffrée n'est pas la somme de ses mesures : deux mesures se rencontrent dans le barème, dans les prestations sous condition de ressources, dans la boucle macro, et dans la dette, que chacune creuse sur le PIB que l'autre a changé. L'écart, la part chiffrée moins la somme des mesures, est dit sur sa ligne, « interaction » : il n'est réparti entre aucune mesure.
+
+Le coût de la première année est mécanique : en vue figée, sur la population de 2024 au droit de 2026, comme la part chiffrée plus haut ; en vue vieillie, sur la population vieillie jusqu'en 2026, la première année du chemin annuel. La dette est en points de PIB, à θ½, vue vieillie, sous la persistance « lue ». Les déciles sont ceux du niveau de vie des ménages : ce que les trois premiers y gagnent en tout, et leur part de ce que gagnent tous les ménages (ou perdent, si la mesure leur prend) ; une mesure des seules entreprises n'en a pas.
+
+| mesure | coût 2026, vue figée | coût 2026, vue vieillie | Δ dette 2035, à θ½ | gain des déciles 1 à 3 | leur part |
+|---|---|---|---|---|---|
+| Baisse de la TVA sur l'énergie et les carburants | +11,29 Md€ | +11,64 Md€ | +1,15 pt | +2,54 Md€ | 22 % |
+| Exonération d'impôt sur le revenu des moins de 30 ans | +8,66 Md€ | +10,12 Md€ | +1,60 pt | +70 M€ | 1 % |
+| Part fiscale pleine dès le deuxième enfant | +2,09 Md€ | +2,33 Md€ | +0,34 pt | +8 M€ | 0 % |
+| Suppression de la CVEC | +236 M€ | +236 M€ | +0,06 pt | +78 M€ | 33 % |
+| **somme des mesures** | +22,27 Md€ | +24,32 Md€ | +3,15 pt | +2,69 Md€ | 12 % |
+| **la part chiffrée** | +21,41 Md€ | +23,36 Md€ | +3,00 pt | +2,69 Md€ | 13 % |
+| **interaction**, la part moins la somme | -862 M€ | -964 M€ | -0,16 pt | -6 M€ | — |
+
+Chaque ligne se lit dans ses deux rapports : la première année (le coût en vue figée, les déciles) et le chemin annuel (le coût en vue vieillie, la dette).
+
+* Baisse de la TVA sur l'énergie et les carburants : `reports/etudes/presidentielle_le_pen/mesures/lp20_tva_energie/premiere_annee_pres2027_le_pen_lp20_tva_energie.json`, `reports/etudes/presidentielle_le_pen/mesures/lp20_tva_energie/predictif_pres2027_le_pen_lp20_tva_energie.json`
+* Exonération d'impôt sur le revenu des moins de 30 ans : `reports/etudes/presidentielle_le_pen/mesures/lp21_ir_moins_30_ans/premiere_annee_pres2027_le_pen_lp21_ir_moins_30_ans.json`, `reports/etudes/presidentielle_le_pen/mesures/lp21_ir_moins_30_ans/predictif_pres2027_le_pen_lp21_ir_moins_30_ans.json`
+* Part fiscale pleine dès le deuxième enfant : `reports/etudes/presidentielle_le_pen/mesures/lp22_part_pleine_2e_enfant/premiere_annee_pres2027_le_pen_lp22_part_pleine_2e_enfant.json`, `reports/etudes/presidentielle_le_pen/mesures/lp22_part_pleine_2e_enfant/predictif_pres2027_le_pen_lp22_part_pleine_2e_enfant.json`
+* Suppression de la CVEC : `reports/etudes/presidentielle_le_pen/mesures/lp26_suppression_cvec/premiere_annee_pres2027_le_pen_lp26_suppression_cvec.json`, `reports/etudes/presidentielle_le_pen/mesures/lp26_suppression_cvec/predictif_pres2027_le_pen_lp26_suppression_cvec.json`
+* la part chiffrée : `reports/etudes/presidentielle_le_pen/premiere_annee_pres2027_le_pen_programme.json`, `reports/etudes/presidentielle_le_pen/predictif_pres2027_le_pen_programme.json`
+
 ## Ce que bouge chaque paramètre
 
 Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point est la mesure seule, mécanique (personne ne change de comportement), sur la population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de PIB jusqu'en 2035, un calcul rapide qui ne refait pas chaque année. Elle ne se compare donc pas à celle de la part chiffrée, plus haut, que le calcul complet chiffre année par année avec les comportements et la boucle macro. Leur coût diffère aussi de celui de la part chiffrée : celle-ci est chiffrée sur la population de 2024 au droit de 2026, les plages sur la population vieillie jusqu'en 2026. Quand un programme a plusieurs paramètres, chacun se règle seul, les autres restant à la valeur du candidat.
+
+![Les mesures chiffrées dans le temps, et leurs plages](graphiques/presidentielle_le_pen/pres2027_le_pen_programme-frise.svg)
+
+*Source du graphique : `programmes/le_pen.json` et `reports/etudes/presidentielle_le_pen/plages/`, ses 9 points de plage ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2 pour les coûts ; la valeur du candidat est celle du programme, le bas et le haut des hypothèses.*
 
 ### Baisse de la TVA sur l'énergie et les carburants
 
@@ -267,11 +328,11 @@ Le programme annonce lui-même un montant pour 11 de ses mesures. Ces montants n
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `601b442` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_le_pen/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `aa22293` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_le_pen/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée (4 mesures sur 25 paramétrées, 36 relevées) | +13,38 Md€ → +21,41 Md€ | +1,49 pt → +3,00 pt | dépend de θ → dépend |
+| la part chiffrée (4 mesures sur 25 paramétrées, 36 relevées) | +21,41 Md€ → +21,41 Md€ | +3,00 pt → +3,00 pt | dépend de θ → dépend |
 
 Ce qui touche chaque ligne :
 
@@ -281,12 +342,7 @@ Là où une seule correction touche une ligne, l'écart avant → après est ce 
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur 2 commits, conteneur cloud, 15 Go, 4 cœurs, deux files ; chaque rapport nomme le sien. Un commit après le premier rejoint l'étude quand sa passe témoin, `plages/lp20_tva_energie__tva_postes.energie__bas.json` rejouée sur lui, redonne son rapport à l'identique, hors date, commit et lieu (D-335) :
-
-* `aa22293`, le premier.
-* `d4f3f7f`, rejoint par `reports/etudes/presidentielle_le_pen/temoins/d4f3f7f.json`, témoin du 2026-11-13.
-
-Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `5a68669`, conteneur cloud, 15 Go, 4 cœurs, deux files. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
@@ -302,3 +358,4 @@ Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une
 
 * `reports/etudes/presidentielle_le_pen/premiere_annee_pres2027_le_pen_programme.json`, `reports/etudes/presidentielle_le_pen/predictif_pres2027_le_pen_programme.json`
 * `reports/etudes/presidentielle_le_pen/plages/`, les 9 points des plages
+* `reports/etudes/presidentielle_le_pen/mesures/<mesure>/`, la première année et le chemin de chaque mesure seule

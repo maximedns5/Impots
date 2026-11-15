@@ -1,0 +1,240 @@
+# Les a priori des θ du jumeau, tirés de la littérature publiée (but 23, D-424).
+#
+# Pour chaque ligne du registre (`jumeau.thetas.REGISTRE`), une entrée : soit une
+# estimation publiée du PARAMÈTRE du bloc (`estimation`, `ecart_type`) que
+# `jumeau.a_priori` passe par l'application θ → paramètre du bloc, linéaire par morceaux
+# par le centre (bas à 0, centre à ½, haut à 1) et prolongée au-delà des bornes par la
+# pente de sa moitié ; soit un a priori donné sur θ lui-même (`theta`), quand le bloc
+# définit θ par la dispersion publiée ; soit `sans_source`, la raison pour laquelle le θ
+# garde l'a priori large de D-417 (½, écart-type ½).
+#
+# LES RÈGLES. (1) Une source n'entre que si son paramètre est celui du bloc (la même
+# définition, au moins la même grandeur) ; une estimation d'une autre grandeur est dite
+# en `comparaison`, pas utilisée. (2) L'ordre : une méta-analyse, puis une estimation
+# française, puis Mésange (G2017-04) et ses t de Student. (3) L'écart-type : la
+# dispersion entre études quand la source la publie (une valeur française est un tirage
+# de cette dispersion), sinon l'écart-type de l'estimation, sinon la demi-largeur de
+# son intervalle à 95 % sur 1,96. (4) La plage du bloc ne change pas, même quand la source
+# en sort : la D-entrée le dit et propose une plage, pour décision.
+#
+# Les plages (bas, centre, haut) ne sont pas recopiées ici : `a_priori.plages` les lit
+# dans les paramètres des blocs, les mêmes que ceux du calcul.
+
+multiplicateur_macro:
+  theta: {moyenne: 0.5, ecart_type: 0.5}
+  source: >
+    Par construction : m_i(h) = c_i(h) + (2θ − 1) sd_i, sd_i l'écart-type inter-études
+    de l'IMK (WP 117, 2013, D-336) ; un multiplicateur qui suit la loi publiée, centrée
+    sur Mésange et d'écart-type sd_i, donne θ ~ N(½, ½). L'a priori large de D-417 est
+    ici celui de la source.
+
+productivite_creations:
+  sans_source: >
+    Aucune estimation de la productivité d'une société entrante marginale rapportée à la
+    moyenne (D-402) ; la borne haute de Foster, Haltiwanger et Syverson n'est pas une loi.
+
+commerce_elasticite_prix_exportations:
+  estimation: 0.73
+  ecart_type: 0.1327
+  source: >
+    Insee, Mésange (G2017-04), p. 77 du PDF (folio 76) : l'élasticité de long terme à la
+    compétitivité-prix des biens agricoles et manufacturés, 0,77 (t = 5,5), et des
+    services exposés, 0,81 (t = 5,5) ; p. 79 : l'agrégat, 0,73.
+  calcul: >
+    Les deux branches ont le même t : l'écart-type relatif de l'agrégat, somme pondérée
+    positive des deux, est au plus 1/5,5 (au plus quand les deux erreurs sont
+    parfaitement corrélées, la covariance n'étant pas publiée) ; 0,73 / 5,5 = 0,1327.
+  comparaison: >
+    Imbs et Méjean (2010, RIE 2017), tableau 4, p. 35 du PDF : −3,493 (0,059) et −3,821
+    (0,088) pour la France, une élasticité de substitution structurelle, agrégée des
+    secteurs, non l'élasticité de long terme d'une équation macroéconomique : cinq fois
+    Mésange, hors de la plage (l'« énigme des élasticités »), non utilisée. FR-BDF (WP 736,
+    1,27) porte sur le prix d'exportation relatif, non sur le prix de production.
+
+commerce_elasticite_prix_importations:
+  estimation: 0.35
+  ecart_type: 0.0613
+  source: >
+    Insee, Mésange (G2017-04), p. 83 du PDF (folio 82) : l'élasticité de long terme au
+    prix relatif des biens agricoles et manufacturés, 0,44 (t = 6,5), des services
+    exposés, 0,29 (t = 3,6), l'énergie nulle ; p. 85 : l'agrégat, 0,35.
+  calcul: >
+    Les parts dans les importations de 2014 (p. 83 : 64 % et 20 %) : 0,64 × 0,44 + 0,20 ×
+    0,29 = 0,3396 ; l'écart-type, les deux erreurs parfaitement corrélées (un majorant),
+    0,64 × 0,44 / 6,5 + 0,20 × 0,29 / 3,6 = 0,0594, mis à l'échelle de 0,35 : 0,0613.
+  comparaison: >
+    Imbs et Méjean (2010, RIE 2017), tableau 2, p. 34 du PDF : −3,198 (0,120) et −3,133
+    (0,145) pour la France, la même raison qu'aux exportations. FR-BDF (WP 736, 1,11),
+    sur le prix d'exportation relatif au prix d'importation : 12 écarts-types de Mésange
+    au-dessus de son centre.
+
+commerce_prix_diffusion:
+  sans_source: >
+    Le profil du centre est celui de Mésange (p. 72), sans écart-type ; les deux bornes
+    (mi-vitesse, diffusion immédiate) sont choisies, non vérifiées.
+
+jumeau_emploi_elasticite_cout:
+  estimation: 0.246
+  ecart_type: 0.0954
+  source: >
+    Lichter, Peichl et Siegloch, IZA DP 7958 (2014 ; European Economic Review 80, 2015),
+    p. 22 du PDF (folio 19) : l'estimation préférée de la méta-régression (942
+    estimations, 105 études), l'élasticité de long terme à production constante,
+    corrigée du biais de publication, −0,246 dans [−0,072 ; −0,446].
+  calcul: >
+    (0,446 − 0,072) / (2 × 1,96) = 0,0954, l'intervalle lu comme un intervalle à 95 %
+    (« our confidence interval »), son centre (0,259) à 0,013 de l'estimation.
+  comparaison: >
+    Mésange (p. 41 du PDF, encadré 5) : 0,44, marqué (***) sans t imprimé ; Bunel et
+    L'Horty (2012), les bornes actuelles 0,31 et 0,52.
+
+jumeau_salaires_chomage:
+  estimation: 0.4673
+  ecart_type: 0.4264
+  source: >
+    Nijkamp et Poot, Tinbergen Institute DP 02-029/3 (2002 ; Journal of Economic Surveys
+    19(3), 2005), tableau 4, p. 33 du PDF : l'élasticité de la courbe des salaires au taux
+    de chômage corrigée du biais de publication (208 estimations), −0,077 (e.-t. 0,006),
+    l'hétérogénéité entre études σ = 0,070.
+  calcul: >
+    Une élasticité e au taux de chômage u (en points) est une semi-élasticité e / u ; au
+    taux de chômage BIT moyen de la période d'estimation de Mésange, 1989-2014, 9,154 %
+    (Insee, t. 302, ligne Total), −0,077 / 9,154 = −0,00841 par point ; le facteur b sur
+    le profil de Mésange (−0,018 agrégé, p. 64) : 0,00841 / 0,018 = 0,4673. L'écart-type :
+    √(0,006² + 0,070²) / 9,154 / 0,018 = 0,4264.
+  comparaison: >
+    Mésange (p. 63) : −0,020 et −0,015 à long terme, marqués (**) et (***), sans t
+    imprimé. La courbe des salaires est estimée sur des marchés locaux du travail ; la
+    semi-élasticité de Mésange est agrégée : la même grandeur, mesurée autrement.
+
+jumeau_consommation_profil:
+  sans_source: >
+    Deux profils publiés (Mésange p. 34 ; Insee, Note de conjoncture de juin 2019,
+    tableau 3), ni l'un ni l'autre avec un écart-type ; aucune méta-analyse française de
+    l'élasticité de la consommation au revenu par horizon n'a été trouvée.
+
+jumeau_consommation_pente_deciles:
+  sans_source: >
+    Aucune propension marginale à consommer le revenu par décile, avec un écart-type,
+    publiée pour la France n'a été trouvée (les estimations de la Banque de France et de
+    l'Insee portent sur la richesse).
+
+# L'offre de travail : chaque année de Bargain, Orsini et Peichl (IZA DP 6735, annexe F)
+# donne une estimation et son écart-type (`behavioural.bop`, la convention de D-220 : la
+# somme des élasticités propre et croisée pour un couple, l'écart-type de la somme borné
+# par la somme des écarts-types). La moyenne des deux années est le centre du magasin ;
+# l'écart-type : s² = (s₉₈² + s₀₁²) / 2 + ((e₉₈ − e₀₁) / 2)², l'incertitude de chaque
+# année plus leur désaccord, que l'article attribue à l'identification.
+labour_supply_married_women:
+  estimation: 0.09
+  ecart_type: 0.0424
+  source: >
+    Bargain, Orsini et Peichl, IZA DP 6735 (2012), tableau F.1, p. 67 du PDF : 1998,
+    0,23 (0,02) et −0,11 (0,01) ; 2001, 0,13 (0,01) et −0,07 (0,02).
+  calcul: e₉₈ = 0,12, s₉₈ = 0,03 ; e₀₁ = 0,06, s₀₁ = 0,03 ; s = √(0,0009 + 0,0009).
+  comparaison: >
+    Bargain et Peichl, IZA DP 7698 (2013), p. 10 du PDF : la moyenne des 90 élasticités
+    publiées pour les femmes en couple, 0,43, sans dispersion chiffrée ; au-dessus de la
+    borne haute (0,208).
+labour_supply_married_men:
+  estimation: 0.065
+  ecart_type: 0.0180
+  source: >
+    Bargain, Orsini et Peichl, IZA DP 6735 (2012), tableau F.3, p. 69 du PDF : 1998,
+    0,09 (0,01) et −0,01 (0,00) ; 2001, 0,06 (0,01) et −0,01 (0,00).
+  calcul: e₉₈ = 0,08, s₉₈ = 0,01 ; e₀₁ = 0,05, s₀₁ = 0,01 ; s = √(0,0001 + 0,000225).
+  comparaison: >
+    Bargain et Peichl (2013), p. 10 : 0,12 pour les hommes (84 estimations), dans la
+    plage.
+labour_supply_single_women:
+  estimation: 0.15
+  ecart_type: 0.0436
+  source: >
+    Bargain, Orsini et Peichl, IZA DP 6735 (2012), tableau F.5, p. 71 du PDF : 1998, 0,18
+    (0,04) ; 2001, 0,12 (0,02).
+  calcul: s = √((0,0016 + 0,0004) / 2 + 0,0009).
+  comparaison: >
+    Bargain et Peichl (2013), p. 10 : 0,23 pour les femmes seules sans enfant (31
+    estimations), dans la plage.
+labour_supply_single_men:
+  estimation: 0.14
+  ecart_type: 0.0354
+  source: >
+    Bargain, Orsini et Peichl, IZA DP 6735 (2012), tableau F.7, p. 73 du PDF : 1998, 0,14
+    (0,04) ; 2001, 0,14 (0,03).
+  calcul: s = √((0,0016 + 0,0009) / 2).
+  comparaison: >
+    Bargain et Peichl (2013), p. 10 : 0,12 pour les hommes, dans la plage.
+
+jumeau_emploi_public_part:
+  sans_source: >
+    Le centre est la convention de la variante de Mésange (note 75), non une estimation ;
+    les bornes sont choisies, non vérifiées.
+
+idees_creations:
+  sans_source: "Choisie, non vérifiée (D-407) : aucune estimation publiée."
+elasticite_creations:
+  estimation: 0.043
+  ecart_type: 0.051
+  source: >
+    Da Rin, Di Giacomo et Sembenelli, Journal of Public Economics 95 (2011), tableau 4
+    p. 40 du PDF et p. 21-22 : l'estimation intra-groupe, +0,107 point de taux d'entrée
+    du premier quartile (27,57 %) à la médiane (30,04 %) du TMEE, 0,043 par point (M0 de
+    la phase 11, D-245), le centre décidé par le propriétaire (D-427). Un panneau
+    national, la grandeur du bloc (une réponse de l'entrée au taux national).
+  calcul: >
+    L'écart-type de cet effet marginal n'est pas publié : il combine le coefficient du
+    TMEE et celui de son carré (−0,886 (0,16) et +0,015), dont la covariance n'est pas
+    imprimée. Est pris celui de l'estimation française de D-426, 0,051 (C1, CR1, 1 464
+    cellules région × secteur × année), la seule précision mesurée sur ε pour la France ;
+    un choix, dit (D-427). Loi sur θ : μ = ½, s₋ = 0,593, s₊ = 0,162.
+  comparaison: >
+    D-426 : ε = −0,056 ± 0,051, une estimation entre secteurs (les effets d'année
+    absorbent la réponse nationale) : une autre grandeur au sens de la règle (1), dite,
+    non utilisée comme estimation ; son intervalle à 95 % (−0,16 ; +0,04) touche le
+    centre. Les variables instrumentales de Da Rin et al. (0,356 par point) : l'ancienne
+    borne haute, au-dessus de la plage.
+fermetures_marges:
+  sans_source: >
+    Choisie, non vérifiée (D-407) : aucune estimation de la réponse des sorties des
+    sociétés françaises à leurs marges après impôt n'est au manifeste.
+survie_creations:
+  sans_source: >
+    Le centre (SINE, 0,6^(1/5)) est un taux observé, non une estimation dont
+    l'écart-type dirait l'incertitude du paramètre ; la plage est choisie (D-402).
+montee_en_charge_creations:
+  sans_source: "Choisie, non vérifiée (D-402) : aucune loi publiée."
+taille_creations:
+  sans_source: "Choisie, non vérifiée (D-402) : aucune loi publiée."
+
+investissement_cout_capital:
+  estimation: 0.30
+  ecart_type: 0.1556
+  source: >
+    Gechert, Havranek, Irsova et Kolcunova (version d'avril 2021 ; Review of Economic
+    Dynamics 45, 2022), tableau 9, p. 35 du PDF : l'élasticité de substitution entre le
+    capital et le travail de la meilleure pratique (3 186 estimations, 121 études,
+    corrigée du biais de publication), 0,30, IC à 95 % (−0,01 ; 0,60). Dans Mésange,
+    l'élasticité de l'investissement au coût réel du capital est celle de la demande de
+    facteurs à son coût (p. 39 et 44), σ d'une fonction CES.
+  calcul: (0,60 + 0,01) / (2 × 1,96) = 0,1556.
+  comparaison: >
+    Mésange (p. 44 du PDF) : −0,44 calibrée, −0,37 en estimation libre, sans t imprimé.
+
+investissement_accelerateur:
+  estimation: 1.19
+  ecart_type: 0.1725
+  source: >
+    Insee, Mésange (G2017-04), p. 44 du PDF : β₀ = 1,19 (t = 6,9) ; β₁ = 0,65 (t = 4,3),
+    qui bouge avec lui. La plage du bloc est déjà ∓ 1,96 écart-type de β₀.
+  calcul: 1,19 / 6,9 = 0,1725 ; θ ~ N(½ ; 1 / (2 × 1,96)).
+
+implantation_tmee:
+  estimation: 0.478
+  ecart_type: 0.1285
+  source: >
+    Devereux et Lockwood (2006), tableau 2, colonne 1, p. 25 du PDF : −0,478 (t = 3,72).
+  calcul: 0,478 / 3,72 = 0,1285.
+  comparaison: >
+    Hanappi, Millot et Turban (OCDE 2023), tableau 1 : une sensibilité nulle après 2009,
+    la borne basse du bloc.

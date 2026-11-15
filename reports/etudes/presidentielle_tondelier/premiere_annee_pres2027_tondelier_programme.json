@@ -710,14 +710,14 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "build_s": 4.06,
-      "baseline_s": 46.37,
-      "reform_s": 56.3,
-      "total_s": 120.31
+      "build_s": 3.32,
+      "baseline_s": 37.71,
+      "reform_s": 43.61,
+      "total_s": 202.21
     }
   },
-  "computed": "2026-11-12",
-  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "computed": "2026-11-13",
+  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
   "dirty": false,
   "where": "conteneur cloud, 15 Go, 4 cœurs, deux files"
 }

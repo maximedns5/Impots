@@ -29,8 +29,8 @@ tourner la loi deux fois sur la même population de ménages et d'entreprises, u
 qu'elle est, une fois avec la mesure, et compte ce qui change. Le coût de la première année
 est cette différence, rien d'autre : la première des trois réponses de chaque étude, et la
 plus sûre. Son erreur est celle de la base qu'il touche, et la page le montre sur deux
-mesures, avec les nombres de la série du 2026-11-12 (commit
-<a href="https://github.com/maximedns5/Impots/commit/aa222933c3d6eba95a599d1da84d4e99ee2443a8"><code>aa22293</code></a>).</p>
+mesures, avec les nombres de la série du 2026-11-13 (commit
+<a href="https://github.com/maximedns5/Impots/commit/5a68669f34e27067b0f00445c40087432d97f161"><code>5a68669</code></a>).</p>
 
 <h2 id="attal">Attal, « Droit au brut », pas à pas</h2>
 <p>Le candidat énonce un gain, pas un taux. L'outil le traduit en un bouton, et le dit :</p>
@@ -49,10 +49,10 @@ dépend du salaire. Chaque terme est une différence entre deux totaux du
 <p><strong>Ce que ce coût ne contient pas.</strong> Aucun comportement :
 « Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement <a class="terme" href="methode.html#mecanique">mécanique</a>. » (<a href="parcours-4-comportements.html">page 4</a>). Aucun effet sur
 l'activité : c'est la <a href="parcours-5-activite.html">page 5</a>. La dette de 2035 part de ce coût :
-<span class="nombre">+20,45 pt</span><a class="etage e-l2" href="#etage-l2" title="simulation mécanique : qui paie quoi le premier jour, personne ne change de comportement">L2, sous hypothèses</a> sans aucune boucle, puis
+<span class="nombre">+20,44 pt</span><a class="etage e-l2" href="#etage-l2" title="simulation mécanique : qui paie quoi le premier jour, personne ne change de comportement">L2, sous hypothèses</a> sans aucune boucle, puis
 <span class="nombre">−3,09 pt</span><a class="etage e-l4" href="#etage-l4" title="ordre de grandeur macroéconomique, en éventail : large par construction, et souvent indisponible">L4, sous hypothèses</a> par le PIB plus haut et
 <span class="nombre">−13,08 pt</span><a class="etage e-l4" href="#etage-l4" title="ordre de grandeur macroéconomique, en éventail : large par construction, et souvent indisponible">L4, sous hypothèses</a> par les recettes que l'activité rend, soit
-<span class="nombre">+4,28 pt</span><a class="etage e-l4" href="#etage-l4" title="ordre de grandeur macroéconomique, en éventail : large par construction, et souvent indisponible">L4, sous hypothèses</a> (<a class="fichier" href="https://github.com/maximedns5/Impots/blob/main/reports/etudes/presidentielle_attal/predictif_pres2027_attal_programme.json"><code>le chemin annuel</code></a>,
+<span class="nombre">+4,27 pt</span><a class="etage e-l4" href="#etage-l4" title="ordre de grandeur macroéconomique, en éventail : large par construction, et souvent indisponible">L4, sous hypothèses</a> (<a class="fichier" href="https://github.com/maximedns5/Impots/blob/main/reports/etudes/presidentielle_attal/predictif_pres2027_attal_programme.json"><code>le chemin annuel</code></a>,
 <a href="parcours-6-dette.html">page 6</a>).</p>
 <p><strong>L'erreur de ce coût est celle de son assiette.</strong> La <a class="terme" href="methode.html#grille">grille de vérification</a>
 compare le total des cotisations des salariés du moteur à celui des comptes nationaux
@@ -199,7 +199,7 @@ donné à ce bouton, la loi intacte autour. Ces passes sont dans la vue vieillie
 la convention « vieillie » du tableau de passage, pas celle de la « première année ».</p>
 <div class="curseur"><label for="bouton-cotisations">Cotisations retraite des salariés : la part gardée</label><input type="range" id="bouton-cotisations" min="0" max="4" step="1" value="1"><output id="bouton-cotisations-x" class="num">0,22</output></div><p class="lecture"><span id="bouton-cotisations-dit">on garde 22 %, le bouton d'Attal</span> : <strong id="bouton-cotisations-cout">+66,40 Md€</strong> pour les ménages, en 2026, vue vieillie (la convention « vieillie » du tableau de passage).</p><div class="curseur"><label for="bouton-tva_energie">TVA sur l'énergie : le taux</label><input type="range" id="bouton-tva_energie" min="0" max="2" step="1" value="1"><output id="bouton-tva_energie-x" class="num">0,055</output></div><p class="lecture"><span id="bouton-tva_energie-dit">TVA à 5,5 %, le bouton de Le Pen</span> : <strong id="bouton-tva_energie-cout">+11,64 Md€</strong> pour les ménages, en 2026, vue vieillie (la convention « vieillie » du tableau de passage).</p><noscript><p>Sans JavaScript, le curseur ne bouge pas : chaque point qu'il choisirait est dans les tableaux ci-dessous.</p></noscript>
 
-<p>Chaque point est une passe de la série, sur le commit <a href="https://github.com/maximedns5/Impots/commit/aa222933c3d6eba95a599d1da84d4e99ee2443a8"><code>aa22293</code></a> des études : les
+<p>Chaque point est une passe de la série, sur le commit <a href="https://github.com/maximedns5/Impots/commit/5a68669f34e27067b0f00445c40087432d97f161"><code>5a68669</code></a> des études : les
 « plages » de chaque étude, qui chiffrent un bouton à son bas, à la valeur du candidat et à
 son haut, la loi intacte autour. Le curseur choisit un point ; il ne calcule rien et
 n'interpole pas entre deux points. Les coûts sont dans la vue vieillie, la population de

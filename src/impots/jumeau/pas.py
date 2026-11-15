@@ -1,0 +1,412 @@
+"""Le pas annuel (CADRE.md §3) : entrées, blocs, point fixe, fermeture des comptes,
+identités.
+
+`pas(etat_prec, ...) -> etat_t` :
+
+1. les ENTRÉES exogènes de l'année (`Entrees`) : croissance réelle et prix, règle de
+   dépense, taux de la dette de référence et taux marginal, nommés comme `dette.scenarios`
+   les nomme ;
+2. les CHOCS STATIQUES des mesures s'inscrivent sur leurs champs : c'est le bloc
+   `mesures`, qui tourne avant ceux qui les lisent ;
+3. les BLOCS tournent dans l'ordre du `Modele`. Une boucle simultanée, déclarée comme
+   telle, se résout par point fixe de Gauss-Seidel : tolérance 1e-10 en relatif, 100
+   itérations au plus ; sinon le pas refuse en nommant le bloc et le champ ;
+4. le CADRE FERME LES COMPTES, et lui seul (`fermer`). Le PIB d'abord, pour un bloc
+   structurel (D-411) : la somme signée des emplois qu'il écrit, par mesure, sous son
+   origine, dès qu'il a tourné (les blocs suivants et le point fixe la lisent) ; aucun
+   bloc structurel n'écrit `pib`, et seuls la tendance, les blocs réduits (`mesange`,
+   `creations`, qui n'impriment que la ligne du PIB) et les blocs sans canal l'écrivent
+   eux-mêmes. Puis, à la fin du pas : les recettes et les dépenses
+   primaires, les intérêts nets aux taux du scénario, B9, le solde primaire, la dette
+   d'ouverture et de fin d'année, le ratio, le taux implicite, la croissance du PIB en
+   volume chaînée ;
+5. les IDENTITÉS sont vérifiées (`identites.verifier`), continuité de la dette comprise.
+
+LES INTÉRÊTS, PAR ORIGINE. La dette de fin d'année se décompose par (origine, mesure)
+comme tout champ additif. La part de référence (le départ publié et la trajectoire de
+`tendance`) est chargée au taux de référence de l'année ; toute autre part, la dette
+qu'ajoutent les mesures, au taux marginal du scénario : c'est `chaine.run`, où la dette
+ajoutée suit ΔD_t = ΔD_{t−1}(1 + m) + Δcoût_t. Chaque mesure porte ainsi les intérêts de
+sa propre dette, et la décomposition de Δb se somme sans reste.
+
+Le pas ne lit aucun fichier et n'utilise ni pandas ni OpenFisca.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from typing import Any, Protocol
+
+import numpy as np
+
+from impots.jumeau import canaux, identites
+from impots.jumeau.champs import (
+    DEPENSES,
+    EMPLOIS,
+    EMPLOIS_EN_VOLUME,
+    FERMES,
+    RECETTES,
+    REGISTRE,
+)
+from impots.jumeau.champs import champ as definition
+from impots.jumeau.etat import ChampAbsent, Cle, Etat
+
+#: Le registre, réduit à ce que l'écriture d'un bloc consulte à chaque champ.
+ADDITIFS = {nom: c.additif for nom, c in REGISTRE.items()}
+SIGNES_EMPLOIS = tuple((nom, REGISTRE[nom].signe) for nom in EMPLOIS)
+#: Les origines dont la dette se charge au taux de référence.
+ORIGINES_REFERENCE = frozenset({"depart", "publie", "tendance"})
+TOLERANCE_POINT_FIXE = 1e-10
+ITERATIONS_MAX = 100
+REGLES = ("part_pib_constante", "gele_en_volume", "personnalise")
+
+
+class PasError(ValueError):
+    """Un pas, ou un modèle, que le cadre refuse."""
+
+
+class NonConvergence(PasError):
+    """Le point fixe d'une boucle ne converge pas."""
+
+
+# --------------------------------------------------------------------------- #
+# les entrées exogènes
+# --------------------------------------------------------------------------- #
+@dataclass(frozen=True)
+class Entrees:
+    """Les scénarios nommés, une valeur par année de la trajectoire."""
+
+    annees: tuple[int, ...]
+    croissance_reelle: tuple[float, ...]
+    prix: tuple[float, ...]
+    regle_depense: str
+    croissance_depense: float | None
+    taux_reference: tuple[float, ...]
+    taux_marginal: float
+    noms: Mapping[str, str]
+
+    def __post_init__(self) -> None:
+        k = len(self.annees)
+        for nom, serie in (("croissance réelle", self.croissance_reelle),
+                           ("prix", self.prix), ("taux de référence", self.taux_reference)):
+            if len(serie) != k:
+                raise PasError(f"{nom} : {len(serie)} valeurs pour {k} années")
+        if self.regle_depense not in REGLES:
+            raise PasError(f"règle de dépense « {self.regle_depense} » inconnue")
+        if self.regle_depense == "personnalise" and self.croissance_depense is None:
+            raise PasError("règle « personnalise » sans croissance de la dépense")
+
+    def nominale(self, k: int) -> float:
+        return (1.0 + self.croissance_reelle[k]) * (1.0 + self.prix[k]) - 1.0
+
+    def facteur_depense(self, k: int) -> float:
+        """s_t / s_{t−1}, la règle de `dette.reference`."""
+        nominale = self.nominale(k)
+        if self.regle_depense == "part_pib_constante":
+            return 1.0
+        if self.regle_depense == "gele_en_volume":
+            return (1.0 + self.prix[k]) / (1.0 + nominale)
+        return (1.0 + float(self.croissance_depense)) / (1.0 + nominale)
+
+    @classmethod
+    def depuis_rejeu(cls, rejeu: Mapping[str, Any], annees: Sequence[int]) -> Entrees:
+        """Les scénarios qu'un rapport porte (`rejeu.cadre`, D-336)."""
+        cadre = rejeu["cadre"]
+        k = len(annees)
+        taux = [float(t) for t in cadre["taux"]["reference"]]
+        if len(taux) < k:
+            raise PasError(f"le rapport porte {len(taux)} taux pour {k} années")
+        return cls(annees=tuple(annees),
+                   croissance_reelle=(float(cadre["growth"]["real"]),) * k,
+                   prix=(float(cadre["growth"]["prices"]),) * k,
+                   regle_depense=cadre["spending"]["rule"],
+                   croissance_depense=cadre["spending"].get("growth"),
+                   taux_reference=tuple(taux[:k]),
+                   taux_marginal=float(cadre["taux"]["marginal"]),
+                   noms={"taux": cadre["taux"]["kind"]})
+
+
+# --------------------------------------------------------------------------- #
+# les blocs et le modèle
+# --------------------------------------------------------------------------- #
+class Bloc(Protocol):
+    nom: str
+    lit: tuple[str, ...]
+    ecrit: tuple[str, ...]
+    thetas: tuple[str, ...]
+
+    def contribue(self, ctx: Contexte) -> Mapping[str, Mapping[str, Any]]:
+        """{champ: {mesure: tableau}}, la mesure « » pour une contribution qui n'est
+        celle d'aucune mesure."""
+
+
+class Modele:
+    """Des blocs dans un ordre, et leurs boucles simultanées déclarées.
+
+    REFUSÉ À LA CONSTRUCTION : un champ inconnu du registre ; un bloc qui écrit un champ
+    que le cadre ferme ; un champ non additif écrit par deux blocs ; un bloc qui lit un
+    champ qu'aucun bloc antérieur n'écrit, hors d'une boucle déclarée qui l'écrit ; un
+    canal porté par deux blocs pour un même instrument (`canaux.verifier`, CADRE.md §4 bis,
+    D-411) ; un bloc structurel qui écrit `pib`, que le cadre ferme pour lui (D-411).
+
+    `pib_par_le_cadre` : les blocs structurels qui écrivent des emplois, dont le cadre
+    ferme le PIB."""
+
+    def __init__(self, blocs: Sequence[Bloc],
+                 boucles: Sequence[Sequence[str]] = ()) -> None:
+        noms = [b.nom for b in blocs]
+        if len(set(noms)) != len(noms):
+            raise PasError(f"blocs en double : {noms}")
+        reserves = {"depart", "publie", "cadre"}
+        if reserves & set(noms):
+            raise PasError(f"noms réservés à l'origine des contributions : {reserves}")
+        self.blocs = tuple(blocs)
+        self.canaux = canaux.verifier(blocs)
+        structurels = [b for b in blocs if canaux.structurel(b)]
+        for bloc in structurels:
+            if "pib" in bloc.ecrit:
+                raise PasError(f"bloc structurel « {bloc.nom} » : écrit « pib », que le "
+                               f"cadre ferme comme la somme de ses emplois (D-411)")
+        self.pib_par_le_cadre = frozenset(
+            b.nom for b in structurels if set(b.ecrit) & set(EMPLOIS))
+        position = {b.nom: i for i, b in enumerate(blocs)}
+        groupes: list[list[Bloc]] = []
+        dans_boucle: dict[str, int] = {}
+        for numero, boucle in enumerate(boucles):
+            membres = sorted(position[n] for n in boucle)
+            if membres != list(range(membres[0], membres[0] + len(membres))):
+                raise PasError(f"boucle {list(boucle)} : ses blocs doivent se suivre")
+            for n in boucle:
+                dans_boucle[n] = numero
+        i = 0
+        while i < len(blocs):
+            numero = dans_boucle.get(blocs[i].nom)
+            if numero is None:
+                groupes.append([blocs[i]])
+                i += 1
+            else:
+                groupe = [b for b in blocs if dans_boucle.get(b.nom) == numero]
+                groupes.append(groupe)
+                i += len(groupe)
+        self.groupes = tuple(tuple(g) for g in groupes)
+        self.boucles = {i for i, g in enumerate(self.groupes)
+                        if any(b.nom in dans_boucle for b in g)}
+        ecrits: dict[str, str] = {}
+        for g, groupe in enumerate(self.groupes):
+            dans_groupe = {c for b in groupe for c in self.ecrit_par(b)}
+            for bloc in groupe:
+                for nom in (*bloc.lit, *bloc.ecrit):
+                    definition(nom)
+                fermes = sorted(set(bloc.ecrit) & set(FERMES))
+                if fermes:
+                    raise PasError(f"bloc « {bloc.nom} » : écrit {fermes}, que le cadre "
+                                   f"seul ferme")
+                for nom in bloc.lit:
+                    permis = nom in ecrits or (g in self.boucles and nom in dans_groupe)
+                    if not permis:
+                        raise PasError(f"bloc « {bloc.nom} » : lit « {nom} », qu'aucun "
+                                       f"bloc antérieur n'écrit")
+            for bloc in groupe:
+                for nom in self.ecrit_par(bloc):
+                    if not REGISTRE[nom].additif and nom in ecrits:
+                        raise PasError(f"« {nom} » n'est pas additif et deux blocs "
+                                       f"l'écrivent ({ecrits[nom]}, {bloc.nom})")
+                    ecrits.setdefault(nom, bloc.nom)
+        self.ecrits = dict(ecrits)
+
+    def ecrit_par(self, bloc: Bloc) -> tuple[str, ...]:
+        """Les champs où un bloc a des contributions : les siens, et le PIB que le cadre
+        ferme pour lui."""
+        if bloc.nom in self.pib_par_le_cadre:
+            return (*bloc.ecrit, "pib")
+        return tuple(bloc.ecrit)
+
+
+# --------------------------------------------------------------------------- #
+# le contexte d'un bloc
+# --------------------------------------------------------------------------- #
+class Contexte:
+    """Ce qu'un bloc voit d'une année : ses lectures déclarées de l'année, tout le passé
+    de la trajectoire, la référence, les entrées, les mesures et θ."""
+
+    def __init__(self, *, annee: int, k: int, n: int, theta: Mapping[str, Any],
+                 entrees: Entrees, prec: Etat, courant: Etat, historique: Sequence[Etat],
+                 reference: Sequence[Etat] | None, mesures: Sequence[Any],
+                 depart: Etat) -> None:
+        self.annee, self.k, self.n = annee, k, n
+        self.theta, self.entrees = theta, entrees
+        self.prec, self.courant = prec, courant
+        self.historique, self.reference = historique, reference
+        self.mesures, self.depart = mesures, depart
+        self.bloc: Bloc | None = None
+        self.amorce: dict[str, np.ndarray] = {}
+
+    def _permis(self, nom: str) -> None:
+        if self.bloc is not None and nom not in self.bloc.lit:
+            raise PasError(f"bloc « {self.bloc.nom} » : lit « {nom} » sans le déclarer")
+
+    def lire(self, nom: str) -> np.ndarray:
+        """Un champ de l'année, déclaré dans `lit`."""
+        self._permis(nom)
+        if not self.courant.present(nom) and nom in self.amorce:
+            return self.amorce[nom]
+        return self.courant[nom]
+
+    def par_mesure(self, nom: str) -> dict[str, np.ndarray]:
+        """Un champ de l'année, déclaré dans `lit`, par mesure."""
+        self._permis(nom)
+        return self.courant.par_mesure(nom)
+
+    def passe(self, j: int) -> Etat:
+        """L'état de l'année j < k de la trajectoire."""
+        if not 0 <= j < self.k:
+            raise PasError(f"année {j} : le passé va de 0 à {self.k - 1}")
+        return self.historique[j]
+
+    def pib_reference(self, j: int) -> np.ndarray:
+        """Le PIB de la trajectoire de référence à l'année j ≤ k. Dans la référence
+        elle-même, à l'année k, le PIB écrit par les blocs qui ont déjà tourné."""
+        if self.reference is not None:
+            return self.reference[j]["pib"]
+        return self.courant["pib"] if j == self.k else self.passe(j)["pib"]
+
+
+# --------------------------------------------------------------------------- #
+# le pas
+# --------------------------------------------------------------------------- #
+def _ecrire(etat: Etat, bloc: Bloc, contributions: Mapping[str, Mapping[str, Any]],
+            ferme_pib: bool = False) -> None:
+    inattendus = sorted(set(contributions) - set(bloc.ecrit))
+    if inattendus:
+        raise PasError(f"bloc « {bloc.nom} » : écrit {inattendus}, non déclarés")
+    etat.retirer(bloc.nom)
+    vides: dict[str, Any] = {}
+    noms, ecrits = [], []
+    presents = etat.valeurs
+    for nom in bloc.ecrit:
+        parts = contributions.get(nom, vides)
+        if ADDITIFS[nom]:
+            if nom not in presents:
+                etat.declarer(nom)
+            if parts:
+                noms.append(nom)
+                ecrits.append(etat.ecrire_origine(bloc.nom, nom, parts))
+        else:
+            if set(parts) != {""}:
+                raise PasError(f"bloc « {bloc.nom} » : « {nom} » n'est pas additif, une "
+                               f"seule valeur, sous la clé « »")
+            etat.fixer(nom, parts[""])
+    etat.verifier_finis(noms, ecrits)
+    if ferme_pib:
+        # Le PIB du bloc structurel, fermé par le cadre : la somme signée de ses
+        # emplois, par mesure, sous son origine (D-411).
+        pib: dict[str, Any] = {}
+        for nom, signe in SIGNES_EMPLOIS:
+            for mesure, valeur in contributions.get(nom, vides).items():
+                pib[mesure] = pib[mesure] + signe * valeur if mesure in pib \
+                    else signe * valeur
+        etat.declarer("pib")
+        for mesure, valeur in pib.items():
+            etat.ecrire("pib", (bloc.nom, mesure), valeur)
+
+
+def _tourner(etat: Etat, groupe: Sequence[Bloc], ctx: Contexte, boucle: bool,
+             modele: Modele) -> None:
+    if not boucle:
+        ctx.bloc = groupe[0]
+        _ecrire(etat, groupe[0], groupe[0].contribue(ctx),
+                groupe[0].nom in modele.pib_par_le_cadre)
+        ctx.bloc = None
+        return
+    champs = list(dict.fromkeys(c for b in groupe for c in modele.ecrit_par(b)))
+    ctx.amorce = {c: (ctx.prec[c] if ctx.prec.present(c) else np.zeros(ctx.n))
+                  for c in champs}
+    avant = None
+    for _ in range(ITERATIONS_MAX):
+        for bloc in groupe:
+            ctx.bloc = bloc
+            _ecrire(etat, bloc, bloc.contribue(ctx), bloc.nom in modele.pib_par_le_cadre)
+        ctx.bloc = None
+        # Les champs de la boucle, empilés : un seul calcul vectorisé de l'écart relatif
+        # de chacun (le même nombre, et le même premier pire, qu'un calcul par champ).
+        apres = np.stack([etat[c] for c in champs])
+        if avant is not None:
+            ecarts = np.max(np.abs(apres - avant) / np.maximum(np.abs(apres), 1.0), axis=1)
+            rang = int(np.argmax(ecarts))
+            pire, ecart = champs[rang], float(ecarts[rang])
+            if ecart <= TOLERANCE_POINT_FIXE:
+                ctx.amorce = {}
+                return
+        avant = apres
+    auteur = next(b.nom for b in groupe if pire in modele.ecrit_par(b))
+    raise NonConvergence(f"point fixe sans convergence en {etat.annee} après "
+                         f"{ITERATIONS_MAX} itérations : bloc « {auteur} », champ « {pire} » "
+                         f"(écart relatif {ecart:.3e})")
+
+
+def _somme_par_cle(etat: Etat, noms: Sequence[str], signes: Sequence[float]
+                   ) -> dict[Cle, np.ndarray]:
+    out: dict[Cle, np.ndarray] = {}
+    for nom, signe in zip(noms, signes, strict=True):
+        for cle, valeur in etat.de(nom).items():
+            out[cle] = out[cle] + signe * valeur if cle in out else signe * valeur
+    return out
+
+
+def fermer(etat: Etat, prec: Etat, entrees: Entrees, k: int) -> None:
+    """Le cadre ferme les comptes (§3.4), contribution par contribution."""
+    recettes = _somme_par_cle(etat, RECETTES, [1.0] * len(RECETTES))
+    depenses = _somme_par_cle(etat, DEPENSES, [1.0] * len(DEPENSES))
+    ouverture = dict(prec.de("dette"))
+    interets = {cle: (entrees.taux_reference[k] if cle[0] in ORIGINES_REFERENCE
+                      else entrees.taux_marginal) * d for cle, d in ouverture.items()}
+    etat.copier_contributions("apu_recettes", recettes)
+    etat.copier_contributions("apu_depenses_primaires", depenses)
+    etat.copier_contributions("interets_nets", interets)
+    zero = np.zeros(etat.n)
+    # Les clés dans un ordre fixe (trié) : l'ordre d'un ensemble change d'un processus à
+    # l'autre (`PYTHONHASHSEED`), et avec lui le dernier bit des sommes de B9 et de la
+    # dette (D-411, corrigé par D-412).
+    cles = sorted(set(recettes) | set(depenses) | set(interets))
+    b9 = {c: recettes.get(c, zero) - depenses.get(c, zero) - interets.get(c, zero)
+          for c in cles}
+    etat.copier_contributions("b9", b9)
+    etat.copier_contributions("solde_primaire",
+                              {c: b9[c] + interets.get(c, zero) for c in cles})
+    etat.copier_contributions("dette_ouverture", ouverture)
+    flux = _somme_par_cle(etat, ("sfa", "ecart_millesime_dette", "ecart_eurostat"),
+                          (1.0, 1.0, 1.0))
+    cles_dette = sorted(set(ouverture) | set(b9) | set(flux))
+    etat.copier_contributions("dette", {
+        c: ouverture.get(c, zero) - b9.get(c, zero) + flux.get(c, zero) for c in cles_dette})
+    etat.fixer("ratio_dette", etat["dette"] / etat["pib"])
+    etat.fixer("taux_implicite", etat["interets_nets"] / etat["dette_ouverture"])
+    try:
+        volume = np.zeros(etat.n)
+        for nom in EMPLOIS_EN_VOLUME:
+            signe = REGISTRE[nom].signe
+            volume = volume + signe * (etat[nom] / etat[f"prix_{nom}"] - prec[nom])
+        etat.fixer("croissance_volume_pib", volume / prec["pib"])
+    except ChampAbsent:
+        # Sans les prix ou les emplois de l'an passé, le volume n'est pas calculé :
+        # absent, et tout ce qui le lit refuse en le nommant.
+        pass
+
+
+def pas(prec: Etat, *, annee: int, k: int, entrees: Entrees, mesures: Sequence[Any],
+        theta: Mapping[str, Any], modele: Modele, historique: Sequence[Etat],
+        reference: Sequence[Etat] | None, depart: Etat) -> Etat:
+    """L'état de l'année `annee`, la k-ième de la trajectoire, depuis l'état `prec`."""
+    if entrees.annees[k] != annee:
+        raise PasError(f"année {annee} au rang {k}, les entrées y portent "
+                       f"{entrees.annees[k]}")
+    etat = Etat(annee, prec.n)
+    ctx = Contexte(annee=annee, k=k, n=prec.n, theta=theta, entrees=entrees, prec=prec,
+                   courant=etat, historique=historique, reference=reference,
+                   mesures=mesures, depart=depart)
+    for g, groupe in enumerate(modele.groupes):
+        _tourner(etat, groupe, ctx, g in modele.boucles, modele)
+    fermer(etat, prec, entrees, k)
+    identites.verifier(etat, prec)
+    return etat

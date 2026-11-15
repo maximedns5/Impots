@@ -1,0 +1,1945 @@
+# La base des mesures fiscales et sociales votées, de 2010 à 2026, par gouvernement
+# (but 23, lot 5, D-410). Lue par `jumeau/votees.py`.
+#
+# CE QUE LA BASE PORTE : le droit voté. Pour chaque mesure, le texte (loi, ordonnance ou
+# décret, son numéro et sa date de promulgation ou de signature), l'article, l'instrument,
+# les paramètres que le texte change (avant, après) et l'année d'effet. Le gouvernement
+# est celui en fonction à la date du texte, selon la frise de `gouvernements.yaml` (une
+# loi de finances préparée par un gouvernement et promulguée sous le suivant est au
+# suivant ; la note le dit).
+#
+# CE QU'ELLE NE PORTE PAS, ET NE DOIT JAMAIS PORTER : ce que la mesure a coûté ou
+# rapporté. Aucun montant budgétaire, aucune évaluation préalable de PLF ou de PLFSS,
+# aucun chiffrage de tiers : ce sont les juges du passé (D-359 à D-361), que le lot 6
+# préenregistrera avant de les ouvrir. Les seuls montants sont des paramètres du droit
+# (un seuil, un plafond, un abattement), écrits en euros entiers. Un test le vérifie.
+#
+# LE SENS (`sens`, D-421 amendé), dit pour chaque mesure d'un prélèvement : hausse ou baisse
+# du paramètre appliqué d'une année à l'autre, tel que le texte le fixe ; mixte, des
+# paramètres en sens contraires ; neutre, un barème indexé ou une date de recouvrement.
+# Une étape peut dire le sien (la fin d'une contribution temporaire). Lu dans les
+# paramètres ci-dessous, relus au JO ; aucun montant.
+#
+# LA VÉRIFICATION, dite mesure par mesure (`verification`, D-413) :
+# * `statut` : « vérifiée » quand la loi, l'article, les paramètres et la date d'effet ont
+#   été relus sur une source primaire ; « non vérifiée » sinon, avec la `raison` ;
+# * `sources` : l'URL de chaque article lu au Journal officiel (Légifrance, forme
+#   /jorf/article_jo/JORFARTI…) ;
+# * `lu_sur` : Légifrance refusant la session (403), le texte a été lu dans l'archive du
+#   Journal officiel que publie la DILA (echanges.dila.gouv.fr/OPENDATA/JORF, fichier
+#   Freemium_jorf_global du 8 novembre 2026) : le texte publié au JO, article par article,
+#   sous le même identifiant que l'URL ;
+# * `note` : ce que la loi lue ne dit pas (un « avant » fixé par décret ou par une loi hors
+#   de l'archive), ou la confirmation antérieure sur codes.droit.org (D-410).
+#
+# Les instruments (vocabulaire fermé, `votees.INSTRUMENTS`) : ir, ir_capital, csg,
+# cotisations_employeurs, cotisations_salaries, cice, is, impots_production, tva,
+# accises_energie, taxe_habitation, patrimoine, transmission, prestations, retraites,
+# remunerations, autres_impots. Les statuts (`votees.STATUTS`) : en_vigueur, remplacee
+# (par une mesure suivante, `suite`), temporaire, suspendue, abrogee, abrogee_avant_effet,
+# censuree.
+
+mesures:
+
+  # ------------------------------------------------------------------ Fillon II
+  - id: lfi2010_taxe_professionnelle
+    gouvernement: fillon_2
+    intitule: Suppression de la taxe professionnelle, remplacée par la contribution économique territoriale
+    instrument: impots_production
+    sens: baisse
+    texte: {nature: loi, numero: 2009-1673, date: 2009-12-30, intitule: loi de finances pour 2010}
+    article: "2"
+    codification: CGI, art. 1447-0, 1586 ter et suivants
+    annee_effet: 2010
+    parametres:
+      - {quoi: "taxe professionnelle", avant: "assise sur les valeurs locatives et, jusqu'en 2009, les équipements et biens mobiliers", apres: supprimée}
+      - {quoi: "cotisation foncière des entreprises (CFE)", avant: néant, apres: "assise sur les valeurs locatives foncières"}
+      - {quoi: "cotisation sur la valeur ajoutée des entreprises (CVAE)", avant: néant, apres: "1,5 % de la valeur ajoutée, taux effectif progressif selon le chiffre d'affaires (nul sous 500 000 €)"}
+    statut: remplacee
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000021557915
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: retraites_2010_age_legal
+    gouvernement: fillon_2
+    intitule: Relèvement de l'âge d'ouverture des droits à la retraite de 60 à 62 ans
+    instrument: retraites
+    texte: {nature: loi, numero: 2010-1330, date: 2010-11-09, intitule: loi portant réforme des retraites}
+    article: "18"
+    codification: CSS, art. L. 161-17-2
+    annee_effet: 2011
+    date_effet: 2011-07-01
+    parametres:
+      - {quoi: "âge d'ouverture des droits", avant: 60 ans, apres: "62 ans pour les assurés nés à compter de 1956, l'âge des générations antérieures relevé de 4 mois par génération ; accéléré à 5 mois et 62 ans atteints dès la génération 1955 par la LFSS 2012 (loi n° 2011-1906, art. 88), à partir des assurés nés le 1er juillet 1951"}
+    statut: remplacee
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000023022403
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000025006415
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: retraites_2010_taux_plein
+    gouvernement: fillon_2
+    intitule: Relèvement de l'âge d'annulation de la décote de 65 à 67 ans
+    instrument: retraites
+    texte: {nature: loi, numero: 2010-1330, date: 2010-11-09, intitule: loi portant réforme des retraites}
+    article: "20"
+    codification: CSS, art. L. 351-8
+    annee_effet: 2016
+    parametres:
+      - {quoi: "âge du taux plein automatique", avant: 65 ans, apres: "67 ans, au même rythme que l'âge d'ouverture"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000023022409
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  # ------------------------------------------------------------------ Fillon III
+  - id: lfi2011_tranche_41
+    gouvernement: fillon_3
+    intitule: Taux marginal de l'impôt sur le revenu porté de 40 à 41 % et prélèvements forfaitaires relevés d'un point
+    instrument: ir
+    sens: hausse
+    texte: {nature: loi, numero: 2010-1657, date: 2010-12-29, intitule: loi de finances pour 2011}
+    article: "6"
+    codification: CGI, art. 197 et 117 quater
+    annee_effet: 2011
+    parametres:
+      - {quoi: "taux de la dernière tranche du barème", avant: 40 %, apres: 41 %}
+      - {quoi: "prélèvement forfaitaire libératoire sur les dividendes et les intérêts", avant: 18 %, apres: 19 %}
+      - {quoi: "taux proportionnel des plus-values de cession de valeurs mobilières (CGI, art. 200 B)", avant: 16 %, apres: 19 %}
+    statut: remplacee
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000023314406
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2011_isf_bouclier
+    gouvernement: fillon_3
+    intitule: Réforme de l'ISF et suppression du bouclier fiscal
+    instrument: patrimoine
+    sens: mixte
+    texte: {nature: loi, numero: 2011-900, date: 2011-07-29, intitule: loi de finances rectificative pour 2011}
+    article: "1 et 30"
+    codification: CGI, art. 885 A et 885 U (anciens) ; art. 1649-0 A (abrogé)
+    annee_effet: 2011
+    parametres:
+      - {quoi: "seuil d'assujettissement à l'ISF", avant: "800 000 €", apres: "1 300 000 €"}
+      - {quoi: "barème de l'ISF", avant: "six tranches de 0,55 % à 1,80 %", apres: "0,25 % du patrimoine taxable sous 3 000 000 €, 0,50 % au-delà, sur la totalité"}
+      - {quoi: "bouclier fiscal (droit à restitution au-delà de 50 % des revenus)", avant: en vigueur, apres: "appliqué pour la dernière fois aux revenus de 2010 (droit à restitution acquis au 1er janvier 2012)"}
+    statut: remplacee
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000024413782
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000024413957
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026289008
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Le barème d'avant 2011 (0,55 % à 1,80 %, à partir de 800 000 €) est relu dans la contribution exceptionnelle de 2012 (loi n° 2012-958, art. 4), qui le reprend."
+
+  - id: lfi2012_cehr
+    gouvernement: fillon_3
+    intitule: Contribution exceptionnelle sur les hauts revenus
+    instrument: ir
+    sens: hausse
+    texte: {nature: loi, numero: 2011-1977, date: 2011-12-28, intitule: loi de finances pour 2012}
+    article: "2"
+    codification: CGI, art. 223 sexies
+    annee_effet: 2012
+    parametres:
+      - {quoi: "taux sur le revenu fiscal de référence d'un célibataire entre 250 000 € et 500 000 €", avant: néant, apres: 3 %}
+      - {quoi: "taux au-delà de 500 000 € (célibataire ; seuils doublés pour un couple)", avant: néant, apres: 4 %}
+    statut: en_vigueur
+    note: Présentée comme temporaire, jusqu'au retour du déficit sous 3 % du PIB ; toujours en vigueur.
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000025044473
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2011_4_tva_7
+    gouvernement: fillon_3
+    intitule: Taux réduit de TVA de 5,5 % porté à 7 % pour la plupart des biens et services
+    instrument: tva
+    sens: hausse
+    texte: {nature: loi, numero: 2011-1978, date: 2011-12-28, intitule: loi de finances rectificative pour 2011}
+    article: "13"
+    codification: CGI, art. 278 bis et 279
+    annee_effet: 2012
+    date_effet: 2012-01-01
+    parametres:
+      - {quoi: "taux intermédiaire de TVA (restauration, travaux dans les logements, transports, hébergement)", avant: "5,5 %", apres: "7 %"}
+    statut: remplacee
+    suite: lfr2012_3_tva_2014
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000025045688
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2011_4_contribution_is_5
+    gouvernement: fillon_3
+    intitule: Contribution exceptionnelle de 5 % sur l'impôt sur les sociétés des grandes entreprises
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 2011-1978, date: 2011-12-28, intitule: loi de finances rectificative pour 2011}
+    article: "30"
+    codification: CGI, art. 235 ter ZAA
+    annee_effet: 2011
+    etapes:
+      - {date: 2011-12-31, quoi: "contribution de 5 %, exercices clos à compter du 31 décembre 2011"}
+    parametres:
+      - {quoi: "taux de la contribution, en pourcentage de l'IS dû", avant: néant, apres: "5 % (chiffre d'affaires supérieur à 250 000 000 €)"}
+      - {quoi: "exercices concernés", avant: néant, apres: "clos du 31 décembre 2011 au 30 décembre 2013 ; prorogée jusqu'au 30 décembre 2015 (loi n° 2012-1509, art. 30), puis 2016 (loi n° 2014-891, art. 15)"}
+    statut: temporaire
+    suite: lfi2014_contribution_is_10_7
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000025045784
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026857140
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000029349573
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2012_tva_sociale
+    gouvernement: fillon_3
+    intitule: TVA sociale, hausse du taux normal en contrepartie d'une baisse des cotisations familiales
+    instrument: tva
+    sens: hausse
+    texte: {nature: loi, numero: 2012-354, date: 2012-03-14, intitule: loi de finances rectificative pour 2012}
+    article: "2"
+    codification: CGI, art. 278
+    annee_effet: 2012
+    date_effet: 2012-10-01
+    parametres:
+      - {quoi: "taux normal de TVA", avant: "19,6 %", apres: "21,2 %"}
+      - {quoi: "cotisation patronale d'allocations familiales", avant: "taux plein", apres: "nulle sous un premier seuil de rémunération annuelle, croissante jusqu'à un second seuil (seuils fixés par décret)"}
+    statut: abrogee_avant_effet
+    note: "Le relèvement du prélèvement social sur les revenus du capital de 3,4 % à 5,4 % (CSS, art. L. 245-16, même article, II, C) n'est pas abrogé par la loi n° 2012-958."
+    suite: lfr2012_2_abrogation_tva_sociale
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000025509592
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2012_ttf
+    gouvernement: fillon_3
+    intitule: Taxe sur les transactions financières
+    instrument: autres_impots
+    texte: {nature: loi, numero: 2012-354, date: 2012-03-14, intitule: loi de finances rectificative pour 2012}
+    article: "5"
+    codification: CGI, art. 235 ter ZD
+    annee_effet: 2012
+    date_effet: 2012-08-01
+    parametres:
+      - {quoi: "taux sur les acquisitions d'actions de sociétés françaises cotées (capitalisation supérieure à 1 000 000 000 €)", avant: néant, apres: "0,1 % voté ; 0,2 % à l'entrée en vigueur (loi n° 2012-958, art. 7) ; 0,3 % depuis 2017 (loi n° 2016-1917, art. 25) ; 0,4 % depuis 2025 (lfi2025_ttf)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000025509658
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026289051
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000033734203
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  # ------------------------------------------------------------------ Ayrault II
+  - id: lfr2012_2_abrogation_tva_sociale
+    gouvernement: ayrault_2
+    intitule: Abrogation de la TVA sociale avant son entrée en vigueur
+    instrument: tva
+    sens: neutre
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "1"
+    annee_effet: 2012
+    parametres:
+      - {quoi: "taux normal de TVA au 1er octobre 2012", avant: "21,2 % (voté)", apres: "19,6 % (maintenu)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026288936
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2012_2_heures_sup
+    gouvernement: ayrault_2
+    intitule: Suppression de l'exonération des heures supplémentaires de la loi TEPA
+    instrument: cotisations_salaries
+    sens: hausse
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "3"
+    codification: CGI, art. 81 quater ; CSS, art. L. 241-17 et L. 241-18
+    annee_effet: 2012
+    date_effet: 2012-08-01
+    parametres:
+      - {quoi: "exonération d'impôt sur le revenu des heures supplémentaires", avant: totale, apres: "supprimée (heures effectuées à compter du 1er août 2012)"}
+      - {quoi: "réduction de cotisations salariales sur les heures supplémentaires", avant: "21,5 % de la rémunération majorée", apres: "supprimée au 1er septembre 2012"}
+      - {quoi: "déduction forfaitaire patronale", avant: toutes entreprises, apres: entreprises de moins de 20 salariés}
+    statut: remplacee
+    suite: mues_2018_heures_sup
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026288968
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2012_2_contribution_isf
+    gouvernement: ayrault_2
+    intitule: Contribution exceptionnelle sur la fortune pour 2012
+    instrument: patrimoine
+    sens: hausse
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "4"
+    annee_effet: 2012
+    parametres:
+      - {quoi: "contribution due en 2012 par les redevables de l'ISF", avant: néant, apres: "calculée sur l'ancien barème de 0,55 % à 1,80 %, sous déduction de l'ISF 2012"}
+    statut: temporaire
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026289008
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2012_2_successions
+    gouvernement: ayrault_2
+    intitule: Abattement des droits de mutation en ligne directe abaissé et rappel fiscal allongé
+    instrument: transmission
+    sens: hausse
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "5"
+    codification: CGI, art. 779 et 784
+    annee_effet: 2012
+    date_effet: 2012-08-17
+    parametres:
+      - {quoi: "abattement par parent et par enfant", avant: "159 325 €", apres: "100 000 €"}
+      - {quoi: "délai de rappel des donations antérieures", avant: 10 ans, apres: 15 ans}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026289012
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2012_2_contribution_dividendes
+    gouvernement: ayrault_2
+    intitule: Contribution additionnelle à l'impôt sur les sociétés de 3 % sur les montants distribués
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 2012-958, date: 2012-08-16, intitule: loi de finances rectificative pour 2012}
+    article: "6"
+    codification: CGI, art. 235 ter ZCA
+    annee_effet: 2012
+    parametres:
+      - {quoi: "taux sur les dividendes distribués", avant: néant, apres: 3 %}
+    statut: abrogee
+    note: Invalidée par le Conseil constitutionnel (décision n° 2017-660 QPC du 6 octobre 2017) et abrogée par la loi de finances pour 2018.
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026289029
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2013_tranche_45
+    gouvernement: ayrault_2
+    intitule: Tranche à 45 % du barème de l'impôt sur le revenu
+    instrument: ir
+    sens: hausse
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "3"
+    codification: CGI, art. 197
+    annee_effet: 2013
+    parametres:
+      - {quoi: "taux de la dernière tranche", avant: "41 %", apres: "45 % au-delà de 150 000 € par part (revenus 2012)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026856871
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2013_plafond_qf
+    gouvernement: ayrault_2
+    intitule: Plafond de l'avantage du quotient familial abaissé
+    instrument: ir
+    sens: hausse
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "4"
+    codification: CGI, art. 197
+    annee_effet: 2013
+    parametres:
+      - {quoi: "plafond par demi-part", avant: "2 336 €", apres: "2 000 € (revenus 2012)"}
+    statut: remplacee
+    suite: lfi2014_plafond_qf
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026856874
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2013_bareme_capital
+    gouvernement: ayrault_2
+    intitule: Revenus du capital imposés au barème progressif
+    instrument: ir_capital
+    sens: hausse
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "9 et 10"
+    codification: CGI, art. 117 quater, 125 A, 150-0 D
+    annee_effet: 2013
+    parametres:
+      - {quoi: "dividendes et intérêts", avant: "prélèvement forfaitaire libératoire optionnel (21 % et 24 %)", apres: "barème progressif, avec un prélèvement à la source non libératoire"}
+      - {quoi: "plus-values de cession de valeurs mobilières", avant: "taux proportionnel de 19 %", apres: "barème progressif, avec abattements pour durée de détention"}
+    statut: remplacee
+    suite: lfi2018_pfu
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026856888
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026856956
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2013_isf_bareme
+    gouvernement: ayrault_2
+    intitule: Rétablissement d'un barème progressif de l'ISF et de son plafonnement
+    instrument: patrimoine
+    sens: hausse
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "13"
+    codification: CGI, art. 885 U et 885 V bis (anciens)
+    annee_effet: 2013
+    parametres:
+      - {quoi: "barème", avant: "0,25 % et 0,50 % sur la totalité", apres: "cinq tranches de 0,50 % à 1,50 % au-delà de 800 000 € (seuil d'assujettissement 1 300 000 €)"}
+      - {quoi: "plafonnement", avant: néant, apres: "impôts du foyer limités à 75 % de ses revenus"}
+    statut: remplacee
+    suite: lfi2018_ifi
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026857033
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2013_charges_financieres
+    gouvernement: ayrault_2
+    intitule: Limitation de la déductibilité des charges financières nettes
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 2012-1509, date: 2012-12-29, intitule: loi de finances pour 2013}
+    article: "23"
+    codification: CGI, art. 212 bis
+    annee_effet: 2012
+    parametres:
+      - {quoi: "part déductible des charges financières nettes supérieures à 3 000 000 €", avant: totale, apres: "85 % (exercices 2012 et 2013), 75 % ensuite"}
+    statut: remplacee
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026857090
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2012_3_cice
+    gouvernement: ayrault_2
+    intitule: Crédit d'impôt pour la compétitivité et l'emploi (CICE)
+    instrument: cice
+    sens: baisse
+    texte: {nature: loi, numero: 2012-1510, date: 2012-12-29, intitule: loi de finances rectificative pour 2012}
+    article: "66"
+    codification: CGI, art. 244 quater C
+    annee_effet: 2013
+    etapes:
+      - {date: 2013-01-01, quoi: "taux de 4 % sur les rémunérations versées en 2013"}
+      - {date: 2014-01-01, quoi: "taux de 6 %"}
+    parametres:
+      - {quoi: "taux sur les rémunérations n'excédant pas 2,5 SMIC", avant: néant, apres: "4 % en 2013, 6 % à partir de 2014"}
+    statut: remplacee
+    suite: lfi2018_cice_6_suppression
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026858441
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2012_3_tva_2014
+    gouvernement: ayrault_2
+    intitule: Taux de TVA relevés au 1er janvier 2014
+    instrument: tva
+    sens: hausse
+    texte: {nature: loi, numero: 2012-1510, date: 2012-12-29, intitule: loi de finances rectificative pour 2012}
+    article: "68"
+    codification: CGI, art. 278 et 279
+    annee_effet: 2014
+    date_effet: 2014-01-01
+    parametres:
+      - {quoi: "taux normal", avant: "19,6 %", apres: "20 %"}
+      - {quoi: "taux intermédiaire", avant: "7 %", apres: "10 %"}
+      - {quoi: "taux réduit", avant: "5,5 %", apres: "5 % voté, maintenu à 5,5 % par la loi de finances pour 2014"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026858463
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CGI, art. 278, version en vigueur modifiée par la loi n° 2012-1510, art. 68)."
+
+  - id: lfss2013_casa
+    gouvernement: ayrault_2
+    intitule: Contribution additionnelle de solidarité pour l'autonomie (CASA) sur les pensions
+    instrument: csg
+    sens: hausse
+    texte: {nature: loi, numero: 2012-1404, date: 2012-12-17, intitule: loi de financement de la sécurité sociale pour 2013}
+    article: "17"
+    codification: CASF, art. L. 14-10-4
+    annee_effet: 2013
+    date_effet: 2013-04-01
+    parametres:
+      - {quoi: "taux sur les pensions de retraite et d'invalidité des retraités imposables", avant: néant, apres: "0,3 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026785476
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: retraites_2014_duree
+    gouvernement: ayrault_2
+    intitule: Allongement de la durée d'assurance requise pour le taux plein
+    instrument: retraites
+    texte: {nature: loi, numero: 2014-40, date: 2014-01-20, intitule: loi garantissant l'avenir et la justice du système de retraites}
+    article: "2"
+    codification: CSS, art. L. 161-17-3
+    annee_effet: 2020
+    parametres:
+      - {quoi: "durée d'assurance pour le taux plein", avant: "166 trimestres (génération 1955)", apres: "un trimestre de plus toutes les trois générations à partir de la génération 1958, jusqu'à 172 trimestres pour la génération 1973"}
+    statut: remplacee
+    suite: lfrss2023_age_64
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000028493487
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2014_plafond_qf
+    gouvernement: ayrault_2
+    intitule: Plafond de l'avantage du quotient familial abaissé à nouveau
+    instrument: ir
+    sens: hausse
+    texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
+    article: "3"
+    codification: CGI, art. 197
+    annee_effet: 2014
+    parametres:
+      - {quoi: "plafond par demi-part", avant: "2 000 €", apres: "1 500 € (revenus 2013)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000028399530
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2014_taxe_hautes_remunerations
+    gouvernement: ayrault_2
+    intitule: Taxe exceptionnelle de solidarité sur les hautes rémunérations
+    instrument: remunerations
+    texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
+    article: "15"
+    annee_effet: 2014
+    parametres:
+      - {quoi: "taux, dû par l'entreprise, sur la fraction des rémunérations individuelles supérieure à 1 000 000 €", avant: néant, apres: "50 %, plafonnée à 5 % du chiffre d'affaires"}
+      - {quoi: "rémunérations concernées", avant: néant, apres: "attribuées en 2013 et 2014"}
+    statut: temporaire
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000028399618
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2014_contribution_is_10_7
+    gouvernement: ayrault_2
+    intitule: Contribution exceptionnelle sur l'impôt sur les sociétés portée à 10,7 %
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
+    article: "16"
+    codification: CGI, art. 235 ter ZAA
+    annee_effet: 2013
+    etapes:
+      - {date: 2013-12-31, quoi: "taux de 10,7 %, exercices clos à compter du 31 décembre 2013"}
+      - {date: 2016-12-31, quoi: "contribution éteinte, exercices clos à compter du 31 décembre 2016 (loi n° 2014-891, art. 15)", sens: baisse}
+    parametres:
+      - {quoi: "taux de la contribution (chiffre d'affaires supérieur à 250 000 000 €)", avant: "5 %", apres: "10,7 %"}
+      - {quoi: "exercices concernés", avant: "clos du 31 décembre 2011 au 30 décembre 2015 (prorogation de la loi n° 2012-1509, art. 30)", apres: "taux de 10,7 % pour les exercices clos à compter du 31 décembre 2013 ; contribution prorogée jusqu'au 30 décembre 2016 (loi n° 2014-891, art. 15)"}
+    statut: temporaire
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000028399629
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000026857140
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000029349573
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  # ------------------------------------------------------------------ Valls I et II
+  - id: lfrss2014_pacte_allegements
+    gouvernement: valls_1
+    intitule: Pacte de responsabilité, allègements de cotisations patronales
+    instrument: cotisations_employeurs
+    sens: baisse
+    texte: {nature: loi, numero: 2014-892, date: 2014-08-08, intitule: loi de financement rectificative de la sécurité sociale pour 2014}
+    article: "2"
+    codification: CSS, art. L. 241-13 et L. 241-6-1
+    annee_effet: 2015
+    date_effet: 2015-01-01
+    parametres:
+      - {quoi: "champ de la réduction générale", avant: "cotisations patronales d'assurances sociales et d'allocations familiales", apres: "étendu à la cotisation FNAL, à la contribution de solidarité pour l'autonomie et, dans la limite d'un taux fixé par arrêté, aux cotisations d'accidents du travail"}
+      - {quoi: "cotisation patronale d'allocations familiales", avant: "5,25 %", apres: "réduite de 1,8 point (3,45 %) pour les rémunérations n'excédant pas 1,6 SMIC"}
+    statut: remplacee
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000029349696
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfrss2014_c3s
+    gouvernement: valls_1
+    intitule: Abattement d'assiette sur la contribution sociale de solidarité des sociétés
+    instrument: impots_production
+    sens: baisse
+    texte: {nature: loi, numero: 2014-892, date: 2014-08-08, intitule: loi de financement rectificative de la sécurité sociale pour 2014}
+    article: "3"
+    codification: CSS, art. L. 651-3
+    annee_effet: 2015
+    parametres:
+      - {quoi: "abattement sur le chiffre d'affaires soumis à la C3S", avant: "760 000 €", apres: "3 250 000 €"}
+    statut: remplacee
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000029349740
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfrss2014_reduction_salariale_censuree
+    gouvernement: valls_1
+    intitule: Réduction dégressive des cotisations salariales des bas salaires
+    instrument: cotisations_salaries
+    sens: baisse
+    texte: {nature: loi, numero: 2014-892, date: 2014-08-08, intitule: loi de financement rectificative de la sécurité sociale pour 2014}
+    article: "1"
+    annee_effet: 2015
+    parametres:
+      - {quoi: "réduction des cotisations salariales jusqu'à 1,3 SMIC", avant: néant, apres: "censurée avant d'entrer en vigueur"}
+    statut: censuree
+    note: Décision du Conseil constitutionnel n° 2014-698 DC du 6 août 2014.
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000029349695
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2014_reduction_ir
+    gouvernement: valls_1
+    intitule: Réduction exceptionnelle d'impôt sur le revenu des ménages modestes
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2014-891, date: 2014-08-08, intitule: loi de finances rectificative pour 2014}
+    article: "1"
+    annee_effet: 2014
+    parametres:
+      - {quoi: "réduction d'impôt sur les revenus de 2013", avant: néant, apres: "350 € pour une personne seule, 700 € pour un couple, sous un plafond de revenu fiscal de référence"}
+    statut: temporaire
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000029349489
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2015_tranche_5_5
+    gouvernement: valls_2
+    intitule: Suppression de la première tranche du barème à 5,5 %
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2014-1654, date: 2014-12-29, intitule: loi de finances pour 2015}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2015
+    parametres:
+      - {quoi: "tranche à 5,5 %", avant: "de 6 011 € à 11 991 € par part", apres: "supprimée ; la tranche à 14 % commence à 9 690 € (revenus 2014)"}
+      - {quoi: "décote", avant: "la moitié de la différence entre 1 016 € et l'impôt", apres: "différence entre 1 135 € (personne seule) ou 1 870 € (couple) et l'impôt"}
+    statut: en_vigueur
+    suite: bareme_2016
+    note: La suppression de la tranche reste en vigueur ; les seuils du barème sont revalorisés par la loi suivante (bareme_2016).
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000029988869
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: loi_rebsamen_prime_activite
+    gouvernement: valls_2
+    intitule: Prime d'activité, en remplacement du RSA activité et de la prime pour l'emploi
+    instrument: prestations
+    texte: {nature: loi, numero: 2015-994, date: 2015-08-17, intitule: loi relative au dialogue social et à l'emploi}
+    article: "57"
+    codification: CSS, art. L. 841-1 et suivants
+    annee_effet: 2016
+    date_effet: 2016-01-01
+    parametres:
+      - {quoi: "prime pour l'emploi et RSA activité", avant: en vigueur, apres: "remplacés par la prime d'activité, prestation mensuelle des travailleurs modestes"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000031046223
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfss2016_pacte_famille
+    gouvernement: valls_2
+    intitule: Baisse de la cotisation d'allocations familiales étendue jusqu'à 3,5 SMIC
+    instrument: cotisations_employeurs
+    sens: baisse
+    texte: {nature: loi, numero: 2015-1702, date: 2015-12-21, intitule: loi de financement de la sécurité sociale pour 2016}
+    article: "7"
+    codification: CSS, art. L. 241-6-1
+    annee_effet: 2016
+    date_effet: 2016-04-01
+    parametres:
+      - {quoi: "champ du taux réduit de 3,45 %", avant: "rémunérations n'excédant pas 1,6 SMIC", apres: "rémunérations n'excédant pas 3,5 SMIC"}
+    statut: remplacee
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000031663464
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  # ------------------------------------------------------------------ Cazeneuve
+  - id: lfi2017_pas
+    gouvernement: cazeneuve
+    intitule: Prélèvement à la source de l'impôt sur le revenu
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
+    article: "60"
+    codification: CGI, art. 204 A et suivants
+    annee_effet: 2019
+    date_effet: 2019-01-01
+    parametres:
+      - {quoi: "recouvrement de l'impôt sur le revenu", avant: "l'année qui suit celle des revenus", apres: "retenue à la source ou acompte, l'année des revenus"}
+    statut: en_vigueur
+    note: Entrée en vigueur prévue au 1er janvier 2018, reportée au 1er janvier 2019 par l'ordonnance n° 2017-1390 du 22 septembre 2017.
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000033734238
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000035607496
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2017_is_28
+    gouvernement: cazeneuve
+    intitule: Trajectoire de baisse du taux normal de l'impôt sur les sociétés à 28 %
+    instrument: is
+    sens: baisse
+    texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
+    article: "11"
+    codification: CGI, art. 219
+    annee_effet: 2017
+    parametres:
+      - {quoi: "taux normal", avant: "33,33 %", apres: "28 % sur les 75 000 premiers euros de bénéfice des PME en 2017, étendu par paliers à toutes les entreprises en 2020"}
+    statut: remplacee
+    suite: lfi2018_is_25
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000033734189
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2017_cice_7
+    gouvernement: cazeneuve
+    intitule: Taux du CICE porté à 7 %
+    instrument: cice
+    sens: baisse
+    texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
+    article: "72"
+    codification: CGI, art. 244 quater C
+    annee_effet: 2017
+    parametres:
+      - {quoi: "taux du CICE", avant: "6 %", apres: "7 % (rémunérations versées à partir du 1er janvier 2017)"}
+    statut: remplacee
+    suite: lfi2018_cice_6_suppression
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000033734250
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2017_reduction_ir_20
+    gouvernement: cazeneuve
+    intitule: Réduction d'impôt sur le revenu de 20 % pour les foyers modestes
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2017
+    parametres:
+      - {quoi: "réduction de l'impôt", avant: néant, apres: "20 % pour un revenu fiscal de référence n'excédant pas 18 500 € pour une part, dégressive jusqu'à 20 500 €"}
+    statut: remplacee
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000033734180
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  # ------------------------------------------------------------------ Philippe II
+  - id: lfr2017_contribution_is
+    gouvernement: philippe_2
+    intitule: Contributions exceptionnelle et additionnelle sur l'impôt sur les sociétés des très grandes entreprises
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 2017-1640, date: 2017-12-01, intitule: première loi de finances rectificative pour 2017}
+    article: "1"
+    annee_effet: 2017
+    etapes:
+      - {date: 2017-12-31, quoi: "contributions de 15 % et 15 %, exercices clos à compter du 31 décembre 2017"}
+      - {date: 2018-12-31, quoi: "contributions éteintes, exercices clos à compter du 31 décembre 2018", sens: baisse}
+    parametres:
+      - {quoi: "contribution exceptionnelle (chiffre d'affaires d'au moins 1 000 000 000 €)", avant: néant, apres: "15 % de l'IS"}
+      - {quoi: "contribution additionnelle (chiffre d'affaires d'au moins 3 000 000 000 €)", avant: néant, apres: "15 % de l'IS en plus"}
+      - {quoi: "exercices concernés", avant: néant, apres: "clos du 31 décembre 2017 au 30 décembre 2018"}
+    statut: temporaire
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036126775
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2018_pfu
+    gouvernement: philippe_2
+    intitule: Prélèvement forfaitaire unique sur les revenus du capital
+    instrument: ir_capital
+    sens: baisse
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "28"
+    codification: CGI, art. 200 A
+    annee_effet: 2018
+    parametres:
+      - {quoi: "imposition des dividendes, intérêts et plus-values mobilières", avant: barème progressif, apres: "12,8 % d'impôt sur le revenu, soit 30 % avec les prélèvements sociaux de 17,2 %, sauf option globale pour le barème"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339236
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CGI, art. 223 sexies, version en vigueur modifiée par la loi n° 2017-1837, art. 28)."
+
+  - id: lfi2018_ifi
+    gouvernement: philippe_2
+    intitule: L'ISF remplacé par l'impôt sur la fortune immobilière (IFI)
+    instrument: patrimoine
+    sens: baisse
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "31"
+    codification: CGI, art. 964 à 983
+    annee_effet: 2018
+    date_effet: 2018-01-01
+    parametres:
+      - {quoi: "assiette", avant: "patrimoine net (ISF)", apres: "patrimoine immobilier net"}
+      - {quoi: "seuil et barème", avant: "1 300 000 € ; 0,50 % à 1,50 %", apres: "inchangés"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339239
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CGI, art. 964 et 977, versions en vigueur modifiées par la loi n° 2017-1837, art. 31)."
+
+  - id: lfi2018_th_degrevement
+    gouvernement: philippe_2
+    intitule: Dégrèvement de la taxe d'habitation sur la résidence principale pour 80 % des foyers
+    instrument: taxe_habitation
+    sens: baisse
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "5"
+    codification: CGI, art. 1414 C
+    annee_effet: 2018
+    etapes:
+      - {date: 2018-01-01, quoi: "dégrèvement de 30 %, impositions établies au titre de 2018"}
+      - {date: 2019-01-01, quoi: "dégrèvement de 65 %, impositions établies au titre de 2019"}
+      - {date: 2020-01-01, quoi: "dégrèvement de 100 %, impositions établies au titre de 2020"}
+    parametres:
+      - {quoi: "dégrèvement, sous un revenu fiscal de référence de 27 000 € pour une part (plus 8 000 € pour chacune des deux demi-parts suivantes, 6 000 € au-delà)", avant: néant, apres: "30 % en 2018, 65 % en 2019, 100 % en 2020"}
+    statut: remplacee
+    suite: lfi2020_th_suppression
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339213
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2018_is_25
+    gouvernement: philippe_2
+    intitule: Trajectoire de baisse du taux normal de l'impôt sur les sociétés à 25 %
+    instrument: is
+    sens: baisse
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "84"
+    codification: CGI, art. 219
+    annee_effet: 2018
+    etapes:
+      - {date: 2018-01-01, quoi: "28 % jusqu'à 500 000 € de bénéfice, exercices ouverts à compter du 1er janvier 2018"}
+      - {date: 2019-01-01, quoi: "31 % au-delà, exercices ouverts à compter du 1er janvier 2019"}
+      - {date: 2020-01-01, quoi: "28 %, exercices ouverts à compter du 1er janvier 2020"}
+      - {date: 2021-01-01, quoi: "26,5 %, exercices ouverts à compter du 1er janvier 2021"}
+      - {date: 2022-01-01, quoi: "25 %, exercices ouverts à compter du 1er janvier 2022"}
+    parametres:
+      - {quoi: "taux normal", avant: "28 % puis 33,33 % (trajectoire de 2017)", apres: "28 % jusqu'à 500 000 € et 33,33 % au-delà en 2018 ; 31 % au-delà en 2019 ; 28 % en 2020 ; 26,5 % en 2021 ; 25 % en 2022"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339292
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2018_cice_6_suppression
+    gouvernement: philippe_2
+    intitule: CICE ramené à 6 % puis supprimé
+    instrument: cice
+    sens: hausse
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "86"
+    codification: CGI, art. 244 quater C
+    annee_effet: 2018
+    etapes:
+      - {date: 2018-01-01, quoi: "taux de 6 % sur les rémunérations versées à compter du 1er janvier 2018"}
+      - {date: 2019-01-01, quoi: "crédit d'impôt supprimé pour les rémunérations versées à compter du 1er janvier 2019"}
+    parametres:
+      - {quoi: "taux du CICE", avant: "7 %", apres: "6 % en 2018 ; supprimé pour les rémunérations versées à partir du 1er janvier 2019"}
+    statut: en_vigueur
+    suite: lfss2018_cice_allegements
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339294
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2018_composante_carbone
+    gouvernement: philippe_2
+    intitule: Trajectoire de la composante carbone et convergence de la fiscalité du gazole et de l'essence
+    instrument: accises_energie
+    sens: hausse
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "16"
+    codification: Code des douanes, art. 265
+    annee_effet: 2018
+    parametres:
+      - {quoi: "tarif de la TICPE sur le gazole (indice 22), en euros par hectolitre", avant: "tarif de 2017", apres: "59,40 en 2018, 64,76 en 2019, 70,12 en 2020, 75,47 en 2021, 78,23 en 2022"}
+    statut: remplacee
+    note: "La loi ne fixe pas la valeur de la tonne de dioxyde de carbone : elle fixe des tarifs par produit et par année. La loi de finances pour 2019 (n° 2018-1317, art. 64) supprime les colonnes de 2019 à 2022 : les tarifs de 2018 restent en vigueur."
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339224
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037882415
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfss2018_csg_cotisations
+    gouvernement: philippe_2
+    intitule: Hausse de la CSG et suppression des cotisations salariales maladie et chômage
+    instrument: csg
+    sens: hausse
+    texte: {nature: loi, numero: 2017-1836, date: 2017-12-30, intitule: loi de financement de la sécurité sociale pour 2018}
+    article: "8"
+    codification: CSS, art. L. 136-8
+    annee_effet: 2018
+    date_effet: 2018-01-01
+    parametres:
+      - {quoi: "CSG sur les revenus d'activité", avant: "7,5 %", apres: "9,2 %"}
+      - {quoi: "CSG sur les pensions au taux normal", avant: "6,6 %", apres: "8,3 %"}
+      - {quoi: "CSG sur les revenus du patrimoine et de placement", avant: "8,2 %", apres: "9,9 %"}
+      - {quoi: "cotisation salariale maladie", avant: "0,75 %", apres: supprimée au 1er janvier 2018}
+      - {quoi: "cotisation salariale d'assurance chômage", avant: "2,40 %", apres: "0,95 % au 1er janvier 2018, supprimée au 1er octobre 2018"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339150
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfss2018_cotisations_salariales
+    gouvernement: philippe_2
+    intitule: Suppression des cotisations salariales maladie et chômage
+    instrument: cotisations_salaries
+    sens: baisse
+    texte: {nature: loi, numero: 2017-1836, date: 2017-12-30, intitule: loi de financement de la sécurité sociale pour 2018}
+    article: "8"
+    codification: CSS, art. L. 241-2 ; code du travail, art. L. 5422-9
+    annee_effet: 2018
+    date_effet: 2018-01-01
+    etapes:
+      - {date: 2018-01-01, quoi: "cotisation d'assurance maladie à la charge des seuls employeurs (CSS, art. L. 241-2) ; contribution salariale d'assurance chômage prise en charge à hauteur de 1,45 point (art. 8, VI, 1°)"}
+      - {date: 2018-10-01, quoi: "contribution salariale d'assurance chômage prise en charge à hauteur de 2,40 points (art. 8, VI, 2°)"}
+    parametres:
+      - {quoi: "cotisation salariale maladie", avant: "0,75 %", apres: supprimée au 1er janvier 2018}
+      - {quoi: "cotisation salariale d'assurance chômage", avant: "2,40 %", apres: "0,95 % au 1er janvier 2018, supprimée au 1er octobre 2018"}
+    statut: en_vigueur
+    note: "Le volet des cotisations de lfss2018_csg_cotisations (même article), sous son instrument (D-421) : la base ne datait la baisse des cotisations salariales qu'à la CSG."
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339150
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfss2018_cice_allegements
+    gouvernement: philippe_2
+    intitule: Le CICE transformé en baisse pérenne de cotisations patronales
+    instrument: cotisations_employeurs
+    sens: baisse
+    texte: {nature: loi, numero: 2017-1836, date: 2017-12-30, intitule: loi de financement de la sécurité sociale pour 2018}
+    article: "9"
+    codification: CSS, art. L. 241-2-1 et L. 241-13
+    annee_effet: 2019
+    date_effet: 2019-01-01
+    etapes:
+      - {date: 2019-01-01, quoi: "cotisation patronale d'assurance maladie réduite de 6 points ; réduction générale étendue à la retraite complémentaire"}
+      - {date: 2019-10-01, quoi: "réduction générale étendue aux contributions patronales d'assurance chômage (loi n° 2018-1203, art. 8, IX)"}
+    parametres:
+      - {quoi: "cotisation patronale d'assurance maladie sur les rémunérations n'excédant pas 2,5 SMIC", avant: "taux de droit commun", apres: "réduit de 6 points (CSS, art. L. 241-2-1)"}
+      - {quoi: "réduction générale", avant: "hors retraite complémentaire et chômage", apres: "étendue aux cotisations patronales de retraite complémentaire et aux contributions patronales d'assurance chômage"}
+    note: "Le calendrier de l'extension de la réduction générale aux contributions patronales d'assurance chômage a été modifié par la LFSS 2019 (loi n° 2018-1203, art. 8, IX, A : le coefficient qui les porte s'ajoute du 1er octobre au 31 décembre 2019), lue au JO (D-421)."
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339151
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037847662
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: mues_2018_pepa
+    gouvernement: philippe_2
+    intitule: Prime exceptionnelle de pouvoir d'achat exonérée
+    instrument: remunerations
+    texte: {nature: loi, numero: 2018-1213, date: 2018-12-24, intitule: loi portant mesures d'urgence économiques et sociales}
+    article: "1"
+    annee_effet: 2019
+    parametres:
+      - {quoi: "exonération d'impôt et de cotisations d'une prime versée du 11 décembre 2018 au 31 mars 2019", avant: néant, apres: "jusqu'à 1 000 € par salarié rémunéré moins de 3 SMIC"}
+    statut: temporaire
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037851900
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: mues_2018_heures_sup
+    gouvernement: philippe_2
+    intitule: Heures supplémentaires exonérées d'impôt sur le revenu et de cotisations salariales
+    instrument: cotisations_salaries
+    sens: baisse
+    texte: {nature: loi, numero: 2018-1213, date: 2018-12-24, intitule: loi portant mesures d'urgence économiques et sociales}
+    article: "2"
+    codification: CGI, art. 81 quater ; CSS, art. L. 241-17
+    annee_effet: 2019
+    date_effet: 2019-01-01
+    parametres:
+      - {quoi: "exonération d'impôt sur le revenu des heures supplémentaires", avant: néant, apres: "dans la limite de 5 000 € par an"}
+      - {quoi: "réduction des cotisations salariales sur les heures supplémentaires", avant: "prévue au 1er septembre 2019 (LFSS 2019)", apres: "avancée au 1er janvier 2019"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037851901
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: mues_2018_csg_pensions
+    gouvernement: philippe_2
+    intitule: Taux de CSG de 6,6 % rétabli pour les pensions des foyers modestes
+    instrument: csg
+    sens: baisse
+    texte: {nature: loi, numero: 2018-1213, date: 2018-12-24, intitule: loi portant mesures d'urgence économiques et sociales}
+    article: "3"
+    codification: CSS, art. L. 136-8
+    annee_effet: 2019
+    parametres:
+      - {quoi: "CSG sur les pensions sous un seuil de revenu fiscal de référence", avant: "8,3 %", apres: "6,6 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037851902
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: decret_2018_prime_activite
+    gouvernement: philippe_2
+    intitule: Revalorisation exceptionnelle de la prime d'activité au niveau du SMIC
+    instrument: prestations
+    texte: {nature: décret, numero: 2018-1197, date: 2018-12-21, intitule: décret portant revalorisation exceptionnelle de la prime d'activité}
+    article: "1"
+    annee_effet: 2019
+    date_effet: 2019-01-01
+    parametres:
+      - {quoi: "bonification individuelle maximale (CSS, art. D. 843-2)", avant: "12,782 % du montant forfaitaire, atteinte à 95 fois le SMIC horaire", apres: "29,101 % du montant forfaitaire, atteinte à 120 fois le SMIC horaire"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037846003
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfss2019_heures_sup_cotisations
+    gouvernement: philippe_2
+    intitule: Réduction des cotisations salariales d'assurance vieillesse sur les heures supplémentaires
+    instrument: cotisations_salaries
+    sens: baisse
+    texte: {nature: loi, numero: 2018-1203, date: 2018-12-22, intitule: loi de financement de la sécurité sociale pour 2019}
+    article: "7"
+    codification: CSS, art. L. 241-17
+    annee_effet: 2019
+    parametres:
+      - {quoi: "cotisations salariales d'assurance vieillesse sur les heures supplémentaires", avant: dues, apres: "réduites, au taux fixé par décret"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037847661
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CSS, art. L. 241-17, version en vigueur modifiée par la loi n° 2018-1203, art. 7)."
+
+  - id: lfss2019_revalorisation_0_3
+    gouvernement: philippe_2
+    intitule: Revalorisation des pensions et des prestations limitée à 0,3 %
+    instrument: prestations
+    texte: {nature: loi, numero: 2018-1203, date: 2018-12-22, intitule: loi de financement de la sécurité sociale pour 2019}
+    article: "68"
+    annee_effet: 2019
+    parametres:
+      - {quoi: "revalorisation des prestations et des plafonds de ressources relevant de l'art. L. 161-25 du CSS", avant: "l'inflation", apres: "0,3 % au titre de 2019"}
+    statut: temporaire
+    suite: lfss2020_revalorisation
+    note: "La loi visait 2019 et 2020 ; la mention de 2020 est censurée (décision n° 2018-776 DC du 21 décembre 2018). 2020 est réglé par la LFSS 2020 (lfss2020_revalorisation)."
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037847640
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: tsn_2019
+    gouvernement: philippe_2
+    intitule: Taxe sur les services numériques et trajectoire de l'IS des grandes entreprises
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 2019-759, date: 2019-07-24, intitule: loi portant création d'une taxe sur les services numériques et modification de la trajectoire de baisse de l'impôt sur les sociétés}
+    article: "1 et 4"
+    codification: CGI, art. 299 et suivants
+    annee_effet: 2019
+    parametres:
+      - {quoi: "taxe sur les services numériques (chiffre d'affaires mondial de 750 000 000 € et français de 25 000 000 €)", avant: néant, apres: "3 % du produit de la publicité ciblée et des places de marché"}
+      - {quoi: "taux normal de l'IS en 2019 pour un chiffre d'affaires d'au moins 250 000 000 €", avant: "31 %", apres: "33,33 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000038811589
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000038811592
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2020_ir_11
+    gouvernement: philippe_2
+    intitule: Taux de la deuxième tranche de l'impôt sur le revenu ramené de 14 à 11 %
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2019-1479, date: 2019-12-28, intitule: loi de finances pour 2020}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2020
+    parametres:
+      - {quoi: "taux de la deuxième tranche", avant: "14 %", apres: "11 % (revenus 2020, appliqué par le prélèvement à la source dès janvier 2020)"}
+      - {quoi: "seuils des tranches (11 %, 30 %, 41 %, 45 %)", avant: "10 064 €, 27 794 €, 74 517 €, 157 806 € (revenus de 2019, revalorisés par le même article)", apres: "10 064 €, 25 659 €, 73 369 €, 157 806 € (revenus de 2020)"}
+    statut: en_vigueur
+    suite: bareme_2021
+    note: Le taux de 11 % reste en vigueur ; les seuils du barème sont revalorisés par la loi suivante (bareme_2021).
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000039683935
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2020_th_suppression
+    gouvernement: philippe_2
+    intitule: Suppression de la taxe d'habitation sur les résidences principales
+    instrument: taxe_habitation
+    sens: baisse
+    texte: {nature: loi, numero: 2019-1479, date: 2019-12-28, intitule: loi de finances pour 2020}
+    article: "16"
+    codification: CGI, art. 1407 et 1414 C
+    annee_effet: 2020
+    etapes:
+      - {date: 2020-01-01, quoi: "foyers sous les plafonds : dégrèvement de 100 % (impositions de 2020, art. 16, VII, A)"}
+      - {date: 2021-01-01, quoi: "autres foyers : exonération de 30 % (impositions de 2021, art. 16, VII, B)"}
+      - {date: 2022-01-01, quoi: "autres foyers : exonération de 65 % (impositions de 2022, art. 16, VII, D)"}
+      - {date: 2023-01-01, quoi: "taxe d'habitation sur les résidences principales supprimée (impositions de 2023, art. 16, VII, E)"}
+    parametres:
+      - {quoi: "foyers sous les plafonds de 2018", avant: "dégrèvement de 65 % (2019)", apres: "dégrèvement de 100 % en 2020"}
+      - {quoi: "autres foyers", avant: aucun allègement, apres: "exonération de 30 % en 2021, 65 % en 2022, suppression en 2023"}
+      - {quoi: "ressources des collectivités", avant: taxe d'habitation, apres: "part départementale de la taxe foncière aux communes, fraction de TVA aux départements et aux intercommunalités"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000039683949
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2020_is_grandes_entreprises
+    gouvernement: philippe_2
+    intitule: Trajectoire de l'IS des entreprises d'au moins 250 000 000 € de chiffre d'affaires
+    instrument: is
+    sens: baisse
+    texte: {nature: loi, numero: 2019-1479, date: 2019-12-28, intitule: loi de finances pour 2020}
+    article: "39"
+    codification: CGI, art. 219
+    annee_effet: 2020
+    etapes:
+      - {date: 2020-01-01, quoi: "31 % au-delà de 500 000 €, exercices ouverts en 2020"}
+      - {date: 2021-01-01, quoi: "27,5 %, exercices ouverts à compter du 1er janvier 2021"}
+    parametres:
+      - {quoi: "taux normal au-delà de 500 000 € de bénéfice", avant: "28 % en 2020 (trajectoire de 2018)", apres: "31 % en 2020, 27,5 % en 2021, 25 % en 2022"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000039683972
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  # ------------------------------------------------------------------ Castex
+  - id: lfi2021_cvae_regions
+    gouvernement: castex
+    intitule: Baisse des impôts de production, suppression de la part régionale de la CVAE
+    instrument: impots_production
+    sens: baisse
+    texte: {nature: loi, numero: 2020-1721, date: 2020-12-29, intitule: loi de finances pour 2021}
+    article: "8"
+    codification: CGI, art. 1586 ter, 1586 sexies et 1647 B sexies
+    annee_effet: 2021
+    parametres:
+      - {quoi: "taux de la CVAE", avant: "1,5 %", apres: "0,75 %"}
+      - {quoi: "plafonnement de la contribution économique territoriale", avant: "3 % de la valeur ajoutée", apres: "2 %"}
+    statut: remplacee
+    suite: lfi2023_cvae
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000042753599
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CGI, art. 1586 sexies, version en vigueur modifiée par la loi n° 2020-1721, art. 8)."
+
+  - id: lfi2021_valeurs_locatives
+    gouvernement: castex
+    intitule: Valeurs locatives des établissements industriels divisées par deux
+    instrument: impots_production
+    sens: baisse
+    texte: {nature: loi, numero: 2020-1721, date: 2020-12-29, intitule: loi de finances pour 2021}
+    article: "29"
+    codification: CGI, art. 1499
+    annee_effet: 2021
+    parametres:
+      - {quoi: "taux d'intérêt appliqué au prix de revient des établissements industriels (taxe foncière et CFE)", avant: "8 % (sol) et 12 % (constructions)", apres: "4 % et 6 %"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000042753620
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CGI, art. 1499, version en vigueur modifiée par la loi n° 2020-1721, art. 29)."
+
+  # ------------------------------------------------------------------ Borne
+  - id: lfr2022_audiovisuel
+    gouvernement: borne
+    intitule: Suppression de la contribution à l'audiovisuel public
+    instrument: autres_impots
+    texte: {nature: loi, numero: 2022-1157, date: 2022-08-16, intitule: loi de finances rectificative pour 2022}
+    article: "6"
+    annee_effet: 2022
+    parametres:
+      - {quoi: "contribution à l'audiovisuel public", avant: "138 € par foyer redevable de la taxe d'habitation (métropole, 2022)", apres: supprimée dès 2022}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000046186677
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfr2022_heures_sup
+    gouvernement: borne
+    intitule: Plafond d'exonération des heures supplémentaires relevé
+    instrument: ir
+    sens: baisse
+    texte: {nature: loi, numero: 2022-1157, date: 2022-08-16, intitule: loi de finances rectificative pour 2022}
+    article: "4"
+    codification: CGI, art. 81 quater
+    annee_effet: 2022
+    parametres:
+      - {quoi: "plafond annuel d'exonération d'impôt sur le revenu", avant: "5 000 €", apres: "7 500 €"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000046186675
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CGI, art. 81 quater, version en vigueur modifiée par la loi n° 2022-1157, art. 4)."
+
+  - id: pouvoir_achat_2022_ppv
+    gouvernement: borne
+    intitule: Prime de partage de la valeur
+    instrument: remunerations
+    texte: {nature: loi, numero: 2022-1158, date: 2022-08-16, intitule: loi portant mesures d'urgence pour la protection du pouvoir d'achat}
+    article: "1"
+    annee_effet: 2022
+    parametres:
+      - {quoi: "exonération de cotisations d'une prime versée par l'employeur", avant: "prime exceptionnelle limitée à 1 000 € (2 000 € avec accord)", apres: "jusqu'à 3 000 € par an, 6 000 € avec un accord d'intéressement ; exonérée d'impôt jusqu'au 31 décembre 2023 sous 3 SMIC"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000046186741
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2023_cvae
+    gouvernement: borne
+    intitule: Suppression de la CVAE en deux ans
+    instrument: impots_production
+    sens: baisse
+    texte: {nature: loi, numero: 2022-1726, date: 2022-12-30, intitule: loi de finances pour 2023}
+    article: "55"
+    codification: CGI, art. 1586 ter, 1586 quater et 1647 B sexies
+    annee_effet: 2023
+    parametres:
+      - {quoi: "taux de la CVAE", avant: "0,75 %", apres: "0,375 % en 2023, suppression en 2024"}
+      - {quoi: "plafonnement de la contribution économique territoriale", avant: "2 % de la valeur ajoutée", apres: "1,625 % en 2023, 1,25 % ensuite"}
+    statut: remplacee
+    suite: lfi2024_cvae_etalement
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000046845693
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CGI, art. 1586 ter et 1647 B sexies, versions en vigueur modifiées par la loi n° 2022-1726, art. 55)."
+
+  - id: lfrss2023_age_64
+    gouvernement: borne
+    intitule: Relèvement de l'âge d'ouverture des droits à la retraite de 62 à 64 ans
+    instrument: retraites
+    texte: {nature: loi, numero: 2023-270, date: 2023-04-14, intitule: loi de financement rectificative de la sécurité sociale pour 2023}
+    article: "10"
+    codification: CSS, art. L. 161-17-2 et L. 161-17-3
+    annee_effet: 2023
+    date_effet: 2023-09-01
+    parametres:
+      - {quoi: "âge d'ouverture des droits", avant: 62 ans, apres: "64 ans, relevé de 3 mois par génération à partir des assurés nés le 1er septembre 1961"}
+      - {quoi: "durée d'assurance pour le taux plein", avant: "172 trimestres pour la génération 1973", apres: "172 trimestres dès la génération 1965"}
+    statut: suspendue
+    suite: lfss2026_suspension_retraites
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000047445097
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CSS, art. L. 161-17-2 et L. 161-17-3, versions en vigueur modifiées par la loi n° 2023-270, art. 10)."
+
+  - id: lfrss2023_regimes_speciaux
+    gouvernement: borne
+    intitule: Fermeture des principaux régimes spéciaux de retraite aux nouveaux embauchés
+    instrument: retraites
+    texte: {nature: loi, numero: 2023-270, date: 2023-04-14, intitule: loi de financement rectificative de la sécurité sociale pour 2023}
+    article: "1"
+    annee_effet: 2023
+    date_effet: 2023-09-01
+    parametres:
+      - {quoi: "affiliation des agents recrutés à partir du 1er septembre 2023 dans les régimes fermés par la loi (RATP, clercs et employés de notaire, Conseil économique, social et environnemental)", avant: régime spécial, apres: régime général}
+    note: "Les régimes des industries électriques et gazières et de la Banque de France, de nature réglementaire, ne sont pas fermés par cet article."
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000047445082
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfi2024_cvae_etalement
+    gouvernement: borne
+    intitule: Suppression de la CVAE étalée jusqu'en 2027
+    instrument: impots_production
+    sens: baisse
+    texte: {nature: loi, numero: 2023-1322, date: 2023-12-29, intitule: loi de finances pour 2024}
+    article: "79"
+    codification: CGI, art. 1586 quater
+    annee_effet: 2024
+    parametres:
+      - {quoi: "taux de la CVAE", avant: "suppression en 2024", apres: "0,28 % en 2024, 0,19 % en 2025, 0,09 % en 2026, suppression en 2027"}
+    statut: remplacee
+    suite: lfi2025_cvae_report
+    note: La loi de finances pour 2025 (art. 62) a de nouveau reporté la baisse (lfi2025_cvae_report).
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000048727432
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000051168728
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  # ------------------------------------------------------------------ Bayrou
+  - id: lfi2025_cdhr
+    gouvernement: bayrou
+    intitule: Contribution différentielle sur les hauts revenus
+    instrument: ir
+    sens: hausse
+    texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
+    article: "10"
+    codification: CGI, art. 224
+    annee_effet: 2025
+    note: Le projet a été déposé par le gouvernement Barnier (PLF 2025, AN n° 324) ; la loi est promulguée sous le gouvernement Bayrou.
+    parametres:
+      - {quoi: "imposition minimale du revenu (impôt sur le revenu et CEHR comprises)", avant: néant, apres: "20 % pour un revenu fiscal de référence supérieur à 250 000 € (personne seule) ou 500 000 € (couple), revenus 2025"}
+    statut: temporaire
+    suite: lfi2026_cdhr
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000051168037
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CGI, art. 224, version en vigueur modifiée par la loi n° 2025-127, art. 10)."
+
+  - id: lfi2025_cebge
+    gouvernement: bayrou
+    intitule: Contribution exceptionnelle sur les bénéfices des grandes entreprises
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
+    article: "48"
+    annee_effet: 2025
+    note: Le projet a été déposé par le gouvernement Barnier ; la loi est promulguée sous le gouvernement Bayrou.
+    parametres:
+      - {quoi: "taux, en pourcentage de l'IS dû, pour un chiffre d'affaires d'au moins 1 000 000 000 €", avant: néant, apres: "20,6 % (jusqu'à 3 000 000 000 €) et 41,2 % au-delà, premier exercice clos à compter du 31 décembre 2025"}
+    statut: temporaire
+    suite: lfi2026_cebge
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000051168626
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+
+  - id: lfss2025_allegements
+    gouvernement: bayrou
+    intitule: Refonte des allègements généraux de cotisations patronales
+    instrument: cotisations_employeurs
+    sens: hausse
+    texte: {nature: loi, numero: 2025-199, date: 2025-02-28, intitule: loi de financement de la sécurité sociale pour 2025}
+    article: "18"
+    codification: CSS, art. L. 241-13
+    annee_effet: 2025
+    parametres:
+      - {quoi: "seuil du taux réduit de cotisation d'assurance maladie", avant: "2,5 SMIC", apres: "2,25 SMIC au 1er janvier 2025"}
+      - {quoi: "seuil du taux réduit de cotisation d'allocations familiales", avant: "3,5 SMIC", apres: "3,3 SMIC au 1er janvier 2025"}
+      - {quoi: "réduction générale", avant: "dégressive jusqu'à 1,6 SMIC, plus les deux taux réduits", apres: "réduction dégressive unique jusqu'à 3 SMIC au 1er janvier 2026, les taux réduits supprimés"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000051269563
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CSS, art. L. 241-13, version en vigueur modifiée par la loi n° 2025-199, art. 18)."
+
+  # ------------------------------------------------------------------ Lecornu II
+  - id: lfss2026_suspension_retraites
+    gouvernement: lecornu_2
+    intitule: Suspension du relèvement de l'âge d'ouverture des droits à la retraite
+    instrument: retraites
+    texte: {nature: loi, numero: 2025-1403, date: 2025-12-30, intitule: loi de financement de la sécurité sociale pour 2026}
+    article: "105"
+    codification: CSS, art. L. 161-17-2
+    annee_effet: 2026
+    parametres:
+      - {quoi: "âge d'ouverture des droits des assurés nés du 1er janvier 1963 au 31 mars 1965", avant: "62 ans et 9 mois (1963), 63 ans (1964), 63 ans et 3 mois (1965)", apres: "62 ans et 9 mois"}
+      - {quoi: "âge des générations suivantes", avant: "+3 mois par génération jusqu'à 64 ans pour la génération 1968", apres: "63 ans pour les assurés nés d'avril à décembre 1965, puis +3 mois par génération jusqu'à 64 ans pour la génération 1969"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000053227007
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+      note: "Déjà confirmée en D-410 sur codes.droit.org (CSS, art. L. 161-17-2, texte en vigueur, qui nomme la loi n° 2025-1403)."
+
+  # ------------------------------------------------------------------ Ajouts de D-413
+  # Relus sur le Journal officiel (archive de la DILA), comme les mesures ci-dessus.
+
+  # Les indexations annuelles du barème de l'impôt sur le revenu (CGI, art. 197, I, 1).
+  # Les seuils sont ceux d'une part, appliqués aux revenus de l'année précédant celle de la
+  # loi. Les lois de finances pour 2012 et pour 2013 n'ont pas revalorisé les seuils : le
+  # barème des revenus de 2010 (loi de finances pour 2011) vaut pour ceux de 2011 et de
+  # 2012, la tranche à 45 % ajoutée (lfi2013_tranche_45). Le barème de 2015 est celui de
+  # lfi2015_tranche_5_5, et celui de 2020 celui de lfi2020_ir_11.
+  - id: bareme_2010
+    gouvernement: fillon_2
+    intitule: Barème de l'impôt sur le revenu des revenus de 2009
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2009-1673, date: 2009-12-30, intitule: loi de finances pour 2010}
+    article: "18"
+    codification: CGI, art. 197
+    annee_effet: 2010
+    parametres:
+      - {quoi: "seuils des tranches (5,5 %, 14 %, 30 %, 40 %)", avant: "barème des revenus de 2008 (loi de finances pour 2009, hors de l'archive lue)", apres: "5 875 €, 11 720 €, 26 030 €, 69 783 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "2 292 €", apres: "2 301 €"}
+    statut: remplacee
+    suite: bareme_2011
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000021558225
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2011
+    gouvernement: fillon_3
+    intitule: Barème de l'impôt sur le revenu des revenus de 2010, reconduit pour 2011 et 2012
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2010-1657, date: 2010-12-29, intitule: loi de finances pour 2011}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2011
+    parametres:
+      - {quoi: "seuils des tranches", avant: "5 875 €, 11 720 €, 26 030 €, 69 783 €", apres: "5 963 €, 11 896 €, 26 420 €, 70 830 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "2 301 €", apres: "2 336 €"}
+    statut: remplacee
+    suite: bareme_2014
+    note: Le taux de la dernière tranche est porté à 41 % par l'article 6 de la même loi (lfi2011_tranche_41).
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000023314390
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2014
+    gouvernement: ayrault_2
+    intitule: Barème de l'impôt sur le revenu des revenus de 2013
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2013-1278, date: 2013-12-29, intitule: loi de finances pour 2014}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2014
+    parametres:
+      - {quoi: "seuils des tranches (5,5 %, 14 %, 30 %, 41 %, 45 %)", avant: "5 963 €, 11 896 €, 26 420 €, 70 830 €, 150 000 €", apres: "6 011 €, 11 991 €, 26 631 €, 71 397 €, 151 200 €"}
+    statut: remplacee
+    suite: lfi2015_tranche_5_5
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000028399525
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2016
+    gouvernement: valls_2
+    intitule: Barème de l'impôt sur le revenu des revenus de 2015
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2015-1785, date: 2015-12-29, intitule: loi de finances pour 2016}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2016
+    parametres:
+      - {quoi: "seuils des tranches (14 %, 30 %, 41 %, 45 %)", avant: "9 690 €, 26 764 €, 71 754 €, 151 956 €", apres: "9 700 €, 26 791 €, 71 826 €, 152 108 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 508 €", apres: "1 510 €"}
+    statut: remplacee
+    suite: bareme_2017
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000031732877
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2017
+    gouvernement: cazeneuve
+    intitule: Barème de l'impôt sur le revenu des revenus de 2016
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2016-1917, date: 2016-12-29, intitule: loi de finances pour 2017}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2017
+    parametres:
+      - {quoi: "seuils des tranches", avant: "9 700 €, 26 791 €, 71 826 €, 152 108 €", apres: "9 710 €, 26 818 €, 71 898 €, 152 260 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 510 €", apres: "1 512 €"}
+    statut: remplacee
+    suite: bareme_2018
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000033734180
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2018
+    gouvernement: philippe_2
+    intitule: Barème de l'impôt sur le revenu des revenus de 2017
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2017-1837, date: 2017-12-30, intitule: loi de finances pour 2018}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2018
+    parametres:
+      - {quoi: "seuils des tranches", avant: "9 710 €, 26 818 €, 71 898 €, 152 260 €", apres: "9 807 €, 27 086 €, 72 617 €, 153 783 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 512 €", apres: "1 527 €"}
+    statut: remplacee
+    suite: bareme_2019
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000036339210
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2019
+    gouvernement: philippe_2
+    intitule: Barème de l'impôt sur le revenu des revenus de 2018
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2018-1317, date: 2018-12-28, intitule: loi de finances pour 2019}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2019
+    parametres:
+      - {quoi: "seuils des tranches", avant: "9 807 €, 27 086 €, 72 617 €, 153 783 €", apres: "9 964 €, 27 519 €, 73 779 €, 156 244 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 527 €", apres: "1 551 €"}
+    statut: remplacee
+    suite: lfi2020_ir_11
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037882353
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2021
+    gouvernement: castex
+    intitule: Barème de l'impôt sur le revenu des revenus de 2020
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2020-1721, date: 2020-12-29, intitule: loi de finances pour 2021}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2021
+    parametres:
+      - {quoi: "seuils des tranches (11 %, 30 %, 41 %, 45 %)", avant: "10 064 €, 25 659 €, 73 369 €, 157 806 €", apres: "10 084 €, 25 710 €, 73 516 €, 158 122 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 567 €", apres: "1 570 €"}
+    statut: remplacee
+    suite: bareme_2022
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000042753593
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2022
+    gouvernement: castex
+    intitule: Barème de l'impôt sur le revenu des revenus de 2021
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2021-1900, date: 2021-12-30, intitule: loi de finances pour 2022}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2022
+    parametres:
+      - {quoi: "seuils des tranches", avant: "10 084 €, 25 710 €, 73 516 €, 158 122 €", apres: "10 225 €, 26 070 €, 74 545 €, 160 336 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 570 €", apres: "1 592 €"}
+    statut: remplacee
+    suite: bareme_2023
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000044637653
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2023
+    gouvernement: borne
+    intitule: Barème de l'impôt sur le revenu des revenus de 2022
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2022-1726, date: 2022-12-30, intitule: loi de finances pour 2023}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2023
+    parametres:
+      - {quoi: "seuils des tranches", avant: "10 225 €, 26 070 €, 74 545 €, 160 336 €", apres: "10 777 €, 27 478 €, 78 570 €, 168 994 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 592 €", apres: "1 678 €"}
+    statut: remplacee
+    suite: bareme_2024
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000046845640
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2024
+    gouvernement: borne
+    intitule: Barème de l'impôt sur le revenu des revenus de 2023
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2023-1322, date: 2023-12-29, intitule: loi de finances pour 2024}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2024
+    parametres:
+      - {quoi: "seuils des tranches", avant: "10 777 €, 27 478 €, 78 570 €, 168 994 €", apres: "11 294 €, 28 797 €, 82 341 €, 177 106 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 678 €", apres: "1 759 €"}
+    statut: remplacee
+    suite: bareme_2025
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000048727355
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2025
+    gouvernement: bayrou
+    intitule: Barème de l'impôt sur le revenu des revenus de 2024
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
+    article: "2"
+    codification: CGI, art. 197
+    annee_effet: 2025
+    parametres:
+      - {quoi: "seuils des tranches", avant: "11 294 €, 28 797 €, 82 341 €, 177 106 €", apres: "11 497 €, 29 315 €, 83 823 €, 180 294 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 759 €", apres: "1 791 €"}
+    statut: remplacee
+    suite: bareme_2026
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000051168019
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: bareme_2026
+    gouvernement: lecornu_2
+    intitule: Barème de l'impôt sur le revenu des revenus de 2025
+    instrument: ir
+    sens: neutre
+    texte: {nature: loi, numero: 2026-103, date: 2026-02-19, intitule: loi de finances pour 2026}
+    article: "4"
+    codification: CGI, art. 197
+    annee_effet: 2026
+    parametres:
+      - {quoi: "seuils des tranches", avant: "11 497 €, 29 315 €, 83 823 €, 180 294 €", apres: "11 600 €, 29 579 €, 84 577 €, 181 917 €"}
+      - {quoi: "plafond de l'avantage du quotient familial par demi-part", avant: "1 791 €", apres: "1 807 €"}
+    statut: en_vigueur
+
+  # La CSG sur les revenus du patrimoine et de placement (CSS, art. L. 136-8, I, 2°).
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000053508182
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: lfss2019_csg_patrimoine
+    gouvernement: philippe_2
+    intitule: CSG sur les revenus du patrimoine ramenée à 9,2 %, les prélèvements sociaux sur le capital refondus
+    instrument: csg
+    sens: baisse
+    texte: {nature: loi, numero: 2018-1203, date: 2018-12-22, intitule: loi de financement de la sécurité sociale pour 2019}
+    article: "26"
+    codification: CSS, art. L. 136-8
+    annee_effet: 2019
+    parametres:
+      - {quoi: "CSG sur les revenus du patrimoine et de placement", avant: "9,9 %", apres: "9,2 %"}
+    statut: remplacee
+    suite: lfss2026_csg_patrimoine
+    note: Le même article abroge les IV, IV bis et V de l'article L. 136-8 et refond les prélèvements sociaux sur le capital ; le taux global n'est pas relu ici.
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000037847610
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: lfss2026_csg_patrimoine
+    gouvernement: lecornu_2
+    intitule: CSG sur les revenus du patrimoine et de placement portée à 10,6 %
+    instrument: csg
+    sens: hausse
+    texte: {nature: loi, numero: 2025-1403, date: 2025-12-30, intitule: loi de financement de la sécurité sociale pour 2026}
+    article: "12"
+    codification: CSS, art. L. 136-8
+    annee_effet: 2026
+    parametres:
+      - {quoi: "CSG sur les revenus du patrimoine et de placement (CSS, art. L. 136-8, I, 2°)", avant: "9,2 %", apres: "10,6 %"}
+      - {quoi: "revenus maintenus à 9,2 % (IV rétabli)", avant: néant, apres: "ceux du a du I de l'art. L. 136-6 et du 2° du I et des 1° à 4° du II de l'art. L. 136-7 (revenus fonciers, plus-values immobilières, épargne logement, assurance vie, rentes)"}
+    statut: en_vigueur
+    note: Les catégories maintenues à 9,2 % sont lues par les renvois du texte au CSS, dont les articles ne sont pas relus ici. Applicable aux revenus du patrimoine imposés au titre de 2025 et aux produits de placement à compter du 1er janvier 2026. C'est la loi qui porte la CSG sur le capital à son taux actuel (D-410 la laissait non identifiée).
+
+  # Les autres mesures des lois de finances pour 2025 et 2026.
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000053226452
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: lfi2025_cvae_report
+    gouvernement: bayrou
+    intitule: Suppression de la CVAE reportée à 2030 et contribution complémentaire
+    instrument: impots_production
+    sens: hausse
+    texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
+    article: "62"
+    codification: CGI, art. 1586 quater
+    annee_effet: 2025
+    note: Le projet a été déposé par le gouvernement Barnier ; la loi est promulguée sous le gouvernement Bayrou.
+    parametres:
+      - {quoi: "taux de la CVAE", avant: "0,28 % en 2024, 0,19 % en 2025, 0,09 % en 2026, suppression en 2027", apres: "0,28 % maintenu, baisse décalée ; les années de fin portées de 2027 à 2030"}
+      - {quoi: "contribution complémentaire à la CVAE due au titre de 2025", avant: néant, apres: "47,4 % de la CVAE due au titre de 2025"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000051168728
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: lfi2025_ttf
+    gouvernement: bayrou
+    intitule: Taux de la taxe sur les transactions financières porté à 0,4 %
+    instrument: autres_impots
+    texte: {nature: loi, numero: 2025-127, date: 2025-02-14, intitule: loi de finances pour 2025}
+    article: "98"
+    codification: CGI, art. 235 ter ZD
+    annee_effet: 2025
+    date_effet: 2025-04-01
+    parametres:
+      - {quoi: "taux de la taxe", avant: "0,3 %", apres: "0,4 % (acquisitions à compter du premier jour du deuxième mois suivant la promulgation)"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000051168984
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: lfi2026_cdhr
+    gouvernement: lecornu_2
+    intitule: Contribution différentielle sur les hauts revenus prorogée
+    instrument: ir
+    sens: hausse
+    texte: {nature: loi, numero: 2026-103, date: 2026-02-19, intitule: loi de finances pour 2026}
+    article: "2"
+    codification: CGI, art. 224
+    annee_effet: 2026
+    parametres:
+      - {quoi: "durée d'application", avant: "imposition des revenus de 2025", apres: "des revenus de 2025 jusqu'à ceux de l'année dont la loi d'approbation des comptes constate un déficit du budget général inférieur à 3 % du PIB"}
+      - {quoi: "revenu de référence", avant: "revenu fiscal de référence", apres: "sans application des règles de quotient ; départ à l'étranger imposé l'année du départ"}
+    statut: temporaire
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000053508168
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: lfi2026_cebge
+    gouvernement: lecornu_2
+    intitule: Contribution exceptionnelle sur les bénéfices des grandes entreprises étendue à un second exercice
+    instrument: is
+    sens: hausse
+    texte: {nature: loi, numero: 2026-103, date: 2026-02-19, intitule: loi de finances pour 2026}
+    article: "12"
+    annee_effet: 2026
+    parametres:
+      - {quoi: "exercices concernés", avant: "le premier exercice clos à compter du 31 décembre 2025", apres: "les deux premiers exercices"}
+      - {quoi: "seuil de chiffre d'affaires du second exercice", avant: néant, apres: "1 500 000 000 €, le taux étant lissé entre 1 500 000 000 € et 1 600 000 000 €"}
+    statut: temporaire
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000053508208
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: lfi2026_holdings
+    gouvernement: lecornu_2
+    intitule: Taxe sur les actifs non affectés à une activité opérationnelle des sociétés holdings patrimoniales
+    instrument: patrimoine
+    sens: hausse
+    texte: {nature: loi, numero: 2026-103, date: 2026-02-19, intitule: loi de finances pour 2026}
+    article: "7"
+    codification: CGI, art. 235 ter C
+    annee_effet: 2026
+    parametres:
+      - {quoi: "taux sur les actifs non professionnels", avant: néant, apres: "20 %"}
+      - {quoi: "sociétés concernées", avant: néant, apres: "actifs d'au moins 5 000 000 €, une personne physique détenant au moins 50 % des droits, revenus passifs supérieurs à 50 % des produits"}
+    statut: en_vigueur
+
+  # Les prestations, les retraites et l'assurance chômage.
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000053508189
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: lfss2015_modulation_af
+    gouvernement: valls_2
+    intitule: Modulation des allocations familiales selon les ressources
+    instrument: prestations
+    texte: {nature: loi, numero: 2014-1554, date: 2014-12-22, intitule: loi de financement de la sécurité sociale pour 2015}
+    article: "85"
+    codification: CSS, art. L. 521-1
+    annee_effet: 2015
+    date_effet: 2015-07-01
+    parametres:
+      - {quoi: "montant des allocations familiales et de leurs majorations", avant: "indépendant des ressources", apres: "variable selon les ressources du ménage, plafonds et montants fixés par décret, avec un complément dégressif"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000029953543
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: lfss2020_revalorisation
+    gouvernement: philippe_2
+    intitule: Revalorisation des prestations limitée à 0,3 % en 2020, sauf les pensions jusqu'à 2 000 €
+    instrument: prestations
+    texte: {nature: loi, numero: 2019-1446, date: 2019-12-24, intitule: loi de financement de la sécurité sociale pour 2020}
+    article: "81"
+    annee_effet: 2020
+    parametres:
+      - {quoi: "revalorisation des prestations et pensions en 2020", avant: "l'inflation (CSS, art. L. 161-25)", apres: "0,3 %"}
+      - {quoi: "pensions totales n'excédant pas 2 000 € par mois", avant: "0,3 % (régime de 2019)", apres: "revalorisation de droit commun, puis coefficients dégressifs jusqu'à 2 014 €"}
+    statut: temporaire
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000039675431
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: chomage_2019
+    gouvernement: philippe_2
+    intitule: Réforme de l'assurance chômage, affiliation allongée et dégressivité
+    instrument: prestations
+    texte: {nature: décret, numero: 2019-797, date: 2019-07-26, intitule: décret relatif au régime d'assurance chômage}
+    article: "5 ; règlement annexé (annexe A), art. 3 et 17 bis"
+    codification: Code du travail, art. L. 5422-20
+    annee_effet: 2019
+    date_effet: 2019-11-01
+    parametres:
+      - {quoi: "durée d'affiliation minimale", avant: "convention du 14 avril 2017 (hors de l'archive lue)", apres: "130 jours travaillés au cours des 24 mois précédant la fin du contrat (36 mois à partir de 53 ans)"}
+      - {quoi: "coefficient de dégressivité de l'allocation journalière (allocataires de moins de 57 ans)", avant: néant, apres: "0,7 à partir du 183e jour d'indemnisation, sans descendre sous 59,03 € par jour"}
+    statut: remplacee
+    suite: chomage_2023
+    note: Le calcul du salaire journalier de référence a été différé et modifié par les décrets n° 2020-361, 2021-346 et 2021-1251, non relus ici.
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000038829622
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000038829683
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000038830617
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: chomage_2023
+    gouvernement: borne
+    intitule: Durée d'indemnisation du chômage réduite d'un quart
+    instrument: prestations
+    texte: {nature: décret, numero: 2023-33, date: 2023-01-26, intitule: décret relatif au régime d'assurance chômage}
+    article: "1 et 2"
+    codification: Code du travail, art. L. 5422-20
+    annee_effet: 2023
+    date_effet: 2023-02-01
+    parametres:
+      - {quoi: "durée d'indemnisation", avant: "égale à la durée retenue sur la période de référence", apres: "affectée d'un coefficient de 0,75, arrondie à l'entier supérieur, pour les fins de contrat à compter du 1er février 2023"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000047061821
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000047061837
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
+  - id: aah_deconjugalisation
+    gouvernement: borne
+    intitule: Allocation aux adultes handicapés calculée sans les ressources du conjoint
+    instrument: prestations
+    texte: {nature: loi, numero: 2022-1158, date: 2022-08-16, intitule: loi portant mesures d'urgence pour la protection du pouvoir d'achat}
+    article: "10"
+    codification: CSS, art. L. 821-1 et L. 821-3
+    annee_effet: 2023
+    date_effet: 2023-10-01
+    parametres:
+      - {quoi: "ressources prises en compte", avant: "celles du bénéficiaire et de son conjoint, concubin ou partenaire", apres: "celles du seul bénéficiaire, l'ancien calcul restant acquis s'il lui est plus favorable"}
+    statut: en_vigueur
+    verification:
+      statut: vérifiée
+      sources:
+        - https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000046186750
+      lu_sur: archive JORF de la DILA, Freemium_jorf_global_20261108-140000
