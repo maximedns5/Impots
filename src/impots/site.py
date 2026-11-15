@@ -345,6 +345,7 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
     listed: list[str] = []
     codes: set[str] = set()
     listes: list = []
+    compares: list = []
     files[site_mesure.CSS] = site_mesure.STYLE
     for study in studies:
         if study.refus:
@@ -371,13 +372,9 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
                 f"{code}.</p>")
         # The study's page (but 25, D-456): its summary first, then its detail as the
         # study writes it, each trajectory with why its curves move.
-        main = site_mesure.lire_courbes(body(lines, n), entries)
-        resume = site_mesure.resume(study, entries, lines, n, _text, body)
-        cut = main.find("</h1>") + len("</h1>") if "</h1>" in main else 0
-        main = (f'{main[:cut]}\n{resume}\n<details id="le-detail" class="sm-detail">'
-                f"<summary>Le détail de l'étude, tel qu'elle l'écrit</summary>"
-                f"{main[cut:]}</details>")
+        main = site_mesure.page_etude(study, entries, lines, n, _text, body)
         files[f"{study.nom}.html"] = _mesure_css(_page(f"{study.titre} — {TITLE}", main, pied))
+        compares.append((study, entries, lines, n))
         mesures = site_mesure.mesures_de(study, entries)
         if mesures:
             from impots import programmes as pg
@@ -424,6 +421,10 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         intro += ('\n<p><a href="presidentielle.html">Les programmes de la présidentielle '
                   "2027</a> : les 24 candidats déclarés, ce que l'outil chiffre de chacun, et "
                   "pourquoi pas le reste.</p>")
+    if sum(1 for c in compares if c[0].programme) > 1:
+        # The candidates side by side (but 25, volet mesure, D-457).
+        files[site_mesure.COMPARER] = _mesure_css(_page(
+            f"Comparer les candidats — {TITLE}", site_mesure.comparer(compares, _text), large=True))
     if listes:
         files[site_mesure.INDEX] = _mesure_css(_page(f"Une mesure pas à pas — {TITLE}",
                                                      site_mesure.index(listes)))

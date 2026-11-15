@@ -201,7 +201,13 @@ def test_the_candidates_page_lists_the_24_with_their_coverage() -> None:
         c = p.couverture()
         assert f"| {c['mesures']} | {c['parametrees']} | {c['chiffrees']} |" in row
         refusee = any(s.programme == slug and s.refus for s in _studies())
-        assert ("| oui |" in row) == (bool(p.chiffrees()) and not refusee)
+        # Since D-457 the row says whether the study has its page, or is preregistered
+        # with passes not run: « oui » sent a reader to a page that did not exist.
+        page = any(s.programme == slug and not s.refus and s.page.exists()
+                   for s in _studies())
+        etudiee = "| sa page |" in row or "| préenregistrée, pas encore chiffrée |" in row
+        assert etudiee == (bool(p.chiffrees()) and not refusee)
+        assert ("| sa page |" in row) == page
         assert ("| refusée |" in row) == refusee
     assert "| refusée |" in next(line for line in text.splitlines()
                                  if line.startswith("| Nicolas Dupont-Aignan ("))

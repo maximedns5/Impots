@@ -56,6 +56,19 @@ def _badge(texte: str, etage: str, conditionnel: bool = False) -> str:
             f'href="#etage-{_slug(etage)}" title="{title}">{_e(label)}</a>')
 
 
+def _m(text: str, etage: str = "programme") -> str:
+    """Un texte du programme, échappé, chaque montant avec son étage (comme
+    `etude.amounts`) ; sans noms de code entre parenthèses."""
+    import re
+
+    text = re.sub(r"\s*\(`[^`]*`\)", "", text)
+    out, last = [], 0
+    for m in etude.AMOUNT.finditer(text):
+        out += [_e(text[last:m.start()]), _badge(m[0], etage)]
+        last = m.end()
+    return "".join(out) + _e(text[last:])
+
+
 def _source(fichier: str, champ: str, commit: str) -> str:
     return (f'<p class="source">Source : <code>{_e(fichier)}</code> · champ '
             f"<code>{_e(champ)}</code> · commit <code>{_e(commit[:7])}</code></p>")
@@ -101,10 +114,10 @@ def _figure(svg: str, trace: str, source: str) -> str:
 # --------------------------------------------------------------------------- #
 # les graphiques de la page (SVG, couleurs par classes : le thème sombre suit)
 # --------------------------------------------------------------------------- #
-def barres(ident: str, rows: list[tuple[str, float, str]], titre: str, unite: str,
+def barres(ident: str, rows: list[tuple[Any, ...]], titre: str, unite: str,
            echelle: float = 1.0) -> str:
     """Des barres horizontales autour de zéro : (libellé, valeur, texte affiché)."""
-    values = [v for _, v, _ in rows] or [0.0]
+    values = [row[1] for row in rows] or [0.0]
     ticks = _ticks(min(0.0, *values), max(0.0, *values))
     x0, x1 = 14.0, W - 14.0
 
@@ -112,12 +125,13 @@ def barres(ident: str, rows: list[tuple[str, float, str]], titre: str, unite: st
         return x0 + (v - ticks[0]) / (ticks[-1] - ticks[0]) * (x1 - x0)
 
     corps, y = [], 8.0
-    for label, v, texte in rows:
+    for row in rows:
+        label, v, texte = row[:3]
         # Le libellé au-dessus de sa barre : au téléphone, rien ne se chevauche.
         corps.append(_t(x0, y + 12, f"{label} : {texte}", "sm-encre"))
         y += 17
         a, b = sorted((x(0), x(v)))
-        cls = "sm-plus" if v >= 0 else "sm-moins"
+        cls = row[3] if len(row) > 3 else "sm-plus" if v >= 0 else "sm-moins"
         corps.append(f'<rect x="{a:.1f}" y="{y:.1f}" width="{max(b - a, 1):.1f}" '
                      f'height="14" class="{cls}"/>')
         y += 22
@@ -126,7 +140,7 @@ def barres(ident: str, rows: list[tuple[str, float, str]], titre: str, unite: st
     for t in ticks:
         corps.append(_t(x(t), y + 14, _fr(t * echelle, d), "sm-doux", "middle"))
     corps.append(_t(x1, y + 30, unite, "sm-doux", "end"))
-    desc = "; ".join(f"{label} : {texte}" for label, _, texte in rows)
+    desc = "; ".join(f"{row[0]} : {row[2]}" for row in rows)
     return _svg(ident, y + 38, titre, desc, corps)
 
 
@@ -193,12 +207,15 @@ def colonnes_deciles(ident: str, deciles: list[dict[str, Any]], sign: int) -> st
 
 
 def ligne_annees(ident: str, years: list[int], series: list[tuple[str, list[float], str]],
-                 reperes: list[tuple[int, str]]) -> str:
+                 reperes: list[tuple[int, str]], bande: list[tuple[float, float]] | None = None,
+                 titre: str = "La dette, année par année",
+                 unite: str = "Δ dette, points de PIB") -> str:
     """Δ dette année par année, en points de PIB : une ligne par vue, et des repères
     verticaux là où la courbe change de pente pour une raison connue."""
     values = [v * 100 for _, vs, _ in series for v in vs]
+    values += [v * 100 for lo_hi in bande or [] for v in lo_hi]
     ticks = _ticks(min(0.0, *values), max(0.0, *values))
-    top, h, x0, x1 = 30.0, 160.0, 46.0, W - 50.0
+    top, h, x0, x1 = 44.0, 150.0, 46.0, W - 50.0
 
     def x(yr: int) -> float:
         return x0 + (yr - years[0]) / max(years[-1] - years[0], 1) * (x1 - x0)
@@ -214,6 +231,12 @@ def ligne_annees(ident: str, years: list[int], series: list[tuple[str, list[floa
         corps.append(_t(x0 - 6, y(t) + 4, _fr(t, d), "sm-doux", "end"))
     corps.append(f'<line x1="{x0}" y1="{y(0):.1f}" x2="{x1}" y2="{y(0):.1f}" '
                  f'class="sm-zero"/>')
+    if bande:
+        haut = " ".join(f"{x(yr):.1f},{y(hi * 100):.1f}" for yr, (_, hi) in zip(years, bande,
+                                                                              strict=True))
+        bas = " ".join(f"{x(yr):.1f},{y(lo * 100):.1f}" for yr, (lo, _) in
+                       reversed(list(zip(years, bande, strict=True))))
+        corps.append(f'<polygon points="{haut} {bas}" class="sm-bande"/>')
     for k, (yr, label) in enumerate(reperes):
         corps.append(f'<line x1="{x(yr):.1f}" y1="{top - 4}" x2="{x(yr):.1f}" '
                      f'y2="{top + h}" class="sm-repere"/>')
@@ -225,11 +248,18 @@ def ligne_annees(ident: str, years: list[int], series: list[tuple[str, list[floa
         corps.append(_t(x1 + 4, y(vs[-1] * 100) + 4, f"{_fr(vs[-1] * 100, 2)}", "sm-encre"))
     for yr in (years[0], (years[0] + years[-1]) // 2, years[-1]):
         corps.append(_t(x(yr), top + h + 16, str(yr), "sm-doux", "middle"))
-    corps.append(_t(x1, top + h + 32, "Δ dette, points de PIB", "sm-doux", "end"))
+    corps.append(_t(x1, top + h + 32, unite, "sm-doux", "end"))
+    corps.insert(0, _t(4, 12, titre, "sm-encre"))
+    if len(series) > 1:
+        for k, (name, _, cls) in enumerate(series):
+            ly = top + h + 48 + 16 * k
+            corps.append(f'<line x1="8" y1="{ly}" x2="30" y2="{ly}" class="{cls}"/>')
+            corps.append(_t(36, ly + 4, name, "sm-doux"))
     desc = "; ".join(f"{name} : " + ", ".join(f"{yr} {_fr(v * 100, 2)}"
                                              for yr, v in zip(years, vs, strict=True))
                      for name, vs, _ in series)
-    return _svg(ident, top + h + 40, "La dette, année par année", desc, corps)
+    return _svg(ident, top + h + (40 + 16 * len(series) if len(series) > 1 else 40), titre,
+                desc, corps)
 
 
 def plage(ident: str, rows: list[tuple[str, float, float, float, str]], unite: str,
@@ -310,7 +340,7 @@ def _modules(menages: dict[str, Any] | None) -> list[tuple[str, float]]:
     if menages is None:
         return []
     out = [(k, float(v)) for k, v in (menages.get("deltas") or {}).items()
-           if k not in AGREGATS and abs(float(v)) >= 1e6]
+           if k not in AGREGATS and not k.endswith("_droit") and abs(float(v)) >= 1e6]
     return sorted(out, key=lambda kv: -abs(kv[1]))[:8]
 
 
@@ -322,9 +352,27 @@ ETAPES = ("Le texte, traduit en paramètres", "Les ménages touchés", "L'effet 
           "Le coût, couche par couche")
 
 
+def _provenance(corps: str) -> str:
+    """Ce qui ne sert qu'au relecteur (rapports, champs, commits, noms de code) sort du
+    texte et se replie en fin d'étape : « D'où viennent ces nombres » (but 25, D-457)."""
+    import re
+
+    sources = re.findall(r'<p class="source">.*?</p>', corps, re.S)
+    if not sources:
+        return corps
+    corps = re.sub(r'<p class="source">.*?</p>', "", corps, flags=re.S)
+    corps = corps.replace("<br></figcaption>", "</figcaption>")
+    return (corps + '<details class="sm-prov"><summary>D\'où viennent ces nombres</summary>'
+            + "".join(sources) + "</details>")
+
+
+HAUT = '<p class="sm-haut"><a href="#contenu">↑ Retour en haut</a></p>'
+
+
 def _etape(k: int, corps: str, phrase: str) -> str:
     return (f'<section class="sm-etape" id="etape-{k}"><h2><span class="sm-num">{k}</span>'
-            f"{_e(ETAPES[k - 1])}</h2><p class=\"sm-phrase\">{phrase}</p>{corps}</section>")
+            f"{_e(ETAPES[k - 1])}</h2><p class=\"sm-phrase\">{phrase}</p>"
+            f"{_provenance(corps)}{HAUT}</section>")
 
 
 def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: Any,
@@ -342,7 +390,7 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
     titre = f"{m.libelle} — {programme.candidat}"
     out.append(f'<p class="sm-fil"><a href="{INDEX}">Une mesure pas à pas</a> &rsaquo; '
                f'<a href="{INDEX}#{programme.slug}">{_e(programme.candidat)}</a></p>')
-    out.append(f"<h1>{_e(m.libelle)}</h1>")
+    out.append(f"<h1>{_m(m.libelle)}</h1>")
     out.append(f'<p class="sm-chapeau">Une mesure du programme de {_e(programme.candidat)}'
                f", suivie de son texte au coût qu'en publie l'étude, en sept étapes. Chaque "
                f"nombre dit son étage de confiance et sa source : le rapport, le champ, le "
@@ -364,21 +412,25 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
     # 1. Le texte -> les paramètres.
     ch = m.chiffrage
     citations = "".join(
-        f'<blockquote class="sm-cite"><p>{_e(_guillemets(s.citation))}</p><footer>{_e(s.type)}, '
+        f'<blockquote class="sm-cite"><p>{_m(_guillemets(s.citation))}</p><footer>{_e(s.type)}, '
         f'{_e(s.date)} · <a href="{_e(s.url)}">la source</a></footer></blockquote>'
         for s in m.sources[:2])
+    feuilles = _feuilles(ch.reforme)
     params = "".join(
-        f"<li><code>{_e(champ)}</code> = {_e(etude.valeur_lue(champ, v))}</li>"
-        for champ, v in _feuilles(ch.reforme))
+        f"<li>{_badge(etude.valeur_lue(champ, v), 'programme')}"
+        + (f" (réglage {k})" if len(feuilles) > 1 else "") + "</li>"
+        for k, (champ, v) in enumerate(feuilles, 1))
     plages = "".join(
-        f"<li><code>{_e(p.champ)}</code> : de {_e(etude.valeur_lue(p.champ, p.min))} à "
-        f"{_e(etude.valeur_lue(p.champ, p.max))}</li>" for p in ch.plages)
+        f"<li>de {_badge(etude.valeur_lue(p.champ, p.min), 'hypothèse')} à "
+        f"{_badge(etude.valeur_lue(p.champ, p.max), 'hypothèse')}</li>" for p in ch.plages)
+    codes = "; ".join(f"<code>{_e(champ)}</code> = {_e(etude.valeur_lue(champ, v))}"
+                      for champ, v in feuilles)
     schema = (
         '<div class="sm-flux">'
         f'<div class="sm-boite"><span class="sm-tag">ce que dit le candidat</span>'
-        f"<strong>{_e(m.parametre)}</strong>{citations}</div>"
+        f"<strong>{_m(m.parametre)}</strong>{citations}</div>"
         '<div class="sm-fleche" aria-hidden="true">→</div>'
-        f'<div class="sm-boite"><span class="sm-tag">ce que le moteur reçoit</span>'
+        f'<div class="sm-boite"><span class="sm-tag">le réglage du moteur</span>'
         f"<ul>{params}</ul>"
         + (f'<p class="sm-petit">Plage réglable : </p><ul>{plages}</ul>' if plages else "")
         + "</div>"
@@ -388,11 +440,12 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
         f"</strong><p class=\"sm-petit\">dès {year}"
         + (f", les années {', '.join(map(str, path['annees']))}" if path.get("annees")
            else f", jusqu'en {etude.LAST_YEAR}") + "</p></div></div>")
-    note = (f'<p class="sm-note"><strong>La traduction</strong> : {_e(ch.note)}</p>'
+    note = (f'<p class="sm-note"><strong>La traduction</strong> : {_m(ch.note, "hypothèse")}</p>'
             if ch.note else "")
     out.append(_etape(1, schema + note + (
         f'<p class="source">Source : <code>programmes/{_e(programme.slug)}.json</code> · '
-        f"mesure <code>{_e(m.id)}</code> · relevé du {_e(programme.releve)}</p>"),
+        f"mesure <code>{_e(m.id)}</code> · relevé du {_e(programme.releve)} · les "
+        f"réglages, par leur nom dans le moteur : {codes}</p>"),
         "Le texte du candidat devient un ou deux nombres que le moteur sait lire. Tout ce "
         "qui n'a pas de bouton reste hors du chiffrage, et la note le dit."))
 
@@ -644,11 +697,16 @@ def reperes_trajectoire(path: dict[str, Any], years: list[int]
 def mesures_de(study: etude.Etude, entries: list[dict[str, Any]]
                ) -> list[tuple[Any, dict[str, Any]]]:
     """(la mesure du programme, son entrée seule) pour chaque mesure seule chiffrée."""
-    if study.programme is None or not entries or not entries[0].get("mesures"):
+    if study.programme is None or not entries:
         return []
     from impots import programmes as pg
 
     p = pg.charger(study.programme)
+    if not entries[0].get("mesures"):
+        # A programme of one priced measure: its part is that measure alone.
+        if len(p.chiffrees()) == 1 and entries[0].get("mesures_absentes") is None:
+            return [(p.chiffrees()[0], {**entries[0], "mesure": p.chiffrees()[0].id})]
+        return []
     by_id = {m.id: m for m in p.chiffrees()}
     return [(by_id[s["mesure"]], s) for s in entries[0]["mesures"]]
 
@@ -675,12 +733,14 @@ def index(listes: list[tuple[Any, etude.Etude, list[tuple[Any, dict[str, Any]]]]
            "la suit de ce que dit le texte au coût qu'en publie l'étude, en sept étapes, "
            "chacune avec son schéma et sa source. Seules les mesures chiffrées seules, avec "
            "leurs deux rapports, y sont.</p>",
+           f'<p class="sm-petit"><a href="{COMPARER}">Comparer les candidats</a></p>',
            '<ol class="sm-sommaire sm-apercu">' + "".join(f"<li>{_e(t)}</li>" for t in ETAPES)
            + "</ol>"]
     for p, study, mesures in listes:
         items = "".join(
-            f'<li><a href="{lien(p.slug, m.id)}"><strong>{_e(m.libelle)}</strong>'
-            f'<span>{_e(m.parametre)}</span></a>'
+            f'<li><div class="sm-nom"><strong>{_m(m.libelle)}</strong>'
+            f'<span>{_m(m.parametre)}</span>'
+            f'<a href="{lien(p.slug, m.id)}">La suivre pas à pas →</a></div>'
             f'<span class="sm-cout">{_badge(_eur(etude.lecture_seule(s)["figee"]), "L2")}'
             f"</span></li>" for m, s in mesures)
         out.append(f'<section class="sm-candidat" id="{p.slug}"><h2>{_e(p.candidat)}</h2>'
@@ -717,6 +777,16 @@ def resume(study: etude.Etude, entries: list[dict[str, Any]], lines: list[str],
                 for h, c in paires)
             out.append(f'<div class="sm-ligne"><h3>{text(cells[0], n)}</h3>'
                        f'<div class="sm-cartes">{cartes}</div></div>')
+    out.append(part_chiffree(study))
+    if study.programme is not None:
+        out.append(f'<p class="sm-petit"><a href="{COMPARER}">Comparer aux autres '
+                   "candidats</a> : ce qui se compare, et ce qui ne se compare pas.</p>")
+    gdp = float((entries[0]["path"].get("start") or {}).get("gdp_eur") or 0)
+    if gdp:
+        out.append(f'<p class="sm-note"><strong>Pour lire les points de PIB</strong> : un '
+                   f"point de PIB, c'est environ {_badge(f'{_fr(gdp / 100 / 1e9)} Md€', 'publié')}"
+                   f" (le PIB de {entries[0]['path']['start']['year']}, divisé par cent)."
+                   "</p>")
     # Pour qui : le graphique des déciles de la première ligne, avec sa légende.
     name = entries[0]["name"]
     for i, ln in enumerate(lines):
@@ -724,35 +794,9 @@ def resume(study: etude.Etude, entries: list[dict[str, Any]], lines: list[str],
             # The same figure as the detail's, its ids made the summary's own.
             figure = body(lines[i:i + 3], n).replace(f"{name}-deciles",
                                                      f"resume-{name}-deciles")
-            out.append("<h3>Pour qui</h3>" + figure)
+            out.append('<h3 id="pour-qui">Pour qui</h3>' + figure)
             break
-    mesures = mesures_de(study, entries)
-    if mesures:
-        from impots import programmes as pg
-
-        p = pg.charger(study.programme)
-        items = "".join(
-            f'<li><a href="{lien(p.slug, m.id)}"><strong>{_e(m.libelle)}</strong>'
-            f'<span>pas à pas →</span></a><span class="sm-cout">'
-            f'{_badge(_eur(etude.lecture_seule(s)["figee"]), "L2")}</span></li>'
-            for m, s in mesures)
-        out.append(f"<h3>Mesure par mesure</h3><p class=\"sm-petit\">Le coût de la première "
-                   f"année, mécanique, de chaque mesure seule ; sa page la suit en sept "
-                   f"étapes.</p><ul class=\"sm-mesures\">{items}</ul>")
-    gdp = float((entries[0]["path"].get("start") or {}).get("gdp_eur") or 0)
-    if gdp:
-        out.append(f'<p class="sm-note"><strong>Pour lire les points de PIB</strong> : un point '
-                   f"de PIB, c'est environ {_badge(f'{_fr(gdp / 100 / 1e9)} Md€', 'publié')} (le PIB de "
-                   f"{entries[0]['path']['start']['year']}, <code>start.gdp_eur</code> du "
-                   f"chemin annuel, divisé par cent).</p>")
-    out.append('<p class="sm-note"><strong>Quel coût ?</strong> « La première année » est '
-               "le coût mécanique de 2026, vue figée (la population de 2024 au droit de "
-               "2026) : c'est celui de la page. Plus bas, la vue vieillie (la population "
-               "vieillie jusqu'en 2026), le coût avec les comportements, les plages et les "
-               "mesures seules en donnent d'autres : chacun dit sa vue, son année et sa "
-               "couche.</p>")
-    out.append('<p class="sm-petit"><a href="#le-detail">Le détail de l\'étude</a>, tel '
-               "qu'elle l'écrit, suit, replié.</p></section>")
+    out.append("</section>")
     return "\n".join(out)
 
 
@@ -776,6 +820,500 @@ def lire_courbes(main: str, entries: list[dict[str, Any]]) -> str:
         note = f'<p class="sm-lire"><strong>Pourquoi ça bouge</strong> : {_e(pourquoi)}</p>'
         main = main[:end] + note + main[end:]
     return main
+
+
+# --------------------------------------------------------------------------- #
+# la page d'une étude, refaite (but 25, D-457) : le résumé, le chemin du coût à la dette,
+# la dette année par année, mesure par mesure, les plages ; le reste en provenance
+# --------------------------------------------------------------------------- #
+PERSISTANCES = {"lue": "lu dans Mésange", "eteint": "éteint après 3 ans",
+                "tenu": "tenu au niveau de la 3e année"}
+SECTIONS = (("en-resume", "En résumé"), ("quel-cout", "Quel coût ?"),
+            ("pour-qui", "Pour qui"), ("cout-dette", "Du coût à la dette"),
+            ("dette-annees", "La dette, année par année"),
+            ("mesure-par-mesure", "Mesure par mesure"), ("plages", "Les réglages"),
+            ("provenance", "Pour le relecteur"))
+
+
+def _section(ident: str, corps: str) -> str:
+    titre = dict(SECTIONS)[ident]
+    return (f'<section class="sm-bloc" id="{ident}"><h2>{_e(titre)}</h2>{corps}{HAUT}'
+            "</section>")
+
+
+def _instrument(nom: str) -> str:
+    return INSTRUMENTS_LUS.get(nom, nom.replace("_", " "))
+
+
+def _freinent(entry: dict[str, Any]) -> list[str]:
+    """Les instruments dont la boucle lit un PIB plus bas la première année : l'impulsion
+    du chemin (`years[0].statistiques.vieillie.impulses`) fois le multiplicateur de PIB de
+    Mésange à un an (`rejeu.macro.instruments`), négatif."""
+    path = entry["path"]
+    impulses = ((path["years"][0].get("statistiques") or {}).get("vieillie") or {}).get(
+        "impulses") or {}
+    tables = ((path.get("rejeu") or {}).get("macro") or {}).get("instruments") or {}
+    out = []
+    for nom, impulse in impulses.items():
+        pib = (tables.get(nom) or {}).get("pib") or {}
+        if isinstance(impulse, (int, float)) and pib.get("1") is not None and (
+                entry["sign"] * float(impulse) * float(pib["1"]) < 0):
+            out.append(_instrument(nom))
+    return out
+
+
+def cascade_etude(entry: dict[str, Any], ident: str) -> str:
+    """Le coût de la première année, en milliards d'euros, puis le pont vers la dette de
+    la dernière année, en points de PIB, chaque marche de sa couleur."""
+    from impots import graphiques
+
+    c = graphiques.cascade_nombres(entry)
+    if c is None:
+        return ""
+    etage = etude.debt_etage(entry["path"])
+    cls = {"comportements": "sm-c-comp"}
+    rows1 = [(lab, v, _eur(v), cls.get(lab, "sm-c-cout")) for lab, v in c["cout"]]
+    if len(rows1) > 1:
+        rows1.append(("coût de la première année", c["cout_total"], _eur(c["cout_total"]),
+                      "sm-c-total"))
+    sans, pib, induites = (v for _, v in c["dette"])
+    rows2 = [("le coût seul, sans effet sur l'activité", sans, etude._points(sans),
+              "sm-c-cout"),
+             ("le PIB qui change (le dénominateur)", pib, etude._points(pib), "sm-c-act"),
+             ("les recettes que l'activité induit", induites, etude._points(induites),
+              "sm-c-act2"),
+             (f"Δ dette {c['annee']}", c["dette_total"], etude._points(c["dette_total"]),
+              "sm-c-total")]
+    out = [_figure(barres(f"{ident}-c1", rows1, f"Le coût de {c['premiere']}",
+                          f"milliards d'euros de {c['premiere']}", 1e-9),
+                   f"le coût de la première année ({c['premiere']}), en milliards d'euros "
+                   f"de {c['premiere']} : mécanique, puis ce que les comportements y "
+                   f"changent quand une étude publiée le permet.", "")]
+    out.append(
+        f'<div class="sm-pont"><b class="sm-pont-tag">Le pont</b> Ce coût, chaque année de '
+        f"{c['premiere']} à {c['annee']}, s'ajoute à la dette ; rapporté au PIB de "
+        f"{c['annee']}, il la monterait de {_badge(etude._points(sans), etage, True)} "
+        f"si l'activité ne bougeait pas. C'est la première marche ci-dessous.</div>")
+    out.append(_figure(barres(f"{ident}-c2", rows2, f"La dette de {c['annee']}",
+                              f"points de PIB de {c['annee']}", 100.0),
+                       f"l'écart de dette en {c['annee']}, en points de PIB, vue vieillie, "
+                       f"à θ½, persistance « lue » : le coût seul (bleu), puis ce que "
+                       f"l'activité y change (vert : le PIB plus grand ou plus petit ; "
+                       f"violet : les recettes qu'elle induit), et la dette qui en "
+                       f"résulte (noir). Les trois premières barres somment à la dernière.",
+                       ""))
+    act = pib + induites
+    if act > 0:
+        freinent = _freinent(entry)
+        phrase = (f"<strong>Ici, l'activité fait monter la dette</strong>, de "
+                  f"{_badge(etude._points(act), etage, True)} : la boucle lit un PIB plus "
+                  f"bas qu'en référence, donc moins de recettes et un dénominateur plus "
+                  f"petit.")
+        if freinent:
+            phrase += (f" Les prélèvements qu'elle lit comme freinant l'activité la "
+                       f"première année : {_e(', '.join(freinent))} (une hausse de "
+                       f"prélèvement, dans Mésange, réduit le PIB).")
+    else:
+        part = -act / sans if sans else 0.0
+        phrase = (f"<strong>L'activité rend une part du coût</strong> : "
+                  f"{_badge(etude._points(-act), etage, True)} sur "
+                  f"{_badge(etude._points(sans), etage, True)}"
+                  + (", plus de la moitié" if part > 0.5 else "") + ".")
+    out.append(f'<p class="sm-note">{phrase}</p>')
+    rows = {(r["persistence"], r["view"]): r for r in entry["debt"]}
+    lue = rows.get(("lue", "vieillie"))
+    juger = []
+    for pers in ("eteint", "tenu"):
+        r = rows.get((pers, "vieillie"))
+        if r is not None:
+            juger.append(f"si l'effet sur l'activité est {PERSISTANCES[pers]}, "
+                         f"{_badge(etude._points(r['theta']), etage, True)}")
+    if lue is not None and lue["corners"]:
+        juger.append(f"aux deux bouts des fourchettes publiées (la boîte θ), de "
+                     f"{_badge(etude._points(min(lue['corners'])), etage, True)} à "
+                     f"{_badge(etude._points(max(lue['corners'])), etage, True)}")
+    if juger:
+        out.append('<p class="sm-note"><strong>Pour juger ce chiffre</strong> : la même '
+                   "dette " + " ; ".join(juger) + ". Le chiffre de tête lit Mésange à ses "
+                   "horizons, au milieu des fourchettes.</p>")
+    out.append(_source(f"predictif_{entry['name']}.json",
+                       "lectures.decomposition.vieillie ; side_by_side ; theta_box",
+                       entry["path"]["commit"]))
+    return "".join(out)
+
+
+def trajectoire_etude(entry: dict[str, Any], ident: str) -> str:
+    """La dette et le PIB de 2026 à 2035 en trois petits panneaux, deux ou trois séries
+    chacun : les vues, les persistances, le PIB ; la bande θ derrière la série lue."""
+    from impots import graphiques
+
+    if not graphiques.rejouable(entry["path"]):
+        return ""
+    t = graphiques.trajectoire_nombres(entry)
+    years, s = t["annees"], t["series"]
+    reperes, pourquoi = reperes_trajectoire(entry["path"], years)
+    panneaux = []
+    a = [("vue vieillie", s[("lue", "vieillie")]["dette"], "sm-l1")]
+    if ("lue", "figee") in s:
+        a.append(("vue figée", s[("lue", "figee")]["dette"], "sm-l2"))
+    panneaux.append(_figure(
+        ligne_annees(f"{ident}-ta", years, a, reperes, bande=t["bande"]["dette"],
+                     titre="La dette", unite="Δ dette, points de PIB"),
+        f"l'écart de dette à la référence, en points de PIB, de {years[0]} à {years[-1]}, "
+        f"à θ½, effet sur l'activité lu dans Mésange ; trait plein : la population "
+        f"vieillie chaque année, tirets : figée en 2024 ; la bande : la boîte θ, du plus "
+        f"bas au plus haut coin. {pourquoi} La bande s'élargit parce que l'incertitude "
+        f"de chaque année s'ajoute dans la dette.", ""))
+    b = [(PERSISTANCES[p], s[(p, "vieillie")]["dette"], cls)
+         for p, cls in (("lue", "sm-l1"), ("eteint", "sm-l3"), ("tenu", "sm-l4"))
+         if (p, "vieillie") in s]
+    if len(b) > 1:
+        court = ((entry["path"].get("rejeu") or {}).get("macro") or {}).get("court") or 3
+        panneaux.append(_figure(
+            ligne_annees(f"{ident}-tb", years, b, [(years[0] + int(court), "3 ans")],
+                         titre="Si l'effet sur l'activité dure ou s'éteint",
+                         unite="Δ dette, points de PIB"),
+            f"la même dette, vue vieillie, sous trois conventions pour l'effet sur "
+            f"l'activité : lu dans Mésange (le chiffre de tête), éteint après {court} ans, "
+            f"tenu à son niveau de la 3e année. La courbe « éteint » quitte les autres en "
+            f"{years[0] + int(court)} : c'est la convention, pas du bruit.", ""))
+    pib = s[("lue", "vieillie")]["pib"]
+    if any(abs(v) > 1e-9 for v in pib):
+        panneaux.append(_figure(
+            ligne_annees(f"{ident}-tc", years, [("PIB", pib, "sm-l1")], reperes,
+                         bande=t["bande"]["pib"], titre="Le PIB",
+                         unite="écart au PIB de référence, %"),
+            f"l'écart du PIB à la référence, en pour cent, de {years[0]} à {years[-1]}, "
+            f"vue vieillie, à θ½ ; la bande : la boîte θ.", ""))
+    return ('<div class="sm-multiples">' + "".join(panneaux) + "</div>"
+            + _source(f"predictif_{entry['name']}.json, rejoué par "
+                      "impots.predictif.rejouer", "side_by_side ; theta_box",
+                      entry["path"]["commit"]))
+
+
+def plages_etude(study: etude.Etude, entries: list[dict[str, Any]]) -> str:
+    """Chaque réglage d'une mesure : son coût au bas, à la valeur du candidat et au haut
+    de sa plage (mécanique, 2026, vue vieillie), sur une ligne, nommé par la mesure."""
+    from impots import programmes as pg
+
+    plages = entries[0].get("plages") or []
+    if not plages or study.programme is None:
+        return ""
+    by = {(r["mesure"], r["champ"], r["point"]): r for r in plages}
+    p = pg.charger(study.programme)
+    out = []
+    for m in p.chiffrees():
+        for k, plage_ in enumerate(m.chiffrage.plages, 1):
+            pts = []
+            for point in etude.POINTS:
+                r = by.get((m.id, plage_.champ, point))
+                if r is None:
+                    break
+                v = (pg._lire(m.chiffrage.reforme, plage_.champ) if point == "candidat"
+                     else plage_.min if point == "bas" else plage_.max)
+                pts.append((point, etude.valeur_lue(plage_.champ, v), v,
+                            float(r["response"]["mechanical_first_year_eur"])))
+            if len(pts) < 3:
+                continue
+            nom = m.libelle + (f", réglage {k}" if len(m.chiffrage.plages) > 1 else "")
+            bout = ""
+            if pts[1][2] in (pts[0][2], pts[2][2]):
+                bout = (" La valeur du candidat est un bout de la plage : la plage va de "
+                        "la mesure retirée à la mesure, ou de la mesure au plus loin "
+                        "qu'on la pousse.")
+            out.append(_figure(
+                reglage(f"{m.id}-plage-{k}", nom, pts),
+                f"le coût de la première année (2026), en milliards d'euros, mécanique, "
+                f"population vieillie, quand on règle la mesure de {_badge(pts[0][1], 'hypothèse')} à "
+                f"{_badge(pts[2][1], 'hypothèse')} ; le point plein est la valeur du candidat.{bout}",
+                _source(f"plages/{m.id}__{plage_.champ}__*.json", "response."
+                        "mechanical_first_year_eur", by[(m.id, plage_.champ,
+                                                         "candidat")]["commit"])))
+    if not out:
+        return ""
+    return ('<p class="sm-phrase">Ce que coûte chaque mesure si on la règle autrement. '
+            "Chaque point est la mesure seule, sans comportements ni boucle.</p>"
+            '<div class="sm-multiples">' + "".join(out) + "</div>")
+
+
+def _lu(texte: str) -> str:
+    """Une valeur de réglage telle que le programme la lit (`etude.valeur_lue`)."""
+    return texte
+
+
+def reglage(ident: str, nom: str, pts: list[tuple[str, str, float, float]]) -> str:
+    """Trois lignes, le bas, le candidat, le haut : la valeur du réglage à gauche, son
+    coût en point sur un axe commun."""
+    values = [c for *_, c in pts]
+    ticks = _ticks(min(0.0, *values), max(0.0, *values))
+    x0, x1 = 150.0, W - 16.0
+
+    def x(v: float) -> float:
+        return x0 + (v - ticks[0]) / (ticks[-1] - ticks[0]) * (x1 - x0)
+
+    lignes = _couper(nom, 46)
+    corps = [_t(4, 14 + 15 * k, ligne, "sm-encre") for k, ligne in enumerate(lignes)]
+    y = 26.0 + 15 * len(lignes)
+    noms = {"bas": "le bas", "candidat": "le candidat", "haut": "le haut"}
+    for point, lu, _, c in pts:
+        cls = "sm-point-plein" if point == "candidat" else "sm-point"
+        corps.append(f'<line x1="{x0}" y1="{y:.1f}" x2="{x1}" y2="{y:.1f}" '
+                     f'class="sm-grille"/>')
+        corps.append(_t(4, y + 4, f"{noms[point]} : {_lu(lu)}",
+                        "sm-encre" if point == "candidat" else "sm-doux"))
+        corps.append(f'<circle cx="{x(c):.1f}" cy="{y:.1f}" r="5" class="{cls}"/>')
+        corps.append(_t(min(x(c) + 8, x1 - 30), y - 7, _fr(c / 1e9, 1), "sm-doux"))
+        y += 24
+    corps.append(f'<line x1="{x(0):.1f}" y1="{y - 84:.1f}" x2="{x(0):.1f}" y2="{y - 12:.1f}" '
+                 f'class="sm-zero"/>')
+    d = _dec(ticks, 1e-9)
+    for t in ticks:
+        corps.append(_t(x(t), y + 4, _fr(t / 1e9, d), "sm-doux", "middle"))
+    corps.append(_t(x1, y + 20, "coût 2026, milliards d'euros", "sm-doux", "end"))
+    desc = "; ".join(f"{noms[pt]} {_lu(lu)} : {_fr(c / 1e9, 2)} Md€" for pt, lu, _, c in pts)
+    return _svg(ident, y + 28, nom, desc, corps)
+
+
+def _couper(texte: str, largeur: int) -> list[str]:
+    mots, lignes, cur = texte.split(), [], ""
+    for m in mots:
+        if cur and len(cur) + 1 + len(m) > largeur:
+            lignes.append(cur)
+            cur = m
+        else:
+            cur = f"{cur} {m}".strip()
+    return [*lignes, cur][:3]
+
+
+def quel_cout(study: etude.Etude, entry: dict[str, Any]) -> str:
+    """Les coûts qu'un lecteur croise pour la même part, chacun nommé : sa vue, son année,
+    sa couche (P3 du lecteur novice)."""
+    lu = etude.lecture_seule(entry)
+    year = entry["scenario"].year
+    items = [(f"<strong>Le coût</strong>, celui du résumé : {year}, mécanique, la "
+              f"population de 2024 au droit de {year} (vue figée)",
+              _badge(_eur(lu["figee"]), "L2"))]
+    if entry["kind"] == "mixte":
+        sign = entry["sign"]
+        items.append(("dont les ménages (leur revenu disponible)",
+                      _badge(_eur(sign * float(entry["response"].reform_cost)), "L2")))
+        items.append(("dont les entreprises",
+                      _badge(_eur(sign * float(entry["firms"].reform_cost)), "L2")))
+    items.append((f"le même coût sur la population vieillie jusqu'en {year} (vue "
+                  f"vieillie), la première année du chemin vers la dette",
+                  _badge(_eur(lu["vieillie"]), "L2")))
+    deltas = getattr(entry["response"], "deltas", None) or {}
+    gros = sorted(((k, float(v)) for k, v in dict(deltas).items()
+                   if k not in AGREGATS and not k.endswith("_droit")
+                   and abs(float(v)) >= 5e9),
+                  key=lambda kv: -abs(kv[1]))[:2]
+    for k, v in gros:
+        items.append((f"un seul module, {CHAMPS_LUS.get(k, k.replace('_', ' '))} : ce n'est "
+                      f"pas le coût, les autres modules le compensent en partie",
+                      _badge(_eur(entry["sign"] * v), "L2")))
+    lis = "".join(f'<li><span>{a}</span><span class="sm-v">{b}</span></li>'
+                  for a, b in items)
+    return (f'<ul class="sm-couts">{lis}</ul><p class="sm-petit">Ailleurs sur le site, '
+            f"d'autres coûts de la même part se lisent par la même règle : l'année pleine "
+            f"(la mesure appliquée toute une année, {year + 1}), la valeur du candidat sur "
+            f"un réglage (une mesure seule, vue vieillie), ce que la boucle lit la première "
+            f"année (les prélèvements qu'elle sait lire). Chacun dit sa vue, son année et sa "
+            f"couche ; « le » coût est le premier de cette liste.</p>")
+
+
+def _chapeau(lines: list[str], n: etude.Nombres,
+             text: Callable[[str, etude.Nombres], str]) -> str:
+    """Les premières phrases de « Ce que dit cette étude » : le coût, qui y gagne, la
+    dette, le verdict. Le paragraphe entier reste dans la provenance."""
+    import re
+
+    start = lines.index("## Ce que dit cette étude")
+    para = next((ln for ln in lines[start + 1:] if ln.strip()), "")
+    phrases = re.split(r"(?<=[.;]) (?=[A-ZÀ-Ý])", para)
+    garde = []
+    for ph in phrases:
+        garde.append(ph)
+        if "conclut" in ph or "verdict" in ph or len(garde) >= 5:
+            break
+    return f'<p class="sm-chapeau">{text(" ".join(garde), n)}</p>'
+
+
+def part_chiffree(study: etude.Etude) -> str:
+    """La part du programme que le verdict couvre, en barre : chiffrées, refusées,
+    vagues, sur les mesures relevées (Me6)."""
+    if study.programme is None:
+        return ""
+    from impots import programmes as pg
+
+    p = pg.charger(study.programme)
+    total = len(p.mesures)
+    ch = len(p.chiffrees())
+    vagues = sum(1 for m in p.mesures if m.precision == "vague")
+    autres = total - ch - vagues
+    w = [ch / total * 100, autres / total * 100, vagues / total * 100]
+    barre = ('<div class="sm-part" role="img" aria-label="'
+             f'{ch} mesures chiffrées, {autres} refusées, {vagues} vagues, sur {total}">'
+             f'<span class="sm-p-ch" style="width:{w[0]:.1f}%"></span>'
+             f'<span class="sm-p-ref" style="width:{w[1]:.1f}%"></span>'
+             f'<span class="sm-p-vag" style="width:{w[2]:.1f}%"></span></div>')
+    return (f'<aside class="garde" role="note"><b>Ce verdict ne porte que sur {ch} mesure'
+            f'{"s" if ch > 1 else ""} sur {total}.</b>{barre}<span class="sm-legende">'
+            f'<i class="sm-p-ch"></i> chiffrées ({ch}) <i class="sm-p-ref"></i> refusées '
+            f'par l\'outil ({autres}) <i class="sm-p-vag"></i> sans montant ({vagues})'
+            f"</span>Il ne dit pas ce que le programme entier fait à la dette : les "
+            f"mesures refusées n'y sont pas, et elles peuvent la faire monter ou baisser."
+            f"</aside>")
+
+
+def mesures_etude(study: etude.Etude, entries: list[dict[str, Any]]) -> str:
+    """Chaque mesure chiffrée : ce que dit le candidat, sur qui, combien, et sa page pas à
+    pas ; puis les mesures refusées, repliées, chacune avec sa raison."""
+    from impots import programmes as pg
+
+    if study.programme is None:
+        return ""
+    p = pg.charger(study.programme)
+    cartes = []
+    for m, seule in mesures_de(study, entries):
+        lu = etude.lecture_seule(seule)
+        qui = "les ménages" if m.chiffrage.couche == "menages" else "les entreprises"
+        cartes.append(
+            f'<article class="sm-mcarte"><h3>{_m(m.libelle)}</h3>'
+            f"<dl><dt>Le candidat</dt><dd>{_m(m.parametre)}</dd>"
+            f"<dt>Sur qui</dt><dd>{qui}</dd><dt>Coût {seule['scenario'].year}</dt><dd>"
+            f'{_badge(_eur(lu["figee"]), "L2")}</dd><dt>Dette {etude.LAST_YEAR}</dt><dd>'
+            f'{_badge(etude._points(lu["dette"]), lu["etage"], True)}</dd></dl>'
+            f'<a class="sm-suivre" href="{lien(p.slug, m.id)}">La suivre pas à pas →</a>'
+            "</article>")
+    refus = [m for m in p.mesures if m.chiffrage is None]
+    lignes = "".join(
+        f"<li><strong>{_m(m.libelle)}</strong> — "
+        + (_e("vague : elle n'énonce ni taux ni montant") if m.refus is None
+           or m.refus.porte == "vague" else _m(etude.porte_lue(m.refus.porte)))
+        + "</li>" for m in refus)
+    return ('<p class="sm-phrase">Le coût de chaque mesure seule ; leur somme n\'est pas '
+            "le coût de la part, deux mesures se rencontrant dans le barème et dans la "
+            "dette.</p>"
+            f'<div class="sm-mcartes">{"".join(cartes)}</div>'
+            + (f'<details class="detail"><summary>Les {len(refus)} mesures que l\'outil ne '
+               f"chiffre pas, et pourquoi</summary><div class=\"detail-corps\">"
+               f'<ul class="sm-refus">{lignes}</ul></div></details>' if refus else ""))
+
+
+def page_etude(study: etude.Etude, entries: list[dict[str, Any]], lines: list[str],
+               n: etude.Nombres, text: Callable[[str, etude.Nombres], str],
+               body: Callable[[list[str], etude.Nombres], str]) -> str:
+    """La page d'une étude : le résumé, puis le chemin, puis mesure par mesure ; tout ce
+    que l'étude écrit, nombres compris, reste dans « Pour le relecteur », replié."""
+    full = lire_courbes(body(lines, n), entries)
+    cut = full.find("</h1>") + len("</h1>")
+    out = [full[:cut], _chapeau(lines, n, text)]
+    mesures = mesures_de(study, entries)
+    presentes = {"en-resume", "pour-qui", "cout-dette", "dette-annees", "provenance"}
+    if study.programme is not None:
+        presentes |= {"quel-cout"}
+    if mesures:
+        presentes |= {"mesure-par-mesure"}
+    plages = plages_etude(study, entries)
+    if plages:
+        presentes.add("plages")
+    out.append('<nav class="sm-toc" aria-label="Sur cette page"><ol>' + "".join(
+        f'<li><a href="#{i}">{_e(t)}</a></li>' for i, t in SECTIONS if i in presentes)
+        + "</ol></nav>")
+    out.append(resume(study, entries, lines, n, text, body))
+    if "quel-cout" in presentes:
+        out.append(_section("quel-cout", quel_cout(study, entries[0])))
+    plusieurs = len(entries) > 1
+    for key, fn in (("cout-dette", cascade_etude), ("dette-annees", trajectoire_etude)):
+        corps = "".join(
+            (f"<h3>{text(study.texte_lu().label(entry), n)}</h3>" if plusieurs else "")
+            + fn(entry, f"sm-{entry['name']}") for entry in entries)
+        if key == "cout-dette":
+            corps = ('<p class="sm-phrase">Le coût d\'une année est en euros ; la dette, '
+                     "dix ans plus tard, en points de PIB. Le pont entre les deux, puis ce "
+                     "que l'activité y change.</p>" + corps)
+        out.append(_section(key, _provenance(corps)))
+    if mesures:
+        out.append(_section("mesure-par-mesure", mesures_etude(study, entries)))
+    if plages:
+        out.append(_section("plages", _provenance(plages)))
+    out.append(_section("provenance", '<p class="sm-phrase">Tout ce que l\'étude écrit, '
+                        "tableau par tableau, avec ses rapports, ses commits et ses "
+                        "décisions : aucun nombre de la page n'est perdu.</p>"
+                        '<details class="detail sm-tout"><summary>Le texte complet de '
+                        "l'étude</summary><div class=\"detail-corps\">"
+                        f"{full[cut:]}</div></details>"))
+    return "\n".join(out)
+
+
+COMPARER = "comparer-candidats.html"
+
+
+def _bref_cellules(lines: list[str]) -> dict[str, str]:
+    """La première ligne du tableau « En bref », par en-tête."""
+    start = lines.index("## En bref")
+    table = []
+    for ln in lines[start + 1:]:
+        if ln.startswith("## "):
+            break
+        if ln.startswith("|"):
+            table.append(ln)
+    if len(table) < 3:
+        return {}
+    return dict(zip(_cellules(table[0]), _cellules(table[2]), strict=False))
+
+
+def comparer(etudes_: list[tuple[etude.Etude, list[dict[str, Any]], list[str], etude.Nombres]],
+             text: Callable[[str, etude.Nombres], str]) -> str:
+    """Les candidats côte à côte (P11 du lecteur novice) : ce que chacun chiffre, ce que
+    cette part coûte et fait à la dette, et ce qui ne se compare pas."""
+    from impots import programmes as pg
+
+    rangs = []
+    for study, entries, lines, n in etudes_:
+        if study.programme is None:
+            continue
+        p = pg.charger(study.programme)
+        lu = etude.lecture_seule(entries[0])
+        rangs.append((p, study, lu, _bref_cellules(lines), n))
+    rangs.sort(key=lambda r: -r[2]["dette"])
+    rows = [(r[0].candidat, r[2]["dette"], etude._points(r[2]["dette"]),
+             "sm-plus" if r[2]["dette"] < 0 else "sm-moins") for r in rangs]
+    figure = _figure(
+        barres("cmp-dette", rows, "La dette en 2035, part chiffrée de chaque programme",
+               "points de PIB de 2035", 100.0),
+        "l'écart de dette en 2035, en points de PIB, à θ½, vue vieillie, de la seule part "
+        "chiffrée de chaque programme ; rouge : elle monte, bleu : elle baisse. Chaque "
+        "barre porte sur une part différente : voir la colonne « chiffrées ».", "")
+    lignes = []
+    for p, study, lu, cells, n in rangs:
+        total, ch = len(p.mesures), len(p.chiffrees())
+        verdict = text(cells.get("verdict", "—"), n)
+        lignes.append(
+            f'<tr><th scope="row"><a href="{study.nom}.html">{_e(p.candidat)}</a></th>'
+            f'<td><span class="sm-frac">{ch} sur {total}</span><span class="sm-part" '
+            f'aria-hidden="true"><span class="sm-p-ch" style="width:{ch / total * 100:.1f}%">'
+            f"</span></span></td><td>{_badge(_eur(lu['figee']), 'L2')}</td>"
+            f"<td>{_badge(etude._points(lu['dette']), lu['etage'], True)}</td>"
+            f"<td>{verdict}</td></tr>")
+    table = ('<div class="sm-table"><table><thead><tr><th>candidat</th><th>mesures '
+             "chiffrées</th><th>coût 2026</th><th>dette 2035, à θ½</th><th>verdict</th>"
+             f"</tr></thead><tbody>{''.join(lignes)}</tbody></table></div>")
+    garde = ('<aside class="garde" role="note"><b>Ce qui ne se compare pas.</b>'
+             "<ul><li>Chaque ligne porte sur la seule part chiffrée d'un programme : "
+             "quelques mesures pour l'un, davantage pour l'autre. Un programme peu chiffré "
+             "n'est pas un programme peu coûteux.</li><li>L'effet sur l'activité n'est lu "
+             "que pour les prélèvements que la boucle sait lire : deux mesures de même "
+             "coût peuvent peser différemment sur la dette.</li><li>Les études n'ont pas "
+             "toutes tourné sur le même code : chaque page dit le sien.</li></ul></aside>")
+    return ("<h1>Comparer les candidats</h1>"
+            '<p class="sm-chapeau">Ce que chaque étude chiffre d\'un programme, ce que '
+            "cette part coûte la première année et ce qu'elle fait à la dette en 2035. "
+            "Ce qui se compare : le sens et l'ordre de grandeur, pour la part chiffrée. "
+            "Ce qui ne se compare pas est dit juste dessous.</p>"
+            + garde + figure + table
+            + f'<p class="sm-petit">Le chemin d\'une mesure : <a href="{INDEX}">une mesure '
+            "pas à pas</a>.</p>")
 
 
 STYLE = """\
@@ -845,14 +1383,65 @@ svg.sm { display: block; width: 100%; max-width: 36rem; height: auto;
 .sm-mesures { list-style: none; padding: 0; }
 .sm-mesures li { display: flex; justify-content: space-between; gap: .8rem;
   align-items: center; padding: .6rem .2rem; border-bottom: 1px solid var(--trait); }
-.sm-mesures a { text-decoration: none; display: grid; }
-.sm-mesures a span { font: .85rem system-ui, sans-serif; color: var(--doux); }
-.sm-mesures a:hover strong, .sm-mesures a:focus strong { text-decoration: underline; }
+.sm-nom { display: grid; gap: .15rem; }
+.sm-nom > span { font: .85rem system-ui, sans-serif; color: var(--doux); }
+.sm-nom > a { font: 600 .88rem system-ui, sans-serif; }
 .sm-cout { flex: none; }
 .sm-resume { border: 1px solid var(--trait); border-radius: .6rem; padding: .2rem 1rem 1rem;
   margin: 1rem 0 2rem; }
 .sm-ligne h3 { font-size: 1rem; margin-bottom: 0; }
 .sm-retour { margin-top: 2rem; font-family: system-ui, sans-serif; }
+.sm-toc ol { display: flex; flex-wrap: wrap; gap: .3rem .5rem; list-style: none; padding: 0;
+  font: .88rem var(--sans, system-ui); }
+.sm-toc a { display: inline-block; padding: .3rem .6rem; border: 1px solid var(--trait);
+  border-radius: 999px; text-decoration: none; }
+.sm-bloc { margin: 2.2rem 0 0; }
+.sm-haut { text-align: right; font: .82rem var(--sans, system-ui); margin: .6rem 0 0; }
+.sm-haut a { color: var(--doux); }
+.sm-prov { font: .8rem var(--sans, system-ui); color: var(--doux); margin: .6rem 0; }
+.sm-prov summary { cursor: pointer; }
+.sm-pont { background: var(--surface-2, var(--sm-carte)); border-left: 4px solid var(--sm-plus);
+  padding: .6rem .8rem; border-radius: 0 .4rem .4rem 0; margin: .8rem 0; }
+.sm-pont-tag { display: block; font: 600 .75rem var(--sans, system-ui);
+  text-transform: uppercase; letter-spacing: .05em; color: var(--doux); }
+.sm-c-cout { fill: var(--serie-1, var(--sm-plus)); }
+.sm-c-comp { fill: var(--serie-2, #b7791f); }
+.sm-c-act { fill: var(--serie-3, #2f855a); }
+.sm-c-act2 { fill: var(--serie-4, #6b46c1); }
+.sm-c-total { fill: var(--encre, var(--texte)); }
+.sm-bande { fill: var(--sm-plus); opacity: .15; }
+.sm-l3 { stroke: var(--serie-2, #b7791f); stroke-width: 2; stroke-dasharray: 6 4; }
+.sm-l4 { stroke: var(--serie-3, #2f855a); stroke-width: 2; stroke-dasharray: 2 3; }
+.sm-point-plein { fill: var(--sm-plus); }
+.sm-multiples { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1rem; }
+.sm-couts { list-style: none; padding: 0; }
+.sm-couts li { display: flex; justify-content: space-between; gap: 1rem; padding: .5rem 0;
+  border-bottom: 1px solid var(--trait); }
+.sm-couts li > span:first-child { font-size: .95rem; }
+.sm-couts .sm-v { flex: none; white-space: nowrap; }
+.sm-mcartes { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: .8rem; }
+.sm-mcarte { background: var(--surface, var(--sm-carte)); border: 1px solid var(--trait);
+  border-radius: .6rem; padding: .8rem 1rem; }
+.sm-mcarte h3 { margin: 0 0 .5rem; font-size: 1.05rem; }
+.sm-mcarte dl { display: grid; grid-template-columns: max-content 1fr; gap: .25rem .7rem;
+  margin: 0 0 .6rem; font-size: .92rem; }
+.sm-mcarte dt { color: var(--doux); font: .82rem var(--sans, system-ui); }
+.sm-suivre { font: 600 .9rem var(--sans, system-ui); }
+.sm-part { display: flex; height: .9rem; border-radius: .3rem; overflow: hidden;
+  margin: .5rem 0 .3rem; background: var(--sm-neutre); }
+.sm-p-ch { background: var(--sm-plus); } .sm-p-ref { background: var(--sm-moins); }
+.sm-p-vag { background: var(--sm-neutre); }
+.sm-legende { display: block; font: .8rem var(--sans, system-ui); color: var(--doux);
+  margin-bottom: .4rem; }
+.sm-legende i { display: inline-block; width: .8rem; height: .8rem; border-radius: .2rem;
+  vertical-align: -.1rem; margin-left: .4rem; }
+.sm-refus { font-size: .92rem; }
+.sm-table { overflow-x: auto; }
+.sm-table table { display: table; width: 100%; }
+.sm-frac { display: block; font: .85rem var(--sans, system-ui); white-space: nowrap; }
+.sm-table .sm-part { width: 6rem; height: .5rem; margin: .2rem 0 0; }
 @media (max-width: 640px) {
   .sm-flux { grid-template-columns: 1fr; }
   .sm-fleche { transform: rotate(90deg); justify-self: center; }

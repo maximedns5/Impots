@@ -3317,6 +3317,10 @@ def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
     slugs = pg.lister()
     studied = {e.programme for e in etudes if e.programme is not None}
     refusees = {e.programme for e in etudes if e.programme is not None and e.refus}
+    # A study whose passes have not run has no page (but 25, D-457): « oui » would send
+    # the reader to a page that does not exist.
+    chiffrees_ = {e.programme for e in etudes if e.programme is not None
+                  and not e.refus and e.page.exists()}
     releves = sorted({pg.charger(slug).releve for slug in slugs})
     w("# Les programmes de la présidentielle 2027")
     w("")
@@ -3344,7 +3348,8 @@ def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
         portes = ", ".join(f"{porte_lue(k)} {n(v, 'programme')}" for k, v in sorted(
             c["refus_par_porte"].items(), key=lambda kv: (-kv[1], kv[0]))
             if k != "vague") or "—"
-        etude_ = ("refusée" if slug in refusees else "oui") if slug in studied else "—"
+        etude_ = ("refusée" if slug in refusees else "sa page" if slug in chiffrees_
+                  else "préenregistrée, pas encore chiffrée") if slug in studied else "—"
         w(f"| {p.candidat} ({p.parti}) | {n(c['mesures'], 'programme')} | "
           f"{n(c['parametrees'], 'programme')} | {n(c['chiffrees'], 'programme')} | {etude_} | "
           f"{portes} |")
@@ -3359,7 +3364,7 @@ def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
         "refus_par_porte"] if k != "vague"})
     for porte in used:
         sens = amounts(porte_sens(porte), "programme", n)
-        w(f"* {sens[:1].upper()}{sens[1:]} (`{porte}`).")
+        w(f"* {sens[:1].upper()}{sens[1:]}.")
     w("")
     for line in lines:
         bare = n.resolve(line, lambda _: "")

@@ -34208,3 +34208,51 @@ change pour une raison connue.
 **Ce qui reste.** Le système visuel du volet `chemin` n'était pas poussé : les pages
 portent leur feuille, `mesure.css`, à reprendre à la jonction. `site verifier`, `etude
 verifier` et `node ui/check.mjs` verts.
+
+## D-457 — Les études raccourcies pour de bon, la cascade pontée, les candidats comparés
+
+**Les retours du lecteur novice** (D-466, passe 1) au volet `mesure`, et la décision du
+propriétaire du 15 novembre : une refonte complète, donc les études raccourcies pour de
+bon. Le système visuel du volet `chemin` (D-450) est fusionné ; les pages du volet en
+reprennent les jetons et la légende, et gardent leur feuille, `mesure.css`, pour leurs
+composants propres.
+
+**Une étude, désormais** : le titre et les premières phrases de « Ce que dit cette étude
+» ; un sommaire ; le résumé (le verdict en premier, puis le coût et la dette), avec la
+part chiffrée en barre à côté du verdict (Me6) et l'échelle de lecture d'un point de PIB
+(A5) ; « Quel coût ? », chaque coût de la même part nommé par sa vue, son année et sa
+couche (P3) ; pour qui ; du coût à la dette ; la dette année par année ; mesure par
+mesure, chaque mesure avec ce que dit le candidat, sur qui, combien et le lien de sa
+page pas à pas (Me2) ; les réglages. Tout ce que l'étude écrit, tableaux, rapports,
+commits et D-entrées compris, est dans « Pour le relecteur », replié : aucun nombre
+n'est perdu (Me1). Mélenchon passe de 31 600 à environ 8 300 px sur ordinateur, de 45
+600 à environ 11 500 au téléphone. Chaque section a son « retour en haut » (N3).
+
+**La cascade** (Me3, P7) : le coût de 2026 en milliards, puis un pont qui dit que ce
+coût, chaque année, rapporté au PIB de 2035, donne la première marche de la dette ;
+chaque marche a sa couleur (coût, comportements, PIB, recettes induites, dette). Quand
+l'activité fait monter la dette, une phrase le dit et nomme les prélèvements que la
+boucle lit comme freinant le PIB la première année (l'impulsion du chemin fois le
+multiplicateur de Mésange à un an, tous deux dans le rapport). Pour juger le chiffre de
+tête : la même dette sous les persistances « éteint » et « tenu », et aux coins de la
+boîte θ, nombres que la page publiait déjà plus bas. Les nombres sont ceux de
+`graphiques.cascade_nombres`.
+
+**La trajectoire** (Me4) : trois petits panneaux de deux ou trois séries, rejoués par
+`graphiques.trajectoire_nombres` (le même rejeu, refusé s'il ne redonne pas le rapport)
+: la dette en vue vieillie et figée avec la boîte θ ; les trois persistances ; le PIB.
+Chaque panneau dit ce qu'il trace et pourquoi il bouge. **Les réglages** (Me5) : trois
+lignes par réglage, le bas, le candidat, le haut, sans pavés ni noms de code ; une
+phrase quand le candidat est un bout de la plage.
+
+**Le reste.** La page des programmes dit « sa page » ou « préenregistrée, pas encore
+chiffrée » au lieu de « oui » pour Arthaud, Glucksmann, Labib et Zemmour (Me7), sans
+changer de nombre ; le test qui tenait « oui » tient la même propriété sur les deux
+mots. Les noms de code des portes et des réglages sortent du texte ; ceux des pages pas
+à pas vont dans « D'où viennent ces nombres », replié. `comparer-candidats.html` (P11) :
+les candidats côte à côte, la part chiffrée de chacun, ce qui ne se compare pas d'abord
+; la page `parcours-comparer.html` du volet `chemin` reste à lui. Le tableau des juges
+du parcours (P4) est au volet `chemin`.
+
+Aucune passe, aucun nombre publié ne change : chaque nombre est lu dans un rapport
+commité, par les fonctions qui le publient déjà.
