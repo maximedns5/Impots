@@ -112,9 +112,9 @@
       "theta": 0.5,
       "parametres": {
         "elasticite": {
-          "centre": 0.2,
-          "bas": 0.043,
-          "haut": 0.356
+          "centre": 0.043,
+          "bas": 0.0,
+          "haut": 0.2
         },
         "productivite": {
           "centre": 0.5,
@@ -337,9 +337,9 @@
     "convention": "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté.",
     "parametres": {
       "elasticite": {
-        "centre": 0.2,
-        "bas": 0.043,
-        "haut": 0.356
+        "centre": 0.043,
+        "bas": 0.0,
+        "haut": 0.2
       },
       "productivite": {
         "centre": 0.5,
@@ -2097,5 +2097,22 @@
         0.014979304722312934
       ]
     }
-  ]
+  ],
+  "recalcul": {
+    "decision": "D-427",
+    "date": "2026-11-15",
+    "objet": "l'élasticité du canal des créations, changée sans passe ; aucun prélèvement sur les entreprises ou le capital ne bouge : aucun nombre ne change",
+    "nombres_refaits": false,
+    "elasticite_avant": {
+      "centre": 0.2,
+      "bas": 0.043,
+      "haut": 0.356
+    },
+    "elasticite": {
+      "centre": 0.043,
+      "bas": 0.0,
+      "haut": 0.2
+    },
+    "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161"
+  }
 }

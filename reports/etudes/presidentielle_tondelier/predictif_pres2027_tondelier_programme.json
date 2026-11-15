@@ -183,9 +183,9 @@
       "theta": 0.5,
       "parametres": {
         "elasticite": {
-          "centre": 0.2,
-          "bas": 0.043,
-          "haut": 0.356
+          "centre": 0.043,
+          "bas": 0.0,
+          "haut": 0.2
         },
         "productivite": {
           "centre": 0.5,
@@ -265,18 +265,18 @@
       "vieillie": {
         "p_hausse": 1.0,
         "quantiles": {
-          "q05": 0.015742548579420236,
-          "q50": 0.021451576112981097,
-          "q95": 0.04071416109846448
+          "q05": 0.018942254913250234,
+          "q50": 0.024656942882115507,
+          "q95": 0.04394058422297113
         },
         "sobol": {
           "eti": {
-            "premier_ordre": 0.006741272777984019,
-            "total": 0.002584733338407265
+            "premier_ordre": 0.007260154892901909,
+            "total": 0.00258296848228815
           },
           "multiplicateur_macro": {
-            "premier_ordre": 1.243650497639776,
-            "total": 1.031221438824988
+            "premier_ordre": 1.2668085218055134,
+            "total": 1.0312217816026152
           }
         },
         "evaluations": 8000
@@ -284,18 +284,18 @@
       "figee": {
         "p_hausse": 1.0,
         "quantiles": {
-          "q05": 0.008443416529172309,
-          "q50": 0.01756894656457364,
-          "q95": 0.042976449480470955
+          "q05": 0.012092136905204155,
+          "q50": 0.021237003553940204,
+          "q95": 0.04668069503219791
         },
         "sobol": {
           "eti": {
-            "premier_ordre": 0.001522379522588589,
-            "total": 0.00043904819778539856
+            "premier_ordre": 0.001695648851125116,
+            "total": 0.00043857210349373135
           },
           "multiplicateur_macro": {
-            "premier_ordre": 1.1683562641613,
-            "total": 1.0345626442683222
+            "premier_ordre": 1.1858359213379768,
+            "total": 1.034561719316946
           }
         },
         "evaluations": 8000
@@ -313,22 +313,22 @@
     },
     "decomposition": {
       "vieillie": {
-        "cout": 0.04334958721223914,
-        "denominateur": -0.003024821053116966,
-        "retroaction": -0.018439457348538912,
-        "total": 0.02188530881058326
+        "cout": 0.04658136757647635,
+        "denominateur": -0.003036268997140157,
+        "retroaction": -0.01845408398461279,
+        "total": 0.025091014594723404
       },
       "figee": {
-        "cout": 0.045886364178430394,
-        "denominateur": -0.004504118012043978,
-        "retroaction": -0.023077463834006773,
-        "total": 0.018304782332379643
+        "cout": 0.049597082237342605,
+        "denominateur": -0.004523848200742364,
+        "retroaction": -0.02309946141074426,
+        "total": 0.02197377262585598
       }
     },
     "taux_marche": {
       "taux": 0.035,
-      "vieillie": 0.024168601340779805,
-      "figee": 0.020483777026847116
+      "vieillie": 0.027487032186381377,
+      "figee": 0.02427523468161108
     },
     "variante_salariale": {
       "sources": {
@@ -340,7 +340,7 @@
       "non_variees": [],
       "boite": {
         "vieillie": {
-          "theta": 0.026469244341664977,
+          "theta": 0.029683234778861367,
           "corners": [
             [
               "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -348,7 +348,7 @@
             ],
             [
               "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-              0.03428114945109062
+              0.04072589062870935
             ],
             [
               "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -356,7 +356,7 @@
             ],
             [
               "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-              0.012654744007775331
+              0.019054328404489507
             ],
             [
               "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -364,7 +364,7 @@
             ],
             [
               "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-              0.03634962981727141
+              0.04279765950736092
             ],
             [
               "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -372,7 +372,7 @@
             ],
             [
               "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-              0.014719753134141866
+              0.02112261500654755
             ],
             [
               "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -380,7 +380,7 @@
             ],
             [
               "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-              0.03428158345841292
+              0.04072632532602527
             ],
             [
               "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -388,7 +388,7 @@
             ],
             [
               "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-              0.012655177286764019
+              0.01905476237115611
             ],
             [
               "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -396,7 +396,7 @@
             ],
             [
               "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-              0.036350063824593715
+              0.04279809420467706
             ],
             [
               "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -404,12 +404,12 @@
             ],
             [
               "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-              0.014720186413130554
+              0.021123048973214376
             ]
           ]
         },
         "figee": {
-          "theta": 0.022955471458889543,
+          "theta": 0.02663477536306913,
           "corners": [
             [
               "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -417,7 +417,7 @@
             ],
             [
               "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-              0.035498087957596125
+              0.04289248556360836
             ],
             [
               "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -425,7 +425,7 @@
             ],
             [
               "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-              0.005263680482248345
+              0.01257339448858108
             ],
             [
               "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -433,7 +433,7 @@
             ],
             [
               "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-              0.03670251425115345
+              0.04409921535403494
             ],
             [
               "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -441,7 +441,7 @@
             ],
             [
               "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-              0.0064637057070977555
+              0.013775706390758202
             ],
             [
               "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -449,7 +449,7 @@
             ],
             [
               "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-              0.03549878171729781
+              0.04289318065014358
             ],
             [
               "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -457,7 +457,7 @@
             ],
             [
               "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-              0.005264371706897197
+              0.012574087030375436
             ],
             [
               "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -465,7 +465,7 @@
             ],
             [
               "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-              0.036703208010854915
+              0.044099910440570156
             ],
             [
               "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -473,7 +473,7 @@
             ],
             [
               "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-              0.00646439693174683
+              0.013776398932552558
             ]
           ]
         }
@@ -482,18 +482,18 @@
         "vieillie": {
           "p_hausse": 1.0,
           "quantiles": {
-            "q05": 0.017583042240456426,
-            "q50": 0.026034891104614544,
-            "q95": 0.043407659521609375
+            "q05": 0.02078595109783159,
+            "q50": 0.02924854155584733,
+            "q95": 0.046639486079582904
           },
           "sobol": {
             "eti": {
-              "premier_ordre": 0.006386281047588178,
-              "total": 0.002311527268947545
+              "premier_ordre": 0.006850711072004272,
+              "total": 0.0023102483296566856
             },
             "multiplicateur_macro": {
-              "premier_ordre": 1.209298659224788,
-              "total": 1.0296108530596098
+              "premier_ordre": 1.2262743678728094,
+              "total": 1.0296125842765613
             }
           },
           "evaluations": 8000
@@ -501,18 +501,18 @@
         "figee": {
           "p_hausse": 1.0,
           "quantiles": {
-            "q05": 0.01002112334253168,
-            "q50": 0.022218164741211854,
-            "q95": 0.04591728946685462
+            "q05": 0.01368120986534196,
+            "q50": 0.02589653178998952,
+            "q95": 0.04962803712708038
           },
           "sobol": {
             "eti": {
-              "premier_ordre": 0.0014817629040128535,
-              "total": 0.0003985294860299169
+              "premier_ordre": 0.0016390325722590523,
+              "total": 0.00039814525696367146
             },
             "multiplicateur_macro": {
-              "premier_ordre": 1.1560292560516365,
-              "total": 1.033165289807558
+              "premier_ordre": 1.169746997442333,
+              "total": 1.0331660900754545
             }
           },
           "evaluations": 8000
@@ -528,9 +528,9 @@
     "convention": "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté.",
     "parametres": {
       "elasticite": {
-        "centre": 0.2,
-        "bas": 0.043,
-        "haut": 0.356
+        "centre": 0.043,
+        "bas": 0.0,
+        "haut": 0.2
       },
       "productivite": {
         "centre": 0.5,
@@ -611,48 +611,48 @@
             -2.3438694460299794
           ],
           "taux_entree": [
-            0.9300230340170329,
-            0.902768953100586,
-            0.8506027989217874,
-            0.795254670255665,
-            0.739965242537227,
-            0.6829417787100938,
-            0.6214790956624162,
-            0.5637279172205681,
-            0.5135119726584778,
-            0.4687738892059959
+            0.19995495231366203,
+            0.19409532491662598,
+            0.18287960176818427,
+            0.17097975410496793,
+            0.1590925271455038,
+            0.14683248242267014,
+            0.13361800556741948,
+            0.12120150220242214,
+            0.11040507412157272,
+            0.1007863861792891
           ],
           "pib": [
-            5.5801382041021977e-05,
-            0.00015460862485987473,
-            0.000284132573229854,
-            0.00043392092589257856,
-            0.0005953081968426933,
-            0.0007281051529850616,
-            0.0008336938193232927,
-            0.0009145710290931415,
-            0.0009735711812609401,
-            0.001013535501492659
+            1.1997297138819723e-05,
+            3.324085434487306e-05,
+            6.10885032444186e-05,
+            9.329299906690436e-05,
+            0.000127991262321179,
+            0.00015654260789178825,
+            0.0001792441711545079,
+            0.0001966327712550254,
+            0.0002093178039711021,
+            0.00021791013282092164
           ],
           "recettes": [
-            2.9085704743331784e-05,
-            8.058762433770905e-05,
-            0.0001481002052395632,
-            0.0002261753288330123,
-            0.0003102962294360891,
-            0.0003795148207306671,
-            0.0004345514642872416,
-            0.0004767076001711343,
-            0.0005074606199530222,
-            0.0005282914735271006
+            6.2534265198163325e-06,
+            1.732633923260744e-05,
+            3.184154412650608e-05,
+            4.862769569909763e-05,
+            6.671368932875912e-05,
+            8.159568645709343e-05,
+            9.342856482175693e-05,
+            0.00010249213403679385,
+            0.00010910403328989979,
+            0.00011358266680832661
           ],
           "productivite": 0.5,
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.02188530881058348,
+            "theta": 0.025091014594723404,
             "c0": 0.02596989783430237,
-            "c1": 0.017808959695422955
+            "c1": 0.024212513151659287
           },
           "delta_sans_creations": [
             0.004458668734842686,
@@ -693,48 +693,48 @@
             -3.754472587587579
           ],
           "taux_entree": [
-            0.959868927700269,
-            0.9526893225279127,
-            0.9247610275183562,
-            0.8976524213631955,
-            0.8713380133597314,
-            0.8457950042319272,
-            0.8210003394474837,
-            0.7969333922113305,
-            0.7735715319465448,
-            0.7508945175175158
+            0.2063718194555578,
+            0.20482820434350119,
+            0.19882362091644654,
+            0.192995270593087,
+            0.18733767287234224,
+            0.18184592590986434,
+            0.176515072981209,
+            0.17134067932543603,
+            0.16631787936850712,
+            0.16144232126626587
           ],
           "pib": [
-            5.759213566201614e-05,
-            0.00016082720354330382,
-            0.0002983249981428152,
-            0.00046057410706878304,
-            0.000639670425029713,
-            0.0007950818583946209,
-            0.0009285211101195286,
-            0.0010423739680998296,
-            0.0011387820486022226,
-            0.0012196674613636624
+            1.2382309167333467e-05,
+            3.457784876181031e-05,
+            6.413987460070526e-05,
+            9.902343301978832e-05,
+            0.00013752914138138826,
+            0.00017094259955484345,
+            0.00019963203867569862,
+            0.00022411040314146332,
+            0.00024483814044947783,
+            0.0002622285041931874
           ],
           "recettes": [
-            3.001911049751182e-05,
-            8.382897315190918e-05,
-            0.0001554978119925076,
-            0.00024006793381529948,
-            0.00033341943218858375,
-            0.0004144255094442808,
-            0.0004839788884983798,
-            0.0005433231285561816,
-            0.0005935745177117863,
-            0.0006357349292924933
+            6.4541087569650405e-06,
+            1.8023229227660467e-05,
+            3.343202957838913e-05,
+            5.161460577028937e-05,
+            7.168517792054549e-05,
+            8.910148453052036e-05,
+            0.00010405546102715164,
+            0.00011681447263957903,
+            0.00012761852130803404,
+            0.00013668300979788605
           ],
           "productivite": 0.5,
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.018304782332379643,
+            "theta": 0.02197377262585598,
             "c0": 0.022979875840417163,
-            "c1": 0.013641017968333058
+            "c1": 0.020968194599218837
           },
           "delta_sans_creations": [
             0.004372254417009724,
@@ -778,48 +778,48 @@
             -2.3438694460299794
           ],
           "taux_entree": [
-            0.9300230340170329,
-            0.902768953100586,
-            0.8506027989217874,
-            0.795254670255665,
-            0.739965242537227,
-            0.6829417787100938,
-            0.6214790956624162,
-            0.5637279172205681,
-            0.5135119726584778,
-            0.4687738892059959
+            0.19995495231366203,
+            0.19409532491662598,
+            0.18287960176818427,
+            0.17097975410496793,
+            0.1590925271455038,
+            0.14683248242267014,
+            0.13361800556741948,
+            0.12120150220242214,
+            0.11040507412157272,
+            0.1007863861792891
           ],
           "pib": [
-            5.5801382041021977e-05,
-            0.00015460862485987473,
-            0.000284132573229854,
-            0.00043392092589257856,
-            0.0005953081968426933,
-            0.0007281051529850616,
-            0.0008336938193232927,
-            0.0009145710290931415,
-            0.0009735711812609401,
-            0.001013535501492659
+            1.1997297138819723e-05,
+            3.324085434487306e-05,
+            6.10885032444186e-05,
+            9.329299906690436e-05,
+            0.000127991262321179,
+            0.00015654260789178825,
+            0.0001792441711545079,
+            0.0001966327712550254,
+            0.0002093178039711021,
+            0.00021791013282092164
           ],
           "recettes": [
-            2.9085704743331784e-05,
-            8.058762433770905e-05,
-            0.0001481002052395632,
-            0.0002261753288330123,
-            0.0003102962294360891,
-            0.0003795148207306671,
-            0.0004345514642872416,
-            0.0004767076001711343,
-            0.0005074606199530222,
-            0.0005282914735271006
+            6.2534265198163325e-06,
+            1.732633923260744e-05,
+            3.184154412650608e-05,
+            4.862769569909763e-05,
+            6.671368932875912e-05,
+            8.159568645709343e-05,
+            9.342856482175693e-05,
+            0.00010249213403679385,
+            0.00010910403328989979,
+            0.00011358266680832661
           ],
           "productivite": 0.5,
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.04149203597156159,
+            "theta": 0.04472365962469449,
             "c0": 0.045609651442499954,
-            "c1": 0.03738275371435895
+            "c1": 0.04383805392965545
           },
           "delta_sans_creations": [
             0.004458668734842686,
@@ -860,48 +860,48 @@
             -3.754472587587579
           ],
           "taux_entree": [
-            0.959868927700269,
-            0.9526893225279127,
-            0.9247610275183562,
-            0.8976524213631955,
-            0.8713380133597314,
-            0.8457950042319272,
-            0.8210003394474837,
-            0.7969333922113305,
-            0.7735715319465448,
-            0.7508945175175158
+            0.2063718194555578,
+            0.20482820434350119,
+            0.19882362091644654,
+            0.192995270593087,
+            0.18733767287234224,
+            0.18184592590986434,
+            0.176515072981209,
+            0.17134067932543603,
+            0.16631787936850712,
+            0.16144232126626587
           ],
           "pib": [
-            5.759213566201614e-05,
-            0.00016082720354330382,
-            0.0002983249981428152,
-            0.00046057410706878304,
-            0.000639670425029713,
-            0.0007950818583946209,
-            0.0009285211101195286,
-            0.0010423739680998296,
-            0.0011387820486022226,
-            0.0012196674613636624
+            1.2382309167333467e-05,
+            3.457784876181031e-05,
+            6.413987460070526e-05,
+            9.902343301978832e-05,
+            0.00013752914138138826,
+            0.00017094259955484345,
+            0.00019963203867569862,
+            0.00022411040314146332,
+            0.00024483814044947783,
+            0.0002622285041931874
           ],
           "recettes": [
-            3.001911049751182e-05,
-            8.382897315190918e-05,
-            0.0001554978119925076,
-            0.00024006793381529948,
-            0.00033341943218858375,
-            0.0004144255094442808,
-            0.0004839788884983798,
-            0.0005433231285561816,
-            0.0005935745177117863,
-            0.0006357349292924933
+            6.4541087569650405e-06,
+            1.8023229227660467e-05,
+            3.343202957838913e-05,
+            5.161460577028937e-05,
+            7.168517792054549e-05,
+            8.910148453052036e-05,
+            0.00010405546102715164,
+            0.00011681447263957903,
+            0.00012761852130803404,
+            0.00013668300979788605
           ],
           "productivite": 0.5,
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.04171817297095015,
+            "theta": 0.04542534050653657,
             "c0": 0.046441917908280006,
-            "c1": 0.03700592414913406
+            "c1": 0.04440929603959276
           },
           "delta_sans_creations": [
             0.004372254417009724,
@@ -945,48 +945,48 @@
             -2.3438694460299794
           ],
           "taux_entree": [
-            0.9300230340170329,
-            0.902768953100586,
-            0.8506027989217874,
-            0.795254670255665,
-            0.739965242537227,
-            0.6829417787100938,
-            0.6214790956624162,
-            0.5637279172205681,
-            0.5135119726584778,
-            0.4687738892059959
+            0.19995495231366203,
+            0.19409532491662598,
+            0.18287960176818427,
+            0.17097975410496793,
+            0.1590925271455038,
+            0.14683248242267014,
+            0.13361800556741948,
+            0.12120150220242214,
+            0.11040507412157272,
+            0.1007863861792891
           ],
           "pib": [
-            5.5801382041021977e-05,
-            0.00015460862485987473,
-            0.000284132573229854,
-            0.00043392092589257856,
-            0.0005953081968426933,
-            0.0007281051529850616,
-            0.0008336938193232927,
-            0.0009145710290931415,
-            0.0009735711812609401,
-            0.001013535501492659
+            1.1997297138819723e-05,
+            3.324085434487306e-05,
+            6.10885032444186e-05,
+            9.329299906690436e-05,
+            0.000127991262321179,
+            0.00015654260789178825,
+            0.0001792441711545079,
+            0.0001966327712550254,
+            0.0002093178039711021,
+            0.00021791013282092164
           ],
           "recettes": [
-            2.9085704743331784e-05,
-            8.058762433770905e-05,
-            0.0001481002052395632,
-            0.0002261753288330123,
-            0.0003102962294360891,
-            0.0003795148207306671,
-            0.0004345514642872416,
-            0.0004767076001711343,
-            0.0005074606199530222,
-            0.0005282914735271006
+            6.2534265198163325e-06,
+            1.732633923260744e-05,
+            3.184154412650608e-05,
+            4.862769569909763e-05,
+            6.671368932875912e-05,
+            8.159568645709343e-05,
+            9.342856482175693e-05,
+            0.00010249213403679385,
+            0.00010910403328989979,
+            0.00011358266680832661
           ],
           "productivite": 0.5,
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.02563278388165413,
+            "theta": 0.028847293227551862,
             "c0": 0.029728591688072736,
-            "c1": 0.021545253603648895
+            "c1": 0.027966378308319717
           },
           "delta_sans_creations": [
             0.004458668734842686,
@@ -1027,48 +1027,48 @@
             -3.754472587587579
           ],
           "taux_entree": [
-            0.959868927700269,
-            0.9526893225279127,
-            0.9247610275183562,
-            0.8976524213631955,
-            0.8713380133597314,
-            0.8457950042319272,
-            0.8210003394474837,
-            0.7969333922113305,
-            0.7735715319465448,
-            0.7508945175175158
+            0.2063718194555578,
+            0.20482820434350119,
+            0.19882362091644654,
+            0.192995270593087,
+            0.18733767287234224,
+            0.18184592590986434,
+            0.176515072981209,
+            0.17134067932543603,
+            0.16631787936850712,
+            0.16144232126626587
           ],
           "pib": [
-            5.759213566201614e-05,
-            0.00016082720354330382,
-            0.0002983249981428152,
-            0.00046057410706878304,
-            0.000639670425029713,
-            0.0007950818583946209,
-            0.0009285211101195286,
-            0.0010423739680998296,
-            0.0011387820486022226,
-            0.0012196674613636624
+            1.2382309167333467e-05,
+            3.457784876181031e-05,
+            6.413987460070526e-05,
+            9.902343301978832e-05,
+            0.00013752914138138826,
+            0.00017094259955484345,
+            0.00019963203867569862,
+            0.00022411040314146332,
+            0.00024483814044947783,
+            0.0002622285041931874
           ],
           "recettes": [
-            3.001911049751182e-05,
-            8.382897315190918e-05,
-            0.0001554978119925076,
-            0.00024006793381529948,
-            0.00033341943218858375,
-            0.0004144255094442808,
-            0.0004839788884983798,
-            0.0005433231285561816,
-            0.0005935745177117863,
-            0.0006357349292924933
+            6.4541087569650405e-06,
+            1.8023229227660467e-05,
+            3.343202957838913e-05,
+            5.161460577028937e-05,
+            7.168517792054549e-05,
+            8.910148453052036e-05,
+            0.00010405546102715164,
+            0.00011681447263957903,
+            0.00012761852130803404,
+            0.00013668300979788605
           ],
           "productivite": 0.5,
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.02239964889786794,
+            "theta": 0.026080183345636554,
             "c0": 0.02708945472297697,
-            "c1": 0.017721231460585685
+            "c1": 0.025071439905736126
           },
           "delta_sans_creations": [
             0.004372254417009724,
@@ -1897,7 +1897,7 @@
         "persistence": "lue",
         "every_year": {
           "vieillie": {
-            "theta": 0.02188530881058348,
+            "theta": 0.025091014594723404,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -1905,7 +1905,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.02921955251640318
+                0.035647078104174446
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -1913,7 +1913,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.011408103605823339
+                0.017796465510991677
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -1921,7 +1921,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03128509116681122
+                0.03771589591269042
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -1929,7 +1929,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.013470133725747235
+                0.019861763649695385
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -1937,7 +1937,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.029219985906496326
+                0.03564751218229856
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -1945,7 +1945,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.011408536259758684
+                0.017796898850620968
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -1953,7 +1953,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.031285524556904365
+                0.037716329990814756
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -1961,12 +1961,12 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.01347056637968258
+                0.019862196989324676
               ]
             ]
           },
           "figee": {
-            "theta": 0.018304782332379643,
+            "theta": 0.02197377262585598,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -1974,7 +1974,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03003950789739407
+                0.03741162534450848
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -1982,7 +1982,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.003848391965500131
+                0.011143754525224425
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -1990,7 +1990,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.031242006524464072
+                0.03861642009389454
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -1998,7 +1998,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.0050465068030765
+                0.012344148758429707
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2006,7 +2006,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.030040200546743723
+                0.037412319316443954
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2014,7 +2014,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.003849082089749656
+                0.011144445962425475
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2022,7 +2022,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.031242699173813726
+                0.038617114065830016
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2030,14 +2030,14 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.005047196927326247
+                0.012344840195630535
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.02295015601680217,
+            "theta": 0.026782685505218007,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2045,7 +2045,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.035997666113293914
+                0.04370442349596293
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2053,7 +2053,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.006709645421690835
+                0.014322367983775397
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2061,7 +2061,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03758767620351988
+                0.0452976995906853
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2069,7 +2069,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.008292626034372974
+                0.01590858575720433
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2077,7 +2077,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.035998007737337856
+                0.04370476582172911
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2085,7 +2085,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.006709985535405805
+                0.01432270879301556
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2093,7 +2093,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.037588017827563824
+                0.0452980419164517
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2101,12 +2101,12 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.008292966148087944
+                0.015908926566444492
               ]
             ]
           },
           "figee": {
-            "theta": 0.021552092958300184,
+            "theta": 0.02550546464975656,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2114,7 +2114,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.0351943337125018
+                0.04314595033090751
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2122,7 +2122,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.004834506666040017
+                0.012685524456880204
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2130,7 +2130,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03656449051813926
+                0.04451901158660343
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2138,7 +2138,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.00619838080735069
+                0.014052276445436496
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2146,7 +2146,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03519510844215601
+                0.04314672670282893
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2154,7 +2154,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.004835277843278529
+                0.012686297261343737
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2162,7 +2162,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.036565265247793244
+                0.044519787958524626
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2170,7 +2170,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.006199151984589202
+                0.014053049249900251
               ]
             ]
           }
@@ -2180,7 +2180,7 @@
         "persistence": "eteint",
         "every_year": {
           "vieillie": {
-            "theta": 0.04149203597156159,
+            "theta": 0.04472365962469449,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2188,7 +2188,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03830161947292976
+                0.044755961112109555
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2196,7 +2196,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.035150031013349015
+                0.04160500917260035
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2204,7 +2204,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04037112701686607
+                0.04682876043798312
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2212,7 +2212,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.037221348519544284
+                0.04367962422573046
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2220,7 +2220,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.038302053695773886
+                0.044756396025633194
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2228,7 +2228,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.03515046561595825
+                0.041605444467098796
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2236,7 +2236,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.040371561239710196
+                0.046829195351506536
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2244,12 +2244,12 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.03722178312215352
+                0.04368005952022891
               ]
             ]
           },
           "figee": {
-            "theta": 0.04171817297095015,
+            "theta": 0.04542534050653657,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2257,7 +2257,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04044472536192156
+                0.04785382896397383
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2265,7 +2265,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.032955011936998124
+                0.04035188030235348
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2273,7 +2273,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04165000332714741
+                0.04906141368802919
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2281,7 +2281,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.03416063139590575
+                0.04155980782868385
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2289,7 +2289,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04044541961219328
+                0.04785452454295802
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2297,7 +2297,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.03295570638397316
+                0.04035257607879461
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2305,7 +2305,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04165069757741913
+                0.0490621092670136
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2313,14 +2313,14 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.03416132584288056
+                0.0415605036051252
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.047460072976155177,
+            "theta": 0.05133581643375984,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2328,7 +2328,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04676465415658537
+                0.05451252333490242
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2336,7 +2336,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.03727894673197496
+                0.04500728364129625
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2344,7 +2344,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.048358564048486485
+                0.05610971528847464
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2352,7 +2352,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.03887285662387607
+                0.046604475594868466
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2360,7 +2360,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04676499661852729
+                0.05451286650201648
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2368,7 +2368,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.037279289193916876
+                0.04500762680841053
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2376,7 +2376,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.0483589065104284
+                0.05611005845558892
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2384,12 +2384,12 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.03887319908581799
+                0.04660481876198275
               ]
             ]
           },
           "figee": {
-            "theta": 0.04688649118398858,
+            "theta": 0.050885967446311575,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2397,7 +2397,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.046304327512536325
+                0.05429971493630115
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2405,7 +2405,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.0364898872130639
+                0.04446441729891437
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2413,7 +2413,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.047677950789931645
+                0.05567625739441273
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2421,7 +2421,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.03786351049045944
+                0.04584095975702618
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2429,7 +2429,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04630510420224221
+                0.05430049327660358
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2437,7 +2437,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.036490663902770004
+                0.044465195639216804
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2445,7 +2445,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04767872747963753
+                0.05567703573471516
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2453,7 +2453,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.037864287180165324
+                0.04584173809732861
               ]
             ]
           }
@@ -2463,7 +2463,7 @@
         "persistence": "tenu",
         "every_year": {
           "vieillie": {
-            "theta": 0.02563278388165413,
+            "theta": 0.028847293227551862,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2471,7 +2471,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03662524334189987
+                0.04307623583947051
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2479,7 +2479,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.013827352545510152
+                0.020231153131002433
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2487,7 +2487,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.038694532250257874
+                0.04514881583372077
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2495,7 +2495,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.01589312018227762
+                0.022300200653552427
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2503,7 +2503,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.036625677518870026
+                0.043076670706974074
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2511,7 +2511,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.013827785983648866
+                0.0202315872573251
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2519,7 +2519,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03869496642722803
+                0.04514925070122433
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2527,12 +2527,12 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.015893553620416334
+                0.022300634779875095
               ]
             ]
           },
           "figee": {
-            "theta": 0.02239964889786794,
+            "theta": 0.026080183345636554,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2540,7 +2540,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03824786967334726
+                0.045651054461857354
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2548,7 +2548,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.006468551816908974
+                0.013784055119051342
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2556,7 +2556,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.0394528691400724
+                0.0468583596204899
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2564,7 +2564,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.007669149274597276
+                0.0149869414374737
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2572,7 +2572,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.038248563763201515
+                0.04565174987980969
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2580,7 +2580,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.006469243371169053
+                0.013784747991714363
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2588,7 +2588,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.03945356322992666
+                0.04685905503844201
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2596,14 +2596,14 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.007669840828857355
+                0.014987634310136722
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.027243952388007475,
+            "theta": 0.031089315240276028,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2611,7 +2611,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04449468036216242
+                0.05223589903007886
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2619,7 +2619,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.009498986403283505
+                0.017134113462957234
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2627,7 +2627,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04608818426547545
+                0.05383268332159186
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2635,7 +2635,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.011085429971215977
+                0.01872380838500942
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2643,7 +2643,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.044495022736875
+                0.05223624210960409
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2651,7 +2651,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.00949932726103686
+                0.017134455019285122
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2659,7 +2659,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.046088526640188254
+                0.05383302640111731
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2667,12 +2667,12 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.01108577082896911
+                0.01872414994133731
               ]
             ]
           },
           "figee": {
-            "theta": 0.02593712580781493,
+            "theta": 0.029904080107739928,
             "corners": [
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2680,15 +2680,15 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.04392491960479328
+                0.05191309052396087
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
-                0.017708317509690374
+                0.017708317509690152
               ],
               [
                 "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.007671023285558132
+                0.015545735454404852
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2696,7 +2696,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.045298172365981326
+                0.05328926088958674
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2704,7 +2704,7 @@
               ],
               [
                 "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.00903796502357923
+                0.016915568013535776
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2712,7 +2712,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0, productivite_creations = 1",
-                0.043925696084997856
+                0.05191386865387049
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2720,7 +2720,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1, productivite_creations = 1",
-                0.007671796197312064
+                0.015546510000719937
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 0",
@@ -2728,7 +2728,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0, productivite_creations = 1",
-                0.045298948846185905
+                0.05329003901949614
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 0",
@@ -2736,7 +2736,7 @@
               ],
               [
                 "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1, productivite_creations = 1",
-                0.009038737935333163
+                0.01691634255985064
               ]
             ]
           }
@@ -2756,73 +2756,73 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1729449033410153,
-          "delta_aged": 0.004364177792469226,
-          "reform_frozen": 1.1728554641664017,
-          "delta_frozen": 0.004274738617855656
+          "reform_aged": 1.1730190778413248,
+          "delta_aged": 0.004438352292778669,
+          "reform_frozen": 1.172932013121376,
+          "delta_frozen": 0.004351287572829987
         },
         {
           "year": 2027,
-          "reform_aged": 1.181403936729,
-          "delta_aged": 0.006711056768773593,
-          "reform_frozen": 1.181121134882627,
-          "delta_frozen": 0.0064282549224006225
+          "reform_aged": 1.1816327868838565,
+          "delta_aged": 0.0069399069236302235,
+          "reform_frozen": 1.1813589495223848,
+          "delta_frozen": 0.006666069562158539
         },
         {
           "year": 2028,
-          "reform_aged": 1.1840060400073715,
-          "delta_aged": 0.008617460510423225,
-          "reform_frozen": 1.1834653460748057,
-          "delta_frozen": 0.008076766577857386
+          "reform_aged": 1.1844701448490589,
+          "delta_aged": 0.009081565352110577,
+          "reform_frozen": 1.183951414248414,
+          "delta_frozen": 0.008562834751465687
         },
         {
           "year": 2029,
-          "reform_aged": 1.181526106992698,
-          "delta_aged": 0.010745533760994963,
-          "reform_frozen": 1.1806848551048952,
-          "delta_frozen": 0.009904281873192033
+          "reform_aged": 1.1823028795467558,
+          "delta_aged": 0.011522306315052688,
+          "reform_frozen": 1.1815055246333268,
+          "delta_frozen": 0.010724951401623661
         },
         {
           "year": 2030,
-          "reform_aged": 1.1736335850892656,
-          "delta_aged": 0.012653743776317006,
-          "reform_frozen": 1.172440017060538,
-          "delta_frozen": 0.011460175747589396
+          "reform_aged": 1.1747943601516693,
+          "delta_aged": 0.013814518838720646,
+          "reform_frozen": 1.1736780566609333,
+          "delta_frozen": 0.012698215347984654
         },
         {
           "year": 2031,
-          "reform_aged": 1.160800264548692,
-          "delta_aged": 0.014704644866372796,
-          "reform_frozen": 1.1592078429723685,
-          "delta_frozen": 0.013112223290049352
+          "reform_aged": 1.1623658569693536,
+          "delta_aged": 0.016270237287034472,
+          "reform_frozen": 1.1608968303794518,
+          "delta_frozen": 0.014801210697132694
         },
         {
           "year": 2032,
-          "reform_aged": 1.1428674691954532,
-          "delta_aged": 0.016632044727364015,
-          "reform_frozen": 1.1408474332004044,
-          "delta_frozen": 0.014612008732315163
+          "reform_aged": 1.144847347820125,
+          "delta_aged": 0.018611923352035875,
+          "reform_frozen": 1.1430114775227034,
+          "delta_frozen": 0.01677605305461416
         },
         {
           "year": 2033,
-          "reform_aged": 1.1199665480487464,
-          "delta_aged": 0.01846147199026693,
-          "reform_frozen": 1.1174726052169452,
-          "delta_frozen": 0.015967529158465776
+          "reform_aged": 1.122361851691478,
+          "delta_aged": 0.02085677563299848,
+          "reform_frozen": 1.1201287824842596,
+          "delta_frozen": 0.01862370642578015
         },
         {
           "year": 2034,
-          "reform_aged": 1.092220752724825,
-          "delta_aged": 0.020212029865982695,
-          "reform_frozen": 1.0892029245720893,
-          "delta_frozen": 0.017194201713246926
+          "reform_aged": 1.0950262683574667,
+          "delta_aged": 0.023017545498624337,
+          "reform_frozen": 1.0923624025447898,
+          "delta_frozen": 0.020353679685947368
         },
         {
           "year": 2035,
-          "reform_aged": 1.0597341735473003,
-          "delta_aged": 0.02188530881058348,
-          "reform_frozen": 1.0561536470690964,
-          "delta_frozen": 0.018304782332379643
+          "reform_aged": 1.0629398793314402,
+          "delta_aged": 0.025091014594723404,
+          "reform_frozen": 1.0598226373625728,
+          "delta_frozen": 0.02197377262585598
         }
       ],
       "conventions": [
@@ -2848,73 +2848,73 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1729449033410153,
-          "delta_aged": 0.004364177792469226,
-          "reform_frozen": 1.1728554641664017,
-          "delta_frozen": 0.004274738617855656
+          "reform_aged": 1.1730190778413248,
+          "delta_aged": 0.004438352292778669,
+          "reform_frozen": 1.172932013121376,
+          "delta_frozen": 0.004351287572829987
         },
         {
           "year": 2027,
-          "reform_aged": 1.181403936729,
-          "delta_aged": 0.006711056768773593,
-          "reform_frozen": 1.181121134882627,
-          "delta_frozen": 0.0064282549224006225
+          "reform_aged": 1.1816327868838565,
+          "delta_aged": 0.0069399069236302235,
+          "reform_frozen": 1.1813589495223848,
+          "delta_frozen": 0.006666069562158539
         },
         {
           "year": 2028,
-          "reform_aged": 1.1840060400073715,
-          "delta_aged": 0.008617460510423225,
-          "reform_frozen": 1.1834653460748057,
-          "delta_frozen": 0.008076766577857386
+          "reform_aged": 1.1844701448490589,
+          "delta_aged": 0.009081565352110577,
+          "reform_frozen": 1.183951414248414,
+          "delta_frozen": 0.008562834751465687
         },
         {
           "year": 2029,
-          "reform_aged": 1.187713402308661,
-          "delta_aged": 0.016932829076957923,
-          "reform_frozen": 1.1870953919606009,
-          "delta_frozen": 0.01631481872889773
+          "reform_aged": 1.1884945819970476,
+          "delta_aged": 0.017714008765344458,
+          "reform_frozen": 1.1879209001493025,
+          "delta_frozen": 0.01714032691759937
         },
         {
           "year": 2030,
-          "reform_aged": 1.1828984331077494,
-          "delta_aged": 0.021918591794800824,
-          "reform_frozen": 1.1821941236375582,
-          "delta_frozen": 0.021214282324609535
+          "reform_aged": 1.1840674045350903,
+          "delta_aged": 0.02308756322214167,
+          "reform_frozen": 1.1834414374375408,
+          "delta_frozen": 0.022461596124592198
         },
         {
           "year": 2031,
-          "reform_aged": 1.1725882346719927,
-          "delta_aged": 0.02649261498967359,
-          "reform_frozen": 1.1718739427105929,
-          "delta_frozen": 0.025778323028273764
+          "reform_aged": 1.174165845089814,
+          "delta_aged": 0.02807022540749493,
+          "reform_frozen": 1.173577085239815,
+          "delta_frozen": 0.027481465557495977
         },
         {
           "year": 2032,
-          "reform_aged": 1.1569469704995414,
-          "delta_aged": 0.030711546031452208,
-          "reform_frozen": 1.1563315860672805,
-          "delta_frozen": 0.030096161599191262
+          "reform_aged": 1.1589427428867602,
+          "delta_aged": 0.03270731841867103,
+          "reform_frozen": 1.1585152606437163,
+          "delta_frozen": 0.03227983617562713
         },
         {
           "year": 2033,
-          "reform_aged": 1.136122955028498,
-          "delta_aged": 0.034617878970018445,
-          "reform_frozen": 1.1356871657040084,
-          "delta_frozen": 0.034182089645528935
+          "reform_aged": 1.1385378862419229,
+          "delta_aged": 0.0370328101834434,
+          "reform_frozen": 1.1383688898268272,
+          "delta_frozen": 0.036863813768347686
         },
         {
           "year": 2034,
-          "reform_aged": 1.110228642051699,
-          "delta_aged": 0.0382199191928565,
-          "reform_frozen": 1.1100604379102066,
-          "delta_frozen": 0.03805171505136418
+          "reform_aged": 1.1130571889285519,
+          "delta_aged": 0.041048466069709466,
+          "reform_frozen": 1.1132516834638664,
+          "delta_frozen": 0.04124296060502397
         },
         {
           "year": 2035,
-          "reform_aged": 1.0793409007082784,
-          "delta_aged": 0.04149203597156159,
-          "reform_frozen": 1.079567037707667,
-          "delta_frozen": 0.04171817297095015
+          "reform_aged": 1.0825725243614113,
+          "delta_aged": 0.04472365962469449,
+          "reform_frozen": 1.0832742052432534,
+          "delta_frozen": 0.04542534050653657
         }
       ],
       "conventions": [
@@ -2939,73 +2939,73 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1729449033410153,
-          "delta_aged": 0.004364177792469226,
-          "reform_frozen": 1.1728554641664017,
-          "delta_frozen": 0.004274738617855656
+          "reform_aged": 1.1730190778413248,
+          "delta_aged": 0.004438352292778669,
+          "reform_frozen": 1.172932013121376,
+          "delta_frozen": 0.004351287572829987
         },
         {
           "year": 2027,
-          "reform_aged": 1.181403936729,
-          "delta_aged": 0.006711056768773593,
-          "reform_frozen": 1.181121134882627,
-          "delta_frozen": 0.0064282549224006225
+          "reform_aged": 1.1816327868838565,
+          "delta_aged": 0.0069399069236302235,
+          "reform_frozen": 1.1813589495223848,
+          "delta_frozen": 0.006666069562158539
         },
         {
           "year": 2028,
-          "reform_aged": 1.1840060400073715,
-          "delta_aged": 0.008617460510423225,
-          "reform_frozen": 1.1834653460748057,
-          "delta_frozen": 0.008076766577857386
+          "reform_aged": 1.1844701448490589,
+          "delta_aged": 0.009081565352110577,
+          "reform_frozen": 1.183951414248414,
+          "delta_frozen": 0.008562834751465687
         },
         {
           "year": 2029,
-          "reform_aged": 1.1821763615069982,
-          "delta_aged": 0.011395788275295082,
-          "reform_frozen": 1.1813513939550906,
-          "delta_frozen": 0.010570820723387442
+          "reform_aged": 1.1829537211393837,
+          "delta_aged": 0.012173147907680537,
+          "reform_frozen": 1.1821727016728758,
+          "delta_frozen": 0.011392128441172655
         },
         {
           "year": 2030,
-          "reform_aged": 1.175002355773033,
-          "delta_aged": 0.01402251446008429,
-          "reform_frozen": 1.1738530453819456,
-          "delta_frozen": 0.012873204068996946
+          "reform_aged": 1.176164848338816,
+          "delta_aged": 0.015185007025867447,
+          "reform_frozen": 1.1750929884176937,
+          "delta_frozen": 0.014113147104745094
         },
         {
           "year": 2031,
-          "reform_aged": 1.1626351733897689,
-          "delta_aged": 0.01653955370744975,
-          "reform_frozen": 1.1611220428732363,
-          "delta_frozen": 0.015026423190917182
+          "reform_aged": 1.164203602120376,
+          "delta_aged": 0.018107982438057002,
+          "reform_frozen": 1.1628142592509592,
+          "delta_frozen": 0.01671863956864006
         },
         {
           "year": 2032,
-          "reform_aged": 1.1451751223984996,
-          "delta_aged": 0.018939697930410393,
-          "reform_frozen": 1.1432812240873802,
-          "delta_frozen": 0.01704579961929098
+          "reform_aged": 1.1471591534413321,
+          "delta_aged": 0.020923728973242905,
+          "reform_frozen": 1.1454501423976997,
+          "delta_frozen": 0.019214717929610492
         },
         {
           "year": 2033,
-          "reform_aged": 1.122754662079874,
-          "delta_aged": 0.021249586021394595,
-          "reform_frozen": 1.1204458375401403,
-          "delta_frozen": 0.018940761481660795
+          "reform_aged": 1.1251555890875338,
+          "delta_aged": 0.0236505130290543,
+          "reform_frozen": 1.1231088409972818,
+          "delta_frozen": 0.02160376493880234
         },
         {
           "year": 2034,
-          "reform_aged": 1.0954913579831784,
-          "delta_aged": 0.023482635124336015,
-          "reform_frozen": 1.0927311676917086,
-          "delta_frozen": 0.020722444832866227
+          "reform_aged": 1.0983040679743286,
+          "delta_aged": 0.026295345115486146,
+          "reform_frozen": 1.0958997049095174,
+          "delta_frozen": 0.02389098205067497
         },
         {
           "year": 2035,
-          "reform_aged": 1.063481648618371,
-          "delta_aged": 0.02563278388165413,
-          "reform_frozen": 1.0602485136345847,
-          "delta_frozen": 0.02239964889786794
+          "reform_aged": 1.0666961579642686,
+          "delta_aged": 0.028847293227551862,
+          "reform_frozen": 1.0639290480823533,
+          "delta_frozen": 0.026080183345636554
         }
       ],
       "conventions": [
@@ -3024,5 +3024,22 @@
         0.0009889047894544158
       ]
     }
-  ]
+  ],
+  "recalcul": {
+    "decision": "D-427",
+    "date": "2026-11-15",
+    "objet": "l'élasticité du canal des créations, changée sans passe : les chemins, la boîte, le Monte-Carlo, les lectures et le canal refaits par le rejeu depuis les champs du rapport ; la passe reste celle de « commit »",
+    "nombres_refaits": true,
+    "elasticite_avant": {
+      "centre": 0.2,
+      "bas": 0.043,
+      "haut": 0.356
+    },
+    "elasticite": {
+      "centre": 0.043,
+      "bas": 0.0,
+      "haut": 0.2
+    },
+    "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161"
+  }
 }

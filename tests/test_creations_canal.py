@@ -127,21 +127,22 @@ ATTAL_A18 = (Path(__file__).resolve().parents[1] / "reports" / "etudes"
              / "predictif_pres2027_attal_a18_suppression_cvae.json")
 
 
-def test_a_published_study_replayed_at_the_declared_slope_gives_d427s_debt() -> None:
-    """D-427: the committed report, replayed from its own fields at the slope the file
-    declares, gives Δb 2035 at θ½, aged view, persistence « lue », +0,2354 point; at the
-    0,20 it carries (D-402), the published +0,2000 to the bit."""
+def test_a_published_study_carries_d427s_slope_and_its_debt() -> None:
+    """D-427: the Attal study rewritten without a pass at the slope the file declares
+    publishes Δb 2035 at θ½, aged view, persistence « lue », +0,2354 point; replayed at
+    the 0,20 it carried (D-402), the +0,2000 published before."""
     payload = json.loads(ATTAL_A18.read_text(encoding="utf-8"))
     theta = {**dict.fromkeys(payload["rejeu"]["lignes"], 0.5), MACRO_ROW: 0.5,
              CREATIONS_ROW: 0.5}
     lue = next(s for s in payload["side_by_side"] if s["persistence"] == "lue")
-    carried = payload["rejeu"]["creations"]["parametres"]["elasticite"]
-    assert carried == {"centre": 0.20, "bas": 0.043, "haut": 0.356}
-    before = rejouer.at_theta(payload, theta, view="vieillie", persistence="lue").delta
-    assert before[-1] == lue["years"][-1]["delta_aged"]
-    payload["rejeu"]["creations"]["parametres"]["elasticite"] = vars(PARAMS.elasticite)
-    after = rejouer.at_theta(payload, theta, view="vieillie", persistence="lue").delta
-    assert after[-1] == pytest.approx(0.002353733480370712, abs=1e-12)
+    assert payload["rejeu"]["creations"]["parametres"]["elasticite"] == vars(
+        PARAMS.elasticite)
+    assert lue["years"][-1]["delta_aged"] == pytest.approx(0.002353733480370712, abs=1e-12)
+    before = payload["recalcul"]["elasticite_avant"]
+    assert before == {"centre": 0.20, "bas": 0.043, "haut": 0.356}
+    payload["rejeu"]["creations"]["parametres"]["elasticite"] = before
+    old = rejouer.at_theta(payload, theta, view="vieillie", persistence="lue").delta
+    assert old[-1] == pytest.approx(0.0020004572578362634, abs=1e-15)
 
 
 def test_the_declared_file_names_its_sources_and_no_report_reads_it_before_its_entry() -> None:

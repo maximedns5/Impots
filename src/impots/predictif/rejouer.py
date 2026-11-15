@@ -198,6 +198,9 @@ class Chemin:
     """The primary balance the reform adds each year, before the loop's feedback, as a
     share of reference GDP (positive improves it): with `feedback`, the balance a page
     draws year by year (but 22)."""
+    reform: Any = None
+    """b_t of the reform, before the reference is taken off: what a report writes as
+    `reform_aged` and `reform_frozen` (D-427)."""
 
 
 def reference_path(rejeu: Mapping[str, Any], start: Mapping[str, Any],
@@ -298,13 +301,15 @@ def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
                            carried=carried)
         extra, more = list(firms.recettes), list(firms.pib)
     debt = 0.0
-    delta = []
+    delta, reform = [], []
     for k in range(horizon):
         debt = debt * (1.0 + marginal) / (1.0 + nominal) - (primary[k] + phi[k] + extra[k])
-        delta.append((refs[k] + debt) / (1.0 + gap[k] + more[k]) - refs[k])
+        reform.append((refs[k] + debt) / (1.0 + gap[k] + more[k]))
+        delta.append(reform[-1] - refs[k])
     return Chemin(years=years, reference=tuple(refs), delta=delta,
                   gdp_gap=[g + m for g, m in zip(gap, more, strict=True)], feedback=phi,
-                  primary=[p + e for p, e in zip(primary, extra, strict=True)])
+                  primary=[p + e for p, e in zip(primary, extra, strict=True)],
+                  reform=reform)
 
 
 def _creations(rejeu: Mapping[str, Any], *, view: str, values: Mapping[str, Any],

@@ -2696,6 +2696,9 @@ class PredictifReportResponse(BaseModel):
     annees: list[int] | None = None
     """The years the text applies the measure in, when it names them (D-288); absent
     from the reports before it."""
+    recalcul: dict[str, Any] | None = None
+    """When the creations slope was changed without a pass (D-427): the decision, the
+    date, the slope before and after, the pass's commit (`predictif.recalcul`)."""
 
     @model_validator(mode="after")
     def _check_report_paths(self) -> PredictifReportResponse:

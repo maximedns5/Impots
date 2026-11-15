@@ -2956,6 +2956,18 @@ class Etude:
           f"{nombre(params['assiette_part_pib'])} du PIB"
           + (f" ; les valeurs fixées par {params['preenregistrement']}."
              if params.get("preenregistrement") else "."))
+        recalcul = path.get("recalcul")
+        if recalcul:
+            before = recalcul["elasticite_avant"]
+            w("")
+            w(f"L'élasticité a été changée sans passe nouvelle ({recalcul['decision']}, "
+              f"décision du propriétaire) : de {nombre(before['centre'])} à "
+              f"{nombre(ela['centre'])}. "
+              + ("La dette, sa boîte et sa distribution sont refaites depuis les champs "
+                 "du rapport, par le même calcul que la page ; les passes restent celles "
+                 "de leur commit." if recalcul.get("nombres_refaits", True) else
+                 "Aucun prélèvement sur les entreprises ou le capital ne bouge ici : "
+                 "aucun nombre de la page n'en dépend."))
         w("")
         names = [*params["instruments_entreprises"], *params["instruments_menages"]]
         w(f"Les instruments lus, en euros de prélèvement, recettes positives, rien "
