@@ -34172,3 +34172,137 @@ population hors de la comparaison du moteur, pas de `make impact` ni de lourds e
 de route. Les tests légers des fichiers touchés tiennent ce qui change ; aucun nombre
 publié ne change, chaque rapport garde son commit.
 
+
+## D-462 — Le moteur rapide : ce qu'une passe refait, et la conception du moteur incrémental
+
+**La question du propriétaire** : refait-on toute la population, et l'extrapolation à la
+France, à chaque mesure ? **Non pour la population, oui pour presque tout le reste.**
+Lu sur le chemin d'une passe « mesure seule » (`etude.first_year`, `POST
+/population/simulate`, `service.run_population`, `population.runner.run`,
+`behavioural.emtr`, `service.macro`) :
+
+* **La population n'est ni reconstruite, ni recalée, ni revieillie** pour une mesure
+  seule : le parquet construit une fois par `make data` est lu (0,5 s), sous-échantillonné
+  à 20 000 ménages, et la vue de la première année est la vue figée du millésime. Le
+  calage (`calibrate.py`) ne tourne jamais dans une passe ; l'extrapolation à la France
+  n'est qu'un poids par ménage, une multiplication. Le chemin annuel (`predictif`)
+  vieillit, lui, le cadre à chaque année, ce qui est un `with_columns`, pas une
+  reconstruction.
+* **Le droit courant est recalculé en entier à chaque passe** : la simulation de la loi
+  sur les 20 000 ménages est construite et calculée (7 + 39 s dans le rapport de
+  Tondelier, tranche à 60 %), alors qu'elle ne dépend pas de la mesure.
+* **La réforme est calculée sur tous les ménages** (41 s), même quand elle n'en touche
+  qu'une poignée : la tranche à 60 % au-delà de 250 000 € de revenu par part ne change
+  l'impôt d'aucun ménage sous ce revenu.
+* **Les comportements** relisent les taux marginaux : quatre échantillons de 3 000
+  ménages plus les 2 294 ménages du haut, deux simulations chacun (le revenu, puis le
+  revenu plus 100 €) pour la loi et autant pour la réforme, seize simulations. Celles de
+  la loi sont mises en cache sur disque ; celles de la réforme, jamais réutilisées d'une
+  mesure à l'autre, sont calculées sur tous les ménages des quatre échantillons.
+* **Chaque passe d'une étude est un processus neuf** (`Etude.launch`) : l'arbre des
+  paramètres, les tables de la boucle macro (Mésange, IMK, le TES) sont relus et
+  analysés à chaque fois.
+* **Combien de passes.** Une étude de candidat chiffre la première année du programme,
+  chaque point de ses plages (bas, candidat, haut, par champ), son chemin annuel, puis
+  chaque mesure seule, sa première année et son chemin. Un chemin annuel porte dix
+  années, chacune en deux vues (figée et vieillie) : vingt passes. La vue figée redonne
+  le même coût d'une année à l'autre (−917 469 815,76 € pour la tranche à 60 %, huit
+  années sur dix, les deux autres à 0,02 % près) et il est recalculé dix fois.
+
+**La mesure** (passe d'essai, sans entrée, cProfile, une mesure seule : la tranche à 60 %
+de Tondelier, sur la population réelle, détachée, le 15 novembre) : 472 s sous le
+profileur (175 s sans lui dans le rapport commité), dont 137 s (29 %) pour les deux
+simulations des 20 000 ménages, 309 s (65 %) pour les taux marginaux (le cache de la loi
+était froid pour 2026), 23 s (5 %) pour relire les tables de la boucle macro. Dans les
+simulations, 320 s des 366 s de calcul vont à l'historique mois par mois des aides au
+logement (`situations.pin_benefit_history`), que chaque simulation refait pour tous ses
+ménages. Le coût mécanique redonné à l'euro près : −917 469 815,7627 €, le rapport.
+
+**La conception** (`engine/incremental.py`, activé par `IMPOTS_MOTEUR=rapide` ; l'ancien
+moteur reste le chemin par défaut tant que la comparaison de D-463 n'a pas conclu) :
+
+1. **La référence calculée une fois et gardée.** Les lignes du droit courant d'une passe
+   (ce que `runner._extract` rend, et le coût du travail par personne) sont écrites dans
+   `data/processed/references/`, sous une empreinte qui nomme ce qui les fait : le code
+   (le condensé des sources de `engine/`, `population/`, `consommation.py`, des versions
+   d'openfisca-core, openfisca-france, numpy et polars), les paramètres (l'année, le
+   palier, le câblage `to_openfisca.WIRING`), la population (l'empreinte ligne à ligne du
+   cadre trié, `emtr.fingerprint`) et les imputations demandées. Une empreinte qui
+   diffère recalcule ; rien n'est servi à un autre cadre.
+2. **Pour une mesure, seuls les ménages qu'elle peut toucher.** Chaque bouton qui a un
+   crible dit, sur les seules données du cadre (pas sur un résultat calculé), quels
+   ménages il peut toucher : le barème de l'IR, les ménages dont la somme des revenus
+   bruts (salaires, pensions, chômage, revenus non salariés) dépasse, moins une marge de
+   5 000 €, le seuil de la première tranche changée (le revenu imposable par part ne
+   dépasse jamais cette somme) ; la revalorisation des aides au logement, les ménages qui
+   ne sont pas propriétaires ; un bouton de la consommation seul, aucun (l'arbre ne le
+   voit pas, D-323). Un bouton sans crible touche tous les ménages : le moteur reste
+   exact, il ne gagne que la référence. Les ménages sont indépendants dans le moteur ; la
+   réforme est calculée sur les ménages criblés, et les autres gardent les lignes de la
+   référence.
+3. **Le crible est vérifié à chaque passe.** 200 ménages tirés hors du crible (graine
+   fixe) passent aussi dans la réforme ; si l'un d'eux bouge de plus d'un centime sur une
+   ligne, le crible est faux : la passe refait la réforme sur tous les ménages et le dit
+   (`moteur_rapide_repli` dans ses gardes). Le moteur rapide ne rend jamais un nombre que
+   le crible aurait faussé sans le dire.
+4. **Les comportements par différence.** Les taux marginaux de la loi viennent du cache
+   (déjà le cas) ; ceux de la réforme ne sont calculés que pour les ménages criblés de
+   chaque échantillon (le crible, sur le cadre, vaut pour le revenu plus 100 € grâce à sa
+   marge), les autres prenant le taux de la loi, avec le même contrôle de 200 ménages.
+   Les canaux lisent ensuite les mêmes vecteurs qu'avant.
+5. **Ni vieillissement ni calage pour une mesure.** Ils ne tournaient déjà pas dans une
+   passe « mesure seule » ; le moteur rapide n'en ajoute pas.
+6. **Hors du moteur rapide**, ramenés à l'ancien chemin : l'imputation du capital et des
+   niches (elles lisent la simulation de la loi), le recalage de la queue, et une
+   réforme du SMIC ou du point d'indice (elle change les salaires de la passe).
+
+Ce qui n'est pas fait ici, et reste à faire : un chemin annuel qui ne refait pas la vue
+figée dix fois, et un processus qui garde l'arbre et les tables macro entre deux passes.
+
+## D-463 — Préenregistrement : le moteur rapide contre les rapports « mesure seule »
+
+Avant tout calcul du moteur rapide de D-462, la comparaison est fixée ici, commitée et
+poussée. Elle est une comparaison de code, pas un chiffrage face à un juge : le juge est
+l'ancien moteur, par ses rapports commités.
+
+**Les trois mesures**, chacune avec un rapport « mesure seule » commité (calculé au commit
+`5a68669`, le 14 novembre) :
+
+* un barème de l'IR : Tondelier, la tranche à 60 % (`pres2027_tondelier_tranche_ir_60`,
+  `reports/etudes/presidentielle_tondelier/mesures/tranche_ir_60/`) ;
+* une prestation sous condition de ressources : Tondelier, les aides au logement + 10 %
+  (`pres2027_tondelier_apl_plus_10`) ;
+* une mesure de TVA : Roussel, la TVA des carburants à 5,5 %
+  (`pres2027_roussel_tva_carburants_5_5`).
+
+**Les deux populations.** D'abord la population de test (le squelette de
+`tests/fixtures/eec_sample.parquet` et ses revenus, comme `test_consommation`), année 2026,
+palier complet, les trois réformes : l'ancien moteur (`runner.run`) et le rapide sur le
+même cadre, et les taux marginaux (`emtr.compute`) des deux. Puis la population réelle :
+`etude.first_year` des trois mesures, `IMPOTS_MOTEUR=rapide`, la référence construite une
+fois, contre les trois rapports commités.
+
+**Les grandeurs comparées.** Sur la fixture : chaque colonne de chaque ménage (droit
+courant et réforme) et chaque taux marginal. Sur la population réelle : le coût mécanique
+(`reform_cost`), chacun des 55 écarts par ligne (`deltas`, le total par couche des
+prélèvements et des prestations), la bande des comportements (p10, p50, p90) et la valeur
+centrale de chaque canal, la médiane du PIB de la boucle macro à chaque horizon, et pour
+chaque décile l'écart moyen et les parts de gagnants et de perdants.
+
+**La tolérance**, écrite avant le premier calcul et jamais modifiée après. Le moteur rapide
+calcule les mêmes ménages par les mêmes formules : il doit redonner les nombres, pas les
+approcher. Un montant en euros tient si son écart est d'au plus 10 € ou d'au plus 1e-7 de
+sa valeur publiée (le plus grand des deux) ; une part (gagnants, perdants) ou un taux
+marginal, à 1e-7 près ; une colonne d'un ménage de la fixture, à un centime. Un seul
+écart au-delà est un échec du moteur rapide, dit comme tel, et cherché.
+
+**Le pronostic.** Les nombres : tous dans la tolérance, et le contrôle des 200 ménages hors
+crible sans repli. Le temps, mesuré sur l'appel de la mesure dans un processus où la
+référence est déjà sur disque et les caches de la loi chauds, contre le temps du rapport
+commité (174,7 s, 111,3 s, 40,6 s) : la tranche à 60 % en 8 s, la TVA des carburants en
+3 s, les aides au logement en 25 s, au-delà de la cible de 10 s, parce qu'elles touchent
+quatre ménages sur dix (tous les non-propriétaires). La première mesure d'une année paie la
+référence, une passe de l'ancien droit courant, environ 50 s, une seule fois.
+
+**La machine.** Environ 20 min accordées par le propriétaire (D-445), détachée, un seul
+processus, aucune autre passe lourde lancée en même temps par ce volet.
