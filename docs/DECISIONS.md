@@ -32613,3 +32613,99 @@ d'écraser les rapports précédents sont de la plomberie, sans test dédié (D-
 et leur emploi par `estimer` sont tenus par `test_jumeau_a_priori.py` (D-424).
 `pytest -m "not lourd and not chrono" -n 2 tests/test_jumeau*.py` : 267 verts, 1 sauté ;
 `ruff check src tests scripts` propre.
+
+## D-429 — Le troisième rejeu noté sur l'histoire : 9 cibles sur 12, comme r2, contre D-428
+
+**Ce qui a tourné.** `scripts/jumeau_rejeu_histoire.py`, cas `rejeu_histoire_r3`, sur
+a399c47 poussé (D-428), en une fois, détaché, en moins d'une minute. Le rapport :
+`reports/jumeau/rejeu_histoire_r3.json` ; ceux de D-420 et de D-423 restent. Ni
+tolérance, ni fenêtre, ni entrée, ni loi, ni réglage n'a changé après le calcul.
+
+**Le contrôle d'abord.** Les REQM du naïf redonnent celles de D-420 exactement (écart
+nul, sur l'estimation, le test et le test à θ½). Celles du naïf mécanique redonnent
+celles de D-423 exactement, comme attendu.
+
+**L'estimation.** Six itérations ; J passe de 90,99 à 85,30 (93,7 %). **Aucun θ
+identifié**, chaque écart-type approché à moins de 1 % de celui de sa loi au point.
+
+| θ | mode de la loi | estimé | en paramètre | écart, en s de la loi | σ | s de la loi |
+|---|---|---|---|---|---|---|
+| profil de la consommation | 0,500 | 0,390 | — | −0,22 | 0,496 | 0,500 |
+| emploi | 0,238 | 0,273 | η = 0,272 (lu 0,246) | +0,27 | 0,127 | 0,129 |
+| salaires | 0,234 | 0,191 | b = 0,382 (lu 0,467) | −0,20 | 0,212 | 0,213 |
+| exportations | 0,500 | 0,502 | — | +0,01 | 0,123 | 0,123 |
+| importations | 0,500 | 0,500 | — | −0,01 | 0,041 | 0,041 |
+| accélérateur | 0,500 | 0,497 | — | −0,01 | 0,255 | 0,255 |
+| coût du capital | 0,341 | 0,322 | ε_K = 0,283 (lu 0,30) | −0,11 | 0,179 | 0,179 |
+
+Les données déplacent chaque θ de moins d'un tiers de l'écart-type de sa loi : les θ de
+r3 sont ceux de la littérature. Sur l'estimation, le jumeau tient 8 cibles (le naïf 6, le
+naïf mécanique 8), bat le naïf sur 10 et le naïf mécanique sur 8 (r2 : 9 et 7) : les
+créations y passent de 7,48 à 6,56, sous le naïf (7,11).
+
+**Le test, aux θ estimés** (REQM en points ; P la bande de D-428 ; N et M identiques à
+D-420 et D-423) :
+
+| cible | tol. | r3 | P | N | M | tenue | bat N | bat M |
+|---|---|---|---|---|---|---|---|---|
+| PIB en volume | 1,0 | 0,940 | [0,88 ; 1,02] | 0,831 | 0,831 | oui | non | non |
+| emploi | 0,8 | 0,894 | [0,80 ; 1,00] | 0,858 | 0,858 | non | non | non |
+| chômage | 0,8 | 0,759 | [0,62 ; 0,85] | 0,627 | 0,627 | oui | non | non |
+| exportations | 4,0 | 3,524 | [3,45 ; 3,60] | 3,870 | 3,870 | oui | oui | oui |
+| importations | 4,0 | 3,271 | [3,20 ; 3,35] | 3,773 | 3,773 | oui | oui | oui |
+| D2 | 0,4 | 0,564 | [0,54 ; 0,59] | 0,645 | 0,539 | non | oui | non |
+| D5 | 0,5 | 0,364 | [0,34 ; 0,39] | 0,424 | 0,349 | oui | oui | non |
+| D61 | 0,4 | 0,227 | [0,20 ; 0,26] | 0,983 | 0,283 | oui | oui | oui |
+| recettes | 0,8 | 1,076 | [1,03 ; 1,12] | 1,301 | 0,959 | non | oui | non |
+| solde | 1,0 | 0,643 | [0,60 ; 0,68] | 1,361 | 0,627 | oui | oui | non |
+| dette | 3,0 | 2,927 | [2,70 ; 3,15] | 4,393 | 2,359 | oui | oui | non |
+| créations | 10 | 4,481 | [4,30 ; 5,00] | 4,310 | 4,310 | oui | non | non |
+
+**9 cibles sur 12 tenues hors de la période d'estimation**, le naïf 6, le naïf mécanique
+9 ; le jumeau bat le naïf sur 8 et le naïf mécanique sur 3 (les deux échanges et D61).
+**À θ½**, les mêmes tenues et les mêmes victoires ; chaque REQM à moins de 0,2 % de celle
+de r2 à θ½, sauf les créations (4,481, la même qu'aux θ estimés) ; contre les θ estimés,
+au plus 4 % d'écart (le chômage, 0,729 contre 0,759).
+
+**Contre le pronostic.** Chaque REQM du test dans sa bande ; chaque tenue, chaque « bat N »
+et chaque « bat M » comme annoncés ; les totaux exactement (9, 6, 9, 8, 3) ; aucun θ
+identifié ; J au départ, J final et leur rapport dans leurs bandes ; le test à θ½ comme
+annoncé. **Manqués** : les salaires, 0,191 sous la bande [0,20 ; 0,30] ; le profil de la
+consommation à 0,110 du mode de sa loi, au-delà des 0,08 annoncés pour chaque θ (le
+pronostic se contredisait : sa bande [0,35 ; 0,50] admettait cet écart). Les créations,
+projetées à 4,55 par la règle de 0,215, font 4,48.
+
+### r1, r2, r3 côte à côte (le test, aux θ estimés)
+
+| cible | r1 (D-420) | r2 (D-423) | r3 | N | M |
+|---|---|---|---|---|---|
+| PIB en volume | 1,034 | 0,940 | 0,940 | 0,831 | 0,831 |
+| emploi | 0,902 | 0,882 | 0,894 | 0,858 | 0,858 |
+| chômage | 0,696 | 0,723 | 0,759 | 0,627 | 0,627 |
+| exportations | 3,855 | 3,524 | 3,524 | 3,870 | 3,870 |
+| importations | 3,899 | 3,271 | 3,271 | 3,773 | 3,773 |
+| D2 | 0,554 | 0,564 | 0,564 | 0,645 | 0,539 |
+| D5 | 0,316 | 0,364 | 0,364 | 0,424 | 0,349 |
+| D61 | 0,263 | 0,225 | 0,227 | 0,983 | 0,283 |
+| recettes | 1,091 | 1,073 | 1,076 | 1,301 | 0,959 |
+| solde | 0,536 | 0,639 | 0,643 | 1,361 | 0,627 |
+| dette | 2,816 | 2,926 | 2,927 | 4,393 | 2,359 |
+| créations | 10,600 | 5,647 | 4,481 | 4,310 | 4,310 |
+| tenues (N 6, M 9) | 7 | 9 | 9 | | |
+| bat N, bat M | 7, 2 | 8, 3 | 8, 3 | | |
+
+Les θ : r1 et r2 sous N(½ ; ½), r3 sous les lois de D-424 ; aucun identifié dans aucun
+des trois. L'emploi 0,597, 0,639, 0,273 ; les salaires 0,399, 0,464, 0,191 ; le coût du
+capital 0,477, 0,476, 0,322 ; les autres à 0,11 de ½ au plus.
+
+**Ce que r3 dit.** Mettre les θ à la littérature ne change presque rien à la note de
+l'histoire : l'emploi (+0,012) et le chômage (+0,036) s'éloignent un peu du publié avec
+une élasticité de l'emploi plus faible et des salaires moins sensibles au chômage, sans
+changer leurs tenues ; le reste bouge de moins de 0,005. Le seul gain est celui des
+créations (5,65 → 4,48), qui vient de ε = 0,043 (D-427), pas des données : la réponse du
+jumeau est près de cinq fois plus petite, il reste au-dessus du naïf (2023 : +8,1 points
+d'erreur, la CVAE). L'histoire budgétaire de 2011 à 2017 n'apprend rien aux θ, ni sous
+l'a priori large ni sous les lois : l'étape zéro le disait, le calcul le confirme.
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune entrée, aucune loi ;
+D-420, D-423 et D-428 restent. Le rapport porte a399c47.
