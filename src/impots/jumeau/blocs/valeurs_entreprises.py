@@ -215,11 +215,12 @@ def lignes(Ligne: Any) -> dict[str, Any]:
         return f"{x:g}".replace(".", ",")
 
     def ligne(cle: str, bloc: str, definition: str, unite: str, plage: Plage,
-              direction: str, source: str, verifiee: bool) -> Any:
+              direction: str, source: str, verifiee: bool,
+              non_monotone: str | None = None) -> Any:
         return Ligne(cle=cle, bloc=bloc, definition=definition, unite=unite,
                             a_zero=fr(plage.bas), a_demi=fr(plage.centre),
                             a_un=fr(plage.haut), direction=direction, source=source,
-                            verifiee=verifiee)
+                            verifiee=verifiee, non_monotone=non_monotone)
 
     return {ligne_.cle: ligne_ for ligne_ in (
         ligne(IDEES_ROW, "naissances",
@@ -250,7 +251,12 @@ def lignes(Ligne: Any) -> dict[str, Any]:
               "par an", p.survie_jeunes,
               "θ = 1 : les sociétés nouvelles survivent le plus",
               "choisie, non vérifiée : D-402 (SINE, 0,6^(1/5), à manifester), sa plage "
-              "0,85 à 0,93", False),
+              "0,85 à 0,93", False,
+              non_monotone=(
+                  "S_j joue deux fois : il garde plus de jeunes sociétés, et, par la "
+                  "stationnarité du stock au taux e₀, il monte le hasard h_o des "
+                  "installées ; le second l'emporte à dix ans sur le PIB de la "
+                  "productivité et sur le stock (D-427). Sa boîte se lit sur la grille.")),
         ligne(MONTEE_ROW, "productivite",
               "M dans min(1, (a + 1)/M) : la montée en charge des entrantes, en années",
               "ans", p.montee_en_charge_ans,

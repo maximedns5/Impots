@@ -219,14 +219,37 @@ def test_une_mesure_ventilee_par_taille_change_les_sorties_pas_les_creations(pop
     ("taille_creations", "productivite", "pib"),
 ])
 def test_theta_zero_et_un_bornent_chaque_bloc(pop, cle, bloc, champ) -> None:
-    grille = np.linspace(0.0, 1.0, 9)
+    """Une ligne monotone : θ = 0 et 1 bornent l'effet. Une ligne déclarée non monotone
+    (D-427 : θ_survie, avec e₀ = 10,47 %) : sa boîte se lit sur la grille et contient
+    chaque valeur de la grille, et la déclaration n'est pas de trop — ses deux bouts
+    seuls ne la bornent pas."""
+    grille = np.array(thetas.GRILLE)
     traj = _calculer(pop, [_loi("impot_societes", 10.0)], _theta(**{cle: grille}))
     effet = np.abs(_part(traj, bloc, champ))  # années × θ
-    assert np.all(np.diff(effet, axis=1) >= -1e-12), "monotone en θ"
-    assert np.all(effet[:, 1:-1] <= effet[:, [-1]] + 1e-12)
-    assert np.all(effet[:, 1:-1] >= effet[:, [0]] - 1e-12)
+    ligne = thetas.REGISTRE[cle]
+    bas, haut = thetas.boite(ligne, effet)
+    assert np.all(effet >= bas[:, None] - 1e-12) and np.all(effet <= haut[:, None] + 1e-12)
+    if ligne.monotone:
+        assert np.all(np.diff(effet, axis=1) >= -1e-12), "monotone en θ"
+        assert np.all(effet[:, 1:-1] <= effet[:, [-1]] + 1e-12)
+        assert np.all(effet[:, 1:-1] >= effet[:, [0]] - 1e-12)
+    else:
+        assert ligne.non_monotone and "grille" in ligne.non_monotone
+        bouts = effet[:, [0, -1]]
+        hors = ((effet > bouts.max(axis=1, keepdims=True) + 1e-12)
+                | (effet < bouts.min(axis=1, keepdims=True) - 1e-12))
+        assert np.any(hors), "déclarée non monotone, et ses bouts la bornent"
     if cle not in SANS_ZERO:
         assert not np.any(effet[:, 0]), "θ = 0 éteint le canal"
+
+
+def test_seule_la_survie_est_declaree_non_monotone() -> None:
+    """La non-monotonie se déclare dans la ligne θ, avec sa raison ; aucune autre ligne
+    du jumeau ne la porte, et leur boîte reste à leurs deux bouts."""
+    declarees = {c for c, ligne in thetas.REGISTRE.items() if not ligne.monotone}
+    assert declarees == {"survie_creations"}
+    assert thetas.points_de_boite(thetas.REGISTRE["survie_creations"]) == thetas.GRILLE
+    assert thetas.points_de_boite(thetas.REGISTRE[CREATIONS_ROW]) == (0.0, 1.0)
 
 
 def test_theta_idees_deplace_la_reference_pas_la_mesure_seule(pop) -> None:

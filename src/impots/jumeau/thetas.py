@@ -42,6 +42,13 @@ class Ligne:
     direction: str
     source: str
     verifiee: bool
+    non_monotone: str | None = None
+    """None : l'effet est monotone en θ, sa boîte se lit à θ = 0 et 1. Sinon, la raison
+    pour laquelle il ne l'est pas, et sa boîte se lit sur `GRILLE` (D-427)."""
+
+    @property
+    def monotone(self) -> bool:
+        return self.non_monotone is None
 
 
 MULTIPLICATEUR = Ligne(
@@ -191,6 +198,27 @@ REGISTRE[EMPLOI_PUBLIC_PART] = Ligne(
     direction="θ = 1 : l'emploi répond le plus",
     source=("Mésange (G2017-04), p. 106, note 75, la convention de sa variante de dépense "
             "publique ; les bornes choisies, non vérifiées"), verifiee=False)
+
+
+#: Les θ où se lit la boîte d'une ligne non monotone : de 0 à 1 par huitièmes (D-427).
+GRILLE = tuple(i / 8 for i in range(9))
+
+
+def points_de_boite(ligne: Ligne) -> tuple[float, ...]:
+    """Où se lit la boîte d'une ligne : ses deux bouts si elle est monotone, la grille
+    sinon (D-427). Les bouts d'une ligne non monotone ne bornent pas ce qu'elle donne
+    entre eux."""
+    return (0.0, 1.0) if ligne.monotone else GRILLE
+
+
+def boite(ligne: Ligne, valeurs: Any) -> tuple[np.ndarray, np.ndarray]:
+    """(bas, haut) de la boîte d'une ligne, depuis `valeurs`, un effet lu sur `GRILLE`
+    (le dernier axe) : aux deux bouts pour une ligne monotone, sur toute la grille sinon."""
+    v = np.asarray(valeurs, dtype=float)
+    if v.shape[-1] != len(GRILLE):
+        raise ThetaError(f"{v.shape[-1]} valeurs pour une grille de {len(GRILLE)}")
+    lus = v[..., [GRILLE.index(t) for t in points_de_boite(ligne)]]
+    return lus.min(axis=-1), lus.max(axis=-1)
 
 
 def ligne_comportement(cle: str, row: Mapping[str, Any]) -> Ligne:
