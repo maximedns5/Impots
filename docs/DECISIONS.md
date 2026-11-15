@@ -33330,3 +33330,129 @@ estimé. Les rapports de D-426 gardent leur commit.
 `tests/test_jumeau_microdonnees_d434.py` et `tests/test_jumeau_microdonnees.py` : 16
 verts. Aucun nombre du jumeau ne change : rien d'autre n'est relancé. Ni `make impact`
 ni `make full`.
+
+## D-436 — Les créations de 2023 relues : la CVAE, 0,64 point ; elle sort des naissances
+
+**Ce qui est fait** (branche `claude/but24-creations`, partie de `claude/but24`, 0ff12ec).
+Le diagnostic de l'erreur de 2023 des créations dans le rejeu r3 (D-429), puis un
+correctif motivé par la loi, non par 2023, avec son test et son effet sur l'estimation.
+Aucun rejeu de l'histoire n'est lancé ; ni `CAS`, ni les cibles, ni les tolérances, ni
+les fenêtres de D-417 ne changent. Les sorties lues : la fenêtre du test 2021-2024 rejouée
+aux θ de r3, en 2 s, sur les cellules (aucune passe sur la population), pour 2023 seule ;
+la ligne des créations du rapport r3, dont les erreurs des autres années du test,
+commitées depuis D-429, n'ont servi à rien ici ; aucune n'est recalculée.
+
+### Le diagnostic
+
+**La cible.** La croissance des créations d'entreprises classiques (Insee, BDM, idbank
+011811818) : les sociétés et les entrepreneurs individuels hors micro, **sans aucun
+micro-entrepreneur** (667 446 créations en 2023, 63 % du total, hors champ). En 2023 :
+384 030 contre 414 863, −7,43 % ; les sociétés, 269 905 contre 293 158, −7,93 % (70 % de
+la cible) ; les EI classiques, 114 125 contre 121 705, −6,23 %. Le jumeau la compare à la
+croissance de ses créations de sociétés : un champ plus étroit que la cible (les EI
+classiques n'y sont pas), dit, non corrigé (la cible est de D-417).
+
+**La décomposition de l'erreur de 2023**, +8,071 points (D-429), complète :
+
+| part | points | d'où |
+|---|---:|---|
+| la référence plate | +7,432 | E = (e₀ + δ) N₀ / 100 ne bouge pas : l'erreur du naïf |
+| la CVAE (`lfi2023_cvae`) | +0,694 | la ligne de la CVAE, 9,002 → 5,203 Md€ |
+| la CFE, dans la même famille | −0,017 | 6,540 → 7,093 Md€ |
+| la C3S, dans la même famille | −0,039 | 4,274 → 4,810 Md€ |
+| l'IS, les cotisations, le CICE, le capital | 0 | aucune mesure d'effet en 2023 |
+| **total** | **+8,071** | |
+
+**La mesure, le canal, l'incidence.** Une seule mesure entre : `lfi2023_cvae` (loi
+n° 2022-1726, art. 55, le taux de la CVAE divisé par deux), qui date la famille « impôts
+de production » (`rejeu_histoire.FAMILLES`). Le taux apparent de la famille, sur le PIB,
+passe de 0,7466 % à 0,6036 %, −0,1430 point (la CVAE −0,1556, la CFE +0,0039, la C3S
++0,0087 : la mesure est une baisse, la variation entière de la famille compte) ; sur le
+PIB de la tendance, ΔP = −3,976 Md€, au signal `prelevements_production`. Le bloc
+`naissances` le lit comme un prélèvement sur le profit, euro pour euro comme l'IS
+(D-401, D-407) : Δτ = 100 ΔP / (b Y) = −1,555 point de taux apparent, ΔE = −ε Δτ N₀ / 100
+= +1 817 sociétés à ε = 0,043, sur 284 614, **+0,638 %**. La CVAE n'est lue par aucun
+autre chemin des créations : les fermetures, la productivité et l'investissement la
+lisent, mais n'écrivent pas `creations_societes`.
+
+**Ce que cela dit.** La « plus grande erreur du jumeau » (D-429, BUT.md) est à 92 % celle
+du naïf : rien dans le jumeau ne fait bouger les créations hors de la fiscalité votée, et
+leur baisse publiée de 2023 n'en vient pas. La CVAE ne fait que 0,64 point, sous le
+dixième de la tolérance (10). Aucun correctif du bloc ne ramène 2023 sous le naïf.
+
+### Le correctif : la CVAE et la C3S sortent des naissances, par la loi
+
+**La raison, hors de 2023.** Le canal applique ε, mesuré par Da Rin et al. sur l'impôt sur
+les bénéfices, aux prélèvements qu'une société paierait. La loi ne fait payer ni la CVAE
+ni la C3S à une société qui entre, ni à la société à la marge que le bloc fait entrer :
+
+* la CVAE est due « par le redevable qui exerce l'activité au 1er janvier de l'année
+  d'imposition » (CGI, art. 1586 octies, I) : rien l'année de la création ; ensuite, son
+  taux est « nul » sous 500 000 € de chiffre d'affaires (art. 1586 quater, I, a), et le
+  minimum de cotisation ne s'applique qu'au-delà (art. 1586 septies). Loi n° 2009-1673,
+  art. 2 (JORFARTI000021557915) ; la loi n° 2022-1726, art. 55 (JORFARTI000046845693),
+  divise les taux des tranches b à e et garde le seuil ;
+* la C3S n'est due qu'au-delà de 760 000 € de chiffre d'affaires, puis après un
+  abattement de 3,25 M€ (loi n° 2014-892, art. 3, JORFARTI000029349740) et de 19 M€
+  (loi n° 2015-1702, art. 9, JORFARTI000031663476 ; CSS, art. L. 651-3) ;
+* la société à la marge a, à maturité, r = 0,10 de la valeur ajoutée moyenne (D-402) :
+  60 k€ en 2024 (s_VA Y / N₀ = 598 k€), environ 150 k€ de chiffre d'affaires au rapport
+  VA / CA des cellules micro de 2023 (0,41) ; 290 k€ à r = 0,20, le haut de la plage.
+  La société micro moyenne à l'IS fait déjà 265 k€. Seuls les secteurs à VA / CA de
+  0,22 (le commerce, l'extraction), au haut de la plage de r, le passeraient, de peu.
+
+Textes lus dans l'archive du JO de la DILA (`Freemium_jorf_global_20261108-140000`,
+manifestée, D-413), extraits par `scripts/jumeau_jorf_extraire.py` hors du dépôt.
+
+**Ce qui change.** `jumeau/parametres/entreprises.yaml` : `naissances.signaux` perd
+`prelevements_production` (la CVAE et la C3S), la raison et ses sources à côté ; la
+docstring de `blocs/demographie.py` le dit. Les fermetures gardent le signal : les
+installées paient ces impôts, et leurs marges en répondent. Rien d'autre : ni ε, ni e₀,
+ni le canal des études (`predictif.creations`), ni la base des mesures.
+
+**Un écart à D-401, dit.** D-401 lisait la CVAE et la C3S euro pour euro comme l'IS, une
+décision du propriétaire du 13 novembre 2026 pour le canal des études, que D-407 a reprise
+dans le jumeau. Le jumeau s'en écarte ici, sur la loi ; le canal des études la garde. Un
+retour se fait en remettant une ligne du fichier.
+
+### Le test
+
+`test_la_cvae_et_la_c3s_ne_font_pas_creer_l_is_si` (`tests/test_jumeau_entreprises.py`) :
+une baisse de 4 Md€ de CVAE ou de C3S ne fait aucune création, et garde ses sorties
+induites ; la même baisse d'IS fait, année par année, 0,043 × 4 N₀ / (0,092 Y_t) sociétés,
+calculé à la main. `LECTURES` dit que les naissances ne lisent plus la CVAE, ce que
+`test_chaque_bloc_a_le_signe_attendu_dans_les_deux_sens[cvae]` tient. **Vus échouer sur
+le code d'avant** (le fichier et le module remis par `git stash`) : ces deux-là, et eux
+seuls. Un changement de test motivé : le test des mesures ventilées par taille portait sur
+la CVAE, dont les naissances ne font plus rien, et son égalité des créations serait vide ;
+il porte sur l'IS, et dit que la création bouge.
+
+### L'effet sur l'estimation (2011-2017), aux θ de r3, non réestimés
+
+Seule la mesure `lfrss2014_c3s` (l'abattement de 3,25 M€, effet en 2015) passait par le
+signal sur l'estimation : 798 créations de plus, de 2015 à 2017, qui s'en vont. REQM des
+créations **6,555 → 6,525** (le naïf 7,113) ; l'erreur de 2015, 4,940 → 4,660, celles de
+2016 et 2017 à 0,003 près. Les autres cibles bougent de 2e-4 au plus (l'emploi
+0,2423 → 0,2424, le chômage 0,6255 → 0,6257, la dette 4,3625 → 4,3627) : 8 tenues, 10
+victoires sur le naïf, 8 sur le naïf mécanique, comme r3. Le rejeu redonne d'abord la REQM
+de r3 sur le code d'avant, 6,5546, le contrôle.
+
+**2023, vu.** Après le correctif, le jumeau ne fait plus rien aux créations en 2023 :
+l'erreur est celle du naïf, +7,432. Ce volet rend 2023 vu ; le quatrième rejeu le note à
+part (D-431). Rien n'est réglé sur 2018, 2019, 2022 ni 2024, ni calculé.
+
+### Les études
+
+**Aucun des 46 rapports d'études qui portent le canal ne change** : leur canal est
+`predictif.creations`, dont les instruments (`instruments_entreprises`, la CVAE et la C3S
+comprises) sont dans `predictif/parameters/creations_entreprises.yaml` et dans
+l'instantané de chaque rapport, que ce correctif ne touche pas. La même raison vaudrait
+pour eux (Attal a18, la suppression de la CVAE, et Lisnard l4, la C3S et la CVAE, y ont
+tout leur canal ; Attal, Lisnard et Retailleau, programmes et r21, une part) ; leurs
+variations sont agrégées, sans l'impôt, et ne se ventilent pas sans passe : **à décider
+par le propriétaire**, puisque D-401 est sa décision. **La page « Le jumeau »**, en mode
+structurel, lit `entreprises.yaml` : les créations des candidats à CVAE ou C3S y changent
+au prochain `site construire` (la jonction).
+
+**Ce qui ne change pas.** Aucune tolérance, aucune fenêtre, aucune cible, aucun θ ; r1, r2
+et r3 gardent leur commit. D-437 n'a pas d'usage : rien n'exige un second temps.

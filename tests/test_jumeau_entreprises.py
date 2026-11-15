@@ -71,7 +71,9 @@ LOT2 = (CREATIONS_ROW, "idees_creations", "elasticite_creations", "fermetures_ma
 SANS_ZERO = ("survie_creations", "montee_en_charge_creations", "taille_creations")
 INSTRUMENTS = ("impot_societes", "cvae", "cotisations_employeurs")
 #: (bloc, champ) : ce que chaque bloc fait, et les impôts qu'il lit.
-LECTURES = {"naissances": ("creations_societes", set(INSTRUMENTS)),
+#: Les naissances ne lisent ni la CVAE ni la C3S (D-436) : la loi n'en fait rien payer à
+#: une société qui entre ; les fermetures et la productivité, si.
+LECTURES = {"naissances": ("creations_societes", {"impot_societes", "cotisations_employeurs"}),
             "fermetures": ("sorties_induites", set(INSTRUMENTS)),
             "productivite": ("pib", set(INSTRUMENTS)),
             "investissement": ("pib", {"impot_societes", "cvae"}),
@@ -168,6 +170,26 @@ def test_le_taux_d_entree_de_reference_est_celui_de_l_insee_et_de_la_dgfip() -> 
     assert h == pytest.approx(0.10823, abs=1e-5)
 
 
+def test_la_cvae_et_la_c3s_ne_font_pas_creer_l_is_si(pop) -> None:
+    """D-436 : la loi ne fait rien payer de la CVAE ni de la C3S à une société qui entre
+    (CGI, art. 1586 octies, I, et 1586 quater, I, a ; CSS, art. L. 651-3) ; les
+    naissances ne les lisent plus. Avant D-436, une baisse de 4 Md€ de la CVAE (l'ordre
+    de celle de 2023) faisait ΔE_t = −ε Δτ_t N₀ / 100, ε Δτ_t N₀ Y_t = 0,043 × 4 N₀ /
+    0,092 ; c'est ce que fait la même baisse d'IS. Les fermetures lisent toujours la
+    CVAE : ses sorties induites restent."""
+    traj = {i: _calculer(pop, [_loi(i, -4.0)], _theta())
+            for i in ("cvae", "c3s", "impot_societes")}
+    for i in ("cvae", "c3s"):
+        assert not np.any(_part(traj[i], "naissances", "creations_societes")), i
+        assert np.all(_part(traj[i], "fermetures", "sorties_induites") < 0), i
+    p = charger()
+    pib = np.array([float(e["pib"][0]) for e in traj["impot_societes"].reference])
+    attendu = 0.043 * 4.0 * pop.stock / (p.assiette_part_pib * pib)
+    assert p.elasticite.centre == 0.043 and p.assiette_part_pib == 0.092
+    assert np.allclose(_part(traj["impot_societes"], "naissances",
+                             "creations_societes")[:, 0], attendu, rtol=1e-12, atol=0.0)
+
+
 # --------------------------------------------------------------------------- #
 # 2. les signes, dans les deux sens
 # --------------------------------------------------------------------------- #
@@ -193,10 +215,13 @@ def test_chaque_bloc_a_le_signe_attendu_dans_les_deux_sens(pop, instrument) -> N
 
 def test_une_mesure_ventilee_par_taille_change_les_sorties_pas_les_creations(pop) -> None:
     """Le même montant, sur les micro ou sur les grandes : les créations lisent le taux
-    apparent national, les sorties les marges de chaque cellule."""
-    lois = [mesure_entreprises(t, t, {a: {"cvae": {t: 5.0}} for a in ANNEES}, )
+    apparent national, les sorties les marges de chaque cellule. L'IS, que les naissances
+    lisent : la CVAE de ce test avant D-436 ne fait plus de créations, et l'égalité y
+    serait vide."""
+    lois = [mesure_entreprises(t, t, {a: {"impot_societes": {t: 5.0}} for a in ANNEES}, )
             for t in ("micro", "GE")]
     micro, ge = (_calculer(pop, [loi], _theta()) for loi in lois)
+    assert np.all(micro.difference("creations_societes") < 0)
     assert np.allclose(micro.difference("creations_societes"),
                        ge.difference("creations_societes"))
     sorties_micro = micro.difference("sorties_induites")
