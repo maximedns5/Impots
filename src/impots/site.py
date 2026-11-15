@@ -21,7 +21,7 @@ import re
 import unicodedata
 from pathlib import Path
 
-from impots import etude
+from impots import etude, site_mesure
 
 SITE = etude.ROOT / "site"
 TITLE = "Impôts — les études"
@@ -321,6 +321,13 @@ def _page(title: str, main: str, pied: str = "", liens: bool = True,
 STYLE = (TEXTES / "style.css").read_text(encoding="utf-8")
 
 
+def _mesure_css(page: str) -> str:
+    """The pages of the volet `mesure` (but 25) add their own sheet to the site's."""
+    return page.replace('<link rel="stylesheet" href="style.css">',
+                        '<link rel="stylesheet" href="style.css">\n'
+                        f'<link rel="stylesheet" href="{site_mesure.CSS}">', 1)
+
+
 def _bref(lines: list[str]) -> list[str]:
     """The study's « En bref » section: its table and the sentence that reads it."""
     start = lines.index("## En bref")
@@ -371,6 +378,9 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
     files[METHODE] = _page(f"Méthode et limites — {TITLE}", methode, liens=False)
     listed: list[str] = []
     codes: set[str] = set()
+    listes: list = []
+    compares: list = []
+    files[site_mesure.CSS] = site_mesure.STYLE
     for study in studies:
         if study.refus:
             # Its passes ran, and a guard refused its path (D-398): not unrun, refused.
@@ -398,7 +408,20 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
                 f"sur les commits {shown}, joints par une passe témoin")
         pied = (f"<p>Étude chiffrée le {html.escape(entries[0]['first']['computed'])}, "
                 f"{code}.</p>")
-        files[f"{study.nom}.html"] = _page(f"{study.titre} — {TITLE}", body(lines, n), pied)
+        # The study's page (but 25, D-456): its summary first, then its detail as the
+        # study writes it, each trajectory with why its curves move.
+        main = site_mesure.page_etude(study, entries, lines, n, _text, body)
+        files[f"{study.nom}.html"] = _mesure_css(_page(f"{study.titre} — {TITLE}", main, pied))
+        compares.append((study, entries, lines, n))
+        mesures = site_mesure.mesures_de(study, entries)
+        if mesures:
+            from impots import programmes as pg
+
+            listes.append((pg.charger(study.programme), study, mesures))
+            for name, text in site_mesure.pages(
+                    study, entries, lambda t, c: _mesure_css(_page(f"{t} — {TITLE}", c))
+            ).items():
+                files[name] = text
         listed.append(f'<li><h2><a href="{study.nom}.html">{html.escape(study.titre)}</a>'
                       f"</h2>\n<p>Chiffrée le {html.escape(entries[0]['first']['computed'])}, "
                       f"{code}.</p>\n{_bref_plie(body(_bref(lines), n))}</li>")
@@ -436,6 +459,16 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         intro += ('\n<p><a href="presidentielle.html">Les programmes de la présidentielle '
                   "2027</a> : les 24 candidats déclarés, ce que l'outil chiffre de chacun, et "
                   "pourquoi pas le reste.</p>")
+    if sum(1 for c in compares if c[0].programme) > 1:
+        # The candidates side by side (but 25, volet mesure, D-457).
+        files[site_mesure.COMPARER] = _mesure_css(_page(
+            f"Comparer les candidats — {TITLE}", site_mesure.comparer(compares, _text), large=True))
+    if listes:
+        files[site_mesure.INDEX] = _mesure_css(_page(f"Une mesure pas à pas — {TITLE}",
+                                                     site_mesure.index(listes)))
+        intro += (f'\n<p><a href="{site_mesure.INDEX}">Une mesure pas à pas</a> : un '
+                  "candidat, une de ses mesures, et comment elle devient un nombre, du texte "
+                  "au coût, couche par couche, chaque couche avec sa source.</p>")
     explorer = _explorer() if EXPLORATEUR_PUBLIE and grille_present() else None
     if explorer is not None:
         files[EXPLORER] = explorer

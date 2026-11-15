@@ -59,13 +59,13 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <text class="g-encre" fill="#1d1d1b" x="12" y="379" text-anchor="start" font-weight="600">La dette (Δb)</text>
 <text class="g-doux" fill="#52514e" x="348" y="379" text-anchor="end" font-size="12">points de PIB</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="501" x2="346" y2="501"/>
-<text class="g-doux" fill="#52514e" x="46" y="505" text-anchor="end" font-size="12">−0,30</text>
+<text class="g-doux" fill="#52514e" x="46" y="505" text-anchor="end" font-size="12">−0,3</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="463.7" x2="346" y2="463.7"/>
-<text class="g-doux" fill="#52514e" x="46" y="467.7" text-anchor="end" font-size="12">−0,20</text>
+<text class="g-doux" fill="#52514e" x="46" y="467.7" text-anchor="end" font-size="12">−0,2</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="426.3" x2="346" y2="426.3"/>
-<text class="g-doux" fill="#52514e" x="46" y="430.3" text-anchor="end" font-size="12">−0,10</text>
+<text class="g-doux" fill="#52514e" x="46" y="430.3" text-anchor="end" font-size="12">−0,1</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="52" y1="389" x2="346" y2="389"/>
-<text class="g-doux" fill="#52514e" x="46" y="393" text-anchor="end" font-size="12">0,00</text>
+<text class="g-doux" fill="#52514e" x="46" y="393" text-anchor="end" font-size="12">0,0</text>
 <line class="g-zero" stroke="#52514e" stroke-width="1.2" x1="52" y1="389" x2="346" y2="389"/>
 <polygon class="g-bande" fill="#2a78d6" fill-opacity=".16" points="52,395 84.7,404.2 117.3,412.5 150,419.9 182.7,426.5 215.3,432.4 248,437.5 280.7,442.1 313.3,446 346,449.5 346,449.5 313.3,446 280.7,442.1 248,437.5 215.3,432.4 182.7,426.5 150,419.9 117.3,412.5 84.7,404.2 52,395"/>
 <polyline class="g-s2" stroke="#eb6834" fill="none" stroke-width="1.2" stroke-dasharray="6 4" stroke-linejoin="round" points="52,395.7 84.7,406.9 117.3,417.5 150,427.8 182.7,437.6 215.3,447 248,456 280.7,464.6 313.3,472.9 346,480.8"><title>La dette (Δb), vue figée, persistance éteinte, 2035 : −0,25 pt</title></polyline>

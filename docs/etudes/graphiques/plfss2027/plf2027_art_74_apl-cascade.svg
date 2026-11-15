@@ -34,11 +34,11 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <text class="g-encre" fill="#1d1d1b" x="10" y="150" text-anchor="start" font-weight="600">total 2026</text>
 <text class="g-sur" fill="#ffffff" x="338" y="150" text-anchor="end" font-size="12" font-weight="600">−0,07 Md€</text>
 <line class="g-axe" stroke="#8a877f" stroke-width="1" x1="156" y1="165" x2="342" y2="165"/>
-<text class="g-doux" fill="#52514e" x="156" y="180" text-anchor="middle" font-size="12">−0,1</text>
-<text class="g-doux" fill="#52514e" x="202.5" y="180" text-anchor="middle" font-size="12">−0,1</text>
-<text class="g-doux" fill="#52514e" x="249" y="180" text-anchor="middle" font-size="12">0,0</text>
-<text class="g-doux" fill="#52514e" x="295.5" y="180" text-anchor="middle" font-size="12">0,0</text>
-<text class="g-doux" fill="#52514e" x="342" y="180" text-anchor="middle" font-size="12">0,0</text>
+<text class="g-doux" fill="#52514e" x="156" y="180" text-anchor="middle" font-size="12">−0,08</text>
+<text class="g-doux" fill="#52514e" x="202.5" y="180" text-anchor="middle" font-size="12">−0,06</text>
+<text class="g-doux" fill="#52514e" x="249" y="180" text-anchor="middle" font-size="12">−0,04</text>
+<text class="g-doux" fill="#52514e" x="295.5" y="180" text-anchor="middle" font-size="12">−0,02</text>
+<text class="g-doux" fill="#52514e" x="342" y="180" text-anchor="middle" font-size="12">0,00</text>
 <text class="g-doux" fill="#52514e" x="350" y="196" text-anchor="end" font-size="12">milliards d&#x27;euros de 2026</text>
 <text class="g-encre" fill="#1d1d1b" x="12" y="219" text-anchor="start" font-weight="600">La dette en 2035, à θ½, vue vieillie</text>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="156" y1="229" x2="156" y2="349"/>
@@ -63,10 +63,10 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <text class="g-encre" fill="#1d1d1b" x="10" y="338" text-anchor="start" font-weight="600">Δ dette 2035</text>
 <text class="g-sur" fill="#ffffff" x="338" y="338" text-anchor="end" font-size="12" font-weight="600">−0,07 pt</text>
 <line class="g-axe" stroke="#8a877f" stroke-width="1" x1="156" y1="353" x2="342" y2="353"/>
-<text class="g-doux" fill="#52514e" x="156" y="368" text-anchor="middle" font-size="12">−0,1</text>
-<text class="g-doux" fill="#52514e" x="202.5" y="368" text-anchor="middle" font-size="12">−0,1</text>
-<text class="g-doux" fill="#52514e" x="249" y="368" text-anchor="middle" font-size="12">0,0</text>
-<text class="g-doux" fill="#52514e" x="295.5" y="368" text-anchor="middle" font-size="12">0,0</text>
-<text class="g-doux" fill="#52514e" x="342" y="368" text-anchor="middle" font-size="12">0,0</text>
+<text class="g-doux" fill="#52514e" x="156" y="368" text-anchor="middle" font-size="12">−0,08</text>
+<text class="g-doux" fill="#52514e" x="202.5" y="368" text-anchor="middle" font-size="12">−0,06</text>
+<text class="g-doux" fill="#52514e" x="249" y="368" text-anchor="middle" font-size="12">−0,04</text>
+<text class="g-doux" fill="#52514e" x="295.5" y="368" text-anchor="middle" font-size="12">−0,02</text>
+<text class="g-doux" fill="#52514e" x="342" y="368" text-anchor="middle" font-size="12">0,00</text>
 <text class="g-doux" fill="#52514e" x="350" y="384" text-anchor="end" font-size="12">points de PIB de 2035</text>
 </svg>

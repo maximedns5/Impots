@@ -266,3 +266,24 @@ def test_an_unrun_study_is_listed_without_a_page(tmp_path) -> None:
 def test_a_table_without_its_header_line_is_refused() -> None:
     with pytest.raises(site.SiteError, match="en-tête"):
         site.body(["| a | b |", "| c | d |"], etude.Nombres())
+
+
+def test_une_mesure_pas_a_pas(built) -> None:
+    """Chaque mesure seule d'un programme a sa page, à l'adresse stable que donne
+    `site_mesure.lien`, listée par l'index ; son coût est celui du tableau de l'étude
+    (D-456)."""
+    from impots import site_mesure
+
+    index = built[site_mesure.INDEX]
+    for study in etude.definitions():
+        if study.programme is None or study.refus or not study.page.exists():
+            continue
+        entries = study.load()
+        for m, seule in site_mesure.mesures_de(study, entries):
+            name = site_mesure.lien(study.programme, m.id)
+            assert name in built and f'href="{name}"' in index, name
+            cout = etude.lecture_seule(seule)["figee"]
+            from impots import fiche
+
+            assert html.escape(fiche._eur(cout)) in built[name], name
+            assert f'href="{name}"' in built[f"{study.nom}.html"], name
