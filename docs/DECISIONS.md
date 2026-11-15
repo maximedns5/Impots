@@ -34862,3 +34862,28 @@ passe d'avant la PR viendra avec l'accord du propriétaire.
 d'avant la jonction). Les schémas des pages pas à pas restent à la mesure du texte
 (42 rem), serrés en trois colonnes. Pyodide n'est toujours pas vendorisé (D-459, J12) :
 à décider. La seconde passe du lecteur novice, sur le site joint.
+
+## D-467 — Le lecteur novice, seconde passe : le site joint
+
+**Ce qui a été lu** (but 25, volet `lecteur`), sur `claude/but25` à b0d4044, le
+dossier `site/` servi en local et ouvert dans Chromium à 1280 px et à 390 px, dans le
+même rôle qu'en D-466 : l'accueil, le chemin en dix étapes et ses curseurs, les quatre
+pages de la population (« un ménage comme le mien » essayé), une mesure d'Attal suivie
+de bout en bout, l'étude de Mélenchon, la liste des études, « comparer les candidats »,
+la méthode, et le jumeau sur la loi simple, les onze programmes et un article du PLF,
+dans ses deux modes et ses deux populations, curseurs bougés.
+
+**Les 50 remarques de D-466** : 34 réglées, 13 en partie, 3 non réglées (trois
+mineures), aucune sans objet. Des 15 bloquantes, 12 sont réglées ; deux, en partie,
+deviennent gênantes (les coûts d'une même mesure, la dette du jumeau contre celle de
+l'étude) ; une reste bloquante : le mode structurel du jumeau ne calcule rien pour 7
+programmes sur 11, ni pour aucun en population vieillie, même si le refus est maintenant
+dit en français.
+
+**Les remarques nouvelles** : 16, aucune bloquante, 10 gênantes, 6 mineures. Ouvertes en
+tout : 32, contre 50 ; 1 bloquante, 21 gênantes, 10 mineures. Aux trois questions du but :
+la population, oui ; une mesure devenue nombre, oui ; le jumeau, en grande partie.
+
+**Le rapport** : `reports/lecteur/passe2.md`, ses captures dans
+`reports/lecteur/captures/passe2/` (28 PNG, 3,7 Mo). Rien n'est calculé : les valeurs du
+jumeau citées sont celles que la page affiche, lues au curseur.
