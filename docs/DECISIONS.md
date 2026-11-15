@@ -34145,9 +34145,9 @@ touchés (`test_recalcul`, `test_etude_creations`, `test_creations_canal`,
 propre.
 
 **La passe d'impact relancée** sur 9eeeab7 (D-309), les rapports, le code et les
-D-entrées ayant changé : .venv/bin/ruff check src tests scripts, ruff propre ; 4 766 verts, 21 sautés (les
+D-entrées ayant changé : `make impact JOBS=2`, ruff propre ; 4 766 verts, 21 sautés (les
 mêmes, mêmes raisons qu'en D-443), aucun rouge, en 41 min 36 s (l'impact a tout rejoué :
-presque chaque test lit  ou un rapport) ; les 29 lourds, chacun dans son
+presque chaque test lit `DECISIONS.md` ou un rapport) ; les 29 lourds, chacun dans son
 processus, verts, aucun sauté ; 5 chronomètres verts.
 
 **Ce qui ne change pas.** Aucun nombre d'aucun rapport, aucune tolérance, aucun verdict,
