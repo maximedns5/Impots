@@ -227,8 +227,10 @@ def test_the_frozen_view_is_priced_on_the_population_as_it_is(monkeypatch) -> No
 
     def run(request, frame):
         passed.append(frame)
+        # The aggregate's fields the pass reads, at their defaults: since goal 22 the
+        # creations channel reads the employer contributions actually paid (D-401).
         return (SimpleNamespace(households=None),
-                SimpleNamespace(reform_cost=1e9, deciles=[]))
+                SimpleNamespace(reform_cost=1e9, deciles=[], employer_contribution_delta=0.0))
 
     monkeypatch.setattr(service, "population_frame", lambda: population)
     monkeypatch.setattr(service, "run_population", run)

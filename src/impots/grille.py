@@ -765,6 +765,13 @@ def _croise(pair: Mapping[str, Any], a: Mapping[str, Any], b: Mapping[str, Any]
     return out
 
 
+def _a_des_rapports(study: Any, plages: str) -> bool:
+    """Une étude a au moins un rapport commité : un JSON à la racine de ses rapports, ou
+    le dossier de ses plages."""
+    dossier = study.rapports
+    return dossier.is_dir() and (any(dossier.glob("*.json")) or (dossier / plages).is_dir())
+
+
 def crans(curseurs: dict[str, Curseur]) -> list[dict[str, Any]]:
     """Les mesures préenregistrées, comme des crans sur les curseurs, avec le nombre de
     leur rapport d'étude : la plage « candidat » d'une mesure de programme (la convention
@@ -776,6 +783,11 @@ def crans(curseurs: dict[str, Curseur]) -> list[dict[str, Any]]:
                 for c in curseurs.values() if c.champ}
     out: list[dict[str, Any]] = []
     for study in etude.definitions():
+        if not _a_des_rapports(study, etude.PLAGES):
+            # Préenregistrée, non refaite au but 22 : ses rapports d'avant ont été retirés
+            # (D-403). Pas de cran, comme le site n'en fait pas de page ; une étude à
+            # moitié là reste refusée par la lecture de son rapport manquant.
+            continue
         if study.programme:
             p = pg.charger(study.programme)
             for m in p.chiffrees():
