@@ -18,6 +18,7 @@ import pytest
 from impots import etude, site
 from impots.population import cli
 
+SOURCE = re.compile(r'<span class="chiffre">.*?</span></span></span>', re.S)
 BADGE = re.compile(r'<span class="(?:nombre|cite)">.*?</span><a class="etage[^>]*>.*?</a>',
                    re.S)
 
@@ -94,20 +95,20 @@ def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
     for study in refusees:
         # Listée « chiffrée, puis refusée », avec sa raison, sans page ni lien (D-398).
         assert f"{study.nom}.html" not in built
-        assert f'href="{study.nom}.html"' not in built["index.html"]
+        assert f'href="{study.nom}.html"' not in built["etudes.html"]
         assert (f"<li><strong>{html.escape(study.titre)}</strong> — chiffrée, puis refusée : "
-                f"{html.escape(study.refus)}</li>") in built["index.html"]
-        assert "ses\npasses n'ont pas tourné" not in built["index.html"].split(
+                f"{html.escape(study.refus)}</li>") in built["etudes.html"]
+        assert "ses\npasses n'ont pas tourné" not in built["etudes.html"].split(
             html.escape(study.titre))[1].split("</li>")[0]
     for study in _chiffrees():
         assert f"{study.nom}.html" in built
         assert f'<a href="{study.nom}.html">{html.escape(study.titre)}</a>' \
-            in built["index.html"]
+            in built["etudes.html"]
     for study in _non_refaites():
         # Sans rapport ni page, listée comme non tournée, sans lien (D-403).
         assert not any(study.rapports.glob("*.json")), study.nom
         assert f"{study.nom}.html" not in built
-        entry = built["index.html"].split(
+        entry = built["etudes.html"].split(
             f"<li><strong>{html.escape(study.titre)}</strong> — ")[1].split("</li>")[0]
         assert re.sub(r"<[^>]+>", "", entry) == (
             f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné.")
@@ -116,7 +117,7 @@ def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
 def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(built) -> None:
     """D-336 : les études ont tourné sur des commits et des moteurs différents ; l'accueil
     le dit avant toute comparaison, et chaque entrée donne son commit."""
-    index = built["index.html"]
+    index = built["etudes.html"]
     # Le message suit les rapports : présent s'ils tiennent sur plusieurs commits, absent
     # quand une série les a tous chiffrés sur un seul (D-338).
     # Une étude dont le chemin a tourné sur un autre commit que sa première année, joint
@@ -170,13 +171,16 @@ def test_each_graphic_says_its_source_and_its_etage(built) -> None:
             assert "<code>reports/" in caption and "impots.graphiques" in caption
 
 
-@pytest.mark.parametrize("name", ["index.html", "plfss2027.html",
+@pytest.mark.parametrize("name", ["etudes.html", "index.html", "plfss2027.html",
                                   "presidentielle_lisnard.html"])
 def test_every_amount_on_the_site_carries_its_etage(built, name) -> None:
     """Fails if a number reaches the site without its badge: remove every badged number,
     and no euro, point or share is left in the text."""
     page = _body(built[name])
-    assert BADGE.search(page)
+    # L'accueil (D-450) montre ses nombres par le chiffre sourcé : un badge d'étage dans
+    # sa provenance, qui s'ouvre au clic.
+    page = SOURCE.sub(" ", page)
+    assert BADGE.search(page) or name == "index.html"
     bare = html.unescape(re.sub(r"<[^>]+>", " ", BADGE.sub(" ", page)))
     assert not etude.AMOUNT.search(bare), etude.AMOUNT.search(bare)
 
@@ -247,7 +251,7 @@ def test_an_unrun_study_is_listed_without_a_page(tmp_path) -> None:
     files = site.build([study])
     assert "futur.html" not in files
     # The first D-xxx of a page links to the method page (D-357): read the text.
-    text = re.sub(r"<[^>]+>", "", files["index.html"])
+    text = re.sub(r"<[^>]+>", "", files["etudes.html"])
     assert f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné" in text
 
 
