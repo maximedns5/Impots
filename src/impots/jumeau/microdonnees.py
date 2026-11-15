@@ -559,10 +559,15 @@ def _cr1(X: np.ndarray, u: np.ndarray, grappe: np.ndarray, A: np.ndarray, k_tot:
 
 def estimer(y: np.ndarray, X: np.ndarray, noms: Sequence[str], effets: Sequence[np.ndarray],
             grappe: np.ndarray, *, tirages: int = 9_999, graine: int = 20261114,
-            poids: str = "webb", interet: Sequence[int] | None = None) -> Resultat:
+            poids: str = "webb", interet: Sequence[int] | None = None,
+            tendance: tuple[Sequence[Any], Sequence[float]] | None = None) -> Resultat:
     """MCO à effets fixes, variance CR1 groupée, bootstrap sauvage groupé : la p-valeur
     sous H₀ (β_j = 0, résidus contraints, WCR) et l'écart-type des tirages sans contrainte
-    (WCU), pour chaque coefficient (la p-valeur, pour ceux d'`interet` seulement)."""
+    (WCU), pour chaque coefficient (la p-valeur, pour ceux d'`interet` seulement).
+
+    `tendance` (D-434) : (cellules, temps), une constante et une pente propres à chaque
+    cellule, projetées avec les effets (`projeter_tendances`) ; l'effet fixe de cellule
+    n'est alors pas à redonner dans `effets`."""
     y = np.asarray(y, dtype=float)
     X = np.asarray(X, dtype=float)
     if X.ndim == 1:
@@ -571,10 +576,16 @@ def estimer(y: np.ndarray, X: np.ndarray, noms: Sequence[str], effets: Sequence[
         raise MicrodonneesError("valeur non finie dans le panneau")
     effets = [_codes(e) for e in effets]
     grappe = _codes(grappe)
-    Z = projeter(np.column_stack([y, X]), effets)
+    if tendance is None:
+        Z = projeter(np.column_stack([y, X]), effets)
+        k_fe = rang_effets(effets)
+    else:
+        cellules = _codes(tendance[0])
+        Z = projeter_tendances(np.column_stack([y, X]), effets, cellules,
+                               np.asarray(tendance[1], dtype=float))
+        k_fe = rang_effets([*effets, cellules]) + int(cellules.max()) + 1
     yt, Xt = Z[:, 0], Z[:, 1:]
     n, k = Xt.shape
-    k_fe = rang_effets(effets)
     k_tot = k + k_fe
     XtX = Xt.T @ Xt
     if np.linalg.matrix_rank(XtX) < k:
@@ -693,3 +704,203 @@ def vers_theta(valeur: float, se: float, bas: float, centre: float, haut: float
         theta = 0.5 + (valeur - centre) / pente
     return {"theta": float(theta), "se_theta": float(se / pente),
             "identifie": bool(se / pente < 0.25)}
+
+
+# =========================================================================== #
+# but 24, volet `fines` (D-434) : l'emploi et les salaires par département et
+# secteur (Urssaf), le coût du capital et l'accélérateur par branche (comptes
+# nationaux). Les spécifications sont celles de D-434, avant tout calcul.
+# =========================================================================== #
+URSSAF_DEP = "urssaf_dep_na17i_effectifs_masse_1998_2025.csv"
+CHOMAGE_LOCALISE = "insee_bdm_taux_chomage_localise_1990_2025.xml"
+FBCF_BRANCHES = "insee_cn2025_t6301_6303_fbcf_branches.xlsx"
+VA_BRANCHES = "insee_cn2025_t6201_6203_va_branches.xlsx"
+CCF_BRANCHES = "insee_cn2025_t6461_6462_ccf_branches.xlsx"
+
+#: Les secteurs NA17i des panneaux Urssaf (le premier mot du libellé). Hors panneau : les
+#: intérimaires (MNa, rattachés à l'agence, non au lieu de travail) et OQ (associations et
+#: établissements non lucratifs, hors du CICE, qui avaient le CITS).
+SECTEURS_URSSAF = ("C1", "C2-C5", "C3", "C4", "DE", "FZ", "GZ", "HZ", "IZ", "JZ", "KZ",
+                   "LZ", "MNb", "RU")
+#: Les 96 départements métropolitains.
+DEPARTEMENTS = tuple([f"{i:02d}" for i in range(1, 20)] + ["2A", "2B"]
+                     + [f"{i:02d}" for i in range(21, 96)])
+#: Les années du salaire de référence de chaque cellule, avant le CICE.
+ANNEES_REFERENCE = (2010, 2011, 2012)
+
+
+def urssaf_departements(texte: str | None = None
+                        ) -> dict[tuple[str, str], dict[int, tuple[float, float]]]:
+    """{(département, secteur) : {année : (effectif salarié moyen, masse salariale €)}},
+    départements métropolitains, secteurs de `SECTEURS_URSSAF`. Une ligne sans effectif
+    ou sans masse n'entre pas (la cellule-année est absente)."""
+    import csv
+    import io
+
+    texte = texte if texte is not None else _texte(URSSAF_DEP)
+    out: dict[tuple[str, str], dict[int, tuple[float, float]]] = {}
+    for r in csv.DictReader(io.StringIO(texte.lstrip("﻿")), delimiter=";"):
+        dep, sect = r["code_departement"].strip(), r["secteur_na17i"].split()[0]
+        if dep not in DEPARTEMENTS or sect not in SECTEURS_URSSAF:
+            continue
+        if not r["effectifs_salaries_moyens"] or not r["masse_salariale"]:
+            continue
+        cellule = out.setdefault((dep, sect), {})
+        annee = int(r["annee"][:4])
+        if annee in cellule:
+            raise MicrodonneesError(f"Urssaf : deux lignes pour {dep} {sect} {annee}")
+        cellule[annee] = (float(r["effectifs_salaries_moyens"]), float(r["masse_salariale"]))
+    if not out:
+        raise MicrodonneesError("Urssaf : aucune cellule département × secteur")
+    return out
+
+
+def chomage_departements(texte: str | None = None) -> dict[str, dict[int, float]]:
+    """{département : {année : taux de chômage localisé moyen, en points}}, la moyenne des
+    quatre trimestres CVS d'une année complète."""
+    texte = texte if texte is not None else _texte(CHOMAGE_LOCALISE)
+    out = {}
+    for a, obs in series_bdm(texte):
+        zone = a.get("REF_AREA", "")
+        if a.get("INDICATEUR") != "TAUX_CHOMAGE_LOCALISE" or not zone.startswith("D"):
+            continue
+        dep = zone[1:]
+        if dep in DEPARTEMENTS:
+            if dep in out:
+                raise MicrodonneesError(f"deux séries de chômage pour {dep}")
+            out[dep] = {an: v / 4.0 for an, v in annuel(obs).items()}
+    manquants = sorted(set(DEPARTEMENTS) - set(out))
+    if manquants:
+        raise MicrodonneesError(f"chômage localisé absent : {manquants}")
+    return out
+
+
+def salaire_relatif(cellules: Mapping[tuple[str, str], Mapping[int, tuple[float, float]]],
+                    annees: Sequence[int] = ANNEES_REFERENCE) -> dict[tuple[str, str], float]:
+    """Le salaire par tête de chaque cellule sur les années de référence (masse sur
+    effectif, sommés), rapporté à celui de l'ensemble des cellules."""
+    def somme(v: Mapping[int, tuple[float, float]], i: int) -> float:
+        return sum(v[a][i] for a in annees if a in v)
+
+    total = (sum(somme(v, 1) for v in cellules.values())
+             / sum(somme(v, 0) for v in cellules.values()))
+    out = {}
+    for c, v in cellules.items():
+        if any(a not in v for a in annees):
+            continue
+        out[c] = (somme(v, 1) / somme(v, 0)) / total
+    return out
+
+
+def dose_travail(parts_smic: Mapping[float, float], annee: int, g: float) -> float:
+    """La dose `travail` de `doses` (en fraction du coût du travail) pour des parts de la
+    masse salariale sous les seuils : −g [r_t a(k_t) + 1,8 % f_t]."""
+    seuil = parametre("cice_seuil_smic", annee, 2.5)
+    dose = -g * parametre("cice", annee, 0.0) * parts_smic[seuil]
+    if annee >= 2015:
+        bas = parts_smic[1.6]
+        haut = parts_smic[parametre("famille_seuil_smic", annee, 1.6)]
+        part = bas + FAMILLE_2016_PART * (haut - bas) if annee == 2016 else haut
+        dose -= g * FAMILLE_POINTS * part
+    return dose
+
+
+def branches_cn(fichier: str, feuille: str) -> dict[str, dict[int, float]]:
+    """{branche A38 de `BRANCHES` : {année : valeur}} d'une table des comptes nationaux
+    par branche (t. 6.201 à 6.203, 6.301 à 6.303, 6.461 et 6.462)."""
+    rows = comptes._rows(fichier, feuille)
+    colonnes = comptes._year_columns(rows)
+    par_code: dict[str, tuple[Any, ...]] = {}
+    for r in rows:
+        if r[0] is not None and str(r[0]).strip() not in par_code:
+            par_code[str(r[0]).strip()] = r
+    out = {}
+    for branche, (code, _) in BRANCHES.items():
+        if code not in par_code:
+            raise MicrodonneesError(f"{fichier} : ligne « {code} » absente ({branche})")
+        r = par_code[code]
+        out[branche] = {a: float(r[i]) for a, i in colonnes.items()
+                        if r[i] is not None and str(r[i]).strip() not in ("", "nd")}
+    return out
+
+
+def choc_cout_capital(e: Exposition, annee: int, k: Constantes, capital_net: float,
+                      taux_usage: float) -> float:
+    """Δck de la branche en `annee`, en log : la baisse de l'IS et de la CVAE (M€ de
+    2023, `doses`) sur son capital net (M€) fois le taux du coût d'usage, le Δck =
+    Δfisca / u du bloc `investissement` (Mésange, p. 42)."""
+    d = doses(e, annee, k)
+    return (d["is"] + d["cvae"]) / (capital_net * taux_usage)
+
+
+def dose_cout_capital(chocs: Mapping[int, float], annee: int,
+                      reponse: Sequence[float]) -> float:
+    """La réponse du bloc à ε_K = 1 : Σ_{j ≤ t} (Δck_j − Δck_{j−1}) R(t − j), R la
+    réponse annuelle à un échelon unitaire (`investissement.reponse_unitaire`, négative) ;
+    log(I/VA) monte de ε_K fois cette dose."""
+    if annee > max(chocs):
+        raise MicrodonneesError(f"Δck connu jusqu'en {max(chocs)}, demandé en {annee}")
+    total, avant = 0.0, 0.0
+    for j in range(min(chocs), annee + 1):
+        c = chocs[j]
+        total += (c - avant) * reponse[annee - j]
+        avant = c
+    return total
+
+
+def projeter_tendances(z: np.ndarray, groupes: Sequence[np.ndarray],
+                       cellules: np.ndarray, temps: np.ndarray, tol: float = 1e-11,
+                       max_iter: int = 10_000) -> np.ndarray:
+    """Comme `projeter`, avec une constante et une pente en `temps` propres à chaque
+    cellule (les effets fixes de cellule compris) : le résidu sur tous ces termes, par
+    projections alternées."""
+    z = np.array(z, dtype=float, copy=True)
+    if z.ndim == 1:
+        z = z[:, None]
+    n = np.bincount(cellules).astype(float)
+    t = np.asarray(temps, dtype=float)
+    tm = np.bincount(cellules, weights=t) / n
+    tc = t - tm[cellules]
+    stt = np.bincount(cellules, weights=tc * tc)
+    if np.any(stt <= 0):
+        raise MicrodonneesError("une cellule sans variation de temps pour sa tendance")
+    for _ in range(max_iter):
+        avant = z.copy()
+        for j in range(z.shape[1]):
+            moy = np.bincount(cellules, weights=z[:, j]) / n
+            pente = np.bincount(cellules, weights=z[:, j] * tc) / stt
+            z[:, j] -= moy[cellules] + pente[cellules] * tc
+        for g in groupes:
+            m = np.bincount(g)
+            for j in range(z.shape[1]):
+                z[:, j] -= (np.bincount(g, weights=z[:, j]) / m)[g]
+        if np.max(np.abs(z - avant)) < tol * max(1.0, np.max(np.abs(z))):
+            return z
+    raise MicrodonneesError("projections alternées sans convergence (tendances)")
+
+
+def critere_d434(valeur: float, se: float, plage: tuple[float, float, float], loi: Any
+                 ) -> dict[str, float | bool]:
+    """θ de l'estimation et son écart-type (`vers_theta`), et le critère du but 24 :
+    l'écart-type de θ sous la moitié de celui de la loi a priori de D-424 (`a_priori.Loi`) du
+    côté où tombe l'estimation."""
+    out: dict[str, float | bool] = dict(vers_theta(valeur, se, *plage))
+    s = loi.ecart_bas if out["theta"] < loi.moyenne else loi.ecart_haut
+    out["s_loi"] = float(s)
+    out["seuil"] = float(0.5 * s)
+    out["identifie"] = bool(out["se_theta"] < 0.5 * s)
+    return out
+
+
+def regions_departements(texte: str | None = None) -> dict[str, str]:
+    """{département : code de sa région} lu dans le fichier de l'Urssaf."""
+    import csv
+    import io
+
+    texte = texte if texte is not None else _texte(URSSAF_DEP)
+    out: dict[str, str] = {}
+    for r in csv.DictReader(io.StringIO(texte.lstrip("﻿")), delimiter=";"):
+        dep = r["code_departement"].strip()
+        if dep in DEPARTEMENTS:
+            out.setdefault(dep, r["code_region"].strip())
+    return out

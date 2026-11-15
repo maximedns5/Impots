@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-14",
+  "generated": "2026-11-15",
   "files": {
     "Dictionnaire_EEC_2024.pdf": {
       "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
@@ -2225,6 +2225,51 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Insee, BDM (source Banque de France), flux DEFAILLANCES-ENTREPRISES : défaillances trimestrielles brutes par date de jugement, par région et secteur, et par département (ensemble), 1990-T1→2025-T4 ; le panneau des défaillances (D-425).",
       "provenance": "API SDMX de la BDM, requête par clé bornée en dates. La BDM republie les séries (révisions des derniers trimestres) : la somme de contrôle est celle du 14 novembre 2026."
+    },
+    "insee_bdm_taux_chomage_localise_1990_2025.xml": {
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/TAUX-CHOMAGE/T.TAUX_CHOMAGE_LOCALISE....?startPeriod=1990-Q1&endPeriod=2025-Q4",
+      "quarantined": false,
+      "sha256": "fe401972d756aca03bc0f1c3e4e083565fc4a7cac41a3f686fc46d92dfa7d8cf",
+      "bytes": 1447642,
+      "downloaded": "2026-11-15",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, BDM, flux TAUX-CHOMAGE : taux de chômage localisés trimestriels (CVS), par département, région et France métropolitaine, 1990-T1→2025-T4 ; la courbe des salaires (D-434)."
+    },
+    "insee_cn2025_t6201_6203_va_branches.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988821/T_6201_6203_fr.xlsx",
+      "quarantined": false,
+      "sha256": "73bc0fcbc4fb74a5d701c75ec6467fea4343e8e8a31ca95f41603e61e47a6c4c",
+      "bytes": 155357,
+      "downloaded": "2026-11-15",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, comptes nationaux annuels 2025 (base 2020), t. 6.201 à 6.203 : la valeur ajoutée brute par branche A38, à prix courants, en volume et ses prix, 1949→2025 ; le panneau de l'investissement (D-434)."
+    },
+    "insee_cn2025_t6301_6303_fbcf_branches.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988825/T_6301_6303_fr.xlsx",
+      "quarantined": false,
+      "sha256": "6f4a513a90a7e37f701cfcb7dcaebcd34f7d37c1ddc17260720d8c8eb30fa164",
+      "bytes": 137732,
+      "downloaded": "2026-11-15",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, comptes nationaux annuels 2025 (base 2020), t. 6.301 à 6.303 : la FBCF de l'ensemble des secteurs par branche A38, à prix courants, en volume et ses prix, 1959→2025 ; le panneau de l'investissement (D-434)."
+    },
+    "insee_cn2025_t6461_6462_ccf_branches.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988825/T_6461_6462_fr.xlsx",
+      "quarantined": false,
+      "sha256": "16e345a7fccb120c68d2332a4920d612e999dbf5033cd0a893bd99d07cb816df",
+      "bytes": 49847,
+      "downloaded": "2026-11-15",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, comptes nationaux annuels 2025 (base 2020), t. 6.461 et 6.462 : la consommation de capital fixe par branche A38, 1959→2025 ; l'échelle du capital des branches dans la dose du coût du capital (D-434)."
+    },
+    "urssaf_dep_na17i_effectifs_masse_1998_2025.csv": {
+      "url": "https://open.urssaf.fr/api/explore/v2.1/catalog/datasets/nombre-etab-effectifs-salaries-et-masse-salariale-secteur-prive-dep-x-na17i/exports/csv?delimiter=%3B&lang=fr",
+      "quarantined": false,
+      "sha256": "9c2c0a8466e2c9befc66856e8db2fa88496e55d1817fb40d32a103e701c2d0fe",
+      "bytes": 6509207,
+      "downloaded": "2026-11-15",
+      "licence": "Open Database License (ODbL)",
+      "description": "Urssaf, open data : établissements employeurs, effectifs salariés moyens annuels et masse salariale annuelle (assiette déplafonnée) du secteur privé, régime général, par département × secteur NA17i, 1998→2025 ; les panneaux de l'emploi et des salaires (D-434)."
     }
   }
 }
