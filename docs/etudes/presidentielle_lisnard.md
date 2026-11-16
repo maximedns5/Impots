@@ -370,7 +370,7 @@ Le secteur public est modélisé statut par statut (D-346) : un titulaire est pa
 
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
-* CSG sur les revenus de remplacement : −3,1 % en moyenne, de −5,4 % à −1,0 % ; 3 années sur 3 dans sa tolérance.
+* CSG sur les revenus de remplacement : −2,8 % en moyenne, de −5,1 % à −0,7 % ; 3 années sur 3 dans sa tolérance.
 * Impôt sur les sociétés, avant crédits d'impôt : −6,2 % en moyenne, de −19,7 % à +2,0 % ; 3 années sur 3 dans sa tolérance.
 * C3S : +6,4 % en moyenne, de +1,2 % à +11,9 % ; 3 années sur 3 dans sa tolérance.
 * CVAE : −15,2 % en moyenne, de −15,2 % à −15,2 % ; 1 année sur 1 dans sa tolérance.

@@ -210,8 +210,8 @@
     const f = st.fiche;
     if (!f) return '<p class="source">Fiche de transmission (D-471) : pas encore écrite pour cette mesure.</p>';
     const ligne = (cle, lib) => (f[cle] == null ? "" : `<li><b>${lib}</b> : ${esc(typeof f[cle] === "string" ? f[cle] : JSON.stringify(f[cle]))}</li>`);
-    return "<h3>La fiche de transmission</h3><ul>" + ligne("levier", "levier") + ligne("payeurs", "payeurs") + ligne("incidence", "incidence") +
-      ligne("financement", "financement") + ligne("hypotheses", "hypothèses") + ligne("montant", "montant") + `</ul><p class="source">${esc(f._chemin)}</p>`;
+    return "<h3>La fiche de transmission</h3><ul>" + ligne("levier", "levier") + ligne("assiette", "assiette") + ligne("payeurs", "payeurs") + ligne("incidence", "incidence") +
+      ligne("financement", "financement") + ligne("calendrier", "calendrier") + ligne("hypotheses", "hypothèses") + ligne("montant", "montant") + `</ul><p class="source">${esc(f._chemin)}</p>`;
   }
   function flux(nd) {
     const parN = parId();

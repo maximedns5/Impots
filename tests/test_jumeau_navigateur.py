@@ -179,8 +179,10 @@ def test_la_convention_porte_un_programme_jusqu_en_2035(session, donnees) -> Non
     """D-419 : dans le mode structurel, la convention « parts_premiere_annee » (D-414)
     fait tourner le programme d'Attal sur dix ans ; chaque nombre est celui de
     `trajectoire.calculer` sur la mesure du rapport entier avec la convention, au bit, et
-    chaque année qu'elle ventile est rendue. Le mode réduit ne la lit pas ; là où elle n'a
-    pas de parts (Retailleau), les années restent absentes et la raison est dite."""
+    chaque année qu'elle ventile est rendue. Le mode réduit ne la lit pas. Retailleau,
+    refusé jusqu'à D-477, tourne dix ans (ses cotisations ventilées) ; là où elle n'a pas
+    de parts (Tondelier, les employeurs mêlés, D-477, D-487), les années restent absentes
+    et la raison est dite."""
     cle = "pres2027_attal_programme"
     choix = {"mode": "structurel", "vue": "figee", "candidat": cle,
              "convention": "parts_premiere_annee"}
@@ -213,9 +215,14 @@ def test_la_convention_porte_un_programme_jusqu_en_2035(session, donnees) -> Non
     avec = session.calculer({**reduit, "theta": _theta(session, reduit)})
     sans = session.calculer({**reduit, "convention": None, "theta": _theta(session, reduit)})
     assert avec["convention"] is None and avec["series"] == sans["series"]
-    # Des cotisations non ventilées : pas de parts, les années absentes, dit.
+    # D-477 : les cotisations de Retailleau ventilées, la convention le porte dix ans.
     ret = {**choix, "candidat": "pres2027_retailleau_programme"}
     sortie = session.calculer({**ret, "theta": _theta(session, ret)})
+    assert sortie["refus"] is None and sortie["calculees"] == list(navigateur.ANNEES)
+    assert sortie["conventions"] is not None and not sortie["mesure"]["non_portes"]
+    # Des employeurs mêlés (D-477, D-487) : pas de parts, les années absentes, dit.
+    ton = {**choix, "candidat": "pres2027_tondelier_programme"}
+    sortie = session.calculer({**ton, "theta": _theta(session, ton)})
     assert sortie["calculees"] == [] and sortie["conventions"] is None
     assert "parts_premiere_annee" in sortie["mesure"]["non_portes"]["entreprises"]
 
@@ -257,8 +264,10 @@ def test_la_portee_redonne_les_nombres_du_reglage(session, choix) -> None:
 @pytest.mark.parametrize("cle, vue, convention, attendu", [
     ("pres2027_attal_programme", "figee", "parts_premiere_annee", 10),
     ("pres2027_attal_programme", "figee", None, 1),
-    ("pres2027_attal_programme", "vieillie", "parts_premiere_annee", 0),
-    ("pres2027_roussel_programme", "figee", "parts_premiere_annee", 0),
+    # D-477 : la vieillie ventilée par convention ; D-487 : le Smic par le bloc `travail`.
+    ("pres2027_attal_programme", "vieillie", "parts_premiere_annee", 10),
+    ("pres2027_roussel_programme", "figee", "parts_premiere_annee", 10),
+    ("pres2027_tondelier_programme", "figee", "parts_premiere_annee", 0),
 ])
 def test_ce_que_le_structurel_calcule_se_dit_avant_le_calcul(session, cle, vue, convention,
                                                              attendu) -> None:

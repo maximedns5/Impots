@@ -2392,6 +2392,10 @@ class Etude:
               "le demandait ; une part des ayants droit ne demande rien (le non-recours). "
               "« Servi en espérance » : chaque famille reçoit son droit multiplié par sa "
               "probabilité de le demander, calée sur le non-recours publié par la Drees. "
+              "Pour la prime d'activité, la grille ci-dessus l'est depuis le but 27 sur les "
+              "foyers que la Cnaf paie (D-495) ; une passe d'avant ce but servait la prime "
+              "au taux de la Drees, et la variation de prime qu'elle chiffre est à "
+              "multiplier par environ 1,39 (D-496). "
               "« Sans pont » : ce montant se compare tel quel au total versé. Un « pont de "
               "non-recours » est l'ancienne correction : un seul coefficient de non-recours, "
               "appliqué au total.")

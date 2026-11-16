@@ -320,12 +320,12 @@ Le secteur public est modélisé statut par statut (D-346) : un titulaire est pa
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
 * Allocations familiales, montant : −16,5 % en moyenne, de −17,1 % à −15,6 % ; 3 années sur 3 dans sa tolérance.
-* Foyers allocataires de la prime d'activité, servis en espérance : −28,1 % en moyenne, de −30,0 % à −26,2 % ; 0 année sur 3 dans sa tolérance.
-* Prime d'activité, montant servi en espérance (sans pont) : −25,1 % en moyenne, de −26,8 % à −23,5 % ; 0 année sur 3 dans sa tolérance.
+* Foyers allocataires de la prime d'activité, servis en espérance : −0,1 % en moyenne, de −2,7 % à +2,5 % ; 3 années sur 3 dans sa tolérance.
+* Prime d'activité, montant servi en espérance (sans pont) : +4,0 % en moyenne, de +1,7 % à +6,2 % ; 3 années sur 3 dans sa tolérance.
 * Foyers allocataires du RSA, servis en espérance : −0,6 % en moyenne, de −0,7 % à −0,4 % ; 2 années sur 2 dans sa tolérance.
 * RSA, montant servi en espérance (sans pont) : +1,2 % en moyenne, de −0,6 % à +3,3 % ; 3 années sur 3 dans sa tolérance.
 
-Le moteur calcule le droit de chaque famille, ce qu'elle toucherait si elle le demandait ; une part des ayants droit ne demande rien (le non-recours). « Servi en espérance » : chaque famille reçoit son droit multiplié par sa probabilité de le demander, calée sur le non-recours publié par la Drees. « Sans pont » : ce montant se compare tel quel au total versé. Un « pont de non-recours » est l'ancienne correction : un seul coefficient de non-recours, appliqué au total.
+Le moteur calcule le droit de chaque famille, ce qu'elle toucherait si elle le demandait ; une part des ayants droit ne demande rien (le non-recours). « Servi en espérance » : chaque famille reçoit son droit multiplié par sa probabilité de le demander, calée sur le non-recours publié par la Drees. Pour la prime d'activité, la grille ci-dessus l'est depuis le but 27 sur les foyers que la Cnaf paie (D-495) ; une passe d'avant ce but servait la prime au taux de la Drees, et la variation de prime qu'elle chiffre est à multiplier par environ 1,39 (D-496). « Sans pont » : ce montant se compare tel quel au total versé. Un « pont de non-recours » est l'ancienne correction : un seul coefficient de non-recours, appliqué au total.
 
 Un écart de niveau ne se reporte pas tel quel sur le chiffrage : le coût d'une mesure est la différence de deux passes sur la même population, et ce qui manque aux deux passes s'y annule en partie.
 

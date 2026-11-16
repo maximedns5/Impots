@@ -1,8 +1,8 @@
 {
  "version": 1,
  "commande": "PYTHONPATH=src .venv/bin/python -m impots.site_population.agregats",
- "commit": "f40424b3dd69f0908e9f178cf442298fa13d09b0",
- "date": "2026-11-15",
+ "commit": "19c4c3fe1b6324e9af26874e0df5c8cd5419b228",
+ "date": "2026-11-16",
  "population_fichier": "population_2024.parquet",
  "population_sha256": "13bda072e69cf7262e77aae47fb8bcffd635b6fb44cc0e89f9eee0044a69c109",
  "construction": {
@@ -289,7 +289,7 @@
    "complexe": 2871982.2214233153
   },
   "types_calage": {
-   "personne_seule": 12138535.13845045,
+   "personne_seule": 12138535.138450447,
    "monoparentale": 2944052.4817468543,
    "couple_sans_enfant": 7744696.854764249,
    "couple_avec_enfant": 7111401.771645773,
@@ -424,7 +424,8 @@
    "verdict": "hors de la tolérance",
    "source": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.401 Compte des ménages (S14)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988835/T_7401_fr.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "cotisations_employeurs",
@@ -433,11 +434,12 @@
    "simule": 421179871653.4768,
    "ecart": 0.2788797778962966,
    "tolerance": 0.15,
-   "usage": "validation",
-   "verdict": "hors de la tolérance",
+   "usage": "remplacee",
+   "verdict": "remplacée",
    "source": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.401 Compte des ménages (S14)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988835/T_7401_fr.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": "cotisations_employeurs_d121"
   },
   {
    "id": "reduction_generale",
@@ -450,7 +452,8 @@
    "verdict": "hors de la tolérance",
    "source": "Rapport à la CCSS, juin 2025 (résultats 2024)",
    "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "bandeau_maladie",
@@ -463,7 +466,8 @@
    "verdict": "dans la tolérance",
    "source": "Rapport à la CCSS, juin 2025 (résultats 2024)",
    "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "bandeau_famille",
@@ -476,7 +480,8 @@
    "verdict": "hors de la tolérance",
    "source": "Rapport à la CCSS, juin 2025 (résultats 2024)",
    "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "csg_activite",
@@ -489,20 +494,22 @@
    "verdict": "dans la tolérance",
    "source": "Rapport à la CCSS, juin 2025 (résultats 2024)",
    "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "csg_remplacement",
    "ligne": "CSG sur les revenus de remplacement",
    "publie": 27353000000.0,
-   "simule": 25871892516.472115,
-   "ecart": -0.054147899079731165,
+   "simule": 25947214438.003597,
+   "ecart": -0.05139420034352371,
    "tolerance": 0.1,
    "usage": "validation",
    "verdict": "dans la tolérance",
    "source": "Rapport à la CCSS, juin 2025 (résultats 2024)",
    "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "ir_bareme",
@@ -515,7 +522,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP Statistiques n° 41 (novembre 2025), « L'impôt sur le revenu 2024 a été plus dynamique que les revenus »",
    "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "foyers_fiscaux",
@@ -528,7 +536,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP/DESF, « L'impôt sur le revenu par collectivité territoriale », IRCOM 2025 (revenus 2024), fichier national.xls",
    "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20260526-131537/ircom-2025-revenus-2024.zip",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "foyers_imposes",
@@ -541,7 +550,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP/DESF, « L'impôt sur le revenu par collectivité territoriale », IRCOM 2025 (revenus 2024), fichier national.xls",
    "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20260526-131537/ircom-2025-revenus-2024.zip",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "foyers_tmi_0",
@@ -554,7 +564,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP/DESF, tableau « Impôt sur le revenu : nombre de foyers et montant de l'impôt net par taux marginal de taxation du barème » (page /impot-sur-le-revenu, node 25519)",
    "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25519_ir_taux_marginal.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "foyers_tmi_1",
@@ -567,7 +578,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP/DESF, tableau « Impôt sur le revenu : nombre de foyers et montant de l'impôt net par taux marginal de taxation du barème » (page /impot-sur-le-revenu, node 25519)",
    "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25519_ir_taux_marginal.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "foyers_tmi_2",
@@ -580,7 +592,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP/DESF, tableau « Impôt sur le revenu : nombre de foyers et montant de l'impôt net par taux marginal de taxation du barème » (page /impot-sur-le-revenu, node 25519)",
    "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25519_ir_taux_marginal.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "foyers_tmi_3",
@@ -593,7 +606,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP/DESF, tableau « Impôt sur le revenu : nombre de foyers et montant de l'impôt net par taux marginal de taxation du barème » (page /impot-sur-le-revenu, node 25519)",
    "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25519_ir_taux_marginal.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "foyers_tmi_4",
@@ -606,7 +620,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP/DESF, tableau « Impôt sur le revenu : nombre de foyers et montant de l'impôt net par taux marginal de taxation du barème » (page /impot-sur-le-revenu, node 25519)",
    "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25519_ir_taux_marginal.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "salaires_declares",
@@ -619,7 +634,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP Statistiques n° 41 (novembre 2025), « L'impôt sur le revenu 2024 a été plus dynamique que les revenus »",
    "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "pensions_declarees",
@@ -632,7 +648,8 @@
    "verdict": "calibration",
    "source": "DGFiP, « L'impôt sur le revenu : les déclarations nationales » (data.economie.gouv.fr, jeu ir-declarations-2042-nat, modifié le 2026-04-07)",
    "url": "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/ir-declarations-2042-nat/exports/csv?delimiter=%3B",
-   "remarque": "cible de calage (dépensée)"
+   "remarque": "cible de calage (dépensée)",
+   "remplacee_par": null
   },
   {
    "id": "niveau_de_vie_median",
@@ -645,7 +662,8 @@
    "verdict": "dans la tolérance",
    "source": "Insee Première n° 2117 (juillet 2026), « Niveau de vie et pauvreté en 2024 » (ERFS 2024)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/9019316/ip2117.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "d9_d1",
@@ -658,7 +676,8 @@
    "verdict": "dans la tolérance",
    "source": "Insee Première n° 2117 (juillet 2026), « Niveau de vie et pauvreté en 2024 » (ERFS 2024)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/9019316/ip2117.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "rsa_montant",
@@ -667,11 +686,12 @@
    "simule": 13258988767.214245,
    "ecart": 0.1242652944741851,
    "tolerance": 0.14,
-   "usage": "validation",
-   "verdict": "dans la tolérance",
+   "usage": "remplacee",
+   "verdict": "remplacée",
    "source": "Cnaf, Rapport du Directeur comptable et financier sur les comptes de l'exercice 2024 (parts État et départements additionnées)",
    "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Professionnels/Nous_connaitre/textes_de_reference/etats_financiers/2024/Rapport_du_Dcf_sur_les_comptes_2024.pdf",
-   "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation"
+   "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation",
+   "remplacee_par": "rsa_montant_servi"
   },
   {
    "id": "ppa_montant",
@@ -680,11 +700,12 @@
    "simule": 8700569793.711435,
    "ecart": -0.15388188640109168,
    "tolerance": 0.13,
-   "usage": "validation",
-   "verdict": "hors de la tolérance",
+   "usage": "remplacee",
+   "verdict": "remplacée",
    "source": "Cnaf, Rapport du Directeur comptable et financier sur les comptes de l'exercice 2024",
    "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Professionnels/Nous_connaitre/textes_de_reference/etats_financiers/2024/Rapport_du_Dcf_sur_les_comptes_2024.pdf",
-   "remarque": "milieu du pont de la Drees (1,68-1,77)"
+   "remarque": "milieu du pont de la Drees (1,68-1,77)",
+   "remplacee_par": "ppa_montant_servi"
   },
   {
    "id": "aide_logement_montant",
@@ -697,7 +718,8 @@
    "verdict": "hors de la tolérance",
    "source": "Cnaf, Rapport du Directeur comptable et financier sur les comptes de l'exercice 2024",
    "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Professionnels/Nous_connaitre/textes_de_reference/etats_financiers/2024/Rapport_du_Dcf_sur_les_comptes_2024.pdf",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "af_montant",
@@ -710,7 +732,8 @@
    "verdict": "dans la tolérance",
    "source": "Les comptes de la Sécurité sociale, rapport à la CCSS, juin 2025 (résultats 2024)",
    "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "rsa_foyers",
@@ -719,11 +742,12 @@
    "simule": 2795977.763120845,
    "ecart": 0.5312035942611417,
    "tolerance": 0.25,
-   "usage": "validation",
-   "verdict": "hors de la tolérance",
+   "usage": "remplacee",
+   "verdict": "remplacée",
    "source": "Cnaf-DSER, RSA Conjoncture n° 45 (mars 2025), « Le revenu de solidarité active au 4e trimestre 2024 »",
    "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2024T4_def.pdf",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": "rsa_foyers_servis"
   },
   {
    "id": "ppa_foyers",
@@ -732,11 +756,12 @@
    "simule": 6666600.451009434,
    "ecart": 0.44049275086634254,
    "tolerance": 0.25,
-   "usage": "validation",
-   "verdict": "hors de la tolérance",
+   "usage": "remplacee",
+   "verdict": "remplacée",
    "source": "Cnaf-DSER, Prime d'activité Conjoncture n° 32 (mars 2025), « La prime d'activité au 4e trimestre 2024 »",
    "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2024T4_def.pdf",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": "ppa_foyers_servis"
   },
   {
    "id": "is",
@@ -749,7 +774,8 @@
    "verdict": "dans la tolérance",
    "source": "INSEE, comptes nationaux annuels base 2020, tableau 3.217 « Principaux impôts par catégorie » (série 1995-2025, millésime publié en 2026)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "contribution_sociale_is",
@@ -762,7 +788,8 @@
    "verdict": "dans la tolérance",
    "source": "INSEE, comptes nationaux annuels base 2020, tableau 3.217 « Principaux impôts par catégorie » (série 1995-2025, millésime publié en 2026)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "c3s",
@@ -775,7 +802,8 @@
    "verdict": "dans la tolérance",
    "source": "INSEE, comptes nationaux annuels base 2020, tableau 3.217 « Principaux impôts par catégorie » (série 1995-2025, millésime publié en 2026)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "cvae",
@@ -788,7 +816,8 @@
    "verdict": "dans la tolérance",
    "source": "INSEE, comptes nationaux annuels base 2020, tableau 3.217 « Principaux impôts par catégorie » (série 1995-2025, millésime publié en 2026)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx",
-   "remarque": ""
+   "remarque": "",
+   "remplacee_par": null
   },
   {
    "id": "tva_menages",
@@ -801,7 +830,8 @@
    "verdict": "refusée",
    "source": null,
    "url": null,
-   "remarque": "aucun total publié pour les seuls ménages ; la consommation n'est servie que pour 2024 : ligne refusée"
+   "remarque": "aucun total publié pour les seuls ménages ; la consommation n'est servie que pour 2024 : ligne refusée",
+   "remplacee_par": null
   },
   {
    "id": "accises_menages",
@@ -814,7 +844,8 @@
    "verdict": "refusée",
    "source": null,
    "url": null,
-   "remarque": "aucun total publié pour les seuls ménages ; la consommation n'est servie que pour 2024 : ligne refusée"
+   "remarque": "aucun total publié pour les seuls ménages ; la consommation n'est servie que pour 2024 : ligne refusée",
+   "remplacee_par": null
   },
   {
    "id": "cotisations_employeurs_d121",
@@ -827,7 +858,8 @@
    "verdict": "dans la tolérance",
    "source": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.401 Compte des ménages (S14)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988835/T_7401_fr.xlsx",
-   "remarque": "But 19, étape 1 (A). Tolérance de D-363 : D121 compte la prévoyance d'entreprise, absente du modèle ; ligne tenue en partie par compensation. Remplace la comparaison de cotisations_employeurs, qui reste notée telle qu'elle est préenregistrée."
+   "remarque": "But 19, étape 1 (A). Tolérance de D-363 : D121 compte la prévoyance d'entreprise, absente du modèle ; ligne tenue en partie par compensation. Remplace la comparaison de cotisations_employeurs, qui reste notée telle qu'elle est préenregistrée.",
+   "remplacee_par": null
   },
   {
    "id": "csg_activite_avec_non_salaries",
@@ -840,20 +872,22 @@
    "verdict": "dans la tolérance",
    "source": "Rapport à la CCSS, juin 2025 (résultats 2024)",
    "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf",
-   "remarque": "But 19, étapes 2 et « ir ». Même publié que csg_activite (D-363), qui reste notée. Relu dans lignes.json (D-363) et le rapport, fichier absent de data/raw. Manquent la CSG des micro-entrepreneurs et des agricoles (environ 2 %) ; celle des gérants est dans la CSG des salaires."
+   "remarque": "But 19, étapes 2 et « ir ». Même publié que csg_activite (D-363), qui reste notée. Relu dans lignes.json (D-363) et le rapport, fichier absent de data/raw. Manquent la CSG des micro-entrepreneurs et des agricoles (environ 2 %) ; celle des gérants est dans la CSG des salaires.",
+   "remplacee_par": null
   },
   {
    "id": "d9_d1_servi",
    "ligne": "Rapport interdécile D9/D1 (ERFS), prestations servies",
    "publie": 3.48,
-   "simule": 3.3550813561774246,
-   "ecart": -0.0358961620179814,
+   "simule": 3.300005387479653,
+   "ecart": -0.05172258980469746,
    "tolerance": 0.15,
    "usage": "validation",
    "verdict": "dans la tolérance",
    "source": "Insee Première n° 2117 (juillet 2026), « Niveau de vie et pauvreté en 2024 » (ERFS 2024)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/9019316/ip2117.xlsx",
-   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que d9_d1 (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw."
+   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que d9_d1 (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
+   "remplacee_par": null
   },
   {
    "id": "foyers_fiscaux_residents_hors_mayotte",
@@ -866,7 +900,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP/DESF, « L'impôt sur le revenu par collectivité territoriale », IRCOM 2025 (revenus 2024)",
    "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20260526-131537/ircom-2025-revenus-2024.zip",
-   "remarque": "But 19, étape 3. Le modèle ne porte ni les non-résidents ni Mayotte ; la ligne foyers_fiscaux reste notée."
+   "remarque": "But 19, étape 3. Le modèle ne porte ni les non-résidents ni Mayotte ; la ligne foyers_fiscaux reste notée.",
+   "remplacee_par": null
   },
   {
    "id": "impots_salaires_calcules",
@@ -879,7 +914,8 @@
    "verdict": "dans la tolérance",
    "source": "Insee, comptes nationaux annuels base 2020, tableau 3.217 « Principaux impôts par catégorie » (série 1995-2025, millésime publié en 2026)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx",
-   "remarque": "But 19, étape 1 (B). Taux légaux sur une assiette calée ; l'effectif nul prend le Fnal des moins de 50 salariés (0,10 % plafonné au lieu de 0,50 % déplafonné)."
+   "remarque": "But 19, étape 1 (B). Taux légaux sur une assiette calée ; l'effectif nul prend le Fnal des moins de 50 salariés (0,10 % plafonné au lieu de 0,50 % déplafonné).",
+   "remplacee_par": null
   },
   {
    "id": "impots_salaires_d291",
@@ -892,7 +928,8 @@
    "verdict": "contexte",
    "source": "Insee, comptes nationaux annuels base 2020, tableau 3.217 « Principaux impôts par catégorie » (série 1995-2025, millésime publié en 2026)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx",
-   "remarque": "But 19, étape 1 (C). Sans tolérance : le moteur n'a ni la taxe sur les salaires, ni le versement mobilité, ni le forfait social, ni la PEEC, ni la contribution sur les stock-options (environ 40 Md€)."
+   "remarque": "But 19, étape 1 (C). Sans tolérance : le moteur n'a ni la taxe sur les salaires, ni le versement mobilité, ni le forfait social, ni la PEEC, ni la contribution sur les stock-options (environ 40 Md€).",
+   "remplacee_par": null
   },
   {
    "id": "ir_net",
@@ -905,20 +942,22 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP Statistiques n° 41 (novembre 2025), « L'impôt sur le revenu 2024 a été plus dynamique que les revenus »",
    "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.xlsx",
-   "remarque": "But 19, étape 1 (E), proposition A1. Le PFU (indice_capital) et 10,6 des 19,5 Md€ de RICI sont calés ; 8,9 Md€ de RICI publiées ne sont pas imputables. Hors barème et CEHR publiés arrondis à 0,01 Md€ ; le texte du n° 41 dit « 92 Md€ », le graphique 1 ajoute 0,15 Md€ de petites impositions absentes du modèle."
+   "remarque": "But 19, étape 1 (E), proposition A1. Le PFU (indice_capital) et 10,6 des 19,5 Md€ de RICI sont calés ; 8,9 Md€ de RICI publiées ne sont pas imputables. Hors barème et CEHR publiés arrondis à 0,01 Md€ ; le texte du n° 41 dit « 92 Md€ », le graphique 1 ajoute 0,15 Md€ de petites impositions absentes du modèle.",
+   "remplacee_par": null
   },
   {
    "id": "niveau_de_vie_median_servi",
    "ligne": "Niveau de vie médian (ERFS), prestations servies",
    "publie": 26740,
-   "simule": 24779.162167346,
-   "ecart": -0.0733297618793568,
+   "simule": 24808.682626874543,
+   "ecart": -0.07222578059556684,
    "tolerance": 0.15,
    "usage": "validation",
    "verdict": "dans la tolérance",
    "source": "Insee Première n° 2117 (juillet 2026), « Niveau de vie et pauvreté en 2024 » (ERFS 2024)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/9019316/ip2117.xlsx",
-   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que niveau_de_vie_median (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw."
+   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que niveau_de_vie_median (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
+   "remplacee_par": null
   },
   {
    "id": "pension_etat_d122",
@@ -931,33 +970,36 @@
    "verdict": "contexte",
    "source": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.401 Compte des ménages (S14)",
    "url": "https://www.insee.fr/fr/statistiques/fichier/8988835/T_7401_fr.xlsx",
-   "remarque": "But 19, étape 1 (D). Contexte : D122 compte d'autres employeurs que l'État ; les titulaires du modèle comprennent des CDI (D-346)."
+   "remarque": "But 19, étape 1 (D). Contexte : D122 compte d'autres employeurs que l'État ; les titulaires du modèle comprennent des CDI (D-346).",
+   "remplacee_par": null
   },
   {
    "id": "ppa_foyers_servis",
    "ligne": "Foyers allocataires de la prime d'activité, servis en espérance",
    "publie": 4628000,
-   "simule": 3332169.3588010343,
-   "ecart": -0.2799979777871576,
+   "simule": 4628221.702415867,
+   "ecart": 4.790458424097643e-05,
    "tolerance": 0.25,
    "usage": "validation",
-   "verdict": "hors de la tolérance",
+   "verdict": "dans la tolérance",
    "source": "Cnaf-DSER, Prime d'activité Conjoncture n° 32 (mars 2025), « La prime d'activité au 4e trimestre 2024 »",
    "url": "https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2024T4.pdf",
-   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_foyers (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le fichier de data/raw (version provisoire au manifeste ; D-363 cite la version « _def », sha256 5d051616…, même valeur)."
+   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_foyers (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le fichier de data/raw (version provisoire au manifeste ; D-363 cite la version « _def », sha256 5d051616…, même valeur).",
+   "remplacee_par": null
   },
   {
    "id": "ppa_montant_servi",
    "ligne": "Prime d'activité, montant servi en espérance (sans pont)",
    "publie": 10282925816,
-   "simule": 7863754974.177338,
-   "ecart": -0.23526094470685444,
+   "simule": 10922374439.894566,
+   "ecart": 0.06218547477018621,
    "tolerance": 0.13,
    "usage": "validation",
-   "verdict": "hors de la tolérance",
+   "verdict": "dans la tolérance",
    "source": "Cnaf, Rapport du Directeur comptable et financier sur les comptes de l'exercice 2024",
    "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Professionnels/Nous_connaitre/textes_de_reference/etats_financiers/2024/Rapport_du_Dcf_sur_les_comptes_2024.pdf",
-   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw."
+   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
+   "remplacee_par": null
   },
   {
    "id": "revenus_non_salaries_hors_gerants",
@@ -970,7 +1012,8 @@
    "verdict": "dans la tolérance",
    "source": "DGFiP, « L'impôt sur le revenu : les déclarations nationales » (data.economie.gouv.fr, jeu ir-declarations-2042-nat, export du 2026-10-15)",
    "url": "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/ir-declarations-2042-nat/exports/csv?use_labels=true",
-   "remarque": "But 19, étapes 2 et « ir ». Somme refaite par ce relevé (le rapport : « environ 75,7 Md€ » en 2024). Hors champ, comme dans le calcul du rapport : BA exonérés (5HB…), micro exonérés (5KN…, 5HP…, 5XA…), plus-values à 12,8 %. Cases hors CGA prises sans la majoration de 10 % (2022)."
+   "remarque": "But 19, étapes 2 et « ir ». Somme refaite par ce relevé (le rapport : « environ 75,7 Md€ » en 2024). Hors champ, comme dans le calcul du rapport : BA exonérés (5HB…), micro exonérés (5KN…, 5HP…, 5XA…), plus-values à 12,8 %. Cases hors CGA prises sans la majoration de 10 % (2022).",
+   "remplacee_par": null
   },
   {
    "id": "rsa_foyers_servis",
@@ -983,7 +1026,8 @@
    "verdict": "dans la tolérance",
    "source": "Cnaf-DSER, RSA Conjoncture n° 45 (mars 2025), « Le revenu de solidarité active au 4e trimestre 2024 »",
    "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2024T4_def.pdf",
-   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que rsa_foyers (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw."
+   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que rsa_foyers (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
+   "remplacee_par": null
   },
   {
    "id": "rsa_montant_servi",
@@ -996,7 +1040,8 @@
    "verdict": "dans la tolérance",
    "source": "Cnaf, Rapport du Directeur comptable et financier sur les comptes de l'exercice 2024 (parts État et départements additionnées)",
    "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Professionnels/Nous_connaitre/textes_de_reference/etats_financiers/2024/Rapport_du_Dcf_sur_les_comptes_2024.pdf",
-   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que rsa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw."
+   "remarque": "But 19, étape 4. Même publié, même source et même tolérance que rsa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
+   "remplacee_par": null
   }
  ],
  "cellules_menages": {
