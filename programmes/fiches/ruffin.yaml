@@ -1,0 +1,24 @@
+# Les données critiques des fiches de Ruffin (but 27, volet `fiches`, D-505).
+refonte_successions:
+  levier:
+    texte: "Code général des impôts, art. 777 (le barème), 779 (les abattements), 784 (le
+      rappel des donations)"
+  assiette:
+    texte: "les droits de succession : les 20 Md€ en font plus du double"
+    montant_md: 17.0
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1706"
+cir_tpe_pme_eti:
+  levier:
+    texte: "Code général des impôts, art. 244 quater B (le crédit d'impôt recherche)"
+  assiette:
+    texte: "le coût du crédit d'impôt recherche : les 3 Md€ d'économie en font 37 %"
+    montant_md: 8.041
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, fiche 200302"
+aides_entreprises:
+  assiette:
+    texte: "les subventions versées par les APU (D3) : les 10 Md€ en font 18 %"
+    montant_md: 56.5
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne D3"

@@ -66,3 +66,13 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'le salaire mensuel net moyen en EQTP de la fonction publique (2 740 €) : 400 000
+    postes en font 13,2 Md€ nets par an, la moitié des 25 Md€ annoncés (le reste : les cotisations
+    des employeurs publics, non comptées ici)'
+  montant_md: null
+  valeur: 2740
+  unite: € nets par mois
+  annee: 2024
+  source: Insee, Siasp 2024, « Emploi, chômage, revenus du travail », édition 2026, fiche
+    29, figure 1

@@ -69,3 +69,11 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les subventions versées par les APU (D3) : les 50 Md€ en font 88 % ; les dépenses
+    fiscales des entreprises (le CIR, 8,04 Md€) et les allègements de cotisations (75,6 Md€)
+    n''y sont pas'
+  montant_md: 56.5
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    D3

@@ -1,0 +1,36 @@
+# Les données critiques des fiches de Retailleau (but 27, volet `fiches`, D-505).
+r22_impots_production_30_md:
+  levier:
+    texte: "Code de la sécurité sociale, art. L137-30 (C3S) ; Code général des impôts, art.
+      1586 ter (CVAE), 1447 (CFE)"
+  assiette:
+    texte: "les autres impôts sur la production reçus par les APU (D29) : les 30 Md€ en
+      font 23 %"
+    montant_md: 132.8
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne D29"
+r4_non_remplacement_400000:
+  assiette:
+    texte: "le salaire mensuel net moyen en EQTP de la fonction publique (2 740 €) : 400 000
+      postes en font 13,2 Md€ nets par an, la moitié des 25 Md€ annoncés (le reste : les
+      cotisations des employeurs publics, non comptées ici)"
+    montant_md: null
+    valeur: 2740
+    unite: € nets par mois
+    annee: 2024
+    source: "Insee, Siasp 2024, « Emploi, chômage, revenus du travail », édition 2026,
+      fiche 29, figure 1"
+r17_assurance_chomage:
+  levier:
+    texte: "Code du travail, art. L5422-1 et s., L5426-2 (la radiation après refus d'offres
+      raisonnables) et L1237-11 (la rupture conventionnelle)"
+r34_remuneration_enseignants:
+  assiette:
+    texte: "les enseignants payés par l'État (747 400 du public et 141 400 du privé sous
+      contrat, rentrée 2025) : 3 Md€ en font 281 € par enseignant et par mois, brut chargé"
+    montant_md: null
+    valeur: 888800
+    unite: enseignants
+    annee: 2025
+    source: "DEPP, « Panorama statistique des personnels de l'enseignement scolaire
+      2025-2026 »"

@@ -9,8 +9,8 @@ source:
   url: https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948
   date: '2026-10-15'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: 'Code général des impôts : CVAE (art. 1586 ter), CFE (art. 1447), taxe foncière des
+    entreprises ; Code de la sécurité sociale, art. L137-30 (C3S)'
   parametre: null
   valeur: null
   enonce: 20 Md€
@@ -84,3 +84,10 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les autres impôts sur la production reçus par les APU (D29) : les 20 Md€ en font
+    15 %'
+  montant_md: 132.8
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    D29

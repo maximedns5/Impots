@@ -79,3 +79,10 @@ montant:
   calendrier:
     2027: 80.0
     2032: 200.0
+assiette:
+  texte: 'la dépense de consommation finale des APU (P3) : 80 Md€ en font 11 %, 200 Md€ 28
+    %'
+  montant_md: 719.6
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    P3

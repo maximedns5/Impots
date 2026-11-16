@@ -9,7 +9,8 @@ source:
   url: https://www.unenouvelleenergie.fr/questions/comment-david-lisnard-veut-il-augmenter-les-salaires-sans-augmenter-le-cout-du-travail/
   date: '2026-06-11'
 levier:
-  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  texte: 'Code de la sécurité sociale, livre II (les cotisations salariales) : baissées et
+    rendues en salaire net'
   parametre: null
   valeur: null
   enonce: '120 Md€ ; ≈ 400 €/mois nets (janvier 2026) ; 250 €/mois sur un revenu médian de
@@ -87,3 +88,9 @@ montant:
   menages_par: cotisations_salariales
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les cotisations salariales de la population de 2026 : les 120 Md€ en font la quasi-totalité'
+  montant_md: 120.2
+  annee: 2026
+  source: 'le rapport de la première année d''Attal (passe des ménages, référence, `cotisations_salariales`
+    : 120,17 Md€)'

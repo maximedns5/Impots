@@ -8,7 +8,8 @@ source:
   url: https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f
   date: '2026-10-06'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: 'Décision (UE, Euratom) 2020/2053 du Conseil relative au système des ressources propres
+    ; TFUE, art. 311 : la contribution se fixe à l''unanimité des États'
   parametre: null
   valeur: null
   enonce: −8,9 Md€ nets (AFP) ; « 9 milliards » (J. Bardella)
@@ -66,3 +67,10 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les ressources propres de l''UE fondées sur la TVA et le RNB versées par les APU
+    françaises (D76) : les 9 Md€ en font 39 %'
+  montant_md: 22.98
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    D76

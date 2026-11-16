@@ -36191,3 +36191,175 @@ définition qui change (comme D121, D-371) le dit, ligne d'avant gardée à côt
 **Cinq volets** (BUT.md, but 27) : `sources`, `grille`, `papillon`, `fiches`, puis `mesure`
 une fois la grille corrigée. Les numéros : D-491 à D-509 aux volets, D-510 et la suite à
 la jonction.
+
+## D-504 — Les fiches de transmission : les données critiques mesure par mesure, Mélenchon
+
+**Le problème** (D-490, volet `fiches`). Les 333 fiches du but 26 (D-472 à D-474) sont
+écrites par `scripts/jumeau_fiches_transmission.py` depuis des gabarits par catégorie ;
+une douzaine seulement sont précises, et une régénération réécrit tout. Sur 357
+hypothèses, 273 sont « non sourcées » (D-473). Le propriétaire veut les données critiques
+sur chaque fiche, mesure par mesure.
+
+**La méthode.** Une table par candidat, `programmes/fiches/<candidat>.yaml`, écrite à la
+main mesure par mesure, que le script lit avant ses fiches précises et ses gabarits : une
+régénération réécrit les fiches depuis elle, rien n'est plus écrasé. Pour chaque mesure :
+le levier (le texte de loi et l'article touchés) ; l'assiette (sur quoi la mesure porte,
+son montant de 2024 à 2026 et sa source publique) ; les payeurs et leur part ; le
+calendrier et le financement, cités ; les hypothèses, chacune avec sa source ou « non
+sourcée ». Le script garde ce qu'il fait bien : le relevé du programme, le rapport des
+chiffrées et, désormais, leurs écarts de la première année (`montant.premiere_annee`, lus
+dans `premiere_annee_<scénario>.json`), le bilan du financement (D-482), les gabarits pour
+ce que la table ne dit pas.
+
+**Le schéma** (`jumeau/transmission/__init__.py`) reste à la version 1, avec deux clés
+facultatives : `assiette` ({texte, montant_md, valeur et unite pour un effectif, annee,
+source}, ou une liste) et `calendrier` ({texte, source}). Un payeur peut dire sa `part`.
+Le montant d'une hypothèse est celui du candidat (`annonce.par: candidat`) ou l'assiette
+fois le paramètre (`par: calcul`, le calcul écrit dans `annonce.calcul`). `valider`
+refuse un nombre d'assiette sans source, une valeur sans unité, un montant calculé sans
+assiette chiffrée. `qualite` fait le relevé (sortes, hypothèses chiffrées par le candidat
+ou par le calcul, sans montant, assiettes chiffrées, hypothèses sourcées et non sourcées).
+
+**Les sources lues**, et elles seules : le document de Mélenchon du 14 octobre 2026
+(« Comment nous allons remettre de l'ordre dans les comptes publics ») et son programme ;
+les Voies et moyens du PLF 2026 (tome 1, recettes ; tome 2, dépenses fiscales) ; le
+rapport de la CCSS de mai 2026 ; le compte des APU de l'Insee (t. 7.301) ; Siasp 2024
+(Insee, fiche 29) ; les comptes de la santé 2024 de la Drees (édition 2025), sa fiche 25
+des établissements de santé (édition 2026), sa fiche 07 des minima sociaux (édition 2024)
+et son communiqué du 4 décembre 2025 ; les fiches de service-public.gouv.fr (Smic, AAH,
+ASPA). Aucun chiffrage de tiers du programme, aucune évaluation préalable.
+
+**Mélenchon, ses 64 mesures.** Chacune a son levier ; 27 portent une assiette chiffrée.
+Ce que les données disent :
+
+* **Le financement.** Le document gage toutes ses dépenses par toutes ses recettes
+  (106,4 Md€ contre 81,7 Md€, p. 14) sans lier une recette à une dépense : chaque dépense
+  cite la phrase de la p. 6, `chiffre: false`. Les 106,4 Md€ sont la somme exacte des
+  quatorze recettes chiffrées : la fin des exonérations au-delà de 2 Smic n'y est pas, ou
+  elle est dans les 22 Md€ des niches ; le document ne le dit pas.
+* **Les écarts au candidat.** Le rapport chiffre la garantie des jeunes à 35,65 Md€ (le
+  candidat 9,5), l'indexation de 10 % à 31,97 Md€ (le candidat 8), le PFU à 13,79 Md€ (9),
+  le point d'indice à 11,09 Md€ net (17, brut ou net non dit). Ils sont dits dans les
+  fiches, pas résolus.
+* **Les recettes contre leur assiette.** Les droits de succession, 17,0 Md€ en 2026 : la
+  réforme en promet 20 de plus. L'IFI, 3,1 Md€ : l'impôt sur la fortune en promet 10. La
+  TTF, 2,63 Md€ à 0,4 % : 5 de plus font un taux d'environ 1,16 % à assiette inchangée. La
+  taxe sur les rachats, 0,2 Md€ : 2,5 en font 12,5 fois. La taxe Gafam à 15 % : (15/3 − 1)
+  × 0,891 = 3,56 Md€, l'ordre des 3,9 du candidat. L'IS, 59,0 Md€ : la réforme en
+  promet 5 %. La CVAE de l'État, 2,74 Md€ en 2026 : le rétablissement en promet 3.
+* **Les hôpitaux** : payés par l'Assurance maladie (l'ONDAM), non par l'État ; leurs 3 Md€
+  tombent à 64 % sur les rémunérations, 36 % sur les consommations (63,3 sur 99,4 Md€ de
+  charges, Drees), et non plus sur la composition moyenne de la dépense. Le point
+  d'indice : l'État paie 76,5 % (sa fonction publique et la compensation promise aux
+  collectivités), l'Assurance maladie 23,5 % (Siasp 2024). La cantine gratuite : une
+  perte de paiements des familles (P13) aux collectivités.
+* **Cinq paramètres chiffrés par le calcul** : les franchises (au moins 2,3 Md€, le
+  doublement abandonné en LFSS 2026 en donne l'ordre) ; le « 100 % Sécu » (au moins 33
+  Md€, la part des complémentaires, Drees) ; l'ASPA au seuil de pauvreté (754 500 × (1 337
+  − 1 043,59 €) × 12 = 2,66 Md€) ; l'AAH au Smic net (1,40 M × (1 477,93 − 1 041,59 €) × 12
+  = 7,33 Md€, 13,87 au brut) ; le CIR (8,04 Md€, compté dans les 22 Md€ des niches que la
+  presse dit le comprendre : `inclus_dans`, non additionné).
+* **Quinze restent sans montant**, chacune sa raison écrite : l'âge et la durée, la
+  pension minimale, la décote, la carence, les heures supplémentaires, le prix des
+  carburants, le livret B, l'abattement et le plafond des successions, le quotient
+  conjugal, la garantie universelle, le salaire maximal, la capitalisation, les crèches,
+  les droits d'inscription.
+
+**Ce qui tient les nombres** : `tests/test_jumeau_transmission_donnees.py` (les calculs de
+l'ASPA et de l'AAH, le CIR inclus dans les niches, le refus d'un calcul sans assiette, le
+relevé de Mélenchon).
+
+## D-505 — Attal et les autres programmes : le relevé avant et après
+
+**Attal, ses 37 mesures.** Le financement du droit au brut est cité : « financé à l'euro
+près par des économies sur le modèle social, d'abord l'assurance chômage et les
+indemnités journalières » ; ce qui est nommé (5 Md€ d'assurance chômage, les indemnités
+journalières sans montant) couvre moins d'un dixième des 63,14 Md€ de la première année.
+La géoénergie : « doubler les subventions … pour les porter à 160 millions » ; le coût est
+l'écart, 80 M€, non 160 (corrigé). La CVAE : 3,28 Md€ retirés, 0,62 rendus en IS, 2,74 Md€
+au PLF 2026. Quatre paramètres chiffrés : 100 000 postes (100 000 × 2 740 € nets × 12 =
+3,29 Md€, une borne basse, en rampe jusqu'en 2031, moins une prime de départ sans
+montant) ; l'assurance chômage (5 Md€, le candidat) ; les enseignants (888 800 × 200 € × 12
+= 2,13 Md€ nets, un tiers en 2027) ; le plan IA (100 Md€ publics sur dix ans, 10 par an).
+Restent sans montant : le plan de 150 Md€ (il contient le frein, l'assurance chômage, les
+échelons et les postes), l'année blanche de 2028 (ni l'inflation de 2028 ni le seuil des
+petites retraites), le plan eau (un redéploiement, coût net nul), la charge
+administrative (un gain des entreprises), le prélèvement sur les réseaux sociaux (leur
+chiffre d'affaires n'est pas publié ; 2 % de l'assiette de la TSN, 0,59 Md€, en serait une
+borne haute), l'intéressement et le nucléaire.
+
+**Les neuf autres**, autant que le temps l'a permis : une table courte pour Le Pen,
+Lisnard, Retailleau, Philippe, Ruffin et Tondelier, qui donne le levier et l'assiette des
+montants déclarés les plus lourds (les impôts de production contre les 132,8 Md€ de D29 :
+15 % chez Le Pen (20 Md€), 30 % chez Lisnard (40), 23 % chez Retailleau (30), 38 % chez
+Philippe (50) ;
+la contribution à l'UE, 9 Md€ sur 22,98 ; les aides aux entreprises de Philippe, 50 Md€
+sur 56,5 Md€ de subventions ; les cotisations de Lisnard, 120 Md€ sur 120,2 ; les
+successions de Ruffin et Tondelier contre 17,0 Md€). Leurs hypothèses restent celles du
+script ; Kazib, Bouamrane et Roussel n'ont pas de table.
+
+**Le relevé** (`transmission.qualite`), avant (au commit 4d1912a) et après :
+
+| | avant | après |
+|---|---:|---:|
+| chiffrées (rapport) | 35 | 35 |
+| hypothèses du candidat | 78 | 79 |
+| hypothèses du calcul (assiette × paramètre) | 0 | 8 |
+| paramètres sans montant | 120 | 111 |
+| sans choc | 100 | 100 |
+| fiches à assiette chiffrée | 0 | 55 |
+| hypothèses sourcées | 84 | 151 |
+| hypothèses non sourcées | 273 | 285 |
+| dont conventions (ρ = 1, montant tenu, montée, variante de Mésange) | 231 | 237 |
+| dont faits non sourcés | 42 | 48 |
+
+Mélenchon : 19 hypothèses sourcées avant, 74 après ; 85 non sourcées avant, 88 après (72
+conventions et 13 faits avant, 71 et 17 après). Attal : 5 et 17 sourcées, 17 et 26 non
+sourcées. Les non sourcées ne baissent pas, et c'est voulu : celles du gabarit sont
+remplacées par une source quand elle existe (la catégorie d'une pension, d'une
+rémunération, d'un impôt en capital, l'entrée en 2027 par la loi de finances), mais les
+tables écrivent aussi ce que le gabarit taisait (les 10 Md€ de l'impôt sur la fortune
+s'ajoutent-ils à l'IFI ? les dotations qui remplacent le CIR ? la prime de départ ?). Les
+conventions (ρ = 1, un montant tenu jusqu'en 2035, la variante approchée) ne sont portées
+par aucune source : elles restent dites « non sourcées ».
+
+## D-506 — Ce que les montants mesure par mesure changent dans le jumeau
+
+**Les passes d'essai** (θ½, Δ en 2035 ; chaque case « dette ; solde », la dette en points
+de PIB, le solde en Md€ ; le réduit sur la vieillie, le structurel sur la figée avec la
+convention des parts de la première année ; au commit de cette entrée). Seuls Mélenchon
+et Attal changent : les autres tables ne touchent pas les montants.
+
+| | avant | après |
+|---|---:|---:|
+| Mélenchon, réduit, hypothèses seules | −9,10 ; +45,5 | +1,86 ; −7,1 |
+| Mélenchon, réduit, tout (rapport et hypothèses) | +18,34 ; −73,3 | +29,39 ; −125,9 |
+| Mélenchon, structurel, hypothèses seules | −11,43 ; +47,3 | −5,05 ; +12,4 |
+| Mélenchon, somme des chocs des hypothèses (Md€ par an) | −50,2 | −4,9 |
+| Attal, réduit, tout | −1,87 ; +11,8 | −0,84 ; +7,3 |
+| Attal, structurel, tout | +11,09 ; −46,2 | +11,85 ; −50,2 |
+| Attal, somme des chocs des hypothèses (Md€ par an) | −26,2 | −22,4 |
+
+Le rapport seul ne bouge pas (Mélenchon +27,38 en réduit ; Attal +4,28 en réduit, +14,07
+en structurel ; le rapport de Mélenchon reste refusé en structurel, D-474, le volet
+`papillon` le traite).
+
+**Pourquoi.** Chez Mélenchon, les quatre paramètres chiffrés ajoutent 45,3 Md€ de dépense
+par an, dont 33 pour le « 100 % Sécu » : sans lui, le réduit donne +21,34 pt de dette
+(hypothèses seules −6,13) et le structurel −9,45. Ce sont 33 Md€ que les ménages paient
+aujourd'hui en primes privées et que le candidat finance par une cotisation universelle
+sans taux : le jumeau les porte comme une dépense publique sans recette, ce que la fiche
+dit. Le CIR n'ajoute rien (compté dans les niches). Les hôpitaux tombent sur les
+rémunérations et les consommations au lieu de la composition moyenne. Chez Attal, les
+100 000 postes, l'assurance chômage et les enseignants se compensent à peu près ; le plan
+IA ajoute 10 Md€ d'investissement par an : c'est l'essentiel de l'écart.
+
+**Ce qui reste.** (1) Le « 100 % Sécu » : faut-il, faute de taux, compter la cotisation
+universelle comme une recette égale (le transfert neutre pour les APU) ou la laisser
+absente ? Décision du propriétaire. (2) Les 237 conventions : un curseur ρ dans le jumeau
+(D-474, question 1) les rendrait réglables plutôt que non sourcées. (3) Les écarts entre
+le rapport et le candidat (la garantie des jeunes, l'indexation, le PFU) ne sont pas
+expliqués ; ils relèvent du volet `papillon` ou d'une relecture du chiffrage. (4) Les
+neuf autres programmes n'ont que leurs montants déclarés les plus lourds ; leurs 89
+paramètres sans montant et leurs 171 hypothèses non sourcées restent à reprendre
+mesure par mesure. (5) Les tests du module (D-474) et `make impact` n'ont pas tourné ici.
