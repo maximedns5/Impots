@@ -28,12 +28,15 @@ self.onmessage = async (ev) => {
       py.globals.set("texte", m.donnees);
       py.runPython("import sys, json\nsys.path.insert(0, '/jumeau')\n" +
         "from impots.jumeau.navigateur import Session, calculer_json, portee_json\n" +
+        "from impots.jumeau import cascade\n" +
         "S = Session(json.loads(texte))\ndel texte");
       self.postMessage({ type: "pret", pyodide_ms: t1 - t0, paquet_ms: performance.now() - t1 });
-    } else if (m.type === "calculer" || m.type === "portee") {
+    } else if (m.type === "calculer" || m.type === "portee" || m.type === "cascade") {
       const t0 = performance.now();
       py.globals.set("reglage", m.reglage);
-      const texte = py.runPython(m.type === "portee" ? "portee_json(S, reglage)" : "calculer_json(S, reglage)");
+      // La cascade d'une mesure (D-484) : le même jumeau, rendu en graphe.
+      const texte = py.runPython(m.type === "portee" ? "portee_json(S, reglage)" :
+        m.type === "cascade" ? "cascade.calculer_json(S, reglage)" : "calculer_json(S, reglage)");
       self.postMessage({ type: "resultat", id: m.id, texte, calcul_ms: performance.now() - t0 });
     }
   } catch (e) {

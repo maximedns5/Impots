@@ -1,0 +1,82 @@
+.chapeau{margin:.2rem 0 .8rem;font-size:1.08rem;max-width:44rem}
+.cascade-levier{max-width:46rem;border-left:4px solid var(--famille-donnees);padding:.2rem .7rem;background:var(--surface);margin:.4rem 0 1rem}
+.cascade-commandes{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:.4rem 1.4rem;align-items:start;border-top:1px solid var(--trait);border-bottom:1px solid var(--trait);padding:.6rem 0;margin:.6rem 0}
+.cascade-commandes[hidden]{display:none}
+.cascade-annees{display:flex;gap:.5rem;align-items:center;min-width:0}
+.cascade-frise{display:flex;gap:2px;flex-wrap:wrap;min-width:0}
+.cascade-frise button,.cascade-jouer{font:600 .82rem/1 var(--sans);min-width:2.9rem;min-height:2.2rem;border:1px solid var(--trait-fort);background:var(--surface);color:var(--encre);border-radius:var(--rayon-petit);cursor:pointer;font-variant-numeric:tabular-nums}
+.cascade-frise button[aria-pressed="true"]{background:var(--encre);color:var(--papier);border-color:var(--encre)}
+.cascade-frise button:disabled{opacity:.4;cursor:not-allowed}
+.cascade-jouer{min-width:2.4rem;font-size:1rem}
+.cascade-theta{grid-column:2;grid-row:1/span 2}
+.cascade-theta label{font:600 .88rem var(--sans)}
+.cascade-theta input{width:100%;min-height:2rem}
+.cascade-aide{font-size:.78rem;color:var(--encre-3);margin:.15rem 0}
+.cascade-boucles{grid-column:1;grid-row:2;align-self:start;font-size:.84rem;color:var(--encre-2)}
+.cascade-vue{display:grid;grid-template-columns:1fr;gap:1rem;align-items:start}
+.cascade-graphe{margin:0;min-width:0;overflow:hidden}
+.cascade-graphe svg{display:block;width:100%;height:auto;font-family:var(--sans)}
+.cascade-panneau{columns:2 22rem;column-gap:1.6rem;background:var(--surface);border:1px solid var(--trait);border-radius:var(--rayon);padding:.7rem .85rem;font-size:.86rem;}
+.cascade-panneau h2,.cascade-panneau .gros{column-span:all}
+.cascade-panneau table,.cascade-panneau ul,.cascade-panneau .defile{break-inside:avoid}
+.cascade-panneau h2{font-size:1.05rem;margin:.1rem 0 .3rem}
+.cascade-panneau .gros{font:700 1.5rem/1.1 var(--serif);font-variant-numeric:tabular-nums;margin:.2rem 0}
+.cascade-panneau table{font-size:.78rem;border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+.cascade-panneau td,.cascade-panneau th{padding:.1rem .25rem;border-bottom:1px solid var(--trait);text-align:right}
+.cascade-panneau th:first-child,.cascade-panneau td:first-child{text-align:left}
+.cascade-panneau .source{font-size:.76rem;color:var(--encre-3);overflow-wrap:anywhere}
+.cascade-panneau ul{padding-left:1rem;margin:.3rem 0}
+.cascade-panneau li{margin:.2rem 0}
+.c-col-titre{font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;fill:var(--encre-3)}
+.c-noeud rect{fill:var(--surface);stroke:var(--trait-fort);stroke-width:1}
+.c-noeud{cursor:pointer}
+.c-noeud:focus{outline:none}
+.c-noeud:focus rect,.c-noeud.choisi rect{stroke:var(--accent);stroke-width:2.5}
+.c-noeud .c-lib{font:600 12px var(--sans);fill:var(--encre)}
+.c-noeud .c-val{font:700 13px var(--sans);fill:var(--encre);font-variant-numeric:tabular-nums}
+.c-noeud .c-unite{font:400 11px var(--sans);fill:var(--encre-3)}
+.c-noeud.mesure rect{stroke:var(--famille-donnees);stroke-width:2}
+.c-noeud.payeur rect{fill:var(--surface-2)}
+.c-noeud.agregat rect{stroke:var(--famille-verdict);stroke-width:1.5}
+.c-noeud.gris rect{fill:transparent;stroke-dasharray:4 3;stroke:var(--trait-fort)}
+.c-noeud.gris .c-lib,.c-noeud.gris .c-unite{fill:var(--encre-3)}
+.c-bande{stroke-width:0;fill:var(--accent)}
+.c-arete{fill:none;stroke-linecap:butt;opacity:.55;cursor:pointer}
+.c-arete.plus{stroke:var(--accent)}
+.c-arete.moins{stroke:var(--perte,var(--rouge))}
+.c-arete.boucle{stroke-dasharray:5 4;opacity:.45}
+.c-arete.choisie,.c-arete:hover{opacity:.95}
+.c-arete.estompee{opacity:.12}
+.c-nb{font:600 11px var(--sans);fill:var(--encre-2);font-variant-numeric:tabular-nums;paint-order:stroke;stroke:var(--papier);stroke-width:3px;pointer-events:none}
+.cascade-liste{display:none}
+.cascade-liste h2{font-size:1rem;margin:1rem 0 .3rem;font-family:var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--encre-3)}
+.cascade-liste details{border:1px solid var(--trait);border-radius:var(--rayon-petit);background:var(--surface);margin:.3rem 0;padding:0 .6rem}
+.cascade-liste details.gris{background:transparent;border-style:dashed;color:var(--encre-3)}
+.cascade-liste summary{display:flex;justify-content:space-between;gap:.5rem;min-height:44px;align-items:center;cursor:pointer;font-weight:600}
+.cascade-liste summary b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.cascade-liste details.gris summary b{white-space:normal;font-weight:400;font-size:.8rem;text-align:right}
+.cascade-liste details>div{font-size:.86rem;padding:.2rem 0 .6rem}
+.cascade-liste .fl{display:flex;justify-content:space-between;gap:.5rem;border-top:1px solid var(--trait);padding:.25rem 0}
+.cascade-liste .fl span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+.cascade-mode,.cascade-mode-raison{font-size:.84rem;color:var(--encre-2);max-width:52rem}
+.cascade-mode-raison{border-left:3px solid var(--ocre);padding-left:.6rem}
+.cascade-table{font-size:.8rem;font-variant-numeric:tabular-nums}
+.cascade-table td{text-align:right;padding:.1rem .35rem}
+.cascade-index{columns:2 18rem;padding-left:1rem}
+.cascade-index>li{break-inside:avoid;margin:0 0 .8rem}
+.etat{font-family:var(--sans);font-size:.82rem;color:var(--encre-3);margin:.3rem 0;min-height:1.1em}
+.absent{color:var(--encre-3)}
+.signe-plus{color:var(--accent)}
+.signe-moins{color:var(--perte,var(--rouge))}
+@media (max-width:52rem){
+  .cascade-vue{grid-template-columns:1fr}
+}
+@media (max-width:40rem){
+  .cascade-commandes{grid-template-columns:1fr}
+  .cascade-theta,.cascade-boucles{grid-column:1;grid-row:auto}
+  .cascade-graphe,.cascade-panneau{display:none}
+  .cascade-liste{display:block}
+  .cascade-frise button{min-width:2.75rem;min-height:2.75rem}
+  .cascade-jouer{min-height:2.75rem}
+}
+button.lien{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;cursor:pointer;text-align:left}

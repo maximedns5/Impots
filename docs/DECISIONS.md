@@ -35071,3 +35071,89 @@ aux prix : le jumeau la refuse aujourd'hui (D-469, J2).
 * **Aucun nombre publié d'une étude ne change** ; ceux du jumeau changent, chaque
   D-entrée dit lesquels. La page de l'étude garde son chiffrage (R15, D-469).
 * Les numéros : D-472 à D-486 aux volets, D-487 et la suite à la jonction.
+
+
+## D-484 — La cascade d'une mesure : le graphe tiré d'une trajectoire du jumeau
+
+Le volet `cascade` du but 26 (D-471). Le propriétaire veut voir, pour une mesure, tout ce
+qu'elle déclenche. Le jumeau sait déjà décomposer chaque champ par bloc (CADRE.md §1) ;
+il manquait de le lire comme un fil, de la mesure aux agrégats.
+
+**Le modèle de données** (`src/impots/jumeau/cascade.py`, numpy seul, importable dans
+Pyodide). `graphe(traj, mesure, blocs, …)` rend des nœuds en quatre couches et des
+arêtes, chacune avec ses montants année par année, son unité, sa raison en une ligne et
+sa source :
+
+* la mesure (son coût statique pour les APU, la contribution au B9 des blocs `mesures` et
+  `chocs_entreprises`) ;
+* les payeurs : les ménages (la somme du choc par décile, ou à défaut leurs impulsions),
+  les entreprises (leurs prélèvements changés, une baisse comptée en gain), les APU ;
+* un nœud par bloc du modèle qui porte un canal (`canaux.declares`), avec ses canaux,
+  leur description du registre et ses θ ; son nombre est sa contribution au premier champ
+  qu'il écrit (une préférence de présentation, `PRINCIPAL`) ;
+* les agrégats : PIB (% du PIB de référence), emploi, solde des APU, dette (points).
+
+Les arêtes ne sont pas écrites à la main : un payeur va vers un canal quand le bloc lit
+un champ que la couche du choc écrit (`lit`), ou le choc dans la mesure elle-même
+(`LIT_LA_MESURE` : la consommation lit les déciles, les salaires le Smic ; un bloc peut le
+déclarer par `lit_la_mesure`) ; un canal va vers un autre quand l'un écrit un champ que
+l'autre lit ; une arête qui remonte l'ordre du pas est une boucle ; un canal va vers un
+agrégat par sa contribution. Un canal qu'un volet ajoute au registre et qu'un bloc porte
+apparaît donc sans retouche. Un canal attendu que rien ne porte est un nœud « pas encore
+modélisé », sans nombre : attendu par la fiche de transmission (clé `canaux`, lue telle
+quelle si le volet `carte` l'a écrite), ou, sans fiche, par huit familles (`FAMILLES` :
+coût du travail, emploi, salaires, consommation, prix, entreprises, commerce, comptes
+sociaux). Le solde par sous-secteur est gris tant qu'aucun champ du registre n'est du
+groupe `sous_secteurs` ; c'est la convention que la jonction avec `financement` reprend.
+
+**Le mode.** Le mode structurel quand il calcule une année au moins (figée, convention de
+D-414), sinon la chaîne des études (réduit, vieillie), et la page dit pourquoi
+(`site_jumeau.raison_structurel`). En réduit, les familles portées par les
+multiplicateurs sont dites « dans les multiplicateurs, sans détail ».
+
+**Les deux exemples, à θ½** (aucun nombre du jumeau ni d'une étude ne change : ce module
+ne fait que lire) :
+
+* Attal a16, structurel, figée : coût statique −63,1 Md€ en 2026 ; ménages +58,0 Md€
+  (déciles) ; consommation +17,1 Md€ ; rémunérations −20,5 Md€ (le brut se renégocie,
+  Mésange p. 64) ; emploi +129 milliers ; PIB +0,445 % ; solde −65,3 Md€ ; dette
+  +1,59 point en 2026, +5,10 en 2028. Familles grises : coût du travail, comptes sociaux.
+* Kazib (le Smic à 2 000 €), réduit (le structurel le refuse, D-469 J2) : coût statique
+  −15,5 Md€ ; entreprises +16,0 Md€ (impulsion de cotisations employeurs : les
+  allègements qui suivent le Smic) ; PIB +0,100 % ; solde −11,1 Md€ ; dette +0,24 point.
+  Grises : coût du travail, comptes sociaux ; six familles « dans les multiplicateurs ».
+
+À θ = 1 (`theta_commun`), Attal a16 : PIB +0,506 % en 2026, +1,347 % en 2029.
+
+**Les nombres qu'un test devra tenir** : ceux-ci, à 1e-6 près, et que chaque arête vers
+un agrégat somme, avec celle des APU, à l'écart de l'agrégat (le PIB, le solde, la dette)
+pour chaque année calculée ; que la page (Pyodide) rende le même graphe que Python.
+
+
+## D-485 — La page de la cascade, ses liens, et le jumeau dans la page quand θ bouge
+
+`src/impots/site_cascade/` écrit `cascade.html` (la liste) et une page par rapport que la
+page du jumeau lit : 46, `cascade-<candidat>.html` pour un programme,
+`cascade-<candidat>-<mesure>.html` pour une mesure seule, `cascade-<scénario>.html` pour un
+volet d'un texte. Chaque page porte en JSON le graphe à θ½ et, sans calcul, le texte de la
+mesure et sa source (`programmes/`), sa fiche si elle existe, et les huit plus gros champs
+de sa passe de première année (le rapport commité). Le dessin (`page.js`) : un graphe en
+couches de gauche à droite, l'épaisseur selon le montant (par unité, sur toutes les
+années), une frise des années qu'on fait défiler, un panneau au clic (pourquoi, source,
+θ, flux entrants et sortants, nombres par année) ; au téléphone, une liste dépliable.
+Le style reprend les jetons de `style.css` (D-450) ; les boucles se montrent sur demande.
+
+Le curseur θ (tous les θ ensemble ; θ = 1 est partout la réponse la plus forte) charge
+Pyodide comme la page du jumeau et appelle `cascade.calculer_json` par le même Worker
+(`jumeau-calcul.js`, un message `cascade` ajouté) ; le relevé du paquet fait tourner la
+cascade une fois, pour que `jumeau-paquet.json` porte `cascade.py`. Dans Chromium : le
+jumeau chargé et le graphe refait à θ = 1 en 7 s (3 s de calcul), sans erreur.
+
+Les liens : la page de chaque mesure (« ce qu'elle déclenche »), la page du jumeau, et
+l'étape « bouclage » du chemin. `site verifier`, `node ui/check.mjs` : verts ; aucune
+page plus large que 390 px. Les pages d'études ne changent pas ; celles des mesures, du
+jumeau et du chemin gagnent un lien. La construction du site prend 1 min de plus.
+
+Ce qui reste : les canaux de `travail` et `financement` et les fiches de `carte` se
+verront à la jonction, sans retouche si leurs noms suivent `FAMILLES` et le groupe
+`sous_secteurs` ; sinon une ligne dans ces deux constantes.
