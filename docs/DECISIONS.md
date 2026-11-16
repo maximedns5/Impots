@@ -35031,3 +35031,43 @@ tests légers du jumeau et du site (41) : verts. `site verifier`, `site publiabl
 relancés : le changement ne touche que la page et ce test.
 Les chronomètres : 5 passés, en 35 s.
 
+
+## D-471 — Le but 25 clos, le but 26 validé : l'effet papillon, en cinq volets
+
+Le but 25 est mergé (PR #131, 836d142) et le site publié le 16 novembre. Le propriétaire,
+le même jour : la population pourra devenir plus visuelle, un terrain de jeu, mais ce
+n'est pas l'urgence ; l'urgence est de comprendre ce que dit une mesure et tout ce
+qu'elle déclenche. Son exemple : « 250 € nets de plus par mois », derrière, des charges,
+un coût pour les entreprises, l'embauche. Il demande plusieurs agents, aucun test, aucune
+étude de candidat : améliorer le modèle pour que le jumeau porte l'effet papillon de
+toutes les propositions.
+
+**L'exemple, lu dans le dépôt.** Attal a16 est chiffré par une échelle des cotisations
+salariales de retraite (0,22) : le net monte, le coût du travail ne bouge pas la première
+année, et la caisse de retraite perd sa recette. Ce que le modèle ne dit pas : qui comble
+la caisse (le candidat annonce « des économies sur le modèle social »), si le brut se
+renégocie ensuite (l'incidence d'une cotisation salariale n'est pas celle d'une
+patronale à long terme), ce que le net en plus fait à la consommation et à l'offre de
+travail. Une hausse du Smic, à l'inverse, monte le coût du travail au bas de l'échelle,
+fait monter le coût des allègements qui le suivent, se diffuse aux salaires voisins et
+aux prix : le jumeau la refuse aujourd'hui (D-469, J2).
+
+**Les décisions.**
+
+* **Cinq volets** (BUT.md, but 26) : `carte`, `ventilation`, `travail`, `financement`,
+  `cascade`, chacun dans son worktree, puis une jonction.
+* **La fiche de transmission**, le contrat commun aux volets, un YAML par mesure sous
+  `src/impots/jumeau/transmission/<candidat>/<mesure>.yaml` : `levier` (le texte et le
+  paramètre touchés), `payeurs` (qui paie ou reçoit d'abord : cellules de ménages,
+  impôts des entreprises, sous-secteurs des APU, avec le sens), `incidence` (qui paie au
+  bout, à quel horizon, avec sa source), `financement` (annoncé, ou absent), `canaux`
+  (les noms de `jumeau/canaux.py`, et les nouveaux, déclarés par leur volet),
+  `hypotheses` (chacune avec sa source ou dite « non sourcée »), `montant` (le rapport,
+  ou l'hypothèse déclarée et son origine). Le volet `carte` en écrit le schéma et le
+  lecteur ; les autres volets ajoutent leurs canaux et ne changent pas les clés.
+* **Ce qui ne tourne pas** : ni étude, ni passe sur la population, ni suite de tests. Le
+  jumeau tourne autant qu'il faut. Les tests des nombres changés sont différés à la PR,
+  par décision du propriétaire, ce qui déroge à D-335 pour ce but et se dit ici.
+* **Aucun nombre publié d'une étude ne change** ; ceux du jumeau changent, chaque
+  D-entrée dit lesquels. La page de l'étude garde son chiffrage (R15, D-469).
+* Les numéros : D-472 à D-486 aux volets, D-487 et la suite à la jonction.

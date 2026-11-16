@@ -1202,7 +1202,7 @@ les six rapports, au bit comme avant D-440, et la page « Le jumeau » est recon
 d'impact et les lourds ont tourné, D-443, D-444), le merge par le propriétaire et son SHA.
 Restent hors d'atteinte des données publiées : η, ε_K, β et l'accélérateur du bloc.
 
-### But 25 — Le jumeau qu'on comprend (validé le 15 novembre 2026, D-445)
+### But 25 — Le jumeau qu'on comprend (fait, D-445 à D-470 ; PR #131, merge 836d142)
 
 Le site montre des résultats et beaucoup de texte ; il ne montre ni comment la
 population est faite, ni ce qu'elle représente, ni comment une mesure devient un
@@ -1276,6 +1276,64 @@ nombres à l'euro mais ne tient les 10 s que pour la TVA (14,4 s pour la tranche
 46,8 s pour les aides au logement, D-465) ; le lecteur garde une remarque bloquante (le
 mode structurel refuse 7 programmes sur 11, D-467, diagnostiqué en D-469). Le
 propriétaire décide du merge et de ces deux points.
+
+### But 26 — L'effet papillon (validé le 16 novembre 2026, D-471)
+
+Le propriétaire, le 16 novembre : le site se lit, mais on ne comprend pas encore ce que
+dit une mesure. « 250 € nets de plus par mois » (Attal, a16) : comment on le fait, qui
+paie, et qu'est-ce que cela déclenche, dans les cotisations, le coût du travail,
+l'embauche, les prix, les comptes sociaux ? Aujourd'hui une mesure entre dans le jumeau
+par sa première ligne (son coût de la première année) ; le mode structurel en refuse 7
+programmes sur 11 (D-469, J2) ; 44 mesures sur 525 sont chiffrées. Le but fait du jumeau
+un modèle où chaque mesure se propage à tout ce qu'elle touche, et où l'on voit cette
+propagation. Cinq volets, en parallèle, chacun sur `claude/but26-<volet>` partie de
+`claude/but26`, puis joints.
+
+1. **La carte des effets** (`carte`) : pour chaque mesure des onze programmes, une fiche
+   de transmission (`jumeau/transmission/`) : le levier (quel texte, quel paramètre),
+   qui paie ou reçoit d'abord, l'incidence attendue et à quel horizon, le financement
+   annoncé, les canaux qu'elle ouvre, ses hypothèses, chacune sourcée. Le jumeau la lit
+   pour ouvrir les canaux ; une mesure non chiffrée dont le montant est énoncé entre comme
+   hypothèse déclarée, et le dit. Le schéma de la fiche est celui de D-471.
+2. **La ventilation** (`ventilation`) : chaque choc de la première année réparti par
+   payeur et par instrument (cotisations des employeurs, allègements, PFU, prélèvements
+   du capital, par cellule de ménages et par impôt des entreprises), lu dans les rapports
+   commités, sans passe ; une convention pour la population vieillie. Le mode structurel
+   fait tourner les onze programmes.
+3. **Le travail** (`travail`) : le Smic et sa diffusion dans l'échelle des salaires ; les
+   allègements qui suivent le Smic ; le coût du travail par tranche de salaire et
+   l'emploi qui y répond ; l'incidence des cotisations salariales et patronales dans le
+   temps (le net, le brut, le super-brut) ; le passage aux prix.
+4. **Le financement** (`financement`) : les sous-secteurs (État, Sécurité sociale par
+   branche, collectivités), la compensation des exonérations, le financement que la
+   mesure ou le programme annonce, et ce que coûte celui qui manque ; un programme
+   chiffré comme un tout, ses mesures en interaction, pas en somme.
+5. **La cascade** (`cascade`) : une page par mesure qui montre l'effet papillon : la
+   mesure, ses payeurs, ses canaux, puis les agrégats, année par année, chaque flèche
+   avec son nombre et sa raison, tirés du jumeau et de la carte. Peu de texte.
+
+**Ce qui ne tourne pas** (le propriétaire) : ni étude de candidat, ni passe sur la
+population, ni suite de tests. Le jumeau lui-même, en secondes, tourne autant qu'il faut.
+Les nombres publiés des études ne changent pas ; ceux du jumeau changent, et chaque
+D-entrée dit lesquels et pourquoi. Les tests des nombres changés (D-335) sont écrits et
+passés avant la PR, avec l'accord du propriétaire.
+
+```
+/goal Chaque mesure des onze programmes se propage dans le jumeau à tout ce qu'elle
+touche, et c'est mergé dans main. Chaque mesure a sa fiche de transmission sourcée ; le
+mode structurel fait tourner les onze programmes, sur les deux populations ; le Smic, le
+coût du travail par tranche, les allègements, l'incidence des cotisations et le
+financement par sous-secteur sont des canaux du jumeau ; un programme se chiffre comme un
+tout ; une page montre, pour chaque mesure, la cascade année par année, chaque flèche
+avec son nombre et sa raison. Aucun nombre publié d'une étude ne change. Preuve attendue :
+par volet, ses D-entrées ; la cascade d'Attal a16 et d'un Smic à 2 000 € ; les onze
+programmes en structurel ; l'URL de la PR et le SHA du merge. Ou s'arrêter après 60 tours
+par volet, en disant ce qui manque.
+```
+
+Les numéros réservés : D-472 à D-474 pour `carte`, D-475 à D-477 pour `ventilation`,
+D-478 à D-480 pour `travail`, D-481 à D-483 pour `financement`, D-484 à D-486 pour
+`cascade` ; D-487 et la suite pour la jonction.
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
