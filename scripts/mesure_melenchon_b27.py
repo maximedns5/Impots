@@ -438,6 +438,11 @@ def redimensionner(S: Any, cle: str, p: dict[str, Any]) -> dict[str, float]:
     if cr:
         cr["variations"] = {v: [float(x) * kv for x in xs]
                             for v, xs in cr["variations"].items()}
+    # la somme d'avant D-440, que `prelevements_lus` lit quand le rapport la porte
+    avant = ((pay.get("recalcul") or {}).get("instruments") or {}).get("variations_avant")
+    if avant:
+        pay["recalcul"]["instruments"]["variations_avant"] = {
+            v: [float(x) * kv for x in xs] for v, xs in avant.items()}
     vieux.update(reform_cost=p["reform_cost"], deltas=p["deltas"], deciles=p["deciles"])
     c["convention"] = CONVENTION_D521
     S.candidats[cle] = c
@@ -538,6 +543,37 @@ def programme_jumeau(S: Any) -> dict[str, Any]:
     return out
 
 
+def paires_jumeau(S: Any, vue: str = "figee") -> dict[str, Any]:
+    """La non-additivité du jumeau seul, paire par paire : Δ(i+j) − Δi − Δj sur la dette
+    de 2035, le B9 et l'emploi de 2035, les mesures sans l'interaction de la passe."""
+    from impots.jumeau import papillon as pa
+
+    cle_p, _ = pa.cles(S, "melenchon")
+    ms = pa.mesures_seules(S, "melenchon", vue)[:-1]
+    nom = {m.identifiant: COURTS[m.identifiant.removeprefix("pres2027_melenchon_")]
+           for m in ms}
+    champs = ("dette_2035", "b9_2035", "emploi_2035")
+
+    def val(liste: list[Any]) -> dict[str, float]:
+        tr, _ = pa.trajectoire(S, liste, cle=cle_p, theta=FIN)
+        c = court_(pa.ecarts(tr))
+        return {k: c[k] for k in champs}
+
+    un = {m.identifiant: val([m]) for m in ms}
+    tout = val(ms)
+    out = {}
+    for a, b in itertools.combinations(ms, 2):
+        ab = val([a, b])
+        out[f"{nom[a.identifiant]}+{nom[b.identifiant]}"] = {
+            k: r3(ab[k] - un[a.identifiant][k] - un[b.identifiant][k]) for k in champs}
+    somme = {k: sum(u[k] for u in un.values()) for k in champs}
+    return {"paires": dict(sorted(out.items(), key=lambda kv: -abs(kv[1]["dette_2035"]))),
+            "ensemble": tout, "somme": {k: r3(v) for k, v in somme.items()},
+            "ensemble_moins_somme": {k: r3(tout[k] - somme[k]) for k in champs},
+            "reste_ordre_3": {k: r3(tout[k] - somme[k] - sum(x[k] for x in out.values()))
+                              for k in champs}}
+
+
 def jumeau() -> None:
     from impots.jumeau import papillon as pa
 
@@ -558,6 +594,7 @@ def jumeau() -> None:
     out["programme_rapports"] = ks
     out["programme_etude"] = programme_jumeau(avant)
     out["programme_d521"] = programme_jumeau(prog)
+    out["paires_jumeau_d521"] = paires_jumeau(prog)
     (RAPPORT / "jumeau.json").write_text(json.dumps(out, ensure_ascii=False, indent=1,
                                                     default=float) + "\n",
                                          encoding="utf-8")
