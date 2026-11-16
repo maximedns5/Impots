@@ -227,13 +227,13 @@
       "quarantined": true
     },
     "erfs_2024_ip2117_figures.xlsx": {
-      "url": null,
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9019316/ip2117.xlsx",
       "sha256": "df80d57ee7449f1a766ca8fc2ba59721bc735a41a18ee63e2d807b43f6dad026",
       "bytes": 41175,
       "downloaded": "2026-09-03",
-      "licence": "unknown",
-      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it.",
-      "quarantined": true
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Première n° 2117, niveaux de vie 2024, données des figures. Re-sourcé le 16 novembre 2026 (but 27, volet sources, D-492) : le fichier de l'URL a l'empreinte de celui mis en quarantaine (D-028) faute d'URL. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : niveau_de_vie_median 2024, d9_d1 2024, d9_d1_servi 2024, niveau_de_vie_median_servi 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
     },
     "filosofi_2023_all_geo.zip": {
       "url": null,
@@ -2333,6 +2333,123 @@
       "licence": "Licence Ouverte / Etalab",
       "quarantined": false,
       "description": "INSEE, Comptes nationaux annuels base 2020, tableau 3.212 « Dépenses et recettes des administrations de sécurité sociale (S1314) », MILLÉSIME 2025 (même dossier que la t. 3.201). Consolidé à l'intérieur du sous-secteur, pas entre sous-secteurs (note de la t. 3.215) : les transferts courants entre APU (D73), les intérêts (D41) et les transferts en capital (D9) entre sous-secteurs y figurent. But 26, volet financement (D-481) : la somme des quatre sous-secteurs redonne chaque ligne de la t. 3.201, à la consolidation près, et B9 exactement."
+    },
+    "ccss_juin2025_rapport.pdf": {
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf",
+      "sha256": "8e0505aa85be5e59e6f898b1753c241b56b0d7cc782371f3e99550108bbdeb3a",
+      "bytes": 5167028,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Rapport à la Commission des comptes de la sécurité sociale, juin 2025. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : reduction_generale 2022, bandeau_maladie 2022, bandeau_famille 2022, af_montant 2022, reduction_generale 2023, bandeau_maladie 2023, bandeau_famille 2023, af_montant 2023, reduction_generale 2024, bandeau_maladie 2024, bandeau_famille 2024, csg_activite 2024, csg_remplacement 2024, af_montant 2024, csg_activite_avec_non_salaries 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "ccss_mai2024_rapport.pdf": {
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2024/CCSS-mai%202024.pdf",
+      "sha256": "9673702efe0159b1575271d3ab0a05e3d06620a312552b38407517da776fa79b",
+      "bytes": 7400083,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Rapport à la Commission des comptes de la sécurité sociale, mai 2024. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : csg_activite 2022, csg_remplacement 2022, csg_activite 2023, csg_remplacement 2023, csg_activite_avec_non_salaries 2022, csg_activite_avec_non_salaries 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "ircom-2023-revenus-2022.zip": {
+      "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20240610-082154/ircom-2023-revenus-2022.zip",
+      "sha256": "497c2d1ca4e439865c38f8f854563e9718c4b57949aa39172ecd51449c37d317",
+      "bytes": 17642568,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP, IRCOM 2023 (revenus 2022), archive complète. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : foyers_fiscaux 2022, foyers_imposes 2022), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "insee_ip2004_niveaux_de_vie_2022.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8216285/ip2004.xlsx",
+      "sha256": "b8e909e3428de5052e27fda517eb7681329e40e2cd2dd5c7f3d4615fa105f228",
+      "bytes": 63500,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Première n° 2004, niveaux de vie 2022, données des figures. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : niveau_de_vie_median 2022, d9_d1 2022, d9_d1_servi 2022, niveau_de_vie_median_servi 2022), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rapport_dcf_comptes_2022.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/qui%20sommes%20nous/Textes%20de%20r%C3%A9f%C3%A9rence/comptes%20et%20financements/Point%203%20Rapport%20du%20Dcf%20sur%20les%20comptes%202022.pdf",
+      "sha256": "ef77607a17b93563a015fe0d7888438d892e5777f321b26914c17403caebe8d7",
+      "bytes": 3778961,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, rapport du directeur comptable et financier sur les comptes 2022. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_montant 2022, ppa_montant 2022, aide_logement_montant 2022, ppa_montant_servi 2022, rsa_montant_servi 2022), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_pa_conjoncture_2023t4.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2023T4.pdf",
+      "sha256": "26244616cff781ced1a95c65f834f34a23506c88dae2804546ebf15f6c4e4330",
+      "bytes": 702413,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, PA Conjoncture, la prime d'activité au 4e trimestre 2023. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : ppa_foyers 2022, ppa_foyers 2023, ppa_foyers_servis 2022, ppa_foyers_servis 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "ircom-2024-revenus-2023.zip": {
+      "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20250919-135242/ircom-2024-revenus-2023.zip",
+      "sha256": "f3a8d6afd9af627359b8f37a73696429b58ac72b37b96d5b9ef35eadf9d2db6c",
+      "bytes": 17476829,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP, IRCOM 2024 (revenus 2023), archive complète. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : foyers_fiscaux 2023, foyers_imposes 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "insee_ip2063_niveaux_de_vie_2023.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8600989/ip2063.xlsx",
+      "sha256": "0dea3c4c18360c6437f77662735b67b51aebd3b359663514341a596421b1c8e3",
+      "bytes": 43312,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Première n° 2063, niveaux de vie 2023, données des figures. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : niveau_de_vie_median 2023, d9_d1 2023, d9_d1_servi 2023, niveau_de_vie_median_servi 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rapport_dcf_comptes_2023.pdf": {
+      "url": "https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/qui%20sommes%20nous/Textes%20de%20r%C3%A9f%C3%A9rence/comptes%20et%20financements/Point_5_Rapport_du_Dcf_sur_les_comptes_2023.pdf",
+      "sha256": "edd21d8a46a3406760f98bffbcf9841e7341da402a6587d99e90f75cb0164eb0",
+      "bytes": 3586408,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, rapport du directeur comptable et financier sur les comptes 2023. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_montant 2023, ppa_montant 2023, aide_logement_montant 2023, ppa_montant_servi 2023, rsa_montant_servi 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rsa_conjoncture_2023t4.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2023T4.pdf",
+      "sha256": "f59d81ef753241518989b13f3409d4c09c278bf34dccb44e56228d958b8456ae",
+      "bytes": 583165,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, RSA Conjoncture, le RSA au 4e trimestre 2023. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_foyers 2023, rsa_foyers_servis 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rapport_dcf_comptes_2024.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Professionnels/Nous_connaitre/textes_de_reference/etats_financiers/2024/Rapport_du_Dcf_sur_les_comptes_2024.pdf",
+      "sha256": "d63abb58ee10417ac0421171c82ab14d18c736f06f8f815a09c24e60d85f61fe",
+      "bytes": 1449209,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, rapport du directeur comptable et financier sur les comptes 2024. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_montant 2024, ppa_montant 2024, aide_logement_montant 2024, ppa_montant_servi 2024, rsa_montant_servi 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rsa_conjoncture_2024t4_def.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2024T4_def.pdf",
+      "sha256": "e8befdcf2d0b1d7716cd53efb23acb9b6f7979e5893f27f961c782b694341cda",
+      "bytes": 609788,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, RSA Conjoncture, le RSA au 4e trimestre 2024 (définitif). Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_foyers 2024, rsa_foyers_servis 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_pa_conjoncture_2024t4_def.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2024T4_def.pdf",
+      "sha256": "5d05161687e37e9a5945659f1d59c4f7aa5357777c8cd52109cf781cb544e7f2",
+      "bytes": 507454,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, PA Conjoncture, la prime d'activité au 4e trimestre 2024 (définitif). Document d'une ligne de la grille de vérification (docs/verification/lignes.json : ppa_foyers 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
     }
   }
 }
