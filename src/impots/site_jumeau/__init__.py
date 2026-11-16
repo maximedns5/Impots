@@ -229,6 +229,12 @@ PARCOURS = [
                                          "debut": 2026, "fin": 2035}},
     {"mode": "structurel", "hypothese": {"instrument": "cotisations_employeurs",
                                          "montant": 10, "debut": 2026, "fin": 2030}},
+    # Le financement d'un point d'indice lit les payeurs de sa fiche (D-487), et une
+    # hausse du Smic passe par le bloc `travail` (`Session.mesure_structurel`).
+    {"mode": "structurel", "vue": "figee", "candidat": "pres2027_melenchon_point_indice_10",
+     "convention": "parts_premiere_annee"},
+    {"mode": "structurel", "vue": "figee", "candidat": "pres2027_tondelier_smic_2000_brut",
+     "convention": "parts_premiere_annee"},
 ]
 
 

@@ -186,6 +186,10 @@ CANAUX.update({
         "le financement que le programme annonce, chiffré en hypothèse déclarée et sourcée "
         "par sa citation, ou le trou qu'il laisse (`jumeau.financement.annonce`)"),
 })
+#: Les canaux comptables que `jumeau.financement.comptes.decomposer` calcule après la
+#: trajectoire (D-487) : la cascade les montre calculés, sans bloc. `financement_annonce`
+#: n'en est pas : il entre comme des lois hypothétiques (`financement.annonce`).
+COMPTABLES = frozenset({"financement_sous_secteurs", "compensation_exonerations"})
 
 
 # --------------------------------------------------------------------- travail (D-478)

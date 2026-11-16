@@ -118,6 +118,10 @@ AGREGATS = (
 #: registre de ce groupe, quand un volet les y écrit ; « pas encore modélisé » sinon.
 GROUPE_SOUS_SECTEURS = "sous_secteurs"
 
+#: Le nom d'un sous-secteur des APU (`financement.comptes.SECTEURS`), en mots.
+NOMS_SOUS_SECTEURS = {"etat": "État", "odac": "organismes d'administration centrale",
+                      "apul": "collectivités locales", "asso": "Sécurité sociale"}
+
 #: Les familles de canaux que le lecteur attend (le propriétaire, D-471) quand la mesure
 #: n'a pas encore de fiche de transmission : (clé, libellé, préfixes des canaux du
 #: registre qui la portent). Une famille qu'aucun bloc structurel ne porte est un nœud
@@ -256,11 +260,15 @@ def canaux_attendus(fiche: Mapping[str, Any] | None) -> list[str] | None:
 # --------------------------------------------------------------------------- #
 def graphe(traj: Any, mesure: Any, blocs: Sequence[Any], *, annees: Sequence[int],
            thetas: Sequence[Mapping[str, Any]] = (), attendus: Sequence[str] | None = None,
-           mode: str = "structurel") -> dict[str, Any]:
+           mode: str = "structurel", sous_secteurs: Mapping[str, Any] | None = None
+           ) -> dict[str, Any]:
     """Le graphe de la cascade d'une trajectoire à une mesure (voir la docstring du
     module). `blocs` dans l'ordre du pas ; `thetas`, le registre des θ que rend
     `navigateur.Session.thetas` (avec, si on l'a, la valeur de chacun) ; `attendus`, les
-    canaux que la fiche de transmission cite (None : les familles de `FAMILLES`)."""
+    canaux que la fiche de transmission cite (None : les familles de `FAMILLES`) ;
+    `sous_secteurs`, le résumé du compte par sous-secteur de la trajectoire
+    (`financement.comptes.resume`), qui fait le nœud des canaux comptables
+    (`canaux.COMPTABLES`) et le solde de chaque sous-secteur (D-487)."""
     n = len(annees)
     noeuds: list[dict[str, Any]] = []
     aretes: list[dict[str, Any]] = []
@@ -477,6 +485,38 @@ def graphe(traj: Any, mesure: Any, blocs: Sequence[Any], *, annees: Sequence[int
     # ------------------------------------------------------------ attendus, non modélisés
     structurels = {c for b in canaux_blocs if b.nom not in registre_canaux.REDUITS
                    for c in _canaux_du_bloc(b)}
+    if sous_secteurs is not None:
+        # Les canaux comptables, calculés après la trajectoire (D-487) : un nœud sans bloc.
+        comptables = sorted(registre_canaux.COMPTABLES)
+        structurels |= set(comptables)
+        comp = sous_secteurs.get("compensation") or {}
+        transfert = [sum(v[k] for v in comp.values()) for k in range(len(traj.annees))]
+        ss = sous_secteurs["sous_secteurs"]
+        nd = noeud(id="canal:financement", type="canal", couche=2, bloc=None,
+                   libelle="Financement par sous-secteur et compensation",
+                   statut="calcule", reduit=False,
+                   valeurs=_serie(transfert if _non_nulle(transfert) else
+                                  ss["asso"]["b9"]["ecart"], n),
+                   unite="Md€", champ=None,
+                   libelle_champ=("transfert de compensation de l'État aux caisses"
+                                  if _non_nulle(transfert) else
+                                  "solde des administrations de sécurité sociale"),
+                   pourquoi="; ".join(registre_canaux.CANAUX[c] for c in comptables),
+                   canaux=[{"nom": c, "description": registre_canaux.CANAUX[c]}
+                           for c in comptables],
+                   thetas=[], source="src/impots/jumeau/financement/comptes.py ; "
+                                     "parametres/financement.yaml")
+        for cle_s, v in ss.items():
+            nd["detail"].append({"libelle": f"solde, {NOMS_SOUS_SECTEURS.get(cle_s, cle_s)}",
+                                 "unite": "Md€", "valeurs": _serie(v["b9"]["ecart"], n)})
+        for compte, v in comp.items():
+            nd["detail"].append({"libelle": f"compensation de l'État, {compte}",
+                                 "unite": "Md€", "valeurs": _serie(v, n)})
+        if "payeur:apu" in par_id:
+            arete("payeur:apu", "canal:financement", par_id["payeur:apu"]["valeurs"], "Md€",
+                  "le coût statique se range entre l'État, les ODAC, les collectivités et "
+                  "la Sécurité sociale, au payeur de chaque instrument",
+                  "src/impots/jumeau/financement/comptes.py", "choc")
     if attendus is not None:
         manquants = [(c, c, registre_canaux.CANAUX.get(c, "")) for c in attendus
                      if c not in structurels]
@@ -515,7 +555,20 @@ def graphe(traj: Any, mesure: Any, blocs: Sequence[Any], *, annees: Sequence[int
                                               "est absent, pas nul"),
               source="le cadre du jumeau ferme les comptes (CADRE.md §3.4)")
     sous = sorted(c.nom for c in REGISTRE.values() if c.groupe == GROUPE_SOUS_SECTEURS)
-    if not sous:
+    if not sous and sous_secteurs is not None:
+        for cle_s, v in sous_secteurs["sous_secteurs"].items():
+            vals = v["b9"]["ecart"]
+            noeud(id=f"agregat:sous_secteur:{cle_s}", type="agregat", couche=3,
+                  libelle=f"Solde, {NOMS_SOUS_SECTEURS.get(cle_s, cle_s)}",
+                  statut="calcule" if _non_nulle(vals) else "sans_effet",
+                  valeurs=_serie(vals, n), unite="Md€",
+                  pourquoi=("le solde du sous-secteur, avec la mesure moins sans elle : le "
+                            "compte consolidé réparti, sans le changer (D-481)"),
+                  source="src/impots/jumeau/financement/comptes.py")
+            if _non_nulle(vals):
+                arete("canal:financement", f"agregat:sous_secteur:{cle_s}", vals, "Md€",
+                      "la part de ce sous-secteur dans le solde", "D-481", "agregat", "b9")
+    elif not sous:
         noeud(id="agregat:sous_secteurs", type="agregat", couche=3,
               libelle="Solde par sous-secteur (État, Sécurité sociale, collectivités)",
               statut="non_modelise", valeurs=[None] * n, unite="",
@@ -602,13 +655,33 @@ def calculer(session: Any, choix: Mapping[str, Any],
     from impots.jumeau.pas import Modele
 
     blocs = Modele(ctx["blocs"], ctx["boucles"]).blocs
+    sous, pourquoi = _sous_secteurs(traj, ctx["mesure"], choix)
     g = graphe(traj, ctx["mesure"], blocs, annees=navigateur.ANNEES, thetas=registre,
-               attendus=attendus, mode=ctx["mode"])
+               attendus=attendus, mode=ctx["mode"], sous_secteurs=sous)
     g["refus"] = refus
+    g["sous_secteurs"] = pourquoi
     g["convention"] = ctx["convention"]
     g["conventions"] = navigateur._conventions(ctx["mesure"], traj.annees)
     g["vue"] = ctx["vue"]
     return g
+
+
+def _sous_secteurs(traj: Any, mesure: Any, choix: Mapping[str, Any]
+                   ) -> tuple[dict[str, Any] | None, str | None]:
+    """Le compte par sous-secteur de la trajectoire (`financement.comptes`, D-481), sous les
+    θ du volet que le réglage donne (`theta`, ou `theta_commun` pour tous) ; sans eux,
+    None et la raison : un θ n'a pas de défaut."""
+    from impots.jumeau.financement import comptes
+
+    cles = list(comptes.parametres()["thetas"])
+    donne = dict(choix.get("theta") or {})
+    if "theta_commun" in choix:
+        donne |= dict.fromkeys(cles, float(choix["theta_commun"]))
+    manque = [c for c in cles if c not in donne]
+    if manque:
+        return None, f"θ du financement sans réglage : {manque}"
+    c = comptes.decomposer(traj, [mesure], {c: donne[c] for c in cles})
+    return comptes.resume(c), None
 
 
 def calculer_json(session: Any, texte: str) -> str:
