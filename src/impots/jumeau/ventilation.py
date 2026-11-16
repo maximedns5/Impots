@@ -163,15 +163,16 @@ def completer(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any], *,
     e_chemin = None if lus is None else lus.get(premiere)
     if e_passe is None and e_chemin is None:
         return None, {"entreprises": (
-            f"{reste / EURO:+.3f} Md€ de prélèvements des ménages en {premiere} (cotisations "
-            f"des employeurs, PFU, prélèvements sociaux du capital) que le rapport ne porte "
+            f"{reste / EURO:+.3f} Md€ de prélèvements des ménages en {premiere} "
+            f"(cotisations des employeurs, PFU, prélèvements sociaux du capital) que le "
+            f"rapport ne porte "
             f"ni par sa passe des ménages ni par ses impulsions")}
     e = e_passe if e_passe is not None else e_chemin
     if e_passe is not None and e_chemin is not None and abs(e_passe - e_chemin) * EURO > \
             EURO_PRES:
         raise MesureError(f"cotisations des employeurs de {premiere} : {e_passe:+.6f} Md€ "
-                          f"dans la passe, {e_chemin:+.6f} Md€ dans le chemin : pas la même "
-                          f"passe")
+                          f"dans la passe, {e_chemin:+.6f} Md€ dans le chemin : pas la "
+                          f"même passe")
     qui = payeur(premiere_annee)
     if abs(e) * EURO > EURO_PRES and qui == "meles":
         return None, {"entreprises": (
@@ -236,7 +237,8 @@ def etendre(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] | None
     prives = payeur(premiere_annee) == "prives"
     e_lus = employeurs_lus(payload, vue)
     x1 = dict(entreprises[premiere]) if entreprises is not None else None
-    e1 = (employeurs_premiere(premiere_annee) if premiere_annee is not None else None) or 0.0
+    e1 = (employeurs_premiere(premiere_annee) if premiere_annee is not None
+          else None) or 0.0
 
     def employeurs(a: int) -> float:
         return 0.0 if e_lus is None else e_lus.get(a, 0.0)
@@ -329,8 +331,9 @@ def etendre(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] | None
     if conventions:
         non_portes.pop("annees", None)
         if refus:
-            non_portes["annees"] = (f"{suivantes[0]} à {suivantes[-1]} : {', '.join(refus)} "
-                                    f"sans parts, absents ; le reste {texte}")
+            non_portes["annees"] = (f"{suivantes[0]} à {suivantes[-1]} : "
+                                    f"{', '.join(refus)} sans parts, absents ; le reste "
+                                    f"{texte}")
     return entreprises, menages, non_portes, conventions
 
 
@@ -363,7 +366,7 @@ def premiere_annee(payload: Mapping[str, Any], premiere_annee_: Mapping[str, Any
                        "payeur": extra.pop("payeur", c.get("payeur")),
                        "bloc": c.get("bloc"), "sous_secteur": extra.pop(
                            "sous_secteur", c.get("sous_secteur")),
-                       "branche": c.get("branche"), "source": c.get("source"), **extra})
+                       "branche": c.get("branche"), **extra})
 
     menages_deciles = None
     if "menages" in passes:
@@ -391,7 +394,8 @@ def premiere_annee(payload: Mapping[str, Any], premiere_annee_: Mapping[str, Any
         canal = float(creations["variations"][VUE_PREMIERE_ANNEE][0])
         deltas = (passes["entreprises"]["reponse"].get("deltas") or {}
                   if "entreprises" in passes else {})
-        capital = canal - sum(float(deltas.get(i, 0.0) or 0.0) for i in lus) - (e or 0.0) * EURO
+        capital = (canal - sum(float(deltas.get(i, 0.0) or 0.0) for i in lus)
+                   - (e or 0.0) * EURO)
         if "menages" in passes:
             capital -= float((passes["menages"]["reponse"].get("deltas") or {})
                              .get("prelevements_sociaux_capital", 0.0) or 0.0)
@@ -460,7 +464,8 @@ def _main(argv: Sequence[str] | None = None) -> int:
         return 0
     for s, v in d.items():
         pp = ", ".join(f"{k} {x:+.3f}" for k, x in v["par_payeur"].items())
-        print(f"{s}: coût {v['cout_md']:+.3f} ; {pp} ; non réparti {v['non_reparti_md']:+.3f}")
+        print(f"{s}: coût {v['cout_md']:+.3f} ; {pp} ; "
+              f"non réparti {v['non_reparti_md']:+.3f}")
     return 0
 
 

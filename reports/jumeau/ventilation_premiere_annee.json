@@ -1,0 +1,4937 @@
+{
+ "decision": "D-475",
+ "scenarios": {
+  "pres2027_attal_a16_droit_au_brut": {
+   "scenario": "pres2027_attal_a16_droit_au_brut",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 63.139065677857175,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 12.050464312864548,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": -77.14023750124763,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": 0.021859762465816498,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 1.5433336821495265,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.05173477969117355,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.28867394091181375,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.0247860087192291,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": -0.002325993257810235,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": 0.02879658556506157,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": 0.0029083185350186826,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -0.0002624129819161296,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.007716668241530098,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "paje",
+     "solde_apu_md": -0.001082083310137272,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    }
+   ],
+   "par_payeur": {
+    "menages": -63.13906726813683
+   },
+   "par_sous_secteur": {
+    "Etat": 13.591472001756264,
+    "ASSO": -77.0957339992153,
+    "APUL": 0.05173477969117355,
+    "ODAC": 0.28867394091181375,
+    "hors_APU": 0.0247860087192291
+   },
+   "menages_deciles_md": [
+    0.6109293991552184,
+    1.7101898238116062,
+    3.2766960472297426,
+    4.028338100711997,
+    5.357035106988424,
+    6.036740059784573,
+    6.643794350493155,
+    7.429862414847426,
+    8.607327892035617,
+    14.270934453612568
+   ],
+   "employeurs": null,
+   "non_reparti_md": 1.590279659069438e-06,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_attal_a18_suppression_cvae": {
+   "scenario": "pres2027_attal_a18_suppression_cvae",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 2.55206372969754,
+   "lignes": [
+    {
+     "module": "impot_societes",
+     "solde_apu_md": 0.6209289857217865,
+     "payeur": "entreprises",
+     "bloc": "entreprises:impot_societes",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "contribution_sociale_is",
+     "solde_apu_md": 0.014709674091338873,
+     "payeur": "entreprises",
+     "bloc": "entreprises:contribution_sociale_is",
+     "sous_secteur": "non porté",
+     "branche": null
+    },
+    {
+     "module": "cebge",
+     "solde_apu_md": 0.09408603040010644,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cebge",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cvae",
+     "solde_apu_md": -3.2817884792917784,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cvae",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "entreprises": -2.552063789078547
+   },
+   "par_sous_secteur": {
+    "Etat": -2.5667734631698855,
+    "non porté": 0.014709674091338873
+   },
+   "menages_deciles_md": null,
+   "employeurs": null,
+   "non_reparti_md": 5.938100633429144e-08,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_attal_a22_pensions_alimentaires": {
+   "scenario": "pres2027_attal_a22_pensions_alimentaires",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 0.19134446813085937,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -0.19134446206684874,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -0.19134446206684874
+   },
+   "par_sous_secteur": {
+    "Etat": -0.19134446206684874
+   },
+   "menages_deciles_md": [
+    0.0,
+    0.0,
+    0.0,
+    0.0018830641057878612,
+    0.014344198134773155,
+    0.02198822753040335,
+    0.03290627964229551,
+    0.03769077776127244,
+    0.048240904441350194,
+    0.03429101651504375
+   ],
+   "employeurs": null,
+   "non_reparti_md": -6.064010626971594e-09,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_attal_programme": {
+   "scenario": "pres2027_attal_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 66.18123442867434,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 11.592943076616608,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": -77.14023750124763,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": 0.021978529006822588,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 1.4848639007799245,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.048291283453159334,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.3322895794477272,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.026207186731669663,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": -0.0023491627896910904,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": 0.011893539366646767,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": 0.0036353982398369313,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -0.00018212698156100512,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.007424319336950108,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "paje",
+     "solde_apu_md": -0.001082083310137272,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "impot_societes",
+     "solde_apu_md": 0.6209289857217865,
+     "payeur": "entreprises",
+     "bloc": "entreprises:impot_societes",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "contribution_sociale_is",
+     "solde_apu_md": 0.014709674091338873,
+     "payeur": "entreprises",
+     "bloc": "entreprises:contribution_sociale_is",
+     "sous_secteur": "non porté",
+     "branche": null
+    },
+    {
+     "module": "cebge",
+     "solde_apu_md": 0.09408603040010644,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cebge",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cvae",
+     "solde_apu_md": -3.2817884792917784,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cvae",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -63.62917270002358,
+    "entreprises": -2.552063789078547
+   },
+   "par_sous_secteur": {
+    "Etat": 10.508684351436955,
+    "ASSO": -77.11141856426296,
+    "APUL": 0.048291283453159334,
+    "ODAC": 0.3322895794477272,
+    "hors_APU": 0.026207186731669663,
+    "non porté": 0.014709674091338873
+   },
+   "menages_deciles_md": [
+    0.6639063725881955,
+    1.6304316816985933,
+    3.273468081533954,
+    4.007068606085498,
+    5.4260765740681025,
+    6.1456265186180765,
+    6.76735962587323,
+    7.466631470598804,
+    8.750617586918516,
+    14.330766151807083
+   ],
+   "employeurs": null,
+   "non_reparti_md": 2.0604277750635447e-06,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_bouamrane_programme": {
+   "scenario": "pres2027_bouamrane_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 15.315256868352844,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 0.1194206158802185,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.07388542990025711,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.20934185335282898,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.015392779488523483,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.35319321151506045,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.08675840893620694,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.008983273660522461,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.5965187316505356,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.007257551353282928,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.029183174927322388,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.0035888127488429545,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.00031345205972152946,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0009226084297168255,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.013109292349481582,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.00011507586837154627,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.002982593612370439,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": -0.08076926790394306,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -16.090866512626953,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 1.214685243852724,
+    "employeurs prives": -16.090866512626953
+   },
+   "par_sous_secteur": {
+    "Etat": 0.7162527995904756,
+    "ASSO": -15.632463607394152,
+    "APUL": 0.007257551353282928,
+    "ODAC": 0.029183174927322388,
+    "hors_APU": 0.0035888127488429545
+   },
+   "menages_deciles_md": [
+    0.0614498740570515,
+    0.0887272257737718,
+    0.334364190233508,
+    0.22526157332619487,
+    0.22998059765253576,
+    0.23277157832651915,
+    0.1852395181157577,
+    0.1929330154204522,
+    0.13117006943737836,
+    0.06444656514825929
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": -0.4390755995786151,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_kazib_programme": {
+   "scenario": "pres2027_kazib_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 15.444320949573944,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 0.12092509932759095,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.07473431626044083,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.2117471063300934,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.01556964440068245,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.35728946860824584,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.0874576319885875,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.008983273660522461,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.602335986154088,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.007335065334407806,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.029440706828697205,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.0037334500771926643,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.0003192237703249455,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0009226084297168255,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.013109292349481582,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.00011507586837154627,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.0030116798813619615,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": -0.08143533323913384,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -16.228399917322264,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 1.2286253234113313,
+    "employeurs prives": -16.228399917322264
+   },
+   "par_sous_secteur": {
+    "Etat": 0.7235803092520039,
+    "ASSO": -15.763864125403234,
+    "APUL": 0.007335065334407806,
+    "ODAC": 0.029440706828697205,
+    "hors_APU": 0.0037334500771926643
+   },
+   "menages_deciles_md": [
+    0.06227414905413452,
+    0.08994287907150883,
+    0.3379132479520755,
+    0.2283361628976706,
+    0.23238545403905844,
+    0.23539860864643883,
+    0.18737725529417135,
+    0.19495532371112415,
+    0.13265175698249473,
+    0.06517250548387851
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": -0.44454635566301093,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_le_pen_lp20_tva_energie": {
+   "scenario": "pres2027_le_pen_lp20_tva_energie",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 11.293087490005355,
+   "lignes": [
+    {
+     "module": "tva_menages",
+     "solde_apu_md": -11.293087490005355,
+     "payeur": "menages",
+     "bloc": "boucle:tva",
+     "sous_secteur": "partage",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": -11.293087490005355
+   },
+   "par_sous_secteur": {
+    "partage": -11.293087490005355
+   },
+   "menages_deciles_md": [
+    0.7310338016965507,
+    0.86172906300026,
+    0.9422857752021087,
+    1.046325664928717,
+    1.1251298503224587,
+    1.1643159386400925,
+    1.2768484573978505,
+    1.2469337196249615,
+    1.3766229222710118,
+    1.521862296921341
+   ],
+   "employeurs": null,
+   "non_reparti_md": 0.0,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_le_pen_lp21_ir_moins_30_ans": {
+   "scenario": "pres2027_le_pen_lp21_ir_moins_30_ans",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 8.655462812895752,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -8.655462812895829,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -8.655462812895829
+   },
+   "par_sous_secteur": {
+    "Etat": -8.655462812895829
+   },
+   "menages_deciles_md": [
+    0.0005619696671848359,
+    0.016255205483680712,
+    0.053185306071139415,
+    0.09915272824391626,
+    0.2275744291739254,
+    0.49930841856074926,
+    0.8101786411283989,
+    1.237297294534088,
+    1.9229515147466048,
+    3.7889973052861436
+   ],
+   "employeurs": null,
+   "non_reparti_md": 7.638334409421077e-14,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_le_pen_lp22_part_pleine_2e_enfant": {
+   "scenario": "pres2027_le_pen_lp22_part_pleine_2e_enfant",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 2.0850430962766113,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -2.0850430902124635,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -2.0850430902124635
+   },
+   "par_sous_secteur": {
+    "Etat": -2.0850430902124635
+   },
+   "menages_deciles_md": [
+    0.0,
+    0.0011006532984365982,
+    0.006844542161928013,
+    0.029416472993053732,
+    0.09097698998812186,
+    0.21576897490417804,
+    0.3259330925528315,
+    0.3933942971174122,
+    0.5052324644327048,
+    0.5163756088278781
+   ],
+   "employeurs": null,
+   "non_reparti_md": -6.064147850537438e-09,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_le_pen_lp26_suppression_cvec": {
+   "scenario": "pres2027_le_pen_lp26_suppression_cvec",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 0.23625195234692384,
+   "lignes": [
+    {
+     "module": "cvec",
+     "solde_apu_md": -0.2362519462831718,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -0.2362519462831718
+   },
+   "par_sous_secteur": {
+    "ODAC": -0.2362519462831718
+   },
+   "menages_deciles_md": [
+    0.013101863936530343,
+    0.03129643532608645,
+    0.033578466847527626,
+    0.03194844130017657,
+    0.029014400772609337,
+    0.026569366999636627,
+    0.026895371502699664,
+    0.015974220650088286,
+    0.01564821614702526,
+    0.012225168864863484
+   ],
+   "employeurs": null,
+   "non_reparti_md": -6.0637520282735835e-09,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_le_pen_programme": {
+   "scenario": "pres2027_le_pen_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 21.407867145596434,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -9.878565302948761,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "tva_menages",
+     "solde_apu_md": -11.293049878172363,
+     "payeur": "menages",
+     "bloc": "boucle:tva",
+     "sous_secteur": "partage",
+     "branche": "non portée"
+    },
+    {
+     "module": "cvec",
+     "solde_apu_md": -0.2362519462831718,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -21.407867127404298
+   },
+   "par_sous_secteur": {
+    "Etat": -9.878565302948761,
+    "partage": -11.293049878172363,
+    "ODAC": -0.2362519462831718
+   },
+   "menages_deciles_md": [
+    0.7448358248223088,
+    0.9081051171659613,
+    1.032081389999261,
+    1.180577228914565,
+    1.3958424372635996,
+    1.725470024642027,
+    2.277853058192993,
+    2.6772957232380303,
+    3.71479072578978,
+    5.751015615568015
+   ],
+   "employeurs": null,
+   "non_reparti_md": -1.8192139350503567e-08,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_lisnard_l1_csg_activite_6_6": {
+   "scenario": "pres2027_lisnard_l1_csg_activite_6_6",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 25.93849095574463,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 3.201152390604355,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": -7.40491492149189,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": -20.907995098836114,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_non_salarie",
+     "solde_apu_md": -1.5129061324616824,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": 0.004345154395532608,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.5676409078564701,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.017995905316856384,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.07901016385025787,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.007251644263490796,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": -0.0012181188673502804,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": 0.011896023172578811,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": 0.0021812389249517916,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -9.211208970490098e-05,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.002838204501007296,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    }
+   ],
+   "par_payeur": {
+    "menages": -25.938491159863254
+   },
+   "par_sous_secteur": {
+    "Etat": 3.767575179593475,
+    "ASSO": -29.810324052887335,
+    "APUL": 0.017995905316856384,
+    "ODAC": 0.07901016385025787,
+    "hors_APU": 0.007251644263490796
+   },
+   "menages_deciles_md": [
+    0.1991220503264521,
+    0.5793193386773245,
+    1.1281121819671132,
+    1.4478806813629452,
+    1.9721362910333293,
+    2.3469250883972075,
+    2.6968237012068084,
+    3.0868866670623865,
+    3.8119062437516815,
+    6.760687525840835
+   ],
+   "employeurs": null,
+   "non_reparti_md": 2.0411862422520244e-07,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_lisnard_l20_deplafonnement_qf": {
+   "scenario": "pres2027_lisnard_l20_deplafonnement_qf",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 3.4964045110249025,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -3.4964045049605406,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -3.4964045049605406
+   },
+   "par_sous_secteur": {
+    "Etat": -3.4964045049605406
+   },
+   "menages_deciles_md": [
+    0.0,
+    0.0,
+    0.0,
+    0.004455394875194693,
+    0.008769521132395406,
+    0.018639695563227417,
+    0.03958315628143354,
+    0.22942955610066548,
+    0.9181466510793991,
+    2.2773805359922954
+   ],
+   "employeurs": null,
+   "non_reparti_md": -6.064361901536586e-09,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_lisnard_l4_suppression_c3s_cvae": {
+   "scenario": "pres2027_lisnard_l4_suppression_c3s_cvae",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 6.5473521939070585,
+   "lignes": [
+    {
+     "module": "impot_societes",
+     "solde_apu_md": 1.6612242120976564,
+     "payeur": "entreprises",
+     "bloc": "entreprises:impot_societes",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "contribution_sociale_is",
+     "solde_apu_md": 0.04432317644253612,
+     "payeur": "entreprises",
+     "bloc": "entreprises:contribution_sociale_is",
+     "sous_secteur": "non porté",
+     "branche": null
+    },
+    {
+     "module": "cebge",
+     "solde_apu_md": 0.3181624023345146,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cebge",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cvae",
+     "solde_apu_md": -3.2817884792917784,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cvae",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "c3s",
+     "solde_apu_md": -5.289273504153075,
+     "payeur": "entreprises",
+     "bloc": "entreprises:c3s",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "entreprises": -6.547352192570147
+   },
+   "par_sous_secteur": {
+    "Etat": -1.3024018648596074,
+    "non porté": 0.04432317644253612,
+    "ASSO": -5.289273504153075
+   },
+   "menages_deciles_md": null,
+   "employeurs": null,
+   "non_reparti_md": -1.3369119145067998e-09,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_lisnard_programme": {
+   "scenario": "pres2027_lisnard_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 36.18544006388997,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -0.49844451150578306,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": -7.40491492149189,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": -20.907995098836114,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_non_salarie",
+     "solde_apu_md": -1.5129061324616824,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": 0.004345154395532608,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.5676409078564701,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.017995905316856384,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.07901016385025787,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.007251644263490796,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": -0.0012181188673502804,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": 0.011896023172578811,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": 0.0021812389249517916,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -9.211208970490098e-05,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.002838204501007296,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "impot_societes",
+     "solde_apu_md": 1.6612242120976564,
+     "payeur": "entreprises",
+     "bloc": "entreprises:impot_societes",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "contribution_sociale_is",
+     "solde_apu_md": 0.04432317644253612,
+     "payeur": "entreprises",
+     "bloc": "entreprises:contribution_sociale_is",
+     "sous_secteur": "non porté",
+     "branche": null
+    },
+    {
+     "module": "cebge",
+     "solde_apu_md": 0.3181624023345146,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cebge",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cvae",
+     "solde_apu_md": -3.2817884792917784,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cvae",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "c3s",
+     "solde_apu_md": -5.289273504153075,
+     "payeur": "entreprises",
+     "bloc": "entreprises:c3s",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": -29.63808806197339,
+    "entreprises": -6.547352192570147
+   },
+   "par_sous_secteur": {
+    "Etat": -1.2344235873762708,
+    "ASSO": -35.09959755704041,
+    "APUL": 0.017995905316856384,
+    "ODAC": 0.07901016385025787,
+    "hors_APU": 0.007251644263490796,
+    "non porté": 0.04432317644253612
+   },
+   "menages_deciles_md": [
+    0.1991220503264521,
+    0.5793193386773245,
+    1.1281121819671132,
+    1.453520559265936,
+    1.9834548568991983,
+    2.368301669383769,
+    2.742411549954184,
+    3.3537881000584098,
+    4.83376423560573,
+    9.087602141726252
+   ],
+   "employeurs": null,
+   "non_reparti_md": 1.9065357292902263e-07,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_melenchon_defiscalisation_pensions_alimentaires": {
+   "scenario": "pres2027_melenchon_defiscalisation_pensions_alimentaires",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 0.19134446813085937,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -0.19134446206684874,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -0.19134446206684874
+   },
+   "par_sous_secteur": {
+    "Etat": -0.19134446206684874
+   },
+   "menages_deciles_md": [
+    0.0,
+    0.0,
+    0.0,
+    0.0018830641057878612,
+    0.014344198134773155,
+    0.02198822753040335,
+    0.03290627964229551,
+    0.03769077776127244,
+    0.048240904441350194,
+    0.03429101651504375
+   ],
+   "employeurs": null,
+   "non_reparti_md": -6.064010626971594e-09,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_melenchon_exonerations_au_dela_2_smic": {
+   "scenario": "pres2027_melenchon_exonerations_au_dela_2_smic",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": -6.326031316012451,
+   "lignes": [
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": 6.326031316012451,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "employeurs prives": 6.326031316012451
+   },
+   "par_sous_secteur": {
+    "ASSO": 6.326031316012451
+   },
+   "menages_deciles_md": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": 0.0,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_melenchon_garantie_autonomie_jeunes": {
+   "scenario": "pres2027_melenchon_garantie_autonomie_jeunes",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 35.6521548075437,
+   "lignes": [
+    {
+     "module": "garantie_autonomie",
+     "solde_apu_md": -35.65215457523306,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "non porté",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -35.65215457523306
+   },
+   "par_sous_secteur": {
+    "non porté": -35.65215457523306
+   },
+   "menages_deciles_md": [
+    8.73943925223903,
+    4.38527533282558,
+    4.251937836551632,
+    3.4758804349633,
+    3.4209346796884024,
+    3.179912926360718,
+    2.960769067207112,
+    1.9472881463946394,
+    1.9495907482244799,
+    1.3411263830886355
+   ],
+   "employeurs": null,
+   "non_reparti_md": -2.3231064005813096e-07,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_melenchon_indexation_pensions_prestations_10": {
+   "scenario": "pres2027_melenchon_indexation_pensions_prestations_10",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 31.973064900475585,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 6.1714986634663695,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "prelevements_pensions",
+     "solde_apu_md": 1.5253725026010723,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -1.204754911039776,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.3517344209606886,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.19899565710150147,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": -1.1161435852586097,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.01789320706803,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.005483935717878699,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.12034412647423912,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.9473577181351986,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": -0.16530738941114878,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.013861785711329191,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.0017586720827785284,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": 1.1918253904990073,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "retraite_imposable",
+     "solde_apu_md": -37.559470932009035,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "partage",
+     "branche": "vieillesse"
+    },
+    {
+     "module": "paje",
+     "solde_apu_md": -0.33459605969934175,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    }
+   ],
+   "par_payeur": {
+    "menages": -31.97306783098425
+   },
+   "par_sous_secteur": {
+    "Etat": 6.528717020144938,
+    "ASSO": -0.043059198031074,
+    "APUL": 0.19899565710150147,
+    "ODAC": -1.1161435852586097,
+    "hors_APU": 0.01789320706803,
+    "partage": -37.559470932009035
+   },
+   "menages_deciles_md": [
+    0.8567074957098322,
+    2.252865327093483,
+    2.9256000799877206,
+    3.1895740868656746,
+    3.1141106208583147,
+    3.5235310261467445,
+    3.8280317114986038,
+    4.182273386485531,
+    4.288652170697645,
+    3.811718995132102
+   ],
+   "employeurs": null,
+   "non_reparti_md": 2.930508664178433e-06,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_melenchon_point_indice_10": {
+   "scenario": "pres2027_melenchon_point_indice_10",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 11.088845339253663,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 2.1733121244744567,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.4005576848383255,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 1.13491348577948,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.08344951497709084,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 1.9107528917745666,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": 0.0023734526633815765,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.1551051617131195,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.0003998953456802368,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.02103463420513916,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.003401655273797512,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": -0.0011271874830396772,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": 0.006260019263994217,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -4.316736237576604e-05,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.0007755257916200906,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": 0.008715624040729522,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": 12.52617817160083,
+     "payeur": "employeurs publics",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO (payé par les APU employeurs : interne aux APU)",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 5.898330263712725,
+    "employeurs publics": 12.52617817160083
+   },
+   "par_sous_secteur": {
+    "Etat": 2.3272900987045366,
+    "ASSO": 3.5462039801835723,
+    "APUL": 0.0003998953456802368,
+    "ODAC": 0.02103463420513916,
+    "hors_APU": 0.003401655273797512,
+    "ASSO (payé par les APU employeurs : interne aux APU)": 12.52617817160083
+   },
+   "menages_deciles_md": [
+    0.02440230760185208,
+    0.14441161400697572,
+    0.34167819536526667,
+    0.4703081644758931,
+    0.7923733635615303,
+    1.1041068199563464,
+    1.4324665122273283,
+    1.6827781515451916,
+    2.0713460674000603,
+    2.0901066264611528
+   ],
+   "employeurs": "publics",
+   "non_reparti_md": -29.513353774567218,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_melenchon_smic_1700_net": {
+   "scenario": "pres2027_melenchon_smic_1700_net",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 29.74478908353644,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 0.37521460883627317,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.19933263662712478,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.5647758663691407,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.04152762202404499,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.9523815736391754,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.16939433092585157,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.021551430314445497,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 1.3318553438121015,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.018620269503261566,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.06882463931440354,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.00883352653440416,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.00039022803948295115,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0015360557423348426,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.027160815920391084,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": -0.0014785066581442356,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.0002570882144844234,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.006659276575219646,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": -0.15580935257921696,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "paje",
+     "solde_apu_md": 0.0003091665652880669,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -31.671987830585206,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 3.1787328007635804,
+    "employeurs prives": -31.671987830585206
+   },
+   "par_sous_secteur": {
+    "Etat": 1.7074601806878575,
+    "ASSO": -30.29699364586155,
+    "APUL": 0.018620269503261566,
+    "ODAC": 0.06882463931440354,
+    "hors_APU": 0.00883352653440416
+   },
+   "menages_deciles_md": [
+    0.17653917484839285,
+    0.29454091036502983,
+    0.8480985559417038,
+    0.737484308720991,
+    0.5855272343113455,
+    0.642052934481453,
+    0.5211882988801073,
+    0.483408158617093,
+    0.348854876085805,
+    0.17181609199846543
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": -1.2515340537148134,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_melenchon_suppression_pfu": {
+   "scenario": "pres2027_melenchon_suppression_pfu",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": -13.78805691232251,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 13.892114418715668,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cdhr",
+     "solde_apu_md": -0.08410780343816468,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "prelevements_pensions",
+     "solde_apu_md": 0.002621472023887634,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.005005010938365936,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.0023857969089450836,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 8.611493936157226e-05,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": -0.0150040380134964,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": -0.001079711594783187,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 3.931470647931099e-06,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0009114160510511398,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": -0.0012246118959915637,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 4.496182948511839e-05,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -1.1928983708538114e-05,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "paje",
+     "solde_apu_md": -0.0018513238061742784,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "pfu_et_prelevements_sociaux_capital",
+     "solde_apu_md": -10.248763453613774,
+     "payeur": "menages",
+     "bloc": "entreprises:pfu_et_prelevements_sociaux_capital",
+     "sous_secteur": "partage",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 3.539297397552481
+   },
+   "par_sous_secteur": {
+    "Etat": 13.810396343657095,
+    "ASSO": -0.006337857821918704,
+    "APUL": 8.611493936157226e-05,
+    "ODAC": -0.0150040380134964,
+    "hors_APU": -0.001079711594783187,
+    "partage": -10.248763453613774
+   },
+   "menages_deciles_md": [
+    0.0016644226012372191,
+    0.009104752347468981,
+    0.0010048314311938047,
+    -0.0031322124838688986,
+    -0.0023126343946440033,
+    -0.009538123539498585,
+    -0.031279331018857846,
+    -0.08564744519273872,
+    -0.35133893950455225,
+    -13.316582232568077
+   ],
+   "employeurs": null,
+   "non_reparti_md": 10.248759514770025,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_melenchon_programme": {
+   "scenario": "pres2027_melenchon_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 88.98039628178317,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 22.346516850886047,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.5943275338110656,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 1.6839281356787414,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.1238182240347662,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 2.836158537100998,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "cdhr",
+     "solde_apu_md": -0.08104379772254598,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.1682068327041391,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "prelevements_pensions",
+     "solde_apu_md": 1.526524860817356,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -1.2362687334759979,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 1.6768783387761306,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.16260599685601998,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": -1.0594637797450732,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.02862063039573002,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.005949715180141806,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.12423652489986324,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.5305417369138202,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": -0.1752516346172695,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.012077741094637304,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.008384391530437843,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": 1.0208189767677431,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "garantie_autonomie",
+     "solde_apu_md": -35.192106569473175,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "non porté",
+     "branche": null
+    },
+    {
+     "module": "retraite_imposable",
+     "solde_apu_md": -37.559470932009035,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "partage",
+     "branche": "vieillesse"
+    },
+    {
+     "module": "paje",
+     "solde_apu_md": -0.34925169586806915,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -14.152764659929932,
+     "payeur": "employeurs meles",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "pfu_et_prelevements_sociaux_capital",
+     "solde_apu_md": -10.259377232685326,
+     "payeur": "menages",
+     "bloc": "entreprises:pfu_et_prelevements_sociaux_capital",
+     "sous_secteur": "partage",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": -54.725378320245376,
+    "employeurs meles": -14.152764659929932
+   },
+   "par_sous_secteur": {
+    "Etat": 23.94830110711977,
+    "ASSO": -8.947252200634221,
+    "APUL": 0.16260599685601998,
+    "ODAC": -1.0594637797450732,
+    "hors_APU": 0.02862063039573002,
+    "non porté": -35.192106569473175,
+    "partage": -47.81884816469436
+   },
+   "menages_deciles_md": [
+    9.961408679112099,
+    6.70138662401651,
+    8.013439542012817,
+    7.823157357583198,
+    8.098748014587015,
+    8.441411626701985,
+    8.596744305987384,
+    8.129870355770901,
+    8.457100951470743,
+    -5.939669904767556
+   ],
+   "employeurs": "meles",
+   "non_reparti_md": -20.10225330160786,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_philippe_p10_exoneration_deux_heures": {
+   "scenario": "pres2027_philippe_p10_exoneration_deux_heures",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 0.0010259440043945312,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -1.5524023895263673e-06,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": -0.00103305126322937,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 5.066320380210876e-06,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 3.481141191482544e-06,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 8.38213688135147e-09,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -2.5329910412430765e-08,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    }
+   ],
+   "par_payeur": {
+    "menages": -0.0010260731518207341
+   },
+   "par_sous_secteur": {
+    "Etat": 3.5223001275658606e-06,
+    "ASSO": -0.0010330765931397825,
+    "APUL": 3.481141191482544e-06
+   },
+   "menages_deciles_md": [
+    1.1226744829092124e-05,
+    7.583326422594238e-06,
+    3.0759386015985555e-05,
+    3.268797487782784e-05,
+    5.887530242049535e-05,
+    8.887080539066343e-05,
+    9.860230134234926e-05,
+    0.000158369361133021,
+    0.0003160201915236172,
+    0.00015119707623647365
+   ],
+   "employeurs": null,
+   "non_reparti_md": 1.2914742620294406e-07,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_philippe_p11_allocation_familiale_unique": {
+   "scenario": "pres2027_philippe_p11_allocation_familiale_unique",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 46.3328637865144,
+   "lignes": [
+    {
+     "module": "af",
+     "solde_apu_md": 12.089019871970741,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": -1.6447024499804859,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": -0.8440361725584488,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": -0.02770631869519806,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": -0.00044182925858545305,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": -0.018472869533539295,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": 1.3179878267895988,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -0.06703503995569816,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": 0.00822351204963109,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "allocation_enfant",
+     "solde_apu_md": -57.14570020313411,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "non porté",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -46.3328636723061
+   },
+   "par_sous_secteur": {
+    "ASSO": 13.348196170854273,
+    "Etat": -1.663175319514025,
+    "APUL": -0.8440361725584488,
+    "ODAC": -0.02770631869519806,
+    "hors_APU": -0.00044182925858545305,
+    "non porté": -57.14570020313411
+   },
+   "menages_deciles_md": [
+    4.768062647074581,
+    5.226211027826291,
+    6.510743730171711,
+    5.994735876432407,
+    5.941796180895741,
+    5.548494138396737,
+    4.868126834453333,
+    3.746347782949615,
+    2.8968782787862932,
+    0.8314672895275322
+   ],
+   "employeurs": null,
+   "non_reparti_md": -1.1420830503539037e-07,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_philippe_programme": {
+   "scenario": "pres2027_philippe_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 46.565561611406004,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -1.5524023895263673e-06,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": -0.00103305126322937,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": 12.131562368857384,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": -1.5200876155038834,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": -0.8043438651126041,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": -0.02335715001438141,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": -0.00044182925858569146,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": -0.021156825462567985,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": 1.353069498122933,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -0.06742316025502058,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": 0.007600437892583639,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "allocation_enfant",
+     "solde_apu_md": -57.619948561651405,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "non porté",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -46.565561306051166
+   },
+   "par_sous_secteur": {
+    "Etat": -1.541245993368841,
+    "ASSO": 13.423776093354652,
+    "APUL": -0.8043438651126041,
+    "ODAC": -0.02335715001438141,
+    "hors_APU": -0.00044182925858569146,
+    "non porté": -57.619948561651405
+   },
+   "menages_deciles_md": [
+    4.928491160528477,
+    4.786778476506859,
+    6.37948424384508,
+    5.653404015775436,
+    6.107530648383703,
+    5.568453597623743,
+    5.083417842015253,
+    3.967233907837662,
+    3.1615225807171727,
+    0.9291733866386876
+   ],
+   "employeurs": null,
+   "non_reparti_md": -3.0535483830362864e-07,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_retailleau_r13_zero_cotisation_1623_h": {
+   "scenario": "pres2027_retailleau_r13_zero_cotisation_1623_h",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 4.301791512219727,
+   "lignes": [
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": -0.0007789532379455567,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 3.7406792068481445e-06,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 2.523859561920166e-06,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 6.128518760204315e-09,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -1.8699105732142925e-08,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -4.301018895653076,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": -0.0007727012697637604,
+    "employeurs prives": -4.301018895653076
+   },
+   "par_sous_secteur": {
+    "ASSO": -4.301797867590127,
+    "Etat": 3.7468077256083486e-06,
+    "APUL": 2.523859561920166e-06
+   },
+   "menages_deciles_md": [
+    7.288709438294551e-06,
+    4.531555348715344e-06,
+    2.1112531028039816e-05,
+    2.387737199226912e-05,
+    4.357042992768677e-05,
+    6.626944648941769e-05,
+    7.394506373111572e-05,
+    0.00012145839887063125,
+    0.0002410895290191174,
+    0.00011537291442192763
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": 8.470311296804311e-08,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_retailleau_r15_revenu_incitation_activite": {
+   "scenario": "pres2027_retailleau_r15_revenu_incitation_activite",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 5.755693003334473,
+   "lignes": [
+    {
+     "module": "ppa",
+     "solde_apu_md": 8.841678977471668,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 12.287731424294606,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.38711365441332246,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.014488184115424038,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.5103636519515339,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.04420839389934646,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "ria",
+     "solde_apu_md": -27.752860555321345,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "non porté",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -5.755693056974138
+   },
+   "par_sous_secteur": {
+    "Etat": 9.352042629423202,
+    "APUL": 12.287731424294606,
+    "ODAC": 0.38711365441332246,
+    "hors_APU": 0.014488184115424038,
+    "ASSO": -0.04420839389934646,
+    "non porté": -27.752860555321345
+   },
+   "menages_deciles_md": [
+    -0.5794356608202877,
+    1.0666063716282208,
+    0.8383542203647069,
+    0.5899530948401346,
+    0.6675605162924952,
+    0.8636020918916096,
+    0.8387504823214743,
+    0.49338778290740665,
+    0.5457848935776968,
+    0.43112921033088875
+   ],
+   "employeurs": null,
+   "non_reparti_md": 5.3639664265858755e-08,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_retailleau_r19_gains_rendus_moitie": {
+   "scenario": "pres2027_retailleau_r19_gains_rendus_moitie",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 10.562864045567382,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 1.9288034134804688,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": -12.856537354904862,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": 0.002444885001865387,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.28623604923694707,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.010404414766651153,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.054807351254879,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.004683597897056102,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": -0.001183894743191302,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": 0.0075105335912418365,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": 0.0014541592675094606,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -5.704789923712611e-05,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.0014311802099645139,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    }
+   ],
+   "par_payeur": {
+    "menages": -10.562865073260632
+   },
+   "par_sous_secteur": {
+    "Etat": 2.2138555679742247,
+    "ASSO": -12.846616005153445,
+    "APUL": 0.010404414766651153,
+    "ODAC": 0.054807351254879,
+    "hors_APU": 0.004683597897056102
+   },
+   "menages_deciles_md": [
+    0.10022797756197495,
+    0.2839865385194977,
+    0.5444688513753603,
+    0.6743299794054248,
+    0.8890524718881442,
+    1.0071684593485701,
+    1.1141078682624974,
+    1.2492445293814034,
+    1.4526916236836591,
+    2.386394020999783
+   ],
+   "employeurs": null,
+   "non_reparti_md": 1.0276932549402318e-06,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe": {
+   "scenario": "pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 6.5473521939070585,
+   "lignes": [
+    {
+     "module": "impot_societes",
+     "solde_apu_md": 1.6612242120976564,
+     "payeur": "entreprises",
+     "bloc": "entreprises:impot_societes",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "contribution_sociale_is",
+     "solde_apu_md": 0.04432317644253612,
+     "payeur": "entreprises",
+     "bloc": "entreprises:contribution_sociale_is",
+     "sous_secteur": "non porté",
+     "branche": null
+    },
+    {
+     "module": "cebge",
+     "solde_apu_md": 0.3181624023345146,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cebge",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cvae",
+     "solde_apu_md": -3.2817884792917784,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cvae",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "c3s",
+     "solde_apu_md": -5.289273504153075,
+     "payeur": "entreprises",
+     "bloc": "entreprises:c3s",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "entreprises": -6.547352192570147
+   },
+   "par_sous_secteur": {
+    "Etat": -1.3024018648596074,
+    "non porté": 0.04432317644253612,
+    "ASSO": -5.289273504153075
+   },
+   "menages_deciles_md": null,
+   "employeurs": null,
+   "non_reparti_md": -1.3369119145067998e-09,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_retailleau_r27_revenu_familial": {
+   "scenario": "pres2027_retailleau_r27_revenu_familial",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 20.999957545912597,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 11.359491877357376,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "af",
+     "solde_apu_md": 12.089019871970741,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": -1.6447024499804859,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": -0.8440361725584488,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": -0.02770631869519806,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": -0.00044182925858545305,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": -0.018472869533539295,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": 1.3179878267895988,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": 1.8019391235208164,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -0.07604473570154383,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": 0.00822351204963109,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "allocation_enfant",
+     "solde_apu_md": -44.965215199088746,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "non porté",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -20.99995736312838
+   },
+   "par_sous_secteur": {
+    "Etat": 9.696316557843351,
+    "ASSO": 15.141125598629243,
+    "APUL": -0.8440361725584488,
+    "ODAC": -0.02770631869519806,
+    "hors_APU": -0.00044182925858545305,
+    "non porté": -44.965215199088746
+   },
+   "menages_deciles_md": [
+    2.621247752916962,
+    2.836337307732936,
+    3.554373297977293,
+    2.952851306735154,
+    2.5324935481482527,
+    2.013228036698643,
+    1.7603734126924353,
+    1.2138877644961348,
+    0.8254211553453761,
+    0.6897439631693859
+   ],
+   "employeurs": null,
+   "non_reparti_md": -1.8278421265449651e-07,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_retailleau_r28_reduction_ir_interets_emprunt": {
+   "scenario": "pres2027_retailleau_r28_reduction_ir_interets_emprunt",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 1.4876906229614257,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -1.487690548463562,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -1.487690548463562
+   },
+   "par_sous_secteur": {
+    "Etat": -1.487690548463562
+   },
+   "menages_deciles_md": [
+    0.0,
+    0.0005580158923336993,
+    0.0020381769998326737,
+    0.015770692206332627,
+    0.043986030230269806,
+    0.12454293149522772,
+    0.27005672724938584,
+    0.33108424871260456,
+    0.36119822944293173,
+    0.33845557073272803
+   ],
+   "employeurs": null,
+   "non_reparti_md": -7.449786365576472e-08,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_retailleau_programme": {
+   "scenario": "pres2027_retailleau_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 48.886230183388996,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 10.829918338883957,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": -12.856556710327942,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": 12.131562368857384,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 8.379842357867412,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 11.81654262584089,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.4163431357550297,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.019715852641831875,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.5010305013625848,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": 1.353069498122933,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": 0.0009397473207464218,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": 1.876818663270512,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": -0.07681195216564199,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.04189921084878364,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "ria",
+     "solde_apu_md": -27.423160267372182,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "non porté",
+     "branche": null
+    },
+    {
+     "module": "allocation_enfant",
+     "solde_apu_md": -44.965215199088746,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "non porté",
+     "branche": null
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -4.301018895653076,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "impot_societes",
+     "solde_apu_md": 1.6612242120976564,
+     "payeur": "entreprises",
+     "bloc": "entreprises:impot_societes",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "contribution_sociale_is",
+     "solde_apu_md": 0.04432317644253612,
+     "payeur": "entreprises",
+     "bloc": "entreprises:contribution_sociale_is",
+     "sous_secteur": "non porté",
+     "branche": null
+    },
+    {
+     "module": "cebge",
+     "solde_apu_md": 0.3181624023345146,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cebge",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cvae",
+     "solde_apu_md": -3.2817884792917784,
+     "payeur": "entreprises",
+     "bloc": "entreprises:cvae",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "c3s",
+     "solde_apu_md": -5.289273504153075,
+     "payeur": "entreprises",
+     "bloc": "entreprises:c3s",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": -38.03786024988001,
+    "employeurs prives": -4.301018895653076,
+    "entreprises": -6.547352192570147
+   },
+   "par_sous_secteur": {
+    "Etat": 18.40838933325435,
+    "ASSO": -7.203169995576943,
+    "APUL": 11.81654262584089,
+    "ODAC": 0.4163431357550297,
+    "hors_APU": 0.019715852641831875,
+    "non porté": -72.3440522900184
+   },
+   "menages_deciles_md": [
+    1.948180532901521,
+    3.3462454457054083,
+    4.55494697867771,
+    3.9244045798050404,
+    4.452828986747811,
+    4.219534536740821,
+    4.1910655564547135,
+    3.4279369116179303,
+    3.25301368700838,
+    3.8585088062848745
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": 1.1547142406698185e-06,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_roussel_smic_plus_15": {
+   "scenario": "pres2027_roussel_smic_plus_15",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 27.768399635549073,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 0.28997185581549073,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.17730724052746963,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.5023709019317016,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.03693901129670143,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.8471328418267212,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.15748743976419674,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.0186617028498497,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 1.2162837621799927,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.01700910818139458,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.06009771715934372,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.008401120381573677,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.0006354614174839258,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0015360557423348426,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.02622355145806694,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": -0.0007514270007019043,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.00023431785450473428,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.006081418679251269,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": -0.14547561837120437,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "paje",
+     "solde_apu_md": 0.0003091665652880669,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -29.464411010808593,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 2.80047529127206,
+    "employeurs prives": -29.464411010808593
+   },
+   "par_sous_secteur": {
+    "Etat": 1.5068910794129673,
+    "ASSO": -28.25633474467181,
+    "APUL": 0.01700910818139458,
+    "ODAC": 0.06009771715934372,
+    "hors_APU": 0.008401120381573677
+   },
+   "menages_deciles_md": [
+    0.1561801357352528,
+    0.2581717897404194,
+    0.7647417600890019,
+    0.654719943669071,
+    0.5271798782162835,
+    0.5749471133473903,
+    0.46415224043516984,
+    0.43572630007557905,
+    0.31485986754378154,
+    0.15457810738414143
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": -1.1044639160125413,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_roussel_tva_carburants_5_5": {
+   "scenario": "pres2027_roussel_tva_carburants_5_5",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 5.198684093532196,
+   "lignes": [
+    {
+     "module": "tva_menages",
+     "solde_apu_md": -5.198684093532196,
+     "payeur": "menages",
+     "bloc": "boucle:tva",
+     "sous_secteur": "partage",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": -5.198684093532196
+   },
+   "par_sous_secteur": {
+    "partage": -5.198684093532196
+   },
+   "menages_deciles_md": [
+    0.29189450214835644,
+    0.35391319546115624,
+    0.4073365604652411,
+    0.4720194390934522,
+    0.5508349163881736,
+    0.5612630115134544,
+    0.6254886852278172,
+    0.6044330381563987,
+    0.6861519482357878,
+    0.6453487968423424
+   ],
+   "employeurs": null,
+   "non_reparti_md": 0.0,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_roussel_programme": {
+   "scenario": "pres2027_roussel_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 32.96708372908127,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 0.28997185581549073,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.17730724052746963,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.5023709019317016,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.03693901129670143,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.8471328418267212,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "tva_menages",
+     "solde_apu_md": -5.198684093532196,
+     "payeur": "menages",
+     "bloc": "boucle:tva",
+     "sous_secteur": "partage",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.15748743976419674,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.0186617028498497,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 1.2162837621799927,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.01700910818139458,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.06009771715934372,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.008401120381573677,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.0006354614174839258,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0015360557423348426,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.02622355145806694,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ars",
+     "solde_apu_md": -0.0007514270007019043,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.00023431785450473428,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.006081418679251269,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": -0.14547561837120437,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "paje",
+     "solde_apu_md": 0.0003091665652880669,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -29.464411010808593,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": -2.3982088022601364,
+    "employeurs prives": -29.464411010808593
+   },
+   "par_sous_secteur": {
+    "Etat": 1.5068910794129673,
+    "ASSO": -28.25633474467181,
+    "partage": -5.198684093532196,
+    "APUL": 0.01700910818139458,
+    "ODAC": 0.06009771715934372,
+    "hors_APU": 0.008401120381573677
+   },
+   "menages_deciles_md": [
+    0.4480746378836092,
+    0.6120849852015756,
+    1.172078320554243,
+    1.1267393827625234,
+    1.0780147946044571,
+    1.1362101248608443,
+    1.0896409256629873,
+    1.0401593382319776,
+    1.0010118157795693,
+    0.7999269042264839
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": -1.1044639160125378,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_ruffin_credit_impot_domicile_travail": {
+   "scenario": "pres2027_ruffin_credit_impot_domicile_travail",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 15.584068642235351,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -15.584068161401763,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": -15.584068161401763
+   },
+   "par_sous_secteur": {
+    "Etat": -15.584068161401763
+   },
+   "menages_deciles_md": [
+    0.2621396838555843,
+    0.5342343317588384,
+    1.1942105138847845,
+    1.2817406653811108,
+    1.6848713206102752,
+    1.883709033498849,
+    1.8762145046807541,
+    1.9399966521473642,
+    2.343749467805746,
+    2.5832024686121406
+   ],
+   "employeurs": null,
+   "non_reparti_md": -4.808335880568393e-07,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_ruffin_smic_1600": {
+   "scenario": "pres2027_ruffin_smic_1600",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 17.584189852419648,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 0.1436278149934387,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.08923400870601272,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.2528294196327362,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.0185904147351532,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.4263795220781555,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.0991003139928112,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.010115627652603149,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.6989577596293192,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.008677503236961365,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.03391799432012558,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.004468559063217878,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.00041481796861338616,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0012293320978696346,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.01404655719080925,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.00012695757626023888,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.0034947887157233803,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": -0.09234668834166813,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -18.50386449861499,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 1.456891463948509,
+    "employeurs prives": -18.50386449861499
+   },
+   "par_sous_secteur": {
+    "Etat": 0.8430003925913713,
+    "ASSO": -17.937037483878157,
+    "APUL": 0.008677503236961365,
+    "ODAC": 0.03391799432012558,
+    "hors_APU": 0.004468559063217878
+   },
+   "menages_deciles_md": [
+    0.07573127160128401,
+    0.1119323620312338,
+    0.39910105730720064,
+    0.28332159010770946,
+    0.2746657657908184,
+    0.28279120867328655,
+    0.22459140838502598,
+    0.22977699444225594,
+    0.15948305143367053,
+    0.07779742801802647
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": -0.5372168177531655,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_ruffin_programme": {
+   "scenario": "pres2027_ruffin_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 33.15931062075363,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": -15.440555240901757,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.08923400870601272,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.2528294196327362,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.0185904147351532,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.4263795220781555,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.0984719027774998,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.010587876261711121,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.6834272004193563,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.0075517692739620204,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.046957058982089996,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.004266312377119302,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.0003011530022563338,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0015384930254659652,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.0018695639658145905,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 6.997965553882718e-05,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.003417135909123346,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": -0.09139609827093888,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -18.50386449861499,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": -14.118229472249931,
+    "employeurs prives": -18.50386449861499
+   },
+   "par_sous_secteur": {
+    "Etat": -14.756826887480145,
+    "ASSO": -17.92404222401795,
+    "APUL": 0.0075517692739620204,
+    "ODAC": 0.046957058982089996,
+    "hors_APU": 0.004266312377119302
+   },
+   "menages_deciles_md": [
+    0.3395436085538108,
+    0.6472227855588438,
+    1.565105111605098,
+    1.5625751175114224,
+    1.9734425135836666,
+    2.170912820832801,
+    2.107111532040217,
+    2.163198808371835,
+    2.502149350356512,
+    2.6630512577105763
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": -0.5372166498887054,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_tondelier_apl_plus_10": {
+   "scenario": "pres2027_tondelier_apl_plus_10",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 1.3283545686269531,
+   "lignes": [
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.11305605803647995,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.0023707212139987945,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": -1.44361205349679,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.0003962395756320953,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.0005652802807480991,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    }
+   ],
+   "par_payeur": {
+    "menages": -1.3283543149514272
+   },
+   "par_sous_secteur": {
+    "Etat": 0.11345229761211204,
+    "APUL": 0.0023707212139987945,
+    "ODAC": -1.44361205349679,
+    "ASSO": -0.0005652802807480991
+   },
+   "menages_deciles_md": [
+    0.42778356689796126,
+    0.42512079086750726,
+    0.22950332957018263,
+    0.09244595174644964,
+    0.061479448968633034,
+    0.038419330076718314,
+    0.0226714483207319,
+    0.015503203341031968,
+    0.011884876593523266,
+    0.003542622243916163
+   ],
+   "employeurs": null,
+   "non_reparti_md": -2.536755259185952e-07,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_tondelier_point_indice_inflation": {
+   "scenario": "pres2027_tondelier_point_indice_inflation",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 2.3327027953568726,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 0.4421630123091736,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.08412549526125336,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.2383556532058258,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.017526144171504974,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.408752426762207,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.03684956405653763,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.00016097290421676635,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.004829074200702667,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.0004897829557923078,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 6.0098293945729736e-05,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.00018424781574492158,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": 0.0018302826138420106,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": 2.641561569375244,
+     "payeur": "employeurs publics",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO (payé par les APU employeurs : interne aux APU)",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 1.2349582589192571,
+    "employeurs publics": 2.641561569375244
+   },
+   "par_sous_secteur": {
+    "Etat": 0.4790726746596569,
+    "ASSO": 0.7504057541988882,
+    "APUL": 0.00016097290421676635,
+    "ODAC": 0.004829074200702667,
+    "hors_APU": 0.0004897829557923078,
+    "ASSO (payé par les APU employeurs : interne aux APU)": 2.641561569375244
+   },
+   "menages_deciles_md": [
+    0.005101062658960933,
+    0.030015083084117676,
+    0.07101744959717113,
+    0.09894095635265703,
+    0.1659436014716121,
+    0.23256821734346445,
+    0.30154625747403646,
+    0.35586383492373175,
+    0.43784380475424534,
+    0.43803872367428853
+   ],
+   "employeurs": "publics",
+   "non_reparti_md": -6.209222623651374,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_tondelier_smic_2000_brut": {
+   "scenario": "pres2027_tondelier_smic_2000_brut",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 15.444320949573944,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 0.12092509932759095,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.07473431626044083,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.2117471063300934,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.01556964440068245,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.35728946860824584,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.0874576319885875,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.008983273660522461,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.602335986154088,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.007335065334407806,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": 0.029440706828697205,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.0037334500771926643,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.0003192237703249455,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0009226084297168255,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.013109292349481582,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.00011507586837154627,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.0030116798813619615,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": -0.08143533323913384,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -16.228399917322264,
+     "payeur": "employeurs prives",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 1.2286253234113313,
+    "employeurs prives": -16.228399917322264
+   },
+   "par_sous_secteur": {
+    "Etat": 0.7235803092520039,
+    "ASSO": -15.763864125403234,
+    "APUL": 0.007335065334407806,
+    "ODAC": 0.029440706828697205,
+    "hors_APU": 0.0037334500771926643
+   },
+   "menages_deciles_md": [
+    0.06227414905413452,
+    0.08994287907150883,
+    0.3379132479520755,
+    0.2283361628976706,
+    0.23238545403905844,
+    0.23539860864643883,
+    0.18737725529417135,
+    0.19495532371112415,
+    0.13265175698249473,
+    0.06517250548387851
+   ],
+   "employeurs": "prives",
+   "non_reparti_md": -0.44454635566301093,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_tondelier_tranche_ir_60": {
+   "scenario": "pres2027_tondelier_tranche_ir_60",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": -0.9174698157626953,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 0.9174698157630921,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    }
+   ],
+   "par_payeur": {
+    "menages": 0.9174698157630921
+   },
+   "par_sous_secteur": {
+    "Etat": 0.9174698157630921
+   },
+   "menages_deciles_md": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -0.9174698157630881
+   ],
+   "employeurs": null,
+   "non_reparti_md": -3.9679370900103095e-13,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  },
+  "pres2027_tondelier_programme": {
+   "scenario": "pres2027_tondelier_programme",
+   "annee": 2026,
+   "vue": "figee",
+   "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+   "cout_md": 18.168466799945495,
+   "lignes": [
+    {
+     "module": "ir",
+     "solde_apu_md": 1.48035611508844,
+     "payeur": "menages",
+     "bloc": "boucle:impot_sur_le_revenu",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "csg_imposable",
+     "solde_apu_md": 0.1582896788455925,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "csg_deductible",
+     "solde_apu_md": 0.4484874043384857,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "crds",
+     "solde_apu_md": 0.03297701228767109,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "cotisations_salariales",
+     "solde_apu_md": 0.7631828416925812,
+     "payeur": "menages",
+     "bloc": "boucle:cotisations_salaries",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse quand le levier est la cotisation de retraite (son nom), sinon non portée"
+    },
+    {
+     "module": "csg_chomage",
+     "solde_apu_md": -0.0874576319885875,
+     "payeur": "menages",
+     "bloc": "boucle:csg",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    },
+    {
+     "module": "af",
+     "solde_apu_md": -0.008983273660522461,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "ppa",
+     "solde_apu_md": 0.747972189770855,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "rsa",
+     "solde_apu_md": 0.009849078449422836,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "APUL",
+     "branche": null
+    },
+    {
+     "module": "aide_logement",
+     "solde_apu_md": -1.4052000776177196,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ODAC",
+     "branche": null
+    },
+    {
+     "module": "reduction_loyer_solidarite",
+     "solde_apu_md": 0.004223233032984972,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "hors_APU",
+     "branche": null
+    },
+    {
+     "module": "aefa",
+     "solde_apu_md": 0.0007583768037580251,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "Etat",
+     "branche": null
+    },
+    {
+     "module": "cf",
+     "solde_apu_md": -0.0009226084297168255,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "asf",
+     "solde_apu_md": -0.013109292349481582,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_pfam",
+     "solde_apu_md": 0.00011507586837154627,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "famille"
+    },
+    {
+     "module": "crds_mini",
+     "solde_apu_md": -0.0037398608822423966,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "CADES"
+    },
+    {
+     "module": "aspa",
+     "solde_apu_md": -0.07883532902006626,
+     "payeur": "menages",
+     "bloc": "menages",
+     "sous_secteur": "ASSO",
+     "branche": "vieillesse (FSV)"
+    },
+    {
+     "module": "cotisations_employeurs",
+     "solde_apu_md": -13.605542227597656,
+     "payeur": "employeurs meles",
+     "bloc": "entreprises:cotisations_employeurs",
+     "sous_secteur": "ASSO",
+     "branche": "non portée"
+    }
+   ],
+   "par_payeur": {
+    "menages": 2.0479629322298267,
+    "employeurs meles": -13.605542227597656
+   },
+   "par_sous_secteur": {
+    "Etat": 2.2290866816630532,
+    "ASSO": -12.395538210895571,
+    "APUL": 0.009849078449422836,
+    "ODAC": -1.4052000776177196,
+    "hors_APU": 0.004223233032984972
+   },
+   "menages_deciles_md": [
+    0.49469317881723796,
+    0.5448341554389012,
+    0.6342438209813347,
+    0.4161688263989157,
+    0.45924081790157056,
+    0.5041665642612236,
+    0.5090235928603659,
+    0.5642472580861776,
+    0.5806570713128495,
+    -0.4112249898738762
+   ],
+   "employeurs": "meles",
+   "non_reparti_md": -6.610887504577665,
+   "non_reparti": "le coût de la passe moins la somme des lignes, au signe d'un solde : les salaires que la passe fait payer (le brut privé d'un Smic, la rémunération publique), ce que la cascade des prestations fait hors des modules, l'écart de l'identité des comptes (D-093) ; le rapport ne le détaille pas"
+  }
+ }
+}
