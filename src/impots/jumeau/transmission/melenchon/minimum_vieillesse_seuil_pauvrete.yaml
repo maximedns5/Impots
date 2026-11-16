@@ -98,6 +98,8 @@ montant:
 assiette:
 - texte: les allocataires du minimum vieillesse fin 2024
   montant_md: null
+  valeur: 754500
+  unite: allocataires
   annee: 2024
   source: Drees, communiqué du 4 décembre 2025 sur les minima sociaux (754 500 allocataires,
     +4,3 %)

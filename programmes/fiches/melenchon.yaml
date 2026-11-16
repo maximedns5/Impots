@@ -1051,6 +1051,8 @@ minimum_vieillesse_seuil_pauvrete:
   assiette:
   - texte: les allocataires du minimum vieillesse fin 2024
     montant_md: null
+    valeur: 754500
+    unite: allocataires
     annee: 2024
     source: "Drees, communiqué du 4 décembre 2025 sur les minima sociaux (754 500
       allocataires, +4,3 %)"
@@ -1099,6 +1101,8 @@ aah_niveau_smic:
   assiette:
   - texte: les allocataires de l'AAH fin 2024
     montant_md: null
+    valeur: 1400000
+    unite: allocataires
     annee: 2024
     source: "Drees, communiqué du 4 décembre 2025 sur les minima sociaux (1,40 million, +3,3
       %)"

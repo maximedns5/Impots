@@ -631,10 +631,13 @@ def _hyp_declaree(code, profil, debut, plein, fin, cal, m, t=None):
     sa catégorie (`code`), ses parts (`parts`, sourcées) et son profil."""
     t = t or {}
     tm = t.get("montant") or {}
-    if tm.get("calcul"):
+    if tm.get("md") is not None:
+        # Un montant de la table : calculé (`calcul`), ou énoncé par le candidat sans
+        # `declare` dans le relevé (`citation`, `url`).
+        src = ({"citation": tm["citation"], "url": tm["url"]} if tm.get("citation")
+               else m["sources"][0])
         d = {"montant_eur": float(tm["md"]) * 1e9, "sens": tm["sens"],
-             "horizon": tm.get("horizon", m["parametre"]),
-             "source": m["sources"][0]}
+             "horizon": tm.get("horizon", m["parametre"]), "source": src}
     else:
         d = m["declare"]
     md = d["montant_eur"] / 1e9
@@ -697,7 +700,7 @@ def construire(candidat, m, scenarios, t=None):
                **{k: t[k] for k in ("payeurs", "incidence", "canaux") if k in t}}
     chiffrage = m.get("chiffrage")
     refus = m.get("refus") or {}
-    calcule = bool((t.get("montant") or {}).get("calcul"))
+    calcule = (t.get("montant") or {}).get("md") is not None
     if chiffrage:
         sorte = "chiffree"
     elif (m.get("declare") and cle in DECLAREES) or calcule:

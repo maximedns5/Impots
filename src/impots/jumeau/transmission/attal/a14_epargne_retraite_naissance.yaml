@@ -10,18 +10,20 @@ source:
   url: https://attalpresident.fr/programme/mesures/capitalisation-startups
   date: '2026-06-18'
 levier:
-  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  texte: 'aucun texte en vigueur : un plan d''épargne retraite ouvert par l''État à chaque
+    naissance (Code monétaire et financier, art. L224-1 et s., le PER)'
   parametre: null
   valeur: null
   enonce: 1 000 € à la naissance ; 660 M€ par an
   couche: null
 payeurs:
-- qui: menages
-  sens: recoit
-  par: retraite
-- qui: apu:secu:vieillesse
+- qui: apu:etat
   sens: paie
   par: depense_publique
+- qui: menages
+  sens: recoit
+  par: autre
+  note: une épargne bloquée jusqu'à la retraite de l'enfant
 incidence:
 - horizon: immediat
   qui: les retraités et futurs retraités
@@ -38,7 +40,7 @@ financement:
   annonce: null
   source: null
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: la mesure ne dit pas son financement
   bilan:
     cout_eur: 660000000
     chiffre_eur: null
@@ -51,12 +53,14 @@ canaux:
 - consommation_menages
 - financement_sous_secteurs
 hypotheses:
-- texte: 'Le montant tombe sur un transfert en capital (D9) : aides à l''investissement.'
+- texte: Le montant est un transfert en capital de l'État aux ménages (D9), qui ne consomment
+    pas cette épargne.
+  source: 'le candidat : un plan d''épargne retraite, attalpresident.fr/programme/mesures/
+    capitalisation-startups'
+- texte: Le montant entre en 2027.
   source: non sourcée
-- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
-    sur l’activité).'
-  source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: Le montant est tenu chaque année jusqu'en 2035, en euros courants ; le candidat ne
+    donne pas de trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
   source: non sourcée
@@ -80,3 +84,12 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les naissances : 660 M€ pour 1 000 € par enfant en supposent 660 000 par an'
+  montant_md: null
+  annee: 2026
+  source: attalpresident.fr, actualité du 28 octobre 2026 (« 1 000 euros à chaque naissance
+    … 660 millions d'euros par an »)
+calendrier:
+  texte: aucune date dans la page de la mesure
+  source: attalpresident.fr, page de la mesure

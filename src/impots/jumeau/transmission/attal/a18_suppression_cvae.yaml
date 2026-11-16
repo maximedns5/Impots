@@ -10,8 +10,8 @@ source:
   url: https://attalpresident.fr/programme/mesures/loi-de-stabilite-fiscale
   date: '2026-08-27'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: Code général des impôts, art. 1586 ter et s. (la CVAE) ; loi de finances pour 2024,
+    art. 79 (sa suppression progressive jusqu'en 2030), que la mesure mène à terme
   parametre: cvae_echelle
   valeur:
     cvae_echelle: 0.0
@@ -42,7 +42,8 @@ financement:
   annonce: null
   source: null
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: la mesure ne dit pas son financement ; la « loi de stabilité fiscale » n'en porte
+    pas
   bilan:
     cout_eur: 2552063730
     chiffre_eur: null
@@ -61,6 +62,10 @@ hypotheses:
     impôts de production » n''a pas de taux et n''est pas chiffrée. La plage va de la suppression
     (0) au droit de 2026 (1).'
   source: le chiffrage de la mesure (`programmes/attal.json`)
+- texte: 'La passe de la première année retire 3,28 Md€ de CVAE et rend 0,62 Md€ d''IS (la
+    CVAE est déductible du bénéfice) : 2,55 Md€ de prélèvements en moins ; le PLF 2026 prévoit
+    2,74 Md€ de CVAE pour l''État.'
+  source: le rapport de la mesure ; Évaluation des voies et moyens 2026, tome 1, ligne 1497
 montant:
   origine: rapport
   scenario: pres2027_attal_a18_suppression_cvae
@@ -72,3 +77,12 @@ montant:
       cvae: -3.28
       impot_societes: 0.62
       prelevements_entreprise: -2.55
+assiette:
+  texte: les recettes de CVAE de l'État
+  montant_md: 2.741
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1497 (4,265 Md€
+    en 2024, 4,069 en 2025, 2,741 en 2026)
+calendrier:
+  texte: aucune date dans la page de la mesure
+  source: attalpresident.fr, page de la mesure

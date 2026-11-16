@@ -70,11 +70,13 @@ incidence:
     », Handbook of Public Economics, vol. 4, ch. 26 : à long terme, l''incidence ne dépend
     pas de qui verse l''impôt, mais des élasticités de l''offre et de la demande'
 financement:
-  annonce: '« Droit au brut » : hausse du net par suppression de cotisations, financée par
-    des économies sur le modèle social'
-  source: le libellé du relevé (`programmes/attal.json`), d'après https://attalpresident.fr/programme/mesures/droit-au-brut
+  annonce: « Ce choc de salaires doit être financé à l'euro près par des économies sur le
+    modèle social, d'abord l'assurance chômage et les indemnités journalières, sans alourdir
+    le coût du travail. »
+  source: attalpresident.fr/programme/mesures/droit-au-brut (22 juillet 2026)
   chiffre: false
-  note: le financement est énoncé, pas chiffré mesure par mesure
+  note: 'le financement nommé (assurance chômage : 5 Md€, a11 ; indemnités journalières :
+    sans montant, a12) couvre moins d''un dixième du coût de la première année'
   bilan:
     cout_eur: 63139065678
     chiffre_eur: null
@@ -91,20 +93,25 @@ canaux:
 - financement_sous_secteurs
 - financement_annonce
 hypotheses:
+- texte: 'Au salaire médian de 2026 (34 000 € brut par an, 2 243 € nets par mois), supprimer
+    toutes les cotisations retraite salariales rend 3 845 € nets par an (mesuré par le moteur).
+    Le candidat énonce un gain, +250 € nets par mois au salaire médian, pas un taux : l''échelle
+    de 0,22 rend 3 000 € par an. Elle s''applique à tous les salaires, ce que la mesure ne
+    précise pas. Plage de 0 (toutes supprimées) à 1 (la mesure retirée).'
+  source: le chiffrage de la mesure (`programmes/attal.json`)
 - texte: 'L''échelle des cotisations salariales de retraite à 0,22 traduit « +250 € nets par
     mois au salaire médian » : 3 000 € par an sur 3 845 € de cotisations retraite salariales
     au médian.'
   valeur: 0.22
   source: le chiffrage de la mesure (`programmes/attal.json`, D-381 et suivantes), mesuré
     par le moteur
-- texte: La baisse s'applique à tous les salaires, ce que la mesure ne précise pas.
-  source: le chiffrage de la mesure (`programmes/attal.json`)
 - texte: Les droits à la retraite des salariés ne baissent pas avec leurs cotisations.
   source: non sourcée
+- texte: 'La caisse perd la recette : l''État la compense (art. L131-7 CSS) ou le régime s''endette
+    ; le candidat ne dit pas lequel, et l''Agirc-Arrco n''est pas tenue par la loi.'
+  source: Code de la sécurité sociale, art. L131-7
 - texte: Aucune renégociation du brut la première année.
-  source: 'Saez, Matsaganis et Tsakloglou (2012), « Earnings determination and taxes : evidence
-    from a cohort-based payroll tax reform in Greece », QJE 127(1) : à moyen terme, les cotisations
-    restent sur celui qui les verse (incidence statutaire)'
+  source: Saez, Matsaganis et Tsakloglou (2012), QJE 127(1)
 montant:
   origine: rapport
   scenario: pres2027_attal_a16_droit_au_brut
@@ -120,3 +127,13 @@ montant:
       rsa: -0.05
       aide_logement: -0.29
       revenu_disponible: 63.14
+assiette:
+- texte: les cotisations salariales des APU (la part des ménages dans les cotisations sociales
+    effectives) ; la mesure en retire 77,14 Md€ la première année
+  montant_md: 120.2
+  annee: 2026
+  source: le rapport de la première année du programme d'Attal (passe des ménages, total `cotisations_salariales`
+    de la référence, 120,17 Md€)
+calendrier:
+  texte: « dès le début 2027 »
+  source: attalpresident.fr/programme/mesures/droit-au-brut (22 juillet 2026)

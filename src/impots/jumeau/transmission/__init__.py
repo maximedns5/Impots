@@ -53,10 +53,11 @@ LE SCHÉMA (version 1). Les sept clés de D-471, plus l'en-tête :
 LES DONNÉES CRITIQUES (but 27, volet `fiches`, D-504). Deux clés facultatives, écrites
 mesure par mesure dans `programmes/fiches/<candidat>.yaml` (et non tirées d'un gabarit) :
 
-* `assiette` : {`texte`, `montant_md` (Md€, ou null), `annee`, `source`}, ou une liste :
-  ce sur quoi la mesure porte et son montant de 2024 à 2026, lu dans une statistique
-  publique (PLF, LFSS, comptes de la Sécurité sociale, Insee, DGFiP, Drees). Un montant
-  d'assiette a toujours une source, jamais « non sourcée » ;
+* `assiette` : {`texte`, `montant_md` (Md€, ou null), `valeur` et `unite` (un effectif,
+  un barème : facultatifs), `annee`, `source`}, ou une liste : ce sur quoi la mesure
+  porte et son montant de 2024 à 2026, lu dans une statistique publique (PLF, LFSS,
+  comptes de la Sécurité sociale, Insee, DGFiP, Drees). Un nombre d'assiette a toujours
+  une source, jamais « non sourcée » ;
 * `calendrier` : {`texte`, `source`} : quand la mesure entre en vigueur, selon le candidat.
 
 Un payeur peut dire sa `part` (de 0 à 1) ou, dans `note`, son montant lu dans le rapport.
@@ -255,10 +256,15 @@ def valider(d: Mapping[str, Any]) -> list[str]:
     out.extend(_valider_donnees(d))
     out.extend(_valider_montant(d["sorte"], d["montant"] or {}))
     a = (d["montant"] or {}).get("annonce") or {}
-    if a.get("par") == "calcul" and not any(
-            isinstance(x.get("montant_md"), int | float) for x in assiettes(d)):
+    if a.get("par") == "calcul" and not any(chiffree(x) for x in assiettes(d)):
         out.append("montant calculé sans assiette chiffrée")
     return out
+
+
+def chiffree(x: Mapping[str, Any]) -> bool:
+    """Une assiette qui porte un nombre : un montant ou une valeur (D-504)."""
+    return any(isinstance(x.get(k), int | float) and not isinstance(x.get(k), bool)
+               for k in ("montant_md", "valeur"))
 
 
 def assiettes(d: Mapping[str, Any]) -> list[Mapping[str, Any]]:
@@ -278,10 +284,13 @@ def _valider_donnees(d: Mapping[str, Any]) -> list[str]:
         if not (isinstance(x, dict) and _source(x.get("texte")) and _source(x.get("source"))):
             out.append(f"assiette {i} sans texte ou sans source")
             continue
-        md = x.get("montant_md")
-        if md is not None and not isinstance(md, int | float):
-            out.append(f"assiette {i} : montant « {md} » pas un nombre")
-        if md is not None and x["source"] == NON_SOURCEE:
+        for k in ("montant_md", "valeur"):
+            v = x.get(k)
+            if v is not None and not isinstance(v, int | float):
+                out.append(f"assiette {i} : {k} « {v} » pas un nombre")
+        if x.get("valeur") is not None and not _source(x.get("unite")):
+            out.append(f"assiette {i} : une valeur sans unité")
+        if chiffree(x) and x["source"] == NON_SOURCEE:
             out.append(f"assiette {i} : un montant sans source")
     cal = d.get("calendrier")
     if cal is not None and not (isinstance(cal, dict) and _source(cal.get("texte"))
@@ -523,7 +532,7 @@ def qualite(racine: Path = ICI, candidats: Iterable[str] | None = None
             q[f"hypothese_{par}"] += 1
         if m["origine"] == "aucun" and f.sorte == "parametre":
             q["sans_montant"] += 1
-        if any(isinstance(x.get("montant_md"), int | float) for x in assiettes(f.donnees)):
+        if any(chiffree(x) for x in assiettes(f.donnees)):
             q["assiette_chiffree"] += 1
         for h in f["hypotheses"] or ():
             q["hypotheses_non_sourcees" if h["source"] == NON_SOURCEE

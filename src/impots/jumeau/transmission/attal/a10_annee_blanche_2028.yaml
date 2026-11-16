@@ -10,7 +10,8 @@ source:
   url: https://www.moneyvox.fr/impot/actualites/109548/attal-veut-100-000-departs-volontaires-de-fonctionnaires-et-impunite-budgetaire-zero
   date: '2026-07-03'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: 'Code de la sécurité sociale, art. L161-25 (la revalorisation annuelle des prestations)
+    : une loi de financement qui y déroge pour 2028'
   parametre: null
   valeur: null
   enonce: gel en 2028
@@ -46,7 +47,14 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: Le bouton existe (indexations, un coefficient par prestation et par année), mais
-    les « petites retraites épargnées » demandent un seuil de pension que le bouton, uniforme,
-    ne dit pas. Le gel tombe en 2028 ; il se mesurerait contre l'indexation légale sur les
-    prix, la référence du but 21. (porte « indexation »)
+  manque: L'économie est l'inflation de 2028 fois les prestations gelées ; ni l'inflation
+    de 2028 (le RESF 2026 s'arrête à 2026) ni le seuil des « petites retraites épargnées »
+    ne sont publiés.
+assiette:
+  texte: les prestations sociales en espèces des APU (D62)
+  montant_md: 580.9
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301, ligne D62
+calendrier:
+  texte: 2028, « mon premier budget »
+  source: attalpresident.fr, page « impunité budgétaire zéro » (3 juillet 2026)

@@ -9,7 +9,9 @@ source:
   url: https://attalpresident.fr/programme/mesures/defiscaliser-pensions-alimentaires
   date: '2026-08-28'
 levier:
-  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  texte: 'Code général des impôts, art. 79 (les pensions alimentaires reçues, imposables)
+    et 156, II, 2° (leur déduction chez le débiteur) : les pensions reçues pour les enfants
+    sorties du revenu imposable'
   parametre: pensions_alimentaires_exonerees
   valeur:
     pensions_alimentaires_exonerees: true
@@ -58,6 +60,8 @@ hypotheses:
     pour lui-même ne sont pas portées. Les prestations qui comptent la pension ne bougent
     pas. Contre le droit de 2026. Pas de plage : la mesure est un oui ou un non.'
   source: le chiffrage de la mesure (`programmes/attal.json`)
+- texte: La déduction chez le parent qui verse la pension est maintenue.
+  source: non sourcée
 montant:
   origine: rapport
   scenario: pres2027_attal_a22_pensions_alimentaires
@@ -68,3 +72,6 @@ montant:
     ecarts_md:
       ir: -0.19
       revenu_disponible: 0.19
+calendrier:
+  texte: aucune date dans la page de la mesure
+  source: attalpresident.fr, page de la mesure
