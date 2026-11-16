@@ -36412,9 +36412,10 @@ milliers ; en réduit, la dette).
 −3,73 pt de dette en 2035 ; les quatre dépenses +16,10. Elles financent 23 % du programme
 en dette de 2035, et 18,0 Md€ de solde en 2026, 16,7 en 2035 ; elles coûtent −79,8
 milliers d'emplois, quand les deux transferts (l'indexation, la garantie d'autonomie) en
-font +230,6 : le programme tient son emploi par la demande, pas par le coût du travail. Le Smic et les exonérations se recouvrent sur la même base :
-1,33 Md€ (l'interaction). Le jumeau est presque additif : l'ensemble moins la somme fait
-−0,114 pt (figée), −0,095 (vieillie), de la dette sur le PIB et des intérêts.
+font +230,6 : le programme tient son emploi par la demande, pas par le coût du travail.
+Le Smic et les exonérations se recouvrent sur la même base : 1,33 Md€ (l'interaction).
+Le jumeau est presque additif : l'ensemble moins la somme fait −0,114 pt (figée), −0,095
+(vieillie), de la dette sur le PIB et des intérêts.
 
 **Le solde par sous-secteur** (structurel, figée ; B9, Md€, 2026 → 2035) : État −26,79 →
 −24,85 ; ODAC −1,01 → −0,84 ; APUL −17,39 → −17,64 ; ASSO −26,35 → −12,31 ; compensation
