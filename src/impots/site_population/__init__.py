@@ -650,6 +650,22 @@ def _point(ligne: dict[str, Any]) -> str:
             f"</span></div>")
 
 
+def _remplacees(grille: list[dict[str, Any]]) -> str:
+    """Les lignes remplacées (D-495), visibles à côté des lignes jugées, sans verdict."""
+    noms = {x["id"]: x["ligne"] for x in grille}
+    rem = [x for x in grille if x["usage"] == "remplacee" and x["ecart"] is not None]
+    if not rem:
+        return ""
+    items = "".join(f"<li>{e(x['ligne'])} : {pct(x['ecart'], 0, True)}, remplacée par "
+                    f"« {e(noms.get(x.get('remplacee_par'), x.get('remplacee_par') or ''))} »"
+                    "</li>" for x in rem)
+    return ("<p>Ne sont plus jugées, mais restent visibles, les lignes qui comptaient autre "
+            "chose que leur total publié (des ayants droit contre des foyers payés, un droit "
+            "divisé par un pont contre un montant versé, le super-brut contre les "
+            "cotisations au sens des comptes) ; chacune a sa remplaçante, qui compte la même "
+            f"chose que le publié (D-495) :</p><ul>{items}</ul>")
+
+
 def page_france(d: dict[str, Any]) -> str:
     p = d["population"]
     tot = {"menages": p["menages"], **{k: x["total"] for k, x in p["revenus"].items()}}
@@ -695,7 +711,8 @@ def page_france(d: dict[str, Any]) -> str:
            '<figure class="ecarts" role="group" aria-label="Écarts des entreprises">'
            "<figcaption>Les entreprises</figcaption>",
            "".join(_point(x) for x in firmes_g), "</figure>",
-           f'<p class="note-source">La grille de D-371, sur la population entière : '
+           _remplacees(d["grille"]),
+           f'<p class="note-source">La grille de D-496, sur la population entière : '
            f"{fichier('reports/verification/grille.json')}. Avec 2022 et 2023 : "
            f"<a href=\"parcours-2-france.html\">la France simulée</a>.</p></section>"]
     hors = sorted((x for x in grille if x["verdict"] != "dans la tolérance"),

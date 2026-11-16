@@ -29,8 +29,10 @@
    "sha256": "f27bfdffc08c809398bb09b1f1c0ef83376b3194e10bc8daf8ace7ee3283826e",
    "perimetre": "Comptabilité nationale (SEC 2010), droits constatés, France entière (hors Mayotte avant 2014 selon convention Insee), tous régimes obligatoires : régimes de base, Agirc-Arrco, assurance chômage, régimes de la fonction publique ; secteurs privé ET public ; cotisations sociales effectives à la charge des employeurs (D121 = D611), y compris employeurs publics et cotisations patronales à des régimes privés de protection sociale (prévoyance/santé d'entreprise) ; hors cotisations imputées D122 (66,0/68,7/72,4 Md€).",
    "tolerance": 0.15,
-   "usage": "validation",
-   "remarque": ""
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "cotisations_employeurs_d121",
+   "remplacee": "D-495"
   },
   {
    "id": "reduction_generale",
@@ -295,8 +297,10 @@
    "sha256": "ef77607a17b93563a015fe0d7888438d892e5777f321b26914c17403caebe8d7",
    "perimetre": "RSA recentralisé (Guyane, Mayotte, La Réunion, Seine-Saint-Denis, et depuis 2022 Ariège, Pyrénées-Orientales) + RSA activité + RSA jeunes, droits constatés",
    "tolerance": 0.14,
-   "usage": "validation",
-   "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation"
+   "usage": "remplacee",
+   "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation",
+   "remplacee_par": "rsa_montant_servi",
+   "remplacee": "D-495"
   },
   {
    "id": "ppa_montant",
@@ -310,8 +314,10 @@
    "sha256": "ef77607a17b93563a015fe0d7888438d892e5777f321b26914c17403caebe8d7",
    "perimetre": "Prime d'activité (Ppa), branche Famille + régimes délégataires, droits constatés, France entière",
    "tolerance": 0.13,
-   "usage": "validation",
-   "remarque": "milieu du pont de la Drees (1,68-1,77)"
+   "usage": "remplacee",
+   "remarque": "milieu du pont de la Drees (1,68-1,77)",
+   "remplacee_par": "ppa_montant_servi",
+   "remplacee": "D-495"
   },
   {
    "id": "aide_logement_montant",
@@ -366,8 +372,10 @@
    "sha256": "26244616cff781ced1a95c65f834f34a23506c88dae2804546ebf15f6c4e4330",
    "perimetre": "Foyers bénéficiaires de la prime d'activité, moyenne du 4e trimestre 2022, champ Caf, France entière",
    "tolerance": 0.25,
-   "usage": "validation",
-   "remarque": ""
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "ppa_foyers_servis",
+   "remplacee": "D-495"
   },
   {
    "id": "is",
@@ -474,8 +482,10 @@
    "sha256": "f27bfdffc08c809398bb09b1f1c0ef83376b3194e10bc8daf8ace7ee3283826e",
    "perimetre": "Comptabilité nationale (SEC 2010), droits constatés, France entière (hors Mayotte avant 2014 selon convention Insee), tous régimes obligatoires : régimes de base, Agirc-Arrco, assurance chômage, régimes de la fonction publique ; secteurs privé ET public ; cotisations sociales effectives à la charge des employeurs (D121 = D611), y compris employeurs publics et cotisations patronales à des régimes privés de protection sociale (prévoyance/santé d'entreprise) ; hors cotisations imputées D122 (66,0/68,7/72,4 Md€).",
    "tolerance": 0.15,
-   "usage": "validation",
-   "remarque": ""
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "cotisations_employeurs_d121",
+   "remplacee": "D-495"
   },
   {
    "id": "reduction_generale",
@@ -744,8 +754,10 @@
    "sha256": "edd21d8a46a3406760f98bffbcf9841e7341da402a6587d99e90f75cb0164eb0",
    "perimetre": "RSA recentralisé (Guyane, Mayotte, La Réunion, Seine-Saint-Denis, et depuis 2022 Ariège, Pyrénées-Orientales) + RSA activité + RSA jeunes, droits constatés",
    "tolerance": 0.14,
-   "usage": "validation",
-   "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation"
+   "usage": "remplacee",
+   "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation",
+   "remplacee_par": "rsa_montant_servi",
+   "remplacee": "D-495"
   },
   {
    "id": "ppa_montant",
@@ -759,8 +771,10 @@
    "sha256": "edd21d8a46a3406760f98bffbcf9841e7341da402a6587d99e90f75cb0164eb0",
    "perimetre": "Prime d'activité (Ppa), branche Famille + régimes délégataires, droits constatés, France entière",
    "tolerance": 0.13,
-   "usage": "validation",
-   "remarque": "milieu du pont de la Drees (1,68-1,77)"
+   "usage": "remplacee",
+   "remarque": "milieu du pont de la Drees (1,68-1,77)",
+   "remplacee_par": "ppa_montant_servi",
+   "remplacee": "D-495"
   },
   {
    "id": "aide_logement_montant",
@@ -804,8 +818,10 @@
    "sha256": "f59d81ef753241518989b13f3409d4c09c278bf34dccb44e56228d958b8456ae",
    "perimetre": "Foyers bénéficiaires du RSA, moyenne du 4e trimestre, champ Caf, France entière (estimation provisoire)",
    "tolerance": 0.25,
-   "usage": "validation",
-   "remarque": ""
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "rsa_foyers_servis",
+   "remplacee": "D-495"
   },
   {
    "id": "ppa_foyers",
@@ -819,8 +835,10 @@
    "sha256": "26244616cff781ced1a95c65f834f34a23506c88dae2804546ebf15f6c4e4330",
    "perimetre": "Foyers bénéficiaires de la prime d'activité, moyenne du 4e trimestre, champ Caf, France entière (estimation provisoire)",
    "tolerance": 0.25,
-   "usage": "validation",
-   "remarque": ""
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "ppa_foyers_servis",
+   "remplacee": "D-495"
   },
   {
    "id": "is",
@@ -927,8 +945,10 @@
    "sha256": "f27bfdffc08c809398bb09b1f1c0ef83376b3194e10bc8daf8ace7ee3283826e",
    "perimetre": "Comptabilité nationale (SEC 2010), droits constatés, France entière (hors Mayotte avant 2014 selon convention Insee), tous régimes obligatoires : régimes de base, Agirc-Arrco, assurance chômage, régimes de la fonction publique ; secteurs privé ET public ; cotisations sociales effectives à la charge des employeurs (D121 = D611), y compris employeurs publics et cotisations patronales à des régimes privés de protection sociale (prévoyance/santé d'entreprise) ; hors cotisations imputées D122 (66,0/68,7/72,4 Md€).",
    "tolerance": 0.15,
-   "usage": "validation",
-   "remarque": ""
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "cotisations_employeurs_d121",
+   "remplacee": "D-495"
   },
   {
    "id": "reduction_generale",
@@ -1197,8 +1217,10 @@
    "sha256": "d63abb58ee10417ac0421171c82ab14d18c736f06f8f815a09c24e60d85f61fe",
    "perimetre": "RSA recentralisé (Guyane, Mayotte, La Réunion, Seine-Saint-Denis, et depuis 2022 Ariège, Pyrénées-Orientales) + RSA activité + RSA jeunes, droits constatés",
    "tolerance": 0.14,
-   "usage": "validation",
-   "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation"
+   "usage": "remplacee",
+   "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation",
+   "remplacee_par": "rsa_montant_servi",
+   "remplacee": "D-495"
   },
   {
    "id": "ppa_montant",
@@ -1212,8 +1234,10 @@
    "sha256": "d63abb58ee10417ac0421171c82ab14d18c736f06f8f815a09c24e60d85f61fe",
    "perimetre": "Prime d'activité (Ppa), branche Famille + régimes délégataires, droits constatés, France entière",
    "tolerance": 0.13,
-   "usage": "validation",
-   "remarque": "milieu du pont de la Drees (1,68-1,77)"
+   "usage": "remplacee",
+   "remarque": "milieu du pont de la Drees (1,68-1,77)",
+   "remplacee_par": "ppa_montant_servi",
+   "remplacee": "D-495"
   },
   {
    "id": "aide_logement_montant",
@@ -1257,8 +1281,10 @@
    "sha256": "e8befdcf2d0b1d7716cd53efb23acb9b6f7979e5893f27f961c782b694341cda",
    "perimetre": "Foyers bénéficiaires du RSA, moyenne du 4e trimestre, champ Caf, France entière (estimation provisoire)",
    "tolerance": 0.25,
-   "usage": "validation",
-   "remarque": ""
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "rsa_foyers_servis",
+   "remplacee": "D-495"
   },
   {
    "id": "ppa_foyers",
@@ -1272,8 +1298,10 @@
    "sha256": "5d05161687e37e9a5945659f1d59c4f7aa5357777c8cd52109cf781cb544e7f2",
    "perimetre": "Foyers bénéficiaires de la prime d'activité, moyenne du 4e trimestre, champ Caf, France entière (estimation provisoire)",
    "tolerance": 0.25,
-   "usage": "validation",
-   "remarque": ""
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "ppa_foyers_servis",
+   "remplacee": "D-495"
   },
   {
    "id": "is",

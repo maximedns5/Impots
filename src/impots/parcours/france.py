@@ -35,7 +35,8 @@ NIVEAU_DE_VIE = ("niveau_de_vie_median", "niveau_de_vie_median_servi", "d9_d1",
                  "d9_d1_servi")
 #: Les lignes que le calage du non-recours force (`population/recours.py`) : la
 #: probabilité de demander est calée pour que la part des foyers ayant droit qui
-#: recourent soit le milieu de la fourchette de la Drees ; le nombre de foyers servis est
+#: recourent soit le milieu de la fourchette de la Drees (pour la prime, depuis D-495, la
+#: part des payés de la Cnaf de 2024) ; le nombre de foyers servis est
 #: donc le nombre d'ayants droit fois une part imposée. Elles restent notées telles
 #: qu'elles ont été préenregistrées, et le compte des lignes tenues ne change pas ; la
 #: page les marque et dit combien des lignes tenues sont de celles-là.
@@ -174,7 +175,8 @@ def commits(rows: list[dict[str, Any]]) -> list[str]:
 
 _ETAT = {"dans la tolérance": ("tenue", "tenue"), "hors de la tolérance": ("hors", "hors"),
          "contexte": ("contexte", "contexte"), "calibration": ("calee", "calée, dépensée"),
-         "refusée": ("refusee", "refusée")}
+         "refusée": ("refusee", "refusée"),
+         "remplacée": ("contexte", "remplacée, sans verdict (D-495)")}
 
 
 def _cellule(r: dict[str, Any] | None) -> str:
@@ -400,14 +402,15 @@ s'annule à 1,6 SMIC.</li>
 prime d'activité multiplié par la probabilité qu'il le demande. C'est ainsi que les
 études comptent le non-recours. Cette probabilité croît avec le montant du droit, selon une
 forme supposée dont la pente suit les taux de recours par tranche de montant que la Drees
-publie ; son plafond est <em>calé</em> pour que la part des foyers ayant droit du modèle
-qui ne la demandent pas soit le milieu de la fourchette publiée en foyers :
-{cible(rsa)} pour le RSA (la Drees dit {_fourchette(rsa.non_recours_foyers)}),
-{cible(ppa)} pour la prime ({_fourchette(ppa.non_recours_foyers)}). Le non-recours en
-montant, plus faible parce que les petits droits sont les moins demandés
-({_fourchette(rsa.non_recours_masse)} pour le RSA, {_fourchette(ppa.non_recours_masse)}
-pour la prime), n'est pas calé : il sert de contrôle. Le calage ne vise ni le nombre
-d'allocataires ni le montant que la Caf verse
+publie ; son plafond est <em>calé</em>. Pour le RSA, la part des foyers ayant droit du
+modèle qui ne le demandent pas est le milieu de la fourchette publiée en foyers par la
+Drees : {cible(rsa)} (la Drees dit {_fourchette(rsa.non_recours_foyers)}) ; le non-recours
+en montant, plus faible parce que les petits droits sont les moins demandés
+({_fourchette(rsa.non_recours_masse)}), n'est pas calé : il sert de contrôle. Pour la
+prime, la Drees dit {_fourchette(ppa.non_recours_foyers)}, mais elle ne retrouve que 73 à
+83 % des foyers que la Caf paie : depuis le but 27 (D-495), le plafond est calé sur les
+foyers que la Caf paie à la fin de 2024, soit {cible(ppa)} de non-recours parmi les ayants
+droit du modèle ; le montant versé sert de contrôle
 ({fichier("src/impots/population/recours.py")}).</li>
 <li id="non-recours-cale"><strong>Calée par le non-recours</strong> : une ligne qui compte
 les foyers servis en espérance retrouve, par construction, la part de recourants que le
