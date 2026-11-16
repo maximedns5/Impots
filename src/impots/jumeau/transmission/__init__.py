@@ -104,25 +104,22 @@ def _categories() -> tuple[str, ...]:
     return CATEGORIES
 
 
-#: Les canaux que la carte cite et qu'un autre volet du but 26 doit enregistrer dans
-#: `jumeau/canaux.py` (D-471). Le nom est celui que la carte propose ; la jonction le
-#: rapproche de celui que le volet a choisi. Tant qu'il n'est pas enregistré, il n'est
-#: pas ouvert.
+#: Les canaux que la carte cite et qu'aucun bloc n'a encore enregistrés dans
+#: `jumeau/canaux.py` (D-471). À la jonction (D-487), les noms que `travail` et
+#: `financement` ont enregistrés remplacent ceux que la carte proposait :
+#: `smic_diffusion`, `incidence_cotisations`, `financement_sous_secteurs`,
+#: `compensation_exonerations` et `financement_annonce` gardent leur nom ;
+#: `allegements_smic` devient `cout_travail_smic` dans les fiches du Smic (le bloc
+#: `travail` y porte la loi, la RGDU et le coût par tranche) et `incidence_cotisations`
+#: ailleurs (une exonération change une cotisation employeur, dont le bloc porte
+#: l'incidence). Restent attendus ceux qu'aucun volet n'a ouverts. Tant qu'il n'est pas
+#: enregistré, un canal n'est pas ouvert.
 CANAUX_ATTENDUS: dict[str, tuple[str, str]] = {
-    "smic_diffusion": ("travail", "la diffusion d'une hausse du Smic aux salaires voisins"),
-    "allegements_smic": ("travail", "le coût des allègements généraux, qui suivent le Smic"),
     "cout_travail_tranche": ("travail", "le coût du travail et l'emploi par tranche de "
-                             "salaire"),
-    "incidence_cotisations": ("travail", "le partage d'une cotisation entre le net, le "
-                              "brut et le super-brut, dans le temps"),
+                             "salaire hors d'une hausse du Smic : `travail.emploi_par_"
+                             "tranche` le calcule en regard, hors de l'état (D-479)"),
     "offre_travail": ("travail", "l'offre de travail selon le salaire net (marges "
-                      "intensive et extensive)"),
-    "financement_sous_secteurs": ("financement", "le solde par sous-secteur des APU : "
-                                  "État, Sécurité sociale par branche, collectivités"),
-    "compensation_exonerations": ("financement", "la compensation par l'État des "
-                                  "exonérations de cotisations (art. L131-7 CSS)"),
-    "financement_annonce": ("financement", "le financement que le candidat annonce, et "
-                            "ce que coûte celui qui manque"),
+                      "intensive et extensive) : non faite au but 26"),
     "patrimoine_menages": ("aucun volet", "le patrimoine des ménages et sa transmission : "
                            "la population n'en porte pas"),
     "droits_retraite": ("aucun volet", "les âges, les durées et les pensions : la "

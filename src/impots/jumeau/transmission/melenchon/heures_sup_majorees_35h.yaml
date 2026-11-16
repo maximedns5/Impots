@@ -58,8 +58,8 @@ canaux:
 - prix_production
 - consommation_menages
 - smic_diffusion
-- allegements_smic
-- cout_travail_tranche
+- cout_travail_smic
+- incidence_cotisations
 - compensation_exonerations
 hypotheses: []
 montant:

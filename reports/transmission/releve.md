@@ -35,18 +35,18 @@ Fiches : `src/impots/jumeau/transmission/<candidat>/<mesure>.yaml`, écrites par
 
 ## Ce que les fiches citent et qui n'est pas encore un canal du registre
 
+À la jonction (D-487), les canaux que `travail` et `financement` ont enregistrés sont
+ouverts dans les fiches, sous leur nom du registre : `incidence_cotisations` (25 fiches),
+`compensation_exonerations` (25), `smic_diffusion` (12), `cout_travail_smic` (12, à la
+place de `allegements_smic`), `financement_sous_secteurs` (61), `financement_annonce`
+(2). Restent attendus :
+
 | canal attendu | volet | fiches |
 |---|---|---:|
-| offre_travail | travail | 71 |
-| financement_sous_secteurs | financement | 61 |
+| offre_travail | travail (non fait) | 71 |
 | patrimoine_menages | aucun volet | 29 |
-| compensation_exonerations | financement | 25 |
 | droits_retraite | aucun volet | 22 |
-| cout_travail_tranche | travail | 14 |
-| allegements_smic | travail | 13 |
-| smic_diffusion | travail | 12 |
-| incidence_cotisations | travail | 11 |
-| financement_annonce | financement | 2 |
+| cout_travail_tranche | travail (hors de l'état) | 2 |
 
 Sur 357 hypothèses, 273 sont dites « non sourcées » : la catégorie d'une dépense que le
 programme ne désigne pas, la variante de Mésange la plus proche, la montée en charge, la

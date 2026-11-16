@@ -49,7 +49,7 @@ canaux:
 - emploi
 - salaires
 - cout_travail_tranche
-- allegements_smic
+- incidence_cotisations
 - compensation_exonerations
 - financement_sous_secteurs
 hypotheses:

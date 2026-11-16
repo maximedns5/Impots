@@ -50,6 +50,7 @@ canaux:
 - offre_travail
 - emploi
 - cout_travail_tranche
+- incidence_cotisations
 - compensation_exonerations
 - financement_sous_secteurs
 hypotheses:

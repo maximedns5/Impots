@@ -190,7 +190,7 @@ GABARITS = {
           "texte": "L'emploi au bas de l'échelle répond au coût ; les prix des services "
           "intensifs en bas salaires montent.", "source": f"{KP} ; {FGL}"}],
         ["salaires", "emploi", "prix_production", "consommation_menages", "smic_diffusion",
-         "allegements_smic", "cout_travail_tranche", "compensation_exonerations"]),
+         "cout_travail_smic", "incidence_cotisations", "compensation_exonerations"]),
     "depense_publique": _g(
         "Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux",
         [{"qui": "apu:etat", "sens": "paie", "par": "depense_publique"}],
@@ -320,7 +320,7 @@ PRECISES = {
                        "travail monte au-dessus de 2 Smic.", "source": SSS},
                       {"horizon": "long", "qui": "salariés et employeurs", "texte": "Une "
                        "part peut passer dans les salaires.", "source": f"{LMR} ; {BBG}"}],
-        "canaux": ["emploi", "salaires", "cout_travail_tranche", "allegements_smic",
+        "canaux": ["emploi", "salaires", "cout_travail_tranche", "incidence_cotisations",
                    "compensation_exonerations", "financement_sous_secteurs"]},
     "melenchon/point_indice_10": {
         "payeurs": [{"qui": "apu:etat", "sens": "paie", "par": "depense_publique"},
@@ -366,7 +366,8 @@ PRECISES = {
                                  "texte": "Des heures déclarées en plus, plus que "
                                  "travaillées.", "source": NS}],
         "canaux": ["offre_travail", "emploi", "cout_travail_tranche",
-                   "compensation_exonerations", "financement_sous_secteurs"]},
+                   "incidence_cotisations", "compensation_exonerations",
+                   "financement_sous_secteurs"]},
 }
 
 # ------------------------------------------------- les montants déclarés : où ils tombent
