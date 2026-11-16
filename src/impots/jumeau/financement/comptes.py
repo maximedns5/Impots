@@ -304,6 +304,16 @@ def _statique(etat: Any, champs: Sequence[str]) -> dict[str, dict[str, np.ndarra
     return out
 
 
+def _avec_publics(m: Any) -> dict[int, dict[str, float]]:
+    """Les impulsions d'une mesure et les cotisations de la rémunération publique qu'elle
+    porte à part (D-500) : le compte des sous-secteurs range les deux de la même façon."""
+    out = {a: dict(v) for a, v in (m.impulsions or {}).items()}
+    for a, v in (getattr(m, "prelevements_publics", None) or {}).items():
+        for i, x in v.items():
+            out.setdefault(a, {})[i] = out.get(a, {}).get(i, 0.0) + float(x)
+    return out
+
+
 def decomposer(traj: Any, mesures: Sequence[Any], theta: Mapping[str, Any] | None = None,
                options: Mapping[str, str] | None = None) -> CompteSousSecteurs:
     """Le compte par sous-secteur d'une trajectoire, et la compensation."""
@@ -312,7 +322,7 @@ def decomposer(traj: Any, mesures: Sequence[Any], theta: Mapping[str, Any] | Non
     annees = tuple(traj.annees)
     n = traj.reference[0].n
     c = CompteSousSecteurs(annees, n)
-    impulsions = {m.identifiant: (m.impulsions or {}) for m in mesures}
+    impulsions = {m.identifiant: _avec_publics(m) for m in mesures}
     inter = {nom: float(publie["lignes"][nom]["consolidation"])
              for nom in ("apu_r_d73", "apu_r_d9", "apu_d_d73", "apu_d_d9")}
     pib0 = None

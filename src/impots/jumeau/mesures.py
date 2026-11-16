@@ -97,6 +97,12 @@ class Mesure:
     travail: Mapping[int, Mapping[str, Any]] | None = None
     """{année : {"smic": coefficient, "passe": bool}} : une hausse du Smic que lit le bloc
     `travail` (D-478) ; "passe", la loi est déjà dans la passe de la première année."""
+    prelevements_publics: Mapping[int, Mapping[str, float]] = field(default_factory=dict)
+    """{année : {instrument : Md€, signe des impulsions}} : les cotisations prélevées sur
+    la rémunération publique (un point d'indice), que les APU employeurs paient et que
+    leurs caisses reçoivent (D-500). Ce ne sont pas des impulsions : aucun bloc marchand
+    ne les lit (ni le coût du travail privé, ni la formation des salaires) ; seul le
+    compte des sous-secteurs les range (`financement.comptes`)."""
 
     def __post_init__(self) -> None:
         if not self.identifiant:

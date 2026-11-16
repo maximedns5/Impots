@@ -1,0 +1,61 @@
+# Les valeurs du volet `papillon` (but 27, D-501) : les canaux que le jumeau ne portait pas
+# et qui se lisent en regard de sa trajectoire (`jumeau/papillon.py`), chacune avec sa source.
+
+prime_de_risque:
+  # β : points de base de taux long par point de dette publique en part du PIB.
+  beta_pb:
+    bas:
+      valeur: 0.0
+      source: >
+        Mésange (Insee, G2017-04), p. 101 : « le choc est effectué de façon permanente, à
+        taux d'intérêt réels constants » ; c'est aussi le jumeau d'avant D-501 (le taux
+        marginal du scénario, fixe).
+    centre:
+      valeur: 3.0
+      source: >
+        Laubach, « New Evidence on the Interest Rate Effects of Budget Deficits and
+        Debt », Journal of the European Economic Association 7(4), 2009, p. 858-885 : un
+        coefficient d'environ 0,03 de la dette projetée (en % du PIB) sur le taux à dix ans
+        dans cinq ans (États-Unis, 1976-2006) ; Furceri, Gonçalves et Li, SUERF Policy
+        Brief n° 1237, 2025 : « a 10 percent of GDP increase in expected debt is
+        associated with an increase in long-term rates of between 20 and 30 basis
+        points », et leurs coefficients « very close to those first reported by Laubach
+        (2009) ». Le haut de leur fourchette.
+    haut:
+      valeur: 5.0
+      source: >
+        Laubach, Federal Reserve Board, FEDS 2003-12 (la version de travail du même
+        article) : 4 à 5 points de base par point de dette ; le haut.
+    note: >
+      Estimations sur les États-Unis : la France est dans une union monétaire, où la prime
+      d'un pays tient aussi à ses voisins et à la BCE. Une source française ou de la zone
+      euro, de même construction, n'est pas lue ici ; c'est la limite de la valeur (dit).
+  duree_vie_moyenne_ans:
+    valeur: 8.471
+    source: >
+      Agence France Trésor, Bulletin mensuel n° 417 (février 2025), tableau « Durée de vie
+      moyenne de la dette négociable », colonne fin décembre 2024 : 8 ans et 172 jours
+      (8 + 172/365).
+    note: >
+      Le taux de marché ne gagne la dette qu'à mesure qu'elle se refinance : la part
+      min(1, t / M) du stock à l'année t, une rampe linéaire, choisie (le profil exact des
+      tombées est dans le bulletin, que ce dépôt lit ailleurs, `dette.maturite`).
+
+pfu:
+  taux_ir:
+    valeur: 0.128
+    source: CGI, art. 200 A, 1-A, 1° (le taux forfaitaire de l'impôt sur le revenu).
+  prelevements_sociaux:
+    valeur: 0.172
+    source: >
+      CSS, art. L136-7 et L136-8 ; ordonnance 96-50 (CRDS) ; CSS, art. L245-15 :
+      9,2 % de CSG, 0,5 % de CRDS et 7,5 % de prélèvement de solidarité sur les revenus
+      de placement, le taux que le canal C10 du dépôt prend (`dividends.yaml`,
+      l'exemple de `dividend_response`). Une hausse des prélèvements sociaux votée
+      après 2025 change τ_0 et τ_1 du même montant (dit).
+  abattement:
+    valeur: 0.40
+    source: CGI, art. 158, 3-2° (l'abattement sur les dividendes imposés au barème).
+  csg_deductible:
+    valeur: 0.068
+    source: CGI, art. 154 quinquies, II (la CSG déductible sur les revenus imposés au barème).

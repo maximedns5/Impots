@@ -36452,6 +36452,297 @@ proposé : Retailleau, puis Mélenchon (le volet `mesure` part de cette populati
 Philippe, puis les autres. Les autres lignes de la grille ne bougent pas : aucune autre
 étude n'hérite d'un changement.
 
+## D-500 — Le papillon de Mélenchon (1) : l'audit, flèche par flèche, et ses défauts
+
+Le programme regardé (D-490) : 64 mesures dans `programmes/melenchon.json`, dont **sept**
+ont un rapport (le point d'indice +10 %, l'indexation à +10 % des pensions, allocations
+familiales et APL, le Smic à 1 700 € net, la garantie d'autonomie des jeunes, la
+suppression du PFU, la fin des exonérations au-delà de 2 Smic, la défiscalisation des
+pensions alimentaires) : 88,98 Md€ de coût en 2026 (figée). Les 57 autres (l'impôt sur la
+fortune, les niches, la taxe Zucman, les successions, les dépenses de services publics…)
+n'ont pas de passe : elles n'entrent dans aucune trajectoire du programme ; c'est le
+premier endroit où la diffusion s'arrête, et le plus gros. Tout ce qui suit est le jumeau
+seul (aucune passe), à θ½, `scripts/jumeau_papillon.py`, `reports/papillon/
+melenchon.json`.
+
+**Les flèches de la cascade, une à une** (mode structurel ; unités, signe, horizon).
+
+| flèche | calculée ou posée | unité, signe | ce qui la porte |
+|---|---|---|---|
+| mesure → solde (statique) | calculée (la passe) | Md€, coût + | `mesures_non_ventilees` |
+| mesure → ménages, décile | 1re année ; puis convention | Md€, gain + | D-414, D-476 |
+| mesure → entreprises | 1re année ; puis convention | Md€, recette + | D-475 |
+| Smic → salaires, allègements | calculée, θ diffusion et incidence | Md€ | bloc `travail` |
+| revenu → consommation | calculée, θ profil et pente | Md€ | bloc `consommation` |
+| coût, activité → emploi | calculée, élasticité agrégée (θ) | milliers | bloc `emploi` |
+| chômage, coin → salaires | calculée, θ | € par tête | bloc `salaires` |
+| prix → commerce | calculée, θ | Md€ | bloc `commerce` |
+| prélèvements → sociétés, investissement | calculée, θ | sociétés, Md€ | lot 2 |
+| solde → sous-secteurs | posée : clés, payeurs des fiches | Md€ | `comptes` |
+| dette → taux | absente (taux marginal fixe) | — | en regard, D-501 |
+
+**Les identités, écrites et tenues chaque année** (`papillon.identites`, au-delà des cinq
+que le cadre vérifie sur les niveaux à chaque pas) : ΔB9 = Σ des contributions par
+(bloc, mesure) ; ΔD_t = ΔD_{t−1} − ΔB9_t + ΔSFA_t ; Δb = Σ de la décomposition par clé ;
+la contribution du bloc `mesures` au solde primaire de chaque mesure égale son choc relu
+(aucune mesure comptée deux fois ni oubliée ; B9 porte aussi, sous la même clé, les
+intérêts de la dette que le choc a faite, d'où le solde primaire). Programme, structurel,
+figée : plus grand résidu 6,4e-16 du PIB ; réduit : 4,6e-16. Le compte par sous-secteur :
+3,9e-16. La somme des coûts des sept mesures et de l'interaction égale le coût du
+programme, chaque année, au bit (`verifier_somme`, résidu 0,0).
+
+**Défaut 1, corrigé : la paie publique lue comme un coût du travail privé.** La passe du
+point d'indice porte ses prélèvements en impulsions : −12,526 Md€ de cotisations des APU
+employeurs, −1,911 de cotisations salariales des agents. Le bloc `emploi` lisait la
+première comme une hausse du coût du travail marchand, `salaires` la seconde comme un coin
+fiscalo-social du privé, `commerce` la première comme un coût unitaire. Elles sont payées
+par les APU à leurs caisses. Corrigé (`papillon.remuneration_publique`, appelé par
+`Session.mesure_structurel` quand `ventilation.payeur` dit « publics ») : elles sortent
+des impulsions et vont dans `Mesure.prelevements_publics`, que seul `comptes` lit (les
+caisses les reçoivent toujours : le partage par sous-secteur de D-487 ne bouge pas).
+Convention nommée « remuneration_publique », sur chaque année. Le point d'indice seul,
+structurel, θ½, en 2035 (avant → après) : figée, emploi −39,5 → +33,7 milliers, dette
++2,765 → +2,042 pt, B9 −12,71 → −9,35 Md€ ; vieillie, −53,5 → +42,8, +3,260 → +2,394.
+Le point d'indice de Tondelier change de même (seul, structurel). Le test
+`test_jumeau_papillon.py` le tient et échoue sur le code d'avant (vu).
+
+**Défaut 2, corrigé (D-502) : Mélenchon refusé en structurel** (les employeurs mêlés).
+
+**Défauts dits, qui demandent une décision.**
+
+* **Le mode réduit, celui des études publiées, lit mal trois mesures sur sept.** (a) Le
+  point d'indice y est récessif : il ne voit que les prélèvements sur la paie (impôts des
+  ménages, cotisations des APU comme des cotisations privées), pas la paie, qui n'a pas
+  d'instrument de Mésange : PIB −0,602 % en 2035, dette +6,998 pt (figée) ; sans les
+  cotisations de la paie, +3,661 ; en structurel, +2,042. (b) Les transferts n'ont pas de
+  multiplicateur (`shocks.UNMAPPED`, « transfert ») : la garantie d'autonomie (35,7 Md€)
+  y fait un PIB inchangé (0,000 %), et l'indexation des pensions un PIB en baisse
+  (−0,167 %) : on y lit l'IR et la CSG des pensions revalorisées, pas les pensions. (c)
+  Le Smic y est encore une baisse du coût du travail (+31,7 Md€ d'impulsion, PIB +1,134 %,
+  B9 de −21,3 en 2026 à −3,5 en 2035, 88 % d'autofinancement), le défaut que D-478 a
+  corrigé en structurel seulement. Le programme réduit en hérite : la boucle de Mésange
+  y ajoute +0,956 pt à la dette de 2035 (figée), +3,684 (vieillie) ; un déficit de 90 Md€
+  y est récessif (PIB −0,095 %, −0,689 %). Deux erreurs s'y compensent en partie : sans
+  la seule paie publique, le programme réduit irait de +25,109 à +21,699 pt (figée),
+  de +27,375 à +23,233 (vieillie). Corriger le réduit change les études : décision.
+* **Le PIB nominal sans la hausse des traitements.** Un rapport ne porte pas ΔD1 des APU
+  (D-418 ne s'ouvre qu'aux mesures qui le déclarent) : la production non marchande, au
+  coût, ne monte pas. Pour le point d'indice, ΔD1 ≈ 29,2 Md€ en 2026 : la dette en points
+  de PIB est surestimée d'environ 1,1 pt en 2026 et 1,0 pt en 2035. Le porter sans double
+  compte demande que les déciles et les recettes de la passe ne passent plus par
+  `emploi_public` : décision.
+* **La compensation des collectivités.** Le programme dit « compenser intégralement cette
+  augmentation pour les collectivités territoriales » ; le compte la fait payer aux APUL
+  aux parts de D1 : APUL −8,21 Md€ en 2026 pour le point d'indice seul (État −10,83, ASSO
+  +8,93). Avec la compensation annoncée, l'APUL irait à zéro et l'État d'autant plus bas,
+  le consolidé inchangé : à ajouter comme un transfert déclaré, décision.
+* **Les payeurs des prestations viennent d'un gabarit.** Les fiches de l'indexation et de
+  la garantie d'autonomie nomment la branche famille seule ; le compte, sans ligne dans
+  `financement.yaml`, prend la clé des dépenses : APUL −4,97 et −4,33 Md€ en 2026, quand
+  les pensions sont aux caisses de retraite et à l'État, et l'APL à l'État. C'est le
+  volet `fiches` (D-504 à D-506), puis une ligne `reste` par mesure.
+* **Deux θ réclamés sans effet.** `autofinancement_poids_tresor_eco` et
+  `employment_elasticity_smic` sont lus (la page les montre) mais leur portée est nulle :
+  le rapport des exonérations ne porte pas les statistiques de C11, et C2 ne fait que des
+  emplois, pas de recettes. Pas de double compte avec le bloc `emploi`, mais deux
+  curseurs morts : à retirer de la page ou à remplir par une passe.
+* **Trois cas de test d'avant le but 26 ne tiennent plus**, sur le commit de départ
+  (`4d1912a`) comme avec ce volet : `test_jumeau_navigateur.py::
+  test_la_convention_porte_un_programme_jusqu_en_2035` attend Retailleau refusé en
+  structurel, et `test_ce_que_le_structurel_calcule_se_dit_avant_le_calcul` Attal
+  (vieillie) et Roussel (figée) refusés ; ils tournent depuis D-477 et D-487. Les tests
+  ne sont pas retouchés ici (pas de ce volet) ; les quatorze autres cas du fichier
+  passent avec ce volet.
+
+## D-501 — Le papillon de Mélenchon (2) : les canaux, ceux qui manquent, les retournements
+
+**Où la diffusion s'arrête, mesure par mesure.**
+
+* **Le Smic et l'emploi des moins qualifiés** : porté (bloc `travail`, `cout_travail_smic`,
+  le profil des non qualifiés). Ce que la passe dit d'abord : la loi relève les allègements
+  de 35,3 Md€ (la RGDU est écrite en multiples du Smic), le brut de 8,4 : le coût
+  super-brut baisse de 23,2 Md€ et le Smic coûte 29,7 Md€ aux APU la première année, le
+  plus gros poste du programme après la garantie d'autonomie. C'est la loi, pas une
+  erreur ; une hausse du Smic sans allègements réindexés serait une autre mesure.
+* **La fin des exonérations au-delà de 2 Smic et le coût du travail** : porté par
+  l'impulsion uniforme et le bloc `emploi` (élasticité agrégée de Mésange). En regard,
+  Bozio-Wasmer par tranche (`papillon.emploi_exonerations`, la matrice du tableau 4.1) :
+  la hausse du coût est de 1,21 % entre 1,6 et 2,5 Smic et 0,93 % entre 2,5 et 3,5 ;
+  −0,153 % d'emploi salarié marchand à θ½, −28,8 milliers sur 18 836 (−14,4 à θ 0, −43,2
+  à 1), contre −39,0 (figée) et −61,0 (vieillie) dans le jumeau en 2035. Même ordre de
+  grandeur, le jumeau au-dessus (D-489, décision 5).
+* **Le point d'indice et les salaires du privé** : pas de canal. Aucune estimation
+  française de l'entraînement des salaires privés par le point n'est lue dans ce dépôt :
+  non ajouté, dit.
+* **La hausse des prestations et la consommation** : portée en structurel (le bloc
+  `consommation`, par décile) ; arrêtée en réduit (D-500).
+* **Le PFU et les dividendes** : le canal C10 existe (Bach et al. 2024, sourcé,
+  `dividends.yaml`) mais ne s'ouvre que sur `pfu_taux` ; `pfu_supprime` le laisse fermé
+  (« aucun levier ne déplace le taux du PFU ») : la suppression est chiffrée sans aucune
+  réponse des dividendes, alors que la réforme de 2013, la même, est celle qui donne
+  l'élasticité haute. Ajouté en regard (`papillon.dividendes_pfu`) ; l'agrégat demande une
+  passe avec C10 ouvert sur `pfu_supprime` (le taux de chaque foyer au barème) : à faire
+  par le volet `mesure`, ou décision.
+* **Le PFU et l'épargne** : pas de canal ; Bach et al. trouvent que la réponse passe par
+  l'épargne des sociétés, pas par l'investissement : rien à ajouter au bloc de
+  l'investissement.
+* **L'IR sur les hauts revenus et l'exil fiscal** : l'IR à 14 tranches est « vague », sans
+  passe : rien ne se propage. Le canal C1 (l'élasticité du revenu imposable) existe pour
+  une passe ; l'exil n'a pas d'élasticité française dans ce dépôt : non ajouté, dit.
+* **Le financement et le taux de la dette** : absent ; le jumeau charge la dette d'une
+  mesure au taux marginal fixe du scénario, comme Mésange (« à taux d'intérêt réels
+  constants », p. 101). Ajouté en regard (`papillon.prime_de_risque`, `papillon.yaml`) :
+  β points de base par point de dette (0 ; 3, Laubach 2009 et Furceri, Gonçalves et Li
+  2025 ; 5, Laubach 2003), le stock refinancé en M = 8,47 ans (AFT, bulletin n° 417,
+  durée de vie moyenne fin 2024). Programme, figée, en 2035 : +1,555 pt de dette à θ½,
+  +2,705 à θ 1, en structurel (sur +12,306) ; +3,427 et +5,980 en réduit (sur +25,109) ;
+  vieillie +1,548 et +3,680 à θ½. Estimations américaines : leur portée en union
+  monétaire est la limite, dite.
+
+**Les cas où une bonne idée se retourne** (jumeau, θ½ sauf dit).
+
+1. **La suppression du PFU sur les dividendes.** Au centre de C10 (ε = 0,774 × 2,5 =
+   1,935), le taux qui maximise la recette des dividendes est 1/(1 + ε) = 34,1 % ; le PFU
+   est à 30 %, le barème le porte à 39,0 % (TMI 41 %) ou 41,1 % (TMI 45 %). Par euro de
+   dividende d'avant : TMI 30 %, +3,16 centimes mécaniques, +0,32 avec la réponse ; TMI
+   41 %, +9,01 → −0,12 ; TMI 45 %, +11,14 → −0,58. À θ 1 (ε = 3,04), −5,71 centimes à 45 %.
+   Sur les dividendes des hauts revenus, la mesure ne rapporte rien et peut coûter ; le
+   jumeau compte +13,8 Md€ (les intérêts et plus-values, sans réponse, en font une part
+   que seule une passe sépare). Le salaire que les propriétaires se reversent (D-252)
+   joue en sens contraire et n'est pas valorisé ici.
+2. **Le Smic, dont l'emploi change de signe avec θ.** Le Smic seul, structurel, figée,
+   emploi en 2035 : +180,6 milliers sans diffusion (θ 0), −7,7 au centre, −225,2 avec
+   les effets fixes (θ 1) ; son solde de 2035 passe de −19,67 à +4,15 Md€ (la diffusion
+   relève les salaires et les prélèvements). L'incidence (θ 0 : +94,1 ; θ 1 : −98,4) et
+   l'élasticité au coût (+83,4 ; −36,4) le retournent aussi. Le centre n'est pas un
+   résultat : c'est un point d'équilibre entre deux canaux de signe contraire.
+3. **Un défaut qui retourne une mesure** (D-500) : le point d'indice récessif en réduit
+   (PIB −0,602 %), la garantie d'autonomie sans effet sur l'activité, l'indexation des
+   pensions récessive ; le Smic expansif (+1,134 %). Dans le programme réduit, ces signes
+   faux se compensent en partie.
+4. **Des mesures dont le gain s'use avec l'horizon** : la fin des exonérations au-delà de
+   2 Smic rapporte +4,55 Md€ en 2026 et +0,89 en 2035 en réduit (80 % repris par
+   l'activité), +5,52 et +4,70 en structurel ; le Smic coûte 18,16 en 2026 et 8,66 en
+   2035 en structurel (52 % repris). Aucune mesure seule ne change de signe de solde avec
+   l'horizon à θ½.
+
+## D-502 — Le papillon de Mélenchon (3) : les compensations, et le programme en structurel
+
+**La convention « mesures_seules »** (`papillon.mesures_seules`, D-489 décision 3). Le
+programme tourne comme ses sept mesures, chacune lue comme le mode structurel la lit (sa
+ventilation, `travail.mesure_smic` pour le Smic, la rémunération publique pour le point
+d'indice, le PFU dans sa propre passe : `mesure_smic` n'a donc plus à garder un PFU), plus
+une huitième mesure, l'interaction de la passe : chaque année, le coût du programme moins
+la somme de ses mesures, sur le solde, sans comportement ni décile ; et l'écart de ses
+cotisations des employeurs, comme une impulsion uniforme et un impôt des entreprises
+privé (le Smic et la fin des exonérations sur la même base : la seconde rapporte moins
+quand le Smic monte). Figée : coût +0,444 Md€ en 2026, +0,525 en 2035, cotisations
++1,333 et +1,409 ; vieillie : +0,334 et +0,619, +0,945 et +0,882. Marquée sur chacune de
+ses années (« mesures_seules ») ; elle n'est pas une passe du programme ventilée.
+
+**Mélenchon, structurel, θ½ (avant : refusé, D-489).**
+
+| | réduit, figée | struct., figée | réduit, vieillie | struct., vieillie |
+|---|---:|---:|---:|---:|
+| dette 2035 (pt de PIB) | +25,109 | +12,306 | +27,375 | +12,078 |
+| B9 2026 (Md€) | −90,69 | −71,53 | −91,59 | −71,81 |
+| B9 2035 (Md€) | −107,73 | −55,63 | −118,78 | −51,95 |
+| PIB 2035 (%) | −0,095 | +1,709 | −0,689 | +1,683 |
+| emploi 2035 (milliers) | — | +186,1 | — | +126,7 |
+
+L'écart entre les deux modes (+12,8 et +15,3 pt) vient presque entier de D-500 : en
+réduit, 68 Md€ de transferts sans multiplicateur et deux mesures de signe faux ; en
+structurel, les ménages dépensent ce qu'ils reçoivent. Le structurel est la lecture à
+retenir pour ce programme ; le réduit reste celle des études publiées.
+
+**Mesure par mesure** (structurel, figée, 2035 ; dette en points, B9 en Md€, emploi en
+milliers ; en réduit, la dette).
+
+| mesure | dette | B9 2026 | B9 2035 | emploi | réduit |
+|---|---:|---:|---:|---:|---:|
+| point d'indice +10 % | +2,042 | −10,10 | −9,35 | +33,7 | +6,998 |
+| indexation +10 % | +5,572 | −28,82 | −25,77 | +106,9 | +9,812 |
+| Smic 1 700 € net | +2,373 | −18,16 | −8,66 | −7,7 | +0,759 |
+| garantie d'autonomie | +6,108 | −32,02 | −28,36 | +123,7 | +9,641 |
+| suppression du PFU | −2,575 | +12,49 | +11,97 | −40,8 | −1,690 |
+| exonérations > 2 Smic | −1,152 | +5,52 | +4,70 | −39,0 | −0,193 |
+| pensions alimentaires | +0,034 | −0,17 | −0,16 | +0,6 | +0,022 |
+| interaction | +0,018 | −0,28 | −0,01 | +8,7 | — |
+| somme | +12,420 | | −55,64 | +186,1 | |
+| ensemble | +12,306 | −71,53 | −55,63 | +186,1 | +25,109 |
+
+**Ce qui finance quoi, ce qui se recouvre.** Les deux recettes (PFU, exonérations) font
+−3,73 pt de dette en 2035 ; les quatre dépenses +16,10. Elles financent 23 % du programme
+en dette de 2035, et 18,0 Md€ de solde en 2026, 16,7 en 2035 ; elles coûtent −79,8
+milliers d'emplois, quand les deux transferts (l'indexation, la garantie d'autonomie) en
+font +230,6 : le programme tient son emploi par la demande, pas par le coût du travail.
+Le Smic et les exonérations se recouvrent sur la même base : 1,33 Md€ (l'interaction).
+Le jumeau est presque additif : l'ensemble moins la somme fait −0,114 pt (figée), −0,095
+(vieillie), de la dette sur le PIB et des intérêts.
+
+**Le solde par sous-secteur** (structurel, figée ; B9, Md€, 2026 → 2035) : État −26,79 →
+−24,85 ; ODAC −1,01 → −0,84 ; APUL −17,39 → −17,64 ; ASSO −26,35 → −12,31 ; compensation
+de l'État aux ASSO 16,50 en 2026 (non ventilée par branche). Vieillie, 2035 : État
+−18,66, ODAC −0,99, APUL −22,61, ASSO −9,69. Le poids des APUL est le défaut des clés
+(D-500 : la compensation des collectivités annoncée et les payeurs des prestations) ;
+chaque mesure a désormais sa propre clé, ce que D-487 attendait (décision 8 : la clé au
+prorata des mesures seules est faite par construction).
+
+## D-503 — Le papillon de Mélenchon (4) : l'étude simplifiée, et ce qui reste à décider
+
+**La sensibilité de la dette de 2035 à chaque θ, un à la fois** (`papillon.sensibilites`,
+une trajectoire vectorisée, le programme en structurel, figée, les autres θ à ½ ; dette
+à θ 0 et à θ 1, portée en points). Sur 26 θ lus :
+
+| θ | bloc | θ 0 | θ 1 | portée |
+|---|---|---:|---:|---:|
+| travail_smic_diffusion | travail | 14,697 | 9,541 | 5,16 |
+| jumeau_consommation_profil | consommation | 14,320 | 12,271 | 2,05 |
+| elasticite_creations | naissances | 12,685 | 10,929 | 1,76 |
+| productivite_creations | créations | 13,093 | 11,522 | 1,57 |
+| travail_incidence | travail | 13,088 | 11,594 | 1,49 |
+| taille_creations | productivité | 12,699 | 11,522 | 1,18 |
+| jumeau_emploi_elasticite_cout | emploi | 11,644 | 12,508 | 0,86 |
+| fermetures_marges | fermetures | 12,714 | 11,899 | 0,82 |
+| jumeau_salaires_chomage | salaires | 12,500 | 11,867 | 0,63 |
+
+Les 17 autres ont chacun une portée de 0,43 pt au plus (le commerce, la pente des
+déciles, l'accélérateur, l'offre de travail, la survie et les idées des créations) ou
+nulle (la part des emplois publics, le coût du capital, l'implantation, et les deux θ
+morts de D-500). Vieillie : le même ordre, la diffusion du Smic en tête (5,16 pt).
+**Le jeu réduit pour Mélenchon** : les neuf θ du tableau, les dix-sept autres fixés à
+leur centre. La diffusion du Smic domine : elle fait passer l'emploi du programme de
++374,4 milliers (θ 0) à −31,3 (θ 1) en 2035, figée ; c'est elle qu'une étude simplifiée
+doit montrer d'abord, avec la prime de risque de D-501 (0 à +2,7 pt).
+
+**La cascade simplifiée** (`papillon.cascade_simple`, la décomposition de Δb de 2035 par
+bloc, rangée en flèches ; la somme est Δb, résidu 6e-14) : structurel, figée, +12,306 pt
+= le choc statique et ses intérêts +23,725 ; la consommation −3,709 ; le travail, les
+salaires et l'emploi −7,399 ; le commerce et les prix +0,641 ; les entreprises et
+l'investissement −0,951. Vieillie : +23,138, −3,654, −7,173, +0,662, −0,895 = +12,078.
+Réduit, figée : +24,154 de choc statique et +0,956 de Mésange = +25,109. Cinq flèches
+portent tout le programme ; la demande publique (D-418) est vide (D-500 : un rapport ne
+porte pas ΔD1).
+
+**Ce qui reste à décider** (le propriétaire) :
+
+1. Le mode réduit des études : la paie publique hors des impulsions (comme en
+   structurel), les transferts (la variante « dépense publique » de Mésange, D-474
+   décision 1) et le Smic de D-478 ; ou le structurel comme lecture publiée des
+   programmes qui portent des transferts ou un Smic (D-500, D-502).
+2. Le PIB nominal d'un point d'indice (ΔD1, environ 1 pt de dette) et la compensation
+   des collectivités qu'un programme annonce (D-500).
+3. Le canal C10 ouvert sur `pfu_supprime`, par une passe (D-501) ; la prime de risque
+   dans l'état, avec son θ, ou en regard seulement (D-501).
+4. La diffusion du Smic au centre (D-489, décision 6) : pour Mélenchon, elle décide du
+   signe de l'emploi (D-501).
+5. Les payeurs des prestations par mesure, après le volet `fiches` (D-500).
+
+Les tests : `tests/test_jumeau_papillon.py` (quatre, 9 s) tient le point d'indice après
+D-500, Mélenchon structurel (+12,306 pt, +186,1 milliers, identités, cascade, prime de
+risque), les dividendes et les exonérations par tranche ; `ruff` passe. Ni `make
+impact`, ni les lourds, ni la suite entière (le brief).
+
 ## D-504 — Les fiches de transmission : les données critiques mesure par mesure, Mélenchon
 
 **Le problème** (D-490, volet `fiches`). Les 333 fiches du but 26 (D-472 à D-474) sont
