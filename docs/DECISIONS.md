@@ -36590,3 +36590,118 @@ tolérance : c'est la ligne que ce tour peut faire sortir.
 reconstruite (`impots population build`, graine 20240101), puis `impots verification
 passe` sur 2024, 2023, 2022, puis `impots verification ecrire`. Le résultat va dans
 D-498. Les études ne sont pas refaites.
+
+## D-498 — La grille, second tour : 34 lignes sur 35 en 2024, le pronostic tenu
+
+**Ce qui a tourné**, détaché, seul sur la machine, au commit 6e18d5f (D-497) : la
+population reconstruite (10 secondes, facteur des salaires horaires 1,0125), puis 2024,
+2023, 2022, 41 minutes, mémoire de la machine au plus 10,1 Go ; puis `impots
+verification ecrire`. Les passes de D-496 restent dans l'historique (683cc42).
+
+**2024, les 35 lignes jugées** (écart au publié, % ; « 5 » : dans ±5 %) :
+
+| ligne | tol. | D-496 | pronostic | passe | tolérance | ±5 % |
+|---|---:|---:|---:|---:|---|---|
+| `cotisations_salariales_apu` | 10 | — | +11,3 | +11,1 | hors | non |
+| `reduction_generale` | 15 | −17,5 | +5,7 | +5,3 | tient | non |
+| `bandeau_maladie` | 15 | +12,8 | +0,1 | +1,1 | tient | 5 |
+| `bandeau_famille` | 15 | +18,4 | +9,8 | +9,6 | tient | non |
+| `aide_logement_montant` | 25 | −27,0 | −9,9 | −9,4 | tient | non |
+| `af_montant` | 25 | −15,6 | −17,1 | −16,9 | tient | non |
+| `ppa_foyers_servis` | 25 | +0,0 | +0,0 | −1,7 | tient | 5 |
+| `ppa_montant_servi` | 13 | +6,2 | +7,7 | +5,8 | tient | non |
+| `rsa_foyers_servis` | 25 | −0,4 | +3,9 | +3,9 | tient | 5 |
+| `rsa_montant_servi` | 14 | +3,3 | +5,9 | +5,7 | tient | non |
+| `ir_bareme` | 10 | −9,8 | −5,4 | −5,4 | tient | non |
+| `ir_net` | 15 | −1,1 | +3,7 | +3,7 | tient | 5 |
+| `foyers_imposes` | 10 | +2,1 | −2,3 | −2,0 | tient | 5 |
+| `foyers_tmi_0` | 15 | −5,3 | +0,2 | +0,1 | tient | 5 |
+| `foyers_tmi_1` | 15 | −10,5 | −14,3 | −14,5 | tient, au bord | non |
+| `foyers_tmi_2` | 15 | +4,2 | +5,3 | +5,8 | tient | non |
+| `foyers_tmi_3` | 30 | −16,4 | −12,9 | −12,8 | tient | non |
+| `foyers_tmi_4` | 30 | −0,9 | −3,3 | **−5,1** | tient | **non** |
+| `niveau_de_vie_median` | 15 | −6,9 | −9,1 | −8,7 | tient | non |
+| `niveau_de_vie_median_servi` | 15 | −7,2 | −9,5 | −9,2 | tient | non |
+| `d9_d1` | 15 | −8,9 | −4,2 | −4,4 | tient | 5 |
+| `d9_d1_servi` | 15 | −5,2 | +1,5 | +0,7 | tient | 5 |
+| `cotisations_employeurs_d121` | 15 | +1,6 | −0,2 | −0,0 | tient | 5 |
+| `csg_remplacement` | 10 | −5,1 | −4,7 | −4,6 | tient | 5 |
+| `csg_activite` | 15 | −7,0 | −7,2 | −7,1 | tient | non |
+| `csg_activite_avec_non_salaries` | 15 | −2,0 | −2,2 | −2,0 | tient | 5 |
+| `impots_salaires_calcules` | 20 | −3,9 | −4,2 | −4,1 | tient | 5 |
+| `salaires_declares` | 10 | −8,2 | −8,3 | −8,2 | tient | non |
+| `foyers_fiscaux` | 10 | −6,9 | = | −6,9 | tient | non |
+| `foyers_fiscaux_residents_hors_mayotte` | 10 | −6,1 | = | −6,1 | tient | non |
+| `revenus_non_salaries_hors_gerants` | 15 | −3,0 | = | −3,0 | tient | 5 |
+| `is` | 20 | +2,0 | = | +2,0 | tient | 5 |
+| `contribution_sociale_is` | 25 | +20,3 | = | +20,3 | tient | non |
+| `c3s` | 25 | +1,2 | = | +1,2 | tient | 5 |
+| `cvae` | 25 | −15,2 | = | −15,2 | tient | non |
+
+Les remplacées, sans verdict : `cotisations_salariales` −11,2, `cotisations_employeurs`
++26,4, `rsa_foyers` +60,0, `ppa_foyers` +69,9, `rsa_montant` +14,2, `ppa_montant` +1,7
+(annoncé +3,6).
+
+**Le compte.** 2024 : **34 lignes jugées sur 35** dans leur tolérance (31 à D-496),
+comme annoncé ; hors, `cotisations_salariales_apu` (+11,1 %). **±5 % : 15 sur 35** (13 à
+D-496), une de moins qu'annoncé (16). 2023 : **31 sur 33** (29 à D-496), comme annoncé,
+hors la contribution sociale sur l'IS (+33,8 %, la couche entreprises, D-494) et la
+ligne neuve (+11,9) ; ±5 % : 16 (12). 2022 : **30 sur 31** (27), comme annoncé, hors la
+ligne neuve (+13,0) ; ±5 % : 15 (13), deux de plus qu'annoncé (l'IR net, +5,0, et la
+masse servie de la prime, +3,8). Trois années : **95 lignes jugées sur 99** (87 à
+D-496) ; ±5 % : 46 (38).
+
+**Le pronostic, ligne par ligne.** Les 99 lignes jugées des trois années tombent dans
+la bande annoncée, et aucune ne change de verdict sur la tolérance. Sur ±5 %, une seule
+ligne change de côté contre le pronostic en 2024 : les foyers à 45 % (−5,1 contre −3,3,
+dans la bande de ±3 ; l'échantillon de 20 000 ménages voit mal un compte de 64 000
+foyers). Les foyers servis de la prime, calés, sont à −1,7 % (bande ±2) : le `p_max`
+calé sur l'échantillon rend 98,3 % des payés de la Cnaf sur la population entière ;
+l'écart ne se retouche pas.
+
+**Les quatre lignes de D-496.** La réduction générale passe de −17,5 à +5,3 %, le
+bandeau famille de +18,4 à +9,6, le bandeau maladie de +12,8 à +1,1 : la forme des
+salaires horaires en parts de Smic était la cause (D-494, § 3). Les aides au logement
+passent de −27,0 à −9,4 % (5,74 M d'allocataires en décembre sur l'échantillon, contre
+4,64) : les revenus selon le statut d'occupation étaient la cause principale. Les
+cotisations des salariés : la ligne au champ des régimes publics est à +11,1 %, hors.
+
+**Ce qui ne tient pas, et pourquoi.**
+
+* **`cotisations_salariales_apu`, +11 à +13 %.** Le modèle cotise sur tout le brut que
+  D11 paie ; l'assiette des cotisations n'en contient pas une partie (intéressement,
+  participation, prime de partage de la valeur, part exonérée des titres-restaurant) :
+  la CCSS de juin 2025 (fiche 1.2) donne un point de cotisation déplafonnée de 7,2 Md€
+  pour les employeurs privés du régime général et 0,3 pour les salariés agricoles, une
+  assiette d'environ 750 Md€, quand le modèle en porte 780 à 805. Le même défaut pèse
+  sur les bandeaux (le bandeau famille reste à +9,6) et la réduction générale. Le
+  correctif est une part du brut hors assiette dans le moteur (cotisations et
+  allègements, ni la CSG ni l'impôt) : il n'est pas fait ici, et se préenregistre à part
+  (D-499 reste libre pour lui).
+* **La contribution sociale sur l'IS de 2023** (+33,8 %) : la couche entreprises, non
+  touchée (D-494, § 4).
+* **Au-delà de ±5 %**, dans la tolérance : le niveau de vie médian s'éloigne (−6,9 →
+  −8,7 %) quand le D9/D1 se rapproche (−8,9 → −4,4) : les revenus du patrimoine, absents
+  du niveau de vie de la grille, et le champ de l'ERFS (D-494, § 4) ; les foyers à 11 %
+  (−14,5 %, au bord) : les salaires sous 1,6 Smic plus bas font passer des foyers à 0 % ;
+  les AF (−17 %), la CSG d'activité (−7 %), les salaires déclarés (−8 %), les foyers
+  fiscaux (−6 à −7 %), la CVAE : causes de D-494, que ce tour ne touche pas.
+
+**Ce que les études héritent**, en ordre de grandeur, sans les refaire (20 000 ménages,
+droit 2024, population de D-496 contre celle-ci) : une mesure sur la réduction générale
+a une assiette de réduction 28 % plus grosse (Mélenchon : la réduction arrêtée à 2 Smic ;
+le rendement de D-496 monterait d'un quart environ) ; une mesure sur les bandeaux, 11 %
+(maladie) et 7 % (famille) plus petite (la LFSS 2025 et ses points de sortie) ; une mesure
+sur les aides au logement, 23 % plus grosse (l'article APL du PLFSS 2027) ; l'impôt au
+barème est 5 % plus haut, ses réformes autant ; la prime servie ne bouge presque pas en
+masse (+1,4 %) mais ses ayants droit sont 20 % plus nombreux au `p_max` abaissé de 17 % :
+le Δ prime d'une réforme bouge de l'ordre de ±10 %, dans un sens que seule la passe dit.
+Les déciles et les gagnants et perdants de toutes les études bougent : les locataires
+sont plus pauvres, les propriétaires plus riches. L'ordre proposé : Mélenchon (le volet
+`mesure` part de cette population), Retailleau, Attal, le PLFSS 2027, puis les autres.
+
+**Le site n'est pas reconstruit** (la jonction s'en charge) ; `GRILLE.md` et
+`reports/verification/` sont écrits sur ce commit. Les tests légers des fichiers touchés
+passent (`test_salaires_horaires`, neuf ; `test_recours`, `test_verification`, mis à
+jour : leurs nombres sont ceux de D-497) ; `test_sources` attend la récolte de la
+jonction (D-493).
