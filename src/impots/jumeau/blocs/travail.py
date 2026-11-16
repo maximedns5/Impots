@@ -37,10 +37,18 @@ l'allègement A et le coût S = (1 + τ_e) B − A ; le net est r B, r = `net_su
 CE QUE LE BLOC ÉCRIT, par mesure m qui porte `travail` ({année : {"smic": 1 + g,
 "passe": bool}}) :
 
-    ŵ_diff  = Σ_t ΔS_diff,t                          la diffusion, en part de π D1
+    ŵ_diff  = (1 + τ_e) Σ_t ΔB_diff,t                la diffusion, en part de π D1
     salaire_moyen += π W_k ŵ_diff ;  remunerations += π D1_k ŵ_diff ;  EBE −= idem
+    impulsion_cotisations_employeurs_ciblees += π D1_k Σ_{t ≤ 1,6 Smic} ΔA_diff,t
+    impulsion_cotisations_employeurs         += π D1_k Σ_{t > 1,6 Smic} ΔA_diff,t
     apu_r_d61 += π D1_k Σ_t [(τ_e + τ_cs) ΔB_diff,t − ΔA_diff,t]
     apu_r_d5  += π D1_k τ_csg Σ_t ΔB_diff,t
+
+La variation des allègements est une variation de cotisation employeur : une impulsion
+(signe de Mésange, une hausse de l'allègement est positive), ciblée pour les deux
+premières tranches (le profil des non qualifiés de l'emploi), que lisent l'emploi, les
+prix et l'incidence ; la masse salariale ne porte que le brut et ses cotisations avant
+réduction, pour que les ménages n'en reçoivent pas l'allègement.
 
 Les ménages en reçoivent le revenu par le bloc `consommation` (la masse salariale va aux
 cellules au prorata de leur super-brut, aux taux moyens : la diffusion aux bas salaires
@@ -344,6 +352,7 @@ class Travail:
     nom = "travail"
     lit: tuple[str, ...] = ()
     ecrit = ("salaire_moyen", "remunerations", "ebe_revenu_mixte", "apu_r_d61", "apu_r_d5",
+             "impulsion_cotisations_employeurs", "impulsion_cotisations_employeurs_ciblees",
              COUT_SMIC, INCIDENCE_SALARIES, INCIDENCE_EMPLOYEURS)
     thetas = ("travail_smic_diffusion", "travail_incidence")
     porte = ("smic_diffusion", "cout_travail_smic", "incidence_cotisations")
@@ -382,14 +391,19 @@ class Travail:
             poids_e = None
             if spec:
                 cas = self._cascade(float(spec["smic"]), t_diff)
-                s = cas.s_diff.sum(axis=0)
-                b = cas.b_diff.sum(axis=0)
-                a = cas.a_diff.sum(axis=0)
+                b_t, a_t = cas.b_diff, cas.a_diff
                 if not spec.get("passe", False):
-                    s, b, a = (s + cas.s_loi.sum(axis=0), b + cas.b_loi.sum(axis=0),
-                               a + cas.a_loi.sum(axis=0))
+                    b_t, a_t = b_t + cas.b_loi, a_t + cas.a_loi
                 else:
                     out[COUT_SMIC][ident] = masse * cas.b_loi.sum(axis=0)
+                b, a = b_t.sum(axis=0), a_t.sum(axis=0)
+                # La masse salariale : le brut et ses cotisations avant réduction ; la
+                # réduction est une cotisation employeur en moins (une impulsion, ciblée
+                # sous 1,6 Smic), que lisent l'emploi, les prix et l'incidence.
+                s = (1.0 + self.p.tau_e) * b
+                out["impulsion_cotisations_employeurs_ciblees"][ident] = masse * a_t[:2].sum(
+                    axis=0)
+                out["impulsion_cotisations_employeurs"][ident] = masse * a_t[2:].sum(axis=0)
                 out["salaire_moyen"][ident] = self.pm.part_marchande * salaire * s
                 out["remunerations"][ident] = masse * s
                 out["ebe_revenu_mixte"][ident] = -masse * s

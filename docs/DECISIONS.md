@@ -35071,3 +35071,169 @@ aux prix : le jumeau la refuse aujourd'hui (D-469, J2).
 * **Aucun nombre publié d'une étude ne change** ; ceux du jumeau changent, chaque
   D-entrée dit lesquels. La page de l'étude garde son chiffrage (R15, D-469).
 * Les numéros : D-472 à D-486 aux volets, D-487 et la suite à la jonction.
+
+## D-478 — Le travail dans le jumeau : le Smic, ses allègements, le coût par tranche
+
+**Ce qui est fait** (but 26, volet `travail`, sur `claude/but26-travail`). Un bloc
+`travail` (`jumeau/blocs/travail.py`, valeurs et sources dans `parametres/travail.yaml`),
+branché dans le mode structurel juste après `mesures` (`blocs.ordre_structurel`). Aucun
+nombre publié d'une étude ne change ; le mode réduit ne bouge pas.
+
+* **Les tranches.** Les 18,5 millions d'EQTP du privé de 2024 par 100 € de salaire net
+  (Insee Première n° 2079, figure 2 ; l'intervalle ouvert du haut fixé par la moyenne de
+  2 733 €), portés en multiples du Smic net de 2024 (1 403,29 €), rangés dans les cinq
+  tranches de Bozio-Wasmer (1-1,2 ; 1,2-1,6 ; 1,6-2,5 ; 2,5-3,5 ; 3,5 Smic et plus) :
+  22 %, 28 %, 32 %, 10 % et 7 % des EQTP. La distribution en Smic est tenue de 2024 à 2035.
+* **Les allègements.** La RGDU de 2026 (CSS, art. L241-13 et D241-7, décret n° 2025-887 :
+  2 % + 38,21 % × [½ (3/m − 1)]^1,75 jusqu'à 3 Smic), poste par poste ; un taux employeur
+  avant réduction de 47,05 % (Bozio-Wasmer, p. 184 et p. 47, recoupé). **Recoupement** :
+  le barème de 2024 sur la même distribution donne 77,2 Md€ d'allègements généraux, pour
+  78,39 Md€ publiés (Bozio-Wasmer, tableau 1.1, 2024 p) : −1,5 %.
+* **Le Smic.** Une hausse g : la loi relève les postes sous le nouveau Smic ; la diffusion
+  relève ceux de 1 à 1,5 Smic de e(m) g, e les élasticités à un an de Koubi et Lhommeau
+  (Insee 2007, figure 11), à θ « travail_smic_diffusion » (0 : la loi seule, la convention
+  des études ; ½ : sans effets fixes, 0,47 à 0,31 ; 1 : avec, 1,19 à 0,49). Pour un Smic
+  à 2 000 € brut (× 1,0818), la loi seule, en 2026 (masse super-brute marchande 1 098 Md€) :
+  le brut +2,88 Md€, les allègements +17,53 Md€ (5,25 ; 6,80 ; 4,55 ; 0,92 ; 0 par
+  tranche), le coût du travail −13,29 Md€ : il baisse dans toutes les tranches (−0,9 %,
+  −3,3 %, −1,3 %, −0,5 %). **Recoupement à la passe** de l'étude (OpenFisca, même
+  requête) : brut +3,17, allègements +17,61, super-brut −13,06 Md€. La diffusion à θ½
+  ajoute +4,63 Md€ de brut, reprend 2,00 Md€ d'allègements : le coût de la première
+  tranche monte de 1,9 %, celui de la deuxième baisse encore de 0,6 %.
+* **Dans le jumeau.** La diffusion va dans la masse salariale (le brut et ses cotisations
+  avant réduction : salaire moyen, rémunérations, EBE), les allègements qu'elle reprend
+  en impulsions de cotisations employeurs (ciblées sous 1,6 Smic, le profil des non
+  qualifiés de Mésange), les cotisations et la CSG aux APU. Pour une mesure dont la passe
+  porte la loi, le brut que la loi relève, que nul champ ne portait, est un coût ciblé
+  (champ `cout_travail_smic`) que lisent l'emploi et les prix. `mesure_smic` rend une
+  mesure du Smic lisible en structurel : les déciles de la passe (les années suivantes au
+  prorata du coût, convention « travail_cout_proportionnel », nommée), ses prélèvements
+  en cotisations employeurs nettes, son impulsion partagée entre l'uniforme et le ciblé au
+  prorata des allègements de la loi (69 % sous 1,6 Smic). Elle refuse une passe avec
+  diffusion (compte double) ou avec une passe des entreprises (au volet `ventilation`).
+  `mesure_smic_hypothese` fait une hausse sans passe : la loi passe alors par le bloc, et
+  ses ménages reçoivent la masse salariale au prorata du super-brut des cellules (trop
+  vers le haut, dit).
+* **Le Smic réel efficace** (D-469, J2, point 2) : la ligne « Smic » de Mésange que lit le
+  bloc des salaires (`menages[année]["smic"]`) n'est pas lue pour ces mesures : elle porte
+  ensemble la loi et la diffusion, et la loi est déjà dans la passe ; le bloc `travail` la
+  remplace, tranche par tranche. La clé reste pour une hypothèse déclarée.
+* **L'incidence** (θ « travail_incidence ») : λ, la part de long terme d'une variation
+  de cotisations qui finit sur le net, par tranche : 0 (Mésange, p. 64 : le coût porte
+  tout, le jumeau d'avant), ½ (Bozio-Wasmer, tableau 4.2 : 0,33 ; 0,62 ; 0,59 ; 0,56 ;
+  0,56), 1. Le bloc des salaires en fait ŵ += (1 − λ_s) L[κ̂, S_p] − λ_e L[τ̂ + τ̂ᶜ, S_p],
+  λ_s pondéré par le brut (0,554 à θ½), λ_e par les allègements que la loi du Smic ouvre
+  (0,522) ou par le coût (0,558). Le chemin suit le profil de productivité de Mésange.
+* **L'emploi par tranche** (`emploi_par_tranche`, θ « travail_emploi_elasticites ») : la
+  matrice de Bozio-Wasmer (tableau 4.1, −0,608 à −0,165 sur la diagonale), à ½, 1 ou 1,5
+  fois (−0,3, −0,6, −0,9 au Smic, p. 178), aux profils de Mésange. Un regard, hors de
+  l'état : l'emploi du jumeau reste celui de Mésange (uniforme et ciblé). Ni branché sur
+  les cellules de ménages.
+* **Les prix** : la boucle prix-salaires de D-414 n'est pas doublée ; `commerce` lit la
+  masse salariale du bloc `travail` avec celle de `salaires` dans le coût salarial
+  unitaire, et le brut de la loi comme un coût.
+* **Les canaux** (`jumeau/canaux.py`, pour la carte) : « smic_diffusion »,
+  « cout_travail_smic », « incidence_cotisations », portés par le bloc `travail`.
+  **Les fonctions publiques** pour `ventilation` et `financement` : `cascade` (par tranche :
+  brut, allègements, coût, loi et diffusion), `rgdu`, `lambdas`, `emploi_par_tranche`,
+  `mesure_smic`, `mesure_smic_hypothese`.
+
+**Non sourcé, dit et sous θ ou déclaré** : la distribution tenue en Smic ; le taux net sur
+brut constant le long de l'échelle ; le profil de diffusion tenu après un an ; la cinquième
+tranche (élasticité et incidence de la quatrième) ; la correspondance des tranches aux
+qualifications de Mésange ; 1 150 € pour les postes sous 1 300 € ; t_delta des grandes
+entreprises pour toutes. Les trois θ ont la loi large (`a_priori.yaml`, sans source).
+
+## D-479 — La cascade d'un Smic à 2 000 € brut, année par année
+
+Passe d'essai du jumeau, mode structurel, vue figée, depuis l'état publié de 2025, tous
+les θ à ½ sauf dit. Écarts à la référence. Avant D-478, le mode structurel refusait la
+mesure (« des prélèvements agrégés […] sans leur ventilation », D-469).
+
+**Tondelier** (`pres2027_tondelier_smic_2000_brut`, par `mesure_smic` ; Kazib porte la
+même requête dans son programme, × 1,0818). θ½ :
+
+| | 2026 | 2027 | 2030 | 2035 |
+|---|---:|---:|---:|---:|
+| brut relevé par la loi (`cout_travail_smic`), Md€ | 2,88 | 2,97 | 3,24 | 3,77 |
+| rémunérations (la diffusion), Md€ | 9,19 | 11,87 | 16,06 | 19,15 |
+| cotisations (D61) des APU, Md€ | +5,54 | +6,53 | +8,21 | +9,74 |
+| emploi total, milliers | −0,0 | +12,2 | +20,2 | −0,5 |
+| consommation des ménages, Md€ | +2,12 | +5,06 | +8,01 | +10,11 |
+| prix de la consommation, % | −0,02 | −0,03 | +0,04 | +0,09 |
+| PIB, Md€ | +1,98 | +4,81 | +8,29 | +10,59 |
+| solde (B9), Md€ | −9,08 | −7,56 | −5,37 | −4,02 |
+| dette, points de PIB | +0,22 | | +0,73 | +1,15 |
+
+La chaîne : la loi relève 2,9 Md€ de brut, les allègements en rendent 17,5 : le coût du
+travail baisse la première année (l'emploi ne bouge pas : le brut ciblé et l'allègement
+se compensent au bas de l'échelle) ; la diffusion relève les salaires de 1 à 1,5 Smic,
+reprend des allègements et fait des cotisations ; la consommation suit le revenu ; à
+moyen terme, l'incidence rend aux salaires la moitié des allègements, le coût remonte,
+l'emploi revient à zéro en 2035 et les prix montent de 0,09 %.
+
+**Les bornes** (dette 2035, points) : diffusion et incidence à 0, **+3,11** (l'emploi
++169 milliers en 2035 : la baisse du coût par les allègements, la lecture « ex ante » de
+Bozio-Wasmer, p. 79, sans diffusion ni incidence) ; à 1, **−0,70** (l'emploi −155
+milliers, les salaires montent de 1 825 € par tête, les cotisations comblent le coût) ;
+diffusion 0 et incidence ½ : +2,54 (B9 2035 −10,37 Md€).
+
+**Kazib**, la même hausse sans passe (`mesure_smic_hypothese`, la loi par le bloc) :
+dette 2035 +1,94 pt à θ½ (+0,25 en 2026, +0,97 en 2030), +3,33 à diffusion 0, +0,45 à 1.
+L'écart à Tondelier (+1,15) : la passe met la loi aux déciles de ses ménages et coûte 15,4
+Md€ la première année ; le bloc, 12,7 Md€ à la masse du jumeau, et les ménages au
+prorata du super-brut des cellules.
+
+**L'emploi par tranche de Bozio-Wasmer, en regard** (long terme, milliers, Smic × 1,0818,
+emploi salarié marchand de 2025 réparti par les EQTP) : la loi seule, élasticités ½ :
++44 ; +62 ; +26 ; +4 ; 0 (total **+136**) ; avec la diffusion à ½ : −43 ; +5 ; +18 ; +2 ;
+0 (total **−17**). Le jumeau (Mésange, deux profils) : +169 et −0,5 milliers en 2035 aux
+mêmes réglages de diffusion. Les deux disent que le signe tient à la diffusion ; l'ampleur
+diffère d'un facteur un à trente sous diffusion. Lequel retenir dans l'état est à décider.
+
+## D-480 — L'incidence des cotisations dans le temps : Attal a16, et ce qui change
+
+**Attal a16** (« droit au brut », cotisations salariales de retraite × 0,22, 63,1 Md€ la
+première année ; `pres2027_attal_a16_droit_au_brut`, figée, « parts_premiere_annee »).
+Le net monte de 77,1 Md€ le premier jour, le coût du travail ne bouge pas. Puis, à θ½
+(λ_s = 0,554), le brut se renégocie de 45 % de la baisse sur le profil de productivité :
+
+| | 2026 | 2027 | 2030 | 2035 |
+|---|---:|---:|---:|---:|
+| salaire moyen par tête, € | −399 | −773 | −1 360 | −1 765 |
+| rémunérations, Md€ | −6,77 | −8,46 | −12,34 | −19,52 |
+| emploi total, milliers | +82 | +247 | +442 | +440 |
+| consommation, Md€ | +20,1 | +36,3 | +35,6 | +27,8 |
+| prix de la consommation, % | −0,08 | −0,20 | −0,42 | −0,71 |
+| PIB, Md€ | +16,1 | +30,1 | +32,3 | +28,8 |
+| solde (B9), Md€ | −61,0 | −57,1 | −57,2 | −63,4 |
+| dette, points de PIB | +1,36 | | +7,16 | +13,85 |
+
+**Les nombres du jumeau qui changent, et pourquoi.** Toute mesure qui touche des
+cotisations, en mode structurel, au défaut θ½ : le jumeau d'avant suivait Mésange (λ = 0 :
+une baisse de cotisation salariale finit tout entière en baisse du brut). Attal a16 :
+dette 2035 **+16,79 → +13,85 pt**, emploi 2035 +747 → +440 milliers, consommation 2035
+−3,2 → +27,8 Md€. À θ « travail_incidence » = 0, le jumeau d'avant au bit (PIB, emploi,
+dette et B9 de 2026 à 2035, recoupés contre `b0bddb3`). À 1 : +11,51 pt. Les programmes
+qui portent des cotisations (Attal, et les mesures du Smic) changent de même ; les mesures
+du Smic tournent désormais en structurel (D-479). Les études, la chaîne réduite et les
+pages publiées ne changent pas. La page du jumeau voit trois curseurs de plus, et un
+programme du Smic n'est plus grisé si la jonction lui applique `mesure_smic`.
+
+**Ce qui n'est pas fait.** L'emploi par tranche n'entre pas dans l'état (D-479) ; les
+tranches ne sont pas reliées aux cellules ; `mesure_smic` n'est pas appelée par la page
+(`navigateur.py` non touché) ni pour un programme qui mêle le Smic à d'autres mesures
+(Kazib, Roussel, Ruffin, Mélenchon, Tondelier) : sa passe ne sépare pas leurs
+prélèvements ; la vue vieillie reste sans ventilation ; le versement des allègements par
+sous-secteur (volet `financement`) ; les trois θ restent à la loi large.
+
+**À décider par le propriétaire** : (1) le défaut d'incidence (θ½, Bozio-Wasmer) ou
+Mésange ; (2) l'emploi du Smic par Mésange ou par la matrice de Bozio-Wasmer ; (3) la
+diffusion au centre « sans effets fixes » ou « avec » (la convention des études est 0).
+
+**Les nombres qu'un test devra tenir** (D-335, à écrire avant la PR) : allègements de 2024
+sur la distribution, 77,20 Md€ à la masse 1 045,14 Md€ (× 0,0739) ; Smic × 1,0818, loi
+seule, parts de la masse : b_loi 0,0026222, a_loi 0,0159586 ; diffusion θ½ :
+b_diff 0,0042119, a_diff −0,0018215 ; λ_s(½) 0,55359, λ_e(½, allègements du Smic) 0,52221 ; Attal a16
+à θ½ : dette 2035 +13,85 pt, à θ_incidence 0 : +16,79 pt, égale au jumeau d'avant ;
+Tondelier Smic, θ½ : dette 2035 +1,15 pt, `cout_travail_smic` 2026 2,88 Md€.
