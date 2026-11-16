@@ -36286,10 +36286,13 @@ Le point d'indice de Tondelier change de même (seul, structurel). Le test
   le rapport des exonérations ne porte pas les statistiques de C11, et C2 ne fait que des
   emplois, pas de recettes. Pas de double compte avec le bloc `emploi`, mais deux
   curseurs morts : à retirer de la page ou à remplir par une passe.
-* **Un test d'avant le but 26 ne tient plus** : `test_jumeau_navigateur.py::
+* **Trois cas de test d'avant le but 26 ne tiennent plus**, sur le commit de départ
+  (`4d1912a`) comme avec ce volet : `test_jumeau_navigateur.py::
   test_la_convention_porte_un_programme_jusqu_en_2035` attend Retailleau refusé en
-  structurel ; il tourne depuis D-477. Le test n'est pas retouché ici (il n'est pas de ce
-  volet) ; les neuf autres du fichier passent avec ce volet.
+  structurel, et `test_ce_que_le_structurel_calcule_se_dit_avant_le_calcul` Attal
+  (vieillie) et Roussel (figée) refusés ; ils tournent depuis D-477 et D-487. Les tests
+  ne sont pas retouchés ici (pas de ce volet) ; les quatorze autres cas du fichier
+  passent avec ce volet.
 
 ## D-501 — Le papillon de Mélenchon (2) : les canaux, ceux qui manquent, les retournements
 
