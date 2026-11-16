@@ -208,24 +208,24 @@
    },
    "sous_secteurs": {
     "etat": {
-     "b9_2026": -26.789,
-     "b9_2035": -24.854,
-     "dette_2035": 243.649
+     "b9_2026": -55.808,
+     "b9_2035": -59.185,
+     "dette_2035": 559.755
     },
     "odac": {
-     "b9_2026": -1.01,
-     "b9_2035": -0.835,
-     "dette_2035": 8.436
+     "b9_2026": 0.186,
+     "b9_2035": 0.577,
+     "dette_2035": -4.57
     },
     "apul": {
-     "b9_2026": -17.386,
-     "b9_2035": -17.638,
-     "dette_2035": 168.36
+     "b9_2026": 1.476,
+     "b9_2035": 4.655,
+     "dette_2035": -36.944
     },
     "asso": {
-     "b9_2026": -26.349,
-     "b9_2035": -12.306,
-     "dette_2035": 155.081
+     "b9_2026": -17.389,
+     "b9_2035": -1.681,
+     "dette_2035": 57.285
     }
    },
    "sous_secteurs_residus": {
@@ -237,17 +237,17 @@
     "reference.dette": 3.9306028127177115e-16,
     "variante.recettes": 3.6602442369826707e-16,
     "variante.depenses": 1.9887394692373353e-16,
-    "variante.interets": 4.1432072275777816e-18,
+    "variante.interets": 4.2713938982978335e-18,
     "variante.transferts": 9.150610592456677e-18,
-    "variante.b9": 1.7939854372850902e-16,
-    "variante.dette": 2.5722747045238047e-16,
-    "branches.recettes": 4.423154209633513e-17,
+    "variante.b9": 1.6880552748437468e-16,
+    "variante.dette": 4.85018594519283e-16,
+    "branches.recettes": 4.323448003424933e-17,
     "branches.depenses": 1.4766976566440095e-17,
     "branches.transferts_recus": 1.0678484745744584e-18,
     "branches.transferts_verses": 0.0,
-    "branches.interets_nets": 3.3370264830451824e-19,
-    "branches.b9": 7.285195168808139e-17,
-    "branches.dette": 3.469140556575304e-16
+    "branches.interets_nets": 4.338134427958738e-19,
+    "branches.b9": 6.764824085321843e-17,
+    "branches.dette": 1.9080273061164172e-16
    },
    "compensation_2026": {
     "asso.maladie": 0.0,
@@ -1309,7 +1309,7 @@
    },
    "identites": {
     "structurel": {
-     "b9_par_bloc": 1.3725633596374012e-17,
+     "b9_par_bloc": 1.8947220222284258e-17,
      "dette_recurrence": 7.359945905421434e-16,
      "ratio_par_cle": 6.661338147750939e-16,
      "statique": 1.004778588494739e-18
@@ -1323,24 +1323,24 @@
    },
    "sous_secteurs": {
     "etat": {
-     "b9_2026": -26.239,
-     "b9_2035": -18.657,
-     "dette_2035": 213.788
+     "b9_2026": -55.404,
+     "b9_2035": -54.604,
+     "dette_2035": 537.784
     },
     "odac": {
-     "b9_2026": -1.032,
-     "b9_2035": -0.994,
-     "dette_2035": 9.297
+     "b9_2026": 0.183,
+     "b9_2035": 0.561,
+     "dette_2035": -4.492
     },
     "apul": {
-     "b9_2026": -18.106,
-     "b9_2035": -22.606,
-     "dette_2035": 195.48
+     "b9_2026": 1.457,
+     "b9_2035": 4.509,
+     "dette_2035": -36.237
     },
     "asso": {
-     "b9_2026": -26.437,
-     "b9_2035": -9.693,
-     "dette_2035": 146.414
+     "b9_2026": -18.05,
+     "b9_2035": -2.417,
+     "dette_2035": 67.924
     }
    },
    "sous_secteurs_residus": {
@@ -1350,19 +1350,19 @@
     "reference.transferts": 1.8447354816267816e-17,
     "reference.b9": 1.9406306636382647e-16,
     "reference.dette": 3.9306028127177115e-16,
-    "variante.recettes": 2.3551826897348587e-16,
+    "variante.recettes": 2.9439783621685735e-16,
     "variante.depenses": 2.8587959002471634e-16,
-    "variante.interets": 3.789444044456852e-18,
+    "variante.interets": 4.019114353978956e-18,
     "variante.transferts": 1.429397950123582e-17,
-    "variante.b9": 2.0190246045495594e-16,
-    "variante.dette": 2.6515432700038997e-16,
-    "branches.recettes": 5.725515169767329e-17,
+    "variante.b9": 2.082005516279029e-16,
+    "variante.dette": 4.574073440395462e-16,
+    "branches.recettes": 4.263124550013958e-17,
     "branches.depenses": 1.5682608698982025e-17,
     "branches.transferts_recus": 2.5119464712368477e-18,
     "branches.transferts_verses": 0.0,
-    "branches.interets_nets": 2.754490881046284e-19,
-    "branches.b9": 3.935884541412038e-17,
-    "branches.dette": 1.526804045271288e-16
+    "branches.interets_nets": 6.700302891204289e-19,
+    "branches.b9": 3.121689144040428e-17,
+    "branches.dette": 6.074941288025223e-17
    },
    "compensation_2026": {
     "asso.maladie": 0.0,

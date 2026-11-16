@@ -198,10 +198,32 @@ mesures:
       (rémunération des salariés) par sous-secteur (`financement_sous_secteurs.yaml`) ;
       les payeurs : la fiche de transmission (src/impots/jumeau/transmission/melenchon/
       point_indice_10.yaml) ; les ODAC ne sont pas nommés par la fiche, leur part est
-      rendue aux autres (une approximation, dite)
+      rendue aux autres (une approximation, dite). Depuis D-510, la fiche de Mélenchon dit
+      les parts (l'État 76,5 %, dont la compensation intégrale des collectivités que le
+      candidat promet ; l'Assurance maladie 23,5 % ; Siasp 2024, D-504) : elles passent
+      avant celles de la ligne D1
   pres2027_tondelier_point_indice_inflation:
     reste: {ligne: apu_d_d1, fiche: tondelier/point_indice_inflation}
     source: "comme pres2027_melenchon_point_indice_10"
+
+  # Les prestations de Mélenchon (D-510, jonction du but 27) : leur choc sans impulsion
+  # (les prestations versées) va aux payeurs que leur fiche nomme (le volet `fiches`,
+  # D-504), aux parts de la ligne D62 de 2025, et non à la clé des dépenses, qui en
+  # mettait 19 % aux APUL (D-500). Quand la fiche dit les parts, ce sont elles.
+  pres2027_melenchon_indexation_pensions_prestations_10:
+    reste: {ligne: apu_d_d62, fiche: melenchon/indexation_pensions_prestations_10}
+    source: >-
+      Insee, comptes nationaux base 2020, t. 3.203, 3.204, 3.205, 3.212 (2025), ligne D62
+      (prestations sociales en espèces) par sous-secteur (`financement_sous_secteurs.yaml`) ;
+      les payeurs : la fiche de transmission (src/impots/jumeau/transmission/melenchon/
+      indexation_pensions_prestations_10.yaml : les régimes de base, les complémentaires,
+      la branche famille, l'État) ; la part des ASSO se partage à parts égales entre les
+      trois branches nommées, faute de parts dans la fiche (une approximation, dite)
+  pres2027_melenchon_garantie_autonomie_jeunes:
+    reste: {ligne: apu_d_d62, fiche: melenchon/garantie_autonomie_jeunes}
+    source: >-
+      comme pres2027_melenchon_indexation_pensions_prestations_10 ; la fiche nomme l'État
+      seul (« la caisse qui verse n'est pas dite ; l'État par défaut »)
 
 thetas:
   financement_a16_part_cnav:

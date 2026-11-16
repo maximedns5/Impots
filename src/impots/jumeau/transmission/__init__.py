@@ -515,7 +515,9 @@ def qualite(racine: Path = ICI, candidats: Iterable[str] | None = None
             ) -> dict[str, dict[str, int]]:
     """{candidat : compte} des données critiques (D-505) : les fiches par sorte, les
     hypothèses chiffrées par le candidat et par le calcul, les fiches sans montant, celles
-    qui portent une assiette chiffrée, et les hypothèses sourcées et non sourcées."""
+    qui portent une assiette chiffrée, et les hypothèses sourcées et non sourcées ; et
+    (D-510) celles qui disent leur calendrier, et celles dont chaque APU qui paie a sa
+    part (que le compte des sous-secteurs lit, `financement.comptes.cle_reste`)."""
     out: dict[str, dict[str, int]] = {}
     for f in fiches(None, racine):
         c = f["candidat"]
@@ -523,7 +525,8 @@ def qualite(racine: Path = ICI, candidats: Iterable[str] | None = None
             continue
         q = out.setdefault(c, {**dict.fromkeys(SORTES, 0), "hypothese_candidat": 0,
                                "hypothese_calcul": 0, "sans_montant": 0,
-                               "assiette_chiffree": 0, "hypotheses_sourcees": 0,
+                               "assiette_chiffree": 0, "calendrier": 0,
+                               "parts_payeurs": 0, "hypotheses_sourcees": 0,
                                "hypotheses_non_sourcees": 0})
         q[f.sorte] += 1
         m = f["montant"]
@@ -534,6 +537,12 @@ def qualite(racine: Path = ICI, candidats: Iterable[str] | None = None
             q["sans_montant"] += 1
         if any(chiffree(x) for x in assiettes(f.donnees)):
             q["assiette_chiffree"] += 1
+        if f.donnees.get("calendrier"):
+            q["calendrier"] += 1
+        apu = [p for p in f["payeurs"] or () if str(p.get("qui", "")).startswith("apu:")
+               and p.get("sens") == "paie"]
+        if apu and all(p.get("part") is not None for p in apu):
+            q["parts_payeurs"] += 1
         for h in f["hypotheses"] or ():
             q["hypotheses_non_sourcees" if h["source"] == NON_SOURCEE
               else "hypotheses_sourcees"] += 1
