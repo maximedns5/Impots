@@ -16,10 +16,10 @@
    "remarque": "",
    "remplacee_par": "cotisations_salariales_apu",
    "remplacee": "D-497",
-   "simule": 111729705296.50656,
-   "ecart": -0.08461792511341693,
+   "simule": 108604257450.21286,
+   "ecart": -0.1102241766192068,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cotisations_salariales_apu",
@@ -36,10 +36,10 @@
    "usage": "validation",
    "remarque": "But 27, volet grille2 (D-497). Remplace cotisations_salariales, qui comparait les seuls régimes publics du modèle à D613CE entier, régimes d'entreprise et étrangers compris ; l'ancienne ligne reste notée, sans verdict. Même tolérance.",
    "preenregistre": "D-497",
-   "simule": 108062904042.62756,
-   "ecart": 0.1295380374477637,
-   "verdict": "hors de la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "simule": 104937456196.33386,
+   "ecart": 0.09686898919550391,
+   "verdict": "dans la tolérance",
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cotisations_employeurs",
@@ -57,10 +57,10 @@
    "remarque": "",
    "remplacee_par": "cotisations_employeurs_d121",
    "remplacee": "D-495",
-   "simule": 387646432597.0017,
-   "ecart": 0.29689275686174055,
+   "simule": 372418200450.6543,
+   "ecart": 0.24594585703320893,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "reduction_generale",
@@ -76,10 +76,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 38098335692.114555,
-   "ecart": 0.06318958788063167,
+   "simule": 40450411933.92421,
+   "ecart": 0.1288277036871186,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "bandeau_maladie",
@@ -95,10 +95,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 25101855390.973267,
-   "ecart": 0.029608506602677,
+   "simule": 25438784063.00532,
+   "ecart": 0.043428386505550476,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "bandeau_famille",
@@ -114,10 +114,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 9872202411.219475,
-   "ecart": 0.12478095148905943,
+   "simule": 10038343772.309948,
+   "ecart": 0.1437101255907427,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "csg_activite",
@@ -136,7 +136,7 @@
    "simule": 93598273087.41664,
    "ecart": -0.06581091217445867,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "csg_remplacement",
@@ -152,10 +152,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 24487095222.56547,
-   "ecart": -0.01961423619468028,
+   "simule": 24487992214.172398,
+   "ecart": -0.019578323490715532,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ir_bareme",
@@ -188,7 +188,7 @@
    "simule": 38744698.32666542,
    "ecart": -0.04918169412612006,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_imposes",
@@ -204,10 +204,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 19141423.043424696,
-   "ecart": 0.049134429425095494,
+   "simule": 19175009.89636891,
+   "ecart": 0.05097531260916566,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_0",
@@ -223,10 +223,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 13203953.97145667,
-   "ecart": -0.010346726768350356,
+   "simule": 13189634.199672211,
+   "ecart": -0.011420012016773229,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_1",
@@ -242,10 +242,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 17917825.803919047,
-   "ecart": -0.11917088762564909,
+   "simule": 17891557.545974128,
+   "ecart": -0.12046221876048924,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_2",
@@ -261,10 +261,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 7192159.309717022,
-   "ecart": 0.12857132025436568,
+   "simule": 7226754.119658817,
+   "ecart": 0.133999830476214,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_3",
@@ -280,10 +280,10 @@
    "tolerance": 0.3,
    "usage": "validation",
    "remarque": "",
-   "simule": 373111.0455555951,
-   "ecart": -0.14365149057701387,
+   "simule": 378491.8925299849,
+   "ecart": -0.13130160080333975,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_4",
@@ -299,10 +299,10 @@
    "tolerance": 0.3,
    "usage": "validation",
    "remarque": "",
-   "simule": 57648.19601708485,
-   "ecart": -0.1357092051411567,
+   "simule": 58260.56883027725,
+   "ecart": -0.1265282034441192,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "salaires_declares",
@@ -318,10 +318,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 796879093591.1772,
-   "ecart": -0.07015274960189355,
+   "simule": 799787422807.8745,
+   "ecart": -0.06675913324635407,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "pensions_declarees",
@@ -340,7 +340,7 @@
    "simule": 350745036161.2328,
    "ecart": 0.05040559987940796,
    "verdict": "contexte",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "niveau_de_vie_median",
@@ -356,10 +356,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 22789.84883305616,
-   "ecart": -0.06330255515593264,
+   "simule": 22820.875288750325,
+   "ecart": -0.06202732064322547,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "d9_d1",
@@ -375,10 +375,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 3.3240250059359826,
-   "ecart": -0.016560649131366012,
+   "simule": 3.3307825579764945,
+   "ecart": -0.014561373379735287,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_montant",
@@ -396,10 +396,10 @@
    "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation",
    "remplacee_par": "rsa_montant_servi",
    "remplacee": "D-495",
-   "simule": 12509452495.719725,
-   "ecart": 0.0975326949242985,
+   "simule": 12508660092.366968,
+   "ecart": 0.0974631724102224,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_montant",
@@ -417,10 +417,10 @@
    "remarque": "milieu du pont de la Drees (1,68-1,77)",
    "remplacee_par": "ppa_montant_servi",
    "remplacee": "D-495",
-   "simule": 9631013520.374556,
-   "ecart": -0.0025533651024722825,
+   "simule": 9590134178.906137,
+   "ecart": -0.006787079601807244,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "aide_logement_montant",
@@ -436,10 +436,10 @@
    "tolerance": 0.25,
    "usage": "validation",
    "remarque": "",
-   "simule": 13309301180.53986,
-   "ecart": -0.11899707349187938,
+   "simule": 13297258546.864042,
+   "ecart": -0.11979422995917555,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "af_montant",
@@ -455,10 +455,10 @@
    "tolerance": 0.25,
    "usage": "validation",
    "remarque": "",
-   "simule": 10644839073.544632,
-   "ecart": -0.18361537897502633,
+   "simule": 10633800799.178806,
+   "ecart": -0.18446193732810745,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_foyers",
@@ -490,10 +490,10 @@
    "remarque": "",
    "remplacee_par": "ppa_foyers_servis",
    "remplacee": "D-495",
-   "simule": 8000051.184914508,
-   "ecart": 0.7316128105875559,
+   "simule": 7976443.197873692,
+   "ecart": 0.7265028566826173,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "is",
@@ -512,7 +512,7 @@
    "simule": 62666781959.85581,
    "ecart": -0.19684743598472543,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "contribution_sociale_is",
@@ -531,7 +531,7 @@
    "simule": 1268138120.194323,
    "ecart": -0.20242885522369614,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "c3s",
@@ -550,7 +550,7 @@
    "simule": 4782482911.834601,
    "ecart": 0.11897120071001432,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cvae",
@@ -610,10 +610,10 @@
    "remarque": "",
    "remplacee_par": "cotisations_salariales_apu",
    "remplacee": "D-497",
-   "simule": 117019089309.9729,
-   "ecart": -0.09895211126531989,
+   "simule": 113741447420.06609,
+   "ecart": -0.12418997905547025,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cotisations_salariales_apu",
@@ -630,10 +630,10 @@
    "usage": "validation",
    "remarque": "But 27, volet grille2 (D-497). Remplace cotisations_salariales, qui comparait les seuls régimes publics du modèle à D613CE entier, régimes d'entreprise et étrangers compris ; l'ancienne ligne reste notée, sans verdict. Même tolérance.",
    "preenregistre": "D-497",
-   "simule": 113175957454.00418,
-   "ecart": 0.11916892414342817,
-   "verdict": "hors de la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "simule": 109898315564.09738,
+   "ecart": 0.08675713784027073,
+   "verdict": "dans la tolérance",
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cotisations_employeurs",
@@ -651,10 +651,10 @@
    "remarque": "",
    "remplacee_par": "cotisations_employeurs_d121",
    "remplacee": "D-495",
-   "simule": 404004915226.74744,
-   "ecart": 0.28517050641701824,
+   "simule": 387990895078.94543,
+   "ecart": 0.23422868465335944,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "reduction_generale",
@@ -670,10 +670,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 41168076723.32057,
-   "ecart": 0.04096482055528905,
+   "simule": 43686023743.36619,
+   "ecart": 0.10463294587251415,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "bandeau_maladie",
@@ -689,10 +689,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 26412745008.2238,
-   "ecart": 0.01400280283414479,
+   "simule": 26777814393.56606,
+   "ecart": 0.028018058721055672,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "bandeau_famille",
@@ -708,10 +708,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 10390772729.729115,
-   "ecart": 0.10646073152264024,
+   "simule": 10571578065.74456,
+   "ecart": 0.12571377550256213,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "csg_activite",
@@ -730,7 +730,7 @@
    "simule": 97958883368.8465,
    "ecart": -0.0644386819394639,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "csg_remplacement",
@@ -746,10 +746,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 26039102454.06308,
-   "ecart": -0.0038598908162555956,
+   "simule": 26039966059.377167,
+   "ecart": -0.003826853122526175,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ir_bareme",
@@ -765,10 +765,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 90591956001.95352,
-   "ecart": -0.012858755438346692,
+   "simule": 91208471026.50972,
+   "ecart": -0.006140858668149507,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_fiscaux",
@@ -787,7 +787,7 @@
    "simule": 38744698.32666542,
    "ecart": -0.059897701256301006,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_imposes",
@@ -803,10 +803,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 19135256.41721195,
-   "ecart": 0.02467971983923367,
+   "simule": 19168853.912575595,
+   "ecart": 0.026478842431892247,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_0",
@@ -822,10 +822,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 13214782.81935698,
-   "ecart": -0.01901990799814568,
+   "simule": 13199271.702403856,
+   "ecart": -0.020171353098964007,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_1",
@@ -841,10 +841,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 17925358.455399055,
-   "ecart": -0.13194390046493676,
+   "simule": 17897249.21380387,
+   "ecart": -0.1333051228182146,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_2",
@@ -860,10 +860,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 7174798.222628982,
-   "ecart": 0.12036199603825448,
+   "simule": 7212420.985201245,
+   "ecart": 0.12623688088714013,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_3",
@@ -879,10 +879,10 @@
    "tolerance": 0.3,
    "usage": "validation",
    "remarque": "",
-   "simule": 372286.2239419465,
-   "ecart": -0.11570968184810804,
+   "simule": 377781.451354583,
+   "ecart": -0.10265688514350824,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_4",
@@ -898,10 +898,10 @@
    "tolerance": 0.3,
    "usage": "validation",
    "remarque": "",
-   "simule": 57472.60533845397,
-   "ecart": -0.05782614199255787,
+   "simule": 57974.97390186284,
+   "ecart": -0.04959059177274039,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "salaires_declares",
@@ -917,10 +917,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 833937060060.2604,
-   "ecart": -0.08172485181470845,
+   "simule": 836987010575.6995,
+   "ecart": -0.0783664523674884,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "pensions_declarees",
@@ -939,7 +939,7 @@
    "simule": 367580798031.64087,
    "ecart": 0.04609577073543192,
    "verdict": "contexte",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "niveau_de_vie_median",
@@ -955,10 +955,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 23807.562259521368,
-   "ecart": -0.07579339054653078,
+   "simule": 23835.528632443486,
+   "ecart": -0.07470773942377773,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "d9_d1",
@@ -974,10 +974,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 3.360897540939884,
-   "ecart": -0.03699210861321378,
+   "simule": 3.368681275643204,
+   "ecart": -0.03476181213661789,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_montant",
@@ -995,10 +995,10 @@
    "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation",
    "remplacee_par": "rsa_montant_servi",
    "remplacee": "D-495",
-   "simule": 12928490054.219854,
-   "ecart": 0.1149066577911928,
+   "simule": 12927697148.02841,
+   "ecart": 0.11483828040233024,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_montant",
@@ -1016,10 +1016,10 @@
    "remarque": "milieu du pont de la Drees (1,68-1,77)",
    "remplacee_par": "ppa_montant_servi",
    "remplacee": "D-495",
-   "simule": 9902787587.223307,
-   "ecart": -0.026098086317121627,
+   "simule": 9860537073.656565,
+   "ecart": -0.030253265417380715,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "aide_logement_montant",
@@ -1035,10 +1035,10 @@
    "tolerance": 0.25,
    "usage": "validation",
    "remarque": "",
-   "simule": 13590142611.722698,
-   "ecart": -0.11336168951726011,
+   "simule": 13578248818.701084,
+   "ecart": -0.11413765580776969,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "af_montant",
@@ -1054,10 +1054,10 @@
    "tolerance": 0.25,
    "usage": "validation",
    "remarque": "",
-   "simule": 10941165831.664646,
-   "ecart": -0.1816629894042897,
+   "simule": 10930708517.98322,
+   "ecart": -0.18244513702444132,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_foyers",
@@ -1075,10 +1075,10 @@
    "remarque": "",
    "remplacee_par": "rsa_foyers_servis",
    "remplacee": "D-495",
-   "simule": 2895558.747510423,
-   "ecart": 0.5892199492373342,
+   "simule": 2895288.8281539995,
+   "ecart": 0.5890718046948407,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_foyers",
@@ -1096,10 +1096,10 @@
    "remarque": "",
    "remplacee_par": "ppa_foyers_servis",
    "remplacee": "D-495",
-   "simule": 7573580.484851395,
-   "ecart": 0.6626960449728638,
+   "simule": 7545564.406076897,
+   "ecart": 0.6565454239466295,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "is",
@@ -1118,7 +1118,7 @@
    "simule": 66912945287.49293,
    "ecart": -0.008182831282992242,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "contribution_sociale_is",
@@ -1137,7 +1137,7 @@
    "simule": 1354064370.305542,
    "ecart": 0.3380082710529071,
    "verdict": "hors de la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "c3s",
@@ -1156,7 +1156,7 @@
    "simule": 5106533436.21436,
    "ecart": 0.061649363038328575,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cvae",
@@ -1216,10 +1216,10 @@
    "remarque": "",
    "remplacee_par": "cotisations_salariales_apu",
    "remplacee": "D-497",
-   "simule": 120217683570.62488,
-   "ecart": -0.11236537131468094,
+   "simule": 116845081286.57329,
+   "ecart": -0.13726718681463357,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cotisations_salariales_apu",
@@ -1236,10 +1236,10 @@
    "usage": "validation",
    "remarque": "But 27, volet grille2 (D-497). Remplace cotisations_salariales, qui comparait les seuls régimes publics du modèle à D613CE entier, régimes d'entreprise et étrangers compris ; l'ancienne ligne reste notée, sans verdict. Même tolérance.",
    "preenregistre": "D-497",
-   "simule": 116265795652.57985,
-   "ecart": 0.11142142866437088,
-   "verdict": "hors de la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "simule": 112893193368.52826,
+   "ecart": 0.07918165919633169,
+   "verdict": "dans la tolérance",
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cotisations_employeurs",
@@ -1257,10 +1257,10 @@
    "remarque": "",
    "remplacee_par": "cotisations_employeurs_d121",
    "remplacee": "D-495",
-   "simule": 416255171734.22534,
-   "ecart": 0.2639263113068011,
+   "simule": 399867337744.03613,
+   "ecart": 0.2141659336057089,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "reduction_generale",
@@ -1276,10 +1276,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 41455143649.37055,
-   "ecart": 0.053444390358064364,
+   "simule": 44015420117.881516,
+   "ecart": 0.11850528862272602,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "bandeau_maladie",
@@ -1295,10 +1295,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 26723110051.627808,
-   "ecart": 0.010745869799455576,
+   "simule": 27073794695.782692,
+   "ecart": 0.02400978462811354,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "bandeau_famille",
@@ -1314,10 +1314,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 10506941165.29761,
-   "ecart": 0.09550006936686573,
+   "simule": 10677430247.444036,
+   "ecart": 0.11327601370493556,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "csg_activite",
@@ -1336,7 +1336,7 @@
    "simule": 100541299757.53117,
    "ecart": -0.07056806325369847,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "csg_remplacement",
@@ -1352,10 +1352,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 26094538511.042164,
-   "ecart": -0.04600817054647888,
+   "simule": 26095196437.423832,
+   "ecart": -0.045984117375650446,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ir_bareme",
@@ -1371,10 +1371,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 93554317645.73244,
-   "ecart": -0.05351054994288229,
+   "simule": 94193513706.9306,
+   "ecart": -0.047043800532843405,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_fiscaux",
@@ -1393,7 +1393,7 @@
    "simule": 38744698.32666542,
    "ecart": -0.06942578820836887,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_imposes",
@@ -1409,10 +1409,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 19294434.42741397,
-   "ecart": -0.019679268095121327,
+   "simule": 19331172.052853905,
+   "ecart": -0.017812685480574464,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_0",
@@ -1428,10 +1428,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 13142856.011711303,
-   "ecart": 0.0008154044343167133,
+   "simule": 13129247.820584161,
+   "ecart": -0.00022084577601766409,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_1",
@@ -1447,10 +1447,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 17897225.73269915,
-   "ecart": -0.14493338535082312,
+   "simule": 17868669.085681967,
+   "ecart": -0.14629772169296906,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_2",
@@ -1466,10 +1466,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 7267555.978936366,
-   "ecart": 0.058171691265861414,
+   "simule": 7303733.178673853,
+   "ecart": 0.06343916890792323,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_3",
@@ -1485,10 +1485,10 @@
    "tolerance": 0.3,
    "usage": "validation",
    "remarque": "",
-   "simule": 378698.6237873181,
-   "ecart": -0.1276476490230214,
+   "simule": 384024.96949975647,
+   "ecart": -0.11537812937731173,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_tmi_4",
@@ -1504,10 +1504,10 @@
    "tolerance": 0.3,
    "usage": "validation",
    "remarque": "",
-   "simule": 58361.97953128182,
-   "ecart": -0.050654246677047654,
+   "simule": 59023.27222567966,
+   "ecart": -0.03989732211465191,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "salaires_declares",
@@ -1523,10 +1523,10 @@
    "tolerance": 0.1,
    "usage": "validation",
    "remarque": "",
-   "simule": 855830251832.0643,
-   "ecart": -0.08186326522683374,
+   "simule": 858968565581.1826,
+   "ecart": -0.07849647475390875,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "pensions_declarees",
@@ -1545,7 +1545,7 @@
    "simule": 374197252252.99976,
    "ecart": -0.00045190827955099433,
    "verdict": "calibration",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "niveau_de_vie_median",
@@ -1561,10 +1561,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 24415.728508980366,
-   "ecart": -0.08692114775690474,
+   "simule": 24447.025781182776,
+   "ecart": -0.08575071872914075,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "d9_d1",
@@ -1580,10 +1580,10 @@
    "tolerance": 0.15,
    "usage": "validation",
    "remarque": "",
-   "simule": 3.326439201132674,
-   "ecart": -0.04412666634118556,
+   "simule": 3.3346649445375824,
+   "ecart": -0.041762946971959036,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_montant",
@@ -1601,10 +1601,10 @@
    "remarque": "droits simulés divisés par le milieu du pont de la Drees (1,30-1,41), comme la réconciliation",
    "remplacee_par": "rsa_montant_servi",
    "remplacee": "D-495",
-   "simule": 13463782564.787273,
-   "ecart": 0.1416303110057815,
+   "simule": 13462913649.513666,
+   "ecart": 0.14155663334430169,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_montant",
@@ -1622,10 +1622,10 @@
    "remarque": "milieu du pont de la Drees (1,68-1,77)",
    "remplacee_par": "ppa_montant_servi",
    "remplacee": "D-495",
-   "simule": 10457006450.643637,
-   "ecart": 0.01692909564442946,
+   "simule": 10412460621.85718,
+   "ecart": 0.01259707676346622,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "aide_logement_montant",
@@ -1641,10 +1641,10 @@
    "tolerance": 0.25,
    "usage": "validation",
    "remarque": "",
-   "simule": 14192293629.298874,
-   "ecart": -0.094086238614418,
+   "simule": 14179466629.141243,
+   "ecart": -0.0949050038023157,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "af_montant",
@@ -1660,10 +1660,10 @@
    "tolerance": 0.25,
    "usage": "validation",
    "remarque": "",
-   "simule": 11438573128.817402,
-   "ecart": -0.1690706720312798,
+   "simule": 11425469646.62677,
+   "ecart": -0.17002254492032765,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_foyers",
@@ -1681,10 +1681,10 @@
    "remarque": "",
    "remplacee_par": "rsa_foyers_servis",
    "remplacee": "D-495",
-   "simule": 2922469.452340453,
-   "ecart": 0.6004761513365022,
+   "simule": 2921947.36124968,
+   "ecart": 0.6001902306953342,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_foyers",
@@ -1702,10 +1702,10 @@
    "remarque": "",
    "remplacee_par": "ppa_foyers_servis",
    "remplacee": "D-495",
-   "simule": 7865203.304896707,
-   "ecart": 0.6994821315680007,
+   "simule": 7831517.567226347,
+   "ecart": 0.6922034501353385,
    "verdict": "remplacée",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "is",
@@ -1724,7 +1724,7 @@
    "simule": 69307461316.9191,
    "ecart": 0.01990230765829004,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "contribution_sociale_is",
@@ -1743,7 +1743,7 @@
    "simule": 1402520298.013413,
    "ecart": 0.20284759692402488,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "c3s",
@@ -1762,7 +1762,7 @@
    "simule": 5289273504.153075,
    "ecart": 0.011720257106555998,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cvae",
@@ -1781,7 +1781,7 @@
    "simule": 3281788479.2917786,
    "ecart": -0.15155416771153607,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "tva_menages",
@@ -1826,10 +1826,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 1 (A). Tolérance de D-363 : D121 compte la prévoyance d'entreprise, absente du modèle ; ligne tenue en partie par compensation. Remplace la comparaison de cotisations_employeurs, qui reste notée telle qu'elle est préenregistrée.",
    "preenregistre": "D-366",
-   "simule": 307057039061.43176,
-   "ecart": 0.027276446823835565,
+   "simule": 292343618084.3372,
+   "ecart": -0.021948123530172836,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cotisations_employeurs_d121",
@@ -1846,10 +1846,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 1 (A). Tolérance de D-363 : D121 compte la prévoyance d'entreprise, absente du modèle ; ligne tenue en partie par compensation. Remplace la comparaison de cotisations_employeurs, qui reste notée telle qu'elle est préenregistrée.",
    "preenregistre": "D-366",
-   "simule": 319672309425.01733,
-   "ecart": 0.01690204328496181,
+   "simule": 304197498941.23975,
+   "ecart": -0.03232451133500314,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "cotisations_employeurs_d121",
@@ -1866,10 +1866,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 1 (A). Tolérance de D-363 : D121 compte la prévoyance d'entreprise, absente du modèle ; ligne tenue en partie par compensation. Remplace la comparaison de cotisations_employeurs, qui reste notée telle qu'elle est préenregistrée.",
    "preenregistre": "D-366",
-   "simule": 329272531951.5361,
-   "ecart": -0.00018967934918523444,
+   "simule": 313453565275.306,
+   "ecart": -0.0482227358910956,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "csg_activite_avec_non_salaries",
@@ -1889,7 +1889,7 @@
    "simule": 98636784536.83473,
    "ecart": -0.015522351716357297,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "csg_activite_avec_non_salaries",
@@ -1909,7 +1909,7 @@
    "simule": 103234422916.60748,
    "ecart": -0.014054372083667777,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "csg_activite_avec_non_salaries",
@@ -1929,7 +1929,7 @@
    "simule": 105958621708.6073,
    "ecart": -0.020488821736932783,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "d9_d1_servi",
@@ -1946,10 +1946,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que d9_d1 (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 3.49848537920257,
-   "ecart": 0.035054845917920074,
+   "simule": 3.50629898012014,
+   "ecart": 0.037366562165721984,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "d9_d1_servi",
@@ -1966,10 +1966,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que d9_d1 (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 3.5326383416012925,
-   "ecart": 0.012217289857103797,
+   "simule": 3.5409715050776964,
+   "ecart": 0.014605015781574915,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "d9_d1_servi",
@@ -1986,10 +1986,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que d9_d1 (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 3.5050826484535467,
-   "ecart": 0.007207657601593809,
+   "simule": 3.5124653759962245,
+   "ecart": 0.00932913103339783,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "foyers_fiscaux_residents_hors_mayotte",
@@ -2047,7 +2047,7 @@
    "simule": 38744698.32666542,
    "ecart": -0.060864061561611726,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "impots_salaires_calcules",
@@ -2064,10 +2064,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 1 (B). Taux légaux sur une assiette calée ; l'effectif nul prend le Fnal des moins de 50 salariés (0,10 % plafonné au lieu de 0,50 % déplafonné).",
    "preenregistre": "D-366",
-   "simule": 15987096317.907299,
-   "ecart": -0.03715391966349679,
+   "simule": 15472285148.654413,
+   "ecart": -0.06815916955827428,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "impots_salaires_calcules",
@@ -2084,10 +2084,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 1 (B). Taux légaux sur une assiette calée ; l'effectif nul prend le Fnal des moins de 50 salariés (0,10 % plafonné au lieu de 0,50 % déplafonné).",
    "preenregistre": "D-366",
-   "simule": 16739912574.865166,
-   "ecart": -0.03671811630422572,
+   "simule": 16200702910.840754,
+   "ecart": -0.06774640862925807,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "impots_salaires_calcules",
@@ -2104,10 +2104,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 1 (B). Taux légaux sur une assiette calée ; l'effectif nul prend le Fnal des moins de 50 salariés (0,10 % plafonné au lieu de 0,50 % déplafonné).",
    "preenregistre": "D-366",
-   "simule": 17616707170.993908,
-   "ecart": -0.04085004785790236,
+   "simule": 17047839857.034716,
+   "ecart": -0.07182229776040094,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "impots_salaires_d291",
@@ -2124,10 +2124,10 @@
    "usage": "contexte",
    "remarque": "But 19, étape 1 (C). Sans tolérance : le moteur n'a ni la taxe sur les salaires, ni le versement mobilité, ni le forfait social, ni la PEEC, ni la contribution sur les stock-options (environ 40 Md€).",
    "preenregistre": "D-366",
-   "simule": 15987096317.907299,
-   "ecart": -0.6933989928100167,
+   "simule": 15472285148.654413,
+   "ecart": -0.7032720566777053,
    "verdict": "contexte",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "impots_salaires_d291",
@@ -2144,10 +2144,10 @@
    "usage": "contexte",
    "remarque": "But 19, étape 1 (C). Sans tolérance : le moteur n'a ni la taxe sur les salaires, ni le versement mobilité, ni le forfait social, ni la PEEC, ni la contribution sur les stock-options (environ 40 Md€).",
    "preenregistre": "D-366",
-   "simule": 16739912574.865166,
-   "ecart": -0.696179306420103,
+   "simule": 16200702910.840754,
+   "ecart": -0.7059656809531969,
    "verdict": "contexte",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "impots_salaires_d291",
@@ -2164,10 +2164,10 @@
    "usage": "contexte",
    "remarque": "But 19, étape 1 (C). Sans tolérance : le moteur n'a ni la taxe sur les salaires, ni le versement mobilité, ni le forfait social, ni la PEEC, ni la contribution sur les stock-options (environ 40 Md€).",
    "preenregistre": "D-366",
-   "simule": 17616707170.993908,
-   "ecart": -0.6969481486471262,
+   "simule": 17047839857.034716,
+   "ecart": -0.706734103025327,
    "verdict": "contexte",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ir_net",
@@ -2184,10 +2184,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 1 (E), proposition A1. Le PFU (indice_capital) et 10,6 des 19,5 Md€ de RICI sont calés ; 8,9 Md€ de RICI publiées ne sont pas imputables. Valeur arrondie à 0,1 Md€.",
    "preenregistre": "D-366",
-   "simule": 86201690673.35661,
-   "ecart": 0.049959691514696924,
+   "simule": 86811505157.45709,
+   "ecart": 0.05738739534052484,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ir_net",
@@ -2204,10 +2204,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 1 (E), proposition A1. Le PFU (indice_capital) et 10,6 des 19,5 Md€ de RICI sont calés ; 8,9 Md€ de RICI publiées ne sont pas imputables. Valeur arrondie à 0,1 Md€.",
    "preenregistre": "D-366",
-   "simule": 89530696148.07108,
-   "ecart": 0.07222390596492301,
+   "simule": 90173962952.96739,
+   "ecart": 0.07992770003553762,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ir_net",
@@ -2224,10 +2224,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 1 (E), proposition A1. Le PFU (indice_capital) et 10,6 des 19,5 Md€ de RICI sont calés ; 8,9 Md€ de RICI publiées ne sont pas imputables. Hors barème et CEHR publiés arrondis à 0,01 Md€ ; le texte du n° 41 dit « 92 Md€ », le graphique 1 ajoute 0,15 Md€ de petites impositions absentes du modèle.",
    "preenregistre": "D-366",
-   "simule": 94996845006.23373,
-   "ecart": 0.03687894542783021,
+   "simule": 95661383785.83989,
+   "ecart": 0.04413230493622988,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "niveau_de_vie_median_servi",
@@ -2244,10 +2244,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que niveau_de_vie_median (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 22663.54673998212,
-   "ecart": -0.06849376325597534,
+   "simule": 22691.787965414132,
+   "ecart": -0.06733300594269909,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "niveau_de_vie_median_servi",
@@ -2264,10 +2264,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que niveau_de_vie_median (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 23676.467192210523,
-   "ecart": -0.08088248477443627,
+   "simule": 23706.054800919002,
+   "ecart": -0.07973389747985238,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "niveau_de_vie_median_servi",
@@ -2284,10 +2284,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que niveau_de_vie_median (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 24272.818946011197,
-   "ecart": -0.09226555923667923,
+   "simule": 24302.76791934647,
+   "ecart": -0.0911455527544327,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "pension_etat_d122",
@@ -2307,7 +2307,7 @@
    "simule": 61727579229.3453,
    "ecart": -0.06503113813263506,
    "verdict": "contexte",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "pension_etat_d122",
@@ -2327,7 +2327,7 @@
    "simule": 64605362289.399796,
    "ecart": -0.05995747912871696,
    "verdict": "contexte",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "pension_etat_d122",
@@ -2347,7 +2347,7 @@
    "simule": 66310080282.401505,
    "ecart": -0.08455746141504106,
    "verdict": "contexte",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_foyers_servis",
@@ -2364,10 +2364,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_foyers (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 4641070.586262623,
-   "ecart": 0.004560732957277658,
+   "simule": 4624490.521463139,
+   "ecart": 0.0009719743426708227,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_foyers_servis",
@@ -2384,10 +2384,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_foyers (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 4376413.665911503,
-   "ecart": -0.03920665951448887,
+   "simule": 4358808.989658499,
+   "ecart": -0.04307157197398481,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_foyers_servis",
@@ -2404,10 +2404,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_foyers (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le fichier de data/raw (version provisoire au manifeste ; D-363 cite la version « _def », sha256 5d051616…, même valeur).",
    "preenregistre": "D-366",
-   "simule": 4549731.2489275085,
-   "ecart": -0.01691200325680453,
+   "simule": 4530543.109854935,
+   "ecart": -0.021058100722788464,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_montant_servi",
@@ -2424,10 +2424,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 10019084452.342474,
-   "ecart": 0.03763763290350841,
+   "simule": 9976184625.590225,
+   "ecart": 0.033194664596881696,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_montant_servi",
@@ -2444,10 +2444,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 10300953811.850208,
-   "ecart": 0.013060064326070764,
+   "simule": 10256666102.151793,
+   "ecart": 0.00870453464839005,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "ppa_montant_servi",
@@ -2464,10 +2464,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que ppa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 10877935666.83802,
-   "ecart": 0.05786386690762657,
+   "simule": 10831438165.840645,
+   "ecart": 0.05334205066297115,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "revenus_non_salaries_hors_gerants",
@@ -2487,7 +2487,7 @@
    "simule": 68379164345.19057,
    "ecart": 0.03586761539054484,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "revenus_non_salaries_hors_gerants",
@@ -2507,7 +2507,7 @@
    "simule": 71558475689.8466,
    "ecart": 0.06477842249016286,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "revenus_non_salaries_hors_gerants",
@@ -2527,7 +2527,7 @@
    "simule": 73463735339.94757,
    "ecart": -0.029704963564654352,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_foyers_servis",
@@ -2563,10 +2563,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que rsa_foyers (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 1884649.784086324,
-   "ecart": 0.034385172385468676,
+   "simule": 1884387.2016117629,
+   "ecart": 0.034241054671659166,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_foyers_servis",
@@ -2583,10 +2583,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que rsa_foyers (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 1897744.967695287,
-   "ecart": 0.039290781870365166,
+   "simule": 1897471.954599481,
+   "ecart": 0.039141267579124284,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_montant_servi",
@@ -2603,10 +2603,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que rsa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 11586673409.145922,
-   "ecart": 0.016571500335353484,
+   "simule": 11586096721.987228,
+   "ecart": 0.016520903955405952,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_montant_servi",
@@ -2623,10 +2623,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que rsa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 11977673947.457087,
-   "ecart": 0.032911683643465306,
+   "simule": 11977121472.981396,
+   "ecart": 0.032864040224270585,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
    "id": "rsa_montant_servi",
@@ -2643,10 +2643,10 @@
    "usage": "validation",
    "remarque": "But 19, étape 4. Même publié, même source et même tolérance que rsa_montant (D-363), qui garde le pont. Payés contre payés : le servi laisse dehors les bénéficiaires que la Drees juge non éligibles (jusqu'à 16 % pour le RSA). Relu dans le rapport et dans lignes.json (D-363), fichier absent de data/raw.",
    "preenregistre": "D-366",
-   "simule": 12470079577.62218,
-   "ecart": 0.0573715638947252,
+   "simule": 12469440866.687958,
+   "ecart": 0.05731740587791445,
    "verdict": "dans la tolérance",
-   "commit": "6e18d5f8d6632526b92b9950c831966538dc621d"
+   "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   }
  ],
  "loi": {
@@ -2657,10 +2657,10 @@
     2023,
     2024
    ],
-   "biais": 0.12004279675185425,
-   "min": 0.11142142866437088,
-   "max": 0.1295380374477637,
-   "tenues": 0
+   "biais": 0.0876025954107021,
+   "min": 0.07918165919633169,
+   "max": 0.09686898919550391,
+   "tenues": 3
   },
   "reduction_generale": {
    "ligne": "Réduction générale dégressive",
@@ -2669,9 +2669,9 @@
     2023,
     2024
    ],
-   "biais": 0.05253293293132836,
-   "min": 0.04096482055528905,
-   "max": 0.06318958788063167,
+   "biais": 0.11732197939411959,
+   "min": 0.10463294587251415,
+   "max": 0.1288277036871186,
    "tenues": 3
   },
   "bandeau_maladie": {
@@ -2681,9 +2681,9 @@
     2023,
     2024
    ],
-   "biais": 0.018119059745425787,
-   "min": 0.010745869799455576,
-   "max": 0.029608506602677,
+   "biais": 0.03181874328490656,
+   "min": 0.02400978462811354,
+   "max": 0.043428386505550476,
    "tenues": 3
   },
   "bandeau_famille": {
@@ -2693,9 +2693,9 @@
     2023,
     2024
    ],
-   "biais": 0.1089139174595218,
-   "min": 0.09550006936686573,
-   "max": 0.12478095148905943,
+   "biais": 0.12756663826608014,
+   "min": 0.11327601370493556,
+   "max": 0.1437101255907427,
    "tenues": 3
   },
   "csg_activite": {
@@ -2717,9 +2717,9 @@
     2023,
     2024
    ],
-   "biais": -0.023160765852471583,
-   "min": -0.04600817054647888,
-   "max": -0.0038598908162555956,
+   "biais": -0.023129764662964052,
+   "min": -0.045984117375650446,
+   "max": -0.003826853122526175,
    "tenues": 3
   },
   "foyers_fiscaux": {
@@ -2741,9 +2741,9 @@
     2023,
     2024
    ],
-   "biais": 0.018044960389735947,
-   "min": -0.019679268095121327,
-   "max": 0.049134429425095494,
+   "biais": 0.01988048985349448,
+   "min": -0.017812685480574464,
+   "max": 0.05097531260916566,
    "tenues": 3
   },
   "foyers_tmi_0": {
@@ -2753,9 +2753,9 @@
     2023,
     2024
    ],
-   "biais": -0.009517076777393108,
-   "min": -0.01901990799814568,
-   "max": 0.0008154044343167133,
+   "biais": -0.010604070297251633,
+   "min": -0.020171353098964007,
+   "max": -0.00022084577601766409,
    "tenues": 3
   },
   "foyers_tmi_1": {
@@ -2765,9 +2765,9 @@
     2023,
     2024
    ],
-   "biais": -0.132016057813803,
-   "min": -0.14493338535082312,
-   "max": -0.11917088762564909,
+   "biais": -0.13335502109055763,
+   "min": -0.14629772169296906,
+   "max": -0.12046221876048924,
    "tenues": 3
   },
   "foyers_tmi_2": {
@@ -2777,9 +2777,9 @@
     2023,
     2024
    ],
-   "biais": 0.10236833585282719,
-   "min": 0.058171691265861414,
-   "max": 0.12857132025436568,
+   "biais": 0.10789196009042579,
+   "min": 0.06343916890792323,
+   "max": 0.133999830476214,
    "tenues": 3
   },
   "foyers_tmi_3": {
@@ -2789,9 +2789,9 @@
     2023,
     2024
    ],
-   "biais": -0.12900294048271443,
-   "min": -0.14365149057701387,
-   "max": -0.11570968184810804,
+   "biais": -0.11644553844138657,
+   "min": -0.13130160080333975,
+   "max": -0.10265688514350824,
    "tenues": 3
   },
   "foyers_tmi_4": {
@@ -2801,9 +2801,9 @@
     2023,
     2024
    ],
-   "biais": -0.08139653127025408,
-   "min": -0.1357092051411567,
-   "max": -0.050654246677047654,
+   "biais": -0.07200537244383716,
+   "min": -0.1265282034441192,
+   "max": -0.03989732211465191,
    "tenues": 3
   },
   "salaires_declares": {
@@ -2813,9 +2813,9 @@
     2023,
     2024
    ],
-   "biais": -0.07791362221447858,
-   "min": -0.08186326522683374,
-   "max": -0.07015274960189355,
+   "biais": -0.07454068678925041,
+   "min": -0.07849647475390875,
+   "max": -0.06675913324635407,
    "tenues": 3
   },
   "niveau_de_vie_median": {
@@ -2825,9 +2825,9 @@
     2023,
     2024
    ],
-   "biais": -0.07533903115312272,
-   "min": -0.08692114775690474,
-   "max": -0.06330255515593264,
+   "biais": -0.07416192626538132,
+   "min": -0.08575071872914075,
+   "max": -0.06202732064322547,
    "tenues": 3
   },
   "d9_d1": {
@@ -2837,9 +2837,9 @@
     2023,
     2024
    ],
-   "biais": -0.032559808028588454,
-   "min": -0.04412666634118556,
-   "max": -0.016560649131366012,
+   "biais": -0.030362044162770736,
+   "min": -0.041762946971959036,
+   "max": -0.014561373379735287,
    "tenues": 3
   },
   "aide_logement_montant": {
@@ -2849,9 +2849,9 @@
     2023,
     2024
    ],
-   "biais": -0.10881500054118583,
-   "min": -0.11899707349187938,
-   "max": -0.094086238614418,
+   "biais": -0.10961229652308697,
+   "min": -0.11979422995917555,
+   "max": -0.0949050038023157,
    "tenues": 3
   },
   "af_montant": {
@@ -2861,9 +2861,9 @@
     2023,
     2024
    ],
-   "biais": -0.17811634680353194,
-   "min": -0.18361537897502633,
-   "max": -0.1690706720312798,
+   "biais": -0.17897653975762548,
+   "min": -0.18446193732810745,
+   "max": -0.17002254492032765,
    "tenues": 3
   },
   "is": {
@@ -2908,9 +2908,9 @@
     2023,
     2024
    ],
-   "biais": -0.03318465269061449,
-   "min": -0.05351054994288229,
-   "max": -0.012858755438346692,
+   "biais": -0.026592329600496456,
+   "min": -0.047043800532843405,
+   "max": -0.006140858668149507,
    "tenues": 2
   },
   "cvae": {
@@ -2930,9 +2930,9 @@
     2023,
     2024
    ],
-   "biais": 0.014662936919870714,
-   "min": -0.00018967934918523444,
-   "max": 0.027276446823835565,
+   "biais": -0.03416512358542386,
+   "min": -0.0482227358910956,
+   "max": -0.021948123530172836,
    "tenues": 3
   },
   "csg_activite_avec_non_salaries": {
@@ -2954,9 +2954,9 @@
     2023,
     2024
    ],
-   "biais": 0.018159931125539226,
-   "min": 0.007207657601593809,
-   "max": 0.035054845917920074,
+   "biais": 0.020433569660231576,
+   "min": 0.00932913103339783,
+   "max": 0.037366562165721984,
    "tenues": 3
   },
   "foyers_fiscaux_residents_hors_mayotte": {
@@ -2976,9 +2976,9 @@
     2023,
     2024
    ],
-   "biais": -0.038240694608541625,
-   "min": -0.04085004785790236,
-   "max": -0.03671811630422572,
+   "biais": -0.06924262531597776,
+   "min": -0.07182229776040094,
+   "max": -0.06774640862925807,
    "tenues": 3
   },
   "ir_net": {
@@ -2988,9 +2988,9 @@
     2023,
     2024
    ],
-   "biais": 0.053020847635816715,
-   "min": 0.03687894542783021,
-   "max": 0.07222390596492301,
+   "biais": 0.06048246677076411,
+   "min": 0.04413230493622988,
+   "max": 0.07992770003553762,
    "tenues": 3
   },
   "niveau_de_vie_median_servi": {
@@ -3000,9 +3000,9 @@
     2023,
     2024
    ],
-   "biais": -0.08054726908903027,
-   "min": -0.09226555923667923,
-   "max": -0.06849376325597534,
+   "biais": -0.07940415205899472,
+   "min": -0.0911455527544327,
+   "max": -0.06733300594269909,
    "tenues": 3
   },
   "ppa_foyers_servis": {
@@ -3012,9 +3012,9 @@
     2023,
     2024
    ],
-   "biais": -0.017185976604671915,
-   "min": -0.03920665951448887,
-   "max": 0.004560732957277658,
+   "biais": -0.02105256611803415,
+   "min": -0.04307157197398481,
+   "max": 0.0009719743426708227,
    "tenues": 3
   },
   "ppa_montant_servi": {
@@ -3024,9 +3024,9 @@
     2023,
     2024
    ],
-   "biais": 0.03618718804573525,
-   "min": 0.013060064326070764,
-   "max": 0.05786386690762657,
+   "biais": 0.031747083302747635,
+   "min": 0.00870453464839005,
+   "max": 0.05334205066297115,
    "tenues": 3
   },
   "revenus_non_salaries_hors_gerants": {
@@ -3047,9 +3047,9 @@
     2023,
     2024
    ],
-   "biais": 0.03683797712791692,
-   "min": 0.034385172385468676,
-   "max": 0.039290781870365166,
+   "biais": 0.036691161125391725,
+   "min": 0.034241054671659166,
+   "max": 0.039141267579124284,
    "tenues": 2
   },
   "rsa_montant_servi": {
@@ -3059,9 +3059,9 @@
     2023,
     2024
    ],
-   "biais": 0.03561824929118133,
-   "min": 0.016571500335353484,
-   "max": 0.0573715638947252,
+   "biais": 0.035567450019197,
+   "min": 0.016520903955405952,
+   "max": 0.05731740587791445,
    "tenues": 3
   }
  }

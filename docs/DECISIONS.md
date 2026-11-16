@@ -36893,3 +36893,88 @@ niveau de vie médian +0,1 à +0,2 %, le D9/D1 +0,2 % ; les foyers à 11 % −0,
 reconstruite (`impots population build`, graine 20240101), puis `impots verification
 passe` sur 2024, 2023, 2022, puis `impots verification ecrire` ; journal dans le
 scratchpad (`grille27c/`). Le résultat va dans D-521. Les études ne sont pas refaites.
+
+## D-521 — La grille, troisième tour : 35 lignes sur 35 en 2024, 98 sur 99 sur trois ans
+
+**Ce qui a tourné**, détaché, seul sur la machine, au commit 2d6a882 (D-520) : la
+population reconstruite (identique à celle des mesures de D-520, octet pour octet), puis
+2024, 2023, 2022, 42 minutes, mémoire de la machine au plus 9,9 Go ; puis `impots
+verification ecrire`. Les passes de D-498 restent dans l'historique (4dab749).
+
+**2024, les lignes que le correctif déplace** (écart au publié, % ; toutes les autres
+tombent sur le pronostic de D-520 au dixième près) :
+
+| ligne | tol. | D-498 | pronostic | passe | tolérance | ±5 % |
+|---|---:|---:|---:|---:|---|---|
+| `cotisations_salariales_apu` | 10 | +11,1 | +7,9 | +7,9 | **tient** | non |
+| `reduction_generale` | 15 | +5,3 | +12,0 | +11,9 | tient | non |
+| `bandeau_maladie` | 15 | +1,1 | +2,3 | +2,4 | tient | 5 |
+| `bandeau_famille` | 15 | +9,6 | +11,1 | +11,3 | tient | non |
+| `cotisations_employeurs_d121` | 15 | 0,0 | −4,9 | −4,8 | tient | 5 |
+| `impots_salaires_calcules` | 20 | −4,1 | −7,2 | −7,2 | tient | non |
+| `ir_bareme` | 10 | −5,4 | −4,7 | −4,7 | tient | 5 |
+| `ir_net` | 15 | +3,7 | +4,4 | +4,4 | tient | 5 |
+| `salaires_declares` | 10 | −8,2 | −7,8 | −7,8 | tient | non |
+| `foyers_imposes` | 10 | −2,0 | −1,8 | −1,8 | tient | 5 |
+| `foyers_tmi_2` | 15 | +5,8 | +6,4 | +6,3 | tient | non |
+| `foyers_tmi_3` | 30 | −12,8 | −12,4 | −11,5 | tient | non |
+| `foyers_tmi_4` | 30 | −5,1 | = | **−4,0** | tient | **5** |
+| `niveau_de_vie_median` | 15 | −8,7 | −8,5 | −8,6 | tient | non |
+| `niveau_de_vie_median_servi` | 15 | −9,2 | −9,1 | −9,1 | tient | non |
+| `d9_d1` | 15 | −4,4 | −4,3 | −4,2 | tient | 5 |
+| `d9_d1_servi` | 15 | +0,7 | +1,0 | +0,9 | tient | 5 |
+| `ppa_foyers_servis` | 25 | −1,7 | −2,1 | −2,1 | tient | 5 |
+| `ppa_montant_servi` | 13 | +5,8 | +5,3 | +5,3 | tient | non |
+| `aide_logement_montant` | 25 | −9,4 | −9,5 | −9,5 | tient | non |
+| `af_montant` | 25 | −16,9 | −17,0 | −17,0 | tient | non |
+
+Inchangées, comme annoncé : `foyers_tmi_0` (0,0), `foyers_tmi_1` (−14,6, au bord),
+`rsa_foyers_servis` (+3,9), `rsa_montant_servi` (+5,7), les trois CSG (−4,6, −7,1,
+−2,0), les foyers fiscaux (−6,9, −6,1), les revenus des non-salariés (−3,0), l'IS
+(+2,0), la contribution sociale sur l'IS (+20,3), la C3S (+1,2), la CVAE (−15,2). Les
+remplacées, sans verdict : `cotisations_salariales` −13,7 (annoncé −13,7),
+`cotisations_employeurs` +21,4, `ppa_montant` +1,3, `ppa_foyers` +69,2, les autres comme
+à D-498.
+
+**Le compte.** 2024 : **35 lignes jugées sur 35** dans leur tolérance (34 à D-498), comme
+annoncé ; la ligne des cotisations des salariés au champ des administrations publiques
+entre (+11,1 → +7,9 %). **±5 % : 16 sur 35** (15 à D-498, 15 annoncées). 2023 : **32 sur
+33**, comme annoncé, hors la contribution sociale sur l'IS (+33,8 %) ; ±5 % : 15 (14
+annoncées). 2022 : **31 sur 31**, comme annoncé ; ±5 % : 12, comme annoncé. Trois années :
+**98 lignes jugées sur 99** (95 à D-498) ; ±5 % : 43 (41 annoncées, 46 à D-498).
+
+**Le pronostic, ligne par ligne.** Aucune ligne ne change de verdict sur la tolérance
+contre le pronostic. 96 des 99 tombent dans leur bande ; les trois autres sont les foyers
+à 45 % (2024 −4,0 contre −5,1 ; 2023 −5,0 contre −5,8 ; 2022 −12,7 contre −13,6 ; bande
+±0,5) : le net plus haut fait passer des foyers dans la dernière tranche, et l'échantillon
+de 20 000 ménages, qui ne voyait aucun mouvement, voit mal un compte de 64 000 foyers
+(déjà dit à D-498). En 2024 et 2023 la ligne entre dans ±5 % : c'est l'écart au
+pronostic sur le second juge (+1 en 2024, +1 en 2023). Rien n'est retouché.
+
+**Ce qui ne tient pas ±5 %, et pourquoi** (2024, 19 lignes) : les cotisations des
+salariés (+7,9 : la part hors assiette au prorata du salaire au-dessus du Smic est une
+hypothèse, et le reste de l'écart n'est pas expliqué ; un taux ou un régime de trop dans
+openfisca, à chercher) ; la réduction générale (+11,9) et le bandeau famille (+11,3), que
+la correction éloigne : avec une assiette plus juste, la forme des salaires horaires de
+D-497 (Dares, 2022, appliquée en 2024) place trop d'assiettes entre 1 et 1,6 Smic, ou la
+répartition de la part hors assiette en laisse trop près du Smic ; les impôts sur les
+salaires (−7,2) ; les deux médians (−8,6, −9,1) et le statut d'occupation : les revenus du
+patrimoine (D-499) ; les foyers à 11 % (−14,6), à 30 % (+6,3), à 41 % (−11,5) ; les AF
+(−17,0), l'aide au logement (−9,5), la CSG d'activité (−7,1), les salaires déclarés
+(−7,8), les foyers fiscaux, la masse de la prime et du RSA (+5,3, +5,7), la contribution
+sociale sur l'IS et la CVAE : causes de D-494, que ce tour ne touche pas.
+
+**Ce que les études héritent**, en ordre de grandeur, sans les refaire (passe de 2024
+contre D-498) : une mesure sur les cotisations des salariés du privé a une assiette 4 %
+plus petite (30,8 Md€ de moins, et nulle au Smic) ; une mesure sur la réduction générale,
+une réduction 6 % plus grosse (Mélenchon : la réduction arrêtée à 2 Smic rapporte
+d'autant plus) ; sur les bandeaux, 1,3 et 1,6 % ; sur les cotisations des employeurs, une
+assiette 4,8 % plus petite ; l'IR au barème +0,7 % ; la prime servie −0,4 % ; les déciles
+bougent peu (médian +0,1 %, D9/D1 +0,2 %). La CSG, l'impôt sur les salaires réels et D11
+ne bougent pas. Le statut d'occupation ne bouge pas (D-499).
+
+**Le site n'est pas reconstruit** (la jonction) ; `GRILLE.md` et `reports/verification/`
+sont écrits sur ce commit. Test léger : `test_assiette_cotisations` (neuf, trois tests).
+**Reste à décider** : l'imputation des revenus du patrimoine dans le niveau de vie (D-499),
+et la répartition de la part hors assiette (au-dessus du Smic, ou une source par tranche
+de salaire, que la Dares publie peut-être dans les tableaux de l'épargne salariale).
