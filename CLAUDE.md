@@ -7,8 +7,9 @@
 
 ## Les règles qui ne se discutent pas
 
-* `src/impots/population/calibrate.py` est ouvert pour le but 19 (D-365) : chaque marge
-  neuve nomme sa source et entre dans un préenregistrement. Hors de ce but, on n'y touche pas.
+* `src/impots/population/calibrate.py` est ouvert pour le but 27 (D-490), comme il l'a été
+  pour le but 19 (D-365) : chaque marge neuve nomme sa source et entre dans un
+  préenregistrement. Hors de ce but, on n'y touche pas.
 * Ne jamais masquer un échec : pas d'assertion retouchée pour passer, pas de saut
   générique, pas de valeur substituée. Un test qui échoue de façon inattendue : soupçonner
   le test d'abord. Les fichiers de données n'entrent pas dans git.

@@ -36161,3 +36161,33 @@ pas de canal. (4) Le financement annoncé (D-482) entre en hypothèse, pas dans 
   −9,62, ASSO +6,21, consolidé −16,76 ; Attal a16 (D-488) : emploi salarié +372,1,
   statique +16,94 pt, Mésange −13,48 pt (réduit, figée) ; la cascade d'Attal a16 porte le
   nœud du financement (59,682 Md€) et quatre soldes par sous-secteur.
+
+## D-490 — Le but 26 clos, le but 27 validé : des données justes, un papillon démontrable
+
+Le but 26 est mergé (PR #132, 17fd297) et le site publié le 16 novembre ; ses tests,
+`make impact` et ses lourds n'ont pas tourné (D-471). Le propriétaire, le même jour : les
+sources publiques sont relues à chaque passe, il faut les récolter une fois ; la grille
+de la population, à 30 lignes sur 40, avec des écarts de +53 %, +44 %, +28 % et −27 %,
+« ne va pas du tout » ; l'effet papillon ne le convainc pas : il faut voir s'il est
+calculé et réel, le simplifier, le regarder d'un œil critique sur un programme, et qu'il
+soit juste mathématiquement ; une proposition appliquée à toute la population, puis les
+mesures d'un programme en interaction ; les données critiques sur chaque fiche, mesure par
+mesure. L'ordre : d'abord les données fausses, ensuite le papillon.
+
+**Les décisions du propriétaire**, le 16 novembre :
+
+* **`calibrate.py` est ouvert pour ce but**, comme pour le but 19 (D-365) : chaque marge
+  neuve nomme sa source et entre dans un préenregistrement. CLAUDE.md le dit.
+* **Les passes sur la population tournent**, détachées, une à la fois. Pas d'étude de
+  candidat complète, pas de `make full`.
+* **Le programme regardé est celui de Mélenchon.**
+
+**Les règles qui tiennent.** Les tolérances de la grille (D-371) ne changent pas. La cible
+de ±5 % est un second juge, préenregistré ligne par ligne avec son pronostic dans une
+D-entrée commitée et poussée avant le premier calcul. Une ligne n'est jamais ramenée dans
+sa tolérance en retouchant son total publié ou sa définition sans raison écrite : une
+définition qui change (comme D121, D-371) le dit, ligne d'avant gardée à côté.
+
+**Cinq volets** (BUT.md, but 27) : `sources`, `grille`, `papillon`, `fiches`, puis `mesure`
+une fois la grille corrigée. Les numéros : D-491 à D-509 aux volets, D-510 et la suite à
+la jonction.
