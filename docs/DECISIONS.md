@@ -35213,7 +35213,8 @@ Le net monte de 77,1 Md€ le premier jour, le coût du travail ne bouge pas. Pu
 cotisations, en mode structurel, au défaut θ½ : le jumeau d'avant suivait Mésange (λ = 0 :
 une baisse de cotisation salariale finit tout entière en baisse du brut). Attal a16 :
 dette 2035 **+16,79 → +13,85 pt**, emploi 2035 +747 → +440 milliers, consommation 2035
-−3,2 → +27,8 Md€. À θ « travail_incidence » = 0, le jumeau d'avant au bit (PIB, emploi,
+−3,2 → +27,8 Md€. Le programme d'Attal sur la page (structurel, figée, convention,
+θ½) : **+17,02 → +14,07 pt** en 2035 (D-469, R13). À θ « travail_incidence » = 0, le jumeau d'avant au bit (PIB, emploi,
 dette et B9 de 2026 à 2035, recoupés contre `b0bddb3`). À 1 : +11,51 pt. Les programmes
 qui portent des cotisations (Attal, et les mesures du Smic) changent de même ; les mesures
 du Smic tournent désormais en structurel (D-479). Les études, la chaîne réduite et les
