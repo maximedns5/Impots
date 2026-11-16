@@ -36367,3 +36367,87 @@ D-371, à ±0,5 point ; la contribution sociale sur l'IS de 2023 (+34 %) reste h
 
 **Ce qui ne bouge pas** : les tolérances, les totaux publiés, les enregistrements de
 `chiffrages_preregistres/`, `calibrate.py`. Le résultat va dans D-496.
+
+## D-496 — La grille du but 27 : 31 lignes jugées sur 35 en 2024, pronostic tenu sauf une
+
+**Ce qui a tourné**, détaché, seul sur la machine, l'une après l'autre (D-495) :
+
+* **A**, la dérive, 2024 au commit a214f05 (code de D-490), dans un worktree à part,
+  14 minutes ; gardée dans `reports/verification/avant_b27/passe_2024.json`. **Aucune
+  dérive** : 39 des 40 lignes jugées redonnent l'écart de D-371 au dixième de point ; la
+  CSG des revenus de remplacement bouge de +0,28 point (−5,4 → −5,1 %), dans la bande de
+  ±0,5 annoncée. Le code des buts 20 à 26 ne change pas la population de la grille.
+* **B**, les correctifs, 2024, 2023, 2022 au commit e38dde9, 40 minutes, mémoire au plus
+  8 Go ; puis `impots verification ecrire`.
+
+**Avant et après, 2024**, les lignes qui bougent (toutes les autres : écart de A) :
+
+| ligne | tol. | D-371 | pronostic | B | tolérance | ±5 % |
+|---|---:|---:|---:|---:|---|---|
+| `ppa_foyers_servis` | 25 | −28,0 | −0,5 à +0,5 | +0,0 | tient (calage) | tient (calage) |
+| `ppa_montant_servi` | 13 | −23,5 | +5,0 à +7,5 | +6,2 | tient | non |
+| `niveau_de_vie_median_servi` | 15 | −7,3 | −7,3 à −6,5 | −7,2 | tient | non |
+| `d9_d1_servi` | 15 | −3,6 | −4,5 à −3,6 | **−5,2** | tient | **non** |
+| `csg_remplacement` | 10 | −5,4 | = | −5,1 | tient | non |
+
+**Le compte.** 2024 : **31 lignes jugées sur 35** dans leur tolérance (30 sur 40 à
+D-371), comme annoncé ; hors, les aides au logement (−27,0 %), la réduction générale
+(−17,5 %), le bandeau famille (+18,4 %), les cotisations salariales (−11,0 %). Les cinq
+lignes remplacées gardent leur écart, sans verdict : `rsa_foyers` +53,1, `ppa_foyers`
++44,0, `rsa_montant` +12,4, `ppa_montant` −15,4, `cotisations_employeurs` +27,9.
+**±5 % : 13 sur 35**, une de moins qu'annoncé (14). Sur les trois années, 87 lignes
+jugées sur 99 tiennent (84 sur 113 à D-371) : 2022, 27 sur 31 (±5 % : 13) ; 2023, 29 sur
+33 (±5 % : 12).
+
+**L'écart au pronostic : le D9/D1 servi.** Annoncé de −4,5 à −3,6 %, il tombe à −5,2 %
+(−4,9 en 2023, −2,7 en 2022) et sort de ±5 % en 2024. La prime servie en plus, 3,1 Md€,
+va davantage au premier décile que je ne l'avais pensé : le D1 du niveau de vie servi
+monte plus que le D9. Rien n'est retouché ; la ligne tient sa tolérance de ±15 %, et un
+D1 plus haut est ce que le recours de la Cnaf doit faire.
+
+**2022 et 2023**, la prime, contre le pronostic : foyers servis +2,5 % et −2,7 % (+2,3 et
+−2,6 annoncés, ±1), masse servie +4,2 % et +1,7 % (+4,1 et +1,6, ±1,5) : tenus. Restent
+hors en 2023 la contribution sociale sur l'IS (+33,8 %) avec les quatre de 2024 sauf les
+cotisations salariales (−9,7 %, tenue) ; en 2022, le bandeau maladie (+15,0 %, au bord)
+avec les mêmes trois.
+
+**Ce qui reste, et pourquoi** (D-494, § 3) : les aides au logement attendent une marge
+de calage statut d'occupation × niveau de vie (ERFS), les allègements une distribution
+des salaires horaires en parts de SMIC, les cotisations salariales un tableau qui sépare
+les régimes publics des régimes d'entreprise et étrangers. Aucune de ces sources n'est
+dans `data/raw` ; le volet `sources` peut les récolter, et chacune ira dans un
+préenregistrement neuf avant sa passe. La masse servie de la prime (+6,2 %) tient sa
+tolérance mais pas ±5 % : le modèle a trop peu de petits droits.
+
+**Le site n'est pas reconstruit.** `impots site construire` refuse : la page de l'étude
+`plfss2027` (`docs/etudes/plfss2027.md`, ligne 351) cite la ligne des foyers servis de
+la prime de D-371 (−28,1 % en moyenne), et la grille dit maintenant −0,1 %. Réécrire
+les pages des études (`impots etude ecrire <nom>`, depuis leurs rapports, sans passe)
+n'a pas été fait ici : cela touche les pages des études, que le propriétaire ou la
+jonction décide de refaire. La page `site/population-france.html` et `GRILLE.md` liront
+la grille de D-496 dès que le site sera reconstruit ; le code de la page (lignes
+remplacées montrées à côté des lignes jugées) est commité (e38dde9).
+
+**Les études qui devraient être refaites** (sans les refaire ici). Le `p_max` de la
+prime est multiplié par 0,7392 ÷ 0,5322 = 1,389, et la prime servie est linéaire en
+`p_max` : la variation de prime de chaque étude est multipliée par 1,389 à
+comportements fixes. Lu dans les rapports de première année commités (Δ prime) :
+
+| étude | Δ prime avant | après, ordre de grandeur | variation du coût |
+|---|---:|---:|---:|
+| Retailleau, programme | −8,38 Md€ | −11,64 | −3,26 |
+| Mélenchon, programme | −1,68 | −2,33 | −0,65 |
+| Attal, programme | −1,48 | −2,06 | −0,58 |
+| Philippe, programme | +1,52 | +2,11 | +0,59 |
+| Roussel, programme | −1,22 | −1,69 | −0,47 |
+| Tondelier, Ruffin, Kazib, Bouamrane, Lisnard | −0,57 à −0,75 | × 1,389 | −0,22 à −0,29 |
+| PLFSS 2027, art. 74 (prime) | +0,56 | +0,78 | +0,22 |
+| Dupont-Aignan, Le Pen | −0,08 ; 0 | × 1,389 | −0,03 ; 0 |
+
+Le coût de la mesure de la prime du PLFSS 2027 passe de 0,56 à environ 0,78 Md€ : son
+enregistrement dans `chiffrages_preregistres/` ne change pas, et une nouvelle note contre
+le juge demanderait un préenregistrement. Les déciles et les gagnants et perdants de
+toutes les études qui touchent la prime bougent dans le même sens. L'ordre de passage
+proposé : Retailleau, puis Mélenchon (le volet `mesure` part de cette population), Attal,
+Philippe, puis les autres. Les autres lignes de la grille ne bougent pas : aucune autre
+étude n'hérite d'un changement.
