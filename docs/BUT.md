@@ -1335,6 +1335,19 @@ Les numéros réservés : D-472 à D-474 pour `carte`, D-475 à D-477 pour `vent
 D-478 à D-480 pour `travail`, D-481 à D-483 pour `financement`, D-484 à D-486 pour
 `cascade` ; D-487 et la suite pour la jonction.
 
+**Où il en est** (16 novembre, D-487 à D-489). Les cinq volets sont fusionnés et branchés
+sur `claude/but26` ; pas de PR. Les 333 fiches citent les canaux du registre ; restent
+attendus l'offre de travail, le patrimoine, les droits à la retraite et le coût par
+tranche hors du Smic. Le mode structurel fait tourner neuf programmes sur onze, sur les
+deux populations (Mélenchon et Tondelier restent refusés : leurs employeurs mêlent le
+privé et le public), et 44 des 46 mesures de la page ; le Smic y passe par le bloc
+`travail`. Le financement range le point d'indice chez ses payeurs. Les cascades d'Attal
+a16 et d'un Smic à 2 000 € montrent le travail, la compensation et le solde de chaque
+sous-secteur. Les ordres de grandeur d'Attal a16 (+440 milliers d'emplois, +13,85 pt de
+dette contre +3,23 en réduit) sont vérifiés par décomposition : aucun défaut, deux choix
+de modèle (D-488). Ce qui manque : les tests des nombres listés dans D-489, `make impact`
+et les lourds, la PR, et les huit décisions de D-489.
+
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,

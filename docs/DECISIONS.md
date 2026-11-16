@@ -35880,3 +35880,284 @@ jumeau et du chemin gagnent un lien. La construction du site prend 1 min de plus
 Ce qui reste : les canaux de `travail` et `financement` et les fiches de `carte` se
 verront à la jonction, sans retouche si leurs noms suivent `FAMILLES` et le groupe
 `sous_secteurs` ; sinon une ligne dans ces deux constantes.
+
+## D-487 — La jonction du but 26 : cinq volets fusionnés, et branchés entre eux
+
+**Les fusions** (sur `claude/but26`, parti de `b0bddb3`, chacune `--no-ff`, dans l'ordre
+carte, ventilation, travail, financement, cascade). Un seul conflit, à chaque fois le même :
+la fin de `docs/DECISIONS.md`, où chaque volet ajoutait ses entrées. Résolu en gardant les
+deux côtés, dans l'ordre des numéros (D-472 à D-485) ; `comm` contre chaque branche : aucune
+ligne perdue. Les fichiers partagés (`canaux.py`, `champs.py`, `mesures.py`,
+`navigateur.py`, `site_jumeau/__init__.py`) se sont fusionnés seuls : chaque volet y avait
+fait des ajouts localisés. Après chaque fusion, une passe d'essai du jumeau (θ½, Δ dette en
+2035, points de PIB) : Attal a16 réduit, vieillie +3,967 et figée +3,234 à chaque étape ;
+structurel, figée +16,795, puis +13,853 après `travail` (D-480) ; structurel, vieillie :
+refusé, puis +19,747 après `ventilation`, +16,219 après `travail` ; le programme d'Attal,
+réduit +4,285 à chaque étape, structurel +17,016 puis +14,075 après `travail`. Rien ne
+casse ; chaque nombre qui bouge est celui que la D-entrée du volet annonce.
+
+**Les canaux de la carte rapprochés du registre** (`transmission.CANAUX_ATTENDUS`,
+`scripts/jumeau_fiches_transmission.py`, les fiches régénérées par le script, sans
+retouche à la main). `smic_diffusion`, `incidence_cotisations`, `financement_sous_secteurs`,
+`compensation_exonerations` et `financement_annonce` avaient déjà le nom du registre : ils
+s'ouvrent seuls. `allegements_smic` n'a pas de canal propre : dans les fiches du Smic (le
+gabarit `salaires_smic`), il devient `cout_travail_smic` (le bloc `travail` porte la loi, la
+RGDU et le coût par tranche d'une hausse du Smic) et `cout_travail_tranche` y est retiré
+pour la même raison ; dans les exonérations au-delà de 2 Smic (Mélenchon) et la r13 de
+Retailleau, il devient `incidence_cotisations` (une exonération change une cotisation
+employeur, dont le bloc porte l'incidence). Le renommage est fait dans les fiches et dans
+`CANAUX_ATTENDUS`, pas dans le registre. Restent attendus : `offre_travail` (71 fiches, non
+fait au but 26), `patrimoine_menages` (29), `droits_retraite` (22), sans volet, et
+`cout_travail_tranche` (2 fiches : le coût par tranche hors d'un Smic, que
+`travail.emploi_par_tranche` calcule en regard, hors de l'état). Les 333 fiches se
+chargent ; `reports/transmission/releve.md` le dit.
+
+**Le Smic dans le mode structurel** (`navigateur.Session.mesure_structurel`). La mesure que
+lit le mode structurel est celle du rapport, sauf une hausse du Smic que le bloc `travail`
+sait lire : elle passe alors par `travail.mesure_smic` (D-478). Trois conditions, toutes
+lues dans le rapport : la passe de la première année relève le Smic ; ses cotisations des
+employeurs sont payées par des employeurs privés (`ventilation.payeur`) ; elle ne porte
+aucun autre prélèvement des entreprises non nul (ni PFU, ni impôt de la passe des
+entreprises). Dans la vue vieillie, avec la convention demandée seulement : les déciles de
+la première année sont ceux de la passe figée, marqués « parts_figee » (D-476) en plus de
+« travail_cout_proportionnel » (D-478, dont la définition est ajoutée à celles que la page
+affiche, `travail.TEXTE_SMIC`). `Session.structurel`, `_contexte` (donc `calculer`,
+`portee` et la cascade), `transmission.entree` et `programme` (un argument `mode`),
+`financement.programme.mesure_seule` et `site_jumeau.raison_structurel` la lisent. Le mode
+réduit ne change pas : il lit toujours `Session.mesure`. Bouamrane, Kazib, Roussel et Ruffin
+tournent dix ans en structurel sur les deux populations ; le Smic de Tondelier seul redonne
+au bit le +1,150 pt de D-479.
+
+**Les refus qui restent : les employeurs mêlés** (Mélenchon, Tondelier). La séparation par
+les mesures seules (D-477) s'écrit, mais pas sans deux changements de contrat, et je ne
+l'ai pas prise : (1) elle demande, chaque année et dans chaque vue, les cotisations des APU
+employeurs lues dans un autre rapport (celui du point d'indice seul), que `ventilation`
+ne lit pas aujourd'hui (`completer` et `etendre` ne voient que le rapport du programme) ;
+(2) l'interaction n'est pas petite chez Mélenchon : −14,153 Md€ pour le programme, −12,82
+pour la somme des mesures seules, 1,33 Md€ (9 %) que le Smic et la fin des exonérations
+au-delà de 2 Smic font ensemble sur la même base (D-483), et qu'une convention devrait
+ranger chez l'un ou l'autre ; (3) même séparés, les deux programmes portent un Smic que
+`mesure_smic` ne lit que sans autre prélèvement (Mélenchon a son PFU, K = −10,259 Md€, et
+tous deux le E public du point d'indice) : il faudrait que `mesure_smic` garde la
+ventilation des entreprises au lieu de la remplacer. Chez Tondelier, l'écart est de 0,02
+Md€ (−13,586 contre −13,606) : une convention « mesures_seules » y serait sûre. C'est une
+décision du propriétaire (D-489), pas un oubli.
+
+**Le financement lit les payeurs des fiches** (`financement.comptes.cle_reste`,
+`payeurs_fiche`). Le choc d'une mesure que ses impulsions ne portent pas allait à la clé
+des prélèvements (D-483 : 54 % aux ASSO). Quand `financement.yaml` (`mesures.<scénario>.
+reste`) nomme une ligne du compte et la fiche de la mesure, il va aux payeurs que la fiche
+nomme, aux parts de cette ligne en 2025 (Insee t. 3.203 à 3.212), renormées. Fait pour les
+deux points d'indice (Mélenchon, Tondelier), ligne D1 ; leurs fiches nomment désormais
+aussi les hôpitaux publics (`apu:secu:maladie`, la fonction publique hospitalière est
+dans les ASSO), et celle de Tondelier quitte le gabarit du Smic, qui la faisait payer par
+les entreprises. Le point d'indice de Mélenchon, réduit, vieillie, θ½, ΔB9 par
+sous-secteur en 2026 (avant → après) : État −8,81 → −13,28 ; ODAC −0,58 → −0,08 ; APUL
+−5,04 → −9,62 ; ASSO −2,34 → +6,21 (elles reçoivent les cotisations des APU employeurs et
+la CSG, et ne paient que la part hospitalière des traitements). Le consolidé ne bouge pas
+(−16,76). Le programme de Mélenchon ne le lit pas encore : son choc mêle sept mesures, et le
+répartir demande une clé par mesure seule (au prorata de leurs restes), une convention de
+plus, non prise.
+
+**La clé `financement` des fiches** : pour une mesure qui coûte (chiffrée : le coût de la
+première année de son rapport ; hypothèse : le montant déclaré d'une dépense ou d'une
+baisse), la fiche porte `bilan`, rendu par `financement.annonce.financement` (D-482) sans
+mesure liée (la carte ne choisit pas les liens) : coût, financement chiffré, trou, en mots.
+Attal a16 : 63,14 Md€ de coût, aucun financement chiffré, 63,14 de trou. Le validateur ne
+lit pas `bilan` (une clé de plus dans `financement`, le schéma 1 le permet).
+
+**La cascade montre le travail et le financement.** Les canaux du travail sont portés par
+le bloc `travail` et leurs noms suivent les préfixes de `FAMILLES` (`smic`, `cout_travail`,
+`incidence`) : ils s'affichaient sans retouche. Ceux du financement ne sont portés par aucun
+bloc (ils répartissent le compte après la trajectoire) : `canaux.COMPTABLES` les nomme,
+dans la section du financement ; la cascade en fait un nœud calculé (« Financement par
+sous-secteur et compensation » : le transfert de compensation de l'État aux caisses, le
+solde de chaque sous-secteur, la compensation par branche) et quatre agrégats (le solde de
+l'État, des ODAC, des collectivités, de la Sécurité sociale), sous les θ du volet que le
+réglage donne (`theta_commun` sur la page ; sans eux, rien et la raison). Le groupe
+`sous_secteurs` du registre reste vide : le compte par sous-secteur n'est pas un champ de
+l'état. Le relevé du paquet de la page passe par un point d'indice et un Smic (`PARCOURS`),
+pour que la page porte les fiches et les paramètres qu'ils lisent.
+
+**Les nombres du jumeau qui changent ici, et pourquoi.** Les programmes du Smic en
+structurel, qui étaient refusés (D-489). Le compte par sous-secteur des deux points
+d'indice seuls. Rien d'autre : le mode réduit, les études et les pages publiées ne
+bougent pas.
+
+## D-488 — Les ordres de grandeur d'Attal a16, vérifiés par décomposition
+
+Trois nombres paraissaient gros : +440 milliers d'emplois en 2035 pour Attal a16 en
+structurel, figée (D-480), +949 milliers sur la vieillie (D-476, avant le volet `travail`),
+et +13,85 pt de dette en structurel contre +3,23 (figée) à +3,97 (vieillie) en réduit,
+pour la même mesure : 63,1 Md€ de coût statique la première année, 77 Md€ de cotisations
+salariales de retraite en moins. Passes d'essai, θ½, après la jonction ; aucun nombre n'est
+retouché. **Verdict : aucun défaut de code ; deux choix de modèle, que le propriétaire
+tranche (D-489).**
+
+**L'emploi.** Le bloc `emploi` (`blocs/menages.py`, `Emploi.contribue`) fait
+ê = L[ŷ, emploi_va] + s (L[ŵ + τ̂ − p̂_va, emploi_cout] + L[ciblé, emploi_cout_nq]),
+les retards et les élasticités de Mésange, s le θ « emploi_cout ». Pour a16, τ̂ = 0 (aucune
+cotisation employeur ne bouge) : tout passe par ŵ, le salaire moyen par tête, que le bloc
+des salaires abaisse par l'incidence (D-480, λ_s = 0,554 à θ½ : 45 % de la baisse de la
+cotisation finit en baisse du brut). En 2035, figée : ŵ = −2,32 % (−1 765 € sur 76 236),
+p̂_va = −1,19 %, le coût réel du travail −1,1 % ; l'emploi salarié +372,1 milliers
+(+1,37 % de 27,13 millions), l'emploi total +440,0, dont 68 milliers de non-salariés
+(`non_salaries`, le rapport de Mésange appliqué à une baisse du coût des salariés, ce qui
+se discute). Sans incidence (θ « travail_incidence » = 0, le jumeau d'avant) : +746,7 ; à 1
+(tout sur le net, le coût ne bouge pas) : l'emploi ne vient plus que de la demande. Sur la
+vieillie : +555,6 aujourd'hui (le +949,0 de D-476 était à λ = 0, avant `travail`).
+
+**En regard, la littérature par tranche.** La matrice de Bozio-Wasmer (tableau 4.1,
+`travail.yaml`) donne des élasticités de −0,81 (somme de la ligne, 1 à 1,2 Smic) à −0,17
+(au-delà de 3,5 Smic) ; pondérées par les EQTP du privé (22, 28, 32, 10, 7 %), −0,40. La
+même baisse nominale du coût (−2,3 %, uniforme le long de l'échelle : la cotisation de
+retraite est proportionnelle) ferait +0,9 % d'emploi salarié marchand, environ +190
+milliers, +90 milliers sur le coût réel. Le jumeau fait deux à quatre fois plus : il
+applique à une baisse étalée sur toute l'échelle l'élasticité agrégée de Mésange, quand
+la littérature (Crépon et Desplatz 2001, Bozio-Wasmer 2024) la trouve forte au bas de
+l'échelle et faible au-dessus de 1,6 Smic, là où est l'essentiel de la masse. C'est le
+même écart que D-479 relevait pour le Smic, de sens contraire. Plausible comme borne
+haute ; pas comme valeur centrale.
+
+**La dette.** Décomposée par bloc (la cascade, CADRE.md §1), en 2035, figée, points de
+PIB : le choc statique +16,94 (réduit +16,71 : le même coût, −74,6 Md€ de B9) ; le retour
+de l'activité, en réduit, est celui de Mésange, −13,48 pt (+63,7 Md€ de B9 en 2035, le PIB
++2,11 %) ; en structurel, −3,09 pt : la consommation −2,28 (+8,4 Md€), les recettes
+induites −0,68 (+3,5), l'investissement −0,13, les salaires −0,10, le commerce +0,11 ; le
+PIB +0,71 %. La chaîne réduite lit la table de Mésange des cotisations employeurs sur le
+super-brut (`variante_source` « super_brut » du rapport) : elle traite la baisse de la
+cotisation salariale comme une baisse du coût du travail entière (λ = 0), dont Mésange fait,
+par point de PIB, +1,14 % de PIB et −0,24 point de solde à dix ans : 76 % d'autofinancement.
+Le structurel, à λ = 0 aussi, n'en fait que 0,30 % de PIB (+16,79 pt) : ses blocs ajoutent
+des emplois sans produire plus (le PIB y est la demande ; la masse salariale baisse, les
+cotisations et la CSG avec), quand Mésange fait passer la baisse du coût par les prix, la
+compétitivité et l'offre. À θ½, 55 % de la baisse va au net et soutient la consommation,
+45 % au coût. L'autofinancement en 2035 : 15 % en structurel (11,2 Md€ sur 74,6), 85 % en
+réduit (63,7 sur 74,6). La littérature encadre large : 17 % pour un impôt sur le travail
+aux États-Unis à long terme (Mankiw et Weinzierl, 2006), 54 % dans l'Europe des quatorze
+(Trabandt et Uhlig, 2011, où le coin fiscal est haut). Le structurel est au bas, le réduit
+au-dessus : l'écart de +10 pt est réel, il vient de la façon dont chaque modèle lit l'offre,
+pas d'une erreur. Les études publiées (réduit) ne changent pas.
+
+**Ce qu'un test devra tenir.** Attal a16, structurel, figée, θ½, en 2035 : ŵ −1 765 €,
+emploi salarié +372,1, total +440,0 milliers ; décomposition de la dette : statique
++16,94, consommation −2,28, recettes induites −0,68 ; réduit, figée : Mésange −13,48.
+
+## D-489 — Les onze programmes après la jonction, et ce qui manque au /goal
+
+**Le relevé** (passe d'essai, θ½, convention demandée en structurel ; écart en 2035 :
+dette en points de PIB, solde en Md€, emploi en milliers ; le réduit ne porte pas
+l'emploi).
+
+| programme | réduit, figée | réduit, vieillie | struct., figée | struct., vieillie |
+|---|---:|---:|---:|---:|
+| Attal | +3,518 | +4,285 | +14,075 | +16,478 |
+| Bouamrane | +0,391 | +0,380 | +1,142 | +0,993 |
+| Kazib | +0,394 | +0,383 | +1,150 | +1,001 |
+| Le Pen | +2,251 | +2,997 | +3,763 | +5,017 |
+| Lisnard | +4,629 | +5,711 | +6,208 | +7,748 |
+| Mélenchon | +25,109 | +27,375 | refusé | refusé |
+| Philippe | +12,757 | +11,729 | +8,141 | +7,517 |
+| Retailleau | +10,812 | +11,367 | +8,962 | +9,622 |
+| Roussel | +1,181 | +1,225 | +3,098 | +3,217 |
+| Ruffin | +2,253 | +2,587 | +4,005 | +4,676 |
+| Tondelier | +2,197 | +2,509 | refusé | refusé |
+
+Le solde (Md€) et l'emploi (milliers, structurel seul) :
+
+| programme | réd., fig. | réd., vieil. | str., fig. | str., vieil. | emploi fig. | vieil. |
+|---|---:|---:|---:|---:|---:|---:|
+| Attal | −11,44 | −18,61 | −63,35 | −82,49 | +445,4 | +562,2 |
+| Bouamrane | −1,83 | −1,08 | −3,99 | −2,18 | −0,4 | −29,2 |
+| Kazib | −1,84 | −1,09 | −4,02 | −2,21 | −0,5 | −29,5 |
+| Le Pen | −12,01 | −19,74 | −17,37 | −28,53 | +71,4 | +110,5 |
+| Lisnard | −22,46 | −32,40 | −26,44 | −39,19 | +104,1 | +142,2 |
+| Mélenchon | −107,73 | −118,78 | refusé | refusé | refusé | refusé |
+| Philippe | −55,97 | −48,45 | −37,95 | −32,57 | +161,6 | +141,7 |
+| Retailleau | −45,53 | −49,45 | −38,87 | −43,67 | +205,9 | +234,1 |
+| Roussel | −6,03 | −5,27 | −12,15 | −11,25 | +11,1 | −29,6 |
+| Ruffin | −11,26 | −13,78 | −17,08 | −21,26 | +50,1 | +21,3 |
+| Tondelier | −9,62 | −10,88 | refusé | refusé | refusé | refusé |
+
+Le réduit redonne les études (Attal +4,285, Mélenchon +27,375 sur la vieillie). En
+structurel, neuf programmes sur onze tournent dix ans sur les deux populations (quatre
+sur la figée seule avant le but, D-469 ; cinq après `ventilation`, D-477) : les quatre
+du Smic s'ajoutent par `Session.mesure_structurel` (D-487). Retailleau passe de +9,608
+(D-477) à +8,962 sur la figée : l'incidence de `travail` (r13, r19 touchent des
+cotisations). Mélenchon et Tondelier restent refusés, raison dite par la page : « des
+prélèvements agrégés […] sans leur ventilation » (les employeurs mêlés, D-487). Sur les 46
+mesures d'études de la page : 44 tournent dix ans sur la figée et 44 sur la vieillie (36
+et 36 après D-477) ; restent les programmes de
+Mélenchon et de Tondelier.
+
+**Les deux cascades d'exemple** (`site/cascade-attal-a16_droit_au_brut.html`,
+`site/cascade-tondelier-smic_2000_brut.html`, structurel, figée, θ½ ; captures à 1280 et
+390 px hors git, sans erreur ni page plus large que 390 px). **Attal a16** : la mesure
+−63,1 Md€ ; les ménages +58,0 ; le bloc `travail` met λ_s = 0,55 ; les salaires −6,8
+(2026) à −19,5 (2035) ; la consommation +20,1 à +27,8 ; l'emploi +82 à +440 milliers ; le
+financement : 59,7 Md€ par an de compensation de l'État aux caisses (la CNAV
+entièrement, L131-7 ; l'Agirc-Arrco à θ½) ; le solde de l'État −46,0 → −52,5, de la
+Sécurité sociale −16,3 → −13,4, des collectivités +1,2 → +2,2 ; le solde des APU −61,0 →
+−63,4 ; la dette +1,36 → +13,85 pt. **Le Smic à 2 000 € brut** (Tondelier) : la mesure
+−15,4 Md€ ; les entreprises +16,2 (les allègements que la loi ouvre), les ménages +1,8 ; le
+bloc `travail` +6,8 Md€ de masse salariale (la diffusion) ; les naissances +6 691 et les
+fermetures −6 494 sociétés en 2026 ; l'emploi 0 puis −0,5 milliers en 2035 ; la
+compensation 8,1 Md€ (les allègements généraux, par la TVA, θ½) ; l'État −6,9 → −6,7, la
+Sécurité sociale −2,3 → +1,9 ; la dette +0,22 → +1,15 pt. Les canaux attendus que rien ne
+porte sont dits « pas encore modélisé » (Attal : `offre_travail`, `financement_annonce`).
+
+**Ce qui manque au /goal.** (1) Les onze en structurel : neuf ; Mélenchon et Tondelier
+attendent la convention des employeurs mêlés. (2) Chaque mesure a sa fiche (333), mais 120
+« paramètres » n'ont pas de montant et 100 sont sans choc : elles ne se propagent pas.
+(3) Le coût du travail par tranche est un canal pour le Smic seulement ; hors du Smic, un
+regard hors de l'état. L'offre de travail, le patrimoine et les droits à la retraite n'ont
+pas de canal. (4) Le financement annoncé (D-482) entre en hypothèse, pas dans la cascade.
+(5) Les tests ne sont pas écrits, `make impact` et les lourds n'ont pas tourné. (6) La PR.
+
+**Les décisions du propriétaire** (de tous les volets) :
+
+1. ρ pour les 78 montants déclarés (aujourd'hui 1), et la variante « dépense publique » de
+   Mésange pour une économie de prestations (D-474) ; une passe ou une assiette publiée
+   pour les 120 paramètres sans montant (D-474).
+2. La convention « parts_figee » de la vieillie, ou une passe de la première année sur la
+   vieillie (D-476).
+3. Les employeurs mêlés : la convention « mesures_seules » (sûre chez Tondelier, 0,02
+   Md€ d'écart ; 1,33 Md€ chez Mélenchon), et `mesure_smic` qui garde la ventilation des
+   entreprises (D-477, D-487).
+4. L'incidence par défaut : θ½ (Bozio-Wasmer) ou Mésange (λ = 0) (D-480).
+5. L'emploi : l'élasticité agrégée de Mésange ou la matrice de Bozio-Wasmer par tranche,
+   pour le Smic (D-479) comme pour une baisse étalée (D-488 : Attal a16, +440 contre
+   ~+190 milliers) ; et l'emploi non salarié qui suit une baisse du coût des salariés.
+6. La diffusion du Smic au centre « sans effets fixes » ou « avec » (D-480).
+7. L'issue des pertes de l'Agirc-Arrco et de l'Unédic (θ ou une règle), la part de la
+   masse salariale sous le plafond (une source Urssaf), le calendrier du plan a1 d'Attal
+   (D-483).
+8. La répartition par sous-secteur d'un programme qui mêle des dépenses sans impulsion :
+   une clé au prorata des mesures seules (D-487).
+
+**Les nombres qu'un test devra tenir** (de tous les volets, à écrire avant la PR, D-335) :
+
+* carte (D-474) : 333 fiches sans défaut, le relevé par sorte ; `entree` d'Attal a16,
+  réduit, vieillie, +3,97 pt ; `programme("attal")` cinq prêtes, trente autres, −1,87 pt
+  (réduit, vieillie) ; la rampe de Lisnard l6 (−80 et −200 Md€) ; une fiche à payeur
+  inconnu ou à hypothèse sans source refusée ;
+* ventilation (D-477) : E de Retailleau 2026 −4,301 Md€, la passe et le chemin à l'euro ;
+  Σ des impôts ventilés = P_t à 1e-12 ; K de Mélenchon −10,259 ; Attal, Le Pen, Lisnard,
+  Philippe sur la figée identiques au bit à D-414 à θ_incidence 0 ; Attal vieillie
+  +20,006 pt à θ_incidence 0 (+16,478 pour le programme à θ½ après la jonction) ;
+* travail (D-480) : allègements 2024 77,20 Md€ ; b_loi 0,0026222, a_loi 0,0159586,
+  b_diff 0,0042119, a_diff −0,0018215 ; λ_s(½) 0,55359, λ_e(½) 0,52221 ; Attal a16 θ½
+  +13,85 pt, θ_incidence 0 +16,79 ; Tondelier Smic +1,15 pt, `cout_travail_smic` 2026
+  2,88 Md€ ;
+* financement (D-481, D-483) : Σ B9 publiés de 2025 −151,592 Md€ ; consolidations
+  143,072, 30,578, 0,880 ; Attal a16, réduit, vieillie, θ½ : CNAV 44,693, Agirc-Arrco
+  −18,480, État −43,079 en 2026 ; identités sous 1e-9 du PIB ; interactions d'Attal
+  −0,247 (2026), de Mélenchon +0,231 (2035) ; Mélenchon avec ses recettes −5,703 Md€ ;
+* cascade (D-484, D-485) : les nombres du graphe d'Attal a16 égaux à la trajectoire ;
+* jonction (D-487 à D-489) : les canaux attendus restants (offre_travail 71,
+  patrimoine_menages 29, droits_retraite 22, cout_travail_tranche 2) ; Kazib structurel
+  figée +1,150 pt = Tondelier Smic seul ; Bouamrane, Roussel, Ruffin structurels du
+  tableau ; le point d'indice de Mélenchon, réduit, vieillie, 2026 : État −13,28, APUL
+  −9,62, ASSO +6,21, consolidé −16,76 ; Attal a16 (D-488) : emploi salarié +372,1,
+  statique +16,94 pt, Mésange −13,48 pt (réduit, figée) ; la cascade d'Attal a16 porte le
+  nœud du financement (59,682 Md€) et quatre soldes par sous-secteur.
