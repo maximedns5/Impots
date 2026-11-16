@@ -211,6 +211,46 @@ REGISTRE[EMPLOI_PUBLIC_PART] = Ligne(
             "publique ; les bornes choisies, non vérifiées"), verifiee=False)
 
 
+# --------------------------------------------------------------------- travail (D-478)
+#: Les θ du bloc `travail` ; leurs valeurs sont dans `jumeau/parametres/travail.yaml`.
+TRAVAIL_DIFFUSION = "travail_smic_diffusion"
+TRAVAIL_INCIDENCE = "travail_incidence"
+TRAVAIL_ELASTICITES = "travail_emploi_elasticites"
+_PAR_THETA_BAS = ("v(θ) = bas + 2θ (centre − bas) si θ ≤ ½, centre + (2θ − 1)(haut − "
+                  "centre) sinon")
+REGISTRE.update({ligne.cle: ligne for ligne in (
+    Ligne(cle=TRAVAIL_DIFFUSION, bloc="travail",
+          definition=("e(m) dans w(m) = max(m (1 + e(m) g), 1 + g) : l'élasticité du salaire "
+                      "d'un poste payé m Smic (de 1 à 1,5, par 0,1 Smic) à une hausse g du "
+                      f"Smic, la diffusion ; {_PAR_THETA_BAS}"),
+          unite="sans dimension", a_zero="0, la loi seule (la convention des études, D-380)",
+          a_demi="Koubi et Lhommeau, à un an, sans effets fixes : 0,47 à 0,31",
+          a_un="Koubi et Lhommeau, à un an, avec effets fixes : 1,19 à 0,49",
+          direction="θ = 1 : les salaires voisins suivent le plus le Smic",
+          source=("Koubi et Lhommeau (Dares), Insee, Les salaires en France 2007, figure "
+                  "11 ; les deux estimations publiées et la loi seule, sans loi entre "
+                  "elles"), verifiee=True),
+    Ligne(cle=TRAVAIL_INCIDENCE, bloc="travail",
+          definition=("λ_t dans ŵ += (1 − λ_s) L[κ̂, S_p] − λ_e L[τ̂ + τ̂ᶜ, S_p], λ_s et λ_e "
+                      "les λ_t des tranches pondérés : la part de long terme d'une variation "
+                      f"de cotisations qui finit sur le salaire net ; {_PAR_THETA_BAS}"),
+          unite="sans dimension", a_zero="0 (Mésange : le coût porte tout)",
+          a_demi="Bozio-Wasmer, tableau 4.2 : 0,33 ; 0,62 ; 0,59 ; 0,56 ; 0,56",
+          a_un="1 (tout sur le salaire net)",
+          direction="θ = 1 : les salariés portent le plus les cotisations",
+          source=("Mésange (G2017-04), p. 64 et note 45 ; Bozio-Wasmer (2024), tableau "
+                  "4.2, p. 185, et p. 259"), verifiee=False),
+    Ligne(cle=TRAVAIL_ELASTICITES, bloc="travail",
+          definition=("le facteur sur la matrice des élasticités de l'emploi de chaque "
+                      "tranche au coût de chaque tranche (Bozio-Wasmer, tableau 4.1), "
+                      "`emploi_par_tranche`, un regard hors de l'état ; "
+                      f"{_PAR_THETA_BAS}"),
+          unite="sans dimension", a_zero="0,5 (−0,3 au Smic)",
+          a_demi="1 (la maquette, −0,6 au Smic)", a_un="1,5 (−0,9 au Smic)",
+          direction="θ = 1 : l'emploi des bas salaires répond le plus à son coût",
+          source="Bozio-Wasmer (2024), p. 178 et tableau 4.1, p. 184", verifiee=True),
+)})
+
 #: Les θ où se lit la boîte d'une ligne non monotone : de 0 à 1 par huitièmes (D-427).
 GRILLE = tuple(i / 8 for i in range(9))
 

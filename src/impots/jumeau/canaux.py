@@ -170,6 +170,21 @@ CANAUX.update({
 DE_MESANGE.add("emploi_public")
 
 
+# --------------------------------------------------------------------- travail (D-478)
+CANAUX.update({
+    "smic_diffusion": (
+        "la diffusion d'une hausse du Smic aux salaires de 1 à 1,5 Smic (Koubi et Lhommeau, "
+        "Insee 2007), son coût et les allègements qu'elle reprend, par tranche de salaire, "
+        "et leur masse salariale (bloc `travail`)"),
+    "cout_travail_smic": (
+        "le salaire brut que la loi d'une hausse du Smic relève, comme un coût du travail "
+        "ciblé que lisent l'emploi et les prix (bloc `travail`)"),
+    "incidence_cotisations": (
+        "la part d'une variation de cotisations salariales ou employeurs qui finit sur le "
+        "salaire net à moyen terme, par tranche (Bozio-Wasmer, tableau 4.2), que lit le "
+        "bloc `salaires` (bloc `travail`)"),
+})
+
 def declares(bloc: Any) -> tuple[tuple[str, str], ...]:
     """Les paires (canal, instrument) qu'un bloc porte : les siennes et celles de Mésange
     qu'il remplace ; `mesange`, ses canaux pour ses seuls instruments. Refusés : un canal
