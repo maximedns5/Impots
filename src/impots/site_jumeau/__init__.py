@@ -699,7 +699,7 @@ def structurel(d: dict[str, Any]) -> dict[str, Any]:
             avec, _ = session.structurel(cle, vue, CONVENTION_PARTS)
             sans, _ = session.structurel(cle, vue, None)
             out[cle][vue] = {"avec": avec, "sans": sans, "raison": None if avec else
-                             raison_structurel(session.mesure(cle, vue, CONVENTION_PARTS),
+                             raison_structurel(session.mesure_structurel(cle, vue, CONVENTION_PARTS),
                                                vue)}
     return out
 

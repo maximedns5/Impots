@@ -107,6 +107,10 @@ INCIDENCE_SALARIES = "incidence_cotisations_salaries"
 INCIDENCE_EMPLOYEURS = "incidence_cotisations_employeurs"
 #: La convention des déciles d'une mesure du Smic après sa première année (D-478).
 CONVENTION_SMIC = "travail_cout_proportionnel"
+TEXTE_SMIC = (
+    "convention « travail_cout_proportionnel » (D-478) : les déciles des ménages d'une "
+    "hausse du Smic, après la première année, sont ceux de sa passe fois le coût de "
+    "l'année sur celui de la première ; une convention déclarée, pas une passe")
 
 
 class TravailError(ValueError):

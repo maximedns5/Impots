@@ -373,7 +373,7 @@ def hypothese(f: Fiche, *, tables: Mapping[str, Any] | None = None,
 
 
 def entree(f: Fiche, session: Any, *, vue: str = "vieillie",
-           convention: str | None = None) -> Entree:
+           convention: str | None = None, mode: str = "reduit") -> Entree:
     """Ce que le jumeau lit d'une fiche. `session` est une `navigateur.Session` : une
     mesure chiffrée y est lue par son rapport (`Session.mesure`, donc
     `Mesure.depuis_rapport`) ; une hypothèse par `hypothese`, avec les tables de Mésange
@@ -387,7 +387,7 @@ def entree(f: Fiche, session: Any, *, vue: str = "vieillie",
         if scenario not in session.candidats:
             return Entree(mesure=None, refus=f"rapport « {scenario} » absent des entrées "
                           f"du jumeau", **commun)
-        return Entree(mesure=session.mesure(scenario, vue, convention), refus=None,
+        return Entree(mesure=_lire(session, scenario, vue, convention, mode), refus=None,
                       **commun)
     if origine == "hypothese":
         if d["montant"].get("inclus_dans"):
@@ -400,8 +400,17 @@ def entree(f: Fiche, session: Any, *, vue: str = "vieillie",
     return Entree(mesure=None, refus=d["montant"]["manque"], **commun)
 
 
+def _lire(session: Any, scenario: str, vue: str, convention: str | None,
+          mode: str) -> Any:
+    """Le rapport d'une mesure : en mode structurel, la mesure que ce mode lit
+    (`Session.mesure_structurel` : une hausse du Smic par le bloc `travail`, D-487)."""
+    if mode == "structurel":
+        return session.mesure_structurel(scenario, vue, convention)
+    return session.mesure(scenario, vue, convention)
+
+
 def programme(candidat: str, session: Any, *, vue: str = "vieillie",
-              convention: str | None = None, racine: Path = ICI
+              convention: str | None = None, racine: Path = ICI, mode: str = "reduit"
               ) -> tuple[list[Entree], list[Entree]]:
     """Les mesures d'un programme prêtes à entrer, et les autres.
 
@@ -423,13 +432,13 @@ def programme(candidat: str, session: Any, *, vue: str = "vieillie",
         canaux = tuple(dict.fromkeys(c for f in chiffrees for c in f.canaux_ouverts))
         attendus = tuple(dict.fromkeys(c for f in chiffrees for c in f.canaux_attendus))
         hyp = tuple(h for f in chiffrees for h in f["hypotheses"] or ())
-        pretes.append(Entree(fiche=tete, mesure=session.mesure(scen, vue, convention),
+        pretes.append(Entree(fiche=tete, mesure=_lire(session, scen, vue, convention, mode),
                              refus=None, canaux=canaux, attendus=attendus,
                              hypotheses=hyp))
     for f in toutes:
         if f.sorte == "chiffree":
             continue
-        e = entree(f, session, vue=vue, convention=convention)
+        e = entree(f, session, vue=vue, convention=convention, mode=mode)
         (pretes if e.mesure is not None else autres).append(e)
     return pretes, autres
 
