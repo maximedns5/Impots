@@ -33,8 +33,11 @@ from pathlib import Path
 from impots.donnees import RAW, ROOT
 
 CACHE = ROOT / "data" / "interim" / "sources" / "texte"
+#: La version de l'extraction : un cache d'une autre version est refait.
+VERSION = 2
 #: Les formats lus. Le reste (parquet, xml, gz) n'est pas lu, et c'est dit.
-LUS = (".pdf", ".xlsx", ".xlsm", ".xls", ".csv", ".txt", ".html", ".htm", ".zip", ".json")
+LUS = (".pdf", ".xlsx", ".xlsm", ".xls", ".csv", ".txt", ".html", ".htm", ".xml", ".zip",
+       ".json")
 #: Un fichier texte au-delà de cette taille n'est pas mis en cache (les grands CSV de
 #: microdonnées ou d'open data se lisent par leur lecteur, pas par une recherche de texte).
 TAILLE_MAX_TEXTE = 40_000_000
@@ -89,6 +92,9 @@ def _xlsx(donnees: bytes, prefixe: str = "") -> list[tuple[str, str]]:
             raise TexteError(f"classeur illisible par openpyxl : {e}") from e
     pages = []
     for ws in wb.worksheets:
+        # Une dimension déclarée fausse (« A1 ») tronque la lecture en flux : on la relit.
+        if hasattr(ws, "reset_dimensions"):
+            ws.reset_dimensions()
         lignes = []
         for i, row in enumerate(ws.iter_rows(values_only=True), start=1):
             cells = [_cellule(v) for v in row]
@@ -121,7 +127,7 @@ def _xls(donnees: bytes, prefixe: str) -> list[tuple[str, str]]:
 
 def _texte_brut(donnees: bytes, nom: str) -> str:
     t = donnees.decode("utf-8", errors="replace")
-    if nom.lower().endswith((".html", ".htm")):
+    if nom.lower().endswith((".html", ".htm", ".xml")):
         t = re.sub(r"(?is)<(script|style).*?</\1>", " ", t)
         t = html.unescape(re.sub(r"<[^>]+>", " ", t))
         t = re.sub(r"[ \t]+", " ", t)
@@ -143,7 +149,7 @@ def _membre(donnees: bytes, nom: str, prefixe: str) -> list[tuple[str, str]]:
         return _xlsx(donnees, prefixe)
     if bas.endswith(".xls"):
         return _xls(donnees, prefixe)
-    if bas.endswith((".csv", ".txt", ".html", ".htm", ".json")):
+    if bas.endswith((".csv", ".txt", ".html", ".htm", ".xml", ".json")):
         if len(donnees) > TAILLE_MAX_TEXTE:
             return []
         return [(prefixe.rstrip(":") or "1", _texte_brut(donnees, nom))]
@@ -190,11 +196,12 @@ def pages(fichier: str, *, reconstruire: bool = False) -> list[tuple[str, str]]:
     cache = CACHE / f"{fichier}.json"
     if cache.exists() and not reconstruire:
         lu = json.loads(cache.read_text(encoding="utf-8"))
-        if lu.get("sha256") == sha:
+        if lu.get("sha256") == sha and lu.get("version") == VERSION:
             return [tuple(p) for p in lu["pages"]]
     contenu = lire(chemin)
     CACHE.mkdir(parents=True, exist_ok=True)
-    cache.write_text(json.dumps({"fichier": fichier, "sha256": sha, "pages": contenu},
+    cache.write_text(json.dumps({"fichier": fichier, "sha256": sha, "version": VERSION,
+                                 "pages": contenu},
                                 ensure_ascii=False), encoding="utf-8")
     return contenu
 
@@ -338,6 +345,9 @@ def trouver(v: float, contenu: list[tuple[str, str]] | Index, *,
     ne retrouve pas 10,32 Md€. Le nombre lu doit avoir au moins min(3, chiffres du cité)
     chiffres significatifs sur une page dite, min(4, chiffres du cité) sans page."""
     idx = _index(contenu)
+    if echelles is ECHELLES and abs(v) < 10:
+        # Un taux ou une élasticité s'imprime tel quel ou en pour cent, pas en milliers.
+        echelles = (1.0, 100.0)
     exige = min(3 if pages_dites is not None else 4, chiffres_significatifs(v))
     out = []
     for e in echelles:

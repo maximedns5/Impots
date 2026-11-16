@@ -122,6 +122,14 @@ def _resoudre(texte: str, url: str | None, man: dict[str, dict[str, Any]],
         i = texte.find(k)
         if i >= 0:
             trouves.append((i, k))
+    # Un nom de fichier tel que l'éditeur le sert (« TCRD_022.xlsx », « IP2114.xlsx ») :
+    # le fichier du manifeste qui finit par lui, ou dont l'URL finit par lui.
+    for m in re.finditer(r"([\w\-]+\.(?:xlsx|xls|pdf|csv|zip))\b", texte):
+        nom = m.group(1).lower()
+        for k, v in man.items():
+            url_k = (v.get("url") or "").lower() if isinstance(v.get("url"), str) else ""
+            if k.lower() != nom and (k.lower().endswith("_" + nom) or url_k.endswith("/" + nom)):
+                trouves.append((m.start(), k))
     for motif, fichier in ALIAS:
         m = re.search(motif, texte)
         if m and fichier in man:
@@ -208,6 +216,24 @@ def _commentaires(lignes: list[str], debut: int) -> str:
     return " ".join(reversed(out))
 
 
+#: Au-delà de ce nombre de lignes, l'en-tête de section ne vaut plus pour une constante.
+SECTION_MAX = 40
+
+
+def _section(lignes: list[str], debut: int) -> str:
+    """Les commentaires de la section d'une affectation : de l'en-tête « # ---- » qui la
+    précède jusqu'à elle. Ils nomment souvent le fichier que les constantes lisent."""
+    i = debut - 2
+    while i >= 0 and not lignes[i].startswith("# ----"):
+        i -= 1
+    if i < 0 or debut - i > SECTION_MAX:
+        return ""  # trop loin : la section d'avant parlerait d'autre chose
+    while i > 0 and lignes[i - 1].startswith("#"):
+        i -= 1
+    return " ".join(x.strip().lstrip("#: ").rstrip() for x in lignes[max(i, 0):debut - 1]
+                    if x.strip().startswith("#"))
+
+
 def _feuilles(v: Any, chemin: tuple[Any, ...]) -> Iterator[tuple[tuple[Any, ...], Any]]:
     from impots.reporting import Figure
 
@@ -232,8 +258,7 @@ def citations_marges() -> Iterator[dict[str, Any]]:
     source = MARGES.read_text(encoding="utf-8")
     lignes = source.splitlines()
     arbre = ast.parse(source)
-    urls: list[tuple[int, str]] = []
-    sections = [i for i, ligne in enumerate(lignes, start=1) if ligne.startswith("# ----")]
+    urls: list[tuple[str, str]] = []
     for noeud in arbre.body:
         cible = None
         if isinstance(noeud, ast.Assign) and len(noeud.targets) == 1:
@@ -245,13 +270,14 @@ def citations_marges() -> Iterator[dict[str, Any]]:
         nom = cible.id
         valeur = getattr(margins, nom, None)
         if nom.endswith("_URL") and isinstance(valeur, str):
-            urls.append((noeud.lineno, valeur))
+            urls.append((nom, valeur))
             continue
         commentaire = _commentaires(lignes, noeud.lineno)
-        # L'URL de la section : une constante `*_URL` définie plus haut, sans en-tête de
-        # section (« # ---- ») entre elle et l'affectation.
-        url_proche = next((u for n, u in reversed(urls) if n < noeud.lineno
-                           and not any(s for s in sections if n < s < noeud.lineno)), None)
+        section = _section(lignes, noeud.lineno)
+        # L'URL d'une constante : celle d'un `*_URL` que son affectation nomme ; sinon
+        # aucune (une URL de la section voisine désignait le mauvais document).
+        noms = {n.id for n in ast.walk(noeud) if isinstance(n, ast.Name)}
+        url_proche = next((u for n, u in urls if n in noms), None)
         for chemin, v in _feuilles(valeur, ()):
             ident = f"marges.{nom}{_id_chemin(chemin)}"
             cite = {"fichier": "src/impots/population/margins.py", "nom": nom,
@@ -262,13 +288,15 @@ def citations_marges() -> Iterator[dict[str, Any]]:
                        "usage": v.use,
                        "source": " ; ".join(x for x in (v.source, v.scope, v.caveat,
                                                        commentaire) if x),
-                       "url": v.url or url_proche, "sha256": None, "cite_par": cite}
+                       "url": v.url or url_proche, "sha256": None, "cite_par": cite,
+                       "entete": section}
             else:
                 v = list(v) if isinstance(v, tuple) else v
                 yield {"id": ident, "valeur": v, "unite": "", "annee": None,
                        "usage": "constante",
                        "source": commentaire,
-                       "url": url_proche, "sha256": None, "cite_par": cite}
+                       "url": url_proche, "sha256": None, "cite_par": cite,
+                       "entete": section}
 
 
 # --------------------------------------------------------------------------- #
@@ -322,7 +350,7 @@ def citations_yaml() -> Iterator[dict[str, Any]]:
                 yield {"id": f"{prefixe}.{chemin_fichier.stem}." + ".".join(map(str, chemin)),
                        "valeur": list(v) if isinstance(v, tuple) else v, "unite": "",
                        "annee": None, "usage": "parametre", "source": texte, "url": url,
-                       "sha256": None, "entete": entete,
+                       "sha256": None, "entete_fichier": entete,
                        "cite_par": {"fichier": rel, "chemin": list(chemin)}}
 
 
@@ -385,11 +413,15 @@ def _relire_un(v: float, texte: str, fichiers: list[str]) -> dict[str, Any]:
             t = ici[0]
             return {"statut": "retrouvée" if t.exact else "retrouvée, arrondie",
                     "document": fichier, "page": t.page, "lu": t.lu, "echelle": t.echelle}
-    if T.chiffres_significatifs(v) >= 3:
+    # Ailleurs dans le document : souvent une page citée au folio imprimé, pas à la page
+    # du PDF. Deux chiffres significatifs suffisent ici : le nombre est cherché à la seule
+    # échelle 1, dans le document que la citation nomme.
+    if T.chiffres_significatifs(v) >= 2:
         for fichier, contenu, dites in lus:
             if not dites:
                 continue
-            ailleurs = T.trouver(v, contenu)
+            ailleurs = T.trouver(v, contenu, echelles=T.ECHELLES if
+                                 T.chiffres_significatifs(v) >= 3 else (1.0,))
             if ailleurs:
                 t = ailleurs[0]
                 return {"statut": "retrouvée ailleurs", "document": fichier,
@@ -447,12 +479,18 @@ def _calcul(v: float, texte: str, fichiers: list[str]) -> dict[str, Any] | None:
 
 def relire(c: dict[str, Any], man: dict[str, dict[str, Any]]) -> dict[str, Any]:
     texte = c.get("source") or ""
-    fichiers = _resoudre(texte + " " + c.get("entete", "") if not texte.strip() else texte,
-                         c.get("url"), man, c.get("sha256"))
-    if not fichiers and not texte.strip() and c.get("entete"):
+    fichiers = _resoudre(texte, c.get("url"), man, c.get("sha256"))
+    if not fichiers and not texte.strip() and c.get("entete_fichier"):
+        # Un nombre sans citation propre : l'en-tête du YAML nomme peut-être son document.
+        c["entete"] = c["entete_fichier"]
+    if not fichiers and c.get("entete") and not c.get("url"):
+        # La citation ne nomme pas son document ; l'en-tête du fichier ou de la section le
+        # nomme peut-être. Le texte de recherche des pages devient alors les deux.
         fichiers = _resoudre(c["entete"], None, man)
+        if fichiers:
+            texte = texte + " " + c["entete"]
     c["documents"] = fichiers
-    c["localisation"] = localisation(texte)
+    c["localisation"] = localisation(c.get("source") or "")
     if not fichiers:
         if _CHOISIE.search(texte):
             return {"statut": "choisie"}

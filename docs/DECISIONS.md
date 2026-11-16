@@ -36244,3 +36244,127 @@ la jonction les branchera (D-493). Le mode d'emploi : `docs/SOURCES.md`.
 
 **Jamais ouverts.** Les évaluations préalables des PLF et des PLFSS et les chiffrages de
 tiers des programmes ne sont pas extraits (`texte.INTERDITS`), même présents au manifeste.
+
+## D-492 — La récolte : 291 documents, 899 nombres, une localisation fausse dans la grille
+
+La récolte de D-491, faite une fois le 16 novembre (`python -m impots.sources recolter`,
+deux minutes une fois le texte extrait ; l'extraction de tout `data/raw/`, 173 documents
+lus, 66 Mo de texte, une demi-heure). Aucun nombre du modèle ne change, aucune passe.
+
+**Les documents.** Le manifeste en portait 256 ; il en porte 269. Treize documents de la
+grille n'y étaient pas, alors que `lignes.json` portait leur URL et leur empreinte (les
+deux rapports de la CCSS de 2024 et 2025, les rapports du directeur comptable de la Cnaf
+sur 2022, 2023 et 2024, quatre RSA et PA Conjoncture, deux IRCOM, les Insee Première
+n° 2004 et 2063) : téléchargés, chacun d'empreinte égale à celle de `lignes.json`. Le
+fichier des figures de l'Insee Première n° 2117, en quarantaine faute d'URL (D-028), a
+l'empreinte du fichier servi à l'URL que la grille cite : re-sourcé. Quatre tableaux des
+sous-secteurs des APU (t. 3.203 à 3.212), au manifeste mais absents de ce checkout, et
+`dlf_top8_depenses_fiscales_ir2018_deciles.xls`, retéléchargé d'empreinte égale, sont
+liés. Retéléchargés d'empreinte différente, donc non écrits (D-007) : l'article de Da Rin
+et al. (le dépôt de l'université sert un autre fichier), les pages de l'AFT et du Sénat,
+le bulletin de l'AFT ; la notice C3S de l'Urssaf ne répond pas. L'inventaire
+(`documents.jsonl`) compte 291 documents : les 269 du manifeste (74 en quarantaine) et 22
+URL citées hors manifeste ; 115 de l'Insee, 39 de la DGFiP, 21 de l'Assemblée, 12 de la
+Cnaf ; 31 fixes (articles, documents de travail), 202 éditions datées, 58 séries révisées
+(comptes nationaux, open data). 148 sont cités par un fichier du dépôt, 91 portent au
+moins un nombre du registre.
+
+**Les nombres.** 899 : la grille 122 (les lignes à total publié, toutes années), les
+marges 240 (32 `Figure` de calage, 16 de validation, 11 de contexte, 181 constantes),
+les YAML du jumeau 415, des comportements 99, de la macro 9 (ses multiplicateurs sont lus
+du PDF par `macro.mesange`, D-026 : ils n'ont pas de nombre écrit), du prédictif 14. La
+relecture :
+
+| | retrouvés | ailleurs | introuvables (calculés) | introuvables | choisis | non relus |
+|---|---|---|---|---|---|---|
+| grille | 108 | 6 | 2 | 3 | 0 | 3 |
+| marges | 82 | 0 | 7 | 5 | 0 | 146 |
+| jumeau | 224 | 9 | 13 | 26 (+3 en partie) | 46 | 94 |
+| comportements | 19 | 9 | 16 | 7 | 3 | 45 |
+| macro, prédictif | 1 | 0 | 0 | 0 | 6 | 16 |
+| **total** | **434** | **24** | **38** | **41** (+3) | **55** | **304** |
+
+**La grille.** Ses 40 lignes notées (113 nombres) : 35 retrouvées à l'endroit dit, toutes
+années, dont trois sommes refaites terme à terme (les impôts sur les salaires calculés,
+t. 3.217, lignes 42 + 44 + 45 + 47). Les cinq autres :
+
+* **`rsa_montant` et `rsa_montant_servi`, 2022 à 2024 : la localisation est fausse, la
+  valeur juste.** `lignes.json` dit « tableau PRESTATIONS ETAT, ligne Revenu de Solidarité
+  Active, p. 53 du PDF » (p. 44 en 2023 et 2024) ; la ligne RSA de ce tableau est la part
+  de l'État, 1 483 710 639 € en 2022. Le total publié de la grille, 11 397 794 848 €, est
+  la ligne TOTAL du tableau « RSA » (État et départements), p. 57 du PDF en 2022, p. 48 en
+  2023 et 2024, nombres retrouvés à l'euro. Le total ne change pas ; la phrase de
+  localisation est à corriger par qui tient la grille (D-494 à D-499 ou la jonction).
+* `ir_net` 2024, `foyers_fiscaux_residents_hors_mayotte` 2024 : des différences écrites
+  (barème + hors barème + CEHR − crédits ; total − non-résidents − Mayotte), dont un terme
+  est sur une autre feuille ou dans un fichier départemental : non refaites, pas fausses.
+* `revenus_non_salaries_hors_gerants`, 2022 à 2024 : une somme de cases de la 2042 que la
+  citation nomme sans en écrire les montants : non refaite.
+* `pensions_declarees`, 2022 à 2024 (contexte) : non relue, son fichier
+  (`dgfip_ir_declarations_2042_nat.csv`) n'est plus dans `data/raw/`.
+
+**Les marges.** Les 32 marges de calage : 10 retrouvées, 7 calculées (des sommes de cases
+ou de cellules de recensement), 3 introuvables (`DECLARED_PENSIONS`, somme des cases
+1AS à 1DS ; `CHAMP_SALARIES_ENQUETE`, un rapport ; `CHILDREN_18_24`, une somme sur les
+communes du TD_FAM6), 12 non relues : leur URL est une page d'accueil (`/statistiques`,
+`/publications`), sans fichier au manifeste. `NIVEAU_DE_VIE_GINI` (0,297, validation) est
+introuvable dans le TCRD_022 ; sa `caveat` le disait déjà. Les autres constantes : les
+quantiles de salaires (Insee Première n° 2079, ECRT 2026 fiches 26 et 29), les revenus
+des non-salariés (Insee Première n° 2114) et les déciles de Filosofi retrouvés ; 146 non
+relues faute de document nommé à côté.
+
+**Le jumeau et les comportements.** Les 33 introuvables et les 3 « en partie » relus à
+l'œil : aucun n'est un nombre imprimé mal recopié. Ce sont des nombres que la citation
+dit dérivés sans que le mot « calcul » soit reconnu : des écarts-types tirés d'un
+intervalle ou d'un t de Student (`a_priori`, sept), une moyenne de deux années de Bargain,
+Orsini et Peichl, des parts du TES (neuf), deux bornes d'intervalle de l'accélérateur de
+Mésange, les lignes de consolidation des sous-secteurs (quatre), des rapports de deux
+cellules des comptes (trois), des profils de Mésange divisés par leur long terme (deux) ;
+dans les comportements, un milieu de deux estimations (Gechert et Heimberger), une part
+lue sur le tracé d'une figure, un rapport et des bornes de support (Bach et al.) ; et une
+borne, la Note de conjoncture de juin 2019, hors manifeste. Les 18 « ailleurs » du jumeau
+et des comportements sont des pages citées au folio imprimé (Bach et al. : décalage de
+trois) ou un nombre retrouvé sur une autre page du même document.
+
+**Écarts entre une valeur citée et la valeur relue : aucun.** Une localisation fausse
+(le RSA de la grille, six nombres), une valeur sans source vérifiable déjà dite (le Gini).
+La relecture dit qu'un nombre est présent ; elle n'a pas vérifié que chaque nombre est la
+bonne ligne du bon tableau (D-493). Deux règles sont nées de faux positifs vus en route,
+avant le décompte ci-dessus : un nombre lu trop court ne confirme pas (« 10 » pour
+10,32 Md€) ; un taux ne se cherche qu'à l'échelle 1 ou 100 (« 287 » ne retrouve pas 0,287).
+
+## D-493 — Les sources : ce qui reste
+
+* **Brancher les lecteurs sur le registre.** Les YAML, `margins.py` et `lignes.json`
+  restent les endroits où le code lit ses valeurs ; le registre les tient (`verifier`,
+  `tests/test_sources.py`) mais ne les remplace pas. Les volets `grille` (marges du
+  calage) et `papillon` (paramètres du jumeau) touchent ces fichiers pendant le but 27 :
+  la jonction récolte de nouveau après eux (`python -m impots.sources recolter`, puis
+  commit de `registre.jsonl` et `documents.jsonl`), sans quoi `test_sources` est rouge,
+  et c'est voulu. Lire `valeur(id)` à la place d'une constante recopiée est un
+  changement par module, à faire là où un volet touche déjà le code.
+* **Corriger la localisation du RSA** dans `lignes.json` (D-492), sans toucher au total.
+* **Les 304 nombres non relus.** 111 n'ont pas de document nommé dans leur citation, 69
+  citent une page d'accueil ou un document hors manifeste (les salaires de la Base Tous
+  Salariés, la Drees, l'Unédic, le SDES, le MESR, la Note de conjoncture de 2019, les
+  articles de Bunel et L'Horty, Gechert et Heimberger publiés, Saez et al.) : chacun
+  demande le fichier au manifeste et son nom dans la citation. 71 sont triviaux (0, 1,
+  une année), 10 n'ont aucune source écrite à côté, 3 un document absent de `data/raw/`,
+  les autres sont trop courts pour une recherche sans page.
+* **La relecture sémantique.** Pour les 40 lignes de la grille, et les marges de calage,
+  vérifier ligne et colonne, et pas seulement la présence du nombre sur la page :
+  `localisation` est en prose ; un champ structuré (feuille, ligne, colonne) dans
+  `lignes.json` le permettrait.
+* **Le cache partagé.** Le texte extrait est dans `data/interim/sources/texte/` du
+  checkout qui l'a extrait (66 Mo) ; un autre worktree le refait par
+  `python -m impots.sources texte` (une demi-heure) ou le lie, comme `data/raw/`.
+* **Les fichiers non lus** : le parquet de l'enquête Emploi (microdonnées, lu par son
+  lecteur), l'archive du JORF (`tar.gz`), les CSV de plus de 40 Mo (TD_POP2, TD_POP3,
+  REI), le classeur `base_cc_logement_2023` (plus de 40 Mo décompressé). Les évaluations
+  préalables (PLF 2026, 2027, PLFSS 2026, 2027) ne sont jamais extraites.
+* **Les fiches de transmission** (`jumeau/transmission/`, 333 mesures) et les barèmes
+  légaux (`entreprises/parameters/`) ne sont pas récoltés : les premières sont réécrites
+  par le volet `fiches` ; les seconds citent des textes de loi, pas des tableaux.
+* **À décider par le propriétaire** : si `lignes.json` reçoit un champ de localisation
+  structuré ; si `test_sources` doit rester rouge tant qu'une valeur citée change sans
+  nouvelle récolte (c'est le choix fait ici), ou n'avertir que.
