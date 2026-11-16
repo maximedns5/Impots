@@ -36191,3 +36191,56 @@ définition qui change (comme D121, D-371) le dit, ligne d'avant gardée à côt
 **Cinq volets** (BUT.md, but 27) : `sources`, `grille`, `papillon`, `fiches`, puis `mesure`
 une fois la grille corrigée. Les numéros : D-491 à D-509 aux volets, D-510 et la suite à
 la jonction.
+
+## D-491 — Le registre des sources : chaque nombre cité, lu une fois
+
+Le propriétaire, le 16 novembre (D-490) : chaque passe et chaque agent relisent les PDF pour
+retrouver un nombre ; il faut les récolter une fois et les garder. But 27, volet `sources`.
+Aucune passe sur la population ; aucun nombre du modèle ne change.
+
+**Ce qui existait.** `data/raw/MANIFEST.json` (D-016, D-028) porte l'URL, l'empreinte et la
+date de chaque fichier ; `donnees.py` (la chaîne) télécharge par lui et refuse un octet de
+différence ; `docs/verification/lignes.json` (D-363) porte pour chaque ligne de la grille
+son total publié, son URL, son empreinte et sa localisation ; `margins.py` porte des
+`Figure` (valeur, source, URL, usage). Les YAML de paramètres citent en prose (« Mésange,
+p. 48 (folio 47) »). Rien ne reliait un nombre cité au document relu, ni ne gardait le
+texte des documents. Le registre prolonge le manifeste, il ne le double pas : un document
+y est nommé par son nom au manifeste, et son empreinte est celle du manifeste.
+
+**La conception.** Un module `src/impots/sources/` et deux fichiers texte versionnés :
+
+* `registre.jsonl`, une ligne par nombre cité : identifiant (`grille.<ligne>.<année>`,
+  `marges.<NOM>[clé]`, `jumeau.<fichier>.<chemin>`, `comportements.…`, `macro.…`,
+  `predictif.…`), valeur citée, unité, année, document, empreinte, localisation, la
+  citation (400 caractères au plus), l'endroit du dépôt qui la cite (`cite_par`) et la
+  relecture. Les nombres sont des agrégats publiés, pas des microdonnées : ils entrent
+  dans git comme les YAML ;
+* `documents.jsonl`, l'inventaire : chaque document du manifeste et chaque URL citée hors
+  manifeste, avec éditeur, empreinte, date, `millesime` (fixe : article, document de
+  travail ; édition datée : un rapport d'une année, remplacé par le suivant ; série
+  révisée : comptes nationaux, open data, le même fichier change à chaque millésime),
+  quarantaine et fichiers qui le citent ;
+* `data/interim/sources/texte/` (hors git), le texte de chaque document, page par page,
+  reconstruit par `python -m impots.sources texte`, avec l'empreinte du fichier lu ;
+  un `.xls` passe par LibreOffice, une archive départementale (IRCOM) par son seul
+  fichier national.
+
+**La relecture** (`texte.trouver`) cherche chaque nombre sur la page ou la feuille que sa
+citation nomme, à huit échelles (0,69 s'imprime 69 % ; 122 058 000 000 € s'imprime
+122,058), à l'arrondi du plus grossier des deux nombres. Un nombre lu de moins de trois
+chiffres significatifs ne confirme pas un nombre cité plus précis (quatre sans page dite) :
+sans cette règle, « 10 » retrouvait 10,32 Md€ et « 42 » 41 635 259 foyers. Une somme écrite
+dans la citation (« 10,720 + 2,687 + 2,262 + 0,935 ») est refaite et ses termes cherchés.
+Le statut dit ce qui a été fait (`retrouvée`, `arrondie`, `ailleurs`, `calculée`,
+`introuvable`, `choisie`, `non relue` et pourquoi) ; rien n'est deviné. La relecture dit
+qu'un nombre est présent, pas qu'il est la bonne ligne du bon tableau.
+
+**La lecture.** `valeur(id)`, `entree(id)`, `chercher(motif)` ; `verifier([fichier])`
+compare chaque valeur du registre à celle que le dépôt cite aujourd'hui à son endroit
+(YAML, `margins.py`, `lignes.json`) et chaque empreinte au manifeste, sans lire aucun
+document (0,3 s) ; `tests/test_sources.py` la tient. Les modules qui lisent ces valeurs
+(population, jumeau) ne sont pas branchés sur le registre : d'autres volets les touchent ;
+la jonction les branchera (D-493). Le mode d'emploi : `docs/SOURCES.md`.
+
+**Jamais ouverts.** Les évaluations préalables des PLF et des PLFSS et les chiffrages de
+tiers des programmes ne sont pas extraits (`texte.INTERDITS`), même présents au manifeste.
