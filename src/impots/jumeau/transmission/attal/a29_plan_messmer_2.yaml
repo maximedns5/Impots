@@ -1,0 +1,44 @@
+schema: 1
+mesure: a29_plan_messmer_2
+candidat: attal
+libelle: 'Plan « Messmer II » : 14 EPR, part des fossiles à 30 % en 2035, prix cibles de l''électricité'
+sorte: parametre
+source:
+  citation: « Le plan vise environ 75 euros pour le nouveau nucléaire et moins de 50 euros
+    pour les industriels exposés à la concurrence internationale » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/plan-messmer-2
+  date: '2026-09-23'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: ≈ 75 €/MWh (nouveau nucléaire) ; < 50 €/MWh (industriels exposés) ; fossiles 40
+    % en 2030 et 30 % en 2035
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Le nucléaire et le prix de l''électricité sont un secteur hors du modèle : ni parc,
+    ni prix de gros, ni facture des ménages. (porte « secteur »)'

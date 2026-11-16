@@ -1,0 +1,58 @@
+schema: 1
+mesure: r20_choc_fiscal_40_md
+candidat: retailleau
+libelle: '« Choc fiscal » : > 25 Md€ sur le coût du travail (zéro cotisation et baisse des
+  cotisations patronales non contributives) + ≈ 15 Md€ sur la fiscalité de production'
+sorte: parametre
+source:
+  citation: « Dès l'entame du quinquennat, nous réduirons de 40 milliards d'euros notre handicap
+    fiscal »
+  url: https://republicains.fr/wp-content/uploads/2026/02/LR_Produire_Plus_LIVRET.pdf
+  date: '2026-02-18'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: 40 Md€ dès le début du quinquennat ; stabilité garantie au moins 5 ans
+  couche: null
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: autre
+- qui: apu:etat
+  sens: paie
+  par: autre
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: salariés, clients, actionnaires
+  texte: Un impôt sur les bénéfices retombe pour partie sur les salaires ; un impôt sur le
+    chiffre d'affaires, en cascade, sur les prix.
+  source: 'Fuest, Peichl et Siegloch (2018), « Do higher corporate taxes reduce wages ? »,
+    American Economic Review 108(2) : environ la moitié de l''impôt local sur les bénéfices
+    retombe sur les salaires (Allemagne) ; Martin et Trannoy (2019), « Les impôts sur (ou
+    contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
+    la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une enveloppe de 40 Md€ sans taux : sa part travail passe par le « zéro cotisation
+    » au-delà d''un seuil d''heures, absent de la population, et sa part production ne nomme
+    pas ses impôts. (porte « donnee_menages »)'

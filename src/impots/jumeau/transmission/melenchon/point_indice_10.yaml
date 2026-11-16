@@ -1,0 +1,77 @@
+schema: 1
+mesure: point_indice_10
+candidat: melenchon
+libelle: Point d'indice des fonctionnaires +10 %
+sorte: chiffree
+source:
+  citation: « en augmentant de 10% les fonctionnaires, dont le point d'indice a été gelé huit
+    années sur dix durant les deux quinquennats d'Emmanuel Macron (17 milliards d'euros) »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  parametre: point_indice_revalorisation, point_indice_contractuels
+  valeur:
+    point_indice_revalorisation: 1.1
+    point_indice_contractuels: 0.0
+  enonce: +10 %, loi de finances 2027
+  couche: menages
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+- qui: apu:apul
+  sens: paie
+  par: depense_publique
+- qui: apu:secu:maladie
+  sens: paie
+  par: depense_publique
+  note: les hôpitaux publics (fonction publique hospitalière), dans les ASSO (Insee, t. 3.212,
+    D1)
+- qui: menages
+  sens: recoit
+  par: salaire_net
+incidence:
+- horizon: immediat
+  qui: les fonctionnaires
+  texte: 'Statutaire : le traitement monte.'
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les salariés du privé
+  texte: Un effet d'entraînement sur les salaires privés.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 11088845339
+    chiffre_eur: null
+    trou_eur: 11088845339
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- emploi_public
+- consommation_menages
+- salaires
+- financement_sous_secteurs
+hypotheses:
+- texte: 'La valeur du point d''indice relevée de 10 %. Plage du point : du droit de 2026
+    (1, le point gelé) à 10 % prolongé de la moitié de l''écart (1,15). Le bouton multiplie
+    le traitement indiciaire des fonctionnaires titulaires, leur brut sur 1,195 (le taux de
+    prime du moteur) ; leurs primes ne bougent pas. La part du salaire des contractuels qui
+    suit le point n''est pas publiée : 0 pour la valeur retenue, la plage allant jusqu''à
+    1 (tous payés sur une grille indiciaire). La mesure se mesure contre le droit de 2026,
+    où le point est gelé depuis le 1er janvier 2024 : il n''a pas d''indexation légale. Le
+    coût compte le salaire que paient l''État, les collectivités et les hôpitaux, moins les
+    cotisations, la CSG et l''impôt qui en reviennent ; les collectivités sont comptées comme
+    l''État, leur compensation éventuelle ne change pas le coût public.'
+  source: le chiffrage de la mesure (`programmes/melenchon.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_melenchon_point_indice_10
+  rapport: reports/etudes/presidentielle_melenchon/mesures/point_indice_10/predictif_pres2027_melenchon_point_indice_10.json
+  annonce_md: 17.0

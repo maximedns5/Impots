@@ -1,0 +1,28 @@
+schema: 1
+mesure: interdiction_licenciements
+candidat: kazib
+libelle: Interdiction des licenciements et des suppressions de postes
+sorte: sans_choc
+source:
+  citation: « il s'agit d'interdire les licenciements et les suppressions de postes, et surtout
+    de répartir le temps de travail entre toutes et tous. »
+  url: https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature
+  date: '2026-09-16'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: aucun paramètre
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une interdiction, sans paramètre fiscal ni social. (porte « vague »)

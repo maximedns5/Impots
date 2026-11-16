@@ -206,6 +206,9 @@ for choix in json.loads(sys.argv[1]):
     out = s.calculer({**choix, "theta": {}})
     out = s.calculer({**choix, "theta": {t["cle"]: 0.5 for t in out["thetas"]}})
     s.portee({**choix, "theta": {t["cle"]: 0.5 for t in out["thetas"]}}, tirages=20)
+    # La page de la cascade (D-484) fait tourner le même paquet, par `cascade`.
+    from impots.jumeau import cascade
+    cascade.calculer(s, {**choix, "theta_commun": 0.5})
 modules = sorted(m.__file__ for n, m in list(sys.modules.items())
                  if n.split(".")[0] == "impots" and getattr(m, "__file__", None))
 import sysconfig
@@ -226,6 +229,12 @@ PARCOURS = [
                                          "debut": 2026, "fin": 2035}},
     {"mode": "structurel", "hypothese": {"instrument": "cotisations_employeurs",
                                          "montant": 10, "debut": 2026, "fin": 2030}},
+    # Le financement d'un point d'indice lit les payeurs de sa fiche (D-487), et une
+    # hausse du Smic passe par le bloc `travail` (`Session.mesure_structurel`).
+    {"mode": "structurel", "vue": "figee", "candidat": "pres2027_melenchon_point_indice_10",
+     "convention": "parts_premiere_annee"},
+    {"mode": "structurel", "vue": "figee", "candidat": "pres2027_tondelier_smic_2000_brut",
+     "convention": "parts_premiere_annee"},
 ]
 
 
@@ -357,6 +366,9 @@ def _corps(d: dict[str, Any]) -> str:
 année à la fois, de 2026 à 2035. On y fait entrer une mesure : il calcule l'économie
 avec et sans elle, et montre ce que la mesure fait passer d'un bloc à l'autre. Il tourne
 ici, dans ce navigateur, avec le code du dépôt.</p>
+<p><span class="si-page" data-page="cascade.html"><a
+href="cascade.html">L'effet papillon d'une mesure</a> : la même trajectoire, en graphe, de
+la mesure à ses payeurs, ses canaux et ses agrégats, année par année.</span></p>
 <noscript><p class="absent">Cette page calcule dans le navigateur : sans script, elle ne
 montre que son mode d'emploi et le juge de l'histoire, plus bas. Les études restent
 lisibles sur leurs pages.</p></noscript>
@@ -652,9 +664,6 @@ def page(d: dict[str, Any]) -> str:
 def raison_structurel(mesure: Any, vue: str) -> str:
     """Pourquoi le mode structurel ne calcule aucune année d'une mesure d'étude, en une
     ligne (J2, D-469), lue dans ce que la mesure ne porte pas (`non_portes`, D-412)."""
-    if vue != "figee":
-        return ("le rapport de l'étude ne répartit sa première année, par impôt et par "
-                "décile, que sur la population figée en 2026")
     np_ = mesure.non_portes or {}
     raisons = []
     m = re.search(r"([+-]\d+(?:\.\d+)?) Md€ de prélèvements des ménages",
@@ -664,9 +673,18 @@ def raison_structurel(mesure: Any, vue: str) -> str:
         raisons.append(f"{montant} Md€ de cotisations patronales, de PFU ou de "
                        "prélèvements sur le capital, en 2026, que le rapport ne répartit "
                        "pas impôt par impôt")
+    if "employeurs privés et par les APU employeurs" in np_.get("entreprises", ""):
+        raisons.append("des cotisations des employeurs que la passe fait payer à la fois "
+                       "par des entreprises et par les administrations (un Smic et un point "
+                       "d'indice ensemble), que le rapport ne sépare pas")
     if "réforme du Smic" in np_.get("menages", ""):
         raisons.append("une hausse du Smic, dont le jumeau ne sait pas lire l'effet sur "
                        "les salaires sans une hypothèse que l'étude ne donne pas")
+    if not raisons and vue != "figee":
+        # Sans la convention « parts_figee » (D-476), la vieillie n'a pas de ventilation.
+        return ("le rapport de l'étude ne répartit sa première année, par impôt et par "
+                "décile, que sur la population figée en 2026 ; la convention la porte "
+                "à la vieillie là où les parts de la figée existent")
     return " ; et ".join(raisons) or ("le rapport ne répartit pas ce qu'elle change impôt "
                                       "par impôt et décile par décile")
 
@@ -687,7 +705,7 @@ def structurel(d: dict[str, Any]) -> dict[str, Any]:
             avec, _ = session.structurel(cle, vue, CONVENTION_PARTS)
             sans, _ = session.structurel(cle, vue, None)
             out[cle][vue] = {"avec": avec, "sans": sans, "raison": None if avec else
-                             raison_structurel(session.mesure(cle, vue, CONVENTION_PARTS),
+                             raison_structurel(session.mesure_structurel(cle, vue, CONVENTION_PARTS),
                                                vue)}
     return out
 

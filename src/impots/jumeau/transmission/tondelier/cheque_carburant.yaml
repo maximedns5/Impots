@@ -1,0 +1,74 @@
+schema: 1
+mesure: cheque_carburant
+candidat: tondelier
+libelle: Chèque carburant financé par la taxe pétrolière
+sorte: hypothese
+source:
+  citation: 'pas de citation verbatim (paraphrase AFP : « reverser cette somme à environ six
+    millions de ménages via un chèque de 450 euros »)'
+  url: https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930
+  date: '2026-09-30'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: 450 € pour environ 6 millions de ménages
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: Chèque carburant financé par la taxe pétrolière
+  source: le libellé du relevé (`programmes/tondelier.json`), d'après https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+  bilan:
+    cout_eur: 2800000000
+    chiffre_eur: null
+    trou_eur: 2800000000
+    dit: 'financement annoncé sans montant : tout le coût reste un trou, le jumeau le dit'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses:
+- texte: Le montant tombe sur des prestations en espèces (D62), aux ménages au prorata des
+    prestations.
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 2.8
+    sens: depense
+    horizon: 'contre-budget pour 2027 : le produit attendu de la taxe pétrolière (2,8 Md€),
+      reversé en chèques'
+    citation: 'pas de citation verbatim (paraphrase AFP : « reverser cette somme à environ
+      six millions de ménages via un chèque de 450 euros »)'
+    url: https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930
+  chocs:
+    apu_d_d62: 2.8
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: depense_publique
+  menages_par: prestations
+  entreprises_par: null
+  inclus_dans: null

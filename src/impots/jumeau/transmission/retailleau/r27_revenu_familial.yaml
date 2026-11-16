@@ -1,0 +1,84 @@
+schema: 1
+mesure: r27_revenu_familial
+candidat: retailleau
+libelle: Revenu familial remplaçant 12 dispositifs, dont le quotient familial ; conditionné
+  à 5 ans de résidence régulière et d'activité
+sorte: chiffree
+source:
+  citation: « un Revenu familial (RF) de 240 euros versé chaque mois à tous, dès le premier
+    enfant, de la naissance jusqu'à 18 ans »
+  url: https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf
+  date: '2026-04-28'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: allocation_enfant, qf_parts_enf1, qf_parts_enf2, qf_parts_enf3_et_sup
+  valeur:
+    allocation_enfant:
+      montant_par_enfant: 240.0
+      montant_troisieme_enfant: 480.0
+      age_maximum: 18
+      remplace_af: true
+      remplace_cf: true
+      remplace_ars: true
+      par_famille: false
+      degressivite_part_ir: 0.0
+      plancher_par_enfant: 0.0
+    qf_parts_enf1: 0.0
+    qf_parts_enf2: 0.0
+    qf_parts_enf3_et_sup: 0.0
+  enonce: 240 €/mois par enfant de 0 à 18 ans, dès le 1er ; 480 € pour le 3e
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 20999957546
+    chiffre_eur: null
+    trou_eur: 20999957546
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses:
+- texte: 'Une prestation neuve (D-382) : 240 € par mois pour chaque enfant de moins de 18
+    ans dès le premier, 480 € pour le troisième. Des douze dispositifs que le document du
+    28 avril 2026 dit remplacer, le moteur en porte cinq ; quatre sont retirés : les allocations
+    familiales (et leur majoration pour âge), le complément familial, l''allocation de rentrée
+    scolaire, les parts du quotient familial des enfants (0 au lieu d''une demi-part, d''une
+    part au troisième). La réduction d''impôt pour frais de scolarité reste : la population
+    ne déclare pas ses cases, et son retrait serait un zéro sans assiette (D-390). Le supplément
+    familial de traitement, les bourses et la prise en compte des enfants dans le RSA et la
+    prime d''activité ne sont pas lus ; la PAJE, l''ASF, les aides au logement et l''AEEH
+    restent, comme le dit le document. Les parts des enfants majeurs rattachés tombent avec
+    celles des mineurs ; la demi-part du parent isolé reste. La condition de cinq ans de résidence
+    et d''activité n''est pas lue. Recours plein, comme les allocations familiales. Pas de
+    plage : le candidat dit ses montants. Contre le droit de 2026.'
+  source: le chiffrage de la mesure (`programmes/retailleau.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_retailleau_r27_revenu_familial
+  rapport: reports/etudes/presidentielle_retailleau/mesures/r27_revenu_familial/predictif_pres2027_retailleau_r27_revenu_familial.json
+  annonce_md: 0.7

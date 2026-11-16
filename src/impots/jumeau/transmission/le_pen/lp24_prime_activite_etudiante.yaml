@@ -1,0 +1,77 @@
+schema: 1
+mesure: lp24_prime_activite_etudiante
+candidat: le_pen
+libelle: « Prime d'activité étudiante »
+sorte: hypothese
+source:
+  citation: Pas de citation directe (paraphrase LCP)
+  url: https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut
+  date: '2026-10-06'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: Paramètres non donnés
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 600000000
+    chiffre_eur: null
+    trou_eur: 600000000
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses:
+- texte: Le montant tombe sur des prestations en espèces (D62), aux ménages au prorata des
+    prestations.
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 0.6
+    sens: depense
+    horizon: par an
+    citation: 'Pas de citation directe. Texte de LCP : « impact calculé » de 600 M€ par an.'
+    url: https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut
+  chocs:
+    apu_d_d62: 0.6
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: depense_publique
+  menages_par: prestations
+  entreprises_par: null
+  inclus_dans: null

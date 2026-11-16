@@ -1,0 +1,27 @@
+schema: 1
+mesure: a12_arrets_maladie
+candidat: attal
+libelle: Plan contre la dérive des arrêts maladie
+sorte: sans_choc
+source:
+  citation: « plan d'action contre la dérive des arrêts maladie » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/equilibre-securite-sociale
+  date: '2026-07-03'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: non chiffré
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Ni mesure ni montant : un plan annoncé. (porte « vague »)'

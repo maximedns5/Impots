@@ -362,7 +362,10 @@ RENVOIS: dict[str, tuple[tuple[str, str], ...]] = {
         ("mesure.html", "Une mesure pas à pas, de bout en bout"),
         ("mesure-attal-a16_droit_au_brut.html", "Le fil rouge : le « droit au brut » "
          "d'Attal, pas à pas")),
-    "activite": (("jumeau.html", "Le jumeau : faire tourner la boucle soi-même"),),
+    "activite": (("jumeau.html", "Le jumeau : faire tourner la boucle soi-même"),
+                 ("cascade-attal-a16_droit_au_brut.html", "L'effet papillon du « droit au "
+                  "brut », année par année"), ("cascade.html", "L'effet papillon de chaque "
+                                                               "mesure")),
     "dette": (("jumeau.html", "Le jumeau : changer le cadre, de 2026 à 2035"),),
 }
 

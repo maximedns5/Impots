@@ -345,8 +345,10 @@ SIGNAUX_ENTREPRISES = {
     "prelevements_production": ("CVAE et C3S", "D29 S11", ("cvae", "c3s")),
     "cotisations_patronales": ("Cotisations patronales, nettes des allègements", "D611",
                                ("cotisations_employeurs",)),
+    # Le troisième : les deux à la fois, quand le rapport ne les sépare pas (D-475).
     "prelevements_capital_menages": ("PFU et prélèvements sociaux du capital", "D5 S14",
-                                     ("pfu", "prelevements_sociaux_capital")),
+                                     ("pfu", "prelevements_sociaux_capital",
+                                      "pfu_et_prelevements_sociaux_capital")),
 }
 for _nom, (_lib, _code, _) in SIGNAUX_ENTREPRISES.items():
     _ajouter(Champ(_nom, f"Variation des prélèvements : {_lib}", MDE, _code,
@@ -420,6 +422,20 @@ _ajouter(
     Champ("va_non_marchande", "Valeur ajoutée non marchande des APU d'une mesure", MDE,
           "B1G S13", "le bloc `demande_publique` (D-418) : ΔD1 + ΔD29 des APU, la part de "
           "leur production non marchande qui est leur valeur ajoutée", 4, "emploi_public"),
+)
+#: Le bloc `travail` (D-478, `blocs/travail.py`) : le salaire brut que la loi d'une hausse du
+#: Smic relève, et la part de long terme des cotisations qui finit sur le net.
+TRAVAIL_SOURCE = "le bloc `travail` (D-478) ; travail.yaml"
+_ajouter(
+    Champ("cout_travail_smic", "Salaire brut relevé par la loi d'une hausse du Smic (coût "
+          "du travail ciblé)", MDE, "D11", f"{TRAVAIL_SOURCE} : π D1 Σ_t ΔB_loi,t", 4,
+          "travail_smic"),
+    Champ("incidence_cotisations_salaries", "Part de long terme d'une cotisation salariale "
+          "qui finit sur le net", "fraction", "", f"{TRAVAIL_SOURCE} : λ_s, par mesure", 4,
+          "travail_smic"),
+    Champ("incidence_cotisations_employeurs", "Part de long terme d'une cotisation "
+          "employeur qui finit sur le net", "fraction", "", f"{TRAVAIL_SOURCE} : λ_e, par mesure", 4,
+          "travail_smic"),
 )
 #: Le revenu disponible et la consommation des ménages par décile de niveau de vie, au
 #: champ de la population (revenu disponible d'OpenFisca, hors loyers imputés et hors

@@ -1,0 +1,282 @@
+# Écrit par `python -m impots.jumeau.financement.sources ecrire` (D-481) ; ne pas éditer à la main.
+annee: 2025
+source: 'Insee, comptes nationaux annuels base 2020, millésime 2025 : t. 3.201 (S13, consolidé)
+  ; t. 3.203 (État), 3.204 (ODAC), 3.205 (APUL), 3.212 (ASSO), consolidées dans le sous-secteur,
+  pas entre sous-secteurs (note de la t. 3.215). URL : https://www.insee.fr/fr/statistiques/fichier/8988845/T_32xx_fr.xlsx
+  ; écrit par `python -m impots.jumeau.financement.sources ecrire`'
+lignes:
+  apu_r_p11:
+    s13: 82.5612
+    etat: 7.1678
+    odac: 10.7598
+    apul: 44.4428
+    asso: 20.1908
+    consolidation: 0.0
+    ligne: Production des branches marchandes et ventes résiduelles (P11)
+    section: RECETTES
+  apu_r_p12:
+    s13: 32.8319
+    etat: 0.7515
+    odac: 28.0653
+    apul: 1.3851
+    asso: 2.63
+    consolidation: 0.0
+    ligne: Production pour emploi final propre (P12)
+    section: RECETTES
+  apu_r_p13:
+    s13: 14.659
+    etat: 0.664
+    odac: 5.591
+    apul: 4.102
+    asso: 4.302
+    consolidation: 0.0
+    ligne: Paiements partiels des ménages (partie du P13)
+    section: RECETTES
+  apu_r_d39:
+    s13: 0.883
+    etat: 0.0
+    odac: 0.0
+    apul: 0.457
+    asso: 0.426
+    consolidation: 0.0
+    ligne: Autres subventions sur la production (D39)
+    section: RECETTES
+  apu_r_d4x:
+    s13: 19.5088
+    etat: 9.9589
+    odac: 1.558
+    apul: 4.38
+    asso: 3.6119
+    consolidation: 0.0
+    ligne: Revenus de la propriété autres que les intérêts (D4 hors D41)
+    section: RECETTES
+  apu_r_d2:
+    s13: 470.392
+    etat: 150.497
+    odac: 20.565
+    apul: 177.304
+    asso: 122.026
+    consolidation: 0.0
+    ligne: Impôts sur la production et les importations (D2)
+    section: RECETTES
+  apu_r_d5:
+    s13: 389.922
+    etat: 207.244
+    odac: 0.54
+    apul: 3.421
+    asso: 178.717
+    consolidation: 0.0
+    ligne: Impôts courants sur le revenu et le patrimoine (D5)
+    section: RECETTES
+  apu_r_d91:
+    s13: 21.681
+    etat: 21.681
+    odac: 0.0
+    apul: 0.0
+    asso: 0.0
+    consolidation: 0.0
+    ligne: Impôts en capital à recevoir (D91r)
+    section: RECETTES
+  apu_r_d733:
+    s13: 0.0
+    etat: -9.658
+    odac: 0.0
+    apul: 9.492
+    asso: 0.166
+    consolidation: 0.0
+    ligne: Transferts de recettes fiscales (D733)
+    section: RECETTES
+  apu_r_d61:
+    s13: 498.736
+    etat: 57.25
+    odac: 0.7
+    apul: 0.895
+    asso: 439.891
+    consolidation: 0.0
+    ligne: Cotisations sociales nettes (D61)
+    section: RECETTES
+  apu_r_d995:
+    s13: -6.675
+    etat: -0.527
+    odac: 0.0
+    apul: 0.0
+    asso: -6.148
+    consolidation: 0.0
+    ligne: Impôts et cotisations dus non recouvrables nets (D995r)
+    section: RECETTES
+  apu_r_d73:
+    s13: 0.0
+    etat: 16.499
+    odac: 52.762
+    apul: 50.542
+    asso: 23.269
+    consolidation: 143.072
+    ligne: Transferts courants entre administrations publiques (D73 hors D733)
+    section: RECETTES
+  apu_r_d7:
+    s13: 23.257
+    etat: 8.82
+    odac: 4.58
+    apul: 4.715
+    asso: 5.142
+    consolidation: 0.0
+    ligne: Autres transferts courants (D7 hors D73)
+    section: RECETTES
+  apu_r_d9:
+    s13: 11.29
+    etat: 7.607
+    odac: 13.912
+    apul: 18.523
+    asso: 1.826
+    consolidation: 30.578
+    ligne: Transferts en capital (D9r hors D91r, D995r)
+    section: RECETTES
+  apu_d_p2:
+    s13: 163.4965
+    etat: 36.1073
+    odac: 25.496
+    apul: 61.074
+    asso: 40.8192
+    consolidation: 0.0
+    ligne: Consommation intermédiaire (P2)
+    section: DEPENSES
+  apu_d_d1:
+    s13: 370.012
+    etat: 153.7998
+    odac: 31.0778
+    apul: 96.9526
+    asso: 88.1818
+    consolidation: 0.0
+    ligne: Rémunération des salariés (D1)
+    section: DEPENSES
+  apu_d_d29:
+    s13: 13.932
+    etat: 1.707
+    odac: 1.728
+    apul: 2.787
+    asso: 7.71
+    consolidation: 0.0
+    ligne: Autres impôts sur la production (D29)
+    section: DEPENSES
+  apu_d_d4x:
+    s13: 0.089
+    etat: 0.0
+    odac: 0.0
+    apul: 0.089
+    asso: 0.0
+    consolidation: 0.0
+    ligne: Revenus de la propriété autres que les intérêts (D4 hors D41)
+    section: DEPENSES
+  apu_d_d5:
+    s13: 0.159
+    etat: 0.0
+    odac: 0.0
+    apul: 0.047
+    asso: 0.112
+    consolidation: 0.0
+    ligne: Impôts courants sur le revenu et le patrimoine (D5)
+    section: DEPENSES
+  apu_d_d62:
+    s13: 580.8805
+    etat: 108.155
+    odac: 1.473
+    apul: 16.4138
+    asso: 454.8387
+    consolidation: 0.0
+    ligne: Prestations sociales autres que transferts sociaux en nature (D62)
+    section: DEPENSES
+  apu_d_d632:
+    s13: 190.1315
+    etat: 22.449
+    odac: 0.336
+    apul: 14.9482
+    asso: 152.3983
+    consolidation: 0.0
+    ligne: Transferts sociaux en nature de produits marchands (D632)
+    section: DEPENSES
+  apu_d_d3:
+    s13: 56.516
+    etat: 28.12
+    odac: 10.597
+    apul: 17.205
+    asso: 0.594
+    consolidation: 0.0
+    ligne: Subventions (D3)
+    section: DEPENSES
+  apu_d_d73:
+    s13: 0.0
+    etat: 103.118
+    odac: 13.549
+    apul: 6.092
+    asso: 20.313
+    consolidation: 143.072
+    ligne: Transferts courants entre administrations publiques (D73)
+    section: DEPENSES
+  apu_d_d7:
+    s13: 93.9642
+    etat: 42.9432
+    odac: 7.3048
+    apul: 24.1562
+    asso: 19.56
+    consolidation: -0.0
+    ligne: Autres transferts courants (D7 hors D73)
+    section: DEPENSES
+  apu_d_d9:
+    s13: 41.478
+    etat: 40.829
+    odac: 13.85
+    apul: 15.706
+    asso: 1.671
+    consolidation: 30.578
+    ligne: Transferts en capital à payer (D9p hors D995p)
+    section: DEPENSES
+  apu_d_p51g:
+    s13: 132.1989
+    etat: 16.6927
+    odac: 34.0123
+    apul: 70.6799
+    asso: 10.814
+    consolidation: 0.0
+    ligne: Formation brute de capital fixe (P51g)
+    section: DEPENSES
+  apu_d_autres_acq:
+    s13: 5.5332
+    etat: 1.295
+    odac: 1.209
+    apul: 2.6262
+    asso: 0.403
+    consolidation: 0.0
+    ligne: Autres acquisitions moins cessions d'actifs non financiers (P52, P53, NP)
+    section: DEPENSES
+  interets_verses:
+    s13: 65.7209
+    etat: 52.514
+    odac: 1.633
+    apul: 6.7049
+    asso: 5.749
+    consolidation: 0.88
+    ligne: Intérêts (D41)
+    section: DEPENSES
+  interets_recus:
+    s13: 3.4728
+    etat: 1.672
+    odac: 1.081
+    apul: 0.268
+    asso: 1.3318
+    consolidation: 0.88
+    ligne: Intérêts (D41)
+    section: RECETTES
+b9:
+  s13: -151.592
+  etat: -128.1028
+  odac: -2.1518
+  apul: -15.5549
+  asso: -5.7825
+dette:
+  annee: 2025T4
+  etat: 2822.67362
+  odac: 68.98555
+  apul: 275.74086
+  asso: 293.06504
+  source: Insee, « Dette de Maastricht des APU, répartition par sous-secteur et par instrument
+    », tableau 1, fin 2025 (Md€) ; data/raw/insee_dette_maastricht_detail.xlsx

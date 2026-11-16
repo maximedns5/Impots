@@ -620,7 +620,8 @@ def page_mesure(study: etude.Etude, m: Any, seule: dict[str, Any], programme: An
                       "lit sur la dernière, sous ses hypothèses."))
     out.append(f'<p class="sm-retour"><a href="{study.nom}.html#chaque-mesure-seule-et-leur-'
                f'interaction">Cette mesure dans l\'étude de {_e(programme.candidat)}</a> · '
-               f'<a href="{INDEX}#{programme.slug}">ses autres mesures</a></p>')
+               f'<a href="{INDEX}#{programme.slug}">ses autres mesures</a>'
+               + _cascade(seule["name"]) + "</p>")
     return titre, "\n".join(out)
 
 
@@ -715,6 +716,16 @@ def reperes_trajectoire(path: dict[str, Any], years: list[int]
 # --------------------------------------------------------------------------- #
 # l'index, le résumé d'une étude, la note des courbes
 # --------------------------------------------------------------------------- #
+def _cascade(scenario: str) -> str:
+    """Le lien vers la cascade de la mesure (but 26, D-484), que le site retire tant que la
+    page n'est pas construite."""
+    from impots import site_cascade
+
+    page = site_cascade.lien(scenario)
+    return (f' · <span class="si-page" data-page="{_e(page)}"><a href="{_e(page)}">ce '
+            f"qu'elle déclenche, année par année</a></span>" if page else "")
+
+
 def mesures_de(study: etude.Etude, entries: list[dict[str, Any]]
                ) -> list[tuple[Any, dict[str, Any]]]:
     """(la mesure du programme, son entrée seule) pour chaque mesure seule chiffrée."""

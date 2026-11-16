@@ -1,0 +1,52 @@
+schema: 1
+mesure: isf_climatique
+candidat: tondelier
+libelle: Rétablir l'impôt sur la fortune, « ISF climatique »
+sorte: parametre
+source:
+  citation: « rétablir la fiscalité sur la grande fortune » (programme, cité par RT)
+  url: https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution
+  date: '2026-07-14'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: seuil d'entrée à 1,3 M€ ; assiette de l'IFI étendue aux placements financiers, aux
+    biens meubles et aux crypto-actifs (amendement I-47 du groupe au PLF 2027) ; volet climatique
+    sans barème
+  couche: null
+payeurs:
+- qui: menages
+  sens: paie
+  par: patrimoine
+  note: 'la population n''en porte pas : aucune clé par décile'
+- qui: apu:etat
+  sens: recoit
+  par: capital_menages
+incidence:
+- horizon: immediat
+  qui: les détenteurs du patrimoine
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les détenteurs du patrimoine
+  texte: L'assiette répond (épargne, transmission, localisation).
+  source: 'Jakobsen, Jakobsen, Kleven et Zucman (2020), « Wealth taxation and wealth accumulation
+    », QJE 135(1) (Danemark) : l''assiette répond à l''impôt sur la fortune, d''autant plus
+    en haut de la distribution'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- patrimoine_menages
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: La population ne porte pas le patrimoine financier et immobilier des ménages, et
+    le volet climatique n'a pas de barème. (porte « patrimoine »)

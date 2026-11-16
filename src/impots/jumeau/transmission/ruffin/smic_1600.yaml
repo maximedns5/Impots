@@ -1,0 +1,94 @@
+schema: 1
+mesure: smic_1600
+candidat: ruffin
+libelle: SMIC à 1 600 €
+sorte: chiffree
+source:
+  citation: « Des mesures fortes, concrètes, comme le SMIC à 1 600€ ou la retraite à 60 ans,
+    qui revalorisent le travail. »
+  url: https://nouspresident.fr/statut-travailleurs-essentiels/
+  date: '2026-04-13'
+levier:
+  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  parametre: smic_revalorisation, smic_diffusion_profil, smic_diffusion_echelle
+  valeur:
+    smic_revalorisation: 1.0933
+    smic_diffusion_profil: annee_avec_effets_fixes
+    smic_diffusion_echelle: 0.0
+  enonce: 1 600 € (net ou brut non dit) ; écrit par Sophie Taillé-Polian dans le livret
+  couche: menages
+payeurs:
+- qui: entreprises
+  sens: paie
+  par: masse_salariale
+- qui: menages
+  sens: recoit
+  par: salaire_net
+- qui: entreprises
+  sens: recoit
+  par: cotisations_employeurs
+  note: les allègements généraux suivent le Smic
+- qui: apu:etat
+  sens: paie
+  par: cotisations_employeurs
+  note: la compensation des allègements à la Sécurité sociale (art. L131-7 CSS)
+- qui: apu:secu:maladie
+  sens: recoit
+  par: cotisations_employeurs
+incidence:
+- horizon: immediat
+  qui: les employeurs de salariés au Smic
+  texte: Le coût du travail monte au Smic ; les allègements généraux, calculés sur le Smic,
+    s'étendent à plus de salaires et changent de coût.
+  source: Code de la sécurité sociale, art. L241-13 (réduction générale) ; Crépon et Desplatz
+    (2001), « Une nouvelle évaluation des effets des allégements de charges sociales sur les
+    bas salaires », Économie et Statistique 348 (Insee)
+- horizon: court
+  qui: les salariés jusqu'à environ 1,5 Smic
+  texte: La hausse se diffuse aux salaires voisins, de moins en moins loin du Smic.
+  source: Koubi et Lhommeau (2007), « Les effets de diffusion de court terme des hausses du
+    Smic dans les grilles salariales des entreprises de dix salariés ou plus sur la période
+    2000-2005 », Insee, Les salaires en France, édition 2007 ; Goarant et Muller (2011), «
+    Les effets des hausses du Smic sur les salaires mensuels dans les entreprises de 10 salariés
+    ou plus de 2006 à 2009 », Insee, Emploi et salaires, édition 2011
+- horizon: long
+  qui: les salariés peu qualifiés, les clients
+  texte: L'emploi au bas de l'échelle répond au coût ; les prix des services intensifs en
+    bas salaires montent.
+  source: 'Kramarz et Philippon (2001), « The impact of differential payroll tax subsidies
+    on minimum wage employment », Journal of Public Economics 82(1) (France) ; Fougère, Gautier
+    et Le Bihan (2010), « Restaurant prices and the minimum wage », Journal of Money, Credit
+    and Banking 42(7) (France) : une hausse du Smic passe dans les prix des services intensifs
+    en bas salaires'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 17584189852
+    chiffre_eur: null
+    trou_eur: 17584189852
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- salaires
+- emploi
+- prix_production
+- consommation_menages
+- smic_diffusion
+- cout_travail_smic
+- incidence_cotisations
+- compensation_exonerations
+hypotheses:
+- texte: Pas de diffusion aux salaires voisins dans le chiffrage de l'étude (`smic_diffusion_echelle`
+    à 0).
+  valeur: 0.0
+  source: le chiffrage de la mesure (`programmes/<candidat>.json`)
+- texte: 'Le jumeau ne lit pas le Smic réel efficace sans une hypothèse de diffusion (D-469,
+    J2) : le volet `travail` la porte.'
+  source: D-469
+montant:
+  origine: rapport
+  scenario: pres2027_ruffin_smic_1600
+  rapport: reports/etudes/presidentielle_ruffin/mesures/smic_1600/predictif_pres2027_ruffin_smic_1600.json

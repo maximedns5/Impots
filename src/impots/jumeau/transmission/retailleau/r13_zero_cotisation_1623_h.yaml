@@ -1,0 +1,75 @@
+schema: 1
+mesure: r13_zero_cotisation_1623_h
+candidat: retailleau
+libelle: 'Seuil « zéro cotisation » : aucune cotisation sociale (salariale ou patronale) au-delà
+  de 1 623 h par an ; CSG et CRDS maintenues ; exonération d''IR des heures supplémentaires
+  maintenue'
+sorte: chiffree
+source:
+  citation: « Nous proposons de libérer le temps de travail en supprimant toutes les cotisations
+    sociales au‑delà de 1 623 heures par an »
+  url: https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf
+  date: '2026-01-09'
+levier:
+  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  parametre: heures_sup_exoneration_salariale, heures_sup_exoneration_patronale, heures_sup_franchise_heures
+  valeur:
+    heures_sup_exoneration_salariale: 1.0
+    heures_sup_exoneration_patronale: 1.0
+    heures_sup_franchise_heures: 16.0
+  enonce: seuil de 1 623 h/an (contre 1 607 h) ; « Au-delà de ce seuil de 1607 heures » selon
+    Public Sénat (07/01/2026)
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: cotisations_salariales
+- qui: entreprises
+  sens: recoit
+  par: cotisations_employeurs
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: cotisations_employeurs
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: salariés et employeurs
+  texte: Des heures déclarées en plus, plus que travaillées.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 4301791512
+    chiffre_eur: null
+    trou_eur: 4301791512
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- offre_travail
+- emploi
+- cout_travail_tranche
+- incidence_cotisations
+- compensation_exonerations
+- financement_sous_secteurs
+hypotheses:
+- texte: '« Toutes les cotisations sociales au-delà de 1 623 heures par an » : les heures
+    supplémentaires imputées (D-383) comptent depuis la durée légale, 1 607 h ; les 16 premières
+    de l''année restent soumises (une franchise), la plage descend à 0 pour la lecture de
+    Public Sénat (« au-delà de 1 607 heures »). Les cotisations salariales que la loi laisse
+    au-delà de sa réduction, et les patronales nettes des allègements, dans le privé ; la
+    CSG et la CRDS sont maintenues, comme l''exonération d''impôt. Pas de plafond d''heures.
+    La déduction forfaitaire patronale des petites entreprises n''est pas portée. Seules les
+    heures déjà faites ; l''annualisation (r14) n''est pas lue. Contre le droit de 2026.'
+  source: le chiffrage de la mesure (`programmes/retailleau.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_retailleau_r13_zero_cotisation_1623_h
+  rapport: reports/etudes/presidentielle_retailleau/mesures/r13_zero_cotisation_1623_h/predictif_pres2027_retailleau_r13_zero_cotisation_1623_h.json

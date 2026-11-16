@@ -764,10 +764,13 @@
     }
     ms.disabled = false;
     if (basculeAuto) { ms.checked = true; $("vue").value = "figee"; basculeAuto = false; }
-    vieillie.disabled = ms.checked;
-    if (ms.checked && $("vue").value === "vieillie") $("vue").value = "figee";
-    raison.innerHTML = ms.checked ? "La population vieillie est grisée pour le jumeau : " + esc(d.vieillie.raison || "") + "." : "";
-    raison.hidden = !ms.checked;
+    // D-476 : la vieillie tourne en structurel par la convention « parts_figee », là où
+    // les parts de la figée existent ; grisée seulement quand le modèle la refuse.
+    const sansVieillie = !(d.vieillie && d.vieillie.avec);
+    vieillie.disabled = ms.checked && sansVieillie;
+    if (ms.checked && sansVieillie && $("vue").value === "vieillie") $("vue").value = "figee";
+    raison.innerHTML = ms.checked && sansVieillie ? "La population vieillie est grisée pour le jumeau : " + esc(d.vieillie.raison || "") + "." : "";
+    raison.hidden = !(ms.checked && sansVieillie);
   }
 
   function montrer() {

@@ -1,0 +1,31 @@
+schema: 1
+mesure: a6_double_regle_or
+candidat: attal
+libelle: Double règle d'or (budgets à l'équilibre d'ici dix ans ; dépenses courantes au plus
+  égales aux dépenses d'avenir), par référendum, instaurée en sept ans
+sorte: sans_choc
+source:
+  citation: « imposer des budgets à l'équilibre d'ici dix ans, sauf crise exceptionnelle,
+    et empêcher que les dépenses courantes dépassent les dépenses d'avenir » (texte de la
+    page)
+  url: https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques
+  date: '2026-10-15'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: équilibre d'ici 10 ans ; règle en 7 ans
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une règle d'or est une hypothèse du calcul de la dette (un solde et une dépense
+    cibles), pas une réforme. (porte « chaine »)

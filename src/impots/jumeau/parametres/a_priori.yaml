@@ -260,3 +260,16 @@ implantation_tmee:
   comparaison: >
     Hanappi, Millot et Turban (OCDE 2023), tableau 1 : une sensibilité nulle après 2009,
     la borne basse du bloc.
+
+# Le bloc `travail` (D-478).
+travail_smic_diffusion:
+  sans_source: >
+    Deux estimations publiées (Koubi et Lhommeau, sans et avec effets fixes) et la loi
+    seule ; aucune loi entre elles n'est publiée.
+travail_incidence:
+  sans_source: >
+    Le centre est la maquette calibrée de Bozio-Wasmer (tableau 4.2), sans écart-type
+    publié ; les bornes sont les deux thèses (Mésange, le consensus des années 1990).
+travail_emploi_elasticites:
+  sans_source: >
+    Bozio-Wasmer donnent trois valeurs (−0,3, −0,6, −0,9 au Smic), pas une loi.

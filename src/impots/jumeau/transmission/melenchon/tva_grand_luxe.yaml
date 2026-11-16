@@ -1,0 +1,28 @@
+schema: 1
+mesure: tva_grand_luxe
+candidat: melenchon
+libelle: TVA « grand luxe »
+sorte: sans_choc
+source:
+  citation: « Instaurer une « TVA grand luxe » visant des produits de consommation ostentatoires
+    et incompatibles avec l'impératif de sobriété (yachts, jets privés, palaces, etc.) »
+  url: https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2
+  date: '2026-11-06'
+levier:
+  texte: Code général des impôts, TVA (art. 278 et s.) et accises
+  parametre: null
+  valeur: null
+  enonce: aucun taux ; yachts, jets privés, palaces
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni le taux ni la liste fermée des produits ne sont énoncés. (porte « vague »)

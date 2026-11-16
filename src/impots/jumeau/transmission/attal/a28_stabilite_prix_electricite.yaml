@@ -1,0 +1,29 @@
+schema: 1
+mesure: a28_stabilite_prix_electricite
+candidat: attal
+libelle: Stabilité des prix de l'électricité sur cinq ans
+sorte: sans_choc
+source:
+  citation: « Gabriel Attal prend un engagement de stabilité des prix de l'électricité pour
+    les cinq prochaines années » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/stabilite-prix-electricite
+  date: '2026-06-17'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: 5 ans (pas de niveau de prix)
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une durée sans niveau de prix. (porte « vague »)

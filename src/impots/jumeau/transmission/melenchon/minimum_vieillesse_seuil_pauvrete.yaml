@@ -1,0 +1,50 @@
+schema: 1
+mesure: minimum_vieillesse_seuil_pauvrete
+candidat: melenchon
+libelle: Minimum vieillesse au niveau du seuil de pauvreté
+sorte: parametre
+source:
+  citation: « Porter, a minima, toutes les pensions pour une carrière complète (salarié, indépendant,
+    agriculteur) au niveau du SMIC revalorisé, et le minimum vieillesse au niveau du seuil
+    de pauvreté »
+  url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
+  date: '2026-11-06'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: ASPA = seuil de pauvreté (1 337 € par mois selon le programme)
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le moteur calcule le minimum vieillesse mais son montant n'est pas un bouton câblé
+    ; le porter au seuil de pauvreté est un bouton à écrire. (porte « bouton_hors_but »)

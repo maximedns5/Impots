@@ -1,0 +1,63 @@
+schema: 1
+mesure: apl_plus_10
+candidat: tondelier
+libelle: Revalorisation des APL de 10 %
+sorte: chiffree
+source:
+  citation: « Revaloriser les APL de 10 % avec un mécanisme empêchant la répercussion sur
+    les montants des loyers. »
+  url: https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf
+  date: '2026-09-12'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: al_revalorisation_portee
+  valeur:
+    al_revalorisation_portee: 1.1
+  enonce: +10 % ; mécanisme anti-répercussion sur les loyers non décrit
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 1328354569
+    chiffre_eur: null
+    trou_eur: 1328354569
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses:
+- texte: 'Les paramètres des aides au logement que le droit révise en octobre (loyers plafonds,
+    forfaits de charges, équivalences de loyer, participation minimale) relevés de 10 %, portés
+    sur toute l''année chiffrée (D-301). La mesure se mesure contre l''indexation légale sur
+    les prix, la référence du but 21 : les 10 % s''ajoutent à elle. Le mécanisme contre la
+    répercussion sur les loyers n''est pas décrit ; les loyers ne bougent pas, ce qu''il viserait.
+    Plage : du droit (1) à 10 % prolongé de la moitié de l''écart (1,15).'
+  source: le chiffrage de la mesure (`programmes/tondelier.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_tondelier_apl_plus_10
+  rapport: reports/etudes/presidentielle_tondelier/mesures/apl_plus_10/predictif_pres2027_tondelier_apl_plus_10.json

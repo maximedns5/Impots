@@ -1,0 +1,28 @@
+schema: 1
+mesure: retablissement_isf
+candidat: roussel
+libelle: Rétablissement de l'ISF
+sorte: sans_choc
+source:
+  citation: « Oui, nous rétablirons l'impôt de solidarité sur la fortune. »
+  url: https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html
+  date: '2026-09-15'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: aucun barème
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni barème ni seuil de l'ISF rétabli ne sont énoncés. (porte « vague »)

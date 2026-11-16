@@ -1,0 +1,46 @@
+schema: 1
+mesure: cee_contribution_anah
+candidat: ruffin
+libelle: Certificats d'économie d'énergie remplacés par une contribution budgétaire à l'Anah
+sorte: parametre
+source:
+  citation: « La transformation des CEE en contribution directe au budget de l'Anah va permettre
+    de simplifier le système (une seule aide à demander) et de réorienter au moins 6 Mds€/an
+    »
+  url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  date: '2026-10-21'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: 6 Md€ par an réorientés ; coût pour les consommateurs réduit de 3 Md€ par an
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Les certificats d''économies d''énergie sont une obligation des fournisseurs, lue
+    dans les prix : ni une taxe que la couche consommation chiffre, ni une recette de l''État.
+    La contribution budgétaire qui les remplacerait est une dépense publique. (porte « prix
+    »)'

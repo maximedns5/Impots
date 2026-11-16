@@ -1,0 +1,46 @@
+schema: 1
+mesure: l14_depense_moins_8_points
+candidat: lisnard
+libelle: Baisse de la dépense publique de 8 points de PIB en 10 ans, puis maintien sous 50
+  %
+sorte: parametre
+source:
+  citation: « il est possible de les réduire de 8 points de PIB en 10 ans et de les maintenir
+    en-deçà de 50% »
+  url: https://www.unenouvelleenergie.fr/notre-programme/etre-maitre-de-notre-destin/
+  date: '2026-11-01'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: −8 points en 10 ans ; < 50 %
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une baisse de la dépense en points de PIB est un scénario de dépense du calcul de
+    la dette, pas une réforme que le moteur microsimule. (porte « depense_publique »)

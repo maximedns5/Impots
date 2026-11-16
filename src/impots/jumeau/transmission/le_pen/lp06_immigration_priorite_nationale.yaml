@@ -1,0 +1,71 @@
+schema: 1
+mesure: lp06_immigration_priorite_nationale
+candidat: le_pen
+libelle: Économies sur l'immigration et « priorité nationale »
+sorte: hypothese
+source:
+  citation: 15 milliards la première année (puis) 29 milliards en année pleine
+  url: https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net
+  date: '2026-10-06'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: 15 Md€ la première année, 29 Md€ en année pleine (environ 20 % du plan)
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: Le montant tombe sur des prestations en espèces (D62), aux ménages au prorata des
+    prestations.
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
+- texte: 'Le calendrier du candidat : 15 Md€ en 2027, 29 Md€ en 2028 ; linéaire entre ses
+    points, tenu ensuite.'
+  source: 15 milliards la première année (puis) 29 milliards en année pleine
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 29.0
+    sens: economie_depense
+    horizon: année pleine (15 Md€ la première année)
+    citation: 15 milliards la première année (puis) 29 milliards en année pleine
+    url: https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net
+  chocs:
+    apu_d_d62: -29.0
+  profil: calendrier
+  debut: 2027
+  plein: 2028
+  fin: 2035
+  instrument: depense_publique
+  menages_par: prestations
+  entreprises_par: null
+  inclus_dans: null
+  calendrier:
+    2027: 15.0
+    2028: 29.0

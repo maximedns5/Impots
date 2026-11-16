@@ -1,0 +1,29 @@
+schema: 1
+mesure: a7_impunite_zero
+candidat: attal
+libelle: '« Impunité zéro » : départ des ministres qui ne tiennent pas leur budget ; démission
+  du gouvernement après 3 ans de dérive sans crise'
+sorte: sans_choc
+source:
+  citation: « si la trajectoire n'est pas respectée pendant trois ans sans qu'une crise ne
+    le justifie, c'est le Premier ministre et le gouvernement qui devront démissionner »
+  url: https://www.moneyvox.fr/impot/actualites/109548/attal-veut-100-000-departs-volontaires-de-fonctionnaires-et-impunite-budgetaire-zero
+  date: '2026-07-03'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: 3 ans
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une sanction politique, sans taux ni montant. (porte « vague »)

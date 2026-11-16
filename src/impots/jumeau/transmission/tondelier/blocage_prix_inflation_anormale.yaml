@@ -1,0 +1,28 @@
+schema: 1
+mesure: blocage_prix_inflation_anormale
+candidat: tondelier
+libelle: Blocage des prix réservé à l'« inflation anormale »
+sorte: sans_choc
+source:
+  citation: « inflation anormale »
+  url: https://www.parlons-politique.fr/elections/ce-que-le-programme-ecologiste-de-marine-tondelier-changerait-pour-les-retraites-le-nucleaire-et-les-impots_23570/
+  date: '2026-07-13'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: aucun seuil
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Aucun seuil d'inflation ni prix bloqué n'est énoncé. (porte « vague »)

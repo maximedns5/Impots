@@ -1,5 +1,25 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-16 evening update adds D-472 to D-489: goal 26, « the butterfly effect », in
+five strands joined on `claude/but26` (D-487), no PR opened. Each of the 333 measures of
+the eleven programmes has a sourced transmission sheet (D-472 to D-474); the employers'
+contributions and capital levies are read in the committed reports, and the aged
+population is ventilated by a declared convention (D-475 to D-477); a `travail` block
+carries the minimum wage, its diffusion, the general reliefs by wage band and the
+incidence of contributions over time (D-478 to D-480); the public accounts are split by
+sub-sector and branch, with the State's compensation and the financing each programme
+announces (D-481 to D-483); one page per measure draws the cascade, year by year
+(D-484, D-485). The join wires them: sheet channels renamed to the registry's, the
+structural mode reads minimum-wage measures through the `travail` block, the financing
+reads the sheets' payers, the cascade shows labour and sub-sector nodes. Nine programmes
+of eleven now run in the structural mode on both populations; Mélenchon and Tondelier
+remain refused (mixed private and public employers, D-487). D-488 checks Attal a16's
+orders of magnitude by decomposition: no code defect, two modelling choices (aggregate
+labour-demand elasticity, +440k jobs against about +190k with Bozio-Wasmer's matrix;
+self-financing 15 % structural against 85 % reduced). **What is left.** The tests of the
+changed numbers (listed in D-489), `make impact` and the heavy tests, the PR; the owner
+decides the eight points of D-489.
+
 The 2026-11-16 update adds D-445 to D-470: goal 25, « the twin one understands », in six
 strands joined on `claude/but25` (D-468), one PR opened. The site reads as a ten-step path
 (D-450 to D-452); the population is shown, its 107 cells published (D-453); one measure is

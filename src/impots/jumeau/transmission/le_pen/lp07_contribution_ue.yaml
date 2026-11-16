@@ -1,0 +1,68 @@
+schema: 1
+mesure: lp07_contribution_ue
+candidat: le_pen
+libelle: Baisse de la contribution française à l'UE
+sorte: hypothese
+source:
+  citation: « 9 milliards d'euros sur notre contribution à l'Union européenne » (J. Bardella)
+  url: https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f
+  date: '2026-10-06'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: −8,9 Md€ nets (AFP) ; « 9 milliards » (J. Bardella)
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: 'Le montant tombe sur un transfert courant (D7) : la contribution au budget de l''UE
+    (D76).'
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
+    sur l’activité).'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 9.0
+    sens: economie_depense
+    horizon: non énoncé
+    citation: « 9 milliards d'euros sur notre contribution à l'Union européenne » (J. Bardella)
+    url: https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f
+  chocs:
+    apu_d_d7: -9.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

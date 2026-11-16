@@ -1,0 +1,70 @@
+schema: 1
+mesure: l4_suppression_c3s_cvae
+candidat: lisnard
+libelle: Suppression de la C3S et, « le cas échéant », de la CVAE
+sorte: chiffree
+source:
+  citation: « La suppression de la C3S […] et, le cas échéant, de la CVAE […] représenterait
+    11,5 milliards d'euros »
+  url: https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/
+  date: '2026-11-01'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: c3s_taux, cvae_echelle
+  valeur:
+    c3s_taux: 0.0
+    cvae_echelle: 0.0
+  enonce: impôts de production de 2 % à 1 % du PIB
+  couche: entreprises
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: cvae
+- qui: apu:apul
+  sens: paie
+  par: impots_production_entreprises
+  note: la CVAE est affectée aux collectivités, compensée par une fraction de TVA depuis 2021
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: clients et salariés
+  texte: Un impôt de production pèse sur la compétitivité et les prix.
+  source: 'Martin et Trannoy (2019), « Les impôts sur (ou contre) la production », Note du
+    CAE n° 53 : les impôts sur le chiffre d''affaires et la valeur ajoutée se reportent en
+    cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 6547352194
+    chiffre_eur: null
+    trou_eur: 6547352194
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses:
+- texte: 'La C3S est supprimée (taux de 0,16 % en 2026 ramené à 0) et la CVAE aussi, sur le
+    droit de 2026. Le candidat ne supprime la CVAE que « le cas échéant » : le choix retenu
+    suit son chiffrage de 11,5 Md€, qui compte les deux impôts, et la plage de cvae_echelle
+    couvre son maintien (1). La plage de la C3S va du droit de 2026 à 0, la borne du schéma.
+    L''objectif d''impôts de production ramenés de 2 % à 1 % du PIB va au-delà de ces deux
+    impôts (c''est la mesure « Baisse des impôts de production, à commencer par la C3S »)
+    et n''est pas chiffré ici.'
+  source: le chiffrage de la mesure (`programmes/lisnard.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_lisnard_l4_suppression_c3s_cvae
+  rapport: reports/etudes/presidentielle_lisnard/mesures/l4_suppression_c3s_cvae/predictif_pres2027_lisnard_l4_suppression_c3s_cvae.json

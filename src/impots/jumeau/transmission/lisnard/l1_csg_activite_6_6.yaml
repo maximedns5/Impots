@@ -1,0 +1,74 @@
+schema: 1
+mesure: l1_csg_activite_6_6
+candidat: lisnard
+libelle: Baisse de la CSG sur les revenus d'activité
+sorte: chiffree
+source:
+  citation: « Il propose d'abaisser la contribution sociale généralisée (CSG) sur les revenus
+    d'activité de 9,2 % à 6,6 % » (texte de la page) ; « Cotiser moins pour gagner plus. »
+  url: https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/
+  date: '2026-10-27'
+levier:
+  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  parametre: csg_activite_deductible, csg_activite_imposable
+  valeur:
+    csg_activite_deductible: 0.0488
+    csg_activite_imposable: 0.0172
+  enonce: 9,2 % → 6,6 %
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: cotisations_salariales
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: cotisations_salaries
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les salariés
+  texte: Le net bouge, le brut et le coût du travail non.
+  source: 'Saez, Matsaganis et Tsakloglou (2012), « Earnings determination and taxes : evidence
+    from a cohort-based payroll tax reform in Greece », QJE 127(1) : à moyen terme, les cotisations
+    restent sur celui qui les verse (incidence statutaire)'
+- horizon: long
+  qui: salariés et employeurs
+  texte: 'Le brut peut se renégocier : une part de la baisse revient à l''employeur.'
+  source: 'Lehmann, Marical et Rioux (2013), « Labor income responds differently to income-tax
+    and payroll-tax reforms », Journal of Public Economics 99 (France, DADS) : une baisse
+    de cotisations se retrouve en partie dans le salaire, lentement'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 25938490956
+    chiffre_eur: null
+    trou_eur: 25938490956
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- consommation_menages
+- offre_travail
+- incidence_cotisations
+- compensation_exonerations
+- financement_sous_secteurs
+hypotheses:
+- texte: 'Le candidat ne dit pas comment répartir la baisse de 2,6 points entre la part déductible
+    (6,8 %) et la part imposable (2,4 %). Le choix retenu est la répartition proportionnelle,
+    qui garde à chaque part son poids dans le taux : 4,88 % et 1,72 %, soit 6,6 %. Chaque
+    plage va du droit de 2026 à la valeur retenue prolongée de la moitié de l''écart ; celle
+    de la part imposable descend jusqu''à 0 pour couvrir l''autre répartition extrême (6,6
+    % et 0 %), et celle de la part déductible contient la baisse portée sur elle seule (4,2
+    % et 2,4 %). La CSG des revenus de remplacement et du capital n''est pas touchée.'
+  source: le chiffrage de la mesure (`programmes/lisnard.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_lisnard_l1_csg_activite_6_6
+  rapport: reports/etudes/presidentielle_lisnard/mesures/l1_csg_activite_6_6/predictif_pres2027_lisnard_l1_csg_activite_6_6.json

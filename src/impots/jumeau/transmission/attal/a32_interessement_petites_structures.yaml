@@ -1,0 +1,28 @@
+schema: 1
+mesure: a32_interessement_petites_structures
+candidat: attal
+libelle: Extension de l'intéressement aux petites structures
+sorte: sans_choc
+source:
+  citation: « Gabriel Attal veut étendre l'intéressement aux petites structures » (texte de
+    la page)
+  url: https://attalpresident.fr/programme/mesures/interessement-petites-structures
+  date: '2026-07-23'
+levier:
+  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  parametre: null
+  valeur: null
+  enonce: non chiffré
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni seuil d'effectif ni régime fiscal ou social énoncés. (porte « vague »)

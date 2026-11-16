@@ -1,0 +1,76 @@
+schema: 1
+mesure: p11_allocation_familiale_unique
+candidat: philippe
+libelle: Allocation familiale unique dès le premier enfant, dégressive selon l'IR
+sorte: chiffree
+source:
+  citation: « une allocation familiale unique de 350 euros par mois dès le premier enfant,
+    dont le montant serait ensuite dégressif en fonction de l'impôt sur le revenu » (texte
+    de l'article)
+  url: https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ
+  date: '2026-10-08'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: allocation_enfant
+  valeur:
+    allocation_enfant:
+      montant_par_enfant: 350.0
+      age_maximum: 20
+      remplace_af: true
+      remplace_cf: true
+      remplace_ars: false
+      par_famille: false
+      degressivite_part_ir: 0.5
+      plancher_par_enfant: 0.0
+  enonce: 350 €/mois
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 46332863787
+    chiffre_eur: null
+    trou_eur: 46332863787
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses:
+- texte: 'Une prestation neuve (D-382) : 350 € par mois pour chaque enfant à charge dès le
+    premier, à la place des allocations familiales (avec leur majoration pour âge et leur
+    forfait) et du complément familial, que « unique » fond ; l''allocation de rentrée scolaire
+    reste. Hypothèses : par enfant, comme le dit « dès le premier enfant » (l''autre lecture,
+    350 € par famille, coûterait bien moins et n''est pas la valeur retenue) ; jusqu''à la
+    veille de 20 ans, l''âge des allocations familiales. « Dégressif en fonction de l''impôt
+    sur le revenu » n''a pas de barème : l''allocation annuelle de la famille baisse de la
+    moitié de l''impôt de son foyer (un douzième par mois), sans plancher ; la plage va de
+    0 (pas de dégressivité) à 1 (un euro d''allocation par euro d''impôt). Ni imposable ni
+    dans les ressources des minima et des aides au logement (D-382). Contre le droit de 2026.'
+  source: le chiffrage de la mesure (`programmes/philippe.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_philippe_p11_allocation_familiale_unique
+  rapport: reports/etudes/presidentielle_philippe/mesures/p11_allocation_familiale_unique/predictif_pres2027_philippe_p11_allocation_familiale_unique.json

@@ -60,6 +60,7 @@ def ordre_structurel(depart: Any, population: Any, cellules: Any, *,
     from impots.jumeau.blocs.mesures import Mesures
     from impots.jumeau.blocs.recettes_induites import RecettesInduites
     from impots.jumeau.blocs.tendance import Tendance
+    from impots.jumeau.blocs.travail import Travail
 
     p = entreprises if entreprises is not None else charger_entreprises()
     pm = menages if menages is not None else charger_menages()
@@ -71,7 +72,7 @@ def ordre_structurel(depart: Any, population: Any, cellules: Any, *,
                          "`Commerce(boucle_prix=...)` (D-414)")
     blocs: list[Any] = [
         Tendance(depart, laisse=(*commerce.prix, "prix_c_apu")), Mesures(),
-        DemandePublique(),
+        Travail(menages=pm), DemandePublique(),
         EmploiPublic(cellules, pm),
         ChocsEntreprises(), Naissances(population, p), Fermetures(population, p),
         Productivite(population, p), Implantation(p),

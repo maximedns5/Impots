@@ -302,7 +302,7 @@ class Session:
         self.tables = entrees["mesange"]
         self.candidats = donnees["candidats"]
         self.cadre = donnees["cadre"]
-        self._mesures: dict[tuple[str, str], Any] = {}
+        self._mesures: dict[tuple[Any, ...], Any] = {}
 
     # ---------------------------------------------------------------- mesures
     def mesure(self, cle: str, vue: str, convention: str | None = None) -> Any:
@@ -317,6 +317,43 @@ class Session:
                 auteur=c["auteur"], rapport=c["rapport"],
                 premiere_annee=c["premiere_annee"], convention=convention)
         return self._mesures[(cle, vue, convention)]
+
+    def mesure_structurel(self, cle: str, vue: str, convention: str | None = None) -> Any:
+        """La mesure que lit le mode structurel (D-487) : celle du rapport, sauf une hausse
+        du Smic que le bloc `travail` sait lire (`travail.mesure_smic`, D-478) : la passe de
+        la première année relève le Smic, ses cotisations des employeurs sont payées par
+        des employeurs privés, et elle ne porte pas d'autre prélèvement des entreprises
+        (ni PFU ni impôt de la passe des entreprises). Dans la vue vieillie, avec la
+        convention demandée seulement : les déciles de la première année sont alors ceux
+        de la passe figée, marqués « parts_figee » (D-476). Sinon, la mesure du rapport,
+        et ses refus."""
+        from impots.jumeau.blocs import travail
+        from impots.jumeau.ventilation import CONVENTION_VIEILLIE, COTISATIONS, payeur
+
+        m = self.mesure(cle, vue, convention)
+        k = (cle, vue, convention, "structurel")
+        if k in self._mesures:
+            return self._mesures[k]
+        out = m
+        pa = self.candidats[cle].get("premiere_annee")
+        requete = (pa or {}).get("request") or {}
+        smic = "smic_revalorisation" in (requete.get("reform") or {})
+        premiere = m.annees[0] if m.annees else None
+        autres = {i for i, v in ((m.entreprises or {}).get(premiere) or {}).items()
+                  if i != COTISATIONS and abs(float(v)) > 1e-12}
+        if (smic and payeur(pa) == "prives" and not autres
+                and (vue == "figee" or convention)):
+            try:
+                out = travail.mesure_smic(m, pa)
+            except travail.TravailError:
+                out = m
+            else:
+                if vue != "figee":
+                    conv = {axe: dict(a) for axe, a in out.conventions.items()}
+                    conv.setdefault("menages", {})[premiere] = CONVENTION_VIEILLIE
+                    out = dataclasses.replace(out, conventions=conv)
+        self._mesures[k] = out
+        return out
 
     def hypothese(self, spec: Mapping[str, Any]) -> Any:
         """Une loi hypothétique : un instrument, un montant (Md€ par an, coût pour les
@@ -399,7 +436,7 @@ class Session:
         from impots.jumeau.blocs.menages import MenagesError
         from impots.jumeau.pas import Modele
 
-        mesure = self.mesure(cle, vue, convention)
+        mesure = self.mesure_structurel(cle, vue, convention)
         _, entrees, blocs, boucles = self._modele("structurel", mesure, cle)
         blocs = Modele(blocs, boucles).blocs
         refus: str | None = None
@@ -450,7 +487,8 @@ class Session:
         if not (cle and mode == "structurel"):
             convention = None
         if cle:
-            mesure = self.mesure(cle, vue, convention)
+            mesure = (self.mesure_structurel(cle, vue, convention) if mode == "structurel"
+                      else self.mesure(cle, vue, convention))
         elif choix.get("hypothese"):
             mesure = self.hypothese(choix["hypothese"])
         else:
@@ -652,15 +690,19 @@ def _indicateurs(traj: Any) -> list[tuple[str, str, str, np.ndarray]]:
 def _conventions(mesure: Any, calculees: Sequence[int]) -> dict[str, Any] | None:
     """Les années calculées qu'une convention nommée a ventilées, par axe, et sa
     définition : la page les marque à côté de chaque nombre de ces années (D-414)."""
-    from impots.jumeau.mesures import TEXTE_CONVENTION
+    from impots.jumeau.blocs.travail import CONVENTION_SMIC, TEXTE_SMIC
+    from impots.jumeau.ventilation import TEXTES
 
+    textes = {**TEXTES, CONVENTION_SMIC: TEXTE_SMIC}
     axes = {axe: sorted(a for a in annees if a in calculees)
             for axe, annees in (mesure.conventions or {}).items()}
     axes = {axe: a for axe, a in axes.items() if a}
     if not axes:
         return None
     noms = sorted({mesure.conventions[axe][a] for axe, a_ in axes.items() for a in a_})
-    return {"noms": noms, "definition": TEXTE_CONVENTION, "axes": axes,
+    # Deux conventions nommées : « parts_premiere_annee » (D-414) dans la vue figée,
+    # « parts_figee » (D-476) dans la vue vieillie ; chacune dit sa définition.
+    return {"noms": noms, "definition": " ; ".join(textes[n] for n in noms), "axes": axes,
             "annees": sorted({a for a_ in axes.values() for a in a_})}
 
 

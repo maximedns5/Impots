@@ -1,0 +1,29 @@
+schema: 1
+mesure: lp23_dons_familiaux
+candidat: le_pen
+libelle: Relèvement du plafond d'exonération des dons familiaux de sommes d'argent
+sorte: sans_choc
+source:
+  citation: 'Pas de citation directe. Texte de LCP : « en relevant le plafond des exonérations
+    prévues pour les dons familiaux de sommes d''argent »'
+  url: https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut
+  date: '2026-10-06'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: Non chiffré
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Un relèvement de plafond qui ne dit pas jusqu'où. (porte « vague »)

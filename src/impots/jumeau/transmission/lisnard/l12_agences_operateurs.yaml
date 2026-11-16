@@ -1,0 +1,29 @@
+schema: 1
+mesure: l12_agences_operateurs
+candidat: lisnard
+libelle: Suppression de l'« essentiel » des quelque 1 200 agences et opérateurs ; budgets
+  base zéro ; moratoire sur les normes
+sorte: sans_choc
+source:
+  citation: « Les départs à la retraite, on ne renouvellera pas. On réorientera, on supprimera
+    l'essentiel de ces machins »
+  url: https://www.unenouvelleenergie.fr/questions/quelles-economies-david-lisnard-propose-t-il-et-ou-exactement/
+  date: '2026-10-11'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: non énoncé
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni agence désignée ni économie chiffrée. (porte « vague »)

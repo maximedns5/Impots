@@ -1,0 +1,28 @@
+schema: 1
+mesure: p13_ptz_logement
+candidat: philippe
+libelle: Prêt à taux zéro pour acheter un logement plus grand à l'arrivée d'un enfant
+sorte: sans_choc
+source:
+  citation: « la possibilité de bénéficier d'un prêt à taux zéro pour l'achat d'un logement
+    plus grand à l'arrivée d'un enfant » (texte de l'article)
+  url: https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ
+  date: '2026-10-08'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: aucun plafond ni montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni plafond ni montant de prêt. (porte « vague »)

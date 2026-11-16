@@ -1,0 +1,183 @@
+# Les valeurs du bloc `travail` du jumeau (but 26, volet `travail`, D-478).
+#
+# Le Smic, sa diffusion dans l'échelle des salaires, les allègements généraux qui le
+# suivent, le coût du travail par tranche de salaire et l'emploi qui y répond, l'incidence
+# des cotisations dans le temps. Chaque valeur a sa source (document, page ou tableau) ;
+# une valeur sans source le dit (« choisie, non vérifiée ») et porte un θ
+# (`jumeau/thetas.py`). Bozio-Wasmer : A. Bozio et A. Wasmer, « Les politiques
+# d'exonérations de cotisations sociales : une inflexion nécessaire », rapport final,
+# octobre 2024, fichier `bozio_wasmer_2024_exonerations_rapport_final.pdf` ; « p. » est la
+# page du PDF, le folio imprimé est trois de moins.
+
+distribution:
+  # Les salaires mensuels nets en EQTP du privé, en 2024, par tranches de 100 € : le
+  # premier intervalle est « moins de 1 300 € », le dernier « 9 000 € ou plus ».
+  source: "Insee Première n° 2079, « Les salaires dans le secteur privé en 2024 », figure 2
+    (insee_ip2079_salaires_prive_2024.xlsx, feuille « Figure 2 ») : effectifs en milliers
+    d'EQTP ; champ : France, salariés du privé, alternants, stagiaires et contrats aidés
+    compris, hors agriculture et particuliers employeurs ; Insee, base Tous salariés 2024"
+  premiere_borne: 1300
+  pas: 100
+  effectifs: [827, 282, 819, 1020, 1127, 1204, 1148, 1064, 973, 878, 786, 708, 634, 574,
+    518, 468, 421, 384, 356, 319, 288, 262, 239, 220, 202, 184, 167, 157, 144, 131, 122,
+    112, 104, 97, 89, 83, 76, 71, 67, 61, 58, 54, 50, 47, 43, 40, 38, 36, 34, 32, 30, 28,
+    26, 25, 24, 22, 21, 20, 19, 18, 17, 16, 15, 14, 14, 13, 12, 12, 11, 11, 11, 10, 10, 9,
+    9, 8, 8, 8, 260]
+  moyenne:
+    valeur: 2733
+    source: "Insee Première n° 2079, figure 3, ligne « Moyenne », colonne « Ensemble » :
+      2 733 € nets par mois en EQTP. Elle fixe le salaire moyen de l'intervalle ouvert du
+      haut (9 000 € ou plus), que la figure 2 ne donne pas"
+  sous_le_smic:
+    valeur: 1150
+    source: "choisie, non vérifiée : le milieu de 1 000 à 1 300 € pour l'intervalle « moins
+      de 1 300 € » (apprentis, stagiaires, incohérences de durée, dit la note de la figure
+      2). Ces postes sont comptés au Smic pour les allègements et pour la loi d'une hausse
+      (les apprentis sont payés en pourcentage du Smic) ; leurs exonérations propres ne
+      sont pas modélisées"
+
+smic:
+  brut_mensuel_2024:
+    valeur: 1772.73
+    calcul: "(10 × 1 766,92 + 2 × 1 801,80) / 12 : 11,65 € de l'heure du 1er janvier au 31
+      octobre 2024, 11,88 € à partir du 1er novembre, 151,67 heures"
+    source: "décret n° 2023-1216 du 20 décembre 2023 (11,65 €) ; décret n° 2024-951 du 23
+      octobre 2024 (11,88 €) ; le paramètre `marche_travail.salaire_minimum.smic` de
+      openfisca-france"
+  net_sur_brut:
+    valeur: 0.7916
+    calcul: "1 − (6,90 + 0,40 + 3,15 + 0,86) % − 9,70 % × 98,25 % : vieillesse plafonnée et
+      déplafonnée, Agirc-Arrco tranche 1 et CEG salariés, CSG et CRDS sur 98,25 % du brut"
+    source: "barèmes 2024 des cotisations salariales (CSS, art. D242-4 ; accord Agirc-Arrco)
+      et de la CSG (CSS, art. L136-8), tels que les porte openfisca-france. Tenu constant le
+      long de l'échelle : au-dessus du plafond de la Sécurité sociale (≈ 2,2 Smic), le taux
+      salarial baisse d'environ deux points ; les tranches en multiples du Smic net sont
+      alors un peu au-dessus de celles en brut (dit, non corrigé)"
+  cotisations_salariales:
+    valeur: 0.1131
+    source: "la part cotisations du même calcul : 6,90 + 0,40 + 3,15 + 0,86 %"
+  csg_crds:
+    valeur: 0.0953
+    source: "9,70 % × 98,25 %, CSS, art. L136-8 et L136-1-2"
+
+cotisations_employeurs:
+  taux_avant_reduction:
+    valeur: 0.4705
+    calcul: "45,25 % + 1,80 point : le taux employeur du groupe au-dessus de 2,5 Smic, qui
+      paie le taux réduit de la branche famille (3,45 % au lieu de 5,25 %) jusqu'à 3,5 Smic
+      en 2024"
+    source: "Bozio-Wasmer, p. 184 (folio 181) : « au-dessus de 2,5 (45,25 %) » ; recoupé :
+      au niveau du Smic, les cotisations employeurs restantes valent 6,9 % en 2024 (p. 47,
+      folio 44), et la réduction maximale de 2024, 32,34 % (openfisca-france,
+      `allegement_general.ensemble_des_entreprises`), plus les six points de maladie et 1,8
+      point de famille des taux réduits, donnent 32,34 + 6,9 + 6 + 1,8 = 47,04 %"
+
+rgdu:
+  # La réduction générale dégressive unique, en vigueur au 1er janvier 2026 :
+  # C(m) = t_min + t_delta × [½ (plafond / m − 1)]^puissance, au plus t_min + t_delta, pour
+  # m < plafond, m la rémunération annuelle brute en multiples du Smic annuel ; nulle au-delà.
+  t_min: 0.02
+  t_delta: 0.3821
+  puissance: 1.75
+  plafond: 3.0
+  source: "CSS, art. L241-13 (version issue de la LFSS pour 2025, loi n° 2025-199, art. 18)
+    et art. D241-7 (décret n° 2025-887 du 4 septembre 2025) ; openfisca-france,
+    `allegement_general.ensemble_des_entreprises` (t_min, t_delta_grandes_entreprises,
+    puissance, plafond, au 1er janvier 2026). t_delta vaut 0,3781 pour une entreprise de
+    moins de 50 salariés (FNAL à 0,1 %) : l'écart de 0,004 n'est pas modélisé, dit. Les
+    taux réduits maladie et famille (les « bandeaux ») sont supprimés au 1er janvier 2026
+    (mesures_votees.yaml, lfss2025_allegements)"
+  fillon_2024:
+    # Le barème de 2024, pour recouper le modèle à un montant publié.
+    reduction_max: 0.3214
+    plafond: 1.6
+    bandeau_maladie: {taux: 0.06, plafond: 2.5}
+    bandeau_famille: {taux: 0.018, plafond: 3.5}
+    source: "openfisca-france, `allegement_general.ensemble_des_entreprises` (0,3194 et
+      0,3234 selon la taille, la moyenne prise), `allegement_cotisation_maladie` et
+      `allegement_cotisation_allocations_familiales` (2,5 et 3,5 Smic en 2024) ;
+      montants publiés : Bozio-Wasmer, tableau 1.1, p. 70 (folio 67) : 42,08 Md€ de
+      réduction générale, 26,62 et 9,69 Md€ de bandeaux maladie et famille en 2024 (p)"
+
+tranches:
+  # Les bornes basses des tranches, en multiples du Smic : celles des quatre groupes de la
+  # maquette de Bozio-Wasmer (p. 183, folio 180), plus les salaires au-delà de 3,5 Smic.
+  bornes: [1.0, 1.2, 1.6, 2.5, 3.5]
+  noms: ["1 à 1,2 Smic", "1,2 à 1,6 Smic", "1,6 à 2,5 Smic", "2,5 à 3,5 Smic",
+    "3,5 Smic et plus"]
+  source: "Bozio-Wasmer, p. 183 (folio 180) : « La catégorie d'emploi 1 est celle des
+    salariés dans l'intervalle 1-1,2 Smic […] 1,2-1,6 […] 1,6 et 2,5 […] 2,5 et 3,5 » ; les
+    salariés au-dessus de 3,5 Smic, « 6,7 % de l'emploi ETP », n'y sont pas modélisés"
+
+diffusion:
+  # L'élasticité du salaire horaire de base à une hausse de 1 % du Smic, par tranche de 0,1
+  # Smic de 1,0 à 1,5 ; nulle au-delà de 1,5 Smic.
+  bornes: [1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
+  sans_effets_fixes: [0.473, 0.358, 0.287, 0.271, 0.311]
+  avec_effets_fixes: [1.188, 0.796, 0.520, 0.357, 0.490]
+  source: "Koubi et Lhommeau (Dares), « Les effets de diffusion de court terme des hausses
+    du Smic dans les grilles salariales des entreprises de dix salariés ou plus sur la
+    période 2000-2005 », Insee, Les salaires en France, édition 2007, figure 11, à un an,
+    sans et avec effets fixes d'entreprise (les mêmes valeurs que
+    `population.margins.SMIC_DIFFUSION_PROFILS`, D-380). Au-delà de 1,5 Smic, l'effet est
+    dit « faible » : zéro. θ « travail_smic_diffusion » : 0, la loi seule (la convention
+    des études, D-380) ; ½, sans effets fixes ; 1, avec effets fixes ; linéaire par
+    morceaux"
+  profil_temps:
+    valeur: [1.0, 1.0, 1.0, 1.0]
+    source: "choisie, non vérifiée : l'estimation est à un an ; la diffusion est atteinte
+      la première année (le pas est annuel) et tenue ensuite. Le rapport du groupe d'experts
+      Smic de novembre 2025 n'en publie pas de plus récente (margins.SMIC_DIFFUSION)"
+
+emploi:
+  # Les élasticités de long terme de la demande de travail de chaque tranche au coût du
+  # travail de chaque tranche (individuelles sur la diagonale, croisées ailleurs).
+  matrice:
+    - [-0.608, -0.135, -0.053, -0.012, 0.0]
+    - [-0.063, -0.325, -0.028, -0.011, 0.0]
+    - [-0.020, -0.023, -0.250, -0.020, 0.0]
+    - [-0.015, -0.017, -0.037, -0.165, 0.0]
+    - [0.0, 0.0, 0.0, 0.0, -0.165]
+  source: "Bozio-Wasmer, tableau 4.1, p. 184 (folio 181), « Élasticités de la demande au
+    coût (individuelles et croisées) », lignes L1 à L4, colonnes τ1 à τ4 (BTS postes,
+    calculs des auteurs) ; la colonne du capital n'est pas lue. La cinquième tranche
+    (au-delà de 3,5 Smic), que la maquette laisse de côté : l'élasticité individuelle de
+    la quatrième, sans effet croisé (choisie, non vérifiée)"
+  echelle:
+    # θ « travail_emploi_elasticites » : un facteur sur la matrice ; ½ la maquette
+    # (élasticité maximale −0,6 au Smic), 0 la moitié (−0,3), 1 une fois et demie (−0,9).
+    bas: 0.5
+    centre: 1.0
+    haut: 1.5
+    source: "Bozio-Wasmer, p. 178 (folio 175) : « une élasticité maximale de l'ordre de
+      −0,3 » est compatible avec les évaluations ex post du CICE ; « l'élasticité retenue
+      variait entre −0,9 et −0,2 » dans les estimations des années 2000 ; « une élasticité
+      maximale de −0,6 au niveau du Smic […] est plus plausible »"
+  profils:
+    # Les profils de l'emploi au coût réel du travail de Mésange, sur leur long terme : les
+    # non qualifiés pour les deux premières tranches, les qualifiés pour les autres.
+    non_qualifie: [0.2647, 0.7500, 1.0441, 1.0]
+    qualifie: [0.5455, 1.0, 1.0303, 1.0]
+    source: "Mésange (G2017-04), p. 48 (folio 47), lignes « Coût réel du travail efficace
+      (+1 %) » : −0,18, −0,51, −0,71, −0,68 (non qualifiés) et −0,18, −0,33, −0,34, −0,33
+      (qualifiés) à 1, 2, 5 ans et LT, divisés par le LT ; la correspondance des tranches
+      aux qualifications est choisie, non vérifiée"
+
+incidence:
+  # La part de long terme d'une variation de cotisations (salariales ou employeurs) qui
+  # finit sur le salaire net, par tranche ; le reste finit sur le coût du travail.
+  centre: [0.33, 0.62, 0.59, 0.56, 0.56]
+  bas: [0.0, 0.0, 0.0, 0.0, 0.0]
+  haut: [1.0, 1.0, 1.0, 1.0, 1.0]
+  source: "centre : Bozio-Wasmer, tableau 4.2, p. 185 (folio 182), la diagonale : « une
+    hausse des cotisations (et donc du superbrut) de 100 € diminue par un effet
+    d'incidence de long terme les salaires bruts de 59 à 62 € dans les groupes 2 à 4 […]
+    seulement 33 pour le groupe 1 » (p. 184), d'après Carbonnier et alii (2022) ; la
+    cinquième tranche prend la quatrième (choisie, non vérifiée). bas : Mésange, p. 64
+    (folio 63) et note 45 : le salaire super-net visé ne dépend pas des cotisations, le
+    coût porte tout à long terme (λ = 0, le jumeau d'avant D-478). haut : le « consensus »
+    de la fin des années 1990, les cotisations employeurs « reportées sur les salaires »
+    (Bozio-Wasmer, p. 259, folio 256). À court terme, l'incidence est la légale (une
+    cotisation salariale sur le net, une employeur sur le coût) ; le chemin vers le long
+    terme suit le profil de la productivité de Mésange (p. 65), celui que le bloc des
+    salaires donnait déjà au coin fiscalo-social (menages.yaml)"

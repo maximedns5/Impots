@@ -1,0 +1,29 @@
+schema: 1
+mesure: tva_gaz_electricite
+candidat: roussel
+libelle: Baisse de la TVA sur le gaz et l'électricité
+sorte: sans_choc
+source:
+  citation: 'Paraphrase de franceinfo : « Fabien Roussel appelle à baisser la TVA sur les
+    prix de l''essence, mais aussi sur ceux du gaz et de l''électricité. »'
+  url: https://www.franceinfo.fr/societe/mobilisation-du-17-octobre/fabien-roussel-appelle-a-continuer-la-mobilisation-tant-que-le-gouvernement-n-entend-pas-ce-cri-de-souffrance-de-douleur-de-colere_8265494.html
+  date: '2026-11-03'
+levier:
+  texte: Code général des impôts, TVA (art. 278 et s.) et accises
+  parametre: null
+  valeur: null
+  enonce: aucun taux
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le taux de TVA visé pour le gaz et l'électricité n'est pas énoncé. (porte « vague
+    »)

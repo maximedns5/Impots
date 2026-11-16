@@ -1,0 +1,29 @@
+schema: 1
+mesure: p17_baisser_depenses
+candidat: philippe
+libelle: Baisser les dépenses plutôt qu'augmenter les impôts ; baisser les dépenses sociales
+  ; supprimer des niches fiscales ; faire contribuer les plus aisés
+sorte: sans_choc
+source:
+  citation: il veut « baisser les dépenses plutôt qu'augmenter les impôts et en travaillant
+    plus » ; « supprimer des niches fiscales »
+  url: https://www.publicsenat.fr/actualites/politique/presidentielle-pour-son-premier-meeting-edouard-philippe-joue-la-carte-du-bon-pere-de-famille-qui-veut-preparer-lavenir-de-nos-enfants
+  date: '2026-07-05'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: non chiffré
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Aucune niche, aucune dépense ni aucun montant désignés. (porte « vague »)

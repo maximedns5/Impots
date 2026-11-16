@@ -1,0 +1,28 @@
+schema: 1
+mesure: l29_fin_subventions_entreprises
+candidat: lisnard
+libelle: Fin des subventions qui compensent les charges des entreprises, contre une baisse
+  directe des charges
+sorte: sans_choc
+source:
+  citation: « nous cesserons de subventionner les entreprises pour compenser les charges »
+  url: https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-supprimer-les-subventions-aux-entreprises/
+  date: '2026-07-03'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni dispositif désigné ni montant. (porte « vague »)

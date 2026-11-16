@@ -1,0 +1,28 @@
+schema: 1
+mesure: a4_zero_deficit_2037
+candidat: attal
+libelle: Zéro déficit en 2037, inscrit dans une loi de programmation sur dix ans
+sorte: sans_choc
+source:
+  citation: un « cap » de « 0% du PIB en deux quinquennats, donc en 2037 »
+  url: https://www.moneyvox.fr/impot/actualites/109548/attal-veut-100-000-departs-volontaires-de-fonctionnaires-et-impunite-budgetaire-zero
+  date: '2026-07-03'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: 0 % du PIB en 2037
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une trajectoire de déficit est une hypothèse du calcul de la dette, pas une réforme
+    : aucun bouton ne la règle. (porte « chaine »)'

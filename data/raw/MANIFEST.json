@@ -2297,6 +2297,42 @@
       "downloaded": "2026-11-15",
       "licence": "Open Database License (ODbL)",
       "description": "Urssaf, open data : établissements employeurs, effectifs salariés moyens annuels et masse salariale annuelle (assiette déplafonnée) du secteur privé, régime général, par département × secteur NA17i, 1998→2025 ; les panneaux de l'emploi et des salaires (D-434)."
+    },
+    "insee_cn2025_t3203_depenses_recettes_sous_secteur.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/T_3203_fr.xlsx",
+      "sha256": "3ecbd58498ac7ae6db91af4d357fc46579c5dec2ace46b26270442df0e951708",
+      "bytes": 33191,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab",
+      "quarantined": false,
+      "description": "INSEE, Comptes nationaux annuels base 2020, tableau 3.203 « Dépenses et recettes de l'État (S13111) », MILLÉSIME 2025 (même dossier que la t. 3.201). Consolidé à l'intérieur du sous-secteur, pas entre sous-secteurs (note de la t. 3.215) : les transferts courants entre APU (D73), les intérêts (D41) et les transferts en capital (D9) entre sous-secteurs y figurent. But 26, volet financement (D-481) : la somme des quatre sous-secteurs redonne chaque ligne de la t. 3.201, à la consolidation près, et B9 exactement."
+    },
+    "insee_cn2025_t3204_depenses_recettes_sous_secteur.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/T_3204_fr.xlsx",
+      "sha256": "38695f8ead6cc70f3b1971f0f061df5ada803f5cd6b2e02a5f1d14e12bceb9bd",
+      "bytes": 30573,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab",
+      "quarantined": false,
+      "description": "INSEE, Comptes nationaux annuels base 2020, tableau 3.204 « Dépenses et recettes des organismes divers d'administration centrale (S13112) », MILLÉSIME 2025 (même dossier que la t. 3.201). Consolidé à l'intérieur du sous-secteur, pas entre sous-secteurs (note de la t. 3.215) : les transferts courants entre APU (D73), les intérêts (D41) et les transferts en capital (D9) entre sous-secteurs y figurent. But 26, volet financement (D-481) : la somme des quatre sous-secteurs redonne chaque ligne de la t. 3.201, à la consolidation près, et B9 exactement."
+    },
+    "insee_cn2025_t3205_depenses_recettes_sous_secteur.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/T_3205_fr.xlsx",
+      "sha256": "8a9f601ebfe07b23300b5b0eb4fa6d1a35e7a8690ca69dcb1b935384fd15e1df",
+      "bytes": 31140,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab",
+      "quarantined": false,
+      "description": "INSEE, Comptes nationaux annuels base 2020, tableau 3.205 « Dépenses et recettes des administrations publiques locales (S1313) », MILLÉSIME 2025 (même dossier que la t. 3.201). Consolidé à l'intérieur du sous-secteur, pas entre sous-secteurs (note de la t. 3.215) : les transferts courants entre APU (D73), les intérêts (D41) et les transferts en capital (D9) entre sous-secteurs y figurent. But 26, volet financement (D-481) : la somme des quatre sous-secteurs redonne chaque ligne de la t. 3.201, à la consolidation près, et B9 exactement."
+    },
+    "insee_cn2025_t3212_depenses_recettes_sous_secteur.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/T_3212_fr.xlsx",
+      "sha256": "6d384593ca748741641802a9a0c4c39be8db49432d8726cc16a5f58f14fea9db",
+      "bytes": 34899,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab",
+      "quarantined": false,
+      "description": "INSEE, Comptes nationaux annuels base 2020, tableau 3.212 « Dépenses et recettes des administrations de sécurité sociale (S1314) », MILLÉSIME 2025 (même dossier que la t. 3.201). Consolidé à l'intérieur du sous-secteur, pas entre sous-secteurs (note de la t. 3.215) : les transferts courants entre APU (D73), les intérêts (D41) et les transferts en capital (D9) entre sous-secteurs y figurent. But 26, volet financement (D-481) : la somme des quatre sous-secteurs redonne chaque ligne de la t. 3.201, à la consolidation près, et B9 exactement."
     }
   }
 }

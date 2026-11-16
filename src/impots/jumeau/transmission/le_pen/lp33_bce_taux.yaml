@@ -1,0 +1,30 @@
+schema: 1
+mesure: lp33_bce_taux
+candidat: le_pen
+libelle: Appel à une intervention de la BCE sur les taux
+sorte: sans_choc
+source:
+  citation: La BCE doit intervenir pour que les pays de l'Eurozone dégagent des marges de
+    manœuvre financières
+  url: https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen
+  date: '2026-10-06'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: aucun
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: La BCE doit intervenir pour que les pays de l'Eurozone dégagent des marges de manœuvre
+    financières
+  source: La BCE doit intervenir pour que les pays de l'Eurozone dégagent des marges de manœuvre
+    financières
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Un appel à la BCE, sans paramètre. (porte « vague »)

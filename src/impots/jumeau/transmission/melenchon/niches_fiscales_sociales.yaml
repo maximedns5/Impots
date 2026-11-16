@@ -1,0 +1,71 @@
+schema: 1
+mesure: niches_fiscales_sociales
+candidat: melenchon
+libelle: Rabot et suppression de niches fiscales et sociales
+sorte: hypothese
+source:
+  citation: « rabotage et suppression des niches fiscales et sociales les plus injustes dont
+    le coût a explosé (22 milliards d'euros en 2027) »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: 'Code général des impôts et Code de la sécurité sociale : les dépenses fiscales et
+    les exonérations sociales (non nommées)'
+  parametre: null
+  valeur: null
+  enonce: aucune liste dans le document ; la presse cite le CIR et le pacte Dutreil
+  couche: null
+payeurs:
+- qui: menages
+  sens: paie
+  par: ir
+  note: 'la clé par décile est celle de l''IR : une hypothèse'
+- qui: entreprises
+  sens: paie
+  par: autre
+- qui: apu:etat
+  sens: recoit
+  par: impot_sur_le_revenu
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+hypotheses:
+- texte: Le montant tombe sur l'impôt sur le revenu (D5), aux ménages au prorata de leur IR.
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : impot_sur_le_revenu.'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 22.0
+    sens: recette
+    horizon: '2027'
+    citation: « rabotage et suppression des niches fiscales et sociales les plus injustes
+      dont le coût a explosé (22 milliards d'euros en 2027) »
+    url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  chocs:
+    apu_r_d5: -22.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: impot_sur_le_revenu
+  menages_par: ir
+  entreprises_par: null
+  inclus_dans: null

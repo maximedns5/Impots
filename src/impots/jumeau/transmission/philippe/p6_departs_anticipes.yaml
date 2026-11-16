@@ -1,0 +1,50 @@
+schema: 1
+mesure: p6_departs_anticipes
+candidat: philippe
+libelle: Départs anticipés entre 60 et 64 ans pour un Français sur trois ; âges handicap,
+  incapacité et invalidité inchangés ; âge d'annulation de la décote (67 ans) inchangé
+sorte: parametre
+source:
+  citation: « Un Français sur trois » pourra partir avant 65 ans, entre 60 et 64 ans
+  url: https://www.publicsenat.fr/actualites/politique/retraites-edouard-philippe-sort-du-bois-et-propose-un-age-de-depart-a-65-ans
+  date: '2026-09-29'
+levier:
+  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  parametre: null
+  valeur: null
+  enonce: 1 sur 3 entre 60 et 64 ans ; 55, 60, 62 et 67 ans maintenus
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: retraite
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les retraités et futurs retraités
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les régimes et les actifs
+  texte: Le solde des régimes et l'emploi des seniors bougent.
+  source: 'Conseil d''orientation des retraites, rapport annuel (juin 2025) : le solde des
+    régimes selon l''âge, la durée et l''indexation'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- droits_retraite
+- offre_travail
+- consommation_menages
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Les départs anticipés et l''âge d''annulation de la décote ne se règlent pas :
+    la population ne vieillit pas et ses pensions sont des données. (porte « retraites »)'

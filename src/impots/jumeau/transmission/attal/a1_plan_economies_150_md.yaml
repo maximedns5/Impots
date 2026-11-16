@@ -1,0 +1,48 @@
+schema: 1
+mesure: a1_plan_economies_150_md
+candidat: attal
+libelle: Plan d'économies sur le quinquennat, deux tiers sur le social
+sorte: parametre
+source:
+  citation: « 150 milliards d'euros d'économies sur le quinquennat, dont deux tiers sur les
+    dépenses sociales » (texte de la page)
+  url: https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques
+  date: '2026-10-15'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: '150 Md€ sur 5 ans — montant annoncé : 150 Md€ (total sur le quinquennat (cinq ans),
+    sans calendrier annuel donné par le candidat ; comprend le frein d''urgence de 20 Md€
+    (a2) et les 7 Md€ par an de l''organisation (a9) : ne pas additionner) ; non lu comme
+    montant annuel : un total sur le quinquennat, sans annuel (D-381).'
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Un plan d''économies sans dépense désignée une à une : la dépense n''est qu''un
+    scénario du calcul de la dette. (porte « depense_publique »)'

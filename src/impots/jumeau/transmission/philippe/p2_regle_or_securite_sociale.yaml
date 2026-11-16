@@ -1,0 +1,29 @@
+schema: 1
+mesure: p2_regle_or_securite_sociale
+candidat: philippe
+libelle: Règle d'or étendue à la Sécurité sociale, adoptée par référendum en début de quinquennat
+sorte: sans_choc
+source:
+  citation: « une règle d'or budgétaire qui s'applique aussi au budget de la Sécurité sociale
+    » (texte de l'article)
+  url: https://www.lagazettefrance.fr/article/edouard-philippe-refute-promettre-aux-francais-du-sang-et-des-larmes
+  date: '2026-06-30'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: non chiffrée
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Ni plafond de dépense ni solde chiffré : une règle d''or sans paramètre. (porte
+    « vague »)'

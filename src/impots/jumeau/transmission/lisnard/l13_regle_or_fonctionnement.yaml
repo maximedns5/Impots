@@ -1,0 +1,28 @@
+schema: 1
+mesure: l13_regle_or_fonctionnement
+candidat: lisnard
+libelle: Règle d'or sur les dépenses de fonctionnement, pas sur l'investissement
+sorte: sans_choc
+source:
+  citation: « cette « règle d'or » s'appliquerait aux dépenses de fonctionnement mais pas
+    à l'investissement »
+  url: https://www.unenouvelleenergie.fr/notre-programme/etre-maitre-de-notre-destin/
+  date: '2026-11-01'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: non énoncé
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Ni plafond ni solde chiffré : une règle d''or sans paramètre. (porte « vague »)'

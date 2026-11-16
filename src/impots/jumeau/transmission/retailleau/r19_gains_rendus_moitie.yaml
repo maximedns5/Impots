@@ -1,0 +1,92 @@
+schema: 1
+mesure: r19_gains_rendus_moitie
+candidat: retailleau
+libelle: Gains rendus pour moitié aux salariés, pour moitié aux entreprises
+sorte: chiffree
+source:
+  citation: « les 30 milliards d'euros seront redonnés pour moitié aux salariés, sous forme
+    de pouvoir d'achat supplémentaire (environ 500 euros par an au niveau du salaire médian)
+    »
+  url: https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf
+  date: '2026-01-09'
+levier:
+  texte: Code de la sécurité sociale, cotisations d'assurance vieillesse salariales du régime
+    général (art. D242-4, CNAV, plafonnée et déplafonnée) ; accord national interprofessionnel
+    Agirc-Arrco (cotisations salariales, CEG, CET)
+  parametre: cotisations_salariales_retraite_echelle
+  valeur:
+    cotisations_salariales_retraite_echelle: 0.87
+  enonce: '≥ 30 Md€ ; ≈ 500 € par an au salaire médian (TG), « 500 euros par mois » selon
+    Public Sénat : les deux se contredisent'
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: salaire_net
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: cotisations_salaries
+- qui: apu:secu:retraite_complementaire
+  sens: paie
+  par: cotisations_salaries
+- qui: apu:etat
+  sens: recoit
+  par: impot_sur_le_revenu
+incidence:
+- horizon: immediat
+  qui: les salariés
+  texte: Le net monte ; le brut et le coût du travail ne bougent pas.
+  source: 'Saez, Matsaganis et Tsakloglou (2012), « Earnings determination and taxes : evidence
+    from a cohort-based payroll tax reform in Greece », QJE 127(1) : à moyen terme, les cotisations
+    restent sur celui qui les verse (incidence statutaire)'
+- horizon: court
+  qui: les régimes de retraite
+  texte: La caisse perd sa recette ; sans compensation, le déficit de la branche se creuse.
+  source: 'Code de la sécurité sociale, art. L131-7 (loi du 25 juillet 1994) : l''État compense
+    à la Sécurité sociale toute exonération ou réduction de cotisations, sauf dérogation d''une
+    loi de financement ; Direction de la Sécurité sociale, rapport à la Commission des comptes
+    de la Sécurité sociale (2025) : le solde par branche'
+- horizon: long
+  qui: salariés et employeurs
+  texte: 'Le brut peut se renégocier à la baisse : une part du gain du net revient à l''employeur,
+    qui voit alors son coût baisser et peut embaucher. Une cotisation de retraite liée à des
+    droits se reporte sur le salaire : si les droits sont maintenus, la renégociation est
+    plus probable.'
+  source: 'Lehmann, Marical et Rioux (2013), « Labor income responds differently to income-tax
+    and payroll-tax reforms », Journal of Public Economics 99 (France, DADS) : une baisse
+    de cotisations se retrouve en partie dans le salaire, lentement ; Bozio, Breda et Grenet
+    (2019), « Does tax-benefit linkage matter for the incidence of social security contributions
+    ? », IZA DP 12502 (France) : une cotisation liée à des droits se reporte sur le salaire,
+    une cotisation sans lien reste sur l''employeur ; Fullerton et Metcalf (2002), « Tax incidence
+    », Handbook of Public Economics, vol. 4, ch. 26 : à long terme, l''incidence ne dépend
+    pas de qui verse l''impôt, mais des élasticités de l''offre et de la demande'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 10562864046
+    chiffre_eur: null
+    trou_eur: 10562864046
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- consommation_menages
+- offre_travail
+- incidence_cotisations
+- salaires
+- emploi
+- compensation_exonerations
+- financement_sous_secteurs
+- financement_annonce
+hypotheses:
+- texte: L'échelle 0,87 traduit le gain que le candidat énonce.
+  valeur: 0.87
+  source: le chiffrage de la mesure (`programmes/retailleau.json`)
+- texte: Les droits à la retraite des salariés ne baissent pas avec leurs cotisations.
+  source: non sourcée
+montant:
+  origine: rapport
+  scenario: pres2027_retailleau_r19_gains_rendus_moitie
+  rapport: reports/etudes/presidentielle_retailleau/mesures/r19_gains_rendus_moitie/predictif_pres2027_retailleau_r19_gains_rendus_moitie.json

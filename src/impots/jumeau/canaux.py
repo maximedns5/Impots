@@ -169,6 +169,43 @@ CANAUX.update({
 })
 DE_MESANGE.add("emploi_public")
 
+# --------------------------------------------------------------------- financement (D-481)
+#: Des canaux comptables : ils répartissent le compte consolidé entre les sous-secteurs
+#: sans le changer (`jumeau.financement`, après la trajectoire) ; aucun bloc ne les porte,
+#: ils ne se heurtent donc à aucun autre. La carte les cite dans `canaux` d'une fiche.
+CANAUX.update({
+    "financement_sous_secteurs": (
+        "qui paie d'abord : le choc d'une mesure et ses effets induits rangés entre l'État, "
+        "les ODAC, les APUL et les ASSO, et dans les ASSO par branche (Insee t. 3.203 à "
+        "3.212 ; `jumeau.financement.comptes`)"),
+    "compensation_exonerations": (
+        "qui paie au bout : la perte de recette d'une branche de la Sécurité sociale que "
+        "l'État compense par un transfert (CSS, art. L131-7 ; compensée, non compensée, ou "
+        "θ quand l'issue est incertaine)"),
+    "financement_annonce": (
+        "le financement que le programme annonce, chiffré en hypothèse déclarée et sourcée "
+        "par sa citation, ou le trou qu'il laisse (`jumeau.financement.annonce`)"),
+})
+#: Les canaux comptables que `jumeau.financement.comptes.decomposer` calcule après la
+#: trajectoire (D-487) : la cascade les montre calculés, sans bloc. `financement_annonce`
+#: n'en est pas : il entre comme des lois hypothétiques (`financement.annonce`).
+COMPTABLES = frozenset({"financement_sous_secteurs", "compensation_exonerations"})
+
+
+# --------------------------------------------------------------------- travail (D-478)
+CANAUX.update({
+    "smic_diffusion": (
+        "la diffusion d'une hausse du Smic aux salaires de 1 à 1,5 Smic (Koubi et Lhommeau, "
+        "Insee 2007), son coût et les allègements qu'elle reprend, par tranche de salaire, "
+        "et leur masse salariale (bloc `travail`)"),
+    "cout_travail_smic": (
+        "le salaire brut que la loi d'une hausse du Smic relève, comme un coût du travail "
+        "ciblé que lisent l'emploi et les prix (bloc `travail`)"),
+    "incidence_cotisations": (
+        "la part d'une variation de cotisations salariales ou employeurs qui finit sur le "
+        "salaire net à moyen terme, par tranche (Bozio-Wasmer, tableau 4.2), que lit le "
+        "bloc `salaires` (bloc `travail`)"),
+})
 
 def declares(bloc: Any) -> tuple[tuple[str, str], ...]:
     """Les paires (canal, instrument) qu'un bloc porte : les siennes et celles de Mésange

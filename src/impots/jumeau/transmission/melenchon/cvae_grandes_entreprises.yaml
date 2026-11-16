@@ -1,0 +1,79 @@
+schema: 1
+mesure: cvae_grandes_entreprises
+candidat: melenchon
+libelle: Rétablissement de la CVAE sur les plus grandes entreprises
+sorte: hypothese
+source:
+  citation: « rétablissement de la CVAE sur les plus grandes entreprises (3 milliards) »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: aucun taux ni seuil ; le programme du 6 novembre 2026 remplace la CVAE par un impôt
+    progressif selon le chiffre d'affaires et l'empreinte écologique
+  couche: null
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: autre
+- qui: apu:etat
+  sens: paie
+  par: autre
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: salariés, clients, actionnaires
+  texte: Un impôt sur les bénéfices retombe pour partie sur les salaires ; un impôt sur le
+    chiffre d'affaires, en cascade, sur les prix.
+  source: 'Fuest, Peichl et Siegloch (2018), « Do higher corporate taxes reduce wages ? »,
+    American Economic Review 108(2) : environ la moitié de l''impôt local sur les bénéfices
+    retombe sur les salaires (Allemagne) ; Martin et Trannoy (2019), « Les impôts sur (ou
+    contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
+    la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses:
+- texte: Le montant tombe sur la CVAE (D29).
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
+    sur l’activité).'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 3.0
+    sens: recette
+    horizon: loi de finances 2027
+    citation: « rétablissement de la CVAE sur les plus grandes entreprises (3 milliards) »
+    url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  chocs:
+    apu_r_d2: -3.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: cvae
+  inclus_dans: null

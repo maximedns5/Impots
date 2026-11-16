@@ -1,0 +1,51 @@
+schema: 1
+mesure: l7_pensions_non_revalorisees
+candidat: lisnard
+libelle: Pas de revalorisation des pensions au-dessus d'un seuil
+sorte: parametre
+source:
+  citation: « Ne pas revaloriser, à titre d'exemple, les pensions de retraite supérieures
+    à 2 200 euros » (texte de la page)
+  url: https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/
+  date: '2026-10-27'
+levier:
+  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  parametre: null
+  valeur: null
+  enonce: '> 2 200 € (27/10/2026) ; > 2 000 €/mois (29/11/2025) : les deux se contredisent'
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: retraite
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les retraités et futurs retraités
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les régimes et les actifs
+  texte: Le solde des régimes et l'emploi des seniors bougent.
+  source: 'Conseil d''orientation des retraites, rapport annuel (juin 2025) : le solde des
+    régimes selon l''âge, la durée et l''indexation'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- droits_retraite
+- offre_travail
+- consommation_menages
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'La revalorisation des pensions année par année, et sa coupure au-dessus d''un seuil,
+    n''est pas dans le moteur : les pensions de la population sont des données. (porte « indexation
+    »)'

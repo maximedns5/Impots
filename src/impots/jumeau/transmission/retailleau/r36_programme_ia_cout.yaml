@@ -1,0 +1,75 @@
+schema: 1
+mesure: r36_programme_ia_cout
+candidat: retailleau
+libelle: 'Programme « L''IA au service des Français » : investissement public nouveau'
+sorte: hypothese
+source:
+  citation: « l'investissement réellement nouveau et spécifique à l'intelligence artificielle
+    s'établit à environ 11,6 milliards d'euros, soit de l'ordre de 2,3 milliards par an. »
+  url: https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf
+  date: '2026-07-07'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: 11,6 Md€ sur le quinquennat, ≈ 2,3 Md€ par an (23 Md€ d'effort brut)
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 2300000000
+    chiffre_eur: null
+    trou_eur: 2300000000
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: Le montant tombe sur de l'investissement public (P51g).
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : investissement_public.'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2031, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 2.3
+    sens: depense
+    horizon: par an sur le quinquennat (11,6 Md€ au total)
+    citation: « l'investissement réellement nouveau et spécifique à l'intelligence artificielle
+      s'établit à environ 11,6 milliards d'euros, soit de l'ordre de 2,3 milliards par an.
+      »
+    url: https://republicains.fr/wp-content/uploads/2026/07/LR_IA.pdf
+  chocs:
+    apu_d_p51g: 2.3
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2031
+  instrument: investissement_public
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

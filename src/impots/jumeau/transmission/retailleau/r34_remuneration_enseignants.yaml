@@ -1,0 +1,78 @@
+schema: 1
+mesure: r34_remuneration_enseignants
+candidat: retailleau
+libelle: Revalorisation du traitement des professeurs (pas des primes), financée par la baisse
+  démographique
+sorte: hypothese
+source:
+  citation: « Nous alignerons ainsi intégralement le début de carrière sur la moyenne européenne,
+    soit 135 euros nets de plus chaque mois […] soit environ 300 euros nets supplémentaires
+    par mois. »
+  url: https://republicains.fr/wp-content/uploads/2026/09/LR_Ecole_vF.pdf
+  date: '2026-08-31'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: +135 € nets/mois en début de carrière ; ≈ +300 € nets/mois au cœur de la carrière
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: Revalorisation du traitement des professeurs (pas des primes), financée par la
+    baisse démographique
+  source: le libellé du relevé (`programmes/retailleau.json`), d'après https://republicains.fr/wp-content/uploads/2026/09/LR_Ecole_vF.pdf
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+  bilan:
+    cout_eur: 3000000000
+    chiffre_eur: null
+    trou_eur: 3000000000
+    dit: 'financement annoncé sans montant : tout le coût reste un trou, le jumeau le dit'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: Le montant tombe sur des rémunérations d'agents publics (D1).
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
+- texte: Montée en charge linéaire de 2027 à 2032, puis le montant tenu jusqu'en 2035.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 3.0
+    sens: depense
+    horizon: 'par an en fin de quinquennat : « plus de 3 milliards d''euros par an » libérés
+      par la baisse du nombre d''élèves, que le parti affecte à cette revalorisation'
+    citation: « libérer plus de 3 milliards d'euros par an en fin de quinquennat, pour financer
+      intégralement cette revalorisation sans un euro d'impôt nouveau »
+    url: https://republicains.fr/wp-content/uploads/2026/09/LR_Ecole_vF.pdf
+  chocs:
+    apu_d_d1: 3.0
+  profil: rampe
+  debut: 2027
+  plein: 2032
+  fin: 2035
+  instrument: depense_publique
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

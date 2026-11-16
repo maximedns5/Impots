@@ -1,0 +1,29 @@
+schema: 1
+mesure: lp29_surprofits
+candidat: le_pen
+libelle: Taxation exceptionnelle des surprofits (TotalEnergies)
+sorte: sans_choc
+source:
+  citation: il est normal qu'elle puisse contribuer à l'effort national par une taxation exceptionnelle
+    sur les surprofits qu'elle a réalisés
+  url: https://www.sudradio.fr/societe/surtaxe-des-surprofits-de-totalenergies-normale-pour-le-pen-pas-la-priorite-pour-bardella
+  date: '2026-04-29'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: Temporaire, liée à une crise ; pas de taux
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une taxe exceptionnelle sans taux ni assiette. (porte « vague »)

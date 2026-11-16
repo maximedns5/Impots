@@ -1,0 +1,72 @@
+schema: 1
+mesure: r21_c3s_cvae_forfait_social_cfe
+candidat: retailleau
+libelle: Suppression de la C3S et de la CVAE ; forfait social maintenu à 20 % sur la participation
+  légale, supprimé sur l'intéressement, la participation supra-légale et l'épargne retraite
+  individuelle ; part industrielle de la CFE exonérée ; CIR sanctuarisé
+sorte: chiffree
+source:
+  citation: '« Contribution sociale de solidarité des sociétés (C3S, 5,3 milliards d''euros)
+    : suppression intégrale »'
+  url: https://republicains.fr/wp-content/uploads/2026/02/LR_Produire_Plus_LIVRET.pdf
+  date: '2026-02-18'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: c3s_taux, cvae_echelle
+  valeur:
+    c3s_taux: 0.0
+    cvae_echelle: 0.0
+  enonce: C3S = 0 ; CVAE = 0 ; forfait social 20 % / 0 % ; CFE industrielle = 0
+  couche: entreprises
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: cvae
+- qui: apu:apul
+  sens: paie
+  par: impots_production_entreprises
+  note: la CVAE est affectée aux collectivités, compensée par une fraction de TVA depuis 2021
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: clients et salariés
+  texte: Un impôt de production pèse sur la compétitivité et les prix.
+  source: 'Martin et Trannoy (2019), « Les impôts sur (ou contre) la production », Note du
+    CAE n° 53 : les impôts sur le chiffre d''affaires et la valeur ajoutée se reportent en
+    cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 6547352194
+    chiffre_eur: null
+    trou_eur: 6547352194
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses:
+- texte: 'La C3S (0,16 % en 2026) et la CVAE sont supprimées sur le droit de 2026, comme dans
+    la mesure de David Lisnard qui supprime ces deux impôts, avec les mêmes plages. La mesure
+    n''est chiffrée qu''en partie : le forfait social maintenu à 20 % sur la participation
+    légale est le droit de 2026 et ne change rien, mais sa suppression sur l''intéressement,
+    la participation supra-légale et l''épargne retraite, une baisse de recette, n''a pas
+    de bouton et n''est pas chiffrée ; l''exonération de la part industrielle de la CFE non
+    plus. Le coût affiché est celui de la C3S et de la CVAE seules.'
+  source: le chiffrage de la mesure (`programmes/retailleau.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe
+  rapport: reports/etudes/presidentielle_retailleau/mesures/r21_c3s_cvae_forfait_social_cfe/predictif_pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe.json

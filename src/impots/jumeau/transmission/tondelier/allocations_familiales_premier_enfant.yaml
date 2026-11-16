@@ -1,0 +1,28 @@
+schema: 1
+mesure: allocations_familiales_premier_enfant
+candidat: tondelier
+libelle: Allocations familiales d'un même montant dès le premier enfant
+sorte: sans_choc
+source:
+  citation: « Réformer les allocations familiales pour attribuer un même montant dès le premier
+    enfant. »
+  url: https://marinetondelier.fr/s/livret-enfance-vf.pdf
+  date: '2026-09-17'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le montant par enfant n'est pas énoncé. (porte « vague »)

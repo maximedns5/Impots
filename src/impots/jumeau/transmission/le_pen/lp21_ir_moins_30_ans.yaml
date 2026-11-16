@@ -1,0 +1,67 @@
+schema: 1
+mesure: lp21_ir_moins_30_ans
+candidat: le_pen
+libelle: Exonération d'impôt sur le revenu des moins de 30 ans
+sorte: chiffree
+source:
+  citation: 'Pas de citation directe. Texte de LCP : « propose d''exonérer les jeunes de moins
+    de 30 ans d''impôt sur le revenu, jusqu''à quatre fois le Smic »'
+  url: https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut
+  date: '2026-10-06'
+levier:
+  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  parametre: ir_exoneration_jeunes_age, ir_exoneration_jeunes_plafond_smic
+  valeur:
+    ir_exoneration_jeunes_age: 30
+    ir_exoneration_jeunes_plafond_smic: 4.0
+  enonce: Jusqu'à 4 SMIC
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: ir
+- qui: apu:etat
+  sens: paie
+  par: impot_sur_le_revenu
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les ménages redevables
+  texte: L'IR reste sur le ménage ; il répond par son offre de travail et sa consommation.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 8655462813
+    chiffre_eur: null
+    trou_eur: 8655462813
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
+canaux:
+- consommation_menages
+- offre_travail
+hypotheses:
+- texte: 'Les salaires des moins de 30 ans au 1er janvier de l''année des revenus sortent
+    du revenu imposable jusqu''à 4 SMIC bruts annuels. « Jusqu''à quatre fois le Smic » se
+    lit comme un abattement : le salaire au-delà reste imposé, sans falaise (l''autre lecture,
+    tout imposé au-delà, n''est pas codée). Le SMIC est brut, le candidat ne le dit pas ;
+    4 SMIC nets feraient 3,17 SMIC bruts, dans la plage. Les revenus des non-salariés, le
+    chômage et les pensions ne sont pas exonérés ; les prestations, qui lisent le salaire
+    entier, ne bougent pas. Un jeune rattaché au foyer de ses parents allège l''impôt de ce
+    foyer. Plage du plafond : de 0 (la mesure retirée) à 4 SMIC prolongés de la moitié de
+    l''écart (6). Contre le droit de 2026.'
+  source: le chiffrage de la mesure (`programmes/le_pen.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_le_pen_lp21_ir_moins_30_ans
+  rapport: reports/etudes/presidentielle_le_pen/mesures/lp21_ir_moins_30_ans/predictif_pres2027_le_pen_lp21_ir_moins_30_ans.json

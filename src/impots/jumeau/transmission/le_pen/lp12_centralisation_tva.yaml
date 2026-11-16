@@ -1,0 +1,28 @@
+schema: 1
+mesure: lp12_centralisation_tva
+candidat: le_pen
+libelle: Centralisation des recettes de TVA ; pas de dépense reconduite sans visa
+sorte: sans_choc
+source:
+  citation: Chaque année, l'Etat transférera aux collectivités territoriales et à la Sécurité
+    Sociale les ressources que le Parlement estime nécessaire à leur équilibre
+  url: https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f
+  date: '2026-10-06'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: Non chiffré
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une organisation des finances publiques, sans taux ni montant. (porte « vague »)

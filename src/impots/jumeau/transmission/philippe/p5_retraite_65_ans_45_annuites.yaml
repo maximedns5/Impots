@@ -1,0 +1,77 @@
+schema: 1
+mesure: p5_retraite_65_ans_45_annuites
+candidat: philippe
+libelle: Âge légal porté à 65 ans et durée de cotisation à 45 annuités, d'abord en reprenant
+  le calendrier 2023 (64 ans, 43 ans)
+sorte: hypothese
+source:
+  citation: « Il est temps de parler des retraites sans faux semblants » ; 65 ans et 45 annuités
+    « en moins de 10 ans »
+  url: https://www.publicsenat.fr/actualites/politique/retraites-edouard-philippe-sort-du-bois-et-propose-un-age-de-depart-a-65-ans
+  date: '2026-09-29'
+levier:
+  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  parametre: null
+  valeur: null
+  enonce: 65 ans et 45 annuités « en moins de 10 ans »
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: retraite
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les retraités et futurs retraités
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les régimes et les actifs
+  texte: Le solde des régimes et l'emploi des seniors bougent.
+  source: 'Conseil d''orientation des retraites, rapport annuel (juin 2025) : le solde des
+    régimes selon l''âge, la durée et l''indexation'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- droits_retraite
+- offre_travail
+- consommation_menages
+- financement_sous_secteurs
+hypotheses:
+- texte: Le montant tombe sur des pensions (prestations en espèces, D62), aux ménages au prorata
+    des pensions.
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
+- texte: Montée en charge linéaire de 2027 à 2035, puis le montant tenu jusqu'en 2035.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 30.0
+    sens: economie_depense
+    horizon: par an, une fois 65 ans et 45 annuités atteints (« en moins de 10 ans ») ; dont
+      10 Md€ pour le système de retraite et 20 Md€ pour les finances publiques
+    citation: 'Pas de citation directe. L''inventaire relève : ses équipes estiment environ
+      30 Md€ par an, dont 10 Md€ pour le système de retraite et 20 Md€ pour les finances publiques
+      (JDN).'
+    url: https://www.journaldunet.com/business/action-publique/1555605-edouard-philippe-devoile-son-projet-de-reforme-des-retraites-pour-la-presidentielle-2027-prevoyant-un-depart-a-65-ans-et-45-annuites/
+  chocs:
+    apu_d_d62: -30.0
+  profil: rampe
+  debut: 2027
+  plein: 2035
+  fin: 2035
+  instrument: depense_publique
+  menages_par: retraite
+  entreprises_par: null
+  inclus_dans: null

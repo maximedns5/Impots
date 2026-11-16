@@ -1,0 +1,45 @@
+schema: 1
+mesure: lp11_effectifs_publics
+candidat: le_pen
+libelle: Réduction des effectifs publics
+sorte: parametre
+source:
+  citation: 'Pas de citation directe. Texte de l''AFP : « réduits d''au moins 200.000 postes
+    en cinq ans, a précisé Jean-Philippe Tanguy »'
+  url: https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net
+  date: '2026-10-06'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: Au moins 200 000 postes en cinq ans (collectivités, agences, organismes)
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Les effectifs publics sont une dépense que le moteur ne microsimule pas. (porte
+    « depense_publique »)
