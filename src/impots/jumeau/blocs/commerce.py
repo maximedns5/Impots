@@ -480,7 +480,7 @@ class Commerce:
         if boucle_prix is not None:
             self.prix = (*PRIX, "prix_c_menages")
             self.lit = (*Commerce.lit, "pib", "remunerations", "effet_prix_pib",
-                        "va_non_marchande")
+                        "va_non_marchande", "cout_travail_smic")
             self.ecrit = (*Commerce.ecrit, *BOUCLE)
             self.thetas = (*Commerce.thetas, thetas.PRIX_DIFFUSION.cle)
             self.remplace = (*Commerce.remplace, "prix_production")
@@ -525,7 +525,9 @@ class Commerce:
               else {})
         d1: dict[str, Any] = {}
         for (origine, m), v in etat.de("remunerations").items():
-            if origine == "salaires":
+            # La masse salariale marchande : celle des salaires, et la diffusion d'une
+            # hausse du Smic (bloc `travail`, D-478).
+            if origine in ("salaires", "travail"):
                 d1[m] = d1.get(m, 0.0) + v
         zero = np.zeros(ctx.n)
         out = {}
@@ -555,6 +557,10 @@ class Commerce:
             for nom in COUTS:
                 for m, v in e.par_mesure(nom).items():
                     c[m] = c.get(m, 0.0) + v
+            if self.boucle is not None and e.present("cout_travail_smic"):
+                # Le salaire brut que la loi du Smic relève (D-478) : un coût.
+                for m, v in e.par_mesure("cout_travail_smic").items():
+                    c[m] = c.get(m, 0.0) - v
             for m, par_an in self.impots_production.items():
                 if annee in par_an:
                     c[m] = c.get(m, 0.0) - float(par_an[annee])

@@ -94,6 +94,9 @@ class Mesure:
     """{année : s} : la part de ΔD1 des APU de l'année qui fait des emplois publics,
     quand la mesure la porte elle-même (D-418) : 1 pour des créations de postes, 0 pour
     un point d'indice (tout en traitements). Absente, le bloc `emploi_public` lit θ."""
+    travail: Mapping[int, Mapping[str, Any]] | None = None
+    """{année : {"smic": coefficient, "passe": bool}} : une hausse du Smic que lit le bloc
+    `travail` (D-478) ; "passe", la loi est déjà dans la passe de la première année."""
 
     def __post_init__(self) -> None:
         if not self.identifiant:

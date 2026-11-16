@@ -627,7 +627,8 @@ class Emploi(_Base):
     ecrit = CHAMPS_TRAVAIL
     thetas = (thetas.EMPLOI_COUT, *thetas.OFFRE_TRAVAIL)
     remplace = ("emploi",)
-    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee", *LIT_PUBLIC)
+    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee", *LIT_PUBLIC,
+                "cout_travail_smic")
 
     def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
         self._debut(ctx)
@@ -649,6 +650,12 @@ class Emploi(_Base):
                    for j in range(k + 1)]
             cible = [self._impulsion(ctx, j, "cotisations_employeurs_ciblees", ident)
                      for j in range(k + 1)]
+            if self.prix:
+                # Le salaire brut que la loi d'une hausse du Smic relève (bloc `travail`,
+                # D-478) : un coût ciblé, au profil des non qualifiés.
+                cible = [c + self._garde(ctx, j, ("smic", ident), lambda j=j, ident=ident: _de(
+                    self._etat(ctx, j), "cout_travail_smic", ident, ctx.n)
+                    / self._ref(ctx, j).d1) for j, c in enumerate(cible)]
             # Le coût réel du travail : le coût nominal déflaté par le prix de valeur
             # ajoutée, nul sans la boucle prix-salaires (D-414).
             cout = [ec.w + t - ec.pva for ec, t in zip(chemin, tau, strict=True)]
@@ -673,7 +680,9 @@ class Salaires(_Base):
              "apu_d_d62")
     thetas = (thetas.SALAIRES_CHOMAGE,)
     remplace = ("salaires",)
-    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee", *LIT_PUBLIC)
+    lit_prix = ("effet_prix_pib", "ecart_prix_valeur_ajoutee", *LIT_PUBLIC,
+                "impulsion_cotisations_employeurs", "impulsion_cotisations_employeurs_ciblees",
+                "incidence_cotisations_salaries", "incidence_cotisations_employeurs")
 
     def preparer(self, entrees: Entrees, mesures: Sequence[Any]) -> None:
         verifier_menages(mesures, entrees.annees)
@@ -696,10 +705,21 @@ class Salaires(_Base):
                     for j in range(k + 1)]
             smic = [float(choc_menages(m, ctx.annee - k + j).get("smic", 0.0))
                     for j in range(k + 1)]
+            # L'incidence des cotisations (bloc `travail`, D-478) : λ_s, λ_e la part de long
+            # terme qui finit sur le net ; nulles sans le bloc, le coin de Mésange.
+            lam_s = _de(ctx.courant, "incidence_cotisations_salaries", ident, ctx.n) \
+                if self.prix else 0.0
+            lam_e = _de(ctx.courant, "incidence_cotisations_employeurs", ident, ctx.n) \
+                if self.prix else 0.0
             w_k = (b * retard(du, tb["salaires_chomage"]) / 100.0
                    + retard(prod, tb["salaires_productivite"])
-                   + retard(coin, tb["salaires_productivite"])
+                   + (1.0 - lam_s) * retard(coin, tb["salaires_productivite"])
                    + retard(smic, tb["salaires_smic"]))
+            if self.prix and np.any(lam_e):
+                tau_e = [self._impulsion(ctx, j, "cotisations_employeurs", ident)
+                         + self._impulsion(ctx, j, "cotisations_employeurs_ciblees", ident)
+                         for j in range(k + 1)]
+                w_k = w_k - lam_e * retard(tau_e, tb["salaires_productivite"])
             if self.prix:
                 # L'indexation aux prix (Mésange, p. 65) : la boucle prix-salaires.
                 w_k = w_k + retard([ec.pva for ec in chemin], tb["salaires_prix"])
