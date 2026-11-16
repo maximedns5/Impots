@@ -34994,3 +34994,40 @@ Les trois changent le modèle ; rien n'en est fait ici.
 étiquettes du schéma au téléphone), A7 et Me8 (étiquettes d'étage collées, sources en
 chemin de fichier), Me5, Me7, Po5, Po7, J11, J12 (Pyodide hors du dépôt, à décider).
 Captures : `reports/lecteur/captures/d469/`.
+
+## D-470 — La passe d'avant la PR du but 25 : une rouge, la page du jumeau, corrigée
+
+Le 16 novembre, à la demande du propriétaire (« lance la passe et ouvre la PR quand c'est
+vert »), `make impact` et les 29 lourds ont tourné une fois sur `claude/but25` à 5ae669a.
+Ruff : vert. Les tests légers : 2 772 passés, 21 sautés, ceux de D-430 (les contrôles
+négatifs non écrits des boutons, une source absente de `data/raw/`, le clone
+superficiel). Les lourds : 28 verts, **1 rouge, `test_la_page_affiche_les_nombres_du_jumeau`**
+(une attente de 120 s dépassée dans Chromium, rejouée deux fois à l'identique). La recette
+s'est arrêtée là ; les chronomètres ont tourné ensuite, seuls.
+
+**Le diagnostic, action par action.** Le harnais attend un calcul après chaque action.
+Depuis D-469, la page grise le mode structurel avant le clic pour un candidat qu'il
+refuse : le candidat par défaut (Kazib) l'est, et entrer par les candidats met la page
+d'elle-même en mode réduit, sur la vieillie. La première étape cochait ensuite le mode
+réduit, déjà coché : rien ne change, rien ne calcule, l'attente expire. Le test n'avait
+pas tourné après D-469 (ses captures dataient de 13 h 19, le commit de 16 h 58). Puis,
+l'étape réordonnée, l'étape 5 attendait le mode réduit sur la figée ; or, depuis D-469
+(R12), chaque mode s'ouvre sur sa population, le réduit sur la vieillie.
+
+**Ce qui est changé.** Aucune assertion. Le scénario : à l'étape 1, le candidat est choisi
+avant le mode (toutes les actions changent alors quelque chose, l'état d'arrivée est le
+même : réduit, vieillie, Attal, multiplicateur à 0,8) ; à l'étape 5, la figée est choisie
+à la main après le passage en réduit, pour garder la combinaison que l'étape couvrait.
+Et un défaut de la page, trouvé en chemin : après une bascule de la page en réduit, une
+population choisie par le lecteur était défaite par le candidat suivant (retour au
+structurel, sur la figée). Le choix de la population par le lecteur vaut maintenant choix
+(`site_jumeau/page.js`, `site/jumeau.js` reconstruit, seul fichier du site qui change).
+Aucun nombre ne change.
+
+**La reprise.** Le lourd, seul : vert, 1 449 nombres égaux à ceux du calcul en Python,
+1 409 au bit, écart relatif maximal 1,7e-15 ; aucune tâche longue du fil principal. Les
+tests légers du jumeau et du site (41) : verts. `site verifier`, `site publiable` et
+`node ui/check.mjs` : verts. Les 28 autres lourds et les tests légers ne sont pas
+relancés : le changement ne touche que la page et ce test.
+Les chronomètres : 5 passés, en 35 s.
+

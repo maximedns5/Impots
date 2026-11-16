@@ -809,7 +809,10 @@
     window.jumeau.chargement = { pyodide_ms: pret.pyodide_ms, paquet_ms: pret.paquet_ms,
       total_ms: performance.now() - t0 };
     window.jumeau.pret = true;
-    for (const id of ["vue", "h-instrument", "h-montant", "h-debut", "h-fin"]) $(id).addEventListener("change", calculer);
+    for (const id of ["h-instrument", "h-montant", "h-debut", "h-fin"]) $(id).addEventListener("change", calculer);
+    // La population choisie par le lecteur après une bascule de la page vaut choix : un
+    // candidat suivant ne la défait plus (D-470).
+    $("vue").addEventListener("change", () => { basculeAuto = false; calculer(); });
     for (const id of ["candidat", "convention"]) $(id).addEventListener("change", () => { montrer(); calculer(); });
     // Chaque modèle s'ouvre sur la population de son calcul (R12, D-469) : la chaîne des
     // études sur la vieillie, celle des nombres publiés ; le jumeau sur la figée.

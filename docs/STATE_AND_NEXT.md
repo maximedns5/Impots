@@ -1,5 +1,18 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-16 update adds D-445 to D-470: goal 25, « the twin one understands », in six
+strands joined on `claude/but25` (D-468), one PR opened. The site reads as a ten-step path
+(D-450 to D-452); the population is shown, its 107 cells published (D-453); one measure is
+followed end to end, the studies summarised first (D-456, D-457); the twin page shows its
+annual step, the reach of each cursor, its ranges, and greys out what the structural mode
+refuses (D-459, D-469). The incremental engine (`IMPOTS_MOTEUR=rapide`) gives back the
+published numbers to the euro but meets 10 s only for the VAT measure (D-463 to D-465).
+The novice reader goes from 15 blocking remarks to 1 (D-466, D-467): the structural mode
+refuses 7 programmes of 11. `make impact` and the 29 heavy tests ran once (D-470): one red,
+the twin page test, broken by D-469's behaviour; fixed by reordering its scenario, no
+assertion touched, and a page fix. **What is left.** The owner merges, and decides the
+engine default, the structural mode's coverage and the points listed in D-469.
+
 The 2026-11-15 update adds D-431 to D-444: goal 23 closed and merged (PR #128), goal 24,
 « the learnt twin », in three strands joined on `claude/but24`, one PR prepared, not
 opened. **The strands.** Non-budget shocks (D-432, D-433: energy prices, interest rates

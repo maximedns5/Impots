@@ -1266,6 +1266,17 @@ D-466 et D-467 pour `lecteur` ; D-468 et la suite pour la jonction. D-446 et D-4
 à l'histoire longue (branche `claude/but25-histoire`) : son étape zéro n'identifie aucun
 θ (D-447).
 
+**Où il en est (16 novembre 2026, D-450 à D-470).** Les six volets sont joints sur
+`claude/but25` (D-468), la seconde lecture corrigée (D-469), la passe d'avant la PR
+faite (D-470 : une rouge, la page du jumeau, corrigée sans toucher une assertion). Le
+site se lit comme un chemin en dix étapes ; la population est montrée et ses 107 cellules
+publiées ; une mesure est suivie de bout en bout ; le jumeau dit son pas, ses curseurs,
+ses plages et ce qu'il refuse. Ce qui manque au /goal : le moteur rapide redonne les
+nombres à l'euro mais ne tient les 10 s que pour la TVA (14,4 s pour la tranche à 60 %,
+46,8 s pour les aides au logement, D-465) ; le lecteur garde une remarque bloquante (le
+mode structurel refuse 7 programmes sur 11, D-467, diagnostiqué en D-469). Le
+propriétaire décide du merge et de ces deux points.
+
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,

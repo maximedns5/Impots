@@ -129,8 +129,10 @@ ATTAL = "pres2027_attal_programme"
 ETAPES = [
     # La page s'ouvre sur une loi simple, dans le jumeau, population figée (D-459) : la
     # première étape choisit la mesure d'étude, la chaîne des études et la vue vieillie.
-    [{"cocher": "entree-candidat"}, {"cocher": "mode-reduit"}, {"choisir": ["vue", "vieillie"]},
-     {"choisir": ["candidat", ATTAL]}, {"theta": ["multiplicateur_macro", 0.8]}],
+    # Le candidat d'abord : celui par défaut, refusé par le jumeau, met déjà la page en
+    # mode réduit (D-469), et une case déjà cochée ne calcule rien (D-470).
+    [{"cocher": "entree-candidat"}, {"choisir": ["candidat", ATTAL]}, {"cocher": "mode-reduit"},
+     {"choisir": ["vue", "vieillie"]}, {"theta": ["multiplicateur_macro", 0.8]}],
     [{"cocher": "mode-structurel"}, {"choisir": ["vue", "figee"]},
      {"theta": ["idees_creations", 0.9]}, {"theta": ["jumeau_emploi_elasticite_cout", 0.2]},
      {"theta": ["survie_creations", 0.3]}],
@@ -138,8 +140,9 @@ ETAPES = [
     [{"cocher": "entree-hypothese"}, {"choisir": ["h-instrument", "depense_publique"]},
      {"remplir": ["h-montant", 12.5]}, {"choisir": ["h-debut", "2027"]},
      {"choisir": ["h-fin", "2033"]}, {"theta": ["commerce_elasticite_prix_exportations", 0.1]}],
-    [{"cocher": "mode-reduit"}, {"choisir": ["h-instrument", "impot_sur_le_revenu"]},
-     {"theta": ["multiplicateur_macro", 0.25]}],
+    # Le mode réduit s'ouvre sur la vieillie (R12, D-469) : la figée, choisie à la main.
+    [{"cocher": "mode-reduit"}, {"choisir": ["vue", "figee"]},
+     {"choisir": ["h-instrument", "impot_sur_le_revenu"]}, {"theta": ["multiplicateur_macro", 0.25]}],
 ]
 
 
