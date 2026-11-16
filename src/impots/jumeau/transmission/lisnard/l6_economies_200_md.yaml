@@ -45,8 +45,8 @@ hypotheses:
   source: non sourcée
 - texte: 'La variante de Mésange la plus proche : depense_publique.'
   source: non sourcée
-- texte: 'Le calendrier du candidat : 80 Md€ en 2027, 200 Md€ en 2032 ; la rampe linéaire
-    de la fiche part de 33.33 Md€ en 2027, pas de 80.'
+- texte: 'Le calendrier du candidat : 80 Md€ en 2027, 200 Md€ en 2032 ; linéaire entre ses
+    points, tenu ensuite.'
   source: « 80 milliards d'euros d'économies dès la première année, puis 200 milliards d'euros
     à l'horizon 2032 » (texte de la page)
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
@@ -67,7 +67,7 @@ montant:
     apu_d_d632: -18.0
     apu_d_p2: -24.0
     apu_d_d62: -92.0
-  profil: rampe
+  profil: calendrier
   debut: 2027
   plein: 2032
   fin: 2035
@@ -76,3 +76,6 @@ montant:
   entreprises_par: null
   inclus_dans: null
   menages_part: 0.46
+  calendrier:
+    2027: 80.0
+    2032: 200.0

@@ -43,8 +43,8 @@ hypotheses:
   source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
 - texte: 'La variante de Mésange la plus proche : depense_publique.'
   source: non sourcée
-- texte: 'Le calendrier du candidat : 3 Md€ en 2027, 9 Md€ en 2030 ; la rampe linéaire de
-    la fiche part de 2.25 Md€ en 2027, pas de 3.'
+- texte: 'Le calendrier du candidat : 3 Md€ en 2027, 9 Md€ en 2030 ; linéaire entre ses points,
+    tenu ensuite.'
   source: « Tarifs des produits de santé et amélioration de la prévention (9 Mds€ en 2030,
     3 Mds€ en 2027) »
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
@@ -60,7 +60,7 @@ montant:
     url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
   chocs:
     apu_d_d632: -9.0
-  profil: rampe
+  profil: calendrier
   debut: 2027
   plein: 2030
   fin: 2035
@@ -68,3 +68,6 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+  calendrier:
+    2027: 3.0
+    2030: 9.0

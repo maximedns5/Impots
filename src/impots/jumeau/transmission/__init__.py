@@ -44,7 +44,8 @@ LE SCHÉMA (version 1). Les sept clés de D-471, plus l'en-tête :
 * `montant` : {`origine` (rapport | hypothese | aucun) ; pour un rapport : `scenario`,
   `rapport` ; pour une hypothèse : `annonce` (le montant du candidat, Md€ par an, son sens,
   son horizon, sa source), `chocs` (catégories du compte des APU, Md€ par an en régime,
-  signe du moteur : un coût est positif), `profil` (constant | rampe), `debut`, `plein`,
+  signe du moteur : un coût est positif), `profil` (constant | rampe | calendrier : les
+  points {année : Md€} que le candidat donne, linéaire entre eux), `debut`, `plein`,
   `fin`, `instrument` (la variante de Mésange la plus proche, ou null), `menages_par`,
   `entreprises_par`, `inclus_dans` (une autre mesure qui le compte déjà) ; pour aucun :
   `manque`}.
@@ -59,6 +60,7 @@ from __future__ import annotations
 import dataclasses
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -254,8 +256,10 @@ def _valider_montant(sorte: str, m: Mapping[str, Any]) -> list[str]:
         inconnues = sorted(set(chocs) - set(_categories()))
         if inconnues:
             out.append(f"chocs sur des catégories inconnues {inconnues}")
-        if m.get("profil") not in ("constant", "rampe"):
-            out.append(f"profil « {m.get('profil')} » (constant | rampe)")
+        if m.get("profil") not in ("constant", "rampe", "calendrier"):
+            out.append(f"profil « {m.get('profil')} » (constant | rampe | calendrier)")
+        if m.get("profil") == "calendrier" and not m.get("calendrier"):
+            out.append("profil « calendrier » sans calendrier {année : Md€}")
         if not (isinstance(m.get("debut"), int) and isinstance(m.get("fin"), int)
                 and m["debut"] <= m.get("plein", m["debut"]) <= m["fin"]):
             out.append("années de l'hypothèse (debut ≤ plein ≤ fin) absentes")
@@ -305,11 +309,25 @@ class Entree:
 
 
 def annuel(m: Mapping[str, Any], annees: Sequence[int]) -> dict[int, float]:
-    """La part du montant de régime, chaque année : 1 de `debut` à `fin` (constant), ou
-    une rampe linéaire de `debut` à `plein`, puis 1 jusqu'à `fin`."""
+    """La part du montant de régime, chaque année : 1 de `debut` à `fin` (constant) ; une
+    rampe linéaire de `debut` à `plein`, puis 1 jusqu'à `fin` ; ou le calendrier du
+    candidat, linéaire entre ses points, son dernier point étant le régime."""
     debut, fin = int(m["debut"]), int(m["fin"])
     plein = int(m.get("plein", debut))
     out = {}
+    if m["profil"] == "calendrier":
+        pts = sorted((int(a), float(v)) for a, v in m["calendrier"].items())
+        regime = pts[-1][1]
+        for a in annees:
+            if a < pts[0][0] or a > fin:
+                continue
+            v = pts[-1][1]
+            for (a0, v0), (a1, v1) in pairwise(pts):
+                if a0 <= a <= a1:
+                    v = v0 + (v1 - v0) * (a - a0) / (a1 - a0)
+                    break
+            out[a] = v / regime
+        return out
     for a in annees:
         if a < debut or a > fin:
             continue

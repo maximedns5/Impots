@@ -541,7 +541,7 @@ def _hyp_declaree(code, profil, debut, plein, fin, cal, m):
     mont = {"origine": "hypothese",
             "annonce": {"montant_md": md, "sens": d["sens"], "horizon": d["horizon"],
                         "citation": d["source"]["citation"], "url": d["source"]["url"]},
-            "chocs": chocs, "profil": "constant" if profil == "calendrier" else profil,
+            "chocs": chocs, "profil": profil,
             "debut": debut, "plein": plein, "fin": fin,
             "instrument": c.get("instrument"), "menages_par": c.get("menages_par"),
             "entreprises_par": c.get("entreprises_par"), "inclus_dans": None}
@@ -554,16 +554,16 @@ def _hyp_declaree(code, profil, debut, plein, fin, cal, m):
                       f"{c.get('instrument') or 'aucune (le mode réduit ne lit aucun effet sur l’activité)'}.",
              "source": NS}]
     if profil == "calendrier":
-        # Le calendrier du candidat : les points qu'il donne, linéaire entre eux.
+        # Le calendrier du candidat : ses points, linéaire entre eux ; le dernier est le
+        # régime, sur lequel les chocs sont écrits.
         pts = sorted(cal.items())
-        mont["profil"] = "rampe"
+        mont["profil"] = "calendrier"
+        mont["calendrier"] = {a: v for a, v in pts}
         mont["chocs"] = {k: round(signe * pts[-1][1] * p, 6) for k, p in c["chocs"].items()}
         mont["debut"], mont["plein"] = pts[0][0], pts[-1][0]
-        hyps.append({"texte": f"Le calendrier du candidat : {pts[0][1]:g} Md€ en "
-                              f"{pts[0][0]}, {pts[-1][1]:g} Md€ en {pts[-1][0]} ; la rampe "
-                              f"linéaire de la fiche part de {pts[-1][1] / (pts[-1][0] - pts[0][0] + 1):.2f} Md€ "
-                              f"en {pts[0][0]}, pas de {pts[0][1]:g}.",
-                     "source": d["source"]["citation"]})
+        hyps.append({"texte": "Le calendrier du candidat : " + ", ".join(
+                         f"{v:g} Md€ en {a}" for a, v in pts) + " ; linéaire entre ses "
+                         "points, tenu ensuite.", "source": d["source"]["citation"]})
     elif profil == "rampe":
         hyps.append({"texte": f"Montée en charge linéaire de {debut} à {plein}, puis le "
                               f"montant tenu jusqu'en {fin}.", "source": NS})

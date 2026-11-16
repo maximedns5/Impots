@@ -43,8 +43,8 @@ hypotheses:
   source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
 - texte: 'La variante de Mésange la plus proche : depense_publique.'
   source: non sourcée
-- texte: 'Le calendrier du candidat : 15 Md€ en 2027, 29 Md€ en 2028 ; la rampe linéaire de
-    la fiche part de 14.50 Md€ en 2027, pas de 15.'
+- texte: 'Le calendrier du candidat : 15 Md€ en 2027, 29 Md€ en 2028 ; linéaire entre ses
+    points, tenu ensuite.'
   source: 15 milliards la première année (puis) 29 milliards en année pleine
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
   source: non sourcée
@@ -58,7 +58,7 @@ montant:
     url: https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net
   chocs:
     apu_d_d62: -29.0
-  profil: rampe
+  profil: calendrier
   debut: 2027
   plein: 2028
   fin: 2035
@@ -66,3 +66,6 @@ montant:
   menages_par: prestations
   entreprises_par: null
   inclus_dans: null
+  calendrier:
+    2027: 15.0
+    2028: 29.0
