@@ -35232,3 +35232,192 @@ cinq mesures prêtes et trente autres, et la trajectoire réduite, vieillie, de 
 −1,87 pt ; une hypothèse en rampe (Lisnard l6 : 80 Md€ en 2027, 200 en 2032) rend −80 et
 −200 Md€ de dépense ces années-là ; une fiche à un payeur inconnu ou à une hypothèse sans
 source est refusée.
+
+## D-475 — La ventilation : les prélèvements des ménages du lot 2, lus dans les rapports
+
+**Le problème** (D-469, J2, points 1 et 3). Le canal des créations somme chaque année ΔP :
+l'IS, sa contribution sociale, la CEBGE de la passe des entreprises, et trois prélèvements
+de la passe des ménages (les cotisations des employeurs nettes des allègements, E ; le PFU
+et les prélèvements sociaux du capital, K). `mesures.ventilations` ne rangeait que les
+premiers : le reste refusait la mesure au bloc `chocs_entreprises`. Aucune passe n'a tourné
+ici : tout est lu dans les rapports commités.
+
+**Ce que les rapports portent.** E deux fois, qui se recoupent à l'euro dans les onze
+programmes : la passe des ménages de la première année, Δ(salaire_super_brut −
+salaire_brut) (`aggregate._employer_contribution_delta`) ; et le chemin annuel, CHAQUE
+ANNÉE ET DANS CHAQUE VUE, l'impulsion « cotisations_employeurs » (ou « …_ciblees ») de
+Mésange, qui vaut −E (`shocks.instrument_deltas`). K se déduit : le reste de ΔP de la
+première année, une fois retirés l'IS, sa contribution, la CEBGE et E. Le rapport ne
+sépare pas le PFU des prélèvements sociaux du capital : K entre sous un nom qui le dit,
+`pfu_et_prelevements_sociaux_capital`, enregistré au signal « prelevements_capital_menages »
+(`champs.SIGNAUX_ENTREPRISES`) et à la catégorie D5 (`blocs.entreprises.CATEGORIE_APU`),
+les mêmes que les deux. Seul cas : Mélenchon, −10,259 Md€ (sa mesure du PFU seule :
+−10,249).
+
+**Qui paie E** (`ventilation.payeur`, lu dans les leviers de la passe). Un employeur privé,
+par défaut : E va aux entreprises, au signal « cotisations_patronales » que lisent les
+naissances et les fermetures. Les APU employeurs quand les seuls leviers sur la
+rémunération sont publics (`point_indice_revalorisation`, `point_indice_contractuels`) : E
+est alors payé par l'État employeur à ses caisses, que le coût de la passe rend déjà
+(`aggregate._salary_terms`) ; il ne va pas aux entreprises, et `non_portes` le dit (point
+d'indice de Mélenchon, +12,526 Md€ ; de Tondelier, +2,642). Les deux à la fois (un Smic et
+un point d'indice dans la même passe : Mélenchon et Tondelier) ne se séparent pas sans
+passe : la ventilation des entreprises est refusée, raison dite. Les employeurs publics
+d'un Smic seul sont comptés privés : une approximation, dite.
+
+**La correspondance** (`jumeau/parametres/ventilation.yaml`, lue par `ventilation`). Chaque
+module, son payeur, le bloc du jumeau qui le lit, le sous-secteur et la branche :
+
+| module | payeur | bloc | sous-secteur | branche |
+|---|---|---|---|---|
+| ir, cdhr | ménages | boucle : IR | État | — |
+| CSG (5 assiettes), pensions | ménages | boucle : CSG | ASSO | non portée |
+| crds, crds_mini | ménages | boucle : CSG ; décile | ASSO | CADES |
+| cotisations_salariales | ménages | boucle | ASSO | vieillesse si levier retraite |
+| tva_menages, accises_energie | ménages | boucle | partagé | non portée |
+| prélèvements sociaux du capital, K | ménages | entreprises : capital | partagé | — |
+| cvec | ménages | décile | ODAC (Crous) | — |
+| cotisations_employeurs (E) | employeurs | entreprises : cotisations | ASSO | non portée |
+| af, cf, asf, ars, paje, crds_pfam | ménages | décile | ASSO | famille |
+| aefa, ppa | ménages | décile | État | — |
+| rsa | ménages | décile | APUL (départements) | — |
+| aide_logement | ménages | décile | ODAC (FNAL) | — |
+| reduction_loyer_solidarite | ménages | décile | hors APU (bailleurs) | — |
+| aspa | ménages | décile | ASSO | vieillesse (FSV) |
+| retraite_imposable | ménages | décile | partagé | vieillesse |
+| ria, allocation_enfant, garantie_autonomie | ménages | décile | non porté | — |
+| impot_societes, cebge, cvae | entreprises | entreprises | État | — |
+| contribution_sociale_is | entreprises | entreprises | non sourcé | — |
+| c3s | entreprises | entreprises | ASSO | non portée |
+
+Les articles cités (CGI, CSS, CASF, CCH, ordonnance n° 96-50, lois de finances) le sont tels
+que le projet les connaît ; aucune page n'a été relue ici : chaque source le dit (« non
+relu »). La branche n'est jamais dans un rapport : il donne un total par module. Les
+prestations nouvelles des programmes n'ont pas de financeur dans le rapport : c'est la
+fiche de transmission (volet `carte`) et le volet `financement`.
+
+**La première année, par payeur** (`ventilation.premiere_annee`, écrite dans
+`reports/jumeau/ventilation_premiere_annee.json`, les 46 rapports qui ont une première
+année ; au signe d'un solde des APU, Md€, 2026, vue figée). Le non réparti est le coût de
+la passe moins la somme des lignes : surtout les salaires que la passe fait payer (le brut
+privé d'un Smic, la rémunération publique) et les prestations nouvelles sans module.
+
+| programme | coût | ménages | employeurs | entreprises | K | non réparti |
+|---|---:|---:|---:|---:|---:|---:|
+| Attal | 66,18 | −63,63 | — | −2,55 | — | 0,00 |
+| Bouamrane | 15,32 | +1,21 | −16,09 (privés) | — | — | −0,44 |
+| Kazib | 15,44 | +1,23 | −16,23 (privés) | — | — | −0,44 |
+| Le Pen | 21,41 | −21,41 | — | — | — | 0,00 |
+| Lisnard | 36,19 | −29,64 | — | −6,55 | — | 0,00 |
+| Mélenchon | 88,98 | −44,47 | −14,15 (mêlés) | — | −10,26 | −20,10 |
+| Philippe | 46,57 | −46,57 | — | — | — | 0,00 |
+| Retailleau | 48,89 | −38,04 | −4,30 (privés) | −6,55 | — | 0,00 |
+| Roussel | 32,97 | −2,40 | −29,46 (privés) | — | — | −1,10 |
+| Ruffin | 33,16 | −14,12 | −18,50 (privés) | — | — | −0,54 |
+| Tondelier | 18,17 | +2,05 | −13,61 (mêlés) | — | — | −6,61 |
+
+Les ménages ne sont par décile que pour leur total (le rapport ne donne pas le décile d'un
+module).
+
+**Le code.** `jumeau/ventilation.py` (nouveau) : `employeurs_lus`, `payeur`, `completer`
+(appelé par `mesures.ventilations` là où il refusait), `etendre` (D-476), `premiere_annee`
+et `tous`, publics pour les volets `travail`, `financement` et `cascade`. Dans
+`mesures.py`, deux appels localisés ; l'`etendre` de D-414 est remplacé par celui de
+`ventilation` (les mêmes parts, E lu). Aucun nombre publié ne change.
+
+## D-476 — La vue vieillie : la convention « parts_figee », et E lu dans chaque vue
+
+**La décision** (à confirmer par le propriétaire). La première année n'est passée que sur
+la population figée (D-412) ; aucune passe sur la vieillie n'est faite ici. Avec la
+convention demandée (`choix["convention"]`, la même case de la page que D-414), la vue
+vieillie est ventilée par la convention nommée « parts_figee » (`CONVENTION_VIEILLIE`),
+première année comprise, et marquée sur chaque nombre qu'elle fait (`Mesure.conventions`,
+`navigateur._conventions` rend sa définition, `ventilation.TEXTES`).
+
+**Les équations** (`ventilation.etendre`, pour la vue v et chaque année t qu'elle ventile ;
+la vue figée suit les mêmes, années après la première, sous « parts_premiere_annee ») :
+
+* E_{t,v} lu : −Σ des impulsions « cotisations employeurs » du chemin, vue v ;
+* R_{t,v} = P_{t,v} − E_{t,v} (P la somme d'avant D-440, `prelevements_lus`) ;
+* X_{i,t,v} = s_i R_{t,v}, s_i = X_{i,1} / R_1 sur la première année figée, pour chaque
+  impôt autre que E (les cinq de la passe des entreprises et K) ; E_{t,v} aux entreprises
+  s'il est privé ;
+* les ménages : G_{d,t,v} = g_d C^m_{t,v}, g_d = G_{d,1} / C^m_1, C^m = coût + P − E − K +
+  E^p (le coût moins ce que paient les entreprises, plus E s'il est privé, que le coût
+  compte et le revenu des ménages non).
+
+E n'est plus réparti aux parts : il est lu, année par année, dans la vue. C'est mieux que
+la convention de D-414 là où le rapport le permet, et c'est la seule lecture vieillie que
+les rapports portent par impôt. Sans E ni K, les formules redonnent au bit les nombres de
+D-414 : les quatre programmes qui tournaient sur la figée (Attal, Le Pen, Lisnard,
+Philippe) gardent leur dette, leur solde et leur emploi à l'identique (relevé ci-dessous).
+
+**Ce qu'elle ne fait pas.** Elle tient la structure par impôt et par décile de 2026 figée
+sur dix ans de population vieillie ; le choc par décile des ménages d'une réforme du Smic
+reste absent (le volet `travail`). Le choix entre elle et une passe de la première année
+sur la vieillie reste au propriétaire : elle est déclarée, pas validée.
+
+**La page** (`site_jumeau`, sans reconstruire le site). `Session.structurel` lève les mêmes
+refus qu'avant, par les blocs ; seul ce qu'ils refusent a changé. `page.js` grise la
+vieillie du mode structurel seulement là où le relevé la refuse (`structurel-dispo`,
+`vieillie.avec`), au lieu de toujours ; `raison_structurel` lit la raison de la vieillie
+dans `non_portes` comme celle de la figée, et nomme les employeurs mêlés.
+
+## D-477 — Le mode structurel, programme par programme, après la ventilation
+
+Relevé le 16 novembre (une passe d'essai du jumeau, θ½, convention demandée ; le site n'est
+pas reconstruit). Années calculées, puis l'écart en 2035, la dernière année du jumeau
+(ANNEES s'arrête en 2035 : il n'y a pas de 2036 dans le jumeau) : dette en points de PIB,
+solde en Md€, emploi en milliers.
+
+| programme | figée avant → après | vieillie avant → après | dette fig. | dette vieil. |
+|---|---|---|---:|---:|
+| Attal | 10 → 10 | 0 → 10 | +17,016 (inchangé) | +20,006 |
+| Le Pen | 10 → 10 | 0 → 10 | +3,763 (inchangé) | +5,017 |
+| Lisnard | 10 → 10 | 0 → 10 | +6,208 (inchangé) | +7,748 |
+| Philippe | 10 → 10 | 0 → 10 | +8,141 (inchangé) | +7,517 |
+| Retailleau | 0 → 10 | 0 → 10 | +9,608 | +10,422 |
+| Bouamrane, Kazib, Roussel, Ruffin | 0 → 0 | 0 → 0 | — | — |
+| Mélenchon, Tondelier | 0 → 0 | 0 → 0 | — | — |
+
+Les soldes et l'emploi en 2035 : Attal −76,10 Md€ et +752,1 (figée, inchangés), −98,86 et
++949,0 (vieillie) ; Le Pen −17,37 et +71,4 (inchangés), −28,53 et +110,5 ; Lisnard −26,44
+et +104,1 (inchangés), −39,19 et +142,2 ; Philippe −37,95 et +161,6 (inchangés), −32,57 et
++141,7 ; Retailleau −41,70 et +274,1 (figée), −47,48 et +324,0 (vieillie).
+
+Cinq programmes sur onze tournent, sur les deux populations (quatre sur la figée seule
+avant). Sur les 46 mesures d'études de la page, 36 tournent dix ans sur la figée (30
+avant) et 36 sur la vieillie (aucune avant) : s'y ajoutent les mesures sans Smic de
+Mélenchon (point d'indice, PFU, exonérations au-delà de 2 Smic), de Tondelier (point
+d'indice) et la r13 de Retailleau.
+
+**Ce qui reste refusé, et pourquoi.**
+
+* **Le Smic** (Bouamrane, Kazib, Roussel, Ruffin, et les mesures Smic de Mélenchon, Ruffin,
+  Roussel, Tondelier) : les entreprises sont maintenant ventilées (E lu chaque année), mais
+  le choc par décile des ménages est retenu (D-412) et le bloc des ménages refuse une
+  impulsion sur leurs instruments sans lui. C'est le volet `travail` (le Smic réel
+  efficace) ; rien n'est contourné ici.
+* **Les employeurs mêlés** (Mélenchon, Tondelier) : la passe fait payer E à la fois par
+  des entreprises et par les APU (un Smic et un point d'indice ensemble), et le rapport ne
+  sépare pas. Les mesures seules le séparent à une interaction près (Tondelier :
+  −16,228 + 2,642 = −13,586 contre −13,606 ; Mélenchon : −12,82 contre −14,153) : une
+  convention possible, non prise, à décider. S'y ajoute le Smic.
+
+**Pour le volet `travail`** : E par année et par vue (`ventilation.employeurs_lus`), son
+payeur (`payeur`), la ventilation de la première année (`premiere_annee`). Le E public
+d'un point d'indice reste, comme avant, dans `Mesure.prelevements` et dans l'impulsion de
+Mésange « cotisations_employeurs » : il n'est retiré que des impôts des entreprises.
+
+**Les tests qui changent** (à réécrire avant la PR, D-471 ; aucun n'est touché ici) :
+`test_jumeau_navigateur.py` (Retailleau figée avec convention : 10 années, plus [] ;
+Attal vieillie avec convention : 10, plus 0) ; `test_jumeau_depuis_rapport.py` (Retailleau
+ventilé : E = −4,301 Md€ en 2026, plus refusé ; le Smic de Mélenchon : entreprises
+étendues, `conventions` non vide).
+
+**Les nombres qu'un test devra tenir.** E de Retailleau, 2026 figée, −4,301 Md€, égal à
+l'euro entre la passe et le chemin ; Σ des impôts ventilés = P_t à 1e-12 chaque année des
+deux vues ; K de Mélenchon −10,259 Md€ ; Attal, Le Pen, Lisnard, Philippe figée : les
+ventilations et les trajectoires identiques au bit à celles d'avant ; Retailleau figée en
+2035 : dette +9,608 pt, solde −41,70 Md€, emploi +274,1 milliers ; vieillie : +10,422,
+−47,48, +324,0 ; Attal vieillie : +20,006 pt.

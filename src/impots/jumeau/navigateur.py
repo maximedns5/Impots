@@ -652,7 +652,7 @@ def _indicateurs(traj: Any) -> list[tuple[str, str, str, np.ndarray]]:
 def _conventions(mesure: Any, calculees: Sequence[int]) -> dict[str, Any] | None:
     """Les années calculées qu'une convention nommée a ventilées, par axe, et sa
     définition : la page les marque à côté de chaque nombre de ces années (D-414)."""
-    from impots.jumeau.mesures import TEXTE_CONVENTION
+    from impots.jumeau.ventilation import TEXTES
 
     axes = {axe: sorted(a for a in annees if a in calculees)
             for axe, annees in (mesure.conventions or {}).items()}
@@ -660,7 +660,9 @@ def _conventions(mesure: Any, calculees: Sequence[int]) -> dict[str, Any] | None
     if not axes:
         return None
     noms = sorted({mesure.conventions[axe][a] for axe, a_ in axes.items() for a in a_})
-    return {"noms": noms, "definition": TEXTE_CONVENTION, "axes": axes,
+    # Deux conventions nommées : « parts_premiere_annee » (D-414) dans la vue figée,
+    # « parts_figee » (D-476) dans la vue vieillie ; chacune dit sa définition.
+    return {"noms": noms, "definition": " ; ".join(TEXTES[n] for n in noms), "axes": axes,
             "annees": sorted({a for a_ in axes.values() for a in a_})}
 
 

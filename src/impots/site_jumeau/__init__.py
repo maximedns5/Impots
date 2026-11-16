@@ -652,9 +652,6 @@ def page(d: dict[str, Any]) -> str:
 def raison_structurel(mesure: Any, vue: str) -> str:
     """Pourquoi le mode structurel ne calcule aucune année d'une mesure d'étude, en une
     ligne (J2, D-469), lue dans ce que la mesure ne porte pas (`non_portes`, D-412)."""
-    if vue != "figee":
-        return ("le rapport de l'étude ne répartit sa première année, par impôt et par "
-                "décile, que sur la population figée en 2026")
     np_ = mesure.non_portes or {}
     raisons = []
     m = re.search(r"([+-]\d+(?:\.\d+)?) Md€ de prélèvements des ménages",
@@ -664,9 +661,18 @@ def raison_structurel(mesure: Any, vue: str) -> str:
         raisons.append(f"{montant} Md€ de cotisations patronales, de PFU ou de "
                        "prélèvements sur le capital, en 2026, que le rapport ne répartit "
                        "pas impôt par impôt")
+    if "employeurs privés et par les APU employeurs" in np_.get("entreprises", ""):
+        raisons.append("des cotisations des employeurs que la passe fait payer à la fois "
+                       "par des entreprises et par les administrations (un Smic et un point "
+                       "d'indice ensemble), que le rapport ne sépare pas")
     if "réforme du Smic" in np_.get("menages", ""):
         raisons.append("une hausse du Smic, dont le jumeau ne sait pas lire l'effet sur "
                        "les salaires sans une hypothèse que l'étude ne donne pas")
+    if not raisons and vue != "figee":
+        # Sans la convention « parts_figee » (D-476), la vieillie n'a pas de ventilation.
+        return ("le rapport de l'étude ne répartit sa première année, par impôt et par "
+                "décile, que sur la population figée en 2026 ; la convention la porte "
+                "à la vieillie là où les parts de la figée existent")
     return " ; et ".join(raisons) or ("le rapport ne répartit pas ce qu'elle change impôt "
                                       "par impôt et décile par décile")
 

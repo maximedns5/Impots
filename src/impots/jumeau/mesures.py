@@ -184,9 +184,20 @@ class Mesure:
             non_portes["prelevements"] = note
         conventions: dict[str, dict[int, str]] = {}
         if convention is not None:
-            entreprises, menages, non_portes, conventions = etendre(
-                entreprises, menages, non_portes, premiere_annee, premiere=premiere,
-                annees=annees, couts=couts, prelevements=prelevements)
+            # D-475, D-476 : les cotisations des employeurs lues chaque année ; la vue
+            # vieillie aux parts de la première année figée (« parts_figee »).
+            from impots.jumeau import ventilation
+
+            if vue != VUE_PREMIERE_ANNEE and premiere_annee is not None:
+                p_f, c_f, _ = prelevements_lus(payload, VUE_PREMIERE_ANNEE)
+                entreprises, menages, non_portes = ventilations(
+                    payload, premiere_annee, vue=VUE_PREMIERE_ANNEE, premiere=premiere,
+                    annees=annees, prelevements=p_f, canal=c_f)
+                if note:
+                    non_portes["prelevements"] = note
+            entreprises, menages, non_portes, conventions = ventilation.etendre(
+                payload, premiere_annee, entreprises, menages, non_portes, vue=vue,
+                premiere=premiere, annees=annees, couts=couts, prelevements=prelevements)
         return cls(identifiant=identifiant, libelle=libelle, auteur=auteur,
                    origine=RAPPORT, annees=annees, impulsions=impulsions,
                    prelevements=prelevements, prelevements_canal=canal, couts=couts,
@@ -366,10 +377,15 @@ def ventilations(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] |
         par_impot = {i: float(deltas.get(i, 0.0) or 0.0) for i in noms}
         reste = canal[premiere] * EURO - sum(par_impot[i] for i in lus)
         if abs(reste) > EURO_PRES:
-            non_portes["entreprises"] = (
-                f"{reste / EURO:+.3f} Md€ de prélèvements des ménages que lit le lot 2 "
-                f"(cotisations patronales nettes, PFU, prélèvements sociaux du capital) en "
-                f"{premiere}, que le rapport ne ventile pas")
+            # Les prélèvements des ménages que lit le lot 2 (cotisations des employeurs,
+            # PFU, prélèvements sociaux du capital) : lus dans le rapport (D-475).
+            from impots.jumeau.ventilation import completer
+
+            complets, notes = completer(payload, premiere_annee, premiere=premiere,
+                                        par_impot=par_impot, reste=reste)
+            non_portes.update(notes)
+            if complets is not None:
+                entreprises = {premiere: complets}
         else:
             entreprises = {premiere: {i: v / EURO for i, v in par_impot.items()}}
 
@@ -398,100 +414,7 @@ def ventilations(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] |
 CONVENTION_PARTS = "parts_premiere_annee"
 TEXTE_CONVENTION = (
     "ventilé par la convention « parts_premiere_annee » (D-414) : le total de l'année du "
-    "chemin annuel aux parts de la première année figée, pas une passe")
-
-
-def etendre(entreprises: dict[int, Any] | None, menages: dict[int, Any] | None,
-            non_portes: dict[str, str], premiere_annee: Mapping[str, Any] | None, *,
-            premiere: int, annees: tuple[int, ...], couts: Mapping[int, float],
-            prelevements: Mapping[int, float]
-            ) -> tuple[dict[int, Any] | None, dict[int, Any] | None, dict[str, str],
-                       dict[str, dict[int, str]]]:
-    """La convention « parts_premiere_annee » (D-414), décidée par le responsable du
-    projet à la place d'une passe nouvelle par année.
-
-    LES TOTAUX DE CHAQUE ANNÉE sont ceux que le chemin annuel porte, dans la vue de la
-    mesure : P_t, la somme des prélèvements du canal des créations (recettes positives),
-    et le coût des ménages : C^m_t = coût_t + P_t quand la première année a une passe des
-    entreprises (le coût, signe du moteur, moins celui des entreprises, −P_t ; il porte
-    aussi ce que la passe des entreprises coûte hors des cinq impôts du canal, 59 € en
-    2026 pour le programme d'Attal), C^m_t = coût_t sinon (les prélèvements sont alors
-    ceux des ménages, dans leur coût).
-
-    LES PARTS sont celles de la première année figée : s_i = P_{i,1} / P_1 pour l'impôt i,
-    g_d = G_{d,1} / C^m_1 pour le décile d (G le choc par décile). Pour t > 1 :
-
-        P_{i,t} = s_i P_t,      G_{d,t} = g_d C^m_t
-
-    Ce n'est pas une passe : la structure des prélèvements et des gagnants d'une année
-    est tenue sur dix ans. Chaque nombre qu'elle fait est nommé dans `conventions`. Elle
-    est REFUSÉE là où les parts n'existent pas, et ce qui manque reste absent, dit dans
-    `non_portes` : une première année sans ventilation (une réforme du Smic, des
-    cotisations que le rapport ne ventile pas, la vue vieillie, un rapport sans sa
-    première année), un total de la première année nul quand une année suivante ne l'est
-    pas, un coût des ménages que le chemin ne sépare pas de celui des entreprises."""
-    conventions: dict[str, dict[int, str]] = {}
-    non_portes = dict(non_portes)
-    suivantes = [a for a in annees if a != premiere]
-    if not suivantes:
-        return entreprises, menages, non_portes, conventions
-    refus: list[str] = []
-
-    if entreprises is None:
-        refus.append("entreprises")
-        non_portes["entreprises"] = (f"{non_portes.get('entreprises', '')} ; la convention "
-                                     f"« {CONVENTION_PARTS} » n'a pas de parts").lstrip(" ;")
-    else:
-        total = sum(entreprises[premiere].values())
-        if total == 0.0 and any(prelevements.get(a, 0.0) for a in suivantes):
-            refus.append("entreprises")
-            non_portes["entreprises"] = (f"prélèvements nuls en {premiere}, pas en "
-                                         f"{suivantes} : pas de parts pour la convention")
-            entreprises = {premiere: entreprises[premiere]}
-        else:
-            parts = {i: (v / total if total else 0.0)
-                     for i, v in entreprises[premiere].items()}
-            entreprises = {premiere: entreprises[premiere], **{
-                a: {i: s * prelevements.get(a, 0.0) for i, s in parts.items()}
-                for a in suivantes}}
-            conventions["entreprises"] = dict.fromkeys(suivantes, CONVENTION_PARTS)
-
-    if menages is None:
-        refus.append("menages")
-        non_portes["menages"] = (f"{non_portes.get('menages', '')} ; la convention "
-                                 f"« {CONVENTION_PARTS} » n'a pas de parts").lstrip(" ;")
-    else:
-        passes = _passes(premiere_annee) if premiere_annee else {}
-        deciles = list(menages[premiere]["deciles"])
-        if "entreprises" in passes and entreprises is None:
-            # Des prélèvements des ménages mêlés à ceux des entreprises (des cotisations
-            # patronales que le rapport ne ventile pas) : le coût des ménages de chaque
-            # année ne se sépare pas de celui des entreprises.
-            cout = None
-        elif "entreprises" in passes:
-            cout = {a: couts[a] + prelevements.get(a, 0.0) for a in annees}
-        else:
-            cout = dict(couts)
-        if cout is None:
-            refus.append("menages")
-            non_portes["menages"] = (
-                "le chemin ne sépare pas, après la première année, le coût des ménages de "
-                "celui des entreprises (leurs prélèvements ne sont pas ventilés) : pas de "
-                "total pour la convention")
-        elif cout[premiere] == 0.0 and any(cout[a] for a in suivantes):
-            refus.append("menages")
-            non_portes["menages"] = (f"coût des ménages nul en {premiere}, pas en "
-                                     f"{suivantes} : pas de parts pour la convention")
-        else:
-            echelle = {a: (cout[a] / cout[premiere] if cout[premiere] else 0.0)
-                       for a in suivantes}
-            menages = {premiere: menages[premiere], **{
-                a: {"deciles": [g * echelle[a] for g in deciles]} for a in suivantes}}
-            conventions["menages"] = dict.fromkeys(suivantes, CONVENTION_PARTS)
-
-    if conventions:
-        non_portes.pop("annees", None)
-        if refus:
-            non_portes["annees"] = (f"{suivantes[0]} à {suivantes[-1]} : {', '.join(refus)} "
-                                    f"sans parts, absents ; le reste {TEXTE_CONVENTION}")
-    return entreprises, menages, non_portes, conventions
+    "chemin annuel aux parts de la première année figée, pas une passe ; les cotisations "
+    "des employeurs, elles, sont lues année par année (D-475)")
+#: Ces conventions s'appliquent dans `ventilation.etendre` (D-475, D-476), qui remplace
+#: l'`etendre` de D-414 : les mêmes parts, mais E lu chaque année, et la vue vieillie.

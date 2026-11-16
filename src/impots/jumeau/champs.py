@@ -345,8 +345,10 @@ SIGNAUX_ENTREPRISES = {
     "prelevements_production": ("CVAE et C3S", "D29 S11", ("cvae", "c3s")),
     "cotisations_patronales": ("Cotisations patronales, nettes des allègements", "D611",
                                ("cotisations_employeurs",)),
+    # Le troisième : les deux à la fois, quand le rapport ne les sépare pas (D-475).
     "prelevements_capital_menages": ("PFU et prélèvements sociaux du capital", "D5 S14",
-                                     ("pfu", "prelevements_sociaux_capital")),
+                                     ("pfu", "prelevements_sociaux_capital",
+                                      "pfu_et_prelevements_sociaux_capital")),
 }
 for _nom, (_lib, _code, _) in SIGNAUX_ENTREPRISES.items():
     _ajouter(Champ(_nom, f"Variation des prélèvements : {_lib}", MDE, _code,
