@@ -35,6 +35,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from impots import etude  # noqa: E402
 from impots.jumeau import transmission  # noqa: E402
+from impots.jumeau.financement import annonce  # noqa: E402
 
 NS = transmission.NON_SOURCEE
 
@@ -322,16 +323,20 @@ PRECISES = {
                        "part peut passer dans les salaires.", "source": f"{LMR} ; {BBG}"}],
         "canaux": ["emploi", "salaires", "cout_travail_tranche", "incidence_cotisations",
                    "compensation_exonerations", "financement_sous_secteurs"]},
-    "melenchon/point_indice_10": {
+    **{k: {
         "payeurs": [{"qui": "apu:etat", "sens": "paie", "par": "depense_publique"},
                     {"qui": "apu:apul", "sens": "paie", "par": "depense_publique"},
+                    {"qui": "apu:secu:maladie", "sens": "paie", "par": "depense_publique",
+                     "note": "les hôpitaux publics (fonction publique hospitalière), dans "
+                             "les ASSO (Insee, t. 3.212, D1)"},
                     {"qui": "menages", "sens": "recoit", "par": "salaire_net"}],
         "incidence": [{"horizon": "immediat", "qui": "les fonctionnaires", "texte":
                        "Statutaire : le traitement monte.", "source": FULLERTON},
                       {"horizon": "long", "qui": "les salariés du privé", "texte": "Un "
                        "effet d'entraînement sur les salaires privés.", "source": NS}],
         "canaux": ["emploi_public", "consommation_menages", "salaires",
-                   "financement_sous_secteurs"]},
+                   "financement_sous_secteurs"]}
+       for k in ("melenchon/point_indice_10", "tondelier/point_indice_inflation")},
     "le_pen/lp26_suppression_cvec": {
         "levier": {"texte": "Code de l'éducation, art. L841-5 : la contribution de vie "
                    "étudiante et de campus (CVEC), versée aux Crous"},
@@ -517,9 +522,34 @@ def _source_programme(m):
     return {"citation": s["citation"], "url": s["url"], "date": s.get("date")}
 
 
-def _financement(m, candidat):
+def _cout(sorte, m, montant):
+    """Le coût de la première année, en euros, positif pour un coût, ou None : celui du
+    rapport (`mechanical_frozen_eur` de sa première année) pour une chiffrée, le montant
+    déclaré pour une hypothèse qui coûte (`declare.sens`)."""
+    if sorte == "chiffree":
+        rapport = json.loads((ROOT / montant["rapport"]).read_text(encoding="utf-8"))
+        return float(rapport["years"][0]["mechanical_frozen_eur"])
+    if sorte == "hypothese" and m["declare"]["sens"] in annonce.COUTE:
+        return float(m["declare"]["montant_eur"])
+    return None
+
+
+def _financement(m, candidat, cout_eur=None):
     """Le financement que la mesure annonce elle-même, lu dans son libellé ou sa citation ;
-    celui du programme entier est l'affaire du volet `financement`."""
+    celui du programme entier est l'affaire du volet `financement`. Pour une mesure qui
+    coûte, `bilan` : le trou de `financement.annonce.financement` (D-482, jonction D-487),
+    sans mesure liée (la carte n'en choisit pas : le lien est au volet `financement`)."""
+    out = _annonce(m, candidat)
+    if cout_eur is not None and cout_eur > 0:
+        b = annonce.financement(m, cout_eur, ())
+        out["bilan"] = {"cout_eur": round(b["cout_eur"]), "chiffre_eur": b["chiffre_eur"],
+                        "trou_eur": round(b["trou_eur"]), "dit": b["dit"],
+                        "source": "jumeau.financement.annonce.financement (D-482), sans "
+                                  "mesure liée"}
+    return out
+
+
+def _annonce(m, candidat):
     motif = re.compile(r"financ|gagé|contrepartie", re.I)
     lieux = [(m["libelle"], f"le libellé du relevé (`programmes/{candidat}.json`), "
               f"d'après {m['sources'][0]['url']}")]
@@ -624,7 +654,7 @@ def construire(candidat, m, scenarios):
         "levier": levier,
         "payeurs": [] if vide else precise.get("payeurs", g["payeurs"]),
         "incidence": [] if vide else precise.get("incidence", g["incidence"]),
-        "financement": _financement(m, candidat),
+        "financement": _financement(m, candidat, _cout(sorte, m, montant)),
         "canaux": [] if vide else precise.get("canaux", g["canaux"]),
         "hypotheses": hyps, "montant": montant}
 

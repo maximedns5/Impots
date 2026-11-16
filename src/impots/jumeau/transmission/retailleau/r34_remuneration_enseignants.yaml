@@ -37,6 +37,12 @@ financement:
   source: le libellé du relevé (`programmes/retailleau.json`), d'après https://republicains.fr/wp-content/uploads/2026/09/LR_Ecole_vF.pdf
   chiffre: false
   note: le financement est énoncé, pas chiffré mesure par mesure
+  bilan:
+    cout_eur: 3000000000
+    chiffre_eur: null
+    trou_eur: 3000000000
+    dit: 'financement annoncé sans montant : tout le coût reste un trou, le jumeau le dit'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - demande_publique
 - emploi_public

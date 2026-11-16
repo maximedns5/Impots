@@ -187,6 +187,22 @@ mesures:
       asso.complementaires: reste
     source: "comme pres2027_attal_a16_droit_au_brut"
 
+  # Le point d'indice (D-487, jonction) : son choc sans impulsion (la hausse des
+  # rémunérations publiques) va aux payeurs que la fiche de la carte nomme (l'État, les
+  # APUL, les hôpitaux en ASSO, branche maladie), aux parts de la ligne D1 de 2025, et non
+  # à la clé des prélèvements (54 % aux ASSO, D-483).
+  pres2027_melenchon_point_indice_10:
+    reste: {ligne: apu_d_d1, fiche: melenchon/point_indice_10}
+    source: >-
+      Insee, comptes nationaux base 2020, t. 3.203, 3.204, 3.205, 3.212 (2025), ligne D1
+      (rémunération des salariés) par sous-secteur (`financement_sous_secteurs.yaml`) ;
+      les payeurs : la fiche de transmission (src/impots/jumeau/transmission/melenchon/
+      point_indice_10.yaml) ; les ODAC ne sont pas nommés par la fiche, leur part est
+      rendue aux autres (une approximation, dite)
+  pres2027_tondelier_point_indice_inflation:
+    reste: {ligne: apu_d_d1, fiche: tondelier/point_indice_inflation}
+    source: "comme pres2027_melenchon_point_indice_10"
+
 thetas:
   financement_a16_part_cnav:
     definition: >-

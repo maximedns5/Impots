@@ -126,6 +126,51 @@ def cle_depenses() -> dict[str, float]:
     return _normer({s: sum(float(lignes[n][s]) for n in noms) for s in SECTEURS})
 
 
+def payeurs_fiche(cle: str) -> tuple[str, ...]:
+    """Les comptes des APU qui paient une mesure, lus dans sa fiche de transmission (le
+    volet `carte`, `payeurs`, sens « paie ») : `apu:etat` → l'État, `apu:apul`, `apu:odac`,
+    `apu:secu:<branche>` → la branche des ASSO (D-487)."""
+    from impots.jumeau import transmission
+
+    candidat, mesure = cle.split("/")
+    out = []
+    for p in transmission.fiche(candidat, mesure)["payeurs"] or ():
+        qui = str(p["qui"])
+        if p["sens"] != "paie" or not qui.startswith("apu:"):
+            continue
+        compte = qui.removeprefix("apu:")
+        compte = f"asso.{compte.removeprefix('secu:')}" if compte.startswith("secu:") \
+            else compte
+        if compte not in comptes():
+            raise FinancementError(f"{cle} : payeur « {qui} » sans compte ({comptes()})")
+        out.append(compte)
+    if not out:
+        raise FinancementError(f"{cle} : la fiche ne nomme aucune APU qui paie")
+    return tuple(dict.fromkeys(out))
+
+
+def cle_reste(mesure: str | None, cote: str) -> dict[str, float]:
+    """La clé du choc statique d'une mesure que ses impulsions ne portent pas (`reste`).
+    Par défaut, la clé des prélèvements (recettes) ou des dépenses ; quand
+    `financement.yaml` (`mesures.<mesure>.reste`) nomme une ligne du compte et la fiche
+    de la mesure, les parts de cette ligne en 2025 restreintes aux payeurs que la fiche
+    nomme, renormées (D-487 : le point d'indice, payé par l'État, les APUL et les
+    hôpitaux, et non à la clé des prélèvements)."""
+    propre = ((parametres().get("mesures") or {}).get(mesure or "") or {}).get("reste")
+    if not propre:
+        return _comme_comptes(cle_prelevements() if cote == "recettes" else cle_depenses())
+    parts = parts_ligne(propre["ligne"])
+    payeurs = payeurs_fiche(propre["fiche"])
+    poids = {cp: parts[secteur(cp)] for cp in payeurs}
+    par_secteur: dict[str, int] = {}
+    for cp in payeurs:
+        par_secteur[secteur(cp)] = par_secteur.get(secteur(cp), 0) + 1
+    # Deux branches des ASSO nommées : la part des ASSO se partage, faute de mieux, à parts
+    # égales (dit) ; une seule : elle prend la part des ASSO.
+    poids = {cp: v / par_secteur[secteur(cp)] for cp, v in poids.items()}
+    return _normer(poids)
+
+
 def _comme_comptes(parts: Mapping[str, float]) -> dict[str, float]:
     """Des parts par sous-secteur en parts par compte (les ASSO au non ventilé)."""
     return {("asso.asso_non_ventile" if s == "asso" else s): v for s, v in parts.items()}
@@ -329,8 +374,7 @@ def decomposer(traj: Any, mesures: Sequence[Any], theta: Mapping[str, Any] | Non
                             c._ajouter("ecart", compte, "transferts_recus", k, t)
                             c.compensation.setdefault(
                                 compte, np.zeros((len(annees), n)))[k] += t
-                cle = (cle_prelevements() if cote == "recettes" else cle_depenses())
-                for s, v in _repartir(reste, _comme_comptes(cle)).items():
+                for s, v in _repartir(reste, cle_reste(m, cote)).items():
                     c._ajouter("ecart", s, cote, k, v)
         # ---- les intérêts de l'écart, au prorata de la dette accumulée de chaque compte
         d_int = var["interets_nets"] - ref["interets_nets"]

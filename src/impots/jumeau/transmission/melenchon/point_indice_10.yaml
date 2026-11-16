@@ -23,6 +23,11 @@ payeurs:
 - qui: apu:apul
   sens: paie
   par: depense_publique
+- qui: apu:secu:maladie
+  sens: paie
+  par: depense_publique
+  note: les hôpitaux publics (fonction publique hospitalière), dans les ASSO (Insee, t. 3.212,
+    D1)
 - qui: menages
   sens: recoit
   par: salaire_net
@@ -42,6 +47,12 @@ financement:
   source: null
   chiffre: false
   note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 11088845339
+    chiffre_eur: null
+    trou_eur: 11088845339
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - emploi_public
 - consommation_menages

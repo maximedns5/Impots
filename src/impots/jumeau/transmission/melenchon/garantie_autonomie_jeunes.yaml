@@ -47,6 +47,12 @@ financement:
     seule) »
   chiffre: false
   note: le financement est énoncé, pas chiffré mesure par mesure
+  bilan:
+    cout_eur: 35652154808
+    chiffre_eur: null
+    trou_eur: 35652154808
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - consommation_menages
 - offre_travail

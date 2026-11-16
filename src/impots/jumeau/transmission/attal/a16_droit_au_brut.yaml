@@ -75,6 +75,12 @@ financement:
   source: le libellé du relevé (`programmes/attal.json`), d'après https://attalpresident.fr/programme/mesures/droit-au-brut
   chiffre: false
   note: le financement est énoncé, pas chiffré mesure par mesure
+  bilan:
+    cout_eur: 63139065678
+    chiffre_eur: null
+    trou_eur: 63139065678
+    dit: 'financement annoncé sans montant : tout le coût reste un trou, le jumeau le dit'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - consommation_menages
 - offre_travail

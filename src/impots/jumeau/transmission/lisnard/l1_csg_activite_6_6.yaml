@@ -47,6 +47,12 @@ financement:
   source: null
   chiffre: false
   note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 25938490956
+    chiffre_eur: null
+    trou_eur: 25938490956
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - consommation_menages
 - offre_travail

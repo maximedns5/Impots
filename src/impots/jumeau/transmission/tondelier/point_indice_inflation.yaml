@@ -18,50 +18,47 @@ levier:
     que les enseignants (presse)
   couche: menages
 payeurs:
-- qui: entreprises
+- qui: apu:etat
   sens: paie
-  par: masse_salariale
+  par: depense_publique
+- qui: apu:apul
+  sens: paie
+  par: depense_publique
+- qui: apu:secu:maladie
+  sens: paie
+  par: depense_publique
+  note: les hôpitaux publics (fonction publique hospitalière), dans les ASSO (Insee, t. 3.212,
+    D1)
 - qui: menages
   sens: recoit
   par: salaire_net
 incidence:
 - horizon: immediat
-  qui: les employeurs
-  texte: Le coût du travail monte au bas de l'échelle.
+  qui: les fonctionnaires
+  texte: 'Statutaire : le traitement monte.'
   source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
     4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
     de l''offre et de la demande'
-- horizon: court
-  qui: les salariés voisins du Smic
-  texte: La hausse se diffuse aux salaires voisins, en s'amortissant.
-  source: Koubi et Lhommeau (2007), « Les effets de diffusion de court terme des hausses du
-    Smic dans les grilles salariales des entreprises de dix salariés ou plus sur la période
-    2000-2005 », Insee, Les salaires en France, édition 2007 ; Goarant et Muller (2011), «
-    Les effets des hausses du Smic sur les salaires mensuels dans les entreprises de 10 salariés
-    ou plus de 2006 à 2009 », Insee, Emploi et salaires, édition 2011
 - horizon: long
-  qui: les salariés peu qualifiés et les clients
-  texte: L'emploi au bas de l'échelle répond au coût ; les prix des services intensifs en
-    bas salaires montent.
-  source: 'Kramarz et Philippon (2001), « The impact of differential payroll tax subsidies
-    on minimum wage employment », Journal of Public Economics 82(1) (France) ; Fougère, Gautier
-    et Le Bihan (2010), « Restaurant prices and the minimum wage », Journal of Money, Credit
-    and Banking 42(7) (France) : une hausse du Smic passe dans les prix des services intensifs
-    en bas salaires'
+  qui: les salariés du privé
+  texte: Un effet d'entraînement sur les salaires privés.
+  source: non sourcée
 financement:
   annonce: null
   source: null
   chiffre: false
   note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 2332702795
+    chiffre_eur: null
+    trou_eur: 2332702795
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
-- salaires
-- emploi
-- prix_production
+- emploi_public
 - consommation_menages
-- smic_diffusion
-- cout_travail_smic
-- incidence_cotisations
-- compensation_exonerations
+- salaires
+- financement_sous_secteurs
 hypotheses:
 - texte: 'Le point d''indice indexé sur l''inflation, ce que dit le programme : la première
     année, il monte de l''inflation de l''année. L''inflation de 2026 est celle des hypothèses

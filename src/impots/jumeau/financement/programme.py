@@ -108,7 +108,8 @@ def mesure_seule(session: Any, cle: str, *, mode: str = "reduit", vue: str = "vi
                  financements: Sequence[Any] = ()) -> dict[str, Any]:
     """Une mesure d'étude, et ses financements (des `Mesure` déjà construites), par
     sous-secteur."""
-    m = session.mesure(cle, vue, "parts_premiere_annee" if mode == "structurel" else None)
+    m = (session.mesure_structurel(cle, vue, "parts_premiere_annee") if mode == "structurel"
+         else session.mesure(cle, vue))
     reg = session.thetas(mode, [m], session._modele(mode, m, cle)[2])
     th = {t["cle"]: 0.5 for t in reg if t["lu"]}
     th |= {"financement_a16_part_cnav": 0.5, "financement_compensation": 0.5}
