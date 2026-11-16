@@ -369,7 +369,7 @@ def page() -> Page:
          for c in cands])
     t2 = tableau(
         ["candidat", "lu par la boucle, vue figée", "non lu, vue figée",
-         "lu et non lu, vue vieillie (page 5)", "l'activité, en 2035 à θ½"],
+         "lu et non lu, vue vieillie (étape 7)", "l'activité, en 2035 à θ½"],
         [[e(c["candidat"]), e(cells[c["nom"]]["lu"]), e(cells[c["nom"]]["non_lu"]),
           e(f"lu {md(c['lu_vieillie'])} ; non lu {md(c['non_lu_vieillie'])}"),
           b(pt(c["activite"]), "L4", True)] for c in cands])

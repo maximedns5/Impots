@@ -18,6 +18,7 @@ import pytest
 from impots import etude, site
 from impots.population import cli
 
+SOURCE = re.compile(r'<span class="chiffre">.*?</span></span></span>', re.S)
 BADGE = re.compile(r'<span class="(?:nombre|cite)">.*?</span><a class="etage[^>]*>.*?</a>',
                    re.S)
 
@@ -94,29 +95,33 @@ def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
     for study in refusees:
         # Listée « chiffrée, puis refusée », avec sa raison, sans page ni lien (D-398).
         assert f"{study.nom}.html" not in built
-        assert f'href="{study.nom}.html"' not in built["index.html"]
-        assert (f"<li><strong>{html.escape(study.titre)}</strong> — chiffrée, puis refusée : "
-                f"{html.escape(study.refus)}</li>") in built["index.html"]
-        assert "ses\npasses n'ont pas tourné" not in built["index.html"].split(
+        assert f'href="{study.nom}.html"' not in built["etudes.html"]
+        # Dite en mots, la raison exacte repliée dessous (D-452) : listée, avec sa raison.
+        entry = built["etudes.html"].split(
+            f"<li><strong>{html.escape(study.titre)}</strong> — ")[1].split("</li>")[0]
+        assert entry.startswith("chiffrée, mais pas publiée")
+        assert html.escape(study.refus) in entry
+        assert "calculs n'ont pas été relancés" not in built["etudes.html"].split(
             html.escape(study.titre))[1].split("</li>")[0]
     for study in _chiffrees():
         assert f"{study.nom}.html" in built
         assert f'<a href="{study.nom}.html">{html.escape(study.titre)}</a>' \
-            in built["index.html"]
+            in built["etudes.html"]
     for study in _non_refaites():
         # Sans rapport ni page, listée comme non tournée, sans lien (D-403).
         assert not any(study.rapports.glob("*.json")), study.nom
         assert f"{study.nom}.html" not in built
-        entry = built["index.html"].split(
+        entry = built["etudes.html"].split(
             f"<li><strong>{html.escape(study.titre)}</strong> — ")[1].split("</li>")[0]
         assert re.sub(r"<[^>]+>", "", entry) == (
-            f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné.")
+            f"pas chiffrée dans la série actuelle : son chiffrage a été annoncé d'avance "
+            f"({study.preenregistrement}), mais ses calculs n'ont pas été relancés.")
 
 
 def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(built) -> None:
     """D-336 : les études ont tourné sur des commits et des moteurs différents ; l'accueil
     le dit avant toute comparaison, et chaque entrée donne son commit."""
-    index = built["index.html"]
+    index = built["etudes.html"]
     # Le message suit les rapports : présent s'ils tiennent sur plusieurs commits, absent
     # quand une série les a tous chiffrés sur un seul (D-338).
     # Une étude dont le chemin a tourné sur un autre commit que sa première année, joint
@@ -141,9 +146,14 @@ def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(buil
 
 def test_no_study_page_runs_a_script(built, monkeypatch) -> None:
     # The explorer runs a script (D-343), and the parcours pages that give a cursor
-    # (D-375), and the twin (D-415), held by their own tests.
+    # (D-375), the twin (D-415), « un ménage comme le mien » (D-453), and the page that
+    # compares the candidates, which took the parcours' two-choice table (D-468), held by
+    # their own tests.
+    from impots import site_mesure, site_population
+
     assert not any("<script" in text.lower() for name, text in built.items()
-                   if name not in (site.EXPLORER, "jumeau.html")
+                   if name not in (site.EXPLORER, "jumeau.html", site_mesure.COMPARER,
+                                   *site_population.SCRIPTEES)
                    and not name.startswith("parcours-"))
     monkeypatch.setattr(site, "STYLE", "<script>alert(1)</script>")
     with pytest.raises(site.SiteError, match="script"):
@@ -170,13 +180,16 @@ def test_each_graphic_says_its_source_and_its_etage(built) -> None:
             assert "<code>reports/" in caption and "impots.graphiques" in caption
 
 
-@pytest.mark.parametrize("name", ["index.html", "plfss2027.html",
+@pytest.mark.parametrize("name", ["etudes.html", "index.html", "plfss2027.html",
                                   "presidentielle_lisnard.html"])
 def test_every_amount_on_the_site_carries_its_etage(built, name) -> None:
     """Fails if a number reaches the site without its badge: remove every badged number,
     and no euro, point or share is left in the text."""
     page = _body(built[name])
-    assert BADGE.search(page)
+    # L'accueil (D-450) montre ses nombres par le chiffre sourcé : un badge d'étage dans
+    # sa provenance, qui s'ouvre au clic.
+    page = SOURCE.sub(" ", page)
+    assert BADGE.search(page) or name == "index.html"
     bare = html.unescape(re.sub(r"<[^>]+>", " ", BADGE.sub(" ", page)))
     assert not etude.AMOUNT.search(bare), etude.AMOUNT.search(bare)
 
@@ -247,10 +260,32 @@ def test_an_unrun_study_is_listed_without_a_page(tmp_path) -> None:
     files = site.build([study])
     assert "futur.html" not in files
     # The first D-xxx of a page links to the method page (D-357): read the text.
-    text = re.sub(r"<[^>]+>", "", files["index.html"])
-    assert f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné" in text
+    text = re.sub(r"<[^>]+>", "", files["etudes.html"])
+    assert (f"annoncé d'avance ({study.preenregistrement}), mais ses calculs n'ont pas "
+            "été relancés") in text
 
 
 def test_a_table_without_its_header_line_is_refused() -> None:
     with pytest.raises(site.SiteError, match="en-tête"):
         site.body(["| a | b |", "| c | d |"], etude.Nombres())
+
+
+def test_une_mesure_pas_a_pas(built) -> None:
+    """Chaque mesure seule d'un programme a sa page, à l'adresse stable que donne
+    `site_mesure.lien`, listée par l'index ; son coût est celui du tableau de l'étude
+    (D-456)."""
+    from impots import site_mesure
+
+    index = built[site_mesure.INDEX]
+    for study in etude.definitions():
+        if study.programme is None or study.refus or not study.page.exists():
+            continue
+        entries = study.load()
+        for m, seule in site_mesure.mesures_de(study, entries):
+            name = site_mesure.lien(study.programme, m.id)
+            assert name in built and f'href="{name}"' in index, name
+            cout = etude.lecture_seule(seule)["figee"]
+            from impots import fiche
+
+            assert html.escape(fiche._eur(cout)) in built[name], name
+            assert f'href="{name}"' in built[f"{study.nom}.html"], name

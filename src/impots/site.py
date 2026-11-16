@@ -21,7 +21,7 @@ import re
 import unicodedata
 from pathlib import Path
 
-from impots import etude
+from impots import etude, site_mesure
 
 SITE = etude.ROOT / "site"
 TITLE = "Impôts — les études"
@@ -29,6 +29,8 @@ TITLE = "Impôts — les études"
 #: sets it; empty, the footer says so and `impots site publiable` refuses.
 REGLAGES = etude.ROOT / "site_reglages.json"
 METHODE = "methode.html"
+#: The studies' list, which was the index until goal 25 (D-450).
+ETUDES = "etudes.html"
 TEXTES = Path(__file__).resolve().parent / "site_textes"
 #: The terms the method page defines, each linked at its first use in a page (D-357):
 #: (anchor on the method page, the pattern of its use). Longest first where they overlap.
@@ -185,12 +187,13 @@ def _legend() -> str:
         f'<dt id="etage-{_slug(key)}"><span class="etage e-{_slug(key)}">'
         f"{html.escape(key)}</span></dt><dd>{html.escape(meaning)}.</dd>"
         for key, meaning in meanings.items())
-    return ('<section id="etages"><h2>Les étages de confiance</h2>'
-            "<p>À côté de chaque nombre, ce sur quoi il repose. Un nombre que l'outil "
+    return ('<section id="etages" class="etages"><details><summary>Ce sur quoi repose '
+            "chaque nombre : les étages de confiance</summary>"
+            "<h2>Les étages de confiance</h2><p>À côté de chaque nombre, ce sur quoi il repose. Un nombre que l'outil "
             "calcule dit son étage, de L0 à L4 ; un nombre qu'il reprend dit d'où il vient. "
             "Un écart de dette dit l'étage le plus haut qui y entre, et qu'il est "
             "<em>sous hypothèses</em> : celles du cadre nommé en bas de page, et θ.</p>"
-            f"<dl>{rows}</dl></section>")
+            f"<dl>{rows}</dl></details></section>")
 
 
 def reglages() -> dict:
@@ -260,71 +263,63 @@ def termes(main: str) -> str:
     return "".join(pieces)
 
 
-def _page(title: str, main: str, pied: str = "", liens: bool = True) -> str:
+#: La navigation du site (D-450) : (libellé, page). Une entrée dont la page n'est pas
+#: construite n'est pas montrée ; les volets du but 25 ajoutent la leur ici.
+NAV: tuple[tuple[str, str], ...] = (
+    ("Le chemin", "chemin.html"),
+    ("La population", "population.html"),
+    ("Une mesure pas à pas", "mesure.html"),
+    ("Le jumeau", "jumeau.html"),
+    ("Les études", "etudes.html"),
+    ("Méthode", METHODE),
+)
+_NAV = "<!--navigation-->"
+#: Les pages d'un même rayon : une page d'étude allume « Les études », une page du
+#: parcours « Le chemin ».
+RAYONS: tuple[tuple[str, str], ...] = (
+    ("parcours-", "chemin.html"), ("presidentielle", "etudes.html"),
+    ("plf", "etudes.html"), ("jumeau", "jumeau.html"), ("population", "population.html"),
+    ("mesure", "mesure.html"), ("cellules", "population.html"),
+    ("comparer-candidats", "etudes.html"),
+)
+
+
+def navigation(nom: str, presentes: set[str]) -> str:
+    """Les liens de l'en-tête pour la page `nom`, parmi les pages construites."""
+    rayon = next((cible for debut, cible in RAYONS if nom.startswith(debut)), nom)
+    items = []
+    for libelle, href in NAV:
+        if href not in presentes:
+            continue
+        ici = ' aria-current="page"' if href in (nom, rayon) else ""
+        items.append(f'<li><a href="{href}"{ici}>{html.escape(libelle)}</a></li>')
+    return "<ul>" + "".join(items) + "</ul>"
+
+
+def _page(title: str, main: str, pied: str = "", liens: bool = True,
+          large: bool = False) -> str:
+    """Le gabarit commun (D-450) : l'en-tête et sa navigation, le contenu, la légende des
+    étages, le pied. `large` ouvre la page aux schémas (le texte reste à sa mesure)."""
     main = termes(main) if liens else main
+    classe = ' class="large"' if large else ""
     return ("<!doctype html>\n"
             '<html lang="fr">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             f"<title>{html.escape(title)}</title>\n"
             '<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
-            f'<header><a href="index.html">{html.escape(TITLE)}</a> · '
-            f'<a href="{METHODE}">Méthode et limites</a></header>\n'
-            f"<main>\n{main}\n{_legend()}\n</main>\n"
-            f"<footer>{pied}<p>Pages construites par <code>impots site construire</code> "
+            '<a class="aller" href="#contenu">Aller au contenu</a>\n'
+            '<header class="site-tete"><div class="site-tete-dedans">'
+            '<a class="marque" href="index.html"><b>Impôts</b>'
+            "<span>une réforme, du ménage à la dette</span></a>"
+            f'<nav class="site-nav" aria-label="Le site">{_NAV}</nav></div></header>\n'
+            f'<main id="contenu"{classe}>\n{main}\n{_legend()}\n</main>\n'
+            f'<footer class="site-pied"><div class="site-pied-dedans">{pied}'
+            "<p>Pages construites par <code>impots site construire</code> "
             "depuis les études et leurs seuls rapports commités ; rien n'y est calculé, rien "
-            f"n'y tourne.</p><p>{_signaler()}</p></footer>\n</body>\n</html>\n")
+            f"n'y tourne.</p><p>{_signaler()}</p></div></footer>\n</body>\n</html>\n")
 
 
-STYLE = """\
-:root { --fond: #fdfcf9; --texte: #1d1d1b; --doux: #5d5a55; --trait: #d9d5cc;
-  --l1: #e7eef7; --l2: #dceedd; --l3: #f6ead2; --l4: #f3dfe0; --ext: #ebe7f3; }
-@media (prefers-color-scheme: dark) {
-  :root { --fond: #1b1a18; --texte: #ece9e2; --doux: #a8a397; --trait: #3c3a35;
-    --l1: #24364a; --l2: #23402a; --l3: #4a3d20; --l4: #4b2a2d; --ext: #3a3350; } }
-body { margin: 0; background: var(--fond); color: var(--texte);
-  font: 17px/1.55 Georgia, "Times New Roman", serif; }
-header, main, footer { max-width: 52rem; margin: 0 auto; padding: 0 1rem; }
-header { padding-top: 1rem; font-family: system-ui, sans-serif; font-size: .9rem; }
-a { color: inherit; text-decoration-color: var(--doux); }
-header a { color: var(--doux); }
-ul.etudes { list-style: none; padding: 0; }
-footer { color: var(--doux); font-size: .85rem; padding: 2rem 1rem; }
-h1, h2, h3 { font-family: system-ui, sans-serif; line-height: 1.25; }
-table { border-collapse: collapse; margin: 1rem 0; font-size: .92rem; display: block;
-  overflow-x: auto; }
-th, td { border-bottom: 1px solid var(--trait); padding: .3rem .5rem; text-align: left;
-  vertical-align: top; }
-td code, th code { overflow-wrap: normal; white-space: nowrap; }
-table { background: linear-gradient(to right, var(--fond) 30%, transparent),
-  linear-gradient(to left, var(--fond) 30%, transparent) right,
-  radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.25), transparent),
-  radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.25), transparent) right;
-  background-repeat: no-repeat; background-size: 2rem 100%, 2rem 100%, .8rem 100%, .8rem 100%;
-  background-attachment: local, local, scroll, scroll; }
-blockquote { border-left: 3px solid var(--trait); margin: 1rem 0; padding: 0 1rem;
-  color: var(--doux); }
-p.absent { border-left: 3px solid var(--l3); padding-left: .8rem; }
-.nombre { white-space: nowrap; }
-.etage { font: 600 .76rem/1 system-ui, sans-serif; padding: .12rem .3rem;
-  margin-left: .25rem; border-radius: .25rem; vertical-align: .12em; text-decoration: none;
-  color: var(--texte); background: var(--ext); white-space: nowrap; }
-.e-l1 { background: var(--l1); } .e-l2 { background: var(--l2); }
-.e-l3 { background: var(--l3); } .e-l4 { background: var(--l4); }
-dl { display: grid; grid-template-columns: max-content 1fr; gap: .4rem 1rem; }
-dd { margin: 0; }
-code { font-size: .85em; overflow-wrap: anywhere; }
-a.terme { text-decoration-style: dotted; }
-main, p, li, dd { overflow-wrap: break-word; }
-.cite { overflow-wrap: anywhere; }
-figure.graphique { margin: 1.2rem 0 1.6rem; }
-figure.graphique svg { display: block; width: 100%; height: auto; max-width: 36rem;
-  border: 1px solid var(--trait); border-radius: .3rem; }
-figure.graphique figcaption { color: var(--doux); font-size: .85rem; margin-top: .4rem; }
-@media (max-width: 560px) {
-  body { font-size: 16px; }
-  dl { grid-template-columns: 1fr; }
-  header, main, footer { padding: 0 1rem; } }
-"""
+STYLE = (TEXTES / "style.css").read_text(encoding="utf-8")
 
 
 def _bref(lines: list[str]) -> list[str]:
@@ -334,28 +329,68 @@ def _bref(lines: list[str]) -> list[str]:
     return lines[start + 1:end]
 
 
+def redirection(cible: str) -> str:
+    """Une page qui mène à une autre, sans script : une ancienne adresse gardée."""
+    c = html.escape(cible)
+    return ("<!doctype html>\n<html lang=\"fr\">\n<head>\n<meta charset=\"utf-8\">\n"
+            f'<meta http-equiv="refresh" content="0; url={c}">\n'
+            f'<link rel="canonical" href="{c}">\n<meta name="robots" content="noindex">\n'
+            f"<title>Cette page a changé d'adresse</title>\n</head>\n<body>\n"
+            f'<p>Cette page a changé d\'adresse : <a href="{c}">{c}</a>.</p>\n'
+            "</body>\n</html>\n")
+
+
+def _bref_plie(bref: str) -> str:
+    """L'« en bref » d'une étude dans la liste (D-451) : son tableau, et les phrases qui
+    le lisent repliées ; elles se répètent d'une étude à l'autre."""
+    from impots import site_composants as sc
+
+    fin = bref.find("</table>")
+    if fin < 0 or not bref[fin + 8:].strip():
+        return bref
+    return bref[:fin + 8] + sc.detail("Comment lire ce tableau", bref[fin + 8:])
+
+
 def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
     """Every file of the site, by name: the index, the style, a page per run study."""
     studies = etude.definitions() if studies is None else studies
     files: dict[str, str] = {"style.css": STYLE, ".nojekyll": ""}
     methode = (TEXTES / "methode.html").read_text(encoding="utf-8").replace(
         "{signaler}", _signaler())
+    from impots import site_composants as sc
+
+    # En tête de la méthode (D-451) : le chemin en un schéma et l'échelle de lecture.
+    bref = ('<p class="surtitre">Méthode et limites</p>'
+            + sc.flux([("Des fichiers publics", "Insee, DGFiP, CAF, recherche")],
+                      [("Une France simulée", "des ménages calés sur la France"),
+                       ("La loi, puis la réforme", "deux calculs, la différence"),
+                       ("Les réactions", "des gens et de l'économie")],
+                      [("Trois réponses", "le coût, le coût vrai, la dette en 2035")],
+                      legende='Chaque étape en détail : <a href="chemin.html">le chemin</a>.')
+            + sc.echelle())
+    methode = methode.replace("</p>", "</p>" + bref, 1)
     files[METHODE] = _page(f"Méthode et limites — {TITLE}", methode, liens=False)
     listed: list[str] = []
     codes: set[str] = set()
+    listes: list = []
+    compares: list = []
     for study in studies:
         if study.refus:
             # Its passes ran, and a guard refused its path (D-398): not unrun, refused.
+            # Dit en mots d'abord ; la raison exacte, repliée (D-452, remarque A4).
             listed.append(f'<li><strong>{html.escape(study.titre)}</strong> — '
-                          f"chiffrée, puis refusée : {html.escape(study.refus)}</li>")
+                          "chiffrée, mais pas publiée : un contrôle de cohérence du modèle "
+                          "a refusé son résultat. <details><summary>La raison exacte"
+                          f"</summary><p>{html.escape(study.refus)}</p></details></li>")
             continue
         why = study.drift()
         if why:
             raise SiteError(f"« {study.nom} » : {why} Le site ne lit qu'une étude à jour.")
         if not study.page.exists():
             listed.append(f'<li><strong>{html.escape(study.titre)}</strong> — '
-                          f"préenregistrée ({html.escape(study.preenregistrement)}), ses "
-                          f"passes n'ont pas tourné.</li>")
+                          "pas chiffrée dans la série actuelle : son chiffrage a été annoncé "
+                          f"d'avance ({html.escape(study.preenregistrement)}), mais ses "
+                          "calculs n'ont pas été relancés.</li>")
             continue
         entries = study.load()
         lines, n = study.lines(entries)
@@ -366,26 +401,41 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
                 f"sur les commits {shown}, joints par une passe témoin")
         pied = (f"<p>Étude chiffrée le {html.escape(entries[0]['first']['computed'])}, "
                 f"{code}.</p>")
-        files[f"{study.nom}.html"] = _page(f"{study.titre} — {TITLE}", body(lines, n), pied)
+        # The study's page (but 25, D-456): its summary first, then its detail as the
+        # study writes it, each trajectory with why its curves move.
+        main = site_mesure.page_etude(study, entries, lines, n, _text, body)
+        files[f"{study.nom}.html"] = (_page(f"{study.titre} — {TITLE}", main, pied))
+        compares.append((study, entries, lines, n))
+        mesures = site_mesure.mesures_de(study, entries)
+        if mesures:
+            from impots import programmes as pg
+
+            listes.append((pg.charger(study.programme), study, mesures))
+            for name, text in site_mesure.pages(
+                    study, entries, lambda t, c: (_page(f"{t} — {TITLE}", c))
+            ).items():
+                files[name] = text
         listed.append(f'<li><h2><a href="{study.nom}.html">{html.escape(study.titre)}</a>'
                       f"</h2>\n<p>Chiffrée le {html.escape(entries[0]['first']['computed'])}, "
-                      f"{code}.</p>\n{body(_bref(lines), n)}</li>")
-    intro = ("<h1>Les études</h1>\n<p>Avant de lire un nombre : <a href=\"methode.html\">"
-             "la méthode et les limites</a>, ce que veut dire chaque mot des pages et ce que "
-             "l'outil ne fait pas.</p>\n<p>Chaque étude prend une réforme, ou les articles d'un "
+                      f"{code}.</p>\n{_bref_plie(body(_bref(lines), n))}</li>")
+    intro = ('<p class="surtitre">Les études</p><h1>Les réformes chiffrées</h1>\n'
+             '<p class="chapeau">Chaque étude prend une réforme, ou les articles d\'un '
              "texte, et donne trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle "
              "coûte une fois les comportements et l'économie pris en compte ; ce qu'elle "
-             "fait à la dette dans dix ans. À côté de chaque nombre, son étage de confiance ; "
-             "une réponse absente est dite absente, avec sa raison.</p>")
+             "fait à la dette dans dix ans.</p>\n<p>À côté de chaque nombre, son étage de "
+             "confiance ; une réponse absente est dite absente, avec sa raison. Avant de lire "
+             'un nombre : <a href="methode.html">la méthode et les limites</a>, et <a '
+             'href="chemin.html">le chemin</a> qui montre comment il se fait.</p>')
     if any(study.programme for study in studies):
         # The review of goal 20: the index sets the candidates side by side, and the
         # parcours says what of them does not compare (D-378).
-        intro += ("\n<p><strong>Les candidats ne se comparent pas ligne à ligne.</strong> "
+        intro += ('\n<aside class="garde" role="note"><b>Avant de comparer</b><p>'
+                  "<strong>Les candidats ne se comparent pas ligne à ligne.</strong> "
                   "Chaque étude ne chiffre qu'une part du programme, dite à côté de chaque "
                   "nombre ; la dette et le verdict dépendent de ce que la boucle macro sait "
                   "lire, qui n'est pas le même d'un candidat à l'autre. Ce qui se compare, "
-                  "et comment : <a href=\"parcours-comparer.html\">comparer deux "
-                  "candidats</a>.</p>")
+                  "et comment : <a href=\"comparer-candidats.html\">comparer deux "
+                  "candidats</a>.</p></aside>")
     if len(codes) > 1:
         # The studies ran on different code (D-336): a reader is told before comparing.
         intro += (f"\n<p><strong>Les études n'ont pas été chiffrées sur le même code</strong>"
@@ -402,6 +452,16 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         intro += ('\n<p><a href="presidentielle.html">Les programmes de la présidentielle '
                   "2027</a> : les 24 candidats déclarés, ce que l'outil chiffre de chacun, et "
                   "pourquoi pas le reste.</p>")
+    if sum(1 for c in compares if c[0].programme) > 1:
+        # The candidates side by side (but 25, volet mesure, D-457).
+        files[site_mesure.COMPARER] = (_page(
+            f"Comparer les candidats — {TITLE}", site_mesure.comparer(compares, _text), large=True))
+    if listes:
+        files[site_mesure.INDEX] = (_page(f"Une mesure pas à pas — {TITLE}",
+                                                     site_mesure.index(listes)))
+        intro += (f'\n<p><a href="{site_mesure.INDEX}">Une mesure pas à pas</a> : un '
+                  "candidat, une de ses mesures, et comment elle devient un nombre, du texte "
+                  "au coût, couche par couche, chaque couche avec sa source.</p>")
     explorer = _explorer() if EXPLORATEUR_PUBLIE and grille_present() else None
     if explorer is not None:
         files[EXPLORER] = explorer
@@ -416,9 +476,20 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         pages = parcours.build()
         files.update(pages)
         scripted |= set(pages)
-        intro += (f'\n<p><a href="{parcours.PAGES[0][1]}">Refaire le chemin d\'un nombre</a> : '
-                  "huit pages, du ménage au verdict, chacune avec sa donnée, le lien de sa "
-                  "source et le fichier qui la calcule.</p>")
+        if site_mesure.COMPARER in files:
+            # Deux pages comparaient les candidats ; celle du volet `mesure` reste, et
+            # reçoit le tableau à deux choix du parcours (D-468).
+            section, style = parcours.comparer_section()
+            files[site_mesure.COMPARER] = (
+                files[site_mesure.COMPARER]
+                .replace("</head>", f"<style>{style}</style>\n</head>", 1)
+                .replace(f"\n{_legend()}\n</main>", f"\n<section id=\"comparer-deux\">"
+                         f"{section}</section>\n{_legend()}\n</main>", 1))
+            files[site_mesure.COMPARER] = files[site_mesure.COMPARER].replace(
+                "rien n'y est calculé, rien n'y tourne.",
+                "rien n'y est calculé ; le tableau à deux choix rejoue dans le navigateur "
+                "des nombres que les rapports portent déjà.")
+            scripted.add(site_mesure.COMPARER)
     from impots import site_jumeau
 
     if site_jumeau.present():
@@ -426,12 +497,31 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         pages = site_jumeau.build()
         files.update(pages)
         scripted.add(site_jumeau.PAGE)
-        intro += (f'\n<p><a href="{site_jumeau.PAGE}">Le jumeau</a> : le jumeau numérique de '
-                  "la France, dans le navigateur ; un programme, une mesure ou une loi "
-                  "hypothétique, et chaque paramètre incertain sur un curseur, de 2026 à "
-                  "2035.</p>")
-    files["index.html"] = _page(TITLE, intro + "\n<ul class=\"etudes\">\n"
-                                + "\n".join(listed) + "\n</ul>")
+    from impots import site_population
+
+    if site_population.present():
+        # The population pages (goal 25, D-453); one of them carries a script.
+        files.update(site_population.build())
+        scripted |= site_population.SCRIPTEES
+    files[ETUDES] = _page(f"Les études — {TITLE}", intro + "\n<ul class=\"etudes\">\n"
+                          + "\n".join(listed) + "\n</ul>", large=True)
+    from impots import site_accueil
+
+    files["index.html"] = _page(TITLE, site_accueil.accueil(studies, set(files)), large=True,
+                                liens=False)
+    # Les anciennes adresses du parcours (but 20) mènent à leur étape (D-452) : un lien
+    # publié ne casse pas.
+    for ancien, nouveau in parcours.ANCIENNES.items():
+        if nouveau in files and ancien not in files:
+            files[ancien] = redirection(nouveau)
+    presentes = set(files)
+    for name, text in list(files.items()):
+        if not name.endswith(".html"):
+            continue
+        # A link to another goal-25 page shows once that page is built (D-450).
+        text = re.sub(r'<span class="si-page" data-page="([^"]+)">(.*?)</span>',
+                      lambda m: m[2] if m[1] in presentes else "", text, flags=re.S)
+        files[name] = text.replace(_NAV, navigation(name, presentes))
     for name, text in files.items():
         # The explorer runs a script by decision (D-343), the parcours pages that give
         # a cursor (D-375), and the twin (D-415); no other page does.

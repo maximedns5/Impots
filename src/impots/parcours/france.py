@@ -234,10 +234,16 @@ def _barres_tmi(lignes: dict[str, dict[int, dict[str, Any]]], annee: int,
             f'</i><i class="sim" style="width:{100 * sim / plus_grand:.1f}%"></i></span>'
             f'<span class="num">{valeur(ident, pub)}<br>{valeur(ident, sim)}</span>'
             f'<span class="num {_ETAT[r["verdict"]][0]}">{pct(r["ecart"])}</span></div>')
-    return ('<div class="barres" role="group" aria-label="Foyers par taux marginal, '
-            f'{annee}"><div class="tmi legende"><span></span><span>'
-            '<i class="pub"></i> DGFiP <i class="sim"></i> simulé</span>'
-            "<span>DGFiP<br>simulé</span><span>écart</span></div>" + "".join(rangs)
+    # Remarque Po5 du lecteur novice (D-452) : deux couleurs franches, l'unité et le mot
+    # « taux marginal » dits au-dessus du graphique.
+    return ('<p class="petit doux">Le <strong>taux marginal</strong> d\'un foyer est le '
+            "taux de sa tranche la plus haute : celui qui s'applique à un euro de revenu de "
+            "plus. Les barres comptent les foyers fiscaux de chaque tranche, en millions "
+            f"(M), en {annee}.</p>"
+            '<div class="barres" role="group" aria-label="Foyers par taux marginal, '
+            f'{annee}, en millions"><div class="tmi legende"><span>taux</span><span>'
+            '<i class="pub"></i> publié (DGFiP) <i class="sim"></i> simulé</span>'
+            "<span>publié<br>simulé</span><span>écart</span></div>" + "".join(rangs)
             + "</div>")
 
 
@@ -299,11 +305,11 @@ def _calees() -> list[Any]:
 
 def table_calees(rows: list[dict[str, Any]]) -> str:
     out = []
-    for name, fig in _calees():
+    for _name, fig in _calees():
         out.append(f"<tr><td>{html.escape(_court(fig.scope))}</td>"
                    f'<td class="num">{_figure(fig)}</td><td>{fig.year}</td>'
                    f"<td>{lien_source(fig.url, _editeur(fig.source), fig.source)}</td>"
-                   f"<td><code>{html.escape(name)}</code></td></tr>")
+                   "<td>imposé : retrouvé par construction</td></tr>")
     for r in rows:
         if r["usage"] == "calibration":
             out.append(f"<tr><td>{html.escape(r['ligne'])} (ligne de la grille, "
@@ -311,9 +317,9 @@ def table_calees(rows: list[dict[str, Any]]) -> str:
                        f'<td class="num">{valeur(r["id"], r["publie"])}</td>'
                        f"<td>{r['annee']}</td>"
                        f"<td>{lien_source(r.get('url'), _editeur(r.get('source')), r.get('localisation') or '')}</td>"
-                       f"<td>retrouvée à {pct(r['ecart'])} : <em>dépensée</em></td></tr>")
+                       f"<td>retrouvée à {pct(r['ecart'])} : imposée, donc rien</td></tr>")
     return ("<table><thead><tr><th>ce qui est calé</th><th>total</th><th>année</th>"
-            "<th>source</th><th>son nom dans margins.py</th></tr></thead><tbody>"
+            "<th>source</th><th>ce qu'il prouve</th></tr></thead><tbody>"
             + "".join(out) + "</tbody></table>")
 
 
@@ -452,8 +458,8 @@ STYLE = """
 .tmi i{display:block;height:.55rem;min-width:1px}
 .tmi.legende{color:var(--doux);font-size:.75rem}
 .tmi.legende i{display:inline-block;width:.8rem;height:.55rem;vertical-align:middle}
-i.pub{background:var(--doux)}
-i.sim{background:var(--texte)}
+i.pub{background:var(--serie-1,#1f4e8c)}
+i.sim{background:var(--serie-2,#a65a14)}
 td.tenue .etat,.num.tenue{color:inherit}
 td.hors,.num.hors{background:var(--l4)}
 td.refusee,td.vide{color:var(--doux)}
@@ -575,15 +581,18 @@ population en arrière par les indices ne déforme pas l'erreur, et que les tota
 de trois années la voient du même côté. {lien("erreur", "La page 8")} range chaque écart
 ligne par ligne, avec sa cause.</p>
 
+<details class="detail"><summary>Les mots de la grille</summary><div class="detail-corps">
 {glossaire()}
-
-<h3 id="grille-entiere">La grille entière</h3>
+</div></details>
+<details class="detail" id="grille-entiere"><summary>La grille entière, ligne par ligne, sur
+trois ans</summary><div class="detail-corps">
 <p>Chaque cellule dit l'écart au total publié, le simulé contre le publié, et le lien de
 la source de l'année ; l'onglet et la ligne lus s'affichent au survol du lien. Une ligne
 « contexte » n'est pas notée ; une ligne « calée » est dépensée ; une ligne
 « <a href="#non-recours-cale">calée par le non-recours</a> » est notée, mais ne prouve rien
 du recours ; une ligne refusée dit pourquoi.</p>
 {table_grille(rows)}
+</div></details>
 
 <h2 id="ou-elle-ne-ressemble-pas">Où elle ne ressemble pas à la France</h2>
 <p>Les foyers fiscaux sont un peu trop peu nombreux ; il manque des salaires horaires

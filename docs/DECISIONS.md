@@ -34152,3 +34152,882 @@ processus, verts, aucun sauté ; 5 chronomètres verts.
 
 **Ce qui ne change pas.** Aucun nombre d'aucun rapport, aucune tolérance, aucun verdict,
 aucun étage ; chaque rapport garde son commit de passe.
+
+## D-445 — Le but 24 clos, le but 25 validé : le jumeau qu'on comprend, en six volets
+
+**Le but 24 est clos** : la PR #130 est mergée (1f0c315), le site republié depuis main.
+**L'histoire longue**, demandée par le propriétaire, est menée à part jusqu'à l'étape
+zéro (D-446, D-447, branche `claude/but25-histoire`) : aucun θ identifié.
+
+**Le but 25** (`BUT.md`) : refaire le site pour qu'on suive le chemin de pensée, et rendre
+le moteur assez rapide pour qu'on voie une mesure agir. Le propriétaire a décidé, le
+15 novembre 2026 : une refonte complète du site, pas une retouche ; la comparaison du
+moteur rapide à l'ancien sur la population de test et sur trois mesures, environ 20 min
+de machine, acceptée ; les six volets lancés ensemble (`chemin`, `population`, `mesure`,
+`jumeau`, `moteur`, `lecteur`). La publication des 50 cellules des ménages et des 57 des
+entreprises, décidée, entre dans `population`.
+
+**Ce qui ne tourne pas**, à la demande du propriétaire : aucune étude, aucune passe sur la
+population hors de la comparaison du moteur, pas de `make impact` ni de lourds en cours
+de route. Les tests légers des fichiers touchés tiennent ce qui change ; aucun nombre
+publié ne change, chaque rapport garde son commit.
+
+
+## D-450 — Le système visuel du site, l'accueil et la navigation (but 25, volet `chemin`)
+
+**Le fait.** Le site d'avant se lisait comme un dossier de relecture : une feuille de
+style de quarante lignes, un en-tête de deux liens, un accueil qui empilait douze tableaux
+et trois paragraphes répétés sous chacun (le lecteur novice, passe 1 : A1, A2, N1, N2).
+
+**Le système.** Une feuille commune (`src/impots/site_textes/style.css`, publiée en
+`site/style.css`) : des jetons de couleur en clair et en sombre, un serif pour les titres
+et la police du système pour le texte, des chiffres tabulaires, une échelle d'espacement.
+Des composants (`src/impots/site_composants.py`), sans script : la carte, l'étape
+numérotée, le schéma de flux (ce qui entre, ce qui est fait, ce qui sort), le chiffre
+sourcé (un nombre qui ouvre sa provenance par l'attribut `popover` : ce qu'il mesure, le
+rapport, le champ, le commit, l'étage, la source publique), le chiffre clé, le curseur
+avec sa portée (ce qu'il change, ce qu'il ne change pas, la plage publiée sous la piste),
+la note de source, la mise en garde, le détail replié, et l'échelle de lecture (un point
+de PIB en euros, A5). Le tout est décrit dans `docs/site/DESIGN.md` ; les volets
+`population`, `mesure` et `jumeau` le reprennent. Les anciens noms de couleur restent des
+alias.
+
+**Le gabarit.** `site._page` porte un en-tête avec la navigation du site (le chemin, la
+population, une mesure pas à pas, le jumeau, les études, la méthode), filtrée sur les
+pages construites : une entrée d'un autre volet apparaît quand sa page existe. Un lien
+`span.si-page` fait de même dans le corps d'une page. La légende des étages est repliée.
+
+**L'accueil** dit en une demi-minute ce qu'est le site, ses trois réponses sur un exemple
+(la part chiffrée du programme de Gabriel Attal : +66,18 Md€, +4,28 pt, 65 % des tirages
+en hausse, chacun ouvrant sa provenance), comment il marche en un schéma, et par où
+commencer. La liste des études passe à `etudes.html`, élargie (A6), et les phrases qui
+lisent chaque tableau s'y replient (A2). Les tests de `test_site.py` qui lisaient la
+liste sur `index.html` la lisent sur `etudes.html` ; l'accueil entre dans le test des
+montants sans étage, ses nombres étant des chiffres sourcés. Aucun nombre ne change.
+
+## D-451 — Le chemin en dix étapes, et la méthode remise d'accord avec les études
+
+**Le chemin.** Le parcours de huit pages devient un chemin de dix étapes, dans l'ordre où
+un nombre se fait : les sources, la population, le calage, les barèmes, une mesure, les
+comportements, le bouclage, la dette, le verdict, ce que le modèle ne sait pas
+(`src/impots/parcours/chemin.py`). Deux étapes sont neuves : les sources (le manifeste,
+compté par producteur, `parcours/sources.py`) et la population (observé, tiré, calé,
+`parcours/population.py`) ; les huit pages d'avant deviennent les étapes 3 à 10, sous de
+nouveaux noms de fichier. Chaque étape s'ouvre sur une question, un chapeau de deux
+phrases, son schéma, ses chiffres sourcés et la phrase qu'elle établit ; ses sections à
+curseur restent ouvertes, les autres se replient sous leur titre, avec leur temps de
+lecture (P1, P10). Rien n'est retiré : le texte d'avant se lit en un clic, ses ancres
+tiennent. Une page au PC passe de 5 600 à 16 600 px à 1 500 à 4 000 px. Une page,
+`chemin.html`, montre les dix étapes d'un coup d'œil et le fil rouge (Attal). Les renvois
+« page N » des textes d'avant suivent la nouvelle numérotation.
+
+**Les chiffres** des étapes sont lus dans les rapports commités par les fonctions des
+pages (`france.compte`, `cout.cout_total`, la décomposition et le Monte-Carlo du rapport
+prédictif d'Attal, le manifeste, `CROSSCHECK.md`), mis en forme comme elles ; les comptes
+de fichiers par producteur sont un agrégat dérivé du manifeste, qui le dit. Le PIB de
+2025 publié, divisé par cent, donne l'échelle de lecture. Aucun nombre publié ne change.
+
+**La méthode** (M1) disait que l'indexation des pensions, une hausse du SMIC et une
+mesure de dépense ne se chiffrent pas, et que les impôts des entreprises n'ont pas
+d'effet sur l'activité ; les études chiffrent les trois premières (D-384 : le SMIC
+horaire relevé et sa diffusion en plage, le point d'indice contre le point gelé,
+l'indexation au-delà de l'indexation légale) et lisent le canal des créations
+d'entreprises (D-400, D-401). La liste est réécrite juste ; ce qui ne se chiffre pas le
+reste (l'âge légal, la durée d'assurance, une économie annoncée sans paramètre, un
+blocage des prix, les successions, la fraude). La méthode s'ouvre sur le schéma du
+chemin et l'échelle de lecture (M2).
+
+**Ce qui reste**, des retours du lecteur novice : le texte des sections à curseur des
+étapes 3 à 9 est encore celui d'avant (formules, noms de fichiers, P5, P6, P8, P9) ; les
+noms de code des ménages types de l'étape 4 (P2) ; les lignes d'état opaques de la liste
+des études (A4), que les tests tiennent mot pour mot.
+
+## D-452 — Les réglages du chemin dits pour un débutant, les anciennes adresses gardées
+
+**Le fait.** Après D-451, les sections à curseur des étapes restaient celles d'avant :
+une formule à la place de l'idée, des noms de fichiers, des curseurs nommés « C1,
+eti_all », une dette de référence sans sa source, la copule et les indices de Sobol
+nommés sans être dits (le lecteur novice, passe 1 : P5, P6, P8, P9) ; le tableau des
+ménages types portait leurs noms de code (P2) ; la liste des études, des lignes d'état
+opaques (A4) ; la page du calage, des noms de code et un graphique à deux gris (Po4, Po5).
+
+**Ce qui change.** Chaque section à curseur des étapes 3 à 9 s'ouvre sur un titre et
+l'idée en mots, puis la portée du réglage (ce qu'il change, ce qu'il ne change pas) ;
+la prose de calcul d'avant se replie sous les réglages, « Comment ce calcul est fait »
+(`parcours.replier`, `chemin.a_vous`). Les éléments que les scripts lisent restent en
+place. Les curseurs des comportements disent qui réagit et la fourchette publiée ; leurs
+colonnes, ce que la réaction rapporte ; ceux du verdict, la corrélation et l'incertitude
+du multiplicateur en mots, et ce qui fait varier le résultat par ce qu'il mesure, plus par
+le nom de son fichier. La dette de référence de 2026 et celle de 2025 publiée sont des
+chiffres sourcés. Les tableaux longs (la grille entière, ses mots, les mêmes nombres sans
+script) se replient. Les ménages types sont nommés en français, leur fichier en petit.
+La table des totaux calés dit ce qu'un total calé prouve (rien) au lieu du nom de sa
+constante ; le graphique des taux marginaux prend deux couleurs franches, dit son unité
+(des millions de foyers) et ce qu'est un taux marginal.
+
+**La liste des études** dit une étude refusée « chiffrée, mais pas publiée : un contrôle
+de cohérence du modèle a refusé son résultat », la raison exacte repliée dessous, et une
+étude non refaite « pas chiffrée dans la série actuelle », avec son préenregistrement.
+Les tests de `test_site.py` qui tenaient l'ancien texte mot pour mot tiennent la même
+propriété : listée, avec sa raison et son préenregistrement, sans page ni lien.
+
+**Les anciennes adresses** du parcours (`parcours-1-menage.html` à
+`parcours-8-erreur.html`) sont des pages de redirection statiques, sans script, vers
+leur étape (`parcours.ANCIENNES`) : aucun lien publié ne casse.
+
+**L'échelle de lecture** lit 2035 dans un rapport commité : le PIB de 2025
+(`rejeu.start.gdp_eur`) porté dix ans au rythme nominal du cadre central
+(`rejeu.cadre.growth`, celui d'`etudes/cadres/central.json`), la même arithmétique que le
+rejeu de la dette ; un point de PIB y vaut environ 30 Md€ en 2025 et 40 Md€ en 2035. La
+méthode, l'accueil et le chemin ne reprennent plus les limites que D-451 a corrigées.
+Aucun nombre publié ne change.
+
+## D-453 — La population montrée : quatre pages, les 107 cellules publiées
+
+**Ce qui est fait** (volet `population` du but 25). Quatre pages, construites par
+`impots site construire` depuis `reports/population/agregats.json`, que
+`python -m impots.site_population.agregats` écrit en deux secondes, sans passe, depuis la
+population de 2024 et son manifeste, le manifeste des cellules (D-409), les cellules
+d'entreprises (D-407), la grille de D-371 et le cadre central. `population.html` : la
+construction en sept étapes (l'enquête Emploi, les enfants créés, les revenus tirés puis
+calés, le calage des poids, les imputations, le vieillissement, les cellules), ce que
+pèse un ménage, la structure (âges, types, activité, logement, outre-mer, revenus,
+niveau de vie par dixième). `population-france.html` : le calé, le vérifié, les écarts et
+ce qu'ils font aux études. `population-comme-moi.html` : la cellule et le cas type les
+plus proches de trois traits, dans le navigateur. `cellules.html` : les 50 cellules des
+ménages et les 57 des entreprises, définies, sourcées, en CSV et en JSON.
+
+**Aucun nombre publié ne change.** Les écarts sont ceux de la grille, recopiés ; les
+cellules sont celles que le jumeau lit, au centime (`tests/test_site_population.py`).
+Les comptes de la population sont des sommes pondérées ; une tranche de poids de moins de
+vingt ménages de l'échantillon serait fondue (aucune ne l'est). Aucun enregistrement.
+
+**Ce qu'on y voit de neuf, dit franchement.** Les cellules ne rangent pas les ménages
+comme le calage : un enfant majeur chez ses parents y fait un ménage complexe (2,87 M,
+contre 1,12 M au recensement et au calage). La page le dit ; les cellules ne bougent pas.
+
+**Les retours du lecteur novice** (passe 1) : Po1 (la taille, le poids, les 20 000
+ménages des passes), Po2 (la population vue), Po3 (« est-ce bon ? », et ce que chaque
+écart fait aux études), Po6 (le vieillissement en image) sont traités sur ces pages ;
+Po4 et Po5 portent sur `parcours-2-france.html`, au volet `chemin`.
+
+**Les points d'entrée stables** (`site_population.ANCRES`) : `population.html#en-bref`,
+`#construction`, `#vieillissement`, `#poids`, `#structure` ; `population-france.html#calee`,
+`#verifiee`, `#ecarts` ; `population-comme-moi.html#choisir` ; `cellules.html#menages`,
+`#entreprises`, `#telecharger`.
+
+## D-456 — Une mesure pas à pas, les études résumées d'abord, les graduations exactes
+
+**Le volet `mesure` du but 25.** Une page par mesure seule d'un programme (34 pages, dix
+candidats), à une adresse stable, `mesure-<programme>-<mesure>.html`, que le parcours
+peut viser ; `mesure.html` les liste par candidat (`mesure.html#<programme>`). Sept
+étapes, chacune avec son schéma : le texte du candidat et les paramètres qu'en reçoit le
+moteur ; les ménages touchés, par décile ; l'effet mécanique, module par module et dans
+ses deux vues ; les comportements, canal par canal ; l'activité (les emplois à 1, 2 et 3
+ans) et le bouclage (du coût à la dette de 2035) ; les gagnants et les perdants ; le
+coût couche par couche, chaque couche avec son rapport, son champ et son commit. Rien
+n'est calculé : les nombres publiés sont ceux de `etude.lecture_seule`, au même format ;
+le seul agrégat dérivé, les ménages touchés (la part des gagnants et des perdants de
+chaque décile fois ses ménages), le dit sous son graphique. Code :
+`src/impots/site_mesure.py`. Aucun script.
+
+**Les pages d'études** (les douze) s'ouvrent sur un résumé : les cellules du tableau «
+En bref », verdict d'abord, en cartes ; « pour qui », le graphique des déciles ; puis
+chaque mesure seule, son coût et le lien de sa page. Le détail, tel que l'étude l'écrit,
+suit sans changer. Sous chaque trajectoire, « pourquoi ça bouge » : les horizons de
+Mésange entre lesquels l'effet macro est interpolé, la persistance « éteinte » qui le
+coupe après trois ans (le saut de 2029 est une convention, pas du bruit), la boîte θ qui
+s'élargit.
+
+**Le diagnostic des graphiques.** Trois causes rendaient les courbes illisibles : six
+lignes et une bande dans trois petits panneaux ; le saut de la persistance « éteinte »,
+jamais dit ; des graduations fausses, `fr(t, 1)` sur un pas de 0,25, qui écrivait « −0,2
+» et « −0,8 » pour −0,25 et −0,75 (« −0,1 » pour −0,08 au PLFSS). Les graduations
+s'écrivent désormais avec les décimales qu'il leur faut (`graphiques.decimales`) ; huit
+SVG réécrits par `impots etude ecrire`, aucune page Markdown ni aucun nombre ne change.
+Les pages pas à pas tracent une courbe par vue, avec des repères aux années où la pente
+change pour une raison connue.
+
+**Ce qui reste.** Le système visuel du volet `chemin` n'était pas poussé : les pages
+portent leur feuille, `mesure.css`, à reprendre à la jonction. `site verifier`, `etude
+verifier` et `node ui/check.mjs` verts.
+
+## D-457 — Les études raccourcies pour de bon, la cascade pontée, les candidats comparés
+
+**Les retours du lecteur novice** (D-466, passe 1) au volet `mesure`, et la décision du
+propriétaire du 15 novembre : une refonte complète, donc les études raccourcies pour de
+bon. Le système visuel du volet `chemin` (D-450) est fusionné ; les pages du volet en
+reprennent les jetons et la légende, et gardent leur feuille, `mesure.css`, pour leurs
+composants propres.
+
+**Une étude, désormais** : le titre et les premières phrases de « Ce que dit cette étude
+» ; un sommaire ; le résumé (le verdict en premier, puis le coût et la dette), avec la
+part chiffrée en barre à côté du verdict (Me6) et l'échelle de lecture d'un point de PIB
+(A5) ; « Quel coût ? », chaque coût de la même part nommé par sa vue, son année et sa
+couche (P3) ; pour qui ; du coût à la dette ; la dette année par année ; mesure par
+mesure, chaque mesure avec ce que dit le candidat, sur qui, combien et le lien de sa
+page pas à pas (Me2) ; les réglages. Tout ce que l'étude écrit, tableaux, rapports,
+commits et D-entrées compris, est dans « Pour le relecteur », replié : aucun nombre
+n'est perdu (Me1). Mélenchon passe de 31 600 à environ 8 300 px sur ordinateur, de 45
+600 à environ 11 500 au téléphone. Chaque section a son « retour en haut » (N3).
+
+**La cascade** (Me3, P7) : le coût de 2026 en milliards, puis un pont qui dit que ce
+coût, chaque année, rapporté au PIB de 2035, donne la première marche de la dette ;
+chaque marche a sa couleur (coût, comportements, PIB, recettes induites, dette). Quand
+l'activité fait monter la dette, une phrase le dit et nomme les prélèvements que la
+boucle lit comme freinant le PIB la première année (l'impulsion du chemin fois le
+multiplicateur de Mésange à un an, tous deux dans le rapport). Pour juger le chiffre de
+tête : la même dette sous les persistances « éteint » et « tenu », et aux coins de la
+boîte θ, nombres que la page publiait déjà plus bas. Les nombres sont ceux de
+`graphiques.cascade_nombres`.
+
+**La trajectoire** (Me4) : trois petits panneaux de deux ou trois séries, rejoués par
+`graphiques.trajectoire_nombres` (le même rejeu, refusé s'il ne redonne pas le rapport)
+: la dette en vue vieillie et figée avec la boîte θ ; les trois persistances ; le PIB.
+Chaque panneau dit ce qu'il trace et pourquoi il bouge. **Les réglages** (Me5) : trois
+lignes par réglage, le bas, le candidat, le haut, sans pavés ni noms de code ; une
+phrase quand le candidat est un bout de la plage.
+
+**Le reste.** La page des programmes dit « sa page » ou « préenregistrée, pas encore
+chiffrée » au lieu de « oui » pour Arthaud, Glucksmann, Labib et Zemmour (Me7), sans
+changer de nombre ; le test qui tenait « oui » tient la même propriété sur les deux
+mots. Les noms de code des portes et des réglages sortent du texte ; ceux des pages pas
+à pas vont dans « D'où viennent ces nombres », replié. `comparer-candidats.html` (P11) :
+les candidats côte à côte, la part chiffrée de chacun, ce qui ne se compare pas d'abord
+; la page `parcours-comparer.html` du volet `chemin` reste à lui. Le tableau des juges
+du parcours (P4) est au volet `chemin`.
+
+Aucune passe, aucun nombre publié ne change : chaque nombre est lu dans un rapport
+commité, par les fonctions qui le publient déjà.
+
+## D-459 — La page « Le jumeau » refaite : le pas annuel, la portée des curseurs, les plages
+
+**Le volet `jumeau` du but 25** (D-445). La page montrait dix courbes, vingt-trois curseurs
+de 0 à 1 et un texte replié ; le lecteur novice (passe 1, J1 à J12) n'y voyait ni ce
+qu'est le jumeau, ni ce que change un curseur. Elle est refaite en cinq temps : le pas
+annuel, ce que la mesure fait, la portée des curseurs, qui y gagne, ce que le jumeau sait.
+Le calcul reste dans le Worker (D-419) ; aucun nombre publié ne change.
+
+**Le pas annuel.** Un schéma des blocs (la mesure, les APU, la dette, le PIB, les
+ménages, les entreprises, le reste du monde) et de leurs canaux, chaque flèche portant
+l'écart de l'année, son épaisseur rapportée à la plus grande de la mesure ; une année au
+curseur ou « faire tourner ». Dessous, les trois identités de l'année, lues dans l'état
+(`navigateur._comptes`, nouveau) : les emplois du PIB sommés à son écart, B9 = recettes −
+dépenses − intérêts, D_t = D_{t−1} − B9 + SFA ; chacune dit si elle tient.
+
+**La portée et les plages** (`navigateur.Session.portee`). Une seule trajectoire,
+vectorisée sur les tirages (CADRE.md §8) : le tirage 0 est le réglage ; puis, pour chaque
+θ lu, lui à chaque point de sa boîte (0 et 1, ou la grille de D-427), les autres au
+réglage ; puis 200 tirages de tous les θ selon leurs lois (`a_priori`, D-424, D-438 ;
+la loi large de D-417 pour une ligne du magasin que porte une mesure), tronquées à
+[0 ; 1] par rejet, graine fixée (20261115). La portée d'un θ : l'écart, à l'horizon, de
+ses points au tirage 0, pour la dette, le solde, le PIB et l'emploi ; la plage d'une
+courbe : les quantiles 5, 25, 75 et 95 % des tirages, chaque année. Chaque curseur dit
+d'où vient sa loi (littérature, données fines, par construction, sans source), s'il est
+identifié (b seul, par les données fines ; les importations, que le rapport de r4
+compte, ne le sont pas : l'artefact de D-439, dit sur la page), sa valeur en paramètre,
+et, quand il est sans effet, quel canal s'ouvrirait. Un curseur bougé : l'écart au
+défaut (chaque θ à ½) s'affiche en clair, et le défaut reste en pointillé.
+
+**Pourquoi les courbes bougeaient.** Pas de bruit : à réglage égal, le jumeau redonne le
+même nombre. (1) Les échelles se recalaient à chaque calcul, sur trois graduations : un
+écart de 0,003 remplissait le cadre, et un curseur faisait sauter l'axe. Elles sont
+désormais graduées et ne font que s'élargir pour une même entrée. (2) Le dénominateur :
+Δb = (ΔD − b^r ΔY)/Y ; la courbe dit les deux parts (`effets`). (3) Les recettes
+induites montent en quelques années (le profil de Mésange) : l'écart de solde est grand
+la première année puis se resserre. (4) La première année : un rapport ne ventile que
+2026 et la vue figée (D-412) ; la convention de D-414 ou rien. (5) Les couleurs suivaient
+le rang de chaque bloc dans le graphique : chaque bloc a désormais la sienne, et son nom.
+
+**Les retours du lecteur.** J1 : le nom du candidat dans chaque option et en titre ; la
+page s'ouvre sur une loi simple (dépense publique, 10 Md€ par an), dans le jumeau,
+population figée, plutôt que sur un candidat. J2 : un refus est dit en mots (ce qui
+manque, pourquoi, quoi essayer, et que c'est une limite du jumeau), le texte exact
+replié. J3 : pour une mesure d'étude, la chaîne des études est calculée à côté et l'écart
+expliqué (la part du coût qui revient en recettes, et les blocs qui y mettent ; Attal :
+66 % dans la chaîne, environ 0 % dans le jumeau, où les salaires reprennent ce que la
+consommation rapporte). J4 à J11 : couleurs fixes, noms en français, unités dites,
+gagnants et perdants visibles par défaut, l'écart au défaut collé en haut au téléphone.
+J7 : aucun défaut trouvé ; un curseur des entreprises est nul pour une loi qui ne
+touche pas leurs prélèvements (sur les cotisations employeurs, l'élasticité des
+créations porte de −0,37 à +0,10 pt de dette en 2035), et la page le dit. J12 : Pyodide
+0.29.5 avec numpy pèse environ 15 Mo (le noyau WebAssembly, la bibliothèque standard,
+la roue de numpy) ; le vendoriser alourdirait le dépôt d'autant à chaque version : non
+fait, à décider.
+
+**Mesuré une fois** (Chromium, cette machine partagée) : Pyodide chargé en 4 à 6 s ; une
+trajectoire du jumeau dans le navigateur, sous la seconde (D-419 tient) ; la portée,
+200 tirages et une cinquantaine de points, 3,5 à 5 s, une fois par entrée, après le
+premier dessin. Le système visuel de `chemin` (D-450) est repris : la page large, ses
+jetons de couleur.
+
+**Les tests.** `test_jumeau_navigateur` : un test nouveau, la portée redonne au tirage 0
+les écarts que la page trace, un θ poussé à un bout redonne son calcul seul, les deux
+parts de Δb et les emplois bouclent ; 13 verts. `test_jumeau_page` (lourd, non lancé) :
+sa première étape choisit la mesure, la chaîne des études et la vue vieillie, la page
+ne s'ouvrant plus sur elles ; il tient la même propriété. `site verifier` et
+`node ui/check.mjs` verts.
+
+## D-462 — Ce qu'une passe refait, et la conception du moteur incrémental
+
+**La question du propriétaire** : refait-on toute la population, et l'extrapolation à la
+France, à chaque mesure ? **Non pour la population, oui pour presque tout le reste.**
+Lu sur le chemin d'une passe « mesure seule » (`etude.first_year`, `POST
+/population/simulate`, `service.run_population`, `population.runner.run`,
+`behavioural.emtr`, `service.macro`) :
+
+* **La population n'est ni reconstruite, ni recalée, ni revieillie** pour une mesure
+  seule : le parquet construit une fois par `make data` est lu (0,5 s), sous-échantillonné
+  à 20 000 ménages, et la vue de la première année est la vue figée du millésime. Le
+  calage (`calibrate.py`) ne tourne jamais dans une passe ; l'extrapolation à la France
+  n'est qu'un poids par ménage, une multiplication. Le chemin annuel (`predictif`)
+  vieillit, lui, le cadre à chaque année, ce qui est un `with_columns`, pas une
+  reconstruction.
+* **Le droit courant est recalculé en entier à chaque passe** : la simulation de la loi
+  sur les 20 000 ménages est construite et calculée (7 + 39 s dans le rapport de
+  Tondelier, tranche à 60 %), alors qu'elle ne dépend pas de la mesure.
+* **La réforme est calculée sur tous les ménages** (41 s), même quand elle n'en touche
+  qu'une poignée : la tranche à 60 % au-delà de 250 000 € de revenu par part ne change
+  l'impôt d'aucun ménage sous ce revenu.
+* **Les comportements** relisent les taux marginaux : quatre échantillons de 3 000
+  ménages plus les 2 294 ménages du haut, deux simulations chacun (le revenu, puis le
+  revenu plus 100 €) pour la loi et autant pour la réforme, seize simulations. Celles de
+  la loi sont mises en cache sur disque ; celles de la réforme, jamais réutilisées d'une
+  mesure à l'autre, sont calculées sur tous les ménages des quatre échantillons.
+* **Chaque passe d'une étude est un processus neuf** (`Etude.launch`) : l'arbre des
+  paramètres, les tables de la boucle macro (Mésange, IMK, le TES) sont relus et
+  analysés à chaque fois.
+* **Combien de passes.** Une étude de candidat chiffre la première année du programme,
+  chaque point de ses plages (bas, candidat, haut, par champ), son chemin annuel, puis
+  chaque mesure seule, sa première année et son chemin. Un chemin annuel porte dix
+  années, chacune en deux vues (figée et vieillie) : vingt passes. La vue figée redonne
+  le même coût d'une année à l'autre (−917 469 815,76 € pour la tranche à 60 %, huit
+  années sur dix, les deux autres à 0,02 % près) et il est recalculé dix fois.
+
+**La mesure** (passe d'essai, sans entrée, cProfile, une mesure seule : la tranche à 60 %
+de Tondelier, sur la population réelle, détachée, le 15 novembre) : 472 s sous le
+profileur (175 s sans lui dans le rapport commité), dont 137 s (29 %) pour les deux
+simulations des 20 000 ménages, 309 s (65 %) pour les taux marginaux (le cache de la loi
+était froid pour 2026), 23 s (5 %) pour relire les tables de la boucle macro. Dans les
+simulations, 320 s des 366 s de calcul vont à l'historique mois par mois des aides au
+logement (`situations.pin_benefit_history`), que chaque simulation refait pour tous ses
+ménages. Le coût mécanique redonné à l'euro près : −917 469 815,7627 €, le rapport.
+
+**La conception** (`engine/incremental.py`, activé par `IMPOTS_MOTEUR=rapide` ; l'ancien
+moteur reste le chemin par défaut tant que la comparaison de D-463 n'a pas conclu) :
+
+1. **La référence calculée une fois et gardée.** Les lignes du droit courant d'une passe
+   (ce que `runner._extract` rend, et le coût du travail par personne) sont écrites dans
+   `data/processed/references/`, sous une empreinte qui nomme ce qui les fait : le code
+   (le condensé des sources de `engine/`, `population/`, `consommation.py`, des versions
+   d'openfisca-core, openfisca-france, numpy et polars), les paramètres (l'année, le
+   palier, le câblage `to_openfisca.WIRING`), la population (l'empreinte ligne à ligne du
+   cadre trié, `emtr.fingerprint`) et les imputations demandées. Une empreinte qui
+   diffère recalcule ; rien n'est servi à un autre cadre.
+2. **Pour une mesure, seuls les ménages qu'elle peut toucher.** Chaque bouton qui a un
+   crible dit, sur les seules données du cadre (pas sur un résultat calculé), quels
+   ménages il peut toucher : le barème de l'IR, les ménages dont la somme des revenus
+   bruts (salaires, pensions, chômage, revenus non salariés) dépasse, moins une marge de
+   5 000 €, le seuil de la première tranche changée (le revenu imposable par part ne
+   dépasse jamais cette somme) ; la revalorisation des aides au logement, les ménages qui
+   ne sont pas propriétaires ; un bouton de la consommation seul, aucun (l'arbre ne le
+   voit pas, D-323). Un bouton sans crible touche tous les ménages : le moteur reste
+   exact, il ne gagne que la référence. Les ménages sont indépendants dans le moteur ; la
+   réforme est calculée sur les ménages criblés, et les autres gardent les lignes de la
+   référence.
+3. **Le crible est vérifié à chaque passe.** 200 ménages tirés hors du crible (graine
+   fixe) passent aussi dans la réforme ; si l'un d'eux bouge de plus d'un centime sur une
+   ligne, le crible est faux : la passe refait la réforme sur tous les ménages et le dit
+   (`moteur_rapide_repli` dans ses gardes). Le moteur rapide ne rend jamais un nombre que
+   le crible aurait faussé sans le dire.
+4. **Les comportements par différence.** Les taux marginaux de la loi viennent du cache
+   (déjà le cas) ; ceux de la réforme ne sont calculés que pour les ménages criblés de
+   chaque échantillon (le crible, sur le cadre, vaut pour le revenu plus 100 € grâce à sa
+   marge), les autres prenant le taux de la loi, avec le même contrôle de 200 ménages.
+   Les canaux lisent ensuite les mêmes vecteurs qu'avant.
+5. **Ni vieillissement ni calage pour une mesure.** Ils ne tournaient déjà pas dans une
+   passe « mesure seule » ; le moteur rapide n'en ajoute pas.
+6. **Hors du moteur rapide**, ramenés à l'ancien chemin : l'imputation du capital et des
+   niches (elles lisent la simulation de la loi), le recalage de la queue, et une
+   réforme du SMIC ou du point d'indice (elle change les salaires de la passe).
+
+Ce qui n'est pas fait ici, et reste à faire : un chemin annuel qui ne refait pas la vue
+figée dix fois, et un processus qui garde l'arbre et les tables macro entre deux passes.
+
+## D-463 — Préenregistrement : le moteur rapide contre les rapports « mesure seule »
+
+Avant tout calcul du moteur rapide de D-462, la comparaison est fixée ici, commitée et
+poussée. Elle est une comparaison de code, pas un chiffrage face à un juge : le juge est
+l'ancien moteur, par ses rapports commités.
+
+**Les trois mesures**, chacune avec un rapport « mesure seule » commité (calculé au commit
+`5a68669`, le 14 novembre) :
+
+* un barème de l'IR : Tondelier, la tranche à 60 % (`pres2027_tondelier_tranche_ir_60`,
+  `reports/etudes/presidentielle_tondelier/mesures/tranche_ir_60/`) ;
+* une prestation sous condition de ressources : Tondelier, les aides au logement + 10 %
+  (`pres2027_tondelier_apl_plus_10`) ;
+* une mesure de TVA : Roussel, la TVA des carburants à 5,5 %
+  (`pres2027_roussel_tva_carburants_5_5`).
+
+**Les deux populations.** D'abord la population de test (le squelette de
+`tests/fixtures/eec_sample.parquet` et ses revenus, comme `test_consommation`), année 2026,
+palier complet, les trois réformes : l'ancien moteur (`runner.run`) et le rapide sur le
+même cadre, et les taux marginaux (`emtr.compute`) des deux. Puis la population réelle :
+`etude.first_year` des trois mesures, `IMPOTS_MOTEUR=rapide`, la référence construite une
+fois, contre les trois rapports commités.
+
+**Les grandeurs comparées.** Sur la fixture : chaque colonne de chaque ménage (droit
+courant et réforme) et chaque taux marginal. Sur la population réelle : le coût mécanique
+(`reform_cost`), chacun des 55 écarts par ligne (`deltas`, le total par couche des
+prélèvements et des prestations), la bande des comportements (p10, p50, p90) et la valeur
+centrale de chaque canal, la médiane du PIB de la boucle macro à chaque horizon, et pour
+chaque décile l'écart moyen et les parts de gagnants et de perdants.
+
+**La tolérance**, écrite avant le premier calcul et jamais modifiée après. Le moteur rapide
+calcule les mêmes ménages par les mêmes formules : il doit redonner les nombres, pas les
+approcher. Un montant en euros tient si son écart est d'au plus 10 € ou d'au plus 1e-7 de
+sa valeur publiée (le plus grand des deux) ; une part (gagnants, perdants) ou un taux
+marginal, à 1e-7 près ; une colonne d'un ménage de la fixture, à un centime. Un seul
+écart au-delà est un échec du moteur rapide, dit comme tel, et cherché.
+
+**Le pronostic.** Les nombres : tous dans la tolérance, et le contrôle des 200 ménages hors
+crible sans repli. Le temps, mesuré sur l'appel de la mesure dans un processus où la
+référence est déjà sur disque et les caches de la loi chauds, contre le temps du rapport
+commité (174,7 s, 111,3 s, 40,6 s) : la tranche à 60 % en 8 s, la TVA des carburants en
+3 s, les aides au logement en 25 s, au-delà de la cible de 10 s, parce qu'elles touchent
+quatre ménages sur dix (tous les non-propriétaires). La première mesure d'une année paie la
+référence, une passe de l'ancien droit courant, environ 50 s, une seule fois.
+
+**La machine.** Environ 20 min accordées par le propriétaire (D-445), détachée, un seul
+processus, aucune autre passe lourde lancée en même temps par ce volet.
+
+## D-464 — Le moteur rapide redonne les nombres à l'euro, mais manque les 10 s
+
+La comparaison de D-463, au commit `18f6ed2`, le 15 novembre, détachée, un seul processus :
+environ 4 min de machine sur la population réelle, 1 min sur la fixture.
+
+**Les nombres : aucun écart.** Sur la population de test, les trois réformes : chaque
+colonne de chaque ménage (400 ménages, droit courant et réforme), chaque personne et chaque
+taux marginal identiques à l'ancien moteur, écart nul. Sur la population réelle, contre
+les trois rapports « mesure seule » commités : 93, 86 et 91 grandeurs comparées (le coût
+mécanique, les 55 écarts par ligne, la bande et les canaux des comportements, le PIB de la
+boucle macro, les trois nombres des dix déciles), **toutes à écart nul**, pas seulement
+dans la tolérance : −917 469 815,7627 € pour la tranche à 60 %, 1 328 354 568,6270 € pour
+les aides au logement, 5 198 684 093,5322 € pour la TVA des carburants, les rapports. Le
+contrôle des 200 ménages hors crible n'a jamais bougé (écart 0,00 €) : aucun repli. Le
+pronostic des nombres est tenu.
+
+**Le crible.** La tranche à 60 % touche 86 ménages sur 20 000 (ceux dont les revenus
+bruts dépassent 245 000 €) ; les aides au logement, 13 227 (tous les non-propriétaires,
+deux tiers, et non quatre sur dix comme le pronostic le disait) ; la TVA, aucun.
+
+**Le temps**, appel de la mesure (`etude.first_year`), une mesure jamais chiffrée dans le
+processus (les taux de sa réforme pas en cache), la référence sur disque, mesuré dans une
+passe d'essai juste après la comparaison, machine partagée :
+
+| Mesure | Rapport | Moteur rapide | Pronostic | Population, comportements |
+|---|---|---|---|---|
+| Tranche à 60 % | 174,7 s | 53,8 s | 8 s | 9,8 s, 43,5 s |
+| Aides au logement + 10 % | 111,3 s | 64,1 s | 25 s | 47,5 s, 16,6 s |
+| TVA des carburants | 40,6 s | 1,2 s | 3 s | 0,4 s, 0,5 s |
+
+La première mesure d'une année paie la référence : 56 s, une fois (l'ancien droit courant
+des 20 000 ménages). Les tables de la boucle macro coûtent 7 s au premier appel d'un
+processus. La même mesure chiffrée une seconde fois prend 9,0 s et 54,8 s : elle lit ses
+taux marginaux dans le cache, ce qui n'est pas un gain du moteur rapide et n'est pas
+compté comme tel.
+
+**Le pronostic du temps est manqué sur deux mesures, et la cible de 10 s aussi.** La TVA
+passe sous la seconde : le droit courant n'est plus refait, et rien d'autre ne tournait.
+La tranche à 60 % gagne un facteur 3, pas 20 : une simulation coûte 4 à 5 s quel que soit
+son nombre de ménages (la construction, et l'historique mois par mois des aides au
+logement de D-462), et les comportements en font huit (quatre échantillons, le revenu et
+le revenu plus 100 €), même sur 286 ménages. Les aides au logement gagnent un facteur 1,7
+seulement : leur crible garde deux ménages sur trois, et la passe réduite sur 13 427
+ménages a coûté 48 à 54 s, plus que les 41,7 s de la passe entière du rapport, sur une
+machine plus chargée ce jour-là (charge moyenne de 4 pour 4 cœurs).
+
+**Ce qui reste à faire pour passer sous 10 s**, sans changer un nombre : les huit
+simulations des taux marginaux en une seule (les ménages des quatre échantillons
+dédoublonnés, le revenu et le revenu plus 100 € côte à côte sous deux identifiants), ce
+qui ramènerait la tranche à 60 % vers 15 s ; un crible des aides au logement plus fin
+que « non propriétaire » (un loyer et des ressources sous le plafond de sortie), à
+vérifier par le même contrôle ; et un processus qui garde l'arbre, les références et les
+tables macro entre deux passes, au lieu du processus neuf de chaque passe d'une étude.
+Le chemin annuel, qui refait vingt passes dont dix identiques, n'est pas touché ici.
+
+**Ce qui change.** Rien de publié : le moteur rapide n'est pris que sous
+`IMPOTS_MOTEUR=rapide`, et l'ancien chemin reste celui des études tant que le propriétaire
+n'a pas décidé de basculer. `tests/test_incremental.py` tient l'égalité ménage par ménage
+sur la fixture (les aides au logement, la référence lue) et le crible du barème.
+
+## D-465 — Le moteur rapide, deuxième version : les taux marginaux en une simulation
+
+Le coordinateur du but, le 15 novembre, demande de poursuivre vers la cible (une mesure
+seule sous 10 s) sans changer un nombre, dans l'ordre de ce qui rapporte. Ce qui a été
+cherché, avant tout calcul de la comparaison ci-dessous :
+
+1. **L'historique des aides au logement** (`pin_benefit_history`, 320 s des 366 s sous
+   profileur, D-462) **n'est pas un surcoût** : c'est le calcul des prestations lui-même.
+   Chaque mois d'octobre de N−1 à décembre de N, l'aide au logement tire le RSA, la prime
+   d'activité, leurs ressources et la MVA du mois ; l'épingler mois par mois fixe l'ordre
+   d'évaluation (D-178, D-179) mais ne refait rien que la passe ne demanderait ensuite.
+   Le coût d'une simulation est surtout fixe : un banc sur la population réelle (passe
+   d'essai) donne 2,2 à 2,4 s pour le revenu disponible de 10 ou de 300 ménages, 5,3 s
+   pour 2 000, et 3 à 4 s pour les lignes de la passe (`_extract`) de 10 ou 300 ménages.
+   Rendre ce calcul vectoriel, c'est réécrire les formules d'openfisca : pas fait. Ce qui
+   paie, c'est **moins de simulations**.
+2. **Les taux marginaux en une seule simulation** (fait) : le cadre et sa copie augmentée
+   de 100 € par actif, côte à côte sous des identifiants distincts (`~b`), et les ménages
+   criblés de tous les échantillons que la passe lira (les quatre de C1 quand C1 est
+   revendiqué, celui de la graine sinon), dédoublonnés : les ménages du haut sont les
+   mêmes dans les quatre. Une simulation au lieu de huit. Le contrôle devient 200 ménages
+   tirés hors du crible dans l'union des échantillons, passés dans la même simulation ;
+   un seul qui bouge arrête la passe (`CribleDementi`) au lieu de la refaire, puisque les
+   échantillons déjà rendus liraient le même crible. L'arithmétique du taux est celle de
+   l'ancien moteur, sortie dans `emtr._rate_from`.
+3. **Un crible plus fin des aides au logement** (essayé, abandonné) : un plafond de
+   revenus bruts par taille de ménage, tiré des ménages de la référence qui touchent une
+   aide, ne retire presque personne (13 166 ménages criblés au lieu de 13 227) : des
+   ménages à plus de 300 000 € de revenus bruts touchent une aide ou la réduction de loyer
+   de solidarité (une famille du ménage, un étudiant, un revenu non salarié brut qui n'est
+   pas la ressource), et un plafond plus serré ne serait plus sûr. Le crible reste « non
+   propriétaire ».
+4. **La passe réduite coupée en deux processus** (essayé, abandonné) : `fork` après le
+   chargement de polars bloque le processus fils (la file de threads de polars), le test
+   ne finit pas. Un processus persistant entre les passes d'une étude, et la vue figée du
+   chemin annuel calculée une fois, touchent `etude.py` et le chemin annuel, d'un autre
+   volet : pas faits, laissés au propriétaire et à la jonction.
+
+Sur la fixture, les trois mesures redonnent, comme en D-464, chaque colonne de chaque
+ménage et chaque taux marginal à écart nul ; `tests/test_incremental.py` tient aussi les
+taux empilés.
+
+**La comparaison préenregistrée**, reprise telle quelle de D-463 : les trois mesures
+(Tondelier, tranche à 60 % ; Tondelier, aides au logement + 10 % ; Roussel, TVA des
+carburants à 5,5 %), les deux populations (la fixture, puis la population réelle contre
+les rapports « mesure seule » commités), les mêmes grandeurs (le coût mécanique, les 55
+écarts par ligne, la bande et les canaux des comportements, le PIB de la boucle macro à
+chaque horizon, l'écart moyen et les parts de gagnants et de perdants de chaque décile)
+et la même tolérance (10 € ou 1e-7 de la valeur publiée, le plus grand des deux, pour un
+montant ; 1e-7 pour une part ou un taux ; un centime pour une colonne d'un ménage de la
+fixture), non modifiée.
+
+**Le nouveau pronostic.** Les nombres : tous à écart nul, aucun crible démenti. Le temps
+d'une mesure jamais chiffrée dans le processus, référence sur disque : la tranche à 60 %
+en 10 s (entre 8 et 13 : 286 ménages dans la passe, environ 900 ménages empilés deux fois
+pour les taux), la TVA en 1,2 s, les aides au logement en 45 s (le crible inchangé, les
+taux en une simulation au lieu de deux). La référence est recalculée une fois (le code
+du moteur a changé, son empreinte aussi), environ 56 s. La passe tient dans les 15 min de
+machine qui restent : environ 4 min, détachée, un seul processus.
+
+### Résultat
+
+La comparaison, au commit `dbbf7a0`, le 15 novembre, détachée, un seul processus (2 min
+18 s de machine) : **les trois mesures redonnent les rapports à écart nul**, 93, 86 et 91
+grandeurs, comme en D-464 ; le contrôle n'a jamais bougé, aucun crible démenti. Le
+pronostic des nombres est tenu.
+
+Un profil de la tranche à 60 % sur ce commit (passe d'essai) a montré deux pertes de
+plomberie : 11,6 s (sous profileur) à reconstruire huit fois l'arbre réformé pour lire la
+première tranche changée, et 3 s à retirer les autres échantillons à chaque appel des
+taux. Les deux sont calculés une fois par passe au commit `7caf97c` (mémoïsation seule) ;
+la même comparaison y a été relancée (1 min 49 s de machine) : de nouveau écart nul
+partout, et les temps ci-dessous.
+
+| Mesure | Rapport | D-464 | `dbbf7a0` | `7caf97c` | Pronostic |
+|---|---|---|---|---|---|
+| Tranche à 60 % | 174,7 s | 53,8 s | 15,6 s | **14,4 s** | 10 s |
+| Aides au logement + 10 % | 111,3 s | 64,1 s | 61,4 s | **46,8 s** | 45 s |
+| TVA des carburants | 40,6 s | 1,2 s | 0,8 s | **0,8 s** | 1,2 s |
+
+Temps d'une mesure jamais chiffrée dans le processus, la référence sur disque, les taux
+de sa réforme hors du cache (ceux qu'une passe précédente avait écrits ont été sortis du
+dossier avant chaque mesure). La référence, recalculée parce que le code du moteur a
+changé : 52 s puis 40 s, une fois.
+
+**La cible de 10 s est atteinte pour la TVA, manquée pour les deux autres**, et le
+pronostic de la tranche à 60 % aussi (14,4 s contre 10 s). Ce qui reste, pour la tranche
+à 60 % : 5,3 s pour la passe de la population (une simulation de 286 ménages, presque
+tout en coût fixe), 8,8 s pour les comportements (une simulation de 1 780 ménages, le
+revenu et le revenu plus 100 € des 890 ménages criblés ou de contrôle, et la lecture des
+quatre échantillons). Pour les aides au logement : 32 s pour la passe sur 13 427 ménages,
+15 s pour les taux sur environ 5 000. Le facteur gagné depuis les rapports : 12 pour la
+tranche à 60 %, 2,4 pour les aides au logement, 50 pour la TVA.
+
+**Ce qui passerait sous 10 s, sans changer un nombre, et n'est pas fait** : la passe de
+la population et les taux marginaux dans une même simulation (un coût fixe de moins,
+environ 3 s, ce qui mettrait la tranche à 60 % vers 11 s) ; moins de ménages de contrôle,
+ce qui toucherait à la garantie de D-462 et se décide ; pour les aides au logement, un
+crible tiré d'un calcul et non des données du cadre (aucune donnée du cadre ne sépare un
+ménage loin de l'aide d'un ménage qui y entre), ou une simulation plus légère ; et, pour
+une étude entière, un processus qui garde la référence, l'arbre et les tables macro
+entre les passes (7 s à la première mesure d'un processus), et la vue figée du chemin
+annuel calculée une fois. Le moteur rapide reste sous `IMPOTS_MOTEUR=rapide` : basculer
+les études reste au propriétaire.
+
+## D-466 — Le lecteur novice, première passe : le site d'avant la refonte
+
+**Ce qui a été lu** (but 25, volet `lecteur`), sur `claude/but25` (f40424b), le dossier
+`site/` servi en local et ouvert dans Chromium à 1280 px et à 390 px, en lecteur qui ne
+sait rien de la fiscalité ni de la macroéconomie, sans lire le code ni les D-entrées :
+l'accueil, les neuf pages du parcours, la liste des programmes, l'étude de Mélenchon en
+détail, celles de Retailleau et du PLFSS 2027 en survol, la méthode, et « Le jumeau »,
+curseurs bougés dans ses deux modes et avec une loi hypothétique.
+
+**Le décompte** : 50 remarques, 15 bloquantes, 31 gênantes, 4 mineures, et 5 qui
+marchent. Par volet : `chemin` 4, 12, 1 ; `population` 2, 4, 1 ; `mesure` 4, 9, 1 ;
+`jumeau` 5, 6, 1. Aux trois questions du but : la population, comprise à moitié (ni sa
+taille, ni un ménage, ni ce que ses écarts font aux études) ; une mesure devenue nombre,
+comprise pour Attal seul, par la page 3 du parcours ; le jumeau et ses curseurs, non.
+
+**Le rapport** : `reports/lecteur/passe1.md`, ses captures dans
+`reports/lecteur/captures/passe1/` (19 PNG, 2,5 Mo). Rien n'est calculé : les valeurs du
+jumeau citées sont celles que la page affiche, lues au curseur.
+
+## D-467 — Le lecteur novice, seconde passe : le site joint
+
+**Ce qui a été lu** (but 25, volet `lecteur`), sur `claude/but25` à b0d4044, le
+dossier `site/` servi en local et ouvert dans Chromium à 1280 px et à 390 px, dans le
+même rôle qu'en D-466 : l'accueil, le chemin en dix étapes et ses curseurs, les quatre
+pages de la population (« un ménage comme le mien » essayé), une mesure d'Attal suivie
+de bout en bout, l'étude de Mélenchon, la liste des études, « comparer les candidats »,
+la méthode, et le jumeau sur la loi simple, les onze programmes et un article du PLF,
+dans ses deux modes et ses deux populations, curseurs bougés.
+
+**Les 50 remarques de D-466** : 34 réglées, 13 en partie, 3 non réglées (trois
+mineures), aucune sans objet. Des 15 bloquantes, 12 sont réglées ; deux, en partie,
+deviennent gênantes (les coûts d'une même mesure, la dette du jumeau contre celle de
+l'étude) ; une reste bloquante : le mode structurel du jumeau ne calcule rien pour 7
+programmes sur 11, ni pour aucun en population vieillie, même si le refus est maintenant
+dit en français.
+
+**Les remarques nouvelles** : 16, aucune bloquante, 10 gênantes, 6 mineures. Ouvertes en
+tout : 32, contre 50 ; 1 bloquante, 21 gênantes, 10 mineures. Aux trois questions du but :
+la population, oui ; une mesure devenue nombre, oui ; le jumeau, en grande partie.
+
+**Le rapport** : `reports/lecteur/passe2.md`, ses captures dans
+`reports/lecteur/captures/passe2/` (28 PNG, 3,7 Mo). Rien n'est calculé : les valeurs du
+jumeau citées sont celles que la page affiche, lues au curseur.
+
+## D-468 — La jonction des volets du site : cinq branches, une feuille, un chemin lié
+
+**Ce qui est joint** (but 25, la jonction), sur `claude/but25` (f40424b), par fusions
+`--no-ff`, sans rebase, dans l'ordre du chemin : `chemin` (ccda1ef), `population`
+(91ee86f), `jumeau` (8e622fc), `mesure` (c81d00c), `lecteur` (776bbf0, ses rapports et
+D-466 seulement). Le volet `moteur` tourne encore : il n'est pas joint, et ne touche
+aucune page. Les données sont reliées fichier par fichier depuis le worktree du but 24.
+
+**Les conflits.** `docs/DECISIONS.md` à chaque fusion : chaque volet ajoutait ses entrées
+à la fin ; elles sont gardées toutes, rangées par numéro (D-450 à D-453, D-456, D-457,
+D-459, D-466), et un `comm` contre le fichier de chaque branche ne trouve aucune ligne
+perdue. Les D-450 et D-451 que `jumeau` avait reprises de `chemin` ne sont pas doublées.
+Les pages de `site/` (deux à la fusion de `population`, une à celle de `jumeau`, 29 à
+celle de `mesure`) sont reconstruites par `impots site construire`. `src/impots/site.py`
+et les tests se sont fusionnés sans conflit.
+
+**Une feuille.** `population.css` et `mesure.css` n'existent plus : leurs composants sont
+dans la feuille commune (section 5 de `style.css`), sur les jetons communs, et décrits
+dans `docs/site/DESIGN.md`. Ce qui doublait un composant commun le reprend : le chiffre
+clé de la population et ceux du jumeau sont des `stat`, les étapes de construction des
+`etapes`, le schéma d'une mesure un `flux`, ses sources des notes de source, les deux
+sommaires en pastilles des `pastilles`, le pont de la cascade et l'encadré de la
+population un même `encadre`. Les composants propres gardent leur forme : barres avec
+cible, colonnes, pyramide, écart contre tolérance, carte de chaleur, frise (population) ;
+couches, cartes de mesure, barre de part chiffrée, petits multiples, graphiques SVG
+(mesure). Trois collisions de noms entre feuilles sont levées (`.compte`, `.legende`,
+`.point` du jumeau) ; une perte se dessine en `--perte`. Ce qui change à l'œil, voulu :
+les pages de la population passent à la largeur commune et leurs chiffres clés au serif
+commun ; le débordement de la population au téléphone (466 px pour 390) et ceux du
+jumeau (1 418 px pour 1 280, 607 pour 390 : les tuiles de chiffres et leur `nowrap`)
+disparaissent.
+
+**Le chemin lié.** L'étape de la population mène à `population.html#en-bref`, puis en
+pastilles à `#construction`, `#poids`, `population-france.html#calee`, `#ecarts`,
+`population-comme-moi.html#choisir` et `cellules.html` ; l'étape d'une mesure à
+`mesure.html` et à la page pas à pas du fil rouge, le « droit au brut » d'Attal ; le
+bouclage et la dette au jumeau ; le calage, déjà, à `population-france.html`. La
+navigation suit l'ordre du chemin (la population, une mesure, le jumeau). Un renvoi
+peut porter une ancre : `si-page` lit le nom de la page sans elle.
+
+**Une page pour comparer.** `comparer-candidats.html` (volet `mesure`) reste ;
+`parcours-comparer.html` est une redirection statique vers elle
+(`parcours.ANCIENNES`), et son tableau à deux choix y est repris, avec son script,
+sous la liste des candidats (`parcours.comparer_section`). Les liens suivent.
+
+**Une phrase rendue juste.** La page des programmes disait que l'outil ne lit l'effet sur
+l'activité que pour les impôts des ménages. Les rapports commités disent autre chose :
+la boucle macroéconomique lit l'impôt sur le revenu, la CSG, les cotisations des
+salariés et des employeurs, et la TVA (`rejeu.macro.instruments`, union des rapports
+prédictifs) ; le canal des créations lit l'IS, sa contribution sociale, la CEBGE, les
+cotisations des employeurs, le PFU et les prélèvements sociaux du capital
+(`rejeu.creations.parametres`). La phrase le dit ; les accises, la CVAE et la C3S
+restent hors de la boucle (D-440).
+
+**Des ordres de grandeur dits comme tels.** Les phrases « pour les études » des écarts de
+`population-france.html` sont des lectures au premier ordre que rien n'a calculées. Chacune
+porte une pastille « non calculé » et une mise en garde les précède ; aucune ne prend l'air
+d'un résultat.
+
+**Vérifié.** `site construire`, `site verifier`, `site publiable` et `node ui/check.mjs`
+verts ; ruff propre (quatre avis des volets corrigés). Captures de 26 pages à 1 280 et à 390
+px, et de quatre en thème sombre : aucun débordement, aucune erreur de console ; les
+captures d'avant la feuille unifiée et d'après, comparées côte à côte. Les tests légers des
+fichiers touchés par les volets (776) : 774 verts au premier tour ; deux de `test_site`
+tombent, tenus depuis : un identifiant de section doublé sur `comparer-candidats.html`
+(corrigé), et la page qui compare porte désormais un script, celui du tableau à deux
+choix venu du parcours : le test l'ajoute à la liste des pages qui en portent, la même
+propriété ; `test_site` repassé, 22 verts. Aucun nombre publié ne change : rien n'est
+recalculé, les pages lisent les mêmes rapports. Pas de `make impact` ni de lourds : la
+passe d'avant la PR viendra avec l'accord du propriétaire.
+
+**Ce qui reste.** Joindre `moteur` quand il aura fini. Le graphique des dettes de
+`comparer-candidats.html` écrit ses libellés trop grands sur ordinateur (un SVG étiré,
+d'avant la jonction). Les schémas des pages pas à pas restent à la mesure du texte
+(42 rem), serrés en trois colonnes. Pyodide n'est toujours pas vendorisé (D-459, J12) :
+à décider. La seconde passe du lecteur novice, sur le site joint.
+
+## D-469 — Les corrections de la seconde lecture : le mode structurel dit ce qu'il refuse
+
+**Ce qui est fait** (but 25, sur `claude/but25`, après la fusion de D-467). Aucun nombre
+publié ne change : les pages montrent autrement ceux des rapports commités. Les remarques
+de `reports/lecteur/passe2.md` :
+
+* **R13, pas un défaut.** Attal en structurel, figée, convention : +17,02 pt de dette en
+  2035 au défaut, plage de 90 % de +17,06 à +19,64. La plage est juste : elle tire chaque
+  curseur selon sa loi publiée (`a_priori`), le défaut met chacun à ½, le milieu de sa
+  boîte. Deux lois ne sont pas centrées sur ½ (l'emploi au coût du travail, centre 0,24 ;
+  l'investissement au coût du capital, 0,34), et le profil de la consommation a son
+  minimum près de ½ (0 à ½ : +0,71 pt ; ½ à 1 : −0,01 pt). Tous les curseurs au centre de
+  leur loi : +18,45 pt, la médiane des tirages. La page le dit en mots sous chaque courbe
+  dont le nombre sort de sa plage, nomme les curseurs décentrés et donne la médiane ; la
+  légende dit « chaque curseur selon sa loi publiée », et la portée ne dit plus que ½ est
+  « le centre publié ».
+* **R12.** Chaque modèle s'ouvre sur la population de son calcul : la chaîne des études
+  sur la vieillie (Attal +4,28 pt, le nombre de l'étude), le jumeau sur la figée. Une note
+  sous les réglages dit que la chaîne sur la figée donne un autre nombre (+3,52 pt).
+* **J2, la bloquante.** Le mode structurel est grisé avant le clic pour une mesure qu'il
+  refuse, avec sa raison en une ligne ; la chaîne des études est choisie à sa place, et
+  les mesures du même candidat que le jumeau calcule sont proposées en boutons. En mode
+  structurel, la population vieillie est grisée, raison dite. Le relevé est fait à la
+  construction de la page (`site_jumeau.structurel`) par `Session.structurel`, qui lève
+  les refus des blocs (`preparer`) sans faire un pas. Sur les 46 mesures d'études, dans
+  les deux vues, avec et sans convention, il redonne les années de `calculer` (184 cas,
+  aucun écart) ; `test_jumeau_navigateur.py` en tient quatre.
+* **R15.** Sous un programme calculé par le jumeau : le chiffrage publié du site est
+  celui de l'étude, chaîne des études, vue vieillie, θ½ ; ce que le jumeau ajoute (les
+  salaires, la consommation, l'emploi répondent bloc par bloc au lieu des multiplicateurs
+  moyens de Mésange) ; pourquoi ils divergent (la part du coût qui revient par
+  l'activité). Lequel croire n'est pas tranché sur la page.
+* **R11.** Le panneau des réglages du jumeau n'est plus fixé en haut de l'écran.
+* **R1.** Les trois réponses de l'accueil sont celles de `docs/BUT.md`, des études et de
+  la méthode : le coût et qui y gagne (+66,18 Md€) ; le coût avec les comportements et
+  l'économie (−13,08 pt rendus par l'activité sur +20,46 pt de coût accumulé, la bande des
+  comportements absente) ; la dette en 2035 (+4,28 pt) et son verdict (« dépend », 65 %).
+  L'étape 7 du chemin attribue la boucle de Mésange à la chaîne des études, plus au jumeau.
+* **R4, vrai.** Le cadre des études suppose des prix à 2,0 % par an, hors du déflateur du
+  PLF 2026 (1,5 à 1,6 %), D-289. Au réglage des études, l'étape 8 le dit comme un fait
+  (« À savoir ») ; l'alerte reste pour un réglage déplacé hors des plages.
+* **R2.** Les pages d'études prennent l'échelle commune de l'accueil et du chemin
+  (`site_composants.echelle`) : ≈ 30 Md€ le point de PIB de 2025, ≈ 40 Md€ celui de 2035,
+  et un point de dette en 2035 ≈ 40 Md€. Une étude d'un autre départ garderait sa note.
+* **R6.** Page d'une mesure : un point de vue par graphique, dit dans son titre. Les
+  modules : le montant de chaque impôt et prestation, d'une couleur, ni coût ni gain ; les
+  comportements : le coût pour l'État ; le bouclage : la dette publique ; les couleurs de
+  la cascade des études (coût bleu, comportements ocre, PIB vert, recettes violet, total
+  noir).
+* **R8.** Page d'une mesure, étape 5 : « Pourquoi ce coût fait cette dette », lu dans les
+  rapports (`years[].mechanical_aged_eur`, `lectures.decomposition`, les impulsions et les
+  multiplicateurs de Mésange). Le Smic à 1 700 € : 30,45 à 25,48 Md€ par an, +7,62 pt
+  accumulés, l'activité en rend 6,86 pt (90 %), la boucle lisant une baisse de
+  cotisations des employeurs. Le point d'indice : 11,69 à 14,62 Md€, +3,64 pt accumulés,
+  l'activité en ajoute 4,81 pt : la boucle lit ses impulsions (impôt sur le revenu, CSG,
+  cotisations) comme des hausses de prélèvements, qui réduisent le PIB dans Mésange. Le
+  coût plus grand pèse moins parce qu'il passe par des impôts que la boucle lit comme une
+  baisse ; rien n'est ajouté que les rapports ne portent.
+* **R5.** « Comparer les candidats » : une colonne « 90 % des tirages » (les quantiles du
+  Monte-Carlo, vue vieillie) et « Pourquoi deux dettes proches ont des verdicts
+  différents », sur l'exemple que les rapports donnent (Tondelier +2,51 pt, 100 % en
+  hausse, contre Lisnard +5,71 pt, de −0,69 à +11,40 pt, « dépend »). Le graphique reste.
+* **Les mineures.** R7 (« l'étude tire 20 000 ménages de la population simulée ») ; R9
+  (libellés des modules et des instruments en français) ; R10 (« 589 000 ménages ») ; R16
+  (« pour aucune année », la convention nommée en mots, les D-412 et D-414 hors du texte
+  visible du refus).
+
+**J2, programme par programme.** Le mode structurel refuse une mesure quand ses
+prélèvements de 2026 contiennent des cotisations patronales nettes des allègements, du
+PFU ou des prélèvements sociaux du capital que le rapport de la première année ne répartit
+pas impôt par impôt (le bloc des entreprises, `chocs_entreprises`, refuse un agrégat), et
+il ne fait pas tourner une hausse du Smic (le bloc des salaires ne lit pas le Smic réel
+efficace sans hypothèse dans la requête). En 2026, vue figée, convention :
+
+| programme | prélèvements non répartis | Smic | ce qui les porte |
+|---|---:|---|---|
+| Kazib | −16,23 Md€ | oui | le Smic à 2 000 € |
+| Retailleau | −4,30 Md€ | non | r13, zéro cotisation de 16 à 23 h |
+| Roussel | −29,46 Md€ | oui | le Smic à +15 % |
+| Ruffin | −18,50 Md€ | oui | le Smic à 1 600 € |
+| Mélenchon | −24,41 Md€ | oui | Smic, point d'indice, PFU, exonérations |
+| Bouamrane | −16,09 Md€ | oui | la hausse des salaires de 150 € |
+| Tondelier | −13,61 Md€ | oui | Smic à 2 000 € brut, point d'indice |
+
+Dans la vue vieillie, aucune mesure ne tourne : la première année n'est répartie que sur
+la population figée. Ce qu'il faudrait, à décider par le propriétaire :
+
+1. **Répartir les prélèvements des ménages que lit le lot 2.** La passe des ménages porte
+   déjà, module par module, les cotisations des employeurs et les allègements ; il
+   faudrait que `mesures.ventilations` les range dans les impôts du bloc des entreprises
+   (une correspondance des modules aux instruments, écrite et testée). Cela suffirait à
+   Retailleau (ses ménages suivraient : leur coût se séparerait de celui des entreprises)
+   et aux mesures sans Smic de Mélenchon et de Tondelier (point d'indice, PFU,
+   exonérations).
+2. **Une hypothèse sur le Smic réel efficace** pour Kazib, Roussel, Ruffin, Mélenchon,
+   Bouamrane et Tondelier : la diffusion de la revalorisation aux salaires, déclarée dans
+   la requête ou fixée par une décision, que le bloc des salaires lirait.
+3. **La vue vieillie** : une passe de la première année sur la population vieillie, ou une
+   convention qui porte les parts de la figée aux totaux de la vieillie.
+
+Les trois changent le modèle ; rien n'en est fait ici.
+
+**Ce qui reste.** R3 (le détail replié des étapes reste la couche du relecteur), R14 (les
+étiquettes du schéma au téléphone), A7 et Me8 (étiquettes d'étage collées, sources en
+chemin de fichier), Me5, Me7, Po5, Po7, J11, J12 (Pyodide hors du dépôt, à décider).
+Captures : `reports/lecteur/captures/d469/`.
+
+## D-470 — La passe d'avant la PR du but 25 : une rouge, la page du jumeau, corrigée
+
+Le 16 novembre, à la demande du propriétaire (« lance la passe et ouvre la PR quand c'est
+vert »), `make impact` et les 29 lourds ont tourné une fois sur `claude/but25` à 5ae669a.
+Ruff : vert. Les tests légers : 2 772 passés, 21 sautés, ceux de D-430 (les contrôles
+négatifs non écrits des boutons, une source absente de `data/raw/`, le clone
+superficiel). Les lourds : 28 verts, **1 rouge, `test_la_page_affiche_les_nombres_du_jumeau`**
+(une attente de 120 s dépassée dans Chromium, rejouée deux fois à l'identique). La recette
+s'est arrêtée là ; les chronomètres ont tourné ensuite, seuls.
+
+**Le diagnostic, action par action.** Le harnais attend un calcul après chaque action.
+Depuis D-469, la page grise le mode structurel avant le clic pour un candidat qu'il
+refuse : le candidat par défaut (Kazib) l'est, et entrer par les candidats met la page
+d'elle-même en mode réduit, sur la vieillie. La première étape cochait ensuite le mode
+réduit, déjà coché : rien ne change, rien ne calcule, l'attente expire. Le test n'avait
+pas tourné après D-469 (ses captures dataient de 13 h 19, le commit de 16 h 58). Puis,
+l'étape réordonnée, l'étape 5 attendait le mode réduit sur la figée ; or, depuis D-469
+(R12), chaque mode s'ouvre sur sa population, le réduit sur la vieillie.
+
+**Ce qui est changé.** Aucune assertion. Le scénario : à l'étape 1, le candidat est choisi
+avant le mode (toutes les actions changent alors quelque chose, l'état d'arrivée est le
+même : réduit, vieillie, Attal, multiplicateur à 0,8) ; à l'étape 5, la figée est choisie
+à la main après le passage en réduit, pour garder la combinaison que l'étape couvrait.
+Et un défaut de la page, trouvé en chemin : après une bascule de la page en réduit, une
+population choisie par le lecteur était défaite par le candidat suivant (retour au
+structurel, sur la figée). Le choix de la population par le lecteur vaut maintenant choix
+(`site_jumeau/page.js`, `site/jumeau.js` reconstruit, seul fichier du site qui change).
+Aucun nombre ne change.
+
+**La reprise.** Le lourd, seul : vert, 1 449 nombres égaux à ceux du calcul en Python,
+1 409 au bit, écart relatif maximal 1,7e-15 ; aucune tâche longue du fil principal. Les
+tests légers du jumeau et du site (41) : verts. `site verifier`, `site publiable` et
+`node ui/check.mjs` : verts. Les 28 autres lourds et les tests légers ne sont pas
+relancés : le changement ne touche que la page et ce test.
+Les chronomètres : 5 passés, en 35 s.
+

@@ -1131,7 +1131,7 @@ manque** passe au but 24 : le jumeau est réglé sur la littérature, pas appris
 l'histoire ; sa dynamique ne bat le naïf mécanique que sur 3 cibles sur 12 (les deux
 échanges et D61), et l'histoire de 2011 à 2017 n'identifie aucun θ.
 
-### But 24 — Le jumeau appris (validé le 15 novembre 2026, D-431)
+### But 24 — Le jumeau appris (fait, D-431 à D-444 ; PR #130, merge 1f0c315)
 
 Le but 23 a construit le jumeau et l'a noté ; il ne l'a pas appris. Les chocs budgétaires
 de 2011 à 2017 sont trop petits pour régler un θ (l'information la plus forte est 0,099,
@@ -1201,6 +1201,81 @@ les six rapports, au bit comme avant D-440, et la page « Le jumeau » est recon
 (D-444). **Ce qui manque** pour fermer le but : la PR, préparée et non ouverte (la passe
 d'impact et les lourds ont tourné, D-443, D-444), le merge par le propriétaire et son SHA.
 Restent hors d'atteinte des données publiées : η, ε_K, β et l'accélérateur du bloc.
+
+### But 25 — Le jumeau qu'on comprend (validé le 15 novembre 2026, D-445)
+
+Le site montre des résultats et beaucoup de texte ; il ne montre ni comment la
+population est faite, ni ce qu'elle représente, ni comment une mesure devient un
+nombre, ni comment le jumeau tourne. Les courbes bougent sans qu'on sache pourquoi, et
+les curseurs ne disent pas leur portée. Une étude de candidat demande des dizaines de
+passes de 3 à 8 min (D-343), une journée pour toutes. Le but refait le site, de fond en
+comble, pour qu'on suive le chemin de pensée du début à la fin, et rend le moteur assez
+rapide pour qu'on voie une mesure agir. Six volets, menés en parallèle chacun sur sa
+branche `claude/but25-<volet>` partie de `claude/but25`, puis joints.
+
+1. **Le chemin** (`chemin`) : la colonne du site refait. Les sources, la population, son
+   calage, les barèmes, une mesure, les comportements, le jumeau, la dette, le verdict ;
+   chaque étape dit d'où vient l'information et mène à la suivante. Le système visuel de
+   tout le site (couleurs, typographie, composants, navigation) est à ce volet, et les
+   autres le reprennent. Peu de texte, des schémas, des nombres qui remontent à leur
+   source.
+2. **La population** (`population`) : qui sont les ménages simulés, ce que pèse un
+   ménage, en quoi la population ressemble à la France et en quoi elle s'en écarte ;
+   « un ménage comme le mien » ; les 50 cellules des ménages et les 57 des entreprises,
+   publiées et lisibles.
+3. **Une mesure pas à pas** (`mesure`) : une mesure d'un candidat suivie de bout en bout,
+   les ménages touchés, le mécanique, les comportements, l'activité, les gagnants et les
+   perdants, le coût couche par couche, chaque couche avec sa source.
+4. **Le jumeau qui tourne** (`jumeau`) : le pas annuel montré, les canaux, la portée de
+   chaque curseur ; les plages ; les courbes qui « bougent beaucoup » diagnostiquées
+   (bruit, grille ou échelle) et rendues cohérentes.
+5. **Le moteur rapide** (`moteur`) : où part le temps d'une passe, mesuré une fois ; puis
+   un moteur incrémental (la référence calculée une fois et gardée ; pour une mesure, les
+   modules et les ménages qu'elle touche ; les comportements par différence). Il redonne
+   les nombres publiés à une tolérance écrite avant sa première comparaison, sur la
+   population de test et sur trois mesures (environ 20 min de machine, accord du
+   propriétaire).
+6. **Le lecteur novice** (`lecteur`) : un agent parcourt le site dans un navigateur comme
+   quelqu'un qui ne sait rien du sujet, et dit page par page ce qu'il ne comprend pas ;
+   une fois sur le site d'avant, une fois sur le site joint.
+
+**Ce qui ne tourne pas.** Aucune étude ni passe sur la population, hors de la comparaison
+du moteur : les pages lisent les rapports commités. Pas de `make impact` ni de lourds en
+cours de route ; les tests légers des fichiers touchés, quelques secondes, et
+`node ui/check.mjs` quand une page change. Aucun nombre publié ne change.
+
+```
+/goal Le site se lit comme un chemin de pensée, du début à la fin, et c'est mergé dans
+main. Une personne sans formation y suit, sur ordinateur et sur téléphone, d'où viennent
+les informations, comment la population est faite et ce qu'elle représente, comment une
+mesure d'un candidat devient un nombre, couche par couche, et comment le jumeau tourne ;
+chaque nombre affiché remonte à sa source, chaque curseur montre sa portée, chaque courbe
+dit ce qu'elle trace et pourquoi elle bouge. Les 50 cellules des ménages et les 57 des
+entreprises sont publiées. Un moteur incrémental chiffre une mesure seule en moins de
+10 secondes et redonne les nombres publiés à une tolérance écrite avant sa première
+comparaison. Le lecteur novice ne relève plus d'incompréhension bloquante. Aucun nombre
+publié ne change. Preuve attendue : par volet, ses D-entrées ; les deux comptes rendus du
+lecteur novice ; la mesure du temps avant et après le moteur ; `site verifier` et
+`node ui/check.mjs` verts ; l'URL de la PR et le SHA du merge. Ou s'arrêter après 60
+tours par volet, en disant ce qui manque.
+```
+
+Les numéros réservés : D-450 à D-452 pour `chemin`, D-453 à D-455 pour `population`,
+D-456 à D-458 pour `mesure`, D-459 à D-461 pour `jumeau`, D-462 à D-465 pour `moteur`,
+D-466 et D-467 pour `lecteur` ; D-468 et la suite pour la jonction. D-446 et D-447 sont
+à l'histoire longue (branche `claude/but25-histoire`) : son étape zéro n'identifie aucun
+θ (D-447).
+
+**Où il en est (16 novembre 2026, D-450 à D-470).** Les six volets sont joints sur
+`claude/but25` (D-468), la seconde lecture corrigée (D-469), la passe d'avant la PR
+faite (D-470 : une rouge, la page du jumeau, corrigée sans toucher une assertion). Le
+site se lit comme un chemin en dix étapes ; la population est montrée et ses 107 cellules
+publiées ; une mesure est suivie de bout en bout ; le jumeau dit son pas, ses curseurs,
+ses plages et ce qu'il refuse. Ce qui manque au /goal : le moteur rapide redonne les
+nombres à l'euro mais ne tient les 10 s que pour la TVA (14,4 s pour la tranche à 60 %,
+46,8 s pour les aides au logement, D-465) ; le lecteur garde une remarque bloquante (le
+mode structurel refuse 7 programmes sur 11, D-467, diagnostiqué en D-469). Le
+propriétaire décide du merge et de ces deux points.
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 

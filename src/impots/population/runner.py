@@ -785,6 +785,17 @@ def run(
     if menages_stats is not None:
         timings["menages_s"] = menages_timing
 
+    # The fast engine (D-462): the baseline read from its reference, the reform on the
+    # households it can touch. Outside its field, the pass below, as it always was.
+    from impots.engine import incremental
+
+    rapide = (incremental.actif() and not impute_capital and not rake_top_tail
+              and not impute_niches and not salary_reform)
+    if rapide:
+        return _run_rapide(frame, reform_frame, reform, conso_reform, year, tier, sample,
+                           impute_consommation, prix_au_dela, annee_consommation,
+                           menages_stats, salary_stats, guards, timings)
+
     started = time.perf_counter()
     built = build_simulation(frame, baseline(), year)
     timings["build_s"] = round(time.perf_counter() - started, 2)
@@ -954,3 +965,105 @@ def run(
         guards=guards,
         persons=persons,
     )
+
+
+def _household_frame(frame: pl.DataFrame, household_ids: np.ndarray,
+                     columns: dict[str, np.ndarray]) -> pl.DataFrame:
+    """The households' frame of a pass: weights and counts, then the rows (see `run`)."""
+    household_weight = (
+        frame.group_by("household_id").agg(pl.col("weight").mean().alias("weight"))
+        .sort("household_id")
+    )
+    persons_per_household = (
+        frame.group_by("household_id").agg(
+            pl.len().alias("n_persons"),
+            (pl.col("age") >= 14).sum().alias("n_aged_14_plus"),
+            (pl.col("age") < 14).sum().alias("n_children_under_14"),
+            (pl.col("role_foyer") == "personne_a_charge").sum().alias("n_dependants"),
+        ).sort("household_id")
+    )
+    return pl.DataFrame({
+        "household_id": household_ids,
+        "weight": household_weight["weight"].to_numpy(),
+        "n_persons": persons_per_household["n_persons"].to_numpy(),
+        "n_aged_14_plus": persons_per_household["n_aged_14_plus"].to_numpy(),
+        "n_children_under_14": persons_per_household["n_children_under_14"].to_numpy(),
+        "n_dependants": persons_per_household["n_dependants"].to_numpy(),
+        **{key: values for key, values in columns.items()},
+    })
+
+
+def _run_rapide(frame: pl.DataFrame, reform_frame: pl.DataFrame, reform: Any,
+                conso_reform: Any, year: int, tier: Tier, sample: int | None,
+                impute_consommation: bool, prix_au_dela: Any, annee_consommation: Any,
+                menages_stats: Any, salary_stats: Any, guards: dict[str, Any],
+                timings: dict[str, float]) -> RunResult:
+    """`run` by the fast engine (D-462): the same rows, the same order, the same
+    adjustments, the baseline from its reference and the reform on the households its
+    knobs can touch. A salary reform, the capital, the niches and the rake never come
+    here."""
+    from impots import consommation as conso_module
+    from impots.engine import incremental
+
+    started = time.perf_counter()
+    ref = incremental.reference(frame, year, tier)
+    timings["reference_s"] = round(time.perf_counter() - started, 2)
+    guards["moteur_rapide_reference"] = "lue" if ref.servie else "calculée"
+    guards["nbptr_min"] = ref.nbptr_min
+    baseline_rows = {key: values.copy() for key, values in ref.rows.items()}
+    persons = frame.select("person_id", "household_id", "salaire_brut_annuel",
+                           "weight").with_columns(
+        pl.Series("salaire_super_brut", ref.salaire_super_brut))
+    columns: dict[str, np.ndarray] = dict(baseline_rows)
+    if reform is not None and not reform.is_empty():
+        started = time.perf_counter()
+        from impots.engine.boutons_programmes import facteur_pensions
+
+        pension_factor = facteur_pensions(reform, year)
+        if pension_factor != 1.0:
+            reform_frame = reform_frame.with_columns(
+                pl.col("pension_annuelle") * pension_factor)
+        touche = incremental.crible(reform, year, frame)
+        if touche is not None and pension_factor != 1.0:
+            touche = None  # the pensions move in the frame, which no crible reads
+        ordre = incremental._menages(frame)["household_id"].to_numpy()
+        if not np.array_equal(ordre, ref.household_ids):
+            raise WiringError("le crible et la référence ne rangent pas les ménages de la "
+                              "même façon")
+        reform_rows, ssb_reform = incremental.reforme(
+            reform_frame, frame, reformed_for(reform, year), year, tier, ref, touche,
+            guards)
+        timings["reform_s"] = round(time.perf_counter() - started, 2)
+        for key, values in reform_rows.items():
+            columns[f"{key}_reform"] = values
+        gain = columns[CSG_DEDUCTIBLE_NS] - columns[f"{CSG_DEDUCTIBLE_NS}_reform"]
+        for key in ("revenu_disponible", "revenu_disponible_droit"):
+            if f"{key}_reform" in columns:
+                columns[f"{key}_reform"] = columns[f"{key}_reform"] + gain
+        persons = persons.with_columns(pl.Series("salaire_super_brut_reform", ssb_reform))
+    for key in [k for k in columns if k.startswith(CSG_DEDUCTIBLE_NS)]:
+        del columns[key]
+    baseline_rows.pop(CSG_DEDUCTIBLE_NS, None)
+    households = _household_frame(frame, ref.household_ids, columns)
+    if conso_reform is not None and not conso_reform.is_empty() and (
+            reform is None or reform.is_empty()):
+        households = households.with_columns(
+            [pl.col(key).alias(f"{key}_reform") for key in baseline_rows])
+    if impute_consommation:
+        started = time.perf_counter()
+        couche = conso_module.colonnes(households, year, conso_reform, prix_au_dela,
+                                       annee_consommation)
+        households = households.with_columns(
+            [pl.Series(key, values) for key, values in couche.items()])
+        columns.update(couche)
+        timings["consommation_s"] = round(time.perf_counter() - started, 2)
+    guards["nan_columns"] = [key for key in columns if not np.isfinite(columns[key]).all()]
+    if guards["nan_columns"]:
+        raise WiringError(f"non-finite values in {guards['nan_columns']}")
+    if salary_stats is not None:  # pragma: no cover - a salary reform never comes here
+        guards["salaires"] = salary_stats
+    if menages_stats is not None:
+        guards["menages"] = menages_stats
+    return RunResult(households=households, year=year, tier=tier,
+                     n_households=int(ref.household_ids.size), n_persons=ref.n_persons,
+                     sampled=sample, timings=timings, guards=guards, persons=persons)

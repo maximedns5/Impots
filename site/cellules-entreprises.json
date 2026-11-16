@@ -1,0 +1,592 @@
+{
+ "titre": "Les 57 cellules d'entreprises (D-407)",
+ "millesime": "2023",
+ "unite": "sommes sur la cellule, euros",
+ "decoupage": "section NAF × catégorie d'entreprise ; les cellules que le secret statistique supprime sont absentes ou complétées",
+ "variables": {
+  "naf_section": {
+   "libelle": "Secteur",
+   "unite": "",
+   "definition": "Section de la nomenclature d'activités française (NAF rév. 2)."
+  },
+  "taille": {
+   "libelle": "Taille",
+   "unite": "",
+   "definition": "Catégorie d'entreprise au sens de la loi de modernisation de l'économie (effectif, chiffre d'affaires, bilan)."
+  },
+  "n_firms": {
+   "libelle": "Entreprises",
+   "unite": "entreprises",
+   "definition": "Entreprises soumises à l'impôt sur les sociétés que la cellule représente."
+  },
+  "turnover_total": {
+   "libelle": "Chiffre d'affaires",
+   "unite": "€",
+   "definition": "Chiffre d'affaires total de la cellule."
+  },
+  "value_added_total": {
+   "libelle": "Valeur ajoutée",
+   "unite": "€",
+   "definition": "Valeur ajoutée totale de la cellule."
+  },
+  "result_total": {
+   "libelle": "Résultat",
+   "unite": "€",
+   "definition": "Résultat comptable avant impôt total de la cellule."
+  },
+  "p_loss": {
+   "libelle": "Part en perte",
+   "unite": "part",
+   "definition": "Part des entreprises déficitaires de la taille (Insee Références, Les entreprises en France 2023, fiche 3.6, données 2021)."
+  }
+ },
+ "sources": {
+  "esane": {
+   "fichier": "insee_esane2023_caracteristiques_par_taille.xlsx",
+   "url": "https://www.insee.fr/fr/statistiques/fichier/8611562/DD_esane23m23ep_caracteristiques_taille.xlsx",
+   "licence": "Licence Ouverte / Etalab 2.0"
+  },
+  "focus": {
+   "fichier": "insee_focus372_tissu_productif_categorie_2023.xlsx",
+   "url": "https://www.insee.fr/fr/statistiques/fichier/8675639/IF372.xlsx",
+   "licence": "Licence Ouverte / Etalab 2.0"
+  },
+  "dgfip": {
+   "fichier": "dgfip_stat_39_impot_benefice_2024_donnees.xlsx",
+   "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num39_09/dgfip_stat_39_limpot-sur-le-benefice-2024-des-entreprises.xlsx",
+   "licence": "Licence Ouverte / Etalab 2.0"
+  }
+ },
+ "cellules_secretisees": [
+  "A/PME",
+  "A/ETI",
+  "A/GE",
+  "K/PME",
+  "K/ETI",
+  "K/GE",
+  "P/PME (count published, value suppressed)",
+  "Q/PME (count published, value suppressed)",
+  "S/PME (count published, value suppressed)",
+  "P/ETI (count published, turnover suppressed)",
+  "P/GE (count published, turnover suppressed)",
+  "Q/ETI (count published, turnover suppressed)",
+  "Q/GE (count published, turnover suppressed)",
+  "S/ETI (count published, turnover suppressed)",
+  "S/GE (count published, turnover suppressed)"
+ ],
+ "cellules": [
+  {
+   "naf_section": "A",
+   "taille": "micro",
+   "n_firms": 1882.0736232675756,
+   "turnover_total": 677697795.1015654,
+   "value_added_total": 217068938.49570772,
+   "result_total": 97671911.32154286,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "B",
+   "taille": "ETI",
+   "n_firms": 18.97670169026953,
+   "turnover_total": 1310165994.5213819,
+   "value_added_total": 538497172.3426213,
+   "result_total": 401674658.5439003,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "B",
+   "taille": "GE",
+   "n_firms": 1.0232983097304706,
+   "turnover_total": 2305584005.478618,
+   "value_added_total": 744626827.6573787,
+   "result_total": 569071614.7337198,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "B",
+   "taille": "PME",
+   "n_firms": 214.0,
+   "turnover_total": 1793093000.0,
+   "value_added_total": 542908000.0,
+   "result_total": 136699523.98085642,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "B",
+   "taille": "micro",
+   "n_firms": 370.394537948566,
+   "turnover_total": 287118985.7713595,
+   "value_added_total": 62546992.56376716,
+   "result_total": 11253267.292271271,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "C",
+   "taille": "ETI",
+   "n_firms": 1901.465509365007,
+   "turnover_total": 376450874447.4205,
+   "value_added_total": 97975608916.40868,
+   "result_total": 52645887204.031494,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "C",
+   "taille": "GE",
+   "n_firms": 102.53449063499315,
+   "turnover_total": 662464999552.5795,
+   "value_added_total": 135479387083.59134,
+   "result_total": 75279952215.22783,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "C",
+   "taille": "PME",
+   "n_firms": 23203.0,
+   "turnover_total": 168051935000.0,
+   "value_added_total": 53875571000.0,
+   "result_total": 12240300721.027931,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "C",
+   "taille": "micro",
+   "n_firms": 122883.74491023354,
+   "turnover_total": 36504519143.78461,
+   "value_added_total": 14124916305.941858,
+   "result_total": 5824216171.84871,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "D",
+   "taille": "ETI",
+   "n_firms": 79.70214709913202,
+   "turnover_total": 83950120896.21062,
+   "value_added_total": 18291740343.997246,
+   "result_total": 6249178429.120702,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "D",
+   "taille": "GE",
+   "n_firms": 4.2978529008679764,
+   "turnover_total": 147732468103.78937,
+   "value_added_total": 25293578656.00275,
+   "result_total": 9104646792.586823,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "D",
+   "taille": "PME",
+   "n_firms": 824.0,
+   "turnover_total": 6185635000.0,
+   "value_added_total": 2866190000.0,
+   "result_total": 1093430910.6012268,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "D",
+   "taille": "micro",
+   "n_firms": 21354.316501894184,
+   "turnover_total": 2103902137.3377807,
+   "value_added_total": 988324629.3729854,
+   "result_total": 503207854.04524285,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "E",
+   "taille": "ETI",
+   "n_firms": 76.85564184559159,
+   "turnover_total": 14484703526.860447,
+   "value_added_total": 5187985159.95872,
+   "result_total": 1824617020.5701418,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "E",
+   "taille": "GE",
+   "n_firms": 4.144358154408406,
+   "turnover_total": 25489671473.139553,
+   "value_added_total": 7173877840.04128,
+   "result_total": 2654478087.3340836,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "E",
+   "taille": "PME",
+   "n_firms": 1206.0,
+   "turnover_total": 9376896000.0,
+   "value_added_total": 2957715000.0,
+   "result_total": 857047642.9193137,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "E",
+   "taille": "micro",
+   "n_firms": 5768.665345157625,
+   "turnover_total": 2335400311.202032,
+   "value_added_total": 878089996.9095708,
+   "result_total": 399009595.25151247,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "F",
+   "taille": "ETI",
+   "n_firms": 427.0,
+   "turnover_total": 67420829481.81237,
+   "value_added_total": 16511686899.56332,
+   "result_total": 6770568414.558243,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "F",
+   "taille": "GE",
+   "n_firms": 19.0,
+   "turnover_total": 89327597518.18762,
+   "value_added_total": 29320753100.436684,
+   "result_total": 12560028650.998528,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "F",
+   "taille": "PME",
+   "n_firms": 25948.0,
+   "turnover_total": 135249305000.0,
+   "value_added_total": 40880091000.0,
+   "result_total": 10995212847.659443,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "F",
+   "taille": "micro",
+   "n_firms": 286471.094540319,
+   "turnover_total": 110507603182.89964,
+   "value_added_total": 40007733791.75995,
+   "result_total": 18882154766.587364,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "G",
+   "taille": "ETI",
+   "n_firms": 2058.0,
+   "turnover_total": 582003850397.8201,
+   "value_added_total": 72181081573.97958,
+   "result_total": 28088719360.0104,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "G",
+   "taille": "GE",
+   "n_firms": 72.0,
+   "turnover_total": 519003433602.1798,
+   "value_added_total": 84577832426.02042,
+   "result_total": 34462241347.800896,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "G",
+   "taille": "PME",
+   "n_firms": 42768.0,
+   "turnover_total": 429844381000.0,
+   "value_added_total": 71828716000.0,
+   "result_total": 22781623661.511944,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "G",
+   "taille": "micro",
+   "n_firms": 354185.9505234614,
+   "turnover_total": 197309443570.11465,
+   "value_added_total": 43360359852.88837,
+   "result_total": 19260055872.88911,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "H",
+   "taille": "ETI",
+   "n_firms": 387.0,
+   "turnover_total": 61810768817.109146,
+   "value_added_total": 20215759049.056602,
+   "result_total": 7125554013.959609,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "H",
+   "taille": "GE",
+   "n_firms": 23.0,
+   "turnover_total": 141624674182.89087,
+   "value_added_total": 59346262950.94339,
+   "result_total": 22005278543.169323,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "H",
+   "taille": "PME",
+   "n_firms": 8805.0,
+   "turnover_total": 46529535000.0,
+   "value_added_total": 15767871000.0,
+   "result_total": 2552575659.755521,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "H",
+   "taille": "micro",
+   "n_firms": 93815.93664629477,
+   "turnover_total": 17301029655.78568,
+   "value_added_total": 6751370736.67108,
+   "result_total": 3121213392.060364,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "I",
+   "taille": "ETI",
+   "n_firms": 221.83671586715866,
+   "turnover_total": 19395333551.10337,
+   "value_added_total": 7450899404.149377,
+   "result_total": 3122861168.3909626,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "I",
+   "taille": "GE",
+   "n_firms": 9.163284132841328,
+   "turnover_total": 16581791448.896631,
+   "value_added_total": 7053678595.850621,
+   "result_total": 3085595454.4447284,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "I",
+   "taille": "PME",
+   "n_firms": 15700.0,
+   "turnover_total": 47944452000.0,
+   "value_added_total": 21187606000.0,
+   "result_total": 4170748593.816885,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "I",
+   "taille": "micro",
+   "n_firms": 142609.5498899076,
+   "turnover_total": 51667235410.57198,
+   "value_added_total": 20544981557.35687,
+   "result_total": 7385525636.54637,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "J",
+   "taille": "ETI",
+   "n_firms": 431.1891143911439,
+   "turnover_total": 109338805650.40651,
+   "value_added_total": 43386976766.80498,
+   "result_total": 7959429393.073327,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "J",
+   "taille": "GE",
+   "n_firms": 17.81088560885609,
+   "turnover_total": 93477808349.5935,
+   "value_added_total": 41073939233.195015,
+   "result_total": 8287550512.395208,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "J",
+   "taille": "PME",
+   "n_firms": 8057.0,
+   "turnover_total": 46750284000.0,
+   "value_added_total": 23931734000.0,
+   "result_total": 1557185473.8012276,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "J",
+   "taille": "micro",
+   "n_firms": 106915.9649533269,
+   "turnover_total": 20390309100.33381,
+   "value_added_total": 11190060895.810408,
+   "result_total": 4886087671.115047,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "K",
+   "taille": "micro",
+   "n_firms": 81882.70215233201,
+   "turnover_total": 11951158646.406275,
+   "value_added_total": 6425969378.2502165,
+   "result_total": 17929147153.73688,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "L",
+   "taille": "ETI",
+   "n_firms": 217.99538745387454,
+   "turnover_total": 24638357515.48587,
+   "value_added_total": 12374949370.954357,
+   "result_total": 1339338979.737202,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "L",
+   "taille": "GE",
+   "n_firms": 9.004612546125461,
+   "turnover_total": 21064247484.51413,
+   "value_added_total": 11715218629.045645,
+   "result_total": 1482552949.2389078,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "L",
+   "taille": "PME",
+   "n_firms": 3738.0,
+   "turnover_total": 22048712000.0,
+   "value_added_total": 9715608000.0,
+   "result_total": 1417843128.833247,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "L",
+   "taille": "micro",
+   "n_firms": 140881.5522314616,
+   "turnover_total": 26593921040.593594,
+   "value_added_total": 11873590380.76595,
+   "result_total": 5173288016.22502,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "M",
+   "taille": "ETI",
+   "n_firms": 456.1577490774908,
+   "turnover_total": 46872870260.35618,
+   "value_added_total": 18820284045.643154,
+   "result_total": 12163110363.119816,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "M",
+   "taille": "GE",
+   "n_firms": 18.842250922509226,
+   "turnover_total": 40073358739.64383,
+   "value_added_total": 17816940954.356846,
+   "result_total": 11841069956.5872,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "M",
+   "taille": "PME",
+   "n_firms": 17225.0,
+   "turnover_total": 81057727000.0,
+   "value_added_total": 40666737000.0,
+   "result_total": 8768686490.31453,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "M",
+   "taille": "micro",
+   "n_firms": 355596.1027312986,
+   "turnover_total": 73871401201.90654,
+   "value_added_total": 43907318012.18294,
+   "result_total": 28654417235.905518,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "N",
+   "taille": "ETI",
+   "n_firms": 662.6291512915129,
+   "turnover_total": 63116637216.41502,
+   "value_added_total": 35513816110.37344,
+   "result_total": 9107888694.283806,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "N",
+   "taille": "GE",
+   "n_firms": 27.370848708487085,
+   "turnover_total": 53960758783.58498,
+   "value_added_total": 33620510889.62656,
+   "result_total": 9238240572.59458,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "N",
+   "taille": "PME",
+   "n_firms": 12557.0,
+   "turnover_total": 46944782000.0,
+   "value_added_total": 22450394000.0,
+   "result_total": 3990633895.3573627,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "N",
+   "taille": "micro",
+   "n_firms": 160388.99789675273,
+   "turnover_total": 24766963483.400593,
+   "value_added_total": 10978591737.713135,
+   "result_total": 5129041479.729213,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "P",
+   "taille": "micro",
+   "n_firms": 112842.27756050396,
+   "turnover_total": 9145971476.568367,
+   "value_added_total": 5119394753.24517,
+   "result_total": 2075223898.400841,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "Q",
+   "taille": "micro",
+   "n_firms": 289018.4498130148,
+   "turnover_total": 66758926275.397255,
+   "value_added_total": 50241857775.62362,
+   "result_total": 41160992487.29712,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "R",
+   "taille": "ETI",
+   "n_firms": 56.65959409594096,
+   "turnover_total": 10585209239.256678,
+   "value_added_total": 4360458942.738589,
+   "result_total": 1198714241.3843327,
+   "p_loss": 0.217
+  },
+  {
+   "naf_section": "R",
+   "taille": "GE",
+   "n_firms": 2.3404059040590406,
+   "turnover_total": 9049688760.743322,
+   "value_added_total": 4127995057.2614107,
+   "result_total": 1210431294.69001,
+   "p_loss": 0.245
+  },
+  {
+   "naf_section": "R",
+   "taille": "PME",
+   "n_firms": 1993.0,
+   "turnover_total": 8362980000.0,
+   "value_added_total": 3459227000.0,
+   "result_total": 325150468.1616885,
+   "p_loss": 0.211
+  },
+  {
+   "naf_section": "R",
+   "taille": "micro",
+   "n_firms": 90317.59594834254,
+   "turnover_total": 8725164907.931274,
+   "value_added_total": 4179859951.600954,
+   "result_total": 2114368053.0810285,
+   "p_loss": 0.398
+  },
+  {
+   "naf_section": "S",
+   "taille": "micro",
+   "n_firms": 181646.37918899095,
+   "turnover_total": 14959462635.71397,
+   "value_added_total": 7910557898.421421,
+   "result_total": 3876223945.551118,
+   "p_loss": 0.398
+  }
+ ]
+}

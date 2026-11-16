@@ -218,3 +218,55 @@ def test_la_convention_porte_un_programme_jusqu_en_2035(session, donnees) -> Non
     sortie = session.calculer({**ret, "theta": _theta(session, ret)})
     assert sortie["calculees"] == [] and sortie["conventions"] is None
     assert "parts_premiere_annee" in sortie["mesure"]["non_portes"]["entreprises"]
+
+
+@pytest.mark.parametrize("choix", [
+    {"mode": "reduit", "vue": "vieillie", "candidat": "pres2027_le_pen_programme"},
+    {"mode": "structurel", "vue": "figee", "candidat": "pres2027_le_pen_programme",
+     "convention": "parts_premiere_annee"},
+    {"mode": "structurel", "vue": "figee", "hypothese": {
+        "instrument": "cotisations_employeurs", "montant": 10, "debut": 2026, "fin": 2035}},
+])
+def test_la_portee_redonne_les_nombres_du_reglage(session, choix) -> None:
+    """D-459 : la portée est une trajectoire vectorisée ; son tirage 0 redonne, au bit près
+    de l'arrondi du vectorisé, les écarts que la page trace ; un θ poussé à un bout redonne
+    le calcul seul de ce réglage ; chaque plage tient le défaut ; les comptes bouclent."""
+    r = session.calculer({**choix, "theta": {}})
+    theta = {t["cle"]: 0.5 for t in r["thetas"]}
+    r = session.calculer({**choix, "theta": theta})
+    p = session.portee({**choix, "theta": theta}, tirages=40)
+    assert p["calculees"] == r["calculees"]
+    for cle, ind in p["indicateurs"].items():
+        np.testing.assert_allclose(ind["defaut"], r["series"][cle]["ecart"][:len(r["calculees"])],
+                                   rtol=1e-9, atol=1e-9)
+        for q in ind["bande"]:
+            assert q == sorted(q)
+    k = len(r["calculees"]) - 1
+    lu = max(p["thetas"], key=lambda t: t["effets"]["dette"]["haut"] - t["effets"]["dette"]["bas"])
+    assert lu["effets"]["dette"]["haut"] > lu["effets"]["dette"]["bas"]
+    un = session.calculer({**choix, "theta": {**theta, lu["cle"]: lu["points"][-1]}})
+    assert un["series"]["dette"]["ecart"][k] - r["series"]["dette"]["ecart"][k] == pytest.approx(
+        lu["effets"]["dette"]["points"][-1], abs=1e-9)
+    s = r["series"]["dette"]
+    for a in range(k + 1):
+        assert s["effets"]["dette_ajoutee"][a] + s["effets"]["denominateur"][a] == pytest.approx(
+            s["ecart"][a], abs=1e-9)
+        assert abs(r["comptes"]["residu_emplois"][a]) < 1e-6
+
+
+@pytest.mark.parametrize("cle, vue, convention, attendu", [
+    ("pres2027_attal_programme", "figee", "parts_premiere_annee", 10),
+    ("pres2027_attal_programme", "figee", None, 1),
+    ("pres2027_attal_programme", "vieillie", "parts_premiere_annee", 0),
+    ("pres2027_roussel_programme", "figee", "parts_premiere_annee", 0),
+])
+def test_ce_que_le_structurel_calcule_se_dit_avant_le_calcul(session, cle, vue, convention,
+                                                             attendu) -> None:
+    """J2, D-469 : la page grise le mode structurel d'après `Session.structurel`, qui lève
+    les refus de D-412 sans faire un pas ; il rend le nombre d'années que `calculer`
+    calcule, et un refus quand il en manque."""
+    k, refus = session.structurel(cle, vue, convention)
+    choix = {"mode": "structurel", "vue": vue, "candidat": cle, "convention": convention}
+    sortie = session.calculer({**choix, "theta": _theta(session, choix)})
+    assert k == len(sortie["calculees"]) == attendu
+    assert (refus is None) == (attendu == 10)
