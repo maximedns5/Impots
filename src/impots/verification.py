@@ -270,7 +270,11 @@ def grille() -> list[dict[str, Any]]:
             sim = p["mesures"][ligne["modele"]]
             ecart = sim / ligne["publie"] - 1.0
             tol = ligne["tolerance"]
-            verdict = (ligne["usage"] if ligne["usage"] != "validation" else
+            # Une ligne remplacée (D-495) compte autre chose que son total publié, et une
+            # ligne préenregistrée le compte juste : elle garde son simulé et son écart,
+            # sans verdict.
+            verdict = ("remplacée" if ligne["usage"] == "remplacee" else
+                       ligne["usage"] if ligne["usage"] != "validation" else
                        # Inclusive, and in floating point: 110/100 − 1 is 0,1000…01.
                        "dans la tolérance" if abs(ecart) <= tol + 1e-12
                        else "hors de la tolérance")
@@ -335,6 +339,8 @@ def ecrire() -> Path:
             tol = "—" if r["tolerance"] is None else f"±{r['tolerance'] * 100:.0f} %"
             verdict = r["verdict"] + ("" if r["verdict"] != "refusée" else
                                       f" : {r['remarque']}")
+            if r["verdict"] == "remplacée":
+                verdict += f" par `{r['remplacee_par']}` ({r['remplacee']})"
             w.append(f"| {r['ligne']} | {_val(r['simule'])} | {_val(r['publie'])} | "
                      f"{_pct(r['ecart'])} | {tol} | {verdict} |")
     GRILLE.write_text("\n".join(w) + "\n", encoding="utf-8")

@@ -65,10 +65,16 @@ class Recours:
     """La fourchette publiée, en part de la masse des droits : le contrôle, pas le calage."""
     source: str
     forme: str
+    cible_payes: float | None = None
+    """Le recours en foyers calé sur les payés de la Cnaf, quand il remplace la Drees
+    (D-495) : les foyers payés publiés sur les ayants droit du modèle."""
 
     @property
     def cible_foyers(self) -> float:
-        """Le recours en foyers que le calage refait : un moins le milieu de la fourchette."""
+        """Le recours en foyers que le calage refait : les payés de la Cnaf s'ils sont la
+        cible (D-495), sinon un moins le milieu de la fourchette de la Drees."""
+        if self.cible_payes is not None:
+            return self.cible_payes
         low, high = self.non_recours_foyers
         return 1.0 - (low + high) / 2.0
 
@@ -121,7 +127,14 @@ PPA = Recours(
     # Recalé sur la population de D-370 : 20 000 ménages, 6,619 M de familles ayant droit
     # en décembre ; contrôle, un recours en masse de 52,4 %, sous la fourchette. τ = 21 €
     # tient sur les six tranches du n° 1379, lu (étape « ppa2 »).
-    p_max=0.5322,
+    # Le but 27 (D-494, D-495) change la cible : la Drees ne retrouve que 73 à 83 % des
+    # foyers que la Cnaf paie (étape « ppa2 », § 2.1), et calé sur elle le modèle servait
+    # 3,332 M de foyers en 2024 contre 4,628 M payés (−28 %). La cible devient les payés de
+    # la Cnaf (PA Conjoncture n° 32, tableau 1, T4 2024) sur les 6,667 M d'ayants droit du
+    # modèle en décembre 2024 (passe de D-371) : 0,6942 ; le compte servi étant linéaire en
+    # p_max, 0,5322 × 4,628 ÷ 3,332 = 0,7392. Le taux de la Drees reste écrit, pour mémoire.
+    p_max=0.7392,
+    cible_payes=4.628 / 6.667,
     non_recours_foyers=(0.48, 0.52),
     non_recours_masse=(0.43, 0.46),
     source=("Drees, Études et Résultats n° 1379 (juillet 2026, C. Gayet), tableau 1 et "
