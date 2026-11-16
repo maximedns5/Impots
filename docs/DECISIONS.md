@@ -37858,3 +37858,97 @@ plus petite, réduction générale 6 % plus grosse, IR au barème +0,7 %, prime 
 `test_salaires`, `test_population`, `test_sources`, `test_jumeau_navigateur`,
 `test_jumeau_cellules`, `test_agregats`, `test_site_population` : verts. `ruff` sur les
 fichiers touchés : vert. **Non lancés** : la suite entière, `make impact`, les lourds.
+
+## D-507 — La mesure (1) : le Smic de Mélenchon sur toute la population, préenregistré
+
+**Ce que fait ce volet** (BUT.md, but 27, volet 5). Une proposition de Mélenchon appliquée
+à toute la population de D-521 (empreinte 8d42e0d8…, liée dans `data/processed`), son
+passage dans le jumeau, puis le programme chiffré (ses sept mesures à rapport, D-500) en
+interaction. Le script : `scripts/mesure_melenchon_b27.py`. Les passes : la vue figée de
+2026 (la population de 2024 telle quelle, la loi de 2026), celle de la première année des
+études (`mesures.VUE_PREMIERE_ANNEE`), sans comportement ni boucle (le jumeau les porte) ;
+détachées, une à la fois, sorties hors git ; aucune étude de candidat.
+
+**La proposition : le Smic à 1 700 € net** (`smic_revalorisation` 1,1617, sans diffusion,
+la réforme de la fiche). Pourquoi elle : c'est la seule des sept qui passe par presque
+tous les canaux du jumeau (les salaires, les allègements, la prime d'activité, l'impôt,
+la consommation, le coût du travail par tranche, l'emploi, les prix), et c'est le cas que
+le propriétaire décrit : une bonne idée dont la passe dit déjà qu'elle bloque. La loi
+écrit la réduction générale en multiples du Smic ; relever le Smic l'étend à des salaires
+qui ne bougent pas : dans l'étude, +35,3 Md€ d'allègements pour +8,4 de brut, le coût
+super-brut en baisse de 23,2 Md€, et +5,3 Md€ seulement de revenu disponible pour 29,7 de
+coût public. La bonification de la prime d'activité est écrite aussi en Smic : des
+ménages dont le salaire ne bouge pas la perdent. Et dans le jumeau son emploi change de
+signe avec la diffusion (D-501). Les autres sont plus simples : la garantie d'autonomie
+et l'indexation sont des transferts, le PFU un impôt.
+
+**Les passes, dans l'ordre** (une à la fois) :
+
+1. Le Smic sur la population du but 19 (13bda072…), palier rapide (20 000 ménages, celui
+   des études) : l'effet du code depuis l'étude (5a68669), seul.
+2. Le Smic sur la population de D-521, palier rapide : l'effet de la population.
+3. Le Smic sur la population de D-521, palier complet (199 451 ménages, huit lots,
+   D-362) : l'effet de l'échantillon. Le coût de l'étude se décompose ainsi en trois
+   termes qui somment à l'écart total.
+4. Le programme, palier rapide, population de D-521 : les sept mesures avec leurs propres
+   imputations (comme l'étude) ; les sept avec l'union des imputations (le capital et les
+   données de ménages pour toutes) ; les 21 paires (union) ; le programme entier. Avec une
+   même référence, l'identité c(P) = Σ c_i + Σ I_ij + R est exacte par construction, où
+   I_ij = c(i+j) − c(i) − c(j) et R le reste d'ordre trois et plus : c'est R qui se dit.
+   L'écart entre « propres » et « union » est ce que l'interaction publiée (D-502 : +0,444
+   Md€) doit à des références différentes, et non aux mesures.
+5. Si le temps le permet, le programme entier et ses sept mesures (union) au palier
+   complet ; sinon, dit.
+
+**Le jumeau** (aucune passe) : la mesure du Smic de l'étude, ses coûts, impulsions,
+prélèvements et déciles portés à ceux de la passe 3 (la première année ; les suivantes au
+même rapport, convention « premiere_annee_d521 », dite), en structurel, figée et
+vieillie, θ½ ; puis chaque θ de 0 à 1 ; la cascade simplifiée ; le programme par ses
+mesures seules (D-502) avec les nombres de la passe 4.
+
+**Ce qui est comparé**, et rien d'autre : les nombres publiés de l'étude actuelle
+(`reports/etudes/presidentielle_melenchon/`, commit 5a68669) et le chiffrage du candidat
+(document du 14 octobre 2026 : point d'indice 17 Md€, indexation 8, garantie 9,5, PFU 9 de
+recette ; rien pour le Smic ni les exonérations ; 81,7 Md€ de dépenses et 106,4 de
+recettes pour les 64 mesures). Aucun chiffrage de tiers.
+
+**Le pronostic** (palier complet sauf dit ; Md€ ; « dans la bande » ou non sera dit ligne
+par ligne).
+
+| ligne | étude | pronostic | bande |
+|---|---:|---:|---|
+| coût public du Smic (passe 3) | 29,74 | 31,5 | 28,5 à 35,0 |
+| écart de code (1 − étude) | — | 0 | ±0,5 |
+| écart de population (2 − 1) | — | +1,5 | +0,3 à +3,5 |
+| écart d'échantillon (3 − 2), relatif | — | 0 | ±3 % |
+| allègements généraux | +35,34 | +37,0 | +34 à +40 |
+| salaire brut | +8,44 | +9,0 | +7,5 à +10,5 |
+| revenu disponible | +5,27 | +5,6 | +4,5 à +7,0 |
+| prime d'activité servie | −1,33 | −1,4 | −1,0 à −2,0 |
+| super-brut (coût du travail agrégé) | −23,23 | −24 | −21 à −28, baisse |
+| ménages perdants (> 1 € par an) | — | 15 % | 8 à 25 %, par la prime |
+| gain moyen, décile le plus haut | D3 | D3 ou D4 | D2 à D5 |
+
+Le jumeau, Smic seul, structurel, figée, θ½ (avant, sur les cellules de D-512 : B9 2026
+−18,18, B9 2035 −8,78, dette 2035 +2,39 pt, emploi 2035 −7,3 milliers) : B9 2026 −19,0
+(−17,5 à −21) ; dette 2035 +2,5 pt (+2,2 à +2,9) ; emploi 2035 −10 milliers (−25 à +5),
+de signe décidé par `travail_smic_diffusion` (+180 à θ 0, −225 à θ 1, ±15 %), puis
+`travail_incidence` et `jumeau_emploi_elasticite_cout` ; le solde de 2035 change de signe
+avec la diffusion (de −20 à +4 Md€) ; ce que le jumeau reprend du coût en dix ans,
+1 − B9 2035 / B9 2026, 50 % (40 à 60 %).
+
+Le programme (palier rapide, union) : coût 91 Md€ (87 à 95 ; l'étude 88,98). Interaction
+I = c(P) − Σ c_i : +0,8 Md€ (+0,2 à +1,5), moins de 2 % du coût. Les cinq plus grosses
+paires, dans l'ordre : Smic × exonérations, +1,2 (+0,8 à +1,6 : la réduction arrêtée à
+2 Smic du nouveau Smic garde plus d'allègements) ; Smic × garantie d'autonomie, −0,4
+(−0,2 à −0,7 : le salaire des jeunes relevé réduit la garantie différentielle) ; Smic ×
+point d'indice, −0,2 (−0,1 à −0,4 : les agents relevés deux fois ne le sont qu'une) ;
+indexation × garantie, −0,15 (−0,05 à −0,3) ; Smic × indexation, ±0,2 (la prime et les
+aides au logement). Chacune des seize autres sous 0,1 en valeur absolue. |R| < 0,15. Ce
+que l'interaction publiée doit aux références différentes : −0,4 Md€ (−0,2 à −0,6), par
+l'allocation de soutien familial (les pensions alimentaires imputées dans le programme
+seulement : l'écart de −0,44 Md€ sur l'ASF dans l'étude). L'identité comptable de chaque
+passe (coût = Δ revenu disponible − Δ cotisations des employeurs − Δ salaires payés par
+les APU ; Σ des déciles = Δ revenu disponible) : résidu sous 1e-6 relatif.
+
+**Rien n'est retouché après le premier calcul** ; un pronostic manqué reste écrit.
