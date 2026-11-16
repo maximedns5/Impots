@@ -1,0 +1,237 @@
+# La correspondance des modules des passes aux payeurs, aux instruments des blocs du
+# jumeau et aux sous-secteurs des APU (but 26, volet « ventilation », D-475).
+#
+# Chaque module est un nombre que le rapport de la première année porte
+# (`premiere_annee_*.json`, `response[.menages|.entreprises].deltas`, en euros, recettes
+# positives pour un prélèvement, dépense positive pour une prestation), ou que le jumeau
+# en déduit sans passe, à l'euro près (`calcule`). Clés :
+#
+# * `payeur` : qui paie ou reçoit d'abord, avant toute incidence (« menages » : les
+#   cellules de ménages, par décile, le total seulement ; « entreprises » : les sociétés,
+#   par impôt ; « employeurs » : privés ou publics selon le levier, `ventilation.payeur`) ;
+# * `bloc` : où le jumeau le lit. « entreprises:<impôt> » : `Mesure.entreprises`, le bloc
+#   `chocs_entreprises` et ses signaux (`champs.SIGNAUX_ENTREPRISES`) ; « menages » : le
+#   choc par décile (`Mesure.menages`), dans le revenu disponible ; « boucle:<instrument> » :
+#   l'impulsion de Mésange que le rapport porte (`Mesure.impulsions`) ;
+# * `sous_secteur` : le sous-secteur des APU qui encaisse ou paie, au sens du SEC 2010 :
+#   « Etat » (S1311, budget de l'État), « ODAC » (S1311, organismes divers), « ASSO »
+#   (S1314, administrations de sécurité sociale), « APUL » (S1313), « partage » quand la
+#   loi le partage entre plusieurs, « hors_APU » ;
+# * `branche` : la branche de la Sécurité sociale, quand la loi la désigne seule ; sinon
+#   « non portée » : les rapports donnent un total par module, jamais par branche ;
+# * `source` : le texte qui affecte le prélèvement ou met la prestation à la charge d'un
+#   financeur. Les articles sont cités tels que le projet les connaît ; aucune page n'a
+#   été relue dans cette session (« non relu ») : à relire avant une publication.
+
+modules:
+  # ------------------------------------------------------------ prélèvements des ménages
+  ir:
+    payeur: menages
+    bloc: boucle:impot_sur_le_revenu
+    sous_secteur: Etat
+    branche: null
+    source: CGI, art. 1 A ; recette du budget général (état A des lois de finances), non relu
+    note: le PFU (CGI, art. 200 A) en est un « dont » ; le rapport ne le sépare pas
+  cdhr:
+    payeur: menages
+    bloc: boucle:impot_sur_le_revenu
+    sous_secteur: Etat
+    branche: null
+    source: loi de finances pour 2025 (n° 2025-127), contribution différentielle sur les
+      hauts revenus, recette du budget général, non relu
+  csg_deductible: &csg
+    payeur: menages
+    bloc: boucle:csg
+    sous_secteur: ASSO
+    branche: non portée
+    source: CSS, art. L. 136-8 (taux) et L. 131-8 (affectation aux branches et à la
+      CADES), non relu ; la part par branche n'est pas dans les rapports
+  csg_imposable: *csg
+  csg_ij: *csg
+  csg_non_salarie: *csg
+  csg_chomage: *csg
+  crds:
+    payeur: menages
+    bloc: boucle:csg
+    sous_secteur: ASSO
+    branche: CADES
+    source: ordonnance n° 96-50 du 24 janvier 1996, art. 14 à 19 (CRDS affectée à la
+      CADES, administration de sécurité sociale en comptabilité nationale), non relu
+  prelevements_pensions:
+    payeur: menages
+    bloc: boucle:csg
+    sous_secteur: ASSO
+    branche: non portée
+    source: CSS, art. L. 136-8 (CSG et CRDS sur les pensions) ; CASF, art. L. 14-10-4
+      (CASA, branche autonomie), non relu ; les trois ne sont pas séparés par le rapport
+  cotisations_salariales:
+    payeur: menages
+    bloc: boucle:cotisations_salaries
+    sous_secteur: ASSO
+    branche: vieillesse quand le levier est la cotisation de retraite (son nom), sinon non
+      portée
+    source: CSS, art. L. 241-3 (cotisation d'assurance vieillesse) ; régimes
+      complémentaires AGIRC-ARRCO, classés en ASSO, non relu
+  tva_menages:
+    payeur: menages
+    bloc: boucle:tva
+    sous_secteur: partage
+    branche: non portée
+    source: CGI, art. 256 ; fractions affectées à la Sécurité sociale (CSS, art. L. 131-8)
+      et aux collectivités (loi n° 2019-1479, art. 16 ; loi n° 2022-1726, art. 55), non
+      relu ; parts non portées par le rapport
+  accises_energie:
+    payeur: menages
+    bloc: boucle:taxe_carbone
+    sous_secteur: partage
+    branche: null
+    source: code des impositions sur les biens et services (accises sur les énergies),
+      fractions aux régions et aux départements, non relu ; parts non portées
+  prelevements_sociaux_capital:
+    payeur: menages
+    bloc: entreprises:pfu_et_prelevements_sociaux_capital
+    sous_secteur: partage
+    branche: non portée
+    source: CSS, art. L. 136-6 et L. 136-7 (CSG sur le capital, ASSO) ; ordonnance n° 96-50
+      (CRDS, CADES) ; CSS, art. L. 235-1 (prélèvement de solidarité), non relu
+  cvec:
+    payeur: menages
+    bloc: menages
+    sous_secteur: ODAC
+    branche: null
+    source: code de l'éducation, art. L. 841-5 (contribution de vie étudiante et de campus,
+      versée aux Crous), non relu
+  # ------------------------------------------------------- calculés depuis le rapport
+  cotisations_employeurs:
+    calcule: Δ(salaire_super_brut − salaire_brut), nettes des allègements, recettes
+      positives : le `employer_contribution_delta` que lit la boucle (D-039), recoupé à
+      l'euro sur la somme du canal des créations (D-443)
+    payeur: employeurs
+    bloc: entreprises:cotisations_employeurs
+    sous_secteur: ASSO
+    branche: non portée
+    source: CSS, art. L. 241-13 (réduction générale imputée sur les cotisations de
+      maladie, vieillesse, famille, accidents du travail, retraite complémentaire et
+      chômage), non relu ; Unédic et AGIRC-ARRCO sont en ASSO ; la part par branche n'est
+      pas dans les rapports
+  pfu_et_prelevements_sociaux_capital:
+    calcule: le reste de la somme du canal des créations de la première année, une fois
+      retirés l'IS, sa contribution sociale, la CEBGE et les cotisations des employeurs
+      (`ventilation.completer`) ; le rapport ne sépare pas le PFU des prélèvements
+      sociaux du capital
+    payeur: menages
+    bloc: entreprises:pfu_et_prelevements_sociaux_capital
+    sous_secteur: partage
+    branche: non portée
+    source: CGI, art. 200 A (PFU, part de l'impôt sur le revenu, État) ; CSS, art. L. 136-6
+      et L. 136-7 (CSG sur le capital, ASSO), non relu
+  # --------------------------------------------------------- prestations (dépenses)
+  af: &famille
+    payeur: menages
+    bloc: menages
+    sous_secteur: ASSO
+    branche: famille
+    source: CSS, art. L. 511-1 et L. 223-1 (prestations familiales servies et financées
+      par la branche famille, CNAF), non relu
+  cf: *famille
+  asf: *famille
+  ars: *famille
+  paje: *famille
+  crds_pfam: *famille
+  aefa:
+    payeur: menages
+    bloc: menages
+    sous_secteur: Etat
+    branche: null
+    source: aide exceptionnelle de fin d'année, décret annuel, financée par le budget de
+      l'État (mission « Solidarité »), servie par les CAF, non relu
+  ppa:
+    payeur: menages
+    bloc: menages
+    sous_secteur: Etat
+    branche: null
+    source: CSS, art. L. 841-1 et suivants (prime d'activité, financée par l'État, servie
+      par les CAF et la MSA), non relu
+  rsa:
+    payeur: menages
+    bloc: menages
+    sous_secteur: APUL
+    branche: null
+    source: CASF, art. L. 262-24 (RSA à la charge des départements), non relu
+  crds_mini:
+    payeur: menages
+    bloc: menages
+    sous_secteur: ASSO
+    branche: CADES
+    source: ordonnance n° 96-50, art. 14 (CRDS), non relu
+  aide_logement:
+    payeur: menages
+    bloc: menages
+    sous_secteur: ODAC
+    branche: null
+    source: CCH, art. L. 813-1 (Fonds national d'aide au logement, financé par l'État et
+      les employeurs), non relu
+  reduction_loyer_solidarite:
+    payeur: menages
+    bloc: menages
+    sous_secteur: hors_APU
+    branche: null
+    source: CCH, art. L. 442-2-1 (réduction de loyer de solidarité, à la charge des
+      bailleurs sociaux, sociétés hors APU), non relu
+  aspa:
+    payeur: menages
+    bloc: menages
+    sous_secteur: ASSO
+    branche: vieillesse (FSV)
+    source: CSS, art. L. 815-1 (ASPA) et L. 135-2 (prise en charge par le FSV), non relu
+  retraite_imposable:
+    payeur: menages
+    bloc: menages
+    sous_secteur: partage
+    branche: vieillesse
+    source: régimes de base (CSS, livre III) et complémentaires, en ASSO ; pensions des
+      fonctionnaires de l'État (compte d'affectation spéciale « Pensions »), non relu ;
+      parts non portées
+  ria: &nouvelle
+    payeur: menages
+    bloc: menages
+    sous_secteur: non porté
+    branche: null
+    source: prestation nouvelle d'un programme ; son financeur est celui que le programme
+      annonce (la fiche de transmission, volet « carte »), pas le rapport
+  allocation_enfant: *nouvelle
+  garantie_autonomie: *nouvelle
+  # ------------------------------------------------------- impôts des entreprises
+  impot_societes:
+    payeur: entreprises
+    bloc: entreprises:impot_societes
+    sous_secteur: Etat
+    branche: null
+    source: CGI, art. 205 ; recette du budget général, non relu
+  contribution_sociale_is:
+    payeur: entreprises
+    bloc: entreprises:contribution_sociale_is
+    sous_secteur: non porté
+    branche: null
+    source: CGI, art. 235 ter ZC ; son affectation n'est pas relue ici (non sourcé)
+  cebge:
+    payeur: entreprises
+    bloc: entreprises:cebge
+    sous_secteur: Etat
+    branche: null
+    source: loi de finances pour 2025 (n° 2025-127), contribution exceptionnelle sur les
+      bénéfices des grandes entreprises, recette du budget général, non relu
+  cvae:
+    payeur: entreprises
+    bloc: entreprises:cvae
+    sous_secteur: Etat
+    branche: null
+    source: CGI, art. 1586 ter et suivants ; depuis 2023, produit au budget de l'État, les
+      collectivités recevant une fraction de TVA (loi n° 2022-1726, art. 55), non relu
+  c3s:
+    payeur: entreprises
+    bloc: entreprises:c3s
+    sous_secteur: ASSO
+    branche: non portée
+    source: CSS, art. L. 651-1 et L. 651-2-1 (C3S affectée à la Sécurité sociale), non
+      relu ; la branche n'est pas relue ici

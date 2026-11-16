@@ -76,7 +76,9 @@ INSTRUMENTS = {i: s for s, (_, _, ins) in SIGNAUX_ENTREPRISES.items() for i in i
 CATEGORIE_APU = {"impot_societes": "apu_r_d5", "contribution_sociale_is": "apu_r_d5",
                  "cebge": "apu_r_d5", "cvae": "apu_r_d2", "c3s": "apu_r_d2",
                  "cotisations_employeurs": "apu_r_d61", "pfu": "apu_r_d5",
-                 "prelevements_sociaux_capital": "apu_r_d5"}
+                 "prelevements_sociaux_capital": "apu_r_d5",
+                 # Les deux, que le rapport ne sépare pas (D-475) : la même catégorie.
+                 "pfu_et_prelevements_sociaux_capital": "apu_r_d5"}
 
 
 def lire_theta(ctx: Contexte, cle: str) -> np.ndarray:
