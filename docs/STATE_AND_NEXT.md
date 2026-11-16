@@ -1,5 +1,17 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-16 night update adds D-497 to D-499, D-512, D-520, D-521: the grid strand of
+goal 27 is done and joined on `claude/but27` (D-512), no PR. Three rounds (Dares hourly
+wages, housing tenure rank, contributions on the public schemes' field, PPV and employee
+savings out of the contribution base) bring **35 of 35 judged lines within tolerance in
+2024**, 98 of 99 over three years, 16 of 35 within ±5 %. The population of D-521 is the
+one in `data/processed`; the twin's cells are rebuilt on it (they were still on goal 19's
+population). The registry holds 941 numbers from 295 documents; the Dares total of
+employee savings (27.2 bn€) is read only in press reprints and is marked « source
+secondaire, à vérifier ». **What is left**: the twelve study pages still quote the grid of
+D-496 and must be rewritten (no pass) before the site builds; the `mesure` strand; studies
+touching the prime and the base; `make impact`, heavy tests, the PR.
+
 The 2026-11-16 late update adds D-491 to D-511 (D-497 to D-499 and D-507 to D-509 still
 free): goal 27, « right data, a demonstrable butterfly », four strands joined on
 `claude/but27` (D-510), no PR. **Sources** (D-491 to D-493): every public number the

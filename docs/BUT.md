@@ -1399,23 +1399,23 @@ Les numéros réservés : D-491 à D-493 pour `sources`, D-494 à D-499 pour `gr
 à D-503 pour `papillon`, D-504 à D-506 pour `fiches`, D-507 à D-509 pour `mesure` ; D-510
 et la suite pour la jonction.
 
-**Où il en est** (16 novembre, D-510, D-511). Quatre volets sont fusionnés sur
-`claude/but27` et branchés ; pas de PR. **Les sources** : 291 documents, 907 nombres au
-registre, récoltés une fois, la localisation fausse du RSA de la grille corrigée (D-491 à
-D-493, D-510). **La grille** : 31 lignes jugées sur 35 en 2024 dans leur tolérance (30
-sur 40 avant), 13 à ±5 % ; cinq lignes qui comptaient autre chose que leur total publié
-sont remplacées, le recours à la prime calé sur la Cnaf (D-494 à D-496, validé par le
-propriétaire) ; hors, les aides au logement, la réduction générale, le bandeau famille,
-les cotisations salariales, chacune faute d'une source ; le volet `grille2` y travaille.
-**Le papillon de Mélenchon** : chaque flèche vérifiée, la paie publique sortie du coût du
-travail privé, le programme en structurel par ses mesures seules (+12,3 pt de dette en
-2035 contre +25,1 en réduit), ses compensations et ses retournements dits (D-500 à
-D-503) ; ses payeurs tirés des fiches (D-510) ; il ne tourne en structurel que dans le
-script, pas encore dans la page. **Les fiches** : Mélenchon et Attal mesure par mesure,
-six autres pour leurs montants les plus lourds (D-504 à D-506). Six pages d'études
-réécrites sans passe ; le site reconstruit. **Ce qui reste** : le volet `mesure`, les
-quatre lignes hors tolérance, les études qui touchent la prime à refaire, `make impact`
-et les lourds, la PR ; neuf décisions du propriétaire (D-511).
+**Où il en est** (16 novembre, D-510 à D-512, D-521). Cinq volets sont fusionnés sur
+`claude/but27` et branchés ; pas de PR. **Les sources** : 295 documents, 941 nombres au
+registre, récoltés une fois ; le total de l'épargne salariale (Dares) marqué « source
+secondaire, à vérifier », la publication ne répondant pas (D-491 à D-493, D-512). **La
+grille, faite** : trois tours (D-494 à D-499, D-520, D-521), joints (D-512) ; **35 lignes
+jugées sur 35 en 2024** dans leur tolérance (30 sur 40 au départ), 98 sur 99 sur trois
+ans, ±5 % : 16 sur 35 ; la population de D-521 est celle que lisent la suite et le
+jumeau, dont les cellules sont refaites dessus (D-512). **Le papillon de Mélenchon** :
+chaque flèche vérifiée, la paie publique sortie du coût du travail privé, le programme en
+structurel par ses mesures seules, ses compensations et ses retournements dits (D-500 à
+D-503) ; ses payeurs tirés des fiches (D-510) ; en structurel dans le script, pas encore
+dans la page. **Les fiches** : Mélenchon et Attal mesure par mesure, six autres pour
+leurs montants les plus lourds (D-504 à D-506). **Ce qui reste** : le volet `mesure` (une
+proposition de Mélenchon sur toute la population de D-521) ; les douze pages d'études à
+réécrire sans passe sur la grille de D-521, puis le site (D-512) ; les études qui
+touchent la prime et l'assiette à refaire ; le tableau de la Dares à relever ; `make
+impact` et les lourds, la PR ; les décisions du propriétaire (D-511, D-521).
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 

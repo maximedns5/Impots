@@ -37797,3 +37797,64 @@ sont écrits sur ce commit. Test léger : `test_assiette_cotisations` (neuf, tro
 **Reste à décider** : l'imputation des revenus du patrimoine dans le niveau de vie (D-499),
 et la répartition de la part hors assiette (au-dessus du Smic, ou une source par tranche
 de salaire, que la Dares publie peut-être dans les tableaux de l'épargne salariale).
+
+## D-512 — La seconde jonction du but 27 : la grille de D-521 sur `claude/but27`
+
+Le propriétaire, le 16 novembre, après D-521 : « oui pour tout, corrige l'assiette et
+lance la suite ». `origin/claude/but27-grille3` (c314797 à 4ed44d0, qui contient
+grille2) est joint à `claude/but27` par un merge sans rebase (d9cd4f8), puis ab3e369,
+249e1ca, f382efe ; poussé, pas de PR.
+
+**Les conflits**, résolus à la main. `DECISIONS.md` : les deux suites gardées dans
+l'ordre d'ajout (D-510, D-511, puis D-497 à D-499, D-520, D-521). `lignes.json` et
+`grille.json` : les deux côtés avaient corrigé la localisation du RSA (six lignes) ;
+celle de la première jonction est gardée (§ 4.2, tableau « RSA », ligne TOTAL, D-510),
+relue dans le PDF de la Cnaf : le tableau est sous le § 4.2, pas sous le § 4.1.3. Le
+total publié ne change pas. `MANIFEST.json` : union ; l'entrée re-sourcée d'ip2117 (D-492)
+est gardée ; les deux sources neuves de grille3 (PPV Urssaf, ERFS 2023 T03), écrites hors
+de la clé `files`, y sont remises, leurs empreintes égales aux fichiers.
+
+**La population n'est pas refaite.** Celle de la passe de D-521 (commit 2d6a882) est
+copiée dans `data/processed` : le code de la population joint est celui de 2d6a882 (seuls
+`etude.py`, le jumeau, les sources et le site diffèrent), ses 257 entrées ont l'empreinte
+du manifeste joint, et la construction est déterministe (graine 20240101). Empreinte
+8d42e0d8… `impots verification ecrire` redonne `GRILLE.md` à l'identique : **la grille
+après la jonction est celle de D-521**, 35 lignes jugées sur 35 en 2024, 98 sur 99 sur
+trois ans, ±5 % : 16 sur 35 en 2024.
+
+**Les cellules du jumeau, refaites** (une passe détachée, seule : 30 000 ménages, 84 s,
+4,6 Go). Elles étaient faites sur la population du but 19 (13bda072…), d'avant D-494 :
+le jumeau ne lisait aucune des trois corrections de la grille. Recoupements, avant →
+après : salaire brut −0,41 → −0,57 % ; IR contre les recettes nettes +4,8 → +9,9 %
+(« dit », sans tolérance) ; médiane du niveau de vie contre Filosofi −4,2 → −6,5 % ; les
+quinze autres inchangés au dixième. `entrees_navigateur.json` et `agregats.json` sont
+réécrits depuis elles, sans passe. Les nombres du navigateur qui en dépendent bougent ;
+la page n'est pas reconstruite (plus bas).
+
+**Les sources.** La récolte refaite : 941 valeurs (907 + 34 du volet grille), 295
+documents ; `verifier` : le registre et le dépôt citent les mêmes valeurs. Les deux
+sources neuves de grille3 et la TI09 sont à l'inventaire. **Le total de la Dares**
+(épargne salariale 2024, 27,2 Md€) : la publication ne répond pas (503 à 15 h 30, puis
+réponse vide) ; une recherche ne trouve que des reprises (participation 11,4 Md€,
+intéressement 11,9, abondement 2,16 chez un seul repreneur : 25,5, pas 27,2 ; la
+différence est peut-être l'épargne retraite, non vérifié). La valeur ne change pas ; elle
+est marquée : un statut neuf de la récolte, « source secondaire, à vérifier », quand la
+citation le dit, et la citation de `margins.py` le dit (commentaire et source de la
+Figure ; aucun nombre ne change). Deux entrées le portent.
+
+**Le site n'est pas reconstruit.** `impots site construire` et `verifier` refusent : les
+douze pages d'études citent la grille de D-496 (« Aides au logement, montant versé :
+−28,1 % » au lieu de −11,0 %, etc.). Les réécrire par `impots etude ecrire`, sans passe,
+comme la première jonction l'a fait (autorisé après D-496), a été refusé dans cette
+session par le système de permissions : c'est au propriétaire. `site publiable` : vert ;
+`node ui/check.mjs` : vert (sur le site commité). **Ce que les études héritent**, sans
+être refaites : ce que D-521 liste (assiette des cotisations des salariés du privé 4 %
+plus petite, réduction générale 6 % plus grosse, IR au barème +0,7 %, prime servie
+−0,4 %) ; et, pour le navigateur, les cellules ci-dessus.
+
+**Les tests lancés**, un fichier à la fois, légers : `test_assiette_cotisations`,
+`test_salaires_horaires`, `test_recours`, `test_verification`, `test_grille`,
+`test_emploi_discontinu`, `test_uprating`, `test_imputations`, `test_secteur_public`,
+`test_salaires`, `test_population`, `test_sources`, `test_jumeau_navigateur`,
+`test_jumeau_cellules`, `test_agregats`, `test_site_population` : verts. `ruff` sur les
+fichiers touchés : vert. **Non lancés** : la suite entière, `make impact`, les lourds.
