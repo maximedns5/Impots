@@ -14,8 +14,26 @@
    "sha256": "f27bfdffc08c809398bb09b1f1c0ef83376b3194e10bc8daf8ace7ee3283826e",
    "perimetre": "Comptabilité nationale (SEC 2010), droits constatés, France entière (hors Mayotte avant 2014 selon convention Insee), tous régimes obligatoires : régimes de base, Agirc-Arrco, assurance chômage, régimes de la fonction publique ; secteurs privé ET public ; cotisations effectives obligatoires des salariés (D613CE), hors CSG/CRDS (classées en impôts D51), hors cotisations des non-salariés (D613NSI, 34,0/34,3/36,2 Md€).",
    "tolerance": 0.1,
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "cotisations_salariales_apu",
+   "remplacee": "D-497"
+  },
+  {
+   "id": "cotisations_salariales_apu",
+   "ligne": "Cotisations à la charge des salariés reçues par les administrations publiques (régimes publics)",
+   "modele": "cotisations_salariales - gérants",
+   "annee": 2022,
+   "publie": 95670000000.0,
+   "source": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.301 Compte des administrations publiques (S13)",
+   "localisation": "Feuille T_7301, compte de distribution secondaire du revenu, ressources, ligne D613CE (ligne 80), colonne BX (2022)",
+   "url": "https://www.insee.fr/fr/statistiques/fichier/8988833/T_7301_fr.xlsx",
+   "sha256": "9c020cff6650162ffdec9c116f7bc288a6ac0084c2e0f5cc1ac8b572445d1845",
+   "perimetre": "Comptabilité nationale (SEC 2010), droits constatés, France entière ; cotisations sociales effectives obligatoires à la charge des salariés (D613CE) reçues par les administrations publiques : régimes de base, Agirc-Arrco, Ircantec, assurance chômage, régimes de la fonction publique. Hors régimes d'entreprise reçus par les sociétés financières (D613CE de S12, tableau 7.201 : 23,8 / 25,9 / 27,8 Md€) et hors régimes étrangers (reste, environ 3 Md€). Le modèle ne porte que des régimes publics ; les cotisations des gérants majoritaires, que le moteur compte comme celles d'un salarié, sont des cotisations de non-salariés (D613NSI) et sortent de la mesure.",
+   "tolerance": 0.1,
    "usage": "validation",
-   "remarque": ""
+   "remarque": "But 27, volet grille2 (D-497). Remplace cotisations_salariales, qui comparait les seuls régimes publics du modèle à D613CE entier, régimes d'entreprise et étrangers compris ; l'ancienne ligne reste notée, sans verdict. Même tolérance.",
+   "preenregistre": "D-497"
   },
   {
    "id": "cotisations_employeurs",
@@ -467,8 +485,26 @@
    "sha256": "f27bfdffc08c809398bb09b1f1c0ef83376b3194e10bc8daf8ace7ee3283826e",
    "perimetre": "Comptabilité nationale (SEC 2010), droits constatés, France entière (hors Mayotte avant 2014 selon convention Insee), tous régimes obligatoires : régimes de base, Agirc-Arrco, assurance chômage, régimes de la fonction publique ; secteurs privé ET public ; cotisations effectives obligatoires des salariés (D613CE), hors CSG/CRDS (classées en impôts D51), hors cotisations des non-salariés (D613NSI, 34,0/34,3/36,2 Md€).",
    "tolerance": 0.1,
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "cotisations_salariales_apu",
+   "remplacee": "D-497"
+  },
+  {
+   "id": "cotisations_salariales_apu",
+   "ligne": "Cotisations à la charge des salariés reçues par les administrations publiques (régimes publics)",
+   "modele": "cotisations_salariales - gérants",
+   "annee": 2023,
+   "publie": 101125000000.0,
+   "source": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.301 Compte des administrations publiques (S13)",
+   "localisation": "Feuille T_7301, compte de distribution secondaire du revenu, ressources, ligne D613CE (ligne 80), colonne BY (2023)",
+   "url": "https://www.insee.fr/fr/statistiques/fichier/8988833/T_7301_fr.xlsx",
+   "sha256": "9c020cff6650162ffdec9c116f7bc288a6ac0084c2e0f5cc1ac8b572445d1845",
+   "perimetre": "Comptabilité nationale (SEC 2010), droits constatés, France entière ; cotisations sociales effectives obligatoires à la charge des salariés (D613CE) reçues par les administrations publiques : régimes de base, Agirc-Arrco, Ircantec, assurance chômage, régimes de la fonction publique. Hors régimes d'entreprise reçus par les sociétés financières (D613CE de S12, tableau 7.201 : 23,8 / 25,9 / 27,8 Md€) et hors régimes étrangers (reste, environ 3 Md€). Le modèle ne porte que des régimes publics ; les cotisations des gérants majoritaires, que le moteur compte comme celles d'un salarié, sont des cotisations de non-salariés (D613NSI) et sortent de la mesure.",
+   "tolerance": 0.1,
    "usage": "validation",
-   "remarque": ""
+   "remarque": "But 27, volet grille2 (D-497). Remplace cotisations_salariales, qui comparait les seuls régimes publics du modèle à D613CE entier, régimes d'entreprise et étrangers compris ; l'ancienne ligne reste notée, sans verdict. Même tolérance.",
+   "preenregistre": "D-497"
   },
   {
    "id": "cotisations_employeurs",
@@ -930,8 +966,26 @@
    "sha256": "f27bfdffc08c809398bb09b1f1c0ef83376b3194e10bc8daf8ace7ee3283826e",
    "perimetre": "Comptabilité nationale (SEC 2010), droits constatés, France entière (hors Mayotte avant 2014 selon convention Insee), tous régimes obligatoires : régimes de base, Agirc-Arrco, assurance chômage, régimes de la fonction publique ; secteurs privé ET public ; cotisations effectives obligatoires des salariés (D613CE), hors CSG/CRDS (classées en impôts D51), hors cotisations des non-salariés (D613NSI, 34,0/34,3/36,2 Md€).",
    "tolerance": 0.1,
+   "usage": "remplacee",
+   "remarque": "",
+   "remplacee_par": "cotisations_salariales_apu",
+   "remplacee": "D-497"
+  },
+  {
+   "id": "cotisations_salariales_apu",
+   "ligne": "Cotisations à la charge des salariés reçues par les administrations publiques (régimes publics)",
+   "modele": "cotisations_salariales - gérants",
+   "annee": 2024,
+   "publie": 104610000000.0,
+   "source": "Insee, comptes nationaux annuels base 2020 (édition mai 2026), tableau 7.301 Compte des administrations publiques (S13)",
+   "localisation": "Feuille T_7301, compte de distribution secondaire du revenu, ressources, ligne D613CE (ligne 80), colonne BZ (2024)",
+   "url": "https://www.insee.fr/fr/statistiques/fichier/8988833/T_7301_fr.xlsx",
+   "sha256": "9c020cff6650162ffdec9c116f7bc288a6ac0084c2e0f5cc1ac8b572445d1845",
+   "perimetre": "Comptabilité nationale (SEC 2010), droits constatés, France entière ; cotisations sociales effectives obligatoires à la charge des salariés (D613CE) reçues par les administrations publiques : régimes de base, Agirc-Arrco, Ircantec, assurance chômage, régimes de la fonction publique. Hors régimes d'entreprise reçus par les sociétés financières (D613CE de S12, tableau 7.201 : 23,8 / 25,9 / 27,8 Md€) et hors régimes étrangers (reste, environ 3 Md€). Le modèle ne porte que des régimes publics ; les cotisations des gérants majoritaires, que le moteur compte comme celles d'un salarié, sont des cotisations de non-salariés (D613NSI) et sortent de la mesure.",
+   "tolerance": 0.1,
    "usage": "validation",
-   "remarque": ""
+   "remarque": "But 27, volet grille2 (D-497). Remplace cotisations_salariales, qui comparait les seuls régimes publics du modèle à D613CE entier, régimes d'entreprise et étrangers compris ; l'ancienne ligne reste notée, sans verdict. Même tolérance.",
+   "preenregistre": "D-497"
   },
   {
    "id": "cotisations_employeurs",

@@ -348,6 +348,12 @@ def _extract(
     # « extrapolation », `aggregate.ASSIS_SUR_LES_SALAIRES`). The gérants are paid their
     # declared pay, already the whole of theirs, and are not carried.
     hors_champ = np.where(gerant, 0.0, margins.EXTRAPOLATION_SALARIES.value - 1.0)
+    # The gérants' contributions, which the engine counts as an employee's (étape « ir »)
+    # and the national accounts as a self-employed person's (D613NSI, not D613CE): the
+    # grid's line at the field of the public schemes takes them out (but 27, D-497).
+    results["cotisations_salariales_gerants"] = _to_households(
+        np.where(gerant, -built.calculate("cotisations_salariales", add=True)
+                 .astype(np.float64), 0.0), individu_index, n_households)
 
     # The employers' contributions as the national accounts count them (D121), for the
     # verification grid only (but 19, étape 1; `docs/diagnostics/cotisations_employeurs.md`).

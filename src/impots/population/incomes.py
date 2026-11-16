@@ -110,6 +110,9 @@ GERANT_GROSS_PAY = "salaire_brut_gerant"
 
 #: The column of the income tax's exempt share of a salary, read by engine correction 24.
 EXEMPT_SHARE = "part_salaire_exoneree"
+#: The share of a private employee's gross pay outside the base of the social contributions
+#: (but 27, volet grille3, D-499): the PPV and the épargne salariale.
+HORS_ASSIETTE_SHARE = "part_salaire_hors_assiette_cotisations"
 
 #: The survey's agricultural sector (NAF divisions 01 to 03), which has its own tables.
 AGRICULTURE = "agriculture"
@@ -207,6 +210,12 @@ class IncomeStats:
     exempt_wage_share: float = 0.0
     """The share of each employee's taxable salary the income tax exempts (D11 against the
     declared salaries, `margins.DECLARED_TAXABLE_WAGES`)."""
+    hourly_wage_factor: float = 1.0
+    """What gives the private wage bill back after the hourly wages are mapped onto the
+    Dares's distribution in parts of Smic (`_salaires_horaires_en_smic`); 1.0 when off."""
+    hors_assiette_share: float = 0.0
+    """The rate, on the private pay above the Smic, of the pay outside the base of the
+    contributions (`_part_hors_assiette`); 0.0 when off."""
 
 
 def lognormal_from_deciles(d1: float, median: float, d9: float) -> tuple[float, float]:
@@ -313,6 +322,8 @@ def _draw_net_eqtp(frame: pl.DataFrame, rng: np.random.Generator) -> np.ndarray:
     # tail; they are drawn and discarded, so that the pensions and the unemployment
     # benefit, which read the same generator after the wages, are the ones drawn before.
     rng.uniform(size=_legacy_tail_size(frame, score))
+    # Who earns more, by tenure (but 27, volet grille2, D-497): the rank, not the curve.
+    score = score * _facteur_statut(frame)
 
     employee = frame["is_salarie"].to_numpy().astype(bool) & (
         frame["statut_activite"].to_numpy() == "employed")
@@ -368,6 +379,142 @@ RANG_EQTP = True
 #: declared salaries (`CHAMP_SALARIES_ENQUETE`), as their wage bill is D11's share of it;
 #: off: France's declared salaries, as from D-368 to the étape « milieu » of but 19.
 PART_EXONEREE_SUR_LE_CHAMP = True
+
+#: Map the private hourly wages onto the Dares's distribution in parts of Smic (but 27,
+#: volet grille2, D-497); off: the wages of the published EQTP net curves, as before.
+HORAIRES_EN_SMIC = True
+
+
+def _private_field(frame: pl.DataFrame, employee: np.ndarray) -> np.ndarray:
+    """The employees of the Dares's field, the field of the allègements: the private
+    sector, without the particuliers employeurs and the gérants majoritaires."""
+    versant = frame["fonction_publique"].to_numpy()
+    private = employee & np.array([v is None for v in versant])
+    if "particulier_employeur" in frame.columns:
+        private &= ~frame["particulier_employeur"].fill_null(False).to_numpy().astype(bool)
+    if "regime_non_salarie" in frame.columns:
+        private &= frame["regime_non_salarie"].is_null().to_numpy()
+    return private
+
+
+def _salaires_horaires_en_smic(frame: pl.DataFrame, wages: np.ndarray,
+                               employee: np.ndarray, weight: np.ndarray
+                               ) -> tuple[np.ndarray, float]:
+    """The private employees' hourly wages, in parts of Smic, mapped onto the Dares's
+    distribution (`margins.SALAIRE_HORAIRE_PRIVE_EN_SMIC_2022`), rank kept.
+
+    **Why** (D-494, § 3; D-497). The wages are drawn on the Insee's *net* EQTP curves and
+    turned gross by one average ratio (0,7587): the hourly wages that come out are too few
+    under 1,6 Smic (50 % of the employees aged 18 to 64 under 4 Smic, against 60 % at the
+    Dares) and too many between 1,6 and 3,5, so the réduction générale ran 17 % short and
+    the bandeaux 13 and 18 % high. The Dares's function is gross, hourly and in parts of
+    Smic: the allègements' own variable.
+
+    **How.** An employee's hourly wage is his annual wage over the annual Smic at his
+    quotité (`margins.SMIC_ANNUEL_2024`); the months worked come after and keep the
+    monthly rate. Each one under 4 Smic takes, on the Dares's function, the value of his
+    rank among the employees aged 18 to 64 under 4 Smic, weighted by person as the Dares
+    counts them; those of 4 Smic and over keep theirs. The private wage bill this moves
+    (about 1 %) is given back to every private employee of the field by one factor, which
+    shifts the mapped distribution by as much: D11 is spent, and it still holds.
+    """
+    private = _private_field(frame, employee) & (wages > 0)
+    quotite = frame["quotite_travail"].to_numpy().astype(np.float64)
+    hourly = np.zeros_like(wages)
+    hourly[private] = wages[private] / (margins.SMIC_ANNUEL_2024 * np.maximum(quotite[private],
+                                                                          1e-9))
+    under = private & (hourly < 4.0)
+    if not under.any():
+        return wages, 1.0
+    age = frame["age"].to_numpy()
+    reference = under & (age >= 18) & (age <= 64)
+    order = np.flatnonzero(reference)
+    order = order[np.argsort(hourly[order], kind="stable")]
+    cumulative = np.cumsum(weight[order])
+    ranks = (cumulative - weight[order] / 2.0) / cumulative[-1]
+    rank = np.interp(hourly[under], hourly[order], ranks)
+    points = margins.SALAIRE_HORAIRE_PRIVE_EN_SMIC_2022
+    values = np.array(sorted(points), dtype=np.float64)
+    shares = np.array([points[v] for v in sorted(points)], dtype=np.float64)
+    mapped = wages.copy()
+    mapped[under] = (np.interp(rank, shares, values) * margins.SMIC_ANNUEL_2024
+                     * quotite[under])
+    before = float((wages[private] * weight[private]).sum())
+    after = float((mapped[private] * weight[private]).sum())
+    factor = before / after if after > 0 else 1.0
+    mapped[private] *= factor
+    return mapped, factor
+
+
+def _facteur_statut(frame: pl.DataFrame) -> np.ndarray:
+    """Each person's factor for his household's tenure (`margins.FACTEUR_STATUT_OCCUPATION`).
+
+    **Why** (D-494, § 3; D-497). The survey has no income, and the wages and pensions were
+    drawn by PCS, sector, age, sex and quotité, not by tenure: at equal PCS, an HLM tenant
+    was paid like an owner. The niveau de vie médian of the HLM tenants came out at 85 %
+    of the whole population's, against 67 % in the ERFS (2023, tableau TI09), and the
+    aides au logement 27 % short. The factor multiplies the wage *score* (the rank on the
+    published curve of the person's sector: the curves stay exact, who sits where on them
+    moves) and the pension draw (whose mass is then recalibrated): the totals do not move,
+    their distribution over tenures does. A frame without tenure takes 1.
+    """
+    if not FACTEUR_STATUT or "statut_occupation" not in frame.columns:
+        return np.ones(frame.height, dtype=np.float64)
+    factors = margins.FACTEUR_STATUT_OCCUPATION
+    statut = frame["statut_occupation"].to_numpy()
+    return np.array([factors.get(s, 1.0) for s in statut], dtype=np.float64)
+
+
+#: Rank the wages and the pensions by tenure (but 27, volet grille2, D-497); off: no
+#: tenure in the draw, as before.
+FACTEUR_STATUT = True
+
+
+#: Take the PPV and the épargne salariale out of the base of the contributions (but 27,
+#: volet grille3, D-499); off: every euro of D11 bears contributions, as before.
+HORS_ASSIETTE = True
+
+
+def _part_hors_assiette(frame: pl.DataFrame, wages: np.ndarray, employee: np.ndarray,
+                        weight: np.ndarray, targets_scale: float) -> tuple[np.ndarray, float]:
+    """Each person's share of gross pay outside the base of the social contributions, and
+    the rate on the pay above the Smic that gives it.
+
+    **Why** (D-497, D-499). The wages are calibrated on D11, which holds the prime de
+    partage de la valeur, the participation, the intéressement and the employer's
+    abondements; none bears contributions (they bear the CSG, the CRDS and the forfait
+    social). The engine made all of D11 contribute: its private base ran 780 to 805 Md€
+    against the CCSS's 750, and the employees' contributions of the public schemes 11 %
+    above the accounts.
+
+    **How.** `margins.REMUNERATION_HORS_ASSIETTE_COTISATIONS` (30,7 Md€ in 2024), times
+    `targets_scale`, is spread over the employees of the private field (`_private_field`:
+    the allègements' field, without the public service, the particuliers employeurs and
+    the gérants) in proportion to their pay above the Smic at their quotité
+    (`margins.SMIC_ANNUEL_2024`): these sums come on top of a salary that itself pays the
+    Smic (C. trav. art. L. 3312-4 and L. 3325-2: the intéressement and the participation
+    « n'ont pas le caractère de salaire » ; the PPV « ne peut se substituer à aucun des
+    éléments de rémunération », loi n° 2022-1158, art. 1er, V), so no base falls under it.
+    A share of nought at the Smic is a hypothesis on who: the PPV goes more to the low
+    pay, the épargne salariale to the high. The share, exempt over gross, goes to the
+    engine, which takes it off `assiette_cotisations_sociales_prive` (correction 27); the
+    gross pay, D11, the CSG and the income tax do not move.
+    """
+    if not HORS_ASSIETTE:
+        return np.zeros_like(wages), 0.0
+    private = _private_field(frame, employee) & (wages > 0)
+    quotite = frame["quotite_travail"].to_numpy().astype(np.float64)
+    above = np.where(private, np.maximum(
+        wages - margins.SMIC_ANNUEL_2024 * np.clip(quotite, 0.0, 1.0), 0.0), 0.0)
+    mass = float((above * weight).sum())
+    if mass <= 0:
+        return np.zeros_like(wages), 0.0
+    rate = margins.REMUNERATION_HORS_ASSIETTE_COTISATIONS.value * targets_scale / mass
+    if rate >= 1.0:
+        raise ValueError(f"la part hors assiette dépasse le salaire au-dessus du Smic ({rate})")
+    share = np.where(private, rate * above / np.maximum(wages, 1e-9), 0.0)
+    return share, rate
+
 
 #: Rounds of the age and sex fit (the largest miss is under 0.1 % after six, on the
 #: test frame).
@@ -754,6 +901,12 @@ def attach_incomes(
     # each than the published wage quantiles imply.
     factor = target / before if before > 0 else 1.0
     wages = np.where(employee, wages * factor, gerant_gross)
+    # Where the private wages sit against the Smic (but 27, volet grille2, D-497): the
+    # hourly wages are mapped onto the Dares's distribution in parts of Smic, the private
+    # wage bill given back, so D11 still holds.
+    hourly_factor = 1.0
+    if HORAIRES_EN_SMIC:
+        wages, hourly_factor = _salaires_horaires_en_smic(frame, wages, employee, weight)
 
     # The share of an employee's taxable salary the income tax exempts: D11 holds overtime,
     # apprentices' pay, placed profit-sharing and the rest the declarations do not, so its
@@ -773,13 +926,16 @@ def attach_incomes(
     exempt_share = (max(0.0, 1.0 - declared / employees_taxable)
                     if employees_taxable > 0 else 0.0)
 
+    hors_assiette, hors_assiette_share = _part_hors_assiette(frame, wages, employee, weight,
+                                                             targets_scale)
+
     # ---- pensions ---------------------------------------------------------
     age = frame["age"].to_numpy()
     inactive = frame["statut_activite"].to_numpy() == "inactive"
     pensioner = inactive & (age >= RETIREMENT_AGE)
     pension_draw = np.where(
         pensioner, np.exp(rng.standard_normal(n) * PENSION_SIGMA), 0.0
-    )
+    ) * _facteur_statut(frame)
     pension_mass = float((pension_draw * weight).sum())
     pensions = (
         pension_draw * (margins.DECLARED_PENSIONS.value * targets_scale / pension_mass)
@@ -807,6 +963,7 @@ def attach_incomes(
     enriched = frame.with_columns(
         pl.Series("salaire_brut_annuel", wages),
         pl.Series(EXEMPT_SHARE, np.where(employee & (wages > 0), exempt_share, 0.0)),
+        pl.Series(HORS_ASSIETTE_SHARE, hors_assiette),
         pl.Series("pension_annuelle", pensions),
         pl.Series("chomage_annuel", chomage),
         pl.Series("loyer_mensuel", rent),
@@ -830,5 +987,7 @@ def attach_incomes(
         self_employment=self_employment,
         gerants_gross_pay=gerants_gross,
         exempt_wage_share=exempt_share,
+        hourly_wage_factor=hourly_factor,
+        hors_assiette_share=hors_assiette_share,
     )
     return enriched, stats

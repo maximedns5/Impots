@@ -2252,7 +2252,7 @@
       "downloaded": "2026-11-15",
       "licence": "Licence ouverte Etalab",
       "description": "Insee, BDM 010002078 : cours du pétrole brut Brent (Londres), prix au comptant en euros par baril, mensuel, 2009-01→2025-12 ; le prix du baril des prix d'importation de Mésange (D-432)."
-},
+    },
     "insee_bdm_taux_chomage_localise_1990_2025.xml": {
       "url": "https://www.bdm.insee.fr/series/sdmx/data/TAUX-CHOMAGE/T.TAUX_CHOMAGE_LOCALISE....?startPeriod=1990-Q1&endPeriod=2025-Q4",
       "quarantined": false,
@@ -2449,6 +2449,33 @@
       "downloaded": "2026-11-16",
       "licence": "publication de la Cnaf, réutilisation avec mention de la source",
       "description": "Cnaf, PA Conjoncture, la prime d'activité au 4e trimestre 2024 (définitif). Document d'une ligne de la grille de vérification (docs/verification/lignes.json : ppa_foyers 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "insee_erfs2023_ti09_niveau_de_vie_statut_occupation.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8731694/irsocerfs2023_ti09.xlsx",
+      "sha256": "ec6cc1e613a94d1de8e26f51815f9b7c48957de20985dea14f89f4fd7fb4812f",
+      "bytes": 8090,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, « Revenu, niveau de vie et pauvreté en 2023 », Insee Résultats, enquête Revenus fiscaux et sociaux 2023, tableau TI09 : répartition des individus et leur niveau de vie selon le statut d'occupation du logement (médianes : ensemble 25 760 €, accédants 29 350, propriétaires 28 920, locataires HLM 17 260, vide non HLM 22 440, meublé 22 250, logés gratuitement 21 040). Marge du rang des salaires et des pensions par statut d'occupation (but 27, volet grille2, D-497).",
+      "quarantined": false
+    },
+    "urssaf_ppv_trimestre_champ_large.csv": {
+      "url": "https://open.urssaf.fr/api/explore/v2.1/catalog/datasets/prime-partage-valeur-par-trimestre-champ-large-france-entiere/exports/csv?delimiter=%3B",
+      "sha256": "7612a75bd5f3a427cc342530d1787ed36ca4d7dd1e7737517b440fb4b43e2d91",
+      "bytes": 6284,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Urssaf, open data, « Prime de partage de la valeur par trimestre, champ large, France entière » (export du 16 novembre 2026) : montants versés par trimestre, secteur privé (champ des ETE et hors), secteur public. 2024, privé : 3 451 + 11 M€. Part du brut hors de l'assiette des cotisations (but 27, volet grille3, D-499).",
+      "quarantined": false
+    },
+    "insee_erfs2023_t03_composition_revenu_disponible_age.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8731688/irsocerfs2023_t03.xlsx",
+      "sha256": "ca856273ba2fee29b7bf6ca09ede0e166661e474b7e14388bc22456bb7a74d70",
+      "bytes": 7875,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, « Revenu, niveau de vie et pauvreté en 2023 », Insee Résultats, ERFS 2023, tableau T03 : composition du revenu disponible moyen selon l'âge de la personne de référence (revenus du patrimoine : 11,4 % de l'ensemble, 4,7 % sous 30 ans, 20,6 % à 75 ans ou plus). Diagnostic du niveau de vie par statut d'occupation (but 27, volet grille3, D-499).",
       "quarantined": false
     }
   }

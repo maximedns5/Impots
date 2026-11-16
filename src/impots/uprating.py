@@ -67,6 +67,9 @@ NOT_UPRATED: dict[str, str] = {
     # A share of the taxable salary, not an amount: the same share whatever the year
     # (but 19, étape « ir », engine correction 24).
     "part_salaire_exoneree": "une part du salaire imposable, pas un montant",
+    # A share of the private gross pay outside the base of the contributions (but 27,
+    # D-499, engine correction 27).
+    "part_salaire_hors_assiette_cotisations": "une part du salaire brut, pas un montant",
 }
 
 
