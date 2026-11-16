@@ -37091,3 +37091,182 @@ expliqués ; ils relèvent du volet `papillon` ou d'une relecture du chiffrage. 
 neuf autres programmes n'ont que leurs montants déclarés les plus lourds ; leurs 89
 paramètres sans montant et leurs 171 hypothèses non sourcées restent à reprendre
 mesure par mesure. (5) Les tests du module (D-474) et `make impact` n'ont pas tourné ici.
+
+## D-510 — La jonction du but 27 : quatre volets fusionnés, et branchés entre eux
+
+**Les fusions** (`git merge --no-ff` sur `claude/but27`, dans l'ordre : `grille`, D-494 à
+D-496 ; `fiches`, D-504 à D-506 ; `papillon`, D-500 à D-503 ; `sources`, D-491 à D-493).
+Un seul conflit, `docs/DECISIONS.md`, à chaque fusion : chaque volet ajoutait ses entrées
+après D-490 ; elles sont rangées dans l'ordre des numéros, et `comm` contre chacune des
+quatre branches ne trouve aucune ligne perdue. D-497 à D-499 restent libres pour le volet
+`grille2`, qui tourne à part ; D-507 à D-509 pour `mesure`. Les treize documents que le
+volet `sources` a téléchargés sont liés dans `data/raw/` (hors git) ; le texte extrait,
+lié depuis le worktree du volet (`data/interim/sources/`), n'est pas refait.
+
+**Après les fusions, sans passe sur la population :**
+
+* **Les fiches** régénérées par `scripts/jumeau_fiches_transmission.py` : 333 écrites,
+  aucune ne change, toutes relues et validées (`--verifier`).
+* **La localisation du RSA de la grille** (D-492), `rsa_montant` et `rsa_montant_servi`,
+  2022 à 2024 : « tableau « RSA » (prise en charge par l'État et par les départements),
+  ligne TOTAL, p. 57 du PDF » (2022), p. 48 (2023, 2024), au lieu du tableau PRESTATIONS
+  ETAT, dont la ligne RSA est la seule part de l'État. Lu dans le texte extrait : le
+  TOTAL de chaque année est le total publié de la grille, à l'euro. Aucun total ne change ;
+  `impots verification ecrire` refait `grille.json` (la seule localisation y change).
+* **La récolte refaite** (`python -m impots.sources recolter`, 20 s) : 907 nombres (899 et
+  les huit de `papillon.yaml`), 291 documents ; les six nombres du RSA sont désormais
+  « retrouvée » à la page dite (« ailleurs » avant). `test_sources` passe.
+* **Le jumeau sur Mélenchon** (`scripts/jumeau_papillon.py`, θ½). Les nombres de D-502 se
+  retrouvent tous, dans les deux modes et les deux vues : structurel +12,306 pt (figée),
+  +12,078 (vieillie), emploi +186,1 et +126,7 milliers ; réduit +25,109 et +27,375 ; les
+  mesures une à une, la cascade simplifiée, la prime de risque, les sensibilités, à
+  l'identique ; seuls des résidus d'identités changent, à 1e-16. Les fiches de Mélenchon ne
+  touchent pas ces nombres : le papillon lit les sept rapports, pas les hypothèses. Les
+  nombres de D-506 (le script d'essai du volet, `fiches/passe.py`, sur ce commit) se
+  retrouvent aussi tous : Mélenchon réduit, hypothèses seules +1,86 pt et −7,1 Md€, tout
+  +29,39 et −125,9 ; structurel, hypothèses seules −5,05 et +12,4 ; Attal réduit, tout
+  −0,84 et +7,3, structurel +11,85 et −50,2. Le point d'indice du papillon (D-500) ne
+  touche pas ces passes : elles lisent le rapport entier du programme (refusé en
+  structurel, D-474), où le point d'indice n'est pas lu seul. Seul le compte par
+  sous-secteur bouge, par le branchement qui suit.
+
+**Les branchements.**
+
+* **Les payeurs des prestations de Mélenchon tirés des fiches** (ce que D-500 attendait).
+  `financement.yaml` donne à l'indexation de 10 % et à la garantie d'autonomie la ligne
+  D62 (les prestations en espèces) et leur fiche ; `comptes.cle_reste` en tire les payeurs,
+  et, quand la fiche dit la part de chacun (`part`, D-504), prend ces parts avant celles de
+  la ligne. Les branches des fiches trouvent leur compte (`vieillesse` → les régimes de
+  base, `retraite_complementaire` → les complémentaires, `chomage` → l'Unédic ; la fiche
+  de l'indexation était illisible avant). Les clés : l'indexation, l'État 19,2 % et les
+  trois branches nommées 26,9 % chacune (la part des ASSO à parts égales, faute de parts
+  dans la fiche : une approximation, dite) ; la garantie d'autonomie, l'État seul (la
+  fiche : « la caisse qui verse n'est pas dite ; l'État par défaut », non sourcé) ; le
+  point d'indice, les parts de sa fiche, l'État 76,5 % (dont la compensation des
+  collectivités que le candidat promet) et l'Assurance maladie 23,5 % (Siasp 2024), au
+  lieu des parts de D1 (l'État 45,4 %, les APUL 28,6 %, les hôpitaux 26,0 %). Le point
+  d'indice de Tondelier, sans parts dans sa fiche, ne change pas.
+  Mélenchon, structurel, figée, B9 en Md€, 2026 → 2035, avant → après : l'État −26,79 →
+  −55,81 et −24,85 → −59,19 ; les ODAC −1,01 → +0,19 et −0,83 → +0,58 ; les APUL −17,39 →
+  +1,48 et −17,64 → +4,66 ; les ASSO −26,35 → −17,39 et −12,31 → −1,68. Le total, la
+  dette et tout le reste ne bougent pas. Les APUL ne paient plus rien du programme ; ce
+  qu'elles gagnent est leur part des recettes induites. La compensation des collectivités
+  (D-500, décision) est donc prise par la fiche, comme l'État qui paie, et non comme un
+  transfert déclaré ; le consolidé est le même. Le test
+  (`test_jumeau_papillon.py::test_les_payeurs_des_prestations_viennent_des_fiches`) échoue
+  sur le code d'avant (vu) ; `reports/papillon/melenchon.json` est réécrit.
+* **Le relevé des fiches** (`transmission.qualite`) compte aussi les fiches qui disent
+  leur calendrier (64 : Mélenchon 51, Attal 13) et celles dont chaque APU payeuse a sa
+  part (une : le point d'indice de Mélenchon). **La cascade** montre l'assiette et le
+  calendrier de la fiche dans son panneau (`site_cascade/page.js`).
+* **Non branché** : la convention « mesures_seules » n'est pas dans le navigateur. Le
+  programme de Mélenchon tourne en structurel par `papillon.mesures_seules` (le script, le
+  rapport), mais la page du jumeau et la cascade le refusent toujours (les employeurs
+  mêlés, D-477) et le montrent en réduit. Le brancher demande que `Session.calculer` et la
+  portée portent une liste de mesures : à faire, dit en D-511.
+
+**Les pages des études.** Six citent une ligne de la grille qui a changé (la prime servie,
+foyers et masse ; la CSG des revenus de remplacement, −3,1 → −2,8 % en moyenne) :
+`plfss2027`, et les présidentielles de Lisnard, Mélenchon, Philippe, Retailleau et
+Tondelier. Elles sont réécrites par `impots etude ecrire`, depuis leurs rapports commités,
+sans passe (le propriétaire l'a autorisé le 16 novembre). La phrase sur le non-recours
+disait la prime « calée sur le non-recours publié par la Drees » : elle dit maintenant que
+la grille est calée sur les foyers que la Cnaf paie (D-495), que les passes d'avant ce but
+servaient la prime au taux de la Drees, et que leur variation de prime est à multiplier
+par environ 1,39 (D-496). Les chiffrages des pages ne changent pas : aucune étude n'est
+refaite (D-496 dit lesquelles devraient l'être).
+
+**Le site.** `reports/population/agregats.json` est réécrit (`python -m
+impots.site_population.agregats`, sans passe : seule la grille recopiée change), puis
+`impots site construire`, `site verifier`, `site publiable`, `node ui/check.mjs` passent.
+La page de la population dit 31 lignes sur 35, les cinq remplacées à part ; les cascades de
+Mélenchon se dessinent sans erreur de console, à 1280 et 390 px, sans défilement de côté
+(captures hors git).
+
+**Les tests légers**, chacun seul : `test_sources` (5), `test_verification` (4),
+`test_recours` (7), `test_jumeau_papillon` (5, dont le neuf), `test_jumeau_transmission_
+donnees` (3), `test_jumeau_navigateur` (17). Dans ce dernier, trois attentes d'avant le
+but 26 sont mises à jour, parce que le comportement attendu a changé par décision, non
+pour faire passer un échec : Retailleau (figée, convention) tourne dix ans depuis D-477
+(ses cotisations ventilées) ; Attal vieillie (convention) dix ans depuis D-477 (la vieillie
+ventilée par convention) ; Roussel figée dix ans depuis D-487 (le Smic lu par le bloc
+`travail`). D-500 les avait vus rouges sur le commit de départ. Le cas refusé que ces tests
+gardent passe à Tondelier, qui l'est encore (les employeurs mêlés, D-477, D-487). Ni la
+suite entière, ni `make impact`, ni les lourds (le brief).
+
+## D-511 — Le but 27 après la jonction : le relevé, et ce qui manque au /goal
+
+**La grille** (D-496, inchangée par la jonction) : en 2024, **31 lignes jugées sur 35**
+dans leur tolérance (30 sur 40 à D-371) ; ±5 % : 13 sur 35. 2023 : 29 sur 33 (±5 % : 12) ;
+2022 : 27 sur 31 (13). Hors en 2024 : les aides au logement (−27,0 %), la réduction
+générale (−17,5 %), le bandeau famille (+18,4 %), les cotisations salariales (−11,0 %).
+Les cinq lignes remplacées gardent leur écart, sans verdict : `rsa_foyers` +53,1,
+`ppa_foyers` +44,0, `rsa_montant` +12,4, `ppa_montant` −15,4, `cotisations_employeurs`
++27,9. Le volet `grille2` (D-497 à D-499) tourne à part ; il n'est pas joint ici.
+
+**Mélenchon, les deux modes** (θ½, dette de 2035 en points de PIB) :
+
+| | figée | vieillie |
+|---|---:|---:|
+| réduit (les études) | +25,109 | +27,375 |
+| structurel, mesures seules (D-502) | +12,306 | +12,078 |
+| emploi 2035, structurel (milliers) | +186,1 | +126,7 |
+
+Le compte par sous-secteur, structurel, figée, B9 2026 : l'État −55,81 Md€, les ASSO
+−17,39, les APUL +1,48, les ODAC +0,19 (D-510 ; avant, −26,79, −26,35, −17,39, −1,01).
+
+**Les fiches** (`transmission.qualite`, onze programmes) : 35 chiffrées, 87 hypothèses (79
+du candidat, 8 du calcul), 111 paramètres sans montant, 100 sans choc ; 55 fiches à
+assiette chiffrée, 64 avec calendrier, une avec les parts de ses payeurs ; 151 hypothèses
+sourcées, 285 non sourcées (dont 237 conventions). Mélenchon : 27 assiettes chiffrées,
+74 hypothèses sourcées, 88 non sourcées.
+
+**Le registre** : 907 nombres, 291 documents ; relus : 417 retrouvés à l'endroit dit, 23
+arrondis, 18 ailleurs, 79 introuvables (dont 38 calculés), 55 choisis, 312 non relus. La
+grille : 114 retrouvés sur 119 (aucun ailleurs).
+
+**Ce qui manque au /goal**, point par point :
+
+* **Les 40 lignes dans leur tolérance** : 31 sur 35 jugées ; quatre hors, chacune faute
+  d'une source (D-494 § 3) : une marge statut d'occupation × niveau de vie (les aides au
+  logement), une distribution des salaires horaires en parts de Smic (les allègements),
+  un tableau des régimes des cotisations salariales. Le volet `grille2` y travaille.
+* **Le plus grand nombre à ±5 %** : 13 sur 35.
+* **Les sources récoltées une fois, un registre que tout lit** : récoltées ; les lecteurs
+  (YAML, `margins.py`, `lignes.json`) ne lisent pas encore le registre, il les tient
+  (D-493) ; 312 nombres non relus.
+* **Chaque flèche du jumeau sur Mélenchon vérifiée** : fait (D-500, D-501), les défauts
+  corrigés ou dits ; les compensations montrées (D-502) ; **il tourne en structurel** dans
+  le script et le rapport du papillon, pas dans le navigateur ni la page (D-510).
+* **Chaque fiche porte ses données critiques mesure par mesure** : Mélenchon (64) et
+  Attal (37) ; six autres n'ont que leurs montants les plus lourds ; Kazib, Bouamrane et
+  Roussel aucune table (D-505).
+* **Une proposition de Mélenchon appliquée à toute la population corrigée** : le volet
+  `mesure` (D-507 à D-509) n'a pas commencé.
+* **Les études qui touchent la prime** ne sont pas refaites sur le recours de la Cnaf
+  (D-496 : Retailleau d'abord, puis Mélenchon, Attal, Philippe) ; leurs pages le disent.
+* `make impact`, les lourds, la PR : pas faits.
+
+**Les décisions du propriétaire, rassemblées.** Prises le 16 novembre : `calibrate.py`
+ouvert pour ce but, les passes détachées une à une, Mélenchon le programme regardé
+(D-490) ; les cinq lignes remplacées sortent du compte de la grille, le recours à la prime
+calé sur la Cnaf est gardé, la réécriture des pages d'études est autorisée (validé après
+D-496). **À prendre** :
+
+1. Le mode réduit des études (la paie publique, les transferts sans multiplicateur, le
+   Smic) ou le structurel comme lecture publiée (D-503, 1).
+2. Le PIB nominal d'un point d'indice (ΔD1) ; la compensation des collectivités, prise
+   ici par la part de l'État dans la fiche (D-510) : la garder, ou un transfert déclaré
+   (D-503, 2).
+3. Le canal C10 sur `pfu_supprime` par une passe ; la prime de risque dans l'état ou en
+   regard (D-503, 3).
+4. La diffusion du Smic au centre, qui décide du signe de l'emploi de Mélenchon (D-503, 4).
+5. Le payeur de la garantie d'autonomie (l'État par défaut, non sourcé) et les parts des
+   branches dans l'indexation (à parts égales) (D-510).
+6. Le « 100 % Sécu » : la cotisation universelle comptée comme une recette égale, ou
+   absente (D-506, 1) ; un curseur ρ pour les 237 conventions (D-506, 2).
+7. Un champ de localisation structuré dans `lignes.json` ; `test_sources` rouge ou
+   simple avertissement quand une valeur citée change sans récolte (D-493).
+8. Brancher « mesures_seules » dans le navigateur pour que la page montre Mélenchon et
+   Tondelier en structurel (D-510).
+9. L'ordre des études à refaire sur le recours de la Cnaf (D-496).

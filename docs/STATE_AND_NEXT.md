@@ -1,5 +1,26 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-16 late update adds D-491 to D-511 (D-497 to D-499 and D-507 to D-509 still
+free): goal 27, « right data, a demonstrable butterfly », four strands joined on
+`claude/but27` (D-510), no PR. **Sources** (D-491 to D-493): every public number the
+repository cites is harvested once into a registry (`src/impots/sources/`, 907 numbers,
+291 documents, the text of each document cached outside git); one wrong location found
+and fixed (the RSA line of the grid). **Grid** (D-494 to D-496): five lines that counted
+something other than their published total are marked replaced, and the take-up of the
+prime d'activité is calibrated on the Cnaf's paid households; 31 of 35 judged lines hold
+their tolerance in 2024 (30 of 40 before), 13 within ±5 %; housing benefits, the general
+relief, the family band and employee contributions stay out, each for lack of a source
+(a parallel strand, `grille2`, works on them). **Butterfly** (D-500 to D-503): every arrow
+of the twin on Mélenchon's programme audited; public pay no longer read as a private
+labour cost; the programme runs in the structural mode through its single measures
+(+12.3 pt of debt in 2035, against +25.1 in the reduced mode the studies publish), but
+only in the script, not yet in the twin page. **Sheets** (D-504 to D-506): critical data
+measure by measure for Mélenchon and Attal; the join takes the payers of Mélenchon's
+benefits from them (D-510). Six study pages are rewritten from their reports, no pass;
+the site is rebuilt. **What is left** (D-511): the `mesure` strand, the four lines out of
+tolerance, rerunning the studies that touch the prime, `make impact` and the heavy tests,
+the PR; nine decisions for the owner.
+
 The 2026-11-16 evening update adds D-472 to D-489: goal 26, « the butterfly effect », in
 five strands joined on `claude/but26` (D-487), no PR opened. Each of the 333 measures of
 the eleven programmes has a sourced transmission sheet (D-472 to D-474); the employers'

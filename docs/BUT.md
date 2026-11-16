@@ -1399,6 +1399,24 @@ Les numéros réservés : D-491 à D-493 pour `sources`, D-494 à D-499 pour `gr
 à D-503 pour `papillon`, D-504 à D-506 pour `fiches`, D-507 à D-509 pour `mesure` ; D-510
 et la suite pour la jonction.
 
+**Où il en est** (16 novembre, D-510, D-511). Quatre volets sont fusionnés sur
+`claude/but27` et branchés ; pas de PR. **Les sources** : 291 documents, 907 nombres au
+registre, récoltés une fois, la localisation fausse du RSA de la grille corrigée (D-491 à
+D-493, D-510). **La grille** : 31 lignes jugées sur 35 en 2024 dans leur tolérance (30
+sur 40 avant), 13 à ±5 % ; cinq lignes qui comptaient autre chose que leur total publié
+sont remplacées, le recours à la prime calé sur la Cnaf (D-494 à D-496, validé par le
+propriétaire) ; hors, les aides au logement, la réduction générale, le bandeau famille,
+les cotisations salariales, chacune faute d'une source ; le volet `grille2` y travaille.
+**Le papillon de Mélenchon** : chaque flèche vérifiée, la paie publique sortie du coût du
+travail privé, le programme en structurel par ses mesures seules (+12,3 pt de dette en
+2035 contre +25,1 en réduit), ses compensations et ses retournements dits (D-500 à
+D-503) ; ses payeurs tirés des fiches (D-510) ; il ne tourne en structurel que dans le
+script, pas encore dans la page. **Les fiches** : Mélenchon et Attal mesure par mesure,
+six autres pour leurs montants les plus lourds (D-504 à D-506). Six pages d'études
+réécrites sans passe ; le site reconstruit. **Ce qui reste** : le volet `mesure`, les
+quatre lignes hors tolérance, les études qui touchent la prime à refaire, `make impact`
+et les lourds, la PR ; neuf décisions du propriétaire (D-511).
+
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
