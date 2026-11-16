@@ -1,0 +1,51 @@
+schema: 1
+mesure: lp26_suppression_cvec
+candidat: le_pen
+libelle: Suppression de la CVEC
+sorte: chiffree
+source:
+  citation: Pas de citation directe (paraphrase LCP)
+  url: https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut
+  date: '2026-10-06'
+levier:
+  texte: 'Code de l''éducation, art. L841-5 : la contribution de vie étudiante et de campus
+    (CVEC), versée aux Crous'
+  parametre: cvec_montant
+  valeur:
+    cvec_montant: 0.0
+  enonce: Suppression (105 €)
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: cvec
+- qui: apu:odac
+  sens: paie
+  par: autre
+  note: les Crous et les établissements perdent la recette
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- financement_sous_secteurs
+hypotheses:
+- texte: 'La contribution de vie étudiante et de campus supprimée, sur les étudiants du supérieur
+    et les boursiers qu''impute la population (D-383). Le compte des inscrits contient ceux
+    que la CVEC ne frappe pas : à 100 €, l''imputation donne 231 M€ contre un produit de 170
+    M€ en 2023-2024, 36 % de trop, et la suppression en est surestimée d''autant. Contre le
+    droit de 2026, 105 €.'
+  source: le chiffrage de la mesure (`programmes/le_pen.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_le_pen_lp26_suppression_cvec
+  rapport: reports/etudes/presidentielle_le_pen/mesures/lp26_suppression_cvec/predictif_pres2027_le_pen_lp26_suppression_cvec.json

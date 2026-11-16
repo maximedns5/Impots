@@ -1,0 +1,29 @@
+schema: 1
+mesure: a35_carte_famille_monoparentale
+candidat: attal
+libelle: Carte « famille monoparentale » (transports, loisirs, culture, vacances, garde d'enfants),
+  sur le modèle de la carte famille nombreuse
+sorte: sans_choc
+source:
+  citation: « Gabriel Attal veut créer une carte « famille monoparentale », sur le modèle
+    de la carte famille nombreuse » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/carte-famille-monoparentale
+  date: '2026-08-28'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: aucun montant ni taux de réduction
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Ni réduction chiffrée ni montant : des avantages annoncés. (porte « vague »)'

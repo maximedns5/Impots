@@ -1,0 +1,28 @@
+schema: 1
+mesure: doubler_industrie_pib
+candidat: roussel
+libelle: Doubler la part de l'industrie dans le PIB
+sorte: sans_choc
+source:
+  citation: « doubler la part d'industrie dans le PIB »
+  url: https://www.france24.com/fr/france/20260906-pr%C3%A9sidentielle-2027-fabien-roussel-officialise-sa-candidature-avec-le-pcf
+  date: '2026-09-06'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: ×2
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Doubler la part de l'industrie dans le PIB est un objectif de croissance, une hypothèse
+    du calcul de la dette, pas une réforme. (porte « chaine »)

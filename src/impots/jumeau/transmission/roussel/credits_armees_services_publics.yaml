@@ -1,0 +1,27 @@
+schema: 1
+mesure: credits_armees_services_publics
+candidat: roussel
+libelle: Réorienter des crédits des armées vers les services publics
+sorte: sans_choc
+source:
+  citation: « réorienter l'argent du ministère de la guerre vers les services publics »
+  url: https://lcp.fr/actualites/presidentielle-a-la-fete-de-l-huma-fabien-roussel-au-defi-de-prouver-l-utilite-d-une
+  date: '2026-09-11'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Aucun montant réorienté n'est énoncé. (porte « vague »)

@@ -1,0 +1,28 @@
+schema: 1
+mesure: l24_chomage_degressivite
+candidat: lisnard
+libelle: 'Assurance chômage : dégressivité'
+sorte: sans_choc
+source:
+  citation: « Dégressivité, et puis parallèlement renforcer la vraie formation des personnes
+    en difficulté »
+  url: https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-reformer-l-assurance-chomage/
+  date: '2024-02-29'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: non énoncé
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni taux ni calendrier de dégressivité. (porte « vague »)

@@ -1,0 +1,30 @@
+schema: 1
+mesure: credit_impot_precarite_energetique
+candidat: tondelier
+libelle: Crédit d'impôt automatisé remplaçant le chèque énergie
+sorte: sans_choc
+source:
+  citation: « Mettre en place un crédit d'impôt automatisé pour les personnes en situation
+    de précarité en remplacement des chèques énergie. »
+  url: https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf
+  date: '2026-09-12'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni le montant ni les conditions de revenu du crédit d'impôt ne sont énoncés. (porte
+    « vague »)

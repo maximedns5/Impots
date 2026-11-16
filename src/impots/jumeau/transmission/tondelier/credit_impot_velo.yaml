@@ -1,0 +1,27 @@
+schema: 1
+mesure: credit_impot_velo
+candidat: tondelier
+libelle: Crédit d'impôt pour l'achat d'un vélo électrique
+sorte: sans_choc
+source:
+  citation: « Aider à l'achat d'un vélo électrique grâce à un crédit d'impôt. »
+  url: https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf
+  date: '2026-09-12'
+levier:
+  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni le taux ni le plafond du crédit d'impôt ne sont énoncés. (porte « vague »)

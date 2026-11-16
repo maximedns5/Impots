@@ -1,0 +1,29 @@
+schema: 1
+mesure: centralisation_livret_b
+candidat: melenchon
+libelle: Centralisation de l'épargne réglementée, « livret B »
+sorte: parametre
+source:
+  citation: « Augmenter ce taux de centralisation, par exemple en le passant progressivement
+    à 80 %, permettrait d'augmenter les fonds du pôle public bancaire. »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: taux de centralisation porté « par exemple » à 80 %
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: L'épargne réglementée et sa centralisation, des dépôts, sont hors du modèle. (porte
+    « secteur »)

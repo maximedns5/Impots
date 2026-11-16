@@ -1,0 +1,28 @@
+schema: 1
+mesure: ticket_climat
+candidat: tondelier
+libelle: Ticket climat mensuel à tarif unique, gratuit pour les jeunes et les ménages précaires
+sorte: sans_choc
+source:
+  citation: « Créer un ticket climat mensuel à tarif unique pour les transports en commun
+    hors TGV, avec la gratuité pour les jeunes et les ménages précaires. »
+  url: https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf
+  date: '2026-09-12'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: aucun tarif
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni le tarif unique ni le coût pour l'État ne sont énoncés. (porte « vague »)

@@ -1,0 +1,28 @@
+schema: 1
+mesure: r14_annualisation_35_heures
+candidat: retailleau
+libelle: Sortie des 35 heures par annualisation
+sorte: parametre
+source:
+  citation: « c'est 4 min de plus par jour »
+  url: https://www.publicsenat.fr/actualites/politique/la-fete-est-finie-bruno-retailleau-veut-supprimer-les-35-heures-inciter-a-la-reprise-dactivite-et-plafonner-les-aides-sociales-pour-relancer-lemploi
+  date: '2026-01-07'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: 1 607 → 1 623 h/an
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'La durée du travail n''est pas dans la population : ni les heures ni leur annualisation
+    ne s''y lisent. (porte « donnee_menages »)'

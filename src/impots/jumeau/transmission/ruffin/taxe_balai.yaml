@@ -1,0 +1,30 @@
+schema: 1
+mesure: taxe_balai
+candidat: ruffin
+libelle: Taxe « balai » sur les produits hors filières REP
+sorte: sans_choc
+source:
+  citation: « Créer une taxe « balai » touchant l'ensemble des produits hors filières REP,
+    pour que tous les producteurs contribuent à la prévention et à la gestion des déchets.
+    »
+  url: https://nouspresident.fr/travaillisme-ecologique/
+  date: '2026-09-09'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: aucun taux
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni le taux ni l'assiette de la taxe ne sont énoncés. (porte « vague »)

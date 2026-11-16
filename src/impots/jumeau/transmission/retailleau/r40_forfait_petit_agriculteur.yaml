@@ -1,0 +1,56 @@
+schema: 1
+mesure: r40_forfait_petit_agriculteur
+candidat: retailleau
+libelle: 'PAC : forfait « petit agriculteur » relevé par réorientation des aides directes'
+sorte: parametre
+source:
+  citation: « nous réorienterons une part des aides directes afin de porter le forfait « petit
+    agriculteur » de 1 250 euros à 3 000 euros »
+  url: https://republicains.fr/wp-content/uploads/2026/03/LR_Agriculture.pdf
+  date: '2026-03-03'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: 1 250 € → 3 000 €
+  couche: null
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: autre
+- qui: apu:etat
+  sens: paie
+  par: autre
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: salariés, clients, actionnaires
+  texte: Un impôt sur les bénéfices retombe pour partie sur les salaires ; un impôt sur le
+    chiffre d'affaires, en cascade, sur les prix.
+  source: 'Fuest, Peichl et Siegloch (2018), « Do higher corporate taxes reduce wages ? »,
+    American Economic Review 108(2) : environ la moitié de l''impôt local sur les bénéfices
+    retombe sur les salaires (Allemagne) ; Martin et Trannoy (2019), « Les impôts sur (ou
+    contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
+    la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une aide de la PAC aux petites exploitations : le secteur agricole et ses aides
+    ne sont pas une dimension du modèle. (porte « dimension_entreprises »)'

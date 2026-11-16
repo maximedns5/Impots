@@ -1,0 +1,80 @@
+schema: 1
+mesure: lp19_impots_production
+candidat: le_pen
+libelle: Baisse des impôts de production
+sorte: hypothese
+source:
+  citation: 'Pas de citation directe. Texte d''Europe 1 : « défend notamment une baisse de
+    20 milliards d''euros des impôts de production »'
+  url: https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948
+  date: '2026-10-15'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: 20 Md€
+  couche: null
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: autre
+- qui: apu:etat
+  sens: paie
+  par: autre
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: salariés, clients, actionnaires
+  texte: Un impôt sur les bénéfices retombe pour partie sur les salaires ; un impôt sur le
+    chiffre d'affaires, en cascade, sur les prix.
+  source: 'Fuest, Peichl et Siegloch (2018), « Do higher corporate taxes reduce wages ? »,
+    American Economic Review 108(2) : environ la moitié de l''impôt local sur les bénéfices
+    retombe sur les salaires (Allemagne) ; Martin et Trannoy (2019), « Les impôts sur (ou
+    contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
+    la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses:
+- texte: Le montant tombe sur un impôt sur la production ou les produits (D2).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
+    sur l’activité).'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 20.0
+    sens: baisse_prelevements
+    horizon: non énoncé
+    citation: 'Pas de citation directe. Texte d''Europe 1 : « défend notamment une baisse
+      de 20 milliards d''euros des impôts de production »'
+    url: https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948
+  chocs:
+    apu_r_d2: 20.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

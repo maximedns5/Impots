@@ -1,0 +1,58 @@
+schema: 1
+mesure: defiscalisation_pensions_alimentaires
+candidat: melenchon
+libelle: Défiscalisation des pensions alimentaires
+sorte: chiffree
+source:
+  citation: « déconjugaliser et revaloriser l'allocation de soutien familial (ASF), défiscaliser
+    les pensions alimentaires, réduire les délais de la justice familiale »
+  url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2
+  date: '2026-11-06'
+levier:
+  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  parametre: pensions_alimentaires_exonerees
+  valeur:
+    pensions_alimentaires_exonerees: true
+  enonce: pensions alimentaires reçues exonérées d'impôt sur le revenu
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: ir
+- qui: apu:etat
+  sens: paie
+  par: impot_sur_le_revenu
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les ménages redevables
+  texte: L'IR reste sur le ménage ; il répond par son offre de travail et sa consommation.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+hypotheses:
+- texte: '« Défiscaliser les pensions alimentaires », sans plafond ni condition. Les pensions
+    alimentaires perçues (1AO à 1DO) sortent du revenu imposable du parent qui les reçoit,
+    entières : le bouton de l''étape 4 (D-383), sans plafond par enfant. Les pensions sont
+    celles qu''impute la population, perçues par les parents isolés pour leurs enfants (5,55
+    Md€ en 2024, vieillies par les prix) : celles que reçoit un parent en couple ou un ex-conjoint
+    pour lui-même ne sont pas portées. Les prestations qui comptent la pension ne bougent
+    pas. Contre le droit de 2026. Pas de plage : la mesure est un oui ou un non.'
+  source: le chiffrage de la mesure (`programmes/melenchon.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_melenchon_defiscalisation_pensions_alimentaires
+  rapport: reports/etudes/presidentielle_melenchon/mesures/defiscalisation_pensions_alimentaires/predictif_pres2027_melenchon_defiscalisation_pensions_alimentaires.json

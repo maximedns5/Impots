@@ -1,0 +1,44 @@
+schema: 1
+mesure: blocage_prix_carburants
+candidat: melenchon
+libelle: Blocage du prix des carburants
+sorte: parametre
+source:
+  citation: « un décret de blocage des prix du carburant sera pris pour ramener le prix à
+    la pompe à 1,70 euro par litre »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: 1,70 € le litre, par décret
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Un prix des carburants fixé par décret, pas une taxe : son coût tombe sur les distributeurs
+    ou sur l''État selon des règles que le candidat ne donne pas, et la consommation imputée
+    ne réagit pas aux prix. (porte « prix »)'

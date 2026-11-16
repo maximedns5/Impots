@@ -1,0 +1,29 @@
+schema: 1
+mesure: p1_deficit_2_pct_2032
+candidat: philippe
+libelle: Déficit public à 2 % du PIB en 2032
+sorte: sans_choc
+source:
+  citation: « retour du déficit public à 2% à l'issue du prochain quinquennat en 2032, contre
+    5% actuellement » (texte de l'article)
+  url: https://www.lagazettefrance.fr/article/edouard-philippe-refute-promettre-aux-francais-du-sang-et-des-larmes
+  date: '2026-06-30'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: 2 % du PIB en fin de quinquennat (2032), contre 5 %
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une trajectoire de déficit est une hypothèse du calcul de la dette, pas une réforme
+    : aucun bouton ne la règle. (porte « chaine »)'

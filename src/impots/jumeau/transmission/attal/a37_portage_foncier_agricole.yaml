@@ -1,0 +1,30 @@
+schema: 1
+mesure: a37_portage_foncier_agricole
+candidat: attal
+libelle: Fiscalité du portage du foncier agricole revue, pour la transmission et l'installation
+  des jeunes agriculteurs
+sorte: sans_choc
+source:
+  citation: « inciter à la transmission, optimiser la fiscalité sur le portage du foncier,
+    mieux accompagner les jeunes porteurs de projet » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/fiscalite-portage-foncier
+  date: '2026-06-04'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: aucun taux ni abattement
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni impôt désigné, ni taux, ni abattement. (porte « vague »)

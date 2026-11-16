@@ -1,0 +1,49 @@
+schema: 1
+mesure: ptz_double
+candidat: ruffin
+libelle: Doublement du prêt à taux zéro
+sorte: parametre
+source:
+  citation: « Avec un PTZ moyen passant d'environ 60 000 euros actuellement à 120 000 euros,
+    l'avantage supplémentaire peut atteindre 30 000 euros étalés sur 15 à 25 ans »
+  url: https://nouspresident.fr/face-a-la-crise-du-logement/
+  date: '2026-09-24'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: PTZ moyen de 60 000 € à 120 000 € ; étendu aux bénéficiaires en cours
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Les accédants à la propriété et leurs prêts ne sont pas dans la population. (porte
+    « donnee_menages »)

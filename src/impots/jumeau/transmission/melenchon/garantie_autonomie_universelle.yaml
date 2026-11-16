@@ -1,0 +1,53 @@
+schema: 1
+mesure: garantie_autonomie_universelle
+candidat: melenchon
+libelle: Garantie d'autonomie pour toute personne
+sorte: parametre
+source:
+  citation: '« Créer une garantie d''autonomie, qui permettra que nul ne soit privé de sa
+    dignité pour vivre : le revenu mensuel de chaque personne atteindra le seuil de pauvreté
+    (1 337 euros pour une personne seule) »'
+  url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
+  date: '2026-11-06'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: revenu mensuel porté au seuil de pauvreté (1 337 € pour une personne seule) ; la
+    loi de finances 2027 n'en engage que le volet des jeunes
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Le bouton de la garantie (garantie_autonomie) porte la mesure des jeunes, chiffrée
+    à part : deux mesures qui règlent le même bouton sont refusées par le chargeur, et la
+    garantie de tous, au-delà de 41 ans, sort des âges du bouton. La loi de finances 2027
+    n''engage que le volet des jeunes. (porte « prestations_hors_modele »)'

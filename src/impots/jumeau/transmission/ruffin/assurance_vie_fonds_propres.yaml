@@ -1,0 +1,51 @@
+schema: 1
+mesure: assurance_vie_fonds_propres
+candidat: ruffin
+libelle: Avantages fiscaux de l'assurance-vie conditionnés à 5 % en fonds propres non cotés
+sorte: parametre
+source:
+  citation: « Un taux minimum même modéré de 5% ne présenterait aucun risque significatif
+    pour les épargnants »
+  url: https://nouspresident.fr/pour-proteger-notre-industrie-relocaliser-100-produits-strategiques/
+  date: '2026-10-15'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: part minimale de 5 % en fonds propres d'industries non cotées
+  couche: null
+payeurs:
+- qui: menages
+  sens: paie
+  par: patrimoine
+  note: 'la population n''en porte pas : aucune clé par décile'
+- qui: apu:etat
+  sens: recoit
+  par: capital_menages
+incidence:
+- horizon: immediat
+  qui: les détenteurs du patrimoine
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les détenteurs du patrimoine
+  texte: L'assiette répond (épargne, transmission, localisation).
+  source: 'Jakobsen, Jakobsen, Kleven et Zucman (2020), « Wealth taxation and wealth accumulation
+    », QJE 135(1) (Danemark) : l''assiette répond à l''impôt sur la fortune, d''autant plus
+    en haut de la distribution'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- patrimoine_menages
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Les contrats d'assurance-vie et leur composition ne sont pas dans la population.
+    (porte « donnee_menages »)

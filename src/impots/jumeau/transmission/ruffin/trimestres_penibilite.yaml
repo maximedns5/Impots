@@ -1,0 +1,29 @@
+schema: 1
+mesure: trimestres_penibilite
+candidat: ruffin
+libelle: Trimestres supplémentaires pour les métiers pénibles (« travailleurs essentiels »)
+sorte: sans_choc
+source:
+  citation: « Reconnaître la pénibilité, accorder des trimestres supplémentaires pour la retraite,
+    ouvrir de vraies possibilités de formation et de reconversion. »
+  url: https://nouspresident.fr/statut-travailleurs-essentiels/
+  date: '2026-04-13'
+levier:
+  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  parametre: null
+  valeur: null
+  enonce: aucun nombre de trimestres
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni nombre de trimestres ni critère de pénibilité ne sont énoncés. (porte « vague
+    »)

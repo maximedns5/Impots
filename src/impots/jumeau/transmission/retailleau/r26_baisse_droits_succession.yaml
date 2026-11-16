@@ -1,0 +1,29 @@
+schema: 1
+mesure: r26_baisse_droits_succession
+candidat: retailleau
+libelle: Baisse des droits de succession au cours du quinquennat
+sorte: sans_choc
+source:
+  citation: « Je ne serai pas le président qui augmentera les droits de succession mais celui
+    qui les baissera »
+  url: https://republicains.fr/actualites/2026/08/26/je-serai-le-president-qui-baissera-les-impots-de-succession/
+  date: '2026-08-26'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: « au maximum du possible »
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni barème ni abattement énoncés. (porte « vague »)

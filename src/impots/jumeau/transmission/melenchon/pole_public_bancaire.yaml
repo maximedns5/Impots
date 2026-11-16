@@ -1,0 +1,30 @@
+schema: 1
+mesure: pole_public_bancaire
+candidat: melenchon
+libelle: 'Pôle public bancaire : 100 Md€ d''investissements par an'
+sorte: sans_choc
+source:
+  citation: « 100 milliards d'euros de plus par an peuvent être mobilisés en investissements
+    pour la planification écologique et notre souveraineté »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: 100 Md€ par an
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Un investissement hors budget de l''État par un pôle public bancaire n''est ni
+    un impôt ni une prestation : il n''entrerait dans le calcul de la dette que comme hypothèse
+    de croissance. (porte « chaine »)'

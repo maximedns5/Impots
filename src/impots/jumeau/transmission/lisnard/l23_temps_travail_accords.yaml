@@ -1,0 +1,30 @@
+schema: 1
+mesure: l23_temps_travail_accords
+candidat: lisnard
+libelle: Temps de travail fixé par accord d'entreprise ; « 37 heures payées 37 » au choix
+  du salarié
+sorte: sans_choc
+source:
+  citation: « Laisser les accords d'entreprise libérer le temps de travail, libérer la création
+    de valeur. »
+  url: https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-assouplir-les-35-heures/
+  date: '2026-08-29'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: 37 h
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une durée laissée aux accords d'entreprise, sans taux ni montant. (porte « vague
+    »)

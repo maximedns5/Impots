@@ -1,0 +1,52 @@
+schema: 1
+mesure: l19_bareme_successions
+candidat: lisnard
+libelle: Barème des successions allégé, abattements unifiés quel que soit le lien de parenté
+sorte: parametre
+source:
+  citation: « de ramener le taux marginal supérieur à 20 %, son niveau d'avant 1984, et d'unifier
+    abattements et barèmes quel que soit le lien de parenté » (texte de la page)
+  url: https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-supprimer-les-droits-de-succession/
+  date: '2026-10-16'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: taux marginal supérieur à 20 % (contre 45 %) ; 100 000 € transmissibles d'un grand-parent
+    à un petit-enfant en franchise
+  couche: null
+payeurs:
+- qui: menages
+  sens: paie
+  par: patrimoine
+  note: 'la population n''en porte pas : aucune clé par décile'
+- qui: apu:etat
+  sens: recoit
+  par: capital_menages
+incidence:
+- horizon: immediat
+  qui: les détenteurs du patrimoine
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les détenteurs du patrimoine
+  texte: L'assiette répond (épargne, transmission, localisation).
+  source: 'Jakobsen, Jakobsen, Kleven et Zucman (2020), « Wealth taxation and wealth accumulation
+    », QJE 135(1) (Danemark) : l''assiette répond à l''impôt sur la fortune, d''autant plus
+    en haut de la distribution'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- patrimoine_menages
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le barème et les abattements des successions demandent un module de transmission.
+    (porte « transmission »)

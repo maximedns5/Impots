@@ -1,0 +1,50 @@
+schema: 1
+mesure: arret_maladie_100_carence
+candidat: melenchon
+libelle: Arrêt maladie indemnisé à 100 %, sans jour de carence
+sorte: parametre
+source:
+  citation: « Garantir le droit à l'arrêt maladie par l'indemnisation à 100 % du salaire,
+    la suppression des jours de carence et l'auto-déclaration pour les arrêts de courte durée
+    »
+  url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
+  date: '2026-11-06'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: indemnisation à 100 % du salaire ; jours de carence supprimés
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Le moteur porte l''impôt des indemnités journalières, pas les arrêts ni leur carence
+    : c''est une dépense qu''il ne microsimule pas. (porte « depense_publique »)'

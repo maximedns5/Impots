@@ -1,0 +1,74 @@
+schema: 1
+mesure: gestion_publique_forets
+candidat: ruffin
+libelle: Gestion publique des forêts privées peu ou pas gérées
+sorte: hypothese
+source:
+  citation: « diffuser la gestion par des régies publiques des forêts privées aujourd'hui
+    peu ou pas gérées »
+  url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  date: '2026-10-21'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: régies publiques ; 0,04 Md€ en 2027, 0,2 Md€ par an en moyenne
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: 'Le montant tombe sur la composition de la dépense publique de Mésange (G2017-04,
+    p. 106) : le programme ne dit pas quelle dépense.'
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 0.04
+    sens: depense
+    horizon: 2027 (0,2 Md€ par an en moyenne sur cinq ans)
+    citation: 'Annexe 2, coût budgétaire des principales mesures : « Gestion publique des
+      forêts 0,04 Md€ 0,2 Md€ »'
+    url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  chocs:
+    apu_d_p51g: 0.0032
+    apu_d_d1: 0.01
+    apu_d_d632: 0.0036
+    apu_d_p2: 0.0048
+    apu_d_d62: 0.0184
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: depense_publique
+  menages_par: prestations
+  entreprises_par: null
+  inclus_dans: null
+  menages_part: 0.46

@@ -1,0 +1,31 @@
+schema: 1
+mesure: budget_guerre_services_publics
+candidat: kazib
+libelle: Crédits militaires réaffectés à la santé, à l'éducation et aux transports gratuits
+sorte: sans_choc
+source:
+  citation: « L'argent de la guerre doit financer la santé, l'éducation et des transports
+    gratuits. »
+  url: https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature
+  date: '2026-09-16'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: « L'argent de la guerre doit financer la santé, l'éducation et des transports gratuits.
+    »
+  source: « L'argent de la guerre doit financer la santé, l'éducation et des transports gratuits.
+    »
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni le montant réaffecté ni l'étendue de la gratuité des transports ne sont énoncés.
+    (porte « vague »)

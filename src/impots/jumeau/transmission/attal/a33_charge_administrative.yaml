@@ -1,0 +1,29 @@
+schema: 1
+mesure: a33_charge_administrative
+candidat: attal
+libelle: Réduire d'un quart la charge administrative des entreprises
+sorte: parametre
+source:
+  citation: « réduire d'un quart la charge administrative des entreprises, avec un gain estimé
+    à 20 milliards d'euros par an » (texte de la page)
+  url: https://attalpresident.fr/actualites/gabriel-attal-vision-economique-liberer-innover-independance-france
+  date: '2026-10-28'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: −25 %
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'La charge administrative est une formalité : ni impôt ni prestation que le moteur
+    porte. (porte « hors_champ »)'

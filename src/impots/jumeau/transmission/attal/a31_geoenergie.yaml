@@ -1,0 +1,71 @@
+schema: 1
+mesure: a31_geoenergie
+candidat: attal
+libelle: Doublement des subventions à la géoénergie, financé sur des budgets sous-consommés
+  (biomasse)
+sorte: hypothese
+source:
+  citation: « Doubler les subventions à la géoénergie, pour les porter à 160 millions d'euros
+    par an dès 2027 » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/doubler-subventions-geoenergie
+  date: '2026-06-25'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: 160 M€/an dès début 2027
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: Doublement des subventions à la géoénergie, financé sur des budgets sous-consommés
+    (biomasse)
+  source: le libellé du relevé (`programmes/attal.json`), d'après https://attalpresident.fr/programme/mesures/doubler-subventions-geoenergie
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses:
+- texte: 'Le montant tombe sur un transfert en capital (D9) : aides à l''investissement.'
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
+    sur l’activité).'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 0.16
+    sens: depense
+    horizon: 'par an dès 2027 : le niveau des subventions doublées (la moitié existe déjà),
+      que le candidat dit financé par des budgets sous-consommés, « sans dépense supplémentaire
+      »'
+    citation: « Doubler les subventions à la géoénergie, pour les porter à 160 millions d'euros
+      par an dès 2027 » (texte de la page)
+    url: https://attalpresident.fr/programme/mesures/doubler-subventions-geoenergie
+  chocs:
+    apu_d_d9: 0.16
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

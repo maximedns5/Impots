@@ -1,0 +1,28 @@
+schema: 1
+mesure: taxe_kilometrique_frontieres
+candidat: melenchon
+libelle: Taxe kilométrique aux frontières de l'UE
+sorte: sans_choc
+source:
+  citation: « La mise en place d'un protectionnisme écologique et solidaire, avec notamment
+    une taxe kilométrique aux frontières de l'UE »
+  url: https://melenchon2027.fr/programme/livre/un-monde-ordonne/chapitre1
+  date: '2026-11-06'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: aucun taux
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni le taux ni l'assiette de la taxe ne sont énoncés. (porte « vague »)

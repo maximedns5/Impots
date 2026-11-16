@@ -1,0 +1,28 @@
+schema: 1
+mesure: prime_activite_hausse
+candidat: bouamrane
+libelle: Hausse de la prime d'activité
+sorte: sans_choc
+source:
+  citation: « Nous expliquons que l'augmentation de la prime d'activité est importante. »
+  url: https://www.sudradio.fr/linvite-politique/karim-bouamrane-il-faut-arreter-de-regarder-melenchon-comme-le-superman-de-la-gauche
+  date: '2026-11-09'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni le montant ni le paramètre de la prime d'activité ne sont énoncés. (porte « vague
+    »)

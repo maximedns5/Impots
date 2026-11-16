@@ -1,0 +1,29 @@
+schema: 1
+mesure: surprofits_raffinage
+candidat: ruffin
+libelle: Contribution exceptionnelle sur les surprofits du raffinage
+sorte: sans_choc
+source:
+  citation: « nous proposons donc de mettre en place une contribution exceptionnelle sur les
+    surprofits des entreprises pétrolières et du raffinage »
+  url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  date: '2026-10-21'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: périmètre élargi (raffinage, stockage, commercialisation) ; taux non fixé
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le taux de la contribution n'est pas fixé. (porte « vague »)

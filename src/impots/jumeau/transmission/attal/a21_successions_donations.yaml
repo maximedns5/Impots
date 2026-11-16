@@ -1,0 +1,30 @@
+schema: 1
+mesure: a21_successions_donations
+candidat: attal
+libelle: Pas de hausse des droits de succession ni de la fiscalité de l'assurance-vie ; faciliter
+  les donations aux petits-enfants comme aux enfants
+sorte: sans_choc
+source:
+  citation: « Il veut même permettre aux grands-parents de transmettre à leurs petits-enfants
+    comme ils le font avec leurs enfants » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/aucune-hausse-impots
+  date: '2026-07-03'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni abattement ni barème énoncés. (porte « vague »)

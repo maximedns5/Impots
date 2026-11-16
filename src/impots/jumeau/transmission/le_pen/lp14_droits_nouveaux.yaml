@@ -1,0 +1,47 @@
+schema: 1
+mesure: lp14_droits_nouveaux
+candidat: le_pen
+libelle: « Droits nouveaux »
+sorte: parametre
+source:
+  citation: dépenses provisionnées pour des droits nouveaux
+  url: https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net
+  date: '2026-10-06'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: '15 Md€ provisionnés, plus des hausses pour l''outre-mer, la recherche et l''éducation
+    — montant annoncé : 15 Md€ (15 Md€ « provisionnés » sur la trajectoire, calendrier non
+    dit (montant non annualisé)) ; non lu comme montant annuel : une provision sans calendrier
+    (D-381).'
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une provision de dépense sans règle de calcul, que le moteur ne microsimule pas.
+    (porte « depense_publique »)

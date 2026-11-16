@@ -1,0 +1,29 @@
+schema: 1
+mesure: ir_14_tranches
+candidat: melenchon
+libelle: Impôt sur le revenu à 14 tranches
+sorte: sans_choc
+source:
+  citation: « Nous réformerons l'impôt sur le revenu au cours du mandat pour le rendre plus
+    progressif avec l'instauration de 14 tranches. »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  parametre: null
+  valeur: null
+  enonce: 14 tranches ; taux non donnés ; « au cours du mandat »
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Seul le nombre de tranches est donné, ni leurs seuils ni leurs taux. (porte « vague
+    »)

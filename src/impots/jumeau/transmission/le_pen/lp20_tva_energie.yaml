@@ -1,0 +1,55 @@
+schema: 1
+mesure: lp20_tva_energie
+candidat: le_pen
+libelle: Baisse de la TVA sur l'énergie et les carburants
+sorte: chiffree
+source:
+  citation: Il faut baisser la TVA sur l'énergie. L'énergie est un bien de première nécessité.
+  url: https://www.europe1.fr/politique/des-choix-a-faire-entre-baisse-de-la-tva-sur-lenergie-et-reduction-des-depenses-marine-le-pen-detaille-son-projet-economique-1083380
+  date: '2026-09-17'
+levier:
+  texte: Code général des impôts, TVA (art. 278 et s.) et accises
+  parametre: tva_postes
+  valeur:
+    tva_postes:
+      energie: 0.055
+  enonce: De 20 % à 5,5 %
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: tva
+- qui: apu:etat
+  sens: paie
+  par: tva
+incidence:
+- horizon: immediat
+  qui: consommateurs et vendeurs
+  texte: Une baisse de taux passe aux prix en partie ; le reste fait la marge.
+  source: 'Carbonnier (2007), « Who pays sales taxes ? Evidence from French VAT reforms, 1987-1999
+    », Journal of Public Economics 91(5-6) : une baisse de TVA passe aux prix en partie, plus
+    sur un marché concurrentiel'
+- horizon: long
+  qui: consommateurs et vendeurs
+  texte: 'Asymétrie : une hausse passe plus qu''une baisse.'
+  source: 'Benzarti, Carloni, Harju et Kosonen (2020), « What goes up may not come down :
+    asymmetric incidence of value-added taxes », Journal of Political Economy 128(12) : les
+    hausses de TVA passent plus aux prix que les baisses'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+hypotheses:
+- texte: La TVA de l'électricité, du gaz, du fioul et des carburants (le groupe « energie
+    » de la couche consommation) passe de 20 % à 5,5 %, à volumes constants et répercutée
+    en entier dans les prix (D-323). Le bois de chauffage, déjà à 10 %, et la chaleur de réseau
+    ne bougent pas. Plage de 0 à 20 % (la mesure retirée).
+  source: le chiffrage de la mesure (`programmes/le_pen.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_le_pen_lp20_tva_energie
+  rapport: reports/etudes/presidentielle_le_pen/mesures/lp20_tva_energie/predictif_pres2027_le_pen_lp20_tva_energie.json

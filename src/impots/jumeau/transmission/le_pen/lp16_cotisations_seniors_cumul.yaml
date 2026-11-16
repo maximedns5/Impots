@@ -1,0 +1,59 @@
+schema: 1
+mesure: lp16_cotisations_seniors_cumul
+candidat: le_pen
+libelle: Suppression des cotisations retraite et chômage des seniors qui continuent à travailler
+sorte: parametre
+source:
+  citation: « Nous mettrons en place des incitations pour que ceux qui ont dépassé l'âge de
+    la retraite et ont leurs trimestres puissent continuer à travailler » ; « supprimer les
+    cotisations retraite et les cotisations chômage »
+  url: https://www.lagazettefrance.fr/article/marine-le-pen-et-la-delicate-operation-seduction-du-monde-economique
+  date: '2026-08-28'
+levier:
+  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  parametre: null
+  valeur: null
+  enonce: Seniors ayant dépassé l'âge de la retraite et ayant tous leurs trimestres
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: cotisations_salariales
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: cotisations_salaries
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les salariés
+  texte: Le net bouge, le brut et le coût du travail non.
+  source: 'Saez, Matsaganis et Tsakloglou (2012), « Earnings determination and taxes : evidence
+    from a cohort-based payroll tax reform in Greece », QJE 127(1) : à moyen terme, les cotisations
+    restent sur celui qui les verse (incidence statutaire)'
+- horizon: long
+  qui: salariés et employeurs
+  texte: 'Le brut peut se renégocier : une part de la baisse revient à l''employeur.'
+  source: 'Lehmann, Marical et Rioux (2013), « Labor income responds differently to income-tax
+    and payroll-tax reforms », Journal of Public Economics 99 (France, DADS) : une baisse
+    de cotisations se retrouve en partie dans le salaire, lentement'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- incidence_cotisations
+- compensation_exonerations
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: La cible, qui a passé l'âge légal avec tous ses trimestres, demande des durées d'assurance
+    que la population ne porte pas. (porte « retraites »)

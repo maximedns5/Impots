@@ -1,0 +1,28 @@
+schema: 1
+mesure: p23_plan_fret_ferroviaire
+candidat: philippe
+libelle: Grand plan fret ferroviaire
+sorte: sans_choc
+source:
+  citation: « Nous devrons mettre en oeuvre un grand plan fret ferroviaire pour faire disparaître
+    des millions de camions de nos routes »
+  url: https://horizonsleparti.fr/discours-dedouard-philippe-lors-de-son-grand-meeting-a-ladidas-arena-5-juillet-2026/
+  date: '2026-07-05'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni montant ni calendrier d'investissement. (porte « vague »)

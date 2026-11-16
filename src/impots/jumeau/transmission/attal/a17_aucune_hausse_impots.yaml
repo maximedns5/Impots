@@ -1,0 +1,30 @@
+schema: 1
+mesure: a17_aucune_hausse_impots
+candidat: attal
+libelle: Aucune hausse d'impôts pendant 5 ans ; retour sur « plusieurs taxes décidées depuis
+  la dissolution »
+sorte: sans_choc
+source:
+  citation: '« Aucune hausse d''impôts pendant les cinq ans du mandat : le redressement passe
+    par les économies, pas par les impôts » (texte de la page)'
+  url: https://attalpresident.fr/programme/mesures/aucune-hausse-impots
+  date: '2026-07-03'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: 0 hausse sur 5 ans
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Aucune taxe nommée ni chiffrée : un engagement, pas un paramètre. (porte « vague
+    »)'

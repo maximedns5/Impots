@@ -1,0 +1,29 @@
+schema: 1
+mesure: premiere_tranche_gratuite_energie
+candidat: melenchon
+libelle: Première tranche gratuite d'électricité, de chaleur, d'eau et de gaz
+sorte: sans_choc
+source:
+  citation: « Instaurer une première tranche gratuite de consommation d'électricité, de chaleur,
+    d'eau, de gaz »
+  url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
+  date: '2026-11-06'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: aucun volume ni seuil
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le volume de la tranche gratuite n'est pas énoncé. (porte « vague »)

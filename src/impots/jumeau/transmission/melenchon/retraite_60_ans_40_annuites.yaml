@@ -1,0 +1,50 @@
+schema: 1
+mesure: retraite_60_ans_40_annuites
+candidat: melenchon
+libelle: Retraite à 60 ans avec 40 annuités
+sorte: parametre
+source:
+  citation: « un premier pas vers le retour à la retraite à 60 ans avec 40 annuités, objectif
+    sur un mandat »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  parametre: null
+  valeur: null
+  enonce: 60 ans, 40 annuités, « objectif sur un mandat »
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: retraite
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les retraités et futurs retraités
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les régimes et les actifs
+  texte: Le solde des régimes et l'emploi des seniors bougent.
+  source: 'Conseil d''orientation des retraites, rapport annuel (juin 2025) : le solde des
+    régimes selon l''âge, la durée et l''indexation'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- droits_retraite
+- offre_travail
+- consommation_menages
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni l'âge ni la durée d'assurance ne sont des paramètres du moteur, dont les pensions
+    sont des données. (porte « retraites »)

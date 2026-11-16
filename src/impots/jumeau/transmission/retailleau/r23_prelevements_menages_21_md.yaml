@@ -1,0 +1,83 @@
+schema: 1
+mesure: r23_prelevements_menages_21_md
+candidat: retailleau
+libelle: Baisse des prélèvements des ménages (cotisations sur les heures supplémentaires,
+  facture d'électricité)
+sorte: hypothese
+source:
+  citation: « 21 milliards iraient aux ménages, via notamment la diminution de cotisations
+    fiscales ou la facture d'électricité » (texte de l'article)
+  url: https://lcp.fr/actualites/face-a-une-france-quasiment-en-faillite-bruno-retailleau-presente-un-plan-d-economies-de
+  date: '2026-10-12'
+levier:
+  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  parametre: null
+  valeur: null
+  enonce: 21 Md€
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: cotisations_salariales
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: cotisations_salaries
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les salariés
+  texte: Le net bouge, le brut et le coût du travail non.
+  source: 'Saez, Matsaganis et Tsakloglou (2012), « Earnings determination and taxes : evidence
+    from a cohort-based payroll tax reform in Greece », QJE 127(1) : à moyen terme, les cotisations
+    restent sur celui qui les verse (incidence statutaire)'
+- horizon: long
+  qui: salariés et employeurs
+  texte: 'Le brut peut se renégocier : une part de la baisse revient à l''employeur.'
+  source: 'Lehmann, Marical et Rioux (2013), « Labor income responds differently to income-tax
+    and payroll-tax reforms », Journal of Public Economics 99 (France, DADS) : une baisse
+    de cotisations se retrouve en partie dans le salaire, lentement'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- incidence_cotisations
+- compensation_exonerations
+- financement_sous_secteurs
+hypotheses:
+- texte: Le montant tombe sur des cotisations sociales (D61), aux ménages au prorata de leurs
+    cotisations.
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : cotisations_salaries.'
+  source: non sourcée
+- texte: Montée en charge linéaire de 2027 à 2032, puis le montant tenu jusqu'en 2035.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 21.0
+    sens: baisse_prelevements
+    horizon: sur cinq ans, jusqu'en 2032 (plan du 12/10/2026)
+    citation: « 21 milliards iraient aux ménages, via notamment la diminution de cotisations
+      fiscales ou la facture d'électricité » (texte de l'article)
+    url: https://lcp.fr/actualites/face-a-une-france-quasiment-en-faillite-bruno-retailleau-presente-un-plan-d-economies-de
+  chocs:
+    apu_r_d61: 21.0
+  profil: rampe
+  debut: 2027
+  plein: 2032
+  fin: 2035
+  instrument: cotisations_salaries
+  menages_par: cotisations_salariales
+  entreprises_par: null
+  inclus_dans: null

@@ -1,0 +1,28 @@
+schema: 1
+mesure: th_residences_secondaires_progressive
+candidat: ruffin
+libelle: Taxe d'habitation sur les résidences secondaires progressive selon les revenus
+sorte: sans_choc
+source:
+  citation: « Enfin, pour que la taxe d'habitation sur les résidences secondaires devienne
+    plus juste et efficace, nous proposons de la rendre progressive selon les revenus. »
+  url: https://nouspresident.fr/face-a-la-crise-du-logement/
+  date: '2026-09-24'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: aucun barème
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le barème selon les revenus n'est pas énoncé. (porte « vague »)

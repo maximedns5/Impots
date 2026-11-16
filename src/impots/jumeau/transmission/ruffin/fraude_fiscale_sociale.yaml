@@ -1,0 +1,75 @@
+schema: 1
+mesure: fraude_fiscale_sociale
+candidat: ruffin
+libelle: Lutte contre la fraude fiscale et sociale
+sorte: hypothese
+source:
+  citation: « la lutte contre la fraude fiscale, dont le rendement est par nature très incertain
+    et ne peut donc constituer le socle d'un programme de rétablissement des finances publiques
+    »
+  url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  date: '2026-10-21'
+levier:
+  texte: Livre des procédures fiscales (contrôle) ; Code de la sécurité sociale (contrôle
+    des cotisations)
+  parametre: null
+  valeur: null
+  enonce: horizon 3 à 5 ans
+  couche: null
+payeurs:
+- qui: menages
+  sens: paie
+  par: autre
+- qui: entreprises
+  sens: paie
+  par: autre
+- qui: apu:etat
+  sens: recoit
+  par: autre
+incidence:
+- horizon: immediat
+  qui: les fraudeurs
+  texte: Statutaire, si la fraude est recouvrée.
+  source: non sourcée
+financement:
+  annonce: « la lutte contre la fraude fiscale, dont le rendement est par nature très incertain
+    et ne peut donc constituer le socle d'un programme de rétablissement des finances publiques
+    »
+  source: « la lutte contre la fraude fiscale, dont le rendement est par nature très incertain
+    et ne peut donc constituer le socle d'un programme de rétablissement des finances publiques
+    »
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux:
+- consommation_menages
+hypotheses:
+- texte: Le montant tombe sur un impôt courant sur le revenu ou le patrimoine (D5).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
+    sur l’activité).'
+  source: non sourcée
+- texte: Montée en charge linéaire de 2027 à 2031, puis le montant tenu jusqu'en 2035.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 7.0
+    sens: recette
+    horizon: « à terme », potentiel à horizon 3 à 5 ans, montée en charge jusqu'en 2030 (9
+      Md€) ; la fraude sociale (≥ 1 Md€ par an) est « hors chiffrage officiel »
+    citation: « En renforçant nos moyens et en modernisant nos outils, un rattrapage de nos
+      partenaires est possible, ce qui pourrait à terme représenter un gain de 7 Mds € par
+      an. »
+    url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  chocs:
+    apu_r_d5: -7.0
+  profil: rampe
+  debut: 2027
+  plein: 2031
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

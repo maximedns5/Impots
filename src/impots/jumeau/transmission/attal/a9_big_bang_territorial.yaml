@@ -1,0 +1,76 @@
+schema: 1
+mesure: a9_big_bang_territorial
+candidat: attal
+libelle: Suppression d'un échelon de collectivité (« big bang territorial »)
+sorte: hypothese
+source:
+  citation: « supprimer un échelon de collectivité territoriale et faire disparaître définitivement
+    les doublons administratifs » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/big-bang-territorial
+  date: '2026-08-02'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: 1 échelon ; plus de 7 Md€ d'économies par an (lettre du 15/10/2026)
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: 'Le montant tombe sur la composition de la dépense publique de Mésange (G2017-04,
+    p. 106) : le programme ne dit pas quelle dépense.'
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 7.0
+    sens: economie_depense
+    horizon: 'chaque année (« plus de 7 milliards ») ; comprise dans les 150 Md€ du quinquennat
+      (a1) : ne pas additionner'
+    citation: « Il faudra notamment tout changer dans notre organisation, supprimer des échelons,
+      tout simplifier. Plus de 7 milliards d'euros pourront ainsi être économisés chaque année.
+      »
+    url: https://doc.parti.re/2026/Lettre-finances-publiques.pdf
+  chocs:
+    apu_d_p51g: -0.56
+    apu_d_d1: -1.75
+    apu_d_d632: -0.63
+    apu_d_p2: -0.84
+    apu_d_d62: -3.22
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: depense_publique
+  menages_par: prestations
+  entreprises_par: null
+  inclus_dans: null
+  menages_part: 0.46

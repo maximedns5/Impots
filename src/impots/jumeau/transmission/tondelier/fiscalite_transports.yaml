@@ -1,0 +1,52 @@
+schema: 1
+mesure: fiscalite_transports
+candidat: tondelier
+libelle: 'Fiscalité des transports : renchérir l''aérien, favoriser le rail'
+sorte: parametre
+source:
+  citation: 'pas de citation verbatim relevée dans cet article ; résumé d''un blog non daté
+    (biosphere.ouvaton.org), cité en appui : « Hausse de la fiscalité des billets d''avion
+    »'
+  url: https://entrevue.fr/elections/marine-tondelier-presente-le-programme-des-ecologistes-pour-2027/
+  date: '2026-07-13'
+levier:
+  texte: Code général des impôts, TVA (art. 278 et s.) et accises
+  parametre: null
+  valeur: null
+  enonce: tarifs de solidarité de la taxe sur les billets d'avion relevés, de 20 € à 3 000
+    € selon la destination, la classe et l'aviation d'affaires (amendement I-3551 du groupe
+    au PLF 2027, rejeté)
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: tva
+- qui: apu:etat
+  sens: paie
+  par: tva
+incidence:
+- horizon: immediat
+  qui: consommateurs et vendeurs
+  texte: Une baisse de taux passe aux prix en partie ; le reste fait la marge.
+  source: 'Carbonnier (2007), « Who pays sales taxes ? Evidence from French VAT reforms, 1987-1999
+    », Journal of Public Economics 91(5-6) : une baisse de TVA passe aux prix en partie, plus
+    sur un marché concurrentiel'
+- horizon: long
+  qui: consommateurs et vendeurs
+  texte: 'Asymétrie : une hausse passe plus qu''une baisse.'
+  source: 'Benzarti, Carloni, Harju et Kosonen (2020), « What goes up may not come down :
+    asymmetric incidence of value-added taxes », Journal of Political Economy 128(12) : les
+    hausses de TVA passent plus aux prix que les baisses'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le transport aérien de passagers et sa taxe de solidarité ne sont pas une assiette
+    du modèle. (porte « secteur »)

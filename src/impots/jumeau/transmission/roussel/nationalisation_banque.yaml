@@ -1,0 +1,29 @@
+schema: 1
+mesure: nationalisation_banque
+candidat: roussel
+libelle: Nationaliser une grande banque, pôle public bancaire
+sorte: sans_choc
+source:
+  citation: « nous mettons à l'ordre du jour l'impérieuse nécessité de nationaliser une grande
+    banque »
+  url: https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html
+  date: '2026-09-15'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: prêts « à taux bonifiés, à taux zéro, voire négatifs »
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni la banque, ni le montant des prêts, ni leurs taux ne sont énoncés. (porte « vague
+    »)

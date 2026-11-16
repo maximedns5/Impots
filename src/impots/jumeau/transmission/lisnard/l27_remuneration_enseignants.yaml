@@ -1,0 +1,46 @@
+schema: 1
+mesure: l27_remuneration_enseignants
+candidat: lisnard
+libelle: Revalorisation des enseignants, conditionnée à une réorganisation (autonomie, présence,
+  formation, évaluation)
+sorte: parametre
+source:
+  citation: « Nous proposons une augmentation de 20 % des rémunérations en cinq ans, conditionnée
+    à une réorganisation profonde »
+  url: https://www.unenouvelleenergie.fr/notre-programme/education/
+  date: '2026-11-12'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: +20 % des rémunérations en cinq ans
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Le traitement des enseignants est un salaire public : la population ne les distingue
+    pas, et ses salaires sont des données. (porte « salaires »)'

@@ -1,0 +1,105 @@
+schema: 1
+mesure: a16_droit_au_brut
+candidat: attal
+libelle: '« Droit au brut » : hausse du net par suppression de cotisations, financée par des
+  économies sur le modèle social'
+sorte: chiffree
+source:
+  citation: « Gabriel Attal propose une hausse de 250 € nets mensuels à ce niveau de rémunération,
+    dès le début 2027. Elle passe par la suppression de cotisations qui pèsent sur le travail
+    » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/droit-au-brut
+  date: '2026-07-22'
+levier:
+  texte: Code de la sécurité sociale, cotisations d'assurance vieillesse salariales du régime
+    général (art. D242-4, CNAV, plafonnée et déplafonnée) ; accord national interprofessionnel
+    Agirc-Arrco (cotisations salariales, CEG, CET)
+  parametre: cotisations_salariales_retraite_echelle
+  valeur:
+    cotisations_salariales_retraite_echelle: 0.22
+  enonce: +250 € nets/mois au salaire médian (2 200 € nets), dès début 2027
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: salaire_net
+  note: +77,14 Md€ de salaires nets, 2026, population figée (rapport de la première année,
+    `deltas.salaire_net`)
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: cotisations_salaries
+  note: la CNAV perd sa part des cotisations salariales
+- qui: apu:secu:retraite_complementaire
+  sens: paie
+  par: cotisations_salaries
+  note: 'l''Agirc-Arrco perd la sienne ; la passe ne sépare pas les deux : −77,14 Md€ ensemble
+    (`deltas.cotisations_salariales`)'
+- qui: apu:etat
+  sens: recoit
+  par: impot_sur_le_revenu
+  note: +12,05 Md€ d'IR (le net imposable monte) ; −1,54 Md€ de prime d'activité versée (`deltas.ir`,
+    `deltas.ppa`)
+incidence:
+- horizon: immediat
+  qui: les salariés
+  texte: Le net monte de 3 000 € par an au salaire médian ; le brut et le coût du travail
+    ne bougent pas.
+  source: 'le chiffrage de la mesure (`programmes/attal.json`, note) ; Saez, Matsaganis et
+    Tsakloglou (2012), « Earnings determination and taxes : evidence from a cohort-based payroll
+    tax reform in Greece », QJE 127(1) : à moyen terme, les cotisations restent sur celui
+    qui les verse (incidence statutaire)'
+- horizon: court
+  qui: les régimes de retraite
+  texte: La caisse perd sa recette ; sans compensation, le déficit de la branche se creuse.
+  source: 'Code de la sécurité sociale, art. L131-7 (loi du 25 juillet 1994) : l''État compense
+    à la Sécurité sociale toute exonération ou réduction de cotisations, sauf dérogation d''une
+    loi de financement ; Direction de la Sécurité sociale, rapport à la Commission des comptes
+    de la Sécurité sociale (2025) : le solde par branche'
+- horizon: long
+  qui: salariés et employeurs
+  texte: 'Le brut peut se renégocier à la baisse : une part du gain du net revient à l''employeur,
+    qui voit alors son coût baisser et peut embaucher. Une cotisation de retraite liée à des
+    droits se reporte sur le salaire : si les droits sont maintenus, la renégociation est
+    plus probable.'
+  source: 'Lehmann, Marical et Rioux (2013), « Labor income responds differently to income-tax
+    and payroll-tax reforms », Journal of Public Economics 99 (France, DADS) : une baisse
+    de cotisations se retrouve en partie dans le salaire, lentement ; Bozio, Breda et Grenet
+    (2019), « Does tax-benefit linkage matter for the incidence of social security contributions
+    ? », IZA DP 12502 (France) : une cotisation liée à des droits se reporte sur le salaire,
+    une cotisation sans lien reste sur l''employeur ; Fullerton et Metcalf (2002), « Tax incidence
+    », Handbook of Public Economics, vol. 4, ch. 26 : à long terme, l''incidence ne dépend
+    pas de qui verse l''impôt, mais des élasticités de l''offre et de la demande'
+financement:
+  annonce: '« Droit au brut » : hausse du net par suppression de cotisations, financée par
+    des économies sur le modèle social'
+  source: le libellé du relevé (`programmes/attal.json`), d'après https://attalpresident.fr/programme/mesures/droit-au-brut
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux:
+- consommation_menages
+- offre_travail
+- incidence_cotisations
+- salaires
+- emploi
+- compensation_exonerations
+- financement_sous_secteurs
+- financement_annonce
+hypotheses:
+- texte: 'L''échelle des cotisations salariales de retraite à 0,22 traduit « +250 € nets par
+    mois au salaire médian » : 3 000 € par an sur 3 845 € de cotisations retraite salariales
+    au médian.'
+  valeur: 0.22
+  source: le chiffrage de la mesure (`programmes/attal.json`, D-381 et suivantes), mesuré
+    par le moteur
+- texte: La baisse s'applique à tous les salaires, ce que la mesure ne précise pas.
+  source: le chiffrage de la mesure (`programmes/attal.json`)
+- texte: Les droits à la retraite des salariés ne baissent pas avec leurs cotisations.
+  source: non sourcée
+- texte: Aucune renégociation du brut la première année.
+  source: 'Saez, Matsaganis et Tsakloglou (2012), « Earnings determination and taxes : evidence
+    from a cohort-based payroll tax reform in Greece », QJE 127(1) : à moyen terme, les cotisations
+    restent sur celui qui les verse (incidence statutaire)'
+montant:
+  origine: rapport
+  scenario: pres2027_attal_a16_droit_au_brut
+  rapport: reports/etudes/presidentielle_attal/mesures/a16_droit_au_brut/predictif_pres2027_attal_a16_droit_au_brut.json

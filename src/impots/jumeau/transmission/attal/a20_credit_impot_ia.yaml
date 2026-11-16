@@ -1,0 +1,29 @@
+schema: 1
+mesure: a20_credit_impot_ia
+candidat: attal
+libelle: Crédit d'impôt productivité pour l'adoption de l'IA par les PME et ETI
+sorte: sans_choc
+source:
+  citation: « un crédit d'impôt productivité pour aider les PME et les ETI à adopter l'IA
+    » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/plan-france-2040
+  date: '2026-06-19'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: non chiffré
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni taux ni assiette du crédit d'impôt. (porte « vague »)

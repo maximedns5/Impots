@@ -1,0 +1,28 @@
+schema: 1
+mesure: lp04_trajectoire_dette
+candidat: le_pen
+libelle: Trajectoire de dette
+sorte: sans_choc
+source:
+  citation: 121 % en 2027 à 112 % en 2032
+  url: https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f
+  date: '2026-10-06'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: 121 % du PIB en 2027, 112 % en 2032
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une cible de dette est ce que le calcul de la dette donne, pas une réforme qu'il
+    prend en entrée. (porte « chaine »)

@@ -1,0 +1,28 @@
+schema: 1
+mesure: lp32_aide_ukraine
+candidat: le_pen
+libelle: Fin de l'aide financière à l'Ukraine
+sorte: sans_choc
+source:
+  citation: Nous n'avons plus les moyens d'apporter une aide qui nous a coûté, en engagement,
+    6 milliards d'euros par an
+  url: https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948
+  date: '2026-10-15'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: Arrêt ; aucun calendrier vérifié
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: Fin de l'aide financière à l'Ukraine
+  source: le libellé du relevé (`programmes/le_pen.json`), d'après https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Un arrêt sans calendrier ni montant. (porte « vague »)

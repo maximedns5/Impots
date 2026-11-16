@@ -1,0 +1,30 @@
+schema: 1
+mesure: a27_aides_carburant
+candidat: attal
+libelle: 'Carburant : aides directes ciblées sur les travailleurs dépendants de leur véhicule,
+  plutôt qu''une baisse générale de taxes'
+sorte: sans_choc
+source:
+  citation: « Une baisse de taxe générale coûte très cher, et rien ne garantit qu'elle se
+    retrouve dans le prix payé à la pompe » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/aide-professionnels-vehicule
+  date: '2026-05-23'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: non chiffré, aide « temporaire et ciblée »
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni montant de l'aide ni public chiffré. (porte « vague »)
