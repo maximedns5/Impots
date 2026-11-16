@@ -35001,8 +35001,8 @@ Le 16 novembre, à la demande du propriétaire (« lance la passe et ouvre la PR
 vert »), `make impact` et les 29 lourds ont tourné une fois sur `claude/but25` à 5ae669a.
 Ruff : vert. Les tests légers : 2 772 passés, 21 sautés, ceux de D-430 (les contrôles
 négatifs non écrits des boutons, une source absente de `data/raw/`, le clone
-superficiel). Les lourds : 28 verts, **1 rouge, `test_la_page_affiche_les_nombres_du_jumeau`**
-(une attente de 120 s dépassée dans Chromium, rejouée deux fois à l'identique). La recette
+superficiel). Les lourds : 28 verts, **1 rouge,
+`test_la_page_affiche_les_nombres_du_jumeau`** (une attente de 120 s dépassée dans Chromium, rejouée deux fois à l'identique). La recette
 s'est arrêtée là ; les chronomètres ont tourné ensuite, seuls.
 
 **Le diagnostic, action par action.** Le harnais attend un calcul après chaque action.
