@@ -19,6 +19,8 @@ Chaque nombre est ensuite cherché dans son document, sur la page ou la feuille 
   essayées ; `introuvable (calculée)` quand la source dit un calcul (une somme, un
   rapport, une moyenne) : le nombre n'est pas imprimé, ses termes le sont peut-être ;
 * `choisie` : la source dit une valeur choisie, une convention ou une décision ;
+* `source secondaire, à vérifier` : la citation dit elle-même que le nombre n'est lu que
+  dans une reprise (presse, note de tiers), la publication d'origine n'ayant pas été lue ;
 * `non relue` : pas de document identifié, document absent de `data/raw/` ou hors
   manifeste, format non lu, ou nombre trop court pour une recherche sans page.
 
@@ -83,6 +85,7 @@ _TABLEAU_CN = re.compile(r"\bt\. ?(\d)\.(\d{3})|\bT_?(\d)(\d{3})\b|tableau (\d)\
 _CHOISIE = re.compile(r"choisie?,? non vérifiée?|choisie? :|choix du propriétaire|"
                       r"décision du propriétaire|non sourcée?|aucune source|sans source|"
                       r"hypothèse non validée", re.I)
+_SECONDAIRE = re.compile(r"source secondaire", re.I)
 _CALCULEE = re.compile(r"\d\s*[/×÷]\s*\d|\d\s+[−+]\s+\d|recomput|recalcul|computed|"
                        r"\bsoit\b|moyenne|somme|calcul|rapport de|divis|résidu|produit de|"
                        r"pondér|interpol|\bmoins\b|\bplus\b", re.I)
@@ -491,6 +494,12 @@ def relire(c: dict[str, Any], man: dict[str, dict[str, Any]]) -> dict[str, Any]:
             texte = texte + " " + c["entete"]
     c["documents"] = fichiers
     c["localisation"] = localisation(c.get("source") or "")
+    if _SECONDAIRE.search(texte):
+        # Lu dans une reprise, pas dans la publication : aucun document ne le relit, et
+        # un fichier du manifeste que la citation nommerait en passant n'est pas le sien.
+        c["documents"] = []
+        return {"statut": "source secondaire, à vérifier",
+                "note": "la publication d'origine n'a pas été lue"}
     if not fichiers:
         if _CHOISIE.search(texte):
             return {"statut": "choisie"}

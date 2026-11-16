@@ -1288,7 +1288,9 @@ PPV_PRIVE_2024 = 3_462e6
 #: à 27,2 milliards d'euros brut, soit 1,1 milliard d'euros de plus qu'en 2023 ») : le
 #: site de la Dares ne répondait pas le 16 novembre (503), le tableau reste à relever par
 #: le volet `sources`. Les reprises ne s'accordent pas sur la ventilation (participation
-#: 11,0 ou 11,4 Md€, intéressement 11,8 ou 11,9), seulement sur le total.
+#: 11,0 ou 11,4 Md€, intéressement 11,8 ou 11,9), seulement sur le total. Source
+#: secondaire, à vérifier : la publication de la Dares ne répondait toujours pas le 16
+#: novembre au soir (503, réponse vide ; seconde jonction du but 27, D-512).
 EPARGNE_SALARIALE_2024 = 27.2e9
 
 REMUNERATION_HORS_ASSIETTE_COTISATIONS = Figure(
@@ -1297,7 +1299,8 @@ REMUNERATION_HORS_ASSIETTE_COTISATIONS = Figure(
           "cotisations sociales (assujetties à la CSG, à la CRDS et au forfait social) : "
           "prime de partage de la valeur, participation, intéressement, abondements",
     source="Urssaf, open data, prime de partage de la valeur par trimestre (2024) ; Dares, "
-           "L'épargne salariale en 2024 (juin 2026), total repris par la presse",
+           "L'épargne salariale en 2024 (juin 2026), total repris par la presse "
+           "(source secondaire, à vérifier)",
     url=DARES_EPARGNE_SALARIALE_URL, use="calibration",
     caveat="Spent by `incomes._part_hors_assiette`: spread over the employees of the "
            "private field (the allègements' field) in proportion to their pay above the "

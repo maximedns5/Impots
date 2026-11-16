@@ -44,6 +44,7 @@ Un nombre qui n'est pas au registre : le chercher dans le texte extrait, pas dan
 | `introuvable (calculée)` | la citation dit un calcul ; le nombre n'est pas imprimé, ses termes peut-être |
 | `introuvable` | le document est lu, le nombre n'y est pas ; `voisin` donne le plus proche à 5 % près, une piste, pas un verdict |
 | `choisie` | la citation dit une valeur choisie, non vérifiée, ou une décision du propriétaire |
+| `source secondaire, à vérifier` | la citation dit « source secondaire » : le nombre n'est lu que dans une reprise (presse, note de tiers), la publication d'origine pas encore (D-512) |
 | `non relue` | pas de document au manifeste (page d'accueil, document hors manifeste), document absent de `data/raw/`, nombre trivial (0, 1, une année) ou trop court sans page |
 
 La relecture dit qu'un nombre est présent, pas qu'il est la bonne ligne du bon tableau.
