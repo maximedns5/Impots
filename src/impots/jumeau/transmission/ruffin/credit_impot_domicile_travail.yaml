@@ -63,3 +63,9 @@ montant:
   scenario: pres2027_ruffin_credit_impot_domicile_travail
   rapport: reports/etudes/presidentielle_ruffin/mesures/credit_impot_domicile_travail/predictif_pres2027_ruffin_credit_impot_domicile_travail.json
   annonce_md: 0.5
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_ruffin/mesures/credit_impot_domicile_travail/premiere_annee_pres2027_ruffin_credit_impot_domicile_travail.json
+    ecarts_md:
+      ir: -15.58
+      revenu_disponible: 15.58

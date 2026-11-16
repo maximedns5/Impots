@@ -1,0 +1,35 @@
+# Les données critiques des fiches de Philippe (but 27, volet `fiches`, D-505).
+p3_deal_impots_production:
+  levier:
+    texte: "Code général des impôts : CVAE (art. 1586 ter), CFE (art. 1447), taxe foncière ;
+      Code de la sécurité sociale, art. L137-30 (C3S)"
+  assiette:
+    texte: "les autres impôts sur la production reçus par les APU (D29) : les 50 Md€ en
+      font 38 %"
+    montant_md: 132.8
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne D29"
+p19_baisse_aides_entreprises:
+  assiette:
+    texte: "les subventions versées par les APU (D3) : les 50 Md€ en font 88 % ; les
+      dépenses fiscales des entreprises (le CIR, 8,04 Md€) et les allègements de
+      cotisations (75,6 Md€) n'y sont pas"
+    montant_md: 56.5
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne D3"
+p5_retraite_65_ans_45_annuites:
+  levier:
+    texte: "Code de la sécurité sociale, art. L161-17-2 (l'âge légal) et L161-17-3 (la durée
+      d'assurance)"
+  assiette:
+    texte: les prestations légales vieillesse nettes de la CNAV
+    montant_md: 167.4
+    annee: 2025
+    source: "Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche
+      CNAV"
+p18_fonds_adaptation_climat:
+  assiette:
+    texte: la formation brute de capital fixe des APU (P51g)
+    montant_md: 132.2
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne P51G"

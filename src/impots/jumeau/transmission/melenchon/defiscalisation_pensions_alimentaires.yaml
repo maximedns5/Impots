@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2
   date: '2026-11-06'
 levier:
-  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  texte: 'Code général des impôts, art. 79 (les pensions alimentaires reçues sont imposables)
+    et art. 156, II, 2° (leur déduction chez le débiteur) : les pensions reçues exonérées'
   parametre: pensions_alimentaires_exonerees
   valeur:
     pensions_alimentaires_exonerees: true
@@ -19,6 +20,7 @@ payeurs:
 - qui: menages
   sens: recoit
   par: ir
+  note: −0,19 Md€ d'IR (rapport, 2026, figé)
 - qui: apu:etat
   sens: paie
   par: impot_sur_le_revenu
@@ -58,7 +60,19 @@ hypotheses:
     pour lui-même ne sont pas portées. Les prestations qui comptent la pension ne bougent
     pas. Contre le droit de 2026. Pas de plage : la mesure est un oui ou un non.'
   source: le chiffrage de la mesure (`programmes/melenchon.json`)
+- texte: La déduction chez le parent qui verse la pension est maintenue.
+  source: non sourcée
 montant:
   origine: rapport
   scenario: pres2027_melenchon_defiscalisation_pensions_alimentaires
   rapport: reports/etudes/presidentielle_melenchon/mesures/defiscalisation_pensions_alimentaires/predictif_pres2027_melenchon_defiscalisation_pensions_alimentaires.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_melenchon/mesures/defiscalisation_pensions_alimentaires/premiere_annee_pres2027_melenchon_defiscalisation_pensions_alimentaires.json
+    ecarts_md:
+      ir: -0.19
+      revenu_disponible: 0.19
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

@@ -2,26 +2,26 @@ schema: 1
 mesure: suppression_cir
 candidat: melenchon
 libelle: Suppression du crédit d'impôt recherche
-sorte: parametre
+sorte: hypothese
 source:
   citation: « Supprimer le crédit impôt recherche au profit de dotations récurrentes à hauteur
     des besoins des universités et instituts de recherche »
   url: https://melenchon2027.fr/programme/livre/le-gout-du-futur-aux-nouvelles-frontieres-de-l-humanite/chapitre2
   date: '2026-11-06'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: Code général des impôts, art. 244 quater B (le crédit d'impôt recherche), 199 ter
+    B et 220 B
   parametre: null
   valeur: null
   enonce: abrogation, au profit de dotations « à hauteur des besoins »
   couche: null
 payeurs:
 - qui: entreprises
-  sens: recoit
-  par: autre
-- qui: apu:etat
   sens: paie
-  par: autre
+  par: impot_societes
+- qui: apu:etat
+  sens: recoit
+  par: impot_societes
 incidence:
 - horizon: immediat
   qui: les entreprises
@@ -39,22 +39,54 @@ incidence:
     contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
     la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
 financement:
-  annonce: null
-  source: null
+  annonce: « au profit de dotations récurrentes à hauteur des besoins des universités et instituts
+    de recherche »
+  source: programme de Mélenchon, livre, « Du futur aux nouvelles frontières de l'humanité
+    », chapitre 2
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: la recette est en partie rendue en dotations, sans montant
 canaux:
 - investissement_cout_du_capital
 - creations_entreprises
 - fermetures_entreprises
 - implantation
 - prix_production
-hypotheses: []
+hypotheses:
+- texte: 'Compté dans les 22 Md€ des niches : la presse cite le CIR parmi elles ; ne pas l''additionner.'
+  source: 'le relevé du programme (`programmes/melenchon.json`, niches_fiscales_sociales :
+    « la presse cite le CIR et le pacte Dutreil »)'
+- texte: Les dotations de remplacement ne sont pas comptées.
+  source: non sourcée
 montant:
-  origine: aucun
-  manque: 'Le CIR a un bouton (cir_taux, cir_taux_au_dela, à 0), mais il se chiffre sur la
-    créance d''un millésime, hors du coût des entreprises (D-222) : un cas préenregistré par
-    register-entreprises lirait 0 €, et la chaîne de la dette refuse ces boutons, ce qui ferait
-    tomber l''étude du programme. La suppression attend une route de préenregistrement sur
-    la créance ; sa contrepartie, des dotations sans montant, est une dépense publique. (porte
-    « depense_publique »)'
+  origine: hypothese
+  annonce:
+    montant_md: 8.041
+    sens: recette
+    horizon: abrogation, au profit de dotations « à hauteur des besoins »
+    citation: « Supprimer le crédit impôt recherche au profit de dotations récurrentes à hauteur
+      des besoins des universités et instituts de recherche »
+    url: https://melenchon2027.fr/programme/livre/le-gout-du-futur-aux-nouvelles-frontieres-de-l-humanite/chapitre2
+    par: calcul
+    calcul: 'Le coût du crédit d''impôt recherche en 2026 (8,041 Md€, dépense fiscale n° 200302)
+      : sa suppression rapporte au plus ce montant, moins les dotations « récurrentes à hauteur
+      des besoins » qui le remplacent, sans montant.'
+  chocs:
+    apu_r_d5: -8.041
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: impot_societes
+  inclus_dans: niches_fiscales_sociales
+assiette:
+  texte: le coût du crédit d'impôt recherche (7,800 Md€ en 2024, 8,068 en 2025, 8,041 en 2026
+    ; 17 593 entreprises)
+  montant_md: 8.041
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, fiche 200302
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

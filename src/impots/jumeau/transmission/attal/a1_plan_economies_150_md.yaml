@@ -44,5 +44,9 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: 'Un plan d''économies sans dépense désignée une à une : la dépense n''est qu''un
-    scénario du calcul de la dette. (porte « depense_publique »)'
+  manque: '150 Md€ « sur le quinquennat » sans calendrier annuel ni dépense désignée, et qui
+    comprend le frein d''urgence (a2), l''assurance chômage (a11), les échelons (a9) et les
+    100 000 postes (a8), chiffrés à part : l''additionner les compterait deux fois.'
+calendrier:
+  texte: le quinquennat, 2027-2032
+  source: Attal, lettre du 15 octobre 2026, p. 1

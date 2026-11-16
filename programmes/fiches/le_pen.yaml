@@ -1,0 +1,46 @@
+# Les données critiques des fiches de Le Pen (but 27, volet `fiches`, D-505) : levier et
+# assiette des montants déclarés ; les hypothèses restent celles du script.
+lp07_contribution_ue:
+  levier:
+    texte: "Décision (UE, Euratom) 2020/2053 du Conseil relative au système des ressources
+      propres ; TFUE, art. 311 : la contribution se fixe à l'unanimité des États"
+  assiette:
+    texte: "les ressources propres de l'UE fondées sur la TVA et le RNB versées par les APU
+      françaises (D76) : les 9 Md€ en font 39 %"
+    montant_md: 22.98
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne D76"
+lp19_impots_production:
+  levier:
+    texte: "Code général des impôts : CVAE (art. 1586 ter), CFE (art. 1447), taxe foncière
+      des entreprises ; Code de la sécurité sociale, art. L137-30 (C3S)"
+  assiette:
+    texte: "les autres impôts sur la production reçus par les APU (D29) : les 20 Md€ en
+      font 15 %"
+    montant_md: 132.8
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne D29"
+lp15_age_legal_60_62:
+  levier:
+    texte: "Code de la sécurité sociale, art. L161-17-2 (l'âge légal, 64 ans par la loi n°
+      2023-270)"
+  assiette: &CNAV
+    texte: les prestations légales vieillesse nettes de la CNAV
+    montant_md: 167.4
+    annee: 2025
+    source: "Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche
+      CNAV"
+lp17_economies_retraites:
+  levier:
+    texte: "Code de la sécurité sociale, livre III (l'assurance vieillesse) : des économies
+      non désignées"
+  assiette: *CNAV
+lp24_prime_activite_etudiante:
+  levier:
+    texte: "Code de la sécurité sociale, art. L841-1 et s. (la prime d'activité) : les
+      étudiants y entrent sans condition de revenu minimal"
+  assiette:
+    texte: la dépense de prime d'activité ; les 0,6 Md€ en font 6 %
+    montant_md: 10.6
+    annee: 2024
+    source: "Cour des comptes, la prime d'activité, rapport au Sénat n° 25-728 (2025)"

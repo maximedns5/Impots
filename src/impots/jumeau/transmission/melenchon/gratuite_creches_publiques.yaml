@@ -8,7 +8,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre3
   date: '2026-11-06'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: Code de l'action sociale et des familles, art. L214-1 et s. ; le barème national
+    des participations familiales de la Cnaf (prestation de service unique)
   parametre: null
   valeur: null
   enonce: gratuité
@@ -40,5 +41,9 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: Le prix des crèches publiques est une dépense des collectivités et de la branche
-    famille que le moteur ne microsimule pas. (porte « depense_publique »)
+  manque: Le montant des participations des familles aux crèches publiques n'est pas dans
+    les documents lus.
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

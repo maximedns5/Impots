@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
   date: '2026-11-06'
 levier:
-  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  texte: Code de la sécurité sociale, art. L351-1 et R351-27 (le coefficient de minoration
+    par trimestre manquant)
   parametre: null
   valeur: null
   enonce: abrogation de la décote
@@ -46,5 +47,9 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: 'Les pensions de la population sont des données : la décote n''y est pas recalculée.
-    (porte « retraites »)'
+  manque: Le montant des décotes servies n'est pas publié dans les documents lus (CCSS, PLF)
+    ; sans lui, aucun calcul.
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

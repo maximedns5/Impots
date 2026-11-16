@@ -9,18 +9,24 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  texte: 'loi n° 2023-270 du 14 avril 2023 de financement rectificative de la Sécurité sociale
+    pour 2023 (art. 10 : l''âge légal porté à 64 ans ; Code de la sécurité sociale, art. L161-17-2
+    et L161-17-3)'
   parametre: null
   valeur: null
   enonce: abrogation, dès 2027
   couche: null
 payeurs:
-- qui: menages
-  sens: recoit
-  par: retraite
 - qui: apu:secu:vieillesse
   sens: paie
   par: depense_publique
+- qui: apu:secu:retraite_complementaire
+  sens: paie
+  par: depense_publique
+  note: l'âge de l'Agirc-Arrco suit celui du régime général ; la part n'est pas dite
+- qui: menages
+  sens: recoit
+  par: retraite
 incidence:
 - horizon: immediat
   qui: les retraités et futurs retraités
@@ -34,10 +40,15 @@ incidence:
   source: 'Conseil d''orientation des retraites, rapport annuel (juin 2025) : le solde des
     régimes selon l''âge, la durée et l''indexation'
 financement:
-  annonce: null
-  source: null
+  annonce: '« Pour financer ces besoins, il est nécessaire de récupérer l''argent là où il
+    s''est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+    plus fortunés et profits des grandes entreprises. »'
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 ; bilan p. 14 : « 106,4 milliards d''euros de recettes, 81,7 milliards de dépenses,
+    24,7 milliards de réduction du déficit »'
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes (106,4
+    Md€ contre 81,7 Md€), sans lier une recette à une dépense
   bilan:
     cout_eur: 9000000000
     chiffre_eur: null
@@ -50,14 +61,20 @@ canaux:
 - consommation_menages
 - financement_sous_secteurs
 hypotheses:
-- texte: Le montant tombe sur des pensions (prestations en espèces, D62), aux ménages au prorata
-    des pensions.
-  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
-- texte: 'La variante de Mésange la plus proche : depense_publique.'
+- texte: Le montant tombe sur des pensions (D62), aux ménages au prorata des pensions.
+  source: 'le compte des APU (Insee, t. 7.301) : les pensions sont des prestations en espèces
+    (D62)'
+- texte: Le montant tenu de 2027 à 2035 ; le coût d'un âge abaissé croît en réalité avec les
+    générations concernées, ce que le candidat ne chiffre pas.
   source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
-  source: non sourcée
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique (la composition moyenne
+    de la dépense publique, G2017-04, p. 106), faute de savoir quelle dépense.'
   source: non sourcée
 montant:
   origine: hypothese
@@ -78,3 +95,12 @@ montant:
   menages_par: retraite
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: les prestations légales vieillesse nettes de la CNAV, dont le montant de 9 Md€ est
+    5,4 %
+  montant_md: 167.4
+  annee: 2025
+  source: Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche CNAV
+calendrier:
+  texte: « dès l'année prochaine », « abrogation immédiate »
+  source: Mélenchon, document du 14 octobre 2026, p. 11

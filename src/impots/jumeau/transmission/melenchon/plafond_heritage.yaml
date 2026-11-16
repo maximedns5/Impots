@@ -8,8 +8,8 @@ source:
   url: https://lcp.fr/actualites/heritages-et-droits-de-succession-que-proposent-les-candidats-a-l-election
   date: '2026-08-27'
 levier:
-  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
-    IFI (art. 964 et s.)'
+  texte: 'Code général des impôts, art. 777 (le barème des droits en ligne directe, 45 % au-delà
+    de 1 805 677 €) : un taux de 100 % au-delà de 12 M€'
   parametre: null
   valeur: null
   enonce: héritage maximal de 12 M€ ; au-delà, « prendre tout »
@@ -46,6 +46,14 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: Le moteur n'a pas de module des transmissions. D'abord portée par Mathilde Panot,
-    la mesure est écrite dans le programme du candidat depuis le 6 novembre 2026. (porte «
-    transmission »)
+  manque: Le montant des héritages au-delà de 12 M€ n'est pas publié ; la mesure est aussi
+    dans les 20 Md€ de la réforme des droits de succession, sans ventilation.
+assiette:
+  texte: les droits de succession
+  montant_md: 17.0
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1706
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

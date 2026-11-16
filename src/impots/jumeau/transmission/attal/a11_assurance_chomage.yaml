@@ -3,7 +3,7 @@ mesure: a11_assurance_chomage
 candidat: attal
 libelle: Réforme de l'assurance chômage dès le début du mandat ; économies réaffectées à la
   baisse des cotisations
-sorte: parametre
+sorte: hypothese
 source:
   citation: '« Gabriel Attal veut la reprendre dès le début du mandat, avec deux objectifs
     : remettre les Français en emploi et dégager 5 milliards d''euros d''économies » (texte
@@ -11,18 +11,20 @@ source:
   url: https://attalpresident.fr/programme/mesures/reforme-assurance-chomage-cinq-milliards
   date: '2026-07-03'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: Code du travail, art. L5422-1 et s. et L5422-20 (le règlement d'assurance chômage,
+    par décret à défaut d'accord des partenaires sociaux)
   parametre: null
   valeur: null
   enonce: 5 Md€ d'économies ; ≥ 100 000 emplois
   couche: null
 payeurs:
-- qui: menages
+- qui: apu:secu:chomage
   sens: recoit
-  par: prestations
-- qui: apu:secu:famille
-  sens: paie
   par: depense_publique
+  note: l'Unédic
+- qui: menages
+  sens: paie
+  par: chomage_brut
 incidence:
 - horizon: immediat
   qui: les allocataires
@@ -36,16 +38,47 @@ incidence:
   source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
     que le rapport de la mesure lit à θ
 financement:
-  annonce: null
-  source: null
-  chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  annonce: « financé à l'euro près par des économies sur le modèle social, d'abord l'assurance
+    chômage et les indemnités journalières »
+  source: attalpresident.fr/programme/mesures/droit-au-brut
+  chiffre: true
+  note: l'économie finance le droit au brut (a16), dont elle couvre une petite part
 canaux:
 - consommation_menages
 - offre_travail
 - financement_sous_secteurs
-hypotheses: []
+hypotheses:
+- texte: Le montant tombe sur les allocations chômage (D62), aux ménages au prorata du chômage.
+  source: 'le candidat : l''assurance chômage, page de la mesure'
+- texte: Pas d'effet de retour à l'emploi compté (le candidat en attend 100 000 emplois).
+  source: attalpresident.fr, page de la mesure (« ≥ 100 000 emplois »)
+- texte: Le montant est tenu chaque année jusqu'en 2035, en euros courants ; le candidat ne
+    donne pas de trajectoire.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique (la composition moyenne
+    de la dépense, G2017-04, p. 106), faute de savoir quelle dépense.'
+  source: non sourcée
 montant:
-  origine: aucun
-  manque: L'assurance chômage n'est pas dans le moteur, et la baisse de cotisations qu'elle
-    financerait n'a pas de taux. (porte « prestations_hors_modele »)
+  origine: hypothese
+  annonce:
+    montant_md: 5.0
+    sens: economie_depense
+    horizon: 5 Md€ d'économies ; ≥ 100 000 emplois
+    citation: '« Gabriel Attal veut la reprendre dès le début du mandat, avec deux objectifs
+      : remettre les Français en emploi et dégager 5 milliards d''euros d''économies »'
+    url: https://attalpresident.fr/programme/mesures/reforme-assurance-chomage-cinq-milliards
+  chocs:
+    apu_d_d62: -5.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: depense_publique
+  menages_par: chomage_brut
+  entreprises_par: null
+  inclus_dans: null
+calendrier:
+  texte: « dès le début du mandat »
+  source: attalpresident.fr/programme/mesures/reforme-assurance-chomage-cinq-milliards

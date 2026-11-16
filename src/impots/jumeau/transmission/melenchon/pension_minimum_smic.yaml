@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  texte: Code de la sécurité sociale, art. L351-10 (le minimum contributif) et L173-2 (le
+    minimum tous régimes)
   parametre: null
   valeur: null
   enonce: pension minimum = SMIC (carrière complète)
@@ -46,5 +47,10 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: 'Les pensions sont des données de la population : le moteur n''a ni minimum de pension
-    ni durée de carrière. (porte « retraites »)'
+  manque: Le coût dépend de la distribution des pensions des carrières complètes, que la statistique
+    publique lue ne donne pas pour l'écart au Smic ; la population n'a ni durée de carrière
+    ni minimum de pension.
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

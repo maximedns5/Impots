@@ -10,7 +10,9 @@ source:
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
   date: '2026-11-06'
 levier:
-  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  texte: 'Code du travail, art. L3121-27 (la durée légale de 35 heures), L3121-33 et L3121-36
+    (la majoration des heures supplémentaires, 25 % puis 50 %, réductible à 10 % par accord)
+    : la majoration rendue impérative'
   parametre: null
   valeur: null
   enonce: 35 h ; majoration de 25 % les quatre premières heures, 50 % au-delà ; 32 h dans
@@ -64,5 +66,15 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: La population ne porte pas les heures supplémentaires, que la majoration renchérirait.
-    (porte « donnee_menages »)
+  manque: 'La mesure renchérit les heures supplémentaires payées sous accord à 10 % : leur
+    volume par taux de majoration n''est pas publié dans les documents lus.'
+assiette:
+  texte: le coût de l'exonération d'IR des heures supplémentaires (n° 120146), une mesure
+    de leur volume
+  montant_md: 2.25
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, « dépenses fiscales
+    les plus coûteuses », n° 120146
+calendrier:
+  texte: « immédiatement »
+  source: programme de Mélenchon, livre, « Mettre en sécurité sociale », chapitre 1

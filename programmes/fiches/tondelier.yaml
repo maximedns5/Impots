@@ -1,0 +1,16 @@
+# Les données critiques des fiches de Tondelier (but 27, volet `fiches`, D-505).
+contribution_gros_heritages:
+  levier:
+    texte: "Code général des impôts, art. 777 (le barème des droits en ligne directe) : une
+      contribution additionnelle"
+  assiette:
+    texte: "les droits de succession : les 15 Md€ en font 88 %"
+    montant_md: 17.0
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1706"
+plan_climat:
+  assiette:
+    texte: "la formation brute de capital fixe des APU (P51g) : les 10 Md€ en font 7,6 %"
+    montant_md: 132.2
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne P51G"

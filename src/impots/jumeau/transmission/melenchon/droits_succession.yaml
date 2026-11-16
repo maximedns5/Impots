@@ -9,8 +9,9 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
-    IFI (art. 964 et s.)'
+  texte: 'Code général des impôts, art. 777 (le barème des droits en ligne directe), 779 (les
+    abattements) et 784 (le rappel des donations sur quinze ans) : une taxation des dons et
+    héritages reçus « tout au long de la vie »'
   parametre: null
   valeur: null
   enonce: aucun barème dans le document
@@ -19,7 +20,7 @@ payeurs:
 - qui: menages
   sens: paie
   par: patrimoine
-  note: 'la population n''en porte pas : aucune clé par décile'
+  note: les héritiers des « plus hauts patrimoines »
 - qui: apu:etat
   sens: recoit
   par: capital_menages
@@ -37,23 +38,32 @@ incidence:
     », QJE 135(1) (Danemark) : l''assiette répond à l''impôt sur la fortune, d''autant plus
     en haut de la distribution'
 financement:
-  annonce: null
-  source: null
-  chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  annonce: « Une partie de cette œuvre de justice fiscale devra être orientée vers la réduction
+    de notre déficit »
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6
+  chiffre: true
+  note: une recette du programme ; son bilan (p. 14) en affecte 81,7 Md€ aux dépenses et 24,7
+    Md€ au déficit, sans dire laquelle va où
 canaux:
 - patrimoine_menages
 - consommation_menages
 hypotheses:
-- texte: 'Le montant tombe sur un impôt en capital (D91) : les droits de succession.'
-  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
-- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
-    sur l’activité).'
+- texte: Le montant tombe sur les impôts en capital (D91).
+  source: 'Insee, t. 7.301 : les droits de succession sont des impôts en capital (D91)'
+- texte: Le montant de la première année est tenu ensuite ; le candidat le dit de la première
+    année seulement.
   source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
-  source: non sourcée
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
   source: non sourcée
+- texte: 'Aucune variante de Mésange pour cet impôt : le mode réduit ne lit aucun effet sur
+    l''activité, seulement la recette.'
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes publiées)'
 montant:
   origine: hypothese
   annonce:
@@ -73,3 +83,13 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: les droits de mutation à titre gratuit par décès (successions) ; les 20 Md€ du candidat
+    en font plus du double
+  montant_md: 17.0
+  annee: 2026
+  source: 'Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, lignes 1705-1706 (successions
+    : 16,0 Md€ en 2024, 16,2 en 2025, 17,0 en 2026 ; donations : 4,4 Md€ en 2026)'
+calendrier:
+  texte: « 20 milliards d'euros la première année »
+  source: Mélenchon, document du 14 octobre 2026, p. 14

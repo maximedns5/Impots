@@ -74,3 +74,11 @@ montant:
   origine: rapport
   scenario: pres2027_philippe_p11_allocation_familiale_unique
   rapport: reports/etudes/presidentielle_philippe/mesures/p11_allocation_familiale_unique/predictif_pres2027_philippe_p11_allocation_familiale_unique.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_philippe/mesures/p11_allocation_familiale_unique/premiere_annee_pres2027_philippe_p11_allocation_familiale_unique.json
+    ecarts_md:
+      ppa: 1.64
+      rsa: 0.84
+      af: -12.09
+      revenu_disponible: 46.33

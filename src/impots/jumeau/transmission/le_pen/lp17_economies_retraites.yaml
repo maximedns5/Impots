@@ -8,7 +8,8 @@ source:
   url: https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen
   date: '2026-10-06'
 levier:
-  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  texte: 'Code de la sécurité sociale, livre III (l''assurance vieillesse) : des économies
+    non désignées'
   parametre: null
   valeur: null
   enonce: 15 à 20 Md€ « à terme », par des « corrections de mesures injustes » (non détaillées)
@@ -70,3 +71,8 @@ montant:
   menages_par: retraite
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: les prestations légales vieillesse nettes de la CNAV
+  montant_md: 167.4
+  annee: 2025
+  source: Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche CNAV

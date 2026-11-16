@@ -9,8 +9,8 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
-    et s.) ; Code de l'énergie (CEE, L221-1)
+  texte: Code de commerce, art. L410-2, alinéa 2 (le décret en Conseil d'État qui fixe les
+    prix en cas de situation de crise)
   parametre: null
   valeur: null
   enonce: 1,70 € le litre, par décret
@@ -39,6 +39,10 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: 'Un prix des carburants fixé par décret, pas une taxe : son coût tombe sur les distributeurs
-    ou sur l''État selon des règles que le candidat ne donne pas, et la consommation imputée
-    ne réagit pas aux prix. (porte « prix »)'
+  manque: Un prix plafonné à 1,70 € le litre ne coûte qu'au-dessus de ce prix ; le coût dépend
+    du prix futur du pétrole, et le candidat ne dit pas qui paie l'écart (distributeurs ou
+    État).
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6

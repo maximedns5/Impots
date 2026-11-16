@@ -2,14 +2,16 @@ schema: 1
 mesure: a23_revalorisation_enseignants
 candidat: attal
 libelle: Revalorisation des enseignants
-sorte: parametre
+sorte: hypothese
 source:
   citation: « une nouvelle revalorisation de 200 euros nets par mois pour les professeurs
     dès la rentrée 2027 » (texte de la page)
   url: https://attalpresident.fr/programme/mesures/revalorisation-salaires-professeurs
   date: '2026-09-01'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: décrets indemnitaires des enseignants (l'indemnité de suivi et d'accompagnement des
+    élèves et la prime d'attractivité, décret n° 2021-276) ; mission « Enseignement scolaire
+    »
   parametre: null
   valeur: null
   enonce: +200 € nets/mois dès la rentrée 2027, jusqu'à +500 € en milieu de carrière
@@ -18,6 +20,9 @@ payeurs:
 - qui: apu:etat
   sens: paie
   par: depense_publique
+- qui: menages
+  sens: recoit
+  par: salaire_net
 incidence:
 - horizon: immediat
   qui: les bénéficiaires de la dépense
@@ -30,16 +35,70 @@ incidence:
   source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
     », document de travail G2017-04, §4 (les variantes)'
 financement:
-  annonce: null
-  source: null
+  annonce: « dépenser moins pour les dépenses courantes et pour les dépenses sociales, et
+    plus pour l'avenir et pour l'éducation »
+  source: Attal, lettre du 15 octobre 2026, p. 1 (la deuxième règle d'or)
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  bilan:
+    cout_eur: 2130000000
+    chiffre_eur: null
+    trou_eur: 2130000000
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - demande_publique
 - emploi_public
 - consommation_menages
-hypotheses: []
+hypotheses:
+- texte: Les enseignants du privé sous contrat, payés par l'État, ont la même hausse.
+  source: non sourcée
+- texte: Le montant tombe sur les rémunérations (D1).
+  source: 'le candidat : une revalorisation des salaires des professeurs'
+- texte: Les +500 € « en milieu de carrière » ne sont pas comptés, faute de calendrier et
+    d'effectif.
+  source: attalpresident.fr, page de la mesure
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
 montant:
-  origine: aucun
-  manque: 'Le traitement des enseignants est un salaire public : la population ne les distingue
-    pas, et ses salaires sont des données. (porte « salaires »)'
+  origine: hypothese
+  annonce:
+    montant_md: 2.13
+    sens: depense
+    horizon: +200 € nets/mois dès la rentrée 2027, jusqu'à +500 € en milieu de carrière
+    citation: « une nouvelle revalorisation de 200 euros nets par mois pour les professeurs
+      dès la rentrée 2027 » (texte de la page)
+    url: https://attalpresident.fr/programme/mesures/revalorisation-salaires-professeurs
+    par: calcul
+    calcul: '888 800 enseignants payés par l''État (747 400 du public et 141 400 du privé
+      sous contrat, rentrée 2025) × 200 € nets × 12 mois = 2,13 Md€ nets par an ; un tiers
+      en 2027 (de la rentrée de septembre) : 0,71 Md€. Une borne basse du coût public : le
+      brut, les cotisations de l''employeur et les +500 € en milieu de carrière n''y sont
+      pas.'
+  chocs:
+    apu_d_d1: 2.13
+  profil: calendrier
+  debut: 2027
+  plein: 2028
+  fin: 2035
+  instrument: depense_publique
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null
+  calendrier:
+    2027: 0.71
+    2028: 2.13
+assiette:
+  texte: les enseignants du secteur public (747 400) et du privé sous contrat (141 400), à
+    la rentrée 2025
+  montant_md: null
+  valeur: 888800
+  unite: enseignants
+  annee: 2025
+  source: DEPP, « Panorama statistique des personnels de l'enseignement scolaire 2025-2026
+    »
+calendrier:
+  texte: « dès la rentrée 2027 »
+  source: attalpresident.fr/programme/mesures/revalorisation-salaires-professeurs (1er septembre
+    2026)

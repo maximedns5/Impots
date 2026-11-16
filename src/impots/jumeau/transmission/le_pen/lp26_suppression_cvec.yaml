@@ -55,3 +55,8 @@ montant:
   origine: rapport
   scenario: pres2027_le_pen_lp26_suppression_cvec
   rapport: reports/etudes/presidentielle_le_pen/mesures/lp26_suppression_cvec/predictif_pres2027_le_pen_lp26_suppression_cvec.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_le_pen/mesures/lp26_suppression_cvec/premiere_annee_pres2027_le_pen_lp26_suppression_cvec.json
+    ecarts_md:
+      revenu_disponible: 0.24

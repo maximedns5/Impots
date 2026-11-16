@@ -10,7 +10,8 @@ source:
   url: https://www.publicsenat.fr/actualites/politique/retraites-edouard-philippe-sort-du-bois-et-propose-un-age-de-depart-a-65-ans
   date: '2026-09-29'
 levier:
-  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  texte: Code de la sécurité sociale, art. L161-17-2 (l'âge légal) et L161-17-3 (la durée
+    d'assurance)
   parametre: null
   valeur: null
   enonce: 65 ans et 45 annuités « en moins de 10 ans »
@@ -75,3 +76,8 @@ montant:
   menages_par: retraite
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: les prestations légales vieillesse nettes de la CNAV
+  montant_md: 167.4
+  annee: 2025
+  source: Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche CNAV

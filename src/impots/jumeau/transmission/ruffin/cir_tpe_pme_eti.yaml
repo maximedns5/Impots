@@ -8,8 +8,7 @@ source:
   url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
   date: '2026-10-21'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: Code général des impôts, art. 244 quater B (le crédit d'impôt recherche)
   parametre: null
   valeur: null
   enonce: aucun seuil
@@ -76,3 +75,8 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'le coût du crédit d''impôt recherche : les 3 Md€ d''économie en font 37 %'
+  montant_md: 8.041
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, fiche 200302

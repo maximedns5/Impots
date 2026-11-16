@@ -9,8 +9,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
   date: '2026-11-06'
 levier:
-  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
-    et s.) ; Code de l'énergie (CEE, L221-1)
+  texte: Code de l'énergie, art. L337-4 (les tarifs réglementés de vente de l'électricité)
+    ; Code général des collectivités territoriales, art. L2224-12-4 (la tarification de l'eau)
   parametre: null
   valeur: null
   enonce: aucun volume ni seuil

@@ -10,34 +10,33 @@ source:
   url: https://attalpresident.fr/programme/mesures/doubler-subventions-geoenergie
   date: '2026-06-25'
 levier:
-  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
-    et s.) ; Code de l'énergie (CEE, L221-1)
+  texte: les aides de l'Ademe à la chaleur renouvelable (le Fonds chaleur), ligne de la mission
+    « Écologie, développement et mobilité durables »
   parametre: null
   valeur: null
   enonce: 160 M€/an dès début 2027
   couche: null
 payeurs:
-- qui: menages
-  sens: recoit
-  par: accises
 - qui: apu:etat
   sens: paie
-  par: taxe_carbone
+  par: depense_publique
+- qui: entreprises
+  sens: recoit
+  par: aides_publiques
 incidence:
 - horizon: immediat
   qui: consommateurs et distributeurs
   texte: Le passage d'une accise au prix à la pompe.
   source: non sourcée
 financement:
-  annonce: Doublement des subventions à la géoénergie, financé sur des budgets sous-consommés
-    (biomasse)
-  source: le libellé du relevé (`programmes/attal.json`), d'après https://attalpresident.fr/programme/mesures/doubler-subventions-geoenergie
+  annonce: null
+  source: null
   chiffre: false
-  note: le financement est énoncé, pas chiffré mesure par mesure
+  note: la mesure ne dit pas son financement
   bilan:
-    cout_eur: 160000000
+    cout_eur: 80000000
     chiffre_eur: null
-    trou_eur: 160000000
+    trou_eur: 80000000
     dit: 'financement annoncé sans montant : tout le coût reste un trou, le jumeau le dit'
     source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
@@ -45,28 +44,28 @@ canaux:
 - prix_production
 - importations
 hypotheses:
-- texte: 'Le montant tombe sur un transfert en capital (D9) : aides à l''investissement.'
+- texte: Le montant est une aide à l'investissement (D9).
   source: non sourcée
-- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
-    sur l’activité).'
-  source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: Le montant est tenu chaque année jusqu'en 2035, en euros courants ; le candidat ne
+    donne pas de trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
   source: non sourcée
 montant:
   origine: hypothese
   annonce:
-    montant_md: 0.16
+    montant_md: 0.08
     sens: depense
-    horizon: 'par an dès 2027 : le niveau des subventions doublées (la moitié existe déjà),
-      que le candidat dit financé par des budgets sous-consommés, « sans dépense supplémentaire
-      »'
+    horizon: 160 M€/an dès début 2027
     citation: « Doubler les subventions à la géoénergie, pour les porter à 160 millions d'euros
       par an dès 2027 » (texte de la page)
     url: https://attalpresident.fr/programme/mesures/doubler-subventions-geoenergie
+    par: calcul
+    calcul: '« Doubler les subventions à la géoénergie, pour les porter à 160 millions d''euros
+      par an » : 80 M€ aujourd''hui, 160 M€ demain ; le coût est l''écart, 160 − 80 = 80 M€
+      par an, et non 160.'
   chocs:
-    apu_d_d9: 0.16
+    apu_d_d9: 0.08
   profil: constant
   debut: 2027
   plein: 2027
@@ -75,3 +74,11 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: les subventions à la géoénergie aujourd'hui, la moitié des 160 M€ visés
+  montant_md: 0.08
+  annee: 2026
+  source: attalpresident.fr/programme/mesures/doubler-subventions-geoenergie (25 juin 2026)
+calendrier:
+  texte: « dès 2027 »
+  source: attalpresident.fr/programme/mesures/doubler-subventions-geoenergie

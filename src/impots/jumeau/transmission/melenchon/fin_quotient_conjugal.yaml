@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2
   date: '2026-11-06'
 levier:
-  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  texte: Code général des impôts, art. 6, 1 (l'imposition commune des époux et des partenaires
+    de Pacs) et art. 194 (deux parts pour un couple)
   parametre: null
   valeur: null
   enonce: 'abrogation : imposition séparée des conjoints'
@@ -45,6 +46,14 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: 'L''imposition séparée des conjoints n''est pas un bouton du moteur : il faut écrire
-    l''impôt de chaque conjoint, à partir des revenus individuels que la population porte.
-    (porte « bouton_hors_but »)'
+  manque: L'imposition séparée se calcule conjoint par conjoint sur la population ; aucune
+    statistique publique ne donne son produit, et le moteur n'a pas encore ce bouton.
+assiette:
+  texte: l'impôt sur le revenu net
+  montant_md: null
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, impôt sur le revenu
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

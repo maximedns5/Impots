@@ -10,7 +10,7 @@ source:
   date: '2026-10-14'
 levier:
   texte: 'Code général des impôts et Code de la sécurité sociale : les dépenses fiscales et
-    les exonérations sociales (non nommées)'
+    les exonérations sociales, non nommées par le document'
   parametre: null
   valeur: null
   enonce: aucune liste dans le document ; la presse cite le CIR et le pacte Dutreil
@@ -34,21 +34,31 @@ incidence:
     4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
     de l''offre et de la demande'
 financement:
-  annonce: null
-  source: null
-  chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  annonce: « Une partie de cette œuvre de justice fiscale devra être orientée vers la réduction
+    de notre déficit »
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6
+  chiffre: true
+  note: une recette du programme ; son bilan (p. 14) en affecte 81,7 Md€ aux dépenses et 24,7
+    Md€ au déficit, sans dire laquelle va où
 canaux:
 - consommation_menages
 - offre_travail
 hypotheses:
-- texte: Le montant tombe sur l'impôt sur le revenu (D5), aux ménages au prorata de leur IR.
-  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
-- texte: 'La variante de Mésange la plus proche : impot_sur_le_revenu.'
+- texte: 'Le montant tombe sur l''impôt sur le revenu (D5), aux ménages au prorata de leur
+    IR : une clé, car le document ne dit pas quelles niches ; le CIR, s''il en est, tombe
+    sur les entreprises.'
   source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
+- texte: Le montant de la première année est tenu chaque année de 2027 à 2035, en euros courants
+    ; le candidat ne donne qu'un montant annuel, sans trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : impot_sur_le_revenu.'
   source: non sourcée
 montant:
   origine: hypothese
@@ -69,3 +79,21 @@ montant:
   menages_par: ir
   entreprises_par: null
   inclus_dans: null
+assiette:
+- texte: le coût des dépenses fiscales
+  montant_md: 88.3
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, « chiffres clés » (89,4
+    Md€ en 2024, 91,8 en 2025, 88,3 en 2026)
+- texte: le coût des exonérations de cotisations en faveur de l'emploi
+  montant_md: 86.8
+  annee: 2025
+  source: Commission des comptes de la Sécurité sociale, mai 2026, §1.6
+- texte: 'les deux dépenses fiscales que la presse cite : le crédit d''impôt recherche (8,04
+    Md€, n° 200302) et le pacte Dutreil (4,0 Md€, n° 520110), 12,0 Md€ ensemble'
+  montant_md: 12.04
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, fiches 200302 et 520110
+calendrier:
+  texte: « 22 milliards d'euros en 2027 »
+  source: Mélenchon, document du 14 octobre 2026, p. 13

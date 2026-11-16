@@ -70,3 +70,10 @@ montant:
   origine: rapport
   scenario: pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe
   rapport: reports/etudes/presidentielle_retailleau/mesures/r21_c3s_cvae_forfait_social_cfe/predictif_pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_retailleau/mesures/r21_c3s_cvae_forfait_social_cfe/premiere_annee_pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe.json
+    ecarts_md:
+      cvae: -3.28
+      impot_societes: 1.66
+      prelevements_entreprise: -6.55

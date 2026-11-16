@@ -65,3 +65,9 @@ montant:
   origine: rapport
   scenario: pres2027_le_pen_lp21_ir_moins_30_ans
   rapport: reports/etudes/presidentielle_le_pen/mesures/lp21_ir_moins_30_ans/predictif_pres2027_le_pen_lp21_ir_moins_30_ans.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_le_pen/mesures/lp21_ir_moins_30_ans/premiere_annee_pres2027_le_pen_lp21_ir_moins_30_ans.json
+    ecarts_md:
+      ir: -8.66
+      revenu_disponible: 8.66

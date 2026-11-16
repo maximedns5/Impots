@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Le texte n'est pas désigné par le programme
+  texte: Code monétaire et financier, art. L221-5 (la centralisation des dépôts du livret
+    A et du LDDS au fonds d'épargne de la Caisse des dépôts)
   parametre: null
   valeur: null
   enonce: taux de centralisation porté « par exemple » à 80 %
@@ -25,5 +26,9 @@ canaux: []
 hypotheses: []
 montant:
   origine: aucun
-  manque: L'épargne réglementée et sa centralisation, des dépôts, sont hors du modèle. (porte
-    « secteur »)
+  manque: 'Un dépôt centralisé n''est ni une dépense ni une recette des APU : aucun choc sur
+    le compte des APU.'
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

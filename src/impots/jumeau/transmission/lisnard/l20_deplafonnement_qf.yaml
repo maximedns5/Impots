@@ -62,3 +62,9 @@ montant:
   origine: rapport
   scenario: pres2027_lisnard_l20_deplafonnement_qf
   rapport: reports/etudes/presidentielle_lisnard/mesures/l20_deplafonnement_qf/predictif_pres2027_lisnard_l20_deplafonnement_qf.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_lisnard/mesures/l20_deplafonnement_qf/premiere_annee_pres2027_lisnard_l20_deplafonnement_qf.json
+    ecarts_md:
+      ir: -3.5
+      revenu_disponible: 3.5

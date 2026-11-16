@@ -10,8 +10,8 @@ source:
   url: https://attalpresident.fr/actualites/harcelement-scolaire-gabriel-attal-parole-huit-jeunes-victimes-engagement
   date: '2026-11-05'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: 'Code général des impôts, art. 299 et s. (la taxe sur les services numériques) :
+    un prélèvement de 2 % voisin, sur les revenus des réseaux sociaux'
   parametre: null
   valeur: null
   enonce: 2 % des revenus des réseaux sociaux en France
@@ -55,5 +55,12 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: 'Un prélèvement sur le chiffre d''affaires des réseaux sociaux : ce secteur numérique
-    n''est pas une assiette du modèle des entreprises. (porte « secteur »)'
+  manque: Le chiffre d'affaires des réseaux sociaux en France n'est pas publié ; 2 % de l'assiette
+    entière de la taxe sur les services numériques (0,59 Md€) n'en serait qu'une borne haute.
+assiette:
+  texte: 'la taxe sur les services numériques rapporte 0,891 Md€ à 3 % : son assiette, tous
+    services numériques taxés, est de l''ordre de 30 Md€ ; celle des seuls réseaux sociaux
+    n''est pas publiée'
+  montant_md: 0.891
+  annee: 2025
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1430

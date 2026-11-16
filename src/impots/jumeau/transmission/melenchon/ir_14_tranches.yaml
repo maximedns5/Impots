@@ -9,7 +9,7 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  texte: Code général des impôts, art. 197 (le barème à cinq tranches)
   parametre: null
   valeur: null
   enonce: 14 tranches ; taux non donnés ; « au cours du mandat »
@@ -27,3 +27,8 @@ montant:
   origine: aucun
   manque: Seul le nombre de tranches est donné, ni leurs seuils ni leurs taux. (porte « vague
     »)
+assiette:
+  texte: l'impôt sur le revenu net
+  montant_md: null
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1
