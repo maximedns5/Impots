@@ -280,7 +280,7 @@ RAYONS: tuple[tuple[str, str], ...] = (
     ("parcours-", "chemin.html"), ("presidentielle", "etudes.html"),
     ("plf", "etudes.html"), ("jumeau", "jumeau.html"), ("population", "population.html"),
     ("mesure", "mesure.html"), ("cellules", "population.html"),
-    ("comparer-candidats", "etudes.html"),
+    ("comparer-candidats", "etudes.html"), ("cascade", "jumeau.html"),
 )
 
 
@@ -497,6 +497,14 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         pages = site_jumeau.build()
         files.update(pages)
         scripted.add(site_jumeau.PAGE)
+    from impots import site_cascade
+
+    if site_cascade.present():
+        # L'effet papillon d'une mesure (but 26, D-484) : le graphe du jumeau à θ½, et le
+        # jumeau dans la page quand le lecteur bouge θ.
+        pages = site_cascade.build()
+        files.update(pages)
+        scripted |= {n for n in pages if n.endswith(".html") and n != site_cascade.INDEX}
     from impots import site_population
 
     if site_population.present():

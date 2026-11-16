@@ -206,6 +206,9 @@ for choix in json.loads(sys.argv[1]):
     out = s.calculer({**choix, "theta": {}})
     out = s.calculer({**choix, "theta": {t["cle"]: 0.5 for t in out["thetas"]}})
     s.portee({**choix, "theta": {t["cle"]: 0.5 for t in out["thetas"]}}, tirages=20)
+    # La page de la cascade (D-484) fait tourner le même paquet, par `cascade`.
+    from impots.jumeau import cascade
+    cascade.calculer(s, {**choix, "theta_commun": 0.5})
 modules = sorted(m.__file__ for n, m in list(sys.modules.items())
                  if n.split(".")[0] == "impots" and getattr(m, "__file__", None))
 import sysconfig
@@ -357,6 +360,9 @@ def _corps(d: dict[str, Any]) -> str:
 année à la fois, de 2026 à 2035. On y fait entrer une mesure : il calcule l'économie
 avec et sans elle, et montre ce que la mesure fait passer d'un bloc à l'autre. Il tourne
 ici, dans ce navigateur, avec le code du dépôt.</p>
+<p><span class="si-page" data-page="cascade.html"><a
+href="cascade.html">L'effet papillon d'une mesure</a> : la même trajectoire, en graphe, de
+la mesure à ses payeurs, ses canaux et ses agrégats, année par année.</span></p>
 <noscript><p class="absent">Cette page calcule dans le navigateur : sans script, elle ne
 montre que son mode d'emploi et le juge de l'histoire, plus bas. Les études restent
 lisibles sur leurs pages.</p></noscript>
