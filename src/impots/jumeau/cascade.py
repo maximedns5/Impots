@@ -65,6 +65,7 @@ NOMS_BLOCS = {
     "naissances": "Naissances d'entreprises", "fermetures": "Fermetures d'entreprises",
     "productivite": "Productivité des entrantes",
     "implantation": "Implantation des multinationales",
+    "travail": "Travail (Smic, allègements, incidence des cotisations)",
 }
 
 #: Les blocs qui lisent un choc dans la mesure elle-même, pas dans un champ de l'état
