@@ -173,15 +173,21 @@ def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, 
     frame, record = _population(annee)
     households = households_par_lots(frame, lots, year=annee, tier="full")
     agg = aggregate.aggregate(households)
-    del households
     # The existing lines read the full-take-up entitlement and its niveau de vie, as they
     # were preregistered (D-363); the expected payments of the take-up layer (but 19,
     # étape 4) are measured beside them, under names no line reads until one is
     # preregistered.
     t, c = agg.totals, agg.counts
     q, servi = agg.niveau_de_vie_quantiles_droit, agg.niveau_de_vie_quantiles
+    # The gérants' contributions are the self-employed's in the national accounts
+    # (D613NSI): the line at the public schemes' field leaves them out (D-497). Not
+    # carried by the extrapolation, so a plain weighted sum.
+    gerants = (float((households["cotisations_salariales_gerants"]
+                      * households["weight"]).sum())
+               if "cotisations_salariales_gerants" in households.columns else 0.0)
     m = {
         "cotisations_salariales": t["cotisations_salariales"],
+        "cotisations_salariales - gérants": t["cotisations_salariales"] - gerants,
         "salaire_super_brut - salaire_brut": t["salaire_super_brut"] - t["salaire_brut"],
         **employeurs(t),
         "allegement_general": t["allegement_general"],
@@ -209,6 +215,7 @@ def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, 
         **{k: c[k] for k in c},
         **mesures_ir_net(frame, annee, lots),
     }
+    del households
     return m, record
 
 

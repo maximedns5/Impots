@@ -53,7 +53,9 @@ def test_a_replaced_line_keeps_its_gap_and_has_no_verdict(tmp_path, monkeypatch)
                           ("ppa_foyers", "ppa_foyers_servis"),
                           ("rsa_montant", "rsa_montant_servi"),
                           ("ppa_montant", "ppa_montant_servi"),
-                          ("cotisations_employeurs", "cotisations_employeurs_d121")}
+                          ("cotisations_employeurs", "cotisations_employeurs_d121"),
+                          # D-497 : D613CE entier contre les seuls régimes publics du modèle.
+                          ("cotisations_salariales", "cotisations_salariales_apu")}
 
 
 def test_a_refused_line_stays_refused_and_a_missing_measure_raises(tmp_path, monkeypatch):

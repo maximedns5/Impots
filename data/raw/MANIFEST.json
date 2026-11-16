@@ -2252,7 +2252,7 @@
       "downloaded": "2026-11-15",
       "licence": "Licence ouverte Etalab",
       "description": "Insee, BDM 010002078 : cours du pétrole brut Brent (Londres), prix au comptant en euros par baril, mensuel, 2009-01→2025-12 ; le prix du baril des prix d'importation de Mésange (D-432)."
-},
+    },
     "insee_bdm_taux_chomage_localise_1990_2025.xml": {
       "url": "https://www.bdm.insee.fr/series/sdmx/data/TAUX-CHOMAGE/T.TAUX_CHOMAGE_LOCALISE....?startPeriod=1990-Q1&endPeriod=2025-Q4",
       "quarantined": false,
@@ -2333,6 +2333,15 @@
       "licence": "Licence Ouverte / Etalab",
       "quarantined": false,
       "description": "INSEE, Comptes nationaux annuels base 2020, tableau 3.212 « Dépenses et recettes des administrations de sécurité sociale (S1314) », MILLÉSIME 2025 (même dossier que la t. 3.201). Consolidé à l'intérieur du sous-secteur, pas entre sous-secteurs (note de la t. 3.215) : les transferts courants entre APU (D73), les intérêts (D41) et les transferts en capital (D9) entre sous-secteurs y figurent. But 26, volet financement (D-481) : la somme des quatre sous-secteurs redonne chaque ligne de la t. 3.201, à la consolidation près, et B9 exactement."
+    },
+    "insee_erfs2023_ti09_niveau_de_vie_statut_occupation.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8731694/irsocerfs2023_ti09.xlsx",
+      "sha256": "ec6cc1e613a94d1de8e26f51815f9b7c48957de20985dea14f89f4fd7fb4812f",
+      "bytes": 8090,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, « Revenu, niveau de vie et pauvreté en 2023 », Insee Résultats, enquête Revenus fiscaux et sociaux 2023, tableau TI09 : répartition des individus et leur niveau de vie selon le statut d'occupation du logement (médianes : ensemble 25 760 €, accédants 29 350, propriétaires 28 920, locataires HLM 17 260, vide non HLM 22 440, meublé 22 250, logés gratuitement 21 040). Marge du rang des salaires et des pensions par statut d'occupation (but 27, volet grille2, D-497).",
+      "quarantined": false
     }
   }
 }

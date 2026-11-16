@@ -1164,3 +1164,103 @@ SMIC_DIFFUSION = Figure(
            "qu'« une fois que le SMIC augmente, les salaires des travailleurs légèrement "
            "supérieurs au SMIC finissent par augmenter également ».",
 )
+
+
+# --------------------------------------------------------------------------- #
+# Le salaire horaire brut du privé en parts de Smic (but 27, volet grille2, D-497).
+# --------------------------------------------------------------------------- #
+BOZIO_WASMER_URL = ("https://www.strategie-plan.gouv.fr/files/files/Publications/Rapport/"
+                    "rapport_vffff_241003.pdf")
+
+#: Part des salariés du privé dont le salaire horaire brut est sous un seuil, en parts
+#: de Smic, 2022 : la fonction de répartition que la population reproduit, en
+#: personnes. Bozio et Wasmer, « Les politiques d'exonérations de cotisations sociales :
+#: une inflexion nécessaire », rapport final, octobre 2024 (`data/raw/bozio_wasmer_2024_
+#: exonerations_rapport_final.pdf`), graphique 3.8, p. 135 du rapport (p. 137 du PDF),
+#: série 2022 : sous 1,1 Smic 12,4 %, 1,2 : 25,2 %, 1,3 : 38,4 %, 1,4 : 47,4 %, 1,5 :
+#: 54,4 %, 1,6 : 60,1 % ; graphique 3.9, p. 136 (p. 138 du PDF), quantiles de 2022 : D1
+#: 1,08, médiane 1,43, Q3 2,01, D9 3,04 (le Q1, 1,20, double le seuil de 1,2 du 3.8, qui
+#: est gardé). Insee, bases Tous salariés, calculs Dares. Champ : poste principal, salariés
+#: comptés en personnes physiques, 18 à 64 ans, secteur privé hors particuliers
+#: employeurs, France métropolitaine, salaire horaire brut inférieur à 4 Smic : 4 Smic
+#: ferme la fonction (part 1), et le bas est fermé au Smic (part 0), une hypothèse : le
+#: graphique ne donne aucun point sous le D1, et les salaires sous le Smic (apprentis,
+#: moins de 18 ans) n'y sont pas séparés.
+SALAIRE_HORAIRE_PRIVE_EN_SMIC_2022: dict[float, float] = {
+    1.00: 0.0, 1.08: 0.10, 1.10: 0.124, 1.20: 0.252, 1.30: 0.384, 1.40: 0.474,
+    1.43: 0.50, 1.50: 0.544, 1.60: 0.601, 2.01: 0.75, 3.04: 0.90, 4.00: 1.0,
+}
+
+SALAIRE_HORAIRE_PRIVE_EN_SMIC = Figure(
+    value=0.601, unit="ratio", year=2022,
+    scope="Part des salariés du privé (18-64 ans, personnes, poste principal, hors "
+          "particuliers employeurs, métropole, sous 4 Smic) dont le salaire horaire brut "
+          "est inférieur à 1,6 Smic ; la fonction entière est "
+          "SALAIRE_HORAIRE_PRIVE_EN_SMIC_2022",
+    source="Bozio et Wasmer, rapport final sur les exonérations de cotisations sociales "
+           "(octobre 2024), graphiques 3.8 et 3.9 (Insee, BTS ; calculs Dares)",
+    url=BOZIO_WASMER_URL, use="calibration",
+    caveat="Spent by `incomes._salaires_horaires_en_smic`: the hourly wages of the "
+           "private employees under 4 Smic are mapped, rank kept, onto this function, "
+           "then the private wage bill is given back uniformly (D11 holds). Of 2022, "
+           "applied to 2024: the Smic rose 2,2 % in 2024 against 2,9 % for the SMPT "
+           "(CCSS, juin 2025, fiche 1.6), so the 2024 distribution is a little less "
+           "compressed. Between published points the function is linear.",
+)
+
+#: Le Smic horaire brut de 2024 : 11,65 € du 1er janvier (décret n° 2023-1216 du 20
+#: décembre 2023), 11,88 € du 1er novembre (décret n° 2024-951 du 23 octobre 2024), sur la
+#: durée légale de 151,67 heures par mois. Le salaire horaire d'un salarié de la
+#: population est son salaire annuel sur ce Smic annuel, à sa quotité.
+SMIC_ANNUEL_2024 = (11.65 * 10 + 11.88 * 2) * 151.67
+
+
+# --------------------------------------------------------------------------- #
+# Le niveau de vie selon le statut d'occupation (but 27, volet grille2, D-497).
+# --------------------------------------------------------------------------- #
+ERFS_2023_URL = "https://www.insee.fr/fr/statistiques/8731694?sommaire=8731855"
+
+#: Niveau de vie annuel médian des individus selon le statut d'occupation du logement,
+#: 2023, en euros : Insee, « Revenu, niveau de vie et pauvreté en 2023 », Insee Résultats,
+#: enquête Revenus fiscaux et sociaux 2023, tableau TI09
+#: (https://www.insee.fr/fr/statistiques/fichier/8731694/irsocerfs2023_ti09.xlsx,
+#: `data/raw/insee_erfs2023_ti09_niveau_de_vie_statut_occupation.xlsx`). Champ : France
+#: métropolitaine, individus des ménages ordinaires dont la personne de référence n'est
+#: pas étudiante, revenu déclaré positif ou nul. Ensemble : 25 760 €. Les clés sont les
+#: `statut_occupation` de la population ; « locataire_meuble » est la ligne « logement
+#: loué meublé ou chambre d'hôtel ».
+NIVEAU_DE_VIE_MEDIAN_PAR_STATUT_2023: dict[str, float] = {
+    "ensemble": 25_760.0, "primo_accedant": 29_350.0, "proprietaire": 28_920.0,
+    "locataire_hlm": 17_260.0, "locataire_vide": 22_440.0, "locataire_meuble": 22_250.0,
+    "loge_gratuitement": 21_040.0,
+}
+
+NIVEAU_DE_VIE_PAR_STATUT = Figure(
+    value=17_260.0 / 25_760.0, unit="ratio", year=2023,
+    scope="Niveau de vie médian des individus des ménages locataires d'un logement HLM "
+          "sur celui de l'ensemble ; les six statuts sont "
+          "NIVEAU_DE_VIE_MEDIAN_PAR_STATUT_2023",
+    source="Insee, Revenu, niveau de vie et pauvreté en 2023 (ERFS 2023), tableau TI09",
+    url=ERFS_2023_URL, use="calibration",
+    caveat="Spent by FACTEUR_STATUT_OCCUPATION: the factors are fitted so that the "
+           "model's niveau de vie médian (servi, pondéré personne) of each tenure, over "
+           "the whole population's, is the ERFS's. Medians relative to the whole, not "
+           "levels: the model's level is the niveau de vie line's. The ERFS is "
+           "metropolitan and leaves out the student households; the model is not.",
+)
+
+#: Le facteur de chaque statut d'occupation sur le rang du salaire et sur le tirage de la
+#: pension (`incomes._facteur_statut`), ajusté hors de la construction (D-497) : six tours
+#: d'une construction et d'une passe d'essai sur 20 000 ménages (graine 20240101, droit
+#: 2024), le facteur de chaque statut multiplié à chaque tour par le rapport, à la
+#: puissance 1,5, du niveau de vie médian relatif de l'ERFS à celui du modèle. Le levier
+#: sature : un rang ne descend pas sous le bas de la courbe de son secteur, et les
+#: propriétaires montent quand les locataires descendent (sans revenus du patrimoine dans
+#: le niveau de vie de la grille, que l'ERFS compte). Le sixième tour, gardé, rend le plus
+#: petit écart maximal : locataires HLM 0,720 (ERFS 0,670), vide 0,908 (0,871), meublé
+#: 0,898 (0,864), logés gratuitement 0,851 (0,817), accédants 1,186 (1,139),
+#: propriétaires 1,169 (1,123) ; avant, 0,854, 0,943, 0,916, 1,000, 1,099 et 1,055.
+FACTEUR_STATUT_OCCUPATION: dict[str, float] = {
+    "primo_accedant": 0.867, "proprietaire": 0.929, "locataire_hlm": 0.383,
+    "locataire_vide": 0.707, "locataire_meuble": 0.700, "loge_gratuitement": 0.574,
+}
