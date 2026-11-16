@@ -2,7 +2,7 @@ schema: 1
 mesure: minimum_vieillesse_seuil_pauvrete
 candidat: melenchon
 libelle: Minimum vieillesse au niveau du seuil de pauvreté
-sorte: parametre
+sorte: hypothese
 source:
   citation: « Porter, a minima, toutes les pensions pour une carrière complète (salarié, indépendant,
     agriculteur) au niveau du SMIC revalorisé, et le minimum vieillesse au niveau du seuil
@@ -10,18 +10,20 @@ source:
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
   date: '2026-11-06'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: Code de la sécurité sociale, art. L815-1 et s. (l'allocation de solidarité aux personnes
+    âgées) et D815-1 (son plafond)
   parametre: null
   valeur: null
   enonce: ASPA = seuil de pauvreté (1 337 € par mois selon le programme)
   couche: null
 payeurs:
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: depense_publique
+  note: la CNAV verse le minimum vieillesse depuis la fin du FSV en 2026 (CCSS)
 - qui: menages
   sens: recoit
   par: prestations
-- qui: apu:secu:famille
-  sens: paie
-  par: depense_publique
 incidence:
 - horizon: immediat
   qui: les allocataires
@@ -35,16 +37,80 @@ incidence:
   source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
     que le rapport de la mesure lit à θ
 financement:
-  annonce: null
-  source: null
+  annonce: '« Pour financer ces besoins, il est nécessaire de récupérer l''argent là où il
+    s''est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+    plus fortunés et profits des grandes entreprises. »'
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 ; bilan p. 14 : « 106,4 milliards d''euros de recettes, 81,7 milliards de dépenses,
+    24,7 milliards de réduction du déficit »'
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes (106,4
+    Md€ contre 81,7 Md€), sans lier une recette à une dépense
+  bilan:
+    cout_eur: 2660000000
+    chiffre_eur: null
+    trou_eur: 2660000000
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - consommation_menages
 - offre_travail
 - financement_sous_secteurs
-hypotheses: []
+hypotheses:
+- texte: Le montant tombe sur les prestations en espèces (D62), aux ménages au prorata des
+    prestations.
+  source: Insee, t. 7.301 (D62)
+- texte: Le seuil de 1 337 € est celui du candidat, tenu en euros de 2026.
+  source: programme de Mélenchon, livre, « Mettre en sécurité sociale », chapitre 1
+- texte: Le montant entre en 2027 et est tenu jusqu'en 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique (la composition moyenne
+    de la dépense publique, G2017-04, p. 106), faute de savoir quelle dépense.'
+  source: non sourcée
 montant:
-  origine: aucun
-  manque: Le moteur calcule le minimum vieillesse mais son montant n'est pas un bouton câblé
-    ; le porter au seuil de pauvreté est un bouton à écrire. (porte « bouton_hors_but »)
+  origine: hypothese
+  annonce:
+    montant_md: 2.66
+    sens: depense
+    horizon: ASPA = seuil de pauvreté (1 337 € par mois selon le programme)
+    citation: « Porter, a minima, toutes les pensions pour une carrière complète (salarié,
+      indépendant, agriculteur) au niveau du SMIC revalorisé, et le minimum vieillesse au
+      niveau du seuil de pauvreté »
+    url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
+    par: calcul
+    calcul: '754 500 allocataires du minimum vieillesse fin 2024 (Drees) × (1 337 € − 1 043,59
+      €, le plafond de l''ASPA d''une personne seule en 2026) × 12 mois = 2,66 Md€ par an.
+      L''ASPA est différentielle : chaque allocataire reçoit l''écart des plafonds. Les couples
+      (plafond de 1 620,18 €) et les nouveaux entrants ne sont pas comptés ; à la dépense
+      de 2026 (4,353 Md€, CCSS) relevée de 28,1 %, il en coûterait 1,22 Md€, une borne basse.'
+  chocs:
+    apu_d_d62: 2.66
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: depense_publique
+  menages_par: prestations
+  entreprises_par: null
+  inclus_dans: null
+assiette:
+- texte: les allocataires du minimum vieillesse fin 2024
+  montant_md: null
+  annee: 2024
+  source: Drees, communiqué du 4 décembre 2025 sur les minima sociaux (754 500 allocataires,
+    +4,3 %)
+- texte: le plafond mensuel de l'ASPA pour une personne seule (1 043,59 €, brut)
+  montant_md: null
+  annee: 2026
+  source: service-public.gouv.fr, fiche F16871 (vérifiée le 23 juin 2026)
+- texte: la dépense de minimum vieillesse de la CNAV
+  montant_md: 4.353
+  annee: 2026
+  source: Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche CNAV
+    (3,845 Md€ en 2024, 4,105 en 2025, 4,353 en 2026)
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

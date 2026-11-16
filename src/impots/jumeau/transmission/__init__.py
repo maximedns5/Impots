@@ -50,9 +50,25 @@ LE SCHÉMA (version 1). Les sept clés de D-471, plus l'en-tête :
   `entreprises_par`, `inclus_dans` (une autre mesure qui le compte déjà) ; pour aucun :
   `manque`}.
 
+LES DONNÉES CRITIQUES (but 27, volet `fiches`, D-504). Deux clés facultatives, écrites
+mesure par mesure dans `programmes/fiches/<candidat>.yaml` (et non tirées d'un gabarit) :
+
+* `assiette` : {`texte`, `montant_md` (Md€, ou null), `annee`, `source`}, ou une liste :
+  ce sur quoi la mesure porte et son montant de 2024 à 2026, lu dans une statistique
+  publique (PLF, LFSS, comptes de la Sécurité sociale, Insee, DGFiP, Drees). Un montant
+  d'assiette a toujours une source, jamais « non sourcée » ;
+* `calendrier` : {`texte`, `source`} : quand la mesure entre en vigueur, selon le candidat.
+
+Un payeur peut dire sa `part` (de 0 à 1) ou, dans `note`, son montant lu dans le rapport.
+Le montant d'une hypothèse est celui du candidat (`annonce.par` : `candidat`, par défaut)
+ou, quand le candidat donne un paramètre et qu'une assiette publiée le permet, l'assiette
+fois le paramètre (`annonce.par` : `calcul`, et `annonce.calcul` : le calcul écrit) ;
+la fiche porte alors son `assiette`.
+
 CE QUE LE LECTEUR NE FAIT PAS. Il ne chiffre rien : une fiche ne porte jamais un nombre que
-ni un rapport ni le candidat ne donne. Une montée en charge, une clé de répartition, une
-variante de Mésange approchée sont des hypothèses déclarées, dites dans la fiche.
+ni un rapport, ni le candidat, ni une assiette publiée (le calcul écrit) ne donne. Une
+montée en charge, une clé de répartition, une variante de Mésange approchée sont des
+hypothèses déclarées, dites dans la fiche.
 """
 
 from __future__ import annotations
@@ -77,6 +93,8 @@ ORIGINES = {"chiffree": "rapport", "hypothese": "hypothese", "parametre": "aucun
             "sans_choc": "aucun"}
 CLES = ("schema", "mesure", "candidat", "libelle", "sorte", "source", "levier",
         "payeurs", "incidence", "financement", "canaux", "hypotheses", "montant")
+#: Les clés facultatives des données critiques (D-504).
+FACULTATIVES = ("assiette", "calendrier")
 HORIZONS = ("immediat", "court", "long")
 SENS = ("paie", "recoit")
 NON_SOURCEE = "non sourcée"
@@ -192,7 +210,7 @@ def valider(d: Mapping[str, Any]) -> list[str]:
     manquent = [c for c in CLES if c not in d]
     if manquent:
         return [f"clés absentes {manquent}"]
-    etrangeres = sorted(set(d) - set(CLES))
+    etrangeres = sorted(set(d) - set(CLES) - set(FACULTATIVES))
     if etrangeres:
         out.append(f"clés inconnues {etrangeres}")
     if d["schema"] != SCHEMA:
@@ -213,6 +231,9 @@ def valider(d: Mapping[str, Any]) -> list[str]:
             out.append(f"payeur {i} : sens « {p.get('sens')} » ({SENS})")
         if p.get("qui") == "entreprises" and p.get("par") not in PAR_ENTREPRISES:
             out.append(f"payeur {i} : entreprises par « {p.get('par')} » inconnu")
+        part = p.get("part")
+        if part is not None and not (isinstance(part, int | float) and 0 <= part <= 1):
+            out.append(f"payeur {i} : part « {part} » (de 0 à 1)")
     if d["sorte"] in ("chiffree", "hypothese") and not d["payeurs"]:
         out.append("une mesure qui a un montant sans payeur")
     for i, inc in enumerate(d["incidence"] or ()):
@@ -231,7 +252,41 @@ def valider(d: Mapping[str, Any]) -> list[str]:
     mal = [c for c in d["canaux"] or () if c not in CANAUX and c not in CANAUX_ATTENDUS]
     if mal:
         out.append(f"canaux ni enregistrés ni attendus {mal}")
+    out.extend(_valider_donnees(d))
     out.extend(_valider_montant(d["sorte"], d["montant"] or {}))
+    a = (d["montant"] or {}).get("annonce") or {}
+    if a.get("par") == "calcul" and not any(
+            isinstance(x.get("montant_md"), int | float) for x in assiettes(d)):
+        out.append("montant calculé sans assiette chiffrée")
+    return out
+
+
+def assiettes(d: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+    """Les assiettes d'une fiche (D-504), en liste."""
+    a = d.get("assiette")
+    if a is None:
+        return []
+    return list(a) if isinstance(a, list) else [a]
+
+
+def _valider_donnees(d: Mapping[str, Any]) -> list[str]:
+    out: list[str] = []
+    a = d.get("assiette")
+    if a is not None and not isinstance(a, dict | list):
+        return ["assiette ni table ni liste"]
+    for i, x in enumerate(assiettes(d)):
+        if not (isinstance(x, dict) and _source(x.get("texte")) and _source(x.get("source"))):
+            out.append(f"assiette {i} sans texte ou sans source")
+            continue
+        md = x.get("montant_md")
+        if md is not None and not isinstance(md, int | float):
+            out.append(f"assiette {i} : montant « {md} » pas un nombre")
+        if md is not None and x["source"] == NON_SOURCEE:
+            out.append(f"assiette {i} : un montant sans source")
+    cal = d.get("calendrier")
+    if cal is not None and not (isinstance(cal, dict) and _source(cal.get("texte"))
+                                and _source(cal.get("source"))):
+        out.append("calendrier sans texte ou sans source")
     return out
 
 
@@ -247,6 +302,10 @@ def _valider_montant(sorte: str, m: Mapping[str, Any]) -> list[str]:
         a = m.get("annonce") or {}
         if not (a.get("montant_md") and a.get("sens") and _source(a.get("citation"))):
             out.append("hypothèse sans montant annoncé, sens ou citation")
+        if a.get("par", "candidat") not in ("candidat", "calcul"):
+            out.append(f"montant par « {a.get('par')} » (candidat | calcul)")
+        if a.get("par") == "calcul" and not _source(a.get("calcul")):
+            out.append("montant calculé sans son calcul écrit")
         chocs = m.get("chocs") or {}
         if not chocs:
             out.append("hypothèse sans chocs")
@@ -441,6 +500,35 @@ def programme(candidat: str, session: Any, *, vue: str = "vieillie",
         e = entree(f, session, vue=vue, convention=convention, mode=mode)
         (pretes if e.mesure is not None else autres).append(e)
     return pretes, autres
+
+
+def qualite(racine: Path = ICI, candidats: Iterable[str] | None = None
+            ) -> dict[str, dict[str, int]]:
+    """{candidat : compte} des données critiques (D-505) : les fiches par sorte, les
+    hypothèses chiffrées par le candidat et par le calcul, les fiches sans montant, celles
+    qui portent une assiette chiffrée, et les hypothèses sourcées et non sourcées."""
+    out: dict[str, dict[str, int]] = {}
+    for f in fiches(None, racine):
+        c = f["candidat"]
+        if candidats is not None and c not in candidats:
+            continue
+        q = out.setdefault(c, {**dict.fromkeys(SORTES, 0), "hypothese_candidat": 0,
+                               "hypothese_calcul": 0, "sans_montant": 0,
+                               "assiette_chiffree": 0, "hypotheses_sourcees": 0,
+                               "hypotheses_non_sourcees": 0})
+        q[f.sorte] += 1
+        m = f["montant"]
+        if f.sorte == "hypothese":
+            par = (m.get("annonce") or {}).get("par", "candidat")
+            q[f"hypothese_{par}"] += 1
+        if m["origine"] == "aucun" and f.sorte == "parametre":
+            q["sans_montant"] += 1
+        if any(isinstance(x.get("montant_md"), int | float) for x in assiettes(f.donnees)):
+            q["assiette_chiffree"] += 1
+        for h in f["hypotheses"] or ():
+            q["hypotheses_non_sourcees" if h["source"] == NON_SOURCEE
+              else "hypotheses_sourcees"] += 1
+    return out
 
 
 def releve(racine: Path = ICI, candidats: Iterable[str] | None = None

@@ -65,3 +65,10 @@ montant:
   origine: rapport
   scenario: pres2027_attal_a18_suppression_cvae
   rapport: reports/etudes/presidentielle_attal/mesures/a18_suppression_cvae/predictif_pres2027_attal_a18_suppression_cvae.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_attal/mesures/a18_suppression_cvae/premiere_annee_pres2027_attal_a18_suppression_cvae.json
+    ecarts_md:
+      cvae: -3.28
+      impot_societes: 0.62
+      prelevements_entreprise: -2.55

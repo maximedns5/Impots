@@ -10,7 +10,7 @@ source:
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
   date: '2026-11-06'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: 'aucun texte en vigueur : la garantie d''autonomie étendue à toute personne'
   parametre: null
   valeur: null
   enonce: revenu mensuel porté au seuil de pauvreté (1 337 € pour une personne seule) ; la
@@ -47,7 +47,10 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: 'Le bouton de la garantie (garantie_autonomie) porte la mesure des jeunes, chiffrée
-    à part : deux mesures qui règlent le même bouton sont refusées par le chargeur, et la
-    garantie de tous, au-delà de 41 ans, sort des âges du bouton. La loi de finances 2027
-    n''engage que le volet des jeunes. (porte « prestations_hors_modele »)'
+  manque: La loi de finances 2027 n'en engage que le volet des jeunes, chiffré à part ; le
+    volet universel se chiffre sur la population, par le bouton de la garantie, déjà pris
+    par la mesure des jeunes.
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

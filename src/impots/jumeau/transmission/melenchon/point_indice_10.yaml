@@ -9,7 +9,9 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  texte: Décret n° 85-1148 du 24 octobre 1985, art. 3 (la valeur du point d'indice de la fonction
+    publique), relevé par décret ; le candidat veut en outre « inscrire son dégel dans la
+    loi »
   parametre: point_indice_revalorisation, point_indice_contractuels
   valeur:
     point_indice_revalorisation: 1.1
@@ -20,17 +22,27 @@ payeurs:
 - qui: apu:etat
   sens: paie
   par: depense_publique
-- qui: apu:apul
-  sens: paie
-  par: depense_publique
+  part: 0.765
+  note: la fonction publique de l'État (46,5 % de la masse nette) et la compensation intégrale
+    des collectivités (30,0 %) que le candidat promet ; parts du volume de travail en EQTP
+    fois le salaire net moyen par versant, 2024 (Insee, Siasp 2024, « Emploi, chômage, revenus
+    du travail », édition 2026, fiche 29, figure 1)
 - qui: apu:secu:maladie
   sens: paie
   par: depense_publique
-  note: les hôpitaux publics (fonction publique hospitalière), dans les ASSO (Insee, t. 3.212,
-    D1)
+  part: 0.235
+  note: la fonction publique hospitalière (23,5 % de la masse nette, même source), financée
+    par l'Assurance maladie
+- qui: apu:apul
+  sens: paie
+  par: depense_publique
+  part: 0.0
+  note: les collectivités paient leurs agents, l'État les compense « intégralement »
 - qui: menages
   sens: recoit
   par: salaire_net
+  note: +13,46 Md€ de salaires nets, +2,17 Md€ d'IR repris par l'État (rapport de la première
+    année, 2026, figé)
 incidence:
 - horizon: immediat
   qui: les fonctionnaires
@@ -43,10 +55,15 @@ incidence:
   texte: Un effet d'entraînement sur les salaires privés.
   source: non sourcée
 financement:
-  annonce: null
-  source: null
+  annonce: '« Pour financer ces besoins, il est nécessaire de récupérer l''argent là où il
+    s''est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+    plus fortunés et profits des grandes entreprises. »'
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 ; bilan p. 14 : « 106,4 milliards d''euros de recettes, 81,7 milliards de dépenses,
+    24,7 milliards de réduction du déficit »'
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes (106,4
+    Md€ contre 81,7 Md€), sans lier une recette à une dépense
   bilan:
     cout_eur: 11088845339
     chiffre_eur: null
@@ -70,8 +87,42 @@ hypotheses:
     cotisations, la CSG et l''impôt qui en reviennent ; les collectivités sont comptées comme
     l''État, leur compensation éventuelle ne change pas le coût public.'
   source: le chiffrage de la mesure (`programmes/melenchon.json`)
+- texte: Le candidat annonce 17 Md€ ; le rapport chiffre 11,09 Md€ de coût net la première
+    année (le brut +16,67 Md€, les cotisations des employeurs publics et la pension des fonctionnaires
+    de l'État en plus, moins ce qui revient en cotisations, CSG et IR). Le candidat ne dit
+    pas si son montant est brut ou net.
+  source: le rapport de la mesure (`premiere_annee_pres2027_melenchon_point_indice_10.json`)
+    ; Mélenchon, document du 14 octobre 2026, p. 10
+- texte: 'Les primes ne suivent pas le point ; les contractuels non plus (part du salaire
+    indexée sur le point : 0 retenu, non publiée).'
+  source: le chiffrage de la mesure (`programmes/melenchon.json`, plages)
 montant:
   origine: rapport
   scenario: pres2027_melenchon_point_indice_10
   rapport: reports/etudes/presidentielle_melenchon/mesures/point_indice_10/predictif_pres2027_melenchon_point_indice_10.json
   annonce_md: 17.0
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_melenchon/mesures/point_indice_10/premiere_annee_pres2027_melenchon_point_indice_10.json
+    ecarts_md:
+      salaire_net: 13.46
+      salaire_brut: 16.67
+      salaire_super_brut: 29.2
+      cotisations_salariales: 1.91
+      cotisations_employeur: 12.34
+      ir: 2.17
+      csg_deductible: 1.13
+      ppa: -0.16
+      pension_employeur_etat: 6.82
+      revenu_disponible: 11.09
+assiette:
+  texte: les salaires et traitements bruts des administrations publiques (D11), dont le traitement
+    indiciaire des titulaires est la part que le point multiplie
+  montant_md: 247.6
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    D11
+calendrier:
+  texte: loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 10 ; programme, livre, « Une économie au service des besoins », chapitre 2

@@ -2,25 +2,27 @@ schema: 1
 mesure: aah_niveau_smic
 candidat: melenchon
 libelle: AAH portée au niveau du SMIC
-sorte: parametre
+sorte: hypothese
 source:
   citation: « Assurer l'autonomie financière des personnes en situation de handicap en revalorisant
     l'allocation aux adultes handicapés (AAH) à hauteur du SMIC »
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2
   date: '2026-11-06'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: Code de la sécurité sociale, art. L821-1 et s. (l'allocation aux adultes handicapés)
+    et D821-3 (son montant)
   parametre: null
   valeur: null
   enonce: montant de l'AAH = SMIC (net ou brut non dit)
   couche: null
 payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+  note: le programme 157 « Handicap et dépendance »
 - qui: menages
   sens: recoit
   par: prestations
-- qui: apu:secu:famille
-  sens: paie
-  par: depense_publique
 incidence:
 - horizon: immediat
   qui: les allocataires
@@ -34,19 +36,77 @@ incidence:
   source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
     que le rapport de la mesure lit à θ
 financement:
-  annonce: « Assurer l'autonomie financière des personnes en situation de handicap en revalorisant
-    l'allocation aux adultes handicapés (AAH) à hauteur du SMIC »
-  source: « Assurer l'autonomie financière des personnes en situation de handicap en revalorisant
-    l'allocation aux adultes handicapés (AAH) à hauteur du SMIC »
+  annonce: '« Pour financer ces besoins, il est nécessaire de récupérer l''argent là où il
+    s''est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+    plus fortunés et profits des grandes entreprises. »'
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 ; bilan p. 14 : « 106,4 milliards d''euros de recettes, 81,7 milliards de dépenses,
+    24,7 milliards de réduction du déficit »'
   chiffre: false
-  note: le financement est énoncé, pas chiffré mesure par mesure
+  note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes (106,4
+    Md€ contre 81,7 Md€), sans lier une recette à une dépense
+  bilan:
+    cout_eur: 7330000000
+    chiffre_eur: null
+    trou_eur: 7330000000
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - consommation_menages
 - offre_travail
 - financement_sous_secteurs
-hypotheses: []
+hypotheses:
+- texte: Le Smic net (le programme ne dit pas net ou brut) ; au brut, 13,87 Md€.
+  source: non sourcée
+- texte: Le montant tombe sur les prestations en espèces (D62).
+  source: Insee, t. 7.301 (D62)
+- texte: Le montant entre en 2027 et est tenu jusqu'en 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique (la composition moyenne
+    de la dépense publique, G2017-04, p. 106), faute de savoir quelle dépense.'
+  source: non sourcée
 montant:
-  origine: aucun
-  manque: 'Le montant de l''AAH a un bouton (indexations, « aah »), mais la population ne
-    porte ni le handicap ni l''AAH : le bouton n''y mordrait sur personne, et chiffrerait
-    zéro. (porte « donnee_menages »)'
+  origine: hypothese
+  annonce:
+    montant_md: 7.33
+    sens: depense
+    horizon: montant de l'AAH = SMIC (net ou brut non dit)
+    citation: « Assurer l'autonomie financière des personnes en situation de handicap en revalorisant
+      l'allocation aux adultes handicapés (AAH) à hauteur du SMIC »
+    url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2
+    par: calcul
+    calcul: '1,40 million d''allocataires de l''AAH fin 2024 (Drees) × (1 477,93 €, le Smic
+      net mensuel, − 1 041,59 €, l''AAH à taux plein) × 12 mois = 7,33 Md€ par an. L''AAH
+      est différentielle : chacun reçoit l''écart des plafonds ; les nouveaux entrants ne
+      sont pas comptés. Au Smic brut (1 867,02 €), le coût serait 13,87 Md€.'
+  chocs:
+    apu_d_d62: 7.33
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: depense_publique
+  menages_par: prestations
+  entreprises_par: null
+  inclus_dans: null
+assiette:
+- texte: les allocataires de l'AAH fin 2024
+  montant_md: null
+  annee: 2024
+  source: Drees, communiqué du 4 décembre 2025 sur les minima sociaux (1,40 million, +3,3
+    %)
+- texte: la dépense d'AAH (11,97 Md€ en 2022, 1 294 700 allocataires, 788 € par mois en moyenne)
+  montant_md: 11.97
+  annee: 2022
+  source: Drees, « Minima sociaux et prestations sociales », édition 2024, fiche 07, tableau
+    1
+- texte: le montant de l'AAH à taux plein (1 041,59 €) et le Smic net (1 477,93 €)
+  montant_md: null
+  annee: 2026
+  source: service-public.gouv.fr, fiches F12242 et F2300
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

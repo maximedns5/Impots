@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
   date: '2026-11-06'
 levier:
-  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  texte: Code général des impôts, art. 163 quatervicies (la déduction des versements sur un
+    plan d'épargne retraite) ; Code monétaire et financier, art. L224-1 et s.
   parametre: null
   valeur: null
   enonce: abrogation (dispositifs non nommés)
@@ -47,5 +48,17 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: Les versements des ménages sur l'épargne retraite ne sont pas dans la population.
-    (porte « donnee_menages »)
+  manque: 'La déduction des versements sur un PER individuel n''est pas une dépense fiscale
+    au sens des Voies et moyens, et la dépense n° 120108 ne sépare pas la retraite de l''épargne
+    salariale : le programme ne nomme pas les dispositifs.'
+assiette:
+  texte: l'exonération des sommes versées à l'épargne salariale et aux plans d'épargne retraite
+    d'entreprise (n° 120108) ; elle mêle participation, intéressement et retraite
+  montant_md: 2.89
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, « dépenses fiscales
+    les plus coûteuses », n° 120108
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

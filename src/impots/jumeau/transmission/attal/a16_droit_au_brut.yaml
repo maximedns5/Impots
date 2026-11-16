@@ -109,3 +109,14 @@ montant:
   origine: rapport
   scenario: pres2027_attal_a16_droit_au_brut
   rapport: reports/etudes/presidentielle_attal/mesures/a16_droit_au_brut/predictif_pres2027_attal_a16_droit_au_brut.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_attal/mesures/a16_droit_au_brut/premiere_annee_pres2027_attal_a16_droit_au_brut.json
+    ecarts_md:
+      salaire_net: 77.14
+      cotisations_salariales: -77.14
+      ir: 12.05
+      ppa: -1.54
+      rsa: -0.05
+      aide_logement: -0.29
+      revenu_disponible: 63.14

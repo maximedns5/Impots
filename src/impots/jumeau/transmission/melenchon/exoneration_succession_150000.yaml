@@ -8,8 +8,7 @@ source:
   url: https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2
   date: '2026-11-06'
 levier:
-  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
-    IFI (art. 964 et s.)'
+  texte: Code général des impôts, art. 779 (l'abattement de 100 000 € en ligne directe)
   parametre: null
   valeur: null
   enonce: 'seuil : 150 000 € par héritage'
@@ -46,4 +45,15 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: Le moteur n'a pas de module des transmissions. (porte « transmission »)
+  manque: La distribution des successions par montant hérité n'est pas dans les documents
+    lus ; le coût, compensé par la réforme des droits de succession (20 Md€), n'est pas calculable
+    seul.
+assiette:
+  texte: les droits de succession
+  montant_md: 17.0
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1706
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

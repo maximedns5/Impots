@@ -82,3 +82,12 @@ montant:
   scenario: pres2027_retailleau_r27_revenu_familial
   rapport: reports/etudes/presidentielle_retailleau/mesures/r27_revenu_familial/predictif_pres2027_retailleau_r27_revenu_familial.json
   annonce_md: 0.7
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_retailleau/mesures/r27_revenu_familial/premiere_annee_pres2027_retailleau_r27_revenu_familial.json
+    ecarts_md:
+      ir: 11.36
+      ppa: 1.64
+      rsa: 0.84
+      af: -12.09
+      revenu_disponible: 21.0

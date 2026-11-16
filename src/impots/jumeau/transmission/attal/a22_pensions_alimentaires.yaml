@@ -62,3 +62,9 @@ montant:
   origine: rapport
   scenario: pres2027_attal_a22_pensions_alimentaires
   rapport: reports/etudes/presidentielle_attal/mesures/a22_pensions_alimentaires/predictif_pres2027_attal_a22_pensions_alimentaires.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_attal/mesures/a22_pensions_alimentaires/premiere_annee_pres2027_attal_a22_pensions_alimentaires.json
+    ecarts_md:
+      ir: -0.19
+      revenu_disponible: 0.19

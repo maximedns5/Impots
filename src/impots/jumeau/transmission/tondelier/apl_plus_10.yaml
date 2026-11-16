@@ -61,3 +61,10 @@ montant:
   origine: rapport
   scenario: pres2027_tondelier_apl_plus_10
   rapport: reports/etudes/presidentielle_tondelier/mesures/apl_plus_10/predictif_pres2027_tondelier_apl_plus_10.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_tondelier/mesures/apl_plus_10/premiere_annee_pres2027_tondelier_apl_plus_10.json
+    ecarts_md:
+      ppa: -0.11
+      aide_logement: 1.44
+      revenu_disponible: 1.33

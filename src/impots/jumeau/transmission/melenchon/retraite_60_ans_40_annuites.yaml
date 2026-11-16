@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  texte: Code de la sécurité sociale, art. L161-17-2 (l'âge légal) et L161-17-3 (la durée
+    d'assurance pour le taux plein)
   parametre: null
   valeur: null
   enonce: 60 ans, 40 annuités, « objectif sur un mandat »
@@ -46,5 +47,14 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: Ni l'âge ni la durée d'assurance ne sont des paramètres du moteur, dont les pensions
-    sont des données. (porte « retraites »)
+  manque: Le coût d'un âge et d'une durée dépend des générations, des carrières et des projections
+    du COR ; aucune statistique publique ne donne le coût de 60 ans et 40 annuités à partir
+    de l'assiette, et le candidat n'en donne pas.
+assiette:
+  texte: les prestations légales vieillesse nettes de la CNAV
+  montant_md: 167.4
+  annee: 2025
+  source: Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche CNAV
+calendrier:
+  texte: « objectif sur un mandat »
+  source: Mélenchon, document du 14 octobre 2026, p. 11

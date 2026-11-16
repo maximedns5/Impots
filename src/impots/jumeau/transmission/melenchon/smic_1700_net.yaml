@@ -9,7 +9,9 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  texte: Code du travail, art. L3231-1 et suivants (le salaire minimum de croissance, relevé
+    par décret) ; Code de la sécurité sociale, art. L241-13 (la réduction générale, calculée
+    sur le Smic)
   parametre: smic_revalorisation, smic_diffusion_profil, smic_diffusion_echelle
   valeur:
     smic_revalorisation: 1.1617
@@ -64,7 +66,8 @@ financement:
   annonce: null
   source: null
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: une hausse du Smic est payée par les employeurs ; le candidat ne dit pas qui paie
+    la hausse des allègements généraux qui suivent le Smic
   bilan:
     cout_eur: 29744789084
     chiffre_eur: null
@@ -81,14 +84,63 @@ canaux:
 - incidence_cotisations
 - compensation_exonerations
 hypotheses:
-- texte: Pas de diffusion aux salaires voisins dans le chiffrage de l'étude (`smic_diffusion_echelle`
-    à 0).
-  valeur: 0.0
-  source: le chiffrage de la mesure (`programmes/<candidat>.json`)
-- texte: 'Le jumeau ne lit pas le Smic réel efficace sans une hypothèse de diffusion (D-469,
-    J2) : le volet `travail` la porte.'
-  source: D-469
+- texte: 'Le SMIC mensuel porté à 1 700 € nets, « immédiatement ». Le bouton est un coefficient
+    sur le SMIC horaire brut de chaque mois de 2026, qui en porte deux : 12,02 € de janvier
+    à mai (1 823,03 € bruts par mois), 12,31 € de juin à décembre (1 867,02 €), 1 848,69 €
+    en moyenne. Le coefficient retenu, 1,1617, donne 1 700 € nets par mois en moyenne sur
+    l''année ; la plage va de 1,1503 (1 700 € nets atteints depuis le SMIC de juin) à 1,178
+    (depuis celui de janvier). Le net est le brut moins les prélèvements salariaux d''un non-cadre
+    sous le plafond (vieillesse 7,30 %, Agirc-Arrco et CEG 4,01 %, CSG et CRDS 9,70 % sur
+    98,25 % du brut), soit 79,16 % du brut, sans mutuelle ni prévoyance. La diffusion au-dessus
+    du nouveau SMIC, entre 1 et 1,5 SMIC dans le privé, est une hypothèse déclarée (D-380)
+    : le profil à un an avec effets fixes d''entreprise de Koubi et Lhommeau (Insee, Les salaires
+    en France 2007), le plus large des quatre publiés, à l''échelle 0 pour la valeur du candidat
+    (le premier jour, la loi seule relève les salaires horaires sous le nouveau SMIC), sa
+    plage allant jusqu''à 1 (le profil entier). La mesure se mesure contre le SMIC de l''arbre
+    de 2026. Le coût ne compte pas le salaire que paie un employeur privé ; il compte celui
+    que paie l''État employeur (les agents publics relevés au SMIC), les cotisations, la CSG
+    et l''impôt qui montent, la prime d''activité qui bouge, et les allègements généraux,
+    qui suivent le SMIC : un SMIC relevé les élargit aussi pour les salaires qui ne bougent
+    pas.'
+  source: le chiffrage de la mesure (`programmes/melenchon.json`)
+- texte: Le chiffrage relève le Smic de 16,17 % (le Smic de la population de 2024) ; au Smic
+    de juin 2026, 1 700 € net en font +15,0 %.
+  source: le chiffrage de la mesure ; service-public.gouv.fr, fiche F2300
+- texte: 'Les allègements généraux suivent le Smic : +35,34 Md€ d''allègements dans la passe
+    de la première année, que l''État compense à la Sécurité sociale.'
+  source: le rapport de la mesure ; Code de la sécurité sociale, art. L131-7
+- texte: Pas de diffusion aux salaires voisins dans le chiffrage (`smic_diffusion_echelle`
+    à 0) ; le bloc `travail` du jumeau la porte.
+  source: le chiffrage de la mesure (`programmes/melenchon.json`) ; D-469, D-478
 montant:
   origine: rapport
   scenario: pres2027_melenchon_smic_1700_net
   rapport: reports/etudes/presidentielle_melenchon/mesures/smic_1700_net/predictif_pres2027_melenchon_smic_1700_net.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_melenchon/mesures/smic_1700_net/premiere_annee_pres2027_melenchon_smic_1700_net.json
+    ecarts_md:
+      salaire_net: 6.7
+      salaire_brut: 8.44
+      salaire_super_brut: -23.23
+      cotisations_salariales: 0.95
+      cotisations_employeur: 3.66
+      allegement_general: 35.34
+      ir: 0.38
+      csg_deductible: 0.56
+      ppa: -1.33
+      aide_logement: -0.07
+      aspa: 0.16
+      pension_employeur_etat: 0.24
+      revenu_disponible: 5.27
+assiette:
+  texte: 'le Smic mensuel net de 35 heures (1 477,93 €, indicatif) et brut (1 867,02 €, 12,31
+    € de l''heure) : 1 700 € net en est +15,0 %'
+  montant_md: null
+  annee: 2026
+  source: service-public.gouv.fr, fiche F2300 (vérifiée le 1er juin 2026 ; arrêté du 22 mai
+    2026 relatif au relèvement du salaire minimum de croissance)
+calendrier:
+  texte: « immédiatement »
+  source: 'programme de Mélenchon, livre, « Une économie au service des besoins », chapitre
+    2 : « Augmenter immédiatement le SMIC à 1 700 euros net mensuel »'

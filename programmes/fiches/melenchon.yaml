@@ -1,0 +1,1403 @@
+# Les données critiques des fiches de transmission de Mélenchon, mesure par mesure
+# (but 27, volet `fiches`, D-504). Lu par `scripts/jumeau_fiches_transmission.py`, qui
+# écrit `src/impots/jumeau/transmission/melenchon/<mesure>.yaml` : cette table passe avant
+# les fiches précises et les gabarits du script. Chaque nombre a sa source : le candidat,
+# la loi, ou une statistique publique (aucun chiffrage de tiers du programme n'a été lu).
+# Un calcul (assiette fois paramètre) est écrit en entier ; « non sourcée » dit ce que rien
+# ne porte.
+
+_sources:
+  ns: &NS non sourcée
+  doc: &DOC "Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    14 octobre 2026 (melenchon2027.fr)"
+  debut: &H_DEBUT
+    texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document
+      décrit.
+    source: "Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+      p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un
+      ajustement de 25 milliards d'euros l'année prochaine »"
+  tenu: &H_TENU
+    texte: Le montant de la première année est tenu chaque année de 2027 à 2035, en euros
+      courants ; le candidat ne donne qu'un montant annuel, sans trajectoire.
+    source: non sourcée
+  rho: &H_RHO
+    texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+    source: non sourcée
+  var_dep: &H_VAR_DEP
+    texte: "La variante de Mésange la plus proche : depense_publique (la composition moyenne
+      de la dépense publique, G2017-04, p. 106), faute de savoir quelle dépense."
+    source: non sourcée
+  var_aucune: &H_VAR_AUCUNE
+    texte: "Aucune variante de Mésange pour cet impôt : le mode réduit ne lit aucun effet
+      sur l'activité, seulement la recette."
+    source: "Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et
+      nouveautés », document de travail G2017-04, §4 (les variantes publiées)"
+  fin_dep: &FIN_DEP
+    annonce: "« Pour financer ces besoins, il est nécessaire de récupérer l'argent là où il
+      s'est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+      plus fortunés et profits des grandes entreprises. »"
+    source: "Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+      p. 6 ; bilan p. 14 : « 106,4 milliards d'euros de recettes, 81,7 milliards de
+      dépenses, 24,7 milliards de réduction du déficit »"
+    chiffre: false
+    note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes
+      (106,4 Md€ contre 81,7 Md€), sans lier une recette à une dépense
+  fin_rec: &FIN_REC
+    annonce: "« Une partie de cette œuvre de justice fiscale devra être orientée vers la
+      réduction de notre déficit »"
+    source: "Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+      p. 6"
+    chiffre: true
+    note: une recette du programme ; son bilan (p. 14) en affecte 81,7 Md€ aux dépenses et
+      24,7 Md€ au déficit, sans dire laquelle va où
+  vm1: &VM1 "Annexe au projet de loi de finances pour 2026, Évaluation des voies et moyens,
+    tome 1 (recettes)"
+  vm2: &VM2 "Annexe au projet de loi de finances pour 2026, Évaluation des voies et moyens,
+    tome 2 (dépenses fiscales)"
+  ccss: &CCSS "Commission des comptes de la Sécurité sociale, « Les comptes de la Sécurité
+    sociale », mai 2026"
+  cal27: &CAL27
+    texte: dès 2027, par la loi de finances pour 2027
+    source: "Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+      p. 6"
+  cal_livre: &CAL_LIVRE
+    texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+      loi de finances pour 2027 du document du 14 octobre
+    source: "programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)"
+  etat_paie: &ETAT_PAIE {qui: "apu:etat", sens: paie, par: depense_publique}
+
+# --------------------------------------------------------------- les chiffrées (rapports)
+point_indice_10:
+  levier:
+    texte: "Décret n° 85-1148 du 24 octobre 1985, art. 3 (la valeur du point d'indice de
+      la fonction publique), relevé par décret ; le candidat veut en outre « inscrire son
+      dégel dans la loi »"
+  assiette:
+    texte: les salaires et traitements bruts des administrations publiques (D11), dont le
+      traitement indiciaire des titulaires est la part que le point multiplie
+    montant_md: 247.6
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+      D11"
+  payeurs:
+  - qui: "apu:etat"
+    sens: paie
+    par: depense_publique
+    part: 0.765
+    note: "la fonction publique de l'État (46,5 % de la masse nette) et la compensation
+      intégrale des collectivités (30,0 %) que le candidat promet ; parts du volume de
+      travail en EQTP fois le salaire net moyen par versant, 2024 (Insee, Siasp 2024,
+      « Emploi, chômage, revenus du travail », édition 2026, fiche 29, figure 1)"
+  - qui: "apu:secu:maladie"
+    sens: paie
+    par: depense_publique
+    part: 0.235
+    note: la fonction publique hospitalière (23,5 % de la masse nette, même source),
+      financée par l'Assurance maladie
+  - qui: "apu:apul"
+    sens: paie
+    par: depense_publique
+    part: 0.0
+    note: les collectivités paient leurs agents, l'État les compense « intégralement »
+  - qui: menages
+    sens: recoit
+    par: salaire_net
+    note: "+13,46 Md€ de salaires nets, +2,17 Md€ d'IR repris par l'État (rapport de la
+      première année, 2026, figé)"
+  calendrier:
+    texte: loi de finances pour 2027
+    source: "Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+      p. 10 ; programme, livre, « Une économie au service des besoins », chapitre 2"
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: Le candidat annonce 17 Md€ ; le rapport chiffre 11,09 Md€ de coût net la
+      première année (le brut +16,67 Md€, les cotisations des employeurs publics et la
+      pension des fonctionnaires de l'État en plus, moins ce qui revient en cotisations,
+      CSG et IR). Le candidat ne dit pas si son montant est brut ou net.
+    source: "le rapport de la mesure (`premiere_annee_pres2027_melenchon_point_indice_10.json`)
+      ; Mélenchon, document du 14 octobre 2026, p. 10"
+  - texte: "Les primes ne suivent pas le point ; les contractuels non plus (part du salaire
+    indexée sur le point : 0 retenu, non publiée)."
+    source: le chiffrage de la mesure (`programmes/melenchon.json`, plages)
+
+indexation_pensions_prestations_10:
+  levier:
+    texte: "Code de la sécurité sociale, art. L161-25 (la revalorisation annuelle des
+      pensions et prestations sur l'inflation) ; Code de la construction et de
+      l'habitation, art. L823-4 (les paramètres des aides personnelles au logement) ; pour
+      les retraites complémentaires, l'accord national interprofessionnel Agirc-Arrco, que
+      la loi ne fixe pas"
+  assiette:
+  - texte: les prestations sociales en espèces des APU (D62), pensions comprises
+    montant_md: 580.9
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+      D62"
+  - texte: les prestations légales vieillesse nettes de la CNAV
+    montant_md: 167.4
+    annee: 2025
+    source: "Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche
+      CNAV (prestations légales nettes, 167 398 M€)"
+  payeurs:
+  - qui: "apu:secu:vieillesse"
+    sens: paie
+    par: depense_publique
+    note: "+37,56 Md€ de pensions imposables dans le rapport (2026, figé), tous régimes
+      ensemble : la passe ne sépare pas la CNAV, la fonction publique et l'Agirc-Arrco"
+  - qui: "apu:secu:retraite_complementaire"
+    sens: paie
+    par: depense_publique
+    note: les pensions complémentaires sont dans les +37,56 Md€ ; leur revalorisation
+      relève de l'Agirc-Arrco, que le candidat ne nomme pas
+  - qui: "apu:secu:famille"
+    sens: paie
+    par: depense_publique
+    note: "+1,20 Md€ d'allocations familiales, +0,95 Md€ d'ASF (rapport)"
+  - qui: "apu:etat"
+    sens: paie
+    par: depense_publique
+    note: "+1,12 Md€ d'aides au logement (rapport) ; l'État reprend +6,17 Md€ d'IR et
+      +3,91 Md€ de CSG sur les pensions"
+  - qui: menages
+    sens: recoit
+    par: retraite
+    note: "+31,97 Md€ de revenu disponible (rapport, 2026, figé)"
+  calendrier: *CAL27
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: Le candidat annonce 8 Md€ ; le rapport chiffre 31,97 Md€ la première année, une
+      revalorisation de 10 % de toutes les pensions et des prestations nommées au-dessus
+      du droit de 2026. Le candidat ne dit pas si ses 8 Md€ s'entendent au-delà de
+      l'indexation sur l'inflation ; l'écart n'est pas résolu ici.
+    source: "le rapport de la mesure ; Mélenchon, document du 14 octobre 2026, p. 10 :
+      « toutes les pensions, allocations familiales et APL, qui seront rehaussées de 10 %
+      (8 milliards d'euros) »"
+
+smic_1700_net:
+  levier:
+    texte: "Code du travail, art. L3231-1 et suivants (le salaire minimum de croissance,
+      relevé par décret) ; Code de la sécurité sociale, art. L241-13 (la réduction générale,
+      calculée sur le Smic)"
+  assiette:
+    texte: "le Smic mensuel net de 35 heures (1 477,93 €, indicatif) et brut (1 867,02 €,
+      12,31 € de l'heure) : 1 700 € net en est +15,0 %"
+    montant_md: null
+    annee: 2026
+    source: "service-public.gouv.fr, fiche F2300 (vérifiée le 1er juin 2026 ; arrêté du 22
+      mai 2026 relatif au relèvement du salaire minimum de croissance)"
+  calendrier:
+    texte: « immédiatement »
+    source: "programme de Mélenchon, livre, « Une économie au service des besoins »,
+      chapitre 2 : « Augmenter immédiatement le SMIC à 1 700 euros net mensuel »"
+  financement:
+    annonce: null
+    source: null
+    chiffre: false
+    note: une hausse du Smic est payée par les employeurs ; le candidat ne dit pas qui paie
+      la hausse des allègements généraux qui suivent le Smic
+  hypotheses:
+  - texte: Le chiffrage relève le Smic de 16,17 % (le Smic de la population de 2024) ; au
+      Smic de juin 2026, 1 700 € net en font +15,0 %.
+    source: "le chiffrage de la mesure ; service-public.gouv.fr, fiche F2300"
+  - texte: "Les allègements généraux suivent le Smic : +35,34 Md€ d'allègements dans la
+      passe de la première année, que l'État compense à la Sécurité sociale."
+    source: "le rapport de la mesure ; Code de la sécurité sociale, art. L131-7"
+  - texte: Pas de diffusion aux salaires voisins dans le chiffrage (`smic_diffusion_echelle`
+      à 0) ; le bloc `travail` du jumeau la porte.
+    source: le chiffrage de la mesure (`programmes/melenchon.json`) ; D-469, D-478
+
+garantie_autonomie_jeunes:
+  levier:
+    texte: "aucun texte en vigueur : une prestation nouvelle, à créer par la loi ; le
+      bouton `garantie_autonomie` du moteur"
+  assiette:
+    texte: "le seuil de pauvreté retenu par le candidat, 1 337 € par mois pour une personne
+      seule"
+    montant_md: null
+    annee: 2026
+    source: "Mélenchon, document du 14 octobre 2026, p. 10 : « plus aucun jeune ne doit
+      vivre sous le seuil de pauvreté, fixé à 1 337 euros par mois »"
+  payeurs:
+  - qui: "apu:etat"
+    sens: paie
+    par: depense_publique
+    note: la caisse qui verse n'est pas dite ; l'État par défaut
+  - qui: menages
+    sens: recoit
+    par: prestations
+    note: "+35,65 Md€ versés la première année (rapport, recours compris) ; +51,92 Md€ de
+      droits"
+  calendrier: *CAL27
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: Le candidat annonce 9,5 Md€ ; le rapport chiffre 35,65 Md€ versés (51,92 Md€ de
+      droits) la première année. L'écart tient à la définition du jeune et du revenu pris
+      en compte, que le candidat ne donne pas.
+    source: "le rapport de la mesure ; Mélenchon, document du 14 octobre 2026, p. 10"
+  - texte: L'État verse la garantie.
+    source: non sourcée
+
+suppression_pfu:
+  levier:
+    texte: "Code général des impôts, art. 200 A (le prélèvement forfaitaire unique de 12,8 %
+      sur les revenus du capital) : supprimé, ces revenus vont au barème (art. 197)"
+  assiette:
+    texte: les recettes de PFO et de PFU (l'acompte de 12,8 % sur les dividendes et
+      intérêts), dans l'impôt sur le revenu net
+    montant_md: 8.1
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, impôt sur le revenu,
+      tableau de composition (ligne « PFO/PFU » : 7,5 ; 8,0 ; 8,1 Md€ en 2024, 2025,
+      2026)"
+  payeurs:
+  - qui: menages
+    sens: paie
+    par: ir
+    note: "+13,89 Md€ d'IR la première année (rapport, 2026, figé) : les ménages qui ont
+      des revenus du capital"
+  - qui: "apu:etat"
+    sens: recoit
+    par: impot_sur_le_revenu
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le candidat annonce 9 Md€ ; le rapport chiffre 13,79 Md€ de recette la première
+      année, sans réponse des dividendes versés.
+    source: "le rapport de la mesure ; Mélenchon, document du 14 octobre 2026, p. 13"
+
+exonerations_au_dela_2_smic:
+  levier:
+    texte: "Code de la sécurité sociale, art. L241-13 (la réduction générale des cotisations
+      patronales) et art. L241-2-1 et L241-6-1 (les taux réduits maladie et famille) : le
+      plafond des allègements ramené à 2 Smic"
+  assiette:
+    texte: le coût des allègements généraux de cotisations en 2025 (le montant que le
+      candidat cite aussi)
+    montant_md: 75.6
+    annee: 2025
+    source: "Commission des comptes de la Sécurité sociale, mai 2026, §1.6 « Les dispositifs
+      d'exonération en faveur de l'emploi »"
+  payeurs:
+  - qui: entreprises
+    sens: paie
+    par: cotisations_employeurs
+    note: "+6,33 Md€ de coût du travail au-dessus de 2 Smic (rapport, 2026, figé)"
+  - qui: "apu:etat"
+    sens: recoit
+    par: cotisations_employeurs
+    note: moins de compensation des allègements à la Sécurité sociale (art. L131-7 CSS)
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: "Le candidat ne chiffre pas cette mesure : le total de ses recettes (106,4 Md€,
+      p. 14) est la somme exacte de ses quatorze recettes chiffrées, sans elle. Elle peut
+      aussi être comprise dans les 22 Md€ des niches sociales ; le document ne le dit
+      pas."
+    source: "Mélenchon, document du 14 octobre 2026, p. 13-14 (somme : 9 + 10 + 22 + 3 + 15
+      + 20 + 3 + 5 + 3,9 + 5 + 5 + 2,5 + 1 + 2 = 106,4)"
+
+defiscalisation_pensions_alimentaires:
+  levier:
+    texte: "Code général des impôts, art. 79 (les pensions alimentaires reçues sont
+      imposables) et art. 156, II, 2° (leur déduction chez le débiteur) : les pensions
+      reçues exonérées"
+  payeurs:
+  - qui: menages
+    sens: recoit
+    par: ir
+    note: "−0,19 Md€ d'IR (rapport, 2026, figé)"
+  - qui: "apu:etat"
+    sens: paie
+    par: impot_sur_le_revenu
+  calendrier: *CAL_LIVRE
+  hypotheses:
+  - texte: La déduction chez le parent qui verse la pension est maintenue.
+    source: non sourcée
+
+# ------------------------------------------------------ les montants déclarés (hypothèses)
+logements_urgence:
+  levier:
+    texte: "Code de l'action sociale et des familles, art. L345-2 et s. (l'hébergement
+      d'urgence) ; Code de la construction et de l'habitation, art. L641-1 et s. (la
+      réquisition de logements vacants)"
+  payeurs: [*ETAT_PAIE]
+  calendrier: *CAL27
+  financement: *FIN_DEP
+  hypotheses: [*H_DEBUT, *H_TENU, *H_RHO, *H_VAR_DEP]
+
+postes_education:
+  code: D1
+  levier:
+    texte: "loi de finances, mission « Enseignement scolaire » : le plafond d'emplois du
+      ministère"
+  assiette:
+    texte: "10 000 postes pour 500 M€ : 50 000 € par poste et par an, le coût que le
+      candidat suppose"
+    montant_md: null
+    annee: 2027
+    source: "Mélenchon, document du 14 octobre 2026, p. 10"
+  payeurs: [*ETAT_PAIE]
+  calendrier:
+    texte: « pour l'année prochaine », 2027
+    source: "Mélenchon, document du 14 octobre 2026, p. 10"
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: Le montant tombe sur des rémunérations d'agents publics (D1) ; ce sont des postes.
+    source: "Mélenchon, document du 14 octobre 2026, p. 10 : « ouvrir 10 000 postes … ce qui
+      … représente 500 millions d'euros »"
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - texte: "La variante de Mésange la plus proche : depense_publique."
+    source: non sourcée
+
+cantine_gratuite:
+  code: RP13
+  levier:
+    texte: "Code de l'éducation, art. R531-52 (le prix de la restauration scolaire, fixé
+      par la collectivité qui en a la charge) : le prix ramené à zéro"
+  payeurs:
+  - qui: "apu:apul"
+    sens: paie
+    par: depense_publique
+    note: les communes (écoles), les départements (collèges), les régions (lycées) perdent
+      le prix payé par les familles
+  - qui: menages
+    sens: recoit
+    par: autre
+  calendrier: *CAL27
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: "Le montant entier tombe sur les paiements partiels des ménages (P13) : les
+      familles cessent de payer, les repas servis ne changent pas."
+    source: non sourcée
+  - texte: Les collectivités, qui fixent et perçoivent le prix, portent la perte ; le
+      candidat ne dit pas si l'État les compense.
+    source: "Code de l'éducation, art. R531-52"
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+places_universite:
+  levier:
+    texte: "loi de finances, mission « Recherche et enseignement supérieur », programme 150
+      (formations supérieures)"
+  payeurs: [*ETAT_PAIE]
+  calendrier: *CAL27
+  financement: *FIN_DEP
+  hypotheses: [*H_DEBUT, *H_TENU, *H_RHO, *H_VAR_DEP]
+
+hopitaux:
+  parts:
+    chocs: {apu_d_d1: 0.64, apu_d_p2: 0.36}
+    instrument: depense_publique
+  levier:
+    texte: "Code de la sécurité sociale, art. L162-22-9 et L174-1 (l'objectif de dépenses
+      des établissements de santé, dans l'ONDAM voté en LFSS)"
+  assiette:
+    texte: les charges du budget principal des hôpitaux publics, dont 63,3 Md€ de charges
+      de personnel (titre 1)
+    montant_md: 99.4
+    annee: 2024
+    source: "Drees, « Les établissements de santé », édition 2026, fiche 25 « La situation
+      financière des hôpitaux publics »"
+  payeurs:
+  - qui: "apu:secu:maladie"
+    sens: paie
+    par: depense_publique
+    note: l'Assurance maladie finance les hôpitaux par l'ONDAM
+  - qui: menages
+    sens: recoit
+    par: salaire_net
+    note: au moins 10 000 postes de soignants
+  calendrier: *CAL27
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: "Les 3 Md€ se partagent comme les charges des hôpitaux publics : 64 % de
+      rémunérations (D1, 63,3 sur 99,4 Md€ en 2024), 36 % de consommations (P2)."
+    source: "Drees, « Les établissements de santé », édition 2026, fiche 25"
+  - texte: "10 000 postes au salaire net moyen de l'hôpital (2 980 € par mois en EQTP, 2024)
+      font 0,36 Md€ de salaires nets : les postes ne sont qu'une part des 3 Md€."
+    source: "Insee, Siasp 2024, « Emploi, chômage, revenus du travail », édition 2026, fiche
+      29, figure 1"
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_DEP
+
+plan_violences_sexistes:
+  levier:
+    texte: "loi de finances, programme 137 « Égalité entre les femmes et les hommes » et
+      crédits interministériels"
+  assiette:
+    texte: "le budget à atteindre, 3 Md€, dont 2,6 Md€ de plus : 0,4 Md€ aujourd'hui selon
+      le candidat"
+    montant_md: 0.4
+    annee: 2026
+    source: "Mélenchon, document du 14 octobre 2026, p. 11 : « atteindre les 3 milliards
+      d'euros de budget … (soit 2,6 milliards d'euros supplémentaires) »"
+  payeurs: [*ETAT_PAIE]
+  calendrier: *CAL27
+  financement: *FIN_DEP
+  hypotheses: [*H_DEBUT, *H_TENU, *H_RHO, *H_VAR_DEP]
+
+violences_enfants:
+  levier:
+    texte: "loi de finances (crédits non désignés) ; Code de l'action sociale et des
+      familles, art. L221-1 (l'aide sociale à l'enfance, des départements)"
+  payeurs: [*ETAT_PAIE]
+  calendrier: *CAL27
+  financement: *FIN_DEP
+  hypotheses: [*H_DEBUT, *H_TENU, *H_RHO, *H_VAR_DEP]
+
+annulation_coupes_indexation:
+  levier:
+    texte: "loi de finances pour 2027 : les crédits des services publics réduits depuis
+      2026, rétablis puis indexés sur l'inflation"
+  payeurs: [*ETAT_PAIE]
+  calendrier: *CAL27
+  financement: *FIN_DEP
+  hypotheses: [*H_DEBUT, *H_TENU, *H_RHO, *H_VAR_DEP]
+
+planification_ecologique:
+  levier:
+    texte: "loi de finances (crédits d'investissement, non désignés)"
+  payeurs: [*ETAT_PAIE]
+  calendrier:
+    texte: « dès 2026 » selon le document ; 2027 au plus tôt pour une loi de finances
+    source: "Mélenchon, document du 14 octobre 2026, p. 12"
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: Le montant est de l'investissement public (P51g).
+    source: "Mélenchon, document du 14 octobre 2026, p. 12 : « 10 milliards devront être
+      investis »"
+  - texte: "La variante de Mésange la plus proche : investissement_public."
+    source: "Insee et DG Trésor, G2017-04, §4 (la variante d'investissement public)"
+  - texte: "Le pôle public bancaire porte « la majorité des investissements » de la
+      planification, hors budget : il n'est pas compté ici."
+    source: "Mélenchon, document du 14 octobre 2026, p. 12, note 1"
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+
+abrogation_reforme_2023:
+  levier:
+    texte: "loi n° 2023-270 du 14 avril 2023 de financement rectificative de la Sécurité
+      sociale pour 2023 (art. 10 : l'âge légal porté à 64 ans ; Code de la sécurité
+      sociale, art. L161-17-2 et L161-17-3)"
+  assiette:
+    texte: les prestations légales vieillesse nettes de la CNAV, dont le montant de 9 Md€
+      est 5,4 %
+    montant_md: 167.4
+    annee: 2025
+    source: "Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche
+      CNAV"
+  payeurs:
+  - qui: "apu:secu:vieillesse"
+    sens: paie
+    par: depense_publique
+  - qui: "apu:secu:retraite_complementaire"
+    sens: paie
+    par: depense_publique
+    note: l'âge de l'Agirc-Arrco suit celui du régime général ; la part n'est pas dite
+  - qui: menages
+    sens: recoit
+    par: retraite
+  calendrier:
+    texte: « dès l'année prochaine », « abrogation immédiate »
+    source: "Mélenchon, document du 14 octobre 2026, p. 11"
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: Le montant tombe sur des pensions (D62), aux ménages au prorata des pensions.
+    source: "le compte des APU (Insee, t. 7.301) : les pensions sont des prestations en
+      espèces (D62)"
+  - texte: Le montant tenu de 2027 à 2035 ; le coût d'un âge abaissé croît en réalité avec
+      les générations concernées, ce que le candidat ne chiffre pas.
+    source: non sourcée
+  - *H_DEBUT
+  - *H_RHO
+  - *H_VAR_DEP
+
+abrogation_assurance_chomage:
+  levier:
+    texte: "Code du travail, art. L5422-1 et s. ; décret n° 2019-797 du 26 juillet 2019 et
+      ses suites, loi n° 2022-1598 du 21 décembre 2022 (la modulation de la durée) : les
+      conditions d'accès, le salaire de référence, la durée et la dégressivité"
+  payeurs:
+  - qui: "apu:secu:chomage"
+    sens: paie
+    par: depense_publique
+    note: l'Unédic
+  - qui: menages
+    sens: recoit
+    par: chomage_brut
+  calendrier:
+    texte: « dès l'année prochaine »
+    source: "Mélenchon, document du 14 octobre 2026, p. 12"
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: Le montant tombe sur des allocations chômage (D62), aux ménages au prorata du
+      chômage.
+    source: "Mélenchon, document du 14 octobre 2026, p. 12 (conditions d'accès, montant,
+      durée et dégressivité de l'indemnité)"
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_DEP
+
+impot_fortune_renforce:
+  levier:
+    texte: "Code général des impôts, art. 964 et s. (l'impôt sur la fortune immobilière),
+      remplacé par un impôt sur la fortune « renforcé » (l'ancien ISF, art. 885 A et s.
+      abrogés en 2018)"
+  assiette:
+    texte: le produit de l'impôt sur la fortune immobilière, que l'impôt rétabli remplace ;
+      les 10 Md€ du candidat en font plus de trois fois le montant
+    montant_md: 3.095
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1406"
+  payeurs:
+  - qui: menages
+    sens: paie
+    par: patrimoine
+    note: la population n'en porte pas
+  - qui: "apu:etat"
+    sens: recoit
+    par: capital_menages
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Les 10 Md€ s'ajoutent à l'IFI, ou le remplacent ; le document ne le dit pas.
+    source: non sourcée
+  - texte: Le montant tombe sur les impôts courants sur le patrimoine (D59, dans D5).
+    source: "Insee, t. 7.301 : l'IFI est un impôt courant sur le patrimoine (D59)"
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+niches_fiscales_sociales:
+  levier:
+    texte: "Code général des impôts et Code de la sécurité sociale : les dépenses fiscales
+      et les exonérations sociales, non nommées par le document"
+  assiette:
+  - texte: le coût des dépenses fiscales
+    montant_md: 88.3
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, « chiffres clés »
+      (89,4 Md€ en 2024, 91,8 en 2025, 88,3 en 2026)"
+  - texte: le coût des exonérations de cotisations en faveur de l'emploi
+    montant_md: 86.8
+    annee: 2025
+    source: "Commission des comptes de la Sécurité sociale, mai 2026, §1.6"
+  - texte: "les deux dépenses fiscales que la presse cite : le crédit d'impôt recherche
+      (8,04 Md€, n° 200302) et le pacte Dutreil (4,0 Md€, n° 520110), 12,0 Md€ ensemble"
+    montant_md: 12.04
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, fiches 200302 et
+      520110"
+  calendrier:
+    texte: « 22 milliards d'euros en 2027 »
+    source: "Mélenchon, document du 14 octobre 2026, p. 13"
+  financement: *FIN_REC
+  hypotheses:
+  - texte: "Le montant tombe sur l'impôt sur le revenu (D5), aux ménages au prorata de leur
+      IR : une clé, car le document ne dit pas quelles niches ; le CIR, s'il en est,
+      tombe sur les entreprises."
+    source: non sourcée
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - texte: "La variante de Mésange la plus proche : impot_sur_le_revenu."
+    source: non sourcée
+
+cvae_grandes_entreprises:
+  levier:
+    texte: "Code général des impôts, art. 1586 ter et s. (la CVAE, en voie de suppression
+      jusqu'en 2030 par la loi de finances pour 2024, art. 79) : rétablie sur les plus
+      grandes entreprises"
+  assiette:
+    texte: les recettes de CVAE de l'État, réduites par la suppression progressive
+    montant_md: 2.741
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1497 (4,265
+      Md€ en 2024, 4,069 en 2025, 2,741 en 2026)"
+  payeurs:
+  - qui: entreprises
+    sens: paie
+    par: cvae
+  - qui: "apu:etat"
+    sens: recoit
+    par: impots_production_entreprises
+    note: la CVAE est versée à l'État depuis 2023, les collectivités recevant une fraction
+      de TVA
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur les impôts sur la production (D29).
+    source: "Insee, t. 7.301 : la CVAE est un autre impôt sur la production (D29)"
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+taxe_zucman:
+  levier:
+    texte: "aucun texte en vigueur : un impôt plancher de 2 % du patrimoine au-delà de 100
+      M€, à créer (la proposition de loi adoptée par l'Assemblée nationale le 20 février
+      2025, rejetée par le Sénat)"
+  assiette:
+    texte: le patrimoine des foyers de plus de 100 M€ ; la statistique publique ne le publie
+      pas (l'IFI ne porte que l'immobilier)
+    montant_md: null
+    annee: 2026
+    source: "DGFiP, Statistiques n° 45, impôt sur la fortune immobilière 2025"
+  payeurs:
+  - qui: menages
+    sens: paie
+    par: patrimoine
+    note: quelques milliers de foyers ; la population n'en porte pas
+  - qui: "apu:etat"
+    sens: recoit
+    par: capital_menages
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur les impôts courants sur le patrimoine (D59, dans D5).
+    source: non sourcée
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+droits_succession:
+  levier:
+    texte: "Code général des impôts, art. 777 (le barème des droits en ligne directe), 779
+      (les abattements) et 784 (le rappel des donations sur quinze ans) : une taxation des
+      dons et héritages reçus « tout au long de la vie »"
+  assiette:
+    texte: les droits de mutation à titre gratuit par décès (successions) ; les 20 Md€ du
+      candidat en font plus du double
+    montant_md: 17.0
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, lignes 1705-1706
+      (successions : 16,0 Md€ en 2024, 16,2 en 2025, 17,0 en 2026 ; donations : 4,4 Md€ en
+      2026)"
+  payeurs:
+  - qui: menages
+    sens: paie
+    par: patrimoine
+    note: les héritiers des « plus hauts patrimoines »
+  - qui: "apu:etat"
+    sens: recoit
+    par: capital_menages
+  calendrier:
+    texte: « 20 milliards d'euros la première année »
+    source: "Mélenchon, document du 14 octobre 2026, p. 14"
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur les impôts en capital (D91).
+    source: "Insee, t. 7.301 : les droits de succession sont des impôts en capital (D91)"
+  - texte: Le montant de la première année est tenu ensuite ; le candidat le dit de la
+      première année seulement.
+    source: non sourcée
+  - *H_DEBUT
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+reforme_is:
+  levier:
+    texte: "Code général des impôts, art. 219 (le taux normal de 25 % et le taux réduit des
+      PME) : un barème progressif"
+  assiette:
+    texte: l'impôt sur les sociétés net ; les 3 Md€ du candidat en font 5,1 %
+    montant_md: 59.0
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, impôt sur les
+      sociétés (57,4 Md€ en 2024, 58,2 en 2025, 59,0 en 2026)"
+  payeurs:
+  - qui: entreprises
+    sens: paie
+    par: impot_societes
+    note: les grandes entreprises, selon le candidat (taux implicite de 14,7 % contre 24 %
+      pour les PME)
+  - qui: "apu:etat"
+    sens: recoit
+    par: impot_societes
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur l'impôt sur les sociétés (D51).
+    source: "Insee, t. 7.301 (D51, impôts sur le revenu, dont l'IS)"
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+taxe_multinationales:
+  levier:
+    texte: "Code général des impôts, art. 209 (la territorialité de l'IS) ; un impôt assis
+      sur l'activité réalisée en France, à créer"
+  assiette:
+    texte: l'impôt sur les sociétés net, que la taxe complète
+    montant_md: 59.0
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, impôt sur les
+      sociétés"
+  payeurs:
+  - qui: entreprises
+    sens: paie
+    par: impot_societes
+  - qui: "apu:etat"
+    sens: recoit
+    par: impot_societes
+  calendrier:
+    texte: « 5 milliards la première année »
+    source: "Mélenchon, document du 14 octobre 2026, p. 14"
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur l'impôt sur les sociétés (D51).
+    source: non sourcée
+  - texte: Le montant de la première année est tenu ensuite.
+    source: non sourcée
+  - *H_DEBUT
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+taxe_gafam:
+  levier:
+    texte: "Code général des impôts, art. 299 à 300 (la taxe sur les services numériques, 3
+      % du produit des services de plus de 750 M€ dans le monde et 25 M€ en France) : le
+      taux porté à 15 %, selon la presse"
+  assiette:
+    texte: le produit de la taxe sur les services numériques au taux de 3 % ; au taux de
+      15 %, à assiette inchangée, il ferait 5 fois plus, soit +3,6 Md€, l'ordre des 3,9
+      Md€ du candidat
+    montant_md: 0.891
+    annee: 2025
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1430 (785 M€
+      en 2024, 891 M€ en 2025)"
+  payeurs:
+  - qui: entreprises
+    sens: paie
+    par: chiffre_affaires
+    note: une vingtaine de groupes, la plupart étrangers
+  - qui: "apu:etat"
+    sens: recoit
+    par: autre
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur les impôts sur la production (D2).
+    source: non sourcée
+  - texte: "Le taux de 15 % : (15 / 3 − 1) × 0,891 = 3,56 Md€ à assiette inchangée ; le
+      candidat dit 3,9 Md€."
+    source: "Public Sénat, cité par le relevé du programme (taux) ; Évaluation des voies et
+      moyens 2026, tome 1, ligne 1430 (assiette)"
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+taxe_superprofits:
+  levier:
+    texte: "aucun texte en vigueur : une taxe sur la hausse soudaine des bénéfices des
+      grandes entreprises, à créer"
+  assiette:
+    texte: l'impôt sur les sociétés net
+    montant_md: 59.0
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, impôt sur les
+      sociétés"
+  payeurs:
+  - qui: entreprises
+    sens: paie
+    par: impot_societes
+  - qui: "apu:etat"
+    sens: recoit
+    par: impot_societes
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur l'impôt sur les sociétés (D51), chaque année, alors que le
+      programme la déclenche « en période de crise ».
+    source: non sourcée
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+taxe_transactions_financieres:
+  levier:
+    texte: "Code général des impôts, art. 235 ter ZD (la taxe sur les acquisitions de titres
+      de capital, 0,4 % depuis 2025)"
+  assiette:
+    texte: le produit de la taxe au taux de 0,4 % ; les 5 Md€ de plus du candidat en font
+      2,9 fois le produit, soit un taux d'environ 1,16 % à assiette inchangée
+    montant_md: 2.63
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1797 (1,332
+      Md€ en 2024, 2,386 en 2025, 2,630 en 2026)"
+  payeurs:
+  - qui: menages
+    sens: paie
+    par: patrimoine
+    note: les acheteurs d'actions de grandes sociétés françaises, ménages et institutions
+  - qui: "apu:etat"
+    sens: recoit
+    par: autre
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur les impôts sur les produits (D21).
+    source: non sourcée
+  - texte: Les transactions ne baissent pas avec le taux.
+    source: non sourcée
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+taxe_rachats_actions:
+  levier:
+    texte: "Code général des impôts, art. 235 ter XA (la taxe sur les réductions de capital
+      liées au rachat de ses propres titres, loi de finances pour 2025)"
+  assiette:
+    texte: le produit de la taxe existante ; les 2,5 Md€ du candidat en font 12,5 fois
+    montant_md: 0.2
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1796 (0,4 Md€
+      en 2025, 0,2 Md€ en 2026 « au titre de la taxe pérenne »)"
+  payeurs:
+  - qui: entreprises
+    sens: paie
+    par: dividendes
+  - qui: "apu:etat"
+    sens: recoit
+    par: autre
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur les impôts courants (D5).
+    source: non sourcée
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+taxe_crypto_actifs:
+  levier:
+    texte: "Code général des impôts, art. 150 VH bis (l'imposition des plus-values de
+      cession d'actifs numériques des particuliers) : un taux non dit"
+  payeurs:
+  - qui: menages
+    sens: paie
+    par: patrimoine
+  - qui: "apu:etat"
+    sens: recoit
+    par: capital_menages
+  calendrier: *CAL27
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur les impôts courants (D5).
+    source: non sourcée
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+fraude_fiscale:
+  levier:
+    texte: "Livre des procédures fiscales (le contrôle fiscal) ; loi de finances (les
+      emplois de la DGFiP, programme 156)"
+  payeurs:
+  - qui: menages
+    sens: paie
+    par: autre
+  - qui: entreprises
+    sens: paie
+    par: autre
+  - qui: "apu:etat"
+    sens: recoit
+    par: autre
+  calendrier:
+    texte: « 2 milliards d'euros la première année »
+    source: "Mélenchon, document du 14 octobre 2026, p. 14"
+  financement: *FIN_REC
+  hypotheses:
+  - texte: Le montant tombe sur les impôts courants (D5) ; le partage entre ménages et
+      entreprises n'est pas dit.
+    source: non sourcée
+  - texte: Le coût des effectifs reconstruits n'est pas compté.
+    source: non sourcée
+  - *H_DEBUT
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_AUCUNE
+
+# ------------------------------------------- les paramètres : chiffrés par une assiette
+suppression_franchises_medicales:
+  montant:
+    md: 2.3
+    sens: depense
+    code: D632
+    calcul: "Le doublement des participations forfaitaires et des franchises, prévu par le
+      PLFSS 2026 et abandonné, valait 2,3 Md€ d'économies (CCSS, mai 2026, « L'ONDAM en
+      2026 ») : leur rendement actuel est au moins de cet ordre (un doublement rapporte
+      moins que le rendement actuel, les plafonds annuels le rognant). Supprimer les deux
+      coûte donc au moins 2,3 Md€ par an à l'Assurance maladie."
+  levier:
+    texte: "Code de la sécurité sociale, art. L160-13, II (la participation forfaitaire) et
+      III (la franchise médicale), et art. D160-9 et suivants (leurs montants et plafonds)"
+  assiette:
+    texte: le rendement des participations forfaitaires et franchises, approché par
+      l'économie attendue de leur doublement
+    montant_md: 2.3
+    annee: 2026
+    source: "Commission des comptes de la Sécurité sociale, mai 2026, « L'ONDAM en 2026 » :
+      « le doublement des participations forfaitaires et franchises (2,3 Md€) »"
+  payeurs:
+  - qui: "apu:secu:maladie"
+    sens: paie
+    par: depense_publique
+  - qui: menages
+    sens: recoit
+    par: autre
+    note: les assurés, au prorata de leurs soins ; la population n'en porte pas la clé
+  calendrier: *CAL_LIVRE
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: "Le montant tombe sur les prestations en nature (D632) : un meilleur
+    remboursement."
+    source: "Insee, t. 7.301 : le remboursement des soins est un transfert social en nature
+      (D632)"
+  - texte: "Le montant est une borne basse : il n'a pas de source plus directe dans les
+      documents publics lus."
+    source: "Commission des comptes de la Sécurité sociale, mai 2026"
+  - texte: Le montant entre en 2027 et est tenu jusqu'en 2035, en euros courants.
+    source: non sourcée
+  - *H_RHO
+  - *H_VAR_DEP
+
+cent_pour_cent_secu:
+  montant:
+    md: 33.0
+    sens: depense
+    code: D632
+    calcul: "Les organismes complémentaires financent 12,8 % de la consommation de soins et
+      de biens médicaux, 33 Md€ en 2024 (Drees, comptes de la santé, édition 2025) ; leur
+      intégration à la Sécurité sociale transfère au moins ces 33 Md€ à la dépense publique.
+      Le remboursement à 100 % des soins prescrits y ajoute une part du reste à charge des
+      ménages (7,8 % de la CSBM, 20 Md€), non comptée : c'est une borne basse."
+  levier:
+    texte: "Code de la sécurité sociale, art. L160-13 (le ticket modérateur) et L871-1 (les
+      contrats complémentaires « responsables ») : le remboursement porté à 100 %, les
+      complémentaires intégrées à l'Assurance maladie"
+  assiette:
+  - texte: la part de la consommation de soins et de biens médicaux financée par les
+      organismes complémentaires (12,8 %)
+    montant_md: 33.0
+    annee: 2024
+    source: "Drees, « Les dépenses de santé en 2024 », résultats des comptes de la santé,
+      édition 2025 (communiqué du 30 septembre 2025)"
+  - texte: le reste à charge des ménages (7,8 % de la CSBM de 255 Md€)
+    montant_md: 19.9
+    annee: 2024
+    source: "Drees, comptes de la santé, édition 2025"
+  payeurs:
+  - qui: "apu:secu:maladie"
+    sens: paie
+    par: depense_publique
+  - qui: menages
+    sens: recoit
+    par: autre
+    note: les ménages ne paient plus leurs cotisations aux complémentaires (des primes
+      privées, hors du compte des APU)
+  calendrier: *CAL_LIVRE
+  financement:
+    annonce: "« Créer une cotisation sociale universelle pour financer la Sécurité sociale,
+      fusionnant les différentes cotisations sociales actuelles et la contribution sociale
+      généralisée (CSG) »"
+    source: "programme de Mélenchon, livre, « Mettre en sécurité sociale », chapitre 1"
+    chiffre: false
+    note: la cotisation universelle n'a ni taux ni barème ; les primes que les ménages ne
+      paient plus aux complémentaires ne sont pas reprises en prélèvement ici
+  hypotheses:
+  - texte: Le montant tombe sur les prestations en nature (D632).
+    source: "Insee, t. 7.301 (D632)"
+  - texte: Aucun prélèvement nouveau ne reprend les primes économisées par les ménages ;
+      c'est l'objet de la cotisation universelle, sans taux.
+    source: non sourcée
+  - texte: Le montant entre en 2027 et est tenu jusqu'en 2035, en euros courants.
+    source: non sourcée
+  - *H_RHO
+  - *H_VAR_DEP
+
+minimum_vieillesse_seuil_pauvrete:
+  montant:
+    md: 2.66
+    sens: depense
+    code: D62P
+    calcul: "754 500 allocataires du minimum vieillesse fin 2024 (Drees) × (1 337 € − 1 043,59
+      €, le plafond de l'ASPA d'une personne seule en 2026) × 12 mois = 2,66 Md€ par an.
+      L'ASPA est différentielle : chaque allocataire reçoit l'écart des plafonds. Les
+      couples (plafond de 1 620,18 €) et les nouveaux entrants ne sont pas comptés ; à la
+      dépense de 2026 (4,353 Md€, CCSS) relevée de 28,1 %, il en coûterait 1,22 Md€, une
+      borne basse."
+  levier:
+    texte: "Code de la sécurité sociale, art. L815-1 et s. (l'allocation de solidarité aux
+      personnes âgées) et D815-1 (son plafond)"
+  assiette:
+  - texte: les allocataires du minimum vieillesse fin 2024
+    montant_md: null
+    annee: 2024
+    source: "Drees, communiqué du 4 décembre 2025 sur les minima sociaux (754 500
+      allocataires, +4,3 %)"
+  - texte: le plafond mensuel de l'ASPA pour une personne seule (1 043,59 €, brut)
+    montant_md: null
+    annee: 2026
+    source: "service-public.gouv.fr, fiche F16871 (vérifiée le 23 juin 2026)"
+  - texte: la dépense de minimum vieillesse de la CNAV
+    montant_md: 4.353
+    annee: 2026
+    source: "Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche
+      CNAV (3,845 Md€ en 2024, 4,105 en 2025, 4,353 en 2026)"
+  payeurs:
+  - qui: "apu:secu:vieillesse"
+    sens: paie
+    par: depense_publique
+    note: la CNAV verse le minimum vieillesse depuis la fin du FSV en 2026 (CCSS)
+  - qui: menages
+    sens: recoit
+    par: prestations
+  calendrier: *CAL_LIVRE
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: Le montant tombe sur les prestations en espèces (D62), aux ménages au prorata
+      des prestations.
+    source: "Insee, t. 7.301 (D62)"
+  - texte: Le seuil de 1 337 € est celui du candidat, tenu en euros de 2026.
+    source: "programme de Mélenchon, livre, « Mettre en sécurité sociale », chapitre 1"
+  - texte: Le montant entre en 2027 et est tenu jusqu'en 2035, en euros courants.
+    source: non sourcée
+  - *H_RHO
+  - *H_VAR_DEP
+
+aah_niveau_smic:
+  montant:
+    md: 7.33
+    sens: depense
+    code: D62P
+    calcul: "1,40 million d'allocataires de l'AAH fin 2024 (Drees) × (1 477,93 €, le Smic
+      net mensuel, − 1 041,59 €, l'AAH à taux plein) × 12 mois = 7,33 Md€ par an. L'AAH est
+      différentielle : chacun reçoit l'écart des plafonds ; les nouveaux entrants ne sont
+      pas comptés. Au Smic brut (1 867,02 €), le coût serait 13,87 Md€."
+  levier:
+    texte: "Code de la sécurité sociale, art. L821-1 et s. (l'allocation aux adultes
+      handicapés) et D821-3 (son montant)"
+  assiette:
+  - texte: les allocataires de l'AAH fin 2024
+    montant_md: null
+    annee: 2024
+    source: "Drees, communiqué du 4 décembre 2025 sur les minima sociaux (1,40 million, +3,3
+      %)"
+  - texte: la dépense d'AAH (11,97 Md€ en 2022, 1 294 700 allocataires, 788 € par mois en
+      moyenne)
+    montant_md: 11.97
+    annee: 2022
+    source: "Drees, « Minima sociaux et prestations sociales », édition 2024, fiche 07,
+      tableau 1"
+  - texte: le montant de l'AAH à taux plein (1 041,59 €) et le Smic net (1 477,93 €)
+    montant_md: null
+    annee: 2026
+    source: "service-public.gouv.fr, fiches F12242 et F2300"
+  payeurs:
+  - qui: "apu:etat"
+    sens: paie
+    par: depense_publique
+    note: le programme 157 « Handicap et dépendance »
+  - qui: menages
+    sens: recoit
+    par: prestations
+  calendrier: *CAL_LIVRE
+  financement: *FIN_DEP
+  hypotheses:
+  - texte: Le Smic net (le programme ne dit pas net ou brut) ; au brut, 13,87 Md€.
+    source: non sourcée
+  - texte: Le montant tombe sur les prestations en espèces (D62).
+    source: "Insee, t. 7.301 (D62)"
+  - texte: Le montant entre en 2027 et est tenu jusqu'en 2035, en euros courants.
+    source: non sourcée
+  - *H_RHO
+  - *H_VAR_DEP
+
+suppression_cir:
+  inclus_dans: niches_fiscales_sociales
+  montant:
+    md: 8.041
+    sens: recette
+    code: RIS
+    calcul: "Le coût du crédit d'impôt recherche en 2026 (8,041 Md€, dépense fiscale n°
+      200302) : sa suppression rapporte au plus ce montant, moins les dotations
+      « récurrentes à hauteur des besoins » qui le remplacent, sans montant."
+  levier:
+    texte: "Code général des impôts, art. 244 quater B (le crédit d'impôt recherche), 199
+      ter B et 220 B"
+  assiette:
+    texte: le coût du crédit d'impôt recherche (7,800 Md€ en 2024, 8,068 en 2025, 8,041 en
+      2026 ; 17 593 entreprises)
+    montant_md: 8.041
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, fiche 200302"
+  payeurs:
+  - qui: entreprises
+    sens: paie
+    par: impot_societes
+  - qui: "apu:etat"
+    sens: recoit
+    par: impot_societes
+  calendrier: *CAL_LIVRE
+  financement:
+    annonce: "« au profit de dotations récurrentes à hauteur des besoins des universités et
+      instituts de recherche »"
+    source: "programme de Mélenchon, livre, « Du futur aux nouvelles frontières de
+      l'humanité », chapitre 2"
+    chiffre: false
+    note: la recette est en partie rendue en dotations, sans montant
+  hypotheses:
+  - texte: "Compté dans les 22 Md€ des niches : la presse cite le CIR parmi elles ; ne pas
+      l'additionner."
+    source: "le relevé du programme (`programmes/melenchon.json`, niches_fiscales_sociales :
+      « la presse cite le CIR et le pacte Dutreil »)"
+  - texte: Les dotations de remplacement ne sont pas comptées.
+    source: non sourcée
+
+# ---------------------------------------------- les paramètres : sans montant, raison dite
+retraite_60_ans_40_annuites:
+  levier:
+    texte: "Code de la sécurité sociale, art. L161-17-2 (l'âge légal) et L161-17-3 (la durée
+      d'assurance pour le taux plein)"
+  assiette:
+    texte: les prestations légales vieillesse nettes de la CNAV
+    montant_md: 167.4
+    annee: 2025
+    source: "Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche
+      CNAV"
+  calendrier:
+    texte: « objectif sur un mandat »
+    source: "Mélenchon, document du 14 octobre 2026, p. 11"
+  manque: "Le coût d'un âge et d'une durée dépend des générations, des carrières et des
+    projections du COR ; aucune statistique publique ne donne le coût de 60 ans et 40
+    annuités à partir de l'assiette, et le candidat n'en donne pas."
+
+pension_minimum_smic:
+  levier:
+    texte: "Code de la sécurité sociale, art. L351-10 (le minimum contributif) et L173-2 (le
+      minimum tous régimes)"
+  calendrier: *CAL_LIVRE
+  manque: "Le coût dépend de la distribution des pensions des carrières complètes, que la
+    statistique publique lue ne donne pas pour l'écart au Smic ; la population n'a ni
+    durée de carrière ni minimum de pension."
+
+suppression_decote_retraite:
+  levier:
+    texte: "Code de la sécurité sociale, art. L351-1 et R351-27 (le coefficient de minoration
+      par trimestre manquant)"
+  calendrier: *CAL_LIVRE
+  manque: "Le montant des décotes servies n'est pas publié dans les documents lus (CCSS,
+    PLF) ; sans lui, aucun calcul."
+
+arret_maladie_100_carence:
+  levier:
+    texte: "Code de la sécurité sociale, art. L321-1 et R323-1 (les indemnités journalières,
+      à 50 % du gain journalier, après trois jours de carence) ; Code du travail, art.
+      L1226-1 (le complément de l'employeur) ; loi n° 2017-1837, art. 115 (le jour de
+      carence des agents publics)"
+  calendrier: *CAL_LIVRE
+  manque: "Le coût dépend du nombre de jours de carence et de la part du salaire que
+    l'employeur complète déjà ; les comptes lus (CCSS) donnent la dépense d'indemnités
+    journalières, pas ces deux nombres."
+
+heures_sup_majorees_35h:
+  levier:
+    texte: "Code du travail, art. L3121-27 (la durée légale de 35 heures), L3121-33 et
+      L3121-36 (la majoration des heures supplémentaires, 25 % puis 50 %, réductible à 10 %
+      par accord) : la majoration rendue impérative"
+  assiette:
+    texte: "le coût de l'exonération d'IR des heures supplémentaires (n° 120146), une
+      mesure de leur volume"
+    montant_md: 2.25
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, « dépenses fiscales
+      les plus coûteuses », n° 120146"
+  calendrier:
+    texte: « immédiatement »
+    source: "programme de Mélenchon, livre, « Mettre en sécurité sociale », chapitre 1"
+  manque: "La mesure renchérit les heures supplémentaires payées sous accord à 10 % : leur
+    volume par taux de majoration n'est pas publié dans les documents lus."
+
+blocage_prix_carburants:
+  levier:
+    texte: "Code de commerce, art. L410-2, alinéa 2 (le décret en Conseil d'État qui fixe
+      les prix en cas de situation de crise)"
+  calendrier: *CAL27
+  manque: "Un prix plafonné à 1,70 € le litre ne coûte qu'au-dessus de ce prix ; le coût
+    dépend du prix futur du pétrole, et le candidat ne dit pas qui paie l'écart
+    (distributeurs ou État)."
+
+centralisation_livret_b:
+  levier:
+    texte: "Code monétaire et financier, art. L221-5 (la centralisation des dépôts du livret
+      A et du LDDS au fonds d'épargne de la Caisse des dépôts)"
+  calendrier: *CAL_LIVRE
+  manque: "Un dépôt centralisé n'est ni une dépense ni une recette des APU : aucun choc sur
+    le compte des APU."
+
+exoneration_succession_150000:
+  levier:
+    texte: "Code général des impôts, art. 779 (l'abattement de 100 000 € en ligne directe)"
+  assiette:
+    texte: les droits de succession
+    montant_md: 17.0
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1706"
+  calendrier: *CAL_LIVRE
+  manque: "La distribution des successions par montant hérité n'est pas dans les documents
+    lus ; le coût, compensé par la réforme des droits de succession (20 Md€), n'est pas
+    calculable seul."
+
+plafond_heritage:
+  levier:
+    texte: "Code général des impôts, art. 777 (le barème des droits en ligne directe, 45 %
+      au-delà de 1 805 677 €) : un taux de 100 % au-delà de 12 M€"
+  assiette:
+    texte: les droits de succession
+    montant_md: 17.0
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1706"
+  calendrier: *CAL_LIVRE
+  manque: "Le montant des héritages au-delà de 12 M€ n'est pas publié ; la mesure est
+    aussi dans les 20 Md€ de la réforme des droits de succession, sans ventilation."
+
+fin_quotient_conjugal:
+  levier:
+    texte: "Code général des impôts, art. 6, 1 (l'imposition commune des époux et des
+      partenaires de Pacs) et art. 194 (deux parts pour un couple)"
+  assiette:
+    texte: l'impôt sur le revenu net
+    montant_md: null
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, impôt sur le
+      revenu"
+  calendrier: *CAL_LIVRE
+  manque: "L'imposition séparée se calcule conjoint par conjoint sur la population ; aucune
+    statistique publique ne donne son produit, et le moteur n'a pas encore ce bouton."
+
+garantie_autonomie_universelle:
+  levier:
+    texte: "aucun texte en vigueur : la garantie d'autonomie étendue à toute personne"
+  calendrier: *CAL_LIVRE
+  manque: "La loi de finances 2027 n'en engage que le volet des jeunes, chiffré à part ; le
+    volet universel se chiffre sur la population, par le bouton de la garantie, déjà pris
+    par la mesure des jeunes."
+
+salaire_maximal_1_20:
+  levier:
+    texte: "aucun texte en vigueur : un plafond de salaire par entreprise, à créer dans le
+      Code du travail"
+  calendrier: *CAL_LIVRE
+  manque: "Le coût pour les APU tient aux cotisations et à l'impôt des salaires écrêtés ;
+    la distribution des salaires par entreprise n'est pas publiée."
+
+suppression_avantages_retraite_capitalisation:
+  levier:
+    texte: "Code général des impôts, art. 163 quatervicies (la déduction des versements sur
+      un plan d'épargne retraite) ; Code monétaire et financier, art. L224-1 et s."
+  assiette:
+    texte: "l'exonération des sommes versées à l'épargne salariale et aux plans d'épargne
+      retraite d'entreprise (n° 120108) ; elle mêle participation, intéressement et
+      retraite"
+    montant_md: 2.89
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 2, « dépenses fiscales
+      les plus coûteuses », n° 120108"
+  calendrier: *CAL_LIVRE
+  manque: "La déduction des versements sur un PER individuel n'est pas une dépense fiscale
+    au sens des Voies et moyens, et la dépense n° 120108 ne sépare pas la retraite de
+    l'épargne salariale : le programme ne nomme pas les dispositifs."
+
+gratuite_creches_publiques:
+  levier:
+    texte: "Code de l'action sociale et des familles, art. L214-1 et s. ; le barème national
+      des participations familiales de la Cnaf (prestation de service unique)"
+  calendrier: *CAL_LIVRE
+  manque: "Le montant des participations des familles aux crèches publiques n'est pas
+    dans les documents lus."
+
+gratuite_enseignement_superieur:
+  levier:
+    texte: "Code de l'éducation, art. L719-4 ; arrêté du 19 avril 2019 relatif aux droits
+      d'inscription dans les établissements publics d'enseignement supérieur"
+  calendrier: *CAL_LIVRE
+  manque: "Le produit des droits d'inscription n'est pas dans les documents lus ; les
+    boursiers en sont déjà exonérés."
+
+# ------------------------------------------------- les mesures sans choc : le levier dit
+conference_indexation_salaires:
+  levier:
+    texte: "Code du travail, art. L3231-3 (l'interdiction de l'indexation des salaires sur
+      les prix, ordonnance n° 59-246 du 4 février 1959, art. 79 du Code monétaire et
+      financier ancien, aujourd'hui CMF art. L112-2) : à lever par la loi"
+ir_14_tranches:
+  levier:
+    texte: "Code général des impôts, art. 197 (le barème à cinq tranches)"
+  assiette:
+    texte: l'impôt sur le revenu net
+    montant_md: null
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1"
+cotisation_sociale_universelle:
+  levier:
+    texte: "Code de la sécurité sociale, art. L136-1 et s. (la CSG) et livre II (les
+      cotisations)"
+exit_tax_renforcee:
+  levier:
+    texte: "Code général des impôts, art. 167 bis (l'imposition des plus-values latentes au
+      transfert du domicile hors de France)"
+tva_grand_luxe:
+  levier:
+    texte: "Code général des impôts, art. 278 (le taux normal de 20 %) : un taux majoré, à
+      créer (la directive 2006/112/CE ne prévoit qu'un taux normal au-dessus des réduits)"
+credit_impot_enfant:
+  levier:
+    texte: "Code général des impôts, art. 194 et 197, I, 2 (le quotient familial et son
+      plafonnement)"
+minima_sociaux_hausse:
+  levier:
+    texte: "Code de l'action sociale et des familles, art. L262-2 (le RSA) ; Code de la
+      sécurité sociale, art. L815-1 (l'ASPA) ; Code du travail, art. L5423-1 (l'ASS)"
+asf_deconjugalisee:
+  levier:
+    texte: "Code de la sécurité sociale, art. L523-1 (l'allocation de soutien familial,
+      perdue à la remise en couple)"
+premiere_tranche_gratuite_energie:
+  levier:
+    texte: "Code de l'énergie, art. L337-4 (les tarifs réglementés de vente de
+      l'électricité) ; Code général des collectivités territoriales, art. L2224-12-4 (la
+      tarification de l'eau)"
+taxe_kilometrique_frontieres:
+  levier:
+    texte: "aucun texte : une taxe aux frontières de l'Union relève du tarif douanier
+      commun (TFUE, art. 31), donc du Conseil de l'Union"
+trajectoire_2027:
+  levier:
+    texte: "loi de programmation des finances publiques ; loi de finances pour 2027"
+bce_dettes_publiques:
+  levier:
+    texte: "TFUE, art. 123 (l'interdiction du financement monétaire) ; statuts du SEBC et de
+      la BCE"
+pole_public_bancaire:
+  levier:
+    texte: "Code monétaire et financier, art. L518-2 (la Caisse des dépôts) ; loi n°
+      2005-722 (Bpifrance)"

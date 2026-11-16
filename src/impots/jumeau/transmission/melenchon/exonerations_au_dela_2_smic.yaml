@@ -9,8 +9,9 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: 'Code de la sécurité sociale, art. L241-13 (la réduction générale des cotisations
+    patronales) et art. L241-2-1 et L241-6-1 (les taux réduits maladie et famille) : le plafond
+    des allègements ramené à 2 Smic'
   parametre: allegement_general_plafond
   valeur:
     allegement_general_plafond: 2.0
@@ -20,10 +21,11 @@ payeurs:
 - qui: entreprises
   sens: paie
   par: cotisations_employeurs
+  note: +6,33 Md€ de coût du travail au-dessus de 2 Smic (rapport, 2026, figé)
 - qui: apu:etat
   sens: recoit
   par: cotisations_employeurs
-  note: moins de compensation des allègements
+  note: moins de compensation des allègements à la Sécurité sociale (art. L131-7 CSS)
 incidence:
 - horizon: court
   qui: les employeurs
@@ -41,10 +43,13 @@ incidence:
     ? », IZA DP 12502 (France) : une cotisation liée à des droits se reporte sur le salaire,
     une cotisation sans lien reste sur l''employeur'
 financement:
-  annonce: null
-  source: null
-  chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  annonce: « Une partie de cette œuvre de justice fiscale devra être orientée vers la réduction
+    de notre déficit »
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6
+  chiffre: true
+  note: une recette du programme ; son bilan (p. 14) en affecte 81,7 Md€ aux dépenses et 24,7
+    Md€ au déficit, sans dire laquelle va où
 canaux:
 - emploi
 - salaires
@@ -60,7 +65,29 @@ hypotheses:
     de 2026, et la réduction s''arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de
     3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l''écart).'
   source: le chiffrage de la mesure (`programmes/melenchon.json`)
+- texte: 'Le candidat ne chiffre pas cette mesure : le total de ses recettes (106,4 Md€, p.
+    14) est la somme exacte de ses quatorze recettes chiffrées, sans elle. Elle peut aussi
+    être comprise dans les 22 Md€ des niches sociales ; le document ne le dit pas.'
+  source: 'Mélenchon, document du 14 octobre 2026, p. 13-14 (somme : 9 + 10 + 22 + 3 + 15
+    + 20 + 3 + 5 + 3,9 + 5 + 5 + 2,5 + 1 + 2 = 106,4)'
 montant:
   origine: rapport
   scenario: pres2027_melenchon_exonerations_au_dela_2_smic
   rapport: reports/etudes/presidentielle_melenchon/mesures/exonerations_au_dela_2_smic/predictif_pres2027_melenchon_exonerations_au_dela_2_smic.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_melenchon/mesures/exonerations_au_dela_2_smic/premiere_annee_pres2027_melenchon_exonerations_au_dela_2_smic.json
+    ecarts_md:
+      salaire_super_brut: 6.33
+      allegement_general: -6.33
+assiette:
+  texte: le coût des allègements généraux de cotisations en 2025 (le montant que le candidat
+    cite aussi)
+  montant_md: 75.6
+  annee: 2025
+  source: Commission des comptes de la Sécurité sociale, mai 2026, §1.6 « Les dispositifs
+    d'exonération en faveur de l'emploi »
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6
