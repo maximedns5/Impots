@@ -179,6 +179,14 @@ mesures:
       7,30 / 11,31 = 64,5 % de la perte, au-dessus 0,40 / 10,26 = 3,9 %. La part de la
       masse salariale sous le plafond n'est pas sourcée ici : θ.
 
+  # Le rapport du programme d'Attal : sa seule impulsion de cotisations salariales est
+  # celle d'a16 (a18 et a22 n'en ont pas : leurs rapports, `impulsions`), même payeur.
+  pres2027_attal_programme:
+    cotisations_salaries:
+      asso.vieillesse_base: theta:financement_a16_part_cnav
+      asso.complementaires: reste
+    source: "comme pres2027_attal_a16_droit_au_brut"
+
 thetas:
   financement_a16_part_cnav:
     definition: >-

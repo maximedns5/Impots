@@ -169,6 +169,24 @@ CANAUX.update({
 })
 DE_MESANGE.add("emploi_public")
 
+# --------------------------------------------------------------------- financement (D-481)
+#: Des canaux comptables : ils répartissent le compte consolidé entre les sous-secteurs
+#: sans le changer (`jumeau.financement`, après la trajectoire) ; aucun bloc ne les porte,
+#: ils ne se heurtent donc à aucun autre. La carte les cite dans `canaux` d'une fiche.
+CANAUX.update({
+    "financement_sous_secteurs": (
+        "qui paie d'abord : le choc d'une mesure et ses effets induits rangés entre l'État, "
+        "les ODAC, les APUL et les ASSO, et dans les ASSO par branche (Insee t. 3.203 à "
+        "3.212 ; `jumeau.financement.comptes`)"),
+    "compensation_exonerations": (
+        "qui paie au bout : la perte de recette d'une branche de la Sécurité sociale que "
+        "l'État compense par un transfert (CSS, art. L131-7 ; compensée, non compensée, ou "
+        "θ quand l'issue est incertaine)"),
+    "financement_annonce": (
+        "le financement que le programme annonce, chiffré en hypothèse déclarée et sourcée "
+        "par sa citation, ou le trou qu'il laisse (`jumeau.financement.annonce`)"),
+})
+
 
 def declares(bloc: Any) -> tuple[tuple[str, str], ...]:
     """Les paires (canal, instrument) qu'un bloc porte : les siennes et celles de Mésange
