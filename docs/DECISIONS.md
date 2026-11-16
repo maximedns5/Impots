@@ -35235,5 +35235,6 @@ diffusion au centre « sans effets fixes » ou « avec » (la convention des ét
 sur la distribution, 77,20 Md€ à la masse 1 045,14 Md€ (× 0,0739) ; Smic × 1,0818, loi
 seule, parts de la masse : b_loi 0,0026222, a_loi 0,0159586 ; diffusion θ½ :
 b_diff 0,0042119, a_diff −0,0018215 ; λ_s(½) 0,55359, λ_e(½, allègements du Smic)
-0,52221 ; Attal a16 à θ½ : dette 2035 +13,85 pt, à θ_incidence 0 : +16,79 pt, égale au jumeau d'avant ;
+0,52221 ; Attal a16 à θ½ : dette 2035 +13,85 pt, à θ_incidence 0 : +16,79 pt, égale
+au jumeau d'avant ;
 Tondelier Smic, θ½ : dette 2035 +1,15 pt, `cout_travail_smic` 2026 2,88 Md€.
