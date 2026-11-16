@@ -1,0 +1,29 @@
+schema: 1
+mesure: a13_retraite_sans_age_legal
+candidat: attal
+libelle: 'Système universel sans âge légal : départ selon la durée de cotisation, avec décote
+  et surcote'
+sorte: sans_choc
+source:
+  citation: « Il propose un système universel, avec les mêmes règles pour tous, ainsi qu'un
+    système plus libre, sans âge légal de départ » (texte de la page)
+  url: https://attalpresident.fr/actualites/gabriel-attal-sur-cnews-et-europe-1-il-faut-proposer-aux-francais-un-projet-d-espoir
+  date: '2026-09-30'
+levier:
+  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  parametre: null
+  valeur: null
+  enonce: aucun paramètre
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni durée de cotisation, ni taux de décote ou de surcote. (porte « vague »)

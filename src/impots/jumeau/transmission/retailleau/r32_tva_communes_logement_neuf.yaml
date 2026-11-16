@@ -1,0 +1,48 @@
+schema: 1
+mesure: r32_tva_communes_logement_neuf
+candidat: retailleau
+libelle: Reversement aux communes d'une part de TVA par logement neuf
+sorte: parametre
+source:
+  citation: « 9 000 euros de TVA reversés à la commune pour chaque logement neuf »
+  url: https://republicains.fr/wp-content/uploads/2026/05/LR_Logement.pdf
+  date: '2026-05-01'
+levier:
+  texte: Code général des impôts, TVA (art. 278 et s.) et accises
+  parametre: null
+  valeur: null
+  enonce: 9 000 € par logement
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: tva
+- qui: apu:etat
+  sens: paie
+  par: tva
+incidence:
+- horizon: immediat
+  qui: consommateurs et vendeurs
+  texte: Une baisse de taux passe aux prix en partie ; le reste fait la marge.
+  source: 'Carbonnier (2007), « Who pays sales taxes ? Evidence from French VAT reforms, 1987-1999
+    », Journal of Public Economics 91(5-6) : une baisse de TVA passe aux prix en partie, plus
+    sur un marché concurrentiel'
+- horizon: long
+  qui: consommateurs et vendeurs
+  texte: 'Asymétrie : une hausse passe plus qu''une baisse.'
+  source: 'Benzarti, Carloni, Harju et Kosonen (2020), « What goes up may not come down :
+    asymmetric incidence of value-added taxes », Journal of Political Economy 128(12) : les
+    hausses de TVA passent plus aux prix que les baisses'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Un reversement aux communes par logement neuf demande les finances locales et la
+    construction, que le moteur ne porte pas. (porte « bases_locales »)

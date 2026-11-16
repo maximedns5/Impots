@@ -1,0 +1,75 @@
+schema: 1
+mesure: taxe_zucman
+candidat: melenchon
+libelle: Taxe Zucman
+sorte: hypothese
+source:
+  citation: « l'instauration de la taxe Zucman pour les personnes possédant plus de 100 millions
+    d'euros de patrimoine (15 milliards d'euros de recettes) »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: 2 % par an du patrimoine au-delà de 100 M€ (« garantie d'impôt »)
+  couche: null
+payeurs:
+- qui: menages
+  sens: paie
+  par: patrimoine
+  note: 'la population n''en porte pas : aucune clé par décile'
+- qui: apu:etat
+  sens: recoit
+  par: capital_menages
+incidence:
+- horizon: immediat
+  qui: les détenteurs du patrimoine
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les détenteurs du patrimoine
+  texte: L'assiette répond (épargne, transmission, localisation).
+  source: 'Jakobsen, Jakobsen, Kleven et Zucman (2020), « Wealth taxation and wealth accumulation
+    », QJE 135(1) (Danemark) : l''assiette répond à l''impôt sur la fortune, d''autant plus
+    en haut de la distribution'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- patrimoine_menages
+- consommation_menages
+hypotheses:
+- texte: Le montant tombe sur un impôt courant sur le revenu ou le patrimoine (D5).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
+    sur l’activité).'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 15.0
+    sens: recette
+    horizon: loi de finances 2027
+    citation: « l'instauration de la taxe Zucman pour les personnes possédant plus de 100
+      millions d'euros de patrimoine (15 milliards d'euros de recettes) »
+    url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  chocs:
+    apu_r_d5: -15.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

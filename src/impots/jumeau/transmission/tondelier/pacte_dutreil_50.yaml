@@ -1,0 +1,53 @@
+schema: 1
+mesure: pacte_dutreil_50
+candidat: tondelier
+libelle: Pacte Dutreil
+sorte: parametre
+source:
+  citation: « La diminution des niches fiscales comme le pacte Dutreil pour passer l'abattement
+    à 50% au-delà de 50 millions d'euros et supprimer le dispositif de réduction additionnelle
+    des droits de 50% en cas de donation avant 70 ans »
+  url: https://marinetondelier.fr/s/dossierpresse-budget2027.pdf
+  date: '2026-08-26'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: abattement passé à 50 % au-delà de 50 M€ ; suppression de la réduction additionnelle
+    de 50 % des droits pour une donation avant 70 ans
+  couche: null
+payeurs:
+- qui: menages
+  sens: paie
+  par: patrimoine
+  note: 'la population n''en porte pas : aucune clé par décile'
+- qui: apu:etat
+  sens: recoit
+  par: capital_menages
+incidence:
+- horizon: immediat
+  qui: les détenteurs du patrimoine
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les détenteurs du patrimoine
+  texte: L'assiette répond (épargne, transmission, localisation).
+  source: 'Jakobsen, Jakobsen, Kleven et Zucman (2020), « Wealth taxation and wealth accumulation
+    », QJE 135(1) (Danemark) : l''assiette répond à l''impôt sur la fortune, d''autant plus
+    en haut de la distribution'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- patrimoine_menages
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le pacte Dutreil exonère des transmissions d'entreprises, que le moteur ne porte
+    pas. (porte « transmission »)

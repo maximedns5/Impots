@@ -35071,3 +35071,164 @@ aux prix : le jumeau la refuse aujourd'hui (D-469, J2).
 * **Aucun nombre publié d'une étude ne change** ; ceux du jumeau changent, chaque
   D-entrée dit lesquels. La page de l'étude garde son chiffrage (R15, D-469).
 * Les numéros : D-472 à D-486 aux volets, D-487 et la suite à la jonction.
+
+## D-472 — La carte des effets : le schéma de la fiche de transmission et son lecteur
+
+**Ce qui est fait** (but 26, volet `carte`, sur `claude/but26-carte`). Le contrat de D-471
+est écrit : `src/impots/jumeau/transmission/__init__.py` (le schéma en tête du module, le
+lecteur, la validation, le lien au jumeau) et 333 fiches, une par mesure des onze
+programmes dont l'étude a sa page, sous `transmission/<candidat>/<mesure>.yaml`.
+
+**Le schéma, version 1.** L'en-tête : `schema`, `mesure`, `candidat`, `libelle`,
+`sorte`, `source` (la citation du programme, son adresse, sa date). Puis les sept clés de
+D-471 :
+
+* `levier` : le texte de droit touché, le bouton du moteur et sa valeur (le chiffrage du
+  programme), le paramètre tel que le candidat l'énonce, la couche ;
+* `payeurs` : {qui, sens (paie | recoit), par, note}. `qui` est connu du lecteur :
+  `menages` (les cellules ; `par`, une variable des cellules, donne la clé par décile),
+  `entreprises` (`par`, un impôt du bloc des entreprises ou un instrument du registre),
+  `apu:etat`, `apu:secu:<branche>` (maladie, at_mp, vieillesse, famille, autonomie,
+  chomage, retraite_complementaire), `apu:apul`, `apu:odac`, `reste_du_monde` ;
+* `incidence` : {horizon (immediat | court | long), qui, texte, source} ;
+* `financement` : {annonce, source, chiffre, note} ; `annonce` est null quand la mesure
+  ne dit pas son financement (celui du programme est l'affaire du volet `financement`) ;
+* `canaux` : des noms du registre (`jumeau/canaux.py`) ou des canaux attendus
+  (`CANAUX_ATTENDUS`), que la carte cite et qu'un autre volet doit enregistrer ; un canal
+  attendu n'est jamais lu comme ouvert ;
+* `hypotheses` : {texte, valeur, source}, la source pouvant être « non sourcée » ;
+* `montant` : `rapport` (scénario, rapport), `hypothese` (le montant annoncé et sa
+  citation, les chocs au compte des APU en Md€ de régime, signe du moteur, le profil
+  constant ou en rampe, les années, la variante de Mésange la plus proche, la clé des
+  ménages ou l'impôt des entreprises, `inclus_dans`) ou `aucun` (ce qui manque).
+
+Quatre sortes : `chiffree` (un rapport), `hypothese` (un montant déclaré), `parametre`
+(un paramètre sans montant ni passe), `sans_choc` (une intention, une règle budgétaire).
+`valider` rend les défauts en mots ; `charger` refuse une fiche qui en a ; `manques` dit
+ce qui manque à une fiche pour se propager (canaux attendus, hypothèses non sourcées,
+montant, financement).
+
+**Comment les fiches sont faites.** `scripts/jumeau_fiches_transmission.py` reprend du
+programme ce qu'il porte (libellé, paramètre, citation, chiffrage, `declare`, raison du
+refus) et ajoute trois tables : des gabarits par catégorie de mesure (texte de droit,
+payeurs, incidence, canaux, chacun avec sa littérature) ; des fiches précises pour les
+chiffrées dont l'effet est le plus long (Attal a16, Retailleau r19, les six Smic, la
+CVAE, les exonérations au-delà de 2 Smic, le point d'indice, r13, la CVEC) ; et, pour
+chacun des 78 montants déclarés, la catégorie du compte des APU où il tombe, la variante
+de Mésange la plus proche et son calendrier. Aucun chiffrage de tiers des programmes n'a
+été lu.
+
+**Attal a16, l'exemple du propriétaire.** Le levier : l'échelle des cotisations
+salariales de retraite à 0,22 (CNAV plafonnée et déplafonnée, Agirc-Arrco, CEG, CET).
+Les payeurs, lus dans le rapport de la première année (2026, figée) : les ménages
+reçoivent +77,14 Md€ de salaires nets ; la CNAV et l'Agirc-Arrco perdent −77,14 Md€ de
+cotisations, que la passe ne sépare pas ; l'État reprend +12,05 Md€ d'IR et verse
+−1,54 Md€ de prime d'activité. L'incidence : immédiate sur le net (le brut et le coût du
+travail ne bougent pas, Saez, Matsaganis et Tsakloglou 2012) ; à court terme, la caisse
+perd sa recette (art. L131-7 CSS, la compensation par l'État ; rapport de la CCSS) ; à
+long terme, le brut peut se renégocier (Lehmann, Marical et Rioux 2013 ; Bozio, Breda et
+Grenet 2019 : une cotisation liée à des droits se reporte sur le salaire). Le
+financement : « des économies sur le modèle social », énoncé, non chiffré. Les canaux :
+consommation, offre de travail, incidence des cotisations, salaires, emploi,
+compensation, sous-secteurs, financement annoncé. Une hypothèse non sourcée : les droits
+à la retraite ne baissent pas avec les cotisations.
+
+**Les sources de l'incidence.** Fullerton et Metcalf (2002) ; Saez, Matsaganis et
+Tsakloglou (2012) ; Lehmann, Marical et Rioux (2013) ; Bozio, Breda et Grenet (2019) ;
+Saez, Schoefer et Seim (2019) ; Crépon et Desplatz (2001) ; Kramarz et Philippon (2001) ;
+Koubi et Lhommeau (2007) et Goarant et Muller (2011), Insee, pour la diffusion du Smic ;
+Fougère, Gautier et Le Bihan (2010) pour les prix ; Carbonnier (2007) et Benzarti et
+al. (2020) pour la TVA ; Fuest, Peichl et Siegloch (2018) et la note 53 du CAE pour les
+impôts des entreprises ; Jakobsen et al. (2020) pour le patrimoine ; le COR et la DSS.
+Le passage des accises aux prix n'a pas de source dans la carte : il est dit non sourcé.
+
+## D-473 — Le relevé de la carte : 35 chiffrées, 78 hypothèses, 120 paramètres, 100 vides
+
+Sur les 333 mesures des onze programmes (`reports/transmission/releve.md`) :
+
+| candidat | chiffrée | hypothèse | paramètre | sans choc |
+|---|---:|---:|---:|---:|
+| Attal | 3 | 4 | 11 | 19 |
+| Bouamrane | 1 | 0 | 0 | 3 |
+| Kazib | 1 | 0 | 2 | 4 |
+| Le Pen | 4 | 10 | 7 | 15 |
+| Lisnard | 3 | 4 | 15 | 7 |
+| Mélenchon | 7 | 24 | 20 | 13 |
+| Philippe | 2 | 4 | 9 | 8 |
+| Retailleau | 6 | 12 | 20 | 3 |
+| Roussel | 2 | 0 | 4 | 10 |
+| Ruffin | 2 | 15 | 14 | 6 |
+| Tondelier | 4 | 5 | 18 | 12 |
+
+Les « 44 chiffrées » de BUT.md comptent les vingt-cinq programmes ; les onze en ont 35.
+Les 120 fiches « paramètre » ont un levier, des payeurs, une incidence et des canaux,
+mais pas de montant : un âge, un taux, un seuil sans assiette dans la population (la
+raison du refus du programme est reprise). Elles n'entrent pas dans le jumeau ; les
+chiffrer demande une passe ou une assiette publiée, hors de ce volet.
+
+Les canaux cités et pas encore enregistrés : `offre_travail` (71 fiches),
+`financement_sous_secteurs` (61), `patrimoine_menages` (29), `compensation_exonerations`
+(25), `droits_retraite` (22), `cout_travail_tranche` (14), `allegements_smic` (13),
+`smic_diffusion` (12), `incidence_cotisations` (11), `financement_annonce` (2). La
+jonction les rapproche des noms que `travail` et `financement` enregistrent ;
+`patrimoine_menages` et `droits_retraite` n'ont pas de volet. Sur 357 hypothèses, 273
+sont non sourcées (la catégorie d'une dépense non désignée, la variante de Mésange
+approchée, la montée en charge, ρ = 1) ; sur 459 lignes d'incidence, 18.
+
+## D-474 — Les fiches dans le jumeau : Attal a16 et les onze programmes, ce qui est refusé
+
+**Le lien.** `transmission.entree(fiche, session, vue, convention)` rend la `Mesure` que
+le jumeau lit, ses canaux ouverts et attendus, ses hypothèses, ou le refus et sa raison :
+une chiffrée par `Session.mesure` (donc `Mesure.depuis_rapport`) ; une hypothèse par
+`Mesure.hypothese`, ses chocs au profil de la fiche, son impulsion sur la variante de
+Mésange quand les tables la portent, ses ménages au prorata de la variable des cellules
+que la fiche nomme, ses entreprises par l'impôt qu'elle nomme (comme
+`Session.hypothese`). `transmission.programme(candidat, session)` rend les mesures prêtes
+d'un programme : son rapport (les chiffrées ensemble, en interaction, jamais leur somme)
+et ses hypothèses, sauf celles qu'une autre mesure compte déjà (`inclus_dans`).
+
+**Les passes d'essai** (au commit de cette entrée, θ½ ; Δ dette en 2035, en points de
+PIB). Attal a16 seul : réduit, vieillie +3,97 ; réduit, figée +3,23 ; structurel,
+figée, convention +16,79 ; structurel, vieillie : refusé (la première année n'est
+répartie que sur la figée, D-412). Les programmes, rapport seul puis rapport et
+hypothèses ensemble (« tout ») :
+
+| candidat | réduit, rapport | réduit, tout | structurel, rapport | structurel, tout |
+|---|---:|---:|---:|---:|
+| Attal | +4,28 | −1,87 | +17,02 | +14,04 |
+| Le Pen | +3,00 | −9,35 | +3,76 | −2,10 |
+| Lisnard | +5,71 | −5,56 | +6,21 | +7,44 |
+| Mélenchon | +27,38 | +18,34 | refus | refus |
+| Philippe | +11,73 | +8,29 | +8,14 | +6,07 |
+| Retailleau | +11,37 | +3,37 | refus | refus |
+| Ruffin | +2,59 | −14,26 | refus | refus |
+| Tondelier | +2,51 | +2,67 | refus | refus |
+| Kazib, Bouamrane, Roussel | +0,38, +0,38, +1,23 | sans hypothèse | refus | refus |
+
+Le rapport seul redonne, en réduit sur la vieillie, le nombre des études (Attal +4,28 pt)
+et, en structurel, celui de D-469 (Attal +17,02 pt). Ce sont des nombres du jumeau ; aucun
+nombre publié ne change. Les hypothèses ne sont pas additives aux rapports (Attal : +4,28
+et −6,31 font −1,87, pas −2,03) : la dette se lit en part du PIB.
+
+**Ce qui est refusé, et pourquoi.** Aucune des 78 hypothèses n'est refusée, dans aucun
+mode. En structurel, les rapports de sept programmes le sont (Kazib, Bouamrane,
+Mélenchon, Retailleau, Roussel, Ruffin, Tondelier) : des prélèvements agrégés que le
+rapport ne répartit pas impôt par impôt, et le Smic (D-469, J2). La carte ne les
+contourne pas : les volets `ventilation` et `travail` les traitent. En structurel, les
+hypothèses de ces programmes tournent seules (Mélenchon −11,43 pt, Ruffin −16,44 pt,
+Retailleau +0,31 pt, Tondelier −1,28 pt).
+
+**Ce qui reste à décider par le propriétaire.** (1) Les 78 montants déclarés entrent
+avec ρ = 1 et des montées en charge non sourcées : faut-il un curseur ρ dans le jumeau,
+comme dans la couche déclarée des études (D-319) ? (2) La variante « dépense publique »
+de Mésange pour une économie de prestations est une approximation forte : elle fait
+l'essentiel de l'écart des hypothèses en réduit (Le Pen −12,43 pt, Ruffin −17,03 pt).
+(3) Les 120 paramètres sans montant : une passe, ou une assiette publiée par mesure ?
+
+**Ce qu'un test devra tenir** (écrit avant la PR, D-471). Les 333 fiches se chargent sans
+défaut ; le relevé de D-473, sorte par sorte ; `entree` d'Attal a16 rend la mesure de
+`Session.mesure` (réduit, vieillie : +3,97 pt en 2035 à θ½) ; `programme("attal")` rend
+cinq mesures prêtes et trente autres, et la trajectoire réduite, vieillie, de l'ensemble
+−1,87 pt ; une hypothèse en rampe (Lisnard l6 : 80 Md€ en 2027, 200 en 2032) rend −80 et
+−200 Md€ de dépense ces années-là ; une fiche à un payeur inconnu ou à une hypothèse sans
+source est refusée.

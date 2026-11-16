@@ -1,0 +1,28 @@
+schema: 1
+mesure: a26_bouclier_eau
+candidat: attal
+libelle: Bouclier tarifaire sur le prix de l'eau du quotidien
+sorte: sans_choc
+source:
+  citation: « un bouclier tarifaire qui garantit aux familles un prix bas sur l'eau du quotidien
+    » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/bouclier-tarifaire-eau
+  date: '2026-08-10'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: non chiffré
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni prix plafond ni montant. (porte « vague »)

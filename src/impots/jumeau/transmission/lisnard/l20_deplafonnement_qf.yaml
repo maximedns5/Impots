@@ -1,0 +1,58 @@
+schema: 1
+mesure: l20_deplafonnement_qf
+candidat: lisnard
+libelle: Déplafonnement du quotient familial
+sorte: chiffree
+source:
+  citation: « des allocations financières, notamment par le déplafonnement du quotient familial
+    »
+  url: https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/
+  date: '2026-11-01'
+levier:
+  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  parametre: plafond_qf_demi_part, plafond_qf_parent_isole
+  valeur:
+    plafond_qf_demi_part: 100000.0
+    plafond_qf_parent_isole: 100000.0
+  enonce: plafond supprimé
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: ir
+- qui: apu:etat
+  sens: paie
+  par: impot_sur_le_revenu
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les ménages redevables
+  texte: L'IR reste sur le ménage ; il répond par son offre de travail et sa consommation.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+financement:
+  annonce: « des allocations financières, notamment par le déplafonnement du quotient familial
+    »
+  source: « des allocations financières, notamment par le déplafonnement du quotient familial
+    »
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux:
+- consommation_menages
+- offre_travail
+hypotheses:
+- texte: '« Plafond supprimé » : le plafond général et celui du premier enfant d''un parent
+    isolé passent à 100 000 €, la borne du schéma, que nul foyer n''atteint. Les autres plafonds
+    particuliers (personne seule sans enfant à charge, réduction complémentaire des veufs)
+    ne sont pas des boutons et restent ceux de 2026. Plages du droit de 2026 à la borne.'
+  source: le chiffrage de la mesure (`programmes/lisnard.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_lisnard_l20_deplafonnement_qf
+  rapport: reports/etudes/presidentielle_lisnard/mesures/l20_deplafonnement_qf/predictif_pres2027_lisnard_l20_deplafonnement_qf.json

@@ -1,0 +1,45 @@
+schema: 1
+mesure: r1_plan_economies_197_md
+candidat: retailleau
+libelle: Plan d'économies sur cinq ans (État, social, collectivités)
+sorte: parametre
+source:
+  citation: « Sa trajectoire prévoit un effort « inédit » de 197 milliards d'euros sur cinq
+    ans » (texte de l'article)
+  url: https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu
+  date: '2026-10-12'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: 197 Md€ jusqu'en 2032 (96 / 91 / 10)
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Un plan d''économies sans dépense désignée une à une : la dépense n''est qu''un
+    scénario du calcul de la dette. (porte « depense_publique »)'

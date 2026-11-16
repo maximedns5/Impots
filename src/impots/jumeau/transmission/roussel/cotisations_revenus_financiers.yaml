@@ -1,0 +1,29 @@
+schema: 1
+mesure: cotisations_revenus_financiers
+candidat: roussel
+libelle: Cotisations sur les revenus financiers et les dividendes
+sorte: sans_choc
+source:
+  citation: « Oui, nous mettrons des cotisations sur les revenus financiers et sur les dividendes
+    pour financer la Sécurité sociale et notre système de retraite par répartition. »
+  url: https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html
+  date: '2026-09-15'
+levier:
+  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  parametre: null
+  valeur: null
+  enonce: aucun taux
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: Cotisations sur les revenus financiers et les dividendes
+  source: le libellé du relevé (`programmes/roussel.json`), d'après https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Aucun taux des cotisations sur les revenus financiers n'est énoncé. (porte « vague
+    »)

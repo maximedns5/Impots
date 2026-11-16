@@ -1,0 +1,50 @@
+schema: 1
+mesure: r10_age_minimal_63_ans
+candidat: retailleau
+libelle: Âge minimal de départ à 63 ans avec décote
+sorte: parametre
+source:
+  citation: « L'âge minimal de départ, c'est 63 ans » ; départ à 63 ans avec « une décote
+    de 7 % par an »
+  url: https://lcp.fr/actualites/retraites-bruno-retailleau-veut-un-age-minimal-de-depart-a-63-ans-et-un-taux-plein-a-65
+  date: '2026-09-23'
+levier:
+  texte: 'Code de la sécurité sociale : âge (art. L161-17-2), pension (art. L351-1 et s.)'
+  parametre: null
+  valeur: null
+  enonce: 63 ans ; décote de 7 %/an
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: retraite
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les retraités et futurs retraités
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les régimes et les actifs
+  texte: Le solde des régimes et l'emploi des seniors bougent.
+  source: 'Conseil d''orientation des retraites, rapport annuel (juin 2025) : le solde des
+    régimes selon l''âge, la durée et l''indexation'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- droits_retraite
+- offre_travail
+- consommation_menages
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'L''âge de départ et la décote ne se règlent pas : la population ne vieillit pas
+    et ses pensions sont des données. (porte « retraites »)'

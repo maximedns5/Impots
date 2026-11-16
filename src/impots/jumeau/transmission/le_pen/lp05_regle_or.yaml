@@ -1,0 +1,33 @@
+schema: 1
+mesure: lp05_regle_or
+candidat: le_pen
+libelle: Règle d'or constitutionnelle par référendum
+sorte: sans_choc
+source:
+  citation: Notre règle d'or imposera un déficit systématiquement inférieur au seuil stabilisant
+    de la dette, soit le niveau permettant de diminuer chaque année la dette en proportion
+    du PIB
+  url: https://lcp.fr/actualites/budget-comment-fonctionnerait-la-regle-d-or-que-marine-le-pen-veut-faire-adopter-par
+  date: '2026-10-02'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: 'Le déficit doit rester sous le « seuil stabilisant de la dette ». Plafonds : 4,9
+    % (2027), 4,4 % (2028), 3,9 % (2030), 3,4 % (2031), 2,9 % (2032), 2,4 % (2033), maintenus
+    jusqu''à une dette sous 60 % du PIB. Dérogation possible à la majorité des 3/5 du Parlement.
+    Référendum « dans les douze mois »'
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une règle budgétaire est une hypothèse du calcul de la dette, qui ne porte qu'un
+    scénario de dépense à la fois. (porte « chaine »)

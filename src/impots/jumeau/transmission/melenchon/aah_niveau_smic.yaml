@@ -1,0 +1,52 @@
+schema: 1
+mesure: aah_niveau_smic
+candidat: melenchon
+libelle: AAH portée au niveau du SMIC
+sorte: parametre
+source:
+  citation: « Assurer l'autonomie financière des personnes en situation de handicap en revalorisant
+    l'allocation aux adultes handicapés (AAH) à hauteur du SMIC »
+  url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2
+  date: '2026-11-06'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: montant de l'AAH = SMIC (net ou brut non dit)
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: « Assurer l'autonomie financière des personnes en situation de handicap en revalorisant
+    l'allocation aux adultes handicapés (AAH) à hauteur du SMIC »
+  source: « Assurer l'autonomie financière des personnes en situation de handicap en revalorisant
+    l'allocation aux adultes handicapés (AAH) à hauteur du SMIC »
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Le montant de l''AAH a un bouton (indexations, « aah »), mais la population ne
+    porte ni le handicap ni l''AAH : le bouton n''y mordrait sur personne, et chiffrerait
+    zéro. (porte « donnee_menages »)'

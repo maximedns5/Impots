@@ -1,0 +1,68 @@
+schema: 1
+mesure: leasing_social_public
+candidat: ruffin
+libelle: Leasing social public
+sorte: hypothese
+source:
+  citation: « déployant une flotte publique de 3 millions de voitures électriques en 5 ans.
+    Les mensualités seront modérées (100 à 200€/mois selon le type de véhicule) »
+  url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  date: '2026-10-21'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: 3 millions de voitures électriques en 5 ans ; 100 à 200 € par mois ; durées de 7
+    à 11 ans
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses:
+- texte: 'Le montant tombe sur un transfert en capital (D9) : aides à l''investissement.'
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
+    sur l’activité).'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 0.8
+    sens: depense
+    horizon: 2027 (2,5 Md€ par an en moyenne)
+    citation: « déployant une flotte publique de 3 millions de voitures électriques en 5 ans.
+      Les mensualités seront modérées (100 à 200€/mois selon le type de véhicule) »
+    url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  chocs:
+    apu_d_d9: 0.8
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

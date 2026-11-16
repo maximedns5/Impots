@@ -1,0 +1,80 @@
+schema: 1
+mesure: l3_impots_production_40_md
+candidat: lisnard
+libelle: Baisse des impôts de production, à commencer par la C3S
+sorte: hypothese
+source:
+  citation: « David Lisnard propose de baisser les impôts de production de 40 milliards d'euros,
+    en commençant par la suppression de la C3S » (texte de la page)
+  url: https://www.unenouvelleenergie.fr/questions/david-lisnard-veut-il-baisser-les-impots/
+  date: '2026-01-21'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: 40 Md€
+  couche: null
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: autre
+- qui: apu:etat
+  sens: paie
+  par: autre
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: salariés, clients, actionnaires
+  texte: Un impôt sur les bénéfices retombe pour partie sur les salaires ; un impôt sur le
+    chiffre d'affaires, en cascade, sur les prix.
+  source: 'Fuest, Peichl et Siegloch (2018), « Do higher corporate taxes reduce wages ? »,
+    American Economic Review 108(2) : environ la moitié de l''impôt local sur les bénéfices
+    retombe sur les salaires (Allemagne) ; Martin et Trannoy (2019), « Les impôts sur (ou
+    contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
+    la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses:
+- texte: Le montant tombe sur un impôt sur la production ou les produits (D2).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
+    sur l’activité).'
+  source: non sourcée
+- texte: Montée en charge linéaire de 2027 à 2032, puis le montant tenu jusqu'en 2035.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 40.0
+    sens: baisse_prelevements
+    horizon: à l'horizon 2032 (sur les 200 Md€ d'économies)
+    citation: « David Lisnard propose de baisser les impôts de production de 40 milliards
+      d'euros, en commençant par la suppression de la C3S » (texte de la page)
+    url: https://www.unenouvelleenergie.fr/questions/david-lisnard-veut-il-baisser-les-impots/
+  chocs:
+    apu_r_d2: 40.0
+  profil: rampe
+  debut: 2027
+  plein: 2032
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

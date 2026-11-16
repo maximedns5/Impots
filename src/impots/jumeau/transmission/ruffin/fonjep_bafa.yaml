@@ -1,0 +1,45 @@
+schema: 1
+mesure: fonjep_bafa
+candidat: ruffin
+libelle: Postes FONJEP doublés, BAFA gratuit
+sorte: parametre
+source:
+  citation: « nous doublerons le nombre de postes FONJEP et nous porterons l'aide à 15 000
+    € par poste » ; « Nous rendrons le BAFA gratuit. »
+  url: https://nouspresident.fr/temps-loisirs/
+  date: '2026-07-17'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: aide de 15 000 € par poste ; BAFA gratuit
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une dépense publique, que le moteur ne microsimule pas : elle n''entre que par
+    le scénario de dépense du calcul de la dette. (porte « depense_publique »)'

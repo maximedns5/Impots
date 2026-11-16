@@ -1,0 +1,71 @@
+schema: 1
+mesure: p19_baisse_aides_entreprises
+candidat: philippe
+libelle: '« Deal » : baisse des aides aux entreprises, contrepartie de la baisse des impôts
+  de production (p3)'
+sorte: hypothese
+source:
+  citation: « un deal à 50 milliards d'euros de baisse d'impôts d'un côté et de baisse de
+    dépenses de l'autre », soit « 250 milliards pour un quinquennat »
+  url: https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe
+  date: '2025-11-06'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: 50 Md€ par an
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: '« Deal » : baisse des aides aux entreprises, contrepartie de la baisse des impôts
+    de production (p3)'
+  source: le libellé du relevé (`programmes/philippe.json`), d'après https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: Le montant tombe sur des subventions (D3) aux entreprises.
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
+    sur l’activité).'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 50.0
+    sens: economie_depense
+    horizon: par an ; contrepartie de p3
+    citation: « un deal à 50 milliards d'euros de baisse d'impôts d'un côté et de baisse de
+      dépenses de l'autre », soit « 250 milliards pour un quinquennat »
+    url: https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe
+  chocs:
+    apu_d_d3: -50.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: null
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

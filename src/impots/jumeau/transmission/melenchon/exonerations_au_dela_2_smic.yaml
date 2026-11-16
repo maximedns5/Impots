@@ -1,0 +1,66 @@
+schema: 1
+mesure: exonerations_au_dela_2_smic
+candidat: melenchon
+libelle: Fin des exonérations de cotisations au-dessus de 2 SMIC
+sorte: chiffree
+source:
+  citation: « Aussi proposons-nous d'interrompre cette subvention au-dessus de 2 SMIC, où
+    les exonérations ne sont plus qu'un effet d'aubaine sans aucun effet sur l'emploi. »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: allegement_general_plafond
+  valeur:
+    allegement_general_plafond: 2.0
+  enonce: 'seuil : 2 SMIC'
+  couche: menages
+payeurs:
+- qui: entreprises
+  sens: paie
+  par: cotisations_employeurs
+- qui: apu:etat
+  sens: recoit
+  par: cotisations_employeurs
+  note: moins de compensation des allègements
+incidence:
+- horizon: court
+  qui: les employeurs
+  texte: Le coût du travail monte au-dessus de 2 Smic.
+  source: 'Saez, Schoefer et Seim (2019), « Payroll taxes, firm behavior, and rent sharing
+    », American Economic Review 109(5) (Suède) : une baisse de cotisations patronales ne passe
+    pas dans les salaires ; elle passe dans l''emploi et l''investissement'
+- horizon: long
+  qui: salariés et employeurs
+  texte: Une part peut passer dans les salaires.
+  source: 'Lehmann, Marical et Rioux (2013), « Labor income responds differently to income-tax
+    and payroll-tax reforms », Journal of Public Economics 99 (France, DADS) : une baisse
+    de cotisations se retrouve en partie dans le salaire, lentement ; Bozio, Breda et Grenet
+    (2019), « Does tax-benefit linkage matter for the incidence of social security contributions
+    ? », IZA DP 12502 (France) : une cotisation liée à des droits se reporte sur le salaire,
+    une cotisation sans lien reste sur l''employeur'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- emploi
+- salaires
+- cout_travail_tranche
+- allegements_smic
+- compensation_exonerations
+- financement_sous_secteurs
+hypotheses:
+- texte: 'Sur le droit de 2026, les taux réduits de cotisations maladie et famille (les «
+    bandeaux ») ont disparu, fondus dans la réduction générale des cotisations patronales,
+    qui est la seule exonération générale ; son seuil de sortie, 3 SMIC (le paramètre allegement_general_plafond),
+    est ramené à 2 SMIC. Le candidat ne dit rien de la courbe sous 2 SMIC : elle reste celle
+    de 2026, et la réduction s''arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de
+    3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l''écart).'
+  source: le chiffrage de la mesure (`programmes/melenchon.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_melenchon_exonerations_au_dela_2_smic
+  rapport: reports/etudes/presidentielle_melenchon/mesures/exonerations_au_dela_2_smic/predictif_pres2027_melenchon_exonerations_au_dela_2_smic.json

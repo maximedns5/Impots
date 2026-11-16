@@ -1,0 +1,81 @@
+schema: 1
+mesure: l6_economies_200_md
+candidat: lisnard
+libelle: 'Économies : 80 Md€ dès la première année, 200 Md€ à l''horizon 2032 ; −7 points
+  de dépense publique dans le PIB'
+sorte: hypothese
+source:
+  citation: « 80 milliards d'euros d'économies dès la première année, puis 200 milliards d'euros
+    à l'horizon 2032 » (texte de la page)
+  url: https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/
+  date: '2026-10-27'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: 80 Md€ en an 1 ; 200 Md€ en 2032 ; ≈ 50 % du PIB
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: 'Le montant tombe sur la composition de la dépense publique de Mésange (G2017-04,
+    p. 106) : le programme ne dit pas quelle dépense.'
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
+- texte: 'Le calendrier du candidat : 80 Md€ en 2027, 200 Md€ en 2032 ; linéaire entre ses
+    points, tenu ensuite.'
+  source: « 80 milliards d'euros d'économies dès la première année, puis 200 milliards d'euros
+    à l'horizon 2032 » (texte de la page)
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 200.0
+    sens: economie_depense
+    horizon: à l'horizon 2032, en année pleine en fin de quinquennat ; 80 Md€ dès la première
+      année ; 300 Md€ visés, non documentés
+    citation: « 80 milliards d'euros d'économies dès la première année, puis 200 milliards
+      d'euros à l'horizon 2032 » (texte de la page)
+    url: https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/
+  chocs:
+    apu_d_p51g: -16.0
+    apu_d_d1: -50.0
+    apu_d_d632: -18.0
+    apu_d_p2: -24.0
+    apu_d_d62: -92.0
+  profil: calendrier
+  debut: 2027
+  plein: 2032
+  fin: 2035
+  instrument: depense_publique
+  menages_par: prestations
+  entreprises_par: null
+  inclus_dans: null
+  menages_part: 0.46
+  calendrier:
+    2027: 80.0
+    2032: 200.0

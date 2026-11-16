@@ -1,0 +1,70 @@
+schema: 1
+mesure: indexation_pensions_prestations_10
+candidat: melenchon
+libelle: Indexation des pensions, allocations familiales et APL, hausse de 10 %
+sorte: chiffree
+source:
+  citation: « nous indexerons toutes les pensions, allocations familiales et APL, qui seront
+    rehaussées de 10 % (8 milliards d'euros) »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: indexations
+  valeur:
+    indexations:
+      pensions:
+        '2025': 1.1
+      prestations_familiales:
+        '2025': 1.1
+      aides_logement:
+        '2025': 1.1
+  enonce: indexation sur l'inflation ; +10 %
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses:
+- texte: 'La mesure se mesure contre l''indexation légale sur les prix, la référence du but
+    21 : l''indexation qu''elle promet est celle du droit, et ne coûte rien ; la hausse de
+    10 % est la mesure. Trois coefficients de 1,10 sur ce que le droit porte : les pensions
+    de retraite de la population (des données, multipliées au 1er janvier), la base mensuelle
+    des allocations familiales (au 1er avril) et les paramètres des aides au logement révisés
+    en octobre. Ils sont posés à la date légale de 2025 pour que toute l''année chiffrée porte
+    la hausse, comme les boutons « portée » (D-301). Le candidat dit « allocations familiales
+    » : la base mensuelle porte aussi le complément familial, l''allocation de soutien familial,
+    l''allocation de rentrée scolaire et l''allocation de base de la PAJE, qui montent avec
+    elles ; c''est la traduction qui ne choisit pas entre les prestations familiales. Les
+    pensions d''invalidité et les autres prestations ne bougent pas. Plages : du droit (1)
+    à 10 % prolongé de la moitié de l''écart (1,15).'
+  source: le chiffrage de la mesure (`programmes/melenchon.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_melenchon_indexation_pensions_prestations_10
+  rapport: reports/etudes/presidentielle_melenchon/mesures/indexation_pensions_prestations_10/predictif_pres2027_melenchon_indexation_pensions_prestations_10.json
+  annonce_md: 8.0

@@ -1,0 +1,50 @@
+schema: 1
+mesure: conge_second_parent_16_semaines
+candidat: tondelier
+libelle: Congé d'accueil de l'enfant de 16 semaines à 100 % pour chaque parent
+sorte: parametre
+source:
+  citation: « rendre obligatoire et aligner le congé d'accueil de l'enfant entre la mère et
+    le second parent avec 16 semaines rémunérées à 100% du salaire mensuel de base »
+  url: https://marinetondelier.fr/s/livret-travail.pdf
+  date: '2026-11-04'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: 16 semaines à 100 % du salaire de base ; congé de naissance à 80 % et trois mois
+    par parent
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Les indemnités de congé de maternité, de paternité et de naissance ne sont pas portées
+    par le moteur. (porte « prestations_hors_modele »)

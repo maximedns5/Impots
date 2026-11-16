@@ -1,0 +1,44 @@
+schema: 1
+mesure: baisse_prix_essence_total
+candidat: roussel
+libelle: Baisse du prix de l'essence exigée de TotalEnergies, sinon « nationalisation-sanction
+  »
+sorte: parametre
+source:
+  citation: « baisser de 30 à 50 centimes le prix de l'essence » ; « alors il faudra la nationaliser
+    »
+  url: https://lcp.fr/actualites/presidentielle-a-la-fete-de-l-huma-fabien-roussel-au-defi-de-prouver-l-utilite-d-une
+  date: '2026-09-11'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: 30 à 50 centimes
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Un prix exigé d''une entreprise, sous menace de nationalisation : ni une taxe ni
+    un paramètre du moteur. (porte « prix »)'

@@ -1,0 +1,82 @@
+schema: 1
+mesure: r30_garde_enfants
+candidat: retailleau
+libelle: 'Garde d''enfants : suppression du plafond de 500 000 € du crédit d''impôt famille
+  ; plafond d''exonération de la participation employeur aux frais de garde relevé'
+sorte: hypothese
+source:
+  citation: « Relever de 2 421 euros à 7 000 euros par an le plafond d'exonération de cotisations
+    sociales et d'impôt sur le revenu »
+  url: https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf
+  date: '2026-04-28'
+levier:
+  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  parametre: null
+  valeur: null
+  enonce: 2 421 € → 7 000 €/an
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: cotisations_salariales
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: cotisations_salaries
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les salariés
+  texte: Le net bouge, le brut et le coût du travail non.
+  source: 'Saez, Matsaganis et Tsakloglou (2012), « Earnings determination and taxes : evidence
+    from a cohort-based payroll tax reform in Greece », QJE 127(1) : à moyen terme, les cotisations
+    restent sur celui qui les verse (incidence statutaire)'
+- horizon: long
+  qui: salariés et employeurs
+  texte: 'Le brut peut se renégocier : une part de la baisse revient à l''employeur.'
+  source: 'Lehmann, Marical et Rioux (2013), « Labor income responds differently to income-tax
+    and payroll-tax reforms », Journal of Public Economics 99 (France, DADS) : une baisse
+    de cotisations se retrouve en partie dans le salaire, lentement'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- incidence_cotisations
+- compensation_exonerations
+- financement_sous_secteurs
+hypotheses:
+- texte: Le montant tombe sur l'impôt sur le revenu (D5), aux ménages au prorata de leur IR.
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : impot_sur_le_revenu.'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 0.8
+    sens: baisse_prelevements
+    horizon: non énoncé ; pour les deux mesures
+    citation: 'Pas de citation directe. L''inventaire relève : 800 M€ pour les deux mesures
+      (document).'
+    url: https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf
+  chocs:
+    apu_r_d5: 0.8
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: impot_sur_le_revenu
+  menages_par: ir
+  entreprises_par: null
+  inclus_dans: null

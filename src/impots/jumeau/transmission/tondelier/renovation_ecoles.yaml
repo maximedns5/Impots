@@ -1,0 +1,47 @@
+schema: 1
+mesure: renovation_ecoles
+candidat: tondelier
+libelle: Rénovation thermique des écoles
+sorte: parametre
+source:
+  citation: « un investissement de 2 milliards d'euros par an de la part de l'Etat est à notre
+    sens nécessaire dès 2027 avec le principe que chaque euro investi par l'Etat déclenche
+    l'investissement d'un euro par les collectivités »
+  url: https://marinetondelier.fr/s/dossierpresse-budget2027.pdf
+  date: '2026-08-26'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: 2 Md€ par an de l'État dès 2027, chaque euro de l'État déclenchant un euro des collectivités
+    (besoin total 4 Md€ par an sur 10 ans) ; compris dans les 10 Md€ du plan climat
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: « Une 'grande transmission' qui doit financer la 'grande transition' » (Tondelier)
+  source: « Une 'grande transmission' qui doit financer la 'grande transition' » (Tondelier)
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une dépense publique, que le moteur ne microsimule pas : elle n''entre que par
+    le scénario de dépense du calcul de la dette. (porte « depense_publique »)'

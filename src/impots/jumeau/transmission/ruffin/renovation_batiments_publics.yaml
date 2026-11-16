@@ -1,0 +1,68 @@
+schema: 1
+mesure: renovation_batiments_publics
+candidat: ruffin
+libelle: Rénovation et adaptation des bâtiments publics (écoles, hôpitaux, Ehpad)
+sorte: hypothese
+source:
+  citation: « Avec une subvention de 40% du coût et des travaux étalés sur 2 ans, le besoin
+    de soutiens d'urgence par l'Etat est d'environ 600 millions d'euros par an »
+  url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  date: '2026-10-21'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: subvention de 40 % du coût, travaux sur 2 ans
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: Le montant tombe sur de l'investissement public (P51g).
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : investissement_public.'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 1.6
+    sens: depense
+    horizon: 2027 (2,4 Md€ par an en moyenne)
+    citation: « Avec une subvention de 40% du coût et des travaux étalés sur 2 ans, le besoin
+      de soutiens d'urgence par l'Etat est d'environ 600 millions d'euros par an »
+    url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  chocs:
+    apu_d_p51g: 1.6
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: investissement_public
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

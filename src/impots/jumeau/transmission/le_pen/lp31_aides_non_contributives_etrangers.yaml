@@ -1,0 +1,27 @@
+schema: 1
+mesure: lp31_aides_non_contributives_etrangers
+candidat: le_pen
+libelle: Fin du financement des aides non contributives pour les étrangers
+sorte: sans_choc
+source:
+  citation: l'arrêt du financement des aides non-contributives pour les étrangers
+  url: https://www.europe1.fr/politique/des-choix-a-faire-entre-baisse-de-la-tva-sur-lenergie-et-reduction-des-depenses-marine-le-pen-detaille-son-projet-economique-1083380
+  date: '2026-09-17'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: Non chiffré dans la source 2026
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: Fin du financement des aides non contributives pour les étrangers
+  source: le libellé du relevé (`programmes/le_pen.json`), d'après https://www.europe1.fr/politique/des-choix-a-faire-entre-baisse-de-la-tva-sur-lenergie-et-reduction-des-depenses-marine-le-pen-detaille-son-projet-economique-1083380
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une intention qui ne dit ni quelles aides ni quels étrangers. (porte « vague »)

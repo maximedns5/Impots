@@ -1,0 +1,70 @@
+schema: 1
+mesure: garantie_autonomie_jeunes
+candidat: melenchon
+libelle: Garantie d'autonomie des jeunes
+sorte: chiffree
+source:
+  citation: « plus aucun jeune ne doit vivre sous le seuil de pauvreté, fixé à 1 337 euros
+    par mois, ce qui coûtera 9,5 milliards d'euros »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: garantie_autonomie
+  valeur:
+    garantie_autonomie:
+      seuil: 1337.0
+      age_minimum: 18
+      age_maximum: 25
+      taux_ressources: 1.0
+  enonce: aucun jeune sous le seuil de pauvreté « fixé à 1 337 euros par mois »
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: « Financer l'autonomie des jeunes détachés du foyer fiscal parental grâce à la
+    garantie d'autonomie qui les portera au-dessus du seuil de pauvreté (1 337 euros pour
+    une personne seule) »
+  source: « Financer l'autonomie des jeunes détachés du foyer fiscal parental grâce à la garantie
+    d'autonomie qui les portera au-dessus du seuil de pauvreté (1 337 euros pour une personne
+    seule) »
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses:
+- texte: 'Une prestation neuve (D-382) : chaque jeune reçoit la différence entre 1 337 € par
+    mois et ses ressources propres du mois (salaire, revenu d''indépendant, chômage, pension),
+    sans les ressources de ses parents ni les prestations de sa famille. Le candidat dit «
+    les jeunes » sans âge : de 18 ans à la veille de 25, l''âge sous lequel le RSA est fermé,
+    est une hypothèse ; la plage de l''âge de sortie va de 21 (la fin des prestations familiales)
+    à 30 ans. Le programme du 6 novembre la réserve aux jeunes « détachés du foyer fiscal
+    parental » : la population ne dit pas le rattachement, et la garantie va à tous les jeunes
+    de la tranche, ce qui la surestime. Servie en espérance avec la loi de recours du RSA
+    (D-382). Elle ne remplace rien et n''entre dans aucune base de ressources. Contre le droit
+    de 2026, où elle n''existe pas.'
+  source: le chiffrage de la mesure (`programmes/melenchon.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_melenchon_garantie_autonomie_jeunes
+  rapport: reports/etudes/presidentielle_melenchon/mesures/garantie_autonomie_jeunes/predictif_pres2027_melenchon_garantie_autonomie_jeunes.json
+  annonce_md: 9.5

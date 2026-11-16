@@ -1,0 +1,59 @@
+schema: 1
+mesure: credit_impot_domicile_travail
+candidat: ruffin
+libelle: Crédit d'impôt pour les trajets domicile-travail, remise à plat des frais kilométriques
+  et avantages véhicules
+sorte: chiffree
+source:
+  citation: « Avec un taux de couverture des déplacements autour de 30%, ce crédit d'impôt
+    permettrait à des gros rouleurs aux revenus moyens d'être remboursés d'environ 700€en
+    2026 »
+  url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  date: '2026-10-21'
+levier:
+  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  parametre: credit_trajets_taux
+  valeur:
+    credit_trajets_taux: 0.3
+  enonce: couverture « autour de 30% » des frais ; environ 700 € pour un gros rouleur
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: ir
+- qui: apu:etat
+  sens: paie
+  par: impot_sur_le_revenu
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les ménages redevables
+  texte: L'IR reste sur le ménage ; il répond par son offre de travail et sa consommation.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+hypotheses:
+- texte: 'Un crédit d''impôt de 30 % des frais de trajet domicile-travail de chaque salarié
+    (« autour de 30 % », plage de 25 à 35 %), sur les frais qu''impute la population (D-383),
+    sans franchise ni plafond ni condition de revenu : les « gros rouleurs aux revenus moyens
+    » ne sont pas définis. La remise à plat des frais kilométriques et des avantages en nature
+    des véhicules n''est pas lue ; les frais réels déclarés restent. Contre le droit de 2026.'
+  source: le chiffrage de la mesure (`programmes/ruffin.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_ruffin_credit_impot_domicile_travail
+  rapport: reports/etudes/presidentielle_ruffin/mesures/credit_impot_domicile_travail/predictif_pres2027_ruffin_credit_impot_domicile_travail.json
+  annonce_md: 0.5

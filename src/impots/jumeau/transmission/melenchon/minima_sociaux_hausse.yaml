@@ -1,0 +1,28 @@
+schema: 1
+mesure: minima_sociaux_hausse
+candidat: melenchon
+libelle: Hausse des minima sociaux
+sorte: sans_choc
+source:
+  citation: « Augmenter immédiatement le SMIC à 1 700 euros net mensuel et les minima sociaux
+    »
+  url: https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2
+  date: '2026-11-06'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: La hausse des minima sociaux n'a ni taux ni montant. (porte « vague »)

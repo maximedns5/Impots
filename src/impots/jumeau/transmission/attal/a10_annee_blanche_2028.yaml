@@ -1,0 +1,52 @@
+schema: 1
+mesure: a10_annee_blanche_2028
+candidat: attal
+libelle: « Année blanche » sur l'ensemble des prestations sociales au budget 2028, petites
+  retraites épargnées
+sorte: parametre
+source:
+  citation: « Pour mon premier budget 2028, il faudra faire une année blanche sur l'ensemble
+    des prestations sociales, en épargnant toutefois les petites retraites »
+  url: https://www.moneyvox.fr/impot/actualites/109548/attal-veut-100-000-departs-volontaires-de-fonctionnaires-et-impunite-budgetaire-zero
+  date: '2026-07-03'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: gel en 2028
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: prestations
+- qui: apu:secu:famille
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les allocataires
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les allocataires
+  texte: L'offre de travail répond au revenu et au taux marginal.
+  source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
+    que le rapport de la mesure lit à θ
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- financement_sous_secteurs
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le bouton existe (indexations, un coefficient par prestation et par année), mais
+    les « petites retraites épargnées » demandent un seuil de pension que le bouton, uniforme,
+    ne dit pas. Le gel tombe en 2028 ; il se mesurerait contre l'indexation légale sur les
+    prix, la référence du but 21. (porte « indexation »)

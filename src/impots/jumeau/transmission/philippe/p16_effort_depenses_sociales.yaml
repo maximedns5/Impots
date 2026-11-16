@@ -1,0 +1,45 @@
+schema: 1
+mesure: p16_effort_depenses_sociales
+candidat: philippe
+libelle: Moitié de l'effort budgétaire portée par les dépenses sociales
+sorte: parametre
+source:
+  citation: « les dépenses sociales, sur lesquelles il entend concentrer la moitié de l'effort
+    budgétaire » (texte de l'article)
+  url: https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ
+  date: '2026-10-08'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: 50 % de l'effort
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une part de l''effort sans montant ni prestation désignée : la dépense n''est qu''un
+    scénario du calcul de la dette. (porte « depense_publique »)'

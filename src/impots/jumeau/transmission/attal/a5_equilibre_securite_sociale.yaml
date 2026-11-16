@@ -1,0 +1,30 @@
+schema: 1
+mesure: a5_equilibre_securite_sociale
+candidat: attal
+libelle: Équilibre strict de la Sécurité sociale
+sorte: sans_choc
+source:
+  citation: « l'équilibre strict de la Sécurité sociale en 2032, quand l'équilibre de l'ensemble
+    des comptes publics est visé en 2037 » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/equilibre-securite-sociale
+  date: '2026-07-03'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: 'équilibre en 2032 (page mesure) ; « en trois ans » (lettre du 15/10/2026) : les
+    deux se contredisent'
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Un solde cible de la Sécurité sociale est une hypothèse du calcul de la dette,
+    pas une réforme : aucun bouton ne le règle. (porte « chaine »)'

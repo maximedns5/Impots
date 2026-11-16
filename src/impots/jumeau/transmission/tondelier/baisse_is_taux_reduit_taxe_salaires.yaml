@@ -1,0 +1,31 @@
+schema: 1
+mesure: baisse_is_taux_reduit_taxe_salaires
+candidat: tondelier
+libelle: Baisse du taux réduit de l'IS et de la taxe sur les salaires pour les TPE, PME et
+  associations
+sorte: sans_choc
+source:
+  citation: « comme un ajustement à la baisse du taux réduit de l'impôt sur les sociétés et
+    de la taxe sur les salaires »
+  url: https://marinetondelier.fr/s/livret-travail.pdf
+  date: '2026-11-04'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: aucun taux
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Ni le taux réduit visé ni le barème de la taxe sur les salaires ne sont énoncés.
+    (porte « vague »)

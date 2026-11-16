@@ -1,0 +1,31 @@
+schema: 1
+mesure: lp01_economies_nettes
+candidat: le_pen
+libelle: Plan d'économies nettes
+sorte: sans_choc
+source:
+  citation: 140 milliards d'euros net d'économies d'ici 2032
+  url: https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net
+  date: '2026-10-06'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: '140 Md€ nets d''ici 2032 par rapport à 2026 — montant annoncé : 140 Md€ (total
+    net d''ici 2032 par rapport à 2026, sur le quinquennat ; la candidate ne donne pas d''annuel
+    (montant non annualisé)) ; non lu comme montant annuel : un total d''ici 2032, dont les
+    lignes sont déclarées une à une (D-381).'
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour le
+    calcul de la dette, pas une réforme que le moteur chiffre. (porte « chaine »)

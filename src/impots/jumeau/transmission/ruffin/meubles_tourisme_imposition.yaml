@@ -1,0 +1,52 @@
+schema: 1
+mesure: meubles_tourisme_imposition
+candidat: ruffin
+libelle: Imposition des locations touristiques doublée
+sorte: parametre
+source:
+  citation: « en imposant les usages occasionnels au moins deux fois plus qu'actuellement,
+    tout en réduisant l'imposition des locations pérennes abordables »
+  url: https://nouspresident.fr/face-a-la-crise-du-logement/
+  date: '2026-09-24'
+levier:
+  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
+    IFI (art. 964 et s.)'
+  parametre: null
+  valeur: null
+  enonce: imposition des usages occasionnels « au moins deux fois plus qu'actuellement » ;
+    abattements et amortissements supprimés
+  couche: null
+payeurs:
+- qui: menages
+  sens: paie
+  par: patrimoine
+  note: 'la population n''en porte pas : aucune clé par décile'
+- qui: apu:etat
+  sens: recoit
+  par: capital_menages
+incidence:
+- horizon: immediat
+  qui: les détenteurs du patrimoine
+  texte: Statutaire.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: les détenteurs du patrimoine
+  texte: L'assiette répond (épargne, transmission, localisation).
+  source: 'Jakobsen, Jakobsen, Kleven et Zucman (2020), « Wealth taxation and wealth accumulation
+    », QJE 135(1) (Danemark) : l''assiette répond à l''impôt sur la fortune, d''autant plus
+    en haut de la distribution'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- patrimoine_menages
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: La population ne distingue pas les revenus des meublés de tourisme des autres revenus
+    locatifs. (porte « donnee_menages »)

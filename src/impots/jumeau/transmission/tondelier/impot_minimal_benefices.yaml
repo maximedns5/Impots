@@ -1,0 +1,56 @@
+schema: 1
+mesure: impot_minimal_benefices
+candidat: tondelier
+libelle: Impôt minimal sur les bénéfices des sociétés
+sorte: parametre
+source:
+  citation: « impôt minimal sur les bénéfices des sociétés » (programme, cité par RT)
+  url: https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution
+  date: '2026-07-14'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: sociétés de plus de 1 Md€ de chiffre d'affaires, au prorata de l'activité en France
+  couche: null
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: autre
+- qui: apu:etat
+  sens: paie
+  par: autre
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: salariés, clients, actionnaires
+  texte: Un impôt sur les bénéfices retombe pour partie sur les salaires ; un impôt sur le
+    chiffre d'affaires, en cascade, sur les prix.
+  source: 'Fuest, Peichl et Siegloch (2018), « Do higher corporate taxes reduce wages ? »,
+    American Economic Review 108(2) : environ la moitié de l''impôt local sur les bénéfices
+    retombe sur les salaires (Allemagne) ; Martin et Trannoy (2019), « Les impôts sur (ou
+    contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
+    la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Un impôt au prorata de l'activité en France demande les bénéfices mondiaux des groupes
+    et leur partage par territoire, que le modèle des entreprises ne porte pas, et son taux
+    n'est pas cité. (porte « dimension_entreprises »)

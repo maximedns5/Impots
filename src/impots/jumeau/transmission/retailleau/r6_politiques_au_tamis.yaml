@@ -1,0 +1,74 @@
+schema: 1
+mesure: r6_politiques_au_tamis
+candidat: retailleau
+libelle: Fin de MaPrimeRénov', du SNU et du soutien aux nouvelles installations photovoltaïques
+  et éoliennes ; baisse de l'aide au développement ; recentrage culture, audiovisuel public
+  et contrats aidés
+sorte: hypothese
+source:
+  citation: « Je passerai plusieurs politiques publiques au tamis »
+  url: https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu
+  date: '2026-10-12'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: non énoncé
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses:
+- texte: 'Le montant tombe sur la composition de la dépense publique de Mésange (G2017-04,
+    p. 106) : le programme ne dit pas quelle dépense.'
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique.'
+  source: non sourcée
+- texte: Montée en charge linéaire de 2027 à 2032, puis le montant tenu jusqu'en 2035.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 23.0
+    sens: economie_depense
+    horizon: sur cinq ans, jusqu'en 2032 (plan du 12/10/2026) ; montant agrégé
+    citation: 'Pas de citation directe. L''inventaire relève : 23 Md€ (agrégé).'
+    url: https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu
+  chocs:
+    apu_d_p51g: -1.84
+    apu_d_d1: -5.75
+    apu_d_d632: -2.07
+    apu_d_p2: -2.76
+    apu_d_d62: -10.58
+  profil: rampe
+  debut: 2027
+  plein: 2032
+  fin: 2035
+  instrument: depense_publique
+  menages_par: prestations
+  entreprises_par: null
+  inclus_dans: null
+  menages_part: 0.46

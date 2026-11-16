@@ -1,0 +1,30 @@
+schema: 1
+mesure: l5_tva_competitivite
+candidat: lisnard
+libelle: 'TVA « compétitivité / relocalisation » pour baisser les charges sur les salaires
+  : question non tranchée'
+sorte: sans_choc
+source:
+  citation: « La question de la TVA « Compétitivité / Relocalisation » afin de baisser les
+    charges sur les salaires reste posée »
+  url: https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/
+  date: '2026-11-01'
+levier:
+  texte: Code général des impôts, TVA (art. 278 et s.) et accises
+  parametre: null
+  valeur: null
+  enonce: non énoncé
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une question laissée ouverte : ni taux de TVA ni baisse de charges. (porte « vague
+    »)'

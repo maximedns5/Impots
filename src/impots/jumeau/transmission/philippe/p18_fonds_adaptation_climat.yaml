@@ -1,0 +1,68 @@
+schema: 1
+mesure: p18_fonds_adaptation_climat
+candidat: philippe
+libelle: Fonds unique d'adaptation au changement climatique, qui fusionne le Fonds Barnier
+  et le Fonds vert
+sorte: hypothese
+source:
+  citation: « Deux milliards, c'est une somme importante. Mais rapportée aux 5 milliards d'euros
+    que coûtent chaque année les catastrophes naturelles, c'est de l'argent bien investi »
+  url: https://www.linfodurable.fr/entre-le-deni-du-rn-et-le-dogme-de-lfi-le-plan-dedouard-philippe-pour-une-politique-de-securite
+  date: '2026-09-17'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: 2 Md€/an
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses:
+- texte: Le montant tombe sur de l'investissement public (P51g).
+  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: 'La variante de Mésange la plus proche : investissement_public.'
+  source: non sourcée
+- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+montant:
+  origine: hypothese
+  annonce:
+    montant_md: 2.0
+    sens: depense
+    horizon: par an
+    citation: « Deux milliards, c'est une somme importante. Mais rapportée aux 5 milliards
+      d'euros que coûtent chaque année les catastrophes naturelles, c'est de l'argent bien
+      investi »
+    url: https://www.linfodurable.fr/entre-le-deni-du-rn-et-le-dogme-de-lfi-le-plan-dedouard-philippe-pour-une-politique-de-securite
+  chocs:
+    apu_d_p51g: 2.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: investissement_public
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null

@@ -1,0 +1,45 @@
+schema: 1
+mesure: r33_photovoltaique_tva
+candidat: retailleau
+libelle: Abrogation du volet électricité de la PPE 3 ; plus d'appels d'offres photovoltaïques
+  ni éoliens en mer ; nouveau photovoltaïque privé de ses avantages fiscaux
+sorte: parametre
+source:
+  citation: « retour au taux normal de TVA à 20 %, suppression des exonérations de taxes pour
+    l'autoconsommation avec revente de surplus »
+  url: https://republicains.fr/wp-content/uploads/2026/05/LR_Electricite_vFF070626.pdf
+  date: '2026-06-07'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: TVA ramenée au taux normal de 20 % (nouveau PV)
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Les installations photovoltaïques ne sont pas un poste de la consommation dans
+    l''enquête Budget de famille : elles sont dans les gros travaux, hors de son champ (division
+    13), et la TVA par poste ne les isole pas. (porte « consommation »)'

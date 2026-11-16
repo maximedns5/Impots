@@ -1,0 +1,71 @@
+schema: 1
+mesure: p10_exoneration_deux_heures
+candidat: philippe
+libelle: Exonération de cotisations pour les salariés qui travaillent deux heures de plus
+  par semaine
+sorte: chiffree
+source:
+  citation: « exonérer de cotisations sociales les salariés qui accepteraient de travailler
+    deux heures supplémentaires par semaine » (texte de l'article)
+  url: https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ
+  date: '2026-10-09'
+levier:
+  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  parametre: heures_sup_exoneration_salariale, heures_sup_exoneration_csg_crds, heures_sup_plafond_heures
+  valeur:
+    heures_sup_exoneration_salariale: 1.0
+    heures_sup_exoneration_csg_crds: 0.0
+    heures_sup_plafond_heures: 94.0
+  enonce: +2 h/semaine exonérées
+  couche: menages
+payeurs:
+- qui: menages
+  sens: recoit
+  par: cotisations_salariales
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: cotisations_salaries
+incidence:
+- horizon: immediat
+  qui: le payeur légal
+  texte: Le premier effet est sur celui que la loi désigne.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les salariés
+  texte: Le net bouge, le brut et le coût du travail non.
+  source: 'Saez, Matsaganis et Tsakloglou (2012), « Earnings determination and taxes : evidence
+    from a cohort-based payroll tax reform in Greece », QJE 127(1) : à moyen terme, les cotisations
+    restent sur celui qui les verse (incidence statutaire)'
+- horizon: long
+  qui: salariés et employeurs
+  texte: 'Le brut peut se renégocier : une part de la baisse revient à l''employeur.'
+  source: 'Lehmann, Marical et Rioux (2013), « Labor income responds differently to income-tax
+    and payroll-tax reforms », Journal of Public Economics 99 (France, DADS) : une baisse
+    de cotisations se retrouve en partie dans le salaire, lentement'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- offre_travail
+- incidence_cotisations
+- compensation_exonerations
+- financement_sous_secteurs
+hypotheses:
+- texte: '« Exonérer de cotisations sociales les salariés qui accepteraient de travailler
+    deux heures supplémentaires par semaine » : sur les heures supplémentaires imputées (D-383),
+    les deux premières de chaque semaine travaillée, 94 heures par an sur 47 semaines (plage
+    de 44 à 52 semaines). Les cotisations salariales que la loi laisse au-delà de sa réduction
+    ; la CSG et la CRDS restent, la plage va jusqu''à les exonérer. Les patronales ne bougent
+    pas : le texte parle des salariés. Seules les heures déjà faites : les deux heures neuves
+    que la mesure veut faire faire, et les 1 000 € par an qu''elles rapporteraient, ne sont
+    pas comptées. Contre le droit de 2026.'
+  source: le chiffrage de la mesure (`programmes/philippe.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_philippe_p10_exoneration_deux_heures
+  rapport: reports/etudes/presidentielle_philippe/mesures/p10_exoneration_deux_heures/predictif_pres2027_philippe_p10_exoneration_deux_heures.json

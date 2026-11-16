@@ -1,0 +1,43 @@
+schema: 1
+mesure: suppression_cee_essence
+candidat: roussel
+libelle: Suppression des certificats d'économie d'énergie sur l'essence
+sorte: parametre
+source:
+  citation: « 15 centimes d'euros par litre »
+  url: https://www.connaissancedesenergies.org/afp/prix-de-lenergie-roussel-pcf-appelle-a-se-mobiliser-sur-les-ronds-points-260911
+  date: '2026-09-11'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: suppression « tout de suite »
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Les certificats d''économies d''énergie sont une obligation des fournisseurs, lue
+    dans les prix : ni une taxe que la couche consommation chiffre, ni une recette de l''État.
+    (porte « prix »)'

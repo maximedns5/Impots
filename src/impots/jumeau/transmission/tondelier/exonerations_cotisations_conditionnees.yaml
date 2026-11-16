@@ -1,0 +1,30 @@
+schema: 1
+mesure: exonerations_cotisations_conditionnees
+candidat: tondelier
+libelle: Exonérations de cotisations conditionnées à la hausse des salaires de moins de 2
+  000 € net
+sorte: sans_choc
+source:
+  citation: « en conditionnant les exonérations de cotisations sociales à l'augmentation des
+    salarié·es gagnant moins de 2000 € net/mois »
+  url: https://marinetondelier.fr/s/livret-travail.pdf
+  date: '2026-11-04'
+levier:
+  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  parametre: null
+  valeur: null
+  enonce: condition sans taux ni barème
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: La condition (une augmentation, sans taux) ne dit ni quelles exonérations tombent
+    ni de combien. (porte « vague »)

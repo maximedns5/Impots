@@ -1,0 +1,27 @@
+schema: 1
+mesure: bce_dettes_publiques
+candidat: melenchon
+libelle: Gel ou annulation par la BCE des dettes publiques qu'elle détient
+sorte: sans_choc
+source:
+  citation: « geler ou annuler la part des dettes publiques qu'elle possède »
+  url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
+  date: '2026-10-14'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Aucun montant de dette gelée ou annulée n'est énoncé. (porte « vague »)

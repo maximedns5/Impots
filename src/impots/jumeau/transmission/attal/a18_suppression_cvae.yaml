@@ -1,0 +1,61 @@
+schema: 1
+mesure: a18_suppression_cvae
+candidat: attal
+libelle: Suppression de la CVAE ; IS maintenu à 25 % ; poursuite de la baisse des impôts de
+  production
+sorte: chiffree
+source:
+  citation: « Le taux de l'impôt sur les sociétés reste à 25 %. Il veut mener enfin à terme
+    la suppression de la CVAE » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/loi-de-stabilite-fiscale
+  date: '2026-08-27'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: cvae_echelle
+  valeur:
+    cvae_echelle: 0.0
+  enonce: CVAE = 0 ; IS à 25 %
+  couche: entreprises
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: cvae
+- qui: apu:apul
+  sens: paie
+  par: impots_production_entreprises
+  note: la CVAE est affectée aux collectivités, compensée par une fraction de TVA depuis 2021
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: clients et salariés
+  texte: Un impôt de production pèse sur la compétitivité et les prix.
+  source: 'Martin et Trannoy (2019), « Les impôts sur (ou contre) la production », Note du
+    CAE n° 53 : les impôts sur le chiffre d''affaires et la valeur ajoutée se reportent en
+    cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses:
+- texte: 'La CVAE est supprimée sur le droit de 2026 (son barème mis à l''échelle 0). L''IS
+    reste à 25 %, son taux de 2026 : aucun bouton à régler. La « poursuite de la baisse des
+    impôts de production » n''a pas de taux et n''est pas chiffrée. La plage va de la suppression
+    (0) au droit de 2026 (1).'
+  source: le chiffrage de la mesure (`programmes/attal.json`)
+montant:
+  origine: rapport
+  scenario: pres2027_attal_a18_suppression_cvae
+  rapport: reports/etudes/presidentielle_attal/mesures/a18_suppression_cvae/predictif_pres2027_attal_a18_suppression_cvae.json

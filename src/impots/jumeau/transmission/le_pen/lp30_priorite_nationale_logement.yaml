@@ -1,0 +1,27 @@
+schema: 1
+mesure: lp30_priorite_nationale_logement
+candidat: le_pen
+libelle: APL réservées aux Français ; priorité nationale dans le logement social
+sorte: sans_choc
+source:
+  citation: donner la priorité d'accès au logement social aux Français
+  url: https://www.sudradio.fr/societe/le-pen-a-henin-beaumont-pour-reprendre-le-fil-dune-campagne-a-deux-visages
+  date: '2026-09-13'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: Non chiffré
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Une priorité d'accès sans règle chiffrée. (porte « vague »)

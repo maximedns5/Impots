@@ -1,0 +1,28 @@
+schema: 1
+mesure: credit_impot_enfant
+candidat: melenchon
+libelle: Crédit d'impôt par enfant
+sorte: sans_choc
+source:
+  citation: « Créer un crédit d'impôt par enfant pour toutes les familles »
+  url: https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2
+  date: '2026-11-06'
+levier:
+  texte: Code général des impôts, impôt sur le revenu (art. 1 A, 197 et s.)
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le montant du crédit par enfant n'est pas énoncé, ni ce qu'il remplace. (porte «
+    vague »)

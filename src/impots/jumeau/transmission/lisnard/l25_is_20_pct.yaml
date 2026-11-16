@@ -1,0 +1,58 @@
+schema: 1
+mesure: l25_is_20_pct
+candidat: lisnard
+libelle: Impôt sur les sociétés ramené à 20 %, avec une part variable laissée aux collectivités
+  (livre de 2025, repris par le parti)
+sorte: parametre
+source:
+  citation: « ramener l'impôt sur les sociétés à 20 % avec une part variable laissée aux collectivités
+    locales entre 0 et 5 % »
+  url: https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-baisser-les-impots/
+  date: '2026-10-16'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: IS à 20 % + part locale de 0 à 5 %
+  couche: null
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: autre
+- qui: apu:etat
+  sens: paie
+  par: autre
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: salariés, clients, actionnaires
+  texte: Un impôt sur les bénéfices retombe pour partie sur les salaires ; un impôt sur le
+    chiffre d'affaires, en cascade, sur les prix.
+  source: 'Fuest, Peichl et Siegloch (2018), « Do higher corporate taxes reduce wages ? »,
+    American Economic Review 108(2) : environ la moitié de l''impôt local sur les bénéfices
+    retombe sur les salaires (Allemagne) ; Martin et Trannoy (2019), « Les impôts sur (ou
+    contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
+    la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses: []
+montant:
+  origine: aucun
+  manque: La part locale de 0 à 5 % dépend de la collectivité de chaque entreprise, que le
+    modèle ne localise pas ; le taux total n'est donc pas fixé. (porte « dimension_entreprises
+    »)

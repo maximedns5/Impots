@@ -1,0 +1,28 @@
+schema: 1
+mesure: hausse_salaires_pensions
+candidat: roussel
+libelle: Hausse des salaires et des pensions
+sorte: sans_choc
+source:
+  citation: « exiger enfin les hausses de salaires et des pensions que nous demandons depuis
+    tant de temps »
+  url: https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html
+  date: '2026-09-15'
+levier:
+  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Aucun montant ni taux de hausse n'est énoncé. (porte « vague »)

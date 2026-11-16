@@ -1,0 +1,29 @@
+schema: 1
+mesure: baisse_csg_jusqu_au_median
+candidat: bouamrane
+libelle: Baisse de la CSG sur les salaires jusqu'au salaire médian
+sorte: sans_choc
+source:
+  citation: « Nous proposons aussi de baisser la CSG pour donner la possibilité d'augmenter
+    les salaires, et pas uniquement le Smic […] jusqu'au salaire médian. »
+  url: https://www.sudradio.fr/linvite-politique/karim-bouamrane-il-faut-arreter-de-regarder-melenchon-comme-le-superman-de-la-gauche
+  date: '2026-11-09'
+levier:
+  texte: 'Code de la sécurité sociale : CSG (art. L136-1 et s.) et cotisations (livre II)'
+  parametre: null
+  valeur: null
+  enonce: jusqu'au salaire médian ; aucun taux
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Aucun taux de CSG n'est énoncé, seulement le champ des salaires visés. (porte «
+    vague »)

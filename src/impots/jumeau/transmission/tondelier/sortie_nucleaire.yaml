@@ -1,0 +1,43 @@
+schema: 1
+mesure: sortie_nucleaire
+candidat: tondelier
+libelle: Sortie progressive du nucléaire
+sorte: parametre
+source:
+  citation: 'pas de citation verbatim relevée dans cet article ; résumé d''un blog non daté
+    (biosphere.ouvaton.org), cité en appui : « sortie du nucléaire d''ici à vingt ans »'
+  url: https://www.parlons-politique.fr/elections/ce-que-le-programme-ecologiste-de-marine-tondelier-changerait-pour-les-retraites-le-nucleaire-et-les-impots_23570/
+  date: '2026-07-13'
+levier:
+  texte: Code des impositions sur les biens et services (accises sur les énergies, L312-1
+    et s.) ; Code de l'énergie (CEE, L221-1)
+  parametre: null
+  valeur: null
+  enonce: environ vingt ans ; neutralité carbone en 2040
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: accises
+- qui: apu:etat
+  sens: paie
+  par: taxe_carbone
+incidence:
+- horizon: immediat
+  qui: consommateurs et distributeurs
+  texte: Le passage d'une accise au prix à la pompe.
+  source: non sourcée
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+- importations
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Le nucléaire et la production d'électricité sont hors du modèle. (porte « secteur
+    »)

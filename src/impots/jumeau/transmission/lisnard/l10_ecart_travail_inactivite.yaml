@@ -1,0 +1,67 @@
+schema: 1
+mesure: l10_ecart_travail_inactivite
+candidat: lisnard
+libelle: Écart minimal entre travail à temps plein et inactivité
+sorte: parametre
+source:
+  citation: « Quelqu'un qui travaille à temps plein doit gagner au moins 500€ de plus que
+    quelqu'un qui ne travaille pas »
+  url: https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-regrouper-les-aides-sociales-en-une-allocation-unique/
+  date: '2026-09-26'
+levier:
+  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  parametre: null
+  valeur: null
+  enonce: ≥ 500 €
+  couche: null
+payeurs:
+- qui: entreprises
+  sens: paie
+  par: masse_salariale
+- qui: menages
+  sens: recoit
+  par: salaire_net
+incidence:
+- horizon: immediat
+  qui: les employeurs
+  texte: Le coût du travail monte au bas de l'échelle.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: court
+  qui: les salariés voisins du Smic
+  texte: La hausse se diffuse aux salaires voisins, en s'amortissant.
+  source: Koubi et Lhommeau (2007), « Les effets de diffusion de court terme des hausses du
+    Smic dans les grilles salariales des entreprises de dix salariés ou plus sur la période
+    2000-2005 », Insee, Les salaires en France, édition 2007 ; Goarant et Muller (2011), «
+    Les effets des hausses du Smic sur les salaires mensuels dans les entreprises de 10 salariés
+    ou plus de 2006 à 2009 », Insee, Emploi et salaires, édition 2011
+- horizon: long
+  qui: les salariés peu qualifiés et les clients
+  texte: L'emploi au bas de l'échelle répond au coût ; les prix des services intensifs en
+    bas salaires montent.
+  source: 'Kramarz et Philippon (2001), « The impact of differential payroll tax subsidies
+    on minimum wage employment », Journal of Public Economics 82(1) (France) ; Fougère, Gautier
+    et Le Bihan (2010), « Restaurant prices and the minimum wage », Journal of Money, Credit
+    and Banking 42(7) (France) : une hausse du Smic passe dans les prix des services intensifs
+    en bas salaires'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- salaires
+- emploi
+- prix_production
+- consommation_menages
+- smic_diffusion
+- allegements_smic
+- cout_travail_tranche
+- compensation_exonerations
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Un écart cible entre travail et inactivité n''est pas un paramètre : il faudrait
+    l''allocation unique qui le produirait, que le moteur ne porte pas. (porte « prestations_hors_modele
+    »)'

@@ -1,0 +1,45 @@
+schema: 1
+mesure: fonds_vert_maprimerenov
+candidat: tondelier
+libelle: Fonds vert et MaPrimeRénov'
+sorte: parametre
+source:
+  citation: « La rénovation des logements en augmentant MaPrimeRénov de +1,4 Md€ » ; « Le
+    rétablissement du Fonds vert […] (+1,9 Md€) »
+  url: https://marinetondelier.fr/s/dossierpresse-budget2027.pdf
+  date: '2026-08-26'
+levier:
+  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  parametre: null
+  valeur: null
+  enonce: fonds vert +1,9 Md€ ; MaPrimeRénov' +1,4 Md€ ; compris dans les 10 Md€ du plan climat
+  couche: null
+payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+incidence:
+- horizon: immediat
+  qui: les bénéficiaires de la dépense
+  texte: La demande publique bouge.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+- horizon: long
+  qui: les contribuables
+  texte: Le solde et la dette bougent ; l'activité en rend une part.
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes)'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- demande_publique
+- emploi_public
+- consommation_menages
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une dépense publique, que le moteur ne microsimule pas : elle n''entre que par
+    le scénario de dépense du calcul de la dette. (porte « depense_publique »)'

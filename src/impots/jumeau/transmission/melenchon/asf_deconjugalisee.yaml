@@ -1,0 +1,27 @@
+schema: 1
+mesure: asf_deconjugalisee
+candidat: melenchon
+libelle: Allocation de soutien familial déconjugalisée et revalorisée
+sorte: sans_choc
+source:
+  citation: « déconjugaliser et revaloriser l'allocation de soutien familial (ASF) »
+  url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre2
+  date: '2026-11-06'
+levier:
+  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  parametre: null
+  valeur: null
+  enonce: aucun montant
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: La revalorisation de l'ASF n'a pas de montant. (porte « vague »)

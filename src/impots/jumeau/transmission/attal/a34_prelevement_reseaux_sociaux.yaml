@@ -1,0 +1,59 @@
+schema: 1
+mesure: a34_prelevement_reseaux_sociaux
+candidat: attal
+libelle: Prélèvement sur les revenus des réseaux sociaux en France, affecté à la santé mentale
+  des jeunes
+sorte: parametre
+source:
+  citation: « le prélèvement de 2 % des revenus des réseaux sociaux en France afin de financer
+    des dispositifs consacrés à la santé mentale des jeunes » (texte de la page)
+  url: https://attalpresident.fr/actualites/harcelement-scolaire-gabriel-attal-parole-huit-jeunes-victimes-engagement
+  date: '2026-11-05'
+levier:
+  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
+    L137-30), CFE (art. 1447)'
+  parametre: null
+  valeur: null
+  enonce: 2 % des revenus des réseaux sociaux en France
+  couche: null
+payeurs:
+- qui: entreprises
+  sens: recoit
+  par: autre
+- qui: apu:etat
+  sens: paie
+  par: autre
+incidence:
+- horizon: immediat
+  qui: les entreprises
+  texte: La marge après impôt bouge.
+  source: 'Fullerton et Metcalf (2002), « Tax incidence », Handbook of Public Economics, vol.
+    4, ch. 26 : à long terme, l''incidence ne dépend pas de qui verse l''impôt, mais des élasticités
+    de l''offre et de la demande'
+- horizon: long
+  qui: salariés, clients, actionnaires
+  texte: Un impôt sur les bénéfices retombe pour partie sur les salaires ; un impôt sur le
+    chiffre d'affaires, en cascade, sur les prix.
+  source: 'Fuest, Peichl et Siegloch (2018), « Do higher corporate taxes reduce wages ? »,
+    American Economic Review 108(2) : environ la moitié de l''impôt local sur les bénéfices
+    retombe sur les salaires (Allemagne) ; Martin et Trannoy (2019), « Les impôts sur (ou
+    contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
+    la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
+financement:
+  annonce: « le prélèvement de 2 % des revenus des réseaux sociaux en France afin de financer
+    des dispositifs consacrés à la santé mentale des jeunes » (texte de la page)
+  source: « le prélèvement de 2 % des revenus des réseaux sociaux en France afin de financer
+    des dispositifs consacrés à la santé mentale des jeunes » (texte de la page)
+  chiffre: false
+  note: le financement est énoncé, pas chiffré mesure par mesure
+canaux:
+- investissement_cout_du_capital
+- creations_entreprises
+- fermetures_entreprises
+- implantation
+- prix_production
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Un prélèvement sur le chiffre d''affaires des réseaux sociaux : ce secteur numérique
+    n''est pas une assiette du modèle des entreprises. (porte « secteur »)'

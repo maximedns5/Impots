@@ -1,0 +1,30 @@
+schema: 1
+mesure: a19_loi_programmation_dix_ans
+candidat: attal
+libelle: Loi de programmation économique, fiscale et énergétique sur dix ans, qui garantit
+  le CIR et le pacte Dutreil
+sorte: sans_choc
+source:
+  citation: « Une loi qui fixe dès 2027, pour dix ans, les règles fiscales, économiques et
+    énergétiques » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/loi-de-stabilite-fiscale
+  date: '2026-08-27'
+levier:
+  texte: Le texte n'est pas désigné par le programme
+  parametre: null
+  valeur: null
+  enonce: 10 ans
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une durée sans taux ni montant : la stabilité promise ne règle aucun paramètre.
+    (porte « vague »)'

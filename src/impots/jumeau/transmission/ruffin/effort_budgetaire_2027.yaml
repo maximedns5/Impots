@@ -1,0 +1,29 @@
+schema: 1
+mesure: effort_budgetaire_2027
+candidat: ruffin
+libelle: Effort budgétaire 2027
+sorte: sans_choc
+source:
+  citation: « les mesures proposées pour le budget 2027 généreraient entre 48 Md€ et 62 Md€
+    par rapport à 2026, soit entre 1,5 et 2 points de PIB »
+  url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
+  date: '2026-10-21'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: 48 à 62 Md€ par rapport à 2026 (1,5 à 2 points de PIB)
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Un effort budgétaire d'ensemble est une hypothèse du calcul de la dette, pas une
+    réforme. (porte « chaine »)

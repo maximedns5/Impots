@@ -1,0 +1,28 @@
+schema: 1
+mesure: lp03_equilibre_primaire
+candidat: le_pen
+libelle: Équilibre primaire
+sorte: sans_choc
+source:
+  citation: l'équilibre primaire en 18 mois
+  url: https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net
+  date: '2026-10-06'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: En 18 mois
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: Un objectif de solde est une trajectoire du calcul de la dette, pas une réforme
+    que le moteur chiffre. (porte « chaine »)

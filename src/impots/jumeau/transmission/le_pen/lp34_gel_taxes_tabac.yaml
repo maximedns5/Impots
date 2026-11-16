@@ -1,0 +1,48 @@
+schema: 1
+mesure: lp34_gel_taxes_tabac
+candidat: le_pen
+libelle: Gel des taxes sur le tabac et fin de l'indexation de leur prix sur l'inflation
+sorte: parametre
+source:
+  citation: le gel des taxes sur le tabac et la désindexation du prix sur l'inflation
+  url: https://www.publicsenat.fr/actualites/politique/marine-le-pen-defend-le-gel-des-taxes-sur-le-tabac-dans-une-lettre-aux-buralistes
+  date: '2026-09-07'
+levier:
+  texte: Code général des impôts, TVA (art. 278 et s.) et accises
+  parametre: null
+  valeur: null
+  enonce: Gel (hausse nulle) de l'accise sur les tabacs ; désindexation sur l'inflation
+  couche: null
+payeurs:
+- qui: menages
+  sens: recoit
+  par: tva
+- qui: apu:etat
+  sens: paie
+  par: tva
+incidence:
+- horizon: immediat
+  qui: consommateurs et vendeurs
+  texte: Une baisse de taux passe aux prix en partie ; le reste fait la marge.
+  source: 'Carbonnier (2007), « Who pays sales taxes ? Evidence from French VAT reforms, 1987-1999
+    », Journal of Public Economics 91(5-6) : une baisse de TVA passe aux prix en partie, plus
+    sur un marché concurrentiel'
+- horizon: long
+  qui: consommateurs et vendeurs
+  texte: 'Asymétrie : une hausse passe plus qu''une baisse.'
+  source: 'Benzarti, Carloni, Harju et Kosonen (2020), « What goes up may not come down :
+    asymmetric incidence of value-added taxes », Journal of Political Economy 128(12) : les
+    hausses de TVA passent plus aux prix que les baisses'
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux:
+- consommation_menages
+- prix_production
+hypotheses: []
+montant:
+  origine: aucun
+  manque: L'accise sur les tabacs n'est pas dans la couche consommation, qui ne porte que
+    la TVA du poste tabac. (porte « consommation »)

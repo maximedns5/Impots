@@ -1,0 +1,29 @@
+schema: 1
+mesure: a3_deficit_sous_3_pct
+candidat: attal
+libelle: Déficit public sous 3 % avant 2032
+sorte: sans_choc
+source:
+  citation: « Ramener le déficit public sous la barre des 3 % du PIB avant 2032, première
+    étape avant l'équilibre » (texte de la page)
+  url: https://attalpresident.fr/programme/mesures/deficit-sous-trois-pour-cent
+  date: '2026-07-03'
+levier:
+  texte: Loi de programmation des finances publiques ; LOLF
+  parametre: null
+  valeur: null
+  enonce: < 3 % du PIB avant 2032
+  couche: null
+payeurs: []
+incidence: []
+financement:
+  annonce: null
+  source: null
+  chiffre: false
+  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+canaux: []
+hypotheses: []
+montant:
+  origine: aucun
+  manque: 'Une trajectoire de déficit est une hypothèse du calcul de la dette, pas une réforme
+    : aucun bouton ne la règle. (porte « chaine »)'
