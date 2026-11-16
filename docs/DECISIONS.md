@@ -35590,3 +35590,208 @@ b_diff 0,0042119, a_diff −0,0018215 ; λ_s(½) 0,55359, λ_e(½, allègements 
 0,52221 ; Attal a16 à θ½ : dette 2035 +13,85 pt, à θ_incidence 0 : +16,79 pt, égale
 au jumeau d'avant ;
 Tondelier Smic, θ½ : dette 2035 +1,15 pt, `cout_travail_smic` 2026 2,88 Md€.
+
+## D-481 — Le financement (1) : le compte des APU par sous-secteur, et la compensation
+
+**Ce qui est fait** (but 26, volet `financement`, sur `claude/but26-financement`). Le
+jumeau tenait un compte des APU consolidé ; il ne savait pas quelle caisse perd, ni qui
+comble. Le module `jumeau/financement/` répartit une trajectoire du jumeau, année par
+année, entre l'État (S13111), les ODAC (S13112), les APUL (S1313) et les ASSO (S1314),
+et, dans les ASSO, range l'écart d'une mesure par branche. Il lit la trajectoire après
+coup et n'écrit rien dans l'état : **aucun nombre consolidé du jumeau ne change**, ni le
+pas, ni les identités du cadre (CADRE.md §6, règle des lots).
+
+**Les sources.** Insee, comptes nationaux base 2020, millésime 2025 : t. 3.201 (le compte
+du jumeau), t. 3.203 (État), 3.204 (ODAC), 3.205 (APUL), 3.212 (ASSO), ajoutées au
+manifeste (`data/raw/insee_cn2025_t32xx_depenses_recettes_sous_secteur.xlsx`). Les tables
+des sous-secteurs sont consolidées dans le sous-secteur, pas entre eux (note de la
+t. 3.215). `financement/sources.py` les lit une fois et écrit
+`parametres/financement_sous_secteurs.yaml` (chaque ligne : S13, les quatre parts, la
+consolidation, le libellé exact) ; le jumeau lit ce YAML, jamais les données. La dette
+par sous-secteur : Insee, dette de Maastricht, tableau 1, fin 2025 (État 2 822,67 Md€,
+ODAC 68,99, APUL 275,74, ASSO 293,07). Les branches : CCSS de mai 2026 (Tableau 16,
+p. 39 ; Tableau 5 de la fiche 1.4, la CSG par attributaire, p. 57 ; Tableau 1 de la fiche
+1.6, les exonérations compensées et non compensées, p. 67).
+
+**L'identité, sur les comptes publiés de 2025.** Chaque ligne du compte du jumeau est la
+somme de ses quatre sous-secteurs à 5e-4 Md€ (l'arrondi de publication), sauf les trois
+opérations consolidées entre sous-secteurs, et leur consolidation est la même en recettes
+et en dépenses : D73 hors D733 143,072 Md€, D9 30,578, D41 0,880. B9 se somme donc
+exactement : −128,1028 (État) − 2,1518 (ODAC) − 15,5549 (APUL) − 5,7825 (ASSO) =
+−151,592 Md€, le B9 de la t. 3.201. `sources.construire` refuse une ligne qui s'écarte
+hors consolidation.
+
+**L'identité, dans le jumeau** (`comptes.verifier`, à chaque année, 1e-9 du PIB, chaque
+tirage, référence et variante) : Σ recettes, Σ dépenses primaires, Σ intérêts nets, Σ B9
+et Σ dette des sous-secteurs égalent le compte consolidé ; les transferts entre APU (D73,
+D9, la compensation) reçus égalent les versés ; la somme des branches est l'écart des
+ASSO. Les parts sont normées, la dernière en complément : le pire résidu des passes
+ci-dessous est de 4e-16 du PIB.
+
+**Les conventions, dites.** La référence : chaque ligne consolidée aux parts de 2025 de
+ses sous-secteurs, les transferts entre APU de 2025 au PIB nominal, les intérêts nets aux
+parts de 2025, la dette d'ouverture aux parts de fin 2025. Ces parts constantes ne
+projettent pas chaque sous-secteur (la Cades qui finit d'amortir, la règle des APUL) :
+la référence par sous-secteur est une clé, pas une prévision (les ASSO y vont de +1,6 à
++91,2 Md€ de 2026 à 2035, parce que la tendance du jumeau améliore le solde consolidé et
+qu'elles en prennent leur part). L'écart d'une mesure : son choc statique (le bloc
+`mesures`) au payeur de ses instruments (ses impulsions ; `financement.yaml`,
+`instruments`), le reste du choc à la clé des prélèvements de 2025 ; les effets induits
+aux parts de leur ligne, `solde_induit` à la clé des prélèvements ; les intérêts de
+l'écart au prorata de la dette accumulée de chaque compte. Les branches ne sont pas
+projetées en niveau (les comptes de la CCSS ne sont pas la comptabilité nationale) :
+seul l'écart d'une mesure s'y range, le reste des ASSO va à `asso_non_ventile`, nommé.
+
+**La compensation** (`compensation` dans `financement.yaml`). CSS, art. L131-7, I, dans
+sa rédaction de la loi n° 2025-1403 du 30 décembre 2025 (édition consolidée du 11
+novembre 2026, p. 81-82) : toute réduction ou exonération de cotisations instituée depuis
+la loi n° 94-637 du 25 juillet 1994 « donne lieu à compensation intégrale aux régimes
+concernés par le budget de l'Etat », de même pour les contributions affectées et les
+réductions d'assiette depuis la loi du 13 août 2004. Exceptions du II : L241-13 (la
+réduction générale, compensée par une fraction de TVA, L131-8), L242-1, L613-1, L621-3,
+L136-1-1, L136-8 III bis, L137-15, L137-30. Une loi de financement peut déroger (le PLFSS
+pour 2027, texte déposé, n° 3211 : « Par dérogation à l'article L. 131‑7 [...] ne font pas
+l'objet d'une compensation par l'État ») ; observé en 2025 : 6,9 Md€ d'exonérations
+ciblées compensées, 2,8 non compensées (CCSS, fiche 1.6). L'option par branche :
+`compensee` (régimes de base, FSV, Cades : le texte), `theta` (Agirc-Arrco, Unédic, le
+reste des ASSO : hors du champ du texte ; l'État ne les compense que pour les allègements
+généraux, par la TVA de l'Acoss, avec un abattement pour l'Unédic), `non_compensee`. La
+perte d'une branche sur un instrument compensable (cotisations, CSG) devient un transfert
+de l'État : B9 de l'État en moins, branche neutre, compte consolidé inchangé.
+
+**Attal a16, payeur déclaré.** La réforme multiplie par 0,22 cinq barèmes salariaux du
+privé (`engine/reforms.py`) : CNAV 6,90 % et 0,40 % (CSS, D242-4), Agirc-Arrco, CEG et
+CET (ANI du 17 novembre 2017). Sous le plafond, la CNAV porte 64,5 % de la perte, au-dessus
+3,9 % ; la part de la masse salariale sous le plafond n'est pas sourcée ici : θ
+`financement_a16_part_cnav`, de 0,505 (s = 0,75) à 0,590 (s = 0,90), non vérifié. Un
+second θ, `financement_compensation`, règle l'issue incertaine (de 0, non compensée, à 1).
+
+**Le jumeau, Attal a16** (chaîne des études, vieillie, θ du modèle à ½, θ du volet à ½ :
+CNAV 54,7 %). Le consolidé est celui de l'étude : ΔB9 −46,92 Md€ en 2026, −17,95 en
+2035, dette +269,79 Md€, +3,97 pt de PIB. Par sous-secteur, ΔB9 2026 → 2035 et Δdette
+2035 : État −43,08 → −45,17, +422,29 ; ODAC +0,34 → +1,26, −8,76 ; APUL +2,95 → +11,05,
+−76,80 ; ASSO −7,13 → +14,91, −66,94. Dans les ASSO, en 2026 : la CNAV perd 44,69 Md€ et
+l'État la compense (L131-7), solde nul ; l'Agirc-Arrco perd 36,96, l'État en compense
+18,48 (θ½), son solde fait −18,48 (−27,58 en 2035, dette +228,28) ; le reste des ASSO
+gagne +11,35 (les cotisations et la CSG de l'activité induite). Le transfert de l'État :
+44,69 → 57,57 Md€ à la CNAV, 18,48 → 23,80 à l'Agirc-Arrco. **Toutes compensées** : l'État
+fait −61,56 → −72,75 (dette +650,57), les ASSO +11,35 → +42,49. **Aucune** : l'État
++20,10 → +49,12 (l'IR du net en plus et l'activité), les ASSO −70,31 → −79,38 (dette
++713,40), la CNAV −44,69 → −66,71, l'Agirc-Arrco −36,96 → −55,17. En structurel (figée,
+convention des parts) : ΔB9 −65,31 → −76,15, dette +690,77 ; État −46,82 → −55,53 ;
+ASSO −19,69 → −21,80 (Agirc-Arrco −17,46 → −20,65) ; CNAV compensée (42,22 en 2026).
+
+**Lecture.** La caisse qui perd est la vieillesse, de base et complémentaire ; la loi
+envoie la perte de la CNAV à l'État ; celle de l'Agirc-Arrco n'a pas de payeur écrit, et
+c'est le premier trou de la mesure. Le financement annoncé est dans D-482.
+
+**Ce qu'un test devra tenir** (D-335, à la PR) : Σ B9 publiés de 2025 = −151,592 Md€ ;
+consolidations 143,072, 30,578, 0,880 ; Attal a16, réduit, vieillie, θ½ : transfert à la
+CNAV 44,693 en 2026, ΔB9 de l'Agirc-Arrco −18,480, ΔB9 de l'État −43,079 ; les identités
+du module sous 1e-9 du PIB. **Canaux** : `financement_sous_secteurs`,
+`compensation_exonerations`, `financement_annonce` (`canaux.py`, section D-481).
+
+## D-482 — Le financement (2) : ce que les programmes annoncent, et le trou
+
+**Ce qui est fait.** `financement/annonce.py` relève, dans `programmes/<candidat>.json`
+seul, ce que chaque mesure déclare (le champ `declare` : montant, sens, horizon,
+citation), son rôle (finance : `recette`, `economie_depense` ; coûte : `depense`,
+`baisse_prelevements` ou chiffrée par le moteur ; règle budgétaire), les liens que le
+candidat dit (« financé par », « économies réaffectées à », « redéploiement »), et ce qui
+ne se somme pas : un total du quinquennat sans calendrier (D-381), un montant compris dans
+un autre (« ne pas additionner »), une règle. Aucun chiffrage de tiers n'est lu.
+
+**Pour la carte** : `annonce.financement(mesure, cout_eur, lie)` remplit la clé
+`financement` d'une fiche (D-471) : l'annonce, les mesures liées (choisies par la carte
+sur ce que le candidat dit), le montant chiffré et sa citation, et le trou (le coût moins
+le financement chiffré et lié) ; un financement annoncé sans montant laisse tout le coût
+en trou, et le dit.
+
+**Dans le jumeau** : `annonce.mesures_financement` fait d'un financement chiffré et annuel
+une loi hypothétique, sourcée par sa citation dans son libellé : une économie par la
+variante de dépense publique de Mésange ; une recette sans instrument sur la ligne de sa
+catégorie (D5 par défaut), sans retour par l'activité. Une mesure chiffrée par le moteur
+n'y entre pas (elle est dans le rapport du programme). Hypothèse déclarée : le montant
+tient chaque année, dès l'année que dit l'horizon, sinon 2027.
+
+**Le relevé des quinze programmes d'étude** (sommes annuelles déclarées, Md€ ; « hors » :
+les mesures non sommées). Arthaud 0 / 0 ; Attal 0 / 0,8 (hors : a2 compris dans a1, a9,
+cinq règles, a16, a18, a22 sans montant déclaré) ; Bouamrane 0 / 0 ; Glucksmann 15,0 /
+16,0 ; Kazib 0 / 0 ; Labib 0 / 0 ; Le Pen 85,3 / 33,8 ; Lisnard 2,5 / 160,0 ; Mélenchon
+106,4 / 81,7 ; Philippe 80,0 / 2,0 ; Retailleau 13,7 / 1,5 ; Roussel 0 / 0 ; Ruffin
+73,5 / 6,7 ; Tondelier 17,8 / 15,8 ; Zemmour 98,4 / 0. Ces sommes sont des déclarations,
+pas des chiffrages : les coûts chiffrés par le moteur n'y sont pas.
+
+**Attal.** a16 : « financée par des économies sur le modèle social », sans montant ; aucun
+financement chiffré ne lui est lié. Le plan a1 (150 Md€ sur le quinquennat, « dont deux
+tiers sur les dépenses sociales ») n'a pas de calendrier ; son plancher annuel déclaré est
+a2 (20 Md€ « dès 2027 », compris dans a1). Le trou d'a16, sans financement lié : tout son
+coût, 66,4 Md€ de choc statique en 2026 (vieillie). Avec a2 en hypothèse (20 Md€ par an
+dès 2027, la variante de dépense, au prorata des dépenses des sous-secteurs) : ΔB9 −46,92
+en 2026, −11,38 en 2027, +5,27 en 2035 ; dette +75,62 Md€, −0,74 pt de PIB en 2035. Par
+sous-secteur en 2035 : État −39,23, ODAC +2,90, APUL +15,49, ASSO +26,11 ; l'Agirc-Arrco
+reste à −27,58 : l'économie non désignée ne tombe pas sur la caisse qui perd. Même si les
+100 Md€ sociaux d'a1 lui allaient tous, 20 Md€ par an en moyenne ne couvrent pas les
+66 à 82 Md€ par an d'a16.
+
+**Mélenchon.** Treize recettes déclarées, annuelles, non chiffrées par le moteur (97,4
+Md€ par an dès 2027 : ISF renforcé 10, niches 22, CVAE 3, taxe Zucman 15, successions 20,
+IS 3, multinationales 5, Gafam 3,9, superprofits 5, transactions financières 5, rachats
+d'actions 2,5, crypto-actifs 1, fraude 2) ; aucune n'est liée à une dépense. Avec elles
+(D-483), le solde du programme passe de −118,78 à −5,70 Md€ en 2035.
+
+## D-483 — Le financement (3) : le programme comme un tout, et les deux soldes de dix ans
+
+**Où la somme des mesures est fausse.** `financement/programme.py` sépare, année par
+année : (1) l'interaction de la passe, le rapport du programme moins ses mesures lancées
+ensemble dans le jumeau (deux mesures sur la même base dans le moteur), lue dans les
+rapports commités, sans passe ; (2) la non-additivité du jumeau, ses mesures ensemble
+moins la somme de leurs trajectoires seules ; (3) le financement (D-482), les
+recouvrements déclarés comptés une fois, la compensation qui se consolide (D-481).
+
+**Attal, programme** (chaîne des études, vieillie, θ½ ; a16, a18, a22). Le programme :
+ΔB9 −50,04 en 2026, −18,61 en 2035 ; dette +283,60 Md€ ; +4,285 pt de PIB (le +4,28 de
+l'étude). Les trois mesures ensemble : −49,79, −18,43, +281,75, +4,246 pt ; leur somme :
+les mêmes soldes et dette, +4,254 pt. L'interaction de la passe : −0,247 Md€ en 2026,
+−0,186 en 2035, +1,85 Md€ de dette, +0,039 pt ; celle du jumeau : nulle sur B9 et la
+dette (au millième), −0,008 pt sur le ratio (la dette sur un PIB qui bouge). Par
+sous-secteur, ΔB9 2026 → 2035 et Δdette 2035 : État −44,40 → −45,96, +431,23 ; ODAC
++0,30 → +1,26, −8,65 ; APUL +2,59 → +11,08, −75,81 ; ASSO −8,52 → +15,00, −63,16 ; la
+compensation de l'État, 44,69 → 57,57 à la CNAV et 18,48 → 23,80 à l'Agirc-Arrco. Avec
+a2 : ΔB9 +4,61 en 2035, dette +89,43, −0,416 pt ; État −40,02, ASSO +26,21 en 2035.
+
+**Mélenchon, programme** (sept mesures ; le structurel le refuse, D-469 J2). Le
+programme : ΔB9 −91,59 en 2026, −118,78 en 2035 ; dette +1 066,17 Md€ ; +27,375 pt.
+Ensemble : −91,55, −119,01, +1 068,38, +27,475 pt ; somme : +27,353 pt. L'interaction de
+la passe : −0,04 Md€ en 2026, +0,23 en 2035, −2,21 de dette, −0,100 pt (le Smic et la
+fin des exonérations au-delà de 2 Smic sur la même base : leurs impulsions de cotisations
+employeurs seules font +31,81 et −7,04 Md€, le programme +12,43) ; celle du jumeau :
++0,122 pt sur le ratio, nulle sur B9. Par sous-secteur, ΔB9 2026 → 2035 et Δdette 2035 :
+État −16,21 → −13,56, +154,64 ; ODAC −1,74 → −2,62, +21,71 ; APUL −15,21 → −22,94,
++190,27 ; ASSO −58,43 → −79,66, +699,56. La compensation : la perte d'allègements
+généraux (L241-13, hors L131-7, θ½) fait payer à l'État 6,22 Md€ en 2026, puis moins à
+mesure que l'impulsion du rapport décroît (0 en 2035). Avec les treize recettes déclarées
+(D-482) : ΔB9 −2,10 en 2027, −5,70 en 2035 ; dette +120,57 Md€ ; +3,73 pt ; État +21,53,
+APUL −7,21, ASSO −19,21 en 2035.
+
+**Une limite qui fausse la répartition de Mélenchon.** Dans la chaîne des études, le choc
+d'une mesure de dépense sans impulsion de Mésange (le point d'indice, l'indexation des
+pensions et prestations, la garantie d'autonomie) va à la clé des prélèvements : 54 % aux
+ASSO, quand le point d'indice est payé par l'État, les APUL et les hôpitaux. Le total est
+juste, le payeur ne l'est pas. Le correctif : le payeur que la fiche de la carte dira
+(`payeurs`), dans `financement.yaml`, section `mesures` ; non fait ici.
+
+**Ce qui ne s'écrit pas sans passe**, dit et pas chiffré : une mesure chiffrée et une
+économie non désignée sur la même prestation (Attal a10, l'année blanche, et a16) ; les
+effets croisés des comportements (le Smic, l'emploi et les allègements, volet `travail`) ;
+la réponse d'une caisse non compensée (l'Agirc-Arrco baisse-t-elle ses pensions ou monte-
+t-elle ses taux ?), qui n'est écrite nulle part.
+
+**Les nombres du jumeau.** Aucun nombre consolidé ne change, aucun nombre publié non
+plus : le module lit les trajectoires. Ce qui est nouveau : le compte par sous-secteur et
+par branche, la compensation, les financements en hypothèse. Ce qui reste à décider par
+le propriétaire : l'issue des pertes de l'Agirc-Arrco et de l'Unédic (θ ou une règle) ;
+la part de la masse salariale sous le plafond (une source, Urssaf ou Acoss, à télécharger) ;
+si le plan a1 d'Attal doit entrer avec un calendrier choisi. **Un test devra tenir** :
+l'interaction de la passe d'Attal, −0,247 Md€ en 2026 ; celle de Mélenchon, +0,231 en
+2035 ; le solde de Mélenchon avec ses recettes déclarées, −5,703 Md€ en 2035.

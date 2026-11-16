@@ -1,0 +1,207 @@
+# Le financement par sous-secteur (but 26, volet `financement`, D-481 à D-483).
+# Chaque valeur porte sa source. Les parts du compte des APU par sous-secteur sont dans
+# financement_sous_secteurs.yaml, écrit depuis les tables de l'Insee (sources.py).
+
+sous_secteurs:
+  etat: "État (S13111), Insee t. 3.203"
+  odac: "Organismes divers d'administration centrale (S13112), Insee t. 3.204"
+  apul: "Administrations publiques locales (S1313), Insee t. 3.205"
+  asso: "Administrations de sécurité sociale (S1314), Insee t. 3.212"
+
+# Les branches de la Sécurité sociale, à l'intérieur des ASSO. Les comptes de la CCSS sont
+# des comptes des organismes (droits constatés), pas la comptabilité nationale : leurs
+# niveaux ne se somment pas aux ASSO de la t. 3.212. Le jumeau ne projette donc pas les
+# branches en niveau ; il y range l'ÉCART qu'une mesure leur fait (son choc statique et la
+# compensation), et le reste de l'écart des ASSO va à « asso_non_ventile », nommé.
+branches:
+  vieillesse_base:
+    libelle: "Vieillesse des régimes de base (CNAV et autres) et FSV"
+    regime_de_base: true
+  maladie:
+    libelle: "Maladie des régimes de base (CNAM et autres)"
+    regime_de_base: true
+  at_mp:
+    libelle: "Accidents du travail et maladies professionnelles"
+    regime_de_base: true
+  famille:
+    libelle: "Famille (CNAF)"
+    regime_de_base: true
+  autonomie:
+    libelle: "Autonomie (CNSA)"
+    regime_de_base: true
+  complementaires:
+    libelle: "Retraites complémentaires (Agirc-Arrco, Ircantec)"
+    regime_de_base: false
+  unedic:
+    libelle: "Assurance chômage (Unédic)"
+    regime_de_base: false
+  cades:
+    libelle: "Caisse d'amortissement de la dette sociale"
+    regime_de_base: false
+  asso_non_ventile:
+    libelle: "ASSO, écart non ventilé par branche (effets induits, hôpitaux, autres)"
+    regime_de_base: false
+
+# Les soldes publiés des branches en 2025, pour situer l'écart (pas projetés).
+soldes_branches_2025:
+  source: >-
+    Rapport à la Commission des comptes de la Sécurité sociale, mai 2026, Tableau 16
+    « Charges nettes, produits nets et soldes des régimes de base, par branche », p. 39
+    du PDF (data/raw/ccss_mai2026_comptes_secu_resultats2025.pdf), M€ ; régimes de base
+  maladie: {recettes: 246738, depenses: 262617, solde: -15879}
+  at_mp: {recettes: 17175, depenses: 17375, solde: -200}
+  vieillesse_base: {recettes: 296978, depenses: 304113, solde: -7136}
+  famille: {recettes: 59705, depenses: 58534, solde: 1171}
+  autonomie: {recettes: 41864, depenses: 41772, solde: 92}
+  fsv: {recettes: 21759, depenses: 21379, solde: 380}
+  robss_fsv: {recettes: 644392, depenses: 665964, solde: -21572}
+
+# L'affectation d'un instrument de Mésange (le choc statique d'une mesure, lu par ses
+# impulsions) à un payeur. « ligne:<champ> » : aux parts du sous-secteur de cette ligne
+# du compte des APU en 2025 (une convention : la mesure touche la ligne comme sa moyenne).
+instruments:
+  impot_sur_le_revenu:
+    affectation: {etat: 1.0}
+    source: >-
+      L'IR est une recette du budget général de l'État ; la t. 3.203 (État) porte 188,4 Md€
+      d'impôts courants (D5) en 2025, la t. 3.212 (ASSO) 173,1 Md€, la CSG et la CRDS
+      (Insee, t. 3.217 : CSG et CRDS en D51) ; aucune fraction d'IR n'est affectée hors
+      de l'État (CSS, art. L131-8 : la liste des impôts affectés n'en contient pas)
+  csg:
+    affectation:
+      asso.maladie: 57285
+      asso.vieillesse_base: 21939
+      asso.famille: 14779
+      asso.autonomie: 37397
+      asso.cades: 8119
+      asso.unedic: 17687
+    source: >-
+      CCSS mai 2026, fiche 1.4, Tableau 5 « Rendement de la CSG par attributaire », 2025,
+      M€, p. 57 du PDF (le FSV, 21 939 M€, porté en vieillesse : il finance la branche
+      vieillesse et y est intégré en 2026) ; une clé en niveau, normalisée
+  cotisations_salaries:
+    affectation: {asso.asso_non_ventile: 1.0}
+    source: >-
+      Insee t. 3.212 : les ASSO reçoivent 425,8 Md€ de cotisations nettes (D61) sur 483,6
+      en 2024 (l'État : les cotisations imputées de ses fonctionnaires) ; la branche
+      dépend de la cotisation, que la mesure dit (`mesures` ci-dessous)
+  cotisations_employeurs:
+    affectation: {asso.asso_non_ventile: 1.0}
+    source: "Insee t. 3.212, comme cotisations_salaries"
+  cotisations_employeurs_ciblees:
+    affectation: {asso.asso_non_ventile: 1.0}
+    source: "Insee t. 3.212, comme cotisations_salaries"
+  tva: {affectation: "ligne:apu_r_d2", source: "Insee t. 3.203 à 3.212, ligne D2, 2025"}
+  taxe_carbone: {affectation: "ligne:apu_r_d2", source: "Insee t. 3.203 à 3.212, ligne D2, 2025"}
+  depense_publique:
+    affectation: "depenses"
+    source: >-
+      Insee t. 3.203 à 3.212, 2025 : les dépenses primaires hors transferts entre APU (P2,
+      D1, D29, D62, D632, D3, D7, P51g...), au prorata de chaque sous-secteur ; une
+      convention, que la mesure remplace quand elle désigne son payeur
+  investissement_public: {affectation: "ligne:apu_d_p51g", source: "Insee t. 3.203 à 3.212, ligne P51g, 2025"}
+
+# La clé des effets induits et des chocs non ventilés : les impôts et cotisations reçus
+# par chaque sous-secteur (Insee t. 3.203 à 3.212, 2025, ligne « Impôts et cotisations
+# sociales » : D2 + D5 + D91 + D733 + D61 + D995). Calculée par `comptes.cle_prelevements`.
+
+# La règle de compensation (CSS, art. L131-7, rédaction de la loi n° 2025-1403 du
+# 30 décembre 2025, art. 43 ; Code de la sécurité sociale, édition consolidée du
+# 11 novembre 2026, codes.droit.org, p. 81-82).
+compensation:
+  regle: >-
+    L131-7, I : « Toute mesure de réduction ou d'exonération de cotisations de sécurité
+    sociale, instituée à compter de la date d'entrée en vigueur de la loi n° 94-637 du
+    25 juillet 1994 relative à la sécurité sociale, donne lieu à compensation intégrale
+    aux régimes concernés par le budget de l'Etat pendant toute la durée de son
+    application. » La règle vaut aussi (1°) pour les contributions affectées aux régimes,
+    aux organismes concourant à leur financement ou à l'amortissement de leur dette, et
+    (2°) pour les réductions d'assiette, instituées depuis la loi n° 2004-810 du 13 août
+    2004 ; et tout transfert de charges entre l'État et ces régimes est compensé.
+  exceptions_du_texte: >-
+    L131-7, II : le I ne s'applique pas aux réductions et exonérations du 5° bis du III de
+    l'art. L136-1-1, du III bis de l'art. L136-8, de l'art. L137-15 (huitième, avant-dernier
+    et dernier alinéas), de l'art. L241-13 (la réduction générale, compensée par une
+    fraction de TVA affectée, art. L131-8), du premier alinéa du II de l'art. L242-1, des
+    art. L613-1 et L621-3, ni à l'abattement de l'art. L137-2 sur la contribution de
+    l'art. L137-30.
+  derogations: >-
+    Une loi de financement peut déroger : « Par dérogation à l'article L. 131‑7 du code de
+    la sécurité sociale, les exonérations prévues aux II et III ne font pas l'objet d'une
+    compensation par l'État » (PLFSS pour 2027, texte déposé, n° 3211, article sur les
+    exonérations agricoles) ; l'exposé des motifs du même texte (article 15) dit la
+    compensation, en application des textes financiers pour 2026, de 2,6 Md€
+    d'exonérations jusque-là non compensées (heures supplémentaires, stagiaires, contrats
+    aidés, CSP). Données : data/raw/plfss2027_texte_an_b3211.html.
+  observe_2025: >-
+    CCSS mai 2026, fiche 1.6, Tableau 1 « Synthèse par branche... », p. 67 du PDF, 2025,
+    M€ : exonérations ciblées compensées 6 886 (maladie 2 120, vieillesse 3 701, famille
+    887, AT-MP 141, CNSA 37) et non compensées 2 770 (vieillesse 2 511), allègements
+    généraux 63 012 sur les régimes de base, 12 587 hors régimes de base (Unédic,
+    Agirc-Arrco, Ircantec, FNAL). La compensation des allègements à l'Agirc-Arrco et à
+    l'Unédic passe par la TVA affectée à l'Acoss ; « à l'euro près pour l'Agirc-Arrco ;
+    elle fait en revanche l'objet d'un abattement pour l'Unédic depuis 2023 (- 2,0 Md€ en
+    2023 ; - 2,6 Md€ en 2024 ; - 3,35 Md€ en 2025 et - 4,1 Md€ en 2026) » (CCSS, fiche
+    1.1, encadré).
+  # Le défaut, par branche, quand une mesure fait perdre une recette : « compensee »
+  # (le texte s'applique), « theta » (l'issue est incertaine : un curseur θ de 0, non
+  # compensée, à 1, compensée), « non_compensee ».
+  defaut:
+    vieillesse_base: compensee
+    maladie: compensee
+    at_mp: compensee
+    famille: compensee
+    autonomie: compensee
+    cades: compensee
+    complementaires: theta
+    unedic: theta
+    asso_non_ventile: theta
+  raison_defaut: >-
+    Régimes de base, FSV et Cades : L131-7, I (« compensation intégrale »), sauf
+    dérogation d'une loi de financement, que la mesure ne dit pas. Agirc-Arrco et Unédic :
+    hors du champ du texte (régimes gérés par les partenaires sociaux) ; l'État ne les
+    compense que pour les allègements généraux, par la TVA de l'Acoss, à l'euro près pour
+    l'une, avec un abattement pour l'autre (CCSS, fiche 1.1) : l'issue d'une autre mesure
+    est incertaine, un θ. Le reste des ASSO : θ.
+  instruments: [cotisations_salaries, cotisations_employeurs, cotisations_employeurs_ciblees, csg]
+
+# Ce qu'une mesure dit de son payeur, et que l'instrument seul ne dit pas.
+mesures:
+  pres2027_attal_a16_droit_au_brut:
+    cotisations_salaries:
+      asso.vieillesse_base: theta:financement_a16_part_cnav
+      asso.complementaires: reste
+    source: >-
+      La réforme multiplie par 0,22 les cinq barèmes salariaux de retraite du secteur privé
+      (engine/reforms.py, ECHELLE_KNOBS) : CNAV plafonnée 6,90 % et déplafonnée 0,40 % (CSS
+      art. D242-4) ; Agirc-Arrco 3,15 % en T1 et 8,64 % en T2, CEG 0,86 % et 1,08 %, CET
+      0,14 % (ANI du 17 novembre 2017, art. 35 à 38) : sous le plafond, la CNAV porte
+      7,30 / 11,31 = 64,5 % de la perte, au-dessus 0,40 / 10,26 = 3,9 %. La part de la
+      masse salariale sous le plafond n'est pas sourcée ici : θ.
+
+  # Le rapport du programme d'Attal : sa seule impulsion de cotisations salariales est
+  # celle d'a16 (a18 et a22 n'en ont pas : leurs rapports, `impulsions`), même payeur.
+  pres2027_attal_programme:
+    cotisations_salaries:
+      asso.vieillesse_base: theta:financement_a16_part_cnav
+      asso.complementaires: reste
+    source: "comme pres2027_attal_a16_droit_au_brut"
+
+thetas:
+  financement_a16_part_cnav:
+    definition: >-
+      Part de la perte de cotisations salariales de retraite d'Attal a16 qui tombe sur la
+      CNAV (le reste sur l'Agirc-Arrco)
+    a_zero: 0.5047
+    a_un: 0.5900
+    source: >-
+      Choisi, non vérifié : la part s de la masse salariale du privé sous le plafond de la
+      Sécurité sociale, de 0,75 (θ = 0) à 0,90 (θ = 1), non sourcée ; la part CNAV est
+      (7,30 s + 0,40 (1 − s)) / (11,31 s + 10,26 (1 − s)), les taux légaux ci-dessus
+  financement_compensation:
+    definition: >-
+      Part de la perte d'une branche à l'issue incertaine (Agirc-Arrco, Unédic, reste des
+      ASSO) que l'État compense par un transfert
+    a_zero: 0.0
+    a_un: 1.0
+    source: "Choisi, non vérifié : l'issue n'est écrite dans aucun texte (voir compensation)"
