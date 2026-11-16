@@ -1264,3 +1264,49 @@ FACTEUR_STATUT_OCCUPATION: dict[str, float] = {
     "primo_accedant": 0.867, "proprietaire": 0.929, "locataire_hlm": 0.383,
     "locataire_vide": 0.707, "locataire_meuble": 0.700, "loge_gratuitement": 0.574,
 }
+
+
+# --------------------------------------------------------------------------- #
+# La part du brut hors de l'assiette des cotisations (but 27, volet grille3, D-499).
+# --------------------------------------------------------------------------- #
+URSSAF_PPV_URL = ("https://open.urssaf.fr/explore/dataset/"
+                  "prime-partage-valeur-par-trimestre-champ-large-france-entiere/")
+DARES_EPARGNE_SALARIALE_URL = ("https://dares.travail-emploi.gouv.fr/publication/"
+                               "lepargne-salariale-en-2024")
+
+#: La prime de partage de la valeur versée par le secteur privé en 2024 : Urssaf, jeu
+#: ouvert « Prime de partage de la valeur par trimestre, champ large, France entière »,
+#: somme des quatre trimestres de 2024, « Secteur privé (champ des ETE) » 3 451 M€ et
+#: « Secteur privé (hors champ des ETE) » 11 M€ (export du 16 novembre 2026,
+#: `data/raw/urssaf_ppv_trimestre_champ_large.csv`). 2023 : 5 287 M€ ; 2022 : 4 519 M€.
+PPV_PRIVE_2024 = 3_462e6
+
+#: La participation, l'intéressement et les abondements de l'employeur (PEE, épargne
+#: retraite collective) versés en 2024 : 27,2 Md€ bruts (Dares, « L'épargne salariale en
+#: 2024 », juin 2026 ; 26,1 en 2023). Le chiffre est lu dans les reprises de la
+#: publication (FO-Cadres, 19 juin 2026 : « Le montant total des primes versées est estimé
+#: à 27,2 milliards d'euros brut, soit 1,1 milliard d'euros de plus qu'en 2023 ») : le
+#: site de la Dares ne répondait pas le 16 novembre (503), le tableau reste à relever par
+#: le volet `sources`. Les reprises ne s'accordent pas sur la ventilation (participation
+#: 11,0 ou 11,4 Md€, intéressement 11,8 ou 11,9), seulement sur le total.
+EPARGNE_SALARIALE_2024 = 27.2e9
+
+REMUNERATION_HORS_ASSIETTE_COTISATIONS = Figure(
+    value=PPV_PRIVE_2024 + EPARGNE_SALARIALE_2024, unit="EUR", year=2024,
+    scope="Rémunérations des salariés du privé comptées dans D11 mais exonérées de "
+          "cotisations sociales (assujetties à la CSG, à la CRDS et au forfait social) : "
+          "prime de partage de la valeur, participation, intéressement, abondements",
+    source="Urssaf, open data, prime de partage de la valeur par trimestre (2024) ; Dares, "
+           "L'épargne salariale en 2024 (juin 2026), total repris par la presse",
+    url=DARES_EPARGNE_SALARIALE_URL, use="calibration",
+    caveat="Spent by `incomes._part_hors_assiette`: spread over the employees of the "
+           "private field (the allègements' field) in proportion to their pay above the "
+           "Smic, so that the contributions, the taxes on the wage bill and the "
+           "allègements read the base the CCSS counts (juin 2025, fiche 1.2 : un point de "
+           "cotisation déplafonnée vaut 7,2 Md€ pour le régime général privé et 0,3 pour "
+           "les salariés agricoles, une assiette d'environ 750 Md€). Neither the CSG nor "
+           "the income tax reads it. A hypothesis on who: nought at the Smic, rising with "
+           "the pay above it. The 2024 total serves 2022 and 2023 (the PPV was 5,3 Md€ in "
+           "2023). Other exempt pay (titres-restaurant, chèques-vacances) is left in the "
+           "base: no total for it is in the depot.",
+)

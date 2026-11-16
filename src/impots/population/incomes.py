@@ -110,6 +110,9 @@ GERANT_GROSS_PAY = "salaire_brut_gerant"
 
 #: The column of the income tax's exempt share of a salary, read by engine correction 24.
 EXEMPT_SHARE = "part_salaire_exoneree"
+#: The share of a private employee's gross pay outside the base of the social contributions
+#: (but 27, volet grille3, D-499): the PPV and the épargne salariale.
+HORS_ASSIETTE_SHARE = "part_salaire_hors_assiette_cotisations"
 
 #: The survey's agricultural sector (NAF divisions 01 to 03), which has its own tables.
 AGRICULTURE = "agriculture"
@@ -210,6 +213,9 @@ class IncomeStats:
     hourly_wage_factor: float = 1.0
     """What gives the private wage bill back after the hourly wages are mapped onto the
     Dares's distribution in parts of Smic (`_salaires_horaires_en_smic`); 1.0 when off."""
+    hors_assiette_share: float = 0.0
+    """The rate, on the private pay above the Smic, of the pay outside the base of the
+    contributions (`_part_hors_assiette`); 0.0 when off."""
 
 
 def lognormal_from_deciles(d1: float, median: float, d9: float) -> tuple[float, float]:
@@ -462,6 +468,52 @@ def _facteur_statut(frame: pl.DataFrame) -> np.ndarray:
 #: Rank the wages and the pensions by tenure (but 27, volet grille2, D-497); off: no
 #: tenure in the draw, as before.
 FACTEUR_STATUT = True
+
+
+#: Take the PPV and the épargne salariale out of the base of the contributions (but 27,
+#: volet grille3, D-499); off: every euro of D11 bears contributions, as before.
+HORS_ASSIETTE = True
+
+
+def _part_hors_assiette(frame: pl.DataFrame, wages: np.ndarray, employee: np.ndarray,
+                        weight: np.ndarray, targets_scale: float) -> tuple[np.ndarray, float]:
+    """Each person's share of gross pay outside the base of the social contributions, and
+    the rate on the pay above the Smic that gives it.
+
+    **Why** (D-497, D-499). The wages are calibrated on D11, which holds the prime de
+    partage de la valeur, the participation, the intéressement and the employer's
+    abondements; none bears contributions (they bear the CSG, the CRDS and the forfait
+    social). The engine made all of D11 contribute: its private base ran 780 to 805 Md€
+    against the CCSS's 750, and the employees' contributions of the public schemes 11 %
+    above the accounts.
+
+    **How.** `margins.REMUNERATION_HORS_ASSIETTE_COTISATIONS` (30,7 Md€ in 2024), times
+    `targets_scale`, is spread over the employees of the private field (`_private_field`:
+    the allègements' field, without the public service, the particuliers employeurs and
+    the gérants) in proportion to their pay above the Smic at their quotité
+    (`margins.SMIC_ANNUEL_2024`): these sums come on top of a salary that itself pays the
+    Smic (C. trav. art. L. 3312-4 and L. 3325-2: the intéressement and the participation
+    « n'ont pas le caractère de salaire » ; the PPV « ne peut se substituer à aucun des
+    éléments de rémunération », loi n° 2022-1158, art. 1er, V), so no base falls under it.
+    A share of nought at the Smic is a hypothesis on who: the PPV goes more to the low
+    pay, the épargne salariale to the high. The share, exempt over gross, goes to the
+    engine, which takes it off `assiette_cotisations_sociales_prive` (correction 27); the
+    gross pay, D11, the CSG and the income tax do not move.
+    """
+    if not HORS_ASSIETTE:
+        return np.zeros_like(wages), 0.0
+    private = _private_field(frame, employee) & (wages > 0)
+    quotite = frame["quotite_travail"].to_numpy().astype(np.float64)
+    above = np.where(private, np.maximum(
+        wages - margins.SMIC_ANNUEL_2024 * np.clip(quotite, 0.0, 1.0), 0.0), 0.0)
+    mass = float((above * weight).sum())
+    if mass <= 0:
+        return np.zeros_like(wages), 0.0
+    rate = margins.REMUNERATION_HORS_ASSIETTE_COTISATIONS.value * targets_scale / mass
+    if rate >= 1.0:
+        raise ValueError(f"la part hors assiette dépasse le salaire au-dessus du Smic ({rate})")
+    share = np.where(private, rate * above / np.maximum(wages, 1e-9), 0.0)
+    return share, rate
 
 
 #: Rounds of the age and sex fit (the largest miss is under 0.1 % after six, on the
@@ -874,6 +926,9 @@ def attach_incomes(
     exempt_share = (max(0.0, 1.0 - declared / employees_taxable)
                     if employees_taxable > 0 else 0.0)
 
+    hors_assiette, hors_assiette_share = _part_hors_assiette(frame, wages, employee, weight,
+                                                             targets_scale)
+
     # ---- pensions ---------------------------------------------------------
     age = frame["age"].to_numpy()
     inactive = frame["statut_activite"].to_numpy() == "inactive"
@@ -908,6 +963,7 @@ def attach_incomes(
     enriched = frame.with_columns(
         pl.Series("salaire_brut_annuel", wages),
         pl.Series(EXEMPT_SHARE, np.where(employee & (wages > 0), exempt_share, 0.0)),
+        pl.Series(HORS_ASSIETTE_SHARE, hors_assiette),
         pl.Series("pension_annuelle", pensions),
         pl.Series("chomage_annuel", chomage),
         pl.Series("loyer_mensuel", rent),
@@ -932,5 +988,6 @@ def attach_incomes(
         gerants_gross_pay=gerants_gross,
         exempt_wage_share=exempt_share,
         hourly_wage_factor=hourly_factor,
+        hors_assiette_share=hors_assiette_share,
     )
     return enriched, stats
