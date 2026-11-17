@@ -39493,3 +39493,73 @@ l'Urssaf, ou les annexes du PLFSS sur les allègements existants). (2) Les heure
 de 3,35 Smic, trop nombreuses contre le D9 de l'Insee (86,9 % sous lui, contre 90 %), non
 calées. (3) La population de D-553 remplace celle de D-521 pour les études : à décider à
 la jonction (les études ne sont pas refaites).
+
+## D-554 — Les rejeux sur la population de D-553 : la paire Smic × exonérations revient
+
+**Ce qui a tourné** (le pronostic ajouté à D-552, commit e4a635c, poussé avant) : sur la
+population de D-553 (5ace8bb6…), 20 000 ménages, détachées, sous le verrou, une à la
+fois, de 101 à 140 s : le Smic, la fin des exonérations et la paire (union, vue figée de
+2026, `mesure_melenchon_b27.py`), le Smic « propres » ; la prime de 2019 et le CICE
+(`juges_passe_b28.py`). Puis le jumeau (secondes). Sorties hors git (`suite28/`) ;
+agrégats : `reports/etudes/suite_b28/rejeux_d554.json`.
+
+**Smic × exonérations** (coût, Md€, population de D-521 → D-553) : le Smic 29,670 →
+30,919 ; la fin des exonérations −4,474 → −4,441 ; les deux 24,211 → 27,029 ; **I = −0,985
+→ +0,551**, tout entier sur la réduction générale. Pronostic +0,4 (−0,3 à +1,2) : **tenu,
+le signe de l'étude revient** (+1,166 sur la population du but 19). Le signe que D-509
+publiait, et que D-532 disait non établi, tenait bien à la densité de 2,5 à 3 Smic.
+
+**La fin des exonérations seule** : −4,474 → **−4,441**. Pronostic −5,4 (−6,3 à −4,7) :
+**manqué**. Le rendement ne revient pas vers −6,33 : la masse que le point met de 2 à 2,5
+Smic y gagne de la réduction, mais le facteur de masse (1,0222) relève aussi tous les
+salaires, et les deux se compensent ; non décomposé ici. **Le Smic seul** coûte 1,25 Md€
+de plus (+4,2 %), non pronostiqué : plus de salariés juste au-dessus de 2 Smic, que la
+hausse fait entrer dans la réduction générale.
+
+**La prime de 2019** (contrôle, le juge est lu, compté à part ; D-536 → D-553) :
+
+| grandeur | pronostic | avant | après | juge | verdict |
+|---|---|---:|---:|---:|---|
+| coût (Md€) | 3,70 (3,55 à 3,85) | 3,768 | 3,706 | 3,725 | tenu ; dans |
+| foyers servis | — | +39,9 % | +41,5 % | +31,8 pts | dans (40 %) |
+| décile au gain le plus haut | D4 | D4 | D4 | D2 | tenu ; hors |
+| part de D1 à D3 | 44 % (42 à 46) | 44,3 % | 44,2 % | 63,8 % | tenu ; hors |
+| part de D6 à D10 | 15 % (13 à 17) | 15,1 % | 15,2 % | 13,2 % | tenu ; dans |
+
+La population refaite ne touche pas qui gagne à la prime : le gain reste un à deux déciles
+trop haut (D-536), et le juge aveugle reste manqué. La cause n'est pas la densité des
+salaires au-dessus de 2 Smic.
+
+**Le CICE** (contrôle, compté à part) : crédit de 2014, 20,85 → **22,04 Md€** (pronostic
+21,0 à 22,0 : **manqué de 0,04**) ; la part jusqu'à 1,6 Smic 0,670 → 0,635 ; le jumeau,
+θ½ : emploi salarié 2016 +185,0 → **+192,6** (186 à 196 : tenu), moyenne de 2014 à 2016
+147,3 → 153,6, **rapport au juge 1,47 → 1,54** (1,48 à 1,56 : tenu), dans [0,5 ; 2]. Le
+crédit s'éloigne du coût que le comité cite (18 Md€ en 2016) : +22 % au lieu de +16 %.
+
+**Le jumeau du Smic de Mélenchon** (défaut de D-551, cellules de D-553 ; le Smic porté à
+sa passe rapide « propres », la complète n'étant pas refaite ; structurel, financement ½,
+2035) :
+
+| θ diffusion | passe de D-521 : emploi figée ; B9 | passe de D-553 : emploi figée ; B9 |
+|---|---|---|
+| 0 | +153,0 ; −16,30 | +159,9 ; −17,54 |
+| ½ | −132,5 ; +0,37 | **−125,6 ; −0,88** |
+| 1 | −564,4 ; +25,40 | −557,5 ; +24,15 |
+
+Pronostic au centre, −136 (−150 à −120) milliers et +0,8 (−1,5 à +3) Md€ : **tenus**.
+Vieillie, θ½ : −168,3 milliers. Avec la passe rapide de D-521 sur les cellules neuves,
+−132,5 (D-551 : −136,1, passe complète, cellules de D-512) ; avec celle de D-553, −125,6 :
+la population refaite déplace l'emploi de 7 milliers, par le coût plus gros de la mesure.
+
+**Le compte des pronostics de D-554** : sept tenus (la paire, le coût de la prime, ses
+trois grandeurs par décile, l'emploi et le rapport du CICE, le jumeau du Smic), deux
+manqués (la fin des exonérations seule, le crédit du CICE de 0,04 Md€). Les juges de la
+prime et du CICE ne comptent dans aucune note (D-551, décision 6) ; aucune tolérance n'a
+changé.
+
+**Ce qui reste au propriétaire.** (1) Garder la population de D-553 pour les études (la
+paire et le Smic changent : +1,5 Md€ d'interaction, +1,25 Md€ sur le Smic seul) ; elles ne
+sont pas refaites. (2) Le bandeau maladie (D-553) et le rendement de la fin des
+exonérations, qui ne revient pas : une décomposition (la forme contre le facteur de masse)
+avant un second point. (3) La prime de 2019 par décile : une question de qui touche la
+prime (D-536), pas des salaires ; à juger sur l'ERFS.
