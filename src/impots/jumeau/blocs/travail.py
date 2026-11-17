@@ -88,9 +88,12 @@ mesures (volet `ventilation`) : `mesure_smic` ne fait que celle d'une mesure du 
 
 from __future__ import annotations
 
+import contextlib
 import dataclasses
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
+from itertools import combinations
+from math import factorial
 from pathlib import Path
 from typing import Any
 
@@ -104,6 +107,11 @@ PARAMETRES = Path(__file__).resolve().parents[1] / "parametres" / "travail.yaml"
 N_TRANCHES = 5
 #: Les champs que le bloc écrit pour les autres (D-478).
 COUT_SMIC = "cout_travail_smic"
+#: Le seuil de sortie de la réduction générale qu'une mesure déclare (D-540), en Smic.
+ALLEGEMENTS = "allegements"
+#: Au plus tant de mesures du travail dans une année : le partage de Shapley les
+#: énumère toutes (2^n cascades).
+MESURES_MAX = 6
 INCIDENCE_SALARIES = "incidence_cotisations_salaries"
 INCIDENCE_EMPLOYEURS = "incidence_cotisations_employeurs"
 #: La convention des déciles d'une mesure du Smic après sa première année (D-478).
@@ -141,6 +149,45 @@ class Parametres:
     profils: dict[str, np.ndarray]
     incidence: dict[str, np.ndarray]
     smic_net_2024: float
+    formes: dict[str, Any] = dataclasses.field(default_factory=dict)
+    """Les options de forme déclarées (`formes` de travail.yaml, D-540) : leur valeur, et
+    ce que lit chacune."""
+
+
+#: Les options de forme tenues pour un essai (`formes`), au-dessus des défauts.
+_ESSAI: dict[str, str] = {}
+
+
+@contextlib.contextmanager
+def formes(**options: str) -> Iterator[None]:
+    """Un essai des écarts de forme (D-540) : `charger` lit ces options au lieu des
+    défauts de travail.yaml, le temps du bloc. Une option ou une valeur inconnue est
+    refusée par `charger`."""
+    avant = dict(_ESSAI)
+    _ESSAI.update(options)
+    try:
+        yield
+    finally:
+        _ESSAI.clear()
+        _ESSAI.update(avant)
+
+
+def _formes(p: Mapping[str, Any]) -> dict[str, Any]:
+    f = p.get("formes") or {}
+    out: dict[str, Any] = {}
+    for nom, spec in f.items():
+        valeur = _ESSAI.get(nom, spec["defaut"])
+        if valeur not in spec["valeurs"]:
+            raise TravailError(f"forme « {nom} » = « {valeur} » : {spec['valeurs']}")
+        out[nom] = valeur
+    inconnues = sorted(set(_ESSAI) - set(f))
+    if inconnues:
+        raise TravailError(f"formes inconnues {inconnues} ({sorted(f)})")
+    prof = f.get("profil") or {}
+    for cle in ("long_terme_avec_la_loi", "horizon_long_terme", "horizon_decroissant"):
+        if cle in prof:
+            out[cle] = float(prof[cle])
+    return out
 
 
 def charger(chemin: Path = PARAMETRES) -> Parametres:
@@ -182,7 +229,7 @@ def charger(chemin: Path = PARAMETRES) -> Parametres:
                  for k in ("non_qualifie", "qualifie")},
         incidence={k: np.asarray(p["incidence"][k], dtype=float)
                    for k in ("bas", "centre", "haut")},
-        smic_net_2024=smic_net)
+        smic_net_2024=smic_net, formes=_formes(p))
 
 
 def par_morceaux(theta: Any, bas: Any, centre: Any, haut: Any) -> Any:
@@ -196,15 +243,18 @@ def par_morceaux(theta: Any, bas: Any, centre: Any, haut: Any) -> Any:
 # --------------------------------------------------------------------------- #
 # les barèmes
 # --------------------------------------------------------------------------- #
-def rgdu(p: Parametres, x: Any) -> Any:
+def rgdu(p: Parametres, x: Any, seuil: float | None = None) -> Any:
     """C(x), le taux de la réduction générale dégressive unique de 2026 pour une
-    rémunération de x Smic (CSS, art. D241-7)."""
+    rémunération de x Smic (CSS, art. D241-7). `seuil` : le seuil de sortie, quand une
+    mesure le baisse (`allegement_general_plafond`, D-540) ; la formule garde son 3
+    (openfisca-france, `allegement_general`, formule de 2026 : le plafond n'y est que la
+    condition de sortie)."""
     r = p.rgdu
     x = np.asarray(x, dtype=float)
     base = np.clip(0.5 * (r["plafond"] / np.maximum(x, 1e-9) - 1.0), 0.0, None)
     c = np.minimum(r["t_min"] + r["t_delta"] * base ** r["puissance"],
                    r["t_min"] + r["t_delta"])
-    return np.where(x < r["plafond"], c, 0.0)
+    return np.where(x < (r["plafond"] if seuil is None else seuil), c, 0.0)
 
 
 def fillon_2024(p: Parametres, x: Any) -> Any:
@@ -222,14 +272,74 @@ def fillon_2024(p: Parametres, x: Any) -> Any:
     return reduc + maladie + famille
 
 
-def diffusion(p: Parametres, theta: Any) -> np.ndarray:
+def _par_tranche(p: Parametres, theta: Any) -> tuple[np.ndarray, np.ndarray]:
+    """Les élasticités par tranche de 0,1 Smic, (tranches, n), et leurs bornes basses :
+    les cinq de 1 à 1,5 Smic ; avec la portée « 2 » (D-540), cinq de plus jusqu'à 2 Smic,
+    celle de 1,4-1,5 décroissant linéairement jusqu'à zéro à 2 Smic (au milieu de
+    chaque tranche)."""
+    e = par_morceaux(theta, p.diffusion["bas"], p.diffusion["sans_effets_fixes"],
+                     p.diffusion["avec_effets_fixes"])
+    bornes = p.diffusion_bornes
+    if p.formes.get("portee", "1,5") == "2":
+        milieux = 1.55 + 0.1 * np.arange(5)
+        facteur = (2.0 - milieux) / (2.0 - 1.45)
+        e = np.concatenate([e, facteur[:, None] * e[-1][None, :]], axis=0)
+        bornes = np.concatenate([bornes[:-1], 1.5 + 0.1 * np.arange(6)])
+    return e, bornes
+
+
+def _profil(p: Parametres, e: np.ndarray, e_bas: np.ndarray, age: int) -> np.ndarray:
+    """La diffusion d'une hausse vieille de `age` ans (1 la première année), selon la
+    forme `profil` (D-540) : tenue ; croissante, F fois à dix ans ; décroissante, ramenée
+    au bas en cinq ans."""
+    forme = p.formes.get("profil", "tenu")
+    if forme == "tenu" or age <= 1:
+        return e
+    if forme == "croissant":
+        lt = p.formes.get("horizon_long_terme", 10.0)
+        part = min(1.0, (age - 1) / (lt - 1.0))
+        return e * (1.0 + (facteur_long_terme(p) - 1.0) * part)
+    h = p.formes.get("horizon_decroissant", 5.0)
+    reste = max(0.0, 1.0 - (age - 1) / (h - 1.0))
+    return e_bas + (e - e_bas) * reste
+
+
+_FACTEURS: dict[tuple[Any, ...], float] = {}
+
+
+def facteur_long_terme(p: Parametres) -> float:
+    """F, la diffusion de long terme sur celle d'un an (profil « croissant », D-540) :
+    la loi et la diffusion d'une hausse de 1 % du Smic, au centre (θ½), font
+    `long_terme_avec_la_loi` (Mésange, 0,20) au lieu de leur valeur d'un an."""
+    cle = (id(p), p.formes.get("recentrage"), p.formes.get("portee"))
+    if cle not in _FACTEURS:
+        q = dataclasses.replace(p, formes={**p.formes, "profil": "tenu"})
+        c = cascade(q, 1.01, 0.5)
+        loi = float(c.b_loi.sum()) / float(c.brut.sum()) / 0.01
+        tout = loi + float(c.b_diff.sum()) / float(c.brut.sum()) / 0.01
+        _FACTEURS[cle] = (p.formes.get("long_terme_avec_la_loi", 0.20) - loi) / (tout - loi)
+    return _FACTEURS[cle]
+
+
+def diffusion(p: Parametres, theta: Any, coefficient: float = 1.0, age: int = 1
+              ) -> np.ndarray:
     """e(m), (intervalles, n) : l'élasticité du salaire de chaque intervalle au Smic, à θ
-    (0 Goarant-Muller, ½ Koubi-Lhommeau sans effets fixes, 1 avec ; D-533)."""
-    par_tranche = par_morceaux(theta, p.diffusion["bas"], p.diffusion["sans_effets_fixes"],
-                               p.diffusion["avec_effets_fixes"])
-    idx = np.searchsorted(p.diffusion_bornes, p.multiples, side="right") - 1
-    dedans = (idx >= 0) & (idx < 5)
-    return np.where(dedans[:, None], par_tranche[np.clip(idx, 0, 4)], 0.0)
+    (0 Goarant-Muller, ½ Koubi-Lhommeau sans effets fixes, 1 avec ; D-533). Les formes
+    de D-540 : `recentrage` « nouveau » lit la tranche de m / (1 + g) pour les postes
+    au-dessus du nouveau Smic ; `portee` « 2 » prolonge jusqu'à 2 Smic ; `profil` fait
+    vieillir la diffusion d'une hausse de `age` ans."""
+    e, bornes = _par_tranche(p, theta)
+    n_t = e.shape[0]
+    g = float(coefficient) - 1.0
+    x = p.multiples
+    if p.formes.get("recentrage", "ancien") == "nouveau" and g > 0.0:
+        x = np.where(p.multiples >= 1.0 + g, p.multiples / (1.0 + g), p.multiples)
+    idx = np.searchsorted(bornes, x, side="right") - 1
+    dedans = (idx >= 0) & (idx < n_t)
+    if p.formes.get("profil", "tenu") != "tenu" and age > 1:
+        bas, _ = _par_tranche(p, np.zeros(e.shape[1]))
+        e = _profil(p, e, bas, age)
+    return np.where(dedans[:, None], e[np.clip(idx, 0, n_t - 1)], 0.0)
 
 
 # --------------------------------------------------------------------------- #
@@ -273,20 +383,26 @@ def _somme(p: Parametres, v: np.ndarray) -> np.ndarray:
     return out
 
 
-def cascade(p: Parametres, coefficient: float, theta_diffusion: Any = 0.5) -> Cascade:
+def cascade(p: Parametres, coefficient: float, theta_diffusion: Any = 0.5, *,
+            seuil: float | None = None, age: int = 1) -> Cascade:
     """La cascade d'un Smic multiplié par `coefficient` (1,0818 : de 1 848,80 € à
-    2 000 € brut), sous la RGDU de 2026, à θ de diffusion (scalaire ou (n,))."""
+    2 000 € brut), sous la RGDU de 2026, à θ de diffusion (scalaire ou (n,)). `seuil` :
+    le seuil de sortie de la réduction générale que les mesures de l'année déclarent
+    (D-540) ; `age` : l'âge de la hausse, que lit la forme `profil`."""
     theta = np.atleast_1d(np.asarray(theta_diffusion, dtype=float))
     g = float(coefficient) - 1.0
     m = p.multiples[:, None] + np.zeros_like(theta)[None, :]
-    e = diffusion(p, theta)
+    e = diffusion(p, theta, coefficient, age)
     w_loi = np.maximum(m, 1.0 + g)
     w = np.maximum(m * (1.0 + e * g), 1.0 + g)
-    a_ref = m * rgdu(p, m)
-    a_loi = w_loi * rgdu(p, w_loi / (1.0 + g))
-    a_var = w * rgdu(p, w / (1.0 + g))
+    a_ref = m * rgdu(p, m, seuil)
+    a_loi = w_loi * rgdu(p, w_loi / (1.0 + g), seuil)
+    a_var = w * rgdu(p, w / (1.0 + g), seuil)
     s_ref = m * (1.0 + p.tau_e) - a_ref
-    total = float((s_ref[:, 0] * p.effectifs).sum())
+    # Le coût de référence, sous le barème de 2026 : les parts restent celles d'une même
+    # masse, quel que soit le seuil des mesures.
+    s_2026 = m[:, 0] * (1.0 + p.tau_e) - m[:, 0] * rgdu(p, m[:, 0])
+    total = float((s_2026 * p.effectifs).sum())
 
     def t(v: np.ndarray) -> np.ndarray:
         return _somme(p, v) / total
@@ -369,11 +485,80 @@ class Travail:
         self.pm = menages if menages is not None else charger_menages()
         self._cascades: dict[tuple[Any, ...], Cascade] = {}
 
-    def _cascade(self, coefficient: float, theta: np.ndarray) -> Cascade:
-        cle = (coefficient, theta.tobytes())
+    def _cascade(self, coefficient: float, theta: np.ndarray, seuil: float | None = None,
+                 age: int = 1) -> Cascade:
+        cle = (coefficient, theta.tobytes(), seuil, age)
         if cle not in self._cascades:
-            self._cascades[cle] = cascade(self.p, coefficient, theta)
+            self._cascades[cle] = cascade(self.p, coefficient, theta, seuil=seuil, age=age)
         return self._cascades[cle]
+
+    def _valeur(self, specs: Sequence[tuple[Mapping[str, Any], int]], theta: np.ndarray
+                ) -> tuple[np.ndarray, np.ndarray, np.ndarray] | None:
+        """Ce que le bloc écrit pour un ensemble de mesures prises ensemble (D-540) : par
+        tranche, le brut et l'allègement que le bloc porte (la diffusion, et la loi d'une
+        hausse sans passe), et le brut que la loi relève (le coût du Smic d'une passe).
+        Le Smic combiné est le produit des coefficients, le seuil combiné le plus bas des
+        seuils déclarés ; la hausse a l'âge de la plus ancienne. None sans hausse."""
+        smic = [(s, debut) for s, debut in specs if "smic" in s]
+        if not smic:
+            return None
+        passes = {bool(s.get("passe", False)) for s, _ in smic}
+        if len(passes) > 1:
+            raise TravailError("une hausse du Smic d'une passe et une hypothétique la même "
+                               "année : la loi de l'une est dans sa passe, pas celle de "
+                               "l'autre ; refusé plutôt que compté deux fois ou pas")
+        coef = float(np.prod([float(s["smic"]) for s, _ in smic]))
+        seuils = [float(s[ALLEGEMENTS]["plafond"]) for s, _ in specs if ALLEGEMENTS in s]
+        seuil = min(seuils) if seuils else None
+        age = max(a for _, a in smic)
+        cas = self._cascade(coef, theta, seuil, age)
+        if passes.pop():
+            return cas.b_diff, cas.a_diff, cas.b_loi
+        return cas.b_diff + cas.b_loi, cas.a_diff + cas.a_loi, np.zeros_like(cas.b_loi)
+
+    def _partage(self, specs: Mapping[str, tuple[Mapping[str, Any], int]],
+                 theta: np.ndarray) -> dict[str, tuple[np.ndarray, ...]]:
+        """La part de chaque mesure dans la valeur de toutes (D-540) : la valeur de
+        Shapley, la moyenne des apports de la mesure à chaque ensemble des autres. Seule,
+        une mesure garde la valeur d'avant au bit près ; à plusieurs, chacune reçoit en
+        plus sa part de l'écart à la somme (l'interaction), et les parts somment à la
+        valeur de toutes. Les blocs de l'emploi et des salaires lisent les mesures une à
+        une : l'interaction va donc aux mesures qui la font, pas à une clé à part."""
+        noms = sorted(specs)
+        n = len(noms)
+        if n > MESURES_MAX:
+            raise TravailError(f"{n} mesures du travail la même année : au plus "
+                               f"{MESURES_MAX} (le partage énumère 2^n ensembles)")
+        memo: dict[frozenset[str], tuple[np.ndarray, ...] | None] = {}
+
+        def v(ens: frozenset[str]) -> tuple[np.ndarray, ...] | None:
+            if ens not in memo:
+                memo[ens] = self._valeur([specs[x] for x in sorted(ens)], theta) \
+                    if ens else None
+            return memo[ens]
+
+        if n == 1:
+            seul = v(frozenset(noms))
+            return {noms[0]: seul} if seul is not None else {}
+        out: dict[str, tuple[np.ndarray, ...]] = {}
+        for x in noms:
+            autres = [y for y in noms if y != x]
+            parts: list[np.ndarray] | None = None
+            for r in range(n):
+                poids = factorial(r) * factorial(n - r - 1) / factorial(n)
+                for c in combinations(autres, r):
+                    avec, sans = v(frozenset((*c, x))), v(frozenset(c))
+                    if avec is None and sans is None:
+                        continue
+                    ref = avec if avec is not None else sans
+                    a = avec if avec is not None else tuple(np.zeros_like(u) for u in ref)
+                    s = sans if sans is not None else tuple(np.zeros_like(u) for u in ref)
+                    d = [poids * (ai - si) for ai, si in zip(a, s, strict=True)]
+                    parts = d if parts is None else [pi + di for pi, di in
+                                                     zip(parts, d, strict=True)]
+            if parts is not None:
+                out[x] = tuple(parts)
+        return out
 
     def contribue(self, ctx: Contexte) -> dict[str, dict[str, Any]]:
         out: dict[str, dict[str, Any]] = {c: {} for c in self.ecrit}
@@ -390,17 +575,28 @@ class Travail:
         salaire = part_d1 * pib * 1e6 / ref["emploi_salarie"]
         t_diff = thetas.lire(ctx.theta, self.thetas[0], n)
         t_inc = thetas.lire(ctx.theta, self.thetas[1], n)
+        # Le choc de l'année, toutes mesures ensemble (D-540) : chaque mesure du travail,
+        # sa déclaration de l'année et l'âge de sa hausse du Smic.
+        specs: dict[str, tuple[Mapping[str, Any], int]] = {}
+        for m in ctx.mesures:
+            par_an = getattr(m, "travail", None) or {}
+            spec = par_an.get(annee)
+            if spec:
+                if ALLEGEMENTS in spec and not spec.get("passe", False):
+                    raise TravailError(f"mesure « {m.identifiant} » : un barème des "
+                                       f"allègements sans passe, que le bloc n'écrit pas")
+                debut = min((a for a, s in par_an.items() if s and "smic" in s),
+                            default=annee)
+                specs[m.identifiant] = (spec, annee - debut + 1)
+        parts = self._partage(specs, t_diff) if specs else {}
         for m in ctx.mesures:
             ident = m.identifiant
-            spec = (getattr(m, "travail", None) or {}).get(annee)
+            spec = specs.get(ident, (None, 0))[0]
             poids_e = None
-            if spec:
-                cas = self._cascade(float(spec["smic"]), t_diff)
-                b_t, a_t = cas.b_diff, cas.a_diff
-                if not spec.get("passe", False):
-                    b_t, a_t = b_t + cas.b_loi, a_t + cas.a_loi
-                else:
-                    out[COUT_SMIC][ident] = masse * cas.b_loi.sum(axis=0)
+            if ident in parts:
+                b_t, a_t, b_loi = parts[ident]
+                if spec.get("passe", False):
+                    out[COUT_SMIC][ident] = masse * b_loi.sum(axis=0)
                 b, a = b_t.sum(axis=0), a_t.sum(axis=0)
                 # La masse salariale : le brut et ses cotisations avant réduction ; la
                 # réduction est une cotisation employeur en moins (une impulsion, ciblée
@@ -414,8 +610,12 @@ class Travail:
                 out["ebe_revenu_mixte"][ident] = -masse * s
                 out["apu_r_d61"][ident] = masse * ((self.p.tau_e + self.p.tau_cs) * b - a)
                 out["apu_r_d5"][ident] = masse * self.p.tau_csg * b
+            if spec and "smic" in spec:
+                cas = self._cascade(float(spec["smic"]), t_diff)
                 if np.any(cas.a_loi[:, 0]):
                     poids_e = cas.a_loi[:, 0]
+            elif spec and ALLEGEMENTS in spec:
+                poids_e = allegement_retire(self.p, float(spec[ALLEGEMENTS]["plafond"]))
             impulsions = (getattr(m, "impulsions", None) or {}).get(annee, {})
             if spec or any(impulsions.get(i) for i in (
                     "cotisations_salaries", "cotisations_employeurs",
@@ -424,6 +624,18 @@ class Travail:
                 out[INCIDENCE_SALARIES][ident] = np.zeros(n) + lam_s
                 out[INCIDENCE_EMPLOYEURS][ident] = np.zeros(n) + lam_e
         return out
+
+
+def allegement_retire(p: Parametres, seuil: float) -> np.ndarray:
+    """Par tranche, l'allègement qu'un seuil de sortie abaissé retire aux postes de la
+    distribution de référence (D-540) : le poids de l'incidence d'une telle mesure."""
+    m = p.multiples
+    retire = m * (rgdu(p, m) - rgdu(p, m, seuil))
+    out = np.zeros(N_TRANCHES)
+    np.add.at(out, p.tranche, retire * p.effectifs)
+    if not out.any():
+        raise TravailError(f"un seuil de sortie à {seuil} Smic ne retire aucun allègement")
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -512,10 +724,12 @@ __all__ = [
     "Cascade",
     "Parametres",
     "Travail",
+    "allegement_retire",
     "allegements_publies_2024",
     "cascade",
     "charger",
     "emploi_par_tranche",
+    "formes",
     "incidence",
     "lambdas",
     "mesure_smic",
