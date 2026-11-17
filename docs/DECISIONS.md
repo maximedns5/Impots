@@ -40228,3 +40228,59 @@ dire l'écart : le rendement de la fin des exonérations est trop bas de l'ordre
 Md€ (D-563). Le désaccord de fond, à trancher avant tout point : le T305 (heures, Insee)
 et l'Urssaf (ETP, DSN) ne disent pas la même densité de 2 à 2,5 Smic une fois le D9 de la
 Dares gardé.
+
+## D-558 — Cinq études ajoutées à la série de D-556 : le PLF 2027 et quatre programmes
+
+**La décision** (le propriétaire, 17 novembre ; D-575, choix 3) : la population des études
+reste celle de D-553 (empreinte 5ace8bb6…), et la série de D-556 prend aussi les cinq
+études non refaites depuis D-403 : le PLF 2027 (articles 2, 3 et 15), Arthaud,
+Glucksmann, Labib (avec ses deux mesures seules) et Zemmour. Dix-sept études en tout ;
+**leur résultat, à toutes, va dans D-559** (et non plus D-558, comme D-556 l'annonçait).
+Cette entrée est commitée et poussée avant tout calcul ; leur `preenregistrement` passe à
+D-558. Aucune tolérance, aucun seuil de D-345, aucun enregistrement de
+`chiffrages_preregistres/` ne change ; aucune annexe d'évaluations préalables n'est
+ouverte. **Dupont-Aignan reste dehors** : refusé à D-398, pour une raison écrite dans sa
+définition : son chemin annuel sort de la boîte θ sous la persistance « tenue », un effet
+n'y est pas monotone en son θ, et la boîte relue à ses coins serait fausse (D-217, D-224).
+
+**Ce que valent leurs rapports actuels.** Aucun : ils ont été retirés à `5a68669` (D-403).
+Il ne reste que leur gel `avant/serie.json`, celui de la série du but 21 (`aa22293`,
+D-394 et D-397), sur la population du but 19 (D-370), sans le canal des créations
+(D-402), avant ε = 0,043 (D-427) et la CVAE et la C3S hors du canal (D-440). Ce gel est
+gardé tel quel : il est l'« avant » de ces cinq études. `impots etude avant` ne peut pas
+le refaire (il lit des rapports qui n'existent plus).
+
+**Le pronostic**, même forme que D-556 : coût de la première année (Md€) et Δb₂₀₃₅ à θ½
+(vue vieillie, persistance « lue », points de PIB), avant = `aa22293` ; le verdict. Trois
+marches s'y ajoutent : (1) le canal des créations, à ε = 0,043 au centre, soit environ
+−0,007 point par Md€ de baisse des cotisations des employeurs nettes (D-403 : −0,032 à
+ε = 0,20) ; (2) D-521 → D-553, comme D-556 (3 à 5 % de la réduction générale en plus pour
+un Smic, +1 % sur une assiette de salaires du privé) ; (3) le code des buts 22 à 28,
+mesuré seulement sur le Smic de Mélenchon (29,745 → 29,547, D-508). Les bandes couvrent
+(1) et (2) ; une ligne qui sort par (3) sera dite manquée, sa cause cherchée.
+
+| étude | ce qui la touche | coût : avant → pron. | Δb : avant → pron. | verdict |
+|---|---|---|---|---|
+| Glucksmann | Smic +16,2 % | +29,74 → 30,84 ¹ | +0,98 → +0,5 à +1,1 | dépend |
+| Labib | Smic +19 %, TVA | +57,37 → +58,0 à +60,0 | +5,58 → +4,8 à +5,8 | hausse |
+| Arthaud | Smic +50,3 % | +74,24 → +75,5 à +78,5 | +3,41 → +2,0 à +3,6 | dépend |
+| Zemmour | CSG d'activité | +91,69 → +91,7 à +94,0 | +12,24 → +12,3 à +12,7 | dépend |
+| PLF, art. 2 | barème de l'IR | +2,62 → +2,62 à +2,72 | +0,373 → +0,36 à +0,39 | dépend |
+| PLF, art. 3 | pensions | −1,10 → ± 1 % | −0,170 → ± 0,005 | dépend |
+| PLF, art. 15 | entreprises | −7,05 → ± 0,5 % | −0,220 → −0,23 à −0,12 | baisse |
+
+¹ Mesuré, pas pronostiqué : sa réforme est celle du Smic de Mélenchon (`smic_1700_net`,
+1,1617, sans diffusion), dont la passe rapide « propres » sur la population de D-553
+donne 30,844 Md€ (D-554). La série doit la retrouver à 0,5 % près ; un écart plus grand
+dirait que la série n'a pas tourné sur ce code. Le sens, partout : le coût monte par la
+réduction générale (les Smic) ou la masse salariale (la CSG, le barème) ; Δb baisse là où
+le canal lit des cotisations des employeurs en baisse (les Smic), monte d'un pour cent
+ailleurs. Le PLF garde ses cas enregistrés : leur écart au chiffre publié se lit sur la
+page, aux tolérances déclarées, sans retouche. Zemmour avait été tué par manque de
+mémoire à D-397 : il passe seul, comme toute la série (une file, sous le verrou).
+
+**L'ordre de la série** (dix-sept, une à une) : Mélenchon ; les cinq Smic publiés
+(Roussel, Ruffin, Tondelier, Kazib, Bouamrane) ; Attal, Retailleau, Lisnard, Philippe,
+Le Pen ; le PLFSS 2027 ; le PLF 2027 ; Glucksmann, Labib, Arthaud, Zemmour. Les douze de
+D-556 sont gelées par `impots etude avant` (série de `5a68669`), les cinq d'ici gardent le
+gel de `aa22293`.
