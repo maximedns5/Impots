@@ -40360,9 +40360,9 @@ mesure a été confronté à des chiffrages officiels sur cinq cas (D-300 : troi
 tolérance) ; les années suivantes, la dette et les effets sur l'activité ne l'ont jamais
 été pour une mesure. Le juge de l'histoire (D-439) rejoue les années passées et tient
 certaines cibles (le PIB et le chômage, pas l'emploi ; le solde et la dette, pas le total
-des recettes) : c'est un test du jumeau, pas d'une mesure, et chaque fiche le dit ainsi. Chaque fiche nomme aussi
-les θ lus sans estimation publiée (la loi large de D-417). « Illustratif » dès qu'une
-mesure est hypothétique ou transformée (D-605).
+des recettes) : c'est un test du jumeau, pas d'une mesure, et chaque fiche le dit ainsi.
+Chaque fiche nomme aussi les θ lus sans estimation publiée (la loi large de D-417).
+« Illustratif » dès qu'une mesure est hypothétique ou transformée (D-605).
 
 **Une limite écrite sur la fiche.** La rémunération par salarié est D1 par tête,
 cotisations des employeurs comprises : le « droit au brut » d'Attal la fait baisser
