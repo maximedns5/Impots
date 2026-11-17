@@ -39388,3 +39388,24 @@ change, et une ligne manquée reste écrite.
 **Le test léger** : `tests/test_salaires_horaires.py::test_le_point_de_l_insee_tient_la_
 densite_de_2_5_a_3_smic` (86,4 % sous 2,5 Smic avec le point, 82,1 % sans ; le Q3 et le D9
 de la Dares gardés) ; sur le code d'avant, sans le point, il échoue (82,1 au lieu de 86,4).
+
+**Ajout, avant les rejeux** (écrit après la passe de la grille, dont aucun nombre n'est lu
+ici ; commité et poussé avant les rejeux). Les rejeux de D-554, sur la population de cette
+entrée (empreinte 5ace8bb6…), 20 000 ménages, détachés, sous le verrou, et leur pronostic :
+
+* **La paire Smic × exonérations** (D-509 : I = −0,985 Md€ sur le coût, population de
+  D-521 ; +1,165 sur celle du but 19). La fin des exonérations perd la bande de 2 à 2,32
+  Smic d'avant et gagne celle de 3 à 3,49 ; le point met plus de salariés de 2 à 2,5 Smic
+  et moins de 2,5 à 3,04 : **I ≈ +0,4 Md€ (−0,3 à +1,2), le signe de l'étude revient**.
+* **La fin des exonérations seule** (−4,474 Md€) : plus de masse de 2 à 2,5 Smic, où la
+  réduction retirée est la plus grosse : **−5,4 (−6,3 à −4,7)**.
+* **La prime de 2019, par décile** (D-536 ; le juge est lu : un contrôle, compté à part,
+  décision 6) : la population ne bouge presque pas sous 1,6 Smic ; coût 3,77 → **3,70
+  (3,55 à 3,85)** ; le décile au gain le plus haut D4 (juge D2 : hors) ; D1 à D3, 44,3 % →
+  **44 % (42 à 46), hors** ; D6 à D10, 15,1 % → **15 % (13 à 17), dans**.
+* **Le CICE** (contrôle, compté à part) : l'assiette sous 2,5 Smic gagne de la masse :
+  crédit de 2014, 20,85 → **21,4 Md€ (21,0 à 22,0)** ; emploi salarié 2016 +185,0 →
+  **+190 (186 à 196)** ; rapport au juge 1,47 → **1,51 (1,48 à 1,56)**, dans [0,5 ; 2].
+* **Le jumeau du Smic de Mélenchon**, au défaut de D-551, sur les cellules refaites, le
+  Smic porté à sa passe rapide « propres » (au lieu de la complète, faute de la refaire) :
+  θ½, figée, emploi 2035 **−136 (−150 à −120) milliers**, B9 **+0,8 (−1,5 à +3) Md€**.
