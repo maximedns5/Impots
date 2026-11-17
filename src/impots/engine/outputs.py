@@ -230,6 +230,14 @@ REGISTRY: tuple[Row, ...] = (
     # by it with no row to hold it (D-387).
     Row("paje", "paje", "famille", "month", "full", False,
         label="Prestation d'accueil du jeune enfant"),
+    # The Garantie jeunes (2017-2021), gross, an allowance cut by the young person's other
+    # resources, the prime d'activité among them: openfisca counts it in `minima_sociaux`,
+    # hence in `revenu_disponible`. Without a row, the bonification of 2019 rejoué in
+    # miroir on 2019 law moved disposable income by 4 % more than the instruments, the
+    # Garantie jeunes rising as the prime fell (D-536). Zero from 2022, the law having
+    # replaced it by the contrat d'engagement jeune.
+    Row("garantie_jeunes", "garantie_jeunes", "individu", "month", "full", False,
+        label="Garantie jeunes (2017-2021)"),
     # The new benefits of the programmes (but 21, étape 3), each added to the system by
     # the reform that poses its group and by nothing else (`engine.prestations_neuves`):
     # `projet` rows, zero where the variable does not exist, the law above all. Each

@@ -2522,6 +2522,38 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Groupe d'experts sur le Smic, rapport de novembre 2024. Note 30, p. 67 : Gautier, Roux et Suarez Castillo (2018) : une hausse de 1 % du Smic relève directement les salaires de base individuels de 0,08 % en moyenne, une hausse de 1 % des minima de branche de 0,14 % ; p. 96 du PDF : minima de branche +12 % contre +15 % pour le Smic et l'inflation de début 2021 au 3e trimestre 2024. But 28, volet reaction (D-533).",
       "quarantined": false
+    },
+    "cnaf_pa_conjoncture_17_2019t4.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/2020_Prime%20d'activit%C3%A9%20Conjoncture%20n%C2%B017.pdf",
+      "sha256": "40c0be887cfcc401756c8942caa0221219430af5402c59a7c5512912cb8a4684",
+      "bytes": 583993,
+      "downloaded": "2026-11-17",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, Prime d'activité conjoncture n° 17, juillet 2020 : données définitives de décembre 2019 (4,35 M de foyers) et graphique 1, foyers payés par trimestre de 2016 à 2019 ; juge du but 28 (D-536)."
+    },
+    "cnaf_pa_conjoncture_16_2019t4.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/2020_Prime%20d'activit%C3%A9%20Conjoncture%20n%C2%B016.pdf",
+      "sha256": "6d0fd663c2b373bf06831ce2b73cbe1fe7de932b2a496d48d658bc49016927e8",
+      "bytes": 435399,
+      "downloaded": "2026-11-17",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, Prime d'activité conjoncture n° 16 : fin décembre 2019 ; « zoom sur les dépenses », croissance des masses de 2018 à 2019 (+75,4 % comptable, +73,8 % en mois de droit) ; juge du but 28 (D-536)."
+    },
+    "cnaf_essentiel_187_2019_depenses_2018.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Essentiel/187_2019_ESSENTIEL_Stabilite_des_depenses_PL_CNAF.pdf",
+      "sha256": "5b9b5f96eede3f7788c49eea19c5e9910698197bc54cb85986f4d023dc5352a9",
+      "bytes": 399035,
+      "downloaded": "2026-11-17",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, l'e-ssentiel n° 187, 2019, figure 1 : prime d'activité versée par les Caf en 2018, 5,3 Md€, +5,4 % sur 2017 ; juge du but 28 (D-536)."
+    },
+    "insee_fps2020_d2_donnees.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4797668/FPS2020_D2_donnees.xlsx",
+      "sha256": "ce48870ae6f3ecd2f0180afa30363fb7ec9e77ba164fbf663dfa54be536fadc5",
+      "bytes": 53898,
+      "downloaded": "2026-11-17",
+      "licence": "Insee, licence ouverte Etalab",
+      "description": "Insee, France portrait social 2020, « Les réformes socio-fiscales de 2019… », données des figures ; figure 8 : effet par décile de la hausse du bonus de la prime d'activité ; juge du but 28 (D-536)."
     }
   }
 }

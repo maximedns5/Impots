@@ -42,6 +42,8 @@ INSTRUMENTS = (
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",
     "af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite", "aefa", "cf", "asf",
     "ars", "aspa", "paje",
+    # The Garantie jeunes, 2017-2021 (D-536): zero for any later year.
+    "garantie_jeunes",
     # The new benefits of the programmes (but 21, étape 3): zero unless a reform poses them.
     "ria", "allocation_enfant", "garantie_autonomie",
     # The CVEC (but 21, étape 4): zero unless the students are imputed.
