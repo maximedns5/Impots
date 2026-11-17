@@ -40341,3 +40341,65 @@ comme structurel à long terme (dit).
 **Règle d'emploi.** Chaque canal est une option ; il n'est branché par défaut que si un
 juge le tient. Aucun ne l'est à cette entrée : la dimension est « sourcé, non jugé », le
 socle à côté des canaux. La pression du coût est jugée sur le CICE (D-601, D-602).
+
+## D-601 — Le canal de la pression du coût, préenregistré sur le CICE
+
+**Pourquoi** (D-600). Le canal `pression_cout` dit qu'une variation du coût du travail
+des entreprises fait varier leur PGF dans le même sens, η = 0,38 (0 à 0,76), Riley et
+Rosazza Bondibene. Il est symétrique : une baisse du coût réduit la PGF. Le CICE en est
+l'expérience naturelle française, une baisse du coût du travail, évaluée après coup. Le
+juge : France Stratégie, « Évaluation du crédit d'impôt pour la compétitivité et
+l'emploi : synthèse des travaux d'approfondissement », septembre 2020
+(`france_strategie_2020_rapport_cice.pdf`, au manifeste depuis la ligne M4, lu alors pour
+l'emploi seulement). Il n'est pas ouvert sur la productivité avant le commit et la
+poussée de cette entrée.
+
+**Ce qui n'est pas aveugle, dit.** Le brief du coordinateur dit le verdict qualitatif :
+le comité n'a pas trouvé d'effet du CICE sur la productivité. Ce qui est aveugle : sa
+forme (un coefficient, un écart entre groupes, une phrase), ses nombres, ses intervalles.
+La note du CAE n° 49 a été lue p. 3 (les taux du CICE) et p. 6 (l'emploi et les salaires)
+pour D-600, sans y lire de nombre sur la productivité.
+
+**Le pronostic du canal**, calculé avant l'ouverture :
+
+* **Au niveau de l'entreprise** : Δln PGF = −η × CICE / coût du travail ; la semi-
+  élasticité à l'intensité (le CICE en part du coût du travail de l'entreprise) vaut
+  **−0,38** (de 0 à −0,76) : une entreprise dont le CICE fait 1 % du coût du travail
+  perd 0,38 % de PGF. La productivité apparente du travail bouge autant (Riley et
+  Rosazza Bondibene : le ratio capital-travail ne bouge pas). Rapportée au salaire brut
+  (si le rapport mesure l'intensité en part de la masse salariale brute), au coût de
+  1 + τ_e = 1,4705 du brut (`travail.yaml`, sans allègement) : **−0,26** (0 à −0,52).
+  Une entreprise dont tous les salariés sont sous 2,5 Smic, à 6 % du brut (CAE n° 49,
+  p. 3, le taux de 2014) : −1,6 % de productivité (0 à −3,1 %).
+* **Pour l'économie**, en ordre de grandeur : 22 Md€ (le CICE basculé de 2019, CAE
+  n° 49, p. 3) sur la masse super-brute marchande du jumeau de 2025 (0,6942 × 1 582,6 =
+  1 098,6 Md€), x = −2,0 % ; ΔPGF = −0,76 % ; ΔPIB = −0,42 % (×s_VA) au centre, à deux
+  ans et au-delà.
+
+**La règle, fixée avant l'ouverture.** On lit dans le rapport les estimations de l'effet
+du CICE sur la productivité (apparente du travail, ou PGF), dans la forme où il les
+donne, la spécification que le rapport retient comme principale ; on convertit le
+pronostic dans la même métrique (le dénominateur de l'intensité que le rapport dit ; à
+défaut, la conversion au brut ci-dessus).
+
+* (a) Un coefficient et son écart-type ou intervalle : le **centre tient** si
+  l'intervalle à 95 % (± 1,96 écart-type) contient le pronostic central converti ; la
+  **bande tient** si l'intervalle rencontre [−0,76 c ; 0], c la conversion.
+* (b) Un écart entre groupes d'exposition, avec l'écart d'intensité : la même règle sur
+  −η × l'écart d'intensité.
+* (c) Une phrase sans nombre : **non concluant**.
+
+**Ce qui en suit, fixé avant.** Centre tenu : le canal prend `juge: D-602` et est branché
+par défaut (D-600, la règle d'emploi). Centre rejeté et zéro dans l'intervalle : le canal
+symétrique n'est pas tenu ; η de `pression_cout` passe à 0 au centre et en bas, son haut
+devient la borne de l'intervalle convertie (la seule réponse que le juge laisse ouverte),
+et le canal reste à côté. Intervalle qui exclut zéro du côté positif (le CICE aurait
+relevé la productivité) : le signe du canal est rejeté, il reste à côté avec ce verdict
+écrit, au propriétaire de le refaire. Non concluant : rien ne change, le canal reste à
+côté, « sourcé, non jugé ». Dans tous les cas, `salaire_efficience` (le Smic, une hausse
+du salaire, que le CICE ne teste pas) reste « sourcé, non jugé ».
+
+**Pronostic.** Le rapport rend des estimations nulles avec des intervalles ; le centre
+(−0,38) est rejeté et zéro est dedans (une chance sur deux) ; le centre tient (une sur
+quatre) ; non concluant (une sur quatre). Aucune tolérance ne sera modifiée après la
+lecture. Résultat en D-602.
