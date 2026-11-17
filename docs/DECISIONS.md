@@ -40422,3 +40422,63 @@ chômage propre ou la règle linéaire 10/3 (2,4 fois plus) ; (b) borner l'adapt
 hédonique (par exemple, un effet du revenu qui décroît de 0,425 à 0,13 sur cinq ans, Clark
 et al. 2018) ; (c) compter les moins de 16 ans ; (d) chercher un coefficient du revenu
 estimé sur SRCV, qui remplacerait la littérature après un nouveau préenregistrement.
+
+## D-620 — La santé et le temps de vie (1) : les canaux et le contrôle préenregistré
+
+**Ce qui est fait** (volet `sante` du but 29, D-590, ajouté par le coordinateur dans la nuit
+du 17 au 18 novembre ; numéros D-620 à D-624). Une dimension « santé », inscrite dans
+`jumeau/impacts` (`jumeau/impacts/sante.py`, paramètres `jumeau/parametres/sante.yaml`,
+numpy et yaml), traduit ce que la trajectoire fait aux ménages en années de vie, en décès
+(un ordre de grandeur), en santé déclarée, en renoncement aux soins et, pour un programme
+qui touche à l'âge de départ, en années de retraite sans incapacité. Sa forme est celle du
+moral (D-595) : chaque canal a un coefficient publié et sa bande, linéaire en lui ; la
+bande du total est l'enveloppe des bornes de même sens. Les documents lus sont au manifeste
+de `data/raw` (copies hors git).
+
+| canal | ce qui est lu | coefficient | centre | bande | source |
+|---|---|---|---:|---|---|
+| revenu → durée de vie | Δln du revenu réel par décile | g, années d'espérance de vie par unité de log du niveau de vie (association) | 5,05 (h), 3,30 (f) | — | Insee Première n° 1687 : 84,4 − 71,7 ans (h), 88,3 − 80,0 (f) entre le vingtile du haut (5 800 €) et celui du bas (470 €), sur ln(5 800 / 470) |
+| | | s, la part causale de g | 1/12 | 0 à 1/6 | Cesarini et al. 2016 (IFN WP 1060, p. 13) : l'intervalle à 95 % exclut un effet de la richesse sur la mortalité à dix ans d'un sixième du gradient |
+| chômage → mortalité | chômeurs de plus | r, surcroît de risque de décès d'un chômeur | 0,30 | 0,10 à 1,00 | Sullivan et von Wachter 2009 : +50 à 100 % l'année qui suit la perte d'emploi, 10 à 15 % vingt ans après |
+| chômage → santé déclarée | chômeurs de plus | c, part causale de l'écart brut | 0,25 | 0 à 0,5 | écart : 75,1 − 60,8 = 14,3 points de « bonne ou très bonne santé » (Eurostat hlth_silc_01, France, 16-64 ans, 2025) ; bas : Schmitz 2011, aucun effet des fermetures d'usines |
+| revenu → renoncement aux soins | Δln du revenu par décile | pente de la part qui renonce pour le prix (examen médical et dentaire), Q1 contre Q5, par unité de log ; part causale | 0,5 | 0 à 1 | Eurostat hlth_silc_08 et 09, France, 16 ans ou plus, 2025 |
+| âge de départ | l'écart d'âge légal du programme, une entrée | τ, l'âge effectif par an d'âge légal | 0,5 | 0,25 à 1,0 | COR, rapport de juin 2026, partie 4, ch. 2 (p. 218) : 48,1 % des nouveaux retraités de 2024 partis au plus tard à 62 ans, 24,5 % à 62 ans |
+| | années de retraite | part des années sans limitation d'activité à 60-64 ans | 0,70 | 0,70 à 0,89 | COR, juin 2026, partie 4, ch. 1 (p. 209) : un peu plus de 30 % de limitations sévères ou modérées, un peu plus de 10 % sévères |
+| | durée de vie | années de vie par personne et par an de départ plus tardif | 0 | −0,10 à +0,10 | Bozio, Garrouste et Perdrix 2021 (France, réforme de 1993 : aucun effet) ; haut : Kuhn et al. 2020 (+0,208 an pour les hommes, rien pour les femmes) ; bas : symétrique, le sens de Hallberg et al. 2015 |
+
+Les conversions : les décès que porte un changement de durée de vie, par la disparité de
+la durée de vie e† (les années perdues en moyenne à un décès, table de mortalité d'Eurostat,
+France, 2024, environ 10 ans) : Δln μ_d = −ΔEV_d / e† ; les décès de 2024 (643 332,
+Eurostat) répartis entre déciles selon les personnes et le gradient ; le taux de décès des
+25-64 ans et les années restantes à un décès de cet âge (même table). Les centres des parts
+causales (1/12, 0,30, 0,25, 0,5) sont **choisis** dans leur bande : la dimension est
+« illustrative », pas « sourcée, non jugée ». La causalité est la limite principale : le
+gradient de l'Insee est une **association** (le diplôme, le métier, la santé dès l'enfance
+font le revenu et la durée de vie ; Chetty et al. 2016 trouvent aux États-Unis 14,6 ans
+d'écart pour les hommes entre le centile du haut et celui du bas, une association aussi) ;
+les loteries suédoises (Cesarini et al. 2016) ne trouvent pas d'effet causal de la richesse
+sur la mortalité des adultes, Lindahl (2005) en trouve un sur la santé. Le temps de travail
+(35 h, 32 h) n'est lu dans aucun programme du jumeau : non chiffré, dit dans les limites.
+
+**Le contrôle, préenregistré avant tout calcul de la dimension sur les cellules** (pas un
+juge de la mesure : un écart de l'état de départ).
+
+* **C1 (hommes) et C2 (femmes), NON aveugles à moitié.** L'écart d'espérance de vie à la
+  naissance entre le dixième et le premier décile de niveau de vie que la dimension
+  implique au départ : g fois l'écart de la moyenne du log du niveau de vie des cellules
+  (revenu disponible sur unités de consommation, pondérée par les personnes) des déciles 10
+  et 1. Le juge : le fichier de données de l'Insee Première n° 1687 (`ip1687.xls`, au
+  manifeste, non ouvert), l'espérance de vie par vingtile : la moyenne des vingtiles 19 et
+  20 moins celle des vingtiles 1 et 2, pour chaque sexe ; à défaut d'un tableau par
+  vingtile dans ce fichier, la figure 1 du PDF. Ce qui n'est pas aveugle : les vingtiles 1
+  et 20, qui fixent g, sont dans le résumé déjà lu, et l'écart de log des cellules (2,078)
+  se tire de D-596. Ce que le contrôle juge : la forme log-linéaire à l'intérieur de la
+  distribution et la dispersion des niveaux de vie des cellules (2024) face à celle de
+  l'échantillon démographique permanent (2012-2016). **Tolérance** : le rapport modèle /
+  publié dans [0,8 ; 1,2] pour chacun. **Pronostic** : les deux tiennent, avec un rapport
+  entre 0,85 et 1,10 (le modèle donne 10,5 ans pour les hommes et 6,9 pour les femmes).
+
+À côté, sans juger : l'écart de chaque décile au premier, et l'écart moyen des deux sexes.
+Le résultat dans D-621 ; trois programmes (Mélenchon, Retailleau, Attal) et un programme qui
+recule l'âge de départ, dans D-622. Aucune tolérance ni coefficient ne change après le
+calcul ; aucun chiffrage de tiers des programmes 2027 n'est lu.
