@@ -651,6 +651,49 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     return service.predictif_simulate(request)
 
 
+@functools.cache
+def _session_impacts() -> Any:
+    """La session du jumeau que lit la page « Ce que ça change » (D-605) : les mêmes
+    entrées que le site (`site_jumeau.donnees`), lues une fois par processus."""
+    from impots import site_jumeau
+    from impots.jumeau import navigateur
+
+    return navigateur.Session(json.loads(json.dumps(site_jumeau.donnees())))
+
+
+@app.get("/impacts/bibliotheque")
+def impacts_bibliotheque() -> JSONResponse:
+    """Ce qu'on peut composer (D-605) : les mesures d'étude (programmes, mesures, volets),
+    les lois hypothétiques, les dimensions inscrites et les modules en erreur."""
+    from impots.jumeau import impacts, navigateur
+    from impots.jumeau.impacts import tableau
+    from impots.jumeau.proposition import DECALAGE_MAX, ECHELLE_MAX
+
+    s = _session_impacts()
+    erreurs = tableau.charger()
+    return JSONResponse({
+        "candidats": [{"cle": k, "libelle": c["libelle"], "groupe": c["groupe"],
+                       "rapport": c["rapport"]} for k, c in s.candidats.items()],
+        "hypotheses": navigateur.HYPOTHESES, "annees": list(navigateur.ANNEES),
+        "echelle_max": ECHELLE_MAX, "decalage_max": DECALAGE_MAX,
+        "dimensions": list(impacts.dimensions()), "modules_en_erreur": erreurs})
+
+
+@app.post("/impacts")
+def impacts_calculer(reglage: dict[str, Any]) -> JSONResponse:
+    """Ce que change un programme, une mesure, une loi hypothétique ou une proposition
+    composée (`composition`), dans toutes les dimensions inscrites (but 29, D-605) : le
+    calcul de la page, `navigateur.impacts_json`, sans navigateur."""
+    from impots.jumeau import navigateur
+
+    try:
+        texte = navigateur.impacts_json(_session_impacts(), json.dumps(reglage))
+    except (navigateur.NavigateurError, KeyError, TypeError, ValueError) as error:
+        raise HTTPException(status_code=422, detail=f"{type(error).__name__} : {error}"
+                            ) from error
+    return JSONResponse(json.loads(texte))
+
+
 @app.get("/", include_in_schema=False)
 def index() -> FileResponse:
     """Serve the static UI so the quickstart is one command instead of two.
