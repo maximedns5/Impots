@@ -8,17 +8,19 @@
 # centrale et sa bande [bas ; haut] en valeur absolue ; le signe est porté par le canal.
 # Aucun chiffrage de tiers des programmes 2027 n'est lu.
 #
-# Les documents, avec le fichier lu (copie hors git, data/raw/bienetre/) :
+# Les documents, avec le fichier lu (copie hors git dans data/raw, au manifeste) :
 #   GB   : HM Treasury, « Wellbeing guidance for appraisal: supplementary Green Book
-#          guidance », juillet 2021 (greenbook_wellbeing.pdf, 90 p.)
+#          guidance », juillet 2021 (greenbook_wellbeing_2021.pdf, 90 p.)
 #   GBF  : HM Treasury, « Wellbeing guidance for appraisal: background paper reviewing
-#          methods and approaches », juillet 2021 (greenbook_background.pdf, 44 p.)
+#          methods and approaches », juillet 2021
+#          (greenbook_wellbeing_background_2021.pdf, 44 p.)
 #   DMO  : Di Tella, MacCulloch et Oswald, « Preferences over Inflation and Unemployment:
 #          Evidence from Surveys of Happiness », American Economic Review 91(1), 2001,
-#          p. 335-341 ; version révisée du 7 février 2000 (aerfeb2000.pdf, 16 p.)
+#          p. 335-341 ; version révisée du 7 février 2000
+#          (ditella_macculloch_oswald_2001_aerfeb2000.pdf, 16 p.)
 #   HH   : Helliwell et Huang, « New Measures of the Costs of Unemployment: Evidence from
 #          the Subjective Well-Being of 3.3 Million Americans », NBER WP 16829, révisé en
-#          février 2014 (Economic Inquiry 52(4), 2014) (w16829.pdf)
+#          février 2014 (Economic Inquiry 52(4), 2014) (helliwell_huang_nber_w16829.pdf)
 
 documents:
   GB: "HM Treasury, Wellbeing guidance for appraisal: supplementary Green Book guidance
@@ -120,7 +122,7 @@ adultes:
   part: 0.8183
   document: "Eurostat, demo_pjan (population au 1er janvier par âge), France, 2024"
   lieu: "68 669 303 personnes, dont 12 474 259 de moins de 16 ans (âges 0 à 15) ;
-    extraction du 17 novembre 2026"
+    extraction du 17 novembre 2026 (eurostat_demo_pjan_fr_2024.json)"
 
 wellby:
   # La valeur d'un WELLBY, une convention : celle du Green Book, en livres de 2019, au

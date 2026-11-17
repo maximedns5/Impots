@@ -111,3 +111,23 @@ def test_controle_depart():
     assert out["centre"]["q5_q1"] == pytest.approx(0.425 * (q5 - q1))
     # Les chômeurs uniformes entre déciles, l'emploi aussi : seul δ reste.
     assert out["centre"]["emploi_chomage"] == pytest.approx(0.46)
+
+
+def test_controle_depart_sur_les_cellules_commitees():
+    """D-596 : les écarts que la dimension implique au départ, sur les cellules de
+    `entrees_navigateur.json` (celles de la population de D-553)."""
+    import json
+
+    from impots.jumeau.cellules import Cellules
+    from impots.jumeau.navigateur import FICHIER
+
+    c = json.loads(FICHIER.read_text(encoding="utf-8"))["cellules"]
+    cel = Cellules(valeurs={k: np.asarray(v, float) for k, v in c["valeurs"].items()},
+                   parts_offre=c["parts_offre"])
+    out = moral.controle_depart(cel, P)
+    assert out["centre"]["q5_q1"] == pytest.approx(0.6596, abs=5e-4)
+    assert out["centre"]["d10_d1"] == pytest.approx(0.8832, abs=5e-4)
+    assert out["centre"]["emploi_chomage"] == pytest.approx(0.5647, abs=5e-4)
+    # Face à SRCV (Eurostat ilc_pw02 2025 : 1,3 ; Insee 2025 : 7,4 − 6,4 = 1,0).
+    assert 0.5 <= out["centre"]["q5_q1"] / 1.3 <= 1.5
+    assert 0.5 <= out["centre"]["emploi_chomage"] / 1.0 <= 1.5

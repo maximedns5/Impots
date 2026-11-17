@@ -40317,3 +40317,48 @@ Le résultat, dans D-596. La dimension tourne aussi sur trois programmes (Retail
 Attal, le mode structurel, vieillie, la convention « parts_premiere_annee » ; Mélenchon,
 que le structurel refuse, par la convention « mesures_seules » de D-502), θ ½ : un ordre de
 grandeur, sans juge, dit dans D-597.
+
+## D-596 — Le moral des gens (2) : le contrôle de l'état de départ, deux sur deux
+
+Le préenregistrement de D-595 est commité et poussé (d68da81) avant le calcul ; les deux
+juges sont lus ensuite (Eurostat `ilc_pw02`, extrait le 17 novembre 2026, mis à jour le
+6 juillet 2026 ; Insee Résultats « Satisfaction dans la vie de 2010 à 2025 », fichier
+`srcv_satisfaction_f.xlsx`, France hors Mayotte, créé le 28 septembre 2026, onglets
+« emploi » et « niveau de vie » ; tous deux au manifeste de `data/raw`). Les écarts du
+modèle (`controle_depart`, cellules de la population de D-553), au centre et aux bornes de
+β et δ :
+
+| contrôle | modèle (bande) | publié | rapport | tolérance | tient |
+|---|---:|---:|---:|---|---|
+| C1 : Q5 − Q1, aveugle | 0,660 (0,543 à 0,776) | 1,3 (Eurostat, 2025 : 7,8 − 6,5) | 0,51 | [0,5 ; 1,5] | oui, au bord |
+| C2 : emploi − chômage, non aveugle | 0,565 (0,466 à 0,653) | 1,0 (Insee, 2025 : 7,4 − 6,4) | 0,56 | [0,5 ; 1,5] | oui |
+
+**Les deux tiennent ; C1 au bord.** Le rapport de C1, 0,507, est à 0,007 de la borne. Le
+publié est l'écart de deux moyennes arrondies au dixième : entre 1,25 et 1,35, le rapport
+va de 0,49 à 0,53 ; la tenue n'est pas solide, et le pronostic (« entre 0,5 et 0,9 ») n'est
+atteint qu'à son bord bas. Les autres années d'Eurostat (2013 : 1,3 ; 2018 : 1,0 ; 2021 :
+1,1 ; 2022 : 1,1 ; 2023 : 1,2 ; 2024 : 1,4) donneraient de 0,47 à 0,66 ; non jugées. Le
+pronostic de C2 (vers 0,6) est tenu (0,56), mais C2 n'était pas aveugle (D-595).
+
+**Ce que le contrôle dit.** Le canal du revenu explique environ la moitié du gradient de
+satisfaction par niveau de vie, et δ plus le revenu un peu plus de la moitié de l'écart
+entre chômeurs et personnes en emploi : c'est ce qu'on attend de coefficients causaux,
+« à caractéristiques données », face à des écarts bruts qui portent aussi la santé (de 5,5
+à 8,0 selon l'état de santé, même fichier), le diplôme et le logement. La dimension ne
+prétend donc pas reproduire le niveau de satisfaction des groupes, seulement ce qu'une
+mesure en change par ses canaux. Elle ne surestime pas le gradient.
+
+**La forme, non jugée.** Par décile, l'écart au premier décile (Insee 2025, de 6,5 à 7,9) :
+
+| décile | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| modèle | 0,19 | 0,28 | 0,35 | 0,40 | 0,45 | 0,51 | 0,57 | 0,65 | 0,88 |
+| Insee 2025 | 0,1 | 0,3 | 0,5 | 0,6 | 0,8 | 1,0 | 1,0 | 1,2 | 1,4 |
+
+Le log du niveau de vie fait monter le modèle vite en bas et en haut (le dixième décile,
+71 539 € par unité de consommation dans les cellules) ; la satisfaction publiée monte à peu
+près régulièrement d'un décile à l'autre. Le D10 − D1 du modèle, 0,883, fait 0,63 du
+publié (1,4). Rien n'est retouché : aucune tolérance ni coefficient ne change après ce
+calcul, et le coefficient de l'Insee, s'il en publie un, n'a pas été lu.
+
+Un test léger tient ces nombres (`test_controle_depart_sur_les_cellules_commitees`).

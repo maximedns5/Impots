@@ -2572,6 +2572,69 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Insee, « Les salaires dans le secteur privé en 2022 », Insee Résultats (base Tous salariés 2022), tableaux régionaux, T305 : déciles du salaire brut horaire par région, catégorie socioprofessionnelle, condition d'emploi et sexe. Ligne France (REG 99, CS1 T, CE T, SEXE E) : 12,1 ; 13,3 ; 14,5 ; 15,8 ; 17,5 ; 19,6 ; 22,5 ; 27,2 ; 36,3 €. Le D8 en Smic (2,507) cale le point à 2,5 Smic de la fonction des salaires horaires (but 28, volet suite, D-552).",
       "quarantined": false
+    },
+    "greenbook_wellbeing_2021.pdf": {
+      "url": "https://assets.publishing.service.gov.uk/media/60fa9169d3bf7f0448719daf/Wellbeing_guidance_for_appraisal_-_supplementary_Green_Book_guidance.pdf",
+      "sha256": "48f02163dc0f73a7225248ebaa344cbf1dcfc5ac69fb4f267afc7e7849ce8dd6",
+      "bytes": 1460524,
+      "downloaded": "2026-11-17",
+      "licence": "Open Government Licence v3.0",
+      "description": "HM Treasury, Wellbeing guidance for appraisal: supplementary Green Book guidance (juillet 2021) ; D-595",
+      "quarantined": false
+    },
+    "greenbook_wellbeing_background_2021.pdf": {
+      "url": "https://assets.publishing.service.gov.uk/media/60fa91c68fa8f50431ca80da/Wellbeing_guidance_for_appraisal_-_background_paper_reviewing_methods_and_approaches.pdf",
+      "sha256": "c76a0f9bbbafb804886d6fb2bfe1614f51e731c481279eb6d70ca340641d92ef",
+      "bytes": 619434,
+      "downloaded": "2026-11-17",
+      "licence": "Open Government Licence v3.0",
+      "description": "HM Treasury, Wellbeing guidance for appraisal: background paper (juillet 2021) ; D-595",
+      "quarantined": false
+    },
+    "ditella_macculloch_oswald_2001_aerfeb2000.pdf": {
+      "url": "https://warwick.ac.uk/fac/soc/economics/staff/ajoswald/aerfeb2000.pdf",
+      "sha256": "8a33a7748d4ed6e85a8fb76a586558f60ba60e01712aa4b19ba6082205250fd0",
+      "bytes": 57431,
+      "downloaded": "2026-11-17",
+      "licence": "article académique, copie des auteurs",
+      "description": "Di Tella, MacCulloch et Oswald, Preferences over Inflation and Unemployment (AER 2001), version révisée du 7 février 2000 ; D-595",
+      "quarantined": false
+    },
+    "helliwell_huang_nber_w16829.pdf": {
+      "url": "https://www.nber.org/system/files/working_papers/w16829/w16829.pdf",
+      "sha256": "62d5ad9bfaad45cfce836349fdd347f106b7e80789029f3985a7a1881ba776b9",
+      "bytes": 275050,
+      "downloaded": "2026-11-17",
+      "licence": "NBER working paper",
+      "description": "Helliwell et Huang, New Measures of the Costs of Unemployment, NBER WP 16829 (révisé 2014) ; D-595",
+      "quarantined": false
+    },
+    "eurostat_demo_pjan_fr_2024.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=FR&sex=T&time=2024&unit=NR&format=JSON",
+      "sha256": "81a283aa55c06ddb8242f65ba5b9d3089b728363a6926dd822e36d5eebafab63",
+      "bytes": 7422,
+      "downloaded": "2026-11-17",
+      "licence": "Eurostat, réutilisation libre",
+      "description": "Population de la France au 1er janvier 2024 par âge ; D-595",
+      "quarantined": false
+    },
+    "eurostat_ilc_pw02_fr.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ilc_pw02?geo=FR&format=JSON",
+      "sha256": "4f80afb3d7800659c8453fa1a1181268ff788a538725bfa5fdef1cba561ffc34",
+      "bytes": 24397,
+      "downloaded": "2026-11-17",
+      "licence": "Eurostat, réutilisation libre",
+      "description": "Satisfaction dans la vie par quintile de revenu, France, EU-SILC 2013 à 2025 ; juge de D-595, lu après le commit",
+      "quarantined": false
+    },
+    "insee_srcv_satisfaction_2022_2025_f.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9051795/srcv_satisfaction_f.xlsx",
+      "sha256": "ea7f92909f069bb2bfc8a3479a554fbec256edbdff38649e1e5a325899068998",
+      "bytes": 48462,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Résultats, Satisfaction dans la vie de 2010 à 2025, France hors Mayotte ; juge de D-595, lu après le commit",
+      "quarantined": false
     }
   }
 }
