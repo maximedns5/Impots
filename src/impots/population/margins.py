@@ -1208,6 +1208,57 @@ SALAIRE_HORAIRE_PRIVE_EN_SMIC = Figure(
            "compressed. Between published points the function is linear.",
 )
 
+# --------------------------------------------------------------------------- #
+# Le salaire horaire brut du privé entre 2,5 et 3,5 Smic (but 28, volet suite, D-552).
+# --------------------------------------------------------------------------- #
+BTS_2022_REGIONS_URL = "https://www.insee.fr/fr/statistiques/8219475?sommaire=8219523"
+
+#: Les déciles du salaire brut horaire du secteur privé en 2022, en euros, ensemble des
+#: postes, toutes catégories, les deux sexes, France (hors Mayotte) : Insee, « Les
+#: salaires dans le secteur privé en 2022 », Insee Résultats (base Tous salariés 2022),
+#: tableaux régionaux, tableau T305, T305.csv
+#: (`data/raw/insee_bts2022_t305_deciles_salaire_brut_horaire.csv`),
+#: ligne REG 99, CS1 T, CE T, SEXE E : 12,1 ; 13,3 ; 14,5 ;
+#: 15,8 ; 17,5 ; 19,6 ; 22,5 ; 27,2 ; 36,3 (moyenne 22,4). Champ : salariés du privé hors
+#: secteur agricole, particuliers employeurs, apprentis et stagiaires ; une observation
+#: est un poste, les heures rémunérées le volume. Une source neuve pour la forme entre le
+#: Q3 et le D9 de la Dares (D-532, D-551) : ni le calage de D-497, ni le juge de D-531.
+SALAIRE_HORAIRE_BRUT_PRIVE_DECILES_2022: dict[float, float] = {
+    0.1: 12.1, 0.2: 13.3, 0.3: 14.5, 0.4: 15.8, 0.5: 17.5, 0.6: 19.6, 0.7: 22.5,
+    0.8: 27.2, 0.9: 36.3,
+}
+
+#: Le Smic horaire brut moyen de 2022, pondéré par les mois : 10,57 € du 1er janvier
+#: (décret n° 2021-1741), 10,85 € du 1er mai (arrêté du 19 avril 2022), 11,07 € du
+#: 1er août (arrêté du 29 juillet 2022) : 10,848 €. Le D8 de 2022 en Smic : 27,2 / 10,848
+#: = 2,507 ; le D9, 3,346.
+SMIC_HORAIRE_MOYEN_2022 = (10.57 * 4 + 10.85 * 3 + 11.07 * 5) / 12.0
+
+#: Le point ajouté à la fonction de la Dares (`incomes._salaires_horaires_en_smic`,
+#: D-552) : à 2,5 Smic, la part des salariés, en personnes, que la fonction place
+#: dessous. Ajusté hors de la construction pour que, sur la population construite, les
+#: heures des salariés du privé (poids × quotité × mois travaillés) payées sous le D8 de
+#: l'Insee en Smic (2,507) fassent 80 % des heures, comme le D8 le dit. Sans lui, la
+#: fonction est linéaire de 2,01 (75 %) à 3,04 Smic (90 %), 82,1 % à 2,5 ; les heures
+#: sous 2,507 Smic font 76,7 % (D-552). Les points de la Dares restent tous : celui-ci
+#: dit seulement comment la densité décroît entre son Q3 et son D9.
+SALAIRE_HORAIRE_PRIVE_POINT_INSEE_2022: dict[float, float] = {2.50: 0.864}
+
+SALAIRE_HORAIRE_PRIVE_D8_INSEE = Figure(
+    value=27.2 / SMIC_HORAIRE_MOYEN_2022, unit="ratio", year=2022,
+    scope="D8 du salaire brut horaire des postes du secteur privé, en Smic horaire brut "
+          "moyen de l'année : 27,2 / 10,848 = 2,507",
+    source="Insee, Les salaires dans le secteur privé en 2022, Insee Résultats, base Tous "
+           "salariés 2022, tableau T305 (déciles du salaire brut horaire)",
+    url=BTS_2022_REGIONS_URL, use="calibration",
+    caveat="Spent by SALAIRE_HORAIRE_PRIVE_POINT_INSEE_2022: the point at 2,5 Smic is "
+           "fitted so that 80 % of the private employees' hours sit under this D8. The "
+           "deciles are read as weighted by hours (an Insee observation is a post; the "
+           "weighting of the deciles is not printed); 2022 applied to 2024, as the "
+           "Dares's function; the published deciles are rounded to 0,1 €.",
+)
+
+
 #: Le Smic horaire brut de 2024 : 11,65 € du 1er janvier (décret n° 2023-1216 du 20
 #: décembre 2023), 11,88 € du 1er novembre (décret n° 2024-951 du 23 octobre 2024), sur la
 #: durée légale de 151,67 heures par mois. Le salaire horaire d'un salarié de la

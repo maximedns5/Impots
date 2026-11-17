@@ -433,7 +433,12 @@ def _salaires_horaires_en_smic(frame: pl.DataFrame, wages: np.ndarray,
     cumulative = np.cumsum(weight[order])
     ranks = (cumulative - weight[order] / 2.0) / cumulative[-1]
     rank = np.interp(hourly[under], hourly[order], ranks)
-    points = margins.SALAIRE_HORAIRE_PRIVE_EN_SMIC_2022
+    points = dict(margins.SALAIRE_HORAIRE_PRIVE_EN_SMIC_2022)
+    if POINT_INSEE:
+        # Between the Dares's Q3 (2,01) and D9 (3,04) the function was linear: as many
+        # employees per tenth of Smic at 3 as at 2 (D-532). One point at 2,5 Smic, set
+        # on the Insee's D8 of the hourly wage (D-552), says how the density falls.
+        points.update(margins.SALAIRE_HORAIRE_PRIVE_POINT_INSEE_2022)
     values = np.array(sorted(points), dtype=np.float64)
     shares = np.array([points[v] for v in sorted(points)], dtype=np.float64)
     mapped = wages.copy()
@@ -463,6 +468,11 @@ def _facteur_statut(frame: pl.DataFrame) -> np.ndarray:
     factors = margins.FACTEUR_STATUT_OCCUPATION
     statut = frame["statut_occupation"].to_numpy()
     return np.array([factors.get(s, 1.0) for s in statut], dtype=np.float64)
+
+
+#: The point at 2,5 Smic on the hourly function (but 28, volet suite, D-552), set on the
+#: Insee's D8 of the private hourly wage; off: linear from the Dares's Q3 to its D9.
+POINT_INSEE = True
 
 
 #: Rank the wages and the pensions by tenure (but 27, volet grille2, D-497); off: no

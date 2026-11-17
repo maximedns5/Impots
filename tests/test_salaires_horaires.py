@@ -66,3 +66,31 @@ def test_le_facteur_du_statut_d_occupation_est_celui_des_marges() -> None:
                           margins.FACTEUR_STATUT_OCCUPATION["proprietaire"], 1.0]
     assert f[0] < f[1]
     assert incomes._facteur_statut(pl.DataFrame({"age": [30]})).tolist() == [1.0]
+
+
+def test_le_point_de_l_insee_tient_la_densite_de_2_5_a_3_smic(monkeypatch) -> None:
+    """D-552 : un point à 2,5 Smic, ajusté sur le D8 du salaire brut horaire de l'Insee
+    (27,2 € en 2022, 2,507 Smic), place 86,4 % des salariés sous 2,5 Smic, contre 82,1 %
+    sur la fonction linéaire de la Dares de 2,01 à 3,04 Smic ; moins de salariés de 2,5 à
+    3,04 Smic, autant sous 2,01 et sous 3,04."""
+    assert margins.SALAIRE_HORAIRE_BRUT_PRIVE_DECILES_2022[0.8] == 27.2
+    assert margins.SALAIRE_HORAIRE_PRIVE_D8_INSEE.value == pytest.approx(2.507, abs=5e-4)
+    frame = _cadre(n=20000, public=1)
+    n = frame.height
+    quotite = frame["quotite_travail"].to_numpy()
+    horaire = np.random.default_rng(3).uniform(1.0, 3.9, n)
+    salaires = horaire * margins.SMIC_ANNUEL_2024 * quotite
+    employe, poids = np.ones(n, dtype=bool), frame["weight"].to_numpy()
+    poids = np.where(frame["fonction_publique"].is_null().to_numpy(), poids, 0.0)
+
+    def parts(point: bool) -> list[float]:
+        monkeypatch.setattr(incomes, "POINT_INSEE", point)
+        sortie, f = incomes._salaires_horaires_en_smic(frame, salaires, employe, poids)
+        h = sortie / (margins.SMIC_ANNUEL_2024 * quotite) / f
+        return [float((poids * (h < x)).sum() / poids.sum()) for x in (2.01, 2.5, 3.04)]
+
+    sans, avec = parts(False), parts(True)
+    assert sans[1] == pytest.approx(0.821, abs=0.005)
+    assert avec[1] == pytest.approx(0.864, abs=0.005)
+    assert avec[0] == pytest.approx(sans[0], abs=0.005)
+    assert avec[2] == pytest.approx(sans[2], abs=0.005)

@@ -39265,3 +39265,126 @@ Au propriétaire ou à la jonction ; aucun n'est changé.
 formes (des données : l'état publié, les cellules) : pas régénérés ici (ils le seront sur
 la population de D-553). Le navigateur lit `travail.yaml` : la page, non reconstruite,
 prendra le défaut à sa prochaine construction.
+
+## D-552 — La densité des salaires de 2,5 à 3,5 Smic : un point de l'Insee, préenregistré
+
+**Pourquoi** (D-532, D-551, décision 5). La fonction des salaires horaires du privé
+(`incomes._salaires_horaires_en_smic`, calée sur la Dares, D-497) est linéaire de son Q3
+(2,01 Smic, 75 %) à son D9 (3,04, 90 %) : la ligne de D-531 en sort à +33 % (0,224 contre
+0,168). Il faut une source qui ne soit ni la Dares (qui cale), ni le rapport n° 1685 (qui
+juge).
+
+**La source neuve.** Insee, « Les salaires dans le secteur privé en 2022 », Insee
+Résultats (base Tous salariés 2022), tableaux régionaux, **T305** : les déciles du
+**salaire brut horaire**, ligne France (REG 99, toutes catégories, tous postes, les deux
+sexes) : 12,1 ; 13,3 ; 14,5 ; 15,8 ; 17,5 ; 19,6 ; 22,5 ; **27,2** ; **36,3** € (moyenne
+22,4). Au manifeste (`insee_bts2022_t305_deciles_salaire_brut_horaire.csv`) et au
+registre (douze valeurs : neuf « retrouvées », trois calculées). Les autres pistes, non
+prises : les déciles nets en EQTP de l'Insee Première (n° 1971 pour 2022, n° 2079 pour
+2024) demandent un rapport net/brut qui varie avec le salaire, et ceux de 2024 calent déjà
+le tirage d'avant la fonction ; la masse par tranche de l'Urssaf et les annexes du PLFSS
+sur les allègements existants n'ont pas été cherchées : le T305 donne la grandeur même
+des allègements (brut, horaire), sans conversion de net en brut.
+
+**La conversion.** Le salaire est déjà brut et horaire, la grandeur des allègements : il
+suffit du Smic horaire brut moyen de 2022, pondéré par les mois (10,57 € de janvier à
+avril, 10,85 de mai à juillet, 11,07 d'août à décembre : 10,848 €). Le **D8 vaut 2,507
+Smic**, le D9 3,346, le D7 2,074, la médiane 1,613. Ce que la conversion ne règle pas, et
+son incertitude : (1) une observation de l'Insee est un poste, son volume les heures
+rémunérées ; les déciles sont lus pondérés par les heures (l'usage pour le salaire horaire
+moyen, non imprimé pour les déciles) ; pondérés par les postes, le D8 serait plus bas et
+la correction plus forte ; (2) le champ exclut les apprentis, les stagiaires et le
+secteur agricole, inclut les dirigeants salariés ; la population n'a pas d'apprenti à
+part ; (3) 2022 appliqué à 2024, comme la fonction de la Dares (le Smic +7,6 %, le salaire
+moyen du privé autour de +7 % : les multiples bougent de moins de 1 %) ; (4) les déciles
+arrondis à 0,1 € (±0,2 % sur le D8). Ensemble : la part des heures sous le D8, ±1 point.
+
+**Le point ajouté** (`margins.SALAIRE_HORAIRE_PRIVE_POINT_INSEE_2022`, lu par
+`incomes._salaires_horaires_en_smic` sous `POINT_INSEE`) : **à 2,5 Smic, 86,4 % des
+salariés** (en personnes, sous 4 Smic, 18 à 64 ans), contre 82,1 % sur la droite de la
+Dares. Tous les points de la Dares restent : ce point dit seulement comment la densité
+décroît entre son Q3 et son D9. Il est ajusté hors de la construction pour que, sur la
+population construite, **80 % des heures** des salariés du privé (poids × quotité × mois
+travaillés, tous niveaux de salaire) soient payées sous le D8 (2,507 Smic). Pourquoi un
+point de la fonction et pas une marge de `calibrate.py` : le raking cale des effectifs par
+cellule démographique avant les revenus (D-365) ; la forme des salaires horaires est faite
+dans `incomes`, par rang, et c'est là qu'elle est fausse (D-532). `calibrate.py` n'est pas
+touché. L'incertitude de ±1 point sur la part des heures fait ±0,014 sur le point.
+
+**L'essai** (une construction hors git, 14 s, au code de ce commit). Les heures sous le
+D8 : 76,7 % → **80,0 %** (le calage). Le facteur de masse rendue aux salariés du privé :
+1,0125 → 1,0222 (la masse ôtée de 2,5 à 3,04 Smic est rendue à tous). Ce qui s'écarte
+alors de la Dares, par ce facteur : les personnes sous 1,6 Smic 59,4 → 58,7 % (Dares
+60,1), la médiane 1,443 → 1,455 (1,43), le D9 3,045 → 2,985 (3,04). Ce qui reste loin de
+l'Insee, **non calé, un contrôle** : en heures, le D9 3,663 Smic (Insee 3,346 : 86,9 % des
+heures sous lui, contre 90 %), la médiane 1,517 (1,613), le D7 2,047 (2,074) ; la
+population a trop d'heures au-dessus de 3,35 Smic et trop sous la médiane en heures
+(la Dares compte des personnes : les temps partiels du bas pèsent moins en heures).
+
+**Le pronostic, ligne par ligne.** Méthode de D-497 et D-520 : l'écart de la grille de
+D-521 (et de D-532 pour la ligne), plus le déplacement mesuré sur 20 000 ménages (graine
+des études, droit 2024 ; pour la ligne, le script de D-531 en essai, droit 2022, deux
+lots) entre la population de D-521 et celle de l'essai. **Ces mesures ne sont pas
+aveugles** : le point est ajusté sur la population, et les 20 000 ménages ont tourné avant
+ce texte (journal `suite28/`). Bandes : ±3 points sur la réduction générale, ±2 sur les
+bandeaux, ±1,5 sur les cotisations, ±1 sur les autres lignes que le point déplace, ±0,5
+ailleurs ; ±10 points sur la ligne de D-531 (le bruit d'un essai de 20 000 ménages sur une
+part). Juge : les tolérances de D-371, inchangées ; puis ±5 % comme D-520. Écart au publié
+(%), D-521 → pronostic, 2024 | 2023 | 2022 :
+
+| ligne | tol. | 2024 | 2023 | 2022 | bande |
+|---|---:|---|---|---|---:|
+| `bandeau_famille_part_2_5_3_5_smic` | 15 | — | — | +33,2 → **−1,1** | ±10 |
+| `reduction_generale` | 15 | +11,9 → +8,0 | +10,5 → +6,7 | +12,9 → +9,0 | ±3 |
+| `bandeau_maladie` | 15 | +2,4 → **+10,2** | +2,8 → +10,6 | +4,3 → +12,2 | ±2 |
+| `bandeau_famille` | 15 | +11,3 → +10,2 | +12,6 → +11,4 | +14,4 → +13,2 | ±2 |
+| `cotisations_employeurs_d121` | 15 | −4,8 → −5,0 | −3,2 → −3,4 | −2,2 → −2,4 | ±1,5 |
+| `ir_bareme` | 10 | −4,7 → −4,9 | −0,6 → −0,8 | — | ±1 |
+| `ir_net` | 15 | +4,4 → +4,2 | +8,0 → +7,8 | +5,7 → +5,6 | ±1 |
+| `foyers_imposes` | 10 | −1,8 → −1,2 | +2,6 → +3,3 | +5,1 → +5,7 | ±1 |
+| `foyers_tmi_0` | 15 | 0,0 → −0,3 | −2,0 → −2,3 | −1,1 → −1,4 | ±1 |
+| `foyers_tmi_1` | 15 | −14,6 → −14,3 | −13,3 → −13,0 | −12,0 → −11,7 | ±1 |
+| `foyers_tmi_2` | 15 | +6,3 → +5,8 | +12,6 → +12,1 | +13,4 → +12,9 | ±1 |
+| `foyers_tmi_3` | 30 | −11,5 → −9,9 | −10,3 → −8,6 | −13,1 → −11,6 | ±1 |
+| `d9_d1` | 15 | −4,2 → −4,4 | −3,5 → −3,7 | −1,5 → −1,7 | ±1 |
+| `d9_d1_servi` | 15 | +0,9 → +0,7 | +1,5 → +1,3 | +3,7 → +3,5 | ±1 |
+| `ppa_foyers_servis` | 25 | −2,1 → −3,3 | −4,3 → −5,5 | +0,1 → −1,2 | ±1 |
+| `ppa_montant_servi` | 13 | +5,3 → +3,2 | +0,9 → −1,2 | +3,3 → +1,2 | ±1 |
+| `rsa_foyers_servis` | 25 | +3,9 → +3,8 | +3,4 → +3,3 | — | ±1 |
+| `aide_logement_montant` | 25 | −9,5 → −9,9 | −11,4 → −11,8 | −12,0 → −12,3 | ±1 |
+| `af_montant` | 25 | −17,0 → −16,9 | −18,2 → −18,1 | −18,4 → −18,3 | ±1 |
+
+Inchangées (« = », ±0,5) : les cotisations des salariés au champ des APU (+7,9, +8,7,
++9,7), les trois CSG, les impôts sur les salaires, les salaires déclarés, **les deux
+médians** (−8,6 et −9,1 en 2024), les foyers fiscaux, les foyers à 45 %, les revenus des
+non-salariés, la masse du RSA, l'IS, la contribution sociale sur l'IS, la C3S, la CVAE.
+
+**La ligne de D-531** : **0,166 (0,149 à 0,183)**, contre 0,168 publié : **dans la
+tolérance** (0,143 à 0,193). Sur l'essai, le bandeau de 2,5 à 3 Smic est divisé par deux
+(1,18 → 0,61 Md€ sur l'échantillon), celui de 2 à 2,5 monte de 43 % (0,98 → 1,41).
+
+**Ce que le point déplace, et ce qu'il dégrade.** La réduction générale se rapproche (le
+facteur relève les salaires sous 1,6 Smic : −3,4 %) ; le bandeau famille aussi (−1,0 %).
+**Le bandeau maladie s'éloigne** (+7,6 % : il s'arrête à 2,5 Smic, et la masse ôtée au-
+dessus de 2,5 est mise juste dessous) : il était à +2,4 % en 2024, il passerait à +10,2,
+dans sa tolérance mais hors de ±5 %. La ligne de D-531 et le bandeau maladie ne peuvent
+tenir ensemble avec ce seul point : c'est dit, pas corrigé. La prime : moins d'ayants
+droit (−1,1 %), la masse servie −2,0 %.
+
+**Le compte annoncé.** 2024 : 35 sur 35 (35 à D-521) ; ±5 % : 16 (le bandeau maladie
+sort, la masse de la prime entre). 2023 : 32 sur 33, hors la contribution sociale sur
+l'IS ; ±5 % : 13 (le bandeau maladie sort, la masse de la prime reste, les foyers servis
+de la prime sortent à −5,5). 2022 : **32 sur 32** (31 à D-532 : la ligne de D-531 entre) ;
+±5 % : 12 (la ligne entre, le bandeau maladie sort). Trois années : **99 sur 100**.
+
+**La passe**, détachée, sous le verrou, au commit de cette entrée, poussée avant :
+`impots population build` (graine 20240101), `impots verification passe` sur 2024, 2023,
+2022, le complément de 2022 (`scripts/ligne_bandeau_famille_tranche.py 2022`, huit lots),
+`impots verification ecrire` ; puis les cellules du jumeau (`scripts/jumeau_cellules.py`,
+30 000 ménages, comme D-512), `entrees_navigateur.json` et `agregats.json` réécrits.
+Journal : `suite28/` du scratchpad. Le résultat va dans D-553 ; aucune tolérance ne
+change, et une ligne manquée reste écrite.
+
+**Le test léger** : `tests/test_salaires_horaires.py::test_le_point_de_l_insee_tient_la_
+densite_de_2_5_a_3_smic` (86,4 % sous 2,5 Smic avec le point, 82,1 % sans ; le Q3 et le D9
+de la Dares gardés) ; sur le code d'avant, sans le point, il échoue (82,1 au lieu de 86,4).

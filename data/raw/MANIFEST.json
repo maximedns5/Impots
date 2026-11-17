@@ -2563,6 +2563,15 @@
       "licence": "document de travail des auteurs, diffusé librement (séminaire, Duke)",
       "description": "Harasztosi et Lindner, « Who Pays for the Minimum Wage? », document de travail, octobre 2015 (publié dans l'American Economic Review 109 (8), 2019). Résumé (p. 1 du PDF) et p. 4 : la hausse du salaire minimum hongrois de 2001 passe dans les prix ; le report est plus fort dans les services et les branches qui n'exportent pas. But 28, volet interaction (D-540, D-541).",
       "quarantined": false
+    },
+    "insee_bts2022_t305_deciles_salaire_brut_horaire.csv": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8219475/T305.csv",
+      "sha256": "6799dfe22e8f69685a31984331677c2aa54ffd2ffbc25f8aa427a1344ea6e92f",
+      "bytes": 56864,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, « Les salaires dans le secteur privé en 2022 », Insee Résultats (base Tous salariés 2022), tableaux régionaux, T305 : déciles du salaire brut horaire par région, catégorie socioprofessionnelle, condition d'emploi et sexe. Ligne France (REG 99, CS1 T, CE T, SEXE E) : 12,1 ; 13,3 ; 14,5 ; 15,8 ; 17,5 ; 19,6 ; 22,5 ; 27,2 ; 36,3 €. Le D8 en Smic (2,507) cale le point à 2,5 Smic de la fonction des salaires horaires (but 28, volet suite, D-552).",
+      "quarantined": false
     }
   }
 }
