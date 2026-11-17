@@ -6,6 +6,27 @@ la loi de 2026. Les nombres sont dans `reports/etudes/mesure_melenchon_b27/` (`s
 `programme.json`, `jumeau.json`) ; le script est `scripts/mesure_melenchon_b27.py`. Aucune
 ligne de ménage n'est publiée : des agrégats, des déciles, des cellules.
 
+**Refaite sur la population de D-553** (but 28, D-556 pronostic, D-557 résultat ; rapports
+dans `reports/etudes/mesure_melenchon_b27/d553/`, les anciens restent à côté). Le texte
+ci-dessous garde les nombres de D-521 ; ceux de D-553 :
+
+| | D-521 | D-553 |
+|---|---:|---:|
+| coût public du Smic, toute la population (Md€) | 29,07 | **30,31** |
+| allègements généraux en plus (Md€) | +37,02 | +37,54 |
+| salaires bruts relevés (Md€) | +10,69 | +9,77 |
+| revenu disponible des ménages (Md€) | +6,08 | **+5,49** |
+| part du coût qui arrive aux ménages | 0,21 | 0,18 |
+| ménages dont un salaire est relevé (millions) | 5,35 | 5,09 |
+| ménages perdants, par la prime (millions) | 3,42 | 3,51 |
+| le programme, passe rapide (Md€) | 88,19 | 90,99 |
+| son interaction (programme moins la somme, Md€) | −1,37 | **+0,18** |
+| la paire Smic × exonérations (Md€) | −0,985 | **+0,551** |
+| jumeau, Smic seul, θ½, figée : emploi 2035 (milliers) | −136,1 ¹ | −129,1 |
+| jumeau, programme, θ½, figée : emploi ; dette (pt) | +58,7 ; +10,29 ¹ | +76,0 ; +10,86 |
+
+¹ Au défaut de diffusion de D-551 (« recentrage » nouveau) ; les §1 et §2 sont à l'ancien.
+
 ## 1. La proposition : le Smic à 1 700 € net
 
 Pourquoi elle : c'est la mesure du programme qui traverse le plus de canaux (salaires,

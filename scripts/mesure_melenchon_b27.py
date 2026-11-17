@@ -175,7 +175,12 @@ def programme() -> None:
 # l'analyse : agrégats, déciles, cellules, perdants, paires (aucune passe)
 # --------------------------------------------------------------------------- #
 ETUDE = ROOT / "reports" / "etudes" / "presidentielle_melenchon"
-RAPPORT = ROOT / "reports" / "etudes" / "mesure_melenchon_b27"
+RAPPORT = Path(os.environ.get("MESURE27_RAPPORT",
+                              ROOT / "reports" / "etudes" / "mesure_melenchon_b27"))
+#: La population des passes, qui nomme les clés des rapports (D-557 : « d553 »).
+POPULATION = os.environ.get("MESURE27_POPULATION", "d521")
+POPULATIONS = {"d521": "D-521, empreinte 8d42e0d8, 199 451 ménages, huit lots (D-362)",
+               "d553": "D-553, empreinte 5ace8bb6, 199 451 ménages, huit lots (D-362)"}
 LONGS = {v: k for k, v in COURTS.items()}
 MD = 1e9
 
@@ -359,12 +364,14 @@ def analyser() -> None:
     chaine = {"etude_5a68669": md(e["response"]["reform_cost"]),
               "code_actuel_population_but19_rapide": md(lire("rapide_but19_smic")[
                   "reform_cost"]),
-              "population_d521_rapide": md(lire("rapide_propres_smic")["reform_cost"]),
-              "population_d521_complet": md(lire("complet_propres_smic")["reform_cost"])}
+              f"population_{POPULATION}_rapide": md(lire("rapide_propres_smic")[
+                  "reform_cost"]),
+              f"population_{POPULATION}_complet": md(lire("complet_propres_smic")[
+                  "reform_cost"])}
     smic = lire("complet_propres_smic")
     out = {
         "mesure": "smic_1700_net", "reforme": reformes()["smic"], "vue": "figee 2026",
-        "population": "D-521, empreinte 8d42e0d8, 199 451 ménages, huit lots (D-362)",
+        "population": POPULATIONS[POPULATION],
         "chaine_du_cout_md": chaine,
         "deltas_md": {k: md(v) for k, v in smic["deltas"].items() if abs(v) > 1e6},
         "deltas_etude_md": {k: md(v) for k, v in e["response"]["deltas"].items()
@@ -583,7 +590,7 @@ def jumeau() -> None:
     k = redimensionner(apres, "pres2027_melenchon_smic_1700_net",
                        lire("complet_propres_smic"))
     out = {"convention": CONVENTION_D521, "rapports": k,
-           "smic_etude": smic_jumeau(avant), "smic_d521": smic_jumeau(apres)}
+           "smic_etude": smic_jumeau(avant), f"smic_{POPULATION}": smic_jumeau(apres)}
     prog = session()
     cle_p, seules = pa.cles(prog, "melenchon")
     ks = {}
@@ -593,8 +600,8 @@ def jumeau() -> None:
     ks["programme"] = redimensionner(prog, cle_p, lire("rapide_union_programme"))
     out["programme_rapports"] = ks
     out["programme_etude"] = programme_jumeau(avant)
-    out["programme_d521"] = programme_jumeau(prog)
-    out["paires_jumeau_d521"] = paires_jumeau(prog)
+    out[f"programme_{POPULATION}"] = programme_jumeau(prog)
+    out[f"paires_jumeau_{POPULATION}"] = paires_jumeau(prog)
     (RAPPORT / "jumeau.json").write_text(json.dumps(out, ensure_ascii=False, indent=1,
                                                     default=float) + "\n",
                                          encoding="utf-8")

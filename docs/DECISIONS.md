@@ -39585,6 +39585,189 @@ qui ne sont pas refaites ; le bandeau maladie éloigné par le point (D-553) ; l
 de la fin des exonérations, manqué (D-554) ; le profil de long terme, φ et la boucle par
 défaut (D-542, D-546) ; `impots etude ecrire`, qui bloque le site et la PR du but 27.
 
+## D-556 — Les études sur la population de D-553 : la liste, les chemins, le pronostic
+
+**La décision** (le propriétaire, 17 novembre, « oui pour 1 ») : la population de D-553
+(empreinte 5ace8bb6…, salaires de 2,5 à 3,5 Smic corrigés par le point de l'Insee) est
+celle des études ; elles sont refaites dessus, avec le défaut de diffusion de D-551. Cette
+entrée, commitée et poussée avant tout calcul, dit lesquelles, par quel chemin, et ce
+qu'on attend de leurs nombres de tête. Le résultat va dans D-557 (les scripts) et D-558
+(la série de `impots etude`). Aucune tolérance, aucun seuil de D-345, aucun enregistrement
+de `chiffrages_preregistres/` ne change.
+
+**Ce qui dépend de quoi.** Deux familles. (1) Les études de `etudes/*.json` passent par
+`impots etude lancer` : la première année (OpenFisca, 20 000 ménages, vue figée de 2026),
+les points de plage, le chemin annuel (`predictif`), puis les mesures seules. Elles lisent
+la population, pas les cellules du jumeau ni `travail.yaml` : **le défaut de D-551 ne les
+touche pas**. (2) Les études du jumeau, par scripts : `mesure_melenchon_b27` (passes
+OpenFisca, puis le jumeau), `reaction_b28`, `interaction_b28` (le jumeau seul, sur les
+passes de `mesure_melenchon_b27`), `boucle_b28` (deux passes, puis le jumeau). Elles lisent
+la population, les cellules et le défaut de D-551 ; leur session du jumeau lit aussi les
+rapports de `presidentielle_melenchon` (les candidats), donc elles se rejouent (secondes)
+après la série (1). `suite_b28` est déjà sur D-553 (D-554) ; les juges de
+`reports/verification/juges_passe_b28/` ne sont pas des études.
+
+**La série (1), refaite** : les douze études publiées à D-403, sur la série de `5a68669`
+(but 22, population du but 19) : le PLFSS 2027 (prime et APL), Attal, Bouamrane, Kazib,
+Le Pen, Lisnard, Mélenchon, Philippe, Retailleau, Roussel, Ruffin, Tondelier. Leur
+`preenregistrement` passe à D-556. **Non refaites** : le PLF 2027, Arthaud, Glucksmann,
+Labib et Zemmour, non refaites depuis D-403 (le propriétaire avait arrêté la série, trop
+longue) ; Dupont-Aignan, refusé (D-398). L'ordre (D-350, D-372), étude par étude : le gel
+de `aa22293` est remplacé, `impots etude avant` fige la série de `5a68669`, ses rapports
+sont retirés, commit et poussée, puis `impots etude lancer`, une étude à la fois, sous le
+verrou des passes. `impots etude` est refusé aux agents : le coordinateur la lance, avec
+l'accord du propriétaire. Durée : D-402 en a pris onze heures sur deux files ; sur une
+file, de l'ordre d'une journée.
+
+**Le pronostic de la série (1).** Coût de la première année (Md€) et Δb₂₀₃₅ à θ½ (vue
+vieillie, persistance « lue », points de PIB), avant = `5a68669` (D-403) ; le verdict.
+La série ne publie pas d'emploi. La méthode : ce que D-553 et D-554 mesurent de la marche
+D-521 → D-553 (le Smic de Mélenchon +4,2 % de coût, la paire Smic × exonérations −0,985 →
++0,551, la fin des exonérations −4,474 → −4,441, la masse servie de la prime −2 %, le
+facteur de masse des salaires du privé 1,0125 → 1,0222) ; pour les Smic, 3 à 5 % de leur
+réduction générale en plus (1,25 Md€ sur 37 pour Mélenchon, D-554), et Δb qui n'en bouge
+presque pas (D-403 : −0,001 point par Md€ de Smic ; le canal des créations −0,03 par Md€
+d'allègement). **La marche `5a68669` → D-521** (le code des buts 23 à 28, la population du
+but 19 → D-521, le recours à la prime calé sur la Cnaf, D-496) n'est mesurée que sur le
+Smic de Mélenchon (29,745 → 29,592, −0,5 %, D-508) : les bandes ne la couvrent pas
+ailleurs, et une ligne qui en sort sera dite manquée, sa cause cherchée, pas repronostiquée.
+
+| étude | ce que D-553 touche | coût : avant → pron. | Δb : avant → pron. | verdict |
+|---|---|---|---|---|
+| Mélenchon | Smic, exon. | +88,98 → +89,5 à +92,5 | +26,78 → +26,3 à +27,5 | hausse |
+| Roussel | Smic +15 % | +32,97 → +33,5 à +35,0 | +0,48 → +0,3 à +0,6 | dépend |
+| Ruffin | Smic +9,3 % | +33,16 → +33,5 à +34,4 | +2,13 → +2,0 à +2,3 | dépend |
+| Tondelier | Smic +8,2 % | +18,17 → +18,5 à +19,4 | +2,19 → +2,1 à +2,4 | hausse |
+| Kazib | Smic +8,2 % | +15,44 → +15,7 à +16,5 | −0,02 → −0,10 à +0,05 | dépend |
+| Bouamrane | Smic +8,1 % | +15,32 → +15,6 à +16,4 | −0,02 → −0,10 à +0,05 | dépend |
+| Attal | cotisations salariales | +66,18 → +66,2 à +67,5 | +4,24 → +4,2 à +4,4 | dépend |
+| Retailleau | cotis., h. sup. | +48,89 → +48,9 à +49,8 | +10,99 → +10,9 à +11,3 | hausse |
+| Lisnard | CSG d'activité | +36,19 → +36,2 à +36,8 | +5,49 → +5,45 à +5,65 | dépend ¹ |
+| Philippe | h. sup., enfants | +46,57 → +46,3 à +47,2 | +11,73 → +11,6 à +11,9 | hausse |
+| Le Pen | IR des jeunes, QF | +21,41 → +21,3 à +21,8 | +3,00 → +2,95 à +3,1 | dépend |
+| PLFSS, prime | prime, −2 % | −0,56 → −0,54 à −0,57 ² | −0,162 → −0,155 à −0,165 | baisse |
+| PLFSS, APL | — | −0,07 → ± 1 % | −0,067 → ± 0,002 | baisse |
+
+¹ Lisnard est à 88,15 % des tirages en hausse pour un seuil de 90 % : le coût monte d'un
+pour cent au plus, « dépend » est attendu, « hausse » possible. ² La prime est la ligne où
+la marche `5a68669` → D-521 pèse le plus (le recours de la Cnaf) : la bande ne dit que
+D-553. Le sens, partout : un coût qui monte, par la réduction générale pour les Smic
+(plus de salariés de 2 à 2,5 Smic, que la hausse fait entrer dans la réduction), par la
+masse des salaires du privé (+1 %) pour les mesures d'assiette salariale. La première
+année n'est pas mesurée avant cette entrée.
+
+**Les études du jumeau (2)**, lancées par l'agent du volet `etudes` (scripts, pas
+`impots etude`), au commit de cette entrée, sous le verrou ; les quatre passes de D-554
+(Smic union et propres, fin des exonérations, la paire) sont reprises telles quelles (aucun
+changement de `src` ni de `scripts` en jeu depuis e4a635c). θ½, structurel, financement à
+½, 2035, défaut de D-551 ; avant = D-551 (même défaut, passes et cellules de D-521).
+
+* **La passe complète du Smic** (199 451 ménages) : 29,067 → **30,30 (30,0 à 30,6) Md€**
+  (le rapport rapide de D-554, +4,2 %) ; le revenu disponible des ménages +6,08 → ± 3 % ;
+  les relevés (5,35 millions) et les perdants par la prime (3,42 millions) ± 3 % ; la part
+  du coût qui arrive aux ménages 0,21 → 0,20 (0,19 à 0,21).
+* **Le programme, passe rapide union** : 88,191 → **90,8 (90,0 à 91,6)** ; l'interaction
+  (programme moins la somme) −1,371 → **+0,2 (−0,4 à +0,8)** ; les autres paires ±0,05.
+* **Le Smic seul dans le jumeau** (la passe complète), figée : emploi −136,1 → **−129
+  (−136 à −122) milliers**, B9 +0,83 → **−0,5 (−1,3 à +0,3) Md€**, dette +0,286 →
+  **+0,57 (+0,40 à +0,75) pt** ; vieillie, le même décalage. Les cellules de D-553 ne
+  déplacent rien (D-554 : la passe rapide de D-521, −132,5, sur l'une et l'autre).
+* **La diffusion selon θ** (`reaction_b28`) : chaque ligne de D-551 décalée de la même
+  marche, emploi **+7 (+4 à +10) milliers**, B9 **−1,3 (−2,0 à −0,6) Md€**.
+* **Le programme dans le jumeau**, figée : emploi +58,7 → **+74 (+65 à +85) milliers**,
+  B9 −46,45 → **−49,5 (−51,5 à −47,5)**, dette +10,293 → **+10,9 (+10,5 à +11,4) pt** ;
+  la paire Smic × exonérations du jumeau reste additive (moins de 1 millier, de 0,1 Md€).
+* **Le CICE** (`interaction_cice_b28`) : connu, D-554 (+192,6 milliers en 2016 au
+  défaut) ; les deux autres réglages de la boucle prix suivent (+4 %). Pas un pronostic.
+* **La boucle** (`boucle_b28`, deux passes de 20 000 ménages) : les coefficients par
+  personne-année ± 5 % ; au défaut de D-551 (que D-546 n'avait pas), le Smic, θ½, avec
+  moins sans la boucle : emploi **+1 à +3 milliers**, B9 **+0,8 à +1,8 Md€** (D-546 :
+  −1 % de l'emploi perdu, +1,07 Md€ par 100 000 emplois perdus, lus à θ 1) ; le CICE,
+  avec la boucle, 2016 : 179,1 → **186,5 (184 à 189) milliers**.
+
+Les rapports neufs sont écrits à côté des anciens (`…_d557.json`, `mesure_melenchon_b27/
+d553/`), qui restent ; la page de `mesure_melenchon_b27` dit l'avant et l'après.
+
+## D-557 — Les études du jumeau sur la population de D-553 : treize pronostics sur seize
+
+**Ce qui a tourné**, au commit 5954e7d (D-556, poussé avant), détaché, les passes une à
+une sous le verrou commun, sur la population de D-553 (5ace8bb6…) et ses cellules
+(605ee363…) : `mesure_melenchon_b27` (la passe du but 19, témoin du code : 29,547 Md€,
+celle de D-508 au millième ; la passe complète du Smic, 892 s ; les 32 passes rapides qui
+manquaient, les quatre de D-554 reprises), puis `analyser` et `jumeau` ;
+`reaction_diffusion_b28`, `interaction_b28`, `interaction_cice_b28` (les entrées du CICE
+de D-554) ; les deux passes de `boucle_b28`, son jumeau et son rapport. De 15 h 30 à
+17 h 00 UTC. Journal : `etudes28/lancer.log` du scratchpad. Rapports neufs, à côté des
+anciens : `mesure_melenchon_b27/d553/`, `reaction_b28/diffusion_d557.json`,
+`interaction_b28/defaut_d557.json` et `cice_d557.json`, `boucle_b28/resultats_d557.json`.
+« Avant » : D-521 pour les passes, D-551 pour le jumeau (même défaut de diffusion).
+
+**Les passes** (Md€, vue figée de 2026) :
+
+| grandeur | avant | pronostic | après | verdict |
+|---|---:|---|---:|---|
+| Smic, passe complète | 29,067 | 30,30 (30,0 à 30,6) | **30,305** | tenu |
+| revenu disponible des ménages | +6,075 | ± 3 % | **+5,485** (−9,7 %) | manqué |
+| ménages relevés (millions) | 5,352 | ± 3 % | **5,090** (−4,9 %) | manqué |
+| perdants par la prime (millions) | 3,420 | ± 3 % | 3,513 (+2,7 %) | tenu |
+| part du coût qui arrive aux ménages | 0,209 | 0,20 (0,19 à 0,21) | **0,181** | manqué |
+| programme, passe rapide union | 88,191 | 90,8 (90,0 à 91,6) | **90,995** | tenu |
+| interaction du programme | −1,371 | +0,2 (−0,4 à +0,8) | **+0,178** | tenu |
+| les autres paires | — | ± 0,05 | au plus 0,011 | tenu |
+
+**Les trois manqués ont une cause, la même.** Le pronostic lisait « la population ne bouge
+presque pas sous 1,6 Smic » (D-554) ; c'est vrai de la part sous 1,6 Smic (59,4 → 58,7 %),
+pas de la bande que la hausse relève, du Smic à 1,16 Smic : le facteur de masse 1,0125 →
+1,0222 (D-552) monte tous les salaires du privé de 1 %, et sort de la bande des salariés
+qui étaient juste au-dessus du Smic. Moins de relevés (−4,9 %), un salaire brut relevé
+plus petit (+10,69 → +9,77 Md€), donc moins de revenu disponible (−0,59 Md€) ; les
+allègements, eux, montent (+37,02 → +37,54), et le coût avec. Les déciles baissent tous
+d'environ 10 % (D4 : 488 → 443 € par ménage et par an). Pour 1 € de coût public, 0,18 €
+arrive aux ménages (0,21 avant) : le premier blocage de D-508 s'aggrave.
+
+**Le jumeau** (θ½, structurel, financement à ½, 2035 ; emploi en milliers, B9 en Md€,
+dette en points de PIB ; défaut de D-551) :
+
+| | avant (D-551) | pronostic | après |
+|---|---|---|---|
+| Smic, figée | −136,1 ; +0,83 ; +0,286 | −129 ; −0,5 ; +0,57 | −129,1 ; −0,42 ; +0,585 |
+| Smic, vieillie | −177,0 ; +2,77 ; +0,302 | même décalage | −171,3 ; +1,68 ; +0,592 |
+| prog., figée | +58,7 ; −46,45 ; +10,293 | +74 ; −49,5 ; +10,9 | +76,0 ; −48,82 ; +10,862 |
+| prog., vieillie | −5,9 ; −43,27 ; +10,131 | — | −2,7 ; −46,28 ; +10,785 |
+| paire Smic × exon. | +0,1 ; 0,00 | < 1 ; < 0,1 | +0,1 ; 0,00 |
+
+Les quatre lignes pronostiquées sont tenues ; les bandes : −136 à −122, −1,3 à +0,3,
++0,40 à +0,75 ; +65 à +85, −51,5 à −47,5, +10,5 à +11,4. **La diffusion selon θ**
+(`reaction_b28`) : chaque ligne décalée, figée, de +6,8 à +7,2 milliers et de −1,23 à
+−1,27 Md€ ; vieillie, de +5,6 à +6,0 et de −1,06 à −1,12 (pronostic +4 à +10 et −2,0 à
+−0,6) : tenu. La plage de l'emploi figée :
++156,4 (θ 0) à −561,0 (θ 1). Les formes, figée, le Smic seul : l'ancien recentrage +1,5 →
++8,4, profil « croissant » −421,9 → −414,9, « decroissant » +143,2 → +150,1, portée « 2 »
+−222,9 → −215,9, φ de Harasztosi et Lindner −147,5 → −141,2, diagnostic du juge −156,4 →
+−150,5 : la même marche de +6 à +7 milliers partout.
+
+**Le CICE** (connu, D-554 ; pas un pronostic) : emploi salarié de 2016, +185,0 → +192,6
+(Mésange), +181,0 → +188,4 (Harasztosi et Lindner), +177,4 → +184,7 (diagnostic du juge).
+
+**La boucle** (`boucle_b28`) : les coefficients par personne-année bougent de moins de
+1,5 % (super-brut 0,687 → 0,688 pour le Smic, 0,691 → 0,692 pour le CICE ; le revenu
+disponible 0,109 → 0,110 et 0,093 → 0,094) : tenu (± 5 %). Le Smic, θ½, avec moins sans
+la boucle : emploi **+2,15** milliers (pronostic +1 à +3), B9 **+1,24** Md€ (+0,8 à +1,8) :
+tenu ; à θ 1, +6,9 et +5,7 (D-546, à l'ancien défaut : +3,1 et +2,1). Le CICE avec la
+boucle, 2016 : 179,1 → **186,5** (184 à 189) : tenu.
+
+**Le compte** : seize pronostics chiffrés, treize tenus, trois manqués (le revenu des
+ménages, les relevés, la part qui arrive aux ménages), d'une seule cause, dite. Aucune
+tolérance ni bande changée après le calcul.
+
+**Ce que cette entrée ne fait pas.** La session du jumeau lit les candidats dans les
+rapports de `presidentielle_melenchon` (série de 5a68669) : quand la série de D-556 sera
+refaite, ces cinq scripts du jumeau se rejouent (secondes, aucune passe ; les commandes de
+`etudes28/lancer.sh` après les passes) et le diront. La page de `mesure_melenchon_b27`
+porte un tableau avant → après en tête ; son texte garde les nombres de D-521. Les pages
+des études du but 28 n'existent pas (rapports seuls). La série de `impots etude` (D-556,
+douze études) n'a pas tourné : elle attend le coordinateur et le propriétaire.
+
 ## D-560 — La fin des exonérations : la forme contre le facteur de masse, préenregistrée
 
 **Pourquoi** (D-554 ; décision du propriétaire du 17 novembre, « oui pour 3 »). Sur la

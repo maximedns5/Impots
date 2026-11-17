@@ -301,9 +301,8 @@ def iterer(calcul: Any, coef: Any, n: int = 8) -> list[dict[str, Any]]:
 def cice(coef: Any | None, theta: dict[str, float] | None = None) -> Any:
     from impots.jumeau.apprentissage import Fenetre
 
+    # les entrées de la passe du CICE : `JUGES28_SORTIE` (celle de D-535 par défaut)
     jp = _module("juges_passe_b28")
-    jp.SORTIE = Path("/tmp/claude-0/-home-user-Impots/8c1eda0e-eb4f-5530-a9a9-deab4a4ca18f"
-                     "/scratchpad/passe28")
     m, _ = jp.mesure_cice()
     if coef is not None:
         m = dataclasses.replace(m, boucle=coef)
@@ -370,9 +369,9 @@ def jumeau(mode: str = "passes") -> Path:
 RAPPORT = ROOT / "reports" / "etudes" / "boucle_b28"
 
 
-def rapport() -> Path:
+def rapport(nom: str = "resultats", decisions: tuple[str, ...] = ("D-545", "D-546")) -> Path:
     """Les agrégats des passes et du jumeau (aucune microdonnée) dans le dépôt."""
-    out: dict[str, Any] = {"decisions": ["D-545", "D-546"]}
+    out: dict[str, Any] = {"decisions": list(decisions)}
     for cas in ("cice", "smic"):
         p = json.loads((SORTIE / f"passe_{cas}.json").read_text(encoding="utf-8"))
         out[f"passe_{cas}"] = {k: p[k] for k in (
@@ -385,7 +384,7 @@ def rapport() -> Path:
         if f.exists():
             out[f"jumeau_{mode}"] = json.loads(f.read_text(encoding="utf-8"))
     RAPPORT.mkdir(parents=True, exist_ok=True)
-    dest = RAPPORT / "resultats.json"
+    dest = RAPPORT / f"{nom}.json"
     dest.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=float) + "\n",
                     encoding="utf-8")
     print(dest)
@@ -396,8 +395,8 @@ if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "passe":
         passe(sys.argv[2])
-    elif cmd == "rapport":
-        rapport()
+    elif cmd == "rapport":  # rapport [nom [décisions…]]
+        rapport(*sys.argv[2:3], *([tuple(sys.argv[3:])] if len(sys.argv) > 3 else []))
     elif cmd == "jumeau":
         jumeau(sys.argv[2] if len(sys.argv) > 2 else "passes")
     else:
