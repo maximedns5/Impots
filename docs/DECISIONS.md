@@ -39584,3 +39584,97 @@ autres rouges hérités que la suite signale (`test_jumeau_structurel`,
 qui ne sont pas refaites ; le bandeau maladie éloigné par le point (D-553) ; le rendement
 de la fin des exonérations, manqué (D-554) ; le profil de long terme, φ et la boucle par
 défaut (D-542, D-546) ; `impots etude ecrire`, qui bloque le site et la PR du but 27.
+
+## D-565 — Les huit rouges de `test_jumeau_depuis_rapport` : la ventilation de D-475
+
+Le 17 novembre (« oui pour 4 »), le volet `rouges` du but 28 cherche la cause des tests
+rouges hérités (D-551, D-555). Données liées sur la population de D-553 (5ace8bb6…) ;
+chaque fichier lancé seul, légers. Les huit de ce fichier ne lisent que des rapports
+commités : la population n'y est pour rien.
+
+**Le commit.** Verts sur fa61eaf (D-443) et sur 3abcbd3~1, les huit rouges sur 3abcbd3
+(D-475, la ventilation : les cotisations des employeurs E et le capital K lus dans les
+rapports ; la vieillie ventilée par « parts_figee », D-476). D-477 le disait : « les
+tests qui changent, à réécrire avant la PR ; aucun n'est touché ici ». Ils ne l'ont pas
+été. Cause : un nombre qui a bougé par décision, plus un défaut de code (plus bas).
+
+**Par test, avant → après** (les attentes suivent D-475 à D-477, citées dans le test) :
+
+* `test_ce_que_le_rapport_ne_porte_pas_reste_absent` : Retailleau, 2026 figée, attendait
+  ses entreprises absentes (« -4.301 Md€ » dans `non_portes`) ; elles sont ventilées, E
+  = −4,301 Md€, égal au bit entre la passe des ménages et le chemin, Σ des six impôts =
+  P_2026 (−10,848) à 1e-12. Le Smic de Mélenchon reste sans ménages, inchangé.
+* `test_la_convention_est_refusee_la_ou_les_parts_n_existent_pas` : Retailleau attendait
+  la convention refusée (« pas de parts ») ; il a ses parts, dix années sur les deux
+  axes, `non_portes` vide, E lu chaque année (−4,301 en 2026, −4,266 ensuite), Σ = P_t à
+  1e-12. Le Smic de Mélenchon : ménages absents (« n'a pas de parts »), mais ses
+  entreprises (E seul, −31,672 Md€ en 2026) sont étendues : `conventions` n'est plus
+  vide. Retailleau ne sert plus d'exemple de refus ; le nom du test reste.
+* `test_les_six_rapports_refaits_se_lisent_comme_avant_d440`, six cas. (a) La lecture
+  « par la couche » (un rapport sans la marque de D-440) donne P_t à quelques centaines
+  d'euros près ; depuis D-476, la vieillie avec convention a ses entreprises, aux parts
+  de la figée sur ce P : elles diffèrent donc de la lecture marquée de 80 € (Attal, CVAE)
+  ou 1 € (Lisnard), et l'égalité au bit, juste pour la figée, ne l'est plus pour elle.
+  Le test garde le bit pour la figée et tient, pour la vieillie, les mêmes parts et le
+  même E, au bit (X_i = s_i (P − E)). (b) Retailleau ventilé : l'ensemble des impôts de
+  2026 a E en plus des cinq.
+
+**Le défaut de code** (`mesures.prelevements_lus`, la branche de la couche). Elle prenait
+P_t = −coût de la couche des entreprises, et disait que les prélèvements des ménages que
+ΔP somme n'y étaient pas, « la ventilation étant absente de toute façon ». Ce n'est plus
+vrai depuis D-475 : chez Retailleau, la couche perdait E, P_2026 −6,547 au lieu de
+−10,848 Md€, et ses entreprises ventilées ne sommaient plus à P. Corrigé : P_t = −coût_t
++ E_t, E lu chaque année (`ventilation.employeurs_lus`) ; écart à la lecture marquée
+4,301 → 1e-9 Md€. Le test le tient (`couche.prelevements` à 1e-6 de P, chaque année),
+vu rouge sur le code d'avant. K (PFU et prélèvements sociaux du capital) ne se lit pas
+année par année : là où il y en a, P de la couche ne le porte pas (dit dans le code).
+**Aucun nombre publié ne change** : les 46 rapports commités qui ont un canal des
+créations portent tous la marque de D-440 ; aucun ne passe par cette branche.
+
+Le fichier : 15 sur 15. Commit cfbb818.
+
+## D-566 — Le rouge de `test_jumeau_structurel` : trois canaux sans bloc, décidés
+
+`test_le_modele_structurel_complet_se_construit_sans_double_compte` attendait que chaque
+canal du registre soit porté par un bloc. Vert sur 2308bbd~1, rouge sur 2308bbd (D-481,
+le financement) : le registre reçoit `financement_sous_secteurs` et `compensation_
+exonerations` (des canaux comptables, `canaux.COMPTABLES`, calculés après la trajectoire
+par `financement.comptes`, D-487) et `financement_annonce` (des lois hypothétiques,
+`financement.annonce`, D-482), qu'aucun bloc ne porte par construction (`canaux.py`, le
+commentaire de la section D-481). Cause : le test, écrit avant, pas une erreur du code.
+
+Le test nomme les trois, vérifie qu'aucun bloc ne les porte et que tout le reste du
+registre l'est une fois. Rien d'autre ne change ; le fichier : 12 sur 12 (acddb90).
+
+## D-567 — Les deux rouges de `test_jumeau_papillon` : cellules, interaction, défaut
+
+Les deux tests lisent `entrees_navigateur.json` (commité) ; aucune donnée de
+`data/processed` (vérifié : mêmes nombres sans elle). Verts sur 19c4c3f (jonction du but
+27), rouges à partir de f382efe (D-512 : les cellules du jumeau refaites sur la
+population de D-521, « les nombres du navigateur qui en dépendent bougent »). Cherché par
+`git bisect` ; ensuite, trois décisions les ont encore déplacés. Les nombres, θ½, figée,
+2035 :
+
+| | but 19 | D-512 f382efe | D-540 1f9ded0 | D-551 013d1ea | D-553 e4a635c |
+|---|---:|---:|---:|---:|---:|
+| point d'indice : emploi (milliers) | 33,654 | 33,628 | 33,628 | 33,628 | 33,628 |
+| point d'indice : dette (pt) | 2,0423 | 2,0521 | 2,0521 | 2,0521 | 2,0517 |
+| Mélenchon, mesures seules : dette (pt) | 12,3060 | 12,3646 | 12,3746 | 10,6130 | 10,6122 |
+| emploi (milliers) | 186,09 | 187,12 | 188,19 | 50,61 | 50,71 |
+| flèche statique (Md€) | 23,7253 | 23,7237 | 23,7240 | 23,6886 | 23,6884 |
+| prime de risque (pt) | 1,5547 | 1,5607 | 1,5621 | 1,3297 | 1,3295 |
+
+1f9ded0 : le choc combiné et l'incidence pondérée par l'allègement retiré (D-540, D-541 ;
+le programme y bougeait de +0,007 pt, ici +0,010). 013d1ea : la diffusion recentrée sur
+le nouveau Smic par défaut (D-551). e4a635c : les cellules de D-553. Le point d'indice
+n'attendait que l'emploi (33,7 à 0,05 : 33,654 tenait, 33,628 non) ; sa dette (2,042 à
+5e-4) était rouge aussi, cachée derrière. Les attentes deviennent 33,63 et 2,052 ; 10,612,
+50,7, 23,688 et 1,3295, les tolérances d'avant ; chaque étape est dite dans le test. Les
+autres nombres (E public −12,526, impulsion 1,333, la somme au bit, les identités) ne
+bougent pas. Le fichier : 5 sur 5. Commit 698c111.
+
+**Ce qui reste.** Rien de rouge dans les trois fichiers. Les fichiers légers qui lisent
+`mesures` ou la ventilation, relancés après le correctif de D-565 : `test_jumeau_
+navigateur` (18), `test_jumeau` (50), `test_jumeau_entreprises` (27), `test_jumeau_
+historique` (26), `test_mesure_melenchon_b27` (2) : verts. Ruff : vert. Non lancés : la
+suite entière, `make impact`, les lourds (le brief). D-568 et D-569 ne servent pas.
