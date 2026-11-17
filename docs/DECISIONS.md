@@ -39409,3 +39409,87 @@ entrée (empreinte 5ace8bb6…), 20 000 ménages, détachés, sous le verrou, et
 * **Le jumeau du Smic de Mélenchon**, au défaut de D-551, sur les cellules refaites, le
   Smic porté à sa passe rapide « propres » (au lieu de la complète, faute de la refaire) :
   θ½, figée, emploi 2035 **−136 (−150 à −120) milliers**, B9 **+0,8 (−1,5 à +3) Md€**.
+
+## D-553 — La grille, le point de l'Insee : la ligne de D-531 tient, 99 sur 100
+
+**Ce qui a tourné**, détaché, sous le verrou commun, au commit 0de0192 (D-552, poussé
+avant) : la population reconstruite (14 s, empreinte **5ace8bb6…**, octet pour octet
+celle de l'essai de D-552 ; facteur des salaires horaires 1,0222), puis 2024, 2023, 2022
+(15 minutes chacune), le complément de 2022 (`ligne_bandeau_famille_tranche.py`, huit
+lots, 6 minutes), `impots verification ecrire` ; puis les cellules du jumeau (30 000
+ménages, 93 s, 4,6 Go), `entrees_navigateur.json` et `agregats.json`. Journal :
+`suite28/passe.log` du scratchpad. Les passes de D-521 et D-532 restent dans
+l'historique (7db9d9e).
+
+**La ligne de D-531** (`bandeau_famille_part_2_5_3_5_smic`, 2022) : **0,224 → 0,165**,
+publié 0,168, **−1,5 %**, **dans la tolérance** (±15 %) et dans ±5 %. Pronostic 0,166
+(0,149 à 0,183) : tenu. Elle n'est plus un juge aveugle de la densité : elle a été lue
+avant (D-532) et le point a été choisi en sachant qu'elle était trop haute ; sa source,
+elle, n'a pas servi au calage.
+
+**Les lignes que le point déplace** (écart au publié, % ; « avant » : D-521, D-532 pour
+la ligne ; « pron. » : le pronostic de D-552 ; ⁵ : dans ±5 %) :
+
+| ligne (tol.) | 2024 : avant; pron.; passe | 2023 (pron.) | 2022 (pron.) |
+|---|---|---|---|
+| `bandeau_famille_part_2_5_3_5_smic` (15) | — | — | −1,5 (−1,1) ⁵ |
+| `reduction_generale` (15) | +11,9; +8,0; **+8,1** | +6,8 (+6,7) | +9,1 (+9,0) |
+| `bandeau_maladie` (15) | +2,4; +10,2; **+9,9** | +9,4 (+10,6) | +11,4 (+12,2) |
+| `bandeau_famille` (15) | +11,3; +10,2; **+10,0** | +11,3 (+11,4) | +13,0 (+13,2) |
+| `cotisations_employeurs_d121` | −4,8; −5,0; **−5,0** ⁵ | −3,3 (−3,4) ⁵ | −2,3 (−2,4) ⁵ |
+| `ir_bareme` (10) | −4,7; −4,9; **−4,9** ⁵ | −0,8 (−0,8) ⁵ | — |
+| `ir_net` (15) | +4,4; +4,2; **+4,2** ⁵ | +7,8 (+7,8) | +5,5 (+5,6) |
+| `foyers_imposes` (10) | −1,8; −1,2; **−1,3** ⁵ | +3,2 (+3,3) ⁵ | +5,6 (+5,7) |
+| `foyers_tmi_3` (30) | −11,5; −9,9; **−10,2** | −8,8 (−8,6) | −11,6 (−11,6) |
+| `foyers_tmi_4` (30) | −4,0; −4,0; **−2,7** ⁵ | −3,9 (−5,0) ⁵ | −12,1 (−12,7) |
+| `ppa_foyers_servis` (25) | −2,1; −3,3; **−3,4** ⁵ | −5,6 (−5,5) | −1,2 (−1,2) ⁵ |
+| `ppa_montant_servi` (13) | +5,3; +3,2; **+3,2** ⁵ | −1,1 (−1,2) ⁵ | +1,3 (+1,2) ⁵ |
+| `aide_logement_montant` (25) | −9,5; −9,9; **−9,9** | −11,8 (−11,8) | −12,4 (−12,3) |
+| `d9_d1` (15) | −4,2; −4,4; **−4,5** ⁵ | −3,8 (−3,7) ⁵ | −1,8 (−1,7) ⁵ |
+
+Les autres lignes que le point touche (les foyers à 0, 11 et 30 %, le D9/D1 servi, les
+AF, les foyers servis du RSA, les deux médians) tombent sur leur pronostic au dixième
+près ; les lignes « = » n'ont pas bougé (les cotisations des salariés au champ des APU
++7,9, +8,7, +9,7 ; les médians −8,5 et −9,0 en 2024).
+
+**Le compte.** 2024 : **35 sur 35** (35), ±5 % : **16** (16 ; le bandeau maladie sort, la
+masse de la prime entre). 2023 : **32 sur 33** (32), hors la contribution sociale sur
+l'IS (+33,8) ; ±5 % : 13. 2022 : **32 sur 32** (31 à D-532 : la ligne de D-531 entre) ;
+±5 % : 12. Trois années : **99 lignes jugées sur 100** (98 sur 100 à D-532), comme
+annoncé. Aucun verdict sur la tolérance ne contredit le pronostic.
+
+**Ce qui contredit le pronostic.** 97 des 100 lignes tombent dans leur bande ; les trois
+autres sont, comme à D-521, **les foyers à 45 %** (2024 −2,7 contre −4,0 ; 2023 −3,9
+contre −5,0 ; 2022 −12,1 contre −12,7 ; bande ±0,5) : le facteur relève tous les salaires
+du privé de 1 % et fait passer des foyers dans la dernière tranche, ce qu'un échantillon de
+20 000 ménages, qui ne voit aucun mouvement sur 64 000 foyers, ne pouvait pas mesurer
+(déjà dit à D-498 et D-521). En 2024 et 2023 le second juge n'en change pas (déjà dans ±5
+%).
+
+**Ce que le point dit, et ce qu'il coûte.** La densité de 2,5 à 3,5 Smic que D-532 avait
+trouvée trop forte de 42 % en masse est désormais celle que disent ensemble l'Insee (le
+D8 des heures) et l'Urssaf (le juge) : deux sources indépendantes s'accordent. La
+réduction générale se rapproche de 4 points. **Le bandeau maladie s'éloigne de 7 à 8
+points** (+2,4 → +9,9 en 2024), toujours dans sa tolérance : le point met juste sous 2,5
+Smic la masse qu'il ôte au-dessus. Une seule pente entre 2,01 et 2,5 Smic ne peut pas
+satisfaire à la fois le D8 de l'Insee et le bandeau maladie ; un second point (vers 2,25,
+avec une seconde source) le pourrait. Non fait.
+
+**Les cellules du jumeau**, refaites (sur 5ace8bb6…, commit e4a635c pour les rapports) :
+les recoupements bougent à peine (salaire brut −0,57 → −0,56 % ; IR contre les recettes
+nettes +9,94 → +9,85 %, « dit » ; médiane contre Filosofi −6,54 → −6,36 %) ; les quinze
+autres inchangés. `entrees_navigateur.json` et `agregats.json` réécrits depuis elles.
+
+**Les tests** (légers, un fichier à la fois, sur la population de cette entrée) :
+`test_salaires_horaires`, `test_salaires`, `test_salaires_haut`, `test_population`,
+`test_sources`, `test_verification`, `test_grille`, `test_jumeau_cellules`,
+`test_agregats`, `test_jumeau_navigateur` (dont `test_les_entrees_commitees_sont_celles_
+des_donnees`) : verts. `ruff` : vert. Non lancés : la suite entière, `make impact`, les
+lourds. Le site n'est pas reconstruit.
+
+**Ce qui reste au propriétaire.** (1) Le bandeau maladie, éloigné par le point : un second
+point de la fonction, sous 2,5 Smic, avec une source à trouver (la masse par tranche de
+l'Urssaf, ou les annexes du PLFSS sur les allègements existants). (2) Les heures au-dessus
+de 3,35 Smic, trop nombreuses contre le D9 de l'Insee (86,9 % sous lui, contre 90 %), non
+calées. (3) La population de D-553 remplace celle de D-521 pour les études : à décider à
+la jonction (les études ne sont pas refaites).
