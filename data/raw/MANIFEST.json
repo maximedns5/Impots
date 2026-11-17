@@ -2661,6 +2661,15 @@
       "licence": "France Stratégie — accès libre",
       "description": "Gilles, L'Horty et Mihoubi (TEPP), « Les effets du CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions pour la période 2013-2016 », rapport VI remis à France Stratégie le 11 septembre 2020 (79 p.). Téléchargé fermé : juge préenregistré en D-603 (la valeur ajoutée par tête et le canal « pression_cout »), ouvert après sa poussée.",
       "quarantined": false
+    },
+    "tepp_2018_cice_rapport_2013_2015.pdf": {
+      "url": "https://halshs.archives-ouvertes.fr/halshs-01878474v1/file/exercicer4615.pdf",
+      "sha256": "b6268dec593e47a1f089d2c0614d90ddd653040a2898b304a9b43720cfece3a3",
+      "bytes": 2039465,
+      "downloaded": "2026-11-18",
+      "licence": "HAL — accès libre",
+      "description": "Gilles, L'Horty, Mihoubi et Yang (TEPP), « Les effets du CICE sur l'emploi, les salaires et l'activité des entreprises : approfondissements et extensions pour la période 2013-2015 », rapport TEPP n° 2018-06, septembre 2018 (191 p., HAL halshs-01878474). Téléchargé fermé : juge préenregistré en D-625 (la productivité du travail et le canal « pression_cout »), ouvert après sa poussée.",
+      "quarantined": false
     }
   }
 }

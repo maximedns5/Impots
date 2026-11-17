@@ -40753,3 +40753,41 @@ productivité apparente du travail » (rapport VI, p. 7, son résumé du précé
 coefficients, un troisième préenregistrement. (3) `salaire_efficience` (le Smic) n'a
 aucun juge français ; les hausses du Smic n'ont pas d'évaluation après coup de leur effet
 sur la productivité au manifeste.
+
+## D-625 — Un troisième juge, le rapport TEPP de 2018, préenregistré avec sa puissance
+
+**Pourquoi** (D-604, consigne du coordinateur du 18 novembre). Le rapport de 2020 tient
+le centre de `pression_cout` par la règle, sans puissance (D-604). Son résumé dit du
+rapport de 2018 : « Nous trouvions un effet négatif sur la productivité apparente du
+travail » (rapport VI, p. 7) ; le signe est donc connu, pas les nombres. Le juge : Gilles,
+L'Horty, Mihoubi et Yang, rapport TEPP n° 2018-06 (2013-2015), 191 pages
+(`tepp_2018_cice_rapport_2013_2015.pdf`, téléchargé fermé, seuls son titre et son nombre
+de pages vus). Il est ouvert après la poussée de cette entrée.
+
+**La lecture, fixée avant.** La variable : la productivité du travail (valeur ajoutée par
+tête, ou productivité apparente) ; rien d'autre. L'échantillon : l'ensemble des
+entreprises (et des groupes, si le rapport les joint) ; la spécification que le rapport
+dit principale pour l'activité, à défaut celle de son résumé ; le quartile le plus exposé
+contre le moins exposé (ou le coefficient de l'intensité) ; la plus longue période
+estimée. S'il y a plusieurs colonnes équivalentes, la première du tableau.
+
+**Le pronostic converti** (comme D-604) : −η / 1,4705 par point de taux apparent de CICE
+(masse brute), soit −0,258 % de PGF par point (0 à −0,517) ; en niveau, ×la valeur
+ajoutée par tête que le rapport publie pour son échantillon, à défaut 68,2 k€ (TEPP 2020,
+tableau 8) : −0,18 k€ par tête et par point. Si le coefficient porte sur un quartile et
+non sur un point, ×l'écart des taux moyens des quartiles que le rapport publie ; sinon
+non concluant.
+
+**La puissance, d'abord.** Avec μ le pronostic central converti et s l'écart-type publié
+(ou déduit de la p-valeur, bilatérale), la puissance d'un test à 5 % de η = 0 quand η =
+0,38 est P = Φ(|μ|/s − 1,96) + Φ(−|μ|/s − 1,96). **Si P < 0,5, le juge est « sans
+puissance »** : il est noté, mais il ne tient ni ne rejette le canal, quelle que soit
+l'inclusion. Si P ≥ 0,5 : la règle de D-601 (centre tenu si l'intervalle à 95 % contient
+μ ; centre rejeté et zéro dedans : η à 0 au centre et en bas, le haut à la borne
+convertie ; signe rejeté). Dans tous les cas le branchement par défaut reste au
+propriétaire (coordinateur, 18 novembre) : un verdict est une proposition.
+
+**Pronostic.** Le coefficient est négatif (le résumé de 2020 le dit), son écart-type de
+l'ordre de 2 k€ comme en 2020 : P ≈ 0,05, « sans puissance » (trois chances sur quatre) ;
+un coefficient en logarithme assez précis pour P ≥ 0,5 (une sur quatre), et alors le
+centre tient. Résultat en D-626.
