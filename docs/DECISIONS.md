@@ -40791,3 +40791,46 @@ propriétaire (coordinateur, 18 novembre) : un verdict est une proposition.
 l'ordre de 2 k€ comme en 2020 : P ≈ 0,05, « sans puissance » (trois chances sur quatre) ;
 un coefficient en logarithme assez précis pour P ≥ 0,5 (une sur quatre), et alors le
 centre tient. Résultat en D-626.
+
+## D-626 — Le rapport TEPP de 2018 : un effet négatif dix fois la bande, sans puissance
+
+**Ce qui a été lu** (après la poussée de D-625, da17ad9). Gilles, L'Horty, Mihoubi et
+Yang, rapport TEPP n° 2018-06. Son approche centrale (p. 5, p. 7 du PDF) : la double
+différence instrumentée sur 2009-2015 si les tests de falsification passent, sinon
+l'échantillon long 2004-2015 en double différence, sinon en triple différence. Pour la
+productivité, la falsification échoue sur l'échantillon court (2012, Q4 : +1,375,
+p = 0,002) et sur le long en double différence (2012, Q2 : −2,743, p = 0,003) : la
+spécification principale est donc la **triple différence sur 2004-2015**, tableau
+A7-3-B p. 69 (p. 71 du PDF), fenêtre 2014-2015 (la plus longue), 72 884 entreprises de 5
+salariés et plus. Colonne « Productivité » (note 4 : la variation absolue de la variable,
+lue en k€ par tête et par point de CICE comme la note 7 du rapport de 2020, même équipe,
+même équation ; l'unité n'est pas écrite ici, dit) :
+
+| quartile, 2014-2015 | coefficient | p | intervalle à 95 % |
+|---|---:|---:|---:|
+| Q2 | −5,761 | 0,000 | |
+| Q3 | −3,877 | 0,000 | |
+| Q4 (le plus exposé) | **−1,855** | 0,002 | **−3,03 à −0,68** |
+
+Suridentification p = 0,053 ; instruments faibles 57,8. La synthèse (tableau 8 p. 24)
+le note −1 pour tous les quartiles et toutes les années en triple différence.
+
+**La puissance, d'abord** (D-625). μ = −0,38 / 1,4705 × 68,2 k€ = −0,176 k€ par tête et
+par point ; s = 1,855 / 3,090 = 0,600 ; |μ|/s = 0,29 ; **P = 0,06**. Le juge ne peut pas
+distinguer η = 0,38 de η = 0 : **« sans puissance »**, par la règle. Il ne tient ni ne
+rejette le canal ; rien ne change (`pression_cout` à côté, `juge: null`).
+
+**Ce qu'il dit tout de même, noté sans valeur de verdict.** L'intervalle exclut la bande
+entière du canal (0 à −0,35 k€) du côté négatif : l'effet estimé est de même signe que le
+canal (une baisse du coût, moins de productivité apparente), mais d'environ −2,7 % de la
+valeur ajoutée par tête par point, soit η ≈ 4, dix fois le haut. Il n'est pas croissant
+avec la dose : Q2, moins exposé, perd trois fois plus que Q4. Une lecture causale de cet
+ordre de grandeur n'est pas plausible ; un effet de composition (l'emploi peu qualifié
+que le CICE a fait embaucher, que les auteurs trouvent aussi) l'est davantage, et c'est
+précisément ce que le socle du jumeau porte déjà (D-600), pas le canal.
+
+**Bilan des trois juges sur le CICE** (D-602, D-604, D-626) : aucun n'a la puissance de
+trancher η dans [0 ; 0,76]. La proposition reste : `pression_cout` à côté, au propriétaire
+de dire s'il le branche. Un juge qui en aurait la puissance serait une évaluation sur
+données d'entreprises d'une hausse du Smic ou d'une baisse ciblée de cotisations avec
+des écarts-types de l'ordre du dixième de k€ par point ; je n'en connais pas d'ouverte.
