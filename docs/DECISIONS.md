@@ -40228,3 +40228,25 @@ dire l'écart : le rendement de la fin des exonérations est trop bas de l'ordre
 Md€ (D-563). Le désaccord de fond, à trancher avant tout point : le T305 (heures, Insee)
 et l'Urssaf (ETP, DSN) ne disent pas la même densité de 2 à 2,5 Smic une fois le D9 de la
 Dares gardé.
+
+## D-590 — Le but 29 : ce qu'une mesure change pour les gens
+
+Dans la nuit du 17 au 18 novembre, le propriétaire demande de développer, sans attendre
+sa validation, ce qui permet de mesurer une proposition dans tout ce qu'elle touche : le
+pouvoir d'achat, le moral des gens, la productivité des entreprises, l'entente entre les
+gens, l'économie en général, avec la souplesse de composer sa proposition ; le matin, la
+chose doit pouvoir servir. Ce que le dépôt sait déjà faire : les comptes publics, l'emploi
+et le PIB du jumeau, les gagnants et perdants par décile (`jumeau/gagnants.py`). Ce qui
+manque : le revenu réel par groupe dans le temps, la pauvreté et les écarts entre groupes,
+le bien-être, la productivité, et une page qui les montre ensemble pour une proposition.
+
+**Décidé par le coordinateur, à la demande du propriétaire.** Le but 29 (BUT.md) : quatre
+volets en parallèle, `pouvoir`, `bienetre`, `productivite` et `tableau`, sur la population
+de D-553 (empreinte 5ace8bb6), pendant que la série des études (D-556, D-558) et le recalage
+sur l'Urssaf (D-580 et la suite) continuent. `claude/but29` part de `claude/but28`
+(1b30dff).
+Chaque dimension a une source publiée par coefficient, une bande, et un statut : jugée
+(un chiffrage officiel fait après coup, préenregistré) ou sourcée non jugée. Le moral et
+l'entente entre les gens n'ont pas de juge aveugle connu : ils sont montrés comme des
+ordres de grandeur sourcés, jamais comme des prévisions vérifiées. Les numéros : D-591 à
+D-609 par volet, D-610 et la suite pour la jonction.

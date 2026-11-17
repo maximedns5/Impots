@@ -1460,6 +1460,48 @@ la Dares qui cale, ni la MECSS qui juge), la population refaite et la grille rep
 préenregistrées. (6) Le CICE et la prime de 2019 restent des juges, comptés à part. Le
 volet `suite` (`claude/but28-suite`) : D-551 à D-559.
 
+### But 29 — Ce qu'une mesure change pour les gens (décidé le 18 novembre 2026, D-590)
+
+Le propriétaire, dans la nuit du 17 au 18 novembre : mesurer une proposition de candidat
+dans tout ce qu'elle peut toucher, et pas seulement dans les comptes : le pouvoir d'achat,
+le moral des gens, la productivité des entreprises, l'entente entre les gens, l'économie
+en général ; avec la souplesse d'y composer sa propre proposition. Le but est décidé et
+lancé par le coordinateur sans validation, à la demande du propriétaire ; il tourne la
+nuit, et le matin la page doit pouvoir servir. Quatre volets en parallèle, sur
+`claude/but29-<volet>` partie de `claude/but29` (lui-même parti de `claude/but28`, non
+mergé, dont il dépend), sur la population de D-553.
+
+1. **Le pouvoir d'achat et l'entente** (`pouvoir`) : le revenu disponible réel (prix du
+   jumeau) par décile, par cas type et par territoire, année par année ; les gagnants et
+   les perdants ; la pauvreté (60 % du médian), le Gini, D9/D1 ; l'écart entre groupes
+   (âge, territoire, statut) comme mesure de ce qui rapproche ou sépare. Juge : les effets
+   redistributifs des mesures publiés après coup par l'Insee (France, portrait social),
+   lus après le préenregistrement.
+2. **Le moral** (`bienetre`) : la satisfaction dans la vie, en WELLBY, par le revenu (en
+   log), le chômage (propre et autour de soi), l'inflation et l'insécurité de l'emploi,
+   avec des coefficients publiés (Insee SRCV, la littérature du bien-être) et leurs
+   bandes. Pas de juge aveugle connu : l'indicateur est dit « sourcé, non jugé ».
+3. **La productivité** (`productivite`) : ce qu'une mesure fait à la productivité des
+   entreprises (salaire minimum et salaires d'efficience, coût du travail qualifié,
+   fiscalité du capital et investissement, R&D), un bloc sourcé du jumeau qui passe au PIB
+   potentiel. Juge : un effet passé évalué après coup (le CICE et la productivité, France
+   Stratégie), préenregistré.
+4. **Le tableau** (`tableau`) : une interface commune (`jumeau/impacts`) où chaque
+   dimension s'inscrit (nom, unité, années, déciles, bande, source, statut jugé ou non),
+   l'API et une page « Ce que ça change » : un programme, une mesure ou une proposition
+   composée par le lecteur (paramètres des mesures existantes), et toutes ses dimensions,
+   avec leurs bandes et ce qui n'est pas jugé.
+
+**Ce qui tourne** : comme au but 28. Les passes sur la population sont détachées, une à
+la fois (le verrou commun) ; pas de `make full`, de `make impact`, de lourds, ni
+d'`impots etude` par un agent. Aucun chiffrage de tiers des programmes 2027 n'est lu.
+Chaque dimension dit sa source, sa bande et si elle est jugée ; une dimension sans juge
+n'est jamais présentée comme une prévision vérifiée.
+
+Les numéros réservés : D-591 à D-594 pour `pouvoir`, D-595 à D-599 pour `bienetre`, D-600
+à D-604 pour `productivite`, D-605 à D-609 pour `tableau` ; D-610 et la suite pour la
+jonction.
+
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
