@@ -178,3 +178,36 @@ tes:
   transmission_importations:
     exportations: 0.2983
     demande_interieure: 0.1579
+
+prix_part_cout:
+  # La part d'une variation du coût du travail qui passe dans les prix de production
+  # (la boucle prix-salaires, équation 7 ; D-536, D-540), par branche : exposée (X,
+  # agriculture, industrie, services exposés) ou abritée (A, construction, commerce,
+  # hébergement et restauration, immobilier, autres services). Le reste reste aux marges.
+  # Une option déclarée, son défaut la forme d'avant (φ = 1 partout) ; le propriétaire
+  # choisit. Aucune valeur n'est tirée d'une évaluation du CICE, qui juge ce bloc.
+  defaut: mesange
+  reglages:
+    mesange: {exposees: 1.0, abritees: 1.0}
+    harasztosi_lindner: {exposees: 0.75, abritees: 0.75}
+    diagnostic_juge: {exposees: 1.0, abritees: 0.0}
+  parts_abritees:
+    uniforme: 0.38
+    ciblee: 0.52
+  source: "mesange : Mésange (G2017-04), p. 70-71 du PDF, équations des prix de
+    production par branche (DAI, NRJ, DSE, DSA) : à long terme, l'élasticité du prix au
+    coût du travail est la part du travail dans la valeur ajoutée de la branche, des
+    coefficients « contraints » (pass-through complet partout ; la vitesse diffère, la
+    correction d'erreur de DSA est −0,02 par trimestre, celle de DAI −0,10).
+    harasztosi_lindner : Harasztosi et Lindner, « Who Pays for the Minimum Wage? »,
+    American Economic Review 109 (8), 2019, résumé (aeaweb.org) : les consommateurs
+    paient environ les trois quarts de la hausse du coût, les propriétaires le quart ;
+    document de travail d'octobre 2015 (p. 1 et 4 du PDF, harasztosi_lindner_2015_who_pays_minimum_wage.pdf) : le report dans les prix est plus
+    fort dans les services et les branches qui n'exportent pas, plus faible dans
+    l'industrie et à l'export ; la part par branche n'est pas chiffrée, d'où 0,75 aux
+    deux. diagnostic_juge : la forme que décrit le juge du CICE (France Stratégie 2020 :
+    des prix dans l'industrie, des salaires dans les services) ; il ne se règle pas sur
+    lui (D-535), c'est un diagnostic, pas un réglage. parts_abritees : Mésange, tableau 2,
+    p. 13 du PDF : les services abrités font 38 % de la masse salariale brute marchande
+    (2013) et 11 sur 21 points de celle des non qualifiés (52 %), le poids des baisses
+    ciblées"

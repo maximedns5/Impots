@@ -2554,6 +2554,15 @@
       "downloaded": "2026-11-17",
       "licence": "Insee, licence ouverte Etalab",
       "description": "Insee, France portrait social 2020, « Les réformes socio-fiscales de 2019… », données des figures ; figure 8 : effet par décile de la hausse du bonus de la prime d'activité ; juge du but 28 (D-536)."
+    },
+    "harasztosi_lindner_2015_who_pays_minimum_wage.pdf": {
+      "url": "https://ipl.econ.duke.edu/seminars/system/files/seminars/1070.pdf",
+      "sha256": "8886b36d1d636f217a0eae729a914e39ba3633f2be7f223c5dc1190f26305ddb",
+      "bytes": 2117653,
+      "downloaded": "2026-11-17",
+      "licence": "document de travail des auteurs, diffusé librement (séminaire, Duke)",
+      "description": "Harasztosi et Lindner, « Who Pays for the Minimum Wage? », document de travail, octobre 2015 (publié dans l'American Economic Review 109 (8), 2019). Résumé (p. 1 du PDF) et p. 4 : la hausse du salaire minimum hongrois de 2001 passe dans les prix ; le report est plus fort dans les services et les branches qui n'exportent pas. But 28, volet interaction (D-540, D-541).",
+      "quarantined": false
     }
   }
 }

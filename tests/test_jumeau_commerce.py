@@ -364,3 +364,21 @@ def test_la_comparaison_aux_variantes_de_mesange() -> None:
     pub_px = _variante(108, "Prix des exportations")
     assert all(a > 0 and b > 0 for a, b in zip(cot["xi"], pub_x, strict=True))
     assert all(a < 0 and b < 0 for a, b in zip(cot["prix_x"], pub_px, strict=True))
+
+
+def test_la_part_du_cout_qui_va_aux_prix():
+    """φ (D-540) : au défaut, tout le coût passe aux prix (Mésange, le bloc d'avant) ;
+    les branches abritées pèsent 38 % de la masse salariale marchande et 52 % de celle
+    des non qualifiés (Mésange, tableau 2), d'où 0,62 et 0,48 quand elles n'en passent
+    rien (le diagnostic du juge du CICE, qui n'est pas un réglage)."""
+    from impots.jumeau.blocs import commerce
+
+    d = commerce.part_prix()
+    assert (d["reglage"], d["uniforme"], d["ciblee"]) == ("mesange", 1.0, 1.0)
+    with commerce.prix("harasztosi_lindner"):
+        assert commerce.part_prix()["uniforme"] == pytest.approx(0.75)
+    with commerce.prix("diagnostic_juge"):
+        d = commerce.part_prix()
+    assert d["uniforme"] == pytest.approx(0.62) and d["ciblee"] == pytest.approx(0.48)
+    with pytest.raises(commerce.CommerceError), commerce.prix("inconnu"):
+        commerce.part_prix()
