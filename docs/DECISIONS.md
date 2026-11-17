@@ -40152,3 +40152,79 @@ qui attend `impots etude ecrire` (D-557).
 en D-556 (de l'ordre d'une journée sur une file), refusée aux agents : son résultat ira en
 D-558. Le second point de la fonction des salaires entre 2,5 et 3,5 Smic et son juge
 (D-563). La part du coût qui arrive aux ménages, tombée de 0,21 à 0,18 (D-557).
+
+## D-575 — Le second point de 2,5 à 3,5 Smic : un juge trouvé, un point qui ne tient pas
+
+**Pourquoi** (D-563 ; décision du propriétaire du 17 novembre, « oui pour 3 »). Ajouter à
+`incomes._salaires_horaires_en_smic` un second point entre 2,5 et 3,5 Smic, qui reporte
+des heures de 3,1-3,5 vers 2,6-3,1 Smic (D-563 : 3,35 % des heures contre 6,23 % au T305),
+ancré si possible sur le D9 des heures de l'Insee (3,346 Smic), jugé par une autre source
+que le T305. Numéros du volet : D-575 à D-579. Cette entrée n'est pas le préenregistrement
+d'une passe : elle dit pourquoi il n'y en a pas.
+
+**Le juge indépendant, trouvé.** Commission des comptes de la sécurité sociale, mai 2024,
+éclairage 3.7 « Dynamique récente des allègements généraux de cotisations sociales »,
+p. 143 (page 147 du PDF, déjà au manifeste : `ccss_mai2024_rapport.pdf`), **graphique 3,
+panneau 2022** : les effectifs salariés du secteur privé en équivalent temps plein par
+tranche de 0,1 Smic, source Urssaf caisse nationale (la DSN, pas la base Tous salariés de
+l'Insee). Les barres n'ont pas d'étiquette : elles sont lues dans le dessin vectoriel du
+PDF (les rectangles, l'axe de 0 à 2 000 000 ETP, 7,131 points par 200 000 ; quelques
+dizaines d'ETP près). Les tranches : « moins de 1 », vingt-cinq de [1,0 ; 1,1[ à
+[3,4 ; 3,5[, puis [3,9 ; 4,0[, [4,9 ; 5,0[, [5 ; 7,5[ et au-delà (le graphique 5 de la
+même page les nomme toutes ; de 3,5 à 3,9 et de 4 à 4,9 Smic, rien n'est dessiné). Un ETP
+pèse comme les heures de la population (poids × quotité × mois). Sur [1 ; 3,5[ Smic, la
+seule plage complète, en part des ETP ou des heures de la plage (les populations : heures
+du privé, Smic de 2024 ; l'Urssaf, 15,22 M d'ETP, Smic de 2022) :
+
+| tranche (Smic) | Urssaf 2022 | D-521 (sans point) | D-553 (point de D-552) |
+|---|---:|---:|---:|
+| 2,0 à 2,5 | 11,80 % | 8,44 % | 12,99 % |
+| 2,5 à 3,0 | 6,37 % | 7,76 % | 4,47 % |
+| 3,0 à 3,5 | 3,84 % | 5,92 % | 5,14 % |
+| **2,6 à 3,1** | **5,72 %** | 7,64 % | **3,54 %** |
+| **3,1 à 3,5** | **2,92 %** | 4,48 % | **4,43 %** |
+
+Les ETP de l'Urssaf, de 2,5 à 3,5 Smic, par 0,1 : 240 ; 212 ; 193 ; 171 ; 153 ; 140 ;
+127 ; 116 ; 106 ; 95 milliers (une décroissance régulière, sans creux). Le juge confirme
+D-563 de façon indépendante : la population de D-553 manque d'heures de 2,6 à 3,1 Smic
+(−38 %) et en a trop de 3,1 à 3,5 (+52 %). Il dit aussi ce que D-563 ne voyait pas : de 2
+à 2,5 Smic, D-553 en a trop (+10 %), et D-521, sans le point, en avait trop au-dessus de
+2,5. Le point de D-552 a corrigé dans le bon sens, mais trop.
+
+**Pourquoi un point ajouté ne peut pas le corriger.** Les personnes entre 2,5 et 3,04 Smic
+(avant le facteur de masse) sont fixées par deux points qui restent : 86,4 % à 2,5 (D-552)
+et 90 % à 3,04 (le D9 de la Dares) ; 3,6 points de personnes. La bande de 2,6 à 3,1 Smic,
+après le facteur (×1,022), est [2,54 ; 3,03] avant lui : exactement ce segment. Un point
+placé dedans ne fait que déplacer ces 3,6 points ; un point entre 3,04 et 3,5 ne touche
+que 3,1-3,5 et au-delà. **Le manque de 2,6 à 3,1 Smic ne se corrige pas sans bouger le
+point de D-552 ou le D9 de la Dares**, ce que la décision ne prévoit pas.
+
+**Et l'ancre tire à rebours du juge.** Essais hors git (sans reconstruire, la population de
+D-553, le rang gardé, le facteur recalculé ; seules les grandeurs de l'ancre lues) :
+
+* tous les points gardés, 90 % des heures sous 3,346 Smic demandent **95 à 96 % à 3,2
+  Smic** : 5 à 6 points de personnes entre 3,04 et 3,2, là où le juge en voit déjà trop ;
+  le D8 des heures glisse à 79,5 % (calé à 80 %) ;
+* sans le D9 de la Dares, **94 % à 2,9 Smic** : le D9 des heures à 3,34, mais celui des
+  personnes à 2,80 (Dares 3,04) et le D8 des heures à 79,0 %.
+
+L'excès des heures au-dessus de 3,35 Smic (13,1 % contre 10 % au T305) n'est pas dans la
+bande : il est surtout chez les salariés de 4 Smic et plus, que la fonction ne place pas
+(11,6 % des heures au-dessus de 3,5 Smic), et dans le facteur, qui rend à tous la masse
+ôtée. Le D9 des heures de l'Insee n'est pas une ancre que ce point peut tenir.
+
+**Arrêté ici**, comme le prévoit la consigne quand le point ne peut pas être ancré sans
+caler : ni point, ni population, ni grille, ni rejeux ; D-576 et D-577 ne sont pas
+écrits. `calibrate.py` n'est pas touché ; aucun test (aucun nombre ne change). La
+population des études reste celle de D-553 (empreinte 5ace8bb6…).
+
+**Ce qui reste au propriétaire.** (1) Prendre l'Urssaf pour ancre de la forme de 2 à 3,5
+Smic (deux points, à la place du point de D-552, et du D9 de la Dares s'il le faut) : il
+n'y aurait plus de juge aveugle de la forme (le T305 l'a ancrée, la ligne de D-531 est
+lue) ; restent en contrôle la ligne de D-531, les bandeaux et le rendement de la fin des
+exonérations. (2) Un point à 3,5 Smic, sous la droite, qui ne corrige que le trop de 3,1
+à 3,5 (vers 3,5-4 Smic), ancré sur l'Urssaf, sans juge indépendant. (3) Garder D-553 et
+dire l'écart : le rendement de la fin des exonérations est trop bas de l'ordre de 0,9
+Md€ (D-563). Le désaccord de fond, à trancher avant tout point : le T305 (heures, Insee)
+et l'Urssaf (ETP, DSN) ne disent pas la même densité de 2 à 2,5 Smic une fois le D9 de la
+Dares gardé.
