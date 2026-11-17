@@ -284,6 +284,104 @@ def jumeau() -> Path:
     return ecrire("jumeau", out)
 
 
+# --------------------------------------------------------------------------- #
+# les juges, ouverts après les calculs (D-536), et le rapport agrégé
+# --------------------------------------------------------------------------- #
+#: France Stratégie, comité de suivi du CICE, rapport de septembre 2020
+#: (`france_strategie_2020_rapport_cice.pdf`), résumé p. 8 : « L'effet total reste estimé
+#: à 100 000 emplois environ » (TEPP, 2014-2016) ; p. 5 du chapitre 1 : 115 000 en 2014,
+#: un peu moins de 100 000 en moyenne sur 2014-2016 ; OFCE, non financé, 400 000.
+JUGE_CICE = {"central_milliers": 100.0, "horizon": "moyenne 2014-2016",
+             "en_2014_milliers": 115.0, "ofce_non_finance_milliers": 400.0,
+             "ofce_finance_milliers": 160.0}
+#: Cnaf, Prime d'activité conjoncture n° 17 (juillet 2020), graphique 1 et texte : les
+#: foyers payés à fin décembre, en milliers (2019, données définitives).
+JUGE_FOYERS = {2017: 2740.0, 2018: 3044.0, 2019: 4350.0}
+#: Les dépenses versées par les Caf, Md€ : 2018, 5,3, +5,4 % sur 2017 (Cnaf, l'e-ssentiel
+#: n° 187, 2019, figure 1) ; 2019, +75,4 % sur 2018 en données comptables (Cnaf, Prime
+#: d'activité conjoncture n° 16, « zoom sur les dépenses »).
+JUGE_DEPENSE = {2018: 5.3, "croissance_2018": 0.054, "croissance_2019": 0.754}
+#: Insee, France, portrait social 2020, « Les réformes socio-fiscales de 2019… »,
+#: figure 8 (FPS2020_D2_donnees.xlsx), « Hausse du bonus de la prime d'activité », effet
+#: moyen sur le niveau de vie annuel, €, par décile ; figure 2 : 3 710 M€.
+JUGE_DECILES = [130, 219, 195, 142, 54, 36, 29, 23, 15, 10]
+JUGE_COUT_INES = 3.71
+
+
+def _verdict(ok: bool) -> str:
+    return "dans la tolérance" if ok else "hors de la tolérance"
+
+
+def rapport() -> Path:
+    cp = json.loads((SORTIE / "cice_passe.json").read_text(encoding="utf-8"))
+    pp = json.loads((SORTIE / "ppa_passe.json").read_text(encoding="utf-8"))
+    ju = json.loads((SORTIE / "jumeau.json").read_text(encoding="utf-8"))
+    c = ju["cice"]
+    es = c["theta_demi"]["emploi_salarie"]
+    moyenne = sum(es[1:4]) / 3
+    sens = {k: round(sum(v["emploi_salarie"][1:4]) / 3, 1) for k, v in c["sensibilites"].items()}
+    ratio = moyenne / JUGE_CICE["central_milliers"]
+    t = pp["totaux"]
+    f_avec, f_sans = t["n_allocataires_ppa_servi"]["avec"], t["n_allocataires_ppa_servi"]["sans"]
+    modele_foyers = f_avec / f_sans - 1
+    jf = JUGE_FOYERS
+    juge_foyers = (jf[2019] / jf[2018] - 1) - (jf[2018] / jf[2017] - 1)
+    d18 = JUGE_DEPENSE[2018]
+    d17, d19 = d18 / (1 + JUGE_DEPENSE["croissance_2018"]), d18 * (1 + JUGE_DEPENSE["croissance_2019"])
+    juge_dep = (d19 - d18) - (d18 - d17)
+    parts_m = [x["part"] for x in pp["deciles"]]
+    parts_j = [x / sum(JUGE_DECILES) for x in JUGE_DECILES]
+    dmax_m = 1 + max(range(10), key=lambda k: pp["deciles"][k]["gain_moyen_menage"])
+    dmax_j = 1 + max(range(10), key=lambda k: JUGE_DECILES[k])
+    bas_m, bas_j = sum(parts_m[:3]), sum(parts_j[:3])
+    haut_m, haut_j = sum(parts_m[5:]), sum(parts_j[5:])
+    out = {
+        "decisions": ["D-535", "D-536"], "commit_passes": {"cice": cp["commit"],
+                                                          "ppa": pp["commit"]},
+        "commit_jumeau": ju["commit"], "menages_echantillon": MENAGES,
+        "cice": {
+            "credit_2014_md": round(cp["cice_md"], 3),
+            "part_ciblee": round(cp["cice_cible_md"] / cp["cice_md"], 3),
+            "credit_par_annee_md": {k: round(v, 3) for k, v in c["entree"]["credit_md"].items()},
+            "emploi_salarie_milliers": dict(zip(c["theta_demi"]["annees"],
+                                                [round(x, 1) for x in es], strict=True)),
+            "emploi_salarie_moyenne_2014_2016": round(moyenne, 1),
+            "sensibilites_moyenne_2014_2016": sens,
+            "juge": JUGE_CICE, "rapport_jumeau_juge": round(ratio, 3),
+            "verdict": _verdict(0.5 <= ratio <= 2.0), "aveugle": False},
+        "ppa": {
+            "cout_md": round(pp["cout_mesure_md"], 3),
+            "foyers_servis_decembre_millions": {"avec": round(f_avec / 1e6, 3),
+                                                "sans": round(f_sans / 1e6, 3)},
+            "foyers_variation_modele": round(modele_foyers, 4),
+            "foyers_juge_cnaf_milliers": jf,
+            "foyers_variation_juge_tendance_otee": round(juge_foyers, 4),
+            "foyers_verdict": _verdict(abs(modele_foyers - juge_foyers) <= 0.4 * juge_foyers),
+            "depense_juge_md": round(juge_dep, 3),
+            "depense_verdict": _verdict(abs(pp["cout_mesure_md"] - juge_dep) <= 0.4 * juge_dep),
+            "cout_ines_md": JUGE_COUT_INES,
+            "deciles_parts_modele": [round(x, 3) for x in parts_m],
+            "deciles_parts_juge": [round(x, 3) for x in parts_j],
+            "decile_max": {"modele": dmax_m, "juge": dmax_j,
+                           "verdict": _verdict(abs(dmax_m - dmax_j) <= 1)},
+            "part_d1_d3": {"modele": round(bas_m, 3), "juge": round(bas_j, 3),
+                           "verdict": _verdict(abs(bas_m - bas_j) <= 0.10)},
+            "part_d6_d10": {"modele": round(haut_m, 3), "juge": round(haut_j, 3),
+                            "verdict": _verdict(abs(haut_m - haut_j) <= 0.10)},
+            "menages_gagnants_millions": round(pp["gagnants"] / 1e6, 2),
+            "menages_perdants_millions": round(pp["perdants"] / 1e6, 3),
+            "jumeau_2019": {k: (round(v[0], 3) if isinstance(v, list) else v)
+                            for k, v in ju["ppa"]["theta_demi"].items() if k != "annees"},
+            "aveugle": {"foyers": False, "depense": False, "deciles": True}},
+    }
+    RAPPORT.mkdir(parents=True, exist_ok=True)
+    dest = RAPPORT / "resultats.json"
+    dest.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print(dest)
+    return dest
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
-    {"cice_passe": cice_passe, "ppa_passe": ppa_passe, "jumeau": jumeau}[cmd]()
+    {"cice_passe": cice_passe, "ppa_passe": ppa_passe, "jumeau": jumeau,
+     "rapport": rapport}[cmd]()
