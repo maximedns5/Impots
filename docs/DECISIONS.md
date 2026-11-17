@@ -39584,3 +39584,110 @@ autres rouges hérités que la suite signale (`test_jumeau_structurel`,
 qui ne sont pas refaites ; le bandeau maladie éloigné par le point (D-553) ; le rendement
 de la fin des exonérations, manqué (D-554) ; le profil de long terme, φ et la boucle par
 défaut (D-542, D-546) ; `impots etude ecrire`, qui bloque le site et la PR du but 27.
+
+## D-560 — La fin des exonérations : la forme contre le facteur de masse, préenregistrée
+
+**Pourquoi** (D-554 ; décision du propriétaire du 17 novembre, « oui pour 3 »). Sur la
+population de D-553, la fin des exonérations au-delà de 2 Smic rapporte 4,441 Md€ (coût
+−4,441), quand D-552 pronostiquait 5,4 (4,7 à 6,3) et que la population du but 19 donnait
+6,326. D-554 a dit, sans le mesurer, que la masse mise de 2 à 2,5 Smic et le facteur de
+masse (1,0222) « se compensent ». Avant toute source neuve, l'écart se décompose : la
+**forme** (la courbe de la réduction, ses paramètres, l'assiette, la population par
+tranche de Smic) contre le **facteur de masse** (tout facteur d'échelle : le facteur des
+salaires horaires, l'extrapolation aux salariés hors enquête, le passage de l'échantillon
+à la population). Numéros du volet : D-560 à D-564. Population : celle de D-553 (empreinte
+5ace8bb6…), celles de D-521 et du but 19 pour les rejeux ; ni elles ni `calibrate.py` ne
+changent.
+
+**Ce que D-554 calcule.** `mesure_melenchon_b27.py`, passe « union », 20 000 ménages (le
+tirage des études), vue figée de 2026 (la population de 2024, le droit de 2026) : la
+réforme `allegement_general_plafond` 3 → 2. La formule de 2026 garde son 3 (D-540) : la
+réforme annule la réduction générale de qui est entre 2 et 3 Smic, sans toucher personne
+d'autre ; le coût est −Δ `allegement_general` à l'euro près (−4,440907 contre −4,440908
+Md€ dans le rapport de la passe). D'où, personne par personne :
+
+    R = Σ_i w_i · f_i · A_i · 1[2 ≤ x_i < 3] = F·E · M · (s_a · c_a + s_b · c_b)
+
+`A_i` la réduction générale de 2026, `x_i` = `assiette_allegement` / `smic_proratise`
+(sommes des mois ; le Smic moyen de 2026, 12,19 €, sur des salaires de 2024 : la bande
+[2 ; 3) de 2026 est [2,086 ; 3,129) en Smic de 2024), `f_i` l'extrapolation (1,0747,
+`margins.EXTRAPOLATION_SALARIES`). M : la masse de l'assiette (pondérée par f) ; s_a, s_b :
+ses parts dans [2 ; 2,5) et [2,5 ; 3) ; c_a, c_b : le taux moyen de la réduction dans
+chaque bande (Σ A / Σ assiette). F·E : l'extrapolation et le rapport de la population
+entière au tirage de 20 000 ménages.
+
+**Les termes et leur référence.**
+
+* **F** = 1,0747 : une hypothèse (27,18 M de salariés des comptes sur 25,29 M de
+  l'enquête), sans juge.
+* **E**, la population entière sur le tirage : la passe sur toute la population (lots).
+* **M**, la masse des salariés : l'Urssaf, masse du secteur privé de 2024, 726,5 Md€, plus
+  la MSA (≈ 27) ; un contexte, D11 étant calé.
+* **s_a, s_b**, la population par tranche de Smic : l'Insee, T305 (le juge de D-552), les
+  déciles du salaire brut horaire de 2022, en heures ; la grille en contrôle (la ligne de
+  D-531, les bandeaux de 2024).
+* **c_a, c_b**, la courbe et ses paramètres : la loi (CSS, art. D241-7 : t_min 0,02,
+  t_delta 0,3821, puissance 1,75) ; la répartition des salaires dans la bande.
+
+**Les calculs** (`scripts/exos_decomposition_b28.py`, hors git `exos28/` du scratchpad ;
+une passe openfisca de référence du droit de 2026 par population, détachée, sous le
+verrou, une à une) :
+
+1. **Les reproductions**, d'abord : D-553, D-521, but 19, 20 000 ménages, avec les données
+   de ménages (les heures supplémentaires entrent dans l'assiette) : R = 4,441, 4,474 et
+   6,326 Md€ à 0,005 près, et, sur D-553, R égal à la passe de la réforme (−Δ) à 0,1 %
+   près. Si une reproduction manque, la décomposition s'arrête et D-561 le dit.
+2. **L'écart du pronostic** (D-521 → D-553, R −0,033) par un contrefactuel : la
+   population de D-553, salaires du champ privé multipliés par 1,011732 / 1,022156 (le
+   facteur de D-521 sur la forme de D-553 ; le facteur multiplie tous ces salaires, rang
+   gardé, `incomes._salaires_horaires_en_smic`). **forme** = R(contrefactuel) − R(D-521) ;
+   **masse** = R(D-553) − R(contrefactuel). Exact, sans reste.
+3. **Le retour vers 6,33** (but 19 → D-521 → D-553) : l'écart de R terme par terme, en
+   log, partagé par l'indice de Montgomery (exact) : M ; s_a, s_b ; c_a, c_b.
+4. **E** : R sur toute la population de D-553 (huit lots) sur R du tirage, les deux sans
+   les données de ménages (imputées par lot, elles seraient calées lot par lot) ; et
+   l'effet de ces données sur le tirage (avec contre sans).
+5. **Contre les références** (D-553) : la masse, F·E·M contre 753,5 Md€ (726,5 + 27) ; la
+   forme, les parts des heures de la population dans [2,086 ; 2,607) et [2,607 ; 3,129)
+   Smic de 2024 contre celles du T305 (interpolation linéaire entre ses déciles, en Smic
+   de 2022, les multiples bougeant de moins de 1 % : 10,87 % et 6,23 %). Ce que chaque
+   référence ferait de R, en Md€ : R × (753,5 / F·E·M − 1) pour la masse ; R_k × (h_k
+   Insee / h_k modèle − 1) par bande pour la forme. Les paramètres de la loi sont lus,
+   pas jugés.
+
+**Le pronostic, qui n'est pas aveugle.** Lu avant ce texte : le complément de 2022 de
+D-553 (`complement_2022.json`, la masse par bande de toute la population, droit de 2022,
+qui contient le facteur), contre celui de D-532. Portées sur la bande de 2026 (x de 2022
+÷ 1,046) avec les taux de la loi, ces masses donnent déjà R de D-553 / R de D-521 ≈ 0,97 :
+D-552 avait oublié que la masse ôtée de 2,5 à 3 Smic rapportait aussi, et lu la bande en
+Smic de 2022 quand la mesure la lit en Smic de 2026, plus haut de 4,6 %. Le reste, par la
+fonction des salaires horaires en personnes (pentes de 23,3 % par Smic de 2,01 à 2,5, 6,7
+de 2,5 à 3,04, 10,4 au-delà).
+
+| part | pronostic (Md€ de rendement) | bande |
+|---|---:|---|
+| reproductions | 4,441 ; 4,474 ; 6,326 | ±0,005 |
+| **forme**, D-521 → D-553 | **−0,09** | −0,20 à +0,02 |
+| **masse** (facteur 1,0117 → 1,0222) | **+0,06** | −0,02 à +0,14 |
+| but 19 → D-521 : M | 0 | −0,15 à +0,15 |
+| s_a | −1,4 | −1,8 à −1,0 |
+| s_b | −0,2 | −0,5 à +0,1 |
+| c_a | −0,2 | −0,4 à 0 |
+| c_b | 0 | −0,1 à +0,1 |
+| E (entière / tirage) | 1,00 | 0,96 à 1,04 |
+| données de ménages (avec − sans) | 0 | −0,1 à +0,1 |
+| F·E·M contre 753,5 Md€ | 0,98 du modèle | 0,94 à 1,01 ; −0,10 Md€ (−0,25 à +0,05) |
+| heures [2 ; 2,5) de 2026, Insee / modèle | 1,08 | 1,00 à 1,16 ; +0,27 Md€ (0 à +0,5) |
+| heures [2,5 ; 3) de 2026, Insee / modèle | 1,45 | 1,25 à 1,70 ; +0,50 Md€ (+0,3 à +0,8) |
+
+En mots : **le facteur de masse relève le rendement, la forme le baisse un peu** (le
+contraire de ce que D-554 supposait) ; ni l'un ni l'autre ne pèse 0,9 Md€ : le pronostic de
+D-552 était faux par construction, pas par la population. Contre les références, **la
+forme est trop basse** (trop peu d'heures de 2,5 à 3,1 Smic, la densité creusée entre le
+point de 2,5 et le D9 de la Dares, quand le T305 la veut plus haute), pour +0,8 Md€
+environ ; la masse, à peine trop haute. Sur les références, R serait de l'ordre de 5,1
+Md€.
+
+Le résultat va dans D-561. Aucune tolérance ne change ; aucune correction ne se fait ici :
+une correction qui change un nombre publié attend le propriétaire, sauf une erreur de code
+manifeste (corrigée avec son test léger, et dite).
