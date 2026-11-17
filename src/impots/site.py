@@ -270,6 +270,7 @@ NAV: tuple[tuple[str, str], ...] = (
     ("La population", "population.html"),
     ("Une mesure pas à pas", "mesure.html"),
     ("Le jumeau", "jumeau.html"),
+    ("Ce que ça change", "impacts.html"),
     ("Les études", "etudes.html"),
     ("Méthode", METHODE),
 )
@@ -505,6 +506,14 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         pages = site_cascade.build()
         files.update(pages)
         scripted |= {n for n in pages if n.endswith(".html") and n != site_cascade.INDEX}
+    from impots import site_impacts
+
+    if site_impacts.present():
+        # Ce que ça change (but 29, D-607) : les programmes précalculés, une mesure ou une
+        # proposition composée calculée dans le navigateur, par le jumeau.
+        pages = site_impacts.build()
+        files.update(pages)
+        scripted.add(site_impacts.PAGE)
     from impots import site_population
 
     if site_population.present():

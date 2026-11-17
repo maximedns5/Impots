@@ -40370,3 +40370,51 @@ cotisations des employeurs comprises : le « droit au brut » d'Attal la fait ba
 (volet `pouvoir`). Pour le programme d'Attal (figée, θ½) : solde −64,0 Md€ en 2026 et
 −63,3 en 2035, dette +14,1 points en 2035, PIB +0,52 % puis +0,74 %, emploi +445 milliers
 en 2035 : les nombres de la page du jumeau, au bit.
+
+## D-607 — Le tableau (3) : la page « Ce que ça change »
+
+**Ce qui est construit** (`src/impots/site_impacts/`, `impacts.html` et `impacts.js`).
+Trois façons de choisir : un programme (la part chiffrée d'un candidat), une mesure
+seule (les 46 rapports, rangés par candidat ou par texte), ou « composer la mienne » :
+des lignes de mesures, chacune avec son intensité (×0,1 à ×3) et son année d'entrée (dès
+son année, ou 1 à 9 ans plus tard), et des lois simples (un instrument, un coût pour
+l'État en Md€ par an, ses années). Puis :
+
+* **d'un coup d'œil** : une carte par dimension, sa question, son nombre de tête à
+  l'horizon avec sa bande et sa première année, « ▲ mieux », « ▼ moins bien » ou « ni
+  l'un ni l'autre » selon le sens de l'indicateur, son statut. La page le dit en gras :
+  ces nombres ne s'additionnent pas ;
+* **dimension par dimension** : la question, le statut et ce qu'il veut dire (« jugé » et
+  sa D-entrée, « sourcé, non jugé : ce n'est pas une prévision vérifiée », « illustratif »),
+  un bouton par indicateur, la courbe dans le temps avec sa bande (5 à 95 %) et une bulle
+  au survol ou au toucher, les barres par groupe (décile, cas type, territoire) à l'année
+  choisie quand l'indicateur en porte, les nombres année par année dans un tableau
+  replié, « ce qu'il faut savoir » (les limites) et les sources. Une dimension en erreur
+  est dite « non calculée », avec sa raison ; un module qui ne se charge pas aussi.
+
+**Le calcul.** Les programmes sont calculés une fois, à la construction
+(`navigateur.impacts_json`), et portés dans la page : elle s'affiche tout de suite et se
+lit sans script (un tableau du premier programme, dans `noscript`). Une mesure seule ou
+une proposition se calcule dans la page : le Worker du jumeau (`jumeau-calcul.js`, qui
+apprend le message « impacts »), Pyodide vérifié par son empreinte, le paquet du jumeau ;
+`site_jumeau.paquet` fait désormais aussi tourner une proposition composée, pour que ses
+modules (`jumeau/impacts/*`, `jumeau/proposition.py`) soient dans le paquet. Mesuré une
+fois dans Chromium (headless, cette machine) : le premier calcul d'une mesure en 11,7 s
+avec le chargement de Pyodide, puis 7 à 9 s par calcul (60 tirages) ; un programme,
+immédiat. Une erreur de Python (le refus d'une hausse du Smic mise à l'échelle) est dite
+par sa seule raison. À 390 px de large, aucun défilement horizontal ; les captures ont été
+regardées (deviceScaleFactor 1).
+
+**Le site.** La page entre dans `site.build` comme la cascade, avec une entrée « Ce que ça
+change » dans la navigation. Le site commité n'est pas reconstruit ici : sur
+`claude/but29`, `impots site verifier` refuse déjà (la page de l'étude du PLFSS 2027 n'est
+pas celle de son rapport, et `impots etude` n'est pas lancé dans cette suite) ; la
+jonction le reconstruira. Pour l'ouvrir en local sans le site entier :
+`PYTHONPATH=src python -m impots.site_impacts servir` (la page, le paquet du jumeau et la
+feuille de style écrits dans `/tmp/impots-ce-que-ca-change`, servis sur
+http://localhost:8001/impacts.html ; environ deux minutes de construction). L'adresse
+garde le choix (`impacts.html#pres2027_le_pen_programme`).
+
+**Ce qui n'est pas fait.** Aucun test de navigateur dédié (D-335 : la plomberie se mesure
+une fois) ; `test_jumeau_page` (lourd) n'a pas tourné. La page ne règle pas θ (chaque θ à
+½ ; la page du jumeau le fait) ni le mode (le réglage par défaut de D-605).
