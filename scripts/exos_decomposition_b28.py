@@ -4,11 +4,14 @@ volet `exos`, D-560, D-561).
 Le rendement de la mesure (`allegement_general_plafond` 3 → 2, droit de 2026, vue figée)
 est, personne par personne, la réduction générale qu'elle retire :
 
-    R = Σ_i w_i · f_i · A_i · 1[2 ≤ x_i < 3]
+    R = Σ_i Σ_mois w_i · f_i · A_im · 1[2 ≤ x_im < 3]
 
-`A_i` la réduction générale de l'année (`allegement_general`), `x_i` la rémunération en
-Smic (`assiette_allegement` sur `smic_proratise`, sommes des mois), `f_i` l'extrapolation
-aux salariés hors de l'enquête (1,0747, zéro au-delà de un pour les gérants). Écrit
+`A_im` la réduction générale du mois (`taux_allegement_general` × `assiette_allegement`),
+`x_im` la rémunération du mois en Smic (`assiette_allegement` sur `smic_proratise`) :
+openfisca compare chaque mois à son Smic, et le Smic de 2026 change en juin (D-561, D-562 ;
+D-560 lisait l'année). `w_i` le poids du ménage (la moyenne de ses membres, comme le
+runner agrège), `f_i` l'extrapolation aux salariés hors de l'enquête (1,0747, un pour les
+gérants). Écrit
 R = F · M · Σ_k s_k · c_k, bandes k = [2 ; 2,5) et [2,5 ; 3) : M la masse de l'assiette
 des salariés (pondérée par f), s_k la part de M dans la bande, c_k le taux moyen de la
 réduction dans la bande (Σ A / Σ assiette).
@@ -117,6 +120,10 @@ def preparer(population: str, k: float, menages: bool, sample: int | None
 
 
 def calculer(frame: pl.DataFrame, controle: bool) -> dict[str, np.ndarray]:
+    """Par personne et par mois (D-562) : la réduction du mois (`taux_allegement_general`
+    × `assiette_allegement`, ce qu'openfisca somme sur l'année quel que soit le mode de
+    recouvrement), son assiette et son x du mois ; le poids, celui du ménage (la moyenne
+    de ses membres, comme le runner agrège) ; f, l'extrapolation."""
     from impots.api.schemas import ReformSpec
     from impots.engine.system import baseline, reformed_for
     from impots.population import margins
@@ -124,11 +131,24 @@ def calculer(frame: pl.DataFrame, controle: bool) -> dict[str, np.ndarray]:
 
     built = build_simulation(frame, baseline(), ANNEE)
     a = np.abs(np.asarray(built.calculate("allegement_general", add=True), dtype=float))
-    base = np.asarray(built.calculate("assiette_allegement", add=True), dtype=float)
-    s = np.asarray(built.calculate("smic_proratise", add=True), dtype=float)
+    taux, base, x = [], [], []
+    for m in range(1, 13):
+        t = np.asarray(built.calculate("taux_allegement_general", month=m), dtype=float)
+        b = np.asarray(built.calculate("assiette_allegement", month=m), dtype=float)
+        s = np.asarray(built.calculate("smic_proratise", month=m), dtype=float)
+        taux.append(t)
+        base.append(b)
+        x.append(np.where(s > 0, b / np.maximum(s, 1e-9), 0.0))
     del built
     gc.collect()
-    out = {"a": a, "assiette": base, "x": np.where(s > 0, base / np.maximum(s, 1e-9), 0.0)}
+    taux_m, base_m, x_m = (np.stack(v, axis=1) for v in (taux, base, x))
+    brut = (taux_m * base_m).sum(axis=1)
+    # Les stagiaires, les apprentis, les exonérations non cumulables : ce qu'openfisca
+    # retire du produit, personne par personne.
+    garde = np.where(brut > 0, a / np.maximum(brut, 1e-9), 0.0)
+    out = {"a": a, "a_m": taux_m * base_m * garde[:, None], "assiette_m": base_m, "x_m": x_m,
+           "x": np.where(base_m.sum(axis=1) > 0, base_m.sum(axis=1) / np.maximum(
+               (base_m / np.maximum(x_m, 1e-9)).sum(axis=1), 1e-9), 0.0)}
     if controle:
         r = build_simulation(frame, reformed_for(ReformSpec(allegement_general_plafond=2.0),
                                                  ANNEE), ANNEE)
@@ -139,7 +159,8 @@ def calculer(frame: pl.DataFrame, controle: bool) -> dict[str, np.ndarray]:
     gerant = (frame["regime_non_salarie"].is_in(["gerant_bic", "gerant_bnc"])
               .fill_null(False).to_numpy())
     out["f"] = np.where(gerant, 1.0, margins.EXTRAPOLATION_SALARIES.value)
-    out["w"] = frame["weight"].to_numpy().astype(float)
+    hw = frame.select(pl.col("weight").mean().over("household_id"))["weight"]
+    out["w"] = hw.to_numpy().astype(float)
     return out
 
 
@@ -161,31 +182,38 @@ def passe(nom: str, population: str, k: float, complet: bool, menages: bool,
     else:
         v = calculer(frame, controle)
     pf = v["w"] * v["f"]
-    x = v["x"]
-    dans = (x >= 2.0) & (x < 3.0)
+    pfm = pf[:, None] * np.ones((1, 12))
+    xm = v["x_m"]
+    dans = (xm >= 2.0) & (xm < 3.0)
+    xa = v["x"]
     out: dict[str, Any] = {
         "nom": nom, "population": population, "echelle": k, "complet": complet,
         "menages": menages, "annee": ANNEE, "menages_echantillon": int(
             frame["household_id"].n_unique()),
-        "rendement": float((pf * v["a"] * dans).sum()),
-        "masse_assiette": float((pf * v["assiette"]).sum()),
+        "methode": "D-562 : x du mois, poids du ménage",
+        "rendement": float((pfm * v["a_m"] * dans).sum()),
+        "rendement_x_annuel": float((pf * v["a"] * ((xa >= 2.0) & (xa < 3.0))).sum()),
+        "masse_assiette": float((pfm * v["assiette_m"]).sum()),
         "reduction_totale": float((pf * v["a"]).sum()),
+        "reduction_totale_mois": float((pfm * v["a_m"]).sum()),
         "bandes": {},
     }
     if controle:
         out["rendement_controle"] = float((pf * (v["a"] - v["a_reforme"])).sum())
     for lo, hi in itertools.pairwise(BANDES):
-        m = (x >= lo) & (x < hi) & (v["assiette"] > 0)
+        m = (xm >= lo) & (xm < hi) & (v["assiette_m"] > 0)
         out["bandes"][f"{lo}-{hi}"] = {
-            "masse": float((pf * v["assiette"])[m].sum()),
-            "reduction": float((pf * v["a"])[m].sum()),
-            "personnes": float(v["w"][m].sum()),
+            "masse": float((pfm * v["assiette_m"])[m].sum()),
+            "reduction": float((pfm * v["a_m"])[m].sum()),
+            "personnes_mois": float((v["w"][:, None] * m).sum() / 12.0),
         }
     out["heures"] = heures(frame)
     out["duree_s"] = round(time.perf_counter() - t0, 1)
     SORTIE.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(f"{nom} : R {out['rendement'] / 1e9:.3f} Md€ en {out['duree_s']} s", flush=True)
+    print(f"{nom} : R {out['rendement'] / 1e9:.3f} Md€ (contrôle "
+          f"{out.get('rendement_controle', float('nan')) / 1e9:.3f}) en {out['duree_s']} s",
+          flush=True)
     return dest
 
 

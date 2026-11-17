@@ -39691,3 +39691,71 @@ Md€.
 Le résultat va dans D-561. Aucune tolérance ne change ; aucune correction ne se fait ici :
 une correction qui change un nombre publié attend le propriétaire, sauf une erreur de code
 manifeste (corrigée avec son test léger, et dite).
+
+## D-561 — La fin des exonérations : la reproduction manque, la décomposition s'arrête
+
+**Ce qui a tourné** (au commit ef25650, D-560 poussé avant ; détachée, sous le verrou,
+56 s) : la première passe de D-560, D-553, 20 000 ménages, droit de 2026, avec la passe
+de la réforme en contrôle. Les cinq autres n'ont pas tourné : arrêtées, comme D-560 le
+prévoyait si une reproduction manquait.
+
+**Le résultat.** La réduction des salariés dont la rémunération **de l'année** est entre
+2 et 3 Smic : **4,165 Md€** ; la passe de la réforme (−Δ `allegement_general`, poids de
+chaque personne) : **4,462** ; D-554 : **4,441**. Les deux conditions de D-560 manquent :
+R n'est pas le rendement de la réforme (−0,297, 6,7 %), et le rendement de la réforme
+n'est pas celui de D-554 à 0,005 près (+0,021). La décomposition ne se fait pas sur cette
+formule ; aucun de ses termes n'est lu.
+
+**Pourquoi, lu dans le code** (openfisca-france, `allegements.py`, et le runner) :
+
+1. **Le x est celui du mois, pas de l'année.** Quel que soit le mode de recouvrement,
+   l'allègement de l'année est la somme, mois par mois, du taux du mois sur l'assiette du
+   mois (`compute_allegement_progressif` et `_anticipe` somment `compute_function` sur
+   chaque mois ; `taux_allegement_general`, formule de 2026, compare `assiette /
+   smic_proratise` du mois à 3). Or le Smic de 2026 change en juin (12,02 € puis 12,31 :
+   +2,4 %) : un salaire de 1,99 Smic sur l'année est au-dessus de 2 de janvier à mai, et la
+   mesure lui retire cinq mois de réduction ; un salaire de 3,02 Smic a sa réduction de
+   juin à décembre, que la mesure lui retire aussi. La passe le montre : 0,048 Md€ de réduction chez ceux dont l'année est entre 3 et
+   3,5 Smic, quand la formule de D-560 n'en prévoyait aucune. C'est une erreur de D-560,
+   pas du code : la mesure lit la bande au mois, et la forme comprend le calendrier du
+   Smic.
+2. **Le poids.** Le runner agrège par ménage, au poids moyen de ses membres (le tirage
+   peut leur en donner de différents) ; le script prenait celui de chaque personne. C'est
+   l'hypothèse pour les 0,021 Md€, non vérifiée ici : la reproduction de D-562 la juge.
+
+**Ce que cela dit déjà, sans être une décomposition.** La bande de la mesure n'a pas de
+bord net en Smic de l'année : 7 % de son rendement vient de mois passés au-dessus de 2
+Smic (ou sous 3) par le seul calendrier du Smic. Une estimation par la masse annuelle par
+tranche (celle de D-552, et la lecture du pronostic de D-560) manque cette part.
+
+Pas de test : aucun nombre publié ne change, l'erreur est dans le script de ce volet, pas
+dans `src`. La méthode corrigée est préenregistrée dans D-562.
+
+## D-562 — La fin des exonérations : la décomposition au mois, préenregistrée
+
+**Ce qui change de D-560**, et rien d'autre : la formule se lit au mois, et le poids est
+celui du ménage.
+
+    R = Σ_i Σ_mois w_i · f_i · A_im · 1[2 ≤ x_im < 3] = F·E · M · (s_a · c_a + s_b · c_b)
+
+`A_im` = `taux_allegement_general` × `assiette_allegement` du mois, multiplié par le
+rapport, pour la personne, de son `allegement_general` de l'année à la somme de ces
+produits (ce qu'openfisca retire aux stagiaires, aux apprentis, aux exonérations non
+cumulables) ; `x_im` = `assiette_allegement` / `smic_proratise` du mois ; `w_i` le poids
+moyen du ménage. M, s_a, s_b, c_a, c_b se lisent sur les mois (la masse d'un mois va à la
+bande de son x). Les bandes des heures contre le T305 restent celles de D-560 (en Smic
+de 2024 ; le Smic moyen de 2026, 12,19 €, fait les bornes 2,086, 2,607, 3,129).
+
+**Les reproductions, mêmes exigences** : R de D-553, D-521 et du but 19 à 0,005 Md€ de
+4,441, 4,474 et 6,326 ; R égal à la passe de la réforme, au même poids, à 0,1 % près, sur
+**chaque** passe (la réforme tourne désormais à chaque fois). Si l'une manque, la
+décomposition s'arrête encore.
+
+**Les calculs** : ceux de D-560, 2 à 5, sur les mêmes populations, au commit de cette
+entrée (`scripts/exos_decomposition_b28.py`, réécrit au mois), détachés, sous le verrou.
+
+**Le pronostic** : celui de D-560, inchangé, terme pour terme (la forme −0,09, la masse
++0,06 ; le retour du but 19 ; E ; les données de ménages ; les références, R de l'ordre
+de 5,1 Md€ sur elles). Il n'est pas refait après D-561 : la part des mois mal classés
+change le niveau des termes, pas, attendu, leurs écarts d'une population à l'autre. Le
+résultat va dans D-563. Aucune tolérance ne change.
