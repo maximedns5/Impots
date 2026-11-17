@@ -2477,6 +2477,15 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Insee, « Revenu, niveau de vie et pauvreté en 2023 », Insee Résultats, ERFS 2023, tableau T03 : composition du revenu disponible moyen selon l'âge de la personne de référence (revenus du patrimoine : 11,4 % de l'ensemble, 4,7 % sous 30 ans, 20,6 % à 75 ans ou plus). Diagnostic du niveau de vie par statut d'occupation (but 27, volet grille3, D-499).",
       "quarantined": false
+    },
+    "an_mecss_l16b1685_2023_exonerations_ferracci_guedj.pdf": {
+      "url": "https://www.assemblee-nationale.fr/dyn/16/rapports/mecss/l16b1685_rapport-information.pdf",
+      "sha256": "3202a173bd3646a89cf9636e1842978ba23c13f7984a514f040d1a984b72c104",
+      "bytes": 2351253,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Assemblée nationale, rapport d'information n° 1685 (XVIe législature, 28 septembre 2023) de la MECSS sur l'efficacité des exonérations de cotisations sociales, MM. Ferracci et Guedj. p. 37 : le bandeau famille sur les salaires entre 2,5 et 3,5 Smic « de l'ordre d'1,6 milliard d'euros en 2022 » ; p. 39, tableau « Montant des exonérations du bandeau famille sur les salaires compris entre 2,5 et 3,5 Smic » par taille d'entreprise (réponse de l'Urssaf), total 1,478 Md€. But 28, volet reaction (D-531).",
+      "quarantined": false
     }
   }
 }

@@ -38209,3 +38209,53 @@ mergé, dont il dépend. Les passes restent détachées et une à la fois, par u
 commun (`flock`). Le juge du passé est une évaluation faite après coup, lue seulement
 après le préenregistrement ; une source qui cale un θ (Bozio-Wasmer pour λ, par exemple)
 ne le juge pas. Les numéros : D-531 à D-549 par volet, D-550 et la suite pour la jonction.
+
+## D-531 — La réaction (1) : une ligne de grille sur les salaires de 2,5 à 3,5 Smic
+
+**Pourquoi** (D-509, D-530). Le signe de la paire Smic × exonérations et le rendement de la
+fin des exonérations au-delà de 2 Smic (−29 %) tiennent à la densité des salaires entre 2
+et 3,5 Smic, qu'aucune ligne ne juge. La forme des salaires horaires du privé est calée
+sur la Dares (Bozio-Wasmer, graphiques 3.8 et 3.9, D-497) : cette source ne peut pas la
+juger. Sous 1,6 Smic, la fonction a six points ; de 1,6 à 4 Smic, trois (2,01 → 75 %,
+3,04 → 90 %, 4 → 100 %), linéaire entre eux : une densité uniforme de 2 à 3 Smic.
+
+**La source, indépendante du calage.** Assemblée nationale, rapport d'information n° 1685
+(28 septembre 2023, MECSS, MM. Ferracci et Guedj), réponses de l'Urssaf : le bandeau
+famille sur les salaires entre 2,5 et 3,5 Smic, en 2022, p. 39 du PDF (tableau par taille
+d'entreprise ; 109 + 88 + 151 + 115 + 178 + 141 + 278 + 418 = 1 478 M€, le total imprimé
+« 1,5 milliard », arrondi), « de l'ordre d'1,6 milliard » dans le texte (p. 37), une
+estimation de l'Urssaf par retraitement de la DSN ; le bandeau entier, 8,8 Md€ en 2022
+(p. 37 ; la CCSS de juin 2025 dit 8,777, la ligne `bandeau_famille`). Le PDF est au
+manifeste (`an_mecss_l16b1685_2023_exonerations_ferracci_guedj.pdf`). Les autres pistes,
+lues et écartées : la Dares et l'Insee en effectifs sous 1,6 Smic (le calage lui-même) ;
+les « effectifs exonérés » des bandeaux (2,28 et 2,36 M, p. 23), dont le champ n'est pas
+dit ; « plus de 78 % » de l'assiette sous 3,5 Smic (p. 15), une borne et non un nombre.
+
+**La ligne** (`lignes.json`, `bandeau_famille_part_2_5_3_5_smic`, 2022, validation) : la
+part du bandeau famille que portent les salariés dont la rémunération est entre 2,5 et 3,5
+Smic, publiée **0,168** (1,478 ÷ 8,8). Le bandeau est un taux unique sur sa bande : c'est
+la part de l'assiette sous 3,5 Smic qui est au-dessus de 2,5, la densité que D-509 nomme.
+Le rapport efface le niveau du bandeau (+14 % dans la grille de 2022) et le champ.
+**Tolérance ±15 %** (0,143 à 0,193), celle des lignes des bandeaux : le montant de la
+tranche est une estimation (1,48 dans le tableau, « de l'ordre de 1,6 » dans le texte,
+soit 0,168 à 0,182), et la population de 2024 est ramenée à 2022 par les indices de la
+grille, structure gardée (le Smic de 2022 à 2024, +7,6 % en moyenne annuelle, le salaire
+moyen du privé autour de +7 % : les multiples du Smic bougent peu).
+
+**Le simulé.** Une passe de la loi de 2022 (openfisca, sans réforme) sur la population de
+D-521 (empreinte 8d42e0d8…) ramenée à 2022 (`verification._population`), par huit lots :
+par personne, le bandeau de l'année (`allegement_cotisation_allocations_familiales`) et
+la rémunération en Smic, `assiette_allegement` sur `smic_proratise` (sommes des mois),
+les deux grandeurs qu'openfisca compare à 3,5. Script `scripts/ligne_bandeau_famille_
+tranche.py`, rapport `reports/verification/complement_2022.json`, que `verification.
+grille` lit à côté de la passe de l'année (ajout de ce commit). Détachée, sous le verrou.
+
+**Le pronostic, qui n'est pas aveugle.** Avant ce texte, deux lectures : sur la population
+de 2024, sans openfisca (la rémunération du privé sur le Smic annuel à sa quotité et à ses
+mois), 23,4 % ; un essai de la passe sur 1 500 ménages (droit 2024), 21,1 %. Pronostic :
+**0,225 (0,205 à 0,245)**, un écart de **+34 % (+22 à +46)** : **hors de la tolérance**,
+trop de salaires de 2,5 à 3,5 Smic. La cause attendue : la fonction de la Dares linéaire
+de 2,01 à 3,04 Smic, quand la densité réelle y décroît. Les bénéficiaires de la bande :
+environ 1,8 M de salariés (pas de juge). Le résultat va dans D-532 ; aucune tolérance ne
+change après le calcul, et si la ligne sort, la population n'est pas refaite sans une
+D-entrée préenregistrée.

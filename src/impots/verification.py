@@ -262,6 +262,11 @@ def grille() -> list[dict[str, Any]]:
     """Chaque ligne, son simulé, son écart, son verdict ; refusée si elle l'est."""
     passes = {int(p.stem.split("_")[1]): json.loads(p.read_text(encoding="utf-8"))
               for p in sorted(RAPPORTS.glob("passe_*.json"))}
+    # Le complément d'une année (D-531) : des mesures qu'une passe de la grille ne porte
+    # pas, lues par personne (`scripts/ligne_bandeau_famille_tranche.py`), chacune avec le
+    # commit de sa propre passe.
+    complements = {int(p.stem.split("_")[1]): json.loads(p.read_text(encoding="utf-8"))
+                   for p in sorted(RAPPORTS.glob("complement_*.json"))}
     out = []
     for ligne in lignes():
         row = dict(ligne)
@@ -271,6 +276,9 @@ def grille() -> list[dict[str, Any]]:
         elif p is None:
             row.update(simule=None, ecart=None, verdict="pas de passe")
         else:
+            c = complements.get(ligne["annee"])
+            if c is not None and ligne["modele"] in c["mesures"]:
+                p = {"mesures": c["mesures"], "commit": c["commit"]}
             if ligne["modele"] not in p["mesures"]:
                 raise VerificationError(f"{ligne['id']} {ligne['annee']} : la passe ne "
                                         f"mesure pas « {ligne['modele']} »")
