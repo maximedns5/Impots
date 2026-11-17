@@ -40130,3 +40130,25 @@ bougent pas. Le fichier : 5 sur 5. Commit 698c111.
 navigateur` (18), `test_jumeau` (50), `test_jumeau_entreprises` (27), `test_jumeau_
 historique` (26), `test_mesure_melenchon_b27` (2) : verts. Ruff : vert. Non lancés : la
 suite entière, `make impact`, les lourds (le brief). D-568 et D-569 ne servent pas.
+
+## D-570 — La jonction des volets `etudes`, `exos` et `rouges` du but 28
+
+Le 17 novembre, après la réponse du propriétaire (« oui pour 1, 3 et 4 » : la population
+de D-553 adoptée pour les études, la fin des exonérations décomposée, les rouges hérités
+cherchés), les trois volets sont joints à `claude/but28` : `rouges` (D-565 à D-567) en
+avance rapide, puis `exos` (D-560 à D-563) et `etudes` (D-556, D-557). Seul conflit : les
+ajouts de `docs/DECISIONS.md`, gardés des deux côtés et rangés par numéro.
+
+**Les tests.** Les données du worktree de jonction sont reliées, fichier par fichier, sur
+la population de D-553 (empreinte 5ace8bb6). Ruff : vert. Les tests légers des fichiers
+touchés et de leurs voisins : `test_jumeau_depuis_rapport`, `test_jumeau_papillon`,
+`test_jumeau_structurel`, `test_jumeau_navigateur`, `test_mesure_melenchon_b27`,
+`test_jumeau_boucle`, `test_jumeau_travail`, `test_salaires_horaires` : 66 verts, aucun
+rouge. Non lancés : la suite entière, `make impact`, les lourds. Rouge connu, hors de ces
+fichiers : `test_etude::test_every_study_is_unrun_or_rendered_exactly` sur douze études,
+qui attend `impots etude ecrire` (D-557).
+
+**Ce qui attend le propriétaire.** La série `impots etude` des douze études préenregistrées
+en D-556 (de l'ordre d'une journée sur une file), refusée aux agents : son résultat ira en
+D-558. Le second point de la fonction des salaires entre 2,5 et 3,5 Smic et son juge
+(D-563). La part du coût qui arrive aux ménages, tombée de 0,21 à 0,18 (D-557).
