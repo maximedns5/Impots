@@ -39563,3 +39563,24 @@ sont pas refaites. (2) Le bandeau maladie (D-553) et le rendement de la fin des
 exonérations, qui ne revient pas : une décomposition (la forme contre le facteur de masse)
 avant un second point. (3) La prime de 2019 par décile : une question de qui touche la
 prime (D-536), pas des salaires ; à juger sur l'ERFS.
+
+## D-555 — La jonction de la suite du but 28 : `claude/but28-suite` sur `claude/but28`
+
+Le 17 novembre, la suite (D-551 à D-554) est jointe à `claude/but28` en avance rapide,
+sans conflit : `claude/but28-suite` partait de 0f408c1 (D-550), sur lequel rien n'a été
+ajouté depuis. Les données du worktree de jonction restent liées sur la population de
+D-521 ; celles de D-553 (empreinte 5ace8bb6) sont dans le worktree de la suite, et c'est
+là que les tests ci-dessous tournent.
+
+**Les tests.** `test_jumeau_travail` et `test_salaires_horaires` : verts.
+`test_jumeau_papillon` : deux rouges, `test_point_indice_ne_renchérit_plus_le_travail_
+prive` et `test_melenchon_tourne_en_structurel_par_les_mesures_seules`. Ils échouent de
+même sur 0f408c1, avant la suite, avec les données de D-521 : ils ne viennent pas de
+D-551 à D-554. Ils ne sont ni retouchés ni sautés ; leur cause reste à chercher, avec les
+autres rouges hérités que la suite signale (`test_jumeau_structurel`,
+`test_jumeau_depuis_rapport`). Non lancés : la suite entière, `make impact`, les lourds.
+
+**Ce qui attend le propriétaire.** Adopter ou non la population de D-553 pour les études,
+qui ne sont pas refaites ; le bandeau maladie éloigné par le point (D-553) ; le rendement
+de la fin des exonérations, manqué (D-554) ; le profil de long terme, φ et la boucle par
+défaut (D-542, D-546) ; `impots etude ecrire`, qui bloque le site et la PR du but 27.
