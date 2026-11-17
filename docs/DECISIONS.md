@@ -40444,3 +40444,90 @@ du CICE sur l'emploi, la masse salariale et l'activité : approfondissements et 
 pour la période 2013-2016 »), qui porte les coefficients de la valeur ajoutée par tête
 par quartile d'exposition, n'est pas au manifeste : un second préenregistrement, sur
 lui, sous la même règle, est le pas suivant. Les rapports du comité de 2016 à 2018 aussi.
+
+## D-603 — La dimension inscrite, ses nombres de tête ; le rapport TEPP préenregistré
+
+**La dimension** (`jumeau/impacts/productivite.py`, inscrite sous « productivite » ;
+paramètres `jumeau/parametres/productivite.yaml` ; tests légers
+`tests/test_impacts_productivite.py`, cinq verts, qui tiennent η et ses bornes, la
+montée, les leviers d'un Smic et d'une cotisation, le socle sur des états faits à la
+main, un canal branché). Numpy et yaml : elle tourne au navigateur. Indicateurs, en %
+d'écart à la référence, année par année : productivité apparente du travail, capital par
+emploi, PIB potentiel, PIB en volume, rémunération réelle moyenne par salarié (D1 par
+tête, le coût et non le net, au prix de la consommation), puis, à côté, la PGF des canaux
+(% du PIB, par canal, bande η = 0 à son haut) et le PIB potentiel avec les canaux. Le
+statut : « sourcé, non jugé » (D-602). Une bande des θ du jumeau n'apparaît que si la
+trajectoire porte des tirages (tirage 0 au centre, 5 et 95 % des autres). Non fait : son
+appel par `impacts/__init__.py` (l'import qui l'inscrit) et la page : au volet `tableau`
+et à la jonction.
+
+**Les nombres de tête**, mode structurel, θ du jumeau à ½, convention
+« parts_premiere_annee » (D-414), population de D-553 (empreinte 5ace8bb6), années 2026,
+2027, 2030 et 2035. Le programme de Mélenchon est refusé en structurel (ses prélèvements
+agrégés, D-412) : il est ici la trajectoire de ses sept mesures ensemble (leurs mesures
+structurelles, une seule trajectoire), ce que le volet `tableau` devra dire aussi.
+
+| % d'écart à la référence | 2026 | 2027 | 2030 | 2035 |
+|---|---:|---:|---:|---:|
+| productivité apparente, Mélenchon | +0,79 | +1,32 | +1,35 | +1,44 |
+| productivité apparente, Retailleau | +0,24 | +0,29 | +0,11 | +0,08 |
+| productivité apparente, Attal | +0,30 | +0,23 | −0,36 | −0,53 |
+| capital par emploi, Mélenchon | +0,15 | +0,27 | +0,87 | +1,54 |
+| capital par emploi, Retailleau | −0,12 | −0,25 | −0,11 | +0,20 |
+| capital par emploi, Attal | −0,18 | −0,52 | −0,71 | −0,55 |
+| PIB potentiel (socle), Mélenchon | +0,09 | +0,36 | +0,78 | +0,68 |
+| PIB potentiel (socle), Retailleau | +0,11 | +0,33 | +0,69 | +0,88 |
+| PIB potentiel (socle), Attal | +0,21 | +0,65 | +1,34 | +1,61 |
+| PIB en volume, Mélenchon | +0,80 | +1,54 | +1,71 | +1,39 |
+| PIB en volume, Retailleau | +0,39 | +0,72 | +0,83 | +0,85 |
+| PIB en volume, Attal | +0,58 | +1,10 | +1,26 | +1,30 |
+| rémunération réelle, Mélenchon | +1,69 | +2,12 | +2,50 | +2,53 |
+| rémunération réelle, Retailleau | −0,00 | −0,03 | −0,12 | −0,13 |
+| rémunération réelle, Attal | −0,64 | −1,17 | −1,89 | −2,10 |
+
+En 2035, les canaux à côté (% du PIB) : Mélenchon +0,81 (0 à +1,63), Retailleau −0,10
+(0 à −0,21), Attal 0 ; le PIB potentiel avec eux : Mélenchon +1,49 (+0,68 à +2,31),
+Retailleau +0,78 (+0,68 à +0,88), Attal +1,61.
+
+Les leviers : Mélenchon, coût du travail +0,87 % de la masse super-brute marchande en
+2026 (+0,98 % en 2035) : le Smic à +16,17 %, net des allègements que la RGDU ouvre, +0,23 %
+(la loi −2,18 %, la diffusion +2,42 %), la fin des exonérations au-delà de 2 Smic +0,64 %
+(7,04 Md€) ; brut relevé par le Smic +2,89 %. D'où, à côté, `pression_cout` +0,21 % du PIB
+et `salaire_efficience` +0,61 % en 2035. Retailleau : coût −0,43 % (la suppression des
+cotisations patronales au-delà de 1 623 h, −4,77 Md€ en 2026), d'où −0,10 % du PIB à
+côté si le canal est symétrique, ce que le CICE n'a pas tranché. Attal : aucun levier (le
+« droit au brut » touche les cotisations salariales, la CVAE passe déjà au capital).
+
+**Comment les lire.** Le socle seul est le jumeau. La productivité apparente de Mélenchon
+monte surtout par la composition (moins d'emploi à bas salaire, le capital par emploi en
+hausse) ; celle d'Attal baisse parce que l'emploi monte plus que le PIB (+562 milliers
+d'emplois en 2035). La rémunération réelle d'Attal baisse : le coin salarial passe au
+brut à long terme (Mésange), le net des salariés monte (volet `pouvoir`). Le PIB
+potentiel lit l'écart d'emploi comme structurel : celui d'Attal dépasse son PIB en 2035.
+
+**Le second juge, préenregistré.** Gilles, L'Horty et Mihoubi (TEPP), « Les effets du
+CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions
+pour la période 2013-2016 », rapport VI à France Stratégie, 11 septembre 2020
+(`tepp_2020_cice_rapport_vi.pdf`, téléchargé fermé ; seuls son titre et ses 79 pages
+ont été vus). Il est ouvert après la poussée de cette entrée. La règle est celle de
+D-601, précisée ici avant l'ouverture :
+
+* la variable : la valeur ajoutée par tête (ou la productivité apparente du travail) ;
+  à défaut la PGF ; rien d'autre ;
+* l'échantillon et la période : l'ensemble des groupes fiscaux et des entreprises
+  indépendantes, la plus longue période que le rapport estime (2014-2016 ou sa
+  moyenne), la spécification qu'il dit principale ;
+* la métrique : l'effet du quartile le plus exposé contre le moins exposé (ou le
+  coefficient de l'intensité) ; le pronostic converti est −η × l'écart d'intensité des
+  deux quartiles **que le rapport publie** (en part de la masse salariale brute, ×1 /
+  1,4705 ; super-brute, tel quel) ; si le rapport ne publie pas cet écart, non concluant ;
+* les verdicts et leurs suites, ceux de D-601 (centre tenu : `juge: D-604` et branché ;
+  centre rejeté avec zéro dedans : η à 0 au centre et en bas, le haut à la borne
+  convertie ; signe rejeté ; non concluant : rien ne change).
+
+**Pronostic.** Le rapport publie la valeur ajoutée par tête par quartile avec ses
+écarts-types ; l'écart d'intensité entre quartiles est de l'ordre de 3 points de masse
+brute, le pronostic converti de l'ordre de −0,8 % ; l'estimation est proche de zéro et
+son intervalle à 95 % large de ±2 points : le centre tient (une chance sur trois) ; non
+concluant, faute de l'écart d'intensité publié (une sur trois) ; centre rejeté (une sur
+trois). Résultat en D-604.

@@ -2590,6 +2590,15 @@
       "licence": "IZA — accès libre",
       "description": "Cahuc et Carcillo, « The detaxation of overtime hours: lessons from the French experiment », IZA DP n° 5439, janvier 2011 (version publiée : Journal of Labor Economics 32(2), 2014, p. 361-400). Résumé p. 3 du PDF : l'exonération des heures supplémentaires de 2007 n'a pas d'effet significatif sur les heures travaillées. Source du canal « duree_travail » (D-600).",
       "quarantined": false
+    },
+    "tepp_2020_cice_rapport_vi.pdf": {
+      "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/2020/CICE/cice_francestrategie_rapport_vi_tepp_11092020.pdf",
+      "sha256": "f269924cb3c4ba62afd60e0e7ac27bea656ba99f360c6b51e587dd3aa24fdc21",
+      "bytes": 1253510,
+      "downloaded": "2026-11-18",
+      "licence": "France Stratégie — accès libre",
+      "description": "Gilles, L'Horty et Mihoubi (TEPP), « Les effets du CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions pour la période 2013-2016 », rapport VI remis à France Stratégie le 11 septembre 2020 (79 p.). Téléchargé fermé : juge préenregistré en D-603 (la valeur ajoutée par tête et le canal « pression_cout »), ouvert après sa poussée.",
+      "quarantined": false
     }
   }
 }
