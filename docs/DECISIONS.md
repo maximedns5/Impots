@@ -40250,3 +40250,70 @@ Chaque dimension a une source publiée par coefficient, une bande, et un statut 
 l'entente entre les gens n'ont pas de juge aveugle connu : ils sont montrés comme des
 ordres de grandeur sourcés, jamais comme des prévisions vérifiées. Les numéros : D-591 à
 D-609 par volet, D-610 et la suite pour la jonction.
+
+## D-595 — Le moral des gens (1) : la dimension, ses coefficients, le contrôle préenregistré
+
+**Ce qui est fait** (volet `bienetre` du but 29, D-590). Une dimension « moral », inscrite
+dans `jumeau/impacts` (`jumeau/impacts/moral.py`), traduit ce que la trajectoire fait aux
+ménages en satisfaction dans la vie (de 0 à 10, la question de SRCV) et en WELLBY (un point
+de satisfaction pour une personne pendant un an). Quatre canaux, chacun avec un coefficient
+publié et sa bande (`jumeau/parametres/moral.yaml`, document, page du PDF, valeur) :
+
+| canal | coefficient | centre | bande | source |
+|---|---|---:|---|---|
+| revenu réel (log, par décile) | β, par unité de log | 0,425 | 0,35 à 0,50 | Green Book, document de fond, p. 19 (Lindqvist et al. 2020) |
+| chômage propre | δ, par chômeur et par an | 0,46 | 0,38 à 0,53 | Green Book, annexe A2, p. 65 (Clark et al. 2018) |
+| chômage autour de soi | ε, par adulte et point de chômage | 0,0279 | 0,0102 à 0,0390 | DMO 2001, tableau 1 (−2,0 ; −1,7 à −2,8), ancré ; bas : Helliwell et Huang 2014 |
+| inflation (moyenne sur trois ans) | φ, par adulte et point | 0,0195 | 0,0098 à 0,0321 | DMO 2001, tableau 1 (−1,4 ; −0,7 à −2,3), ancré |
+
+L'ancrage : DMO estiment sur une échelle de 1 à 4 ; leur coefficient d'un chômeur, sur la
+même échelle, est −0,33 (tableau A1). Un coefficient c du taux (en fraction) est porté sur
+0-10 par (c / 100) δ / 0,33 : le rapport des effets de DMO, à l'échelle du chômage propre
+du Green Book (choisi ; la règle linéaire 10/3 donnerait 2,4 fois plus, non retenue).
+L'insécurité de l'emploi n'est pas un canal de plus : elle passe par ε (Helliwell et Huang,
+p. 36-37 ; DMO, p. 11, « fear of unemployment »). Les adultes : la part des 16 ans ou plus,
+0,8183 (Eurostat, demo_pjan, France, 2024), des personnes des cellules, uniforme entre
+déciles. L'équivalent monétaire : la valeur d'un WELLBY du Green Book, 13 000 £ de 2019
+(10 000 à 16 000), au cours moyen de la BCE de 2019 (0,8777706 £ pour 1 €), soit 14 810 €
+de 2019, une convention ; elle se fonde sur un coefficient du revenu de 1,96, pas sur β,
+ce que les limites disent. Les entrées : le revenu disponible des dix déciles, le chômage,
+la population active et l'écart du prix de la consommation (D-414) de la variante et de la
+référence, au tirage 0. Statut : « sourcé, non jugé ». Aucun coefficient n'est estimé sur
+la France : les coefficients de l'Insee n'ont pas été lus, pour garder le contrôle aveugle.
+
+Les cellules lues sont celles de `reports/jumeau/entrees_navigateur.json` : leurs totaux
+(67 266 697 personnes, 1 352,2 Md€ de revenu disponible, 2 492 518 chômeurs) sont ceux de
+`jumeau_cellules_2024.json` de la population de D-553 (empreinte 5ace8bb6), au bit.
+
+**Le contrôle, préenregistré avant tout calcul sur les cellules** (pas un juge : un écart
+de l'état de départ, ce que la dimension doit retrouver de ce que SRCV publie).
+
+* **C1, le revenu, aveugle.** L'écart de satisfaction entre le cinquième et le premier
+  quintile de niveau de vie que la dimension implique au départ : β fois l'écart de la
+  moyenne du log du niveau de vie (revenu disponible sur unités de consommation des
+  cellules) des déciles 9-10 et 1-2, pondérée par les personnes (`controle_depart`). Le
+  juge : Eurostat, `ilc_pw02` (« Overall life satisfaction by income quintile, household
+  composition and degree of urbanisation », EU-SILC, dont SRCV est la part française),
+  France, tous ménages, tous degrés d'urbanisation, QU5 moins QU1, la dernière année
+  publiée ; à côté, sans juger, les autres années et, s'il existe, le tableau par quintile
+  de l'Insee (« Satisfaction dans la vie de 2010 à 2025 », Insee Résultats). Aucune de ces
+  valeurs n'a été lue. **Tolérance** : le rapport modèle / publié dans [0,5 ; 1,5]. Raison :
+  β est un effet causal, à caractéristiques données ; l'écart publié est brut et porte
+  aussi la santé, l'emploi, le diplôme, qui suivent le revenu : un rapport sous 1 est
+  attendu ; sous la moitié, la dimension manquerait l'essentiel du gradient ; au-dessus de
+  1,5, elle l'exagérerait. **Pronostic** : dans la tolérance, entre 0,5 et 0,9.
+* **C2, le chômage, NON aveugle.** L'écart entre personnes en emploi et chômeurs :
+  δ plus β fois l'écart de log du niveau de vie moyen des cellules, pondéré par les
+  personnes en emploi et par les chômeurs. Le juge : le tableau le plus récent de l'Insee
+  par statut d'activité (SRCV) que la recherche trouve ; à défaut, l'Insee Focus qui
+  publie la note des chômeurs et des personnes en emploi. **Il n'est pas aveugle** : un
+  extrait de recherche, lu en cherchant la source, donnait 6,3 contre 7,4 (données de 2014
+  à 2017, un Insee Focus) et 6,1 contre 7,5 (un article de presse, année non dite).
+  Même tolérance, [0,5 ; 1,5], pour la même raison. **Pronostic** : dans la tolérance,
+  vers 0,6 (δ fait l'essentiel ; les cellules, sans distribution interne, sous-estiment
+  l'écart de revenu entre chômeurs et personnes en emploi d'un même décile).
+
+Le résultat, dans D-596. La dimension tourne aussi sur trois programmes (Retailleau et
+Attal, le mode structurel, vieillie, la convention « parts_premiere_annee » ; Mélenchon,
+que le structurel refuse, par la convention « mesures_seules » de D-502), θ ½ : un ordre de
+grandeur, sans juge, dit dans D-597.
