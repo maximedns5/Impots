@@ -1417,6 +1417,41 @@ réécrire sans passe sur la grille de D-521, puis le site (D-512) ; les études
 touchent la prime et l'assiette à refaire ; le tableau de la Dares à relever ; `make
 impact` et les lourds, la PR ; les décisions du propriétaire (D-511, D-521).
 
+### But 28 — Un jumeau qui réagit comme l'économie (validé le 17 novembre 2026, D-530)
+
+Le propriétaire, le 17 novembre, après le volet `mesure` du but 27 : « est-ce que notre
+population réagit de la bonne manière, et les mesures se diffusent-elles bien dans le
+modèle ? » La réponse de D-509 : la loi est juste et vérifiée, la réaction ne l'est pas.
+La population est statique et ne reçoit pas les emplois du jumeau ; le jumeau est additif
+(deux mesures y font la somme de leurs effets) ; le signe de l'emploi du Smic tient à un θ
+sans source (`travail_smic_diffusion`, de +190 à −216 milliers) ; une distribution que
+la grille ne juge pas (les salaires entre 1 et 3 Smic) a retourné une interaction ; et
+aucune réaction n'a jamais été confrontée au passé. Quatre volets, en deux temps, sur
+`claude/but28-<volet>` partie de `claude/but28` (lui-même parti de `claude/but27`, dont
+il dépend ; il se rebase sur `main` après le merge du but 27).
+
+1. **Les données de la réaction** (`reaction`) : une ligne de grille sur la distribution
+   des salaires par tranche de Smic (préenregistrée), et la diffusion des hausses du Smic
+   sourcée dans la littérature publique (Insee, Dares) pour `travail_smic_diffusion`.
+2. **Les juges du passé** (`passe`) : deux ou trois mesures passées rejouées, leur effet
+   préenregistré, puis comparé aux évaluations faites après coup (le CICE et sa bascule
+   en allègements, les hausses du Smic de 2022-2023, la prime d'activité de 2019). Une
+   source qui a servi à caler un θ ne peut pas le juger.
+3. **Après 1 et 2, la diffusion non additive** (`interaction`) : le bloc `travail` reçoit
+   le choc combiné des mesures par tranche de salaire, au lieu de sommer leurs effets.
+4. **Après 1 et 2, la boucle** (`boucle`) : les emplois et les salaires du jumeau
+   reviennent dans la population (repondération), pour le second tour des impôts et des
+   prestations.
+
+**Ce qui tourne** : les passes sur la population, détachées, une à la fois (un verrou
+commun) ; pas d'étude de candidat complète, pas de `make full`, pas de `make impact` ni
+de lourds sans l'accord du propriétaire. Les évaluations préalables des PLF et des PLFSS
+ne sont pas ouvertes ; les évaluations après coup le sont, après le préenregistrement.
+
+Les numéros réservés : D-531 à D-534 pour `reaction`, D-535 à D-539 pour `passe`, D-540
+à D-544 pour `interaction`, D-545 à D-549 pour `boucle` ; D-550 et la suite pour la
+jonction.
+
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,

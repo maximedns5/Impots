@@ -38189,3 +38189,23 @@ et −216,5 → −215,8 milliers, B9 2035 à θ 1 +5,38 → +5,50 ; vieillie, e
    Smic dans le bloc `travail`) ne se ferait que par un bloc qui lit plusieurs mesures.
 5. Le palier complet du programme (huit passes de 13 minutes) et le redimensionnement
    comme convention : à faire par une étude refaite, ou à garder comme lecture d'essai.
+
+## D-530 — Le but 28 : un jumeau qui réagit comme l'économie
+
+Le 17 novembre, le propriétaire a demandé si la population réagit de la bonne manière et si
+les mesures se diffusent bien dans le jumeau. La réponse, tirée de D-500 à D-509 : non,
+pas encore. La loi est juste (la grille de D-521, le Smic à 29,07 Md€ contre 29,74 dans
+l'étude) ; la réaction ne l'est pas. La population est statique et ne reçoit rien du
+jumeau ; le jumeau est additif (D-509) ; le signe de l'emploi du Smic tient à un θ sans
+source ; la distribution des salaires entre 1 et 3 Smic, qu'aucune ligne ne juge, a
+retourné la paire Smic × exonérations (+1,165 → −0,985 Md€) ; aucune réaction n'a été
+confrontée au passé. Proposé : les données (une ligne de grille, la diffusion sourcée),
+les juges du passé, puis la diffusion non additive et la boucle population ↔ jumeau.
+Réponse du propriétaire : « oui lance 1 et 2, puis 3 et 4 ».
+
+**Décidé.** Le but 28 (BUT.md) : quatre volets, `reaction` et `passe` d'abord, en
+parallèle, `interaction` et `boucle` ensuite. `claude/but28` part de `claude/but27`, non
+mergé, dont il dépend. Les passes restent détachées et une à la fois, par un verrou
+commun (`flock`). Le juge du passé est une évaluation faite après coup, lue seulement
+après le préenregistrement ; une source qui cale un θ (Bozio-Wasmer pour λ, par exemple)
+ne le juge pas. Les numéros : D-531 à D-549 par volet, D-550 et la suite pour la jonction.
