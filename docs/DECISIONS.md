@@ -40482,3 +40482,43 @@ juge de la mesure : un écart de l'état de départ).
 Le résultat dans D-621 ; trois programmes (Mélenchon, Retailleau, Attal) et un programme qui
 recule l'âge de départ, dans D-622. Aucune tolérance ni coefficient ne change après le
 calcul ; aucun chiffrage de tiers des programmes 2027 n'est lu.
+
+## D-621 — La santé et le temps de vie (2) : le contrôle de l'état de départ, deux sur deux
+
+Le préenregistrement de D-620 est commité et poussé (2ede3d2) avant le calcul ; la
+dimension (`jumeau/impacts/sante.py`, `jumeau/parametres/sante.yaml`) a été écrite ensuite,
+l'écart du modèle calculé (`controle_depart`, cellules de `entrees_navigateur.json`,
+population de D-553), puis le juge ouvert : `ip1687.xls`, onglet « Figure 1 »,
+l'espérance de vie à la naissance par vingtile de niveau de vie et par sexe (2012-2016,
+France hors Mayotte, échantillon démographique permanent). Décile = moyenne de deux
+vingtiles.
+
+| contrôle | modèle | publié (D10 − D1) | rapport | tolérance | tient |
+|---|---:|---:|---:|---|---|
+| C1 : hommes | 10,50 (g = 5,054 × 2,078) | 11,65 (84,0 − 72,35) | 0,90 | [0,8 ; 1,2] | oui |
+| C2 : femmes | 6,86 (g = 3,303 × 2,078) | 7,55 (88,1 − 80,55) | 0,91 | [0,8 ; 1,2] | oui |
+
+**Les deux tiennent, dans le pronostic** (entre 0,85 et 1,10). L'écart de log du niveau de
+vie entre D10 et D1 est presque le même dans les cellules (2,078) et dans l'échantillon de
+l'Insee (2,003, sur les niveaux de vie moyens des vingtiles) : la dispersion des cellules
+n'est pas en cause. Le modèle est un peu court aux deux bouts parce que la droite passe par
+les vingtiles extrêmes, plus loin que les déciles.
+
+**La forme, non jugée, et ce qu'elle dit.** L'écart de chaque décile au premier, en années :
+
+| décile | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| hommes, modèle | 2,25 | 3,30 | 4,12 | 4,76 | 5,38 | 6,02 | 6,77 | 7,72 | 10,50 |
+| hommes, Insee | 2,35 | 4,15 | 5,45 | 6,60 | 7,50 | 8,40 | 9,30 | 10,35 | 11,65 |
+| femmes, modèle | 1,47 | 2,16 | 2,69 | 3,11 | 3,52 | 3,94 | 4,42 | 5,05 | 6,86 |
+| femmes, Insee | 1,85 | 3,25 | 4,25 | 4,90 | 5,50 | 5,95 | 6,40 | 6,90 | 7,55 |
+
+Le gradient publié n'est pas linéaire en log : il est plus raide que g au milieu de la
+distribution (de D3 à D9, le modèle fait 70 à 75 % de l'écart publié) et plus plat en haut
+(de D9 à D10, 2,8 ans dans le modèle contre 1,3 publié pour les hommes). Pour une mesure qui
+change surtout le revenu des déciles du milieu, g sous-estime donc l'association d'un quart
+environ ; pour le dixième décile, il la surestime. Rien n'est retouché : g reste celui de
+D-620, et ce biais de forme est plus petit que l'incertitude sur la part causale (0 à 1/6).
+
+Un test léger tient ces nombres (`test_controle_depart_sur_les_cellules_commitees`), avec
+les canaux à la main sur des cellules synthétiques (`tests/test_jumeau_impacts_sante.py`).
