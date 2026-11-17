@@ -196,7 +196,7 @@ STATE_RECEIPTS = (
 STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "reduction_loyer_solidarite",
                    "aefa", "cf", "asf", "ars", "crds_pfam", "crds_mini", "aspa",
                    "ria", "allocation_enfant", "garantie_autonomie",
-                   "retraite_imposable", "paje")
+                   "retraite_imposable", "paje", "garantie_jeunes")
 
 #: The identity is checked in absolute euros against a floor, and relatively above it.
 #: A reform moving a few million is not worth a relative test; one moving billions is.

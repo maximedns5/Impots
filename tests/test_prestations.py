@@ -428,3 +428,18 @@ def test_a_transfer_reform_has_no_macro_path():
     assert impulse.covered_share == 0.0
     for reason in impulse.reasons().values():
         assert "0,39" in reason
+
+
+def test_the_garantie_jeunes_is_a_transfer_the_ledger_sees():
+    """The bonification of the prime d'activité of 2019, rejouée in miroir on 2019 law
+    (D-536): the Garantie jeunes (2017-2021) is cut by the prime, so it rose as the prime
+    fell, inside `revenu_disponible`, with no row to hold it, and the guard refused the
+    pass by 4 %. These are the deltas measured on 3 000 ménages, scaled by a thousand."""
+    from impots import guards
+
+    moved = {"ppa": -589.743e6, "crds_mini": 2.9487e6, "garantie_jeunes": 15.157e6}
+    cost = sum(moved.values())
+    guards.sector_balance(moved, reform_cost=cost)
+    with pytest.raises(guards.SectorBalanceError, match="ne correspond pas"):
+        guards.sector_balance({k: v for k, v in moved.items() if k != "garantie_jeunes"},
+                              reform_cost=cost)

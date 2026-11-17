@@ -110,6 +110,7 @@ UNMAPPED = {
     "aspa": "transfert",
     "retraite_imposable": "transfert",
     "paje": "transfert",
+    "garantie_jeunes": "transfert",
     "impot_societes": "fiscalité des entreprises",
     "contribution_sociale_is": "fiscalité des entreprises",
     "cebge": "fiscalité des entreprises",

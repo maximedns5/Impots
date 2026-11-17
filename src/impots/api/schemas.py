@@ -1493,6 +1493,8 @@ class ResultRows(BaseModel):
     garantie_autonomie: float | None = None
     """The new benefits of the programmes (but 21, étape 3): zero unless the reform poses
     their group, the law having none of them."""
+    garantie_jeunes: float | None = None
+    """The Garantie jeunes, 2017-2021 (D-536): zero from 2022."""
     cvec: float | None = None
     """The CVEC, POSITIVE, paid by a student of higher education who holds no grant: zero
     for a household of the input format, which declares no student."""
