@@ -41070,3 +41070,172 @@ garde le choix (`impacts.html#pres2027_le_pen_programme`).
 **Ce qui n'est pas fait.** Aucun test de navigateur dédié (D-335 : la plomberie se mesure
 une fois) ; `test_jumeau_page` (lourd) n'a pas tourné. La page ne règle pas θ (chaque θ à
 ½ ; la page du jumeau le fait) ni le mode (le réglage par défaut de D-605).
+
+## D-620 — La santé et le temps de vie (1) : les canaux et le contrôle préenregistré
+
+**Ce qui est fait** (volet `sante` du but 29, D-590, ajouté par le coordinateur dans la nuit
+du 17 au 18 novembre ; numéros D-620 à D-624). Une dimension « santé », inscrite dans
+`jumeau/impacts` (`jumeau/impacts/sante.py`, paramètres `jumeau/parametres/sante.yaml`,
+numpy et yaml), traduit ce que la trajectoire fait aux ménages en années de vie, en décès
+(un ordre de grandeur), en santé déclarée, en renoncement aux soins et, pour un programme
+qui touche à l'âge de départ, en années de retraite sans incapacité. Sa forme est celle du
+moral (D-595) : chaque canal a un coefficient publié et sa bande, linéaire en lui ; la
+bande du total est l'enveloppe des bornes de même sens. Les documents lus sont au manifeste
+de `data/raw` (copies hors git).
+
+| canal | ce qui est lu | coefficient | centre | bande | source |
+|---|---|---|---:|---|---|
+| revenu → durée de vie | Δln du revenu réel par décile | g, années d'espérance de vie par unité de log du niveau de vie (association) | 5,05 (h), 3,30 (f) | — | Insee Première n° 1687 : 84,4 − 71,7 ans (h), 88,3 − 80,0 (f) entre le vingtile du haut (5 800 €) et celui du bas (470 €), sur ln(5 800 / 470) |
+| | | s, la part causale de g | 1/12 | 0 à 1/6 | Cesarini et al. 2016 (IFN WP 1060, p. 13) : l'intervalle à 95 % exclut un effet de la richesse sur la mortalité à dix ans d'un sixième du gradient |
+| chômage → mortalité | chômeurs de plus | r, surcroît de risque de décès d'un chômeur | 0,30 | 0,10 à 1,00 | Sullivan et von Wachter 2009 : +50 à 100 % l'année qui suit la perte d'emploi, 10 à 15 % vingt ans après |
+| chômage → santé déclarée | chômeurs de plus | c, part causale de l'écart brut | 0,25 | 0 à 0,5 | écart : 75,1 − 60,8 = 14,3 points de « bonne ou très bonne santé » (Eurostat hlth_silc_01, France, 16-64 ans, 2025) ; bas : Schmitz 2011, aucun effet des fermetures d'usines |
+| revenu → renoncement aux soins | Δln du revenu par décile | pente de la part qui renonce pour le prix (examen médical et dentaire), Q1 contre Q5, par unité de log ; part causale | 0,5 | 0 à 1 | Eurostat hlth_silc_08 et 09, France, 16 ans ou plus, 2025 |
+| âge de départ | l'écart d'âge légal du programme, une entrée | τ, l'âge effectif par an d'âge légal | 0,5 | 0,25 à 1,0 | COR, rapport de juin 2026, partie 4, ch. 2 (p. 218) : 48,1 % des nouveaux retraités de 2024 partis au plus tard à 62 ans, 24,5 % à 62 ans |
+| | années de retraite | part des années sans limitation d'activité à 60-64 ans | 0,70 | 0,70 à 0,89 | COR, juin 2026, partie 4, ch. 1 (p. 209) : un peu plus de 30 % de limitations sévères ou modérées, un peu plus de 10 % sévères |
+| | durée de vie | années de vie par personne et par an de départ plus tardif | 0 | −0,10 à +0,10 | Bozio, Garrouste et Perdrix 2021 (France, réforme de 1993 : aucun effet) ; haut : Kuhn et al. 2020 (+0,208 an pour les hommes, rien pour les femmes) ; bas : symétrique, le sens de Hallberg et al. 2015 |
+
+Les conversions : les décès que porte un changement de durée de vie, par la disparité de
+la durée de vie e† (les années perdues en moyenne à un décès, table de mortalité d'Eurostat,
+France, 2024, environ 10 ans) : Δln μ_d = −ΔEV_d / e† ; les décès de 2024 (643 332,
+Eurostat) répartis entre déciles selon les personnes et le gradient ; le taux de décès des
+25-64 ans et les années restantes à un décès de cet âge (même table). Les centres des parts
+causales (1/12, 0,30, 0,25, 0,5) sont **choisis** dans leur bande : la dimension est
+« illustrative », pas « sourcée, non jugée ». La causalité est la limite principale : le
+gradient de l'Insee est une **association** (le diplôme, le métier, la santé dès l'enfance
+font le revenu et la durée de vie ; Chetty et al. 2016 trouvent aux États-Unis 14,6 ans
+d'écart pour les hommes entre le centile du haut et celui du bas, une association aussi) ;
+les loteries suédoises (Cesarini et al. 2016) ne trouvent pas d'effet causal de la richesse
+sur la mortalité des adultes, Lindahl (2005) en trouve un sur la santé. Le temps de travail
+(35 h, 32 h) n'est lu dans aucun programme du jumeau : non chiffré, dit dans les limites.
+
+**Le contrôle, préenregistré avant tout calcul de la dimension sur les cellules** (pas un
+juge de la mesure : un écart de l'état de départ).
+
+* **C1 (hommes) et C2 (femmes), NON aveugles à moitié.** L'écart d'espérance de vie à la
+  naissance entre le dixième et le premier décile de niveau de vie que la dimension
+  implique au départ : g fois l'écart de la moyenne du log du niveau de vie des cellules
+  (revenu disponible sur unités de consommation, pondérée par les personnes) des déciles 10
+  et 1. Le juge : le fichier de données de l'Insee Première n° 1687 (`ip1687.xls`, au
+  manifeste, non ouvert), l'espérance de vie par vingtile : la moyenne des vingtiles 19 et
+  20 moins celle des vingtiles 1 et 2, pour chaque sexe ; à défaut d'un tableau par
+  vingtile dans ce fichier, la figure 1 du PDF. Ce qui n'est pas aveugle : les vingtiles 1
+  et 20, qui fixent g, sont dans le résumé déjà lu, et l'écart de log des cellules (2,078)
+  se tire de D-596. Ce que le contrôle juge : la forme log-linéaire à l'intérieur de la
+  distribution et la dispersion des niveaux de vie des cellules (2024) face à celle de
+  l'échantillon démographique permanent (2012-2016). **Tolérance** : le rapport modèle /
+  publié dans [0,8 ; 1,2] pour chacun. **Pronostic** : les deux tiennent, avec un rapport
+  entre 0,85 et 1,10 (le modèle donne 10,5 ans pour les hommes et 6,9 pour les femmes).
+
+À côté, sans juger : l'écart de chaque décile au premier, et l'écart moyen des deux sexes.
+Le résultat dans D-621 ; trois programmes (Mélenchon, Retailleau, Attal) et un programme qui
+recule l'âge de départ, dans D-622. Aucune tolérance ni coefficient ne change après le
+calcul ; aucun chiffrage de tiers des programmes 2027 n'est lu.
+
+## D-621 — La santé et le temps de vie (2) : le contrôle de l'état de départ, deux sur deux
+
+Le préenregistrement de D-620 est commité et poussé (2ede3d2) avant le calcul ; la
+dimension (`jumeau/impacts/sante.py`, `jumeau/parametres/sante.yaml`) a été écrite ensuite,
+l'écart du modèle calculé (`controle_depart`, cellules de `entrees_navigateur.json`,
+population de D-553), puis le juge ouvert : `ip1687.xls`, onglet « Figure 1 »,
+l'espérance de vie à la naissance par vingtile de niveau de vie et par sexe (2012-2016,
+France hors Mayotte, échantillon démographique permanent). Décile = moyenne de deux
+vingtiles.
+
+| contrôle | modèle | publié (D10 − D1) | rapport | tolérance | tient |
+|---|---:|---:|---:|---|---|
+| C1 : hommes | 10,50 (g = 5,054 × 2,078) | 11,65 (84,0 − 72,35) | 0,90 | [0,8 ; 1,2] | oui |
+| C2 : femmes | 6,86 (g = 3,303 × 2,078) | 7,55 (88,1 − 80,55) | 0,91 | [0,8 ; 1,2] | oui |
+
+**Les deux tiennent, dans le pronostic** (entre 0,85 et 1,10). L'écart de log du niveau de
+vie entre D10 et D1 est presque le même dans les cellules (2,078) et dans l'échantillon de
+l'Insee (2,003, sur les niveaux de vie moyens des vingtiles) : la dispersion des cellules
+n'est pas en cause. Le modèle est un peu court aux deux bouts parce que la droite passe par
+les vingtiles extrêmes, plus loin que les déciles.
+
+**La forme, non jugée, et ce qu'elle dit.** L'écart de chaque décile au premier, en années :
+
+| décile | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| hommes, modèle | 2,25 | 3,30 | 4,12 | 4,76 | 5,38 | 6,02 | 6,77 | 7,72 | 10,50 |
+| hommes, Insee | 2,35 | 4,15 | 5,45 | 6,60 | 7,50 | 8,40 | 9,30 | 10,35 | 11,65 |
+| femmes, modèle | 1,47 | 2,16 | 2,69 | 3,11 | 3,52 | 3,94 | 4,42 | 5,05 | 6,86 |
+| femmes, Insee | 1,85 | 3,25 | 4,25 | 4,90 | 5,50 | 5,95 | 6,40 | 6,90 | 7,55 |
+
+Le gradient publié n'est pas linéaire en log : il est plus raide que g au milieu de la
+distribution (de D3 à D9, le modèle fait 72 à 80 % de l'écart publié) et plus plat en haut
+(de D9 à D10, 2,8 ans dans le modèle contre 1,3 publié pour les hommes). Pour une mesure qui
+change surtout le revenu des déciles du milieu, g sous-estime donc l'association d'un quart
+environ ; pour le dixième décile, il la surestime. Rien n'est retouché : g reste celui de
+D-620, et ce biais de forme est plus petit que l'incertitude sur la part causale (0 à 1/6).
+
+Un test léger tient ces nombres (`test_controle_depart_sur_les_cellules_commitees`), avec
+les canaux à la main sur des cellules synthétiques (`tests/test_jumeau_impacts_sante.py`).
+
+## D-622 — La santé et le temps de vie (3) : quatre programmes, un ordre de grandeur
+
+**Ce qui tourne** (`scripts/jumeau_sante.py`, rapport `reports/jumeau/sante_programmes.json`,
+des agrégats). Comme le moral (D-597) : le mode structurel, vue vieillie, convention
+« parts_premiere_annee », θ ½, tirage 0 ; Retailleau, Attal et Philippe comme un tout,
+Mélenchon par ses mesures seules (D-502). L'écart d'âge légal, que le jumeau ne règle pas,
+vient du texte de chaque programme (`retraite.programmes` de `sante.yaml`, calendrier
+choisi) face à la loi de 2023 suspendue par la LFSS pour 2026 : Mélenchon −0,75 an en 2027,
+−4 à partir de 2033 ; Retailleau (63 ans avec décote) de 0 à −1 en 2033 ; Philippe (65 ans
+et 45 annuités) +0,25 de 2027 à 2033, +0,75 en 2035 ; Attal (sans âge légal, aucun
+paramètre) zéro. Aucune passe sur la population. Statut : « illustratif ».
+
+**En 2035** (le centre, l'enveloppe entre crochets) :
+
+| programme | années de vie (milliers) | dont revenu | dont chômage | décès évités | EV D1 / D10 (mois) | bonne santé (milliers) | renoncements évités (milliers) | retraite sans limitation (milliers d'années) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Mélenchon | 14,6 [−347 ; 371] | +17,9 | −3,3 | 1 591 [−355 ; 3 354] | +0,74 / −0,04 | −4,9 | 140 [0 ; 280] | +1 177 [589 ; 2 993] |
+| Retailleau | 13,0 [−82 ; 118] | +7,0 | +6,0 | 858 [64 ; 1 972] | +0,20 / +0,04 | +8,8 | 56 [0 ; 112] | +294 [147 ; 748] |
+| Attal | 24,1 [5 ; 70] | +8,0 | +16,2 | 1 272 [173 ; 3 234] | +0,14 / +0,13 | +23,8 | 69 [0 ; 138] | 0 |
+| Philippe | 12,1 [−62 ; 91] | +8,9 | +3,2 | 940 [34 ; 2 015] | +0,36 / +0,01 | +4,7 | 68 [0 ; 136] | −221 [−561 ; −110] |
+
+Sur dix ans (2026-2035), au centre : Mélenchon 188 000 années de vie (revenu +199 000,
+chômage −11 000), 18 500 décès évités, 7,6 millions d'années de retraite sans limitation
+de plus ; Retailleau 126 000 années de vie, 8 900 décès, 1,5 million d'années de retraite
+sans limitation ; Attal 208 000 années de vie (dont le chômage 126 000), 11 800 décès ;
+Philippe 139 000 années de vie, 11 100 décès, 0,9 million d'années de retraite sans
+limitation en moins. Les décès évités par le revenu vont surtout au premier décile
+(Mélenchon : 459 sur 1 698 en 2035 ; le dixième décile en perd 12), parce que le revenu y
+monte le plus et que la mortalité y est la plus haute.
+
+**Ce que ces nombres disent, et ce qu'ils ne disent pas.**
+
+1. **Au centre, les effets sur la durée de vie sont petits** : quelques dixièmes de mois
+   d'espérance de vie, de l'ordre de 1 000 décès évités par an sur 643 000. C'est le choix
+   de D-620 : le gradient de l'Insee est une association, et la dimension n'en garde qu'un
+   douzième (au plus un sixième, la borne des loteries suédoises). Si on prenait
+   l'association pour une cause, le canal du revenu serait douze fois plus grand (environ
+   20 000 décès par an pour Mélenchon en 2035) : c'est l'erreur que la dimension refuse.
+2. **Le temps de retraite en bonne santé domine dès que l'âge bouge** : un an d'âge légal,
+   c'est de 0,25 à 1 an d'âge effectif pour 840 000 personnes par génération, soit de
+   150 000 à 750 000 années de retraite sans limitation d'activité par an. C'est du temps
+   libre, mesuré presque mécaniquement (τ est la seule vraie incertitude) ; ce n'est pas
+   de la durée de vie.
+3. **La durée de vie et l'âge de départ : on ne sait pas le signe.** Au centre, zéro
+   (Bozio, Garrouste et Perdrix : rien en France) ; la bande, ±0,1 an de vie par an de
+   départ décalé (Kuhn et al. pour les hommes autrichiens dans un sens, Hallberg et al. dans
+   l'autre), fait l'essentiel de l'enveloppe des années de vie de Mélenchon (±340 000 par
+   an quand l'écart atteint 4 ans), de Retailleau et de Philippe. L'enveloppe dit
+   l'ignorance, pas un risque.
+4. **Le chômage** passe par le jumeau (D-488 pour Attal : l'emploi est discuté) ; chez
+   Attal, il fait les deux tiers des années de vie. La santé déclarée suit le chômage : la
+   moitié haute de sa bande est déjà généreuse (Schmitz 2011 ne trouve aucun effet).
+5. Le renoncement aux soins pour le prix baisse de 1,5 % (Retailleau) à 3,6 % (Mélenchon)
+   de son niveau de 2025 (1,9 % des adultes pour un examen médical, 5,1 % pour un examen
+   dentaire, environ 3,9 millions de renoncements) ; le premier décile en fait le cinquième
+   chez Mélenchon (29 000 sur 140 000).
+
+**Pas de test des nombres des programmes** : ils dépendent de tout le jumeau, que les autres
+volets changent ; le rapport commité les tient, avec son commit. Les tests légers tiennent
+les coefficients, les canaux à la main, l'écart d'âge des programmes et le contrôle de
+départ.
+
+**Ce qui reste à décider** (le propriétaire) : (a) les calendriers d'âge, choisis à partir
+des textes (Mélenchon : 60 ans en ligne droite sur le mandat ; Philippe : un trimestre par
+génération) ; (b) la part causale du gradient (1/12 au centre) et le centre de r (0,30) ;
+(c) chiffrer la bascule vers l'invalidité, le chômage et les arrêts maladie après un report
+(Drees 2016 pour le COR, Caroli et al. 2023), non lue ; (d) lire le temps de travail (32 h,
+28 h) quand une mesure du jumeau le porte.
