@@ -40403,3 +40403,44 @@ du salaire, que le CICE ne teste pas) reste « sourcé, non jugé ».
 (−0,38) est rejeté et zéro est dedans (une chance sur deux) ; le centre tient (une sur
 quatre) ; non concluant (une sur quatre). Aucune tolérance ne sera modifiée après la
 lecture. Résultat en D-602.
+
+## D-602 — Le CICE et la productivité : non concluant, le canal reste à côté
+
+**Ce qui a été lu** (après la poussée de D-601, c4e00c2). France Stratégie, « Évaluation
+du crédit d'impôt pour la compétitivité et l'emploi : synthèse des travaux
+d'approfondissement », septembre 2020, en entier sur le mot « productivité » et ses
+voisins (valeur ajoutée par tête, PGF, investissement). Le rapport ne donne **aucun
+nombre** sur la productivité :
+
+* p. 54 (p. 56 du PDF), la lecture du rapport TEPP : « Si des effets significatifs sont
+  trouvés sur l'activité (valeur ajoutée), sur les variables liées à la compétitivité
+  (valeur ajoutée par tête et investissement notamment) les effets estimés sont moins
+  robustes et plus difficiles à interpréter » ;
+* p. 21-23 (p. 23-25 du PDF) : des effets positifs sur l'EBE et la valeur ajoutée du
+  quartile le plus bénéficiaire, sur la valeur ajoutée et la rentabilité des groupes
+  fiscaux les plus bénéficiaires ; sur l'investissement, « difficile d'établir une
+  conclusion claire » ;
+* p. 59 (p. 61 du PDF), l'étude de l'OFCE par branche : « Les effets du CICE sur
+  l'investissement paraissent nuls » ; aucune élasticité de la productivité publiée.
+
+Le rapport ne dit donc pas « aucun effet sur la productivité » : il dit des effets moins
+robustes et difficiles à interpréter, sans coefficient ni intervalle.
+
+**Le verdict, par la règle de D-601** : cas (c), une phrase sans nombre, **non
+concluant**. Le pronostic le donnait à une chance sur quatre ; il avait mis une chance
+sur deux sur « centre rejeté, zéro dedans ». Ce que D-601 fixait pour ce cas s'applique :
+rien ne change. `pression_cout` garde η = 0,38 (0 à 0,76), `juge: null`, n'est pas
+branché, et reste montré à côté, « sourcé, non jugé ». `salaire_efficience` aussi.
+Aucune tolérance n'a été modifiée.
+
+**Ce que le juge laisse entendre, sans valeur de jugement.** Des effets sur la valeur
+ajoutée des plus bénéficiaires, avec des effets sur l'emploi (le quart le plus exposé) :
+une productivité apparente qui ne baisse pas nettement, ce qu'un η de 0,38 symétrique
+prédirait (−1,6 % pour une entreprise toute sous 2,5 Smic) ; et un investissement nul,
+ce que le jumeau fait aussi (les cotisations n'entrent pas au coût d'usage, D-600).
+
+**Ce qui reste, pour un juge chiffré.** Le rapport TEPP de 2020 lui-même (« Les effets
+du CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions
+pour la période 2013-2016 »), qui porte les coefficients de la valeur ajoutée par tête
+par quartile d'exposition, n'est pas au manifeste : un second préenregistrement, sur
+lui, sous la même règle, est le pas suivant. Les rapports du comité de 2016 à 2018 aussi.
