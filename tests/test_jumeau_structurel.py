@@ -85,7 +85,17 @@ def test_le_modele_structurel_complet_se_construit_sans_double_compte() -> None:
     blocs, boucles = ordre_structurel(depart, POPULATION, CELLULES)
     modele = Modele(blocs, boucles)
     portes = {c for c, _ in modele.canaux}
-    assert portes == set(canaux.CANAUX), "chaque canal du registre est porté une fois"
+    # D-481 (D-566) : trois canaux du registre n'ont pas de bloc, par construction. Les
+    # deux comptables (`canaux.COMPTABLES`) sont calculés après la trajectoire
+    # (`financement.comptes`, D-487) ; le financement annoncé entre comme des lois
+    # hypothétiques (`financement.annonce`, D-482). Avant 2308bbd, le registre n'avait
+    # que des canaux portés par un bloc.
+    sans_bloc = canaux.COMPTABLES | {"financement_annonce"}
+    assert sans_bloc == {"financement_sous_secteurs", "compensation_exonerations",
+                         "financement_annonce"}
+    assert not portes & sans_bloc
+    assert portes == set(canaux.CANAUX) - sans_bloc, \
+        "chaque canal du registre, hors les trois sans bloc, est porté une fois"
     assert all(i == canaux.TOUS or c == "investissement_cout_du_capital"
                for c, i in modele.canaux)
     assert "mesange" not in {b.nom for b in blocs}
