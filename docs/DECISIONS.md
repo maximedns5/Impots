@@ -38209,3 +38209,128 @@ mergé, dont il dépend. Les passes restent détachées et une à la fois, par u
 commun (`flock`). Le juge du passé est une évaluation faite après coup, lue seulement
 après le préenregistrement ; une source qui cale un θ (Bozio-Wasmer pour λ, par exemple)
 ne le juge pas. Les numéros : D-531 à D-549 par volet, D-550 et la suite pour la jonction.
+
+## D-535 — Les juges du passé de la réaction (1) : deux cas, préenregistrés
+
+**Ce que fait ce volet** (BUT.md, but 28, volet 2). Le jumeau n'a jamais été confronté au
+passé sur sa réaction. Deux mesures passées sont rejouées : la loi par openfisca sur la
+population de D-521 (empreinte 8d42e0d8…) ramenée à l'année par les indices constatés de
+l'Insee (D-360, D-362 : salaires par tête D11 sur l'emploi salarié, prix hors tabac ; la
+structure reste celle de 2024, dit sur chaque cas), puis le choc dans le jumeau. Le code :
+`scripts/juges_passe_b28.py`, commité avec cette entrée ; aucune passe n'a tourné, aucun
+nombre des juges n'a été ouvert. Les passes : 20 000 ménages (le palier des études),
+détachées, sous le verrou commun, une à la fois ; sorties hors git.
+
+**Les cas écartés, et pourquoi.**
+
+* *Les hausses du Smic de 2022-2023* : le juge serait la diffusion (Insee, Dares, Banque
+  de France). Le volet `reaction` source en ce moment `travail_smic_diffusion` dans la
+  même littérature (Insee, Dares) : un juge qui risque d'être la source du θ ne le juge
+  pas. Remis à après la jonction, avec un juge que `reaction` n'aura pas lu.
+* *La bascule du CICE en allègements (2019)* : aucune évaluation après coup de son effet
+  sur l'emploi n'est connue de l'enregistreur ; l'année double de 2019 est un effet de
+  trésorerie, que le jumeau ne porte pas. Écartée.
+
+**Ce qui cale déjà un θ, vérifié dans `a_priori.yaml`, `travail.yaml` et `menages.yaml`.**
+
+* L'incidence `travail_incidence` a pour centre le tableau 4.2 de Bozio-Wasmer, « d'après
+  Carbonnier et alii (2022) », une évaluation de l'incidence du CICE sur les salaires :
+  **le CICE ne juge ni λ ni les salaires**. Le salaire moyen est donné, pas noté ; le cas
+  est lu aussi à λ de Mésange (θ 0), en sensibilité, pas en verdict.
+* Les bornes de `travail_emploi_elasticites` (la borne basse « compatible avec les
+  évaluations ex post du CICE », Bozio-Wasmer p. 178) : ce θ n'entre pas dans l'état
+  (l'emploi par tranche est calculé à côté, D-478) ; il n'est pas jugé ici.
+* L'emploi du jumeau est celui du bloc `emploi` : η (`jumeau_emploi_elasticite_cout`,
+  0,44 au centre, Mésange ; a priori Lichter, Peichl et Siegloch, une méta-analyse) et
+  les profils de Mésange (qualifiés et non qualifiés, p. 48). Aucun ne vient du CICE.
+  L'estimation sur l'histoire (D-417 à D-439) a lu l'emploi agrégé de 2011 à 2017, années
+  du CICE comprises ; le jumeau tourne à θ½, pas aux θ estimés : dit.
+* Le recours à la prime : τ ajusté sur la Drees n° 1379 (T4 2021), `p_max` calé sur les
+  foyers payés de la Cnaf au T4 2024 (D-495, D-497). Les foyers de 2017 à 2019 n'ont calé
+  aucun nombre ; la série est la même, l'année et la grandeur (une variation à travers
+  une réforme) ne le sont pas.
+
+**L'aveugle, percé, dit.** `tests/test_macro_validation.py` et un épisode de l'ancienne
+couche macro (`cice_2013.yaml`, non ouvert ici) citent le rapport de France Stratégie de
+2020 ; l'enregistreur en a vu, en cherchant, qu'un chiffre de « 160 000 » y est « net du
+financement », et connaît de mémoire l'ordre de grandeur publié (une centaine de milliers
+d'emplois). Il connaît aussi de mémoire le saut des foyers de la prime au début de 2019
+(de l'ordre de +40 %). Ces deux cas sont **notés à part**, comme les révisions (D-359) ;
+seul le juge par décile de la prime est aveugle (une recherche a montré que l'ensemble des
+mesures de 2019 favorise les niveaux de vie intermédiaires, sans nombre par mesure).
+
+### Cas 1 — Le CICE, de 2013 à 2017, sur l'emploi
+
+**La mesure codée.** Le crédit d'une année de salaires (CGI, art. 244 quater C : 4 % en
+2013, 6 % de 2014 à 2016, 7 % en 2017, les rémunérations jusqu'à 2,5 Smic), calculé par
+openfisca (`credit_impot_competitivite_emploi`, `assiette_allegement`, `smic_proratise`)
+sur la population ramenée à 2014, loi de 2014. Les autres années : au taux de l'année et
+aux rémunérations publiées (D1, état publié), une convention dite. Le jumeau : le modèle
+structurel complet depuis l'état publié de 2012 (`rejeu_histoire.simulateur`, la mesure
+seule, la variante avec moins la variante sans), θ½. Le crédit va au compte des APU comme
+une subvention (D3, comme les comptes le rangent), aux entreprises comme une baisse de
+cotisation, et au coût du travail par deux impulsions : la part des salaires jusqu'à 1,6
+Smic au profil des non qualifiés (ciblée, la convention de D-478), le reste uniforme.
+L'année du crédit est l'année des salaires (les entreprises l'ont provisionné ; le
+versement décalé n'est pas porté) ; le financement n'est pas porté (le déficit le paie).
+
+**La grandeur.** L'effet sur l'emploi salarié du secteur marchand (`emploi_salarie`), en
+milliers, à l'horizon du chiffre central du juge (2015, 2016 ou 2017 : lu à cette année),
+brut du financement. **Le juge** : France Stratégie, comité de suivi du CICE, rapport de
+2020 (au manifeste, `france_strategie_2020_rapport_cice.pdf`), son estimation de l'effet
+sur l'emploi des entreprises ; s'il ne donne qu'un chiffre net du financement, c'est lui,
+et l'écart de définition est dit.
+
+**La tolérance, et sa raison.** Dans la tolérance si le jumeau est dans l'intervalle que
+le juge publie, ou à défaut si le rapport jumeau sur juge est entre 0,5 et 2. Les
+évaluations du comité se contredisent entre équipes (des effets nuls à des effets
+significatifs), elles mesurent un écart entre entreprises plus et moins exposées, pas un
+effet macroéconomique ; le jumeau, lui, porte la demande. Un facteur deux est l'honnêteté
+de cette comparaison.
+
+**Le pronostic.** Le crédit de 2014 : 20 Md€ (17 à 24) ; la part ciblée : 0,55 (0,45 à
+0,65). L'emploi salarié marchand : +30 milliers en 2013, +80 en 2014, +120 en 2015, **+160
+en 2016** (100 à 250), +200 en 2017 ; au-dessus du juge, rapport 1,6 : dans la tolérance,
+près de son bord haut. Le salaire moyen monte (incidence), non noté. Sensibilités : λ à 0
+(Mésange) porte l'emploi de 2016 de 20 % plus haut, à 1 de 30 % plus bas ; η à 0 de 30 %
+plus bas.
+
+### Cas 2 — La prime d'activité de 2019 : le recours, la dépense, qui y gagne
+
+**La mesure codée.** La loi de 2019 contre la même loi à la bonification individuelle
+d'avant le décret n° 2018-1197 (`taux_bonification_max` 0,12782 au lieu de 0,29101,
+`seuil_max_bonification` 95 au lieu de 120 heures de Smic), en miroir (D-298), sur la
+population ramenée à 2019. La prime servie en espérance (`population.recours`, le recours
+croît avec le droit) : la mesure compte les recourants qui touchent plus et ceux qu'un
+droit plus gros fait recourir. Le jumeau depuis l'état publié de 2018, 2019 seule : la
+dépense (D62) et ses déciles ; **sans juge** (aucune évaluation après coup de l'effet
+macroéconomique n'est connue), rapporté pour mémoire.
+
+**Les grandeurs et les juges.** (a) Les foyers payés : le modèle, la variation relative
+des foyers servis en espérance en décembre 2019 (avec contre sans) ; le juge, la Cnaf,
+foyers payés au titre de décembre (prime d'activité, conjoncture, ou la Drees, *Minima
+sociaux et prestations sociales*, la même source pour les trois années), la variation
+relative de 2018 à 2019 moins celle de 2017 à 2018 (la tendance). (b) La dépense : le coût
+de la mesure servie, contre la dépense de prime de la même source, (D₂₀₁₉ − D₂₀₁₈) −
+(D₂₀₁₈ − D₂₀₁₇). (c) Qui y gagne : Insee et Drees, *France, portrait social*, édition
+2020, l'effet de la revalorisation exceptionnelle de la prime par décile de niveau de vie
+(Ines) ; le modèle, le gain par décile de niveau de vie (pondéré personne, rang sans la
+mesure). Comparés : la part du gain total de chaque décile (le gain moyen du juge
+normalisé, ses déciles ayant autant de personnes) et le décile au gain moyen le plus haut.
+
+**Les tolérances, et leur raison.** (a) et (b) : à 40 % du juge. Le juge contient la
+tendance au-delà de ce qu'en ôte l'année d'avant (le Smic, l'emploi, la revalorisation
+d'août 2018), la population a la structure de 2024, et les indices de 2020 (l'activité
+partielle, D-360) relèvent les salaires de 2019 de un à deux points. (c) : le décile au
+gain le plus haut à un décile près ; la part de D1 à D3 et celle de D6 à D10 chacune à 10
+points près. Ines est lui-même un modèle de microsimulation, avec ses hypothèses de
+recours.
+
+**Le pronostic.** Le coût de la mesure : 4,0 Md€ (2,8 à 5,5). (a) Les foyers servis :
++30 % (+20 à +40), **sous le juge** (+40 % de mémoire) : le recours du modèle sature
+lentement sur les petits droits que la mesure crée ; dans la tolérance de peu. (b) La
+dépense : dans la tolérance. (c) Le gain moyen le plus haut en D4 ou D5 ; D1 à D3, 25 %
+du gain ; D6 à D10, 30 %.
+
+**Rien n'est retouché après le premier calcul** ; un cas manqué reste écrit. Le résultat
+ira dans D-536, cas par cas, avec ce qu'il dit du jumeau (quel bloc, quel θ, quelle forme).
