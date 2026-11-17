@@ -40531,3 +40531,53 @@ brute, le pronostic converti de l'ordre de −0,8 % ; l'estimation est proche de
 son intervalle à 95 % large de ±2 points : le centre tient (une chance sur trois) ; non
 concluant, faute de l'écart d'intensité publié (une sur trois) ; centre rejeté (une sur
 trois). Résultat en D-604.
+
+## D-604 — Le rapport TEPP : le centre tient par la règle, sans puissance ; à côté
+
+**Ce qui a été lu** (après la poussée de D-603, 97542fb). Gilles, L'Horty et Mihoubi,
+rapport VI à France Stratégie (2020), tableau 7c p. 35 (l'ensemble des entreprises et
+des groupes fiscaux, 2013-2016, la plus longue période ; double différence instrumentée,
+échantillon 2009-2016), colonne « Productivité » (la variation de la productivité du
+travail, note 7 : « en K€ par tête par point de CICE supplémentaire »). Le quatrième
+quartile (le plus exposé, taux apparent de CICE de 3,90 à 4,00 % en 2013, annexe A1.c,
+contre moins de 2,67 % au premier), période 2014-2016 : **+0,785 k€ par tête et par
+point (p = 0,724)**, d'où un écart-type de 2,22 et un intervalle à 95 % de **−3,57 à
++5,14 k€**. En 2013 : +0,624 (p = 0,694). Le test de falsification de 2012 : −2,547
+(p = 0,103). Le test de suridentification de la colonne : p = 0,000 (les instruments
+sont rejetés) ; celui des instruments faibles n'est pas publié ; le coefficient n'est pas
+en gras (le rapport ne le tient pas pour valide).
+
+**Le pronostic converti** (la règle de D-603 : l'intensité est déjà rapportée à un point
+de taux apparent, en part de la masse salariale brute) : −η / 1,4705 = −0,258 % de PGF
+par point, ×68,2 k€ de valeur ajoutée par ETP (tableau 8 p. 37, les entreprises hors
+groupe fiscal, 1 309 658 € pour 19,2 ETP ; 97,8 k€ dans les groupes) : **−0,18 k€ par
+tête et par point** (de 0 à −0,35 ; −0,25 avec la VA des groupes).
+
+**Le verdict, par la règle** : cas (a). L'intervalle (−3,57 ; +5,14) contient le
+pronostic central : **le centre tient** ; la bande aussi. Pronostiqué à une chance sur
+trois.
+
+**Ce que la règle ne disait pas, et qui compte.** L'intervalle est vingt-cinq fois plus
+large que le pronostic : il tient aussi η = 0, et η = ±10. Le juge n'a pas de puissance
+sur ce canal, et la spécification est rejetée par son propre test de suridentification.
+Le rapport le dit lui-même pour les groupes fiscaux (p. 46 : « aucun effet du CICE n'est
+mis en évidence sur [...] la productivité du travail, quelle que soient la période et
+l'échantillon considérés ») ; pour les entreprises hors groupe, il trouve un effet positif
+au troisième quartile (p. 58), pas au quatrième.
+
+**Ce qui en suit.** D-603 fixait, pour un centre tenu, `juge: D-604` et le canal branché
+par défaut. **Je ne l'applique pas, et je le dis** : un juge qui tient tout ne tient pas
+un canal au sens de la règle d'emploi de D-600, et brancher le canal change les nombres
+de la dimension, ce qui attend le propriétaire (brief du but 29). `pression_cout` reste à
+côté, `juge: null`, « sourcé, non jugé », avec ce verdict écrit dans
+`productivite.yaml`. La règle n'est pas récrite : son résultat est noté tel quel, et la
+suite qu'elle prévoyait est au propriétaire. Aucune tolérance n'a été modifiée ; aucun
+nombre de D-603 ne change.
+
+**Ce qui reste au propriétaire.** (1) Brancher `pression_cout` par défaut, comme D-603
+le prévoyait, ou le garder à côté faute de puissance (ma proposition). (2) Un juge qui ait
+de la puissance : le rapport TEPP de 2018 trouvait « un effet négatif sur la
+productivité apparente du travail » (rapport VI, p. 7, son résumé du précédent) ; ses
+coefficients, un troisième préenregistrement. (3) `salaire_efficience` (le Smic) n'a
+aucun juge français ; les hausses du Smic n'ont pas d'évaluation après coup de leur effet
+sur la productivité au manifeste.

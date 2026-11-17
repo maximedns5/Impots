@@ -13,7 +13,11 @@ pression_cout:
   bas: 0.0
   haut: 0.76
   branche_par_defaut: false
-  # La D-entrée d'un jugement qui tient le canal ; le CICE est préenregistré en D-601.
+  # La D-entrée d'un jugement qui tient le canal. Le CICE : D-601 et D-602, France
+  # Stratégie 2020, non concluant ; D-603 et D-604, TEPP 2020, tableau 7c p. 35 : +0,785
+  # k€ par tête et par point (IC à 95 % −3,57 à +5,14) contre −0,18 au centre : le centre
+  # tient par la règle, mais sans puissance et sur des instruments rejetés ; le canal
+  # n'est pas branché, au propriétaire de trancher (D-604).
   juge: null
   source: >
     Le haut : Riley et Rosazza Bondibene, « Raising the standard: minimum wages and firm
