@@ -422,6 +422,11 @@ def dimension(variante: Any, reference: Any = None, depart: Any = None,
                    bas=dec_env["revenu"][0] + dec_env["chomage"][0],
                    haut=dec_env["revenu"][1] + dec_env["chomage"][1],
                    par_groupe={LIBELLES[k]: c.deces[k] for k in ("revenu", "chomage")}),
+        Indicateur("deces_evites_revenu", "Dont décès évités par le revenu réel, par décile "
+                   "de niveau de vie", "décès par an", c.deces["revenu"],
+                   bas=dec_env["revenu"][0], haut=dec_env["revenu"][1],
+                   par_groupe={f"D{d}": c.deces_revenu[:, d - 1]
+                               for d in range(1, N_DECILES + 1)}),
         Indicateur("esperance_de_vie", "Espérance de vie à la naissance si l'écart de "
                    "revenu durait, par décile de niveau de vie", "mois", 12.0 * ev_moy,
                    bas=12.0 * (ev_bas * pers).sum(axis=1) / pers.sum(),

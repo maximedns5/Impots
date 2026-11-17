@@ -40514,7 +40514,7 @@ les vingtiles extrêmes, plus loin que les déciles.
 | femmes, Insee | 1,85 | 3,25 | 4,25 | 4,90 | 5,50 | 5,95 | 6,40 | 6,90 | 7,55 |
 
 Le gradient publié n'est pas linéaire en log : il est plus raide que g au milieu de la
-distribution (de D3 à D9, le modèle fait 70 à 75 % de l'écart publié) et plus plat en haut
+distribution (de D3 à D9, le modèle fait 72 à 80 % de l'écart publié) et plus plat en haut
 (de D9 à D10, 2,8 ans dans le modèle contre 1,3 publié pour les hommes). Pour une mesure qui
 change surtout le revenu des déciles du milieu, g sous-estime donc l'association d'un quart
 environ ; pour le dixième décile, il la surestime. Rien n'est retouché : g reste celui de
@@ -40522,3 +40522,71 @@ D-620, et ce biais de forme est plus petit que l'incertitude sur la part causale
 
 Un test léger tient ces nombres (`test_controle_depart_sur_les_cellules_commitees`), avec
 les canaux à la main sur des cellules synthétiques (`tests/test_jumeau_impacts_sante.py`).
+
+## D-622 — La santé et le temps de vie (3) : quatre programmes, un ordre de grandeur
+
+**Ce qui tourne** (`scripts/jumeau_sante.py`, rapport `reports/jumeau/sante_programmes.json`,
+des agrégats). Comme le moral (D-597) : le mode structurel, vue vieillie, convention
+« parts_premiere_annee », θ ½, tirage 0 ; Retailleau, Attal et Philippe comme un tout,
+Mélenchon par ses mesures seules (D-502). L'écart d'âge légal, que le jumeau ne règle pas,
+vient du texte de chaque programme (`retraite.programmes` de `sante.yaml`, calendrier
+choisi) face à la loi de 2023 suspendue par la LFSS pour 2026 : Mélenchon −0,75 an en 2027,
+−4 à partir de 2033 ; Retailleau (63 ans avec décote) de 0 à −1 en 2033 ; Philippe (65 ans
+et 45 annuités) +0,25 de 2027 à 2033, +0,75 en 2035 ; Attal (sans âge légal, aucun
+paramètre) zéro. Aucune passe sur la population. Statut : « illustratif ».
+
+**En 2035** (le centre, l'enveloppe entre crochets) :
+
+| programme | années de vie (milliers) | dont revenu | dont chômage | décès évités | EV D1 / D10 (mois) | bonne santé (milliers) | renoncements évités (milliers) | retraite sans limitation (milliers d'années) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Mélenchon | 14,6 [−347 ; 371] | +17,9 | −3,3 | 1 591 [−355 ; 3 354] | +0,74 / −0,04 | −4,9 | 140 [0 ; 280] | +1 177 [589 ; 2 993] |
+| Retailleau | 13,0 [−82 ; 118] | +7,0 | +6,0 | 858 [64 ; 1 972] | +0,20 / +0,04 | +8,8 | 56 [0 ; 112] | +294 [147 ; 748] |
+| Attal | 24,1 [5 ; 70] | +8,0 | +16,2 | 1 272 [173 ; 3 234] | +0,14 / +0,13 | +23,8 | 69 [0 ; 138] | 0 |
+| Philippe | 12,1 [−62 ; 91] | +8,9 | +3,2 | 940 [34 ; 2 015] | +0,36 / +0,01 | +4,7 | 68 [0 ; 136] | −221 [−561 ; −110] |
+
+Sur dix ans (2026-2035), au centre : Mélenchon 188 000 années de vie (revenu +199 000,
+chômage −11 000), 18 500 décès évités, 7,6 millions d'années de retraite sans limitation
+de plus ; Retailleau 126 000 années de vie, 8 900 décès, 1,5 million d'années de retraite
+sans limitation ; Attal 208 000 années de vie (dont le chômage 126 000), 11 800 décès ;
+Philippe 139 000 années de vie, 11 100 décès, 0,9 million d'années de retraite sans
+limitation en moins. Les décès évités par le revenu vont surtout au premier décile
+(Mélenchon : 459 sur 1 698 en 2035 ; le dixième décile en perd 12), parce que le revenu y
+monte le plus et que la mortalité y est la plus haute.
+
+**Ce que ces nombres disent, et ce qu'ils ne disent pas.**
+
+1. **Au centre, les effets sur la durée de vie sont petits** : quelques dixièmes de mois
+   d'espérance de vie, de l'ordre de 1 000 décès évités par an sur 643 000. C'est le choix
+   de D-620 : le gradient de l'Insee est une association, et la dimension n'en garde qu'un
+   douzième (au plus un sixième, la borne des loteries suédoises). Si on prenait
+   l'association pour une cause, le canal du revenu serait douze fois plus grand (environ
+   20 000 décès par an pour Mélenchon en 2035) : c'est l'erreur que la dimension refuse.
+2. **Le temps de retraite en bonne santé domine dès que l'âge bouge** : un an d'âge légal,
+   c'est de 0,25 à 1 an d'âge effectif pour 840 000 personnes par génération, soit de
+   150 000 à 750 000 années de retraite sans limitation d'activité par an. C'est du temps
+   libre, mesuré presque mécaniquement (τ est la seule vraie incertitude) ; ce n'est pas
+   de la durée de vie.
+3. **La durée de vie et l'âge de départ : on ne sait pas le signe.** Au centre, zéro
+   (Bozio, Garrouste et Perdrix : rien en France) ; la bande, ±0,1 an de vie par an de
+   départ décalé (Kuhn et al. pour les hommes autrichiens dans un sens, Hallberg et al. dans
+   l'autre), fait l'essentiel de l'enveloppe des années de vie de Mélenchon (±340 000 par
+   an quand l'écart atteint 4 ans), de Retailleau et de Philippe. L'enveloppe dit
+   l'ignorance, pas un risque.
+4. **Le chômage** passe par le jumeau (D-488 pour Attal : l'emploi est discuté) ; chez
+   Attal, il fait les deux tiers des années de vie. La santé déclarée suit le chômage : la
+   moitié haute de sa bande est déjà généreuse (Schmitz 2011 ne trouve aucun effet).
+5. Le renoncement aux soins pour le prix baisse d'environ 1 % à 2 % du niveau de 2025
+   (1,9 % des adultes pour un examen médical, 5,1 % pour un examen dentaire) ; le premier
+   décile en fait l'essentiel chez Mélenchon (29 000 sur 140 000).
+
+**Pas de test des nombres des programmes** : ils dépendent de tout le jumeau, que les autres
+volets changent ; le rapport commité les tient, avec son commit. Les tests légers tiennent
+les coefficients, les canaux à la main, l'écart d'âge des programmes et le contrôle de
+départ.
+
+**Ce qui reste à décider** (le propriétaire) : (a) les calendriers d'âge, choisis à partir
+des textes (Mélenchon : 60 ans en ligne droite sur le mandat ; Philippe : un trimestre par
+génération) ; (b) la part causale du gradient (1/12 au centre) et le centre de r (0,30) ;
+(c) chiffrer la bascule vers l'invalidité, le chômage et les arrêts maladie après un report
+(Drees 2016 pour le COR, Caroli et al. 2023), non lue ; (d) lire le temps de travail (32 h,
+28 h) quand une mesure du jumeau le porte.
