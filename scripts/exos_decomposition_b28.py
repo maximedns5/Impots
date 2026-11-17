@@ -51,7 +51,7 @@ sys.path.insert(0, str(ROOT / "src"))
 SORTIE = Path(os.environ.get(
     "EXOS28_SORTIE",
     "/tmp/claude-0/-home-user-Impots/8c1eda0e-eb4f-5530-a9a9-deab4a4ca18f/scratchpad/exos28"))
-RAPPORT = ROOT / "reports" / "etudes" / "suite_b28" / "exos_decomposition_d561.json"
+RAPPORT = ROOT / "reports" / "etudes" / "suite_b28" / "exos_decomposition_d563.json"
 ANNEE = 2026
 LOTS = 8
 #: Les bandes de x (Smic de 2026) ; la mesure retire la réduction de [2 ; 3).
@@ -222,38 +222,100 @@ def passe(nom: str, population: str, k: float, complet: bool, menages: bool,
 # --------------------------------------------------------------------------- #
 MD = 1e9
 A, B = "2.0-2.5", "2.5-3.0"
+SMIC26 = (12.02 * 5 + 12.31 * 7) / 12
+SMIC24 = (11.65 * 10 + 11.88 * 2) / 12
+RAPPORT_SMIC = SMIC26 / SMIC24
+# Insee T305, France, déciles du salaire brut horaire de 2022 (€), Smic moyen 10,848.
+T305 = np.array([12.1, 13.3, 14.5, 15.8, 17.5, 19.6, 22.5, 27.2, 36.3]) / 10.848
+MASSE_PUB = 726.5 + 27.0
 
 
-def termes(p: dict[str, Any]) -> dict[str, float]:
-    """M, s_a, s_b, c_a, c_b et R de la formule (M en Md€ d'assiette, F inclus)."""
+def lire(n: str) -> dict[str, Any]:
+    return json.loads((SORTIE / f"{n}.json").read_text(encoding="utf-8"))
+
+
+def termes(p):
     b = p["bandes"]
     m = p["masse_assiette"]
     t = {"M": m / MD, "R": p["rendement"] / MD}
     for k, n in ((A, "a"), (B, "b")):
         t[f"s_{n}"] = b[k]["masse"] / m
         t[f"c_{n}"] = b[k]["reduction"] / b[k]["masse"]
+        t[f"R_{n}"] = b[k]["reduction"] / MD
     return t
 
 
-def decomposer(x: dict[str, float], y: dict[str, float]) -> dict[str, float]:
-    """R(y) − R(x) en Md€ par terme : la masse M (log), puis la forme, partagée entre
-    les parts et les taux des deux bandes au prorata de leur log (indice de Montgomery,
-    exact : les parts somment l'écart)."""
-    def lm(a: float, b: float) -> float:
-        return (a - b) / np.log(a / b) if a != b else a
+def lm(a, b):
+    return (a - b) / np.log(a / b) if abs(a - b) > 1e-15 else a
 
-    out: dict[str, float] = {}
+
+def decomposer(x, y):
+    out = {"M": 0.0}
     for n in ("a", "b"):
-        ry = y["M"] * y[f"s_{n}"] * y[f"c_{n}"]
-        rx = x["M"] * x[f"s_{n}"] * x[f"c_{n}"]
-        w = lm(ry, rx)
-        out[f"M_{n}"] = w * np.log(y["M"] / x["M"])
+        w = lm(y[f"R_{n}"], x[f"R_{n}"])
+        out["M"] += w * np.log(y["M"] / x["M"])
         out[f"s_{n}"] = w * np.log(y[f"s_{n}"] / x[f"s_{n}"])
         out[f"c_{n}"] = w * np.log(y[f"c_{n}"] / x[f"c_{n}"])
-    out["M"] = out.pop("M_a") + out.pop("M_b")
-    out["total"] = sum(out.values())
+    out["somme"] = sum(out.values())
     out["ecart_R"] = y["R"] - x["R"]
     return {k: round(float(v), 4) for k, v in out.items()}
+
+
+def heures_bandes(p):
+    g = np.array(p["heures"]["grille"])
+    s = np.array(p["heures"]["sous"])
+    bornes = np.array([2.0, 2.5, 3.0]) * RAPPORT_SMIC
+    sous = np.interp(bornes, g, s)
+    return {"a": float(sous[1] - sous[0]), "b": float(sous[2] - sous[1]),
+            "bornes_2024": [round(float(v), 4) for v in bornes]}
+
+
+def insee_bandes():
+    bornes = np.array([2.0, 2.5, 3.0]) * RAPPORT_SMIC * 1.00297  # Smic 2024 → 2022
+    sous = np.interp(bornes, T305, np.arange(1, 10) / 10)
+    return {"a": float(sous[1] - sous[0]), "b": float(sous[2] - sous[1])}
+
+
+def analyser() -> dict[str, Any]:
+    lus = {f.stem: lire(f.stem) for f in SORTIE.glob("*.json")}
+    t = {n: termes(v) for n, v in lus.items()}
+    out = {"rapport_smic_2026_2024": RAPPORT_SMIC, "termes": t}
+    d553 = lus["d553"]
+    out["controle_reforme"] = {"R": d553["rendement"] / MD,
+                               "R_reforme": d553.get("rendement_controle", 0) / MD}
+    out["pronostic"] = {
+        "forme": t["d553_facteur_d521"]["R"] - t["d521"]["R"],
+        "masse": t["d553"]["R"] - t["d553_facteur_d521"]["R"],
+        "detail_forme": decomposer(t["d521"], t["d553_facteur_d521"]),
+        "detail_masse": decomposer(t["d553_facteur_d521"], t["d553"]),
+    }
+    out["retour"] = {"but19_d521": decomposer(t["but19"], t["d521"]),
+                     "d521_d553": decomposer(t["d521"], t["d553"]),
+                     "but19_d553": decomposer(t["but19"], t["d553"])}
+    if "d553_complet_sans_menages" in t:
+        out["E"] = t["d553_complet_sans_menages"]["R"] / t["d553_sans_menages"]["R"]
+        out["E_detail"] = decomposer(t["d553_sans_menages"], t["d553_complet_sans_menages"])
+    out["menages"] = t["d553"]["R"] - t["d553_sans_menages"]["R"]
+    h = {n: heures_bandes(lus[n]) for n in lus}
+    ins = insee_bandes()
+    out["heures"] = {"insee": ins, **h}
+    T = t["d553"]
+    E = out.get("E", 1.0)
+    fm = T["M"] * E
+    out["references"] = {
+        "F_E_M": fm, "masse_pub": MASSE_PUB, "rho_M": MASSE_PUB / fm,
+        "masse_md": T["R"] * (MASSE_PUB / fm - 1),
+        "rho_a": ins["a"] / h["d553"]["a"], "rho_b": ins["b"] / h["d553"]["b"],
+        "forme_a_md": T["R_a"] * (ins["a"] / h["d553"]["a"] - 1),
+        "forme_b_md": T["R_b"] * (ins["b"] / h["d553"]["b"] - 1),
+    }
+    r = out["references"]
+    r["R_sur_references"] = T["R"] + r["masse_md"] + r["forme_a_md"] + r["forme_b_md"]
+    # les déciles des heures du modèle (Smic de 2024) contre le T305
+    out["deciles_heures"] = {"insee_smic_2022": [round(float(v), 3) for v in T305],
+                             **{n: [round(v, 3) for v in lus[n]["heures"]["deciles"]]
+                                for n in lus}}
+    return out
 
 
 def main() -> int:
@@ -271,9 +333,11 @@ def main() -> int:
     if a.cmd == "passe":
         passe(a.nom, a.population, a.echelle, a.complet, not a.sans_menages, a.controle)
         return 0
-    lus = {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in SORTIE.glob("*.json")}
-    t = {n: termes(v) for n, v in lus.items()}
-    print(json.dumps(t, ensure_ascii=False, indent=1))
+    out = analyser()
+    out["decisions"] = ["D-560", "D-561", "D-562", "D-563"]
+    RAPPORT.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=float) + "\n",
+                       encoding="utf-8")
+    print(RAPPORT)
     return 0
 
 
