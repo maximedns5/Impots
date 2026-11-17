@@ -38461,6 +38461,7 @@ milliers, plus que tout le sourçage du θ. (2) Le long terme : tenir l'effet d'
 (aujourd'hui), le laisser décroître (Goarant et Muller) ou croître (Cette et al.). (3) La
 densité des salaires de 2,5 à 3,5 Smic (D-532) : une marge neuve, préenregistrée, avec une
 source qui ne soit pas celle qui juge ; et refaire alors la paire Smic × exonérations.
+
 ## D-535 — Les juges du passé de la réaction (1) : deux cas, préenregistrés
 
 **Ce que fait ce volet** (BUT.md, but 28, volet 2). Le jumeau n'a jamais été confronté au
