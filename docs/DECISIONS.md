@@ -39164,3 +39164,25 @@ pas de source indépendante. (3) Le profil de l'emploi au coût : une source hor
 et sa falaise à 2 Smic : avec le recentrage et la portée, l'interaction devient réelle
 (+0,9 Md€) ; elle repose sur la densité des salaires de 1,9 à 2 Smic, que D-532 dit mal
 tenue au-dessus de 2,5.
+
+## D-550 — La jonction du but 28 : les quatre volets sur `claude/but28`
+
+Le 17 novembre, les volets `reaction` (D-531 à D-534) et `passe` (D-535, D-536) sont
+joints, puis `boucle` (D-545, D-546) et `interaction` (D-540 à D-542). Conflits : les
+ajouts de `docs/DECISIONS.md` et de `data/raw/MANIFEST.json`, gardés des deux côtés.
+Aucun autre fichier en conflit ; `menages.py`, `mesures.py` et `navigateur.py` reçoivent
+des ajouts localisés des deux derniers volets.
+
+**Les tests.** Ruff : vert. Les tests légers des fichiers touchés, après la jonction :
+`test_jumeau_travail`, `test_jumeau_commerce`, `test_jumeau_navigateur`,
+`test_jumeau_boucle`, `test_jumeau_menages`, `test_verification`, la Garantie jeunes de
+`test_prestations` : verts. Un rouge d'abord, `test_les_entrees_commitees_sont_celles_des_
+donnees` : les données du worktree de jonction étaient liées sur des cellules d'avant
+D-512 ; reliées sur celles de D-521, il passe. Rien de changé dans le code ni le test.
+Non lancés : la suite entière, `make impact`, les lourds.
+
+**Ce que la jonction ne fait pas.** La boucle (D-546) et le choc combiné (D-541) n'ont
+pas tourné ensemble : la boucle s'applique à l'emploi, que le choc combiné ne change pas
+au défaut (D-541) ; avec les formes non par défaut, il faudra les rejouer ensemble. Aucun
+défaut n'est changé : les formes de la diffusion, φ, la boucle par défaut et la marge des
+salaires de 2,5 à 3,5 Smic attendent le propriétaire (D-534, D-536, D-542, D-546).
