@@ -39,6 +39,14 @@ SOURCES = (
 )
 
 
+#: Les cibles du juge de l'histoire (D-439) qui sont des comptes publics.
+CIBLES_JUGE = ("solde", "dette", "recettes", "recettes_d2", "recettes_d5", "recettes_d61")
+
+
+def _bas(libelle: str) -> str:
+    return libelle[:1].lower() + libelle[1:]
+
+
 def _ratio(reference: Any, variante: Any) -> np.ndarray | None:
     r, v = niveaux(reference, "ratio_dette"), niveaux(variante, "ratio_dette")
     return None if r is None or v is None else 100.0 * (v - r)
@@ -69,10 +77,15 @@ def comptes_publics(variante: Any, reference: Any, depart: Any, cellules: Any,
     ]
     juge = options.get("juge")
     if juge:
+        lignes = [x for x in juge.get("lignes") or () if x["cible"] in CIBLES_JUGE]
+        tenues = [_bas(x["libelle"]) for x in lignes if x.get("tenue")]
+        manquees = [_bas(x["libelle"]) for x in lignes if not x.get("tenue")]
         limites.append(
             f"Le juge de l'histoire (D-439) rejoue les années passées : le jumeau y tient "
-            f"{juge.get('tenues')} cibles sur {juge.get('cibles')} (le solde, la dette et "
-            f"les recettes en sont) ; c'est un test du jumeau, pas de cette mesure.")
+            f"{juge.get('tenues')} cibles sur {juge.get('cibles')} ; pour les comptes, "
+            + (f"tenu pour {', '.join(tenues)}" if tenues else "rien de tenu")
+            + (f", manqué pour {', '.join(manquees)}" if manquees else "")
+            + " ; c'est un test du jumeau, pas de cette mesure.")
     sans = thetas_sans_source(options)
     if sans:
         limites.append(f"θ lus sans estimation publiée, à la loi large (D-417) : "

@@ -40250,3 +40250,123 @@ Chaque dimension a une source publiée par coefficient, une bande, et un statut 
 l'entente entre les gens n'ont pas de juge aveugle connu : ils sont montrés comme des
 ordres de grandeur sourcés, jamais comme des prévisions vérifiées. Les numéros : D-591 à
 D-609 par volet, D-610 et la suite pour la jonction.
+
+## D-605 — Le tableau (1) : le moteur des dimensions et la proposition composée
+
+**Ce qui est codé** (branche `claude/but29-tableau`, partie de `claude/but29`, 062985c).
+`navigateur.Session.calculer` rend, en plus de ce qu'il rendait (séries, comptes,
+déciles, θ), toutes les dimensions inscrites (`dimensions`), leur vue d'ensemble
+(`ensemble`) et les modules de dimension qui ne s'importent pas (`modules_en_erreur`).
+`jumeau/impacts/tableau.py` importe chaque module du paquet `jumeau.impacts` (sauf ceux
+qui commencent par `_` et lui-même), ce qui les inscrit : une dimension d'un autre volet
+se montre sans changer ni ce fichier, ni la page. Une dimension qui lève est rendue avec
+son erreur, à sa place, et les autres se calculent ; un nombre non fini devient absent.
+`navigateur.impacts_json` est l'entrée de la page « Ce que ça change » (D-607) et de
+l'API (`GET /impacts/bibliotheque`, `POST /impacts`, une clé comme tout calcul, D-295).
+
+**Ce que reçoit une dimension.** `calcul(variante, reference, depart, cellules,
+**options)` : `variante` et `reference` sont les états de la trajectoire au réglage, un
+par année calculée, d'un seul tirage ; `depart` l'état de départ ; `cellules` les
+cinquante cellules de ménages. Les options : `trajectoire` (la `Trajectoire` même, pour
+`gagnants_perdants`), `tirages` (la même trajectoire vectorisée sur des tirages des θ lus,
+chacun selon sa loi, graine de D-459 ; None sans bande demandée), `mesures`,
+`illustratives` ({identifiant : raison} des mesures déclarées ou transformées), `mode`,
+`thetas` (le registre, l'origine de chaque loi), `juge` (le juge de l'histoire, D-439),
+`annees`. Le premier indicateur d'une dimension est son nombre de tête : la vue
+d'ensemble le pose à la première année calculée et à l'horizon, avec son sens et son
+statut. Elle ne somme jamais deux dimensions : aucun total, aucun poids, aucune note.
+
+**Le réglage par défaut.** Sans mode dit : le jumeau complet sur la population figée,
+avec la convention de D-414, comme la cascade (D-484) ; une mesure qu'il refuse dès sa
+première année passe par la chaîne des études (réduit, vieillie), et la page dit
+pourquoi : c'est le cas des programmes de Mélenchon et de Tondelier (des cotisations que
+la passe fait payer à la fois aux entreprises et aux APU). Chaque θ à ½, le centre de sa
+boîte ; 60 tirages pour les bandes (`TIRAGES_IMPACTS`, contre 200 pour la plage du
+jumeau : le calcul tourne dans le navigateur). Une bande dit l'incertitude des réactions
+de l'économie, pas celle du chiffrage de la mesure.
+
+**La proposition composée** (`composition`, `jumeau/proposition.py`). Une liste
+d'éléments, calculée comme un programme (`trajectoire.calculer` avec toutes ses mesures),
+dans le mode structurel seul (le cadre commun des rapports, que `site_jumeau.donnees`
+tient unique). Ce qui est possible :
+
+* toute mesure de la bibliothèque, telle quelle : les 46 rapports d'étude commités que la
+  page du jumeau lit (les programmes, leurs mesures, les volets du PLFSS), de candidats
+  différents ensemble ;
+* une mesure d'étude à une **intensité** k (`echelle`, de 0 à 3 sur la page) : chaque
+  montant de sa passe fois k (coût, impulsions, prélèvements, chocs par décile et par
+  impôt, statistiques suffisantes des canaux C1, C7, C2, C10, C11, chacun linéaire en ce
+  qu'on multiplie) ; la mesure à k fois son intensité au premier ordre ;
+* une mesure d'étude qui **entre plus tard** (`decalage`, de 0 à 9 ans) : chaque année
+  passe d ans plus tard, ce qui sort de 2035 est perdu, les montants restent en euros de
+  leur année d'origine ;
+* une **loi hypothétique** : un des cinq instruments de Mésange, un montant, ses années
+  (`Session.hypothese`, inchangée).
+
+Ce qui ne l'est pas, et pourquoi :
+
+* **changer un paramètre de barème** (un taux, un seuil, un montant de la loi) : il faut
+  une passe sur la population (OpenFisca), qui ne tourne ni dans le navigateur ni dans un
+  pas du jumeau ; l'intensité k en est l'approximation au premier ordre, dite
+  « illustrative » (les seuils, les barèmes non linéaires, le comportement au second ordre
+  ne suivent pas k) ;
+* **une hausse du Smic ou un seuil d'allègements à une autre intensité** : le bloc
+  `travail` les lit dans la passe de leur première année et dans un coefficient (D-478,
+  D-540), pas dans un montant ; refusé avec sa raison (l'année d'entrée, elle, se décale) ;
+* **une mesure qu'aucune règle ne porte** : tout ce qu'aucun rapport n'a chiffré et
+  qu'aucun des cinq instruments ne représente (une mesure de dépense hors de la
+  composition de Mésange, une règle d'emploi, une mesure non fiscale) ; la bibliothèque
+  n'offre que ce qui a une passe ou une loi ;
+* **les interactions statiques** entre mesures composées : chaque passe a été faite seule ;
+  deux mesures qui touchent le même barème ne se recoupent pas (dit sur la page). Le
+  programme d'un candidat et l'une de ses mesures ensemble la comptent deux fois : dit ;
+* **la chaîne des études** (mode réduit) pour une composition : elle lit le cadre de
+  chaque rapport, ses persistances et son canal des créations, que plusieurs rapports ne
+  partagent pas forcément ; refusée.
+
+Une mesure transformée ou hypothétique rend « illustratives » les dimensions du tableau
+qui la lisent (`illustratives`, leur raison dans les limites). Mis à l'échelle 1 et sans
+décalage, une mesure redonne la mesure seule, au bit (`test_impacts_tableau.py`).
+
+**Les tests légers** (`tests/test_impacts_tableau.py`, 9 tests, 24 s) : la forme du JSON,
+un JSON strict, les nombres des deux dimensions de D-606 égaux à ceux que la page du
+jumeau rend sur le programme d'Attal, l'identité à l'échelle 1, la première année nulle à
+un an de décalage, l'échelle sur les montants et les canaux, le refus du Smic, une
+dimension d'un autre volet montrée et une dimension en erreur dite. `test_jumeau_navigateur`
+(léger) passe inchangé. Aucun nombre publié ne change.
+
+## D-606 — Le tableau (2) : deux dimensions tirées de ce que le jumeau sait déjà
+
+Pour que la page vive sans attendre les autres volets, deux dimensions s'inscrivent,
+lues dans les champs que la page du jumeau montre déjà ; ce sont des grandeurs déjà notées.
+
+**« Les comptes publics »** (`impacts/comptes.py`) : « Combien la mesure coûte-t-elle, ou
+rapporte-t-elle, à l'État et à la Sécurité sociale, et que devient la dette ? » Le solde
+B9 (Md€, la tête), la dette (points de PIB, Δb de D-459), les recettes hors intérêts et
+les dépenses primaires (Md€), en écart à la trajectoire sans la mesure. Sources : l'état
+publié de 2025 (D-412 : t. 3.201, Eurostat), les rapports d'étude (la passe de chaque
+mesure, D-336), Mésange et les blocs du jumeau (D-409, D-414).
+
+**« L'économie en général »** (`impacts/economie.py`) : « La mesure fait-elle grandir
+l'économie, créer des emplois, monter les prix, et les salaires suivent-ils ? » Le PIB
+(% de celui de la référence, la tête), l'emploi intérieur et les chômeurs BIT (milliers),
+le prix de la consommation des ménages (`ecart_prix_consommation`, l'équation (PC) de
+Mésange, D-414) et la rémunération moyenne par salarié déflatée par ce prix
+(`salaire_moyen`, D1 par tête, D-412). Absents du mode réduit, qui ne les écrit pas, et
+dits absents.
+
+**Le statut : « sourcé, non jugé »**, pas « jugé ». Le coût de la première année d'une
+mesure a été confronté à des chiffrages officiels sur cinq cas (D-300 : trois dans leur
+tolérance) ; les années suivantes, la dette et les effets sur l'activité ne l'ont jamais
+été pour une mesure. Le juge de l'histoire (D-439) rejoue les années passées et tient
+certaines cibles (le PIB et le chômage, pas l'emploi ; le solde et la dette, pas le total
+des recettes) : c'est un test du jumeau, pas d'une mesure, et chaque fiche le dit ainsi. Chaque fiche nomme aussi
+les θ lus sans estimation publiée (la loi large de D-417). « Illustratif » dès qu'une
+mesure est hypothétique ou transformée (D-605).
+
+**Une limite écrite sur la fiche.** La rémunération par salarié est D1 par tête,
+cotisations des employeurs comprises : le « droit au brut » d'Attal la fait baisser
+(−1,33 % en 2028, θ½) alors que le net monte ; le net se lit dans le pouvoir d'achat
+(volet `pouvoir`). Pour le programme d'Attal (figée, θ½) : solde −64,0 Md€ en 2026 et
+−63,3 en 2035, dette +14,1 points en 2035, PIB +0,52 % puis +0,74 %, emploi +445 milliers
+en 2035 : les nombres de la page du jumeau, au bit.
