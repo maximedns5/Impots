@@ -51,7 +51,7 @@ import numpy as np
 
 from impots.jumeau.cellules import N_CELLULES, N_DECILES, TYPES
 from impots.jumeau.impacts import Dimension, Indicateur, Source, inscrire
-from impots.jumeau.impacts.pouvoir import LIBELLES_TYPES, Revenus, bande, chemin, revenus
+from impots.jumeau.impacts.pouvoir import LIBELLES_TYPES, Revenus, bande, chemin, revenus_de
 
 ROOT = Path(__file__).resolve().parents[4]
 FICHIER = ROOT / "reports" / "jumeau" / "niveaux_de_vie_cellules.json"
@@ -293,9 +293,9 @@ def entente(variante: Any, reference: Any, depart: Any, cellules: Any,
     sinon l'approchée."""
     from impots.jumeau.blocs.menages import charger
 
-    c = chemin(variante, reference, options.get("mesures"), options.get("annees"))
     params = options.get("params") or charger()
-    r = revenus(c, depart, cellules, params)
+    r, _mesures = revenus_de(variante, reference, depart, cellules,
+                             {**options, "params": params})
     dist = options.get("distribution")
     if isinstance(dist, Mapping):
         dist = depuis_dict(dist)
@@ -304,8 +304,12 @@ def entente(variante: Any, reference: Any, depart: Any, cellules: Any,
     if dist is None:
         dist = approchee(cellules)
     n = r.n
-    pib = np.stack([np.broadcast_to(np.asarray(e["pib"], dtype=float), (n,))
-                    for e in c.reference])
+    if options.get("revenus") is not None:
+        pib = np.full((len(r.annees), n), params.pib_cellules)
+    else:
+        c = chemin(variante, reference, options.get("mesures"), options.get("annees"))
+        pib = np.stack([np.broadcast_to(np.asarray(e["pib"], dtype=float), (n,))
+                        for e in c.reference])
     calc = calculer_entente(r, cellules, dist, params.pib_cellules, pib)
     debut = options.get("tirages_depuis", 1 if n > 2 else None)
 
@@ -344,7 +348,7 @@ def entente(variante: Any, reference: Any, depart: Any, cellules: Any,
     return Dimension(
         cle="entente", titre="Ce qui rapproche ou sépare",
         question="La mesure rapproche-t-elle les niveaux de vie, ou les éloigne-t-elle ?",
-        annees=c.annees, indicateurs=tuple(indicateurs_),
+        annees=r.annees, indicateurs=tuple(indicateurs_),
         statut="jugé" if juge else "sourcé, non jugé", sources=SOURCES, limites=LIMITES,
         juge=juge,
         notes={"distribution": dist.source,

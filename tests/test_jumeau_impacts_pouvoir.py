@@ -118,3 +118,25 @@ def test_le_gini_d_un_exemple_connu() -> None:
     x = np.array([1.0, 2.0, 3.0, 4.0])
     attendu = np.abs(x[:, None] - x[None, :]).sum() / (2 * 16 * x.mean())
     assert entente.gini(x, np.ones(4)) == pytest.approx(attendu)
+
+
+def test_le_chemin_statique_de_melenchon(session) -> None:
+    """D-593 : Mélenchon, que le mode structurel refuse (le Smic, D-412), lu sur la passe
+    de sa première année : 68,3 Md€ aux ménages en 2026, +1 454 € par UC (€ de 2024) ; la
+    pauvreté reconstituée sur la distribution approchée baisse de 1,2 point. Chaque clé de
+    répartition garde le choc de chaque décile."""
+    cel = session.cellules
+    ch = pouvoir.chocs_du_rapport(session.candidats["pres2027_melenchon_programme"][
+        "premiere_annee"])
+    assert list(ch) == [2026] and sum(ch[2026]) == pytest.approx(68.28, abs=0.01)
+    for cle in pouvoir.REPARTITIONS:
+        np.testing.assert_allclose(
+            pouvoir.repartir(ch[2026], cel, cle).reshape(10, 5).sum(axis=1), ch[2026])
+    rv = pouvoir.revenus_statiques(ch, cel)
+    d = pouvoir.pouvoir_achat(None, None, None, cel, revenus=rv)
+    reel = {i.cle: i for i in d.indicateurs}
+    assert reel["reel_uc"].valeurs[0] == pytest.approx(1454.4, abs=1.0)
+    assert reel["perdants"].par_groupe["D10"][0] == pytest.approx(100.0)
+    e = entente.entente(None, None, None, cel, revenus=rv, lire_fichier=False)
+    pauvrete = {i.cle: i for i in e.indicateurs}["pauvrete"]
+    assert pauvrete.valeurs[0] == pytest.approx(-1.18, abs=0.01)

@@ -91,6 +91,9 @@ LIMITES = (
     "de la consommation moyenne des ménages, le même pour toutes les cellules.",
     "Hors du mode structurel, ni la dynamique (emploi, salaires) ni les prix : le gain est "
     "le choc statique seul.",
+    "Le gain par type de ménage dépend de la clé qui répartit le choc d'un décile entre "
+    "ses types (le rapport ne le dit pas) : les ménages pour le modèle ; les bornes sous "
+    "deux autres clés (les UC, le revenu) sont dans les notes.",
 )
 
 
@@ -288,12 +291,11 @@ def pouvoir_achat(variante: Any, reference: Any, depart: Any, cellules: Any,
     `reference` est celle de la référence et `options["mesures"]` les mesures).
     `options["tirages_depuis"]` : le premier tirage des lois de θ (1 par défaut s'il y a
     plus de deux tirages) ; None, pas de bande."""
-    c = chemin(variante, reference, options.get("mesures"), options.get("annees"))
-    r = revenus(c, depart, cellules, options.get("params"))
+    r, mesures = revenus_de(variante, reference, depart, cellules, options)
     debut = _debut(r.n, options)
     t = tableaux(r)
-    an = c.annees[0] - 1 if c.annees else None
-    euros = f"€ de {depart.annee if hasattr(depart, 'annee') else an} par UC et par an"
+    an = depart.annee if hasattr(depart, "annee") else options.get("annee_euros", "départ")
+    euros = f"€ de {an} par UC et par an"
     indicateurs = (
         _indicateur("reel_uc", "Gain de revenu disponible réel, par unité de consommation",
                     euros, t["reel_uc"], debut),
@@ -310,6 +312,7 @@ def pouvoir_achat(variante: Any, reference: Any, depart: Any, cellules: Any,
                     "% des ménages", t["perdants"], debut, sens=0),
     )
     limites = list(LIMITES)
+    bornes = bornes_types(r, cellules, mesures) if mesures else None
     if not r.structurel:
         limites.insert(0, "Cette trajectoire ne porte pas la boucle prix-salaires : le gain "
                           "réel est le gain nominal, sans prix ni dynamique des prix.")
@@ -321,16 +324,118 @@ def pouvoir_achat(variante: Any, reference: Any, depart: Any, cellules: Any,
         cle="pouvoir_achat", titre="Le pouvoir d'achat",
         question="Une fois les prix passés, les ménages ont-ils plus ou moins de quoi "
                  "vivre, et lesquels ?",
-        annees=c.annees, indicateurs=indicateurs,
+        annees=r.annees, indicateurs=indicateurs,
         statut="jugé" if juge else "sourcé, non jugé", sources=SOURCES,
         limites=tuple(limites), juge=juge,
         notes={"seuil_gagnant_euros": 10.0, "structurel": r.structurel,
                "tirages": r.n, "tirages_depuis": debut,
+               "types_bornes_repartition": bornes,
                "prix_consommation_pct": [float(x) for x in 100.0 * r.prix[:, 0]],
                "cas_types": [{"nom": n_, "decile": d, "type": ty} for n_, d, ty in CAS_TYPES],
                "cellules_uc": {f"D{k // len(TYPES) + 1}·{TYPES[k % len(TYPES)]}":
                                [float(x) for x in r.reel[:, k, 0] * 1e9 / r.uc[k]
                                 / r.deflateur[:, 0]] for k in range(r.uc.size)}})
+
+
+# --------------------------------------------------------------------------- #
+# le choc statique : sa répartition entre les types d'un décile, un chemin sans jumeau
+# --------------------------------------------------------------------------- #
+#: Les clés de répartition du choc statique d'un décile entre ses cellules : celle du
+#: modèle (les ménages, `menages.revenus_cellules`), et deux autres, pour borner ce que la
+#: clé fait au gain par type (le rapport ne dit pas qui, dans le décile, gagne).
+REPARTITIONS = {"menages": "au prorata des ménages (le modèle)",
+                "uc": "au prorata des unités de consommation",
+                "revenu_disponible": "au prorata du revenu disponible"}
+
+
+def repartir(choc: Sequence[float], cellules: Any, cle: str = "menages") -> np.ndarray:
+    """Le choc d'un décile (10 Md€) réparti entre ses cellules (50,), selon `cle`."""
+    poids = np.asarray(cellules[cle], dtype=float)
+    dec = np.repeat(np.arange(N_DECILES), len(TYPES))
+    par_decile = np.bincount(dec, weights=poids, minlength=N_DECILES)
+    return np.asarray(choc, dtype=float)[dec] * poids / par_decile[dec]
+
+
+def _chocs(mesures: Sequence[Any], annees: Sequence[int]) -> np.ndarray:
+    """La somme des chocs par décile des mesures, (années, 10) Md€."""
+    from impots.jumeau.blocs.menages import choc_menages
+
+    out = np.zeros((len(annees), N_DECILES))
+    for k, a in enumerate(annees):
+        for m in mesures:
+            d = choc_menages(m, a).get("deciles")
+            if d is not None:
+                out[k] += np.asarray(d, dtype=float)
+    return out
+
+
+def bornes_types(r: Revenus, cellules: Any, mesures: Sequence[Any]
+                 ) -> dict[str, dict[str, list[float]]]:
+    """Le gain réel par UC de chaque type (€ de l'année de départ, tirage 0), sous chaque
+    clé de répartition du choc statique : {type : {clé : [années]}}."""
+    chocs = _chocs(mesures, r.annees)
+    modele = np.stack([repartir(x, cellules, "menages") for x in chocs])
+    out: dict[str, dict[str, list[float]]] = {}
+    typ = np.tile(np.arange(len(TYPES)), N_DECILES)
+    for cle in REPARTITIONS:
+        autre = np.stack([repartir(x, cellules, cle) for x in chocs])
+        reel = r.reel[:, :, 0] - modele + autre
+        for i, t in enumerate(TYPES):
+            s = typ == i
+            v = reel[:, s].sum(axis=1) * 1e9 / r.uc[s].sum() / r.deflateur[:, 0]
+            out.setdefault(LIBELLES_TYPES[t], {})[cle] = [float(x) for x in v]
+    return out
+
+
+@dataclass(frozen=True)
+class Statique:
+    """Une mesure sans trajectoire : ses chocs par décile, année par année (Md€, gain des
+    ménages positif), lus sur la passe de son rapport. Ce que `revenus_statiques` lit."""
+
+    identifiant: str
+    menages: Mapping[int, Mapping[str, Any]]
+
+
+def revenus_statiques(chocs: Mapping[int, Sequence[float]], cellules: Any,
+                      params: Any = None) -> tuple[Revenus, list[Statique]]:
+    """Les revenus des cellules sous le seul choc statique (pas de dynamique, pas de prix),
+    aux revenus des cellules : pour une mesure que le mode structurel refuse."""
+    annees = tuple(sorted(chocs))
+    mesure = Statique("statique", {a: {"deciles": list(chocs[a])} for a in annees})
+    dyn = np.stack([repartir(chocs[a], cellules) for a in annees])[:, :, None]
+    rd = np.asarray(cellules["revenu_disponible"], dtype=float) / 1e9
+    a_ = len(annees)
+    zero = np.zeros((a_, rd.size, 1))
+    return Revenus(annees=annees, menages=np.asarray(cellules["menages"], dtype=float),
+                   personnes=np.asarray(cellules["personnes"], dtype=float),
+                   uc=np.asarray(cellules["uc"], dtype=float),
+                   rd_ref=np.broadcast_to(rd[None, :, None], (a_, rd.size, 1)).copy(),
+                   dynamique=dyn, indexation=zero, reprise=zero, prix=np.zeros((a_, 1)),
+                   deflateur=np.ones((a_, 1)), structurel=False), [mesure]
+
+
+def chocs_du_rapport(premiere_annee: Mapping[str, Any]) -> dict[int, list[float]]:
+    """Le choc par décile de la passe des ménages d'un rapport de première année (Md€),
+    même quand le jumeau ne le lit pas (une réforme du Smic, D-412) : le gain statique."""
+    from impots.jumeau.blocs.menages import menages_depuis_deciles
+    from impots.jumeau.mesures import _passes
+
+    passes = _passes(premiere_annee)
+    if "menages" not in passes or not passes["menages"]["reponse"].get("deciles"):
+        raise ValueError("le rapport n'a pas de passe des ménages par décile")
+    annee = int(passes["menages"]["requete"]["year"])
+    return {annee: menages_depuis_deciles(passes["menages"]["reponse"]["deciles"])}
+
+
+def revenus_de(variante: Any, reference: Any, depart: Any, cellules: Any,
+               options: Mapping[str, Any]) -> tuple[Revenus, Sequence[Any]]:
+    """Les revenus d'une trajectoire, ou ceux que `options["revenus"]` donne (un couple
+    (Revenus, mesures) de `revenus_statiques`)."""
+    if options.get("revenus") is not None:
+        r, mesures = options["revenus"]
+        return r, mesures
+    c = chemin(variante, reference, options.get("mesures"), options.get("annees"))
+    return revenus(c, depart, cellules, options.get("params")), c.mesures
 
 
 # --------------------------------------------------------------------------- #
@@ -357,5 +462,6 @@ def trajectoire_tiree(session: Any, choix: Mapping[str, Any], tirages: int = 200
     return traj, ctx["depart"], refus
 
 
-__all__ = ["CAS_TYPES", "Chemin", "Revenus", "chemin", "groupes", "pouvoir_achat",
-           "revenus", "trajectoire_tiree"]
+__all__ = ["CAS_TYPES", "Chemin", "Revenus", "Statique", "bornes_types", "chemin",
+           "chocs_du_rapport", "groupes", "pouvoir_achat", "repartir", "revenus",
+           "revenus_de", "revenus_statiques", "trajectoire_tiree"]
