@@ -108,3 +108,17 @@ def test_un_canal_branche_passe_au_socle() -> None:
     # Branché sans juge qui le tienne : la dimension reste « sourcé, non jugé ».
     assert branche.statut == "sourcé, non jugé" and branche.juge is None
     assert branche.notes["canaux_branches"] == ["pression_cout"]
+
+
+def test_le_canal_de_la_r_et_d() -> None:
+    p = P.charger()
+    # Trésor-Éco n° 290, p. 6 : 0,35 % de productivité pour 0,19 point de PIB de CIR.
+    assert p.cir.haut == pytest.approx(round(0.35 / 0.19, 2))
+    assert p.cir.centre == pytest.approx(round(0.25 / 0.19, 2))
+    annees = tuple(range(2026, 2033))
+    out = P.canal_cir({a: -8.0 for a in annees if a >= 2027}, annees, [4000.0] * 7, p)
+    # Rien pendant quatre ans après la marche de 2027, tout à partir de la cinquième.
+    np.testing.assert_allclose(out["centre"], [0, 0, 0, 0, 0, -0.002 * 1.32, -0.002 * 1.32])
+    var, ref, depart = _trajectoire()
+    d = P.calculer(var, ref, depart, cir={2026: 2.0, 2027: 2.0, 2028: 2.0})
+    assert "rd_cir" in {i.cle: i for i in d.indicateurs}["pgf_canaux"].par_groupe

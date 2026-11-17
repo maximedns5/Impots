@@ -60,6 +60,8 @@ from impots.jumeau.impacts import Dimension, Indicateur, Source, inscrire
 
 FICHIER = Path(__file__).resolve().parents[1] / "parametres" / "productivite.yaml"
 CANAUX = ("pression_cout", "salaire_efficience")
+#: Le canal de la R&D (D-627), lu sur la créance de CIR et non sur le coût du travail.
+CIR = "rd_cir"
 COTISATIONS = "cotisations_employeurs"
 
 
@@ -83,6 +85,8 @@ class Canal:
 @dataclass(frozen=True)
 class Parametres:
     canaux: Mapping[str, Canal]
+    cir: Canal
+    montee_cir: tuple[float, ...]
     montee: tuple[float, ...]
     theta_diffusion: float
     sources: Mapping[str, str]
@@ -95,7 +99,11 @@ def charger(chemin: Path = FICHIER) -> Parametres:
                        bool(d[c]["branche_par_defaut"]), d[c].get("juge"),
                        " ".join(str(d[c]["source"]).split()))
               for c in CANAUX}
-    return Parametres(canaux=canaux, montee=tuple(float(x) for x in d["montee"]["parts"]),
+    c = d[CIR]
+    cir = Canal(CIR, float(c["bas"]), float(c["centre"]), float(c["haut"]),
+                bool(c["branche_par_defaut"]), c.get("juge"), " ".join(str(c["source"]).split()))
+    return Parametres(canaux=canaux, cir=cir,
+                      montee_cir=tuple(float(x) for x in c["montee"]), montee=tuple(float(x) for x in d["montee"]["parts"]),
                       theta_diffusion=float(d["theta_diffusion"]["valeur"]),
                       sources={k: " ".join(str(d[k]["source"]).split())
                                for k in ("montee", "capital_menages", "duree_travail")})
@@ -246,6 +254,19 @@ def canaux_a_cote(mesures: Sequence[Any], annees: Sequence[int], masse: Sequence
     return out
 
 
+def canal_cir(cir: Mapping[int, float], annees: Sequence[int], pib: Sequence[float],
+              params: Parametres | None = None) -> dict[str, np.ndarray]:
+    """ΔPIB/PIB (fraction) du canal de la R&D : x_t = ΔCIR_t / PIB_t (une hausse de la
+    créance est positive), la productivité de toute l'économie η x, à la montée du
+    fichier (rien quatre ans, tout la cinquième)."""
+    p = params or charger()
+    x = np.array([float(cir.get(a, 0.0)) for a in annees]) / np.asarray(pib, dtype=float)
+    out = {nom: pgf_canal(x, p.cir.eta(th), p.montee_cir)
+           for nom, th in (("bas", 0.0), ("centre", 0.5), ("haut", 1.0))}
+    out["x"] = x
+    return out
+
+
 def _etats(variante: Any, reference: Any) -> tuple[Sequence[Any], Sequence[Any], Any]:
     """Une `Trajectoire` en `variante` (référence None), ou les deux suites d'états."""
     if reference is None and hasattr(variante, "variante"):
@@ -256,9 +277,12 @@ def _etats(variante: Any, reference: Any) -> tuple[Sequence[Any], Sequence[Any],
 @inscrire("productivite")
 def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *,
              mesures: Sequence[Any] | None = None, annees: Sequence[int] | None = None,
-             canaux: Iterable[str] | None = None, **_: Any) -> Dimension:
+             canaux: Iterable[str] | None = None, cir: Mapping[int, float] | None = None,
+             **_: Any) -> Dimension:
     """La dimension « productivité ». `mesures` : les mesures de la variante (leurs
-    leviers) ; `canaux` : ceux à brancher (par défaut, ceux que le fichier branche)."""
+    leviers) ; `canaux` : ceux à brancher (par défaut, ceux que le fichier branche) ;
+    `cir` : {année : Md€}, la variation de la créance de CIR qu'une mesure fait (une
+    hausse positive), lue par le canal `rd_cir`, toujours à côté (D-627)."""
     var, ref, traj = _etats(variante, reference)
     if traj is not None:
         mesures = traj.mesures if mesures is None else mesures
@@ -291,6 +315,12 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
              else np.full(len(annees), np.nan))
     a_cote = (canaux_a_cote(mesures or (), annees, masse, p)
               if mesures and d1 is not None else {})
+    if cir:
+        pib_r = _niveau(ref, "pib")
+        a_cote[CIR] = canal_cir(cir, annees, pib_r[:, 0], p)
+        limites.append("Le canal de la R&D lit une variation de la créance de CIR que la "
+                       "trajectoire du jumeau ne porte pas forcément : il est à côté, "
+                       "estimé sur une hausse du CIR (une baisse extrapole).")
     if mesures and d1 is None:
         limites.append("Sans les rémunérations de la référence, les canaux ne se "
                        "rapportent à aucune masse : non calculés.")
@@ -342,6 +372,9 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
         Source("Le jumeau (D-600)", "blocs `investissement`, `productivite`, `salaires`",
                "le socle : capital du coût d'usage, démographie, emploi, salaires"),
         *(Source(*_source_canal(c)) for c in p.canaux.values()),
+        Source("Trésor-Éco n° 290 (2021), réforme du CIR de 2008", "p. 6",
+               f"canal « rd_cir » : η = {p.cir.centre} ({p.cir.bas} à {p.cir.haut}), dès la "
+               "cinquième année"),
         Source("France Stratégie, fiscalité du capital, rapport final 2023", "p. 21 du "
                "PDF", "aucun effet du PFU sur l'investissement : canal nul"),
         Source("Cahuc et Carcillo, IZA DP 5439 (2011)", "résumé, p. 3 du PDF",

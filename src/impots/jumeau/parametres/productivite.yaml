@@ -74,3 +74,27 @@ theta_diffusion:
   # La diffusion d'une hausse du Smic aux salaires voisins (`travail`), lue au centre.
   valeur: 0.5
   source: Le centre de « travail_smic_diffusion » (D-533), comme le bloc `travail`.
+
+rd_cir:
+  # La productivité apparente du travail de l'ensemble de l'économie, en %, par point de
+  # PIB de créance de CIR en plus (une fraction : 0,35 % / 0,19 point = 1,84).
+  centre: 1.32
+  bas: 0.0
+  haut: 1.84
+  branche_par_defaut: false
+  juge: null
+  # La part de l'effet atteinte l'année h après une marche de la créance : rien pendant
+  # quatre ans, tout à partir de la cinquième.
+  montee: [0.0, 0.0, 0.0, 0.0, 1.0]
+  source: >
+    Le Gall, Meignan et Roulleau, « Évaluation de la réforme du Crédit Impôt Recherche de
+    2008 », Trésor-Éco n° 290 (2021), p. 6 [lu] : la réforme a relevé les créances de 0,19
+    point de PIB ; elle « induirait une augmentation de 0,35 % de la productivité du
+    travail au niveau de l'ensemble de l'économie, soit la somme des effets directs de
+    l'innovation (0,25 %) et des effets de diffusion de l'innovation (0,10 %) », à partir
+    de la cinquième année (Lopez et Mairesse 2018 : +1,7 % pour les bénéficiaires). Le
+    haut : 0,35 / 0,19 = 1,84 ; le centre, les seuls effets directs, 0,25 / 0,19 = 1,32 ;
+    le bas, 0 : la R&D induite est mesurée (IPP n° 22, multiplicateur 0,8 à 1,4, p. 77),
+    son effet sur la productivité ne l'est pas au manifeste. Estimé sur une hausse du CIR
+    seulement : une baisse ou une suppression extrapole (support nul, comme `rd_cir` du
+    magasin comportemental, D-222). Sourcé, non jugé.
