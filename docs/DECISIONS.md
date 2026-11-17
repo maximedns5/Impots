@@ -38315,3 +38315,149 @@ p. 15, une borne, pourraient servir de contrôle faible). Aucune tolérance ne c
 
 Pas de test neuf : la ligne n'est pas un correctif, son nombre est tenu par son rapport
 commité ; la lecture du complément par `verification.grille` est de la plomberie (D-335).
+
+## D-533 — La réaction (3) : la diffusion des hausses du Smic, sourcée
+
+**Ce qui manquait** (D-508, D-530). `travail_smic_diffusion` décide du signe de l'emploi du
+Smic de Mélenchon (+189,8 à −215,8 milliers en 2035, θ 0 à 1) et du solde (−18,25 à
++5,50 Md€). Son centre et son haut étaient sourcés (Koubi et Lhommeau, figure 11, sans et
+avec effets fixes), son bas ne l'était pas : θ 0 était « la loi seule », la convention des
+études (D-380), qu'aucune estimation ne soutient. Lu dans la littérature publique, après
+téléchargement (manifeste ; aucun chiffrage de tiers des programmes) :
+
+* **Koubi et Lhommeau** (Insee, Les salaires en France 2007, figure 11, p. 14 du PDF) :
+  2000-2005, Acemo, entreprises de 10 salariés ou plus, salaire horaire de base par 0,1
+  Smic. À un an, de 1 à 1,5 Smic, 0,47 → 0,31 sans effets fixes, 1,19 → 0,49 avec (au-
+  dessus de 1, « proches de l'unité », note 1) ; à un trimestre, un effet jusqu'à 2 Smic
+  (figure 10).
+* **Goarant et Muller** (Insee, Emploi et salaires 2011, figure 11, p. 14 du PDF) :
+  2006-2009, même enquête, salaire mensuel de base. À un an, 0,16 entre 1 et 1,1 Smic,
+  non significatif au-delà ; la diffusion se fait en deux trimestres jusqu'à 1,8-2 Smic
+  (figure 10), puis un rattrapage négatif aux troisième et quatrième (p. 13) ;
+  « conclusions similaires » sur 1999-2005.
+* **Gautier, Roux et Suarez Castillo** (2018), lus dans le rapport du groupe d'experts
+  sur le Smic de 2024 (note 30, p. 67) : +1 % de Smic relève les salaires de base de
+  0,08 % en moyenne, directement ; +1 % de minima de branche, de 0,14 % (source
+  secondaire : l'annexe de 2018 n'est pas lue).
+* **Cette, Chouard et Verdugo** (Économie et Statistique n° 448-449, 2011, tableau 4,
+  p. 18 du PDF) : 1970-2009, séries agrégées ; un coup de pouce de 1 % relève le SMPT de
+  0,08 % à court terme et de **0,28 % à long terme** (SHBO : 0,11 et 0,23).
+
+Les deux premières sont des élasticités différentielles (par rapport aux postes de 3 Smic
+et plus, dont la réponse est dans les effets de date) ; la troisième et la quatrième, des
+moyennes. Pour les comparer, le bloc les porte à la même grandeur : l'élasticité du
+salaire brut moyen marchand à une hausse de 1 % du Smic, la loi (0,031 : 10 % des EQTP
+entre 1 et 1,1 Smic dans la distribution de l'Insee Première n° 2079) plus la diffusion.
+
+| lecture | diffusion seule | loi et diffusion |
+|---|---:|---:|
+| la loi seule (l'ancien θ 0) | 0 | 0,03 |
+| Goarant et Muller, à un an | 0,009 | 0,04 |
+| Gautier, Roux et Suarez Castillo, direct | | 0,08 |
+| Koubi et Lhommeau sans effets fixes (θ ½) | 0,096 | 0,11 |
+| Koubi et Lhommeau avec effets fixes (θ 1) | 0,188 | 0,19 |
+| Cette, Chouard et Verdugo, long terme, coups de pouce | | 0,28 (SMPT), 0,23 (SHBO) |
+
+**Décidé.** Le θ garde sa forme (bas à 0, centre à ½, haut à 1, linéaire par morceaux) ;
+**son bas devient Goarant et Muller** : e = 0,16 entre 1 et 1,1 Smic, zéro au-delà, la
+plus petite diffusion publiée en France, la plus récente des estimations par tranche. Le
+centre reste Koubi et Lhommeau sans effets fixes : 0,11 en moyenne, la médiane des cinq
+lectures agrégées (0,04 ; 0,08 ; 0,11 ; 0,19 ; 0,28). Le haut reste Koubi et Lhommeau
+avec effets fixes. La littérature ne se réduit pas à un nombre : sa fourchette agrégée
+est de **0,04 à 0,28** ; le bloc en couvre 0,04 à 0,19. Le long terme macro de Cette,
+Chouard et Verdugo (0,28) est **au-dessus du haut** : la forme du bloc (rien au-delà de
+1,5 Smic, l'effet d'un an tenu) ne peut pas l'atteindre, et ce n'est pas le même
+estimateur (séries agrégées de 1970-2009, l'indexation et sa circularité). Il est dit,
+pas utilisé (règle 4 de `a_priori.yaml` : la plage change ici parce que D-530 le demande,
+et cette entrée le dit). L'a priori reste large (θ ~ N(½ ; ½)), le texte change.
+`travail.yaml` (le vecteur `bas`), `travail.py` (`diffusion` lit `bas` au lieu de zéro),
+`thetas.py` et `a_priori.yaml` (les textes).
+
+**Jusqu'où, à quelle vitesse.** Jusqu'où : à un trimestre, jusqu'à 2 Smic (Koubi et
+Lhommeau, fig. 10 ; Goarant et Muller, fig. 10, « quasiment nulle au-delà de 2 fois le
+Smic ») ; à un an, jusqu'à 1,5 (Koubi et Lhommeau, seules tranches estimées) ou 1,1
+(Goarant et Muller). Vitesse : entre 1 et 1,1 Smic, l'effet du premier trimestre est 33 à
+81 % de celui d'un an, entre 1,4 et 1,5, 14 à 22 % (Koubi et Lhommeau, p. 15 du PDF) ;
+de 2006 à 2009, une compensation suit aux trimestres 3 et 4 ; en macro, l'effet de long
+terme est 3,5 fois celui du trimestre (Cette et al.). Les sources se contredisent sur le
+long terme : le bloc tient l'effet d'un an (`profil_temps`, choisie, non vérifiée), sans
+changement.
+
+**La forme du bloc contre ce que mesurent les sources** (pour le volet `interaction`,
+sans réécrire le bloc) :
+
+1. **Les tranches restent celles de l'ancien Smic.** Les élasticités sont estimées sur des
+   hausses de 2 à 5,5 % par an ; `diffusion()` les applique aux postes de 1 à 1,5 Smic
+   *d'avant*, et w = max(m (1 + e g), 1 + g). Pour g = 16,17 % (Mélenchon), la loi absorbe
+   les postes jusqu'à 1,16 Smic, si bien que la tranche 1-1,1, la plus diffusante, ne
+   diffuse plus ; ceux de 1,5 à 1,74 Smic d'avant (1,3 à 1,5 du nouveau) ne reçoivent rien.
+   Les sources mesurent une diffusion relative au Smic courant, recentrée sur le nouveau
+   (Brochu et al. 2023, dans le rapport de 2024) : le bloc devrait lire e(m / (1 + g)) au
+   moins au-delà du nouveau Smic, et la linéarité en g d'une hausse de 16 % est hors de
+   l'échantillon (dit).
+2. **La grandeur** : salaire de base horaire ou mensuel, entreprises de 10 salariés ou
+   plus (Acemo), contre la distribution en EQTP nets de tous les postes du privé (Insee
+   Première n° 2079), passés en brut par un seul rapport ; les entreprises de moins de 10
+   salariés (23 % de l'effectif, rapport n° 1685, p. 39) sont extrapolées.
+3. **Le profil dans le temps** : un an tenu à jamais, quand Goarant et Muller voient un
+   rattrapage et Cette et al. un long terme plus fort.
+4. **Rien au-delà de 1,5 Smic** quand l'effet trimestriel va à 2 Smic.
+5. **Une diffusion additive, mesure par mesure** (D-509) : la diffusion d'une hausse du
+   Smic ne lit ni les allègements que la même mesure ou une autre retire, ni les minima de
+   branche (le canal de Gautier et al., +0,14).
+
+Le test léger `tests/test_jumeau_travail.py` tient le bas (vu échouer sur le code
+d'avant). La récolte du registre porte les cinq documents neufs et les valeurs du bloc
+(`jumeau.travail.diffusion.*` passent de « non relue » à « retrouvée ») ; seules ces
+entrées sont commitées : la récolte de ce worktree résout autrement 80 lignes de
+`financement_sous_secteurs` (un autre tableau des comptes), sans lien avec ce volet,
+laissées telles qu'au commit d'avant.
+
+**Ce que cela change**, sur le Smic de Mélenchon : D-534.
+
+## D-534 — La réaction (4) : le Smic de Mélenchon avec la diffusion sourcée
+
+**Ce qui a tourné** (le jumeau seul, 15 secondes, aucune passe) : la mesure de D-508 et
+D-509, portée à la passe complète de D-521 (convention « premiere_annee_d521 »), en
+structurel, financement à ½, à θ de diffusion 0, ¼, ½, ¾ et 1, avant (commit c976d9d) et
+après D-533. Script `scripts/reaction_diffusion_b28.py` ; rapports `reports/etudes/
+reaction_b28/diffusion_avant.json` et `diffusion_apres.json`.
+
+**Avant et après : les mêmes nombres, à 0,1 près, à chaque θ.**
+
+| θ diffusion | emploi 2035, figée | B9 2035 (Md€) | dette 2035 (pt) | emploi, vieillie |
+|---|---:|---:|---:|---:|
+| 0 (avant : la loi seule ; après : Goarant-Muller) | +189,8 | −18,25 | +4,451 | +148,8 |
+| ¼ | +97,1 | −12,83 | +3,267 | +56,2 |
+| ½ (Koubi-Lhommeau sans effets fixes) | +1,5 | −7,27 | +2,052 | −39,4 |
+| ¾ | −87,0 | −2,08 | +0,922 | −127,9 |
+| 1 (Koubi-Lhommeau avec effets fixes) | −215,8 | +5,50 | −0,722 | −256,8 |
+
+Pourquoi rien ne bouge : le bas sourcé ne diffuse qu'entre 1 et 1,1 Smic, et un Smic
+relevé de 16,17 % porte par la loi tous ces postes à 1,1617 (1,1 × 1,026 < 1,1617) ; à θ ¼,
+l'élasticité de la tranche (0,317) ne les en sort pas non plus. Pour une hausse de 2 %,
+le bas diffuse 0,37 % de la hausse en masse brute (zéro avant). **La plage de l'emploi du
+Smic de Mélenchon, +190 à −216 milliers, est désormais sourcée aux deux bouts** ; elle ne
+se resserre pas : la littérature va plus loin que le haut (Cette et al., 0,28 contre
+0,19) et le bas se confond ici avec la loi seule.
+
+**Où la littérature place le θ**, en moyenne pour une petite hausse (D-533) : Gautier,
+Roux et Suarez Castillo (0,08) vers θ 0,3, soit un emploi d'environ +75 milliers en 2035 ;
+Koubi et Lhommeau au centre, environ 0 ; Cette et al. au-delà de θ 1, au-delà de −216
+milliers (interpolations linéaires sur le tableau, non calculées par le jumeau). Les
+estimations micro récentes (2006-2009 et branches) penchent vers un emploi positif ; le
+long terme macro, vers un emploi négatif. Le signe n'est pas tranché par les sources.
+
+**L'écart de forme qui pèse le plus.** Si la diffusion était lue par rapport au nouveau
+Smic (e(m / (1 + g)) pour les postes au-dessus du nouveau Smic, l'écart 1 de D-533), la
+diffusion moyenne du Smic de Mélenchon passerait, en part de la hausse, de 0 à 0,013 (θ
+0), de 0,061 à 0,107 (θ ½), de 0,130 à 0,221 (θ 1) : au centre, autant que l'actuel θ 0,86,
+un emploi de l'ordre de −140 milliers en 2035 (interpolation, à recalculer par le volet
+`interaction` s'il change la forme). Ce volet ne réécrit pas le bloc.
+
+**Ce qui reste au propriétaire.** (1) La forme de la diffusion pour une grande hausse
+(recentrée sur le nouveau Smic) : elle déplace le centre de l'emploi de 0 à environ −140
+milliers, plus que tout le sourçage du θ. (2) Le long terme : tenir l'effet d'un an
+(aujourd'hui), le laisser décroître (Goarant et Muller) ou croître (Cette et al.). (3) La
+densité des salaires de 2,5 à 3,5 Smic (D-532) : une marge neuve, préenregistrée, avec une
+source qui ne soit pas celle qui juge ; et refaire alors la paire Smic × exonérations.

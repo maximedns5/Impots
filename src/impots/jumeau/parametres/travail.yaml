@@ -110,19 +110,33 @@ tranches:
     salariés au-dessus de 3,5 Smic, « 6,7 % de l'emploi ETP », n'y sont pas modélisés"
 
 diffusion:
-  # L'élasticité du salaire horaire de base à une hausse de 1 % du Smic, par tranche de 0,1
-  # Smic de 1,0 à 1,5 ; nulle au-delà de 1,5 Smic.
+  # L'élasticité du salaire de base à une hausse de 1 % du Smic, par tranche de 0,1 Smic
+  # de 1,0 à 1,5 ; nulle au-delà de 1,5 Smic. θ « travail_smic_diffusion » : 0 le bas, ½
+  # le centre, 1 le haut, linéaire par morceaux (D-533). En moyenne sur la distribution
+  # de l'Insee Première n° 2079, avec la loi (0,031) : 0,04 (bas), 0,11 (centre), 0,19
+  # (haut) ; la littérature va de 0,04 à 0,28 (D-533).
   bornes: [1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
+  bas: [0.16, 0.0, 0.0, 0.0, 0.0]
   sans_effets_fixes: [0.473, 0.358, 0.287, 0.271, 0.311]
   avec_effets_fixes: [1.188, 0.796, 0.520, 0.357, 0.490]
-  source: "Koubi et Lhommeau (Dares), « Les effets de diffusion de court terme des hausses
-    du Smic dans les grilles salariales des entreprises de dix salariés ou plus sur la
-    période 2000-2005 », Insee, Les salaires en France, édition 2007, figure 11, à un an,
-    sans et avec effets fixes d'entreprise (les mêmes valeurs que
-    `population.margins.SMIC_DIFFUSION_PROFILS`, D-380). Au-delà de 1,5 Smic, l'effet est
-    dit « faible » : zéro. θ « travail_smic_diffusion » : 0, la loi seule (la convention
-    des études, D-380) ; ½, sans effets fixes ; 1, avec effets fixes ; linéaire par
-    morceaux"
+  source: "bas : Goarant et Muller (Dares), « Les effets des hausses du Smic sur les
+    salaires mensuels dans les entreprises de 10 salariés ou plus de 2006 à 2009 », Insee
+    Références, Emploi et salaires, édition 2011, figure 11, p. 14 du PDF (folio 81,
+    insee_empsal2011_goarant_muller_hausses_smic.pdf) : à un an, 0,16 point entre 1 et 1,1
+    Smic, non significatif au-delà ; la plus petite diffusion publiée en France (D-533),
+    au lieu de la loi seule, que nulle estimation ne soutient. centre et haut : Koubi et
+    Lhommeau (Dares), « Les effets de diffusion de court terme des hausses du Smic dans les
+    grilles salariales des entreprises de dix salariés ou plus sur la période 2000-2005 »,
+    Insee, Les salaires en France, édition 2007, figure 11, p. 14 du PDF (folio 80,
+    insee_salfra2007_koubi_lhommeau_diffusion_smic.pdf), à un an, sans et avec effets
+    fixes d'entreprise (les mêmes valeurs que `population.margins.SMIC_DIFFUSION_PROFILS`,
+    D-380) ; les élasticités au-dessus de 1 sont « proches de l'unité » (note 1, p. 15).
+    Au-delà de 1,5 Smic, l'effet à un an n'est pas estimé : zéro. Hors plage : Cette,
+    Chouard et Verdugo, Économie et Statistique n° 448-449 (2011), tableau 4, p. 18 du PDF
+    (insee_es448_2011_cette_chouard_verdugo_smic_salaire_moyen.pdf), un coup de pouce de
+    1 % relève le SMPT de 0,28 % à long terme, au-dessus du haut (0,19) ; Gautier, Roux et
+    Suarez Castillo (2018), lus dans le rapport du groupe d'experts sur le Smic de 2024,
+    note 30, p. 67 (ges_smic_rapport_2024.pdf), 0,08 en moyenne, entre le bas et le centre"
   profil_temps:
     valeur: [1.0, 1.0, 1.0, 1.0]
     source: "choisie, non vérifiée : l'estimation est à un an ; la diffusion est atteinte

@@ -27,7 +27,8 @@ référence), une hausse du Smic d'un facteur 1 + g et une diffusion e(m) :
     S(w)     = w (1 + τ_e) − A(w)                  le coût (super-brut) d'un poste
 
 e(m) est l'élasticité de la tranche de 0,1 Smic qui contient m, zéro hors de [1 ; 1,5),
-mise à θ (« travail_smic_diffusion » : 0 la loi seule, ½ sans effets fixes, 1 avec).
+mise à θ (« travail_smic_diffusion » : 0 Goarant-Muller, 0,16 de 1 à 1,1 Smic ; ½
+Koubi-Lhommeau sans effets fixes ; 1 avec, D-533).
 Chaque grandeur d'une tranche est la somme de ses postes, rapportée au coût de référence
 de tous les postes, Σ S(m) : une part de la masse salariale super-brute marchande, que le
 bloc porte au niveau du jumeau, π D1_k (π la part marchande, `menages.yaml`). Les
@@ -173,7 +174,7 @@ def charger(chemin: Path = PARAMETRES) -> Parametres:
         fillon=r["fillon_2024"],
         diffusion_bornes=np.asarray(p["diffusion"]["bornes"], dtype=float),
         diffusion={k: np.asarray(p["diffusion"][k], dtype=float)
-                   for k in ("sans_effets_fixes", "avec_effets_fixes")},
+                   for k in ("bas", "sans_effets_fixes", "avec_effets_fixes")},
         matrice=np.asarray(e["matrice"]["valeur"] if isinstance(e["matrice"], Mapping)
                            else e["matrice"], dtype=float),
         echelle={k: float(e["echelle"][k]) for k in ("bas", "centre", "haut")},
@@ -223,8 +224,8 @@ def fillon_2024(p: Parametres, x: Any) -> Any:
 
 def diffusion(p: Parametres, theta: Any) -> np.ndarray:
     """e(m), (intervalles, n) : l'élasticité du salaire de chaque intervalle au Smic, à θ
-    (0 la loi seule, ½ Koubi-Lhommeau sans effets fixes, 1 avec)."""
-    par_tranche = par_morceaux(theta, np.zeros(5), p.diffusion["sans_effets_fixes"],
+    (0 Goarant-Muller, ½ Koubi-Lhommeau sans effets fixes, 1 avec ; D-533)."""
+    par_tranche = par_morceaux(theta, p.diffusion["bas"], p.diffusion["sans_effets_fixes"],
                                p.diffusion["avec_effets_fixes"])
     idx = np.searchsorted(p.diffusion_bornes, p.multiples, side="right") - 1
     dedans = (idx >= 0) & (idx < 5)

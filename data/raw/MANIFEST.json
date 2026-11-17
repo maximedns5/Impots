@@ -2486,6 +2486,42 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Assemblée nationale, rapport d'information n° 1685 (XVIe législature, 28 septembre 2023) de la MECSS sur l'efficacité des exonérations de cotisations sociales, MM. Ferracci et Guedj. p. 37 : le bandeau famille sur les salaires entre 2,5 et 3,5 Smic « de l'ordre d'1,6 milliard d'euros en 2022 » ; p. 39, tableau « Montant des exonérations du bandeau famille sur les salaires compris entre 2,5 et 3,5 Smic » par taille d'entreprise (réponse de l'Urssaf), total 1,478 Md€. But 28, volet reaction (D-531).",
       "quarantined": false
+    },
+    "insee_salfra2007_koubi_lhommeau_diffusion_smic.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/1373191/salfra07ae.pdf",
+      "sha256": "5554c6286f432b7b7f79aa97ff85a6443dac119cac98e958af49f776dfec21e3",
+      "bytes": 180735,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Koubi et Lhommeau (Dares), « Les effets de diffusion de court terme des hausses du Smic dans les grilles salariales des entreprises de dix salariés ou plus sur la période 2000-2005 », Insee, Les salaires en France, édition 2007. Figure 11 (p. 14 du PDF, folio 80) : élasticités du salaire horaire de base au Smic par tranche de 0,1 Smic de 1 à 1,5, trimestrielles et annuelles, sans et avec effets fixes d'entreprise ; figure 10 : effet trimestriel significatif jusqu'à 2 Smic. But 28, volet reaction (D-533).",
+      "quarantined": false
+    },
+    "insee_empsal2011_goarant_muller_hausses_smic.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/1373824/empsal11f.pdf",
+      "sha256": "b85653c6a5ef390f00344ffbfb4a24a206c4a642d57c76756a86a162d385c0a1",
+      "bytes": 309438,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Goarant et Muller (Dares), « Les effets des hausses du Smic sur les salaires mensuels dans les entreprises de 10 salariés ou plus de 2006 à 2009 », Insee Références, Emploi et salaires, édition 2011. Résumé p. 2 du PDF ; figure 10 (p. 12) : effets retardés, compensation aux 3e et 4e trimestres (p. 13) ; figure 11 (p. 14 du PDF, folio 81) : à un an, 0,16 point entre 1 et 1,1 Smic, non significatif au-delà. But 28, volet reaction (D-533).",
+      "quarantined": false
+    },
+    "insee_es448_2011_cette_chouard_verdugo_smic_salaire_moyen.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/1377686/ES448A.pdf",
+      "sha256": "449c81bd9833dcb7d095693524355012529515bae85faf5b10a6d773fbab5248",
+      "bytes": 1228758,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Cette, Chouard et Verdugo (Banque de France), « Les effets des hausses du Smic sur le salaire moyen », Économie et Statistique n° 448-449, 2011. Tableau 4 (p. 18 du PDF) : élasticités de court et de long terme du SHBO et du SMPT aux composantes des revalorisations du Smic ; coups de pouce : SMPT 0,08 et 0,28, SHBO 0,11 et 0,23. But 28, volet reaction (D-533).",
+      "quarantined": false
+    },
+    "ges_smic_rapport_2024.pdf": {
+      "url": "https://strategie.gouv.fr/files/2025-02/smic-rapport-2024-11decembre15h45_vdef_complet.pdf",
+      "sha256": "215044f7cda37d2e00ff7f8719aad89d24ca45d5ddd562494697614e0a8b8a07",
+      "bytes": 9053600,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Groupe d'experts sur le Smic, rapport de novembre 2024. Note 30, p. 67 : Gautier, Roux et Suarez Castillo (2018) : une hausse de 1 % du Smic relève directement les salaires de base individuels de 0,08 % en moyenne, une hausse de 1 % des minima de branche de 0,14 % ; p. 96 du PDF : minima de branche +12 % contre +15 % pour le Smic et l'inflation de début 2021 au 3e trimestre 2024. But 28, volet reaction (D-533).",
+      "quarantined": false
     }
   }
 }
