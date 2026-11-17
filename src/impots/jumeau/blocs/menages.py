@@ -502,6 +502,13 @@ def revenus_cellules(etat: Etat, mesure: Any, ref: Reference, params: Parametres
                                                ec.publiques_traitements))
     db = st.allocation_sur_salaire * ref.salaire * ec.d_u * 1e3 / 1e9
     rd = st.rho[:, None] * d1_c + np.outer(st.part_chomeurs, db)
+    coef = getattr(mesure, "boucle", None)
+    if coef is not None:
+        # La boucle population ↔ jumeau (D-545) : la part de l'emploi, aux taux de la
+        # microsimulation au lieu de ceux des cellules (`jumeau.boucle`).
+        from impots.jumeau import boucle
+        rd = rd + boucle.corrections(coef, st, boucle.masse(
+            coef, etat.annee, ec.e, ref.emploi_marchand, pi_d1))["rd"]
     choc = choc_menages(mesure, etat.annee).get("deciles")
     if choc is not None:
         par_decile = np.bincount(st.decile, weights=st.menages, minlength=N_DECILES)
@@ -736,6 +743,17 @@ class Salaires(_Base):
             out["apu_r_d5"][ident] = st.taux_d5 @ d1_c
             out["apu_d_d62"][ident] = (st.allocation_sur_salaire * ref.salaire
                                        * chemin[-1].d_u * 1e3 / 1e9)
+            coef = getattr(m, "boucle", None)
+            if coef is not None:
+                # La boucle population ↔ jumeau (D-545) : l'écart entre la
+                # microsimulation et le forfait des cellules, pour la part de l'emploi.
+                from impots.jumeau import boucle
+                cor = boucle.corrections(coef, st, boucle.masse(
+                    coef, ctx.annee, chemin[-1].e, ref.emploi_marchand, pi_d1))
+                out["remunerations"][ident] = d1 + cor["remunerations"]
+                out["ebe_revenu_mixte"][ident] = -d1 - cor["remunerations"]
+                for c in ("apu_r_d61", "apu_r_d5", "apu_d_d62"):
+                    out[c][ident] = out[c][ident] + cor[c]
         return out
 
 

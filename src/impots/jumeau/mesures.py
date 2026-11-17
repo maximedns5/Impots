@@ -103,6 +103,10 @@ class Mesure:
     leurs caisses reçoivent (D-500). Ce ne sont pas des impulsions : aucun bloc marchand
     ne les lit (ni le coût du travail privé, ni la formation des salaires) ; seul le
     compte des sous-secteurs les range (`financement.comptes`)."""
+    boucle: Any | None = None
+    """Les coefficients de la boucle population ↔ jumeau (`jumeau.boucle.Coefficients`,
+    D-545) : la part de l'emploi de la masse salariale aux taux d'une microsimulation des
+    transitions, au lieu de ceux des cellules. Absente, le forfait des cellules."""
 
     def __post_init__(self) -> None:
         if not self.identifiant:

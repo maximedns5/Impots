@@ -38719,3 +38719,234 @@ du Smic de 2022-2023, après le volet `reaction`, avec une source qu'il n'aura p
 (3) λ, calé sur une évaluation du CICE, qu'aucun juge du CICE ne peut trancher. (4) La
 boucle prix-salaires dans le volet `interaction`. (5) La Garantie jeunes dans la grille
 de 2022 (deux mois), à repasser ou à dire.
+
+## D-545 — La boucle population ↔ jumeau (1) : la règle, et deux cas préenregistrés
+
+**Ce que fait ce volet** (BUT.md, but 28, volet 4). Le jumeau fait des emplois ; la
+population n'en reçoit rien. Ce qu'ils rendent, le jumeau le compte par des taux moyens
+de cellule (`blocs.menages`, D-409) : la masse de l'emploi, π D1 ê, va aux cellules au
+prorata de leurs chômeurs, chaque euro au taux ρ_c en revenu, t61_c en cotisations, t5_c
+en CSG, CRDS et IR, et chaque chômeur de moins rend β W d'allocation. Aucune autre
+prestation ne bouge, et chaque emploi créé est payé le salaire moyen W. Sur les cellules
+de D-512, par emploi, en part de W : revenu 0,604 − 0,258 = 0,347, cotisations 0,308,
+CSG, CRDS et IR 0,088, allocation −0,258, prestations 0. Le code : `jumeau/boucle.py`,
+deux ajouts localisés (`Mesure.boucle` ; la correction dans `revenus_cellules` et dans
+`Salaires`), `scripts/boucle_b28.py`, `tests/test_jumeau_boucle.py`.
+
+**La règle de la transition.** *Qui* : les chômeurs au sens du BIT de la population (15 à
+64 ans), à probabilité égale par unité de poids. C'est la règle du jumeau lui-même : la
+population active y est constante (Mésange, p. 40, note 27), un emploi marchand de plus
+est un chômeur de moins, la masse va « au prorata des chômeurs » ; les inactifs ne sont
+pas tirés, et c'est une limite dite (les transitions de l'enquête Emploi en font entrer
+une part dans l'emploi ; non lues). *Dans quel ménage* : le sien ; une copie du ménage où
+lui seul change, qui reçoit la part s du poids (une repondération par mélange : la
+variante s w_h, l'original (1 − s) w_h). *À quel salaire* : son taux mensuel brut quand
+il travaille, celui de ses mois en emploi de l'année ; sans mois en emploi, celui d'un
+donneur tiré à graine fixe parmi les chômeurs qui en ont un, du même sexe et du même côté
+de 25 ans. C'est la règle de la population (`emploi_discontinu`, étape « ppa » du but
+19 : le taux d'un salarié de la même classe d'emploi, du même sexe, du même côté de 25
+ans, d'abord en contrat à durée limitée), prolongée, sans rien caler. Sur la population
+de D-521 : 12 × le taux, 31 700 € brut par an en moyenne (médiane 26 000) ; 41 % sous
+1,2 Smic horaire, 72 % sous 1,6. La quotité est la sienne. La variante travaille douze
+mois, sans allocation ; l'emploi gagné est 1 − m/12 personne-année, m ses mois déjà
+travaillés (0,79 en moyenne). Le câblage écrit le même salaire sur les années
+d'historique (D-011) : un emploi tenu, que les aides au logement lisent en N − 2.
+
+**Les coefficients.** Par personne-année, les écarts variante − original pondérés, en
+part du super-brut moyen par salarié de la même passe (comme β) : le super-brut (q), les
+cotisations (super-brut − net − CSG et CRDS des salaires, la définition de t61), D5 (CSG
+et CRDS des salaires, IR du ménage, CSG et CRDS du chômage), l'allocation chômage brute,
+les prestations de `cellules.PRESTATIONS` servies en espérance, le revenu disponible et
+sa répartition entre les cinquante cellules (celle du ménage d'origine).
+
+**Le double compte.** La boucle remplace, elle n'ajoute pas. Pour la masse M = π D1 ê
+que le jumeau donne aux emplois salariés marchands, elle écrit l'écart entre la
+microsimulation et le forfait : rémunérations (q − 1) M (et l'EBE l'opposé : le PIB ne
+bouge pas, l'IS sur les profits induits lit cet EBE), D61 (c61 − Σ p_c t61_c) M, D5
+(c5 − Σ p_c t5_c) M, D62 (cch + β) M + cpr M, revenu de chaque cellule (r_c − (ρ_c − β)
+p_c) M. Avec les coefficients du forfait, chaque correction est nulle et le jumeau est
+celui d'avant, au bit (le test `test_avec_le_forfait_la_boucle_ne_change_rien`). Ce que
+la boucle ne touche pas : la part du salaire de la masse (π D1 ŵ), la réponse de l'offre
+au salaire (au forfait β), les non-salariés, les emplois publics, les prestations
+indexées sur les prix, le choc statique de la mesure (sa passe). Les recettes induites
+déjà comptées par le jumeau sur cette masse sont celles que la correction remplace ;
+l'allocation économisée aussi, pour les seuls chômeurs qui deviennent salariés.
+
+**Le point fixe, et pourquoi une passe suffit.** Le total d'une grandeur sur la
+population repondérée est Σ_h w_h [(1 − s) X_h + s X'_h] : linéaire en s, ses écarts
+par personne-année ne dépendent pas de l'emploi que le jumeau rend. Une seconde passe à
+l'emploi de la première itération redonnerait les mêmes coefficients, au terme près des
+ménages où deux chômeurs passent ensemble (d'ordre s², mesuré dans la passe : les deux
+premiers chômeurs de chaque ménage qui en a deux, ensemble). La boucle jumeau →
+population → jumeau se résout donc dans le jumeau ; la correction est écrite par les
+blocs de la boucle simultanée, que le pas résout par Gauss-Seidel. Pour la montrer
+itération par itération, `emploi_impose` : la correction lit l'emploi de l'itération
+d'avant. **Un signe** : un emploi détruit (le Smic à θ 1) est lu comme le miroir d'un
+emploi créé, chez les mêmes personnes (dit, non vérifié).
+
+**Ce qui tourne.** Deux passes OpenFisca, tier « full », sur le sous-échantillon de 20 000
+ménages des études plus leurs variantes (une par chômeur, environ 1 500) et les paires,
+détachées, sous le verrou commun, une à la fois ; sorties hors git (`boucle28/`). (1) **Le
+CICE** (D-535, D-536) : la loi de 2014 ne passe pas le tier « full » (l'IFI y est lu sur
+l'année et la précédente ; 2018 non plus), donc la loi de 2019 sur la population ramenée
+à 2019 (D-535), avec la bonification de la prime d'avant le décret n° 2018-1197 (le
+miroir de D-535) : les transferts de 2016 à 2018 ; le RSA activité et la PPE de 2013 à
+2015 n'y sont pas, et la réduction générale renforcée de 2019 baisse c61 et q d'environ
+le taux du CICE sous 2,5 Smic (dit). Le jumeau du CICE de D-536, θ½, avec et sans la
+boucle. (2) **Le Smic de Mélenchon** (D-508, D-534) : la vue figée de 2026, la loi de la
+réforme (le monde où les emplois du jumeau existent), comme la passe de D-508 ; le
+jumeau structurel, figée, « premiere_annee_d521 », θ de diffusion 0, ½ et 1. Deux essais
+de plomberie de 400 ménages ont tourné (le Smic, puis le CICE en 2014, 2018 et 2019) :
+seuls leurs refus ont été lus, leurs nombres non, leurs fichiers effacés.
+
+**Le juge.** Aucun pour le Smic. Pour le CICE, France Stratégie (2020) a déjà été lu par
+D-536 : la boucle y est un **contrôle**, pas un jugement ; le rapport jumeau sur juge
+est dit, il ne compte dans aucune note.
+
+**Le pronostic**, écrit avant les passes. Les coefficients, les mêmes pour les deux cas
+(estimés à la main sur la population, sans OpenFisca ; bande entre parenthèses) : q 0,70
+(0,60 à 0,85), c61 0,21 (0,15 à 0,27), c5 0,055 (0,03 à 0,08), cch −0,33 (−0,38 à
+−0,28), cpr −0,005 (−0,04 à +0,02), r 0,105 (0,05 à 0,17), contre le forfait 1, 0,308,
+0,088, −0,258, 0 et 0,347. Le jumeau avec ces coefficients (le pronostic chiffré, en
+secondes, `jumeau pronostic`) :
+
+| | sans | pronostic (bande) |
+|---|---:|---|
+| CICE, emploi salarié 2016 (milliers) | +185,0 | +179 (+175 à +183) |
+| CICE, emploi 2014-2016, rapport au juge | 1,47 | 1,43 (1,40 à 1,46) |
+| CICE, consommation 2016 (Md€) | −0,11 | −2,3 (−3,2 à −1,2) |
+| CICE, cotisations, CSG et IR 2016 (Md€) | +1,62 | ≈ 0,0 (−0,8 à +0,8) |
+| CICE, prestations et allocations 2016 (Md€) | −4,56 | −5,5 (−6,0 à −5,0) |
+| CICE, B9 2016 (Md€) | −15,70 | −16,7 (−17,7 à −15,7) |
+| Smic θ½, emploi 2035 (milliers) | +1,3 | +1,8 (−1 à +4) |
+| Smic θ½, B9 2035 (Md€) | −7,27 | −7,4 (−7,7 à −7,1) |
+| Smic θ½, dette 2035 (pt) | +2,05 | +2,10 (+2,0 à +2,2) |
+| Smic θ 0, consommation 2035 | +5,3 | +0,7 (−2 à +3) |
+| Smic θ 0, B9 2035 | −18,25 | −20,0 (−21 à −19) |
+| Smic θ 1, consommation 2035 | +39,0 | +43,7 (+41 à +46) |
+| Smic θ 1, B9 2035 | +5,50 | +7,3 (+6 à +8,5) |
+
+En mots : un emploi rend aux ménages trois fois moins que le forfait (il est payé moins
+que la moyenne, et l'allocation perdue est plus grosse par personne-année que β) ; la
+consommation du CICE, déjà presque nulle, devient négative ; les recettes de second tour
+baissent d'autant que l'allocation économisée monte, le solde bouge peu ; au Smic, la
+boucle ne change rien au centre (l'emploi y est nul) et creuse l'écart entre les bornes.
+La boucle itérée converge en moins de dix itérations, le facteur de contraction sous 0,1 ;
+le terme d'ordre s² sous 1 % des écarts seuls ; le résidu du revenu disponible
+(revenu disponible moins ses composantes) sous 0,01 W.
+
+**Rien n'est retouché après le premier calcul.** Le résultat ira dans D-546, y compris ce
+qui contredit le pronostic.
+
+## D-546 — La boucle population ↔ jumeau (2) : un emploi rend trois fois moins au ménage
+
+**Ce qui a tourné** (D-545, commit 6bd2744 ; détaché, sous le verrou commun, une passe à
+la fois) : le CICE (loi de 2019 au miroir de la bonification, population ramenée à 2019,
+154 s) puis le Smic de Mélenchon (vue figée de 2026, loi de la réforme, 121 s), chacun
+sur les 20 000 ménages des études, 1 544 variantes (2,40 millions de chômeurs pondérés,
+1,91 million de personnes-années d'emploi à gagner) et 113 paires. Puis le jumeau (25 s).
+Rapport : `reports/etudes/boucle_b28/resultats.json` ; script `scripts/boucle_b28.py`.
+Le script a reçu sa commande `rapport` après les passes (rien de ce qu'elles lisent).
+
+**Ce que rend une personne-année d'emploi** (€ de l'année de la passe ; W le super-brut
+moyen par salarié de la passe, 48 504 € pour le CICE, 55 048 € pour le Smic ; le forfait
+du jumeau entre parenthèses, en € de la même passe ; pronostic de D-545 en part de W) :
+
+| | CICE | Smic | forfait (CICE) | part de W, CICE / Smic | pronostic |
+|---|---:|---:|---:|---|---|
+| super-brut (q) | 33 493 | 37 833 | 48 504 | 0,691 / 0,687 | 0,70 (0,60 à 0,85) |
+| cotisations (c61) | 9 657 | 9 538 | 14 919 | 0,199 / 0,173 | 0,21 (0,15 à 0,27) |
+| CSG, CRDS, IR (c5) | 2 821 | 3 468 | 4 278 | 0,058 / 0,063 | 0,055 (0,03 à 0,08) |
+| allocation | −16 198 | −18 628 | −12 492 | −0,334 / −0,338 | −0,33 (−0,38 à −0,28) |
+| autres prestations | −198 | −135 | 0 | −0,004 / −0,002 | −0,005 (−0,04 à +0,02) |
+| revenu disponible (r) | +4 529 | +6 026 | +16 815 | 0,093 / 0,110 | 0,105 (0,05 à 0,17) |
+
+Les douze coefficients sont dans leur bande. Les autres prestations (CICE ; Smic) : prime
+d'activité +376 (+550), aides au logement −263 (−317), RSA −111 (−135), allocations
+familiales −76 (−86), le reste −124 (−145). **Le forfait se trompe trois fois dans le même
+sens** : un emploi payé la moyenne (l'embauche coûte 31 % de moins en super-brut), une
+allocation perdue trop petite (β W la rapporte à un chômeur ; la transition la retire
+par personne-année d'emploi gagnée, 1/0,79 fois plus : +30 %), et aucune prestation
+qui bouge. Le revenu que l'emploi
+apporte au ménage est 3,7 fois (CICE) et 3,2 fois (Smic) plus petit que le forfait. Le
+résidu du revenu disponible (revenu moins net, IR, chômage net et prestations) : −0,002
+et −0,001 W, sous 0,01 : tenu.
+
+**Le CICE** (θ½, ses chocs de D-536 ; avec la boucle, contre sans) :
+
+| | sans | avec | pronostic (bande) | |
+|---|---:|---:|---|---|
+| emploi salarié 2016 (milliers) | +185,0 | +179,1 | +179 (+175 à +183) | tenu |
+| emploi 2014-2016, rapport au juge | 1,47 | 1,43 | 1,43 (1,40 à 1,46) | tenu |
+| consommation 2016 (Md€) | −0,11 | −2,41 | −2,3 (−3,2 à −1,2) | tenu |
+| cotisations, CSG et IR 2016 | +1,62 | −0,09 | 0,0 (−0,8 à +0,8) | tenu |
+| prestations et allocations 2016 | −4,56 | −5,53 | −5,5 (−6,0 à −5,0) | tenu |
+| B9 2016 (Md€) | −15,70 | −16,73 | −16,7 (−17,7 à −15,7) | tenu |
+
+Hors pronostic : PIB 2016 +2,86 → +1,18 Md€, rémunérations +5,31 → +1,10, TVA −0,01 →
+−0,27, dette 2017 +3,28 → +3,53 pt. Le contrôle contre France Stratégie (déjà lu, D-536)
+ne change pas de verdict : 143,2 milliers en moyenne de 2014 à 2016, rapport 1,43. **Ce
+que la boucle dit de D-536** : la consommation presque nulle n'était pas une compensation
+fortuite ; elle est négative dès que l'emploi est payé ce qu'il est payé et que la perte
+d'allocation est comptée par personne-année. Les recettes de second tour (−1,71 Md€ en
+2016) et les allocations économisées (+0,97) se compensent à moitié ; le reste du solde
+vient de la consommation et du PIB perdus.
+
+**Le Smic de Mélenchon** (figée, « premiere_annee_d521 », structurel ; B9 et
+consommation en Md€, emploi salarié en milliers, dette en points, 2035) :
+
+| diffusion | B9 sans → avec | conso sans → avec | emploi sans → avec | dette |
+|---|---|---|---|---|
+| θ 0 | −18,25 → −20,29 | +5,34 → +0,65 | +160,5 → +159,3 | +4,45 → +4,89 |
+| θ ½ | −7,27 → −7,37 | +21,06 → +20,73 | +1,3 → +1,9 | +2,05 → +2,11 |
+| θ 1 | +5,50 → +7,64 | +38,97 → +43,68 | −182,5 → −179,9 | −0,72 → −1,10 |
+
+Les cinq lignes préenregistrées sont dans leur bande (θ½ : emploi +1,9, B9 −7,37, dette
++2,11 ; θ 0 : consommation +0,65, B9 −20,29 ; θ 1 : consommation +43,68, B9 +7,64). En
+emploi total (D-534) : +189,8 → +188,4, +1,5 → +2,2, −215,8 → −212,7. **Au centre, la
+boucle ne change rien** (l'emploi y est nul) ; **elle écarte les bornes** : la plage du
+B9 de 2035 selon la diffusion passe de 23,8 à 27,9 Md€. À θ 0, les emplois créés rendent
+peu aux ménages et coûtent l'allocation : le solde perd 2,0 Md€ ; à θ 1, les emplois
+détruits (lus en miroir, D-545) en coûtent moins que le forfait ne disait, et le solde
+gagne 2,1 Md€. Le signe de l'emploi reste celui de la diffusion (D-534).
+
+**La convergence.** La boucle itérée (`emploi_impose` : la correction lit l'emploi de
+l'itération d'avant), sur l'écart maximal de l'emploi d'une itération à l'autre, en
+milliers : CICE 7,00, 0,23, 0,0072, 0,0002, 5e-6, 1e-7 ; le Smic à θ 0, 5,16, 0,16,
+0,0050, 0,0002, 6e-6, 2e-7. Le facteur de contraction est 0,03 ; six itérations à 1e-6
+près, et la limite est la boucle écrite dans les blocs (179,126 contre 179,13 ; B9 2016
+−16,7276 dans les deux). Pronostic (moins de dix, facteur sous 0,1) : tenu. Le second
+pas (refaire la passe à l'emploi rendu) n'a pas tourné : la passe est linéaire en s.
+
+**Le terme d'ordre s²** (les deux chômeurs d'un ménage ensemble, contre la somme des deux
+seuls, sur les 113 paires, s = 1) : nul sur le super-brut, les cotisations et
+l'allocation ; sur le revenu disponible +0,2 % (CICE) et −0,3 % (Smic) ; sur D5 +1,3 % et
++1,7 % ; **sur les prestations −10 % et −8 %** : le pronostic (sous 1 % des écarts seuls)
+est **manqué** sur D5 et les prestations. Pondéré par s (179 milliers d'emplois pour
+2,40 millions de chômeurs, 0,075) et par la part des chômeurs en paire (0,35 sur 2,40),
+il fait moins de 0,3 % des prestations de la boucle, et rien de lisible sur le solde :
+une passe suffit.
+
+**Ce que la boucle ne fait pas, et qui reste.** (1) Les inactifs n'entrent pas dans
+l'emploi (la population active du jumeau est constante) ; la part des embauches qui
+viennent de l'inactivité, à sourcer dans les transitions de l'enquête Emploi, ferait
+perdre moins d'allocation par emploi. (2) Un emploi détruit est le miroir d'un emploi créé
+(les mêmes personnes) : un licenciement d'un salarié en poste, payé plus, perdrait plus.
+(3) Le CICE à la loi de 2019 (la réduction générale renforcée, sans RSA activité ni
+PPE). (4) La part du salaire de la masse (π D1 ŵ) reste aux taux moyens : la diffusion du
+Smic aux bas salaires y est toujours trop répartie vers le haut (D-478). (5) Le volet
+`interaction` réécrit `travail.py` : la boucle n'y touche pas, et ses corrections portent
+sur l'emploi que le bloc `emploi` fait, quel qu'en soit le choc.
+
+**Les tests** (légers, sans passe) : `tests/test_jumeau_boucle.py`, quatre, dont la
+correction de l'allocation vue échouer sur le code d'avant (sans la boucle dans
+`Salaires`, l'écart de dépense est nul) ; `test_jumeau_menages.py` vert avec les ajouts
+de `menages.py`. `ruff` vert. Non lancés : la suite entière, `make impact`, les lourds.
+
+**Ce qui reste au propriétaire.** (1) Brancher la boucle par défaut dans le navigateur et
+les études (aujourd'hui : une mesure la porte si on la lui donne), après une passe par
+année de loi, ou garder le forfait et dire son biais (le revenu des emplois créés trois
+fois trop gros). (2) Les inactifs dans les transitions, avec une source. (3) Le salaire
+des emplois créés dans la masse du jumeau (q ≈ 0,69) : il baisse les rémunérations et
+l'IR, et le PIB par la consommation ; c'est une correction de composition que Mésange ne
+fait pas.
