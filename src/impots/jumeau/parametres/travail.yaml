@@ -146,9 +146,10 @@ diffusion:
 formes:
   # Les écarts de forme de la diffusion à ce que mesurent les sources (D-533, D-540) :
   # chacun une option déclarée, son défaut la forme d'avant. Le propriétaire choisit ;
-  # aucun défaut ne change sans une D-entrée.
+  # aucun défaut ne change sans une D-entrée. D-551 : le recentrage « nouveau » devient
+  # le défaut (décision du propriétaire du 17 novembre) ; les autres gardent le leur.
   recentrage:
-    defaut: ancien
+    defaut: nouveau
     valeurs: [ancien, nouveau]
     source: "ancien : e(m), m en Smic d'avant la hausse (le bloc de D-478). nouveau : e(m /
       (1 + g)) pour les postes au-dessus du nouveau Smic, la diffusion relative au Smic

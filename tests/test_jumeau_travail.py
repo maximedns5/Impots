@@ -28,15 +28,26 @@ def test_le_bas_de_la_diffusion_est_goarant_muller(p):
     assert e_demi[dans][0] == pytest.approx(0.473)
 
 
-def test_la_loi_absorbe_le_bas_pour_une_grande_hausse(p):
-    """Une hausse de 2 % diffuse au bas (0,37 % de la hausse en masse brute, zéro avec la
-    loi seule) ; celle de Mélenchon (+16,17 %) relève par la loi tous les postes où le bas
-    diffuse : à θ 0, rien ne reste à la diffusion (D-533, l'écart de forme 1)."""
+def test_la_loi_absorbe_le_bas_pour_une_grande_hausse():
+    """Sous l'ancienne forme (e(m), m en Smic d'avant) : une hausse de 2 % diffuse au bas
+    (0,37 % de la hausse en masse brute, zéro avec la loi seule) ; celle de Mélenchon
+    (+16,17 %) relève par la loi tous les postes où le bas diffuse : à θ 0, rien ne reste
+    à la diffusion (D-533, l'écart de forme 1). Sous le défaut de D-551, le recentrage,
+    le bas diffuse au-dessus du nouveau Smic : 0,87 % pour 2 %, 1,25 % pour Mélenchon."""
+    with travail.formes(recentrage="ancien"):
+        p = travail.charger()
     petite = travail.cascade(p, 1.02, 0.0)
     part = petite.b_diff[:, 0].sum() / petite.brut[:, 0].sum() / 0.02
     assert part == pytest.approx(0.0037, abs=5e-4)
     grande = travail.cascade(p, SMIC_MELENCHON, 0.0)
     assert grande.b_diff[:, 0].sum() == 0.0
+    q = travail.charger()
+    petite = travail.cascade(q, 1.02, 0.0)
+    assert petite.b_diff[:, 0].sum() / petite.brut[:, 0].sum() / 0.02 == pytest.approx(
+        0.0087, abs=5e-4)
+    grande = travail.cascade(q, SMIC_MELENCHON, 0.0)
+    assert grande.b_diff[:, 0].sum() / grande.brut[:, 0].sum() / (
+        SMIC_MELENCHON - 1.0) == pytest.approx(0.0125, abs=5e-4)
 
 
 # ------------------------------------------------------------- l'interaction (D-540)
@@ -45,12 +56,17 @@ class _Mesure:
         self.identifiant, self.travail, self.impulsions = ident, travail_, {}
 
 
-def test_deux_hausses_du_smic_ne_se_somment_pas(p):
+@pytest.mark.parametrize("recentrage, rapport", [("ancien", 0.886), ("nouveau", 1.181)])
+def test_deux_hausses_du_smic_ne_se_somment_pas(recentrage, rapport):
     """Le choc combiné (D-540) : deux hausses de 8 % font une hausse de 16,64 %, que la
     diffusion lit d'un coup (w = max(m (1 + e g), 1 + g)) ; la somme de leurs effets
-    séparés n'en est pas la valeur (0,886 de la somme au centre : la loi de la seconde
-    hausse absorbe une part de la diffusion de la première). Le partage de Shapley rend chacune à la moitié du
-    tout, et une mesure seule garde sa valeur d'avant."""
+    séparés n'en est pas la valeur. Sous l'ancienne forme, 0,886 de la somme au centre :
+    la loi de la seconde hausse absorbe une part de la diffusion de la première. Sous le
+    recentrage (le défaut, D-551), 1,181 : la diffusion suit le Smic, et la bande qui
+    diffuse monte vers des salaires plus hauts. Le partage de Shapley rend chacune à la
+    moitié du tout, et une mesure seule garde sa valeur d'avant."""
+    with travail.formes(recentrage=recentrage):
+        p = travail.charger()
     bloc = travail.Travail(params=p)
     t = np.array([0.5])
     spec = {"smic": 1.08, "passe": True}
@@ -58,7 +74,7 @@ def test_deux_hausses_du_smic_ne_se_somment_pas(p):
     deux = bloc._valeur([(spec, 1), (spec, 1)], t)
     somme = 2.0 * seul[0].sum()
     assert deux[0].sum() != pytest.approx(somme, rel=1e-3)
-    assert deux[0].sum() / somme == pytest.approx(0.886, abs=2e-3)
+    assert deux[0].sum() / somme == pytest.approx(rapport, abs=2e-3)
     parts = bloc._partage({"a": (spec, 1), "b": (spec, 1)}, t)
     assert parts["a"][0].sum() == pytest.approx(deux[0].sum() / 2.0)
     assert bloc._partage({"a": (spec, 1)}, t)["a"][0].sum() == seul[0].sum()
@@ -86,15 +102,17 @@ def test_le_seuil_d_une_mesure_ne_touche_que_les_salaires_qu_il_coupe(p):
 
 
 def test_le_recentrage_porte_la_diffusion_de_melenchon(p):
-    """La forme `recentrage` « nouveau » (D-540, l'écart 1 de D-533) : la diffusion du
-    Smic de Mélenchon, en part de la hausse de la masse brute, passe de 0,061 à 0,107 au
-    centre (D-534) ; le défaut reste l'ancien."""
+    """La forme `recentrage` « nouveau » (D-540, l'écart 1 de D-533), le défaut depuis
+    D-551 (décision du propriétaire) : la diffusion du Smic de Mélenchon, en part de la
+    hausse de la masse brute, est 0,109 au centre, contre 0,061 sous l'ancienne forme
+    (D-534) ; les autres formes gardent leur défaut."""
     def part(q):
         c = travail.cascade(q, SMIC_MELENCHON, 0.5)
         return c.b_diff[:, 0].sum() / c.brut[:, 0].sum() / (SMIC_MELENCHON - 1.0)
 
-    assert p.formes["recentrage"] == "ancien"
-    assert part(p) == pytest.approx(0.061, abs=2e-3)
-    with travail.formes(recentrage="nouveau"):
+    assert p.formes["recentrage"] == "nouveau"
+    assert p.formes["profil"] == "tenu" and p.formes["portee"] == "1,5"
+    assert part(p) == pytest.approx(0.109, abs=2e-3)
+    with travail.formes(recentrage="ancien"):
         q = travail.charger()
-    assert part(q) == pytest.approx(0.107, abs=3e-3)
+    assert part(q) == pytest.approx(0.061, abs=2e-3)

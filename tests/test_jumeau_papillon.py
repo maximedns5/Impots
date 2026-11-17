@@ -82,5 +82,6 @@ def test_les_payeurs_des_prestations_viennent_des_fiches(session):
     traj, th = pa.trajectoire(session, ms, cle=P + "programme", theta={
         "financement_a16_part_cnav": 0.5, "financement_compensation": 0.5})
     res = comptes.resume(comptes.decomposer(traj, ms, th))["sous_secteurs"]
-    assert res["etat"]["b9"]["ecart"][0] == pytest.approx(-55.81, abs=0.01)
-    assert res["apul"]["b9"]["ecart"][0] == pytest.approx(1.48, abs=0.01)
+    # D-551 : la diffusion recentrée par défaut ; sous l'ancienne forme, −55,81 et 1,48.
+    assert res["etat"]["b9"]["ecart"][0] == pytest.approx(-54.92, abs=0.01)
+    assert res["apul"]["b9"]["ecart"][0] == pytest.approx(1.545, abs=0.01)

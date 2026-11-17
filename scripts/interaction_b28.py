@@ -37,6 +37,8 @@ CHAMPS = ("emploi_2035", "b9_2035", "dette_2035")
 #: Les réglages essayés : (formes du bloc `travail`, réglage de la boucle prix).
 REGLAGES: dict[str, tuple[dict[str, str], str | None]] = {
     "defaut": ({}, None),
+    # D-551 : le recentrage « nouveau » est le défaut ; l'ancien défaut se lit ici.
+    "recentrage_ancien": ({"recentrage": "ancien"}, None),
     "recentrage_nouveau": ({"recentrage": "nouveau"}, None),
     "profil_croissant": ({"profil": "croissant"}, None),
     "profil_decroissant": ({"profil": "decroissant"}, None),
