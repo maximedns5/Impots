@@ -12,6 +12,7 @@ Chaque instrument que les études chiffrent, contre un total publié, sur 2022, 
 | Réduction générale dégressive | 2022, 2023, 2024 | +11,7 % | +10,5 % | +12,9 % | 3/3 |
 | Bandeau maladie | 2022, 2023, 2024 | +3,2 % | +2,4 % | +4,3 % | 3/3 |
 | Bandeau famille | 2022, 2023, 2024 | +12,8 % | +11,3 % | +14,4 % | 3/3 |
+| Part du bandeau famille portée par les salaires de 2,5 à 3,5 Smic | 2022 | +33,2 % | +33,2 % | +33,2 % | 0/1 |
 | CSG sur les revenus d'activité | 2022, 2023, 2024 | -6,7 % | -7,1 % | -6,4 % | 3/3 |
 | CSG sur les revenus de remplacement | 2022, 2023, 2024 | -2,3 % | -4,6 % | -0,4 % | 3/3 |
 | Foyers fiscaux | 2022, 2023, 2024 | -6,0 % | -6,9 % | -4,9 % | 3/3 |
@@ -54,6 +55,7 @@ Chaque instrument que les études chiffrent, contre un total publié, sur 2022, 
 | Réduction générale dégressive | 40,45 Md€ | 35,83 Md€ | +12,9 % | ±15 % | dans la tolérance |
 | Bandeau maladie | 25,44 Md€ | 24,38 Md€ | +4,3 % | ±15 % | dans la tolérance |
 | Bandeau famille | 10,04 Md€ | 8,78 Md€ | +14,4 % | ±15 % | dans la tolérance |
+| Part du bandeau famille portée par les salaires de 2,5 à 3,5 Smic | 0,22 | 0,17 | +33,2 % | ±15 % | hors de la tolérance |
 | CSG sur les revenus d'activité | 93,60 Md€ | 100,19 Md€ | -6,6 % | ±15 % | dans la tolérance |
 | CSG sur les revenus de remplacement | 24,49 Md€ | 24,98 Md€ | -2,0 % | ±10 % | dans la tolérance |
 | Impôt sur le revenu au barème, avant réductions et crédits | — | — | — | ±10 % | refusée : aucun total publié trouvé pour cette année : ligne refusée (D-362) |

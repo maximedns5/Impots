@@ -120,6 +120,25 @@
    "commit": "2d6a88239f2dbebd7cb827c9a89c605f0232be94"
   },
   {
+   "id": "bandeau_famille_part_2_5_3_5_smic",
+   "ligne": "Part du bandeau famille portée par les salaires de 2,5 à 3,5 Smic",
+   "modele": "bandeau famille entre 2,5 et 3,5 Smic / bandeau famille",
+   "annee": 2022,
+   "publie": 0.168,
+   "source": "Assemblée nationale, rapport d'information n° 1685 (28 septembre 2023), MECSS, MM. Ferracci et Guedj, sur l'efficacité des exonérations de cotisations sociales (réponses de l'Urssaf au questionnaire des rapporteurs)",
+   "localisation": "p. 39 du PDF, tableau « Montant des exonérations du bandeau famille sur les salaires compris entre 2,5 et 3,5 Smic », colonne des montants : 109 + 88 + 151 + 115 + 178 + 141 + 278 + 418 = 1 478 millions d'euros ; p. 37 : le bandeau famille « pour atteindre 8,8 milliards d'euros en 2022 » ; 1,478 / 8,8 = 0,168 (calculée)",
+   "url": "https://www.assemblee-nationale.fr/dyn/16/rapports/mecss/l16b1685_rapport-information.pdf",
+   "sha256": "3202a173bd3646a89cf9636e1842978ba23c13f7984a514f040d1a984b72c104",
+   "perimetre": "Réduction de 1,8 point de la cotisation d'allocations familiales (CSS, art. L241-6-1), employeurs du secteur privé, 2022 : la part de son montant que portent les salariés dont la rémunération annuelle est comprise entre 2,5 et 3,5 Smic ; le taux étant unique sur la bande, c'est la part de l'assiette. Le montant de la tranche est une estimation de l'Urssaf par retraitement de la DSN (« de l'ordre d'1,6 milliard », p. 37)",
+   "tolerance": 0.15,
+   "usage": "validation",
+   "remarque": "But 28, volet reaction, préenregistrée en D-531 : la densité des salaires au-dessus de 2,5 Smic (D-509). Mesurée par personne, hors passe de la grille (complement_2022.json).",
+   "simule": 0.22376037042772312,
+   "ecart": 0.3319069668316852,
+   "verdict": "hors de la tolérance",
+   "commit": "4c43c3899182ad50fb6b5fbaa700b98814b90fe1"
+  },
+  {
    "id": "csg_activite",
    "ligne": "CSG sur les revenus d'activité",
    "modele": "csg_deductible + csg_imposable",
@@ -2697,6 +2716,16 @@
    "min": 0.11327601370493556,
    "max": 0.1437101255907427,
    "tenues": 3
+  },
+  "bandeau_famille_part_2_5_3_5_smic": {
+   "ligne": "Part du bandeau famille portée par les salaires de 2,5 à 3,5 Smic",
+   "annees": [
+    2022
+   ],
+   "biais": 0.3319069668316852,
+   "min": 0.3319069668316852,
+   "max": 0.3319069668316852,
+   "tenues": 0
   },
   "csg_activite": {
    "ligne": "CSG sur les revenus d'activité",

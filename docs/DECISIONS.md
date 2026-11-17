@@ -38259,3 +38259,59 @@ de 2,01 à 3,04 Smic, quand la densité réelle y décroît. Les bénéficiaires
 environ 1,8 M de salariés (pas de juge). Le résultat va dans D-532 ; aucune tolérance ne
 change après le calcul, et si la ligne sort, la population n'est pas refaite sans une
 D-entrée préenregistrée.
+
+## D-532 — La réaction (2) : la ligne des salaires de 2,5 à 3,5 Smic, +33 %, hors
+
+**Ce qui a tourné**, détaché, sous le verrou, au commit 4c43c38 (D-531) : la loi de 2022
+sur la population de D-521 ramenée à 2022 (facteur des salaires 0,931), huit lots, 377
+secondes, 3,6 Go. Rapport : `reports/verification/complement_2022.json` ; la grille est
+réécrite (`GRILLE.md`, `grille.json`), les passes de la grille ne sont pas refaites.
+
+**Le résultat.** `bandeau_famille_part_2_5_3_5_smic`, 2022 : simulé **0,224**, publié
+0,168, **+33,2 %**, **hors de la tolérance** (±15 %). Le pronostic, 0,225 (0,205 à 0,245),
+est tenu ; il n'était pas aveugle (D-531). La grille de 2022 juge 32 lignes ; 31 tiennent.
+
+**Où est l'écart** (Md€ de bandeau, 2022, sans l'extrapolation hors champ ; part du total ;
+bénéficiaires, millions) :
+
+| rémunération | modèle | part | bénéficiaires | publié |
+|---|---:|---:|---:|---:|
+| sous 1,6 Smic | 4,750 | 50,8 % | 13,63 | |
+| 1,6 à 2 | 1,457 | 15,6 % | 2,41 | |
+| 2 à 2,5 | 0,991 | 10,6 % | 1,30 | |
+| **sous 2,5** | **7,197** | 76,9 % | | **7,32** (8,8 − 1,478) |
+| 2,5 à 3 | 1,143 | 12,2 % | 1,22 | |
+| 3 à 3,5 | 0,950 | 10,2 % | 0,91 | |
+| **2,5 à 3,5** | **2,093** | 22,4 % | 2,13 | **1,478** |
+| au-delà (mois sous 3,5) | 0,065 | 0,7 % | 0,13 | |
+| total | 9,356 | | | 8,8 (CCSS : 8,777) |
+
+Sous 2,5 Smic, le modèle rend le publié à −1,7 % ; entre 2,5 et 3,5, **+42 %** (0,61 Md€
+de trop, une masse de 116 Md€ contre 82). L'excès de la ligne `bandeau_famille` de 2022
+(+14,4 % dans la grille, avec l'extrapolation hors champ, facteur 1,073) est presque
+entier dans cette bande. Le bandeau maladie, qui s'arrête à 2,5 Smic, tient à +4,3 %.
+
+**La cause.** La fonction des salaires horaires de la Dares (D-497) n'a que deux points
+entre 1,6 et 4 Smic (2,01 → 75 % ; 3,04 → 90 %), linéaire entre eux : autant de salariés
+par dixième de Smic à 3 Smic qu'à 2 (1,30 M de 2 à 2,5, 1,22 M de 2,5 à 3), quand la
+densité réelle décroît ; et la masse croît avec le salaire, d'où plus de bandeau de 2,5 à
+3 que de 2 à 2,5. Le point du D9 (3,04 Smic) fixe le haut ; ce qui manque est la forme
+entre P75 et D9.
+
+**Ce que cela dit de D-509.** La population du but 19 avait 0,74 M de salariés entre 3 et
+3,49 Smic, celle de D-521 1,06 M ; la ligne dit que la bande 2,5-3,5 est surchargée de
+42 % en masse. Le retournement de la paire Smic × exonérations (+1,165 → −0,985 Md€) et
+la baisse de rendement des exonérations au-delà de 2 Smic (−6,33 → −4,47 Md€) tiennent à
+cette densité : **le signe publié en D-509 n'est pas établi**, et ces deux nombres sont
+probablement trop bas en valeur absolue ; ce volet ne les refait pas.
+
+**Le correctif, non fait** (la population n'est pas refaite ici ; il se préenregistre
+dans une D-entrée à lui) : un point de plus sur la fonction des salaires horaires entre
+2,5 et 3,5 Smic dans `incomes._salaires_horaires_en_smic`, par une marge sourcée. Le
+montant de cette ligne (1,478 Md€, soit 82 Md€ d'assiette) ne peut pas à la fois caler et
+juger : il faut une autre source pour l'un des deux (la DSN par tranche de Smic que
+l'Urssaf ou la Dares publieraient ; les « plus de 78 % » de l'assiette sous 3,5 Smic,
+p. 15, une borne, pourraient servir de contrôle faible). Aucune tolérance ne change.
+
+Pas de test neuf : la ligne n'est pas un correctif, son nombre est tenu par son rapport
+commité ; la lecture du complément par `verification.grille` est de la plomberie (D-335).
