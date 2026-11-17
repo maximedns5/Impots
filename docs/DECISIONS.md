@@ -40575,9 +40575,10 @@ monte le plus et que la mortalité y est la plus haute.
 4. **Le chômage** passe par le jumeau (D-488 pour Attal : l'emploi est discuté) ; chez
    Attal, il fait les deux tiers des années de vie. La santé déclarée suit le chômage : la
    moitié haute de sa bande est déjà généreuse (Schmitz 2011 ne trouve aucun effet).
-5. Le renoncement aux soins pour le prix baisse d'environ 1 % à 2 % du niveau de 2025
-   (1,9 % des adultes pour un examen médical, 5,1 % pour un examen dentaire) ; le premier
-   décile en fait l'essentiel chez Mélenchon (29 000 sur 140 000).
+5. Le renoncement aux soins pour le prix baisse de 1,5 % (Retailleau) à 3,6 % (Mélenchon)
+   de son niveau de 2025 (1,9 % des adultes pour un examen médical, 5,1 % pour un examen
+   dentaire, environ 3,9 millions de renoncements) ; le premier décile en fait le cinquième
+   chez Mélenchon (29 000 sur 140 000).
 
 **Pas de test des nombres des programmes** : ils dépendent de tout le jumeau, que les autres
 volets changent ; le rapport commité les tient, avec son commit. Les tests légers tiennent
