@@ -1,0 +1,1788 @@
+{
+ "commit": "1a0dfe15894f140eb7cbfffea4f577038f521f87",
+ "decision": "D-597",
+ "mode": "structurel",
+ "vue": "vieillie",
+ "theta": "½ pour chaque θ lu",
+ "programmes": {
+  "melenchon": {
+   "convention": "mesures_seules (D-502) ; le programme refusé : mesure « pres2027_melenchon_programme » : des prélèvements agrégés (le signal du canal du lot 1) sans leur ventilation par impôt ; les blocs du lot 2 lisent chaque impôt et ne devinent pas la ventilation",
+   "cle": "moral",
+   "titre": "Le moral des gens",
+   "question": "La vie que mènent les gens en est-elle plus ou moins satisfaisante, et de combien ?",
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "statut": "sourcé, non jugé",
+   "juge": null,
+   "sources": [
+    {
+     "document": "HM Treasury, Wellbeing guidance for appraisal: background paper reviewing methods and approaches (juillet 2021)",
+     "lieu": "p. 19 du PDF : « a coefficient of 0.35-0.50 on ln(income) (LS on a 0-10 scale) is the estimate with the most confidence » (Lindqvist et al. 2020, gains de loterie suédois, effets de long terme, revenu exogène) ; le centre est le milieu de la plage, choisi",
+     "valeur": "β = 0.425 par unité de log du revenu (bande 0.35 à 0.5)"
+    },
+    {
+     "document": "HM Treasury, Wellbeing guidance for appraisal: supplementary Green Book guidance (juillet 2021)",
+     "lieu": "annexe A2, p. 65 du PDF (folio 62), ligne « From employment to unemployment » : « Selected values (Clark et al., 2018): UK: -0.46 (95% CI: -0.38 to -0.53) » ; p. 44 du PDF (encadré 11) : le coefficient s'entend au-delà de la perte de revenu salarial ; p. 14 du PDF : pas d'adaptation tant que dure le chômage (Clark et al. 2018)",
+     "valeur": "δ = 0.46 point par chômeur et par an (bande 0.38 à 0.53)"
+    },
+    {
+     "document": "Di Tella, MacCulloch et Oswald, Preferences over Inflation and Unemployment, American Economic Review 91(1), 2001 (version révisée du 7 février 2000)",
+     "lieu": "DMO, tableau 1, p. 14 du PDF : le taux de chômage (en fraction) −2,0 (colonne 2, tendances par pays, celle du calcul de la p. 11) ; la bande, les colonnes sur tout l'échantillon des tableaux 1 et 2 (p. 14-15) : −1,7 (colonne 6) à −2,8 (colonne 1) ; p. 11 : « The second component, which is more akin to higher fear of unemployment for everyone in society, is 0.02 » ; DMO, tableau A1, p. 16 du PDF : « Unemployed −0.33 » (MCO, même échelle) ; p. 11 : « The loss from being unemployed is equal to 0.33 when measured in the same units »",
+     "valeur": "ε = 0.0279 point par adulte et par point de chômage (ancré sur δ ; bande 0.0102 à 0.0390)"
+    },
+    {
+     "document": "Helliwell et Huang, New Measures of the Costs of Unemployment, NBER WP 16829 (révisé en février 2014 ; Economic Inquiry 52(4), 2014)",
+     "lieu": "HH, tableau 2, p. 22 du PDF : « Life ladder, Employed », modèle 3 (effets fixes) 2,4 % ; modèle 1 (de base) 4,4 %, le résumé (p. 1) : « roughly equivalent to a four percent decline in household income » ; p. 36-37 : la sécurité de l'emploi est un canal de cet effet",
+     "valeur": "la borne basse de ε : 2,4 % du revenu par point de chômage, fois β"
+    },
+    {
+     "document": "Di Tella, MacCulloch et Oswald, Preferences over Inflation and Unemployment, American Economic Review 91(1), 2001 (version révisée du 7 février 2000)",
+     "lieu": "DMO, tableau 1, p. 14 du PDF : l'inflation (en fraction) −1,4 (colonne 2) ; p. 11 : « 0.014 is the marginal effect of inflation on well-being », le taux marginal de substitution de 1,66 ; la bande, les colonnes sur tout l'échantillon des tableaux 1 et 2 : −0,7 (colonne 6, tableau 2, p. 15) à −2,3 (colonne 5, tableau 1)",
+     "valeur": "φ = 0.0195 point par adulte et par point d'inflation (bande 0.0098 à 0.0321)"
+    },
+    {
+     "document": "Eurostat, demo_pjan (population au 1er janvier par âge), France, 2024",
+     "lieu": "68 669 303 personnes, dont 12 474 259 de moins de 16 ans (âges 0 à 15) ; extraction du 17 novembre 2026 (eurostat_demo_pjan_fr_2024.json)",
+     "valeur": "part des 16 ans ou plus : 0.8183"
+    },
+    {
+     "document": "HM Treasury, Wellbeing guidance for appraisal: supplementary Green Book guidance (juillet 2021)",
+     "lieu": "p. 33 du PDF (encadré 7) et p. 57-60 : « multiplying by £13,000 [Low: £10,000, High £16,000]. This is the recommended standard value of one wellbeing adjusted life year […] in 2019 prices and values »",
+     "valeur": "un WELLBY vaut 13,000 £ de 2019 (14,810 € de 2019), une convention"
+    },
+    {
+     "document": "BCE, série EXR.A.GBP.EUR.SP00.A (cours de référence, moyenne annuelle), 2019",
+     "lieu": "moyenne de 2019",
+     "valeur": "1 € = 0.877771 £"
+    }
+   ],
+   "limites": [
+    "L'adaptation hédonique : l'effet du revenu s'estompe en partie avec le temps (Clark et al. 2018 trouvent 0,13 en panel contre 0,35 à 0,50 pour un revenu exogène de long terme) ; l'effet d'une hausse durable est compté chaque année, sans adaptation. Le chômage, lui, ne s'adapte pas (Green Book, p. 14).",
+    "La comparaison sociale : la satisfaction dépend en partie du revenu relatif ; une hausse de tous les revenus vaut moins que la même hausse pour un seul (le paradoxe d'Easterlin). Le coefficient β est individuel : appliqué à une hausse générale, il surestime l'effet du revenu, non borné ici.",
+    "Les coefficients sont britanniques, européens (1975-1991) et américains ; aucun n'est estimé sur la France. L'ancrage de ε et φ sur le chômage propre suppose que le rapport des effets de DMO vaut sur l'échelle de 0 à 10.",
+    "Un décile n'a pas de distribution interne : tous ses adultes gagnent le même log du revenu ; la perte des chômeurs est répartie entre déciles au prorata des chômeurs des cellules de 2024.",
+    "La part des adultes (16 ans ou plus) est uniforme entre déciles : les déciles du bas, qui ont plus d'enfants, sont un peu surpondérés.",
+    "L'inflation : l'effet de DMO est au-delà du revenu ; la perte de pouvoir d'achat, elle, est dans le canal du revenu (revenu réel). L'insécurité de l'emploi passe par le chômage autour de soi, pas comptée à part.",
+    "La valeur monétaire d'un WELLBY (Green Book) se fonde sur un coefficient du revenu de 1,96, pas sur β : l'équivalent monétaire du canal du revenu n'est pas le revenu gagné, il en est environ un cinquième ; c'est une convention de lecture, pas un montant.",
+    "Ce qui n'est pas lu : la santé, le logement, le temps libre, les services publics, la confiance ; le moral des moins de 16 ans."
+   ],
+   "indicateurs": [
+    {
+     "cle": "wellby",
+     "libelle": "Satisfaction gagnée, toutes personnes de 16 ans ou plus",
+     "unite": "milliers de WELLBY par an",
+     "sens": 1,
+     "valeurs": [
+      1604.0729572925677,
+      1797.4812853233054,
+      1942.4665646490569,
+      1872.9262391267425,
+      1800.4201437758045,
+      1672.2779725870919,
+      1496.9311448236326,
+      1317.0949923659307,
+      1137.840721012632,
+      960.2490066422109
+     ],
+     "bas": [
+      1126.9204362146106,
+      1354.734173261369,
+      1385.9432921273303,
+      1350.0852877553466,
+      1351.2078867885696,
+      1241.3489347782506,
+      1031.033758211162,
+      812.6785898397292,
+      593.270888366311,
+      374.0625390337237
+     ],
+     "haut": [
+      2133.5759178455864,
+      2232.7060233309912,
+      2438.7069777356837,
+      2345.4421512164286,
+      2221.1224715792714,
+      2102.490970476711,
+      1996.6385006652984,
+      1889.3297717022704,
+      1782.3568598465467,
+      1675.9356708249247
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       1931.6390513594383,
+       1967.1817420079126,
+       1962.1918196005713,
+       1932.6400858729633,
+       1904.4595136708865,
+       1864.0205239320187,
+       1816.9889542185008,
+       1771.0129076957912,
+       1725.8096817148967,
+       1681.2336173757878
+      ],
+      "le chômage (les chômeurs)": [
+       -27.12367694743771,
+       -7.082559195117738,
+       11.263749679338934,
+       7.047623645928207,
+       -0.314781042597715,
+       -10.643937064925895,
+       -24.084152769508464,
+       -37.5849430581492,
+       -50.614014153389256,
+       -62.955066567508254
+      ],
+      "le chômage autour de soi": [
+       -251.15188203172883,
+       -41.260737496349435,
+       147.5141303017313,
+       107.78731069404648,
+       36.337998000304346,
+       -66.11305579896087,
+       -200.4531611103096,
+       -335.49501158213894,
+       -465.82700415668427,
+       -589.2391207065447
+      ],
+      "l'inflation": [
+       -49.29053508770412,
+       -121.35715999313973,
+       -178.5031349325849,
+       -174.54878108619542,
+       -140.0625868527888,
+       -114.98555848104006,
+       -95.52049551504989,
+       -80.8379606895723,
+       -71.52794239219106,
+       -68.79042345952396
+      ]
+     }
+    },
+    {
+     "cle": "satisfaction",
+     "libelle": "Écart de satisfaction d'un adulte, par décile de niveau de vie",
+     "unite": "points sur 10",
+     "sens": 1,
+     "valeurs": [
+      0.02914147030101521,
+      0.03265515278138681,
+      0.035289125377425755,
+      0.034025774280009406,
+      0.03270854353018226,
+      0.030380562587029696,
+      0.027195006499686415,
+      0.023927892075701326,
+      0.02067134878618091,
+      0.017445009456349497
+     ],
+     "bas": [
+      0.020472958087258283,
+      0.024611689572088456,
+      0.025178671021665617,
+      0.024527232466636573,
+      0.024547626917049745,
+      0.022551800372655573,
+      0.018730968256560787,
+      0.01476407222153917,
+      0.010778054635971557,
+      0.006795658715157437
+     ],
+     "haut": [
+      0.03876104198514843,
+      0.040561955722772484,
+      0.04430441062014672,
+      0.042610052417931546,
+      0.04035151533861267,
+      0.03819631638059261,
+      0.03627327628988196,
+      0.034323780087792806,
+      0.03238038473305888,
+      0.03044701262228731
+     ],
+     "par_groupe": {
+      "D1": [
+       0.09084124076497324,
+       0.09225119354070764,
+       0.09316146997371792,
+       0.08990648580574395,
+       0.08658924127056716,
+       0.08235192114120138,
+       0.07729497423834601,
+       0.07220274438194067,
+       0.06718264324463424,
+       0.06225477272426399
+      ],
+      "D2": [
+       0.040364989600365955,
+       0.04350794082002138,
+       0.045918104323921474,
+       0.0442659373450715,
+       0.042533489001852,
+       0.03981655970312578,
+       0.03623904864948039,
+       0.0325866777239008,
+       0.028960573132814978,
+       0.02537974158095191
+      ],
+      "D3": [
+       0.038213713370148845,
+       0.041788241512990154,
+       0.044465913843396376,
+       0.04292079905048488,
+       0.04127776270425444,
+       0.038584489947630515,
+       0.03499253675805748,
+       0.03131874131606762,
+       0.027672220277459185,
+       0.024066202131250734
+      ],
+      "D4": [
+       0.031681074777038284,
+       0.03557772350483286,
+       0.03849037387525208,
+       0.037209814044576205,
+       0.0358371305058011,
+       0.03339196037220336,
+       0.03004102969152931,
+       0.026603107794623458,
+       0.023182767859693067,
+       0.019797112746029306
+      ],
+      "D5": [
+       0.02845553542437948,
+       0.03229992483502199,
+       0.03516910231921573,
+       0.0340320519510395,
+       0.03283019043370377,
+       0.03057665745580896,
+       0.027443703394838516,
+       0.024223062263915136,
+       0.02101200644990646,
+       0.01782982595264053
+      ],
+      "D6": [
+       0.025769677065068025,
+       0.029544039242394775,
+       0.032363770485168177,
+       0.031338764213337415,
+       0.030268457486407763,
+       0.02816816866851897,
+       0.025210354647318196,
+       0.022163144663834636,
+       0.01911957533014614,
+       0.016098240520549548
+      ],
+      "D7": [
+       0.023106875259369653,
+       0.02695769192814275,
+       0.02985318319776417,
+       0.02892228311956152,
+       0.02794692020412414,
+       0.02594228676516077,
+       0.0230812448489359,
+       0.020129039714700342,
+       0.017176717110583044,
+       0.014245191986108985
+      ],
+      "D8": [
+       0.018841596951478468,
+       0.022695572016139393,
+       0.025611966875764412,
+       0.024809353212864683,
+       0.023973148910597628,
+       0.022122352632385184,
+       0.01942886159586145,
+       0.016641769808282154,
+       0.013848666501608186,
+       0.011070633930165599
+      ],
+      "D9": [
+       0.015690714914252342,
+       0.019506795743141073,
+       0.022396718746225404,
+       0.02167708496513766,
+       0.020937207211620668,
+       0.019196750426581297,
+       0.016628288912766534,
+       0.013965816999422967,
+       0.011292885038003317,
+       0.008631724936402586
+      ],
+      "D10": [
+       -0.009340508546252303,
+       -0.005799204044650549,
+       -0.0031110468563114576,
+       -0.0038328033095891643,
+       -0.00455912803584186,
+       -0.006221959288331716,
+       -0.008709077184100326,
+       -0.011266262595433467,
+       -0.013843693132785238,
+       -0.016416768320935526
+      ]
+     }
+    },
+    {
+     "cle": "satisfaction_revenu",
+     "libelle": "Dont le revenu réel, par décile",
+     "unite": "points sur 10",
+     "sens": 1,
+     "valeurs": [
+      0.03509242007450996,
+      0.03573813027069636,
+      0.03564747748899039,
+      0.035110606041310014,
+      0.03459864472174601,
+      0.03386398261481334,
+      0.033009551969507826,
+      0.032174297196208096,
+      0.03135308238709137,
+      0.030543261331778013
+     ],
+     "bas": [
+      0.028899640061361146,
+      0.029431401399397008,
+      0.02935674616740384,
+      0.028914616739902366,
+      0.02849300153555553,
+      0.027887985682787456,
+      0.027184336916065276,
+      0.026496480043936083,
+      0.02582018549525171,
+      0.02515327403793484
+     ],
+     "haut": [
+      0.041285200087658784,
+      0.04204485914199572,
+      0.04193820881057692,
+      0.04130659534271767,
+      0.04070428790793648,
+      0.03983997954683924,
+      0.03883476702295039,
+      0.037852114348480126,
+      0.036885979278931016,
+      0.035933248625621195
+     ],
+     "par_groupe": {
+      "D1": [
+       0.09683843220283439,
+       0.0953462456954761,
+       0.09350061913823417,
+       0.09097930246128116,
+       0.08847987911500983,
+       0.08585348743161185,
+       0.08315057945501056,
+       0.08051322600378218,
+       0.0779506658932742,
+       0.07546035322862511
+      ],
+      "D2": [
+       0.04633750587067633,
+       0.04659654977259545,
+       0.04626750043656081,
+       0.04534516542095688,
+       0.044423840481175994,
+       0.04330844290628425,
+       0.04207274383875234,
+       0.04086296727181576,
+       0.03968255079713838,
+       0.038528050100444085
+      ],
+      "D3": [
+       0.044316811422264395,
+       0.04491094809920111,
+       0.044761082776373244,
+       0.043966097683287714,
+       0.04316962963701421,
+       0.04212761636055194,
+       0.04094218051831429,
+       0.039775976420998685,
+       0.03863786948252795,
+       0.03751759584018751
+      ],
+      "D4": [
+       0.03779475118510425,
+       0.03870319232097124,
+       0.038781149895215146,
+       0.038252364072472865,
+       0.037729120204582654,
+       0.036939237968432445,
+       0.036000066379642245,
+       0.035075001196319226,
+       0.034168156757828964,
+       0.033273059213956846
+      ],
+      "D5": [
+       0.034481908922567604,
+       0.035402597035925853,
+       0.035496132941570925,
+       0.03509728614720751,
+       0.0347211669475456,
+       0.03408967543892861,
+       0.033325220481800207,
+       0.03257398110515849,
+       0.031834484149654604,
+       0.03110313910822079
+      ],
+      "D6": [
+       0.03170473440078344,
+       0.03262286688389627,
+       0.03272872230816898,
+       0.03242772535283782,
+       0.032158374239919726,
+       0.03164535214851231,
+       0.03101078861226882,
+       0.030387527830232852,
+       0.02977165291973283,
+       0.02915960545471796
+      ],
+      "D7": [
+       0.029058252514309567,
+       0.030040781041796083,
+       0.03021135778752746,
+       0.03000700380711844,
+       0.02983702635677983,
+       0.029425874546217968,
+       0.028896169895923467,
+       0.028376037190948767,
+       0.02785924841130232,
+       0.027344436061927165
+      ],
+      "D8": [
+       0.0247349440701826,
+       0.025763508247836967,
+       0.02599423985490479,
+       0.02590915203902,
+       0.0258625816004768,
+       0.025583168090974464,
+       0.02519225945982562,
+       0.024808355643796732,
+       0.024422910930217444,
+       0.024035187893845792
+      ],
+      "D9": [
+       0.02151038937623725,
+       0.022555494503706447,
+       0.022809586042098918,
+       0.02279602637135537,
+       0.022825784901061,
+       0.022628655088045062,
+       0.022326269999986176,
+       0.02203031554739535,
+       0.021729652940213486,
+       0.021425281914056432
+      ],
+      "D10": [
+       -0.0036220757260613853,
+       -0.002776941593675738,
+       -0.002656136569271859,
+       -0.0026875559939609195,
+       -0.00267172529586063,
+       -0.0028297841099204626,
+       -0.00310099243255551,
+       -0.0033420533360156803,
+       -0.0035958467363356476,
+       -0.0038581969726598745
+      ]
+     }
+    },
+    {
+     "cle": "equivalent_monetaire",
+     "libelle": "Équivalent monétaire (valeur du WELLBY du Green Book, une convention)",
+     "unite": "Md€ de 2019 par an",
+     "sens": 1,
+     "valeurs": [
+      23.75671780850644,
+      26.621143051730115,
+      28.768410949783167,
+      27.738501504433682,
+      26.664668273334126,
+      24.766850978640885,
+      22.16992102800803,
+      19.506503066697725,
+      16.851702908669093,
+      14.22152563135373
+     ],
+     "bas": [
+      12.838439066136537,
+      15.433806660434618,
+      15.78935649163153,
+      15.380844240572042,
+      15.39363344806228,
+      14.142065532591895,
+      11.74605025744952,
+      9.258439389969649,
+      6.758837540996601,
+      4.261506810933559
+     ],
+     "haut": [
+      38.89081576157754,
+      40.69775904239201,
+      44.45274385331536,
+      42.75271286081222,
+      40.486614094010825,
+      38.32419942935817,
+      36.39472091073086,
+      34.438697704430204,
+      32.488795771406274,
+      30.54895064063298
+     ],
+     "par_groupe": null
+    }
+   ],
+   "notes": {
+    "coefficients": {
+     "beta": 0.425,
+     "delta": 0.46,
+     "epsilon": 0.027878787878787878,
+     "phi": 0.019515151515151513
+    },
+    "adultes_millions": 55.044338556819014,
+    "valeur_wellby_euros_2019": 14810.247688860849,
+    "wellby_cumules_milliers": 15601.761027598975,
+    "wellby_cumules_bande_milliers": [
+     10621.285786376404,
+     20818.305315223715
+    ],
+    "prix_lus": true,
+    "entrees": {
+     "chomeurs_de_plus_milliers": [
+      58.96451510312545,
+      15.396867815473342,
+      -24.48641234638899,
+      -15.320920969409144,
+      0.6843066143428587,
+      23.13899361940412,
+      52.356853846757524,
+      81.70639795249825,
+      110.0304655508462,
+      136.85884036414836
+     ],
+     "taux_de_chomage_points": [
+      0.16366276801943053,
+      0.026887501119034207,
+      -0.09612737396931109,
+      -0.07023944826871492,
+      -0.023679604902435147,
+      0.04308247912278851,
+      0.13062501837598633,
+      0.21862484886857048,
+      0.30355550713671436,
+      0.38397683799950705
+     ],
+     "inflation_points_mm3": [
+      0.04588586762919924,
+      0.112974601906683,
+      0.16617330703226488,
+      0.16249209406041162,
+      0.13038798034338084,
+      0.10704310891213557,
+      0.08892256505798168,
+      0.0752542036116269,
+      0.06658726042549733,
+      0.06403883137815018
+     ]
+    },
+    "tirage": 0,
+    "decisions": "D-595 à D-599"
+   }
+  },
+  "retailleau": {
+   "convention": "programme",
+   "cle": "moral",
+   "titre": "Le moral des gens",
+   "question": "La vie que mènent les gens en est-elle plus ou moins satisfaisante, et de combien ?",
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "statut": "sourcé, non jugé",
+   "juge": null,
+   "sources": [
+    {
+     "document": "HM Treasury, Wellbeing guidance for appraisal: background paper reviewing methods and approaches (juillet 2021)",
+     "lieu": "p. 19 du PDF : « a coefficient of 0.35-0.50 on ln(income) (LS on a 0-10 scale) is the estimate with the most confidence » (Lindqvist et al. 2020, gains de loterie suédois, effets de long terme, revenu exogène) ; le centre est le milieu de la plage, choisi",
+     "valeur": "β = 0.425 par unité de log du revenu (bande 0.35 à 0.5)"
+    },
+    {
+     "document": "HM Treasury, Wellbeing guidance for appraisal: supplementary Green Book guidance (juillet 2021)",
+     "lieu": "annexe A2, p. 65 du PDF (folio 62), ligne « From employment to unemployment » : « Selected values (Clark et al., 2018): UK: -0.46 (95% CI: -0.38 to -0.53) » ; p. 44 du PDF (encadré 11) : le coefficient s'entend au-delà de la perte de revenu salarial ; p. 14 du PDF : pas d'adaptation tant que dure le chômage (Clark et al. 2018)",
+     "valeur": "δ = 0.46 point par chômeur et par an (bande 0.38 à 0.53)"
+    },
+    {
+     "document": "Di Tella, MacCulloch et Oswald, Preferences over Inflation and Unemployment, American Economic Review 91(1), 2001 (version révisée du 7 février 2000)",
+     "lieu": "DMO, tableau 1, p. 14 du PDF : le taux de chômage (en fraction) −2,0 (colonne 2, tendances par pays, celle du calcul de la p. 11) ; la bande, les colonnes sur tout l'échantillon des tableaux 1 et 2 (p. 14-15) : −1,7 (colonne 6) à −2,8 (colonne 1) ; p. 11 : « The second component, which is more akin to higher fear of unemployment for everyone in society, is 0.02 » ; DMO, tableau A1, p. 16 du PDF : « Unemployed −0.33 » (MCO, même échelle) ; p. 11 : « The loss from being unemployed is equal to 0.33 when measured in the same units »",
+     "valeur": "ε = 0.0279 point par adulte et par point de chômage (ancré sur δ ; bande 0.0102 à 0.0390)"
+    },
+    {
+     "document": "Helliwell et Huang, New Measures of the Costs of Unemployment, NBER WP 16829 (révisé en février 2014 ; Economic Inquiry 52(4), 2014)",
+     "lieu": "HH, tableau 2, p. 22 du PDF : « Life ladder, Employed », modèle 3 (effets fixes) 2,4 % ; modèle 1 (de base) 4,4 %, le résumé (p. 1) : « roughly equivalent to a four percent decline in household income » ; p. 36-37 : la sécurité de l'emploi est un canal de cet effet",
+     "valeur": "la borne basse de ε : 2,4 % du revenu par point de chômage, fois β"
+    },
+    {
+     "document": "Di Tella, MacCulloch et Oswald, Preferences over Inflation and Unemployment, American Economic Review 91(1), 2001 (version révisée du 7 février 2000)",
+     "lieu": "DMO, tableau 1, p. 14 du PDF : l'inflation (en fraction) −1,4 (colonne 2) ; p. 11 : « 0.014 is the marginal effect of inflation on well-being », le taux marginal de substitution de 1,66 ; la bande, les colonnes sur tout l'échantillon des tableaux 1 et 2 : −0,7 (colonne 6, tableau 2, p. 15) à −2,3 (colonne 5, tableau 1)",
+     "valeur": "φ = 0.0195 point par adulte et par point d'inflation (bande 0.0098 à 0.0321)"
+    },
+    {
+     "document": "Eurostat, demo_pjan (population au 1er janvier par âge), France, 2024",
+     "lieu": "68 669 303 personnes, dont 12 474 259 de moins de 16 ans (âges 0 à 15) ; extraction du 17 novembre 2026 (eurostat_demo_pjan_fr_2024.json)",
+     "valeur": "part des 16 ans ou plus : 0.8183"
+    },
+    {
+     "document": "HM Treasury, Wellbeing guidance for appraisal: supplementary Green Book guidance (juillet 2021)",
+     "lieu": "p. 33 du PDF (encadré 7) et p. 57-60 : « multiplying by £13,000 [Low: £10,000, High £16,000]. This is the recommended standard value of one wellbeing adjusted life year […] in 2019 prices and values »",
+     "valeur": "un WELLBY vaut 13,000 £ de 2019 (14,810 € de 2019), une convention"
+    },
+    {
+     "document": "BCE, série EXR.A.GBP.EUR.SP00.A (cours de référence, moyenne annuelle), 2019",
+     "lieu": "moyenne de 2019",
+     "valeur": "1 € = 0.877771 £"
+    }
+   ],
+   "limites": [
+    "L'adaptation hédonique : l'effet du revenu s'estompe en partie avec le temps (Clark et al. 2018 trouvent 0,13 en panel contre 0,35 à 0,50 pour un revenu exogène de long terme) ; l'effet d'une hausse durable est compté chaque année, sans adaptation. Le chômage, lui, ne s'adapte pas (Green Book, p. 14).",
+    "La comparaison sociale : la satisfaction dépend en partie du revenu relatif ; une hausse de tous les revenus vaut moins que la même hausse pour un seul (le paradoxe d'Easterlin). Le coefficient β est individuel : appliqué à une hausse générale, il surestime l'effet du revenu, non borné ici.",
+    "Les coefficients sont britanniques, européens (1975-1991) et américains ; aucun n'est estimé sur la France. L'ancrage de ε et φ sur le chômage propre suppose que le rapport des effets de DMO vaut sur l'échelle de 0 à 10.",
+    "Un décile n'a pas de distribution interne : tous ses adultes gagnent le même log du revenu ; la perte des chômeurs est répartie entre déciles au prorata des chômeurs des cellules de 2024.",
+    "La part des adultes (16 ans ou plus) est uniforme entre déciles : les déciles du bas, qui ont plus d'enfants, sont un peu surpondérés.",
+    "L'inflation : l'effet de DMO est au-delà du revenu ; la perte de pouvoir d'achat, elle, est dans le canal du revenu (revenu réel). L'insécurité de l'emploi passe par le chômage autour de soi, pas comptée à part.",
+    "La valeur monétaire d'un WELLBY (Green Book) se fonde sur un coefficient du revenu de 1,96, pas sur β : l'équivalent monétaire du canal du revenu n'est pas le revenu gagné, il en est environ un cinquième ; c'est une convention de lecture, pas un montant.",
+    "Ce qui n'est pas lu : la santé, le logement, le temps libre, les services publics, la confiance ; le moral des moins de 16 ans."
+   ],
+   "indicateurs": [
+    {
+     "cle": "wellby",
+     "libelle": "Satisfaction gagnée, toutes personnes de 16 ans ou plus",
+     "unite": "milliers de WELLBY par an",
+     "sens": 1,
+     "valeurs": [
+      1041.2186997294543,
+      1492.1087274856768,
+      1743.2085076562767,
+      1834.8537019667497,
+      1915.0977759521002,
+      1962.9364593438472,
+      1974.461638238766,
+      1973.6440241301154,
+      1968.5251666767135,
+      1960.3538887216685
+     ],
+     "bas": [
+      752.7521355648954,
+      937.1129806393113,
+      1036.6445569276725,
+      1067.773568192221,
+      1095.293482736885,
+      1108.6600524144785,
+      1106.5030359463017,
+      1099.3715858728551,
+      1090.8176682187857,
+      1081.3951769166647
+     ],
+     "haut": [
+      1280.1629992382238,
+      1904.9282899477016,
+      2252.649338119048,
+      2378.5341650807854,
+      2489.527876267861,
+      2559.9059201924165,
+      2580.373378635684,
+      2583.560030091764,
+      2580.711554638902,
+      2573.0819590835886
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       786.2698041709795,
+       785.0667862882598,
+       778.0666936031716,
+       765.5475932563625,
+       754.586288116981,
+       738.7668213590545,
+       721.3528044483486,
+       704.2514670971908,
+       687.9080666998254,
+       672.7500063517369
+      ],
+      "le chômage (les chômeurs)": [
+       21.68126940507278,
+       61.327288114909585,
+       84.50413733716597,
+       94.90383667858025,
+       103.73887691577742,
+       109.0593558561938,
+       111.3255737130731,
+       112.52028373438955,
+       113.24299083491091,
+       113.69742370005841
+      ],
+      "le chômage autour de soi": [
+       218.5082060827504,
+       618.2907520944783,
+       851.7295402683175,
+       956.3627284734474,
+       1045.3567680822441,
+       1098.8095734816675,
+       1121.3595887464526,
+       1133.1349681586532,
+       1140.1623335061765,
+       1144.493629438887
+      ],
+      "l'inflation": [
+       14.75942007065176,
+       27.423900988029185,
+       28.908136447621455,
+       18.039543558359533,
+       11.415842837097331,
+       16.300708646931437,
+       20.42367133089167,
+       23.73730513988179,
+       27.2117756358008,
+       29.41282923098627
+      ]
+     }
+    },
+    {
+     "cle": "satisfaction",
+     "libelle": "Écart de satisfaction d'un adulte, par décile de niveau de vie",
+     "unite": "points sur 10",
+     "sens": 1,
+     "valeurs": [
+      0.018915999847189842,
+      0.027107396811489725,
+      0.031669169861254044,
+      0.033334103925560646,
+      0.034791911868924684,
+      0.03566100548774192,
+      0.035870385402136246,
+      0.03585553166549253,
+      0.03576253649854874,
+      0.03561408748146026
+     ],
+     "bas": [
+      0.013675377982567162,
+      0.017024693278346603,
+      0.018832900605347556,
+      0.019398426726302133,
+      0.01989838576416498,
+      0.020141218542758476,
+      0.020102031652249285,
+      0.01997247336777494,
+      0.019817072869225218,
+      0.019645892843283136
+     ],
+     "haut": [
+      0.023256942181561276,
+      0.034607161061284385,
+      0.04092426936502782,
+      0.0432112407459591,
+      0.04522768265619303,
+      0.04650625272842505,
+      0.04687808857893927,
+      0.04693598102600339,
+      0.04688423228076373,
+      0.0467456241013333
+     ],
+     "par_groupe": {
+      "D1": [
+       0.02622537760005075,
+       0.03511996679009675,
+       0.040140804914297654,
+       0.04193322298004973,
+       0.04345723506908095,
+       0.04429693062796617,
+       0.04440974123287168,
+       0.04426277162009237,
+       0.04402833752271007,
+       0.04373838260066575
+      ],
+      "D2": [
+       0.026076705310210238,
+       0.03442153313975981,
+       0.03909899374997078,
+       0.040735768097394084,
+       0.04213544102674837,
+       0.04289691352191237,
+       0.04297400231729075,
+       0.042810225886679994,
+       0.042567265626620415,
+       0.04227396124170728
+      ],
+      "D3": [
+       0.02768535728704674,
+       0.03615323779376171,
+       0.040885497310412286,
+       0.04252869426035947,
+       0.04393511443663707,
+       0.04468233331952859,
+       0.044732208717341515,
+       0.04453929779595634,
+       0.04426747344737202,
+       0.04394695684762063
+      ],
+      "D4": [
+       0.02200420034700275,
+       0.030547491308414228,
+       0.0353090302929331,
+       0.03702815345347371,
+       0.038524045312307735,
+       0.0393825021197287,
+       0.039547036377374514,
+       0.03947543959202743,
+       0.039322929297710765,
+       0.03911594775115286
+      ],
+      "D5": [
+       0.021824081702591085,
+       0.030024931594882925,
+       0.03458151639190303,
+       0.03620929155810249,
+       0.03762937402745123,
+       0.0384424028869014,
+       0.03858862056202096,
+       0.03850899493428558,
+       0.0383529559468961,
+       0.03814509621240904
+      ],
+      "D6": [
+       0.018329746745265024,
+       0.0263592196630682,
+       0.030816051958103184,
+       0.03243781580031742,
+       0.03386426287918861,
+       0.034717275873597075,
+       0.034923051004532454,
+       0.03491123040065397,
+       0.03482374342197812,
+       0.03468196393618254
+      ],
+      "D7": [
+       0.01642718580057679,
+       0.024483629029159532,
+       0.028955063435173806,
+       0.03060510003620447,
+       0.03206260015920872,
+       0.032954448094919854,
+       0.03320035309155129,
+       0.03323019005964149,
+       0.03318337700573034,
+       0.03308008009339495
+      ],
+      "D8": [
+       0.012939095519923838,
+       0.02092560322440317,
+       0.02535675413788032,
+       0.027028842430849315,
+       0.02851686760736804,
+       0.02946452902871874,
+       0.029778352886740342,
+       0.029881695419145593,
+       0.029907860387297834,
+       0.029874255461887274
+      ],
+      "D9": [
+       0.011027528657672231,
+       0.01888350570770928,
+       0.023238125094926565,
+       0.024897156246981904,
+       0.026380573707922853,
+       0.02734525039722211,
+       0.027689557978781525,
+       0.02782894238789338,
+       0.02789198728871211,
+       0.027894140499386072
+      ],
+      "D10": [
+       0.009111312211273755,
+       0.016818493369065896,
+       0.021085829336634387,
+       0.022736574692966787,
+       0.02422082143983553,
+       0.025215237549880625,
+       0.025611760257197698,
+       0.025811117882168323,
+       0.025935822694800208,
+       0.025999050798539043
+      ]
+     }
+    },
+    {
+     "cle": "satisfaction_revenu",
+     "libelle": "Dont le revenu réel, par décile",
+     "unite": "points sur 10",
+     "sens": 1,
+     "valeurs": [
+      0.014284299253761758,
+      0.014262443820228338,
+      0.014135271928102459,
+      0.013907835271126621,
+      0.013708699348581804,
+      0.013421304365324857,
+      0.013104940914200263,
+      0.012794257966606932,
+      0.012497344590483881,
+      0.01222196549164265
+     ],
+     "bas": [
+      0.011763540561921446,
+      0.011745541969599807,
+      0.011640812176084377,
+      0.011453511399751334,
+      0.011289517110596779,
+      0.01105283888909106,
+      0.01079230428228257,
+      0.010536447737205709,
+      0.010291930839222021,
+      0.010065148051941005
+     ],
+     "haut": [
+      0.016805057945602067,
+      0.016779345670856868,
+      0.01662973168012054,
+      0.016362159142501907,
+      0.016127881586566827,
+      0.015789769841558655,
+      0.015417577546117955,
+      0.015052068196008154,
+      0.014702758341745746,
+      0.014378782931344291
+     ],
+     "par_groupe": {
+      "D1": [
+       0.021556713803410586,
+       0.022170460279819223,
+       0.022462840527180776,
+       0.02234515799647938,
+       0.022197163845643242,
+       0.021871300210664375,
+       0.021454503899923823,
+       0.02100966828081764,
+       0.02057008387068685,
+       0.02015242412930283
+      ],
+      "D2": [
+       0.02142776557075895,
+       0.021527817778764995,
+       0.02149790514011557,
+       0.021234039788449167,
+       0.02096974396115022,
+       0.020570497450952588,
+       0.02012004097245396,
+       0.019659485396637984,
+       0.019212032290692908,
+       0.018791436496727692
+      ],
+      "D3": [
+       0.02293203720136884,
+       0.022964273872962744,
+       0.02287757961006246,
+       0.022570069487205382,
+       0.02226998628666268,
+       0.021830871730668576,
+       0.021342291579928844,
+       0.020846849809259896,
+       0.020367053278965066,
+       0.01991705748959789
+      ],
+      "D4": [
+       0.017242424468783584,
+       0.01733460946953908,
+       0.01726815559911338,
+       0.01703251575735227,
+       0.01681845853395347,
+       0.016488506891782568,
+       0.016113701765723226,
+       0.01573910818881295,
+       0.015378343853767469,
+       0.015041705886733365
+      ],
+      "D5": [
+       0.017132091270960756,
+       0.017009443741997362,
+       0.01681263494960847,
+       0.01651912059927732,
+       0.016257691307892442,
+       0.01589943672975935,
+       0.015513609290815224,
+       0.015134832281618058,
+       0.014772865429002711,
+       0.014436811955944574
+      ],
+      "D6": [
+       0.013710749747505954,
+       0.013550199857135277,
+       0.013331667103408116,
+       0.013067153667165807,
+       0.012841833550220458,
+       0.012541475343660818,
+       0.01222283494255482,
+       0.011915885138079852,
+       0.01162490340231238,
+       0.011356460098296384
+      ],
+      "D7": [
+       0.011795143500513722,
+       0.011637709492034841,
+       0.011419833678508002,
+       0.011177335654279922,
+       0.010977752667135828,
+       0.010713028147612647,
+       0.010433154062104358,
+       0.010167142990073392,
+       0.00991640033679143,
+       0.009686166180635314
+      ],
+      "D8": [
+       0.00835343951991069,
+       0.008210891225665535,
+       0.008002317959152551,
+       0.0078041214114610655,
+       0.007653965730265975,
+       0.00745643767068744,
+       0.007249330938579805,
+       0.007059381470203006,
+       0.006883163044964664,
+       0.006723593118586942
+      ],
+      "D9": [
+       0.006500762782372351,
+       0.006335369363650263,
+       0.006113216952292866,
+       0.005930210668383187,
+       0.005799444788162261,
+       0.0056333833491021695,
+       0.005462915785111057,
+       0.005312253235086582,
+       0.005174877741566386,
+       0.005052300270519092
+      ],
+      "D10": [
+       0.0046654736864581445,
+       0.0044992668202222755,
+       0.0042763407301859456,
+       0.004123866493632971,
+       0.0040269075070831824,
+       0.00391044467025461,
+       0.0038006511005196264,
+       0.0037144211324000565,
+       0.0036414031220265344,
+       0.0035815967568931955
+      ]
+     }
+    },
+    {
+     "cle": "equivalent_monetaire",
+     "libelle": "Équivalent monétaire (valeur du WELLBY du Green Book, une convention)",
+     "unite": "Md€ de 2019 par an",
+     "sens": 1,
+     "valeurs": [
+      15.420706841266849,
+      22.098499832773847,
+      25.81734977171894,
+      27.17463779895083,
+      28.36307241023714,
+      29.07157516037791,
+      29.24226591447009,
+      29.23015684700707,
+      29.154345300238216,
+      29.033326649789466
+     ],
+     "bas": [
+      8.575727366180816,
+      10.67605796593451,
+      11.809971271852493,
+      12.164608477342727,
+      12.478129054867923,
+      12.63040767615683,
+      12.605833869877866,
+      12.524588837594413,
+      12.427138345927577,
+      12.319792630519462
+     ],
+     "haut": [
+      23.334807508717628,
+      34.72302745063827,
+      41.061285727620366,
+      43.355913995402176,
+      45.379107047200904,
+      46.66195783166884,
+      47.035038605953474,
+      47.09312487963053,
+      47.04120287717819,
+      46.90213063109817
+     ],
+     "par_groupe": null
+    }
+   ],
+   "notes": {
+    "coefficients": {
+     "beta": 0.425,
+     "delta": 0.46,
+     "epsilon": 0.027878787878787878,
+     "phi": 0.019515151515151513
+    },
+    "adultes_millions": 55.044338556819014,
+    "valeur_wellby_euros_2019": 14810.247688860849,
+    "wellby_cumules_milliers": 17866.40858990137,
+    "wellby_cumules_bande_milliers": [
+     10376.32424343007,
+     23183.435511295975
+    ],
+    "prix_lus": true,
+    "entrees": {
+     "chomeurs_de_plus_milliers": [
+      -47.13319435885387,
+      -133.32019155415128,
+      -183.7046463851434,
+      -206.3126884316962,
+      -225.5192976429944,
+      -237.08555620911693,
+      -242.0121167675502,
+      -244.60931246606424,
+      -246.180414858502,
+      -247.1683123914313
+     ],
+     "taux_de_chomage_points": [
+      -0.14239056284652968,
+      -0.4029082924244781,
+      -0.5550283479325846,
+      -0.6232124167510942,
+      -0.6812052565489918,
+      -0.7160377014397229,
+      -0.7307323869314639,
+      -0.7384057962385713,
+      -0.7429851689088274,
+      -0.7458076517655121
+     ],
+     "inflation_points_mm3": [
+      -0.013739935962160365,
+      -0.02552963745217858,
+      -0.026911351643518405,
+      -0.01679348999432043,
+      -0.010627311153484769,
+      -0.015174762414413845,
+      -0.01901293782922124,
+      -0.022097687509061697,
+      -0.0253321643304965,
+      -0.02738118355363429
+     ]
+    },
+    "tirage": 0,
+    "decisions": "D-595 à D-599"
+   }
+  },
+  "attal": {
+   "convention": "programme",
+   "cle": "moral",
+   "titre": "Le moral des gens",
+   "question": "La vie que mènent les gens en est-elle plus ou moins satisfaisante, et de combien ?",
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "statut": "sourcé, non jugé",
+   "juge": null,
+   "sources": [
+    {
+     "document": "HM Treasury, Wellbeing guidance for appraisal: background paper reviewing methods and approaches (juillet 2021)",
+     "lieu": "p. 19 du PDF : « a coefficient of 0.35-0.50 on ln(income) (LS on a 0-10 scale) is the estimate with the most confidence » (Lindqvist et al. 2020, gains de loterie suédois, effets de long terme, revenu exogène) ; le centre est le milieu de la plage, choisi",
+     "valeur": "β = 0.425 par unité de log du revenu (bande 0.35 à 0.5)"
+    },
+    {
+     "document": "HM Treasury, Wellbeing guidance for appraisal: supplementary Green Book guidance (juillet 2021)",
+     "lieu": "annexe A2, p. 65 du PDF (folio 62), ligne « From employment to unemployment » : « Selected values (Clark et al., 2018): UK: -0.46 (95% CI: -0.38 to -0.53) » ; p. 44 du PDF (encadré 11) : le coefficient s'entend au-delà de la perte de revenu salarial ; p. 14 du PDF : pas d'adaptation tant que dure le chômage (Clark et al. 2018)",
+     "valeur": "δ = 0.46 point par chômeur et par an (bande 0.38 à 0.53)"
+    },
+    {
+     "document": "Di Tella, MacCulloch et Oswald, Preferences over Inflation and Unemployment, American Economic Review 91(1), 2001 (version révisée du 7 février 2000)",
+     "lieu": "DMO, tableau 1, p. 14 du PDF : le taux de chômage (en fraction) −2,0 (colonne 2, tendances par pays, celle du calcul de la p. 11) ; la bande, les colonnes sur tout l'échantillon des tableaux 1 et 2 (p. 14-15) : −1,7 (colonne 6) à −2,8 (colonne 1) ; p. 11 : « The second component, which is more akin to higher fear of unemployment for everyone in society, is 0.02 » ; DMO, tableau A1, p. 16 du PDF : « Unemployed −0.33 » (MCO, même échelle) ; p. 11 : « The loss from being unemployed is equal to 0.33 when measured in the same units »",
+     "valeur": "ε = 0.0279 point par adulte et par point de chômage (ancré sur δ ; bande 0.0102 à 0.0390)"
+    },
+    {
+     "document": "Helliwell et Huang, New Measures of the Costs of Unemployment, NBER WP 16829 (révisé en février 2014 ; Economic Inquiry 52(4), 2014)",
+     "lieu": "HH, tableau 2, p. 22 du PDF : « Life ladder, Employed », modèle 3 (effets fixes) 2,4 % ; modèle 1 (de base) 4,4 %, le résumé (p. 1) : « roughly equivalent to a four percent decline in household income » ; p. 36-37 : la sécurité de l'emploi est un canal de cet effet",
+     "valeur": "la borne basse de ε : 2,4 % du revenu par point de chômage, fois β"
+    },
+    {
+     "document": "Di Tella, MacCulloch et Oswald, Preferences over Inflation and Unemployment, American Economic Review 91(1), 2001 (version révisée du 7 février 2000)",
+     "lieu": "DMO, tableau 1, p. 14 du PDF : l'inflation (en fraction) −1,4 (colonne 2) ; p. 11 : « 0.014 is the marginal effect of inflation on well-being », le taux marginal de substitution de 1,66 ; la bande, les colonnes sur tout l'échantillon des tableaux 1 et 2 : −0,7 (colonne 6, tableau 2, p. 15) à −2,3 (colonne 5, tableau 1)",
+     "valeur": "φ = 0.0195 point par adulte et par point d'inflation (bande 0.0098 à 0.0321)"
+    },
+    {
+     "document": "Eurostat, demo_pjan (population au 1er janvier par âge), France, 2024",
+     "lieu": "68 669 303 personnes, dont 12 474 259 de moins de 16 ans (âges 0 à 15) ; extraction du 17 novembre 2026 (eurostat_demo_pjan_fr_2024.json)",
+     "valeur": "part des 16 ans ou plus : 0.8183"
+    },
+    {
+     "document": "HM Treasury, Wellbeing guidance for appraisal: supplementary Green Book guidance (juillet 2021)",
+     "lieu": "p. 33 du PDF (encadré 7) et p. 57-60 : « multiplying by £13,000 [Low: £10,000, High £16,000]. This is the recommended standard value of one wellbeing adjusted life year […] in 2019 prices and values »",
+     "valeur": "un WELLBY vaut 13,000 £ de 2019 (14,810 € de 2019), une convention"
+    },
+    {
+     "document": "BCE, série EXR.A.GBP.EUR.SP00.A (cours de référence, moyenne annuelle), 2019",
+     "lieu": "moyenne de 2019",
+     "valeur": "1 € = 0.877771 £"
+    }
+   ],
+   "limites": [
+    "L'adaptation hédonique : l'effet du revenu s'estompe en partie avec le temps (Clark et al. 2018 trouvent 0,13 en panel contre 0,35 à 0,50 pour un revenu exogène de long terme) ; l'effet d'une hausse durable est compté chaque année, sans adaptation. Le chômage, lui, ne s'adapte pas (Green Book, p. 14).",
+    "La comparaison sociale : la satisfaction dépend en partie du revenu relatif ; une hausse de tous les revenus vaut moins que la même hausse pour un seul (le paradoxe d'Easterlin). Le coefficient β est individuel : appliqué à une hausse générale, il surestime l'effet du revenu, non borné ici.",
+    "Les coefficients sont britanniques, européens (1975-1991) et américains ; aucun n'est estimé sur la France. L'ancrage de ε et φ sur le chômage propre suppose que le rapport des effets de DMO vaut sur l'échelle de 0 à 10.",
+    "Un décile n'a pas de distribution interne : tous ses adultes gagnent le même log du revenu ; la perte des chômeurs est répartie entre déciles au prorata des chômeurs des cellules de 2024.",
+    "La part des adultes (16 ans ou plus) est uniforme entre déciles : les déciles du bas, qui ont plus d'enfants, sont un peu surpondérés.",
+    "L'inflation : l'effet de DMO est au-delà du revenu ; la perte de pouvoir d'achat, elle, est dans le canal du revenu (revenu réel). L'insécurité de l'emploi passe par le chômage autour de soi, pas comptée à part.",
+    "La valeur monétaire d'un WELLBY (Green Book) se fonde sur un coefficient du revenu de 1,96, pas sur β : l'équivalent monétaire du canal du revenu n'est pas le revenu gagné, il en est environ un cinquième ; c'est une convention de lecture, pas un montant.",
+    "Ce qui n'est pas lu : la santé, le logement, le temps libre, les services publics, la confiance ; le moral des moins de 16 ans."
+   ],
+   "indicateurs": [
+    {
+     "cle": "wellby",
+     "libelle": "Satisfaction gagnée, toutes personnes de 16 ans ou plus",
+     "unite": "milliers de WELLBY par an",
+     "sens": 1,
+     "valeurs": [
+      1486.8604039652296,
+      2532.162423360759,
+      3234.5857786216884,
+      3583.7818656612803,
+      3885.1522815743087,
+      4081.853928310731,
+      4171.216946595579,
+      4223.242867139936,
+      4257.713053811635,
+      4280.602426657367
+     ],
+     "bas": [
+      979.2762766330907,
+      1404.4494014086572,
+      1692.9648153054575,
+      1828.9893241007346,
+      1946.3570529413053,
+      2024.5214442524596,
+      2057.8090006962207,
+      2076.478910363363,
+      2088.5967873513737,
+      2096.4239058433195
+     ],
+     "haut": [
+      1877.1354818902737,
+      3332.4896271383877,
+      4308.84390417288,
+      4791.969983334549,
+      5204.454115668039,
+      5475.171056911738,
+      5599.5351173611,
+      5671.2632434765355,
+      5719.647447880137,
+      5752.396467158318
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       890.1633371659985,
+       877.3130233509289,
+       875.7416076497011,
+       861.2597017495978,
+       851.9393735262013,
+       848.0068560880985,
+       840.6105002512213,
+       835.3084688968645,
+       830.6404511502703,
+       826.626341663103
+      ],
+      "le chômage (les chômeurs)": [
+       51.78463197265863,
+       143.31621707184954,
+       204.14533791656316,
+       237.39786507541967,
+       267.0956529259847,
+       285.6173848317906,
+       294.49622970153206,
+       300.07048082240505,
+       303.6702329503896,
+       306.00905317094845
+      ],
+      "le chômage autour de soi": [
+       514.679903511807,
+       1432.9479063170313,
+       2044.4679357070318,
+       2377.9599405440576,
+       2676.0737886710726,
+       2862.1153998137884,
+       2950.807347810817,
+       3006.3158393382146,
+       3041.958812803344,
+       3064.9330484594457
+      ],
+      "l'inflation": [
+       30.232531314765577,
+       78.5852766209493,
+       110.23089734839265,
+       107.16435829220538,
+       90.04346645105038,
+       86.11428757705328,
+       85.30286883200833,
+       81.548078082452,
+       81.44355690763062,
+       83.03398336386927
+      ]
+     }
+    },
+    {
+     "cle": "satisfaction",
+     "libelle": "Écart de satisfaction d'un adulte, par décile de niveau de vie",
+     "unite": "points sur 10",
+     "sens": 1,
+     "valeurs": [
+      0.027012049612158234,
+      0.0460022318325609,
+      0.058763278175880285,
+      0.06510718376535589,
+      0.07058223213208197,
+      0.07415574490185352,
+      0.07577921828036645,
+      0.07672438215931202,
+      0.07735060799062286,
+      0.07776644317814363
+     ],
+     "bas": [
+      0.017790681154652113,
+      0.02551487470339801,
+      0.03075638402953848,
+      0.03322756476059345,
+      0.03535980454978482,
+      0.036779830539023846,
+      0.037384571322844874,
+      0.03772375079446066,
+      0.03794389835742033,
+      0.038086094970135854
+     ],
+     "haut": [
+      0.03410224431986984,
+      0.060541914291484415,
+      0.07827951097504995,
+      0.08705654584963507,
+      0.09455021628238458,
+      0.09946837768356581,
+      0.10172772103676077,
+      0.10303081828519796,
+      0.10390982247840228,
+      0.10450477956457702
+     ],
+     "par_groupe": {
+      "D1": [
+       0.019228331227538774,
+       0.04092029680240829,
+       0.055434990731872295,
+       0.06281825482382264,
+       0.06919283506740312,
+       0.07331351925046556,
+       0.07522824828751916,
+       0.07635572963479209,
+       0.07710309530996352,
+       0.07759982043185334
+      ],
+      "D2": [
+       0.02151890290539798,
+       0.04169596970941074,
+       0.055228616975913414,
+       0.062039315547478456,
+       0.06791758897448748,
+       0.07173818580069033,
+       0.07349790189513207,
+       0.07453081390697135,
+       0.07521760825144042,
+       0.07567630233473835
+      ],
+      "D3": [
+       0.02772804561703971,
+       0.04808134126968433,
+       0.0617460485043549,
+       0.06858693873334837,
+       0.07450039435459002,
+       0.07834127759896028,
+       0.08008873723571205,
+       0.08110560172868281,
+       0.08177301293742882,
+       0.08221014347984351
+      ],
+      "D4": [
+       0.02833413431243948,
+       0.04823014715576936,
+       0.061607426464032874,
+       0.06826296606544707,
+       0.07401905360360153,
+       0.07776776179593148,
+       0.07946080329994529,
+       0.08044383074303861,
+       0.08108817188177153,
+       0.08150987599017197
+      ],
+      "D5": [
+       0.03128007621521121,
+       0.05035225255507229,
+       0.06317991379602106,
+       0.06952812512048735,
+       0.07501152164121246,
+       0.07858749808354351,
+       0.08019348538187465,
+       0.08111932422072168,
+       0.08172443969177198,
+       0.08211796309338087
+      ],
+      "D6": [
+       0.029977594633380573,
+       0.048409803944404035,
+       0.06080992871549107,
+       0.06692999242411214,
+       0.07220947194965915,
+       0.075659811453353,
+       0.07720978050252036,
+       0.0781030678946551,
+       0.07868965336307505,
+       0.07907370341930547
+      ],
+      "D7": [
+       0.028951225690399228,
+       0.04728792539855961,
+       0.05962617188377842,
+       0.06571225364580607,
+       0.07096228641968332,
+       0.07439655363558939,
+       0.07594034783267703,
+       0.07683176184346333,
+       0.07741878016320847,
+       0.07780498936486091
+      ],
+      "D8": [
+       0.02782334190504327,
+       0.045757278849486785,
+       0.05782492746810537,
+       0.06377062236381861,
+       0.06889534067484598,
+       0.07225330115086136,
+       0.07376614388797155,
+       0.0746415104202498,
+       0.07522142434602484,
+       0.07560631526581019
+      ],
+      "D9": [
+       0.026884824227241783,
+       0.044380163970641595,
+       0.056155753127057895,
+       0.06194369963147361,
+       0.06692771762961494,
+       0.07019927438212406,
+       0.07167278457003856,
+       0.07252512764946384,
+       0.0730916710810156,
+       0.07346948471634313
+      ],
+      "D10": [
+       0.02666541895282152,
+       0.04389524986813151,
+       0.05547367474622755,
+       0.06120971135291561,
+       0.06615590749916575,
+       0.06941690500484443,
+       0.07092900741896108,
+       0.07183207546943907,
+       0.07245711510940579,
+       0.07289803744209036
+      ]
+     }
+    },
+    {
+     "cle": "satisfaction_revenu",
+     "libelle": "Dont le revenu réel, par décile",
+     "unite": "points sur 10",
+     "sens": 1,
+     "valeurs": [
+      0.016171751001188533,
+      0.015938297131962636,
+      0.015909748951669658,
+      0.01564665366739888,
+      0.01547732965574279,
+      0.015405886932636155,
+      0.015271516059431051,
+      0.015175193140610181,
+      0.015090388456441334,
+      0.01501746343649539
+     ],
+     "bas": [
+      0.013317912589214087,
+      0.013125656461616288,
+      0.013102146195492662,
+      0.012885479490799073,
+      0.012746036187082295,
+      0.012687201003347425,
+      0.012576542637178514,
+      0.012497217880502502,
+      0.012427378728834038,
+      0.012367322830055026
+     ],
+     "haut": [
+      0.019025589413162982,
+      0.01875093780230899,
+      0.018717351707846656,
+      0.018407827843998685,
+      0.018208623124403283,
+      0.01812457286192489,
+      0.017966489481683594,
+      0.01785316840071786,
+      0.017753398184048627,
+      0.017667604042935756
+     ],
+     "par_groupe": {
+      "D1": [
+       0.008299747846931906,
+       0.010612030169198464,
+       0.012233425354001617,
+       0.012952998168349402,
+       0.013632575909141246,
+       0.01407672791774457,
+       0.014218475649013908,
+       0.014294966964503681,
+       0.01432516510486627,
+       0.01432914269338728
+      ],
+      "D2": [
+       0.010637429452879299,
+       0.011518081847333056,
+       0.012212768321758475,
+       0.012390026369729055,
+       0.012600314202185003,
+       0.012761228591484304,
+       0.01275604071365535,
+       0.01274303374586431,
+       0.012715935350718112,
+       0.012684009590817166
+      ],
+      "D3": [
+       0.01659726490701981,
+       0.017213484749482418,
+       0.017747380963806982,
+       0.01779474270420246,
+       0.017897238381922278,
+       0.017989269835283178,
+       0.017929079990528562,
+       0.017873189332467777,
+       0.017809377479907983,
+       0.017744628374182364
+      ],
+      "D4": [
+       0.017183157363140144,
+       0.017306396666597376,
+       0.01752914132391371,
+       0.01737818380164334,
+       0.017311729125500802,
+       0.01730436196810928,
+       0.017186291201200556,
+       0.01709438951026483,
+       0.01700610366817849,
+       0.016925015978037874
+      ],
+      "D5": [
+       0.020295778328891696,
+       0.01988979360861053,
+       0.0197587107348785,
+       0.01940745476009685,
+       0.019163897260607694,
+       0.019043414204507947,
+       0.01886686754727491,
+       0.018735719079972082,
+       0.01861979408320507,
+       0.018518053640957377
+      ],
+      "D6": [
+       0.019167637927866618,
+       0.018429841784365016,
+       0.018076013328558776,
+       0.01760855964717728,
+       0.01726106746780223,
+       0.01707730382258469,
+       0.016874630956351406,
+       0.016729697643265942,
+       0.01660736178062196,
+       0.016504022002396087
+      ],
+      "D7": [
+       0.018110110930153175,
+       0.017221731969408165,
+       0.016769425236493326,
+       0.016247982049871594,
+       0.015853174394766738,
+       0.01564219420690298,
+       0.015428004217652237,
+       0.015277843577947335,
+       0.015153774648487335,
+       0.015051186781806086
+      ],
+      "D8": [
+       0.0170930185118422,
+       0.015997705338335114,
+       0.015404942466158932,
+       0.01481425500517122,
+       0.014357670241617559,
+       0.014110009896494184,
+       0.01388386441814434,
+       0.013729582210735586,
+       0.01360611042816983,
+       0.013507208101791051
+      ],
+      "D9": [
+       0.01629515696344552,
+       0.015009862403817147,
+       0.01429026261456814,
+       0.013632146449512939,
+       0.013115525765805639,
+       0.012831769964716081,
+       0.012590408434775926,
+       0.012428243416768951,
+       0.012301178697178852,
+       0.012201551731655474
+      ],
+      "D10": [
+       0.01626904263445162,
+       0.015059889383969842,
+       0.014370175656040679,
+       0.01378426773733857,
+       0.013340674951405925,
+       0.013115493986989638,
+       0.012945865795851844,
+       0.012855232158601649,
+       0.012800100056368972,
+       0.012772311651762396
+      ]
+     }
+    },
+    {
+     "cle": "equivalent_monetaire",
+     "libelle": "Équivalent monétaire (valeur du WELLBY du Green Book, une convention)",
+     "unite": "Md€ de 2019 par an",
+     "sens": 1,
+     "valeurs": [
+      22.02077086148475,
+      37.501952678398965,
+      47.905016552254025,
+      53.0766970932914,
+      57.54006759905837,
+      60.453267708031575,
+      61.77675614305439,
+      62.5472729125573,
+      63.05778491504643,
+      63.39678219633441
+     ],
+     "bas": [
+      11.15640324058576,
+      16.0001873087189,
+      19.287098648615682,
+      20.836757623241592,
+      22.173869265401525,
+      23.064356954453242,
+      23.443585382060196,
+      23.656282294751758,
+      23.794335186794516,
+      23.88350562029897
+     ],
+     "haut": [
+      34.21642022442354,
+      60.744611444281915,
+      78.54159442884745,
+      87.3480152255644,
+      94.8667748164368,
+      99.8014024513783,
+      102.06831019149831,
+      103.37577027030133,
+      104.25771741054234,
+      104.85466644079112
+     ],
+     "par_groupe": null
+    }
+   ],
+   "notes": {
+    "coefficients": {
+     "beta": 0.425,
+     "delta": 0.46,
+     "epsilon": 0.027878787878787878,
+     "phi": 0.019515151515151513
+    },
+    "adultes_millions": 55.044338556819014,
+    "valeur_wellby_euros_2019": 14810.247688860849,
+    "wellby_cumules_milliers": 35737.17197569852,
+    "wellby_cumules_bande_milliers": [
+     18195.866918895983,
+     47732.90644499196
+    ],
+    "prix_lus": true,
+    "entrees": {
+     "chomeurs_de_plus_milliers": [
+      -112.57528689708398,
+      -311.55699363445547,
+      -443.7942128620939,
+      -516.0823153813471,
+      -580.6427237521407,
+      -620.9073583299796,
+      -640.2091950033305,
+      -652.3271322226196,
+      -660.1526803269339,
+      -665.2370721107575
+     ],
+     "taux_de_chomage_points": [
+      -0.33539042977218936,
+      -0.9337784725255025,
+      -1.3322746330943775,
+      -1.5495942254559498,
+      -1.7438596921317182,
+      -1.8650934443938845,
+      -1.9228894266210668,
+      -1.9590614564639854,
+      -1.982288149612991,
+      -1.997259277721572
+     ],
+     "inflation_points_mm3": [
+      -0.028144265984059332,
+      -0.0731571202101317,
+      -0.10261686864174373,
+      -0.09976214602691295,
+      -0.08382385330358948,
+      -0.08016607638185642,
+      -0.07941070513135703,
+      -0.07591527074414821,
+      -0.07581796920778291,
+      -0.07729853941695371
+     ]
+    },
+    "tirage": 0,
+    "decisions": "D-595 à D-599"
+   }
+  }
+ }
+}

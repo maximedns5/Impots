@@ -40362,3 +40362,63 @@ publié (1,4). Rien n'est retouché : aucune tolérance ni coefficient ne change
 calcul, et le coefficient de l'Insee, s'il en publie un, n'a pas été lu.
 
 Un test léger tient ces nombres (`test_controle_depart_sur_les_cellules_commitees`).
+
+## D-597 — Le moral des gens (3) : Mélenchon, Retailleau et Attal, un ordre de grandeur
+
+**Ce qui tourne** (`scripts/jumeau_moral.py`, commit 1a0dfe1, rapport
+`reports/jumeau/moral_programmes.json`, des agrégats). Le mode structurel, vue vieillie,
+convention « parts_premiere_annee », θ ½ pour chaque θ lu, tirage 0. Retailleau et Attal
+tournent comme un tout ; Mélenchon, que le structurel refuse comme un tout (des
+prélèvements agrégés sans ventilation, D-412), par ses mesures seules et leur interaction
+(D-502). Le jumeau tourne en secondes : aucune passe sur la population. Statut : « sourcé,
+non jugé » ; aucun de ces nombres n'est une prévision vérifiée.
+
+**En 2035** (milliers de WELLBY par an, l'enveloppe des coefficients entre crochets ;
+l'écart moyen de satisfaction d'un des 55,0 millions d'adultes ; l'équivalent monétaire à
+14 810 € de 2019 le WELLBY, une convention) :
+
+| programme | WELLBY 2035 | revenu | chômeurs | autour | inflation | points / adulte | Md€ 2019 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Mélenchon | 960 [374 ; 1 676] | +1 681 | −63 | −589 | −69 | +0,017 | 14,2 |
+| Retailleau | 1 960 [1 081 ; 2 573] | +673 | +114 | +1 144 | +29 | +0,036 | 29,0 |
+| Attal | 4 281 [2 096 ; 5 752] | +827 | +306 | +3 065 | +83 | +0,078 | 63,4 |
+
+Sur dix ans (2026-2035), en millions de WELLBY : Mélenchon 15,6 [10,6 ; 20,8], dont le
+revenu +18,6, l'inflation −1,1, le chômage autour de soi −1,7 et celui des chômeurs −0,2 ;
+Retailleau 17,9 [10,4 ; 23,2], dont le revenu +7,4 et le chômage autour de soi +9,3 ;
+Attal 35,7 [18,2 ; 47,7], dont le revenu +8,5 et le chômage autour de soi +24,0.
+
+**Par décile, en 2035** (points de satisfaction d'un adulte, tous canaux) : Mélenchon de
++0,062 (D1) à −0,016 (D10), le seul décile qui y perde ; Retailleau de +0,044 (D1) à +0,026
+(D10) ; Attal de +0,078 (D1) à +0,073 (D10), presque plat, parce que le chômage autour de
+soi, commun à tous, y fait l'essentiel.
+
+**Ce que ces nombres disent, et ce qu'ils ne disent pas.**
+
+1. Le canal du revenu suit le revenu réel par décile du jumeau ; il est le plus solide
+   (β entre 0,35 et 0,50, et le contrôle de D-596 dit qu'il ne surestime pas le
+   gradient). Mélenchon y fait plus du double des deux autres.
+2. Le chômage autour de soi pèse le plus chez Retailleau et Attal : un point de chômage en
+   moins touche 55 millions d'adultes. C'est ce que trouvent Helliwell et Huang (l'effet
+   indirect, à l'échelle de la population, plus grand que la perte des chômeurs), mais
+   c'est aussi le coefficient le plus incertain (0,0102 à 0,0390, presque 1 à 4) et il
+   multiplie l'emploi du jumeau, lui-même discuté (D-488 : Attal, +440 000 emplois avec
+   l'élasticité agrégée du coût du travail, environ +190 000 avec la matrice de
+   Bozio-Wasmer). Le classement des trois programmes dépend donc surtout de leur effet sur
+   le chômage, que le moral ne fait qu'amplifier.
+3. Les limites sont écrites dans la dimension (`LIMITES`) : pas d'adaptation hédonique au
+   revenu (une hausse durable est comptée chaque année), pas de comparaison sociale (une
+   hausse générale vaut moins qu'une hausse individuelle : le canal du revenu est un haut),
+   des coefficients estimés hors de France, des déciles sans distribution interne, l'âge
+   des adultes uniforme entre déciles. L'équivalent monétaire se fonde sur un coefficient
+   du revenu de 1,96 (Fujiwara) : il ne se compare pas au coût budgétaire.
+
+**Pas de test des nombres des programmes** : ils dépendent de tout le jumeau, que les
+autres volets changent ; le rapport commité les tient, avec son commit. Les tests légers
+tiennent les coefficients, les canaux à la main et le contrôle de départ.
+
+**Ce qui reste à décider** (le propriétaire) : (a) garder l'ancrage de ε et φ sur le
+chômage propre ou la règle linéaire 10/3 (2,4 fois plus) ; (b) borner l'adaptation
+hédonique (par exemple, un effet du revenu qui décroît de 0,425 à 0,13 sur cinq ans, Clark
+et al. 2018) ; (c) compter les moins de 16 ans ; (d) chercher un coefficient du revenu
+estimé sur SRCV, qui remplacerait la littérature après un nouveau préenregistrement.
