@@ -2572,6 +2572,24 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Insee, « Les salaires dans le secteur privé en 2022 », Insee Résultats (base Tous salariés 2022), tableaux régionaux, T305 : déciles du salaire brut horaire par région, catégorie socioprofessionnelle, condition d'emploi et sexe. Ligne France (REG 99, CS1 T, CE T, SEXE E) : 12,1 ; 13,3 ; 14,5 ; 15,8 ; 17,5 ; 19,6 ; 22,5 ; 27,2 ; 36,3 €. Le D8 en Smic (2,507) cale le point à 2,5 Smic de la fonction des salaires horaires (but 28, volet suite, D-552).",
       "quarantined": false
+    },
+    "riley_rosazza_2015_niesr_dp449.pdf": {
+      "url": "https://www.niesr.ac.uk/wp-content/uploads/2021/10/Minimum-wages-and-firm-productivity-NIESR-DP-449-4.pdf",
+      "sha256": "5d04fb43af1b8ab9834f78908acb4451a959eff29a17d22496cd62e809dfef04",
+      "bytes": 1198418,
+      "downloaded": "2026-11-18",
+      "licence": "NIESR — accès libre",
+      "description": "Riley et Rosazza Bondibene, « Raising the standard: minimum wages and firm productivity », NIESR Discussion Paper n° 449, mai 2015 (version publiée : Labour Economics 44, 2017, p. 27-50). Tableau 1 p. 27 (p. 28 du PDF) : à l'introduction du salaire minimum britannique, seuil de 12 000 £, MCO, coût moyen du travail +0,042 (0,011), productivité du travail (VA) +0,043 (0,018), PGF +0,032 (0,017), ratio capital-travail +0,025 (0,026), emploi −0,006 (0,026). Source du canal « smic_efficience » (D-600).",
+      "quarantined": false
+    },
+    "cahuc_carcillo_2011_iza_dp5439.pdf": {
+      "url": "https://docs.iza.org/dp5439.pdf",
+      "sha256": "2982b1c91f4b4f041ffc4a4f6f78b8f09a1839cee5483a31ecffca365355f6b5",
+      "bytes": 236338,
+      "downloaded": "2026-11-18",
+      "licence": "IZA — accès libre",
+      "description": "Cahuc et Carcillo, « The detaxation of overtime hours: lessons from the French experiment », IZA DP n° 5439, janvier 2011 (version publiée : Journal of Labor Economics 32(2), 2014, p. 361-400). Résumé p. 3 du PDF : l'exonération des heures supplémentaires de 2007 n'a pas d'effet significatif sur les heures travaillées. Source du canal « duree_travail » (D-600).",
+      "quarantined": false
     }
   }
 }

@@ -40250,3 +40250,94 @@ Chaque dimension a une source publiée par coefficient, une bande, et un statut 
 l'entente entre les gens n'ont pas de juge aveugle connu : ils sont montrés comme des
 ordres de grandeur sourcés, jamais comme des prévisions vérifiées. Les numéros : D-591 à
 D-609 par volet, D-610 et la suite pour la jonction.
+
+## D-600 — La productivité : ce que le jumeau porte déjà, et les canaux qui manquent
+
+**Pourquoi** (D-590, volet `productivite`). Dire ce qu'une mesure fait à la productivité
+des entreprises, et par là au PIB potentiel, au PIB et au salaire réel, année par année,
+avec bandes et statut ; une dimension `productivite` inscrite dans `jumeau/impacts`.
+Numéros du volet : D-600 à D-604. Cette entrée est l'inventaire, avant tout calcul.
+
+**Ce que le jumeau porte déjà** (lu dans `jumeau/blocs`, mode structurel) :
+
+* **La tendance est exogène.** `tendance` fait croître le PIB de la référence au taux des
+  entrées (croissance réelle et prix du cadre des études) : la productivité tendancielle
+  n'y est pas un objet, elle est dans la croissance donnée. Aucune mesure ne la touche.
+* **L'investissement passe au capital et au potentiel, pour la fiscalité des
+  entreprises.** `investissement` (D-407) : l'IS, la CVAE et la C3S entrent au coût
+  d'usage (Mésange, p. 42), l'investissement répond (p. 44, ε_K = 0,44), le capital
+  s'accumule (δ = 0,0777) et le PIB potentiel gagne s_K ΔK/K (sur les revenus non
+  ventilés). L'accélérateur (D-414) ajoute la demande d'investissement, qui n'entre pas
+  au capital du potentiel (dit dans le bloc). Les cotisations employeurs n'entrent pas au
+  coût d'usage (des impôts sur la main-d'œuvre, comme dans Mésange).
+* **La démographie des entreprises** (`productivite` de `demographie.py`, D-407) : la
+  valeur ajoutée des entrantes et des sortantes à la marge, à leur productivité relative
+  (r = 0,10), sur le PIB potentiel ; le champ `productivite_moyenne`.
+* **L'emploi et les salaires** : l'emploi répond au coût réel du travail (Mésange,
+  élasticité 0,44 ; le profil des non qualifiés pour l'allègement ciblé) ; le salaire
+  s'indexe à long terme sur la productivité apparente (équation WS, Mésange p. 58 du
+  PDF : « la productivité apparente du travail et les prix de valeur ajoutée, auxquels le
+  salaire s'ajuste intégralement »). Le Smic et ses allègements passent par `travail`
+  (D-478) : une hausse du Smic relève les salaires sous lui, et la RGDU, exprimée en Smic
+  de l'année, ouvre plus d'allègement ; la loi seule baisse donc le coût (−2,2 % de la
+  masse super-brute marchande pour +16,17 % de Smic), la diffusion le relève (+2,4 %).
+* **Ce que la productivité apparente du jumeau contient donc** : le PIB en volume sur
+  l'emploi ; la composition (un emploi à bas salaire en moins relève la moyenne), le
+  capital du coût d'usage, la démographie. **Ce qu'elle ne contient pas** : un effet de
+  la mesure sur l'efficacité des entreprises elles-mêmes (la productivité globale des
+  facteurs, PGF) : ni salaire d'efficience, ni pression du coût du travail, ni R&D.
+
+**Les canaux, un par mécanisme** (paramètres dans `jumeau/parametres/productivite.yaml`,
+chacun avec document, page, valeur et bande ; tous hors du jumeau, montrés à côté) :
+
+1. **La pression du coût du travail** (`pression_cout`) : une hausse du coût du travail
+   des entreprises relève leur PGF (organisation, formation, salaire d'efficience) ; la
+   baisse la réduit, si le mécanisme est symétrique. Riley et Rosazza Bondibene (NIESR
+   DP 449, 2015 ; Labour Economics 2017), tableau 1 p. 27 : à l'introduction du salaire
+   minimum britannique, coût moyen du travail des entreprises à bas salaires +4,2 %, PGF
+   +3,2 %, ratio capital-travail et emploi sans effet significatif ; η = 0,032 / 0,042 =
+   0,76 en haut. Harasztosi et Lindner (2015), p. 1 et 3-4 : la hausse de 60 % du salaire
+   minimum hongrois passe aux prix, sans gain d'efficacité dans leur modèle (σ_KL = 1,08) :
+   η = 0 en bas. Le centre, 0,38, le milieu, choisi. Agrégé : ΔlnPGF = η Δcoût / coût (la
+   part de chaque entreprise dans la VA, à part salariale égale, dit), Δcoût la variation
+   du coût super-brut marchand que la mesure fait (la cascade de `travail` pour un Smic,
+   la loi et la diffusion au centre ; l'allègement retiré pour un seuil abaissé, D-540 ;
+   les cotisations employeurs de la mesure sinon). Montée : la moitié la première année,
+   tout ensuite (choisie ; Riley et Rosazza Bondibene mesurent sur quatre ans).
+2. **Le salaire d'efficience** (`salaire_efficience`) : la même lecture sur le salaire
+   brut relevé par une hausse du Smic (et non sur le coût net des allègements, que la
+   RGDU fait baisser) : au Royaume-Uni, sans allègement, coût et salaire allaient
+   ensemble ; en France ils divergent, d'où deux canaux. Même η, même montée.
+3. **La fiscalité du capital des ménages et l'investissement** (`capital_menages`) :
+   nul. France Stratégie, comité d'évaluation de la fiscalité du capital, rapport final
+   2023, p. 21 du PDF : « Aucun effet n'a été détecté sur l'investissement et les salaires
+   parmi les entreprises possédées davantage par des personnes physiques suite à
+   l'instauration du PFU ». Le PFU, l'IFI, les prélèvements sur les dividendes ne passent
+   donc pas au capital ; la fiscalité des entreprises y passe déjà (`investissement`).
+4. **La durée du travail** (`duree_travail`) : nul sur les heures. Cahuc et Carcillo (IZA
+   DP 5439, 2011 ; Journal of Labor Economics 2014), résumé p. 3 : l'exonération des
+   heures supplémentaires de 2007 n'a pas eu d'effet significatif sur les heures
+   travaillées. Une mesure qui exonère des heures (Retailleau) ne change ni les heures ni
+   la productivité horaire ; son coût et ses recettes restent dans le jumeau.
+5. **La R&D et le CIR** : aucun des trois programmes de tête n'y touche ; pas de canal
+   construit. La source est au manifeste (IPP n° 22, Bozio, Cottet et Py 2019, tableaux
+   5.1 et 5.2) pour le jour où une mesure le fera.
+
+**Le coût du travail qualifié** (allègements au-delà de 2 Smic) n'a pas de canal propre :
+il passe par la pression du coût (1), que le CICE juge (D-601). L'Horty, Martin et Mayer
+(note du CAE n° 49, 2019) disent les effets sur l'emploi « très faibles et peu
+significatifs au seuil de 2,5 SMIC » (p. 6) ; aucun chiffrage publié d'un effet sur la
+productivité n'est au manifeste.
+
+**Du canal au PIB.** ΔlnPGF porte sur les sociétés : sur le PIB, ×s_VA (0,5539, la part
+des sociétés dans le PIB de 2024, `entreprises.yaml`). Le PIB potentiel gagne autant, à
+emploi donné (Riley et Rosazza Bondibene : pas d'effet sur l'emploi) ; le PIB aussi à long
+terme (la demande suit, dit) ; le salaire réel moyen aussi (Mésange p. 58, l'indexation
+unitaire sur la productivité). Le PIB potentiel du socle (le jumeau seul) : α ΔK/K + (1 −
+α) ΔL/L + la démographie, α la part du capital du départ ; ΔK accumule l'écart
+d'investissement des entreprises au taux δ du bloc, ΔL l'écart d'emploi du jumeau, lu
+comme structurel à long terme (dit).
+
+**Règle d'emploi.** Chaque canal est une option ; il n'est branché par défaut que si un
+juge le tient. Aucun ne l'est à cette entrée : la dimension est « sourcé, non jugé », le
+socle à côté des canaux. La pression du coût est jugée sur le CICE (D-601, D-602).
