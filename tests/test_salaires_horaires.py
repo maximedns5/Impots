@@ -84,6 +84,8 @@ def test_le_point_de_l_insee_tient_la_densite_de_2_5_a_3_smic(monkeypatch) -> No
     poids = np.where(frame["fonction_publique"].is_null().to_numpy(), poids, 0.0)
 
     def parts(point: bool) -> list[float]:
+        # D-580 : les points de l'Urssaf remplacent celui-ci ; il se lit sans eux.
+        monkeypatch.setattr(incomes, "POINTS_URSSAF", False)
         monkeypatch.setattr(incomes, "POINT_INSEE", point)
         sortie, f = incomes._salaires_horaires_en_smic(frame, salaires, employe, poids)
         h = sortie / (margins.SMIC_ANNUEL_2024 * quotite) / f
@@ -94,3 +96,49 @@ def test_le_point_de_l_insee_tient_la_densite_de_2_5_a_3_smic(monkeypatch) -> No
     assert avec[1] == pytest.approx(0.864, abs=0.005)
     assert avec[0] == pytest.approx(sans[0], abs=0.005)
     assert avec[2] == pytest.approx(sans[2], abs=0.005)
+
+
+def test_les_points_de_l_urssaf_tiennent_la_forme_de_2_a_3_5_smic(monkeypatch) -> None:
+    """D-580 : les ETP de l'Urssaf par 0,1 Smic (CCSS, mai 2024, graphique 3, 2022) font,
+    dans ceux de 1 à 3,5 Smic, 11,80 % de 2 à 2,5, 6,37 % de 2,5 à 3 et 3,84 % de 3 à 3,5.
+    Les trois points qui en sont tirés placent 85,2, 90,7 et 94,0 % des salariés sous 2,5,
+    3 et 3,5 Smic, à la place du point de l'Insee (86,4 % à 2,5) et du D9 de la Dares
+    (90 % à 3,04) ; le Q3 de la Dares (75 % à 2,01) reste. Sur le code d'avant (D-553), la
+    part sous 3 Smic était 89,7 %, sous 3,5 Smic 94,8 %."""
+    etp = margins.SALAIRE_PRIVE_ETP_URSSAF_2022
+    total = sum(etp.values())
+
+    def tranche(a: float, b: float) -> float:
+        return sum(v for x, v in etp.items() if a - 1e-9 <= x < b - 1e-9) / total
+
+    assert total == pytest.approx(15220, abs=5)
+    assert tranche(2.0, 2.5) == pytest.approx(0.1180, abs=5e-4)
+    assert tranche(2.5, 3.0) == pytest.approx(0.0637, abs=5e-4)
+    assert tranche(3.0, 3.5) == pytest.approx(0.0384, abs=5e-4)
+
+    frame = _cadre(n=20000, public=1)
+    n = frame.height
+    quotite = frame["quotite_travail"].to_numpy()
+    horaire = np.random.default_rng(4).uniform(1.0, 3.99, n)
+    salaires = horaire * margins.SMIC_ANNUEL_2024 * quotite
+    employe = np.ones(n, dtype=bool)
+    poids = np.where(frame["fonction_publique"].is_null().to_numpy(),
+                     frame["weight"].to_numpy(), 0.0)
+
+    def parts(urssaf: bool) -> list[float]:
+        monkeypatch.setattr(incomes, "POINTS_URSSAF", urssaf)
+        monkeypatch.setattr(incomes, "POINT_INSEE", True)
+        sortie, f = incomes._salaires_horaires_en_smic(frame, salaires, employe, poids)
+        h = sortie / (margins.SMIC_ANNUEL_2024 * quotite) / f
+        return [float((poids * (h < x)).sum() / poids.sum())
+                for x in (2.01, 2.5, 3.0, 3.04, 3.5)]
+
+    avant, apres = parts(False), parts(True)
+    assert apres[1] == pytest.approx(0.852, abs=0.005)
+    assert apres[2] == pytest.approx(0.907, abs=0.005)
+    assert apres[4] == pytest.approx(0.940, abs=0.005)
+    assert apres[0] == pytest.approx(0.75, abs=0.005)
+    assert avant[1] == pytest.approx(0.864, abs=0.005)
+    assert avant[2] == pytest.approx(0.897, abs=0.005)
+    assert avant[3] == pytest.approx(0.90, abs=0.005)
+    assert avant[4] == pytest.approx(0.948, abs=0.005)

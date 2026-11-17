@@ -1259,6 +1259,47 @@ SALAIRE_HORAIRE_PRIVE_D8_INSEE = Figure(
 )
 
 
+# --------------------------------------------------------------------------- #
+# Le salaire horaire du privé de 2 à 3,5 Smic sur l'Urssaf (but 28, volet urssaf, D-580).
+# --------------------------------------------------------------------------- #
+CCSS_MAI_2024_URL = ("https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/"
+                     "CCSS/2024/CCSS-mai%202024.pdf")
+
+#: Les effectifs salariés du secteur privé en équivalent temps plein, par tranche de 0,1
+#: Smic, de [1,0 ; 1,1[ à [3,4 ; 3,5[, 2022, en milliers d'ETP : Commission des comptes
+#: de la sécurité sociale, mai 2024 (`data/raw/ccss_mai2024_rapport.pdf`), éclairage 3.7
+#: « Dynamique récente des allègements généraux de cotisations sociales », graphique 3,
+#: panneau 2022, p. 143 (p. 147 du PDF) ; source Urssaf caisse nationale (DSN). Les barres
+#: n'ont pas d'étiquette : lues dans le dessin vectoriel du PDF (axe de 0 à 2 000 000 ETP,
+#: 7,131 points par 200 000 ; à quelques dizaines d'ETP près), D-575. La plage de 1 à 3,5
+#: Smic est la seule complète (de 3,5 à 3,9 et de 4 à 4,9 Smic, rien n'est dessiné) : les
+#: parts se lisent dans elle (15,22 M d'ETP). De 2 à 2,5 Smic 11,80 %, de 2,5 à 3 6,37 %,
+#: de 3 à 3,5 3,84 %.
+SALAIRE_PRIVE_ETP_URSSAF_2022: dict[float, float] = {
+    1.0: 1735.5, 1.1: 1833.5, 1.2: 1781.2, 1.3: 1485.7, 1.4: 1239.2, 1.5: 1043.2,
+    1.6: 870.2, 1.7: 729.8, 1.8: 618.8, 1.9: 535.5, 2.0: 463.7, 2.1: 400.0, 2.2: 349.4,
+    2.3: 310.2, 2.4: 272.6, 2.5: 240.0, 2.6: 212.2, 2.7: 192.6, 2.8: 171.4, 2.9: 153.5,
+    3.0: 140.4, 3.1: 127.4, 3.2: 115.9, 3.3: 106.1, 3.4: 94.7,
+}
+
+#: Les points qui remplacent, de 2 à 3,5 Smic, celui de l'Insee (D-552, 86,4 % à 2,5) et
+#: le D9 de la Dares (90 % à 3,04) dans `incomes._salaires_horaires_en_smic` (D-580) : la
+#: part des salariés, en personnes, que la fonction place sous 2,5, 3 et 3,5 Smic.
+#: Ajustés hors de la construction, sur la population de D-553 (rang gardé, facteur de
+#: masse recalculé), pour que les heures des salariés du privé (poids × quotité × mois
+#: travaillés) de 2 à 2,5, de 2,5 à 3 et de 3 à 3,5 Smic fassent, dans celles de 1 à 3,5
+#: Smic, les parts des ETP de l'Urssaf (11,80, 6,37 et 3,84 %). Les ETP sont en Smic du
+#: mois de 2022, les heures de la population en Smic de 2024 : les multiples bougent de
+#: moins de 1 %. Le Q3 de la Dares (75 % à 2,01) et tout ce qui est dessous restent.
+SALAIRE_HORAIRE_PRIVE_POINTS_URSSAF_2022: dict[float, float] = {
+    2.50: 0.852, 3.00: 0.907, 3.50: 0.940,
+}
+
+#: Le point de la Dares que les points de l'Urssaf retirent : son D9 (3,04 Smic, 90 %),
+#: qui, gardé, laisse 0,5 point de trop de 2 à 2,5 Smic et 0,7 de trop peu de 2,5 à 3
+#: (D-580).
+SALAIRE_HORAIRE_PRIVE_RETIRES_URSSAF: tuple[float, ...] = (3.04,)
+
 #: Le Smic horaire brut de 2024 : 11,65 € du 1er janvier (décret n° 2023-1216 du 20
 #: décembre 2023), 11,88 € du 1er novembre (décret n° 2024-951 du 23 octobre 2024), sur la
 #: durée légale de 151,67 heures par mois. Le salaire horaire d'un salarié de la

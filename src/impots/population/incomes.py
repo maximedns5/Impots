@@ -434,7 +434,13 @@ def _salaires_horaires_en_smic(frame: pl.DataFrame, wages: np.ndarray,
     ranks = (cumulative - weight[order] / 2.0) / cumulative[-1]
     rank = np.interp(hourly[under], hourly[order], ranks)
     points = dict(margins.SALAIRE_HORAIRE_PRIVE_EN_SMIC_2022)
-    if POINT_INSEE:
+    if POINTS_URSSAF:
+        # From 2 to 3,5 Smic the shape is the Urssaf's ETP by tenth of Smic (D-580): three
+        # points replace the Insee's (D-552) and the Dares's D9 (3,04).
+        for x in margins.SALAIRE_HORAIRE_PRIVE_RETIRES_URSSAF:
+            points.pop(x)
+        points.update(margins.SALAIRE_HORAIRE_PRIVE_POINTS_URSSAF_2022)
+    elif POINT_INSEE:
         # Between the Dares's Q3 (2,01) and D9 (3,04) the function was linear: as many
         # employees per tenth of Smic at 3 as at 2 (D-532). One point at 2,5 Smic, set
         # on the Insee's D8 of the hourly wage (D-552), says how the density falls.
@@ -473,6 +479,10 @@ def _facteur_statut(frame: pl.DataFrame) -> np.ndarray:
 #: The point at 2,5 Smic on the hourly function (but 28, volet suite, D-552), set on the
 #: Insee's D8 of the private hourly wage; off: linear from the Dares's Q3 to its D9.
 POINT_INSEE = True
+
+#: The points at 2,5, 3 and 3,5 Smic set on the Urssaf's ETP (but 28, volet urssaf, D-580),
+#: in place of the Insee's point and of the Dares's D9; off: POINT_INSEE decides.
+POINTS_URSSAF = True
 
 
 #: Rank the wages and the pensions by tenure (but 27, volet grille2, D-497); off: no

@@ -40228,3 +40228,155 @@ dire l'écart : le rendement de la fin des exonérations est trop bas de l'ordre
 Md€ (D-563). Le désaccord de fond, à trancher avant tout point : le T305 (heures, Insee)
 et l'Urssaf (ETP, DSN) ne disent pas la même densité de 2 à 2,5 Smic une fois le D9 de la
 Dares gardé.
+
+## D-580 — La forme des salaires de 2 à 3,5 Smic sur l'Urssaf : trois points, préenregistrés
+
+**Pourquoi** (D-575 ; décision du propriétaire du 17 novembre, « 3 maintenant, puis 1 »).
+Prendre l'Urssaf pour ancre de la forme des salaires horaires du privé de 2 à 3,5 Smic,
+dans `incomes._salaires_horaires_en_smic`, avec des points qui remplacent celui de D-552
+(et le D9 de la Dares s'il le faut). Numéros du volet `urssaf` : D-580 à D-589.
+`calibrate.py` n'est pas touché. La série des études tourne à côté, sur la population de
+D-553 (5ace8bb6…) : elle n'est pas touchée.
+
+**Le désaccord à trancher d'abord.** De 2 à 2,5 Smic, en part des heures de 1 à 3,5 Smic
+(la seule plage complète du graphique de l'Urssaf) : le T305 de l'Insee (D-552, déciles
+interpolés, 0 % sous 1 Smic, 91,8 % sous 3,5 en prolongeant la pente de D8 à D9) en met
+**13,7 %**, l'Urssaf (CCSS, mai 2024, éclairage 3.7, graphique 3, 2022, D-575) **11,8 %** ;
+de 2,5 à 3, 6,6 contre 6,4 ; de 3 à 3,5, 6,5 contre 3,8 ; sous 2 Smic, 73,2 contre 78,0.
+Le T305 étale les salaires au-dessus de 2 Smic, l'Urssaf les tient plus bas. Les causes
+probables, aucune vérifiée (aucune source ne publie les deux grandeurs sur un champ
+commun) :
+
+1. **la grandeur** : le T305 est un salaire brut horaire **de l'année**, par poste
+   (salaire de l'année sur heures rémunérées de l'année) ; l'Urssaf range des **ETP de la
+   DSN** par la rémunération rapportée au Smic, vraisemblablement au mois. Un mois sans
+   prime est plus bas que la moyenne de l'année, un mois de prime (treizième mois, primes
+   annuelles) très haut : la répartition au mois a plus de masse sous 2 Smic et au-delà de
+   5 Smic (540 000 ETP au-dessus de 5 Smic sur le graphique), moins entre les deux ;
+2. **le champ** : le T305 couvre le privé hors agriculture, apprentis, stagiaires et
+   particuliers employeurs, entreprises publiques comprises ; l'Urssaf, le régime général
+   (les statuts particuliers, IEG, SNCF, RATP, salariés bien payés de 2 à 3,5 Smic, y sont
+   peu ou pas), apprentis compris (sous 1 Smic, hors de la plage comparée) ;
+3. **l'unité** : des ETP (des heures) des deux côtés si les déciles du T305 sont pondérés
+   par les heures, ce que l'Insee n'imprime pas (D-552) ; pondérés par les postes, ils
+   seraient plus bas, et le désaccord plus grand : l'unité ne l'explique pas ;
+4. **l'année** (2022 des deux côtés) et **le brut** (des deux côtés) ne l'expliquent pas ;
+   le Smic : celui du mois pour l'Urssaf, la moyenne de l'année (10,848 €) pour le T305,
+   moins de 2 % sur les multiples, sans sens défini.
+
+**La règle retenue** : de 2 à 3,5 Smic, **l'Urssaf ancre la forme**, le T305 n'ancre plus
+rien. Raisons : la décision du propriétaire ; l'Urssaf est la grandeur des allègements
+(la rémunération sur le Smic, la DSN, le régime général), celle des lignes qu'on juge
+(les bandeaux, la réduction générale, la ligne de D-531) ; elle donne la forme par 0,1
+Smic, le T305 deux déciles dans la plage. Le T305 reste écrit, en contexte (ses D8 et D9
+des heures sont dits, pas jugés). Sous 2,01 Smic, la Dares (D-497) ancre, inchangée ; la
+masse privée (D11) donne le facteur. **Il ne reste aucun juge aveugle de la forme** : le
+T305 l'a ancrée (D-552), la ligne de D-531 a été lue (D-532), l'Urssaf l'ancre. Restent
+des **contrôles**, dont les pronostics suivent : la ligne de D-531, les bandeaux maladie
+et famille, la réduction générale, le rendement de la fin des exonérations (D-563), la
+grille entière.
+
+**Les points** (`margins.SALAIRE_HORAIRE_PRIVE_POINTS_URSSAF_2022`, lus par
+`incomes._salaires_horaires_en_smic` sous `POINTS_URSSAF`, qui prime sur `POINT_INSEE`) :
+**85,2 % des salariés sous 2,5 Smic, 90,7 % sous 3, 94,0 % sous 3,5** (en personnes, sous
+4 Smic, 18 à 64 ans). Ils remplacent le point de l'Insee (86,4 % à 2,5) et **le D9 de la
+Dares (90 % à 3,04)**, retiré (`SALAIRE_HORAIRE_PRIVE_RETIRES_URSSAF`) : gardé, avec deux
+points à 2,5 et 3,5, il laisse 0,5 point de trop de 2 à 2,5 Smic et 0,7 de trop peu de 2,5
+à 3 (essai). Le Q3 de la Dares (75 % à 2,01) et tout ce qui est dessous restent. Les ETP
+de l'Urssaf par 0,1 Smic, de 1 à 3,5 Smic, sont dans `SALAIRE_PRIVE_ETP_URSSAF_2022`
+(lus dans le dessin du PDF, D-575 ; au registre, relecture automatique : les « retrouvée
+ailleurs » y sont des coïncidences, les barres n'ont pas d'étiquette).
+
+**L'ajustement** (hors de la construction, sur la population de D-553, rang gardé, facteur
+de masse recalculé ; il reproduit la population de D-553 à 3e-4 Smic près en médiane) :
+les heures du privé (poids × quotité × mois travaillés), en part de celles de 1 à 3,5 Smic.
+
+| tranche (Smic) | Urssaf 2022 | D-553 | points de D-580 |
+|---|---:|---:|---:|
+| 2,0 à 2,5 | 11,80 % | 12,99 % | 11,84 % |
+| 2,5 à 3,0 | 6,37 % | 4,48 % | 6,38 % |
+| 3,0 à 3,5 | 3,84 % | 5,13 % | 3,83 % |
+| 2,6 à 3,1 (non calée) | 5,72 % | 3,54 % | 5,68 % |
+| 3,1 à 3,5 (non calée) | 2,92 % | 4,42 % | 2,85 % |
+| 1,0 à 2,0 (non calée) | 77,99 % | 77,39 % | 77,95 % |
+
+Le facteur de masse : 1,0217 → **1,0194**. Le D9 des personnes (avant le facteur) : 3,04 →
+**2,94** (Dares 3,04 : il n'est plus tenu). Ce qui se dégrade, dit : **de 3,5 à 4 Smic**,
+la fonction met 6 % des personnes (de 94 à 100 %), soit 6,1 % des heures de 1 à 3,5 Smic
+(D-553 5,6), quand l'Urssaf, en prolongeant ses barres de 3,0-3,5 jusqu'à celle de [3,9 ;
+4,0[, en a 2,4 % ; la barre [3,9 ; 4,0[ seule : 0,40 % contre 1,30 %. Le trop de 3,1 à 3,5
+(D-575) passe au-dessus de 3,5. Non calé : un point à 3,9 Smic, ancré sur cette barre, le
+pourrait (au propriétaire). Le T305, en contexte : les heures sous son D8 (2,507) 80,0 →
+79,1 %, sous son D9 (3,346) 86,9 → 87,0 % (90 %). Sous 2 Smic, la Dares et l'Urssaf ne
+disent pas non plus la même forme (de 1,1 à 1,3 Smic 26,9 % des heures de la plage dans
+la population, 23,7 chez l'Urssaf) : hors du volet, non touché.
+
+**Le pronostic des contrôles.** Méthode : l'écart de la grille de D-553, déplacé par le
+rapport, entre la population ajustée et celle de D-553, d'une grandeur calculée en Python
+sur toute la population (sans openfisca) : la masse privée sous 2,5 Smic de l'année (le
+bandeau maladie), sous 3,5 (le bandeau famille), la réduction de 2024 sous 1,6 Smic, la
+part de la masse de 2,5 à 3,5 Smic dans celle sous 3,5 (la ligne de D-531). **Ce n'est
+pas aveugle** : les points sont ajustés sur la population, et la méthode est validée sur
+un passage connu, D-521 → D-553, lu avant (rapport par la méthode contre la grille, 2024 :
+bandeau maladie 1,077 contre 1,073 ; famille 0,987 contre 0,988 ; réduction 0,962 contre
+0,966 ; ligne de D-531 0,719 contre 0,737 ; 2023 et 2022 : à 1,3 point près). Bandes : ±1,5
+point sur le bandeau maladie, ±1 sur le bandeau famille et la réduction générale ; ±3 points
+d'écart sur la ligne de D-531 ; ±1 sur les autres lignes, ±1,5 sur les foyers à 45 %
+(qu'un facteur de masse déplace, D-553), ±0,5 sur les lignes que la forme des salaires du
+privé ne touche pas. Juge : les tolérances de D-371, **inchangées** ; puis ±5 % comme D-520.
+Écart au publié (%), D-553 → pronostic :
+
+| ligne | tol. | 2024 | 2023 | 2022 | bande |
+|---|---:|---|---|---|---:|
+| `bandeau_famille_part_2_5_3_5_smic` | 15 | — | — | −1,5 → **+2,4** | ±3 |
+| `bandeau_maladie` | 15 | +9,9 → **+7,8** | +9,4 → +7,3 | +11,4 → +9,2 | ±1,5 |
+| `bandeau_famille` | 15 | +10,0 → **+8,8** | +11,3 → +10,0 | +13,0 → +11,8 | ±1 |
+| `reduction_generale` | 15 | +8,1 → **+8,9** | +6,8 → +7,6 | +9,1 → +9,9 | ±1 |
+| `cotisations_employeurs_d121` | 15 | −5,0 → −4,9 | −3,3 → −3,2 | −2,3 → −2,2 | ±1 |
+| `foyers_tmi_4` | 30 | −2,7 → −2,7 | −3,9 → −3,9 | −12,1 → −12,1 | ±1,5 |
+
+La ligne de D-531 : **0,172 (0,167 à 0,177)**, publié 0,168, dans la tolérance (0,143 à
+0,193) et dans ±5 %. Les allègements de 2024 : bandeau maladie −0,57 Md€, famille −0,12,
+réduction générale +0,33. **Les autres lignes que la forme touche** (les cotisations des
+salariés au champ des APU, les trois CSG, l'IR, les foyers imposés, les foyers à 0, 11,
+30 %, les salaires déclarés, les deux médians, les deux D9/D1, la prime d'activité et le
+RSA servis, les aides au logement, les AF, les impôts sur les salaires) : **leur écart de
+D-553, ±1** ; le facteur baisse de 0,2 % (il était monté de 1,0 % de D-521 à D-553, et
+ces lignes avaient bougé de 0 à 2 points). Les lignes des entreprises, des pensions et
+des non-salariés : celui de D-553, ±0,5.
+
+**Le compte annoncé** : 2024 **35 sur 35**, ±5 % : 16 (le bandeau maladie reste dehors) ;
+2023 32 sur 33, hors la contribution sociale sur l'IS ; ±5 % : 13 ; 2022 **32 sur 32** ;
+±5 % : 12. Trois années : **99 sur 100**, comme D-553.
+
+**Le rendement de la fin des exonérations** (D-563, `allegement_general_plafond` 3 → 2,
+droit de 2026, 20 000 ménages, au mois, méthode de D-562) : par bande, les rendements de
+D-553 (R_a 3,367 Md€ de 2 à 2,5 Smic de 2026, R_b 1,074 de 2,5 à 3) portés par les heures
+des bandes [2,086 ; 2,607[ et [2,607 ; 3,129[ en Smic de 2024 (10,49 → 9,59 % ; 3,35 →
+5,11 %) : **R = 4,72 Md€ (4,57 à 4,87)**, contre 4,441 (D-553). La méthode, sur D-521, rend
+4,53 contre 4,474 mesuré. La reproduction de D-562 s'exige encore : R égal à la passe de la
+réforme à 0,1 % près. Le rendement sur les références de D-563 (5,36) n'est plus une
+cible : il prenait le T305 pour la forme.
+
+**La paire Smic × exonérations** (D-554, union, vue figée de 2026, 20 000 ménages) : le Smic
+seul 30,919 → **30,6 (30,2 à 30,9)** Md€ (la hausse fait entrer moins de salariés dans la
+réduction : la bande de 2 à 2,6 Smic perd 0,9 point d'heures) ; la fin des exonérations
+seule −4,72 (−4,87 à −4,57) ; **l'interaction I = +0,551 → −0,1 (−0,7 à +0,5)** : la
+densité de 2,6 à 3,1 Smic revient à mi-chemin de D-521 (où I valait −0,985) ; le signe
+de l'étude n'est pas pronostiqué.
+
+**Les passes**, détachées, sous le verrou commun, une à la fois, au commit de cette entrée,
+poussée avant, dans le worktree de ce volet (les liens de `data/processed` vers celui de
+la série retirés d'abord) : `impots population build` (graine 20240101) ; `impots
+verification passe` sur 2024, 2023, 2022 ; le complément de 2022
+(`scripts/ligne_bandeau_famille_tranche.py 2022`) ; `impots verification ecrire` ; les
+cellules du jumeau (`scripts/jumeau_cellules.py`, 30 000 ménages) ;
+`entrees_navigateur.json`, `agregats.json`. Résultat en D-581. Puis les rejeux :
+`scripts/exos_decomposition_b28.py passe … --controle` et `scripts/mesure_melenchon_b27.py`
+(le Smic, la fin des exonérations, les deux ; union, rapide). Résultat en D-582. Aucune
+tolérance ne change ; une ligne manquée reste écrite.
+
+**Le test léger** : `tests/test_salaires_horaires.py::test_les_points_de_l_urssaf_
+tiennent_la_forme_de_2_a_3_5_smic` (les parts des ETP de l'Urssaf ; 85,2, 90,7 et 94,0 %
+sous 2,5, 3 et 3,5 Smic avec les points ; 86,4, 89,7, 94,8 % sans) ; vu échouer sur le
+code d'avant. Le test de D-552 se lit désormais sans les points de l'Urssaf.
