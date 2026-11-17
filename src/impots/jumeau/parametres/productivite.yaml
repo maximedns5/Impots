@@ -1,0 +1,76 @@
+# Les canaux de la productivité des entreprises — but 29, volet `productivite` (D-600).
+#
+# Chaque valeur porte sa source (document, page ou tableau) et sa bande (bas, centre,
+# haut : θ = 0, ½, 1, comme `entreprises.yaml`). [lu] : lu sur un fichier du manifeste.
+# « choisie, non vérifiée » : aucune source ne la chiffre. Aucun canal n'est dans le
+# jumeau : la dimension `productivite` (`jumeau/impacts/productivite.py`) les montre à
+# côté du socle, et n'en branche un que si un juge le tient (`branche_par_defaut`).
+
+pression_cout:
+  # η : la variation relative de la PGF des entreprises par variation relative de leur
+  # coût du travail (super-brut, net des allègements).
+  centre: 0.38
+  bas: 0.0
+  haut: 0.76
+  branche_par_defaut: false
+  # La D-entrée d'un jugement qui tient le canal. Le CICE : D-601 et D-602, France
+  # Stratégie 2020, non concluant ; D-603 et D-604, TEPP 2020, tableau 7c p. 35 : +0,785
+  # k€ par tête et par point (IC à 95 % −3,57 à +5,14) contre −0,18 au centre : le centre
+  # tient par la règle, mais sans puissance et sur des instruments rejetés ; le canal
+  # n'est pas branché, au propriétaire de trancher (D-604).
+  juge: null
+  source: >
+    Le haut : Riley et Rosazza Bondibene, « Raising the standard: minimum wages and firm
+    productivity », NIESR DP 449 (2015), tableau 1 p. 27 (p. 28 du PDF) [lu] : à
+    l'introduction du salaire minimum britannique, seuil de 12 000 £, MCO, coût moyen du
+    travail des entreprises à bas salaires +0,042 (0,011), PGF +0,032 (0,017), ratio
+    capital-travail +0,025 (0,026), emploi −0,006 (0,026) ; 0,032 / 0,042 = 0,76. Le bas :
+    Harasztosi et Lindner, « Who pays for the minimum wage? » (2015), p. 1 et p. 3-4 du
+    PDF [lu] : la hausse du salaire minimum hongrois passe aux prix, dans un modèle
+    néoclassique sans gain d'efficacité. Le centre : le milieu, choisi, non vérifié. Le
+    canal est symétrique (une baisse du coût réduit la PGF) : c'est ce que le CICE juge
+    (D-601).
+
+salaire_efficience:
+  # η_w : la même réponse, lue sur le salaire brut relevé par une hausse du Smic.
+  centre: 0.38
+  bas: 0.0
+  haut: 0.76
+  branche_par_defaut: false
+  juge: null
+  source: >
+    Les mêmes sources que `pression_cout` [lu] : au Royaume-Uni, sans allègement, le coût
+    et le salaire allaient ensemble ; Riley et Rosazza Bondibene (p. 2 du PDF) lisent leur
+    résultat comme « organisational change, training and efficiency wage responses ». En
+    France la RGDU, en Smic de l'année, fait baisser le coût de la loi quand le Smic
+    monte (D-478) : le canal lit le brut. Sourcé, non jugé.
+
+montee:
+  # La part de l'effet atteinte l'année k (0 la première année de la mesure), au-delà : 1.
+  parts: [0.5, 1.0]
+  source: >
+    Choisie, non vérifiée : Riley et Rosazza Bondibene mesurent l'effet sur les quatre
+    années qui suivent l'introduction (1999-2002 contre 1996-1998, tableau 1).
+
+capital_menages:
+  # L'effet sur l'investissement d'une variation des prélèvements sur le capital des
+  # ménages (PFU, prélèvements sociaux, dividendes) : nul.
+  valeur: 0.0
+  source: >
+    France Stratégie, comité d'évaluation des réformes de la fiscalité du capital,
+    rapport final, octobre 2023, p. 21 du PDF [lu] : « Aucun effet n'a été détecté sur
+    l'investissement et les salaires parmi les entreprises possédées davantage par des
+    personnes physiques suite à l'instauration du PFU ».
+
+duree_travail:
+  # L'effet sur les heures travaillées d'une exonération des heures supplémentaires : nul.
+  valeur: 0.0
+  source: >
+    Cahuc et Carcillo, « The detaxation of overtime hours: lessons from the French
+    experiment », IZA DP 5439 (2011), résumé p. 3 du PDF [lu] : « this reform has had no
+    significant impact on hours worked ».
+
+theta_diffusion:
+  # La diffusion d'une hausse du Smic aux salaires voisins (`travail`), lue au centre.
+  valeur: 0.5
+  source: Le centre de « travail_smic_diffusion » (D-533), comme le bloc `travail`.

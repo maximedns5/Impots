@@ -2633,7 +2633,33 @@
       "bytes": 48462,
       "downloaded": "2026-11-17",
       "licence": "Licence Ouverte / Etalab 2.0",
-      "description": "Insee Résultats, Satisfaction dans la vie de 2010 à 2025, France hors Mayotte ; juge de D-595, lu après le commit",
+      "description": "Insee Résultats, Satisfaction dans la vie de 2010 à 2025, France hors Mayotte ; juge de D-595, lu après le commit"
+    },
+    "riley_rosazza_2015_niesr_dp449.pdf": {
+      "url": "https://www.niesr.ac.uk/wp-content/uploads/2021/10/Minimum-wages-and-firm-productivity-NIESR-DP-449-4.pdf",
+      "sha256": "5d04fb43af1b8ab9834f78908acb4451a959eff29a17d22496cd62e809dfef04",
+      "bytes": 1198418,
+      "downloaded": "2026-11-18",
+      "licence": "NIESR — accès libre",
+      "description": "Riley et Rosazza Bondibene, « Raising the standard: minimum wages and firm productivity », NIESR Discussion Paper n° 449, mai 2015 (version publiée : Labour Economics 44, 2017, p. 27-50). Tableau 1 p. 27 (p. 28 du PDF) : à l'introduction du salaire minimum britannique, seuil de 12 000 £, MCO, coût moyen du travail +0,042 (0,011), productivité du travail (VA) +0,043 (0,018), PGF +0,032 (0,017), ratio capital-travail +0,025 (0,026), emploi −0,006 (0,026). Source du canal « smic_efficience » (D-600).",
+      "quarantined": false
+    },
+    "cahuc_carcillo_2011_iza_dp5439.pdf": {
+      "url": "https://docs.iza.org/dp5439.pdf",
+      "sha256": "2982b1c91f4b4f041ffc4a4f6f78b8f09a1839cee5483a31ecffca365355f6b5",
+      "bytes": 236338,
+      "downloaded": "2026-11-18",
+      "licence": "IZA — accès libre",
+      "description": "Cahuc et Carcillo, « The detaxation of overtime hours: lessons from the French experiment », IZA DP n° 5439, janvier 2011 (version publiée : Journal of Labor Economics 32(2), 2014, p. 361-400). Résumé p. 3 du PDF : l'exonération des heures supplémentaires de 2007 n'a pas d'effet significatif sur les heures travaillées. Source du canal « duree_travail » (D-600).",
+      "quarantined": false
+    },
+    "tepp_2020_cice_rapport_vi.pdf": {
+      "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/2020/CICE/cice_francestrategie_rapport_vi_tepp_11092020.pdf",
+      "sha256": "f269924cb3c4ba62afd60e0e7ac27bea656ba99f360c6b51e587dd3aa24fdc21",
+      "bytes": 1253510,
+      "downloaded": "2026-11-18",
+      "licence": "France Stratégie — accès libre",
+      "description": "Gilles, L'Horty et Mihoubi (TEPP), « Les effets du CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions pour la période 2013-2016 », rapport VI remis à France Stratégie le 11 septembre 2020 (79 p.). Téléchargé fermé : juge préenregistré en D-603 (la valeur ajoutée par tête et le canal « pression_cout »), ouvert après sa poussée.",
       "quarantined": false
     }
   }

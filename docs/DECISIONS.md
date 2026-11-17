@@ -40422,3 +40422,334 @@ chômage propre ou la règle linéaire 10/3 (2,4 fois plus) ; (b) borner l'adapt
 hédonique (par exemple, un effet du revenu qui décroît de 0,425 à 0,13 sur cinq ans, Clark
 et al. 2018) ; (c) compter les moins de 16 ans ; (d) chercher un coefficient du revenu
 estimé sur SRCV, qui remplacerait la littérature après un nouveau préenregistrement.
+
+## D-600 — La productivité : ce que le jumeau porte déjà, et les canaux qui manquent
+
+**Pourquoi** (D-590, volet `productivite`). Dire ce qu'une mesure fait à la productivité
+des entreprises, et par là au PIB potentiel, au PIB et au salaire réel, année par année,
+avec bandes et statut ; une dimension `productivite` inscrite dans `jumeau/impacts`.
+Numéros du volet : D-600 à D-604. Cette entrée est l'inventaire, avant tout calcul.
+
+**Ce que le jumeau porte déjà** (lu dans `jumeau/blocs`, mode structurel) :
+
+* **La tendance est exogène.** `tendance` fait croître le PIB de la référence au taux des
+  entrées (croissance réelle et prix du cadre des études) : la productivité tendancielle
+  n'y est pas un objet, elle est dans la croissance donnée. Aucune mesure ne la touche.
+* **L'investissement passe au capital et au potentiel, pour la fiscalité des
+  entreprises.** `investissement` (D-407) : l'IS, la CVAE et la C3S entrent au coût
+  d'usage (Mésange, p. 42), l'investissement répond (p. 44, ε_K = 0,44), le capital
+  s'accumule (δ = 0,0777) et le PIB potentiel gagne s_K ΔK/K (sur les revenus non
+  ventilés). L'accélérateur (D-414) ajoute la demande d'investissement, qui n'entre pas
+  au capital du potentiel (dit dans le bloc). Les cotisations employeurs n'entrent pas au
+  coût d'usage (des impôts sur la main-d'œuvre, comme dans Mésange).
+* **La démographie des entreprises** (`productivite` de `demographie.py`, D-407) : la
+  valeur ajoutée des entrantes et des sortantes à la marge, à leur productivité relative
+  (r = 0,10), sur le PIB potentiel ; le champ `productivite_moyenne`.
+* **L'emploi et les salaires** : l'emploi répond au coût réel du travail (Mésange,
+  élasticité 0,44 ; le profil des non qualifiés pour l'allègement ciblé) ; le salaire
+  s'indexe à long terme sur la productivité apparente (équation WS, Mésange p. 58 du
+  PDF : « la productivité apparente du travail et les prix de valeur ajoutée, auxquels le
+  salaire s'ajuste intégralement »). Le Smic et ses allègements passent par `travail`
+  (D-478) : une hausse du Smic relève les salaires sous lui, et la RGDU, exprimée en Smic
+  de l'année, ouvre plus d'allègement ; la loi seule baisse donc le coût (−2,2 % de la
+  masse super-brute marchande pour +16,17 % de Smic), la diffusion le relève (+2,4 %).
+* **Ce que la productivité apparente du jumeau contient donc** : le PIB en volume sur
+  l'emploi ; la composition (un emploi à bas salaire en moins relève la moyenne), le
+  capital du coût d'usage, la démographie. **Ce qu'elle ne contient pas** : un effet de
+  la mesure sur l'efficacité des entreprises elles-mêmes (la productivité globale des
+  facteurs, PGF) : ni salaire d'efficience, ni pression du coût du travail, ni R&D.
+
+**Les canaux, un par mécanisme** (paramètres dans `jumeau/parametres/productivite.yaml`,
+chacun avec document, page, valeur et bande ; tous hors du jumeau, montrés à côté) :
+
+1. **La pression du coût du travail** (`pression_cout`) : une hausse du coût du travail
+   des entreprises relève leur PGF (organisation, formation, salaire d'efficience) ; la
+   baisse la réduit, si le mécanisme est symétrique. Riley et Rosazza Bondibene (NIESR
+   DP 449, 2015 ; Labour Economics 2017), tableau 1 p. 27 : à l'introduction du salaire
+   minimum britannique, coût moyen du travail des entreprises à bas salaires +4,2 %, PGF
+   +3,2 %, ratio capital-travail et emploi sans effet significatif ; η = 0,032 / 0,042 =
+   0,76 en haut. Harasztosi et Lindner (2015), p. 1 et 3-4 : la hausse de 60 % du salaire
+   minimum hongrois passe aux prix, sans gain d'efficacité dans leur modèle (σ_KL = 1,08) :
+   η = 0 en bas. Le centre, 0,38, le milieu, choisi. Agrégé : ΔlnPGF = η Δcoût / coût (la
+   part de chaque entreprise dans la VA, à part salariale égale, dit), Δcoût la variation
+   du coût super-brut marchand que la mesure fait (la cascade de `travail` pour un Smic,
+   la loi et la diffusion au centre ; l'allègement retiré pour un seuil abaissé, D-540 ;
+   les cotisations employeurs de la mesure sinon). Montée : la moitié la première année,
+   tout ensuite (choisie ; Riley et Rosazza Bondibene mesurent sur quatre ans).
+2. **Le salaire d'efficience** (`salaire_efficience`) : la même lecture sur le salaire
+   brut relevé par une hausse du Smic (et non sur le coût net des allègements, que la
+   RGDU fait baisser) : au Royaume-Uni, sans allègement, coût et salaire allaient
+   ensemble ; en France ils divergent, d'où deux canaux. Même η, même montée.
+3. **La fiscalité du capital des ménages et l'investissement** (`capital_menages`) :
+   nul. France Stratégie, comité d'évaluation de la fiscalité du capital, rapport final
+   2023, p. 21 du PDF : « Aucun effet n'a été détecté sur l'investissement et les salaires
+   parmi les entreprises possédées davantage par des personnes physiques suite à
+   l'instauration du PFU ». Le PFU, l'IFI, les prélèvements sur les dividendes ne passent
+   donc pas au capital ; la fiscalité des entreprises y passe déjà (`investissement`).
+4. **La durée du travail** (`duree_travail`) : nul sur les heures. Cahuc et Carcillo (IZA
+   DP 5439, 2011 ; Journal of Labor Economics 2014), résumé p. 3 : l'exonération des
+   heures supplémentaires de 2007 n'a pas eu d'effet significatif sur les heures
+   travaillées. Une mesure qui exonère des heures (Retailleau) ne change ni les heures ni
+   la productivité horaire ; son coût et ses recettes restent dans le jumeau.
+5. **La R&D et le CIR** : aucun des trois programmes de tête n'y touche ; pas de canal
+   construit. La source est au manifeste (IPP n° 22, Bozio, Cottet et Py 2019, tableaux
+   5.1 et 5.2) pour le jour où une mesure le fera.
+
+**Le coût du travail qualifié** (allègements au-delà de 2 Smic) n'a pas de canal propre :
+il passe par la pression du coût (1), que le CICE juge (D-601). L'Horty, Martin et Mayer
+(note du CAE n° 49, 2019) disent les effets sur l'emploi « très faibles et peu
+significatifs au seuil de 2,5 SMIC » (p. 6) ; aucun chiffrage publié d'un effet sur la
+productivité n'est au manifeste.
+
+**Du canal au PIB.** ΔlnPGF porte sur les sociétés : sur le PIB, ×s_VA (0,5539, la part
+des sociétés dans le PIB de 2024, `entreprises.yaml`). Le PIB potentiel gagne autant, à
+emploi donné (Riley et Rosazza Bondibene : pas d'effet sur l'emploi) ; le PIB aussi à long
+terme (la demande suit, dit) ; le salaire réel moyen aussi (Mésange p. 58, l'indexation
+unitaire sur la productivité). Le PIB potentiel du socle (le jumeau seul) : α ΔK/K + (1 −
+α) ΔL/L + la démographie, α la part du capital du départ ; ΔK accumule l'écart
+d'investissement des entreprises au taux δ du bloc, ΔL l'écart d'emploi du jumeau, lu
+comme structurel à long terme (dit).
+
+**Règle d'emploi.** Chaque canal est une option ; il n'est branché par défaut que si un
+juge le tient. Aucun ne l'est à cette entrée : la dimension est « sourcé, non jugé », le
+socle à côté des canaux. La pression du coût est jugée sur le CICE (D-601, D-602).
+
+## D-601 — Le canal de la pression du coût, préenregistré sur le CICE
+
+**Pourquoi** (D-600). Le canal `pression_cout` dit qu'une variation du coût du travail
+des entreprises fait varier leur PGF dans le même sens, η = 0,38 (0 à 0,76), Riley et
+Rosazza Bondibene. Il est symétrique : une baisse du coût réduit la PGF. Le CICE en est
+l'expérience naturelle française, une baisse du coût du travail, évaluée après coup. Le
+juge : France Stratégie, « Évaluation du crédit d'impôt pour la compétitivité et
+l'emploi : synthèse des travaux d'approfondissement », septembre 2020
+(`france_strategie_2020_rapport_cice.pdf`, au manifeste depuis la ligne M4, lu alors pour
+l'emploi seulement). Il n'est pas ouvert sur la productivité avant le commit et la
+poussée de cette entrée.
+
+**Ce qui n'est pas aveugle, dit.** Le brief du coordinateur dit le verdict qualitatif :
+le comité n'a pas trouvé d'effet du CICE sur la productivité. Ce qui est aveugle : sa
+forme (un coefficient, un écart entre groupes, une phrase), ses nombres, ses intervalles.
+La note du CAE n° 49 a été lue p. 3 (les taux du CICE) et p. 6 (l'emploi et les salaires)
+pour D-600, sans y lire de nombre sur la productivité.
+
+**Le pronostic du canal**, calculé avant l'ouverture :
+
+* **Au niveau de l'entreprise** : Δln PGF = −η × CICE / coût du travail ; la semi-
+  élasticité à l'intensité (le CICE en part du coût du travail de l'entreprise) vaut
+  **−0,38** (de 0 à −0,76) : une entreprise dont le CICE fait 1 % du coût du travail
+  perd 0,38 % de PGF. La productivité apparente du travail bouge autant (Riley et
+  Rosazza Bondibene : le ratio capital-travail ne bouge pas). Rapportée au salaire brut
+  (si le rapport mesure l'intensité en part de la masse salariale brute), au coût de
+  1 + τ_e = 1,4705 du brut (`travail.yaml`, sans allègement) : **−0,26** (0 à −0,52).
+  Une entreprise dont tous les salariés sont sous 2,5 Smic, à 6 % du brut (CAE n° 49,
+  p. 3, le taux de 2014) : −1,6 % de productivité (0 à −3,1 %).
+* **Pour l'économie**, en ordre de grandeur : 22 Md€ (le CICE basculé de 2019, CAE
+  n° 49, p. 3) sur la masse super-brute marchande du jumeau de 2025 (0,6942 × 1 582,6 =
+  1 098,6 Md€), x = −2,0 % ; ΔPGF = −0,76 % ; ΔPIB = −0,42 % (×s_VA) au centre, à deux
+  ans et au-delà.
+
+**La règle, fixée avant l'ouverture.** On lit dans le rapport les estimations de l'effet
+du CICE sur la productivité (apparente du travail, ou PGF), dans la forme où il les
+donne, la spécification que le rapport retient comme principale ; on convertit le
+pronostic dans la même métrique (le dénominateur de l'intensité que le rapport dit ; à
+défaut, la conversion au brut ci-dessus).
+
+* (a) Un coefficient et son écart-type ou intervalle : le **centre tient** si
+  l'intervalle à 95 % (± 1,96 écart-type) contient le pronostic central converti ; la
+  **bande tient** si l'intervalle rencontre [−0,76 c ; 0], c la conversion.
+* (b) Un écart entre groupes d'exposition, avec l'écart d'intensité : la même règle sur
+  −η × l'écart d'intensité.
+* (c) Une phrase sans nombre : **non concluant**.
+
+**Ce qui en suit, fixé avant.** Centre tenu : le canal prend `juge: D-602` et est branché
+par défaut (D-600, la règle d'emploi). Centre rejeté et zéro dans l'intervalle : le canal
+symétrique n'est pas tenu ; η de `pression_cout` passe à 0 au centre et en bas, son haut
+devient la borne de l'intervalle convertie (la seule réponse que le juge laisse ouverte),
+et le canal reste à côté. Intervalle qui exclut zéro du côté positif (le CICE aurait
+relevé la productivité) : le signe du canal est rejeté, il reste à côté avec ce verdict
+écrit, au propriétaire de le refaire. Non concluant : rien ne change, le canal reste à
+côté, « sourcé, non jugé ». Dans tous les cas, `salaire_efficience` (le Smic, une hausse
+du salaire, que le CICE ne teste pas) reste « sourcé, non jugé ».
+
+**Pronostic.** Le rapport rend des estimations nulles avec des intervalles ; le centre
+(−0,38) est rejeté et zéro est dedans (une chance sur deux) ; le centre tient (une sur
+quatre) ; non concluant (une sur quatre). Aucune tolérance ne sera modifiée après la
+lecture. Résultat en D-602.
+
+## D-602 — Le CICE et la productivité : non concluant, le canal reste à côté
+
+**Ce qui a été lu** (après la poussée de D-601, c4e00c2). France Stratégie, « Évaluation
+du crédit d'impôt pour la compétitivité et l'emploi : synthèse des travaux
+d'approfondissement », septembre 2020, en entier sur le mot « productivité » et ses
+voisins (valeur ajoutée par tête, PGF, investissement). Le rapport ne donne **aucun
+nombre** sur la productivité :
+
+* p. 54 (p. 56 du PDF), la lecture du rapport TEPP : « Si des effets significatifs sont
+  trouvés sur l'activité (valeur ajoutée), sur les variables liées à la compétitivité
+  (valeur ajoutée par tête et investissement notamment) les effets estimés sont moins
+  robustes et plus difficiles à interpréter » ;
+* p. 21-23 (p. 23-25 du PDF) : des effets positifs sur l'EBE et la valeur ajoutée du
+  quartile le plus bénéficiaire, sur la valeur ajoutée et la rentabilité des groupes
+  fiscaux les plus bénéficiaires ; sur l'investissement, « difficile d'établir une
+  conclusion claire » ;
+* p. 59 (p. 61 du PDF), l'étude de l'OFCE par branche : « Les effets du CICE sur
+  l'investissement paraissent nuls » ; aucune élasticité de la productivité publiée.
+
+Le rapport ne dit donc pas « aucun effet sur la productivité » : il dit des effets moins
+robustes et difficiles à interpréter, sans coefficient ni intervalle.
+
+**Le verdict, par la règle de D-601** : cas (c), une phrase sans nombre, **non
+concluant**. Le pronostic le donnait à une chance sur quatre ; il avait mis une chance
+sur deux sur « centre rejeté, zéro dedans ». Ce que D-601 fixait pour ce cas s'applique :
+rien ne change. `pression_cout` garde η = 0,38 (0 à 0,76), `juge: null`, n'est pas
+branché, et reste montré à côté, « sourcé, non jugé ». `salaire_efficience` aussi.
+Aucune tolérance n'a été modifiée.
+
+**Ce que le juge laisse entendre, sans valeur de jugement.** Des effets sur la valeur
+ajoutée des plus bénéficiaires, avec des effets sur l'emploi (le quart le plus exposé) :
+une productivité apparente qui ne baisse pas nettement, ce qu'un η de 0,38 symétrique
+prédirait (−1,6 % pour une entreprise toute sous 2,5 Smic) ; et un investissement nul,
+ce que le jumeau fait aussi (les cotisations n'entrent pas au coût d'usage, D-600).
+
+**Ce qui reste, pour un juge chiffré.** Le rapport TEPP de 2020 lui-même (« Les effets
+du CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions
+pour la période 2013-2016 »), qui porte les coefficients de la valeur ajoutée par tête
+par quartile d'exposition, n'est pas au manifeste : un second préenregistrement, sur
+lui, sous la même règle, est le pas suivant. Les rapports du comité de 2016 à 2018 aussi.
+
+## D-603 — La dimension inscrite, ses nombres de tête ; le rapport TEPP préenregistré
+
+**La dimension** (`jumeau/impacts/productivite.py`, inscrite sous « productivite » ;
+paramètres `jumeau/parametres/productivite.yaml` ; tests légers
+`tests/test_impacts_productivite.py`, cinq verts, qui tiennent η et ses bornes, la
+montée, les leviers d'un Smic et d'une cotisation, le socle sur des états faits à la
+main, un canal branché). Numpy et yaml : elle tourne au navigateur. Indicateurs, en %
+d'écart à la référence, année par année : productivité apparente du travail, capital par
+emploi, PIB potentiel, PIB en volume, rémunération réelle moyenne par salarié (D1 par
+tête, le coût et non le net, au prix de la consommation), puis, à côté, la PGF des canaux
+(% du PIB, par canal, bande η = 0 à son haut) et le PIB potentiel avec les canaux. Le
+statut : « sourcé, non jugé » (D-602). Une bande des θ du jumeau n'apparaît que si la
+trajectoire porte des tirages (tirage 0 au centre, 5 et 95 % des autres). Non fait : son
+appel par `impacts/__init__.py` (l'import qui l'inscrit) et la page : au volet `tableau`
+et à la jonction.
+
+**Les nombres de tête**, mode structurel, θ du jumeau à ½, convention
+« parts_premiere_annee » (D-414), population de D-553 (empreinte 5ace8bb6), années 2026,
+2027, 2030 et 2035. Le programme de Mélenchon est refusé en structurel (ses prélèvements
+agrégés, D-412) : il est ici la trajectoire de ses sept mesures ensemble (leurs mesures
+structurelles, une seule trajectoire), ce que le volet `tableau` devra dire aussi.
+
+| % d'écart à la référence | 2026 | 2027 | 2030 | 2035 |
+|---|---:|---:|---:|---:|
+| productivité apparente, Mélenchon | +0,79 | +1,32 | +1,35 | +1,44 |
+| productivité apparente, Retailleau | +0,24 | +0,29 | +0,11 | +0,08 |
+| productivité apparente, Attal | +0,30 | +0,23 | −0,36 | −0,53 |
+| capital par emploi, Mélenchon | +0,15 | +0,27 | +0,87 | +1,54 |
+| capital par emploi, Retailleau | −0,12 | −0,25 | −0,11 | +0,20 |
+| capital par emploi, Attal | −0,18 | −0,52 | −0,71 | −0,55 |
+| PIB potentiel (socle), Mélenchon | +0,09 | +0,36 | +0,78 | +0,68 |
+| PIB potentiel (socle), Retailleau | +0,11 | +0,33 | +0,69 | +0,88 |
+| PIB potentiel (socle), Attal | +0,21 | +0,65 | +1,34 | +1,61 |
+| PIB en volume, Mélenchon | +0,80 | +1,54 | +1,71 | +1,39 |
+| PIB en volume, Retailleau | +0,39 | +0,72 | +0,83 | +0,85 |
+| PIB en volume, Attal | +0,58 | +1,10 | +1,26 | +1,30 |
+| rémunération réelle, Mélenchon | +1,69 | +2,12 | +2,50 | +2,53 |
+| rémunération réelle, Retailleau | −0,00 | −0,03 | −0,12 | −0,13 |
+| rémunération réelle, Attal | −0,64 | −1,17 | −1,89 | −2,10 |
+
+En 2035, les canaux à côté (% du PIB) : Mélenchon +0,81 (0 à +1,63), Retailleau −0,10
+(0 à −0,21), Attal 0 ; le PIB potentiel avec eux : Mélenchon +1,49 (+0,68 à +2,31),
+Retailleau +0,78 (+0,68 à +0,88), Attal +1,61.
+
+Les leviers : Mélenchon, coût du travail +0,87 % de la masse super-brute marchande en
+2026 (+0,98 % en 2035) : le Smic à +16,17 %, net des allègements que la RGDU ouvre, +0,23 %
+(la loi −2,18 %, la diffusion +2,42 %), la fin des exonérations au-delà de 2 Smic +0,64 %
+(7,04 Md€) ; brut relevé par le Smic +2,89 %. D'où, à côté, `pression_cout` +0,21 % du PIB
+et `salaire_efficience` +0,61 % en 2035. Retailleau : coût −0,43 % (la suppression des
+cotisations patronales au-delà de 1 623 h, −4,77 Md€ en 2026), d'où −0,10 % du PIB à
+côté si le canal est symétrique, ce que le CICE n'a pas tranché. Attal : aucun levier (le
+« droit au brut » touche les cotisations salariales, la CVAE passe déjà au capital).
+
+**Comment les lire.** Le socle seul est le jumeau. La productivité apparente de Mélenchon
+monte surtout par la composition (moins d'emploi à bas salaire, le capital par emploi en
+hausse) ; celle d'Attal baisse parce que l'emploi monte plus que le PIB (+562 milliers
+d'emplois en 2035). La rémunération réelle d'Attal baisse : le coin salarial passe au
+brut à long terme (Mésange), le net des salariés monte (volet `pouvoir`). Le PIB
+potentiel lit l'écart d'emploi comme structurel : celui d'Attal dépasse son PIB en 2035.
+
+**Le second juge, préenregistré.** Gilles, L'Horty et Mihoubi (TEPP), « Les effets du
+CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions
+pour la période 2013-2016 », rapport VI à France Stratégie, 11 septembre 2020
+(`tepp_2020_cice_rapport_vi.pdf`, téléchargé fermé ; seuls son titre et ses 79 pages
+ont été vus). Il est ouvert après la poussée de cette entrée. La règle est celle de
+D-601, précisée ici avant l'ouverture :
+
+* la variable : la valeur ajoutée par tête (ou la productivité apparente du travail) ;
+  à défaut la PGF ; rien d'autre ;
+* l'échantillon et la période : l'ensemble des groupes fiscaux et des entreprises
+  indépendantes, la plus longue période que le rapport estime (2014-2016 ou sa
+  moyenne), la spécification qu'il dit principale ;
+* la métrique : l'effet du quartile le plus exposé contre le moins exposé (ou le
+  coefficient de l'intensité) ; le pronostic converti est −η × l'écart d'intensité des
+  deux quartiles **que le rapport publie** (en part de la masse salariale brute, ×1 /
+  1,4705 ; super-brute, tel quel) ; si le rapport ne publie pas cet écart, non concluant ;
+* les verdicts et leurs suites, ceux de D-601 (centre tenu : `juge: D-604` et branché ;
+  centre rejeté avec zéro dedans : η à 0 au centre et en bas, le haut à la borne
+  convertie ; signe rejeté ; non concluant : rien ne change).
+
+**Pronostic.** Le rapport publie la valeur ajoutée par tête par quartile avec ses
+écarts-types ; l'écart d'intensité entre quartiles est de l'ordre de 3 points de masse
+brute, le pronostic converti de l'ordre de −0,8 % ; l'estimation est proche de zéro et
+son intervalle à 95 % large de ±2 points : le centre tient (une chance sur trois) ; non
+concluant, faute de l'écart d'intensité publié (une sur trois) ; centre rejeté (une sur
+trois). Résultat en D-604.
+
+## D-604 — Le rapport TEPP : le centre tient par la règle, sans puissance ; à côté
+
+**Ce qui a été lu** (après la poussée de D-603, 97542fb). Gilles, L'Horty et Mihoubi,
+rapport VI à France Stratégie (2020), tableau 7c p. 35 (l'ensemble des entreprises et
+des groupes fiscaux, 2013-2016, la plus longue période ; double différence instrumentée,
+échantillon 2009-2016), colonne « Productivité » (la variation de la productivité du
+travail, note 7 : « en K€ par tête par point de CICE supplémentaire »). Le quatrième
+quartile (le plus exposé, taux apparent de CICE de 3,90 à 4,00 % en 2013, annexe A1.c,
+contre moins de 2,67 % au premier), période 2014-2016 : **+0,785 k€ par tête et par
+point (p = 0,724)**, d'où un écart-type de 2,22 et un intervalle à 95 % de **−3,57 à
++5,14 k€**. En 2013 : +0,624 (p = 0,694). Le test de falsification de 2012 : −2,547
+(p = 0,103). Le test de suridentification de la colonne : p = 0,000 (les instruments
+sont rejetés) ; celui des instruments faibles n'est pas publié ; le coefficient n'est pas
+en gras (le rapport ne le tient pas pour valide).
+
+**Le pronostic converti** (la règle de D-603 : l'intensité est déjà rapportée à un point
+de taux apparent, en part de la masse salariale brute) : −η / 1,4705 = −0,258 % de PGF
+par point, ×68,2 k€ de valeur ajoutée par ETP (tableau 8 p. 37, les entreprises hors
+groupe fiscal, 1 309 658 € pour 19,2 ETP ; 97,8 k€ dans les groupes) : **−0,18 k€ par
+tête et par point** (de 0 à −0,35 ; −0,25 avec la VA des groupes).
+
+**Le verdict, par la règle** : cas (a). L'intervalle (−3,57 ; +5,14) contient le
+pronostic central : **le centre tient** ; la bande aussi. Pronostiqué à une chance sur
+trois.
+
+**Ce que la règle ne disait pas, et qui compte.** L'intervalle est vingt-cinq fois plus
+large que le pronostic : il tient aussi η = 0, et η = ±10. Le juge n'a pas de puissance
+sur ce canal, et la spécification est rejetée par son propre test de suridentification.
+Le rapport le dit lui-même pour les groupes fiscaux (p. 46 : « aucun effet du CICE n'est
+mis en évidence sur [...] la productivité du travail, quelle que soient la période et
+l'échantillon considérés ») ; pour les entreprises hors groupe, il trouve un effet positif
+au troisième quartile (p. 58), pas au quatrième.
+
+**Ce qui en suit.** D-603 fixait, pour un centre tenu, `juge: D-604` et le canal branché
+par défaut. **Je ne l'applique pas, et je le dis** : un juge qui tient tout ne tient pas
+un canal au sens de la règle d'emploi de D-600, et brancher le canal change les nombres
+de la dimension, ce qui attend le propriétaire (brief du but 29). `pression_cout` reste à
+côté, `juge: null`, « sourcé, non jugé », avec ce verdict écrit dans
+`productivite.yaml`. La règle n'est pas récrite : son résultat est noté tel quel, et la
+suite qu'elle prévoyait est au propriétaire. Aucune tolérance n'a été modifiée ; aucun
+nombre de D-603 ne change.
+
+**Ce qui reste au propriétaire.** (1) Brancher `pression_cout` par défaut, comme D-603
+le prévoyait, ou le garder à côté faute de puissance (ma proposition). (2) Un juge qui ait
+de la puissance : le rapport TEPP de 2018 trouvait « un effet négatif sur la
+productivité apparente du travail » (rapport VI, p. 7, son résumé du précédent) ; ses
+coefficients, un troisième préenregistrement. (3) `salaire_efficience` (le Smic) n'a
+aucun juge français ; les hausses du Smic n'ont pas d'évaluation après coup de leur effet
+sur la productivité au manifeste.
