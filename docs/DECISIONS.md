@@ -40834,3 +40834,71 @@ trancher η dans [0 ; 0,76]. La proposition reste : `pression_cout` à côté, a
 de dire s'il le branche. Un juge qui en aurait la puissance serait une évaluation sur
 données d'entreprises d'une hausse du Smic ou d'une baisse ciblée de cotisations avec
 des écarts-types de l'ordre du dixième de k€ par point ; je n'en connais pas d'ouverte.
+
+## D-627 — La productivité sur tous les programmes chiffrés, avec les tirages des θ
+
+**Pourquoi** (consigne du coordinateur du 18 novembre). Étendre la dimension aux autres
+programmes chiffrés et au PLFSS 2027 ; construire le canal de la R&D si un programme
+touche au CIR ; des bandes par tirages des θ, comme le navigateur. Ceci n'est pas un
+chiffrage comparé à un juge : pas de préenregistrement.
+
+**Ce qui est fait.**
+
+* `scripts/jumeau_productivite.py` écrit `reports/jumeau/productivite_programmes.json`
+  (commit du code 3d95302) : mode structurel, convention « parts_premiere_annee », θ à ½
+  au tirage 0 puis 200 tirages de tous les θ lus, chacun selon sa loi (D-424), graine du
+  navigateur (20261115, D-459). Chaque indicateur porte le tirage 0 et la bande de 5 à
+  95 % des tirages ; le tirage 0 n'est pas la médiane (les lois ne sont pas centrées sur
+  ½) et peut sortir de la bande (Lisnard, Philippe, Le Pen : de quelques centièmes),
+  dit. Les canaux à côté gardent leur bande de η (θ = 0 et 1), non tirée.
+* Les programmes que le mode structurel refuse (prélèvements agrégés, D-412) sont pris
+  comme la trajectoire de leurs mesures chiffrées ensemble : Mélenchon (sept mesures) et
+  Tondelier (quatre) ; aucune mesure n'y est refusée. Le PLFSS 2027 : ses deux volets
+  chiffrés (art. 74, APL et prime d'activité), ensemble.
+* **Le canal de la R&D** (`rd_cir`, `productivite.yaml`) : Trésor-Éco n° 290 (2021),
+  p. 6 : 0,19 point de PIB de CIR en plus, +0,35 % de productivité du travail de toute
+  l'économie dès la cinquième année (0,25 % d'effets directs, 0,10 % de diffusion) ;
+  η = 1,32 (les effets directs), de 0 à 1,84. Estimé sur une hausse : une baisse
+  extrapole (dit). Deux programmes y touchent, par des mesures qui ne sont pas dans leur
+  part chiffrée et que lisent leurs fiches de transmission (le levier, CGI art. 244
+  quater B) : Mélenchon, la suppression du CIR (−8,041 Md€ par an dès 2027, fiche
+  `suppression_cir`, comptée dans ses 22 Md€ de niches) ; Ruffin, le CIR recentré sur
+  les TPE, PME et ETI (−3,0 Md€ dès 2027). Le canal est toujours à côté.
+* Un test léger de plus (le canal de la R&D, ses bornes et sa montée) : six verts.
+
+**Les nombres de tête**, 2035, % d'écart à la référence, tirage 0 [5 % ; 95 %] :
+
+| programme | productivité apparente | PIB potentiel | PIB en volume |
+|---|---|---|---|
+| Mélenchon | +1,44 [+0,45 ; +1,81] | +0,68 [+0,13 ; +1,36] | +1,39 [+0,84 ; +1,59] |
+| Retailleau | +0,08 [−0,02 ; +0,24] | +0,88 [+0,61 ; +0,95] | +0,85 [+0,68 ; +0,93] |
+| Attal | −0,53 [−0,74 ; +0,35] | +1,61 [+1,01 ; +1,78] | +1,30 [+1,13 ; +1,57] |
+| Roussel | +0,90 [+0,15 ; +1,29] | −0,00 [−0,44 ; +0,61] | +0,41 [+0,08 ; +0,63] |
+| Ruffin | +0,59 [+0,14 ; +0,81] | +0,21 [−0,05 ; +0,56] | +0,48 [+0,27 ; +0,60] |
+| Tondelier | +0,44 [+0,07 ; +0,64] | +0,01 [−0,21 ; +0,32] | +0,21 [+0,04 ; +0,33] |
+| Kazib | +0,42 [+0,06 ; +0,62] | −0,02 [−0,24 ; +0,29] | +0,17 [+0,01 ; +0,30] |
+| Bouamrane | +0,42 [+0,06 ; +0,62] | −0,02 [−0,24 ; +0,29] | +0,17 [+0,01 ; +0,29] |
+| Lisnard | +0,30 [+0,19 ; +0,28] | +0,63 [+0,43 ; +0,69] | +0,76 [+0,58 ; +0,77] |
+| Philippe | +0,26 [+0,17 ; +0,26] | +0,60 [+0,49 ; +0,65] | +0,73 [+0,59 ; +0,74] |
+| Le Pen | +0,23 [+0,15 ; +0,22] | +0,44 [+0,36 ; +0,48] | +0,59 [+0,47 ; +0,59] |
+| PLFSS 2027 | +0,00 | +0,01 | +0,01 |
+
+La rémunération réelle par salarié (D1 par tête), 2035 : Mélenchon +2,53 [+1,01 ;
++3,98], Roussel +2,18, Ruffin +1,34, Tondelier +1,12, Kazib +1,11, Bouamrane +1,10,
+Lisnard +0,19, Philippe +0,19, Le Pen +0,15, Retailleau −0,13, Attal −2,10 [−4,08 ;
+0,00] ; le PLFSS 2027, 0,00.
+
+Les canaux à côté, 2035, % du PIB au centre de η (bande de η = 0 à son haut) :
+Mélenchon +0,52 (0 à +1,21 : pression du coût +0,21, salaire d'efficience +0,61, R&D
+−0,30) ; Roussel +0,59 (salaire d'efficience +0,55) ; Ruffin +0,19 (salaire
+d'efficience +0,31, R&D −0,11) ; Tondelier, Kazib, Bouamrane +0,26 (le Smic) ; Retailleau
+−0,10 (la pression du coût, symétrique) ; Attal, Lisnard, Philippe, Le Pen, PLFSS : 0.
+
+**Comment les lire.** La gauche du Smic (Mélenchon, Roussel, Ruffin, Tondelier, Kazib,
+Bouamrane) relève la productivité apparente par la composition (l'emploi à bas salaire
+baisse) plus que le PIB : leur PIB potentiel est proche de zéro, sauf Mélenchon (le
+capital). La droite et le centre (Retailleau, Attal, Lisnard, Philippe, Le Pen) relèvent
+l'emploi et le PIB potentiel, la productivité apparente bouge peu ou baisse (Attal). Les
+canaux à côté, non jugés (D-602, D-604, D-626), ne changent l'ordre que si on les
+branche ; la suppression du CIR de Mélenchon en retire 0,30 point de PIB à partir de
+2031, une extrapolation.
