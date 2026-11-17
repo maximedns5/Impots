@@ -367,10 +367,37 @@ def jumeau(mode: str = "passes") -> Path:
     return ecrire(f"jumeau_{mode}", out)
 
 
+RAPPORT = ROOT / "reports" / "etudes" / "boucle_b28"
+
+
+def rapport() -> Path:
+    """Les agrégats des passes et du jumeau (aucune microdonnée) dans le dépôt."""
+    out: dict[str, Any] = {"decisions": ["D-545", "D-546"]}
+    for cas in ("cice", "smic"):
+        p = json.loads((SORTIE / f"passe_{cas}.json").read_text(encoding="utf-8"))
+        out[f"passe_{cas}"] = {k: p[k] for k in (
+            "commit", "annee", "menages_echantillon", "duree_s", "variantes", "paires",
+            "coefficients", "par_personne_annee_eur", "prestations_eur_par_personne_annee",
+            "ordre_deux")}
+        out[f"passe_{cas}"]["meta"] = {k: v for k, v in p["meta"].items() if k != "commit"}
+    for mode in ("pronostic", "passes"):
+        f = SORTIE / f"jumeau_{mode}.json"
+        if f.exists():
+            out[f"jumeau_{mode}"] = json.loads(f.read_text(encoding="utf-8"))
+    RAPPORT.mkdir(parents=True, exist_ok=True)
+    dest = RAPPORT / "resultats.json"
+    dest.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=float) + "\n",
+                    encoding="utf-8")
+    print(dest)
+    return dest
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "passe":
         passe(sys.argv[2])
+    elif cmd == "rapport":
+        rapport()
     elif cmd == "jumeau":
         jumeau(sys.argv[2] if len(sys.argv) > 2 else "passes")
     else:
