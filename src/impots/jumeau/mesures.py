@@ -262,9 +262,12 @@ def prelevements_lus(payload: Mapping[str, Any], vue: str
       chemin (`mechanical_by_layer`, son coût, signe du moteur), P_t = −coût_t quand elle
       bouge, ΔP_t sinon. Le coût de la couche porte aussi ce qu'elle coûte hors des cinq
       impôts, 59 € en 2026 chez Attal (1e-9 relatif) ; et il ne porte pas les
-      prélèvements des ménages que ΔP somme (PFU, cotisations patronales) : là où il y en
-      a, la ventilation est absente de toute façon (`ventilations`, le recoupement de la
-      première année).
+      prélèvements des ménages que ΔP somme. Depuis D-475, ils sont ventilés : les
+      cotisations des employeurs nettes, E_t, lues chaque année dans les impulsions du
+      chemin (`ventilation.employeurs_lus`), sont ajoutées, P_t = −coût_t + E_t (D-565 ;
+      sans elles, Retailleau perdait 4,301 Md€ en 2026). Le PFU et les prélèvements
+      sociaux du capital (K) ne se lisent pas année par année : là où il y en a, P_t ne
+      les porte pas, et seule la première année les recoupe (`ventilations`).
 
     ΔP reste ce que lit le canal : les créations suivent D-440."""
     creations = (rejouer._rejeu(payload) or {}).get("creations")
@@ -287,10 +290,13 @@ def prelevements_lus(payload: Mapping[str, Any], vue: str
             f"le canal ne lit pas {', '.join(hors)} (D-440) et le rapport ne porte ni la "
             f"somme d'avant ni le coût de sa couche des entreprises : les prélèvements "
             f"sont ceux du canal, sans elles")
+    from impots.jumeau.ventilation import employeurs_lus
+
+    employeurs = employeurs_lus(payload, vue) or {}
     totaux = {}
     for a, c in zip(annees, couches, strict=True):
         cout = float(c["entreprises"])
-        totaux[a] = -cout / EURO if cout else canal[a]
+        totaux[a] = -cout / EURO + employeurs.get(a, 0.0) if cout else canal[a]
     return totaux, canal, None
 
 

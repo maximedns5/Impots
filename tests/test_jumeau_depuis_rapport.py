@@ -45,6 +45,7 @@ def _paire(chemin: str) -> tuple[dict, dict, str]:
 
 
 ATTAL = "presidentielle_attal/predictif_pres2027_attal_programme.json"
+RETAILLEAU = "presidentielle_retailleau/predictif_pres2027_retailleau_programme.json"
 
 
 def _mesure(chemin: str, vue: str = "figee", **autres) -> Mesure:
@@ -77,11 +78,21 @@ def test_ce_que_le_rapport_ne_porte_pas_reste_absent() -> None:
     seul = Mesure.depuis_rapport(payload, vue="figee", identifiant="x", libelle="x",
                                  auteur="x", rapport=rapport)
     assert seul.entreprises is None and seul.menages is None
-    # Retailleau : 4,3 Md€ de cotisations patronales nettes, que le rapport ne ventile pas.
-    retailleau = _mesure("presidentielle_retailleau/"
-                         "predictif_pres2027_retailleau_programme.json")
-    assert retailleau.entreprises is None and set(retailleau.menages) == {2026}
-    assert "-4.301 Md€" in retailleau.non_portes["entreprises"]
+    # Retailleau : 4,3 Md€ de cotisations patronales nettes. Absentes jusqu'à D-475 (le
+    # rapport ne les ventilait pas, `non_portes` disait « -4.301 Md€ ») ; depuis, lues
+    # dans la passe des ménages et le chemin, égales au bit, et ventilées (D-477, D-565).
+    from impots.jumeau.ventilation import employeurs_lus, employeurs_premiere
+
+    retailleau = _mesure(RETAILLEAU)
+    payload, premiere, _ = _paire(RETAILLEAU)
+    assert set(retailleau.entreprises) == {2026} and set(retailleau.menages) == {2026}
+    employeurs = retailleau.entreprises[2026]["cotisations_employeurs"]
+    assert employeurs == pytest.approx(-4.301, abs=1e-3)
+    assert employeurs == employeurs_premiere(premiere) == employeurs_lus(payload,
+                                                                          "figee")[2026]
+    assert sum(retailleau.entreprises[2026].values()) == pytest.approx(
+        retailleau.prelevements[2026], abs=1e-12)
+    assert "entreprises" not in retailleau.non_portes
     # Une réforme du Smic : le Smic réel efficace ne se lit pas dans la requête.
     smic = _mesure("presidentielle_melenchon/mesures/smic_1700_net/"
                    "predictif_pres2027_melenchon_smic_1700_net.json")
@@ -184,21 +195,37 @@ def test_le_modele_structurel_tourne_dix_ans_avec_la_convention() -> None:
 
 
 def test_la_convention_est_refusee_la_ou_les_parts_n_existent_pas() -> None:
-    """Retailleau (cotisations non ventilées) et le Smic de Mélenchon : pas de parts, la
-    convention ne fait aucun nombre, et l'absence reste dite ; une convention inconnue
-    est refusée."""
-    retailleau = _mesure("presidentielle_retailleau/"
-                         "predictif_pres2027_retailleau_programme.json",
-                         convention=CONVENTION_PARTS)
-    assert retailleau.entreprises is None and set(retailleau.menages) == {2026}
-    assert retailleau.conventions == {}
-    assert "pas de parts" in retailleau.non_portes["entreprises"]
-    assert "ne sépare pas" in retailleau.non_portes["menages"]
+    """Le Smic de Mélenchon : pas de parts des ménages, la convention n'en fait aucun
+    nombre, et l'absence reste dite ; ses entreprises (E seul, lu chaque année) sont
+    étendues. Retailleau, refusé jusqu'à D-475, a ses parts. Une convention inconnue est
+    refusée."""
+    from impots.jumeau.ventilation import employeurs_lus
+
+    annees = list(range(2026, 2036))
+    convention = dict.fromkeys(annees[1:], CONVENTION_PARTS)
+    # D-475, D-477 (D-565) : Retailleau, ses cotisations ventilées, a ses parts : dix
+    # années sur les deux axes (avant : entreprises absentes, « pas de parts »).
+    retailleau = _mesure(RETAILLEAU, convention=CONVENTION_PARTS)
+    payload, _, _ = _paire(RETAILLEAU)
+    assert sorted(retailleau.entreprises) == annees and sorted(retailleau.menages) == annees
+    assert retailleau.conventions == {"entreprises": convention, "menages": convention}
+    assert retailleau.non_portes == {}
+    employeurs = employeurs_lus(payload, "figee")
+    for a in annees:
+        assert sum(retailleau.entreprises[a].values()) == pytest.approx(
+            retailleau.prelevements[a], abs=1e-12)
+        assert retailleau.entreprises[a]["cotisations_employeurs"] == employeurs[a]
+    # Le Smic de Mélenchon : les ménages restent absents ; depuis D-475, ses entreprises
+    # (E, −31,672 Md€ en 2026) sont étendues sous la convention (avant : `conventions`
+    # vide, D-477).
     smic = _mesure("presidentielle_melenchon/mesures/smic_1700_net/"
                    "predictif_pres2027_melenchon_smic_1700_net.json",
                    convention=CONVENTION_PARTS)
-    assert smic.menages is None and smic.conventions == {}
+    assert smic.menages is None and smic.conventions == {"entreprises": convention}
+    assert smic.entreprises[2026]["cotisations_employeurs"] == pytest.approx(-31.672,
+                                                                              abs=1e-3)
     assert "smic_revalorisation" in smic.non_portes["menages"]
+    assert "n'a pas de parts" in smic.non_portes["menages"]
     with pytest.raises(MesureError, match="convention « autre » inconnue"):
         _mesure(ATTAL, convention="autre")
 
@@ -230,6 +257,20 @@ def _d401(payload: dict) -> dict:
     liste.extend(marque["retires"])
     recalcul = {k: v for k, v in payload["recalcul"].items() if k != "instruments"}
     return {**payload, "rejeu": rejeu, "recalcul": recalcul}
+
+
+def _memes_parts(couche: Mesure, m: Mesure, annee: int = 2026) -> None:
+    """Deux lectures ventilées aux mêmes parts (D-476) : E identique, et chaque autre
+    impôt X_i = s_i (P − E), sur le P de chaque lecture."""
+    e_c, e_m = couche.entreprises[annee], m.entreprises[annee]
+    assert set(e_c) == set(e_m)
+    employeurs = "cotisations_employeurs"
+    assert e_c.get(employeurs) == e_m.get(employeurs)
+    r_c = couche.prelevements[annee] - e_c.get(employeurs, 0.0)
+    r_m = m.prelevements[annee] - e_m.get(employeurs, 0.0)
+    for i in e_m:
+        if i != employeurs:
+            assert e_c[i] == pytest.approx(e_m[i] * r_c / r_m, rel=1e-12, abs=1e-15), i
 
 
 @pytest.mark.parametrize("chemin", REFAITS_D440)
@@ -270,7 +311,14 @@ def test_les_six_rapports_refaits_se_lisent_comme_avant_d440(chemin: str) -> Non
             if m.entreprises is not None:
                 # La couche porte aussi ce qu'elle coûte hors des cinq impôts (59 € en
                 # 2026 chez Attal) : quelques centaines d'euros au plus.
-                assert couche.entreprises[2026] == m.entreprises[2026]
+                if vue == "figee":
+                    assert couche.entreprises[2026] == m.entreprises[2026]
+                else:
+                    # D-476 (D-565) : la vieillie est ventilée par la convention
+                    # « parts_figee », X_i = s_i (P − E), E lu ; la couche porte P à
+                    # quelques centaines d'euros près (Attal : 80 € sur la CVAE), les
+                    # parts s_i et E sont les mêmes, au bit.
+                    _memes_parts(couche, m)
                 for a in m.annees:
                     assert couche.prelevements[a] == pytest.approx(m.prelevements[a],
                                                                    abs=1e-6)
@@ -280,8 +328,12 @@ def test_les_six_rapports_refaits_se_lisent_comme_avant_d440(chemin: str) -> Non
                 assert getattr(allege, champ) == getattr(m, champ), (vue, champ)
     figee = _mesure(chemin, convention=CONVENTION_PARTS)
     if figee.entreprises is not None:
+        # D-475 : les cotisations des employeurs de Retailleau sont ventilées (seul des
+        # six à en porter) ; avant, ses entreprises étaient absentes.
+        employeurs = {"cotisations_employeurs"} if chemin == RETAILLEAU else set()
         assert set(figee.entreprises[2026]) == {
-            "impot_societes", "contribution_sociale_is", "cebge", "cvae", "c3s"}
+            "impot_societes", "contribution_sociale_is", "cebge", "cvae", "c3s",
+            *employeurs}
         cvae = premiere["response"].get("entreprises", premiere["response"])["deltas"]["cvae"]
         assert figee.entreprises[2026]["cvae"] == cvae / 1e9
 
