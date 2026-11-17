@@ -1452,6 +1452,14 @@ Les numéros réservés : D-531 à D-534 pour `reaction`, D-535 à D-539 pour `p
 à D-544 pour `interaction`, D-545 à D-549 pour `boucle` ; D-550 et la suite pour la
 jonction.
 
+**La suite, décidée le 17 novembre après la jonction (D-551)** : « oui pour 1, 5 et 6,
+lance la suite ». (1) La diffusion du Smic se lit par rapport au nouveau Smic, par défaut
+(`recentrage` « nouveau ») ; le profil, la portée, φ et la boucle gardent leur défaut.
+(5) La densité des salaires entre 2,5 et 3,5 Smic est corrigée par une source neuve (ni
+la Dares qui cale, ni la MECSS qui juge), la population refaite et la grille repassée,
+préenregistrées. (6) Le CICE et la prime de 2019 restent des juges, comptés à part. Le
+volet `suite` (`claude/but28-suite`) : D-551 à D-559.
+
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,

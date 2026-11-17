@@ -39186,3 +39186,82 @@ pas tourné ensemble : la boucle s'applique à l'emploi, que le choc combiné ne
 au défaut (D-541) ; avec les formes non par défaut, il faudra les rejouer ensemble. Aucun
 défaut n'est changé : les formes de la diffusion, φ, la boucle par défaut et la marge des
 salaires de 2,5 à 3,5 Smic attendent le propriétaire (D-534, D-536, D-542, D-546).
+
+## D-551 — La suite du but 28 : trois décisions, la diffusion recentrée par défaut
+
+Le 17 novembre, après D-550, le propriétaire répond aux questions laissées par les quatre
+volets (D-534, D-536, D-542, D-546) : « oui pour 1, 5 et 6, lance la suite ».
+
+**Décidé.**
+
+1. **La diffusion du Smic se lit par rapport au nouveau Smic, par défaut** : l'option
+   `recentrage` « nouveau » de D-540 et D-541 (e(m / (1 + g)) pour les postes au-dessus
+   du nouveau Smic), la forme que mesurent les sources (D-533, écart 1). Les autres formes
+   gardent leur défaut : le profil « tenu », la portée « 1,5 », φ = 1 (Mésange) ; la
+   boucle population ↔ jumeau (D-546) n'est pas branchée par défaut.
+5. **La densité des salaires entre 2,5 et 3,5 Smic est corrigée** (D-532), par une source
+   neuve, ni la Dares de D-497 (qui cale la fonction), ni le rapport n° 1685 de la MECSS
+   (qui juge, D-531) ; puis la population est refaite et la grille repassée, préenregistrée
+   (D-552, D-553), et les rejeux de D-508, D-509 et D-536 refaits dessus (D-554).
+6. **Le CICE et la prime de 2019 restent des juges, comptés à part** (D-535, D-536) : non
+   aveugles, ils ne comptent dans aucune note ; seul le juge par décile de la prime l'était.
+
+Les numéros du volet `suite` : D-551 à D-559 (BUT.md, but 28).
+
+**Le défaut changé** (`travail.yaml`, `formes.recentrage.defaut` : « ancien » →
+« nouveau » ; commit 013d1ea). Le jumeau seul, aucune passe : `scripts/reaction_
+diffusion_b28.py`, `interaction_b28.py` (qui essaie désormais l'ancien défaut sous
+« recentrage_ancien ») et `interaction_cice_b28.py` ; rapports `reports/etudes/
+reaction_b28/diffusion_d551.json`, `interaction_b28/defaut_d551.json` et `cice_d551.json`.
+Le Smic de Mélenchon (D-534), structurel, « premiere_annee_d521 », financement à ½, 2035 :
+
+| θ diffusion | emploi figée (milliers) | B9 (Md€) | dette (pt) | emploi vieillie |
+|---|---:|---:|---:|---:|
+| 0 | +189,8 → +149,6 | −18,25 → −15,86 | +4,451 → +3,929 | +148,8 → +108,6 |
+| ¼ | +97,1 → +8,1 | −12,83 → −7,57 | +3,267 → +2,116 | +56,2 → −32,9 |
+| ½ | +1,5 → −136,1 | −7,27 → +0,83 | +2,052 → +0,286 | −39,4 → −177,0 |
+| ¾ | −87,0 → −333,0 | −2,08 → +12,26 | +0,922 → −2,195 | −127,9 → −373,9 |
+| 1 | −215,8 → −568,2 | +5,50 → +25,88 | −0,722 → −5,137 | −256,8 → −609,2 |
+
+Au centre, ce que D-541 avait lu comme option (−136,1 milliers, B9 +0,83) ; la diffusion
+moyenne du Smic de Mélenchon, en part de la hausse de la masse brute, passe de 0 à 0,0125
+(θ 0), de 0,061 à 0,109 (θ ½), de 0,130 à 0,251 (θ 1 ; D-534 l'avait interpolée à 0,221).
+La plage de l'emploi selon θ s'élargit : +150 à −568 milliers (+190 à −216 avant), et
+son milieu passe du zéro à un emploi négatif. Le programme (θ½, figée) : +196,3 → +58,7
+milliers, dette +12,054 → +10,293 pt ; vieillie +131,7 → −5,9, +11,892 → +10,131. La
+paire Smic × exonérations dans le jumeau reste additive (écart à la somme +0,1 millier,
+0,00 Md€, figée) : aucun salaire diffusé n'atteint 2 Smic (au plus 1,5 × 1,1617 = 1,74).
+Les autres formes s'essaient désormais sur le recentrage : profil « croissant » −421,9
+milliers, « decroissant » +143,2, portée « 2 » −222,9 (le réglage « recentrage et portée
+2 » de D-541). φ (Harasztosi et Lindner) : −147,5 ; diagnostic du juge : −156,4. **Le
+CICE ne bouge pas** (pas de Smic) : +185,0 milliers en 2016, rapport au juge 1,47, au bit.
+
+**Les tests mis à jour par décision** (D-335 ; l'ancienne forme reste tenue sous
+`travail.formes(recentrage="ancien")`, aux nombres d'avant) :
+
+* `test_jumeau_travail.py::test_le_recentrage_porte_la_diffusion_de_melenchon` : le
+  défaut est « nouveau », la part au centre 0,109 (0,061 sous l'ancien, tenu à côté).
+* `test_la_loi_absorbe_le_bas_pour_une_grande_hausse` : l'absorption à θ 0 (zéro pour
+  Mélenchon, 0,37 % pour 2 %) est une propriété de l'ancienne forme, tenue sous elle ; sous
+  le défaut, 1,25 % et 0,87 %.
+* `test_deux_hausses_du_smic_ne_se_somment_pas` : deux hausses de 8 % font 0,886 de la
+  somme sous l'ancienne forme, **1,181 sous le recentrage** : la diffusion suit le Smic, la
+  bande qui diffuse monte vers des salaires plus hauts (0,104 de la hausse pour 8 %, 0,118
+  pour 16,64 %) ; l'interaction de deux hausses change de signe. Les deux sont tenus.
+* `test_jumeau_papillon.py::test_les_payeurs_des_prestations_viennent_des_fiches` : le B9
+  de l'État du programme de Mélenchon, 2026, figée, −55,81 → −54,92 Md€, celui des APUL
+  1,48 → 1,545 (le Smic diffuse dès la première année).
+
+**Les rouges d'avant, non touchés** (vus rouges sur 0f408c1, avant le changement) :
+`test_jumeau_papillon.py::test_point_indice_ne_renchérit_plus_le_travail_prive` (33,63
+contre 33,7) et `::test_melenchon_tourne_en_structurel_par_les_mesures_seules` (dette
+12,374 contre 12,306 avant ; 10,613 après le défaut : il tenait l'ancien défaut, mais il
+était rouge avant pour une autre raison, non cherchée ici) ;
+`test_jumeau_structurel.py::test_le_modele_structurel_complet_se_construit_sans_double_
+compte` (trois canaux du registre sans bloc) ; huit de `test_jumeau_depuis_rapport.py`.
+Au propriétaire ou à la jonction ; aucun n'est changé.
+
+**Ce qui ne change pas.** `entrees_navigateur.json` et `agregats.json` ne lisent pas les
+formes (des données : l'état publié, les cellules) : pas régénérés ici (ils le seront sur
+la population de D-553). Le navigateur lit `travail.yaml` : la page, non reconstruite,
+prendra le défaut à sa prochaine construction.
