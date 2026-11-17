@@ -143,6 +143,44 @@ diffusion:
       la première année (le pas est annuel) et tenue ensuite. Le rapport du groupe d'experts
       Smic de novembre 2025 n'en publie pas de plus récente (margins.SMIC_DIFFUSION)"
 
+formes:
+  # Les écarts de forme de la diffusion à ce que mesurent les sources (D-533, D-540) :
+  # chacun une option déclarée, son défaut la forme d'avant. Le propriétaire choisit ;
+  # aucun défaut ne change sans une D-entrée.
+  recentrage:
+    defaut: ancien
+    valeurs: [ancien, nouveau]
+    source: "ancien : e(m), m en Smic d'avant la hausse (le bloc de D-478). nouveau : e(m /
+      (1 + g)) pour les postes au-dessus du nouveau Smic, la diffusion relative au Smic
+      courant que mesurent les sources (Brochu et al. 2023, lus dans le rapport du groupe
+      d'experts sur le Smic de 2024, p. 178 du PDF, ges_smic_rapport_2024.pdf : le pic et
+      les effets d'entraînement « rétablis immédiatement », au nouveau minimum ; D-533,
+      écart 1). La linéarité en g d'une hausse de 16 % reste hors de l'échantillon (dit)"
+  profil:
+    defaut: tenu
+    valeurs: [tenu, croissant, decroissant]
+    long_terme_avec_la_loi: 0.20
+    horizon_long_terme: 10
+    horizon_decroissant: 5
+    source: "tenu : l'effet d'un an, tenu (profil_temps). croissant : la diffusion de long
+      terme de Mésange (G2017-04, p. 64 du PDF : « l'effet de diffusion agrégé sur
+      l'ensemble des travailleurs s'élève à long terme autour de 0,20 », d'après
+      Aeberhardt et al. 2012), atteinte à dix ans (la convention du bloc commerce),
+      linéaire depuis l'effet d'un an : un facteur F sur la diffusion tel que la loi et la
+      diffusion d'une hausse de 1 % fassent 0,20 au centre. decroissant : le rattrapage de
+      Goarant et Muller (p. 13 du PDF : les salaires voisins du Smic progressent moins
+      trois et quatre trimestres plus tard) prolongé au-delà d'un an, la diffusion
+      ramenée à celle du bas (θ 0) en cinq ans : forme choisie, non vérifiée"
+  portee:
+    defaut: "1,5"
+    valeurs: ["1,5", "2"]
+    source: "1,5 : l'effet à un an, estimé jusqu'à 1,5 Smic (Koubi et Lhommeau, figure 11).
+      2 : la portée de l'effet à un trimestre, « significative jusqu'à 2 smics » (Koubi et
+      Lhommeau, p. 14 du PDF, figure 10) et qui « s'atténue au-delà de 1,8 Smic »
+      (Goarant et Muller, p. 12 du PDF, figure 10) ; de 1,5 à 2 Smic, l'élasticité de la tranche 1,4-1,5
+      décroît linéairement jusqu'à zéro à 2 Smic (au milieu de chaque tranche de 0,1) :
+      la portée sourcée, la forme choisie, non vérifiée"
+
 emploi:
   # Les élasticités de long terme de la demande de travail de chaque tranche au coût du
   # travail de chaque tranche (individuelles sur la diagonale, croisées ailleurs).

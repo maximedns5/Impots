@@ -37,3 +37,64 @@ def test_la_loi_absorbe_le_bas_pour_une_grande_hausse(p):
     assert part == pytest.approx(0.0037, abs=5e-4)
     grande = travail.cascade(p, SMIC_MELENCHON, 0.0)
     assert grande.b_diff[:, 0].sum() == 0.0
+
+
+# ------------------------------------------------------------- l'interaction (D-540)
+class _Mesure:
+    def __init__(self, ident, travail_):
+        self.identifiant, self.travail, self.impulsions = ident, travail_, {}
+
+
+def test_deux_hausses_du_smic_ne_se_somment_pas(p):
+    """Le choc combiné (D-540) : deux hausses de 8 % font une hausse de 16,64 %, que la
+    diffusion lit d'un coup (w = max(m (1 + e g), 1 + g)) ; la somme de leurs effets
+    séparés n'en est pas la valeur (0,886 de la somme au centre : la loi de la seconde
+    hausse absorbe une part de la diffusion de la première). Le partage de Shapley rend chacune à la moitié du
+    tout, et une mesure seule garde sa valeur d'avant."""
+    bloc = travail.Travail(params=p)
+    t = np.array([0.5])
+    spec = {"smic": 1.08, "passe": True}
+    seul = bloc._valeur([(spec, 1)], t)
+    deux = bloc._valeur([(spec, 1), (spec, 1)], t)
+    somme = 2.0 * seul[0].sum()
+    assert deux[0].sum() != pytest.approx(somme, rel=1e-3)
+    assert deux[0].sum() / somme == pytest.approx(0.886, abs=2e-3)
+    parts = bloc._partage({"a": (spec, 1), "b": (spec, 1)}, t)
+    assert parts["a"][0].sum() == pytest.approx(deux[0].sum() / 2.0)
+    assert bloc._partage({"a": (spec, 1)}, t)["a"][0].sum() == seul[0].sum()
+
+
+def test_le_seuil_d_une_mesure_ne_touche_que_les_salaires_qu_il_coupe(p):
+    """Un seuil de sortie à 2 Smic (la fin des exonérations de Mélenchon) retire
+    l'allègement de 2 à 3 Smic seulement, la formule gardant son 3 (openfisca) ; une
+    hausse du Smic qui diffuse sous 1,5 Smic d'avant n'en change pas la diffusion :
+    l'interaction est nulle au réglage par défaut."""
+    x = np.array([1.0, 1.5, 1.99, 2.0, 2.5, 3.0])
+    assert np.array_equal(travail.rgdu(p, x, 2.0)[:3], travail.rgdu(p, x)[:3])
+    assert not travail.rgdu(p, x, 2.0)[3:].any()
+    retire = travail.allegement_retire(p, 2.0)
+    assert retire[:2].sum() == 0.0 and retire[2:4].all()
+    bloc = travail.Travail(params=p)
+    t = np.array([0.5])
+    smic = {"smic": SMIC_MELENCHON, "passe": True}
+    exo = {travail.ALLEGEMENTS: {"plafond": 2.0}, "passe": True}
+    parts = bloc._partage({"smic": (smic, 1), "exo": (exo, 1)}, t)
+    seul = bloc._valeur([(smic, 1)], t)
+    assert set(parts) == {"smic", "exo"}
+    assert np.allclose(parts["exo"][1], 0.0)
+    assert np.allclose(parts["smic"][1], seul[1])
+
+
+def test_le_recentrage_porte_la_diffusion_de_melenchon(p):
+    """La forme `recentrage` « nouveau » (D-540, l'écart 1 de D-533) : la diffusion du
+    Smic de Mélenchon, en part de la hausse de la masse brute, passe de 0,061 à 0,107 au
+    centre (D-534) ; le défaut reste l'ancien."""
+    def part(q):
+        c = travail.cascade(q, SMIC_MELENCHON, 0.5)
+        return c.b_diff[:, 0].sum() / c.brut[:, 0].sum() / (SMIC_MELENCHON - 1.0)
+
+    assert p.formes["recentrage"] == "ancien"
+    assert part(p) == pytest.approx(0.061, abs=2e-3)
+    with travail.formes(recentrage="nouveau"):
+        q = travail.charger()
+    assert part(q) == pytest.approx(0.107, abs=3e-3)
