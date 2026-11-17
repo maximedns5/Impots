@@ -38758,9 +38758,9 @@ ne change pas) : `recentrage` (« ancien » : e(m) ; « nouveau » : e(m / (1 + 
 postes au-dessus du nouveau Smic) ; `profil` (« tenu » ; « croissant » : la diffusion
 de long terme de Mésange, 0,20 avec la loi, p. 64 du PDF, atteinte à dix ans ;
 « decroissant » : le rattrapage de Goarant et Muller prolongé, la diffusion ramenée au
-bas en cinq ans, forme choisie, non vérifiée) ; `portee` (« 1,5 » ; « 2 » : de 1,5 à 2 Smic, l'élasticité
-de la tranche 1,4-1,5 décroissant linéairement jusqu'à zéro, la portée de Koubi et
-Lhommeau et de Goarant et Muller à un trimestre, la forme choisie).
+bas en cinq ans, forme choisie, non vérifiée) ; `portee` (« 1,5 » ; « 2 » : de 1,5 à 2
+Smic, l'élasticité de la tranche 1,4-1,5 décroissant linéairement jusqu'à zéro, la
+portée de Koubi et Lhommeau et de Goarant et Muller à un trimestre, la forme choisie).
 
 Pronostics, Smic de Mélenchon (D-534), figée, θ½ (avant : emploi 2035 +1,5 milliers, B9
 2035 −7,27 Md€ ; vieillie, emploi −39,4) :
@@ -38799,3 +38799,137 @@ d'emplois de D-509 (+12,047 pt, +195,5 milliers ; vieillie +11,882, +130,5).
 
 Les résultats vont dans D-541 et la suite ; aucune tolérance ne change, et le défaut
 reste celui d'avant tant que le propriétaire n'a pas choisi.
+
+## D-541 — L'interaction (2) : le choc combiné, nul sur Mélenchon par défaut ; les formes
+
+**Ce qui a tourné** (le jumeau seul, aucune passe ; D-540 commitée et poussée avant,
+6f312a8). Le code : 1f9ded0 (le bloc) et 9ec6475 (les prix). Script `scripts/
+interaction_b28.py` ; rapports `reports/etudes/interaction_b28/avant.json` (le même
+script sur le code de 6f312a8) et `choc_combine_formes.json` (au commit 9ec6475). Les
+mesures de Mélenchon portées aux passes de D-521 (convention « premiere_annee_d521 »),
+structurel, θ½, financement ½ ; 3 minutes pour huit réglages.
+
+**Comment l'interaction est faite, et un écart à D-540.** Le bloc forme chaque année le
+Smic combiné (produit des coefficients) et le seuil de sortie combiné (le plus bas), et
+refait une cascade par ensemble de mesures. D-540 disait écrire l'écart à la somme sous
+une clé `travail_interaction` : les blocs de l'emploi et des salaires (`menages`) lisent
+les mesures une à une (`ctx.mesures`), et une clé à part n'y aurait fait ni emploi ni
+salaire. L'écart va donc aux mesures qui le font, par la **valeur de Shapley** (la
+moyenne des apports de chacune à tous les ensembles des autres) : seule, une mesure garde
+sa valeur d'avant au bit près (le Smic seul, figée et vieillie, à 0,01 près à chaque θ,
+rapport de D-534 refait à l'identique) ; ensemble, les parts somment au tout. La fin des
+exonérations au-delà de 2 Smic déclare son seuil au bloc (`navigateur.mesure_
+structurel`, depuis `allegement_general_plafond` de sa passe) ; sa loi reste dans sa
+passe. Le barème de 2026 garde son 3 dans la formule (openfisca-france, formule de 2026 :
+le plafond n'y est que la condition de sortie) : un seuil à 2 Smic ne coupe que de 2 à 3.
+Test léger, vu échouer sur le code d'avant : `test_jumeau_travail.py` (deux hausses de
+8 % font 0,886 de la somme de leurs diffusions au centre ; le seuil ne touche que 2 à 3
+Smic ; la diffusion recentrée).
+
+**L'additivité, avant et après** (paire moins somme, figée ; vieillie à 0,01 près) :
+
+| paire | emploi 2035, avant → après | B9 2035 | dette 2035 |
+|---|---:|---:|---:|
+| Smic × exonérations | 0,0 → 0,0 | 0,00 → 0,00 | +0,005 → +0,005 |
+| Smic × point d'indice | 0,0 → 0,0 | 0,00 → 0,00 | −0,015 → −0,015 |
+| Smic × exonérations, recentrage et portée « 2 » | −5,2 | +0,91 | −0,181 |
+
+Le pronostic (nulle au défaut, à moins de 0,01 Md€) : **tenu**. Pourquoi : aucun salaire
+que le bloc fait diffuser n'atteint 2 Smic du nouveau (au plus 1,5 de l'ancien, 1,29 du
+nouveau) ; le point d'indice n'est pas dans les tranches du privé, et rien dans les
+sources lues ne fait diffuser le traitement public au privé. Les restes sur la dette
+sont ceux de D-509 (le PIB au dénominateur). L'interaction de Mélenchon reste celle de la
+loi, dans la passe (−1,37 Md€, D-509), dont D-532 a dit le signe non établi. **Avec le
+recentrage et la portée à 2 Smic ensemble**, les postes de 1,9 à 2 Smic du nouveau
+franchissent le seuil et perdent leur allègement d'un coup : −5,2 milliers d'emplois,
++0,91 Md€ de B9 en 2035. Le pronostic (sous 0,05 Md€) : **manqué** — le seuil est une
+falaise (5,4 % du salaire à 2 Smic). Le jumeau n'est donc plus additif dans la diffusion,
+mais seulement là où une raison le veut, et au réglage par défaut elle ne joue pas.
+
+L'incidence de la fin des exonérations, pondérée par l'allègement retiré (tranches de
+1,6 à 3,5 Smic) : la mesure seule, dette 2035 −0,815 → −0,808 pt, emploi −27,6 → −26,9
+milliers (pronostic, moins de 0,02 pt : tenu). Le programme : figée +12,047 → +12,054 pt,
++195,5 → +196,3 milliers (tenu) ; vieillie +11,882 → +11,892, +130,5 → +131,7 (le
+pronostic d'un millier : **manqué de 0,2**).
+
+**Les formes** (Smic de Mélenchon seul, θ½ ; défaut : figée +1,5 milliers, B9 −7,27,
+dette +2,052 ; vieillie −39,4 milliers) :
+
+| réglage | emploi 2035 figée | B9 2035 | dette 2035 | emploi vieillie | pronostic |
+|---|---:|---:|---:|---:|---|
+| recentrage « nouveau » | −136,1 | +0,83 | +0,286 | −177,0 | tenu |
+| profil « croissant » (F = 2,07) | −195,1 | +5,79 | +0,417 | −236,1 | tenu |
+| profil « decroissant » | +185,8 | −17,64 | +3,910 | +144,8 | tenu |
+| portée « 2 » | −87,0 | −2,04 | +0,909 | −128,0 | **manqué** |
+| recentrage et portée « 2 » | −222,9 | +5,87 | −0,816 | −263,9 | (non pronostiqué) |
+
+La portée à 2 Smic pèse trois fois plus que prévu : les postes de 1,5 à 2 Smic sont
+nombreux (la tranche la plus dense après le Smic) et leur masse est grande ; 0,31 de
+1,4-1,5 décroissant vers 2 suffit. Le programme (figée, emploi et dette 2035) : défaut
++196,3 et +12,054 ; recentrage +58,7 et +10,293 ; croissant −0,4 et +10,418 ; décroissant
++380,6 et +13,908 ; portée « 2 » +107,7 et +10,913 ; recentrage et portée, −33,5 et
++9,008.
+
+**Ce que cela dit.** Chaque écart de forme déplace l'emploi du Smic de Mélenchon plus que
+le θ de diffusion entier (+190 à −216, D-534) ne le faisait d'un bout à l'autre au
+centre : de −223 à +186 milliers à θ½. Trois formes sur quatre le rendent négatif ; seule
+la lecture décroissante (une extrapolation non sourcée au-delà d'un an) le rend
+positif. Le recentrage est la forme que mesurent les sources récentes (la diffusion
+relative au Smic courant) ; le profil croissant est celui de Mésange (0,20 à long
+terme, Aeberhardt et al.). Les minima de branche : il faudrait la grille des minima
+conventionnels par branche et leur position au Smic (Dares, « suivi des grilles »), et
+l'élasticité des salaires de base aux minima (Gautier, Roux et Suarez Castillo, +0,14,
+dont l'annexe n'est pas lue) ; rien n'est fait.
+
+## D-542 — L'interaction (3) : la boucle prix-salaires, le CICE rejoué, ce qui reste
+
+**La part du coût qui va aux prix** (`commerce.yaml`, `prix_part_cout` ; défaut φ = 1, le
+bloc d'avant). Sources hors du CICE : Mésange (p. 70-71 du PDF) contraint le report
+complet à long terme dans toutes les branches, les services abrités plus lentement
+(correction de −0,02 par trimestre, −0,10 dans l'industrie) ; Harasztosi et Lindner
+(AER 2019, résumé ; document de 2015, p. 1 et 4, au manifeste) : les consommateurs
+paient les trois quarts d'une hausse du coût du salaire minimum, et le report est **plus
+fort** dans les services et les branches qui n'exportent pas. Aucune source lue hors du
+CICE ne soutient la forme du juge (les prix dans l'industrie, les salaires dans les
+services) : elle est essayée en diagnostic, pas en réglage. Test léger
+`test_jumeau_commerce.py::test_la_part_du_cout_qui_va_aux_prix`.
+
+**Le CICE** (`scripts/interaction_cice_b28.py`, entrées de la passe de D-536 gardées,
+aucune passe ; rapport `reports/etudes/interaction_b28/cice.json`). **Le juge est déjà
+lu** (D-536) : un contrôle de non-régression, compté à part, pas un verdict neuf.
+
+| réglage | φ unif. / ciblé | emploi 2016 | moyenne 2014-2016 | rapport | salaire 2016 |
+|---|---|---:|---:|---:|---:|
+| défaut (Mésange) | 1 / 1 | +185,0 | 147,3 | 1,47 | −143 € |
+| Harasztosi-Lindner | 0,75 / 0,75 | +181,0 | 146,2 | 1,46 | −22 € |
+| diagnostic du juge | 0,62 / 0,48 | +177,4 | 145,3 | 1,45 | +87 € |
+
+Le défaut rend D-536 à l'identique : non-régression **tenue**. Tous dans [0,5 ; 2]. Les
+pronostics : φ 0,75, emploi (170 à 200) et rapport (1,3 à 1,6) tenus ; le salaire de
+2016, attendu de −0,28 à −0,05 % avec son signe, fait −0,05 % (−22 € sur 47 800) :
+**manqué de peu**, le signe gardé. Le diagnostic retourne le salaire nominal (+0,18 %,
+attendu −0,25 à +0,05) : **manqué**. Il faut que les services ne passent rien aux prix
+pour que le salaire monte comme le juge le voit ; l'emploi n'y bouge presque pas
+(−4 %). Sur Mélenchon, le Smic seul en 2035 (figée) : φ 0,75, emploi −11,6 milliers, B9
+−7,01, dette +1,964 ; diagnostic, −21,9, −6,82, +1,896 ; le programme, +186,2 et
++11,987 pt (φ 0,75), +177,5 et +11,930 (diagnostic) ; les paires restent nulles.
+
+**Le profil temporel de l'emploi au coût** (regardé, pas changé). Le jumeau fait, par Md€
+de crédit, 2,2 emplois (milliers) en 2013, 4,9 en 2014, 7,3 en 2015, 8,6 en 2016, 8,5 en
+2017 : le profil de Mésange (non qualifiés, 0,26 à un an, 0,75 à deux, 1,04 à cinq)
+atteint son plein en quatre ans. Le juge voit 115 000 en 2014 (5,5 par Md€) puis un peu
+moins. Un profil plein à deux ans tiendrait le jumeau vers 5 par Md€ et la moyenne près
+de 1,0 fois le juge ; on ne le règle pas sur lui. Il faudrait une source hors du CICE sur
+la vitesse de l'emploi après une baisse du coût (les allègements des années 1990, par
+exemple, dont l'évaluation n'est pas au dépôt).
+
+**Ce qui reste au propriétaire.** (1) Le réglage par défaut de chaque forme : le
+recentrage, que mesurent les sources, porte l'emploi du Smic de Mélenchon de +1,5 à
+−136 milliers (le solde de 2035 de −7,3 à +0,8 Md€) ; le profil (tenu, croissant
+selon Mésange, décroissant non sourcé) ; la portée à 2 Smic (forme choisie entre 1,5 et
+2). (2) φ : 1 (Mésange) ou 0,75 (Harasztosi et Lindner) ; la forme du juge du CICE n'a
+pas de source indépendante. (3) Le profil de l'emploi au coût : une source hors du CICE.
+(4) Les minima de branche : les données à réunir (D-541). (5) La fin des exonérations
+et sa falaise à 2 Smic : avec le recentrage et la portée, l'interaction devient réelle
+(+0,9 Md€) ; elle repose sur la densité des salaires de 1,9 à 2 Smic, que D-532 dit mal
+tenue au-dessus de 2,5.
