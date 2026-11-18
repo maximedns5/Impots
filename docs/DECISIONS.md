@@ -42745,3 +42745,106 @@ d'une proposition, et le premier gain à chercher si la page doit répondre plus
 (4) Une clé pour le POST sur une instance publique (D-295) : la page n'envoie pas de clé ;
 en local, `IMPOTS_AUTH=aucune`. (5) Les propositions ne sont jamais effacées (le dossier
 `data/processed/propositions/`) : quelques Mo chacune.
+
+## D-665 — Seconde relecture adverse du but 29 : six erreurs corrigées
+
+**Ce qui est relu** (volet `relecture2` du but 29, branche `claude/but29-relecture2`,
+partie de `claude/but29` à 279666f) : les pièces ajoutées après D-635. Le code d'abord,
+les D-entrées ensuite : `impacts/territoires.py` et `table_territoires.py` (D-645 à
+D-649), `impacts/synthese.py` (D-650 à D-652), `navigateur.programme_compose` et les
+options `degrader` et `limite_commune` du tableau (D-655 à D-658), `parametrique.py` et
+ses routes (D-660, D-661), `impacts/pour_vous.py` et `cas_types.py` (D-630 à D-633,
+D-638), la page `site_impacts`. Le jumeau a tourné (Retailleau, Attal, Mélenchon, en
+secondes) ; aucune passe sur la population, aucune proposition lancée, aucun lourd ;
+`test_parametrique.py` vérifié avant de tourner (`_detacher` remplacé, `lancer` injecté).
+
+**Relu et tenu.** Les unités du gain des territoires (Md€ × 1e9 / ménages du décile, le
+même rangement décile × type que `cellules.deciles`) ; le revenu de référence corrigé du
+rapport case / cellule ; l'interpolation des quantiles et le contrôle de D-647 (la médiane
+de Filosofi n'est dans `margins` qu'en validation, rien ne s'y cale) ; dans « Pour vous »,
+les signes des coefficients (des valeurs absolues, le signe au canal), l'intensité d'une
+mesure à la cellule (déjà dans `Mesure.menages`, `proposition.transformer`), la
+conversion en euros de 2026 (D-638) ; la dégradation des statuts d'un programme composé
+(moral, santé, territoires) ; les identifiants de proposition (aucun chemin possible) et
+la page servie en local (un nom de fichier du dossier, rien d'autre).
+
+**Corrigé**, chaque correctif avec son test léger, en échec sur le code d'avant :
+
+1. *Grave, la file des propositions se fermait pour toujours* (`parametrique`). Une passe
+   tuée sans écrire sa fin (la mémoire, comme cette nuit ; la machine relancée) restait
+   « en_cours » : la même proposition ne se relançait plus, et trois comme elle rendaient
+   503 à tout le monde. Le pid de la passe est écrit (au détachement, puis par la passe) ;
+   un processus disparu, ou zombie, met la proposition en échec avec sa raison, et elle
+   se relance. Une remise en file efface l'ancien pid. Commit d6e7f39.
+2. *Moyen, un réglage qui n'est pas une table* (`{"boutons": [..]}`, un nombre, `null`)
+   rendait une erreur 500 : désormais 422 et la raison. Même commit.
+3. *Grave, `POST /impacts` sans borne sur ses tirages* (`navigateur.impacts_json`) : la
+   trajectoire est vectorisée sur les tirages ; une requête qui en demandait des millions
+   tenait autant de trajectoires en mémoire et faisait tomber le serveur (une clé suffit,
+   le débit ne compte que les requêtes). Borné à la plage du jumeau, de 0 à 200 ; au-delà,
+   422. La page en demande 60 : aucun nombre publié ne change. Commit 7d0d668.
+4. *Moyen, une bande qui n'en était pas* (`impacts/pour_vous.py`). Dans la chaîne des
+   études, ni salaires ni prix ne bougent avec les θ : la « bande » du revenu réel du cas
+   par défaut était le statique répété, et « En bref » la disait. Mélenchon (programme
+   entier), 2035 : [+1 606 ; +1 606] € → sans bande ; le centre ne change pas ; Retailleau
+   (jumeau complet) garde [−1 332 ; −1 166].
+5. *Moyen, une phrase qui disait plus que ses indicateurs* (`synthese`). « Ce qu'on gagne
+   ici, on le paie là » affirmait un lien entre deux dimensions qu'aucun indicateur ne
+   mesure, contre la règle de D-650 (aucun mot ne juge l'ensemble). La phrase dit
+   désormais que les nombres sûrs ne vont pas tous du même côté, « ce n'est pas un bilan,
+   ni un lien ». Les textes cités en D-651 sont ceux d'avant.
+6. *Le défaut connu de la page, et plus* (`site_impacts/page.js`). Dans les barres par
+   groupe, une étiquette négative longue chevauchait son libellé, et les libellés plus
+   longs que la colonne de gauche étaient coupés au bord du dessin (« le chômage autour
+   de soi », tous les cas types de « Pour vous »). La place des étiquettes de valeur est
+   réservée de chaque côté ; un libellé trop long passe au-dessus de sa barre. Mesuré dans
+   Chromium (deviceScaleFactor 1, 1 200 et 390 px, les 22 programmes, chaque indicateur de
+   chaque fiche, les boîtes des textes) : 52 chevauchements et 978 textes coupés avant, 0
+   et 0 après ; aucun défilement horizontal, aucune erreur hors le `favicon.ico`. Et les
+   cartes de la vue d'ensemble disaient « ▼ moins bien » sans réserve quand leur bande
+   franchit zéro, là où « En bref » et « Comparer » disent « sens pas sûr » : elles le
+   disent aussi (Attal, productivité −0,43 % [−0,81 ; +0,26]). Pas de test (D-335 : rendu).
+
+Les rapports commités ne lisent aucune de ces lignes : aucun n'est refait. Les points
+écrits et non changés sont dans D-666.
+
+## D-666 — Seconde relecture : ce qui est écrit, non changé (au propriétaire)
+
+Par gravité.
+
+* *La même grandeur sous deux noms, dans la chaîne des études.* Sans le champ
+  `effet_prix_pib` (le mode réduit), la productivité prend l'écart du PIB pour le « PIB
+  en volume » (`productivite.socle`, `dprix = 0`), sens « mieux » ; l'économie dit le même
+  nombre « PIB en valeur (nominal) », sens 0. Mélenchon, programme entier, 2035 : −0,6886 %
+  des deux côtés, à 1e-14 près ; « En bref » le cite deux fois et l'arbitrage met « PIB en
+  volume en baisse » du côté « moins bien ». D-651 (point 3) le disait redondant ; c'est
+  une étiquette fausse d'un côté ou de l'autre. Le bloc `mesange` lit la ligne du PIB des
+  variantes de Mésange, publiée en volume à vérifier sur le PDF : si c'est le volume,
+  c'est l'économie qui se trompe de nom dans ce mode. Non tranché ici.
+* *Le verrou des propositions n'est pas celui des autres passes par défaut.* Sans
+  `IMPOTS_VERROU_PASSES`, il est privé (`data/processed/propositions/passe.lock`) : une
+  proposition et `/population/simulate` ou `/predictif/simulate` (le compteur des calculs
+  lourds de D-295, dans le processus du serveur) peuvent tourner ensemble. La file compte
+  ses places sans verrou (deux requêtes simultanées peuvent passer FILE_MAX). Le pid
+  écrit (D-665) peut être réutilisé par un autre processus : une passe perdue paraîtrait
+  vivante, rarement.
+* *D-661 dit les cas types « hors du verrou »* ; `passer` les fait sous le verrou, avec
+  les deux passes. Le temps (17 s) est petit ; le texte est faux, pas le calcul.
+* *Les territoires : la part des gagnants* est celle des ménages des cellules dont le gain
+  moyen dépasse 10 € : « 100 % partout » (Retailleau, Attal) dit que toutes les cellules
+  gagnent en moyenne, pas que tous les ménages gagnent. Le statut « illustratif » le
+  couvre ; le libellé pourrait le dire. Les déciles de la table sont ceux des ménages, les
+  quantiles du contrôle ceux des personnes (D-647 le mesure : 0,006 d'écart).
+* *« Pour vous » sur la page* ne montre pas la bande du revenu réel du cas par défaut, que
+  la fiche porte ; la productivité garde des noms de canaux bruts dans ses barres
+  (`pression_cout`).
+* *La certitude « probablement »* lit de la même façon les bandes de tirages et les
+  enveloppes de bornes publiées (moral) : D-650 le dit ; cela reste le point le plus
+  discutable du paragraphe. La netteté d'une bande de largeur nulle est infinie : une
+  dimension sourcée à bande dégénérée viendrait en tête ; aucune ne l'est aujourd'hui.
+* *Une composition sans borne* (`POST /impacts`, la liste `composition`) : bornée par le
+  débit seulement.
+
+**Ce qui n'a pas été fait** : pas de `make impact`, pas de lourds ; le site commité n'est
+pas reconstruit (la page a été écrite à part pour la vérifier). Les contrôles aveugles
+(D-646, D-656) relus sur leurs commits seulement.
