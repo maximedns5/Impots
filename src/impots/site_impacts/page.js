@@ -391,7 +391,11 @@
     const t = e.tete;
     if (!t) return `<a class="i-carte" href="#f-${esc(e.cle)}"><h3>${esc(e.titre)}</h3><p class="i-q">${esc(e.question)}</p><p class="i-lib">Aucun indicateur calculé ici.</p>${statut(e)}</a>`;
     const h = t.horizon;
-    const bande = h.bas !== null && h.bas !== undefined ? `<p class="i-bande">entre ${fr(h.bas)} et ${fr(h.haut)}${unite(t.unite)}</p>` : "";
+    const aBande = h.bas !== null && h.bas !== undefined && h.haut !== null && h.haut !== undefined;
+    // La règle de D-650, celle de « En bref » et de « Comparer » : sans une bande d'un seul
+    // côté de zéro, celui du nombre, « mieux » ou « moins bien » n'est pas sûr (D-665).
+    const sur = aBande && ((h.bas > 1e-9 && h.haut > 1e-9 && h.valeur > 1e-9) || (h.bas < -1e-9 && h.haut < -1e-9 && h.valeur < -1e-9));
+    const bande = aBande ? `<p class="i-bande">entre ${fr(h.bas)} et ${fr(h.haut)}${unite(t.unite)}${sur ? "" : " : sens pas sûr"}</p>` : "";
     return `<a class="i-carte" href="#f-${esc(e.cle)}" data-cle="${esc(e.cle)}"><h3>${esc(e.titre)}</h3><p class="i-q">${esc(e.question)}</p>
       <p class="i-lib">${esc(t.libelle)}, en ${h.annee}</p>
       <p class="i-gros" data-v="${h.valeur}">${fr(h.valeur)}<small>${esc(unite(t.unite))}</small></p>${bande}
@@ -523,15 +527,26 @@
     const barres = () => {
       const i = Number(sel.value);
       const noms = Object.keys(ind.par_groupe), vals = noms.map((n) => ind.par_groupe[n][i]);
-      const W = 560, gl = 120, gr = 70, hb = 20, esp = 4, H = noms.length * (hb + esp) + 8;
+      // La place des étiquettes de valeur est réservée de chaque côté (D-665) : une valeur
+      // négative longue (−385) chevauchait son libellé. Des libellés trop longs pour la
+      // colonne de gauche passent au-dessus de leur barre, au lieu d'être coupés.
+      const W = 560, hb = 20, esp = 4, cw = 6.4;
+      const largeur = (x) => fr(x).length * cw + 8;
+      const dessus = Math.max(...noms.map((n) => n.length)) * cw + 8 > 120;
+      const gl = dessus ? 4 : 120, hn = dessus ? 15 : 0;
       const m = Math.max(1e-12, ...vals.map((x) => Math.abs(x ?? 0)));
       const neg = vals.some((x) => x < 0), pos = vals.some((x) => x > 0);
-      const zero = neg && pos ? gl + (W - gl - gr) / 2 : neg ? W - gr : gl;
-      const echelle = (neg && pos ? (W - gl - gr) / 2 : W - gl - gr) / m;
+      const gv = neg ? Math.max(...vals.filter((x) => x < 0).map(largeur)) : 0;
+      const droite = vals.filter((x) => x !== null && x !== undefined && x >= 0);
+      const gr = droite.length ? Math.max(...droite.map(largeur)) : 8;
+      const a = gl + gv, span = W - gr - a, H = noms.length * (hn + hb + esp) + 8;
+      const zero = neg && pos ? a + span / 2 : neg ? a + span : a;
+      const echelle = (neg && pos ? span / 2 : span) / m;
       const parts = [`<line class="g-zero" x1="${zero}" x2="${zero}" y1="0" y2="${H}"/>`];
       noms.forEach((n, j) => {
-        const x = vals[j], y = 4 + j * (hb + esp);
-        parts.push(`<text class="g-texte" x="${gl - 8}" y="${y + hb / 2 + 4}" text-anchor="end">${esc(n)}</text>`);
+        const x = vals[j], y = 4 + hn + j * (hn + hb + esp);
+        parts.push(dessus ? `<text class="g-texte" x="${gl}" y="${y - 4}">${esc(n)}</text>`
+          : `<text class="g-texte" x="${gl - 8}" y="${y + hb / 2 + 4}" text-anchor="end">${esc(n)}</text>`);
         if (x === null || x === undefined) { parts.push(`<text class="g-texte" x="${zero + 6}" y="${y + hb / 2 + 4}">absent</text>`); return; }
         const w = Math.abs(x) * echelle, x0 = x >= 0 ? zero : zero - w;
         const c = ind.sens === 0 ? "neutre" : x * ind.sens >= 0 ? "gain" : "perte";
