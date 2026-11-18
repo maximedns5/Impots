@@ -42904,3 +42904,21 @@ réglage : « Calculé par le jumeau complet, mesure par mesure : » et la raiso
 `test_un_programme_calcule_par_ses_mesures_n_est_pas_la_chaine_des_etudes`, en échec sur
 le code d'avant. Aucun rapport commité ne lit ces lignes : aucun n'est refait ; le site
 commité n'est pas reconstruit.
+
+## D-671 — D-661 précisé : les cas types d'une proposition tournent sous le verrou
+
+D-661 (« Les temps mesurés ») dit les cas types d'une proposition faits « hors du verrou
+(ce n'est pas une passe sur la population) ». C'est faux pour le code commité, comme D-666
+le relevait : `parametrique.passer` prend le verrou (`fcntl.flock`, `IMPOTS_VERROU_PASSES`
+s'il est donné) avant la première étape et le garde jusqu'au résultat ; les cas types
+(`cas_types.construire` sur le seul scénario de la proposition, 244 ménages types) en sont
+la troisième étape, après la première année et le chemin annuel, et le jumeau la
+quatrième. Relu sur 348e673 (`passer`, la boucle des étapes dans le `with` du verrou).
+
+Ce qui reste vrai de D-661 : les 17 s sont le temps de `cas_types.construire` seul, et
+les cas types ne sont pas une passe sur la population (OpenFisca sur des ménages types,
+quelques secondes). Le calcul ne change pas, aucun nombre non plus ; rien n'est refait.
+**Le choix est gardé** : sous le verrou, une proposition ne fait tourner qu'un OpenFisca
+à la fois sur la machine, dans l'ordre de sa file, pour 17 s de plus sur 40 à 50 min ;
+les sortir du verrou demanderait un second verrou ou une seconde file, sans gain lisible.
+D-661 n'est pas réécrite ; elle se lit avec celle-ci.
