@@ -43177,8 +43177,9 @@ de vie dans les cellules (`scripts/jumeau_niveaux_de_vie.py`, 18 novembre, 11 h 
 76 s) ; les cellules de D-553 refaites (`jumeau_cellules.py`, 30 000 ménages, 89 s) ;
 `ppa_passe` (112 s) et `ir_passe` (112 s), 20 000 ménages, de 18 h 26 à 18 h 58 UTC ;
 puis `rapport` et le verdict (`relais/pouvoir/verdict.py`, commité au relais 0ffe422 sur
-`claude/relais-b28-b29`, ses juges codés tels quels). Rapports : `reports/verification/juges_pouvoir_b29/
-modele.json` et `verdict.json`, `reports/jumeau/niveaux_de_vie_cellules.json`. La passe
+`claude/relais-b28-b29`, ses juges codés tels quels). Rapports :
+`reports/verification/juges_pouvoir_b29/modele.json` et `verdict.json`,
+`reports/jumeau/niveaux_de_vie_cellules.json`. La passe
 de la mesurée a tourné avant celles des juges : **le nombre noté est (b) sur la
 mesurée**, comme D-591 le disait ; l'approchée est rapportée à côté.
 
