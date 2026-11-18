@@ -775,7 +775,8 @@ class Session:
             traj.variante, traj.reference, ctx["depart"], self.cellules, trajectoire=traj,
             tirages=t, mesures=list(traj.mesures), illustratives=ctx["illustratives"],
             mode=ctx["mode"], thetas=ctx["registre"], juge=self.donnees.get("juge"),
-            annees=tuple(traj.annees), programme=programme_age(ctx))
+            annees=tuple(traj.annees), programme=programme_age(ctx),
+            composition=ctx.get("composition"), cle=ctx.get("cle"))
 
 
 def programme_age(ctx: Mapping[str, Any]) -> str | None:
