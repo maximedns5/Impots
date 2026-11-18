@@ -122,3 +122,21 @@ def test_le_canal_de_la_r_et_d() -> None:
     var, ref, depart = _trajectoire()
     d = P.calculer(var, ref, depart, cir={2026: 2.0, 2027: 2.0, 2028: 2.0})
     assert "rd_cir" in {i.cle: i for i in d.indicateurs}["pgf_canaux"].par_groupe
+
+
+def test_la_bande_des_canaux_quand_le_levier_baisse() -> None:
+    """D-635 : une baisse du coût (ou du CIR) fait un canal négatif ; la bande est
+    l'enveloppe, canal par canal, et son bas reste sous son haut. Avant : bas 0, haut
+    −0,38 % (les bornes de η sommées telles quelles)."""
+    var, ref, depart = _trajectoire()
+    m = SimpleNamespace(identifiant="c", travail=None,
+                        entreprises={a: {"cotisations_employeurs": -3.471}
+                                     for a in (2026, 2027, 2028)})
+    d = P.calculer(var, ref, depart, mesures=[m], cir={2026: 2.0, 2027: 2.0, 2028: 2.0})
+    ind = {i.cle: i for i in d.indicateurs}
+    for cle in ("pgf_canaux", "pib_potentiel_avec_canaux"):
+        i = ind[cle]
+        assert np.all(i.bas <= i.valeurs + 1e-12) and np.all(i.valeurs <= i.haut + 1e-12)
+    pgf = ind["pgf_canaux"]
+    assert pgf.valeurs[-1] < 0 and pgf.haut[-1] == pytest.approx(0.0)
+    assert pgf.bas[-1] == pytest.approx(pgf.valeurs[-1] * 0.76 / 0.38)

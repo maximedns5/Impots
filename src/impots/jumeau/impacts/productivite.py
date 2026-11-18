@@ -352,8 +352,11 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
                                       "référence", valeurs=val, bas=bas, haut=haut,
                                       sens=sens))
     if a_cote:
-        total = {nom: sum(a_cote[c][nom] for c in a_cote) for nom in ("bas", "centre",
-                                                                       "haut")}
+        # La bande est l'enveloppe, canal par canal : η = 0 et η au haut donnent le bas et
+        # le haut quand le levier monte, l'inverse quand il baisse (une baisse de coût, une
+        # suppression du CIR) ; sommer les « bas » et les « haut » tels quels rendait un bas
+        # au-dessus du haut (D-635).
+        total = _enveloppe(a_cote, list(a_cote))
         indicateurs.append(Indicateur(
             cle="pgf_canaux", libelle="Productivité des entreprises par les canaux à côté "
             "(PIB, centre de η ; bande de η = 0 à son haut)", unite="% du PIB",
@@ -362,7 +365,7 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
             par_groupe={c: 100.0 * a_cote[c]["centre"] for c in a_cote}, sens=1))
         if s["pib_potentiel"] is not None:
             base = s["pib_potentiel"][:, 0] + ajout["centre"]
-            reste = {nom: total[nom] - ajout[nom] for nom in total}
+            reste = _enveloppe(a_cote, [c for c in a_cote if c not in branches])
             indicateurs.append(Indicateur(
                 cle="pib_potentiel_avec_canaux", libelle="PIB potentiel, avec tous les "
                 "canaux de la productivité", unite="% d'écart à la référence",
@@ -394,6 +397,20 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
                [c for c in a_cote if c not in branches],
                "alpha": float(s["alpha"]),
                "leviers": {c: [float(x) for x in a_cote[c]["x"]] for c in a_cote}})
+
+
+def _enveloppe(a_cote: Mapping[str, Mapping[str, np.ndarray]], cles: Sequence[str]
+               ) -> dict[str, np.ndarray]:
+    """Le centre, et le bas et le haut des canaux `cles` : la somme, canal par canal, du
+    plus petit et du plus grand de leurs trois bornes de η (l'enveloppe, D-635)."""
+    n = len(next(iter(a_cote.values()))["centre"])
+    out = {nom: np.zeros(n) for nom in ("bas", "centre", "haut")}
+    for c in cles:
+        pile = np.array([a_cote[c][nom] for nom in ("bas", "centre", "haut")])
+        out["bas"] = out["bas"] + pile.min(axis=0)
+        out["centre"] = out["centre"] + a_cote[c]["centre"]
+        out["haut"] = out["haut"] + pile.max(axis=0)
+    return out
 
 
 def _source_canal(c: Canal) -> tuple[str, str, str]:
