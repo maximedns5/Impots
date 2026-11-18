@@ -216,6 +216,62 @@
       '<p class="i-aide">Aucune dimension calculée.</p>';
     $("fiches").innerHTML = "";
     for (const d of r.dimensions || []) $("fiches").appendChild(fiche(d));
+    pourVous();
+  }
+
+  /* ------------------------------------------------------------ pour vous (D-630) */
+  const PV = ["foyer", "enfants", "activite", "logement", "age"];
+  for (const k of PV) $("pv-" + k).addEventListener("change", pourVous);
+  function cleCas() {
+    const v = Object.fromEntries(PV.map((k) => [k, $("pv-" + k).value]));
+    if (v.activite === "retraite") return `${v.foyer}-0-retraite-${v.logement}-62_plus`;
+    return `${v.foyer}-${v.enfants}-${v.activite}-${v.logement}-${v.age === "62_plus" ? "50_61" : v.age}`;
+  }
+  const euros = (x) => fr(x, 0) + " €";
+  function pourVous() {
+    const out = $("pv-resultat");
+    const r = window.impacts.resultat;
+    const d = r && (r.dimensions || []).find((x) => x.cle === "pour_vous");
+    if (!d) { out.innerHTML = '<p class="i-aide">Pas calculé pour ce choix.</p>'; return; }
+    if (d.erreur) { out.innerHTML = `<div class="i-avert i-refus"><b>Non calculé :</b> ${esc(d.erreur)}</div>`; return; }
+    const v = Object.fromEntries(PV.map((k) => [k, $("pv-" + k).value]));
+    const cle = cleCas(), c = d.notes.cas[cle], an = d.annees;
+    if (!c) { out.innerHTML = '<p class="i-aide">Ce cas type n\'est pas dans la grille.</p>'; return; }
+    const f = an.length - 1;
+    const notes = [];
+    if (v.activite === "retraite" && v.enfants !== "0") notes.push("un retraité est pris sans enfant à charge");
+    if (v.activite !== "retraite" && v.age === "62_plus") notes.push("un actif de 62 ans ou plus est pris à 50-61 ans");
+    const approx = { length: c.origines.cellule || 0 }, exact = { length: c.origines.openfisca || 0 };
+    const pct = (i) => 100 * c.reel[i] / c.rd;
+    const origine = !Object.keys(c.origines).length ? "aucune mesure lue" : approx.length && !exact.length
+      ? "<b>approximation</b> : le gain moyen d'un ménage du même décile de niveau de vie (la cellule), pas un calcul de votre situation"
+      : approx.length ? `calculé par OpenFisca pour ${exact.length} mesure(s), <b>approximé par la cellule</b> pour ${approx.length}`
+      : "calculé par OpenFisca pour ce cas type, avant et après la mesure (impôts, cotisations, prestations, TVA)";
+    const L = c.lignes;
+    const lignes = L ? [["impot_revenu", "impôt sur le revenu", -1], ["prelevements_travail", "cotisations, CSG et CRDS", -1],
+      ["prestations", "prestations (prime d'activité, aides au logement, allocations…)", 1], ["salaire_net", "salaire net", 1],
+      ["pensions_chomage", "pensions ou allocations chômage (brutes)", 1], ["taxes_consommation", "TVA et accises payées", -1]]
+      .filter(([k]) => L[k]).map(([k, lib, s]) => `<li>${esc(lib)} : ${k === "impot_revenu" || k === "prelevements_travail" || k === "taxes_consommation" ? (L[k] > 0 ? "+" + fr(L[k], 0).replace("+", "") + " € à payer" : fr(-L[k], 0).replace("+", "") + " € de moins à payer") : euros(L[k])}</li>`).join("") : "";
+    const dep = c.depart;
+    const depart = !dep ? "<p>Âge de départ : vous êtes déjà à la retraite, ou ce n'est pas un actif.</p>"
+      : !dep.programme ? "<p>Âge de départ : seul un programme entier qui règle l'âge le porte ; ici, aucun changement lu.</p>"
+      : `<p>Âge de départ : votre génération atteint l'âge légal (${fr(dep.age_legal_reference, 2).replace("+", "")} ans aujourd'hui) en ${dep.annee} ; le programme le change de <b>${fr(dep.ecart_age_legal, 2)} an</b>, soit un départ effectif de ${fr(dep.ecart_age_effectif, 2)} an (de ${fr(dep.ecart_age_effectif_bande[0], 2)} à ${fr(dep.ecart_age_effectif_bande[1], 2)}) et ${fr(dep.retraite_sans_limitation_ans, 2)} an de retraite sans limitation d'activité.</p>`;
+    const actif = ["smic", "median", "eleve", "independant"].includes(v.activite);
+    out.innerHTML = `<p class="pv-cas">Le cas type : ${esc([d.notes.grille.libelles[v.foyer], v.activite === "retraite" ? "" : v.enfants + " enfant(s)", d.notes.grille.libelles[v.activite], d.notes.grille.libelles[v.logement], d.notes.grille.libelles[v.activite === "retraite" ? "62_plus" : v.age]].filter(Boolean).join(", "))} ; revenu disponible sans la mesure : ${euros(c.rd).replace("+", "")} par an.${notes.length ? " (" + esc(notes.join(" ; ")) + ")" : ""} ${statut(d)}</p>
+      <div class="pv-tetes">
+        <div class="pv-tete"><h3>Votre revenu disponible réel, en ${an[f]}</h3><p class="i-gros" data-v="${c.reel[f]}">${euros(c.reel[f])}<small> par an</small></p><p>${fr(pct(f))} % ; en ${an[0]} : ${euros(c.reel[0])}</p></div>
+        <div class="pv-tete"><h3>Dont la mesure elle-même</h3><p class="i-gros">${euros(c.statique[f])}<small> par an</small></p><p>${origine}</p></div>
+        <div class="pv-tete"><h3>Votre risque d'être au chômage</h3>${actif ? `<p class="i-gros">${fr(c.risque[f])}<small> point</small></p><p>aujourd'hui ${fr(c.risque0, 1).replace("+", "")} % pour un ménage comme le vôtre</p>` : "<p>Vous n'êtes pas en emploi : votre risque n'est pas calculé ; le chômage autour de vous compte dans la satisfaction.</p>"}</div>
+        <div class="pv-tete"><h3>Satisfaction dans la vie (0 à 10)</h3><p class="i-gros">${fr(c.sat[f], 3)}<small> point</small></p><p>entre ${fr(c.sat_bande[0], 3)} et ${fr(c.sat_bande[1], 3)} ; un ordre de grandeur</p></div>
+        <div class="pv-tete"><h3>Espérance de vie</h3><p class="i-gros">${fr(c.ev[f], 2)}<small> mois</small></p><p>si l'écart de revenu durait ; entre ${fr(c.ev_bande[0], 2)} et ${fr(c.ev_bande[1], 2)}</p></div>
+      </div>
+      ${lignes ? `<h4>Ce que la mesure change à vos impôts et prestations (par an, la première année)</h4><ul class="pv-lignes">${lignes}</ul>` : ""}
+      ${depart}`;
+    out.appendChild(courbe({ libelle: "Votre revenu disponible réel", unite: "€ par an", valeurs: c.reel }, an));
+    const t = an.map((a, i) => `<tr><td>${a}</td><td>${fr(c.reel[i], 0)}</td><td>${fr(pct(i))}</td><td>${fr(c.statique[i], 0)}</td><td>${actif ? fr(c.risque[i]) : "—"}</td><td>${fr(c.sat[i], 3)}</td><td>${fr(c.ev[i], 2)}</td></tr>`).join("");
+    const det = document.createElement("details");
+    det.innerHTML = `<summary>Année par année</summary><div class="i-defile"><table class="i-table"><thead><tr><th>année</th><th>revenu réel (€)</th><th>%</th><th>dont la mesure (€)</th><th>risque de chômage (points)</th><th>satisfaction</th><th>espérance de vie (mois)</th></tr></thead><tbody>${t}</tbody></table></div>`;
+    out.appendChild(det);
   }
   function carte(e) {
     if (e.erreur) return `<a class="i-carte i-erreur" href="#f-${esc(e.cle)}"><h3>${esc(e.cle)}</h3><p class="i-q">Non calculée : ${esc(e.erreur)}</p></a>`;

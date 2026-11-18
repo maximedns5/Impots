@@ -32,11 +32,10 @@ CAS = {
 
 
 def main() -> int:
-    from jumeau_sante import trajectoire
-
     from impots import site_jumeau
     from impots.jumeau.impacts import pour_vous
     from impots.jumeau.navigateur import Session
+    from jumeau_sante import trajectoire
 
     session = Session(site_jumeau.donnees())
     commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
@@ -57,7 +56,7 @@ def main() -> int:
         for k in CAS:
             x = n["cas"][k]
             print(f"{slug:11s} {k:40s} statique {x['statique'][-1]:7.0f} réel 2035 "
-                  f"{x['reel'][-1]:7.0f} ({x['pct'][-1]:+.2f} %) risque {x['risque'][-1]:+.2f}"
+                  f"{x['reel'][-1]:7.0f} ({100 * x['reel'][-1] / x['rd']:+.2f} %) risque {x['risque'][-1]:+.2f}"
                   f" sat {x['sat'][-1]:+.3f} ev {x['ev'][-1]:+.2f} mois")
     SORTIE.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(f"-> {SORTIE.relative_to(ROOT)}")

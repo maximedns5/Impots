@@ -41367,3 +41367,34 @@ janvier de l'arbre ; le ménage n'a pas d'autre revenu ; les mois d'avant au mê
 
 **Pronostic** (non aveugle) : C1' et C2' tiennent ; C3' tient si l'hypothèse du loyer est
 celle de la Drees, et manque sinon, d'abord par l'aide au logement. Le résultat dans D-632.
+
+## D-632 — Pour vous (3) : le contrôle sur la prime d'activité, trois sur trois, non aveugle
+
+Le préenregistrement de D-631 est commité et poussé (462f58d), son amendement aussi
+(d127ec1), avant que le modèle ne tourne sur ce contrôle
+(`scripts/controle_pour_vous_ppa.py`, rapport `reports/jumeau/controle_pour_vous_ppa.json`,
+commit 90f0481). Le cas type : une personne seule sans enfant, locataire du parc privé en
+zone 2, au Smic brut de janvier toute l'année (1 766,92 € en 2024, 1 801,80 € en 2025),
+OpenFisca au droit de chaque année.
+
+| contrôle | modèle | publié (Drees, fiche 04) | tolérance | tient |
+|---|---:|---:|---|---|
+| C1' : prime d'activité, janvier 2024 | 222,99 € | 222 € | ± 6,66 € | oui |
+| C1' : prime d'activité, janvier 2025 | 247,57 € | 246 € | ± 7,38 € | oui |
+| C2' : son écart de 2024 à 2025 | +24,58 € | +24 € | rapport 0,8 à 1,2 | oui (1,02) |
+| C3' : revenu disponible, janvier 2024 | 1 621,66 € | 1 621 € | ± 3 % | oui (+0,04 %) |
+| C3' : revenu disponible, janvier 2025 | 1 673,86 € | 1 673 € | ± 3 % | oui (+0,05 %) |
+| C3' : l'année sur douze, 2024 | 1 640,88 € | 1 621 € | ± 3 % | oui (+1,2 %) |
+| C3' : l'année sur douze, 2025 | 1 671,03 € | 1 673 € | ± 3 % | oui (−0,1 %) |
+
+**Les trois tiennent, dans le pronostic.** Le revenu de janvier (salaire net 1 398,68 € en
+2024, 1 426,29 € en 2025, le Smic net que la fiche dit pour 2025, plus la prime
+d'activité) retrouve le publié à l'euro ; l'année sur douze s'en écarte de 1,2 % en 2024
+parce que le Smic a été relevé en novembre 2024. **Ce que le contrôle ne juge pas** :
+l'aide au logement est nulle à un Smic pour une personne seule, au loyer plafond (278,28 €
+en 2024) comme au loyer médian de la population (370 €) : l'hypothèse du loyer, qui n'a pas
+pu être lue, ne change rien ici, et l'aide au logement des cas types n'est pas jugée.
+**Non aveugle** : les quatre nombres étaient connus avant le calcul (D-631) ; le contrôle
+dit que le cas type et le barème d'OpenFisca reproduisent ce que la Drees publie, pas que
+la grille est juste ailleurs (couples, enfants, chômeurs, retraités). Aucune tolérance n'a
+changé. Un test léger tient ces nombres (`tests/test_pour_vous.py`).

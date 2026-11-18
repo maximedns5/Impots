@@ -164,6 +164,31 @@ année par année, avec ce qu'on peut en croire.</p>
 s'additionnent pas</b> : chacun a son unité, et aucun n'est converti dans celle d'un
 autre.</p>
 <div id="ensemble" class="i-ensemble"></div>
+<section id="pour-vous" class="i-pourvous" aria-labelledby="titre-pourvous">
+<h2 id="titre-pourvous">Pour vous</h2>
+<p class="i-aide">Dites votre situation : la page montre ce que la mesure change pour un
+ménage comme le vôtre, année par année. Un cas type, pas vous : ses revenus sont des
+médianes de la population, et le calcul le dit quand il n'est qu'une approximation.</p>
+<div class="i-situation">
+  <label>Foyer <select id="pv-foyer"><option value="seul">seul</option>
+    <option value="couple">en couple</option></select></label>
+  <label>Enfants <select id="pv-enfants"><option value="0">aucun</option>
+    <option value="1">un</option><option value="2">deux</option>
+    <option value="3">trois</option></select></label>
+  <label>Activité <select id="pv-activite"><option value="smic">salarié au Smic</option>
+    <option value="median">salaire médian</option>
+    <option value="eleve">salaire élevé (cadre)</option>
+    <option value="chomeur">au chômage</option><option value="retraite">retraité</option>
+    <option value="independant">indépendant</option></select></label>
+  <label>Logement <select id="pv-logement"><option value="locataire">locataire</option>
+    <option value="proprietaire">propriétaire</option></select></label>
+  <label>Âge <select id="pv-age"><option value="moins_30">moins de 30 ans</option>
+    <option value="30_49" selected>30 à 49 ans</option>
+    <option value="50_61">50 à 61 ans</option>
+    <option value="62_plus">62 ans ou plus</option></select></label>
+</div>
+<div id="pv-resultat" aria-live="polite"></div>
+</section>
 <h2>Dimension par dimension</h2>
 <div id="fiches"></div>
 </section>
@@ -181,6 +206,12 @@ officiel fait après coup l'a confrontée), <b>sourcé, non jugé</b> (chaque co
 sa source publiée, aucun juge connu), <b>illustratif</b> (un ordre de grandeur : une loi
 déclarée, une mesure mise à l'échelle). Une dimension non jugée n'est jamais une
 prévision vérifiée.</li>
+<li>Pour vous : chaque cas type passe par OpenFisca avant et après chaque mesure de la
+liste (impôts, cotisations, prestations, TVA), au droit de 2026 ; puis le jumeau y ajoute
+les salaires, l'indexation et les prix. Un indépendant, une loi simple, une mesure hors de
+la liste prennent le gain moyen d'un ménage de leur décile : une approximation, dite.
+La satisfaction et la santé reprennent les coefficients publiés des fiches du moral et de
+la santé (D-630 à D-633).</li>
 <li>Composer : une mesure à ×2 double chaque montant de sa passe, au premier ordre, sans
 refaire la passe ; une entrée plus tardive décale ses années. Les interactions entre
 mesures d'une même proposition ne sont pas chiffrées (D-605).</li>

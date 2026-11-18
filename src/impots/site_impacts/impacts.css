@@ -78,3 +78,14 @@
 .i-defile{overflow-x:auto;max-width:100%}
 .i-methode{max-width:48rem;margin:1rem 0;font-size:.88rem}
 @media (max-width:760px){.i-corps{grid-template-columns:1fr}.i-ensemble{grid-template-columns:1fr}.i-composition input[type=range]{width:6.5rem}}
+.i-pourvous{background:var(--surface);border:1px solid var(--trait);border-radius:var(--rayon);padding:.7rem .85rem;margin:.6rem 0 1.4rem;max-width:52rem}
+.i-pourvous h2{margin-top:0}
+.i-situation{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr));gap:.4rem .7rem;margin:.4rem 0 .7rem}
+.i-situation label{display:flex;flex-direction:column;font:600 .82rem var(--sans);gap:.15rem;min-width:0}
+.i-situation select{font:.92rem var(--sans);min-height:2.2rem;border:1px solid var(--trait-fort);border-radius:var(--rayon-petit);background:var(--surface);color:var(--encre);padding:.15rem .3rem;max-width:100%}
+.pv-tetes{display:grid;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr));gap:.6rem;margin:.5rem 0}
+.pv-tete{border:1px solid var(--trait);border-radius:var(--rayon-petit);padding:.5rem .6rem;background:var(--papier);min-width:0}
+.pv-tete h3{font:600 .85rem var(--sans);margin:0 0 .2rem;color:var(--encre-2)}
+.pv-tete p{margin:.1rem 0;font-size:.8rem;color:var(--encre-2)}
+.pv-cas{font-size:.86rem;margin:.2rem 0}
+.pv-lignes{font-size:.84rem;margin:.3rem 0;padding-left:1.1rem}

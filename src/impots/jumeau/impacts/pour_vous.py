@@ -380,17 +380,19 @@ def pour_vous(variante: Any, reference: Any, depart: Any, cellules: Any, *,
     )
     cas_json = {}
     for k, r in res.items():
+        # Compact (la page porte tous les cas de chaque programme précalculé) : le % se
+        # relit du revenu réel (100 réel / rd), les bandes à l'horizon seulement.
         cas_json[k] = {
             "rd": round(r["revenu_disponible_reference"]),
-            "reel": _r(r["revenu_reel"], 0), "pct": _r(r["revenu_reel_pct"], 3),
-            "statique": _r(r["statique"], 0), "risque0": round(r["risque_chomage_base"], 2),
-            "risque": _r(r["risque_chomage"], 4), "sat": _r(r["satisfaction"], 4),
-            "sat_b": _r(r["satisfaction_bas"], 4), "sat_h": _r(r["satisfaction_haut"], 4),
-            "ev": _r(r["esperance_vie"], 3), "ev_b": _r(r["esperance_vie_bas"], 3),
-            "ev_h": _r(r["esperance_vie_haut"], 3), "bs": _r(r["bonne_sante"], 4),
-            "depart": r["depart"],
-            "origines": [{x: (round(v, 2) if isinstance(v, float) else v)
-                          for x, v in o.items() if x != "ecarts"} for o in r["origines"]],
+            "reel": _r(r["revenu_reel"], 0), "statique": _r(r["statique"], 0),
+            "risque0": round(r["risque_chomage_base"], 2), "risque": _r(r["risque_chomage"], 3),
+            "sat": _r(r["satisfaction"], 4), "ev": _r(r["esperance_vie"], 3),
+            "sat_bande": [round(float(r["satisfaction_bas"][-1]), 4),
+                          round(float(r["satisfaction_haut"][-1]), 4)],
+            "ev_bande": [round(float(r["esperance_vie_bas"][-1]), 3),
+                         round(float(r["esperance_vie_haut"][-1]), 3)],
+            "bonne_sante": round(float(r["bonne_sante"][-1]), 4),
+            "depart": r["depart"], "origines": _compte(r["origines"]),
             "lignes": _lignes(r["origines"]),
         }
     exact = all(o["origine"] in ("openfisca", "aucun ménage touché")
@@ -433,6 +435,13 @@ def _ensemble(ident: str, mesures: Sequence[Any]) -> Any:
                 d = menages.setdefault(int(a), {"deciles": np.zeros(10)})
                 d["deciles"] = d["deciles"] + np.asarray(x["deciles"], float)
     return SimpleNamespace(identifiant=ident, annees=tuple(annees), menages=menages)
+
+
+def _compte(origines: Sequence[Mapping[str, Any]]) -> dict[str, int]:
+    out: dict[str, int] = {}
+    for o in origines:
+        out[o["origine"]] = out.get(o["origine"], 0) + 1
+    return out
 
 
 def _lignes(origines: Sequence[Mapping[str, Any]]) -> dict[str, float] | None:
