@@ -41700,7 +41700,7 @@ Les cas que le tableau d'OpenFisca tient ne changent pas : `pour_vous_programmes
 seul `lus` gagne « rdb_dXX ») et garde son commit. Test :
 `test_le_gain_de_la_cellule_est_ramene_en_euros_de_2026`, en échec sur le code d'avant.
 
-## D-639 — L'économie met en tête le PIB en volume ; le nominal à côté, sans sens
+## D-639 — Le PIB en volume en tête de l'économie ; le double compte de la santé retiré
 
 **L'erreur** (D-635, écrit, non changé) : la dimension « économie » (D-606) n'avait qu'un
 PIB, le nominal (`pib` de l'état, celui de la page du jumeau), marqué « mieux » quand il
@@ -41728,3 +41728,38 @@ jumeau, au bit, passe toujours. Le juge de l'histoire (D-439) lisait déjà `pib
 Ruffin (le Smic) est celui dont la tête baisse le plus : une part de son PIB nominal était
 des prix. Aucun rapport commité ne lit cette dimension : aucun n'est refait. Test :
 `test_l_economie_met_en_tete_le_pib_en_volume`, en échec sur le code d'avant.
+
+**Le double compte de la santé** (D-635, écrit, non changé ; le même volet, les numéros
+réservés étant pris). Le canal du chômage (Sullivan et von Wachter : le surcroît de
+mortalité d'un travailleur qui perd son emploi, perte de revenu comprise) et le canal du
+revenu (le gradient de l'Insee sur le revenu des déciles) comptaient tous deux le revenu
+de ceux qui passent entre le chômage et l'emploi : le jumeau le met dans le revenu des
+déciles (`menages.revenus_cellules` : ρ_c π D1 ê aux cellules au prorata de leurs
+chômeurs, moins l'allocation a_s w ΔU). Mesuré (jumeau, θ à ½, `scripts/jumeau_sante.py`)
+avant tout correctif, 2035 : Attal, 665 000 chômeurs de moins, 8,78 Md€ de revenu des
+déciles par l'emploi ; ce revenu fait 1 835 des 7 978 années de vie du canal du revenu,
+quand le canal du chômage en compte 16 147. Mélenchon (des actifs en plus : le chômage et
+l'emploi montent ensemble en 2035) : rien de commun en 2035. **Un double compte
+manifeste** pour un programme qui fait baisser le chômage : retiré.
+
+*Le correctif* (`impacts/sante.py`, `revenu_du_chomage`, `calculer_sante`) : la part q =
+−ΔU / ΔE (bornée à [0, 1], nulle si le revenu n'a pas le signe de −ΔU) de ce revenu sort
+de Δln y pour la durée de vie et les décès ; le renoncement aux soins, que le canal du
+chômage ne couvre pas, la garde. Jamais plus que ce que le jumeau a mis dans le revenu.
+Sans l'état de départ, rien n'est retiré et `notes` le dit ; `scripts/jumeau_sante.py`
+passe désormais le départ. `reports/jumeau/sante_programmes.json` refait. Avant → après,
+2035, années de vie (milliers) [bande] et décès évités ; puis le cumul 2026-2035 :
+
+| programme | années de vie 2035 | dont revenu | décès 2035 | cumul |
+|---|---|---|---|---|
+| Attal | 24,13 → 22,29 [5,4 ; 66,1] | 7,98 → 6,14 | 1 272 → 1 099 | 207,9 → 193,3 |
+| Retailleau | 13,04 → 12,17 | 7,04 → 6,17 | 858 → 776 | 126,0 → 118,8 |
+| Philippe | 12,05 → 11,51 | 8,85 → 8,31 | 940 → 889 | 138,5 → 133,1 |
+| Mélenchon | 14,62 → 14,62 | 17,95 → 17,95 | 1 591 → 1 591 | 188,3 → 188,1 |
+
+Le canal du chômage ne change pas. Le revenu retiré en 2035 : 8,78 Md€ (Attal), 4,26
+(Retailleau), 2,72 (Philippe), 0 (Mélenchon). Test :
+`test_le_revenu_du_chomage_ne_compte_pas_deux_fois`, en échec sur le code d'avant. Le choix
+écrit : on retire du revenu, pas du chômage, parce que Sullivan et von Wachter mesurent
+l'effet total d'une perte d'emploi et que la part causale du gradient (s = 1/12) est la
+plus incertaine des deux ; le propriétaire peut préférer l'inverse.
