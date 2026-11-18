@@ -40350,3 +40350,68 @@ dans la tolérance.
 
 **Rien n'est retouché après le premier calcul** ; un cas manqué reste écrit. Le résultat
 ira dans D-592 ; les nombres des dimensions sur des programmes réels, dans D-593.
+
+## D-593 — Le pouvoir d'achat et l'entente (3) : les nombres sur trois programmes réels
+
+**Ce qui a tourné** (commits 0775711, 923f50b ; le jumeau seul, en secondes, aucune passe
+sur la population). Le mode structurel du navigateur, vue figée, la convention de D-414
+(`parts_premiere_annee`), θ½ au tirage 0, et 200 tirages des lois de θ (la graine de
+D-459) pour les bandes, `trajectoire_tiree` : 2,4 s la trajectoire, 0,1 s la dimension.
+La distribution des niveaux de vie dans les cellules est **l'approchée** : la passe de
+la mesurée (`scripts/jumeau_niveaux_de_vie.py`, 93 s) attend le verrou commun, tenu
+depuis 23 h 30 UTC par une étude d'une autre session ; ses nombres iront dans D-594. Les
+bandes sont celles des θ seuls (5 et 95 %), pas celles de la méthode des cellules.
+
+**Les références reconstituées** (approchée, 2024) : pauvreté 15,6 %, Gini 0,300, D9/D1
+4,15, S80/S20 4,66, médiane 24 897 € ; l'Insee publie, pour 2023, de l'ordre de 15 %,
+0,29 à 0,30, 3,4 et 4,5 (de mémoire, non relu ici) : **D9/D1 est trop haut** (le bas de
+la distribution, prolongé linéairement sous le premier décile), le reste du bon ordre.
+
+**Retailleau** (37,5 Md€ aux ménages en 2026, chocs statiques et dynamique) :
+
+| | 2026 | 2030 | 2035 | bande 2035 |
+|---|---:|---:|---:|---|
+| gain réel, € de 2025 par UC | +791 | +767 | +707 | +639 à +764 |
+| en % du revenu disponible | +2,67 | +2,49 | +2,18 | +1,97 à +2,36 |
+| D1 / D5 / D10, % | +5,2 / +4,1 / +1,1 | | +4,7 / +3,4 / +0,8 | |
+| ce que les prix reprennent, € par UC | −7 | −15 | −33 | −85 à +9 |
+| pauvreté, points | −0,82 | −0,74 | −0,77 | −0,79 à −0,73 |
+| Gini, points (×100) | −0,71 | −0,72 | −0,63 | −0,64 à −0,60 |
+
+Les prix de la consommation baissent (−0,04 % en 2026, −0,15 % en 2035) : la « reprise »
+est négative, les prix rendent un peu de pouvoir d'achat. Tous les ménages gagnent.
+
+**Attal** (53,5 Md€ en 2026, 39,7 en 2035) : +1 133 € par UC en 2026 (+3,8 %), +848 en
+2035 (+594 à +1 101) ; D1 +1,9 %, D5 +4,7 %, D10 +3,7 % en 2026 : le gain va au milieu et
+au haut. Les prix baissent de 0,70 % en 2035, ce qui rend 153 € par UC. **La pauvreté
+monte de 1,1 point en 2026** (la médiane monte plus vite que le bas : la pauvreté est
+relative), puis +0,13 en 2035 (−0,02 à +0,57) ; le Gini +0,07 puis −0,14. En 2035, 0 à
+4,6 % de ménages perdants selon les tirages.
+
+**Mélenchon**, que le mode structurel refuse (le Smic, D-412), sur le seul choc statique
+de la passe de sa première année (`chocs_du_rapport`, `revenus_statiques`) : 68,3 Md€
+aux ménages en 2026, dont −5,9 Md€ pour D10 ; +1 454 € par UC (€ de 2024, +5,1 %), D1
++2 380, D10 −1 262 ; 90 % de gagnants, D10 entier perdant ; la pauvreté −1,18 point, le
+Gini −2,24 points, D9/D1 −0,31. Sans dynamique ni prix : ni l'emploi que le Smic détruit
+ou crée, ni la hausse des prix qu'il ferait ; dit sur la dimension.
+
+**Ce que le type de ménage ne dit pas.** Le choc d'un décile se répartit entre ses types
+au prorata des ménages ; une personne seule a une UC, un couple avec enfants plus de
+deux : à gain égal par ménage, le gain par UC des personnes seules est le double. Les
+bornes sous deux autres clés (UC, revenu) le montrent : Retailleau, personnes seules
++1 160 (ménages) contre +776 (UC) ; Mélenchon +2 316 contre +1 563. **Le gain par type
+est un ordre de grandeur, pas un résultat** ; il faudrait les chocs par décile et par
+type dans les rapports des études (la passe les a), un champ que les rapports n'ont pas.
+
+**Ce qui n'est pas fait, et pourquoi.** Aucun coefficient ne relie les écarts à la
+confiance ou à la cohésion : ceux que l'enregistreur connaît (corrélations entre pays du
+Gini et de la confiance) ne sont pas des effets d'une mesure, et il ne les a pas relus ;
+l'entente reste « ce qui rapproche ou sépare » en niveaux de vie. Le territoire et l'âge
+attendent la distribution mesurée.
+
+**Pour le volet `tableau`.** `impacts.calculer(traj, None, depart, cellules)` rend les
+deux dimensions ; pour des bandes, une trajectoire de `pouvoir.trajectoire_tiree(session,
+choix, tirages)` (tirage 0 au réglage) ; pour une mesure refusée, `options["revenus"] =
+pouvoir.revenus_statiques(pouvoir.chocs_du_rapport(premiere_annee), cellules)`. La
+distribution mesurée est lue dans `reports/jumeau/niveaux_de_vie_cellules.json` quand le
+fichier est là (à embarquer dans le paquet de la page), sinon l'approchée.
