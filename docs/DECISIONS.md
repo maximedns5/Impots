@@ -41239,3 +41239,104 @@ génération) ; (b) la part causale du gradient (1/12 au centre) et le centre de
 (c) chiffrer la bascule vers l'invalidité, le chômage et les arrêts maladie après un report
 (Drees 2016 pour le COR, Caroli et al. 2023), non lue ; (d) lire le temps de travail (32 h,
 28 h) quand une mesure du jumeau le porte.
+
+## D-630 — Pour vous (1) : la méthode, un cas type par OpenFisca, la cellule à défaut
+
+**Pourquoi** (volet `cas` du but 29, ajouté par le coordinateur dans la nuit du 17 au 18
+novembre ; numéros D-630 à D-634). Le lecteur dit sa situation et voit ce qu'une mesure,
+un programme ou une proposition composée change pour lui, année par année : son revenu
+disponible réel, ses impôts et prestations, son âge de départ, son risque de chômage, et un
+ordre de grandeur de ce que cela fait à sa satisfaction et à sa santé. Aucune microdonnée
+individuelle n'est publiée : des cas types seulement.
+
+**Ce qui existe.** Le calcul d'un ménage par OpenFisca (`engine.compute`, celui de `POST
+/simulate`, fermé sans clé par D-295) ; les cas types chiffrés d'avance du parcours
+(`reports/parcours/menages.json`, cinq situations, droit de 2024, sans logement) ; « un
+ménage comme le mien » (`site_population`, la cellule et le cas type les plus proches,
+sans mesure) ; et, pour chaque mesure de la bibliothèque, un scénario (`scenarios/<clé>.json`)
+dont la réforme des ménages est une `ReformSpec`, chiffrée en 2026 et portée ensuite.
+
+**Décidé.**
+
+1. **Le statique, exact quand on peut** : pour chaque cas type de la grille et chaque
+   scénario de la bibliothèque (les programmes, leurs mesures, les volets des textes), le
+   ménage passé par OpenFisca au droit de 2026, avant et après la réforme du scénario, tous
+   les ménages de la grille dans une seule simulation (`impots.cas_types`, chaque ligne du
+   registre du moteur, refusé si un ménage pris seul ne redonne pas le même revenu
+   disponible à un euro près). Une hausse du Smic relève le salaire du cas type au Smic (la
+   loi du premier jour, et la diffusion déclarée du scénario au-dessus, comme
+   `population.salaires`) et l'arbre porte le nouveau Smic ; le point d'indice ne touche
+   pas ces cas types (salariés du privé, dit) ; la TVA et les accises sont comptées sur la
+   consommation imputée du cas type (Budget de famille, `consommation`, son décile et ses
+   unités de consommation), à volumes constants. Le tableau est commité
+   (`jumeau/parametres/cas_types.json`, des cas types, aucune personne), avec la commande qui
+   le refait ; la page le lit sans OpenFisca (D-415).
+2. **À défaut, la cellule** : un cas type que le moteur des ménages ne sait pas décrire
+   (l'indépendant), une loi simple, ou une mesure absente du tableau prend le gain par
+   ménage du décile de sa cellule (décile × type, le choc statique de la mesure par décile,
+   réparti par ménage comme `blocs.menages`), dit « approximation : la cellule ».
+3. **Une proposition composée** : la somme des statiques de ses mesures, chacune fois son
+   intensité et décalée de son année d'entrée (au premier ordre, comme D-605), dite
+   « illustrative » ; les interactions entre mesures ne sont pas chiffrées.
+4. **Le temps** : le statique de 2026 en part du revenu disponible du cas type, tenu
+   chaque année où la mesure s'applique ; s'y ajoutent, par le jumeau, le salaire moyen par
+   tête (variante sur référence) sur le salaire net du cas type, l'indexation des pensions
+   et des prestations sur le prix de la consommation (l'hypothèse du jumeau, D-414), et le
+   revenu est déflaté par l'écart du prix de la consommation (D-414). Le mode réduit ne
+   porte ni salaires ni prix : le statique seul, dit.
+5. **Le chômage** : le risque de base est le taux de chômage de la cellule du cas type
+   (chômeurs sur actifs, BIT, la population de D-553), multiplié par le rapport des
+   chômeurs de la variante et de la référence du jumeau.
+6. **La satisfaction et la santé**, aux coefficients de D-595 et D-620, sans en changer
+   aucun : β Δln y − δ Δ(risque) − ε Δu − φ π̄ pour la satisfaction (points de 0 à 10) ;
+   l'espérance de vie si l'écart durait (s g Δln y), la probabilité d'être en bonne santé
+   (−c (e − u) Δ(risque)) ; l'âge de départ de la génération du lecteur, lu dans
+   `sante.yaml` pour un programme entier (D-622), l'âge effectif τ fois l'écart légal.
+   Bandes : l'enveloppe des bornes, comme ces deux dimensions. Statut « illustratif ».
+7. **La grille** : seul ou en couple (les deux adultes dans la même situation), zéro à
+   trois enfants, Smic, salaire médian, salaire élevé (le neuvième décile), retraité,
+   chômeur indemnisé, indépendant ; locataire du parc privé ou propriétaire ; l'âge (moins
+   de 30 ans, 30 à 49, 50 à 61, 62 ou plus pour un retraité). Les niveaux sont ceux de la
+   population de D-553 (salariés à temps complet toute l'année : médiane et neuvième
+   décile des salaires bruts, en multiples du Smic de 2024 portés au Smic de 2026 ;
+   médianes des pensions des 65 ans ou plus et des allocations chômage des chômeurs ;
+   médiane des loyers des locataires), écrits avec leur source dans le tableau.
+
+Le contrôle d'un barème passé sur un cas type publié est préenregistré dans D-631 ; les
+nombres de tête dans D-633.
+
+## D-631 — Pour vous (2) : le contrôle sur la prime d'activité, préenregistré
+
+**Le juge** : la Drees, « Minima sociaux et prestations sociales », la fiche « La prime
+d'activité » de deux éditions, l'édition 2022 (fiche 29) et l'édition 2024 (fiche 30) :
+le cas type qu'elles publient, le montant mensuel de la prime d'activité selon le revenu
+d'activité et la configuration familiale, à la date que chaque fiche dit. Aucune valeur
+n'en a été lue : une recherche a seulement montré que la fiche de 2022 porte ce cas type,
+« au 1er juillet 2022 », avec une colonne pour la personne seule sans enfant ; et qu'au 1er
+juillet 2022 le Smic à temps plein valait 1 646 € bruts, 1 303 € nets (un extrait de presse,
+pas le juge).
+
+**Ce qui est comparé.** Pour chaque édition, les points du cas type de la personne seule
+sans enfant (chaque revenu d'activité que la fiche donne, en part du Smic ou en euros), et,
+s'ils y sont, ceux du couple sans enfant et du parent seul ou du couple avec deux enfants.
+Le modèle : le ménage du cas type par OpenFisca (`impots.cas_types`), au mois de la date de
+la fiche, le salaire du cas type celui que la fiche dit (en part du Smic du mois : le Smic
+de l'arbre), les hypothèses du cas type (le logement, le forfait logement, l'aide au
+logement) reprises telles que la fiche les écrit, lues avant le calcul et dites dans D-632.
+La prime d'activité d'un mois lit les ressources du trimestre d'avant : le salaire est
+constant toute l'année, et les mois d'avant portent le droit de leur mois.
+
+* **C1, les montants** : chaque point dans [publié − max(5 €, 3 %) ; publié + max(5 €,
+  3 %)]. La C1 tient si 80 % des points tiennent, et le point de la personne seule à un
+  Smic tient en tout cas.
+* **C2, ce que les barèmes de juillet 2022 à la date de 2024 ont changé** (la
+  revalorisation exceptionnelle de 4 % de juillet 2022, celles d'avril 2023 et d'avril 2024,
+  et le Smic) : pour la personne seule sans enfant à un Smic (à son plus proche point des
+  deux fiches s'il n'y est pas), le rapport de l'écart du modèle entre les deux dates à
+  l'écart publié dans [0,8 ; 1,2] ; un écart publié de moins de 10 € n'est pas jugé
+  (le dire).
+
+**Pronostic** : C1 tient, chaque point à moins de 2 % ou 3 € ; C2 tient, rapport entre 0,95
+et 1,05. Ce qui ferait manquer : la date (un mois de revalorisation), le forfait logement,
+l'arrondi des fiches à l'euro, le Smic net que la fiche retient. Aucune tolérance ne change
+après le calcul ; le résultat dans D-632.
