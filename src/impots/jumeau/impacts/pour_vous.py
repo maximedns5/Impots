@@ -304,6 +304,9 @@ def sources(tab: Mapping[str, Any], pm: Mapping[str, Any], ps: Mapping[str, Any]
 
 
 LIMITES = (
+    "La bande est l'enveloppe des bornes publiées des coefficients, canal par canal "
+    "(celle du total somme les bornes de même sens) : ni un intervalle de confiance, ni "
+    "des tirages des θ du jumeau, qui sont lus au réglage.",
     "Des cas types, pas des personnes : un ménage de la grille, dont les revenus sont des "
     "médianes de la population ; votre situation précise peut en être loin (un loyer, des "
     "heures, un patrimoine, des revenus du capital qu'il n'a pas).",

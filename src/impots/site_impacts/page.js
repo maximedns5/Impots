@@ -343,7 +343,7 @@
     if (ind.par_groupe && Object.keys(ind.par_groupe).length) div.appendChild(groupes(ind, annees, fin));
     const lignes = annees.map((a, i) => `<tr><td>${a}</td><td data-v="${v[i]}">${fr(v[i])}</td>${ind.bas ? `<td>${fr(ind.bas[i])}</td><td>${fr(ind.haut[i])}</td>` : ""}</tr>`).join("");
     const det = document.createElement("details");
-    det.innerHTML = `<summary>Les nombres, année par année</summary><div class="i-defile"><table class="i-table"><thead><tr><th>année</th><th>${esc(ind.unite)}</th>${ind.bas ? "<th>bas (5 %)</th><th>haut (95 %)</th>" : ""}</tr></thead><tbody>${lignes}</tbody></table></div>`;
+    det.innerHTML = `<summary>Les nombres, année par année</summary><div class="i-defile"><table class="i-table"><thead><tr><th>année</th><th>${esc(ind.unite)}</th>${ind.bas ? "<th>bas de la bande</th><th>haut de la bande</th>" : ""}</tr></thead><tbody>${lignes}</tbody></table></div>`;
     div.appendChild(det);
     return div;
   }
@@ -393,7 +393,7 @@
     if (k.length) { const f = k[k.length - 1]; parts.push(`<circle class="g-point" cx="${X(f)}" cy="${Y(v[f])}" r="4"/>`); }
     parts.push(`<line class="g-curseur" x1="0" x2="0" y1="${h}" y2="${H - bs}" visibility="hidden"/><rect x="${g}" y="0" width="${W - g - dr}" height="${H}" fill="transparent"/>`);
     fig.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(ind.libelle)}, écart à la trajectoire sans la mesure, ${esc(ind.unite)}, de ${annees[0]} à ${annees[annees.length - 1]}">${parts.join("")}</svg>
-      <figcaption>${esc(ind.libelle)} : écart à la trajectoire sans la mesure (${esc(ind.unite)})${ind.bas ? " ; en clair, la bande de 5 à 95 %" : ""}.</figcaption>`;
+      <figcaption>${esc(ind.libelle)} : écart à la trajectoire sans la mesure (${esc(ind.unite)})${ind.bas ? " ; en clair, la bande (ce qu'elle est : « Ce qu'il faut savoir »)" : ""}.</figcaption>`;
     const svg = fig.querySelector("svg"), cur = svg.querySelector(".g-curseur");
     const bulle = document.createElement("div");
     bulle.className = "i-bulle"; bulle.hidden = true; fig.appendChild(bulle);

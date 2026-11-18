@@ -328,6 +328,9 @@ def sources(p: Mapping[str, Any]) -> tuple[Source, ...]:
 
 
 LIMITES = (
+    "La bande est l'enveloppe des bornes publiées des coefficients, canal par canal "
+    "(celle du total somme les bornes de même sens) : ni un intervalle de confiance, ni "
+    "des tirages des θ du jumeau, qui sont lus au réglage.",
     "Corrélation contre causalité, surtout : le gradient de l'Insee (13 ans d'écart "
     "d'espérance de vie chez les hommes entre les 5 % les plus aisés et les 5 % les plus "
     "modestes) est une association ; le diplôme, le métier, la santé dès l'enfance font à "

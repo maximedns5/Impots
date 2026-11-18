@@ -317,6 +317,9 @@ def sources(p: Mapping[str, Any]) -> tuple[Source, ...]:
 
 
 LIMITES = (
+    "La bande est l'enveloppe des bornes publiées des coefficients, canal par canal "
+    "(celle du total somme les bornes de même sens) : ni un intervalle de confiance, ni "
+    "des tirages des θ du jumeau, qui sont lus au réglage.",
     "L'adaptation hédonique : l'effet du revenu s'estompe en partie avec le temps (Clark "
     "et al. 2018 trouvent 0,13 en panel contre 0,35 à 0,50 pour un revenu exogène de long "
     "terme) ; l'effet d'une hausse durable est compté chaque année, sans adaptation. Le "

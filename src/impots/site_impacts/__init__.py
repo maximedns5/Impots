@@ -219,8 +219,11 @@ la population synthétique du projet), puis du jumeau de l'économie, année par
 (<a href="jumeau.html">la page du jumeau</a>, <a href="cascade.html">l'effet
 papillon</a>).</li>
 <li>Par défaut, le jumeau complet, sur la population figée de 2026, chaque paramètre
-incertain au centre de sa plage (θ = ½). La bande va de 5 à 95 % de tirages de ces
-paramètres : l'incertitude des réactions de l'économie, pas celle du chiffrage.</li>
+incertain au centre de sa plage (θ = ½). Deux sortes de bandes, que chaque fiche dit
+dans « Ce qu'il faut savoir » : pour les comptes et l'économie, de 5 à 95 % de tirages de
+ces paramètres (l'incertitude des réactions de l'économie, pas celle du chiffrage) ; pour
+le moral, la santé, « Pour vous » et les canaux de la productivité, l'enveloppe des bornes
+publiées de leurs coefficients, pas un intervalle de confiance.</li>
 <li>Le statut de chaque dimension dit ce qu'on peut en croire : <b>jugé</b> (un chiffrage
 officiel fait après coup l'a confrontée), <b>sourcé, non jugé</b> (chaque coefficient a
 sa source publiée, aucun juge connu), <b>illustratif</b> (un ordre de grandeur : une loi
