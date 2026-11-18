@@ -532,7 +532,8 @@
     const v = i < 0 ? null : (ind.valeurs || [])[i];
     if (v === null || v === undefined) return { absent: "absent cette année", statut: d.statut };
     const b = ind.bas ? ind.bas[i] : null, h = ind.haut ? ind.haut[i] : null;
-    const net = b !== null && h !== null && b !== undefined && h !== undefined && ((b > 1e-9 && h > 1e-9) || (b < -1e-9 && h < -1e-9));
+    // Le sens est sûr quand la bande reste d'un côté de zéro, celui du nombre (D-650).
+    const net = b !== null && h !== null && b !== undefined && h !== undefined && ((b > 1e-9 && h > 1e-9 && v > 1e-9) || (b < -1e-9 && h < -1e-9 && v < -1e-9));
     const largeur = net ? Math.max(h, b) - Math.min(h, b) : 0;
     return { v, b: b ?? null, h: h ?? null, statut: d.statut, juge: d.juge, sens: ind.sens, net,
       nettete: net ? (largeur > 1e-12 ? Math.min(Math.abs(b), Math.abs(h)) / largeur : Infinity) : -1 };

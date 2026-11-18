@@ -45,14 +45,14 @@ BANDES = [(-2.0, 1.0), (-1.0, 0.0), (0.0, 3.0), (-0.5, 0.5), (1.0, 2.0), (-3.0, 
 def test_une_bande_qui_touche_zero_ne_dit_jamais_probablement(valeur, bas, haut) -> None:
     d = _dim("a", [valeur] * 3, [bas] * 3, [haut] * 3)
     t = _tetes(synthese.en_bref([d]))[0]
-    d_un_cote = (bas > 0 and haut > 0) or (bas < 0 and haut < 0)
+    d_un_cote = ((bas > 0 and haut > 0 and valeur > 0)
+                 or (bas < 0 and haut < 0 and valeur < 0))
     if d_un_cote:
         assert t["certitude"] == "probable" and "probablement" in t["texte"]
     else:
         assert t["certitude"] != "probable"
         assert "probablement" not in t["texte"]
-        if valeur and not (bas == haut == 0):
-            assert "le sens n'est pas sûr" in t["texte"]
+        assert "le sens n'est pas sûr" in t["texte"]
     assert (t["bas"], t["haut"]) == (bas, haut)
 
 
@@ -76,6 +76,7 @@ def test_aucune_phrase_ne_dit_probablement_sur_une_bande_qui_change_de_signe() -
         for p in s["phrases"]:
             if "probablement" in p["texte"] and p["sorte"] == "tete":
                 assert p["bas"] * p["haut"] > 0, p
+                assert p["valeur"] * p["bas"] > 0, p
                 assert p["statut"] != "illustratif"
             if p["sorte"] in ("pour_qui", "detail"):
                 assert "probablement" not in p["texte"]
@@ -202,3 +203,12 @@ def test_une_erreur_et_une_dimension_vide_sont_dites() -> None:
     sortes = [p["sorte"] for p in s["phrases"]]
     assert sortes == ["cadre", "absent", "erreur"]
     assert "chaîne des études" in s["phrases"][0]["texte"]
+
+
+def test_le_libelle_court_garde_de_qui_il_s_agit() -> None:
+    """Un arbitrage sur un cas type dit lequel : la parenthèse reste, la virgule hors des
+    parenthèses coupe (avant : « le revenu disponible réel du ménage », sans le cas)."""
+    assert synthese._court("Le revenu du ménage (seul, au Smic, locataire)") == \
+        "le revenu du ménage (seul, au Smic, locataire)"
+    assert synthese._court("Satisfaction gagnée, toutes personnes") == "satisfaction gagnée"
+    assert synthese._court("PIB en volume") == "PIB en volume"

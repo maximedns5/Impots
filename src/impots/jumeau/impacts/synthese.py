@@ -12,7 +12,8 @@ LES RÈGLES (D-650) :
 * **La certitude d'une phrase** vient de la bande de l'indicateur qu'elle lit, à l'année
   qu'elle dit, et du statut de sa dimension :
   - « probablement » : la bande existe et reste tout entière d'un côté de zéro
-    (bas et haut strictement de même signe), et la dimension n'est pas illustrative ;
+    (bas et haut strictement de même signe), du côté du nombre dit, et la dimension
+    n'est pas illustrative ;
   - « un ordre de grandeur » : la dimension est illustrative ; jamais « probablement »,
     même quand sa bande reste d'un côté ;
   - « le sens n'est pas sûr » : la bande touche ou franchit zéro ;
@@ -98,10 +99,16 @@ def _bas_casse(s: str) -> str:
 
 
 def _court(lib: str) -> str:
-    """Le libellé raccourci pour une liste : jusqu'à sa première virgule ou parenthèse
-    (« Satisfaction gagnée, toutes personnes… » → « satisfaction gagnée »)."""
-    coupe = min((i for i in (lib.find(" ("), lib.find(", ")) if i > 0), default=len(lib))
-    return _bas_casse(lib[:coupe])
+    """Le libellé raccourci pour une liste : jusqu'à sa première virgule hors des
+    parenthèses (« Satisfaction gagnée, toutes personnes… » → « satisfaction gagnée ») ;
+    une parenthèse reste, car elle dit souvent de qui il s'agit (« du ménage (seul, au
+    Smic…) »)."""
+    niveau = 0
+    for i, ch in enumerate(lib):
+        niveau += (ch == "(") - (ch == ")")
+        if niveau == 0 and lib.startswith(", ", i):
+            return _bas_casse(lib[:i])
+    return _bas_casse(lib)
 
 
 def _texte_nombres(t: str) -> list[str]:
@@ -148,9 +155,18 @@ def certitude(valeur: float | None, bas: float | None, haut: float | None,
         return "ordre_de_grandeur"
     if bas is None or haut is None:
         return "sans_bande"
-    if (bas > NUL and haut > NUL) or (bas < -NUL and haut < -NUL):
+    if signe_sur(valeur, bas, haut):
         return "probable"
     return "incertain"
+
+
+def signe_sur(valeur: float | None, bas: float | None, haut: float | None) -> bool:
+    """La bande reste d'un côté de zéro, et le nombre dit est du même côté : une bande de
+    tirages ne contient pas toujours le centre (D-627), et une phrase ne dit pas « en
+    baisse » d'un nombre dont la bande est tout entière au-dessus de zéro."""
+    if valeur is None or not bande_d_un_cote(bas, haut):
+        return False
+    return (valeur > NUL) == (bas > 0)  # type: ignore[operator]
 
 
 def bande_d_un_cote(bas: float | None, haut: float | None) -> bool:
@@ -210,7 +226,7 @@ def _phrase_tete(d: Mapping[str, Any], ind: Mapping[str, Any]) -> dict[str, Any]
         corps = (f"probablement {_direction(v)}, de {nombre(abs(v))} {u} en {an}{bande}"
                  + (f", c'est {sens}" if sens else ""))
     elif c == "ordre_de_grandeur":
-        if bande_d_un_cote(bas, haut) or bas is None:
+        if signe_sur(v, bas, haut) or bas is None:
             corps = (f"{_direction(v)}, un ordre de grandeur : {nombre(v, True)} {u} en {an}"
                      + (bande if bas is not None else ", sans bande")
                      + (f", c'est {sens}" if sens else ""))
@@ -234,7 +250,7 @@ def _phrase_tete(d: Mapping[str, Any], ind: Mapping[str, Any]) -> dict[str, Any]
             "bas": bas, "haut": haut, "statut": d["statut"], "certitude": c,
             "nettete": nettete(bas, haut) if c == "probable" else 0.0,
             # L'arbitrage ne lit qu'un sens sûr : une bande d'un seul côté de zéro.
-            "sens": sens if bande_d_un_cote(bas, haut) and not nul_partout else None}
+            "sens": sens if signe_sur(v, bas, haut) and not nul_partout else None}
 
 
 def _echeance(ind: Mapping[str, Any], annees: Sequence[int], u: str) -> str | None:
