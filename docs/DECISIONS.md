@@ -41340,3 +41340,30 @@ constant toute l'année, et les mois d'avant portent le droit de leur mois.
 et 1,05. Ce qui ferait manquer : la date (un mois de revalorisation), le forfait logement,
 l'arrondi des fiches à l'euro, le Smic net que la fiche retient. Aucune tolérance ne change
 après le calcul ; le résultat dans D-632.
+
+**Amendement, avant tout calcul** (ajouté après le commit 462f58d, poussé avant que le
+modèle ne tourne sur ce contrôle). Les deux fiches nommées ne s'ouvrent pas d'ici : le
+serveur de la Drees rend une réponse vide ou 503 à chaque essai (`curl`, et la lecture de
+page), et le panorama de 2025 que le manifeste porte est en quarantaine (sans URL, D-028).
+Une recherche pour trouver un miroir a rendu un résumé qui **montre les valeurs** d'une
+autre fiche du même panorama, la fiche 04 « La combinaison des prestations et ses effets sur
+le niveau de vie » : pour une personne seule sans enfant, locataire du parc privé, au Smic
+à temps plein, la prime d'activité mensuelle vaut 222 € au barème du 1er janvier 2024
+(édition 2024 ; revenu disponible 1 621 €) et 246 € au 1er janvier 2025 (édition 2025 ;
+revenu disponible 1 673 €, Smic net 1 426 €). **Le juge devient ces quatre nombres, non
+aveugles**, lus dans le résumé de la recherche (le document lui-même ne s'ouvre pas : ses
+hypothèses ne sont pas lues). L'hypothèse du modèle, posée ici : le cas type de la Drees
+paie le loyer plafond de l'aide au logement en zone 2 (la convention habituelle de ses cas
+types, de mémoire, non vérifiée) ; le salaire est le Smic brut à temps plein du mois de
+janvier de l'arbre ; le ménage n'a pas d'autre revenu ; les mois d'avant au même salaire.
+
+* **C1'** : la prime d'activité de janvier 2024 et de janvier 2025 dans [publié −
+  max(5 € ; 3 %) ; publié + max(5 € ; 3 %)], chacune.
+* **C2'** : l'écart de janvier 2024 à janvier 2025 (24 € publiés, au-dessus du seuil de
+  10 €), rapport modèle / publié dans [0,8 ; 1,2].
+* **C3'** : le revenu disponible mensuel de janvier (celui de l'année divisé par douze,
+  et celui du mois, les deux dits) dans ± 3 % du publié, chaque année. À côté, sans juger :
+  le même cas type au loyer médian de la population (D-630).
+
+**Pronostic** (non aveugle) : C1' et C2' tiennent ; C3' tient si l'hypothèse du loyer est
+celle de la Drees, et manque sinon, d'abord par l'aide au logement. Le résultat dans D-632.
