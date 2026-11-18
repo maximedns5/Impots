@@ -149,3 +149,55 @@ def test_une_mesure_declaree_rend_la_productivite_illustrative() -> None:
     d = P.calculer(var, ref, depart, illustratives={"m": "2 fois la mesure chiffrée"})
     assert d.statut == "illustratif" and d.juge is None
     assert P.calculer(var, ref, depart).statut == "sourcé, non jugé"
+
+
+class _EtatParMesure(_Etat):
+    """Un état qui porte aussi des champs par mesure (`par_mesure`)."""
+
+    def __init__(self, annee: int, parts: dict[str, dict[str, float]], **champs: float
+                 ) -> None:
+        super().__init__(annee, **champs)
+        self._p = {k: {m: np.array([v]) for m, v in d.items()} for k, d in parts.items()}
+
+    def par_mesure(self, nom: str) -> dict[str, np.ndarray]:
+        return self._p.get(nom, {})
+
+
+def test_le_droit_au_brut_passe_au_cout_par_l_incidence() -> None:
+    """D-637 : une baisse de cotisations salariales (le « droit au brut » d'Attal) rend
+    1 − λ_s au coût du travail dans le jumeau (bloc `salaires`) ; le levier de la
+    productivité la lit. Avant : il ne lisait que les cotisations employeurs, et le canal
+    d'un tel programme était nul."""
+    from impots.jumeau.blocs.menages import HORIZON_MAX, poids_interpolation
+    from impots.jumeau.blocs.menages import charger as charger_menages
+
+    _, ref, _ = _trajectoire()
+    depart = _Etat(2025, ebe_revenu_mixte=400.0, remunerations=600.0, pib=1000.0)
+    parts = {"impulsion_cotisations_salaries": {"a": 6.0},
+             "incidence_cotisations_salaries": {"a": 0.554},
+             "incidence_cotisations_employeurs": {"a": 0.558}}
+    var = [_EtatParMesure(2026 + t, parts, pib=1010.0, effet_prix_pib=0.0,
+                          emploi_total=30000.0, investissement_entreprises=120.0,
+                          salaire_moyen=50000.0, ecart_prix_consommation=0.0,
+                          remunerations=500.0) for t in range(3)]
+    m = SimpleNamespace(identifiant="a", travail=None, entreprises={})
+    d = P.calculer(var, ref, depart, mesures=[m])
+    pgf = {i.cle: i for i in d.indicateurs}["pgf_canaux"]
+    assert pgf.valeurs[-1] < 0.0
+    # Le levier : (1 − λ_s) L[κ], κ = −6 / D1, D1 = 600/1000 × 1000 = 600 (le départ).
+    pm = charger_menages()
+    r = poids_interpolation(pm.horizons, HORIZON_MAX) @ pm.salaires_productivite
+    attendu = [(1 - 0.554) * (-0.01) * r[t] for t in range(3)]
+    np.testing.assert_allclose(d.notes["leviers"]["pression_cout"], attendu, rtol=1e-9)
+    # Une baisse de cotisation employeur en rend λ_e au salaire : le coût baisse moins.
+    parts_e = {"impulsion_cotisations_employeurs": {"a": 6.0},
+               "incidence_cotisations_employeurs": {"a": 0.558}}
+    var_e = [_EtatParMesure(e.annee, parts_e, **{k: float(v[0]) for k, v in e._c.items()})
+             for e in var]
+    m_e = SimpleNamespace(identifiant="a", travail=None,
+                          entreprises={a: {"cotisations_employeurs": -6.0}
+                                       for a in (2026, 2027, 2028)})
+    x = P.calculer(var_e, ref, depart, mesures=[m_e]).notes["leviers"]["pression_cout"]
+    masse = charger_menages().part_marchande * 500.0
+    np.testing.assert_allclose(x, [-6.0 / masse + 0.558 * 0.01 * r[t] for t in range(3)],
+                               rtol=1e-9)
