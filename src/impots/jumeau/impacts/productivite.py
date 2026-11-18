@@ -32,7 +32,12 @@ référence) :
   loi et la diffusion au centre ; Δcoût = s_loi + s_diff, Δbrut = (1 + τ_e)(b_loi +
   b_diff) ;
 * sinon, les cotisations employeurs de la mesure (`Mesure.entreprises[a]`, recettes
-  positives : une hausse est un coût), Δcoût seulement.
+  positives : une hausse est un coût), Δcoût seulement ;
+* en plus, chaque année, l'incidence de long terme des cotisations que le jumeau fait
+  (`cout_incidence`, D-637) : une baisse de cotisation salariale (le « droit au brut »)
+  rend 1 − λ_s au coût, une baisse de cotisation employeur en rend λ_e au salaire ; sans
+  elle, le levier lisait l'employeur à λ_e = 0 et le salarié à λ_s = 1, deux bouts
+  opposés de θ, et un programme de cotisations salariales avait un canal nul.
 
     ΔlnPGF_c,t = η_c(θ) Σ_{j ≤ t} m(t − j) (x_{c,j} − x_{c,j−1})    m la montée
     ΔPIB_c / PIB = s_VA ΔlnPGF_c
@@ -57,12 +62,20 @@ import numpy as np
 import yaml
 
 from impots.jumeau.impacts import Dimension, Indicateur, Source, inscrire
+from impots.jumeau.impacts._commun import statut as statut_commun
 
 FICHIER = Path(__file__).resolve().parents[1] / "parametres" / "productivite.yaml"
 CANAUX = ("pression_cout", "salaire_efficience")
 #: Le canal de la R&D (D-627), lu sur la créance de CIR et non sur le coût du travail.
 CIR = "rd_cir"
 COTISATIONS = "cotisations_employeurs"
+#: Ce que la page dit de chaque canal (D-672) : ses barres et ses sources, en français ;
+#: les clés restent celles du fichier des paramètres et des notes.
+LIBELLES = {
+    "pression_cout": "la pression du coût du travail",
+    "salaire_efficience": "le salaire d'efficience",
+    CIR: "la R&D (crédit d'impôt recherche)",
+}
 
 
 @dataclass(frozen=True)
@@ -149,6 +162,62 @@ def leviers(mesures: Sequence[Any], annees: Sequence[int], masse: Sequence[float
         cout += c_m
         detail[getattr(m, "identifiant", str(m))] = c_m
     return {"cout": cout, "brut": brut, **{f"cout:{k}": v for k, v in detail.items()}}
+
+
+#: Les champs de l'incidence des cotisations que le bloc `travail` écrit par mesure, et
+#: les impulsions qu'elle lit (D-478, `blocs/menages.py`, classe `Salaires`).
+INCIDENCE = ("incidence_cotisations_salaries", "incidence_cotisations_employeurs")
+IMPULSIONS_EMPLOYEURS = ("impulsion_cotisations_employeurs",
+                         "impulsion_cotisations_employeurs_ciblees")
+
+
+def _par_mesure(etat: Any, champ: str, ident: str) -> float:
+    """La part d'une mesure dans un champ de l'état, au tirage 0 ; 0 si absente."""
+    from impots.jumeau.etat import ChampAbsent
+
+    if not hasattr(etat, "par_mesure"):
+        return 0.0
+    try:
+        parts = etat.par_mesure(champ)
+    except ChampAbsent:  # un état sans le champ : la mesure n'y écrit rien (`menages._de`)
+        return 0.0
+    v = parts.get(ident)
+    return 0.0 if v is None else float(np.ravel(np.asarray(v, dtype=float))[0])
+
+
+def cout_incidence(etats: Sequence[Any], idents: Sequence[str], d1: Sequence[float]
+                   ) -> dict[str, np.ndarray]:
+    """Par mesure, (années,) : la variation relative du coût du travail que l'incidence de
+    long terme des cotisations fait dans le jumeau (D-637), le terme du bloc `salaires` :
+
+        ŵ_t += (1 − λ_s) L[κ]_t − λ_e L[τ]_t,   κ = −I^cs / D1,  τ = −(I^ce + I^cec) / D1
+
+    I les impulsions de la mesure (Md€, une baisse positive), λ l'incidence que le bloc
+    `travail` écrit (0 sans lui : le coin de Mésange), L le retard du profil de la
+    productivité de Mésange, D1 celui de la référence du bloc. Une baisse de cotisation
+    salariale (le « droit au brut ») rend 1 − λ_s au coût ; une baisse de cotisation
+    employeur en rend λ_e au salaire."""
+    from impots.jumeau.blocs.menages import HORIZON_MAX, poids_interpolation, retard
+    from impots.jumeau.blocs.menages import charger as charger_menages
+
+    pm = charger_menages()
+    table = poids_interpolation(pm.horizons, HORIZON_MAX) @ pm.salaires_productivite
+    d1 = np.asarray(d1, dtype=float)
+    out: dict[str, np.ndarray] = {}
+    for ident in idents:
+        kappa = [-_par_mesure(e, "impulsion_cotisations_salaries", ident) / d1[k]
+                 for k, e in enumerate(etats)]
+        tau = [-sum(_par_mesure(e, c, ident) for c in IMPULSIONS_EMPLOYEURS) / d1[k]
+               for k, e in enumerate(etats)]
+        if not any(kappa) and not any(tau):
+            continue
+        w = np.zeros(len(etats))
+        for k, e in enumerate(etats):
+            lam_s, lam_e = (_par_mesure(e, c, ident) for c in INCIDENCE)
+            w[k] = ((1.0 - lam_s) * retard(kappa[:k + 1], table)
+                    - lam_e * retard(tau[:k + 1], table))
+        out[ident] = w
+    return out
 
 
 def pgf_canal(x: np.ndarray, eta: float, montee: Sequence[float]) -> np.ndarray:
@@ -238,14 +307,20 @@ def _bande(serie: np.ndarray) -> tuple[np.ndarray, np.ndarray | None, np.ndarray
 
 
 def canaux_a_cote(mesures: Sequence[Any], annees: Sequence[int], masse: Sequence[float],
-                  params: Parametres | None = None) -> dict[str, dict[str, np.ndarray]]:
-    """Par canal, ΔPIB/PIB (fraction) au bas, au centre et au haut de η, (années,)."""
+                  params: Parametres | None = None,
+                  incidence: Mapping[str, np.ndarray] | None = None
+                  ) -> dict[str, dict[str, np.ndarray]]:
+    """Par canal, ΔPIB/PIB (fraction) au bas, au centre et au haut de η, (années,).
+    `incidence` : par mesure, le coût du travail que l'incidence des cotisations fait
+    dans le jumeau (`cout_incidence`), ajouté au levier de `pression_cout` (D-637)."""
     from impots.jumeau.blocs.valeurs_entreprises import charger as charger_entreprises
 
     p = params or charger()
     s_va = charger_entreprises().part_va_societes_pib
     lev = leviers(mesures, annees, masse, p.theta_diffusion)
-    x = {"pression_cout": lev["cout"], "salaire_efficience": lev["brut"]}
+    cout = lev["cout"] + sum((np.asarray(v, dtype=float) for v in (incidence or {}).values()),
+                             np.zeros(len(annees)))
+    x = {"pression_cout": cout, "salaire_efficience": lev["brut"]}
     out: dict[str, dict[str, np.ndarray]] = {}
     for c, canal in p.canaux.items():
         out[c] = {nom: s_va * pgf_canal(x[c], canal.eta(th), p.montee)
@@ -278,6 +353,7 @@ def _etats(variante: Any, reference: Any) -> tuple[Sequence[Any], Sequence[Any],
 def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *,
              mesures: Sequence[Any] | None = None, annees: Sequence[int] | None = None,
              canaux: Iterable[str] | None = None, cir: Mapping[int, float] | None = None,
+             illustratives: Mapping[str, str] | None = None, tirages: Any = None,
              **_: Any) -> Dimension:
     """La dimension « productivité ». `mesures` : les mesures de la variante (leurs
     leviers) ; `canaux` : ceux à brancher (par défaut, ceux que le fichier branche) ;
@@ -295,6 +371,10 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
     if inconnus:
         raise ValueError(f"canaux inconnus : {inconnus} ({CANAUX})")
     s = socle(var, ref, depart)
+    # La bande du socle : les tirages des θ que le tableau passe (la page), comme les
+    # autres dimensions (`_commun.serie`) ; une trajectoire vectorisée les porte déjà.
+    s_t = (socle(tirages.variante, tirages.reference, depart)
+           if tirages is not None and len(tirages.annees) == len(annees) else None)
     limites = [
         "Le socle est le jumeau : la productivité apparente y bouge par la composition de "
         "l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par "
@@ -313,7 +393,18 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
     d1 = _niveau(ref, "remunerations")
     masse = (charger_menages().part_marchande * d1[:, 0] if d1 is not None
              else np.full(len(annees), np.nan))
-    a_cote = (canaux_a_cote(mesures or (), annees, masse, p)
+    # L'incidence de long terme des cotisations, telle que le jumeau la fait (D-637) : le
+    # D1 de la référence du bloc `salaires`, la part du départ fois le PIB de référence.
+    # Sans le PIB du départ (des états faits à la main), le D1 de la référence.
+    pib_ref = _niveau(ref, "pib")
+    try:
+        d1_bloc = (float(depart["remunerations"][0]) / float(depart["pib"][0])
+                   * pib_ref[:, 0])
+    except (KeyError, TypeError):
+        d1_bloc = None if d1 is None else d1[:, 0]
+    incid = ({} if not mesures or d1_bloc is None else cout_incidence(
+        var, [getattr(m, "identifiant", str(m)) for m in mesures], d1_bloc))
+    a_cote = (canaux_a_cote(mesures or (), annees, masse, p, incid)
               if mesures and d1 is not None else {})
     if cir:
         pib_r = _niveau(ref, "pib")
@@ -348,21 +439,29 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
         if v is None:
             continue
         val, bas, haut = _bande(v)
+        x = None if s_t is None else s_t.get(cle)
+        if bas is None and x is not None and np.ndim(x) == 2 and np.shape(x)[1] > 1:
+            x = x + ajout["centre"][:, None] if cle != "capital_par_tete" else x
+            bas, haut = (np.percentile(100.0 * x, q, axis=1) for q in (5.0, 95.0))
         indicateurs.append(Indicateur(cle=cle, libelle=libelle, unite="% d'écart à la "
                                       "référence", valeurs=val, bas=bas, haut=haut,
                                       sens=sens))
     if a_cote:
-        total = {nom: sum(a_cote[c][nom] for c in a_cote) for nom in ("bas", "centre",
-                                                                       "haut")}
+        # La bande est l'enveloppe, canal par canal : η = 0 et η au haut donnent le bas et
+        # le haut quand le levier monte, l'inverse quand il baisse (une baisse de coût, une
+        # suppression du CIR) ; sommer les « bas » et les « haut » tels quels rendait un bas
+        # au-dessus du haut (D-635).
+        total = _enveloppe(a_cote, list(a_cote))
         indicateurs.append(Indicateur(
             cle="pgf_canaux", libelle="Productivité des entreprises par les canaux à côté "
             "(PIB, centre de η ; bande de η = 0 à son haut)", unite="% du PIB",
             valeurs=100.0 * total["centre"], bas=100.0 * total["bas"],
             haut=100.0 * total["haut"],
-            par_groupe={c: 100.0 * a_cote[c]["centre"] for c in a_cote}, sens=1))
+            par_groupe={LIBELLES.get(c, c): 100.0 * a_cote[c]["centre"] for c in a_cote},
+            sens=1))
         if s["pib_potentiel"] is not None:
             base = s["pib_potentiel"][:, 0] + ajout["centre"]
-            reste = {nom: total[nom] - ajout[nom] for nom in total}
+            reste = _enveloppe(a_cote, [c for c in a_cote if c not in branches])
             indicateurs.append(Indicateur(
                 cle="pib_potentiel_avec_canaux", libelle="PIB potentiel, avec tous les "
                 "canaux de la productivité", unite="% d'écart à la référence",
@@ -373,7 +472,7 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
                "le socle : capital du coût d'usage, démographie, emploi, salaires"),
         *(Source(*_source_canal(c)) for c in p.canaux.values()),
         Source("Trésor-Éco n° 290 (2021), réforme du CIR de 2008", "p. 6",
-               f"canal « rd_cir » : η = {p.cir.centre} ({p.cir.bas} à {p.cir.haut}), dès la "
+               f"canal de {LIBELLES[CIR]} : η = {p.cir.centre} ({p.cir.bas} à {p.cir.haut}), dès la "
                "cinquième année"),
         Source("France Stratégie, fiscalité du capital, rapport final 2023", "p. 21 du "
                "PDF", "aucun effet du PFU sur l'investissement : canal nul"),
@@ -384,6 +483,12 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
     )
     juges = [p.canaux[c].juge for c in branches if p.canaux[c].juge]
     statut = "jugé" if branches and len(juges) == len(branches) else "sourcé, non jugé"
+    if illustratives:
+        # Une mesure déclarée ou mise à l'échelle : illustratif, même avec un canal jugé
+        # (la règle de `_commun.statut`, D-606 ; D-635).
+        statut, en_plus = statut_commun({"illustratives": illustratives})
+        limites = [*en_plus, *limites]
+        juges = []
     return Dimension(
         cle="productivite", titre="La productivité des entreprises",
         question="La mesure rend-elle les entreprises plus productives, et avec elles le "
@@ -396,8 +501,22 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
                "leviers": {c: [float(x) for x in a_cote[c]["x"]] for c in a_cote}})
 
 
+def _enveloppe(a_cote: Mapping[str, Mapping[str, np.ndarray]], cles: Sequence[str]
+               ) -> dict[str, np.ndarray]:
+    """Le centre, et le bas et le haut des canaux `cles` : la somme, canal par canal, du
+    plus petit et du plus grand de leurs trois bornes de η (l'enveloppe, D-635)."""
+    n = len(next(iter(a_cote.values()))["centre"])
+    out = {nom: np.zeros(n) for nom in ("bas", "centre", "haut")}
+    for c in cles:
+        pile = np.array([a_cote[c][nom] for nom in ("bas", "centre", "haut")])
+        out["bas"] = out["bas"] + pile.min(axis=0)
+        out["centre"] = out["centre"] + a_cote[c]["centre"]
+        out["haut"] = out["haut"] + pile.max(axis=0)
+    return out
+
+
 def _source_canal(c: Canal) -> tuple[str, str, str]:
     lieu = ("tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4"
             if c.cle == "pression_cout" else "tableau 1 p. 27, lu sur le salaire brut")
-    return (f"Riley et Rosazza Bondibene, NIESR DP 449 (canal « {c.cle} »)", lieu,
+    return (f"Riley et Rosazza Bondibene, NIESR DP 449 (canal de {LIBELLES.get(c.cle, c.cle)})", lieu,
             f"η = {c.centre} ({c.bas} à {c.haut})")

@@ -204,8 +204,59 @@ class Sante:
         return sum(self.deces.values())
 
 
+def _lire(etats: Sequence[Any], champ: str, tirage: int) -> np.ndarray | None:
+    if not all(e.present(champ) for e in etats):
+        return None
+    return np.array([float(np.asarray(e[champ]).ravel()[tirage]) for e in etats])
+
+
+def revenu_du_chomage(variante: Any, reference: Any, depart: Any, cellules: Any,
+                      tirage: int = 0) -> np.ndarray | None:
+    """(années, 10), Md€ : la part du revenu disponible des déciles que le jumeau fait
+    passer entre l'emploi et le chômage, celle des personnes que le canal du chômage compte
+    déjà (D-639). Le jumeau donne aux cellules, au prorata de leurs chômeurs, le revenu des
+    emplois marchands créés, ρ_c π D1 ê, et retire l'allocation des chômeurs en moins,
+    a_s w ΔU (`menages.revenus_cellules`) ; la part qui va avec le chômage est
+    q = −ΔU / ΔE, bornée à [0, 1] : rien quand l'emploi et le chômage montent ensemble
+    (des actifs en plus), et rien quand ce revenu n'a pas le signe de −ΔU (des emplois
+    publics, des actifs qui partent). Jamais plus que ce que le jumeau a mis dans le
+    revenu des déciles. None sans le départ ou les champs."""
+    from impots.jumeau.blocs import menages as M
+
+    if depart is None or cellules is None:
+        return None
+    _, var, ref = _etats(variante, reference)
+    lus = {c: (_lire(var, c, tirage), _lire(ref, c, tirage))
+           for c in ("pib", "emploi_salarie", "emploi_total", "chomage")}
+    if any(v is None or r is None for v, r in lus.values()):
+        return None
+    pv, pr = _lire(var, "emploi_public", tirage), _lire(ref, "emploi_public", tirage)
+    d_pub = (pv - pr) if pv is not None and pr is not None else 0.0
+    p = M.charger()
+    try:
+        st = M.structure(cellules, p.pib_cellules)
+        r = M.reference(p, depart, lus["pib"][1])
+    except (KeyError, AttributeError, M.MenagesError):
+        return None
+    d = {c: v - rr for c, (v, rr) in lus.items()}
+    e_m = (d["emploi_salarie"] - d_pub) / r.emploi_marchand
+    db = st.allocation_sur_salaire * r.salaire * d["chomage"] * 1e3 / 1e9
+    rd_c = (np.outer(st.rho * st.part_chomeurs, p.part_marchande * r.d1 * e_m)
+            + np.outer(st.part_chomeurs, db))
+    par_decile = np.array([np.bincount(st.decile, weights=rd_c[:, j], minlength=N_DECILES)
+                           for j in range(rd_c.shape[1])])
+    with np.errstate(divide="ignore", invalid="ignore"):
+        q = np.where(d["emploi_total"] != 0.0, -d["chomage"] / d["emploi_total"], 0.0)
+    q = np.clip(q, 0.0, 1.0) * (par_decile.sum(axis=1) * -d["chomage"] > 0.0)
+    return par_decile * q[:, None]
+
+
 def calculer_sante(e: Entrees, cellules: Any, p: Mapping[str, Any], borne: str = "centre",
-                   ecart_age: np.ndarray | None = None) -> Sante:
+                   ecart_age: np.ndarray | None = None,
+                   dln_chomage: np.ndarray | None = None) -> Sante:
+    """`dln_chomage` (années, 10) : la part de Δln y qui vient des passages entre l'emploi
+    et le chômage, retirée du canal du revenu vers la durée de vie (le canal du chômage la
+    compte déjà, D-639) ; le renoncement aux soins la garde."""
     k = coefficients(p, borne)
     t = p["table"]
     edag = float(t["disparite"])
@@ -215,8 +266,9 @@ def calculer_sante(e: Entrees, cellules: Any, p: Mapping[str, Any], borne: str =
     ev_rel = g * (ln_dec - (pers * ln_dec).sum() / pers.sum())
     poids = pers * np.exp(-ev_rel / edag)
     deces_dec = float(t["deces_2024"]) * poids / poids.sum()
-    # revenu → durée de vie
-    d_ev = k.s * g * e.dln_revenu
+    # revenu → durée de vie, sans la part du revenu que le chômage fait (D-639)
+    dln_vie = e.dln_revenu if dln_chomage is None else e.dln_revenu - dln_chomage
+    d_ev = k.s * g * dln_vie
     dlnmu = -d_ev / edag
     deces_rev = deces_dec[None, :] * (1.0 - np.exp(dlnmu))
     # chômage → mortalité et santé
@@ -328,6 +380,9 @@ def sources(p: Mapping[str, Any]) -> tuple[Source, ...]:
 
 
 LIMITES = (
+    "La bande est l'enveloppe des bornes publiées des coefficients, canal par canal "
+    "(celle du total somme les bornes de même sens) : ni un intervalle de confiance, ni "
+    "des tirages des θ du jumeau, qui sont lus au réglage.",
     "Corrélation contre causalité, surtout : le gradient de l'Insee (13 ans d'écart "
     "d'espérance de vie chez les hommes entre les 5 % les plus aisés et les 5 % les plus "
     "modestes) est une association ; le diplôme, le métier, la santé dès l'enfance font à "
@@ -345,7 +400,9 @@ LIMITES = (
     "leur entreprise, aux États-Unis ; leur effet dure vingt ans après le retour à "
     "l'emploi, ce qui n'est pas compté ici (un bas), mais un chômeur du stock n'est pas "
     "toujours dans sa première année (le centre de 0,30 est choisi). La santé déclarée des "
-    "chômeurs est moins bonne surtout par sélection (Schmitz 2011).",
+    "chômeurs est moins bonne surtout par sélection (Schmitz 2011). Leur surcroît de "
+    "mortalité porte déjà leur perte de revenu : le revenu que le jumeau donne aux déciles "
+    "pour ceux qui passent entre le chômage et l'emploi sort du canal du revenu (D-639).",
     "Le renoncement aux soins pour raison de prix est déclaratif et sa mesure dépend de la "
     "question ; un même ménage peut renoncer à un examen médical et à un examen dentaire : "
     "ce sont des renoncements, pas des personnes. La couverture (complémentaire santé "
@@ -398,7 +455,16 @@ def dimension(variante: Any, reference: Any = None, depart: Any = None,
             statut="illustratif", sources=sources(p), limites=LIMITES,
             notes={"absent": "la trajectoire ne porte ni le revenu par décile ni le "
                              "chômage : la santé se lit dans le mode structurel"})
-    res = {b: calculer_sante(e, cellules, p, b, da) for b in BORNES}
+    # Le double compte du chômage (D-639) : le revenu de ceux qui passent entre l'emploi
+    # et le chômage sort du canal du revenu, le canal du chômage le portant déjà.
+    o = revenu_du_chomage(variante, reference, depart, cellules, tirage)
+    dln_chom = None
+    if o is not None:
+        _, var, _ = _etats(variante, reference)
+        rdb = np.array([[float(np.asarray(x[f"rdb_d{d:02d}"]).ravel()[tirage])
+                         for d in range(1, N_DECILES + 1)] for x in var])
+        dln_chom = np.log(rdb / (rdb - o))
+    res = {b: calculer_sante(e, cellules, p, b, da, dln_chom) for b in BORNES}
     c = res["centre"]
     r = list(res.values())
     vie_env = {k: enveloppe(r, lambda x, k=k: x.vie[k]) for k in CANAUX_VIE}
@@ -461,6 +527,12 @@ def dimension(variante: Any, reference: Any = None, depart: Any = None,
         "ecart_age_legal": [float(x) for x in da],
         "programme_age": programme,
         "prix_lus": e.prix_lus,
+        "double_compte_chomage": (
+            "retiré (D-639) : la part du revenu des passages entre l'emploi et le chômage "
+            "sort du canal du revenu" if dln_chom is not None else
+            "non retiré : sans l'état de départ, la part du revenu qui va avec le chômage "
+            "ne se lit pas (D-639)"),
+        "revenu_du_chomage_md": None if o is None else [float(x) for x in o.sum(axis=1)],
         "entrees": {"chomeurs_de_plus_milliers": [float(x) for x in e.d_chomeurs / 1e3]},
         "tirage": tirage,
         "decisions": "D-620 à D-624",

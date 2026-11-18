@@ -210,3 +210,94 @@ def test_la_sante_lit_l_age_du_programme_entier_seulement() -> None:
     assert programme_age({"cle": "pres2027_philippe_programme",
                           "composition": [{"candidat": "x"}]}) is None
     assert programme_age({"cle": "pres2027_le_pen_lp20_tva_energie"}) is None
+
+
+class _E:
+    def __init__(self, **champs: float) -> None:
+        self._c = {k: np.array([v]) for k, v in champs.items()}
+
+    def present(self, nom: str) -> bool:
+        return nom in self._c
+
+    def __getitem__(self, nom: str) -> np.ndarray:
+        return self._c[nom]
+
+
+def test_l_economie_met_en_tete_le_pib_en_volume() -> None:
+    """D-639 : le PIB en tête est le PIB en volume (écart moins l'effet des prix du PIB),
+    « mieux » s'il monte ; le PIB en valeur suit, sans sens. Avant : le seul PIB était le
+    nominal, marqué « mieux » quand les prix montaient."""
+    from impots.jumeau.impacts import economie
+
+    ref = [_E(pib=1000.0, effet_prix_pib=0.0)]
+    var = [_E(pib=1010.0, effet_prix_pib=15.0)]  # +1 % en valeur, −0,5 % en volume
+    d = economie.economie(var, ref, None, None, annees=[2026])
+    ind = {i.cle: i for i in d.indicateurs}
+    assert d.indicateurs[0].cle == "pib_volume"
+    assert ind["pib_volume"].valeurs[0] == pytest.approx(-0.5)
+    assert ind["pib_volume"].sens == 1
+    assert ind["pib"].valeurs[0] == pytest.approx(1.0) and ind["pib"].sens == 0
+
+
+@pytest.mark.parametrize("slug, n", [("melenchon", 7), ("tondelier", 4)])
+def test_un_programme_refuse_se_calcule_par_ses_mesures(session, slug, n) -> None:
+    """D-655 : un programme que le jumeau complet refuse comme un tout se calcule, sur la
+    ligne « par ses mesures » (D-652), comme ses mesures chiffrées et leur interaction
+    (D-502) : le coût est celui du
+    programme chaque année ; toutes les dimensions ont leur nombre ; le moral passe à
+    « illustratif » ; chaque fiche dit en tête ce qui manque."""
+    cle = f"pres2027_{slug}_programme"
+    out = _strict(navigateur.impacts_json(session, json.dumps(
+        {"candidat": cle, "tirages": 0, "mesures_seules": True})))
+    assert out["reglage"]["mode"] == "structurel" and out["reglage"]["vue"] == "figee"
+    assert out["refus"] is None and out["calculees"] == list(navigateur.ANNEES)
+    c = out["composee"]
+    assert c["programme"] == cle and len(c["mesures"]) == n
+    assert out["mesure"]["identifiant"] == cle
+    mesures, _ = session.programme_compose(cle, "figee", CONVENTION_PARTS)
+    p = session.mesure(cle, "figee", CONVENTION_PARTS)
+    for a in p.annees:
+        assert sum(m.couts[a] for m in mesures) == pytest.approx(p.couts[a], abs=1e-9)
+    dims = {d["cle"]: d for d in out["dimensions"]}
+    for d in dims.values():
+        assert "erreur" not in d, d.get("erreur")
+        assert d["indicateurs"][0]["valeurs"][-1] is not None
+        assert d["limites"][0] == c["texte"]
+    assert dims["moral"]["statut"] == "illustratif"
+    assert dims["moral"]["statut_sans_composition"] == "sourcé, non jugé"
+    assert dims["comptes_publics"]["statut"] == "sourcé, non jugé"
+    # Sans la demander, la page garde la chaîne des études pour le programme entier
+    # (D-652 : le propriétaire choisit la ligne mise en avant).
+    assert session.reglage_impacts({"candidat": cle})["mode"] == "reduit"
+
+
+def test_l_api_borne_les_tirages_des_bandes() -> None:
+    """D-665 : `POST /impacts` prenait `tirages` sans borne ; dix millions de tirages
+    tiennent dix millions de trajectoires en mémoire : une requête faisait tomber le
+    serveur. Au-delà de la plage du jumeau (200), refusé et dit (422)."""
+    from fastapi.testclient import TestClient
+
+    from impots.api.main import app
+
+    client = TestClient(app, raise_server_exceptions=False)
+    trop = client.post("/impacts", json={"candidat": "pres2027_le_pen_lp21_ir_moins_30_ans",
+                                         "tirages": navigateur.TIRAGES + 1})
+    assert trop.status_code == 422 and "tirages" in trop.json()["detail"], trop.text
+    with pytest.raises(navigateur.NavigateurError, match="tirages"):
+        navigateur.impacts_json(navigateur.Session(json.loads(json.dumps(
+            site_jumeau.donnees()))), json.dumps({"candidat": PROGRAMME, "tirages": -1}))
+
+
+def test_sans_prix_l_ecart_du_pib_est_le_pib_en_volume() -> None:
+    """D-670 : sans l'effet des prix du PIB (la chaîne des études), l'écart du PIB est
+    celui des variantes de Mésange, publiées « PIB en volume » : il est le PIB en volume,
+    « mieux » s'il monte, et il n'y a pas de PIB en valeur à part. Avant : le même nombre
+    se disait « PIB en valeur (nominal) », sans sens, quand la productivité le disait en
+    volume."""
+    from impots.jumeau.impacts import economie
+
+    d = economie.economie([_E(pib=993.0)], [_E(pib=1000.0)], None, None, annees=[2026])
+    ind = {i.cle: i for i in d.indicateurs}
+    assert list(ind) == ["pib_volume"]
+    assert ind["pib_volume"].libelle == "PIB en volume" and ind["pib_volume"].sens == 1
+    assert ind["pib_volume"].valeurs[0] == pytest.approx(-0.7)

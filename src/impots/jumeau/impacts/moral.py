@@ -52,6 +52,7 @@ import numpy as np
 import yaml
 
 from impots.jumeau.impacts import Dimension, Indicateur, Source, inscrire
+from impots.jumeau.impacts._commun import statut
 
 PARAMETRES = Path(__file__).resolve().parents[1] / "parametres" / "moral.yaml"
 N_DECILES = 10
@@ -316,6 +317,9 @@ def sources(p: Mapping[str, Any]) -> tuple[Source, ...]:
 
 
 LIMITES = (
+    "La bande est l'enveloppe des bornes publiées des coefficients, canal par canal "
+    "(celle du total somme les bornes de même sens) : ni un intervalle de confiance, ni "
+    "des tirages des θ du jumeau, qui sont lus au réglage.",
     "L'adaptation hédonique : l'effet du revenu s'estompe en partie avec le temps (Clark "
     "et al. 2018 trouvent 0,13 en panel contre 0,35 à 0,50 pour un revenu exogène de long "
     "terme) ; l'effet d'une hausse durable est compté chaque année, sans adaptation. Le "
@@ -347,11 +351,16 @@ LIMITES = (
 @inscrire("moral")
 def dimension(variante: Any, reference: Any = None, depart: Any = None,
               cellules: Any = None, *, tirage: int = 0,
-              params: Mapping[str, Any] | None = None, **_: Any) -> Dimension:
+              params: Mapping[str, Any] | None = None,
+              illustratives: Mapping[str, str] | None = None, **_: Any) -> Dimension:
     """La dimension du moral. `variante` est la `Trajectoire` (qui porte la référence) ou
     la suite des états de la variante, `reference` alors celle de la référence. `depart`
     n'est pas lu. Les cellules sont celles du jumeau (`jumeau.cellules.Cellules`)."""
     p = params if params is not None else charger()
+    # Une mesure déclarée ou mise à l'échelle rend la trajectoire illustrative, et ce qui
+    # la lit aussi (la règle de `_commun.statut`, D-606 ; D-635).
+    statut_, en_plus = statut({"illustratives": illustratives})
+    limites = (*en_plus, *LIMITES)
     titre = "Le moral des gens"
     question = ("La vie que mènent les gens en est-elle plus ou moins satisfaisante, "
                 "et de combien ?")
@@ -363,7 +372,7 @@ def dimension(variante: Any, reference: Any = None, depart: Any = None,
         annees = _etats(variante, reference)[0]
         return Dimension(
             cle="moral", titre=titre, question=question, annees=annees, indicateurs=(),
-            statut="sourcé, non jugé", sources=sources(p), limites=LIMITES,
+            statut=statut_, sources=sources(p), limites=limites,
             notes={"absent": "la trajectoire ne porte ni le revenu par décile ni le "
                              "chômage : le moral se lit dans le mode structurel"})
     res = {b: calculer_moral(e, cellules, p, b) for b in BORNES}
@@ -408,5 +417,5 @@ def dimension(variante: Any, reference: Any = None, depart: Any = None,
         "decisions": "D-595 à D-599",
     }
     return Dimension(cle="moral", titre=titre, question=question, annees=e.annees,
-                     indicateurs=indicateurs, statut="sourcé, non jugé",
-                     sources=sources(p), limites=LIMITES, notes=notes)
+                     indicateurs=indicateurs, statut=statut_,
+                     sources=sources(p), limites=limites, notes=notes)

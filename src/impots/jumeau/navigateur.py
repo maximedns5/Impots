@@ -306,6 +306,10 @@ class Session:
         self.candidats = donnees["candidats"]
         self.cadre = donnees["cadre"]
         self._mesures: dict[tuple[Any, ...], Any] = {}
+        # D-660 : les propositions du lecteur chiffrées par une passe (`parametrique`),
+        # {candidat : {"raison", "tableau"}} : toutes leurs dimensions sont dites
+        # illustratives ; « Pour vous » lit le tableau des cas types de leur passe.
+        self.parametriques: dict[str, dict[str, Any]] = {}
 
     # ---------------------------------------------------------------- mesures
     def mesure(self, cle: str, vue: str, convention: str | None = None) -> Any:
@@ -513,9 +517,17 @@ class Session:
             convention = None
         illustratives: dict[str, str] = {}
         avertissements: list[str] = []
+        composee: dict[str, Any] | None = None
         if composition:
             mesures, illustratives, avertissements = self.composer(composition, vue,
                                                                    convention)
+            mesure = mesures[0]
+        elif cle and choix.get("mesures_seules"):
+            # D-655 : le programme comme ses mesures chiffrées et leur interaction.
+            if mode != "structurel":
+                raise NavigateurError("un programme composé de ses mesures se calcule dans "
+                                      "le mode structurel (D-655)")
+            mesures, composee = self.programme_compose(cle, vue, convention)
             mesure = mesures[0]
         elif cle:
             mesure = (self.mesure_structurel(cle, vue, convention) if mode == "structurel"
@@ -534,6 +546,9 @@ class Session:
         return {"mode": mode, "vue": vue, "cle": cle, "convention": convention,
                 "mesure": mesure, "mesures": mesures, "illustratives": illustratives,
                 "composition": composition, "avertissements_composition": avertissements,
+                "composee": composee,
+                "parametrique": (self.parametriques.get(cle) if cle and not composition
+                                 else None),
                 "depart": depart, "entrees": entrees, "blocs": blocs,
                 "boucles": boucles, "registre": registre, "theta": theta}
 
@@ -644,12 +659,15 @@ class Session:
                            valeur_a(lignes[t["cle"]], t["theta"], mesures))
         out: dict[str, Any] = {
             "mode": ctx["mode"], "vue": ctx["vue"], "candidat": ctx["cle"],
-            "mesure": _decrire(mesures, ctx["composition"]),
+            "mesure": (_decrire_compose(ctx["composee"], mesures) if ctx["composee"]
+                       else _decrire(mesures, ctx["composition"])),
             "annees": list(ANNEES), "thetas": registre, "refus": None, "calculees": [],
             "convention": ctx["convention"], "conventions": None}
         if ctx["composition"]:
             out["composition"] = [_une_mesure(m, ctx["illustratives"].get(m.identifiant))
                                   for m in mesures]
+        if ctx["composee"]:
+            out["composee"] = ctx["composee"]
         traj, out["refus"] = self._derouler(ctx, theta)
         mode, depart = ctx["mode"], ctx["depart"]
         if traj is None:
@@ -685,7 +703,9 @@ class Session:
         ne dit pas son mode : le jumeau complet (structurel) sur la population figée, avec
         la convention des parts de la première année (D-414), comme la cascade (D-484) ;
         pour une mesure d'étude qu'il refuse dès la première année, la chaîne des études
-        (réduit, vieillie), et `pourquoi_mode` dit pourquoi."""
+        (réduit, vieillie), et `pourquoi_mode` dit pourquoi ; avec `mesures_seules`, un
+        programme qu'il refuse se calcule comme ses mesures chiffrées et leur interaction
+        (D-655), la ligne « par ses mesures » de la page (D-652)."""
         from impots.jumeau.mesures import CONVENTION_PARTS
 
         choix = dict(choix)
@@ -697,12 +717,103 @@ class Session:
         cle = choix.get("candidat")
         if cle and not choix.get("composition"):
             k, refus = self.structurel(cle, choix["vue"], choix["convention"])
-            if not k:
+            if k or not choix.get("mesures_seules"):
+                # Un programme que le jumeau complet calcule n'a pas à se composer.
+                choix.pop("mesures_seules", None)
+            if not k and choix.get("mesures_seules"):
+                # D-655 : demandé, le programme refusé comme un tout se calcule comme ses
+                # mesures chiffrées et leur interaction (D-502), dans le jumeau complet.
+                try:
+                    _, info = self.programme_compose(cle, choix["vue"],
+                                                     choix["convention"])
+                except NavigateurError as e:
+                    raise NavigateurError(f"« {cle} » : le jumeau complet le refuse comme "
+                                          f"un tout ({refus}), et ses mesures ne se "
+                                          f"composent pas ({e})") from e
+                choix["pourquoi_mode"] = (
+                    f"le jumeau complet refuse le programme comme un tout ({refus}) ; il "
+                    f"le calcule comme ses {len(info['mesures'])} mesures chiffrées "
+                    f"ensemble, plus leur interaction (D-502, D-655)")
+            elif not k:
                 choix.update(mode="reduit", vue="vieillie", convention=None,
                              pourquoi_mode=("le jumeau complet refuse la mesure dès sa "
                                             f"première année ({refus}) : la chaîne des "
                                             "études, sans les ménages ni les entreprises"))
+        elif choix.get("mesures_seules"):
+            raise NavigateurError("« mesures_seules » : le programme d'un candidat que le "
+                                  "jumeau complet refuse (D-655)")
         return choix
+
+    def programme_compose(self, cle: str, vue: str, convention: str | None
+                          ) -> tuple[list[Any], dict[str, Any]]:
+        """Un programme que le jumeau complet refuse comme un tout (ses prélèvements
+        agrégés, D-412), pris comme ses mesures chiffrées ensemble, chacune comme le mode
+        structurel la lit, plus la mesure d'interaction de sa passe (la convention
+        « mesures_seules », D-502 ; D-655) : la somme de leurs coûts est le coût du
+        programme, chaque année. Refusé (NavigateurError) si une mesure ne se calcule pas
+        sur toutes les années, ou si la passe ne se sépare pas. Rend les mesures et ce
+        que la page en dit (`composee`)."""
+        k = (cle, vue, convention, "programme_compose")
+        if k not in self._mesures:
+            self._mesures[k] = self._programme_compose(cle, vue, convention)
+        mesures, info = self._mesures[k]
+        return list(mesures), info
+
+    def _programme_compose(self, cle: str, vue: str, convention: str | None
+                           ) -> tuple[list[Any], dict[str, Any]]:
+        from impots.jumeau import papillon
+
+        if not (cle.startswith("pres2027_") and cle.endswith("_programme")):
+            raise NavigateurError(f"« {cle} » n'est pas le programme d'un candidat")
+        slug = cle[len("pres2027_"):-len("_programme")]
+        _, seules = papillon.cles(self, slug)
+        if not seules:
+            raise NavigateurError(f"« {cle} » : aucune mesure chiffrée seule")
+        refusees = {}
+        for c in seules:
+            k, refus = self.structurel(c, vue, convention)
+            if k < len(ANNEES):
+                refusees[c] = refus or f"{k} années calculées sur {len(ANNEES)}"
+        if refusees:
+            # Une mesure qui manque fausserait l'interaction (le programme moins la
+            # somme) : elle serait comptée dans l'interaction, sur le solde seul.
+            raise NavigateurError("des mesures refusées : " + " ; ".join(
+                f"« {c} » ({r})" for c, r in refusees.items()))
+        try:
+            mesures = papillon.mesures_seules(self, slug, vue, convention)
+        except papillon.PapillonError as e:
+            raise NavigateurError(str(e)) from e
+        inter = mesures[-1]
+        premiere = inter.annees[0]
+        info = {
+            "programme": cle, "libelle": self.candidats[cle]["libelle"],
+            "mesures": [{"identifiant": m.identifiant, "libelle": m.libelle}
+                        for m in mesures[:-1]],
+            "interaction": {"identifiant": inter.identifiant,
+                            "couts": {str(a): float(inter.couts[a]) for a in inter.annees},
+                            "cotisations_employeurs": {
+                                str(a): float(inter.impulsions[a]["cotisations_employeurs"])
+                                for a in inter.annees}},
+            "refusees": [], "decision": "D-655"}
+        n = len(info["mesures"])
+
+        def md(x: float) -> str:
+            return f"{x:+.2f}".replace(".", ",").replace("-", "−")
+
+        info["titre"] = f"Calculé comme la somme de ses {n} mesures chiffrées"
+        info["texte"] = (
+            f"{info['titre']}, chacune avec sa passe, "
+            f"plus l'interaction de la passe du programme (son coût en plus de leur somme : "
+            f"{md(inter.couts[premiere])} Md€ en {premiere}, sur le solde seul ; l'écart "
+            f"de ses cotisations des employeurs, "
+            f"{md(inter.impulsions[premiere]['cotisations_employeurs'])} Md€) : le jumeau "
+            f"complet refuse le programme comme un tout (sa passe ne ventile pas ses "
+            f"prélèvements par impôt). Ne contient pas : la répartition de l'interaction "
+            f"entre les ménages (le revenu par décile, le moral, la santé, les territoires "
+            f"lisent la somme des passes de ses mesures, faites seules ; « Pour vous » lit le "
+            f"programme entier), ni les mesures de son programme qu'aucun rapport ne chiffre. "
+            f"Aucune de ses mesures chiffrées n'est refusée (D-502, D-655).")
+        return mesures, info
 
     def composer(self, elements: Sequence[Mapping[str, Any]], vue: str,
                  convention: str | None) -> tuple[list[Any], dict[str, str], list[str]]:
@@ -777,7 +888,51 @@ class Session:
             mode=ctx["mode"], thetas=ctx["registre"], juge=self.donnees.get("juge"),
             annees=tuple(traj.annees), programme=programme_age(ctx),
             composition=ctx.get("composition"), cle=ctx.get("cle"),
-            distribution=self.donnees.get("niveaux_de_vie"), lire_fichier=False)
+            distribution=self.donnees.get("niveaux_de_vie"), lire_fichier=False,
+            **_options_compose(ctx))
+
+
+#: Les dimensions qui lisent le revenu des ménages par décile, et pas un cas type du
+#: programme entier : pour un programme composé de ses mesures (D-655), l'interaction de
+#: sa passe n'y est pas répartie. Leur statut passe à « illustratif ».
+#: Le pouvoir d'achat et l'entente lisent aussi les chocs par décile (D-594).
+LISENT_LES_DECILES = ("moral", "sante", "territoires", "pouvoir_achat", "entente")
+
+
+def _options_compose(ctx: Mapping[str, Any]) -> dict[str, Any]:
+    """Ce que le tableau lit d'un programme composé de ses mesures (D-655) : le statique
+    de « Pour vous » est celui du programme entier (`cle_statique`, D-633) ; les
+    dimensions qui lisent les déciles sont dites illustratives, avec la raison."""
+    p = ctx.get("parametrique")
+    if p:
+        # D-660 : une proposition du lecteur, une passe non préenregistrée.
+        from impots.jumeau import impacts
+        from impots.jumeau.impacts import tableau
+
+        tableau.charger()
+        out = {"degrader": dict.fromkeys(impacts.dimensions(), p["raison"]),
+               "limite_commune": f"Votre barème : {p['raison']}."}
+        if p.get("tableau") is not None:
+            out["tableau"] = p["tableau"]
+        return out
+    c = ctx.get("composee")
+    if not c:
+        return {}
+    raison = ("programme calculé comme ses mesures chiffrées et leur interaction (D-655) : "
+              "le revenu par décile est la somme des passes de ses mesures, faites seules ; "
+              "l'interaction de la passe du programme n'y est pas répartie")
+    return {"cle_statique": c["programme"],
+            "degrader": dict.fromkeys(LISENT_LES_DECILES, raison),
+            "limite_commune": c["texte"]}
+
+
+def _decrire_compose(c: Mapping[str, Any], mesures: Sequence[Any]) -> dict[str, Any]:
+    """Un programme composé de ses mesures (D-655) se décrit comme le programme."""
+    return {"identifiant": c["programme"], "libelle": c["libelle"],
+            "auteur": mesures[0].auteur, "origine": "mesures_seules",
+            "rapport": None, "commit": None,
+            "non_portes": {f"{m.identifiant} · {k}": v for m in mesures
+                           for k, v in m.non_portes.items()}}
 
 
 def programme_age(ctx: Mapping[str, Any]) -> str | None:
@@ -1077,6 +1232,12 @@ def impacts_json(session: Session, texte: str) -> str:
 
     choix = {"tirages": TIRAGES_IMPACTS, **session.reglage_impacts(json.loads(texte)),
              "dimensions": True}
+    # Borné (D-665) : la trajectoire est vectorisée sur les tirages ; sans borne, une
+    # requête de l'API en demandait des millions et faisait tomber le serveur.
+    n = choix["tirages"] or 0
+    if isinstance(n, bool) or not isinstance(n, int | float) or not 0 <= n <= TIRAGES:
+        raise NavigateurError(f"tirages : {n!r}, il en faut de 0 à {TIRAGES}")
+    choix["tirages"] = int(n)
     pourquoi = choix.pop("pourquoi_mode", None)
     if not choix.get("theta"):
         # Chaque θ à ½, le centre de sa boîte : le défaut de la page (D-605), dit.
@@ -1085,7 +1246,12 @@ def impacts_json(session: Session, texte: str) -> str:
     out = session.calculer(choix)
     out["reglage"] = {k: choix.get(k) for k in ("mode", "vue", "convention", "tirages")}
     out["pourquoi_mode"] = pourquoi
-    return json.dumps(propre(out), ensure_ascii=False)
+    out = propre(out)
+    # « En bref » : le paragraphe écrit par des règles sur les dimensions (D-650).
+    from impots.jumeau.impacts.synthese import en_bref
+
+    out["synthese"] = en_bref(out)
+    return json.dumps(out, ensure_ascii=False)
 
 
 def portee_json(session: Session, texte: str) -> str:

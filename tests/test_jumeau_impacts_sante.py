@@ -128,3 +128,54 @@ def test_controle_depart_sur_les_cellules_commitees():
     # Le juge (ip1687.xls, figure 1) : vingtiles 19-20 moins 1-2.
     assert 0.8 <= out["hommes"]["d10_d1"] / 11.65 <= 1.2
     assert 0.8 <= out["femmes"]["d10_d1"] / 7.55 <= 1.2
+
+
+def _cellules_commitees():
+    import json
+
+    from impots.jumeau.cellules import Cellules
+    from impots.jumeau.navigateur import FICHIER
+
+    c = json.loads(FICHIER.read_text(encoding="utf-8"))["cellules"]
+    return Cellules(valeurs={k: np.asarray(v, float) for k, v in c["valeurs"].items()},
+                    parts_offre=c["parts_offre"])
+
+
+def test_le_revenu_du_chomage_ne_compte_pas_deux_fois():
+    """D-639 : le revenu que le jumeau donne aux déciles pour les chômeurs qui retrouvent
+    un emploi sort du canal du revenu vers la durée de vie ; le canal du chômage (Sullivan
+    et von Wachter, perte de revenu comprise) le compte déjà. Avant : compté deux fois."""
+    from impots.jumeau.blocs import menages as M
+
+    cel = _cellules_commitees()
+    depart = FauxEtat(2025, {"remunerations": 1500.0, "pib": 3000.0})
+
+    def e(rdb, chom, emp):
+        x = etat(2026, rdb, chom)
+        x.v |= {"pib": np.array([3000.0]), "emploi_total": np.array([emp]),
+                "emploi_salarie": np.array([emp - 3000.0])}
+        return x
+
+    ref = [e(100.0, 2400.0, 30000.0)]
+    var = [e(101.0, 2300.0, 30100.0)]  # 100 000 chômeurs de moins, autant d'emplois
+    o = sante.revenu_du_chomage(var, ref, depart, cel)
+    p = M.charger()
+    st = M.structure(cel, p.pib_cellules)
+    r = M.reference(p, depart, np.array([3000.0]))
+    a_la_main = (st.rho * st.part_chomeurs * p.part_marchande * float(r.d1[0]) * 100.0
+                 / r.emploi_marchand
+                 - st.part_chomeurs * st.allocation_sur_salaire * float(r.salaire[0])
+                 * 100.0 * 1e3 / 1e9)
+    np.testing.assert_allclose(o[0], np.bincount(st.decile, weights=a_la_main,
+                                                 minlength=10), rtol=1e-12)
+    assert o.sum() > 0.0
+    avec = sante.dimension(var, ref, depart, cel, params=P)
+    sans = sante.dimension(var, ref, None, cel, params=P)
+    vie = {d: {i.cle: i for i in x.indicateurs}["annees_de_vie"] for d, x in
+           (("avec", avec), ("sans", sans))}
+    assert vie["avec"].par_groupe["le revenu réel"][0] < vie["sans"].par_groupe[
+        "le revenu réel"][0]
+    assert vie["avec"].par_groupe["le chômage"][0] == vie["sans"].par_groupe["le chômage"][0]
+    # Des actifs en plus (l'emploi et le chômage montent ensemble) : rien à retirer.
+    var2 = [e(101.0, 2500.0, 30100.0)]
+    assert not sante.revenu_du_chomage(var2, ref, depart, cel).any()

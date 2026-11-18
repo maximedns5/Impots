@@ -143,3 +143,55 @@ def test_la_simulation_commune_redonne_le_menage_seul():
     ch = cas_types.Chiffreur(cas, n)
     ch.verifier(range(len(cas)))
     assert ch.base[0]["revenu_disponible"] == pytest.approx(20346.25, abs=0.01)
+
+
+class _E:
+    def __init__(self, annee, **champs):
+        self.annee = annee
+        self._c = {k: np.array([v]) for k, v in champs.items()}
+
+    def present(self, nom):
+        return nom in self._c
+
+    def __getitem__(self, nom):
+        return self._c[nom]
+
+
+def test_le_gain_de_la_cellule_est_ramene_en_euros_de_2026(cellules):
+    """D-638 : le gain pris à la cellule est en Md€ de son année ; le statique
+    d'OpenFisca, en euros de 2026. Le premier est ramené au revenu du décile de la
+    référence de 2026. Avant : 1 Md€ de 2030 comptait comme 1 Md€ de 2026."""
+    ref = [_E(a, **{f"rdb_d{d:02d}": 100.0 * 1.03 ** (a - 2026) for d in range(1, 11)})
+           for a in ANNEES]
+    eco = pour_vous.economie(ref, ref)
+    assert "rdb_dXX" in eco["lus"]
+    np.testing.assert_allclose(eco["nominal"][0], 1.03 ** np.arange(10), rtol=1e-12)
+    ind = "seul-0-independant-locataire-30_49"
+    dec = pour_vous.charger()["cas"][ind]["decile"]
+    deciles = np.zeros(10)
+    deciles[dec - 1] = 1.0
+    h = SimpleNamespace(identifiant="hypothese_ir", annees=ANNEES,
+                        menages={2030: {"deciles": deciles}})
+    r = _calcul(ind, {**_eco(), "nominal": eco["nominal"]}, [h], cellules)
+    menages = np.asarray(cellules["menages"], float).reshape(10, -1).sum(axis=1)[dec - 1]
+    assert r["statique"][4] == pytest.approx(1e9 / menages / 1.03 ** 4)
+
+
+def test_sans_l_economie_du_jumeau_le_revenu_reel_n_a_pas_de_bande() -> None:
+    """D-665 : dans la chaîne des études (le mode réduit), ni les salaires ni les prix ne
+    bougent avec les θ ; la « bande » du revenu réel était le statique répété (Mélenchon :
+    de +1 606 à +1 606 €), dite bande par la fiche et par « En bref ». Sans l'économie du
+    jumeau, pas de bande."""
+    import json
+
+    from impots import site_jumeau
+    from impots.jumeau import navigateur
+
+    s = navigateur.Session(json.loads(json.dumps(site_jumeau.donnees())))
+    r = json.loads(navigateur.impacts_json(s, json.dumps(
+        {"candidat": "pres2027_melenchon_programme", "tirages": 4})))
+    assert r["reglage"]["mode"] == "reduit"
+    d = next(x for x in r["dimensions"] if x["cle"] == "pour_vous")
+    ind = d["indicateurs"][0]
+    assert ind["cle"] == "revenu_reel" and ind["valeurs"][-1] > 1000
+    assert ind["bas"] is None and ind["haut"] is None
