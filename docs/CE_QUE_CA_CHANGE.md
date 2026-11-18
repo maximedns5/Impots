@@ -164,5 +164,7 @@ Prises sur le compte rendu de la nuit ; le détail et ce que chacune change, dan
 * Le verrou commun par défaut et la file sous verrou : faits (D-676).
 * Le juge de l'impôt de 2020 est le *Portrait social* 2022, dossier D2, par l'amendement
   de D-677, non aveugle.
-* À faire : la grille des cas types de « Pour vous » élargie ; l'outre-mer corrigé dans la
-  population (voir D-676 : à concilier avec la population des études).
+* « Pour vous » : la grille des cas types élargie, faite (D-678) : 1 155 cas au lieu de
+  196 (le Smic à mi-temps, le parc social, la zone 1, le conjoint sans revenu ou au Smic).
+* L'outre-mer : une population à part, après la série, préenregistrée ; les études restent
+  sur D-553 (D-678).

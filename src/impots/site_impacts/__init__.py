@@ -283,16 +283,22 @@ ménage comme le vôtre, année par année. Un cas type, pas vous : ses revenus 
 médianes de la population, et le calcul le dit quand il n'est qu'une approximation.</p>
 <div class="i-situation">
   <label>Foyer <select id="pv-foyer"><option value="seul">seul</option>
-    <option value="couple">en couple</option></select></label>
+    <option value="couple">en couple, même situation</option>
+    <option value="couple_sans">en couple, conjoint sans revenu</option>
+    <option value="couple_smic">en couple, conjoint au Smic</option></select></label>
   <label>Enfants <select id="pv-enfants"><option value="0">aucun</option>
     <option value="1">un</option><option value="2">deux</option>
     <option value="3">trois</option></select></label>
   <label>Activité <select id="pv-activite"><option value="smic">salarié au Smic</option>
+    <option value="mi_temps">Smic à mi-temps</option>
     <option value="median">salaire médian</option>
     <option value="eleve">salaire élevé (cadre)</option>
     <option value="chomeur">au chômage</option><option value="retraite">retraité</option>
     <option value="independant">indépendant</option></select></label>
-  <label>Logement <select id="pv-logement"><option value="locataire">locataire</option>
+  <label>Logement <select id="pv-logement"><option value="locataire">locataire du privé</option>
+    <option value="locataire_idf">locataire du privé, agglomération parisienne</option>
+    <option value="hlm">locataire HLM</option>
+    <option value="hlm_idf">locataire HLM, agglomération parisienne</option>
     <option value="proprietaire">propriétaire</option></select></label>
   <label>Âge <select id="pv-age"><option value="moins_30">moins de 30 ans</option>
     <option value="30_49" selected>30 à 49 ans</option>

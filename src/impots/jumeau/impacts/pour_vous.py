@@ -76,7 +76,10 @@ def charger(chemin: Path = TABLEAU) -> dict[str, Any]:
 
 def choisir(foyer: str, enfants: int, activite: str, logement: str, age: str) -> str:
     """La clé du cas type pour ce que dit le lecteur (la règle de `cas_types.choisir`)."""
+    if activite == "smic" and foyer == "couple_smic":
+        foyer = "couple"
     if activite == "retraite":
+        foyer = "couple_sans" if foyer == "couple_smic" else foyer
         return f"{foyer}-0-retraite-{logement}-62_plus"
     return f"{foyer}-{int(enfants)}-{activite}-{logement}-{'50_61' if age == '62_plus' else age}"
 
@@ -268,7 +271,7 @@ def calcul_cas(cas: Mapping[str, Any], tab: Mapping[str, Any], eco: Mapping[str,
     nominal = s + eco["w"] * float(ref["salaire_net"]) + eco["dp"] * indexees
     dln = np.log1p(nominal / rd) - np.log1p(eco["dp"])
     reel = rd * np.expm1(dln)
-    actif = cas["activite"] in ("smic", "median", "eleve", "independant")
+    actif = cas["activite"] in ("smic", "mi_temps", "median", "eleve", "independant")
     r0 = taux_chomage_cellule(cas, cellules) if actif else 0.0
     drisque = r0 * eco["ru"]
     # La satisfaction : chaque canal à chaque borne, l'enveloppe des bornes de même sens.

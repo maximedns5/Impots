@@ -52,7 +52,8 @@ def test_le_tableau_tient_le_statique_d_attal_au_smic():
     assert tab["cas"][SMIC]["reference"]["revenu_disponible"] == pytest.approx(20346.25,
                                                                                  abs=0.01)
     assert tab["verification"]["reforme"] == "plf2027_art_74_ppa"
-    assert len([c for c in tab["cas"].values() if c["reference"]]) == 196
+    # 196 cas de D-630, puis 1 155 avec la grille élargie par décision (D-676, D-678).
+    assert len([c for c in tab["cas"].values() if c["reference"]]) == 1155
 
 
 def test_le_revenu_reel_et_la_satisfaction_a_la_main(cellules):
@@ -109,10 +110,17 @@ def test_le_choix_du_cas_type():
 
     for args in (("couple", 3, "retraite", "locataire", "30_49"),
                  ("seul", 2, "smic", "proprietaire", "62_plus"),
-                 ("seul", 1, "independant", "locataire", "moins_30")):
+                 ("seul", 1, "independant", "locataire", "moins_30"),
+                 ("couple_smic", 1, "smic", "hlm", "30_49"),
+                 ("couple_smic", 0, "retraite", "hlm_idf", "62_plus"),
+                 ("couple_sans", 2, "mi_temps", "locataire_idf", "moins_30")):
         k = pour_vous.choisir(*args)
         assert k == cas_types.choisir(*args)
         assert k in pour_vous.charger()["cas"]
+    assert pour_vous.choisir("couple_smic", 1, "smic", "hlm", "30_49") == \
+        "couple-1-smic-hlm-30_49"
+    assert pour_vous.choisir("couple_smic", 0, "retraite", "hlm_idf", "62_plus") == \
+        "couple_sans-0-retraite-hlm_idf-62_plus"
 
 
 def _script(nom):
@@ -195,3 +203,26 @@ def test_sans_l_economie_du_jumeau_le_revenu_reel_n_a_pas_de_bande() -> None:
     ind = d["indicateurs"][0]
     assert ind["cle"] == "revenu_reel" and ind["valeurs"][-1] > 1000
     assert ind["bas"] is None and ind["haut"] is None
+
+
+def test_la_grille_elargie_d678():
+    """Le mi-temps, le parc social et la zone 1, les couples dont le conjoint est sans
+    revenu ou au Smic (D-678) : chaque ménage pris seul redonne la simulation commune, et
+    le tableau commité les tient."""
+    from impots import cas_types
+
+    tab = pour_vous.charger()
+    n = tab["niveaux"]
+    assert n["loyer_hlm_par_taille_2024"]["hlm_idf"]["1"] == 323
+    cas = (cas_types.Cas("seul", 0, "mi_temps", "hlm_idf", "30_49"),
+           cas_types.Cas("couple_sans", 2, "median", "locataire_idf", "30_49"),
+           cas_types.Cas("couple_smic", 1, "chomeur", "hlm", "moins_30"))
+    ch = cas_types.Chiffreur(cas, n)
+    ch.verifier(range(len(cas)))
+    for c, b, attendu in zip(cas, ch.base, (14930.07, 36097.67, 30923.54), strict=True):
+        assert b["revenu_disponible"] == pytest.approx(attendu, abs=0.01)
+        assert tab["cas"][c.cle]["reference"]["revenu_disponible"] == pytest.approx(
+            attendu, abs=0.01)
+    e = tab["mesures"]["pres2027_retailleau_programme"]["ecarts"]
+    assert e["seul-0-mi_temps-hlm_idf-30_49"]["revenu_disponible"] == pytest.approx(
+        820.91, abs=0.01)

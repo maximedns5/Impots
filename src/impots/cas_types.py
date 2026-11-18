@@ -51,13 +51,27 @@ COMMANDE = "PYTHONPATH=src .venv/bin/python -m impots.cas_types"
 ANNEE = 2026
 ANNEE_POPULATION = 2024
 
-FOYERS = ("seul", "couple")
+#: Le foyer, et pour un couple ce que fait le conjoint (D-678) : « couple », les deux dans
+#: la même situation (D-630) ; « couple_sans », le conjoint sans revenu ; « couple_smic »,
+#: le conjoint salarié au Smic à temps complet.
+FOYERS = ("seul", "couple", "couple_sans", "couple_smic")
 ENFANTS = (0, 1, 2, 3)
 #: Les situations d'activité : celles qu'OpenFisca chiffre, et l'indépendant, que le moteur
-#: des ménages ne sait pas décrire (la cellule, D-630).
-ACTIVITES = ("smic", "median", "eleve", "chomeur", "retraite", "independant")
-ACTIVITES_OPENFISCA = ("smic", "median", "eleve", "chomeur", "retraite")
-LOGEMENTS = ("locataire", "proprietaire")
+#: des ménages ne sait pas décrire (la cellule, D-630). « mi_temps » : le Smic à mi-temps
+#: (D-678).
+ACTIVITES = ("smic", "mi_temps", "median", "eleve", "chomeur", "retraite", "independant")
+ACTIVITES_OPENFISCA = ("smic", "mi_temps", "median", "eleve", "chomeur", "retraite")
+#: Le logement et sa zone (D-678) : le parc privé et le parc social, en zone 2 ou en zone 1
+#: (l'agglomération parisienne, ce que la population sait dire de l'Île-de-France).
+LOGEMENTS = ("locataire", "locataire_idf", "hlm", "hlm_idf", "proprietaire")
+#: (statut d'occupation d'OpenFisca, zone APL, clé du loyer) de chaque logement.
+LOGEMENT_STATUT = {"locataire": ("locataire_vide", 2, "prive"),
+                   "locataire_idf": ("locataire_vide", 1, "prive"),
+                   "hlm": ("locataire_hlm", 2, "hlm_province"),
+                   "hlm_idf": ("locataire_hlm", 1, "hlm_idf"),
+                   "proprietaire": ("proprietaire", 2, None)}
+#: La part du Smic à temps complet d'un salarié à mi-temps.
+MI_TEMPS = 0.5
 #: La classe d'âge et l'âge du cas type ; un retraité a 70 ans, un actif n'a pas 62 ans.
 AGES = {"moins_30": 27, "30_49": 40, "50_61": 55, "62_plus": 70}
 AGES_ACTIFS = ("moins_30", "30_49", "50_61")
@@ -65,10 +79,17 @@ AGES_ACTIFS = ("moins_30", "30_49", "50_61")
 AGES_ENFANTS = {27: (5, 3, 1), 40: (12, 9, 6), 55: (17, 15, 13)}
 LIBELLES = {
     "seul": "Seul", "couple": "En couple (les deux adultes dans la même situation)",
-    "smic": "Salarié au Smic, à temps complet", "median": "Salarié au salaire médian",
+    "couple_sans": "En couple, le conjoint sans revenu",
+    "couple_smic": "En couple, le conjoint salarié au Smic",
+    "smic": "Salarié au Smic, à temps complet", "mi_temps": "Salarié au Smic, à mi-temps",
+    "median": "Salarié au salaire médian",
     "eleve": "Salaire élevé (cadre, le neuvième décile)", "chomeur": "Au chômage, indemnisé",
     "retraite": "Retraité", "independant": "Indépendant",
-    "locataire": "Locataire du parc privé", "proprietaire": "Propriétaire",
+    "locataire": "Locataire du parc privé",
+    "locataire_idf": "Locataire du parc privé, agglomération parisienne",
+    "hlm": "Locataire du parc social (HLM)",
+    "hlm_idf": "Locataire du parc social, agglomération parisienne",
+    "proprietaire": "Propriétaire",
     "moins_30": "Moins de 30 ans", "30_49": "30 à 49 ans", "50_61": "50 à 61 ans",
     "62_plus": "62 ans ou plus",
 }
@@ -101,27 +122,50 @@ def cle(foyer: str, enfants: int, activite: str, logement: str, age: str) -> str
     return f"{foyer}-{int(enfants)}-{activite}-{logement}-{age}"
 
 
+def foyers(activite: str) -> tuple[str, ...]:
+    """Les foyers d'une activité : un retraité n'a pas de conjoint au Smic ; un salarié au
+    Smic en couple avec un conjoint au Smic est le couple « même situation »."""
+    if activite == "retraite":
+        return ("seul", "couple", "couple_sans")
+    if activite == "smic":
+        return ("seul", "couple", "couple_sans")
+    return FOYERS
+
+
 def grille(activites: Sequence[str] = ACTIVITES_OPENFISCA) -> tuple[Cas, ...]:
     """Les cas types : un retraité a 62 ans ou plus et aucun enfant à charge ; un actif
-    a moins de 62 ans."""
+    a moins de 62 ans. Les cas de D-630 d'abord, dans leur ordre ; ceux de D-678 ensuite."""
+    out = [c for c in _grille(activites, ("seul", "couple"), ("locataire", "proprietaire"))]
+    vus = set(out)
+    out += [c for c in _grille(activites, FOYERS, LOGEMENTS) if c not in vus]
+    return tuple(out)
+
+
+def _grille(activites: Sequence[str], foyers_: Sequence[str], logements: Sequence[str]
+            ) -> list[Cas]:
     out = []
-    for f in FOYERS:
+    for f in foyers_:
         for a in activites:
+            if f not in foyers(a):
+                continue
             ages = ("62_plus",) if a == "retraite" else AGES_ACTIFS
             enfants = (0,) if a == "retraite" else ENFANTS
             for e in enfants:
-                for lg in LOGEMENTS:
+                for lg in logements:
                     for g in ages:
                         out.append(Cas(f, e, a, lg, g))
-    return tuple(out)
+    return out
 
 
 def choisir(foyer: str, enfants: int, activite: str, logement: str, age: str) -> str:
     """La clé du cas type de la grille pour ce que le lecteur dit (la même règle que la
     page) : un retraité a 62 ans ou plus et ses enfants ne sont plus à charge ; un actif de
     62 ans ou plus est pris à 50-61 ans."""
+    if activite == "smic" and foyer == "couple_smic":
+        foyer = "couple"
     if activite == "retraite":
-        return cle(foyer, 0, activite, logement, "62_plus")
+        return cle("couple_sans" if foyer == "couple_smic" else foyer, 0, activite, logement,
+                   "62_plus")
     return cle(foyer, enfants, activite, logement, "50_61" if age == "62_plus" else age)
 
 
@@ -178,7 +222,27 @@ def niveaux(chemin: Path = POPULATION) -> dict[str, Any]:
         "loyer_definition": "loyer mensuel des personnes de référence locataires du parc "
                             "privé (vide ou meublé), médiane par nombre de personnes du "
                             "ménage (5 : cinq ou plus)",
+        **loyers_logements(),
     }
+
+
+def loyers_logements() -> dict[str, Any]:
+    """Les loyers du parc social, par nombre de personnes (D-678) : la règle de la
+    population (`logement.monthly_rent` : la surface supposée, le loyer au m² du RPLS de
+    2024, Île-de-France ou province), la même qui fait les loyers des ménages HLM de la
+    population de D-553."""
+    from impots.population import logement as lg
+
+    tailles = np.arange(1, 6)
+    out = {}
+    for nom, zone in (("hlm_province", "zone_2"), ("hlm_idf", "zone_1")):
+        v = lg.monthly_rent(np.array(["locataire_hlm"] * 5), np.array([zone] * 5), tailles)
+        out[nom] = {int(n): round(float(x)) for n, x in zip(tailles, v, strict=True)}
+    return {"loyer_hlm_par_taille_2024": out,
+            "loyer_hlm_definition": "loyer mensuel hors charges du parc social, la règle de "
+                                    "la population (logement.monthly_rent : 30 m² plus 12 m² "
+                                    "par personne, au loyer moyen au m² du RPLS au 1er "
+                                    "janvier 2024, Île-de-France 7,68 €, province 6,15 €)"}
 
 
 # --------------------------------------------------------------------------- ménages
@@ -189,40 +253,53 @@ def menage(cas: Cas, n: Mapping[str, Any]) -> Any:
     age = AGES[cas.age]
     naissance = ANNEE - age
     smic = float(n["smic_annuel_brut_2026"]) / float(n["smic_annuel_brut_2024"])
-    revenus: dict[str, float] = {"salaire_brut_annuel": 0.0}
-    if cas.activite == "smic":
-        revenus["salaire_brut_annuel"] = float(n["smic_annuel_brut_2026"])
-    elif cas.activite == "median":
-        revenus["salaire_brut_annuel"] = float(n["salaire_median_brut_2024"]) * smic
-    elif cas.activite == "eleve":
-        revenus["salaire_brut_annuel"] = float(n["salaire_d9_brut_2024"]) * smic
-    elif cas.activite == "chomeur":
-        revenus["chomage_brut_annuel"] = float(n["chomage_median_2024"])
-    elif cas.activite == "retraite":
-        revenus["pension_annuelle"] = float(n["pension_mediane_2024"])
-    else:
-        raise CasTypesError(f"« {cas.activite} » : le moteur des ménages ne le décrit pas")
+    revenus = _revenus(cas.activite, n, smic)
     adultes = [Adult(annee_naissance=naissance, **revenus)]
     if cas.foyer == "couple":
         adultes.append(Adult(annee_naissance=naissance, **revenus))
+    elif cas.foyer == "couple_sans":
+        adultes.append(Adult(annee_naissance=naissance, salaire_brut_annuel=0.0))
+    elif cas.foyer == "couple_smic":
+        adultes.append(Adult(annee_naissance=naissance, **_revenus("smic", n, smic)))
     enfants = [Child(annee_naissance=ANNEE - a) for a in AGES_ENFANTS.get(age, ())[
         :cas.enfants]]
     personnes = len(adultes) + len(enfants)
-    if cas.logement == "locataire":
-        loyers = n["loyer_median_par_taille_2024"]
-        loyer = float(loyers.get(min(personnes, 5), loyers.get(str(min(personnes, 5)))))
-        logement = Logement(statut="locataire_vide", loyer_mensuel=loyer, zone_apl=2)
+    statut, zone, cle_loyer = LOGEMENT_STATUT[cas.logement]
+    if cle_loyer is None:
+        logement = Logement(statut=statut, loyer_mensuel=0.0, zone_apl=zone)
     else:
-        logement = Logement(statut="proprietaire", loyer_mensuel=0.0, zone_apl=2)
+        loyers = (n["loyer_median_par_taille_2024"] if cle_loyer == "prive"
+                  else n["loyer_hlm_par_taille_2024"][cle_loyer])
+        loyer = float(loyers.get(min(personnes, 5), loyers.get(str(min(personnes, 5)))))
+        logement = Logement(statut=statut, loyer_mensuel=loyer, zone_apl=zone)
     return HouseholdInput(adults=adultes, children=enfants,
-                          couple_marie_ou_pacse=cas.foyer == "couple", logement=logement)
+                          couple_marie_ou_pacse=cas.foyer != "seul", logement=logement)
+
+
+def _revenus(activite: str, n: Mapping[str, Any], smic: float) -> dict[str, float]:
+    revenus: dict[str, float] = {"salaire_brut_annuel": 0.0}
+    if activite == "smic":
+        revenus["salaire_brut_annuel"] = float(n["smic_annuel_brut_2026"])
+    elif activite == "mi_temps":
+        revenus["salaire_brut_annuel"] = MI_TEMPS * float(n["smic_annuel_brut_2026"])
+    elif activite == "median":
+        revenus["salaire_brut_annuel"] = float(n["salaire_median_brut_2024"]) * smic
+    elif activite == "eleve":
+        revenus["salaire_brut_annuel"] = float(n["salaire_d9_brut_2024"]) * smic
+    elif activite == "chomeur":
+        revenus["chomage_brut_annuel"] = float(n["chomage_median_2024"])
+    elif activite == "retraite":
+        revenus["pension_annuelle"] = float(n["pension_mediane_2024"])
+    else:
+        raise CasTypesError(f"« {activite} » : le moteur des ménages ne le décrit pas")
+    return revenus
 
 
 def unites_consommation(cas: Cas) -> float:
     """L'échelle de l'OCDE modifiée (`population.aggregate.consumption_units`)."""
     age = AGES[cas.age]
     enfants = AGES_ENFANTS.get(age, ())[:cas.enfants]
-    adultes = 2 if cas.foyer == "couple" else 1
+    adultes = 1 if cas.foyer == "seul" else 2
     grands = sum(1 for a in enfants if a >= 14)
     return 1.0 + 0.5 * (adultes - 1 + grands) + 0.3 * (len(enfants) - grands)
 
@@ -440,6 +517,7 @@ def cellule(cas: Cas, revenu_disponible: float, cellules: Any, deflateur: float
     decile = int(np.searchsorted(seuils, x)) + 1
     if cas.foyer == "seul":
         type_ = "seul" if cas.enfants == 0 else "monoparentale"
+    # Les couples de D-678 (conjoint sans revenu, au Smic) aussi.
     else:
         type_ = "couple_sans_enfant" if cas.enfants == 0 else "couple_avec_enfants"
     return decile, type_
@@ -521,7 +599,7 @@ def construire(cles: Sequence[str] | None = None, verifier: int = 3,
         print(f"  {sc} ({time.time() - t0:.0f} s)", file=sys.stderr, flush=True)
     return {
         "version": 1, "annee": ANNEE, "commit": _commit(), "commande": COMMANDE,
-        "decisions": "D-630 à D-634", "niveaux": n,
+        "decisions": "D-630 à D-634, D-678", "niveaux": n,
         "grille": {"foyers": list(FOYERS), "enfants": list(ENFANTS),
                    "activites": list(ACTIVITES), "logements": list(LOGEMENTS),
                    "ages": AGES, "libelles": LIBELLES},

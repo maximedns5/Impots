@@ -43321,3 +43321,81 @@ processus, cinq fois : trois mises en file et cinq refus à chaque fois, avec le
 d'avant comme avec celui-ci ; la course que D-666 décrivait ne s'est pas produite sur ces
 essais, la fenêtre est étroite. Le verrou la ferme sans qu'on l'ait vue. Tests légers de
 `tests/test_parametrique.py` : 16 passés ; ruff : vert.
+
+## D-678 — « Pour vous » : la grille des cas types élargie ; l'outre-mer à part
+
+**Le point 9 de D-676, tranché** (le propriétaire, 18 novembre : « oui, population à part
+après la série »). L'outre-mer se corrige dans une population à part, construite après la
+série des études, préenregistrée contre sa grille et la ligne L1 de D-646 (la médiane de
+La Réunion rapportée à la métropole) ; les études restent sur D-553. Rien n'est fait ici.
+
+**Le point 8, fait** (`src/impots/cas_types.py`). Trois axes s'élargissent, sans changer
+la forme des clés (`foyer-enfants-activité-logement-âge`) :
+
+* **le foyer** : « couple_sans » (le conjoint sans revenu) et « couple_smic » (le conjoint
+  salarié au Smic à temps complet), à côté de « couple », les deux dans la même situation
+  (D-630). Un couple au Smic dont le conjoint est au Smic est le couple « couple » ; un
+  retraité n'a pas de conjoint au Smic : il est pris avec un conjoint sans revenu, et la
+  page le dit (`choisir`, la même règle dans `pour_vous.choisir` et la page) ;
+* **l'activité** : « mi_temps », le Smic à mi-temps (la moitié du Smic annuel de 2026).
+  Le moteur des ménages n'a pas de quotité : OpenFisca le lit comme un salaire sous le
+  Smic à temps complet, ce qui ne touche que les allègements des employeurs, pas le
+  revenu du ménage (dit dans le libellé de la source) ;
+* **le logement** : « hlm » (le parc social, zone 2) et deux logements de l'agglomération
+  parisienne, zone APL 1 : « locataire_idf » et « hlm_idf ». Les loyers HLM sont ceux de la
+  règle de la population (`logement.monthly_rent` : 30 m² plus 12 m² par personne, au
+  loyer moyen au m² du RPLS au 1er janvier 2024, 7,68 € en Île-de-France, 6,15 € en
+  province) : 258 à 554 € par mois en province, 323 à 691 € en zone 1, d'une à cinq
+  personnes. **Une limite, dite** : le loyer du parc privé de la population n'a pas de
+  zone (8,8 €/m², et `margins.RENT_PER_M2` le dit sans source) : « locataire_idf » a le
+  loyer du privé de partout, 370 € pour une personne ; il porte les plafonds de la zone 1,
+  pas un loyer francilien.
+
+Les niveaux sont ceux de la population de D-553, reconstruite ici (empreinte 5ace8bb6,
+la même) : les niveaux relus sont égaux, au nombre près, à ceux du tableau d'avant.
+
+**Le tableau** (`jumeau/parametres/cas_types.json`, refait par `construire`, 46
+scénarios, 7 min 53 s) : **1 155 cas types chiffrés par OpenFisca au lieu de 196**, 1 395
+avec les indépendants (la cellule). **Les 244 cas d'avant sont identiques, au centime**,
+dans leur référence et dans leurs écarts sous les 46 scénarios ; la vérification du
+ménage pris seul (`engine.compute`, à 1 €) passe sur la référence et sous
+`plf2027_art_74_ppa`. `reports/jumeau/pour_vous_programmes.json` (quatre cas d'avant) ne
+change donc pas et n'est pas refait.
+
+**Ce que la grille montre de plus** (le statique : le revenu disponible de 2026, € par an,
+sous le programme entier ; Mélenchon, Retailleau, Attal) :
+
+| cas type | revenu de référence | Mélenchon | Retailleau | Attal |
+|---|---:|---:|---:|---:|
+| seul, Smic, locataire du privé | 20 346 | +1 606 | −1 225 | +1 441 |
+| seul, Smic à mi-temps, locataire du privé | 14 556 | +1 119 | +822 | +715 |
+| seul, Smic à mi-temps, HLM en zone 1 | 14 930 | +796 | +821 | +712 |
+| couple, 2 enfants, deux salaires médians | 56 112 | +182 | +2 966 | +5 298 |
+| couple, 2 enfants, médian et conjoint sans revenu | 36 095 | +91 | +2 011 | +1 973 |
+| couple, 2 enfants, médian et conjoint au Smic, HLM | 47 966 | +2 068 | +3 507 | +3 844 |
+| couple de retraités, une pension, HLM | 20 294 | +2 029 | 0 | 0 |
+
+Le revenu d'incitation à l'activité de Retailleau retire au salarié au Smic à temps
+complet plus qu'il ne lui rend (D-633), quand le salarié à mi-temps y gagne. Le statut
+reste « illustratif » (D-630).
+
+**Ce que cela coûte à la page** (écrite à part, 2 min 2 s) : le fichier des cas types des
+programmes, `impacts-pour-vous.json`, passe de 1,44 à 8,66 Mo (compressé : 90 à 361 Ko),
+le paquet du jumeau de 1,73 à 4,75 Mo (396 à 549 Ko) ; `impacts.html` ne bouge pas (1,98
+Mo). Servi compressé, le surcoût est d'un demi-mégaoctet ; sans compression, il est de
+dix. La page, vérifiée dans Chromium à 1 200 et 390 px (Retailleau ; un couple dont le
+conjoint est sans revenu en zone 1, un mi-temps en HLM de zone 1, un retraité au conjoint
+« au Smic ») : aucune erreur, aucun défilement horizontal ; l'étiquette du foyer suit le
+cas pris (le retraité est dit « le conjoint sans revenu »). `node ui/check.mjs` passe.
+
+**Les tests** (`tests/test_pour_vous.py`) : le compte des cas passe de 196 à 1 155 par
+cette décision ; le choix du cas type et trois cas neufs (le ménage seul et le tableau,
+leur revenu de référence, l'écart de Retailleau) sont tenus, rouges sur le code d'avant.
+Tests légers de `test_pour_vous`, `test_impacts_tableau`, `test_impacts_synthese`,
+`test_parametrique` : 80 passés ; ruff : vert.
+
+**Les données de ce conteneur.** `make data` (profil des tests), puis les fichiers bruts
+que le code cite : 61 placés, empreinte vérifiée ; 13 non placés et rien mis à leur place
+(trois sites injoignables ou refusés, dix fichiers dont la version servie a changé, dont
+les séries de la BDM de l'Insee). Les évaluations préalables et l'archive du Journal
+officiel n'ont pas été téléchargées.

@@ -342,8 +342,12 @@
   for (const k of PV) $("pv-" + k).addEventListener("change", pourVous);
   function cleCas() {
     const v = Object.fromEntries(PV.map((k) => [k, $("pv-" + k).value]));
-    if (v.activite === "retraite") return `${v.foyer}-0-retraite-${v.logement}-62_plus`;
-    return `${v.foyer}-${v.enfants}-${v.activite}-${v.logement}-${v.age === "62_plus" ? "50_61" : v.age}`;
+    // La règle de `cas_types.choisir` (D-678) : un couple au Smic dont le conjoint est au
+    // Smic est le couple « même situation » ; un retraité n'a pas de conjoint au Smic.
+    let f = v.foyer;
+    if (v.activite === "smic" && f === "couple_smic") f = "couple";
+    if (v.activite === "retraite") return `${f === "couple_smic" ? "couple_sans" : f}-0-retraite-${v.logement}-62_plus`;
+    return `${f}-${v.enfants}-${v.activite}-${v.logement}-${v.age === "62_plus" ? "50_61" : v.age}`;
   }
   const euros = (x) => fr(x, 0) + " €";
   let casProgrammes = null;
@@ -372,6 +376,8 @@
     const notes = [];
     if (v.activite === "retraite" && v.enfants !== "0") notes.push("un retraité est pris sans enfant à charge");
     if (v.activite !== "retraite" && v.age === "62_plus") notes.push("un actif de 62 ans ou plus est pris à 50-61 ans");
+    if (v.activite === "smic" && v.foyer === "couple_smic") notes.push("un couple dont les deux sont au Smic est le couple « même situation »");
+    if (v.activite === "retraite" && v.foyer === "couple_smic") notes.push("un retraité est pris avec un conjoint sans revenu");
     const approx = { length: c.origines.cellule || 0 }, exact = { length: c.origines.openfisca || 0 };
     const pct = (i) => 100 * c.reel[i] / c.rd;
     const origine = !Object.keys(c.origines).length ? "aucune mesure lue" : approx.length && !exact.length
@@ -387,10 +393,10 @@
     const depart = !dep ? "<p class=\"pv-depart\">Âge de départ : vous êtes déjà à la retraite, ou ce n'est pas un actif.</p>"
       : !dep.programme || !dep.ecart_age_legal ? "<p class=\"pv-depart\">Âge de départ : ce choix ne change pas l'âge légal de votre génération (seul un programme entier qui le règle le porte ici).</p>"
       : `<p class="pv-depart">Âge de départ : votre génération atteint l'âge légal (${nf(dep.age_legal_reference % 1 ? 2 : 0).format(dep.age_legal_reference)} ans dans la loi actuelle) en ${dep.annee} ; le programme le change de <b>${fr(dep.ecart_age_legal, 2)} an</b>, soit un départ effectif de ${fr(dep.ecart_age_effectif, 2)} an (de ${fr(dep.effectif_bas, 2)} à ${fr(dep.effectif_haut, 2)}) et ${fr(dep.retraite_sans_limitation_ans, 2)} an de retraite sans limitation d'activité.</p>`;
-    const actif = ["smic", "median", "eleve", "independant"].includes(v.activite);
+    const actif = ["smic", "mi_temps", "median", "eleve", "independant"].includes(v.activite);
     const sansEco = !(d.notes.economie && d.notes.economie.lus || []).includes("salaire_moyen")
       ? '<div class="i-avert">Ce calcul ne porte ni les salaires, ni les prix, ni le chômage du jumeau (la chaîne des études) : le revenu est la mesure elle-même, et le risque de chômage n\'est pas lu.</div>' : "";
-    out.innerHTML = `<p class="pv-cas">Le cas type : ${esc([d.notes.grille.libelles[v.foyer], v.activite === "retraite" ? "" : v.enfants + " enfant(s)", d.notes.grille.libelles[v.activite], d.notes.grille.libelles[v.logement], d.notes.grille.libelles[v.activite === "retraite" ? "62_plus" : v.age]].filter(Boolean).join(", "))} ; revenu disponible sans la mesure : ${euros(c.rd).replace("+", "")} par an.${notes.length ? " (" + esc(notes.join(" ; ")) + ")" : ""} ${statut(d)}</p>
+    out.innerHTML = `<p class="pv-cas">Le cas type : ${esc([d.notes.grille.libelles[cle.split("-")[0]], v.activite === "retraite" ? "" : v.enfants + " enfant(s)", d.notes.grille.libelles[v.activite], d.notes.grille.libelles[v.logement], d.notes.grille.libelles[v.activite === "retraite" ? "62_plus" : v.age]].filter(Boolean).join(", "))} ; revenu disponible sans la mesure : ${euros(c.rd).replace("+", "")} par an.${notes.length ? " (" + esc(notes.join(" ; ")) + ")" : ""} ${statut(d)}</p>
       ${sansEco}<div class="pv-tetes">
         <div class="pv-tete"><h3>Votre revenu disponible réel, en ${an[f]}</h3><p class="i-gros" data-v="${c.reel[f]}">${euros(c.reel[f])}<small> par an</small></p><p>${fr(pct(f))} % ; en ${an[0]} : ${euros(c.reel[0])}</p></div>
         <div class="pv-tete"><h3>Dont la mesure elle-même</h3><p class="i-gros">${euros(c.statique[f])}<small> par an</small></p><p>${origine}</p></div>
