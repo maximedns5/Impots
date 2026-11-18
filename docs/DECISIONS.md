@@ -41900,8 +41900,10 @@ table (be9e808) et avant tout calcul par territoire. Calculé sur la seule table
 
 | ligne | table | publié | écart | tolérance | |
 |---|---|---|---|---|---|
-| L1 médiane Réunion / métropole | 0,817 (20 171 / 24 680) | 0,737 | +0,080 | ± 0,05 | manquée |
+| L1 médiane Réunion / métropole | 0,817 | 0,737 | +0,080 | ± 0,05 | manquée |
 | L2 pauvreté rural − métropole | −4,0 points (11,6 − 15,6 %) | −4,9 | +0,9 | ± 3 | tenue |
+
+Médianes de la table : 20 171 € (La Réunion), 24 680 € (métropole).
 
 **Une ligne sur deux.** L1 est manquée, comme le pronostic le disait, mais moins loin
 qu'il ne le craignait (0,817 contre « 0,85 à 0,90 ») : la composition des ménages de La
