@@ -43,6 +43,17 @@ def _pib(reference: Any, variante: Any) -> np.ndarray | None:
     return None if r is None or v is None else 100.0 * (v / r - 1.0)
 
 
+def _pib_volume(reference: Any, variante: Any) -> np.ndarray | None:
+    """Le PIB en volume (D-639) : l'écart du PIB moins l'effet des prix du PIB que le
+    jumeau écrit (`effet_prix_pib`, Md€), sur le PIB de la référence ; la formule du
+    socle de la productivité (`impacts/productivite.socle`)."""
+    r, v = niveaux(reference, "pib"), niveaux(variante, "pib")
+    dp = ecart(reference, variante, "effet_prix_pib")
+    if r is None or v is None or dp is None:
+        return None
+    return 100.0 * (v - r - dp) / r
+
+
 def _prix(reference: Any, variante: Any) -> np.ndarray | None:
     e = ecart(reference, variante, "ecart_prix_consommation")
     return None if e is None else 100.0 * e
@@ -65,7 +76,10 @@ def economie(variante: Any, reference: Any, depart: Any, cellules: Any,
              **options: Any) -> Dimension:
     indicateurs = []
     for cle, libelle, unite, sens, f in (
-            ("pib", "PIB", "% du PIB sans la mesure", 1, _pib),
+            # En tête le PIB en volume, l'activité (D-639) ; le PIB en valeur à côté,
+            # sans sens : il monte aussi quand seuls les prix montent.
+            ("pib_volume", "PIB en volume", "% du PIB sans la mesure", 1, _pib_volume),
+            ("pib", "PIB en valeur (nominal)", "% du PIB sans la mesure", 0, _pib),
             ("emploi", "Emploi intérieur", "milliers d'emplois", 1,
              lambda r, v: ecart(r, v, "emploi_total")),
             ("chomage", "Chômeurs (BIT)", "milliers de personnes", -1,
@@ -79,6 +93,8 @@ def economie(variante: Any, reference: Any, depart: Any, cellules: Any,
     statut_, limites = statut(options)
     limites += [
         "Écarts à la trajectoire sans la mesure, pas des niveaux.",
+        "Le PIB en volume dit l'activité ; le PIB en valeur (celui de la page du jumeau) y "
+        "ajoute l'écart des prix du PIB : il n'est ni mieux ni moins bien en soi (D-639).",
         "La rémunération par salarié est D1 par tête : cotisations des employeurs "
         "comprises. Une mesure qui baisse ces cotisations la fait baisser alors que le "
         "salaire net monte ; le net des ménages se lit dans le pouvoir d'achat.",

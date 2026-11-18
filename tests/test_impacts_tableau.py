@@ -210,3 +210,30 @@ def test_la_sante_lit_l_age_du_programme_entier_seulement() -> None:
     assert programme_age({"cle": "pres2027_philippe_programme",
                           "composition": [{"candidat": "x"}]}) is None
     assert programme_age({"cle": "pres2027_le_pen_lp20_tva_energie"}) is None
+
+
+class _E:
+    def __init__(self, **champs: float) -> None:
+        self._c = {k: np.array([v]) for k, v in champs.items()}
+
+    def present(self, nom: str) -> bool:
+        return nom in self._c
+
+    def __getitem__(self, nom: str) -> np.ndarray:
+        return self._c[nom]
+
+
+def test_l_economie_met_en_tete_le_pib_en_volume() -> None:
+    """D-639 : le PIB en tête est le PIB en volume (écart moins l'effet des prix du PIB),
+    « mieux » s'il monte ; le PIB en valeur suit, sans sens. Avant : le seul PIB était le
+    nominal, marqué « mieux » quand les prix montaient."""
+    from impots.jumeau.impacts import economie
+
+    ref = [_E(pib=1000.0, effet_prix_pib=0.0)]
+    var = [_E(pib=1010.0, effet_prix_pib=15.0)]  # +1 % en valeur, −0,5 % en volume
+    d = economie.economie(var, ref, None, None, annees=[2026])
+    ind = {i.cle: i for i in d.indicateurs}
+    assert d.indicateurs[0].cle == "pib_volume"
+    assert ind["pib_volume"].valeurs[0] == pytest.approx(-0.5)
+    assert ind["pib_volume"].sens == 1
+    assert ind["pib"].valeurs[0] == pytest.approx(1.0) and ind["pib"].sens == 0

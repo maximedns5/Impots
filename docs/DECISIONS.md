@@ -41699,3 +41699,32 @@ Les cas que le tableau d'OpenFisca tient ne changent pas : `pour_vous_programmes
 (quatre cas tenus par OpenFisca, le programme d'un coup) ne bouge en aucun nombre (relancé,
 seul `lus` gagne « rdb_dXX ») et garde son commit. Test :
 `test_le_gain_de_la_cellule_est_ramene_en_euros_de_2026`, en échec sur le code d'avant.
+
+## D-639 — L'économie met en tête le PIB en volume ; le nominal à côté, sans sens
+
+**L'erreur** (D-635, écrit, non changé) : la dimension « économie » (D-606) n'avait qu'un
+PIB, le nominal (`pib` de l'état, celui de la page du jumeau), marqué « mieux » quand il
+monte, et c'était la tête de sa fiche dans la vue d'ensemble. Une mesure qui ne fait que
+monter les prix y paraissait faire grandir l'économie ; la productivité, elle, montrait le
+PIB en volume.
+
+**Le correctif** (`impacts/economie.py`) : un premier indicateur `pib_volume`, « PIB en
+volume », (ΔPIB − Δeffet_prix_pib) / PIB^r, la formule du socle de la productivité
+(D-600), sens « mieux » s'il monte ; il devient la tête de la fiche. Le PIB nominal reste
+à côté, renommé « PIB en valeur (nominal) », avec le sens 0 (ni mieux ni moins bien), et
+une limite le dit. La clé `pib` ne change pas : le test qui la tient égale à la page du
+jumeau, au bit, passe toujours. Le juge de l'histoire (D-439) lisait déjà `pib_volume`.
+
+**Avant → après**, 2035, la tête de la fiche (centre, θ à ½) :
+
+| programme | avant : PIB (nominal), « mieux » | après : PIB en volume | nominal, sens 0 |
+|---|---|---|---|
+| Retailleau | +0,735 % | +0,796 % | +0,735 % |
+| Attal | +0,741 % | +1,022 % | +0,741 % |
+| Ruffin | +0,650 % | +0,519 % | +0,650 % |
+| Lisnard | +0,575 % | +0,547 % | +0,575 % |
+| Le Pen | +0,388 % | +0,370 % | +0,388 % |
+
+Ruffin (le Smic) est celui dont la tête baisse le plus : une part de son PIB nominal était
+des prix. Aucun rapport commité ne lit cette dimension : aucun n'est refait. Test :
+`test_l_economie_met_en_tete_le_pib_en_volume`, en échec sur le code d'avant.
