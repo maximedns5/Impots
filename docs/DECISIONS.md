@@ -41476,3 +41476,95 @@ OpenFisca, quand le moteur des ménages portera ses revenus ; (c) le salaire moy
 appliqué à tous les salariés, ou par tranche de salaire (le bloc `travail` a une
 distribution) ; (d) le contrôle de l'aide au logement et des couples sur un cas type
 publié, les fiches de la Drees une fois ouvrables d'ici.
+
+## D-635 — Relecture adverse du but 29 : trois erreurs corrigées, le reste écrit
+
+**Ce qui est relu** (volet `relecture` du but 29, branche `claude/but29-relecture`, partie
+de `claude/but29` à a2dd03e) : `jumeau/impacts/` (comptes, economie, moral, productivite,
+sante, pour_vous, tableau, _commun), `jumeau/parametres/{moral,productivite,sante}.yaml`,
+`jumeau/proposition.py`, `cas_types.py`, `site_impacts/`, les ajouts à `navigateur.py` et à
+`api/main.py`, les quatre rapports `reports/jumeau/*_programmes.json`. Le code et les PDF
+de `data/raw` d'abord, les D-entrées (D-595 à D-633) ensuite. Le jumeau a tourné sur
+Retailleau par `navigateur.impacts_json` (la page, en secondes) ; aucune passe sur la
+population, aucun `make impact`, aucun lourd.
+
+**Les coefficients relus sur leur source** : tous retrouvés, à la page et à la valeur dites.
+Green Book (β 0,35 à 0,50, p. 19 du document de fond ; δ −0,46 [−0,38 ; −0,53], annexe A2 ;
+13 000 £ [10 000 ; 16 000]) ; DMO (tableaux 1, 2 et A1 : −2,0, −1,7, −2,8 ; −1,4, −0,7,
+−2,3 ; −0,33 ; p. 11, 0,02 et 0,0033) ; Helliwell et Huang (tableau 2, échelle de Cantril,
+en emploi, modèle 3 : 2,4 %) ; NIESR DP 449 (tableau 1, seuil 12 000 £, MCO : 0,042 et
+0,032) ; Trésor-Éco n° 290 (0,19 point, 0,35 % dont 0,25 % direct) ; Insee Première
+n° 1687 (84,4, 71,7, 88,3, 80,0 ans ; 5 800 et 470 €) ; Cesarini et al. (un sixième du
+gradient) ; Sullivan et von Wachter (50 à 100 %, 10 à 15 %) ; Kuhn et al. (0,208 an) ; COR
+(48,1 % et 24,5 % ; un peu plus de 30 % et de 10 %) ; la part des 16 ans ou plus, 0,8183
+(56 195 044 sur 68 669 303). Aucune unité fausse trouvée dans les conversions (DMO en
+fraction, ×c/100 ; Δu en points ; chômeurs en milliers ×1000 ; Md€ ×1e9 / ménages). La TVA
+n'est pas comptée deux fois : le prix de la consommation du jumeau l'exclut
+(`blocs/commerce.py`, équation PC), le statique des cas types la retranche une fois. La
+diffusion d'une hausse du Smic n'est pas comptée deux fois dans « Pour vous » : le cas type
+la porte (`cas_types`), la part du bloc `travail` est retranchée du salaire moyen.
+
+**Corrigé** (chaque correctif avec son test léger, en échec sur le code d'avant) :
+
+1. *Grave, la bande des canaux de la productivité était à l'envers*
+   (`impacts/productivite.py`, l'indicateur `pgf_canaux` et `pib_potentiel_avec_canaux`).
+   Les bornes de η (0, centre, haut) étaient sommées telles quelles : pour un levier qui
+   baisse (une baisse de cotisations, la suppression du CIR), le « bas » passait au-dessus
+   du « haut » ; pour des canaux de signes mêlés, la bande était trop étroite. Désormais
+   l'enveloppe canal par canal (`_enveloppe`). En 2035, en % du PIB, avant → après :
+   Retailleau [0 ; −0,207] → [−0,207 ; 0] ; Mélenchon [0 ; 1,214] → [−0,414 ; 1,628] ;
+   Ruffin [0 ; 0,452] → [−0,174 ; 0,625]. Le centre ne change pas. Le rapport
+   `productivite_programmes.json` garde son commit et sa bande d'avant : à refaire au
+   prochain passage du script (le jumeau seul, sans passe). Commit 91958a3.
+2. *Moyen, un statut trop fort.* Une loi hypothétique ou une mesure mise à l'échelle ou
+   décalée rendait les comptes et l'économie « illustratifs » (`_commun.statut`, D-606),
+   mais le moral et la productivité, qui lisent la même trajectoire, restaient « sourcés,
+   non jugés ». Ils suivent maintenant la même règle et en disent la raison. Aucun nombre
+   ne change ; les rapports (programmes entiers) ne sont pas touchés. Commit 44058d5.
+3. *Moyen, la page promettait plus que le calcul.* Toutes les bandes y étaient dites « de
+   5 à 95 % » (légende, en-têtes du tableau, « Comment c'est calculé ») ; celles du moral,
+   de la santé, de « Pour vous » et des canaux de la productivité sont l'enveloppe des
+   bornes publiées des coefficients, pas des tirages ni un intervalle de confiance. La page
+   dit les deux sortes, et ces trois dimensions le disent dans leurs limites. Commit
+   06c8e37.
+
+**Écrit, non changé** (des choix de modèle ou des points discutables ; au propriétaire),
+par gravité :
+
+* *La plus forte* : ε, le chômage autour de soi, fait l'essentiel du moral de Retailleau
+  et d'Attal (D-597), et son ancrage (c/100 × δ / 0,33) est un choix ; la règle linéaire
+  10/3 donnerait 2,4 fois plus, la borne basse de Helliwell et Huang passe par β (0,425),
+  pas par le coefficient du revenu de leur propre étude (0,24 sur l'échelle de Cantril,
+  tableau 1), qui donnerait 0,0058 au lieu de 0,0102 (`moral.yaml`, `bas_hh`). Le statut
+  « sourcé, non jugé » du moral tient sur des sources, mais deux centres (β au milieu de
+  sa plage, l'ancrage) sont choisis, comme ceux qui font dire la santé « illustrative ».
+* Le haut de φ (−2,3, DMO colonne 5) vient d'une équation avec un terme d'inflation au
+  carré (+3,5) : son effet marginal à 8 % d'inflation est −1,7, pas −2,3 ; la colonne 6
+  (−0,7) a une variable retardée (0,3), l'effet de long terme y est −1,0. La bande de φ est
+  donc un peu large aux deux bouts (`moral.yaml`, `inflation`).
+* Santé, un double compte partiel : le surcroît de mortalité d'un chômeur (Sullivan et von
+  Wachter) porte déjà sa perte de revenu, que le canal du revenu compte aussi par le revenu
+  du décile. Petit au centre (s = 1/12), non borné.
+* Santé, la forme de g : D-621 le dit, g sous-estime d'un quart l'association au milieu de
+  la distribution ; la conversion annuelle compte l'effet du revenu l'année même.
+* L'économie : son « PIB » est le PIB nominal (`pib` de l'état, comme la page du jumeau),
+  marqué « mieux » quand il monte ; la productivité montre le PIB en volume. Pour
+  Retailleau en 2035 : +0,735 % contre +0,796 % ; un écart de prix, pas d'activité.
+* La productivité, sur la page, n'a de bande que pour ses canaux : le socle (productivité
+  apparente, PIB potentiel…) ignore les tirages des θ que le tableau lui passe (`tirages`) ;
+  les rapports (`scripts/jumeau_productivite.py`) les ont. Une bande qui manque, pas fausse.
+* La productivité ne lit, comme levier de coût, que `entreprises["cotisations_employeurs"]`
+  (ni `cotisations_employeurs_ciblees`, ni les impulsions) : Attal, Lisnard, Philippe et
+  Le Pen ont un canal de coût nul dans le rapport ; à vérifier sur leurs passes.
+* « Pour vous » : le gain d'une mesure prise à la cellule (`Mesure.menages`, Md€ de son
+  année) se mêle au statique d'OpenFisca (euros de 2026) sans conversion : un écart de
+  quelques pour cent en fin de période, sur les cas approximés seulement.
+* Les rapports `moral_`, `sante_` et `pour_vous_programmes.json` restent ceux de leur
+  commit : aucun de leurs nombres ne change avec ces correctifs (le statut seul, et pas
+  pour des programmes entiers).
+
+**Ce qui n'a pas été fait** : la page n'a pas été construite ni ouverte au téléphone
+(`site_impacts.servir` demande le paquet du jumeau) ; `node ui/check.mjs` passe, mais il
+ne couvre pas cette page. Les contrôles dits aveugles (D-595 C1, D-620) n'ont pas été
+re-vérifiés au-delà de leurs D-entrées ; les non aveugles le disent eux-mêmes (D-595 C2,
+D-620 à moitié, D-632).
