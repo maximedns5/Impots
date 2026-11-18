@@ -53,6 +53,7 @@ def _json_script(x: Any) -> str:
 def bibliotheque(d: dict[str, Any]) -> dict[str, Any]:
     """Les mesures que le lecteur peut choisir, par candidat ou par texte, chacune avec
     son programme s'il en a un ; les lois hypothétiques ; les bornes des réglages."""
+    from impots import parametrique
     from impots.jumeau import navigateur
     from impots.jumeau.proposition import DECALAGE_MAX, ECHELLE_MAX
 
@@ -68,7 +69,11 @@ def bibliotheque(d: dict[str, Any]) -> dict[str, Any]:
     return {"groupes": list(groupes.values()),
             "libelles": {k: c["libelle"] for k, c in d["candidats"].items()},
             "hypotheses": navigateur.HYPOTHESES, "annees": list(navigateur.ANNEES),
-            "echelle_max": ECHELLE_MAX, "decalage_max": DECALAGE_MAX}
+            "echelle_max": ECHELLE_MAX, "decalage_max": DECALAGE_MAX,
+            # D-660 : le menu de « Votre barème », que la page montre sans l'API.
+            "bareme": {"boutons": parametrique.BOUTONS,
+                       "hors_menu": parametrique.HORS_MENU,
+                       "raison": parametrique.RAISON}}
 
 
 def precalculer(d: dict[str, Any]) -> dict[str, Any]:
@@ -208,6 +213,8 @@ année par année, avec ce qu'on peut en croire.</p>
     aria-selected="false">Une mesure</button>
   <button type="button" role="tab" id="o-composer" aria-controls="p-composer"
     aria-selected="false">Composer la mienne</button>
+  <button type="button" role="tab" id="o-bareme" aria-controls="p-bareme"
+    aria-selected="false">Votre barème</button>
   <button type="button" role="tab" id="o-comparer" aria-controls="p-comparer"
     aria-selected="false">Comparer</button>
 </div>
@@ -230,6 +237,22 @@ année par année, avec ce qu'on peut en croire.</p>
     <button type="button" id="ajouter-loi">+ une loi simple</button>
     <button type="button" id="calculer" class="i-principal">Calculer</button>
   </div>
+</div>
+<div role="tabpanel" id="p-bareme" aria-labelledby="o-bareme" class="i-panneau" hidden>
+  <p class="i-aide">Réglez la loi vous-même : le Smic, une prestation, l'impôt sur le
+  revenu, la TVA, une cotisation. Votre barème passe sur toute la population (OpenFisca),
+  comme une mesure de candidat, puis dans le jumeau : <b>environ trois quarts d'heure</b>,
+  une proposition à la fois, sur un serveur qui fait tourner le moteur. Le résultat est
+  <b>illustratif</b> : un chiffrage que personne n'a enregistré avant de le voir, jamais
+  comparé à un chiffrage officiel.</p>
+  <div id="bareme-boutons" class="i-bareme"></div>
+  <details class="i-hors"><summary>Ce que le menu ne règle pas</summary>
+  <ul id="bareme-hors"></ul></details>
+  <div class="i-boutons">
+    <button type="button" id="bareme-lancer" class="i-principal">Lancer la passe</button>
+    <button type="button" id="bareme-neutre">Revenir à la loi</button>
+  </div>
+  <div id="bareme-etat" class="i-avert" role="status" aria-live="polite" hidden></div>
 </div>
 <div role="tabpanel" id="p-comparer" aria-labelledby="o-comparer" class="i-panneau" hidden>
   <p class="i-aide">Les programmes côte à côte, dimension par dimension : le même nombre,
@@ -335,6 +358,10 @@ illustrative ; jamais de total entre dimensions ni de verdict d'ensemble.</li>
 jumeau complet refuse leur programme entier (la page dit pourquoi) : la chaîne des
 études sur le programme entier, et le jumeau complet sur leurs mesures composées
 (D-652).</li>
+<li>Votre barème : la passe sur la population est celle d'une mesure de candidat (la
+première année, puis chaque année jusqu'en 2035, dans le cadre des études publiées), puis
+les cas types et le jumeau ; chaque dimension est dite illustrative, parce que rien n'a
+été enregistré avant le calcul (D-660).</li>
 <li>Composer : une mesure à ×2 double chaque montant de sa passe, au premier ordre, sans
 refaire la passe ; une entrée plus tardive décale ses années. Les interactions entre
 mesures d'une même proposition ne sont pas chiffrées (D-605).</li>

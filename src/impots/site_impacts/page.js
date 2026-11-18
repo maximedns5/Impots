@@ -49,7 +49,7 @@
   }
 
   /* ------------------------------------------------------------ le choix */
-  const onglets = ["programme", "mesure", "composer", "comparer"];
+  const onglets = ["programme", "mesure", "composer", "bareme", "comparer"];
   let onglet = "programme";
   function montrer(o) {
     onglet = o;
@@ -70,6 +70,7 @@
     if (x === "programme") choisir({ candidat: $("programme").value });
     if (x === "mesure") choisir({ candidat: $("mesure").value });
     if (x === "composer" && !$("composition").children.length) ajouterMesure();
+    if (x === "bareme") try { history.replaceState(null, "", "#bareme"); } catch (e) { /* page locale */ }
   });
   $("programme").addEventListener("change", () => choisir({ candidat: $("programme").value }));
   $("mesure").addEventListener("change", () => choisir({ candidat: $("mesure").value }));
@@ -125,6 +126,87 @@
     const c = composition();
     if (!c.length) { $("etat").textContent = "Ajoutez au moins une mesure ou une loi."; return; }
     choisir({ composition: c });
+  });
+
+  /* ------------------------------------------------------------ votre barème (D-660) */
+  // La page montre le menu sans l'API ; « Lancer » appelle l'API à la même origine
+  // (`POST /impacts/proposition`), suit l'état, puis dessine le résultat comme un autre.
+  const BR = B.bareme || { boutons: [], hors_menu: [] };
+  const API = "/impacts/proposition";
+  const LOCAL = `<p>La passe tourne sur un serveur qui a le moteur et la population : ce site statique n'en a pas. Pour la lancer chez vous, dans le dépôt, la population construite (<code>make data</code>) :</p>
+    <ol><li><code>PYTHONPATH=src python -m impots.site_impacts ecrire</code> (la page, environ deux minutes)</li>
+    <li><code>IMPOTS_AUTH=aucune PYTHONPATH=src uvicorn impots.api.main:app</code></li>
+    <li>ouvrir <code>http://localhost:8000/site/impacts.html#bareme</code></li></ol>`;
+  function bouton(b) {
+    const v = b.id === "ir_tranche_seuil" ? 0 : b.neutre;
+    return `<label data-b="${esc(b.id)}"><span>${esc(b.libelle)}</span>
+      <span class="i-ligne"><input type="number" data-b="${esc(b.id)}" min="${b.min}" max="${b.max}" step="${b.pas}" value="${v}"> ${esc(b.unite === "%" && b.id !== "tva_normal" && b.id !== "ir_tranche_taux" ? "% de plus" : b.unite)}</span>
+      <span class="i-aide">${esc(b.aide)}</span></label>`;
+  }
+  $("bareme-boutons").innerHTML = BR.boutons.map(bouton).join("");
+  $("bareme-hors").innerHTML = BR.hors_menu.map((h) => `<li>${esc(h)}</li>`).join("");
+  for (const i of $("bareme-boutons").querySelectorAll("input")) i.addEventListener("input", () => {
+    const b = BR.boutons.find((x) => x.id === i.dataset.b);
+    i.closest("label").classList.toggle("i-bouge", Number(i.value) !== b.neutre);
+  });
+  $("bareme-neutre").addEventListener("click", () => {
+    for (const i of $("bareme-boutons").querySelectorAll("input")) {
+      i.value = BR.boutons.find((x) => x.id === i.dataset.b).neutre;
+      i.closest("label").classList.remove("i-bouge");
+    }
+  });
+  function reglageBareme() {
+    const out = {};
+    for (const i of $("bareme-boutons").querySelectorAll("input")) {
+      const b = BR.boutons.find((x) => x.id === i.dataset.b);
+      const v = Number(String(i.value).replace(",", "."));
+      if (i.value !== "" && isFinite(v) && v !== b.neutre) out[b.id] = v;
+    }
+    return out;
+  }
+  function etatBareme(html, refus) {
+    const e = $("bareme-etat");
+    e.hidden = false;
+    e.classList.toggle("i-refus", !!refus);
+    e.innerHTML = html;
+  }
+  const ETAPES = { premiere_annee: "la première année (20 000 ménages, comportements, boucle)", chemin_annuel: "chaque année jusqu'en 2035 (la plus longue)", cas_types: "les cas types de « Pour vous »", jumeau: "le jumeau, toutes les dimensions" };
+  let suivi = null;
+  async function suivre(id) {
+    clearTimeout(suivi);
+    let r;
+    try { r = await fetch(`${API}/${encodeURIComponent(id)}`, { headers: { Accept: "application/json" } }); }
+    catch (e) { etatBareme("Le serveur ne répond plus : " + esc(e.message) + LOCAL, true); return; }
+    const e = await r.json().catch(() => ({}));
+    window.impacts.bareme = e;
+    if (!r.ok) { etatBareme(esc(e.detail || r.status), true); return; }
+    if (e.etat === "fait" && e.resultat) {
+      etatBareme(`<b>Fait.</b> ${esc(e.libelle)} — ${Object.entries(e.temps || {}).map(([k, v]) => `${esc(k.replace(/_s$/, "").replace(/_/g, " "))} ${fr(v / 60, 1).replace("+", "")} min`).join(", ")}. Le résultat est ci-dessous.`);
+      dessiner(e.resultat);
+      return;
+    }
+    if (e.etat === "echec") { etatBareme(`<b>La passe a échoué :</b> <code>${esc(e.erreur)}</code>`, true); return; }
+    const depuis = e.debut ? Math.round((Date.now() - Date.parse(e.debut)) / 60000) : null;
+    etatBareme(e.etat === "en_file"
+      ? `<b>En file</b> : ${esc(e.libelle)}. Une passe tourne déjà sur le serveur ; la vôtre partira après elle. La page vérifie toutes les quinze secondes.`
+      : `<b>En cours</b> (${depuis === null ? "" : depuis + " min, "}environ trois quarts d'heure en tout) : ${esc(ETAPES[e.etape] || e.etape || "")}. Vous pouvez laisser la page ouverte, ou revenir plus tard à <code>${esc(location.pathname)}#bareme=${esc(id)}</code>.`);
+    suivi = setTimeout(() => suivre(id), 15000);
+  }
+  $("bareme-lancer").addEventListener("click", async () => {
+    const boutons = reglageBareme();
+    if (!Object.keys(boutons).length) { etatBareme("Bougez au moins un réglage : à leur valeur de départ, ils laissent la loi.", true); return; }
+    etatBareme("Envoi au serveur…");
+    let r;
+    try { r = await fetch(API, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ boutons }) }); }
+    catch (e) { etatBareme("<b>Aucun serveur de calcul ici.</b>" + LOCAL, true); return; }
+    const e = await r.json().catch(() => null);
+    if (r.status === 404 || r.status === 405 || e === null) { etatBareme("<b>Aucun serveur de calcul ici.</b>" + LOCAL, true); return; }
+    if (!r.ok) {
+      etatBareme(`<b>Le serveur refuse :</b> ${esc(e.detail || r.status)}${r.status === 503 && /clé/.test(e.detail || "") ? LOCAL : ""}`, true);
+      return;
+    }
+    try { history.replaceState(null, "", "#bareme=" + e.id); } catch (x) { /* page locale */ }
+    suivre(e.id);
   });
 
   /* ------------------------------------------------------------ le calcul */
@@ -217,6 +299,7 @@
     if (parMesures) av.push(`<div class="i-avert i-refus"><b>Le jumeau complet refuse ce programme entier</b> (la raison est ci-dessus) : il est calculé par la chaîne des études, sans les ménages ni les entreprises. Ses mesures, elles, passent une à une dans le jumeau complet. <button type="button" class="i-lien" data-voir="${esc(r.candidat)}@mesures">Voir le calcul par ses mesures</button></div>`);
     if (r.couverture) av.push(couverture(r));
     if (r.refus) av.push(`<div class="i-avert i-refus"><b>Le jumeau ne calcule ${r.calculees && r.calculees.length ? "que jusqu'en " + r.calculees[r.calculees.length - 1] : "aucune année"} :</b> ${esc(r.refus)}</div>`);
+    if (r.proposition) av.push(`<div class="i-avert i-refus"><b>Votre barème, un chiffrage illustratif.</b> ${esc(r.proposition.libelle)}. Une passe sur la population faite à votre demande, que personne n'a enregistrée avant de la voir : chaque dimension est illustrative, aucune n'est comparée à un chiffrage officiel (D-660).</div>`);
     if (r.composition) av.push(`<div class="i-avert"><b>La proposition :</b><ul>${r.composition.map((m) => `<li>${esc(m.libelle)}${m.transformee ? " — <i>" + esc(m.transformee) + "</i>" : ""}</li>`).join("")}</ul></div>`);
     if (r.avertissements && r.avertissements.length) av.push(`<div class="i-avert"><ul>${r.avertissements.map((a) => `<li>${esc(a)}</li>`).join("")}</ul></div>`);
     const mods = Object.entries(r.modules_en_erreur || {});
@@ -644,6 +727,10 @@
 
   /* ------------------------------------------------------------ au départ */
   const voulu = decodeURIComponent((location.hash || "").slice(1));
+  if (voulu === "bareme" || voulu.startsWith("bareme=")) {
+    montrer("bareme");
+    if (voulu.startsWith("bareme=")) suivre(voulu.slice(7));
+  }
   const estProgramme = B.groupes.some((g) => g.programme === voulu);
   const estMesure = !estProgramme && B.groupes.some((g) => g.mesures.some((m) => m.cle === voulu));
   if (estMesure) { montrer("mesure"); $("mesure").value = voulu; choisir({ candidat: voulu }); }

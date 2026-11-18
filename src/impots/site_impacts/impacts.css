@@ -134,3 +134,12 @@
 .i-cmp-table tbody th{font-weight:600;text-align:left}
 .c-vide{color:var(--encre-3)}
 @media (max-width:560px){.c-ligne{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nom val" "piste piste"}.c-nom{grid-area:nom}.c-val{grid-area:val}.c-piste{grid-area:piste}}
+/* Votre barème (D-660) */
+.i-bareme{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr));gap:.5rem;margin:.5rem 0}
+.i-bareme label{display:flex;flex-direction:column;gap:.2rem;border:1px solid var(--trait);border-radius:var(--rayon-petit);padding:.45rem .6rem;background:var(--papier);font-size:.88rem;min-width:0}
+.i-bareme .i-ligne{display:flex;gap:.4rem;align-items:center}
+.i-bareme input[type=number]{font:.92rem var(--sans);width:7.5rem;max-width:100%;min-height:2.2rem;border:1px solid var(--trait-fort);border-radius:var(--rayon-petit);background:var(--surface);color:var(--encre);padding:.15rem .3rem}
+.i-bareme .i-aide{margin:0;font-size:.76rem}
+.i-bareme label.i-bouge{border-color:var(--trait-fort)}
+.i-hors{font-size:.85rem;margin:.3rem 0}
+#bareme-etat code{word-break:break-all;white-space:pre-wrap}

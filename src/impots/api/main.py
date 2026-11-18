@@ -742,12 +742,14 @@ def impacts_proposition_etat(ident: str) -> JSONResponse:
 @app.get("/site/{nom}", include_in_schema=False)
 def site_impacts_local(nom: str) -> FileResponse:
     """La page « Ce que ça change » écrite en local (`python -m impots.site_impacts
-    ecrire`), servie par l'API pour que son formulaire « votre barème » l'appelle à la même
-    origine (D-660). Un nom de fichier du dossier, rien d'autre."""
+    ecrire [dossier]`, `IMPOTS_SITE_LOCAL` s'il n'est pas celui par défaut), servie par
+    l'API pour que son formulaire « votre barème » l'appelle à la même origine (D-660).
+    Un nom de fichier du dossier, rien d'autre."""
     from impots.site_impacts import LOCAL
 
-    chemin = (LOCAL / nom).resolve()
-    if chemin.parent != LOCAL.resolve() or not chemin.is_file():
+    dossier = Path(os.environ.get("IMPOTS_SITE_LOCAL") or LOCAL).resolve()
+    chemin = (dossier / nom).resolve()
+    if chemin.parent != dossier or not chemin.is_file():
         raise HTTPException(status_code=404, detail=(
             f"« {nom} » absent : la page s'écrit par `PYTHONPATH=src python -m "
             f"impots.site_impacts ecrire` (environ deux minutes)"))
