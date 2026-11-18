@@ -54,6 +54,15 @@ def _pib_volume(reference: Any, variante: Any) -> np.ndarray | None:
     return 100.0 * (v - r - dp) / r
 
 
+def _sans_prix(reference: Any, variante: Any) -> bool:
+    """Aucun état ne porte l'effet des prix du PIB : la chaîne des études (le mode
+    réduit, D-670), où l'écart du PIB est celui des variantes de Mésange, « PIB en
+    volume » (G2017-04, la première ligne de chaque tableau de variante), et du canal
+    des créations (une valeur ajoutée, sans prix). Aucun prix n'y bouge : l'écart est
+    un volume, et non une valeur."""
+    return not any(e.present("effet_prix_pib") for e in (*reference, *variante))
+
+
 def _prix(reference: Any, variante: Any) -> np.ndarray | None:
     e = ecart(reference, variante, "ecart_prix_consommation")
     return None if e is None else 100.0 * e
@@ -75,11 +84,18 @@ def _bas(libelles: list[str]) -> str:
 def economie(variante: Any, reference: Any, depart: Any, cellules: Any,
              **options: Any) -> Dimension:
     indicateurs = []
-    for cle, libelle, unite, sens, f in (
+    # Sans prix (la chaîne des études, D-670), l'écart du PIB est un volume : il prend
+    # la place et le nom du PIB en volume, et il n'y a pas de PIB en valeur à côté.
+    # Avant D-670, le même nombre s'y disait « PIB en valeur (nominal) », sans sens.
+    sans_prix = _sans_prix(reference, variante)
+    pibs = ((("pib_volume", "PIB en volume", "% du PIB sans la mesure", 1, _pib),)
+            if sans_prix else
             # En tête le PIB en volume, l'activité (D-639) ; le PIB en valeur à côté,
             # sans sens : il monte aussi quand seuls les prix montent.
-            ("pib_volume", "PIB en volume", "% du PIB sans la mesure", 1, _pib_volume),
-            ("pib", "PIB en valeur (nominal)", "% du PIB sans la mesure", 0, _pib),
+            (("pib_volume", "PIB en volume", "% du PIB sans la mesure", 1, _pib_volume),
+             ("pib", "PIB en valeur (nominal)", "% du PIB sans la mesure", 0, _pib)))
+    for cle, libelle, unite, sens, f in (
+            *pibs,
             ("emploi", "Emploi intérieur", "milliers d'emplois", 1,
              lambda r, v: ecart(r, v, "emploi_total")),
             ("chomage", "Chômeurs (BIT)", "milliers de personnes", -1,
@@ -93,8 +109,13 @@ def economie(variante: Any, reference: Any, depart: Any, cellules: Any,
     statut_, limites = statut(options)
     limites += [
         "Écarts à la trajectoire sans la mesure, pas des niveaux.",
-        "Le PIB en volume dit l'activité ; le PIB en valeur (celui de la page du jumeau) y "
-        "ajoute l'écart des prix du PIB : il n'est ni mieux ni moins bien en soi (D-639).",
+        ("Le PIB est celui que Mésange publie, en volume (la ligne « PIB en volume » de "
+         "ses variantes, G2017-04), plus le canal des créations : la chaîne des études "
+         "ne fait bouger aucun prix, il n'y a pas de PIB en valeur à part (D-670)."
+         if sans_prix else
+         "Le PIB en volume dit l'activité ; le PIB en valeur (celui de la page du jumeau) "
+         "y ajoute l'écart des prix du PIB : il n'est ni mieux ni moins bien en soi "
+         "(D-639)."),
         "La rémunération par salarié est D1 par tête : cotisations des employeurs "
         "comprises. Une mesure qui baisse ces cotisations la fait baisser alors que le "
         "salaire net monte ; le net des ménages se lit dans le pouvoir d'achat.",

@@ -286,3 +286,18 @@ def test_l_api_borne_les_tirages_des_bandes() -> None:
     with pytest.raises(navigateur.NavigateurError, match="tirages"):
         navigateur.impacts_json(navigateur.Session(json.loads(json.dumps(
             site_jumeau.donnees()))), json.dumps({"candidat": PROGRAMME, "tirages": -1}))
+
+
+def test_sans_prix_l_ecart_du_pib_est_le_pib_en_volume() -> None:
+    """D-670 : sans l'effet des prix du PIB (la chaîne des études), l'écart du PIB est
+    celui des variantes de Mésange, publiées « PIB en volume » : il est le PIB en volume,
+    « mieux » s'il monte, et il n'y a pas de PIB en valeur à part. Avant : le même nombre
+    se disait « PIB en valeur (nominal) », sans sens, quand la productivité le disait en
+    volume."""
+    from impots.jumeau.impacts import economie
+
+    d = economie.economie([_E(pib=993.0)], [_E(pib=1000.0)], None, None, annees=[2026])
+    ind = {i.cle: i for i in d.indicateurs}
+    assert list(ind) == ["pib_volume"]
+    assert ind["pib_volume"].libelle == "PIB en volume" and ind["pib_volume"].sens == 1
+    assert ind["pib_volume"].valeurs[0] == pytest.approx(-0.7)

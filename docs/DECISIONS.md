@@ -42848,3 +42848,58 @@ Par gravité.
 **Ce qui n'a pas été fait** : pas de `make impact`, pas de lourds ; le site commité n'est
 pas reconstruit (la page a été écrite à part pour la vérifier). Les contrôles aveugles
 (D-646, D-656) relus sur leurs commits seulement.
+
+## D-670 — Le PIB de la chaîne des études est un volume : l'économie le disait en valeur
+
+**Le problème** (D-666, premier point ; volet `finition` du but 29, branche
+`claude/but29-finition`, numéros D-670 à D-674). Dans la chaîne des études (le mode
+réduit : les blocs `mesange` et `creations`, sans ménages ni entreprises), aucun état ne
+porte l'effet des prix du PIB (`effet_prix_pib`). La productivité prenait alors l'écart du
+PIB pour le « PIB en volume » (`productivite.socle`, `dprix = 0`), sens « mieux » ;
+l'économie disait le même nombre « PIB en valeur (nominal) », sens 0. L'un des deux noms
+était faux.
+
+**La source qui tranche** : Insee, Mésange (G2017-04),
+`data/raw/insee_G2017-04_mesange.pdf`, section 4. Chaque tableau de variante imprime en première ligne « PIB en volume », en %
+d'écart au compte central (lu avec `pdftotext -layout` : par exemple « Baisse de l'impôt
+sur le revenu des ménages de 1 % du PIB ex ante », PIB en volume 0,41 0,83 0,88 0,81 0,87
+1,05). C'est la ligne que `macro.mesange.ROWS["gdp"]` lit (« PIB en volume » ; « PIB (en
+volume et en %) » pour la variante ciblée), que `retroaction.replay_tables` porte et que
+le bloc `mesange` multiplie par le PIB de la référence. Le canal des créations écrit une
+valeur ajoutée sans prix (s_VA r c Σ Δe). Aucun prix ne bouge dans ce mode : l'écart est
+un volume. **C'est l'économie qui se trompait de nom** ; la productivité avait raison.
+
+**Le correctif** (`impacts/economie.py`). Quand aucun état ne porte `effet_prix_pib`,
+l'écart du PIB devient l'indicateur `pib_volume`, « PIB en volume », sens « mieux », en
+tête de la fiche comme dans le jumeau complet (D-639) ; il n'y a pas de PIB en valeur à
+part (ce serait le même nombre sous un autre nom), et une limite dit d'où vient le PIB.
+Dans le jumeau complet, rien ne change (le test de D-639 et celui qui tient `pib` égal à
+la page du jumeau, au bit, passent inchangés). La clé `pib_volume` aligne aussi la
+chaîne des études sur le jumeau complet dans « Comparer ». La productivité n'est pas
+touchée.
+
+**Avant → après**, Mélenchon, 2035, centre à θ ½, bande de 60 tirages (jumeau, en
+secondes ; aucune passe) :
+
+| ligne, dimension | avant | après |
+|---|---|---|
+| entier (réduit), économie | « PIB en valeur (nominal) », sens 0 | « PIB en volume », « mieux » |
+| entier (réduit), économie | −0,6886 % [−1,219 ; −0,149] | −0,6886 % [−1,219 ; −0,149] |
+| entier (réduit), productivité | « PIB en volume » −0,6886 % | inchangé |
+| par ses mesures, économie | volume +1,5011 %, valeur +1,8672 % | inchangé |
+
+Le nombre ne change pas, son nom et son sens changent. « En bref » (programme entier) :
+« l'économie en général (PIB en valeur (nominal)) » devient « (PIB en volume) », et
+l'arbitrage met désormais les deux PIB en volume en baisse du côté « moins bien » (avant :
+celui de la productivité seulement). Le doublon reste (le même nombre dans deux
+dimensions, D-651 point 3) ; il n'est plus contradictoire. Test :
+`test_sans_prix_l_ecart_du_pib_est_le_pib_en_volume`, en échec sur le code d'avant.
+
+**Une phrase fausse de plus, trouvée en le mesurant** (`impacts/synthese._cadre`). Sur la
+ligne « par ses mesures » (D-655), qui tourne dans le jumeau complet, « En bref »
+commençait par « Calculé par la chaîne des études, pas par le jumeau complet » : la phrase
+du cadre ne regardait que la présence d'une raison de mode. Elle lit désormais le mode du
+réglage : « Calculé par le jumeau complet, mesure par mesure : » et la raison. Test :
+`test_un_programme_calcule_par_ses_mesures_n_est_pas_la_chaine_des_etudes`, en échec sur
+le code d'avant. Aucun rapport commité ne lit ces lignes : aucun n'est refait ; le site
+commité n'est pas reconstruit.

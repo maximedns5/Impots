@@ -215,3 +215,17 @@ def test_le_libelle_court_garde_de_qui_il_s_agit() -> None:
         "le revenu du ménage (seul, au Smic, locataire)"
     assert synthese._court("Satisfaction gagnée, toutes personnes") == "satisfaction gagnée"
     assert synthese._court("PIB en volume") == "PIB en volume"
+
+
+def test_un_programme_calcule_par_ses_mesures_n_est_pas_la_chaine_des_etudes() -> None:
+    """D-670 : la ligne « par ses mesures » (D-655) tourne dans le jumeau complet ; avant,
+    « En bref » la disait « calculée par la chaîne des études »."""
+    s = synthese.en_bref({"dimensions": [], "calculees": [2026], "refus": None,
+                          "reglage": {"mode": "structurel"},
+                          "pourquoi_mode": "le jumeau complet refuse le programme comme "
+                                           "un tout (raison) ; il le calcule comme ses "
+                                           "7 mesures chiffrées ensemble"})
+    cadre = s["phrases"][0]
+    assert cadre["sorte"] == "cadre"
+    assert "chaîne des études" not in cadre["texte"]
+    assert cadre["texte"].startswith("Calculé par le jumeau complet, mesure par mesure")

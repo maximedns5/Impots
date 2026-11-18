@@ -503,8 +503,14 @@ def _cadre(r: Mapping[str, Any]) -> dict[str, Any] | None:
     études à la place du jumeau complet, des années refusées."""
     morceaux = []
     if r.get("pourquoi_mode"):
-        morceaux.append("Calculé par la chaîne des études, pas par le jumeau complet : "
-                        + str(r["pourquoi_mode"]).split(" : la chaîne")[0] + ".")
+        # Un programme refusé comme un tout et calculé par ses mesures (D-655) reste dans
+        # le jumeau complet : seul le mode réduit est la chaîne des études (D-670).
+        if (r.get("reglage") or {}).get("mode") == "structurel":
+            morceaux.append("Calculé par le jumeau complet, mesure par mesure : "
+                            + str(r["pourquoi_mode"]) + ".")
+        else:
+            morceaux.append("Calculé par la chaîne des études, pas par le jumeau complet : "
+                            + str(r["pourquoi_mode"]).split(" : la chaîne")[0] + ".")
     calculees = r.get("calculees") or []
     if r.get("refus") and calculees:
         morceaux.append(f"Le jumeau ne calcule que jusqu'en {calculees[-1]}.")
