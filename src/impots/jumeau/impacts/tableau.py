@@ -30,8 +30,8 @@ from impots.jumeau import impacts
 #: L'ordre de la page : celui du but 29 (D-590), puis le reste, par nom de module.
 ORDRE = ("pouvoir", "pouvoir_achat", "entente", "bienetre", "moral", "productivite",
          "economie", "comptes")
-#: Ce qui n'est pas une dimension.
-HORS = {"tableau"}
+#: Ce qui n'est pas une dimension : le tableau, et le paragraphe « En bref » (D-650).
+HORS = {"tableau", "synthese"}
 
 
 def charger() -> dict[str, str]:

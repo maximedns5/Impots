@@ -98,9 +98,8 @@ def session() -> navigateur.Session:
     return navigateur.Session(json.loads(json.dumps(site_jumeau.donnees())))
 
 
-def _dimension(session, cle: str, **choix) -> dict:
-    out = json.loads(navigateur.impacts_json(session, json.dumps({"candidat": cle,
-                                                                  **choix})))
+def _dimension(session, cle: str) -> dict:
+    out = json.loads(navigateur.impacts_json(session, json.dumps({"candidat": cle})))
     dims = out["dimensions"]
     return next(d for d in dims if d["cle"] == "territoires") if isinstance(dims, list) \
         else dims["territoires"]
@@ -149,9 +148,8 @@ def test_les_nombres_de_tete_de_d648(retailleau) -> None:
 
 
 def test_le_mode_reduit_sans_deciles_est_dit(session) -> None:
-    """Mélenchon dans la chaîne des études (vue vieillie), demandée : pas de choc par
-    décile ; la dimension n'est pas calculée et dit pourquoi, jamais zéro. (La page, elle,
-    le compose de ses mesures depuis D-655 : le mode est dit ici.)"""
-    d = _dimension(session, "pres2027_melenchon_programme", mode="reduit", vue="vieillie")
+    """Mélenchon (la chaîne des études, vue vieillie) : pas de choc par décile ; la
+    dimension n'est pas calculée et dit pourquoi, jamais zéro."""
+    d = _dimension(session, "pres2027_melenchon_programme")
     assert "TerritoiresAbsents" in (d.get("erreur") or "")
     assert not d.get("indicateurs")

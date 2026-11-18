@@ -242,12 +242,13 @@ def test_l_economie_met_en_tete_le_pib_en_volume() -> None:
 @pytest.mark.parametrize("slug, n", [("melenchon", 7), ("tondelier", 4)])
 def test_un_programme_refuse_se_calcule_par_ses_mesures(session, slug, n) -> None:
     """D-655 : un programme que le jumeau complet refuse comme un tout se calcule, sur la
-    page, comme ses mesures chiffrées et leur interaction (D-502) : le coût est celui du
+    ligne « par ses mesures » (D-652), comme ses mesures chiffrées et leur interaction
+    (D-502) : le coût est celui du
     programme chaque année ; toutes les dimensions ont leur nombre ; le moral passe à
     « illustratif » ; chaque fiche dit en tête ce qui manque."""
     cle = f"pres2027_{slug}_programme"
-    out = _strict(navigateur.impacts_json(session, json.dumps({"candidat": cle,
-                                                                "tirages": 0})))
+    out = _strict(navigateur.impacts_json(session, json.dumps(
+        {"candidat": cle, "tirages": 0, "mesures_seules": True})))
     assert out["reglage"]["mode"] == "structurel" and out["reglage"]["vue"] == "figee"
     assert out["refus"] is None and out["calculees"] == list(navigateur.ANNEES)
     c = out["composee"]
@@ -265,6 +266,6 @@ def test_un_programme_refuse_se_calcule_par_ses_mesures(session, slug, n) -> Non
     assert dims["moral"]["statut"] == "illustratif"
     assert dims["moral"]["statut_sans_composition"] == "sourcé, non jugé"
     assert dims["comptes_publics"]["statut"] == "sourcé, non jugé"
-    # Une mesure seule refusée garde la chaîne des études : rien ne se compose.
-    assert not session.reglage_impacts({"candidat": "pres2027_melenchon_smic_1700_net"}
-                                       ).get("mesures_seules")
+    # Sans la demander, la page garde la chaîne des études pour le programme entier
+    # (D-652 : le propriétaire choisit la ligne mise en avant).
+    assert session.reglage_impacts({"candidat": cle})["mode"] == "reduit"

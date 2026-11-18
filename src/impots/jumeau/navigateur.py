@@ -697,7 +697,9 @@ class Session:
         ne dit pas son mode : le jumeau complet (structurel) sur la population figée, avec
         la convention des parts de la première année (D-414), comme la cascade (D-484) ;
         pour une mesure d'étude qu'il refuse dès la première année, la chaîne des études
-        (réduit, vieillie), et `pourquoi_mode` dit pourquoi."""
+        (réduit, vieillie), et `pourquoi_mode` dit pourquoi ; avec `mesures_seules`, un
+        programme qu'il refuse se calcule comme ses mesures chiffrées et leur interaction
+        (D-655), la ligne « par ses mesures » de la page (D-652)."""
         from impots.jumeau.mesures import CONVENTION_PARTS
 
         choix = dict(choix)
@@ -709,28 +711,31 @@ class Session:
         cle = choix.get("candidat")
         if cle and not choix.get("composition"):
             k, refus = self.structurel(cle, choix["vue"], choix["convention"])
-            info, pas_compose = None, ""
-            if not k and cle.startswith("pres2027_") and cle.endswith("_programme"):
+            if k or not choix.get("mesures_seules"):
+                # Un programme que le jumeau complet calcule n'a pas à se composer.
+                choix.pop("mesures_seules", None)
+            if not k and choix.get("mesures_seules"):
+                # D-655 : demandé, le programme refusé comme un tout se calcule comme ses
+                # mesures chiffrées et leur interaction (D-502), dans le jumeau complet.
                 try:
                     _, info = self.programme_compose(cle, choix["vue"],
                                                      choix["convention"])
                 except NavigateurError as e:
-                    pas_compose = f", et ses mesures chiffrées ne se composent pas ({e})"
-            if not k:
-                if info is None:
-                    choix.update(mode="reduit", vue="vieillie", convention=None,
-                                 pourquoi_mode=("le jumeau complet refuse la mesure dès sa "
-                                                f"première année ({refus}){pas_compose} : "
-                                                "la chaîne des études, sans les ménages ni "
-                                                "les entreprises"))
-                else:
-                    # D-655 : un programme refusé comme un tout se calcule comme ses
-                    # mesures chiffrées et leur interaction (D-502), dans le jumeau complet.
-                    choix["mesures_seules"] = True
-                    choix["pourquoi_mode"] = (
-                        f"le jumeau complet refuse le programme comme un tout ({refus}) ; "
-                        f"il le calcule comme ses {len(info['mesures'])} mesures chiffrées "
-                        f"ensemble, plus leur interaction (D-502, D-655)")
+                    raise NavigateurError(f"« {cle} » : le jumeau complet le refuse comme "
+                                          f"un tout ({refus}), et ses mesures ne se "
+                                          f"composent pas ({e})") from e
+                choix["pourquoi_mode"] = (
+                    f"le jumeau complet refuse le programme comme un tout ({refus}) ; il "
+                    f"le calcule comme ses {len(info['mesures'])} mesures chiffrées "
+                    f"ensemble, plus leur interaction (D-502, D-655)")
+            elif not k:
+                choix.update(mode="reduit", vue="vieillie", convention=None,
+                             pourquoi_mode=("le jumeau complet refuse la mesure dès sa "
+                                            f"première année ({refus}) : la chaîne des "
+                                            "études, sans les ménages ni les entreprises"))
+        elif choix.get("mesures_seules"):
+            raise NavigateurError("« mesures_seules » : le programme d'un candidat que le "
+                                  "jumeau complet refuse (D-655)")
         return choix
 
     def programme_compose(self, cle: str, vue: str, convention: str | None
@@ -789,8 +794,9 @@ class Session:
         def md(x: float) -> str:
             return f"{x:+.2f}".replace(".", ",").replace("-", "−")
 
+        info["titre"] = f"Calculé comme la somme de ses {n} mesures chiffrées"
         info["texte"] = (
-            f"Calculé comme la somme de ses {n} mesures chiffrées, chacune avec sa passe, "
+            f"{info['titre']}, chacune avec sa passe, "
             f"plus l'interaction de la passe du programme (son coût en plus de leur somme : "
             f"{md(inter.couts[premiere])} Md€ en {premiere}, sur le solde seul ; l'écart "
             f"de ses cotisations des employeurs, "
@@ -1214,7 +1220,12 @@ def impacts_json(session: Session, texte: str) -> str:
     out = session.calculer(choix)
     out["reglage"] = {k: choix.get(k) for k in ("mode", "vue", "convention", "tirages")}
     out["pourquoi_mode"] = pourquoi
-    return json.dumps(propre(out), ensure_ascii=False)
+    out = propre(out)
+    # « En bref » : le paragraphe écrit par des règles sur les dimensions (D-650).
+    from impots.jumeau.impacts.synthese import en_bref
+
+    out["synthese"] = en_bref(out)
+    return json.dumps(out, ensure_ascii=False)
 
 
 def portee_json(session: Session, texte: str) -> str:
