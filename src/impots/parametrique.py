@@ -27,7 +27,9 @@ raison, et le résultat le dit en tête (`proposition.statut`). Aucune n'est com
 juge.
 
 LA FILE. Une passe à la fois, sous un verrou de fichier (`fcntl.flock`, le même que
-`flock(1)`, `IMPOTS_VERROU_PASSES` pour le partager avec d'autres passes) ; chaque
+`flock(1)`) : par défaut le verrou commun de la machine, `VERROU_COMMUN`, que toute passe
+sur la population prend aussi (`flock /tmp/impots/passes.lock …`) ; `IMPOTS_VERROU_PASSES`
+en donne un autre (D-676). La file compte ses places sous son propre verrou ; chaque
 proposition dans son processus détaché, son état dans `etat.json` de son dossier
 (`DOSSIER/<id>/`), lu par `GET /impacts/proposition/<id>`. L'identifiant est l'empreinte
 de la réforme et du commit : la même proposition, demandée deux fois, n'est passée
@@ -47,6 +49,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 import time
 from collections.abc import Callable, Mapping
 from datetime import UTC, datetime
@@ -58,6 +61,9 @@ ROOT = Path(__file__).resolve().parents[2]
 DOSSIER = ROOT / "data" / "processed" / "propositions"
 ENV_DOSSIER = "IMPOTS_PROPOSITIONS"
 ENV_VERROU = "IMPOTS_VERROU_PASSES"
+#: Le verrou commun de la machine (D-676) : une passe tient 6 Go sur 15, deux ensemble
+#: tombent (D-661). Hors de tout worktree, pour que chacun prenne le même.
+VERROU_COMMUN = Path(tempfile.gettempdir()) / "impots" / "passes.lock"
 #: « non » : ce serveur rend les propositions déjà passées, et n'en lance aucune (une
 #: instance publique en lecture, ou une vérification de la page).
 ENV_PASSES = "IMPOTS_PASSES"
@@ -267,7 +273,19 @@ def dossier() -> Path:
 
 
 def verrou() -> Path:
-    return Path(os.environ.get(ENV_VERROU) or dossier() / "passe.lock")
+    return Path(os.environ.get(ENV_VERROU) or VERROU_COMMUN)
+
+
+@contextlib.contextmanager
+def _file_verrouillee():
+    """La file sous verrou (D-676) : compter les places et poser l'état « en_file » se
+    font d'un tenant ; deux requêtes ensemble ne passent plus `FILE_MAX`, ni ne lancent
+    deux fois la même proposition."""
+    d = dossier()
+    d.mkdir(parents=True, exist_ok=True)
+    with open(d / "file.lock", "a") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        yield
 
 
 def _commit() -> str:
@@ -376,21 +394,22 @@ def proposer(reglage: Mapping[str, Any], *,
     commit = _commit()
     ident = identifiant(reform, commit)
     ici = dossier() / ident
-    if (ici / "etat.json").exists():
-        e = etat(ident)
-        if e.get("etat") != "echec":
-            return e
-    if os.environ.get(ENV_PASSES) == "non":
-        raise FileFermee(f"ce serveur ne lance pas de passe ({ENV_PASSES}=non) : il ne rend "
-                         f"que les propositions déjà passées")
-    if en_attente() >= FILE_MAX:
-        raise FileFermee(f"déjà {FILE_MAX} propositions en file : réessayez quand l'une "
-                         f"aura fini")
-    ici.mkdir(parents=True, exist_ok=True)
-    ecrire_etat(ici, id=ident, etat="en_file", reglage=dict(reglage), reforme=reform,
-                imputations=imputations, libelle=libelle(reglage), commit=commit,
-                demande=_maintenant(), statut="illustratif", raison=RAISON, erreur=None,
-                temps={}, pid=None, fin=None, etape=None)
+    with _file_verrouillee():
+        if (ici / "etat.json").exists():
+            e = etat(ident)
+            if e.get("etat") != "echec":
+                return e
+        if os.environ.get(ENV_PASSES) == "non":
+            raise FileFermee(f"ce serveur ne lance pas de passe ({ENV_PASSES}=non) : il ne "
+                             f"rend que les propositions déjà passées")
+        if en_attente() >= FILE_MAX:
+            raise FileFermee(f"déjà {FILE_MAX} propositions en file : réessayez quand "
+                             f"l'une aura fini")
+        ici.mkdir(parents=True, exist_ok=True)
+        ecrire_etat(ici, id=ident, etat="en_file", reglage=dict(reglage), reforme=reform,
+                    imputations=imputations, libelle=libelle(reglage), commit=commit,
+                    demande=_maintenant(), statut="illustratif", raison=RAISON,
+                    erreur=None, temps={}, pid=None, fin=None, etape=None)
     # Lu à l'appel, pas à la définition : un test qui remplace `_detacher` ne lance rien.
     (lancer or _detacher)(ici)
     return etat(ident)

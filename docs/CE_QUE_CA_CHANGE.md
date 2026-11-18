@@ -121,18 +121,18 @@ fait la première année, le chemin annuel (OpenFisca sur 20 000 ménages), les 
 puis le jumeau. **Pronostic : 40 à 50 min et 6 Go par proposition**, une à la fois ;
 l'état se suit sur la page ou par `GET /impacts/proposition/<id>`. En ligne de commande :
 
-    IMPOTS_VERROU_PASSES=<le verrou commun> PYTHONPATH=src \
-      $PY -m impots.parametrique lancer smic=5
+    PYTHONPATH=src $PY -m impots.parametrique lancer smic=5
     PYTHONPATH=src $PY -m impots.parametrique etat <id rendu>
 
 **Pourquoi le verrou commun.** Une passe tient 6 Go ; la machine en a 15 pour tout. Deux
 passes ensemble (une proposition et une étude, ou deux agents) font tomber l'une ou
-l'autre faute de mémoire (c'est arrivé la nuit du but 29, D-661). Sans
-`IMPOTS_VERROU_PASSES`, le verrou des propositions est privé
-(`data/processed/propositions/passe.lock`) et ne protège pas des autres passes (D-666) :
-donner le verrou commun que les autres passes prennent avec `flock`. Lancer d'un worktree
-dont `src/` est commité (sinon les rapports le disent « modifié »). Le résultat est
-toujours « illustratif » : il n'est ni préenregistré ni jugé.
+l'autre faute de mémoire (c'est arrivé la nuit du but 29, D-661). Depuis D-676, une
+proposition prend par défaut le verrou commun de la machine, `/tmp/impots/passes.lock`
+(`parametrique.VERROU_COMMUN`) ; toute autre passe sur la population le prend aussi :
+`flock /tmp/impots/passes.lock <la commande>`. `IMPOTS_VERROU_PASSES` en donne un autre.
+La file compte ses places sous son propre verrou. Lancer d'un worktree dont `src/` est
+commité (sinon les rapports le disent « modifié »). Le résultat est toujours
+« illustratif » : il n'est ni préenregistré ni jugé.
 
 ## Ce qui n'est pas fait
 
@@ -145,36 +145,24 @@ toujours « illustratif » : il n'est ni préenregistré ni jugé.
   départ non plus (la santé seule le lit, sur un programme entier, D-622).
 * Le site commité n'est pas reconstruit ; `make impact` et les tests lourds n'ont pas
   tourné pour le but 29.
-* Restes écrits dans D-666 : la file des propositions compte ses places sans verrou ; un
-  pid réutilisé peut faire paraître vivante une passe perdue ; la part des gagnants par
+* Restes écrits dans D-666 : un pid réutilisé peut faire paraître vivante une passe perdue ; la part des gagnants par
   territoire est celle des cellules, pas des ménages ; « Pour vous » ne montre pas sur la
   page la bande que porte sa fiche ; une composition n'est bornée que par le débit.
 * Le même PIB en volume est cité deux fois dans « En bref » sur la chaîne des études
   (l'économie et la productivité, D-670) : redondant, plus contradictoire.
 
-## Les décisions qui attendent le propriétaire
+## Les décisions du propriétaire (18 novembre, D-676)
 
-* La ligne de Mélenchon et de Tondelier mise en avant : programme entier par la chaîne
-  des études (aujourd'hui) ou « par ses mesures » (D-652, D-658).
-* Brancher le canal de la pression du coût par défaut, ou le garder à côté faute de
-  puissance (proposé : à côté) (D-604, D-626).
-* Un juge de la productivité qui ait de la puissance ; aucun juge du salaire d'efficience
-  (le Smic) (D-604).
-* Le moral : l'ancrage du chômage autour de soi (ou la règle 10/3, 2,4 fois plus),
-  l'adaptation hédonique, les moins de 16 ans, un coefficient du revenu estimé sur SRCV
-  (D-597, D-635).
-* La certitude « probablement » lit de la même façon les bandes de tirages et les
-  enveloppes de bornes publiées (D-650, D-666).
-* La santé : les calendriers d'âge des programmes, la part causale du gradient et r, la
-  bascule vers l'invalidité et le chômage après un report, le temps de travail (D-622).
-* Le double compte santé : retirer du canal du revenu (choisi) ou du chômage (D-639).
-* Pour vous : la grille des cas types, l'indépendant par OpenFisca, le salaire moyen par
-  tranche, le contrôle du logement et des couples sur un cas publié (D-633).
-* Les territoires : la table sur la passe même des cellules, les régions de métropole, le
-  revenu de l'outre-mer, la densité, une bande par territoire (D-649).
-* « En bref » : les seuils de l'échéance, les déciles du bas et du haut, la longueur du
-  paragraphe ; les phrases rendues sont à relire (D-650, D-651).
-* « Votre barème » : une clé pour une instance publique, l'effacement des propositions,
-  les impôts des entreprises, un chemin annuel plus rapide (D-661).
-* Le verrou des propositions commun par défaut, et la file sous verrou (D-666).
-* Le juge du pouvoir d'achat et de l'entente (D-591, D-592).
+Prises sur le compte rendu de la nuit ; le détail et ce que chacune change, dans D-676.
+
+* La ligne de Mélenchon et de Tondelier mise en avant reste le programme entier par la
+  chaîne des études ; « par ses mesures » reste la seconde ligne.
+* Le canal de la pression du coût reste à côté, faute de puissance.
+* Le moral garde l'ancrage du chômage autour de soi.
+* La santé garde ses centres et le retrait du double compte côté revenu.
+* « En bref » reste tel quel.
+* Le verrou commun par défaut et la file sous verrou : faits (D-676).
+* Le juge de l'impôt de 2020 est le *Portrait social* 2022, dossier D2, par l'amendement
+  de D-677, non aveugle.
+* À faire : la grille des cas types de « Pour vous » élargie ; l'outre-mer corrigé dans la
+  population (voir D-676 : à concilier avec la population des études).

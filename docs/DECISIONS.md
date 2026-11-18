@@ -43232,3 +43232,92 @@ clé est celle d'un programme (`…_programme`), « la mesure » sinon. Aucun no
 change. Tests légers des fichiers touchés (`test_impacts_tableau`,
 `test_impacts_synthese`, `test_jumeau_navigateur`) : 72 passés. La page réécrite
 (`site_impacts ecrire`, hors du dépôt) porte la nouvelle tournure.
+
+## D-676 — Les décisions du propriétaire sur les buts 28 et 29, le 18 novembre
+
+Le propriétaire a répondu, le 18 novembre après-midi, aux treize décisions du compte rendu
+de la nuit (tirées de D-553 à D-675, `docs/CE_QUE_CA_CHANGE.md` et `relais/RELAIS.md`).
+Ses choix, et ce que chacun fait ou ne fait pas :
+
+1. **Les PR attendent la fin des passes de reprise** (la série des études, D-559 ; la
+   forme Urssaf, D-581 et D-582 ; le juge de l'Insee, D-592 et D-640). Aucune PR, ni
+   `make impact`, ni lourds avant. Le but 27 reste le but en cours jusqu'à son merge.
+2. **La population des études reste celle de D-553** (empreinte 5ace8bb6…), l'écart dit :
+   la fin des exonérations y rapporte de l'ordre de 0,9 Md€ de moins que sur ses
+   références (D-563). La série en cours n'est pas refaite. Les passes de D-580 tournent
+   jusqu'au bout, en contrôle : D-581 et D-582 s'écrivent contre D-580, sans adoption.
+3. **Mélenchon et Tondelier : le programme entier par la chaîne des études** reste la
+   ligne mise en avant ; « par ses mesures » (D-655 à D-658) reste la seconde ligne.
+4. **Le canal de la pression du coût reste à côté**, faute de puissance (D-604, D-626) ;
+   les nombres de la productivité ne changent pas.
+5. **Le moral garde l'ancrage du chômage autour de soi** (c/100 × δ / 0,33, D-595).
+6. **Le juge de l'impôt de 2020 est le *Portrait social* 2022, dossier D2**, par un
+   amendement écrit. Il n'a pas pu l'être avant l'ouverture : D-677 le dit.
+7. **La santé garde ses centres** (s = 1/12, r = 0,30) **et le retrait du double compte
+   côté revenu** (D-639).
+8. **« Pour vous » : la grille des cas types est élargie** (un couple à deux revenus, le
+   temps partiel, le parc social, l'Île-de-France ; D-633). À faire, dans un volet à
+   part : les cas types se calculent par OpenFisca, sans passe sur la population.
+9. **Les territoires : l'outre-mer est corrigé dans la population** (D-647 : la médiane
+   de La Réunion rapportée à la métropole, 0,817 contre 0,737). **À concilier avec le
+   point 2** : des revenus locaux à catégorie égale changent la population (et
+   `population/*`), donc ce n'est plus celle de D-553 que gardent les études. Proposé :
+   une population à part, préenregistrée contre sa grille et la ligne L1, après la
+   série ; les études restent sur D-553 tant que le propriétaire n'a pas tranché.
+10. **« En bref » reste tel quel** (D-650).
+11. **Le verrou commun par défaut, et la file sous verrou** : fait ici, plus bas.
+12. **Les deux restes de la grille attendent D-581** (le bandeau maladie, les heures
+    au-dessus de 3,35 Smic) : D-580 pronostique le bandeau maladie à +7,8 % au lieu de
+    +9,9 sur la forme Urssaf, qui n'est pas adoptée (point 2).
+13. **Le site : un hébergement statique, une fois la série écrite** (`impots etude
+    ecrire`) ; le choix de l'hébergeur reste au propriétaire.
+
+**Le point 11, fait** (`src/impots/parametrique.py`). Sans `IMPOTS_VERROU_PASSES`, une
+proposition prenait un verrou privé, `data/processed/propositions/passe.lock` (D-666) ;
+elle prend désormais `parametrique.VERROU_COMMUN`, `/tmp/impots/passes.lock` (le dossier
+temporaire de la machine), hors de tout worktree. Toute passe sur la population le prend
+par `flock /tmp/impots/passes.lock <commande>`. Les scripts du relais
+(`relais/etudes28`, `relais/urssaf28`) prennent `$S/passe.lock` du scratchpad : les
+passes en cours ne sont pas touchées ; une passe lancée après cette entrée prend le
+verrou commun. Et la file : compter les places, refuser au-delà de `FILE_MAX` et poser
+l'état « en_file » se font sous un verrou à elle (`<dossier>/file.lock`), d'un tenant ;
+deux requêtes ensemble ne passent plus `FILE_MAX` ni ne lancent deux fois la même
+proposition. Aucun nombre ne change ; la plomberie n'a pas de test dédié (D-335), son
+effet est mesuré une fois, plus bas. `docs/CE_QUE_CA_CHANGE.md` suit.
+
+## D-677 — Le juge de l'impôt de 2020 : le *Portrait social* 2022, un amendement non aveugle
+
+**Ce que D-591 préenregistrait** (2c27233, 17 novembre, 23 h 41 UTC) : pour le cas 2, la
+baisse de l'impôt sur le revenu de 2020, le juge était *France, portrait social* 2021,
+l'effet par décile et, s'il était publié, sur la pauvreté ; sinon la grandeur était
+« sans juge », non notée, et rien n'était mis à sa place.
+
+**Ce qui s'est passé ensuite, sans D-entrée.** L'édition 2021 n'a pas ce dossier. Le volet
+`pouvoir` a mis au manifeste, à 1 h 00 (090c948), *France, portrait social* 2022, dossier
+« Les réformes sociofiscales de 2020 et 2021… » (`insee_fps2022_d2_donnees.xlsx` et
+`insee_fps2022_d2.pdf`), et en a lu les figures 1, 4 et 5 pour les coder dans le script
+du verdict (`relais/pouvoir/A_FINIR.md`, `verdict.py`). Le changement d'édition est donc
+fait **après la lecture des valeurs du juge**, contre la règle de D-591 (« rien n'est mis
+à sa place »).
+
+**La décision du propriétaire** (D-676, point 6) : le *Portrait social* 2022, dossier D2,
+est le juge du cas 2, par cet amendement. **Il est non aveugle** : ses valeurs étaient
+lues avant que le modèle ne tourne sur ce cas, et elles sont dans le dépôt depuis le
+relais (0ffe422). Le cas 2 est donc **noté à part**, comme les révisions et les contrôles
+(BUT.md, « L'aveugle »), et ne compte dans aucune note.
+
+**Ce qui ne change pas.** Les grandeurs, les tolérances et le pronostic de D-591, tels
+quels ; aucun n'est retouché, même là où le juge est connu. Le cas 1 (la prime de 2019,
+*Portrait social* 2020, l'édition préenregistrée) garde son statut de D-591. **Une
+différence de champ, dite avant le résultat** : le juge publie un effet consolidé, sur la
+législation de 2021 ; D-591 mesure la loi de 2020 contre la même loi au barème de 2019
+revalorisé, sur la population ramenée à 2020. D-592 dira l'écart et le comptera manqué
+s'il sort des tolérances de D-591, sans le corriger de cette différence.
+
+**L'effet, mesuré une fois** (hors des tests, la passe remplacée par une fonction vide) :
+sans `IMPOTS_VERROU_PASSES`, `parametrique.verrou()` rend `/tmp/impots/passes.lock`, et
+non plus le verrou du dossier des propositions. Huit requêtes lancées ensemble, de huit
+processus, cinq fois : trois mises en file et cinq refus à chaque fois, avec le code
+d'avant comme avec celui-ci ; la course que D-666 décrivait ne s'est pas produite sur ces
+essais, la fenêtre est étroite. Le verrou la ferme sans qu'on l'ait vue. Tests légers de
+`tests/test_parametrique.py` : 16 passés ; ruff : vert.
