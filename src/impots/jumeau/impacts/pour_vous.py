@@ -378,23 +378,7 @@ def pour_vous(variante: Any, reference: Any, depart: Any, cellules: Any, *,
                    haut=d["esperance_vie_haut"],
                    par_groupe={lib: res[k]["esperance_vie"] for lib, k in vit.items()}),
     )
-    cas_json = {}
-    for k, r in res.items():
-        # Compact (la page porte tous les cas de chaque programme précalculé) : le % se
-        # relit du revenu réel (100 réel / rd), les bandes à l'horizon seulement.
-        cas_json[k] = {
-            "rd": round(r["revenu_disponible_reference"]),
-            "reel": _r(r["revenu_reel"], 0), "statique": _r(r["statique"], 0),
-            "risque0": round(r["risque_chomage_base"], 2), "risque": _r(r["risque_chomage"], 3),
-            "sat": _r(r["satisfaction"], 4), "ev": _r(r["esperance_vie"], 3),
-            "sat_bande": [round(float(r["satisfaction_bas"][-1]), 4),
-                          round(float(r["satisfaction_haut"][-1]), 4)],
-            "ev_bande": [round(float(r["esperance_vie_bas"][-1]), 3),
-                         round(float(r["esperance_vie_haut"][-1]), 3)],
-            "bonne_sante": round(float(r["bonne_sante"][-1]), 4),
-            "depart": r["depart"], "origines": _compte(r["origines"]),
-            "lignes": _lignes(r["origines"]),
-        }
+    cas_json = colonnes(res)
     exact = all(o["origine"] in ("openfisca", "aucun ménage touché")
                 for o in res[DEFAUT]["origines"])
     limites = list(LIMITES)
@@ -404,7 +388,7 @@ def pour_vous(variante: Any, reference: Any, depart: Any, cellules: Any, *,
         limites.append("Ce calcul ne porte ni les salaires ni les prix du jumeau (le mode "
                        "réduit) : le revenu réel est le statique seul.")
     notes = {
-        "cas": cas_json, "defaut": DEFAUT, "grille": tab["grille"],
+        "cas": cas_json, "defaut": DEFAUT, "grille": tab["grille"], "programme": programme,
         "tableau": {"commit": tab["commit"], "annee": tab["annee"],
                     "commande": tab["commande"]},
         "economie": {"lus": eco["lus"], "salaire_moyen_pct": _r(100 * eco["w"], 4),
@@ -435,6 +419,58 @@ def _ensemble(ident: str, mesures: Sequence[Any]) -> Any:
                 d = menages.setdefault(int(a), {"deciles": np.zeros(10)})
                 d["deciles"] = d["deciles"] + np.asarray(x["deciles"], float)
     return SimpleNamespace(identifiant=ident, annees=tuple(annees), menages=menages)
+
+
+#: Les champs d'un départ, dans l'ordre des colonnes de `colonnes`.
+DEPART = ("annee", "age_legal_reference", "ecart_age_legal", "ecart_age_effectif",
+          "effectif_bas", "effectif_haut", "retraite_sans_limitation_ans")
+
+
+def colonnes(res: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+    """Tous les cas types en colonnes, pour la page (elle porte chaque programme
+    précalculé) : `cles` donne l'ordre ; le % se relit du revenu réel (100 réel / rd) ; les
+    bandes à l'horizon seulement ; un départ en liste (`DEPART`) ou None."""
+    cles = list(res)
+
+    def serie(nom: str, d: int) -> list[list[float]]:
+        return [_r(res[k][nom], d) for k in cles]
+
+    def depart(x: Mapping[str, Any] | None) -> list[float] | None:
+        if x is None:
+            return None
+        b = x["ecart_age_effectif_bande"]
+        return [x["annee"], x["age_legal_reference"], x["ecart_age_legal"],
+                round(x["ecart_age_effectif"], 3), round(b[0], 3), round(b[1], 3),
+                round(x["retraite_sans_limitation_ans"], 3)]
+
+    return {
+        "cles": cles, "rd": [round(res[k]["revenu_disponible_reference"]) for k in cles],
+        "reel": serie("revenu_reel", 0), "statique": serie("statique", 0),
+        "risque0": [round(res[k]["risque_chomage_base"], 2) for k in cles],
+        "risque": serie("risque_chomage", 2), "sat": serie("satisfaction", 3),
+        "ev": serie("esperance_vie", 2),
+        "sat_bande": [[round(float(res[k][x][-1]), 3) for x in ("satisfaction_bas",
+                                                                 "satisfaction_haut")]
+                      for k in cles],
+        "ev_bande": [[round(float(res[k][x][-1]), 2) for x in ("esperance_vie_bas",
+                                                                "esperance_vie_haut")]
+                     for k in cles],
+        "depart": [depart(res[k]["depart"]) for k in cles], "depart_champs": list(DEPART),
+        "origines": [_compte(res[k]["origines"]) for k in cles],
+        "lignes": [_lignes(res[k]["origines"]) for k in cles],
+    }
+
+
+def un_cas(cas: Mapping[str, Any], cle: str) -> dict[str, Any] | None:
+    """Un cas type lu dans les colonnes de `colonnes` (le script et les tests)."""
+    if cle not in cas["cles"]:
+        return None
+    i = cas["cles"].index(cle)
+    out = {x: v[i] for x, v in cas.items() if isinstance(v, list) and x not in
+           ("cles", "depart_champs")}
+    if out["depart"] is not None:
+        out["depart"] = dict(zip(cas["depart_champs"], out["depart"], strict=True))
+    return out
 
 
 def _compte(origines: Sequence[Mapping[str, Any]]) -> dict[str, int]:

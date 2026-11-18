@@ -83,13 +83,33 @@ def precalculer(d: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+#: Les cas types de « Pour vous » des programmes précalculés, dans un fichier à part que
+#: la page lit quand le lecteur s'en sert (D-630) : ils pèseraient sinon les deux tiers de
+#: la page.
+POUR_VOUS = "impacts-pour-vous.json"
+
+
+def separer(pre: dict[str, Any]) -> dict[str, Any]:
+    """Retire de chaque programme précalculé les cas types de « Pour vous » ; les rend,
+    par programme. La dimension garde `notes.fichier` pour que la page les retrouve."""
+    out = {}
+    for cle, r in pre.items():
+        for d in r.get("dimensions") or []:
+            if d.get("cle") == "pour_vous" and isinstance(d.get("notes"), dict) \
+                    and "cas" in d["notes"]:
+                out[cle] = d["notes"].pop("cas")
+                d["notes"]["fichier"] = POUR_VOUS
+    return out
+
+
 def donnees() -> dict[str, Any]:
     from impots import site_jumeau
 
     d = site_jumeau.donnees()
     pre = precalculer(d)
+    cas = separer(pre)
     return {"bibliotheque": bibliotheque(d), "precalcul": pre,
-            "defaut": next(iter(pre), None)}
+            "defaut": next(iter(pre), None), "pour_vous": cas}
 
 
 def corps(x: dict[str, Any]) -> str:
@@ -235,7 +255,10 @@ def page(x: dict[str, Any]) -> str:
 
 
 def build() -> dict[str, str]:
-    return {PAGE: page(donnees()), SCRIPT: (ICI / "page.js").read_text(encoding="utf-8")}
+    x = donnees()
+    cas = x.pop("pour_vous")
+    return {PAGE: page(x), SCRIPT: (ICI / "page.js").read_text(encoding="utf-8"),
+            POUR_VOUS: json.dumps(cas, ensure_ascii=False, separators=(",", ":"))}
 
 
 def present() -> bool:

@@ -228,14 +228,27 @@
     return `${v.foyer}-${v.enfants}-${v.activite}-${v.logement}-${v.age === "62_plus" ? "50_61" : v.age}`;
   }
   const euros = (x) => fr(x, 0) + " €";
-  function pourVous() {
+  let casProgrammes = null;
+  async function pourVous() {
     const out = $("pv-resultat");
     const r = window.impacts.resultat;
     const d = r && (r.dimensions || []).find((x) => x.cle === "pour_vous");
     if (!d) { out.innerHTML = '<p class="i-aide">Pas calculé pour ce choix.</p>'; return; }
     if (d.erreur) { out.innerHTML = `<div class="i-avert i-refus"><b>Non calculé :</b> ${esc(d.erreur)}</div>`; return; }
+    if (!d.notes.cas && d.notes.fichier) {
+      // Les cas types des programmes précalculés sont dans un fichier à part (D-630).
+      try {
+        if (!casProgrammes) { out.innerHTML = '<p class="i-aide">Chargement des cas types…</p>'; casProgrammes = await fetch(d.notes.fichier).then((x) => { if (!x.ok) throw new Error(x.status); return x.json(); }); }
+      } catch (e) { out.innerHTML = `<div class="i-avert i-refus">Les cas types ne se chargent pas (${esc(e.message)}).</div>`; return; }
+      if (window.impacts.resultat !== r) return;
+      d.notes.cas = casProgrammes[r.candidat];
+      if (!d.notes.cas) { out.innerHTML = '<p class="i-aide">Pas de cas type pour ce programme.</p>'; return; }
+    }
     const v = Object.fromEntries(PV.map((k) => [k, $("pv-" + k).value]));
-    const cle = cleCas(), c = d.notes.cas[cle], an = d.annees;
+    const cle = cleCas(), C = d.notes.cas, i0 = C.cles.indexOf(cle), an = d.annees;
+    const c = i0 < 0 ? null : Object.fromEntries(Object.entries(C).filter(([, x]) => Array.isArray(x)).map(([k, x]) => [k, x[i0]]));
+    if (c && c.depart) c.depart = Object.fromEntries(C.depart_champs.map((k, j) => [k, c.depart[j]]));
+    if (c && c.depart) c.depart.programme = d.notes.programme;
     if (!c) { out.innerHTML = '<p class="i-aide">Ce cas type n\'est pas dans la grille.</p>'; return; }
     const f = an.length - 1;
     const notes = [];
@@ -253,12 +266,14 @@
       ["pensions_chomage", "pensions ou allocations chômage (brutes)", 1], ["taxes_consommation", "TVA et accises payées", -1]]
       .filter(([k]) => L[k]).map(([k, lib, s]) => `<li>${esc(lib)} : ${k === "impot_revenu" || k === "prelevements_travail" || k === "taxes_consommation" ? (L[k] > 0 ? "+" + fr(L[k], 0).replace("+", "") + " € à payer" : fr(-L[k], 0).replace("+", "") + " € de moins à payer") : euros(L[k])}</li>`).join("") : "";
     const dep = c.depart;
-    const depart = !dep ? "<p>Âge de départ : vous êtes déjà à la retraite, ou ce n'est pas un actif.</p>"
-      : !dep.programme ? "<p>Âge de départ : seul un programme entier qui règle l'âge le porte ; ici, aucun changement lu.</p>"
-      : `<p>Âge de départ : votre génération atteint l'âge légal (${fr(dep.age_legal_reference, 2).replace("+", "")} ans aujourd'hui) en ${dep.annee} ; le programme le change de <b>${fr(dep.ecart_age_legal, 2)} an</b>, soit un départ effectif de ${fr(dep.ecart_age_effectif, 2)} an (de ${fr(dep.ecart_age_effectif_bande[0], 2)} à ${fr(dep.ecart_age_effectif_bande[1], 2)}) et ${fr(dep.retraite_sans_limitation_ans, 2)} an de retraite sans limitation d'activité.</p>`;
+    const depart = !dep ? "<p class=\"pv-depart\">Âge de départ : vous êtes déjà à la retraite, ou ce n'est pas un actif.</p>"
+      : !dep.programme || !dep.ecart_age_legal ? "<p class=\"pv-depart\">Âge de départ : ce choix ne change pas l'âge légal de votre génération (seul un programme entier qui le règle le porte ici).</p>"
+      : `<p class="pv-depart">Âge de départ : votre génération atteint l'âge légal (${nf(dep.age_legal_reference % 1 ? 2 : 0).format(dep.age_legal_reference)} ans dans la loi actuelle) en ${dep.annee} ; le programme le change de <b>${fr(dep.ecart_age_legal, 2)} an</b>, soit un départ effectif de ${fr(dep.ecart_age_effectif, 2)} an (de ${fr(dep.effectif_bas, 2)} à ${fr(dep.effectif_haut, 2)}) et ${fr(dep.retraite_sans_limitation_ans, 2)} an de retraite sans limitation d'activité.</p>`;
     const actif = ["smic", "median", "eleve", "independant"].includes(v.activite);
+    const sansEco = !(d.notes.economie && d.notes.economie.lus || []).includes("salaire_moyen")
+      ? '<div class="i-avert">Ce calcul ne porte ni les salaires, ni les prix, ni le chômage du jumeau (la chaîne des études) : le revenu est la mesure elle-même, et le risque de chômage n\'est pas lu.</div>' : "";
     out.innerHTML = `<p class="pv-cas">Le cas type : ${esc([d.notes.grille.libelles[v.foyer], v.activite === "retraite" ? "" : v.enfants + " enfant(s)", d.notes.grille.libelles[v.activite], d.notes.grille.libelles[v.logement], d.notes.grille.libelles[v.activite === "retraite" ? "62_plus" : v.age]].filter(Boolean).join(", "))} ; revenu disponible sans la mesure : ${euros(c.rd).replace("+", "")} par an.${notes.length ? " (" + esc(notes.join(" ; ")) + ")" : ""} ${statut(d)}</p>
-      <div class="pv-tetes">
+      ${sansEco}<div class="pv-tetes">
         <div class="pv-tete"><h3>Votre revenu disponible réel, en ${an[f]}</h3><p class="i-gros" data-v="${c.reel[f]}">${euros(c.reel[f])}<small> par an</small></p><p>${fr(pct(f))} % ; en ${an[0]} : ${euros(c.reel[0])}</p></div>
         <div class="pv-tete"><h3>Dont la mesure elle-même</h3><p class="i-gros">${euros(c.statique[f])}<small> par an</small></p><p>${origine}</p></div>
         <div class="pv-tete"><h3>Votre risque d'être au chômage</h3>${actif ? `<p class="i-gros">${fr(c.risque[f])}<small> point</small></p><p>aujourd'hui ${fr(c.risque0, 1).replace("+", "")} % pour un ménage comme le vôtre</p>` : "<p>Vous n'êtes pas en emploi : votre risque n'est pas calculé ; le chômage autour de vous compte dans la satisfaction.</p>"}</div>

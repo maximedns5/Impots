@@ -89,3 +89,8 @@
 .pv-tete p{margin:.1rem 0;font-size:.8rem;color:var(--encre-2)}
 .pv-cas{font-size:.86rem;margin:.2rem 0}
 .pv-lignes{font-size:.84rem;margin:.3rem 0;padding-left:1.1rem}
+.pv-tete .i-gros{font:700 1.4rem/1.15 var(--serif);color:var(--encre);margin:.15rem 0}
+.pv-tete .i-gros small{font:400 .78rem var(--sans);color:var(--encre-3)}
+.i-pourvous h4{font:600 .9rem var(--sans);margin:.7rem 0 .2rem}
+.pv-depart{font-size:.86rem;margin:.4rem 0;max-width:44rem}
+.i-pourvous .i-graphe{max-width:36rem}

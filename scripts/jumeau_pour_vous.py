@@ -52,9 +52,10 @@ def main() -> int:
         n = d.notes
         out["programmes"][slug] = {
             "convention": convention, "annees": list(d.annees),
-            "economie": n["economie"], "cas": {k: n["cas"][k] for k in CAS}}
+            "economie": n["economie"],
+            "cas": {k: pour_vous.un_cas(n["cas"], k) for k in CAS}}
         for k in CAS:
-            x = n["cas"][k]
+            x = pour_vous.un_cas(n["cas"], k)
             print(f"{slug:11s} {k:40s} statique {x['statique'][-1]:7.0f} réel 2035 "
                   f"{x['reel'][-1]:7.0f} ({100 * x['reel'][-1] / x['rd']:+.2f} %) risque {x['risque'][-1]:+.2f}"
                   f" sat {x['sat'][-1]:+.3f} ev {x['ev'][-1]:+.2f} mois")
