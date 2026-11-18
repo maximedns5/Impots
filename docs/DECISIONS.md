@@ -42003,3 +42003,99 @@ est trop riche dans la population (D-647) : des revenus locaux à catégorie ég
 changeraient la population, donc `population/*`, hors de ce volet. (4) La grille de
 densité (dense, intermédiaire, rural) n'est pas dans l'enquête : le rural hors unité
 urbaine en tient lieu. (5) Pas de bande par territoire, seulement pour l'ensemble.
+
+## D-655 — Les programmes refusés (1) : Mélenchon et Tondelier par leurs mesures chiffrées
+
+**Le problème** (volet `refuses` du but 29, ajouté par le coordinateur dans la nuit ;
+numéros D-655 à D-659). Sur la page « Ce que ça change », les programmes de Mélenchon et
+de Tondelier passaient par la chaîne des études (réduit, vieillie, D-605) : pas de
+ménages par cellule, pas de choc par décile. Les territoires y étaient « non calculés »,
+« Pour vous » réduit au statique, le moral et la santé sans l'économie des ménages ;
+quand la productivité (D-627) et « Pour vous » (D-633) les avaient calculés, hors de la
+page, comme leurs mesures chiffrées ensemble. Deux programmes majeurs, vus à moitié.
+
+**Pourquoi le tout est refusé**, relu dans le code et non dans D-605 (qui disait « des
+cotisations payées à la fois par les entreprises et les APU », la raison de D-487, plus la
+première levée). Le bloc `chocs_entreprises` (`blocs/entreprises.py`, `preparer`) refuse
+une mesure qui porte des prélèvements agrégés (le signal du canal du lot 1) sans leur
+ventilation par impôt : le rapport du programme ne ventile pas sa passe (D-412), et les
+blocs du lot 2 lisent chaque impôt. Ses mesures, elles, ont chacune leur passe ventilée,
+et se calculent toutes sur les dix ans (sept chez Mélenchon, quatre chez Tondelier ;
+aucune refusée, figée comme vieillie, convention « parts_premiere_annee »).
+
+**La voie retenue : la convention « mesures_seules » de D-502**, dans le jumeau complet,
+au réglage de la page (structurel, population figée, parts de la première année, θ à ½,
+60 tirages pour les bandes), le même que pour les autres programmes : les deux se lisent à
+côté d'Attal ou de Retailleau. Le programme tourne comme ses mesures, chacune comme le mode
+structurel la lit (le Smic par `travail.mesure_smic`, le point d'indice par la
+rémunération publique), plus la mesure d'interaction de sa passe (`papillon.interaction`) :
+chaque année, le coût du programme moins la somme de ses mesures, sur le solde, sans
+comportement ni décile ; et l'écart de ses cotisations des employeurs (le Smic et les
+exonérations sur la même base), en impulsion et en impôt des entreprises privées. La somme
+des coûts est celle du programme, chaque année (`papillon.verifier_somme`). C'est plus
+que ce que fait D-627 (les mesures sans l'interaction) : le coût du programme y est
+entier ; c'est le choix de D-502, déjà publié pour Mélenchon.
+
+**Ce qui manque, dit en tête de la page et dans chaque fiche.** (1) La répartition de
+l'interaction entre les ménages : le revenu par décile est la somme des passes des
+mesures, faites seules ; l'interaction ne se lit que sur le solde et les cotisations
+(Mélenchon : +0,44 Md€ de coût et +1,33 Md€ de cotisations des employeurs en 2026, figée ;
+Tondelier : −0,02 et +0,02, lus au premier calcul de la page). (2) Les mesures du
+programme qu'aucun rapport ne chiffre (comme pour tout programme : la part chiffrée). (3)
+Aucune mesure chiffrée n'est refusée ; si l'une l'était, la composition serait refusée
+(sinon l'interaction la compterait sur le solde seul), et la page reviendrait à la chaîne
+des études, en disant les deux raisons.
+
+**Le statut dégradé là où il le faut.** Les dimensions qui lisent le revenu des ménages
+par décile, et pas le programme entier, passent à « illustratif » avec la raison : le
+moral (il était « sourcé, non jugé » ; `statut_sans_composition` le garde), la santé et
+les territoires (déjà illustratifs). « Pour vous » lit le statique du programme entier
+dans le tableau des cas types (OpenFisca, `cle_statique`, D-633), interactions comprises ;
+il reste illustratif. Les comptes publics, l'économie et la productivité lisent des
+agrégats qui portent l'interaction entière : leur statut ne change pas.
+
+**Ce qui n'est pas fait, et pourquoi.** Les chocs par décile pour la chaîne des études
+(vue vieillie) : le rapport du programme n'en porte pas (sa première année n'est pas
+ventilée, c'est la raison même du refus) ; les tirer de la somme des passes des mesures
+mêlerait les deux chemins. Une fois la composition dans le jumeau complet, la chaîne des
+études n'est plus le chemin de la page pour ces deux programmes ; elle reste celui de
+l'API quand le mode « reduit » est demandé, sans territoires (dit).
+
+**Le code** : `navigateur.Session.programme_compose` (les mesures, refus nommés, et ce
+que la page en dit, `composee`), `reglage_impacts` (essaie la composition avant de
+revenir aux études), `_contexte` (`mesures_seules`), `_options_compose` ; dans
+`impacts/tableau.calculer_tout`, deux options génériques, `degrader` (dimension : raison)
+et `limite_commune`. Aucune dimension n'est réécrite.
+
+## D-656 — Les programmes refusés (2) : le contrôle de la composition, préenregistré
+
+**Ce qui est comparé.** La composition de D-655 (le chemin de la page) au chemin des
+études (le programme comme un tout, réduit, vieillie, θ à ½), pour Mélenchon et pour
+Tondelier, sur ce que les deux partagent : les passes (le coût statique) et la première
+année du solde. Un script (`scripts/jumeau_programmes_composes.py`) écrit
+`reports/jumeau/programmes_composes.json` ; aucune passe OpenFisca, le jumeau seul.
+
+**Ce qui a déjà été vu, avant d'écrire ceci** (non aveugle sur un côté) : au premier
+calcul de la page, ΔB9 2026 de la composition vaut −66,18 Md€ (Mélenchon) et −10,09
+(Tondelier) ; D-502 publiait, sur un code plus ancien, −71,53 (structurel figée) et −91,59
+(réduit vieillie) pour Mélenchon. Le chemin des études n'a pas été recalculé depuis.
+
+**Les lignes, leur tolérance, leur pronostic** (chacune pour les deux programmes) :
+
+* **C1** : Σ coûts des mesures + interaction − coût du programme, chaque année de 2026 à
+  2035, figée et vieillie. Tolérance 1e-6 Md€. Pronostic : tenu (par construction).
+* **C2** : le coût statique de 2026, composition (figée) contre programme (vieillie, le
+  chemin des études). Tolérance 2 %. Pronostic : tenu, vers 1 % (D-502 : figée et
+  vieillie à 1 % l'une de l'autre sur ΔB9 2026 en réduit).
+* **C3** : la part statique de ΔB9 2026 (la contribution du bloc `mesures`), composition
+  contre chemin des études. Tolérance 5 %. Pronostic : tenu, peu sûr (le structurel peut
+  lire autrement les canaux de recettes des mesures ventilées).
+* **C4** : ΔB9 2026 entier, composition contre chemin des études. Tolérance 10 %.
+  Pronostic : manqué pour Mélenchon (vers −66 contre vers −90 : le réduit ne fait pas
+  dépenser les transferts, D-500) ; manqué aussi pour Tondelier, de moins.
+
+Les écarts relatifs se prennent sur le chemin des études. C1 et C2 disent si la
+composition porte le programme entier ; C3 si les deux chemins lisent le même choc
+statique ; C4 n'est pas une erreur de la composition s'il manque : la première année d'un
+mode et de l'autre n'ont pas la même économie (D-500, D-502). Aucune tolérance ne changera
+après le premier calcul ; une ligne manquée reste notée, avec son explication en D-657.

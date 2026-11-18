@@ -65,6 +65,11 @@ def calculer_tout(variante: Sequence[Any], reference: Sequence[Any], depart: Any
     """Chaque dimension inscrite, dans l'ordre, sous sa forme JSON, ou son erreur ; la vue
     d'ensemble ; les modules qui ne se sont pas importés."""
     erreurs = charger()
+    # D-655 : un programme composé de ses mesures. `degrader` : {dimension : raison} des
+    # dimensions qui passent à « illustratif » ; `limite_commune` : la limite que chaque
+    # fiche dit en tête de ses limites.
+    degrader = dict(options.pop("degrader", None) or {})
+    commune = options.pop("limite_commune", None)
     dims: list[dict[str, Any]] = []
     for cle in impacts.dimensions():
         try:
@@ -73,6 +78,15 @@ def calculer_tout(variante: Sequence[Any], reference: Sequence[Any], depart: Any
             dims.append(propre(impacts.vers_dict(d)))
         except Exception as e:  # dit à la page, pas avalé
             dims.append({"cle": cle, "erreur": f"{type(e).__name__} : {e}"})
+            continue
+        x = dims[-1]
+        if cle in degrader:
+            if x["statut"] != "illustratif":
+                x["statut_sans_composition"] = x["statut"]
+                x["statut"], x["juge"] = "illustratif", None
+            x["limites"] = [f"Illustratif : {degrader[cle]}.", *x.get("limites", [])]
+        if commune:
+            x["limites"] = [commune, *x.get("limites", [])]
     return {"dimensions": dims, "ensemble": ensemble(dims),
             "modules_en_erreur": erreurs}
 
