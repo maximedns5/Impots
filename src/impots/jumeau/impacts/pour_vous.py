@@ -337,9 +337,11 @@ def sources(tab: Mapping[str, Any], pm: Mapping[str, Any], ps: Mapping[str, Any]
 
 
 LIMITES = (
-    "La bande est l'enveloppe des bornes publiées des coefficients, canal par canal "
-    "(celle du total somme les bornes de même sens) : ni un intervalle de confiance, ni "
-    "des tirages des θ du jumeau, qui sont lus au réglage.",
+    "La bande de la satisfaction et de la santé est l'enveloppe des bornes publiées des "
+    "coefficients, canal par canal (celle du total somme les bornes de même sens) : ni un "
+    "intervalle de confiance, ni des tirages. Celle du revenu réel (le cas par défaut) va "
+    "de 5 à 95 % des tirages des θ du jumeau, quand le réglage en demande ; le statique "
+    "n'en dépend pas.",
     "Des cas types, pas des personnes : un ménage de la grille, dont les revenus sont des "
     "médianes de la population ; votre situation précise peut en être loin (un loyer, des "
     "heures, un patrimoine, des revenus du capital qu'il n'a pas).",
@@ -377,7 +379,8 @@ def pour_vous(variante: Any, reference: Any, depart: Any, cellules: Any, *,
               mesures: Sequence[Any] = (), composition: Sequence[Mapping[str, Any]] | None
               = None, programme: str | None = None, illustratives: Mapping[str, str] |
               None = None, tableau: Mapping[str, Any] | None = None,
-              cle_statique: str | None = None, **_: Any) -> Dimension:
+              cle_statique: str | None = None, tirages: Any = None,
+              **_: Any) -> Dimension:
     if cellules is None:
         raise PourVousError("la dimension lit les cellules de ménages")
     tab = tableau if tableau is not None else charger()
@@ -393,13 +396,27 @@ def pour_vous(variante: Any, reference: Any, depart: Any, cellules: Any, *,
         res[k] = calcul_cas({**c, "cle": k}, tab, eco, list(mesures), composition,
                             cellules, pm, ps, programme)
     d = res[DEFAUT]
+    # La bande du revenu réel du cas par défaut : les tirages des θ que le tableau passe,
+    # comme les autres dimensions (5 et 95 %) ; le statique n'en dépend pas.
+    bande: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    if tirages is not None and len(tirages.annees) == len(annees):
+        n = int(np.asarray(tirages.variante[0]["pib"]).size)
+        if n > 1:
+            cas_d = {**tab["cas"][DEFAUT], "cle": DEFAUT}
+            tir = [calcul_cas(cas_d, tab, economie(tirages.variante, tirages.reference, j),
+                              list(mesures), composition, cellules, pm, ps, programme)
+                   for j in range(n)]
+            for cle in ("revenu_reel", "revenu_reel_pct"):
+                x = np.array([r[cle] for r in tir])
+                bande[cle] = (np.percentile(x, 5.0, axis=0), np.percentile(x, 95.0, axis=0))
     vit = {lib: k for k, lib in VITRINE.items() if k in res}
     ind = (
         Indicateur("revenu_reel", "Le revenu disponible réel du ménage (seul, au Smic, "
                    "locataire, par défaut)", "€ par an", d["revenu_reel"],
+                   *bande.get("revenu_reel", (None, None)),
                    par_groupe={lib: res[k]["revenu_reel"] for lib, k in vit.items()}),
         Indicateur("revenu_reel_pct", "Le revenu disponible réel, en part", "%",
-                   d["revenu_reel_pct"],
+                   d["revenu_reel_pct"], *bande.get("revenu_reel_pct", (None, None)),
                    par_groupe={lib: res[k]["revenu_reel_pct"] for lib, k in vit.items()}),
         Indicateur("statique", "Dont la mesure elle-même (impôts, prestations, TVA), avant "
                    "l'économie", "€ par an", d["statique"],

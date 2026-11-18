@@ -346,7 +346,8 @@ def _etats(variante: Any, reference: Any) -> tuple[Sequence[Any], Sequence[Any],
 def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *,
              mesures: Sequence[Any] | None = None, annees: Sequence[int] | None = None,
              canaux: Iterable[str] | None = None, cir: Mapping[int, float] | None = None,
-             illustratives: Mapping[str, str] | None = None, **_: Any) -> Dimension:
+             illustratives: Mapping[str, str] | None = None, tirages: Any = None,
+             **_: Any) -> Dimension:
     """La dimension « productivité ». `mesures` : les mesures de la variante (leurs
     leviers) ; `canaux` : ceux à brancher (par défaut, ceux que le fichier branche) ;
     `cir` : {année : Md€}, la variation de la créance de CIR qu'une mesure fait (une
@@ -363,6 +364,10 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
     if inconnus:
         raise ValueError(f"canaux inconnus : {inconnus} ({CANAUX})")
     s = socle(var, ref, depart)
+    # La bande du socle : les tirages des θ que le tableau passe (la page), comme les
+    # autres dimensions (`_commun.serie`) ; une trajectoire vectorisée les porte déjà.
+    s_t = (socle(tirages.variante, tirages.reference, depart)
+           if tirages is not None and len(tirages.annees) == len(annees) else None)
     limites = [
         "Le socle est le jumeau : la productivité apparente y bouge par la composition de "
         "l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par "
@@ -427,6 +432,10 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
         if v is None:
             continue
         val, bas, haut = _bande(v)
+        x = None if s_t is None else s_t.get(cle)
+        if bas is None and x is not None and np.ndim(x) == 2 and np.shape(x)[1] > 1:
+            x = x + ajout["centre"][:, None] if cle != "capital_par_tete" else x
+            bas, haut = (np.percentile(100.0 * x, q, axis=1) for q in (5.0, 95.0))
         indicateurs.append(Indicateur(cle=cle, libelle=libelle, unite="% d'écart à la "
                                       "référence", valeurs=val, bas=bas, haut=haut,
                                       sens=sens))
