@@ -43195,3 +43195,30 @@ après la série). Pas de PR, pas de `make impact`, pas de lourds.
 **Tests légers** des fichiers du but (`test_impacts_*`, `test_jumeau_impacts_*`,
 `test_jumeau_navigateur`, `test_parametrique`, `test_pour_vous`) sur ce commit : 135
 passés. Aucun nombre ne change ici.
+
+## D-674 — La raison d'un refus en clair, et le centre hors de sa bande
+
+**Ce qui est fait** (le dessin de la page seul, `site_impacts/page.js` et `impacts.css` ;
+aucun nombre ne change, aucune passe). Les deux points vus et non changés dans D-673.
+
+* **La raison d'un refus** passe par `lisible` partout où la page la cite (le réglage,
+  « En bref », la fiche et la carte d'une dimension non calculée, « Comparer », l'erreur
+  d'un calcul dans la page) : le nom de la classe d'exception est retiré
+  (« TerritoiresAbsents : »), une clé connue de la bibliothèque devient le nom du
+  programme ou de la mesure (« pres2027_melenchon_programme » devient « Jean-Luc
+  Mélenchon : le programme (sa part chiffrée) »), « le mode reduit » devient « la chaîne
+  des études » et « le mode structurel » « le jumeau complet ». Le reste du texte est
+  gardé tel quel : la raison ne perd rien ; une clé inconnue reste écrite.
+* **Le centre hors de sa bande.** Là où le calcul à θ = ½ sort de la bande des tirages
+  (5 et 95 %), la carte et la fiche le disent en une phrase (« le réglage central sort de
+  la bande des tirages : la réponse aux θ n'est pas symétrique », « de moins que
+  l'arrondi » quand les nombres affichés sont égaux) ; « Comparer » dit « centre hors de
+  la bande » sur la ligne, et le tableau « (centre hors) » dans la cellule. Sur les
+  programmes précalculés en 2035 : la productivité apparente de Lisnard, Philippe et Le
+  Pen, le PIB en volume de Lisnard.
+
+Vérifié sur la page écrite pour D-673 (le script et le style remplacés, sans la récrire),
+dans Chromium sans tête à 1 200 et 390 px : aucune erreur de la console, aucun défilement
+horizontal, plus de nom de classe ni de clé brute dans le texte. `ui/check.mjs` ne couvre
+pas cette page. Pas de test dédié : c'est du rendu (D-335). Tests légers des fichiers
+du but (`test_impacts_*`, `test_jumeau_impacts_*`, `test_jumeau_navigateur`) : 110 passés.

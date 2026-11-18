@@ -143,3 +143,4 @@
 .i-bareme label.i-bouge{border-color:var(--trait-fort)}
 .i-hors{font-size:.85rem;margin:.3rem 0}
 #bareme-etat code{word-break:break-all;white-space:pre-wrap}
+.i-hors-bande{font-style:italic}

@@ -40,6 +40,26 @@
     const [c, lib] = STATUTS[d.statut] || ["", d.statut];
     return `<span class="i-statut ${c}">${esc(lib)}${d.juge ? " · " + esc(d.juge) : ""}</span>`;
   }
+  // La raison d'un refus, dite pour un lecteur (D-674) : sans le nom de la classe
+  // d'exception (« TerritoiresAbsents : »), une clé connue remplacée par le nom du
+  // programme ou de la mesure, les modes par ce que la page en dit ; le reste tel quel.
+  function lisible(texte) {
+    return String(texte ?? "")
+      .replace(/(^|[(\s])(?!OpenFisca\b)[A-Z][a-z]+(?:[A-Z][a-z]*)+ ?: /g, "$1")
+      .replace(/(^|\()mesure « ([\w@.-]+) »/g, (m, a, k) => B.libelles[k] ? `${a}« ${k} »` : m)
+      .replace(/« ([\w@.-]+) »/g, (m, k) => B.libelles[k] ? `« ${B.libelles[k]} »` : m)
+      .replace(/\ble mode (?:reduit|réduit)\b/g, "la chaîne des études")
+      .replace(/\ble mode structurel\b/g, "le jumeau complet");
+  }
+  // Le centre est le calcul à θ = ½, la bande les quantiles de 5 et 95 % des tirages :
+  // rien n'impose que l'un tombe dans l'autre (D-673) ; la page le dit là où c'est le cas.
+  function horsBande(v, b, h) {
+    if ([v, b, h].some((x) => x === null || x === undefined || !isFinite(x))) return "";
+    const lo = Math.min(b, h), hi = Math.max(b, h), eps = 1e-9 * Math.max(1, Math.abs(v));
+    if (v >= lo - eps && v <= hi + eps) return "";
+    const peu = fr(v) === fr(v < lo ? lo : hi) ? " (de moins que l'arrondi)" : "";
+    return `le réglage central sort de la bande des tirages${peu} : la réponse aux θ n'est pas symétrique`;
+  }
   function signe(p, sens) {
     if (!p || p.signe === null) return "";
     if (p.signe === "mieux") return '<span class="i-signe mieux">▲ mieux</span>';
@@ -276,7 +296,7 @@
     } catch (e) {
       // Une erreur de Python arrive avec sa pile : la page n'en dit que la raison.
       const brut = String(e.message || e).trim().split("\n").filter((l) => l.trim()).pop() || "";
-      window.impacts.erreur = brut.replace(/^[\w.]*(Error|Exception) : |^[\w.]*(Error|Exception): /, "");
+      window.impacts.erreur = lisible(brut.replace(/^[\w.]*(Error|Exception) : |^[\w.]*(Error|Exception): /, ""));
       $("etat").textContent = "Le calcul n'a pas abouti : " + window.impacts.erreur;
     }
   }
@@ -289,7 +309,7 @@
       : "la chaîne des études (sans les ménages ni les entreprises)";
     const n = g.tirages ? `, bande sur ${g.tirages} tirages` : "";
     return `Calculé par ${mode}, chaque paramètre incertain au centre (θ = ½)${n}.` +
-      (r.pourquoi_mode ? ` <b>${r.composee ? "Pourquoi par ses mesures" : "Pourquoi pas le jumeau complet"} :</b> ${esc(r.pourquoi_mode)}.` : "");
+      (r.pourquoi_mode ? ` <b>${r.composee ? "Pourquoi par ses mesures" : "Pourquoi pas le jumeau complet"} :</b> ${esc(lisible(r.pourquoi_mode))}.` : "");
   }
   function dessiner(r) {
     window.impacts.resultat = r;
@@ -300,12 +320,12 @@
     const parMesures = r.pourquoi_mode && D.precalcul[r.candidat + "@mesures"];
     if (parMesures) av.push(`<div class="i-avert i-refus"><b>Le jumeau complet refuse ce programme entier</b> (la raison est ci-dessus) : il est calculé par la chaîne des études, sans les ménages ni les entreprises. Ses mesures, elles, passent une à une dans le jumeau complet. <button type="button" class="i-lien" data-voir="${esc(r.candidat)}@mesures">Voir le calcul par ses mesures</button></div>`);
     if (r.couverture) av.push(couverture(r));
-    if (r.refus) av.push(`<div class="i-avert i-refus"><b>Le jumeau ne calcule ${r.calculees && r.calculees.length ? "que jusqu'en " + r.calculees[r.calculees.length - 1] : "aucune année"} :</b> ${esc(r.refus)}</div>`);
+    if (r.refus) av.push(`<div class="i-avert i-refus"><b>Le jumeau ne calcule ${r.calculees && r.calculees.length ? "que jusqu'en " + r.calculees[r.calculees.length - 1] : "aucune année"} :</b> ${esc(lisible(r.refus))}</div>`);
     if (r.proposition) av.push(`<div class="i-avert i-refus"><b>Votre barème, un chiffrage illustratif.</b> ${esc(r.proposition.libelle)}. Une passe sur la population faite à votre demande, que personne n'a enregistrée avant de la voir : chaque dimension est illustrative, aucune n'est comparée à un chiffrage officiel (D-660).</div>`);
     if (r.composition) av.push(`<div class="i-avert"><b>La proposition :</b><ul>${r.composition.map((m) => `<li>${esc(m.libelle)}${m.transformee ? " — <i>" + esc(m.transformee) + "</i>" : ""}</li>`).join("")}</ul></div>`);
     if (r.avertissements && r.avertissements.length) av.push(`<div class="i-avert"><ul>${r.avertissements.map((a) => `<li>${esc(a)}</li>`).join("")}</ul></div>`);
     const mods = Object.entries(r.modules_en_erreur || {});
-    if (mods.length) av.push(`<div class="i-avert i-refus"><b>Dimensions qui ne se chargent pas :</b><ul>${mods.map(([m, e]) => `<li>${esc(m)} : ${esc(e)}</li>`).join("")}</ul></div>`);
+    if (mods.length) av.push(`<div class="i-avert i-refus"><b>Dimensions qui ne se chargent pas :</b><ul>${mods.map(([m, e]) => `<li>${esc(m)} : ${esc(lisible(e))}</li>`).join("")}</ul></div>`);
     $("avertissements").innerHTML = av.join("");
     for (const b of $("avertissements").querySelectorAll("[data-voir]")) b.addEventListener("click", () => choisir({ candidat: b.dataset.voir }));
     bref(r);
@@ -332,7 +352,7 @@
     const r = window.impacts.resultat;
     const d = r && (r.dimensions || []).find((x) => x.cle === "pour_vous");
     if (!d) { out.innerHTML = '<p class="i-aide">Pas calculé pour ce choix.</p>'; return; }
-    if (d.erreur) { out.innerHTML = `<div class="i-avert i-refus"><b>Non calculé :</b> ${esc(d.erreur)}</div>`; return; }
+    if (d.erreur) { out.innerHTML = `<div class="i-avert i-refus"><b>Non calculé :</b> ${esc(lisible(d.erreur))}</div>`; return; }
     if (!d.notes.cas && d.notes.fichier) {
       // Les cas types des programmes précalculés sont dans un fichier à part (D-630).
       try {
@@ -387,7 +407,7 @@
     out.appendChild(det);
   }
   function carte(e) {
-    if (e.erreur) return `<a class="i-carte i-erreur" href="#f-${esc(e.cle)}"><h3>${esc(e.cle)}</h3><p class="i-q">Non calculée : ${esc(e.erreur)}</p></a>`;
+    if (e.erreur) return `<a class="i-carte i-erreur" href="#f-${esc(e.cle)}"><h3>${esc(e.cle)}</h3><p class="i-q">Non calculée : ${esc(lisible(e.erreur))}</p></a>`;
     const t = e.tete;
     if (!t) return `<a class="i-carte" href="#f-${esc(e.cle)}"><h3>${esc(e.titre)}</h3><p class="i-q">${esc(e.question)}</p><p class="i-lib">Aucun indicateur calculé ici.</p>${statut(e)}</a>`;
     const h = t.horizon;
@@ -395,7 +415,8 @@
     // La règle de D-650, celle de « En bref » et de « Comparer » : sans une bande d'un seul
     // côté de zéro, celui du nombre, « mieux » ou « moins bien » n'est pas sûr (D-665).
     const sur = aBande && ((h.bas > 1e-9 && h.haut > 1e-9 && h.valeur > 1e-9) || (h.bas < -1e-9 && h.haut < -1e-9 && h.valeur < -1e-9));
-    const bande = aBande ? `<p class="i-bande">entre ${fr(h.bas)} et ${fr(h.haut)}${unite(t.unite)}${sur ? "" : " : sens pas sûr"}</p>` : "";
+    const hors = aBande ? horsBande(h.valeur, h.bas, h.haut) : "";
+    const bande = aBande ? `<p class="i-bande">entre ${fr(h.bas)} et ${fr(h.haut)}${unite(t.unite)}${sur ? "" : " : sens pas sûr"}</p>${hors ? `<p class="i-bande i-hors-bande">${esc(hors)}.</p>` : ""}` : "";
     return `<a class="i-carte" href="#f-${esc(e.cle)}" data-cle="${esc(e.cle)}"><h3>${esc(e.titre)}</h3><p class="i-q">${esc(e.question)}</p>
       <p class="i-lib">${esc(t.libelle)}, en ${h.annee}</p>
       <p class="i-gros" data-v="${h.valeur}">${fr(h.valeur)}<small>${esc(unite(t.unite))}</small></p>${bande}
@@ -409,7 +430,7 @@
     s.id = "f-" + d.cle;
     s.dataset.cle = d.cle;
     if (d.erreur) {
-      s.innerHTML = `<h3>${esc(d.cle)}</h3><div class="i-avert i-refus"><b>Non calculée :</b> ${esc(d.erreur)}</div>`;
+      s.innerHTML = `<h3>${esc(d.cle)}</h3><div class="i-avert i-refus"><b>Non calculée :</b> ${esc(lisible(d.erreur))}</div>`;
       return s;
     }
     const [, , explication] = STATUTS[d.statut] || ["", "", ""];
@@ -439,7 +460,8 @@
     const k = v.map((x, i) => (x === null ? -1 : i)).filter((i) => i >= 0);
     const fin = k.length ? k[k.length - 1] : -1;
     const tete = fin >= 0 ? `<p class="i-gros" data-v="${v[fin]}">${fr(v[fin])}<small>${esc(unite(ind.unite))} en ${annees[fin]}</small></p>` +
-      (ind.bas ? `<p class="i-bande">bande : de ${fr(ind.bas[fin])} à ${fr(ind.haut[fin])}${esc(unite(ind.unite))}</p>` : "") : "";
+      (ind.bas ? `<p class="i-bande">bande : de ${fr(ind.bas[fin])} à ${fr(ind.haut[fin])}${esc(unite(ind.unite))}</p>` : "") +
+      (ind.bas && horsBande(v[fin], ind.bas[fin], ind.haut[fin]) ? `<p class="i-bande i-hors-bande">${esc(horsBande(v[fin], ind.bas[fin], ind.haut[fin]))}.</p>` : "") : "";
     div.innerHTML = tete;
     div.appendChild(courbe(ind, annees));
     if (ind.par_groupe && Object.keys(ind.par_groupe).length) div.appendChild(groupes(ind, annees, fin));
@@ -564,7 +586,7 @@
   /* ------------------------------------------------------------ en bref (D-650) */
   function phrase(p) {
     // La phrase commence par le titre de sa dimension : il devient le lien vers sa fiche.
-    const t = p.texte || "";
+    const t = lisible(p.texte || "");
     const debut = p.dimension && p.titre && t.startsWith(p.titre)
       ? `<a href="#f-${esc(p.dimension)}">${esc(p.titre)}</a>${esc(t.slice(p.titre.length))}` : esc(t);
     return `<span class="b-phrase b-${esc(p.sorte)}"${p.certitude ? ` data-certitude="${esc(p.certitude)}"` : ""}${p.dimension ? ` data-dimension="${esc(p.dimension)}"` : ""}>${debut}</span>`;
@@ -629,7 +651,7 @@
   function point(r, dc, ic, annee) {
     const d = (r.dimensions || []).find((x) => x.cle === dc);
     if (!d) return { absent: "dimension non calculée" };
-    if (d.erreur) return { absent: "non calculée : " + d.erreur };
+    if (d.erreur) return { absent: "non calculée : " + lisible(d.erreur) };
     const ind = (d.indicateurs || []).find((x) => x.cle === ic);
     if (!ind) return { absent: "absent ici", statut: d.statut };
     const i = (d.annees || []).indexOf(annee);
@@ -699,14 +721,14 @@
       const [cs] = STATUTS[p.statut] || [""];
       return `<div class="c-ligne" role="listitem" data-cle="${esc(l.cle)}" data-v="${p.v}">${tete}
         <div class="c-piste" aria-hidden="true"><span class="c-zero" style="left:${X(0)}"></span>${bande}<span class="c-point ${c}" style="left:${X(p.v)}"></span></div>
-        <div class="c-val"><span class="c-nombre">${fr(p.v)}</span><small>${p.b !== null && p.h !== null ? `de ${fr(p.b)} à ${fr(p.h)}${p.net ? "" : " : sens pas sûr"}` : "sans bande"}</small><span class="i-statut ${cs}">${esc(STATUT_COURT[p.statut] || p.statut || "")}</span></div></div>`;
+        <div class="c-val"><span class="c-nombre">${fr(p.v)}</span><small>${p.b !== null && p.h !== null ? `de ${fr(p.b)} à ${fr(p.h)}${p.net ? "" : " : sens pas sûr"}` : "sans bande"}</small>${horsBande(p.v, p.b, p.h) ? `<small class="i-hors-bande" title="${esc(horsBande(p.v, p.b, p.h))}">centre hors de la bande</small>` : ""}<span class="i-statut ${cs}">${esc(STATUT_COURT[p.statut] || p.statut || "")}</span></div></div>`;
     }).join("");
     // Les refus du jumeau complet, avec leur raison et le calcul par leurs mesures.
     const refus = lignes.filter((l) => l.refuse);
     $("cmp-refus").innerHTML = refus.length ? `<div class="i-avert i-refus"><b>Refusés par le jumeau complet :</b><ul>${refus.map((l) => {
       const m = D.precalcul[l.cle + "@mesures"];
       const c = m && m.couverture;
-      return `<li><b>${esc(l.nom)}</b> : ${esc((l.r.pourquoi_mode || "").replace(/ : la chaîne des études.*$/, ""))}. Deux lignes : la chaîne des études sur le programme entier (sans les ménages ni les entreprises : plusieurs dimensions y sont absentes, pas nulles), et le jumeau complet sur ses ${c ? c.nombre : ""} mesures et leur interaction${c ? `, qui couvrent ${c.mesures === null ? "un coût inconnu" : fr(c.mesures, 1).replace("+", "") + " Md€"}${c.interaction === null || c.interaction === undefined ? "" : " et " + fr(c.interaction, 2) + " Md€ d'interaction"} des ${fr(c.programme, 1).replace("+", "")} Md€ du programme en ${c.annee} (coût mécanique ; l'interaction ne se lit que sur le solde, pas entre les ménages)` : ""}${c && c.age ? " ; l'âge de départ du programme, dans aucune de ses mesures, est lu par la santé et « Pour vous » comme pour tout programme" : ""}.</li>`;
+      return `<li><b>${esc(l.nom)}</b> : ${esc(lisible(l.r.pourquoi_mode || "").replace(/ : la chaîne des études.*$/, ""))}. Deux lignes : la chaîne des études sur le programme entier (sans les ménages ni les entreprises : plusieurs dimensions y sont absentes, pas nulles), et le jumeau complet sur ses ${c ? c.nombre : ""} mesures et leur interaction${c ? `, qui couvrent ${c.mesures === null ? "un coût inconnu" : fr(c.mesures, 1).replace("+", "") + " Md€"}${c.interaction === null || c.interaction === undefined ? "" : " et " + fr(c.interaction, 2) + " Md€ d'interaction"} des ${fr(c.programme, 1).replace("+", "")} Md€ du programme en ${c.annee} (coût mécanique ; l'interaction ne se lit que sur le solde, pas entre les ménages)` : ""}${c && c.age ? " ; l'âge de départ du programme, dans aucune de ses mesures, est lu par la santé et « Pour vous » comme pour tout programme" : ""}.</li>`;
     }).join("")}</ul></div>` : "";
     tableau(lignes, dims, aChoisie);
     window.impacts.comparaison = { dimension: dChoisie, indicateur: iChoisi, annee: aChoisie, lignes: liste.map((l) => ({ cle: l.cle, nom: l.nom, v: l.p.v ?? null })) };
@@ -732,7 +754,8 @@
       if (p.v === undefined) return `<td class="c-vide" title="${esc(p.absent)}">—</td>`;
       const c = !p.sens || Math.abs(p.v) < 1e-9 ? "" : p.v * p.sens > 0 ? "c-mieux" : "c-moins";
       const [cs] = STATUTS[p.statut] || [""];
-      return `<td class="${c}" data-v="${p.v}"><span>${fr(p.v)}</span>${p.b !== null && p.h !== null ? `<small>${fr(p.b)} à ${fr(p.h)}${p.net ? "" : " ?"}</small>` : "<small>sans bande</small>"}<small class="c-st ${cs}">${esc(STATUT_COURT[p.statut] || "")}</small></td>`;
+      const hors = horsBande(p.v, p.b, p.h);
+      return `<td class="${c}" data-v="${p.v}"${hors ? ` title="${esc(hors)}"` : ""}><span>${fr(p.v)}</span>${p.b !== null && p.h !== null ? `<small>${fr(p.b)} à ${fr(p.h)}${p.net ? "" : " ?"}${hors ? " (centre hors)" : ""}</small>` : "<small>sans bande</small>"}<small class="c-st ${cs}">${esc(STATUT_COURT[p.statut] || "")}</small></td>`;
     }).join("")}</tr>`).join("");
     $("cmp-table").innerHTML = `<caption class="i-cache">Le nombre de tête de chaque dimension en ${annee}, par programme</caption>${tete}<tbody>${corps}</tbody>`;
     for (const b of $("cmp-table").querySelectorAll("thead button")) b.addEventListener("click", () => {
