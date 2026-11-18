@@ -43168,3 +43168,30 @@ place, après `pouvoir`, avant le moral. Trois choses changent pour elles.
 Tests légers des fichiers touchés (`test_impacts_*`, `test_jumeau_impacts_*`,
 `test_jumeau_navigateur`) : 110 passés. Les nombres sur la distribution mesurée et le
 juge (D-591) iront dans D-592 et D-640 quand les passes auront tourné.
+
+## D-610 — La jonction du but 29 au matin du 18 novembre : ce qui sert, ce qui attend
+
+**Joint sur `claude/but29`** (d3679d0 et ce commit ; non mergé, parti de `claude/but28`) :
+les dix dimensions de « Ce que ça change », par `jumeau/impacts` (D-605) : les comptes et
+l'économie (D-606, D-639, D-670), le pouvoir d'achat et l'entente (D-591, D-593, D-594),
+le moral (D-595 à D-597), la productivité (D-600 à D-604, D-625 à D-627, D-636, D-637),
+la santé (D-620 à D-622), « Pour vous » (D-630 à D-633, D-638), les territoires (D-645 à
+D-649), « En bref » (D-650, D-651), « Comparer » et les programmes refusés par leurs
+mesures (D-652, D-655 à D-658), « Votre barème » (D-660, D-661, D-671), deux relectures
+adverses (D-635, D-665, D-666) et le mode d'emploi (`docs/CE_QUE_CA_CHANGE.md`, D-673).
+
+**Le statut, sans arrondi** : aucune dimension n'est « jugée ». Les contrôles de l'état
+de départ tiennent (moral, santé, la prime d'activité de « Pour vous », la table des
+territoires sur L2) ; les juges d'effet n'ont pas de puissance (les trois du CICE) ou
+n'ont pas encore tourné (l'Insee pour le pouvoir d'achat, D-591 : les trois passes
+attendent le verrou commun, tenu par la série des études de D-556). D-592 et D-640 les
+écriront ; le pronostic de D-591 annonce déjà trois écarts hors tolérance.
+
+**Ce qui n'est pas fait** : la série des dix-sept études (D-556) tourne encore sur
+Mélenchon, mesure par mesure ; la population de la forme Urssaf (D-580) attend derrière
+elle, puis les passes du juge de l'Insee. Le site n'est pas réécrit (`etude ecrire`
+après la série). Pas de PR, pas de `make impact`, pas de lourds.
+
+**Tests légers** des fichiers du but (`test_impacts_*`, `test_jumeau_impacts_*`,
+`test_jumeau_navigateur`, `test_parametrique`, `test_pour_vous`) sur ce commit : 135
+passés. Aucun nombre ne change ici.

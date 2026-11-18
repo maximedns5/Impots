@@ -1502,6 +1502,14 @@ Les numéros réservés : D-591 à D-594 pour `pouvoir`, D-595 à D-599 pour `bi
 à D-604 pour `productivite`, D-605 à D-609 pour `tableau` ; D-610 et la suite pour la
 jonction.
 
+**Les volets ajoutés dans la nuit** (D-610) : la santé (D-620 à D-624), la suite de la
+productivité (D-625 à D-629), « Pour vous » par cas type (D-630 à D-634), les relectures
+adverses (D-635, D-665 à D-669) et leurs corrections (D-636 à D-639), le pouvoir d'achat
+sur la page (D-640 à D-644), les territoires (D-645 à D-649), « En bref » et « Comparer »
+(D-650 à D-654), les programmes refusés par leurs mesures (D-655 à D-659), « Votre
+barème » (D-660 à D-664), la finition et le mode d'emploi (D-670 à D-674). La page et son
+usage : `docs/CE_QUE_CA_CHANGE.md`.
+
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
