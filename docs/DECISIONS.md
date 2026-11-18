@@ -43222,3 +43222,13 @@ dans Chromium sans tête à 1 200 et 390 px : aucune erreur de la console, aucun
 horizontal, plus de nom de classe ni de clé brute dans le texte. `ui/check.mjs` ne couvre
 pas cette page. Pas de test dédié : c'est du rendu (D-335). Tests légers des fichiers
 du but (`test_impacts_*`, `test_jumeau_impacts_*`, `test_jumeau_navigateur`) : 110 passés.
+
+## D-675 — « Refuse le programme » pour un programme : la tournure laissée par D-674
+
+La raison d'un refus, pour un programme entier que le jumeau complet refuse et qui
+passe à la chaîne des études, disait « refuse la mesure dès sa première année »
+(`Session.reglage_impacts`, D-605). Elle dit désormais « refuse le programme » quand la
+clé est celle d'un programme (`…_programme`), « la mesure » sinon. Aucun nombre ne
+change. Tests légers des fichiers touchés (`test_impacts_tableau`,
+`test_impacts_synthese`, `test_jumeau_navigateur`) : 72 passés. La page réécrite
+(`site_impacts ecrire`, hors du dépôt) porte la nouvelle tournure.

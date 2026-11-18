@@ -735,8 +735,9 @@ class Session:
                     f"le calcule comme ses {len(info['mesures'])} mesures chiffrées "
                     f"ensemble, plus leur interaction (D-502, D-655)")
             elif not k:
+                objet = ("le programme" if cle.endswith("_programme") else "la mesure")
                 choix.update(mode="reduit", vue="vieillie", convention=None,
-                             pourquoi_mode=("le jumeau complet refuse la mesure dès sa "
+                             pourquoi_mode=(f"le jumeau complet refuse {objet} dès sa "
                                             f"première année ({refus}) : la chaîne des "
                                             "études, sans les ménages ni les entreprises"))
         elif choix.get("mesures_seules"):
