@@ -42533,3 +42533,42 @@ ses mesures ; comme pour Retailleau ou Attal, les comptes publics ne chiffrent p
 **La couverture** (D-652) gagne l'interaction : Mélenchon, 88,5 Md€ pour ses sept mesures
 plus 0,44 d'interaction, 89,0 pour le programme (coût mécanique de 2026, figée, sans
 convention ; la somme est le programme au bit, C1).
+
+**Les nombres de tête** (`impacts_json`, le réglage de la page : structurel, figée, parts
+de la première année, θ à ½, bande de 5 à 95 % sur 60 tirages ; 2026, puis 2035 [bande]).
+La ligne du programme entier par la chaîne des études, en regard ; « — » : absent, dit.
+
+| 2035 [bande] | Mélenchon, par ses mesures | études | Tondelier, par ses mesures | études |
+|---|---|---|---|---|
+| moral (k WELLBY/an) | +1 289 [+838 ; +1 807] | — | −224 [−443 ; +84] | — |
+| productivité (%) | +1,33 [+0,40 ; +1,43] | −0,69 | +0,39 [+0,01 ; +0,47] | +0,30 |
+| PIB en volume (%) | +1,50 [+0,92 ; +1,74] | −0,69 | +0,26 [+0,06 ; +0,38] | +0,30 |
+| solde B9 (Md€) | −47,9 [−63,8 ; −23,3] | −118,8 | −4,0 [−12,7 ; +7,4] | −10,9 |
+| santé (k années/an) | +16,0 [−342 ; +371] | — | +0,1 [−7,2 ; +3,8] | — |
+| pour vous (€/an) | +1 830 [+1 663 ; +1 842] | +1 606 | +967 [+888 ; +989] | +878 |
+| territoires (%) | +6,05 [+4,53 ; +7,63] | — | +1,09 [+0,27 ; +1,87] | — |
+
+En 2026 (par ses mesures) : moral +1 606 et +25 ; PIB en volume +0,80 % et +0,10 % ;
+solde −66,2 et −10,1 Md€ ; « pour vous » +1 676 et +909 € ; territoires +6,04 % et +0,82 %.
+(« pour vous » : le salarié seul au Smic, locataire ; « études » : le statique seul.
+L'économie de la chaîne des études est le PIB nominal du réduit.) La bande de la santé de
+Mélenchon, très large, vient des tirages des θ du canal du chômage, que les deux sens
+traversent (le chômage et l'emploi montent ensemble, D-639) ; dite, non changée.
+
+**La page vérifiée** (`site_impacts.ecrire` dans un dossier à part, 2 min ; servie en
+local ; Chromium sans tête, deviceScaleFactor 1, 1 200 et 390 px) : Mélenchon et Tondelier
+« par ses mesures » : les sept fiches ont leur nombre, aucune carte vide, l'avertissement
+en tête (le titre en gras, ce qui manque, les mesures), le bouton vers le programme entier ;
+la ligne des études de Mélenchon : deux cartes « aucun indicateur », avec leur raison et le
+bouton vers ses mesures (D-652). Aucun défilement horizontal, aucune erreur hors le
+`favicon.ico` du serveur local. Captures regardées. Vu, non changé : dans les barres du
+moral, une étiquette de valeur négative longue (−385) chevauche son libellé (« le chômage
+autour de soi »), sur tous les programmes. Le moral se dit « illustratif » avec un texte
+de statut élargi (« ou approchée : un programme pris par ses mesures »).
+
+**Ce qui n'est pas fait.** Pas de `make impact`, pas de lourds, aucune passe OpenFisca ;
+le site commité n'est pas reconstruit (la jonction le fera). `node ui/check.mjs` ne couvre
+pas cette page. **À décider par le propriétaire** : la ligne de Mélenchon et de Tondelier
+mise en avant (la chaîne des études aujourd'hui ; « par ses mesures » porte toutes les
+dimensions et le coût du programme entier, C1, mais pas la répartition de l'interaction ;
+c'est une ligne à changer dans `precalculer`).

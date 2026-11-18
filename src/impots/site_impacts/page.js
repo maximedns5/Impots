@@ -34,7 +34,7 @@
   const STATUTS = {
     "jugé": ["juge", "✓ jugé", "Un chiffrage officiel fait après coup, préenregistré, l'a confrontée"],
     "sourcé, non jugé": ["source", "◐ sourcé, non jugé", "Chaque coefficient a sa source publiée ; aucun chiffrage officiel ne l'a confrontée après coup. Ce n'est pas une prévision vérifiée."],
-    "illustratif": ["illustratif", "◌ illustratif", "Un ordre de grandeur : une partie de la chaîne est déclarée (une loi simple, une mesure mise à l'échelle ou décalée), pas chiffrée par une passe."],
+    "illustratif": ["illustratif", "◌ illustratif", "Un ordre de grandeur : une partie de la chaîne est déclarée (une loi simple, une mesure mise à l'échelle ou décalée) ou approchée (un programme pris par ses mesures), pas chiffrée par une passe."],
   };
   function statut(d) {
     const [c, lib] = STATUTS[d.statut] || ["", d.statut];
