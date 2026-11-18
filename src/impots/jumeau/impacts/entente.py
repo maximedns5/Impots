@@ -51,7 +51,14 @@ import numpy as np
 
 from impots.jumeau.cellules import N_CELLULES, N_DECILES, TYPES
 from impots.jumeau.impacts import Dimension, Indicateur, Source, inscrire
-from impots.jumeau.impacts.pouvoir import LIBELLES_TYPES, Revenus, bande, chemin, revenus_de
+from impots.jumeau.impacts.pouvoir import (
+    LIBELLES_TYPES,
+    Revenus,
+    _debut,
+    bande,
+    chemins,
+    revenus_de,
+)
 
 ROOT = Path(__file__).resolve().parents[4]
 FICHIER = ROOT / "reports" / "jumeau" / "niveaux_de_vie_cellules.json"
@@ -307,11 +314,12 @@ def entente(variante: Any, reference: Any, depart: Any, cellules: Any,
     if options.get("revenus") is not None:
         pib = np.full((len(r.annees), n), params.pib_cellules)
     else:
-        c = chemin(variante, reference, options.get("mesures"), options.get("annees"))
-        pib = np.stack([np.broadcast_to(np.asarray(e["pib"], dtype=float), (n,))
-                        for e in c.reference])
+        pib = np.concatenate([
+            np.stack([np.broadcast_to(np.asarray(e["pib"], dtype=float), (e.n,))
+                      for e in c.reference])
+            for c in chemins(variante, reference, options)], axis=1)
     calc = calculer_entente(r, cellules, dist, params.pib_cellules, pib)
-    debut = options.get("tirages_depuis", 1 if n > 2 else None)
+    debut = _debut(n, options)
 
     def ecart(cle: str, facteur: float = 1.0) -> np.ndarray:
         return facteur * (calc.variante[cle] - calc.reference[cle])

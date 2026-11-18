@@ -253,7 +253,7 @@ def _indicateur(cle: str, libelle: str, unite: str, series: Mapping[str, np.ndar
 def _debut(n: int, options: Mapping[str, Any]) -> int | None:
     if "tirages_depuis" in options:
         return options["tirages_depuis"]
-    return 1 if n > 2 else None
+    return 1 if n > 2 or (n == 2 and options.get("tirages") is not None) else None
 
 
 # --------------------------------------------------------------------------- #
@@ -434,8 +434,37 @@ def revenus_de(variante: Any, reference: Any, depart: Any, cellules: Any,
     if options.get("revenus") is not None:
         r, mesures = options["revenus"]
         return r, mesures
-    c = chemin(variante, reference, options.get("mesures"), options.get("annees"))
-    return revenus(c, depart, cellules, options.get("params")), c.mesures
+    cs = chemins(variante, reference, options)
+    r = joindre([revenus(c, depart, cellules, options.get("params")) for c in cs])
+    return r, cs[0].mesures
+
+
+def chemins(variante: Any, reference: Any, options: Mapping[str, Any]) -> list[Chemin]:
+    """Le chemin au réglage, puis, si le tableau en donne (`options["tirages"]`, la même
+    trajectoire vectorisée sur les tirages des θ, D-605), celui des tirages : le tirage 0
+    est le réglage, les suivants font la bande (`tirages_depuis` = 1)."""
+    cs = [chemin(variante, reference, options.get("mesures"), options.get("annees"))]
+    t = options.get("tirages")
+    if (t is not None and hasattr(t, "variante") and hasattr(t, "reference")
+            and len(t.annees) == len(cs[0].annees)):
+        cs.append(chemin(t))
+    return cs
+
+
+def joindre(rs: Sequence[Revenus]) -> Revenus:
+    """Les revenus de plusieurs chemins, mis bout à bout sur l'axe des tirages."""
+    if len(rs) == 1:
+        return rs[0]
+    a = rs[0]
+
+    def cat(champ: str) -> np.ndarray:
+        x = [np.asarray(getattr(r, champ)) for r in rs]
+        return np.concatenate(x, axis=x[0].ndim - 1)
+
+    return Revenus(annees=a.annees, menages=a.menages, personnes=a.personnes, uc=a.uc,
+                   rd_ref=cat("rd_ref"), dynamique=cat("dynamique"),
+                   indexation=cat("indexation"), reprise=cat("reprise"), prix=cat("prix"),
+                   deflateur=cat("deflateur"), structurel=a.structurel)
 
 
 # --------------------------------------------------------------------------- #

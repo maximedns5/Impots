@@ -181,7 +181,20 @@ def donnees() -> dict[str, Any]:
              "persistence": premier["persistence"]}
     return {"entrees": navigateur.lire(), "cadre": cadre, "candidats": cands,
             "hypotheses": navigateur.HYPOTHESES, "annees": list(navigateur.ANNEES),
-            "juge": juge(), "origines_loi": navigateur.ORIGINES_LOI}
+            "juge": juge(), "origines_loi": navigateur.ORIGINES_LOI,
+            "niveaux_de_vie": niveaux_de_vie()}
+
+
+def niveaux_de_vie() -> dict[str, Any] | None:
+    """La distribution mesurée des niveaux de vie dans les cellules (D-591, des agrégats
+    commités), pour la dimension « ce qui rapproche ou sépare » ; la page la reçoit avec
+    ses entrées, jamais par un fichier. Absente, la dimension prend l'approchée, et le
+    dit."""
+    from impots.jumeau.impacts import entente
+
+    if not entente.FICHIER.exists():
+        return None
+    return json.loads(entente.FICHIER.read_text(encoding="utf-8"))
 
 
 # --------------------------------------------------------------------------- #

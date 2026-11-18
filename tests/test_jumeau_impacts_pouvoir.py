@@ -140,3 +140,21 @@ def test_le_chemin_statique_de_melenchon(session) -> None:
     e = entente.entente(None, None, None, cel, revenus=rv, lire_fichier=False)
     pauvrete = {i.cle: i for i in e.indicateurs}["pauvrete"]
     assert pauvrete.valeurs[0] == pytest.approx(-1.18, abs=0.01)
+
+
+def test_la_page_donne_aux_deux_dimensions_la_bande_des_tirages(session) -> None:
+    """D-594 : sur la page (le tableau, D-605), le pouvoir d'achat et l'entente lisent la
+    trajectoire vectorisée des tirages des θ que le tableau leur passe : le centre reste
+    celui du réglage (+791 € par UC en 2026, +707 en 2035), une bande s'y ajoute (le
+    réglage, θ½, n'est pas la médiane des tirages : il peut en sortir)."""
+    choix = {**RETAILLEAU, "theta": _theta(session, RETAILLEAU), "tirages": 8}
+    out = session.calculer(choix)
+    dims = {d["cle"]: d for d in out["dimensions"]}
+    for cle in ("pouvoir_achat", "entente"):
+        assert "erreur" not in dims[cle], dims[cle]
+        ind = dims[cle]["indicateurs"][0]
+        assert ind["bas"] is not None and ind["haut"] is not None
+        assert ind["bas"][-1] < ind["haut"][-1]
+    reel = dims["pouvoir_achat"]["indicateurs"][0]["valeurs"]
+    assert reel[0] == pytest.approx(790.6, abs=1.0)
+    assert reel[-1] == pytest.approx(706.9, abs=1.0)

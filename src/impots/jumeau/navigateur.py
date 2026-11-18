@@ -776,7 +776,8 @@ class Session:
             tirages=t, mesures=list(traj.mesures), illustratives=ctx["illustratives"],
             mode=ctx["mode"], thetas=ctx["registre"], juge=self.donnees.get("juge"),
             annees=tuple(traj.annees), programme=programme_age(ctx),
-            composition=ctx.get("composition"), cle=ctx.get("cle"))
+            composition=ctx.get("composition"), cle=ctx.get("cle"),
+            distribution=self.donnees.get("niveaux_de_vie"), lire_fichier=False)
 
 
 def programme_age(ctx: Mapping[str, Any]) -> str | None:
