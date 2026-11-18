@@ -1,0 +1,106 @@
+{
+ "commit": "d127ec1a6f73f075666238257002d275a4002a75",
+ "decision": "D-631, D-632",
+ "publie": {
+  "2024": {
+   "ppa": 222.0,
+   "revenu_disponible": 1621.0
+  },
+  "2025": {
+   "ppa": 246.0,
+   "revenu_disponible": 1673.0
+  }
+ },
+ "annees": {
+  "2024": {
+   "plafond": {
+    "smic_brut_mensuel": 1766.92,
+    "loyer": 278.28,
+    "plafond_zone_2": 278.28,
+    "ppa": 222.9856414794922,
+    "aide_logement": 0.0,
+    "rsa": 0.0,
+    "salaire_net": 1398.677978515625,
+    "revenu_disponible_annuel_sur_12": 1640.8802083333333,
+    "revenu_du_mois": 1621.6636199951172
+   },
+   "loyer_population": {
+    "smic_brut_mensuel": 1766.92,
+    "loyer": 370.0,
+    "plafond_zone_2": 278.28,
+    "ppa": 222.9856414794922,
+    "aide_logement": 0.0,
+    "rsa": 0.0,
+    "salaire_net": 1398.677978515625,
+    "revenu_disponible_annuel_sur_12": 1640.8802083333333,
+    "revenu_du_mois": 1621.6636199951172
+   }
+  },
+  "2025": {
+   "plafond": {
+    "smic_brut_mensuel": 1801.8,
+    "loyer": 287.35,
+    "plafond_zone_2": 287.35,
+    "ppa": 247.5654296875,
+    "aide_logement": 0.0,
+    "rsa": 0.0,
+    "salaire_net": 1426.2938232421875,
+    "revenu_disponible_annuel_sur_12": 1671.0296223958333,
+    "revenu_du_mois": 1673.8592529296875
+   },
+   "loyer_population": {
+    "smic_brut_mensuel": 1801.8,
+    "loyer": 370.0,
+    "plafond_zone_2": 287.35,
+    "ppa": 247.5654296875,
+    "aide_logement": 0.0,
+    "rsa": 0.0,
+    "salaire_net": 1426.2938232421875,
+    "revenu_disponible_annuel_sur_12": 1671.0296223958333,
+    "revenu_du_mois": 1673.8592529296875
+   }
+  }
+ },
+ "verdicts": {
+  "C1_2024": {
+   "modele": 222.9856414794922,
+   "publie": 222.0,
+   "tient": true
+  },
+  "C3_2024_revenu_disponible_annuel_sur_12": {
+   "modele": 1640.8802083333333,
+   "publie": 1621.0,
+   "ecart_pct": 1.2264163068064882,
+   "tient": true
+  },
+  "C3_2024_revenu_du_mois": {
+   "modele": 1621.6636199951172,
+   "publie": 1621.0,
+   "ecart_pct": 0.04093892628729279,
+   "tient": true
+  },
+  "C1_2025": {
+   "modele": 247.5654296875,
+   "publie": 246.0,
+   "tient": true
+  },
+  "C3_2025_revenu_disponible_annuel_sur_12": {
+   "modele": 1671.0296223958333,
+   "publie": 1673.0,
+   "ecart_pct": -0.11777511082885495,
+   "tient": true
+  },
+  "C3_2025_revenu_du_mois": {
+   "modele": 1673.8592529296875,
+   "publie": 1673.0,
+   "ecart_pct": 0.051360007751788395,
+   "tient": true
+  },
+  "C2": {
+   "modele": 24.579788208007812,
+   "publie": 24.0,
+   "rapport": 1.0241578420003254,
+   "tient": true
+  }
+ }
+}
