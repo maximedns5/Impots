@@ -41780,3 +41780,114 @@ pas toujours le centre (θ à ½) ; pour la mesure de Le Pen, la productivité a
 2035 vaut +0,054 % pour une bande de +0,037 à +0,053 %, comme peut le faire toute bande de
 tirages autour d'un modèle non linéaire. `node ui/check.mjs` passe (il ne couvre pas cette
 page).
+
+## D-645 — Où ça tombe (1) : la table de passage des cellules aux territoires
+
+**Pourquoi** (volet `territoires` du but 29, ajouté par le coordinateur dans la nuit du 17
+au 18 novembre ; numéros D-645 à D-649). Le jumeau chiffre le gain d'une mesure par
+cellule (décile de niveau de vie × type de ménage, `jumeau.cellules`), sans territoire. Le
+lecteur demande aussi « où ça tombe » : outre-mer ou métropole, grandes villes ou rural.
+
+**Ce que la population porte, lu avant de décider.** La population de D-553 (empreinte
+5ace8bb6) a `region` à deux valeurs seulement (`metropole`, `dom`), `departement` pour
+l'outre-mer seulement (971, 972, 973, 974 ; tiré sur le recensement, `logement`), et
+`zone_apl` (1, 2, 3), tirée ménage par ménage sur le statut de la commune dans l'unité
+urbaine et le statut d'occupation (`margins.APL_ZONE_BY_STCOMM`). Le fichier détail de
+l'enquête Emploi n'a ni région, ni département, ni commune en métropole : **aucune région
+métropolitaine n'est connue**, et aucune n'est inventée. Le statut de la commune dans
+l'unité urbaine 2020 (`STCOMM2020` : ville-centre, banlieue, ville isolée, hors unité
+urbaine), lui, est observé ; la population ne le garde pas, mais son identifiant de ménage
+est `IDENT-TRIM` de l'enquête : on le relit dans `FD_EEC_2024.parquet`, par ménage.
+
+**Décidé : deux axes.**
+
+1. **Les régions que la population connaît** : la métropole, la Guadeloupe, la Martinique,
+   la Guyane, La Réunion (Mayotte n'est pas dans l'enquête Emploi).
+2. **Les types de territoire** : en métropole, « rural (hors unité urbaine) »
+   (`STCOMM2020` = H, observé) ; dans une unité urbaine, selon la zone APL :
+   « agglomération parisienne (zone 1) », « grandes agglomérations (zone 2) », « villes
+   moyennes et petites (zone 3) » ; et « outre-mer » à part. Limite : la zone est tirée,
+   pas observée ; les revenus d'un ménage de zone 1 sont ceux des ménages urbains de même
+   statut de commune et de même statut d'occupation, pas ceux de l'Île-de-France.
+
+**La table** (`scripts/jumeau_territoires.py`, `jumeau/parametres/territoires.json`,
+commitée). Chaque ménage est rangé dans sa cellule comme `cellules.construire` le fait :
+le décile du niveau de vie (revenu disponible sur les unités de consommation de l'OCDE
+modifiée, rangé sur le poids des ménages, `aggregate.weighted_decile_index`) et le type
+(`cellules.types_menages`). Le revenu disponible est celui d'une passe de référence déjà
+faite sur toute la population de D-553 (199 451 ménages, droit de 2026, vue figée, sans
+les imputations des niches, du capital et des indemnités journalières) : la situation de
+référence de `complet_propres_smic` (série des études du but 28, son empreinte dans la
+table) ; aucune passe n'est lancée pour ce volet. Les cellules du jumeau, elles, viennent
+d'une passe au droit de 2024 sur 30 000 ménages avec ces imputations : le rangement peut
+différer aux bords des déciles, et la table dit l'écart des ménages par cellule.
+Pour chaque cellule et chaque territoire, la table porte des sommes pondérées : ménages,
+personnes, unités de consommation, revenu disponible ; et les neuf seuils de décile du
+niveau de vie. Aucune microdonnée : 50 cellules × 10 territoires.
+
+**Le seuil.** Une case (cellule, territoire) qui porte moins de **30 ménages observés**
+(lignes de l'enquête, non pondérées) ne publie pas sa propre part : sur l'axe de cette
+case, la cellule entière prend la répartition de son décile (les cinq types ensemble) ;
+si une case (décile, territoire) de cet axe a elle-même moins de 30 ménages, la cellule
+prend la répartition nationale de l'axe. Les personnes, unités et revenus d'une cellule
+regroupée suivent ses ménages, au prorata. La table dit quelles cellules sont regroupées.
+
+**Le gain d'un territoire.** Le gain par ménage d'une cellule (`gagnants.gagnants_perdants`
+dans le mode structurel : le choc statique et la dynamique ; le choc statique seul,
+réparti au prorata des ménages du décile, dans le mode réduit) est supposé **le même
+partout**. Le gain moyen d'un territoire est la moyenne des gains des cellules, pondérée
+par ses ménages dans chaque cellule (la part de la cellule dans le territoire, lue dans la
+table, fois les ménages de la cellule du jumeau). En % : rapporté au revenu disponible de
+référence du territoire, celui de chaque cellule dans le jumeau (sa part du PIB nominal
+de la référence, comme `blocs.menages`) corrigé du rapport du revenu par ménage de la case
+à celui de la cellule (la table). La part des gagnants : celle des ménages du territoire
+dans les cellules qui gagnent plus de 10 € par an (`gagnants.SEUIL`).
+
+**Les limites, écrites sur la fiche.** Les prix, les loyers et l'emploi locaux ne sont
+pas modélisés : l'emploi du jumeau est national et se répartit aux cellules, pas aux
+territoires ; une mesure territoriale (un taux réduit outre-mer, une aide au logement de
+zone 1) n'est vue que par la passe de sa mesure, au décile. Deux ménages de la même
+cellule gagnent autant à Paris et en Guyane. Statut : « illustratif ».
+
+## D-646 — Où ça tombe (2) : le contrôle de la table, préenregistré
+
+**Le juge.** Deux agrégats territoriaux publiés, qu'aucune étape de la population n'a lus
+pour se caler (la médiane métropolitaine de Filosofi est dans `margins` en « validation »
+seulement ; La Réunion et la grille de densité n'y sont pas ; les revenus de la population
+sont tirés sans le territoire, qui n'y joue que par la composition des ménages) :
+
+* Insee, « Niveau de vie en 2023 : comparaisons régionales et départementales »
+  (Filosofi 2023, `TCRD_022.xlsx`, `data/raw/insee_filosofi_2023_TCRD_022.xlsx`, feuille
+  DEP) : niveau de vie médian de La Réunion 19 110 €, de la France métropolitaine 25 920 €.
+* Insee Première n° 2117 (ERFS 2024, `data/raw/erfs_2024_ip2117_figures.xlsx`, tableau
+  complémentaire 4) : taux de pauvreté à 60 % de la médiane en 2024, communes rurales de la
+  grille de densité 10,5 %, ensemble de la métropole 15,4 %.
+
+**Ce qui est calculé, sur la seule table commitée.** Pour un territoire, les personnes de
+chaque décile national (somme des cinq types) ; la fonction de répartition du niveau de vie
+est interpolée linéairement entre les seuils de décile de la table (uniforme dans un
+décile). Une quantité qui tombe dans le premier ou le dernier décile n'a pas de borne :
+« non calculable », compté manqué.
+
+* **L1** : médiane de La Réunion / médiane de la métropole. Publié 19 110 / 25 920 =
+  0,737. **Tolérance ± 0,05.**
+* **L2** : taux de pauvreté du rural (hors unité urbaine) moins celui de la métropole, au
+  seuil de 60 % de la médiane de la métropole (même interpolation). Publié 10,5 − 15,4 =
+  −4,9 points. **Tolérance ± 3 points** : plus large, parce que la définition n'est pas la
+  même (les communes hors unité urbaine sont une part des communes rurales de la grille de
+  densité : 21 % des ménages de l'enquête contre 35 % de la population).
+
+On lit un rapport et un écart, pas des niveaux : la passe est au droit de 2026 sur les
+revenus de 2024, le juge en 2023 ou 2024. Les deux lignes sont dites aussi, à titre
+d'information, sur la population directement (le revenu disponible ménage par ménage, les
+quantiles pondérés par personne), pour séparer ce que la table perd de ce que la population
+porte ; ces nombres-là ne sont pas jugés.
+
+**Le pronostic, avant tout calcul par territoire.** L1 **manquée** : les revenus de la
+population sont tirés sur des lois nationales (par catégorie sociale, âge, activité) ; La
+Réunion n'y diffère que par son chômage, son inactivité et ses ménages ; je m'attends à un
+rapport vers 0,85 à 0,90, trop haut. L2 : à moitié ; le rural de l'enquête a plus de
+propriétaires, de retraités et de couples, sa pauvreté devrait être plus basse, mais
+l'écart sans revenus locaux est plus petit : vers −2,5 points, juste dans la tolérance.
+Aucune tolérance ne change après le premier calcul ; le résultat va dans D-647, manqué ou
+tenu, et la fiche de la dimension le dit.
