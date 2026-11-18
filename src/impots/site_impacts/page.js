@@ -198,7 +198,7 @@
       : "la chaîne des études (sans les ménages ni les entreprises)";
     const n = g.tirages ? `, bande sur ${g.tirages} tirages` : "";
     return `Calculé par ${mode}, chaque paramètre incertain au centre (θ = ½)${n}.` +
-      (r.pourquoi_mode ? ` <b>Pourquoi pas le jumeau complet :</b> ${esc(r.pourquoi_mode)}.` : "");
+      (r.pourquoi_mode ? ` <b>${r.composee ? "Pourquoi par ses mesures" : "Pourquoi pas le jumeau complet"} :</b> ${esc(r.pourquoi_mode)}.` : "");
   }
   function dessiner(r) {
     window.impacts.resultat = r;
@@ -206,6 +206,8 @@
     $("titre-resultat").textContent = r.mesure ? r.mesure.libelle : "";
     $("reglage").innerHTML = ligneReglage(r);
     const av = [];
+    // D-655 : un programme refusé comme un tout, calculé par ses mesures chiffrées.
+    if (r.composee) av.push(`<div class="i-avert i-compose"><b>Ce programme est calculé comme la somme de ses ${r.composee.mesures.length} mesures chiffrées.</b> ${esc(r.composee.texte)}<ul>${r.composee.mesures.map((m) => `<li>${esc(m.libelle.split(" : ").pop())}</li>`).join("")}</ul></div>`);
     if (r.refus) av.push(`<div class="i-avert i-refus"><b>Le jumeau ne calcule ${r.calculees && r.calculees.length ? "que jusqu'en " + r.calculees[r.calculees.length - 1] : "aucune année"} :</b> ${esc(r.refus)}</div>`);
     if (r.composition) av.push(`<div class="i-avert"><b>La proposition :</b><ul>${r.composition.map((m) => `<li>${esc(m.libelle)}${m.transformee ? " — <i>" + esc(m.transformee) + "</i>" : ""}</li>`).join("")}</ul></div>`);
     if (r.avertissements && r.avertissements.length) av.push(`<div class="i-avert"><ul>${r.avertissements.map((a) => `<li>${esc(a)}</li>`).join("")}</ul></div>`);

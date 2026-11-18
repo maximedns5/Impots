@@ -237,3 +237,34 @@ def test_l_economie_met_en_tete_le_pib_en_volume() -> None:
     assert ind["pib_volume"].valeurs[0] == pytest.approx(-0.5)
     assert ind["pib_volume"].sens == 1
     assert ind["pib"].valeurs[0] == pytest.approx(1.0) and ind["pib"].sens == 0
+
+
+@pytest.mark.parametrize("slug, n", [("melenchon", 7), ("tondelier", 4)])
+def test_un_programme_refuse_se_calcule_par_ses_mesures(session, slug, n) -> None:
+    """D-655 : un programme que le jumeau complet refuse comme un tout se calcule, sur la
+    page, comme ses mesures chiffrées et leur interaction (D-502) : le coût est celui du
+    programme chaque année ; toutes les dimensions ont leur nombre ; le moral passe à
+    « illustratif » ; chaque fiche dit en tête ce qui manque."""
+    cle = f"pres2027_{slug}_programme"
+    out = _strict(navigateur.impacts_json(session, json.dumps({"candidat": cle,
+                                                                "tirages": 0})))
+    assert out["reglage"]["mode"] == "structurel" and out["reglage"]["vue"] == "figee"
+    assert out["refus"] is None and out["calculees"] == list(navigateur.ANNEES)
+    c = out["composee"]
+    assert c["programme"] == cle and len(c["mesures"]) == n
+    assert out["mesure"]["identifiant"] == cle
+    mesures, _ = session.programme_compose(cle, "figee", CONVENTION_PARTS)
+    p = session.mesure(cle, "figee", CONVENTION_PARTS)
+    for a in p.annees:
+        assert sum(m.couts[a] for m in mesures) == pytest.approx(p.couts[a], abs=1e-9)
+    dims = {d["cle"]: d for d in out["dimensions"]}
+    for d in dims.values():
+        assert "erreur" not in d, d.get("erreur")
+        assert d["indicateurs"][0]["valeurs"][-1] is not None
+        assert d["limites"][0] == c["texte"]
+    assert dims["moral"]["statut"] == "illustratif"
+    assert dims["moral"]["statut_sans_composition"] == "sourcé, non jugé"
+    assert dims["comptes_publics"]["statut"] == "sourcé, non jugé"
+    # Une mesure seule refusée garde la chaîne des études : rien ne se compose.
+    assert not session.reglage_impacts({"candidat": "pres2027_melenchon_smic_1700_net"}
+                                       ).get("mesures_seules")
