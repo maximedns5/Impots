@@ -42099,3 +42099,38 @@ composition porte le programme entier ; C3 si les deux chemins lisent le même c
 statique ; C4 n'est pas une erreur de la composition s'il manque : la première année d'un
 mode et de l'autre n'ont pas la même économie (D-500, D-502). Aucune tolérance ne changera
 après le premier calcul ; une ligne manquée reste notée, avec son explication en D-657.
+
+## D-657 — Les programmes refusés (3) : le contrôle, six lignes sur huit, C4 manqué
+
+Préenregistré en D-656 (9b340f3, poussé avant le calcul) ; calculé par
+`scripts/jumeau_programmes_composes.py`, écrit dans `reports/jumeau/
+programmes_composes.json` (θ à ½, le jumeau seul). Md€ ; l'écart relatif est pris sur
+le chemin des études.
+
+| ligne | Mélenchon : composition / études | écart | Tondelier | écart | tolérance |
+|---|---|---:|---|---:|---:|
+| C1 | pire écart des coûts, 2026-2035 | 0 | idem | 0 | 1e-6 Md€ |
+| C2 | coût 2026 : 88,98 / 89,15 | −0,19 % | 18,17 / 18,18 | −0,07 % | 2 % |
+| C3 | ΔB9 statique 2026 : −88,98 / −89,15 | +0,19 % | −18,56 / −18,64 | +0,40 % | 5 % |
+| C4 | ΔB9 2026 : −66,18 / −91,59 | +27,7 % | −10,08 / −15,51 | +35,0 % | 10 % |
+
+**Tenu** : C1, C2, C3 pour les deux programmes, comme pronostiqué. La composition porte
+le coût du programme au bit, chaque année, figée et vieillie (C1) ; d'une vue à l'autre,
+la première année ne bouge que de 0,2 % (C2) ; les deux chemins lisent le même choc
+statique sur le solde (C3 : la contribution du bloc `mesures`, celle des canaux de
+recettes comprise).
+
+**Manqué** : C4, pour les deux, comme pronostiqué ; et plus que le pronostic ne le disait
+pour Tondelier (« de moins » : il manque de plus, en relatif). Ce n'est pas la
+composition : tout l'écart est dans la dynamique de la première année, c'est-à-dire
+ΔB9 moins sa part statique : +22,80 Md€ dans la composition contre −2,44 dans le chemin
+des études (Mélenchon) ; +8,48 contre +3,13 (Tondelier). Dans le jumeau complet, les
+ménages dépensent les transferts (l'indexation, la garantie d'autonomie, les APL, le
+point d'indice) et les recettes suivent ; dans le réduit, 68 Md€ de transferts n'ont pas
+de multiplicateur (D-500). C'était l'écart de D-502 entre les deux modes (−71,53 et
+−91,59 sur un code plus ancien), il reste. La ligne demeure manquée ; la page montre le
+solde du jumeau complet, le même mode que pour les autres programmes, et le chemin des
+études reste celui des rapports publiés.
+
+Ce que cela dit au lecteur : sur le statique, les deux chemins sont les mêmes à 0,4 %
+près ; la première année du solde dépend du modèle de l'économie, pas de la composition.
