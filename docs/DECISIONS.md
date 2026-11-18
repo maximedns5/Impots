@@ -41763,3 +41763,20 @@ Le canal du chômage ne change pas. Le revenu retiré en 2035 : 8,78 Md€ (Atta
 écrit : on retire du revenu, pas du chômage, parce que Sullivan et von Wachter mesurent
 l'effet total d'une perte d'emploi et que la part causale du gradient (s = 1/12) est la
 plus incertaine des deux ; le propriétaire peut préférer l'inverse.
+
+**La page vérifiée** (le même volet). `site_impacts.ecrire` dans un dossier à part
+(1 min 28 s), servie en local, ouverte dans Chromium (Playwright, deviceScaleFactor 1) à
+1 200 et à 390 px : le programme de Retailleau (précalculé), une mesure seule (Le Pen,
+l'IR des moins de 30 ans, calculée dans la page par Pyodide en 6 s), une proposition
+composée (une loi simple, 6 s) et « Pour vous » (l'indépendant, approximé). Aucune erreur
+dans la console, aucun défilement horizontal à 390 px. *Ce qui cassait* : deux fiches sur
+six n'avaient pas de bande, la productivité (son socle ignorait les tirages des θ que le
+tableau lui passe, D-635) et « Pour vous » (le revenu réel du cas par défaut, lu au seul
+réglage). Les deux lisent désormais les tirages de la page (5 et 95 %, comme
+`_commun.serie`) ; les rapports, qui portent leurs tirages dans la trajectoire, ne
+changent pas. Après : chaque fiche a son nombre, sa bande et son statut, aux deux
+largeurs et dans les quatre cas. Un point vu, non changé : la bande des tirages ne contient
+pas toujours le centre (θ à ½) ; pour la mesure de Le Pen, la productivité apparente en
+2035 vaut +0,054 % pour une bande de +0,037 à +0,053 %, comme peut le faire toute bande de
+tirages autour d'un modèle non linéaire. `node ui/check.mjs` passe (il ne couvre pas cette
+page).
