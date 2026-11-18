@@ -53,7 +53,10 @@ def main() -> int:
            "theta": "½ pour chaque θ lu", "programmes": {}}
     for slug in PROGRAMMES:
         traj, convention = trajectoire(session, slug)
-        d = dimension(traj, None, None, session.cellules, programme=slug)
+        # L'état de départ du modèle : la part du revenu qui va avec le chômage (D-639).
+        depart = session._modele("structurel", traj.mesures[0],
+                                 f"pres2027_{slug}_programme")[0]
+        d = dimension(traj, None, depart, session.cellules, programme=slug)
         out["programmes"][slug] = {"convention": convention, **vers_dict(d)}
         v = d.indicateurs[0]
         print(f"{slug:12s} {convention[:40]:40s} vie 2035 {v.valeurs[-1]:8.2f} k "
