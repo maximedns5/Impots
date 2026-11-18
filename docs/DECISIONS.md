@@ -41398,3 +41398,81 @@ pu être lue, ne change rien ici, et l'aide au logement des cas types n'est pas 
 dit que le cas type et le barème d'OpenFisca reproduisent ce que la Drees publie, pas que
 la grille est juste ailleurs (couples, enfants, chômeurs, retraités). Aucune tolérance n'a
 changé. Un test léger tient ces nombres (`tests/test_pour_vous.py`).
+
+## D-633 — Pour vous (4) : trois programmes pour quatre cas types, et la page
+
+**Ce qui est fait** (volet `cas`, D-630). `impots.cas_types` chiffre 196 cas types par
+OpenFisca (deux foyers, zéro à trois enfants, Smic, salaire médian, salaire élevé,
+chômeur, retraité ; locataire ou propriétaire ; trois âges d'actifs) sous les 46 scénarios
+de la bibliothèque, tous dans une simulation par scénario (229 s en tout ; trois ménages
+pris seuls redonnent le même revenu disponible à 1 €, au droit et sous une réforme,
+`plf2027_art_74_ppa`) ; l'indépendant passe par sa cellule. Le tableau commité :
+`jumeau/parametres/cas_types.json` (0,44 Mo, les écarts nuls omis). Les niveaux, de la
+population de D-553 : Smic 22 185 € bruts par an en 2026 ; salaire médian 33 625 € et
+neuvième décile 73 724 € bruts en 2024 (temps complet, toute l'année), portés par le Smic
+(+4,3 %) ; pension médiane des 65 ans ou plus 20 294 € ; allocation chômage médiane
+13 362 € ; loyers médians du privé de 370 € (une personne) à 792 € (cinq ou plus).
+
+La dimension `pour_vous` (`jumeau/impacts/pour_vous.py`, statut « illustratif ») :
+D-630, deux précisions écrites à l'usage. (1) Le salaire du jumeau appliqué au salaire net
+du cas type retranche la part que le bloc `travail` écrit (la hausse mécanique des bas
+salaires d'une hausse du Smic, D-478) : le statique du cas type la porte déjà ; le reste du
+salaire moyen (WS de Mésange, l'indexation aux prix, le coin des cotisations) s'applique à
+tous les salariés, Smic compris (une approximation). (2) Un programme que le structurel
+calcule par ses mesures seules (D-502) garde le statique du programme entier
+(`cle_statique`). La page « Ce que ça change » a une section « Pour vous » : cinq choix
+(foyer, enfants, activité, logement, âge), et pour le cas type le revenu réel, ce que la
+mesure change aux impôts et prestations, le risque de chômage, la satisfaction, l'espérance
+de vie, l'âge de départ, la courbe et la table année par année, au téléphone aussi (390 px,
+aucun défilement horizontal, captures regardées). Les cas types des programmes précalculés
+sont dans `impacts-pour-vous.json`, lu à la demande (la page passe de 2,9 à 0,83 Mo).
+
+**Les nombres de tête** (`scripts/jumeau_pour_vous.py`, `reports/jumeau/
+pour_vous_programmes.json`) : comme D-597 et D-622, structurel, vieillie, convention
+« parts_premiere_annee », θ ½, tirage 0 ; Mélenchon par ses mesures seules. En 2035, euros
+de 2026 par an (le statique : la mesure elle-même, la première année) ; le risque de
+chômage en points ; la satisfaction d'un adulte en points de 0 à 10 ; l'espérance de vie
+en mois, si l'écart durait.
+
+| programme, cas type | statique | revenu réel 2035 | risque | satisfaction | vie |
+|---|---:|---:|---:|---:|---:|
+| Mélenchon, seul au Smic, locataire | +1 606 | +1 809 (+8,9 %) | +0,48 | +0,022 | +0,36 |
+| Mélenchon, couple 2 enfants, médians | +182 | +887 (+1,6 %) | +0,30 | −0,007 | +0,07 |
+| Mélenchon, couple de retraités | +3 341 | +3 326 (+8,6 %) | — | +0,023 | +0,35 |
+| Retailleau, seul au Smic, locataire | −1 225 | −1 251 (−6,1 %) | −0,86 | −0,002 | −0,27 |
+| Retailleau, couple 2 enf., médians | +2 966 | +2 896 (+5,2 %) | −0,54 | +0,045 | +0,21 |
+| Retailleau, couple de retraités | 0 | −5 (0,0 %) | — | +0,021 | 0,00 |
+| Attal, seul au Smic, locataire | +1 441 | +1 084 (+5,3 %) | −2,33 | +0,090 | +0,22 |
+| Attal, couple 2 enfants, médians | +5 298 | +4 165 (+7,4 %) | −1,46 | +0,094 | +0,30 |
+| Attal, couple de retraités | 0 | −17 (0,0 %) | — | +0,057 | 0,00 |
+
+D'où ils viennent. **Mélenchon** : le Smic à 1 700 € nets fait le statique du salarié au
+Smic (+2 840 € de salaire net, −955 € de prestations, +288 € d'impôt), l'indexation de 10 %
+celui des retraités (+4 059 € de pension) ; l'économie y ajoute le salaire moyen (+2,3 % en
+2035, hors la part mécanique ; les prix +1,1 %) et le chômage monte un peu (+0,48 point pour
+le salarié au Smic, risque de départ 8,6 %). L'âge : −4 ans d'âge légal pour toute
+génération qui l'atteint après 2033, −2 ans de départ effectif (de −4 à −1), +1,4 an de
+retraite sans limitation. **Retailleau** : le revenu d'incitation à l'activité retire 1 481
+€ de prestations au salarié seul au Smic, les gains rendus à moitié lui en rendent 265 ; le
+revenu familial fait l'essentiel du couple avec enfants (+3 918 € de prestations, +1 854 €
+d'impôt) ; l'âge minimal à 63 ans : −1 an légal, −0,5 effectif. **Attal** : le « droit au
+brut » (les cotisations salariales de retraite à 22 %) fait le statique ; le salaire moyen
+du jumeau baisse de 2,9 % en 2035 (le coin des cotisations revient à l'employeur, Mésange,
+D-606) et en reprend d'un cinquième à un quart ; le chômage baisse le plus (−2,3 points de
+risque au Smic). Les retraités ne bougent qu'avec les prix et le chômage autour d'eux.
+
+**Ce que ces nombres ne disent pas.** Des cas types, pas des personnes ; le statique est
+exact pour le cas type et tenu en part de son revenu ; l'économie est celle du jumeau
+(discutée : D-488 pour l'emploi d'Attal) ; la satisfaction et la santé ne sont pas jugées
+(D-596, D-621) ; dans la page, Mélenchon passe par la chaîne des études (le structurel le
+refuse comme un tout) : le statique seul, dit sur la page. Un test léger tient le statique
+d'Attal, les formules à la main, l'intensité, la cellule, l'âge de départ, le choix du cas
+type, le contrôle de D-632 et la simulation commune (`tests/test_pour_vous.py`, 7 tests,
+18 s) ; pas de test des nombres des programmes (ils dépendent du jumeau).
+
+**Ce qui reste à décider** (le propriétaire) : (a) la grille (un couple à deux revenus
+différents, le temps partiel, le parc social, l'Île-de-France) ; (b) l'indépendant par
+OpenFisca, quand le moteur des ménages portera ses revenus ; (c) le salaire moyen du jumeau
+appliqué à tous les salariés, ou par tranche de salaire (le bloc `travail` a une
+distribution) ; (d) le contrôle de l'aide au logement et des couples sur un cas type
+publié, les fiches de la Drees une fois ouvrables d'ici.
