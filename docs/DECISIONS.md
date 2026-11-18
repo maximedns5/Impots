@@ -43138,3 +43138,33 @@ le calcul à θ = ½, la bande les quantiles de 5 et 95 % des tirages : rien n'i
 l'un tombe dans l'autre quand la réponse aux θ n'est pas symétrique ; la page ne le dit
 pas. Et la raison d'un refus est citée brute (« TerritoiresAbsents : le mode reduit… »,
 « mesure « pres2027_melenchon_programme » »).
+
+## D-594 — Le pouvoir d'achat et l'entente (4) : sur la page, avec la bande des tirages
+
+**Ce qui est fait** (commits cf47902, 830830e ; le jumeau seul, aucune passe). Les deux
+dimensions de D-591 se montrent sur la page « Ce que ça change » par le tableau (D-605),
+sans changer le tableau ni la page : `impacts.tableau.calculer_tout` les rend à leur
+place, après `pouvoir`, avant le moral. Trois choses changent pour elles.
+
+* **La bande.** Le tableau passe à chaque dimension la trajectoire vectorisée des tirages
+  des θ (`options["tirages"]`) ; les deux dimensions ne la lisaient pas et n'avaient pas
+  de bande sur la page. Elles la joignent au réglage (`pouvoir.chemins`, `joindre` : le
+  tirage 0 est le réglage, les suivants font la bande, 5 et 95 %). Le centre ne change
+  pas : Retailleau, θ½, +791 € de 2025 par UC en 2026, +707 en 2035 (D-593) ; la bande
+  de 2035 sur 50 tirages, +626 à +752 (sur 200, D-593 : +639 à +764). La pauvreté
+  −0,82 point en 2026, −0,77 en 2035, bande −0,78 à −0,73. Le test
+  (`test_la_page_donne_aux_deux_dimensions_la_bande_des_tirages`) échoue sur le code
+  d'avant (pas de bande) et passe. Le réglage, θ½, n'est pas la médiane des tirages :
+  sur 8 tirages, le centre de 2035 sort de la bande, ce que D-673 dit déjà des autres.
+* **La distribution des niveaux de vie** arrive avec les entrées de la page
+  (`site_jumeau.donnees()["niveaux_de_vie"]`, la session la passe en `distribution`,
+  `lire_fichier=False`) au lieu d'être lue comme un fichier : le paquet de la page
+  refuse un fichier lu hors de `src/impots`, et la page n'aurait pas vu la mesurée.
+  Sans le fichier, l'approchée, dite dans la source de la dimension.
+* **Un programme composé de ses mesures** (D-655) : le pouvoir d'achat et l'entente
+  lisent les chocs par décile des passes, faites seules, comme le moral ; ils entrent
+  dans `LISENT_LES_DECILES` et deviennent « illustratif », avec la raison.
+
+Tests légers des fichiers touchés (`test_impacts_*`, `test_jumeau_impacts_*`,
+`test_jumeau_navigateur`) : 110 passés. Les nombres sur la distribution mesurée et le
+juge (D-591) iront dans D-592 et D-640 quand les passes auront tourné.
