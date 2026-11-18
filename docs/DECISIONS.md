@@ -41891,3 +41891,37 @@ propriétaires, de retraités et de couples, sa pauvreté devrait être plus bas
 l'écart sans revenus locaux est plus petit : vers −2,5 points, juste dans la tolérance.
 Aucune tolérance ne change après le premier calcul ; le résultat va dans D-647, manqué ou
 tenu, et la fiche de la dimension le dit.
+
+## D-647 — Où ça tombe (3) : le contrôle de la table, le résultat
+
+Le préenregistrement (D-646) est commité et poussé (7756a0b) avant la construction de la
+table (be9e808) et avant tout calcul par territoire. Calculé sur la seule table commitée
+(`impacts.territoires.quantile`, `part_sous`), les tolérances inchangées :
+
+| ligne | table | publié | écart | tolérance | |
+|---|---|---|---|---|---|
+| L1 médiane La Réunion / métropole | 0,817 (20 171 / 24 680 €) | 0,737 | +0,080 | ± 0,05 | manquée |
+| L2 pauvreté rural − métropole | −4,0 points (11,6 − 15,6 %) | −4,9 | +0,9 | ± 3 | tenue |
+
+**Une ligne sur deux.** L1 est manquée, comme le pronostic le disait, mais moins loin
+qu'il ne le craignait (0,817 contre « 0,85 à 0,90 ») : la composition des ménages de La
+Réunion (chômage, inactivité, familles monoparentales, prestations des DOM au droit de
+2026) fait déjà les deux tiers de l'écart publié (−18 % sur −26 %). Le reste est ce que
+la population ne porte pas : des salaires et des revenus non salariés tirés sur des lois
+nationales, sans écart local à catégorie égale. L2 est tenue : le rural hors unité
+urbaine est moins pauvre de 4,0 points que la métropole (publié, pour les communes
+rurales de la grille de densité : 4,9), par sa seule composition.
+
+**Ce que la table perd, lu sur la population directement** (non jugé : les quantiles
+pondérés par personne, ménage par ménage, sans interpolation) : médianes 20 259 et
+24 611 €, rapport 0,823 ; pauvreté 11,4 % dans le rural, 15,4 % en métropole, −4,0
+points. La table et la population disent la même chose à 0,006 et 0,1 point près :
+l'écart de L1 vient de la population, pas de l'interpolation entre les déciles. Le rural
+hors unité urbaine fait 21,0 % des personnes de métropole (D-646 l'écrivait à « 21 % des
+ménages » sur un compte non pondéré : c'est 21,0 % pondéré, en personnes).
+
+**Ce que la fiche en dit.** Pour l'outre-mer, la dimension sous-estime l'écart de revenu
+à la métropole : un gain fixe en euros y pèse plus en % du revenu que la table ne le dit.
+La limite est écrite sur la fiche (la ligne de D-647) ; le statut reste « illustratif ».
+Pour les médianes absolues : 24 680 € pour la métropole (droit de 2026, revenus de 2024),
+contre 25 920 publiés pour 2023 ; on ne juge pas un niveau (D-646).
