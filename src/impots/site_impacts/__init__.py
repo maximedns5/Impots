@@ -36,7 +36,7 @@ STYLE = (ICI / "impacts.css").read_text(encoding="utf-8")
 #: Ce que la page garde d'un calcul précalculé : ce qu'elle dessine.
 GARDE = ("mode", "vue", "candidat", "mesure", "annees", "calculees", "refus",
          "avertissements", "dimensions", "ensemble", "modules_en_erreur", "reglage",
-         "pourquoi_mode", "composition", "convention")
+         "pourquoi_mode", "composition", "convention", "synthese")
 #: Le dossier où `servir` écrit la page, hors du dépôt.
 LOCAL = Path("/tmp/impots-ce-que-ca-change")
 
