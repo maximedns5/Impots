@@ -42943,3 +42943,33 @@ libellé court), les codes des tables citées dans les sources (`hlth_silc_01`,
 `demo_pjan` : des références, pas des noms), et l'identifiant du programme dans la raison
 d'un refus du jumeau complet (« mesure « pres2027_melenchon_programme » »), que la page
 cite telle qu'elle vient du jumeau.
+
+## D-673 — Le mode d'emploi de la page, et sa dernière vérification
+
+**Le mode d'emploi** : `docs/CE_QUE_CA_CHANGE.md` (à quoi sert la page, les dimensions,
+leur statut et leurs D-entrées, l'ouvrir en local, composer, « Votre barème » et le verrou
+commun, ce qui n'est pas fait, les décisions qui attendent le propriétaire, tirées de
+D-590 à D-669). Ses commandes ont été lancées telles quelles : `site_impacts ecrire`
+(1 min 39 s), le dossier servi seul (`http.server`), `site_impacts servir` (la page
+répond après 1 min 50 s), l'API avec `IMPOTS_AUTH=aucune`, `IMPOTS_SITE_LOCAL` et
+`IMPOTS_PASSES=non` (la page, le menu des réglages, `POST /impacts` sur une mesure et sur
+une composition : sept dimensions, toutes « illustratif »). Aucune proposition lancée,
+aucune passe sur la population.
+
+**La page vérifiée** (écrite sur ce commit, servie par l'API ; Chromium sans tête,
+deviceScaleFactor 1, 1 200 et 390 px) : Retailleau ; Mélenchon, programme entier (la
+chaîne des études : six dimensions, les territoires « non calculés » avec leur raison) et
+par ses mesures (sept dimensions ; « En bref » dit désormais « Calculé par le jumeau
+complet, mesure par mesure », D-670) ; une proposition composée (deux mesures et une loi
+simple : tout « illustratif »). Aucune erreur de la console, aucun défilement horizontal,
+aucun nom brut de canal dans le texte (D-672) ; sur le programme entier de Mélenchon,
+l'économie dit « PIB en volume » (D-670). Trois captures à 1 200 px (deviceScaleFactor 2)
+gardées hors du dépôt pour le propriétaire.
+
+**Vu, non changé** : sur la composition (Lisnard, CSG ; Le Pen, IR des moins de 30 ans ;
++10 Md€ d'IR), le centre est au bord de sa bande ou juste dehors (PIB en volume +0,73 %,
+bande +0,58 à +0,73 ; productivité apparente +0,27 %, bande +0,18 à +0,26). Le centre est
+le calcul à θ = ½, la bande les quantiles de 5 et 95 % des tirages : rien n'impose que
+l'un tombe dans l'autre quand la réponse aux θ n'est pas symétrique ; la page ne le dit
+pas. Et la raison d'un refus est citée brute (« TerritoiresAbsents : le mode reduit… »,
+« mesure « pres2027_melenchon_programme » »).
