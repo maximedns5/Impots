@@ -97,6 +97,13 @@ def _bas_casse(s: str) -> str:
     return s[:1].lower() + s[1:]
 
 
+def _court(lib: str) -> str:
+    """Le libellé raccourci pour une liste : jusqu'à sa première virgule ou parenthèse
+    (« Satisfaction gagnée, toutes personnes… » → « satisfaction gagnée »)."""
+    coupe = min((i for i in (lib.find(" ("), lib.find(", ")) if i > 0), default=len(lib))
+    return _bas_casse(lib[:coupe])
+
+
 def _texte_nombres(t: str) -> list[str]:
     """Les nombres écrits dans un texte (pour les tests) : signe, chiffres, virgule."""
     return re.findall(r"[−+-]?\d[\d" + FINE + r"]*(?:,\d+)?", t)
@@ -201,12 +208,12 @@ def _phrase_tete(d: Mapping[str, Any], ind: Mapping[str, Any]) -> dict[str, Any]
         corps = f"sans effet en {an}"
     elif c == "probable":
         corps = (f"probablement {_direction(v)}, de {nombre(abs(v))} {u} en {an}{bande}"
-                 + (f", {sens} que sans la mesure" if sens else ""))
+                 + (f", c'est {sens}" if sens else ""))
     elif c == "ordre_de_grandeur":
         if bande_d_un_cote(bas, haut) or bas is None:
             corps = (f"{_direction(v)}, un ordre de grandeur : {nombre(v, True)} {u} en {an}"
                      + (bande if bas is not None else ", sans bande")
-                     + (f", {sens} que sans la mesure" if sens else ""))
+                     + (f", c'est {sens}" if sens else ""))
         else:
             corps = (f"{_direction(v) if abs(v) > NUL else 'nul'} au centre, un ordre de "
                      f"grandeur : {nombre(v, True)} {u} en {an}, et le sens n'est pas sûr"
@@ -214,15 +221,14 @@ def _phrase_tete(d: Mapping[str, Any], ind: Mapping[str, Any]) -> dict[str, Any]
     elif c == "sans_bande":
         corps = (f"{_direction(v) if abs(v) > NUL else 'nul'} au calcul central, sans "
                  f"bande : {nombre(v, True)} {u} en {an}"
-                 + (f", {sens} que sans la mesure" if sens else ""))
+                 + (f", c'est {sens}" if sens else ""))
     else:
         corps = (f"{_direction(v) if abs(v) > NUL else 'nul'} au centre, {nombre(v, True)} {u} "
                  f"en {an}, mais le sens n'est pas sûr{bande}")
-    texte = f"{d['titre']} — {lib} : {corps}."
+    texte = f"{d['titre']} — {lib} : {corps} ({_statut_txt(d)})."
     ech = _echeance(ind, annees, u) if not nul_partout else None
     if ech:
         texte += " " + ech
-    texte += f" ({_statut_txt(d)})"
     return {"sorte": "tete", "texte": texte, "dimension": d["cle"],
             "titre": d["titre"], "indicateur": ind["cle"], "annee": an, "valeur": v,
             "bas": bas, "haut": haut, "statut": d["statut"], "certitude": c,
@@ -288,8 +294,8 @@ def _phrase_deciles(d: Mapping[str, Any], ind: Mapping[str, Any]
              f"{dit(bas30)} pour les 30 % les plus modestes ({nombre(bas30, True)} {u} en "
              f"moyenne par décile), {dit(haut30)} pour les 30 % les plus aisés "
              f"({nombre(haut30, True)} {u}) ; l'écart le plus grand en {plus} "
-             f"({nombre(vals[plus], True)} {u}). Au calcul central, sans bande par "
-             f"décile{ordre}. ({_statut_txt(d)})")
+             f"({nombre(vals[plus], True)} {u}) ; au calcul central, sans bande par "
+             f"décile{ordre} ({_statut_txt(d)}).")
     phrase = {"sorte": "pour_qui", "texte": texte, "dimension": d["cle"],
               "titre": d["titre"], "indicateur": ind["cle"], "annee": an,
               "valeur": None, "bas": None, "haut": None, "statut": d["statut"],
@@ -322,8 +328,8 @@ def _phrase_groupes(d: Mapping[str, Any], ind: Mapping[str, Any]) -> dict[str, A
     u = _unite(ind["unite"])
     texte = (f"{d['titre']} — dans le détail ({_bas_casse(ind['libelle'])}, en {an}) : "
              f"le plus haut, « {hi} » ({nombre(vals[hi], True)} {u}) ; le plus bas, "
-             f"« {lo} » ({nombre(vals[lo], True)} {u}). Au calcul central, sans bande. "
-             f"({_statut_txt(d)})")
+             f"« {lo} » ({nombre(vals[lo], True)} {u}) ; au calcul central, sans bande "
+             f"({_statut_txt(d)}).")
     return {"sorte": "detail", "texte": texte, "dimension": d["cle"], "titre": d["titre"],
             "indicateur": ind["cle"], "annee": an, "valeur": None, "bas": None,
             "haut": None, "statut": d["statut"],
@@ -335,15 +341,15 @@ def _phrase_arbitrages(items_mieux: list[Mapping[str, Any]],
                        items_moins: list[Mapping[str, Any]],
                        groupes: list[Mapping[str, Any]]) -> dict[str, Any] | None:
     def liste(xs: Sequence[Mapping[str, Any]]) -> str:
-        return " ; ".join(f"{x['mots']} ({_bas_casse(x['titre'])})" for x in xs)
+        return ", ".join(f"{x['mots']} ({_bas_casse(x['titre'])})" for x in xs)
 
     dims = [x["dimension"] for x in (*items_mieux, *items_moins, *groupes)]
     if not dims:
         return None
     morceaux = []
     if items_mieux and items_moins:
-        morceaux.append(f"Ce qu'on gagne ici, on le paie là : du côté « mieux », "
-                        f"{liste(items_mieux)} ; du côté « moins bien », "
+        morceaux.append(f"Ce qu'on gagne ici, on le paie là. Du côté « mieux » : "
+                        f"{liste(items_mieux)}. Du côté « moins bien » : "
                         f"{liste(items_moins)}.")
     elif items_mieux:
         morceaux.append(f"Les nombres de tête dont le sens est sûr vont du côté « mieux » "
@@ -354,7 +360,7 @@ def _phrase_arbitrages(items_mieux: list[Mapping[str, Any]],
                         f"bien » ({liste(items_moins)}) ; ce n'est pas un bilan : ce que "
                         f"le jumeau ne mesure pas n'y est pas.")
     if groupes:
-        morceaux.append(f"Entre les ménages : {liste(groupes)} (au calcul central).")
+        morceaux.append(f"Entre les ménages : {'. '.join(x['mots'] + ' (' + _bas_casse(x['titre']) + ')' for x in groupes)}, au calcul central.")
     return {"sorte": "arbitrage", "texte": " ".join(morceaux), "dimension": None,
             "dimensions": list(dict.fromkeys(dims)), "titre": None, "indicateur": None,
             "statut": None, "certitude": None}
@@ -362,7 +368,7 @@ def _phrase_arbitrages(items_mieux: list[Mapping[str, Any]],
 
 def _mots(ph: Mapping[str, Any], ind: Mapping[str, Any]) -> str:
     v = ph["valeur"]
-    m = f"{_bas_casse(ind['libelle'])} {_direction(v)}"
+    m = f"{_court(ind['libelle'])} {_direction(v)}"
     if ph["certitude"] == "ordre_de_grandeur":
         m += ", un ordre de grandeur"
     return m
@@ -442,21 +448,22 @@ def en_bref(resultat: Mapping[str, Any] | Sequence[Any]) -> dict[str, Any]:
             "sorte": "plus_net", "dimension": None,
             "dimensions": [p["dimension"] for p in nets], "statut": None,
             "certitude": "probable", "indicateur": None,
-            "texte": "Ce qui bouge le plus nettement (la bande la plus loin de zéro, pas "
-                     "le plus gros nombre : les unités ne se comparent pas) : "
-                     + ", ".join(f"{_bas_casse(p['titre'])} ({_bas_casse(_lib(dims, p))})"
-                                 for p in nets) + "."})
+            "texte": "Ce qui bouge le plus nettement : "
+                     + ", ".join(f"{_bas_casse(p['titre'])} ({_court(_lib(dims, p))})"
+                                 for p in nets)
+                     + " (le plus net au regard de sa bande, pas le plus gros : les unités "
+                       "ne se comparent pas)."})
     elif tetes:
         phrases.append({
             "sorte": "plus_net", "dimension": None, "dimensions": [], "statut": None,
             "certitude": None, "indicateur": None,
             "texte": "Aucun nombre de tête n'a une bande qui reste d'un seul côté de zéro "
                      "dans une dimension sourcée : rien n'est dit « probablement »."})
-    phrases += tetes
-    phrases += autres
     arb = _phrase_arbitrages(mieux, moins, entre)
     if arb:
         phrases.append(arb)
+    phrases += tetes
+    phrases += autres
     if absentes:
         titres = [_bas_casse(next(d["titre"] for d in dims if d.get("cle") == c))
                   for c in absentes]

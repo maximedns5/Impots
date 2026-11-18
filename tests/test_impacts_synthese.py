@@ -103,7 +103,7 @@ def test_chaque_phrase_cite_sa_dimension_et_son_statut() -> None:
         if p["sorte"] in ("tete", "pour_qui", "detail"):
             assert p["dimension"] in titres
             assert p["texte"].startswith(titres[p["dimension"]])
-            assert f"({p['statut']})" in p["texte"]
+            assert f"({p['statut']})." in p["texte"]
             assert p["indicateur"]
         elif p["sorte"] in ("arbitrage", "plus_net", "absent"):
             assert set(p["dimensions"]) <= set(titres)
@@ -164,7 +164,7 @@ def test_l_arbitrage_suit_le_sens_de_chaque_indicateur() -> None:
     arb = next(p for p in synthese.en_bref([a, b, c, n])["phrases"]
                if p["sorte"] == "arbitrage")
     assert arb["dimensions"] == ["a", "b"]
-    mieux, moins = arb["texte"].split("du côté « moins bien »")
+    mieux, moins = arb["texte"].split("Du côté « moins bien »")
     assert "dimension a" in mieux and "dimension b" in moins
     for mot in ("bon", "mauvais", "bilan positif", "au total"):
         assert mot not in arb["texte"]
