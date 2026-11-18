@@ -2805,6 +2805,24 @@
       "licence": "Eurostat, réutilisation libre avec mention de la source",
       "description": "Eurostat demo_mlifetable, table de mortalité, France, deux sexes, 2024 ; D-620",
       "quarantined": false
+    },
+    "insee_fps2022_d2_donnees.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/6535299/FPORSOC22-D2.xlsx",
+      "sha256": "60e7b5b8d2277569f1ecf10c68052d5d29013c718d7e23d6ab588316bdf881b5",
+      "bytes": 50774,
+      "downloaded": "2026-11-18",
+      "licence": "Insee, licence ouverte Etalab",
+      "quarantined": false,
+      "description": "Insee, France portrait social 2022, dossier « Les réformes sociofiscales de 2020 et 2021… », données des figures ; figures 1, 4 et 5 : coût, effet par dixième et effet sur la pauvreté de la baisse de l'impôt sur le revenu de 2020 ; juge du but 29 (D-591, D-592)."
+    },
+    "insee_fps2022_d2.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/6535299/FPORSOC22-D2.pdf",
+      "sha256": "6adf7652912cfa537f98ef23c8eef4247e696c92a83813ae252a5649f9475ac3",
+      "bytes": 208497,
+      "downloaded": "2026-11-18",
+      "licence": "Insee, licence ouverte Etalab",
+      "quarantined": false,
+      "description": "Insee, France portrait social 2022, dossier « Les réformes sociofiscales de 2020 et 2021 augmentent le revenu disponible des ménages… », texte ; juge du but 29 (D-592)."
     }
   }
 }
