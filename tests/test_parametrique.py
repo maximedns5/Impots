@@ -10,6 +10,7 @@ les nombres de cette mesure lue comme une étude, sous un statut « illustratif 
 from __future__ import annotations
 
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -175,3 +176,42 @@ def test_the_api_queues_a_proposition_and_says_its_state(ici, monkeypatch) -> No
     assert client.post("/impacts/proposition", json={"boutons": {"smic": 5}}
                        ).json()["id"] == ident
     assert len(lances) == 2
+
+
+def test_a_pass_killed_without_a_word_does_not_hold_the_queue(ici, monkeypatch) -> None:
+    """D-665 : une passe tuée (la mémoire, un redémarrage) n'écrit pas sa fin ; son état
+    restait « en_cours » pour toujours : la même proposition ne se relançait plus, et
+    trois comme elle fermaient la file. Le processus disparu la met en échec, dit."""
+    import subprocess
+    import sys
+
+    mort = subprocess.Popen([sys.executable, "-c", "pass"])
+    mort.wait()
+    monkeypatch.setattr(parametrique, "FILE_MAX", 1)
+    e = parametrique.proposer({"rsa": 5}, lancer=lambda d: None)
+    parametrique.ecrire_etat(ici / e["id"], etat="en_cours", pid=mort.pid)
+    lu = parametrique.etat(e["id"])
+    assert lu["etat"] == "echec" and "disparu" in lu["erreur"]
+    lances: list[Path] = []
+    # La file n'est plus tenue par elle, et la même proposition se relance.
+    assert parametrique.proposer({"rsa": 6}, lancer=lances.append)["etat"] == "en_file"
+    parametrique.ecrire_etat(lances[0], etat="echec")
+    assert parametrique.proposer({"rsa": 5}, lancer=lances.append)["etat"] == "en_file"
+    assert len(lances) == 2
+    # Un processus vivant garde sa place.
+    vivant = parametrique.ecrire_etat(ici / e["id"], etat="en_cours", pid=os.getpid())
+    assert parametrique.etat(e["id"])["etat"] == vivant["etat"] == "en_cours"
+
+
+@pytest.mark.parametrize("corps", [{"boutons": [{"smic": 5}]}, {"boutons": 5},
+                                   {"boutons": None}])
+def test_a_setting_that_is_not_a_table_is_refused_not_a_crash(ici, corps) -> None:
+    """D-665 : des réglages qui ne sont pas une table {id : valeur} rendaient une erreur
+    500 (un TypeError dans `reforme`) au lieu d'un refus dit."""
+    from fastapi.testclient import TestClient
+
+    from impots.api.main import app
+
+    r = TestClient(app, raise_server_exceptions=False).post("/impacts/proposition",
+                                                            json=corps)
+    assert r.status_code == 422 and "table" in r.json()["detail"], r.text

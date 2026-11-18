@@ -185,6 +185,10 @@ def reforme(reglage: Mapping[str, Any],
     hors de ses bornes, un réglage vide (rien ne change)."""
     from impots.api.schemas import ReformSpec
 
+    if not isinstance(reglage, Mapping):
+        # Une liste, un nombre, rien : refusé et dit, pas une erreur 500 (D-665).
+        raise PropositionError(f"le réglage doit être une table {{id : valeur}}, pas "
+                               f"{type(reglage).__name__}")
     inconnus = sorted(set(reglage) - set(_PAR_ID))
     if inconnus:
         raise PropositionError(f"réglages inconnus : {inconnus} ({sorted(_PAR_ID)})")
@@ -293,6 +297,40 @@ def ecrire_etat(ici: Path, **champs: Any) -> dict[str, Any]:
     return etat
 
 
+def _vivant(pid: int) -> bool:
+    """Le processus est-il encore là ? Un processus fini que son parent (le serveur) n'a
+    pas encore attendu est un zombie : fini, donc pas vivant."""
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    try:
+        stat = Path(f"/proc/{pid}/stat").read_text(encoding="utf-8")
+    except OSError:
+        return True
+    return stat.rsplit(")", 1)[-1].split()[:1] != ["Z"]
+
+
+def _perdue(e: Mapping[str, Any]) -> bool:
+    """En file ou en cours, mais son processus a disparu sans écrire sa fin (tué faute de
+    mémoire, la machine ou le serveur relancés) : D-665."""
+    pid = e.get("pid")
+    return (e.get("etat") in ("en_file", "en_cours") and isinstance(pid, int)
+            and not _vivant(pid))
+
+
+def _relire(ici: Path) -> dict[str, Any]:
+    """L'état écrit, et l'échec dit d'une passe dont le processus a disparu."""
+    out = json.loads((ici / "etat.json").read_text(encoding="utf-8"))
+    if _perdue(out):
+        out = ecrire_etat(ici, etat="echec", fin=_maintenant(), erreur=(
+            f"le processus de la passe ({out['pid']}) a disparu sans écrire sa fin "
+            f"(tué, faute de mémoire, ou la machine relancée) ; à relancer (D-665)"))
+    return out
+
+
 def etat(ident: str) -> dict[str, Any]:
     """L'état d'une proposition, et son résultat quand il est là."""
     if not ident.startswith("votre_bareme_") or not ident[13:].isalnum():
@@ -301,7 +339,7 @@ def etat(ident: str) -> dict[str, Any]:
     chemin = ici / "etat.json"
     if not chemin.exists():
         raise FileNotFoundError(ident)
-    out = json.loads(chemin.read_text(encoding="utf-8"))
+    out = _relire(ici)
     if out.get("etat") == "fait" and (ici / "resultat.json").exists():
         out["resultat"] = json.loads((ici / "resultat.json").read_text(encoding="utf-8"))
     return out
@@ -312,8 +350,7 @@ def en_attente() -> int:
     n = 0
     for chemin in racine.glob("votre_bareme_*/etat.json") if racine.exists() else []:
         with contextlib.suppress(OSError, ValueError):
-            if json.loads(chemin.read_text(encoding="utf-8")).get("etat") in (
-                    "en_file", "en_cours"):
+            if _relire(chemin.parent).get("etat") in ("en_file", "en_cours"):
                 n += 1
     return n
 
@@ -324,9 +361,12 @@ def _detacher(ici: Path) -> None:
     env = {**os.environ, "PYTHONPATH": str(ROOT / "src"), "IMPOTS_AUTH": "aucune",
            "IMPOTS_FIRM_VINTAGE": MILLESIME_ENTREPRISES}
     with open(ici / "journal.log", "ab") as journal:
-        subprocess.Popen([sys.executable, "-m", "impots.parametrique", "passe", str(ici)],
-                         cwd=ROOT, env=env, stdout=journal, stderr=subprocess.STDOUT,
-                         stdin=subprocess.DEVNULL, start_new_session=True)
+        p = subprocess.Popen([sys.executable, "-m", "impots.parametrique", "passe",
+                              str(ici)], cwd=ROOT, env=env, stdout=journal,
+                             stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
+                             start_new_session=True)
+    # Son pid : une passe tuée sans écrire sa fin ne tient plus la file (D-665).
+    ecrire_etat(ici, pid=p.pid)
 
 
 def proposer(reglage: Mapping[str, Any], *,
@@ -350,7 +390,7 @@ def proposer(reglage: Mapping[str, Any], *,
     ecrire_etat(ici, id=ident, etat="en_file", reglage=dict(reglage), reforme=reform,
                 imputations=imputations, libelle=libelle(reglage), commit=commit,
                 demande=_maintenant(), statut="illustratif", raison=RAISON, erreur=None,
-                temps={})
+                temps={}, pid=None, fin=None, etape=None)
     # Lu à l'appel, pas à la définition : un test qui remplace `_detacher` ne lance rien.
     (lancer or _detacher)(ici)
     return etat(ident)
@@ -447,7 +487,7 @@ def passer(ici: Path, *, premiere_annee: Callable[[Path, str], None] = _premiere
            session: Any = None, tirages: int | None = None) -> dict[str, Any]:
     """La proposition de `ici`, sous le verrou : les deux passes, le jumeau, le résultat.
     L'échec est écrit dans l'état, avec sa raison, jamais avalé."""
-    e = ecrire_etat(ici)
+    e = ecrire_etat(ici, pid=os.getpid())
     nom = e["id"]
     temps: dict[str, float] = {}
     verrou().parent.mkdir(parents=True, exist_ok=True)
