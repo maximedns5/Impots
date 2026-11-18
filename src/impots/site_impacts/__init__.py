@@ -36,7 +36,8 @@ STYLE = (ICI / "impacts.css").read_text(encoding="utf-8")
 #: Ce que la page garde d'un calcul précalculé : ce qu'elle dessine.
 GARDE = ("mode", "vue", "candidat", "mesure", "annees", "calculees", "refus",
          "avertissements", "dimensions", "ensemble", "modules_en_erreur", "reglage",
-         "pourquoi_mode", "composition", "convention")
+         "pourquoi_mode", "composition", "convention", "synthese", "couverture",
+         "programme")
 #: Le dossier où `servir` écrit la page, hors du dépôt.
 LOCAL = Path("/tmp/impots-ce-que-ca-change")
 
@@ -71,7 +72,9 @@ def bibliotheque(d: dict[str, Any]) -> dict[str, Any]:
 
 
 def precalculer(d: dict[str, Any]) -> dict[str, Any]:
-    """Chaque programme, calculé une fois comme la page le calculerait."""
+    """Chaque programme, calculé une fois comme la page le calculerait ; et, pour un
+    programme que le jumeau complet refuse, le calcul par ses mesures (D-652) sous la clé
+    `<programme>@mesures`."""
     from impots.jumeau import navigateur
 
     s = navigateur.Session(json.loads(json.dumps(d)))
@@ -80,6 +83,41 @@ def precalculer(d: dict[str, Any]) -> dict[str, Any]:
         if cle.endswith("_programme"):
             r = json.loads(navigateur.impacts_json(s, json.dumps({"candidat": cle})))
             out[cle] = {k: r.get(k) for k in GARDE}
+            if r.get("pourquoi_mode"):
+                out[cle + MESURES] = par_mesures(s, d, cle)
+    return out
+
+
+#: Le suffixe du calcul d'un programme refusé par ses mesures (D-652).
+MESURES = "@mesures"
+
+
+def par_mesures(s: Any, d: dict[str, Any], programme: str) -> dict[str, Any]:
+    """Un programme que le jumeau complet refuse, calculé par le jumeau complet comme la
+    proposition composée de ses mesures (D-605, D-652) : chaque mesure sa passe, faite
+    seule, sans leurs interactions statiques. Le résultat dit ce qu'il couvre : le coût
+    mécanique de la première année du programme et la somme de celui de ses mesures."""
+    from impots.jumeau import navigateur
+
+    groupe = d["candidats"][programme]["groupe"]
+    mesures = [k for k, c in d["candidats"].items()
+               if c["groupe"] == groupe and not k.endswith("_programme")]
+    r = json.loads(navigateur.impacts_json(s, json.dumps(
+        {"composition": [{"candidat": k} for k in mesures]})))
+    out = {k: r.get(k) for k in GARDE}
+    prog = s.mesure(programme, "figee")
+    a = min(prog.couts)
+    out["candidat"] = programme + MESURES
+    out["programme"] = programme
+    out["mesure"] = {**(out.get("mesure") or {}),
+                     "libelle": f"{groupe} : le programme, par ses mesures (jumeau complet)"}
+    couts = {k: s.mesure(k, "figee").couts.get(a) for k in mesures}
+    sans = [k for k, c in couts.items() if c is None]
+    # Une mesure sans coût cette année-là : la somme est absente, pas comptée à zéro.
+    out["couverture"] = {
+        "annee": a, "programme": prog.couts[a], "nombre": len(mesures),
+        "mesures": None if sans else sum(couts.values()), "sans_cout": sans,
+        "age": _age_hors_mesures(programme)}
     return out
 
 
@@ -87,6 +125,17 @@ def precalculer(d: dict[str, Any]) -> dict[str, Any]:
 #: la page lit quand le lecteur s'en sert (D-630) : ils pèseraient sinon les deux tiers de
 #: la page.
 POUR_VOUS = "impacts-pour-vous.json"
+
+
+def _age_hors_mesures(programme: str) -> str | None:
+    """L'âge de départ que la santé lit pour le programme entier (`sante.yaml`, D-622) et
+    qu'aucune de ses mesures chiffrées ne porte : son texte, ou None."""
+    from impots.jumeau.impacts import sante
+    from impots.jumeau.navigateur import programme_age
+
+    nom = programme_age({"cle": programme})
+    p = sante.charger()["retraite"]["programmes"].get(nom or "")
+    return p["texte"] if p and p.get("ages") else None
 
 
 def separer(pre: dict[str, Any]) -> dict[str, Any]:
@@ -132,9 +181,11 @@ def corps(x: dict[str, Any]) -> str:
            f"<td>{_e(e['statut'])}</td>" if e.get("tete") else
            f"<td colspan=\"3\">non calculée : {_e(e.get('erreur', ''))}</td>") + "</tr>"
         for e in defaut.get("ensemble") or [])
+    bref = " ".join(p["texte"] for p in (defaut.get("synthese") or {}).get("phrases") or [])
+    sans_script_bref = f"<p><b>En bref.</b> {_e(bref)}</p>" if bref else ""
     sans_script = (f"<noscript><p>Sans script, la page ne montre que le premier programme "
                    f"de la liste, {_e((defaut.get('mesure') or {}).get('libelle', ''))} :"
-                   f"</p><table class=\"i-table\"><thead><tr><th>dimension</th><th>nombre"
+                   f"</p>{sans_script_bref}<table class=\"i-table\"><thead><tr><th>dimension</th><th>nombre"
                    f"</th><th>à l'horizon</th><th>statut</th></tr></thead><tbody>{lignes}"
                    f"</tbody></table></noscript>")
     return f"""<h1>Ce que ça change</h1>
@@ -151,6 +202,8 @@ année par année, avec ce qu'on peut en croire.</p>
     aria-selected="false">Une mesure</button>
   <button type="button" role="tab" id="o-composer" aria-controls="p-composer"
     aria-selected="false">Composer la mienne</button>
+  <button type="button" role="tab" id="o-comparer" aria-controls="p-comparer"
+    aria-selected="false">Comparer</button>
 </div>
 <div role="tabpanel" id="p-programme" aria-labelledby="o-programme" class="i-panneau">
   <label for="programme">Le programme d'un candidat (sa part chiffrée)</label>
@@ -172,6 +225,11 @@ année par année, avec ce qu'on peut en croire.</p>
     <button type="button" id="calculer" class="i-principal">Calculer</button>
   </div>
 </div>
+<div role="tabpanel" id="p-comparer" aria-labelledby="o-comparer" class="i-panneau" hidden>
+  <p class="i-aide">Les programmes côte à côte, dimension par dimension : le même nombre,
+  la même année, la bande et le statut de chacun. Une mesure ou une proposition que vous
+  calculez dans la page s'y ajoute.</p>
+</div>
 <p class="etat" id="etat" role="status" aria-live="polite"></p>
 </section>
 {sans_script}
@@ -179,6 +237,11 @@ année par année, avec ce qu'on peut en croire.</p>
 <h2 id="titre-resultat"></h2>
 <p id="reglage" class="i-reglage"></p>
 <div id="avertissements"></div>
+<section id="en-bref" class="i-bref" aria-labelledby="titre-bref">
+<h2 id="titre-bref">En bref</h2>
+<div id="bref"></div>
+<p class="i-aide" id="bref-avert"></p>
+</section>
 <h2>D'un coup d'œil</h2>
 <p class="i-aide">Un nombre par dimension, à l'horizon, avec sa bande. <b>Ils ne
 s'additionnent pas</b> : chacun a son unité, et aucun n'est converti dans celle d'un
@@ -212,6 +275,29 @@ médianes de la population, et le calcul le dit quand il n'est qu'une approximat
 <h2>Dimension par dimension</h2>
 <div id="fiches"></div>
 </section>
+<section id="comparer" class="i-comparer" aria-labelledby="titre-comparer" hidden>
+<h2 id="titre-comparer">Comparer</h2>
+<div class="i-cmp-reglages">
+  <label>Dimension <select id="cmp-dimension"></select></label>
+  <label>Nombre <select id="cmp-indicateur"></select></label>
+  <label>Année <select id="cmp-annee"></select></label>
+  <label>Ordre <select id="cmp-tri">
+    <option value="haut">du plus haut au plus bas</option>
+    <option value="bas">du plus bas au plus haut</option>
+    <option value="net">le plus net d'abord</option>
+    <option value="nom">par nom</option></select></label>
+</div>
+<p id="cmp-question" class="i-question"></p>
+<div id="cmp-liste" class="i-cmp-liste" role="list"></div>
+<p class="i-aide">Le point : le nombre au réglage ; le trait clair : sa bande. Une bande
+qui reste d'un côté du zéro est un sens sûr ; une bande qui le franchit, non. Les
+nombres de deux dimensions ne s'additionnent pas.</p>
+<div id="cmp-refus"></div>
+<h3>Tous les nombres de tête</h3>
+<p class="i-aide">Le premier nombre de chaque dimension, à l'année choisie. Choisir un
+titre de colonne range les programmes selon ce nombre.</p>
+<div class="i-defile"><table id="cmp-table" class="i-table i-cmp-table"></table></div>
+</section>
 <details class="i-methode"><summary>Comment c'est calculé</summary>
 <ul>
 <li>Chaque programme et chaque mesure viennent d'une passe sur la population (OpenFisca,
@@ -235,6 +321,14 @@ les salaires, l'indexation et les prix. Un indépendant, une loi simple, une mes
 la liste prennent le gain moyen d'un ménage de leur décile : une approximation, dite.
 La satisfaction et la santé reprennent les coefficients publiés des fiches du moral et de
 la santé (D-630 à D-633).</li>
+<li>« En bref » est écrit par des règles (D-650), pas par un modèle de langue : une
+phrase par nombre, qui cite sa dimension et dit sa certitude ; « probablement » seulement
+quand la bande reste d'un côté de zéro, « un ordre de grandeur » pour une dimension
+illustrative ; jamais de total entre dimensions ni de verdict d'ensemble.</li>
+<li>Comparer : Jean-Luc Mélenchon et Marine Tondelier ont deux lignes, parce que le
+jumeau complet refuse leur programme entier (la page dit pourquoi) : la chaîne des
+études sur le programme entier, et le jumeau complet sur leurs mesures composées
+(D-652).</li>
 <li>Composer : une mesure à ×2 double chaque montant de sa passe, au premier ordre, sans
 refaire la passe ; une entrée plus tardive décale ses années. Les interactions entre
 mesures d'une même proposition ne sont pas chiffrées (D-605).</li>

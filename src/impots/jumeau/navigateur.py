@@ -1084,7 +1084,12 @@ def impacts_json(session: Session, texte: str) -> str:
     out = session.calculer(choix)
     out["reglage"] = {k: choix.get(k) for k in ("mode", "vue", "convention", "tirages")}
     out["pourquoi_mode"] = pourquoi
-    return json.dumps(propre(out), ensure_ascii=False)
+    out = propre(out)
+    # « En bref » : le paragraphe écrit par des règles sur les dimensions (D-650).
+    from impots.jumeau.impacts.synthese import en_bref
+
+    out["synthese"] = en_bref(out)
+    return json.dumps(out, ensure_ascii=False)
 
 
 def portee_json(session: Session, texte: str) -> str:
