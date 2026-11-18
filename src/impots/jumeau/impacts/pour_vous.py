@@ -399,7 +399,10 @@ def pour_vous(variante: Any, reference: Any, depart: Any, cellules: Any, *,
     # La bande du revenu réel du cas par défaut : les tirages des θ que le tableau passe,
     # comme les autres dimensions (5 et 95 %) ; le statique n'en dépend pas.
     bande: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-    if tirages is not None and len(tirages.annees) == len(annees):
+    # Sans l'économie du jumeau (le mode réduit), rien ne bouge avec les θ : la « bande »
+    # serait le statique répété, pas une bande (D-665).
+    if tirages is not None and len(tirages.annees) == len(annees) and \
+            "salaire_moyen" in eco["lus"]:
         n = int(np.asarray(tirages.variante[0]["pib"]).size)
         if n > 1:
             cas_d = {**tab["cas"][DEFAUT], "cle": DEFAUT}

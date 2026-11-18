@@ -175,3 +175,23 @@ def test_le_gain_de_la_cellule_est_ramene_en_euros_de_2026(cellules):
     r = _calcul(ind, {**_eco(), "nominal": eco["nominal"]}, [h], cellules)
     menages = np.asarray(cellules["menages"], float).reshape(10, -1).sum(axis=1)[dec - 1]
     assert r["statique"][4] == pytest.approx(1e9 / menages / 1.03 ** 4)
+
+
+def test_sans_l_economie_du_jumeau_le_revenu_reel_n_a_pas_de_bande() -> None:
+    """D-665 : dans la chaîne des études (le mode réduit), ni les salaires ni les prix ne
+    bougent avec les θ ; la « bande » du revenu réel était le statique répété (Mélenchon :
+    de +1 606 à +1 606 €), dite bande par la fiche et par « En bref ». Sans l'économie du
+    jumeau, pas de bande."""
+    import json
+
+    from impots import site_jumeau
+    from impots.jumeau import navigateur
+
+    s = navigateur.Session(json.loads(json.dumps(site_jumeau.donnees())))
+    r = json.loads(navigateur.impacts_json(s, json.dumps(
+        {"candidat": "pres2027_melenchon_programme", "tirages": 4})))
+    assert r["reglage"]["mode"] == "reduit"
+    d = next(x for x in r["dimensions"] if x["cle"] == "pour_vous")
+    ind = d["indicateurs"][0]
+    assert ind["cle"] == "revenu_reel" and ind["valeurs"][-1] > 1000
+    assert ind["bas"] is None and ind["haut"] is None
