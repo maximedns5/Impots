@@ -42922,3 +42922,24 @@ quelques secondes). Le calcul ne change pas, aucun nombre non plus ; rien n'est 
 à la fois sur la machine, dans l'ordre de sa file, pour 17 s de plus sur 40 à 50 min ;
 les sortir du verrou demanderait un second verrou ou une seconde file, sans gain lisible.
 D-661 n'est pas réécrite ; elle se lit avec celle-ci.
+
+## D-672 — Les canaux de la productivité dits en français sur la page
+
+D-666 relevait que la productivité gardait des noms de canaux bruts dans ses barres : la
+fiche « Productivité des entreprises par les canaux à côté » montrait par groupe
+`pression_cout`, `salaire_efficience` et `rd_cir`, et ses sources disaient « canal
+« pression_cout » ». Le correctif (`impacts/productivite.LIBELLES`) les dit comme le moral
+et la santé disent les leurs (`LIBELLES`, minuscule et article) : « la pression du coût
+du travail », « le salaire d'efficience », « la R&D (crédit d'impôt recherche) ». Les
+clés restent celles de `parametres/productivite.yaml` et des notes (`canaux_branches`,
+`canaux_a_cote`), que le code lit. Aucun nombre ne change. Le test de D-627 lit désormais
+le libellé (`test_impacts_productivite`).
+
+Relu de la même façon sur Retailleau, Attal, Mélenchon (les deux lignes) et le Smic +15 %
+de Roussel : dans les libellés, les groupes et « En bref », plus aucun nom brut de canal.
+Restent, écrits et non changés : les clés des θ dans la limite « θ lus sans estimation
+publiée » (ce sont les noms du panneau des θ de la page du jumeau, qui n'ont pas de
+libellé court), les codes des tables citées dans les sources (`hlth_silc_01`,
+`demo_pjan` : des références, pas des noms), et l'identifiant du programme dans la raison
+d'un refus du jumeau complet (« mesure « pres2027_melenchon_programme » »), que la page
+cite telle qu'elle vient du jumeau.

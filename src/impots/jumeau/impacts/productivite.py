@@ -69,6 +69,13 @@ CANAUX = ("pression_cout", "salaire_efficience")
 #: Le canal de la R&D (D-627), lu sur la créance de CIR et non sur le coût du travail.
 CIR = "rd_cir"
 COTISATIONS = "cotisations_employeurs"
+#: Ce que la page dit de chaque canal (D-672) : ses barres et ses sources, en français ;
+#: les clés restent celles du fichier des paramètres et des notes.
+LIBELLES = {
+    "pression_cout": "la pression du coût du travail",
+    "salaire_efficience": "le salaire d'efficience",
+    CIR: "la R&D (crédit d'impôt recherche)",
+}
 
 
 @dataclass(frozen=True)
@@ -450,7 +457,8 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
             "(PIB, centre de η ; bande de η = 0 à son haut)", unite="% du PIB",
             valeurs=100.0 * total["centre"], bas=100.0 * total["bas"],
             haut=100.0 * total["haut"],
-            par_groupe={c: 100.0 * a_cote[c]["centre"] for c in a_cote}, sens=1))
+            par_groupe={LIBELLES.get(c, c): 100.0 * a_cote[c]["centre"] for c in a_cote},
+            sens=1))
         if s["pib_potentiel"] is not None:
             base = s["pib_potentiel"][:, 0] + ajout["centre"]
             reste = _enveloppe(a_cote, [c for c in a_cote if c not in branches])
@@ -464,7 +472,7 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
                "le socle : capital du coût d'usage, démographie, emploi, salaires"),
         *(Source(*_source_canal(c)) for c in p.canaux.values()),
         Source("Trésor-Éco n° 290 (2021), réforme du CIR de 2008", "p. 6",
-               f"canal « rd_cir » : η = {p.cir.centre} ({p.cir.bas} à {p.cir.haut}), dès la "
+               f"canal de {LIBELLES[CIR]} : η = {p.cir.centre} ({p.cir.bas} à {p.cir.haut}), dès la "
                "cinquième année"),
         Source("France Stratégie, fiscalité du capital, rapport final 2023", "p. 21 du "
                "PDF", "aucun effet du PFU sur l'investissement : canal nul"),
@@ -510,5 +518,5 @@ def _enveloppe(a_cote: Mapping[str, Mapping[str, np.ndarray]], cles: Sequence[st
 def _source_canal(c: Canal) -> tuple[str, str, str]:
     lieu = ("tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4"
             if c.cle == "pression_cout" else "tableau 1 p. 27, lu sur le salaire brut")
-    return (f"Riley et Rosazza Bondibene, NIESR DP 449 (canal « {c.cle} »)", lieu,
+    return (f"Riley et Rosazza Bondibene, NIESR DP 449 (canal de {LIBELLES.get(c.cle, c.cle)})", lieu,
             f"η = {c.centre} ({c.bas} à {c.haut})")

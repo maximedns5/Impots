@@ -121,7 +121,9 @@ def test_le_canal_de_la_r_et_d() -> None:
     np.testing.assert_allclose(out["centre"], [0, 0, 0, 0, 0, -0.002 * 1.32, -0.002 * 1.32])
     var, ref, depart = _trajectoire()
     d = P.calculer(var, ref, depart, cir={2026: 2.0, 2027: 2.0, 2028: 2.0})
-    assert "rd_cir" in {i.cle: i for i in d.indicateurs}["pgf_canaux"].par_groupe
+    groupes = {i.cle: i for i in d.indicateurs}["pgf_canaux"].par_groupe
+    # D-672 : les barres disent le canal en français, plus sa clé.
+    assert P.LIBELLES[P.CIR] in groupes and "rd_cir" not in groupes
 
 
 def test_la_bande_des_canaux_quand_le_levier_baisse() -> None:
