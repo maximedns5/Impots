@@ -41925,3 +41925,79 @@ ménages » sur un compte non pondéré : c'est 21,0 % pondéré, en personnes).
 La limite est écrite sur la fiche (la ligne de D-647) ; le statut reste « illustratif ».
 Pour les médianes absolues : 24 680 € pour la métropole (droit de 2026, revenus de 2024),
 contre 25 920 publiés pour 2023 ; on ne juge pas un niveau (D-646).
+
+## D-648 — Où ça tombe (4) : la dimension, et ses nombres sur trois programmes
+
+**Ce qui est codé** (`jumeau/impacts/territoires.py`, numpy seulement ; la table est un
+JSON lu une fois, que le paquet du jumeau emporte : `parametres/territoires.json` y est,
+vérifié). La dimension « Où ça tombe : les territoires », statut « illustratif » toujours
+(la répartition des cellules entre territoires est une hypothèse, même pour un programme
+chiffré tel quel : la fiche le dit en tête de ses limites, parce que la page explique
+« illustratif » par une loi simple ou une mesure transformée). Sept indicateurs : sur
+chacun des deux axes, le gain en % du revenu, le gain en € par ménage, la part des ménages
+gagnants (plus de 10 € par an), chacun avec l'ensemble (la tête, sa bande sur les tirages
+du tableau) et une série par territoire ; et l'écart entre le type de territoire de
+métropole qui gagne le plus et celui qui gagne le moins (points de %). Dans le mode réduit,
+le choc statique par décile seul ; s'il manque pour une mesure (la vue vieillie n'a pas de
+ventilation publiée), la dimension lève `TerritoiresAbsents` avec la raison : la page dit
+« non calculée », jamais zéro.
+
+**Les nombres de tête**, réglage par défaut de la page (D-605 : figée, θ à ½, 60 tirages),
+2026 → 2035, gain en % du revenu disponible [bande 5-95 % en 2035] et en € par ménage :
+
+| programme | ensemble | Paris (z. 1) | grandes villes | villes moyennes | rural | outre-mer |
+|---|---|---|---|---|---|---|
+| Retailleau, % | 2,64 → 2,08 [1,62 ; 2,40] | 2,15 | 2,14 | 2,04 | 1,95 | 2,30 |
+| Retailleau, € | 1 208 → 1 241 | 1 256 | 1 241 | 1 231 | 1 244 | 1 247 |
+| Attal, % | 3,77 → 2,14 [0,39 ; 3,51] | 2,17 | 2,20 | 2,15 | 2,03 | 2,10 |
+| Attal, € | 1 723 → 1 280 | 1 266 | 1 275 | 1 297 | 1 294 | 1 138 |
+
+(les colonnes des territoires : 2035.) Par région en 2035, Retailleau : métropole 2,07 %,
+Guadeloupe 2,34, Martinique 2,36, Guyane 2,31, La Réunion 2,36 ; Attal : métropole 2,14 %,
+1 284 €, et 1 119 à 1 159 € dans les quatre départements d'outre-mer. La part des gagnants
+est de 100 % partout au centre (aucune cellule ne perd) ; sa bande descend à 95 %
+(Retailleau) et 76 % (Attal). L'écart entre types de métropole : 0,20 point (Retailleau),
+0,17 (Attal). Lecture : les gains de ces deux programmes sont à peu près les mêmes en
+euros partout ; en % du revenu, ils pèsent plus outre-mer (Retailleau) et moins dans le
+rural, plus aisé à composition égale ; Attal donne moins d'euros outre-mer, où les
+salariés sont moins nombreux.
+
+**Mélenchon** : son programme est calculé par la chaîne des études (le jumeau complet le
+refuse, D-605) dans la vue vieillie, qui n'a pas de choc par décile : non calculé, dit.
+Ses mesures seules passent par le jumeau complet ; en 2035, % du revenu, ensemble puis
+rural et outre-mer : la garantie d'autonomie des jeunes 2,21 (rural 1,96, outre-mer 2,85,
+La Réunion 2,93) ; l'indexation des pensions et prestations 1,97 (1,93 ; 2,02) ; le Smic à
+1 700 € nets 2,08 (2,14 ; 2,04) ; le point d'indice 0,62 (0,64 ; 0,58) ; la suppression du
+PFU −0,84 (−0,76 ; −0,65), 0 % de gagnants. Les sommer ne fait pas le programme (D-605).
+
+**Les tests légers** (`tests/test_impacts_territoires.py`, 8 tests, 11 s) : la table est
+un agrégat des 50 cellules aux deux axes cohérents ; le contrôle de D-647 redonné sur la
+table ; l'interpolation entre déciles sur une table jouet ; la règle du seuil ; le seuil
+des gagnants égal à celui du jumeau ; l'ensemble de chaque axe égal au gain des cellules
+du jumeau, et la moyenne pondérée des territoires aussi ; les nombres de Retailleau
+ci-dessus ; Mélenchon dit non calculé. `test_impacts_tableau` passe inchangé. Aucun nombre
+d'une autre dimension ne change ; aucun rapport n'est refait.
+
+## D-649 — Où ça tombe (5) : la page vérifiée, ce qui reste
+
+**La page** (`site_impacts.ecrire` dans un dossier à part, 1 min 31 s, servie en local,
+Chromium sans tête, deviceScaleFactor 1, à 1 200 et 390 px) : la fiche se montre sans
+changer la page (D-605), avec sa carte d'un coup d'œil, ses sept boutons, la courbe et sa
+bande, les barres par territoire, ses limites et ses sources. Trois cas : Retailleau
+(précalculé), le programme de Mélenchon (« non calculée », avec la raison), sa garantie
+d'autonomie des jeunes (calculée dans la page par Pyodide, 9 à 10 s). Aucun défilement
+horizontal, aucune erreur de script (un 404 au chargement, la petite icône). *Ce qui
+cassait* et est corrigé : les noms longs des territoires étaient coupés dans la colonne
+des barres (désormais « Paris (zone 1) », « Grandes villes », « Villes moyennes »,
+« Rural », « Outre-mer », les définitions dans les limites) ; les libellés des boutons
+raccourcis.
+
+**Ce qui reste, au propriétaire.** (1) La table se range sur une passe au droit de 2026
+sans le capital ; refaire la table sur la passe même des cellules (droit de 2024, avec
+les imputations) demanderait de garder les ménages de cette passe : `scripts/jumeau_
+cellules.py` ne les écrit pas. (2) Les régions de métropole demandent une autre source que
+l'enquête Emploi diffusée (l'ERFS ou Filosofi par région, sous convention). (3) L'outre-mer
+est trop riche dans la population (D-647) : des revenus locaux à catégorie égale
+changeraient la population, donc `population/*`, hors de ce volet. (4) La grille de
+densité (dense, intermédiaire, rural) n'est pas dans l'enquête : le rural hors unité
+urbaine en tient lieu. (5) Pas de bande par territoire, seulement pour l'ensemble.

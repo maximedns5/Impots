@@ -141,7 +141,7 @@ def test_les_nombres_de_tete_de_d648(retailleau) -> None:
     ind = {i["cle"]: i for i in retailleau["indicateurs"]}
     pct = ind["pct_types"]
     assert pct["valeurs"][-1] == pytest.approx(2.077, abs=1e-3)
-    assert pct["par_groupe"]["Rural (hors unité urbaine)"][-1] == pytest.approx(1.953,
+    assert pct["par_groupe"]["Rural"][-1] == pytest.approx(1.953,
                                                                                 abs=1e-3)
     assert pct["par_groupe"]["Outre-mer"][-1] == pytest.approx(2.302, abs=1e-3)
     assert ind["euros_regions"]["valeurs"][-1] == pytest.approx(1241.3, abs=0.1)

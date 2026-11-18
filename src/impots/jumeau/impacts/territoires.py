@@ -52,6 +52,13 @@ SOURCES = (
 )
 
 LIMITES = (
+    "Pourquoi « illustratif » ici : la répartition des cellules entre les territoires est "
+    "une hypothèse (le même gain par ménage partout dans une cellule), pas une passe par "
+    "territoire ; c'est vrai même pour un programme chiffré tel quel.",
+    "Les types de territoire : Paris, l'agglomération parisienne (zone APL 1) ; grandes "
+    "villes, les agglomérations de plus de 100 000 habitants (zone 2) ; villes moyennes, "
+    "le reste des unités urbaines (zone 3) ; rural, les communes hors unité urbaine ; "
+    "outre-mer, Guadeloupe, Martinique, Guyane et La Réunion (pas Mayotte).",
     "Le gain par ménage d'une cellule (décile × type) est supposé le même partout : deux "
     "ménages de la même cellule gagnent autant à Paris et en Guyane. Les prix, les loyers "
     "et l'emploi locaux ne sont pas modélisés ; l'emploi du jumeau est national, réparti "
@@ -74,6 +81,12 @@ LIMITES = (
     "La bande, quand il y en a, est celle de la moyenne nationale (5 à 95 % des tirages des "
     "θ) ; les barres par territoire sont au réglage.",
 )
+
+
+#: Les noms courts des barres (la page n'a qu'une étroite colonne d'étiquettes) ; les
+#: noms longs, et ce qu'est chaque zone, sont dans les limites.
+COURTS = {"zone_1": "Paris (zone 1)", "zone_2": "Grandes villes", "zone_3": "Villes moyennes",
+          "rural": "Rural", "outre_mer": "Outre-mer"}
 
 
 @cache
@@ -245,14 +258,15 @@ def territoires(variante: Any, reference: Any, depart: Any, cellules: Any,
         r = par_territoire(g, y, menages, a)
         rt = par_territoire(gt, yt, menages, a) if gt is not None else None
         for cle, libelle, unite, sens in (
-                ("pct", "Gain moyen par ménage, en % du revenu disponible", "%", 1),
-                ("euros", "Gain moyen par ménage", "€ par an", 1),
-                ("gagnants", "Part des ménages qui gagnent plus de 10 € par an", "%", 0)):
+                ("pct", "Gain en % du revenu", "%", 1),
+                ("euros", "Gain par ménage", "€ par an", 1),
+                ("gagnants", "Part des gagnants (plus de 10 € par an)", "%", 0)):
             x = r[cle]
             if x is None:
                 continue
             bas, haut = _bande(None if rt is None or rt[cle] is None else rt[cle][:, -1, :])
-            groupes = {lib: x[:, j, 0] for j, lib in enumerate(a["libelles"])}
+            groupes = {COURTS.get(k, lib): x[:, j, 0]
+                       for j, (k, lib) in enumerate(zip(a["cles"], a["libelles"], strict=True))}
             indicateurs.append(Indicateur(
                 f"{cle}_{nom_axe}", f"{libelle}, {titre_axe}", unite, x[:, -1, 0],
                 bas=bas, haut=haut, par_groupe=groupes, sens=sens))
@@ -261,8 +275,8 @@ def territoires(variante: Any, reference: Any, depart: Any, cellules: Any,
             # moins (en % du revenu, hors outre-mer, l'autre axe le montre).
             p = r["pct"][:, :4, 0]
             indicateurs.append(Indicateur(
-                "ecart_types", "Écart de gain entre types de territoire de métropole "
-                "(le plus haut moins le plus bas)", "points de %", p.max(axis=1) - p.min(axis=1),
+                "ecart_types", "Écart entre types de territoire (métropole)", "points de %",
+                p.max(axis=1) - p.min(axis=1),
                 sens=0))
     statut_, limites = statut(options)
     limites = [*limites, *LIMITES, f"Le gain des cellules : {porte}."]
