@@ -454,7 +454,11 @@ def scenarios_bibliotheque() -> list[str]:
     return list(site_jumeau.candidats())
 
 
-def construire(cles: Sequence[str] | None = None, verifier: int = 3) -> dict[str, Any]:
+def construire(cles: Sequence[str] | None = None, verifier: int = 3,
+               dossier: Path | None = None) -> dict[str, Any]:
+    """Le tableau des cas types : chaque cas au droit de 2026, et ses écarts sous chaque
+    scénario de `cles` (lus dans `dossier`, le dossier des scénarios par défaut ; celui
+    d'une proposition du lecteur, D-660)."""
     from impots import scenarios
     from impots.jumeau.cellules import N_DECILES, TYPES
     from impots.jumeau.navigateur import lire
@@ -493,7 +497,7 @@ def construire(cles: Sequence[str] | None = None, verifier: int = 3) -> dict[str
     out_mesures: dict[str, Any] = {}
     verifie = None
     for sc in (cles if cles is not None else scenarios_bibliotheque()):
-        s = scenarios.load(sc)
+        s = scenarios.load(sc, dossier)
         if s.reform is None or s.reform.is_empty():
             out_mesures[sc] = {"annee": s.year, "vide": True}
             continue

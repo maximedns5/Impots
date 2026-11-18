@@ -306,6 +306,10 @@ class Session:
         self.candidats = donnees["candidats"]
         self.cadre = donnees["cadre"]
         self._mesures: dict[tuple[Any, ...], Any] = {}
+        # D-660 : les propositions du lecteur chiffrées par une passe (`parametrique`),
+        # {candidat : {"raison", "tableau"}} : toutes leurs dimensions sont dites
+        # illustratives ; « Pour vous » lit le tableau des cas types de leur passe.
+        self.parametriques: dict[str, dict[str, Any]] = {}
 
     # ---------------------------------------------------------------- mesures
     def mesure(self, cle: str, vue: str, convention: str | None = None) -> Any:
@@ -543,6 +547,8 @@ class Session:
                 "mesure": mesure, "mesures": mesures, "illustratives": illustratives,
                 "composition": composition, "avertissements_composition": avertissements,
                 "composee": composee,
+                "parametrique": (self.parametriques.get(cle) if cle and not composition
+                                 else None),
                 "depart": depart, "entrees": entrees, "blocs": blocs,
                 "boucles": boucles, "registre": registre, "theta": theta}
 
@@ -895,6 +901,18 @@ def _options_compose(ctx: Mapping[str, Any]) -> dict[str, Any]:
     """Ce que le tableau lit d'un programme composé de ses mesures (D-655) : le statique
     de « Pour vous » est celui du programme entier (`cle_statique`, D-633) ; les
     dimensions qui lisent les déciles sont dites illustratives, avec la raison."""
+    p = ctx.get("parametrique")
+    if p:
+        # D-660 : une proposition du lecteur, une passe non préenregistrée.
+        from impots.jumeau import impacts
+        from impots.jumeau.impacts import tableau
+
+        tableau.charger()
+        out = {"degrader": dict.fromkeys(impacts.dimensions(), p["raison"]),
+               "limite_commune": f"Votre barème : {p['raison']}."}
+        if p.get("tableau") is not None:
+            out["tableau"] = p["tableau"]
+        return out
     c = ctx.get("composee")
     if not c:
         return {}

@@ -694,6 +694,66 @@ def impacts_calculer(reglage: dict[str, Any]) -> JSONResponse:
     return JSONResponse(json.loads(texte))
 
 
+@app.get("/impacts/proposition/boutons")
+def impacts_proposition_boutons() -> JSONResponse:
+    """Le menu de « votre barème » (D-660) : chaque réglage, ses bornes, sa valeur neutre
+    et ce qu'il bouge ; ce que le menu ne porte pas."""
+    from impots import parametrique
+
+    return JSONResponse({"boutons": parametrique.BOUTONS,
+                         "hors_menu": parametrique.HORS_MENU,
+                         "statut": "illustratif", "raison": parametrique.RAISON})
+
+
+@app.post("/impacts/proposition")
+def impacts_proposition(reglage: dict[str, Any]) -> JSONResponse:
+    """Votre barème (D-660) : la proposition mise en file, une passe sur la population à
+    la fois (la première année, puis le chemin annuel, comme une mesure d'étude), puis
+    toutes les dimensions du jumeau. Rend tout de suite son état (202), ou son résultat
+    (200) quand la même proposition est déjà passée. Un chiffrage illustratif, non
+    préenregistré, jamais comparé à un juge."""
+    from impots import parametrique
+
+    try:
+        e = parametrique.proposer(reglage.get("boutons", reglage))
+    except parametrique.PropositionError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except OverflowError as error:
+        raise HTTPException(status_code=503, detail=str(error),
+                            headers={"Retry-After": "600"}) from error
+    return JSONResponse(e, status_code=200 if e.get("etat") == "fait" else 202)
+
+
+@app.get("/impacts/proposition/{ident}")
+def impacts_proposition_etat(ident: str) -> JSONResponse:
+    """Où en est une proposition (D-660) : en file, en cours (et son étape), faite (et son
+    résultat, toutes les dimensions), ou en échec (et pourquoi)."""
+    from impots import parametrique
+
+    try:
+        return JSONResponse(parametrique.etat(ident))
+    except parametrique.PropositionError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except FileNotFoundError as error:
+        raise HTTPException(status_code=404, detail=f"proposition « {ident} » inconnue"
+                            ) from error
+
+
+@app.get("/site/{nom}", include_in_schema=False)
+def site_impacts_local(nom: str) -> FileResponse:
+    """La page « Ce que ça change » écrite en local (`python -m impots.site_impacts
+    ecrire`), servie par l'API pour que son formulaire « votre barème » l'appelle à la même
+    origine (D-660). Un nom de fichier du dossier, rien d'autre."""
+    from impots.site_impacts import LOCAL
+
+    chemin = (LOCAL / nom).resolve()
+    if chemin.parent != LOCAL.resolve() or not chemin.is_file():
+        raise HTTPException(status_code=404, detail=(
+            f"« {nom} » absent : la page s'écrit par `PYTHONPATH=src python -m "
+            f"impots.site_impacts ecrire` (environ deux minutes)"))
+    return FileResponse(chemin)
+
+
 @app.get("/", include_in_schema=False)
 def index() -> FileResponse:
     """Serve the static UI so the quickstart is one command instead of two.

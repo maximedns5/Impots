@@ -42572,3 +42572,88 @@ pas cette page. **À décider par le propriétaire** : la ligne de Mélenchon et
 mise en avant (la chaîne des études aujourd'hui ; « par ses mesures » porte toutes les
 dimensions et le coût du programme entier, C1, mais pas la répartition de l'interaction ;
 c'est une ligne à changer dans `precalculer`).
+
+## D-660 — Votre barème (1) : une passe à la demande, ce qu'elle coûte, la décision
+
+**Le problème** (volet `parametrique` du but 29, ajouté par le coordinateur dans la nuit ;
+numéros D-660 à D-664). La proposition composée de D-605 ne sait pas changer un paramètre
+de barème : il faut une passe sur la population (OpenFisca), qui ne tourne ni dans le
+navigateur ni dans un pas du jumeau ; l'intensité k en est l'approximation au premier
+ordre, et une hausse du Smic n'a même pas celle-là (refusée, D-605). Le lecteur doit
+pouvoir proposer SA mesure en réglant un barème, et en voir toutes les dimensions.
+
+**L'inventaire des boutons.** `ReformSpec` porte la liste blanche du moteur (environ 150
+boutons, `engine.reforms`, `boutons_programmes`) ; les scénarios des programmes de 2027 et
+des textes (PLF, PLFSS) en règlent 53, dont le Smic (18 scénarios), les cotisations ou la
+CSG (12), la TVA et les accises (10), le quotient familial (13), les heures
+supplémentaires (18), le point d'indice (12), les indexations des prestations (6) ; côté
+entreprises, la CVAE et la C3S (`FirmReformSpec`, 11). Le menu du lecteur en garde ce qui
+se règle d'un seul nombre et se dit sans jargon (`parametrique.BOUTONS`, 13 réglages) :
+le Smic de ±x % (`smic_revalorisation`, la loi seule le premier jour, sans diffusion :
+la valeur de candidat des programmes, D-380) ; le RSA, la prime d'activité, l'AAH, l'Aspa,
+les prestations familiales, les aides au logement, les pensions de ±y % (`indexations`,
+chacune à sa date légale de 2026) ; les taux de l'IR de ±p points (`ir_bareme`, le barème
+de 2026 lu dans l'arbre, la tranche à 0 % laissée) et une tranche en plus (seuil et
+taux) ; le taux normal de TVA (`tva_taux_normal`, l'imputation de la consommation, D-323) ;
+les cotisations salariales de retraite (`cotisations_salariales_retraite_echelle`). Un
+réglage à sa valeur neutre n'entre pas dans la réforme ; aucun chemin de paramètre n'est
+accepté. **Hors du menu, et dit sur la page** : l'âge de départ (aucune passe ne le
+chiffre, la population ne porte pas de carrières ; la santé seule le lit, D-622) ; les
+impôts des entreprises (leur simulateur n'est pas branché ici) ; une réforme qui change
+d'une année à l'autre (la proposition entre en 2026, la loi reconduite).
+
+**Ce qu'une passe coûte**, lu dans les journaux de la série de Mélenchon de cette nuit
+(même machine, même population de D-553, sans nouvelle passe) : la première année d'une
+mesure seule (le simulateur, 20 000 ménages, comportements et boucle) de 1 min 20 à 2 min
+(01:31 à 01:42) ; le chemin annuel du programme (dix années, deux vues, comportements,
+boucle, canal des créations) 38 min (00:52 à 01:30), environ 6 Go (D-236). Le moteur rapide
+(D-462, D-465 : les mêmes nombres, au bit) ne sert pas une hausse du Smic (une réforme des
+salaires est hors de son champ) ; il sert les autres réglages, sa référence calculée une
+fois par année et par vue. Les cas types de « Pour vous » (D-630) : 229 s pour 46 mesures,
+quelques secondes par mesure après la base. **Pronostic : 40 à 50 min par proposition,
+6 Go, une à la fois.** La mesure vient en D-661.
+
+**La décision.**
+
+(a) **Une route d'API asynchrone.** `POST /impacts/proposition` ({"boutons": {id :
+valeur}}) traduit le réglage (`parametrique.reforme`, validé par `ReformSpec`), le met en
+file et rend tout de suite son état (202) ; `GET /impacts/proposition/<id>` dit l'état
+(« en_file », « en_cours » et son étape, « fait » et le résultat, « echec » et pourquoi) ;
+`GET /impacts/proposition/boutons` donne le menu. Chaque proposition tourne dans son
+processus détaché (une session à lui), sous un verrou de fichier (`fcntl.flock`, celui de
+`flock(1)` : `IMPOTS_VERROU_PASSES` le partage avec les autres passes), une à la fois ; au
+plus trois en file (503 au-delà). Le processus fait ce que fait `impots etude` pour une
+mesure seule, sans en être une : la première année (`etude.first_year`), le chemin annuel
+(`impots predictif`, dans le cadre des études publiées, `etudes/cadres/central.json`,
+avec le canal des créations), puis les cas types (`cas_types.construire`, sur son seul
+scénario) ; ensuite le jumeau : les deux rapports deviennent un candidat de la session
+(`navigateur.alleger`, ce que la page lit d'une mesure d'étude : la première année
+ventilée par impôt et par décile, ce que le jumeau complet exige, D-655), et
+`navigateur.impacts_json` rend toutes les dimensions au réglage de la page (structurel,
+figée, parts de la première année, θ à ½, 60 tirages). L'identifiant est l'empreinte de
+la réforme, du commit et du cadre : la même proposition n'est passée qu'une fois. Tout
+est écrit sous `data/processed/propositions/<id>/` (hors de git) : le scénario, les deux
+rapports, les cas types, l'état, le journal, le résultat. Les calculs restent fermés sans
+clé (D-295) : le POST en demande une, les GET sont publics.
+
+(b) **Sur la page, un onglet « Votre barème ».** Le menu est dans la page (elle le montre
+sans l'API) ; « Lancer » appelle l'API à la même origine, suit l'état, puis dessine le
+résultat comme un autre. Sans API (le site statique), la page le dit et donne les deux
+commandes pour la lancer en local ; l'API sert alors la page écrite en local (`GET
+/site/<fichier>`, le dossier de `site_impacts.ecrire`), ce qui garde la politique de
+sécurité de la page (`connect-src 'self'`).
+
+**Le statut : illustratif, toujours.** Une proposition du lecteur est un chiffrage non
+préenregistré : chaque dimension passe à « illustratif » (l'option `degrader` du tableau,
+D-655), avec sa raison en tête de ses limites, et le résultat le dit
+(`proposition.statut`). Aucune n'est comparée à un juge ; aucune ne devient un rapport
+d'étude. Dans « Comparer », elle s'ajoute comme tout calcul fait dans la page (« Votre
+calcul »), avec son statut.
+
+**Les voies écartées.** (1) La première année seule reportée en part de PIB (le chemin des
+plages et de la grille, `annuel.carried_payload`, quelques minutes) : le jumeau complet
+lit la vue figée et son coût chaque année (`mechanical_frozen_eur`), qu'un report ne
+porte pas ; ce serait une autre chaîne que celle des études, et la proposition ne se
+lirait pas à côté d'elles. (2) L'intensité k sur une mesure voisine : le premier ordre de
+D-605, déjà là. (3) Une passe dans le processus du serveur : 6 Go et 40 min tiendraient un
+fil du serveur, et une passe d'un autre agent tournerait en même temps.
