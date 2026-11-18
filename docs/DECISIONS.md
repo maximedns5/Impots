@@ -42657,3 +42657,91 @@ porte pas ; ce serait une autre chaîne que celle des études, et la proposition
 lirait pas à côté d'elles. (2) L'intensité k sur une mesure voisine : le premier ordre de
 D-605, déjà là. (3) Une passe dans le processus du serveur : 6 Go et 40 min tiendraient un
 fil du serveur, et une passe d'un autre agent tournerait en même temps.
+
+## D-661 — Votre barème (2) : ce qui marche, ce qui a coûté, la passe de démonstration
+
+**Ce qui est codé** (branche `claude/but29-parametrique`, 30c5763, 877fe74, 54fe38c).
+`src/impots/parametrique.py` (le menu, la traduction, la file, la passe, le jumeau) ;
+trois routes et la page servie en local dans `api/main.py` ; dans `navigateur.Session`,
+`parametriques` ({candidat : raison, tableau des cas types}) et, dans `_options_compose`,
+la branche qui dit chaque dimension illustrative et donne à « Pour vous » le tableau de la
+passe ; `cas_types.construire` lit les scénarios d'un dossier donné ; l'onglet « Votre
+barème » de la page (`site_impacts`). Aucune dimension n'est réécrite. `IMPOTS_PASSES=non`
+fait un serveur qui rend les propositions déjà passées sans en lancer (une instance en
+lecture, ou une vérification de la page).
+
+**Le test léger** (`tests/test_parametrique.py`, 12 tests, 12 s, aucune passe) : chaque
+réglage traduit en son bouton, à la valeur près ; les taux de l'IR lus dans l'arbre de
+2026 ; sept refus (vide, neutre, inconnu, hors bornes, tranche sans taux, tranche sous la
+dernière, pas un nombre) ; une proposition passée de bout en bout, ses deux passes et ses
+cas types remplacés par les rapports commités du Smic à 2 000 € bruts de Tondelier (un
+coefficient de 1,0818 : le réglage « smic = 8,18 ») : les sept dimensions sont
+« illustratif », avec la raison en tête de leurs limites, et **chaque nombre de tête est
+celui de la mesure lue comme une étude, au bit** (le jumeau lit la passe du lecteur comme
+celle d'un candidat) ; un échec écrit dans l'état, puis relancé ; l'API (202, l'état, 422,
+404, la file pleine, la file fermée, la proposition déjà là rendue sans relance).
+`test_impacts_tableau` et `test_jumeau_navigateur` (31 tests, légers) passent inchangés.
+Le premier calcul du test confrontait aussi « Pour vous » : sans le tableau des cas types de
+la passe, le salarié seul au Smic gagnait 116 € par an en 2026 (le gain moyen de son
+décile) au lieu de 918 € (OpenFisca sur le cas type) ; c'est pourquoi la passe fait aussi
+les cas types (`cas_types.construire` sur son seul scénario).
+
+**Les temps mesurés.** Les cas types d'une proposition (le Smic +5 %, 244 ménages types,
+OpenFisca) : 17 s, hors du verrou (ce n'est pas une passe sur la population) ; le salarié
+seul au Smic, locataire, y gagne 585,70 € de revenu disponible par an en 2026 (878 € de
+salaire net, 295 € de prestations en moins). Le jumeau sur les deux rapports : 3,5 s (60
+tirages). La première année et le chemin annuel ne sont pas mesurés ici : voir plus bas.
+
+**Un incident, dit.** La première version du test de l'API remplaçait `_detacher` par
+`monkeypatch` alors que `proposer` l'avait lié en valeur par défaut : le test a lancé deux
+vraies propositions (le Smic +5 %, le RSA +5 %), détachées, sous le verrou privé du test et
+non sous le verrou commun, vers 02:13 UTC, pendant le chemin annuel de la série de
+Mélenchon. Le noyau en a tué une faute de mémoire ; l'autre a fait sa première année sur la
+population et commençait son chemin annuel quand elle a été arrêtée, à la main, vers 02:16.
+La série de Mélenchon a continué (son chemin de `indexation_pensions_prestations_10`
+tournait encore après) ; aucun de ses rapports n'a été touché, aucun rapport de ces passes
+n'a été gardé. Corrigé : `proposer` lit `_detacher` à l'appel, et la fixture des tests le
+remplace par une fonction qui échoue ; le test de l'API compte ce qu'il aurait lancé. Une
+seconde fois, pendant la vérification de la page, un POST a mis une proposition en file
+sous le verrou commun (le commit avait changé, donc l'identifiant) : elle attendait son tour
+et a été arrêtée avant d'avoir rien calculé ; d'où `IMPOTS_PASSES=non`.
+
+**La page vérifiée** (`site_impacts ecrire` dans un dossier à part, servie par l'API,
+`IMPOTS_PASSES=non`, la proposition de démonstration faite des rapports de Tondelier ;
+Chromium sans tête, deviceScaleFactor 1, 1 200 et 390 px) : l'onglet, les 13 réglages et
+ce que le menu ne règle pas ; « Lancer la passe » rend la proposition faite, ses temps,
+l'avertissement en tête (« Votre barème, un chiffrage illustratif »), sept cartes
+« illustratif », « En bref », « Pour vous » ; l'état « en cours » (l'étape, les minutes,
+l'adresse où revenir) ; servie en statique, « Aucun serveur de calcul ici » et les trois
+commandes. Aucun défilement horizontal, aucune erreur. Captures regardées. `node
+ui/check.mjs` passe (il ne couvre pas cette page).
+
+**La passe de démonstration n'a pas tourné.** Le verrou commun est tenu par la série des
+études de Mélenchon (`impots etude lancer`, un seul `flock` pour toute la série, ses
+chemins annuels de 28 à 38 min chacun, cinq encore à faire à 02:30), et deux autres passes
+attendent derrière elle (une construction de la population, les niveaux de vie du
+jumeau) : rien ne se libère avant 06:00 UTC. Comme le demande le coordinateur, elle n'est
+pas mise en file ; voici comment la lancer, d'un worktree où rien d'autre ne tourne et
+dont `src/` est commité (sinon les rapports le disent « modifié ») :
+
+    cd /home/user/Impots-b29-parametrique
+    IMPOTS_VERROU_PASSES=<le verrou commun> PYTHONPATH=src \
+      /home/user/Impots-but19/.venv/bin/python -m impots.parametrique lancer smic=5
+    PYTHONPATH=src /home/user/Impots-but19/.venv/bin/python -m impots.parametrique \
+      etat <id rendu>
+
+ou, avec la page : `PYTHONPATH=src …/python -m impots.site_impacts ecrire
+/tmp/impots-votre-bareme`, puis `IMPOTS_AUTH=aucune IMPOTS_SITE_LOCAL=/tmp/impots-votre-
+bareme IMPOTS_VERROU_PASSES=<le verrou> PYTHONPATH=src …/python -m uvicorn
+impots.api.main:app`, et http://localhost:8000/site/impacts.html#bareme. Pronostic, d'après
+D-660 : de 40 à 50 min, dont 1 à 2 min pour la première année et 30 à 40 min pour le
+chemin annuel, 6 Go au plus haut ; l'état les écrit (`temps`).
+
+**Ce qui reste.** (1) La mesure des temps et de la mémoire d'une vraie proposition (ci-
+dessus). (2) Les impôts des entreprises (IS, CVAE) : le simulateur des entreprises et le
+scénario mixte (`first_year_payload(mixte=True)`) le permettraient ; pas branché. (3) Le
+chemin annuel refait dix fois la vue figée (D-462) : c'est la plus grosse part du temps
+d'une proposition, et le premier gain à chercher si la page doit répondre plus vite.
+(4) Une clé pour le POST sur une instance publique (D-295) : la page n'envoie pas de clé ;
+en local, `IMPOTS_AUTH=aucune`. (5) Les propositions ne sont jamais effacées (le dossier
+`data/processed/propositions/`) : quelques Mo chacune.
