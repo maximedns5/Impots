@@ -41780,3 +41780,375 @@ pas toujours le centre (θ à ½) ; pour la mesure de Le Pen, la productivité a
 2035 vaut +0,054 % pour une bande de +0,037 à +0,053 %, comme peut le faire toute bande de
 tirages autour d'un modèle non linéaire. `node ui/check.mjs` passe (il ne couvre pas cette
 page).
+
+## D-650 — « En bref » : le paragraphe d'une proposition, écrit par des règles
+
+**Ce qui est codé** (branche `claude/but29-synthese`, partie de `claude/but29`, e6d1e36).
+`jumeau/impacts/synthese.py`, `en_bref` : à partir des dimensions calculées (la forme
+JSON de `Dimension`, ou des `Dimension`), des phrases en français, chacune sortie d'un
+gabarit et d'un seul indicateur d'une seule dimension. Aucun modèle de langue. Chaque
+phrase porte ce qu'elle cite : `dimension`, `indicateur`, l'année, la valeur, la bande,
+le statut, la certitude. `navigateur.impacts_json` ajoute `synthese` à chaque résultat
+(un programme précalculé, une mesure ou une proposition calculée dans la page, l'API) ;
+le module entre dans le paquet de Pyodide par le relevé de `site_jumeau.paquet`. Le
+tableau ne le prend pas pour une dimension (`tableau.HORS`). Générique : il ne connaît
+aucune dimension par son nom ; celles des volets `pouvoir` et `territoires` y entreront
+sans changer ce fichier.
+
+**Les règles.**
+
+* *La certitude d'une phrase* vient de la bande de son indicateur, à l'année qu'elle dit,
+  et du statut de sa dimension. « Probablement » : la bande reste tout entière d'un côté
+  de zéro (bas et haut strictement de même signe), du côté du nombre dit (une bande de
+  tirages ne contient pas toujours le centre, D-627), dans une dimension qui n'est pas
+  illustrative. « Un ordre de grandeur » : la dimension est illustrative ; jamais
+  « probablement », même avec une bande d'un côté. « Le sens n'est pas sûr » : la bande
+  touche ou franchit zéro, ou n'est pas du côté du nombre. « Au calcul central, sans
+  bande » : l'indicateur n'en a pas. Un nombre par groupe (décile, cas type) n'a pas de
+  bande : jamais « probablement ». Le statut est dit à la fin de chaque phrase.
+* *Ce qui bouge le plus.* Les dimensions n'ont pas d'unité commune : on ne compare pas
+  leurs tailles. On range par netteté : les « probablement » d'abord, de la bande la plus
+  loin de zéro au regard de sa largeur (min(|bas|, |haut|) / (haut − bas)) à la plus
+  proche, puis les ordres de grandeur, les nombres sans bande, ceux dont le sens n'est
+  pas sûr. La première phrase nomme les trois plus nettes et dit que ce n'est pas « le
+  plus gros ». Les deux sortes de bandes (tirages des θ ; enveloppe des bornes publiées
+  des coefficients) sont lues de la même façon : c'est une limite, dite ici.
+* *Une phrase par dimension* : son nombre de tête (le premier indicateur, D-605), à la
+  dernière année calculée, en hausse ou en baisse, avec sa bande, « c'est mieux » ou
+  « c'est moins bien » si l'indicateur a un sens (le sens de l'indicateur, pas un
+  jugement de la proposition).
+* *À quelle échéance* : la première année calculée contre l'horizon : l'écart change de
+  sens en route ; grandit (au moins le double) ; s'atténue (au plus la moitié) ; est là
+  dès le début ; ou n'apparaît qu'à une année dite.
+* *Pour qui* : le premier indicateur d'une dimension qui porte les dix déciles : la
+  moyenne des trois premiers (« les 30 % les plus modestes ») et des trois derniers
+  (« les 30 % les plus aisés »), et le décile où l'écart est le plus grand. Une moyenne de
+  déciles d'un même indicateur, jamais de deux. D'autres groupes (les cas types, les
+  canaux) : le plus haut et le plus bas, « dans le détail ».
+* *Les arbitrages*, sans aucun nombre : pour chaque dimension, son premier indicateur qui a
+  un sens, quand son signe est sûr (sa bande reste du côté du nombre) ; ceux qui vont du
+  côté « mieux » face à ceux du côté « moins bien » (« Ce qu'on gagne ici, on le paie
+  là »). Dans une dimension, les 30 % les plus modestes face aux plus aisés quand ils vont
+  en sens contraires. Si tout va d'un côté, la phrase dit que ce n'est pas un bilan.
+* *Jamais de somme ni de verdict.* Aucune phrase ne lit deux dimensions ; les trois qui en
+  nomment plusieurs (le plus net, les arbitrages, les absents) ne portent aucun nombre.
+  Aucun mot ne juge l'ensemble ; sous le paragraphe, toujours : « ces phrases ne
+  s'additionnent pas et ne disent pas si la proposition est bonne ou mauvaise ».
+* *Ce qui manque est dit* : une dimension sans nombre (« absent, pas nul »), une
+  dimension en erreur, et le cadre quand ce n'est pas le jumeau complet (la chaîne des
+  études et la raison du refus, des années refusées).
+
+**La page.** « En bref » en tête du résultat : l'essentiel d'un tenant (le cadre, le plus
+net, les arbitrages), puis une phrase par dimension, son titre lié à sa fiche, puis pour
+qui, puis ce qui manque ; une liste plutôt qu'un seul bloc, pour la lecture au
+téléphone. Sans script, le paragraphe du premier programme est dans `noscript`.
+
+**Les tests légers** (`tests/test_impacts_synthese.py`, 38 tests, 4 s) : une bande qui
+touche ou franchit zéro, ou qui n'est pas du côté du nombre, ne donne jamais
+« probablement » (24 cas, puis 200 tirages de quatre dimensions aux statuts mêlés) ; une
+dimension illustrative est un ordre de grandeur ; chaque phrase cite sa dimension (son
+titre en tête, son statut à la fin) ; changer les nombres d'une autre dimension ne change
+pas une phrase, ses nombres sont ceux de son indicateur ou des années, et aucune somme de
+deux têtes n'apparaît ; les phrases à plusieurs dimensions n'ont pas de nombre ;
+l'arbitrage suit le sens de chaque indicateur ; les déciles, l'échéance, les erreurs et
+les absents. `test_impacts_tableau` (léger) passe inchangé. Aucun nombre publié ne change.
+
+**Ce qui reste à décider par le propriétaire.** Les seuils de l'échéance (2 et ½) et le
+choix des trois déciles du bas et du haut sont des conventions, écrites ici, non
+discutées. La netteté compare des bandes de nature différente. Le paragraphe est long
+pour un programme qui touche six dimensions ; on peut n'en garder que l'essentiel.
+
+## D-651 — Ce que disent les synthèses de Mélenchon, Retailleau et Attal (à relire)
+
+Le texte rendu par les règles de D-650, tel que la page l'affiche, sur les programmes
+précalculés (le réglage par défaut de D-605 : jumeau complet, population figée, θ à ½, 60
+tirages ; `python -m impots.site_impacts ecrire`, commit de cette entrée). Mélenchon a
+deux textes : le jumeau complet refuse son programme entier (D-605), qui passe par la
+chaîne des études ; ses sept mesures, composées, passent par le jumeau complet (D-652).
+**À relire par le propriétaire** : ce sont des phrases écrites par des règles, que
+personne n'a encore lues comme un lecteur de la page les lira.
+
+**Ce que la relecture a déjà fait voir** (écrit, non changé, sauf le premier point) :
+
+1. *Corrigé avant cette entrée* : un arbitrage disait « le revenu disponible réel du
+   ménage en baisse » pour Retailleau, sans dire quel ménage (le libellé court coupait la
+   parenthèse du cas type : seul, au Smic, locataire). La parenthèse reste désormais.
+2. *Les deux calculs de Mélenchon ne disent pas la même chose de l'activité* : le programme
+   entier, par la chaîne des études, fait baisser le PIB (−0,69 % en 2035, bande de −1,22
+   à −0,15) ; ses mesures composées, par le jumeau complet, le font monter (PIB en volume
+   +1,48 %, bande de +0,90 à +1,70). Ce ne sont ni le même modèle (sans ou avec les
+   ménages et les entreprises : la hausse du Smic et le point d'indice passent par le
+   bloc `travail` et la demande) ni la même mesure (la somme des passes faites seules, sans
+   leurs interactions statiques : 88,5 Md€ de coût mécanique en 2026 contre 89,0 pour le
+   programme). La page montre les deux, chacun nommé ; aucun n'est préféré ici.
+3. *Dans la chaîne des études*, la productivité n'a que le PIB : sa tête redit le nombre
+   de l'économie (−0,69 %), et « le plus net » le cite deux fois (en valeur, puis en
+   volume). Ce n'est pas faux, c'est redondant.
+4. *« Pour vous » de Mélenchon par la chaîne des études* a une bande nulle (+1 606 € de
+   +1 606 à +1 606) : sans le jumeau complet, ni les salaires ni les prix ne bougent avec
+   les θ ; la phrase dit « un ordre de grandeur » comme la règle le veut.
+5. *Retailleau* : le cas type par défaut (seul, au Smic, locataire) perd 1 240 € par an en
+   2035 alors que la satisfaction moyenne monte et que les plus modestes y gagnent en
+   moyenne (le moral, pour qui) ; la phrase « dans le détail » le dit (le plus bas : ce
+   cas type). C'est l'arbitrage le plus visible des trois programmes.
+
+*Mélenchon, le programme entier (la chaîne des études)* :
+
+> Calculé par la chaîne des études, pas par le jumeau complet : le jumeau complet refuse
+> la mesure dès sa première année (mesure « pres2027_melenchon_programme » : des
+> prélèvements agrégés (le signal du canal du lot 1) sans leur ventilation par impôt ; les
+> blocs du lot 2 lisent chaque impôt et ne devinent pas la ventilation).
+>
+> Ce qui bouge le plus nettement : les comptes publics (solde des administrations
+> publiques (B9)), l'économie en général (PIB en valeur (nominal)), la productivité des
+> entreprises (PIB en volume) (le plus net au regard de sa bande, pas le plus gros : les
+> unités ne se comparent pas).
+>
+> Ce qu'on gagne ici, on le paie là. Du côté « mieux » : le revenu disponible réel du
+> ménage (seul, au Smic, locataire, par défaut) en hausse, un ordre de grandeur (pour
+> vous). Du côté « moins bien » : PIB en volume en baisse (la productivité des
+> entreprises), solde des administrations publiques (B9) en baisse (les comptes publics).
+>
+> Les comptes publics — Solde des administrations publiques (B9) : probablement en baisse,
+> de 119 Md€ en 2035 (bande : de −135 à −103), c'est moins bien (sourcé, non jugé).
+> L'écart est là dès 2026 (−91,6 Md€).
+>
+> L'économie en général — PIB en valeur (nominal) : probablement en baisse, de 0,69 % du
+> PIB sans la mesure en 2035 (bande : de −1,22 à −0,15) (sourcé, non jugé). L'écart
+> grandit avec le temps : −0,32 % du PIB sans la mesure en 2026.
+>
+> La productivité des entreprises — PIB en volume : probablement en baisse, de 0,69 %
+> d'écart à la référence en 2035 (bande : de −1,22 à −0,15), c'est moins bien (sourcé, non
+> jugé). L'écart grandit avec le temps : −0,32 % d'écart à la référence en 2026.
+>
+> Pour vous — Le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) :
+> en hausse, un ordre de grandeur : +1 606 € par an en 2035 (bande : de +1 606 à +1 606),
+> c'est mieux (illustratif). L'écart est là dès 2026 (+1 606 € par an).
+>
+> Pour vous — dans le détail (le revenu disponible réel du ménage (seul, au Smic,
+> locataire, par défaut), en 2035) : le plus haut, « Couple de retraités, propriétaire »
+> (+3 341 € par an) ; le plus bas, « Seul, salaire élevé, propriétaire » (0,00 € par an) ;
+> au calcul central, sans bande (illustratif).
+>
+> Pas de nombre ici pour le moral des gens, la santé et le temps de vie : leur fiche dit
+> pourquoi (absent, pas nul).
+
+*Mélenchon, par ses sept mesures (le jumeau complet)* :
+
+> Ce qui bouge le plus nettement : l'économie en général (PIB en volume), le moral des
+> gens (satisfaction gagnée), les comptes publics (solde des administrations publiques
+> (B9)) (le plus net au regard de sa bande, pas le plus gros : les unités ne se comparent
+> pas).
+>
+> Ce qu'on gagne ici, on le paie là. Du côté « mieux » : satisfaction gagnée en hausse (le
+> moral des gens), productivité apparente du travail (PIB en volume par emploi) en hausse
+> (la productivité des entreprises), PIB en volume en hausse (l'économie en général), le
+> revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) en hausse, un
+> ordre de grandeur (pour vous). Du côté « moins bien » : solde des administrations
+> publiques (B9) en baisse (les comptes publics).
+>
+> L'économie en général — PIB en volume : probablement en hausse, de 1,48 % du PIB sans la
+> mesure en 2035 (bande : de +0,90 à +1,70), c'est mieux (sourcé, non jugé). L'écart est
+> là dès 2026 (+0,80 % du PIB sans la mesure).
+>
+> Le moral des gens — Satisfaction gagnée, toutes personnes de 16 ans ou plus :
+> probablement en hausse, de 1 234 milliers de WELLBY par an en 2035 (bande : de +765 à
+> +1 780), c'est mieux (sourcé, non jugé). L'écart est là dès 2026 (+1 586 milliers de
+> WELLBY par an).
+>
+> Les comptes publics — Solde des administrations publiques (B9) : probablement en baisse,
+> de 47,9 Md€ en 2035 (bande : de −63,6 à −24,0), c'est moins bien (sourcé, non jugé).
+> L'écart est là dès 2026 (−65,9 Md€).
+>
+> La productivité des entreprises — Productivité apparente du travail (PIB en volume par
+> emploi) : probablement en hausse, de 1,34 % d'écart à la référence en 2035 (bande : de
+> +0,40 à +1,42), c'est mieux (sourcé, non jugé). L'écart est là dès 2026 (+0,78 % d'écart
+> à la référence).
+>
+> La santé et le temps de vie — Années de vie gagnées dans l'année, tous canaux : en
+> hausse au centre, un ordre de grandeur : +15,7 milliers d'années de vie par an en 2035,
+> et le sens n'est pas sûr (bande : de −6,89 à +34,9) (illustratif). L'écart est là dès
+> 2026 (+19,3 milliers d'années de vie par an).
+>
+> Pour vous — Le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) :
+> en hausse, un ordre de grandeur : +1 827 € par an en 2035 (bande : de +1 663 à +1 835),
+> c'est mieux (illustratif). L'écart est là dès 2026 (+1 673 € par an).
+>
+> Le moral des gens — pour qui (écart de satisfaction d'un adulte, par décile de niveau de
+> vie, en 2035) : en hausse pour les 30 % les plus modestes (+0,043 points sur 10 en
+> moyenne par décile), en hausse pour les 30 % les plus aisés (+0,0067 points sur 10) ;
+> l'écart le plus grand en D1 (+0,070 points sur 10) ; au calcul central, sans bande par
+> décile (sourcé, non jugé).
+>
+> La santé et le temps de vie — pour qui (dont décès évités par le revenu réel, par décile
+> de niveau de vie, en 2035) : en hausse pour les 30 % les plus modestes (+303 décès par
+> an en moyenne par décile), en hausse pour les 30 % les plus aisés (+63,6 décès par an) ;
+> l'écart le plus grand en D1 (+472 décès par an) ; au calcul central, sans bande par
+> décile, un ordre de grandeur (illustratif).
+>
+> Pour vous — dans le détail (le revenu disponible réel du ménage (seul, au Smic,
+> locataire, par défaut), en 2035) : le plus haut, « Couple de retraités, propriétaire »
+> (+3 328 € par an) ; le plus bas, « Seul, au chômage, locataire » (+243 € par an) ; au
+> calcul central, sans bande (illustratif).
+
+*Retailleau (le jumeau complet)* :
+
+> Ce qui bouge le plus nettement : les comptes publics (solde des administrations
+> publiques (B9)), l'économie en général (PIB en volume), le moral des gens (satisfaction
+> gagnée) (le plus net au regard de sa bande, pas le plus gros : les unités ne se
+> comparent pas).
+>
+> Ce qu'on gagne ici, on le paie là. Du côté « mieux » : satisfaction gagnée en hausse (le
+> moral des gens), productivité apparente du travail (PIB en volume par emploi) en hausse
+> (la productivité des entreprises), PIB en volume en hausse (l'économie en général). Du
+> côté « moins bien » : solde des administrations publiques (B9) en baisse (les comptes
+> publics), le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) en
+> baisse, un ordre de grandeur (pour vous).
+>
+> Les comptes publics — Solde des administrations publiques (B9) : probablement en baisse,
+> de 39,0 Md€ en 2035 (bande : de −46,2 à −36,4), c'est moins bien (sourcé, non jugé).
+> L'écart est là dès 2026 (−45,5 Md€).
+>
+> L'économie en général — PIB en volume : probablement en hausse, de 0,80 % du PIB sans la
+> mesure en 2035 (bande : de +0,64 à +0,83), c'est mieux (sourcé, non jugé). L'écart
+> grandit avec le temps : +0,39 % du PIB sans la mesure en 2026.
+>
+> Le moral des gens — Satisfaction gagnée, toutes personnes de 16 ans ou plus :
+> probablement en hausse, de 1 769 milliers de WELLBY par an en 2035 (bande : de +996 à
+> +2 309), c'est mieux (sourcé, non jugé). L'écart est là dès 2026 (+1 032 milliers de
+> WELLBY par an).
+>
+> La productivité des entreprises — Productivité apparente du travail (PIB en volume par
+> emploi) : probablement en hausse, de 0,12 % d'écart à la référence en 2035 (bande : de
+> +0,0073 à +0,25), c'est mieux (sourcé, non jugé). L'écart est là dès 2026 (+0,24 %
+> d'écart à la référence).
+>
+> La santé et le temps de vie — Années de vie gagnées dans l'année, tous canaux : en
+> hausse au centre, un ordre de grandeur : +11,3 milliers d'années de vie par an en 2035,
+> et le sens n'est pas sûr (bande : de −82,3 à +114) (illustratif). L'écart est là dès
+> 2026 (+9,10 milliers d'années de vie par an).
+>
+> Pour vous — Le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) :
+> en baisse, un ordre de grandeur : −1 240 € par an en 2035 (bande : de −1 332 à −1 166),
+> c'est moins bien (illustratif). L'écart est là dès 2026 (−1 225 € par an).
+>
+> Le moral des gens — pour qui (écart de satisfaction d'un adulte, par décile de niveau de
+> vie, en 2035) : en hausse pour les 30 % les plus modestes (+0,039 points sur 10 en
+> moyenne par décile), en hausse pour les 30 % les plus aisés (+0,025 points sur 10) ;
+> l'écart le plus grand en D3 (+0,040 points sur 10) ; au calcul central, sans bande par
+> décile (sourcé, non jugé).
+>
+> La santé et le temps de vie — pour qui (dont décès évités par le revenu réel, par décile
+> de niveau de vie, en 2035) : en hausse pour les 30 % les plus modestes (+97,4 décès par
+> an en moyenne par décile), en hausse pour les 30 % les plus aisés (+19,8 décès par an) ;
+> l'écart le plus grand en D3 (+98,4 décès par an) ; au calcul central, sans bande par
+> décile, un ordre de grandeur (illustratif).
+>
+> Pour vous — dans le détail (le revenu disponible réel du ménage (seul, au Smic,
+> locataire, par défaut), en 2035) : le plus haut, « Couple, 2 enfants, salaires médians,
+> propriétaire » (+2 927 € par an) ; le plus bas, « Seul, au Smic, locataire » (−1 240 €
+> par an) ; au calcul central, sans bande (illustratif).
+
+*Attal (le jumeau complet)* :
+
+> Ce qui bouge le plus nettement : l'économie en général (PIB en volume), les comptes
+> publics (solde des administrations publiques (B9)), le moral des gens (satisfaction
+> gagnée) (le plus net au regard de sa bande, pas le plus gros : les unités ne se
+> comparent pas).
+>
+> Ce qu'on gagne ici, on le paie là. Du côté « mieux » : satisfaction gagnée en hausse (le
+> moral des gens), PIB en volume en hausse (l'économie en général), années de vie gagnées
+> dans l'année en hausse, un ordre de grandeur (la santé et le temps de vie), le revenu
+> disponible réel du ménage (seul, au Smic, locataire, par défaut) en hausse, un ordre de
+> grandeur (pour vous). Du côté « moins bien » : solde des administrations publiques (B9)
+> en baisse (les comptes publics).
+>
+> L'économie en général — PIB en volume : probablement en hausse, de 1,02 % du PIB sans la
+> mesure en 2035 (bande : de +0,89 à +1,31), c'est mieux (sourcé, non jugé). L'écart est
+> là dès 2026 (+0,55 % du PIB sans la mesure).
+>
+> Les comptes publics — Solde des administrations publiques (B9) : probablement en baisse,
+> de 63,3 Md€ en 2035 (bande : de −83,2 à −54,8), c'est moins bien (sourcé, non jugé).
+> L'écart est là dès 2026 (−64,0 Md€).
+>
+> Le moral des gens — Satisfaction gagnée, toutes personnes de 16 ans ou plus :
+> probablement en hausse, de 3 361 milliers de WELLBY par an en 2035 (bande : de +1 640 à
+> +4 518), c'est mieux (sourcé, non jugé). L'écart grandit avec le temps : +1 412 milliers
+> de WELLBY par an en 2026.
+>
+> La santé et le temps de vie — Années de vie gagnées dans l'année, tous canaux : en
+> hausse, un ordre de grandeur : +17,4 milliers d'années de vie par an en 2035 (bande : de
+> +4,26 à +51,9), c'est mieux (illustratif). L'écart est là dès 2026 (+10,2 milliers
+> d'années de vie par an).
+>
+> Pour vous — Le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) :
+> en hausse, un ordre de grandeur : +1 168 € par an en 2035 (bande : de +860 à +1 462),
+> c'est mieux (illustratif). L'écart est là dès 2026 (+1 336 € par an).
+>
+> La productivité des entreprises — Productivité apparente du travail (PIB en volume par
+> emploi) : en baisse au centre, −0,43 % d'écart à la référence en 2035, mais le sens
+> n'est pas sûr (bande : de −0,81 à +0,26) (sourcé, non jugé). L'écart change de sens en
+> route : +0,28 % d'écart à la référence en 2026.
+>
+> Le moral des gens — pour qui (écart de satisfaction d'un adulte, par décile de niveau de
+> vie, en 2035) : en hausse pour les 30 % les plus modestes (+0,062 points sur 10 en
+> moyenne par décile), en hausse pour les 30 % les plus aisés (+0,058 points sur 10) ;
+> l'écart le plus grand en D3 (+0,065 points sur 10) ; au calcul central, sans bande par
+> décile (sourcé, non jugé).
+>
+> La santé et le temps de vie — pour qui (dont décès évités par le revenu réel, par décile
+> de niveau de vie, en 2035) : en hausse pour les 30 % les plus modestes (+39,5 décès par
+> an en moyenne par décile), en hausse pour les 30 % les plus aisés (+36,9 décès par an) ;
+> l'écart le plus grand en D5 (+58,3 décès par an) ; au calcul central, sans bande par
+> décile, un ordre de grandeur (illustratif).
+>
+> Pour vous — dans le détail (le revenu disponible réel du ménage (seul, au Smic,
+> locataire, par défaut), en 2035) : le plus haut, « Couple, 2 enfants, salaires médians,
+> propriétaire » (+4 429 € par an) ; le plus bas, « Couple de retraités, propriétaire »
+> (−13,8 € par an) ; au calcul central, sans bande (illustratif).
+
+## D-652 — « Comparer » : les programmes côte à côte ; les refusés par leurs mesures
+
+**Ce qui est construit** (`site_impacts`, un quatrième onglet, « Comparer »). Tous les
+programmes précalculés, côte à côte, sur un nombre : on choisit la dimension, l'indicateur
+(le premier par défaut, la tête de D-605), l'année (l'horizon par défaut) et l'ordre (du
+plus haut, du plus bas, le plus net d'abord, par nom). Chaque ligne : le nombre, sa bande
+(un trait clair autour d'un point sur un axe commun avec son zéro ; « sens pas sûr » quand
+la bande franchit zéro ou n'est pas du côté du nombre, la règle de D-650), le statut ; la
+couleur du point suit le sens de l'indicateur. Dessous, le tableau de tous les nombres de
+tête à l'année choisie, chaque colonne triable (`aria-sort`), dans un cadre qui défile
+seul au téléphone. Une mesure ou une proposition calculée dans la page s'ajoute à la
+comparaison (les cinq dernières). Générique : les dimensions et les indicateurs sont
+l'union de ce que rendent les calculs ; une dimension d'un autre volet y entre seule. Une
+case absente est « — », avec sa raison au survol (absent, pas nul). Aucun total, aucune
+note par programme.
+
+**Les refusés : Mélenchon et Tondelier.** Le jumeau complet refuse leur programme entier
+dès sa première année (des prélèvements agrégés sans leur ventilation par impôt, D-605) ;
+la page les calculait par la chaîne des études seulement, où le moral, la santé, l'emploi
+et la productivité hors PIB sont absents. Chacune de leurs mesures, elle, passe seule dans
+le jumeau complet (vérifié : 7 sur 7 et 4 sur 4). Décidé ici : un programme refusé a
+**deux lignes**, et la page deux vues, nommées : la chaîne des études sur le programme
+entier, et le jumeau complet sur la proposition composée de ses mesures (D-605 : chaque
+passe faite seule, leurs interactions statiques non chiffrées), précalculée à la
+construction (`site_impacts.par_mesures`, la clé `<programme>@mesures`). Ce que cela
+couvre est dit, au coût mécanique de la première année des rapports : Mélenchon, 88,5 Md€
+pour la somme de ses 7 mesures contre 89,0 pour le programme ; Tondelier, 18,2 contre 18,2
+(4 mesures). La raison du refus est écrite sous la comparaison et dans la vue du
+programme, avec un bouton vers le calcul par ses mesures, et retour. **Une limite** : la
+santé lit l'âge de départ d'un programme entier seulement (D-622) ; celui de Mélenchon (60
+ans en 2032, `sante.yaml`) n'est dans aucune de ses sept mesures chiffrées, et la chaîne
+des études n'a pas de santé : aucune des deux lignes de Mélenchon ne porte son âge de
+départ, et la page le dit sur la ligne par ses mesures. Tondelier n'a pas d'âge.
+
+**Vérifié dans Chromium** (headless, deviceScaleFactor 1, 1 200 et 390 px) : la page
+d'Attal, de Retailleau, de Mélenchon (et le passage à ses mesures, ses cas types de
+« Pour vous » chargés), « Comparer » (tri par une colonne), une mesure de Le Pen calculée
+dans la page par Pyodide (6,3 s) puis ajoutée à la comparaison ; aucune erreur de console
+hors le `favicon.ico` absent du serveur local ; aucun défilement horizontal de la page.
+Les captures ont été regardées. `node ui/check.mjs` passe (il ne couvre pas cette page).
+Aucun test de navigateur dédié (D-335).
+
+**Ce qui reste à décider par le propriétaire.** Quelle ligne de Mélenchon et de Tondelier
+la page met en avant (aujourd'hui : le programme entier par la chaîne des études, comme
+avant ; la comparaison montre les deux). La comparaison ne règle ni θ ni le mode.

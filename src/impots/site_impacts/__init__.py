@@ -116,7 +116,8 @@ def par_mesures(s: Any, d: dict[str, Any], programme: str) -> dict[str, Any]:
     # Une mesure sans coût cette année-là : la somme est absente, pas comptée à zéro.
     out["couverture"] = {
         "annee": a, "programme": prog.couts[a], "nombre": len(mesures),
-        "mesures": None if sans else sum(couts.values()), "sans_cout": sans}
+        "mesures": None if sans else sum(couts.values()), "sans_cout": sans,
+        "age": _age_hors_mesures(programme)}
     return out
 
 
@@ -124,6 +125,17 @@ def par_mesures(s: Any, d: dict[str, Any], programme: str) -> dict[str, Any]:
 #: la page lit quand le lecteur s'en sert (D-630) : ils pèseraient sinon les deux tiers de
 #: la page.
 POUR_VOUS = "impacts-pour-vous.json"
+
+
+def _age_hors_mesures(programme: str) -> str | None:
+    """L'âge de départ que la santé lit pour le programme entier (`sante.yaml`, D-622) et
+    qu'aucune de ses mesures chiffrées ne porte : son texte, ou None."""
+    from impots.jumeau.impacts import sante
+    from impots.jumeau.navigateur import programme_age
+
+    nom = programme_age({"cle": programme})
+    p = sante.charger()["retraite"]["programmes"].get(nom or "")
+    return p["texte"] if p and p.get("ages") else None
 
 
 def separer(pre: dict[str, Any]) -> dict[str, Any]:
