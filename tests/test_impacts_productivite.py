@@ -140,3 +140,12 @@ def test_la_bande_des_canaux_quand_le_levier_baisse() -> None:
     pgf = ind["pgf_canaux"]
     assert pgf.valeurs[-1] < 0 and pgf.haut[-1] == pytest.approx(0.0)
     assert pgf.bas[-1] == pytest.approx(pgf.valeurs[-1] * 0.76 / 0.38)
+
+
+def test_une_mesure_declaree_rend_la_productivite_illustrative() -> None:
+    """D-635 : comme les comptes et l'économie (`_commun.statut`). Avant : « sourcé, non
+    jugé » pour une loi hypothétique ou une mesure mise à l'échelle."""
+    var, ref, depart = _trajectoire()
+    d = P.calculer(var, ref, depart, illustratives={"m": "2 fois la mesure chiffrée"})
+    assert d.statut == "illustratif" and d.juge is None
+    assert P.calculer(var, ref, depart).statut == "sourcé, non jugé"

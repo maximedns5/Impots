@@ -131,3 +131,17 @@ def test_controle_depart_sur_les_cellules_commitees():
     # Face à SRCV (Eurostat ilc_pw02 2025 : 1,3 ; Insee 2025 : 7,4 − 6,4 = 1,0).
     assert 0.5 <= out["centre"]["q5_q1"] / 1.3 <= 1.5
     assert 0.5 <= out["centre"]["emploi_chomage"] / 1.0 <= 1.5
+
+
+def test_une_mesure_declaree_rend_le_moral_illustratif():
+    """D-635 : une loi hypothétique ou une mesure mise à l'échelle rend la trajectoire
+    illustrative (`_commun.statut`) ; le moral qui la lit l'est aussi. Avant : « sourcé,
+    non jugé » quoi qu'il arrive."""
+    cel = FaussesCellules()
+    ref = [etat(2026, 10.0, 2400.0, prix=0.0)]
+    var = [etat(2026, 10.1, 2430.0, prix=0.0)]
+    d = moral.dimension(var, ref, None, cel, params=P,
+                        illustratives={"hypothese_tva": "loi hypothétique"})
+    assert d.statut == "illustratif"
+    assert any("hypothese_tva" in x for x in d.limites)
+    assert moral.dimension(var, ref, None, cel, params=P).statut == "sourcé, non jugé"

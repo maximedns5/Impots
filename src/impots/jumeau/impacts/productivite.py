@@ -57,6 +57,7 @@ import numpy as np
 import yaml
 
 from impots.jumeau.impacts import Dimension, Indicateur, Source, inscrire
+from impots.jumeau.impacts._commun import statut as statut_commun
 
 FICHIER = Path(__file__).resolve().parents[1] / "parametres" / "productivite.yaml"
 CANAUX = ("pression_cout", "salaire_efficience")
@@ -278,7 +279,7 @@ def _etats(variante: Any, reference: Any) -> tuple[Sequence[Any], Sequence[Any],
 def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *,
              mesures: Sequence[Any] | None = None, annees: Sequence[int] | None = None,
              canaux: Iterable[str] | None = None, cir: Mapping[int, float] | None = None,
-             **_: Any) -> Dimension:
+             illustratives: Mapping[str, str] | None = None, **_: Any) -> Dimension:
     """La dimension « productivité ». `mesures` : les mesures de la variante (leurs
     leviers) ; `canaux` : ceux à brancher (par défaut, ceux que le fichier branche) ;
     `cir` : {année : Md€}, la variation de la créance de CIR qu'une mesure fait (une
@@ -387,6 +388,12 @@ def calculer(variante: Any, reference: Any, depart: Any, cellules: Any = None, *
     )
     juges = [p.canaux[c].juge for c in branches if p.canaux[c].juge]
     statut = "jugé" if branches and len(juges) == len(branches) else "sourcé, non jugé"
+    if illustratives:
+        # Une mesure déclarée ou mise à l'échelle : illustratif, même avec un canal jugé
+        # (la règle de `_commun.statut`, D-606 ; D-635).
+        statut, en_plus = statut_commun({"illustratives": illustratives})
+        limites = [*en_plus, *limites]
+        juges = []
     return Dimension(
         cle="productivite", titre="La productivité des entreprises",
         question="La mesure rend-elle les entreprises plus productives, et avec elles le "
