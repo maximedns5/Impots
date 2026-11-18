@@ -41568,3 +41568,28 @@ par gravité :
 ne couvre pas cette page. Les contrôles dits aveugles (D-595 C1, D-620) n'ont pas été
 re-vérifiés au-delà de leurs D-entrées ; les non aveugles le disent eux-mêmes (D-595 C2,
 D-620 à moitié, D-632).
+
+## D-636 — Le rapport de la productivité refait avec la bande corrigée (D-635, point 1)
+
+**Ce qui est fait** (volet `corrige` du but 29, branche `claude/but29-corrige`) :
+`scripts/jumeau_productivite.py` relancé tel quel (le jumeau seul, 200 tirages, la graine
+du navigateur, une minute ; aucune passe sur la population) pour que
+`reports/jumeau/productivite_programmes.json` porte l'enveloppe canal par canal de D-635.
+
+**Avant → après**, en 2035, centre [bas ; haut], en % d'écart à la référence. Le centre
+ne bouge nulle part ; seules les deux lignes des canaux changent, et seulement pour les
+programmes qui ont un canal non nul :
+
+| programme | `pgf_canaux` | `pib_potentiel_avec_canaux` |
+|---|---|---|
+| Mélenchon | 0,517 [0 ; 1,214] → [−0,414 ; 1,628] | 1,198 [0,681 ; 1,894] → [0,267 ; 2,308] |
+| Retailleau | −0,104 [0 ; −0,207] → [−0,207 ; 0] | 0,779 [0,883 ; 0,676] → [0,676 ; 0,883] |
+| Ruffin | 0,192 [0 ; 0,452] → [−0,174 ; 0,625] | 0,399 [0,207 ; 0,659] → [0,033 ; 0,832] |
+| Tondelier | 0,261 [0 ; 0,522] → [−0,022 ; 0,544] | 0,275 [0,014 ; 0,536] → [−0,008 ; 0,558] |
+| Kazib | 0,261 [0 ; 0,522] → [−0,022 ; 0,544] | 0,243 [−0,018 ; 0,504] → [−0,041 ; 0,526] |
+| Bouamrane | 0,258 [0 ; 0,517] → [−0,022 ; 0,539] | 0,240 [−0,018 ; 0,499] → [−0,041 ; 0,521] |
+
+Attal, Roussel, Lisnard, Philippe, Le Pen et l'article 74 du PLF 2027 : aucun nombre ne
+change (leurs canaux sont nuls ou d'un seul signe à bas nul). Les autres indicateurs
+(productivité apparente, capital par tête, PIB potentiel du socle, salaires) sont
+identiques au rapport d'avant : le correctif ne touche que l'addition des canaux.
