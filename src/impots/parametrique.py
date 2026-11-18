@@ -58,6 +58,9 @@ ROOT = Path(__file__).resolve().parents[2]
 DOSSIER = ROOT / "data" / "processed" / "propositions"
 ENV_DOSSIER = "IMPOTS_PROPOSITIONS"
 ENV_VERROU = "IMPOTS_VERROU_PASSES"
+#: « non » : ce serveur rend les propositions déjà passées, et n'en lance aucune (une
+#: instance publique en lecture, ou une vérification de la page).
+ENV_PASSES = "IMPOTS_PASSES"
 #: Le cadre des études publiées (D-289, D-336) : la proposition se lit à côté d'elles.
 CADRE = "central"
 MILLESIME_ENTREPRISES = "2023"
@@ -74,6 +77,10 @@ RAISON = ("une proposition du lecteur, chiffrée par une passe qui n'a pas été
 
 class PropositionError(ValueError):
     """Un réglage que le module ne sait pas traduire, et pourquoi."""
+
+
+class FileFermee(RuntimeError):
+    """La file ne prend pas de proposition de plus (pleine, ou fermée sur ce serveur)."""
 
 
 # --------------------------------------------------------------------------- #
@@ -333,9 +340,12 @@ def proposer(reglage: Mapping[str, Any], *,
         e = etat(ident)
         if e.get("etat") != "echec":
             return e
+    if os.environ.get(ENV_PASSES) == "non":
+        raise FileFermee(f"ce serveur ne lance pas de passe ({ENV_PASSES}=non) : il ne rend "
+                         f"que les propositions déjà passées")
     if en_attente() >= FILE_MAX:
-        raise OverflowError(f"déjà {FILE_MAX} propositions en file : réessayez quand l'une "
-                            f"aura fini")
+        raise FileFermee(f"déjà {FILE_MAX} propositions en file : réessayez quand l'une "
+                         f"aura fini")
     ici.mkdir(parents=True, exist_ok=True)
     ecrire_etat(ici, id=ident, etat="en_file", reglage=dict(reglage), reforme=reform,
                 imputations=imputations, libelle=libelle(reglage), commit=commit,

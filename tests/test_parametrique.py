@@ -168,3 +168,10 @@ def test_the_api_queues_a_proposition_and_says_its_state(ici, monkeypatch) -> No
     plein = client.post("/impacts/proposition", json={"rsa": 6})
     assert plein.status_code == 503 and "file" in plein.json()["detail"]
     assert [p.name for p in lances] == [ident, lances[1].name] and len(lances) == 2
+    monkeypatch.setenv(parametrique.ENV_PASSES, "non")
+    ferme = client.post("/impacts/proposition", json={"rsa": 7})
+    assert ferme.status_code == 503 and "ne lance pas" in ferme.json()["detail"]
+    # Une proposition déjà là reste servie.
+    assert client.post("/impacts/proposition", json={"boutons": {"smic": 5}}
+                       ).json()["id"] == ident
+    assert len(lances) == 2

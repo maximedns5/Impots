@@ -718,7 +718,7 @@ def impacts_proposition(reglage: dict[str, Any]) -> JSONResponse:
         e = parametrique.proposer(reglage.get("boutons", reglage))
     except parametrique.PropositionError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    except OverflowError as error:
+    except parametrique.FileFermee as error:
         raise HTTPException(status_code=503, detail=str(error),
                             headers={"Retry-After": "600"}) from error
     return JSONResponse(e, status_code=200 if e.get("etat") == "fait" else 202)

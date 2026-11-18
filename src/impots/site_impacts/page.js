@@ -171,6 +171,7 @@
     e.innerHTML = html;
   }
   const ETAPES = { premiere_annee: "la première année (20 000 ménages, comportements, boucle)", chemin_annuel: "chaque année jusqu'en 2035 (la plus longue)", cas_types: "les cas types de « Pour vous »", jumeau: "le jumeau, toutes les dimensions" };
+  const TEMPS = { attente_verrou_s: "l'attente de son tour", premiere_annee_s: "la première année", chemin_annuel_s: "les années suivantes", cas_types_s: "les cas types", jumeau_s: "le jumeau" };
   let suivi = null;
   async function suivre(id) {
     clearTimeout(suivi);
@@ -181,7 +182,8 @@
     window.impacts.bareme = e;
     if (!r.ok) { etatBareme(esc(e.detail || r.status), true); return; }
     if (e.etat === "fait" && e.resultat) {
-      etatBareme(`<b>Fait.</b> ${esc(e.libelle)} — ${Object.entries(e.temps || {}).map(([k, v]) => `${esc(k.replace(/_s$/, "").replace(/_/g, " "))} ${fr(v / 60, 1).replace("+", "")} min`).join(", ")}. Le résultat est ci-dessous.`);
+      const duree = (v) => (v < 90 ? `${Math.round(v)} s` : `${fr(v / 60, 0).replace("+", "")} min`);
+      etatBareme(`<b>Fait.</b> ${esc(e.libelle)}. Les temps : ${Object.entries(e.temps || {}).map(([k, v]) => `${esc(TEMPS[k] || k)} ${duree(v)}`).join(", ")}. Le résultat est ci-dessous.`);
       dessiner(e.resultat);
       return;
     }
