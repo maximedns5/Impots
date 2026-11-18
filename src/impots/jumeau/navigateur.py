@@ -775,7 +775,18 @@ class Session:
             traj.variante, traj.reference, ctx["depart"], self.cellules, trajectoire=traj,
             tirages=t, mesures=list(traj.mesures), illustratives=ctx["illustratives"],
             mode=ctx["mode"], thetas=ctx["registre"], juge=self.donnees.get("juge"),
-            annees=tuple(traj.annees))
+            annees=tuple(traj.annees), programme=programme_age(ctx))
+
+
+def programme_age(ctx: Mapping[str, Any]) -> str | None:
+    """Le programme dont la santé lit l'âge légal (`impacts.sante`, D-622) : le nom du
+    candidat d'un programme entier (« pres2027_<nom>_programme »), aucun pour une mesure
+    seule ou une proposition composée (la page le dit : l'âge n'y est pas porté)."""
+    cle = ctx.get("cle") or ""
+    if ctx.get("composition") or not (cle.startswith("pres2027_")
+                                      and cle.endswith("_programme")):
+        return None
+    return cle[len("pres2027_"):-len("_programme")]
 
 
 def loi_de(cle: str) -> Any:

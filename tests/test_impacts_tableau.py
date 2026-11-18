@@ -198,3 +198,15 @@ def test_la_vue_d_ensemble_ne_somme_rien() -> None:
     assert e[0]["tete"]["debut"]["annee"] == 2027
     assert e[0]["tete"]["horizon"]["signe"] == "moins bien"
     assert len(e) == len(dims)
+
+
+def test_la_sante_lit_l_age_du_programme_entier_seulement() -> None:
+    """D-622 : la dimension `sante` ne voit l'âge légal que d'un programme entier ; une
+    mesure seule ou une proposition composée n'en porte pas (D-610)."""
+    from impots.jumeau.navigateur import programme_age
+
+    assert programme_age({"cle": "pres2027_philippe_programme"}) == "philippe"
+    assert programme_age({"cle": "pres2027_le_pen_programme"}) == "le_pen"
+    assert programme_age({"cle": "pres2027_philippe_programme",
+                          "composition": [{"candidat": "x"}]}) is None
+    assert programme_age({"cle": "pres2027_le_pen_lp20_tva_energie"}) is None
