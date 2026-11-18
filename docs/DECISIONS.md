@@ -43168,3 +43168,125 @@ place, après `pouvoir`, avant le moral. Trois choses changent pour elles.
 Tests légers des fichiers touchés (`test_impacts_*`, `test_jumeau_impacts_*`,
 `test_jumeau_navigateur`) : 110 passés. Les nombres sur la distribution mesurée et le
 juge (D-591) iront dans D-592 et D-640 quand les passes auront tourné.
+
+## D-592 — Le pouvoir d'achat et l'entente (2) : le juge de D-591, la prime manquée
+
+**Ce qui a tourné** (le code de D-591, 4cbe38f, figé dans un worktree détaché ; les
+passes une à une sous le verrou commun, détachées). La distribution mesurée des niveaux
+de vie dans les cellules (`scripts/jumeau_niveaux_de_vie.py`, 18 novembre, 11 h 19 UTC,
+76 s) ; les cellules de D-553 refaites (`jumeau_cellules.py`, 30 000 ménages, 89 s) ;
+`ppa_passe` (112 s) et `ir_passe` (112 s), 20 000 ménages, de 18 h 26 à 18 h 58 UTC ;
+puis `rapport` et le verdict (`relais/pouvoir/verdict.py`, commité au relais 0ffe422 sur
+`claude/relais-b28-b29`, ses juges codés tels quels). Rapports : `reports/verification/juges_pouvoir_b29/
+modele.json` et `verdict.json`, `reports/jumeau/niveaux_de_vie_cellules.json`. La passe
+de la mesurée a tourné avant celles des juges : **le nombre noté est (b) sur la
+mesurée**, comme D-591 le disait ; l'approchée est rapportée à côté.
+
+**Les cellules, dites.** L'empreinte du fichier refait (79fb44e6…) n'est pas celle de
+D-557 (605ee363…) : le fichier porte la date, les durées et la mémoire de sa passe. Le
+contenu est le même : population 5ace8bb6…, graine 20240101, 30 000 ménages, et les
+recoupements de D-553 au centième (salaire brut −0,56 %, IR contre les recettes nettes
++9,85 %, « dit », médiane contre Filosofi −6,36 %). Le conteneur a été récupéré deux fois
+pendant la chaîne (16 h 51, puis 16 h 53 à 18 h 24, la session inactive) ; la chaîne a
+été relancée en entier, rien d'une passe interrompue n'est gardé. Deux fichiers manquaient
+au checkout neuf et ont été posés depuis leur URL du manifeste, l'empreinte vérifiée :
+`ccss_mai2026_comptes_secu_resultats2025.pdf` et `plfss2026_annexe9_evaluations_
+prealables.pdf` (la part ALD de la Drees, p. 228, D-312 ; aucune évaluation préalable
+n'y est jugée). Si l'interdit du propriétaire sur les évaluations préalables couvre
+aussi ce fichier de 2026, ce résultat est à refaire sans lui.
+
+### Cas 1 — La prime d'activité de 2019 (*Portrait social* 2020, fig. 4) : manqué
+
+| | modèle | pronostic | juge | tient |
+|---|---:|---|---:|---|
+| pauvreté, (b) mesurée, points | −0,17 | −0,20 (−0,05 à −0,35) | −0,7 | non (0,24) |
+| pauvreté, (a) ménages de la passe | −0,32 | −0,25 (−0,10 à −0,40) | −0,7 | non (0,45) |
+| pauvreté, (b) approchée | −0,39 | | −0,7 | (0,55) |
+| Gini, (a), points ×100 | −0,19 | −0,15 (−0,05 à −0,25) | sans juge | |
+| D9/D1, (a) | −0,031 | −0,03 (−0,01 à −0,06) | sans juge | |
+
+**La pauvreté est manquée** : (b) fait le quart de l'effet publié, le rapport sort de 0,5
+à 2. Le pronostic l'avait dite sous le juge, rapport 0,6, « dans la tolérance de peu » ;
+elle l'est bien plus. (a) manque aussi, de peu (0,45). Le contrôle de la méthode, (b) à
+0,1 point de (a), **est manqué** : 0,15 point d'écart. La distribution approchée, qui
+tiendrait (0,55), n'est pas celle que D-591 note ; elle est rapportée, rien n'est mis à
+la place. Ce que cela dit : le gain de la prime tombe dans le modèle en D2 à D4 (129, 193,
+206 € par personne et par an ; le plus haut en D4), et la mesurée place, dans ces
+cellules, peu de personnes juste sous le seuil ; D-536 disait déjà le gain d'un à deux
+déciles trop haut. Le Gini et D9/D1, sans juge par mesure (le *Portrait social* 2020
+n'en donne qu'une part), tombent dans leurs fourchettes. Coût : 3,71 Md€ (non jugé).
+
+### Cas 2 — La baisse de l'impôt de 2020 (*Portrait social* 2022, D2) : à part (D-677)
+
+**Noté à part, non aveugle** (D-677) : le juge a été lu avant que le modèle ne tourne ;
+ce cas n'entre dans aucune note. **La différence de champ, dite et non corrigée** : le
+juge est un effet consolidé, sur la législation de 2021 ; le modèle mesure la loi de 2020
+contre la même loi au barème et à la décote de 2019 revalorisés de 0,2 % (27 850 €,
+1 210 et 1 994 €), sur la population ramenée à 2020.
+
+| | modèle | pronostic | juge | tient |
+|---|---:|---|---:|---|
+| coût, Md€ | 6,54 | 5,0 (4,0 à 6,0) | 5,39 | sans tolérance |
+| gain moyen, € par personne | 135 | 110 (85 à 135) | 120 | oui (+12 %) |
+| décile au gain le plus haut | D8 | D7 ou D8 | D8 | oui |
+| part de D1 à D3, % | 1,1 | 4 (0 à 8) | 0,9 | oui |
+| part de D8 à D10, % | 56,7 | 33 (25 à 42) | 59,8 | oui |
+| pauvreté, (b) mesurée, points | +0,41 | +0,02 (−0,03 à +0,08) | +0,232 | oui (1,75) |
+| pauvreté, (a) | +0,30 | +0,02 (−0,03 à +0,08) | +0,232 | oui (1,28) |
+| Gini, (a), points ×100 | +0,10 | −0,05 (−0,15 à +0,05) | sans juge | |
+
+Le gain par décile, € par personne : 1, 3, 11, 23, 82, 165, 299, 344, 273, 146 (le juge :
+0, 0, 10, 20, 70, 140, 230, 290, 250, 160). **Contre le juge, tout tient** ; le contrôle
+(b) contre (a) manque de 0,01 point (0,11). **Le pronostic se trompe** sur la forme : il
+mettait un tiers du gain en haut, le modèle et le juge y en mettent près de 60 % ; il
+voyait la pauvreté quasi nulle, elle monte de 0,3 à 0,4 point (le juge, 0,23) ; il
+voyait le Gini baisser, il monte. Le coût dépasse la fourchette : 6,5 Md€ contre 5,0
+prévus et 5,39 publiés, le champ (2020 contre 2019 revalorisé, et non le consolidé)
+pouvant en porter une part, non mesurée.
+
+**Ce qui reste.** La prime manquée n'est pas corrigée ici : il faudrait voir où tombe le
+gain dans le décile (la distribution du gain dans la cellule, D-591, limite dite), et
+D-536 n'a pas été repris. Aucune tolérance n'est retouchée.
+
+## D-640 — Le pouvoir d'achat et l'entente (5) : les nombres de D-593 sur la mesurée
+
+**Ce qui a tourné** (le code de D-594, d3679d0, le jumeau seul, aucune passe sur la
+population ; `relais/pouvoir/essai2.py`, 200 tirages, la graine de D-459) : le tableau de
+D-593 refait, la distribution des niveaux de vie dans les cellules étant **la mesurée**
+(`reports/jumeau/niveaux_de_vie_cellules.json`, D-592), commitée avec cette entrée ; la
+page la lit par `site_jumeau.donnees()` (D-594).
+
+**Les références** (mesurée, 2024 ; entre parenthèses, l'approchée de D-593) : pauvreté
+16,5 % (15,6), Gini 0,288 (0,300), D9/D1 3,57 (4,15), S80/S20 4,39 (4,66), médiane
+24 889 € (24 897). **D9/D1 se rapproche** de l'ordre que l'Insee publie (3,4, de mémoire,
+non relu) : le bas de la distribution n'est plus prolongé linéairement. La pauvreté monte
+d'un point.
+
+**Le pouvoir d'achat ne bouge pas** : il ne lit pas la distribution. Retailleau +791 €
+de 2025 par UC en 2026, +707 en 2035 (bande +639 à +764) ; Attal +1 133 puis +848 ;
+Mélenchon +1 454 (€ de 2024), comme D-593.
+
+**Ce qui rapproche ou sépare**, mesurée (approchée, D-593), la pauvreté en points :
+
+| | 2026 | 2030 | 2035 | bande 2035 |
+|---|---:|---:|---:|---|
+| Retailleau, pauvreté | −0,49 (−0,82) | −0,64 (−0,74) | −0,57 (−0,77) | −0,62 à −0,53 |
+| Retailleau, Gini ×100 | −0,69 (−0,71) | −0,71 (−0,72) | −0,62 (−0,63) | −0,64 à −0,59 |
+| Attal, pauvreté | +1,12 (+1,1) | +0,71 | +0,43 (+0,13) | +0,22 à +1,00 |
+| Attal, Gini ×100 | +0,12 (+0,07) | −0,11 | −0,12 (−0,14) | −0,17 à +0,01 |
+
+Mélenchon, choc statique seul : pauvreté −1,16 point (−1,18), Gini −2,22 (−2,24), D9/D1
+−0,37 (−0,31), S80/S20 −0,53. **La pauvreté bouge le plus** : la mesurée met moins de
+monde près du seuil en bas qu'elle ne le prolongeait ; Retailleau la baisse d'un tiers de
+moins, Attal la monte plus longtemps (sa bande de 2035 ne passe plus par zéro). Le Gini
+change peu. Retailleau : pauvreté des personnes seules −2,59 point en 2026.
+
+**Les groupes que la mesurée ouvre** (D-593 les attendait) : l'écart moyen à la moyenne,
+en points du niveau de vie moyen, en 2026. Retailleau : âge de la personne de référence
++0,04, statut −0,46 (les retraités +0,54, les personnes en emploi −0,43), territoire
+−0,06 (l'outre-mer +0,10). Attal : âge +0,23 (les 75 ans et plus s'éloignent), statut
+−0,31, territoire −0,05. Mélenchon : âge −0,06, statut −1,37, territoire −0,15. Ces
+écarts ne sont pas jugés.
+
+Le Mélenchon de D-593 et les nombres de la page (50 tirages, D-594) se lisent sur la même
+distribution dès que le fichier est là ; aucun code n'est changé par cette entrée.

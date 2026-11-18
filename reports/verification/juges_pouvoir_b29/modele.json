@@ -1,0 +1,254 @@
+{
+ "decisions": [
+  "D-591",
+  "D-592"
+ ],
+ "menages_echantillon": 20000,
+ "ppa_2019": {
+  "commit": "4cbe38f1db3e76040f79270b78d1a16e67d7b53f",
+  "annee": 2019,
+  "vieillissement": {
+   "jeu": "insee_constate",
+   "source": "Insee, constaté : salaires par tête, D11 sur l'emploi intérieur salarié (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac, ensemble des ménages, France (BDM 001768695)",
+   "de": 2024,
+   "vers": 2019,
+   "salaires": {
+    "2020": -0.03664474311144206,
+    "2021": 0.05250448012329545,
+    "2022": 0.055844276565951256,
+    "2023": 0.046620701783021135,
+    "2024": 0.026386633280596428
+   },
+   "prix": {
+    "2020": 0.002,
+    "2021": 0.016,
+    "2022": 0.053,
+    "2023": 0.048,
+    "2024": 0.018000000000000002
+   },
+   "facteur_salaires": 0.8695396636770973,
+   "facteur_prix": 0.8743818591179079,
+   "colonnes": {
+    "salaire_brut_annuel": "wage",
+    "pension_annuelle": "price",
+    "chomage_annuel": "wage",
+    "loyer_mensuel": "price",
+    "revenu_non_salarie_annuel": "wage"
+   }
+  },
+  "menages": 20000,
+  "duree_s": 111.7,
+  "sens": "gain = revenu_disponible − revenu_disponible_reform (la mesure, moins le miroir)",
+  "micro": {
+   "cout_md": 3.705782093205032,
+   "gain_nv_par_decile": [
+    43.09571066165327,
+    129.05610508290792,
+    193.48571632425603,
+    205.65103670093077,
+    94.08608790064147,
+    49.7335507610399,
+    32.14847516248904,
+    22.146823648839007,
+    17.342160803096213,
+    8.294752025225527
+   ],
+   "parts_deciles": [
+    0.05420568518013972,
+    0.16232647043743556,
+    0.24336588641659712,
+    0.25866739824525187,
+    0.11834126371910894,
+    0.06255474510232864,
+    0.040436277692712956,
+    0.02785622355491716,
+    0.021812929741809477,
+    0.010433119909698516
+   ],
+   "gain_nv_moyen": 79.5017604977996,
+   "decile_max": 4,
+   "pauvrete_sans": 0.14301812277363915,
+   "pauvrete_avec": 0.13983337036897764,
+   "pauvrete_points": -0.31847524046615117,
+   "gini_points": -0.1868183408838764,
+   "d9_d1": -0.031324046793997695,
+   "mediane_sans": 21664.752904168865
+  },
+  "cellules": {
+   "mesuree": {
+    "pauvrete_points": -0.16790378399344774,
+    "gini_points": -0.1730492128423855,
+    "d9_d1": -0.04056076292309907,
+    "pauvrete_reference": 0.16497639734323755
+   },
+   "approchee": {
+    "pauvrete_points": -0.3884167040658332,
+    "gini_points": -0.17288300221702801,
+    "d9_d1": -0.03481451958256265,
+    "pauvrete_reference": 0.15631409083386635
+   }
+  },
+  "cellules_gain_uc_par_decile_euros_de_l_annee": [
+   18.30576967552454,
+   98.51488061192796,
+   170.10452920373382,
+   235.46470508885204,
+   139.72126105052004,
+   57.308267009366126,
+   32.73597248313403,
+   21.51737986005979,
+   15.907053945822145,
+   7.564997805351922
+  ],
+  "chocs_par_decile_md": [
+   0.07660835114818541,
+   0.44772508456492566,
+   0.7969299764440928,
+   1.0829722849844756,
+   0.6435321861788466,
+   0.27667633894357346,
+   0.16105334515062417,
+   0.10581829912123462,
+   0.07886808884300736,
+   0.0355981378260666
+  ],
+  "echelle": 1.1488453917757864,
+  "distribution": "mesurée : les quantiles du niveau de vie des personnes de chaque cellule, passe de référence des cellules (30000 ménages, droit de 2024, population population_2024.parquet)"
+ },
+ "ir_2020": {
+  "commit": "4cbe38f1db3e76040f79270b78d1a16e67d7b53f",
+  "annee": 2020,
+  "vieillissement": {
+   "jeu": "insee_constate",
+   "source": "Insee, constaté : salaires par tête, D11 sur l'emploi intérieur salarié (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac, ensemble des ménages, France (BDM 001768695)",
+   "de": 2024,
+   "vers": 2020,
+   "salaires": {
+    "2021": 0.05250448012329545,
+    "2022": 0.055844276565951256,
+    "2023": 0.046620701783021135,
+    "2024": 0.026386633280596428
+   },
+   "prix": {
+    "2021": 0.016,
+    "2022": 0.053,
+    "2023": 0.048,
+    "2024": 0.018000000000000002
+   },
+   "facteur_salaires": 0.8376756060764403,
+   "facteur_prix": 0.8761306228361437,
+   "colonnes": {
+    "salaire_brut_annuel": "wage",
+    "pension_annuelle": "price",
+    "chomage_annuel": "wage",
+    "loyer_mensuel": "price",
+    "revenu_non_salarie_annuel": "wage"
+   }
+  },
+  "menages": 20000,
+  "contrefactuel": {
+   "ir_bareme": [
+    {
+     "threshold": 0.0,
+     "rate": 0.0
+    },
+    {
+     "threshold": 10084.0,
+     "rate": 0.14
+    },
+    {
+     "threshold": 27850.0,
+     "rate": 0.3
+    },
+    {
+     "threshold": 74666.0,
+     "rate": 0.41
+    },
+    {
+     "threshold": 158122.0,
+     "rate": 0.45
+    }
+   ],
+   "decote_seuil_celib": 1210.0,
+   "decote_seuil_couple": 1994.0,
+   "decote_taux": 0.75
+  },
+  "duree_s": 112.4,
+  "sens": "gain = revenu_disponible − revenu_disponible_reform (la loi de 2020, moins le contrefactuel)",
+  "micro": {
+   "cout_md": 6.543661312808377,
+   "gain_nv_par_decile": [
+    1.0552670346735145,
+    3.419314097465852,
+    10.558244010771869,
+    22.501008022250836,
+    81.55159231001677,
+    165.24645565351557,
+    298.88046860081386,
+    343.6479125318604,
+    272.5216197325394,
+    146.47413933584178
+   ],
+   "parts_deciles": [
+    0.0007840861265612024,
+    0.0025406239919240825,
+    0.007845002617991767,
+    0.0167187334050927,
+    0.06059458888436011,
+    0.12278167429101865,
+    0.2220746230384363,
+    0.2553377977180093,
+    0.20248943082580198,
+    0.10883343910080408
+   ],
+   "gain_nv_moyen": 134.5832933032428,
+   "decile_max": 8,
+   "pauvrete_sans": 0.12600932477711013,
+   "pauvrete_avec": 0.12898637593798942,
+   "pauvrete_points": 0.29770511608792904,
+   "gini_points": 0.09918621568284491,
+   "d9_d1": 0.016462512536807417,
+   "mediane_sans": 21277.992530417898
+  },
+  "cellules": {
+   "mesuree": {
+    "pauvrete_points": 0.40559507607945966,
+    "gini_points": 0.07733093970724303,
+    "d9_d1": 0.023876749039366985,
+    "pauvrete_reference": 0.16497639734323755
+   },
+   "approchee": {
+    "pauvrete_points": 0.38120667322333046,
+    "gini_points": 0.06983825189443849,
+    "d9_d1": 0.026042329308810785,
+    "pauvrete_reference": 0.15631409083386635
+   }
+  },
+  "cellules_gain_uc_par_decile_euros_de_l_annee": [
+   0.30751812177488996,
+   1.5111578473048473,
+   8.589844031984544,
+   14.448325815534618,
+   71.44313315922173,
+   161.79134375328925,
+   296.4828814786045,
+   359.55034826196237,
+   281.0644048307093,
+   148.39468621557793
+  ],
+  "chocs_par_decile_md": [
+   0.0012869415859011765,
+   0.006867828197861051,
+   0.04024292729953726,
+   0.06645215221001087,
+   0.32905482904850497,
+   0.7811060951311846,
+   1.4586265878194524,
+   1.7681988489755973,
+   1.3935334931467525,
+   0.6982916093935739
+  ],
+  "echelle": 1.1697274309282155,
+  "distribution": "mesurée : les quantiles du niveau de vie des personnes de chaque cellule, passe de référence des cellules (30000 ménages, droit de 2024, population population_2024.parquet)"
+ }
+}
