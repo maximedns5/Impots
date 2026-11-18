@@ -41660,3 +41660,42 @@ du coût réduit la PGF, ce que Riley et Rosazza Bondibene n'estiment que dans l
 hausse) : la baisse de 0,48 point du PIB d'Attal en dépend entièrement, son bas est 0.
 Test : `test_le_droit_au_brut_passe_au_cout_par_l_incidence`, en échec sur le code
 d'avant (le levier valait 0).
+
+## D-638 — « Pour vous » : le gain pris à la cellule ramené en euros de 2026
+
+**L'erreur** (D-635, écrit, non changé) : dans « Pour vous », le statique d'une mesure
+chiffrée par OpenFisca est en euros de 2026 (le cas type au droit et aux niveaux de 2026),
+tenu en part du revenu de 2026 chaque année ; à défaut (l'indépendant, une loi simple, une
+mesure hors du tableau), le gain est pris à la cellule, `Mesure.menages[a]` en Md€ de
+l'année a (vue vieillie : le total de l'année du chemin, aux parts de la première), divisé
+par le nombre de ménages du décile. Les deux étaient sommés et rapportés au revenu de 2026
+sans conversion : un gain de 2035 comptait comme des euros de 2026.
+
+**Le correctif** (`impacts/pour_vous.py`, `nominal`, `statique`) : le gain de la cellule de
+l'année a est divisé par le revenu disponible nominal de son décile dans la référence du
+jumeau (`rdb_dXX`), rapporté à celui de 2026 ; c'est le même rapport au revenu du décile
+que l'année dite, porté au revenu de 2026, la base du statique d'OpenFisca. Sans les
+déciles (un autre mode), le PIB nominal de la référence ; sans lui, rien (et `lus` le
+dit). Le facteur vaut 1 en 2026 et 1,307 en 2035 (Retailleau, décile 5 : 110,1 → 143,9
+Md€) : l'écart est de l'ordre de 23 % en fin de période, non de « quelques pour cent »
+comme D-635 l'estimait.
+
+**Avant → après**, les cas approximés (l'indépendant, seul et locataire, ou en couple,
+deux enfants, propriétaire : tous deux au même décile et à la même cellule), le statique
+en € par an, 2026 inchangé, puis 2035 ; et le revenu réel de 2035 :
+
+| programme | statique 2026 | statique 2035 | revenu réel 2035 (seul) |
+|---|---|---|---|
+| Mélenchon | 2 770 | 2 975 → 2 276 | 2 656 → 1 964 |
+| Retailleau | 1 357 | 1 391 → 1 064 | 1 456 → 1 129 |
+| Attal | 2 082 | 2 599 → 1 988 | 2 852 → 2 236 |
+| Roussel | 366 | 325 → 248 | 144 → 68 |
+| Ruffin | 699 | 730 → 558 | 622 → 451 |
+| Lisnard | 818 | 1 129 → 864 | 1 103 → 838 |
+| Le Pen | 606 | 923 → 706 | 903 → 686 |
+| Philippe | 1 750 | 1 558 → 1 192 | 1 533 → 1 167 |
+
+Les cas que le tableau d'OpenFisca tient ne changent pas : `pour_vous_programmes.json`
+(quatre cas tenus par OpenFisca, le programme d'un coup) ne bouge en aucun nombre (relancé,
+seul `lus` gagne « rdb_dXX ») et garde son commit. Test :
+`test_le_gain_de_la_cellule_est_ramene_en_euros_de_2026`, en échec sur le code d'avant.

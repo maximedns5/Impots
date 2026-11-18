@@ -118,7 +118,34 @@ def economie(variante: Any, reference: Any, tirage: int = 0) -> dict[str, Any]:
         lus.append("chomage")
     infl = _moral.moyenne(100.0 * np.diff(np.concatenate([[0.0], dp])), 3)
     return {"annees": tuple(int(a) for a in annees), "w": w, "dp": dp, "ru": ru, "du": du,
-            "inflation": infl, "lus": lus}
+            "inflation": infl, "lus": lus,
+            "nominal": nominal(ref, tuple(int(a) for a in annees), tirage, lus)}
+
+
+#: L'année des euros du statique d'OpenFisca (le droit et les niveaux de 2026).
+ANNEE_EUROS = 2026
+
+
+def nominal(ref: Sequence[Any], annees: Sequence[int], tirage: int = 0,
+            lus: list[str] | None = None) -> np.ndarray:
+    """(10, années) : le revenu disponible nominal de chaque décile dans la référence du
+    jumeau (`rdb_dXX`), rapporté à celui de 2026 (D-638). Il porte en euros de 2026 un gain
+    pris à la cellule (`Mesure.menages`, Md€ de son année) : le même rapport au revenu du
+    décile que l'année dite. Sans les déciles, le PIB nominal de la référence ; sans lui,
+    1 (et le gain reste en euros de son année, dit par `lus`)."""
+    n = len(annees)
+    base = annees.index(ANNEE_EUROS) if ANNEE_EUROS in annees else 0
+    series = [_champ(ref, f"rdb_d{d:02d}", tirage) for d in range(1, 11)]
+    if all(s is not None for s in series):
+        if lus is not None:
+            lus.append("rdb_dXX")
+        return np.array([s / s[base] for s in series])
+    pib = _champ(ref, "pib", tirage)
+    if pib is not None:
+        if lus is not None:
+            lus.append("pib (nominal)")
+        return np.tile(pib / pib[base], (10, 1))
+    return np.ones((10, n))
 
 
 def _origine(etat: Any, champ: str, origine: str, tirage: int) -> float:
@@ -141,9 +168,12 @@ def _base(ident: str, mesures: Mapping[str, Any]) -> str | None:
 
 def statique(cas: Mapping[str, Any], tab: Mapping[str, Any], mesures: Sequence[Any],
              composition: Sequence[Mapping[str, Any]] | None, annees: Sequence[int],
-             cellules: Any) -> tuple[np.ndarray, list[dict[str, Any]]]:
+             cellules: Any, nominal: np.ndarray | None = None
+             ) -> tuple[np.ndarray, list[dict[str, Any]]]:
     """Le gain statique du cas type par année (euros de 2026, gain positif), et, mesure par
-    mesure, d'où il vient (« openfisca » ou « cellule »)."""
+    mesure, d'où il vient (« openfisca » ou « cellule »). `nominal` (10, années) : le
+    revenu des déciles rapporté à 2026, qui ramène un gain de cellule en euros de 2026
+    (D-638) ; None, le gain reste en euros de son année."""
     from impots.jumeau.cellules import TYPES
 
     out = np.zeros(len(annees))
@@ -175,7 +205,9 @@ def statique(cas: Mapping[str, Any], tab: Mapping[str, Any], mesures: Sequence[A
         for j, a in enumerate(annees):
             x = men.get(a, men.get(str(a)))
             if x and x.get("deciles") is not None:
-                out[j] += float(x["deciles"][d]) * 1e9 / menages_dec[d]
+                # Md€ de l'année a, ramenés en euros de 2026 au revenu du décile (D-638).
+                porte = 1.0 if nominal is None else float(nominal[d, j])
+                out[j] += float(x["deciles"][d]) * 1e9 / menages_dec[d] / porte
                 lu = True
         origines.append({"mesure": m.identifiant,
                          "origine": "cellule" if lu else "absent",
@@ -229,7 +261,8 @@ def calcul_cas(cas: Mapping[str, Any], tab: Mapping[str, Any], eco: Mapping[str,
     annees = eco["annees"]
     ref = reference_cas(cas, cellules, tab)
     rd = float(ref["revenu_disponible"])
-    s, origines = statique(cas, tab, mesures, composition, annees, cellules)
+    s, origines = statique(cas, tab, mesures, composition, annees, cellules,
+                           eco.get("nominal"))
     indexees = (float(ref["prestations"]) + (float(ref["pensions_chomage"])
                                              if cas["activite"] == "retraite" else 0.0))
     nominal = s + eco["w"] * float(ref["salaire_net"]) + eco["dp"] * indexees
@@ -316,7 +349,9 @@ LIMITES = (
     "revenus et les seuils des années suivantes ne le changent pas.",
     "L'indépendant, une loi simple ou une mesure hors du tableau prennent le gain moyen par "
     "ménage du décile de leur cellule (décile de niveau de vie × type de ménage) : une "
-    "approximation, dite mesure par mesure.",
+    "approximation, dite mesure par mesure ; ce gain, en euros de son année, est ramené "
+    "en euros de 2026 au revenu disponible de son décile dans la référence du jumeau "
+    "(D-638).",
     "Une proposition composée somme les statiques de ses mesures, chacune fois son "
     "intensité, sans leurs interactions (D-605).",
     "Après la mesure, l'économie du jumeau : le salaire moyen par tête (cotisations des "
