@@ -83,6 +83,9 @@ SERIES = (
 #: La plage des résultats : tant de tirages des θ selon leurs lois, d'une graine fixée,
 #: pour que la page redonne la même plage à chaque visite (D-459).
 TIRAGES = 200
+#: Les tirages des bandes de la page « Ce que ça change » (D-605) : moins que la plage du
+#: jumeau, pour que le calcul dans le navigateur reste de quelques secondes.
+TIRAGES_IMPACTS = 60
 GRAINE = 20261115
 
 #: D'où vient la loi d'un θ (`a_priori.yaml`, D-424, D-438) : une estimation publiée du
@@ -498,21 +501,40 @@ class Session:
             raise NavigateurError(f"convention « {convention} » inconnue "
                                   f"({CONVENTION_PARTS})")
         cle = choix.get("candidat") or None
-        if not (cle and mode == "structurel"):
+        composition = choix.get("composition") or None
+        if composition:
+            # Une proposition composée (D-605) : le mode structurel seul, le cadre commun
+            # des rapports (`site_jumeau.donnees` le tient unique).
+            if mode != "structurel":
+                raise NavigateurError("une proposition composée se calcule dans le mode "
+                                      "structurel (D-605)")
+            cle = None
+        elif not (cle and mode == "structurel"):
             convention = None
-        if cle:
+        illustratives: dict[str, str] = {}
+        avertissements: list[str] = []
+        if composition:
+            mesures, illustratives, avertissements = self.composer(composition, vue,
+                                                                   convention)
+            mesure = mesures[0]
+        elif cle:
             mesure = (self.mesure_structurel(cle, vue, convention) if mode == "structurel"
                       else self.mesure(cle, vue, convention))
+            mesures = [mesure]
         elif choix.get("hypothese"):
             mesure = self.hypothese(choix["hypothese"])
+            mesures = [mesure]
+            illustratives[mesure.identifiant] = "loi hypothétique, déclarée sans passe"
         else:
-            raise NavigateurError("ni candidat ni loi hypothétique")
+            raise NavigateurError("ni candidat, ni loi hypothétique, ni proposition")
         depart, entrees, blocs, boucles = self._modele(mode, mesure, cle)
-        registre = self.thetas(mode, [mesure], blocs)
+        registre = self.thetas(mode, mesures, blocs)
         donne = choix.get("theta") or {}
         theta = {t["cle"]: float(donne[t["cle"]]) for t in registre if t["cle"] in donne}
         return {"mode": mode, "vue": vue, "cle": cle, "convention": convention,
-                "mesure": mesure, "depart": depart, "entrees": entrees, "blocs": blocs,
+                "mesure": mesure, "mesures": mesures, "illustratives": illustratives,
+                "composition": composition, "avertissements_composition": avertissements,
+                "depart": depart, "entrees": entrees, "blocs": blocs,
                 "boucles": boucles, "registre": registre, "theta": theta}
 
     def _derouler(self, ctx: Mapping[str, Any], theta: Mapping[str, Any]
@@ -528,7 +550,7 @@ class Session:
         while True:
             try:
                 traj = calculer(ctx["depart"], entrees=_tronquer(ctx["entrees"], annees),
-                                mesures=[ctx["mesure"]], theta=theta, blocs=blocs,
+                                mesures=ctx["mesures"], theta=theta, blocs=blocs,
                                 boucles=ctx["boucles"])
                 return traj, refus
             except (EntreprisesError, MenagesError) as e:
@@ -559,7 +581,7 @@ class Session:
         manque = [t["cle"] for t in lus if t["cle"] not in ctx["theta"]]
         if manque:
             raise NavigateurError(f"θ sans réglage : {manque} ; ils n'ont pas de défaut")
-        lignes = thetas.registre([ctx["mesure"]])
+        lignes = thetas.registre(ctx["mesures"])
         base = {t["cle"]: ctx["theta"][t["cle"]] for t in lus}
         colonnes: dict[str, list[float]] = {c: [v] for c, v in base.items()}
         points: list[tuple[str, float]] = []
@@ -614,29 +636,31 @@ class Session:
         réduit et une loi hypothétique ne la lisent pas, et `convention` rendu le dit
         (None)."""
         ctx = self._contexte(choix)
-        mesure, registre, theta = ctx["mesure"], ctx["registre"], ctx["theta"]
-        lignes = thetas.registre([mesure])
+        registre, theta, mesures = ctx["registre"], ctx["theta"], ctx["mesures"]
+        lignes = thetas.registre(mesures)
         for t in registre:
             t["theta"] = theta.get(t["cle"])
             t["valeur"] = (None if t["theta"] is None else
-                           valeur_a(lignes[t["cle"]], t["theta"], [mesure]))
+                           valeur_a(lignes[t["cle"]], t["theta"], mesures))
         out: dict[str, Any] = {
-            "mode": ctx["mode"], "vue": ctx["vue"], "candidat": ctx["cle"], "mesure": {
-                "identifiant": mesure.identifiant, "libelle": mesure.libelle,
-                "auteur": mesure.auteur, "origine": mesure.origine,
-                "rapport": mesure.rapport, "commit": mesure.commit,
-                "non_portes": dict(mesure.non_portes)},
+            "mode": ctx["mode"], "vue": ctx["vue"], "candidat": ctx["cle"],
+            "mesure": _decrire(mesures, ctx["composition"]),
             "annees": list(ANNEES), "thetas": registre, "refus": None, "calculees": [],
             "convention": ctx["convention"], "conventions": None}
+        if ctx["composition"]:
+            out["composition"] = [_une_mesure(m, ctx["illustratives"].get(m.identifiant))
+                                  for m in mesures]
         traj, out["refus"] = self._derouler(ctx, theta)
         mode, depart = ctx["mode"], ctx["depart"]
         if traj is None:
             out["series"], out["deciles"] = {}, {"absent": out["refus"]}
-            out["avertissements"] = [a for a in (mesure.avertissement,) if a]
+            out["avertissements"] = [*ctx["avertissements_composition"],
+                                     *(m.avertissement for m in mesures if m.avertissement)]
             return out
         out["calculees"] = list(traj.annees)
-        out["conventions"] = _conventions(mesure, traj.annees)
-        out["avertissements"] = list(traj.avertissements)
+        out["conventions"] = _conventions_de(mesures, traj.annees)
+        out["avertissements"] = [*ctx["avertissements_composition"],
+                                 *traj.avertissements]
         out["series"] = _series(traj)
         out["comptes"] = _comptes(traj, len(ANNEES))
         # Les années refusées sont absentes : None, sur toute la longueur de la page.
@@ -651,7 +675,119 @@ class Session:
                           {"absent": "le mode réduit ne porte pas les ménages par cellule : "
                                      "les gagnants et les perdants se lisent dans le mode "
                                      "structurel"})
+        if choix.get("dimensions", True):
+            out.update(self._dimensions(ctx, traj, int(choix.get("tirages") or 0)))
         return out
+
+    # ---------------------------------------------------------------- but 29
+    def reglage_impacts(self, choix: Mapping[str, Any]) -> dict[str, Any]:
+        """Le réglage par défaut de la page « Ce que ça change » (D-605), quand le choix
+        ne dit pas son mode : le jumeau complet (structurel) sur la population figée, avec
+        la convention des parts de la première année (D-414), comme la cascade (D-484) ;
+        pour une mesure d'étude qu'il refuse dès la première année, la chaîne des études
+        (réduit, vieillie), et `pourquoi_mode` dit pourquoi."""
+        from impots.jumeau.mesures import CONVENTION_PARTS
+
+        choix = dict(choix)
+        if choix.get("mode"):
+            return choix
+        choix.setdefault("vue", "figee")
+        choix.setdefault("convention", CONVENTION_PARTS)
+        choix["mode"] = "structurel"
+        cle = choix.get("candidat")
+        if cle and not choix.get("composition"):
+            k, refus = self.structurel(cle, choix["vue"], choix["convention"])
+            if not k:
+                choix.update(mode="reduit", vue="vieillie", convention=None,
+                             pourquoi_mode=("le jumeau complet refuse la mesure dès sa "
+                                            f"première année ({refus}) : la chaîne des "
+                                            "études, sans les ménages ni les entreprises"))
+        return choix
+
+    def composer(self, elements: Sequence[Mapping[str, Any]], vue: str,
+                 convention: str | None) -> tuple[list[Any], dict[str, str], list[str]]:
+        """Les mesures d'une proposition composée (D-605) : pour chaque élément, une mesure
+        d'étude ({candidat, echelle, decalage}) ou une loi hypothétique ({hypothese}).
+        Rend les mesures, {identifiant : raison} de celles qui ne sont pas une passe telle
+        quelle, et les avertissements de la composition."""
+        from impots.jumeau.proposition import PropositionError, transformer
+
+        if not isinstance(elements, Sequence) or not elements:
+            raise NavigateurError("une proposition vide : choisir au moins une mesure")
+        mesures: list[Any] = []
+        illustratives: dict[str, str] = {}
+        vus: dict[str, int] = {}
+        groupes: dict[str, list[str]] = {}
+        for i, e in enumerate(elements):
+            if e.get("hypothese"):
+                h = self.hypothese(e["hypothese"])
+                base = f"hypothese_{e['hypothese']['instrument']}"
+                n = vus[base] = vus.get(base, 0) + 1
+                m = dataclasses.replace(h, identifiant=base if n == 1 else f"{base}_{n}")
+                illustratives[m.identifiant] = "loi hypothétique, déclarée sans passe"
+            elif e.get("candidat"):
+                cle = e["candidat"]
+                m0 = self.mesure_structurel(cle, vue, convention)
+                n = vus[cle] = vus.get(cle, 0) + 1
+                try:
+                    m, raison = transformer(
+                        m0, echelle=float(e.get("echelle", 1.0)),
+                        decalage=int(e.get("decalage", 0)),
+                        identifiant=cle if n == 1 else f"{cle}_{n}", fin=ANNEES[-1])
+                except PropositionError as err:
+                    raise NavigateurError(str(err)) from err
+                if raison:
+                    illustratives[m.identifiant] = raison
+                groupes.setdefault(self.candidats[cle]["groupe"], []).append(cle)
+            else:
+                raise NavigateurError(f"élément {i + 1} de la proposition : ni candidat ni "
+                                      f"loi hypothétique")
+            mesures.append(m)
+        avertissements = []
+        for groupe, cles in groupes.items():
+            prog = [c for c in cles if c.endswith("_programme")]
+            if prog and len(cles) > len(prog):
+                avertissements.append(
+                    f"{groupe} : le programme porte déjà ses mesures chiffrées ; y ajouter "
+                    f"l'une d'elles la compte deux fois.")
+        if len(mesures) > 1:
+            avertissements.append(
+                "Proposition composée : chaque mesure garde la passe de son rapport, faite "
+                "seule ; leurs interactions statiques (un barème qui en touche un autre) "
+                "ne sont pas chiffrées, leurs effets dans l'économie se cumulent dans le "
+                "jumeau (D-605).")
+        return mesures, illustratives, avertissements
+
+    def _dimensions(self, ctx: Mapping[str, Any], traj: Any, tirages: int
+                    ) -> dict[str, Any]:
+        """Toutes les dimensions inscrites (`jumeau.impacts`, D-590), sur la trajectoire
+        au réglage ; avec `tirages`, la même trajectoire vectorisée sur autant de tirages
+        des θ lus, chacun selon sa loi, graine fixée (D-459), pour leurs bandes."""
+        from impots.jumeau.impacts import tableau
+
+        t = None
+        if tirages > 0:
+            rng = np.random.default_rng(GRAINE)
+            lus = [x["cle"] for x in ctx["registre"] if x["lu"]]
+            theta = {c: _tirer(loi_de(c), tirages, rng) for c in lus}
+            t, _ = self._derouler(ctx, theta)
+        return tableau.calculer_tout(
+            traj.variante, traj.reference, ctx["depart"], self.cellules, trajectoire=traj,
+            tirages=t, mesures=list(traj.mesures), illustratives=ctx["illustratives"],
+            mode=ctx["mode"], thetas=ctx["registre"], juge=self.donnees.get("juge"),
+            annees=tuple(traj.annees), programme=programme_age(ctx),
+            composition=ctx.get("composition"), cle=ctx.get("cle"))
+
+
+def programme_age(ctx: Mapping[str, Any]) -> str | None:
+    """Le programme dont la santé lit l'âge légal (`impacts.sante`, D-622) : le nom du
+    candidat d'un programme entier (« pres2027_<nom>_programme »), aucun pour une mesure
+    seule ou une proposition composée (la page le dit : l'âge n'y est pas porté)."""
+    cle = ctx.get("cle") or ""
+    if ctx.get("composition") or not (cle.startswith("pres2027_")
+                                      and cle.endswith("_programme")):
+        return None
+    return cle[len("pres2027_"):-len("_programme")]
 
 
 def loi_de(cle: str) -> Any:
@@ -890,6 +1026,65 @@ def _deciles(traj: Any, depart: Etat, cellules: Any) -> dict[str, Any]:
             "part_gagnants": [float(x) for x in gagne / par_decile],
             "part_perdants": [float(x) for x in perd / par_decile]}
     return {"seuil": SEUIL, "annees": annees}
+
+
+def _une_mesure(m: Any, raison: str | None = None) -> dict[str, Any]:
+    return {"identifiant": m.identifiant, "libelle": m.libelle, "auteur": m.auteur,
+            "origine": m.origine, "rapport": m.rapport, "commit": m.commit,
+            "non_portes": dict(m.non_portes), "annees": list(m.annees),
+            "transformee": raison}
+
+
+def _decrire(mesures: Sequence[Any], composition: Any) -> dict[str, Any]:
+    """La mesure du réglage ; une proposition composée se décrit par ses mesures."""
+    if not composition:
+        d = _une_mesure(mesures[0])
+        return {k: d[k] for k in ("identifiant", "libelle", "auteur", "origine", "rapport",
+                                  "commit", "non_portes")}
+    return {"identifiant": "proposition",
+            "libelle": "Proposition composée : " + " ; ".join(m.libelle for m in mesures),
+            "auteur": "le lecteur", "origine": "composition", "rapport": None,
+            "commit": None,
+            "non_portes": {f"{m.identifiant} · {k}": v for m in mesures
+                           for k, v in m.non_portes.items()}}
+
+
+def _conventions_de(mesures: Sequence[Any], calculees: Sequence[int]
+                    ) -> dict[str, Any] | None:
+    """`_conventions` sur plusieurs mesures : l'union de leurs axes et de leurs noms."""
+    parts = [c for c in (_conventions(m, calculees) for m in mesures) if c]
+    if not parts:
+        return None
+    if len(parts) == 1:
+        return parts[0]
+    axes: dict[str, set[int]] = {}
+    for c in parts:
+        for axe, a in c["axes"].items():
+            axes.setdefault(axe, set()).update(a)
+    noms = sorted({n for c in parts for n in c["noms"]})
+    definitions = list(dict.fromkeys(c["definition"] for c in parts))
+    return {"noms": noms, "definition": " ; ".join(definitions),
+            "axes": {axe: sorted(a) for axe, a in axes.items()},
+            "annees": sorted({a for c in parts for a in c["annees"]})}
+
+
+def impacts_json(session: Session, texte: str) -> str:
+    """L'entrée de la page « Ce que ça change » (D-605) : un réglage en JSON (un candidat,
+    une loi hypothétique ou une `composition`, et `tirages`), le résultat avec toutes les
+    dimensions, en JSON strict (un nombre non fini est absent)."""
+    from impots.jumeau.impacts.tableau import propre
+
+    choix = {"tirages": TIRAGES_IMPACTS, **session.reglage_impacts(json.loads(texte)),
+             "dimensions": True}
+    pourquoi = choix.pop("pourquoi_mode", None)
+    if not choix.get("theta"):
+        # Chaque θ à ½, le centre de sa boîte : le défaut de la page (D-605), dit.
+        registre = session._contexte({**choix, "theta": {}})["registre"]
+        choix["theta"] = {t["cle"]: 0.5 for t in registre}
+    out = session.calculer(choix)
+    out["reglage"] = {k: choix.get(k) for k in ("mode", "vue", "convention", "tirages")}
+    out["pourquoi_mode"] = pourquoi
+    return json.dumps(propre(out), ensure_ascii=False)
 
 
 def portee_json(session: Session, texte: str) -> str:

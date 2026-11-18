@@ -2572,6 +2572,239 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Insee, « Les salaires dans le secteur privé en 2022 », Insee Résultats (base Tous salariés 2022), tableaux régionaux, T305 : déciles du salaire brut horaire par région, catégorie socioprofessionnelle, condition d'emploi et sexe. Ligne France (REG 99, CS1 T, CE T, SEXE E) : 12,1 ; 13,3 ; 14,5 ; 15,8 ; 17,5 ; 19,6 ; 22,5 ; 27,2 ; 36,3 €. Le D8 en Smic (2,507) cale le point à 2,5 Smic de la fonction des salaires horaires (but 28, volet suite, D-552).",
       "quarantined": false
+    },
+    "greenbook_wellbeing_2021.pdf": {
+      "url": "https://assets.publishing.service.gov.uk/media/60fa9169d3bf7f0448719daf/Wellbeing_guidance_for_appraisal_-_supplementary_Green_Book_guidance.pdf",
+      "sha256": "48f02163dc0f73a7225248ebaa344cbf1dcfc5ac69fb4f267afc7e7849ce8dd6",
+      "bytes": 1460524,
+      "downloaded": "2026-11-17",
+      "licence": "Open Government Licence v3.0",
+      "description": "HM Treasury, Wellbeing guidance for appraisal: supplementary Green Book guidance (juillet 2021) ; D-595",
+      "quarantined": false
+    },
+    "greenbook_wellbeing_background_2021.pdf": {
+      "url": "https://assets.publishing.service.gov.uk/media/60fa91c68fa8f50431ca80da/Wellbeing_guidance_for_appraisal_-_background_paper_reviewing_methods_and_approaches.pdf",
+      "sha256": "c76a0f9bbbafb804886d6fb2bfe1614f51e731c481279eb6d70ca340641d92ef",
+      "bytes": 619434,
+      "downloaded": "2026-11-17",
+      "licence": "Open Government Licence v3.0",
+      "description": "HM Treasury, Wellbeing guidance for appraisal: background paper (juillet 2021) ; D-595",
+      "quarantined": false
+    },
+    "ditella_macculloch_oswald_2001_aerfeb2000.pdf": {
+      "url": "https://warwick.ac.uk/fac/soc/economics/staff/ajoswald/aerfeb2000.pdf",
+      "sha256": "8a33a7748d4ed6e85a8fb76a586558f60ba60e01712aa4b19ba6082205250fd0",
+      "bytes": 57431,
+      "downloaded": "2026-11-17",
+      "licence": "article académique, copie des auteurs",
+      "description": "Di Tella, MacCulloch et Oswald, Preferences over Inflation and Unemployment (AER 2001), version révisée du 7 février 2000 ; D-595",
+      "quarantined": false
+    },
+    "helliwell_huang_nber_w16829.pdf": {
+      "url": "https://www.nber.org/system/files/working_papers/w16829/w16829.pdf",
+      "sha256": "62d5ad9bfaad45cfce836349fdd347f106b7e80789029f3985a7a1881ba776b9",
+      "bytes": 275050,
+      "downloaded": "2026-11-17",
+      "licence": "NBER working paper",
+      "description": "Helliwell et Huang, New Measures of the Costs of Unemployment, NBER WP 16829 (révisé 2014) ; D-595",
+      "quarantined": false
+    },
+    "eurostat_demo_pjan_fr_2024.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=FR&sex=T&time=2024&unit=NR&format=JSON",
+      "sha256": "81a283aa55c06ddb8242f65ba5b9d3089b728363a6926dd822e36d5eebafab63",
+      "bytes": 7422,
+      "downloaded": "2026-11-17",
+      "licence": "Eurostat, réutilisation libre",
+      "description": "Population de la France au 1er janvier 2024 par âge ; D-595",
+      "quarantined": false
+    },
+    "eurostat_ilc_pw02_fr.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ilc_pw02?geo=FR&format=JSON",
+      "sha256": "4f80afb3d7800659c8453fa1a1181268ff788a538725bfa5fdef1cba561ffc34",
+      "bytes": 24397,
+      "downloaded": "2026-11-17",
+      "licence": "Eurostat, réutilisation libre",
+      "description": "Satisfaction dans la vie par quintile de revenu, France, EU-SILC 2013 à 2025 ; juge de D-595, lu après le commit",
+      "quarantined": false
+    },
+    "insee_srcv_satisfaction_2022_2025_f.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9051795/srcv_satisfaction_f.xlsx",
+      "sha256": "ea7f92909f069bb2bfc8a3479a554fbec256edbdff38649e1e5a325899068998",
+      "bytes": 48462,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Résultats, Satisfaction dans la vie de 2010 à 2025, France hors Mayotte ; juge de D-595, lu après le commit"
+    },
+    "riley_rosazza_2015_niesr_dp449.pdf": {
+      "url": "https://www.niesr.ac.uk/wp-content/uploads/2021/10/Minimum-wages-and-firm-productivity-NIESR-DP-449-4.pdf",
+      "sha256": "5d04fb43af1b8ab9834f78908acb4451a959eff29a17d22496cd62e809dfef04",
+      "bytes": 1198418,
+      "downloaded": "2026-11-18",
+      "licence": "NIESR — accès libre",
+      "description": "Riley et Rosazza Bondibene, « Raising the standard: minimum wages and firm productivity », NIESR Discussion Paper n° 449, mai 2015 (version publiée : Labour Economics 44, 2017, p. 27-50). Tableau 1 p. 27 (p. 28 du PDF) : à l'introduction du salaire minimum britannique, seuil de 12 000 £, MCO, coût moyen du travail +0,042 (0,011), productivité du travail (VA) +0,043 (0,018), PGF +0,032 (0,017), ratio capital-travail +0,025 (0,026), emploi −0,006 (0,026). Source du canal « smic_efficience » (D-600).",
+      "quarantined": false
+    },
+    "cahuc_carcillo_2011_iza_dp5439.pdf": {
+      "url": "https://docs.iza.org/dp5439.pdf",
+      "sha256": "2982b1c91f4b4f041ffc4a4f6f78b8f09a1839cee5483a31ecffca365355f6b5",
+      "bytes": 236338,
+      "downloaded": "2026-11-18",
+      "licence": "IZA — accès libre",
+      "description": "Cahuc et Carcillo, « The detaxation of overtime hours: lessons from the French experiment », IZA DP n° 5439, janvier 2011 (version publiée : Journal of Labor Economics 32(2), 2014, p. 361-400). Résumé p. 3 du PDF : l'exonération des heures supplémentaires de 2007 n'a pas d'effet significatif sur les heures travaillées. Source du canal « duree_travail » (D-600).",
+      "quarantined": false
+    },
+    "tepp_2020_cice_rapport_vi.pdf": {
+      "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/2020/CICE/cice_francestrategie_rapport_vi_tepp_11092020.pdf",
+      "sha256": "f269924cb3c4ba62afd60e0e7ac27bea656ba99f360c6b51e587dd3aa24fdc21",
+      "bytes": 1253510,
+      "downloaded": "2026-11-18",
+      "licence": "France Stratégie — accès libre",
+      "description": "Gilles, L'Horty et Mihoubi (TEPP), « Les effets du CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions pour la période 2013-2016 », rapport VI remis à France Stratégie le 11 septembre 2020 (79 p.). Téléchargé fermé : juge préenregistré en D-603 (la valeur ajoutée par tête et le canal « pression_cout »), ouvert après sa poussée.",
+      "quarantined": false
+    },
+    "tepp_2018_cice_rapport_2013_2015.pdf": {
+      "url": "https://halshs.archives-ouvertes.fr/halshs-01878474v1/file/exercicer4615.pdf",
+      "sha256": "b6268dec593e47a1f089d2c0614d90ddd653040a2898b304a9b43720cfece3a3",
+      "bytes": 2039465,
+      "downloaded": "2026-11-18",
+      "licence": "HAL — accès libre",
+      "description": "Gilles, L'Horty, Mihoubi et Yang (TEPP), « Les effets du CICE sur l'emploi, les salaires et l'activité des entreprises : approfondissements et extensions pour la période 2013-2015 », rapport TEPP n° 2018-06, septembre 2018 (191 p., HAL halshs-01878474). Téléchargé fermé : juge préenregistré en D-625 (la productivité du travail et le canal « pression_cout »), ouvert après sa poussée.",
+      "quarantined": false
+    },
+    "insee_ip1687_esperance_vie_niveau_vie.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/3319895/ip1687.pdf",
+      "sha256": "28eb4f06a8d813d569853e5a8e7328fea796860c1c8af84d084b043b21736dee",
+      "bytes": 740086,
+      "downloaded": "2026-11-17",
+      "licence": "publication de l'Insee, réutilisation avec mention de la source",
+      "description": "Insee Première n° 1687 (Blanpain, février 2018), « L'espérance de vie par niveau de vie : chez les hommes, 13 ans d'écart entre les plus aisés et les plus modestes » ; D-620",
+      "quarantined": false
+    },
+    "insee_ip1687_esperance_vie_niveau_vie.xls": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/3319895/ip1687.xls",
+      "sha256": "f2878ec536809f4fd38cee4be88bd5a266ee27f510efdbcddcb5891edd01b643",
+      "bytes": 50176,
+      "downloaded": "2026-11-17",
+      "licence": "publication de l'Insee, réutilisation avec mention de la source",
+      "description": "Données de l'Insee Première n° 1687 : le juge du contrôle préenregistré de D-620, non ouvert avant le commit de D-620",
+      "quarantined": false
+    },
+    "cesarini_et_al_2016_ifn_wp1060.pdf": {
+      "url": "https://www.ifn.se/media/pgacvykf/wp1060.pdf",
+      "sha256": "8928ecca2310cc43145291814aa170281daf12581fbd1858517733c5dee93b31",
+      "bytes": 390681,
+      "downloaded": "2026-11-17",
+      "licence": "document de travail de l'IFN, lecture",
+      "description": "Cesarini, Lindqvist, Östling et Wallace, Wealth, Health, and Child Development (IFN WP 1060 ; QJE 131(2), 2016) ; D-620",
+      "quarantined": false
+    },
+    "sullivan_von_wachter_2009_qje.pdf": {
+      "url": "https://www.movingforwardnetwork.com/wp-content/uploads/2023/04/Sullivan_Job-Displacement-and-Mortality_2009.pdf",
+      "sha256": "1f31b9c02bc20d22fbdf5f2e86e655646ee3f5ae62b31f3b15549dffa0c4dd55",
+      "bytes": 331893,
+      "downloaded": "2026-11-17",
+      "licence": "article, lecture",
+      "description": "Sullivan et von Wachter, Job Displacement and Mortality, QJE 124(3), 2009 ; D-620",
+      "quarantined": false
+    },
+    "sullivan_von_wachter_nber_w13626.pdf": {
+      "url": "https://www.nber.org/papers/w13626.pdf",
+      "sha256": "20617cbe3924c8b58f6d3888cb0a0ea26ca908d60486f4aad304398dd6ef9c8f",
+      "bytes": 410576,
+      "downloaded": "2026-11-17",
+      "licence": "document de travail du NBER, lecture",
+      "description": "Sullivan et von Wachter, Mortality, Mass-Layoffs, and Career Outcomes, NBER WP 13626 ; D-620",
+      "quarantined": false
+    },
+    "kuhn_wuellrich_zweimuller_nber_w25124.pdf": {
+      "url": "https://www.nber.org/papers/w25124.pdf",
+      "sha256": "f1deb413a535d45512b0e9e29c7c7743aa038e278303036c1c75db2c25e9dfed",
+      "bytes": 761670,
+      "downloaded": "2026-11-17",
+      "licence": "document de travail du NBER, lecture",
+      "description": "Kuhn, Wuellrich et Zweimüller, Fatal Attraction? Extended Unemployment Benefits, Labor Force Exits, and Mortality, NBER WP 25124 (J. Public Econ. 2020) ; D-620",
+      "quarantined": false
+    },
+    "bozio_garrouste_perdrix_2019_wp.pdf": {
+      "url": "https://legos.dauphine.fr/fileadmin/mediatheque/recherche_et_valo/LEGOS/cv/publications/garroustenv2019.pdf",
+      "sha256": "e9aeecc790ddf587daf9616f1e1a8fe2303b6f731dab80f65fabe162d15dc38f",
+      "bytes": 1814729,
+      "downloaded": "2026-11-17",
+      "licence": "document de travail du LEDa, lecture",
+      "description": "Bozio, Garrouste et Perdrix, Impact of later retirement on mortality: Evidence from France, LEDa WP 4/2019 (Health Economics 30(5), 2021) ; D-620",
+      "quarantined": false
+    },
+    "insee_es538_caroli_et_al_2023.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/7615292/04_ES538_Caroli-et-al_FR.pdf",
+      "sha256": "8a481160d3cbb6934f534094fe2782ed44c63bbdb685609799aad8dc71c543c0",
+      "bytes": 1931714,
+      "downloaded": "2026-11-17",
+      "licence": "publication de l'Insee, réutilisation avec mention de la source",
+      "description": "Caroli, Pollak et Roger, Effets sur la consommation de soins d'un report de l'âge de départ à la retraite, Économie et Statistique n° 538, 2023 ; D-620",
+      "quarantined": false
+    },
+    "cor_ra2026_partie4_chap1.pdf": {
+      "url": "https://www.cor-retraites.fr/sites/default/files/2026-06/RA_Part4_Chap1.pdf",
+      "sha256": "72e1edafab4ae56f58a554ca7597237a0c2b8297196f5664553eba5654f03498",
+      "bytes": 659514,
+      "downloaded": "2026-11-17",
+      "licence": "publication du COR, réutilisation avec mention de la source",
+      "description": "COR, rapport annuel de juin 2026, partie 4, chapitre 1 (limitations d'activité à 55-69 ans) ; D-620",
+      "quarantined": false
+    },
+    "cor_ra2026_partie4_chap2.pdf": {
+      "url": "https://www.cor-retraites.fr/sites/default/files/2026-06/RA_Part4_Chap2.pdf",
+      "sha256": "eb9d71ae705cda17486f9d3e255c992e61de5c2a73cbe7189150509987855f6c",
+      "bytes": 544154,
+      "downloaded": "2026-11-17",
+      "licence": "publication du COR, réutilisation avec mention de la source",
+      "description": "COR, rapport annuel de juin 2026, partie 4, chapitre 2 (âges de départ) ; D-620",
+      "quarantined": false
+    },
+    "eurostat_hlth_silc_01_fr.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/hlth_silc_01?geo=FR&sex=T&age=Y16-64",
+      "sha256": "cadc574e6a854d2da707146e389db6f33928cb027ce1bd31d7dd8b2b041a2689",
+      "bytes": 15279,
+      "downloaded": "2026-11-17",
+      "licence": "Eurostat, réutilisation libre avec mention de la source",
+      "description": "Eurostat hlth_silc_01, santé perçue par statut d'activité, France, 16-64 ans (EU-SILC) ; D-620",
+      "quarantined": false
+    },
+    "eurostat_hlth_silc_08_fr.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/hlth_silc_08?geo=FR&sex=T&age=Y_GE16",
+      "sha256": "995f53f5bc1ce4a75323018625fae5985311957214ac25cca8d12228dcb14b57",
+      "bytes": 16641,
+      "downloaded": "2026-11-17",
+      "licence": "Eurostat, réutilisation libre avec mention de la source",
+      "description": "Eurostat hlth_silc_08, besoins d'examen médical non satisfaits par raison et quintile, France, 16 ans ou plus ; D-620",
+      "quarantined": false
+    },
+    "eurostat_hlth_silc_09_fr.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/hlth_silc_09?geo=FR&sex=T&age=Y_GE16",
+      "sha256": "6deb3e3f02b5abfd1c1791e3728e8a2590452cc2440ecb448d1f959df63fcc4c",
+      "bytes": 16174,
+      "downloaded": "2026-11-17",
+      "licence": "Eurostat, réutilisation libre avec mention de la source",
+      "description": "Eurostat hlth_silc_09, besoins d'examen dentaire non satisfaits par raison et quintile, France, 16 ans ou plus ; D-620",
+      "quarantined": false
+    },
+    "eurostat_demo_gind_fr.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_gind?geo=FR&indic_de=DEATH&indic_de=JAN&sinceTimePeriod=2022",
+      "sha256": "79c8db00e70c3cc4ed03335f601d00724e9729e0c20f55a35624c97673c5d9d6",
+      "bytes": 2781,
+      "downloaded": "2026-11-17",
+      "licence": "Eurostat, réutilisation libre avec mention de la source",
+      "description": "Eurostat demo_gind, décès et population au 1er janvier, France, 2022-2026 ; D-620",
+      "quarantined": false
+    },
+    "eurostat_demo_mlifetable_fr_2024.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_mlifetable?geo=FR&sex=T&time=2024",
+      "sha256": "2dbb863f318e1058907ba438bc04df094dbc75d144cdac58d9a46c402d5c978c",
+      "bytes": 22774,
+      "downloaded": "2026-11-17",
+      "licence": "Eurostat, réutilisation libre avec mention de la source",
+      "description": "Eurostat demo_mlifetable, table de mortalité, France, deux sexes, 2024 ; D-620",
+      "quarantined": false
     }
   }
 }

@@ -1,0 +1,3485 @@
+{
+ "commit": "3ffdd2e7c827fbec16d54c17982865df53aa89c0",
+ "decision": "D-622",
+ "mode": "structurel",
+ "vue": "vieillie",
+ "theta": "½ pour chaque θ lu",
+ "programmes": {
+  "melenchon": {
+   "convention": "mesures_seules (D-502) ; le programme refusé : mesure « pres2027_melenchon_programme » : des prélèvements agrégés (le signal du canal du lot 1) sans leur ventilation par impôt ; les blocs du lot 2 lisent chaque impôt et ne devinent pas la ventilation",
+   "cle": "sante",
+   "titre": "La santé et le temps de vie",
+   "question": "Les gens en vivent-ils plus longtemps, en meilleure santé, et combien de temps de retraite en bonne santé y gagnent-ils ou y perdent-ils ?",
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "statut": "illustratif",
+   "juge": null,
+   "sources": [
+    {
+     "document": "Insee Première n° 1687, L'espérance de vie par niveau de vie (Blanpain, février 2018)",
+     "lieu": "p. 1 (résumé) et figure 1 : 5 % les plus aisés, 5 800 € par mois, 84,4 ans (h) et 88,3 ans (f) ; 5 % les plus modestes, 470 € par mois, 71,7 ans (h) et 80,0 ans (f), 2012-2016 ; le résumé : autour de 1 000 €, 100 € de plus vont avec 0,9 an (h) et 0,7 an (f), autour de 2 000 €, 0,3 et 0,2 an (le gradient s'aplatit)",
+     "valeur": "g = 5.05 ans (hommes) et 3.30 (femmes) d'espérance de vie par unité de log du niveau de vie, une association"
+    },
+    {
+     "document": "Cesarini, Lindqvist, Östling et Wallace, Wealth, Health, and Child Development, IFN WP 1060 (Quarterly Journal of Economics 131(2), 2016)",
+     "lieu": "p. 1 (résumé) et p. 13 du PDF : « For 10-year mortality, the 95% confidence interval allows us to rule out causal effects one sixth of the gradient » ; le gradient suédois : 1 M SEK va avec 2,8 points de mortalité à dix ans en moins (2,1 avec les contrôles)",
+     "valeur": "part causale s = 0.083 (bande 0 à 1/6), le centre choisi"
+    },
+    {
+     "document": "Sullivan et von Wachter, Job Displacement and Mortality, Quarterly Journal of Economics 124(3), 2009",
+     "lieu": "p. 1 du PDF (résumé) : « mortality rates in the year after displacement are 50-100% higher than would otherwise have been expected […] we estimate a 10-15% increase in annual death hazards » vingt ans après ; la bande va du long terme (0,10) au haut de la première année (1,00) ; le centre, 0,30 (à peu près la moyenne géométrique), est choisi : un chômeur du stock n'est pas toujours dans sa première année, et l'effet durable après le retour à l'emploi n'est pas compté",
+     "valeur": "r = 0.3 (bande 0.1 à 1)"
+    },
+    {
+     "document": "Eurostat, hlth_silc_01 (santé perçue par statut d'activité), France, 16-64 ans",
+     "lieu": "hlth_silc_01, France, 16-64 ans, deux sexes, 2025 : EMP 75,1 %, UNE 60,8 % (2024 : 77,1 et 63,5) ; extraction du 17 novembre 2026, mise à jour du 20 octobre 2026",
+     "valeur": "bonne ou très bonne santé : 75.1 % en emploi, 60.8 % au chômage ; part causale 0.25 (bande 0 à 0.5, Schmitz 2011 au bas)"
+    },
+    {
+     "document": "Eurostat, hlth_silc_08 et hlth_silc_09 (besoins d'examen médical et dentaire non satisfaits, par raison et quintile de revenu), France, 16 ans ou plus",
+     "lieu": "hlth_silc_08 et hlth_silc_09, raison « Too expensive » (TXP), France, 16 ans ou plus, 2025 ; extraction du 17 novembre 2026",
+     "valeur": "renoncement pour le prix : examen médical 3.9 % (Q1) contre 0.4 % (Q5), dentaire 9.2 % contre 1.5 % ; part causale 0.5, choisie"
+    },
+    {
+     "document": "COR, rapport annuel de juin 2026, partie 4, chapitre 2",
+     "lieu": "p. 4 du PDF (folio 218) : « Parmi l'ensemble des nouveaux retraités, 48,1 % sont partis à la retraite au plus tard à 62 ans », 24,5 % à 62 ans exactement (le bas) ; le haut, un décalage de tous les départs ; le centre, choisi près de la part liée à l'âge légal",
+     "valeur": "τ = 0.5 an d'âge effectif par an d'âge légal (bande 0.25 à 1)"
+    },
+    {
+     "document": "COR, rapport annuel de juin 2026, partie 4, chapitre 1",
+     "lieu": "p. 7 du PDF (folio 209) : « Les limitations d'activité sévères ou modérées s'établissent à un peu plus de 30 % de la classe d'âge […] limitation sévère […] un peu plus de 10 % » (60-64 ans) ; le haut compte les années sans limitation sévère",
+     "valeur": "part des années de 60-64 ans sans limitation : 0.7 (sans limitation sévère : 0.89)"
+    },
+    {
+     "document": "Bozio, Garrouste et Perdrix, Impact of later retirement on mortality: Evidence from France, LEDa WP 4/2019 (Health Economics 30(5), 2021)",
+     "lieu": "BGP p. 2 du PDF (résumé) : un an de plus d'âge de liquidation n'a pas d'effet significatif sur la probabilité de décès (réforme de 1993), et l'effet minimal détectable est petit ; Garrouste et Perdrix, Journal of Economic Surveys 36(4), 2022 : « later retirement has no effect on mortality » ; haut : KWZ p. 19 du PDF, un an de retraite anticipée réduit l'âge au décès des hommes de 0,208 an, rien pour les femmes (moyenne des deux sexes, environ 0,10) ; bas : symétrique, choisi (Hallberg, Johansson et Josephson, J. Health Econ. 44, 2015 : une retraite anticipée offerte réduit la mortalité, sens seulement)",
+     "valeur": "années de vie par an de départ plus tardif : 0 (bande -0.1 à 0.1)"
+    },
+    {
+     "document": "Eurostat, demo_mlifetable (table de mortalité), France, deux sexes, 2024 ; demo_pjan et demo_gind, 2024",
+     "lieu": "demo_mlifetable (FR, T, 2024 ; DEATHRATE, LIFEXP, NUMBERDYING, SURVIVORS), demo_pjan (FR, 2024, par âge), demo_gind (FR, DEATH, 2024) ; extraction du 17 novembre 2026 ; le calcul dans D-620",
+     "valeur": "e0 = 83 ans, e† = 10.57 ans, 643,332 décès en 2024, taux de décès des 25-64 ans 0.002594, 31.19 ans perdus à un décès de cet âge, une génération de 62-64 ans : 840,764"
+    }
+   ],
+   "limites": [
+    "Corrélation contre causalité, surtout : le gradient de l'Insee (13 ans d'écart d'espérance de vie chez les hommes entre les 5 % les plus aisés et les 5 % les plus modestes) est une association ; le diplôme, le métier, la santé dès l'enfance font à la fois le revenu et la durée de vie, et la mauvaise santé fait baisser le revenu. Les loteries suédoises (Cesarini et al. 2016) excluent un effet causal de la richesse sur la mortalité d'un sixième du gradient ; la dimension en garde au plus un sixième, au centre un douzième. Aux États-Unis (Chetty et al. 2016), l'écart est aussi une association.",
+    "L'espérance de vie par décile est celle qu'aurait le décile si l'écart de revenu de l'année durait toute la vie ; les décès évités de l'année la traduisent par la disparité de la durée de vie (e†), comme si la mortalité de tous les âges bougeait d'un même facteur. L'effet du revenu sur la santé met des années à venir ; il est compté l'année même.",
+    "Le chômage : Sullivan et von Wachter mesurent la perte d'emploi d'hommes anciens dans leur entreprise, aux États-Unis ; leur effet dure vingt ans après le retour à l'emploi, ce qui n'est pas compté ici (un bas), mais un chômeur du stock n'est pas toujours dans sa première année (le centre de 0,30 est choisi). La santé déclarée des chômeurs est moins bonne surtout par sélection (Schmitz 2011).",
+    "Le renoncement aux soins pour raison de prix est déclaratif et sa mesure dépend de la question ; un même ménage peut renoncer à un examen médical et à un examen dentaire : ce sont des renoncements, pas des personnes. La couverture (complémentaire santé solidaire, 100 % santé) n'est pas lue.",
+    "L'âge de départ n'est pas dans le jumeau (la population ne vieillit pas) : l'écart d'âge légal est une entrée lue dans le texte du programme, avec un calendrier choisi ; l'âge effectif en suit une part τ. La littérature ne trouve pas d'effet d'un départ plus tardif sur la mortalité en France (Bozio, Garrouste et Perdrix 2021) ; Kuhn et al. 2020 trouvent qu'une sortie anticipée raccourcit la vie des hommes, Hallberg et al. 2015 le contraire : la bande va dans les deux sens. Le report de 2010 a augmenté les arrêts maladie et la consommation de soins après 60 ans (Caroli, Pollak et Roger 2023), la bascule vers l'invalidité et le chômage : non chiffrés ici.",
+    "Les années de retraite sans limitation d'activité sont du temps libre en bonne santé, pas une durée de vie : un départ plus tardif en retire, sans changer la longévité au centre. La part sans limitation est celle des 60-64 ans de tous statuts (COR).",
+    "Les déciles n'ont ni âge ni sexe : les décès sont répartis selon les personnes et le gradient, pas selon l'âge des membres de chaque décile.",
+    "Ce qui n'est pas lu : le temps de travail (35 h, 32 h, 28 h), les conditions de travail et la pénibilité, l'offre de soins et les dépenses de santé publiques (hôpital, 100 % Sécu), le logement, la pollution, la santé des enfants."
+   ],
+   "indicateurs": [
+    {
+     "cle": "annees_de_vie",
+     "libelle": "Années de vie gagnées dans l'année, tous canaux",
+     "unite": "milliers d'années de vie par an",
+     "sens": 1,
+     "valeurs": [
+      19.472690846043214,
+      20.809384473165643,
+      21.6801054845745,
+      21.108780499826583,
+      20.38312843059662,
+      19.385165987345726,
+      18.160299770800073,
+      16.943348967153316,
+      15.761010207326988,
+      14.623052059669666
+     ],
+     "bas": [
+      -4.770633768416457,
+      -64.30301222878501,
+      -117.50884812643872,
+      -172.23266323920546,
+      -227.06164509944398,
+      -273.01849331730614,
+      -319.5225286442201,
+      -342.9162081002471,
+      -345.20781947205717,
+      -347.37841903710455
+     ],
+     "haut": [
+      41.242299677740554,
+      105.21020786088056,
+      161.77262820023216,
+      214.9864878469252,
+      267.7200308516136,
+      310.7764768789194,
+      353.6529490664128,
+      373.4293659527856,
+      372.2142196934015,
+      371.0271444564808
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       20.90388097656815,
+       21.183098141801143,
+       21.085769863891034,
+       20.73691021744367,
+       20.399737960429736,
+       19.94679698253753,
+       19.431108364066095,
+       18.926531397227436,
+       18.43167604894413,
+       17.944897770801017
+      ],
+      "le chômage": [
+       -1.4311901305249368,
+       -0.37371366863550226,
+       0.5943356206834696,
+       0.371870282382915,
+       -0.016609529833113496,
+       -0.5616309951918067,
+       -1.2708085932660218,
+       -1.983182430074119,
+       -2.6706658416171414,
+       -3.32184571113135
+      ],
+      "l'âge de départ": [
+       0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0
+      ]
+     }
+    },
+    {
+     "cle": "deces_evites",
+     "libelle": "Décès évités dans l'année (revenu et chômage), un ordre de grandeur",
+     "unite": "décès par an",
+     "sens": 1,
+     "valeurs": [
+      1931.7752123191367,
+      1992.0955597177624,
+      2013.924755027509,
+      1973.7874727176625,
+      1929.4332209777453,
+      1869.1074246202077,
+      1797.5821370238793,
+      1727.0056172749019,
+      1658.146860198788,
+      1591.216201686994
+     ],
+     "bas": [
+      -152.9539521775074,
+      -39.93947511333785,
+      6.351775362653304,
+      3.974246899464732,
+      -1.7750913576053753,
+      -60.02254944873428,
+      -135.81367887848901,
+      -211.94639628878048,
+      -285.41902763889505,
+      -355.01183190460085
+     ],
+     "haut": [
+      3931.664212595135,
+      3995.7675552094847,
+      4045.0266906767456,
+      3955.570306173683,
+      3852.16755818285,
+      3761.0078879737516,
+      3656.243791131527,
+      3553.5288005613097,
+      3452.9000689113404,
+      3354.170184850338
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       1977.6613979723888,
+       2004.0774022517637,
+       1994.8694289395492,
+       1961.8647320192683,
+       1929.965748385027,
+       1887.114189454828,
+       1838.326240687426,
+       1790.589536161536,
+       1743.7725684904567,
+       1697.7197512583743
+      ],
+      "le chômage": [
+       -45.88618565325222,
+       -11.981842534001354,
+       19.05532608795991,
+       11.922740698394195,
+       -0.5325274072816125,
+       -18.006764834620284,
+       -40.7441036635467,
+       -63.58391888663414,
+       -85.62570829166852,
+       -106.50354957138025
+      ]
+     }
+    },
+    {
+     "cle": "deces_evites_revenu",
+     "libelle": "Dont décès évités par le revenu réel, par décile de niveau de vie",
+     "unite": "décès par an",
+     "sens": 1,
+     "valeurs": [
+      1977.6613979723888,
+      2004.0774022517637,
+      1994.8694289395492,
+      1961.8647320192683,
+      1929.965748385027,
+      1887.114189454828,
+      1838.326240687426,
+      1790.589536161536,
+      1743.7725684904567,
+      1697.7197512583743
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      3946.9596078128857,
+      3999.7615027208185,
+      3981.5089370502124,
+      3915.8278371790357,
+      3852.3450673186103,
+      3767.010142918625,
+      3669.825159019376,
+      3574.723440190188,
+      3481.44197167523,
+      3389.671368040798
+     ],
+     "par_groupe": {
+      "D1": [
+       588.3455712897372,
+       579.313195582349,
+       568.1399615086768,
+       552.8735851075016,
+       537.7368260171008,
+       521.8279738075369,
+       505.45225721040504,
+       489.4703989078933,
+       473.9386441796773,
+       458.84182728839426
+      ],
+      "D2": [
+       274.0470639543727,
+       275.5763240016826,
+       273.6337831245019,
+       268.18851953965896,
+       262.7488305502844,
+       256.16277757277174,
+       248.86571927878074,
+       241.7210615852882,
+       234.74915192248062,
+       227.92969188324633
+      ],
+      "D3": [
+       252.12041627134775,
+       255.49460782628617,
+       254.64351477065478,
+       250.12858725821616,
+       245.60495866462696,
+       239.68630700056204,
+       232.95243163039933,
+       226.32719850008294,
+       219.86100854805895,
+       213.49558190349396
+      ],
+      "D4": [
+       196.76253806568798,
+       201.48486578961808,
+       201.89009528227987,
+       199.14137770363277,
+       196.42135723720398,
+       192.3150402323202,
+       187.43229375302096,
+       182.62253887982968,
+       177.90718560639962,
+       173.2525880546263
+      ],
+      "D5": [
+       170.54357723907094,
+       175.09095036504615,
+       175.55291564788794,
+       173.58302450141835,
+       171.7253283999476,
+       168.6061972109891,
+       164.83011428281213,
+       161.11909272235147,
+       157.46586608363347,
+       153.85270517135413
+      ],
+      "D6": [
+       159.71664428536386,
+       164.33600848911664,
+       164.86857362660422,
+       163.35422801460544,
+       161.99906582753658,
+       159.41786535334967,
+       156.22500372248072,
+       153.08886000366627,
+       149.989731921702,
+       146.90971725482694
+      ],
+      "D7": [
+       142.077070833148,
+       146.87544314826891,
+       147.70845118174725,
+       146.71049141022394,
+       145.88039689416226,
+       143.8724684929527,
+       141.28547320664833,
+       138.74512245624067,
+       136.22100214716363,
+       133.7064346644055
+      ],
+      "D8": [
+       113.42310349387937,
+       118.1349190297133,
+       119.19184064496226,
+       118.80207764144555,
+       118.58875066351932,
+       117.30881440978693,
+       115.51809524104878,
+       113.75941172372309,
+       111.99361662378706,
+       110.21733087060869
+      ],
+      "D9": [
+       92.08996501548603,
+       96.56034374665373,
+       97.64715136641061,
+       97.58915409423943,
+       97.71643686502331,
+       96.87327049179373,
+       95.57987975578573,
+       94.31396540008583,
+       93.02788266601817,
+       91.72590665962885
+      ],
+      "D10": [
+       -11.464552475704918,
+       -8.789255726970596,
+       -8.406858214176191,
+       -8.506313251673866,
+       -8.456202734378369,
+       -8.956525117235007,
+       -9.815027393955688,
+       -10.578114017625412,
+       -11.381521208464141,
+       -12.212032492210813
+      ]
+     }
+    },
+    {
+     "cle": "esperance_de_vie",
+     "libelle": "Espérance de vie à la naissance si l'écart de revenu durait, par décile de niveau de vie",
+     "unite": "mois",
+     "sens": 1,
+     "valeurs": [
+      0.34501807820249125,
+      0.3513665058826274,
+      0.35047523510502077,
+      0.3451968771369132,
+      0.3401634280269645,
+      0.33294045201892875,
+      0.3245399479050859,
+      0.31632797517475103,
+      0.30825403913297067,
+      0.3002921230383018
+     ],
+     "bas": [
+      -0.006994307583591779,
+      -0.005362335057792352,
+      -0.005129057908934168,
+      -0.0051897295063813445,
+      -0.00515916008151269,
+      -0.005464375114395047,
+      -0.005988084327344663,
+      -0.006453578213363539,
+      -0.00694365882977675,
+      -0.007450262883987111
+     ],
+     "haut": [
+      0.697030464402596,
+      0.7080953472446869,
+      0.7060795285395459,
+      0.6955834841944438,
+      0.6854860165436376,
+      0.6713452795517809,
+      0.6550679805269642,
+      0.639109528942459,
+      0.623451737465623,
+      0.608034509320941
+     ],
+     "par_groupe": {
+      "D1": [
+       0.9520862255673521,
+       0.9374154983848058,
+       0.9192698553511518,
+       0.8944810310815459,
+       0.8699074554286272,
+       0.844085565422495,
+       0.8175113903252769,
+       0.791581727527684,
+       0.7663874102726018,
+       0.7419034080904707
+      ],
+      "D2": [
+       0.4555763663563934,
+       0.45812320778313,
+       0.45488809406593905,
+       0.44581997468668666,
+       0.43676178606793925,
+       0.4257955338999847,
+       0.4136465137807894,
+       0.401752355860286,
+       0.3901468575017509,
+       0.3787961552472138
+      ],
+      "D3": [
+       0.43570950867757696,
+       0.4415508810888008,
+       0.4400774504857965,
+       0.4322613970921113,
+       0.42443076375045186,
+       0.4141860038466562,
+       0.40253115658183997,
+       0.3910653900261739,
+       0.37987586625248254,
+       0.368861674061675
+      ],
+      "D4": [
+       0.3715865817273103,
+       0.3805181006761724,
+       0.38128455600726247,
+       0.3760856934621346,
+       0.37094131774374833,
+       0.36317543409867065,
+       0.3539417826155647,
+       0.3448468210516578,
+       0.33593100034928935,
+       0.32713067156789394
+      ],
+      "D5": [
+       0.33901571689719784,
+       0.3480676444308442,
+       0.3489872612124759,
+       0.3450659199599687,
+       0.34136802955609,
+       0.3351593957188789,
+       0.3276435054035117,
+       0.3202575466851151,
+       0.3129870359057839,
+       0.30579667228416235
+      ],
+      "D6": [
+       0.31171137555213096,
+       0.32073817690086337,
+       0.32177891546982884,
+       0.31881960428944683,
+       0.3161714254763759,
+       0.3111275471779573,
+       0.30488871009270496,
+       0.29876099827401437,
+       0.2927059021141404,
+       0.28668843624259965
+      ],
+      "D7": [
+       0.285691964735487,
+       0.2953518885484575,
+       0.29702894760774484,
+       0.2950198009759637,
+       0.29334863400802397,
+       0.289306313551688,
+       0.2840984173715017,
+       0.27898462966750165,
+       0.2739037184276485,
+       0.26884223885344993
+      ],
+      "D8": [
+       0.24318650151288201,
+       0.2532990339380824,
+       0.2555675174305885,
+       0.25473095971662385,
+       0.25427309322656394,
+       0.251525983968564,
+       0.24768268833989615,
+       0.2439082619384209,
+       0.24011868589749602,
+       0.23630671007480403
+      ],
+      "D9": [
+       0.21148365339919623,
+       0.22175881144852397,
+       0.22425696273240664,
+       0.22412364814392666,
+       0.22441622502256225,
+       0.2224781042232909,
+       0.21950514534106927,
+       0.21659541052507328,
+       0.21363938655474052,
+       0.21064690252878118
+      ],
+      "D10": [
+       -0.035611154872083675,
+       -0.02730205126623618,
+       -0.02611433274273354,
+       -0.02642323903934776,
+       -0.02626759639562103,
+       -0.027821582930436836,
+       -0.03048802126867025,
+       -0.03285805928442958,
+       -0.035353279364804535,
+       -0.037932627673082135
+      ]
+     }
+    },
+    {
+     "cle": "bonne_sante",
+     "libelle": "Personnes de plus en bonne ou très bonne santé déclarée (le chômage)",
+     "unite": "milliers de personnes",
+     "sens": 1,
+     "valeurs": [
+      -2.1079814149367344,
+      -0.5504380244031719,
+      0.8753892413834062,
+      0.5477229246563768,
+      -0.024463961462757193,
+      -0.8272190218936971,
+      -1.8717575250215812,
+      -2.9210037268018123,
+      -3.933589143442751,
+      -4.892703543018303
+     ],
+     "bas": [
+      -4.215962829873469,
+      -1.1008760488063438,
+      0.0,
+      0.0,
+      -0.048927922925514386,
+      -1.6544380437873942,
+      -3.7435150500431624,
+      -5.842007453603625,
+      -7.867178286885502,
+      -9.785407086036606
+     ],
+     "haut": [
+      -0.0,
+      -0.0,
+      1.7507784827668125,
+      1.0954458493127537,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "par_groupe": null
+    },
+    {
+     "cle": "renoncements_evites",
+     "libelle": "Renoncements à un examen médical ou dentaire pour le prix, évités, par décile",
+     "unite": "milliers par an",
+     "sens": 1,
+     "valeurs": [
+      161.06683508628163,
+      164.0305092205209,
+      163.61443199899708,
+      161.15030485295063,
+      158.8005099612421,
+      155.42856524582436,
+      151.50690810311707,
+      147.67326418399,
+      143.9040607506111,
+      140.18715225331718
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      322.13367017256326,
+      328.0610184410418,
+      327.22886399799415,
+      322.30060970590125,
+      317.6010199224842,
+      310.8571304916487,
+      303.01381620623414,
+      295.34652836798,
+      287.8081215012222,
+      280.37430450663436
+     ],
+     "par_groupe": {
+      "D1": [
+       36.98969738077886,
+       36.41972194760317,
+       35.71474184541282,
+       34.75166614540296,
+       33.7969531135833,
+       32.79374156459003,
+       31.761302833104153,
+       30.75390418126771,
+       29.77507459004503,
+       28.823841595525373
+      ],
+      "D2": [
+       20.508974209576557,
+       20.623627007645457,
+       20.477989813333643,
+       20.06976445264195,
+       19.661986151381164,
+       19.16831132648397,
+       18.621391076232705,
+       18.085944121450577,
+       17.56349193977116,
+       17.05251007813356
+      ],
+      "D3": [
+       20.479657265473598,
+       20.754219336209545,
+       20.68496366665674,
+       20.31758565106754,
+       19.94952233407565,
+       19.46798780839225,
+       18.920174936028467,
+       18.381249425638167,
+       17.85530815677629,
+       17.33760799960411
+      ],
+      "D4": [
+       17.03874765671774,
+       17.448293924113727,
+       17.483439000978137,
+       17.245050126448213,
+       17.009159693296745,
+       16.653062518999388,
+       16.229662252931174,
+       15.812621480590588,
+       15.403795041287998,
+       15.000264373669907
+      ],
+      "D5": [
+       15.517199033265705,
+       15.931517762968967,
+       15.97360984284513,
+       15.794124852445815,
+       15.624867503773723,
+       15.3406900979047,
+       14.996677829083803,
+       14.65861270179769,
+       14.325831779812896,
+       13.996719299543765
+      ],
+      "D6": [
+       15.259892158096253,
+       15.701801006851683,
+       15.752750569725524,
+       15.607876904480266,
+       15.47823478592993,
+       15.231310724348619,
+       14.925887218567835,
+       14.625903872231886,
+       14.32947543986264,
+       14.034889205715467
+      ],
+      "D7": [
+       14.268343869925136,
+       14.750790461828252,
+       14.834547998972289,
+       14.734204977235933,
+       14.650741709430338,
+       14.448855673339558,
+       14.18875716617095,
+       13.933358728535419,
+       13.679602243609727,
+       13.426816236407415
+      ],
+      "D8": [
+       12.07495324661692,
+       12.577071396594599,
+       12.689708536988192,
+       12.648170889045652,
+       12.62543641806856,
+       12.489034045209305,
+       12.29820266789031,
+       12.110790858241835,
+       11.92262682268066,
+       11.733350569476281
+      ],
+      "D9": [
+       10.561967304372137,
+       11.075131710319875,
+       11.199894980471722,
+       11.193236951342337,
+       11.207848895937087,
+       11.111054802470258,
+       10.962578577444978,
+       10.817259903888056,
+       10.669629446291124,
+       10.5201780918577
+      ],
+      "D10": [
+       -1.6325970385412707,
+       -1.2516653336143566,
+       -1.1972142563871169,
+       -1.2113760971600618,
+       -1.2042406442343778,
+       -1.2754833159136985,
+       -1.3977264543373096,
+       -1.5063810896519352,
+       -1.620774709526429,
+       -1.7390251966164045
+      ]
+     }
+    },
+    {
+     "cle": "retraite_sans_limitation",
+     "libelle": "Années de retraite sans limitation d'activité gagnées (l'âge de départ)",
+     "unite": "milliers d'années-personnes par an",
+     "sens": 1,
+     "valeurs": [
+      -0.0,
+      220.70055,
+      411.97435999999954,
+      603.2481699999992,
+      794.5219800000009,
+      949.0123650000004,
+      1103.50275,
+      1177.0695999999998,
+      1177.0695999999998,
+      1177.0695999999998
+     ],
+     "bas": [
+      -0.0,
+      110.350275,
+      205.98717999999977,
+      301.6240849999996,
+      397.26099000000045,
+      474.5061825000002,
+      551.751375,
+      588.5347999999999,
+      588.5347999999999,
+      588.5347999999999
+     ],
+     "haut": [
+      -0.0,
+      561.20997,
+      1047.5919439999989,
+      1533.9739179999979,
+      2020.3558920000023,
+      2413.2028710000013,
+      2806.04985,
+      2993.11984,
+      2993.11984,
+      2993.11984
+     ],
+     "par_groupe": {
+      "toutes les années de retraite": [
+       -0.0,
+       315.2865,
+       588.5347999999993,
+       861.7830999999989,
+       1135.0314000000012,
+       1355.7319500000006,
+       1576.4325,
+       1681.528,
+       1681.528,
+       1681.528
+      ]
+     }
+    }
+   ],
+   "notes": {
+    "coefficients": {
+     "g_hommes": 5.053960978546015,
+     "g_femmes": 3.3029823718056615,
+     "g": 4.178471675175838,
+     "s": 0.0833333333,
+     "r": 0.3,
+     "c": 0.25,
+     "k": 0.5,
+     "tau": 0.5,
+     "lambda": 0.7,
+     "v": 0.0
+    },
+    "annees_de_vie_cumulees_milliers": 188.32696672650235,
+    "annees_de_vie_cumulees_bande_milliers": [
+     -2213.9202710332247,
+     2572.0318104853923
+    ],
+    "deces_evites_cumules": 18484.07446156459,
+    "retraite_sans_limitation_cumulee_milliers": 7614.168974999999,
+    "ecart_age_legal": [
+     0.0,
+     -0.75,
+     -1.3999999999999986,
+     -2.049999999999997,
+     -2.700000000000003,
+     -3.2250000000000014,
+     -3.75,
+     -4.0,
+     -4.0,
+     -4.0
+    ],
+    "programme_age": "melenchon",
+    "prix_lus": true,
+    "entrees": {
+     "chomeurs_de_plus_milliers": [
+      58.96451510312545,
+      15.396867815473342,
+      -24.48641234638899,
+      -15.320920969409144,
+      0.6843066143428587,
+      23.13899361940412,
+      52.356853846757524,
+      81.70639795249825,
+      110.0304655508462,
+      136.85884036414836
+     ]
+    },
+    "tirage": 0,
+    "decisions": "D-620 à D-624"
+   }
+  },
+  "retailleau": {
+   "convention": "programme",
+   "cle": "sante",
+   "titre": "La santé et le temps de vie",
+   "question": "Les gens en vivent-ils plus longtemps, en meilleure santé, et combien de temps de retraite en bonne santé y gagnent-ils ou y perdent-ils ?",
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "statut": "illustratif",
+   "juge": null,
+   "sources": [
+    {
+     "document": "Insee Première n° 1687, L'espérance de vie par niveau de vie (Blanpain, février 2018)",
+     "lieu": "p. 1 (résumé) et figure 1 : 5 % les plus aisés, 5 800 € par mois, 84,4 ans (h) et 88,3 ans (f) ; 5 % les plus modestes, 470 € par mois, 71,7 ans (h) et 80,0 ans (f), 2012-2016 ; le résumé : autour de 1 000 €, 100 € de plus vont avec 0,9 an (h) et 0,7 an (f), autour de 2 000 €, 0,3 et 0,2 an (le gradient s'aplatit)",
+     "valeur": "g = 5.05 ans (hommes) et 3.30 (femmes) d'espérance de vie par unité de log du niveau de vie, une association"
+    },
+    {
+     "document": "Cesarini, Lindqvist, Östling et Wallace, Wealth, Health, and Child Development, IFN WP 1060 (Quarterly Journal of Economics 131(2), 2016)",
+     "lieu": "p. 1 (résumé) et p. 13 du PDF : « For 10-year mortality, the 95% confidence interval allows us to rule out causal effects one sixth of the gradient » ; le gradient suédois : 1 M SEK va avec 2,8 points de mortalité à dix ans en moins (2,1 avec les contrôles)",
+     "valeur": "part causale s = 0.083 (bande 0 à 1/6), le centre choisi"
+    },
+    {
+     "document": "Sullivan et von Wachter, Job Displacement and Mortality, Quarterly Journal of Economics 124(3), 2009",
+     "lieu": "p. 1 du PDF (résumé) : « mortality rates in the year after displacement are 50-100% higher than would otherwise have been expected […] we estimate a 10-15% increase in annual death hazards » vingt ans après ; la bande va du long terme (0,10) au haut de la première année (1,00) ; le centre, 0,30 (à peu près la moyenne géométrique), est choisi : un chômeur du stock n'est pas toujours dans sa première année, et l'effet durable après le retour à l'emploi n'est pas compté",
+     "valeur": "r = 0.3 (bande 0.1 à 1)"
+    },
+    {
+     "document": "Eurostat, hlth_silc_01 (santé perçue par statut d'activité), France, 16-64 ans",
+     "lieu": "hlth_silc_01, France, 16-64 ans, deux sexes, 2025 : EMP 75,1 %, UNE 60,8 % (2024 : 77,1 et 63,5) ; extraction du 17 novembre 2026, mise à jour du 20 octobre 2026",
+     "valeur": "bonne ou très bonne santé : 75.1 % en emploi, 60.8 % au chômage ; part causale 0.25 (bande 0 à 0.5, Schmitz 2011 au bas)"
+    },
+    {
+     "document": "Eurostat, hlth_silc_08 et hlth_silc_09 (besoins d'examen médical et dentaire non satisfaits, par raison et quintile de revenu), France, 16 ans ou plus",
+     "lieu": "hlth_silc_08 et hlth_silc_09, raison « Too expensive » (TXP), France, 16 ans ou plus, 2025 ; extraction du 17 novembre 2026",
+     "valeur": "renoncement pour le prix : examen médical 3.9 % (Q1) contre 0.4 % (Q5), dentaire 9.2 % contre 1.5 % ; part causale 0.5, choisie"
+    },
+    {
+     "document": "COR, rapport annuel de juin 2026, partie 4, chapitre 2",
+     "lieu": "p. 4 du PDF (folio 218) : « Parmi l'ensemble des nouveaux retraités, 48,1 % sont partis à la retraite au plus tard à 62 ans », 24,5 % à 62 ans exactement (le bas) ; le haut, un décalage de tous les départs ; le centre, choisi près de la part liée à l'âge légal",
+     "valeur": "τ = 0.5 an d'âge effectif par an d'âge légal (bande 0.25 à 1)"
+    },
+    {
+     "document": "COR, rapport annuel de juin 2026, partie 4, chapitre 1",
+     "lieu": "p. 7 du PDF (folio 209) : « Les limitations d'activité sévères ou modérées s'établissent à un peu plus de 30 % de la classe d'âge […] limitation sévère […] un peu plus de 10 % » (60-64 ans) ; le haut compte les années sans limitation sévère",
+     "valeur": "part des années de 60-64 ans sans limitation : 0.7 (sans limitation sévère : 0.89)"
+    },
+    {
+     "document": "Bozio, Garrouste et Perdrix, Impact of later retirement on mortality: Evidence from France, LEDa WP 4/2019 (Health Economics 30(5), 2021)",
+     "lieu": "BGP p. 2 du PDF (résumé) : un an de plus d'âge de liquidation n'a pas d'effet significatif sur la probabilité de décès (réforme de 1993), et l'effet minimal détectable est petit ; Garrouste et Perdrix, Journal of Economic Surveys 36(4), 2022 : « later retirement has no effect on mortality » ; haut : KWZ p. 19 du PDF, un an de retraite anticipée réduit l'âge au décès des hommes de 0,208 an, rien pour les femmes (moyenne des deux sexes, environ 0,10) ; bas : symétrique, choisi (Hallberg, Johansson et Josephson, J. Health Econ. 44, 2015 : une retraite anticipée offerte réduit la mortalité, sens seulement)",
+     "valeur": "années de vie par an de départ plus tardif : 0 (bande -0.1 à 0.1)"
+    },
+    {
+     "document": "Eurostat, demo_mlifetable (table de mortalité), France, deux sexes, 2024 ; demo_pjan et demo_gind, 2024",
+     "lieu": "demo_mlifetable (FR, T, 2024 ; DEATHRATE, LIFEXP, NUMBERDYING, SURVIVORS), demo_pjan (FR, 2024, par âge), demo_gind (FR, DEATH, 2024) ; extraction du 17 novembre 2026 ; le calcul dans D-620",
+     "valeur": "e0 = 83 ans, e† = 10.57 ans, 643,332 décès en 2024, taux de décès des 25-64 ans 0.002594, 31.19 ans perdus à un décès de cet âge, une génération de 62-64 ans : 840,764"
+    }
+   ],
+   "limites": [
+    "Corrélation contre causalité, surtout : le gradient de l'Insee (13 ans d'écart d'espérance de vie chez les hommes entre les 5 % les plus aisés et les 5 % les plus modestes) est une association ; le diplôme, le métier, la santé dès l'enfance font à la fois le revenu et la durée de vie, et la mauvaise santé fait baisser le revenu. Les loteries suédoises (Cesarini et al. 2016) excluent un effet causal de la richesse sur la mortalité d'un sixième du gradient ; la dimension en garde au plus un sixième, au centre un douzième. Aux États-Unis (Chetty et al. 2016), l'écart est aussi une association.",
+    "L'espérance de vie par décile est celle qu'aurait le décile si l'écart de revenu de l'année durait toute la vie ; les décès évités de l'année la traduisent par la disparité de la durée de vie (e†), comme si la mortalité de tous les âges bougeait d'un même facteur. L'effet du revenu sur la santé met des années à venir ; il est compté l'année même.",
+    "Le chômage : Sullivan et von Wachter mesurent la perte d'emploi d'hommes anciens dans leur entreprise, aux États-Unis ; leur effet dure vingt ans après le retour à l'emploi, ce qui n'est pas compté ici (un bas), mais un chômeur du stock n'est pas toujours dans sa première année (le centre de 0,30 est choisi). La santé déclarée des chômeurs est moins bonne surtout par sélection (Schmitz 2011).",
+    "Le renoncement aux soins pour raison de prix est déclaratif et sa mesure dépend de la question ; un même ménage peut renoncer à un examen médical et à un examen dentaire : ce sont des renoncements, pas des personnes. La couverture (complémentaire santé solidaire, 100 % santé) n'est pas lue.",
+    "L'âge de départ n'est pas dans le jumeau (la population ne vieillit pas) : l'écart d'âge légal est une entrée lue dans le texte du programme, avec un calendrier choisi ; l'âge effectif en suit une part τ. La littérature ne trouve pas d'effet d'un départ plus tardif sur la mortalité en France (Bozio, Garrouste et Perdrix 2021) ; Kuhn et al. 2020 trouvent qu'une sortie anticipée raccourcit la vie des hommes, Hallberg et al. 2015 le contraire : la bande va dans les deux sens. Le report de 2010 a augmenté les arrêts maladie et la consommation de soins après 60 ans (Caroli, Pollak et Roger 2023), la bascule vers l'invalidité et le chômage : non chiffrés ici.",
+    "Les années de retraite sans limitation d'activité sont du temps libre en bonne santé, pas une durée de vie : un départ plus tardif en retire, sans changer la longévité au centre. La part sans limitation est celle des 60-64 ans de tous statuts (COR).",
+    "Les déciles n'ont ni âge ni sexe : les décès sont répartis selon les personnes et le gradient, pas selon l'âge des membres de chaque décile.",
+    "Ce qui n'est pas lu : le temps de travail (35 h, 32 h, 28 h), les conditions de travail et la pénibilité, l'offre de soins et les dépenses de santé publiques (hôpital, 100 % Sécu), le logement, la pollution, la santé des enfants."
+   ],
+   "indicateurs": [
+    {
+     "cle": "annees_de_vie",
+     "libelle": "Années de vie gagnées dans l'année, tous canaux",
+     "unite": "milliers d'années de vie par an",
+     "sens": 1,
+     "valeurs": [
+      9.29521912385534,
+      11.39686050027177,
+      12.567054804140684,
+      12.995308013883678,
+      13.353190337555388,
+      13.474027313783688,
+      13.41556435321888,
+      13.301945327767742,
+      13.170503125114818,
+      13.036646235284852
+     ],
+     "bas": [
+      0.38133987573445804,
+      1.07865180732449,
+      1.4862966106432303,
+      -19.34988882008332,
+      -40.213594175829996,
+      -50.62956520957668,
+      -61.099255955038416,
+      -82.09734286016119,
+      -82.08463156403013,
+      -82.07663879529103
+     ],
+     "haut": [
+      20.104545674036213,
+      27.096971169332562,
+      31.06800728864464,
+      53.67556560080535,
+      76.03228189467869,
+      87.15823201890775,
+      97.71074784836507,
+      118.5871104163848,
+      118.37549448156764,
+      118.14013906108949
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       8.151199496651968,
+       8.160905078298299,
+       8.108164972210993,
+       7.987674474133619,
+       7.879372865045366,
+       7.719472942513743,
+       7.54143221833413,
+       7.364773908251309,
+       7.195197817205196,
+       7.0373626211579134
+      ],
+      "le chômage": [
+       1.1440196272033738,
+       3.23595542197347,
+       4.458889831929691,
+       5.007633539750059,
+       5.4738174725100235,
+       5.754554371269946,
+       5.874132134884752,
+       5.937171419516434,
+       5.975305307909622,
+       5.999283614126939
+      ],
+      "l'âge de départ": [
+       0.0,
+       0.0,
+       0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0
+      ]
+     }
+    },
+    {
+     "cle": "deces_evites",
+     "libelle": "Décès évités dans l'année (revenu et chômage), un ordre de grandeur",
+     "unite": "décès par an",
+     "sens": 1,
+     "valeurs": [
+      807.8426749959415,
+      875.8316158581972,
+      910.0511953827646,
+      916.2454834406319,
+      920.9459353108648,
+      914.8190850939445,
+      901.8089681837516,
+      887.1169261144789,
+      872.2964084176446,
+      858.1328160065041
+     ],
+     "bas": [
+      12.226350616686695,
+      34.58325768914684,
+      47.652985272306196,
+      53.51751137918199,
+      58.49970580859274,
+      61.49999328064494,
+      62.77794308950253,
+      63.45165565369706,
+      63.85919961429542,
+      64.11546023433728
+     ],
+     "haut": [
+      1663.5262229778068,
+      1888.9218007408213,
+      2009.6463316457048,
+      2045.5207903895953,
+      2074.876306239059,
+      2074.6625737406603,
+      2053.797160199589,
+      2027.1503330740265,
+      1999.179519498573,
+      1971.9140171020945
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       771.1636231458814,
+       772.0818427907567,
+       767.0922395658461,
+       755.6929493030859,
+       745.4468178850866,
+       730.3191052520098,
+       713.4751389152441,
+       696.7619591533878,
+       680.7188095747583,
+       665.7864353034922
+      ],
+      "le chômage": [
+       36.67905185006008,
+       103.74977306744053,
+       142.95895581691858,
+       160.55253413754596,
+       175.49911742577822,
+       184.4999798419348,
+       188.33382926850757,
+       190.35496696109118,
+       191.57759884288623,
+       192.34638070301182
+      ]
+     }
+    },
+    {
+     "cle": "deces_evites_revenu",
+     "libelle": "Dont décès évités par le revenu réel, par décile de niveau de vie",
+     "unite": "décès par an",
+     "sens": 1,
+     "valeurs": [
+      771.1636231458814,
+      772.0818427907567,
+      767.0922395658461,
+      755.6929493030859,
+      745.4468178850866,
+      730.3191052520098,
+      713.4751389152441,
+      696.7619591533878,
+      680.7188095747583,
+      665.7864353034922
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      1541.2627168109398,
+      1543.089223849353,
+      1533.116478922643,
+      1510.3456765977755,
+      1489.8792481531316,
+      1459.6626409342107,
+      1426.017729304564,
+      1392.6337765370558,
+      1360.587523355619,
+      1330.7594147587217
+     ],
+     "par_groupe": {
+      "D1": [
+       131.3510174406034,
+       135.08753202082286,
+       136.86749285786192,
+       136.151066630386,
+       135.2501004269243,
+       133.26625503668615,
+       130.72874194649097,
+       128.02043126333845,
+       125.34399999002206,
+       122.8009736522065
+      ],
+      "D2": [
+       126.8494166295178,
+       127.4412178639268,
+       127.26428735225961,
+       125.70353024935298,
+       124.14019489312942,
+       121.77855247555124,
+       119.113902608262,
+       116.38941590795602,
+       113.74234571351877,
+       111.25407592267747
+      ],
+      "D3": [
+       130.56955748461365,
+       130.75294210298642,
+       130.25976377267273,
+       128.51040180916127,
+       126.80324988244163,
+       124.30508692209222,
+       121.52540972020252,
+       118.7065872304975,
+       115.97667536278236,
+       113.41622934750045
+      ],
+      "D4": [
+       89.83696346013257,
+       90.31694572768934,
+       89.97093881393303,
+       88.74401300086365,
+       87.62944379961654,
+       85.91139062601744,
+       83.95973273878916,
+       82.0091197622259,
+       80.13046595530288,
+       78.37740105726762
+      ],
+      "D5": [
+       84.79033984635979,
+       84.18373137587267,
+       83.2103129983736,
+       81.75856031658255,
+       80.46547588203286,
+       78.69343059179022,
+       76.78494580303587,
+       74.91128024867325,
+       73.12071673079667,
+       71.458295536529
+      ],
+      "D6": [
+       69.11782147667927,
+       68.3088918196198,
+       67.20779967730599,
+       65.87500578781454,
+       64.73967224711012,
+       63.226209098412546,
+       61.620586000390226,
+       60.073834101524,
+       58.6075129773891,
+       57.254738650759364
+      ],
+      "D7": [
+       57.70962073317576,
+       56.939697105528985,
+       55.87417016912253,
+       54.68820655543292,
+       53.71210698967121,
+       52.41739674349143,
+       51.04856436260848,
+       49.74750688139164,
+       48.52110252138751,
+       47.39498603211876
+      ],
+      "D8": [
+       38.32936240681759,
+       37.67549441717121,
+       36.71875734024162,
+       35.80960451226847,
+       35.12081196337748,
+       34.214701132875234,
+       33.264635626264706,
+       32.39326262379254,
+       31.5848678505746,
+       30.852837854177082
+      ],
+      "D9": [
+       27.84716227769542,
+       27.138844385904424,
+       26.187434757003487,
+       25.40366350000154,
+       24.84361833387861,
+       24.132400882046948,
+       23.402303103419403,
+       22.757020449357114,
+       22.168639244912285,
+       21.643632893148666
+      ],
+      "D10": [
+       14.762361390286097,
+       14.236545971234113,
+       13.53128182707151,
+       13.048896941222031,
+       12.742143466904501,
+       12.37368174304644,
+       12.026317005780793,
+       11.753500684631383,
+       11.522483228072103,
+       11.333264357107227
+      ]
+     }
+    },
+    {
+     "cle": "esperance_de_vie",
+     "libelle": "Espérance de vie à la naissance si l'écart de revenu durait, par décile de niveau de vie",
+     "unite": "mois",
+     "sens": 1,
+     "valeurs": [
+      0.14043891719459822,
+      0.14022404117122989,
+      0.1389737255267265,
+      0.13673763698863217,
+      0.134779792726207,
+      0.1319542120282154,
+      0.12884382210102427,
+      0.12578928116935462,
+      0.12287011850673168,
+      0.12016267435618279
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      0.2808778345577232,
+      0.2804480825107286,
+      0.2779474512202214,
+      0.2734752741413495,
+      0.2695595856141496,
+      0.2639084242147758,
+      0.257687644356661,
+      0.2515785624896563,
+      0.24574023716090754,
+      0.24032534885656076
+     ],
+     "par_groupe": {
+      "D1": [
+       0.21193910117974943,
+       0.21797327121830626,
+       0.2208478655277003,
+       0.21969084641946007,
+       0.21823581261448796,
+       0.21503201974817177,
+       0.2109342042704057,
+       0.20656071477910926,
+       0.20223885358888416,
+       0.1981325491217399
+      ],
+      "D2": [
+       0.21067132109155334,
+       0.21165500419043531,
+       0.21136091215919678,
+       0.20876666769435592,
+       0.20616819092307576,
+       0.20224291978517853,
+       0.1978141677015242,
+       0.1932861243424146,
+       0.18888690051085438,
+       0.1847517296612573
+      ],
+      "D3": [
+       0.22546086555687048,
+       0.2257778067782898,
+       0.22492545496232697,
+       0.22190210828544654,
+       0.21895178086624129,
+       0.21463453914001815,
+       0.20983096662212986,
+       0.20495993272892735,
+       0.20024271811508576,
+       0.19581849538786925
+      ],
+      "D4": [
+       0.1695223111184758,
+       0.17042864621113185,
+       0.16977529182250006,
+       0.16745855204850504,
+       0.16535400606149117,
+       0.16211002114281498,
+       0.15842505031381915,
+       0.1547421593721808,
+       0.15119523336089088,
+       0.14788551051506
+      ],
+      "D5": [
+       0.16843754843200556,
+       0.16723171496000822,
+       0.16529675033861155,
+       0.16241100587125679,
+       0.15984071201554842,
+       0.15631846117641332,
+       0.15252512229526322,
+       0.14880110111054534,
+       0.14524235230960234,
+       0.14193837603205828
+      ],
+      "D6": [
+       0.13479995162932215,
+       0.1332214735843854,
+       0.1310729255345457,
+       0.1284723092978403,
+       0.1262570299422477,
+       0.1233039987469205,
+       0.12017122253502519,
+       0.11715338473929252,
+       0.11429254017361831,
+       0.11165328666356471
+      ],
+      "D7": [
+       0.1159662894160393,
+       0.1144184457810387,
+       0.11227635656888897,
+       0.10989218921567054,
+       0.10792994954909407,
+       0.10532725800530658,
+       0.10257562050308458,
+       0.09996027996350823,
+       0.09749505390685408,
+       0.09523146120150928
+      ],
+      "D8": [
+       0.08212849508301043,
+       0.08072700329569334,
+       0.07867637391692911,
+       0.07672776530442264,
+       0.07525147998562395,
+       0.07330944374639758,
+       0.07127323289109445,
+       0.06940570707224814,
+       0.0676731807235235,
+       0.06610433738867055
+      ],
+      "D9": [
+       0.06391353680544667,
+       0.06228743865223654,
+       0.060103303221512805,
+       0.0583040406958895,
+       0.057018390045621224,
+       0.05538572411815305,
+       0.053709738500769114,
+       0.05222846980068625,
+       0.05087783542819724,
+       0.0496726907444774
+      ],
+      "D10": [
+       0.04586952857022526,
+       0.0442354328466758,
+       0.042043690840788954,
+       0.04054461018578703,
+       0.03959133870628116,
+       0.038446311259918445,
+       0.03736685403387005,
+       0.0365190670239999,
+       0.03580117599340833,
+       0.035213177869632045
+      ]
+     }
+    },
+    {
+     "cle": "bonne_sante",
+     "libelle": "Personnes de plus en bonne ou très bonne santé déclarée (le chômage)",
+     "unite": "milliers de personnes",
+     "sens": 1,
+     "valeurs": [
+      1.6850116983290255,
+      4.766196848060908,
+      6.567441108268875,
+      7.375678611433137,
+      8.062314890737047,
+      8.475808634475928,
+      8.651933174439916,
+      8.744782920661795,
+      8.800949831191446,
+      8.836267167993668
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      3.370023396658051,
+      9.532393696121815,
+      13.13488221653775,
+      14.751357222866273,
+      16.124629781474095,
+      16.951617268951857,
+      17.303866348879833,
+      17.48956584132359,
+      17.60189966238289,
+      17.672534335987336
+     ],
+     "par_groupe": null
+    },
+    {
+     "cle": "renoncements_evites",
+     "libelle": "Renoncements à un examen médical ou dentaire pour le prix, évités, par décile",
+     "unite": "milliers par an",
+     "sens": 1,
+     "valeurs": [
+      65.5619323872142,
+      65.46162053920851,
+      64.87792827366631,
+      63.83404180348492,
+      62.92004975824612,
+      61.600967167915044,
+      60.14892539646067,
+      58.72295594271864,
+      57.360185928983995,
+      56.09625372353636
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      131.1238647744284,
+      130.92324107841702,
+      129.75585654733263,
+      127.66808360696984,
+      125.84009951649224,
+      123.20193433583009,
+      120.29785079292134,
+      117.44591188543728,
+      114.72037185796799,
+      112.19250744707271
+     ],
+     "par_groupe": {
+      "D1": [
+       8.234089523899556,
+       8.468524302679569,
+       8.580205756251312,
+       8.535254169379984,
+       8.478724352353538,
+       8.354253138073428,
+       8.195048067803125,
+       8.025132729846554,
+       7.8572232136124605,
+       7.69768833587332
+      ],
+      "D2": [
+       9.483926318478252,
+       9.52820941302663,
+       9.514970082961833,
+       9.39818331184751,
+       9.281206012272936,
+       9.10449955759756,
+       8.90512757746016,
+       8.701285738133544,
+       8.503243050306667,
+       8.317087405348925
+      ],
+      "D3": [
+       10.597338734690213,
+       10.612235925269479,
+       10.572172826546886,
+       10.430066440287048,
+       10.291392178736873,
+       10.08846883388355,
+       9.86268647922533,
+       9.633733237043247,
+       9.412009963588941,
+       9.204058189953079
+      ],
+      "D4": [
+       7.773283598951374,
+       7.814842728628255,
+       7.784883787413108,
+       7.678651898705268,
+       7.582149953349763,
+       7.433400124508839,
+       7.264429308109169,
+       7.09555386295696,
+       6.932912959772336,
+       6.781148781093862
+      ],
+      "D5": [
+       7.709610007512799,
+       7.654417410080419,
+       7.565851512819541,
+       7.433767160893557,
+       7.316121401876725,
+       7.1549033090514875,
+       6.981277156971699,
+       6.810823767800694,
+       6.647935114852567,
+       6.496707738231011
+      ],
+      "D6": [
+       6.599158343632623,
+       6.521883638155508,
+       6.416701042624732,
+       6.289387359425248,
+       6.180937919598031,
+       6.0363716922655595,
+       5.883006012029175,
+       5.73526716473194,
+       5.595213952121599,
+       5.466008773549092
+      ],
+      "D7": [
+       5.791716600217625,
+       5.714412482611407,
+       5.607429895588676,
+       5.48835717448269,
+       5.390356832247504,
+       5.260370334487622,
+       5.1229450130459195,
+       4.992326785157777,
+       4.869205740692952,
+       4.75615489191876
+      ],
+      "D8": [
+       4.077930856247901,
+       4.008342504501022,
+       3.9065224868574626,
+       3.8097681121467257,
+       3.736466032910156,
+       3.640037996625207,
+       3.538933902750421,
+       3.4462055366234687,
+       3.3601803068955194,
+       3.2822824392023473
+      ],
+      "D9": [
+       3.191985173301714,
+       3.1107741896069783,
+       3.0016935744538045,
+       2.9118343741696866,
+       2.8476261012619615,
+       2.766087108211131,
+       2.682384632824093,
+       2.60840675638873,
+       2.5409530508512006,
+       2.4807654262197114
+      ],
+      "D10": [
+       2.1028932302821506,
+       2.027977944649244,
+       1.9274973081489544,
+       1.8587718021472037,
+       1.8150689736386245,
+       1.7625750732106524,
+       1.7130872462415783,
+       1.6742203640357223,
+       1.6413085762897455,
+       1.6143517421462525
+      ]
+     }
+    },
+    {
+     "cle": "retraite_sans_limitation",
+     "libelle": "Années de retraite sans limitation d'activité gagnées (l'âge de départ)",
+     "unite": "milliers d'années-personnes par an",
+     "sens": 1,
+     "valeurs": [
+      -0.0,
+      -0.0,
+      -0.0,
+      73.56684999999999,
+      147.13369999999998,
+      183.917125,
+      220.70055,
+      294.26739999999995,
+      294.26739999999995,
+      294.26739999999995
+     ],
+     "bas": [
+      -0.0,
+      -0.0,
+      -0.0,
+      36.783424999999994,
+      73.56684999999999,
+      91.9585625,
+      110.350275,
+      147.13369999999998,
+      147.13369999999998,
+      147.13369999999998
+     ],
+     "haut": [
+      -0.0,
+      -0.0,
+      -0.0,
+      187.06999,
+      374.13998,
+      467.674975,
+      561.20997,
+      748.27996,
+      748.27996,
+      748.27996
+     ],
+     "par_groupe": {
+      "toutes les années de retraite": [
+       -0.0,
+       -0.0,
+       -0.0,
+       105.0955,
+       210.191,
+       262.73875,
+       315.2865,
+       420.382,
+       420.382,
+       420.382
+      ]
+     }
+    }
+   ],
+   "notes": {
+    "coefficients": {
+     "g_hommes": 5.053960978546015,
+     "g_femmes": 3.3029823718056615,
+     "g": 4.178471675175838,
+     "s": 0.0833333333,
+     "r": 0.3,
+     "c": 0.25,
+     "k": 0.5,
+     "tau": 0.5,
+     "lambda": 0.7,
+     "v": 0.0
+    },
+    "annees_de_vie_cumulees_milliers": 126.00631913487683,
+    "annees_de_vie_cumulees_bande_milliers": [
+     -414.6046290863086,
+     747.9490954538121
+    ],
+    "deces_evites_cumules": 8865.091108804725,
+    "retraite_sans_limitation_cumulee_milliers": 1508.1204249999998,
+    "ecart_age_legal": [
+     0.0,
+     0.0,
+     0.0,
+     -0.25,
+     -0.5,
+     -0.625,
+     -0.75,
+     -1.0,
+     -1.0,
+     -1.0
+    ],
+    "programme_age": "retailleau",
+    "prix_lus": true,
+    "entrees": {
+     "chomeurs_de_plus_milliers": [
+      -47.13319435885387,
+      -133.32019155415128,
+      -183.7046463851434,
+      -206.3126884316962,
+      -225.5192976429944,
+      -237.08555620911693,
+      -242.0121167675502,
+      -244.60931246606424,
+      -246.180414858502,
+      -247.1683123914313
+     ]
+    },
+    "tirage": 0,
+    "decisions": "D-620 à D-624"
+   }
+  },
+  "attal": {
+   "convention": "programme",
+   "cle": "sante",
+   "titre": "La santé et le temps de vie",
+   "question": "Les gens en vivent-ils plus longtemps, en meilleure santé, et combien de temps de retraite en bonne santé y gagnent-ils ou y perdent-ils ?",
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "statut": "illustratif",
+   "juge": null,
+   "sources": [
+    {
+     "document": "Insee Première n° 1687, L'espérance de vie par niveau de vie (Blanpain, février 2018)",
+     "lieu": "p. 1 (résumé) et figure 1 : 5 % les plus aisés, 5 800 € par mois, 84,4 ans (h) et 88,3 ans (f) ; 5 % les plus modestes, 470 € par mois, 71,7 ans (h) et 80,0 ans (f), 2012-2016 ; le résumé : autour de 1 000 €, 100 € de plus vont avec 0,9 an (h) et 0,7 an (f), autour de 2 000 €, 0,3 et 0,2 an (le gradient s'aplatit)",
+     "valeur": "g = 5.05 ans (hommes) et 3.30 (femmes) d'espérance de vie par unité de log du niveau de vie, une association"
+    },
+    {
+     "document": "Cesarini, Lindqvist, Östling et Wallace, Wealth, Health, and Child Development, IFN WP 1060 (Quarterly Journal of Economics 131(2), 2016)",
+     "lieu": "p. 1 (résumé) et p. 13 du PDF : « For 10-year mortality, the 95% confidence interval allows us to rule out causal effects one sixth of the gradient » ; le gradient suédois : 1 M SEK va avec 2,8 points de mortalité à dix ans en moins (2,1 avec les contrôles)",
+     "valeur": "part causale s = 0.083 (bande 0 à 1/6), le centre choisi"
+    },
+    {
+     "document": "Sullivan et von Wachter, Job Displacement and Mortality, Quarterly Journal of Economics 124(3), 2009",
+     "lieu": "p. 1 du PDF (résumé) : « mortality rates in the year after displacement are 50-100% higher than would otherwise have been expected […] we estimate a 10-15% increase in annual death hazards » vingt ans après ; la bande va du long terme (0,10) au haut de la première année (1,00) ; le centre, 0,30 (à peu près la moyenne géométrique), est choisi : un chômeur du stock n'est pas toujours dans sa première année, et l'effet durable après le retour à l'emploi n'est pas compté",
+     "valeur": "r = 0.3 (bande 0.1 à 1)"
+    },
+    {
+     "document": "Eurostat, hlth_silc_01 (santé perçue par statut d'activité), France, 16-64 ans",
+     "lieu": "hlth_silc_01, France, 16-64 ans, deux sexes, 2025 : EMP 75,1 %, UNE 60,8 % (2024 : 77,1 et 63,5) ; extraction du 17 novembre 2026, mise à jour du 20 octobre 2026",
+     "valeur": "bonne ou très bonne santé : 75.1 % en emploi, 60.8 % au chômage ; part causale 0.25 (bande 0 à 0.5, Schmitz 2011 au bas)"
+    },
+    {
+     "document": "Eurostat, hlth_silc_08 et hlth_silc_09 (besoins d'examen médical et dentaire non satisfaits, par raison et quintile de revenu), France, 16 ans ou plus",
+     "lieu": "hlth_silc_08 et hlth_silc_09, raison « Too expensive » (TXP), France, 16 ans ou plus, 2025 ; extraction du 17 novembre 2026",
+     "valeur": "renoncement pour le prix : examen médical 3.9 % (Q1) contre 0.4 % (Q5), dentaire 9.2 % contre 1.5 % ; part causale 0.5, choisie"
+    },
+    {
+     "document": "COR, rapport annuel de juin 2026, partie 4, chapitre 2",
+     "lieu": "p. 4 du PDF (folio 218) : « Parmi l'ensemble des nouveaux retraités, 48,1 % sont partis à la retraite au plus tard à 62 ans », 24,5 % à 62 ans exactement (le bas) ; le haut, un décalage de tous les départs ; le centre, choisi près de la part liée à l'âge légal",
+     "valeur": "τ = 0.5 an d'âge effectif par an d'âge légal (bande 0.25 à 1)"
+    },
+    {
+     "document": "COR, rapport annuel de juin 2026, partie 4, chapitre 1",
+     "lieu": "p. 7 du PDF (folio 209) : « Les limitations d'activité sévères ou modérées s'établissent à un peu plus de 30 % de la classe d'âge […] limitation sévère […] un peu plus de 10 % » (60-64 ans) ; le haut compte les années sans limitation sévère",
+     "valeur": "part des années de 60-64 ans sans limitation : 0.7 (sans limitation sévère : 0.89)"
+    },
+    {
+     "document": "Bozio, Garrouste et Perdrix, Impact of later retirement on mortality: Evidence from France, LEDa WP 4/2019 (Health Economics 30(5), 2021)",
+     "lieu": "BGP p. 2 du PDF (résumé) : un an de plus d'âge de liquidation n'a pas d'effet significatif sur la probabilité de décès (réforme de 1993), et l'effet minimal détectable est petit ; Garrouste et Perdrix, Journal of Economic Surveys 36(4), 2022 : « later retirement has no effect on mortality » ; haut : KWZ p. 19 du PDF, un an de retraite anticipée réduit l'âge au décès des hommes de 0,208 an, rien pour les femmes (moyenne des deux sexes, environ 0,10) ; bas : symétrique, choisi (Hallberg, Johansson et Josephson, J. Health Econ. 44, 2015 : une retraite anticipée offerte réduit la mortalité, sens seulement)",
+     "valeur": "années de vie par an de départ plus tardif : 0 (bande -0.1 à 0.1)"
+    },
+    {
+     "document": "Eurostat, demo_mlifetable (table de mortalité), France, deux sexes, 2024 ; demo_pjan et demo_gind, 2024",
+     "lieu": "demo_mlifetable (FR, T, 2024 ; DEATHRATE, LIFEXP, NUMBERDYING, SURVIVORS), demo_pjan (FR, 2024, par âge), demo_gind (FR, DEATH, 2024) ; extraction du 17 novembre 2026 ; le calcul dans D-620",
+     "valeur": "e0 = 83 ans, e† = 10.57 ans, 643,332 décès en 2024, taux de décès des 25-64 ans 0.002594, 31.19 ans perdus à un décès de cet âge, une génération de 62-64 ans : 840,764"
+    }
+   ],
+   "limites": [
+    "Corrélation contre causalité, surtout : le gradient de l'Insee (13 ans d'écart d'espérance de vie chez les hommes entre les 5 % les plus aisés et les 5 % les plus modestes) est une association ; le diplôme, le métier, la santé dès l'enfance font à la fois le revenu et la durée de vie, et la mauvaise santé fait baisser le revenu. Les loteries suédoises (Cesarini et al. 2016) excluent un effet causal de la richesse sur la mortalité d'un sixième du gradient ; la dimension en garde au plus un sixième, au centre un douzième. Aux États-Unis (Chetty et al. 2016), l'écart est aussi une association.",
+    "L'espérance de vie par décile est celle qu'aurait le décile si l'écart de revenu de l'année durait toute la vie ; les décès évités de l'année la traduisent par la disparité de la durée de vie (e†), comme si la mortalité de tous les âges bougeait d'un même facteur. L'effet du revenu sur la santé met des années à venir ; il est compté l'année même.",
+    "Le chômage : Sullivan et von Wachter mesurent la perte d'emploi d'hommes anciens dans leur entreprise, aux États-Unis ; leur effet dure vingt ans après le retour à l'emploi, ce qui n'est pas compté ici (un bas), mais un chômeur du stock n'est pas toujours dans sa première année (le centre de 0,30 est choisi). La santé déclarée des chômeurs est moins bonne surtout par sélection (Schmitz 2011).",
+    "Le renoncement aux soins pour raison de prix est déclaratif et sa mesure dépend de la question ; un même ménage peut renoncer à un examen médical et à un examen dentaire : ce sont des renoncements, pas des personnes. La couverture (complémentaire santé solidaire, 100 % santé) n'est pas lue.",
+    "L'âge de départ n'est pas dans le jumeau (la population ne vieillit pas) : l'écart d'âge légal est une entrée lue dans le texte du programme, avec un calendrier choisi ; l'âge effectif en suit une part τ. La littérature ne trouve pas d'effet d'un départ plus tardif sur la mortalité en France (Bozio, Garrouste et Perdrix 2021) ; Kuhn et al. 2020 trouvent qu'une sortie anticipée raccourcit la vie des hommes, Hallberg et al. 2015 le contraire : la bande va dans les deux sens. Le report de 2010 a augmenté les arrêts maladie et la consommation de soins après 60 ans (Caroli, Pollak et Roger 2023), la bascule vers l'invalidité et le chômage : non chiffrés ici.",
+    "Les années de retraite sans limitation d'activité sont du temps libre en bonne santé, pas une durée de vie : un départ plus tardif en retire, sans changer la longévité au centre. La part sans limitation est celle des 60-64 ans de tous statuts (COR).",
+    "Les déciles n'ont ni âge ni sexe : les décès sont répartis selon les personnes et le gradient, pas selon l'âge des membres de chaque décile.",
+    "Ce qui n'est pas lu : le temps de travail (35 h, 32 h, 28 h), les conditions de travail et la pénibilité, l'offre de soins et les dépenses de santé publiques (hôpital, 100 % Sécu), le logement, la pollution, la santé des enfants."
+   ],
+   "indicateurs": [
+    {
+     "cle": "annees_de_vie",
+     "libelle": "Années de vie gagnées dans l'année, tous canaux",
+     "unite": "milliers d'années de vie par an",
+     "sens": 1,
+     "valeurs": [
+      11.00781509431228,
+      15.827398861246103,
+      19.095948453929108,
+      20.75433208720675,
+      22.26881475550653,
+      23.230567672553924,
+      23.63911018254735,
+      23.888753721652282,
+      24.037686919338892,
+      24.124644771024876
+     ],
+     "bas": [
+      0.9108112976442209,
+      2.520709806600378,
+      3.590599624884363,
+      4.17545996390345,
+      4.6977979560633125,
+      5.02356647133735,
+      5.179731571084716,
+      5.277773996093697,
+      5.3410880485836,
+      5.382224266007495
+     ],
+     "haut": [
+      25.64822654274472,
+      41.72724118623928,
+      52.543846995717985,
+      58.2003261948742,
+      63.318789003608806,
+      66.54541238581949,
+      67.98730471401535,
+      68.8788697586371,
+      69.43009165942178,
+      69.76864033280214
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       8.275381201379618,
+       8.265269441444968,
+       8.324149579276016,
+       8.227952195496401,
+       8.175420887316593,
+       8.159868258541875,
+       8.099915469293201,
+       8.05543173337119,
+       8.014422773588095,
+       7.977971973002386
+      ],
+      "le chômage": [
+       2.7324338929326624,
+       7.562129419801135,
+       10.77179887465309,
+       12.526379891710349,
+       14.093393868189937,
+       15.070699414012049,
+       15.539194713254146,
+       15.833321988281092,
+       16.023264145750797,
+       16.146672798022486
+      ],
+      "l'âge de départ": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "cle": "deces_evites",
+     "libelle": "Décès évités dans l'année (revenu et chômage), un ordre de grandeur",
+     "unite": "décès par an",
+     "sens": 1,
+     "valeurs": [
+      870.5182170598688,
+      1024.4091341345988,
+      1132.8866336750161,
+      1180.0402526733217,
+      1225.3113130654099,
+      1255.1738582431067,
+      1264.5225712652343,
+      1269.7442603288678,
+      1271.9543516476474,
+      1272.4625106142628
+     ],
+     "bas": [
+      29.202029421103585,
+      80.81788414877775,
+      115.12021881642715,
+      133.87175260992146,
+      150.6187225413053,
+      161.0633687507967,
+      166.07026518386394,
+      169.2136580985475,
+      171.24360527680668,
+      172.56249650553048
+     ],
+     "haut": [
+      1856.837093293582,
+      2371.106289002962,
+      2725.265645768279,
+      2894.604617474777,
+      3052.1483836888983,
+      3153.656173075233,
+      3192.395083548023,
+      3215.422276132128,
+      3227.9716415652056,
+      3234.2718593530517
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       782.912128796558,
+       781.9554816882655,
+       787.5259772257348,
+       778.4249948435573,
+       773.4551454414941,
+       771.9837519907167,
+       766.3117757136425,
+       762.1032860332251,
+       758.2235358172275,
+       754.7750210976714
+      ],
+      "le chômage": [
+       87.60608826331075,
+       242.45365244633325,
+       345.36065644928146,
+       401.6152578297643,
+       451.85616762391584,
+       483.19010625239014,
+       498.21079555159173,
+       507.64097429564254,
+       513.7308158304199,
+       517.6874895165914
+      ]
+     }
+    },
+    {
+     "cle": "deces_evites_revenu",
+     "libelle": "Dont décès évités par le revenu réel, par décile de niveau de vie",
+     "unite": "décès par an",
+     "sens": 1,
+     "valeurs": [
+      782.912128796558,
+      781.9554816882655,
+      787.5259772257348,
+      778.4249948435573,
+      773.4551454414941,
+      771.9837519907167,
+      766.3117757136425,
+      762.1032860332251,
+      758.2235358172275,
+      754.7750210976714
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      1564.8167990825461,
+      1562.9274475151847,
+      1574.0634576040072,
+      1555.8870913755625,
+      1545.9611582758453,
+      1543.0224855672654,
+      1531.692431709384,
+      1523.285695146653,
+      1515.535588797139,
+      1508.6468942977467
+     ],
+     "par_groupe": {
+      "D1": [
+       50.5986438730423,
+       64.68946211407554,
+       74.56857669029594,
+       78.95251554389665,
+       83.09256316042519,
+       85.79825858376758,
+       86.6617410662838,
+       87.12769809959369,
+       87.31165333192618,
+       87.33588320975107
+      ],
+      "D2": [
+       62.99844971125333,
+       68.21164278029143,
+       72.32372336127106,
+       73.37293731908733,
+       74.61764026820741,
+       75.5700859286701,
+       75.53937927822383,
+       75.46239198050957,
+       75.30199829837865,
+       75.11303131816685
+      ],
+      "D3": [
+       94.52407101618154,
+       98.03120057299911,
+       101.0696612060147,
+       101.33919587964346,
+       101.92249324926497,
+       102.44623533428846,
+       102.1037011817197,
+       101.78563182298448,
+       101.42248188186203,
+       101.05399624562246
+      ],
+      "D4": [
+       89.52837392276363,
+       90.17004968771339,
+       91.32980901629573,
+       90.54382424930621,
+       90.19781430906195,
+       90.15945557902273,
+       89.54469109787674,
+       89.06617845166829,
+       88.60648955465373,
+       88.18427740095812
+      ],
+      "D5": [
+       100.43578311783132,
+       98.42827354321454,
+       97.78008264245065,
+       96.04312665080417,
+       94.83871038183928,
+       94.24290117629353,
+       93.36983787674946,
+       92.72127119849428,
+       92.14798344625888,
+       91.64483880002776
+      ],
+      "D6": [
+       96.60633475330211,
+       92.89044222678807,
+       91.10831832656106,
+       88.75382455761415,
+       87.00350351976921,
+       86.0778654309466,
+       85.05696418555574,
+       84.32689806504511,
+       83.71065469158788,
+       83.19009588599803
+      ],
+      "D7": [
+       88.58492686807499,
+       84.2423543512254,
+       82.03127446836413,
+       79.48212812996225,
+       77.55198836906553,
+       76.52052202090513,
+       75.47334593873921,
+       74.7391993459005,
+       74.1326106280832,
+       73.63104114225456
+      ],
+      "D8": [
+       78.4039509028779,
+       73.38297431022127,
+       70.66553851125391,
+       67.95749293042653,
+       65.86416503797044,
+       64.72867279212217,
+       63.69180452654293,
+       62.98441614722397,
+       62.41828836197801,
+       61.96480954777375
+      ],
+      "D9": [
+       69.77668674763315,
+       64.27619147943251,
+       61.196381661015565,
+       58.379564750930875,
+       56.1682649669792,
+       54.953662792566014,
+       53.92050609847313,
+       53.22634206088173,
+       52.68242236357313,
+       52.255950364117304
+      ],
+      "D10": [
+       51.454907883597805,
+       47.632890622304274,
+       45.45261134221199,
+       43.60038483188573,
+       42.19800217891094,
+       41.48609235213445,
+       40.949804463478145,
+       40.66325886092355,
+       40.488953258925854,
+       40.401097183001376
+      ]
+     }
+    },
+    {
+     "cle": "esperance_de_vie",
+     "libelle": "Espérance de vie à la naissance si l'écart de revenu durait, par décile de niveau de vie",
+     "unite": "mois",
+     "sens": 1,
+     "valeurs": [
+      0.15899577286925537,
+      0.15670052491718375,
+      0.15641984782851476,
+      0.15383317443378997,
+      0.1521684318776744,
+      0.15146602859584124,
+      0.15014493474306104,
+      0.14919791688940864,
+      0.14836414284098506,
+      0.14764716606419948
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      0.31799154592930556,
+      0.3134010500224081,
+      0.31283969584473337,
+      0.30766634905217966,
+      0.3043368639379509,
+      0.30293205737344175,
+      0.30028986966629595,
+      0.2983958339578548,
+      0.29672828586000705,
+      0.2952943323055755
+     ],
+     "par_groupe": {
+      "D1": [
+       0.08160061476619887,
+       0.10433427637734215,
+       0.12027534426265155,
+       0.12734996690212472,
+       0.13403137005469618,
+       0.1383981384939411,
+       0.1397917593878057,
+       0.14054379890555416,
+       0.14084069790343084,
+       0.14087980435275765
+      ],
+      "D2": [
+       0.10458399446531315,
+       0.11324230289926349,
+       0.12007225055891826,
+       0.12181499816443772,
+       0.12388248463784905,
+       0.12546454632619353,
+       0.12541354067783145,
+       0.12528566009789488,
+       0.12501923685903413,
+       0.12470535242750186
+      ],
+      "D3": [
+       0.16317929710972176,
+       0.16923778453650148,
+       0.17448689090861078,
+       0.17495253723955279,
+       0.17596024379486788,
+       0.1768650692559031,
+       0.17627330087628007,
+       0.17572380080211414,
+       0.17509642193539662,
+       0.17445982827855136
+      ],
+      "D4": [
+       0.16893961483117767,
+       0.1701512664513152,
+       0.1723412246654817,
+       0.1708570558873425,
+       0.17020369357714601,
+       0.17013126191014666,
+       0.16897042578074184,
+       0.16806687610468984,
+       0.16719887636273864,
+       0.16640164667727403
+      ],
+      "D5": [
+       0.1995419643270575,
+       0.19555044514218578,
+       0.19426167790743087,
+       0.19080823522325596,
+       0.18841365142917357,
+       0.18722909840082053,
+       0.18549334497423195,
+       0.1842039328432946,
+       0.18306419327801915,
+       0.18206391196982669
+      ],
+      "D6": [
+       0.18845042854018867,
+       0.18119663963091276,
+       0.17771790509005111,
+       0.17312204163986766,
+       0.16970560345567248,
+       0.16789889478235148,
+       0.1659062763575427,
+       0.16448133578513152,
+       0.16327856652228065,
+       0.16226256102566175
+      ],
+      "D7": [
+       0.1780531424133373,
+       0.1693188687126071,
+       0.1648719254862071,
+       0.15974525352234642,
+       0.15586362386743263,
+       0.1537893303647047,
+       0.1516834790639225,
+       0.1502071449945525,
+       0.1489873367420569,
+       0.147978723812709
+      ],
+      "D8": [
+       0.16805339686216428,
+       0.15728460846424516,
+       0.15145674288661382,
+       0.14564928212512812,
+       0.1411602785932159,
+       0.13872535685969037,
+       0.13650196279998225,
+       0.1349851067214335,
+       0.1337711694368968,
+       0.13279879162697344
+      ],
+      "D9": [
+       0.16020906302839033,
+       0.14757243500599848,
+       0.14049754715744142,
+       0.1340271477373037,
+       0.1289478891659685,
+       0.1261580878082149,
+       0.12378509412367694,
+       0.12219073663149935,
+       0.12094147467500754,
+       0.11996197243181544
+      ],
+      "D10": [
+       0.15995231483080544,
+       0.14806428516947848,
+       0.14128322805188048,
+       0.1355227583069894,
+       0.13116148797618826,
+       0.12894757672624504,
+       0.12727984356931074,
+       0.1263887610142128,
+       0.12584671883190696,
+       0.1255735116283765
+      ]
+     }
+    },
+    {
+     "cle": "bonne_sante",
+     "libelle": "Personnes de plus en bonne ou très bonne santé déclarée (le chômage)",
+     "unite": "milliers de personnes",
+     "sens": 1,
+     "valeurs": [
+      4.024566506570752,
+      11.13816252243178,
+      15.865643109819851,
+      18.44994277488316,
+      20.757977374139024,
+      22.197438060296765,
+      22.887478721369057,
+      23.320694976958645,
+      23.600458321687885,
+      23.782225327959573
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      8.049133013141503,
+      22.27632504486356,
+      31.731286219639703,
+      36.89988554976632,
+      41.51595474827805,
+      44.39487612059353,
+      45.77495744273811,
+      46.64138995391729,
+      47.20091664337577,
+      47.564450655919146
+     ],
+     "par_groupe": null
+    },
+    {
+     "cle": "renoncements_evites",
+     "libelle": "Renoncements à un examen médical ou dentaire pour le prix, évités, par décile",
+     "unite": "milliers par an",
+     "sens": 1,
+     "valeurs": [
+      74.22493934685457,
+      73.15343513668542,
+      73.0224049872258,
+      71.81485290977871,
+      71.03769127191923,
+      70.70978418325738,
+      70.09305010709585,
+      69.65094814753279,
+      69.26171246499605,
+      68.92700194527816
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      148.44987869370914,
+      146.30687027337083,
+      146.0448099744516,
+      143.62970581955742,
+      142.07538254383846,
+      141.41956836651477,
+      140.1861002141917,
+      139.30189629506557,
+      138.5234249299921,
+      137.85400389055633
+     ],
+     "par_groupe": {
+      "D1": [
+       3.1702822341417076,
+       4.053512387851911,
+       4.6728420884288395,
+       4.9476997047769595,
+       5.2072802701247305,
+       5.376934487108442,
+       5.431078338519446,
+       5.460295980191896,
+       5.471830864101776,
+       5.47335019679181
+      ],
+      "D2": [
+       4.708124923990592,
+       5.097901561858441,
+       5.405369707155158,
+       5.483824096660164,
+       5.5768974645808145,
+       5.648118152834939,
+       5.645821998767143,
+       5.6400651164758155,
+       5.6280713702278975,
+       5.6139410329530115
+      ],
+      "D3": [
+       7.6699177113918475,
+       7.954684840813036,
+       8.201408626523119,
+       8.223295404467356,
+       8.270660643155077,
+       8.313190161005897,
+       8.2853752674728,
+       8.259547111414362,
+       8.23005841789245,
+       8.200136601521871
+      ],
+      "D4": [
+       7.746564617459557,
+       7.8021237447762894,
+       7.902542186197091,
+       7.834487044988437,
+       7.804527740537508,
+       7.801206455655206,
+       7.747977424112175,
+       7.706546017052227,
+       7.666744718252756,
+       7.6301885127731826
+      ],
+      "D5": [
+       9.133300379966393,
+       8.950603252518656,
+       8.891614666761415,
+       8.73354601445593,
+       8.62394273802177,
+       8.569724174721399,
+       8.49027643808087,
+       8.431258334569966,
+       8.37909094291529,
+       8.333306740664913
+      ],
+      "D6": [
+       9.225628072047574,
+       8.870517398601416,
+       8.700215259816254,
+       8.47522385390779,
+       8.30797144560772,
+       8.219523664492447,
+       8.121974634653682,
+       8.052216386568654,
+       7.993334578968061,
+       7.943595828551988
+      ],
+      "D7": [
+       8.892526835420233,
+       8.456310084517044,
+       8.234215930825824,
+       7.978174013243735,
+       7.7843133747644995,
+       7.680716715994359,
+       7.575543962793863,
+       7.501811254951835,
+       7.440890242986748,
+       7.390516981278417
+      ],
+      "D8": [
+       8.344364910970604,
+       7.809661645704477,
+       7.520290303382096,
+       7.231932122560996,
+       7.009039373849501,
+       6.888138065970227,
+       6.777739753758154,
+       6.702423212270951,
+       6.642147514960796,
+       6.5938659840377065
+      ],
+      "D9": [
+       8.001199423086875,
+       7.370097917770612,
+       7.016762173198861,
+       6.693615934597033,
+       6.439946385680973,
+       6.300617457640058,
+       6.182104838311217,
+       6.1024790543170555,
+       6.040088114275198,
+       5.991169578488292
+      ],
+      "D10": [
+       7.333030238379187,
+       6.788022302273534,
+       6.477144044937142,
+       6.213054720120322,
+       6.013111835596644,
+       5.9116148478344215,
+       5.835157450626491,
+       5.794305679720036,
+       5.769455700415076,
+       5.756930488216983
+      ]
+     }
+    },
+    {
+     "cle": "retraite_sans_limitation",
+     "libelle": "Années de retraite sans limitation d'activité gagnées (l'âge de départ)",
+     "unite": "milliers d'années-personnes par an",
+     "sens": 1,
+     "valeurs": [
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "bas": [
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "haut": [
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "par_groupe": {
+      "toutes les années de retraite": [
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0,
+       -0.0
+      ]
+     }
+    }
+   ],
+   "notes": {
+    "coefficients": {
+     "g_hommes": 5.053960978546015,
+     "g_femmes": 3.3029823718056615,
+     "g": 4.178471675175838,
+     "s": 0.0833333333,
+     "r": 0.3,
+     "c": 0.25,
+     "k": 0.5,
+     "tau": 0.5,
+     "lambda": 0.7,
+     "v": 0.0
+    },
+    "annees_de_vie_cumulees_milliers": 207.87507251931808,
+    "annees_de_vie_cumulees_bande_milliers": [
+     42.099763002202586,
+     584.0487487738808
+    ],
+    "deces_evites_cumules": 11767.023102707335,
+    "retraite_sans_limitation_cumulee_milliers": 0.0,
+    "ecart_age_legal": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "programme_age": "attal",
+    "prix_lus": true,
+    "entrees": {
+     "chomeurs_de_plus_milliers": [
+      -112.57528689708398,
+      -311.55699363445547,
+      -443.7942128620939,
+      -516.0823153813471,
+      -580.6427237521407,
+      -620.9073583299796,
+      -640.2091950033305,
+      -652.3271322226196,
+      -660.1526803269339,
+      -665.2370721107575
+     ]
+    },
+    "tirage": 0,
+    "decisions": "D-620 à D-624"
+   }
+  },
+  "philippe": {
+   "convention": "programme",
+   "cle": "sante",
+   "titre": "La santé et le temps de vie",
+   "question": "Les gens en vivent-ils plus longtemps, en meilleure santé, et combien de temps de retraite en bonne santé y gagnent-ils ou y perdent-ils ?",
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "statut": "illustratif",
+   "juge": null,
+   "sources": [
+    {
+     "document": "Insee Première n° 1687, L'espérance de vie par niveau de vie (Blanpain, février 2018)",
+     "lieu": "p. 1 (résumé) et figure 1 : 5 % les plus aisés, 5 800 € par mois, 84,4 ans (h) et 88,3 ans (f) ; 5 % les plus modestes, 470 € par mois, 71,7 ans (h) et 80,0 ans (f), 2012-2016 ; le résumé : autour de 1 000 €, 100 € de plus vont avec 0,9 an (h) et 0,7 an (f), autour de 2 000 €, 0,3 et 0,2 an (le gradient s'aplatit)",
+     "valeur": "g = 5.05 ans (hommes) et 3.30 (femmes) d'espérance de vie par unité de log du niveau de vie, une association"
+    },
+    {
+     "document": "Cesarini, Lindqvist, Östling et Wallace, Wealth, Health, and Child Development, IFN WP 1060 (Quarterly Journal of Economics 131(2), 2016)",
+     "lieu": "p. 1 (résumé) et p. 13 du PDF : « For 10-year mortality, the 95% confidence interval allows us to rule out causal effects one sixth of the gradient » ; le gradient suédois : 1 M SEK va avec 2,8 points de mortalité à dix ans en moins (2,1 avec les contrôles)",
+     "valeur": "part causale s = 0.083 (bande 0 à 1/6), le centre choisi"
+    },
+    {
+     "document": "Sullivan et von Wachter, Job Displacement and Mortality, Quarterly Journal of Economics 124(3), 2009",
+     "lieu": "p. 1 du PDF (résumé) : « mortality rates in the year after displacement are 50-100% higher than would otherwise have been expected […] we estimate a 10-15% increase in annual death hazards » vingt ans après ; la bande va du long terme (0,10) au haut de la première année (1,00) ; le centre, 0,30 (à peu près la moyenne géométrique), est choisi : un chômeur du stock n'est pas toujours dans sa première année, et l'effet durable après le retour à l'emploi n'est pas compté",
+     "valeur": "r = 0.3 (bande 0.1 à 1)"
+    },
+    {
+     "document": "Eurostat, hlth_silc_01 (santé perçue par statut d'activité), France, 16-64 ans",
+     "lieu": "hlth_silc_01, France, 16-64 ans, deux sexes, 2025 : EMP 75,1 %, UNE 60,8 % (2024 : 77,1 et 63,5) ; extraction du 17 novembre 2026, mise à jour du 20 octobre 2026",
+     "valeur": "bonne ou très bonne santé : 75.1 % en emploi, 60.8 % au chômage ; part causale 0.25 (bande 0 à 0.5, Schmitz 2011 au bas)"
+    },
+    {
+     "document": "Eurostat, hlth_silc_08 et hlth_silc_09 (besoins d'examen médical et dentaire non satisfaits, par raison et quintile de revenu), France, 16 ans ou plus",
+     "lieu": "hlth_silc_08 et hlth_silc_09, raison « Too expensive » (TXP), France, 16 ans ou plus, 2025 ; extraction du 17 novembre 2026",
+     "valeur": "renoncement pour le prix : examen médical 3.9 % (Q1) contre 0.4 % (Q5), dentaire 9.2 % contre 1.5 % ; part causale 0.5, choisie"
+    },
+    {
+     "document": "COR, rapport annuel de juin 2026, partie 4, chapitre 2",
+     "lieu": "p. 4 du PDF (folio 218) : « Parmi l'ensemble des nouveaux retraités, 48,1 % sont partis à la retraite au plus tard à 62 ans », 24,5 % à 62 ans exactement (le bas) ; le haut, un décalage de tous les départs ; le centre, choisi près de la part liée à l'âge légal",
+     "valeur": "τ = 0.5 an d'âge effectif par an d'âge légal (bande 0.25 à 1)"
+    },
+    {
+     "document": "COR, rapport annuel de juin 2026, partie 4, chapitre 1",
+     "lieu": "p. 7 du PDF (folio 209) : « Les limitations d'activité sévères ou modérées s'établissent à un peu plus de 30 % de la classe d'âge […] limitation sévère […] un peu plus de 10 % » (60-64 ans) ; le haut compte les années sans limitation sévère",
+     "valeur": "part des années de 60-64 ans sans limitation : 0.7 (sans limitation sévère : 0.89)"
+    },
+    {
+     "document": "Bozio, Garrouste et Perdrix, Impact of later retirement on mortality: Evidence from France, LEDa WP 4/2019 (Health Economics 30(5), 2021)",
+     "lieu": "BGP p. 2 du PDF (résumé) : un an de plus d'âge de liquidation n'a pas d'effet significatif sur la probabilité de décès (réforme de 1993), et l'effet minimal détectable est petit ; Garrouste et Perdrix, Journal of Economic Surveys 36(4), 2022 : « later retirement has no effect on mortality » ; haut : KWZ p. 19 du PDF, un an de retraite anticipée réduit l'âge au décès des hommes de 0,208 an, rien pour les femmes (moyenne des deux sexes, environ 0,10) ; bas : symétrique, choisi (Hallberg, Johansson et Josephson, J. Health Econ. 44, 2015 : une retraite anticipée offerte réduit la mortalité, sens seulement)",
+     "valeur": "années de vie par an de départ plus tardif : 0 (bande -0.1 à 0.1)"
+    },
+    {
+     "document": "Eurostat, demo_mlifetable (table de mortalité), France, deux sexes, 2024 ; demo_pjan et demo_gind, 2024",
+     "lieu": "demo_mlifetable (FR, T, 2024 ; DEATHRATE, LIFEXP, NUMBERDYING, SURVIVORS), demo_pjan (FR, 2024, par âge), demo_gind (FR, DEATH, 2024) ; extraction du 17 novembre 2026 ; le calcul dans D-620",
+     "valeur": "e0 = 83 ans, e† = 10.57 ans, 643,332 décès en 2024, taux de décès des 25-64 ans 0.002594, 31.19 ans perdus à un décès de cet âge, une génération de 62-64 ans : 840,764"
+    }
+   ],
+   "limites": [
+    "Corrélation contre causalité, surtout : le gradient de l'Insee (13 ans d'écart d'espérance de vie chez les hommes entre les 5 % les plus aisés et les 5 % les plus modestes) est une association ; le diplôme, le métier, la santé dès l'enfance font à la fois le revenu et la durée de vie, et la mauvaise santé fait baisser le revenu. Les loteries suédoises (Cesarini et al. 2016) excluent un effet causal de la richesse sur la mortalité d'un sixième du gradient ; la dimension en garde au plus un sixième, au centre un douzième. Aux États-Unis (Chetty et al. 2016), l'écart est aussi une association.",
+    "L'espérance de vie par décile est celle qu'aurait le décile si l'écart de revenu de l'année durait toute la vie ; les décès évités de l'année la traduisent par la disparité de la durée de vie (e†), comme si la mortalité de tous les âges bougeait d'un même facteur. L'effet du revenu sur la santé met des années à venir ; il est compté l'année même.",
+    "Le chômage : Sullivan et von Wachter mesurent la perte d'emploi d'hommes anciens dans leur entreprise, aux États-Unis ; leur effet dure vingt ans après le retour à l'emploi, ce qui n'est pas compté ici (un bas), mais un chômeur du stock n'est pas toujours dans sa première année (le centre de 0,30 est choisi). La santé déclarée des chômeurs est moins bonne surtout par sélection (Schmitz 2011).",
+    "Le renoncement aux soins pour raison de prix est déclaratif et sa mesure dépend de la question ; un même ménage peut renoncer à un examen médical et à un examen dentaire : ce sont des renoncements, pas des personnes. La couverture (complémentaire santé solidaire, 100 % santé) n'est pas lue.",
+    "L'âge de départ n'est pas dans le jumeau (la population ne vieillit pas) : l'écart d'âge légal est une entrée lue dans le texte du programme, avec un calendrier choisi ; l'âge effectif en suit une part τ. La littérature ne trouve pas d'effet d'un départ plus tardif sur la mortalité en France (Bozio, Garrouste et Perdrix 2021) ; Kuhn et al. 2020 trouvent qu'une sortie anticipée raccourcit la vie des hommes, Hallberg et al. 2015 le contraire : la bande va dans les deux sens. Le report de 2010 a augmenté les arrêts maladie et la consommation de soins après 60 ans (Caroli, Pollak et Roger 2023), la bascule vers l'invalidité et le chômage : non chiffrés ici.",
+    "Les années de retraite sans limitation d'activité sont du temps libre en bonne santé, pas une durée de vie : un départ plus tardif en retire, sans changer la longévité au centre. La part sans limitation est celle des 60-64 ans de tous statuts (COR).",
+    "Les déciles n'ont ni âge ni sexe : les décès sont répartis selon les personnes et le gradient, pas selon l'âge des membres de chaque décile.",
+    "Ce qui n'est pas lu : le temps de travail (35 h, 32 h, 28 h), les conditions de travail et la pénibilité, l'offre de soins et les dépenses de santé publiques (hôpital, 100 % Sécu), le logement, la pollution, la santé des enfants."
+   ],
+   "indicateurs": [
+    {
+     "cle": "annees_de_vie",
+     "libelle": "Années de vie gagnées dans l'année, tous canaux",
+     "unite": "milliers d'années de vie par an",
+     "sens": 1,
+     "valeurs": [
+      12.724447960024438,
+      14.404758247979547,
+      15.21973957920097,
+      15.106983029646486,
+      14.881109320903441,
+      14.436047838958524,
+      13.826320090029576,
+      13.20650726986963,
+      12.613088848476414,
+      12.05194930752509
+     ],
+     "bas": [
+      0.26011620607635527,
+      -20.195856950046974,
+      -19.84862617399046,
+      -19.765532004561138,
+      -19.721908879660948,
+      -19.72785483825853,
+      -19.780527431848498,
+      -19.840093934864395,
+      -40.91670832188161,
+      -61.988801992047364
+     ],
+     "haut": [
+      26.46089500247604,
+      53.0933464212807,
+      56.11330308212349,
+      56.221830062073614,
+      55.94619515806318,
+      55.03410993541597,
+      53.60579920646315,
+      52.12963287581596,
+      71.73341535858283,
+      91.41970464047225
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       11.944099341795372,
+       11.935029098120461,
+       11.708318101172349,
+       11.346279043329893,
+       10.989535959886275,
+       10.562312353734105,
+       10.110602385575069,
+       9.669489074462806,
+       9.248613814121203,
+       8.846455283667186
+      ],
+      "le chômage": [
+       0.7803486182290658,
+       2.469729149859086,
+       3.5114214780286215,
+       3.7607039863165928,
+       3.891573361017164,
+       3.873735485224419,
+       3.7157177044545073,
+       3.5370181954068243,
+       3.3644750343552103,
+       3.2054940238579044
+      ],
+      "l'âge de départ": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "cle": "deces_evites",
+     "libelle": "Décès évités dans l'année (revenu et chômage), un ordre de grandeur",
+     "unite": "décès par an",
+     "sens": 1,
+     "valeurs": [
+      1155.019130362171,
+      1208.325190600618,
+      1220.2749365012137,
+      1194.0157556527856,
+      1164.4611034902946,
+      1123.470687612102,
+      1075.6692950132615,
+      1028.207335933075,
+      982.8574279094952,
+      939.7130843302626
+     ],
+     "bas": [
+      8.339730877728607,
+      26.39445495200477,
+      37.52721468449953,
+      40.19134323305112,
+      41.58996859054359,
+      41.39933189296162,
+      39.71056646846753,
+      37.80077156574569,
+      35.956770699532015,
+      34.25771105971898
+     ],
+     "haut": [
+      2340.704114994172,
+      2519.5562734321015,
+      2588.0881186546526,
+      2546.3836411938,
+      2493.0221035660447,
+      2410.451059516299,
+      2308.2668307157187,
+      2205.8669611125065,
+      2107.940325481487,
+      2014.991922417993
+     ],
+     "par_groupe": {
+      "le revenu réel": [
+       1129.999937728985,
+       1129.1418257446037,
+       1107.693292447715,
+       1073.4417259536324,
+       1039.6911977186637,
+       999.2726919332171,
+       956.5375956078589,
+       914.8050212358379,
+       874.9871158108991,
+       836.9399511511057
+      ],
+      "le chômage": [
+       25.01919263318582,
+       79.18336485601431,
+       112.58164405349861,
+       120.57402969915334,
+       124.76990577163076,
+       124.19799567888485,
+       119.1316994054026,
+       113.40231469723707,
+       107.87031209859603,
+       102.77313317915691
+      ]
+     }
+    },
+    {
+     "cle": "deces_evites_revenu",
+     "libelle": "Dont décès évités par le revenu réel, par décile de niveau de vie",
+     "unite": "décès par an",
+     "sens": 1,
+     "valeurs": [
+      1129.999937728985,
+      1129.1418257446037,
+      1107.693292447715,
+      1073.4417259536324,
+      1039.6911977186637,
+      999.2726919332171,
+      956.5375956078589,
+      914.8050212358379,
+      874.9871158108991,
+      836.9399511511057
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      2257.306806216886,
+      2255.611723912054,
+      2212.815971809657,
+      2144.470208863289,
+      2077.122417660609,
+      1996.4577405866828,
+      1911.1611660310432,
+      1827.8592454550496,
+      1748.372618486167,
+      1672.4148118208034
+     ],
+     "par_groupe": {
+      "D1": [
+       306.21436485408475,
+       303.54697076023706,
+       297.5128044912054,
+       288.1847158821501,
+       278.5983694704191,
+       267.80579932840516,
+       256.59340795021393,
+       245.4974817816172,
+       234.86987136188762,
+       224.67871373129015
+      ],
+      "D2": [
+       174.6426089067788,
+       174.2310453178874,
+       171.10215875148646,
+       165.8106009510644,
+       160.44670407349233,
+       154.1880315464803,
+       147.59656629958783,
+       141.11323990014415,
+       134.9196729347897,
+       128.9972391017072
+      ],
+      "D3": [
+       176.3524597980933,
+       175.87843893563755,
+       172.608266074932,
+       167.25344697807984,
+       161.8660092346463,
+       155.55548259117933,
+       148.9123864832486,
+       142.38922838841287,
+       136.15870293952742,
+       130.20082212086547
+      ],
+      "D4": [
+       125.24025865327991,
+       125.69596853800222,
+       123.63366091538448,
+       119.91068007008046,
+       116.21124331453957,
+       111.71288536311391,
+       106.90861332234911,
+       102.2113567567717,
+       97.73054335721731,
+       93.45257532123857
+      ],
+      "D5": [
+       113.19731347719821,
+       112.97331041378504,
+       110.65440304216375,
+       107.16590393230194,
+       103.76974688623127,
+       99.69165545637583,
+       95.39165070454783,
+       91.20606096378289,
+       87.21664534617172,
+       83.4072038955472
+      ],
+      "D6": [
+       89.37597478009737,
+       89.38213290075343,
+       87.50373799589457,
+       84.74421245140158,
+       82.11653771079219,
+       78.88471220782495,
+       75.46113815613595,
+       72.14827389505358,
+       68.99517634840832,
+       65.98769119537205
+      ],
+      "D7": [
+       69.08069859442239,
+       69.46954195073536,
+       68.10836332158988,
+       66.0132830761686,
+       64.06034401975619,
+       61.55979109255742,
+       58.877063465665614,
+       56.295322705156245,
+       53.84123586840115,
+       51.50368133528265
+      ],
+      "D8": [
+       44.237784982089124,
+       44.88492979613629,
+       44.05910319661431,
+       42.748440003064644,
+       41.5938085003527,
+       39.99135485168528,
+       38.23777264669616,
+       36.57203380266048,
+       34.993159389529424,
+       33.493098910091845
+      ],
+      "D9": [
+       27.495777708393227,
+       28.278249069800662,
+       27.80040416754996,
+       27.01937050701525,
+       26.401544041650677,
+       25.408483180644843,
+       24.287527468793527,
+       23.243920073850255,
+       22.258753026170538,
+       21.326121754801687
+      ],
+      "D10": [
+       4.162695974548067,
+       4.801238061628816,
+       4.710390490894582,
+       4.591072102305669,
+       4.6268904667835535,
+       4.4744963149500805,
+       4.271469110620262,
+       4.128102968388491,
+       4.003355238795934,
+       3.892803784908859
+      ]
+     }
+    },
+    {
+     "cle": "esperance_de_vie",
+     "libelle": "Espérance de vie à la naissance si l'écart de revenu durait, par décile de niveau de vie",
+     "unite": "mois",
+     "sens": 1,
+     "valeurs": [
+      0.19632179419732382,
+      0.19647431920045016,
+      0.1927449074487153,
+      0.18679422263163017,
+      0.18099480745759006,
+      0.1739549726076856,
+      0.16648819110858537,
+      0.15921965820836753,
+      0.1522904736148058,
+      0.14567420891478763
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      0.3926435886302338,
+      0.3929486386366695,
+      0.38548981512872443,
+      0.3735884454874133,
+      0.3619896151323738,
+      0.34790994542411713,
+      0.3329763824169565,
+      0.3184393166077987,
+      0.3045809474123601,
+      0.29134841800438427
+     ],
+     "par_groupe": {
+      "D1": [
+       0.49463740559804525,
+       0.4903203437223408,
+       0.4805548489503645,
+       0.465460058740144,
+       0.4499492250580299,
+       0.43248897510757284,
+       0.41435208239843485,
+       0.39640613376171185,
+       0.3792199938628793,
+       0.36274183811737093
+      ],
+      "D2": [
+       0.2901370250239949,
+       0.28945250600433137,
+       0.284248613560155,
+       0.27544830170229706,
+       0.26652830690056184,
+       0.2561211207617701,
+       0.2451614759156312,
+       0.23438255750251596,
+       0.22408623693516733,
+       0.21424143565641957
+      ],
+      "D3": [
+       0.3046114445724211,
+       0.30379169284669855,
+       0.29813653790266464,
+       0.2888769199500005,
+       0.2795615795520293,
+       0.2686510094721013,
+       0.25716645811772143,
+       0.24589026677162235,
+       0.23512086782788869,
+       0.2248235874797434
+      ],
+      "D4": [
+       0.23639059990423192,
+       0.23725155584680585,
+       0.23335536044167005,
+       0.22632205669707992,
+       0.2193336177727951,
+       0.21083649160553747,
+       0.20176214079007163,
+       0.19289054935504296,
+       0.18442832697317801,
+       0.17634971416977463
+      ],
+      "D5": [
+       0.22491857580599728,
+       0.22447309652242645,
+       0.2198615319039932,
+       0.21292433945733735,
+       0.20617114192311498,
+       0.19806240513309292,
+       0.18951298494827917,
+       0.18119160212511656,
+       0.17326074174607384,
+       0.16568812840477448
+      ],
+      "D6": [
+       0.1743364340465755,
+       0.17434845431250165,
+       0.17068199789424077,
+       0.16529584662595848,
+       0.1601672595578595,
+       0.15385980032646673,
+       0.14717845316954112,
+       0.14071349904536595,
+       0.13456063086443404,
+       0.12869218481846018
+      ],
+      "D7": [
+       0.1388287442553409,
+       0.13961061756758475,
+       0.13687362586200255,
+       0.13266105592840138,
+       0.12873441473304564,
+       0.12370690118364662,
+       0.11831333590504,
+       0.11312301906653188,
+       0.10818953383350655,
+       0.10349049355845684
+      ],
+      "D8": [
+       0.09479323017402219,
+       0.09618046535216357,
+       0.0944102062767637,
+       0.09160069211571727,
+       0.08912569625238695,
+       0.08569085687010489,
+       0.08193218189981534,
+       0.07836189588647516,
+       0.0749778848065763,
+       0.07176287974097557
+      ],
+      "D9": [
+       0.06310685430953016,
+       0.06490320073003272,
+       0.06380619272641327,
+       0.06201316236936466,
+       0.060594827103794296,
+       0.0583151049057159,
+       0.05574182985976739,
+       0.05334616316443039,
+       0.051084691494840864,
+       0.04894385395623687
+      ],
+      "D10": [
+       0.0129326269945014,
+       0.014916560550661585,
+       0.014634297632150826,
+       0.01426357698842557,
+       0.014374864055851203,
+       0.013901378616639634,
+       0.013270580089287958,
+       0.012825148315631193,
+       0.012437564335742696,
+       0.012094088353145101
+      ]
+     }
+    },
+    {
+     "cle": "bonne_sante",
+     "libelle": "Personnes de plus en bonne ou très bonne santé déclarée (le chômage)",
+     "unite": "milliers de personnes",
+     "sens": 1,
+     "valeurs": [
+      1.1493653773276702,
+      3.637632091496416,
+      5.171927235816724,
+      5.539092215040775,
+      5.731848022790798,
+      5.705574846466375,
+      5.472832502882475,
+      5.209628309465722,
+      4.9554917213117555,
+      4.721330649132433
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      2.2987307546553404,
+      7.275264182992832,
+      10.343854471633447,
+      11.07818443008155,
+      11.463696045581596,
+      11.41114969293275,
+      10.94566500576495,
+      10.419256618931444,
+      9.910983442623511,
+      9.442661298264866
+     ],
+     "par_groupe": null
+    },
+    {
+     "cle": "renoncements_evites",
+     "libelle": "Renoncements à un examen médical ou dentaire pour le prix, évités, par décile",
+     "unite": "milliers par an",
+     "sens": 1,
+     "valeurs": [
+      91.65006719231953,
+      91.7212713438616,
+      89.98024794382697,
+      87.20225446859412,
+      84.49487909771348,
+      81.20843125500438,
+      77.72266937665131,
+      74.32945706714592,
+      71.09466473965924,
+      68.00595466140189
+     ],
+     "bas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "haut": [
+      183.30013438463905,
+      183.4425426877232,
+      179.96049588765393,
+      174.40450893718824,
+      168.98975819542696,
+      162.41686251000877,
+      155.44533875330262,
+      148.65891413429185,
+      142.18932947931847,
+      136.01190932280377
+     ],
+     "par_groupe": {
+      "D1": [
+       19.21725937730305,
+       19.049536320222533,
+       18.670135078309045,
+       18.083684285399322,
+       17.481069702163335,
+       16.8027179473364,
+       16.098077805799967,
+       15.400856071615319,
+       14.73315382266962,
+       14.092957611390036
+      ],
+      "D2": [
+       13.061285007057243,
+       13.030469574218786,
+       12.796202602074029,
+       12.400033304767138,
+       11.998476163422295,
+       11.52996917342675,
+       11.036591794584087,
+       10.551350293779864,
+       10.087834210498029,
+       9.64464446134784
+      ],
+      "D3": [
+       14.317653986753669,
+       14.27912319031424,
+       14.013313900568704,
+       13.578084009315365,
+       13.140234995552293,
+       12.627405389225741,
+       12.087596936802278,
+       11.557582031392222,
+       11.051387893026451,
+       10.567384748508056
+      ],
+      "D4": [
+       10.839465089038503,
+       10.878943401147831,
+       10.700287083632873,
+       10.377781660697384,
+       10.057333471228969,
+       9.667705869774181,
+       9.251610183609932,
+       8.844811835100455,
+       8.456784713374521,
+       8.086347642332667
+      ],
+      "D5": [
+       10.294821546927423,
+       10.274431369234096,
+       10.063353939863193,
+       9.74582944007881,
+       9.436726631487597,
+       9.065578993169428,
+       8.67426069134862,
+       8.293379962039637,
+       7.93037396298749,
+       7.583765406032188
+      ],
+      "D6": [
+       8.534674674819113,
+       8.535263129319434,
+       8.355771028827697,
+       8.092090926182754,
+       7.841019929996064,
+       7.532237013452985,
+       7.205150339426754,
+       6.888657229198721,
+       6.587442348164325,
+       6.300151409107177
+      ],
+      "D7": [
+       6.9335385890153,
+       6.972587770157451,
+       6.835893905279112,
+       6.625505081622906,
+       6.42939642704096,
+       6.178306788590856,
+       5.908935390094226,
+       5.649714849837648,
+       5.40332127749067,
+       5.168636614360176
+      ],
+      "D8": [
+       4.706773670932889,
+       4.775654138450253,
+       4.687755363489996,
+       4.548254396416186,
+       4.4253632854813105,
+       4.254813009488721,
+       4.0681833065523865,
+       3.8909076912532816,
+       3.7228811958614387,
+       3.5632463657485154
+      ],
+      "D9": [
+       3.1516976427529726,
+       3.241411206216247,
+       3.186624169579461,
+       3.097076217751964,
+       3.0262413779862873,
+       2.9123869455885965,
+       2.7838718265067346,
+       2.6642268662385256,
+       2.5512839061087322,
+       2.4443656846610127
+      ],
+      "D10": [
+       0.5928976077193555,
+       0.6838512445807329,
+       0.6709108722028652,
+       0.6539151463622964,
+       0.6590171133543712,
+       0.6373101249507123,
+       0.6083911019263326,
+       0.5879702366902462,
+       0.5702014094779605,
+       0.5544547179142316
+      ]
+     }
+    },
+    {
+     "cle": "retraite_sans_limitation",
+     "libelle": "Années de retraite sans limitation d'activité gagnées (l'âge de départ)",
+     "unite": "milliers d'années-personnes par an",
+     "sens": 1,
+     "valeurs": [
+      -0.0,
+      -73.56684999999999,
+      -73.56684999999999,
+      -73.56684999999999,
+      -73.56684999999999,
+      -73.56684999999999,
+      -73.56684999999999,
+      -73.56684999999999,
+      -147.13369999999998,
+      -220.70055
+     ],
+     "bas": [
+      -0.0,
+      -187.06999,
+      -187.06999,
+      -187.06999,
+      -187.06999,
+      -187.06999,
+      -187.06999,
+      -187.06999,
+      -374.13998,
+      -561.20997
+     ],
+     "haut": [
+      -0.0,
+      -36.783424999999994,
+      -36.783424999999994,
+      -36.783424999999994,
+      -36.783424999999994,
+      -36.783424999999994,
+      -36.783424999999994,
+      -36.783424999999994,
+      -73.56684999999999,
+      -110.350275
+     ],
+     "par_groupe": {
+      "toutes les années de retraite": [
+       -0.0,
+       -105.0955,
+       -105.0955,
+       -105.0955,
+       -105.0955,
+       -105.0955,
+       -105.0955,
+       -105.0955,
+       -210.191,
+       -315.2865
+      ]
+     }
+    }
+   ],
+   "notes": {
+    "coefficients": {
+     "g_hommes": 5.053960978546015,
+     "g_femmes": 3.3029823718056615,
+     "g": 4.178471675175838,
+     "s": 0.0833333333,
+     "r": 0.3,
+     "c": 0.25,
+     "k": 0.5,
+     "tau": 0.5,
+     "lambda": 0.7,
+     "v": 0.0
+    },
+    "annees_de_vie_cumulees_milliers": 138.47095149261412,
+    "annees_de_vie_cumulees_bande_milliers": [
+     -241.52579432108354,
+     571.7582317427672
+    ],
+    "deces_evites_cumules": 11092.01394740528,
+    "retraite_sans_limitation_cumulee_milliers": -882.8022,
+    "ecart_age_legal": [
+     0.0,
+     0.25,
+     0.25,
+     0.25,
+     0.25,
+     0.25,
+     0.25,
+     0.25,
+     0.5,
+     0.75
+    ],
+    "programme_age": "philippe",
+    "prix_lus": true,
+    "entrees": {
+     "chomeurs_de_plus_milliers": [
+      -32.15008048469008,
+      -101.7519466152844,
+      -144.66929330955873,
+      -154.93964237876298,
+      -160.33141322491747,
+      -159.59649920185666,
+      -153.08622385685248,
+      -145.723868796244,
+      -138.61515304368547,
+      -132.06519298272542
+     ]
+    },
+    "tirage": 0,
+    "decisions": "D-620 à D-624"
+   }
+  }
+ }
+}

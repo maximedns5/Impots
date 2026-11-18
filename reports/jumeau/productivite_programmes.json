@@ -1,0 +1,5250 @@
+{
+ "decision": "D-627",
+ "commit": "3d95302cb52c7d598d759ed37ca236beec802ddd",
+ "mode": "structurel",
+ "vue": "vieillie",
+ "convention": "parts_premiere_annee",
+ "tirages": 200,
+ "graine": 20261115,
+ "theta_tirage_0": 0.5,
+ "programmes": {
+  "melenchon": {
+   "forme": "mesures composées (le programme est refusé en structurel)",
+   "cles": [
+    "pres2027_melenchon_point_indice_10",
+    "pres2027_melenchon_indexation_pensions_prestations_10",
+    "pres2027_melenchon_smic_1700_net",
+    "pres2027_melenchon_garantie_autonomie_jeunes",
+    "pres2027_melenchon_suppression_pfu",
+    "pres2027_melenchon_exonerations_au_dela_2_smic",
+    "pres2027_melenchon_defiscalisation_pensions_alimentaires"
+   ],
+   "refusees": [],
+   "cir_fiches": [
+    "suppression_cir : -8.041 Md€ par an, 2027-2035 (Suppression du crédit d'impôt recherche)"
+   ],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600).",
+     "Le canal de la R&D lit une variation de la créance de CIR que la trajectoire du jumeau ne porte pas forcément : il est à côté, estimé sur une hausse du CIR (une baisse extrapole)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.7856596179915964,
+       1.315019255940597,
+       1.2583407051110607,
+       1.2961310002363335,
+       1.351410962037325,
+       1.35955386348523,
+       1.3764396854664573,
+       1.3973476718192934,
+       1.4192228432990062,
+       1.4376129742281307
+      ],
+      "bas": [
+       0.5730897189783424,
+       0.7168561914760974,
+       0.5619434393733436,
+       0.5144387401142991,
+       0.4898163029081015,
+       0.4643760382437001,
+       0.44093259563946163,
+       0.4454559847313133,
+       0.44525604860201184,
+       0.45006514530618547
+      ],
+      "haut": [
+       0.9398884676055052,
+       1.5649953630996467,
+       1.546743735704552,
+       1.6274105175280318,
+       1.7267323716737548,
+       1.7521610178641827,
+       1.7681980878149743,
+       1.7894647578535257,
+       1.8030148914019914,
+       1.8078688184295066
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.15364511098956424,
+       0.2673629556381396,
+       0.4068526629820379,
+       0.6537673938715072,
+       0.8683152575054587,
+       1.0575945258006314,
+       1.2254801629175471,
+       1.3571433880843253,
+       1.4594970292841403,
+       1.5385381570855783
+      ],
+      "bas": [
+       -0.07452215840576204,
+       -0.26852902569820536,
+       -0.24968532268184015,
+       -0.13613987632198177,
+       -0.02988882761291722,
+       0.09738230953257988,
+       0.2226225594596232,
+       0.3187735125706803,
+       0.39771998462934555,
+       0.4729302281230219
+      ],
+      "haut": [
+       0.3022540918204707,
+       0.6565943494488579,
+       0.8960594923141251,
+       1.1955913917811878,
+       1.4444649885297898,
+       1.6239092124152994,
+       1.761863959475418,
+       1.8572272305526212,
+       1.9209524221179968,
+       1.9617165640583767
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.08801291476407669,
+       0.35743589632494494,
+       0.5952049449504396,
+       0.7038228374852816,
+       0.7765510340457668,
+       0.8052777992420183,
+       0.7945927978568187,
+       0.7661371860800551,
+       0.7268276647967904,
+       0.6805786424850871
+      ],
+      "bas": [
+       0.018920720656839075,
+       0.144040536262587,
+       0.2533472780607925,
+       0.2899905860892157,
+       0.3092088041363446,
+       0.2909796853489853,
+       0.245431723507624,
+       0.20252004730714546,
+       0.1588374333940004,
+       0.12895079370692394
+      ],
+      "haut": [
+       0.21608556916340438,
+       0.6523704211621412,
+       0.9731065196316994,
+       1.1527747940666093,
+       1.2730668863359114,
+       1.357712604231006,
+       1.3950947359378953,
+       1.402755708892602,
+       1.3821773787439415,
+       1.3601235805506278
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.7984296384686725,
+       1.539674921165407,
+       1.6515475200981529,
+       1.6836127434999557,
+       1.7107693520764453,
+       1.6592037543998392,
+       1.5879387195528167,
+       1.5198747289635808,
+       1.4558096919019035,
+       1.392541560554334
+      ],
+      "bas": [
+       0.7627882648737506,
+       1.1239272522694304,
+       1.1495162451615721,
+       1.1565854935302529,
+       1.123630905112607,
+       1.0817068375437207,
+       1.0130839668484863,
+       0.9462582189387178,
+       0.8917717859064368,
+       0.842351698040477
+      ],
+      "haut": [
+       0.9070013665443201,
+       1.6552179024354134,
+       1.7717838683545977,
+       1.8040973275370407,
+       1.8211991810862371,
+       1.7770872412735568,
+       1.7185223563566676,
+       1.67445777728599,
+       1.6317782755117258,
+       1.5868814521038896
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       1.6865347887496052,
+       2.1230346404569556,
+       2.2925849317329883,
+       2.388540976026321,
+       2.501571131577296,
+       2.5347122953730983,
+       2.536232123611315,
+       2.5376525760702373,
+       2.534910376400612,
+       2.528519324966294
+      ],
+      "bas": [
+       0.7260186492745657,
+       1.0133161112695177,
+       1.0038512056537985,
+       1.021626223931762,
+       1.0729627443160816,
+       1.056160628156716,
+       1.0300704531265858,
+       1.021367540816196,
+       1.021183628762945,
+       1.0078467288148218
+      ],
+      "haut": [
+       3.0100297293337137,
+       3.587418799432006,
+       3.841303836218007,
+       3.98433240616609,
+       4.094842432192923,
+       4.081564356182698,
+       4.044483464295833,
+       4.01465038261165,
+       3.981256945206829,
+       3.977115212581509
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.39630373373685723,
+       0.7938236904570569,
+       0.7958022517282772,
+       0.7986345828188487,
+       0.8015776451143307,
+       0.46962318234854633,
+       0.48198769288957527,
+       0.49340843387383887,
+       0.5051670931514061,
+       0.5169957112242026
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.7926074674737145,
+       1.5876473809141138,
+       1.5916045034565545,
+       1.5972691656376974,
+       1.6031552902286614,
+       1.1418897415060427,
+       1.160678333564969,
+       1.1777535283823297,
+       1.1956735967421948,
+       1.213897664381411
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        0.09180616388242345,
+        0.18482855074818932,
+        0.18680711201940978,
+        0.18963944310998118,
+        0.19258250540546315,
+        0.19498961437444667,
+        0.19755241702730814,
+        0.19945878421214724,
+        0.20198198066751985,
+        0.20484587070479465
+       ],
+       "salaire_efficience": [
+        0.30449756985443377,
+        0.6089951397088675,
+        0.6089951397088675,
+        0.6089951397088675,
+        0.6089951397088675,
+        0.6089951397088675,
+        0.6089951397088675,
+        0.6089951397088675,
+        0.6089951397088675,
+        0.6089951397088675
+       ],
+       "rd_cir": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.3343615717347678,
+        -0.32455986384660046,
+        -0.31504549004717575,
+        -0.3058100272249813,
+        -0.2968452991894596
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.4843166485009339,
+       1.1512595867820017,
+       1.391007196678717,
+       1.5024574203041303,
+       1.5781286791600975,
+       1.2749009815905648,
+       1.276580490746394,
+       1.259545619953894,
+       1.2319947579481965,
+       1.1975743537092898
+      ],
+      "bas": [
+       0.08801291476407669,
+       0.35743589632494494,
+       0.5952049449504396,
+       0.7038228374852816,
+       0.7765510340457668,
+       0.8052777992420183,
+       0.7945927978568187,
+       0.7661371860800551,
+       0.7268276647967904,
+       0.6805786424850871
+      ],
+      "haut": [
+       0.880620382237791,
+       1.9450832772390587,
+       2.186809448406994,
+       2.301092003122979,
+       2.3797063242744283,
+       1.9471675407480613,
+       1.9552711314217879,
+       1.9438907144623845,
+       1.922501261538985,
+       1.894476306866498
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience",
+      "rd_cir"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       0.008723669853040964,
+       0.00883923864848642,
+       0.008911678093274655,
+       0.00910837440477717,
+       0.009191335827973154,
+       0.009337104405658148,
+       0.009434860263551292,
+       0.00951825256865629,
+       0.009674621211184651,
+       0.009790387141369681
+      ],
+      "salaire_efficience": [
+       0.028934182173926147,
+       0.028934182173926147,
+       0.028934182173926147,
+       0.028934182173926147,
+       0.028934182173926147,
+       0.028934182173926147,
+       0.028934182173926147,
+       0.028934182173926147,
+       0.028934182173926147,
+       0.028934182173926147
+      ],
+      "rd_cir": [
+       0.0,
+       -0.0025330422101118772,
+       -0.0024587868473227308,
+       -0.0023867082579331496,
+       -0.0023167426304922826,
+       -0.002248828024162573,
+       -0.0021829043138832972,
+       -0.0021189131371416206,
+       -0.0020567978423040385,
+       -0.001996503438462472
+      ]
+     }
+    }
+   }
+  },
+  "retailleau": {
+   "forme": "programme",
+   "cles": [
+    "pres2027_retailleau_programme"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.23800276619541094,
+       0.289745189234214,
+       0.1753580550021061,
+       0.1346021006533693,
+       0.11371533559252356,
+       0.08812327183911339,
+       0.07618916920488772,
+       0.07271413584672981,
+       0.07396184285088925,
+       0.07815273118441102
+      ],
+      "bas": [
+       0.2343966526555752,
+       0.19412560637607656,
+       0.08319000738507776,
+       0.04516417529232264,
+       0.0197793417059744,
+       -0.011748705589387782,
+       -0.025650731352942487,
+       -0.02687143555360593,
+       -0.024240099032966082,
+       -0.020369864203099157
+      ],
+      "haut": [
+       0.29647555201588016,
+       0.3750389819542665,
+       0.2807773194561891,
+       0.2613899795816055,
+       0.26048992376063285,
+       0.2433196052182962,
+       0.2381439660040141,
+       0.2386669527403595,
+       0.24045446301057202,
+       0.24340098347557568
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.11464549523590994,
+       -0.25351466207500506,
+       -0.2557871104271081,
+       -0.18052171860697408,
+       -0.10811533316734678,
+       -0.03509735639903866,
+       0.03791927165850417,
+       0.10114776148566484,
+       0.15514930551381312,
+       0.20178791707659016
+      ],
+      "bas": [
+       -0.13551423800512552,
+       -0.30700876390677867,
+       -0.3306776986508192,
+       -0.27208751195379355,
+       -0.23450624668097883,
+       -0.19601621006851533,
+       -0.14322967324476132,
+       -0.09694375011776668,
+       -0.05633600141040805,
+       -0.027186471419227698
+      ],
+      "haut": [
+       -0.0612213354287733,
+       -0.14140870948183226,
+       -0.10535543756316881,
+       -0.0008840745704164114,
+       0.08901893421474405,
+       0.16611522808790302,
+       0.23041625721883044,
+       0.2981824509012419,
+       0.34784883969773733,
+       0.3950988085663454
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.10805080799438128,
+       0.3312574949891973,
+       0.4921168150976928,
+       0.5958725094620771,
+       0.6885330574452071,
+       0.7559032402375839,
+       0.8008952326183929,
+       0.8346082741112657,
+       0.8612127776944067,
+       0.8828526754301359
+      ],
+      "bas": [
+       0.07944138824530148,
+       0.2456167806358311,
+       0.34334298906116695,
+       0.40678551916904576,
+       0.4658337798464656,
+       0.5119049341297769,
+       0.5476512073449398,
+       0.5751438841029083,
+       0.5927136707601283,
+       0.610296984685176
+      ],
+      "haut": [
+       0.12086107866951824,
+       0.3606080500022519,
+       0.5309920022163002,
+       0.6374599012079123,
+       0.7338339861639362,
+       0.8005265598564203,
+       0.8473533971285925,
+       0.8855187237119687,
+       0.9197864135999297,
+       0.9465442383923416
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.387694893998462,
+       0.7151054063586534,
+       0.7581165939147636,
+       0.78665990708827,
+       0.8257058153923706,
+       0.8346064038102434,
+       0.8350485853709098,
+       0.8369257465573672,
+       0.8404228432330512,
+       0.8451297820278364
+      ],
+      "bas": [
+       0.3758204404866186,
+       0.5535687185413144,
+       0.5812958271362694,
+       0.6029105519833723,
+       0.6313824377042414,
+       0.6396133131881948,
+       0.649295385501851,
+       0.6643164631446082,
+       0.6750113259179799,
+       0.6843404672207063
+      ],
+      "haut": [
+       0.43137471751525175,
+       0.7676206909116629,
+       0.8188862124995618,
+       0.8441736690294074,
+       0.8858685881410291,
+       0.8999738447373673,
+       0.9035067796905326,
+       0.9092468704614518,
+       0.9202549601011994,
+       0.9289385851040299
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.0005880979583317014,
+       -0.02677063712530625,
+       -0.08497960498877744,
+       -0.11318239376293393,
+       -0.12078017639910454,
+       -0.13065315892100138,
+       -0.14003662725318167,
+       -0.14101000774481287,
+       -0.13870863918555854,
+       -0.13403947429934115
+      ],
+      "bas": [
+       -0.14817810368495166,
+       -0.3534365895645608,
+       -0.469406511968809,
+       -0.5460613414489007,
+       -0.5878572628296364,
+       -0.6099632007427702,
+       -0.6220602057142349,
+       -0.614770163435488,
+       -0.604441111820101,
+       -0.5918584188931758
+      ],
+      "haut": [
+       0.16119864623707958,
+       0.2204471846650912,
+       0.231019866752986,
+       0.27204386633543176,
+       0.31855140421870975,
+       0.34063323811691304,
+       0.34482270273936017,
+       0.3532541711019221,
+       0.36337735180672176,
+       0.3732519572324399
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       -0.04571152598705985,
+       -0.09203770337566343,
+       -0.09354526987332995,
+       -0.09528826685906931,
+       -0.09694053085686519,
+       -0.09848302995343798,
+       -0.09990851680084215,
+       -0.10122928995639233,
+       -0.1024652734166524,
+       -0.10361666828366653
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       -0.0914230519741197,
+       -0.18407540675132686,
+       -0.1870905397466599,
+       -0.19057653371813862,
+       -0.19388106171373037,
+       -0.19696605990687596,
+       -0.1998170336016843,
+       -0.20245857991278465,
+       -0.2049305468333048,
+       -0.20723333656733306
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        -0.04571152598705985,
+        -0.09203770337566343,
+        -0.09354526987332995,
+        -0.09528826685906931,
+        -0.09694053085686519,
+        -0.09848302995343798,
+        -0.09990851680084215,
+        -0.10122928995639233,
+        -0.1024652734166524,
+        -0.10361666828366653
+       ],
+       "salaire_efficience": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.06233928200732144,
+       0.2392197916135339,
+       0.3985715452243629,
+       0.5005842426030079,
+       0.5915925265883419,
+       0.657420210284146,
+       0.7009867158175507,
+       0.7333789841548733,
+       0.7587475042777544,
+       0.7792360071464693
+      ],
+      "bas": [
+       0.10805080799438128,
+       0.3312574949891973,
+       0.4921168150976928,
+       0.5958725094620771,
+       0.6885330574452071,
+       0.7559032402375839,
+       0.8008952326183929,
+       0.8346082741112657,
+       0.8612127776944067,
+       0.8828526754301359
+      ],
+      "haut": [
+       0.016627756020261578,
+       0.14718208823787046,
+       0.3050262753510329,
+       0.40529597574393855,
+       0.4946519957314767,
+       0.5589371803307079,
+       0.6010781990167086,
+       0.6321496941984811,
+       0.6562822308611019,
+       0.6756193388628028
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       -0.004343632761962715,
+       -0.004402038599599539,
+       -0.004486885805668922,
+       -0.004567662884673788,
+       -0.004643888396968746,
+       -0.004714235318354259,
+       -0.004779342010437796,
+       -0.0048397387537721165,
+       -0.004896788499814446,
+       -0.0049491474063673956
+      ],
+      "salaire_efficience": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   }
+  },
+  "attal": {
+   "forme": "programme",
+   "cles": [
+    "pres2027_attal_programme"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.2977209277874149,
+       0.23369138263562572,
+       -0.07888445271400091,
+       -0.2361623208711583,
+       -0.3643958989831053,
+       -0.46856672325304993,
+       -0.5146902113453145,
+       -0.5349856073733394,
+       -0.5369575643442093,
+       -0.5270167445933005
+      ],
+      "bas": [
+       0.2487468461542386,
+       0.004189116926984763,
+       -0.31206446830786994,
+       -0.5004080647164727,
+       -0.6390972378444559,
+       -0.7294044305043579,
+       -0.7543278516092433,
+       -0.768947915874143,
+       -0.7606740073689799,
+       -0.7356180266074697
+      ],
+      "haut": [
+       0.44739795235237967,
+       0.5857167592117761,
+       0.43256155674482816,
+       0.3961108030632676,
+       0.3755306915715083,
+       0.34275594023036915,
+       0.33502552007063086,
+       0.3386115309937221,
+       0.34359912401663356,
+       0.3502706377077869
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.1791665669906961,
+       -0.5244108988305074,
+       -0.68265601552705,
+       -0.6903928795464753,
+       -0.7086209681634981,
+       -0.6998075731612041,
+       -0.6590041911642697,
+       -0.6205234506963087,
+       -0.5840153170179607,
+       -0.5488356180938014
+      ],
+      "bas": [
+       -0.21603297460356496,
+       -0.6303870409971835,
+       -0.835065435326009,
+       -0.8760118866582578,
+       -0.9306152485977293,
+       -0.9419348529764215,
+       -0.910052564664664,
+       -0.8887144762556393,
+       -0.8652643630361079,
+       -0.8388568519583528
+      ],
+      "haut": [
+       -0.05589613725235034,
+       -0.1695108321409623,
+       -0.13915740480600852,
+       -0.02719654384710233,
+       0.06134598514770485,
+       0.15166280182224087,
+       0.23719202436865758,
+       0.2919013874341712,
+       0.329664338417247,
+       0.3667613239906819
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.21304864734847614,
+       0.6472145207739879,
+       0.9701670625241077,
+       1.16652995620686,
+       1.3378595673235492,
+       1.453305899218235,
+       1.517090242734932,
+       1.5600243872637123,
+       1.5898293456520909,
+       1.611470185639138
+      ],
+      "bas": [
+       0.1448631062137994,
+       0.41963157743304486,
+       0.609071109597706,
+       0.7144449622303365,
+       0.8137525692865026,
+       0.8832233116441381,
+       0.9292073889153822,
+       0.9619085613359567,
+       0.9879962487602924,
+       1.0071378714181558
+      ],
+      "haut": [
+       0.24094184885162784,
+       0.7111849145518502,
+       1.0482438406117087,
+       1.2669715641973047,
+       1.4600055526497406,
+       1.588812806548276,
+       1.6607554554619548,
+       1.71713704638465,
+       1.7543939385452674,
+       1.7798681192818584
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.5832635856708345,
+       1.0950374716612972,
+       1.1676962257984782,
+       1.208120611666423,
+       1.2571396893212416,
+       1.2632125333947335,
+       1.263380028214768,
+       1.2698957189410698,
+       1.2827392601919805,
+       1.3001008618425596
+      ],
+      "bas": [
+       0.5536139845636524,
+       0.8541399093656956,
+       0.8918480223923784,
+       0.9455573719421364,
+       0.9889366636637459,
+       1.014695399354368,
+       1.0438659197069742,
+       1.064047653366877,
+       1.0913840405679132,
+       1.1257769930772907
+      ],
+      "haut": [
+       0.6498238239403656,
+       1.2005134382125482,
+       1.2896811272663702,
+       1.3380704062931734,
+       1.4019247991907422,
+       1.4259656889239336,
+       1.4561853331872552,
+       1.4880500285310674,
+       1.52903664264922,
+       1.570005108539374
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.6403354297642938,
+       -1.1678756104580912,
+       -1.4654706149687557,
+       -1.7064193096704705,
+       -1.8938328330690979,
+       -1.9851475915207195,
+       -2.050386452761932,
+       -2.082245477073197,
+       -2.0993554870772257,
+       -2.1041032689021244
+      ],
+      "bas": [
+       -1.3227995373038837,
+       -2.511239571937641,
+       -3.0773425040183042,
+       -3.5100853652807316,
+       -3.838799548375398,
+       -3.935414934187598,
+       -4.010606355480315,
+       -4.046194274092899,
+       -4.068243206603061,
+       -4.078092991428106
+      ],
+      "haut": [
+       -0.0070289125284206866,
+       -0.007952475022170653,
+       -0.04789613182416008,
+       -0.04343247742802646,
+       -0.023023973175897265,
+       -0.015282394545855386,
+       -0.015456866999435973,
+       -0.01111253801793888,
+       -0.005209856833521878,
+       0.0018557535376339102
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "salaire_efficience": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.21304864734847614,
+       0.6472145207739879,
+       0.9701670625241077,
+       1.16652995620686,
+       1.3378595673235492,
+       1.453305899218235,
+       1.517090242734932,
+       1.5600243872637123,
+       1.5898293456520909,
+       1.611470185639138
+      ],
+      "bas": [
+       0.21304864734847614,
+       0.6472145207739879,
+       0.9701670625241077,
+       1.16652995620686,
+       1.3378595673235492,
+       1.453305899218235,
+       1.517090242734932,
+       1.5600243872637123,
+       1.5898293456520909,
+       1.611470185639138
+      ],
+      "haut": [
+       0.21304864734847614,
+       0.6472145207739879,
+       0.9701670625241077,
+       1.16652995620686,
+       1.3378595673235492,
+       1.453305899218235,
+       1.517090242734932,
+       1.5600243872637123,
+       1.5898293456520909,
+       1.611470185639138
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "salaire_efficience": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   }
+  },
+  "roussel": {
+   "forme": "programme",
+   "cles": [
+    "pres2027_roussel_programme"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.28446583041654705,
+       0.540288135137712,
+       0.6002283582547951,
+       0.6616256210761007,
+       0.7266553403899811,
+       0.7723194566235936,
+       0.8086746954091506,
+       0.8416657008348816,
+       0.8707274438611634,
+       0.8955968116003632
+      ],
+      "bas": [
+       0.11542367060181191,
+       0.14579990992267702,
+       0.11163709743340801,
+       0.10615343419705159,
+       0.11349694287653424,
+       0.11630262329923591,
+       0.12295488645893805,
+       0.12275711651468903,
+       0.1283723163624284,
+       0.14854169158490582
+      ],
+      "haut": [
+       0.4219930436954309,
+       0.8127840435258918,
+       0.9574276306824445,
+       1.053827869792631,
+       1.1340053802688437,
+       1.1771723058738588,
+       1.2184103012745207,
+       1.2497643419856275,
+       1.2726286204467485,
+       1.2874744850212683
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.12472002989083464,
+       0.2515899755045403,
+       0.34543094398831187,
+       0.4567047532088253,
+       0.5637995232436799,
+       0.6640602414302865,
+       0.750879144720562,
+       0.8241035979111189,
+       0.8847192823405736,
+       0.9349464777779204
+      ],
+      "bas": [
+       -0.03372845491686592,
+       -0.1303212151996369,
+       -0.14083494836928057,
+       -0.11746570417308864,
+       -0.08301859076563112,
+       -0.01757741204521876,
+       0.026770643768369035,
+       0.06872477609911944,
+       0.10596316370544256,
+       0.14783782684551605
+      ],
+      "haut": [
+       0.25745374191107107,
+       0.570618912612007,
+       0.7440482090196975,
+       0.9011399051205201,
+       1.0417753423371607,
+       1.135468969081335,
+       1.2058600173606409,
+       1.2570788929248669,
+       1.2930280789615956,
+       1.3159552943698138
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.017633371430968797,
+       0.009697699792527088,
+       0.05808325535585963,
+       0.0813735993138394,
+       0.09261433885653764,
+       0.08905170283391452,
+       0.07497252862826868,
+       0.05364589637512232,
+       0.02768246673936813,
+       -0.0018161456861051205
+      ],
+      "bas": [
+       -0.09640135828154153,
+       -0.19845607485976424,
+       -0.20002634898952534,
+       -0.21838850061725845,
+       -0.2525665780215681,
+       -0.2713220953820523,
+       -0.3021755379624461,
+       -0.34683648878781753,
+       -0.3930422083395051,
+       -0.4405209751273189
+      ],
+      "haut": [
+       0.07793271819531937,
+       0.22834124731506056,
+       0.3426823240842451,
+       0.4234049891554981,
+       0.4926985679105708,
+       0.544226889444132,
+       0.5750981575556907,
+       0.5935131722634024,
+       0.6030504107092545,
+       0.6053188308997269
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.20161604429955512,
+       0.4181111198680089,
+       0.4736704194047083,
+       0.4989123279413867,
+       0.5180854917923613,
+       0.5082331847131304,
+       0.4862763564550172,
+       0.46122845945258584,
+       0.4345149293123558,
+       0.4058583355958707
+      ],
+      "bas": [
+       0.17355015680584804,
+       0.2899202209494819,
+       0.3046508078509482,
+       0.2737506739551614,
+       0.2650693161911488,
+       0.21762192843513808,
+       0.1651914048804426,
+       0.14776415558554865,
+       0.12695569408788673,
+       0.08401548670621659
+      ],
+      "haut": [
+       0.26343034406544646,
+       0.5079895567909783,
+       0.5791211215000746,
+       0.6129306779198315,
+       0.6468591179345561,
+       0.6682325421102487,
+       0.6590893092989866,
+       0.6501331454405745,
+       0.6534945098350278,
+       0.6343451424138377
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       1.5200780240364642,
+       1.8255340648191565,
+       1.9493766157117287,
+       2.0363915022791224,
+       2.1213700223819076,
+       2.1531815047834524,
+       2.1663774872216157,
+       2.173179195977526,
+       2.17603970660063,
+       2.1753995425724426
+      ],
+      "bas": [
+       0.6526180123617475,
+       0.771243040729207,
+       0.7354873423849628,
+       0.7638732891005651,
+       0.796601687189703,
+       0.8083608487889582,
+       0.7924362149967024,
+       0.7874636679728331,
+       0.7829102346502526,
+       0.779702200419653
+      ],
+      "haut": [
+       2.6501879211664727,
+       3.1973314330941935,
+       3.4447512590945473,
+       3.5495174955745035,
+       3.6390419804039085,
+       3.628219770074079,
+       3.598308215644747,
+       3.5777014033279424,
+       3.5496524032756547,
+       3.4913128999422134
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.2944102882498173,
+       0.5888205764996346,
+       0.5888205764996346,
+       0.5888205764996346,
+       0.5888205764996346,
+       0.5888205764996346,
+       0.5888205764996346,
+       0.5888205764996346,
+       0.5888205764996346,
+       0.5888205764996346
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.5888205764996346,
+       1.1776411529992692,
+       1.1776411529992692,
+       1.1776411529992692,
+       1.1776411529992692,
+       1.1776411529992692,
+       1.1776411529992692,
+       1.1776411529992692,
+       1.1776411529992692,
+       1.1776411529992692
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        0.017456764157812617,
+        0.034913528315625234,
+        0.034913528315625234,
+        0.034913528315625234,
+        0.034913528315625234,
+        0.034913528315625234,
+        0.034913528315625234,
+        0.034913528315625234,
+        0.034913528315625234,
+        0.034913528315625234
+       ],
+       "salaire_efficience": [
+        0.27695352409200463,
+        0.5539070481840093,
+        0.5539070481840093,
+        0.5539070481840093,
+        0.5539070481840093,
+        0.5539070481840093,
+        0.5539070481840093,
+        0.5539070481840093,
+        0.5539070481840093,
+        0.5539070481840093
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.2767769168188485,
+       0.5985182762921616,
+       0.6469038318554942,
+       0.670194175813474,
+       0.6814349153561722,
+       0.677872279333549,
+       0.6637931051279032,
+       0.6424664728747569,
+       0.6165030432390026,
+       0.5870044308135295
+      ],
+      "bas": [
+       -0.017633371430968797,
+       0.009697699792527088,
+       0.05808325535585963,
+       0.0813735993138394,
+       0.09261433885653764,
+       0.08905170283391452,
+       0.07497252862826868,
+       0.05364589637512232,
+       0.02768246673936813,
+       -0.0018161456861051205
+      ],
+      "haut": [
+       0.5711872050686658,
+       1.187338852791796,
+       1.2357244083551286,
+       1.2590147523131086,
+       1.2702554918558069,
+       1.2666928558331836,
+       1.2526136816275377,
+       1.2312870493743915,
+       1.2053236197386372,
+       1.175825007313164
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       0.0016587889175958886,
+       0.0016587889175958886,
+       0.0016587889175958886,
+       0.0016587889175958886,
+       0.0016587889175958886,
+       0.0016587889175958886,
+       0.0016587889175958886,
+       0.0016587889175958886,
+       0.0016587889175958886,
+       0.0016587889175958886
+      ],
+      "salaire_efficience": [
+       0.02631687249136259,
+       0.02631687249136259,
+       0.02631687249136259,
+       0.02631687249136259,
+       0.02631687249136259,
+       0.02631687249136259,
+       0.02631687249136259,
+       0.02631687249136259,
+       0.02631687249136259,
+       0.02631687249136259
+      ]
+     }
+    }
+   }
+  },
+  "ruffin": {
+   "forme": "programme",
+   "cles": [
+    "pres2027_ruffin_programme"
+   ],
+   "refusees": [],
+   "cir_fiches": [
+    "cir_tpe_pme_eti : -3.000 Md€ par an, 2027-2035 (CIR recentré sur TPE, PME, ETI)"
+   ],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600).",
+     "Le canal de la R&D lit une variation de la créance de CIR que la trajectoire du jumeau ne porte pas forcément : il est à côté, estimé sur une hausse du CIR (une baisse extrapole)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.2521820266210506,
+       0.4351713286116832,
+       0.44152795564940117,
+       0.466057973694034,
+       0.4984126721577331,
+       0.5182413186969104,
+       0.5370946267345245,
+       0.55672365881696,
+       0.5757316653015154,
+       0.5922968568909059
+      ],
+      "bas": [
+       0.15209996975192097,
+       0.18947381339449731,
+       0.1500237285268602,
+       0.1279806008291018,
+       0.12707386584898783,
+       0.12485664053860535,
+       0.13190656305198223,
+       0.13541267141529256,
+       0.13672245012239292,
+       0.14217733692644785
+      ],
+      "haut": [
+       0.33451350289953385,
+       0.5875529656675116,
+       0.6264858368253311,
+       0.6852419084639769,
+       0.7283896631310615,
+       0.7414851590540948,
+       0.761394568761432,
+       0.7810176801695501,
+       0.7972913512243429,
+       0.8076803503139096
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.059859758329183776,
+       0.10176991360058008,
+       0.15773853118710157,
+       0.24340312183417367,
+       0.3241871568457233,
+       0.40325073333795647,
+       0.4737360348516573,
+       0.5326101300658248,
+       0.5805424379149215,
+       0.6183305020281971
+      ],
+      "bas": [
+       -0.03303388476228574,
+       -0.12707181827846137,
+       -0.13916902053824398,
+       -0.11065612024759086,
+       -0.06719559875529135,
+       -0.020752256409270472,
+       0.029700077305369055,
+       0.07062923635302476,
+       0.10448994397362577,
+       0.13266300447934531
+      ],
+      "haut": [
+       0.13496189891774904,
+       0.29222752084494963,
+       0.3969285337901895,
+       0.5111686530575698,
+       0.6086298262330445,
+       0.6795572447084594,
+       0.7368855675086413,
+       0.7815188539815786,
+       0.8126886547357526,
+       0.8300805586245928
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.0239757930769574,
+       0.11029176546430478,
+       0.18674549644537897,
+       0.22694192340638242,
+       0.2532598352886819,
+       0.26094157209969526,
+       0.25548513640241516,
+       0.24258221175387723,
+       0.22562192172455303,
+       0.20700427202552865
+      ],
+      "bas": [
+       -0.019105675847533574,
+       -0.004871234105018276,
+       0.02648703303018555,
+       0.04116884645902352,
+       0.04700032327375837,
+       0.031927677398790405,
+       0.011037696424081101,
+       -0.012274579556990777,
+       -0.03241817143150382,
+       -0.0534549691000674
+      ],
+      "haut": [
+       0.08009834049929235,
+       0.23981882585062905,
+       0.35922741683440984,
+       0.4291476576197684,
+       0.4899013742694519,
+       0.5229700285643442,
+       0.5462595023573861,
+       0.5569981582758526,
+       0.5612415774774495,
+       0.5563831195783959
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.24290920908729513,
+       0.4862717421881182,
+       0.5375472292024641,
+       0.5588807719791041,
+       0.5765788350984432,
+       0.5652676550369143,
+       0.5447212972775635,
+       0.5234983287694025,
+       0.5031148768660115,
+       0.48368051795491873
+      ],
+      "bas": [
+       0.2283070991165538,
+       0.35533689347006714,
+       0.3738372680573789,
+       0.38205053060588023,
+       0.37855703688346964,
+       0.3581601502743845,
+       0.3241914950291263,
+       0.30726992192702574,
+       0.28212780614435456,
+       0.26757702639324865
+      ],
+      "haut": [
+       0.28527872849136243,
+       0.5430321872519375,
+       0.6046689011615753,
+       0.6337115314970356,
+       0.6542445079170706,
+       0.6583504885609351,
+       0.650173880847638,
+       0.6289273590894188,
+       0.6073427192450157,
+       0.6021245799992955
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.9398579128821583,
+       1.1375693288519395,
+       1.2043437447780914,
+       1.2550593463460213,
+       1.3091748771757006,
+       1.3265560101840101,
+       1.332539351747708,
+       1.3360530174025609,
+       1.339343716449437,
+       1.3417480647848423
+      ],
+      "bas": [
+       0.4146614345599753,
+       0.4896279431588668,
+       0.46957996555815784,
+       0.48662695977405135,
+       0.5165359328333685,
+       0.5158116348613584,
+       0.5120562386078453,
+       0.509556832628365,
+       0.5095627757801324,
+       0.5101972941317456
+      ],
+      "haut": [
+       1.5800791477504734,
+       1.9060042446821077,
+       2.0574159538579746,
+       2.1154240097194617,
+       2.157131462824228,
+       2.202478191919038,
+       2.169849493392992,
+       2.139868980966736,
+       2.1244370887159985,
+       2.1073540719037616
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.1515356130649642,
+       0.3030712261299284,
+       0.3030712261299284,
+       0.3030712261299284,
+       0.3030712261299284,
+       0.17832496133645695,
+       0.18198186018790605,
+       0.18553155816058037,
+       0.18897719781567093,
+       0.1923218295911423
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.3030712261299284,
+       0.6061424522598567,
+       0.6061424522598567,
+       0.6061424522598567,
+       0.6061424522598567,
+       0.43225371951744207,
+       0.43735121488612866,
+       0.4422992787268262,
+       0.4471022915793767,
+       0.4517645055694276
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        -0.004817415588947438,
+        -0.009634831177894876,
+        -0.009634831177894876,
+        -0.009634831177894876,
+        -0.009634831177894876,
+        -0.009634831177894876,
+        -0.009634831177894876,
+        -0.009634831177894876,
+        -0.009634831177894876,
+        -0.009634831177894876
+       ],
+       "salaire_efficience": [
+        0.1563530286539116,
+        0.3127060573078232,
+        0.3127060573078232,
+        0.3127060573078232,
+        0.3127060573078232,
+        0.3127060573078232,
+        0.3127060573078232,
+        0.3127060573078232,
+        0.3127060573078232,
+        0.3127060573078232
+       ],
+       "rd_cir": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.12474626479347138,
+        -0.12108936594202231,
+        -0.11753966796934799,
+        -0.11409402831425741,
+        -0.11074939653878606
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.17551140614192157,
+       0.4133629915942331,
+       0.4898167225753073,
+       0.5300131495363107,
+       0.5563310614186103,
+       0.43926653343615224,
+       0.4374669965903212,
+       0.42811376991445765,
+       0.41459911954022394,
+       0.399326101616671
+      ],
+      "bas": [
+       0.0239757930769574,
+       0.11029176546430478,
+       0.18674549644537897,
+       0.22694192340638242,
+       0.2532598352886819,
+       0.26094157209969526,
+       0.25548513640241516,
+       0.24258221175387723,
+       0.22562192172455303,
+       0.20700427202552865
+      ],
+      "haut": [
+       0.3270470192068857,
+       0.7164342177241614,
+       0.7928879487052356,
+       0.8330843756662392,
+       0.8594022875485385,
+       0.6931952916171373,
+       0.6928363512885438,
+       0.6848814904807033,
+       0.6727242133039298,
+       0.6587687775949563
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience",
+      "rd_cir"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       -0.0004577638512016758,
+       -0.0004577638512016758,
+       -0.0004577638512016758,
+       -0.0004577638512016758,
+       -0.0004577638512016758,
+       -0.0004577638512016758,
+       -0.0004577638512016758,
+       -0.0004577638512016758,
+       -0.0004577638512016758,
+       -0.0004577638512016758
+      ],
+      "salaire_efficience": [
+       0.014857087420041031,
+       0.014857087420041031,
+       0.014857087420041031,
+       0.014857087420041031,
+       0.014857087420041031,
+       0.014857087420041031,
+       0.014857087420041031,
+       0.014857087420041031,
+       0.014857087420041031,
+       0.014857087420041031
+      ],
+      "rd_cir": [
+       0.0,
+       -0.0009450474605566014,
+       -0.0009173436813789569,
+       -0.0008904520300708181,
+       -0.000864348699350435,
+       -0.0008390105798392884,
+       -0.0008144152396032697,
+       -0.000790540904293603,
+       -0.0007673664378699311,
+       -0.0007448713238884984
+      ]
+     }
+    }
+   }
+  },
+  "tondelier": {
+   "forme": "mesures composées (le programme est refusé en structurel)",
+   "cles": [
+    "pres2027_tondelier_tranche_ir_60",
+    "pres2027_tondelier_smic_2000_brut",
+    "pres2027_tondelier_point_indice_inflation",
+    "pres2027_tondelier_apl_plus_10"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.138323134937135,
+       0.25541492822473977,
+       0.2817617311879905,
+       0.3092720943093541,
+       0.34017497203004954,
+       0.36463331514293706,
+       0.38497098730578827,
+       0.40437071237597877,
+       0.4216131058305761,
+       0.43597798053942594
+      ],
+      "bas": [
+       0.05454793399390479,
+       0.061571762073462384,
+       0.03605038828846885,
+       0.03672910622326554,
+       0.0377982414608713,
+       0.04078268849809219,
+       0.0520377980951603,
+       0.0556462813440628,
+       0.06152391704235427,
+       0.0666501421808241
+      ],
+      "haut": [
+       0.2098529132239312,
+       0.40036801221675383,
+       0.4625229720719701,
+       0.5085572162127189,
+       0.547632193805862,
+       0.57877076110292,
+       0.5984160309447261,
+       0.6138201655279684,
+       0.6278960361468099,
+       0.6375280590394471
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.056913792107771144,
+       0.10690399162291975,
+       0.15076396720632435,
+       0.20408733677368396,
+       0.2565969325757145,
+       0.30935116221904035,
+       0.35572366497051977,
+       0.3959229982267498,
+       0.42915534843599445,
+       0.4559421469611413
+      ],
+      "bas": [
+       -0.02074856816811132,
+       -0.08145369536782299,
+       -0.08627707173427979,
+       -0.07550512325398383,
+       -0.06087141842985976,
+       -0.03611479324403865,
+       -0.0025476081435998844,
+       0.02358589812211487,
+       0.04572253522191372,
+       0.06343480681871516
+      ],
+      "haut": [
+       0.1243740297131367,
+       0.2713369024833908,
+       0.35823719313139324,
+       0.43751406202612747,
+       0.5074896734181277,
+       0.5561903904735563,
+       0.5932724672094644,
+       0.6210159141116052,
+       0.6406199335419922,
+       0.6528544027522681
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.004576167416171651,
+       0.01885554191947259,
+       0.04666929061457198,
+       0.06115629526842175,
+       0.06857242883014454,
+       0.06598060079956705,
+       0.057514494067720995,
+       0.04471030867963307,
+       0.029826222927111422,
+       0.013954752076908949
+      ],
+      "bas": [
+       -0.046269250256990614,
+       -0.08782283112112602,
+       -0.08696150178187245,
+       -0.09312731272132246,
+       -0.1105575819542697,
+       -0.1206254214288995,
+       -0.1358915227258468,
+       -0.16027551075601254,
+       -0.18527511299703656,
+       -0.2101659563804189
+      ],
+      "haut": [
+       0.04351757410138668,
+       0.12599916313267434,
+       0.19109033936620434,
+       0.23326264431545796,
+       0.27097208550030466,
+       0.2992199721516695,
+       0.3149266244604678,
+       0.3220351412671047,
+       0.3230723833245643,
+       0.32236604173851113
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.10279564599930252,
+       0.21498976563834302,
+       0.24350577524799286,
+       0.25630589841476165,
+       0.26616453767193426,
+       0.26076851671554574,
+       0.24922396478184386,
+       0.2360127477906596,
+       0.2223305521507461,
+       0.20819508546375534
+      ],
+      "bas": [
+       0.08778338144157169,
+       0.14409704998942957,
+       0.15994423144144573,
+       0.1506570533151732,
+       0.14066611167209295,
+       0.11565562284003736,
+       0.0902328344400103,
+       0.08049859963715245,
+       0.068069468584183,
+       0.043933820540199765
+      ],
+      "haut": [
+       0.1345731085380873,
+       0.2619200078957535,
+       0.2993488103776862,
+       0.31774384028261243,
+       0.34096152637426497,
+       0.34975902609171505,
+       0.34312070293439656,
+       0.3482755659742089,
+       0.3437426199613097,
+       0.3328258149977489
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.8030422302922835,
+       0.9526655185204014,
+       1.0068543827693288,
+       1.0484261424905883,
+       1.0893641448706193,
+       1.1042510173514986,
+       1.1104933708799614,
+       1.1138822558814265,
+       1.1168201598162009,
+       1.118690118254806
+      ],
+      "bas": [
+       0.3420952182617565,
+       0.3958575532770481,
+       0.3719859032316253,
+       0.38300928696753056,
+       0.4004667859599409,
+       0.40325501970381317,
+       0.3947511887261368,
+       0.3918858644055412,
+       0.3910881789881282,
+       0.39831509605521176
+      ],
+      "haut": [
+       1.3722061859455745,
+       1.641139979980003,
+       1.7791979324968474,
+       1.8279448146328452,
+       1.858957091928231,
+       1.8767108760842484,
+       1.8484448521579138,
+       1.8371246917188198,
+       1.8236691620341383,
+       1.7967601612465487
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.13047906282266708,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.26095812564533416,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        -0.00555697356187118,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236
+       ],
+       "salaire_efficience": [
+        0.13603603638453826,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.1259028954064954,
+       0.2798136675648067,
+       0.30762741625990614,
+       0.32211442091375586,
+       0.32953055447547863,
+       0.3269387264449012,
+       0.3184726197130551,
+       0.3056684343249672,
+       0.29078434857244556,
+       0.2749128777222431
+      ],
+      "bas": [
+       -0.004576167416171651,
+       0.01885554191947259,
+       0.04666929061457198,
+       0.06115629526842175,
+       0.06857242883014454,
+       0.06598060079956705,
+       0.057514494067720995,
+       0.04471030867963307,
+       0.029826222927111422,
+       0.013954752076908949
+      ],
+      "haut": [
+       0.2563819582291625,
+       0.5407717932101408,
+       0.5685855419052402,
+       0.58307254655909,
+       0.5904886801208128,
+       0.5878968520902353,
+       0.5794307453583893,
+       0.5666265599703013,
+       0.5517424742177797,
+       0.5358710033675772
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612
+      ],
+      "salaire_efficience": [
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645
+      ]
+     }
+    }
+   }
+  },
+  "kazib": {
+   "forme": "programme",
+   "cles": [
+    "pres2027_kazib_programme"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.11913824038789489,
+       0.22707628207050412,
+       0.2592519933229509,
+       0.288779131361494,
+       0.32077806590864455,
+       0.3472625021117892,
+       0.3689414331864427,
+       0.3892813437712528,
+       0.40724518997223846,
+       0.4223893666399636
+      ],
+      "bas": [
+       0.03625696534512835,
+       0.03571495044136786,
+       0.019327018061782168,
+       0.021310521190445204,
+       0.023890617432185138,
+       0.027286771404962943,
+       0.03797523924605085,
+       0.04497365695666611,
+       0.05094967397691663,
+       0.05738453987399917
+      ],
+      "haut": [
+       0.19016920035029183,
+       0.37351743746232813,
+       0.4422587894976645,
+       0.4894810856646831,
+       0.5294354342835622,
+       0.5641620160365977,
+       0.5867778239069886,
+       0.5993195266855665,
+       0.6138916041720487,
+       0.6241016747952487
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.05811643546238532,
+       0.11148710109387672,
+       0.15406667067783264,
+       0.20224909861303875,
+       0.2505903015959321,
+       0.2996894723179544,
+       0.3427771819618508,
+       0.38060548947875805,
+       0.4122281974969999,
+       0.43798246564099585
+      ],
+      "bas": [
+       -0.019017766065617107,
+       -0.07437175561534559,
+       -0.0759794443986489,
+       -0.06930348110179395,
+       -0.05819754207577353,
+       -0.037059245885980294,
+       -0.010909261500065544,
+       0.014777092739284292,
+       0.03541784606992504,
+       0.05189442753714024
+      ],
+      "haut": [
+       0.12652228976138927,
+       0.27520708740186606,
+       0.3592492052557494,
+       0.43440787753079135,
+       0.500767975206623,
+       0.5464508674719291,
+       0.5808744678855369,
+       0.6068065385761664,
+       0.6252996594028,
+       0.6369185405834871
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.010653205734224062,
+       0.0005958190708645435,
+       0.019806607568108165,
+       0.03024933658034003,
+       0.03487701858795159,
+       0.030989021329303992,
+       0.022545199137223353,
+       0.010342530716459766,
+       -0.0036196315570046606,
+       -0.018341950297151154
+      ],
+      "bas": [
+       -0.052863996968517346,
+       -0.106659335884416,
+       -0.11176215564366834,
+       -0.1225557444807228,
+       -0.14309651300521814,
+       -0.15418352589211856,
+       -0.1741247451886876,
+       -0.1971673562325439,
+       -0.22064028409208641,
+       -0.24385770964267706
+      ],
+      "haut": [
+       0.03695385621819699,
+       0.10781635164653551,
+       0.16048407324350697,
+       0.20099230404462248,
+       0.23789488942308584,
+       0.2638344588046271,
+       0.2804796407910423,
+       0.2889129223009888,
+       0.29137330006394424,
+       0.2905264678138103
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.0770472262952266,
+       0.1665103707852384,
+       0.19274904715538912,
+       0.20559873791707764,
+       0.21544954851148643,
+       0.21226390105669096,
+       0.20341602814342316,
+       0.19270951330105165,
+       0.18132509665884494,
+       0.16953835819611596
+      ],
+      "bas": [
+       0.06179543451252502,
+       0.10919104646952221,
+       0.11123624722202158,
+       0.11131102050109558,
+       0.10021781420357528,
+       0.07613287020299758,
+       0.05635710795596678,
+       0.04846025679127847,
+       0.02976352372451373,
+       0.008945178966326163
+      ],
+      "haut": [
+       0.10730577669506683,
+       0.21296563576960287,
+       0.24981652572306062,
+       0.27026224456149883,
+       0.2949300676446225,
+       0.30041207488146754,
+       0.30499442782492286,
+       0.30719298764352043,
+       0.30582444756741217,
+       0.2972836042216127
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.7981777452286343,
+       0.9426630738601505,
+       0.9963994680307398,
+       1.037688937732284,
+       1.0774714128334306,
+       1.092487738494996,
+       1.0993331199502965,
+       1.1030455279338547,
+       1.1062580315933657,
+       1.1084020914001957
+      ],
+      "bas": [
+       0.3372574807117368,
+       0.3886724757504134,
+       0.36535006406113846,
+       0.37271403916811163,
+       0.3888568787516855,
+       0.398330081407533,
+       0.3877548728426661,
+       0.3813841656194117,
+       0.3839981906364587,
+       0.39400934532466403
+      ],
+      "haut": [
+       1.367517859128434,
+       1.6305068173301795,
+       1.7718391252449361,
+       1.8202211275690166,
+       1.8503175764025677,
+       1.8632373281994625,
+       1.8387878212076865,
+       1.8277389542901188,
+       1.8102884363285265,
+       1.7826961729816269
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.13047906282266708,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416,
+       0.26095812564533416
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.26095812564533416,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683,
+       0.5219162512906683
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        -0.00555697356187118,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236,
+        -0.01111394712374236
+       ],
+       "salaire_efficience": [
+        0.13603603638453826,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765,
+        0.2720720727690765
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.119825857088443,
+       0.2615539447161987,
+       0.2807647332134423,
+       0.2912074622256742,
+       0.2958351442332857,
+       0.29194714697463814,
+       0.2835033247825575,
+       0.2713006563617939,
+       0.2573384940883295,
+       0.242616175348183
+      ],
+      "bas": [
+       -0.010653205734224062,
+       0.0005958190708645435,
+       0.019806607568108165,
+       0.03024933658034003,
+       0.03487701858795159,
+       0.030989021329303992,
+       0.022545199137223353,
+       0.010342530716459766,
+       -0.0036196315570046606,
+       -0.018341950297151154
+      ],
+      "haut": [
+       0.2503049199111101,
+       0.5225120703615328,
+       0.5417228588587764,
+       0.5521655878710083,
+       0.5567932698786199,
+       0.5529052726199722,
+       0.5444614504278916,
+       0.5322587820071281,
+       0.5182966197336636,
+       0.5035743009935171
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612,
+       -0.0005280386488855612
+      ],
+      "salaire_efficience": [
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645,
+       0.012926511895811645
+      ]
+     }
+    }
+   }
+  },
+  "bouamrane": {
+   "forme": "programme",
+   "cles": [
+    "pres2027_bouamrane_programme"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.11804586498664893,
+       0.2249609400336583,
+       0.25680970137382797,
+       0.2860397574563356,
+       0.3177541611347534,
+       0.34400829046108417,
+       0.3655023396132995,
+       0.3856827679718844,
+       0.403535249014797,
+       0.4185599363318415
+      ],
+      "bas": [
+       0.035902343564783175,
+       0.03528605039476052,
+       0.019068753689981403,
+       0.021021038124339215,
+       0.023599615243573582,
+       0.02697324685438041,
+       0.03747955735455944,
+       0.044545029146483284,
+       0.050488606469172304,
+       0.05685499240176473
+      ],
+      "haut": [
+       0.1885508625186082,
+       0.3703739799759695,
+       0.4385240234106754,
+       0.4853294080361376,
+       0.5249535430909907,
+       0.5593789317444207,
+       0.5817963617093534,
+       0.5942743141019046,
+       0.6087620033479967,
+       0.6188880347265223
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.057579044264088886,
+       0.11040050341557528,
+       0.15253597363120708,
+       0.20025511037096155,
+       0.2481812285837437,
+       0.296852246473156,
+       0.3395579787515146,
+       0.37708988709177493,
+       0.40849442376642564,
+       0.4340359960862683
+      ],
+      "bas": [
+       -0.018861405129831914,
+       -0.07377396783964707,
+       -0.07539681047995184,
+       -0.06880562745130768,
+       -0.05778917588392439,
+       -0.03682919994705157,
+       -0.010906596332939108,
+       0.014568728331095793,
+       0.035073739885844724,
+       0.051416395227218414
+      ],
+      "haut": [
+       0.12549102238513457,
+       0.272916412459406,
+       0.3562511558097092,
+       0.4307242859514937,
+       0.4965353930740312,
+       0.5418267759172211,
+       0.5759478959228834,
+       0.6016725516557083,
+       0.6200359714993393,
+       0.6315506070686211
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.010548493847199929,
+       0.000645780519458925,
+       0.019733989426406858,
+       0.030113813043238173,
+       0.03469651586958519,
+       0.030840566482659426,
+       0.022475412560139324,
+       0.010353552188059232,
+       -0.0035296701755388915,
+       -0.018142409867221918
+      ],
+      "bas": [
+       -0.05244226334501294,
+       -0.10583415128017971,
+       -0.11086321071604532,
+       -0.1215762076247165,
+       -0.1419378858530301,
+       -0.15294128451824193,
+       -0.17271382333593185,
+       -0.1955778757148721,
+       -0.2188889927137596,
+       -0.2419289135046129
+      ],
+      "haut": [
+       0.03663964594253762,
+       0.10690239471117893,
+       0.15913695242744144,
+       0.19936346378649755,
+       0.23593867936313154,
+       0.26164658773142724,
+       0.2781523506084558,
+       0.2864874652843143,
+       0.2888786031026234,
+       0.2879742185443443
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.07634679193389425,
+       0.1650254033787498,
+       0.19106180303008133,
+       0.20380589377596772,
+       0.21355893026185888,
+       0.2104009160392906,
+       0.20164235166538488,
+       0.19101193088174462,
+       0.17970837045901403,
+       0.16801806452764736
+      ],
+      "bas": [
+       0.06121854734025057,
+       0.10821308724114372,
+       0.11025933861660565,
+       0.11032902287447695,
+       0.09931780794726046,
+       0.07543293944728936,
+       0.05581687429895691,
+       0.047949227234734645,
+       0.02942567462907118,
+       0.008772848593882412
+      ],
+      "haut": [
+       0.10636094003558125,
+       0.21109841623762599,
+       0.24765736991370904,
+       0.267902889929581,
+       0.2923251987574159,
+       0.2977872794931226,
+       0.30233232768592216,
+       0.3044945589946034,
+       0.30315049682446515,
+       0.29466342557464326
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.7913168932970782,
+       0.9345191795867125,
+       0.9877705477454146,
+       1.0286321810319965,
+       1.0680339868950783,
+       1.082929151699763,
+       1.0897364353759764,
+       1.0933432129806464,
+       1.0965607384539888,
+       1.098677885650412
+      ],
+      "bas": [
+       0.33431790081815516,
+       0.3852679354408761,
+       0.3621434351674069,
+       0.36939367015765057,
+       0.3853733503372947,
+       0.3947747863639106,
+       0.38431761002416187,
+       0.37793092366614656,
+       0.380620676507748,
+       0.3905627152945135
+      ],
+      "haut": [
+       1.3562561713340013,
+       1.6170665100111914,
+       1.757284410689971,
+       1.8052101580886286,
+       1.835034928572607,
+       1.8478727553449654,
+       1.8236515471737231,
+       1.8126038300965284,
+       1.7953673973802942,
+       1.7679355538434292
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.12918983783437826,
+       0.2583796756687565,
+       0.2583796756687565,
+       0.2583796756687565,
+       0.2583796756687565,
+       0.2583796756687565,
+       0.2583796756687565,
+       0.2583796756687565,
+       0.2583796756687565,
+       0.2583796756687565
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.2583796756687565,
+       0.516759351337513,
+       0.516759351337513,
+       0.516759351337513,
+       0.516759351337513,
+       0.516759351337513,
+       0.516759351337513,
+       0.516759351337513,
+       0.516759351337513,
+       0.516759351337513
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        -0.0056095120641974005,
+        -0.011219024128394801,
+        -0.011219024128394801,
+        -0.011219024128394801,
+        -0.011219024128394801,
+        -0.011219024128394801,
+        -0.011219024128394801,
+        -0.011219024128394801,
+        -0.011219024128394801,
+        -0.011219024128394801
+       ],
+       "salaire_efficience": [
+        0.13479934989857567,
+        0.26959869979715134,
+        0.26959869979715134,
+        0.26959869979715134,
+        0.26959869979715134,
+        0.26959869979715134,
+        0.26959869979715134,
+        0.26959869979715134,
+        0.26959869979715134,
+        0.26959869979715134
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.11864134398717834,
+       0.2590254561882155,
+       0.2781136650951634,
+       0.2884934887119947,
+       0.2930761915383417,
+       0.28922024215141595,
+       0.2808550882288958,
+       0.26873322785681575,
+       0.2548500054932176,
+       0.2402372658015346
+      ],
+      "bas": [
+       -0.010548493847199929,
+       0.000645780519458925,
+       0.019733989426406858,
+       0.030113813043238173,
+       0.03469651586958519,
+       0.030840566482659426,
+       0.022475412560139324,
+       0.010353552188059232,
+       -0.0035296701755388915,
+       -0.018142409867221918
+      ],
+      "haut": [
+       0.2478311818215566,
+       0.517405131856972,
+       0.5364933407639199,
+       0.5468731643807512,
+       0.5514558672070983,
+       0.5475999178201725,
+       0.5392347638976525,
+       0.5271129035255723,
+       0.5132296811619742,
+       0.4986169414702911
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       -0.0005330309993932477,
+       -0.0005330309993932477,
+       -0.0005330309993932477,
+       -0.0005330309993932477,
+       -0.0005330309993932477,
+       -0.0005330309993932477,
+       -0.0005330309993932477,
+       -0.0005330309993932477,
+       -0.0005330309993932477,
+       -0.0005330309993932477
+      ],
+      "salaire_efficience": [
+       0.012808998603032395,
+       0.012808998603032395,
+       0.012808998603032395,
+       0.012808998603032395,
+       0.012808998603032395,
+       0.012808998603032395,
+       0.012808998603032395,
+       0.012808998603032395,
+       0.012808998603032395,
+       0.012808998603032395
+      ]
+     }
+    }
+   }
+  },
+  "lisnard": {
+   "forme": "programme",
+   "cles": [
+    "pres2027_lisnard_programme"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.219860337076061,
+       0.31830512335038197,
+       0.2679681772367992,
+       0.2661874261106867,
+       0.2759159064335215,
+       0.27479876629310507,
+       0.27765710233207397,
+       0.28331924631268546,
+       0.290211443150179,
+       0.2972506575922962
+      ],
+      "bas": [
+       0.20857236160575443,
+       0.2040451079515171,
+       0.1649559888839014,
+       0.16415543140638644,
+       0.16822743672527674,
+       0.16853118167137748,
+       0.17016293910785074,
+       0.17569028821231236,
+       0.18112342370115497,
+       0.1867865487035092
+      ],
+      "haut": [
+       0.23586714768650263,
+       0.3164930381830633,
+       0.25743100366902527,
+       0.2545219291021328,
+       0.2602889130507713,
+       0.255829898229738,
+       0.25778373001196453,
+       0.2641239356770597,
+       0.271491874589107,
+       0.2790809587104714
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.059945888874879394,
+       -0.11309294012982196,
+       -0.08320016807884523,
+       0.0035523767306644416,
+       0.08701831931219317,
+       0.1626565957930648,
+       0.23330850282585747,
+       0.2941050379099641,
+       0.3463310181409218,
+       0.3916215807972856
+      ],
+      "bas": [
+       -0.09380735634195281,
+       -0.19426049162448222,
+       -0.19788021652347887,
+       -0.14772279150625067,
+       -0.09332819776106449,
+       -0.04978791889770795,
+       -0.0010281538627998565,
+       0.035856458432659284,
+       0.058225001694452994,
+       0.08418719790020956
+      ],
+      "haut": [
+       -0.038043283953019286,
+       -0.0706797865533593,
+       -0.031096711022947886,
+       0.06302886632442828,
+       0.1333011963898966,
+       0.2072100285291955,
+       0.2743889904965701,
+       0.33248422161165186,
+       0.37742593705647465,
+       0.41633157447422453
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.05383736120249645,
+       0.1879191543325656,
+       0.2965135654582562,
+       0.36966302988853084,
+       0.4389955879238922,
+       0.4954033415692901,
+       0.5386173836992504,
+       0.5749437752573717,
+       0.6066015473674697,
+       0.6347162165078921
+      ],
+      "bas": [
+       0.04391766947548398,
+       0.14554289951241803,
+       0.209837778575504,
+       0.2525167860241416,
+       0.2990371449061765,
+       0.3369426810209738,
+       0.3666191801921556,
+       0.3872198697098805,
+       0.4091687998943458,
+       0.42942601919712
+      ],
+      "haut": [
+       0.07533725046287844,
+       0.23473310571859085,
+       0.35786102827933136,
+       0.4355106296477968,
+       0.5063142457472833,
+       0.5594243982989957,
+       0.5971254258954062,
+       0.6308349822203161,
+       0.6596343325997335,
+       0.687276970812695
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.29528532909297184,
+       0.5474433926779131,
+       0.5919945730684699,
+       0.6271761071486481,
+       0.6719748061817203,
+       0.6961033394789251,
+       0.7130183912240491,
+       0.7298741849056377,
+       0.7468098521214033,
+       0.7632125717314223
+      ],
+      "bas": [
+       0.2872837346805611,
+       0.4139079170046526,
+       0.4305365283017206,
+       0.4520118316250365,
+       0.4804094379406587,
+       0.5028417577839858,
+       0.5229953871874484,
+       0.5426450001261903,
+       0.5628626001406851,
+       0.576115748588541
+      ],
+      "haut": [
+       0.32211770630215153,
+       0.5733743860986434,
+       0.6154469518836065,
+       0.6464295341527465,
+       0.6903929894014091,
+       0.7099090881955239,
+       0.7234835708727717,
+       0.7373947489590701,
+       0.7545568869246336,
+       0.7717972662353787
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.05588669903120458,
+       0.11346706080936908,
+       0.12214578298019863,
+       0.13319220300043177,
+       0.15543533830264522,
+       0.16433887268731961,
+       0.16847904566852367,
+       0.17554604163396714,
+       0.1829807981913234,
+       0.19049904131169804
+      ],
+      "bas": [
+       0.05061530339553366,
+       0.07206614628216368,
+       0.06720835970821959,
+       0.068726466691309,
+       0.07099573588583263,
+       0.06630120067349421,
+       0.06290319812619183,
+       0.06293282539355904,
+       0.06351345896469685,
+       0.06520519710339845
+      ],
+      "haut": [
+       0.06419344420213524,
+       0.11648391185493434,
+       0.13365983165376516,
+       0.158793139094332,
+       0.18989022278075196,
+       0.20118331009949855,
+       0.21307686553002303,
+       0.21750471504597407,
+       0.22371059572894642,
+       0.2312031560763161
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "salaire_efficience": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.05383736120249645,
+       0.1879191543325656,
+       0.2965135654582562,
+       0.36966302988853084,
+       0.4389955879238922,
+       0.4954033415692901,
+       0.5386173836992504,
+       0.5749437752573717,
+       0.6066015473674697,
+       0.6347162165078921
+      ],
+      "bas": [
+       0.05383736120249645,
+       0.1879191543325656,
+       0.2965135654582562,
+       0.36966302988853084,
+       0.4389955879238922,
+       0.4954033415692901,
+       0.5386173836992504,
+       0.5749437752573717,
+       0.6066015473674697,
+       0.6347162165078921
+      ],
+      "haut": [
+       0.05383736120249645,
+       0.1879191543325656,
+       0.2965135654582562,
+       0.36966302988853084,
+       0.4389955879238922,
+       0.4954033415692901,
+       0.5386173836992504,
+       0.5749437752573717,
+       0.6066015473674697,
+       0.6347162165078921
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "salaire_efficience": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   }
+  },
+  "philippe": {
+   "forme": "programme",
+   "cles": [
+    "pres2027_philippe_programme"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.34284169797904607,
+       0.5072517861918202,
+       0.4051107990816094,
+       0.37049574738559077,
+       0.3516565289847007,
+       0.31548731980344247,
+       0.29306998523741523,
+       0.2788373919370146,
+       0.26912150426325887,
+       0.26128053352458824
+      ],
+      "bas": [
+       0.3253361369715335,
+       0.3253999435025434,
+       0.25593838109815303,
+       0.23201849455410484,
+       0.21566634762754444,
+       0.19198447952813447,
+       0.18078892072755148,
+       0.17634471796503237,
+       0.17443237434110692,
+       0.17251864427876518
+      ],
+      "haut": [
+       0.3659453431212012,
+       0.5011487087896693,
+       0.3921949709770567,
+       0.353653465992082,
+       0.3372267785727423,
+       0.3024809951370255,
+       0.2854298532956767,
+       0.2724666368103667,
+       0.26462863719997953,
+       0.25790382041286586
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.02141672389047722,
+       -0.08136487369216905,
+       -0.05842158328319691,
+       0.03318212054068681,
+       0.10781688356626962,
+       0.1736058955762898,
+       0.23284700113237466,
+       0.27546354443881427,
+       0.3044064871079888,
+       0.3230532772475536
+      ],
+      "bas": [
+       -0.05162906651409338,
+       -0.16761058283582264,
+       -0.183414854619956,
+       -0.1155697676504186,
+       -0.05788891329215895,
+       0.0005960956858902624,
+       0.057598528992367504,
+       0.09930710698381029,
+       0.13450253789733746,
+       0.1672156721979734
+      ],
+      "haut": [
+       -0.0029040361298898775,
+       -0.034989286420893405,
+       0.01801570921201367,
+       0.12143845940872916,
+       0.19408794225243992,
+       0.2512657888638791,
+       0.30123305541175255,
+       0.3371177187040508,
+       0.35354766886001027,
+       0.3635386949012764
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.10872251090022146,
+       0.32714773072331205,
+       0.48235405134858583,
+       0.5564408384890718,
+       0.6080256737486411,
+       0.6325340143511021,
+       0.6335219074118487,
+       0.6249650683972535,
+       0.6116671616657632,
+       0.5960807243474473
+      ],
+      "bas": [
+       0.10284095072335955,
+       0.2808590671963304,
+       0.38309487862147623,
+       0.43100883328102135,
+       0.4689836974505299,
+       0.48763430520874207,
+       0.4932100099795129,
+       0.4922711951844822,
+       0.49005102005079326,
+       0.4886734016370026
+      ],
+      "haut": [
+       0.13117832711399602,
+       0.38379865700321814,
+       0.5596594250221554,
+       0.6379439960815958,
+       0.6909834885595871,
+       0.7139633384216671,
+       0.7051580731624736,
+       0.6895146933479984,
+       0.669019677940812,
+       0.6469197209909089
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.46065286988873644,
+       0.8693065517986093,
+       0.9133017432240367,
+       0.9154329920383302,
+       0.9177427331824568,
+       0.8790706414272256,
+       0.8333358067512922,
+       0.793069384972472,
+       0.7581842827461782,
+       0.7270977560758916
+      ],
+      "bas": [
+       0.44676372361304173,
+       0.6636531316788596,
+       0.6774473906667208,
+       0.6710883429593343,
+       0.6771340922294007,
+       0.6509247888406029,
+       0.63229364205034,
+       0.6181718461251665,
+       0.6051569227108345,
+       0.5931156691794903
+      ],
+      "haut": [
+       0.5051245132230668,
+       0.9025575369798677,
+       0.9423897904665051,
+       0.9359013489899115,
+       0.9361710069801655,
+       0.8930934460791834,
+       0.8453501204465044,
+       0.802885408018092,
+       0.7684543902991064,
+       0.7372406979525026
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.08716876636662985,
+       0.17984589360826586,
+       0.18903793244180456,
+       0.1949997659627778,
+       0.21636006188949786,
+       0.21444981305618338,
+       0.20425404511159595,
+       0.19944648200973525,
+       0.1957934909627923,
+       0.19308064909915323
+      ],
+      "bas": [
+       0.07964099237887212,
+       0.11425958203762576,
+       0.10150097410156156,
+       0.09355139410192947,
+       0.09429236642243155,
+       0.0798097025814326,
+       0.06479037494621975,
+       0.05685930448826371,
+       0.05261596435222837,
+       0.05171313422389301
+      ],
+      "haut": [
+       0.0998628368877974,
+       0.18682720061438116,
+       0.2077439585201457,
+       0.23497962750998463,
+       0.2701591491211696,
+       0.2780324685006841,
+       0.27521989678867764,
+       0.27224384669345625,
+       0.26705790463815265,
+       0.26265906674797107
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "salaire_efficience": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.10872251090022146,
+       0.32714773072331205,
+       0.48235405134858583,
+       0.5564408384890718,
+       0.6080256737486411,
+       0.6325340143511021,
+       0.6335219074118487,
+       0.6249650683972535,
+       0.6116671616657632,
+       0.5960807243474473
+      ],
+      "bas": [
+       0.10872251090022146,
+       0.32714773072331205,
+       0.48235405134858583,
+       0.5564408384890718,
+       0.6080256737486411,
+       0.6325340143511021,
+       0.6335219074118487,
+       0.6249650683972535,
+       0.6116671616657632,
+       0.5960807243474473
+      ],
+      "haut": [
+       0.10872251090022146,
+       0.32714773072331205,
+       0.48235405134858583,
+       0.5564408384890718,
+       0.6080256737486411,
+       0.6325340143511021,
+       0.6335219074118487,
+       0.6249650683972535,
+       0.6116671616657632,
+       0.5960807243474473
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "salaire_efficience": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   }
+  },
+  "le_pen": {
+   "forme": "programme",
+   "cles": [
+    "pres2027_le_pen_programme"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.17164611010445086,
+       0.26337611955677964,
+       0.22613139209284316,
+       0.220562830575588,
+       0.22244610355723893,
+       0.21571869040122316,
+       0.215354351204744,
+       0.21866454053416362,
+       0.2238763178837866,
+       0.2297715133317224
+      ],
+      "bas": [
+       0.16312063423978174,
+       0.1732242038525278,
+       0.14741842755838452,
+       0.14398922524353264,
+       0.14317126734397445,
+       0.13817857808367973,
+       0.14066561765409769,
+       0.1444505645963412,
+       0.14919527195529136,
+       0.15464893984363015
+      ],
+      "haut": [
+       0.1835121788048888,
+       0.26213234993882395,
+       0.2190529230620042,
+       0.21260289428012946,
+       0.21527946288964817,
+       0.20647533903566656,
+       0.20688891331189002,
+       0.2107821117399666,
+       0.21657123977388945,
+       0.22273400799696194
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.010721472809216426,
+       -0.04135039094247395,
+       -0.03205361546000374,
+       0.012227736867620465,
+       0.050350355696782145,
+       0.08603500156851851,
+       0.12026601989798547,
+       0.14795540385934558,
+       0.17026971340623476,
+       0.188587665711637
+      ],
+      "bas": [
+       -0.025952230883192207,
+       -0.08527451035646005,
+       -0.09775922469299148,
+       -0.06951892037383611,
+       -0.04291747671440305,
+       -0.01637777781840932,
+       0.015277632726788953,
+       0.036701441689156455,
+       0.05407101902826117,
+       0.07131237807735391
+      ],
+      "haut": [
+       -0.0014728993712154206,
+       -0.017446887383828494,
+       0.007936023642826081,
+       0.06011260909910886,
+       0.10128515132523326,
+       0.13425248245859772,
+       0.1641797847670001,
+       0.18812177317187428,
+       0.20652495010289207,
+       0.22258327308665837
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.054399971402057386,
+       0.16658319244966602,
+       0.2530483261982077,
+       0.3034223995594736,
+       0.3450858992236015,
+       0.37528482889685016,
+       0.39517234661105183,
+       0.4110562546635334,
+       0.4249313441294015,
+       0.43775475521939605
+      ],
+      "bas": [
+       0.05150856426345468,
+       0.14164558589625054,
+       0.20047937301878938,
+       0.23516679401686008,
+       0.2669275276911588,
+       0.2910847898659888,
+       0.30931877721993845,
+       0.32551121586117343,
+       0.3416636813113524,
+       0.35721566299052976
+      ],
+      "haut": [
+       0.065489343041267,
+       0.19602822392226255,
+       0.29573940792437925,
+       0.3487309092378686,
+       0.39324989506524216,
+       0.4247129686949425,
+       0.4437355657885838,
+       0.4584716420317209,
+       0.46943742720809645,
+       0.4801021592603182
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.23049275358161744,
+       0.4472240764631797,
+       0.4928009006320142,
+       0.5196752495347019,
+       0.547790890812504,
+       0.5567661136645484,
+       0.5623837696576874,
+       0.5703408151246359,
+       0.5803821235808678,
+       0.5916829120932369
+      ],
+      "bas": [
+       0.22478187883714248,
+       0.3455657217067824,
+       0.3717243844538554,
+       0.39041510470857044,
+       0.40975644430451635,
+       0.4184635924373103,
+       0.4289483074807339,
+       0.44197616876842977,
+       0.4567817271890955,
+       0.4726039206933662
+      ],
+      "haut": [
+       0.251259338417396,
+       0.46621491119635755,
+       0.5080370667897691,
+       0.5305275836109992,
+       0.555714167548528,
+       0.5616185559411163,
+       0.5646590632651913,
+       0.5723173957734954,
+       0.5821374417786584,
+       0.5933592366566598
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.043625010292625,
+       0.0923423178301297,
+       0.10182977025647855,
+       0.11015518758066278,
+       0.12657388376822176,
+       0.13217490243349062,
+       0.13385831793941705,
+       0.13817818017101136,
+       0.1430865137217685,
+       0.14847756876823492
+      ],
+      "bas": [
+       0.039616613400675904,
+       0.05968990636786575,
+       0.057000234488566726,
+       0.05555294439253289,
+       0.058390442527702646,
+       0.05413361935753813,
+       0.05038748526878356,
+       0.05031191898961396,
+       0.05051426584762431,
+       0.05215455626902399
+      ],
+      "haut": [
+       0.050347414322492456,
+       0.0955295794148403,
+       0.11101776422530181,
+       0.13136177399124754,
+       0.15616330839979148,
+       0.16754968253424365,
+       0.17454865261768973,
+       0.18196104143363695,
+       0.18840513960073024,
+       0.19279257268088762
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "salaire_efficience": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.054399971402057386,
+       0.16658319244966602,
+       0.2530483261982077,
+       0.3034223995594736,
+       0.3450858992236015,
+       0.37528482889685016,
+       0.39517234661105183,
+       0.4110562546635334,
+       0.4249313441294015,
+       0.43775475521939605
+      ],
+      "bas": [
+       0.054399971402057386,
+       0.16658319244966602,
+       0.2530483261982077,
+       0.3034223995594736,
+       0.3450858992236015,
+       0.37528482889685016,
+       0.39517234661105183,
+       0.4110562546635334,
+       0.4249313441294015,
+       0.43775475521939605
+      ],
+      "haut": [
+       0.054399971402057386,
+       0.16658319244966602,
+       0.2530483261982077,
+       0.3034223995594736,
+       0.3450858992236015,
+       0.37528482889685016,
+       0.39517234661105183,
+       0.4110562546635334,
+       0.4249313441294015,
+       0.43775475521939605
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "salaire_efficience": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   }
+  },
+  "plf2027_art_74": {
+   "forme": "volets composés",
+   "cles": [
+    "plf2027_art_74_ppa",
+    "plf2027_art_74_apl"
+   ],
+   "refusees": [],
+   "cir_fiches": [],
+   "dimension": {
+    "cle": "productivite",
+    "titre": "La productivité des entreprises",
+    "question": "La mesure rend-elle les entreprises plus productives, et avec elles le PIB potentiel et les salaires ?",
+    "annees": [
+     2026,
+     2027,
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033,
+     2034,
+     2035
+    ],
+    "statut": "sourcé, non jugé",
+    "juge": null,
+    "sources": [
+     {
+      "document": "Le jumeau (D-600)",
+      "lieu": "blocs `investissement`, `productivite`, `salaires`",
+      "valeur": "le socle : capital du coût d'usage, démographie, emploi, salaires"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « pression_cout »)",
+      "lieu": "tableau 1 p. 27 ; Harasztosi et Lindner (2015), p. 1 et 3-4",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Riley et Rosazza Bondibene, NIESR DP 449 (canal « salaire_efficience »)",
+      "lieu": "tableau 1 p. 27, lu sur le salaire brut",
+      "valeur": "η = 0.38 (0.0 à 0.76)"
+     },
+     {
+      "document": "Trésor-Éco n° 290 (2021), réforme du CIR de 2008",
+      "lieu": "p. 6",
+      "valeur": "canal « rd_cir » : η = 1.32 (0.0 à 1.84), dès la cinquième année"
+     },
+     {
+      "document": "France Stratégie, fiscalité du capital, rapport final 2023",
+      "lieu": "p. 21 du PDF",
+      "valeur": "aucun effet du PFU sur l'investissement : canal nul"
+     },
+     {
+      "document": "Cahuc et Carcillo, IZA DP 5439 (2011)",
+      "lieu": "résumé, p. 3 du PDF",
+      "valeur": "l'exonération des heures supplémentaires sans effet sur les heures"
+     },
+     {
+      "document": "Insee, Mésange (G2017-04)",
+      "lieu": "p. 58 du PDF",
+      "valeur": "le salaire s'indexe à long terme sur la productivité apparente"
+     }
+    ],
+    "limites": [
+     "Le socle est le jumeau : la productivité apparente y bouge par la composition de l'emploi, le capital du coût d'usage et la démographie des sociétés, pas par l'efficacité des entreprises (D-600).",
+     "L'écart d'emploi est lu comme structurel dans le PIB potentiel ; le PIB y suit le canal à long terme (la demande suit, dit).",
+     "La fiscalité du capital des ménages (PFU) et l'exonération des heures supplémentaires n'ont pas de canal : leurs effets publiés sont nuls (D-600)."
+    ],
+    "indicateurs": [
+     {
+      "cle": "productivite_apparente",
+      "libelle": "Productivité apparente du travail (PIB en volume par emploi)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.004279654476380124,
+       0.010086683816346032,
+       0.010311215295200071,
+       0.008329703123410859,
+       0.007429043772777533,
+       0.006645945701078126,
+       0.005795848238476786,
+       0.005188477196327312,
+       0.004827778465132937,
+       0.004540928760965457
+      ],
+      "bas": [
+       0.00405077067524795,
+       0.007754892188921447,
+       0.006515148540203741,
+       0.005115202672733021,
+       0.004484194673670672,
+       0.003970218834478123,
+       0.003390792346499305,
+       0.0031574166567327477,
+       0.0030162832934643724,
+       0.0029041419073949637
+      ],
+      "haut": [
+       0.004578659353738912,
+       0.010231640778201045,
+       0.010052730805308885,
+       0.007987881071327418,
+       0.007101155536929359,
+       0.00630119879476809,
+       0.0055608443638788235,
+       0.005076548912299472,
+       0.004772250546946077,
+       0.004478824608750153
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "capital_par_tete",
+      "libelle": "Capital des entreprises par emploi",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       -0.0002673186072499334,
+       -0.00125160002755198,
+       -0.00160204540790021,
+       -0.000131479809661883,
+       0.0018523902444389506,
+       0.003442223088079288,
+       0.004779660775944272,
+       0.0058169225770177135,
+       0.006474098693676211,
+       0.006820779321015102
+      ],
+      "bas": [
+       -0.0006451297339415962,
+       -0.002649155876106035,
+       -0.004071707429906812,
+       -0.0032846471064823524,
+       -0.001638795663468362,
+       -0.00024062860378371001,
+       0.0010527016735473183,
+       0.0021545121801591627,
+       0.003031899895200585,
+       0.003767510319007128
+      ],
+      "haut": [
+       -3.610978230650377e-05,
+       -0.00047059639965985116,
+       -0.00016838630717774908,
+       0.0017791054573101917,
+       0.0037931691320214336,
+       0.0051450402163366596,
+       0.00628401037190751,
+       0.007167640711601696,
+       0.007517256925623217,
+       0.007579523575127476
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib_potentiel",
+      "libelle": "PIB potentiel",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.0013555786346413224,
+       0.005263524270672802,
+       0.00947992288361162,
+       0.011805189290278073,
+       0.012854793566733165,
+       0.013331827220666422,
+       0.01324103203823612,
+       0.012767641117028621,
+       0.012160850330906772,
+       0.011523561668933473
+      ],
+      "bas": [
+       0.0012803909822656206,
+       0.004666987225303494,
+       0.007781614487334599,
+       0.00916461437856212,
+       0.009865678202021335,
+       0.0101861863517148,
+       0.010193585643198132,
+       0.009936758175464248,
+       0.009669680060253908,
+       0.009367566111619359
+      ],
+      "haut": [
+       0.0016415605005763347,
+       0.006200312600173682,
+       0.011017033110691526,
+       0.013604742513562368,
+       0.014673370399263648,
+       0.015098950940888433,
+       0.014856095989596479,
+       0.014105396035500794,
+       0.0133493682712193,
+       0.012523395844206664
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pib",
+      "libelle": "PIB en volume",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.005743588537742431,
+       0.01585784456645976,
+       0.020441239477788344,
+       0.02018914918413593,
+       0.019534239508380465,
+       0.018583949757943554,
+       0.017101068407986173,
+       0.015599968570343464,
+       0.014366171443778523,
+       0.01330153762310567
+      ],
+      "bas": [
+       0.005567477085206118,
+       0.01318282257756485,
+       0.015246684366328991,
+       0.014623290038006016,
+       0.014253160814538608,
+       0.01373752917783662,
+       0.012789784708188727,
+       0.01199090159711631,
+       0.011378727412462255,
+       0.010821862734986932
+      ],
+      "haut": [
+       0.006291948994638959,
+       0.01674869207714777,
+       0.02109765749296334,
+       0.0207606470215444,
+       0.020035983307900348,
+       0.018995241953258864,
+       0.017457968819962862,
+       0.01590712071695338,
+       0.01469411480875489,
+       0.013621312654463803
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "salaire_reel",
+      "libelle": "Rémunération réelle moyenne par salarié (D1 par tête, cotisations comprises, au prix de la consommation)",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.0010871816052748784,
+       0.0031939217581822277,
+       0.004241284674444401,
+       0.0042598457439924076,
+       0.004444665369685019,
+       0.004544122933936023,
+       0.0042729822413711815,
+       0.003969470829057187,
+       0.0037740972543387485,
+       0.0036205178333803545
+      ],
+      "bas": [
+       0.0009927832153311389,
+       0.0023125855446493038,
+       0.00243140195653635,
+       0.0021277520452012144,
+       0.0019508294010117666,
+       0.0017296839477709547,
+       0.001318202184298345,
+       0.0009998692277168875,
+       0.0008433602083146585,
+       0.0008163263619309635
+      ],
+      "haut": [
+       0.001243244950193123,
+       0.0033934948172542607,
+       0.004574438990631036,
+       0.004939998248026933,
+       0.0055477348116295105,
+       0.005913290930990022,
+       0.005765467745738605,
+       0.005520305265546144,
+       0.005241397274675651,
+       0.0050319363256390295
+      ],
+      "par_groupe": null
+     },
+     {
+      "cle": "pgf_canaux",
+      "libelle": "Productivité des entreprises par les canaux à côté (PIB, centre de η ; bande de η = 0 à son haut)",
+      "unite": "% du PIB",
+      "sens": 1,
+      "valeurs": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "bas": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "haut": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "par_groupe": {
+       "pression_cout": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "salaire_efficience": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "cle": "pib_potentiel_avec_canaux",
+      "libelle": "PIB potentiel, avec tous les canaux de la productivité",
+      "unite": "% d'écart à la référence",
+      "sens": 1,
+      "valeurs": [
+       0.0013555786346413224,
+       0.005263524270672802,
+       0.00947992288361162,
+       0.011805189290278073,
+       0.012854793566733165,
+       0.013331827220666422,
+       0.01324103203823612,
+       0.012767641117028621,
+       0.012160850330906772,
+       0.011523561668933473
+      ],
+      "bas": [
+       0.0013555786346413224,
+       0.005263524270672802,
+       0.00947992288361162,
+       0.011805189290278073,
+       0.012854793566733165,
+       0.013331827220666422,
+       0.01324103203823612,
+       0.012767641117028621,
+       0.012160850330906772,
+       0.011523561668933473
+      ],
+      "haut": [
+       0.0013555786346413224,
+       0.005263524270672802,
+       0.00947992288361162,
+       0.011805189290278073,
+       0.012854793566733165,
+       0.013331827220666422,
+       0.01324103203823612,
+       0.012767641117028621,
+       0.012160850330906772,
+       0.011523561668933473
+      ],
+      "par_groupe": null
+     }
+    ],
+    "notes": {
+     "canaux_branches": [],
+     "canaux_a_cote": [
+      "pression_cout",
+      "salaire_efficience"
+     ],
+     "alpha": 0.4051015899435115,
+     "leviers": {
+      "pression_cout": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "salaire_efficience": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   }
+  }
+ }
+}

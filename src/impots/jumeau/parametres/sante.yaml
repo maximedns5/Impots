@@ -1,0 +1,214 @@
+# La santé et le temps de vie (but 29, volet `sante`, D-620 à D-624).
+# `jumeau/impacts/sante.py` lit ce fichier.
+#
+# Chaque coefficient a sa source (document, page du PDF ou tableau), sa valeur centrale et
+# sa bande [bas ; haut]. Les centres des parts causales sont CHOISIS dans leur bande (D-620) :
+# la dimension est « illustrative ». Aucun chiffrage de tiers des programmes 2027 n'est lu.
+#
+# Les documents, avec le fichier lu (copie hors git dans data/raw, au manifeste) :
+#   IP1687 : Insee Première n° 1687, N. Blanpain, « L'espérance de vie par niveau de vie :
+#            chez les hommes, 13 ans d'écart entre les plus aisés et les plus modestes »,
+#            février 2018 (insee_ip1687_esperance_vie_niveau_vie.pdf ; données .xls)
+#   CLOW   : Cesarini, Lindqvist, Östling et Wallace, « Wealth, Health, and Child
+#            Development: Evidence from Administrative Data on Swedish Lottery Players »,
+#            IFN WP 1060 (QJE 131(2), 2016) (cesarini_et_al_2016_ifn_wp1060.pdf)
+#   SVW    : Sullivan et von Wachter, « Job Displacement and Mortality: An Analysis Using
+#            Administrative Data », QJE 124(3), 2009 (sullivan_von_wachter_2009_qje.pdf)
+#   KWZ    : Kuhn, Wuellrich et Zweimüller, « Fatal Attraction? Extended Unemployment
+#            Benefits, Labor Force Exits, and Mortality », NBER WP 25124, 2018 (J. Public
+#            Econ. 2020) (kuhn_wuellrich_zweimuller_nber_w25124.pdf)
+#   BGP    : Bozio, Garrouste et Perdrix, « Impact of later retirement on mortality:
+#            Evidence from France », LEDa WP 4/2019 (Health Economics 30(5), 2021)
+#   COR1/2 : Conseil d'orientation des retraites, rapport annuel de juin 2026, partie 4,
+#            chapitres 1 et 2 (cor_ra2026_partie4_chap1.pdf, cor_ra2026_partie4_chap2.pdf)
+
+documents:
+  IP1687: "Insee Première n° 1687, L'espérance de vie par niveau de vie (Blanpain, février
+    2018)"
+  CLOW: "Cesarini, Lindqvist, Östling et Wallace, Wealth, Health, and Child Development,
+    IFN WP 1060 (Quarterly Journal of Economics 131(2), 2016)"
+  SVW: "Sullivan et von Wachter, Job Displacement and Mortality, Quarterly Journal of
+    Economics 124(3), 2009"
+  KWZ: "Kuhn, Wuellrich et Zweimüller, Fatal Attraction?, NBER WP 25124 (Journal of Public
+    Economics, 2020)"
+  BGP: "Bozio, Garrouste et Perdrix, Impact of later retirement on mortality: Evidence from
+    France, LEDa WP 4/2019 (Health Economics 30(5), 2021)"
+  COR1: "COR, rapport annuel de juin 2026, partie 4, chapitre 1"
+  COR2: "COR, rapport annuel de juin 2026, partie 4, chapitre 2"
+  SILC1: "Eurostat, hlth_silc_01 (santé perçue par statut d'activité), France, 16-64 ans"
+  SILC8: "Eurostat, hlth_silc_08 et hlth_silc_09 (besoins d'examen médical et dentaire non
+    satisfaits, par raison et quintile de revenu), France, 16 ans ou plus"
+  TABLE: "Eurostat, demo_mlifetable (table de mortalité), France, deux sexes, 2024 ; demo_pjan
+    et demo_gind, 2024"
+
+revenu_vie:
+  # g : années d'espérance de vie à la naissance par unité de log du niveau de vie, une
+  # ASSOCIATION, tirée des deux vingtiles extrêmes : (EV haut − EV bas) / ln(5 800 / 470).
+  hommes: {haut: 84.4, bas: 71.7}
+  femmes: {haut: 88.3, bas: 80.0}
+  niveau_de_vie: {haut: 5800, bas: 470}
+  document: IP1687
+  lieu: "p. 1 (résumé) et figure 1 : 5 % les plus aisés, 5 800 € par mois, 84,4 ans (h) et
+    88,3 ans (f) ; 5 % les plus modestes, 470 € par mois, 71,7 ans (h) et 80,0 ans (f),
+    2012-2016 ; le résumé : autour de 1 000 €, 100 € de plus vont avec 0,9 an (h) et 0,7 an
+    (f), autour de 2 000 €, 0,3 et 0,2 an (le gradient s'aplatit)"
+  part_causale:
+    # s : la part causale de g. Les loteries suédoises excluent (95 %) un effet de la richesse
+    # sur la mortalité à dix ans d'un sixième du gradient en coupe ; le centre, le milieu,
+    # est choisi.
+    centre: 0.0833333333
+    bas: 0.0
+    haut: 0.1666666667
+    document: CLOW
+    lieu: "p. 1 (résumé) et p. 13 du PDF : « For 10-year mortality, the 95% confidence
+      interval allows us to rule out causal effects one sixth of the gradient » ; le
+      gradient suédois : 1 M SEK va avec 2,8 points de mortalité à dix ans en moins (2,1
+      avec les contrôles)"
+
+chomage_mortalite:
+  # r : le surcroît relatif de risque de décès d'un chômeur, l'année où il l'est.
+  centre: 0.30
+  bas: 0.10
+  haut: 1.00
+  document: SVW
+  lieu: "p. 1 du PDF (résumé) : « mortality rates in the year after displacement are
+    50-100% higher than would otherwise have been expected […] we estimate a 10-15%
+    increase in annual death hazards » vingt ans après ; la bande va du long terme (0,10)
+    au haut de la première année (1,00) ; le centre, 0,30 (à peu près la moyenne
+    géométrique), est choisi : un chômeur du stock n'est pas toujours dans sa première
+    année, et l'effet durable après le retour à l'emploi n'est pas compté"
+
+chomage_sante:
+  # c : la part causale de l'écart brut de santé déclarée entre personnes en emploi et
+  # chômeurs (« bonne ou très bonne », 16-64 ans).
+  emploi: 75.1
+  chomeurs: 60.8
+  annee: 2025
+  document_ecart: SILC1
+  lieu_ecart: "hlth_silc_01, France, 16-64 ans, deux sexes, 2025 : EMP 75,1 %, UNE 60,8 %
+    (2024 : 77,1 et 63,5) ; extraction du 17 novembre 2026, mise à jour du 20 octobre 2026"
+  part_causale:
+    centre: 0.25
+    bas: 0.0
+    haut: 0.5
+    lieu: "bas : Schmitz, « Why are the unemployed in worse health? », Labour Economics 18(1),
+      2011 (abstract) : aucun effet sur la santé du chômage dû à une fermeture d'usine, la
+      sélection des malades vers le chômage fait l'écart ; haut et centre choisis (la moitié,
+      le quart de l'écart brut)"
+
+renoncement:
+  # La part des 16 ans ou plus qui disent avoir renoncé à un examen médical (ou dentaire)
+  # parce qu'il était trop cher, par quintile de revenu ; la pente par unité de log entre
+  # le premier et le cinquième quintile se calcule sur les cellules (D-620).
+  medical: {q1: 3.9, q5: 0.4, total: 1.9}
+  dentaire: {q1: 9.2, q5: 1.5, total: 5.1}
+  annee: 2025
+  document: SILC8
+  lieu: "hlth_silc_08 et hlth_silc_09, raison « Too expensive » (TXP), France, 16 ans ou
+    plus, 2025 ; extraction du 17 novembre 2026"
+  part_causale:
+    centre: 0.5
+    bas: 0.0
+    haut: 1.0
+    lieu: "choisie : le renoncement « parce que trop cher » est lié au revenu par sa
+      définition (haut, 1) ; mais le gradient porte aussi la santé, la couverture
+      complémentaire et l'information (bas, 0)"
+
+adultes:
+  # Les 16 ans ou plus, comme le moral (D-595) : part uniforme entre déciles.
+  part: 0.8183
+  document: "Eurostat, demo_pjan, France, 2024 (D-595)"
+
+table:
+  # La table de mortalité de 2024 (deux sexes) et la population de 2024.
+  e0: 83.0
+  disparite: 10.57
+  # e† = Σ d_x ē_x / l_0, ē_x la moyenne de e_x et e_x+1 : les années perdues en moyenne
+  # à un décès.
+  deces_2024: 643332
+  taux_deces_25_64: 0.002594
+  # m des 25-64 ans, pondéré par la population de chaque âge (demo_pjan 2024).
+  annees_perdues_25_64: 31.19
+  # Σ d_x ē_x / Σ d_x sur 25-64 ans.
+  generation_62_64: 840764
+  # la population moyenne des âges 62, 63 et 64 au 1er janvier 2024.
+  document: TABLE
+  lieu: "demo_mlifetable (FR, T, 2024 ; DEATHRATE, LIFEXP, NUMBERDYING, SURVIVORS),
+    demo_pjan (FR, 2024, par âge), demo_gind (FR, DEATH, 2024) ; extraction du 17 novembre
+    2026 ; le calcul dans D-620"
+
+retraite:
+  transmission:
+    # τ : ce que l'âge effectif de départ bouge pour un an d'âge légal.
+    centre: 0.5
+    bas: 0.25
+    haut: 1.0
+    document: COR2
+    lieu: "p. 4 du PDF (folio 218) : « Parmi l'ensemble des nouveaux retraités, 48,1 % sont
+      partis à la retraite au plus tard à 62 ans », 24,5 % à 62 ans exactement (le bas) ;
+      le haut, un décalage de tous les départs ; le centre, choisi près de la part liée à
+      l'âge légal"
+  sans_limitation:
+    # la part des années de 60-64 ans vécues sans limitation d'activité
+    centre: 0.70
+    bas: 0.70
+    haut: 0.89
+    document: COR1
+    lieu: "p. 7 du PDF (folio 209) : « Les limitations d'activité sévères ou modérées
+      s'établissent à un peu plus de 30 % de la classe d'âge […] limitation sévère […] un peu
+      plus de 10 % » (60-64 ans) ; le haut compte les années sans limitation sévère"
+  vie:
+    # années de vie par personne et par an de départ plus tardif (au-delà de la retraite)
+    centre: 0.0
+    bas: -0.10
+    haut: 0.10
+    document: BGP
+    lieu: "BGP p. 2 du PDF (résumé) : un an de plus d'âge de liquidation n'a pas d'effet
+      significatif sur la probabilité de décès (réforme de 1993), et l'effet minimal
+      détectable est petit ; Garrouste et Perdrix, Journal of Economic Surveys 36(4), 2022 :
+      « later retirement has no effect on mortality » ; haut : KWZ p. 19 du PDF, un an de
+      retraite anticipée réduit l'âge au décès des hommes de 0,208 an, rien pour les femmes
+      (moyenne des deux sexes, environ 0,10) ; bas : symétrique, choisi (Hallberg, Johansson
+      et Josephson, J. Health Econ. 44, 2015 : une retraite anticipée offerte réduit la
+      mortalité, sens seulement)"
+  reference:
+    # l'âge légal de départ par année où une génération l'atteint, la loi de 2023 avec la
+    # suspension de la LFSS pour 2026 (64 ans à partir de la génération 1969) ; une
+    # approximation par année, au trimestre.
+    lieu: "COR2 p. 1 du PDF et COR1, note 205 (p. 4 du PDF) : la suspension affecte les
+      générations 1964 à 1968, 64 ans atteint à partir de la génération 1969"
+    # génération 1964 : 62,75 ans (fin 2026) ; 1965 : 63 (2028) ; 1966 : 63,25 (2029) ;
+    # 1967 : 63,5 (2030) ; 1968 : 63,75 (fin 2031) ; 1969 : 64 (2033). Entre deux années
+    # données, l'âge suit une ligne droite ; après la dernière, il reste.
+    ages: {2026: 62.75, 2027: 62.75, 2028: 63.0, 2029: 63.25, 2030: 63.5, 2031: 63.625,
+           2032: 63.75, 2033: 64.0}
+  programmes:
+    # L'âge légal du programme par année, lu dans sa mesure (transmission/<candidat>), une
+    # entrée de la dimension : le jumeau ne règle pas l'âge (la population ne vieillit pas).
+    melenchon:
+      mesures: [abrogation_reforme_2023, retraite_60_ans_40_annuites]
+      texte: "abrogation de la réforme de 2023 « dès 2027 », puis 60 ans et 40 annuités,
+        « objectif sur un mandat » : 62 ans en 2027, de 62 à 60 ans en ligne droite de 2028
+        à 2032 (choisi)"
+      ages: {2026: 62.75, 2027: 62.0, 2028: 61.6, 2029: 61.2, 2030: 60.8, 2031: 60.4,
+             2032: 60.0}
+      # l'écart à la référence : −0,75 en 2027, −3,75 en 2032, −4 à partir de 2033
+    retailleau:
+      mesures: [r10_age_minimal_63_ans]
+      texte: "âge minimal de 63 ans avec une décote de 7 % par an, taux plein à 65 ans :
+        l'âge légal plafonné à 63 ans à partir de 2028 (choisi) ; la décote forte fait de τ un
+        haut"
+      ages: {2026: 62.75, 2027: 62.75, 2028: 63.0}
+      # l'écart à la référence : 0 en 2028, −0,25 en 2029 … −1 à partir de 2033
+    attal:
+      mesures: [a13_retraite_sans_age_legal]
+      texte: "système universel sans âge légal, ni durée ni décote dite : aucun paramètre,
+        non chiffré (l'âge de la référence)"
+      ages: {}
+    philippe:
+      mesures: [p5_retraite_65_ans_45_annuites]
+      texte: "le calendrier de 2023 repris (63 ans pour la génération 1964, 64 pour 1968),
+        puis 65 ans « en moins de 10 ans » au rythme d'un trimestre par génération (choisi) :
+        un trimestre d'avance sur la référence de 2027 à 2033, puis 65 ans en 2037"
+      ages: {2026: 62.75, 2027: 63.0, 2028: 63.25, 2029: 63.5, 2030: 63.75, 2031: 63.875,
+             2032: 64.0, 2033: 64.25, 2034: 64.5, 2035: 64.75, 2037: 65.0}
