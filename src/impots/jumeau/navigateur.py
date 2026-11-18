@@ -1230,6 +1230,12 @@ def impacts_json(session: Session, texte: str) -> str:
 
     choix = {"tirages": TIRAGES_IMPACTS, **session.reglage_impacts(json.loads(texte)),
              "dimensions": True}
+    # Borné (D-665) : la trajectoire est vectorisée sur les tirages ; sans borne, une
+    # requête de l'API en demandait des millions et faisait tomber le serveur.
+    n = choix["tirages"] or 0
+    if isinstance(n, bool) or not isinstance(n, int | float) or not 0 <= n <= TIRAGES:
+        raise NavigateurError(f"tirages : {n!r}, il en faut de 0 à {TIRAGES}")
+    choix["tirages"] = int(n)
     pourquoi = choix.pop("pourquoi_mode", None)
     if not choix.get("theta"):
         # Chaque θ à ½, le centre de sa boîte : le défaut de la page (D-605), dit.

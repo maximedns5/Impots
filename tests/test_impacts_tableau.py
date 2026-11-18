@@ -269,3 +269,20 @@ def test_un_programme_refuse_se_calcule_par_ses_mesures(session, slug, n) -> Non
     # Sans la demander, la page garde la chaîne des études pour le programme entier
     # (D-652 : le propriétaire choisit la ligne mise en avant).
     assert session.reglage_impacts({"candidat": cle})["mode"] == "reduit"
+
+
+def test_l_api_borne_les_tirages_des_bandes() -> None:
+    """D-665 : `POST /impacts` prenait `tirages` sans borne ; dix millions de tirages
+    tiennent dix millions de trajectoires en mémoire : une requête faisait tomber le
+    serveur. Au-delà de la plage du jumeau (200), refusé et dit (422)."""
+    from fastapi.testclient import TestClient
+
+    from impots.api.main import app
+
+    client = TestClient(app, raise_server_exceptions=False)
+    trop = client.post("/impacts", json={"candidat": "pres2027_le_pen_lp21_ir_moins_30_ans",
+                                         "tirages": navigateur.TIRAGES + 1})
+    assert trop.status_code == 422 and "tirages" in trop.json()["detail"], trop.text
+    with pytest.raises(navigateur.NavigateurError, match="tirages"):
+        navigateur.impacts_json(navigateur.Session(json.loads(json.dumps(
+            site_jumeau.donnees()))), json.dumps({"candidat": PROGRAMME, "tirages": -1}))
