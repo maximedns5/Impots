@@ -41593,3 +41593,67 @@ Attal, Roussel, Lisnard, Philippe, Le Pen et l'article 74 du PLF 2027 : aucun no
 change (leurs canaux sont nuls ou d'un seul signe à bas nul). Les autres indicateurs
 (productivité apparente, capital par tête, PIB potentiel du socle, salaires) sont
 identiques au rapport d'avant : le correctif ne touche que l'addition des canaux.
+
+## D-637 — Le levier de coût de la productivité lit l'incidence des cotisations du jumeau
+
+**La question** (D-635, écrit, non changé) : le levier de coût du canal `pression_cout`
+ne lisait que `Mesure.entreprises[a]["cotisations_employeurs"]` ; Attal, Lisnard,
+Philippe et Le Pen y avaient un canal nul. Leurs passes et leurs fiches
+(`jumeau/transmission/<candidat>/`) relues mesure par mesure, et la trajectoire du jumeau
+(états par mesure, tirage 0) :
+
+* *Attal* : le « droit au brut » (a16, cotisations salariales de retraite à l'échelle
+  0,22 ; −77,14 Md€ en 2026, passe des ménages) est dans la trajectoire du programme
+  (impulsion `cotisations_salaries` : 81,7 Md€ en 2026, 105,2 en 2035). Légalement, le
+  brut et le coût ne bougent pas (la fiche, Saez et al. 2012). Mais le jumeau, lui, fait
+  bouger le coût : le bloc `salaires` (`blocs/menages.py`, D-478) écrit ŵ += (1 − λ_s)
+  L[κ], λ_s = 0,554 au centre (Bozio-Wasmer, tableau 4.2, p. 185, `travail.yaml`) ; les
+  rémunérations du programme y baissent de 24,6 Md€ en 2035. **Une ligne réelle
+  manquait.** La CVAE (a18) est un impôt de production, pas un coût du travail ; le
+  crédit d'impôt IA (a20) et l'intéressement (a32) sont sans choc.
+* *Lisnard* : la baisse de CSG d'activité (l1) est dans la trajectoire (35,6 Md€ en
+  2030), mais le jumeau ne la met pas dans le coin des salaires (le bloc ne lit que
+  `cotisations_salaries`) : le coût n'y bouge pas, le canal le suit. Les 120 Md€ de
+  cotisations salariales (l2) et les 40 Md€ d'impôts de production (l3) sont des
+  hypothèses hors du programme chiffré ; la C3S et la CVAE (l4) ne sont pas un coût du
+  travail. Canal nul : juste.
+* *Philippe* : l'exonération salariale de deux heures (p10) laisse une impulsion de
+  0,0015 Md€ ; la baisse de 50 Md€ des aides (p19) est en subventions (D3), hors du
+  programme chiffré, comme le « deal » des impôts de production (p3). Canal nul : juste.
+* *Le Pen* : TVA et IR seulement dans la trajectoire. La hausse de 10 % des salaires
+  exonérée de cotisations patronales (lp36) et les cotisations des seniors (lp16) n'ont
+  pas de montant (`origine: aucun`) : rien à lire. Canal nul : juste, faute de chiffrage ;
+  si lp36 est un jour chiffrée en cotisations employeurs, le levier la lira.
+
+**La décision** : le levier de coût ajoute, pour chaque mesure, le terme du jumeau
+lui-même (`impacts/productivite.py`, `cout_incidence`) :
+Δcoût_t += (1 − λ_s) L[κ]_t − λ_e L[τ]_t, κ et τ les impulsions de cotisations salariales
+et employeurs (ciblées comprises) de l'état, sur le D1 de la référence du bloc, λ celles
+que le bloc `travail` écrit (0 sans lui, le coin de Mésange), L le retard du profil de la
+productivité de Mésange (p. 65). La raison d'y mettre aussi λ_e : avant, le levier lisait
+l'employeur à λ_e = 0 (tout sur le coût) et le salarié à λ_s = 1 (rien sur le coût), deux
+bouts opposés de θ « travail_incidence » ; aucun θ du jumeau ne fait cela. Le statutaire
+employeur reste lu comme avant, sur π D1 ; le terme d'incidence suit la convention du
+bloc (sur D1) : un écart de 1/π sur ce terme seulement, dit. Le canal reste à côté, non
+branché (D-604). La fiscalité de la CSG reste hors du coût, comme dans le jumeau.
+
+**Avant → après** (`reports/jumeau/productivite_programmes.json`, refait ; 2035, centre
+[bas ; haut], `pgf_canaux` en % du PIB) :
+
+| programme | `pgf_canaux` | `pib_potentiel_avec_canaux` |
+|---|---|---|
+| Attal | 0 [0 ; 0] → −0,478 [−0,957 ; 0] | 1,611 → 1,133 [0,655 ; 1,611] |
+| Retailleau | −0,104 [−0,207 ; 0] → −0,144 [−0,288 ; 0] | 0,779 → 0,739 [0,595 ; 0,883] |
+| Mélenchon | 0,517 [−0,414 ; 1,628] → 0,568 [−0,414 ; 1,730] | 1,198 → 1,249 |
+| Roussel | 0,589 [0 ; 1,178] → 0,693 [0 ; 1,386] | 0,587 → 0,691 |
+| Ruffin | 0,192 [−0,174 ; 0,625] → 0,254 [−0,154 ; 0,730] | 0,399 → 0,461 |
+| Tondelier | 0,261 [−0,022 ; 0,544] → 0,315 [0 ; 0,630] | 0,275 → 0,329 |
+| Kazib | 0,261 [−0,022 ; 0,544] → 0,315 [0 ; 0,630] | 0,243 → 0,297 |
+| Bouamrane | 0,258 [−0,022 ; 0,539] → 0,312 [0 ; 0,624] | 0,240 → 0,294 |
+
+Lisnard, Philippe, Le Pen, l'article 74 : inchangés (nuls). Le levier d'Attal : −1,05 %
+du coût en 2026, −2,27 % en 2035. Le canal est symétrique par choix (D-600 : une baisse
+du coût réduit la PGF, ce que Riley et Rosazza Bondibene n'estiment que dans le sens de la
+hausse) : la baisse de 0,48 point du PIB d'Attal en dépend entièrement, son bas est 0.
+Test : `test_le_droit_au_brut_passe_au_cout_par_l_incidence`, en échec sur le code
+d'avant (le levier valait 0).
