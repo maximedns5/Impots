@@ -169,6 +169,9 @@ def test_l_arbitrage_suit_le_sens_de_chaque_indicateur() -> None:
     assert "dimension a" in mieux and "dimension b" in moins
     for mot in ("bon", "mauvais", "bilan positif", "au total"):
         assert mot not in arb["texte"]
+    # D-665 : deux indicateurs de sens contraires ne disent pas que l'un paie l'autre ;
+    # « ce qu'on gagne ici, on le paie là » affirmait un lien qu'aucun ne mesure.
+    assert "on le paie" not in arb["texte"] and "pas un bilan" in arb["texte"]
 
 
 def test_les_deciles_disent_pour_qui_et_leur_arbitrage() -> None:

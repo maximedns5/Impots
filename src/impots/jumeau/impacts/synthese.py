@@ -364,9 +364,11 @@ def _phrase_arbitrages(items_mieux: list[Mapping[str, Any]],
         return None
     morceaux = []
     if items_mieux and items_moins:
-        morceaux.append(f"Ce qu'on gagne ici, on le paie là. Du côté « mieux » : "
-                        f"{liste(items_mieux)}. Du côté « moins bien » : "
-                        f"{liste(items_moins)}.")
+        # Des sens contraires, pas un lien : rien ne dit que l'un paie l'autre (D-665).
+        morceaux.append(f"Les nombres de tête dont le sens est sûr ne vont pas tous du même "
+                        f"côté. Du côté « mieux » : {liste(items_mieux)}. Du côté « moins "
+                        f"bien » : {liste(items_moins)}. Ce n'est pas un bilan, ni un "
+                        f"lien : rien ici ne dit que l'un paie l'autre.")
     elif items_mieux:
         morceaux.append(f"Les nombres de tête dont le sens est sûr vont du côté « mieux » "
                         f"({liste(items_mieux)}) ; ce n'est pas un bilan : ce que le "
