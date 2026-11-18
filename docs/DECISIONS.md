@@ -42860,14 +42860,15 @@ l'économie disait le même nombre « PIB en valeur (nominal) », sens 0. L'un d
 était faux.
 
 **La source qui tranche** : Insee, Mésange (G2017-04),
-`data/raw/insee_G2017-04_mesange.pdf`, section 4. Chaque tableau de variante imprime en première ligne « PIB en volume », en %
-d'écart au compte central (lu avec `pdftotext -layout` : par exemple « Baisse de l'impôt
-sur le revenu des ménages de 1 % du PIB ex ante », PIB en volume 0,41 0,83 0,88 0,81 0,87
-1,05). C'est la ligne que `macro.mesange.ROWS["gdp"]` lit (« PIB en volume » ; « PIB (en
-volume et en %) » pour la variante ciblée), que `retroaction.replay_tables` porte et que
-le bloc `mesange` multiplie par le PIB de la référence. Le canal des créations écrit une
-valeur ajoutée sans prix (s_VA r c Σ Δe). Aucun prix ne bouge dans ce mode : l'écart est
-un volume. **C'est l'économie qui se trompait de nom** ; la productivité avait raison.
+`data/raw/insee_G2017-04_mesange.pdf`, section 4. Chaque tableau de variante imprime en
+première ligne « PIB en volume », en % d'écart au compte central (lu avec `pdftotext`,
+mise en page gardée ; ainsi, « Baisse de l'impôt sur le revenu des ménages de 1 % du PIB
+ex ante » : PIB en volume 0,41 0,83 0,88 0,81 0,87 1,05). C'est la ligne que
+`macro.mesange.ROWS["gdp"]` lit (« PIB en volume » ; « PIB (en volume et en %) » pour la
+variante ciblée), que `retroaction.replay_tables` porte et que le bloc `mesange` multiplie
+par le PIB de la référence. Le canal des créations écrit une valeur ajoutée sans prix
+(s_VA r c Σ Δe). Aucun prix ne bouge dans ce mode : l'écart est un volume. **C'est
+l'économie qui se trompait de nom** ; la productivité avait raison.
 
 **Le correctif** (`impacts/economie.py`). Quand aucun état ne porte `effet_prix_pib`,
 l'écart du PIB devient l'indicateur `pib_volume`, « PIB en volume », sens « mieux », en
@@ -42879,13 +42880,13 @@ chaîne des études sur le jumeau complet dans « Comparer ». La productivité 
 touchée.
 
 **Avant → après**, Mélenchon, 2035, centre à θ ½, bande de 60 tirages (jumeau, en
-secondes ; aucune passe) :
+secondes ; aucune passe ; « entier » : le programme entier, mode réduit) :
 
 | ligne, dimension | avant | après |
 |---|---|---|
-| entier (réduit), économie | « PIB en valeur (nominal) », sens 0 | « PIB en volume », « mieux » |
-| entier (réduit), économie | −0,6886 % [−1,219 ; −0,149] | −0,6886 % [−1,219 ; −0,149] |
-| entier (réduit), productivité | « PIB en volume » −0,6886 % | inchangé |
+| entier, économie | « PIB en valeur (nominal) », sens 0 | « PIB en volume », mieux |
+| entier, économie | −0,6886 % [−1,219 ; −0,149] | −0,6886 % [−1,219 ; −0,149] |
+| entier, productivité | « PIB en volume » −0,6886 % | inchangé |
 | par ses mesures, économie | volume +1,5011 %, valeur +1,8672 % | inchangé |
 
 Le nombre ne change pas, son nom et son sens changent. « En bref » (programme entier) :
