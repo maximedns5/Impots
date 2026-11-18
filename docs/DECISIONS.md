@@ -41900,7 +41900,7 @@ table (be9e808) et avant tout calcul par territoire. Calculé sur la seule table
 
 | ligne | table | publié | écart | tolérance | |
 |---|---|---|---|---|---|
-| L1 médiane La Réunion / métropole | 0,817 (20 171 / 24 680 €) | 0,737 | +0,080 | ± 0,05 | manquée |
+| L1 médiane Réunion / métropole | 0,817 (20 171 / 24 680) | 0,737 | +0,080 | ± 0,05 | manquée |
 | L2 pauvreté rural − métropole | −4,0 points (11,6 − 15,6 %) | −4,9 | +0,9 | ± 3 | tenue |
 
 **Une ligne sur deux.** L1 est manquée, comme le pronostic le disait, mais moins loin
@@ -41945,7 +41945,7 @@ ventilation publiée), la dimension lève `TerritoiresAbsents` avec la raison : 
 **Les nombres de tête**, réglage par défaut de la page (D-605 : figée, θ à ½, 60 tirages),
 2026 → 2035, gain en % du revenu disponible [bande 5-95 % en 2035] et en € par ménage :
 
-| programme | ensemble | Paris (z. 1) | grandes villes | villes moyennes | rural | outre-mer |
+| programme | ensemble | Paris (z. 1) | grandes villes | v. moyennes | rural | outre-mer |
 |---|---|---|---|---|---|---|
 | Retailleau, % | 2,64 → 2,08 [1,62 ; 2,40] | 2,15 | 2,14 | 2,04 | 1,95 | 2,30 |
 | Retailleau, € | 1 208 → 1 241 | 1 256 | 1 241 | 1 231 | 1 244 | 1 247 |
