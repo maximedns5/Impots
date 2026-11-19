@@ -40284,3 +40284,100 @@ mémoire à D-397 : il passe seul, comme toute la série (une file, sous le verr
 Le Pen ; le PLFSS 2027 ; le PLF 2027 ; Glucksmann, Labib, Arthaud, Zemmour. Les douze de
 D-556 sont gelées par `impots etude avant` (série de `5a68669`), les cinq d'ici gardent le
 gel de `aa22293`.
+
+## D-559 — La série de D-556 et D-558 : quinze études, 32 lignes tenues sur 54
+
+**Ce qui a tourné.** `impots etude lancer`, au commit 01a24df (D-556, poussé avant), sur la
+population de D-553 (5ace8bb6…), une étude à la fois sous le verrou commun, du 18 novembre
+11 h 17 au 19 novembre 18 h 37 UTC, sur une file (conteneur cloud, 15 Go, 4 cœurs).
+Quinze études sur dix-sept : **Labib et Arthaud sont retirées sur consigne du
+propriétaire** (19 novembre, vers 12 h UTC, « fais pas les études Labib et Arthaud ») ;
+elles gardent leur gel `avant/serie.json` et n'ont pas de rapport neuf ; leurs six lignes
+de D-558 ne sont pas jugées. Rapports : a8f0743 ; pages (`impots etude ecrire`, des seuls
+rapports commités) : a1596e4 ; `impots etude verifier` dit, pour les quinze, « la page est
+celle de ses rapports ». Journal : `etudes28/serie.log` du scratchpad.
+
+**Les incidents, dits.** Le conteneur a redémarré trois fois (vers 16 h 51, de 16 h 53 à
+18 h 24, de 23 h 16 à 23 h 45 le 18) ; chaque fois la série a été relancée, et `lancer`
+saute les rapports déjà écrits sur le même commit. La relance de 23 h 45 a envoyé sa sortie
+dans /dev/null, par erreur : les codes de retour de Bouamrane à Le Pen ne sont pas
+journalisés. Ce qui en tient lieu : les rapports sont tous là, et `verifier` passe. Les
+quatre dernières (PLFSS, PLF, Glucksmann, Zemmour) sont journalisées, rc = 0.
+
+**Le résultat contre D-556** : coût de la première année (Md€), Δb₂₀₃₅ à θ½ (vue
+vieillie, persistance « lue », points de PIB), verdict du Monte-Carlo (D-345).
+
+| étude | coût, pron. | après | Δb, pron. | après | verdict |
+|---|---|---:|---|---:|---|
+| Mélenchon | 89,5 à 92,5 | +90,995 | 26,3 à 27,5 | +27,495 | hausse |
+| Roussel | 33,5 à 35,0 | +34,307 | 0,3 à 0,6 | +1,336 ✗ | dépend |
+| Ruffin | 33,5 à 34,4 | +34,749 ✗ | 2,0 à 2,3 | +2,636 ✗ | dépend |
+| Tondelier | 18,5 à 19,4 | +20,060 ✗ | 2,1 à 2,4 | +2,643 ✗ | hausse |
+| Kazib | 15,7 à 16,5 | +17,152 ✗ | −0,10 à +0,05 | +0,445 ✗ | dépend |
+| Bouamrane | 15,6 à 16,4 | +17,015 ✗ | −0,10 à +0,05 | +0,442 ✗ | dépend |
+| Attal | 66,2 à 67,5 | +62,938 ✗ | 4,2 à 4,4 | +3,978 ✗ | dépend |
+| Retailleau | 48,9 à 49,8 | +45,479 ✗ | 10,9 à 11,3 | +10,872 ✗ | hausse |
+| Lisnard | 36,2 à 36,8 | +36,461 | 5,45 à 5,65 | +5,705 ✗ | dépend ¹ |
+| Philippe | 46,3 à 47,2 | +46,314 | 11,6 à 11,9 | +11,695 | hausse |
+| Le Pen | 21,3 à 21,8 | +21,631 | 2,95 à 3,1 | +3,021 | dépend |
+| PLFSS, prime | −0,54 à −0,57 | −0,749 ✗ | −0,155 à −0,165 | −0,230 ✗ | baisse |
+| PLFSS, APL | −0,07 ± 1 % | −0,087 ✗ | −0,067 ± 0,002 | −0,084 ✗ | baisse |
+
+✗ : manqué ; les dix-huit verdicts sont tenus. ¹ 89 % des tirages en hausse, pour un
+seuil de 90 % : « dépend », l'attendu de D-556.
+
+**Le résultat contre D-558** (même forme, même signe ✗ ; avant = `aa22293`) :
+
+| étude | coût, pron. | après | Δb, pron. | après | verdict |
+|---|---|---:|---|---:|---|
+| Glucksmann | 30,844 ± 0,5 % | +30,844 | 0,5 à 1,1 | +0,880 | dépend |
+| Zemmour | 91,7 à 94,0 | +90,542 ✗ | 12,3 à 12,7 | +12,017 ✗ | dépend |
+| PLF, art. 2 | 2,62 à 2,72 | +2,628 | 0,36 à 0,39 | +0,377 | dépend |
+| PLF, art. 3 | −1,10 ± 1 % | −1,164 ✗ | −0,170 ± 0,005 | −0,1752 ✗ | dépend |
+| PLF, art. 15 | −7,05 ± 0,5 % | −7,054 | −0,23 à −0,12 | −0,211 | baisse |
+
+**Le compte** : dix-huit lignes, cinquante-quatre pronostics ; trente-deux tenus (les
+dix-huit verdicts, huit coûts, six Δb), vingt-deux manqués. Glucksmann, le témoin de
+D-558, redonne au millième la passe rapide de D-554 (30,844) : la série a tourné sur ce
+code. Aucune tolérance, aucun seuil, aucun enregistrement n'a changé ; aucune ligne n'est
+repronostiquée.
+
+**Les causes cherchées.** Les rapports d'avant, retirés à 01a24df, sont relus dans
+l'historique (01a24df^ pour les douze de D-556, 5a68669^ pour Zemmour et le PLF), mesure
+par mesure et poste par poste.
+
+1. **Δb des Smic, de Lisnard, d'Attal et de Retailleau : l'« avant » de D-556 était faux.**
+   D-556 a pris ses Δb dans D-403, à ε = 0,20. Le canal des créations était déjà à
+   ε = 0,043 (D-427) dans le code de la série, et le gel de D-556 lui-même le dit
+   (`avant/serie.json`, relu à ce code) : Roussel +1,23, Ruffin +2,59, Tondelier +2,51,
+   Kazib +0,38, Bouamrane +0,38, Lisnard +5,71, Attal +4,28, Retailleau +11,37. De ce gel à
+   la série, Δb bouge de +0,05 à +0,13 point pour les Smic, de 0,00 pour Lisnard, de −0,30
+   pour Attal et −0,50 pour Retailleau (leurs coûts, ci-dessous). Une erreur du pronostic,
+   pas de la série.
+2. **Le recours à la prime d'activité, calé sur la Cnaf (D-495, D-496 : `p_max` 0,5322 →
+   0,7392).** C'est la marche `5a68669` → D-521 que D-556 disait non couverte. La prime
+   servie par euro de droit passe de 0,52-0,54 à 0,60-0,62 ; toute mesure qui touche la
+   prime pèse plus. La prime du PLFSS : servie +0,193 Md€, tout l'écart (−0,557 → −0,749).
+   Retailleau, r15 (revenu d'incitation à l'activité) : prime −3,39, soit −3,06 du coût
+   (5,756 → 2,696), la plus grande part de son écart (−3,41). Attal, a16 (droit au brut) :
+   prime −0,60 sur −3,23. Zemmour : prime −0,75 sur −1,15. Les Smic : prime −0,30.
+3. **Les Smic : l'allègement général.** Kazib (le Smic de Tondelier, le même) : 15,444 →
+   17,152, dont l'allègement général +1,856 (+10,5 %), la prime −0,303, le revenu
+   disponible −0,36. Le pronostic prenait 3 à 5 % de l'allègement, le taux du Smic de
+   Mélenchon (+1,25 Md€ sur 37, D-554), dont la hausse est double : le taux ne se
+   transpose pas d'une hausse à l'autre. La part des marches D-521 et D-553 dans ces
+   +10,5 % n'est pas séparée (il faudrait une passe de plus) ; la cause n'est pas trouvée
+   au-delà de ce poste.
+4. **Attal et Retailleau : une assiette salariale qui baisse.** Attal a16 : cotisations
+   salariales −3,8 % (77,14 → 74,21 Md€), le pronostic disait +1 % sur cette assiette ;
+   Retailleau r19 −0,53, r13 −0,37. La cause n'est pas trouvée dans cette entrée.
+5. **Les APL du PLFSS (+21 %) et l'art. 3 du PLF** (IR sur les pensions +0,061 Md€,
+   +5,5 % ; Δb −0,1752, à 0,0002 du bord) : causes non cherchées plus loin que le poste.
+
+**Ce qui n'est pas fait.** Les études du jumeau de D-556 (2) devaient se rejouer après la
+série, leur session lisant les rapports de `presidentielle_melenchon` : les lignes `j` de
+`etudes28/lancer.sh`. Elles lisent les sorties des passes de D-557 (`MESURE27_SORTIE`,
+`BOUCLE28_SORTIE`), écrites dans le scratchpad d'une autre session, absentes de ce disque.
+Les rejouer demande de refaire d'abord les passes de D-557 (les lignes `f`, de l'ordre
+d'une heure et demie sous le verrou), et récrirait les rapports `…_d557.json` commités :
+laissé au propriétaire. Pas de `make impact` ni de lourds, pas de PR (D-676).
