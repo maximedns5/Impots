@@ -40415,8 +40415,8 @@ navigateur n'avaient pas à changer ; elles ne sont pas écrites.
 | bandeau maladie | +9,9 → 7,8 → 7,9 | 9,4 → 7,3 → 7,9 | 11,4 → 9,2 → 9,7 | ±1,5 | oui |
 | bandeau famille | +10,0 → 8,8 → 8,7 | 11,3 → 10,0 → 10,2 | 13,0 → 11,8 → 11,8 | ±1 | oui |
 | réduction générale | +8,1 → 8,9 → 8,9 | 6,8 → 7,6 → 7,6 | 9,1 → 9,9 → 9,9 | ±1 | oui |
-| employeurs, D121 | −5,0 → −4,9 → −4,8 | −3,3 → −3,2 → −3,2 | −2,3 → −2,2 → −2,2 | ±1 | oui |
-| foyers à 45 % | −2,7 → −2,7 → −3,6 | −3,9 → −3,9 → −3,9 | −12,1 → id. → −12,1 | ±1,5 | oui |
+| D121 | −5,0 → −4,9 → −4,8 | −3,3 → −3,2 → −3,2 | −2,3 → −2,2 → −2,2 | ±1 | oui |
+| TMI 45 % | −2,7 → −2,7 → −3,6 | −3,9 → −3,9 → −3,9 | −12,1 → id. → −12,1 | ±1,5 | oui |
 
 La ligne de D-531 : **0,1675**, pronostic 0,172 (0,167 à 0,177), publié 0,168 : dans la
 bande, au bord bas, et dans la tolérance. **Les autres lignes** bougent de moins de 0,5
