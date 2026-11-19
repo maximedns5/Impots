@@ -1,0 +1,1788 @@
+{
+  "rejeu": {
+    "version": 1,
+    "start": {
+      "year": 2025,
+      "debt_ratio": 1.15693757321829,
+      "primary_balance": -0.029870353480509815,
+      "implicit_rate": 0.01882827582292081,
+      "gdp_eur": 2991056000000.0,
+      "receipts_ratio": 0.5212362790934039,
+      "spending_ratio": 0.5511066325739137
+    },
+    "cadre": {
+      "growth": {
+        "real": 0.01,
+        "prices": 0.02
+      },
+      "spending": {
+        "rule": "gele_en_volume",
+        "growth": null
+      },
+      "taux": {
+        "kind": "implicite_tenu",
+        "market_rate": null,
+        "reference": [
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081
+        ],
+        "marginal": 0.01882827582292081
+      }
+    },
+    "looped": true,
+    "behavioural": true,
+    "lignes": {},
+    "macro": {
+      "horizons": [
+        1,
+        2,
+        3,
+        5,
+        10
+      ],
+      "court": 3,
+      "instruments": {}
+    },
+    "box_rows": [
+      "multiplicateur_macro",
+      "productivite_creations"
+    ],
+    "creations": {
+      "theta": 0.5,
+      "parametres": {
+        "elasticite": {
+          "centre": 0.043,
+          "bas": 0.0,
+          "haut": 0.2
+        },
+        "productivite": {
+          "centre": 0.5,
+          "bas": 0.0,
+          "haut": 1.0
+        },
+        "survie_annuelle": 0.9,
+        "montee_en_charge_ans": 5,
+        "taille_relative": 0.1,
+        "part_va_societes_pib": 0.6,
+        "assiette_part_pib": 0.092,
+        "instruments_entreprises": [
+          "impot_societes",
+          "contribution_sociale_is",
+          "cebge"
+        ],
+        "instruments_menages": [
+          "pfu",
+          "prelevements_sociaux_capital",
+          "cotisations_employeurs"
+        ],
+        "preenregistrement": "D-402"
+      },
+      "variations": {
+        "figee": [
+          2023709790.874707,
+          1705547388.5401924,
+          1500371667.8551824,
+          1275969066.2240505,
+          1069766653.0926921,
+          1069766653.0926921,
+          1069766653.0926921,
+          1069766653.0926921,
+          1069766653.0926921,
+          1069766653.0926921
+        ],
+        "vieillie": [
+          2124473397.5341759,
+          1844541372.3282695,
+          1671648681.452484,
+          1464562287.3458169,
+          1264964397.629812,
+          1303166322.4382322,
+          1342521945.3758671,
+          1383066108.126218,
+          1424834704.5916297,
+          1467864712.6702971
+        ]
+      }
+    }
+  },
+  "monte_carlo": {
+    "objet": "distribution sous des lois déclarées",
+    "lois": "Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes.",
+    "rho": 0.8,
+    "cle_copule": "fichier YAML du magasin où vit la ligne (un article par fichier)",
+    "groupes": {},
+    "multiplicateur": null,
+    "tirages": 2000,
+    "graine": 20261103,
+    "persistence": "lue",
+    "annee": 2035,
+    "vues": {
+      "vieillie": {
+        "p_hausse": 1.0,
+        "quantiles": {
+          "q05": 0.016180671549179015,
+          "q50": 0.016180671549179015,
+          "q95": 0.016180671549179015
+        },
+        "sobol": {},
+        "evaluations": 4000
+      },
+      "figee": {
+        "p_hausse": 1.0,
+        "quantiles": {
+          "q05": 0.013705874649223126,
+          "q50": 0.013705874649223126,
+          "q95": 0.013705874649223126
+        },
+        "sobol": {},
+        "evaluations": 4000
+      }
+    },
+    "note": "Une distribution sous des lois déclarées, à côté de la boîte θ : elle dépend de ces lois, et en changer change la réponse (D-336)."
+  },
+  "lectures": {
+    "persistence": "lue",
+    "theta": {
+      "multiplicateur_macro": 0.5,
+      "productivite_creations": 0.5
+    },
+    "decomposition": {
+      "vieillie": {
+        "cout": 0.016180671549179015,
+        "denominateur": 0.0,
+        "retroaction": 0.0,
+        "total": 0.016180671549179015
+      },
+      "figee": {
+        "cout": 0.013705874649223126,
+        "denominateur": 0.0,
+        "retroaction": 0.0,
+        "total": 0.013705874649223126
+      }
+    },
+    "taux_marche": {
+      "taux": 0.035,
+      "vieillie": 0.01749657214161182,
+      "figee": 0.014879196854710397
+    },
+    "variante_salariale": null,
+    "creations_sans_canal": {
+      "vieillie": 0.016063193890277327,
+      "figee": 0.013602295778123885
+    }
+  },
+  "creations": {
+    "convention": "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté.",
+    "parametres": {
+      "elasticite": {
+        "centre": 0.043,
+        "bas": 0.0,
+        "haut": 0.2
+      },
+      "productivite": {
+        "centre": 0.5,
+        "bas": 0.0,
+        "haut": 1.0
+      },
+      "survie_annuelle": 0.9,
+      "montee_en_charge_ans": 5,
+      "taille_relative": 0.1,
+      "part_va_societes_pib": 0.6,
+      "assiette_part_pib": 0.092,
+      "instruments_entreprises": [
+        "impot_societes",
+        "contribution_sociale_is",
+        "cebge"
+      ],
+      "instruments_menages": [
+        "pfu",
+        "prelevements_sociaux_capital",
+        "cotisations_employeurs"
+      ],
+      "preenregistrement": "D-402"
+    },
+    "prelevements_eur": {
+      "figee": {
+        "2026": 2023709790.874707,
+        "2027": 1705547388.5401924,
+        "2028": 1500371667.8551824,
+        "2029": 1275969066.2240505,
+        "2030": 1069766653.0926921,
+        "2031": 1069766653.0926921,
+        "2032": 1069766653.0926921,
+        "2033": 1069766653.0926921,
+        "2034": 1069766653.0926921,
+        "2035": 1069766653.0926921
+      },
+      "vieillie": {
+        "2026": 2124473397.5341759,
+        "2027": 1844541372.3282695,
+        "2028": 1671648681.452484,
+        "2029": 1464562287.3458169,
+        "2030": 1264964397.629812,
+        "2031": 1303166322.4382322,
+        "2032": 1342521945.3758671,
+        "2033": 1383066108.126218,
+        "2034": 1424834704.5916297,
+        "2035": 1467864712.6702971
+      }
+    },
+    "chemins": [
+      {
+        "persistence": "lue",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.7494063698110116,
+            0.6315866448588477,
+            0.5556073751506887,
+            0.4725081383812477,
+            0.3961486709478024,
+            0.39614867094780226,
+            0.39614867094780243,
+            0.3961486709478023,
+            0.3961486709478023,
+            0.3961486709478024
+          ],
+          "taux_entree": [
+            -0.032224473901873496,
+            -0.027158225728930452,
+            -0.023891117131479612,
+            -0.02031784995039365,
+            -0.0170343928507555,
+            -0.017034392850755496,
+            -0.017034392850755503,
+            -0.0170343928507555,
+            -0.0170343928507555,
+            -0.0170343928507555
+          ],
+          "pib": [
+            -1.9334684341124096e-06,
+            -5.109736725138164e-06,
+            -9.064883701506423e-06,
+            -1.3396974912373265e-05,
+            -1.7794062615097006e-05,
+            -2.105813282353856e-05,
+            -2.3551312292545592e-05,
+            -2.5510890165263124e-05,
+            -2.714525367852454e-05,
+            -2.8616180840459817e-05
+          ],
+          "recettes": [
+            -1.0077938923413024e-06,
+            -2.6633801577579315e-06,
+            -4.72494625098765e-06,
+            -6.982989354433121e-06,
+            -9.274910987448207e-06,
+            -1.0976262797595913e-05,
+            -1.2275798387133207e-05,
+            -1.3297201466102261e-05,
+            -1.4149091022440664e-05,
+            -1.491579162314523e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.016180671549179015,
+            "c0": 0.016063193890277327,
+            "c1": 0.016298155931989244
+          },
+          "delta_sans_creations": [
+            0.002230605032749411,
+            0.00454498197881037,
+            0.006542733202395512,
+            0.008200903207152166,
+            0.009547914411180525,
+            0.010880056813155292,
+            0.012197494540348686,
+            0.013500389908335686,
+            0.014788903440993595,
+            0.016063193890277327
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.7138620844538105,
+            0.5839939233329174,
+            0.4986798801546952,
+            0.41166277004593194,
+            0.3350186286989625,
+            0.32519765938551976,
+            0.3156645888036496,
+            0.30641097728950645,
+            0.2974286325854266,
+            0.2887096025872904
+          ],
+          "taux_entree": [
+            -0.030696069631513848,
+            -0.02511173870331545,
+            -0.021443234846651893,
+            -0.01770149911197507,
+            -0.014405801034055386,
+            -0.013983499353577348,
+            -0.013573577318556932,
+            -0.013175672023448777,
+            -0.012789431201173344,
+            -0.012414512911253487
+          ],
+          "pib": [
+            -1.8417641778908312e-06,
+            -4.821879842402423e-06,
+            -8.474148823031901e-06,
+            -1.2409835155829964e-05,
+            -1.6337990795881418e-05,
+            -1.9107883588176166e-05,
+            -2.1085138717951323e-05,
+            -2.250668336262065e-05,
+            -2.357328007060918e-05,
+            -2.443597249089305e-05
+          ],
+          "recettes": [
+            -9.599943070513388e-07,
+            -2.5133387072893274e-06,
+            -4.417033801000896e-06,
+            -6.4684563007873225e-06,
+            -8.51595353030751e-06,
+            -9.959722142850864e-06,
+            -1.0990339249513211e-05,
+            -1.1731299890665806e-05,
+            -1.2287248790031023e-05,
+            -1.2736915377181868e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.013705874649223126,
+            "c0": 0.013602295778123885,
+            "c1": 0.013809458582670686
+          },
+          "delta_sans_creations": [
+            0.002124807610953683,
+            0.0042640989194489,
+            0.006055120844272288,
+            0.007495849018340994,
+            0.008628815486535046,
+            0.009713637734629854,
+            0.010751891916846334,
+            0.011745106163568497,
+            0.012694762009230587,
+            0.013602295778123885
+          ]
+        }
+      },
+      {
+        "persistence": "eteint",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.7494063698110116,
+            0.6315866448588477,
+            0.5556073751506887,
+            0.4725081383812477,
+            0.3961486709478024,
+            0.39614867094780226,
+            0.39614867094780243,
+            0.3961486709478023,
+            0.3961486709478023,
+            0.3961486709478024
+          ],
+          "taux_entree": [
+            -0.032224473901873496,
+            -0.027158225728930452,
+            -0.023891117131479612,
+            -0.02031784995039365,
+            -0.0170343928507555,
+            -0.017034392850755496,
+            -0.017034392850755503,
+            -0.0170343928507555,
+            -0.0170343928507555,
+            -0.0170343928507555
+          ],
+          "pib": [
+            -1.9334684341124096e-06,
+            -5.109736725138164e-06,
+            -9.064883701506423e-06,
+            -1.3396974912373265e-05,
+            -1.7794062615097006e-05,
+            -2.105813282353856e-05,
+            -2.3551312292545592e-05,
+            -2.5510890165263124e-05,
+            -2.714525367852454e-05,
+            -2.8616180840459817e-05
+          ],
+          "recettes": [
+            -1.0077938923413024e-06,
+            -2.6633801577579315e-06,
+            -4.72494625098765e-06,
+            -6.982989354433121e-06,
+            -9.274910987448207e-06,
+            -1.0976262797595913e-05,
+            -1.2275798387133207e-05,
+            -1.3297201466102261e-05,
+            -1.4149091022440664e-05,
+            -1.491579162314523e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.016180671549179015,
+            "c0": 0.016063193890277327,
+            "c1": 0.016298155931989244
+          },
+          "delta_sans_creations": [
+            0.002230605032749411,
+            0.00454498197881037,
+            0.006542733202395512,
+            0.008200903207152166,
+            0.009547914411180525,
+            0.010880056813155292,
+            0.012197494540348686,
+            0.013500389908335686,
+            0.014788903440993595,
+            0.016063193890277327
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.7138620844538105,
+            0.5839939233329174,
+            0.4986798801546952,
+            0.41166277004593194,
+            0.3350186286989625,
+            0.32519765938551976,
+            0.3156645888036496,
+            0.30641097728950645,
+            0.2974286325854266,
+            0.2887096025872904
+          ],
+          "taux_entree": [
+            -0.030696069631513848,
+            -0.02511173870331545,
+            -0.021443234846651893,
+            -0.01770149911197507,
+            -0.014405801034055386,
+            -0.013983499353577348,
+            -0.013573577318556932,
+            -0.013175672023448777,
+            -0.012789431201173344,
+            -0.012414512911253487
+          ],
+          "pib": [
+            -1.8417641778908312e-06,
+            -4.821879842402423e-06,
+            -8.474148823031901e-06,
+            -1.2409835155829964e-05,
+            -1.6337990795881418e-05,
+            -1.9107883588176166e-05,
+            -2.1085138717951323e-05,
+            -2.250668336262065e-05,
+            -2.357328007060918e-05,
+            -2.443597249089305e-05
+          ],
+          "recettes": [
+            -9.599943070513388e-07,
+            -2.5133387072893274e-06,
+            -4.417033801000896e-06,
+            -6.4684563007873225e-06,
+            -8.51595353030751e-06,
+            -9.959722142850864e-06,
+            -1.0990339249513211e-05,
+            -1.1731299890665806e-05,
+            -1.2287248790031023e-05,
+            -1.2736915377181868e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.013705874649223126,
+            "c0": 0.013602295778123885,
+            "c1": 0.013809458582670686
+          },
+          "delta_sans_creations": [
+            0.002124807610953683,
+            0.0042640989194489,
+            0.006055120844272288,
+            0.007495849018340994,
+            0.008628815486535046,
+            0.009713637734629854,
+            0.010751891916846334,
+            0.011745106163568497,
+            0.012694762009230587,
+            0.013602295778123885
+          ]
+        }
+      },
+      {
+        "persistence": "tenu",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.7494063698110116,
+            0.6315866448588477,
+            0.5556073751506887,
+            0.4725081383812477,
+            0.3961486709478024,
+            0.39614867094780226,
+            0.39614867094780243,
+            0.3961486709478023,
+            0.3961486709478023,
+            0.3961486709478024
+          ],
+          "taux_entree": [
+            -0.032224473901873496,
+            -0.027158225728930452,
+            -0.023891117131479612,
+            -0.02031784995039365,
+            -0.0170343928507555,
+            -0.017034392850755496,
+            -0.017034392850755503,
+            -0.0170343928507555,
+            -0.0170343928507555,
+            -0.0170343928507555
+          ],
+          "pib": [
+            -1.9334684341124096e-06,
+            -5.109736725138164e-06,
+            -9.064883701506423e-06,
+            -1.3396974912373265e-05,
+            -1.7794062615097006e-05,
+            -2.105813282353856e-05,
+            -2.3551312292545592e-05,
+            -2.5510890165263124e-05,
+            -2.714525367852454e-05,
+            -2.8616180840459817e-05
+          ],
+          "recettes": [
+            -1.0077938923413024e-06,
+            -2.6633801577579315e-06,
+            -4.72494625098765e-06,
+            -6.982989354433121e-06,
+            -9.274910987448207e-06,
+            -1.0976262797595913e-05,
+            -1.2275798387133207e-05,
+            -1.3297201466102261e-05,
+            -1.4149091022440664e-05,
+            -1.491579162314523e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.016180671549179015,
+            "c0": 0.016063193890277327,
+            "c1": 0.016298155931989244
+          },
+          "delta_sans_creations": [
+            0.002230605032749411,
+            0.00454498197881037,
+            0.006542733202395512,
+            0.008200903207152166,
+            0.009547914411180525,
+            0.010880056813155292,
+            0.012197494540348686,
+            0.013500389908335686,
+            0.014788903440993595,
+            0.016063193890277327
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.7138620844538105,
+            0.5839939233329174,
+            0.4986798801546952,
+            0.41166277004593194,
+            0.3350186286989625,
+            0.32519765938551976,
+            0.3156645888036496,
+            0.30641097728950645,
+            0.2974286325854266,
+            0.2887096025872904
+          ],
+          "taux_entree": [
+            -0.030696069631513848,
+            -0.02511173870331545,
+            -0.021443234846651893,
+            -0.01770149911197507,
+            -0.014405801034055386,
+            -0.013983499353577348,
+            -0.013573577318556932,
+            -0.013175672023448777,
+            -0.012789431201173344,
+            -0.012414512911253487
+          ],
+          "pib": [
+            -1.8417641778908312e-06,
+            -4.821879842402423e-06,
+            -8.474148823031901e-06,
+            -1.2409835155829964e-05,
+            -1.6337990795881418e-05,
+            -1.9107883588176166e-05,
+            -2.1085138717951323e-05,
+            -2.250668336262065e-05,
+            -2.357328007060918e-05,
+            -2.443597249089305e-05
+          ],
+          "recettes": [
+            -9.599943070513388e-07,
+            -2.5133387072893274e-06,
+            -4.417033801000896e-06,
+            -6.4684563007873225e-06,
+            -8.51595353030751e-06,
+            -9.959722142850864e-06,
+            -1.0990339249513211e-05,
+            -1.1731299890665806e-05,
+            -1.2287248790031023e-05,
+            -1.2736915377181868e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.013705874649223126,
+            "c0": 0.013602295778123885,
+            "c1": 0.013809458582670686
+          },
+          "delta_sans_creations": [
+            0.002124807610953683,
+            0.0042640989194489,
+            0.006055120844272288,
+            0.007495849018340994,
+            0.008628815486535046,
+            0.009713637734629854,
+            0.010751891916846334,
+            0.011745106163568497,
+            0.012694762009230587,
+            0.013602295778123885
+          ]
+        }
+      }
+    ]
+  },
+  "scenario": "pres2027_lisnard_l4_suppression_c3s_cvae",
+  "titre": "pres2027_lisnard_l4_suppression_c3s_cvae",
+  "source": "David Lisnard (Nouvelle Énergie), programme relevé le 2026-11-12 — Suppression de la C3S et, « le cas échéant », de la CVAE : « « La suppression de la C3S […] et, le cas échéant, de la CVAE […] représenterait 11,5 milliards d'euros » » (https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/, 2026-11-01)",
+  "reference": "reconduit",
+  "computed": "2026-11-19",
+  "spending_name": "Dépenses gelées en volume",
+  "growth_name": "Croissance réelle 1 %, prix 2 %",
+  "rate_name": "Taux implicite tenu à son niveau de 2025",
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "years": [
+    {
+      "year": 2026,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 6547352193.907059,
+      "mechanical_aged_eur": 6873354876.753548,
+      "reference": 1.168580725548546,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 6547352193.907059
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 6873354876.753548
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 6547352193.907059,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cebge": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cvae": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 6873354876.753548,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cebge": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cvae": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2027,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 6865514596.469406,
+      "mechanical_aged_eur": 7425021316.089344,
+      "reference": 1.1746928799602263,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 6865514596.469406
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 7425021316.089344
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 6865514596.469406,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cvae": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 7425021316.089344,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cvae": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2028,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 6011129671.561966,
+      "mechanical_aged_eur": 6697338536.038229,
+      "reference": 1.1753885794969483,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 6011129671.561966
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 6697338536.038229
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 6011129671.561966,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cvae": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 6697338536.038229,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cvae": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 5079106208.125381,
+      "mechanical_aged_eur": 5829817981.2913065,
+      "reference": 1.1707805732317031,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 5079106208.125381
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 5829817981.2913065
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 5079106208.125381,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cvae": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 5829817981.2913065,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "cvae": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2030,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 4219506747.410965,
+      "mechanical_aged_eur": 4989429980.456829,
+      "reference": 1.1609798413129486,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 4219506747.410965
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 4989429980.456829
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 4219506747.410965,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 4989429980.456829,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2031,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 4219506747.410965,
+      "mechanical_aged_eur": 5140110765.866626,
+      "reference": 1.146095619682319,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 4219506747.410965
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 5140110765.866626
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 4219506747.410965,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 5140110765.866626,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2032,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 4219506747.410965,
+      "mechanical_aged_eur": 5295342110.995798,
+      "reference": 1.1262354244680892,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 4219506747.410965
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 5295342110.995798
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 4219506747.410965,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 5295342110.995798,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2033,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 4219506747.410965,
+      "mechanical_aged_eur": 5455261442.74787,
+      "reference": 1.1015050760584795,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 4219506747.410965
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 5455261442.74787
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 4219506747.410965,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 5455261442.74787,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2034,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 4219506747.410965,
+      "mechanical_aged_eur": 5620010338.318856,
+      "reference": 1.0720087228588424,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 4219506747.410965
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 5620010338.318856
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 4219506747.410965,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 5620010338.318856,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2035,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 4219506747.410965,
+      "mechanical_aged_eur": 5789734650.536086,
+      "reference": 1.0378488647367168,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 4219506747.410965
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 5789734650.536086
+        }
+      },
+      "statistiques": {
+        "figee": {
+          "cost_eur": 4219506747.410965,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 5789734650.536086,
+          "impulses": {},
+          "uncovered": {
+            "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+            "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
+          },
+          "canaux": null,
+          "c1_floor_share": null
+        }
+      }
+    }
+  ],
+  "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté.",
+    "Couche entreprises : le millésime 2023, sous le droit de chaque année. Vue figée : le millésime tel quel ; vue vieillie : son coût suivi au PIB nominal du scénario depuis 2024, l'année de ses bénéfices (M0, R7). L'IS est compté à l'exercice, non à la caisse (PHASE11_SPEC §3). La CVAE est abrogée au 1er janvier 2030 : à partir de cette année, le facteur sur son barème n'a plus rien à régler, et la couche entreprises n'y coûte rien. C'est le droit, pas un chiffre manquant (D-254)."
+  ],
+  "absent": {
+    "rétroaction": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'contribution_sociale_is': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cebge': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cvae': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'c3s': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}",
+    "bande": "Comportement demandé, mais aucun canal des ménages ne lit un bouton des entreprises, et ceux de la couche entreprises n'entrent pas dans les recettes : seul le chiffre mécanique est porté.",
+    "θ": "Comportement demandé : les θ sont listés parce que la requête les nomme, mais aucun canal des ménages ne lit cette réforme ; ceux des entreprises se lisent dans leurs indices."
+  },
+  "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
+    "dividend_wage_shift_firm_owners": 0.5,
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "is_croissance_pib": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5
+  },
+  "theta_applied": false,
+  "closed": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "Canal ouvert dans la dette (but 22), hypothèse non validée : C8 reste l'indice de la couche entreprises ; le canal de la dette lit les euros de prélèvement, pas le taux normal seul, et la dette sans lui est donnée à côté.",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244).",
+    "rétroaction PIB → recettes": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'contribution_sociale_is': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cebge': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cvae': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'c3s': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}",
+    "multiplicateur macro": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'contribution_sociale_is': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cebge': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cvae': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'c3s': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}"
+  },
+  "uprating_note": "Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "behavioural": true,
+  "macro": true,
+  "theta_box": {
+    "year": 2035,
+    "rows": [
+      "multiplicateur_macro",
+      "productivite_creations"
+    ],
+    "paths": [
+      {
+        "persistence": "lue",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.016180671549179015,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.016063193890277327
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.016298155931989244
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.016063193890277327
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.016298155931989244
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.013705874649223126,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.013602295778123885
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.013809458582670686
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.013602295778123885
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.013809458582670686
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.021399977522563285,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.021230042762137025
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.021569927738101846
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.021230042762137025
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.021569927738101846
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.020384934302219326,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.020223103498632655
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.020546779125747427
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.020223103498632655
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.020546779125747427
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "eteint",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.016180671549179015,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.016063193890277327
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.016298155931989244
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.016063193890277327
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.016298155931989244
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.013705874649223126,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.013602295778123885
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.013809458582670686
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.013602295778123885
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.013809458582670686
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.021399977522563285,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.021230042762137025
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.021569927738101846
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.021230042762137025
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.021569927738101846
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.020384934302219326,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.020223103498632655
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.020546779125747427
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.020223103498632655
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.020546779125747427
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "tenu",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.016180671549179015,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.016063193890277327
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.016298155931989244
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.016063193890277327
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.016298155931989244
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.013705874649223126,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.013602295778123885
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.013809458582670686
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.013602295778123885
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.013809458582670686
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.021399977522563285,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.021230042762137025
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.021569927738101846
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.021230042762137025
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.021569927738101846
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.020384934302219326,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.020223103498632655
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.020546779125747427
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.020223103498632655
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.020546779125747427
+              ]
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file",
+  "annees": null,
+  "persistence": null,
+  "side_by_side": [
+    {
+      "persistence": "lue",
+      "label": "Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1708146021082633,
+          "delta_aged": 0.002233876559717185,
+          "reform_frozen": 1.17070864932306,
+          "delta_frozen": 0.0021279237745139845
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1792475476331916,
+          "delta_aged": 0.004554667672965307,
+          "reform_frozen": 1.1789661264489215,
+          "delta_frozen": 0.004273246488695204
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1819503715369406,
+          "delta_aged": 0.006561792039992298,
+          "reform_frozen": 1.1814615537693547,
+          "delta_frozen": 0.006072974272406384
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1790125071134376,
+          "delta_aged": 0.008231933881734488,
+          "reform_frozen": 1.1783052682697228,
+          "delta_frozen": 0.007524695038019669
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.170572927181955,
+          "delta_aged": 0.009593085869006313,
+          "reform_frozen": 1.1696503489315946,
+          "delta_frozen": 0.008670507618645962
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1570350912685585,
+          "delta_aged": 0.010939471586239424,
+          "reform_frozen": 1.1558636363696388,
+          "delta_frozen": 0.009768016687319747
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1385066710152096,
+          "delta_aged": 0.012271246547120418,
+          "reform_frozen": 1.137054218054759,
+          "delta_frozen": 0.010818793586669706
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1150936307537205,
+          "delta_aged": 0.013588554695241006,
+          "reform_frozen": 1.1133294237577935,
+          "delta_frozen": 0.011824347699314064
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0869003381456104,
+          "delta_aged": 0.014891615286767967,
+          "reform_frozen": 1.0847949303696853,
+          "delta_frozen": 0.012786207510842917
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0540295362858958,
+          "delta_aged": 0.016180671549179015,
+          "reform_frozen": 1.05155473938594,
+          "delta_frozen": 0.013705874649223126
+        }
+      ],
+      "conventions": [],
+      "gdp_gap_aged": []
+    },
+    {
+      "persistence": "eteint",
+      "label": "Effet macro éteint après trois ans",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1708146021082633,
+          "delta_aged": 0.002233876559717185,
+          "reform_frozen": 1.17070864932306,
+          "delta_frozen": 0.0021279237745139845
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1792475476331916,
+          "delta_aged": 0.004554667672965307,
+          "reform_frozen": 1.1789661264489215,
+          "delta_frozen": 0.004273246488695204
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1819503715369406,
+          "delta_aged": 0.006561792039992298,
+          "reform_frozen": 1.1814615537693547,
+          "delta_frozen": 0.006072974272406384
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1790125071134376,
+          "delta_aged": 0.008231933881734488,
+          "reform_frozen": 1.1783052682697228,
+          "delta_frozen": 0.007524695038019669
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.170572927181955,
+          "delta_aged": 0.009593085869006313,
+          "reform_frozen": 1.1696503489315946,
+          "delta_frozen": 0.008670507618645962
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1570350912685585,
+          "delta_aged": 0.010939471586239424,
+          "reform_frozen": 1.1558636363696388,
+          "delta_frozen": 0.009768016687319747
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1385066710152096,
+          "delta_aged": 0.012271246547120418,
+          "reform_frozen": 1.137054218054759,
+          "delta_frozen": 0.010818793586669706
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1150936307537205,
+          "delta_aged": 0.013588554695241006,
+          "reform_frozen": 1.1133294237577935,
+          "delta_frozen": 0.011824347699314064
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0869003381456104,
+          "delta_aged": 0.014891615286767967,
+          "reform_frozen": 1.0847949303696853,
+          "delta_frozen": 0.012786207510842917
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0540295362858958,
+          "delta_aged": 0.016180671549179015,
+          "reform_frozen": 1.05155473938594,
+          "delta_frozen": 0.013705874649223126
+        }
+      ],
+      "conventions": [],
+      "gdp_gap_aged": []
+    },
+    {
+      "persistence": "tenu",
+      "label": "Effet macro tenu au niveau de la troisième année",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1708146021082633,
+          "delta_aged": 0.002233876559717185,
+          "reform_frozen": 1.17070864932306,
+          "delta_frozen": 0.0021279237745139845
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1792475476331916,
+          "delta_aged": 0.004554667672965307,
+          "reform_frozen": 1.1789661264489215,
+          "delta_frozen": 0.004273246488695204
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1819503715369406,
+          "delta_aged": 0.006561792039992298,
+          "reform_frozen": 1.1814615537693547,
+          "delta_frozen": 0.006072974272406384
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1790125071134376,
+          "delta_aged": 0.008231933881734488,
+          "reform_frozen": 1.1783052682697228,
+          "delta_frozen": 0.007524695038019669
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.170572927181955,
+          "delta_aged": 0.009593085869006313,
+          "reform_frozen": 1.1696503489315946,
+          "delta_frozen": 0.008670507618645962
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1570350912685585,
+          "delta_aged": 0.010939471586239424,
+          "reform_frozen": 1.1558636363696388,
+          "delta_frozen": 0.009768016687319747
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1385066710152096,
+          "delta_aged": 0.012271246547120418,
+          "reform_frozen": 1.137054218054759,
+          "delta_frozen": 0.010818793586669706
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1150936307537205,
+          "delta_aged": 0.013588554695241006,
+          "reform_frozen": 1.1133294237577935,
+          "delta_frozen": 0.011824347699314064
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0869003381456104,
+          "delta_aged": 0.014891615286767967,
+          "reform_frozen": 1.0847949303696853,
+          "delta_frozen": 0.012786207510842917
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0540295362858958,
+          "delta_aged": 0.016180671549179015,
+          "reform_frozen": 1.05155473938594,
+          "delta_frozen": 0.013705874649223126
+        }
+      ],
+      "conventions": [],
+      "gdp_gap_aged": []
+    }
+  ]
+}

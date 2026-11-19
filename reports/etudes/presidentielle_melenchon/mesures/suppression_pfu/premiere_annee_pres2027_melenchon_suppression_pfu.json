@@ -1,0 +1,820 @@
+{
+  "scenario": "pres2027_melenchon_suppression_pfu",
+  "kind": "menages",
+  "endpoint": "/population/simulate",
+  "request": {
+    "year": 2026,
+    "reform": {
+      "pfu_supprime": true
+    },
+    "behavioural": true,
+    "macro": true
+  },
+  "response": {
+    "meta": {
+      "vintage": "2024",
+      "branch": "A' — EEC household structure, synthetic incomes (D-012)",
+      "households": 31053752.518907875,
+      "persons": 67267876.2313524,
+      "tier": "quick",
+      "sampled_households": 20000,
+      "note": "Population synthétique construite à partir de données ouvertes : structure des ménages observée dans l'enquête Emploi, revenus entièrement simulés à partir de distributions publiées. Les écarts aux totaux publiés sont dans reports/reconciliation.md. Les niveaux de RSA, de prime d'activité et de la distribution des niveaux de vie ne sont pas publiables en l'état (D-015) ; les écarts entre droit courant et réforme le sont. Ce résultat porte sur un sous-échantillon déterministe de 20 000 ménages repondérés, pas sur la population complète : attendez-vous à un bruit d'échantillonnage de l'ordre du pour cent sur les agrégats.",
+      "limitations": [
+        "**No income is observed.** The EEC fichier détail carries no wage, pension or benefit of any kind (docs/M0_RECON.md). Every euro in this population is drawn from a published distribution and calibrated to a published total.",
+        "**No self-employment income.** 3.87 M people are recorded in employment as indépendants and receive nothing, which understates their households and overstates their entitlement to means-tested benefits.",
+        "**No capital income, no property income.** The top of the distribution is a construction; nothing above roughly the 95th percentile is publishable.",
+        "**No réductions or crédits d'impôt.** Worth 19.5 bn nationally, which is why the income tax line is compared against the barème rather than the net yield.",
+        "**Children under 15 are synthesised**, not observed: their number is drawn from published family-size margins and their ages uniformly. Household composition above 15 is real.",
+        "**Age is banded.** The EEC gives five age groups; exact ages are drawn inside them, so any threshold that does not fall on a band edge is fuzzy for an individual household and only right on average.",
+        "**Benefits assume 100 % take-up.** OpenFisca computes legal entitlement; DREES measures non-take-up of RSA at 33-37 % of eligible households.",
+        "**Assortative mating is absent.** Two earners in a household are drawn independently, which flattens the top of the household income distribution."
+      ]
+    },
+    "totals": {
+      "salaire_brut": 1101570539911.79,
+      "salaire_super_brut": 1497828837348.0522,
+      "salaire_net": 884083864338.3807,
+      "salaire_imposable": 853871264266.7244,
+      "cotisations_salariales": 116297454404.73859,
+      "cotisations_employeur": 481525681940.82886,
+      "retraite_imposable": 375640485593.34106,
+      "chomage_brut": 35817945206.790634,
+      "prelevements_pensions": 9745952151.693962,
+      "csg_deductible": 73899022164.94246,
+      "csg_imposable": 26082007850.474445,
+      "crds": 5433751630.708818,
+      "csg_ij": 0.0,
+      "csg_retraite": 24450562003.30385,
+      "csg_chomage": 929884704.9232501,
+      "csg_non_salarie": 5353359549.061754,
+      "revenus_non_salaries": 72319790001.052,
+      "revenus_non_salaries_hors_gerants": 72319790001.052,
+      "allegement_general": 88228138376.13908,
+      "allegement_bandeau_maladie": 0.0,
+      "allegement_bandeau_famille": 0.0,
+      "prelevements_salaires_d291": 17018521408.803432,
+      "pension_employeur_etat": 68173779301.10557,
+      "remuneration_hors_brut": 2960751760.5715733,
+      "ir": 103557095356.83218,
+      "ir_avant_niches": 91630959992.6638,
+      "reductions": 0.0,
+      "credits_impot": 0.0,
+      "cdhr": 129773805.94364044,
+      "af": 11884162249.219833,
+      "ppa": 11787597396.497055,
+      "rsa": 12496102552.862534,
+      "aide_logement": 15100511398.003632,
+      "reduction_loyer_solidarite": 1277776891.6065414,
+      "aefa": 523039288.7399277,
+      "cf": 1346801931.647757,
+      "asf": 9440754713.910099,
+      "ars": 1926414052.889351,
+      "aspa": 7853004285.6736765,
+      "paje": 3535875111.689291,
+      "garantie_jeunes": 0.0,
+      "ria": 0.0,
+      "allocation_enfant": 0.0,
+      "garantie_autonomie": 0.0,
+      "cvec": 0.0,
+      "crds_pfam": -140670044.09521917,
+      "crds_logement": -75881931.01155764,
+      "crds_mini": -58937985.64263972,
+      "revenu_disponible": 1393978164274.253,
+      "rsa_droit": 18302109367.79284,
+      "ppa_droit": 19540368976.446823,
+      "crds_mini_droit": -97701843.00061488,
+      "aefa_droit": 737046297.319942,
+      "revenu_disponible_droit": 1407712185820.355,
+      "ria_droit": 0.0,
+      "garantie_autonomie_droit": 0.0
+    },
+    "totals_reform": {
+      "salaire_brut": 1101570539911.79,
+      "salaire_super_brut": 1497828837348.0522,
+      "salaire_net": 884083864338.3807,
+      "salaire_imposable": 853871264266.7244,
+      "cotisations_salariales": 116297454404.73859,
+      "cotisations_employeur": 481525681940.82886,
+      "retraite_imposable": 375640485593.34106,
+      "chomage_brut": 35817945206.790634,
+      "prelevements_pensions": 9752505442.495346,
+      "csg_deductible": 73899022164.94246,
+      "csg_imposable": 26082007850.474445,
+      "crds": 5433751630.708818,
+      "csg_ij": 0.0,
+      "csg_retraite": 24457358008.776756,
+      "csg_chomage": 929884704.9232501,
+      "csg_non_salarie": 5353359549.061754,
+      "revenus_non_salaries": 72319790001.052,
+      "revenus_non_salaries_hors_gerants": 72319790001.052,
+      "allegement_general": 88228138376.13908,
+      "allegement_bandeau_maladie": 0.0,
+      "allegement_bandeau_famille": 0.0,
+      "prelevements_salaires_d291": 17018521408.803432,
+      "pension_employeur_etat": 68173779301.10557,
+      "remuneration_hors_brut": 2960751760.5715733,
+      "ir": 117473131827.09464,
+      "ir_avant_niches": 115622621599.5412,
+      "reductions": 0.0,
+      "credits_impot": 0.0,
+      "cdhr": 0.0,
+      "af": 11887398369.449837,
+      "ppa": 11785228933.425846,
+      "rsa": 12496040022.488297,
+      "aide_logement": 15120274088.713137,
+      "reduction_loyer_solidarite": 1279809669.5186229,
+      "aefa": 523027166.17063844,
+      "cf": 1347389485.0419142,
+      "asf": 9440754713.910099,
+      "ars": 1928835918.0467196,
+      "aspa": 7853004285.6736765,
+      "paje": 3539577759.3016396,
+      "garantie_jeunes": 0.0,
+      "ria": 0.0,
+      "allocation_enfant": 0.0,
+      "garantie_autonomie": 0.0,
+      "cvec": 0.0,
+      "crds_pfam": -140719785.0225597,
+      "crds_logement": -75981248.30532362,
+      "crds_mini": -58926143.33752027,
+      "revenu_disponible": 1380214614545.287,
+      "rsa_droit": 18302011149.631733,
+      "ppa_droit": 19536560097.760414,
+      "crds_mini_droit": -97682798.59270367,
+      "aefa_droit": 736691301.6974049,
+      "revenu_disponible_droit": 1393946824317.0366,
+      "ria_droit": 0.0,
+      "garantie_autonomie_droit": 0.0
+    },
+    "deltas": {
+      "salaire_brut": 0.0,
+      "salaire_super_brut": 0.0,
+      "salaire_net": 0.0,
+      "salaire_imposable": 0.0,
+      "cotisations_salariales": 0.0,
+      "cotisations_employeur": 0.0,
+      "retraite_imposable": 0.0,
+      "chomage_brut": 0.0,
+      "prelevements_pensions": 6553290.801383972,
+      "csg_deductible": 0.0,
+      "csg_imposable": 0.0,
+      "crds": 0.0,
+      "csg_ij": 0.0,
+      "csg_retraite": 6796005.47290802,
+      "csg_chomage": 0.0,
+      "csg_non_salarie": 0.0,
+      "revenus_non_salaries": 0.0,
+      "revenus_non_salaries_hors_gerants": 0.0,
+      "allegement_general": 0.0,
+      "allegement_bandeau_maladie": 0.0,
+      "allegement_bandeau_famille": 0.0,
+      "prelevements_salaires_d291": 0.0,
+      "pension_employeur_etat": 0.0,
+      "remuneration_hors_brut": 0.0,
+      "ir": 13916036470.262451,
+      "ir_avant_niches": 23991661606.877396,
+      "reductions": 0.0,
+      "credits_impot": 0.0,
+      "cdhr": -129773805.94364044,
+      "af": 3236120.230003357,
+      "ppa": -2368463.071208954,
+      "rsa": -62530.37423706055,
+      "aide_logement": 19762690.70950508,
+      "reduction_loyer_solidarite": 2032777.91208148,
+      "aefa": -12122.569289267063,
+      "cf": 587553.3941571712,
+      "asf": 0.0,
+      "ars": 2421865.15736866,
+      "aspa": 0.0,
+      "paje": 3702647.6123485565,
+      "garantie_jeunes": 0.0,
+      "ria": 0.0,
+      "allocation_enfant": 0.0,
+      "garantie_autonomie": 0.0,
+      "cvec": 0.0,
+      "crds_pfam": -49740.92734053731,
+      "crds_logement": -99317.29376597703,
+      "crds_mini": 11842.30511944741,
+      "revenu_disponible": -13763549728.96582,
+      "rsa_droit": -98218.16110610962,
+      "ppa_droit": -3808878.6864089966,
+      "crds_mini_droit": 19044.407911211252,
+      "aefa_droit": -354995.6225371361,
+      "revenu_disponible_droit": -13765361503.31836,
+      "ria_droit": 0.0,
+      "garantie_autonomie_droit": 0.0
+    },
+    "reform_cost": -13763549728.96582,
+    "deciles": [
+      {
+        "decile": 1,
+        "n_households": 3104706.5617768457,
+        "mean_niveau_de_vie": 9084.177241910525,
+        "mean_baseline": 12550.774573898729,
+        "mean_reform": 12551.712037797817,
+        "mean_delta": 0.9374638990896591,
+        "share_winners": 0.024000759332047445,
+        "share_losers": 0.0,
+        "share_unaffected": 0.9759992406679524
+      },
+      {
+        "decile": 2,
+        "n_households": 3105482.8303380157,
+        "mean_niveau_de_vie": 14050.37417733719,
+        "mean_baseline": 20365.815329418536,
+        "mean_reform": 20368.59320326347,
+        "mean_delta": 2.7778738449347964,
+        "share_winners": 0.08998034974370309,
+        "share_losers": 0.0019995633276378463,
+        "share_unaffected": 0.908020086928659
+      },
+      {
+        "decile": 3,
+        "n_households": 3106616.790386781,
+        "mean_niveau_de_vie": 17077.097879606863,
+        "mean_baseline": 25877.679953962725,
+        "mean_reform": 25878.961543653204,
+        "mean_delta": 1.2815896904768194,
+        "share_winners": 0.046472877901068604,
+        "share_losers": 0.001998833458110477,
+        "share_unaffected": 0.9515282886408207
+      },
+      {
+        "decile": 4,
+        "n_households": 3104833.503697471,
+        "mean_niveau_de_vie": 20108.10214354623,
+        "mean_baseline": 29695.094527577185,
+        "mean_reform": 29693.480535065697,
+        "mean_delta": -1.6139925114881057,
+        "share_winners": 0.023499782678654605,
+        "share_losers": 0.007999926018265399,
+        "share_unaffected": 0.9685002913030799
+      },
+      {
+        "decile": 5,
+        "n_households": 3105654.3553386284,
+        "mean_niveau_de_vie": 22615.87679038728,
+        "mean_baseline": 33037.969712276776,
+        "mean_reform": 33038.16853280753,
+        "mean_delta": 0.1988205307613526,
+        "share_winners": 0.018494939250459905,
+        "share_losers": 0.014995896689562084,
+        "share_unaffected": 0.966509164059978
+      },
+      {
+        "decile": 6,
+        "n_households": 3104411.011489759,
+        "mean_niveau_de_vie": 25467.153497592342,
+        "mean_baseline": 39974.19200577991,
+        "mean_reform": 39972.84164162742,
+        "mean_delta": -1.350364152485763,
+        "share_winners": 0.016002029522947693,
+        "share_losers": 0.036004566426632315,
+        "share_unaffected": 0.9479934040504199
+      },
+      {
+        "decile": 7,
+        "n_households": 3106643.2031052196,
+        "mean_niveau_de_vie": 29004.96025619982,
+        "mean_baseline": 46109.27310320512,
+        "mean_reform": 46099.722539455004,
+        "mean_delta": -9.550563750119117,
+        "share_winners": 0.02448550168404917,
+        "share_losers": 0.1249260290002509,
+        "share_unaffected": 0.8505884693156996
+      },
+      {
+        "decile": 8,
+        "n_households": 3105023.999659895,
+        "mean_niveau_de_vie": 33343.84738654431,
+        "mean_baseline": 52740.06190515301,
+        "mean_reform": 52712.848890727735,
+        "mean_delta": -27.213014425280903,
+        "share_winners": 0.08099428155941409,
+        "share_losers": 0.4015422529221068,
+        "share_unaffected": 0.5174634655184791
+      },
+      {
+        "decile": 9,
+        "n_households": 3105452.290693603,
+        "mean_niveau_de_vie": 40381.14990786852,
+        "mean_baseline": 64554.464219935086,
+        "mean_reform": 64440.75137194647,
+        "mean_delta": -113.71284798862061,
+        "share_winners": 0.15946674359182816,
+        "share_losers": 0.7725474346887714,
+        "share_unaffected": 0.0679858217194001
+      },
+      {
+        "decile": 10,
+        "n_households": 3104927.97242166,
+        "mean_niveau_de_vie": 70468.12715455907,
+        "mean_baseline": 104799.821648549,
+        "mean_reform": 100515.2825003358,
+        "mean_delta": -4284.5391482132,
+        "share_winners": 0.000499980163574435,
+        "share_losers": 0.9990000396728511,
+        "share_unaffected": 0.0004999801635744349
+      }
+    ],
+    "emtr_deciles": [],
+    "narrow_band": null,
+    "reconciliation": [
+      {
+        "label": "Masse salariale brute",
+        "simulated": 1107684670335.9775,
+        "published": 1111650000000.0,
+        "residual": -0.0035670666702851683,
+        "use": "calibration",
+        "status": "calibrated (spent)",
+        "source": "INSEE comptes nationaux (D11)"
+      },
+      {
+        "label": "Pensions et retraites",
+        "simulated": 400209299927.53174,
+        "published": 400400000000.0,
+        "residual": -0.00047627390726334706,
+        "use": "calibration",
+        "status": "calibrated (spent)",
+        "source": "DGFiP"
+      },
+      {
+        "label": "Allocations chômage",
+        "simulated": 35994828387.043144,
+        "published": 35900000000.0,
+        "residual": 0.002641459249112632,
+        "use": "calibration",
+        "status": "calibrated (spent)",
+        "source": "Unédic"
+      },
+      {
+        "label": "Impôt sur le revenu — barème",
+        "simulated": 107525107399.12921,
+        "published": 98840000000.0,
+        "residual": 0.08787037028661682,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "DGFiP"
+      },
+      {
+        "label": "Impôt sur le revenu — recettes nettes",
+        "simulated": 107703508933.91048,
+        "published": 87990000000.0,
+        "residual": 0.22404260636334206,
+        "use": "validation",
+        "status": "OUTSIDE tolerance",
+        "source": "budget.gouv.fr"
+      },
+      {
+        "label": "Salaires déclarés (imposables)",
+        "simulated": 911347103586.6213,
+        "published": 932100000000.0,
+        "residual": -0.02226466732472765,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "DGFiP"
+      },
+      {
+        "label": "Foyers fiscaux",
+        "simulated": 35335119.46643769,
+        "published": 41635259.0,
+        "residual": -0.15131740944765848,
+        "use": "validation",
+        "status": "OUTSIDE tolerance",
+        "source": "DGFiP"
+      },
+      {
+        "label": "Foyers imposés",
+        "simulated": 19307597.622604176,
+        "published": 19681757.0,
+        "residual": -0.019010466260498182,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "DGFiP"
+      },
+      {
+        "label": "Allocations familiales",
+        "simulated": 10611035321.898708,
+        "published": 13770000000.0,
+        "residual": -0.2294091995716261,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "Prime d'activité (bridge-adjusted)",
+        "simulated": 7646730402.651495,
+        "published": 10650000000.0,
+        "residual": -0.28199714529093944,
+        "use": "validation",
+        "status": "OUTSIDE tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "Prime d'activité",
+        "simulated": 13190609944.57383,
+        "published": 10650000000.0,
+        "residual": 0.23855492437312953,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "RSA (bridge-adjusted)",
+        "simulated": 19407873612.842716,
+        "published": 12360000000.0,
+        "residual": 0.5702163117186663,
+        "use": "validation",
+        "status": "OUTSIDE tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "RSA",
+        "simulated": 26297668745.40188,
+        "published": 12360000000.0,
+        "residual": 1.127643102378793,
+        "use": "validation",
+        "status": "OUTSIDE tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "Aides au logement",
+        "simulated": 12139562609.024488,
+        "published": 15990000000.0,
+        "residual": -0.24080283871016328,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "Allocataires AF",
+        "simulated": 4165325.9551283303,
+        "published": 4752000.0,
+        "residual": -0.12345834277602474,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "Allocataires prime d'activité",
+        "simulated": 5127469.28308621,
+        "published": 4812900.0,
+        "residual": 0.06535961334875218,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "Foyers allocataires du RSA",
+        "simulated": 3612512.375302098,
+        "published": 1840200.0,
+        "residual": 0.9631085617335606,
+        "use": "validation",
+        "status": "OUTSIDE tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "Allocataires d'une aide au logement",
+        "simulated": 4765097.55239393,
+        "published": 5809400.0,
+        "residual": -0.17976080965436536,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "CNAF / DREES"
+      },
+      {
+        "label": "Niveau de vie médian",
+        "simulated": 24634.8926404348,
+        "published": 25920.0,
+        "residual": -0.04957975924248459,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "INSEE Filosofi 2023"
+      },
+      {
+        "label": "Rapport interdécile D9/D1",
+        "simulated": 3.627614251102944,
+        "published": 3.5,
+        "residual": 0.036461214600841174,
+        "use": "validation",
+        "status": "within tolerance",
+        "source": "INSEE Filosofi 2023"
+      },
+      {
+        "label": "Ménages",
+        "simulated": 31013334.259670414,
+        "published": 31274700.0,
+        "residual": -0.008357098240097782,
+        "use": "calibration",
+        "status": "calibrated (spent)",
+        "source": "INSEE recensement"
+      }
+    ],
+    "behavioural": {
+      "mechanical": 13763549728.96582,
+      "band": null,
+      "grade": "no-evidence",
+      "grade_reason": "Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.",
+      "channels": [
+        {
+          "key": "c1_eti",
+          "label": "Réponse du revenu imposable",
+          "applies": false,
+          "central": null,
+          "band": null,
+          "unit": "EUR",
+          "message": "Mécanique seulement — aucun canal fondé sur des preuves n'est câblé pour cet instrument.",
+          "grade": null,
+          "diagnostics": {}
+        },
+        {
+          "key": "c2_employment",
+          "label": "Emploi au voisinage du SMIC",
+          "applies": false,
+          "central": null,
+          "band": null,
+          "unit": "emplois",
+          "message": "Mécanique seulement : aucun paramètre de cotisation patronale n'est bougé par cette réforme, donc rien ne déclenche ce canal.",
+          "grade": null,
+          "diagnostics": {}
+        },
+        {
+          "key": "c3_incidence",
+          "label": "Incidence des cotisations patronales",
+          "applies": false,
+          "central": null,
+          "band": null,
+          "unit": "EUR",
+          "message": "Mécanique seulement : aucun paramètre de cotisation patronale n'est bougé par cette réforme, donc rien ne déclenche ce canal.",
+          "grade": null,
+          "diagnostics": {}
+        },
+        {
+          "key": "c4_investment",
+          "label": "Investissement et impôts de production",
+          "applies": false,
+          "central": null,
+          "band": null,
+          "unit": "%",
+          "message": "Mécanique seulement — aucun canal fondé sur des preuves n'est câblé pour cet instrument.",
+          "grade": null,
+          "diagnostics": {}
+        },
+        {
+          "key": "c7_labour_supply",
+          "label": "Offre de travail",
+          "applies": false,
+          "central": null,
+          "band": null,
+          "unit": "EUR",
+          "message": "Aucun levier de cette réforme ne déplace le salaire net horaire par un prélèvement proportionnel : le canal ne s'ouvre que pour la CSG sur les revenus d'activité. L'IR relève de C1, dont l'élasticité contient déjà les heures.",
+          "grade": null,
+          "diagnostics": {}
+        },
+        {
+          "key": "c8_creations",
+          "label": "Créations de sociétés",
+          "applies": false,
+          "central": null,
+          "band": null,
+          "unit": "points de taux de création",
+          "message": "Aucun levier de cette réforme ne déplace le taux normal de l'IS : la seule réponse des créations de sociétés mesurée l'a été sur la baisse de ce taux et sur le PFU.",
+          "grade": null,
+          "diagnostics": {}
+        },
+        {
+          "key": "c9_rd",
+          "label": "R&D et CIR",
+          "applies": false,
+          "central": null,
+          "band": null,
+          "unit": "EUR de R&D",
+          "message": "Aucun levier de cette réforme ne déplace un taux du CIR-recherche : la seule réponse de la R&D mesurée l'a été sur la réforme de 2008 du crédit.",
+          "grade": null,
+          "diagnostics": {}
+        },
+        {
+          "key": "c10_dividendes",
+          "label": "Dividendes et PFU",
+          "applies": false,
+          "central": null,
+          "band": null,
+          "unit": "EUR",
+          "message": "Aucun levier de cette réforme ne déplace le taux du PFU : la réponse des dividendes est mesurée sur leur taux net, que seul ce levier bouge ici.",
+          "grade": null,
+          "diagnostics": {}
+        },
+        {
+          "key": "c11_autofinancement",
+          "label": "Autofinancement d'une baisse ciblée de cotisations",
+          "applies": false,
+          "central": null,
+          "band": null,
+          "unit": "EUR",
+          "message": "Mécanique seulement : aucun paramètre de cotisation patronale n'est bougé par cette réforme, donc rien ne déclenche ce canal.",
+          "grade": null,
+          "diagnostics": {}
+        }
+      ],
+      "seed": 20260902,
+      "draws": 1000,
+      "parameters_vintage": "25 rows [autofinancement_cout_par_emploi,autofinancement_poids_tresor_eco,autofinancement_retour_par_emploi,dividend_elasticity_firm_owners,dividend_elasticity_other_holders,dividend_share_firm_owners,dividend_wage_shift_firm_owners,employment_elasticity_at_fadeout,employment_elasticity_smic,employment_fadeout_smic_multiple,eti_all,eti_top_decile,firm_creation_exposure_per_is_point,firm_creation_profit_tax,is_croissance_pib,labour_supply_married_men,labour_supply_married_women,labour_supply_single_men,labour_supply_single_women,passthrough_benefit_linked,passthrough_unlinked,production_tax_investment,rd_cir_multiplier,wealth_disclosure_growth_effect_pp,wealth_tax_rate_elasticity]",
+      "notes": [],
+      "emtr_households": 3268
+    },
+    "macro": {
+      "available": true,
+      "unavailable_because": "",
+      "gdp": {
+        "1": {
+          "p10": -18560607312.834137,
+          "p50": -6044544240.216307,
+          "p90": 6728502237.68091,
+          "unit": "EUR"
+        },
+        "2": {
+          "p10": -24042393221.682217,
+          "p50": -11856122631.355106,
+          "p90": 939293853.1367698,
+          "unit": "EUR"
+        },
+        "3": {
+          "p10": -24502148760.454327,
+          "p50": -12218959339.375109,
+          "p90": 42512231.88829526,
+          "unit": "EUR"
+        }
+      },
+      "jobs": {
+        "1": {
+          "p10": -37.83330047282618,
+          "p50": -12.321563535328096,
+          "p90": 13.715876422139786,
+          "unit": "milliers ETP"
+        },
+        "2": {
+          "p10": -109.94798573541435,
+          "p50": -54.21742096734408,
+          "p90": 4.2972875772495565,
+          "unit": "milliers ETP"
+        },
+        "3": {
+          "p10": -168.7042002579063,
+          "p50": -84.12944111655924,
+          "p90": 0.29752185285836635,
+          "unit": "milliers ETP"
+        }
+      },
+      "decomposition": [
+        {
+          "horizon": "1",
+          "parameter": 25289109550.515045,
+          "scenario": 0.0,
+          "scenario_available": false,
+          "scenario_unavailable_because": "l'effet de régime n'est établi que du côté DÉPENSE (Gechert et Rannenberg, tableau 4 : haut de cycle non significatif), et les instruments de cette réforme sont fiscaux (csg, impot_sur_le_revenu). Le décalage n'est donc pas applicable ici."
+        },
+        {
+          "horizon": "2",
+          "parameter": 24981687074.818985,
+          "scenario": 0.0,
+          "scenario_available": false,
+          "scenario_unavailable_because": "l'effet de régime n'est établi que du côté DÉPENSE (Gechert et Rannenberg, tableau 4 : haut de cycle non significatif), et les instruments de cette réforme sont fiscaux (csg, impot_sur_le_revenu). Le décalage n'est donc pas applicable ici."
+        },
+        {
+          "horizon": "3",
+          "parameter": 24544660992.34262,
+          "scenario": 0.0,
+          "scenario_available": false,
+          "scenario_unavailable_because": "l'effet de régime n'est établi que du côté DÉPENSE (Gechert et Rannenberg, tableau 4 : haut de cycle non significatif), et les instruments de cette réforme sont fiscaux (csg, impot_sur_le_revenu). Le décalage n'est donc pas applicable ici."
+        }
+      ],
+      "composition": [
+        {
+          "code": "LZ",
+          "label": "Activités Immobilières",
+          "output_share": 0.17507055203829128,
+          "employment_share": 0.0356903987267491
+        },
+        {
+          "code": "GZ",
+          "label": "Commerce ; Réparation D'Automobiles Et De Motocycles",
+          "output_share": 0.1282241004706773,
+          "employment_share": 0.18365735132140454
+        },
+        {
+          "code": "KZ",
+          "label": "Activités Financières Et D'Assurance",
+          "output_share": 0.07789974610880909,
+          "employment_share": 0.04838709634193813
+        },
+        {
+          "code": "CA",
+          "label": "Fabrication De Denrées Alimentaires, De Boissons Et De Produits À Base De Tabac",
+          "output_share": 0.0728405513863952,
+          "employment_share": 0.04505375328108761
+        },
+        {
+          "code": "DZ",
+          "label": "Production Et Distribution D'Électricité, De Gaz, De Vapeur Et D'Air Conditionné",
+          "output_share": 0.0680241469746127,
+          "employment_share": 0.007103413668904731
+        },
+        {
+          "code": "IZ",
+          "label": "Hébergement Et Restauration",
+          "output_share": 0.06572315644052353,
+          "employment_share": 0.1293544067273562
+        },
+        {
+          "code": "NZ",
+          "label": "Activités De Services Administratifs Et De Soutien",
+          "output_share": 0.05252702186999762,
+          "employment_share": 0.08988614700982056
+        },
+        {
+          "code": "HZ",
+          "label": "Transports Et Entreposage",
+          "output_share": 0.0515888123905878,
+          "employment_share": 0.05748453847788609
+        },
+        {
+          "code": "MA",
+          "label": "Activités Juridiques, Comptables, De Gestion, D'Architecture, D'Ingénierie, De Contrôle Et D'Analyses Techniques",
+          "output_share": 0.04528897525494487,
+          "employment_share": 0.04483332750146778
+        },
+        {
+          "code": "AZ",
+          "label": "Agriculture, Sylviculture Et Pêche",
+          "output_share": 0.028750969451338003,
+          "employment_share": 0.042251661217569854
+        },
+        {
+          "code": "FZ",
+          "label": "Construction",
+          "output_share": 0.02738291434219234,
+          "employment_share": 0.027733187269394027
+        },
+        {
+          "code": "JB",
+          "label": "Télécommunications",
+          "output_share": 0.02108034074444384,
+          "employment_share": 0.006572296786407607
+        }
+      ],
+      "assumptions": {
+        "cycle_state": "normal",
+        "design": "Type I + multiplicateur de littérature ; propagation sectorielle et multiplicateur agrégé ont des rôles disjoints",
+        "leakage": 0.27433909858311484,
+        "leakage_applied": false,
+        "horizons": [
+          "1",
+          "2",
+          "3"
+        ],
+        "parameters_vintage": "8 rows [consumption_by_instrument,employment_by_instrument,investment_by_instrument,multiplier_by_instrument,multiplier_dispersion,multiplier_regime_shift,primary_balance_by_instrument,real_income_by_instrument]",
+        "grade": "in-support",
+        "covered_share": 0.9975230928636516,
+        "instruments": [
+          "csg",
+          "impot_sur_le_revenu"
+        ],
+        "simulation_conditions": "Choc permanent, à taux d'intérêt réels constants, à taux de change nominaux constants, sans réaction endogène de la politique budgétaire ni de la politique monétaire.",
+        "caveats": [
+          "impot_sur_le_revenu : Baisse uniforme d'environ 2,5 points du taux apparent : le modèle n'a qu'un seul taux d'imposition sur le revenu pour tous les salariés, donc il ne représente AUCUN effet de barème ni de progressivité."
+        ],
+        "banner": "Couche macro (L4) : ordre de grandeur et composition, pas une prévision. L'éventail des estimations crédibles pour un même choc est large — la dispersion entre études publiées est du même ordre que la valeur centrale elle-même. C'est une propriété de la littérature, pas de ce modèle."
+      },
+      "notes": [
+        "Fuite à l'importation calculée et AFFICHÉE, mais NON APPLIQUÉE : le multiplicateur Mésange est déjà net de l'éviction par les importations.",
+        "Pas de boucle de retour de recettes : la ligne d'élasticité est morte (verdict WRONG), donc cette couche ne boucle pas le solde public.",
+        "Emploi en ÉQUIVALENTS TEMPS PLEIN, à ne pas additionner aux personnes comptées par la couche entrées-sorties."
+      ],
+      "uncovered": {
+        "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "cf": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "ars": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "crds_pfam": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+        "paje": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
+      }
+    },
+    "niche_blind_spot": null,
+    "timings": {
+      "build_s": 6.41,
+      "capital_s": 5.98,
+      "baseline_s": 40.8,
+      "reform_s": 41.85,
+      "total_s": 121.43
+    }
+  },
+  "computed": "2026-11-18",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

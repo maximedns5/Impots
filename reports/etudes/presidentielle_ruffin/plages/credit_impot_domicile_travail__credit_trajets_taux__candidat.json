@@ -1,0 +1,68 @@
+{
+  "programme": "ruffin",
+  "mesure": "credit_impot_domicile_travail",
+  "champ": "credit_trajets_taux",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "credit_trajets_taux": 0.3
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 16363209188.00586,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.005310340790076529,
+      0.010562064097381807,
+      0.01575581696311734,
+      0.02089223928620787,
+      0.025971963902139406,
+      0.03099561666092865,
+      0.035963816504231305,
+      0.04087717554159842,
+      0.0457362991258925,
+      0.05054178592786962
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-18",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

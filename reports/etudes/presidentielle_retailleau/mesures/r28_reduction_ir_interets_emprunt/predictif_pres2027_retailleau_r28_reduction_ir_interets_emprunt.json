@@ -1,0 +1,1806 @@
+{
+  "rejeu": {
+    "version": 1,
+    "start": {
+      "year": 2025,
+      "debt_ratio": 1.15693757321829,
+      "primary_balance": -0.029870353480509815,
+      "implicit_rate": 0.01882827582292081,
+      "gdp_eur": 2991056000000.0,
+      "receipts_ratio": 0.5212362790934039,
+      "spending_ratio": 0.5511066325739137
+    },
+    "cadre": {
+      "growth": {
+        "real": 0.01,
+        "prices": 0.02
+      },
+      "spending": {
+        "rule": "gele_en_volume",
+        "growth": null
+      },
+      "taux": {
+        "kind": "implicite_tenu",
+        "market_rate": null,
+        "reference": [
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081
+        ],
+        "marginal": 0.01882827582292081
+      }
+    },
+    "looped": true,
+    "behavioural": true,
+    "lignes": {},
+    "macro": {
+      "horizons": [
+        1,
+        2,
+        3,
+        5,
+        10
+      ],
+      "court": 3,
+      "instruments": {
+        "impot_sur_le_revenu": {
+          "pib": {
+            "1": 0.41,
+            "2": 0.83,
+            "3": 0.88,
+            "5": 0.81,
+            "10": 0.87
+          },
+          "solde": {
+            "1": -0.81,
+            "2": -0.5,
+            "3": -0.42,
+            "5": -0.51,
+            "10": -0.5
+          },
+          "sd": 0.66,
+          "brut": 1.0,
+          "pib_salariale": {
+            "1": 0.41,
+            "2": 0.819753086419753,
+            "3": 0.8582716049382716,
+            "5": 0.77,
+            "10": 0.65
+          },
+          "variante_source": "super_brut"
+        }
+      }
+    },
+    "box_rows": [
+      "multiplicateur_macro",
+      "productivite_creations"
+    ],
+    "creations": {
+      "theta": 0.5,
+      "parametres": {
+        "elasticite": {
+          "centre": 0.043,
+          "bas": 0.0,
+          "haut": 0.2
+        },
+        "productivite": {
+          "centre": 0.5,
+          "bas": 0.0,
+          "haut": 1.0
+        },
+        "survie_annuelle": 0.9,
+        "montee_en_charge_ans": 5,
+        "taille_relative": 0.1,
+        "part_va_societes_pib": 0.6,
+        "assiette_part_pib": 0.092,
+        "instruments_entreprises": [
+          "impot_societes",
+          "contribution_sociale_is",
+          "cebge"
+        ],
+        "instruments_menages": [
+          "pfu",
+          "prelevements_sociaux_capital",
+          "cotisations_employeurs"
+        ],
+        "preenregistrement": "D-402"
+      },
+      "variations": {
+        "figee": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vieillie": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "monte_carlo": {
+    "objet": "distribution sous des lois déclarées",
+    "lois": "Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes.",
+    "rho": 0.8,
+    "cle_copule": "fichier YAML du magasin où vit la ligne (un article par fichier)",
+    "groupes": {
+      "multiplicateur_macro": [
+        "multiplicateur_macro"
+      ]
+    },
+    "multiplicateur": {
+      "loi": "normale (centre Mésange, écart-type IMK), censurée à zéro",
+      "decalage_moyen": -0.014558170566505413
+    },
+    "tirages": 2000,
+    "graine": 20261103,
+    "persistence": "lue",
+    "annee": 2035,
+    "vues": {
+      "vieillie": {
+        "p_hausse": 0.8235,
+        "quantiles": {
+          "q05": -0.001045701418552425,
+          "q50": 0.002546904849323628,
+          "q95": 0.0057748044462839765
+        },
+        "sobol": {
+          "multiplicateur_macro": {
+            "premier_ordre": 0.9711230584356749,
+            "total": 0.9765555749512247
+          }
+        },
+        "evaluations": 6000
+      },
+      "figee": {
+        "p_hausse": 0.8295,
+        "quantiles": {
+          "q05": -0.000737369043677083,
+          "q50": 0.002042396045883854,
+          "q95": 0.0045651643903303896
+        },
+        "sobol": {
+          "multiplicateur_macro": {
+            "premier_ordre": 0.9711647166514162,
+            "total": 0.976652897295709
+          }
+        },
+        "evaluations": 6000
+      }
+    },
+    "note": "Une distribution sous des lois déclarées, à côté de la boîte θ : elle dépend de ces lois, et en changer change la réponse (D-336)."
+  },
+  "lectures": {
+    "persistence": "lue",
+    "theta": {
+      "multiplicateur_macro": 0.5,
+      "productivite_creations": 0.5
+    },
+    "decomposition": {
+      "vieillie": {
+        "cout": 0.0057748044462839765,
+        "denominateur": -0.0005488992669524517,
+        "retroaction": -0.002764533540018599,
+        "total": 0.002461371639312926
+      },
+      "figee": {
+        "cout": 0.0045651643903303896,
+        "denominateur": -0.00038960988039460354,
+        "retroaction": -0.002199526924440809,
+        "total": 0.001976027585494977
+      }
+    },
+    "taux_marche": {
+      "taux": 0.035,
+      "vieillie": 0.0026911665847313415,
+      "figee": 0.002167762425594688
+    },
+    "variante_salariale": {
+      "sources": {
+        "impot_sur_le_revenu": "super_brut"
+      },
+      "non_variees": [],
+      "boite": {
+        "vieillie": {
+          "theta": 0.0028923511688581094,
+          "corners": [
+            [
+              "multiplicateur_macro = 0, productivite_creations = 0",
+              0.0054833415260335805
+            ],
+            [
+              "multiplicateur_macro = 0, productivite_creations = 1",
+              0.0054833415260335805
+            ],
+            [
+              "multiplicateur_macro = 1, productivite_creations = 0",
+              0.00023205400133896603
+            ],
+            [
+              "multiplicateur_macro = 1, productivite_creations = 1",
+              0.00023205400133896603
+            ]
+          ]
+        },
+        "figee": {
+          "theta": 0.0023410526177689572,
+          "corners": [
+            [
+              "multiplicateur_macro = 0, productivite_creations = 0",
+              0.004358137762136449
+            ],
+            [
+              "multiplicateur_macro = 0, productivite_creations = 1",
+              0.004358137762136449
+            ],
+            [
+              "multiplicateur_macro = 1, productivite_creations = 0",
+              0.0002766254671291435
+            ],
+            [
+              "multiplicateur_macro = 1, productivite_creations = 1",
+              0.0002766254671291435
+            ]
+          ]
+        }
+      },
+      "monte_carlo": {
+        "vieillie": {
+          "p_hausse": 0.857,
+          "quantiles": {
+            "q05": -0.0009017917665064656,
+            "q50": 0.002977901280983075,
+            "q95": 0.0057748044462839765
+          },
+          "sobol": {
+            "multiplicateur_macro": {
+              "premier_ordre": 0.967916555217631,
+              "total": 0.9731041214262793
+            }
+          },
+          "evaluations": 6000
+        },
+        "figee": {
+          "p_hausse": 0.872,
+          "quantiles": {
+            "q05": -0.0006168283038027744,
+            "q50": 0.002407431690178874,
+            "q95": 0.0045651643903303896
+          },
+          "sobol": {
+            "multiplicateur_macro": {
+              "premier_ordre": 0.9677486830236057,
+              "total": 0.9729111747468222
+            }
+          },
+          "evaluations": 6000
+        }
+      }
+    },
+    "creations_sans_canal": {
+      "vieillie": 0.002461371639312926,
+      "figee": 0.001976027585494977
+    }
+  },
+  "creations": {
+    "convention": "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté.",
+    "parametres": {
+      "elasticite": {
+        "centre": 0.043,
+        "bas": 0.0,
+        "haut": 0.2
+      },
+      "productivite": {
+        "centre": 0.5,
+        "bas": 0.0,
+        "haut": 1.0
+      },
+      "survie_annuelle": 0.9,
+      "montee_en_charge_ans": 5,
+      "taille_relative": 0.1,
+      "part_va_societes_pib": 0.6,
+      "assiette_part_pib": 0.092,
+      "instruments_entreprises": [
+        "impot_societes",
+        "contribution_sociale_is",
+        "cebge"
+      ],
+      "instruments_menages": [
+        "pfu",
+        "prelevements_sociaux_capital",
+        "cotisations_employeurs"
+      ],
+      "preenregistrement": "D-402"
+    },
+    "prelevements_eur": {
+      "figee": {
+        "2026": 0.0,
+        "2027": 0.0,
+        "2028": 0.0,
+        "2029": 0.0,
+        "2030": 0.0,
+        "2031": 0.0,
+        "2032": 0.0,
+        "2033": 0.0,
+        "2034": 0.0,
+        "2035": 0.0
+      },
+      "vieillie": {
+        "2026": 0.0,
+        "2027": 0.0,
+        "2028": 0.0,
+        "2029": 0.0,
+        "2030": 0.0,
+        "2031": 0.0,
+        "2032": 0.0,
+        "2033": 0.0,
+        "2034": 0.0,
+        "2035": 0.0
+      }
+    },
+    "chemins": [
+      {
+        "persistence": "lue",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.002461371639312926,
+            "c0": 0.002461371639312926,
+            "c1": 0.002461371639312926
+          },
+          "delta_sans_creations": [
+            0.00019682542642618372,
+            0.00019568288444937743,
+            0.00040335778345457207,
+            0.0006985720210122004,
+            0.0010222472029366436,
+            0.001312984543625717,
+            0.0016032665279346325,
+            0.001891754217879571,
+            0.002177787538861775,
+            0.002461371639312926
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.001976027585494977,
+            "c0": 0.001976027585494977,
+            "c1": 0.001976027585494977
+          },
+          "delta_sans_creations": [
+            0.00018123766147937204,
+            0.00017328719273379534,
+            0.00035785127241227954,
+            0.0006162111581864416,
+            0.0008907901947776686,
+            0.0011251478129545855,
+            0.0013506006949552951,
+            0.001567401690774739,
+            0.0017757960508164583,
+            0.001976027585494977
+          ]
+        }
+      },
+      {
+        "persistence": "eteint",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.005071485444186896,
+            "c0": 0.005071485444186896,
+            "c1": 0.005071485444186896
+          },
+          "delta_sans_creations": [
+            0.00019682542642618372,
+            0.00019568288444937743,
+            0.00040335778345457207,
+            0.0016058716809839169,
+            0.002196808716878218,
+            0.0027851783609731395,
+            0.0033683186337425397,
+            0.003944813610489151,
+            0.004511873945205913,
+            0.005071485444186896
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.004092114742823005,
+            "c0": 0.004092114742823005,
+            "c1": 0.004092114742823005
+          },
+          "delta_sans_creations": [
+            0.00018123766147937204,
+            0.00017328719273379534,
+            0.00035785127241227954,
+            0.0014516389703156385,
+            0.0019403927060992476,
+            0.0024087976050901627,
+            0.002857532513736105,
+            0.0032872459531891884,
+            0.0036985696000300106,
+            0.004092114742823005
+          ]
+        }
+      },
+      {
+        "persistence": "tenu",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.0021284929447820122,
+            "c0": 0.0021284929447820122,
+            "c1": 0.0021284929447820122
+          },
+          "delta_sans_creations": [
+            0.00019682542642618372,
+            0.00019568288444937743,
+            0.00040335778345457207,
+            0.000647428635271563,
+            0.0008934277802186141,
+            0.0011403572339026002,
+            0.0013882880294961986,
+            0.001635947179496,
+            0.0018827051740277767,
+            0.0021284929447820122
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "taux_entree": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "pib": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "recettes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": 0.0017036689997458332,
+            "c0": 0.0017036689997458332,
+            "c1": 0.0017036689997458332
+          },
+          "delta_sans_creations": [
+            0.00018123766147937204,
+            0.00017328719273379534,
+            0.00035785127241227954,
+            0.0005691165796131159,
+            0.0007739690666799248,
+            0.0009724475343915184,
+            0.0011645977739913604,
+            0.0013504759355160711,
+            0.001530142842341986,
+            0.0017036689997458332
+          ]
+        }
+      }
+    ]
+  },
+  "scenario": "pres2027_retailleau_r28_reduction_ir_interets_emprunt",
+  "titre": "pres2027_retailleau_r28_reduction_ir_interets_emprunt",
+  "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-12 — Réduction d'IR sur les intérêts d'emprunt de la résidence principale : « « 50 % des intérêts annuels lorsque le foyer fiscal compte un enfant mineur, 75 % s'il en compte deux, et 100 % s'il en compte trois ou plus » » (https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf, 2026-04-28)",
+  "reference": "reconduit",
+  "computed": "2026-11-19",
+  "spending_name": "Dépenses gelées en volume",
+  "growth_name": "Croissance réelle 1 %, prix 2 %",
+  "rate_name": "Taux implicite tenu à son niveau de 2025",
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "years": [
+    {
+      "year": 2026,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 1688181206.2475586,
+      "mechanical_aged_eur": 1833412446.5732422,
+      "reference": 1.168580725548546,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688181206.2475586,
+          "impulses": {
+            "impot_sur_le_revenu": 1688181194.0956726
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 1833412446.5732422,
+          "impulses": {
+            "impot_sur_le_revenu": 1833412376.2207336
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2027,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 1688181191.0874023,
+      "mechanical_aged_eur": 1905923767.7324219,
+      "reference": 1.1746928799602263,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688181191.0874023,
+          "impulses": {
+            "impot_sur_le_revenu": 1688181194.0956726
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 1905923767.7324219,
+          "impulses": {
+            "impot_sur_le_revenu": 1905923861.0268402
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2028,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1688176533.880371,
+      "mechanical_aged_eur": 1981077978.1691895,
+      "reference": 1.1753885794969483,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688176533.880371,
+          "impulses": {
+            "impot_sur_le_revenu": 1688176536.8884735
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 1981077978.1691895,
+          "impulses": {
+            "impot_sur_le_revenu": 1981078022.6547394
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1688181239.6000977,
+      "mechanical_aged_eur": 2053152789.2436523,
+      "reference": 1.1707805732317031,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688181239.6000977,
+          "impulses": {
+            "impot_sur_le_revenu": 1688181194.0956726
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 2053152789.2436523,
+          "impulses": {
+            "impot_sur_le_revenu": 2053152853.3427582
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2030,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1688181239.6000977,
+      "mechanical_aged_eur": 2123400040.6621094,
+      "reference": 1.1609798413129486,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688181239.6000977,
+          "impulses": {
+            "impot_sur_le_revenu": 1688181194.0956726
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 2123400040.6621094,
+          "impulses": {
+            "impot_sur_le_revenu": 2123400108.219635
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2031,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1688181239.5996094,
+      "mechanical_aged_eur": 2187851361.352295,
+      "reference": 1.146095619682319,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688181239.5996094,
+          "impulses": {
+            "impot_sur_le_revenu": 1688181194.0956726
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 2187851361.352295,
+          "impulses": {
+            "impot_sur_le_revenu": 2187851520.060501
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2032,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1688176533.8798828,
+      "mechanical_aged_eur": 2253494808.833008,
+      "reference": 1.1262354244680892,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688176533.8798828,
+          "impulses": {
+            "impot_sur_le_revenu": 1688176536.8884735
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 2253494808.833008,
+          "impulses": {
+            "impot_sur_le_revenu": 2253494788.3668213
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2033,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1688181239.5996094,
+      "mechanical_aged_eur": 2316507561.8845215,
+      "reference": 1.1015050760584795,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688181239.5996094,
+          "impulses": {
+            "impot_sur_le_revenu": 1688181194.0956726
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 2316507561.8845215,
+          "impulses": {
+            "impot_sur_le_revenu": 2316507610.2551575
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2034,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1688181239.6000977,
+      "mechanical_aged_eur": 2373288356.2177734,
+      "reference": 1.0720087228588424,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688181239.6000977,
+          "impulses": {
+            "impot_sur_le_revenu": 1688181194.0956726
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 2373288356.2177734,
+          "impulses": {
+            "impot_sur_le_revenu": 2373288336.4617615
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2035,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1688181239.5996094,
+      "mechanical_aged_eur": 2429332526.517334,
+      "reference": 1.0378488647367168,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1688181239.5996094,
+          "impulses": {
+            "impot_sur_le_revenu": 1688181194.0956726
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 2429332526.517334,
+          "impulses": {
+            "impot_sur_le_revenu": 2429332623.589813
+          },
+          "uncovered": {},
+          "canaux": {},
+          "c1_floor_share": null
+        }
+      }
+    }
+  ],
+  "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+    "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+    "Rétroaction mesurée contre le coût que la chaîne compte : un point par point de variante ; pour la TVA, le moteur chiffre celle des ménages, le point net de la variante, sans les 15 % que les APU se versent (folio 112, D-348).",
+    "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+    "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+    "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+    "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+    "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+    "Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange dit « erroné » (folio 108, D-336).",
+    "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté."
+  ],
+  "absent": {},
+  "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
+    "dividend_wage_shift_firm_owners": 0.5,
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "is_croissance_pib": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5,
+    "multiplicateur_macro": 0.5
+  },
+  "theta_applied": true,
+  "closed": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "Canal ouvert dans la dette (but 22), hypothèse non validée : C8 reste l'indice de la couche entreprises ; le canal de la dette lit les euros de prélèvement, pas le taux normal seul, et la dette sans lui est donnée à côté.",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
+  },
+  "uprating_note": "Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "behavioural": true,
+  "macro": true,
+  "theta_box": {
+    "year": 2035,
+    "rows": [
+      "multiplicateur_macro",
+      "productivite_creations"
+    ],
+    "paths": [
+      {
+        "persistence": "lue",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.002461371639312926,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.0050614709960246085
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.0050614709960246085
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                -0.0001903150688866706
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                -0.0001903150688866706
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.001976027585494977,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.0040016443505881405
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.0040016443505881405
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                -8.223924407113614e-05
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                -8.223924407113614e-05
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.002413512377846372,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.004963391894760694
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.004963391894760694
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                -0.0001884383887482688
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                -0.0001884383887482688
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.002222420310114437,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.004570268855190962
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.004570268855190962
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                -0.00017352417101301754
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                -0.00017352417101301754
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "eteint",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.005071485444186896,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.005636885956514348
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.005636885956514348
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.004452373255450226
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.004452373255450226
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.004092114742823005,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.004471561172131766
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.004471561172131766
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.003678856327018032
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.003678856327018032
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.004969123275179399,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.005527363414118414
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.005527363414118414
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.004356761821799449
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.004356761821799449
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.004575501002979321,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.00508952093464865
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.00508952093464865
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                0.004011646900654586
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                0.004011646900654586
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "tenu",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.0021284929447820122,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.004900768171148817
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.004900768171148817
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                -0.0006336577746044458
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                -0.0006336577746044458
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0017036689997458332,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.0038742444209767246
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.0038742444209767246
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                -0.00044858408010850503
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                -0.00044858408010850503
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.002087472395893464,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.0048065947635531625
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.0048065947635531625
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                -0.0006232000690342687
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                -0.0006232000690342687
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.001922195727447562,
+            "corners": [
+              [
+                "multiplicateur_macro = 0, productivite_creations = 0",
+                0.0044258928448097645
+              ],
+              [
+                "multiplicateur_macro = 0, productivite_creations = 1",
+                0.0044258928448097645
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 0",
+                -0.0005738759301581187
+              ],
+              [
+                "multiplicateur_macro = 1, productivite_creations = 1",
+                -0.0005738759301581187
+              ]
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file",
+  "annees": null,
+  "persistence": null,
+  "side_by_side": [
+    {
+      "persistence": "lue",
+      "label": "Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1687775509749723,
+          "delta_aged": 0.00019682542642618372,
+          "reform_frozen": 1.1687619632100255,
+          "delta_frozen": 0.00018123766147937204
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1748885628446757,
+          "delta_aged": 0.00019568288444937743,
+          "reform_frozen": 1.17486616715296,
+          "delta_frozen": 0.00017328719273379534
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1757919372804029,
+          "delta_aged": 0.00040335778345457207,
+          "reform_frozen": 1.1757464307693606,
+          "delta_frozen": 0.00035785127241227954
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1714791452527153,
+          "delta_aged": 0.0006985720210122004,
+          "reform_frozen": 1.1713967843898896,
+          "delta_frozen": 0.0006162111581864416
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1620020885158853,
+          "delta_aged": 0.0010222472029366436,
+          "reform_frozen": 1.1618706315077263,
+          "delta_frozen": 0.0008907901947776686
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1474086042259448,
+          "delta_aged": 0.001312984543625717,
+          "reform_frozen": 1.1472207674952737,
+          "delta_frozen": 0.0011251478129545855
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1278386909960239,
+          "delta_aged": 0.0016032665279346325,
+          "reform_frozen": 1.1275860251630445,
+          "delta_frozen": 0.0013506006949552951
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.103396830276359,
+          "delta_aged": 0.001891754217879571,
+          "reform_frozen": 1.1030724777492542,
+          "delta_frozen": 0.001567401690774739
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0741865103977042,
+          "delta_aged": 0.002177787538861775,
+          "reform_frozen": 1.0737845189096589,
+          "delta_frozen": 0.0017757960508164583
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0403102363760297,
+          "delta_aged": 0.002461371639312926,
+          "reform_frozen": 1.0398248923222118,
+          "delta_frozen": 0.001976027585494977
+        }
+      ],
+      "conventions": [
+        "Persistance « lue » : colonnes 5 et 10 ans de Mésange sous sa spécification centrale (« wage setting »), interpolées linéairement entre les horizons imprimés. Sous courbe de Phillips, les horizons longs tombent (cotisations employeurs : 1,73 contre 0,25 à long terme) ; la colonne de long terme reste refusée (D-055, D-336).",
+        "Au-delà de trois ans : Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux."
+      ],
+      "gdp_gap_aged": [
+        0.00024394837284004138,
+        0.0004960607621531583,
+        0.000530284544456872,
+        0.0005134797281429883,
+        0.0004952351507741716,
+        0.0005032141274608553,
+        0.0005102123820805445,
+        0.0005166820765948784,
+        0.0005219627786306121,
+        0.0005262319469165871
+      ]
+    },
+    {
+      "persistence": "eteint",
+      "label": "Effet macro éteint après trois ans",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1687775509749723,
+          "delta_aged": 0.00019682542642618372,
+          "reform_frozen": 1.1687619632100255,
+          "delta_frozen": 0.00018123766147937204
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1748885628446757,
+          "delta_aged": 0.00019568288444937743,
+          "reform_frozen": 1.17486616715296,
+          "delta_frozen": 0.00017328719273379534
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1757919372804029,
+          "delta_aged": 0.00040335778345457207,
+          "reform_frozen": 1.1757464307693606,
+          "delta_frozen": 0.00035785127241227954
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.172386444912687,
+          "delta_aged": 0.0016058716809839169,
+          "reform_frozen": 1.1722322122020188,
+          "delta_frozen": 0.0014516389703156385
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1631766500298268,
+          "delta_aged": 0.002196808716878218,
+          "reform_frozen": 1.1629202340190479,
+          "delta_frozen": 0.0019403927060992476
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1488807980432922,
+          "delta_aged": 0.0027851783609731395,
+          "reform_frozen": 1.1485044172874093,
+          "delta_frozen": 0.0024087976050901627
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1296037431018318,
+          "delta_aged": 0.0033683186337425397,
+          "reform_frozen": 1.1290929569818253,
+          "delta_frozen": 0.002857532513736105
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1054498896689686,
+          "delta_aged": 0.003944813610489151,
+          "reform_frozen": 1.1047923220116687,
+          "delta_frozen": 0.0032872459531891884
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0765205968040483,
+          "delta_aged": 0.004511873945205913,
+          "reform_frozen": 1.0757072924588724,
+          "delta_frozen": 0.0036985696000300106
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0429203501809037,
+          "delta_aged": 0.005071485444186896,
+          "reform_frozen": 1.0419409794795398,
+          "delta_frozen": 0.004092114742823005
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro éteint après trois ans."
+      ],
+      "gdp_gap_aged": [
+        0.00024394837284004138,
+        0.0004960607621531583,
+        0.000530284544456872,
+        1.0708081679976349e-05,
+        8.72524966306848e-06,
+        5.20692483899465e-06,
+        2.1172398507348004e-06,
+        -5.617535759808446e-07,
+        -2.5876150481433052e-06,
+        -5.558096358133788e-06
+      ]
+    },
+    {
+      "persistence": "tenu",
+      "label": "Effet macro tenu au niveau de la troisième année",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1687775509749723,
+          "delta_aged": 0.00019682542642618372,
+          "reform_frozen": 1.1687619632100255,
+          "delta_frozen": 0.00018123766147937204
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1748885628446757,
+          "delta_aged": 0.00019568288444937743,
+          "reform_frozen": 1.17486616715296,
+          "delta_frozen": 0.00017328719273379534
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1757919372804029,
+          "delta_aged": 0.00040335778345457207,
+          "reform_frozen": 1.1757464307693606,
+          "delta_frozen": 0.00035785127241227954
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1714280018669747,
+          "delta_aged": 0.000647428635271563,
+          "reform_frozen": 1.1713496898113163,
+          "delta_frozen": 0.0005691165796131159
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1618732690931672,
+          "delta_aged": 0.0008934277802186141,
+          "reform_frozen": 1.1617538103796285,
+          "delta_frozen": 0.0007739690666799248
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1472359769162217,
+          "delta_aged": 0.0011403572339026002,
+          "reform_frozen": 1.1470680672167106,
+          "delta_frozen": 0.0009724475343915184
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1276237124975854,
+          "delta_aged": 0.0013882880294961986,
+          "reform_frozen": 1.1274000222420806,
+          "delta_frozen": 0.0011645977739913604
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1031410232379755,
+          "delta_aged": 0.001635947179496,
+          "reform_frozen": 1.1028555519939955,
+          "delta_frozen": 0.0013504759355160711
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0738914280328702,
+          "delta_aged": 0.0018827051740277767,
+          "reform_frozen": 1.0735388657011844,
+          "delta_frozen": 0.001530142842341986
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0399773576814988,
+          "delta_aged": 0.0021284929447820122,
+          "reform_frozen": 1.0395525337364626,
+          "delta_frozen": 0.0017036689997458332
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année."
+      ],
+      "gdp_gap_aged": [
+        0.00024394837284004138,
+        0.0004960607621531583,
+        0.000530284544456872,
+        0.0005343045892390895,
+        0.0005370738777605118,
+        0.0005382902173833005,
+        0.0005383992502334619,
+        0.000537809962134482,
+        0.0005358640195366707,
+        0.0005327908497255281
+      ]
+    }
+  ]
+}

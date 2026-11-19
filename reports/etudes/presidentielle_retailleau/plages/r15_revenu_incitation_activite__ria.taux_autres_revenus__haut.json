@@ -1,0 +1,80 @@
+{
+  "programme": "retailleau",
+  "mesure": "r15_revenu_incitation_activite",
+  "champ": "ria.taux_autres_revenus",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "ria": {
+        "socle": 300.0,
+        "insertion": 250.0,
+        "taux_revenus_activite": 0.3,
+        "plafond_revenus_activite": 1833.0,
+        "remplace_rsa": true,
+        "remplace_ppa": true,
+        "remplace_ass": true,
+        "age_minimum": 18,
+        "age_maximum": 65,
+        "insertion_demandeurs_emploi": true,
+        "taux_autres_revenus": 1.0
+      }
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 3001738509.420166,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.0009741520911070722,
+      0.0019375511353429964,
+      0.0028903158287698627,
+      0.0038325635572391548,
+      0.004764410410854403,
+      0.005685971198273965,
+      0.006597359460856822,
+      0.0074986874866505016,
+      0.008390066324225787,
+      0.009271605796359328
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-19",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

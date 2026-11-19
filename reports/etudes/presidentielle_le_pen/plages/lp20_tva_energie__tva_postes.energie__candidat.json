@@ -1,0 +1,70 @@
+{
+  "programme": "le_pen",
+  "mesure": "lp20_tva_energie",
+  "champ": "tva_postes.energie",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "tva_postes": {
+        "energie": 0.055
+      }
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 11640273646.870682,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.0037776098346247178,
+      0.0075135210310353084,
+      0.011208193874043149,
+      0.014862083567667161,
+      0.018475640291218065,
+      0.022049309254762672,
+      0.025583530753976236,
+      0.029078740224390165,
+      0.032535368295038,
+      0.03595384084151387
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-19",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

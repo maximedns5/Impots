@@ -1,0 +1,93 @@
+{
+  "programme": "tondelier",
+  "mesure": "tranche_ir_60",
+  "champ": "ir_bareme.5.rate",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "ir_bareme": [
+        {
+          "threshold": 0.0,
+          "rate": 0.0
+        },
+        {
+          "threshold": 11600.0,
+          "rate": 0.11
+        },
+        {
+          "threshold": 29579.0,
+          "rate": 0.3
+        },
+        {
+          "threshold": 84577.0,
+          "rate": 0.41
+        },
+        {
+          "threshold": 181917.0,
+          "rate": 0.45
+        },
+        {
+          "threshold": 250000.0,
+          "rate": 0.6
+        }
+      ]
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": -1098420943.791748,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      -0.00035646977774805855,
+      -0.0007090047117859211,
+      -0.0010576482363571227,
+      -0.0014024433062618247,
+      -0.0017434324021490255,
+      -0.0020806575357517065,
+      -0.0024141602550609154,
+      -0.0027439816494465585,
+      -0.0030701623547189083,
+      -0.0033927425581348203
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-18",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}
