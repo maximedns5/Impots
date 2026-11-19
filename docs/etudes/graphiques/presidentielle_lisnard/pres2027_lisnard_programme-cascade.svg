@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 453" width="360" height="453" role="img" aria-labelledby="pres2027_lisnard_programme-cascade-t pres2027_lisnard_programme-cascade-d" font-size="13">
 <title id="pres2027_lisnard_programme-cascade-t">Du coût de 2026 à la dette de 2035</title>
-<desc id="pres2027_lisnard_programme-cascade-d">Le coût de 2026 : ménages, mécanique +29,64 Md€ ; entreprises, mécan. +6,55 Md€ ; comportements −1,12 Md€ ; total +35,06 Md€. La dette en 2035, à θ½, vue vieillie, persistance lue : le coût, sans boucle +11,39 pt ; le PIB, dénominateur −1,00 pt ; les recettes induites −4,68 pt ; Δ dette +5,71 pt.</desc>
+<desc id="pres2027_lisnard_programme-cascade-d">Le coût de 2026 : ménages, mécanique +29,91 Md€ ; entreprises, mécan. +6,55 Md€ ; comportements −1,13 Md€ ; total +35,33 Md€. La dette en 2035, à θ½, vue vieillie, persistance lue : le coût, sans boucle +11,46 pt ; le PIB, dénominateur −1,02 pt ; les recettes induites −4,74 pt ; Δ dette +5,71 pt.</desc>
 <style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
 .g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
 .g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
@@ -26,21 +26,21 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="295.5" y1="101" x2="295.5" y2="221"/>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="342" y1="101" x2="342" y2="221"/>
 <line class="g-zero" stroke="#52514e" stroke-width="1.2" x1="156" y1="99" x2="156" y2="221"/>
-<rect class="g-plus" fill="#2a78d6" x="156" y="107" width="137.8" height="18" rx="2"><title>ménages, mécanique : +29,64 Md€</title></rect>
-<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="293.8" y1="125" x2="293.8" y2="137"/>
+<rect class="g-plus" fill="#2a78d6" x="156" y="107" width="139.1" height="18" rx="2"><title>ménages, mécanique : +29,91 Md€</title></rect>
+<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="295.1" y1="125" x2="295.1" y2="137"/>
 <text class="g-encre" fill="#1d1d1b" x="10" y="120" text-anchor="start">ménages, mécanique</text>
-<text class="g-sur" fill="#ffffff" x="289.8" y="120" text-anchor="end" font-size="12" font-weight="600">+29,64 Md€</text>
-<rect class="g-plus" fill="#2a78d6" x="293.8" y="137" width="30.4" height="18" rx="2"><title>entreprises, mécan. : +6,55 Md€</title></rect>
-<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="324.3" y1="155" x2="324.3" y2="167"/>
+<text class="g-sur" fill="#ffffff" x="291.1" y="120" text-anchor="end" font-size="12" font-weight="600">+29,91 Md€</text>
+<rect class="g-plus" fill="#2a78d6" x="295.1" y="137" width="30.4" height="18" rx="2"><title>entreprises, mécan. : +6,55 Md€</title></rect>
+<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="325.5" y1="155" x2="325.5" y2="167"/>
 <text class="g-encre" fill="#1d1d1b" x="10" y="150" text-anchor="start">entreprises, mécan.</text>
-<text class="g-doux" fill="#52514e" x="289.8" y="150" text-anchor="end" font-size="12">+6,55 Md€</text>
-<rect class="g-moins" fill="#e34948" x="319" y="167" width="5.2" height="18" rx="2"><title>comportements : −1,12 Md€</title></rect>
-<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="319" y1="185" x2="319" y2="197"/>
+<text class="g-doux" fill="#52514e" x="291.1" y="150" text-anchor="end" font-size="12">+6,55 Md€</text>
+<rect class="g-moins" fill="#e34948" x="320.3" y="167" width="5.3" height="18" rx="2"><title>comportements : −1,13 Md€</title></rect>
+<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="320.3" y1="185" x2="320.3" y2="197"/>
 <text class="g-encre" fill="#1d1d1b" x="10" y="180" text-anchor="start">comportements</text>
-<text class="g-doux" fill="#52514e" x="315" y="180" text-anchor="end" font-size="12">−1,12 Md€</text>
-<rect class="g-total" fill="#52514e" x="156" y="197" width="163" height="18" rx="2"><title>total 2026 : +35,06 Md€</title></rect>
+<text class="g-doux" fill="#52514e" x="316.3" y="180" text-anchor="end" font-size="12">−1,13 Md€</text>
+<rect class="g-total" fill="#52514e" x="156" y="197" width="164.3" height="18" rx="2"><title>total 2026 : +35,33 Md€</title></rect>
 <text class="g-encre" fill="#1d1d1b" x="10" y="210" text-anchor="start" font-weight="600">total 2026</text>
-<text class="g-sur" fill="#ffffff" x="315" y="210" text-anchor="end" font-size="12" font-weight="600">+35,06 Md€</text>
+<text class="g-sur" fill="#ffffff" x="316.3" y="210" text-anchor="end" font-size="12" font-weight="600">+35,33 Md€</text>
 <line class="g-axe" stroke="#8a877f" stroke-width="1" x1="156" y1="225" x2="342" y2="225"/>
 <text class="g-doux" fill="#52514e" x="156" y="240" text-anchor="middle" font-size="12">0</text>
 <text class="g-doux" fill="#52514e" x="202.5" y="240" text-anchor="middle" font-size="12">10</text>
@@ -54,21 +54,21 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="280" y1="289" x2="280" y2="409"/>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="342" y1="289" x2="342" y2="409"/>
 <line class="g-zero" stroke="#52514e" stroke-width="1.2" x1="156" y1="287" x2="156" y2="409"/>
-<rect class="g-plus" fill="#2a78d6" x="156" y="295" width="141.3" height="18" rx="2"><title>le coût, sans boucle : +11,39 pt</title></rect>
-<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="297.3" y1="313" x2="297.3" y2="325"/>
+<rect class="g-plus" fill="#2a78d6" x="156" y="295" width="142.2" height="18" rx="2"><title>le coût, sans boucle : +11,46 pt</title></rect>
+<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="298.2" y1="313" x2="298.2" y2="325"/>
 <text class="g-encre" fill="#1d1d1b" x="10" y="308" text-anchor="start">le coût, sans boucle</text>
-<text class="g-sur" fill="#ffffff" x="293.3" y="308" text-anchor="end" font-size="12" font-weight="600">+11,39 pt</text>
-<rect class="g-moins" fill="#e34948" x="284.8" y="325" width="12.5" height="18" rx="2"><title>le PIB, dénominateur : −1,00 pt</title></rect>
-<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="284.8" y1="343" x2="284.8" y2="355"/>
+<text class="g-sur" fill="#ffffff" x="294.2" y="308" text-anchor="end" font-size="12" font-weight="600">+11,46 pt</text>
+<rect class="g-moins" fill="#e34948" x="285.6" y="325" width="12.6" height="18" rx="2"><title>le PIB, dénominateur : −1,02 pt</title></rect>
+<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="285.6" y1="343" x2="285.6" y2="355"/>
 <text class="g-encre" fill="#1d1d1b" x="10" y="338" text-anchor="start">le PIB, dénominateur</text>
-<text class="g-doux" fill="#52514e" x="280.8" y="338" text-anchor="end" font-size="12">−1,00 pt</text>
-<rect class="g-moins" fill="#e34948" x="226.8" y="355" width="58" height="18" rx="2"><title>les recettes induites : −4,68 pt</title></rect>
-<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="226.8" y1="373" x2="226.8" y2="385"/>
+<text class="g-doux" fill="#52514e" x="281.6" y="338" text-anchor="end" font-size="12">−1,02 pt</text>
+<rect class="g-moins" fill="#e34948" x="226.7" y="355" width="58.8" height="18" rx="2"><title>les recettes induites : −4,74 pt</title></rect>
+<line class="g-lien" stroke="#8a877f" stroke-width="1" stroke-dasharray="2 2" x1="226.7" y1="373" x2="226.7" y2="385"/>
 <text class="g-encre" fill="#1d1d1b" x="10" y="368" text-anchor="start">les recettes induites</text>
-<text class="g-doux" fill="#52514e" x="288.8" y="368" text-anchor="start" font-size="12">−4,68 pt</text>
-<rect class="g-total" fill="#52514e" x="156" y="385" width="70.8" height="18" rx="2"><title>Δ dette 2035 : +5,71 pt</title></rect>
+<text class="g-doux" fill="#52514e" x="289.6" y="368" text-anchor="start" font-size="12">−4,74 pt</text>
+<rect class="g-total" fill="#52514e" x="156" y="385" width="70.7" height="18" rx="2"><title>Δ dette 2035 : +5,71 pt</title></rect>
 <text class="g-encre" fill="#1d1d1b" x="10" y="398" text-anchor="start" font-weight="600">Δ dette 2035</text>
-<text class="g-doux" fill="#52514e" x="230.8" y="398" text-anchor="start" font-size="12">+5,71 pt</text>
+<text class="g-doux" fill="#52514e" x="230.7" y="398" text-anchor="start" font-size="12">+5,71 pt</text>
 <line class="g-axe" stroke="#8a877f" stroke-width="1" x1="156" y1="413" x2="342" y2="413"/>
 <text class="g-doux" fill="#52514e" x="156" y="428" text-anchor="middle" font-size="12">0</text>
 <text class="g-doux" fill="#52514e" x="218" y="428" text-anchor="middle" font-size="12">5</text>
