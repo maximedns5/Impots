@@ -1,0 +1,60 @@
+{
+ "annee": 2022,
+ "lots": 8,
+ "menages": null,
+ "commit": "57038e6d1bb6b11d11f87be49ad344b3e821d1b3",
+ "vieillissement": {
+  "jeu": "insee_constate",
+  "source": "Insee, constaté : salaires par tête, D11 sur l'emploi intérieur salarié (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac, ensemble des ménages, France (BDM 001768695)",
+  "de": 2024,
+  "vers": 2022,
+  "salaires": {
+   "2023": 0.046620701783021135,
+   "2024": 0.026386633280596428
+  },
+  "prix": {
+   "2023": 0.048,
+   "2024": 0.018000000000000002
+  },
+  "facteur_salaires": 0.9308928439626207,
+  "facteur_prix": 0.9373265945800026,
+  "colonnes": {
+   "salaire_brut_annuel": "wage",
+   "pension_annuelle": "price",
+   "chomage_annuel": "wage",
+   "loyer_mensuel": "price",
+   "revenu_non_salarie_annuel": "wage"
+  }
+ },
+ "bandeau_famille_total": 9147341060.546322,
+ "par_bande": {
+  "0.0-1.6": {
+   "bandeau": 4742887513.9966545,
+   "beneficiaires": 13549172.307448393
+  },
+  "1.6-2.0": {
+   "bandeau": 1505715962.4576216,
+   "beneficiaires": 2480191.5984163797
+  },
+  "2.0-2.5": {
+   "bandeau": 1290479633.6624818,
+   "beneficiaires": 1694676.1437680572
+  },
+  "2.5-3.0": {
+   "bandeau": 828280373.6997924,
+   "beneficiaires": 889446.1448241936
+  },
+  "3.0-3.5": {
+   "bandeau": 704085557.7272424,
+   "beneficiaires": 690209.1263926843
+  },
+  "3.5-inf": {
+   "bandeau": 75892019.00252938,
+   "beneficiaires": 148533.7243054484
+  }
+ },
+ "mesures": {
+  "bandeau famille entre 2,5 et 3,5 Smic / bandeau famille": 0.16752036698799058
+ },
+ "secondes": 317.0
+}

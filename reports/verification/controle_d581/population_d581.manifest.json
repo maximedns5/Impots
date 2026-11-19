@@ -1,0 +1,1214 @@
+{
+  "vintage": "2024",
+  "built": "2026-11-18",
+  "seed": 20240101,
+  "rows": 423347,
+  "households": 199451,
+  "branch": "A' — EEC household structure, synthetic incomes (D-012)",
+  "inputs": {
+    "Dictionnaire_EEC_2024.pdf": {
+      "sha256": "2d200d603e0dcd6c9edb329b8422045eeeef772884c4057a96749f36e26cade0",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf"
+    },
+    "FD_EEC_2024.parquet": {
+      "sha256": "d8d865004ece040c82c8919dcfeb5f51f3b7979705ed50379842a5c7c6201520",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/FD_EEC_2024.parquet"
+    },
+    "Varmod_EEC_2024.csv": {
+      "sha256": "d802c4b8d7ceb464301d66e3156f8d182979896e62a313bb834489af9e8c8816",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/Varmod_EEC_2024.csv"
+    },
+    "budget_execution_2025_recettes_fiscales_nettes.pdf": {
+      "sha256": "eda213b2f07165151aab1fd8a86c56d3764df181ceb0a8a3a62235d71213aed4",
+      "url": null
+    },
+    "ccomptes_budget_etat_2025_resultats_gestion.pdf": {
+      "sha256": "4c741e5aa9cb62799aa84fa618096b06c0ecc5ac6409366795a3aeb8268e8f23",
+      "url": null
+    },
+    "ccss_mai2026_comptes_secu_resultats2025.pdf": {
+      "sha256": "b7f578c5f0573753204cc05c61ea98fe10b7b9a57ea73f4a2880685bdd61a0ba",
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2026/CCSS%20mai%202026_assembl%c3%a9_V2.pdf"
+    },
+    "cnaf_allocataires_prestations_national_mensuel.csv": {
+      "sha256": "13c0406a0becd77c0489af80eb673571d4314b387f2614f799543567822d3b60",
+      "url": null
+    },
+    "cnaf_analyses_statistiques_07_depenses_prestations_2024.pdf": {
+      "sha256": "0d0c4be692ead6534ba9ffcc80a99711ca6b1f8b7b0696ffdf8c5ca8c829edfc",
+      "url": null
+    },
+    "cnaf_depenses_tous_regimes_national_2013_2024.csv": {
+      "sha256": "12b508ad9bf633879c9c53f2901c01ff794ea7863a2e4389a67bd0c748621993",
+      "url": null
+    },
+    "dgfip_1329_ac_notice_cvae_2026.pdf": {
+      "sha256": "bc86e38ffa1a31af56f2fcadfb09b2dc5b0a7f5b0ba0679e771a95c26679198a",
+      "url": null
+    },
+    "dgfip_1329_def_notice_cvae_2025.pdf": {
+      "sha256": "341092520dd75ad16a82472d882f059f23490cd86305e7c386bfd27d04f14f51",
+      "url": null
+    },
+    "dgfip_stat_32_ir_2023.pdf": {
+      "sha256": "4dd3dbf8a30e00d8560c57551083ae4296bcc2aef9dab150dc130c133abb14f9",
+      "url": null
+    },
+    "dgfip_stat_32_ir_2023_tables.xlsx": {
+      "sha256": "d8721958c326fb381818bddcf112f783f8f9af0dc1845fac49b43eb499292029",
+      "url": null
+    },
+    "dgfip_stat_35_impots_production_2023.pdf": {
+      "sha256": "afe37a7a528c84712c0291f13e84f512ac7615114f22b0455ff0d9a1b3bd5674",
+      "url": null
+    },
+    "dgfip_stat_39_impot_benefice_2024.pdf": {
+      "sha256": "8b474509c70e1fc36035380d5adc25bcec54cf9fc535697c79494a6348252859",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num39_09/dgfip_stat_39_limpot-sur-le-benefice-2024-des-entreprises_publi.pdf"
+    },
+    "dgfip_stat_39_impot_benefice_2024_donnees.xlsx": {
+      "sha256": "9637d62fc2f33c36bad5999025e8b077799ab23d5e6630039d1e0f3c4ab82308",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num39_09/dgfip_stat_39_limpot-sur-le-benefice-2024-des-entreprises.xlsx"
+    },
+    "dgfip_stat_43_recettes_fiscales_dgfip_2025.pdf": {
+      "sha256": "33d68935df30ad59b40f33c8c7c2fb5f6f06e732c69051dce7343f2011c1b597",
+      "url": null
+    },
+    "dgfip_stat_47_impots_production_2024.pdf": {
+      "sha256": "0741d10e8cb0027a332801e5d5286060de776521ecd1654049f88ec3572b0c69",
+      "url": null
+    },
+    "dgfip_stat_47_impots_production_2024_donnees.xlsx": {
+      "sha256": "04586e7d3439edda0258c9ae336c6dcf45b4781d18d94b35722645199fb0d1ea",
+      "url": null
+    },
+    "drees_ER1370_non_recours_RSA.pdf": {
+      "sha256": "dd2f52dbb12cf6f278126b79a48dddec4eb913a8e2605969ab6dd32b7e919f6e",
+      "url": null
+    },
+    "drees_ER1370_non_recours_RSA_donnees.xlsx": {
+      "sha256": "39093bf20583de5ebf52a448d97d4f4e0f219525368e5424af18374b2044f616",
+      "url": null
+    },
+    "drees_ER1379_non_recours_prime_activite.pdf": {
+      "sha256": "222853d711e012ee3bb36d423a8381a8e1edfb019d341dbe163e8cd06262ac13",
+      "url": null
+    },
+    "drees_ER1379_non_recours_prime_activite_donnees.xlsx": {
+      "sha256": "03aefa4575c3b20433db7030691fe564550894e75ccf941dfd2f1eace558898f",
+      "url": null
+    },
+    "drees_panorama_minima_sociaux_2025.pdf": {
+      "sha256": "495d5d4d6cfc10058ced8ecec19a7e440d42a3ca9739fc6d70ee36cb18968deb",
+      "url": null
+    },
+    "erfs_2024_distribution_niveaux_de_vie.xlsx": {
+      "sha256": "1e485ca348684f272e781de8a32631a1aa20369dc5509ab2465d39feadbcf2b4",
+      "url": null
+    },
+    "erfs_2024_ip2117_figures.xlsx": {
+      "sha256": "df80d57ee7449f1a766ca8fc2ba59721bc735a41a18ee63e2d807b43f6dad026",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9019316/ip2117.xlsx"
+    },
+    "filosofi_2023_all_geo.zip": {
+      "sha256": "f3822a78e3f55fa842a2dd9b0f155d4341057f986eec38048c74a20486979b78",
+      "url": null
+    },
+    "filosofi_2023_note_accompagnement.pdf": {
+      "sha256": "3979fbbc67ae9ac5af977c952aa960ef3ce8e170568512c18acf14b66fae87b2",
+      "url": null
+    },
+    "filosofi_2023_sources_methodes.pdf": {
+      "sha256": "81ca4feb998177ba4cee414f026176f26310b8084e4490c6c33bfe45f0c718dc",
+      "url": null
+    },
+    "insee_TES_symetrique_A38_2022DEF.xlsx": {
+      "sha256": "db4189aa708c10122dadf09c17f8bb49e1dd45561f93bf5527abe8473a29aa73",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8574722/TES_symetrique_A38_2022DEF.xlsx"
+    },
+    "insee_TES_symetrique_A38_2023SD.xlsx": {
+      "sha256": "319076fac8a04885a70ae1ad2c7c2b7a2dd27c3e436ed2fad81eabaa591846e6",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8574722/TES_symetrique_A38_2023SD.xlsx"
+    },
+    "insee_annexe_ir_apu_2025_20260326.pdf": {
+      "sha256": "51a10c6a10dfe4b1bb2879a1d64ab3a4bb47b15ec0d8f26c54f7ee9bd72ea0e4",
+      "url": null
+    },
+    "insee_bts_2024_sexe_age.xlsx": {
+      "sha256": "85de7eee481db948635be343dffb4d4c4d93086cb90053c78bfae246cf21b1dd",
+      "url": null
+    },
+    "insee_bts_2024_sexe_pcs.xlsx": {
+      "sha256": "2428ee4b64551acea0c5daf0b06bc7141917847e702fb5c692e8cc30ae4109ca",
+      "url": null
+    },
+    "insee_cn2024_t6205_salaires_traitements_bruts_par_branche.xlsx": {
+      "sha256": "1a36a05e3848f3ad911c21a49f3e2537144a1da88d75026dfb800e24504c16d5",
+      "url": null
+    },
+    "insee_cn2024_t6208_emploi_par_branche_a38.xlsx": {
+      "sha256": "51a94b81aff103eb6654e4fc69e666188b8b532f9be34055de522ef03e3e175d",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8574683/T_6208.xlsx"
+    },
+    "insee_cn2024_t7301_compte_administrations_publiques_S13.xlsx": {
+      "sha256": "7c7c09fc41dda9af3d13137f25da69af7c411fcbf9e3957c9950f510e3f6c877",
+      "url": null
+    },
+    "insee_cn2025_t3217_principaux_impots_par_categorie.xlsx": {
+      "sha256": "589b94cf953d0fdb6e07b123dcadfd11b831e866096ec0cfb0911d62ae432790",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx"
+    },
+    "insee_ecrt2025_F26_deciles_pcs_sexe_2023.xlsx": {
+      "sha256": "1158b73b3d885ec7fe1e36b713594fba43886bd9002b1ff9663bf94501d2f1e2",
+      "url": null
+    },
+    "insee_ecrt2026_F26_prive_individus_2024.xlsx": {
+      "sha256": "5e3b2648ca13be5192585473cbe46e6ebd11622b6a9b5e132b5441436436b262",
+      "url": null
+    },
+    "insee_ecrt2026_F30_revenu_salarial_2023.xlsx": {
+      "sha256": "c6b2d697d461e6b8c0f07c2cae5a720358dd83a8cc28b642455bd76bc4994854",
+      "url": null
+    },
+    "insee_entfra2023_fiche36_impot_societes.pdf": {
+      "sha256": "aa597d933ce69c7911e055174a5d15f24c46d531e25fb926d08e36d2fa0fdf16",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/7678564/ENTFRA23-F20.pdf"
+    },
+    "insee_esane2023_caracteristiques_par_taille.xlsx": {
+      "sha256": "1bdb514e8d052d1837486d1711bcc89178c9fef501b04e3b3a986da975fb65e4",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8611562/DD_esane23m23ep_caracteristiques_taille.xlsx"
+    },
+    "insee_focus372_tissu_productif_categorie_2023.xlsx": {
+      "sha256": "b895bc0bd7c780c35183476b2c2dab72283ba7dda9651e8d74f361876eb6db8d",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8675639/IF372.xlsx"
+    },
+    "insee_fporsoc25_F16_revenu_salarial_2022.xlsx": {
+      "sha256": "8b83278729106bd67bce8e94fc4ca604bb48c2253a140c164e59c7d6e8c5494b",
+      "url": null
+    },
+    "insee_ia112_taux_implicite_is_2016_2022.xlsx": {
+      "sha256": "9d48545b48b7a83662242c9f674e9259ce90a4c186a61211581577d3f1202e01",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8630968/IA112.xlsx"
+    },
+    "insee_ip2079_salaires_prive_2024.xlsx": {
+      "sha256": "34b7e19cce45d8a5bc7a83f125d00d694ea6266e06b94531f8815a957f5b7d11",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8657156/ip2079.xlsx"
+    },
+    "insee_ip2100_fonction_publique_etat_2024.xlsx": {
+      "sha256": "2f6af041d8ba335b2a49cde3be698f34d0fe486717a96b5097274e9578c5f5f7",
+      "url": null
+    },
+    "insee_ip2101_fonction_publique_territoriale_2024.xlsx": {
+      "sha256": "d1594c0747e530d0ebfb4bde1f6472b33d57f2f4192db8cc5b539f5aee9bdbf5",
+      "url": null
+    },
+    "insee_ip2102_fonction_publique_hospitaliere_2024.xlsx": {
+      "sha256": "448f4da2e190d4b7780494f2ba289e35059248990da6abb061f27960821cfcb2",
+      "url": null
+    },
+    "insee_marc_salaires_fonction_publique.xlsx": {
+      "sha256": "e93b1376586372efb8384f5e1510624e30380b0dd4feb2c9a780667748b517c7",
+      "url": null
+    },
+    "insee_nomenclature_categories_juridiques_2022-09.xls": {
+      "sha256": "6bcd5d133b2b5847bef372c175c9d5bbf72313aa0c897c1521c34d25b6a56672",
+      "url": null
+    },
+    "insee_rp2022_SL_ENF1.xlsx": {
+      "sha256": "8c46392736d6fb34967d258e855f9ec296e98921fae84fd7e68b75cc22433df5",
+      "url": null
+    },
+    "insee_rp2022_SL_ENF2.xlsx": {
+      "sha256": "59d09c885f44f7a3ff7afd77b1b0fb6ffe3271c8184c1a83f5de0576d19d5796",
+      "url": null
+    },
+    "insee_rp2022_SL_ENF3.xlsx": {
+      "sha256": "fe885fff17624bc260bba89518c5f2159d96416d4c3975a87dcd198b07214682",
+      "url": null
+    },
+    "insee_rp2022_SL_FAM1.xlsx": {
+      "sha256": "c059e8453f274e647b6a121743edf18e05b2cdfcec5b9730e3958567a7acee0d",
+      "url": null
+    },
+    "insee_rp2022_SL_FAM2.xlsx": {
+      "sha256": "15b4a9b3de13d720d78b29bf3db3b7696b678747f6e67ae27d4d7778fa64d226",
+      "url": null
+    },
+    "insee_rp2022_SL_FAM3.xlsx": {
+      "sha256": "8a5d631bf0eb176fc88cd7ccc6e64872ac56cae92f997dbec7c180ef17a2942c",
+      "url": null
+    },
+    "insee_rp2022_SL_FAM4.xlsx": {
+      "sha256": "a7f76b7bf6b266bad555864b1eb0e86e27e640517ee9c4040691faa295b7674b",
+      "url": null
+    },
+    "insee_rp2022_SL_MEN1_personnes_par_menage.xlsx": {
+      "sha256": "757fbd26c3e74c5d9d39d8127238b692decd351ba00418a17b04da0b24058b4d",
+      "url": null
+    },
+    "insee_rp2022_SL_MEN2_structure_familiale.xlsx": {
+      "sha256": "7ef4862a37f7ac322e737ba3100e5e6a10e5303bf6d17e59c9d9cb441b0eac63",
+      "url": null
+    },
+    "insee_rp2022_td_FAM1_type_famille_nb_enfants_moins25.csv": {
+      "sha256": "182a2039408c0bb4b78b71c00d2890f2096882dc86da6f0669a1032711a995f4",
+      "url": null
+    },
+    "insee_rp2022_td_FAM5.csv": {
+      "sha256": "e3efa006aa3b5ef1995f007646e8ff6dd732e7fd32afe5ee7ba934e79cb3a3e3",
+      "url": null
+    },
+    "insee_rp2022_td_FAM6.csv": {
+      "sha256": "97db20c99d99aacc98cdb5d82e4729dbe5fc5c55357e9f350c49439563b1d4ea",
+      "url": null
+    },
+    "insee_rp2023_TD_FAM1v1_familles_type_nb_enfants_moins25.xlsx": {
+      "sha256": "de45d72827504f434b85de223300b643856886e36fbc6afb1bd6a8ecf64cbba6",
+      "url": null
+    },
+    "insee_rp2023_TD_FAM6v1_enfants_par_age_et_type_famille.xlsx": {
+      "sha256": "9a00565d003ac0068663d58aee761637c573246443ecd7584b6dac5d289e1c77",
+      "url": null
+    },
+    "insee_rp2023_enfants_familles_par_age_et_type.xlsx": {
+      "sha256": "8560a6e9f85edcbb163e7e258dc0115dd41b2c6e1a4f34c72d59663c18fe8c6f",
+      "url": null
+    },
+    "insee_rp2023_familles_enfants_moins18_structure.xlsx": {
+      "sha256": "b87bda767997668b95974396615ec6f536a0098bbc1f3538626c2e2a2ee075b7",
+      "url": null
+    },
+    "insee_rp2023_menages_structure_familiale.xlsx": {
+      "sha256": "33ad53ebf18011a45883a92794bb6b92ee38bc553b226f4191edaa2af3b8a1e5",
+      "url": null
+    },
+    "insee_rp2023_taille_des_menages.xlsx": {
+      "sha256": "59c669711ba6937779f2a1d1636cf7eae580a9e1cfbe3f5249d91a59eaf9ce3b",
+      "url": null
+    },
+    "insee_series_longues_prive_CS2_taux_cotisations_salariales.csv": {
+      "sha256": "b062ebbfaad97a8693551c784e646514b1dc1a4557ac35959fc227aaf11c8283",
+      "url": null
+    },
+    "insee_series_longues_prive_CS3_taux_cotisations_salariales.csv": {
+      "sha256": "766569d875fd1dbd30f1b695c0f623654d3b6a51fa68c2d537ea6669325567de",
+      "url": null
+    },
+    "insee_series_longues_prive_EQTP02.csv": {
+      "sha256": "b6c9ffa886472a4cb726e9b02c67d4f448b55952bc1696b58111f28b7f8d46b6",
+      "url": null
+    },
+    "insee_series_longues_prive_EQTP08.csv": {
+      "sha256": "0d9e7c8fed0d4d6555f234417ef8bc92cc6c75c4c3d17e8d72454b16cead120f",
+      "url": null
+    },
+    "insee_series_longues_prive_PRELEV35.csv": {
+      "sha256": "9dd282ce566e7e6b0078b1c059b8bf035e961b8aeda0527e4c65d90f77a009cb",
+      "url": null
+    },
+    "insee_series_longues_prive_TC02b.csv": {
+      "sha256": "3bad010b0b29366efe8b0ede4fd285c438c146defa80d513f91a805899e6a48b",
+      "url": null
+    },
+    "insee_series_longues_prive_TC08.csv": {
+      "sha256": "24759b2a4bad3469db306027ce1280ca9d9feafdd4221b76a87ffda2f8006fa5",
+      "url": null
+    },
+    "insee_series_longues_prive_metadonnees.csv": {
+      "sha256": "2e1b5973e4770d3f74065dcc3ca7ead059902f1fada8619ab5bd8c51bff24d00",
+      "url": null
+    },
+    "ipp_rapport60_impots_production_2025.pdf": {
+      "sha256": "e8234692f2235de1d90f5f7fc4e3f9a15da131b26aa51cc87558940e2295ba60",
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/10/FS_ImpotsProductions-9.pdf"
+    },
+    "urssaf_annuel_effectifs_masse_salariale_secteur_prive_france_entiere_na88.csv": {
+      "sha256": "26efbf31a276142b9a5d7390b3c68db95ba75b73d31ba87ed069651389ff6388",
+      "url": null
+    },
+    "urssaf_annuel_effectifs_masse_salariale_secteur_prive_par_tranche_entreprise.csv": {
+      "sha256": "ed14cc24226ace81df266eab1cd40d598bcce6ad6b38c53772d451121f3feaec",
+      "url": null
+    },
+    "urssaf_c3s_notice_mars2026.pdf": {
+      "sha256": "fdde4b6550bf3f27c9896c602d184c87b865493036401e261ba8152e559a52cd",
+      "url": "https://www.urssaf.fr/files/live/sites/urssaffr/files/outils-documentation/guides/C3S-Notice.pdf"
+    },
+    "urssaf_masse_salariale_trimestrielle_secteur_prive_france_entiere.csv": {
+      "sha256": "4418d04b8afc3cf200c2ff946429c762269f05cb47997971c4568396963ca037",
+      "url": null
+    },
+    "urssaf_particuliers_employeurs_2024.csv": {
+      "sha256": "20eff88e911f654e261c6bd092ecaba3f6c03c512d11e7d5e334541df46790bb",
+      "url": null
+    },
+    "urssaf_trimestriel_effectifs_masse_salariale_secteur_prive_france_entiere_na88.csv": {
+      "sha256": "c9a7da50bbf0f5c9deea450db4e52f9bbf8d1484d7dd6b5f29721ddcafce835c",
+      "url": null
+    },
+    "voies_et_moyens_tome1_plf2025.pdf": {
+      "sha256": "c01eccd5eb0a96912b0ad84b5db354fc3c9eaf80bd7db20c023e10057ab5648b",
+      "url": null
+    },
+    "voies_et_moyens_tome1_plf2026.pdf": {
+      "sha256": "4703605df8bfd1b4a20b1889839ebc1ea5a9b434eb4460eb2b40749e107371a0",
+      "url": null
+    },
+    "insee_G2017-04_mesange.pdf": {
+      "sha256": "a90bc25445928e3f5573eab4bcecae0670480c28cee5a66e68a60c1030032150",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/2848300/G2017-04.pdf"
+    },
+    "hcfp_note_methodologique_2023-1_elasticite_po.pdf": {
+      "sha256": "f932c9b5770f002ef6e21a09331b5a22c2c13b76d750bdd9d769891025c27697",
+      "url": "https://www.hcfp.fr/sites/default/files/2023-02/Note%20m%C3%A9thodologique%20HCFP%202023-1.pdf"
+    },
+    "imk_wp117_2013_gechert_meta_regression.pdf": {
+      "sha256": "4b5350969f656d6d4a88ec8c9f2fc4677d16a04fa5f473bad2c5aace0c8f621a",
+      "url": "https://www.econstor.eu/bitstream/10419/105983/1/imk-wp_117_2013.pdf"
+    },
+    "imk_wp139_2014_gechert_rannenberg_regime_dependent.pdf": {
+      "sha256": "ad8415979ccae933b623b2c25465636082e174197636f77c23de51a0da199678",
+      "url": "https://www.econstor.eu/bitstream/10419/106005/1/imk-wp_139_2014.pdf"
+    },
+    "france_strategie_2020_rapport_cice.pdf": {
+      "sha256": "3118138d2c2deda5a69260a7de52a3e5c9c54a7001ecfa6a7b0456bc65ff49d4",
+      "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/2020/CICE/fs-2020-rapport-cice2020-16septembre-final18h.pdf"
+    },
+    "plf2026_voies_et_moyens_tome2.pdf": {
+      "sha256": "f8fdf8072037fbc0cff1839c880718f184ea0c011572ae43bf58a12b20142214",
+      "url": "https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1087933/file/Voies_et_moyens_Tome_2_2026.pdf"
+    },
+    "plf2025_voies_et_moyens_tome2.pdf": {
+      "sha256": "037fa53f1d04a07a6fd2f79e2d2bf25f063bc94f3e21ea8750bf1b81d66e4d45",
+      "url": "https://www2.assemblee-nationale.fr/static/17/Annexes-DL/PLF-2025/Voies_et_moyens_Tome_2_2025.pdf"
+    },
+    "dgfip_ir_credits_impot_par_decile_rfr_2024.xlsx": {
+      "sha256": "c7578465e0a5101bcca0f21a0f37f21291c092f2c9dcfcc40c8e9bff5a44797c",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25535_ir_ci_deciles_rfr_par_part.xlsx"
+    },
+    "dgfip_ir_reductions_par_decile_rfr.xlsx": {
+      "sha256": "b9425ecfe7188e670198ce45350b5441d35462826d0b2e5ff9aeac604512a63f",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25536_ir_ri_deciles_rfr_par_part.xlsx"
+    },
+    "dgfip_stat_41_impot_revenu_2024_donnees.xlsx": {
+      "sha256": "0d7fd5b950231738da88f7f62827fbd41da8247dac6ca1f3d93812452a76a4f8",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.xlsx"
+    },
+    "dgfip_stat_41_impot_revenu_2024.pdf": {
+      "sha256": "ffc54026d9082e97d34705a677b7eb20d81536cc952f07f444243a62fc2ecb5a",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.pdf"
+    },
+    "dlf_top8_depenses_fiscales_ir2018_deciles.xls": {
+      "sha256": "7b9146326f3e254a24950ad4bc03fb1b836683d494fb7f96f1093c9d06ab6800",
+      "url": "https://data.economie.gouv.fr/api/v2/catalog/datasets/liste-des-8-depenses-fiscales-les-plus-couteuses-parmi-celles-relatives-a-limpot/attachments/top_8_depenses_fiscales_ir2018_fl_sc_xls"
+    },
+    "an_qe15_27130_frais_scolarite_repartition_deciles.html": {
+      "sha256": "5fc0f88ff51f43e643c9d8c1e99425887217005190537226a54df8151d76ce30",
+      "url": null
+    },
+    "ccomptes_neb_2026_depenses_fiscales.pdf": {
+      "sha256": "6093843af07cbea9596381183d87e28c165d34af29755ccf48d42567adac5e54",
+      "url": null
+    },
+    "dgfip_ir_declarations_2042_nat.csv": {
+      "sha256": "40df4b5c6649ea1647730a5e173aa7bcfc96af66990ef39de49d7c0a00411f8d",
+      "url": null
+    },
+    "dgfip_ir_declarations_2042_nat_cases_7ac_7ae_7ag.csv": {
+      "sha256": "02f493c4f5eb4d53882aa223ba996a1d66ef95824be462f22fa47f9734ccab8c",
+      "url": null
+    },
+    "dgfip_ir_declarations_2042_nationales_2006_2024.csv": {
+      "sha256": "e984973355e0a27ede6d9f9a2b6880ebb3ca552bfb72ed589d761a47cf697e82",
+      "url": null
+    },
+    "dgfip_stats_33_ifi_2024.pdf": {
+      "sha256": "bb4750482fb36c111a038b061769d6f27d6125a04b9d0f76e89d2dc9e5b6bc5a",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num33_04/dgfip_stats_ifi_2024.pdf"
+    },
+    "dgfip_stats_33_ifi_2024.xlsx": {
+      "sha256": "f35f5788504616220fe709d8e51df3d604ae79df4ab2d0681858a3ded3739765",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num33_04/dgfip_stats_ifi_2024.xlsx"
+    },
+    "dgfip_stats_45_ifi_2025.pdf": {
+      "sha256": "90a63cbf1c22ab3b19337551b01cc1d813ffb8c47fa33feb4271f97e91bf7dad",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2026/num45_04/dgfip_stat_45_ifi_2025.pdf"
+    },
+    "dgfip_stats_45_ifi_2025.xlsx": {
+      "sha256": "626c8f24676102ae887b740bfd0f978bb59ce5d8c33d6fb608ac8439a9ea7c1b",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2026/num45_04/dgfip_stat_45.xlsx"
+    },
+    "dgfip_stats_23_ifi_2023.pdf": {
+      "sha256": "4edd91fd86a4d609624ebbe72c0b79ca5483f5899214f70727ea165f15f1b58f",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2024/num23_04/dgfip_stats_ifi_2023.pdf"
+    },
+    "dgfip_stats_23_ifi_2023.xlsx": {
+      "sha256": "486099edaabeded259992452ea274c9187859f3e410f38effec424f78a84d717",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2024/num23_04/dgfip_stats_ifi_2023.xlsx"
+    },
+    "dgfip_stats_15_ifi_2022.pdf": {
+      "sha256": "6a559efbff8d515d198e85038060367f53fcd2d97ab97ea2c314fe49951c4b0d",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2023/num15_04/dgfip_statistiques_15_2023.pdf"
+    },
+    "dgfip_stats_15_ifi_2022.xlsx": {
+      "sha256": "19c7706215c33edcbca8f62dc935bdf086caa8f87b11a66a87fc25111f9ef67e",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2023/num15_04/dgfip_statistiques_15_2023.xlsx"
+    },
+    "ipp_note92_milliardaires.pdf": {
+      "sha256": "743769b021997edbcd9f30971508c196b676ce3645ef5e75abc71e8a82cd99df",
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/05/92_Note_IPP_Billionaires-version-actualisee.pdf"
+    },
+    "insee_rpm2023_patrimoine_composition.html": {
+      "sha256": "f3c80fef1f18a0b8e3232fd444b0bd07e2cddac8cef718cd5d7c28a92efc0788",
+      "url": "https://www.insee.fr/fr/statistiques/7941439?sommaire=7941491"
+    },
+    "bdf_comptes_distributionnels_methodologie_2024.pdf": {
+      "sha256": "a6f7af6591f38409280e1edeb92f4b766213a6f869ca99e95b147d8cacac8321",
+      "url": "https://www.banque-france.fr/system/files/2024-02/Donnees_et_methodologie_comptes%20distributionnels%20de%20patrimoine%20des%20m%C3%A9nages_2024_02_07.pdf"
+    },
+    "ggmsz_french_wealth_tax.pdf": {
+      "sha256": "17a0027e270924a860df16780559c1e6d87353352fd0cc61b64251db5b72857c",
+      "url": "https://gabriel-zucman.eu/files/GGMSZ2026.pdf"
+    },
+    "vm_tome1_plf2026_recettes.pdf": {
+      "sha256": "4703605df8bfd1b4a20b1889839ebc1ea5a9b434eb4460eb2b40749e107371a0",
+      "url": "https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1087930/file/PLF%202026%20-%20V&M%20TI%20-%20Evaluations%20des%20recettes.pdf"
+    },
+    "senat_r19_042_isf_ifi_transition.html": {
+      "sha256": "3daf07837c33f7adcda3c3b931fe3d7ab4dc5fb178be8004067417bab223c3e4",
+      "url": "https://www.senat.fr/rap/r19-042-1/r19-042-16.html"
+    },
+    "ipp_rapport46_isf_plafonnement.pdf": {
+      "sha256": "aa6250072ea72d9b76d926dca9121d80136999c29a9adebd122b90f086d262ba",
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/06/46_Rapport_IPP_46_ISFplaf-2.pdf"
+    },
+    "plf2026_texte_an_b1906.html": {
+      "sha256": "88ef308e62a21ce5c56af0aca6b5d3db2fd1f281631ae7df6cdbd237ab6788bc",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B1906.html"
+    },
+    "plf2026_evaluations_prealables.pdf": {
+      "sha256": "9f53516f81391e0574aec89a9c0315e8caa6c30f9ecf1a6327d64b1fb8cb9fea",
+      "url": "https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1087921/file/PLF%202026_Evaluations%20pr%C3%A9alables_Vdef.pdf"
+    },
+    "dgfip_stat_41_ir_2024.pdf": {
+      "sha256": "ffc54026d9082e97d34705a677b7eb20d81536cc952f07f444243a62fc2ecb5a",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.pdf"
+    },
+    "dgfip_stat_41_ir_2024_tables.xlsx": {
+      "sha256": "0d7fd5b950231738da88f7f62827fbd41da8247dac6ca1f3d93812452a76a4f8",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.xlsx"
+    },
+    "rei_2025.zip": {
+      "sha256": "8bd3745d2851ea1da6d3b9f4ee5a9f5c3b8aa87523785c9f69ee69b6606ced2c",
+      "url": "https://data.economie.gouv.fr/api/v2/catalog/datasets/impots-locaux-fichier-de-recensement-des-elements-dimposition-a-la-fiscalite-dir/attachments/rei_2025_fichier_notice_tracezip"
+    },
+    "dgfip_stat_46_tf_2025.pdf": {
+      "sha256": "eb1ecd012caba1222f1beba0601d35f455b2dd939fcac2a2a95761f36bf1daef",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2026/num46_05/dgfip_stat_46_tf_2026.pdf"
+    },
+    "resf_2026.pdf": {
+      "sha256": "79d577f3068315c500b6f749c40d2e59450424a31061ce0d46646317ab04996e",
+      "url": "https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1087924/file/RESF%202026.pdf"
+    },
+    "insee_ir158_dette_t1_2026.pdf": {
+      "sha256": "71475685591aca3976f8df501a01bf5b88a8e2130c42ae4b8585606888665745",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/version-html/9010340/IR158-Dette_1t2026.pdf"
+    },
+    "insee_ir158_dette_t1_2026_series.xls": {
+      "sha256": "7e31f42e45b211629a1c38241bb58d39401eee34650f973c5a2d9de9771807d5",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9010340/IR_dette_T1_2026_SL.xls"
+    },
+    "insee_dette_maastricht_detail.xlsx": {
+      "sha256": "e98889b0a109a066ffe1f88e724ee41ec722daa506c4af66c47628dc15c864ee",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9035065/dette.xlsx"
+    },
+    "insee_cn2025_pib_T1101_1103.xlsx": {
+      "sha256": "79dae87233daf59345a8fee530ae427877c9f68bd67f21d129bffaf12bad3c14",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988797/T_1101_1103_fr.xlsx"
+    },
+    "plf2026_pap_engagements_financiers.pdf": {
+      "sha256": "2715898f5466cd9089dad97d99b0ad0365a54eea9b3bdb2cdfb3f3bb76314e34",
+      "url": "https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1087975/file/PAP2026_BG_Engagements_financiers_Etat_EB.pdf"
+    },
+    "aft_encours_detaille_oat_2026-09-13.html": {
+      "sha256": "74cad2492271f0a58b8873769690e46fc3a3358affd0d77c30e8d5a717b652dc",
+      "url": "https://www.aft.gouv.fr/fr/encours-detaille-oat"
+    },
+    "aft_encours_detaille_btf_2026-09-13.html": {
+      "sha256": "3dba70cca3311d38c69c92c677be4cb1e8ff1a3d6fd3dc7d78ab45a5d3baed61",
+      "url": "https://www.aft.gouv.fr/fr/encours-detaille-btf"
+    },
+    "aft_bulletin_mensuel_435_aout_2026.pdf": {
+      "sha256": "a28f3d02d3360a2ffe42e16309bbc3cb2ddd3cea01930965e31a85b14c0fca5f",
+      "url": "https://www.aft.gouv.fr/fr/publications/bulletins-mensuels"
+    },
+    "erfs_2022_fpr_dictionnaire.pdf": {
+      "sha256": "0a0ef10af680ea8a0e077fa13ce3eec9a5bb6324056331e68d1421572648d8b7",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "erfs_2022_methodologie.pdf": {
+      "sha256": "d06fa2395ae7d7071912cbbac98a3fb26303bd8f64637c0ecb15980228b89054",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "erfs_2022_fpr_liste_variables.xlsx": {
+      "sha256": "9334620bee8077e515a5834ddf0fcd36b7b9346f75cb6e7cb42e893a92f57fd2",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "erfs_2022_eec_dictionnaire_codes_fpr.pdf": {
+      "sha256": "27666eb99d43c791902de3c0205b7f775d42585eb3f003d33629cb5c91a57704",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "erfs_2022_eec_t4_questionnaire.pdf": {
+      "sha256": "7f0fb03e0964ca1d78120840064b0ae8f6a7991be50b6a8dcc3b9a07f6dde706",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "erfs_2022_formats_stata.txt": {
+      "sha256": "85ffdc67ed0d0af244bd870584624cb44a6d1ca69b8b7d9747e0faef3585acd4",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "cerfa_2042_4318.pdf": {
+      "sha256": "a306518ce3e7feff29a797f2c020ee04c9b28df23ae2302cf526bd9f8f25eea9",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "cerfa_2042_4319.pdf": {
+      "sha256": "50318181413a0b71d0dd8c0e2cd94adf1e03ea50692aee7441b60b1948d486bf",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "cerfa_2042_4359.pdf": {
+      "sha256": "b30daa44f0aa29ec00d5d78457e009a41141264ce6ee6cceca2a22f0615a72ce",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "cerfa_2042_4384.pdf": {
+      "sha256": "d3a64187ea12b8ccb89c2b3c0dcc7c1468cf29d0eee38d128583ccb7484d392a",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais"
+    },
+    "insee_cn2025_t7301_compte_administrations_publiques_S13.xlsx": {
+      "sha256": "9c020cff6650162ffdec9c116f7bc288a6ac0084c2e0f5cc1ac8b572445d1845",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988833/T_7301_fr.xlsx"
+    },
+    "eurostat_gov_10dd_edpt3_fr_sfa.json": {
+      "sha256": "1e5213cd1d17607a205f3ad5508b3589d20632fa84b29dfac6482e42c00ba4b4",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10dd_edpt3?format=JSON&geo=FR&sector=S13&unit=MIO_EUR&na_item=GD_CH&na_item=B9_T3&na_item=F_ASS&na_item=ORADJ&na_item=K61&na_item=KX&na_item=YA3"
+    },
+    "plf2027_texte_an_b3210.html": {
+      "sha256": "7fcd191974d807a1b83fe63b4903a57916ed33c454056ed5ee76bf34e00dbc42",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B3210.html"
+    },
+    "plf2027_evaluations_prealables.pdf": {
+      "sha256": "b1142977a5e33fc93b36aec3cf97a60adc4e5df8b7504e523bc46a006c0a0801",
+      "url": "https://www.assemblee-nationale.fr/dyn/contenu/visualisation/1128179/file/PLF%202027%20-%20Evaluations%20pr%C3%A9alables.pdf"
+    },
+    "TD_POP2_2021_csv.zip": {
+      "sha256": "da45addb4ae864c111d8b81560963646fb45f10f75f676e1bcee8a028e2b0eb1",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8202264/TD_POP2_2021_csv.zip"
+    },
+    "TD_POP3_2021_csv.zip": {
+      "sha256": "71b96db19844f438587994aeb9b866486ab15019bf85d287be45a84157fde319",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8202264/TD_POP3_2021_csv.zip"
+    },
+    "dgfip_ir_2042_nat_export_2026-10-15.csv": {
+      "sha256": "e984973355e0a27ede6d9f9a2b6880ebb3ca552bfb72ed589d761a47cf697e82",
+      "url": "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/ir-declarations-2042-nat/exports/csv?use_labels=true"
+    },
+    "insee_cn2025_t3201_depenses_recettes_APU_S13.xlsx": {
+      "sha256": "487d4299a5bac8d616000952fd012a0eb6d251a3586508165fc37d64a73a397a",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/T_3201_fr.xlsx"
+    },
+    "iza_dp6735_2012_bargain_orsini_peichl_labor_supply.pdf": {
+      "sha256": "bafcea339a581c5b242e0ac82b30815995db3a09b72af3fd125fb0a6feb3d882",
+      "url": "https://docs.iza.org/dp6735.pdf"
+    },
+    "france_strategie_2023_fiscalite_capital_rapport_final.pdf": {
+      "sha256": "054482853fde6777a88a6da92427b66da13e9ab447b5e81b225a8de1b698a8df",
+      "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/Rapport/fs-2023-rapport-isf-quatrieme_rapport_complet_17octobre_2.pdf"
+    },
+    "ipp_rapport_47_2023_bach_et_al_creations_entreprises.pdf": {
+      "sha256": "3ff9d014aacff19de65d00fb82e37846dcf39468a0f6aeb4e084e1d18680ea6b",
+      "url": "https://shs.hal.science/halshs-04439415v1/file/Rapport_IPP_47_ISFcrea_compressed.pdf"
+    },
+    "mesr_gecir_cir_2019_semi_definitif_publication_longue.pdf": {
+      "sha256": "b36bf74a9d3f64eb2393e53cdb9ea8dd0a3be70bd8d611bc697c5e301551470d",
+      "url": "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2022-12/le-cr-dit-d-imp-t-recherche-en-2019-semi-d-finitif---publication-longue-25903.pdf"
+    },
+    "mesr_gecir_cir_2021_provisoire.pdf": {
+      "sha256": "b58729e7b5c76ae701822903ec4bc14771d03ff9d8fcad2d66fd1c8c43027076",
+      "url": "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2023-11/le-cr-dit-d-imp-t-recherche-en-2021---provisoire-30075.pdf"
+    },
+    "ipp_rapport_22_2019_bozio_cottet_py_cir.pdf": {
+      "sha256": "328725b0bc90cb477140b88f5d6f28e1545718be2ae017245bf9346e6e232e9c",
+      "url": "https://www.ipp.eu/wp-content/uploads/2019/03/evaluation-impact-reforme-credit-impot-recherche-ipp-mars-2019.pdf"
+    },
+    "tresor_eco_290_2021_reforme_cir_2008.pdf": {
+      "sha256": "342669cf356f62b3af6f47535ae428c631e949a6983a2cdbcaaae54845b86a54",
+      "url": "https://www.tresor.economie.gouv.fr/Articles/7e114a21-4f00-4d51-8e58-523b99ae76aa/files/0ab81d2a-0f49-42d5-8101-85c5a37c019d"
+    },
+    "gechert_heimberger_2021_imk_wp210_corporate_tax_growth.pdf": {
+      "sha256": "de3a5add486a2f3183e6f50445b4040c1f0abe43173e47a0fece4f7ac3c64a37",
+      "url": "https://www.boeckler.de/pdf/p_imk_wp_210_2021.pdf"
+    },
+    "hanappi_millot_turban_2023_oecd_eco_wp1765_investment.pdf": {
+      "sha256": "eef40d87de074b4d31fdaf99882c359edb04d67e684fd7bf0c9282f18e0f7f05",
+      "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2023/07/how-does-corporate-taxation-affect-business-investment_bf34611b/04e682d7-en.pdf"
+    },
+    "oecd_cts_2026_explanatory_annex.pdf": {
+      "sha256": "d170971e1ab2ab8269d8d036141973d84c6e8e6cf91e25334999f35e64be6441",
+      "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/corporate-taxation/explanatory-annex-corporate-tax-statistics.pdf"
+    },
+    "da_rin_di_giacomo_sembenelli_2011_aam_firm_entry.pdf": {
+      "sha256": "d2249333d300c80f6a30a4ac4355ce036da53a12c3449f845c32b1481a4327c7",
+      "url": "https://iris.unito.it/bitstream/2318/87892/2/JPubEc-open.pdf"
+    },
+    "ec_dp098_2019_semi_elasticities_budget_balance.pdf": {
+      "sha256": "d3c5889991fdb7709d2f8d9d41ee1c8d512f6041f281b24095c0793fe66ba03c",
+      "url": "https://op.europa.eu/o/opportal-service/download-handler?identifier=21a8100d-a9ce-11e9-9d01-01aa75ed71a1&format=pdf&language=en&productionSystem=cellar&part="
+    },
+    "tresor_eco_97_2012_allegements_bas_salaires.pdf": {
+      "sha256": "c38c7c0bf05e73ba9e1cb04ad1c02158c2e2e2f0173aba1ecfd671fefe752344",
+      "url": "https://www.tresor.economie.gouv.fr/Articles/41e04a15-fd18-4b4a-b425-dc774d68eb4e/files/acbed36f-ec77-4921-a9b9-ed2d3d533151"
+    },
+    "bozio_wasmer_2024_exonerations_rapport_final.pdf": {
+      "sha256": "8a5d215f62f1342b5e780952f585e2833c409f32acadf03fe308de5ceaff7990",
+      "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/Rapport/rapport_vffff_241003.pdf"
+    },
+    "ipp_notes_46_2019_fiscalite_revenus_capital.pdf": {
+      "sha256": "5640d5fd9414de87d89a1ff8e9c3828b6c6d6155f4188e269b91a1baa3cab732",
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/05/46-notesIPP-octobre2019.pdf"
+    },
+    "pse_wp_2019_70_v2_bach_et_al_dividends_flat_tax.pdf": {
+      "sha256": "8705129da4897331ee484a845c2c4e29fd5bdc98c68b262797faf8a688d3973a",
+      "url": "https://shs.hal.science/halshs-02415470v2/file/wp1970_2.pdf"
+    },
+    "cae_note_49_2019_baisses_de_charges.pdf": {
+      "sha256": "58220e97634d6ad64cbc642043b8dae30afacbae1137114d6df22d99f27761da",
+      "url": "https://cae-eco.fr/static/pdf/cae-note049v4.pdf"
+    },
+    "ipp_rapport_25_2019_evaluation_fiscalite_dividendes.pdf": {
+      "sha256": "e83eece9a4097f9dd6719dff91c83fc62814a7745d6fea7a5dd0ede95960e5a4",
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/06/25_evaluation-impact-fiscalite-dividendes-ipp-oct-2019.pdf"
+    },
+    "oecd_cts_etr_baseline_fra_2025.csv": {
+      "sha256": "ac23f9617635769bef1d6ca814262d14bee1e2b534e9dc425cf80466657c4d3d",
+      "url": "https://sdmx.oecd.org/public/rest/data/OECD.CTP.TPS,DSD_ETR@DF_ETR_BASELINE,2.1/FRA.A.......?startPeriod=2025&endPeriod=2025&format=csvfilewithlabels"
+    },
+    "plfss2027_texte_an_b3211.html": {
+      "sha256": "b68128d00b620e25e0aece7b9697e02f1bdc43434d4f720b60e1fa888cfd1bf1",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B3211.html"
+    },
+    "plfss2027_evaluations_prealables.pdf": {
+      "sha256": "80e0b30b6b8bc7f33d6a20a2eba6edbd1927c5e1b023c55c7a69c015c549ea34",
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/PLFSS/2027/annexe-9.pdf"
+    },
+    "plfss2026_annexe9_evaluations_prealables.pdf": {
+      "sha256": "ef666d688cc84bc879790390b4ec2d8449743952cca679e9a5bab0c4f3671c31",
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/PLFSS/2026/PLFSS2026-Annexe09-GenerationXBOOK_avec%20couverture.pdf"
+    },
+    "cnaf_pa_conjoncture_32_2024t4.pdf": {
+      "sha256": "890bd8ed0879c97c027e9105dd0755974cbb88651c6cb8dc1028d3330b767847",
+      "url": "https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2024T4.pdf"
+    },
+    "cnaf_analyses_statistiques_5_2025_pa.pdf": {
+      "sha256": "75649c7eb75d50d2d041c30ec1fd00f9200bee1b0593c7f59ac6e4ac3539db7d",
+      "url": "https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Analyses_statistiques/CNAF_n%C2%B05_Analyses_statistiques_PA.pdf"
+    },
+    "dgfip_statistiques_37_2025_tva_2024.xlsx": {
+      "sha256": "454b74964e8c736b74eedd59ad94f3ba5e9eef1b3596c80a5dfe8cdff42bad8f",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num37_09/dgfip_stat_37_2025.xlsx"
+    },
+    "insee_bdf2017_france_entiere_csv.zip": {
+      "sha256": "f6d4a3344031f4acb6037a2a370deb7774d7b2e3d2192f600b38d75e3627169d",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4648335/bdf2017fe_csv.zip"
+    },
+    "insee_cn2025_conso_effective_fonction.xlsx": {
+      "sha256": "e7a0b42f2b572c7b92a42ce4f02b616df22410d7781d806c350dbe4ab9f7396d",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988813/T_CONSO_EFF_FONCTION_fr.xlsx"
+    },
+    "plf2027_jaune_budget_vert.pdf": {
+      "sha256": "db144c8a202c50553520d3cdc4d4c7124deca39ad06d67caa0729be5789f0600",
+      "url": "https://www.assemblee-nationale.fr/dyn/contenu/visualisation/1129732/file/4-Jaune%202027%20-%20Budget%20vert.pdf"
+    },
+    "sdes_bilan_energetique_2024_publication.pdf": {
+      "sha256": "42a090baa16d0e3873995af0c3066dd5cda20b39c010db5f1ce64fa072d79028",
+      "url": "https://www.statistiques.developpement-durable.gouv.fr/media/9087/download?inline"
+    },
+    "sdes_bilan_energetique_2024_series_longues.xlsx": {
+      "sha256": "10f6c43b574c28726a542831419ff484c0321cf86fdb2ce5fdf73816ef7ebdb9",
+      "url": "https://www.statistiques.developpement-durable.gouv.fr/media/8958/download?inline"
+    },
+    "tresor_eco_371_2025_composition_tva.pdf": {
+      "sha256": "d3daa52ccfdc05978c7939d97ece4018803c0d0a868191c5c538699dc6bcadfb",
+      "url": "https://www.tresor.economie.gouv.fr/Articles/c462ac7f-76db-4c33-9bb3-dcc6886ed898/files/f4d0d1ac-fc61-4cf3-ab3f-094385b218bd"
+    },
+    "plf2021_texte_an_b3360.html": {
+      "sha256": "42c3b1217800a0c58e34ebce799f5b4492362aa05d9c970e5e2837a3261ccbf2",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L15B3360.html"
+    },
+    "plf2022_texte_an_b4482.html": {
+      "sha256": "e3f1db2b1299e4799e28cd81435eda0c707488c7f2c567f1eeef450a913c8485",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L15B4482.html"
+    },
+    "plf2023_texte_an_b273.html": {
+      "sha256": "81ff50c02fd58c33264d607cb4f56b73b603c947670fbc7d574de387006320d7",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L16B0273.html"
+    },
+    "plf2024_texte_an_b1680.html": {
+      "sha256": "58d9406553b5598b256ab3b830bd20186abedc57b7c75d59e3f3032a9576db5a",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L16B1680.html"
+    },
+    "plf2025_texte_an_b324.html": {
+      "sha256": "00378a9a82ed255db11c5ef97154e62d182b0799f91619807ad67f1b9b2fbabe",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B0324.html"
+    },
+    "plfss2021_texte_an_b3397.html": {
+      "sha256": "dff95e4f2a96e2c082d9a14bcd420ce126499e8afc828b8b58793ff605d3a2ed",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L15B3397.html"
+    },
+    "plfss2022_texte_an_b4523.html": {
+      "sha256": "34db99c9501217d72d06583b86c7581d3b111d9a6e2c8b4665d79eb025329827",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L15B4523.html"
+    },
+    "plfss2023_texte_an_b274.html": {
+      "sha256": "84ddb93deaaa467b5b895e3b5b12a1a0bdd127bedb2644c52508c4aae0ff96eb",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L16B0274.html"
+    },
+    "plfss2024_texte_an_b1682.html": {
+      "sha256": "b33fb98298789a90055ee89bbd4ce10c49254b331a93851d1bea0cd4cfb412c6",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L16B1682.html"
+    },
+    "plfss2025_texte_an_b325.html": {
+      "sha256": "7788ec6a7c8dca1412584acc00b02af6b9c4545a79aa6923716779262841cd5b",
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B0325.html"
+    },
+    "insee_bdm_001768695_ipc_hors_tabac_annuel.xml": {
+      "sha256": "028a7434e9110532f32c503bee99ced572a79b844226d4155e03485002bcabec",
+      "url": "https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/001768695"
+    },
+    "insee_cn2025_t6205_salaires_bruts_branches.xlsx": {
+      "sha256": "1e6d708aee9546c82d13d406e22a3c21cc2706a1c78c1037f58d4266ae83f454",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988821/T_6205_fr.xlsx"
+    },
+    "insee_cn2025_t6210_emploi_salarie_branches.xlsx": {
+      "sha256": "8cc073067002a3a06b7be09a469dc44944dc483e9826d3d552481aaa697d864b",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988823/T_6210_fr.xlsx"
+    },
+    "dgfip_stat_32_2025.xlsx": {
+      "sha256": "d8721958c326fb381818bddcf112f783f8f9af0dc1845fac49b43eb499292029",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num32_04/dgfip_stat_32_2025.xlsx"
+    },
+    "dgfip_stat_22_ir_2022.xlsx": {
+      "sha256": "ca58409105940a089d4d307e4e1ef219695f6a277ca8a51479124684a3c4e70c",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2024/num22_04/dgfip_stat_ir_2022.xlsx"
+    },
+    "insee_filosofi_2023_TCRD_022.xlsx": {
+      "sha256": "1331aa5469a0a54c519d21d80ea4168a211a1387cadbadb6b0c6daf9eb4e65a5",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/2012717/TCRD_022.xlsx"
+    },
+    "insee_cn2026_T_7401_compte_menages.xlsx": {
+      "sha256": "f27bfdffc08c809398bb09b1f1c0ef83376b3194e10bc8daf8ace7ee3283826e",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988835/T_7401_fr.xlsx"
+    },
+    "insee_ip2114_revenus_non_salaries_2024.xlsx": {
+      "sha256": "2761bc1ae40e2f449b4c59f954e1e8d70ea29acb6c08f3e300b6306370afae44",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9013403/IP2114.xlsx"
+    },
+    "insee_ip2114_revenus_non_salaries_2024.pdf": {
+      "sha256": "02fefb0fd008b606e00644c8ae6fb5f26e084288a8f6a3e4312c8bca5a0444a1",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/version-html/9013403/IP2114.pdf"
+    },
+    "TD_FAM6v1_2021_csv.zip": {
+      "sha256": "788008303b4666cd1e21eb5c0768119814b8a39194ba033410e03a20bdf66d84",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8205229/TD_FAM6v1_2021_csv.zip"
+    },
+    "insee_rp2022_SL_PERS1_series_longues.xlsx": {
+      "sha256": "b32c12609ee4925632afd3249299da9fe22aaa347ed1f76e40e42ea2fbae6f44",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8613715/SL_PERS1%202022%20series%20longues.xlsx"
+    },
+    "insee_rp2023_log_t10_france.html": {
+      "sha256": "ab6fd37010647139322d727be86da71756803aad0424c90ee99df57d58606c5f",
+      "url": "https://www.insee.fr/fr/statistiques/2011101?geo=FE-1"
+    },
+    "ircom-2025-revenus-2024.zip": {
+      "sha256": "3df14c80f69afb76a8c6d1f13cd2fb9e861ba9e162bc1e516c6fb2ed77338b00",
+      "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20260526-131537/ircom-2025-revenus-2024.zip"
+    },
+    "dgfip_ir_taux_marginal_2019_2024.xlsx": {
+      "sha256": "2fb279cf8d89e6737a0d1afe9b2dffd7719477944e09e69b442f50f653261f17",
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25519_ir_taux_marginal.xlsx"
+    },
+    "UU2020_au_01-01-2026.zip": {
+      "sha256": "262e511e5781ab9480eb77064f98c5dcaf35e21fa30e066fd88d89e3adcdaf5d",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4802589/UU2020_au_01-01-2026.zip"
+    },
+    "base_cc_logement_2023_xlsx.zip": {
+      "sha256": "0eccb43a2966f496c3fe397764da2992002a6694093834e5ec65e470e8cc83cc",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8997194/base_cc_logement_2023_xlsx.zip"
+    },
+    "beneficiaires_CAF_31-12-2024_Iris.xlsx": {
+      "sha256": "e8f02333a22074f4460dd9e94d1f6b698623799a72c74c315154abad00137e17",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8682393/beneficiaires_CAF_31-12-2024_Iris.xlsx"
+    },
+    "sdes_rpls_2024_datalab_essentiel.pdf": {
+      "sha256": "06ea948ce4babd5df770decc764a1991ae4dacb942ccb5a97cea27f426e986a6",
+      "url": "https://www.statistiques.developpement-durable.gouv.fr/media/7974/download?inline"
+    },
+    "insee_ecrt2026_f26_salaires_prive_age_sexe.xlsx": {
+      "sha256": "5e3b2648ca13be5192585473cbe46e6ebd11622b6a9b5e132b5441436436b262",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733089/ECRT2026_F26.xlsx"
+    },
+    "insee_ecrt2026_f29_salaires_fonction_publique.xlsx": {
+      "sha256": "82a22593c10ffd686287e1b3e4ce9147c914b720c14c3ddb252e60ad9b0d7ccb",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733095/ECRT2026_F29.xlsx"
+    },
+    "insee_ecrt2026_F30_revenu_salarial.xlsx": {
+      "sha256": "c6b2d697d461e6b8c0f07c2cae5a720358dd83a8cc28b642455bd76bc4994854",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733097/ECRT2026_F30.xlsx"
+    },
+    "insee_revenus_salariaux_2022.xlsx": {
+      "sha256": "6e749570d9c43e114173eca03354332123c1d115b52811fb0147766a932bf17e",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/2381326/marc-salair-revenu-salarial.xlsx"
+    },
+    "drees_er1379_non_recours_ppa.pdf": {
+      "sha256": "222853d711e012ee3bb36d423a8381a8e1edfb019d341dbe163e8cd06262ac13",
+      "url": "https://drees.solidarites-sante.gouv.fr/sites/default/files/2026-07/ER1379_Non-recours_PA.pdf"
+    },
+    "senat_r25-728_ccomptes_prime_activite.pdf": {
+      "sha256": "8990f4c044ea85301f77ef2154ce7d881e12eb0d8fdab14564faee431633d0df",
+      "url": "https://www.senat.fr/rap/r25-728/r25-7281.pdf"
+    },
+    "insee_ecrt2026_f2_emploi.xlsx": {
+      "sha256": "a20cb076b38193b43f32fde54ced4d1ba61496f8288b7e9286ad2ae932b41779",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8733041/ECRT2026_F2.xlsx"
+    },
+    "insee_cn2025_t1105_pib_trois_approches.xlsx": {
+      "sha256": "6799d776e81788a7395ec27e01f8046520db076e2a2a29c5523269096b76dc3f",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988797/T_1105_fr.xlsx"
+    },
+    "insee_cn2024_t8202_patrimoine_snf.xlsx": {
+      "sha256": "3b367ffb16cfbb7019af4425732d7ac72476517b3bf9b88d7b03e19b09d811fd",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8574720/T_8202.xlsx"
+    },
+    "insee_entfra2023_fiche3_2_multinationales.pdf": {
+      "sha256": "13b24620c0ffab49785bd2d38b46565a1f6a8195559fcd24724a0a760d4baa9d",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/7678556/ENTFRA23-F16.pdf"
+    },
+    "devereux_lockwood_2006_foreign_owned_capital.pdf": {
+      "sha256": "5f364c6dc9e643d5a5b0106bc3428718ded6426dd36d646b7eb4e17598f10bde",
+      "url": "https://oxfordtax.web.ox.ac.uk/sitefiles/devereux-lockwood-taxes-and-the-size-of-the-foreign-owned-capital-stock-which-1y9d1ifqcl.pdf"
+    },
+    "insee_cn2025_t7101_compte_snf.xlsx": {
+      "sha256": "192cf3b1f502e7cdaa1d25db8ff998a6ac1251ab1446ea7c824169cdaec92676",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988829/t_7101_fr.xlsx"
+    },
+    "insee_cn2025_t7201_compte_sf_en.xlsx": {
+      "sha256": "f5f11301241607b43e3820308dbe1770e8fc25848a9e28109a0267f62cba2a97",
+      "url": "https://www.insee.fr/en/statistiques/fichier/8988902/T_7201_en.xlsx"
+    },
+    "bdf_wp736_2019_fr_bdf.pdf": {
+      "sha256": "9cb47d186ab3557300983f90a16ce99bcd70d71e7736067215fb250a75fbc5e2",
+      "url": "https://www.banque-france.fr/system/files/2023-04/wp736.pdf"
+    },
+    "insee_eec2025_t302_chomage_bit.xlsx": {
+      "sha256": "0ec9012029c94795350d81ffd7a3b511bcc8281e913a4860c62d81e058245d81",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8977299/EEC_T302.xlsx"
+    },
+    "insee_ndc_2019_06_dossier_pouvoir_achat_consommation.pdf": {
+      "sha256": "ed745919e29d0d940b90b6f680a0f8f11e229403c96dc79f46f17973e9f18aea",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4176734/062019_dossier1.pdf"
+    },
+    "insee_cn2025_t3105_passage_deficit_dette.xlsx": {
+      "sha256": "964ccff6ff8ca50d00b8031b337bfcf94fa7e92056946d73e3a1594d36745234",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988843/t_3105_fr.xlsx"
+    },
+    "insee_cn2025_t6208_emploi_total_branches.xlsx": {
+      "sha256": "5c7c2415a861b2de2cec8c90aed55cc5f2b4fa7a5c5a0ee4ad68c34c31ae1723",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988823/T_6208_fr.xlsx"
+    },
+    "insee_bdm_creations_entreprises_2009_2025.xml": {
+      "sha256": "fd030f854043f4ee9e4f97d19e19e36407692e22ea9e459aa9568aa4f90327ac",
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/010755537+010755410+011811817+011811818?startPeriod=2009-01&endPeriod=2025-12"
+    },
+    "insee_bdm_defaillances_entreprises_2009_2025.xml": {
+      "sha256": "5793359f3618befb14350264dddb5c11641c9b44bfbf3fe0becca73cffed5f5b",
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/001656093+001656094+001656095+001656096+001656097+001656098+001656099+001656100+001656101+001656102+001656103+001656104?startPeriod=2009-12&endPeriod=2025-12"
+    },
+    "eurostat_une_rt_a_fr_2009_2025.json": {
+      "sha256": "b3f81ffbfe660faffae2d43cde3f7b69a31d21c672bba0d4b2c9af283d850df4",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_a?format=JSON&geo=FR&age=Y15-74&unit=PC_ACT&unit=THS_PER&sex=T&sex=M&sex=F&sinceTimePeriod=2009&untilTimePeriod=2025"
+    },
+    "eurostat_irt_lt_mcby_a_fr_2009_2025.json": {
+      "sha256": "f1615eb91b437fe2be7e81c11a79daeee6e2bb2eca8dce9bf8e2aa94b02c6465",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/irt_lt_mcby_a?format=JSON&geo=FR&sinceTimePeriod=2009&untilTimePeriod=2025"
+    },
+    "eurostat_irt_lt_mcby_m_fr_2009_2025.json": {
+      "sha256": "d6b316a858d4f64a5ec771a64aecea8114b5a3e5644a0f5761210329f82f93b0",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/irt_lt_mcby_m?format=JSON&geo=FR&sinceTimePeriod=2009-01&untilTimePeriod=2025-12"
+    },
+    "Freemium_jorf_global_20261108-140000.tar.gz": {
+      "sha256": "6e09df4105f15b62ff363c74c39637e1c9007a801aa8cca2f4bbeddb27edeb1a",
+      "url": "https://echanges.dila.gouv.fr/OPENDATA/JORF/Freemium_jorf_global_20261108-140000.tar.gz"
+    },
+    "ocde_eo119_xmkt_fra_2009_2025.csv": {
+      "sha256": "e475814b8c0f29609a9b51867272f1a95ca029d8b8c814b7570229f7433bfa60",
+      "url": "https://sdmx.oecd.org/public/rest/data/OECD.ECO.MAD,DSD_EO@DF_EO,/FRA.XMKT.A?startPeriod=2009&endPeriod=2025&format=csvfilewithlabels"
+    },
+    "gechert_havranek_irsova_kolcunova_2021_capital_labor_substitution.pdf": {
+      "sha256": "0376895befc6a8b37a796a5cb8246b033480b8dc802a0d6c1206bd51f760cd32",
+      "url": "https://meta-analysis.cz/sigma/sigma.pdf"
+    },
+    "imbs_mejean_2010_trade_elasticities.pdf": {
+      "sha256": "a7cc96841d668aa0808eb958ba67a0139d8a0de52632e51f41f9693a80c82cae",
+      "url": "https://www.frbsf.org/Imbs.pdf"
+    },
+    "iza_dp7698_2013_bargain_peichl_labor_supply_survey.pdf": {
+      "sha256": "1efffd875ff61bcf183e6c092fdd851c6cafdbb23cb8cb9a2c7c1cd95a99b2ec",
+      "url": "https://docs.iza.org/dp7698.pdf"
+    },
+    "iza_dp7958_2014_lichter_peichl_siegloch_labor_demand.pdf": {
+      "sha256": "771f6a13ddd0bf302f4643a75b26a74cffb0a3514cbbd7a67f0e99b9b001e913",
+      "url": "https://docs.iza.org/dp7958.pdf"
+    },
+    "tinbergen_dp02029_2002_nijkamp_poot_wage_curve.pdf": {
+      "sha256": "c8d9995fee88bcc91c9a407cc170172e747075588a703e217b1ec29f569f5c91",
+      "url": "https://papers.tinbergen.nl/02029.pdf"
+    },
+    "insee_bdm_creations_region_secteur_arretee_2000_2021.xml": {
+      "sha256": "58ece3f90b1d319e3babee6286ec05bff63ea9b8e4fcc3654bf09e6f1c71e920",
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/CREATIONS-ENTREPRISES/T..TYPE-ENT_HAE+TYPE-ENT_TOTAL......BRUT.?startPeriod=1990-Q1&endPeriod=2025-Q4"
+    },
+    "insee_bdm_creations_region_secteur_m2022_2012_2025.xml": {
+      "sha256": "df4acf2fe475dfbe8cfcdd5c538206b7adaf9909f3600d2b1260a8442618ed2d",
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/CREATIONS-ENTREPRISES-METHODE-2022/T..TYPE-ENT_PM+TYPE-ENT_TOTAL+TYPE-ENT_HAE......BRUT.?startPeriod=2000-Q1&endPeriod=2025-Q4"
+    },
+    "insee_bdm_defaillances_region_secteur_1990_2025.xml": {
+      "sha256": "b5f28ce0207ecc7e3fc5fb62f7743f2f8ce741c165a4788b658eab021fb5ed86",
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/DEFAILLANCES-ENTREPRISES/T..NOMBRE_DEFAILLANCES.....BRUT.?startPeriod=1990-Q1&endPeriod=2025-Q4"
+    },
+    "bce_exr_hci_fr_h03_nrd0_2009_2025.csv": {
+      "sha256": "527de0dbaebb1a44f2ebd53422a44ae14ef9a918a58f245e677bf174f59e56ef",
+      "url": "https://data-api.ecb.europa.eu/service/data/EXR/A.H03.FRF.NRD0.A?format=csvdata&startPeriod=2009&endPeriod=2025"
+    },
+    "bce_mir_fr_credits_snf_fixation_plus_1an_2009_2025.csv": {
+      "sha256": "a79e3adef5a3a2c530867020cabec571bb377fe2c21878ea1802ae78399f7808",
+      "url": "https://data-api.ecb.europa.eu/service/data/MIR/M.FR.B.A2A.K.R.A.2240.EUR.N?format=csvdata&startPeriod=2009-01&endPeriod=2025-12"
+    },
+    "insee_bdm_010002078_brent_euros_2009_2025.xml": {
+      "sha256": "c505c194cdfa50da1494003dc308b42219c9e40165df0e9e7f32b8c62346df3b",
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/SERIES_BDM/010002078?startPeriod=2009-01&endPeriod=2025-12"
+    },
+    "insee_bdm_taux_chomage_localise_1990_2025.xml": {
+      "sha256": "fe401972d756aca03bc0f1c3e4e083565fc4a7cac41a3f686fc46d92dfa7d8cf",
+      "url": "https://www.bdm.insee.fr/series/sdmx/data/TAUX-CHOMAGE/T.TAUX_CHOMAGE_LOCALISE....?startPeriod=1990-Q1&endPeriod=2025-Q4"
+    },
+    "insee_cn2025_t6201_6203_va_branches.xlsx": {
+      "sha256": "73bc0fcbc4fb74a5d701c75ec6467fea4343e8e8a31ca95f41603e61e47a6c4c",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988821/T_6201_6203_fr.xlsx"
+    },
+    "insee_cn2025_t6301_6303_fbcf_branches.xlsx": {
+      "sha256": "6f4a513a90a7e37f701cfcb7dcaebcd34f7d37c1ddc17260720d8c8eb30fa164",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988825/T_6301_6303_fr.xlsx"
+    },
+    "insee_cn2025_t6461_6462_ccf_branches.xlsx": {
+      "sha256": "16e345a7fccb120c68d2332a4920d612e999dbf5033cd0a893bd99d07cb816df",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988825/T_6461_6462_fr.xlsx"
+    },
+    "urssaf_dep_na17i_effectifs_masse_1998_2025.csv": {
+      "sha256": "9c2c0a8466e2c9befc66856e8db2fa88496e55d1817fb40d32a103e701c2d0fe",
+      "url": "https://open.urssaf.fr/api/explore/v2.1/catalog/datasets/nombre-etab-effectifs-salaries-et-masse-salariale-secteur-prive-dep-x-na17i/exports/csv?delimiter=%3B&lang=fr"
+    },
+    "insee_cn2025_t3203_depenses_recettes_sous_secteur.xlsx": {
+      "sha256": "3ecbd58498ac7ae6db91af4d357fc46579c5dec2ace46b26270442df0e951708",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/T_3203_fr.xlsx"
+    },
+    "insee_cn2025_t3204_depenses_recettes_sous_secteur.xlsx": {
+      "sha256": "38695f8ead6cc70f3b1971f0f061df5ada803f5cd6b2e02a5f1d14e12bceb9bd",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/T_3204_fr.xlsx"
+    },
+    "insee_cn2025_t3205_depenses_recettes_sous_secteur.xlsx": {
+      "sha256": "8a9f601ebfe07b23300b5b0eb4fa6d1a35e7a8690ca69dcb1b935384fd15e1df",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/T_3205_fr.xlsx"
+    },
+    "insee_cn2025_t3212_depenses_recettes_sous_secteur.xlsx": {
+      "sha256": "6d384593ca748741641802a9a0c4c39be8db49432d8726cc16a5f58f14fea9db",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/T_3212_fr.xlsx"
+    },
+    "ccss_juin2025_rapport.pdf": {
+      "sha256": "8e0505aa85be5e59e6f898b1753c241b56b0d7cc782371f3e99550108bbdeb3a",
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf"
+    },
+    "ccss_mai2024_rapport.pdf": {
+      "sha256": "9673702efe0159b1575271d3ab0a05e3d06620a312552b38407517da776fa79b",
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2024/CCSS-mai%202024.pdf"
+    },
+    "ircom-2023-revenus-2022.zip": {
+      "sha256": "497c2d1ca4e439865c38f8f854563e9718c4b57949aa39172ecd51449c37d317",
+      "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20240610-082154/ircom-2023-revenus-2022.zip"
+    },
+    "insee_ip2004_niveaux_de_vie_2022.xlsx": {
+      "sha256": "b8e909e3428de5052e27fda517eb7681329e40e2cd2dd5c7f3d4615fa105f228",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8216285/ip2004.xlsx"
+    },
+    "cnaf_rapport_dcf_comptes_2022.pdf": {
+      "sha256": "ef77607a17b93563a015fe0d7888438d892e5777f321b26914c17403caebe8d7",
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/qui%20sommes%20nous/Textes%20de%20r%C3%A9f%C3%A9rence/comptes%20et%20financements/Point%203%20Rapport%20du%20Dcf%20sur%20les%20comptes%202022.pdf"
+    },
+    "cnaf_pa_conjoncture_2023t4.pdf": {
+      "sha256": "26244616cff781ced1a95c65f834f34a23506c88dae2804546ebf15f6c4e4330",
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2023T4.pdf"
+    },
+    "ircom-2024-revenus-2023.zip": {
+      "sha256": "f3a8d6afd9af627359b8f37a73696429b58ac72b37b96d5b9ef35eadf9d2db6c",
+      "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20250919-135242/ircom-2024-revenus-2023.zip"
+    },
+    "insee_ip2063_niveaux_de_vie_2023.xlsx": {
+      "sha256": "0dea3c4c18360c6437f77662735b67b51aebd3b359663514341a596421b1c8e3",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8600989/ip2063.xlsx"
+    },
+    "cnaf_rapport_dcf_comptes_2023.pdf": {
+      "sha256": "edd21d8a46a3406760f98bffbcf9841e7341da402a6587d99e90f75cb0164eb0",
+      "url": "https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/qui%20sommes%20nous/Textes%20de%20r%C3%A9f%C3%A9rence/comptes%20et%20financements/Point_5_Rapport_du_Dcf_sur_les_comptes_2023.pdf"
+    },
+    "cnaf_rsa_conjoncture_2023t4.pdf": {
+      "sha256": "f59d81ef753241518989b13f3409d4c09c278bf34dccb44e56228d958b8456ae",
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2023T4.pdf"
+    },
+    "cnaf_rapport_dcf_comptes_2024.pdf": {
+      "sha256": "d63abb58ee10417ac0421171c82ab14d18c736f06f8f815a09c24e60d85f61fe",
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Professionnels/Nous_connaitre/textes_de_reference/etats_financiers/2024/Rapport_du_Dcf_sur_les_comptes_2024.pdf"
+    },
+    "cnaf_rsa_conjoncture_2024t4_def.pdf": {
+      "sha256": "e8befdcf2d0b1d7716cd53efb23acb9b6f7979e5893f27f961c782b694341cda",
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2024T4_def.pdf"
+    },
+    "cnaf_pa_conjoncture_2024t4_def.pdf": {
+      "sha256": "5d05161687e37e9a5945659f1d59c4f7aa5357777c8cd52109cf781cb544e7f2",
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2024T4_def.pdf"
+    },
+    "insee_erfs2023_ti09_niveau_de_vie_statut_occupation.xlsx": {
+      "sha256": "ec6cc1e613a94d1de8e26f51815f9b7c48957de20985dea14f89f4fd7fb4812f",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8731694/irsocerfs2023_ti09.xlsx"
+    },
+    "urssaf_ppv_trimestre_champ_large.csv": {
+      "sha256": "7612a75bd5f3a427cc342530d1787ed36ca4d7dd1e7737517b440fb4b43e2d91",
+      "url": "https://open.urssaf.fr/api/explore/v2.1/catalog/datasets/prime-partage-valeur-par-trimestre-champ-large-france-entiere/exports/csv?delimiter=%3B"
+    },
+    "insee_erfs2023_t03_composition_revenu_disponible_age.xlsx": {
+      "sha256": "ca856273ba2fee29b7bf6ca09ede0e166661e474b7e14388bc22456bb7a74d70",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8731688/irsocerfs2023_t03.xlsx"
+    },
+    "an_mecss_l16b1685_2023_exonerations_ferracci_guedj.pdf": {
+      "sha256": "3202a173bd3646a89cf9636e1842978ba23c13f7984a514f040d1a984b72c104",
+      "url": "https://www.assemblee-nationale.fr/dyn/16/rapports/mecss/l16b1685_rapport-information.pdf"
+    },
+    "insee_salfra2007_koubi_lhommeau_diffusion_smic.pdf": {
+      "sha256": "5554c6286f432b7b7f79aa97ff85a6443dac119cac98e958af49f776dfec21e3",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/1373191/salfra07ae.pdf"
+    },
+    "insee_empsal2011_goarant_muller_hausses_smic.pdf": {
+      "sha256": "b85653c6a5ef390f00344ffbfb4a24a206c4a642d57c76756a86a162d385c0a1",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/1373824/empsal11f.pdf"
+    },
+    "insee_es448_2011_cette_chouard_verdugo_smic_salaire_moyen.pdf": {
+      "sha256": "449c81bd9833dcb7d095693524355012529515bae85faf5b10a6d773fbab5248",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/1377686/ES448A.pdf"
+    },
+    "ges_smic_rapport_2024.pdf": {
+      "sha256": "215044f7cda37d2e00ff7f8719aad89d24ca45d5ddd562494697614e0a8b8a07",
+      "url": "https://strategie.gouv.fr/files/2025-02/smic-rapport-2024-11decembre15h45_vdef_complet.pdf"
+    },
+    "cnaf_pa_conjoncture_17_2019t4.pdf": {
+      "sha256": "40c0be887cfcc401756c8942caa0221219430af5402c59a7c5512912cb8a4684",
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/2020_Prime%20d'activit%C3%A9%20Conjoncture%20n%C2%B017.pdf"
+    },
+    "cnaf_pa_conjoncture_16_2019t4.pdf": {
+      "sha256": "6d0fd663c2b373bf06831ce2b73cbe1fe7de932b2a496d48d658bc49016927e8",
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/2020_Prime%20d'activit%C3%A9%20Conjoncture%20n%C2%B016.pdf"
+    },
+    "cnaf_essentiel_187_2019_depenses_2018.pdf": {
+      "sha256": "5b9b5f96eede3f7788c49eea19c5e9910698197bc54cb85986f4d023dc5352a9",
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Essentiel/187_2019_ESSENTIEL_Stabilite_des_depenses_PL_CNAF.pdf"
+    },
+    "insee_fps2020_d2_donnees.xlsx": {
+      "sha256": "ce48870ae6f3ecd2f0180afa30363fb7ec9e77ba164fbf663dfa54be536fadc5",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4797668/FPS2020_D2_donnees.xlsx"
+    },
+    "harasztosi_lindner_2015_who_pays_minimum_wage.pdf": {
+      "sha256": "8886b36d1d636f217a0eae729a914e39ba3633f2be7f223c5dc1190f26305ddb",
+      "url": "https://ipl.econ.duke.edu/seminars/system/files/seminars/1070.pdf"
+    },
+    "insee_bts2022_t305_deciles_salaire_brut_horaire.csv": {
+      "sha256": "6799dfe22e8f69685a31984331677c2aa54ffd2ffbc25f8aa427a1344ea6e92f",
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8219475/T305.csv"
+    }
+  },
+  "skeleton": {
+    "households": 199451,
+    "persons_observed": 353420,
+    "children_synthesised": 69927,
+    "households_with_extra_adults": 17034,
+    "couple_households_without_a_pair": 747,
+    "households_missing_noi_01": 2757,
+    "rattachement_probability": 0.70778141721875
+  },
+  "incomes": {
+    "employees": 24925774.60501392,
+    "gross_wages_before_calibration": 1002912772027.9094,
+    "gross_wages_after_calibration": 1037001400886.4045,
+    "wage_calibration_factor": 0.9970207956288104,
+    "pensioners": 15997979.772528922,
+    "pensions_total": 374366431543.0,
+    "unemployed": 2442717.792531058,
+    "unemployment_total": 35900000000.0,
+    "renters": 25795339.428376265,
+    "rent_total": 154320222245.7989,
+    "people_without_modelled_income": 6582876.6676230095,
+    "targets_scale": 1.0,
+    "self_employment": {
+      "self_employed": 3792104.210975126,
+      "micro_entrepreneurs": 1550093.9157749864,
+      "agricoles": 363826.67711582285,
+      "gerants": 980531.376327253,
+      "share_zero": 0.2946761711295885,
+      "total_before_calibration": 73211860927.06073,
+      "total_after_calibration": 73760400000.0,
+      "calibration_factor": 1.007492489140329,
+      "gerants_taxable_pay": 30717889341.0
+    },
+    "gerants_gross_pay": 37076510972.84248,
+    "exempt_wage_share": 0.06846063555640514,
+    "hourly_wage_factor": 1.0198885321527833,
+    "hors_assiette_share": 0.07959230516857606
+  },
+  "mois_travailles": {
+    "salaries_partiels": 2177100.2182303364,
+    "sortants_payes": 2789993.0185851683,
+    "volume_eqtp": 0.8441936108245562,
+    "volume_avant": 0.9352113614693214,
+    "facteur": 0.9992867353735155
+  },
+  "familles_jeunes": {
+    "jeunes": 4465,
+    "jeunes_ponderes": 711712.3783535013,
+    "familles_avant": 223478,
+    "familles_apres": 227943
+  },
+  "raking": {
+    "converged": true,
+    "iterations": 27,
+    "max_change": 7.473299443121186e-07,
+    "clipped_households": 0,
+    "weight_ratio_range": [
+      0.7033501257039249,
+      2.1380471793408202
+    ],
+    "effective_sample_size": 140605.46454304334,
+    "fit_before": {
+      "household_type": 0.4117871359217409,
+      "tenure": 0.12591945324560405,
+      "age_sex": 0.02167899992404987
+    },
+    "fit_after": {
+      "household_type": 0.0070649302708755135,
+      "tenure": 0.007064800089953693,
+      "age_sex": 3.1908790987245084e-07
+    }
+  }
+}

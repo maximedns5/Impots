@@ -40380,3 +40380,92 @@ tolérance ne change ; une ligne manquée reste écrite.
 tiennent_la_forme_de_2_a_3_5_smic` (les parts des ETP de l'Urssaf ; 85,2, 90,7 et 94,0 %
 sous 2,5, 3 et 3,5 Smic avec les points ; 86,4, 89,7, 94,8 % sans) ; vu échouer sur le
 code d'avant. Le test de D-552 se lit désormais sans les points de l'Urssaf.
+
+## D-581 — La forme Urssaf (2) : la grille de D-580, le pronostic tenu, en contrôle
+
+**Ce qui a tourné** (au commit de D-580, 57038e6, poussé avant ; détaché, sous le verrou
+commun, une passe à la fois, en alternance avec la série des études) : `impots population
+build` (graine 20240101 ; **empreinte e7d0c056…**, 199 451 ménages) ; `impots
+verification passe` sur 2024, 2023 et 2022 ; le complément de 2022 ; `impots
+verification ecrire` ; les cellules du jumeau (30 000 ménages) ; `agregats.json`. Le 18
+novembre, de 14 h à 23 h 16 UTC, coupé par trois redémarrages du conteneur (16 h 51,
+16 h 53 à 18 h 24, 23 h 16 à 23 h 45) : chaque étape interrompue a été refaite en entier,
+les étapes finies gardées (la population et 2024 avant la deuxième coupure ; la grille,
+le complément, `ecrire` et les cellules avant la troisième). Journal : `urssaf28/passe.log`
+du scratchpad.
+
+**Sans adoption** (D-676, point 2). La population des études reste celle de D-553
+(5ace8bb6…). Les rapports de ce contrôle sont écrits à part, dans
+`reports/verification/controle_d581/` (la grille, `GRILLE.md`, les trois passes, le
+complément, les agrégats, le manifeste de la population) ; la grille, les passes et les
+agrégats du dépôt restent ceux de D-553.
+
+**Ce qui n'a pas tourné.** `entrees_navigateur.json` (`impots.jumeau.navigateur ecrire`)
+s'arrête : `insee_bdm_creations_entreprises_2009_2025.xml` est au manifeste mais absent
+de `data/raw` du checkout neuf. Les sept séries BDM du manifeste, retéléchargées depuis
+leur URL, n'ont pas l'empreinte du manifeste (séries révisées, ou l'en-tête de l'envoi) :
+**aucune n'est posée**, rien n'est mis à leur place. Sans adoption, les entrées du
+navigateur n'avaient pas à changer ; elles ne sont pas écrites.
+
+**La grille contre le pronostic** (écart au publié, %, D-553 → pronostic → mesuré) :
+
+| ligne | 2024 | 2023 | 2022 | bande | tient |
+|---|---|---|---|---:|---|
+| part de 2,5 à 3,5 Smic | — | — | −1,5 → +2,4 → −0,3 | ±3 | oui |
+| bandeau maladie | +9,9 → 7,8 → 7,9 | 9,4 → 7,3 → 7,9 | 11,4 → 9,2 → 9,7 | ±1,5 | oui |
+| bandeau famille | +10,0 → 8,8 → 8,7 | 11,3 → 10,0 → 10,2 | 13,0 → 11,8 → 11,8 | ±1 | oui |
+| réduction générale | +8,1 → 8,9 → 8,9 | 6,8 → 7,6 → 7,6 | 9,1 → 9,9 → 9,9 | ±1 | oui |
+| employeurs, D121 | −5,0 → −4,9 → −4,8 | −3,3 → −3,2 → −3,2 | −2,3 → −2,2 → −2,2 | ±1 | oui |
+| foyers à 45 % | −2,7 → −2,7 → −3,6 | −3,9 → −3,9 → −3,9 | −12,1 → id. → −12,1 | ±1,5 | oui |
+
+La ligne de D-531 : **0,1675**, pronostic 0,172 (0,167 à 0,177), publié 0,168 : dans la
+bande, au bord bas, et dans la tolérance. **Les autres lignes** bougent de moins de 0,5
+point (la prime d'activité servie +0,45, les foyers à 41 % −0,4), dans leur bande de ±1
+ou ±0,5. **Le compte** : 2024 **35 sur 35**, ±5 % : 16 ; 2023 32 sur 33 (la contribution
+sociale sur l'IS, comme D-553), ±5 % : 13 ; 2022 **32 sur 32**, ±5 % : 12. Trois années :
+**99 sur 100**, comme annoncé. Aucune tolérance n'a changé.
+
+**Ce que cela dit.** La forme de l'Urssaf rapproche les trois allègements de 1,1 à 2 points
+(le bandeau maladie +9,9 → +7,9 % en 2024, sorti des ±5 % dans les deux cas) sans rien
+défaire ailleurs ; la réduction générale s'éloigne de 0,8 point, comme prévu. Le reste du
+bandeau maladie (D-676, point 12) n'est donc pas la forme de 2 à 3,5 Smic : il reste de
+l'ordre de 8 % sur la forme de l'Urssaf.
+
+**Les cellules du jumeau** sur cette population : salaire brut −0,56 %, IR contre les
+recettes nettes +9,86 % (« dit »), médiane contre Filosofi −6,39 % ; les quinze autres
+recoupements tiennent. Hors git, non adoptées.
+
+## D-582 — La forme Urssaf (3) : les rejeux, la fin des exonérations sous la bande
+
+**Ce qui a tourné** (57038e6, la population de D-581, 20 000 ménages, droit de 2026, du
+18 novembre 23 h 46 à 23 h 53 UTC) : `exos_decomposition_b28.py passe d581 … --controle`
+et `mesure_melenchon_b27.py` (le Smic, la fin des exonérations, les deux ; union, vue
+figée, rapide). Rapports : `reports/verification/controle_d581/exos_d581.json`,
+`rapide_union_*.json`. Sans adoption (D-676).
+
+| grandeur | D-553 | pronostic | mesuré | tient |
+|---|---:|---|---:|---|
+| R, la fin des exonérations, Md€ | 4,441 | 4,72 (4,57 à 4,87) | **4,494** | **non** |
+| reproduction (R contre la passe de la réforme) | | à 0,1 % | 4,494 = 4,494 | oui |
+| le Smic seul, Md€ | 30,919 | 30,6 (30,2 à 30,9) | **30,560** | oui |
+| l'exonération seule, Md€ | −4,441 | −4,72 (−4,87 à −4,57) | **−4,494** | **non** |
+| l'interaction I, Md€ | +0,551 | −0,1 (−0,7 à +0,5) | **+0,166** | oui |
+
+**R est manqué** : 4,494 Md€, sous la bande. Par bande (en Smic de 2026) : de 2 à 2,5,
+3,266 (D-553 3,367 ; la méthode de D-580 attendait 3,08) ; de 2,5 à 3, 1,229 (1,074 ; la
+méthode attendait 1,64). La méthode de D-580 portait les rendements par les heures des
+bandes ; les heures de 2,5 à 3 Smic montent bien (de 3,35 à 5,11 % en Smic de 2024), mais
+le rendement par heure de la bande y est plus bas que celui de D-553 : sans doute les heures
+neuves sont-elles au bas de la bande, où la réduction rendue est faible (non vérifié). La
+méthode ne le voyait pas ; le pronostic n'est pas retouché. La fin des exonérations
+reste, sur la forme de l'Urssaf, à 0,9 Md€ sous ses références de D-563 (5,36), comme sur
+D-553 (D-676, point 2).
+
+**Le Smic et la paire tiennent.** Le Smic seul baisse de 0,36 Md€ (la réduction perd des
+salariés entre 2 et 2,6 Smic). **L'interaction passe de +0,551 à +0,166 Md€** : de
+même signe que sur D-553, plus petite ; elle était −0,985 sur D-521. Le signe de l'étude
+dépend de la forme de 2,6 à 3,1 Smic ; il n'était pas pronostiqué.
+
+**Ce qui reste au propriétaire.** Adopter ou non la forme de l'Urssaf pour une population
+future (elle tient la grille comme D-553 et rapproche les trois allègements ; la fin des
+exonérations y rend 4,49 Md€ au lieu de 4,44). Les études restent sur D-553.
