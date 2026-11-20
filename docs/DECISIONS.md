@@ -40533,3 +40533,13 @@ CICE, qui ne la lit pas, ne bouge pas. Aucune ligne n'est repronostiquée.
 manquées. Commités : `interaction_b28/cice_d557.json` (le commit seul change) et
 `boucle_b28/resultats_d557.json`. Restent ceux de D-557 : `mesure_melenchon_b27/d553/
 smic.json` et `programme.json` (le témoin du but 19, population absente).
+
+## D-682 — Le témoin du but 19 n'est pas refait : `smic.json` et `programme.json` restent
+
+**La décision** (le propriétaire, 20 novembre, « laisse smic.json et programme.json tels
+quels ») : la population du but 19 n'est pas refaite. `mesure_melenchon_b27/d553/
+smic.json` et `programme.json` restent ceux de D-557 (commit 5954e7d) ; ils ne lisent
+pas les rapports de l'étude Mélenchon de D-559, à la différence de `jumeau.json`,
+`diffusion_d557.json`, `defaut_d557.json` et `resultats_d557.json`, rejoués (D-680,
+D-681). Les passes qu'ils résument sont redonnées au millième par le rejeu (D-680) : leurs
+nombres de passe restent justes ; leur colonne « publiée » lit l'étude d'avant la série.
