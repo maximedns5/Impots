@@ -40425,3 +40425,68 @@ du jumeau ont changé (D-559 : le programme 88,98 → 91,00 Md€).
 * **Les lignes « telles que publiées »** (`smic_etude`, `programme_etude`, le jumeau lu
   sur les rapports de l'étude) bougent avec eux, sans bande : leur avant et après sont
   donnés.
+
+## D-680 — Le rejeu de D-679 : les passes redonnent D-557, le jumeau suit l'étude
+
+**Ce qui a tourné**, au commit 48ba1a6 (D-679, poussé avant), détaché, les passes une à
+une sous le verrou commun, sur la population de D-553 (5ace8bb6…), le 20 novembre de
+5 h 23 à 6 h 39 UTC. Le conteneur a redémarré vers 5 h 52, pendant les passes rapides du
+programme : relancé, `passe` saute les sorties déjà écrites (toutes relues, aucune
+abîmée). Journal : `etudes28/lancer_d679.log` du scratchpad.
+
+**Les codes de retour.** rc = 0 : la passe des entrées du CICE, la passe complète du
+Smic, les passes rapides du programme, les deux passes de `boucle_b28`, `jumeau`,
+`reaction_diffusion_b28`, `interaction_b28`. **rc = 1, trois** :
+* `analyser` : la passe témoin du but 19 n'existe pas (population absente). Attendu
+  (D-679) ; `mesure_melenchon_b27/d553/smic.json` et `programme.json` restent ceux de D-557.
+* `interaction_cice_b28` et le jumeau de `boucle_b28` : **pas attendus**.
+  `insee_bdm_creations_entreprises_2009_2025.xml` est au manifeste mais absent de
+  `data/raw`. Re-téléchargé pour D-581, son empreinte ne correspond pas au
+  manifeste : il n'a pas été placé, et ne l'est pas ici. `cice_d557.json` reste celui de
+  D-557. Le `rapport` de `boucle_b28`, qui a tourné après l'échec, a récrit
+  `resultats_d557.json` sans sa partie `jumeau_passes` : ce fichier tronqué est remis à
+  son état commité, pas commité.
+
+**Le résultat contre D-679.**
+
+| ligne | pronostic | après | verdict |
+|---|---|---:|---|
+| Smic, passe complète (Md€) | 30,305 au millième | 30,305 | tenu |
+| programme, passe rapide union | 90,995 au millième | 90,995 | tenu |
+| interaction du programme | +0,178 au millième | +0,178 | tenu |
+| coefficients de la boucle | au millième | écart 0 | tenu |
+| Smic, figée : emploi (milliers) | −129,1 ± 1,5 | −135,0 | manqué |
+| Smic, figée : B9 (Md€) | −0,42 ± 0,15 | +0,20 | manqué |
+| Smic, figée : dette (pt) | +0,585 ± 0,02 | +0,451 | manqué |
+| programme, figée : emploi | +76,0 ± 2,5 | +68,9 | manqué |
+| programme, figée : B9 | −48,82 ± 0,5 | −48,19 | manqué |
+| programme, figée : dette | +10,862 ± 0,05 | +10,726 | manqué |
+| diffusion, figée : emploi | +6,5 à +7,5 | +0,9 à +1,3 | manqué |
+| diffusion, figée : B9 | −1,2 à −1,3 | −0,61 à −0,65 | manqué |
+| CICE, 2016 | ± 0,2 | — | non jugé |
+| boucle : Smic emploi, B9 ; CICE | ± 0,1 ; ± 0,05 ; ± 0,2 | — | non jugés |
+
+Douze lignes jugées, quatre tenues, huit manquées ; quatre non jugées (le fichier BDM).
+Vieillie, sans bande : Smic −171,3 ; +1,68 ; +0,592 → −160,8 ; −0,05 ; +1,223 ; programme
+−2,7 ; −46,28 ; +10,785 → +32,9 ; −47,93 ; +11,476. La plage de l'emploi, figée :
++150,5 (θ 0) à −566,9 (θ 1). La paire Smic × exonérations du jumeau reste additive (0,0
+millier, 0,00 Md€). Les lignes « telles que publiées » (l'étude lue seule) : Smic, figée,
+−144,7 ; −0,69 ; +0,625 → −131,5 ; −0,24 ; +0,556 ; programme +50,7 ; −47,93 ; +10,612 →
++68,9 ; −48,19 ; +10,726.
+
+**La cause, trouvée par deux essais** (hors rapports, dans un worktree jetable, au même
+commit et sur les mêmes sorties de passes) : (1) `mesures.py` remis à son état de D-557 :
+le jumeau redonne le rejeu au dixième, ce n'est pas lui ; (2) les rapports de
+`presidentielle_melenchon` remis à leur état d'avant la série (01a24df^) : le jumeau
+redonne D-557 au dixième, toutes lignes. **Tout l'écart vient des rapports de l'étude
+Mélenchon de D-559**, que la session du jumeau lit. Le pronostic les croyait neutralisés
+par le calage sur les passes (`redimensionner`) : il ne cale que la première année ; le
+chemin des années suivantes, lui, vient de l'étude. Les lignes calées et les lignes
+publiées se rejoignent (le programme : 68,9 et 68,9). Aucune ligne n'est repronostiquée.
+
+**Ce qui est commité** : `mesure_melenchon_b27/d553/jumeau.json`,
+`reaction_b28/diffusion_d557.json`, `interaction_b28/defaut_d557.json`, récrits par le
+rejeu. Restent ceux de D-557 : `smic.json`, `programme.json`, `cice_d557.json`,
+`boucle_b28/resultats_d557.json`. Les compléter demande la population du but 19 (le
+témoin) et le fichier BDM des créations, avec une empreinte qui tient : laissé au
+propriétaire.
