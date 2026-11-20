@@ -40641,3 +40641,62 @@ la passe n'est pas en 2026.
 (lourd) vert ; les 183 tests légers des fichiers du jumeau verts ; `ruff` passe. Aucun
 nombre publié ne change : ventiler l'art. 15 sur 2027 demanderait une convention que le
 chemin ne porte pas, non faite ici.
+
+## D-685 — Les 39 rouges d'avant la série : la grille du but 27, le site, et cinq autres
+
+**La décision** (le propriétaire, 20 novembre, « corrige les 39 tests de la grille de
+D-553 »). Les 39 rouges que `make impact` montrait sur `claude/but28` avant la série
+(D-683). Ils ne viennent pas de D-553 elle-même : la grille a perdu sa ligne
+`cotisations_salariales` au second tour du but 27 (D-498, « remplacée » par
+`cotisations_salariales_apu`, la règle de D-495), et ses comptes ont changé avec elle
+(84 sur 113 à D-371 ; 99 sur 100 depuis D-553). `main` porte encore l'ancienne grille.
+
+**La grille et les parcours (34 rouges).**
+* `parcours/cout.py` lisait la loi d'erreur de `cotisations_salariales` : elle lit celle de
+  sa remplaçante, `cotisations_salariales_apu` (D613CE des APU, les cotisations des
+  gérants majoritaires retirées), et le dit (« Insee, compte des APU, ligne D613CE » ; en
+  moyenne +8,8 %, trois années sur trois dans la tolérance). Ce rouge cachait ceux de la
+  série (D-559) dans `test_parcours_cout` : Attal 66,18 → 62,94 Md€ et 20,46 → 19,54 pt, la
+  prime −557 → −749 M€, le curseur des cotisations (+85,01, +66,40, +16,66, +11,11 →
+  +80,66, +62,98, +15,81, +10,55), le tableau de passage d'Attal et de la prime ; mis sur
+  D-559, chaque ancien nombre écrit à côté.
+* `parcours/erreur.py` : les explications des lignes hors de tolérance de D-364 à D-371
+  (les allègements, la prime, le RSA, les cotisations des employeurs, les aides au
+  logement) sont retirées ; ces lignes tiennent ou sont remplacées, et le test refuse une
+  explication sans ligne hors. Reste `contribution_sociale_is` (2023), la seule hors.
+* `test_parcours_erreur` et `test_parcours_france` : 84 sur 113 → 99 sur 100 ; les lignes
+  calées par le non-recours 2 → 5 (le RSA en 2023 et 2024 ; la prime les trois années,
+  depuis D-495) ; le texte du calage de la prime suit la page (les foyers que la Caf paie,
+  42 % de non-recours parmi les ayants droit, D-497), plus la moitié de la Drees.
+* `test_site` : le site commité est reconstruit (`impots site construire`) sur les études
+  de D-559, avec Glucksmann, Zemmour et le PLF 2027 (dix pages neuves, 118 récrites) ;
+  `site verifier` dit « le site est celui des études ». Les pages des cascades (D-485)
+  font tourner le jumeau dans la page : elles entrent dans la liste des pages qui portent
+  un script, qu'elles n'avaient jamais rejointe.
+* `test_page_explorer` : vert une fois le site construit, sans changement.
+
+**Les cinq autres.**
+* `test_dependances` : `test_assiette_cotisations` importait `tests.test_allegements`
+  (D-499) ; il importe `test_allegements`, déclaré dans `MODULES_LOCAUX` comme les autres
+  modules de test réemployés.
+* `test_etude_programmes` (Arthaud, en fait les quinze) : le générateur
+  `scripts/preenregistrer_programmes.py` écrivait D-402 partout ; les définitions commitées
+  disent D-556 (onze) et D-558 (quatre, Labib et Arthaud compris, retirées après coup) ;
+  le générateur les suit.
+* `test_ij_moteur` : la correction 27 (D-499) retire de l'assiette des cotisations une part
+  du brut ; moins de cotisations déductibles, un salaire imposable plus haut. Le test, qui
+  isole les indemnités journalières, la met à zéro comme il le faisait déjà de la part
+  exonérée de l'IR.
+* **`test_non_salaries`, non corrigé.** Il tenait que le tirage des gérants majoritaires
+  baisse les salaires des salariés d'un facteur commun (1 − leur paie ÷ D11). Depuis
+  `HORAIRES_EN_SMIC` (D-497), ce n'est plus vrai : 217 facteurs de 0,942 à 0,978, autour
+  de l'attendu 0,9666 ; la masse des salariés ne baisse que de 93 % de la paie des
+  gérants, et des salaires hors du champ « salarié employé » bougent aussi. Les autres
+  réglages (`POINT_INSEE`, `FACTEUR_STATUT`, `HORS_ASSIETTE`, `RANG_EQTP`) n'y sont pour
+  rien : seul `HORAIRES_EN_SMIC` éteint redonne le facteur commun. Un défaut possible du
+  modèle (la masse de D11 n'est plus tenue à la paie des gérants près), pas du test : le
+  test reste rouge, la question au propriétaire.
+
+**Ce qui le tient** : les douze fichiers touchés ou rouges, rejoués ensemble (parcours,
+site, explorateur, dépendances, assiette, études, indemnités, non-salariés) : 137 verts,
+1 rouge, `test_non_salaries`, dit plus haut ; `ruff` passe.

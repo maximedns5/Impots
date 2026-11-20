@@ -25,7 +25,8 @@ def test_la_page_montre_la_grille_et_chaque_ligne_hors_de_sa_tolerance():
     notees = [r for r in rows if r["usage"] == "validation" and r["ecart"] is not None]
     tenues = sum(r["verdict"] == "dans la tolérance" for r in notees)
     assert f"{tenues} sur {len(notees)} lignes tenues" in texte
-    assert (tenues, len(notees)) == (84, 113)  # D-371
+    # D-371 : 84 sur 113 ; la grille du but 27 et le point de l'Insee (D-553) : 99 sur 100.
+    assert (tenues, len(notees)) == (99, 100)
     hors = {r["id"] for r in notees if r["verdict"] == "hors de la tolérance"}
     for ident in hors:
         bloc = re.search(rf'<section class="hors-ligne" id="hors-{ident}">(.*?)</section>',
@@ -64,7 +65,8 @@ def test_les_lignes_calees_par_le_non_recours_sont_dites():
     allocataires."""
     page = erreur.page()
     texte = _texte(page.corps)
-    assert "84 sur 113 lignes tenues (dont 2 calées par le non-recours" in texte
+    # D-685 : 84 sur 113, dont 2, avant la grille du but 27 ; 99 sur 100, dont 5 (D-553).
+    assert "99 sur 100 lignes tenues (dont 5 calées par le non-recours" in texte
     for ident in ("rsa_foyers_servis", "ppa_foyers_servis"):
         ligne = re.search(rf'<tr id="stable-{ident}">(.*?)</tr>', page.corps, re.S)[1]
         assert "calée par le non-recours" in ligne, ident

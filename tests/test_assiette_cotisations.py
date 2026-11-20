@@ -14,11 +14,11 @@ import warnings
 import numpy as np
 import polars as pl
 import pytest
-from tests.test_allegements import _frame
 
 from impots.engine import system
 from impots.population import incomes, margins
 from impots.population.to_openfisca import build_simulation
+from test_allegements import _frame
 
 YEAR = 2024
 

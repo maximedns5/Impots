@@ -58,6 +58,9 @@ MODULES_LOCAUX: frozenset[str] = frozenset({
     # et `tests/test_jumeau_structurel.py`, dont les helpers servent aux tests du mode
     # structurel complété (D-414)
     "test_jumeau_structurel",
+    # et `tests/test_allegements.py`, dont le ménage type sert aux tests de l'assiette des
+    # cotisations (D-499 ; déclaré à D-685)
+    "test_allegements",
 })
 
 #: Les racines que l'on scanne par défaut. `src/` est le minimum ; `tests/` et `scripts/`
