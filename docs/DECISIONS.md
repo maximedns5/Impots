@@ -40381,3 +40381,47 @@ série, leur session lisant les rapports de `presidentielle_melenchon` : les lig
 Les rejouer demande de refaire d'abord les passes de D-557 (les lignes `f`, de l'ordre
 d'une heure et demie sous le verrou), et récrirait les rapports `…_d557.json` commités :
 laissé au propriétaire. Pas de `make impact` ni de lourds, pas de PR (D-676).
+
+## D-679 — Le rejeu des études du jumeau après la série de D-559, préenregistré
+
+**La décision** (le propriétaire, 20 novembre, « oui, relance les passes de D-557 et les
+lignes j ») : les études du jumeau de D-556 (2) se rejouent sur les rapports de la série
+de D-559, comme D-556 le prévoyait. Leurs entrées (les sorties des passes de D-557) ne
+sont plus sur le disque : les passes sont refaites d'abord, au commit de cette entrée,
+détachées, une à une sous le verrou commun, sur la population de D-553 (5ace8bb6…) et ses
+cellules. Le résultat va dans une nouvelle entrée. Aucune tolérance, aucun seuil, aucun
+enregistrement ne change.
+
+**Ce qui tourne**, dans l'ordre de `etudes28/lancer.sh` : la passe des entrées du CICE
+(`juges_passe_b28 cice_passe`, celle de D-554, absente elle aussi) ; la passe complète du
+Smic, les passes rapides du programme, les deux passes de `boucle_b28` ; puis, sans
+verrou, `analyser`, `jumeau`, `reaction_diffusion_b28`, `interaction_b28`,
+`interaction_cice_b28`, le jumeau et le rapport de `boucle_b28`. Ils récrivent les
+rapports commités de D-557 (`mesure_melenchon_b27/d553/`, `…_d557.json`, `resultats_d557`).
+
+**Ce qui ne tourne pas, et ce que cela casse.** La passe témoin du but 19
+(`rapide_but19_smic`) lit une population du but 19 qui n'est plus sur le disque, et que
+cette entrée ne refait pas. `analyser` la lit (le témoin du code de D-508) : **il
+échouera**, et `mesure_melenchon_b27/d553/smic.json` et `programme.json` resteront ceux de
+D-557. L'échec est attendu, et dit, pas contourné.
+
+**Le pronostic.** Depuis D-557 (5954e7d), le code n'a changé que dans
+`src/impots/jumeau/mesures.py` (cfbb818, les rouges de `test_jumeau_depuis_rapport`), qui
+ne touche pas les passes ; les rapports de `presidentielle_melenchon` lus par la session
+du jumeau ont changé (D-559 : le programme 88,98 → 91,00 Md€).
+
+* **Les passes** redonnent D-557 au millième de Md€ : Smic complet 30,305, programme
+  rapide union 90,995, interaction +0,178 ; les coefficients de la boucle au millième.
+* **Le jumeau, les lignes calées sur les passes** (`smic_d553`, `programme_d553`, θ½,
+  2035, emploi en milliers, B9 en Md€, dette en points), figée : Smic −129,1 ; −0,42 ;
+  +0,585 → **± 1,5 ; ± 0,15 ; ± 0,02** ; programme +76,0 ; −48,82 ; +10,862 → **± 2,5 ;
+  ± 0,5 ; ± 0,05**. Une ligne qui en sort : sa cause cherchée dans `mesures.py` ou dans les
+  rapports relus, pas de repronostic.
+* **La diffusion selon θ** : chaque ligne de D-551 décalée de +6,5 à +7,5 milliers,
+  figée, et de −1,2 à −1,3 Md€.
+* **Le CICE** : +192,6 (Mésange), +188,4, +184,7 milliers en 2016, ± 0,2.
+* **La boucle** : Smic, θ½, avec moins sans, emploi +2,15 ± 0,1 millier, B9 +1,24 ± 0,05
+  Md€ ; le CICE avec la boucle, 2016, 186,5 ± 0,2.
+* **Les lignes « telles que publiées »** (`smic_etude`, `programme_etude`, le jumeau lu
+  sur les rapports de l'étude) bougent avec eux, sans bande : leur avant et après sont
+  donnés.
