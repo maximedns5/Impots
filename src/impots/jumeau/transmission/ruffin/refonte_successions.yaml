@@ -9,8 +9,8 @@ source:
   url: https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf
   date: '2026-10-21'
 levier:
-  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
-    IFI (art. 964 et s.)'
+  texte: Code général des impôts, art. 777 (le barème), 779 (les abattements), 784 (le rappel
+    des donations)
   parametre: null
   valeur: null
   enonce: abattement de 100 000 à 200 000 € ; assiette étendue aux transmissions reçues au
@@ -74,3 +74,8 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les droits de succession : les 20 Md€ en font plus du double'
+  montant_md: 17.0
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1706

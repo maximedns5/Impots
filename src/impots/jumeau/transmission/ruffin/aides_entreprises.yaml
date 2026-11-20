@@ -77,3 +77,9 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les subventions versées par les APU (D3) : les 10 Md€ en font 18 %'
+  montant_md: 56.5
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    D3

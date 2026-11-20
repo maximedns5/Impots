@@ -72,3 +72,9 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: la formation brute de capital fixe des APU (P51g)
+  montant_md: 132.2
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    P51G

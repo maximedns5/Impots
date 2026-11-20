@@ -10,8 +10,8 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Livre des procédures fiscales (contrôle) ; Code de la sécurité sociale (contrôle
-    des cotisations)
+  texte: Livre des procédures fiscales (le contrôle fiscal) ; loi de finances (les emplois
+    de la DGFiP, programme 156)
   parametre: null
   valeur: null
   enonce: reconstruction des effectifs
@@ -32,24 +32,34 @@ incidence:
   texte: Statutaire, si la fraude est recouvrée.
   source: non sourcée
 financement:
-  annonce: « Faire de la lutte contre la fraude et l'évasion fiscales une priorité en renforçant
-    massivement les moyens humains et financiers du contrôle fiscal »
-  source: « Faire de la lutte contre la fraude et l'évasion fiscales une priorité en renforçant
-    massivement les moyens humains et financiers du contrôle fiscal »
-  chiffre: false
-  note: le financement est énoncé, pas chiffré mesure par mesure
+  annonce: « Une partie de cette œuvre de justice fiscale devra être orientée vers la réduction
+    de notre déficit »
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6
+  chiffre: true
+  note: une recette du programme ; son bilan (p. 14) en affecte 81,7 Md€ aux dépenses et 24,7
+    Md€ au déficit, sans dire laquelle va où
 canaux:
 - consommation_menages
 hypotheses:
-- texte: Le montant tombe sur un impôt courant sur le revenu ou le patrimoine (D5).
+- texte: Le montant tombe sur les impôts courants (D5) ; le partage entre ménages et entreprises
+    n'est pas dit.
   source: non sourcée
-- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
-    sur l’activité).'
+- texte: Le coût des effectifs reconstruits n'est pas compté.
   source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
+- texte: Le montant de la première année est tenu chaque année de 2027 à 2035, en euros courants
+    ; le candidat ne donne qu'un montant annuel, sans trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
   source: non sourcée
+- texte: 'Aucune variante de Mésange pour cet impôt : le mode réduit ne lit aucun effet sur
+    l''activité, seulement la recette.'
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes publiées)'
 montant:
   origine: hypothese
   annonce:
@@ -70,3 +80,6 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+calendrier:
+  texte: « 2 milliards d'euros la première année »
+  source: Mélenchon, document du 14 octobre 2026, p. 14

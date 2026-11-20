@@ -3,14 +3,15 @@ mesure: a24_plan_ia_france_2040
 candidat: attal
 libelle: Plan IA « France 2040 », à parité public et privé ; part publique financée par des
   économies (arrêts maladie, gel des prestations)
-sorte: parametre
+sorte: hypothese
 source:
   citation: « Gabriel Attal veut porter l'effort à 200 milliards d'euros, partagés à égalité
     entre financement public et privé » (texte de la page)
   url: https://attalpresident.fr/programme/mesures/plan-france-2040
   date: '2026-06-19'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: loi de finances, mission « Investir pour la France de 2030 » (le plan France 2030,
+    que le plan prolonge)
   parametre: null
   valeur: null
   enonce: '200 Md€ sur 10 ans — montant annoncé : 100 Md€ (total sur dix ans : la moitié publique
@@ -21,6 +22,9 @@ payeurs:
 - qui: apu:etat
   sens: paie
   par: depense_publique
+- qui: entreprises
+  sens: recoit
+  par: aides_publiques
 incidence:
 - horizon: immediat
   qui: les bénéficiaires de la dépense
@@ -33,17 +37,52 @@ incidence:
   source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
     », document de travail G2017-04, §4 (les variantes)'
 financement:
-  annonce: Plan IA « France 2040 », à parité public et privé ; part publique financée par
-    des économies (arrêts maladie, gel des prestations)
-  source: le libellé du relevé (`programmes/attal.json`), d'après https://attalpresident.fr/programme/mesures/plan-france-2040
+  annonce: null
+  source: null
   chiffre: false
-  note: le financement est énoncé, pas chiffré mesure par mesure
+  note: la moitié privée n'est pas une dépense publique
+  bilan:
+    cout_eur: 10000000000
+    chiffre_eur: null
+    trou_eur: 10000000000
+    dit: 'financement annoncé sans montant : tout le coût reste un trou, le jumeau le dit'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - demande_publique
 - emploi_public
 - consommation_menages
-hypotheses: []
+hypotheses:
+- texte: 'La moitié publique (100 Md€) sur dix ans : 10 Md€ par an, de 2027 à 2035 dans le
+    jumeau.'
+  source: attalpresident.fr/programme/mesures/plan-france-2040
+- texte: Les 10 Md€ s'ajoutent à la dépense de France 2030 ; « porter l'effort à » laisse
+    entendre qu'une part y est déjà.
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : investissement_public.'
+  source: Insee et DG Trésor, G2017-04, §4
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
 montant:
-  origine: aucun
-  manque: Un investissement public sur dix ans est une dépense que le moteur ne microsimule
-    pas. (porte « depense_publique »)
+  origine: hypothese
+  annonce:
+    montant_md: 10.0
+    sens: depense
+    horizon: '200 Md€ sur 10 ans — montant annoncé : 100 Md€ (total sur dix ans : la moitié
+      publique des 200 Md€ « partagés à égalité entre financement public et privé » ; aucun
+      montant annuel donné) ; non lu comme montant annuel : un total sur dix ans (D-381).'
+    citation: « Gabriel Attal veut porter l'effort à 200 milliards d'euros, partagés à égalité
+      entre financement public et privé » (sur dix ans)
+    url: https://attalpresident.fr/programme/mesures/plan-france-2040
+  chocs:
+    apu_d_p51g: 10.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: investissement_public
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null
+calendrier:
+  texte: dix ans, jusqu'en 2040 selon le nom du plan
+  source: attalpresident.fr/programme/mesures/plan-france-2040 (19 juin 2026)

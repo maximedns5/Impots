@@ -12,7 +12,8 @@ source:
   url: https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf
   date: '2026-01-09'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: Code du travail, art. L5422-1 et s., L5426-2 (la radiation après refus d'offres raisonnables)
+    et L1237-11 (la rupture conventionnelle)
   parametre: null
   valeur: null
   enonce: 6 mois max (ruptures conventionnelles)

@@ -3,22 +3,31 @@ mesure: a8_cent_mille_postes
 candidat: attal
 libelle: Suppression de postes dans l'État et les collectivités, par départs volontaires avec
   prime et non-remplacement, sans licenciement ; Éducation, Armées, Justice et Intérieur épargnés
-sorte: parametre
+sorte: hypothese
 source:
   citation: « Gabriel Attal propose de supprimer 100 000 postes dans l'État et les collectivités,
     sans aucun licenciement » (texte de la page)
   url: https://attalpresident.fr/programme/mesures/cent-mille-postes-en-moins
   date: '2026-07-03'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: lois de finances (plafonds d'emplois de l'État) et budgets des collectivités ; un
+    plan de départs volontaires
   parametre: null
   valeur: null
   enonce: 100 000 postes
   couche: null
 payeurs:
 - qui: apu:etat
-  sens: paie
+  sens: recoit
   par: depense_publique
+  note: l'État et les collectivités ; le partage n'est pas dit
+- qui: apu:apul
+  sens: recoit
+  par: depense_publique
+- qui: menages
+  sens: paie
+  par: salaire_net
+  note: les postes non remplacés ; la prime de départ en rend une part
 incidence:
 - horizon: immediat
   qui: les bénéficiaires de la dépense
@@ -31,16 +40,60 @@ incidence:
   source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
     », document de travail G2017-04, §4 (les variantes)'
 financement:
-  annonce: null
-  source: null
+  annonce: « deux tiers des économies seront réalisées sur nos dépenses sociales »
+  source: Attal, lettre aux Français sur les finances publiques, 15 octobre 2026, p. 1
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: une économie ; elle finance le redressement (déficit sous 3 % avant 2032), pas une
+    mesure nommée
 canaux:
 - demande_publique
 - emploi_public
 - consommation_menages
-hypotheses: []
+hypotheses:
+- texte: Le montant tombe sur les rémunérations (D1) ; ce sont des postes.
+  source: 'Attal, lettre du 15 octobre 2026, p. 1 : « supprimer 100 000 postes de fonctionnaires
+    »'
+- texte: Montée en charge linéaire de 2027 à 2031, la fin du mandat.
+  source: non sourcée
+- texte: 'La prime de départ volontaire n''est pas comptée : le candidat ne la chiffre pas.'
+  source: Attal, lettre du 15 octobre 2026, p. 1 (« avec une prime de départ »)
+- texte: L'économie peut être comprise dans les 20 Md€ du frein d'urgence (a2) ; le candidat
+    ne le dit pas.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
 montant:
-  origine: aucun
-  manque: 'Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement
-    un scénario de dépense du calcul de la dette. (porte « depense_publique »)'
+  origine: hypothese
+  annonce:
+    montant_md: 3.29
+    sens: economie_depense
+    horizon: 100 000 postes
+    citation: « Gabriel Attal propose de supprimer 100 000 postes dans l'État et les collectivités,
+      sans aucun licenciement » (texte de la page)
+    url: https://attalpresident.fr/programme/mesures/cent-mille-postes-en-moins
+    par: calcul
+    calcul: 100 000 postes × 2 740 € (le salaire mensuel net moyen en EQTP de la fonction
+      publique, 2024) × 12 mois = 3,29 Md€ de salaires nets par an, une borne basse de l'économie
+      (sans les cotisations des employeurs publics) ; moins la prime de départ volontaire,
+      sans montant.
+  chocs:
+    apu_d_d1: -3.29
+  profil: rampe
+  debut: 2027
+  plein: 2031
+  fin: 2035
+  instrument: depense_publique
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null
+assiette:
+  texte: le salaire mensuel net moyen en EQTP de la fonction publique (2 740 €)
+  montant_md: null
+  valeur: 2740
+  unite: € nets par mois
+  annee: 2024
+  source: Insee, Siasp 2024, « Emploi, chômage, revenus du travail », édition 2026, fiche
+    29, figure 1
+calendrier:
+  texte: aucune date ; un plan de départs volontaires sur le quinquennat
+  source: Attal, lettre du 15 octobre 2026, p. 1

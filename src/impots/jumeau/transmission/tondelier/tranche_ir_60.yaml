@@ -65,3 +65,9 @@ montant:
   origine: rapport
   scenario: pres2027_tondelier_tranche_ir_60
   rapport: reports/etudes/presidentielle_tondelier/mesures/tranche_ir_60/predictif_pres2027_tondelier_tranche_ir_60.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_tondelier/mesures/tranche_ir_60/premiere_annee_pres2027_tondelier_tranche_ir_60.json
+    ecarts_md:
+      ir: 0.92
+      revenu_disponible: -0.92

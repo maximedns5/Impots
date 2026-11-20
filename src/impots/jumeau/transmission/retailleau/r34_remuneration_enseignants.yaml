@@ -76,3 +76,12 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les enseignants payés par l''État (747 400 du public et 141 400 du privé sous contrat,
+    rentrée 2025) : 3 Md€ en font 281 € par enseignant et par mois, brut chargé'
+  montant_md: null
+  valeur: 888800
+  unite: enseignants
+  annee: 2025
+  source: DEPP, « Panorama statistique des personnels de l'enseignement scolaire 2025-2026
+    »

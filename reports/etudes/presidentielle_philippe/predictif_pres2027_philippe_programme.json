@@ -75,32 +75,6 @@
             "10": 0.59
           },
           "variante_source": "super_brut"
-        },
-        "impot_sur_le_revenu": {
-          "pib": {
-            "1": 0.41,
-            "2": 0.83,
-            "3": 0.88,
-            "5": 0.81,
-            "10": 0.87
-          },
-          "solde": {
-            "1": -0.81,
-            "2": -0.5,
-            "3": -0.42,
-            "5": -0.51,
-            "10": -0.5
-          },
-          "sd": 0.66,
-          "brut": 1.0,
-          "pib_salariale": {
-            "1": 0.41,
-            "2": 0.819753086419753,
-            "3": 0.8582716049382716,
-            "5": 0.77,
-            "10": 0.65
-          },
-          "variante_source": "super_brut"
         }
       }
     },
@@ -188,14 +162,14 @@
       "vieillie": {
         "p_hausse": 1.0,
         "quantiles": {
-          "q05": 0.1172917872254335,
-          "q50": 0.11729390746040991,
-          "q95": 0.11729676328767388
+          "q05": 0.11694464436552623,
+          "q50": 0.1169448045436664,
+          "q95": 0.11694502047316732
         },
         "sobol": {
           "multiplicateur_macro": {
-            "premier_ordre": -339.7994121134016,
-            "total": 0.9818631437176067
+            "premier_ordre": -4533.688135440887,
+            "total": 0.9819309438391243
           }
         },
         "evaluations": 6000
@@ -203,14 +177,14 @@
       "figee": {
         "p_hausse": 1.0,
         "quantiles": {
-          "q05": 0.12757338290874254,
-          "q50": 0.12757479034706176,
-          "q95": 0.12757685286514087
+          "q05": 0.1268784579067739,
+          "q50": 0.12687853834789908,
+          "q95": 0.1268786562652802
         },
         "sobol": {
           "multiplicateur_macro": {
-            "premier_ordre": -542.5291161471793,
-            "total": 0.9828808223093846
+            "premier_ordre": -9461.671797995225,
+            "total": 0.9828846079491397
           }
         },
         "evaluations": 6000
@@ -226,69 +200,68 @@
     },
     "decomposition": {
       "vieillie": {
-        "cout": 0.1172967868262067,
-        "denominateur": -5.466604158232968e-07,
-        "retroaction": -2.4053671026091905e-06,
-        "total": 0.11729383479868827
+        "cout": 0.11694502209265623,
+        "denominateur": -4.1279841545005524e-08,
+        "retroaction": -1.817592563124748e-07,
+        "total": 0.11694479905355837
       },
       "figee": {
-        "cout": 0.12757687539407825,
-        "denominateur": -3.713682743544666e-07,
-        "retroaction": -1.764017769856352e-06,
-        "total": 0.12757474000803404
+        "cout": 0.12687865755574568,
+        "denominateur": -2.1232752889233097e-08,
+        "retroaction": -1.0085317425634344e-07,
+        "total": 0.12687853546981853
       }
     },
     "taux_marche": {
       "taux": 0.035,
-      "vieillie": 0.12655429298884835,
-      "figee": 0.13738691693074823
+      "vieillie": 0.12616955171018662,
+      "figee": 0.13663744007552947
     },
     "variante_salariale": {
       "sources": {
-        "cotisations_salaries": "super_brut",
-        "impot_sur_le_revenu": "super_brut"
+        "cotisations_salaries": "super_brut"
       },
       "non_variees": [],
       "boite": {
         "vieillie": {
-          "theta": 0.11729457602892812,
+          "theta": 0.11694485541680244,
           "corners": [
             [
               "multiplicateur_macro = 0, productivite_creations = 0",
-              0.11729669821397493
+              0.11694501571076654
             ],
             [
               "multiplicateur_macro = 0, productivite_creations = 1",
-              0.11729669821397493
+              0.11694501571076654
             ],
             [
               "multiplicateur_macro = 1, productivite_creations = 0",
-              0.11729248247421786
+              0.11694469693350351
             ],
             [
               "multiplicateur_macro = 1, productivite_creations = 1",
-              0.11729248247421786
+              0.11694469693350351
             ]
           ]
         },
         "figee": {
-          "theta": 0.12757535558158972,
+          "theta": 0.1268785706733837,
           "corners": [
             [
               "multiplicateur_macro = 0, productivite_creations = 0",
-              0.12757682315637564
+              0.12687865457552694
             ],
             [
               "multiplicateur_macro = 0, productivite_creations = 1",
-              0.12757682315637564
+              0.12687865457552694
             ],
             [
               "multiplicateur_macro = 1, productivite_creations = 0",
-              0.1275738939827875
+              0.1268784871100883
             ],
             [
               "multiplicateur_macro = 1, productivite_creations = 1",
-              0.1275738939827875
+              0.1268784871100883
             ]
           ]
         }
@@ -297,14 +270,14 @@
         "vieillie": {
           "p_hausse": 1.0,
           "quantiles": {
-            "q05": 0.11729203494080442,
-            "q50": 0.11729464869067208,
-            "q95": 0.1172967868262067
+            "q05": 0.11694466336859981,
+            "q50": 0.11694486090691025,
+            "q95": 0.11694502209265623
           },
           "sobol": {
             "multiplicateur_macro": {
-              "premier_ordre": -193.8718676531797,
-              "total": 0.9752108341383608
+              "premier_ordre": -2569.9293281941605,
+              "total": 0.9751753581082937
             }
           },
           "evaluations": 6000
@@ -312,14 +285,14 @@
         "figee": {
           "p_hausse": 1.0,
           "quantiles": {
-            "q05": 0.12757358351709547,
-            "q50": 0.12757540592062955,
-            "q95": 0.12757687539407825
+            "q05": 0.12687846937387937,
+            "q50": 0.1268785735514638,
+            "q95": 0.12687865755574568
           },
           "sobol": {
             "multiplicateur_macro": {
-              "premier_ordre": -265.19654385061534,
-              "total": 0.9750168537692477
+              "premier_ordre": -4633.35775513638,
+              "total": 0.9750179127294649
             }
           },
           "evaluations": 6000
@@ -327,8 +300,8 @@
       }
     },
     "creations_sans_canal": {
-      "vieillie": 0.11729383479868827,
-      "figee": 0.12757474000803404
+      "vieillie": 0.11694479905355837,
+      "figee": 0.12687853546981853
     }
   },
   "creations": {
@@ -455,21 +428,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.11729383479868827,
-            "c0": 0.11729383479868827,
-            "c1": 0.11729383479868827
+            "theta": 0.11694479905355837,
+            "c0": 0.11694479905355837,
+            "c1": 0.11694479905355837
           },
           "delta_sans_creations": [
-            0.014748765863684454,
-            0.028812715134864497,
-            0.04219647674384497,
-            0.054897569800123946,
-            0.06692795451846711,
-            0.07827676914671189,
-            0.0889650151957897,
-            0.09901014980928391,
-            0.1084437846979811,
-            0.11729383479868827
+            0.014681077807726872,
+            0.028685813912833646,
+            0.04202046258208991,
+            0.05466788171133152,
+            0.06665146185769588,
+            0.07796300640756959,
+            0.08862319270537222,
+            0.09865559271566404,
+            0.10809074860289769,
+            0.11694479905355837
           ]
         },
         "figee": {
@@ -537,21 +510,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.12757474000803404,
-            "c0": 0.12757474000803404,
-            "c1": 0.12757474000803404
+            "theta": 0.12687853546981853,
+            "c0": 0.12687853546981853,
+            "c1": 0.12687853546981853
           },
           "delta_sans_creations": [
-            0.015111647360535274,
-            0.029707171146949207,
-            0.043781401549036314,
-            0.05732027466430534,
-            0.07033051152586656,
-            0.08279716549143123,
-            0.09473803498239008,
-            0.10617020580440517,
-            0.11711038791919282,
-            0.12757474000803404
+            0.015030151601619801,
+            0.0295480037917355,
+            0.0435461751654731,
+            0.057011015481301275,
+            0.0699495540680466,
+            0.08234754395965083,
+            0.09422265120623474,
+            0.10559186658895459,
+            0.11647179974238475,
+            0.12687853546981853
           ]
         }
       },
@@ -622,21 +595,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.11729623208444351,
-            "c0": 0.11729623208444351,
-            "c1": 0.11729623208444351
+            "theta": 0.11694497891020372,
+            "c0": 0.11694497891020372,
+            "c1": 0.11694497891020372
           },
           "delta_sans_creations": [
-            0.014748765863684454,
-            0.028812715134864497,
-            0.04219647674384497,
-            0.0548981153605117,
-            0.06692873972271363,
-            0.07827783098881591,
-            0.08896639187204514,
-            0.09901186022409014,
-            0.10844583463784918,
-            0.11729623208444351
+            0.014681077807726872,
+            0.028685813912833646,
+            0.04202046258208991,
+            0.054667919195324544,
+            0.066651518800104,
+            0.07796308689276499,
+            0.0886233005185435,
+            0.0986557248406974,
+            0.10809090737829563,
+            0.11694497891020372
           ]
         },
         "figee": {
@@ -704,21 +677,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.1275765531578119,
-            "c0": 0.1275765531578119,
-            "c1": 0.1275765531578119
+            "theta": 0.126878639047447,
+            "c0": 0.126878639047447,
+            "c1": 0.126878639047447
           },
           "delta_sans_creations": [
-            0.015111647360535274,
-            0.029707171146949207,
-            0.043781401549036314,
-            0.05732079455159189,
-            0.07033122690058069,
-            0.08279810476715332,
-            0.0947391938825608,
-            0.10617158413233363,
-            0.11711198380259358,
-            0.1275765531578119
+            0.015030151601619801,
+            0.0295480037917355,
+            0.0435461751654731,
+            0.057011045222062684,
+            0.0699495949982325,
+            0.08234759756942323,
+            0.09422271746351618,
+            0.10559194539700112,
+            0.11647189100195221,
+            0.126878639047447
           ]
         }
       },
@@ -789,21 +762,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.11729418755893573,
-            "c0": 0.11729418755893573,
-            "c1": 0.11729418755893573
+            "theta": 0.11694482594150979,
+            "c0": 0.11694482594150979,
+            "c1": 0.11694482594150979
           },
           "delta_sans_creations": [
-            0.014748765863684454,
-            0.028812715134864497,
-            0.04219647674384497,
-            0.05489757583464083,
-            0.06692796868529771,
-            0.07827682904529887,
-            0.08896513175085241,
-            0.09901033349778388,
-            0.10844404722501366,
-            0.11729418755893573
+            0.014681077807726872,
+            0.028685813912833646,
+            0.04202046258208991,
+            0.05466788212958784,
+            0.06665146286263113,
+            0.07796301063274247,
+            0.08862320115083322,
+            0.09865560635394055,
+            0.10809076852872557,
+            0.11694482594150979
           ]
         },
         "figee": {
@@ -871,21 +844,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.1275750360267509,
-            "c0": 0.1275750360267509,
-            "c1": 0.1275750360267509
+            "theta": 0.12687855241551826,
+            "c0": 0.12687855241551826,
+            "c1": 0.12687855241551826
           },
           "delta_sans_creations": [
-            0.015111647360535274,
-            0.029707171146949207,
-            0.043781401549036314,
-            0.05732028041352977,
-            0.07033052451222366,
-            0.08279722129008915,
-            0.09473814112517576,
-            0.10617036929114398,
-            0.1171106148458223,
-            0.1275750360267509
+            0.015030151601619801,
+            0.0295480037917355,
+            0.0435461751654731,
+            0.0570110158132251,
+            0.06994955481834575,
+            0.08234754716001724,
+            0.09422265729057888,
+            0.10559187594935349,
+            0.11647181273545715,
+            0.12687855241551826
           ]
         }
       }
@@ -895,7 +868,7 @@
   "titre": "pres2027_philippe_programme",
   "source": "Édouard Philippe (Horizons), programme relevé le 2026-11-12 — la part chiffrée : p10_exoneration_deux_heures, p11_allocation_familiale_unique",
   "reference": "reconduit",
-  "computed": "2026-11-13",
+  "computed": "2026-11-19",
   "spending_name": "Dépenses gelées en volume",
   "growth_name": "Croissance réelle 1 %, prix 2 %",
   "rate_name": "Taux implicite tenu à son niveau de 2025",
@@ -910,8 +883,8 @@
     {
       "year": 2026,
       "basis": "legislated",
-      "mechanical_frozen_eur": 46565561611.406006,
-      "mechanical_aged_eur": 45447421243.75635,
+      "mechanical_frozen_eur": 46313739695.53247,
+      "mechanical_aged_eur": 45238119777.2146,
       "reference": 1.168580725548546,
       "reform_aged": null,
       "delta_aged": null,
@@ -919,10 +892,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 46565561611.406006,
+          "cost_eur": 46313739695.53247,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4023895263672,
-            "cotisations_salaries": 1033051.2632293701
+            "cotisations_salaries": 59196.100830078125
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -940,10 +912,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 45447421243.75635,
+          "cost_eur": 45238119777.2146,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4024047851562,
-            "cotisations_salaries": 1085436.1885375977
+            "cotisations_salaries": 74694.17234802246
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -965,8 +936,8 @@
     {
       "year": 2027,
       "basis": "legislated",
-      "mechanical_frozen_eur": 46863183858.75659,
-      "mechanical_aged_eur": 45163116249.17236,
+      "mechanical_frozen_eur": 46612828437.14624,
+      "mechanical_aged_eur": 44971761325.20581,
       "reference": 1.1746928799602263,
       "reform_aged": null,
       "delta_aged": null,
@@ -974,10 +945,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 46863183858.75659,
+          "cost_eur": 46612828437.14624,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4024047851562,
-            "cotisations_salaries": 1033051.2632293701
+            "cotisations_salaries": 59196.100830078125
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -995,10 +965,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 45163116249.17236,
+          "cost_eur": 44971761325.20581,
           "impulses": {
-            "impot_sur_le_revenu": -3104.8047943115234,
-            "cotisations_salaries": 1160908.5841064453
+            "cotisations_salaries": 85677.81033325195
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1020,8 +989,8 @@
     {
       "year": 2028,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 47100201685.88501,
-      "mechanical_aged_eur": 44810010231.77734,
+      "mechanical_frozen_eur": 46845076249.519775,
+      "mechanical_aged_eur": 44644055225.31592,
       "reference": 1.1753885794969483,
       "reform_aged": null,
       "delta_aged": null,
@@ -1029,9 +998,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 47100201685.88501,
+          "cost_eur": 46845076249.519775,
           "impulses": {
-            "cotisations_salaries": 1038900.9899749756
+            "cotisations_salaries": 59152.927154541016
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1049,9 +1018,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 44810010231.77734,
+          "cost_eur": 44644055225.31592,
           "impulses": {
-            "cotisations_salaries": 1222810.9462127686
+            "cotisations_salaries": 97412.90872192383
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1073,8 +1042,8 @@
     {
       "year": 2029,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 47242327555.17236,
-      "mechanical_aged_eur": 44361073971.32251,
+      "mechanical_frozen_eur": 46983541594.20874,
+      "mechanical_aged_eur": 44172887751.16992,
       "reference": 1.1707805732317031,
       "reform_aged": null,
       "delta_aged": null,
@@ -1082,10 +1051,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 47242327555.17236,
+          "cost_eur": 46983541594.20874,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4024047851562,
-            "cotisations_salaries": 1033051.2632293701
+            "cotisations_salaries": 59196.100830078125
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1103,10 +1071,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 44361073971.32251,
+          "cost_eur": 44172887751.16992,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4023895263672,
-            "cotisations_salaries": 1346486.3286437988
+            "cotisations_salaries": 112941.78532409668
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1128,8 +1095,8 @@
     {
       "year": 2030,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 47352927330.588135,
-      "mechanical_aged_eur": 43859549741.479004,
+      "mechanical_frozen_eur": 47091611798.93091,
+      "mechanical_aged_eur": 43687392236.23999,
       "reference": 1.1609798413129486,
       "reform_aged": null,
       "delta_aged": null,
@@ -1137,10 +1104,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 47352927330.588135,
+          "cost_eur": 47091611798.93091,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4024047851562,
-            "cotisations_salaries": 1033051.2632293701
+            "cotisations_salaries": 59196.100830078125
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1158,9 +1124,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 43859549741.479004,
+          "cost_eur": 43687392236.23999,
           "impulses": {
-            "cotisations_salaries": 1473531.4609680176
+            "cotisations_salaries": 115891.12478637695
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1182,8 +1148,8 @@
     {
       "year": 2031,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 47352937966.970215,
-      "mechanical_aged_eur": 43222043099.055176,
+      "mechanical_frozen_eur": 47091650809.10474,
+      "mechanical_aged_eur": 43076783670.535645,
       "reference": 1.146095619682319,
       "reform_aged": null,
       "delta_aged": null,
@@ -1191,10 +1157,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 47352937966.970215,
+          "cost_eur": 47091650809.10474,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4024047851562,
-            "cotisations_salaries": 1033051.2632293701
+            "cotisations_salaries": 59196.100830078125
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1212,9 +1177,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 43222043099.055176,
+          "cost_eur": 43076783670.535645,
           "impulses": {
-            "cotisations_salaries": 1567609.2479553223
+            "cotisations_salaries": 122914.76300048828
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1236,8 +1201,8 @@
     {
       "year": 2032,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 47353122810.53833,
-      "mechanical_aged_eur": 42555558952.87134,
+      "mechanical_frozen_eur": 47091832717.55542,
+      "mechanical_aged_eur": 42438278746.749756,
       "reference": 1.1262354244680892,
       "reform_aged": null,
       "delta_aged": null,
@@ -1245,9 +1210,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 47353122810.53833,
+          "cost_eur": 47091832717.55542,
           "impulses": {
-            "cotisations_salaries": 1038900.9899749756
+            "cotisations_salaries": 59152.927154541016
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1265,10 +1230,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 42555558952.87134,
+          "cost_eur": 42438278746.749756,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4024047851562,
-            "cotisations_salaries": 1646826.288909912
+            "cotisations_salaries": 114147.36422729492
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1290,8 +1254,8 @@
     {
       "year": 2033,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 47352938075.396484,
-      "mechanical_aged_eur": 41847960962.79199,
+      "mechanical_frozen_eur": 47091650809.10474,
+      "mechanical_aged_eur": 41784098656.31836,
       "reference": 1.1015050760584795,
       "reform_aged": null,
       "delta_aged": null,
@@ -1299,10 +1263,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 47352938075.396484,
+          "cost_eur": 47091650809.10474,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4024047851562,
-            "cotisations_salaries": 1033051.2632293701
+            "cotisations_salaries": 59196.100830078125
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1320,9 +1283,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 41847960962.79199,
+          "cost_eur": 41784098656.31836,
           "impulses": {
-            "cotisations_salaries": 1702547.8695983887
+            "cotisations_salaries": 125040.54440307617
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1344,8 +1307,8 @@
     {
       "year": 2034,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 47352927330.588135,
-      "mechanical_aged_eur": 41154589514.69458,
+      "mechanical_frozen_eur": 47091611798.93091,
+      "mechanical_aged_eur": 41144013693.36548,
       "reference": 1.0720087228588424,
       "reform_aged": null,
       "delta_aged": null,
@@ -1353,10 +1316,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 47352927330.588135,
+          "cost_eur": 47091611798.93091,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4024047851562,
-            "cotisations_salaries": 1033051.2632293701
+            "cotisations_salaries": 59196.100830078125
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1374,9 +1336,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 41154589514.69458,
+          "cost_eur": 41144013693.36548,
           "impulses": {
-            "cotisations_salaries": 1675383.1585388184
+            "cotisations_salaries": 124155.68365478516
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1398,8 +1360,8 @@
     {
       "year": 2035,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 47352937966.970215,
-      "mechanical_aged_eur": 40466469788.26587,
+      "mechanical_frozen_eur": 47091650809.10474,
+      "mechanical_aged_eur": 40465601855.434326,
       "reference": 1.0378488647367168,
       "reform_aged": null,
       "delta_aged": null,
@@ -1407,10 +1369,9 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 47352937966.970215,
+          "cost_eur": 47091650809.10474,
           "impulses": {
-            "impot_sur_le_revenu": 1552.4024047851562,
-            "cotisations_salaries": 1033051.2632293701
+            "cotisations_salaries": 59196.100830078125
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1428,10 +1389,9 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 40466469788.26587,
+          "cost_eur": 40465601855.434326,
           "impulses": {
-            "impot_sur_le_revenu": -1552.4024047851562,
-            "cotisations_salaries": 1733997.4924621582
+            "cotisations_salaries": 131000.1908569336
           },
           "uncovered": {
             "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1513,88 +1473,88 @@
         "persistence": "lue",
         "every_year": {
           "vieillie": {
-            "theta": 0.11729383479868827,
+            "theta": 0.11694479905355837,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.1172960171753048
+                0.11694496373663399
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.1172960171753048
+                0.11694496373663399
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.11729209441698973
+                0.11694466758674249
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.11729209441698973
+                0.11694466758674249
               ]
             ]
           },
           "figee": {
-            "theta": 0.12757474000803404,
+            "theta": 0.12687853546981853,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.12757626333928385
+                0.12687862256074256
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.12757626333928385
+                0.12687862256074256
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.12757356636170147
+                0.1268784683837576
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.12757356636170147
+                0.1268784683837576
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.1403729551389763,
+            "theta": 0.13972885549882208,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.1403748125755082
+                0.1397289831560784
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.1403748125755082
+                0.1397289831560784
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.14037148848197667
+                0.13972875473613033
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.14037148848197667
+                0.13972875473613033
               ]
             ]
           },
           "figee": {
-            "theta": 0.14382672782136452,
+            "theta": 0.14305120785867342,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.14382849648677265
+                0.1430513090708303
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.14382849648677265
+                0.1430513090708303
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.14382533107358997
+                0.14305112796080732
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.14382533107358997
+                0.14305112796080732
               ]
             ]
           }
@@ -1604,88 +1564,88 @@
         "persistence": "eteint",
         "every_year": {
           "vieillie": {
-            "theta": 0.11729623208444351,
+            "theta": 0.11694497891020372,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.11729674011768898
+                0.11694501843961014
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.11729674011768898
+                0.11694501843961014
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.11729571335614941
+                0.11694493821007002
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.11729571335614941
+                0.11694493821007002
               ]
             ]
           },
           "figee": {
-            "theta": 0.1275765531578119,
+            "theta": 0.126878639047447,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.12757684800490088
+                0.12687865598641523
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.12757684800490088
+                0.12687865598641523
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.12757625578534548
+                0.12687862196542188
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.12757625578534548
+                0.12687862196542188
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.14037505372947567,
+            "theta": 0.13972899974222774,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.14037547182054588
+                0.13972902848059165
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.14037547182054588
+                0.13972902848059165
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.1403746251236424
+                0.139728970283445
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.1403746251236424
+                0.139728970283445
               ]
             ]
           },
           "figee": {
-            "theta": 0.14382872655932233,
+            "theta": 0.14305132224620487,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.14382912449544594
+                0.14305134502173122
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.14382912449544594
+                0.14305134502173122
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.1438283186136835
+                0.14305129889973744
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.1438283186136835
+                0.14305129889973744
               ]
             ]
           }
@@ -1695,88 +1655,88 @@
         "persistence": "tenu",
         "every_year": {
           "vieillie": {
-            "theta": 0.11729418755893573,
+            "theta": 0.11694482594150979,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.11729649468769066
+                0.11694500008336628
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.11729649468769066
+                0.11694500008336628
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.1172922683977522
+                0.11694468098291777
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.1172922683977522
+                0.11694468098291777
               ]
             ]
           },
           "figee": {
-            "theta": 0.1275750360267509,
+            "theta": 0.12687855241551826,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.12757666577975013
+                0.1268786455905837
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.12757666577975013
+                0.1268786455905837
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.12757370924991207
+                0.12687847657002194
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.12757370924991207
+                0.12687847657002194
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.14037328472218924,
+            "theta": 0.1397288781920265,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.14037525921444183
+                0.13972901389456727
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.14037525921444183
+                0.13972901389456727
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.14037164997637763
+                0.139728765868683
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.14037164997637763
+                0.139728765868683
               ]
             ]
           },
           "figee": {
-            "theta": 0.14382704193655504,
+            "theta": 0.14305122586822416,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.14382892201529085
+                0.14305133345637322
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.14382892201529085
+                0.14305133345637322
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.14382548520776517
+                0.143051136808392
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.14382548520776517
+                0.143051136808392
               ]
             ]
           }
@@ -1784,9 +1744,9 @@
       }
     ]
   },
-  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
   "dirty": false,
-  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file",
   "annees": null,
   "persistence": null,
   "side_by_side": [
@@ -1796,73 +1756,73 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1833294914122305,
-          "delta_aged": 0.014748765863684454,
-          "reform_frozen": 1.1836923729090814,
-          "delta_frozen": 0.015111647360535274
+          "reform_aged": 1.183261803356273,
+          "delta_aged": 0.014681077807726872,
+          "reform_frozen": 1.1836108771501659,
+          "delta_frozen": 0.015030151601619801
         },
         {
           "year": 2027,
-          "reform_aged": 1.2035055950950908,
-          "delta_aged": 0.028812715134864497,
-          "reform_frozen": 1.2044000511071755,
-          "delta_frozen": 0.029707171146949207
+          "reform_aged": 1.20337869387306,
+          "delta_aged": 0.028685813912833646,
+          "reform_frozen": 1.2042408837519618,
+          "delta_frozen": 0.0295480037917355
         },
         {
           "year": 2028,
-          "reform_aged": 1.2175850562407933,
-          "delta_aged": 0.04219647674384497,
-          "reform_frozen": 1.2191699810459846,
-          "delta_frozen": 0.043781401549036314
+          "reform_aged": 1.2174090420790382,
+          "delta_aged": 0.04202046258208991,
+          "reform_frozen": 1.2189347546624214,
+          "delta_frozen": 0.0435461751654731
         },
         {
           "year": 2029,
-          "reform_aged": 1.225678143031827,
-          "delta_aged": 0.054897569800123946,
-          "reform_frozen": 1.2281008478960085,
-          "delta_frozen": 0.05732027466430534
+          "reform_aged": 1.2254484549430347,
+          "delta_aged": 0.05466788171133152,
+          "reform_frozen": 1.2277915887130044,
+          "delta_frozen": 0.057011015481301275
         },
         {
           "year": 2030,
-          "reform_aged": 1.2279077958314157,
-          "delta_aged": 0.06692795451846711,
-          "reform_frozen": 1.2313103528388152,
-          "delta_frozen": 0.07033051152586656
+          "reform_aged": 1.2276313031706445,
+          "delta_aged": 0.06665146185769588,
+          "reform_frozen": 1.2309293953809952,
+          "delta_frozen": 0.0699495540680466
         },
         {
           "year": 2031,
-          "reform_aged": 1.224372388829031,
-          "delta_aged": 0.07827676914671189,
-          "reform_frozen": 1.2288927851737503,
-          "delta_frozen": 0.08279716549143123
+          "reform_aged": 1.2240586260898887,
+          "delta_aged": 0.07796300640756959,
+          "reform_frozen": 1.22844316364197,
+          "delta_frozen": 0.08234754395965083
         },
         {
           "year": 2032,
-          "reform_aged": 1.215200439663879,
-          "delta_aged": 0.0889650151957897,
-          "reform_frozen": 1.2209734594504793,
-          "delta_frozen": 0.09473803498239008
+          "reform_aged": 1.2148586171734614,
+          "delta_aged": 0.08862319270537222,
+          "reform_frozen": 1.220458075674324,
+          "delta_frozen": 0.09422265120623474
         },
         {
           "year": 2033,
-          "reform_aged": 1.2005152258677634,
-          "delta_aged": 0.09901014980928391,
-          "reform_frozen": 1.2076752818628846,
-          "delta_frozen": 0.10617020580440517
+          "reform_aged": 1.2001606687741435,
+          "delta_aged": 0.09865559271566404,
+          "reform_frozen": 1.207096942647434,
+          "delta_frozen": 0.10559186658895459
         },
         {
           "year": 2034,
-          "reform_aged": 1.1804525075568235,
-          "delta_aged": 0.1084437846979811,
-          "reform_frozen": 1.1891191107780352,
-          "delta_frozen": 0.11711038791919282
+          "reform_aged": 1.18009947146174,
+          "delta_aged": 0.10809074860289769,
+          "reform_frozen": 1.1884805226012272,
+          "delta_frozen": 0.11647179974238475
         },
         {
           "year": 2035,
-          "reform_aged": 1.155142699535405,
-          "delta_aged": 0.11729383479868827,
-          "reform_frozen": 1.1654236047447508,
-          "delta_frozen": 0.12757474000803404
+          "reform_aged": 1.1547936637902751,
+          "delta_aged": 0.11694479905355837,
+          "reform_frozen": 1.1647274002065353,
+          "delta_frozen": 0.12687853546981853
         }
       ],
       "conventions": [
@@ -1870,16 +1830,16 @@
         "Au-delà de trois ans : Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux."
       ],
       "gdp_gap_aged": [
-        1.3406377883731157e-07,
-        2.585453139079157e-07,
-        2.766084327894402e-07,
-        2.9361736202812156e-07,
-        3.1582004502539355e-07,
-        3.5645983057524937e-07,
-        3.926982262041478e-07,
-        4.2483593915088364e-07,
-        4.47821993795809e-07,
-        4.7323960723304817e-07
+        9.211369979108618e-09,
+        1.8497901050226257e-08,
+        2.122284248674041e-08,
+        2.3918464280784383e-08,
+        2.5492005165748816e-08,
+        2.7782619736167825e-08,
+        2.8888908310348443e-08,
+        3.075248809139323e-08,
+        3.3354145931003795e-08,
+        3.5746502952212035e-08
       ]
     },
     {
@@ -1888,89 +1848,89 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1833294914122305,
-          "delta_aged": 0.014748765863684454,
-          "reform_frozen": 1.1836923729090814,
-          "delta_frozen": 0.015111647360535274
+          "reform_aged": 1.183261803356273,
+          "delta_aged": 0.014681077807726872,
+          "reform_frozen": 1.1836108771501659,
+          "delta_frozen": 0.015030151601619801
         },
         {
           "year": 2027,
-          "reform_aged": 1.2035055950950908,
-          "delta_aged": 0.028812715134864497,
-          "reform_frozen": 1.2044000511071755,
-          "delta_frozen": 0.029707171146949207
+          "reform_aged": 1.20337869387306,
+          "delta_aged": 0.028685813912833646,
+          "reform_frozen": 1.2042408837519618,
+          "delta_frozen": 0.0295480037917355
         },
         {
           "year": 2028,
-          "reform_aged": 1.2175850562407933,
-          "delta_aged": 0.04219647674384497,
-          "reform_frozen": 1.2191699810459846,
-          "delta_frozen": 0.043781401549036314
+          "reform_aged": 1.2174090420790382,
+          "delta_aged": 0.04202046258208991,
+          "reform_frozen": 1.2189347546624214,
+          "delta_frozen": 0.0435461751654731
         },
         {
           "year": 2029,
-          "reform_aged": 1.2256786885922148,
-          "delta_aged": 0.0548981153605117,
-          "reform_frozen": 1.228101367783295,
-          "delta_frozen": 0.05732079455159189
+          "reform_aged": 1.2254484924270277,
+          "delta_aged": 0.054667919195324544,
+          "reform_frozen": 1.2277916184537658,
+          "delta_frozen": 0.057011045222062684
         },
         {
           "year": 2030,
-          "reform_aged": 1.2279085810356622,
-          "delta_aged": 0.06692873972271363,
-          "reform_frozen": 1.2313110682135293,
-          "delta_frozen": 0.07033122690058069
+          "reform_aged": 1.2276313601130526,
+          "delta_aged": 0.066651518800104,
+          "reform_frozen": 1.2309294363111811,
+          "delta_frozen": 0.0699495949982325
         },
         {
           "year": 2031,
-          "reform_aged": 1.224373450671135,
-          "delta_aged": 0.07827783098881591,
-          "reform_frozen": 1.2288937244494724,
-          "delta_frozen": 0.08279810476715332
+          "reform_aged": 1.224058706575084,
+          "delta_aged": 0.07796308689276499,
+          "reform_frozen": 1.2284432172517423,
+          "delta_frozen": 0.08234759756942323
         },
         {
           "year": 2032,
-          "reform_aged": 1.2152018163401344,
-          "delta_aged": 0.08896639187204514,
-          "reform_frozen": 1.22097461835065,
-          "delta_frozen": 0.0947391938825608
+          "reform_aged": 1.2148587249866327,
+          "delta_aged": 0.0886233005185435,
+          "reform_frozen": 1.2204581419316054,
+          "delta_frozen": 0.09422271746351618
         },
         {
           "year": 2033,
-          "reform_aged": 1.2005169362825696,
-          "delta_aged": 0.09901186022409014,
-          "reform_frozen": 1.207676660190813,
-          "delta_frozen": 0.10617158413233363
+          "reform_aged": 1.2001608008991769,
+          "delta_aged": 0.0986557248406974,
+          "reform_frozen": 1.2070970214554806,
+          "delta_frozen": 0.10559194539700112
         },
         {
           "year": 2034,
-          "reform_aged": 1.1804545574966916,
-          "delta_aged": 0.10844583463784918,
-          "reform_frozen": 1.189120706661436,
-          "delta_frozen": 0.11711198380259358
+          "reform_aged": 1.180099630237138,
+          "delta_aged": 0.10809090737829563,
+          "reform_frozen": 1.1884806138607946,
+          "delta_frozen": 0.11647189100195221
         },
         {
           "year": 2035,
-          "reform_aged": 1.1551450968211603,
-          "delta_aged": 0.11729623208444351,
-          "reform_frozen": 1.1654254178945287,
-          "delta_frozen": 0.1275765531578119
+          "reform_aged": 1.1547938436469205,
+          "delta_aged": 0.11694497891020372,
+          "reform_frozen": 1.1647275037841638,
+          "delta_frozen": 0.126878639047447
         }
       ],
       "conventions": [
         "Au-delà de trois ans : Effet macro éteint après trois ans."
       ],
       "gdp_gap_aged": [
-        1.3406377883731157e-07,
-        2.585453139079157e-07,
-        2.766084327894402e-07,
-        2.5477209351934137e-08,
-        3.520610947163789e-08,
-        4.2521974536723294e-08,
-        3.170438518984163e-08,
-        1.7405813494819334e-08,
-        8.86840532107064e-12,
-        -1.3061311477921258e-08
+        9.211369979108618e-09,
+        1.8497901050226257e-08,
+        2.122284248674041e-08,
+        5.495724322567143e-09,
+        4.737302765303603e-09,
+        3.0807785151648727e-09,
+        -6.77546552014129e-10,
+        -9.545136337292037e-10,
+        -1.5811998126214301e-09,
+        9.051704456367715e-10
       ]
     },
     {
@@ -1979,144 +1939,90 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1833294914122305,
-          "delta_aged": 0.014748765863684454,
-          "reform_frozen": 1.1836923729090814,
-          "delta_frozen": 0.015111647360535274
+          "reform_aged": 1.183261803356273,
+          "delta_aged": 0.014681077807726872,
+          "reform_frozen": 1.1836108771501659,
+          "delta_frozen": 0.015030151601619801
         },
         {
           "year": 2027,
-          "reform_aged": 1.2035055950950908,
-          "delta_aged": 0.028812715134864497,
-          "reform_frozen": 1.2044000511071755,
-          "delta_frozen": 0.029707171146949207
+          "reform_aged": 1.20337869387306,
+          "delta_aged": 0.028685813912833646,
+          "reform_frozen": 1.2042408837519618,
+          "delta_frozen": 0.0295480037917355
         },
         {
           "year": 2028,
-          "reform_aged": 1.2175850562407933,
-          "delta_aged": 0.04219647674384497,
-          "reform_frozen": 1.2191699810459846,
-          "delta_frozen": 0.043781401549036314
+          "reform_aged": 1.2174090420790382,
+          "delta_aged": 0.04202046258208991,
+          "reform_frozen": 1.2189347546624214,
+          "delta_frozen": 0.0435461751654731
         },
         {
           "year": 2029,
-          "reform_aged": 1.225678149066344,
-          "delta_aged": 0.05489757583464083,
-          "reform_frozen": 1.228100853645233,
-          "delta_frozen": 0.05732028041352977
+          "reform_aged": 1.225448455361291,
+          "delta_aged": 0.05466788212958784,
+          "reform_frozen": 1.2277915890449282,
+          "delta_frozen": 0.0570110158132251
         },
         {
           "year": 2030,
-          "reform_aged": 1.2279078099982463,
-          "delta_aged": 0.06692796868529771,
-          "reform_frozen": 1.2313103658251723,
-          "delta_frozen": 0.07033052451222366
+          "reform_aged": 1.2276313041755798,
+          "delta_aged": 0.06665146286263113,
+          "reform_frozen": 1.2309293961312944,
+          "delta_frozen": 0.06994955481834575
         },
         {
           "year": 2031,
-          "reform_aged": 1.224372448727618,
-          "delta_aged": 0.07827682904529887,
-          "reform_frozen": 1.2288928409724083,
-          "delta_frozen": 0.08279722129008915
+          "reform_aged": 1.2240586303150616,
+          "delta_aged": 0.07796301063274247,
+          "reform_frozen": 1.2284431668423363,
+          "delta_frozen": 0.08234754716001724
         },
         {
           "year": 2032,
-          "reform_aged": 1.2152005562189416,
-          "delta_aged": 0.08896513175085241,
-          "reform_frozen": 1.220973565593265,
-          "delta_frozen": 0.09473814112517576
+          "reform_aged": 1.2148586256189224,
+          "delta_aged": 0.08862320115083322,
+          "reform_frozen": 1.220458081758668,
+          "delta_frozen": 0.09422265729057888
         },
         {
           "year": 2033,
-          "reform_aged": 1.2005154095562633,
-          "delta_aged": 0.09901033349778388,
-          "reform_frozen": 1.2076754453496235,
-          "delta_frozen": 0.10617036929114398
+          "reform_aged": 1.20016068241242,
+          "delta_aged": 0.09865560635394055,
+          "reform_frozen": 1.207096952007833,
+          "delta_frozen": 0.10559187594935349
         },
         {
           "year": 2034,
-          "reform_aged": 1.180452770083856,
-          "delta_aged": 0.10844404722501366,
-          "reform_frozen": 1.1891193377046647,
-          "delta_frozen": 0.1171106148458223
+          "reform_aged": 1.180099491387568,
+          "delta_aged": 0.10809076852872557,
+          "reform_frozen": 1.1884805355942996,
+          "delta_frozen": 0.11647181273545715
         },
         {
           "year": 2035,
-          "reform_aged": 1.1551430522956525,
-          "delta_aged": 0.11729418755893573,
-          "reform_frozen": 1.1654239007634677,
-          "delta_frozen": 0.1275750360267509
+          "reform_aged": 1.1547936906782266,
+          "delta_aged": 0.11694482594150979,
+          "reform_frozen": 1.164727417152235,
+          "delta_frozen": 0.12687855241551826
         }
       ],
       "conventions": [
         "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année."
       ],
       "gdp_gap_aged": [
-        1.3406377883731157e-07,
-        2.585453139079157e-07,
-        2.766084327894402e-07,
-        2.901124365878994e-07,
-        3.0862384169533636e-07,
-        3.2295644829404993e-07,
-        3.3185524274942056e-07,
-        3.3581706392973247e-07,
-        3.2881905442742755e-07,
-        3.2260965657405426e-07
+        9.211369979108618e-09,
+        1.8497901050226257e-08,
+        2.122284248674041e-08,
+        2.3676059807649944e-08,
+        2.4979702035676075e-08,
+        2.5421057590365346e-08,
+        2.4464763953401973e-08,
+        2.408807211011176e-08,
+        2.4200496831340667e-08,
+        2.414600869245029e-08
       ]
     }
-  ],
-  "recalcul": {
-    "decision": "D-427",
-    "date": "2026-11-15",
-    "objet": "l'élasticité du canal des créations, changée sans passe ; aucun prélèvement sur les entreprises ou le capital ne bouge : aucun nombre ne change",
-    "nombres_refaits": false,
-    "elasticite_avant": {
-      "centre": 0.2,
-      "bas": 0.043,
-      "haut": 0.356
-    },
-    "elasticite": {
-      "centre": 0.043,
-      "bas": 0.0,
-      "haut": 0.2
-    },
-    "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161",
-    "instruments": {
-      "decision": "D-444",
-      "date": "2026-11-15",
-      "retires": [
-        "cvae",
-        "c3s"
-      ],
-      "objet": "des instruments retirés de la liste du canal des créations, sans passe : ils y valaient zéro chaque année, aucun nombre ne change ; la passe reste celle de « commit »",
-      "nombres_refaits": false,
-      "variations_avant": {
-        "figee": [
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ],
-        "vieillie": [
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ]
-      },
-      "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161"
-    }
-  }
+  ]
 }

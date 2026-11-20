@@ -234,7 +234,8 @@ def _attal() -> str:
     meta = m["meta"]
     dec = pred["lectures"]["decomposition"]["vieillie"]
     beh = m["behavioural"]
-    cot = loi_erreur("cotisations_salariales")
+    # D-498 : la ligne des cotisations des salariés de la grille est celle des APU.
+    cot = loi_erreur("cotisations_salariales_apu")
     if not math.isclose(pred["years"][0]["mechanical_frozen_eur"], total, rel_tol=1e-9):
         raise ParcoursError("Attal : le chemin annuel ne part pas du coût de la première "
                             "année.")
@@ -285,8 +286,9 @@ l'activité : c'est la {lien("activite", "page 5")}. La dette de 2035 part de ce
 {b(pt(dec["total"]), "L4", True)} ({fichier(ATTAL_PRED, "le chemin annuel")},
 {lien("dette", "page 6")}).</p>
 <p><strong>L'erreur de ce coût est celle de son assiette.</strong> La grille de vérification
-compare le total des cotisations des salariés du moteur à celui des comptes nationaux
-({source(cot["url"], "Insee, compte des ménages, ligne D613CE")}) : en moyenne sur
+compare les cotisations des salariés du moteur, celles des gérants majoritaires retirées, à
+celles que reçoivent les administrations publiques dans les comptes nationaux
+({source(cot["url"], "Insee, compte des APU, ligne D613CE")}) : en moyenne sur
 {len(cot["annees"])} ans, {b(pct(cot["biais"]), "vérifié")} (de
 {b(pct(cot["min"]), "vérifié")} à {b(pct(cot["max"]), "vérifié")}),
 {cot["tenues"]} années sur {len(cot["annees"])} dans la tolérance

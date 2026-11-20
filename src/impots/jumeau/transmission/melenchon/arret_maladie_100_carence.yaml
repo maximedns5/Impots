@@ -10,7 +10,10 @@ source:
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
   date: '2026-11-06'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: Code de la sécurité sociale, art. L321-1 et R323-1 (les indemnités journalières,
+    à 50 % du gain journalier, après trois jours de carence) ; Code du travail, art. L1226-1
+    (le complément de l'employeur) ; loi n° 2017-1837, art. 115 (le jour de carence des agents
+    publics)
   parametre: null
   valeur: null
   enonce: indemnisation à 100 % du salaire ; jours de carence supprimés
@@ -46,5 +49,10 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: 'Le moteur porte l''impôt des indemnités journalières, pas les arrêts ni leur carence
-    : c''est une dépense qu''il ne microsimule pas. (porte « depense_publique »)'
+  manque: Le coût dépend du nombre de jours de carence et de la part du salaire que l'employeur
+    complète déjà ; les comptes lus (CCSS) donnent la dépense d'indemnités journalières, pas
+    ces deux nombres.
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

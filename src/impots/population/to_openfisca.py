@@ -394,6 +394,9 @@ def excluded_from_allegements(frame: pl.DataFrame) -> np.ndarray:
 
 #: The share of a salary the income tax exempts (correction 24), by the column that carries it.
 EXEMPT_SHARE_INPUT = ("part_salaire_exoneree_ir", "part_salaire_exoneree")
+#: The share of a private salary outside the base of the contributions (correction 27, D-499).
+HORS_ASSIETTE_INPUT = ("part_salaire_hors_assiette_cotisations",
+                       "part_salaire_hors_assiette_cotisations")
 
 
 def micro_turnover(income: np.ndarray, abatement: float, minimum: float) -> np.ndarray:
@@ -707,14 +710,14 @@ def build_simulation(
         if categorie_ns is not None:
             simulation.set_input("categorie_non_salarie", str(year - offset), categorie_ns)
 
-    # ---- the exempt share of the salaries (correction 24), each year of the history -----
+    # ---- the exempt shares of the salaries (corrections 24 and 27), each year of history --
     # Written only where the system carries the variable: raw openfisca, which the kill
     # tests run, has none, and a frame built before the étape « ir » no column.
-    variable, column = EXEMPT_SHARE_INPUT
-    if column in frame.columns and variable in tax_benefit_system.variables:
-        share = frame[column].fill_null(0.0).to_numpy().astype(np.float64)
-        for offset in range(HISTORY_YEARS, -1, -1):
-            simulation.set_input(variable, str(year - offset), share)
+    for variable, column in (EXEMPT_SHARE_INPUT, HORS_ASSIETTE_INPUT):
+        if column in frame.columns and variable in tax_benefit_system.variables:
+            share = frame[column].fill_null(0.0).to_numpy().astype(np.float64)
+            for offset in range(HISTORY_YEARS, -1, -1):
+                simulation.set_input(variable, str(year - offset), share)
 
     # ---- foyer fiscal inputs, ordered to match `foyer_ids` -----------------
     foyer = _group_frame(frame, "foyer_id", ["parent_isole"])

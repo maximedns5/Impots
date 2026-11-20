@@ -45,6 +45,7 @@ def _paire(chemin: str) -> tuple[dict, dict, str]:
 
 
 ATTAL = "presidentielle_attal/predictif_pres2027_attal_programme.json"
+RETAILLEAU = "presidentielle_retailleau/predictif_pres2027_retailleau_programme.json"
 
 
 def _mesure(chemin: str, vue: str = "figee", **autres) -> Mesure:
@@ -65,7 +66,8 @@ def test_la_premiere_annee_figee_porte_ses_impots_et_ses_deciles() -> None:
     assert set(m.menages) == {2026}
     assert m.menages[2026]["deciles"] == menages_depuis_deciles(
         premiere["response"]["menages"]["deciles"])
-    assert sum(m.menages[2026]["deciles"]) == pytest.approx(58.46, abs=0.01)
+    # D-559 : 58,46 sur la série de 5a68669, 55,42 sur celle de D-559.
+    assert sum(m.menages[2026]["deciles"]) == pytest.approx(55.42, abs=0.01)
     assert set(m.non_portes) == {"annees"}
 
 
@@ -77,11 +79,24 @@ def test_ce_que_le_rapport_ne_porte_pas_reste_absent() -> None:
     seul = Mesure.depuis_rapport(payload, vue="figee", identifiant="x", libelle="x",
                                  auteur="x", rapport=rapport)
     assert seul.entreprises is None and seul.menages is None
-    # Retailleau : 4,3 Md€ de cotisations patronales nettes, que le rapport ne ventile pas.
-    retailleau = _mesure("presidentielle_retailleau/"
-                         "predictif_pres2027_retailleau_programme.json")
-    assert retailleau.entreprises is None and set(retailleau.menages) == {2026}
-    assert "-4.301 Md€" in retailleau.non_portes["entreprises"]
+    # Retailleau : 3,9 Md€ de cotisations patronales nettes (4,301 sur la série de
+    # 5a68669, 3,933 sur celle de D-559). Absentes jusqu'à D-475 (le rapport ne les
+    # ventilait pas, `non_portes` disait « -4.301 Md€ ») ; depuis, lues dans la passe des
+    # ménages et le chemin, égales au bit, et ventilées (D-477, D-565).
+    from impots.jumeau.ventilation import employeurs_lus, employeurs_premiere
+
+    retailleau = _mesure(RETAILLEAU)
+    payload, premiere, _ = _paire(RETAILLEAU)
+    assert set(retailleau.entreprises) == {2026} and set(retailleau.menages) == {2026}
+    employeurs = retailleau.entreprises[2026]["cotisations_employeurs"]
+    assert employeurs == pytest.approx(-3.933, abs=1e-3)
+    assert employeurs == employeurs_premiere(premiere) == employeurs_lus(payload,
+                                                                          "figee")[2026]
+    # D-683 : 1,34 € hors des cinq impôts et de E dans la couche du rapport de D-559 (au
+    # bit sur la série de 5a68669 ; Attal en porte 59 €).
+    assert sum(retailleau.entreprises[2026].values()) == pytest.approx(
+        retailleau.prelevements[2026], abs=1e-8)
+    assert "entreprises" not in retailleau.non_portes
     # Une réforme du Smic : le Smic réel efficace ne se lit pas dans la requête.
     smic = _mesure("presidentielle_melenchon/mesures/smic_1700_net/"
                    "predictif_pres2027_melenchon_smic_1700_net.json")
@@ -160,8 +175,9 @@ def test_la_convention_ventile_chaque_annee_aux_parts_de_la_premiere() -> None:
         np.testing.assert_allclose(m.menages[a]["deciles"], np.array(
             m.menages[2026]["deciles"]) * cout[a] / cout[2026], rtol=1e-12)
     # Le coût des ménages de la première année est celui de leur passe, aux 59 € près
-    # que la passe des entreprises coûte hors des cinq impôts du canal.
-    assert cout[2026] == pytest.approx(63.629, abs=1e-3)
+    # que la passe des entreprises coûte hors des cinq impôts du canal (63,629 sur la
+    # série de 5a68669, 60,386 sur celle de D-559).
+    assert cout[2026] == pytest.approx(60.386, abs=1e-3)
     # Sans la convention, rien ne change (D-412).
     assert set(_mesure(ATTAL).entreprises) == {2026}
 
@@ -184,21 +200,40 @@ def test_le_modele_structurel_tourne_dix_ans_avec_la_convention() -> None:
 
 
 def test_la_convention_est_refusee_la_ou_les_parts_n_existent_pas() -> None:
-    """Retailleau (cotisations non ventilées) et le Smic de Mélenchon : pas de parts, la
-    convention ne fait aucun nombre, et l'absence reste dite ; une convention inconnue
-    est refusée."""
-    retailleau = _mesure("presidentielle_retailleau/"
-                         "predictif_pres2027_retailleau_programme.json",
-                         convention=CONVENTION_PARTS)
-    assert retailleau.entreprises is None and set(retailleau.menages) == {2026}
-    assert retailleau.conventions == {}
-    assert "pas de parts" in retailleau.non_portes["entreprises"]
-    assert "ne sépare pas" in retailleau.non_portes["menages"]
+    """Le Smic de Mélenchon : pas de parts des ménages, la convention n'en fait aucun
+    nombre, et l'absence reste dite ; ses entreprises (E seul, lu chaque année) sont
+    étendues. Retailleau, refusé jusqu'à D-475, a ses parts. Une convention inconnue est
+    refusée."""
+    from impots.jumeau.ventilation import employeurs_lus
+
+    annees = list(range(2026, 2036))
+    convention = dict.fromkeys(annees[1:], CONVENTION_PARTS)
+    # D-475, D-477 (D-565) : Retailleau, ses cotisations ventilées, a ses parts : dix
+    # années sur les deux axes (avant : entreprises absentes, « pas de parts »).
+    retailleau = _mesure(RETAILLEAU, convention=CONVENTION_PARTS)
+    payload, _, _ = _paire(RETAILLEAU)
+    assert sorted(retailleau.entreprises) == annees and sorted(retailleau.menages) == annees
+    assert retailleau.conventions == {"entreprises": convention, "menages": convention}
+    assert retailleau.non_portes == {}
+    employeurs = employeurs_lus(payload, "figee")
+    for a in annees:
+        # D-683 : en 2026, la couche des entreprises du rapport de D-559 porte 1,34 € hors
+        # des cinq impôts et de E (au bit sur la série de 5a68669) ; Attal en porte 59 €
+        # (`mesures.prelevements_lus`). Les autres années, au bit.
+        assert sum(retailleau.entreprises[a].values()) == pytest.approx(
+            retailleau.prelevements[a], abs=1e-8 if a == 2026 else 1e-12)
+        assert retailleau.entreprises[a]["cotisations_employeurs"] == employeurs[a]
+    # Le Smic de Mélenchon : les ménages restent absents ; depuis D-475, ses entreprises
+    # (E, −33,751 Md€ en 2026 ; −31,672 sur la série de 5a68669) sont étendues sous la
+    # convention (avant : `conventions` vide, D-477).
     smic = _mesure("presidentielle_melenchon/mesures/smic_1700_net/"
                    "predictif_pres2027_melenchon_smic_1700_net.json",
                    convention=CONVENTION_PARTS)
-    assert smic.menages is None and smic.conventions == {}
+    assert smic.menages is None and smic.conventions == {"entreprises": convention}
+    assert smic.entreprises[2026]["cotisations_employeurs"] == pytest.approx(-33.751,
+                                                                              abs=1e-3)
     assert "smic_revalorisation" in smic.non_portes["menages"]
+    assert "n'a pas de parts" in smic.non_portes["menages"]
     with pytest.raises(MesureError, match="convention « autre » inconnue"):
         _mesure(ATTAL, convention="autre")
 
@@ -206,7 +241,8 @@ def test_la_convention_est_refusee_la_ou_les_parts_n_existent_pas() -> None:
 # --------------------------------------------------------------------------- #
 # Les impôts des entreprises que le canal ne lit plus (D-440, D-443)
 # --------------------------------------------------------------------------- #
-#: Les six rapports refaits sans passe par D-440, la CVAE et la C3S sorties de ΔP.
+#: Les six rapports que D-440 avait refaits sans passe, la CVAE et la C3S sorties de ΔP ;
+#: la série de D-559 les a recalculés, le canal sans ces deux impôts dès la passe.
 REFAITS_D440 = (
     ATTAL,
     "presidentielle_attal/mesures/a18_suppression_cvae/"
@@ -220,33 +256,21 @@ REFAITS_D440 = (
 )
 
 
-def _d401(payload: dict) -> dict:
-    """Le rapport d'avant D-440, reconstitué depuis sa marque : ΔP d'avant, et la CVAE et
-    la C3S rendues à la liste du canal."""
-    marque = payload["recalcul"]["instruments"]
-    rejeu = json.loads(json.dumps(payload["rejeu"]))
-    rejeu["creations"]["variations"] = marque["variations_avant"]
-    liste = rejeu["creations"]["parametres"]["instruments_entreprises"]
-    liste.extend(marque["retires"])
-    recalcul = {k: v for k, v in payload["recalcul"].items() if k != "instruments"}
-    return {**payload, "rejeu": rejeu, "recalcul": recalcul}
-
-
 @pytest.mark.parametrize("chemin", REFAITS_D440)
 def test_les_six_rapports_refaits_se_lisent_comme_avant_d440(chemin: str) -> None:
-    """D-443 : sur les six rapports de D-440, le jumeau retrouve les impôts des
-    entreprises, CVAE et C3S comprises, et le coût des ménages d'avant D-440, au bit ; le
-    canal des créations, lui, lit ΔP de D-440. La lecture tient sans la marque du
-    recalcul (une passe à venir, qui ne somme plus ces deux impôts) : par la couche des
-    entreprises, à quelques centaines d'euros près. Le rapport allégé de la page « Le
-    jumeau » se lit de même."""
+    """D-443, sur la série de D-559 (D-683) : le rapport ne porte plus la marque du
+    recalcul de D-440, le canal des créations lit ΔP sans la CVAE ni la C3S dès la passe,
+    et le jumeau retrouve par la couche des entreprises les impôts des entreprises, CVAE
+    et C3S comprises, ceux de la première année. Le rapport allégé de la page « Le
+    jumeau » se lit de même. (Sur la série de 5a68669, le test lisait aussi le rapport
+    d'avant D-440, reconstitué depuis la marque, au bit : la marque n'existe plus.)"""
     from impots.jumeau.navigateur import alleger
+    from impots.predictif import creations
 
     payload, premiere, rapport = _paire(chemin)
-    marque = payload["recalcul"]["instruments"]
-    assert marque["retires"] == ["cvae", "c3s"]
-    avant = _d401(payload)
-    sans_marque = {**payload, "recalcul": avant["recalcul"]}
+    assert "recalcul" not in payload
+    liste = payload["rejeu"]["creations"]["parametres"]["instruments_entreprises"]
+    assert not set(creations.PRODUCTION) & set(liste)
     leger = alleger(payload, premiere)
     for vue in ("figee", "vieillie"):
         for convention in (None, CONVENTION_PARTS):
@@ -256,32 +280,21 @@ def test_les_six_rapports_refaits_se_lisent_comme_avant_d440(chemin: str) -> Non
                                              auteur="x", rapport=rapport,
                                              premiere_annee=prem, convention=convention)
 
-            m, d401 = lire(payload), lire(avant)
-            for champ in ("annees", "prelevements", "couts", "canaux", "entreprises",
-                          "menages", "non_portes", "conventions", "impulsions"):
-                assert getattr(m, champ) == getattr(d401, champ), (vue, convention, champ)
-            assert m.prelevements == {a: v / 1e9 for a, v in zip(
-                m.annees, marque["variations_avant"][vue], strict=True)}
-            assert d401.prelevements_canal is None
+            m = lire(payload)
             assert m.prelevements_canal == {a: v / 1e9 for a, v in zip(
                 m.annees, payload["rejeu"]["creations"]["variations"][vue], strict=True)}
-            couche = lire(sans_marque)
-            assert couche.prelevements_canal == m.prelevements_canal
-            if m.entreprises is not None:
-                # La couche porte aussi ce qu'elle coûte hors des cinq impôts (59 € en
-                # 2026 chez Attal) : quelques centaines d'euros au plus.
-                assert couche.entreprises[2026] == m.entreprises[2026]
-                for a in m.annees:
-                    assert couche.prelevements[a] == pytest.approx(m.prelevements[a],
-                                                                   abs=1e-6)
             allege = lire(leger["payload"], leger["premiere_annee"])
             for champ in ("prelevements", "prelevements_canal", "entreprises", "menages",
                           "non_portes"):
                 assert getattr(allege, champ) == getattr(m, champ), (vue, champ)
     figee = _mesure(chemin, convention=CONVENTION_PARTS)
     if figee.entreprises is not None:
+        # D-475 : les cotisations des employeurs de Retailleau sont ventilées (seul des
+        # six à en porter) ; avant, ses entreprises étaient absentes.
+        employeurs = {"cotisations_employeurs"} if chemin == RETAILLEAU else set()
         assert set(figee.entreprises[2026]) == {
-            "impot_societes", "contribution_sociale_is", "cebge", "cvae", "c3s"}
+            "impot_societes", "contribution_sociale_is", "cebge", "cvae", "c3s",
+            *employeurs}
         cvae = premiere["response"].get("entreprises", premiere["response"])["deltas"]["cvae"]
         assert figee.entreprises[2026]["cvae"] == cvae / 1e9
 
@@ -289,13 +302,34 @@ def test_les_six_rapports_refaits_se_lisent_comme_avant_d440(chemin: str) -> Non
 def test_le_cout_des_menages_d_attal_et_de_lisnard_redevient_celui_d_avant_d440() -> None:
     """Les nombres de D-443 : en 2026, vue figée, le coût des ménages d'Attal 63,629 Md€
     (66,911 lu à tort sur ΔP de D-440), celui de Lisnard 29,638 (38,209) ; les impôts des
-    entreprises, −2,552 et −6,547 Md€ (et non +0,730 et +2,024, l'IS induit seul)."""
+    entreprises, −2,552 et −6,547 Md€ (et non +0,730 et +2,024, l'IS induit seul). Sur la
+    série de D-559 : 60,386 et 29,914 ; les impôts des entreprises n'ont pas bougé."""
     for chemin, menages, entreprises in (
-            (ATTAL, 63.629, -2.552),
-            ("presidentielle_lisnard/predictif_pres2027_lisnard_programme.json", 29.638,
+            (ATTAL, 60.386, -2.552),
+            ("presidentielle_lisnard/predictif_pres2027_lisnard_programme.json", 29.914,
              -6.547)):
         m = _mesure(chemin, convention=CONVENTION_PARTS)
         assert m.couts[2026] + m.prelevements[2026] == pytest.approx(menages, abs=1e-3)
         assert sum(m.entreprises[2026].values()) == pytest.approx(entreprises, abs=1e-3)
         assert sum(m.entreprises[2027].values()) == pytest.approx(m.prelevements[2027],
                                                                   abs=1e-12)
+
+
+def test_une_loi_d_une_annee_plus_tardive_se_lit_sans_ventilation() -> None:
+    """D-684 : le PLF 2027, art. 15, a sa passe des entreprises en 2027 et son chemin en
+    2026 (nul cette année-là). Avant, la mesure était refusée au chargement, et la page du
+    jumeau s'arrêtait ; elle se lit, sans ventilation, la raison dite, et le mode
+    structurel la refuse en le disant."""
+    from impots import site_jumeau
+
+    predictif = (ETUDES.parent / "etude_plf2027" / "predictif_plf2027_art_15.json")
+    premiere = predictif.with_name("premiere_annee_plf2027_art_15.json")
+    payload = json.loads(predictif.read_text(encoding="utf-8"))
+    prem = json.loads(premiere.read_text(encoding="utf-8"))
+    assert prem["request"]["year"] == 2027 and payload["years"][0]["year"] == 2026
+    m = Mesure.depuis_rapport(payload, vue="figee", identifiant="x", libelle="x",
+                              auteur="x", rapport=str(predictif), premiere_annee=prem)
+    assert m.entreprises is None and m.menages is None
+    assert "porte sur 2027, le chemin commence en 2026" in m.non_portes["entreprises"]
+    assert site_jumeau.raison_structurel(m, "figee").startswith(
+        "une passe de la première année faite pour 2027")

@@ -72,3 +72,13 @@ montant:
   origine: rapport
   scenario: pres2027_lisnard_l1_csg_activite_6_6
   rapport: reports/etudes/presidentielle_lisnard/mesures/l1_csg_activite_6_6/predictif_pres2027_lisnard_l1_csg_activite_6_6.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_lisnard/mesures/l1_csg_activite_6_6/premiere_annee_pres2027_lisnard_l1_csg_activite_6_6.json
+    ecarts_md:
+      salaire_net: 28.31
+      ir: 3.2
+      csg_deductible: -20.91
+      ppa: -0.57
+      aide_logement: -0.08
+      revenu_disponible: 25.94

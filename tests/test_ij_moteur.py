@@ -131,9 +131,12 @@ def test_the_ald_exemption_is_whole_in_the_tree() -> None:
 
 def test_without_sick_pay_the_salaries_are_openfisca_s(frames) -> None:
     """The exempt share of the salaries (correction 24, étape « ir » of but 19) is the other
-    reader of the category: set to nil here, so that the test still isolates sick pay."""
+    reader of the category: set to nil here, so that the test still isolates sick pay. So is
+    the share outside the contribution base (correction 27, D-499): fewer deductible
+    contributions make a higher taxable salary (D-685)."""
     _, without = frames
-    without = without.with_columns(pl.lit(0.0).alias("part_salaire_exoneree"))
+    without = without.with_columns(pl.lit(0.0).alias("part_salaire_exoneree"),
+                                   pl.lit(0.0).alias("part_salaire_hors_assiette_cotisations"))
     assert np.allclose(_calc(without, baseline(), "revenu_categoriel_tspr"),
                        _calc(without, uncorrected_baseline(), "revenu_categoriel_tspr"))
 

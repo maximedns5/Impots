@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: loi de finances, programme 137 « Égalité entre les femmes et les hommes » et crédits
+    interministériels
   parametre: null
   valeur: null
   enonce: budget porté à 3 Md€ (+2,6 Md€)
@@ -30,10 +31,15 @@ incidence:
   source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
     », document de travail G2017-04, §4 (les variantes)'
 financement:
-  annonce: null
-  source: null
+  annonce: '« Pour financer ces besoins, il est nécessaire de récupérer l''argent là où il
+    s''est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+    plus fortunés et profits des grandes entreprises. »'
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 ; bilan p. 14 : « 106,4 milliards d''euros de recettes, 81,7 milliards de dépenses,
+    24,7 milliards de réduction du déficit »'
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes (106,4
+    Md€ contre 81,7 Md€), sans lier une recette à une dépense
   bilan:
     cout_eur: 2600000000
     chiffre_eur: null
@@ -45,14 +51,17 @@ canaux:
 - emploi_public
 - consommation_menages
 hypotheses:
-- texte: 'Le montant tombe sur la composition de la dépense publique de Mésange (G2017-04,
-    p. 106) : le programme ne dit pas quelle dépense.'
-  source: non sourcée
-- texte: 'La variante de Mésange la plus proche : depense_publique.'
-  source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
+- texte: Le montant de la première année est tenu chaque année de 2027 à 2035, en euros courants
+    ; le candidat ne donne qu'un montant annuel, sans trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique (la composition moyenne
+    de la dépense publique, G2017-04, p. 106), faute de savoir quelle dépense.'
   source: non sourcée
 montant:
   origine: hypothese
@@ -78,3 +87,14 @@ montant:
   entreprises_par: null
   inclus_dans: null
   menages_part: 0.46
+assiette:
+  texte: 'le budget à atteindre, 3 Md€, dont 2,6 Md€ de plus : 0,4 Md€ aujourd''hui selon
+    le candidat'
+  montant_md: 0.4
+  annee: 2026
+  source: 'Mélenchon, document du 14 octobre 2026, p. 11 : « atteindre les 3 milliards d''euros
+    de budget … (soit 2,6 milliards d''euros supplémentaires) »'
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6

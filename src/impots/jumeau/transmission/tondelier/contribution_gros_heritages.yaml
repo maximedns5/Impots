@@ -10,8 +10,8 @@ source:
   url: https://marinetondelier.fr/s/dossierpresse-budget2027.pdf
   date: '2026-08-26'
 levier:
-  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
-    IFI (art. 964 et s.)'
+  texte: 'Code général des impôts, art. 777 (le barème des droits en ligne directe) : une
+    contribution additionnelle'
   parametre: null
   valeur: null
   enonce: 10 % au-delà de 4 M€ ; 10 points de plus au-delà de 13 M€
@@ -75,3 +75,8 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les droits de succession : les 15 Md€ en font 88 %'
+  montant_md: 17.0
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1706

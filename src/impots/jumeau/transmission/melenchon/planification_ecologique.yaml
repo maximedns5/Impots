@@ -10,7 +10,7 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: loi de finances (crédits d'investissement, non désignés)
   parametre: null
   valeur: null
   enonce: 10 Md€ « dès 2026 » ; 700 000 rénovations par an
@@ -31,10 +31,15 @@ incidence:
   source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
     », document de travail G2017-04, §4 (les variantes)'
 financement:
-  annonce: null
-  source: null
+  annonce: '« Pour financer ces besoins, il est nécessaire de récupérer l''argent là où il
+    s''est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+    plus fortunés et profits des grandes entreprises. »'
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 ; bilan p. 14 : « 106,4 milliards d''euros de recettes, 81,7 milliards de dépenses,
+    24,7 milliards de réduction du déficit »'
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes (106,4
+    Md€ contre 81,7 Md€), sans lier une recette à une dépense
   bilan:
     cout_eur: 10000000000
     chiffre_eur: null
@@ -46,11 +51,20 @@ canaux:
 - emploi_public
 - consommation_menages
 hypotheses:
-- texte: Le montant tombe sur de l'investissement public (P51g).
-  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
+- texte: Le montant est de l'investissement public (P51g).
+  source: 'Mélenchon, document du 14 octobre 2026, p. 12 : « 10 milliards devront être investis
+    »'
 - texte: 'La variante de Mésange la plus proche : investissement_public.'
-  source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+  source: Insee et DG Trésor, G2017-04, §4 (la variante d'investissement public)
+- texte: 'Le pôle public bancaire porte « la majorité des investissements » de la planification,
+    hors budget : il n''est pas compté ici.'
+  source: Mélenchon, document du 14 octobre 2026, p. 12, note 1
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
+- texte: Le montant de la première année est tenu chaque année de 2027 à 2035, en euros courants
+    ; le candidat ne donne qu'un montant annuel, sans trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
   source: non sourcée
@@ -74,3 +88,6 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+calendrier:
+  texte: « dès 2026 » selon le document ; 2027 au plus tôt pour une loi de finances
+  source: Mélenchon, document du 14 octobre 2026, p. 12

@@ -23,7 +23,8 @@ def test_la_page_montre_le_compte_et_les_lignes_hors_de_la_grille():
     tenues = sum(r["verdict"] == "dans la tolérance" for r in notees)
     texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", page.corps)))
     assert f"{tenues} lignes notées sur {len(notees)}" in texte
-    assert (tenues, len(notees)) == (84, 113)  # D-371
+    # D-371 : 84 sur 113 ; la grille du but 27 et le point de l'Insee (D-553) : 99 sur 100.
+    assert (tenues, len(notees)) == (99, 100)
     for annee in france.ANNEES:
         n = [r for r in notees if r["annee"] == annee]
         t = sum(r["verdict"] == "dans la tolérance" for r in n)
@@ -78,8 +79,10 @@ def test_les_lignes_calees_par_le_non_recours_sont_marquees_sans_changer_le_comp
     notees = [r for r in rows if r["usage"] == "validation" and r["ecart"] is not None]
     calees = [r for r in notees if r["id"] in france.CALEES_PAR_LE_RECOURS
               and r["verdict"] == "dans la tolérance"]
-    assert len(calees) == 2  # rsa_foyers_servis, 2023 et 2024
-    assert "84 lignes notées sur 113 tiennent leur tolérance (dont 2 calées par le " \
+    # D-685 : rsa_foyers_servis en 2023 et 2024, et, depuis la grille du but 27 (D-495),
+    # ppa_foyers_servis les trois années ; avant, 2 sur 84 tenues sur 113.
+    assert len(calees) == 5
+    assert "99 lignes notées sur 100 tiennent leur tolérance (dont 5 calées par le " \
            "non-recours" in texte
     for ident in france.CALEES_PAR_LE_RECOURS:
         ligne = re.search(rf'<tr id="ligne-{ident}">(.*?)</tr>', page.corps, re.S)[1]
@@ -88,11 +91,15 @@ def test_les_lignes_calees_par_le_non_recours_sont_marquees_sans_changer_le_comp
 
 
 def test_le_non_recours_est_decrit_par_son_vrai_calage():
-    """Le calage vise le milieu de la fourchette de la Drees en foyers (35 % pour le RSA,
-    50 % pour la prime), pas des allocataires ; le pont de la prime dit 42 % en montant."""
+    """Le calage vise le milieu de la fourchette de la Drees en foyers pour le RSA (35 %),
+    pas des allocataires ; pour la prime, depuis le but 27 (D-495, D-497), les foyers que
+    la Caf paie, 42 % de non-recours parmi les ayants droit du modèle (avant : 50 %, le
+    milieu de la fourchette de la Drees, 48 à 52 %). Le pont de la prime dit 42 % en
+    montant."""
     texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", france.page().corps)))
     # `\s+` a ramené les espaces fines et insécables à des espaces : on compare ainsi.
-    assert "35 % pour le RSA (la Drees dit 33 à 37 %)" in texte
-    assert "50 % pour la prime (48 à 52 %)" in texte
+    assert "par la Drees : 35 % (la Drees dit 33 à 37 %)" in texte
+    assert "Pour la prime, la Drees dit 48 à 52 %" in texte
+    assert "soit 42 % de non-recours parmi les ayants droit du modèle" in texte
     assert "un non-recours d'environ 42 % des montants" in texte
     assert "calée sur les allocataires que compte la Drees" not in texte

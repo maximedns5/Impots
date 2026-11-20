@@ -1,0 +1,588 @@
+{
+ "mesure": "smic_1700_net",
+ "reforme": {
+  "smic_revalorisation": 1.1617,
+  "smic_diffusion_profil": "annee_avec_effets_fixes",
+  "smic_diffusion_echelle": 0.0
+ },
+ "vue": "figee 2026",
+ "population": "D-553, empreinte 5ace8bb6, 199 451 ménages, huit lots (D-362)",
+ "chaine_du_cout_md": {
+  "etude_5a68669": 29.745,
+  "code_actuel_population_but19_rapide": 29.547,
+  "population_d553_rapide": 30.844,
+  "population_d553_complet": 30.305
+ },
+ "deltas_md": {
+  "salaire_brut": 9.765,
+  "salaire_super_brut": -23.6,
+  "salaire_net": 7.75,
+  "salaire_imposable": 7.471,
+  "cotisations_salariales": 1.096,
+  "cotisations_employeur": 4.169,
+  "csg_deductible": 0.653,
+  "csg_imposable": 0.231,
+  "crds": 0.048,
+  "csg_chomage": -0.183,
+  "allegement_general": 37.543,
+  "prelevements_salaires_d291": 0.171,
+  "pension_employeur_etat": 0.209,
+  "remuneration_hors_brut": 0.01,
+  "ir": 0.342,
+  "ir_avant_niches": 0.34,
+  "af": 0.016,
+  "ppa": -2.064,
+  "rsa": -0.031,
+  "aide_logement": -0.174,
+  "reduction_loyer_solidarite": -0.036,
+  "aefa": 0.001,
+  "cf": 0.002,
+  "asf": 0.017,
+  "aspa": 0.153,
+  "crds_mini": 0.01,
+  "revenu_disponible": 5.485,
+  "rsa_droit": -0.056,
+  "ppa_droit": -3.318,
+  "crds_mini_droit": 0.017,
+  "aefa_droit": -0.001,
+  "revenu_disponible_droit": 4.211
+ },
+ "deltas_etude_md": {
+  "salaire_brut": 8.442,
+  "salaire_super_brut": -23.23,
+  "salaire_net": 6.695,
+  "salaire_imposable": 6.454,
+  "cotisations_salariales": 0.952,
+  "cotisations_employeur": 3.659,
+  "csg_deductible": 0.565,
+  "csg_imposable": 0.199,
+  "crds": 0.042,
+  "csg_chomage": -0.169,
+  "allegement_general": 35.338,
+  "prelevements_salaires_d291": 0.148,
+  "pension_employeur_etat": 0.237,
+  "remuneration_hors_brut": 0.007,
+  "ir": 0.375,
+  "ir_avant_niches": 0.373,
+  "af": 0.022,
+  "ppa": -1.332,
+  "rsa": -0.019,
+  "aide_logement": -0.069,
+  "reduction_loyer_solidarite": -0.009,
+  "cf": 0.002,
+  "asf": 0.027,
+  "ars": 0.001,
+  "aspa": 0.156,
+  "crds_mini": 0.007,
+  "revenu_disponible": 5.275,
+  "rsa_droit": -0.034,
+  "ppa_droit": -2.462,
+  "crds_mini_droit": 0.012,
+  "aefa_droit": -0.001,
+  "revenu_disponible_droit": 4.134
+ },
+ "cout_md": 30.305,
+ "cout_droit_md": 29.031,
+ "impulsions_md": {
+  "impot_sur_le_revenu": -0.342,
+  "csg": -0.749,
+  "cotisations_salaries": -1.096,
+  "cotisations_employeurs": 33.365
+ },
+ "deciles": [
+  {
+   "decile": 1,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 60.6,
+   "total_md": 0.188,
+   "part_gagnants": 0.14,
+   "part_perdants": 0.0983
+  },
+  {
+   "decile": 2,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 151.9,
+   "total_md": 0.472,
+   "part_gagnants": 0.1818,
+   "part_perdants": 0.1679
+  },
+  {
+   "decile": 3,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 255.7,
+   "total_md": 0.794,
+   "part_gagnants": 0.232,
+   "part_perdants": 0.1783
+  },
+  {
+   "decile": 4,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 442.9,
+   "total_md": 1.375,
+   "part_gagnants": 0.3548,
+   "part_perdants": 0.1383
+  },
+  {
+   "decile": 5,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 166.1,
+   "total_md": 0.516,
+   "part_gagnants": 0.1672,
+   "part_perdants": 0.3159
+  },
+  {
+   "decile": 6,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 220.9,
+   "total_md": 0.686,
+   "part_gagnants": 0.1632,
+   "part_perdants": 0.0557
+  },
+  {
+   "decile": 7,
+   "menages_m": 3.106,
+   "gain_moyen_eur": 129.5,
+   "total_md": 0.402,
+   "part_gagnants": 0.1302,
+   "part_perdants": 0.0469
+  },
+  {
+   "decile": 8,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 80.3,
+   "total_md": 0.249,
+   "part_gagnants": 0.1013,
+   "part_perdants": 0.0405
+  },
+  {
+   "decile": 9,
+   "menages_m": 3.106,
+   "gain_moyen_eur": 54.9,
+   "total_md": 0.171,
+   "part_gagnants": 0.0794,
+   "part_perdants": 0.033
+  },
+  {
+   "decile": 10,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 30.2,
+   "total_md": 0.094,
+   "part_gagnants": 0.0496,
+   "part_perdants": 0.0196
+  }
+ ],
+ "deciles_etude": [
+  {
+   "decile": 1,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 56.8,
+   "total_md": 0.177,
+   "part_gagnants": 0.1105,
+   "part_perdants": 0.0985
+  },
+  {
+   "decile": 2,
+   "menages_m": 3.106,
+   "gain_moyen_eur": 94.8,
+   "total_md": 0.295,
+   "part_gagnants": 0.1256,
+   "part_perdants": 0.1897
+  },
+  {
+   "decile": 3,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 273.1,
+   "total_md": 0.848,
+   "part_gagnants": 0.2235,
+   "part_perdants": 0.1641
+  },
+  {
+   "decile": 4,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 237.5,
+   "total_md": 0.737,
+   "part_gagnants": 0.2145,
+   "part_perdants": 0.18
+  },
+  {
+   "decile": 5,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 188.6,
+   "total_md": 0.586,
+   "part_gagnants": 0.15,
+   "part_perdants": 0.188
+  },
+  {
+   "decile": 6,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 206.8,
+   "total_md": 0.642,
+   "part_gagnants": 0.1585,
+   "part_perdants": 0.0401
+  },
+  {
+   "decile": 7,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 167.9,
+   "total_md": 0.521,
+   "part_gagnants": 0.1445,
+   "part_perdants": 0.0436
+  },
+  {
+   "decile": 8,
+   "menages_m": 3.105,
+   "gain_moyen_eur": 155.7,
+   "total_md": 0.483,
+   "part_gagnants": 0.1295,
+   "part_perdants": 0.0365
+  },
+  {
+   "decile": 9,
+   "menages_m": 3.106,
+   "gain_moyen_eur": 112.3,
+   "total_md": 0.349,
+   "part_gagnants": 0.1015,
+   "part_perdants": 0.0295
+  },
+  {
+   "decile": 10,
+   "menages_m": 3.106,
+   "gain_moyen_eur": 55.3,
+   "total_md": 0.172,
+   "part_gagnants": 0.056,
+   "part_perdants": 0.01
+  }
+ ],
+ "cellules": {
+  "par_configuration": [
+   {
+    "configuration": "couple avec enfants",
+    "menages_m": 6.25,
+    "echantillon": 35851,
+    "gain_moyen_eur": 262.8,
+    "total_md": 1.643,
+    "part_gagnants": 0.2534,
+    "part_perdants": 0.1237
+   },
+   {
+    "configuration": "couple sans enfant",
+    "menages_m": 7.745,
+    "echantillon": 54344,
+    "gain_moyen_eur": 96.8,
+    "total_md": 0.75,
+    "part_gagnants": 0.089,
+    "part_perdants": 0.039
+   },
+   {
+    "configuration": "famille monoparentale",
+    "menages_m": 2.048,
+    "echantillon": 13577,
+    "gain_moyen_eur": 337.0,
+    "total_md": 0.69,
+    "part_gagnants": 0.3186,
+    "part_perdants": 0.178
+   },
+   {
+    "configuration": "ménage complexe",
+    "menages_m": 2.872,
+    "echantillon": 17034,
+    "gain_moyen_eur": 379.7,
+    "total_md": 1.091,
+    "part_gagnants": 0.3324,
+    "part_perdants": 0.2262
+   },
+   {
+    "configuration": "personne seule",
+    "menages_m": 12.139,
+    "echantillon": 78645,
+    "gain_moyen_eur": 63.7,
+    "total_md": 0.773,
+    "part_gagnants": 0.0921,
+    "part_perdants": 0.1173
+   }
+  ],
+  "par_situation": [
+   {
+    "situation": "actif, salaire inchangé",
+    "menages_m": 13.756,
+    "echantillon": 83642,
+    "gain_moyen_eur": -18.2,
+    "total_md": -0.251,
+    "part_gagnants": 0.0184,
+    "part_perdants": 0.2127
+   },
+   {
+    "situation": "ni salaire ni pension",
+    "menages_m": 2.392,
+    "echantillon": 15748,
+    "gain_moyen_eur": -5.0,
+    "total_md": -0.012,
+    "part_gagnants": 0.0137,
+    "part_perdants": 0.0799
+   },
+   {
+    "situation": "retraité",
+    "menages_m": 9.817,
+    "echantillon": 73414,
+    "gain_moyen_eur": 0.4,
+    "total_md": 0.004,
+    "part_gagnants": 0.0007,
+    "part_perdants": 0.0017
+   },
+   {
+    "situation": "salaire relevé par la mesure",
+    "menages_m": 5.09,
+    "echantillon": 26647,
+    "gain_moyen_eur": 1022.8,
+    "total_md": 5.206,
+    "part_gagnants": 0.9244,
+    "part_perdants": 0.0746
+   }
+  ],
+  "croise": [
+   {
+    "configuration": "couple avec enfants",
+    "situation": "actif, salaire inchangé",
+    "menages_m": 4.235,
+    "echantillon": 24838,
+    "gain_moyen_eur": -17.5,
+    "total_md": -0.074,
+    "part_gagnants": 0.0125,
+    "part_perdants": 0.1497
+   },
+   {
+    "configuration": "couple avec enfants",
+    "situation": "ni salaire ni pension",
+    "menages_m": 0.32,
+    "echantillon": 1998,
+    "gain_moyen_eur": -22.7,
+    "total_md": -0.007,
+    "part_gagnants": 0.0067,
+    "part_perdants": 0.1284
+   },
+   {
+    "configuration": "couple avec enfants",
+    "situation": "retraité",
+    "menages_m": 0.068,
+    "echantillon": 443,
+    "gain_moyen_eur": 9.9,
+    "total_md": 0.001,
+    "part_gagnants": 0.0131,
+    "part_perdants": 0.0069
+   },
+   {
+    "configuration": "couple avec enfants",
+    "situation": "salaire relevé par la mesure",
+    "menages_m": 1.627,
+    "echantillon": 8572,
+    "gain_moyen_eur": 1059.4,
+    "total_md": 1.724,
+    "part_gagnants": 0.9391,
+    "part_perdants": 0.06
+   },
+   {
+    "configuration": "couple sans enfant",
+    "situation": "actif, salaire inchangé",
+    "menages_m": 3.105,
+    "echantillon": 20416,
+    "gain_moyen_eur": 13.1,
+    "total_md": 0.041,
+    "part_gagnants": 0.024,
+    "part_perdants": 0.0795
+   },
+   {
+    "configuration": "couple sans enfant",
+    "situation": "ni salaire ni pension",
+    "menages_m": 0.181,
+    "echantillon": 1256,
+    "gain_moyen_eur": -23.3,
+    "total_md": -0.004,
+    "part_gagnants": 0.0085,
+    "part_perdants": 0.1336
+   },
+   {
+    "configuration": "couple sans enfant",
+    "situation": "retraité",
+    "menages_m": 3.815,
+    "echantillon": 29414,
+    "gain_moyen_eur": 0.3,
+    "total_md": 0.001,
+    "part_gagnants": 0.0004,
+    "part_perdants": 0.0002
+   },
+   {
+    "configuration": "couple sans enfant",
+    "situation": "salaire relevé par la mesure",
+    "menages_m": 0.643,
+    "echantillon": 3258,
+    "gain_moyen_eur": 1107.8,
+    "total_md": 0.712,
+    "part_gagnants": 0.9518,
+    "part_perdants": 0.0464
+   },
+   {
+    "configuration": "famille monoparentale",
+    "situation": "actif, salaire inchangé",
+    "menages_m": 0.927,
+    "echantillon": 6098,
+    "gain_moyen_eur": -35.1,
+    "total_md": -0.033,
+    "part_gagnants": 0.0211,
+    "part_perdants": 0.3359
+   },
+   {
+    "configuration": "famille monoparentale",
+    "situation": "ni salaire ni pension",
+    "menages_m": 0.414,
+    "echantillon": 3094,
+    "gain_moyen_eur": 0.7,
+    "total_md": 0.0,
+    "part_gagnants": 0.0137,
+    "part_perdants": 0.0487
+   },
+   {
+    "configuration": "famille monoparentale",
+    "situation": "retraité",
+    "menages_m": 0.047,
+    "echantillon": 361,
+    "gain_moyen_eur": 16.9,
+    "total_md": 0.001,
+    "part_gagnants": 0.0148,
+    "part_perdants": 0.0
+   },
+   {
+    "configuration": "famille monoparentale",
+    "situation": "salaire relevé par la mesure",
+    "menages_m": 0.66,
+    "echantillon": 4024,
+    "gain_moyen_eur": 1093.2,
+    "total_md": 0.722,
+    "part_gagnants": 0.949,
+    "part_perdants": 0.0501
+   },
+   {
+    "configuration": "ménage complexe",
+    "situation": "actif, salaire inchangé",
+    "menages_m": 1.306,
+    "echantillon": 8108,
+    "gain_moyen_eur": -46.8,
+    "total_md": -0.061,
+    "part_gagnants": 0.0295,
+    "part_perdants": 0.4113
+   },
+   {
+    "configuration": "ménage complexe",
+    "situation": "ni salaire ni pension",
+    "menages_m": 0.104,
+    "echantillon": 760,
+    "gain_moyen_eur": 29.9,
+    "total_md": 0.003,
+    "part_gagnants": 0.0498,
+    "part_perdants": 0.0697
+   },
+   {
+    "configuration": "ménage complexe",
+    "situation": "retraité",
+    "menages_m": 0.465,
+    "echantillon": 3252,
+    "gain_moyen_eur": 2.3,
+    "total_md": 0.001,
+    "part_gagnants": 0.009,
+    "part_perdants": 0.0327
+   },
+   {
+    "configuration": "ménage complexe",
+    "situation": "salaire relevé par la mesure",
+    "menages_m": 0.997,
+    "echantillon": 4914,
+    "gain_moyen_eur": 1150.6,
+    "total_md": 1.147,
+    "part_gagnants": 0.9092,
+    "part_perdants": 0.0903
+   },
+   {
+    "configuration": "personne seule",
+    "situation": "actif, salaire inchangé",
+    "menages_m": 4.183,
+    "echantillon": 24182,
+    "gain_moyen_eur": -29.5,
+    "total_md": -0.124,
+    "part_gagnants": 0.0162,
+    "part_perdants": 0.286
+   },
+   {
+    "configuration": "personne seule",
+    "situation": "ni salaire ni pension",
+    "menages_m": 1.373,
+    "echantillon": 8640,
+    "gain_moyen_eur": -2.8,
+    "total_md": -0.004,
+    "part_gagnants": 0.0132,
+    "part_perdants": 0.0717
+   },
+   {
+    "configuration": "personne seule",
+    "situation": "retraité",
+    "menages_m": 5.421,
+    "echantillon": 39944,
+    "gain_moyen_eur": 0.0,
+    "total_md": 0.0,
+    "part_gagnants": 0.0,
+    "part_perdants": 0.0
+   },
+   {
+    "configuration": "personne seule",
+    "situation": "salaire relevé par la mesure",
+    "menages_m": 1.162,
+    "echantillon": 5879,
+    "gain_moyen_eur": 775.0,
+    "total_md": 0.901,
+    "part_gagnants": 0.8878,
+    "part_perdants": 0.111
+   }
+  ],
+  "perdants": {
+   "menages_m": 3.513,
+   "part": 0.1131,
+   "echantillon": 19894,
+   "perte_moyenne_eur": -157.6,
+   "total_md": -0.553,
+   "composantes_moyennes_eur": {
+    "salaire_net": 19.0,
+    "ppa": -173.6,
+    "aide_logement": -1.5,
+    "rsa": -0.2,
+    "ir": 2.3,
+    "aspa": 0.2,
+    "af": 0.0,
+    "garantie_autonomie": 0.0,
+    "csg_chomage": -0.0,
+    "asf": 0.0
+   },
+   "par_situation": {
+    "actif, salaire inchangé": 0.8329,
+    "ni salaire ni pension": 0.0544,
+    "retraité": 0.0047,
+    "salaire relevé par la mesure": 0.108
+   },
+   "sans_hausse_de_salaire_part": 0.892,
+   "dont_par_la_prime_part": 0.9996
+  },
+  "releves": {
+   "menages_m": 5.09,
+   "gain_moyen_eur": 1022.8
+  }
+ },
+ "identites": {
+  "deciles_moins_delta_rd_md": -0.53839364,
+  "menages_moins_delta_rd_md": -0.53839364,
+  "balance": {
+   "reform_cost": 30.305440001,
+   "expected_cost": 30.30543252,
+   "state_gain": -30.30543252,
+   "aggregate": 0.0,
+   "unexplained": 7.482e-06
+  }
+ },
+ "duree_s": 892.0
+}

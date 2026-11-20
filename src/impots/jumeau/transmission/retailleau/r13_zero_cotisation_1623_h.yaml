@@ -73,3 +73,8 @@ montant:
   origine: rapport
   scenario: pres2027_retailleau_r13_zero_cotisation_1623_h
   rapport: reports/etudes/presidentielle_retailleau/mesures/r13_zero_cotisation_1623_h/predictif_pres2027_retailleau_r13_zero_cotisation_1623_h.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_retailleau/mesures/r13_zero_cotisation_1623_h/premiere_annee_pres2027_retailleau_r13_zero_cotisation_1623_h.json
+    ecarts_md:
+      salaire_super_brut: -4.3

@@ -162,14 +162,14 @@
       "vieillie": {
         "p_hausse": 0.8235,
         "quantiles": {
-          "q05": -0.009189111751893764,
-          "q50": 0.02241458279395403,
-          "q95": 0.051026144302666276
+          "q05": -0.009096680808683177,
+          "q50": 0.02218722383149241,
+          "q95": 0.0505066655932076
         },
         "sobol": {
           "multiplicateur_macro": {
-            "premier_ordre": 0.9712413876045195,
-            "total": 0.9766587308605579
+            "premier_ordre": 0.9712400179761306,
+            "total": 0.9766575096539184
           }
         },
         "evaluations": 6000
@@ -177,14 +177,14 @@
       "figee": {
         "p_hausse": 0.8295,
         "quantiles": {
-          "q05": -0.006761067753344019,
-          "q50": 0.01879747844093993,
-          "q95": 0.04214231943808233
+          "q05": -0.006691773473622664,
+          "q50": 0.01860401360000319,
+          "q95": 0.04170714324527869
         },
         "sobol": {
           "multiplicateur_macro": {
-            "premier_ordre": 0.9712681076012563,
-            "total": 0.9767390266328655
+            "premier_ordre": 0.9712669104814882,
+            "total": 0.9767380307964907
           }
         },
         "evaluations": 6000
@@ -200,22 +200,22 @@
     },
     "decomposition": {
       "vieillie": {
-        "cout": 0.051026144302666276,
-        "denominateur": -0.005052157971605631,
-        "retroaction": -0.024314677580971944,
-        "total": 0.0216593087500887
+        "cout": 0.0505066655932076,
+        "denominateur": -0.0049987321107649585,
+        "retroaction": -0.0240683058890927,
+        "total": 0.02143962759334994
       },
       "figee": {
-        "cout": 0.04214231943808233,
-        "denominateur": -0.00371481865002643,
-        "retroaction": -0.020242179732429033,
-        "total": 0.01818532105562687
+        "cout": 0.04170714324527869,
+        "denominateur": -0.0036751074683141205,
+        "retroaction": -0.020033864089099795,
+        "total": 0.017998171687864772
       }
     },
     "taux_marche": {
       "taux": 0.035,
-      "vieillie": 0.023687155527496007,
-      "figee": 0.019949850906872735
+      "vieillie": 0.023446868524338527,
+      "figee": 0.01974454237564438
     },
     "variante_salariale": {
       "sources": {
@@ -224,44 +224,44 @@
       "non_variees": [],
       "boite": {
         "vieillie": {
-          "theta": 0.025495500451946373,
+          "theta": 0.025236492106591513,
           "corners": [
             [
               "multiplicateur_macro = 0, productivite_creations = 0",
-              0.04846594876565735
+              0.04797234351605684
             ],
             [
               "multiplicateur_macro = 0, productivite_creations = 1",
-              0.04846594876565735
+              0.04797234351605684
             ],
             [
               "multiplicateur_macro = 1, productivite_creations = 0",
-              0.002043697750465867
+              0.0020226515244301524
             ],
             [
               "multiplicateur_macro = 1, productivite_creations = 1",
-              0.002043697750465867
+              0.0020226515244301524
             ]
           ]
         },
         "figee": {
-          "theta": 0.02156427096246727,
+          "theta": 0.021342123682877245,
           "corners": [
             [
               "multiplicateur_macro = 0, productivite_creations = 0",
-              0.04023499673089037
+              0.03981947260284757
             ],
             [
               "multiplicateur_macro = 0, productivite_creations = 1",
-              0.04023499673089037
+              0.03981947260284757
             ],
             [
               "multiplicateur_macro = 1, productivite_creations = 0",
-              0.002542324828778142
+              0.0025161994617404204
             ],
             [
               "multiplicateur_macro = 1, productivite_creations = 1",
-              0.002542324828778142
+              0.0025161994617404204
             ]
           ]
         }
@@ -270,14 +270,14 @@
         "vieillie": {
           "p_hausse": 0.857,
           "quantiles": {
-            "q05": -0.007933468668887843,
-            "q50": 0.026252097085180726,
-            "q95": 0.051026144302666276
+            "q05": -0.007853640926595707,
+            "q50": 0.025985384142316215,
+            "q95": 0.0505066655932076
           },
           "sobol": {
             "multiplicateur_macro": {
-              "premier_ordre": 0.9679880337813364,
-              "total": 0.9731581312844167
+              "premier_ordre": 0.9679872495205631,
+              "total": 0.9731574978579314
             }
           },
           "evaluations": 6000
@@ -285,14 +285,14 @@
         "figee": {
           "p_hausse": 0.872,
           "quantiles": {
-            "q05": -0.005660939029487067,
-            "q50": 0.022177331023166658,
-            "q95": 0.04214231943808233
+            "q05": -0.0056028617255885595,
+            "q50": 0.02194884974274569,
+            "q95": 0.04170714324527869
           },
           "sobol": {
             "multiplicateur_macro": {
-              "premier_ordre": 0.9678158619388892,
-              "total": 0.9729619883775333
+              "premier_ordre": 0.9678150821596273,
+              "total": 0.972961400612388
             }
           },
           "evaluations": 6000
@@ -300,8 +300,8 @@
       }
     },
     "creations_sans_canal": {
-      "vieillie": 0.0216593087500887,
-      "figee": 0.01818532105562687
+      "vieillie": 0.02143962759334994,
+      "figee": 0.017998171687864772
     }
   },
   "creations": {
@@ -428,21 +428,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.0216593087500887,
-            "c0": 0.0216593087500887,
-            "c1": 0.0216593087500887
+            "theta": 0.02143962759334994,
+            "c0": 0.02143962759334994,
+            "c1": 0.02143962759334994
           },
           "delta_sans_creations": [
-            0.001771419970121979,
-            0.001741283139372607,
-            0.0035899484657486713,
-            0.0062134444671038125,
-            0.009072405852617926,
-            0.011619220841415645,
-            0.014150485486828845,
-            0.016667038142381685,
-            0.01916958777499489,
-            0.0216593087500887
+            0.0017532784615053032,
+            0.0017235139374940367,
+            0.0035533504421314532,
+            0.006150074673505035,
+            0.008979884597545063,
+            0.011500952857871782,
+            0.014006568167554967,
+            0.016497646841364233,
+            0.0189750619227107,
+            0.02143962759334994
           ]
         },
         "figee": {
@@ -510,21 +510,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.01818532105562687,
-            "c0": 0.01818532105562687,
-            "c1": 0.01818532105562687
+            "theta": 0.017998171687864772,
+            "c0": 0.017998171687864772,
+            "c1": 0.017998171687864772
           },
           "delta_sans_creations": [
-            0.0016699681820717682,
-            0.0015937855248988608,
-            0.003290908741067744,
-            0.005668376645783679,
-            0.008196301195577682,
-            0.010353095173003535,
-            0.012428116347695362,
-            0.01442366180054,
-            0.016341990668060857,
-            0.01818532105562687
+            0.0016527587930943444,
+            0.0015773944756551916,
+            0.0032570681950545577,
+            0.005610071608471268,
+            0.00811196946380588,
+            0.010246567304297738,
+            0.012300231756745328,
+            0.014275236979458539,
+            0.01617381833926479,
+            0.017998171687864772
           ]
         }
       },
@@ -595,21 +595,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.04478012613143645,
-            "c0": 0.04478012613143645,
-            "c1": 0.04478012613143645
+            "theta": 0.04432405598341527,
+            "c0": 0.04432405598341527,
+            "c1": 0.04432405598341527
           },
           "delta_sans_creations": [
-            0.001771419970121979,
-            0.001741283139372607,
-            0.0035899484657486713,
-            0.014420172990438962,
-            0.019623312117128755,
-            0.024769263505256767,
-            0.02985711381831857,
-            0.03488791481140585,
-            0.03986184297330286,
-            0.04478012613143645
+            0.0017532784615053032,
+            0.0017235139374940367,
+            0.0035533504421314532,
+            0.014272287832562736,
+            0.019422215582818536,
+            0.024515899972472832,
+            0.02955191255396783,
+            0.034531371534787025,
+            0.03945539396322739,
+            0.04432405598341527
           ]
         },
         "figee": {
@@ -677,21 +677,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.03778413630805,
-            "c0": 0.03778413630805,
-            "c1": 0.03778413630805
+            "theta": 0.03739386431877789,
+            "c0": 0.03739386431877789,
+            "c1": 0.03739386431877789
           },
           "delta_sans_creations": [
-            0.0016699681820717682,
-            0.0015937855248988608,
-            0.003290908741067744,
-            0.013404152682445769,
-            0.017917070551529246,
-            0.022242044637065916,
-            0.026385300811397006,
-            0.030352871381434943,
-            0.03415059751373506,
-            0.03778413630805
+            0.0016527587930943444,
+            0.0015773944756551916,
+            0.0032570681950545577,
+            0.013265694759319047,
+            0.017731998091516266,
+            0.022012299067372787,
+            0.02611276101967963,
+            0.030039352496687766,
+            0.03379785415172143,
+            0.03739386431877789
           ]
         }
       },
@@ -762,21 +762,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.018732127820686006,
-            "c0": 0.018732127820686006,
-            "c1": 0.018732127820686006
+            "theta": 0.018542153780985116,
+            "c0": 0.018542153780985116,
+            "c1": 0.018542153780985116
           },
           "delta_sans_creations": [
-            0.001771419970121979,
-            0.001741283139372607,
-            0.0035899484657486713,
-            0.005753146709586154,
-            0.007916859649815366,
-            0.010080670085277132,
-            0.012244370469276955,
-            0.014407712442733978,
-            0.016570271750492083,
-            0.018732127820686006
+            0.0017532784615053032,
+            0.0017235139374940367,
+            0.0035533504421314532,
+            0.005694491000773683,
+            0.007836171267423309,
+            0.009978126788097619,
+            0.012119902280109285,
+            0.014261355719203728,
+            0.01640219861369907,
+            0.018542153780985116
           ]
         },
         "figee": {
@@ -844,21 +844,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.015678611717255153,
-            "c0": 0.015678611717255153,
-            "c1": 0.015678611717255153
+            "theta": 0.015517261624761414,
+            "c0": 0.015517261624761414,
+            "c1": 0.015517261624761414
           },
           "delta_sans_creations": [
-            0.0016699681820717682,
-            0.0015937855248988608,
-            0.003290908741067744,
-            0.0052343424988585685,
-            0.0071192067475407406,
-            0.008945808773610286,
-            0.010714542866064436,
-            0.012425880976881798,
-            0.014080367786291514,
-            0.015678611717255153
+            0.0016527587930943444,
+            0.0015773944756551916,
+            0.0032570681950545577,
+            0.005180511295659551,
+            0.007045982315542654,
+            0.008853786261450614,
+            0.010604313456507919,
+            0.012298031862008507,
+            0.013935480281837886,
+            0.015517261624761414
           ]
         }
       }
@@ -868,7 +868,7 @@
   "titre": "pres2027_ruffin_credit_impot_domicile_travail",
   "source": "François Ruffin (Debout !), programme relevé le 2026-11-12 — Crédit d'impôt pour les trajets domicile-travail, remise à plat des frais kilométriques et avantages véhicules : « « Avec un taux de couverture des déplacements autour de 30%, ce crédit d'impôt permettrait à des gros rouleurs aux revenus moyens d'être remboursés d'environ 700€en 2026 » » (https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf, 2026-10-21)",
   "reference": "reconduit",
-  "computed": "2026-11-14",
+  "computed": "2026-11-18",
   "spending_name": "Dépenses gelées en volume",
   "growth_name": "Croissance réelle 1 %, prix 2 %",
   "rate_name": "Taux implicite tenu à son niveau de 2025",
@@ -883,8 +883,8 @@
     {
       "year": 2026,
       "basis": "legislated",
-      "mechanical_frozen_eur": 15584068642.235352,
-      "mechanical_aged_eur": 16532893752.179443,
+      "mechanical_frozen_eur": 15423142556.660156,
+      "mechanical_aged_eur": 16363209188.00586,
       "reference": 1.168580725548546,
       "reform_aged": null,
       "delta_aged": null,
@@ -892,18 +892,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584068642.235352,
+          "cost_eur": 15423142556.660156,
           "impulses": {
-            "impot_sur_le_revenu": 15584068161.401764
+            "impot_sur_le_revenu": 15423142443.685959
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 16532893752.179443,
+          "cost_eur": 16363209188.00586,
           "impulses": {
-            "impot_sur_le_revenu": 16532892691.33397
+            "impot_sur_le_revenu": 16363208703.412918
           },
           "uncovered": {},
           "canaux": {},
@@ -914,8 +914,8 @@
     {
       "year": 2027,
       "basis": "legislated",
-      "mechanical_frozen_eur": 15584067613.053223,
-      "mechanical_aged_eur": 17028037546.478271,
+      "mechanical_frozen_eur": 15423141461.911133,
+      "mechanical_aged_eur": 16853506457.856445,
       "reference": 1.1746928799602263,
       "reform_aged": null,
       "delta_aged": null,
@@ -923,18 +923,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584067613.053223,
+          "cost_eur": 15423141461.911133,
           "impulses": {
-            "impot_sur_le_revenu": 15584068161.401787
+            "impot_sur_le_revenu": 15423142443.697815
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 17028037546.478271,
+          "cost_eur": 16853506457.856445,
           "impulses": {
-            "impot_sur_le_revenu": 17028037930.686234
+            "impot_sur_le_revenu": 16853507062.78125
           },
           "uncovered": {},
           "canaux": {},
@@ -945,8 +945,8 @@
     {
       "year": 2028,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 15584069542.088379,
-      "mechanical_aged_eur": 17540871878.6438,
+      "mechanical_frozen_eur": 15423141548.324219,
+      "mechanical_aged_eur": 17361609402.21167,
       "reference": 1.1753885794969483,
       "reform_aged": null,
       "delta_aged": null,
@@ -954,18 +954,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584069542.088379,
+          "cost_eur": 15423141548.324219,
           "impulses": {
-            "impot_sur_le_revenu": 15584069713.804169
+            "impot_sur_le_revenu": 15423142322.700638
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 17540871878.6438,
+          "cost_eur": 17361609402.21167,
           "impulses": {
-            "impot_sur_le_revenu": 17540872866.583923
+            "impot_sur_le_revenu": 17361609889.34517
           },
           "uncovered": {},
           "canaux": {},
@@ -976,8 +976,8 @@
     {
       "year": 2029,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 15584067647.92163,
-      "mechanical_aged_eur": 18067711270.83496,
+      "mechanical_frozen_eur": 15423141471.007324,
+      "mechanical_aged_eur": 17883224699.031982,
       "reference": 1.1707805732317031,
       "reform_aged": null,
       "delta_aged": null,
@@ -985,18 +985,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584067647.92163,
+          "cost_eur": 15423141471.007324,
           "impulses": {
-            "impot_sur_le_revenu": 15584068161.401787
+            "impot_sur_le_revenu": 15423142443.697815
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 18067711270.83496,
+          "cost_eur": 17883224699.031982,
           "impulses": {
-            "impot_sur_le_revenu": 18067712126.420334
+            "impot_sur_le_revenu": 17883225511.174194
           },
           "uncovered": {},
           "canaux": {},
@@ -1007,8 +1007,8 @@
     {
       "year": 2030,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 15584067553.928467,
-      "mechanical_aged_eur": 18610314907.565186,
+      "mechanical_frozen_eur": 15423141455.847168,
+      "mechanical_aged_eur": 18420126647.009766,
       "reference": 1.1609798413129486,
       "reform_aged": null,
       "delta_aged": null,
@@ -1016,18 +1016,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584067553.928467,
+          "cost_eur": 15423141455.847168,
           "impulses": {
-            "impot_sur_le_revenu": 15584068161.401787
+            "impot_sur_le_revenu": 15423142443.697815
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 18610314907.565186,
+          "cost_eur": 18420126647.009766,
           "impulses": {
-            "impot_sur_le_revenu": 18610315786.977448
+            "impot_sur_le_revenu": 18420128007.44565
           },
           "uncovered": {},
           "canaux": {},
@@ -1038,8 +1038,8 @@
     {
       "year": 2031,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 15584067572.12085,
-      "mechanical_aged_eur": 19168544019.661865,
+      "mechanical_frozen_eur": 15423141461.910645,
+      "mechanical_aged_eur": 18974124080.354492,
       "reference": 1.146095619682319,
       "reform_aged": null,
       "delta_aged": null,
@@ -1047,18 +1047,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584067572.12085,
+          "cost_eur": 15423141461.910645,
           "impulses": {
-            "impot_sur_le_revenu": 15584068161.401787
+            "impot_sur_le_revenu": 15423142443.697815
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 19168544019.661865,
+          "cost_eur": 18974124080.354492,
           "impulses": {
-            "impot_sur_le_revenu": 19168544794.677643
+            "impot_sur_le_revenu": 18974125142.819565
           },
           "uncovered": {},
           "canaux": {},
@@ -1069,8 +1069,8 @@
     {
       "year": 2032,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 15584069493.575928,
-      "mechanical_aged_eur": 19743738861.93701,
+      "mechanical_frozen_eur": 15423141584.708008,
+      "mechanical_aged_eur": 19544259261.969727,
       "reference": 1.1262354244680892,
       "reform_aged": null,
       "delta_aged": null,
@@ -1078,18 +1078,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584069493.575928,
+          "cost_eur": 15423141584.708008,
           "impulses": {
-            "impot_sur_le_revenu": 15584069713.804169
+            "impot_sur_le_revenu": 15423142322.700638
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 19743738861.93701,
+          "cost_eur": 19544259261.969727,
           "impulses": {
-            "impot_sur_le_revenu": 19743739859.107666
+            "impot_sur_le_revenu": 19544259755.840973
           },
           "uncovered": {},
           "canaux": {},
@@ -1100,8 +1100,8 @@
     {
       "year": 2033,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 15584067559.992676,
-      "mechanical_aged_eur": 20337137283.895996,
+      "mechanical_frozen_eur": 15423141461.910645,
+      "mechanical_aged_eur": 20131205220.121582,
       "reference": 1.1015050760584795,
       "reform_aged": null,
       "delta_aged": null,
@@ -1109,18 +1109,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584067559.992676,
+          "cost_eur": 15423141461.910645,
           "impulses": {
-            "impot_sur_le_revenu": 15584068161.401787
+            "impot_sur_le_revenu": 15423142443.697815
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 20337137283.895996,
+          "cost_eur": 20131205220.121582,
           "impulses": {
-            "impot_sur_le_revenu": 20337138010.730713
+            "impot_sur_le_revenu": 20131205608.850525
           },
           "uncovered": {},
           "canaux": {},
@@ -1131,8 +1131,8 @@
     {
       "year": 2034,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 15584067553.928467,
-      "mechanical_aged_eur": 20947114479.64502,
+      "mechanical_frozen_eur": 15423141455.847168,
+      "mechanical_aged_eur": 20735359795.23242,
       "reference": 1.0720087228588424,
       "reform_aged": null,
       "delta_aged": null,
@@ -1140,18 +1140,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584067553.928467,
+          "cost_eur": 15423141455.847168,
           "impulses": {
-            "impot_sur_le_revenu": 15584068161.401787
+            "impot_sur_le_revenu": 15423142443.697815
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 20947114479.64502,
+          "cost_eur": 20735359795.23242,
           "impulses": {
-            "impot_sur_le_revenu": 20947115334.273193
+            "impot_sur_le_revenu": 20735361056.415436
           },
           "uncovered": {},
           "canaux": {},
@@ -1162,8 +1162,8 @@
     {
       "year": 2035,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 15584067572.12085,
-      "mechanical_aged_eur": 21576846645.24292,
+      "mechanical_frozen_eur": 15423141461.910645,
+      "mechanical_aged_eur": 21357268823.542725,
       "reference": 1.0378488647367168,
       "reform_aged": null,
       "delta_aged": null,
@@ -1171,18 +1171,18 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 15584067572.12085,
+          "cost_eur": 15423141461.910645,
           "impulses": {
-            "impot_sur_le_revenu": 15584068161.401787
+            "impot_sur_le_revenu": 15423142443.697815
           },
           "uncovered": {},
           "canaux": {},
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 21576846645.24292,
+          "cost_eur": 21357268823.542725,
           "impulses": {
-            "impot_sur_le_revenu": 21576848538.567078
+            "impot_sur_le_revenu": 21357270143.161163
           },
           "uncovered": {},
           "canaux": {},
@@ -1251,88 +1251,88 @@
         "persistence": "lue",
         "every_year": {
           "vieillie": {
-            "theta": 0.0216593087500887,
+            "theta": 0.02143962759334994,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.04467815763803351
+                0.04422376542293338
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.04467815763803351
+                0.04422376542293338
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                -0.0016811667973961608
+                -0.0016644188277272765
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                -0.0016811667973961608
+                -0.0016644188277272765
               ]
             ]
           },
           "figee": {
-            "theta": 0.01818532105562687,
+            "theta": 0.017998171687864772,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.036911723465621105
+                0.036530887411467816
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.036911723465621105
+                0.036530887411467816
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                -0.0007551317983409689
+                -0.000747381406535963
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                -0.0007551317983409689
+                -0.000747381406535963
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.021674069881393976,
+            "theta": 0.021452641097028824,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.04471286206531122
+                0.04425446471876748
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.04471286206531122
+                0.04425446471876748
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                -0.0016869503844314515
+                -0.001669777778166237
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                -0.0016869503844314515
+                -0.001669777778166237
               ]
             ]
           },
           "figee": {
-            "theta": 0.020435640131141408,
+            "theta": 0.020225529462230663,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.042149506858484065
+                0.04171471442002783
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.042149506858484065
+                0.04171471442002783
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                -0.0015908810995586276
+                -0.0015745791507193463
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                -0.0015908810995586276
+                -0.0015745791507193463
               ]
             ]
           }
@@ -1342,88 +1342,88 @@
         "persistence": "eteint",
         "every_year": {
           "vieillie": {
-            "theta": 0.04478012613143645,
+            "theta": 0.04432405598341527,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0498055266486257
+                0.04929840305697786
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0498055266486257
+                0.04929840305697786
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.03926766314150543
+                0.03886770273535345
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.03926766314150543
+                0.03886770273535345
               ]
             ]
           },
           "figee": {
-            "theta": 0.03778413630805,
+            "theta": 0.03739386431877789,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.04128000264149034
+                0.040853710733663284
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.04128000264149034
+                0.040853710733663284
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.03397559324415478
+                0.03362457622777448
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.03397559324415478
+                0.03362457622777448
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.044809332236968036,
+            "theta": 0.04434943358505916,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.049843292099342795
+                0.049331727813329174
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.049843292099342795
+                0.049331727813329174
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.03928733057037781
+                0.038884106529596396
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.03928733057037781
+                0.038884106529596396
               ]
             ]
           },
           "figee": {
-            "theta": 0.0422377181280571,
+            "theta": 0.04180155778134731,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.046982778480268106
+                0.046497619230648324
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.046982778480268106
+                0.046497619230648324
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.03703262474445168
+                0.03665021373840571
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.03703262474445168
+                0.03665021373840571
               ]
             ]
           }
@@ -1433,88 +1433,88 @@
         "persistence": "tenu",
         "every_year": {
           "vieillie": {
-            "theta": 0.018732127820686006,
+            "theta": 0.018542153780985116,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.04326460884074157
+                0.04282459429595131
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.04326460884074157
+                0.04282459429595131
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                -0.005571035921839496
+                -0.005514932196547306
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                -0.005571035921839496
+                -0.005514932196547306
               ]
             ]
           },
           "figee": {
-            "theta": 0.015678611717255153,
+            "theta": 0.015517261624761414,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.03573610856605769
+                0.03536740714073061
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.03573610856605769
+                0.03536740714073061
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                -0.004118911206671738
+                -0.004076631166138656
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                -0.004118911206671738
+                -0.004076631166138656
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.018745242972305176,
+            "theta": 0.01855374584765701,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0432982876203829
+                0.04285441601501594
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0432982876203829
+                0.04285441601501594
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                -0.005578791431563035
+                -0.005522000144470907
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                -0.005578791431563035
+                -0.005522000144470907
               ]
             ]
           },
           "figee": {
-            "theta": 0.017674216510795926,
+            "theta": 0.01749250654457768,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.04081615426662344
+                0.04039513701700348
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.04081615426662344
+                0.04039513701700348
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                -0.005261099930811142
+                -0.005207188922387029
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                -0.005261099930811142
+                -0.005207188922387029
               ]
             ]
           }
@@ -1522,9 +1522,9 @@
       }
     ]
   },
-  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
   "dirty": false,
-  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file",
   "annees": null,
   "persistence": null,
   "side_by_side": [
@@ -1534,73 +1534,73 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.170352145518668,
-          "delta_aged": 0.001771419970121979,
-          "reform_frozen": 1.1702506937306179,
-          "delta_frozen": 0.0016699681820717682
+          "reform_aged": 1.1703340040100514,
+          "delta_aged": 0.0017532784615053032,
+          "reform_frozen": 1.1702334843416404,
+          "delta_frozen": 0.0016527587930943444
         },
         {
           "year": 2027,
-          "reform_aged": 1.176434163099599,
-          "delta_aged": 0.001741283139372607,
-          "reform_frozen": 1.1762866654851252,
-          "delta_frozen": 0.0015937855248988608
+          "reform_aged": 1.1764163938977203,
+          "delta_aged": 0.0017235139374940367,
+          "reform_frozen": 1.1762702744358815,
+          "delta_frozen": 0.0015773944756551916
         },
         {
           "year": 2028,
-          "reform_aged": 1.178978527962697,
-          "delta_aged": 0.0035899484657486713,
-          "reform_frozen": 1.178679488238016,
-          "delta_frozen": 0.003290908741067744
+          "reform_aged": 1.1789419299390798,
+          "delta_aged": 0.0035533504421314532,
+          "reform_frozen": 1.1786456476920029,
+          "delta_frozen": 0.0032570681950545577
         },
         {
           "year": 2029,
-          "reform_aged": 1.176994017698807,
-          "delta_aged": 0.0062134444671038125,
-          "reform_frozen": 1.1764489498774868,
-          "delta_frozen": 0.005668376645783679
+          "reform_aged": 1.1769306479052082,
+          "delta_aged": 0.006150074673505035,
+          "reform_frozen": 1.1763906448401744,
+          "delta_frozen": 0.005610071608471268
         },
         {
           "year": 2030,
-          "reform_aged": 1.1700522471655666,
-          "delta_aged": 0.009072405852617926,
-          "reform_frozen": 1.1691761425085263,
-          "delta_frozen": 0.008196301195577682
+          "reform_aged": 1.1699597259104937,
+          "delta_aged": 0.008979884597545063,
+          "reform_frozen": 1.1690918107767545,
+          "delta_frozen": 0.00811196946380588
         },
         {
           "year": 2031,
-          "reform_aged": 1.1577148405237347,
-          "delta_aged": 0.011619220841415645,
-          "reform_frozen": 1.1564487148553226,
-          "delta_frozen": 0.010353095173003535
+          "reform_aged": 1.1575965725401909,
+          "delta_aged": 0.011500952857871782,
+          "reform_frozen": 1.1563421869866168,
+          "delta_frozen": 0.010246567304297738
         },
         {
           "year": 2032,
-          "reform_aged": 1.140385909954918,
-          "delta_aged": 0.014150485486828845,
-          "reform_frozen": 1.1386635408157846,
-          "delta_frozen": 0.012428116347695362
+          "reform_aged": 1.1402419926356442,
+          "delta_aged": 0.014006568167554967,
+          "reform_frozen": 1.1385356562248345,
+          "delta_frozen": 0.012300231756745328
         },
         {
           "year": 2033,
-          "reform_aged": 1.1181721142008612,
-          "delta_aged": 0.016667038142381685,
-          "reform_frozen": 1.1159287378590195,
-          "delta_frozen": 0.01442366180054
+          "reform_aged": 1.1180027228998437,
+          "delta_aged": 0.016497646841364233,
+          "reform_frozen": 1.115780313037938,
+          "delta_frozen": 0.014275236979458539
         },
         {
           "year": 2034,
-          "reform_aged": 1.0911783106338373,
-          "delta_aged": 0.01916958777499489,
-          "reform_frozen": 1.0883507135269033,
-          "delta_frozen": 0.016341990668060857
+          "reform_aged": 1.0909837847815531,
+          "delta_aged": 0.0189750619227107,
+          "reform_frozen": 1.0881825411981072,
+          "delta_frozen": 0.01617381833926479
         },
         {
           "year": 2035,
-          "reform_aged": 1.0595081734868055,
-          "delta_aged": 0.0216593087500887,
-          "reform_frozen": 1.0560341857923436,
-          "delta_frozen": 0.01818532105562687
+          "reform_aged": 1.0592884923300667,
+          "delta_aged": 0.02143962759334994,
+          "reform_frozen": 1.0558470364245816,
+          "delta_frozen": 0.017998171687864772
         }
       ],
       "conventions": [
@@ -1608,16 +1608,16 @@
         "Au-delà de trois ans : Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux."
       ],
       "gdp_gap_aged": [
-        0.002199817303897353,
-        0.004452752931783271,
-        0.004720297511870645,
-        0.004531909258008624,
-        0.004343423958058279,
-        0.0044070227002435515,
-        0.004470535374860166,
-        0.00453417638848272,
-        0.004597790091965807,
-        0.004661424112462868
+        0.002177239659452912,
+        0.004407082819438768,
+        0.004671978293311666,
+        0.004485614093269529,
+        0.004299069710884475,
+        0.004362159298261786,
+        0.00442527045220495,
+        0.0044883203856169234,
+        0.004551268796288297,
+        0.004614114314861137
       ]
     },
     {
@@ -1626,89 +1626,89 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.170352145518668,
-          "delta_aged": 0.001771419970121979,
-          "reform_frozen": 1.1702506937306179,
-          "delta_frozen": 0.0016699681820717682
+          "reform_aged": 1.1703340040100514,
+          "delta_aged": 0.0017532784615053032,
+          "reform_frozen": 1.1702334843416404,
+          "delta_frozen": 0.0016527587930943444
         },
         {
           "year": 2027,
-          "reform_aged": 1.176434163099599,
-          "delta_aged": 0.001741283139372607,
-          "reform_frozen": 1.1762866654851252,
-          "delta_frozen": 0.0015937855248988608
+          "reform_aged": 1.1764163938977203,
+          "delta_aged": 0.0017235139374940367,
+          "reform_frozen": 1.1762702744358815,
+          "delta_frozen": 0.0015773944756551916
         },
         {
           "year": 2028,
-          "reform_aged": 1.178978527962697,
-          "delta_aged": 0.0035899484657486713,
-          "reform_frozen": 1.178679488238016,
-          "delta_frozen": 0.003290908741067744
+          "reform_aged": 1.1789419299390798,
+          "delta_aged": 0.0035533504421314532,
+          "reform_frozen": 1.1786456476920029,
+          "delta_frozen": 0.0032570681950545577
         },
         {
           "year": 2029,
-          "reform_aged": 1.185200746222142,
-          "delta_aged": 0.014420172990438962,
-          "reform_frozen": 1.184184725914149,
-          "delta_frozen": 0.013404152682445769
+          "reform_aged": 1.1850528610642659,
+          "delta_aged": 0.014272287832562736,
+          "reform_frozen": 1.1840462679910222,
+          "delta_frozen": 0.013265694759319047
         },
         {
           "year": 2030,
-          "reform_aged": 1.1806031534300774,
-          "delta_aged": 0.019623312117128755,
-          "reform_frozen": 1.1788969118644779,
-          "delta_frozen": 0.017917070551529246
+          "reform_aged": 1.1804020568957672,
+          "delta_aged": 0.019422215582818536,
+          "reform_frozen": 1.178711839404465,
+          "delta_frozen": 0.017731998091516266
         },
         {
           "year": 2031,
-          "reform_aged": 1.1708648831875759,
-          "delta_aged": 0.024769263505256767,
-          "reform_frozen": 1.168337664319385,
-          "delta_frozen": 0.022242044637065916
+          "reform_aged": 1.170611519654792,
+          "delta_aged": 0.024515899972472832,
+          "reform_frozen": 1.1681079187496919,
+          "delta_frozen": 0.022012299067372787
         },
         {
           "year": 2032,
-          "reform_aged": 1.1560925382864078,
-          "delta_aged": 0.02985711381831857,
-          "reform_frozen": 1.1526207252794862,
-          "delta_frozen": 0.026385300811397006
+          "reform_aged": 1.155787337022057,
+          "delta_aged": 0.02955191255396783,
+          "reform_frozen": 1.1523481854877689,
+          "delta_frozen": 0.02611276101967963
         },
         {
           "year": 2033,
-          "reform_aged": 1.1363929908698853,
-          "delta_aged": 0.03488791481140585,
-          "reform_frozen": 1.1318579474399144,
-          "delta_frozen": 0.030352871381434943
+          "reform_aged": 1.1360364475932665,
+          "delta_aged": 0.034531371534787025,
+          "reform_frozen": 1.1315444285551672,
+          "delta_frozen": 0.030039352496687766
         },
         {
           "year": 2034,
-          "reform_aged": 1.1118705658321453,
-          "delta_aged": 0.03986184297330286,
-          "reform_frozen": 1.1061593203725775,
-          "delta_frozen": 0.03415059751373506
+          "reform_aged": 1.1114641168220698,
+          "delta_aged": 0.03945539396322739,
+          "reform_frozen": 1.1058065770105638,
+          "delta_frozen": 0.03379785415172143
         },
         {
           "year": 2035,
-          "reform_aged": 1.0826289908681532,
-          "delta_aged": 0.04478012613143645,
-          "reform_frozen": 1.0756330010447668,
-          "delta_frozen": 0.03778413630805
+          "reform_aged": 1.082172920720132,
+          "delta_aged": 0.04432405598341527,
+          "reform_frozen": 1.0752427290554947,
+          "delta_frozen": 0.03739386431877789
         }
       ],
       "conventions": [
         "Au-delà de trois ans : Effet macro éteint après trois ans."
       ],
       "gdp_gap_aged": [
-        0.002199817303897353,
-        0.004452752931783271,
-        0.004720297511870645,
-        -1.8605512432381065e-06,
-        -1.4523878799536204e-06,
-        -1.919487094004846e-06,
-        -2.0650160547437734e-06,
-        -2.0776978101412765e-06,
-        -1.949767559465365e-06,
-        -1.8485701542801713e-06
+        0.002177239659452912,
+        0.004407082819438768,
+        0.004671978293311666,
+        -1.6237414565935971e-06,
+        -1.2759080421964164e-06,
+        -1.7274905087700021e-06,
+        -1.656694816981763e-06,
+        -1.5691299672143888e-06,
+        -1.80796442434068e-06,
+        -2.0089598234859007e-06
       ]
     },
     {
@@ -1717,144 +1717,90 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.170352145518668,
-          "delta_aged": 0.001771419970121979,
-          "reform_frozen": 1.1702506937306179,
-          "delta_frozen": 0.0016699681820717682
+          "reform_aged": 1.1703340040100514,
+          "delta_aged": 0.0017532784615053032,
+          "reform_frozen": 1.1702334843416404,
+          "delta_frozen": 0.0016527587930943444
         },
         {
           "year": 2027,
-          "reform_aged": 1.176434163099599,
-          "delta_aged": 0.001741283139372607,
-          "reform_frozen": 1.1762866654851252,
-          "delta_frozen": 0.0015937855248988608
+          "reform_aged": 1.1764163938977203,
+          "delta_aged": 0.0017235139374940367,
+          "reform_frozen": 1.1762702744358815,
+          "delta_frozen": 0.0015773944756551916
         },
         {
           "year": 2028,
-          "reform_aged": 1.178978527962697,
-          "delta_aged": 0.0035899484657486713,
-          "reform_frozen": 1.178679488238016,
-          "delta_frozen": 0.003290908741067744
+          "reform_aged": 1.1789419299390798,
+          "delta_aged": 0.0035533504421314532,
+          "reform_frozen": 1.1786456476920029,
+          "delta_frozen": 0.0032570681950545577
         },
         {
           "year": 2029,
-          "reform_aged": 1.1765337199412893,
-          "delta_aged": 0.005753146709586154,
-          "reform_frozen": 1.1760149157305617,
-          "delta_frozen": 0.0052343424988585685
+          "reform_aged": 1.1764750642324768,
+          "delta_aged": 0.005694491000773683,
+          "reform_frozen": 1.1759610845273627,
+          "delta_frozen": 0.005180511295659551
         },
         {
           "year": 2030,
-          "reform_aged": 1.168896700962764,
-          "delta_aged": 0.007916859649815366,
-          "reform_frozen": 1.1680990480604894,
-          "delta_frozen": 0.0071192067475407406
+          "reform_aged": 1.168816012580372,
+          "delta_aged": 0.007836171267423309,
+          "reform_frozen": 1.1680258236284913,
+          "delta_frozen": 0.007045982315542654
         },
         {
           "year": 2031,
-          "reform_aged": 1.1561762897675962,
-          "delta_aged": 0.010080670085277132,
-          "reform_frozen": 1.1550414284559294,
-          "delta_frozen": 0.008945808773610286
+          "reform_aged": 1.1560737464704167,
+          "delta_aged": 0.009978126788097619,
+          "reform_frozen": 1.1549494059437697,
+          "delta_frozen": 0.008853786261450614
         },
         {
           "year": 2032,
-          "reform_aged": 1.1384797949373662,
-          "delta_aged": 0.012244370469276955,
-          "reform_frozen": 1.1369499673341537,
-          "delta_frozen": 0.010714542866064436
+          "reform_aged": 1.1383553267481985,
+          "delta_aged": 0.012119902280109285,
+          "reform_frozen": 1.1368397379245971,
+          "delta_frozen": 0.010604313456507919
         },
         {
           "year": 2033,
-          "reform_aged": 1.1159127885012134,
-          "delta_aged": 0.014407712442733978,
-          "reform_frozen": 1.1139309570353613,
-          "delta_frozen": 0.012425880976881798
+          "reform_aged": 1.1157664317776832,
+          "delta_aged": 0.014261355719203728,
+          "reform_frozen": 1.113803107920488,
+          "delta_frozen": 0.012298031862008507
         },
         {
           "year": 2034,
-          "reform_aged": 1.0885789946093345,
-          "delta_aged": 0.016570271750492083,
-          "reform_frozen": 1.086089090645134,
-          "delta_frozen": 0.014080367786291514
+          "reform_aged": 1.0884109214725415,
+          "delta_aged": 0.01640219861369907,
+          "reform_frozen": 1.0859442031406803,
+          "delta_frozen": 0.013935480281837886
         },
         {
           "year": 2035,
-          "reform_aged": 1.0565809925574028,
-          "delta_aged": 0.018732127820686006,
-          "reform_frozen": 1.053527476453972,
-          "delta_frozen": 0.015678611717255153
+          "reform_aged": 1.056391018517702,
+          "delta_aged": 0.018542153780985116,
+          "reform_frozen": 1.0533661263614782,
+          "delta_frozen": 0.015517261624761414
         }
       ],
       "conventions": [
         "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année."
       ],
       "gdp_gap_aged": [
-        0.002199817303897353,
-        0.004452752931783271,
-        0.004720297511870645,
-        0.0047196985400486426,
-        0.00471895678681929,
-        0.004718109787315486,
-        0.004717208060179053,
-        0.00471642429404914,
-        0.004715616384745508,
-        0.004714834867398193
+        0.002177239659452912,
+        0.004407082819438768,
+        0.004671978293311666,
+        0.004671476015417949,
+        0.00467075088029636,
+        0.004670064361121342,
+        0.0046694286136372155,
+        0.0046687122176633416,
+        0.004667909612061605,
+        0.0046670196511402326
       ]
     }
-  ],
-  "recalcul": {
-    "decision": "D-427",
-    "date": "2026-11-15",
-    "objet": "l'élasticité du canal des créations, changée sans passe ; aucun prélèvement sur les entreprises ou le capital ne bouge : aucun nombre ne change",
-    "nombres_refaits": false,
-    "elasticite_avant": {
-      "centre": 0.2,
-      "bas": 0.043,
-      "haut": 0.356
-    },
-    "elasticite": {
-      "centre": 0.043,
-      "bas": 0.0,
-      "haut": 0.2
-    },
-    "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161",
-    "instruments": {
-      "decision": "D-444",
-      "date": "2026-11-15",
-      "retires": [
-        "cvae",
-        "c3s"
-      ],
-      "objet": "des instruments retirés de la liste du canal des créations, sans passe : ils y valaient zéro chaque année, aucun nombre ne change ; la passe reste celle de « commit »",
-      "nombres_refaits": false,
-      "variations_avant": {
-        "figee": [
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ],
-        "vieillie": [
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ]
-      },
-      "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161"
-    }
-  }
+  ]
 }

@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2
   date: '2026-11-06'
 levier:
-  texte: Code général des impôts, TVA (art. 278 et s.) et accises
+  texte: 'Code général des impôts, art. 278 (le taux normal de 20 %) : un taux majoré, à créer
+    (la directive 2006/112/CE ne prévoit qu''un taux normal au-dessus des réduits)'
   parametre: null
   valeur: null
   enonce: aucun taux ; yachts, jets privés, palaces

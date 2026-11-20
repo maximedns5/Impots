@@ -2,22 +2,29 @@ schema: 1
 mesure: cent_pour_cent_secu
 candidat: melenchon
 libelle: « 100 % Sécu »
-sorte: parametre
+sorte: hypothese
 source:
   citation: « Instaurer le « 100 % Sécu » en remboursant à 100 % les soins de santé prescrits
     et en intégrant les assurances maladie complémentaires dans la Sécurité sociale »
   url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
   date: '2026-11-06'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: 'Code de la sécurité sociale, art. L160-13 (le ticket modérateur) et L871-1 (les
+    contrats complémentaires « responsables ») : le remboursement porté à 100 %, les complémentaires
+    intégrées à l''Assurance maladie'
   parametre: null
   valeur: null
   enonce: remboursement à 100 % des soins prescrits ; complémentaires intégrées
   couche: null
 payeurs:
-- qui: apu:etat
+- qui: apu:secu:maladie
   sens: paie
   par: depense_publique
+- qui: menages
+  sens: recoit
+  par: autre
+  note: les ménages ne paient plus leurs cotisations aux complémentaires (des primes privées,
+    hors du compte des APU)
 incidence:
 - horizon: immediat
   qui: les bénéficiaires de la dépense
@@ -30,16 +37,73 @@ incidence:
   source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
     », document de travail G2017-04, §4 (les variantes)'
 financement:
-  annonce: null
-  source: null
+  annonce: « Créer une cotisation sociale universelle pour financer la Sécurité sociale, fusionnant
+    les différentes cotisations sociales actuelles et la contribution sociale généralisée
+    (CSG) »
+  source: programme de Mélenchon, livre, « Mettre en sécurité sociale », chapitre 1
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: la cotisation universelle n'a ni taux ni barème ; les primes que les ménages ne paient
+    plus aux complémentaires ne sont pas reprises en prélèvement ici
+  bilan:
+    cout_eur: 33000000000
+    chiffre_eur: null
+    trou_eur: 33000000000
+    dit: 'aucun financement annoncé : tout le coût est un trou'
+    source: jumeau.financement.annonce.financement (D-482), sans mesure liée
 canaux:
 - demande_publique
 - emploi_public
 - consommation_menages
-hypotheses: []
+hypotheses:
+- texte: Le montant tombe sur les prestations en nature (D632).
+  source: Insee, t. 7.301 (D632)
+- texte: Aucun prélèvement nouveau ne reprend les primes économisées par les ménages ; c'est
+    l'objet de la cotisation universelle, sans taux.
+  source: non sourcée
+- texte: Le montant entre en 2027 et est tenu jusqu'en 2035, en euros courants.
+  source: non sourcée
+- texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique (la composition moyenne
+    de la dépense publique, G2017-04, p. 106), faute de savoir quelle dépense.'
+  source: non sourcée
 montant:
-  origine: aucun
-  manque: Le remboursement des soins est une dépense que le moteur ne microsimule pas. (porte
-    « depense_publique »)
+  origine: hypothese
+  annonce:
+    montant_md: 33.0
+    sens: depense
+    horizon: remboursement à 100 % des soins prescrits ; complémentaires intégrées
+    citation: « Instaurer le « 100 % Sécu » en remboursant à 100 % les soins de santé prescrits
+      et en intégrant les assurances maladie complémentaires dans la Sécurité sociale »
+    url: https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1
+    par: calcul
+    calcul: 'Les organismes complémentaires financent 12,8 % de la consommation de soins et
+      de biens médicaux, 33 Md€ en 2024 (Drees, comptes de la santé, édition 2025) ; leur
+      intégration à la Sécurité sociale transfère au moins ces 33 Md€ à la dépense publique.
+      Le remboursement à 100 % des soins prescrits y ajoute une part du reste à charge des
+      ménages (7,8 % de la CSBM, 20 Md€), non comptée : c''est une borne basse.'
+  chocs:
+    apu_d_d632: 33.0
+  profil: constant
+  debut: 2027
+  plein: 2027
+  fin: 2035
+  instrument: depense_publique
+  menages_par: null
+  entreprises_par: null
+  inclus_dans: null
+assiette:
+- texte: la part de la consommation de soins et de biens médicaux financée par les organismes
+    complémentaires (12,8 %)
+  montant_md: 33.0
+  annee: 2024
+  source: Drees, « Les dépenses de santé en 2024 », résultats des comptes de la santé, édition
+    2025 (communiqué du 30 septembre 2025)
+- texte: le reste à charge des ménages (7,8 % de la CSBM de 255 Md€)
+  montant_md: 19.9
+  annee: 2024
+  source: Drees, comptes de la santé, édition 2025
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

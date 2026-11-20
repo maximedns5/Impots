@@ -303,13 +303,13 @@ def test_the_debt_without_activity_is_the_cost_without_the_loop(pages) -> None:
     coût de 66,18 Md€, les pensions alimentaires s'ajoutant ; 20,41 sur ceux du but 22
     (D-403), le canal des créations d'entreprises entrant dans la dette ; 20,44 à son
     élasticité de D-427 (0,043 au lieu de 0,20) ; 20,46 sans la CVAE dans le canal
-    (D-440)."""
+    (D-440) ; 19,54 sur ceux de D-559 (D-683), au coût de 62,94 Md€."""
     study, text = pages["attal"]
     path = json.loads(next(study.rapports.glob("predictif_*.json")).read_text("utf-8"))
     cout = path["lectures"]["decomposition"]["vieillie"]["cout"]
-    assert f"{cout * 100:.2f}" == "20.46"
+    assert f"{cout * 100:.2f}" == "19.54"
     head = text.split("## En bref")[0]
-    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 20,46 points" in head
+    assert "Sans aucun effet sur l'activité, la dette serait plus haute de 19,54 points" in head
     assert "13,95" not in head
     for slug, (_, page) in pages.items():
         assert "Sans aucun effet sur l'activité" in page.split("## En bref")[0], slug

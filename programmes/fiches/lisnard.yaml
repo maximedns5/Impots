@@ -1,0 +1,29 @@
+# Les données critiques des fiches de Lisnard (but 27, volet `fiches`, D-505).
+l2_cotisations_salaire_net:
+  levier:
+    texte: "Code de la sécurité sociale, livre II (les cotisations salariales) : baissées
+      et rendues en salaire net"
+  assiette:
+    texte: "les cotisations salariales de la population de 2026 : les 120 Md€ en font la
+      quasi-totalité"
+    montant_md: 120.2
+    annee: 2026
+    source: "le rapport de la première année d'Attal (passe des ménages, référence,
+      `cotisations_salariales` : 120,17 Md€)"
+l3_impots_production_40_md:
+  levier:
+    texte: "Code de la sécurité sociale, art. L137-30 (C3S) ; Code général des impôts, art.
+      1586 ter (CVAE), 1447 (CFE)"
+  assiette:
+    texte: "les autres impôts sur la production reçus par les APU (D29) : les 40 Md€ en
+      font 30 %"
+    montant_md: 132.8
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne D29"
+l6_economies_200_md:
+  assiette:
+    texte: "la dépense de consommation finale des APU (P3) : 80 Md€ en font 11 %, 200 Md€
+      28 %"
+    montant_md: 719.6
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne P3"

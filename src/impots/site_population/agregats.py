@@ -217,7 +217,7 @@ def _grille(annee: int = 2024) -> list[dict[str, Any]]:
     """Les lignes de la grille commitée (D-371), recopiées pour l'année de la population."""
     grille = json.loads(GRILLE.read_text(encoding="utf-8"))
     garder = ("id", "ligne", "publie", "simule", "ecart", "tolerance", "usage", "verdict",
-              "source", "url", "remarque")
+              "source", "url", "remarque", "remplacee_par")
     return [{k: ligne.get(k) for k in garder} for ligne in grille["lignes"]
             if ligne["annee"] == annee]
 

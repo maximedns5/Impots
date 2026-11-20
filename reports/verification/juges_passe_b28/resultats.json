@@ -1,0 +1,125 @@
+{
+ "decisions": [
+  "D-535",
+  "D-536"
+ ],
+ "commit_passes": {
+  "cice": "f69a68651dfd6c441ca50f1b1da3ef46ee2bb3da",
+  "ppa": "a00d62f09488fcdf5344e71a2d10f37044bb7438"
+ },
+ "commit_jumeau": "a00d62f09488fcdf5344e71a2d10f37044bb7438",
+ "menages_echantillon": 20000,
+ "cice": {
+  "credit_2014_md": 20.849,
+  "part_ciblee": 0.67,
+  "credit_par_annee_md": {
+   "2013": 13.666,
+   "2014": 20.849,
+   "2015": 21.149,
+   "2016": 21.554,
+   "2017": 25.95
+  },
+  "emploi_salarie_milliers": {
+   "2013": 30.4,
+   "2014": 103.0,
+   "2015": 153.8,
+   "2016": 185.0,
+   "2017": 219.7
+  },
+  "emploi_salarie_moyenne_2014_2016": 147.3,
+  "sensibilites_moyenne_2014_2016": {
+   "travail_incidence=0.0": 197.7,
+   "travail_incidence=1.0": 107.3,
+   "jumeau_emploi_elasticite_cout=0.0": 46.0,
+   "jumeau_emploi_elasticite_cout=1.0": 174.0,
+   "jumeau_salaires_chomage=0.0": 153.1,
+   "jumeau_salaires_chomage=1.0": 128.1,
+   "multiplicateur_macro=0.0": 147.3,
+   "multiplicateur_macro=1.0": 147.3
+  },
+  "juge": {
+   "central_milliers": 100.0,
+   "horizon": "moyenne 2014-2016",
+   "en_2014_milliers": 115.0,
+   "ofce_non_finance_milliers": 400.0,
+   "ofce_finance_milliers": 160.0
+  },
+  "rapport_jumeau_juge": 1.473,
+  "verdict": "dans la tolérance",
+  "aveugle": false
+ },
+ "ppa": {
+  "cout_md": 3.768,
+  "foyers_servis_decembre_millions": {
+   "avec": 4.73,
+   "sans": 3.382
+  },
+  "foyers_variation_modele": 0.3987,
+  "foyers_juge_cnaf_milliers": {
+   "2017": 2740.0,
+   "2018": 3044.0,
+   "2019": 4350.0
+  },
+  "foyers_variation_juge_tendance_otee": 0.3181,
+  "foyers_verdict": "dans la tolérance",
+  "depense_juge_md": 3.725,
+  "depense_verdict": "dans la tolérance",
+  "cout_ines_md": 3.71,
+  "deciles_parts_modele": [
+   0.047,
+   0.145,
+   0.251,
+   0.285,
+   0.121,
+   0.057,
+   0.038,
+   0.024,
+   0.021,
+   0.01
+  ],
+  "deciles_parts_juge": [
+   0.152,
+   0.257,
+   0.229,
+   0.166,
+   0.063,
+   0.042,
+   0.034,
+   0.027,
+   0.018,
+   0.012
+  ],
+  "decile_max": {
+   "modele": 4,
+   "juge": 2,
+   "verdict": "hors de la tolérance"
+  },
+  "part_d1_d3": {
+   "modele": 0.443,
+   "juge": 0.638,
+   "verdict": "hors de la tolérance"
+  },
+  "part_d6_d10": {
+   "modele": 0.151,
+   "juge": 0.132,
+   "verdict": "dans la tolérance"
+  },
+  "menages_gagnants_millions": 7.53,
+  "menages_perdants_millions": 0.202,
+  "jumeau_2019": {
+   "emploi_salarie": 3.0,
+   "emploi_total": 3.547,
+   "salaire_moyen": 5.548,
+   "pib": 1.189,
+   "b9": -3.392,
+   "c_menages": 1.506,
+   "remunerations": 0.29,
+   "chomage": -3.177
+  },
+  "aveugle": {
+   "foyers": false,
+   "depense": false,
+   "deciles": true
+  }
+ }
+}

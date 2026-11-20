@@ -173,15 +173,21 @@ def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, 
     frame, record = _population(annee)
     households = households_par_lots(frame, lots, year=annee, tier="full")
     agg = aggregate.aggregate(households)
-    del households
     # The existing lines read the full-take-up entitlement and its niveau de vie, as they
     # were preregistered (D-363); the expected payments of the take-up layer (but 19,
     # étape 4) are measured beside them, under names no line reads until one is
     # preregistered.
     t, c = agg.totals, agg.counts
     q, servi = agg.niveau_de_vie_quantiles_droit, agg.niveau_de_vie_quantiles
+    # The gérants' contributions are the self-employed's in the national accounts
+    # (D613NSI): the line at the public schemes' field leaves them out (D-497). Not
+    # carried by the extrapolation, so a plain weighted sum.
+    gerants = (float((households["cotisations_salariales_gerants"]
+                      * households["weight"]).sum())
+               if "cotisations_salariales_gerants" in households.columns else 0.0)
     m = {
         "cotisations_salariales": t["cotisations_salariales"],
+        "cotisations_salariales - gérants": t["cotisations_salariales"] - gerants,
         "salaire_super_brut - salaire_brut": t["salaire_super_brut"] - t["salaire_brut"],
         **employeurs(t),
         "allegement_general": t["allegement_general"],
@@ -209,6 +215,7 @@ def mesures_menages(annee: int, lots: int) -> tuple[dict[str, float], dict[str, 
         **{k: c[k] for k in c},
         **mesures_ir_net(frame, annee, lots),
     }
+    del households
     return m, record
 
 
@@ -255,6 +262,11 @@ def grille() -> list[dict[str, Any]]:
     """Chaque ligne, son simulé, son écart, son verdict ; refusée si elle l'est."""
     passes = {int(p.stem.split("_")[1]): json.loads(p.read_text(encoding="utf-8"))
               for p in sorted(RAPPORTS.glob("passe_*.json"))}
+    # Le complément d'une année (D-531) : des mesures qu'une passe de la grille ne porte
+    # pas, lues par personne (`scripts/ligne_bandeau_famille_tranche.py`), chacune avec le
+    # commit de sa propre passe.
+    complements = {int(p.stem.split("_")[1]): json.loads(p.read_text(encoding="utf-8"))
+                   for p in sorted(RAPPORTS.glob("complement_*.json"))}
     out = []
     for ligne in lignes():
         row = dict(ligne)
@@ -264,13 +276,20 @@ def grille() -> list[dict[str, Any]]:
         elif p is None:
             row.update(simule=None, ecart=None, verdict="pas de passe")
         else:
+            c = complements.get(ligne["annee"])
+            if c is not None and ligne["modele"] in c["mesures"]:
+                p = {"mesures": c["mesures"], "commit": c["commit"]}
             if ligne["modele"] not in p["mesures"]:
                 raise VerificationError(f"{ligne['id']} {ligne['annee']} : la passe ne "
                                         f"mesure pas « {ligne['modele']} »")
             sim = p["mesures"][ligne["modele"]]
             ecart = sim / ligne["publie"] - 1.0
             tol = ligne["tolerance"]
-            verdict = (ligne["usage"] if ligne["usage"] != "validation" else
+            # Une ligne remplacée (D-495) compte autre chose que son total publié, et une
+            # ligne préenregistrée le compte juste : elle garde son simulé et son écart,
+            # sans verdict.
+            verdict = ("remplacée" if ligne["usage"] == "remplacee" else
+                       ligne["usage"] if ligne["usage"] != "validation" else
                        # Inclusive, and in floating point: 110/100 − 1 is 0,1000…01.
                        "dans la tolérance" if abs(ecart) <= tol + 1e-12
                        else "hors de la tolérance")
@@ -335,6 +354,8 @@ def ecrire() -> Path:
             tol = "—" if r["tolerance"] is None else f"±{r['tolerance'] * 100:.0f} %"
             verdict = r["verdict"] + ("" if r["verdict"] != "refusée" else
                                       f" : {r['remarque']}")
+            if r["verdict"] == "remplacée":
+                verdict += f" par `{r['remplacee_par']}` ({r['remplacee']})"
             w.append(f"| {r['ligne']} | {_val(r['simule'])} | {_val(r['publie'])} | "
                      f"{_pct(r['ecart'])} | {tol} | {verdict} |")
     GRILLE.write_text("\n".join(w) + "\n", encoding="utf-8")

@@ -1277,7 +1277,7 @@ nombres à l'euro mais ne tient les 10 s que pour la TVA (14,4 s pour la tranche
 mode structurel refuse 7 programmes sur 11, D-467, diagnostiqué en D-469). Le
 propriétaire décide du merge et de ces deux points.
 
-### But 26 — L'effet papillon (validé le 16 novembre 2026, D-471)
+### But 26 — L'effet papillon (fait, D-471 à D-489 ; PR #132, merge 17fd297)
 
 Le propriétaire, le 16 novembre : le site se lit, mais on ne comprend pas encore ce que
 dit une mesure. « 250 € nets de plus par mois » (Attal, a16) : comment on le fait, qui
@@ -1347,6 +1347,118 @@ sous-secteur. Les ordres de grandeur d'Attal a16 (+440 milliers d'emplois, +13,8
 dette contre +3,23 en réduit) sont vérifiés par décomposition : aucun défaut, deux choix
 de modèle (D-488). Ce qui manque : les tests des nombres listés dans D-489, `make impact`
 et les lourds, la PR, et les huit décisions de D-489.
+
+### But 27 — Des données justes, un papillon démontrable (validé le 16 novembre 2026, D-490)
+
+Le propriétaire, le 16 novembre, après le but 26 : d'abord corriger les données fausses ;
+ensuite vérifier que l'effet papillon est calculé, juste et démontrable, sur un programme
+regardé d'un œil critique, Mélenchon. La grille de la population tient 30 lignes sur 40 :
+les foyers au RSA à +53 %, à la prime d'activité à +44 %, les cotisations des employeurs
+à +28 %, les aides au logement à −27 %, la prime servie à −24 %. Ce n'est pas acceptable ;
+la cible est les 40 dans leur tolérance, et mieux, ±5 % sur chaque valeur. Les sources
+publiques se relisent à chaque passe : on les récolte une fois. Quatre volets, chacun sur
+`claude/but27-<volet>` partie de `claude/but27`, puis un cinquième après la grille.
+
+1. **Les sources** (`sources`) : un registre de chaque source publique que le dépôt lit,
+   ses nombres extraits une fois (document, page, tableau, empreinte), que les passes, les
+   paramètres et les agents lisent au lieu de relire les documents.
+2. **La grille** (`grille`) : chaque ligne hors de sa tolérance remontée à sa cause, et
+   corrigée à la source (ressources manquantes, recours, champ, définitions, calage :
+   `calibrate.py` est ouvert pour ce but). Les tolérances de D-371 ne bougent pas ; la
+   cible de ±5 % est préenregistrée à part, ligne par ligne, avec son pronostic, avant le
+   premier calcul.
+3. **Le papillon de Mélenchon** (`papillon`) : chaque flèche du jumeau sur son programme
+   vérifiée (calculée ou non, juste ou non : unités, signes, doubles comptes, identités) ;
+   où la diffusion s'arrête, où elle devrait aller et ne va pas ; les cas où une bonne idée
+   de départ se retourne ; comment ses mesures se compensent ; ses employeurs séparés pour
+   qu'il tourne en structurel. Un jeu réduit de θ pour une étude simplifiée.
+4. **Les fiches** (`fiches`) : les données critiques de chaque fiche de transmission
+   écrites mesure par mesure (montant, assiette, payeurs, calendrier, sources), et non
+   tirées d'un gabarit par catégorie ; Mélenchon d'abord, puis les dix autres.
+5. **Après la grille** (`mesure`) : une proposition de Mélenchon appliquée à toute la
+   population corrigée, puis son programme entier, ses mesures en interaction.
+
+**Ce qui tourne** (le propriétaire) : les passes sur la population, détachées, une à la
+fois ; pas d'étude de candidat complète, pas de `make full`. Les chiffrages comparés à un
+juge sont préenregistrés (CLAUDE.md).
+
+```
+/goal Les données de la population sont justes et l'effet papillon d'un programme est
+démontrable, et c'est mergé dans main. Les 40 lignes de la grille tiennent leur tolérance
+de D-371, et le plus grand nombre possible tient ±5 %, préenregistré ligne par ligne ; les
+sources publiques sont récoltées une fois dans un registre que tout lit ; chaque flèche du
+jumeau sur le programme de Mélenchon est vérifiée, ses défauts corrigés ou dits, ses
+compensations montrées, et il tourne en structurel ; chaque fiche de transmission porte
+ses données critiques mesure par mesure ; une proposition de Mélenchon est appliquée à
+toute la population corrigée. Preuve attendue : par volet, ses D-entrées ; la grille avant
+et après ; l'URL de la PR et le SHA du merge. Ou s'arrêter après 60 tours par volet, en
+disant ce qui manque.
+```
+
+Les numéros réservés : D-491 à D-493 pour `sources`, D-494 à D-499 pour `grille`, D-500
+à D-503 pour `papillon`, D-504 à D-506 pour `fiches`, D-507 à D-509 pour `mesure` ; D-510
+et la suite pour la jonction.
+
+**Où il en est** (16 novembre, D-510 à D-512, D-521). Cinq volets sont fusionnés sur
+`claude/but27` et branchés ; pas de PR. **Les sources** : 295 documents, 941 nombres au
+registre, récoltés une fois ; le total de l'épargne salariale (Dares) marqué « source
+secondaire, à vérifier », la publication ne répondant pas (D-491 à D-493, D-512). **La
+grille, faite** : trois tours (D-494 à D-499, D-520, D-521), joints (D-512) ; **35 lignes
+jugées sur 35 en 2024** dans leur tolérance (30 sur 40 au départ), 98 sur 99 sur trois
+ans, ±5 % : 16 sur 35 ; la population de D-521 est celle que lisent la suite et le
+jumeau, dont les cellules sont refaites dessus (D-512). **Le papillon de Mélenchon** :
+chaque flèche vérifiée, la paie publique sortie du coût du travail privé, le programme en
+structurel par ses mesures seules, ses compensations et ses retournements dits (D-500 à
+D-503) ; ses payeurs tirés des fiches (D-510) ; en structurel dans le script, pas encore
+dans la page. **Les fiches** : Mélenchon et Attal mesure par mesure, six autres pour
+leurs montants les plus lourds (D-504 à D-506). **Ce qui reste** : le volet `mesure` (une
+proposition de Mélenchon sur toute la population de D-521) ; les douze pages d'études à
+réécrire sans passe sur la grille de D-521, puis le site (D-512) ; les études qui
+touchent la prime et l'assiette à refaire ; le tableau de la Dares à relever ; `make
+impact` et les lourds, la PR ; les décisions du propriétaire (D-511, D-521).
+
+### But 28 — Un jumeau qui réagit comme l'économie (validé le 17 novembre 2026, D-530)
+
+Le propriétaire, le 17 novembre, après le volet `mesure` du but 27 : « est-ce que notre
+population réagit de la bonne manière, et les mesures se diffusent-elles bien dans le
+modèle ? » La réponse de D-509 : la loi est juste et vérifiée, la réaction ne l'est pas.
+La population est statique et ne reçoit pas les emplois du jumeau ; le jumeau est additif
+(deux mesures y font la somme de leurs effets) ; le signe de l'emploi du Smic tient à un θ
+sans source (`travail_smic_diffusion`, de +190 à −216 milliers) ; une distribution que
+la grille ne juge pas (les salaires entre 1 et 3 Smic) a retourné une interaction ; et
+aucune réaction n'a jamais été confrontée au passé. Quatre volets, en deux temps, sur
+`claude/but28-<volet>` partie de `claude/but28` (lui-même parti de `claude/but27`, dont
+il dépend ; il se rebase sur `main` après le merge du but 27).
+
+1. **Les données de la réaction** (`reaction`) : une ligne de grille sur la distribution
+   des salaires par tranche de Smic (préenregistrée), et la diffusion des hausses du Smic
+   sourcée dans la littérature publique (Insee, Dares) pour `travail_smic_diffusion`.
+2. **Les juges du passé** (`passe`) : deux ou trois mesures passées rejouées, leur effet
+   préenregistré, puis comparé aux évaluations faites après coup (le CICE et sa bascule
+   en allègements, les hausses du Smic de 2022-2023, la prime d'activité de 2019). Une
+   source qui a servi à caler un θ ne peut pas le juger.
+3. **Après 1 et 2, la diffusion non additive** (`interaction`) : le bloc `travail` reçoit
+   le choc combiné des mesures par tranche de salaire, au lieu de sommer leurs effets.
+4. **Après 1 et 2, la boucle** (`boucle`) : les emplois et les salaires du jumeau
+   reviennent dans la population (repondération), pour le second tour des impôts et des
+   prestations.
+
+**Ce qui tourne** : les passes sur la population, détachées, une à la fois (un verrou
+commun) ; pas d'étude de candidat complète, pas de `make full`, pas de `make impact` ni
+de lourds sans l'accord du propriétaire. Les évaluations préalables des PLF et des PLFSS
+ne sont pas ouvertes ; les évaluations après coup le sont, après le préenregistrement.
+
+Les numéros réservés : D-531 à D-534 pour `reaction`, D-535 à D-539 pour `passe`, D-540
+à D-544 pour `interaction`, D-545 à D-549 pour `boucle` ; D-550 et la suite pour la
+jonction.
+
+**La suite, décidée le 17 novembre après la jonction (D-551)** : « oui pour 1, 5 et 6,
+lance la suite ». (1) La diffusion du Smic se lit par rapport au nouveau Smic, par défaut
+(`recentrage` « nouveau ») ; le profil, la portée, φ et la boucle gardent leur défaut.
+(5) La densité des salaires entre 2,5 et 3,5 Smic est corrigée par une source neuve (ni
+la Dares qui cale, ni la MECSS qui juge), la population refaite et la grille repassée,
+préenregistrées. (6) Le CICE et la prime de 2019 restent des juges, comptés à part. Le
+volet `suite` (`claude/but28-suite`) : D-551 à D-559.
 
 ### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 

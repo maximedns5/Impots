@@ -1,0 +1,422 @@
+# Les données critiques des fiches de transmission d'Attal, mesure par mesure (but 27,
+# volet `fiches`, D-505). Même règle que `melenchon.yaml` : le candidat, la loi ou une
+# statistique publique ; un calcul écrit ; « non sourcée » quand rien ne porte.
+
+_sources:
+  lettre: &LETTRE "Attal, lettre aux Français sur les finances publiques, 15 octobre 2026
+    (doc.parti.re/2026/Lettre-finances-publiques.pdf)"
+  tenu: &H_TENU
+    texte: Le montant est tenu chaque année jusqu'en 2035, en euros courants ; le candidat ne
+      donne pas de trajectoire.
+    source: non sourcée
+  rho: &H_RHO
+    texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+    source: non sourcée
+  var_dep: &H_VAR_DEP
+    texte: "La variante de Mésange la plus proche : depense_publique (la composition moyenne
+      de la dépense, G2017-04, p. 106), faute de savoir quelle dépense."
+    source: non sourcée
+  fin_eco: &FIN_ECO
+    annonce: "« deux tiers des économies seront réalisées sur nos dépenses sociales »"
+    source: "Attal, lettre aux Français sur les finances publiques, 15 octobre 2026, p. 1"
+    chiffre: false
+    note: une économie ; elle finance le redressement (déficit sous 3 % avant 2032), pas une
+      mesure nommée
+  cal_elu: &CAL_ELU
+    texte: « dès mon élection », 2027
+    source: "Attal, lettre aux Français sur les finances publiques, 15 octobre 2026, p. 1"
+  cal_page: &CAL_PAGE
+    texte: aucune date dans la page de la mesure
+    source: "attalpresident.fr, page de la mesure"
+  fin_brut: &FIN_BRUT
+    annonce: "« Ce choc de salaires doit être financé à l'euro près par des économies sur le
+      modèle social, d'abord l'assurance chômage et les indemnités journalières, sans
+      alourdir le coût du travail. »"
+    source: "attalpresident.fr/programme/mesures/droit-au-brut (22 juillet 2026)"
+    chiffre: false
+    note: "le financement nommé (assurance chômage : 5 Md€, a11 ; indemnités journalières :
+      sans montant, a12) couvre moins d'un dixième du coût de la première année"
+
+# ---------------------------------------------------------------------------- chiffrées
+a16_droit_au_brut:
+  assiette:
+  - texte: les cotisations salariales des APU (la part des ménages dans les cotisations
+      sociales effectives) ; la mesure en retire 77,14 Md€ la première année
+    montant_md: 120.2
+    annee: 2026
+    source: "le rapport de la première année du programme d'Attal (passe des ménages, total
+      `cotisations_salariales` de la référence, 120,17 Md€)"
+  calendrier:
+    texte: « dès le début 2027 »
+    source: "attalpresident.fr/programme/mesures/droit-au-brut (22 juillet 2026)"
+  financement: *FIN_BRUT
+  hypotheses:
+  - texte: "L'échelle des cotisations salariales de retraite à 0,22 traduit « +250 € nets
+      par mois au salaire médian » : 3 000 € par an sur 3 845 € de cotisations retraite
+      salariales au médian."
+    valeur: 0.22
+    source: "le chiffrage de la mesure (`programmes/attal.json`, D-381 et suivantes), mesuré
+      par le moteur"
+  - texte: Les droits à la retraite des salariés ne baissent pas avec leurs cotisations.
+    source: non sourcée
+  - texte: "La caisse perd la recette : l'État la compense (art. L131-7 CSS) ou le régime
+      s'endette ; le candidat ne dit pas lequel, et l'Agirc-Arrco n'est pas tenue par la
+      loi."
+    source: "Code de la sécurité sociale, art. L131-7"
+  - texte: Aucune renégociation du brut la première année.
+    source: "Saez, Matsaganis et Tsakloglou (2012), QJE 127(1)"
+
+a18_suppression_cvae:
+  levier:
+    texte: "Code général des impôts, art. 1586 ter et s. (la CVAE) ; loi de finances pour
+      2024, art. 79 (sa suppression progressive jusqu'en 2030), que la mesure mène à terme"
+  assiette:
+    texte: les recettes de CVAE de l'État
+    montant_md: 2.741
+    annee: 2026
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1497 (4,265
+      Md€ en 2024, 4,069 en 2025, 2,741 en 2026)"
+  calendrier: *CAL_PAGE
+  financement:
+    annonce: null
+    source: null
+    chiffre: false
+    note: la mesure ne dit pas son financement ; la « loi de stabilité fiscale » n'en porte
+      pas
+  hypotheses:
+  - texte: "La passe de la première année retire 3,28 Md€ de CVAE et rend 0,62 Md€ d'IS
+      (la CVAE est déductible du bénéfice) : 2,55 Md€ de prélèvements en moins ; le PLF
+      2026 prévoit 2,74 Md€ de CVAE pour l'État."
+    source: "le rapport de la mesure ; Évaluation des voies et moyens 2026, tome 1, ligne
+      1497"
+
+a22_pensions_alimentaires:
+  levier:
+    texte: "Code général des impôts, art. 79 (les pensions alimentaires reçues, imposables)
+      et 156, II, 2° (leur déduction chez le débiteur) : les pensions reçues pour les
+      enfants sorties du revenu imposable"
+  calendrier: *CAL_PAGE
+  hypotheses:
+  - texte: La déduction chez le parent qui verse la pension est maintenue.
+    source: non sourcée
+
+# ------------------------------------------------------ les montants déclarés (hypothèses)
+a2_frein_urgence_20_md:
+  levier:
+    texte: "loi de finances pour 2027 (et loi de finances rectificative) : des crédits gelés
+      ou annulés, non désignés"
+  assiette:
+    texte: "la dépense des APU hors charges d'intérêts n'est pas lue ici ; la dépense de
+      consommation finale des APU (P3) donne l'ordre de grandeur : 20 Md€ en font 2,8 %"
+    montant_md: 719.6
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13),
+      ligne P3"
+  payeurs:
+  - {qui: "apu:etat", sens: recoit, par: depense_publique}
+  calendrier:
+    texte: « dès 2027 », « dès son arrivée à l'Élysée »
+    source: "attalpresident.fr/programme/mesures/deficit-sous-trois-pour-cent ; Attal,
+      lettre du 15 octobre 2026"
+  financement: *FIN_ECO
+  hypotheses:
+  - texte: "Les 20 Md€ de 2027 sont les premiers des 150 Md€ du quinquennat (a1) : a1 n'a
+      pas de montant annuel et n'est pas additionné."
+    source: "Attal, lettre du 15 octobre 2026, p. 1 : « D'abord … un frein d'urgence de 20
+      milliards … Ensuite, je lancerai un plan de 150 milliards »"
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_DEP
+
+a9_big_bang_territorial:
+  levier:
+    texte: "Code général des collectivités territoriales : un échelon de collectivité
+      supprimé, non nommé (la Constitution, art. 72, nomme communes, départements et
+      régions : une révision constitutionnelle si l'échelon est le département ou la
+      région)"
+  payeurs:
+  - {qui: "apu:apul", sens: recoit, par: depense_publique,
+     note: les collectivités dépensent moins}
+  calendrier:
+    texte: aucune date ; « chaque année » une fois la réforme faite
+    source: "Attal, lettre du 15 octobre 2026, p. 1 : « Plus de 7 milliards d'euros pourront
+      ainsi être économisés chaque année »"
+  financement: *FIN_ECO
+  hypotheses:
+  - texte: L'économie est pleine dès 2027 ; une réforme des échelons prend plusieurs années,
+      que le candidat ne dit pas.
+    source: non sourcée
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_DEP
+
+a14_epargne_retraite_naissance:
+  levier:
+    texte: "aucun texte en vigueur : un plan d'épargne retraite ouvert par l'État à chaque
+      naissance (Code monétaire et financier, art. L224-1 et s., le PER)"
+  assiette:
+    texte: "les naissances : 660 M€ pour 1 000 € par enfant en supposent 660 000 par an"
+    montant_md: null
+    annee: 2026
+    source: "attalpresident.fr, actualité du 28 octobre 2026 (« 1 000 euros à chaque
+      naissance … 660 millions d'euros par an »)"
+  payeurs:
+  - {qui: "apu:etat", sens: paie, par: depense_publique}
+  - {qui: menages, sens: recoit, par: autre,
+     note: une épargne bloquée jusqu'à la retraite de l'enfant}
+  calendrier: *CAL_PAGE
+  financement:
+    annonce: null
+    source: null
+    chiffre: false
+    note: la mesure ne dit pas son financement
+  hypotheses:
+  - texte: Le montant est un transfert en capital de l'État aux ménages (D9), qui ne
+      consomment pas cette épargne.
+    source: "le candidat : un plan d'épargne retraite, attalpresident.fr/programme/mesures/
+      capitalisation-startups"
+  - texte: Le montant entre en 2027.
+    source: non sourcée
+  - *H_TENU
+  - *H_RHO
+
+a31_geoenergie:
+  montant:
+    md: 0.08
+    sens: depense
+    calcul: "« Doubler les subventions à la géoénergie, pour les porter à 160 millions
+      d'euros par an » : 80 M€ aujourd'hui, 160 M€ demain ; le coût est l'écart, 160 − 80 =
+      80 M€ par an, et non 160."
+  levier:
+    texte: "les aides de l'Ademe à la chaleur renouvelable (le Fonds chaleur), ligne de la
+      mission « Écologie, développement et mobilité durables »"
+  assiette:
+    texte: les subventions à la géoénergie aujourd'hui, la moitié des 160 M€ visés
+    montant_md: 0.08
+    annee: 2026
+    source: "attalpresident.fr/programme/mesures/doubler-subventions-geoenergie (25 juin
+      2026)"
+  payeurs:
+  - {qui: "apu:etat", sens: paie, par: depense_publique}
+  - {qui: entreprises, sens: recoit, par: aides_publiques}
+  calendrier:
+    texte: « dès 2027 »
+    source: "attalpresident.fr/programme/mesures/doubler-subventions-geoenergie"
+  financement:
+    annonce: null
+    source: null
+    chiffre: false
+    note: la mesure ne dit pas son financement
+  hypotheses:
+  - texte: Le montant est une aide à l'investissement (D9).
+    source: non sourcée
+  - *H_TENU
+  - *H_RHO
+
+# --------------------------------------- les paramètres : chiffrés par une assiette ou dits
+a8_cent_mille_postes:
+  code: D1
+  profil: {profil: rampe, debut: 2027, plein: 2031, fin: 2035}
+  montant:
+    md: 3.29
+    sens: economie_depense
+    calcul: "100 000 postes × 2 740 € (le salaire mensuel net moyen en EQTP de la fonction
+      publique, 2024) × 12 mois = 3,29 Md€ de salaires nets par an, une borne basse de
+      l'économie (sans les cotisations des employeurs publics) ; moins la prime de départ
+      volontaire, sans montant."
+  levier:
+    texte: "lois de finances (plafonds d'emplois de l'État) et budgets des collectivités ;
+      un plan de départs volontaires"
+  assiette:
+    texte: le salaire mensuel net moyen en EQTP de la fonction publique (2 740 €)
+    montant_md: null
+    valeur: 2740
+    unite: € nets par mois
+    annee: 2024
+    source: "Insee, Siasp 2024, « Emploi, chômage, revenus du travail », édition 2026, fiche
+      29, figure 1"
+  payeurs:
+  - {qui: "apu:etat", sens: recoit, par: depense_publique,
+     note: "l'État et les collectivités ; le partage n'est pas dit"}
+  - {qui: "apu:apul", sens: recoit, par: depense_publique}
+  - {qui: menages, sens: paie, par: salaire_net,
+     note: les postes non remplacés ; la prime de départ en rend une part}
+  calendrier:
+    texte: aucune date ; un plan de départs volontaires sur le quinquennat
+    source: "Attal, lettre du 15 octobre 2026, p. 1"
+  financement: *FIN_ECO
+  hypotheses:
+  - texte: Le montant tombe sur les rémunérations (D1) ; ce sont des postes.
+    source: "Attal, lettre du 15 octobre 2026, p. 1 : « supprimer 100 000 postes de
+      fonctionnaires »"
+  - texte: Montée en charge linéaire de 2027 à 2031, la fin du mandat.
+    source: non sourcée
+  - texte: "La prime de départ volontaire n'est pas comptée : le candidat ne la chiffre
+      pas."
+    source: "Attal, lettre du 15 octobre 2026, p. 1 (« avec une prime de départ »)"
+  - texte: L'économie peut être comprise dans les 20 Md€ du frein d'urgence (a2) ; le
+      candidat ne le dit pas.
+    source: non sourcée
+  - *H_RHO
+
+a11_assurance_chomage:
+  code: D62C
+  montant:
+    md: 5.0
+    sens: economie_depense
+    citation: "« Gabriel Attal veut la reprendre dès le début du mandat, avec deux
+      objectifs : remettre les Français en emploi et dégager 5 milliards d'euros
+      d'économies »"
+    url: "https://attalpresident.fr/programme/mesures/reforme-assurance-chomage-cinq-milliards"
+  levier:
+    texte: "Code du travail, art. L5422-1 et s. et L5422-20 (le règlement d'assurance
+      chômage, par décret à défaut d'accord des partenaires sociaux)"
+  payeurs:
+  - {qui: "apu:secu:chomage", sens: recoit, par: depense_publique, note: l'Unédic}
+  - {qui: menages, sens: paie, par: chomage_brut}
+  calendrier:
+    texte: « dès le début du mandat »
+    source: "attalpresident.fr/programme/mesures/reforme-assurance-chomage-cinq-milliards"
+  financement:
+    annonce: "« financé à l'euro près par des économies sur le modèle social, d'abord
+      l'assurance chômage et les indemnités journalières »"
+    source: "attalpresident.fr/programme/mesures/droit-au-brut"
+    chiffre: true
+    note: l'économie finance le droit au brut (a16), dont elle couvre une petite part
+  hypotheses:
+  - texte: Le montant tombe sur les allocations chômage (D62), aux ménages au prorata du
+      chômage.
+    source: "le candidat : l'assurance chômage, page de la mesure"
+  - texte: Pas d'effet de retour à l'emploi compté (le candidat en attend 100 000 emplois).
+    source: "attalpresident.fr, page de la mesure (« ≥ 100 000 emplois »)"
+  - *H_TENU
+  - *H_RHO
+  - *H_VAR_DEP
+
+a23_revalorisation_enseignants:
+  code: D1
+  profil: {profil: calendrier, debut: 2027, plein: 2028, fin: 2035,
+           calendrier: {2027: 0.71, 2028: 2.13}}
+  montant:
+    md: 2.13
+    sens: depense
+    calcul: "888 800 enseignants payés par l'État (747 400 du public et 141 400 du privé
+      sous contrat, rentrée 2025) × 200 € nets × 12 mois = 2,13 Md€ nets par an ; un
+      tiers en 2027 (de la rentrée de septembre) : 0,71 Md€. Une borne basse du coût
+      public : le brut, les cotisations de l'employeur et les +500 € en milieu de carrière
+      n'y sont pas."
+  levier:
+    texte: "décrets indemnitaires des enseignants (l'indemnité de suivi et
+      d'accompagnement des élèves et la prime d'attractivité, décret n° 2021-276) ; mission
+      « Enseignement scolaire »"
+  assiette:
+    texte: les enseignants du secteur public (747 400) et du privé sous contrat (141 400), à
+      la rentrée 2025
+    montant_md: null
+    valeur: 888800
+    unite: enseignants
+    annee: 2025
+    source: "DEPP, « Panorama statistique des personnels de l'enseignement scolaire
+      2025-2026 »"
+  payeurs:
+  - {qui: "apu:etat", sens: paie, par: depense_publique}
+  - {qui: menages, sens: recoit, par: salaire_net}
+  calendrier:
+    texte: « dès la rentrée 2027 »
+    source: "attalpresident.fr/programme/mesures/revalorisation-salaires-professeurs (1er
+      septembre 2026)"
+  financement:
+    annonce: "« dépenser moins pour les dépenses courantes et pour les dépenses sociales, et
+      plus pour l'avenir et pour l'éducation »"
+    source: "Attal, lettre du 15 octobre 2026, p. 1 (la deuxième règle d'or)"
+    chiffre: false
+  hypotheses:
+  - texte: Les enseignants du privé sous contrat, payés par l'État, ont la même hausse.
+    source: non sourcée
+  - texte: Le montant tombe sur les rémunérations (D1).
+    source: "le candidat : une revalorisation des salaires des professeurs"
+  - texte: Les +500 € « en milieu de carrière » ne sont pas comptés, faute de calendrier et
+      d'effectif.
+    source: "attalpresident.fr, page de la mesure"
+  - *H_RHO
+  - texte: "La variante de Mésange la plus proche : depense_publique."
+    source: non sourcée
+
+a24_plan_ia_france_2040:
+  code: INV
+  montant:
+    md: 10.0
+    sens: depense
+    citation: "« Gabriel Attal veut porter l'effort à 200 milliards d'euros, partagés à
+      égalité entre financement public et privé » (sur dix ans)"
+    url: "https://attalpresident.fr/programme/mesures/plan-france-2040"
+  levier:
+    texte: "loi de finances, mission « Investir pour la France de 2030 » (le plan France
+      2030, que le plan prolonge)"
+  payeurs:
+  - {qui: "apu:etat", sens: paie, par: depense_publique}
+  - {qui: entreprises, sens: recoit, par: aides_publiques}
+  calendrier:
+    texte: dix ans, jusqu'en 2040 selon le nom du plan
+    source: "attalpresident.fr/programme/mesures/plan-france-2040 (19 juin 2026)"
+  financement:
+    annonce: null
+    source: null
+    chiffre: false
+    note: la moitié privée n'est pas une dépense publique
+  hypotheses:
+  - texte: "La moitié publique (100 Md€) sur dix ans : 10 Md€ par an, de 2027 à 2035 dans
+      le jumeau."
+    source: "attalpresident.fr/programme/mesures/plan-france-2040"
+  - texte: Les 10 Md€ s'ajoutent à la dépense de France 2030 ; « porter l'effort à »
+      laisse entendre qu'une part y est déjà.
+    source: non sourcée
+  - texte: "La variante de Mésange la plus proche : investissement_public."
+    source: "Insee et DG Trésor, G2017-04, §4"
+  - *H_RHO
+
+a1_plan_economies_150_md:
+  manque: "150 Md€ « sur le quinquennat » sans calendrier annuel ni dépense désignée, et
+    qui comprend le frein d'urgence (a2), l'assurance chômage (a11), les échelons (a9) et
+    les 100 000 postes (a8), chiffrés à part : l'additionner les compterait deux fois."
+  calendrier:
+    texte: le quinquennat, 2027-2032
+    source: "Attal, lettre du 15 octobre 2026, p. 1"
+a10_annee_blanche_2028:
+  levier:
+    texte: "Code de la sécurité sociale, art. L161-25 (la revalorisation annuelle des
+      prestations) : une loi de financement qui y déroge pour 2028"
+  assiette:
+    texte: les prestations sociales en espèces des APU (D62)
+    montant_md: 580.9
+    annee: 2025
+    source: "Insee, comptes nationaux annuels base 2020, t. 7.301, ligne D62"
+  calendrier:
+    texte: 2028, « mon premier budget »
+    source: "attalpresident.fr, page « impunité budgétaire zéro » (3 juillet 2026)"
+  manque: "L'économie est l'inflation de 2028 fois les prestations gelées ; ni l'inflation
+    de 2028 (le RESF 2026 s'arrête à 2026) ni le seuil des « petites retraites
+    épargnées » ne sont publiés."
+a25_plan_eau:
+  manque: "Un redéploiement de 600 M€ de crédits existants : aucun coût net pour les APU."
+  financement:
+    annonce: "« redéploie 600 millions d'euros de crédits existants »"
+    source: "attalpresident.fr/programme/mesures/plan-eau-a-euro-constant"
+    chiffre: true
+a33_charge_administrative:
+  manque: "Le gain de 20 Md€ par an est celui des entreprises (moins de formalités), pas
+    une recette ni une dépense des APU."
+a34_prelevement_reseaux_sociaux:
+  levier:
+    texte: "Code général des impôts, art. 299 et s. (la taxe sur les services numériques) :
+      un prélèvement de 2 % voisin, sur les revenus des réseaux sociaux"
+  assiette:
+    texte: "la taxe sur les services numériques rapporte 0,891 Md€ à 3 % : son assiette,
+      tous services numériques taxés, est de l'ordre de 30 Md€ ; celle des seuls réseaux
+      sociaux n'est pas publiée"
+    montant_md: 0.891
+    annee: 2025
+    source: "Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1430"
+  manque: "Le chiffre d'affaires des réseaux sociaux en France n'est pas publié ; 2 % de
+    l'assiette entière de la taxe sur les services numériques (0,59 Md€) n'en serait
+    qu'une borne haute."

@@ -128,9 +128,9 @@
       "vieillie": {
         "p_hausse": 1.0,
         "quantiles": {
-          "q05": 0.0035753230532702407,
-          "q50": 0.0035753230532702407,
-          "q95": 0.0035753230532702407
+          "q05": 0.004409594465225597,
+          "q50": 0.004409594465225597,
+          "q95": 0.004409594465225597
         },
         "sobol": {},
         "evaluations": 4000
@@ -138,9 +138,9 @@
       "figee": {
         "p_hausse": 1.0,
         "quantiles": {
-          "q05": 0.0035864950173538634,
-          "q50": 0.0035864950173538634,
-          "q95": 0.0035864950173538634
+          "q05": 0.004215438760199364,
+          "q50": 0.004215438760199364,
+          "q95": 0.004215438760199364
         },
         "sobol": {},
         "evaluations": 4000
@@ -156,27 +156,27 @@
     },
     "decomposition": {
       "vieillie": {
-        "cout": 0.0035753230532702407,
+        "cout": 0.004409594465225597,
         "denominateur": 0.0,
         "retroaction": 0.0,
-        "total": 0.0035753230532702407
+        "total": 0.004409594465225597
       },
       "figee": {
-        "cout": 0.0035864950173538634,
+        "cout": 0.004215438760199364,
         "denominateur": 0.0,
         "retroaction": 0.0,
-        "total": 0.0035864950173538634
+        "total": 0.004215438760199364
       }
     },
     "taux_marche": {
       "taux": 0.035,
-      "vieillie": 0.0038498416738970143,
-      "figee": 0.0038632030098197934
+      "vieillie": 0.004744737317936565,
+      "figee": 0.004540700193483627
     },
     "variante_salariale": null,
     "creations_sans_canal": {
-      "vieillie": 0.0035753230532702407,
-      "figee": 0.0035864950173538634
+      "vieillie": 0.004409594465225597,
+      "figee": 0.004215438760199364
     }
   },
   "creations": {
@@ -303,21 +303,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.0035753230532702407,
-            "c0": 0.0035753230532702407,
-            "c1": 0.0035753230532702407
+            "theta": 0.004409594465225597,
+            "c0": 0.004409594465225597,
+            "c1": 0.004409594465225597
           },
           "delta_sans_creations": [
-            0.0004274710539966531,
-            0.0008357590746326249,
-            0.0012270295581200408,
-            0.0016015101581494662,
-            0.001962056136155965,
-            0.002311190985697653,
-            0.0026474449488926854,
-            0.002970607354726651,
-            0.003280755014216874,
-            0.0035753230532702407
+            0.0005119299138443001,
+            0.0010063050244402127,
+            0.0014854800677079893,
+            0.0019439167801085233,
+            0.0023873560937510696,
+            0.0028203442062098016,
+            0.0032405122922660734,
+            0.0036455411280473804,
+            0.004036413423069263,
+            0.004409594465225597
           ]
         },
         "figee": {
@@ -385,21 +385,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.0035864950173538634,
-            "c0": 0.0035864950173538634,
-            "c1": 0.0035864950173538634
+            "theta": 0.004215438760199364,
+            "c0": 0.004215438760199364,
+            "c1": 0.004215438760199364
           },
           "delta_sans_creations": [
-            0.0004310899755919362,
-            0.0008439621024753929,
-            0.0012401548445377664,
-            0.00162005803953158,
-            0.0019842296213288257,
-            0.0023331815361731234,
-            0.002667410076413912,
-            0.0029873965121649526,
-            0.0032936073780842623,
-            0.0035864950173538634
+            0.0005067730602204001,
+            0.0009923985680755365,
+            0.001457963339190238,
+            0.001904435256151471,
+            0.002332418784639856,
+            0.002742515618171737,
+            0.0031353090385854987,
+            0.0035113646124067532,
+            0.003871230649298285,
+            0.004215438760199364
           ]
         }
       },
@@ -470,21 +470,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.0035753230532702407,
-            "c0": 0.0035753230532702407,
-            "c1": 0.0035753230532702407
+            "theta": 0.004409594465225597,
+            "c0": 0.004409594465225597,
+            "c1": 0.004409594465225597
           },
           "delta_sans_creations": [
-            0.0004274710539966531,
-            0.0008357590746326249,
-            0.0012270295581200408,
-            0.0016015101581494662,
-            0.001962056136155965,
-            0.002311190985697653,
-            0.0026474449488926854,
-            0.002970607354726651,
-            0.003280755014216874,
-            0.0035753230532702407
+            0.0005119299138443001,
+            0.0010063050244402127,
+            0.0014854800677079893,
+            0.0019439167801085233,
+            0.0023873560937510696,
+            0.0028203442062098016,
+            0.0032405122922660734,
+            0.0036455411280473804,
+            0.004036413423069263,
+            0.004409594465225597
           ]
         },
         "figee": {
@@ -552,21 +552,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.0035864950173538634,
-            "c0": 0.0035864950173538634,
-            "c1": 0.0035864950173538634
+            "theta": 0.004215438760199364,
+            "c0": 0.004215438760199364,
+            "c1": 0.004215438760199364
           },
           "delta_sans_creations": [
-            0.0004310899755919362,
-            0.0008439621024753929,
-            0.0012401548445377664,
-            0.00162005803953158,
-            0.0019842296213288257,
-            0.0023331815361731234,
-            0.002667410076413912,
-            0.0029873965121649526,
-            0.0032936073780842623,
-            0.0035864950173538634
+            0.0005067730602204001,
+            0.0009923985680755365,
+            0.001457963339190238,
+            0.001904435256151471,
+            0.002332418784639856,
+            0.002742515618171737,
+            0.0031353090385854987,
+            0.0035113646124067532,
+            0.003871230649298285,
+            0.004215438760199364
           ]
         }
       },
@@ -637,21 +637,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.0035753230532702407,
-            "c0": 0.0035753230532702407,
-            "c1": 0.0035753230532702407
+            "theta": 0.004409594465225597,
+            "c0": 0.004409594465225597,
+            "c1": 0.004409594465225597
           },
           "delta_sans_creations": [
-            0.0004274710539966531,
-            0.0008357590746326249,
-            0.0012270295581200408,
-            0.0016015101581494662,
-            0.001962056136155965,
-            0.002311190985697653,
-            0.0026474449488926854,
-            0.002970607354726651,
-            0.003280755014216874,
-            0.0035753230532702407
+            0.0005119299138443001,
+            0.0010063050244402127,
+            0.0014854800677079893,
+            0.0019439167801085233,
+            0.0023873560937510696,
+            0.0028203442062098016,
+            0.0032405122922660734,
+            0.0036455411280473804,
+            0.004036413423069263,
+            0.004409594465225597
           ]
         },
         "figee": {
@@ -719,21 +719,21 @@
           "theta": 0.5,
           "preenregistrement": "D-402",
           "boite": {
-            "theta": 0.0035864950173538634,
-            "c0": 0.0035864950173538634,
-            "c1": 0.0035864950173538634
+            "theta": 0.004215438760199364,
+            "c0": 0.004215438760199364,
+            "c1": 0.004215438760199364
           },
           "delta_sans_creations": [
-            0.0004310899755919362,
-            0.0008439621024753929,
-            0.0012401548445377664,
-            0.00162005803953158,
-            0.0019842296213288257,
-            0.0023331815361731234,
-            0.002667410076413912,
-            0.0029873965121649526,
-            0.0032936073780842623,
-            0.0035864950173538634
+            0.0005067730602204001,
+            0.0009923985680755365,
+            0.001457963339190238,
+            0.001904435256151471,
+            0.002332418784639856,
+            0.002742515618171737,
+            0.0031353090385854987,
+            0.0035113646124067532,
+            0.003871230649298285,
+            0.004215438760199364
           ]
         }
       }
@@ -743,7 +743,7 @@
   "titre": "pres2027_tondelier_apl_plus_10",
   "source": "Marine Tondelier (Les Écologistes), programme relevé le 2026-11-12 — Revalorisation des APL de 10 % : « « Revaloriser les APL de 10 % avec un mécanisme empêchant la répercussion sur les montants des loyers. » » (https://marinetondelier.fr/s/dp-bouclier-social-pour-envoi.pdf, 2026-09-12)",
   "reference": "reconduit",
-  "computed": "2026-11-14",
+  "computed": "2026-11-18",
   "spending_name": "Dépenses gelées en volume",
   "growth_name": "Croissance réelle 1 %, prix 2 %",
   "rate_name": "Taux implicite tenu à son niveau de 2025",
@@ -758,8 +758,8 @@
     {
       "year": 2026,
       "basis": "legislated",
-      "mechanical_frozen_eur": 1328354568.6269531,
-      "mechanical_aged_eur": 1317203274.6818848,
+      "mechanical_frozen_eur": 1561563357.8032227,
+      "mechanical_aged_eur": 1577453613.8029785,
       "reference": 1.168580725548546,
       "reform_aged": null,
       "delta_aged": null,
@@ -767,12 +767,13 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 1328354568.6269531,
+          "cost_eur": 1561563357.8032227,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
           },
@@ -780,7 +781,7 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 1317203274.6818848,
+          "cost_eur": 1577453613.8029785,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -798,8 +799,8 @@
     {
       "year": 2027,
       "basis": "legislated",
-      "mechanical_frozen_eur": 1325745022.4804688,
-      "mechanical_aged_eur": 1311066225.637207,
+      "mechanical_frozen_eur": 1559348523.668457,
+      "mechanical_aged_eur": 1587304344.9697266,
       "reference": 1.1746928799602263,
       "reform_aged": null,
       "delta_aged": null,
@@ -807,12 +808,13 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 1325745022.4804688,
+          "cost_eur": 1559348523.668457,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
           },
@@ -820,13 +822,12 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 1311066225.637207,
+          "cost_eur": 1587304344.9697266,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
-            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
           },
@@ -838,8 +839,8 @@
     {
       "year": 2028,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 1326139959.802246,
-      "mechanical_aged_eur": 1309746518.5114746,
+      "mechanical_frozen_eur": 1558366528.0788574,
+      "mechanical_aged_eur": 1603378371.4509277,
       "reference": 1.1753885794969483,
       "reform_aged": null,
       "delta_aged": null,
@@ -847,7 +848,21 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 1326139959.802246,
+          "cost_eur": 1558366528.0788574,
+          "impulses": {},
+          "uncovered": {
+            "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
+          },
+          "canaux": {},
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": 1603378371.4509277,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -858,9 +873,36 @@
           },
           "canaux": {},
           "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1558417860.65625,
+      "mechanical_aged_eur": 1599751480.2097168,
+      "reference": 1.1707805732317031,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": 1558417860.65625,
+          "impulses": {},
+          "uncovered": {
+            "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
+          },
+          "canaux": {},
+          "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 1309746518.5114746,
+          "cost_eur": 1599751480.2097168,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -876,49 +918,10 @@
       }
     },
     {
-      "year": 2029,
-      "basis": "reconducted",
-      "mechanical_frozen_eur": 1326042720.5498047,
-      "mechanical_aged_eur": 1307285472.0319824,
-      "reference": 1.1707805732317031,
-      "reform_aged": null,
-      "delta_aged": null,
-      "reform_frozen": null,
-      "delta_frozen": null,
-      "statistiques": {
-        "figee": {
-          "cost_eur": 1326042720.5498047,
-          "impulses": {},
-          "uncovered": {
-            "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
-            "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
-            "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
-            "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
-            "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
-          },
-          "canaux": {},
-          "c1_floor_share": null
-        },
-        "vieillie": {
-          "cost_eur": 1307285472.0319824,
-          "impulses": {},
-          "uncovered": {
-            "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
-            "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
-            "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
-            "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
-            "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
-          },
-          "canaux": {},
-          "c1_floor_share": null
-        }
-      }
-    },
-    {
       "year": 2030,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 1326042515.8874512,
-      "mechanical_aged_eur": 1312748082.442627,
+      "mechanical_frozen_eur": 1558417504.3925781,
+      "mechanical_aged_eur": 1613574398.8017578,
       "reference": 1.1609798413129486,
       "reform_aged": null,
       "delta_aged": null,
@@ -926,12 +929,13 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 1326042515.8874512,
+          "cost_eur": 1558417504.3925781,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
           },
@@ -939,7 +943,7 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 1312748082.442627,
+          "cost_eur": 1613574398.8017578,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -957,8 +961,8 @@
     {
       "year": 2031,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 1326042515.8874512,
-      "mechanical_aged_eur": 1325821454.2998047,
+      "mechanical_frozen_eur": 1558417504.3925781,
+      "mechanical_aged_eur": 1642436815.6784668,
       "reference": 1.146095619682319,
       "reform_aged": null,
       "delta_aged": null,
@@ -966,12 +970,13 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 1326042515.8874512,
+          "cost_eur": 1558417504.3925781,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
           },
@@ -979,7 +984,7 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 1325821454.2998047,
+          "cost_eur": 1642436815.6784668,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -997,8 +1002,8 @@
     {
       "year": 2032,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 1326042416.932129,
-      "mechanical_aged_eur": 1332609152.6694336,
+      "mechanical_frozen_eur": 1558417462.2265625,
+      "mechanical_aged_eur": 1662420056.9973145,
       "reference": 1.1262354244680892,
       "reform_aged": null,
       "delta_aged": null,
@@ -1006,12 +1011,13 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 1326042416.932129,
+          "cost_eur": 1558417462.2265625,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
           },
@@ -1019,7 +1025,7 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 1332609152.6694336,
+          "cost_eur": 1662420056.9973145,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1037,8 +1043,8 @@
     {
       "year": 2033,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 1326042515.8874512,
-      "mechanical_aged_eur": 1337258587.1538086,
+      "mechanical_frozen_eur": 1558417504.3925781,
+      "mechanical_aged_eur": 1672774144.6359863,
       "reference": 1.1015050760584795,
       "reform_aged": null,
       "delta_aged": null,
@@ -1046,12 +1052,13 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 1326042515.8874512,
+          "cost_eur": 1558417504.3925781,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
           },
@@ -1059,7 +1066,7 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 1337258587.1538086,
+          "cost_eur": 1672774144.6359863,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1077,8 +1084,8 @@
     {
       "year": 2034,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 1326042515.8874512,
-      "mechanical_aged_eur": 1340708789.505371,
+      "mechanical_frozen_eur": 1558417504.3925781,
+      "mechanical_aged_eur": 1685425981.5161133,
       "reference": 1.0720087228588424,
       "reform_aged": null,
       "delta_aged": null,
@@ -1086,12 +1093,13 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 1326042515.8874512,
+          "cost_eur": 1558417504.3925781,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
           },
@@ -1099,7 +1107,7 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 1340708789.505371,
+          "cost_eur": 1685425981.5161133,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1117,8 +1125,8 @@
     {
       "year": 2035,
       "basis": "reconducted",
-      "mechanical_frozen_eur": 1326042515.8874512,
-      "mechanical_aged_eur": 1332239011.753662,
+      "mechanical_frozen_eur": 1558417504.3925781,
+      "mechanical_aged_eur": 1682450789.491455,
       "reference": 1.0378488647367168,
       "reform_aged": null,
       "delta_aged": null,
@@ -1126,12 +1134,13 @@
       "delta_frozen": null,
       "statistiques": {
         "figee": {
-          "cost_eur": 1326042515.8874512,
+          "cost_eur": 1558417504.3925781,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+            "reduction_loyer_solidarite": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
             "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
           },
@@ -1139,7 +1148,7 @@
           "c1_floor_share": null
         },
         "vieillie": {
-          "cost_eur": 1332239011.753662,
+          "cost_eur": 1682450789.491455,
           "impulses": {},
           "uncovered": {
             "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -1210,88 +1219,88 @@
         "persistence": "lue",
         "every_year": {
           "vieillie": {
-            "theta": 0.0035753230532702407,
+            "theta": 0.004409594465225597,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0035753230532702407
+                0.004409594465225597
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0035753230532702407
+                0.004409594465225597
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.0035753230532702407
+                0.004409594465225597
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.0035753230532702407
+                0.004409594465225597
               ]
             ]
           },
           "figee": {
-            "theta": 0.0035864950173538634,
+            "theta": 0.004215438760199364,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0035864950173538634
+                0.004215438760199364
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0035864950173538634
+                0.004215438760199364
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.0035864950173538634
+                0.004215438760199364
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.0035864950173538634
+                0.004215438760199364
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.0040685054604849835,
+            "theta": 0.004872352479513342,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0040685054604849835
+                0.004872352479513342
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0040685054604849835
+                0.004872352479513342
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.0040685054604849835
+                0.004872352479513342
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.0040685054604849835
+                0.004872352479513342
               ]
             ]
           },
           "figee": {
-            "theta": 0.004102948967557252,
+            "theta": 0.004823271525535855,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.004102948967557252
+                0.004823271525535855
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.004102948967557252
+                0.004823271525535855
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.004102948967557252
+                0.004823271525535855
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.004102948967557252
+                0.004823271525535855
               ]
             ]
           }
@@ -1301,88 +1310,88 @@
         "persistence": "eteint",
         "every_year": {
           "vieillie": {
-            "theta": 0.0035753230532702407,
+            "theta": 0.004409594465225597,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0035753230532702407
+                0.004409594465225597
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0035753230532702407
+                0.004409594465225597
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.0035753230532702407
+                0.004409594465225597
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.0035753230532702407
+                0.004409594465225597
               ]
             ]
           },
           "figee": {
-            "theta": 0.0035864950173538634,
+            "theta": 0.004215438760199364,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0035864950173538634
+                0.004215438760199364
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0035864950173538634
+                0.004215438760199364
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.0035864950173538634
+                0.004215438760199364
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.0035864950173538634
+                0.004215438760199364
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.0040685054604849835,
+            "theta": 0.004872352479513342,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0040685054604849835
+                0.004872352479513342
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0040685054604849835
+                0.004872352479513342
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.0040685054604849835
+                0.004872352479513342
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.0040685054604849835
+                0.004872352479513342
               ]
             ]
           },
           "figee": {
-            "theta": 0.004102948967557252,
+            "theta": 0.004823271525535855,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.004102948967557252
+                0.004823271525535855
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.004102948967557252
+                0.004823271525535855
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.004102948967557252
+                0.004823271525535855
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.004102948967557252
+                0.004823271525535855
               ]
             ]
           }
@@ -1392,88 +1401,88 @@
         "persistence": "tenu",
         "every_year": {
           "vieillie": {
-            "theta": 0.0035753230532702407,
+            "theta": 0.004409594465225597,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0035753230532702407
+                0.004409594465225597
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0035753230532702407
+                0.004409594465225597
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.0035753230532702407
+                0.004409594465225597
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.0035753230532702407
+                0.004409594465225597
               ]
             ]
           },
           "figee": {
-            "theta": 0.0035864950173538634,
+            "theta": 0.004215438760199364,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0035864950173538634
+                0.004215438760199364
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0035864950173538634
+                0.004215438760199364
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.0035864950173538634
+                0.004215438760199364
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.0035864950173538634
+                0.004215438760199364
               ]
             ]
           }
         },
         "first_year": {
           "vieillie": {
-            "theta": 0.0040685054604849835,
+            "theta": 0.004872352479513342,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.0040685054604849835
+                0.004872352479513342
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.0040685054604849835
+                0.004872352479513342
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.0040685054604849835
+                0.004872352479513342
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.0040685054604849835
+                0.004872352479513342
               ]
             ]
           },
           "figee": {
-            "theta": 0.004102948967557252,
+            "theta": 0.004823271525535855,
             "corners": [
               [
                 "multiplicateur_macro = 0, productivite_creations = 0",
-                0.004102948967557252
+                0.004823271525535855
               ],
               [
                 "multiplicateur_macro = 0, productivite_creations = 1",
-                0.004102948967557252
+                0.004823271525535855
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 0",
-                0.004102948967557252
+                0.004823271525535855
               ],
               [
                 "multiplicateur_macro = 1, productivite_creations = 1",
-                0.004102948967557252
+                0.004823271525535855
               ]
             ]
           }
@@ -1481,9 +1490,9 @@
       }
     ]
   },
-  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
   "dirty": false,
-  "where": "conteneur cloud, 15 Go, 4 cœurs, deux files",
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file",
   "annees": null,
   "persistence": null,
   "side_by_side": [
@@ -1493,73 +1502,73 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1690081966025427,
-          "delta_aged": 0.0004274710539966531,
-          "reform_frozen": 1.169011815524138,
-          "delta_frozen": 0.0004310899755919362
+          "reform_aged": 1.1690926554623904,
+          "delta_aged": 0.0005119299138443001,
+          "reform_frozen": 1.1690874986087665,
+          "delta_frozen": 0.0005067730602204001
         },
         {
           "year": 2027,
-          "reform_aged": 1.175528639034859,
-          "delta_aged": 0.0008357590746326249,
-          "reform_frozen": 1.1755368420627017,
-          "delta_frozen": 0.0008439621024753929
+          "reform_aged": 1.1756991849846665,
+          "delta_aged": 0.0010063050244402127,
+          "reform_frozen": 1.1756852785283018,
+          "delta_frozen": 0.0009923985680755365
         },
         {
           "year": 2028,
-          "reform_aged": 1.1766156090550683,
-          "delta_aged": 0.0012270295581200408,
-          "reform_frozen": 1.176628734341486,
-          "delta_frozen": 0.0012401548445377664
+          "reform_aged": 1.1768740595646563,
+          "delta_aged": 0.0014854800677079893,
+          "reform_frozen": 1.1768465428361385,
+          "delta_frozen": 0.001457963339190238
         },
         {
           "year": 2029,
-          "reform_aged": 1.1723820833898526,
-          "delta_aged": 0.0016015101581494662,
-          "reform_frozen": 1.1724006312712347,
-          "delta_frozen": 0.00162005803953158
+          "reform_aged": 1.1727244900118117,
+          "delta_aged": 0.0019439167801085233,
+          "reform_frozen": 1.1726850084878546,
+          "delta_frozen": 0.001904435256151471
         },
         {
           "year": 2030,
-          "reform_aged": 1.1629418974491046,
-          "delta_aged": 0.001962056136155965,
-          "reform_frozen": 1.1629640709342774,
-          "delta_frozen": 0.0019842296213288257
+          "reform_aged": 1.1633671974066997,
+          "delta_aged": 0.0023873560937510696,
+          "reform_frozen": 1.1633122600975885,
+          "delta_frozen": 0.002332418784639856
         },
         {
           "year": 2031,
-          "reform_aged": 1.1484068106680168,
-          "delta_aged": 0.002311190985697653,
-          "reform_frozen": 1.1484288012184922,
-          "delta_frozen": 0.0023331815361731234
+          "reform_aged": 1.148915963888529,
+          "delta_aged": 0.0028203442062098016,
+          "reform_frozen": 1.1488381353004908,
+          "delta_frozen": 0.002742515618171737
         },
         {
           "year": 2032,
-          "reform_aged": 1.128882869416982,
-          "delta_aged": 0.0026474449488926854,
-          "reform_frozen": 1.1289028345445031,
-          "delta_frozen": 0.002667410076413912
+          "reform_aged": 1.1294759367603553,
+          "delta_aged": 0.0032405122922660734,
+          "reform_frozen": 1.1293707335066747,
+          "delta_frozen": 0.0031353090385854987
         },
         {
           "year": 2033,
-          "reform_aged": 1.1044756834132061,
-          "delta_aged": 0.002970607354726651,
-          "reform_frozen": 1.1044924725706444,
-          "delta_frozen": 0.0029873965121649526
+          "reform_aged": 1.1051506171865269,
+          "delta_aged": 0.0036455411280473804,
+          "reform_frozen": 1.1050164406708862,
+          "delta_frozen": 0.0035113646124067532
         },
         {
           "year": 2034,
-          "reform_aged": 1.0752894778730593,
-          "delta_aged": 0.003280755014216874,
-          "reform_frozen": 1.0753023302369267,
-          "delta_frozen": 0.0032936073780842623
+          "reform_aged": 1.0760451362819117,
+          "delta_aged": 0.004036413423069263,
+          "reform_frozen": 1.0758799535081407,
+          "delta_frozen": 0.003871230649298285
         },
         {
           "year": 2035,
-          "reform_aged": 1.041424187789987,
-          "delta_aged": 0.0035753230532702407,
-          "reform_frozen": 1.0414353597540706,
-          "delta_frozen": 0.0035864950173538634
+          "reform_aged": 1.0422584592019424,
+          "delta_aged": 0.004409594465225597,
+          "reform_frozen": 1.0420643034969161,
+          "delta_frozen": 0.004215438760199364
         }
       ],
       "conventions": [],
@@ -1571,73 +1580,73 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1690081966025427,
-          "delta_aged": 0.0004274710539966531,
-          "reform_frozen": 1.169011815524138,
-          "delta_frozen": 0.0004310899755919362
+          "reform_aged": 1.1690926554623904,
+          "delta_aged": 0.0005119299138443001,
+          "reform_frozen": 1.1690874986087665,
+          "delta_frozen": 0.0005067730602204001
         },
         {
           "year": 2027,
-          "reform_aged": 1.175528639034859,
-          "delta_aged": 0.0008357590746326249,
-          "reform_frozen": 1.1755368420627017,
-          "delta_frozen": 0.0008439621024753929
+          "reform_aged": 1.1756991849846665,
+          "delta_aged": 0.0010063050244402127,
+          "reform_frozen": 1.1756852785283018,
+          "delta_frozen": 0.0009923985680755365
         },
         {
           "year": 2028,
-          "reform_aged": 1.1766156090550683,
-          "delta_aged": 0.0012270295581200408,
-          "reform_frozen": 1.176628734341486,
-          "delta_frozen": 0.0012401548445377664
+          "reform_aged": 1.1768740595646563,
+          "delta_aged": 0.0014854800677079893,
+          "reform_frozen": 1.1768465428361385,
+          "delta_frozen": 0.001457963339190238
         },
         {
           "year": 2029,
-          "reform_aged": 1.1723820833898526,
-          "delta_aged": 0.0016015101581494662,
-          "reform_frozen": 1.1724006312712347,
-          "delta_frozen": 0.00162005803953158
+          "reform_aged": 1.1727244900118117,
+          "delta_aged": 0.0019439167801085233,
+          "reform_frozen": 1.1726850084878546,
+          "delta_frozen": 0.001904435256151471
         },
         {
           "year": 2030,
-          "reform_aged": 1.1629418974491046,
-          "delta_aged": 0.001962056136155965,
-          "reform_frozen": 1.1629640709342774,
-          "delta_frozen": 0.0019842296213288257
+          "reform_aged": 1.1633671974066997,
+          "delta_aged": 0.0023873560937510696,
+          "reform_frozen": 1.1633122600975885,
+          "delta_frozen": 0.002332418784639856
         },
         {
           "year": 2031,
-          "reform_aged": 1.1484068106680168,
-          "delta_aged": 0.002311190985697653,
-          "reform_frozen": 1.1484288012184922,
-          "delta_frozen": 0.0023331815361731234
+          "reform_aged": 1.148915963888529,
+          "delta_aged": 0.0028203442062098016,
+          "reform_frozen": 1.1488381353004908,
+          "delta_frozen": 0.002742515618171737
         },
         {
           "year": 2032,
-          "reform_aged": 1.128882869416982,
-          "delta_aged": 0.0026474449488926854,
-          "reform_frozen": 1.1289028345445031,
-          "delta_frozen": 0.002667410076413912
+          "reform_aged": 1.1294759367603553,
+          "delta_aged": 0.0032405122922660734,
+          "reform_frozen": 1.1293707335066747,
+          "delta_frozen": 0.0031353090385854987
         },
         {
           "year": 2033,
-          "reform_aged": 1.1044756834132061,
-          "delta_aged": 0.002970607354726651,
-          "reform_frozen": 1.1044924725706444,
-          "delta_frozen": 0.0029873965121649526
+          "reform_aged": 1.1051506171865269,
+          "delta_aged": 0.0036455411280473804,
+          "reform_frozen": 1.1050164406708862,
+          "delta_frozen": 0.0035113646124067532
         },
         {
           "year": 2034,
-          "reform_aged": 1.0752894778730593,
-          "delta_aged": 0.003280755014216874,
-          "reform_frozen": 1.0753023302369267,
-          "delta_frozen": 0.0032936073780842623
+          "reform_aged": 1.0760451362819117,
+          "delta_aged": 0.004036413423069263,
+          "reform_frozen": 1.0758799535081407,
+          "delta_frozen": 0.003871230649298285
         },
         {
           "year": 2035,
-          "reform_aged": 1.041424187789987,
-          "delta_aged": 0.0035753230532702407,
-          "reform_frozen": 1.0414353597540706,
-          "delta_frozen": 0.0035864950173538634
+          "reform_aged": 1.0422584592019424,
+          "delta_aged": 0.004409594465225597,
+          "reform_frozen": 1.0420643034969161,
+          "delta_frozen": 0.004215438760199364
         }
       ],
       "conventions": [],
@@ -1649,131 +1658,77 @@
       "years": [
         {
           "year": 2026,
-          "reform_aged": 1.1690081966025427,
-          "delta_aged": 0.0004274710539966531,
-          "reform_frozen": 1.169011815524138,
-          "delta_frozen": 0.0004310899755919362
+          "reform_aged": 1.1690926554623904,
+          "delta_aged": 0.0005119299138443001,
+          "reform_frozen": 1.1690874986087665,
+          "delta_frozen": 0.0005067730602204001
         },
         {
           "year": 2027,
-          "reform_aged": 1.175528639034859,
-          "delta_aged": 0.0008357590746326249,
-          "reform_frozen": 1.1755368420627017,
-          "delta_frozen": 0.0008439621024753929
+          "reform_aged": 1.1756991849846665,
+          "delta_aged": 0.0010063050244402127,
+          "reform_frozen": 1.1756852785283018,
+          "delta_frozen": 0.0009923985680755365
         },
         {
           "year": 2028,
-          "reform_aged": 1.1766156090550683,
-          "delta_aged": 0.0012270295581200408,
-          "reform_frozen": 1.176628734341486,
-          "delta_frozen": 0.0012401548445377664
+          "reform_aged": 1.1768740595646563,
+          "delta_aged": 0.0014854800677079893,
+          "reform_frozen": 1.1768465428361385,
+          "delta_frozen": 0.001457963339190238
         },
         {
           "year": 2029,
-          "reform_aged": 1.1723820833898526,
-          "delta_aged": 0.0016015101581494662,
-          "reform_frozen": 1.1724006312712347,
-          "delta_frozen": 0.00162005803953158
+          "reform_aged": 1.1727244900118117,
+          "delta_aged": 0.0019439167801085233,
+          "reform_frozen": 1.1726850084878546,
+          "delta_frozen": 0.001904435256151471
         },
         {
           "year": 2030,
-          "reform_aged": 1.1629418974491046,
-          "delta_aged": 0.001962056136155965,
-          "reform_frozen": 1.1629640709342774,
-          "delta_frozen": 0.0019842296213288257
+          "reform_aged": 1.1633671974066997,
+          "delta_aged": 0.0023873560937510696,
+          "reform_frozen": 1.1633122600975885,
+          "delta_frozen": 0.002332418784639856
         },
         {
           "year": 2031,
-          "reform_aged": 1.1484068106680168,
-          "delta_aged": 0.002311190985697653,
-          "reform_frozen": 1.1484288012184922,
-          "delta_frozen": 0.0023331815361731234
+          "reform_aged": 1.148915963888529,
+          "delta_aged": 0.0028203442062098016,
+          "reform_frozen": 1.1488381353004908,
+          "delta_frozen": 0.002742515618171737
         },
         {
           "year": 2032,
-          "reform_aged": 1.128882869416982,
-          "delta_aged": 0.0026474449488926854,
-          "reform_frozen": 1.1289028345445031,
-          "delta_frozen": 0.002667410076413912
+          "reform_aged": 1.1294759367603553,
+          "delta_aged": 0.0032405122922660734,
+          "reform_frozen": 1.1293707335066747,
+          "delta_frozen": 0.0031353090385854987
         },
         {
           "year": 2033,
-          "reform_aged": 1.1044756834132061,
-          "delta_aged": 0.002970607354726651,
-          "reform_frozen": 1.1044924725706444,
-          "delta_frozen": 0.0029873965121649526
+          "reform_aged": 1.1051506171865269,
+          "delta_aged": 0.0036455411280473804,
+          "reform_frozen": 1.1050164406708862,
+          "delta_frozen": 0.0035113646124067532
         },
         {
           "year": 2034,
-          "reform_aged": 1.0752894778730593,
-          "delta_aged": 0.003280755014216874,
-          "reform_frozen": 1.0753023302369267,
-          "delta_frozen": 0.0032936073780842623
+          "reform_aged": 1.0760451362819117,
+          "delta_aged": 0.004036413423069263,
+          "reform_frozen": 1.0758799535081407,
+          "delta_frozen": 0.003871230649298285
         },
         {
           "year": 2035,
-          "reform_aged": 1.041424187789987,
-          "delta_aged": 0.0035753230532702407,
-          "reform_frozen": 1.0414353597540706,
-          "delta_frozen": 0.0035864950173538634
+          "reform_aged": 1.0422584592019424,
+          "delta_aged": 0.004409594465225597,
+          "reform_frozen": 1.0420643034969161,
+          "delta_frozen": 0.004215438760199364
         }
       ],
       "conventions": [],
       "gdp_gap_aged": []
     }
-  ],
-  "recalcul": {
-    "decision": "D-427",
-    "date": "2026-11-15",
-    "objet": "l'élasticité du canal des créations, changée sans passe ; aucun prélèvement sur les entreprises ou le capital ne bouge : aucun nombre ne change",
-    "nombres_refaits": false,
-    "elasticite_avant": {
-      "centre": 0.2,
-      "bas": 0.043,
-      "haut": 0.356
-    },
-    "elasticite": {
-      "centre": 0.043,
-      "bas": 0.0,
-      "haut": 0.2
-    },
-    "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161",
-    "instruments": {
-      "decision": "D-444",
-      "date": "2026-11-15",
-      "retires": [
-        "cvae",
-        "c3s"
-      ],
-      "objet": "des instruments retirés de la liste du canal des créations, sans passe : ils y valaient zéro chaque année, aucun nombre ne change ; la passe reste celle de « commit »",
-      "nombres_refaits": false,
-      "variations_avant": {
-        "figee": [
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ],
-        "vieillie": [
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ]
-      },
-      "commit_passe": "5a68669f34e27067b0f00445c40087432d97f161"
-    }
-  }
+  ]
 }

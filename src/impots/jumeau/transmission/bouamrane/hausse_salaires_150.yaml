@@ -92,3 +92,19 @@ montant:
   origine: rapport
   scenario: pres2027_bouamrane_programme
   rapport: reports/etudes/presidentielle_bouamrane/predictif_pres2027_bouamrane_programme.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_bouamrane/premiere_annee_pres2027_bouamrane_programme.json
+    ecarts_md:
+      salaire_net: 2.48
+      salaire_brut: 3.13
+      salaire_super_brut: -12.96
+      cotisations_salariales: 0.35
+      cotisations_employeur: 1.36
+      allegement_general: 17.45
+      ir: 0.12
+      csg_deductible: 0.21
+      ppa: -0.6
+      aspa: 0.08
+      pension_employeur_etat: 0.1
+      revenu_disponible: 1.92

@@ -9,7 +9,9 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  texte: 'Code du travail, art. L3231-3 (l''interdiction de l''indexation des salaires sur
+    les prix, ordonnance n° 59-246 du 4 février 1959, art. 79 du Code monétaire et financier
+    ancien, aujourd''hui CMF art. L112-2) : à lever par la loi'
   parametre: null
   valeur: null
   enonce: indexation sur l'inflation, sans autre paramètre

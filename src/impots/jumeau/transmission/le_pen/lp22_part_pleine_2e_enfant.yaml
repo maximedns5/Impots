@@ -59,3 +59,9 @@ montant:
   scenario: pres2027_le_pen_lp22_part_pleine_2e_enfant
   rapport: reports/etudes/presidentielle_le_pen/mesures/lp22_part_pleine_2e_enfant/predictif_pres2027_le_pen_lp22_part_pleine_2e_enfant.json
   annonce_md: 3.5
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_le_pen/mesures/lp22_part_pleine_2e_enfant/premiere_annee_pres2027_le_pen_lp22_part_pleine_2e_enfant.json
+    ecarts_md:
+      ir: -2.09
+      revenu_disponible: 2.09
