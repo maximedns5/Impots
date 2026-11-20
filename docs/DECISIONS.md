@@ -40490,3 +40490,46 @@ rejeu. Restent ceux de D-557 : `smic.json`, `programme.json`, `cice_d557.json`,
 `boucle_b28/resultats_d557.json`. Les compléter demande la population du but 19 (le
 témoin) et le fichier BDM des créations, avec une empreinte qui tient : laissé au
 propriétaire.
+
+## D-681 — Le CICE et la boucle de D-679, les deux fichiers BDM acceptés
+
+**La décision** (le propriétaire, 20 novembre, « accepte le fichier BDM et relance le
+CICE et la boucle », puis « oui, accepte aussi le fichier des défaillances ») : les deux
+fichiers de la BDM de l'Insee re-téléchargés pour D-581, dont l'empreinte ne correspond
+pas au manifeste, sont placés dans `data/raw` (hors git ; `MANIFEST.json` n'est pas
+touché) : `insee_bdm_creations_entreprises_2009_2025.xml` (7352e9c5… au lieu de
+fd030f85…) et `insee_bdm_defaillances_entreprises_2009_2025.xml` (40d35ec9… au lieu de
+5793359f…). Tous deux ont la taille du manifeste (75 505 et 238 262 octets) ; leur en-tête
+porte la date de préparation de la BDM (`Prepared`, 19 novembre), qui suffit à changer
+l'empreinte. La même taille ne prouve pas les mêmes valeurs : la BDM révise chaque mois
+ses derniers mois, et la comparaison n'est pas faite (le fichier du 14 novembre n'est
+plus sur le disque).
+
+**Ce qui a tourné**, au commit 15533ce, sans passe sur la population (les sorties des
+passes de D-679 sont reprises) : `interaction_cice_b28`, puis le jumeau et le rapport de
+`boucle_b28`. Trois essais, tous dans `etudes28/lancer_d681.log` : (1) le seul fichier des
+créations placé, les deux lignes échouent sur celui des défaillances (rc = 1) ; (2) les
+deux placés, le CICE passe (rc = 0), la boucle échoue : le script de relance n'exportait
+pas `MESURE27_SORTIE`, oubli du script, pas du code ; (3) la variable ajoutée, la boucle
+seule, rc = 0. Après les essais (1) et (2), le rapport tronqué de la boucle a été remis à
+son état commité.
+
+**Le résultat contre D-679** (les quatre lignes non jugées de D-680) :
+
+| ligne | pronostic | après | verdict |
+|---|---|---:|---|
+| CICE 2016 (milliers), trois réglages | 192,6 ; 188,4 ; 184,7 ± 0,2 | identiques | tenu |
+| boucle, Smic θ½, avec moins sans : emploi | +2,15 ± 0,1 | +2,23 | tenu |
+| boucle, Smic θ½, avec moins sans : B9 (Md€) | +1,24 ± 0,05 | +1,31 | manqué |
+| boucle, CICE avec la boucle, 2016 | 186,5 ± 0,2 | 186,5 | tenu |
+
+Trois tenues, une manquée de 0,02 Md€ au-delà de la bande. À θ 0 et θ 1, sans bande :
+−0,99 ; −1,70 → −0,91 ; −1,64 et +6,92 ; +5,68 → +7,00 ; +5,74. La cause de la ligne
+manquée n'est pas testée : la boucle lit la session du jumeau de `mesure_melenchon_b27`
+(`smic_session`), donc les rapports de l'étude Mélenchon de D-559, la cause de D-680 ; le
+CICE, qui ne la lit pas, ne bouge pas. Aucune ligne n'est repronostiquée.
+
+**Le compte de D-679, avec D-680** : seize lignes, toutes jugées ; sept tenues, neuf
+manquées. Commités : `interaction_b28/cice_d557.json` (le commit seul change) et
+`boucle_b28/resultats_d557.json`. Restent ceux de D-557 : `mesure_melenchon_b27/d553/
+smic.json` et `programme.json` (le témoin du but 19, population absente).
