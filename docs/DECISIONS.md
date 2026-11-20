@@ -40615,3 +40615,29 @@ et son chemin en 2026, ce que `mesures.ventilations` refuse (« passe des entrep
 2027, chemin commençant en 2026 »), et la page s'arrête sur ce refus.
 C'est le code de la page (`site_jumeau`, `navigateur`), pas le test : non touché ici,
 laissé au propriétaire.
+
+## D-684 — La page du jumeau et le PLF 2027, art. 15 : une passe plus tardive se lit
+
+**La décision** (le propriétaire, 20 novembre, « corrige la page du jumeau pour l'art. 15
+du PLF »). Le lourd `test_jumeau_page` était rouge depuis la série de D-559 (D-683) : la
+page charge les rapports du PLF 2027, et l'art. 15 a sa passe des entreprises en 2027 et
+son chemin en 2026, nul cette année-là (la loi s'applique en 2027). `mesures.ventilations`
+refusait la mesure au chargement (« passe des entreprises de 2027, chemin commençant en
+2026 ») ; la session ne prend pour un refus que ceux des blocs, et la page s'arrêtait.
+
+**Le correctif** (`src/impots/jumeau/mesures.py`, `src/impots/site_jumeau/__init__.py`) :
+une passe de la première année d'une autre année que la première du chemin ne ventile
+rien ; la ventilation est absente et dite dans `non_portes`, comme sans rapport de la
+première année (D-412), au lieu d'un refus au chargement. La mesure se lit (mode réduit :
+le chemin et le canal) ; le mode structurel la refuse par ses blocs, qui ne devinent pas
+la ventilation, et la page grise le choix avec sa raison : « une passe de la première
+année faite pour 2027, quand le chemin commence en 2026 : elle ne répartit aucune année
+du chemin ». Les contrôles du même commit, du même scénario et du coût de la première
+année restent des refus. Aucun autre rapport n'est concerné : l'art. 15 est le seul dont
+la passe n'est pas en 2026.
+
+**Ce qui le tient** : `test_une_loi_d_une_annee_plus_tardive_se_lit_sans_ventilation`
+(léger), rouge sur le code d'avant (l'erreur ci-dessus), vert après ; `test_jumeau_page`
+(lourd) vert ; les 183 tests légers des fichiers du jumeau verts ; `ruff` passe. Aucun
+nombre publié ne change : ventiler l'art. 15 sur 2027 demanderait une convention que le
+chemin ne porte pas, non faite ici.

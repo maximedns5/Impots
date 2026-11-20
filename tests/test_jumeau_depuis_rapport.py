@@ -313,3 +313,23 @@ def test_le_cout_des_menages_d_attal_et_de_lisnard_redevient_celui_d_avant_d440(
         assert sum(m.entreprises[2026].values()) == pytest.approx(entreprises, abs=1e-3)
         assert sum(m.entreprises[2027].values()) == pytest.approx(m.prelevements[2027],
                                                                   abs=1e-12)
+
+
+def test_une_loi_d_une_annee_plus_tardive_se_lit_sans_ventilation() -> None:
+    """D-684 : le PLF 2027, art. 15, a sa passe des entreprises en 2027 et son chemin en
+    2026 (nul cette année-là). Avant, la mesure était refusée au chargement, et la page du
+    jumeau s'arrêtait ; elle se lit, sans ventilation, la raison dite, et le mode
+    structurel la refuse en le disant."""
+    from impots import site_jumeau
+
+    predictif = (ETUDES.parent / "etude_plf2027" / "predictif_plf2027_art_15.json")
+    premiere = predictif.with_name("premiere_annee_plf2027_art_15.json")
+    payload = json.loads(predictif.read_text(encoding="utf-8"))
+    prem = json.loads(premiere.read_text(encoding="utf-8"))
+    assert prem["request"]["year"] == 2027 and payload["years"][0]["year"] == 2026
+    m = Mesure.depuis_rapport(payload, vue="figee", identifiant="x", libelle="x",
+                              auteur="x", rapport=str(predictif), premiere_annee=prem)
+    assert m.entreprises is None and m.menages is None
+    assert "porte sur 2027, le chemin commence en 2026" in m.non_portes["entreprises"]
+    assert site_jumeau.raison_structurel(m, "figee").startswith(
+        "une passe de la première année faite pour 2027")

@@ -351,7 +351,9 @@ def ventilations(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] |
       bloc des salaires n'est pas la revalorisation de la requête sans hypothèse.
 
     Le rapport de la première année doit être celui de la même passe : même commit, même
-    scénario, même année, et son coût celui du chemin figé à l'euro près ; sinon refusé.
+    scénario, et son coût celui du chemin figé à l'euro près ; sinon refusé. Une passe
+    d'une autre année que la première du chemin (une loi qui s'applique plus tard) ne
+    ventile rien : absente, dite (D-684).
     """
     non_portes: dict[str, str] = {}
     if premiere_annee is None:
@@ -367,8 +369,15 @@ def ventilations(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] |
     passes = _passes(premiere_annee)
     for nom, passe in passes.items():
         if int(passe["requete"]["year"]) != premiere:
-            raise MesureError(f"passe des {nom} de {passe['requete']['year']}, chemin "
-                              f"commençant en {premiere}")
+            # D-684 : une loi qui s'applique après la première année du chemin (le PLF
+            # 2027, art. 15 : sa passe des entreprises en 2027, le chemin en 2026, nul
+            # cette année-là). Sa passe ne ventile pas l'année où le chemin commence : la
+            # ventilation est absente, dite, et les blocs refusent plutôt que de lire un
+            # zéro ; la mesure, elle, se lit (mode réduit).
+            texte = (f"la passe des {nom} de la première année porte sur "
+                     f"{passe['requete']['year']}, le chemin commence en {premiere} : "
+                     f"elle ne ventile aucune année du chemin")
+            return None, None, {"entreprises": texte, "menages": texte}
     cout = sum(float(p["reponse"]["reform_cost"]) for p in passes.values())
     figee = float(payload["years"][0]["mechanical_frozen_eur"])
     if abs(cout - figee) > EURO_PRES:
