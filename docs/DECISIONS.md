@@ -40543,3 +40543,75 @@ pas les rapports de l'étude Mélenchon de D-559, à la différence de `jumeau.j
 `diffusion_d557.json`, `defaut_d557.json` et `resultats_d557.json`, rejoués (D-680,
 D-681). Les passes qu'ils résument sont redonnées au millième par le rejeu (D-680) : leurs
 nombres de passe restent justes ; leur colonne « publiée » lit l'étude d'avant la série.
+
+## D-683 — Les tests mis sur la série de D-559 : 77 rouges, leurs nombres et leur forme
+
+**La décision** (le propriétaire, 20 novembre, « mets à jour les tests sur D-559, puis
+ouvre la PR »). `make impact` au commit 909c09b a donné 96 rouges et 20 erreurs dans la
+passe légère. Les mêmes 116, rejoués sur `claude/but28` d'avant la série (1b30dff, même
+code : entre les deux, seuls les rapports et le champ `preenregistrement` de cinq
+`etudes/*.json` changent) : **39 y étaient déjà** (plus bas), **77 viennent de la série**.
+Aucun ne vient du code : ils tiennent les nombres ou la forme des rapports de la série de
+5a68669. Ils sont mis sur ceux de D-559 ; chaque nombre changé garde son ancienne valeur
+écrite à côté.
+
+**La forme : la marque du recalcul.** Les 48 rapports du chemin annuel sont calculés par
+leur passe à la pente de D-427 et sans la CVAE ni la C3S dans le canal ; aucun ne porte
+plus le bloc `recalcul` de D-427 et D-440 (la réécriture sans passe, et la somme
+d'avant). Ce qui le lisait :
+* `test_recalcul` : 46 → 48 rapports, et « pas de `recalcul` » ; aucun ne lit la CVAE ni la
+  C3S ; la réécriture à sa propre pente redonne les chemins de chaque rapport, et l'aller
+  à la pente de D-402 puis le retour aussi, sur les 22 que la pente concerne ; `retirer`
+  refuse ce qu'il refusait (la marque posée par lui-même). `test_the_report_before_d440_
+  is_given_back` devient `test_the_pass_gives_back_what_d440_rewrote` : **les trois
+  mesures seules que D-440 avait réécrites sans passe (Attal a18, Lisnard l4, Retailleau
+  r21) redonnent, calculées par la passe, le Δb publié par D-440, au 1e-4 point**
+  (0,2475 ; 1,6181 ; 1,6181) ; les programmes donnent le leur (3,9775 ; 5,7051 ; 10,8723).
+* `test_jumeau_depuis_rapport`, les six rapports de D-440 : le rapport d'avant D-440
+  reconstitué depuis la marque n'existe plus ; le test tient ce que la lecture sans marque
+  promettait (la couche des entreprises, CVAE et C3S de la première année, le rapport
+  allégé lu de même).
+* `test_creations_canal` (Attal a18) : la lecture avec la CVAE, par la marque, est retirée ;
+  à la pente de D-402 sans la CVAE, +0,2566 (avec elle, +0,2000, l'ancien nombre publié).
+* `test_mesure_melenchon_b27` : la somme d'avant n'est plus là ; le test tient que ΔP du
+  canal, que le jumeau lit à sa place, suit le facteur du redimensionnement.
+
+**Les nombres** (avant → D-559) : le coût des ménages d'Attal 63,629 → 60,386 Md€, ses
+déciles 58,46 → 55,42 ; Lisnard 29,638 → 29,914 ; les cotisations des employeurs de
+Retailleau −4,301 → −3,933, du Smic de Mélenchon −31,672 → −33,751 ; le point d'indice
+−12,526 → −12,503, 33,63 → 33,31 milliers, 2,052 → 2,035 pt ; le programme de Mélenchon
+dans le jumeau 10,612 → 10,726 pt, 50,7 → 68,9 milliers (D-680), la statique 23,688 →
+24,011, la prime de risque 1,3295 → 1,3498, l'interaction 1,333 → 0,735, l'État −54,92 →
+−55,007 et les APUL 1,545 → 1,600 ; Attal sans boucle 20,46 → 19,54 pt, au coût de 66,18
+→ 62,94 Md€ ; par euro rendu 11,4 et 11,9 → 12,0 et 12,5 € (Retailleau 4,3 et 5,0 → 4,5
+et 5,3) ; le non-lu d'Attal +0,63 et +0,95 → −0,01 et +0,24 Md€, de Lisnard +5,86 et
++6,26 → +5,65 et +6,02 ; Lisnard en marches +29,64 et +28,51 → +29,91 et +28,78 ; son
+verdict 88,90 → 88,65 % des tirages.
+
+**Une tolérance dite.** Retailleau, 2026 : la somme des impôts de la couche des
+entreprises et les prélèvements, au bit sur la série de 5a68669, s'écartent de 1,34 € sur
+celle de D-559 (ce que la couche coûte hors des cinq impôts et de E ; Attal en porte 59 €,
+écrit dans `mesures.prelevements_lus`). Les deux contrôles de 2026 passent de 1e-12 à
+1e-8 Md€ (10 €) ; les autres années restent au bit. C'est un contrôle d'identité, pas un
+chiffrage jugé ; il est dit ici, pas caché.
+
+**Les 39 d'avant la série, non touchés.** La grille de D-553 (99 sur 100) a remplacé
+l'ancienne (84 sur 113) et n'a plus de ligne `cotisations_salariales` : les pages des
+parcours « coût », « erreur », « France » et le site en dépendent (34). Restent
+`test_dependances` (`tests` importé par `test_assiette_cotisations.py`), `test_ij_moteur`,
+`test_non_salaries`, `test_page_explorer` et `test_the_committed_scenarios_and_studies_
+are_the_generated_ones` (Arthaud). Ils sont rouges sur `claude/but28` avant la série et le
+restent ; à reprendre hors de ce but, ou par décision du propriétaire.
+
+Les neuf fichiers touchés, rejoués : 148 verts, le seul rouge étant celui d'Arthaud
+(plus haut). `ruff` passe.
+
+**Les lourds et les chronos** (`tests/memoire.py lancer`, puis `-m chrono`, lancés à part :
+`make impact` s'arrête après la passe légère rouge) : 28 lourds sur 29 verts, les 5
+chronos verts. **Le rouge : `test_jumeau_page`**, nouveau avec la série, et pas un nombre :
+les rapports du PLF 2027 sont revenus (D-558) et la page du jumeau les charge (ses
+candidats commencent par `plf2027_art_2`) ; l'art. 15 a sa passe des entreprises en 2027
+et son chemin en 2026, ce que `mesures.ventilations` refuse (« passe des entreprises de
+2027, chemin commençant en 2026 »), et la page s'arrête sur ce refus.
+C'est le code de la page (`site_jumeau`, `navigateur`), pas le test : non touché ici,
+laissé au propriétaire.

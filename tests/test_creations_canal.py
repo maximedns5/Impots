@@ -147,11 +147,12 @@ ATTAL_A18 = (Path(__file__).resolve().parents[1] / "reports" / "etudes"
 
 
 def test_a_published_study_carries_d427s_slope_and_its_debt() -> None:
-    """D-427, then D-440: the Attal study rewritten without a pass, at the slope the file
-    declares and without the CVAE, publishes Δb 2035 at θ½, aged view, persistence
-    « lue », +0,2475 point, above the +0,2450 without the channel: what is left of it is
-    the IS the abolition induces, a rise. With the CVAE read (D-427), +0,2354; at the 0,20
-    of D-402 as well, the +0,2000 published before."""
+    """D-427, then D-440: the Attal study, at the slope the file declares and without the
+    CVAE, publishes Δb 2035 at θ½, aged view, persistence « lue », +0,2475 point, above
+    the +0,2450 without the channel: what is left of it is the IS the abolition induces,
+    a rise. On the series of D-559 (D-683), computed by a pass, the same number as D-440's
+    rewrite. At the 0,20 of D-402, without the CVAE, +0,2566 (with it, the rewrite's mark
+    gave back +0,2000, the number published before D-427 : the mark is gone)."""
     payload = json.loads(ATTAL_A18.read_text(encoding="utf-8"))
     theta = {**dict.fromkeys(payload["rejeu"]["lignes"], 0.5), MACRO_ROW: 0.5,
              CREATIONS_ROW: 0.5}
@@ -165,15 +166,10 @@ def test_a_published_study_carries_d427s_slope_and_its_debt() -> None:
                             creations=False).delta
     assert sans[-1] == pytest.approx(0.002450, abs=5e-7)
     assert sans[-1] < lue["years"][-1]["delta_aged"]
-    payload["rejeu"]["creations"]["variations"] = payload["recalcul"]["instruments"][
-        "variations_avant"]
-    with_cvae = rejouer.at_theta(payload, theta, view="vieillie", persistence="lue").delta
-    assert with_cvae[-1] == pytest.approx(0.002353733480370712, abs=1e-12)
-    before = payload["recalcul"]["elasticite_avant"]
-    assert before == {"centre": 0.20, "bas": 0.043, "haut": 0.356}
-    payload["rejeu"]["creations"]["parametres"]["elasticite"] = before
+    payload["rejeu"]["creations"]["parametres"]["elasticite"] = {
+        "centre": 0.20, "bas": 0.043, "haut": 0.356}
     old = rejouer.at_theta(payload, theta, view="vieillie", persistence="lue").delta
-    assert old[-1] == pytest.approx(0.0020004572578362634, abs=1e-15)
+    assert old[-1] == pytest.approx(0.0025657099969584873, abs=1e-15)
 
 
 def test_the_declared_file_names_its_sources_and_no_report_reads_it_before_its_entry() -> None:

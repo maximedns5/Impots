@@ -46,15 +46,19 @@ def test_la_somme_d_avant_d440_suit_le_facteur(script):
     # D-509, correctif de D-508 : sans elle, le point d'indice redimensionné était refusé
     # par la ventilation (« prélèvements hors cotisations des employeurs nuls en 2026, pas
     # en 2027… »), et le Smic lisait une somme d'avant que la passe ne portait plus.
+    # D-683 : les rapports de la série de D-559 ne portent plus la somme d'avant D-440
+    # (`recalcul`) ; la somme que lit le jumeau est alors ΔP du canal, qui suit le facteur.
     s = script.session()
     cle = P + "point_indice_10"
-    script.redimensionner(s, cle, _passe_de_l_etude(s, cle, 0.99))
+    k = script.redimensionner(s, cle, _passe_de_l_etude(s, cle, 0.99))
     m = s.mesure(cle, "figee", "parts_premiere_annee")
     assert m.conventions["entreprises"][2035] == "parts_premiere_annee"
-    avant = s.candidats[cle]["payload"]["recalcul"]["instruments"]["variations_avant"]
+    payload = s.candidats[cle]["payload"]
+    assert "recalcul" not in payload
     origine = json.loads((ROOT / "reports" / "etudes" / "presidentielle_melenchon" / "mesures"
                           / "point_indice_10"
                           / "predictif_pres2027_melenchon_point_indice_10.json")
                          .read_text(encoding="utf-8"))
-    o = origine["recalcul"]["instruments"]["variations_avant"]["figee"]
-    assert avant["figee"][3] == pytest.approx(o[3] * 0.99, rel=1e-12)
+    o = origine["rejeu"]["creations"]["variations"]["figee"]
+    assert payload["rejeu"]["creations"]["variations"]["figee"][3] == pytest.approx(
+        o[3] * k["k_creations"], rel=1e-12)
