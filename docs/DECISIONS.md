@@ -40834,3 +40834,70 @@ Aucune tolérance, aucun seuil, aucun enregistrement n'a changé.
 **Ce qui n'est pas refait ici.** Les études (la série de D-559) et les rapports du jumeau
 (D-680, D-681) sont sur la population de D-553 : ils ne lisent pas celle-ci, et restent
 tels quels jusqu'à leur série, préenregistrée à part.
+
+## D-688 — La série des quinze études sur la population de D-687, préenregistrée
+
+**La décision** (le propriétaire, 21 novembre, « change le modèle ») : le correctif de
+D-686 ayant tenu la grille (D-687, 99 lignes sur 100), les études se refont sur la
+population **03400239…** et ses cellules (93c34eb6…). Quinze études, celles de D-559 :
+Labib et Arthaud restent dehors (consigne du 19 novembre), Dupont-Aignan refusé (D-398).
+Cette entrée est commitée et poussée avant tout calcul ; le résultat va dans D-689. Aucune
+tolérance, aucun seuil de D-345, aucun enregistrement de `chiffrages_preregistres/` ne
+change ; aucune annexe d'évaluations préalables n'est ouverte.
+
+**Le gel de l'avant.** `impots etude avant` refuse d'écraser un gel (D-350) : les gels
+actuels, ceux de la série de `5a68669` (douze études) et de `aa22293` (Glucksmann,
+Zemmour), sont **retirés et refaits sur la série de D-559**, pour que la section « ce qui
+a bougé depuis la série précédente » de chaque page compare à la série précédente, qui est
+celle de D-559. Les anciens gels restent dans l'historique (2637c6c). C'est un
+remplacement dit, pas un écrasement en silence : le commit du gel le nomme.
+
+**Le pronostic.** Coût de la première année (Md€) et Δb₂₀₃₅ à θ½ (vue vieillie,
+persistance « lue », points de PIB) ; avant = D-559 ; le verdict du Monte-Carlo (D-345).
+**La méthode**, et ce qu'elle vaut : le coût de chaque étude est déplacé canal par canal,
+avec les déplacements que l'essai de D-686 a mesurés sur la grille (allègements +3,7 %,
+cotisations des employeurs −0,4 %, prime servie +2,4 %, impôt sur le revenu +0,7 %, aides
+au logement +0,5 %, le reste nul : les salaires, la CSG, le RSA, les allocations
+familiales), appliqués aux écarts par poste du rapport de première année de D-559. C'est
+une règle grossière : elle somme des postes qui ne font pas le coût, et elle ne lit ni les
+mesures seules ni les plages. D'où les bandes : **±2 points de pourcentage sur le
+déplacement, ±3 là où il dépasse 3 points** ; Δb suit le coût, bande ±0,05 point au moins.
+**Les premières années des études ne sont pas mesurées avant cette entrée** : elles
+tournent au même échantillon rapide (20 000 ménages, graine des études) que la série, et
+les mesurer serait les connaître. Le pronostic est donc aveugle, à la différence de celui
+de D-686 sur la grille.
+
+| étude | coût D-559 | coût pron. | Δb D-559 | Δb pron. | verdict |
+|---|---:|---|---:|---|---|
+| Mélenchon | +90,995 | +90,473 à +94,113 | +27,495 | +27,330 à +28,430 | hausse |
+| Roussel | +34,307 | +34,523 à +36,582 | +1,336 | +1,334 à +1,434 | dépend |
+| Ruffin | +34,749 | +34,735 à +36,125 | +2,636 | +2,636 à +2,741 | dépend |
+| Tondelier | +20,060 | +20,154 à +21,358 | +2,643 | +2,656 à +2,815 | hausse |
+| Kazib | +17,152 | +17,330 à +18,360 | +0,445 | +0,413 à +0,513 | dépend |
+| Bouamrane | +17,015 | +17,192 à +18,213 | +0,442 | +0,409 à +0,509 | dépend |
+| Attal | +62,938 | +61,707 à +64,224 | +3,978 | +3,898 à +4,057 | dépend |
+| Retailleau | +45,479 | +44,363 à +46,183 | +10,872 | +10,600 à +11,035 | hausse |
+| Lisnard | +36,461 | +35,706 à +37,164 | +5,705 | +5,585 à +5,813 | dépend |
+| Philippe | +46,314 | +45,433 à +47,285 | +11,694 | +11,472 à +11,940 | hausse |
+| Le Pen | +21,631 | +21,128 à +21,993 | +3,021 | +2,951 à +3,072 | dépend |
+| PLFSS, prime | −0,749 | −0,782 à −0,752 | −0,230 | −0,285 à −0,185 | baisse |
+| PLFSS, APL | −0,087 | −0,089 à −0,086 | −0,084 | −0,134 à −0,034 | baisse |
+| PLF, art. 2 | +2,628 | +2,557 à +2,662 | +0,377 | +0,324 à +0,424 | dépend |
+| PLF, art. 3 | −1,164 | −1,179 à −1,132 | −0,175 | −0,224 à −0,124 | dépend |
+| PLF, art. 15 | −7,054 | −7,195 à −6,913 | −0,211 | −0,261 à −0,161 | baisse |
+| Glucksmann | +30,844 | +31,257 à +33,108 | +0,880 | +0,868 à +0,968 | dépend |
+| Zemmour | +90,542 | +88,751 à +92,373 | +12,017 | +11,777 à +12,258 | dépend |
+
+Les verdicts sont pronostiqués inchangés, les dix-huit : aucun déplacement ne traverse un
+seuil de D-345. Lisnard est le plus près (88,65 % des tirages en hausse pour un seuil de
+90 % : « dépend » attendu, « hausse » possible). La ligne la plus mal connue est le
+PLFSS, prime : la règle lui donne +2,4 %, le seul canal qu'elle lit ; D-559 l'avait
+manquée de 35 % par ce même canal.
+
+**L'ordre** (quinze, une à une, sous le verrou commun, détachées) : Mélenchon ; Roussel,
+Ruffin, Tondelier, Kazib, Bouamrane ; Attal, Retailleau, Lisnard, Philippe, Le Pen ; le
+PLFSS 2027 ; le PLF 2027 ; Glucksmann, Zemmour. Durée attendue : de l'ordre d'une journée
+sur une file (D-559 : 31 heures, deux redémarrages du conteneur comptés). Puis
+`impots etude ecrire` et `impots etude verifier` par étude, le site reconstruit, et les
+études du jumeau rejouées (les lignes `j` de D-679, dont les passes de D-557 : elles
+lisent la population, et leur résultat ira dans la même entrée que la série).
