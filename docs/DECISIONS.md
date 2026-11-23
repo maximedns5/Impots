@@ -40700,3 +40700,77 @@ D-553 »). Les 39 rouges que `make impact` montrait sur `claude/but28` avant la 
 **Ce qui le tient** : les douze fichiers touchés ou rouges, rejoués ensemble (parcours,
 site, explorateur, dépendances, assiette, études, indemnités, non-salariés) : 137 verts,
 1 rouge, `test_non_salaries`, dit plus haut ; `ruff` passe.
+
+## D-686 — Les gérants retirés des salariés d'un facteur commun : préenregistré
+
+**La décision** (le propriétaire, 21 novembre, « change le modèle », après D-685). Le
+tirage des non-salariés paie les gérants majoritaires sur D11 ; la masse des salariés est
+D11 moins leur paie, fois le champ de l'enquête (0,9305), et elle tient au bit. Mais
+depuis `HORAIRES_EN_SMIC` (D-497) la paie des gérants était retirée *avant* la fonction
+horaire de la Dares : les salaires sous 4 Smic y sont posés par rang, en parts de Smic,
+quelle que soit la masse, et la coupe tombait sur les salaires au-dessus. Le propriétaire
+choisit la règle que `test_non_salaries` tenait : ce que reçoivent les gérants manque à
+chaque salarié d'un même facteur.
+
+**Le correctif** (`incomes.attach_incomes`, sous `GERANTS_APRES_HORAIRES`) : la masse est
+calée sur D11 entier fois le champ, la fonction de la Dares appliquée, puis tous les
+salariés multipliés par 1 − (paie des gérants ÷ D11), soit environ 0,967. La masse est la
+même ; les salaires sous 4 Smic sortent de la Dares d'environ 3,3 % par le bas, ceux du
+haut montent d'autant. `test_non_salaries` (le facteur commun, à 1e-9) passe ; sur le code
+d'avant, 217 facteurs de 0,942 à 0,978. Les 293 tests légers qui lisent les revenus
+passent.
+
+**L'essai** (hors git, au code de cette entrée) : la population reconstruite (11 s,
+graine 20240101) a l'empreinte **03400239…** ; le réglage éteint redonne 5ace8bb6…
+octet pour octet (D-553). Les mesures des ménages de la grille, 2024, sur 20 000 ménages
+des deux populations : le déplacement de chaque ligne. **Ces mesures ne sont pas
+aveugles** : elles ont tourné avant ce texte. Méthode de D-552 : l'écart de la grille de
+D-553, plus ce déplacement, le même les trois années. Bandes : ±3 points sur la réduction
+générale, ±2 sur les bandeaux et les foyers à 41 et 45 % (le bruit des hauts revenus sur
+20 000 ménages), ±1,5 sur les cotisations, ±1 sur les autres lignes déplacées, ±0,5 sur
+celles que l'essai ne déplace pas (moins de 0,25 %). Juge : les tolérances de D-371,
+inchangées ; puis ±5 %. Écart au publié (%), D-553 → pronostic :
+
+| ligne | tol. | dépl. | 2024 | 2023 | 2022 | bande ± |
+|---|---:|---:|---|---|---|---:|
+| `foyers_tmi_4` | 30 | +4,9 | −2,7 → +2,0 | −3,9 → +0,8 | −12,1 → −7,8 | 2 |
+| `foyers_tmi_3` | 30 | +4,0 | −10,2 → −6,6 | −8,8 → −5,1 | −11,6 → −8,0 | 2 |
+| `reduction_generale` | 15 | +3,7 | +8,1 → +12,1 | +6,8 → +10,8 | +9,1 → +13,1 | 3 |
+| `ppa_montant_servi` | 13 | +2,4 | +3,2 → +5,7 | −1,1 → +1,2 | +1,3 → +3,7 | 1 |
+| `ppa_foyers_servis` | 25 | +1,5 | −3,4 → −2,0 | −5,6 → −4,2 | −1,2 → +0,2 | 1 |
+| `bandeau_maladie` | 15 | −1,3 | +9,9 → +8,5 | +9,4 → +8,0 | +11,4 → +10,0 | 2 |
+| `foyers_imposes` | 10 | −0,9 | −1,3 → −2,1 | +3,2 → +2,3 | +5,6 → +4,7 | 1 |
+| `ir_net` | 15 | +0,7 | +4,2 → +4,9 | +7,8 → +8,5 | +5,5 → +6,2 | 1 |
+| `bandeau_famille` | 15 | −0,7 | +10,0 → +9,3 | +11,3 → +10,5 | +13,0 → +12,3 | 2 |
+| `ir_bareme` | 10 | +0,7 | −4,9 → −4,2 | −0,8 → −0,1 | — | 1 |
+| `foyers_tmi_2` | 15 | −0,6 | +5,9 → +5,3 | +12,2 → +11,5 | +13,1 → +12,3 | 1 |
+| `aide_logement_montant` | 25 | +0,5 | −9,9 → −9,4 | −11,8 → −11,4 | −12,4 → −11,9 | 1 |
+| `cotisations_employeurs_d121` | 15 | −0,4 | −5,0 → −5,3 | −3,3 → −3,7 | −2,3 → −2,7 |1,5|
+| `d9_d1` | 15 | +0,4 | −4,5 → −4,1 | −3,8 → −3,4 | −1,8 → −1,4 | 1 |
+| `foyers_tmi_0` | 15 | +0,4 | −0,2 → +0,1 | −2,3 → −1,9 | −1,4 → −1,0 | 1 |
+| `niveau_de_vie_median` | 15 | −0,3 | −8,5 → −8,8 | −7,4 → −7,7 | −6,1 → −6,4 | 1 |
+| `niveau_de_vie_median_servi` | 15 | −0,3 | −9,0 → −9,3 | −7,9 → −8,1 | −6,7 → −6,9 | 1 |
+| `d9_d1_servi` | 15 | +0,3 | +0,7 → +0,9 | +1,2 → +1,5 | +3,4 → +3,6 | 1 |
+
+Inchangées (±0,5) : les cotisations des salariés des APU, les trois CSG, les impôts sur les
+salaires, les salaires déclarés, les foyers fiscaux, les foyers à 11 %, les revenus des
+non-salariés, le RSA servi (foyers et masse), les allocations familiales ; et les lignes
+des entreprises (IS, contribution sociale sur l'IS, C3S, CVAE), que la population ne lit
+pas. **La ligne de D-531** (2022, le complément, non mesurée par l'essai) : 0,165 →
+**0,160 (0,145 à 0,180)** ; la coupe uniforme fait glisser sous 2,5 Smic une partie de la
+tranche.
+
+**Le compte annoncé.** Toutes les lignes restent dans leur tolérance : 2024 35 sur 35,
+2023 32 sur 33 (la contribution sociale sur l'IS reste hors), 2022 32 sur 32 ; **99 sur
+100**. ±5 % : 2024, la masse de la prime sort (+5,7) et les cotisations des employeurs
+(−5,0, au bord) aussi ; 2023, les foyers servis de la prime entrent (−4,2) ; 2022, les
+foyers imposés entrent (+4,7).
+
+**La passe**, détachée, sous le verrou, au commit de cette entrée, poussée avant :
+`impots population build` (graine 20240101), `impots verification passe` sur 2024, 2023,
+2022, le complément de 2022 (`scripts/ligne_bandeau_famille_tranche.py 2022`, huit lots),
+`impots verification ecrire` ; puis les cellules du jumeau (`scripts/jumeau_cellules.py`)
+et `agregats.json` (`site_population.agregats`), `entrees_navigateur.json`
+(`jumeau.navigateur ecrire`, qui tourne depuis les fichiers BDM de D-681). Le résultat va
+dans D-687. Les études (la série de D-559) se refont ensuite sur cette population, sous un
+préenregistrement à part, écrit après la grille.
