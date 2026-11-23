@@ -1,9 +1,9 @@
 {
-  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
   "scenarios": {
     "pres2027_roussel_programme": {
-      "cout": 32967083729.08127,
-      "dette": 0.012253745421668905,
+      "cout": 34306851034.39377,
+      "dette": 0.013356450722007862,
       "selon_theta": "dépend de θ"
     }
   }

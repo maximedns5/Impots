@@ -1,9 +1,9 @@
 {
-  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
   "scenarios": {
     "pres2027_ruffin_programme": {
-      "cout": 33159310620.75363,
-      "dette": 0.025871991665095795,
+      "cout": 34749373472.56659,
+      "dette": 0.026360102900820692,
       "selon_theta": "dépend de θ"
     }
   }

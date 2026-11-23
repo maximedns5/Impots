@@ -1,9 +1,9 @@
 {
-  "commit": "5a68669f34e27067b0f00445c40087432d97f161",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
   "scenarios": {
     "pres2027_lisnard_programme": {
-      "cout": 36185440063.88997,
-      "dette": 0.05710667897857835,
+      "cout": 36461362165.49373,
+      "dette": 0.05705105563298307,
       "selon_theta": "hausse"
     }
   }
