@@ -40774,3 +40774,63 @@ et `agregats.json` (`site_population.agregats`), `entrees_navigateur.json`
 (`jumeau.navigateur ecrire`, qui tourne depuis les fichiers BDM de D-681). Le résultat va
 dans D-687. Les études (la série de D-559) se refont ensuite sur cette population, sous un
 préenregistrement à part, écrit après la grille.
+
+## D-687 — La grille, les gérants retirés d'un facteur commun : 54 pronostics sur 54
+
+**Ce qui a tourné**, détaché, sous le verrou commun, au commit bf45c32 (D-686, poussé
+avant) : la population reconstruite (11 s, empreinte **03400239…**, octet pour octet
+celle de l'essai de D-686), puis 2024, 2023, 2022 (13 à 15 minutes chacune), le complément
+de 2022 (`ligne_bandeau_famille_tranche.py`, huit lots, 5 minutes), `verification ecrire` ;
+puis les cellules du jumeau (30 000 ménages, 83 s, empreinte 93c34eb6…, ses neuf
+recoupements tiennent), `agregats.json` et `entrees_navigateur.json`. De 8 h 53 à 9 h 42
+UTC, tout en rc = 0. Journal : `grille686/passe.log` du scratchpad. Les passes de D-553
+restent dans l'historique (2637c6c).
+
+**Le compte** : **99 lignes tenues sur 100**, comme D-553 et comme annoncé. 2024 : 35 sur
+35 ; 2023 : 32 sur 33 (la contribution sociale sur l'IS reste la seule hors, +33,8 %) ;
+2022 : 32 sur 32. ±5 % : **14, 14 et 13** (16, 13, 12 à D-553), les trois mouvements
+annoncés, et eux seuls : en 2024 la masse de la prime servie sort (+5,7) et les
+cotisations des employeurs aussi (−5,3) ; en 2023 les foyers servis de la prime entrent
+(−4,1) ; en 2022 les foyers imposés entrent (+4,9).
+
+**Le résultat contre D-686** (écart au publié, % ; pronostic ; **passe**) :
+
+| ligne (tol.) | 2024 | 2023 | 2022 |
+|---|---|---|---|
+| `reduction_generale` (15) | +12,1; **+12,1** | +10,8; **+10,7** | +13,1; **+13,1** |
+| `aide_logement_montant` (25) | −9,4; **−9,4** | −11,4; **−11,3** | −11,9; **−11,9** |
+| `niveau_de_vie_median_servi` (15) | −9,3; **−9,3** | −8,1; **−8,2** | −6,9; **−6,9** |
+| `bandeau_famille` (15) | +9,3; **+9,2** | +10,5; **+10,5** | +12,3; **+12,2** |
+| `niveau_de_vie_median` (15) | −8,8; **−8,7** | −7,7; **−7,6** | −6,4; **−6,4** |
+| `bandeau_maladie` (15) | +8,5; **+8,4** | +8,0; **+7,9** | +10,0; **+9,9** |
+| `foyers_tmi_3` (30) | −6,6; **−7,3** | −5,1; **−5,9** | −8,0; **−8,7** |
+| `ppa_montant_servi` (13) | +5,7; **+5,7** | +1,2; **+1,2** | +3,7; **+3,7** |
+| `foyers_tmi_2` (15) | +5,3; **+5,4** | +11,5; **+11,7** | +12,3; **+12,4** |
+| `cotisations_employeurs_d121` (15) | −5,3; **−5,3** | −3,7; **−3,7** | −2,7; **−2,7** |
+| `ir_net` (15) | +4,9; **+4,8** | +8,5; **+8,5** | +6,2; **+6,2** |
+| `ir_bareme` (10) | −4,2; **−4,2** | −0,1; **−0,1** | — |
+| `d9_d1` (15) | −4,1; **−4,1** | −3,4; **−3,5** | −1,4; **−1,4** |
+| `foyers_imposes` (10) | −2,1; **−2,0** | +2,3; **+2,4** | +4,7; **+4,9** |
+| `ppa_foyers_servis` (25) | −2,0; **−1,9** | −4,2; **−4,1** | +0,2; **+0,2** |
+| `d9_d1_servi` (15) | +0,9; **+1,1** | +1,5; **+1,5** | +3,6; **+3,7** |
+| `foyers_tmi_4` (30) | +2,0; **+0,2** | +0,8; **−0,2** | −7,8; **−8,8** |
+| `foyers_tmi_0` (15) | +0,1; **+0,1** | −1,9; **−1,9** | −1,0; **−1,1** |
+
+**Les 53 lignes pronostiquées sont tenues**, dans leurs bandes. Les deux plus gros écarts
+au pronostic, dans leur bande de ±2 : les foyers à 45 % (−1,8 point en 2024) et à 41 %
+(−0,8) ; le déplacement mesuré sur 20 000 ménages surestimait le leur, le bruit des hauts
+revenus qu'annonçait D-686. Les lignes que l'essai ne déplaçait pas bougent toutes de
+moins de 0,5 point, sauf la ligne du complément, hors de l'essai (ci-dessous).
+
+**La ligne de D-531** (`bandeau_famille_part_2_5_3_5_smic`, 2022) : 0,165 → **0,170**,
+publié 0,168, **+1,3 %**, dans la tolérance (±15 %) et dans ±5 %. Pronostic 0,160 (0,145 à
+0,180) : **tenu**. La coupe uniforme fait bien glisser une part de la tranche sous 2,5
+Smic, un peu moins qu'annoncé.
+
+**Le compte de D-686** : 54 pronostics (53 lignes et la ligne du complément), **54
+tenus** ; le compte de 99 sur 100 et les trois mouvements de ±5 % annoncés, tenus aussi.
+Aucune tolérance, aucun seuil, aucun enregistrement n'a changé.
+
+**Ce qui n'est pas refait ici.** Les études (la série de D-559) et les rapports du jumeau
+(D-680, D-681) sont sur la population de D-553 : ils ne lisent pas celle-ci, et restent
+tels quels jusqu'à leur série, préenregistrée à part.
