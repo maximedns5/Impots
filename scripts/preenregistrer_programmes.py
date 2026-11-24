@@ -200,6 +200,14 @@ def arguments(nom: str, p, m) -> list[str]:
 #: chiffre, sur le scénario de sa part chiffrée.
 ETUDES = ROOT / "etudes"
 PREENREGISTREMENT_ETUDES = "D-402"  # la série du but 22 (D-394 au but 21, D-372 au but 19)
+#: La série du but 28 (D-556, D-558) : les études refaites sur la population de D-553.
+#: Labib et Arthaud, préenregistrées à D-558, ont été retirées de la série sur consigne
+#: du propriétaire (D-559) ; leur préenregistrement reste écrit. Le générateur suit les
+#: définitions commitées (D-685).
+PREENREGISTREMENT_PAR_ETUDE = {
+    **dict.fromkeys(("attal", "bouamrane", "kazib", "le_pen", "lisnard", "melenchon",
+                     "philippe", "retailleau", "roussel", "ruffin", "tondelier"), "D-556"),
+    **dict.fromkeys(("arthaud", "glucksmann", "labib", "zemmour"), "D-558")}
 CADRE_ETUDES = "central"
 #: Les études dont les passes ont tourné et dont un garde a refusé le chemin (D-398).
 REFUS = {"dupont_aignan": (
@@ -243,7 +251,8 @@ def etudes() -> list[tuple[str, dict, dict]]:
             "nom": f"presidentielle_{slug}",
             "titre": f"{p.candidat} : la part chiffrée du programme, en trois réponses",
             "texte": "programme", "programme": slug,
-            "preenregistrement": PREENREGISTREMENT_ETUDES, "cadre": CADRE_ETUDES,
+            "preenregistrement": PREENREGISTREMENT_PAR_ETUDE.get(
+                slug, PREENREGISTREMENT_ETUDES), "cadre": CADRE_ETUDES,
             "millesime_entreprises": VINTAGE_ENTREPRISES,
             "scenarios": [{"scenario": nom}],
             # La dette « si les économies annoncées sont tenues », à côté (étape 5, D-380).

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 475" width="360" height="475" role="img" aria-labelledby="pres2027_philippe_programme-frise-t pres2027_philippe_programme-frise-d" font-size="13">
 <title id="pres2027_philippe_programme-frise-t">Les mesures chiffrées dans le temps, et leurs plages</title>
-<desc id="pres2027_philippe_programme-frise-d">Les mesures chiffrées : Exonération de cotisations pour les salariés qui travaillent deux heures de plus par semaine, de 2026 à 2035, plage heures_sup_plafond_heures : bas 88 0,00 Md€, candidat 94 0,00 Md€, haut 104 € 0,00 Md€, plage heures_sup_exoneration_csg_crds : bas 0 0,00 Md€, candidat 0 0,00 Md€, haut 1 +2,32 Md€ ; Allocation familiale unique dès le premier enfant, dégressive selon l&#x27;IR, de 2026 à 2035, plage allocation_enfant.degressivite_part_ir : bas 0 +53,79 Md€, candidat 0,5 +45,16 Md€, haut 1 +40,87 Md€.</desc>
+<desc id="pres2027_philippe_programme-frise-d">Les mesures chiffrées : Exonération de cotisations pour les salariés qui travaillent deux heures de plus par semaine, de 2026 à 2035, plage heures_sup_plafond_heures : bas 88 0,00 Md€, candidat 94 0,00 Md€, haut 104 € 0,00 Md€, plage heures_sup_exoneration_csg_crds : bas 0 0,00 Md€, candidat 0 0,00 Md€, haut 1 +2,30 Md€ ; Allocation familiale unique dès le premier enfant, dégressive selon l&#x27;IR, de 2026 à 2035, plage allocation_enfant.degressivite_part_ir : bas 0 +54,41 Md€, candidat 0,5 +45,03 Md€, haut 1 +40,87 Md€.</desc>
 <style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
 .g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
 .g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
@@ -55,8 +55,8 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <text class="g-doux" fill="#52514e" x="76.6" y="319" text-anchor="middle" font-size="12">0,00 Md€</text>
 <rect class="g-f1" fill="#2a78d6" x="71.6" y="294" width="10" height="10"><title>candidat (0) : 0,00 Md€</title></rect>
 <text class="g-encre" fill="#1d1d1b" x="76.6" y="333" text-anchor="middle" font-size="12">0,00 Md€</text>
-<circle class="g-f2" fill="#eb6834" cx="283.4" cy="299" r="5"><title>haut (1) : +2,32 Md€</title></circle>
-<text class="g-doux" fill="#52514e" x="283.4" y="319" text-anchor="middle" font-size="12">+2,32 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="299" r="5"><title>haut (1) : +2,30 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="319" text-anchor="middle" font-size="12">+2,30 Md€</text>
 <text class="g-encre" fill="#1d1d1b" x="12" y="357" text-anchor="start" font-weight="600">Allocation familiale unique dès le premier enfant,</text>
 <text class="g-encre" fill="#1d1d1b" x="12" y="373" text-anchor="start" font-weight="600">dégressive selon l&#x27;IR</text>
 <rect class="g-f1" fill="#2a78d6" x="15.3" y="379" width="30.5" height="10" rx="2"><title>2026 : s'applique</title></rect>
@@ -71,10 +71,10 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <rect class="g-f1" fill="#2a78d6" x="314.1" y="379" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
 <text class="g-doux" fill="#52514e" x="12" y="407" text-anchor="start" font-size="12">plage « allocation_enfant.degressivite_part_ir »</text>
 <line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="419" x2="283.4" y2="419"/>
-<circle class="g-f2" fill="#eb6834" cx="283.4" cy="419" r="5"><title>bas (0) : +53,79 Md€</title></circle>
-<text class="g-doux" fill="#52514e" x="283.4" y="439" text-anchor="middle" font-size="12">+53,79 Md€</text>
-<rect class="g-f1" fill="#2a78d6" x="140.3" y="414" width="10" height="10"><title>candidat (0,5) : +45,16 Md€</title></rect>
-<text class="g-encre" fill="#1d1d1b" x="145.3" y="453" text-anchor="middle" font-size="12">+45,16 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="419" r="5"><title>bas (0) : +54,41 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="439" text-anchor="middle" font-size="12">+54,41 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="135.1" y="414" width="10" height="10"><title>candidat (0,5) : +45,03 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="140.1" y="453" text-anchor="middle" font-size="12">+45,03 Md€</text>
 <circle class="g-f2" fill="#eb6834" cx="76.6" cy="419" r="5"><title>haut (1) : +40,87 Md€</title></circle>
 <text class="g-doux" fill="#52514e" x="76.6" y="439" text-anchor="middle" font-size="12">+40,87 Md€</text>
 <text class="g-doux" fill="#52514e" x="348" y="465" text-anchor="end" font-size="12">coût de 2026, milliards d&#x27;euros</text>

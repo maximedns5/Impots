@@ -43,66 +43,11 @@ SIMULATEUR_DGFIP = "https://simulateur-ir-ifi.impots.gouv.fr/"
 
 #: Pourquoi une ligne est hors de sa tolérance, tiré des D-entrées qui l'ont mesuré.
 #: Une ligne hors de sa tolérance qui n'est pas ici est dite « pas encore expliquée ».
+#: D-685 : sur la grille du but 27 et de D-553 (99 sur 100), une seule ligne est hors ;
+#: les explications des lignes revenues dans leur tolérance ou remplacées (D-495) sont
+#: retirées (les allègements, la prime, le RSA, les cotisations des employeurs, les
+#: aides au logement : D-364 à D-371).
 EXPLICATIONS: dict[str, tuple[str, str]] = {
-    "cotisations_employeurs": (
-        "D-364, D-367",
-        "Un classement, pas une erreur de la population : le super-brut moins le brut "
-        "compte des impôts sur les salaires, la contribution de l'État aux pensions de ses "
-        "agents et des salaires hors brut, que les comptes nationaux rangent ailleurs. La "
-        "mesure au sens de l'Insee (D121), qui les retire, tient sa tolérance ; la ligne "
-        "d'origine reste, telle qu'elle a été préenregistrée."),
-    "reduction_generale": (
-        "D-370, D-371",
-        "La règle est juste ; il manque des salaires horaires près du SMIC. C'est la forme "
-        "du bas des salaires horaires, que les quantiles publiés en équivalent temps plein "
-        "ne donnent pas."),
-    "bandeau_famille": (
-        "D-371",
-        "La baisse de la cotisation patronale d'allocations familiales sur les salaires "
-        "sous 3,5 SMIC. La même cause que la réduction générale, de l'autre côté : il y a "
-        "trop de salaires horaires entre 1,6 et 3,5 SMIC."),
-    "bandeau_maladie": (
-        "D-369, D-371",
-        "La baisse de la cotisation patronale d'assurance maladie sur les salaires sous "
-        "2,5 SMIC, rangée avec les autres allègements : la forme du bas des salaires "
-        "horaires. Elle ne sort de sa tolérance qu'en 2022."),
-    "ppa_montant_servi": (
-        "D-370, D-371",
-        "Un choix de cible, dit : la probabilité de demander la prime est calée sur le "
-        "taux de non-recours de la Drees, la moitié des foyers qui y ont droit ; or les "
-        "recourants que la Drees compte ne sont que 73 à 83 % des foyers que la Cnaf paie. "
-        "La prime servie reste donc sous ce que la Cnaf verse."),
-    "ppa_foyers_servis": (
-        "D-370, D-371",
-        "Le même choix de cible que le montant : la part des ayants droit qui demandent la "
-        "prime est imposée par le calage, à la moitié ; la ligne, calée par le "
-        "non-recours, ne dit que le nombre de foyers ayant droit, mesuré contre des "
-        "recourants de la Drees moins nombreux que les foyers que la Cnaf paie."),
-    "ppa_montant": (
-        "D-370, D-371",
-        "L'ancienne mesure du non-recours, un seul coefficient qui ramène le total des "
-        "droits au total versé ; la mesure foyer par foyer la remplace. Le coefficient dit "
-        "un non-recours en montant, tiré des mêmes travaux de la Drees (les mots de la "
-        "grille, plus haut) : la même cible, sous la Cnaf."),
-    "ppa_foyers": (
-        "D-364, D-366",
-        "Elle compte les foyers qui ont droit à la prime, comme si tous la demandaient ; la "
-        "Cnaf ne compte que ceux qui la demandent. La ligne qui pondère chaque foyer par "
-        "sa probabilité de la demander compte ce que la Cnaf compte ; la part des "
-        "demandeurs y est imposée par le calage du non-recours."),
-    "rsa_foyers": (
-        "D-364, D-367",
-        "Elle compte les foyers qui ont droit au RSA, comme si tous le demandaient ; "
-        "l'ancienne correction du non-recours, un seul coefficient, corrige le montant, "
-        "pas le nombre. La ligne qui pondère chaque foyer par sa probabilité de le "
-        "demander tient sa tolérance ; mais la part des demandeurs y est imposée par le "
-        "calage du non-recours : elle ne dit que le nombre de foyers ayant droit."),
-    "aide_logement_montant": (
-        "D-371",
-        "Ce que le modèle ne couvre pas : les foyers et résidences (étudiants, "
-        "travailleurs, personnes âgées), les accédants à la propriété, et les personnes "
-        "hébergées hors du bail, qui n'ont plus d'aide dans le modèle. Chacun a été "
-        "mesuré lors de la refonte des aides au logement."),
     "contribution_sociale_is": (
         "D-364",
         "Une contribution qui n'est due qu'au-dessus d'un seuil d'impôt sur les sociétés "

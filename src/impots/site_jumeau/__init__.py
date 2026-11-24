@@ -695,6 +695,13 @@ def raison_structurel(mesure: Any, vue: str) -> str:
         raisons.append("des cotisations des employeurs que la passe fait payer à la fois "
                        "par des entreprises et par les administrations (un Smic et un point "
                        "d'indice ensemble), que le rapport ne sépare pas")
+    m = re.search(r"porte sur (\d{4}), le chemin commence en (\d{4})",
+                  np_.get("entreprises", ""))
+    if m:
+        # D-684 : le PLF 2027, art. 15, une loi de 2027 sur un chemin qui part de 2026.
+        raisons.append(f"une passe de la première année faite pour {m.group(1)}, quand le "
+                       f"chemin commence en {m.group(2)} : elle ne répartit aucune année du "
+                       "chemin")
     if "réforme du Smic" in np_.get("menages", ""):
         raisons.append("une hausse du Smic, dont le jumeau ne sait pas lire l'effet sur "
                        "les salaires sans une hypothèse que l'étude ne donne pas")

@@ -475,6 +475,12 @@ def _facteur_statut(frame: pl.DataFrame) -> np.ndarray:
 POINT_INSEE = True
 
 
+#: Take the gérants' pay off the employees by one factor after the hourly mapping (but 28,
+#: D-686); off: before it, which left the wages under 4 Smic on the Dares's function and
+#: the cut on the wages above (D-497 to D-685).
+GERANTS_APRES_HORAIRES = True
+
+
 #: Rank the wages and the pensions by tenure (but 27, volet grille2, D-497); off: no
 #: tenure in the draw, as before.
 FACTEUR_STATUT = True
@@ -901,15 +907,20 @@ def attach_incomes(
 
     before = float((wages * weight).sum())
     gerants_gross = float((gerant_gross * weight).sum())
-    target = ((margins.TOTAL_GROSS_WAGES.value * targets_scale - gerants_gross)
-              * margins.CHAMP_SALARIES_ENQUETE.value)
+    d11 = margins.TOTAL_GROSS_WAGES.value * targets_scale
+    target = (d11 - gerants_gross) * margins.CHAMP_SALARIES_ENQUETE.value
     # The one calibration on incomes, and therefore spent: the wage bill can never
     # afterwards appear as a validation line (§4.3). D11 holds the gérants' pay too, and
     # the pay of employees the survey does not cover: the employees' share is D11 less
     # the gérants, times the survey's share of the accounts' salaried headcount (but 19,
     # étape « haut »). Before, the whole of it went to the survey's employees, 6.5 % more
     # each than the published wage quantiles imply.
-    factor = target / before if before > 0 else 1.0
+    # D-686: the gérants' pay is taken off the employees by one factor, after the hourly
+    # mapping, so that what they receive is missing from every employee alike; before, it
+    # was taken off before the mapping, which pins the wages under 4 Smic to the Dares's
+    # function, and the cut fell on the wages above. The wage bill is the same.
+    gerants = 1.0 - gerants_gross / d11 if GERANTS_APRES_HORAIRES and d11 > 0 else 1.0
+    factor = target / gerants / before if before > 0 else 1.0
     wages = np.where(employee, wages * factor, gerant_gross)
     # Where the private wages sit against the Smic (but 27, volet grille2, D-497): the
     # hourly wages are mapped onto the Dares's distribution in parts of Smic, the private
@@ -917,6 +928,9 @@ def attach_incomes(
     hourly_factor = 1.0
     if HORAIRES_EN_SMIC:
         wages, hourly_factor = _salaires_horaires_en_smic(frame, wages, employee, weight)
+    if gerants != 1.0:
+        wages = np.where(employee, wages * gerants, wages)
+        factor *= gerants
 
     # The share of an employee's taxable salary the income tax exempts: D11 holds overtime,
     # apprentices' pay, placed profit-sharing and the rest the declarations do not, so its

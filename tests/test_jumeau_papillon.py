@@ -29,15 +29,17 @@ def test_point_indice_ne_renchérit_plus_le_travail_prive(session):
     # cotisations de la paie publique lues comme un coût du travail privé.
     m = session.mesure_structurel(P + "point_indice_10", "figee", "parts_premiere_annee")
     assert "cotisations_employeurs" not in m.impulsions[2026]
-    assert m.prelevements_publics[2026]["cotisations_employeurs"] == pytest.approx(-12.526,
+    # D-683 : −12,526 sur la série de 5a68669, −12,503 sur celle de D-559.
+    assert m.prelevements_publics[2026]["cotisations_employeurs"] == pytest.approx(-12.503,
                                                                                     abs=1e-3)
     assert m.conventions["impulsions"][2026] == pa.CONVENTION_PUBLIQUE
     _, dette, emploi = _dette_emploi(session, [m], P + "point_indice_10")
     # D-567 : les cellules du jumeau refaites sur la population de D-521 (D-512, f382efe),
     # puis de D-553 (e4a635c) : emploi 33,654 → 33,628 → 33,628 milliers, dette 2,0423
-    # → 2,0521 → 2,0517 pt (D-500 : 33,7 et 2,042, sur la population du but 19).
-    assert emploi == pytest.approx(33.63, abs=0.05)
-    assert dette == pytest.approx(2.052, abs=5e-4)
+    # → 2,0521 → 2,0517 pt (D-500 : 33,7 et 2,042, sur la population du but 19) ; les
+    # rapports de la série de D-559 (D-683) : 33,306 milliers, 2,0348 pt.
+    assert emploi == pytest.approx(33.31, abs=0.05)
+    assert dette == pytest.approx(2.035, abs=5e-4)
 
 
 def test_melenchon_tourne_en_structurel_par_les_mesures_seules(session):
@@ -45,22 +47,24 @@ def test_melenchon_tourne_en_structurel_par_les_mesures_seules(session):
     assert all(v == 0.0 for v in pa.verifier_somme(
         session, "melenchon", "figee", "parts_premiere_annee").values())
     ms = pa.mesures_seules(session, "melenchon", "figee")
-    assert ms[-1].impulsions[2026]["cotisations_employeurs"] == pytest.approx(1.333, abs=1e-3)
+    # L'interaction : 1,333 sur la série de 5a68669, 0,735 sur celle de D-559 (D-683).
+    assert ms[-1].impulsions[2026]["cotisations_employeurs"] == pytest.approx(0.735, abs=1e-3)
     traj, dette, emploi = _dette_emploi(session, ms, P + "programme")
     # D-567 : D-502 tenait 12,306 pt et 186,1 milliers (cellules du but 19). Les cellules
     # de D-521 (D-512, f382efe) : 12,365 et 187,1 ; l'incidence pondérée et le choc
     # combiné (D-540, D-541, 1f9ded0) : 12,375 et 188,2 ; la diffusion recentrée par défaut
-    # (D-551, 013d1ea) : 10,613 et 50,6 ; les cellules de D-553 (e4a635c) : 10,612, 50,7.
-    assert dette == pytest.approx(10.612, abs=5e-4)
-    assert emploi == pytest.approx(50.7, abs=0.05)
+    # (D-551, 013d1ea) : 10,613 et 50,6 ; les cellules de D-553 (e4a635c) : 10,612, 50,7 ;
+    # les rapports de la série de D-559 (D-680, D-683) : 10,726 et 68,9.
+    assert dette == pytest.approx(10.726, abs=5e-4)
+    assert emploi == pytest.approx(68.9, abs=0.05)
     assert max(pa.identites(traj, ms).values()) < 1e-12
     c = pa.cascade_simple(traj)
     assert abs(c["residu"]) < 1e-9
-    # Les mêmes étapes : statique 23,725 → 23,724 → 23,724 → 23,689 → 23,688 Md€ ; prime
-    # de risque 1,555 → 1,561 → 1,562 → 1,330 → 1,3295 pt.
-    assert c["fleches"]["statique"] == pytest.approx(23.688, abs=5e-4)
+    # Les mêmes étapes : statique 23,725 → 23,724 → 23,724 → 23,689 → 23,688 → 24,011 Md€ ;
+    # prime de risque 1,555 → 1,561 → 1,562 → 1,330 → 1,3295 → 1,3498 pt (D-559).
+    assert c["fleches"]["statique"] == pytest.approx(24.011, abs=5e-4)
     assert pa.prime_de_risque(traj, session._modele("structurel", ms[0], P + "programme")[1],
-                              0.5)["dette_pts"][-1] == pytest.approx(1.3295, abs=5e-4)
+                              0.5)["dette_pts"][-1] == pytest.approx(1.3498, abs=5e-4)
 
 
 def test_le_pfu_supprime_se_retourne_sur_les_dividendes():
@@ -92,5 +96,6 @@ def test_les_payeurs_des_prestations_viennent_des_fiches(session):
         "financement_a16_part_cnav": 0.5, "financement_compensation": 0.5})
     res = comptes.resume(comptes.decomposer(traj, ms, th))["sous_secteurs"]
     # D-551 : la diffusion recentrée par défaut ; sous l'ancienne forme, −55,81 et 1,48.
-    assert res["etat"]["b9"]["ecart"][0] == pytest.approx(-54.92, abs=0.01)
-    assert res["apul"]["b9"]["ecart"][0] == pytest.approx(1.545, abs=0.01)
+    # La série de D-559 (D-683) : −54,92 et 1,545 → −55,007 et 1,600.
+    assert res["etat"]["b9"]["ecart"][0] == pytest.approx(-55.007, abs=0.01)
+    assert res["apul"]["b9"]["ecart"][0] == pytest.approx(1.600, abs=0.01)
