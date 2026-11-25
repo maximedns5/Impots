@@ -41074,3 +41074,45 @@ programme, de 4,8 à 5,9 aussi. Les paires du jumeau : programme moins somme +0,
 `reaction_b28/diffusion_d691.json`, `interaction_b28/defaut_d691.json`,
 `interaction_b28/cice_d691.json`, `boucle_b28/resultats_d691.json`, à côté de ceux de
 D-557, qui ne sont pas récrits.
+
+## D-692 — Les tests mis sur la série de D-689, et les agrégats de la population refaits
+
+**La décision** (le plan de D-688, « mettre les tests à jour », sous le style de D-683).
+La passe légère au commit 9a573ef (`pytest -m "not lourd and not chrono"`, 1 h 15) :
+4 823 verts, 24 sautés, **21 rouges**. Vingt tiennent des nombres de la série de D-559 ;
+un tient deux fichiers ensemble, et dit vrai.
+
+**Le rouge qui dit vrai : `test_les_cellules_publiees_sont_celles_du_jumeau`.**
+`reports/population/agregats.json`, commité par D-687, porte les cellules de ménages de
+D-552 (l'IR, 96,655 Md€, est au centime celui d'`entrees_navigateur.json` de e4a635c),
+alors que son en-tête nomme la population de D-687 : il a été écrit avant les entrées du
+navigateur, dans la même passe. Les entrées, elles, sont celles de D-687 (97,281 Md€).
+Refait par `python -m impots.site_population.agregats` : seules les cinquante cellules
+changent (l'IR +0,65 %, les prestations +0,49 %, les autres sous 0,1 %), plus le commit
+et la date. Le site reconstruit (`site verifier` : « le site est celui des études ») :
+`population*.html`, `cellules.html`, `cellules-menages.csv` et `.json`. Le test, qui
+échouait sur l'ancien fichier, passe sur le nouveau.
+
+**Les vingt autres : leurs nombres**, mis sur la série de D-689, chaque ancienne valeur
+écrite à côté. Aucune forme ne change, aucune tolérance ne bouge.
+* `test_recalcul` : les programmes, Δb lu (pt), Attal 3,9775 → 3,9572, Lisnard 5,7051 →
+  5,7062, Retailleau 10,8723 → 10,8452 ; les trois mesures seules de D-440 ne bougent pas
+  (0,2475 ; 1,6181 ; 1,6181), la propriété que le test garde.
+* `test_graphiques` (Lisnard) : ménages, mécanique +29,91 → +29,94 Md€, central +28,78 →
+  +28,99.
+* `test_jumeau_depuis_rapport` (cinq) : Attal, déciles 55,42 → 55,35, coût des ménages
+  2026 60,386 → 60,308 ; Retailleau, employeurs −3,933 → −3,908 ; le Smic de Mélenchon,
+  E −33,751 → −32,960 ; Lisnard, ménages 29,914 → 29,940.
+* `test_etude_programmes` : Attal sans boucle 19,54 → 19,50 pt, au coût de 62,86 Md€.
+* `test_jumeau_papillon` (deux) : l'interaction des employeurs 0,735 → 0,691 ; le
+  programme 10,726 → 10,415 pt, 68,9 → 63,1 milliers (les nombres de D-691) ; statique
+  24,011 → 23,680 Md€, prime de risque 1,3498 → 1,3073 pt ; l'État −55,007 → −54,513,
+  les APUL 1,600 → 1,632.
+* `test_parcours_comparer` (six) et `test_parcours_cout` (quatre) : les mêmes rapports
+  lus par les pages, Attal +62,94 → +62,86 Md€ et +19,54 → +19,50 pt, la prime −749 →
+  −755 M€, les points du curseur, le tableau de passage, l'euro rendu (Attal 12,0 et
+  12,5 € → 11,9 et 12,4 ; Retailleau 5,3 → 5,2 ; Mélenchon 3,6 → 3,5), le non-lu (Attal
+  −0,01 et +0,24 → −0,02 et +0,22 ; Lisnard vieillie +6,02 → +6,01).
+
+Les 21 et `test_site_population` : verts. `ruff` : propre. `node ui/check.mjs` : vert.
+`make impact` et les lourds ne sont pas relancés : ils tournent une fois, avant la PR.
