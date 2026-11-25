@@ -112,7 +112,8 @@ def test_inscrite():
 
 def test_controle_depart_sur_les_cellules_commitees():
     """D-621 : l'écart d'espérance de vie D10 − D1 que g implique sur les cellules de
-    `entrees_navigateur.json` (population de D-553), face à l'Insee Première n° 1687."""
+    `entrees_navigateur.json` (population de D-687 ; sur celle de D-553 : 2,0780, 10,502,
+    6,864, D-693), face à l'Insee Première n° 1687."""
     import json
 
     from impots.jumeau.cellules import Cellules
@@ -122,9 +123,9 @@ def test_controle_depart_sur_les_cellules_commitees():
     cel = Cellules(valeurs={k: np.asarray(v, float) for k, v in c["valeurs"].items()},
                    parts_offre=c["parts_offre"])
     out = sante.controle_depart(cel, P)
-    assert out["ecart_ln_d10_d1"] == pytest.approx(2.0780, abs=5e-4)
-    assert out["hommes"]["d10_d1"] == pytest.approx(10.502, abs=5e-3)
-    assert out["femmes"]["d10_d1"] == pytest.approx(6.864, abs=5e-3)
+    assert out["ecart_ln_d10_d1"] == pytest.approx(2.0835, abs=5e-4)
+    assert out["hommes"]["d10_d1"] == pytest.approx(10.530, abs=5e-3)
+    assert out["femmes"]["d10_d1"] == pytest.approx(6.882, abs=5e-3)
     # Le juge (ip1687.xls, figure 1) : vingtiles 19-20 moins 1-2.
     assert 0.8 <= out["hommes"]["d10_d1"] / 11.65 <= 1.2
     assert 0.8 <= out["femmes"]["d10_d1"] / 7.55 <= 1.2

@@ -44243,3 +44243,44 @@ et la date. Le site reconstruit (`site verifier` : « le site est celui des étu
 
 Les 21 et `test_site_population` : verts. `ruff` : propre. `node ui/check.mjs` : vert.
 `make impact` et les lourds ne sont pas relancés : ils tournent une fois, avant la PR.
+
+## D-693 — Le but 29 sur la série de D-689 : six tests mis sur leurs nombres, les causes
+
+**La jonction** (8e45527) : `claude/but28` à ef26636 joint dans `claude/but29`, sans
+conflit, pour la PR #134. Les 41 rouges de 46be858 (« aucun rapport d'étude commité »,
+D-688) disparaissent avec les rapports de D-689. Sept tests légers du but restent rouges.
+
+**Six tiennent des nombres du but 29 lus sur l'avant.** Mis sur la série de D-689 et la
+population de D-687, chaque ancien nombre écrit à côté, aucune tolérance changée :
+
+| test | avant | après |
+|---|---:|---:|
+| Retailleau, € 2025 par UC, 2026 et 2035 | +790,6 ; +706,9 | +725,9 ; +644,6 |
+| Retailleau, gain réel D1 et D10, 2026, % | +5,20 ; +1,10 | +4,76 ; +1,16 |
+| Mélenchon : Md€ ; € par UC ; pauvreté | 68,28 ; 1 454 ; −1,18 | 68,68 ; 1 463 ; −1,12 |
+| territoires 2035 : %, rural, outre-mer | 2,077 ; 1,953 ; 2,302 | 1,891 ; 1,788 ; 2,077 |
+| territoires, € par ménage, régions | 1 241,3 | 1 129,7 |
+| santé, départ (D-621) : ln, H, F | 2,0780 ; 10,50 ; 6,86 | 2,0835 ; 10,53 ; 6,88 |
+| moral, départ (D-596) : Q5−Q1, D10−D1 | 0,6596 ; 0,8832 | 0,6610 ; 0,8855 |
+
+**Les causes.** Le pouvoir d'achat et les territoires de Retailleau baissent d'environ
+8 % parce que le choc aux ménages de sa première année baisse d'autant : 37,18 Md€ dans
+les rapports que le but 29 lisait (ceux d'avant D-559), 34,17 dans la série de D-559 et
+34,18 dans celle de D-689 ; le coût total, lui, bouge à peine (D-689). Le reste vient des
+cellules de la population de D-687 (l'IR des cellules +0,6 %). Les juges des contrôles
+de départ tiennent encore, avec les bornes d'origine : santé 0,90 et 0,91 (de 0,8 à 1,2),
+moral 0,51 et 0,57 (de 0,5 à 1,5), le premier à 0,01 de sa borne basse.
+
+**Le septième ne vient pas du code** : `test_les_entrees_commitees_sont_celles_des_donnees`
+compare les entrées commitées aux données de ce conteneur, qui sont encore celles de
+D-553 ; il passe sur des données de D-687 (D-692). Non changé.
+
+**Ce qui n'est pas refait** : la distribution mesurée des niveaux de vie
+(`reports/jumeau/niveaux_de_vie_cellules.json`, D-592, D-640) a été calculée sur les
+cellules de D-553 ; l'entente qui la lit mêle donc deux populations jusqu'à ce qu'une
+passe la refasse sur D-687. Les nombres du juge de D-592 restent ceux de D-553.
+
+Tests légers des fichiers du but (`test_impacts_*`, `test_jumeau_impacts_*`,
+`test_jumeau_navigateur`, `test_parametrique`, `test_pour_vous`) : 134 passés, un rouge,
+celui des données du conteneur ci-dessus. Chacun des six a échoué sur l'avant : c'est
+ce qui les a montrés.

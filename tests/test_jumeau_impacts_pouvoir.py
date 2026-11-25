@@ -66,16 +66,17 @@ def test_le_reel_est_le_nominal_moins_les_prix(session, retailleau) -> None:
 
 
 def test_les_nombres_de_tete_de_retailleau(session, retailleau) -> None:
-    """D-593 : Retailleau, θ½, vue figée, la convention de D-414 : +791 € par UC (en €
-    de 2025) en 2026, +707 en 2035 ; D1 +5,2 %, D10 +1,1 % en 2026."""
+    """D-593 : Retailleau, θ½, vue figée, la convention de D-414, en € de 2025 par UC.
+    Sur la série de D-689 (D-693) : +726 en 2026, +645 en 2035 ; D1 +4,76 %, D10 +1,16 %
+    en 2026. Avant, sur les rapports d'avant D-559 : +791, +707, +5,2 %, +1,1 %."""
     traj, depart = retailleau
     d = calculer(traj, None, depart, session.cellules, cles=["pouvoir_achat"])[
         "pouvoir_achat"]
     reel = {i.cle: i for i in d.indicateurs}
-    assert reel["reel_uc"].valeurs[0] == pytest.approx(790.6, abs=1.0)
-    assert reel["reel_uc"].valeurs[-1] == pytest.approx(706.9, abs=1.0)
-    assert reel["reel_pct"].par_groupe["D1"][0] == pytest.approx(5.20, abs=0.02)
-    assert reel["reel_pct"].par_groupe["D10"][0] == pytest.approx(1.10, abs=0.02)
+    assert reel["reel_uc"].valeurs[0] == pytest.approx(725.9, abs=1.0)
+    assert reel["reel_uc"].valeurs[-1] == pytest.approx(644.6, abs=1.0)
+    assert reel["reel_pct"].par_groupe["D1"][0] == pytest.approx(4.76, abs=0.02)
+    assert reel["reel_pct"].par_groupe["D10"][0] == pytest.approx(1.16, abs=0.02)
     assert d.statut == "sourcé, non jugé" and reel["reel_uc"].bas is None
 
 
@@ -122,30 +123,31 @@ def test_le_gini_d_un_exemple_connu() -> None:
 
 def test_le_chemin_statique_de_melenchon(session) -> None:
     """D-593 : Mélenchon, que le mode structurel refuse (le Smic, D-412), lu sur la passe
-    de sa première année : 68,3 Md€ aux ménages en 2026, +1 454 € par UC (€ de 2024) ; la
-    pauvreté reconstituée sur la distribution approchée baisse de 1,2 point. Chaque clé de
-    répartition garde le choc de chaque décile."""
+    de sa première année : 68,7 Md€ aux ménages en 2026, +1 463 € par UC (€ de 2024) ; la
+    pauvreté reconstituée sur la distribution approchée baisse de 1,12 point (série de
+    D-689, D-693 ; avant : 68,28, +1 454,4, −1,18). Chaque clé de répartition garde le
+    choc de chaque décile."""
     cel = session.cellules
     ch = pouvoir.chocs_du_rapport(session.candidats["pres2027_melenchon_programme"][
         "premiere_annee"])
-    assert list(ch) == [2026] and sum(ch[2026]) == pytest.approx(68.28, abs=0.01)
+    assert list(ch) == [2026] and sum(ch[2026]) == pytest.approx(68.68, abs=0.01)
     for cle in pouvoir.REPARTITIONS:
         np.testing.assert_allclose(
             pouvoir.repartir(ch[2026], cel, cle).reshape(10, 5).sum(axis=1), ch[2026])
     rv = pouvoir.revenus_statiques(ch, cel)
     d = pouvoir.pouvoir_achat(None, None, None, cel, revenus=rv)
     reel = {i.cle: i for i in d.indicateurs}
-    assert reel["reel_uc"].valeurs[0] == pytest.approx(1454.4, abs=1.0)
+    assert reel["reel_uc"].valeurs[0] == pytest.approx(1462.9, abs=1.0)
     assert reel["perdants"].par_groupe["D10"][0] == pytest.approx(100.0)
     e = entente.entente(None, None, None, cel, revenus=rv, lire_fichier=False)
     pauvrete = {i.cle: i for i in e.indicateurs}["pauvrete"]
-    assert pauvrete.valeurs[0] == pytest.approx(-1.18, abs=0.01)
+    assert pauvrete.valeurs[0] == pytest.approx(-1.12, abs=0.01)
 
 
 def test_la_page_donne_aux_deux_dimensions_la_bande_des_tirages(session) -> None:
     """D-594 : sur la page (le tableau, D-605), le pouvoir d'achat et l'entente lisent la
     trajectoire vectorisée des tirages des θ que le tableau leur passe : le centre reste
-    celui du réglage (+791 € par UC en 2026, +707 en 2035), une bande s'y ajoute (le
+    celui du réglage (+726 € par UC en 2026, +645 en 2035, D-693), une bande s'y ajoute (le
     réglage, θ½, n'est pas la médiane des tirages : il peut en sortir)."""
     choix = {**RETAILLEAU, "theta": _theta(session, RETAILLEAU), "tirages": 8}
     out = session.calculer(choix)
@@ -156,5 +158,5 @@ def test_la_page_donne_aux_deux_dimensions_la_bande_des_tirages(session) -> None
         assert ind["bas"] is not None and ind["haut"] is not None
         assert ind["bas"][-1] < ind["haut"][-1]
     reel = dims["pouvoir_achat"]["indicateurs"][0]["valeurs"]
-    assert reel[0] == pytest.approx(790.6, abs=1.0)
-    assert reel[-1] == pytest.approx(706.9, abs=1.0)
+    assert reel[0] == pytest.approx(725.9, abs=1.0)
+    assert reel[-1] == pytest.approx(644.6, abs=1.0)

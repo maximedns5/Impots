@@ -136,15 +136,15 @@ def test_la_moyenne_nationale_est_le_gain_des_cellules(session, retailleau) -> N
 
 def test_les_nombres_de_tete_de_d648(retailleau) -> None:
     """Retailleau, 2035, θ à ½ (D-648) : le gain en % du revenu, l'ensemble, le rural et
-    l'outre-mer ; « illustratif »."""
+    l'outre-mer ; « illustratif ». Sur la série de D-689 et la population de D-687
+    (D-693) ; avant, sur les rapports d'avant D-559 : 2,077, 1,953, 2,302, 1 241,3."""
     assert retailleau["statut"] == "illustratif"
     ind = {i["cle"]: i for i in retailleau["indicateurs"]}
     pct = ind["pct_types"]
-    assert pct["valeurs"][-1] == pytest.approx(2.077, abs=1e-3)
-    assert pct["par_groupe"]["Rural"][-1] == pytest.approx(1.953,
-                                                                                abs=1e-3)
-    assert pct["par_groupe"]["Outre-mer"][-1] == pytest.approx(2.302, abs=1e-3)
-    assert ind["euros_regions"]["valeurs"][-1] == pytest.approx(1241.3, abs=0.1)
+    assert pct["valeurs"][-1] == pytest.approx(1.891, abs=1e-3)
+    assert pct["par_groupe"]["Rural"][-1] == pytest.approx(1.788, abs=1e-3)
+    assert pct["par_groupe"]["Outre-mer"][-1] == pytest.approx(2.077, abs=1e-3)
+    assert ind["euros_regions"]["valeurs"][-1] == pytest.approx(1129.7, abs=0.1)
 
 
 def test_le_mode_reduit_sans_deciles_est_dit(session) -> None:
