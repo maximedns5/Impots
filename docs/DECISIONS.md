@@ -44284,3 +44284,34 @@ Tests légers des fichiers du but (`test_impacts_*`, `test_jumeau_impacts_*`,
 `test_jumeau_navigateur`, `test_parametrique`, `test_pour_vous`) : 134 passés, un rouge,
 celui des données du conteneur ci-dessus. Chacun des six a échoué sur l'avant : c'est
 ce qui les a montrés.
+
+## D-694 — La distribution des niveaux de vie refaite sur la population de D-687
+
+**La décision** (le propriétaire, 25 novembre : « refais la distribution des niveaux de vie
+sur D-687 »). D-693 laissait `reports/jumeau/niveaux_de_vie_cellules.json` (D-592, D-640)
+sur les cellules de D-553, alors que celles du jumeau sont de D-687 : l'entente mêlait
+deux populations.
+
+**Ce qui a tourné**, au commit 10643f2, figé dans un worktree détaché, chaque passe sous le
+verrou commun, le 25 novembre : la population reconstruite (empreinte **03400239…**, celle
+de D-687) ; les cellules (`jumeau_cellules.py`, 30 000 ménages, 74 s ; leurs recoupements
+tiennent, l'IR et les chômeurs BIT « dits » comme à D-687), dont les valeurs sont celles
+d'`entrees_navigateur.json` au bit près ; puis `jumeau_niveaux_de_vie.py` (73 s ; écart
+des ménages aux cellules 0, aucune cellule approchée). Rc = 0 partout.
+
+**Ce qui change**, la référence mesurée sur la passe, de D-553 à D-687 :
+
+| | D-553 | D-687 |
+|---|---:|---:|
+| pauvreté (60 % du médian) | 16,56 % | 16,53 % |
+| Gini | 0,3029 | 0,3043 |
+| D9/D1 | 3,589 | 3,602 |
+| S80/S20 | 4,648 | 4,672 |
+| niveau de vie médian, € | 24 896 | 24 820 |
+
+Des écarts de l'ordre du pour mille ; aucun test léger du but ne bouge (134 passés, le
+même rouge que D-693, celui des données du conteneur).
+
+**Ce qui n'est pas refait** : les passes du juge de l'Insee (D-592 : la prime de 2019,
+l'impôt de 2020) restent celles de D-553. Les refaire sur D-687 serait une nouvelle
+comparaison à un juge, à préenregistrer d'abord.
