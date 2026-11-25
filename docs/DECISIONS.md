@@ -44341,4 +44341,7 @@ les chronos n'ont pas tourné.
   par son nom, `site_impacts.PAGE`.
 
 Aucun nombre ne change. Les tests de ces deux fichiers passent ; `node ui/check.mjs` passe.
-`make impact` est relancé sur le commit de cette entrée, pour les lourds.
+Les deux étapes que `make` n'avait pas atteintes ont tourné ensuite au commit 51b9898, dans
+le même worktree, sous le verrou (15:59-16:43 UTC) : **29 lourds verts, 0 rouge**
+(`tests/memoire.py lancer --impact`), et les 5 chronos passent. La passe légère n'est pas
+refaite : ses seuls rouges sont ceux corrigés ici.
