@@ -149,12 +149,13 @@ def test_no_study_page_runs_a_script(built, monkeypatch) -> None:
     # (D-375), the twin (D-415), « un ménage comme le mien » (D-453), and the page that
     # compares the candidates, which took the parcours' two-choice table (D-468), held by
     # their own tests. The cascade pages (D-485) run the twin in the page when θ moves;
-    # they were left out of this list until D-685.
-    from impots import site_mesure, site_population
+    # they were left out of this list until D-685. « Ce que ça change » (D-607) calcule
+    # une mesure dans le navigateur ; elle manquait ici jusqu'à D-695.
+    from impots import site_impacts, site_mesure, site_population
 
     assert not any("<script" in text.lower() for name, text in built.items()
                    if name not in (site.EXPLORER, "jumeau.html", site_mesure.COMPARER,
-                                   *site_population.SCRIPTEES)
+                                   site_impacts.PAGE, *site_population.SCRIPTEES)
                    and not name.startswith(("parcours-", "cascade-")))
     monkeypatch.setattr(site, "STYLE", "<script>alert(1)</script>")
     with pytest.raises(site.SiteError, match="script"):

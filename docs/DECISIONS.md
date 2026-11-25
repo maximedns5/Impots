@@ -44315,3 +44315,30 @@ même rouge que D-693, celui des données du conteneur).
 **Ce qui n'est pas refait** : les passes du juge de l'Insee (D-592 : la prime de 2019,
 l'impôt de 2020) restent celles de D-553. Les refaire sur D-687 serait une nouvelle
 comparaison à un juge, à préenregistrer d'abord.
+
+## D-695 — `make impact` sur le but 29 : le site sans la page, deux scripts non déclarés
+
+**La décision** (le propriétaire, 25 novembre : « lance make impact et les lourds »).
+`make impact` a tourné au commit d3202eb, dans un worktree détaché qui porte la population
+de D-687 et ses cellules, sous le verrou commun (14:10-15:28 UTC). Ruff passe ; la passe
+légère donne 4 977 passés, 21 sautés, **6 rouges**, et `make` s'arrête là : les lourds et
+les chronos n'ont pas tourné.
+
+**Les six rouges**, tous du but 29, aucun des données :
+
+* `test_dependances` : `scripts/juges_pouvoir_b29.py` importe `juges_passe_b28` et
+  `scripts/jumeau_pour_vous.py` importe `jumeau_sante`, deux scripts frères chargés après
+  un `sys.path.insert`, que `MODULES_LOCAUX` ne nommait pas. Ils y sont nommés, un par
+  un, comme les autres.
+* quatre de `test_site` (le site commité, la dérive, `site verifier`) : le site commité est
+  celui de D-689, reconstruit sur le but 28, qui n'a pas la page « Ce que ça change ».
+  Reconstruit sur le but 29 : `impacts.html`, `impacts.js`, `impacts-pour-vous.json` en
+  plus, le lien de la page dans le menu de toutes les pages, le paquet du jumeau qui porte
+  `impacts_json`, et les niveaux de vie de D-694 dans `jumeau-donnees.json`. Tout vient des
+  fichiers commités ; rien des données du conteneur.
+* `test_no_study_page_runs_a_script` : la page calcule une mesure dans le navigateur
+  (D-607) et n'était pas dans la liste des pages qui portent un script. Elle y est ajoutée
+  par son nom, `site_impacts.PAGE`.
+
+Aucun nombre ne change. Les tests de ces deux fichiers passent ; `node ui/check.mjs` passe.
+`make impact` est relancé sur le commit de cette entrée, pour les lourds.
