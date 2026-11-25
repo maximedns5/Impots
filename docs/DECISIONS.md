@@ -41148,3 +41148,33 @@ d'avant.
 **Ce qui reste.** « Ce qui touche chaque ligne » nomme encore les corrections du but 16
 (D-346, D-347, D-348, D-345), pas le changement de modèle de D-686 : c'est le même défaut
 dans une autre phrase, non corrigé ici.
+
+## D-694 — « Ce qui touche chaque ligne » : les corrections nommées par le gel
+
+**La décision** (demandée par le propriétaire, le reste de D-693). Sous « Ce qui a bougé »,
+la liste « Ce qui touche chaque ligne » venait de `causes` : les corrections du but 16, le
+secteur public (D-346), la CVAE et la C3S (D-347), la TVA (D-348), le verdict du
+Monte-Carlo (D-345). Vraies pour le gel du but 16, fausses pour celui de D-559 : entre
+01a24df et la série de D-689, seul `population/incomes.py` change un nombre des études,
+les gérants majoritaires retirés des salariés (D-686), sur la population refaite (D-687).
+Les autres fichiers de `src` touchés depuis (jumeau, parcours, `dependances.py`,
+`etude.py`) ne sont pas lus par les passes ; aucun scénario ni programme ne change.
+
+**Le correctif.** Le gel nomme ses corrections : `impots etude avant <nom> --correction
+TEXTE`, autant que voulu, les écrit sous `corrections`. Quand le gel en porte, chaque ligne
+qui a bougé les reçoit ; une ligne dont la première année et la dette sont celles du gel,
+au bit près, est dite touchée par aucune. Un gel sans elles est celui du but 16, et la page
+garde `causes`.
+
+**Les gels refaits.** Les quinze, PLF 2027 compris : son gel de 01a24df, oublié par D-693,
+lisait encore « la boîte θ » ; il porte désormais le verdict du Monte-Carlo (art. 2 et
+art. 3 « dépend », art. 15 « baisse »). Repris comme en D-693 des rapports du parent de
+707de49c ; chaque champ est identique au gel commité, `corrections` s'ajoute. La
+correction écrite : « les gérants majoritaires retirés des salariés d'un facteur commun,
+sur la population refaite (D-686, D-687) ». Dix-sept lignes la reçoivent ; l'art. 15 du
+PLF, une réforme des entreprises, est la seule identique au bit près. Aucun nombre ne
+bouge. Les quinze pages réécrites, le site reconstruit.
+
+**Le test.** `test_the_page_says_what_moved_against_the_frozen_series_and_why` : un gel
+qui nomme ses corrections les donne à la ligne qui a bougé, dit « aucune » de celle qui ne
+l'a pas fait, et ne nomme plus D-346 ni D-345. Il échoue sur le code d'avant.

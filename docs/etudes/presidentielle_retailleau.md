@@ -382,7 +382,7 @@ La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dan
 
 Ce qui touche chaque ligne :
 
-* **la part chiffrée (6 mesures sur 37 paramétrées, 41 relevées)** : le secteur public modélisé statut par statut (D-346), la CVAE et la C3S déduites de l'IS (D-347), le verdict lu sur le Monte-Carlo (D-345).
+* **la part chiffrée (6 mesures sur 37 paramétrées, 41 relevées)** : les gérants majoritaires retirés des salariés d'un facteur commun, sur la population refaite (D-686, D-687).
 
 Là où une seule correction touche une ligne, l'écart avant → après est ce qu'elle pèse (D-352) ; ailleurs, les corrections ne se séparent pas sans un calcul refait sans chacune, qui n'est pas fait.
 
