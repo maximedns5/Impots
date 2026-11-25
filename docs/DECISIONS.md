@@ -40968,3 +40968,56 @@ une hausse.
   « lisait la boîte θ », et donne Lisnard « hausse → dépend ». Le gel de D-559 garde le
   verdict de la boîte, quand D-559 lisait déjà le Monte-Carlo. Le nombre ne change pas ;
   la phrase est fausse pour cette série. À corriger dans `etude.py`, à part.
+
+## D-690 — Les études du jumeau sur la population de D-687, préenregistrées
+
+**La décision** (D-688, « les lignes `j` de D-679 ») : les études du jumeau se rejouent sur
+la population de D-687 (03400239…) et ses cellules (93c34eb6…), après la série de D-689.
+D-688 ne leur donnait pas de pronostic : il est ici, commité et poussé avant tout calcul.
+Le résultat va dans D-691. Aucune tolérance, aucun seuil, aucun enregistrement ne change.
+
+**Ce qui change dans le code** : une ligne. `mesure_melenchon_b27.py` apprend la clé de
+population `d687` (« D-687, empreinte 03400239, 199 451 ménages, huit lots »), qui nomme
+les clés de ses rapports. Rien d'autre.
+
+**Ce qui tourne**, les lignes de D-679 dans le même ordre, détachées, les passes une à
+une sous le verrou commun, vers des sorties neuves (hors git : `mesure_d687`,
+`juges_d687`, `boucle_d687`) : la passe des entrées du CICE, la passe complète du Smic,
+les passes rapides du programme, les deux passes de `boucle_b28` ; puis `analyser`,
+`jumeau`, la diffusion, l'interaction, le CICE, le jumeau et le rapport de la boucle. Les
+rapports vont à côté de ceux de D-557, qui ne sont pas récrits :
+`mesure_melenchon_b27/d687/`, `reaction_b28/diffusion_d691.json`,
+`interaction_b28/defaut_d691.json`, `interaction_b28/cice_d691.json`,
+`boucle_b28/resultats_d691.json`.
+
+**Ce qui échouera** : `analyser` lit la passe témoin du but 19, dont la population n'est
+plus sur le disque (D-682) ; il échoue, et `d687/smic.json` et `programme.json` ne sont
+pas écrits. Attendu, dit, pas contourné.
+
+**Ce que le pronostic sait déjà, et qui n'est pas aveugle.** Les lignes « telles que
+publiées » (le jumeau lu sur les rapports de l'étude Mélenchon de D-689, sans passe) ont
+été calculées avant ce texte : elles ne demandent aucune passe et lisent des rapports
+commités. D-680 a montré que les lignes calées sur les passes suivent ces lignes, le
+calage ne touchant que la première année. Figée, θ½, 2035 (emploi en milliers, B9 en
+Md€, dette en points), D-559 → D-689 : Smic −131,5 ; −0,24 ; +0,556 → −137,3 ; +1,04 ;
++0,250 ; programme +68,9 ; −48,19 ; +10,726 → +63,1 ; −46,87 ; +10,415.
+
+**Le pronostic.**
+* **Les passes rapides** redonnent les rapports de l'étude au millième : le programme,
+  union, +89,867 ; l'interaction (programme moins la somme des mesures seules) +0,114
+  (D-557 : +0,178, la même règle le redonne).
+* **La passe complète du Smic** : 30,305 × 29,664 / 30,844 = **29,145 ± 0,15** (le
+  rapport de la passe complète à la rapide tenu à celui de D-557).
+* **Le jumeau, programme calé, figée** : les lignes publiées, **+63,1 ± 0,3 ; −46,87 ±
+  0,05 ; +10,415 ± 0,005** (D-680 : calé et publié égaux au dixième).
+* **Le jumeau, Smic calé, figée** : les lignes publiées décalées comme en D-680 (emploi
+  × 1,027 ; B9 +0,44 ; dette −0,105) : **−141,0 ± 3 ; +1,48 ± 0,3 ; +0,145 ± 0,05**.
+* **Le CICE**, 2016, trois réglages : 192,6 ; 188,4 ; 184,7 milliers, **± 2 %** (la
+  passe lit les salaires autour de 2,5 Smic, que D-686 a déplacés de quelques points).
+* **La boucle**, Smic θ½, avec moins sans : emploi **+2,15 ± 0,15** millier, B9 **+1,31 ±
+  0,1** Md€ ; le CICE avec la boucle, 2016, **186,5 ± 2 %**.
+* **Sans bande, donnés avant et après** : la vieillie, la diffusion selon θ, les réglages
+  de l'interaction, les coefficients de la boucle, les paires du jumeau.
+
+Treize lignes jugées. Une ligne qui sort de sa bande : sa cause cherchée, pas de
+repronostic.
