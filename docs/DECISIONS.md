@@ -40901,3 +40901,70 @@ sur une file (D-559 : 31 heures, deux redémarrages du conteneur comptés). Puis
 `impots etude ecrire` et `impots etude verifier` par étude, le site reconstruit, et les
 études du jumeau rejouées (les lignes `j` de D-679, dont les passes de D-557 : elles
 lisent la population, et leur résultat ira dans la même entrée que la série).
+
+## D-689 — La série de D-688 : 43 pronostics sur 54, le Smic va dans l'autre sens
+
+**Ce qui a tourné**, au commit 707de49 (D-688, poussé avant), détaché, une étude à la fois
+sous le verrou commun, sur la population de D-687 (03400239…), du 23 novembre 9 h 51 au
+25 novembre 1 h 34 UTC. Quatre redémarrages du conteneur : deux à 19 h 53 et 21 h 55 le
+23 (la session sans tâche de fond, le conteneur repris : le travail de Ruffin perdu deux
+fois), un à 1 h 16 le 24, un à 0 h 58 le 25. Chaque fois la série relancée au même commit
+et à la même population ; `lancer` saute les rapports déjà écrits. Les quinze rc = 0.
+Les 243 rapports sont ceux que 707de49 avait retirés, un pour un (fea31ed) ; les pages par
+`impots etude ecrire`, `impots etude verifier` quinze sur quinze (aa64624) ; le site
+reconstruit, « le site est celui des études » (d318e39). Journal : `serie688/serie.log`.
+
+**Le résultat contre D-688.** Coût de la première année (Md€), Δb₂₀₃₅ à θ½ (vieillie,
+« lue », points), verdict du Monte-Carlo (D-345) :
+
+| étude | coût D-559 → après | bande | Δb → après | bande | verdict |
+|---|---|---|---|---|---|
+| Mélenchon | +90,995 → +89,867 | manqué | +27,495 → +27,484 | tenu | hausse, tenu |
+| Roussel | +34,307 → +33,223 | manqué | +1,336 → +1,321 | manqué | dépend, tenu |
+| Ruffin | +34,749 → +34,092 | manqué | +2,636 → +2,627 | manqué | dépend, tenu |
+| Tondelier | +20,060 → +19,496 | manqué | +2,643 → +2,646 | manqué | hausse, tenu |
+| Kazib | +17,152 → +16,607 | manqué | +0,445 → +0,441 | tenu | dépend, tenu |
+| Bouamrane | +17,015 → +16,479 | manqué | +0,442 → +0,438 | tenu | dépend, tenu |
+| Attal | +62,938 → +62,860 | tenu | +3,978 → +3,957 | tenu | dépend, tenu |
+| Retailleau | +45,479 → +45,463 | tenu | +10,872 → +10,845 | tenu | hausse, tenu |
+| Lisnard | +36,461 → +36,488 | tenu | +5,705 → +5,706 | tenu | dépend, tenu |
+| Philippe | +46,314 → +46,323 | tenu | +11,694 → +11,703 | tenu | hausse, tenu |
+| Le Pen | +21,631 → +21,603 | tenu | +3,021 → +3,010 | tenu | dépend, tenu |
+| PLFSS, prime | −0,749 → −0,755 | tenu | −0,230 → −0,234 | tenu | baisse, tenu |
+| PLFSS, APL | −0,087 → −0,088 | tenu | −0,084 → −0,084 | tenu | baisse, tenu |
+| PLF, art. 2 | +2,628 → +2,620 | tenu | +0,377 → +0,375 | tenu | dépend, tenu |
+| PLF, art. 3 | −1,164 → −1,163 | tenu | −0,175 → −0,175 | tenu | dépend, tenu |
+| PLF, art. 15 | −7,054 → −7,054 | tenu | −0,211 → −0,211 | tenu | baisse, tenu |
+| Glucksmann | +30,844 → +29,664 | manqué | +0,880 → +0,864 | manqué | dépend, tenu |
+| Zemmour | +90,542 → +90,511 | tenu | +12,017 → +12,001 | tenu | dépend, tenu |
+
+**Le compte : 43 sur 54** ; coûts 11 sur 18, Δb 14 sur 18, verdicts 18 sur 18. Lisnard
+reste « dépend », à 88,65 % des tirages en hausse, comme avant (le Monte-Carlo ne lit pas
+la population).
+
+**Le manqué a une cause, et une seule.** Les sept coûts manqués sont les sept programmes
+qui relèvent le Smic : le pronostic les voulait en hausse de 1,4 à 4,3 %, ils baissent de
+1,2 à 3,8 %. Les onze autres tiennent, tous à moins de 1 % de D-559. La règle de D-688
+déplaçait l'écart de chaque poste comme la grille avait déplacé son *niveau* (allègements
++3,7 %). Mais l'écart d'un relèvement du Smic ne suit pas le niveau des allègements : il
+suit le nombre de salaires que le nouveau Smic rattrape. Les salaires sous 4 Smic sortent
+de D-686 plus bas d'environ 3,3 % ; le relèvement en touche davantage, et ajoute plus de
+salaire brut. Roussel, première année, D-559 → après (Md€) : salaire brut +8,50 → +9,50,
+cotisations des employeurs +3,66 → +4,07, allègements +35,27 → +34,96, prime −1,89 →
+−1,99 ; Glucksmann et Mélenchon de même (+1,08 de salaire brut). Plus de cotisations
+rentrent qu'il n'en sort d'allègements : le coût baisse d'environ 1,1 Md€. Les quatre Δb
+manqués suivent : leur bande commençait à leur valeur de D-559, parce qu'elle attendait
+une hausse.
+
+**Ce qui n'est pas fait, et pourquoi.**
+* **Les lignes `j` de D-679** (les passes de D-557, puis le jumeau, la diffusion,
+  l'interaction, le CICE, la boucle). D-688 les annonçait dans cette entrée, mais sans
+  pronostic ; et `mesure_melenchon_b27.py` ne connaît que les populations `d521` et `d553`
+  (ses rapports en portent la clé) : la population de D-687 demande une ligne de script.
+  Elles vont sous leur propre préenregistrement, avec pronostic, avant de tourner.
+* **Les tests** qui tiennent les nombres de D-559 n'ont pas été relancés ; ce sera
+  l'entrée qui les met sur cette série.
+* **Une phrase de page** : la section « ce qui a bougé » dit que la série précédente
+  « lisait la boîte θ », et donne Lisnard « hausse → dépend ». Le gel de D-559 garde le
+  verdict de la boîte, quand D-559 lisait déjà le Monte-Carlo. Le nombre ne change pas ;
+  la phrase est fausse pour cette série. À corriger dans `etude.py`, à part.
