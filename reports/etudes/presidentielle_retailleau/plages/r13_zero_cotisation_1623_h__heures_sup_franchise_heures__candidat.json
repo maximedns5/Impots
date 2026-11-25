@@ -1,0 +1,70 @@
+{
+  "programme": "retailleau",
+  "mesure": "r13_zero_cotisation_1623_h",
+  "champ": "heures_sup_franchise_heures",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "heures_sup_exoneration_salariale": 1.0,
+      "heures_sup_exoneration_patronale": 1.0,
+      "heures_sup_franchise_heures": 16.0
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 4400407277.516357,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.0014280610844890074,
+      0.002840358708717128,
+      0.004237066875520723,
+      0.005618357667029672,
+      0.006984401265867746,
+      0.008335365976121167,
+      0.009671418244074248,
+      0.010992722678715872,
+      0.012299442072021272,
+      0.013591737419007766
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-24",
+  "commit": "707de49c8cf3b38400ec259bd1ce02e40e178c5e",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

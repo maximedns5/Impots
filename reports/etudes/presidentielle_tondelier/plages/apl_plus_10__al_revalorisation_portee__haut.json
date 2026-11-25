@@ -1,0 +1,68 @@
+{
+  "programme": "tondelier",
+  "mesure": "apl_plus_10",
+  "champ": "al_revalorisation_portee",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "al_revalorisation_portee": 1.15
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 2338492906.7143555,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.0007589094612889813,
+      0.001509441802534317,
+      0.002251689493449005,
+      0.0029857439830316412,
+      0.003711695710833629,
+      0.004429634118101378,
+      0.005139647658795932,
+      0.0058418238104915865,
+      0.006536249085152823,
+      0.00722300903979356
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-24",
+  "commit": "707de49c8cf3b38400ec259bd1ce02e40e178c5e",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

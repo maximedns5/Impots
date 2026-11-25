@@ -1,0 +1,68 @@
+{
+  "programme": "attal",
+  "mesure": "a16_droit_au_brut",
+  "champ": "cotisations_salariales_retraite_echelle",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "cotisations_salariales_retraite_echelle": 0.22
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 62877767160.399414,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.020405677633551056,
+      0.04058610993833556,
+      0.0605437832546285,
+      0.08028115647757117,
+      0.09980066136012256,
+      0.11910470281266261,
+      0.1381956591992921,
+      0.15707588263085892,
+      0.1757476992547522,
+      0.19421340954149557
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-24",
+  "commit": "707de49c8cf3b38400ec259bd1ce02e40e178c5e",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

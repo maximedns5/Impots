@@ -1,0 +1,70 @@
+{
+  "programme": "tondelier",
+  "mesure": "smic_2000_brut",
+  "champ": "smic_revalorisation",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "smic_revalorisation": 1.0818,
+      "smic_diffusion_profil": "annee_avec_effets_fixes",
+      "smic_diffusion_echelle": 0.0
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 18409935014.894897,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.005974563285783496,
+      0.01188317715808962,
+      0.01772656959065122,
+      0.02350546052156144,
+      0.029220561941972756,
+      0.03487257798381971,
+      0.04046220500657127,
+      0.04599013168302535,
+      0.05145703908415844,
+      0.05686360076303609
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-24",
+  "commit": "707de49c8cf3b38400ec259bd1ce02e40e178c5e",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

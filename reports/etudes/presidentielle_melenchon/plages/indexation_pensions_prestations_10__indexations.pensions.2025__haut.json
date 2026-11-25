@@ -1,0 +1,78 @@
+{
+  "programme": "melenchon",
+  "mesure": "indexation_pensions_prestations_10",
+  "champ": "indexations.pensions.2025",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "indexations": {
+        "pensions": {
+          "2025": 1.15
+        },
+        "prestations_familiales": {
+          "2025": 1.1
+        },
+        "aides_logement": {
+          "2025": 1.1
+        }
+      }
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 46627209291.22705,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.015131895496889092,
+      0.030096759600003242,
+      0.04489643606292315,
+      0.059532748287203674,
+      0.07400749954702679,
+      0.08832247321137454,
+      0.10247943296375084,
+      0.11648012301947586,
+      0.13032626834058392,
+      0.1440195748483475
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-23",
+  "commit": "707de49c8cf3b38400ec259bd1ce02e40e178c5e",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

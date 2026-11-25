@@ -1,0 +1,70 @@
+{
+  "programme": "glucksmann",
+  "mesure": "smic_1700_net",
+  "champ": "smic_revalorisation",
+  "point": "bas",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "smic_revalorisation": 1.1503,
+      "smic_diffusion_profil": "annee_avec_effets_fixes",
+      "smic_diffusion_echelle": 0.0
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 32056743674.270477,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.010403352519338771,
+      0.020691869030750043,
+      0.030866817136066427,
+      0.04092945044486784,
+      0.05088100872893331,
+      0.0607227180749883,
+      0.07045579103576438,
+      0.080081426779393,
+      0.08960081123714936,
+      0.09901511724956569
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-25",
+  "commit": "707de49c8cf3b38400ec259bd1ce02e40e178c5e",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

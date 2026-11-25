@@ -1,0 +1,70 @@
+{
+  "programme": "philippe",
+  "mesure": "p10_exoneration_deux_heures",
+  "champ": "heures_sup_exoneration_csg_crds",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "heures_sup_exoneration_salariale": 1.0,
+      "heures_sup_exoneration_csg_crds": 1.0,
+      "heures_sup_plafond_heures": 94.0
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 2300146016.6030273,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.0007464647719623851,
+      0.0014846897929108316,
+      0.0022147660162290528,
+      0.0029367833913236385,
+      0.0036508308747071894,
+      0.004356996440957772,
+      0.0050553670935580275,
+      0.005746028875613707,
+      0.006429066880456302,
+      0.0071045652621251065
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-24",
+  "commit": "707de49c8cf3b38400ec259bd1ce02e40e178c5e",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}

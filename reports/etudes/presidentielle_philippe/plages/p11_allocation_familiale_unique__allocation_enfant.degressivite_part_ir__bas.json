@@ -1,0 +1,77 @@
+{
+  "programme": "philippe",
+  "mesure": "p11_allocation_familiale_unique",
+  "champ": "allocation_enfant.degressivite_part_ir",
+  "point": "bas",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "allocation_enfant": {
+        "montant_par_enfant": 350.0,
+        "age_maximum": 20,
+        "remplace_af": true,
+        "remplace_cf": true,
+        "remplace_ars": false,
+        "par_famille": false,
+        "degressivite_part_ir": 0.0,
+        "plancher_par_enfant": 0.0
+      }
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 54445439839.78662,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.017669140368064662,
+      0.03514324230600718,
+      0.05242445871931323,
+      0.0695149187489108,
+      0.08641672803349199,
+      0.10313196896893917,
+      0.11966270096488762,
+      0.13601096069845697,
+      0.1521787623651798,
+      0.16816809792716203
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-24",
+  "commit": "707de49c8cf3b38400ec259bd1ce02e40e178c5e",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file"
+}
