@@ -127,7 +127,7 @@
    "definition": "Personnes au chômage au sens du BIT."
   }
  },
- "source": "Population de ménages 2024 du dépôt (enquête Emploi 2024 de l'Insee, revenus tirés et calés), passe de référence au droit de 2024 sur 30000 ménages (commit 0de0192, 2026-11-17) ; reports/jumeau/entrees_navigateur.json",
+ "source": "Population de ménages 2024 du dépôt (enquête Emploi 2024 de l'Insee, revenus tirés et calés), passe de référence au droit de 2024 sur 30000 ménages (commit bf45c32, 2026-11-23) ; reports/jumeau/entrees_navigateur.json",
  "cellules": [
   {
    "cellule": 1,
