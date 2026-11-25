@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 377" width="360" height="377" role="img" aria-labelledby="pres2027_roussel_programme-frise-t pres2027_roussel_programme-frise-d" font-size="13">
 <title id="pres2027_roussel_programme-frise-t">Les mesures chiffrées dans le temps, et leurs plages</title>
-<desc id="pres2027_roussel_programme-frise-d">Les mesures chiffrées : TVA sur les carburants, de 2026 à 2035, plage tva_postes.carburants : bas 0 % +7,29 Md€, candidat 5,5 % +5,29 Md€, haut 20 % 0,00 Md€ ; SMIC augmenté de 15 %, de 2026 à 2035, plage smic_diffusion_echelle : bas 0 +32,74 Md€, candidat 0 +32,74 Md€, haut 1 +7,02 Md€.</desc>
+<desc id="pres2027_roussel_programme-frise-d">Les mesures chiffrées : TVA sur les carburants, de 2026 à 2035, plage tva_postes.carburants : bas 0 % +7,29 Md€, candidat 5,5 % +5,29 Md€, haut 20 % 0,00 Md€ ; SMIC augmenté de 15 %, de 2026 à 2035, plage smic_diffusion_echelle : bas 0 +32,00 Md€, candidat 0 +32,00 Md€, haut 1 +5,99 Md€.</desc>
 <style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
 .g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
 .g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
@@ -61,11 +61,11 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <rect class="g-f1" fill="#2a78d6" x="314.1" y="281" width="30.5" height="10" rx="2"><title>2035 : s'applique</title></rect>
 <text class="g-doux" fill="#52514e" x="12" y="309" text-anchor="start" font-size="12">plage « smic_diffusion_echelle »</text>
 <line class="g-axe" stroke="#8a877f" stroke-width="2" x1="76.6" y1="321" x2="283.4" y2="321"/>
-<circle class="g-f2" fill="#eb6834" cx="283.4" cy="321" r="5"><title>bas (0) : +32,74 Md€</title></circle>
-<text class="g-doux" fill="#52514e" x="283.4" y="341" text-anchor="middle" font-size="12">+32,74 Md€</text>
-<rect class="g-f1" fill="#2a78d6" x="278.4" y="316" width="10" height="10"><title>candidat (0) : +32,74 Md€</title></rect>
-<text class="g-encre" fill="#1d1d1b" x="283.4" y="355" text-anchor="middle" font-size="12">+32,74 Md€</text>
-<circle class="g-f2" fill="#eb6834" cx="76.6" cy="321" r="5"><title>haut (1) : +7,02 Md€</title></circle>
-<text class="g-doux" fill="#52514e" x="76.6" y="341" text-anchor="middle" font-size="12">+7,02 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="283.4" cy="321" r="5"><title>bas (0) : +32,00 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="283.4" y="341" text-anchor="middle" font-size="12">+32,00 Md€</text>
+<rect class="g-f1" fill="#2a78d6" x="278.4" y="316" width="10" height="10"><title>candidat (0) : +32,00 Md€</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="283.4" y="355" text-anchor="middle" font-size="12">+32,00 Md€</text>
+<circle class="g-f2" fill="#eb6834" cx="76.6" cy="321" r="5"><title>haut (1) : +5,99 Md€</title></circle>
+<text class="g-doux" fill="#52514e" x="76.6" y="341" text-anchor="middle" font-size="12">+5,99 Md€</text>
 <text class="g-doux" fill="#52514e" x="348" y="367" text-anchor="end" font-size="12">coût de 2026, milliards d&#x27;euros</text>
 </svg>

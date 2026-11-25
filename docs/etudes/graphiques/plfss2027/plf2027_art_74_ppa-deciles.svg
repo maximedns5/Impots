@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 439" width="360" height="439" role="img" aria-labelledby="plf2027_art_74_ppa-deciles-t plf2027_art_74_ppa-deciles-d" font-size="13">
 <title id="plf2027_art_74_ppa-deciles-t">Ce que chaque décile y gagne ou y perd en 2026</title>
-<desc id="plf2027_art_74_ppa-deciles-d">Le gain moyen par ménage en 2026, par décile de niveau de vie : D1 −13 € ; D2 −36 € ; D3 −43 € ; D4 −48 € ; D5 −47 € ; D6 −25 € ; D7 −12 € ; D8 −7 € ; D9 −6 € ; D10 −3 €.</desc>
+<desc id="plf2027_art_74_ppa-deciles-d">Le gain moyen par ménage en 2026, par décile de niveau de vie : D1 −13 € ; D2 −36 € ; D3 −43 € ; D4 −48 € ; D5 −48 € ; D6 −25 € ; D7 −13 € ; D8 −7 € ; D9 −6 € ; D10 −3 €.</desc>
 <style>.g-fond{fill:#fcfcfb}.g-encre{fill:#1d1d1b}.g-doux{fill:#52514e}
 .g-axe{stroke:#8a877f}.g-grille{stroke:#e4e1da}.g-zero{stroke:#52514e}
 .g-s1{stroke:#2a78d6}.g-s2{stroke:#eb6834}.g-s3{stroke:#1baf7a}.g-s4{stroke:#6250d6}
@@ -29,36 +29,36 @@ text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}</style>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="145.3" y1="137" x2="145.3" y2="377"/>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="244.7" y1="137" x2="244.7" y2="377"/>
 <line class="g-grille" stroke="#e4e1da" stroke-width="1" x1="344" y1="137" x2="344" y2="377"/>
-<rect class="g-moins" fill="#e34948" x="278.4" y="142" width="65.6" height="14" rx="2"><title>D1 : −13 € par ménage</title></rect>
+<rect class="g-moins" fill="#e34948" x="277.3" y="142" width="66.7" height="14" rx="2"><title>D1 : −13 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="154" text-anchor="end" font-size="12">D1</text>
-<text class="g-encre" fill="#1d1d1b" x="274.4" y="154" text-anchor="end" font-size="12">−13 €</text>
-<rect class="g-moins" fill="#e34948" x="164.4" y="166" width="179.6" height="14" rx="2"><title>D2 : −36 € par ménage</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="273.3" y="154" text-anchor="end" font-size="12">−13 €</text>
+<rect class="g-moins" fill="#e34948" x="163.9" y="166" width="180.1" height="14" rx="2"><title>D2 : −36 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="178" text-anchor="end" font-size="12">D2</text>
-<text class="g-encre" fill="#1d1d1b" x="160.4" y="178" text-anchor="end" font-size="12">−36 €</text>
-<rect class="g-moins" fill="#e34948" x="130" y="190" width="214" height="14" rx="2"><title>D3 : −43 € par ménage</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="159.9" y="178" text-anchor="end" font-size="12">−36 €</text>
+<rect class="g-moins" fill="#e34948" x="128.6" y="190" width="215.4" height="14" rx="2"><title>D3 : −43 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="202" text-anchor="end" font-size="12">D3</text>
-<text class="g-encre" fill="#1d1d1b" x="126" y="202" text-anchor="end" font-size="12">−43 €</text>
-<rect class="g-moins" fill="#e34948" x="106.7" y="214" width="237.3" height="14" rx="2"><title>D4 : −48 € par ménage</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="124.6" y="202" text-anchor="end" font-size="12">−43 €</text>
+<rect class="g-moins" fill="#e34948" x="106.4" y="214" width="237.6" height="14" rx="2"><title>D4 : −48 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="226" text-anchor="end" font-size="12">D4</text>
-<text class="g-encre" fill="#1d1d1b" x="102.7" y="226" text-anchor="end" font-size="12">−48 €</text>
-<rect class="g-moins" fill="#e34948" x="109.5" y="238" width="234.5" height="14" rx="2"><title>D5 : −47 € par ménage</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="102.4" y="226" text-anchor="end" font-size="12">−48 €</text>
+<rect class="g-moins" fill="#e34948" x="105.5" y="238" width="238.5" height="14" rx="2"><title>D5 : −48 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="250" text-anchor="end" font-size="12">D5</text>
-<text class="g-encre" fill="#1d1d1b" x="105.5" y="250" text-anchor="end" font-size="12">−47 €</text>
-<rect class="g-moins" fill="#e34948" x="218.4" y="262" width="125.6" height="14" rx="2"><title>D6 : −25 € par ménage</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="101.5" y="250" text-anchor="end" font-size="12">−48 €</text>
+<rect class="g-moins" fill="#e34948" x="218.5" y="262" width="125.5" height="14" rx="2"><title>D6 : −25 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="274" text-anchor="end" font-size="12">D6</text>
-<text class="g-encre" fill="#1d1d1b" x="214.4" y="274" text-anchor="end" font-size="12">−25 €</text>
-<rect class="g-moins" fill="#e34948" x="282.6" y="286" width="61.4" height="14" rx="2"><title>D7 : −12 € par ménage</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="214.5" y="274" text-anchor="end" font-size="12">−25 €</text>
+<rect class="g-moins" fill="#e34948" x="280.9" y="286" width="63.1" height="14" rx="2"><title>D7 : −13 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="298" text-anchor="end" font-size="12">D7</text>
-<text class="g-encre" fill="#1d1d1b" x="278.6" y="298" text-anchor="end" font-size="12">−12 €</text>
-<rect class="g-moins" fill="#e34948" x="307.6" y="310" width="36.4" height="14" rx="2"><title>D8 : −7 € par ménage</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="276.9" y="298" text-anchor="end" font-size="12">−13 €</text>
+<rect class="g-moins" fill="#e34948" x="308.3" y="310" width="35.7" height="14" rx="2"><title>D8 : −7 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="322" text-anchor="end" font-size="12">D8</text>
-<text class="g-encre" fill="#1d1d1b" x="303.6" y="322" text-anchor="end" font-size="12">−7 €</text>
-<rect class="g-moins" fill="#e34948" x="316.3" y="334" width="27.7" height="14" rx="2"><title>D9 : −6 € par ménage</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="304.3" y="322" text-anchor="end" font-size="12">−7 €</text>
+<rect class="g-moins" fill="#e34948" x="315.1" y="334" width="28.9" height="14" rx="2"><title>D9 : −6 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="346" text-anchor="end" font-size="12">D9</text>
-<text class="g-encre" fill="#1d1d1b" x="312.3" y="346" text-anchor="end" font-size="12">−6 €</text>
-<rect class="g-moins" fill="#e34948" x="328.5" y="358" width="15.5" height="14" rx="2"><title>D10 : −3 € par ménage</title></rect>
+<text class="g-encre" fill="#1d1d1b" x="311.1" y="346" text-anchor="end" font-size="12">−6 €</text>
+<rect class="g-moins" fill="#e34948" x="328.8" y="358" width="15.2" height="14" rx="2"><title>D10 : −3 € par ménage</title></rect>
 <text class="g-doux" fill="#52514e" x="40" y="370" text-anchor="end" font-size="12">D10</text>
-<text class="g-encre" fill="#1d1d1b" x="324.5" y="370" text-anchor="end" font-size="12">−3 €</text>
+<text class="g-encre" fill="#1d1d1b" x="324.8" y="370" text-anchor="end" font-size="12">−3 €</text>
 <line class="g-zero" stroke="#52514e" stroke-width="1.2" x1="344" y1="135" x2="344" y2="377"/>
 <line class="g-axe" stroke="#8a877f" stroke-width="1" x1="46" y1="381" x2="344" y2="381"/>
 <text class="g-doux" fill="#52514e" x="46" y="396" text-anchor="middle" font-size="12">−60</text>

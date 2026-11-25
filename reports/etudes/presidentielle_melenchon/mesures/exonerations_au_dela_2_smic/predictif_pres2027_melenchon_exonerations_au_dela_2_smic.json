@@ -1,0 +1,2639 @@
+{
+  "rejeu": {
+    "version": 1,
+    "start": {
+      "year": 2025,
+      "debt_ratio": 1.15693757321829,
+      "primary_balance": -0.029870353480509815,
+      "implicit_rate": 0.01882827582292081,
+      "gdp_eur": 2991056000000.0,
+      "receipts_ratio": 0.5212362790934039,
+      "spending_ratio": 0.5511066325739137
+    },
+    "cadre": {
+      "growth": {
+        "real": 0.01,
+        "prices": 0.02
+      },
+      "spending": {
+        "rule": "gele_en_volume",
+        "growth": null
+      },
+      "taux": {
+        "kind": "implicite_tenu",
+        "market_rate": null,
+        "reference": [
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081
+        ],
+        "marginal": 0.01882827582292081
+      }
+    },
+    "looped": true,
+    "behavioural": true,
+    "lignes": {
+      "autofinancement_poids_tresor_eco": {
+        "low": 0.0,
+        "central": 0.5,
+        "high": 1.0,
+        "un": "high",
+        "loi": "triangular",
+        "fichier": "self_financing"
+      },
+      "employment_elasticity_smic": {
+        "low": -0.52,
+        "central": -0.43,
+        "high": -0.31,
+        "un": "low",
+        "loi": "triangular",
+        "fichier": "employer_contributions"
+      }
+    },
+    "macro": {
+      "horizons": [
+        1,
+        2,
+        3,
+        5,
+        10
+      ],
+      "court": 3,
+      "instruments": {
+        "cotisations_employeurs": {
+          "pib": {
+            "1": 0.2,
+            "2": 0.55,
+            "3": 0.76,
+            "5": 0.97,
+            "10": 1.29
+          },
+          "solde": {
+            "1": -0.72,
+            "2": -0.42,
+            "3": -0.27,
+            "5": -0.24,
+            "10": -0.17
+          },
+          "sd": 0.66,
+          "brut": 1.0,
+          "pib_salariale": {
+            "1": 0.29,
+            "2": 0.7171971649484535,
+            "3": 0.8800721649484535,
+            "5": 0.84,
+            "10": 0.85
+          },
+          "variante_source": "phillips"
+        }
+      }
+    },
+    "box_rows": [
+      "autofinancement_poids_tresor_eco",
+      "employment_elasticity_smic",
+      "multiplicateur_macro",
+      "productivite_creations"
+    ],
+    "creations": {
+      "theta": 0.5,
+      "parametres": {
+        "elasticite": {
+          "centre": 0.043,
+          "bas": 0.0,
+          "haut": 0.2
+        },
+        "productivite": {
+          "centre": 0.5,
+          "bas": 0.0,
+          "haut": 1.0
+        },
+        "survie_annuelle": 0.9,
+        "montee_en_charge_ans": 5,
+        "taille_relative": 0.1,
+        "part_va_societes_pib": 0.6,
+        "assiette_part_pib": 0.092,
+        "instruments_entreprises": [
+          "impot_societes",
+          "contribution_sociale_is",
+          "cebge"
+        ],
+        "instruments_menages": [
+          "pfu",
+          "prelevements_sociaux_capital",
+          "cotisations_employeurs"
+        ],
+        "preenregistrement": "D-402"
+      },
+      "variations": {
+        "figee": [
+          4337656560.668457,
+          4310800182.638672,
+          4310800453.085449,
+          4310800182.638672,
+          4310800182.638672,
+          4310800182.638672,
+          4310800453.085449,
+          4310800182.638672,
+          4310800182.638672,
+          4310800182.638672
+        ],
+        "vieillie": [
+          4666889365.690918,
+          4900662686.997314,
+          5419840543.194824,
+          5888993347.736328,
+          6184692796.900879,
+          6554531125.73584,
+          6869727062.03125,
+          7167154027.794434,
+          7225288793.459473,
+          7664330010.888184
+        ]
+      }
+    }
+  },
+  "monte_carlo": {
+    "objet": "distribution sous des lois déclarées",
+    "lois": "Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes.",
+    "rho": 0.8,
+    "cle_copule": "fichier YAML du magasin où vit la ligne (un article par fichier)",
+    "groupes": {
+      "self_financing": [
+        "autofinancement_poids_tresor_eco"
+      ],
+      "employer_contributions": [
+        "employment_elasticity_smic"
+      ],
+      "multiplicateur_macro": [
+        "multiplicateur_macro"
+      ]
+    },
+    "multiplicateur": {
+      "loi": "normale (centre Mésange, écart-type IMK), censurée à zéro",
+      "decalage_moyen": 0.038455142074581464
+    },
+    "tirages": 2000,
+    "graine": 20261103,
+    "persistence": "lue",
+    "annee": 2035,
+    "vues": {
+      "vieillie": {
+        "p_hausse": 0.4365,
+        "quantiles": {
+          "q05": -0.015254558263847084,
+          "q50": -0.001644523455741398,
+          "q95": 0.005045546440184423
+        },
+        "sobol": {
+          "self_financing": {
+            "premier_ordre": 0.0,
+            "total": 0.0
+          },
+          "employer_contributions": {
+            "premier_ordre": 0.0,
+            "total": 0.0
+          },
+          "multiplicateur_macro": {
+            "premier_ordre": 1.0902538511528868,
+            "total": 1.0355117954287167
+          }
+        },
+        "evaluations": 10000
+      },
+      "figee": {
+        "p_hausse": 0.439,
+        "quantiles": {
+          "q05": -0.010416531727059886,
+          "q50": -0.001044832132240714,
+          "q95": 0.003113184280241077
+        },
+        "sobol": {
+          "self_financing": {
+            "premier_ordre": 0.0,
+            "total": 0.0
+          },
+          "employer_contributions": {
+            "premier_ordre": 0.0,
+            "total": 0.0
+          },
+          "multiplicateur_macro": {
+            "premier_ordre": 1.0934089262056716,
+            "total": 1.035447993738247
+          }
+        },
+        "evaluations": 10000
+      }
+    },
+    "note": "Une distribution sous des lois déclarées, à côté de la boîte θ : elle dépend de ces lois, et en changer change la réponse (D-336)."
+  },
+  "lectures": {
+    "persistence": "lue",
+    "theta": {
+      "autofinancement_poids_tresor_eco": 0.5,
+      "employment_elasticity_smic": 0.5,
+      "multiplicateur_macro": 0.5,
+      "productivite_creations": 0.5
+    },
+    "decomposition": {
+      "vieillie": {
+        "cout": -0.016356711900527676,
+        "denominateur": 0.002396246749981179,
+        "retroaction": 0.011888664330340859,
+        "total": -0.002071800820205638
+      },
+      "figee": {
+        "cout": -0.011353248441526631,
+        "denominateur": 0.0015532558005593167,
+        "retroaction": 0.008474270885865165,
+        "total": -0.0013257217551021494
+      }
+    },
+    "taux_marche": {
+      "taux": 0.035,
+      "vieillie": -0.0024948490858491823,
+      "figee": -0.0016422190673655024
+    },
+    "variante_salariale": {
+      "sources": {
+        "cotisations_employeurs": "phillips"
+      },
+      "non_variees": [],
+      "boite": {
+        "vieillie": {
+          "theta": -0.004036241536717,
+          "corners": [
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+              -0.014343494193943762
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+              -0.013510222743621014
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+              0.0029203605124732412
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+              0.003759735287312216
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+              -0.014343494193943762
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+              -0.013510222743621014
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+              0.0029203605124732412
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+              0.003759735287312216
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+              -0.014343494193943762
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+              -0.013510222743621014
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+              0.0029203605124732412
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+              0.003759735287312216
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+              -0.014343494193943762
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+              -0.013510222743621014
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+              0.0029203605124732412
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+              0.003759735287312216
+            ]
+          ]
+        },
+        "figee": {
+          "theta": -0.0030444180979445346,
+          "corners": [
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+              -0.009988657804895329
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+              -0.009364456069826055
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+              0.0016631828786366487
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+              0.0022901775932921975
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+              -0.009988657804895329
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+              -0.009364456069826055
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+              0.0016631828786366487
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+              0.0022901775932921975
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+              -0.009988657804895329
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+              -0.009364456069826055
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+              0.0016631828786366487
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+              0.0022901775932921975
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+              -0.009988657804895329
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+              -0.009364456069826055
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+              0.0016631828786366487
+            ],
+            [
+              "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+              0.0022901775932921975
+            ]
+          ]
+        }
+      },
+      "monte_carlo": {
+        "vieillie": {
+          "p_hausse": 0.36,
+          "quantiles": {
+            "q05": -0.016356711900527676,
+            "q50": -0.003609382081132151,
+            "q95": 0.004261780205640808
+          },
+          "sobol": {
+            "self_financing": {
+              "premier_ordre": 0.0,
+              "total": 0.0
+            },
+            "employer_contributions": {
+              "premier_ordre": 0.0,
+              "total": 0.0
+            },
+            "multiplicateur_macro": {
+              "premier_ordre": 1.0932451731110642,
+              "total": 1.0345874765127843
+            }
+          },
+          "evaluations": 10000
+        },
+        "figee": {
+          "p_hausse": 0.334,
+          "quantiles": {
+            "q05": -0.011353248441526631,
+            "q50": -0.0027637391126358324,
+            "q95": 0.002509475279364104
+          },
+          "sobol": {
+            "self_financing": {
+              "premier_ordre": 0.0,
+              "total": 0.0
+            },
+            "employer_contributions": {
+              "premier_ordre": 0.0,
+              "total": 0.0
+            },
+            "multiplicateur_macro": {
+              "premier_ordre": 1.0966213247640604,
+              "total": 1.0343102308645267
+            }
+          },
+          "evaluations": 10000
+        }
+      }
+    },
+    "creations_sans_canal": {
+      "vieillie": -0.0024905962333654497,
+      "figee": -0.0016388839678647127
+    }
+  },
+  "creations": {
+    "convention": "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté.",
+    "parametres": {
+      "elasticite": {
+        "centre": 0.043,
+        "bas": 0.0,
+        "haut": 0.2
+      },
+      "productivite": {
+        "centre": 0.5,
+        "bas": 0.0,
+        "haut": 1.0
+      },
+      "survie_annuelle": 0.9,
+      "montee_en_charge_ans": 5,
+      "taille_relative": 0.1,
+      "part_va_societes_pib": 0.6,
+      "assiette_part_pib": 0.092,
+      "instruments_entreprises": [
+        "impot_societes",
+        "contribution_sociale_is",
+        "cebge"
+      ],
+      "instruments_menages": [
+        "pfu",
+        "prelevements_sociaux_capital",
+        "cotisations_employeurs"
+      ],
+      "preenregistrement": "D-402"
+    },
+    "prelevements_eur": {
+      "figee": {
+        "2026": 4337656560.668457,
+        "2027": 4310800182.638672,
+        "2028": 4310800453.085449,
+        "2029": 4310800182.638672,
+        "2030": 4310800182.638672,
+        "2031": 4310800182.638672,
+        "2032": 4310800453.085449,
+        "2033": 4310800182.638672,
+        "2034": 4310800182.638672,
+        "2035": 4310800182.638672
+      },
+      "vieillie": {
+        "2026": 4666889365.690918,
+        "2027": 4900662686.997314,
+        "2028": 5419840543.194824,
+        "2029": 5888993347.736328,
+        "2030": 6184692796.900879,
+        "2031": 6554531125.73584,
+        "2032": 6869727062.03125,
+        "2033": 7167154027.794434,
+        "2034": 7225288793.459473,
+        "2035": 7664330010.888184
+      }
+    },
+    "chemins": [
+      {
+        "persistence": "lue",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            1.6462416624804,
+            1.6780285606490228,
+            1.8013972740511832,
+            1.899951478828028,
+            1.9368591213345214,
+            1.9925075943399606,
+            2.0271052214613214,
+            2.052872618240634,
+            2.0088565666733795,
+            2.0684563920031267
+          ],
+          "taux_entree": [
+            -0.07078839148665719,
+            -0.07215522810790798,
+            -0.07746008278420087,
+            -0.0816979135896052,
+            -0.08328494221738442,
+            -0.0856778265566183,
+            -0.08716552452283681,
+            -0.08827352258434726,
+            -0.08638083236695532,
+            -0.08894362485613444
+          ],
+          "pib": [
+            -4.247303489199432e-06,
+            -1.1974459967033457e-05,
+            -2.2761317081460736e-05,
+            -3.617293298870853e-05,
+            -5.1671709076735235e-05,
+            -6.634167997332922e-05,
+            -8.023445463248097e-05,
+            -9.323730465813535e-05,
+            -0.0001051255820146198,
+            -0.00011608971281279747
+          ],
+          "recettes": [
+            -2.213848666890743e-06,
+            -6.241522957369442e-06,
+            -1.186402422280573e-05,
+            -1.8854644994929478e-05,
+            -2.6933169373554337e-05,
+            -3.4579690418103516e-05,
+            -4.1821108587722905e-05,
+            -4.859866575270456e-05,
+            -5.479526720682889e-05,
+            -6.0510169947564405e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": -0.002071800820205638,
+            "c0": -0.0024905962333654497,
+            "c1": -0.0016529079206082375
+          },
+          "delta_sans_creations": [
+            -0.000736720641294264,
+            -0.0007508390432862111,
+            -0.0008218250293852147,
+            -0.001049254839148972,
+            -0.0012373506586145222,
+            -0.0015061760638817034,
+            -0.0017640576234811967,
+            -0.0020151154267327165,
+            -0.0022325860399456943,
+            -0.0024905962333654497
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            1.5301050417437263,
+            1.4760546252063806,
+            1.4327846222186529,
+            1.3907828890798042,
+            1.3500125112403456,
+            1.3104373046402111,
+            1.2720223130005326,
+            1.2347332879029727,
+            1.1985374567103209,
+            1.1634026953119014
+          ],
+          "taux_entree": [
+            -0.06579451679498023,
+            -0.06347034888387436,
+            -0.06160973875540207,
+            -0.059803664230431576,
+            -0.05805053798333486,
+            -0.056348804099529075,
+            -0.0546969594590229,
+            -0.05309353137982782,
+            -0.05153711063854379,
+            -0.050026315898411756
+          ],
+          "pib": [
+            -3.947671007698814e-06,
+            -1.091402874689033e-05,
+            -2.0144222553490674e-05,
+            -3.100745716512795e-05,
+            -4.297963490790294e-05,
+            -5.329717052310734e-05,
+            -6.215450385498686e-05,
+            -6.971021461978842e-05,
+            -7.610665688990679e-05,
+            -8.147159178328154e-05
+          ],
+          "recettes": [
+            -2.0576693471378378e-06,
+            -5.6887877339475604e-06,
+            -1.0499899609010905e-05,
+            -1.6162211596899398e-05,
+            -2.2402544976188302e-05,
+            -2.7780418849671114e-05,
+            -3.239718231826997e-05,
+            -3.633549288322112e-05,
+            -3.966955065153338e-05,
+            -4.246594935293441e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": -0.0013257217551021494,
+            "c0": -0.0016388839678647127,
+            "c1": -0.001012508429143688
+          },
+          "delta_sans_creations": [
+            -0.0006847329270873725,
+            -0.000660484605406797,
+            -0.0006558129239497834,
+            -0.0008057049215770551,
+            -0.0009332409582181178,
+            -0.0011097116155487363,
+            -0.0012667340668628402,
+            -0.0014062968979628998,
+            -0.0015298819633311478,
+            -0.0016388839678647127
+          ]
+        }
+      },
+      {
+        "persistence": "eteint",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            1.6462416624804,
+            1.6780285606490228,
+            1.8013972740511832,
+            1.899951478828028,
+            1.9368591213345214,
+            1.9925075943399606,
+            2.0271052214613214,
+            2.052872618240634,
+            2.0088565666733795,
+            2.0684563920031267
+          ],
+          "taux_entree": [
+            -0.07078839148665719,
+            -0.07215522810790798,
+            -0.07746008278420087,
+            -0.0816979135896052,
+            -0.08328494221738442,
+            -0.0856778265566183,
+            -0.08716552452283681,
+            -0.08827352258434726,
+            -0.08638083236695532,
+            -0.08894362485613444
+          ],
+          "pib": [
+            -4.247303489199432e-06,
+            -1.1974459967033457e-05,
+            -2.2761317081460736e-05,
+            -3.617293298870853e-05,
+            -5.1671709076735235e-05,
+            -6.634167997332922e-05,
+            -8.023445463248097e-05,
+            -9.323730465813535e-05,
+            -0.0001051255820146198,
+            -0.00011608971281279747
+          ],
+          "recettes": [
+            -2.213848666890743e-06,
+            -6.241522957369442e-06,
+            -1.186402422280573e-05,
+            -1.8854644994929478e-05,
+            -2.6933169373554337e-05,
+            -3.4579690418103516e-05,
+            -4.1821108587722905e-05,
+            -4.859866575270456e-05,
+            -5.479526720682889e-05,
+            -6.0510169947564405e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": -0.013591156740698551,
+            "c0": -0.014007637660279793,
+            "c1": -0.01317457909971087
+          },
+          "delta_sans_creations": [
+            -0.000736720641294264,
+            -0.0007508390432862111,
+            -0.0008218250293852147,
+            -0.003710302958018108,
+            -0.005259765102122227,
+            -0.006986513976604547,
+            -0.008753721789259927,
+            -0.010483215085235642,
+            -0.012225114462610431,
+            -0.014007637660279793
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            1.5301050417437263,
+            1.4760546252063806,
+            1.4327846222186529,
+            1.3907828890798042,
+            1.3500125112403456,
+            1.3104373046402111,
+            1.2720223130005326,
+            1.2347332879029727,
+            1.1985374567103209,
+            1.1634026953119014
+          ],
+          "taux_entree": [
+            -0.06579451679498023,
+            -0.06347034888387436,
+            -0.06160973875540207,
+            -0.059803664230431576,
+            -0.05805053798333486,
+            -0.056348804099529075,
+            -0.0546969594590229,
+            -0.05309353137982782,
+            -0.05153711063854379,
+            -0.050026315898411756
+          ],
+          "pib": [
+            -3.947671007698814e-06,
+            -1.091402874689033e-05,
+            -2.0144222553490674e-05,
+            -3.100745716512795e-05,
+            -4.297963490790294e-05,
+            -5.329717052310734e-05,
+            -6.215450385498686e-05,
+            -6.971021461978842e-05,
+            -7.610665688990679e-05,
+            -8.147159178328154e-05
+          ],
+          "recettes": [
+            -2.0576693471378378e-06,
+            -5.6887877339475604e-06,
+            -1.0499899609010905e-05,
+            -1.6162211596899398e-05,
+            -2.2402544976188302e-05,
+            -2.7780418849671114e-05,
+            -3.239718231826997e-05,
+            -3.633549288322112e-05,
+            -3.966955065153338e-05,
+            -4.246594935293441e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": -0.009802171096934487,
+            "c0": -0.010114153743658871,
+            "c1": -0.009490137609065474
+          },
+          "delta_sans_creations": [
+            -0.0006847329270873725,
+            -0.000660484605406797,
+            -0.0006558129239497834,
+            -0.003278900967801146,
+            -0.00453709570578309,
+            -0.005750604755288213,
+            -0.006913419681223498,
+            -0.008027211812762225,
+            -0.009093600260545287,
+            -0.010114153743658871
+          ]
+        }
+      },
+      {
+        "persistence": "tenu",
+        "vieillie": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            1.6462416624804,
+            1.6780285606490228,
+            1.8013972740511832,
+            1.899951478828028,
+            1.9368591213345214,
+            1.9925075943399606,
+            2.0271052214613214,
+            2.052872618240634,
+            2.0088565666733795,
+            2.0684563920031267
+          ],
+          "taux_entree": [
+            -0.07078839148665719,
+            -0.07215522810790798,
+            -0.07746008278420087,
+            -0.0816979135896052,
+            -0.08328494221738442,
+            -0.0856778265566183,
+            -0.08716552452283681,
+            -0.08827352258434726,
+            -0.08638083236695532,
+            -0.08894362485613444
+          ],
+          "pib": [
+            -4.247303489199432e-06,
+            -1.1974459967033457e-05,
+            -2.2761317081460736e-05,
+            -3.617293298870853e-05,
+            -5.1671709076735235e-05,
+            -6.634167997332922e-05,
+            -8.023445463248097e-05,
+            -9.323730465813535e-05,
+            -0.0001051255820146198,
+            -0.00011608971281279747
+          ],
+          "recettes": [
+            -2.213848666890743e-06,
+            -6.241522957369442e-06,
+            -1.186402422280573e-05,
+            -1.8854644994929478e-05,
+            -2.6933169373554337e-05,
+            -3.4579690418103516e-05,
+            -4.1821108587722905e-05,
+            -4.859866575270456e-05,
+            -5.479526720682889e-05,
+            -6.0510169947564405e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": -0.0036751137187112093,
+            "c0": -0.004093338572403127,
+            "c1": -0.0032567916007200104
+          },
+          "delta_sans_creations": [
+            -0.000736720641294264,
+            -0.0007508390432862111,
+            -0.0008218250293852147,
+            -0.0012582538221252992,
+            -0.001678695579719891,
+            -0.002139500014296525,
+            -0.002616585501227009,
+            -0.003101618358503311,
+            -0.0035696119184498443,
+            -0.004093338572403127
+          ]
+        },
+        "figee": {
+          "years": [
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035
+          ],
+          "taux_apparent": [
+            1.5301050417437263,
+            1.4760546252063806,
+            1.4327846222186529,
+            1.3907828890798042,
+            1.3500125112403456,
+            1.3104373046402111,
+            1.2720223130005326,
+            1.2347332879029727,
+            1.1985374567103209,
+            1.1634026953119014
+          ],
+          "taux_entree": [
+            -0.06579451679498023,
+            -0.06347034888387436,
+            -0.06160973875540207,
+            -0.059803664230431576,
+            -0.05805053798333486,
+            -0.056348804099529075,
+            -0.0546969594590229,
+            -0.05309353137982782,
+            -0.05153711063854379,
+            -0.050026315898411756
+          ],
+          "pib": [
+            -3.947671007698814e-06,
+            -1.091402874689033e-05,
+            -2.0144222553490674e-05,
+            -3.100745716512795e-05,
+            -4.297963490790294e-05,
+            -5.329717052310734e-05,
+            -6.215450385498686e-05,
+            -6.971021461978842e-05,
+            -7.610665688990679e-05,
+            -8.147159178328154e-05
+          ],
+          "recettes": [
+            -2.0576693471378378e-06,
+            -5.6887877339475604e-06,
+            -1.0499899609010905e-05,
+            -1.6162211596899398e-05,
+            -2.2402544976188302e-05,
+            -2.7780418849671114e-05,
+            -3.239718231826997e-05,
+            -3.633549288322112e-05,
+            -3.966955065153338e-05,
+            -4.246594935293441e-05
+          ],
+          "productivite": 0.5,
+          "theta": 0.5,
+          "preenregistrement": "D-402",
+          "boite": {
+            "theta": -0.0025465870241594413,
+            "c0": -0.0028594390005827197,
+            "c1": -0.0022336840195349428
+          },
+          "delta_sans_creations": [
+            -0.0006847329270873725,
+            -0.000660484605406797,
+            -0.0006558129239497834,
+            -0.0009999469033672437,
+            -0.001332868948667354,
+            -0.0016566456443247723,
+            -0.001971216859290248,
+            -0.002276545978819655,
+            -0.0025726183088652377,
+            -0.0028594390005827197
+          ]
+        }
+      }
+    ]
+  },
+  "scenario": "pres2027_melenchon_exonerations_au_dela_2_smic",
+  "titre": "pres2027_melenchon_exonerations_au_dela_2_smic",
+  "source": "Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-01 — Fin des exonérations de cotisations au-dessus de 2 SMIC : « « Aussi proposons-nous d'interrompre cette subvention au-dessus de 2 SMIC, où les exonérations ne sont plus qu'un effet d'aubaine sans aucun effet sur l'emploi. » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf, 2026-10-14)",
+  "reference": "reconduit",
+  "computed": "2026-11-23",
+  "spending_name": "Dépenses gelées en volume",
+  "growth_name": "Croissance réelle 1 %, prix 2 %",
+  "rate_name": "Taux implicite tenu à son niveau de 2025",
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "years": [
+    {
+      "year": 2026,
+      "basis": "legislated",
+      "mechanical_frozen_eur": -4337656560.668457,
+      "mechanical_aged_eur": -4666889365.690918,
+      "reference": 1.168580725548546,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4337656560.668457,
+          "impulses": {
+            "cotisations_employeurs": -4337656560.668457
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8604.651577896402,
+              "tail": -415.9882079576488
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -4666889365.690918,
+          "impulses": {
+            "cotisations_employeurs": -4666889365.690918
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 10304.817382585785,
+              "tail": -432.0449792436992
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2027,
+      "basis": "legislated",
+      "mechanical_frozen_eur": -4310800182.638672,
+      "mechanical_aged_eur": -4900662686.997314,
+      "reference": 1.1746928799602263,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4310800182.638672,
+          "impulses": {
+            "cotisations_employeurs": -4310800182.638672
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8425.66328146084,
+              "tail": -406.8066989641935
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -4900662686.997314,
+          "impulses": {
+            "cotisations_employeurs": -4900662686.997314
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 10831.956293329384,
+              "tail": -447.1835081430314
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2028,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": -4310800453.085449,
+      "mechanical_aged_eur": -5419840543.194824,
+      "reference": 1.1753885794969483,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4310800453.085449,
+          "impulses": {
+            "cotisations_employeurs": -4310800453.085449
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8425.935590168754,
+              "tail": -406.8193060418483
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -5419840543.194824,
+          "impulses": {
+            "cotisations_employeurs": -5419840543.194824
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 12861.029224406426,
+              "tail": -516.4429533871901
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": -4310800182.638672,
+      "mechanical_aged_eur": -5888993347.736328,
+      "reference": 1.1707805732317031,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4310800182.638672,
+          "impulses": {
+            "cotisations_employeurs": -4310800182.638672
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8425.66328146084,
+              "tail": -406.8066989641935
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -5888993347.736328,
+          "impulses": {
+            "cotisations_employeurs": -5888993347.736328
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 14528.43610831317,
+              "tail": -567.1946372806508
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2030,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": -4310800182.638672,
+      "mechanical_aged_eur": -6184692796.900879,
+      "reference": 1.1609798413129486,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4310800182.638672,
+          "impulses": {
+            "cotisations_employeurs": -4310800182.638672
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8425.66328146084,
+              "tail": -406.8066989641935
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -6184692796.900879,
+          "impulses": {
+            "cotisations_employeurs": -6184692796.900879
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 15430.139522771267,
+              "tail": -592.9781314178787
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2031,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": -4310800182.638672,
+      "mechanical_aged_eur": -6554531125.73584,
+      "reference": 1.146095619682319,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4310800182.638672,
+          "impulses": {
+            "cotisations_employeurs": -4310800182.638672
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8425.66328146084,
+              "tail": -406.8066989641935
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -6554531125.73584,
+          "impulses": {
+            "cotisations_employeurs": -6554531125.73584
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 16180.641304959716,
+              "tail": -650.3490004931571
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2032,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": -4310800453.085449,
+      "mechanical_aged_eur": -6869727062.03125,
+      "reference": 1.1262354244680892,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4310800453.085449,
+          "impulses": {
+            "cotisations_employeurs": -4310800453.085449
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8425.935590168754,
+              "tail": -406.8193060418483
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -6869727062.03125,
+          "impulses": {
+            "cotisations_employeurs": -6869727062.03125
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 16549.312644687983,
+              "tail": -709.8335097437802
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2033,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": -4310800182.638672,
+      "mechanical_aged_eur": -7167154027.794434,
+      "reference": 1.1015050760584795,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4310800182.638672,
+          "impulses": {
+            "cotisations_employeurs": -4310800182.638672
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8425.66328146084,
+              "tail": -406.8066989641935
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -7167154027.794434,
+          "impulses": {
+            "cotisations_employeurs": -7167154027.794434
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 17199.769666629112,
+              "tail": -688.7410785478975
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2034,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": -4310800182.638672,
+      "mechanical_aged_eur": -7225288793.459473,
+      "reference": 1.0720087228588424,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4310800182.638672,
+          "impulses": {
+            "cotisations_employeurs": -4310800182.638672
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8425.66328146084,
+              "tail": -406.8066989641935
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -7225288793.459473,
+          "impulses": {
+            "cotisations_employeurs": -7225288793.459473
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 17586.23246550949,
+              "tail": -691.452358844358
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    },
+    {
+      "year": 2035,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": -4310800182.638672,
+      "mechanical_aged_eur": -7664330010.888184,
+      "reference": 1.0378488647367168,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -4310800182.638672,
+          "impulses": {
+            "cotisations_employeurs": -4310800182.638672
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 8425.66328146084,
+              "tail": -406.8066989641935
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -7664330010.888184,
+          "impulses": {
+            "cotisations_employeurs": -7664330010.888184
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 20172.016666870837,
+              "tail": -812.1122991894754
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
+    }
+  ],
+  "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+    "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+    "Rétroaction mesurée contre le coût que la chaîne compte : un point par point de variante ; pour la TVA, le moteur chiffre celle des ménages, le point net de la variante, sans les 15 % que les APU se versent (folio 112, D-348).",
+    "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+    "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+    "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+    "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+    "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+    "Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange dit « erroné » (folio 108, D-336).",
+    "Créations d'entreprises dans la dette : HYPOTHÈSE NON VALIDÉE. Les variations des prélèvements sur les entreprises et le capital déplacent le taux d'entrée selon la pente de Da Rin, Di Giacomo et Sembenelli (2011), lue sur un taux apparent et non sur leur taux effectif ; les cotisations patronales en font partie, comptées aussi par la boucle macro (choix du propriétaire) ; les sociétés nouvelles survivent, montent en charge et produisent à une productivité relative réglée par θ, de 0 à 1. Aucune source ne redonne ce total ; la dette sans ce canal est donnée à côté."
+  ],
+  "absent": {},
+  "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
+    "dividend_wage_shift_firm_owners": 0.5,
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "is_croissance_pib": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5,
+    "multiplicateur_macro": 0.5
+  },
+  "theta_applied": true,
+  "closed": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "Canal ouvert dans la dette (but 22), hypothèse non validée : C8 reste l'indice de la couche entreprises ; le canal de la dette lit les euros de prélèvement, pas le taux normal seul, et la dette sans lui est donnée à côté.",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
+  },
+  "uprating_note": "Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "behavioural": true,
+  "macro": true,
+  "theta_box": {
+    "year": 2035,
+    "rows": [
+      "autofinancement_poids_tresor_eco",
+      "employment_elasticity_smic",
+      "multiplicateur_macro",
+      "productivite_creations"
+    ],
+    "paths": [
+      {
+        "persistence": "lue",
+        "every_year": {
+          "vieillie": {
+            "theta": -0.002071800820205638,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.011972310048645518
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.0111378622388143
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.003745609989063148
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.004585807936662523
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.011972310048645518
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.0111378622388143
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.003745609989063148
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.004585807936662523
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.011972310048645518
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.0111378622388143
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.003745609989063148
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.004585807936662523
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.011972310048645518
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.0111378622388143
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.003745609989063148
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.004585807936662523
+              ]
+            ]
+          },
+          "figee": {
+            "theta": -0.0013257217551021494,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.008046519141736264
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.007421643197275785
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.002306203125654438
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0029336665617760715
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.008046519141736264
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.007421643197275785
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.002306203125654438
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0029336665617760715
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.008046519141736264
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.007421643197275785
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.002306203125654438
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0029336665617760715
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.008046519141736264
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.007421643197275785
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.002306203125654438
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0029336665617760715
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": -0.0017214273757846232,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.010143967117820729
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.009402812598966914
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.003074218037663501
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0038195078836187335
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.010143967117820729
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.009402812598966914
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.003074218037663501
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0038195078836187335
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.010143967117820729
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.009402812598966914
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.003074218037663501
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0038195078836187335
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.010143967117820729
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.009402812598966914
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.003074218037663501
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0038195078836187335
+              ]
+            ]
+          },
+          "figee": {
+            "theta": -0.0015997544193588897,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.009427710324849903
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.008738764682288291
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0028567456892618637
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0035492628908317947
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.009427710324849903
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.008738764682288291
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0028567456892618637
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0035492628908317947
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.009427710324849903
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.008738764682288291
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0028567456892618637
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0035492628908317947
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.009427710324849903
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.008738764682288291
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0028567456892618637
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0035492628908317947
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "eteint",
+        "every_year": {
+          "vieillie": {
+            "theta": -0.013591156740698551,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.01660131041189672
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.015768857806552683
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.0115413671305713
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.010707714879200525
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.01660131041189672
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.015768857806552683
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.0115413671305713
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.010707714879200525
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.01660131041189672
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.015768857806552683
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.0115413671305713
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.010707714879200525
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.01660131041189672
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.015768857806552683
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.0115413671305713
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.010707714879200525
+              ]
+            ]
+          },
+          "figee": {
+            "theta": -0.009802171096934487,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.01156873032867023
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.010944921648549988
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.008797687420155409
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.008173497924605089
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.01156873032867023
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.010944921648549988
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.008797687420155409
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.008173497924605089
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.01156873032867023
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.010944921648549988
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.008797687420155409
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.008173497924605089
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.01156873032867023
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.010944921648549988
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.008797687420155409
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.008173497924605089
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": -0.011834338123805743,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.014280232187069197
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.013540611450633788
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.01025710487868614
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.009516680288222945
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.014280232187069197
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.013540611450633788
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.01025710487868614
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.009516680288222945
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.014280232187069197
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.013540611450633788
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.01025710487868614
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.009516680288222945
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.014280232187069197
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.013540611450633788
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.01025710487868614
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.009516680288222945
+              ]
+            ]
+          },
+          "figee": {
+            "theta": -0.010999389235286872,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.013272811498272752
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.012585191033035681
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.009533501821916479
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.008845186930018789
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.013272811498272752
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.012585191033035681
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.009533501821916479
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.008845186930018789
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.013272811498272752
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.012585191033035681
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.009533501821916479
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.008845186930018789
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.013272811498272752
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.012585191033035681
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                -0.009533501821916479
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                -0.008845186930018789
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "tenu",
+        "every_year": {
+          "vieillie": {
+            "theta": -0.0036751137187112093,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.015298892805894804
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.01446598236606067
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.002788940017289354
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0036281433234204297
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.015298892805894804
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.01446598236606067
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.002788940017289354
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0036281433234204297
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.015298892805894804
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.01446598236606067
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.002788940017289354
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0036281433234204297
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.015298892805894804
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.01446598236606067
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.002788940017289354
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0036281433234204297
+              ]
+            ]
+          },
+          "figee": {
+            "theta": -0.0025465870241594413,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.010615024934665263
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.009990987789705086
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0016059199567253213
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0022328465832939237
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.010615024934665263
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.009990987789705086
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0016059199567253213
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0022328465832939237
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.010615024934665263
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.009990987789705086
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0016059199567253213
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0022328465832939237
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.010615024934665263
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.009990987789705086
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0016059199567253213
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.0022328465832939237
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": -0.0031547977622046197,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.013139813747777396
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.01239985305375746
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0022368604771194622
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.002981382992300441
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.013139813747777396
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.01239985305375746
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0022368604771194622
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.002981382992300441
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.013139813747777396
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.01239985305375746
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0022368604771194622
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.002981382992300441
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.013139813747777396
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.01239985305375746
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0022368604771194622
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.002981382992300441
+              ]
+            ]
+          },
+          "figee": {
+            "theta": -0.002931978689199921,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.012212715104108707
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.011524800913089939
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0020787416859577856
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.002770596311183704
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.012212715104108707
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.011524800913089939
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0020787416859577856
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.002770596311183704
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.012212715104108707
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.011524800913089939
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0020787416859577856
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1, productivite_creations = 1",
+                0.002770596311183704
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 0",
+                -0.012212715104108707
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0, productivite_creations = 1",
+                -0.011524800913089939
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 0",
+                0.0020787416859577856
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1, productivite_creations = 1",
+                0.002770596311183704
+              ]
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "commit": "707de49c8cf3b38400ec259bd1ce02e40e178c5e",
+  "dirty": false,
+  "where": "conteneur cloud, 15 Go, 4 cœurs, une file",
+  "annees": null,
+  "persistence": null,
+  "side_by_side": [
+    {
+      "persistence": "lue",
+      "label": "Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1678511811480594,
+          "delta_aged": -0.0007295444004866702,
+          "reform_frozen": 1.1679026626641666,
+          "delta_frozen": -0.0006780628843794378
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1739645483230519,
+          "delta_aged": -0.0007283316371744508,
+          "reform_frozen": 1.1740529484547089,
+          "delta_frozen": -0.0006399315055174437
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1746137480330159,
+          "delta_aged": -0.0007748314639324239,
+          "reform_frozen": 1.1747746131720405,
+          "delta_frozen": -0.0006139663249078442
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1698125823034167,
+          "delta_aged": -0.0009679909282864774,
+          "reform_frozen": 1.1700453298677986,
+          "delta_frozen": -0.0007352433639045142
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1598679665131715,
+          "delta_aged": -0.001111874799777146,
+          "reform_frozen": 1.160152723888183,
+          "delta_frozen": -0.0008271174247655999
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1447648999022333,
+          "delta_aged": -0.0013307197800858095,
+          "reform_frozen": 1.1451304177821333,
+          "delta_frozen": -0.0009652019001857859
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1247019772140796,
+          "delta_aged": -0.0015334472540096122,
+          "reform_frozen": 1.1251536417325552,
+          "delta_frozen": -0.0010817827355340537
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.0997800837031837,
+          "delta_aged": -0.0017249923552957735,
+          "reform_frozen": 1.1003256382325155,
+          "delta_frozen": -0.0011794378259639693
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0701291249819926,
+          "delta_aged": -0.00187959787684977,
+          "reform_frozen": 1.0707485764296367,
+          "delta_frozen": -0.0012601464292056885
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0357770639165111,
+          "delta_aged": -0.002071800820205638,
+          "reform_frozen": 1.0365231429816146,
+          "delta_frozen": -0.0013257217551021494
+        }
+      ],
+      "conventions": [
+        "Persistance « lue » : colonnes 5 et 10 ans de Mésange sous sa spécification centrale (« wage setting »), interpolées linéairement entre les horizons imprimés. Sous courbe de Phillips, les horizons longs tombent (cotisations employeurs : 1,73 contre 0,25 à long terme) ; la colonne de long terme reste refusée (D-055, D-336).",
+        "Au-delà de trois ans : Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux."
+      ],
+      "gdp_gap_aged": [
+        -0.00030290846589639363,
+        -0.000838847070478109,
+        -0.0011898361841456164,
+        -0.001412863056861836,
+        -0.0016373209114091678,
+        -0.0017904039048567296,
+        -0.0019420593086341724,
+        -0.0020878441165029984,
+        -0.002215536590169256,
+        -0.002340068088819463
+      ]
+    },
+    {
+      "persistence": "eteint",
+      "label": "Effet macro éteint après trois ans",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1678511811480594,
+          "delta_aged": -0.0007295444004866702,
+          "reform_frozen": 1.1679026626641666,
+          "delta_frozen": -0.0006780628843794378
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1739645483230519,
+          "delta_aged": -0.0007283316371744508,
+          "reform_frozen": 1.1740529484547089,
+          "delta_frozen": -0.0006399315055174437
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1746137480330159,
+          "delta_aged": -0.0007748314639324239,
+          "reform_frozen": 1.1747746131720405,
+          "delta_frozen": -0.0006139663249078442
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1671513314363067,
+          "delta_aged": -0.003629241795396476,
+          "reform_frozen": 1.1675719713419188,
+          "delta_frozen": -0.003208601889784335
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1558451566363035,
+          "delta_aged": -0.005134684676645129,
+          "reform_frozen": 1.1565485739096657,
+          "delta_frozen": -0.004431267403282924
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.139283901332394,
+          "delta_aged": -0.006811718349925,
+          "reform_frozen": 1.1404890789018303,
+          "delta_frozen": -0.005606540780488833
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1177113181502505,
+          "delta_aged": -0.008524106317838731,
+          "reform_frozen": 1.1195063421104245,
+          "delta_frozen": -0.006729082357664673
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.0913106063004898,
+          "delta_aged": -0.010194469757989655,
+          "reform_frozen": 1.0937039282645749,
+          "delta_frozen": -0.007801147793904617
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0601347740686395,
+          "delta_aged": -0.01187394879020287,
+          "reform_frozen": 1.0631838734026997,
+          "delta_frozen": -0.008824849456142703
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0242577079960182,
+          "delta_aged": -0.013591156740698551,
+          "reform_frozen": 1.0280466936397823,
+          "delta_frozen": -0.009802171096934487
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro éteint après trois ans."
+      ],
+      "gdp_gap_aged": [
+        -0.00030290846589639363,
+        -0.000838847070478109,
+        -0.0011898361841456164,
+        -0.00010278394185993372,
+        -0.00014291883824906873,
+        -9.78236861212563e-05,
+        -6.032991437162283e-05,
+        -6.115701265620526e-05,
+        -2.9130010165212768e-05,
+        -6.710809595738219e-06
+      ]
+    },
+    {
+      "persistence": "tenu",
+      "label": "Effet macro tenu au niveau de la troisième année",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1678511811480594,
+          "delta_aged": -0.0007295444004866702,
+          "reform_frozen": 1.1679026626641666,
+          "delta_frozen": -0.0006780628843794378
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1739645483230519,
+          "delta_aged": -0.0007283316371744508,
+          "reform_frozen": 1.1740529484547089,
+          "delta_frozen": -0.0006399315055174437
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1746137480330159,
+          "delta_aged": -0.0007748314639324239,
+          "reform_frozen": 1.1747746131720405,
+          "delta_frozen": -0.0006139663249078442
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.169603562810725,
+          "delta_aged": -0.001177010420978064,
+          "reform_frozen": 1.1698510714312609,
+          "delta_frozen": -0.0009295018004422673
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1594265584072183,
+          "delta_aged": -0.0015532829057303132,
+          "reform_frozen": 1.1597530478553102,
+          "delta_frozen": -0.001226793457638431
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1441314577876542,
+          "delta_aged": -0.001964161894664862,
+          "reform_frozen": 1.1445834008950453,
+          "delta_frozen": -0.0015122187872738113
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.123849253053011,
+          "delta_aged": -0.002386171415078131,
+          "reform_frozen": 1.124449031845343,
+          "delta_frozen": -0.001786392622746158
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.0986932839320152,
+          "delta_aged": -0.0028117921264643186,
+          "reform_frozen": 1.0994552089570537,
+          "delta_frozen": -0.0020498671014257397
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0687916778983182,
+          "delta_aged": -0.003217044960524218,
+          "reform_frozen": 1.069705598588149,
+          "delta_frozen": -0.0023031242706934574
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0341737510180056,
+          "delta_aged": -0.0036751137187112093,
+          "reform_frozen": 1.0353022777125573,
+          "delta_frozen": -0.0025465870241594413
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année."
+      ],
+      "gdp_gap_aged": [
+        -0.00030290846589639363,
+        -0.000838847070478109,
+        -0.0011898361841456164,
+        -0.0012538361122662294,
+        -0.0013161964078548655,
+        -0.0013573606601378436,
+        -0.0013887759883681801,
+        -0.0014154089102933027,
+        -0.0014222913201277132,
+        -0.0014240627804414942
+      ]
+    }
+  ]
+}

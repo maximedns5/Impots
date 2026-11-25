@@ -4,7 +4,7 @@
 
 ## Ce que dit cette étude
 
-La part chiffrée du programme coûte 36,46 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +64 € par an dans le dixième le plus modeste à +3 077 € dans le dixième le plus aisé ; les entreprises paient 6,55 Md€ de moins. Une fois comptés les changements de comportement que des études publiées permettent de chiffrer, le coût pour la part des ménages irait de +28,37 Md€ à +29,21 Md€. En 2035, la dette publique serait plus haute de 5,71 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 89 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu et la CSG, pas pour la part des entreprises, qui agit sur la dette sans effet sur l'activité. Sans aucun effet sur l'activité, la dette serait plus haute de 11,46 points de PIB : le coût après les comportements, à θ½, sans la boucle macro. Le revenu imposable répond aux taux (le canal C1, l'élasticité du revenu imposable), et la boucle lit aussi l'impôt sur le revenu dans Mésange. L'élasticité est mesurée sur le revenu déclaré, toutes réactions comprises, les heures travaillées avec ; le multiplicateur de Mésange passe lui aussi par l'emploi et l'activité. La même réaction peut donc être comptée deux fois, une fois dans le coût après comportements, une fois dans les recettes induites ; l'outil ne mesure pas ce recouvrement. Et l'élasticité pèse surtout dans le haut de la distribution, là où la population simulée est la plus faible : peu de foyers tirés, aucun revenu du capital. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
+La part chiffrée du programme coûte 36,49 Md€ au budget sur le droit et les revenus de 2026, comme si elle s'appliquait cette année-là, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de +66 € par an dans le dixième le plus modeste à +3 110 € dans le dixième le plus aisé ; les entreprises paient 6,55 Md€ de moins. Une fois comptés les changements de comportement que des études publiées permettent de chiffrer, le coût pour la part des ménages irait de +28,60 Md€ à +29,37 Md€. En 2035, la dette publique serait plus haute de 5,71 points de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 89 % des tirages du calcul d'incertitude, et l'outil ne tranche pas : cette part du programme peut faire monter ou baisser la dette selon les hypothèses. L'effet sur l'activité n'est lu que pour l'impôt sur le revenu et la CSG, pas pour la part des entreprises, qui agit sur la dette sans effet sur l'activité. Sans aucun effet sur l'activité, la dette serait plus haute de 11,47 points de PIB : le coût après les comportements, à θ½, sans la boucle macro. Le revenu imposable répond aux taux (le canal C1, l'élasticité du revenu imposable), et la boucle lit aussi l'impôt sur le revenu dans Mésange. L'élasticité est mesurée sur le revenu déclaré, toutes réactions comprises, les heures travaillées avec ; le multiplicateur de Mésange passe lui aussi par l'emploi et l'activité. La même réaction peut donc être comptée deux fois, une fois dans le coût après comportements, une fois dans les recettes induites ; l'outil ne mesure pas ce recouvrement. Et l'élasticité pèse surtout dans le haut de la distribution, là où la population simulée est la plus faible : peu de foyers tirés, aucun revenu du capital. Ces nombres valent pour la seule part chiffrée, pas pour le programme entier.
 
 David Lisnard, Nouvelle Énergie, a déclaré sa candidature à l'élection présidentielle de 2027. Son programme a été relevé le 12/11/2026 ; le relevé compte ses mesures, celles qui énoncent un paramètre, et celles que cet outil chiffre. Il dit plus bas pourquoi il ne chiffre pas les autres.
 
@@ -20,7 +20,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 | programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | sans le canal des créations | verdict | selon θ |
 |---|---|---|---|---|---|---|
-| la part chiffrée (3 mesures sur 21 paramétrées, 29 relevées) | +36,46 Md€ | — | +5,71 pt | +5,69 pt | dépend (89 % des tirages en hausse) | hausse |
+| la part chiffrée (3 mesures sur 21 paramétrées, 29 relevées) | +36,49 Md€ | — | +5,71 pt | +5,69 pt | dépend (89 % des tirages en hausse) | hausse |
 
 **La dette lit le canal des créations d'entreprises, une hypothèse non validée** (décision du propriétaire, D-400) : ce qu'une hausse ou une baisse des prélèvements sur les entreprises et le capital, cotisations patronales comprises, fait aux sociétés qui se créent, et ce qu'elles produisent. Aucune source ne redonne ce total. La dette, le verdict et « selon θ » le lisent ; la colonne « sans le canal » donne la dette sans lui, à θ½, sur les mêmes passes. Le canal, ses paramètres et ses sources sont dits avec la dette de chaque mesure. Les points de plage, chiffrés sans comportement ni boucle, ne le lisent pas.
 
@@ -40,20 +40,20 @@ Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est 
 
 *Source du graphique : `reports/etudes/presidentielle_lisnard/premiere_annee_pres2027_lisnard_programme.json` ; tracé par `impots.graphiques`. Ses nombres reposent sur : L2, la simulation mécanique ; les déciles sont ceux de la population (L1).*
 
-La part chiffrée coûte **36,46 Md€** la première année (2026) : +29,91 Md€ pour les ménages, sur la population de 2024 au droit de 2026, et +6,55 Md€ pour les entreprises, sur celles de 2023.
+La part chiffrée coûte **36,49 Md€** la première année (2026) : +29,94 Md€ pour les ménages, sur la population de 2024 au droit de 2026, et +6,55 Md€ pour les entreprises, sur celles de 2023.
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
 |---|---|---|---|---|---|
-| 1 | 3 104 707 | 9 077 € | +64 € | 29 % | 0 % |
-| 2 | 3 105 483 | 14 036 € | +178 € | 42 % | 0 % |
-| 3 | 3 106 617 | 17 045 € | +325 € | 55 % | 0 % |
-| 4 | 3 104 834 | 20 061 € | +454 € | 65 % | 0 % |
-| 5 | 3 105 397 | 22 552 € | +560 € | 72 % | 0 % |
-| 6 | 3 104 668 | 25 359 € | +736 € | 69 % | 0 % |
-| 7 | 3 106 643 | 28 842 € | +876 € | 67 % | 0 % |
-| 8 | 3 105 024 | 33 089 € | +1 099 € | 69 % | 0 % |
-| 9 | 3 105 452 | 39 668 € | +1 650 € | 69 % | 0 % |
-| 10 | 3 104 928 | 59 761 € | +3 077 € | 80 % | 0 % |
+| 1 | 3 104 707 | 9 069 € | +66 € | 29 % | 0 % |
+| 2 | 3 105 483 | 14 014 € | +178 € | 42 % | 0 % |
+| 3 | 3 106 617 | 17 007 € | +325 € | 55 % | 0 % |
+| 4 | 3 104 834 | 19 993 € | +452 € | 65 % | 0 % |
+| 5 | 3 105 654 | 22 477 € | +560 € | 72 % | 0 % |
+| 6 | 3 104 411 | 25 287 € | +727 € | 68 % | 0 % |
+| 7 | 3 106 643 | 28 784 € | +871 € | 67 % | 0 % |
+| 8 | 3 105 024 | 33 044 € | +1 089 € | 69 % | 0 % |
+| 9 | 3 105 452 | 39 681 € | +1 650 € | 69 % | 0 % |
+| 10 | 3 104 928 | 60 083 € | +3 110 € | 81 % | 0 % |
 
 Les déciles sont ceux du niveau de vie de la population simulée. Toute structure
 plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
@@ -75,18 +75,18 @@ Population d'entreprises synthétique : effectifs et agrégats par secteur × ta
 
 La bande et l'éventail ne lisent que la part des ménages : aucun canal des comportements ne lit une réforme des entreprises, et aucune variante de Mésange ne porte leurs impôts. La dette, plus bas, compte les deux parts.
 
-**Une fois les comportements pris en compte**, la mesure coûte de +28,37 Md€ à +29,21 Md€, central +28,78 Md€ (bande **extrapolée** : la réforme sort de l'étendue des variations sur lesquelles les élasticités publiées ont été estimées), pour +29,91 Md€ sans eux (la part des ménages).
+**Une fois les comportements pris en compte**, la mesure coûte de +28,60 Md€ à +29,37 Md€, central +28,99 Md€ (bande **extrapolée** : la réforme sort de l'étendue des variations sur lesquelles les élasticités publiées ont été estimées), pour +29,94 Md€ sans eux (la part des ménages).
 
 *Cette réforme est plus grande que celles sur lesquelles les élasticités ont été estimées : la bande est une extrapolation, élargie et signalée comme telle.*
 
 **L'effet sur l'économie**, l'éventail macro (la fourchette de ce que des multiplicateurs publiés disent du PIB et de l'emploi), **extrapolé**, le choc dépassant ceux sur lesquels les multiplicateurs ont été estimés ; 97 % de la mesure a un multiplicateur publié ; conjoncture supposée normale, ni récession ni surchauffe :
 
-* **PIB, à 1 an** : [-13,69 Md€ ; +39,62 Md€], central +13,91 Md€
-* **PIB, à 2 ans** : [-1,14 Md€ ; +50,94 Md€], central +25,65 Md€
-* **PIB, à 3 ans** : [-1,02 Md€ ; +55,29 Md€], central +27,97 Md€
-* **emploi, à 1 an** : [-26,71 ; +77,47] milliers ETP, central +27,21
-* **emploi, à 2 ans** : [-4,91 ; +222,05] milliers ETP, central +111,80
-* **emploi, à 3 ans** : [-5,78 ; +355,60] milliers ETP, central +180,09
+* **PIB, à 1 an** : [-13,68 Md€ ; +39,64 Md€], central +13,92 Md€
+* **PIB, à 2 ans** : [-1,14 Md€ ; +50,98 Md€], central +25,67 Md€
+* **PIB, à 3 ans** : [-991 M€ ; +55,31 Md€], central +28,00 Md€
+* **emploi, à 1 an** : [-26,68 ; +77,51] milliers ETP, central +27,21
+* **emploi, à 2 ans** : [-4,70 ; +222,19] milliers ETP, central +111,88
+* **emploi, à 3 ans** : [-5,57 ; +355,75] milliers ETP, central +180,22
 
 > Couche macro (L4) : ordre de grandeur et composition, pas une prévision. L'éventail des estimations crédibles pour un même choc est large — la dispersion entre études publiées est du même ordre que la valeur centrale elle-même. C'est une propriété de la littérature, pas de ce modèle.
 
@@ -106,7 +106,7 @@ Ce que la chaîne ne lit pas, et pourquoi :
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
 | Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | vieillie | +5,71 pt | de +0,72 pt à +10,63 pt |
-| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | +4,64 pt | de +0,67 pt à +8,55 pt |
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | +4,69 pt | de +0,75 pt à +8,57 pt |
 
 En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sous cette persistance, elle **augmente la dette** en 2035, à θ½ comme à chaque coin de la boîte, dans les deux vues.
 
@@ -117,7 +117,7 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 | persistance | vue | Δ dette 2035, à θ½ | sans le canal | ce que le canal y change |
 |---|---|---|---|---|
 | lue | vieillie | +5,71 pt | +5,69 pt | +0,01 pt |
-| lue | figée | +4,64 pt | +4,63 pt | +0,01 pt |
+| lue | figée | +4,69 pt | +4,68 pt | +0,01 pt |
 
 La productivité relative des sociétés nouvelles, rapportée à la société moyenne, est la ligne θ du canal : 0,5 au centre (θ½), de 0, le canal éteint, à 1. Aucune source ne la chiffre pour les sociétés qu'un impôt fait naître ou disparaître. Sa boîte, toutes les autres lignes à θ½, va de +5,69 pt à +5,72 pt en 2035, vue vieillie, persistance « lue ». Le Monte-Carlo du verdict lit le canal à sa productivité centrale, sans la tirer : sa loi n'est pas déclarée.
 
@@ -131,33 +131,33 @@ Les instruments lus, en euros de prélèvement, recettes positives, rien d'autre
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
-| Effet macro éteint après trois ans | vieillie | +10,17 pt | de +8,74 pt à +11,47 pt |
-| Effet macro éteint après trois ans | figée | +8,32 pt | de +7,31 pt à +9,23 pt |
-| Effet macro tenu au niveau de la troisième année | vieillie | +4,93 pt | de -0,27 pt à +10,06 pt |
-| Effet macro tenu au niveau de la troisième année | figée | +3,97 pt | de -0,18 pt à +8,07 pt |
+| Effet macro éteint après trois ans | vieillie | +10,18 pt | de +8,75 pt à +11,47 pt |
+| Effet macro éteint après trois ans | figée | +8,37 pt | de +7,40 pt à +9,26 pt |
+| Effet macro tenu au niveau de la troisième année | vieillie | +4,93 pt | de -0,26 pt à +10,06 pt |
+| Effet macro tenu au niveau de la troisième année | figée | +4,02 pt | de -0,09 pt à +8,10 pt |
 
 **La distribution, à côté de la boîte.** La boîte dit jusqu'où Δb va quand chaque effet parcourt sa fourchette publiée : ce n'est pas une probabilité. Le Monte-Carlo en est une, sous des lois déclarées : Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes. (ρ = 0,8, 2000 tirages, persistance « lue », D-336). D'autres lois donneraient une autre réponse.
 
 | vue | P(hausse de la dette en 2035) | quantile 5 % | médiane | quantile 95 % | ce qui pèse le plus (Sobol, total) |
 |---|---|---|---|---|---|
 | vieillie | 89 % | -0,77 pt | +5,70 pt | +11,47 pt | le multiplicateur 0,99, les lignes de `labour_supply.yaml` 0,00, les lignes de `eti.yaml` 0,00 |
-| figée | 90 % | -0,48 pt | +4,63 pt | +9,17 pt | le multiplicateur 0,99, les lignes de `labour_supply.yaml` 0,00, les lignes de `eti.yaml` 0,00 |
+| figée | 90 % | -0,43 pt | +4,68 pt | +9,23 pt | le multiplicateur 0,99, les lignes de `labour_supply.yaml` 0,00, les lignes de `eti.yaml` 0,00 |
 
 **D'où vient Δb.** La dette de 2035 en trois marches, à θ½ sous la persistance « lue » : le coût après comportements, sans la boucle macro ; ce que le PIB plus haut ou plus bas change au seul ratio, comme dénominateur ; ce que les recettes induites par l'activité y changent. Les trois font la ligne du tableau (D-349).
 
 | vue | le coût, sans boucle | le PIB, dénominateur | les recettes induites | Δ dette 2035 |
 |---|---|---|---|---|
-| vieillie | +11,46 pt | -1,02 pt | -4,74 pt | +5,71 pt |
-| figée | +9,17 pt | -0,69 pt | -3,84 pt | +4,64 pt |
+| vieillie | +11,47 pt | -1,02 pt | -4,75 pt | +5,71 pt |
+| figée | +9,23 pt | -0,69 pt | -3,85 pt | +4,69 pt |
 
-**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : +6,21 pt en vue vieillie, contre +5,71 pt ; +5,06 pt en vue figée, contre +4,64 pt.
+**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : +6,21 pt en vue vieillie, contre +5,71 pt ; +5,12 pt en vue figée, contre +4,69 pt.
 
 **Si les salaires se forment autrement.** Mésange publie une sensibilité de ses variantes à la formation des salaires (folios 137 et 138) : une courbe de Phillips pour les cotisations employeurs et la TVA, un super-brut visé pour les cotisations salariés, la CSG et l'IR. Le multiplicateur y est recentré, à écart-type, persistance et recettes induites par point de PIB inchangés ; Mésange n'imprime pas le solde de la variante, que la page suppose proportionnel au PIB (D-349). C'est une sensibilité, hors du verdict.
 
 | vue | Δ dette 2035, à θ½ | aux coins de la boîte | P(hausse) | verdict |
 |---|---|---|---|---|
-| vieillie | +6,28 pt | de +1,28 pt à +11,19 pt | 91 % | hausse |
-| figée | +5,12 pt | de +1,15 pt à +9,03 pt | 92 % | hausse |
+| vieillie | +6,28 pt | de +1,28 pt à +11,20 pt | 91 % | hausse |
+| figée | +5,18 pt | de +1,23 pt à +9,05 pt | 93 % | hausse |
 
 ### La dette en 2035, si les économies annoncées sont tenues
 
@@ -173,9 +173,9 @@ Les instruments lus, en euros de prélèvement, recettes positives, rien d'autre
 
 | part réalisée | solde annoncé, par an | Δ dette 2035, vue vieillie | Δ dette 2035, vue figée |
 |---|---|---|---|
-| 0 % | +0 € | +5,71 pt | +4,64 pt |
-| 50 % | +100,00 Md€ | -9,01 pt | -10,14 pt |
-| 100 % | +200,00 Md€ | -24,25 pt | -25,45 pt |
+| 0 % | +0 € | +5,71 pt | +4,69 pt |
+| 50 % | +100,00 Md€ | -9,01 pt | -10,09 pt |
+| 100 % | +200,00 Md€ | -24,25 pt | -25,39 pt |
 
 À θ½, sous la persistance « lue ». À une part réalisée nulle, la ligne est la dette de la part chiffrée, plus haut ; le solde est positif quand il améliore les comptes publics.
 
@@ -201,12 +201,12 @@ Le coût de la première année est mécanique : en vue figée, sur la populatio
 
 | mesure | coût 2026, vue figée | coût 2026, vue vieillie | Δ dette 2035, à θ½ | gain des déciles 1 à 3 | leur part |
 |---|---|---|---|---|---|
-| Baisse de la CSG sur les revenus d'activité | +25,63 Md€ | +27,07 Md€ | +3,40 pt | +1,76 Md€ | 7 % |
+| Baisse de la CSG sur les revenus d'activité | +25,63 Md€ | +27,05 Md€ | +3,39 pt | +1,77 Md€ | 7 % |
 | Suppression de la C3S et, « le cas échéant », de la CVAE | +6,55 Md€ | +6,87 Md€ | +1,62 pt | — | — |
-| Déplafonnement du quotient familial | +4,07 Md€ | +4,75 Md€ | +0,53 pt | +0 € | 0 % |
-| **somme des mesures** | +36,25 Md€ | +38,69 Md€ | +5,55 pt | +1,76 Md€ | 6 % |
-| **la part chiffrée** | +36,46 Md€ | +38,92 Md€ | +5,71 pt | +1,76 Md€ | 6 % |
-| **interaction**, la part moins la somme | +211 M€ | +233 M€ | +0,15 pt | +0 € | — |
+| Déplafonnement du quotient familial | +4,11 Md€ | +4,78 Md€ | +0,54 pt | +0 € | 0 % |
+| **somme des mesures** | +36,28 Md€ | +38,71 Md€ | +5,55 pt | +1,77 Md€ | 6 % |
+| **la part chiffrée** | +36,49 Md€ | +38,94 Md€ | +5,71 pt | +1,77 Md€ | 6 % |
+| **interaction**, la part moins la somme | +207 M€ | +233 M€ | +0,15 pt | +0 € | — |
 
 Chaque ligne se lit dans ses deux rapports : la première année (le coût en vue figée, les déciles) et le chemin annuel (le coût en vue vieillie, la dette).
 
@@ -231,15 +231,15 @@ Ce que l'outil en lit : Le candidat ne dit pas comment répartir la baisse de 2,
 
 | `csg_activite_deductible` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
-| le bas | 3,92 % | +36,56 Md€ | +11,29 pt |
-| le candidat | 4,88 % | +27,07 Md€ | +8,36 pt |
-| le haut | 6,8 % | +8,05 Md€ | +2,49 pt |
+| le bas | 3,92 % | +36,53 Md€ | +11,28 pt |
+| le candidat | 4,88 % | +27,05 Md€ | +8,36 pt |
+| le haut | 6,8 % | +8,04 Md€ | +2,48 pt |
 
 | `csg_activite_imposable` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
-| le bas | 0 % | +47,46 Md€ | +14,66 pt |
-| le candidat | 1,72 % | +27,07 Md€ | +8,36 pt |
-| le haut | 2,4 % | +19,01 Md€ | +5,87 pt |
+| le bas | 0 % | +47,44 Md€ | +14,65 pt |
+| le candidat | 1,72 % | +27,05 Md€ | +8,36 pt |
+| le haut | 2,4 % | +19,00 Md€ | +5,87 pt |
 
 ### Suppression de la C3S et, « le cas échéant », de la CVAE
 
@@ -271,15 +271,15 @@ Ce que l'outil en lit : « Plafond supprimé » : le plafond général et celui 
 
 | `plafond_qf_demi_part` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
-| le bas | 1 807 € | +493 M€ | +0,15 pt |
-| le candidat | 100 000 € | +4,75 Md€ | +1,47 pt |
-| le haut | 100 000 € | +4,75 Md€ | +1,47 pt |
+| le bas | 1 807 € | +495 M€ | +0,15 pt |
+| le candidat | 100 000 € | +4,78 Md€ | +1,48 pt |
+| le haut | 100 000 € | +4,78 Md€ | +1,48 pt |
 
 | `plafond_qf_parent_isole` | valeur | coût 2026 | dette en 2035, mécanique, sans comportements ni boucle |
 |---|---|---|---|
-| le bas | 4 262 € | +4,53 Md€ | +1,40 pt |
-| le candidat | 100 000 € | +4,75 Md€ | +1,47 pt |
-| le haut | 100 000 € | +4,75 Md€ | +1,47 pt |
+| le bas | 4 262 € | +4,56 Md€ | +1,41 pt |
+| le candidat | 100 000 € | +4,78 Md€ | +1,48 pt |
+| le haut | 100 000 € | +4,78 Md€ | +1,48 pt |
 
 ## Le programme, mesure par mesure
 
@@ -344,11 +344,11 @@ Le programme annonce lui-même un montant pour 4 de ses mesures. Ces montants ne
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `5a68669` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_lisnard/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_lisnard/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée (3 mesures sur 21 paramétrées, 29 relevées) | +36,19 Md€ → +36,46 Md€ | +5,71 pt → +5,71 pt | hausse → dépend |
+| la part chiffrée (3 mesures sur 21 paramétrées, 29 relevées) | +36,46 Md€ → +36,49 Md€ | +5,71 pt → +5,71 pt | hausse → dépend |
 
 Ce qui touche chaque ligne :
 
@@ -358,7 +358,7 @@ Là où une seule correction touche une ligne, l'écart avant → après est ce 
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `01a24df`, conteneur cloud, 15 Go, 4 cœurs, une file. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `707de49`, conteneur cloud, 15 Go, 4 cœurs, une file. Cadre du calcul année par année jusqu'en 2035 : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 
@@ -367,10 +367,10 @@ Le secteur public est modélisé statut par statut (D-346) : un titulaire est pa
 **La vérification de ses instruments.** Le niveau que le moteur donne à chaque instrument que la page chiffre, contre son total publié, sur 2022, 2023 et 2024 (`docs/verification/GRILLE.md`, D-364) : l'écart moyen, son étendue, et les années qui tiennent la tolérance écrite avant le calcul.
 
 * CSG sur les revenus de remplacement : −2,3 % en moyenne, de −4,6 % à −0,4 % ; 3 années sur 3 dans sa tolérance.
-* Foyers imposés : +2,5 % en moyenne, de −1,3 % à +5,6 % ; 3 années sur 3 dans sa tolérance.
+* Foyers imposés : +1,8 % en moyenne, de −2,0 % à +4,9 % ; 3 années sur 3 dans sa tolérance.
 * Impôt sur les sociétés, avant crédits d'impôt : −6,2 % en moyenne, de −19,7 % à +2,0 % ; 3 années sur 3 dans sa tolérance.
 * C3S : +6,4 % en moyenne, de +1,2 % à +11,9 % ; 3 années sur 3 dans sa tolérance.
-* Impôt sur le revenu au barème, avant réductions et crédits : −2,8 % en moyenne, de −4,9 % à −0,8 % ; 2 années sur 2 dans sa tolérance.
+* Impôt sur le revenu au barème, avant réductions et crédits : −2,2 % en moyenne, de −4,2 % à −0,1 % ; 2 années sur 2 dans sa tolérance.
 * CVAE : −15,2 % en moyenne, de −15,2 % à −15,2 % ; 1 année sur 1 dans sa tolérance.
 * CSG sur les revenus d'activité, avec celle des non-salariés : −1,7 % en moyenne, de −2,0 % à −1,4 % ; 3 années sur 3 dans sa tolérance.
 

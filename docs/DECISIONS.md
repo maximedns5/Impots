@@ -44028,3 +44028,218 @@ sur une file (D-559 : 31 heures, deux redémarrages du conteneur comptés). Puis
 `impots etude ecrire` et `impots etude verifier` par étude, le site reconstruit, et les
 études du jumeau rejouées (les lignes `j` de D-679, dont les passes de D-557 : elles
 lisent la population, et leur résultat ira dans la même entrée que la série).
+
+## D-689 — La série de D-688 : 43 pronostics sur 54, le Smic va dans l'autre sens
+
+**Ce qui a tourné**, au commit 707de49 (D-688, poussé avant), détaché, une étude à la fois
+sous le verrou commun, sur la population de D-687 (03400239…), du 23 novembre 9 h 51 au
+25 novembre 1 h 34 UTC. Quatre redémarrages du conteneur : deux à 19 h 53 et 21 h 55 le
+23 (la session sans tâche de fond, le conteneur repris : le travail de Ruffin perdu deux
+fois), un à 1 h 16 le 24, un à 0 h 58 le 25. Chaque fois la série relancée au même commit
+et à la même population ; `lancer` saute les rapports déjà écrits. Les quinze rc = 0.
+Les 243 rapports sont ceux que 707de49 avait retirés, un pour un (fea31ed) ; les pages par
+`impots etude ecrire`, `impots etude verifier` quinze sur quinze (aa64624) ; le site
+reconstruit, « le site est celui des études » (d318e39). Journal : `serie688/serie.log`.
+
+**Le résultat contre D-688.** Coût de la première année (Md€), Δb₂₀₃₅ à θ½ (vieillie,
+« lue », points), verdict du Monte-Carlo (D-345) :
+
+| étude | coût D-559 → après | bande | Δb → après | bande | verdict |
+|---|---|---|---|---|---|
+| Mélenchon | +90,995 → +89,867 | manqué | +27,495 → +27,484 | tenu | hausse, tenu |
+| Roussel | +34,307 → +33,223 | manqué | +1,336 → +1,321 | manqué | dépend, tenu |
+| Ruffin | +34,749 → +34,092 | manqué | +2,636 → +2,627 | manqué | dépend, tenu |
+| Tondelier | +20,060 → +19,496 | manqué | +2,643 → +2,646 | manqué | hausse, tenu |
+| Kazib | +17,152 → +16,607 | manqué | +0,445 → +0,441 | tenu | dépend, tenu |
+| Bouamrane | +17,015 → +16,479 | manqué | +0,442 → +0,438 | tenu | dépend, tenu |
+| Attal | +62,938 → +62,860 | tenu | +3,978 → +3,957 | tenu | dépend, tenu |
+| Retailleau | +45,479 → +45,463 | tenu | +10,872 → +10,845 | tenu | hausse, tenu |
+| Lisnard | +36,461 → +36,488 | tenu | +5,705 → +5,706 | tenu | dépend, tenu |
+| Philippe | +46,314 → +46,323 | tenu | +11,694 → +11,703 | tenu | hausse, tenu |
+| Le Pen | +21,631 → +21,603 | tenu | +3,021 → +3,010 | tenu | dépend, tenu |
+| PLFSS, prime | −0,749 → −0,755 | tenu | −0,230 → −0,234 | tenu | baisse, tenu |
+| PLFSS, APL | −0,087 → −0,088 | tenu | −0,084 → −0,084 | tenu | baisse, tenu |
+| PLF, art. 2 | +2,628 → +2,620 | tenu | +0,377 → +0,375 | tenu | dépend, tenu |
+| PLF, art. 3 | −1,164 → −1,163 | tenu | −0,175 → −0,175 | tenu | dépend, tenu |
+| PLF, art. 15 | −7,054 → −7,054 | tenu | −0,211 → −0,211 | tenu | baisse, tenu |
+| Glucksmann | +30,844 → +29,664 | manqué | +0,880 → +0,864 | manqué | dépend, tenu |
+| Zemmour | +90,542 → +90,511 | tenu | +12,017 → +12,001 | tenu | dépend, tenu |
+
+**Le compte : 43 sur 54** ; coûts 11 sur 18, Δb 14 sur 18, verdicts 18 sur 18. Lisnard
+reste « dépend », à 88,65 % des tirages en hausse, comme avant (le Monte-Carlo ne lit pas
+la population).
+
+**Le manqué a une cause, et une seule.** Les sept coûts manqués sont les sept programmes
+qui relèvent le Smic : le pronostic les voulait en hausse de 1,4 à 4,3 %, ils baissent de
+1,2 à 3,8 %. Les onze autres tiennent, tous à moins de 1 % de D-559. La règle de D-688
+déplaçait l'écart de chaque poste comme la grille avait déplacé son *niveau* (allègements
++3,7 %). Mais l'écart d'un relèvement du Smic ne suit pas le niveau des allègements : il
+suit le nombre de salaires que le nouveau Smic rattrape. Les salaires sous 4 Smic sortent
+de D-686 plus bas d'environ 3,3 % ; le relèvement en touche davantage, et ajoute plus de
+salaire brut. Roussel, première année, D-559 → après (Md€) : salaire brut +8,50 → +9,50,
+cotisations des employeurs +3,66 → +4,07, allègements +35,27 → +34,96, prime −1,89 →
+−1,99 ; Glucksmann et Mélenchon de même (+1,08 de salaire brut). Plus de cotisations
+rentrent qu'il n'en sort d'allègements : le coût baisse d'environ 1,1 Md€. Les quatre Δb
+manqués suivent : leur bande commençait à leur valeur de D-559, parce qu'elle attendait
+une hausse.
+
+**Ce qui n'est pas fait, et pourquoi.**
+* **Les lignes `j` de D-679** (les passes de D-557, puis le jumeau, la diffusion,
+  l'interaction, le CICE, la boucle). D-688 les annonçait dans cette entrée, mais sans
+  pronostic ; et `mesure_melenchon_b27.py` ne connaît que les populations `d521` et `d553`
+  (ses rapports en portent la clé) : la population de D-687 demande une ligne de script.
+  Elles vont sous leur propre préenregistrement, avec pronostic, avant de tourner.
+* **Les tests** qui tiennent les nombres de D-559 n'ont pas été relancés ; ce sera
+  l'entrée qui les met sur cette série.
+* **Une phrase de page** : la section « ce qui a bougé » dit que la série précédente
+  « lisait la boîte θ », et donne Lisnard « hausse → dépend ». Le gel de D-559 garde le
+  verdict de la boîte, quand D-559 lisait déjà le Monte-Carlo. Le nombre ne change pas ;
+  la phrase est fausse pour cette série. À corriger dans `etude.py`, à part.
+
+## D-690 — Les études du jumeau sur la population de D-687, préenregistrées
+
+**La décision** (D-688, « les lignes `j` de D-679 ») : les études du jumeau se rejouent sur
+la population de D-687 (03400239…) et ses cellules (93c34eb6…), après la série de D-689.
+D-688 ne leur donnait pas de pronostic : il est ici, commité et poussé avant tout calcul.
+Le résultat va dans D-691. Aucune tolérance, aucun seuil, aucun enregistrement ne change.
+
+**Ce qui change dans le code** : une ligne. `mesure_melenchon_b27.py` apprend la clé de
+population `d687` (« D-687, empreinte 03400239, 199 451 ménages, huit lots »), qui nomme
+les clés de ses rapports. Rien d'autre.
+
+**Ce qui tourne**, les lignes de D-679 dans le même ordre, détachées, les passes une à
+une sous le verrou commun, vers des sorties neuves (hors git : `mesure_d687`,
+`juges_d687`, `boucle_d687`) : la passe des entrées du CICE, la passe complète du Smic,
+les passes rapides du programme, les deux passes de `boucle_b28` ; puis `analyser`,
+`jumeau`, la diffusion, l'interaction, le CICE, le jumeau et le rapport de la boucle. Les
+rapports vont à côté de ceux de D-557, qui ne sont pas récrits :
+`mesure_melenchon_b27/d687/`, `reaction_b28/diffusion_d691.json`,
+`interaction_b28/defaut_d691.json`, `interaction_b28/cice_d691.json`,
+`boucle_b28/resultats_d691.json`.
+
+**Ce qui échouera** : `analyser` lit la passe témoin du but 19, dont la population n'est
+plus sur le disque (D-682) ; il échoue, et `d687/smic.json` et `programme.json` ne sont
+pas écrits. Attendu, dit, pas contourné.
+
+**Ce que le pronostic sait déjà, et qui n'est pas aveugle.** Les lignes « telles que
+publiées » (le jumeau lu sur les rapports de l'étude Mélenchon de D-689, sans passe) ont
+été calculées avant ce texte : elles ne demandent aucune passe et lisent des rapports
+commités. D-680 a montré que les lignes calées sur les passes suivent ces lignes, le
+calage ne touchant que la première année. Figée, θ½, 2035 (emploi en milliers, B9 en
+Md€, dette en points), D-559 → D-689 : Smic −131,5 ; −0,24 ; +0,556 → −137,3 ; +1,04 ;
++0,250 ; programme +68,9 ; −48,19 ; +10,726 → +63,1 ; −46,87 ; +10,415.
+
+**Le pronostic.**
+* **Les passes rapides** redonnent les rapports de l'étude au millième : le programme,
+  union, +89,867 ; l'interaction (programme moins la somme des mesures seules) +0,114
+  (D-557 : +0,178, la même règle le redonne).
+* **La passe complète du Smic** : 30,305 × 29,664 / 30,844 = **29,145 ± 0,15** (le
+  rapport de la passe complète à la rapide tenu à celui de D-557).
+* **Le jumeau, programme calé, figée** : les lignes publiées, **+63,1 ± 0,3 ; −46,87 ±
+  0,05 ; +10,415 ± 0,005** (D-680 : calé et publié égaux au dixième).
+* **Le jumeau, Smic calé, figée** : les lignes publiées décalées comme en D-680 (emploi
+  × 1,027 ; B9 +0,44 ; dette −0,105) : **−141,0 ± 3 ; +1,48 ± 0,3 ; +0,145 ± 0,05**.
+* **Le CICE**, 2016, trois réglages : 192,6 ; 188,4 ; 184,7 milliers, **± 2 %** (la
+  passe lit les salaires autour de 2,5 Smic, que D-686 a déplacés de quelques points).
+* **La boucle**, Smic θ½, avec moins sans : emploi **+2,15 ± 0,15** millier, B9 **+1,31 ±
+  0,1** Md€ ; le CICE avec la boucle, 2016, **186,5 ± 2 %**.
+* **Sans bande, donnés avant et après** : la vieillie, la diffusion selon θ, les réglages
+  de l'interaction, les coefficients de la boucle, les paires du jumeau.
+
+Treize lignes jugées. Une ligne qui sort de sa bande : sa cause cherchée, pas de
+repronostic.
+
+## D-691 — Les études du jumeau de D-690 : onze lignes sur treize, le jumeau suit l'étude
+
+**Ce qui a tourné**, au commit 825658d (D-690, poussé avant), détaché, les passes une à
+une sous le verrou commun, sur la population de D-687 (03400239…), le 25 novembre de
+1 h 47 à 2 h 55 UTC, sans redémarrage. Journal : `jumeau690/lancer.log` du scratchpad.
+rc = 0 partout, sauf `analyser` (rc = 1, le témoin du but 19 absent) : attendu, écrit
+dans D-690 ; ni `d687/smic.json` ni `d687/programme.json`.
+
+**Le résultat contre D-690.**
+
+| ligne | pronostic | après | verdict |
+|---|---|---:|---|
+| programme, passe rapide union (Md€) | 89,867 au millième | 89,867 | tenu |
+| interaction du programme (Md€) | +0,114 au millième | +0,121 | manqué |
+| Smic, passe complète (Md€) | 29,145 ± 0,15 | 29,134 | tenu |
+| programme calé, figée : emploi (milliers) | +63,1 ± 0,3 | +63,1 | tenu |
+| programme calé, figée : B9 (Md€) | −46,87 ± 0,05 | −46,88 | tenu |
+| programme calé, figée : dette (pt) | +10,415 ± 0,005 | +10,416 | tenu |
+| Smic calé, figée : emploi | −141,0 ± 3 | −140,8 | tenu |
+| Smic calé, figée : B9 | +1,48 ± 0,3 | +1,47 | tenu |
+| Smic calé, figée : dette | +0,145 ± 0,05 | +0,146 | tenu |
+| CICE 2016 (milliers) | 192,6 ; 188,4 ; 184,7 ± 2 % | 190,8 ; 186,6 ; 182,9 | tenu |
+| boucle, Smic θ½, avec moins sans : emploi | +2,15 ± 0,15 | +2,33 | manqué |
+| boucle, Smic θ½, avec moins sans : B9 | +1,31 ± 0,1 | +1,37 | tenu |
+| boucle, CICE avec la boucle, 2016 | 186,5 ± 2 % | 184,7 | tenu |
+
+Treize lignes jugées, onze tenues, deux manquées. Aucune n'est repronostiquée.
+
+**L'interaction, la cause trouvée.** Le script la prend comme le programme moins la somme
+des mesures seules passées en `union` (`paires()`) ; le pronostic a pris la somme des
+mesures `propres`, celles de l'étude. En D-557 les deux sommes coïncidaient (écart
+−0,0002) et donnaient +0,178 ; ici elles s'écartent de −0,007, surtout par le PFU (union
+moins propres : +0,0145 en D-557, +0,0096 ici). Avec les mesures propres : +0,114, le
+nombre du pronostic. L'erreur est dans le pronostic, qui a lu une règle pour l'autre.
+
+**La boucle, l'emploi : la cause supposée, pas testée.** Les coefficients des passes de
+la boucle bougent au plus de 0,003 (super-brut 0,688 → 0,686 pour le Smic) ; l'écart
+vient donc du chemin sans la boucle, la session du jumeau, qui lit les rapports de
+l'étude Mélenchon de D-689, comme en D-681 (+2,23 alors). À θ 0 et θ 1, sans bande :
+−0,89 ; −1,58 et +7,22 ; +5,81.
+
+**Sans bande.** Vieillie, Smic calé : −155,4 ; +0,08 ; +1,141 (publiée −152,1 ; −0,36 ;
++1,263) ; programme +39,8 ; −48,00 ; +11,426. La diffusion, figée, θ 0 à 1 : emploi
++144,8 ; +3,3 ; −140,8 ; −337,6 ; −572,8 (D-680 : +150,5 à −566,9). Les réglages de
+l'interaction, Smic seul, figée : tous plus bas de 4,8 à 5,9 milliers qu'en D-680 ; le
+programme, de 4,8 à 5,9 aussi. Les paires du jumeau : programme moins somme +0,1 millier,
+−0,01 Md€, −0,111 pt. La passe complète du Smic sur la rapide : 0,9821 (D-557 : 0,9826).
+
+**Ce qui est commité** : `mesure_melenchon_b27/d687/jumeau.json`,
+`reaction_b28/diffusion_d691.json`, `interaction_b28/defaut_d691.json`,
+`interaction_b28/cice_d691.json`, `boucle_b28/resultats_d691.json`, à côté de ceux de
+D-557, qui ne sont pas récrits.
+
+## D-692 — Les tests mis sur la série de D-689, et les agrégats de la population refaits
+
+**La décision** (le plan de D-688, « mettre les tests à jour », sous le style de D-683).
+La passe légère au commit 9a573ef (`pytest -m "not lourd and not chrono"`, 1 h 15) :
+4 823 verts, 24 sautés, **21 rouges**. Vingt tiennent des nombres de la série de D-559 ;
+un tient deux fichiers ensemble, et dit vrai.
+
+**Le rouge qui dit vrai : `test_les_cellules_publiees_sont_celles_du_jumeau`.**
+`reports/population/agregats.json`, commité par D-687, porte les cellules de ménages de
+D-552 (l'IR, 96,655 Md€, est au centime celui d'`entrees_navigateur.json` de e4a635c),
+alors que son en-tête nomme la population de D-687 : il a été écrit avant les entrées du
+navigateur, dans la même passe. Les entrées, elles, sont celles de D-687 (97,281 Md€).
+Refait par `python -m impots.site_population.agregats` : seules les cinquante cellules
+changent (l'IR +0,65 %, les prestations +0,49 %, les autres sous 0,1 %), plus le commit
+et la date. Le site reconstruit (`site verifier` : « le site est celui des études ») :
+`population*.html`, `cellules.html`, `cellules-menages.csv` et `.json`. Le test, qui
+échouait sur l'ancien fichier, passe sur le nouveau.
+
+**Les vingt autres : leurs nombres**, mis sur la série de D-689, chaque ancienne valeur
+écrite à côté. Aucune forme ne change, aucune tolérance ne bouge.
+* `test_recalcul` : les programmes, Δb lu (pt), Attal 3,9775 → 3,9572, Lisnard 5,7051 →
+  5,7062, Retailleau 10,8723 → 10,8452 ; les trois mesures seules de D-440 ne bougent pas
+  (0,2475 ; 1,6181 ; 1,6181), la propriété que le test garde.
+* `test_graphiques` (Lisnard) : ménages, mécanique +29,91 → +29,94 Md€, central +28,78 →
+  +28,99.
+* `test_jumeau_depuis_rapport` (cinq) : Attal, déciles 55,42 → 55,35, coût des ménages
+  2026 60,386 → 60,308 ; Retailleau, employeurs −3,933 → −3,908 ; le Smic de Mélenchon,
+  E −33,751 → −32,960 ; Lisnard, ménages 29,914 → 29,940.
+* `test_etude_programmes` : Attal sans boucle 19,54 → 19,50 pt, au coût de 62,86 Md€.
+* `test_jumeau_papillon` (deux) : l'interaction des employeurs 0,735 → 0,691 ; le
+  programme 10,726 → 10,415 pt, 68,9 → 63,1 milliers (les nombres de D-691) ; statique
+  24,011 → 23,680 Md€, prime de risque 1,3498 → 1,3073 pt ; l'État −55,007 → −54,513,
+  les APUL 1,600 → 1,632.
+* `test_parcours_comparer` (six) et `test_parcours_cout` (quatre) : les mêmes rapports
+  lus par les pages, Attal +62,94 → +62,86 Md€ et +19,54 → +19,50 pt, la prime −749 →
+  −755 M€, les points du curseur, le tableau de passage, l'euro rendu (Attal 12,0 et
+  12,5 € → 11,9 et 12,4 ; Retailleau 5,3 → 5,2 ; Mélenchon 3,6 → 3,5), le non-lu (Attal
+  −0,01 et +0,24 → −0,02 et +0,22 ; Lisnard vieillie +6,02 → +6,01).
+
+Les 21 et `test_site_population` : verts. `ruff` : propre. `node ui/check.mjs` : vert.
+`make impact` et les lourds ne sont pas relancés : ils tournent une fois, avant la PR.

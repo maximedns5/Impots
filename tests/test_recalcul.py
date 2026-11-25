@@ -33,11 +33,13 @@ def test_every_study_report_reads_the_channel_at_the_declared_slope() -> None:
 #: on the series of D-559, computed by a pass without the two taxes (D-683).
 SANS_PRODUCTION = {
     "predictif_pres2027_attal_a18_suppression_cvae": (0.2475, 0.2475),
-    "predictif_pres2027_attal_programme": (4.2850, 3.9775),
+    "predictif_pres2027_attal_programme": (4.2850, 3.9572),
     "predictif_pres2027_lisnard_l4_suppression_c3s_cvae": (1.6181, 1.6181),
-    "predictif_pres2027_lisnard_programme": (5.7107, 5.7051),
+    "predictif_pres2027_lisnard_programme": (5.7107, 5.7062),
     "predictif_pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe": (1.6181, 1.6181),
-    "predictif_pres2027_retailleau_programme": (11.3672, 10.8723)}
+    "predictif_pres2027_retailleau_programme": (11.3672, 10.8452)}
+# D-692 : les programmes sur la série de D-689 ; sur celle de D-559, 3,9775, 5,7051 et
+# 10,8723. Les trois mesures seules ne bougent pas.
 
 
 def _lue(payload) -> float:

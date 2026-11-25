@@ -66,8 +66,9 @@ def test_la_premiere_annee_figee_porte_ses_impots_et_ses_deciles() -> None:
     assert set(m.menages) == {2026}
     assert m.menages[2026]["deciles"] == menages_depuis_deciles(
         premiere["response"]["menages"]["deciles"])
-    # D-559 : 58,46 sur la série de 5a68669, 55,42 sur celle de D-559.
-    assert sum(m.menages[2026]["deciles"]) == pytest.approx(55.42, abs=0.01)
+    # D-559 : 58,46 sur la série de 5a68669, 55,42 sur celle de D-559 ; 55,35 sur celle
+    # de D-689 (D-692).
+    assert sum(m.menages[2026]["deciles"]) == pytest.approx(55.35, abs=0.01)
     assert set(m.non_portes) == {"annees"}
 
 
@@ -80,16 +81,17 @@ def test_ce_que_le_rapport_ne_porte_pas_reste_absent() -> None:
                                  auteur="x", rapport=rapport)
     assert seul.entreprises is None and seul.menages is None
     # Retailleau : 3,9 Md€ de cotisations patronales nettes (4,301 sur la série de
-    # 5a68669, 3,933 sur celle de D-559). Absentes jusqu'à D-475 (le rapport ne les
-    # ventilait pas, `non_portes` disait « -4.301 Md€ ») ; depuis, lues dans la passe des
-    # ménages et le chemin, égales au bit, et ventilées (D-477, D-565).
+    # 5a68669, 3,933 sur celle de D-559, 3,908 sur celle de D-689, D-692). Absentes
+    # jusqu'à D-475 (le rapport ne les ventilait pas, `non_portes` disait « -4.301 Md€ ») ;
+    # depuis, lues dans la passe des ménages et le chemin, égales au bit, et ventilées
+    # (D-477, D-565).
     from impots.jumeau.ventilation import employeurs_lus, employeurs_premiere
 
     retailleau = _mesure(RETAILLEAU)
     payload, premiere, _ = _paire(RETAILLEAU)
     assert set(retailleau.entreprises) == {2026} and set(retailleau.menages) == {2026}
     employeurs = retailleau.entreprises[2026]["cotisations_employeurs"]
-    assert employeurs == pytest.approx(-3.933, abs=1e-3)
+    assert employeurs == pytest.approx(-3.908, abs=1e-3)
     assert employeurs == employeurs_premiere(premiere) == employeurs_lus(payload,
                                                                           "figee")[2026]
     # D-683 : 1,34 € hors des cinq impôts et de E dans la couche du rapport de D-559 (au
@@ -176,8 +178,8 @@ def test_la_convention_ventile_chaque_annee_aux_parts_de_la_premiere() -> None:
             m.menages[2026]["deciles"]) * cout[a] / cout[2026], rtol=1e-12)
     # Le coût des ménages de la première année est celui de leur passe, aux 59 € près
     # que la passe des entreprises coûte hors des cinq impôts du canal (63,629 sur la
-    # série de 5a68669, 60,386 sur celle de D-559).
-    assert cout[2026] == pytest.approx(60.386, abs=1e-3)
+    # série de 5a68669, 60,386 sur celle de D-559, 60,308 sur celle de D-689, D-692).
+    assert cout[2026] == pytest.approx(60.308, abs=1e-3)
     # Sans la convention, rien ne change (D-412).
     assert set(_mesure(ATTAL).entreprises) == {2026}
 
@@ -224,13 +226,14 @@ def test_la_convention_est_refusee_la_ou_les_parts_n_existent_pas() -> None:
             retailleau.prelevements[a], abs=1e-8 if a == 2026 else 1e-12)
         assert retailleau.entreprises[a]["cotisations_employeurs"] == employeurs[a]
     # Le Smic de Mélenchon : les ménages restent absents ; depuis D-475, ses entreprises
-    # (E, −33,751 Md€ en 2026 ; −31,672 sur la série de 5a68669) sont étendues sous la
+    # (E, −32,960 Md€ en 2026 ; −31,672 sur la série de 5a68669, −33,751 sur celle de
+    # D-559, D-692) sont étendues sous la
     # convention (avant : `conventions` vide, D-477).
     smic = _mesure("presidentielle_melenchon/mesures/smic_1700_net/"
                    "predictif_pres2027_melenchon_smic_1700_net.json",
                    convention=CONVENTION_PARTS)
     assert smic.menages is None and smic.conventions == {"entreprises": convention}
-    assert smic.entreprises[2026]["cotisations_employeurs"] == pytest.approx(-33.751,
+    assert smic.entreprises[2026]["cotisations_employeurs"] == pytest.approx(-32.960,
                                                                               abs=1e-3)
     assert "smic_revalorisation" in smic.non_portes["menages"]
     assert "n'a pas de parts" in smic.non_portes["menages"]
@@ -303,10 +306,11 @@ def test_le_cout_des_menages_d_attal_et_de_lisnard_redevient_celui_d_avant_d440(
     """Les nombres de D-443 : en 2026, vue figée, le coût des ménages d'Attal 63,629 Md€
     (66,911 lu à tort sur ΔP de D-440), celui de Lisnard 29,638 (38,209) ; les impôts des
     entreprises, −2,552 et −6,547 Md€ (et non +0,730 et +2,024, l'IS induit seul). Sur la
-    série de D-559 : 60,386 et 29,914 ; les impôts des entreprises n'ont pas bougé."""
+    série de D-559 : 60,386 et 29,914 ; sur celle de D-689 (D-692) : 60,308 et 29,940 ;
+    les impôts des entreprises n'ont pas bougé."""
     for chemin, menages, entreprises in (
-            (ATTAL, 60.386, -2.552),
-            ("presidentielle_lisnard/predictif_pres2027_lisnard_programme.json", 29.914,
+            (ATTAL, 60.308, -2.552),
+            ("presidentielle_lisnard/predictif_pres2027_lisnard_programme.json", 29.940,
              -6.547)):
         m = _mesure(chemin, convention=CONVENTION_PARTS)
         assert m.couts[2026] + m.prelevements[2026] == pytest.approx(menages, abs=1e-3)

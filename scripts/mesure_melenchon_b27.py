@@ -180,7 +180,8 @@ RAPPORT = Path(os.environ.get("MESURE27_RAPPORT",
 #: La population des passes, qui nomme les clés des rapports (D-557 : « d553 »).
 POPULATION = os.environ.get("MESURE27_POPULATION", "d521")
 POPULATIONS = {"d521": "D-521, empreinte 8d42e0d8, 199 451 ménages, huit lots (D-362)",
-               "d553": "D-553, empreinte 5ace8bb6, 199 451 ménages, huit lots (D-362)"}
+               "d553": "D-553, empreinte 5ace8bb6, 199 451 ménages, huit lots (D-362)",
+               "d687": "D-687, empreinte 03400239, 199 451 ménages, huit lots (D-362)"}
 LONGS = {v: k for k, v in COURTS.items()}
 MD = 1e9
 

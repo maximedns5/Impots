@@ -24,23 +24,23 @@ def test_attal_pas_a_pas_porte_les_nombres_du_rapport(page: parcours.Page) -> No
     m, f = cout.menages_entreprises(rep)
     # Le coût de la série de D-397, et ses deux couches, lus dans le rapport : 65,69 Md€
     # et 20,28 points sur celle de D-373 ; les pensions alimentaires s'ajoutent. La série
-    # de D-559 (D-685) : 66,18 → 62,94 Md€.
-    assert cout.md(cout.cout_total(rep)) == "+62,94 Md€"
-    for texte in ("+62,94 Md€", cout.md(m["reform_cost"]), cout.md(f["reform_cost"]),
+    # de D-559 (D-685) : 66,18 → 62,94 Md€ ; celle de D-689 (D-692) : 62,86.
+    assert cout.md(cout.cout_total(rep)) == "+62,86 Md€"
+    for texte in ("+62,86 Md€", cout.md(m["reform_cost"]), cout.md(f["reform_cost"]),
                   cout.md(m["deltas"]["salaire_net"]), cout.md(-m["deltas"]["ir"])):
         assert texte in page.corps
     # La dette sans boucle : +20,45 pt à D-397, +20,41 avec le canal des créations (D-403),
     # +20,44 à son élasticité de D-427, +20,46 sans la CVAE dans le canal (D-440), +19,54
-    # sur la série de D-559 (D-685).
-    assert "+19,54 pt" in page.corps
+    # sur la série de D-559 (D-685), +19,50 sur celle de D-689 (D-692).
+    assert "+19,50 pt" in page.corps
 
 
 def test_la_prime_est_lue_en_miroir(page: parcours.Page) -> None:
     m, _ = cout.menages_entreprises(cout.lire(cout.PPA))
     # −557 M€ sur la série de 5a68669, −749 sur celle de D-559 (D-559 : le recours calé
-    # sur la Cnaf, D-496 ; D-685).
-    assert cout.meur(-m["reform_cost"]) == "−749 M€"
-    assert "−749 M€" in page.corps
+    # sur la Cnaf, D-496 ; D-685) ; −755 sur celle de D-689 (D-692).
+    assert cout.meur(-m["reform_cost"]) == "−755 M€"
+    assert "−755 M€" in page.corps
     # Le juge : le chiffre de l'enregistrement, pas celui de la série.
     assert "−887 M€" in page.corps and "−332 M€" in page.corps and "−167 %" in page.corps
 
@@ -61,13 +61,14 @@ def test_les_juges_et_ce_que_vaut_la_note(page: parcours.Page) -> None:
 def test_le_curseur_choisit_des_points_des_plages(page: parcours.Page) -> None:
     donnees, _ = cout._bouton_donnees()
     # Attal (0 ; 0,22 ; 1) et Retailleau (0,805 ; 0,87 ; 1) sur le même bouton ; sur la
-    # série de D-559 (D-685), +85,01, +66,40, +16,66 et +11,11 Md€ → ceux-ci.
+    # série de D-559 (D-685), +85,01, +66,40, +16,66 et +11,11 Md€ → +80,66, +62,98, +15,81
+    # et +10,55 ; sur celle de D-689 (D-692), ceux-ci.
     assert [p["cout"] for p in donnees["cotisations"]] == [
-        "+80,66 Md€", "+62,98 Md€", "+15,81 Md€", "+10,55 Md€", "0,00 Md€"]
+        "+80,52 Md€", "+62,88 Md€", "+15,78 Md€", "+10,52 Md€", "0,00 Md€"]
     assert [p["cout"] for p in donnees["tva_energie"]] == [
         "+16,06 Md€", "+11,64 Md€", "0,00 Md€"]
     assert donnees["depart"] == {"cotisations": 1, "tva_energie": 1}
-    assert "+62,98 Md€" in page.corps and "+11,64 Md€" in page.corps
+    assert "+62,88 Md€" in page.corps and "+11,64 Md€" in page.corps
     for ancien in ("explorer.html", "reports/grille", "1,108", "+59,91"):
         assert ancien not in page.corps
 
@@ -84,14 +85,16 @@ def test_le_tableau_de_passage_porte_chaque_convention(page: parcours.Page) -> N
     pensions alimentaires : +61,73, +63,14, +66,40 et +68,02 Md€ sur celle du but 19 ;
     le préenregistré ne bouge pas. Sur la série de D-559 (D-685) : +62,27, +63,63,
     +66,93, +68,59 et +63,59 Md€ → ceux-ci ; la prime : −1 056, −560, −557, −493, −791
-    et −952 M€ → ceux-ci (le recours calé sur la Cnaf, D-496) ; le juge ne bouge pas."""
+    et −952 M€ → ceux-ci (le recours calé sur la Cnaf, D-496) ; le juge ne bouge pas. Sur
+    la série de D-689 (D-692) : +59,05, +60,39, +63,53, +65,07 et +60,41 Md€ → ceux-ci ;
+    la prime : −1 229, −753, −749, −688, −1 122 et −1 278 M€ → ceux-ci."""
     attal = [r[2] for r in cout.passage_attal()]
-    for texte in ("+59,05 Md€", "+60,39 Md€", "+63,53 Md€", "+65,07 Md€", "+60,41 Md€",
+    for texte in ("+58,97 Md€", "+60,31 Md€", "+63,43 Md€", "+64,97 Md€", "+60,35 Md€",
                   "+75,66 Md€"):
         assert any(texte in x for x in attal), texte
     ppa, _ = cout.passage_ppa()
-    for texte in ("−1\u202f229 M€", "−753 M€", "−749 M€", "−688 M€", "−1\u202f122 M€",
-                  "−1\u202f278 M€", "−887 M€", "−819 M€"):
+    for texte in ("−1\u202f238 M€", "−758 M€", "−755 M€", "−695 M€", "−1\u202f136 M€",
+                  "−1\u202f288 M€", "−887 M€", "−819 M€"):
         assert any(texte in r[2] for r in ppa), texte
     for mot, _ in cout.CONVENTIONS:
         assert f"<dt>{mot}</dt>" in page.corps
