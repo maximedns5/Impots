@@ -3139,10 +3139,14 @@ class Etude:
 
         w("## Ce qui a bougé depuis la série précédente")
         w("")
+        # A freeze from before D-693 keeps only the verdict of the θ box; one from after
+        # keeps the Monte-Carlo verdict too, and the column compares like with like.
+        monte = all("verdict" in then for then in avant["scenarios"].values())
         w(f"La série précédente a tourné sur `{avant['commit'][:7]}` ; ce qu'elle disait est "
           f"figé dans `{_relative(self.rapports / AVANT)}` avant que celle-ci ne remplace "
-          f"ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le "
-          f"Monte-Carlo.")
+          f"ses rapports (D-350). "
+          + ("Les deux verdicts lisent le Monte-Carlo (D-345)." if monte else
+             "Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo."))
         w("")
         w("| | la première année, avant → après | dette à θ½, avant → après | verdict, "
           "avant → après |")
@@ -3160,7 +3164,8 @@ class Etude:
 
             w(f"| {texte.label(entry)} | {n(fiche._eur(then['cout']), 'L2')} → "
               f"{n(fiche._eur(entry['cost']), 'L2')} | {points(then['dette'])} → "
-              f"{points(entry['debt'][0]['theta'])} | {then['selon_theta']} → "
+              f"{points(entry['debt'][0]['theta'])} | "
+              f"{then['verdict'] if monte else then['selon_theta']} → "
               f"{verdict_mc(entry)} |")
         w("")
         w("Ce qui touche chaque ligne :")
@@ -3231,7 +3236,8 @@ class Etude:
         entries = self.load()
         snapshot = {"commit": entries[0]["first"]["commit"], "scenarios": {
             e["name"]: {"cout": e["cost"], "dette": e["debt"][0]["theta"],
-                        "selon_theta": verdict(e["debt"])} for e in entries}}
+                        "selon_theta": verdict(e["debt"]), "verdict": verdict_mc(e)}
+            for e in entries}}
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
                           encoding="utf-8")

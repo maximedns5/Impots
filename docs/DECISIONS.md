@@ -41116,3 +41116,35 @@ et la date. Le site reconstruit (`site verifier` : « le site est celui des étu
 
 Les 21 et `test_site_population` : verts. `ruff` : propre. `node ui/check.mjs` : vert.
 `make impact` et les lourds ne sont pas relancés : ils tournent une fois, avant la PR.
+
+## D-693 — « Ce qui a bougé » : le verdict d'avant lu sur le Monte-Carlo, comme l'actuel
+
+**La décision** (demandée par le propriétaire). Les pages des quatorze études qui ont un gel
+disaient, sous « Ce qui a bougé depuis la série précédente », que le verdict de la série
+d'avant « lisait la boîte θ » et celui-ci « le Monte-Carlo ». C'était vrai du gel du but 16
+(D-350) ; c'est faux depuis D-345 : la série de D-559 lisait déjà le Monte-Carlo. Le gel
+(`figer_avant`) ne gardait que le verdict de la boîte (`selon_theta`), et la colonne
+comparait l'un à l'autre. D'où Lisnard « hausse → dépend » : la boîte de D-559 disait
+hausse, son Monte-Carlo disait déjà « dépend », et rien n'a bougé.
+
+**Le correctif.** `figer_avant` garde aussi le verdict du Monte-Carlo (`verdict`). Quand
+chaque ligne du gel le porte, la page compare verdict à verdict et dit « Les deux verdicts
+lisent le Monte-Carlo (D-345). » ; un gel d'avant ce correctif garde la phrase et la
+colonne d'avant, qui y sont vraies.
+
+**Les gels refaits.** Les rapports de D-559, retirés par 707de49c, sont repris de son
+parent dans un worktree à part ; `figer_avant` y refait les quatorze gels. Le commit, le
+coût, la dette et `selon_theta` sont identiques aux gels commités, ligne à ligne ; seul
+`verdict` s'ajoute. Labib et Arthaud, hors de la série, gardent le leur. La colonne
+« verdict, avant → après » devient : Lisnard dépend → dépend ; les huit lignes « dépend
+de θ → dépend » deviennent « dépend → dépend » ; les autres ne changent pas. Aucun nombre
+ne bouge. Les quatorze pages réécrites (`etude verifier` passe), le site reconstruit.
+
+**Le test.** `test_the_page_says_what_moved_against_the_frozen_series_and_why` tient les
+deux cas : le gel porte le verdict du Monte-Carlo, la page le compare et ne dit plus
+« lisait la boîte θ » ; un gel sans lui garde l'ancienne phrase. Il échoue sur le code
+d'avant.
+
+**Ce qui reste.** « Ce qui touche chaque ligne » nomme encore les corrections du but 16
+(D-346, D-347, D-348, D-345), pas le changement de modèle de D-686 : c'est le même défaut
+dans une autre phrase, non corrigé ici.

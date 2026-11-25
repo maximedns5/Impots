@@ -4,7 +4,8 @@
     "pres2027_bouamrane_programme": {
       "cout": 17015360804.196472,
       "dette": 0.00441658345852769,
-      "selon_theta": "dépend de θ"
+      "selon_theta": "dépend de θ",
+      "verdict": "dépend"
     }
   }
 }

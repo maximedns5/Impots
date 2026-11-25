@@ -4,7 +4,8 @@
     "pres2027_retailleau_programme": {
       "cout": 45478844295.86458,
       "dette": 0.10872318189390606,
-      "selon_theta": "hausse"
+      "selon_theta": "hausse",
+      "verdict": "hausse"
     }
   }
 }

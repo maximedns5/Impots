@@ -315,7 +315,7 @@ Les portes, de celle qui ouvrirait le plus d'articles à celle qui en ouvrirait 
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dans `reports/etudes/plfss2027/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dans `reports/etudes/plfss2027/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Les deux verdicts lisent le Monte-Carlo (D-345).
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|

@@ -4,7 +4,8 @@
     "pres2027_glucksmann_programme": {
       "cout": 30843567005.809326,
       "dette": 0.008802926503324704,
-      "selon_theta": "dépend de θ"
+      "selon_theta": "dépend de θ",
+      "verdict": "dépend"
     }
   }
 }

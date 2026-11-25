@@ -243,11 +243,11 @@ Le programme n'annonce, pour aucune de ses mesures, un montant que le relevé ai
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_roussel/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_roussel/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Les deux verdicts lisent le Monte-Carlo (D-345).
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée (2 mesures sur 7 paramétrées, 16 relevées) | +34,31 Md€ → +33,22 Md€ | +1,34 pt → +1,32 pt | dépend de θ → dépend |
+| la part chiffrée (2 mesures sur 7 paramétrées, 16 relevées) | +34,31 Md€ → +33,22 Md€ | +1,34 pt → +1,32 pt | dépend → dépend |
 
 Ce qui touche chaque ligne :
 

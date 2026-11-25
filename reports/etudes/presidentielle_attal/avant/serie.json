@@ -4,7 +4,8 @@
     "pres2027_attal_programme": {
       "cout": 62938190571.90311,
       "dette": 0.039774924615350926,
-      "selon_theta": "dépend de θ"
+      "selon_theta": "dépend de θ",
+      "verdict": "dépend"
     }
   }
 }
