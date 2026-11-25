@@ -41021,3 +41021,56 @@ Md€, dette en points), D-559 → D-689 : Smic −131,5 ; −0,24 ; +0,556 → 
 
 Treize lignes jugées. Une ligne qui sort de sa bande : sa cause cherchée, pas de
 repronostic.
+
+## D-691 — Les études du jumeau de D-690 : onze lignes sur treize, le jumeau suit l'étude
+
+**Ce qui a tourné**, au commit 825658d (D-690, poussé avant), détaché, les passes une à
+une sous le verrou commun, sur la population de D-687 (03400239…), le 25 novembre de
+1 h 47 à 2 h 55 UTC, sans redémarrage. Journal : `jumeau690/lancer.log` du scratchpad.
+rc = 0 partout, sauf `analyser` (rc = 1, le témoin du but 19 absent) : attendu, écrit
+dans D-690 ; ni `d687/smic.json` ni `d687/programme.json`.
+
+**Le résultat contre D-690.**
+
+| ligne | pronostic | après | verdict |
+|---|---|---:|---|
+| programme, passe rapide union (Md€) | 89,867 au millième | 89,867 | tenu |
+| interaction du programme (Md€) | +0,114 au millième | +0,121 | manqué |
+| Smic, passe complète (Md€) | 29,145 ± 0,15 | 29,134 | tenu |
+| programme calé, figée : emploi (milliers) | +63,1 ± 0,3 | +63,1 | tenu |
+| programme calé, figée : B9 (Md€) | −46,87 ± 0,05 | −46,88 | tenu |
+| programme calé, figée : dette (pt) | +10,415 ± 0,005 | +10,416 | tenu |
+| Smic calé, figée : emploi | −141,0 ± 3 | −140,8 | tenu |
+| Smic calé, figée : B9 | +1,48 ± 0,3 | +1,47 | tenu |
+| Smic calé, figée : dette | +0,145 ± 0,05 | +0,146 | tenu |
+| CICE 2016 (milliers) | 192,6 ; 188,4 ; 184,7 ± 2 % | 190,8 ; 186,6 ; 182,9 | tenu |
+| boucle, Smic θ½, avec moins sans : emploi | +2,15 ± 0,15 | +2,33 | manqué |
+| boucle, Smic θ½, avec moins sans : B9 | +1,31 ± 0,1 | +1,37 | tenu |
+| boucle, CICE avec la boucle, 2016 | 186,5 ± 2 % | 184,7 | tenu |
+
+Treize lignes jugées, onze tenues, deux manquées. Aucune n'est repronostiquée.
+
+**L'interaction, la cause trouvée.** Le script la prend comme le programme moins la somme
+des mesures seules passées en `union` (`paires()`) ; le pronostic a pris la somme des
+mesures `propres`, celles de l'étude. En D-557 les deux sommes coïncidaient (écart
+−0,0002) et donnaient +0,178 ; ici elles s'écartent de −0,007, surtout par le PFU (union
+moins propres : +0,0145 en D-557, +0,0096 ici). Avec les mesures propres : +0,114, le
+nombre du pronostic. L'erreur est dans le pronostic, qui a lu une règle pour l'autre.
+
+**La boucle, l'emploi : la cause supposée, pas testée.** Les coefficients des passes de
+la boucle bougent au plus de 0,003 (super-brut 0,688 → 0,686 pour le Smic) ; l'écart
+vient donc du chemin sans la boucle, la session du jumeau, qui lit les rapports de
+l'étude Mélenchon de D-689, comme en D-681 (+2,23 alors). À θ 0 et θ 1, sans bande :
+−0,89 ; −1,58 et +7,22 ; +5,81.
+
+**Sans bande.** Vieillie, Smic calé : −155,4 ; +0,08 ; +1,141 (publiée −152,1 ; −0,36 ;
++1,263) ; programme +39,8 ; −48,00 ; +11,426. La diffusion, figée, θ 0 à 1 : emploi
++144,8 ; +3,3 ; −140,8 ; −337,6 ; −572,8 (D-680 : +150,5 à −566,9). Les réglages de
+l'interaction, Smic seul, figée : tous plus bas de 4,8 à 5,9 milliers qu'en D-680 ; le
+programme, de 4,8 à 5,9 aussi. Les paires du jumeau : programme moins somme +0,1 millier,
+−0,01 Md€, −0,111 pt. La passe complète du Smic sur la rapide : 0,9821 (D-557 : 0,9826).
+
+**Ce qui est commité** : `mesure_melenchon_b27/d687/jumeau.json`,
+`reaction_b28/diffusion_d691.json`, `interaction_b28/defaut_d691.json`,
+`interaction_b28/cice_d691.json`, `boucle_b28/resultats_d691.json`, à côté de ceux de
+D-557, qui ne sont pas récrits.
