@@ -352,6 +352,20 @@ class Session:
                     conv = {axe: dict(a) for axe, a in out.conventions.items()}
                     conv.setdefault("menages", {})[premiere] = CONVENTION_VIEILLIE
                     out = dataclasses.replace(out, conventions=conv)
+        seuil = (requete.get("reform") or {}).get("allegement_general_plafond")
+        if seuil is not None and not smic and m.annees:
+            # D-540 : une mesure qui baisse le seuil de sortie de la réduction générale
+            # le déclare au bloc `travail`, qui fait diffuser une hausse du Smic sous le
+            # barème de toutes les mesures de l'année ; sa loi reste dans sa passe.
+            out = dataclasses.replace(out, travail={
+                a: {travail.ALLEGEMENTS: {"plafond": float(seuil)}, "passe": True}
+                for a in out.annees})
+        if payeur(pa) == "publics":
+            # D-500 : les cotisations de la rémunération publique ne sont pas un coût du
+            # travail privé ; elles sortent des impulsions que lisent les blocs marchands.
+            from impots.jumeau.papillon import remuneration_publique
+
+            out = remuneration_publique(out)
         self._mesures[k] = out
         return out
 
@@ -691,9 +705,10 @@ def _conventions(mesure: Any, calculees: Sequence[int]) -> dict[str, Any] | None
     """Les années calculées qu'une convention nommée a ventilées, par axe, et sa
     définition : la page les marque à côté de chaque nombre de ces années (D-414)."""
     from impots.jumeau.blocs.travail import CONVENTION_SMIC, TEXTE_SMIC
+    from impots.jumeau.papillon import TEXTES as TEXTES_PAPILLON
     from impots.jumeau.ventilation import TEXTES
 
-    textes = {**TEXTES, CONVENTION_SMIC: TEXTE_SMIC}
+    textes = {**TEXTES, CONVENTION_SMIC: TEXTE_SMIC, **TEXTES_PAPILLON}
     axes = {axe: sorted(a for a in annees if a in calculees)
             for axe, annees in (mesure.conventions or {}).items()}
     axes = {axe: a for axe, a in axes.items() if a}

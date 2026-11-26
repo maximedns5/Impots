@@ -63,10 +63,12 @@ def test_la_cascade_somme_au_cout_et_a_la_dette_de_la_page(chargees) -> None:
 def test_lisnard_a_sa_marche_des_comportements(chargees) -> None:
     (entry,) = chargees["presidentielle_lisnard"][1]
     marches = dict(graphiques.cascade_nombres(entry)["cout"])
-    # La page : « central +28,51 Md€ […] pour +29,64 Md€ sans eux (la part des ménages) ».
-    assert marches["ménages, mécanique"] / 1e9 == pytest.approx(29.64, abs=0.005)
+    # La page : « central +28,99 Md€ […] pour +29,94 Md€ sans eux (la part des ménages) »
+    # (D-683 : +28,51 et +29,64 sur la série de 5a68669 ; D-692 : +28,78 et +29,91 sur
+    # celle de D-559).
+    assert marches["ménages, mécanique"] / 1e9 == pytest.approx(29.94, abs=0.005)
     assert (marches["ménages, mécanique"] + marches["comportements"]) / 1e9 == (
-        pytest.approx(28.51, abs=0.005))
+        pytest.approx(28.99, abs=0.005))
 
 
 def test_la_trajectoire_finit_sur_le_delta_b_du_rapport(chargees) -> None:

@@ -334,6 +334,15 @@ def attach_mois_travailles(frame: pl.DataFrame, seed: int,
         part = frame["part_salaire_exoneree"].fill_null(0.0).to_numpy().astype(np.float64)
         commune = float(part[employe].max()) if employe.any() else 0.0
         colonnes.append(pl.Series("part_salaire_exoneree", np.where(sortant, commune, part)))
+    if "part_salaire_hors_assiette_cotisations" in frame.columns:
+        # La personne sans emploi payée une partie de l'année prend la part de son donneur
+        # (D-499), sauf chez un particulier employeur, hors du champ.
+        hors = frame["part_salaire_hors_assiette_cotisations"].fill_null(0.0).to_numpy()
+        chez_particulier = np.zeros(frame.height, dtype=bool)
+        if "particulier_employeur" in frame.columns:
+            chez_particulier = particulier[np.maximum(donneur, 0)]
+        colonnes.append(pl.Series("part_salaire_hors_assiette_cotisations", np.where(
+            sortant, np.where(chez_particulier, 0.0, hors[np.maximum(donneur, 0)]), hors)))
     out = frame.with_columns(colonnes)
 
     champ = _champ_insee(frame)

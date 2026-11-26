@@ -223,13 +223,15 @@ REGISTRE.update({ligne.cle: ligne for ligne in (
           definition=("e(m) dans w(m) = max(m (1 + e(m) g), 1 + g) : l'élasticité du salaire "
                       "d'un poste payé m Smic (de 1 à 1,5, par 0,1 Smic) à une hausse g du "
                       f"Smic, la diffusion ; {_PAR_THETA_BAS}"),
-          unite="sans dimension", a_zero="0, la loi seule (la convention des études, D-380)",
+          unite="sans dimension",
+          a_zero="Goarant et Muller, à un an : 0,16 de 1 à 1,1 Smic, 0 au-delà (D-533)",
           a_demi="Koubi et Lhommeau, à un an, sans effets fixes : 0,47 à 0,31",
           a_un="Koubi et Lhommeau, à un an, avec effets fixes : 1,19 à 0,49",
           direction="θ = 1 : les salaires voisins suivent le plus le Smic",
-          source=("Koubi et Lhommeau (Dares), Insee, Les salaires en France 2007, figure "
-                  "11 ; les deux estimations publiées et la loi seule, sans loi entre "
-                  "elles"), verifiee=True),
+          source=("Goarant et Muller (Dares), Insee, Emploi et salaires 2011, figure 11 ; "
+                  "Koubi et Lhommeau (Dares), Insee, Les salaires en France 2007, figure "
+                  "11 ; trois estimations publiées, sans loi entre elles (D-533)"),
+          verifiee=True),
     Ligne(cle=TRAVAIL_INCIDENCE, bloc="travail",
           definition=("λ_t dans ŵ += (1 − λ_s) L[κ̂, S_p] − λ_e L[τ̂ + τ̂ᶜ, S_p], λ_s et λ_e "
                       "les λ_t des tranches pondérés : la part de long terme d'une variation "

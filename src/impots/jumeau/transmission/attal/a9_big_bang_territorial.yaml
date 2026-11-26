@@ -9,15 +9,18 @@ source:
   url: https://attalpresident.fr/programme/mesures/big-bang-territorial
   date: '2026-08-02'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: 'Code général des collectivités territoriales : un échelon de collectivité supprimé,
+    non nommé (la Constitution, art. 72, nomme communes, départements et régions : une révision
+    constitutionnelle si l''échelon est le département ou la région)'
   parametre: null
   valeur: null
   enonce: 1 échelon ; plus de 7 Md€ d'économies par an (lettre du 15/10/2026)
   couche: null
 payeurs:
-- qui: apu:etat
-  sens: paie
+- qui: apu:apul
+  sens: recoit
   par: depense_publique
+  note: les collectivités dépensent moins
 incidence:
 - horizon: immediat
   qui: les bénéficiaires de la dépense
@@ -30,23 +33,26 @@ incidence:
   source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
     », document de travail G2017-04, §4 (les variantes)'
 financement:
-  annonce: null
-  source: null
+  annonce: « deux tiers des économies seront réalisées sur nos dépenses sociales »
+  source: Attal, lettre aux Français sur les finances publiques, 15 octobre 2026, p. 1
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: une économie ; elle finance le redressement (déficit sous 3 % avant 2032), pas une
+    mesure nommée
 canaux:
 - demande_publique
 - emploi_public
 - consommation_menages
 hypotheses:
-- texte: 'Le montant tombe sur la composition de la dépense publique de Mésange (G2017-04,
-    p. 106) : le programme ne dit pas quelle dépense.'
+- texte: L'économie est pleine dès 2027 ; une réforme des échelons prend plusieurs années,
+    que le candidat ne dit pas.
   source: non sourcée
-- texte: 'La variante de Mésange la plus proche : depense_publique.'
-  source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: Le montant est tenu chaque année jusqu'en 2035, en euros courants ; le candidat ne
+    donne pas de trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique (la composition moyenne
+    de la dépense, G2017-04, p. 106), faute de savoir quelle dépense.'
   source: non sourcée
 montant:
   origine: hypothese
@@ -74,3 +80,7 @@ montant:
   entreprises_par: null
   inclus_dans: null
   menages_part: 0.46
+calendrier:
+  texte: aucune date ; « chaque année » une fois la réforme faite
+  source: 'Attal, lettre du 15 octobre 2026, p. 1 : « Plus de 7 milliards d''euros pourront
+    ainsi être économisés chaque année »'

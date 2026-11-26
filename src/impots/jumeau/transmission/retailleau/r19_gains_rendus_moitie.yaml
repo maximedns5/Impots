@@ -90,3 +90,13 @@ montant:
   origine: rapport
   scenario: pres2027_retailleau_r19_gains_rendus_moitie
   rapport: reports/etudes/presidentielle_retailleau/mesures/r19_gains_rendus_moitie/predictif_pres2027_retailleau_r19_gains_rendus_moitie.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_retailleau/mesures/r19_gains_rendus_moitie/premiere_annee_pres2027_retailleau_r19_gains_rendus_moitie.json
+    ecarts_md:
+      salaire_net: 12.86
+      cotisations_salariales: -12.86
+      ir: 1.93
+      ppa: -0.29
+      aide_logement: -0.05
+      revenu_disponible: 10.56

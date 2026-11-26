@@ -126,27 +126,41 @@ def cle_depenses() -> dict[str, float]:
     return _normer({s: sum(float(lignes[n][s]) for n in noms) for s in SECTEURS})
 
 
-def payeurs_fiche(cle: str) -> tuple[str, ...]:
-    """Les comptes des APU qui paient une mesure, lus dans sa fiche de transmission (le
-    volet `carte`, `payeurs`, sens « paie ») : `apu:etat` → l'État, `apu:apul`, `apu:odac`,
-    `apu:secu:<branche>` → la branche des ASSO (D-487)."""
+#: Les branches des fiches (`transmission.BRANCHES`) dont le compte porte un autre nom.
+BRANCHE_COMPTE = {"vieillesse": "vieillesse_base", "chomage": "unedic",
+                  "retraite_complementaire": "complementaires"}
+
+
+def _payeurs_fiche(cle: str) -> dict[str, float | None]:
+    """{compte : part dite par la fiche, ou None} des APU qui paient une mesure."""
     from impots.jumeau import transmission
 
     candidat, mesure = cle.split("/")
-    out = []
+    out: dict[str, float | None] = {}
     for p in transmission.fiche(candidat, mesure)["payeurs"] or ():
         qui = str(p["qui"])
         if p["sens"] != "paie" or not qui.startswith("apu:"):
             continue
         compte = qui.removeprefix("apu:")
-        compte = f"asso.{compte.removeprefix('secu:')}" if compte.startswith("secu:") \
-            else compte
+        if compte.startswith("secu:"):
+            branche = compte.removeprefix("secu:")
+            compte = f"asso.{BRANCHE_COMPTE.get(branche, branche)}"
         if compte not in comptes():
             raise FinancementError(f"{cle} : payeur « {qui} » sans compte ({comptes()})")
-        out.append(compte)
+        part = p.get("part")
+        out[compte] = (out.get(compte) or 0.0) + float(part) if part is not None else None
     if not out:
         raise FinancementError(f"{cle} : la fiche ne nomme aucune APU qui paie")
-    return tuple(dict.fromkeys(out))
+    return out
+
+
+def payeurs_fiche(cle: str) -> tuple[str, ...]:
+    """Les comptes des APU qui paient une mesure, lus dans sa fiche de transmission (le
+    volet `carte`, `payeurs`, sens « paie ») : `apu:etat` → l'État, `apu:apul`, `apu:odac`,
+    `apu:secu:<branche>` → la branche des ASSO (D-487 ; `vieillesse` → la CNAV et les
+    régimes de base, `retraite_complementaire` → les complémentaires, `chomage` →
+    l'Unédic, D-510)."""
+    return tuple(_payeurs_fiche(cle))
 
 
 def cle_reste(mesure: str | None, cote: str) -> dict[str, float]:
@@ -155,10 +169,16 @@ def cle_reste(mesure: str | None, cote: str) -> dict[str, float]:
     `financement.yaml` (`mesures.<mesure>.reste`) nomme une ligne du compte et la fiche
     de la mesure, les parts de cette ligne en 2025 restreintes aux payeurs que la fiche
     nomme, renormées (D-487 : le point d'indice, payé par l'État, les APUL et les
-    hôpitaux, et non à la clé des prélèvements)."""
+    hôpitaux, et non à la clé des prélèvements). Quand la fiche dit la part de chacun de
+    ses payeurs, ce sont ces parts (D-510)."""
     propre = ((parametres().get("mesures") or {}).get(mesure or "") or {}).get("reste")
     if not propre:
         return _comme_comptes(cle_prelevements() if cote == "recettes" else cle_depenses())
+    dites = _payeurs_fiche(propre["fiche"])
+    if all(v is not None for v in dites.values()):
+        # La fiche dit la part de chaque payeur (le volet `fiches`, D-504) : elle passe
+        # avant les parts de la ligne (D-510). Une part nulle n'est pas un payeur.
+        return _normer({cp: v for cp, v in dites.items() if v})
     parts = parts_ligne(propre["ligne"])
     payeurs = payeurs_fiche(propre["fiche"])
     poids = {cp: parts[secteur(cp)] for cp in payeurs}
@@ -304,6 +324,16 @@ def _statique(etat: Any, champs: Sequence[str]) -> dict[str, dict[str, np.ndarra
     return out
 
 
+def _avec_publics(m: Any) -> dict[int, dict[str, float]]:
+    """Les impulsions d'une mesure et les cotisations de la rémunération publique qu'elle
+    porte à part (D-500) : le compte des sous-secteurs range les deux de la même façon."""
+    out = {a: dict(v) for a, v in (m.impulsions or {}).items()}
+    for a, v in (getattr(m, "prelevements_publics", None) or {}).items():
+        for i, x in v.items():
+            out.setdefault(a, {})[i] = out.get(a, {}).get(i, 0.0) + float(x)
+    return out
+
+
 def decomposer(traj: Any, mesures: Sequence[Any], theta: Mapping[str, Any] | None = None,
                options: Mapping[str, str] | None = None) -> CompteSousSecteurs:
     """Le compte par sous-secteur d'une trajectoire, et la compensation."""
@@ -312,7 +342,7 @@ def decomposer(traj: Any, mesures: Sequence[Any], theta: Mapping[str, Any] | Non
     annees = tuple(traj.annees)
     n = traj.reference[0].n
     c = CompteSousSecteurs(annees, n)
-    impulsions = {m.identifiant: (m.impulsions or {}) for m in mesures}
+    impulsions = {m.identifiant: _avec_publics(m) for m in mesures}
     inter = {nom: float(publie["lignes"][nom]["consolidation"])
              for nom in ("apu_r_d73", "apu_r_d9", "apu_d_d73", "apu_d_d9")}
     pib0 = None

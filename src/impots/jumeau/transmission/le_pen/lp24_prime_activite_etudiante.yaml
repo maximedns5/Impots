@@ -8,7 +8,8 @@ source:
   url: https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut
   date: '2026-10-06'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: 'Code de la sécurité sociale, art. L841-1 et s. (la prime d''activité) : les étudiants
+    y entrent sans condition de revenu minimal'
   parametre: null
   valeur: null
   enonce: Paramètres non donnés
@@ -75,3 +76,8 @@ montant:
   menages_par: prestations
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: la dépense de prime d'activité ; les 0,6 Md€ en font 6 %
+  montant_md: 10.6
+  annee: 2024
+  source: Cour des comptes, la prime d'activité, rapport au Sénat n° 25-728 (2025)

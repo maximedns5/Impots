@@ -9,8 +9,8 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
-    IFI (art. 964 et s.)'
+  texte: 'Code général des impôts, art. 200 A (le prélèvement forfaitaire unique de 12,8 %
+    sur les revenus du capital) : supprimé, ces revenus vont au barème (art. 197)'
   parametre: pfu_supprime
   valeur:
     pfu_supprime: true
@@ -19,11 +19,12 @@ levier:
 payeurs:
 - qui: menages
   sens: paie
-  par: patrimoine
-  note: 'la population n''en porte pas : aucune clé par décile'
+  par: ir
+  note: '+13,89 Md€ d''IR la première année (rapport, 2026, figé) : les ménages qui ont des
+    revenus du capital'
 - qui: apu:etat
   sens: recoit
-  par: capital_menages
+  par: impot_sur_le_revenu
 incidence:
 - horizon: immediat
   qui: les détenteurs du patrimoine
@@ -38,10 +39,13 @@ incidence:
     », QJE 135(1) (Danemark) : l''assiette répond à l''impôt sur la fortune, d''autant plus
     en haut de la distribution'
 financement:
-  annonce: null
-  source: null
-  chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  annonce: « Une partie de cette œuvre de justice fiscale devra être orientée vers la réduction
+    de notre déficit »
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6
+  chiffre: true
+  note: une recette du programme ; son bilan (p. 14) en affecte 81,7 Md€ aux dépenses et 24,7
+    Md€ au déficit, sans dire laquelle va où
 canaux:
 - patrimoine_menages
 - consommation_menages
@@ -53,8 +57,28 @@ hypotheses:
     capital est celui qu''impute la population (D-248) : ni l''assurance vie, ni les plus-values
     d''avant 2018. Contre le droit de 2026. Pas de plage : la mesure est un oui ou un non.'
   source: le chiffrage de la mesure (`programmes/melenchon.json`)
+- texte: Le candidat annonce 9 Md€ ; le rapport chiffre 13,79 Md€ de recette la première année,
+    sans réponse des dividendes versés.
+  source: le rapport de la mesure ; Mélenchon, document du 14 octobre 2026, p. 13
 montant:
   origine: rapport
   scenario: pres2027_melenchon_suppression_pfu
   rapport: reports/etudes/presidentielle_melenchon/mesures/suppression_pfu/predictif_pres2027_melenchon_suppression_pfu.json
   annonce_md: 9.0
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_melenchon/mesures/suppression_pfu/premiere_annee_pres2027_melenchon_suppression_pfu.json
+    ecarts_md:
+      ir: 13.89
+      revenu_disponible: -13.79
+assiette:
+  texte: les recettes de PFO et de PFU (l'acompte de 12,8 % sur les dividendes et intérêts),
+    dans l'impôt sur le revenu net
+  montant_md: 8.1
+  annee: 2026
+  source: 'Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, impôt sur le revenu,
+    tableau de composition (ligne « PFO/PFU » : 7,5 ; 8,0 ; 8,1 Md€ en 2024, 2025, 2026)'
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6

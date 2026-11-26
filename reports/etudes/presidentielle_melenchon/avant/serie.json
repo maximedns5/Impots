@@ -1,10 +1,14 @@
 {
-  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
   "scenarios": {
     "pres2027_melenchon_programme": {
-      "cout": 88980396281.78317,
-      "dette": 0.2753748008288259,
-      "selon_theta": "hausse"
+      "cout": 90995107901.75195,
+      "dette": 0.2749538232243087,
+      "selon_theta": "hausse",
+      "verdict": "hausse"
     }
-  }
+  },
+  "corrections": [
+    "les gérants majoritaires retirés des salariés d'un facteur commun, sur la population refaite (D-686, D-687)"
+  ]
 }

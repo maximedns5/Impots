@@ -25,9 +25,11 @@ def test_attal_porte_les_nombres_de_ses_rapports() -> None:
     # But 21 (D-397) : les pensions alimentaires s'ajoutent ; 65,69 Md€ et 20,28 points
     # sur la série du but 19, deux mesures chiffrées sur vingt paramétrées. But 22
     # (D-403) : le canal des créations d'entreprises entre dans la dette, +20,45 → +20,41 ;
-    # à l'élasticité de D-427, +20,44 ; sans la CVAE dans le canal (D-440), +20,46.
-    assert comparer.md(c["cout"]) == "+66,18 Md€"
-    assert comparer.pt(c["sans_boucle"]) == "+20,46 pt"
+    # à l'élasticité de D-427, +20,44 ; sans la CVAE dans le canal (D-440), +20,46 ; la
+    # série de D-559 (D-683) : +66,18 Md€ → +62,94, +20,46 → +19,54 pt ; celle de D-689
+    # (D-692) : +62,86 et +19,50.
+    assert comparer.md(c["cout"]) == "+62,86 Md€"
+    assert comparer.pt(c["sans_boucle"]) == "+19,50 pt"
     assert (c["chiffrees"], c["parametrees"]) == (3, 21)
     # Ce que la boucle lit et ce qu'elle ne lit pas refont le coût.
     assert c["lu"] + c["non_lu"] == pytest.approx(c["cout"])
@@ -47,7 +49,7 @@ def test_les_huit_sont_la(page: parcours.Page) -> None:
         assert f'value="{nom}"' not in page.corps
     assert ("non refaite au but 22 (D-403)" in page.corps) == bool(absentes)
     assert "presidentielle_dupont_aignan" not in page.corps
-    assert "+66,18 Md€" in page.corps and "+20,46 pt" in page.corps
+    assert "+62,86 Md€" in page.corps and "+19,50 pt" in page.corps
 
 
 def test_le_verdict_n_est_pas_montre(page: parcours.Page) -> None:
@@ -60,9 +62,10 @@ def test_un_euro_aux_trois_premiers_deciles_ne_se_lit_pas_sans_gain(monkeypatch)
     """Depuis la série du but 21 (D-397), les trois premiers déciles gagnent chez les huit,
     Mélenchon compris (sa part des ménages rapportait au but 19 ; elle coûte 88,98 Md€
     dont 24,68 vont aux trois premiers déciles). Le cas sans gain se tient sur son rapport,
-    les gains de ces déciles mis à zéro."""
+    les gains de ces déciles mis à zéro. 3,6 € sur la série de D-559, 3,5 € sur celle de
+    D-689 (D-692)."""
     c = comparer.candidat("presidentielle_melenchon")
-    assert c["par_euro"] == "3,6 €" and c["pourquoi"] == ""
+    assert c["par_euro"] == "3,5 €" and c["pourquoi"] == ""
     lire = comparer.lire
 
     def sans_gain(chemin: str):
@@ -89,24 +92,29 @@ def test_un_euro_rendu_se_lit_sur_le_cout_des_menages() -> None:
     a = comparer.candidat("presidentielle_attal")
     r = comparer.candidat("presidentielle_retailleau")
     # But 21 (D-397) : 11,3 € et 11,7 € pour Attal, 11,4 € et 18,4 € pour Retailleau sur
-    # la série du but 19 ; les programmes ont grandi.
-    assert (a["par_euro"], a["par_euro_total"]) == ("11,4 €", "11,9 €")
-    assert (r["par_euro"], r["par_euro_total"]) == ("4,3 €", "5,0 €")
-    assert comparer._cellules(r)["par_euro"].startswith("4,3 € sur le coût des ménages")
+    # la série du but 19 ; les programmes ont grandi. La série de D-559 (D-683) : 11,4 et
+    # 11,9 € → 12,0 et 12,5 € pour Attal, 4,3 et 5,0 € → 4,5 et 5,3 € pour Retailleau ;
+    # celle de D-689 (D-692) : 11,9 et 12,4 € pour Attal, 4,5 et 5,2 € pour Retailleau.
+    assert (a["par_euro"], a["par_euro_total"]) == ("11,9 €", "12,4 €")
+    assert (r["par_euro"], r["par_euro_total"]) == ("4,5 €", "5,2 €")
+    assert comparer._cellules(r)["par_euro"].startswith("4,5 € sur le coût des ménages")
 
 
 def test_non_lu_une_definition_deux_vues() -> None:
     """Relecture 2, constat 1 : « non lu » est le coût de l'année moins ce qui est lu, dans
     la vue figée (cette page) comme dans la vue vieillie (la page 5)."""
     a = comparer.candidat("presidentielle_attal")
-    # But 21 (D-397) : +0,60, +0,93 et +13,90 Md€ sur la série du but 19.
-    assert comparer.md(a["non_lu"]) == "+0,63 Md€"
-    assert comparer.md(a["non_lu_vieillie"]) == "+0,95 Md€"
+    # But 21 (D-397) : +0,60, +0,93 et +13,90 Md€ sur la série du but 19 ; +0,63 et +0,95
+    # sur celle de 5a68669 ; −0,01 et +0,24 sur celle de D-559 (D-683) ; −0,02 et +0,22
+    # sur celle de D-689 (D-692).
+    assert comparer.md(a["non_lu"]) == "−0,02 Md€"
+    assert comparer.md(a["non_lu_vieillie"]) == "+0,22 Md€"
     # D-403 : Labib (+13,86 Md€ non lus, vue vieillie) n'est pas refait au but 22 ;
     # Lisnard, dont l'impôt des entreprises n'est pas lu, tient la vue vieillie à sa place.
+    # D-683 : +5,86 et +6,26 sur la série de 5a68669. D-692 : +6,02 → +6,01 (D-689).
     lis = comparer.candidat("presidentielle_lisnard")
-    assert comparer.md(lis["non_lu"]) == "+5,86 Md€"
-    assert comparer.md(lis["non_lu_vieillie"]) == "+6,26 Md€"
+    assert comparer.md(lis["non_lu"]) == "+5,65 Md€"
+    assert comparer.md(lis["non_lu_vieillie"]) == "+6,01 Md€"
 
 
 def test_un_candidat_ne_se_compare_pas_a_lui_meme(page: parcours.Page) -> None:
@@ -116,7 +124,7 @@ def test_un_candidat_ne_se_compare_pas_a_lui_meme(page: parcours.Page) -> None:
 def test_couverture_asymetrie_et_sources(page: parcours.Page) -> None:
     """Constats 7 et 8 : la couverture à côté de chaque coût, l'asymétrie du canal
     d'offre de travail, une source accessible pour Tondelier."""
-    assert "+66,18 Md€, pour 3 mesures sur 21" in page.script
+    assert "+62,86 Md€, pour 3 mesures sur 21" in page.script
     assert "ne s'ouvre que pour la\nCSG" in page.corps or "ne s'ouvre que pour la CSG" in page.corps
     assert "https://monvote2027.fr/candidat/tondelier" in page.corps
     assert "francais.rt.com" in page.corps

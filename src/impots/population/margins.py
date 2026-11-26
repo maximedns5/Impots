@@ -1164,3 +1164,203 @@ SMIC_DIFFUSION = Figure(
            "qu'« une fois que le SMIC augmente, les salaires des travailleurs légèrement "
            "supérieurs au SMIC finissent par augmenter également ».",
 )
+
+
+# --------------------------------------------------------------------------- #
+# Le salaire horaire brut du privé en parts de Smic (but 27, volet grille2, D-497).
+# --------------------------------------------------------------------------- #
+BOZIO_WASMER_URL = ("https://www.strategie-plan.gouv.fr/files/files/Publications/Rapport/"
+                    "rapport_vffff_241003.pdf")
+
+#: Part des salariés du privé dont le salaire horaire brut est sous un seuil, en parts
+#: de Smic, 2022 : la fonction de répartition que la population reproduit, en
+#: personnes. Bozio et Wasmer, « Les politiques d'exonérations de cotisations sociales :
+#: une inflexion nécessaire », rapport final, octobre 2024 (`data/raw/bozio_wasmer_2024_
+#: exonerations_rapport_final.pdf`), graphique 3.8, p. 135 du rapport (p. 137 du PDF),
+#: série 2022 : sous 1,1 Smic 12,4 %, 1,2 : 25,2 %, 1,3 : 38,4 %, 1,4 : 47,4 %, 1,5 :
+#: 54,4 %, 1,6 : 60,1 % ; graphique 3.9, p. 136 (p. 138 du PDF), quantiles de 2022 : D1
+#: 1,08, médiane 1,43, Q3 2,01, D9 3,04 (le Q1, 1,20, double le seuil de 1,2 du 3.8, qui
+#: est gardé). Insee, bases Tous salariés, calculs Dares. Champ : poste principal, salariés
+#: comptés en personnes physiques, 18 à 64 ans, secteur privé hors particuliers
+#: employeurs, France métropolitaine, salaire horaire brut inférieur à 4 Smic : 4 Smic
+#: ferme la fonction (part 1), et le bas est fermé au Smic (part 0), une hypothèse : le
+#: graphique ne donne aucun point sous le D1, et les salaires sous le Smic (apprentis,
+#: moins de 18 ans) n'y sont pas séparés.
+SALAIRE_HORAIRE_PRIVE_EN_SMIC_2022: dict[float, float] = {
+    1.00: 0.0, 1.08: 0.10, 1.10: 0.124, 1.20: 0.252, 1.30: 0.384, 1.40: 0.474,
+    1.43: 0.50, 1.50: 0.544, 1.60: 0.601, 2.01: 0.75, 3.04: 0.90, 4.00: 1.0,
+}
+
+SALAIRE_HORAIRE_PRIVE_EN_SMIC = Figure(
+    value=0.601, unit="ratio", year=2022,
+    scope="Part des salariés du privé (18-64 ans, personnes, poste principal, hors "
+          "particuliers employeurs, métropole, sous 4 Smic) dont le salaire horaire brut "
+          "est inférieur à 1,6 Smic ; la fonction entière est "
+          "SALAIRE_HORAIRE_PRIVE_EN_SMIC_2022",
+    source="Bozio et Wasmer, rapport final sur les exonérations de cotisations sociales "
+           "(octobre 2024), graphiques 3.8 et 3.9 (Insee, BTS ; calculs Dares)",
+    url=BOZIO_WASMER_URL, use="calibration",
+    caveat="Spent by `incomes._salaires_horaires_en_smic`: the hourly wages of the "
+           "private employees under 4 Smic are mapped, rank kept, onto this function, "
+           "then the private wage bill is given back uniformly (D11 holds). Of 2022, "
+           "applied to 2024: the Smic rose 2,2 % in 2024 against 2,9 % for the SMPT "
+           "(CCSS, juin 2025, fiche 1.6), so the 2024 distribution is a little less "
+           "compressed. Between published points the function is linear.",
+)
+
+# --------------------------------------------------------------------------- #
+# Le salaire horaire brut du privé entre 2,5 et 3,5 Smic (but 28, volet suite, D-552).
+# --------------------------------------------------------------------------- #
+BTS_2022_REGIONS_URL = "https://www.insee.fr/fr/statistiques/8219475?sommaire=8219523"
+
+#: Les déciles du salaire brut horaire du secteur privé en 2022, en euros, ensemble des
+#: postes, toutes catégories, les deux sexes, France (hors Mayotte) : Insee, « Les
+#: salaires dans le secteur privé en 2022 », Insee Résultats (base Tous salariés 2022),
+#: tableaux régionaux, tableau T305, T305.csv
+#: (`data/raw/insee_bts2022_t305_deciles_salaire_brut_horaire.csv`),
+#: ligne REG 99, CS1 T, CE T, SEXE E : 12,1 ; 13,3 ; 14,5 ;
+#: 15,8 ; 17,5 ; 19,6 ; 22,5 ; 27,2 ; 36,3 (moyenne 22,4). Champ : salariés du privé hors
+#: secteur agricole, particuliers employeurs, apprentis et stagiaires ; une observation
+#: est un poste, les heures rémunérées le volume. Une source neuve pour la forme entre le
+#: Q3 et le D9 de la Dares (D-532, D-551) : ni le calage de D-497, ni le juge de D-531.
+SALAIRE_HORAIRE_BRUT_PRIVE_DECILES_2022: dict[float, float] = {
+    0.1: 12.1, 0.2: 13.3, 0.3: 14.5, 0.4: 15.8, 0.5: 17.5, 0.6: 19.6, 0.7: 22.5,
+    0.8: 27.2, 0.9: 36.3,
+}
+
+#: Le Smic horaire brut moyen de 2022, pondéré par les mois : 10,57 € du 1er janvier
+#: (décret n° 2021-1741), 10,85 € du 1er mai (arrêté du 19 avril 2022), 11,07 € du
+#: 1er août (arrêté du 29 juillet 2022) : 10,848 €. Le D8 de 2022 en Smic : 27,2 / 10,848
+#: = 2,507 ; le D9, 3,346.
+SMIC_HORAIRE_MOYEN_2022 = (10.57 * 4 + 10.85 * 3 + 11.07 * 5) / 12.0
+
+#: Le point ajouté à la fonction de la Dares (`incomes._salaires_horaires_en_smic`,
+#: D-552) : à 2,5 Smic, la part des salariés, en personnes, que la fonction place
+#: dessous. Ajusté hors de la construction pour que, sur la population construite, les
+#: heures des salariés du privé (poids × quotité × mois travaillés) payées sous le D8 de
+#: l'Insee en Smic (2,507) fassent 80 % des heures, comme le D8 le dit. Sans lui, la
+#: fonction est linéaire de 2,01 (75 %) à 3,04 Smic (90 %), 82,1 % à 2,5 ; les heures
+#: sous 2,507 Smic font 76,7 % (D-552). Les points de la Dares restent tous : celui-ci
+#: dit seulement comment la densité décroît entre son Q3 et son D9.
+SALAIRE_HORAIRE_PRIVE_POINT_INSEE_2022: dict[float, float] = {2.50: 0.864}
+
+SALAIRE_HORAIRE_PRIVE_D8_INSEE = Figure(
+    value=27.2 / SMIC_HORAIRE_MOYEN_2022, unit="ratio", year=2022,
+    scope="D8 du salaire brut horaire des postes du secteur privé, en Smic horaire brut "
+          "moyen de l'année : 27,2 / 10,848 = 2,507",
+    source="Insee, Les salaires dans le secteur privé en 2022, Insee Résultats, base Tous "
+           "salariés 2022, tableau T305 (déciles du salaire brut horaire)",
+    url=BTS_2022_REGIONS_URL, use="calibration",
+    caveat="Spent by SALAIRE_HORAIRE_PRIVE_POINT_INSEE_2022: the point at 2,5 Smic is "
+           "fitted so that 80 % of the private employees' hours sit under this D8. The "
+           "deciles are read as weighted by hours (an Insee observation is a post; the "
+           "weighting of the deciles is not printed); 2022 applied to 2024, as the "
+           "Dares's function; the published deciles are rounded to 0,1 €.",
+)
+
+
+#: Le Smic horaire brut de 2024 : 11,65 € du 1er janvier (décret n° 2023-1216 du 20
+#: décembre 2023), 11,88 € du 1er novembre (décret n° 2024-951 du 23 octobre 2024), sur la
+#: durée légale de 151,67 heures par mois. Le salaire horaire d'un salarié de la
+#: population est son salaire annuel sur ce Smic annuel, à sa quotité.
+SMIC_ANNUEL_2024 = (11.65 * 10 + 11.88 * 2) * 151.67
+
+
+# --------------------------------------------------------------------------- #
+# Le niveau de vie selon le statut d'occupation (but 27, volet grille2, D-497).
+# --------------------------------------------------------------------------- #
+ERFS_2023_URL = "https://www.insee.fr/fr/statistiques/8731694?sommaire=8731855"
+
+#: Niveau de vie annuel médian des individus selon le statut d'occupation du logement,
+#: 2023, en euros : Insee, « Revenu, niveau de vie et pauvreté en 2023 », Insee Résultats,
+#: enquête Revenus fiscaux et sociaux 2023, tableau TI09
+#: (https://www.insee.fr/fr/statistiques/fichier/8731694/irsocerfs2023_ti09.xlsx,
+#: `data/raw/insee_erfs2023_ti09_niveau_de_vie_statut_occupation.xlsx`). Champ : France
+#: métropolitaine, individus des ménages ordinaires dont la personne de référence n'est
+#: pas étudiante, revenu déclaré positif ou nul. Ensemble : 25 760 €. Les clés sont les
+#: `statut_occupation` de la population ; « locataire_meuble » est la ligne « logement
+#: loué meublé ou chambre d'hôtel ».
+NIVEAU_DE_VIE_MEDIAN_PAR_STATUT_2023: dict[str, float] = {
+    "ensemble": 25_760.0, "primo_accedant": 29_350.0, "proprietaire": 28_920.0,
+    "locataire_hlm": 17_260.0, "locataire_vide": 22_440.0, "locataire_meuble": 22_250.0,
+    "loge_gratuitement": 21_040.0,
+}
+
+NIVEAU_DE_VIE_PAR_STATUT = Figure(
+    value=17_260.0 / 25_760.0, unit="ratio", year=2023,
+    scope="Niveau de vie médian des individus des ménages locataires d'un logement HLM "
+          "sur celui de l'ensemble ; les six statuts sont "
+          "NIVEAU_DE_VIE_MEDIAN_PAR_STATUT_2023",
+    source="Insee, Revenu, niveau de vie et pauvreté en 2023 (ERFS 2023), tableau TI09",
+    url=ERFS_2023_URL, use="calibration",
+    caveat="Spent by FACTEUR_STATUT_OCCUPATION: the factors are fitted so that the "
+           "model's niveau de vie médian (servi, pondéré personne) of each tenure, over "
+           "the whole population's, is the ERFS's. Medians relative to the whole, not "
+           "levels: the model's level is the niveau de vie line's. The ERFS is "
+           "metropolitan and leaves out the student households; the model is not.",
+)
+
+#: Le facteur de chaque statut d'occupation sur le rang du salaire et sur le tirage de la
+#: pension (`incomes._facteur_statut`), ajusté hors de la construction (D-497) : six tours
+#: d'une construction et d'une passe d'essai sur 20 000 ménages (graine 20240101, droit
+#: 2024), le facteur de chaque statut multiplié à chaque tour par le rapport, à la
+#: puissance 1,5, du niveau de vie médian relatif de l'ERFS à celui du modèle. Le levier
+#: sature : un rang ne descend pas sous le bas de la courbe de son secteur, et les
+#: propriétaires montent quand les locataires descendent (sans revenus du patrimoine dans
+#: le niveau de vie de la grille, que l'ERFS compte). Le sixième tour, gardé, rend le plus
+#: petit écart maximal : locataires HLM 0,720 (ERFS 0,670), vide 0,908 (0,871), meublé
+#: 0,898 (0,864), logés gratuitement 0,851 (0,817), accédants 1,186 (1,139),
+#: propriétaires 1,169 (1,123) ; avant, 0,854, 0,943, 0,916, 1,000, 1,099 et 1,055.
+FACTEUR_STATUT_OCCUPATION: dict[str, float] = {
+    "primo_accedant": 0.867, "proprietaire": 0.929, "locataire_hlm": 0.383,
+    "locataire_vide": 0.707, "locataire_meuble": 0.700, "loge_gratuitement": 0.574,
+}
+
+
+# --------------------------------------------------------------------------- #
+# La part du brut hors de l'assiette des cotisations (but 27, volet grille3, D-499).
+# --------------------------------------------------------------------------- #
+URSSAF_PPV_URL = ("https://open.urssaf.fr/explore/dataset/"
+                  "prime-partage-valeur-par-trimestre-champ-large-france-entiere/")
+DARES_EPARGNE_SALARIALE_URL = ("https://dares.travail-emploi.gouv.fr/publication/"
+                               "lepargne-salariale-en-2024")
+
+#: La prime de partage de la valeur versée par le secteur privé en 2024 : Urssaf, jeu
+#: ouvert « Prime de partage de la valeur par trimestre, champ large, France entière »,
+#: somme des quatre trimestres de 2024, « Secteur privé (champ des ETE) » 3 451 M€ et
+#: « Secteur privé (hors champ des ETE) » 11 M€ (export du 16 novembre 2026,
+#: `data/raw/urssaf_ppv_trimestre_champ_large.csv`). 2023 : 5 287 M€ ; 2022 : 4 519 M€.
+PPV_PRIVE_2024 = 3_462e6
+
+#: La participation, l'intéressement et les abondements de l'employeur (PEE, épargne
+#: retraite collective) versés en 2024 : 27,2 Md€ bruts (Dares, « L'épargne salariale en
+#: 2024 », juin 2026 ; 26,1 en 2023). Le chiffre est lu dans les reprises de la
+#: publication (FO-Cadres, 19 juin 2026 : « Le montant total des primes versées est estimé
+#: à 27,2 milliards d'euros brut, soit 1,1 milliard d'euros de plus qu'en 2023 ») : le
+#: site de la Dares ne répondait pas le 16 novembre (503), le tableau reste à relever par
+#: le volet `sources`. Les reprises ne s'accordent pas sur la ventilation (participation
+#: 11,0 ou 11,4 Md€, intéressement 11,8 ou 11,9), seulement sur le total. Source
+#: secondaire, à vérifier : la publication de la Dares ne répondait toujours pas le 16
+#: novembre au soir (503, réponse vide ; seconde jonction du but 27, D-512).
+EPARGNE_SALARIALE_2024 = 27.2e9
+
+REMUNERATION_HORS_ASSIETTE_COTISATIONS = Figure(
+    value=PPV_PRIVE_2024 + EPARGNE_SALARIALE_2024, unit="EUR", year=2024,
+    scope="Rémunérations des salariés du privé comptées dans D11 mais exonérées de "
+          "cotisations sociales (assujetties à la CSG, à la CRDS et au forfait social) : "
+          "prime de partage de la valeur, participation, intéressement, abondements",
+    source="Urssaf, open data, prime de partage de la valeur par trimestre (2024) ; Dares, "
+           "L'épargne salariale en 2024 (juin 2026), total repris par la presse "
+           "(source secondaire, à vérifier)",
+    url=DARES_EPARGNE_SALARIALE_URL, use="calibration",
+    caveat="Spent by `incomes._part_hors_assiette`: spread over the employees of the "
+           "private field (the allègements' field) in proportion to their pay above the "
+           "Smic, so that the contributions, the taxes on the wage bill and the "
+           "allègements read the base the CCSS counts (juin 2025, fiche 1.2 : un point de "
+           "cotisation déplafonnée vaut 7,2 Md€ pour le régime général privé et 0,3 pour "
+           "les salariés agricoles, une assiette d'environ 750 Md€). Neither the CSG nor "
+           "the income tax reads it. A hypothesis on who: nought at the Smic, rising with "
+           "the pay above it. The 2024 total serves 2022 and 2023 (the PPV was 5,3 Md€ in "
+           "2023). Other exempt pay (titres-restaurant, chèques-vacances) is left in the "
+           "base: no total for it is in the depot.",
+)

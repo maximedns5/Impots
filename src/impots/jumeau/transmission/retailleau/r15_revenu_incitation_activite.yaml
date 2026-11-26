@@ -77,3 +77,11 @@ montant:
   origine: rapport
   scenario: pres2027_retailleau_r15_revenu_incitation_activite
   rapport: reports/etudes/presidentielle_retailleau/mesures/r15_revenu_incitation_activite/predictif_pres2027_retailleau_r15_revenu_incitation_activite.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_retailleau/mesures/r15_revenu_incitation_activite/premiere_annee_pres2027_retailleau_r15_revenu_incitation_activite.json
+    ecarts_md:
+      ppa: -8.84
+      rsa: -12.29
+      aide_logement: -0.39
+      revenu_disponible: 5.76

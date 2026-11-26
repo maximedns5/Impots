@@ -737,6 +737,33 @@ the self-employed's in law, a bias the étape « ir » stated and that remains.
 
 **Blast radius:** a person marked excluded. The wire carries none; the population marks the
 gérants majoritaires and the employees of a private person.
+
+---
+
+**Correction 27 — the PPV and the épargne salariale bear no contributions (CSS art. L. 242-1 ;
+C. trav. art. L. 3312-4, L. 3325-1, L. 3332-27 ; loi n° 2022-1158, art. 1er), but 27, volet
+grille3, D-499.**
+
+An input openfisca has no place for, again. The population's gross pay is calibrated on D11,
+which holds the prime de partage de la valeur, the participation, the intéressement and the
+employer's abondements: 30,7 Md€ in 2024 (`margins.REMUNERATION_HORS_ASSIETTE_COTISATIONS`).
+They bear the CSG, the CRDS and the forfait social, not the contributions; openfisca has a
+`prime_partage_valeur` but no participation nor intéressement, and the population cannot
+split a person's pay into them. So every euro of D11 bore contributions: a private base of
+780 to 805 Md€ against the CCSS's 750 (juin 2025, fiche 1.2), the employees' contributions
+of the public schemes 11 % above the accounts (D-498).
+
+The correction adds `part_salaire_hors_assiette_cotisations`, an individual share, zero
+unless the population writes it (`incomes._part_hors_assiette`), and takes it off
+`assiette_cotisations_sociales_prive`: wrapped around openfisca's formula. Everything that
+reads the base moves with it, as in law: the contributions, the taxes on the wage bill, the
+allègements (the PPV entered their base only in 2025, LFSS 2025 art. 18; out before). The
+CSG's base (`assiette_csg_abattue`) reads `salaire_de_base` and does not move, nor the
+gross pay. The net pay rises by the contributions no longer paid, and the taxable salary
+with it, which is right for the PPV and the épargne salariale taken in cash.
+
+**Blast radius:** a person with a share above zero. The wire carries none; the population
+built since D-499 carries one share for every employee of the private field.
 """
 
 from __future__ import annotations
@@ -1151,6 +1178,10 @@ def apply_to(system: Any) -> Any:
             self.add_variable(_excluded_from_the_allegements())
             base_formula = self.get_variable(ALLEGEMENT_BASE).get_formula()
             self.update_variable(_no_allegement_base_for_the_excluded(base_formula))
+            # Correction 27 (but 27, volet grille3, D-499).
+            self.add_variable(_share_outside_the_contribution_base())
+            private_base = self.get_variable(PRIVATE_CONTRIBUTION_BASE).get_formula()
+            self.update_variable(_contribution_base_less_the_exempt_share(private_base))
 
     return BenefitCorrections(system)
 
@@ -2360,3 +2391,53 @@ def _no_allegement_base_for_the_excluded(openfisca_formula: Any) -> Any:
             return where(exclu, 0.0, montant)
 
     return assiette_allegement
+
+
+#: The share of a person's gross pay outside the base of the contributions (correction 27),
+#: and the private base openfisca's contributions, taxes on the wage bill and allègements read.
+SHARE_OUTSIDE_CONTRIBUTION_BASE = "part_salaire_hors_assiette_cotisations"
+PRIVATE_CONTRIBUTION_BASE = "assiette_cotisations_sociales_prive"
+
+
+def _share_outside_the_contribution_base() -> Any:
+    """`part_salaire_hors_assiette_cotisations`: the share of a person's gross pay that bears
+    no contributions (PPV, participation, intéressement, abondements); an input, zero unless
+    the population writes it (correction 27)."""
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import Individu
+
+    class part_salaire_hors_assiette_cotisations(Variable):
+        value_type = float
+        entity = Individu
+        label = ("Part du salaire brut hors de l'assiette des cotisations sociales (prime de "
+                 "partage de la valeur, participation, intéressement, abondements), "
+                 "correction 27")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049608683"
+        definition_period = YEAR
+
+    return part_salaire_hors_assiette_cotisations
+
+
+def _contribution_base_less_the_exempt_share(openfisca_formula: Any) -> Any:
+    """`assiette_cotisations_sociales_prive`, the share outside the base taken off (correction
+    27): the formula it wraps, times one less the person's share of the year."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_divide_by_period
+    from openfisca_france.entities import Individu
+
+    class assiette_cotisations_sociales_prive(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Assiette des cotisations sociales des salariés du privé, sans la part du "
+                 "brut qui n'en porte pas (correction 27)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049608683"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula(individu, period, parameters):
+            montant = openfisca_formula(individu, period, parameters)
+            share = individu(SHARE_OUTSIDE_CONTRIBUTION_BASE, period.this_year)
+            if not (share > 0).any():
+                return montant
+            return montant * (1.0 - share)
+
+    return assiette_cotisations_sociales_prive

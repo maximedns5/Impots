@@ -108,6 +108,13 @@ et chaque profil est la réponse à un choc permanent (comme le bloc `mesange`).
    retranchée (D-418). Les prix de l'investissement
    et de la consommation des APU restent ceux du scénario : ces blocs écrivent des volumes.
 
+8. LA PART DU COÛT QUI VA AUX PRIX (D-540). Dans τ, une variation du coût du travail
+   (les impulsions de cotisations employeurs, le brut que la loi du Smic relève) entre
+   pour φ, le reste aux marges : φ = (1 − a) φ_X + a φ_A, φ_X et φ_A la part des
+   branches exposées et abritées, a la part des services abrités dans la masse salariale
+   (0,38 ; 0,52 pour une baisse ciblée, Mésange tableau 2). Une option déclarée
+   (`prix_part_cout` de commerce.yaml, `prix`) : au défaut, φ = 1, le bloc d'avant.
+
 LES HORIZONS. Mésange imprime T, 1 an, 2 ans, 5 ans et le long terme : h = 1 lit « 1 an »,
 h = 2 « 2 ans », 3 et 4 l'interpolation linéaire vers « 5 ans », puis linéaire jusqu'au
 long terme, atteint à dix ans (choisi, non vérifié : le tableau ne date pas le LT).
@@ -120,7 +127,8 @@ prix-salaires (équation 7) ; un choc de prix étrangers ou de change ; le solde
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+import contextlib
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -155,6 +163,39 @@ NON_ECARTS = frozenset({"tendance", "depart", "publie"})
 
 class CommerceError(ValueError):
     """Le bloc ne se lit pas comme demandé."""
+
+
+#: Le réglage de la part du coût qui va aux prix tenu pour un essai (`prix`), au-dessus
+#: du défaut de commerce.yaml (D-540).
+_ESSAI_PRIX: list[str] = []
+
+
+@contextlib.contextmanager
+def prix(reglage: str) -> Iterator[None]:
+    """Un essai de la part d'une variation du coût du travail qui passe dans les prix
+    (`prix_part_cout` de commerce.yaml, D-540), le temps du bloc."""
+    _ESSAI_PRIX.append(reglage)
+    try:
+        yield
+    finally:
+        _ESSAI_PRIX.pop()
+
+
+def part_prix(chemin: Path | None = None) -> dict[str, float]:
+    """φ, la part d'une variation du coût du travail qui va aux prix (D-540) : pour une
+    baisse uniforme, pour une baisse ciblée sous 1,6 Smic (et le brut que la loi du Smic
+    relève, ciblé lui aussi), les branches exposées et abritées pondérées par la masse
+    salariale (Mésange, tableau 2) ; le réglage, et ses deux parts par branche."""
+    d = yaml.safe_load((chemin or FICHIER).read_text(encoding="utf-8"))["prix_part_cout"]
+    nom = _ESSAI_PRIX[-1] if _ESSAI_PRIX else d["defaut"]
+    if nom not in d["reglages"]:
+        raise CommerceError(f"réglage des prix « {nom} » : {sorted(d['reglages'])}")
+    r = d["reglages"][nom]
+    x, a = float(r["exposees"]), float(r["abritees"])
+    pa = d["parts_abritees"]
+    return {"reglage": nom, "exposees": x, "abritees": a,
+            "uniforme": (1.0 - pa["uniforme"]) * x + pa["uniforme"] * a,
+            "ciblee": (1.0 - pa["ciblee"]) * x + pa["ciblee"] * a}
 
 
 # --------------------------------------------------------------------------- #
@@ -473,6 +514,7 @@ class Commerce:
         self.scenario = demande_mondiale
         self.impots_production = {m: dict(v) for m, v in (impots_production or {}).items()}
         self.p = parametres or charger()
+        self.phi = part_prix()
         self._fixe: dict[str, Any] | None = None
         self.boucle = boucle_prix
         #: Les déflateurs que la tendance laisse au bloc.
@@ -554,13 +596,17 @@ class Commerce:
         couts: list[dict[str, Any]] = []
         for e, annee in zip(etats, annees, strict=True):
             c: dict[str, Any] = {}
+            # φ (D-540) : la part de la variation du coût du travail qui va aux prix,
+            # le reste aux marges ; 1 au défaut, la forme d'avant au bit près.
             for nom in COUTS:
+                phi = self.phi["ciblee" if nom.endswith("_ciblees") else "uniforme"]
                 for m, v in e.par_mesure(nom).items():
-                    c[m] = c.get(m, 0.0) + v
+                    c[m] = c.get(m, 0.0) + (v if phi == 1.0 else phi * v)
             if self.boucle is not None and e.present("cout_travail_smic"):
                 # Le salaire brut que la loi du Smic relève (D-478) : un coût.
+                phi = self.phi["ciblee"]
                 for m, v in e.par_mesure("cout_travail_smic").items():
-                    c[m] = c.get(m, 0.0) - v
+                    c[m] = c.get(m, 0.0) - (v if phi == 1.0 else phi * v)
             for m, par_an in self.impots_production.items():
                 if annee in par_an:
                     c[m] = c.get(m, 0.0) - float(par_an[annee])

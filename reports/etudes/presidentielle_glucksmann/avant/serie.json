@@ -1,10 +1,14 @@
 {
-  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
   "scenarios": {
     "pres2027_glucksmann_programme": {
-      "cout": 29744789083.536438,
-      "dette": 0.0098401401531234,
-      "selon_theta": "dépend de θ"
+      "cout": 30843567005.809326,
+      "dette": 0.008802926503324704,
+      "selon_theta": "dépend de θ",
+      "verdict": "dépend"
     }
-  }
+  },
+  "corrections": [
+    "les gérants majoritaires retirés des salariés d'un facteur commun, sur la population refaite (D-686, D-687)"
+  ]
 }

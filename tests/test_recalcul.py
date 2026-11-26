@@ -16,25 +16,30 @@ RAPPORTS = [c for c in sorted((RACINE / "reports" / "etudes").glob("**/predictif
 
 
 def test_every_study_report_reads_the_channel_at_the_declared_slope() -> None:
-    assert len(RAPPORTS) == 46
+    """D-683: the series of D-559 computed the 48 reports at D-427's slope in their pass;
+    none carries the rewrite of D-427 (`recalcul`) any more. On the series of 5a68669,
+    46 reports, each rewritten without a pass and marked."""
+    assert len(RAPPORTS) == 48
     cible = vars(creations.charger().elasticite)
     for chemin in RAPPORTS:
         payload = json.loads(chemin.read_text(encoding="utf-8"))
         assert payload["rejeu"]["creations"]["parametres"]["elasticite"] == cible
         assert payload["creations"]["parametres"]["elasticite"] == cible
-        assert payload["recalcul"]["decision"] == "D-427"
-        assert payload["recalcul"]["nombres_refaits"] == recalcul.concerne(payload)
+        assert "recalcul" not in payload
 
 
-#: The reports the CVAE or the C3S moved, rewritten without them (D-440): Δb 2035 at θ½,
-#: aged view, persistence « lue », points of GDP, before (D-427) and after.
+#: The six reports the CVAE or the C3S moved, which D-440 rewrote without them: Δb 2035 at
+#: θ½, aged view, persistence « lue », points of GDP, after D-440 (series of 5a68669) and
+#: on the series of D-559, computed by a pass without the two taxes (D-683).
 SANS_PRODUCTION = {
-    "predictif_pres2027_attal_a18_suppression_cvae": (0.2354, 0.2475),
-    "predictif_pres2027_attal_programme": (4.2730, 4.2850),
-    "predictif_pres2027_lisnard_l4_suppression_c3s_cvae": (1.5615, 1.6181),
-    "predictif_pres2027_lisnard_programme": (5.6541, 5.7107),
-    "predictif_pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe": (1.5615, 1.6181),
-    "predictif_pres2027_retailleau_programme": (11.3095, 11.3672)}
+    "predictif_pres2027_attal_a18_suppression_cvae": (0.2475, 0.2475),
+    "predictif_pres2027_attal_programme": (4.2850, 3.9572),
+    "predictif_pres2027_lisnard_l4_suppression_c3s_cvae": (1.6181, 1.6181),
+    "predictif_pres2027_lisnard_programme": (5.7107, 5.7062),
+    "predictif_pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe": (1.6181, 1.6181),
+    "predictif_pres2027_retailleau_programme": (11.3672, 10.8452)}
+# D-692 : les programmes sur la série de D-689 ; sur celle de D-559, 3,9775, 5,7051 et
+# 10,8723. Les trois mesures seules ne bougent pas.
 
 
 def _lue(payload) -> float:
@@ -43,50 +48,30 @@ def _lue(payload) -> float:
 
 
 def test_the_reports_the_production_taxes_moved_no_longer_read_them() -> None:
-    """D-440: six reports, those whose firm reform moves the CVAE or the C3S, carry the
-    channel without them and say it; D-444: the forty others, where they were zero, lose
-    them from their lists and say it, their ΔP and every number unchanged."""
+    """D-440, D-444: no report reads the CVAE or the C3S in the channel; on the series of
+    D-559, from the pass on (D-683), not by a rewrite."""
     for chemin in RAPPORTS:
         payload = json.loads(chemin.read_text(encoding="utf-8"))
-        marque = payload["recalcul"].get("instruments")
         lus = [payload["creations"]["parametres"]["instruments_entreprises"],
                payload["rejeu"]["creations"]["parametres"]["instruments_entreprises"]]
-        if chemin.stem in SANS_PRODUCTION:
-            assert marque["decision"] == "D-440"
-            assert marque["retires"] == list(creations.PRODUCTION)
-            assert all(not set(creations.PRODUCTION) & set(i) for i in lus)
-            assert marque["variations_avant"] != payload["rejeu"]["creations"]["variations"]
-            assert {v: {str(r["year"]): x for r, x in zip(payload["years"], xs,
-                                                          strict=True)}
-                    for v, xs in payload["rejeu"]["creations"]["variations"].items()
-                    } == payload["creations"]["prelevements_eur"]
-        else:
-            assert marque["decision"] == "D-444" and marque["nombres_refaits"] is False
-            assert marque["retires"] == list(creations.PRODUCTION)
-            assert all(not set(creations.PRODUCTION) & set(i) for i in lus)
-            assert marque["variations_avant"] == payload["rejeu"]["creations"]["variations"]
+        assert all(not set(creations.PRODUCTION) & set(i) for i in lus)
 
 
-def test_the_report_before_d440_is_given_back() -> None:
-    """Each publishes its new number; ΔP before, the instruments put back and the numbers
-    refitted, the number D-427 published (to the byte, D-440, checked once on git)."""
+def test_the_pass_gives_back_what_d440_rewrote() -> None:
+    """D-683: the three measures alone D-440 rewrote without a pass give, computed by the
+    pass of D-559, the number D-440 published, to 5e-5 point; the programmes their own
+    (their other measures moved with the series)."""
+    vus = set()
     for chemin in RAPPORTS:
         if chemin.stem not in SANS_PRODUCTION:
             continue
-        avant, apres = SANS_PRODUCTION[chemin.stem]
-        payload = json.loads(chemin.read_text(encoding="utf-8"))
-        assert _lue(payload) == pytest.approx(apres, abs=5e-5)
-        marque = payload["recalcul"].pop("instruments")
-        block = payload["rejeu"]["creations"]
-        block["variations"] = marque["variations_avant"]
-        years = [str(r["year"]) for r in payload["years"]]
-        payload["creations"]["prelevements_eur"] = {
-            v: dict(zip(years, xs, strict=True)) for v, xs in block["variations"].items()}
-        for snapshot in (block["parametres"], payload["creations"]["parametres"]):
-            snapshot["instruments_entreprises"] += list(creations.PRODUCTION)
-        recalcul._refaire(payload)
-        assert recalcul.controle(recalcul.ecrire(payload)) == []
-        assert _lue(payload) == pytest.approx(avant, abs=5e-5)
+        d440, d559 = SANS_PRODUCTION[chemin.stem]
+        assert _lue(json.loads(chemin.read_text(encoding="utf-8"))) == pytest.approx(
+            d559, abs=5e-5)
+        if "programme" not in chemin.stem:
+            assert d559 == d440
+        vus.add(chemin.stem)
+    assert vus == set(SANS_PRODUCTION)
 
 
 def test_retirer_refuses_what_it_cannot_take_out() -> None:
@@ -94,9 +79,9 @@ def test_retirer_refuses_what_it_cannot_take_out() -> None:
     payload = json.loads(chemin.read_text(encoding="utf-8"))
     zeros = {v: [0.0] * len(xs) for v, xs in payload["rejeu"]["creations"]["variations"]
              .items()}
+    retire = recalcul.retirer(payload, zeros, ["impot_societes"], decision="x", date="y")
     with pytest.raises(recalcul.RecalculError, match="déjà été retirés"):
-        recalcul.retirer(payload, zeros, ["impot_societes"], decision="x", date="y")
-    del payload["recalcul"]["instruments"]
+        recalcul.retirer(retire, zeros, ["cebge"], decision="x", date="y")
     with pytest.raises(recalcul.RecalculError, match="pas tous lus"):
         recalcul.retirer(payload, zeros, ["cvae"], decision="x", date="y")
     with pytest.raises(recalcul.RecalculError, match="vues"):
@@ -106,30 +91,30 @@ def test_retirer_refuses_what_it_cannot_take_out() -> None:
 
 @pytest.mark.parametrize("chemin", RAPPORTS, ids=lambda c: c.stem)
 def test_the_rewrite_at_its_own_slope_gives_the_report_back(chemin) -> None:
-    """The control: to the byte for a report whose numbers were rewritten; for the others,
-    to the byte but the families of `AU_PRES`, to 1e-11 relative."""
+    """The control, and the rewrite at the report's own slope: its paths, unchanged
+    (D-683: on the series of D-559, computed by a pass, every report)."""
     texte = chemin.read_text(encoding="utf-8")
     assert recalcul.controle(texte) == []
     payload = json.loads(texte)
-    if payload["recalcul"]["nombres_refaits"]:
-        assert recalcul.ecrire(recalcul.recalculer(payload)) == texte
+    assert recalcul.recalculer(payload)["side_by_side"] == payload["side_by_side"]
 
 
-def test_back_to_the_old_slope_and_forth_is_the_report_to_the_byte() -> None:
-    """At the slope before, then at D-427's, the rewritten report again, byte for byte:
-    what the slope moves is all the rewrite moves."""
+def test_back_to_the_old_slope_and_forth_is_the_report() -> None:
+    """At the slope before D-427, then back at its own, the report's paths again, for
+    each report the slope concerns: what the slope moves is all the rewrite moves."""
+    avant = {"centre": 0.20, "bas": 0.043, "haut": 0.356}
+    cible = vars(creations.charger().elasticite)
+    vus = 0
     for chemin in RAPPORTS:
-        texte = chemin.read_text(encoding="utf-8")
-        payload = json.loads(texte)
-        if not payload["recalcul"]["nombres_refaits"]:
+        payload = json.loads(chemin.read_text(encoding="utf-8"))
+        if not recalcul.concerne(payload):
             continue
-        marque = payload["recalcul"]
-        avant = recalcul.recalculer(payload, marque["elasticite_avant"],
-                                    decision=marque["decision"], date=marque["date"])
-        assert avant["side_by_side"] != payload["side_by_side"]
-        retour = recalcul.recalculer(avant, marque["elasticite"],
-                                     decision=marque["decision"], date=marque["date"])
-        assert recalcul.ecrire(retour) == texte
+        vus += 1
+        ancien = recalcul.recalculer(payload, avant, decision="D-427", date="x")
+        assert ancien["side_by_side"] != payload["side_by_side"]
+        retour = recalcul.recalculer(ancien, cible, decision="D-427", date="x")
+        assert retour["side_by_side"] == payload["side_by_side"]
+    assert vus > 0
 
 
 def test_a_report_without_the_channel_is_refused() -> None:

@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/le-gout-du-futur-aux-nouvelles-frontieres-de-l-humanite/chapitre2
   date: '2026-11-06'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: Code de l'éducation, art. L719-4 ; arrêté du 19 avril 2019 relatif aux droits d'inscription
+    dans les établissements publics d'enseignement supérieur
   parametre: null
   valeur: null
   enonce: gratuité, de la licence au doctorat
@@ -41,5 +42,9 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: Les droits d'inscription sont une ressource des universités, hors du moteur. (porte
-    « depense_publique »)
+  manque: Le produit des droits d'inscription n'est pas dans les documents lus ; les boursiers
+    en sont déjà exonérés.
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

@@ -8,19 +8,21 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: 'Code général des impôts, art. 219 (le taux normal de 25 % et le taux réduit des
+    PME) : un barème progressif'
   parametre: null
   valeur: null
   enonce: aucun taux
   couche: null
 payeurs:
 - qui: entreprises
-  sens: recoit
-  par: autre
-- qui: apu:etat
   sens: paie
-  par: autre
+  par: impot_societes
+  note: les grandes entreprises, selon le candidat (taux implicite de 14,7 % contre 24 % pour
+    les PME)
+- qui: apu:etat
+  sens: recoit
+  par: impot_societes
 incidence:
 - horizon: immediat
   qui: les entreprises
@@ -38,10 +40,13 @@ incidence:
     contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
     la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
 financement:
-  annonce: null
-  source: null
-  chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  annonce: « Une partie de cette œuvre de justice fiscale devra être orientée vers la réduction
+    de notre déficit »
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6
+  chiffre: true
+  note: une recette du programme ; son bilan (p. 14) en affecte 81,7 Md€ aux dépenses et 24,7
+    Md€ au déficit, sans dire laquelle va où
 canaux:
 - investissement_cout_du_capital
 - creations_entreprises
@@ -49,15 +54,21 @@ canaux:
 - implantation
 - prix_production
 hypotheses:
-- texte: Le montant tombe sur l'impôt sur les sociétés (D5).
-  source: 'le compte des APU (Insee, base 2020, t. 3.201) : la nature de l''opération'
-- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
-    sur l’activité).'
-  source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: Le montant tombe sur l'impôt sur les sociétés (D51).
+  source: Insee, t. 7.301 (D51, impôts sur le revenu, dont l'IS)
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
+- texte: Le montant de la première année est tenu chaque année de 2027 à 2035, en euros courants
+    ; le candidat ne donne qu'un montant annuel, sans trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
   source: non sourcée
+- texte: 'Aucune variante de Mésange pour cet impôt : le mode réduit ne lit aucun effet sur
+    l''activité, seulement la recette.'
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes publiées)'
 montant:
   origine: hypothese
   annonce:
@@ -76,3 +87,13 @@ montant:
   menages_par: null
   entreprises_par: impot_societes
   inclus_dans: null
+assiette:
+  texte: l'impôt sur les sociétés net ; les 3 Md€ du candidat en font 5,1 %
+  montant_md: 59.0
+  annee: 2026
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, impôt sur les sociétés
+    (57,4 Md€ en 2024, 58,2 en 2025, 59,0 en 2026)
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6

@@ -68,3 +68,10 @@ montant:
   origine: rapport
   scenario: pres2027_lisnard_l4_suppression_c3s_cvae
   rapport: reports/etudes/presidentielle_lisnard/mesures/l4_suppression_c3s_cvae/predictif_pres2027_lisnard_l4_suppression_c3s_cvae.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_lisnard/mesures/l4_suppression_c3s_cvae/premiere_annee_pres2027_lisnard_l4_suppression_c3s_cvae.json
+    ecarts_md:
+      cvae: -3.28
+      impot_societes: 1.66
+      prelevements_entreprise: -6.55

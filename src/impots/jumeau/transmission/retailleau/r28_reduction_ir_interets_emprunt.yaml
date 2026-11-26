@@ -68,3 +68,9 @@ montant:
   origine: rapport
   scenario: pres2027_retailleau_r28_reduction_ir_interets_emprunt
   rapport: reports/etudes/presidentielle_retailleau/mesures/r28_reduction_ir_interets_emprunt/predictif_pres2027_retailleau_r28_reduction_ir_interets_emprunt.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_retailleau/mesures/r28_reduction_ir_interets_emprunt/premiere_annee_pres2027_retailleau_r28_reduction_ir_interets_emprunt.json
+    ecarts_md:
+      ir: -1.49
+      revenu_disponible: 1.49

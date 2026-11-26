@@ -91,3 +91,20 @@ montant:
   origine: rapport
   scenario: pres2027_roussel_smic_plus_15
   rapport: reports/etudes/presidentielle_roussel/mesures/smic_plus_15/predictif_pres2027_roussel_smic_plus_15.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_roussel/mesures/smic_plus_15/premiere_annee_pres2027_roussel_smic_plus_15.json
+    ecarts_md:
+      salaire_net: 5.96
+      salaire_brut: 7.51
+      salaire_super_brut: -21.95
+      cotisations_salariales: 0.85
+      cotisations_employeur: 3.26
+      allegement_general: 32.73
+      ir: 0.29
+      csg_deductible: 0.5
+      ppa: -1.22
+      aide_logement: -0.06
+      aspa: 0.15
+      pension_employeur_etat: 0.21
+      revenu_disponible: 4.72

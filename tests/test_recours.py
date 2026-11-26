@@ -22,19 +22,23 @@ def test_the_take_up_law_is_the_calibrated_one() -> None:
     """Les nombres de la loi : τ ajusté sur les tranches publiées, p_max calé sur le taux en
     foyers (15 000 ménages, 2024). Les changer change le coût de toute réforme du RSA ou de
     la prime : ils se préenregistrent."""
-    assert (recours.RSA.tau, recours.RSA.p_max) == (79.0, 0.6892)
-    assert (recours.PPA.tau, recours.PPA.p_max) == (21.0, 0.5322)
+    # Recalés pour la population du but 27 (D-497), mêmes cibles.
+    assert (recours.RSA.tau, recours.RSA.p_max) == (79.0, 0.6962)
+    assert (recours.PPA.tau, recours.PPA.p_max) == (21.0, 0.6116)
     assert recours.RSA.cible_foyers == pytest.approx(0.65)
-    assert recours.PPA.cible_foyers == pytest.approx(0.50)
+    # La prime est calée sur les payés de la Cnaf (D-495), plus sur la Drees (0,50) ; les
+    # ayants droit du modèle passent de 6,667 à 8,006 M avec la population de D-497.
+    assert recours.PPA.cible_foyers == pytest.approx(4.628 / 8.006)
+    assert recours.PPA.p_max == pytest.approx(0.7392 * 4_597_253 / 5_556_248, abs=5e-5)
     # Croissante, nulle en zéro, saturée au p_max.
     x = np.array([0.0, 10.0, 50.0, 100.0, 450.0, 5000.0])
     p = recours.probabilite("rsa", x)
     assert p[0] == 0.0 and np.all(np.diff(p) > 0)
-    assert p[-1] == pytest.approx(0.6892, rel=1e-9)
+    assert p[-1] == pytest.approx(0.6962, rel=1e-9)
     assert recours.probabilite("rsa", np.array([450.0]))[0] == pytest.approx(
-        0.6892 * (1 - np.exp(-450 / 79)), rel=1e-12)
+        0.6962 * (1 - np.exp(-450 / 79)), rel=1e-12)
     assert recours.probabilite("ppa", np.array([25.0]))[0] == pytest.approx(
-        0.5322 * (1 - np.exp(-25 / 21)), rel=1e-12)
+        0.6116 * (1 - np.exp(-25 / 21)), rel=1e-12)
 
 
 def test_p_max_reproduces_the_published_rate_exactly() -> None:

@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2
   date: '2026-11-06'
 levier:
-  texte: Code du travail, Smic (art. L3231-1 et s.) ; point d'indice (décret n° 85-1148)
+  texte: 'aucun texte en vigueur : un plafond de salaire par entreprise, à créer dans le Code
+    du travail'
   parametre: null
   valeur: null
   enonce: plus haut salaire de l'entreprise ≤ 20 fois le plus bas
@@ -62,5 +63,9 @@ canaux:
 hypotheses: []
 montant:
   origine: aucun
-  manque: Le moteur ne déplace pas la distribution des salaires, et la population ne rattache
-    pas un salarié aux autres salaires de son entreprise. (porte « salaires »)
+  manque: Le coût pour les APU tient aux cotisations et à l'impôt des salaires écrêtés ; la
+    distribution des salaires par entreprise n'est pas publiée.
+calendrier:
+  texte: aucune date ; la mesure est au programme (livre du 6 novembre 2026), pas dans la
+    loi de finances pour 2027 du document du 14 octobre
+  source: programme de Mélenchon, melenchon2027.fr/programme/livre (6 novembre 2026)

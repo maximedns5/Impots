@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: 'aucun texte en vigueur : une prestation nouvelle, à créer par la loi ; le bouton
+    `garantie_autonomie` du moteur'
   parametre: garantie_autonomie
   valeur:
     garantie_autonomie:
@@ -20,12 +21,14 @@ levier:
   enonce: aucun jeune sous le seuil de pauvreté « fixé à 1 337 euros par mois »
   couche: menages
 payeurs:
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+  note: la caisse qui verse n'est pas dite ; l'État par défaut
 - qui: menages
   sens: recoit
   par: prestations
-- qui: apu:secu:famille
-  sens: paie
-  par: depense_publique
+  note: +35,65 Md€ versés la première année (rapport, recours compris) ; +51,92 Md€ de droits
 incidence:
 - horizon: immediat
   qui: les allocataires
@@ -39,14 +42,15 @@ incidence:
   source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
     que le rapport de la mesure lit à θ
 financement:
-  annonce: « Financer l'autonomie des jeunes détachés du foyer fiscal parental grâce à la
-    garantie d'autonomie qui les portera au-dessus du seuil de pauvreté (1 337 euros pour
-    une personne seule) »
-  source: « Financer l'autonomie des jeunes détachés du foyer fiscal parental grâce à la garantie
-    d'autonomie qui les portera au-dessus du seuil de pauvreté (1 337 euros pour une personne
-    seule) »
+  annonce: '« Pour financer ces besoins, il est nécessaire de récupérer l''argent là où il
+    s''est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+    plus fortunés et profits des grandes entreprises. »'
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 ; bilan p. 14 : « 106,4 milliards d''euros de recettes, 81,7 milliards de dépenses,
+    24,7 milliards de réduction du déficit »'
   chiffre: false
-  note: le financement est énoncé, pas chiffré mesure par mesure
+  note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes (106,4
+    Md€ contre 81,7 Md€), sans lier une recette à une dépense
   bilan:
     cout_eur: 35652154808
     chiffre_eur: null
@@ -69,8 +73,30 @@ hypotheses:
     (D-382). Elle ne remplace rien et n''entre dans aucune base de ressources. Contre le droit
     de 2026, où elle n''existe pas.'
   source: le chiffrage de la mesure (`programmes/melenchon.json`)
+- texte: Le candidat annonce 9,5 Md€ ; le rapport chiffre 35,65 Md€ versés (51,92 Md€ de droits)
+    la première année. L'écart tient à la définition du jeune et du revenu pris en compte,
+    que le candidat ne donne pas.
+  source: le rapport de la mesure ; Mélenchon, document du 14 octobre 2026, p. 10
+- texte: L'État verse la garantie.
+  source: non sourcée
 montant:
   origine: rapport
   scenario: pres2027_melenchon_garantie_autonomie_jeunes
   rapport: reports/etudes/presidentielle_melenchon/mesures/garantie_autonomie_jeunes/predictif_pres2027_melenchon_garantie_autonomie_jeunes.json
   annonce_md: 9.5
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_melenchon/mesures/garantie_autonomie_jeunes/premiere_annee_pres2027_melenchon_garantie_autonomie_jeunes.json
+    ecarts_md:
+      garantie_autonomie: 35.65
+      revenu_disponible: 35.65
+assiette:
+  texte: le seuil de pauvreté retenu par le candidat, 1 337 € par mois pour une personne seule
+  montant_md: null
+  annee: 2026
+  source: 'Mélenchon, document du 14 octobre 2026, p. 10 : « plus aucun jeune ne doit vivre
+    sous le seuil de pauvreté, fixé à 1 337 euros par mois »'
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6

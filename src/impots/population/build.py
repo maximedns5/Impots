@@ -72,6 +72,8 @@ SCHEMA: dict[str, pl.DataType] = {
     "secteur_non_salarie": pl.String,
     # The share of a salary the income tax exempts (but 19, étape « ir »).
     "part_salaire_exoneree": pl.Float64,
+    # The share of a private salary outside the base of the contributions (but 27, D-499).
+    "part_salaire_hors_assiette_cotisations": pl.Float64,
     # The months a salary is paid on, twelve bits (but 19, étape « ppa »).
     "mois_travailles": pl.Int64,
 }

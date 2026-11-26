@@ -9,15 +9,21 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Loi organique relative aux lois de finances (crédits) ; LFSS ; budgets locaux
+  texte: Code de la sécurité sociale, art. L162-22-9 et L174-1 (l'objectif de dépenses des
+    établissements de santé, dans l'ONDAM voté en LFSS)
   parametre: null
   valeur: null
   enonce: +3 Md€ ; au moins 10 000 postes
   couche: null
 payeurs:
-- qui: apu:etat
+- qui: apu:secu:maladie
   sens: paie
   par: depense_publique
+  note: l'Assurance maladie finance les hôpitaux par l'ONDAM
+- qui: menages
+  sens: recoit
+  par: salaire_net
+  note: au moins 10 000 postes de soignants
 incidence:
 - horizon: immediat
   qui: les bénéficiaires de la dépense
@@ -30,10 +36,15 @@ incidence:
   source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
     », document de travail G2017-04, §4 (les variantes)'
 financement:
-  annonce: null
-  source: null
+  annonce: '« Pour financer ces besoins, il est nécessaire de récupérer l''argent là où il
+    s''est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+    plus fortunés et profits des grandes entreprises. »'
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 ; bilan p. 14 : « 106,4 milliards d''euros de recettes, 81,7 milliards de dépenses,
+    24,7 milliards de réduction du déficit »'
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes (106,4
+    Md€ contre 81,7 Md€), sans lier une recette à une dépense
   bilan:
     cout_eur: 3000000000
     chiffre_eur: null
@@ -45,14 +56,24 @@ canaux:
 - emploi_public
 - consommation_menages
 hypotheses:
-- texte: 'Le montant tombe sur la composition de la dépense publique de Mésange (G2017-04,
-    p. 106) : le programme ne dit pas quelle dépense.'
-  source: non sourcée
-- texte: 'La variante de Mésange la plus proche : depense_publique.'
-  source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: 'Les 3 Md€ se partagent comme les charges des hôpitaux publics : 64 % de rémunérations
+    (D1, 63,3 sur 99,4 Md€ en 2024), 36 % de consommations (P2).'
+  source: Drees, « Les établissements de santé », édition 2026, fiche 25
+- texte: '10 000 postes au salaire net moyen de l''hôpital (2 980 € par mois en EQTP, 2024)
+    font 0,36 Md€ de salaires nets : les postes ne sont qu''une part des 3 Md€.'
+  source: Insee, Siasp 2024, « Emploi, chômage, revenus du travail », édition 2026, fiche
+    29, figure 1
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
+- texte: Le montant de la première année est tenu chaque année de 2027 à 2035, en euros courants
+    ; le candidat ne donne qu'un montant annuel, sans trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
+  source: non sourcée
+- texte: 'La variante de Mésange la plus proche : depense_publique (la composition moyenne
+    de la dépense publique, G2017-04, p. 106), faute de savoir quelle dépense.'
   source: non sourcée
 montant:
   origine: hypothese
@@ -64,11 +85,8 @@ montant:
       avec au moins 10 000 créations de postes de personnel soignant. »
     url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   chocs:
-    apu_d_p51g: 0.24
-    apu_d_d1: 0.75
-    apu_d_d632: 0.27
-    apu_d_p2: 0.36
-    apu_d_d62: 1.38
+    apu_d_d1: 1.92
+    apu_d_p2: 1.08
   profil: constant
   debut: 2027
   plein: 2027
@@ -78,3 +96,14 @@ montant:
   entreprises_par: null
   inclus_dans: null
   menages_part: 0.46
+assiette:
+  texte: les charges du budget principal des hôpitaux publics, dont 63,3 Md€ de charges de
+    personnel (titre 1)
+  montant_md: 99.4
+  annee: 2024
+  source: Drees, « Les établissements de santé », édition 2026, fiche 25 « La situation financière
+    des hôpitaux publics »
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6

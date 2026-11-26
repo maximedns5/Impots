@@ -92,3 +92,19 @@ montant:
   origine: rapport
   scenario: pres2027_ruffin_smic_1600
   rapport: reports/etudes/presidentielle_ruffin/mesures/smic_1600/predictif_pres2027_ruffin_smic_1600.json
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_ruffin/mesures/smic_1600/premiere_annee_pres2027_ruffin_smic_1600.json
+    ecarts_md:
+      salaire_net: 3.0
+      salaire_brut: 3.78
+      salaire_super_brut: -14.72
+      cotisations_salariales: 0.43
+      cotisations_employeur: 1.64
+      allegement_general: 20.15
+      ir: 0.14
+      csg_deductible: 0.25
+      ppa: -0.7
+      aspa: 0.09
+      pension_employeur_etat: 0.11
+      revenu_disponible: 2.33

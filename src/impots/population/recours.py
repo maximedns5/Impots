@@ -65,10 +65,16 @@ class Recours:
     """La fourchette publiée, en part de la masse des droits : le contrôle, pas le calage."""
     source: str
     forme: str
+    cible_payes: float | None = None
+    """Le recours en foyers calé sur les payés de la Cnaf, quand il remplace la Drees
+    (D-495) : les foyers payés publiés sur les ayants droit du modèle."""
 
     @property
     def cible_foyers(self) -> float:
-        """Le recours en foyers que le calage refait : un moins le milieu de la fourchette."""
+        """Le recours en foyers que le calage refait : les payés de la Cnaf s'ils sont la
+        cible (D-495), sinon un moins le milieu de la fourchette de la Drees."""
+        if self.cible_payes is not None:
+            return self.cible_payes
         low, high = self.non_recours_foyers
         return 1.0 - (low + high) / 2.0
 
@@ -91,7 +97,11 @@ RSA = Recours(
     # Recalé sur la population de D-370 : 20 000 ménages, graine 20240101, droit 2024,
     # 2,735 M de familles ayant droit en décembre ; contrôle, un recours en masse de
     # 67,8 %, au bord bas de la fourchette publiée.
-    p_max=0.6892,
+    # Recalé pour la population du but 27 (D-497 : salaires horaires de la Dares, rang par
+    # statut d'occupation) : le compte servi est linéaire en p_max, et le taux servi de
+    # décembre sur 20 000 ménages (graine 20240101, droit 2024) passe de 0,6500 à 0,6434 ;
+    # 0,6892 × 0,6500 ÷ 0,6434 = 0,6962, la même cible de la Drees.
+    p_max=0.6962,
     non_recours_foyers=(0.33, 0.37),
     non_recours_masse=(0.29, 0.32),
     source=("Drees, Études et Résultats n° 1370 (mai 2026, C. Gayet), tableau 1 et "
@@ -121,7 +131,20 @@ PPA = Recours(
     # Recalé sur la population de D-370 : 20 000 ménages, 6,619 M de familles ayant droit
     # en décembre ; contrôle, un recours en masse de 52,4 %, sous la fourchette. τ = 21 €
     # tient sur les six tranches du n° 1379, lu (étape « ppa2 »).
-    p_max=0.5322,
+    # Le but 27 (D-494, D-495) change la cible : la Drees ne retrouve que 73 à 83 % des
+    # foyers que la Cnaf paie (étape « ppa2 », § 2.1), et calé sur elle le modèle servait
+    # 3,332 M de foyers en 2024 contre 4,628 M payés (−28 %). La cible devient les payés de
+    # la Cnaf (PA Conjoncture n° 32, tableau 1, T4 2024) sur les 6,667 M d'ayants droit du
+    # modèle en décembre 2024 (passe de D-371) : 0,6942 ; le compte servi étant linéaire en
+    # p_max, 0,5322 × 4,628 ÷ 3,332 = 0,7392. Le taux de la Drees reste écrit, pour mémoire.
+    # Recalé pour la population du but 27 (D-497), la même cible de la Cnaf (décision du
+    # propriétaire, 16 novembre) : sur 20 000 ménages (graine 20240101, droit 2024), les
+    # ayants droit de décembre passent de 6,62 à 7,95 M et les servis, à p_max = 0,7392, de
+    # 4,597 à 5,556 M ; 0,7392 × 4,597 ÷ 5,556 = 0,6116.
+    p_max=0.6116,
+    # Les ayants droit de décembre 2024 de la population entière, estimés par le même
+    # rapport sur l'échantillon : 6,667 × 7,948 ÷ 6,619 = 8,006 M (D-497).
+    cible_payes=4.628 / 8.006,
     non_recours_foyers=(0.48, 0.52),
     non_recours_masse=(0.43, 0.46),
     source=("Drees, Études et Résultats n° 1379 (juillet 2026, C. Gayet), tableau 1 et "

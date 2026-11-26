@@ -440,16 +440,42 @@ def test_the_page_says_what_moved_against_the_frozen_series_and_why(lu) -> None:
         lu.figer_avant()
     then = json.loads(frozen.read_text(encoding="utf-8"))
     entry = next(e for e in lu.load() if e["name"].endswith("apl"))
-    then["scenarios"][entry["name"]].update(dette=0.012, selon_theta="dépend de θ")
-    frozen.write_text(json.dumps(then), encoding="utf-8")
-    text = lu.render(lu.load())
-    section = text.split("## Ce qui a bougé depuis la série précédente\n")[1].split("\n## ")[0]
-    row = next(line for line in section.splitlines()
-               if line.startswith("| art. 74 du PLF, les aides au logement |"))
+    assert then["scenarios"][entry["name"]]["verdict"] == etude.verdict_mc(entry)
+
+    def moved(frozen_then: dict) -> tuple[str, str]:
+        frozen.write_text(json.dumps(frozen_then), encoding="utf-8")
+        text = lu.render(lu.load())
+        section = text.split("## Ce qui a bougé depuis la série précédente\n")[1]
+        section = section.split("\n## ")[0]
+        return section, next(line for line in section.splitlines()
+                             if line.startswith("| art. 74 du PLF, les aides au logement |"))
+
+    # D-693: a freeze that keeps the Monte-Carlo verdict compares it with the new one.
+    then["scenarios"][entry["name"]].update(dette=0.012, selon_theta="dépend de θ",
+                                            verdict="baisse")
+    section, row = moved(then)
+    assert "Les deux verdicts lisent le Monte-Carlo (D-345)." in section
+    assert "lisait la boîte θ" not in section
+    assert row.endswith(f"| +1,20 pt → {etude._points(entry['debt'][0]['theta'])} | "
+                        f"baisse → hausse |")
+    # A freeze from before keeps only the θ box's verdict, and the page says so.
+    for scenario in then["scenarios"].values():
+        del scenario["verdict"]
+    section, row = moved(then)
+    assert "Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo." in section
     assert row.endswith(f"| +1,20 pt → {etude._points(entry['debt'][0]['theta'])} | "
                         f"dépend de θ → hausse |")
     assert ("* **art. 74 du PLF, les aides au logement** : le secteur public modélisé "
             "statut par statut (D-346), le verdict lu sur le Monte-Carlo (D-345).") in section
+    # D-694: a freeze that names its corrections gives them to each line that moved, and
+    # says that none touches a line whose first year and debt are the frozen ones.
+    then["corrections"] = ["les gérants retirés des salariés (D-686)"]
+    section, _ = moved(then)
+    assert ("* **art. 74 du PLF, les aides au logement** : les gérants retirés des "
+            "salariés (D-686).") in section
+    assert ("* **art. 74 du PLF, la prime d'activité** : aucune : sa première année et sa "
+            "dette sont celles de la série précédente, au bit près.") in section
+    assert "(D-346)" not in section and "(D-345)." not in section
 
 
 def test_a_study_half_of_d349_is_refused(lu) -> None:

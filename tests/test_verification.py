@@ -35,6 +35,29 @@ def test_the_gap_and_the_verdict_read_the_preregistered_tolerance(tmp_path, monk
     assert loi["biais"] == pytest.approx(0.105) and loi["tenues"] == 1
 
 
+def test_a_replaced_line_keeps_its_gap_and_has_no_verdict(tmp_path, monkeypatch):
+    """D-495 : une ligne remplacée garde son simulé et son écart, n'est ni tenue ni hors,
+    et n'entre pas dans la loi d'erreur ; le dépôt en a cinq, chacune avec sa remplaçante."""
+    ligne = {**_ligne(2024, 100.0, usage="remplacee"), "remplacee_par": "y",
+             "remplacee": "D-495"}
+    _setup(tmp_path, monkeypatch, [ligne], {2024: {"m": 153.0}})
+    rows = v.grille()
+    assert rows[0]["ecart"] == pytest.approx(0.53)
+    assert rows[0]["verdict"] == "remplacée"
+    assert v.loi_d_erreur(rows) == {}
+    vraies = json.loads((v.ROOT / "docs" / "verification" / "lignes.json")
+                        .read_text(encoding="utf-8"))
+    remplacees = {(x["id"], x["remplacee_par"]) for x in vraies["lignes"]
+                  if x["usage"] == "remplacee"}
+    assert remplacees == {("rsa_foyers", "rsa_foyers_servis"),
+                          ("ppa_foyers", "ppa_foyers_servis"),
+                          ("rsa_montant", "rsa_montant_servi"),
+                          ("ppa_montant", "ppa_montant_servi"),
+                          ("cotisations_employeurs", "cotisations_employeurs_d121"),
+                          # D-497 : D613CE entier contre les seuls régimes publics du modèle.
+                          ("cotisations_salariales", "cotisations_salariales_apu")}
+
+
 def test_a_refused_line_stays_refused_and_a_missing_measure_raises(tmp_path, monkeypatch):
     _setup(tmp_path, monkeypatch, [_ligne(2022, None), _ligne(2023, 1.0)],
            {2022: {"m": 1.0}, 2023: {"autre": 1.0}})

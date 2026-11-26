@@ -97,6 +97,16 @@ class Mesure:
     travail: Mapping[int, Mapping[str, Any]] | None = None
     """{année : {"smic": coefficient, "passe": bool}} : une hausse du Smic que lit le bloc
     `travail` (D-478) ; "passe", la loi est déjà dans la passe de la première année."""
+    prelevements_publics: Mapping[int, Mapping[str, float]] = field(default_factory=dict)
+    """{année : {instrument : Md€, signe des impulsions}} : les cotisations prélevées sur
+    la rémunération publique (un point d'indice), que les APU employeurs paient et que
+    leurs caisses reçoivent (D-500). Ce ne sont pas des impulsions : aucun bloc marchand
+    ne les lit (ni le coût du travail privé, ni la formation des salaires) ; seul le
+    compte des sous-secteurs les range (`financement.comptes`)."""
+    boucle: Any | None = None
+    """Les coefficients de la boucle population ↔ jumeau (`jumeau.boucle.Coefficients`,
+    D-545) : la part de l'emploi de la masse salariale aux taux d'une microsimulation des
+    transitions, au lieu de ceux des cellules. Absente, le forfait des cellules."""
 
     def __post_init__(self) -> None:
         if not self.identifiant:
@@ -252,9 +262,12 @@ def prelevements_lus(payload: Mapping[str, Any], vue: str
       chemin (`mechanical_by_layer`, son coût, signe du moteur), P_t = −coût_t quand elle
       bouge, ΔP_t sinon. Le coût de la couche porte aussi ce qu'elle coûte hors des cinq
       impôts, 59 € en 2026 chez Attal (1e-9 relatif) ; et il ne porte pas les
-      prélèvements des ménages que ΔP somme (PFU, cotisations patronales) : là où il y en
-      a, la ventilation est absente de toute façon (`ventilations`, le recoupement de la
-      première année).
+      prélèvements des ménages que ΔP somme. Depuis D-475, ils sont ventilés : les
+      cotisations des employeurs nettes, E_t, lues chaque année dans les impulsions du
+      chemin (`ventilation.employeurs_lus`), sont ajoutées, P_t = −coût_t + E_t (D-565 ;
+      sans elles, Retailleau perdait 4,301 Md€ en 2026). Le PFU et les prélèvements
+      sociaux du capital (K) ne se lisent pas année par année : là où il y en a, P_t ne
+      les porte pas, et seule la première année les recoupe (`ventilations`).
 
     ΔP reste ce que lit le canal : les créations suivent D-440."""
     creations = (rejouer._rejeu(payload) or {}).get("creations")
@@ -277,10 +290,13 @@ def prelevements_lus(payload: Mapping[str, Any], vue: str
             f"le canal ne lit pas {', '.join(hors)} (D-440) et le rapport ne porte ni la "
             f"somme d'avant ni le coût de sa couche des entreprises : les prélèvements "
             f"sont ceux du canal, sans elles")
+    from impots.jumeau.ventilation import employeurs_lus
+
+    employeurs = employeurs_lus(payload, vue) or {}
     totaux = {}
     for a, c in zip(annees, couches, strict=True):
         cout = float(c["entreprises"])
-        totaux[a] = -cout / EURO if cout else canal[a]
+        totaux[a] = -cout / EURO + employeurs.get(a, 0.0) if cout else canal[a]
     return totaux, canal, None
 
 
@@ -335,7 +351,9 @@ def ventilations(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] |
       bloc des salaires n'est pas la revalorisation de la requête sans hypothèse.
 
     Le rapport de la première année doit être celui de la même passe : même commit, même
-    scénario, même année, et son coût celui du chemin figé à l'euro près ; sinon refusé.
+    scénario, et son coût celui du chemin figé à l'euro près ; sinon refusé. Une passe
+    d'une autre année que la première du chemin (une loi qui s'applique plus tard) ne
+    ventile rien : absente, dite (D-684).
     """
     non_portes: dict[str, str] = {}
     if premiere_annee is None:
@@ -351,8 +369,15 @@ def ventilations(payload: Mapping[str, Any], premiere_annee: Mapping[str, Any] |
     passes = _passes(premiere_annee)
     for nom, passe in passes.items():
         if int(passe["requete"]["year"]) != premiere:
-            raise MesureError(f"passe des {nom} de {passe['requete']['year']}, chemin "
-                              f"commençant en {premiere}")
+            # D-684 : une loi qui s'applique après la première année du chemin (le PLF
+            # 2027, art. 15 : sa passe des entreprises en 2027, le chemin en 2026, nul
+            # cette année-là). Sa passe ne ventile pas l'année où le chemin commence : la
+            # ventilation est absente, dite, et les blocs refusent plutôt que de lire un
+            # zéro ; la mesure, elle, se lit (mode réduit).
+            texte = (f"la passe des {nom} de la première année porte sur "
+                     f"{passe['requete']['year']}, le chemin commence en {premiere} : "
+                     f"elle ne ventile aucune année du chemin")
+            return None, None, {"entreprises": texte, "menages": texte}
     cout = sum(float(p["reponse"]["reform_cost"]) for p in passes.values())
     figee = float(payload["years"][0]["mechanical_frozen_eur"])
     if abs(cout - figee) > EURO_PRES:

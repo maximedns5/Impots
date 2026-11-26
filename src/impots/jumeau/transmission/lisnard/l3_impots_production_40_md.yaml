@@ -9,8 +9,8 @@ source:
   url: https://www.unenouvelleenergie.fr/questions/david-lisnard-veut-il-baisser-les-impots/
   date: '2026-01-21'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: Code de la sécurité sociale, art. L137-30 (C3S) ; Code général des impôts, art. 1586
+    ter (CVAE), 1447 (CFE)
   parametre: null
   valeur: null
   enonce: 40 Md€
@@ -84,3 +84,10 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les autres impôts sur la production reçus par les APU (D29) : les 40 Md€ en font
+    30 %'
+  montant_md: 132.8
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    D29

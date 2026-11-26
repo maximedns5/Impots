@@ -227,13 +227,13 @@
       "quarantined": true
     },
     "erfs_2024_ip2117_figures.xlsx": {
-      "url": null,
+      "url": "https://www.insee.fr/fr/statistiques/fichier/9019316/ip2117.xlsx",
       "sha256": "df80d57ee7449f1a766ca8fc2ba59721bc735a41a18ee63e2d807b43f6dad026",
       "bytes": 41175,
       "downloaded": "2026-09-03",
-      "licence": "unknown",
-      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it.",
-      "quarantined": true
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Première n° 2117, niveaux de vie 2024, données des figures. Re-sourcé le 16 novembre 2026 (but 27, volet sources, D-492) : le fichier de l'URL a l'empreinte de celui mis en quarantaine (D-028) faute d'URL. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : niveau_de_vie_median 2024, d9_d1 2024, d9_d1_servi 2024, niveau_de_vie_median_servi 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
     },
     "filosofi_2023_all_geo.zip": {
       "url": null,
@@ -2252,7 +2252,7 @@
       "downloaded": "2026-11-15",
       "licence": "Licence ouverte Etalab",
       "description": "Insee, BDM 010002078 : cours du pétrole brut Brent (Londres), prix au comptant en euros par baril, mensuel, 2009-01→2025-12 ; le prix du baril des prix d'importation de Mésange (D-432)."
-},
+    },
     "insee_bdm_taux_chomage_localise_1990_2025.xml": {
       "url": "https://www.bdm.insee.fr/series/sdmx/data/TAUX-CHOMAGE/T.TAUX_CHOMAGE_LOCALISE....?startPeriod=1990-Q1&endPeriod=2025-Q4",
       "quarantined": false,
@@ -2333,6 +2333,245 @@
       "licence": "Licence Ouverte / Etalab",
       "quarantined": false,
       "description": "INSEE, Comptes nationaux annuels base 2020, tableau 3.212 « Dépenses et recettes des administrations de sécurité sociale (S1314) », MILLÉSIME 2025 (même dossier que la t. 3.201). Consolidé à l'intérieur du sous-secteur, pas entre sous-secteurs (note de la t. 3.215) : les transferts courants entre APU (D73), les intérêts (D41) et les transferts en capital (D9) entre sous-secteurs y figurent. But 26, volet financement (D-481) : la somme des quatre sous-secteurs redonne chaque ligne de la t. 3.201, à la consolidation près, et B9 exactement."
+    },
+    "ccss_juin2025_rapport.pdf": {
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2025/Rapport%20CCSS%20juin_BAT_%20avec%20couverture.pdf",
+      "sha256": "8e0505aa85be5e59e6f898b1753c241b56b0d7cc782371f3e99550108bbdeb3a",
+      "bytes": 5167028,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Rapport à la Commission des comptes de la sécurité sociale, juin 2025. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : reduction_generale 2022, bandeau_maladie 2022, bandeau_famille 2022, af_montant 2022, reduction_generale 2023, bandeau_maladie 2023, bandeau_famille 2023, af_montant 2023, reduction_generale 2024, bandeau_maladie 2024, bandeau_famille 2024, csg_activite 2024, csg_remplacement 2024, af_montant 2024, csg_activite_avec_non_salaries 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "ccss_mai2024_rapport.pdf": {
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2024/CCSS-mai%202024.pdf",
+      "sha256": "9673702efe0159b1575271d3ab0a05e3d06620a312552b38407517da776fa79b",
+      "bytes": 7400083,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Rapport à la Commission des comptes de la sécurité sociale, mai 2024. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : csg_activite 2022, csg_remplacement 2022, csg_activite 2023, csg_remplacement 2023, csg_activite_avec_non_salaries 2022, csg_activite_avec_non_salaries 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "ircom-2023-revenus-2022.zip": {
+      "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20240610-082154/ircom-2023-revenus-2022.zip",
+      "sha256": "497c2d1ca4e439865c38f8f854563e9718c4b57949aa39172ecd51449c37d317",
+      "bytes": 17642568,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP, IRCOM 2023 (revenus 2022), archive complète. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : foyers_fiscaux 2022, foyers_imposes 2022), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "insee_ip2004_niveaux_de_vie_2022.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8216285/ip2004.xlsx",
+      "sha256": "b8e909e3428de5052e27fda517eb7681329e40e2cd2dd5c7f3d4615fa105f228",
+      "bytes": 63500,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Première n° 2004, niveaux de vie 2022, données des figures. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : niveau_de_vie_median 2022, d9_d1 2022, d9_d1_servi 2022, niveau_de_vie_median_servi 2022), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rapport_dcf_comptes_2022.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/qui%20sommes%20nous/Textes%20de%20r%C3%A9f%C3%A9rence/comptes%20et%20financements/Point%203%20Rapport%20du%20Dcf%20sur%20les%20comptes%202022.pdf",
+      "sha256": "ef77607a17b93563a015fe0d7888438d892e5777f321b26914c17403caebe8d7",
+      "bytes": 3778961,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, rapport du directeur comptable et financier sur les comptes 2022. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_montant 2022, ppa_montant 2022, aide_logement_montant 2022, ppa_montant_servi 2022, rsa_montant_servi 2022), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_pa_conjoncture_2023t4.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2023T4.pdf",
+      "sha256": "26244616cff781ced1a95c65f834f34a23506c88dae2804546ebf15f6c4e4330",
+      "bytes": 702413,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, PA Conjoncture, la prime d'activité au 4e trimestre 2023. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : ppa_foyers 2022, ppa_foyers 2023, ppa_foyers_servis 2022, ppa_foyers_servis 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "ircom-2024-revenus-2023.zip": {
+      "url": "https://static.data.gouv.fr/resources/limpot-sur-le-revenu-par-collectivite-territoriale-ircom/20250919-135242/ircom-2024-revenus-2023.zip",
+      "sha256": "f3a8d6afd9af627359b8f37a73696429b58ac72b37b96d5b9ef35eadf9d2db6c",
+      "bytes": 17476829,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP, IRCOM 2024 (revenus 2023), archive complète. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : foyers_fiscaux 2023, foyers_imposes 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "insee_ip2063_niveaux_de_vie_2023.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8600989/ip2063.xlsx",
+      "sha256": "0dea3c4c18360c6437f77662735b67b51aebd3b359663514341a596421b1c8e3",
+      "bytes": 43312,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee Première n° 2063, niveaux de vie 2023, données des figures. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : niveau_de_vie_median 2023, d9_d1 2023, d9_d1_servi 2023, niveau_de_vie_median_servi 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rapport_dcf_comptes_2023.pdf": {
+      "url": "https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/qui%20sommes%20nous/Textes%20de%20r%C3%A9f%C3%A9rence/comptes%20et%20financements/Point_5_Rapport_du_Dcf_sur_les_comptes_2023.pdf",
+      "sha256": "edd21d8a46a3406760f98bffbcf9841e7341da402a6587d99e90f75cb0164eb0",
+      "bytes": 3586408,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, rapport du directeur comptable et financier sur les comptes 2023. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_montant 2023, ppa_montant 2023, aide_logement_montant 2023, ppa_montant_servi 2023, rsa_montant_servi 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rsa_conjoncture_2023t4.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2023T4.pdf",
+      "sha256": "f59d81ef753241518989b13f3409d4c09c278bf34dccb44e56228d958b8456ae",
+      "bytes": 583165,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, RSA Conjoncture, le RSA au 4e trimestre 2023. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_foyers 2023, rsa_foyers_servis 2023), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rapport_dcf_comptes_2024.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Professionnels/Nous_connaitre/textes_de_reference/etats_financiers/2024/Rapport_du_Dcf_sur_les_comptes_2024.pdf",
+      "sha256": "d63abb58ee10417ac0421171c82ab14d18c736f06f8f815a09c24e60d85f61fe",
+      "bytes": 1449209,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, rapport du directeur comptable et financier sur les comptes 2024. Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_montant 2024, ppa_montant 2024, aide_logement_montant 2024, ppa_montant_servi 2024, rsa_montant_servi 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_rsa_conjoncture_2024t4_def.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2024T4_def.pdf",
+      "sha256": "e8befdcf2d0b1d7716cd53efb23acb9b6f7979e5893f27f961c782b694341cda",
+      "bytes": 609788,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, RSA Conjoncture, le RSA au 4e trimestre 2024 (définitif). Document d'une ligne de la grille de vérification (docs/verification/lignes.json : rsa_foyers 2024, rsa_foyers_servis 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "cnaf_pa_conjoncture_2024t4_def.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2024T4_def.pdf",
+      "sha256": "5d05161687e37e9a5945659f1d59c4f7aa5357777c8cd52109cf781cb544e7f2",
+      "bytes": 507454,
+      "downloaded": "2026-11-16",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, PA Conjoncture, la prime d'activité au 4e trimestre 2024 (définitif). Document d'une ligne de la grille de vérification (docs/verification/lignes.json : ppa_foyers 2024), dont lignes.json portait l'URL et l'empreinte sans que le fichier soit au manifeste ; téléchargé le 16 novembre 2026, empreinte égale à celle de lignes.json (but 27, volet sources, D-492).",
+      "quarantined": false
+    },
+    "insee_erfs2023_ti09_niveau_de_vie_statut_occupation.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8731694/irsocerfs2023_ti09.xlsx",
+      "sha256": "ec6cc1e613a94d1de8e26f51815f9b7c48957de20985dea14f89f4fd7fb4812f",
+      "bytes": 8090,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, « Revenu, niveau de vie et pauvreté en 2023 », Insee Résultats, enquête Revenus fiscaux et sociaux 2023, tableau TI09 : répartition des individus et leur niveau de vie selon le statut d'occupation du logement (médianes : ensemble 25 760 €, accédants 29 350, propriétaires 28 920, locataires HLM 17 260, vide non HLM 22 440, meublé 22 250, logés gratuitement 21 040). Marge du rang des salaires et des pensions par statut d'occupation (but 27, volet grille2, D-497).",
+      "quarantined": false
+    },
+    "urssaf_ppv_trimestre_champ_large.csv": {
+      "url": "https://open.urssaf.fr/api/explore/v2.1/catalog/datasets/prime-partage-valeur-par-trimestre-champ-large-france-entiere/exports/csv?delimiter=%3B",
+      "sha256": "7612a75bd5f3a427cc342530d1787ed36ca4d7dd1e7737517b440fb4b43e2d91",
+      "bytes": 6284,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Urssaf, open data, « Prime de partage de la valeur par trimestre, champ large, France entière » (export du 16 novembre 2026) : montants versés par trimestre, secteur privé (champ des ETE et hors), secteur public. 2024, privé : 3 451 + 11 M€. Part du brut hors de l'assiette des cotisations (but 27, volet grille3, D-499).",
+      "quarantined": false
+    },
+    "insee_erfs2023_t03_composition_revenu_disponible_age.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8731688/irsocerfs2023_t03.xlsx",
+      "sha256": "ca856273ba2fee29b7bf6ca09ede0e166661e474b7e14388bc22456bb7a74d70",
+      "bytes": 7875,
+      "downloaded": "2026-11-16",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, « Revenu, niveau de vie et pauvreté en 2023 », Insee Résultats, ERFS 2023, tableau T03 : composition du revenu disponible moyen selon l'âge de la personne de référence (revenus du patrimoine : 11,4 % de l'ensemble, 4,7 % sous 30 ans, 20,6 % à 75 ans ou plus). Diagnostic du niveau de vie par statut d'occupation (but 27, volet grille3, D-499).",
+      "quarantined": false
+    },
+    "an_mecss_l16b1685_2023_exonerations_ferracci_guedj.pdf": {
+      "url": "https://www.assemblee-nationale.fr/dyn/16/rapports/mecss/l16b1685_rapport-information.pdf",
+      "sha256": "3202a173bd3646a89cf9636e1842978ba23c13f7984a514f040d1a984b72c104",
+      "bytes": 2351253,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Assemblée nationale, rapport d'information n° 1685 (XVIe législature, 28 septembre 2023) de la MECSS sur l'efficacité des exonérations de cotisations sociales, MM. Ferracci et Guedj. p. 37 : le bandeau famille sur les salaires entre 2,5 et 3,5 Smic « de l'ordre d'1,6 milliard d'euros en 2022 » ; p. 39, tableau « Montant des exonérations du bandeau famille sur les salaires compris entre 2,5 et 3,5 Smic » par taille d'entreprise (réponse de l'Urssaf), total 1,478 Md€. But 28, volet reaction (D-531).",
+      "quarantined": false
+    },
+    "insee_salfra2007_koubi_lhommeau_diffusion_smic.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/1373191/salfra07ae.pdf",
+      "sha256": "5554c6286f432b7b7f79aa97ff85a6443dac119cac98e958af49f776dfec21e3",
+      "bytes": 180735,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Koubi et Lhommeau (Dares), « Les effets de diffusion de court terme des hausses du Smic dans les grilles salariales des entreprises de dix salariés ou plus sur la période 2000-2005 », Insee, Les salaires en France, édition 2007. Figure 11 (p. 14 du PDF, folio 80) : élasticités du salaire horaire de base au Smic par tranche de 0,1 Smic de 1 à 1,5, trimestrielles et annuelles, sans et avec effets fixes d'entreprise ; figure 10 : effet trimestriel significatif jusqu'à 2 Smic. But 28, volet reaction (D-533).",
+      "quarantined": false
+    },
+    "insee_empsal2011_goarant_muller_hausses_smic.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/1373824/empsal11f.pdf",
+      "sha256": "b85653c6a5ef390f00344ffbfb4a24a206c4a642d57c76756a86a162d385c0a1",
+      "bytes": 309438,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Goarant et Muller (Dares), « Les effets des hausses du Smic sur les salaires mensuels dans les entreprises de 10 salariés ou plus de 2006 à 2009 », Insee Références, Emploi et salaires, édition 2011. Résumé p. 2 du PDF ; figure 10 (p. 12) : effets retardés, compensation aux 3e et 4e trimestres (p. 13) ; figure 11 (p. 14 du PDF, folio 81) : à un an, 0,16 point entre 1 et 1,1 Smic, non significatif au-delà. But 28, volet reaction (D-533).",
+      "quarantined": false
+    },
+    "insee_es448_2011_cette_chouard_verdugo_smic_salaire_moyen.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/1377686/ES448A.pdf",
+      "sha256": "449c81bd9833dcb7d095693524355012529515bae85faf5b10a6d773fbab5248",
+      "bytes": 1228758,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Cette, Chouard et Verdugo (Banque de France), « Les effets des hausses du Smic sur le salaire moyen », Économie et Statistique n° 448-449, 2011. Tableau 4 (p. 18 du PDF) : élasticités de court et de long terme du SHBO et du SMPT aux composantes des revalorisations du Smic ; coups de pouce : SMPT 0,08 et 0,28, SHBO 0,11 et 0,23. But 28, volet reaction (D-533).",
+      "quarantined": false
+    },
+    "ges_smic_rapport_2024.pdf": {
+      "url": "https://strategie.gouv.fr/files/2025-02/smic-rapport-2024-11decembre15h45_vdef_complet.pdf",
+      "sha256": "215044f7cda37d2e00ff7f8719aad89d24ca45d5ddd562494697614e0a8b8a07",
+      "bytes": 9053600,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Groupe d'experts sur le Smic, rapport de novembre 2024. Note 30, p. 67 : Gautier, Roux et Suarez Castillo (2018) : une hausse de 1 % du Smic relève directement les salaires de base individuels de 0,08 % en moyenne, une hausse de 1 % des minima de branche de 0,14 % ; p. 96 du PDF : minima de branche +12 % contre +15 % pour le Smic et l'inflation de début 2021 au 3e trimestre 2024. But 28, volet reaction (D-533).",
+      "quarantined": false
+    },
+    "cnaf_pa_conjoncture_17_2019t4.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/2020_Prime%20d'activit%C3%A9%20Conjoncture%20n%C2%B017.pdf",
+      "sha256": "40c0be887cfcc401756c8942caa0221219430af5402c59a7c5512912cb8a4684",
+      "bytes": 583993,
+      "downloaded": "2026-11-17",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, Prime d'activité conjoncture n° 17, juillet 2020 : données définitives de décembre 2019 (4,35 M de foyers) et graphique 1, foyers payés par trimestre de 2016 à 2019 ; juge du but 28 (D-536)."
+    },
+    "cnaf_pa_conjoncture_16_2019t4.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/2020_Prime%20d'activit%C3%A9%20Conjoncture%20n%C2%B016.pdf",
+      "sha256": "6d0fd663c2b373bf06831ce2b73cbe1fe7de932b2a496d48d658bc49016927e8",
+      "bytes": 435399,
+      "downloaded": "2026-11-17",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, Prime d'activité conjoncture n° 16 : fin décembre 2019 ; « zoom sur les dépenses », croissance des masses de 2018 à 2019 (+75,4 % comptable, +73,8 % en mois de droit) ; juge du but 28 (D-536)."
+    },
+    "cnaf_essentiel_187_2019_depenses_2018.pdf": {
+      "url": "https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Essentiel/187_2019_ESSENTIEL_Stabilite_des_depenses_PL_CNAF.pdf",
+      "sha256": "5b9b5f96eede3f7788c49eea19c5e9910698197bc54cb85986f4d023dc5352a9",
+      "bytes": 399035,
+      "downloaded": "2026-11-17",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, l'e-ssentiel n° 187, 2019, figure 1 : prime d'activité versée par les Caf en 2018, 5,3 Md€, +5,4 % sur 2017 ; juge du but 28 (D-536)."
+    },
+    "insee_fps2020_d2_donnees.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4797668/FPS2020_D2_donnees.xlsx",
+      "sha256": "ce48870ae6f3ecd2f0180afa30363fb7ec9e77ba164fbf663dfa54be536fadc5",
+      "bytes": 53898,
+      "downloaded": "2026-11-17",
+      "licence": "Insee, licence ouverte Etalab",
+      "description": "Insee, France portrait social 2020, « Les réformes socio-fiscales de 2019… », données des figures ; figure 8 : effet par décile de la hausse du bonus de la prime d'activité ; juge du but 28 (D-536)."
+    },
+    "harasztosi_lindner_2015_who_pays_minimum_wage.pdf": {
+      "url": "https://ipl.econ.duke.edu/seminars/system/files/seminars/1070.pdf",
+      "sha256": "8886b36d1d636f217a0eae729a914e39ba3633f2be7f223c5dc1190f26305ddb",
+      "bytes": 2117653,
+      "downloaded": "2026-11-17",
+      "licence": "document de travail des auteurs, diffusé librement (séminaire, Duke)",
+      "description": "Harasztosi et Lindner, « Who Pays for the Minimum Wage? », document de travail, octobre 2015 (publié dans l'American Economic Review 109 (8), 2019). Résumé (p. 1 du PDF) et p. 4 : la hausse du salaire minimum hongrois de 2001 passe dans les prix ; le report est plus fort dans les services et les branches qui n'exportent pas. But 28, volet interaction (D-540, D-541).",
+      "quarantined": false
+    },
+    "insee_bts2022_t305_deciles_salaire_brut_horaire.csv": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8219475/T305.csv",
+      "sha256": "6799dfe22e8f69685a31984331677c2aa54ffd2ffbc25f8aa427a1344ea6e92f",
+      "bytes": 56864,
+      "downloaded": "2026-11-17",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Insee, « Les salaires dans le secteur privé en 2022 », Insee Résultats (base Tous salariés 2022), tableaux régionaux, T305 : déciles du salaire brut horaire par région, catégorie socioprofessionnelle, condition d'emploi et sexe. Ligne France (REG 99, CS1 T, CE T, SEXE E) : 12,1 ; 13,3 ; 14,5 ; 15,8 ; 17,5 ; 19,6 ; 22,5 ; 27,2 ; 36,3 €. Le D8 en Smic (2,507) cale le point à 2,5 Smic de la fonction des salaires horaires (but 28, volet suite, D-552).",
+      "quarantined": false
     }
   }
 }

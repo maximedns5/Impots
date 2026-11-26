@@ -10,8 +10,8 @@ source:
   url: https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe
   date: '2025-11-06'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: 'Code général des impôts : CVAE (art. 1586 ter), CFE (art. 1447), taxe foncière ;
+    Code de la sécurité sociale, art. L137-30 (C3S)'
   parametre: null
   valeur: null
   enonce: 50 Md€ par an, soit 250 Md€ sur le quinquennat ; « en un coup » dès le premier PLF
@@ -87,3 +87,10 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: 'les autres impôts sur la production reçus par les APU (D29) : les 50 Md€ en font
+    38 %'
+  montant_md: 132.8
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    D29

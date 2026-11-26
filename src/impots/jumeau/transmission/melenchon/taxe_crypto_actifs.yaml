@@ -8,8 +8,8 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: 'Code général des impôts : droits de mutation (art. 777 et s.), PFU (art. 200 A),
-    IFI (art. 964 et s.)'
+  texte: 'Code général des impôts, art. 150 VH bis (l''imposition des plus-values de cession
+    d''actifs numériques des particuliers) : un taux non dit'
   parametre: null
   valeur: null
   enonce: aucun taux
@@ -18,7 +18,6 @@ payeurs:
 - qui: menages
   sens: paie
   par: patrimoine
-  note: 'la population n''en porte pas : aucune clé par décile'
 - qui: apu:etat
   sens: recoit
   par: capital_menages
@@ -36,23 +35,32 @@ incidence:
     », QJE 135(1) (Danemark) : l''assiette répond à l''impôt sur la fortune, d''autant plus
     en haut de la distribution'
 financement:
-  annonce: null
-  source: null
-  chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  annonce: « Une partie de cette œuvre de justice fiscale devra être orientée vers la réduction
+    de notre déficit »
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6
+  chiffre: true
+  note: une recette du programme ; son bilan (p. 14) en affecte 81,7 Md€ aux dépenses et 24,7
+    Md€ au déficit, sans dire laquelle va où
 canaux:
 - patrimoine_menages
 - consommation_menages
 hypotheses:
-- texte: Le montant tombe sur un impôt courant sur le revenu ou le patrimoine (D5).
+- texte: Le montant tombe sur les impôts courants (D5).
   source: non sourcée
-- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
-    sur l’activité).'
-  source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
+- texte: Le montant de la première année est tenu chaque année de 2027 à 2035, en euros courants
+    ; le candidat ne donne qu'un montant annuel, sans trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
   source: non sourcée
+- texte: 'Aucune variante de Mésange pour cet impôt : le mode réduit ne lit aucun effet sur
+    l''activité, seulement la recette.'
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes publiées)'
 montant:
   origine: hypothese
   annonce:
@@ -71,3 +79,7 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6

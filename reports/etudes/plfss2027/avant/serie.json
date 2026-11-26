@@ -1,15 +1,20 @@
 {
-  "commit": "aa222933c3d6eba95a599d1da84d4e99ee2443a8",
+  "commit": "01a24df6daab3bc732ce804eddfcd73e8ee55a54",
   "scenarios": {
     "plf2027_art_74_ppa": {
-      "cout": -557100615.3408203,
-      "dette": -0.0016217293427456259,
-      "selon_theta": "baisse"
+      "cout": -748939544.0,
+      "dette": -0.0022952469127379693,
+      "selon_theta": "baisse",
+      "verdict": "baisse"
     },
     "plf2027_art_74_apl": {
-      "cout": -72492824.14233398,
-      "dette": -0.0006741149653308742,
-      "selon_theta": "baisse"
+      "cout": -87358129.15234375,
+      "dette": -0.0008381576519627121,
+      "selon_theta": "baisse",
+      "verdict": "baisse"
     }
-  }
+  },
+  "corrections": [
+    "les gérants majoritaires retirés des salariés d'un facteur commun, sur la population refaite (D-686, D-687)"
+  ]
 }

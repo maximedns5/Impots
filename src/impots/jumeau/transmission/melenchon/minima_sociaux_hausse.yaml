@@ -9,7 +9,8 @@ source:
   url: https://melenchon2027.fr/programme/livre/une-economie-au-service-des-besoins/chapitre2
   date: '2026-11-06'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: Code de l'action sociale et des familles, art. L262-2 (le RSA) ; Code de la sécurité
+    sociale, art. L815-1 (l'ASPA) ; Code du travail, art. L5423-1 (l'ASS)
   parametre: null
   valeur: null
   enonce: aucun montant

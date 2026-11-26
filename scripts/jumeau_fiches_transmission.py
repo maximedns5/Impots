@@ -15,8 +15,18 @@ qu'il ne porte pas vient de trois tables de ce fichier, chacune sourcée :
   compte des APU où il tombe, la variante de Mésange la plus proche, la clé des ménages
   ou l'impôt des entreprises, et le calendrier. Ce sont des hypothèses : la fiche le dit.
 
-Aucun nombre n'est inventé : un montant est celui d'un rapport commité ou celui que le
-candidat énonce ; une clé ou un calendrier que personne ne donne est dit « non sourcé ».
+Et, depuis le but 27 (volet `fiches`, D-504), une quatrième, hors de ce fichier :
+`programmes/fiches/<candidat>.yaml`, les données critiques écrites mesure par mesure (le
+levier et son article, l'assiette et sa source, le montant ou le calcul qui le donne, les
+payeurs et leur part, le calendrier, le financement cité, les hypothèses et leurs
+sources). Elle passe avant les trois autres : une régénération réécrit les fiches depuis
+elle, et n'écrase plus ce qui a été écrit à la main. Le script garde ce qu'il fait bien :
+le relevé du programme, le rapport et les écarts de sa première année, le bilan du
+financement, les gabarits pour ce que la table ne dit pas encore.
+
+Aucun nombre n'est inventé : un montant est celui d'un rapport commité, celui que le
+candidat énonce, ou une assiette publiée fois le paramètre du candidat (le calcul écrit
+dans la fiche) ; une clé ou un calendrier que personne ne donne est dit « non sourcé ».
 `--verifier` relit chaque fiche écrite par le lecteur (`jumeau.transmission.charger`).
 """
 
@@ -404,6 +414,9 @@ CODES = {
     "RCVAE": {"chocs": {"apu_r_d2": 1.0}, "instrument": None, "entreprises_par": "cvae"},
     "RCS": {"chocs": {"apu_r_d61": 1.0}, "instrument": "cotisations_salaries",
             "menages_par": "cotisations_salariales"},
+    "RP13": {"chocs": {"apu_r_p13": 1.0}, "instrument": None},
+    "RD61": {"chocs": {"apu_r_d61": 1.0}, "instrument": "cotisations_employeurs",
+             "entreprises_par": "cotisations_employeurs"},
 }
 #: Pourquoi chaque code tombe là (le compte des APU, Insee, base 2020, t. 3.201).
 RAISONS = {
@@ -426,6 +439,8 @@ RAISONS = {
     "RD2": "un impôt sur la production ou les produits (D2)",
     "RCVAE": "la CVAE (D29)",
     "RCS": "des cotisations sociales (D61), aux ménages au prorata de leurs cotisations",
+    "RP13": "des paiements partiels des ménages (P13) : un tarif payé à un service public",
+    "RD61": "des cotisations des employeurs (D61)",
 }
 C27 = ("constant", 2027, 2027, 2035, None)
 R32 = ("rampe", 2027, 2032, 2035, None)
@@ -517,6 +532,53 @@ SIGNE = {"economie_depense": -1.0, "recette": -1.0, "depense": 1.0,
          "baisse_prelevements": 1.0}
 
 
+TABLES = ROOT / "programmes" / "fiches"
+
+
+def table(candidat):
+    """Les données critiques d'un candidat, mesure par mesure (D-504), ou {}."""
+    p = TABLES / f"{candidat}.yaml"
+    if not p.exists():
+        return {}
+    t = {k: v for k, v in (yaml.safe_load(p.read_text(encoding="utf-8")) or {}).items()
+         if not k.startswith("_")}            # `_sources` : les ancres YAML partagées
+    ids = {m["id"] for m in json.loads((ROOT / "programmes" / f"{candidat}.json")
+                                         .read_text(encoding="utf-8"))["mesures"]}
+    inconnues = sorted(set(t) - ids)
+    if inconnues:
+        raise SystemExit(f"{p} : mesures inconnues du programme {inconnues}")
+    return t
+
+
+#: Les variables de la passe des ménages que la fiche d'une chiffrée relève de sa première
+#: année (les écarts du rapport, Md€) : qui reçoit, qui paie.
+ECARTS = ("salaire_net", "salaire_brut", "salaire_super_brut", "cotisations_salariales",
+          "cotisations_employeur", "allegement_general", "retraite_imposable", "ir",
+          "csg_deductible", "csg_retraite", "prelevements_pensions", "ppa", "rsa",
+          "aide_logement", "af", "aspa", "garantie_autonomie", "pension_employeur_etat",
+          "revenu_disponible", "cvae", "impot_societes", "prelevements_entreprise")
+
+
+def _ecarts(rapport_chemin):
+    """Les écarts de la première année du rapport d'une chiffrée, en Md€ (la passe figée
+    de `premiere_annee_<scénario>.json`, à côté du rapport), ou None."""
+    p = ROOT / rapport_chemin
+    pa = p.with_name(p.name.replace("predictif_", "premiere_annee_", 1))
+    if not pa.exists():
+        return None
+    r = json.loads(pa.read_text(encoding="utf-8"))
+    reps = ([r["response"]] if r.get("kind") != "mixte"
+            else [r["response"][k] for k in ("menages", "entreprises")])
+    out = {}
+    for rep in reps:
+        t, tr = rep.get("totals") or {}, rep.get("totals_reform") or {}
+        for k in ECARTS:
+            if k in t and k in tr and abs(tr[k] - t[k]) >= 5e7:
+                out[k] = round((tr[k] - t[k]) / 1e9, 2)
+    return {"annee": r["request"].get("year"), "source": etude._relative(pa),
+            "ecarts_md": out} if out else None
+
+
 def _source_programme(m):
     s = m["sources"][0]
     return {"citation": s["citation"], "url": s["url"], "date": s.get("date")}
@@ -529,8 +591,8 @@ def _cout(sorte, m, montant):
     if sorte == "chiffree":
         rapport = json.loads((ROOT / montant["rapport"]).read_text(encoding="utf-8"))
         return float(rapport["years"][0]["mechanical_frozen_eur"])
-    if sorte == "hypothese" and m["declare"]["sens"] in annonce.COUTE:
-        return float(m["declare"]["montant_eur"])
+    if sorte == "hypothese" and montant["annonce"]["sens"] in annonce.COUTE:
+        return float(montant["annonce"]["montant_md"]) * 1e9
     return None
 
 
@@ -563,11 +625,29 @@ def _annonce(m, candidat):
                     "(volet `financement`)"}
 
 
-def _hyp_declaree(code, profil, debut, plein, fin, cal, m):
-    d = m["declare"]
+def _hyp_declaree(code, profil, debut, plein, fin, cal, m, t=None):
+    """Le montant d'une hypothèse : déclaré par le candidat (`declare`), ou calculé par la
+    table (`t["montant"]` : l'assiette fois le paramètre, D-504). La table peut aussi dire
+    sa catégorie (`code`), ses parts (`parts`, sourcées) et son profil."""
+    t = t or {}
+    tm = t.get("montant") or {}
+    if tm.get("md") is not None:
+        # Un montant de la table : calculé (`calcul`), ou énoncé par le candidat sans
+        # `declare` dans le relevé (`citation`, `url`).
+        src = ({"citation": tm["citation"], "url": tm["url"]} if tm.get("citation")
+               else m["sources"][0])
+        d = {"montant_eur": float(tm["md"]) * 1e9, "sens": tm["sens"],
+             "horizon": tm.get("horizon", m["parametre"]), "source": src}
+    else:
+        d = m["declare"]
     md = d["montant_eur"] / 1e9
     signe = SIGNE[d["sens"]]
-    c = CODES[code]
+    c = dict(CODES[code])
+    if t.get("parts"):
+        c["chocs"] = t["parts"]["chocs"]
+        for k in ("instrument", "menages_par", "menages_part", "entreprises_par"):
+            if k in t["parts"]:
+                c[k] = t["parts"][k]
     chocs = {k: round(signe * md * p, 6) for k, p in c["chocs"].items()}
     mont = {"origine": "hypothese",
             "annonce": {"montant_md": md, "sens": d["sens"], "horizon": d["horizon"],
@@ -575,7 +655,11 @@ def _hyp_declaree(code, profil, debut, plein, fin, cal, m):
             "chocs": chocs, "profil": profil,
             "debut": debut, "plein": plein, "fin": fin,
             "instrument": c.get("instrument"), "menages_par": c.get("menages_par"),
-            "entreprises_par": c.get("entreprises_par"), "inclus_dans": None}
+            "entreprises_par": c.get("entreprises_par"),
+            "inclus_dans": t.get("inclus_dans")}
+    if tm.get("calcul"):
+        mont["annonce"]["par"] = "calcul"
+        mont["annonce"]["calcul"] = tm["calcul"]
     if c.get("menages_part") is not None:
         mont["menages_part"] = c["menages_part"]
     hyps = [{"texte": f"Le montant tombe sur {RAISONS[code]}.", "source": NS
@@ -606,15 +690,20 @@ def _hyp_declaree(code, profil, debut, plein, fin, cal, m):
     return mont, hyps
 
 
-def construire(candidat, m, scenarios):
+def construire(candidat, m, scenarios, t=None):
+    """Une fiche. `t`, l'entrée de la table du candidat (D-504), passe avant les fiches
+    précises de ce fichier, qui passent avant les gabarits."""
     cle = f"{candidat}/{m['id']}"
     g = GABARITS[m["categorie"]]
-    precise = PRECISES.get(cle, {})
+    t = t or {}
+    precise = {**PRECISES.get(cle, {}),
+               **{k: t[k] for k in ("payeurs", "incidence", "canaux") if k in t}}
     chiffrage = m.get("chiffrage")
     refus = m.get("refus") or {}
+    calcule = (t.get("montant") or {}).get("md") is not None
     if chiffrage:
         sorte = "chiffree"
-    elif m.get("declare") and cle in DECLAREES:
+    elif (m.get("declare") and cle in DECLAREES) or calcule:
         sorte = "hypothese"
     elif m["precision"] == "vague" or refus.get("porte") in ("vague", "chaine") \
             or m["categorie"] in ("regle_budgetaire",):
@@ -628,8 +717,13 @@ def construire(candidat, m, scenarios):
         levier.update({"parametre": ", ".join(reforme), "valeur": reforme,
                        "couche": chiffrage["couche"]})
     levier.update(precise.get("levier", {}))
-    hyps = list(precise.get("hypotheses", []))
-    if chiffrage and not hyps and chiffrage.get("note"):
+    levier.update(t.get("levier", {}))
+    hyps = list(t["hypotheses"]) if "hypotheses" in t else list(
+        precise.get("hypotheses", []))
+    if chiffrage and "hypotheses" in t and chiffrage.get("note"):
+        hyps.insert(0, {"texte": chiffrage["note"], "source": "le chiffrage de la mesure "
+                        f"(`programmes/{candidat}.json`)"})
+    elif chiffrage and not hyps and chiffrage.get("note"):
         hyps.append({"texte": chiffrage["note"], "source": "le chiffrage de la mesure "
                      f"(`programmes/{candidat}.json`)"})
     if sorte == "chiffree":
@@ -637,26 +731,52 @@ def construire(candidat, m, scenarios):
         montant = {"origine": "rapport", "scenario": scen, "rapport": rapport}
         if m.get("declare"):
             montant["annonce_md"] = m["declare"]["montant_eur"] / 1e9
+        ecarts = _ecarts(rapport)
+        if ecarts:
+            montant["premiere_annee"] = ecarts
     elif sorte == "hypothese":
-        montant, h = _hyp_declaree(*DECLAREES[cle], m)
-        hyps += h
+        code, *prof = DECLAREES.get(cle) or ((t.get("montant") or {}).get("code"), *C27)
+        if t.get("code"):
+            code = t["code"]
+        if t.get("profil"):
+            p = t["profil"]
+            prof = [p["profil"], p["debut"], p.get("plein", p["debut"]), p["fin"],
+                    p.get("calendrier")]
+        montant, h = _hyp_declaree(code, *prof, m, t)
+        if "hypotheses" not in t:
+            hyps += h
     else:
         raison = refus.get("raison", "")
         montant = {"origine": "aucun",
-                   "manque": (f"{raison} (porte « {refus.get('porte')} »)" if raison
-                              else "aucun montant énoncé")}
+                   "manque": t.get("manque") or (
+                       f"{raison} (porte « {refus.get('porte')} »)" if raison
+                       else "aucun montant énoncé")}
         if sorte == "parametre" and m.get("declare"):
             montant["annonce_md"] = m["declare"]["montant_eur"] / 1e9
+    # Une mesure sans choc n'a de payeurs, d'incidence et de canaux que ceux que sa table
+    # écrit (D-504) : pas ceux du gabarit de sa catégorie.
     vide = sorte == "sans_choc"
-    return {
+    if vide:
+        precise = {k: t[k] for k in ("payeurs", "incidence", "canaux") if k in t}
+    fin = _financement(m, candidat, _cout(sorte, m, montant))
+    if t.get("financement"):
+        bilan = fin.get("bilan")
+        fin = {"annonce": None, "source": None, "chiffre": False, **t["financement"]}
+        if bilan:
+            fin["bilan"] = bilan
+    out = {
         "schema": transmission.SCHEMA, "mesure": m["id"], "candidat": candidat,
         "libelle": m["libelle"], "sorte": sorte, "source": _source_programme(m),
         "levier": levier,
-        "payeurs": [] if vide else precise.get("payeurs", g["payeurs"]),
-        "incidence": [] if vide else precise.get("incidence", g["incidence"]),
-        "financement": _financement(m, candidat, _cout(sorte, m, montant)),
-        "canaux": [] if vide else precise.get("canaux", g["canaux"]),
+        "payeurs": precise.get("payeurs", [] if vide else g["payeurs"]),
+        "incidence": precise.get("incidence", [] if vide else g["incidence"]),
+        "financement": fin,
+        "canaux": precise.get("canaux", [] if vide else g["canaux"]),
         "hypotheses": hyps, "montant": montant}
+    for k in transmission.FACULTATIVES:
+        if t.get(k) is not None:
+            out[k] = t[k]
+    return out
 
 
 def scenarios_chiffres():
@@ -693,14 +813,18 @@ def main(argv=None):
             scen.setdefault(f"{c}/{m['id']}", scen[f"{c}/*"])
         dossier = transmission.ICI / c
         dossier.mkdir(exist_ok=True)
+        donnees = table(c)
         for m in prog["mesures"]:
-            d = construire(c, m, scen)
+            d = construire(c, m, scen, donnees.get(m["id"]))
             texte = yaml.safe_dump(d, allow_unicode=True, sort_keys=False, width=88)
             (dossier / f"{m['id']}.yaml").write_text(texte, encoding="utf-8")
             ecrites += 1
     print(f"{ecrites} fiches écrites")
     if args.verifier:
+        for f in sorted(transmission.ICI.glob("*/*.yaml")):
+            transmission.charger(f)
         print(transmission.releve())
+        print(transmission.qualite())
 
 
 if __name__ == "__main__":

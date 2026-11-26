@@ -2392,6 +2392,10 @@ class Etude:
               "le demandait ; une part des ayants droit ne demande rien (le non-recours). "
               "« Servi en espérance » : chaque famille reçoit son droit multiplié par sa "
               "probabilité de le demander, calée sur le non-recours publié par la Drees. "
+              "Pour la prime d'activité, la grille ci-dessus l'est depuis le but 27 sur les "
+              "foyers que la Cnaf paie (D-495) ; une passe d'avant ce but servait la prime "
+              "au taux de la Drees, et la variation de prime qu'elle chiffre est à "
+              "multiplier par environ 1,39 (D-496). "
               "« Sans pont » : ce montant se compare tel quel au total versé. Un « pont de "
               "non-recours » est l'ancienne correction : un seul coefficient de non-recours, "
               "appliqué au total.")
@@ -3135,10 +3139,14 @@ class Etude:
 
         w("## Ce qui a bougé depuis la série précédente")
         w("")
+        # A freeze from before D-693 keeps only the verdict of the θ box; one from after
+        # keeps the Monte-Carlo verdict too, and the column compares like with like.
+        monte = all("verdict" in then for then in avant["scenarios"].values())
         w(f"La série précédente a tourné sur `{avant['commit'][:7]}` ; ce qu'elle disait est "
           f"figé dans `{_relative(self.rapports / AVANT)}` avant que celle-ci ne remplace "
-          f"ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le "
-          f"Monte-Carlo.")
+          f"ses rapports (D-350). "
+          + ("Les deux verdicts lisent le Monte-Carlo (D-345)." if monte else
+             "Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo."))
         w("")
         w("| | la première année, avant → après | dette à θ½, avant → après | verdict, "
           "avant → après |")
@@ -3156,13 +3164,14 @@ class Etude:
 
             w(f"| {texte.label(entry)} | {n(fiche._eur(then['cout']), 'L2')} → "
               f"{n(fiche._eur(entry['cost']), 'L2')} | {points(then['dette'])} → "
-              f"{points(entry['debt'][0]['theta'])} | {then['selon_theta']} → "
+              f"{points(entry['debt'][0]['theta'])} | "
+              f"{then['verdict'] if monte else then['selon_theta']} → "
               f"{verdict_mc(entry)} |")
         w("")
         w("Ce qui touche chaque ligne :")
         w("")
         for entry in entries:
-            w(f"* **{texte.label(entry)}** : {', '.join(causes(entry))}.")
+            w(f"* **{texte.label(entry)}** : {self._touche(entry, avant)}.")
         w("")
         parts = self.decomposition(entries)
         if not parts:
@@ -3197,6 +3206,22 @@ class Etude:
               "de croissance : il ne le mesure pas.")
             w("")
 
+    @staticmethod
+    def _touche(entry: dict[str, Any], avant: dict[str, Any]) -> str:
+        """What touches a line since the frozen series. A freeze that names its
+        corrections (D-694) gives them to every line that moved; a line whose first year
+        and debt are the frozen ones to the bit is touched by none. A freeze without them
+        is but 16's, whose corrections `causes` names (D-350)."""
+        corrections = avant.get("corrections")
+        if not corrections:
+            return ", ".join(causes(entry))
+        then = avant["scenarios"].get(entry["name"])
+        if (then is not None and then["cout"] == entry["cost"]
+                and then["dette"] == entry["debt"][0]["theta"]):
+            return ("aucune : sa première année et sa dette sont celles de la série "
+                    "précédente, au bit près")
+        return ", ".join(corrections)
+
     #: The corrections a decomposition pass leaves out (D-354), as a reader names them.
     CORRECTIONS: ClassVar[dict[str, str]] = {"E1": "le secteur public statut par statut",
                    "E2": "la CVAE et la C3S déduites de l'IS"}
@@ -3216,10 +3241,12 @@ class Etude:
                     out.setdefault(other["name"], []).append((sans, other))
         return out
 
-    def figer_avant(self) -> Path:
+    def figer_avant(self, corrections: list[str] | None = None) -> Path:
         """`impots etude avant` : freeze what the committed series says (D-350), before
         the next one replaces its reports. Refused if a frozen file is already there: it
-        is the previous series', not overwritten in silence."""
+        is the previous series', not overwritten in silence. `corrections` name what
+        changes before the next series (D-694); without them, the page names those of
+        but 16, as the first freeze did."""
         target = self.rapports / AVANT
         if target.exists():
             raise EtudeError(f"{_relative(target)} existe : la série d'avant est déjà "
@@ -3227,7 +3254,10 @@ class Etude:
         entries = self.load()
         snapshot = {"commit": entries[0]["first"]["commit"], "scenarios": {
             e["name"]: {"cout": e["cost"], "dette": e["debt"][0]["theta"],
-                        "selon_theta": verdict(e["debt"])} for e in entries}}
+                        "selon_theta": verdict(e["debt"]), "verdict": verdict_mc(e)}
+            for e in entries}}
+        if corrections:
+            snapshot["corrections"] = list(corrections)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
                           encoding="utf-8")

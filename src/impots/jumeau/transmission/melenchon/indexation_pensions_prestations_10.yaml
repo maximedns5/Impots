@@ -9,7 +9,10 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: Code de la sécurité sociale et Code de l'action sociale et des familles
+  texte: Code de la sécurité sociale, art. L161-25 (la revalorisation annuelle des pensions
+    et prestations sur l'inflation) ; Code de la construction et de l'habitation, art. L823-4
+    (les paramètres des aides personnelles au logement) ; pour les retraites complémentaires,
+    l'accord national interprofessionnel Agirc-Arrco, que la loi ne fixe pas
   parametre: indexations
   valeur:
     indexations:
@@ -22,12 +25,29 @@ levier:
   enonce: indexation sur l'inflation ; +10 %
   couche: menages
 payeurs:
-- qui: menages
-  sens: recoit
-  par: prestations
+- qui: apu:secu:vieillesse
+  sens: paie
+  par: depense_publique
+  note: '+37,56 Md€ de pensions imposables dans le rapport (2026, figé), tous régimes ensemble
+    : la passe ne sépare pas la CNAV, la fonction publique et l''Agirc-Arrco'
+- qui: apu:secu:retraite_complementaire
+  sens: paie
+  par: depense_publique
+  note: les pensions complémentaires sont dans les +37,56 Md€ ; leur revalorisation relève
+    de l'Agirc-Arrco, que le candidat ne nomme pas
 - qui: apu:secu:famille
   sens: paie
   par: depense_publique
+  note: +1,20 Md€ d'allocations familiales, +0,95 Md€ d'ASF (rapport)
+- qui: apu:etat
+  sens: paie
+  par: depense_publique
+  note: +1,12 Md€ d'aides au logement (rapport) ; l'État reprend +6,17 Md€ d'IR et +3,91 Md€
+    de CSG sur les pensions
+- qui: menages
+  sens: recoit
+  par: retraite
+  note: +31,97 Md€ de revenu disponible (rapport, 2026, figé)
 incidence:
 - horizon: immediat
   qui: les allocataires
@@ -41,10 +61,15 @@ incidence:
   source: le magasin comportemental du projet (offre de travail par groupe, C7, `labour.groups`),
     que le rapport de la mesure lit à θ
 financement:
-  annonce: null
-  source: null
+  annonce: '« Pour financer ces besoins, il est nécessaire de récupérer l''argent là où il
+    s''est accumulé lors des deux derniers quinquennats : revenus du capital, ménages les
+    plus fortunés et profits des grandes entreprises. »'
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 ; bilan p. 14 : « 106,4 milliards d''euros de recettes, 81,7 milliards de dépenses,
+    24,7 milliards de réduction du déficit »'
   chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  note: le programme gage l'ensemble de ses dépenses par l'ensemble de ses recettes (106,4
+    Md€ contre 81,7 Md€), sans lier une recette à une dépense
   bilan:
     cout_eur: 31973064900
     chiffre_eur: null
@@ -69,8 +94,44 @@ hypotheses:
     pensions d''invalidité et les autres prestations ne bougent pas. Plages : du droit (1)
     à 10 % prolongé de la moitié de l''écart (1,15).'
   source: le chiffrage de la mesure (`programmes/melenchon.json`)
+- texte: Le candidat annonce 8 Md€ ; le rapport chiffre 31,97 Md€ la première année, une revalorisation
+    de 10 % de toutes les pensions et des prestations nommées au-dessus du droit de 2026.
+    Le candidat ne dit pas si ses 8 Md€ s'entendent au-delà de l'indexation sur l'inflation
+    ; l'écart n'est pas résolu ici.
+  source: 'le rapport de la mesure ; Mélenchon, document du 14 octobre 2026, p. 10 : « toutes
+    les pensions, allocations familiales et APL, qui seront rehaussées de 10 % (8 milliards
+    d''euros) »'
 montant:
   origine: rapport
   scenario: pres2027_melenchon_indexation_pensions_prestations_10
   rapport: reports/etudes/presidentielle_melenchon/mesures/indexation_pensions_prestations_10/predictif_pres2027_melenchon_indexation_pensions_prestations_10.json
   annonce_md: 8.0
+  premiere_annee:
+    annee: 2026
+    source: reports/etudes/presidentielle_melenchon/mesures/indexation_pensions_prestations_10/premiere_annee_pres2027_melenchon_indexation_pensions_prestations_10.json
+    ecarts_md:
+      retraite_imposable: 37.56
+      ir: 6.17
+      csg_retraite: 3.91
+      prelevements_pensions: 1.53
+      ppa: -0.35
+      rsa: -0.2
+      aide_logement: 1.12
+      af: 1.2
+      aspa: -1.19
+      revenu_disponible: 31.97
+assiette:
+- texte: les prestations sociales en espèces des APU (D62), pensions comprises
+  montant_md: 580.9
+  annee: 2025
+  source: Insee, comptes nationaux annuels base 2020, t. 7.301 (compte des APU, S13), ligne
+    D62
+- texte: les prestations légales vieillesse nettes de la CNAV
+  montant_md: 167.4
+  annee: 2025
+  source: Commission des comptes de la Sécurité sociale, mai 2026, tableau 1 de la fiche CNAV
+    (prestations légales nettes, 167 398 M€)
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6

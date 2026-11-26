@@ -8,18 +8,20 @@ source:
   url: https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf
   date: '2026-10-14'
 levier:
-  texte: 'Code général des impôts : IS (art. 205 et s.), CVAE (art. 1586 ter), C3S (CSS, art.
-    L137-30), CFE (art. 1447)'
+  texte: 'Code général des impôts, art. 299 à 300 (la taxe sur les services numériques, 3
+    % du produit des services de plus de 750 M€ dans le monde et 25 M€ en France) : le taux
+    porté à 15 %, selon la presse'
   parametre: null
   valeur: null
   enonce: 'document : pas de taux ; Public Sénat : taux porté à 15 %'
   couche: null
 payeurs:
 - qui: entreprises
-  sens: recoit
-  par: autre
-- qui: apu:etat
   sens: paie
+  par: chiffre_affaires
+  note: une vingtaine de groupes, la plupart étrangers
+- qui: apu:etat
+  sens: recoit
   par: autre
 incidence:
 - horizon: immediat
@@ -38,10 +40,13 @@ incidence:
     contre) la production », Note du CAE n° 53 : les impôts sur le chiffre d''affaires et
     la valeur ajoutée se reportent en cascade sur les prix et pèsent sur la compétitivité'
 financement:
-  annonce: null
-  source: null
-  chiffre: false
-  note: la mesure n'annonce pas son financement ; le programme, peut-être (volet `financement`)
+  annonce: « Une partie de cette œuvre de justice fiscale devra être orientée vers la réduction
+    de notre déficit »
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6
+  chiffre: true
+  note: une recette du programme ; son bilan (p. 14) en affecte 81,7 Md€ aux dépenses et 24,7
+    Md€ au déficit, sans dire laquelle va où
 canaux:
 - investissement_cout_du_capital
 - creations_entreprises
@@ -49,15 +54,25 @@ canaux:
 - implantation
 - prix_production
 hypotheses:
-- texte: Le montant tombe sur un impôt sur la production ou les produits (D2).
+- texte: Le montant tombe sur les impôts sur la production (D2).
   source: non sourcée
-- texte: 'La variante de Mésange la plus proche : aucune (le mode réduit ne lit aucun effet
-    sur l’activité).'
-  source: non sourcée
-- texte: Le montant tenu de 2027 à 2035, en euros courants.
+- texte: 'Le taux de 15 % : (15 / 3 − 1) × 0,891 = 3,56 Md€ à assiette inchangée ; le candidat
+    dit 3,9 Md€.'
+  source: Public Sénat, cité par le relevé du programme (taux) ; Évaluation des voies et moyens
+    2026, tome 1, ligne 1430 (assiette)
+- texte: Le montant entre en 2027, par la loi de finances pour 2027 que le document décrit.
+  source: 'Mélenchon, « Comment nous allons remettre de l''ordre dans les comptes publics
+    », p. 6 : « Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement
+    de 25 milliards d''euros l''année prochaine »'
+- texte: Le montant de la première année est tenu chaque année de 2027 à 2035, en euros courants
+    ; le candidat ne donne qu'un montant annuel, sans trajectoire.
   source: non sourcée
 - texte: Le montant annoncé se réalise en entier (ρ = 1, D-319).
   source: non sourcée
+- texte: 'Aucune variante de Mésange pour cet impôt : le mode réduit ne lit aucun effet sur
+    l''activité, seulement la recette.'
+  source: 'Insee et DG Trésor, « Le modèle macroéconométrique Mésange : réestimation et nouveautés
+    », document de travail G2017-04, §4 (les variantes publiées)'
 montant:
   origine: hypothese
   annonce:
@@ -76,3 +91,15 @@ montant:
   menages_par: null
   entreprises_par: null
   inclus_dans: null
+assiette:
+  texte: le produit de la taxe sur les services numériques au taux de 3 % ; au taux de 15
+    %, à assiette inchangée, il ferait 5 fois plus, soit +3,6 Md€, l'ordre des 3,9 Md€ du
+    candidat
+  montant_md: 0.891
+  annee: 2025
+  source: Annexe au PLF 2026, Évaluation des voies et moyens, tome 1, ligne 1430 (785 M€ en
+    2024, 891 M€ en 2025)
+calendrier:
+  texte: dès 2027, par la loi de finances pour 2027
+  source: Mélenchon, « Comment nous allons remettre de l'ordre dans les comptes publics »,
+    p. 6

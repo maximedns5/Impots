@@ -1,0 +1,2122 @@
+{
+ "convention": "premiere_annee_d521",
+ "rapports": {
+  "k_cout": 0.9821085079305097,
+  "k_creations": 0.988383558695023,
+  "k_impot_sur_le_revenu": 0.9725675770748866,
+  "k_csg": 0.9879563881909939,
+  "k_cotisations_salaries": 1.002901449392662,
+  "k_cotisations_employeurs": 0.988383558695023
+ },
+ "smic_etude": {
+  "figee": {
+   "court": {
+    "b9_2026": -12.41,
+    "b9_2035": 1.04,
+    "dette_2035": 0.25,
+    "pib_2035": 0.695,
+    "emploi_2026": -30.6,
+    "emploi_2035": -137.3,
+    "consommation_2035": 33.3
+   },
+   "serie": {
+    "dette_pts": [
+     0.175,
+     0.158,
+     0.232,
+     0.285,
+     0.296,
+     0.312,
+     0.32,
+     0.312,
+     0.288,
+     0.25
+    ],
+    "b9": [
+     -12.413,
+     -8.517,
+     -6.555,
+     -4.966,
+     -3.4,
+     -2.388,
+     -1.506,
+     -0.663,
+     0.186,
+     1.043
+    ],
+    "pib_pct": [
+     0.195,
+     0.427,
+     0.517,
+     0.578,
+     0.633,
+     0.659,
+     0.672,
+     0.682,
+     0.689,
+     0.695
+    ],
+    "emploi_total": [
+     -30.566,
+     -51.407,
+     -58.897,
+     -70.2,
+     -82.718,
+     -96.411,
+     -108.33,
+     -119.09,
+     -128.676,
+     -137.343
+    ],
+    "c_menages": [
+     6.852,
+     15.475,
+     19.032,
+     21.976,
+     24.92,
+     26.907,
+     28.562,
+     30.138,
+     31.711,
+     33.3
+    ]
+   },
+   "cascade": {
+    "annee": 2035,
+    "fleches": {
+     "statique": 7.820696327353413,
+     "consommation": -1.0040832788756335,
+     "travail_salaires_emploi": -6.3786160096872235,
+     "commerce_prix": 0.3262780304087887,
+     "entreprises_investissement": -0.5146105377214301,
+     "demande_publique": 0.0,
+     "mesange_et_creations": 0.0,
+     "interets_et_pib": 0.0
+    },
+    "par_mesure": {
+     "pres2027_melenchon_smic_1700_net": 0.24966453147791512
+    },
+    "total": 0.24966453147790002,
+    "residu": -1.426636586643326e-14
+   },
+   "reprise_2035": 1.084,
+   "reduit": {
+    "b9_2026": -20.95,
+    "b9_2035": -2.15,
+    "dette_2035": 0.456,
+    "pib_2035": 1.145,
+    "consommation_2035": 0.0
+   },
+   "sensibilites": [
+    {
+     "cle": "travail_smic_diffusion",
+     "bloc": "travail",
+     "centre": 0.25,
+     "a_zero": 3.89,
+     "a_un": -5.17,
+     "portee": 9.07,
+     "b9_centre": 1.04,
+     "b9_a_zero": -15.64,
+     "b9_a_un": 26.1,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": 148.25,
+     "emploi_a_un": -569.36
+    },
+    {
+     "cle": "travail_incidence",
+     "bloc": "travail",
+     "centre": 0.25,
+     "a_zero": 1.11,
+     "a_un": -0.52,
+     "portee": 1.63,
+     "b9_centre": 1.04,
+     "b9_a_zero": -2.68,
+     "b9_a_un": 4.36,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -44.47,
+     "emploi_a_un": -220.14
+    },
+    {
+     "cle": "productivite_creations",
+     "bloc": "creations",
+     "centre": 0.25,
+     "a_zero": 1.06,
+     "a_un": -0.56,
+     "portee": 1.62,
+     "b9_centre": 1.04,
+     "b9_a_zero": -3.73,
+     "b9_a_un": 5.82,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -165.69,
+     "emploi_a_un": -108.99
+    },
+    {
+     "cle": "elasticite_creations",
+     "bloc": "naissances",
+     "centre": 0.25,
+     "a_zero": 0.58,
+     "a_un": -0.94,
+     "portee": 1.51,
+     "b9_centre": 1.04,
+     "b9_a_zero": -1.04,
+     "b9_a_un": 8.63,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -149.78,
+     "emploi_a_un": -91.92
+    },
+    {
+     "cle": "jumeau_emploi_elasticite_cout",
+     "bloc": "emploi",
+     "centre": 0.25,
+     "a_zero": -0.74,
+     "a_un": 0.55,
+     "portee": 1.29,
+     "b9_centre": 1.04,
+     "b9_a_zero": 6.64,
+     "b9_a_un": -0.8,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": 61.11,
+     "emploi_a_un": -202.23
+    },
+    {
+     "cle": "taille_creations",
+     "bloc": "productivite",
+     "centre": 0.25,
+     "a_zero": 0.66,
+     "a_un": -0.56,
+     "portee": 1.21,
+     "b9_centre": 1.04,
+     "b9_a_zero": -1.35,
+     "b9_a_un": 5.82,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -151.52,
+     "emploi_a_un": -108.99
+    },
+    {
+     "cle": "fermetures_marges",
+     "bloc": "fermetures",
+     "centre": 0.25,
+     "a_zero": 0.73,
+     "a_un": -0.23,
+     "portee": 0.97,
+     "b9_centre": 1.04,
+     "b9_a_zero": -1.65,
+     "b9_a_un": 3.74,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -153.25,
+     "emploi_a_un": -121.43
+    },
+    {
+     "cle": "jumeau_salaires_chomage",
+     "bloc": "salaires",
+     "centre": 0.25,
+     "a_zero": 0.02,
+     "a_un": 0.79,
+     "portee": 0.77,
+     "b9_centre": 1.04,
+     "b9_a_zero": 2.48,
+     "b9_a_un": -2.02,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -170.32,
+     "emploi_a_un": -64.95
+    },
+    {
+     "cle": "jumeau_consommation_profil",
+     "bloc": "consommation",
+     "centre": 0.25,
+     "a_zero": 0.85,
+     "a_un": 0.24,
+     "portee": 0.61,
+     "b9_centre": 1.04,
+     "b9_a_zero": -1.35,
+     "b9_a_un": 1.06,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -159.45,
+     "emploi_a_un": -137.28
+    },
+    {
+     "cle": "commerce_elasticite_prix_importations",
+     "bloc": "commerce",
+     "centre": 0.25,
+     "a_zero": 0.21,
+     "a_un": 0.72,
+     "portee": 0.51,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.24,
+     "b9_a_un": -1.42,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -134.72,
+     "emploi_a_un": -169.39
+    },
+    {
+     "cle": "commerce_elasticite_prix_exportations",
+     "bloc": "commerce",
+     "centre": 0.25,
+     "a_zero": 0.19,
+     "a_un": 0.49,
+     "portee": 0.29,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.34,
+     "b9_a_un": -0.18,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -133.44,
+     "emploi_a_un": -153.26
+    },
+    {
+     "cle": "labour_supply_married_women",
+     "bloc": "emploi",
+     "centre": 0.25,
+     "a_zero": 0.11,
+     "a_un": 0.39,
+     "portee": 0.28,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.84,
+     "b9_a_un": 0.27,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -144.2,
+     "emploi_a_un": -130.65
+    },
+    {
+     "cle": "labour_supply_married_men",
+     "bloc": "emploi",
+     "centre": 0.25,
+     "a_zero": 0.15,
+     "a_un": 0.35,
+     "portee": 0.21,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.63,
+     "b9_a_un": 0.47,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -142.4,
+     "emploi_a_un": -132.38
+    },
+    {
+     "cle": "commerce_prix_diffusion",
+     "bloc": "commerce",
+     "centre": 0.25,
+     "a_zero": 0.32,
+     "a_un": 0.15,
+     "portee": 0.18,
+     "b9_centre": 1.04,
+     "b9_a_zero": 0.73,
+     "b9_a_un": 0.95,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -127.58,
+     "emploi_a_un": -159.05
+    },
+    {
+     "cle": "montee_en_charge_creations",
+     "bloc": "productivite",
+     "centre": 0.25,
+     "a_zero": 0.34,
+     "a_un": 0.17,
+     "portee": 0.17,
+     "b9_centre": 1.04,
+     "b9_a_zero": 0.57,
+     "b9_a_un": 1.41,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -140.22,
+     "emploi_a_un": -135.23
+    },
+    {
+     "cle": "labour_supply_single_women",
+     "bloc": "emploi",
+     "centre": 0.25,
+     "a_zero": 0.19,
+     "a_un": 0.33,
+     "portee": 0.14,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.37,
+     "b9_a_un": 0.57,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -140.18,
+     "emploi_a_un": -133.24
+    },
+    {
+     "cle": "labour_supply_single_men",
+     "bloc": "emploi",
+     "centre": 0.25,
+     "a_zero": 0.18,
+     "a_un": 0.31,
+     "portee": 0.13,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.41,
+     "b9_a_un": 0.68,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -140.53,
+     "emploi_a_un": -134.19
+    },
+    {
+     "cle": "investissement_accelerateur",
+     "bloc": "investissement",
+     "centre": 0.25,
+     "a_zero": 0.29,
+     "a_un": 0.21,
+     "portee": 0.07,
+     "b9_centre": 1.04,
+     "b9_a_zero": 0.99,
+     "b9_a_un": 1.09,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -137.85,
+     "emploi_a_un": -137.05
+    },
+    {
+     "cle": "jumeau_consommation_pente_deciles",
+     "bloc": "consommation",
+     "centre": 0.25,
+     "a_zero": 0.25,
+     "a_un": 0.25,
+     "portee": 0.0,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.04,
+     "b9_a_un": 1.04,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -137.35,
+     "emploi_a_un": -137.34
+    },
+    {
+     "cle": "survie_creations",
+     "bloc": "fermetures",
+     "centre": 0.25,
+     "a_zero": 0.25,
+     "a_un": 0.25,
+     "portee": 0.0,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.08,
+     "b9_a_un": 1.0,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -137.2,
+     "emploi_a_un": -137.53
+    },
+    {
+     "cle": "idees_creations",
+     "bloc": "naissances",
+     "centre": 0.25,
+     "a_zero": 0.25,
+     "a_un": 0.25,
+     "portee": 0.0,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.02,
+     "b9_a_un": 1.07,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -137.02,
+     "emploi_a_un": -137.66
+    },
+    {
+     "cle": "jumeau_emploi_public_part",
+     "bloc": "emploi_public",
+     "centre": 0.25,
+     "a_zero": 0.25,
+     "a_un": 0.25,
+     "portee": 0.0,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.04,
+     "b9_a_un": 1.04,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -137.34,
+     "emploi_a_un": -137.34
+    },
+    {
+     "cle": "investissement_cout_capital",
+     "bloc": "investissement",
+     "centre": 0.25,
+     "a_zero": 0.25,
+     "a_un": 0.25,
+     "portee": 0.0,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.04,
+     "b9_a_un": 1.04,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -137.34,
+     "emploi_a_un": -137.34
+    },
+    {
+     "cle": "implantation_tmee",
+     "bloc": "implantation",
+     "centre": 0.25,
+     "a_zero": 0.25,
+     "a_un": 0.25,
+     "portee": 0.0,
+     "b9_centre": 1.04,
+     "b9_a_zero": 1.04,
+     "b9_a_un": 1.04,
+     "emploi_centre": -137.34,
+     "emploi_a_zero": -137.34,
+     "emploi_a_un": -137.34
+    }
+   ],
+   "diffusion": {
+    "0.0": {
+     "b9_2026": -23.78,
+     "b9_2035": -15.64,
+     "dette_2035": 3.894,
+     "pib_2035": 0.388,
+     "emploi_2026": 42.5,
+     "emploi_2035": 148.3,
+     "consommation_2035": 8.55
+    },
+    "0.25": {
+     "b9_2026": -18.13,
+     "b9_2035": -7.35,
+     "dette_2035": 2.08,
+     "pib_2035": 0.54,
+     "emploi_2026": 6.3,
+     "emploi_2035": 6.7,
+     "consommation_2035": 20.78
+    },
+    "0.5": {
+     "b9_2026": -12.41,
+     "b9_2035": 1.04,
+     "dette_2035": 0.25,
+     "pib_2035": 0.695,
+     "emploi_2026": -30.6,
+     "emploi_2035": -137.3,
+     "consommation_2035": 33.3
+    },
+    "0.75": {
+     "b9_2026": -4.55,
+     "b9_2035": 12.48,
+     "dette_2035": -2.232,
+     "pib_2035": 0.899,
+     "emploi_2026": -80.3,
+     "emploi_2035": -334.2,
+     "consommation_2035": 50.04
+    },
+    "1.0": {
+     "b9_2026": 4.83,
+     "b9_2035": 26.1,
+     "dette_2035": -5.174,
+     "pib_2035": 1.141,
+     "emploi_2026": -139.7,
+     "emploi_2035": -569.4,
+     "consommation_2035": 70.03
+    }
+   },
+   "coins_travail": {
+    "0.0/0.0/0.0": {
+     "emploi_2035": 140.2,
+     "b9_2035": -23.59
+    },
+    "0.0/0.0/0.5": {
+     "emploi_2035": 264.0,
+     "b9_2035": -20.32
+    },
+    "0.0/0.0/1.0": {
+     "emploi_2035": 308.3,
+     "b9_2035": -19.13
+    },
+    "0.0/0.5/0.0": {
+     "emploi_2035": 121.4,
+     "b9_2035": -16.28
+    },
+    "0.0/0.5/0.5": {
+     "emploi_2035": 148.3,
+     "b9_2035": -15.64
+    },
+    "0.0/0.5/1.0": {
+     "emploi_2035": 159.6,
+     "b9_2035": -15.36
+    },
+    "0.0/1.0/0.0": {
+     "emploi_2035": 104.6,
+     "b9_2035": -9.77
+    },
+    "0.0/1.0/0.5": {
+     "emploi_2035": 45.1,
+     "b9_2035": -11.48
+    },
+    "0.0/1.0/1.0": {
+     "emploi_2035": 27.1,
+     "b9_2035": -12.02
+    },
+    "0.5/0.0/0.0": {
+     "emploi_2035": 76.6,
+     "b9_2035": 0.82
+    },
+    "0.5/0.0/0.5": {
+     "emploi_2035": -44.5,
+     "b9_2035": -2.68
+    },
+    "0.5/0.0/1.0": {
+     "emploi_2035": -82.9,
+     "b9_2035": -3.8
+    },
+    "0.5/0.5/0.0": {
+     "emploi_2035": 61.1,
+     "b9_2035": 6.64
+    },
+    "0.5/0.5/0.5": {
+     "emploi_2035": -137.3,
+     "b9_2035": 1.04
+    },
+    "0.5/0.5/1.0": {
+     "emploi_2035": -202.2,
+     "b9_2035": -0.8
+    },
+    "0.5/1.0/0.0": {
+     "emploi_2035": 47.3,
+     "b9_2035": 11.83
+    },
+    "0.5/1.0/0.5": {
+     "emploi_2035": -220.1,
+     "b9_2035": 4.36
+    },
+    "0.5/1.0/1.0": {
+     "emploi_2035": -308.6,
+     "b9_2035": 1.87
+    },
+    "1.0/0.0/0.0": {
+     "emploi_2035": -20.4,
+     "b9_2035": 37.62
+    },
+    "1.0/0.0/0.5": {
+     "emploi_2035": -512.5,
+     "b9_2035": 23.86
+    },
+    "1.0/0.0/1.0": {
+     "emploi_2035": -676.2,
+     "b9_2035": 19.25
+    },
+    "1.0/0.5/0.0": {
+     "emploi_2035": -30.5,
+     "b9_2035": 41.1
+    },
+    "1.0/0.5/0.5": {
+     "emploi_2035": -569.4,
+     "b9_2035": 26.1
+    },
+    "1.0/0.5/1.0": {
+     "emploi_2035": -749.3,
+     "b9_2035": 21.05
+    },
+    "1.0/1.0/0.0": {
+     "emploi_2035": -39.5,
+     "b9_2035": 44.22
+    },
+    "1.0/1.0/0.5": {
+     "emploi_2035": -620.2,
+     "b9_2035": 28.1
+    },
+    "1.0/1.0/1.0": {
+     "emploi_2035": -814.8,
+     "b9_2035": 22.66
+    }
+   }
+  },
+  "vieillie": {
+   "court": {
+    "b9_2026": -16.47,
+    "b9_2035": -0.36,
+    "dette_2035": 1.263,
+    "pib_2035": 0.673,
+    "emploi_2026": -24.4,
+    "emploi_2035": -152.1,
+    "consommation_2035": 31.89
+   },
+   "serie": {
+    "dette_pts": [
+     0.306,
+     0.448,
+     0.684,
+     0.891,
+     1.033,
+     1.15,
+     1.233,
+     1.276,
+     1.285,
+     1.263
+    ],
+    "b9": [
+     -16.467,
+     -14.058,
+     -12.539,
+     -10.859,
+     -8.656,
+     -6.659,
+     -4.83,
+     -3.154,
+     -1.75,
+     -0.362
+    ],
+    "pib_pct": [
+     0.195,
+     0.436,
+     0.535,
+     0.601,
+     0.658,
+     0.679,
+     0.683,
+     0.681,
+     0.677,
+     0.673
+    ],
+    "emploi_total": [
+     -24.433,
+     -31.002,
+     -28.544,
+     -34.412,
+     -45.988,
+     -65.122,
+     -86.942,
+     -109.815,
+     -131.867,
+     -152.148
+    ],
+    "c_menages": [
+     6.782,
+     15.543,
+     19.21,
+     22.111,
+     24.938,
+     26.677,
+     28.001,
+     29.248,
+     30.53,
+     31.892
+    ]
+   },
+   "cascade": {
+    "annee": 2035,
+    "fleches": {
+     "statique": 8.937291839319245,
+     "consommation": -1.0099985234453925,
+     "travail_salaires_emploi": -6.430318100784521,
+     "commerce_prix": 0.30642302299811375,
+     "entreprises_investissement": -0.5403543528574755,
+     "demande_publique": 0.0,
+     "mesange_et_creations": 0.0,
+     "interets_et_pib": 0.0
+    },
+    "par_mesure": {
+     "pres2027_melenchon_smic_1700_net": 1.263043885229969
+    },
+    "total": 1.2630438852299308,
+    "residu": -3.930189507173054e-14
+   },
+   "reprise_2035": 0.978,
+   "reduit": {
+    "b9_2026": -24.23,
+    "b9_2035": -2.41,
+    "dette_2035": 0.864,
+    "pib_2035": 1.189,
+    "consommation_2035": 0.0
+   }
+  }
+ },
+ "smic_d687": {
+  "figee": {
+   "court": {
+    "b9_2026": -11.93,
+    "b9_2035": 1.47,
+    "dette_2035": 0.146,
+    "pib_2035": 0.693,
+    "emploi_2026": -31.3,
+    "emploi_2035": -140.8,
+    "consommation_2035": 33.38
+   },
+   "serie": {
+    "dette_pts": [
+     0.159,
+     0.129,
+     0.192,
+     0.235,
+     0.236,
+     0.242,
+     0.241,
+     0.224,
+     0.192,
+     0.146
+    ],
+    "b9": [
+     -11.928,
+     -8.082,
+     -6.124,
+     -4.547,
+     -2.991,
+     -1.975,
+     -1.09,
+     -0.242,
+     0.612,
+     1.474
+    ],
+    "pib_pct": [
+     0.195,
+     0.426,
+     0.515,
+     0.576,
+     0.631,
+     0.657,
+     0.67,
+     0.68,
+     0.687,
+     0.693
+    ],
+    "emploi_total": [
+     -31.349,
+     -53.648,
+     -61.664,
+     -73.43,
+     -86.284,
+     -100.016,
+     -111.926,
+     -122.633,
+     -132.158,
+     -140.755
+    ],
+    "c_menages": [
+     6.865,
+     15.484,
+     19.047,
+     21.997,
+     24.944,
+     26.943,
+     28.608,
+     30.195,
+     31.778,
+     33.376
+    ]
+   },
+   "cascade": {
+    "annee": 2035,
+    "fleches": {
+     "statique": 7.680934275679705,
+     "consommation": -0.9972506808160548,
+     "travail_salaires_emploi": -6.357097238900907,
+     "commerce_prix": 0.32800177159170646,
+     "entreprises_investissement": -0.5084542857820376,
+     "demande_publique": 0.0,
+     "mesange_et_creations": 0.0,
+     "interets_et_pib": 0.0
+    },
+    "par_mesure": {
+     "pres2027_melenchon_smic_1700_net": 0.1461338417724134
+    },
+    "total": 0.14613384177240007,
+    "residu": -1.2823075934420558e-14
+   },
+   "reprise_2035": 1.124,
+   "reduit": {
+    "b9_2026": -20.53,
+    "b9_2035": -1.92,
+    "dette_2035": 0.405,
+    "pib_2035": 1.131,
+    "consommation_2035": 0.0
+   },
+   "sensibilites": [
+    {
+     "cle": "travail_smic_diffusion",
+     "bloc": "travail",
+     "centre": 0.15,
+     "a_zero": 3.79,
+     "a_un": -5.28,
+     "portee": 9.07,
+     "b9_centre": 1.47,
+     "b9_a_zero": -15.21,
+     "b9_a_un": 26.53,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": 144.84,
+     "emploi_a_un": -572.77
+    },
+    {
+     "cle": "travail_incidence",
+     "bloc": "travail",
+     "centre": 0.15,
+     "a_zero": 1.0,
+     "a_un": -0.61,
+     "portee": 1.61,
+     "b9_centre": 1.47,
+     "b9_a_zero": -2.19,
+     "b9_a_un": 4.74,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -49.35,
+     "emploi_a_un": -222.25
+    },
+    {
+     "cle": "productivite_creations",
+     "bloc": "creations",
+     "centre": 0.15,
+     "a_zero": 0.95,
+     "a_un": -0.65,
+     "portee": 1.6,
+     "b9_centre": 1.47,
+     "b9_a_zero": -3.25,
+     "b9_a_un": 6.19,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -168.78,
+     "emploi_a_un": -112.73
+    },
+    {
+     "cle": "elasticite_creations",
+     "bloc": "naissances",
+     "centre": 0.15,
+     "a_zero": 0.47,
+     "a_un": -1.03,
+     "portee": 1.49,
+     "b9_centre": 1.47,
+     "b9_a_zero": -0.58,
+     "b9_a_un": 8.98,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -153.05,
+     "emploi_a_un": -95.86
+    },
+    {
+     "cle": "jumeau_emploi_elasticite_cout",
+     "bloc": "emploi",
+     "centre": 0.15,
+     "a_zero": -0.85,
+     "a_un": 0.45,
+     "portee": 1.3,
+     "b9_centre": 1.47,
+     "b9_a_zero": 7.12,
+     "b9_a_un": -0.39,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": 59.46,
+     "emploi_a_un": -206.26
+    },
+    {
+     "cle": "taille_creations",
+     "bloc": "productivite",
+     "centre": 0.15,
+     "a_zero": 0.55,
+     "a_un": -0.65,
+     "portee": 1.2,
+     "b9_centre": 1.47,
+     "b9_a_zero": -0.89,
+     "b9_a_un": 6.19,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -154.77,
+     "emploi_a_un": -112.73
+    },
+    {
+     "cle": "fermetures_marges",
+     "bloc": "fermetures",
+     "centre": 0.15,
+     "a_zero": 0.63,
+     "a_un": -0.33,
+     "portee": 0.96,
+     "b9_centre": 1.47,
+     "b9_a_zero": -1.19,
+     "b9_a_un": 4.14,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -156.48,
+     "emploi_a_un": -125.03
+    },
+    {
+     "cle": "jumeau_salaires_chomage",
+     "bloc": "salaires",
+     "centre": 0.15,
+     "a_zero": -0.09,
+     "a_un": 0.7,
+     "portee": 0.79,
+     "b9_centre": 1.47,
+     "b9_a_zero": 2.93,
+     "b9_a_un": -1.64,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -174.34,
+     "emploi_a_un": -67.08
+    },
+    {
+     "cle": "jumeau_consommation_profil",
+     "bloc": "consommation",
+     "centre": 0.15,
+     "a_zero": 0.74,
+     "a_un": 0.13,
+     "portee": 0.61,
+     "b9_centre": 1.47,
+     "b9_a_zero": -0.91,
+     "b9_a_un": 1.49,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -162.81,
+     "emploi_a_un": -140.69
+    },
+    {
+     "cle": "commerce_elasticite_prix_importations",
+     "bloc": "commerce",
+     "centre": 0.15,
+     "a_zero": 0.11,
+     "a_un": 0.62,
+     "portee": 0.52,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.68,
+     "b9_a_un": -1.02,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -138.1,
+     "emploi_a_un": -173.28
+    },
+    {
+     "cle": "commerce_elasticite_prix_exportations",
+     "bloc": "commerce",
+     "centre": 0.15,
+     "a_zero": 0.09,
+     "a_un": 0.39,
+     "portee": 0.3,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.78,
+     "b9_a_un": 0.23,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -136.79,
+     "emploi_a_un": -156.91
+    },
+    {
+     "cle": "labour_supply_married_women",
+     "bloc": "emploi",
+     "centre": 0.15,
+     "a_zero": 0.01,
+     "a_un": 0.28,
+     "portee": 0.28,
+     "b9_centre": 1.47,
+     "b9_a_zero": 2.27,
+     "b9_a_un": 0.7,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -147.63,
+     "emploi_a_un": -134.05
+    },
+    {
+     "cle": "labour_supply_married_men",
+     "bloc": "emploi",
+     "centre": 0.15,
+     "a_zero": 0.04,
+     "a_un": 0.25,
+     "portee": 0.21,
+     "b9_centre": 1.47,
+     "b9_a_zero": 2.06,
+     "b9_a_un": 0.9,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -145.82,
+     "emploi_a_un": -135.78
+    },
+    {
+     "cle": "commerce_prix_diffusion",
+     "bloc": "commerce",
+     "centre": 0.15,
+     "a_zero": 0.22,
+     "a_un": 0.04,
+     "portee": 0.18,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.16,
+     "b9_a_un": 1.38,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -130.84,
+     "emploi_a_un": -162.59
+    },
+    {
+     "cle": "montee_en_charge_creations",
+     "bloc": "productivite",
+     "centre": 0.15,
+     "a_zero": 0.24,
+     "a_un": 0.07,
+     "portee": 0.17,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.0,
+     "b9_a_un": 1.84,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -143.6,
+     "emploi_a_un": -138.66
+    },
+    {
+     "cle": "labour_supply_single_women",
+     "bloc": "emploi",
+     "centre": 0.15,
+     "a_zero": 0.09,
+     "a_un": 0.23,
+     "portee": 0.14,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.8,
+     "b9_a_un": 1.0,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -143.6,
+     "emploi_a_un": -136.64
+    },
+    {
+     "cle": "labour_supply_single_men",
+     "bloc": "emploi",
+     "centre": 0.15,
+     "a_zero": 0.08,
+     "a_un": 0.21,
+     "portee": 0.13,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.84,
+     "b9_a_un": 1.11,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -143.95,
+     "emploi_a_un": -137.6
+    },
+    {
+     "cle": "investissement_accelerateur",
+     "bloc": "investissement",
+     "centre": 0.15,
+     "a_zero": 0.18,
+     "a_un": 0.11,
+     "portee": 0.07,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.42,
+     "b9_a_un": 1.52,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -141.24,
+     "emploi_a_un": -140.48
+    },
+    {
+     "cle": "jumeau_consommation_pente_deciles",
+     "bloc": "consommation",
+     "centre": 0.15,
+     "a_zero": 0.15,
+     "a_un": 0.14,
+     "portee": 0.0,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.47,
+     "b9_a_un": 1.47,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -140.75,
+     "emploi_a_un": -140.76
+    },
+    {
+     "cle": "survie_creations",
+     "bloc": "fermetures",
+     "centre": 0.15,
+     "a_zero": 0.15,
+     "a_un": 0.15,
+     "portee": 0.0,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.51,
+     "b9_a_un": 1.43,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -140.62,
+     "emploi_a_un": -140.94
+    },
+    {
+     "cle": "idees_creations",
+     "bloc": "naissances",
+     "centre": 0.15,
+     "a_zero": 0.15,
+     "a_un": 0.15,
+     "portee": 0.0,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.45,
+     "b9_a_un": 1.5,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -140.44,
+     "emploi_a_un": -141.07
+    },
+    {
+     "cle": "jumeau_emploi_public_part",
+     "bloc": "emploi_public",
+     "centre": 0.15,
+     "a_zero": 0.15,
+     "a_un": 0.15,
+     "portee": 0.0,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.47,
+     "b9_a_un": 1.47,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -140.76,
+     "emploi_a_un": -140.76
+    },
+    {
+     "cle": "investissement_cout_capital",
+     "bloc": "investissement",
+     "centre": 0.15,
+     "a_zero": 0.15,
+     "a_un": 0.15,
+     "portee": 0.0,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.47,
+     "b9_a_un": 1.47,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -140.76,
+     "emploi_a_un": -140.76
+    },
+    {
+     "cle": "implantation_tmee",
+     "bloc": "implantation",
+     "centre": 0.15,
+     "a_zero": 0.15,
+     "a_un": 0.15,
+     "portee": 0.0,
+     "b9_centre": 1.47,
+     "b9_a_zero": 1.47,
+     "b9_a_un": 1.47,
+     "emploi_centre": -140.76,
+     "emploi_a_zero": -140.76,
+     "emploi_a_un": -140.76
+    }
+   ],
+   "diffusion": {
+    "0.0": {
+     "b9_2026": -23.3,
+     "b9_2035": -15.21,
+     "dette_2035": 3.79,
+     "pib_2035": 0.386,
+     "emploi_2026": 41.7,
+     "emploi_2035": 144.8,
+     "consommation_2035": 8.63
+    },
+    "0.25": {
+     "b9_2026": -17.64,
+     "b9_2035": -6.92,
+     "dette_2035": 1.976,
+     "pib_2035": 0.538,
+     "emploi_2026": 5.5,
+     "emploi_2035": 3.3,
+     "consommation_2035": 20.86
+    },
+    "0.5": {
+     "b9_2026": -11.93,
+     "b9_2035": 1.47,
+     "dette_2035": 0.146,
+     "pib_2035": 0.693,
+     "emploi_2026": -31.3,
+     "emploi_2035": -140.8,
+     "consommation_2035": 33.38
+    },
+    "0.75": {
+     "b9_2026": -4.06,
+     "b9_2035": 12.91,
+     "dette_2035": -2.335,
+     "pib_2035": 0.897,
+     "emploi_2026": -81.1,
+     "emploi_2035": -337.6,
+     "consommation_2035": 50.11
+    },
+    "1.0": {
+     "b9_2026": 5.32,
+     "b9_2035": 26.53,
+     "dette_2035": -5.277,
+     "pib_2035": 1.139,
+     "emploi_2026": -140.5,
+     "emploi_2035": -572.8,
+     "consommation_2035": 70.11
+    }
+   },
+   "coins_travail": {
+    "0.0/0.0/0.0": {
+     "emploi_2035": 138.3,
+     "b9_2035": -23.02
+    },
+    "0.0/0.0/0.5": {
+     "emploi_2035": 259.1,
+     "b9_2035": -19.83
+    },
+    "0.0/0.0/1.0": {
+     "emploi_2035": 302.4,
+     "b9_2035": -18.66
+    },
+    "0.0/0.5/0.0": {
+     "emploi_2035": 119.7,
+     "b9_2035": -15.8
+    },
+    "0.0/0.5/0.5": {
+     "emploi_2035": 144.8,
+     "b9_2035": -15.21
+    },
+    "0.0/0.5/1.0": {
+     "emploi_2035": 155.5,
+     "b9_2035": -14.95
+    },
+    "0.0/1.0/0.0": {
+     "emploi_2035": 103.1,
+     "b9_2035": -9.37
+    },
+    "0.0/1.0/0.5": {
+     "emploi_2035": 43.0,
+     "b9_2035": -11.11
+    },
+    "0.0/1.0/1.0": {
+     "emploi_2035": 24.8,
+     "b9_2035": -11.64
+    },
+    "0.5/0.0/0.0": {
+     "emploi_2035": 74.7,
+     "b9_2035": 1.39
+    },
+    "0.5/0.0/0.5": {
+     "emploi_2035": -49.4,
+     "b9_2035": -2.19
+    },
+    "0.5/0.0/1.0": {
+     "emploi_2035": -88.8,
+     "b9_2035": -3.34
+    },
+    "0.5/0.5/0.0": {
+     "emploi_2035": 59.5,
+     "b9_2035": 7.12
+    },
+    "0.5/0.5/0.5": {
+     "emploi_2035": -140.8,
+     "b9_2035": 1.47
+    },
+    "0.5/0.5/1.0": {
+     "emploi_2035": -206.3,
+     "b9_2035": -0.39
+    },
+    "0.5/1.0/0.0": {
+     "emploi_2035": 45.9,
+     "b9_2035": 12.23
+    },
+    "0.5/1.0/0.5": {
+     "emploi_2035": -222.3,
+     "b9_2035": 4.74
+    },
+    "0.5/1.0/1.0": {
+     "emploi_2035": -311.0,
+     "b9_2035": 2.24
+    },
+    "1.0/0.0/0.0": {
+     "emploi_2035": -22.3,
+     "b9_2035": 38.19
+    },
+    "1.0/0.0/0.5": {
+     "emploi_2035": -517.4,
+     "b9_2035": 24.35
+    },
+    "1.0/0.0/1.0": {
+     "emploi_2035": -682.1,
+     "b9_2035": 19.72
+    },
+    "1.0/0.5/0.0": {
+     "emploi_2035": -32.2,
+     "b9_2035": 41.58
+    },
+    "1.0/0.5/0.5": {
+     "emploi_2035": -572.8,
+     "b9_2035": 26.53
+    },
+    "1.0/0.5/1.0": {
+     "emploi_2035": -753.4,
+     "b9_2035": 21.46
+    },
+    "1.0/1.0/0.0": {
+     "emploi_2035": -41.0,
+     "b9_2035": 44.61
+    },
+    "1.0/1.0/0.5": {
+     "emploi_2035": -622.3,
+     "b9_2035": 28.48
+    },
+    "1.0/1.0/1.0": {
+     "emploi_2035": -817.1,
+     "b9_2035": 23.03
+    }
+   }
+  },
+  "vieillie": {
+   "court": {
+    "b9_2026": -15.91,
+    "b9_2035": 0.08,
+    "dette_2035": 1.141,
+    "pib_2035": 0.671,
+    "emploi_2026": -25.3,
+    "emploi_2035": -155.4,
+    "consommation_2035": 31.97
+   },
+   "serie": {
+    "dette_pts": [
+     0.288,
+     0.414,
+     0.635,
+     0.829,
+     0.958,
+     1.064,
+     1.137,
+     1.17,
+     1.171,
+     1.141
+    ],
+    "b9": [
+     -15.907,
+     -13.52,
+     -11.993,
+     -10.326,
+     -8.144,
+     -6.164,
+     -4.353,
+     -2.69,
+     -1.296,
+     0.083
+    ],
+    "pib_pct": [
+     0.195,
+     0.435,
+     0.534,
+     0.599,
+     0.655,
+     0.677,
+     0.681,
+     0.679,
+     0.675,
+     0.671
+    ],
+    "emploi_total": [
+     -25.283,
+     -33.461,
+     -31.627,
+     -38.003,
+     -49.916,
+     -69.023,
+     -90.723,
+     -113.41,
+     -135.266,
+     -155.352
+    ],
+    "c_menages": [
+     6.796,
+     15.552,
+     19.225,
+     22.134,
+     24.964,
+     26.714,
+     28.05,
+     29.307,
+     30.6,
+     31.971
+    ]
+   },
+   "cascade": {
+    "annee": 2035,
+    "fleches": {
+     "statique": 8.777574369106931,
+     "consommation": -1.0028111360549445,
+     "travail_salaires_emploi": -6.407709575881903,
+     "commerce_prix": 0.308230874963366,
+     "entreprises_investissement": -0.5339399804965568,
+     "demande_publique": 0.0,
+     "mesange_et_creations": 0.0,
+     "interets_et_pib": 0.0
+    },
+    "par_mesure": {
+     "pres2027_melenchon_smic_1700_net": 1.1413445516368936
+    },
+    "total": 1.1413445516368803,
+    "residu": -1.2878587085651816e-14
+   },
+   "reprise_2035": 1.005,
+   "reduit": {
+    "b9_2026": -23.74,
+    "b9_2035": -2.17,
+    "dette_2035": 0.798,
+    "pib_2035": 1.175,
+    "consommation_2035": 0.0
+   }
+  }
+ },
+ "programme_rapports": {
+  "pi": {
+   "k_cout": 1.0052620648989083,
+   "k_creations": 1.0,
+   "k_impot_sur_le_revenu": 0.9812048310173742,
+   "k_csg": 1.0,
+   "k_cotisations_salaries": 1.0,
+   "k_cotisations_employeurs": 1.0
+  },
+  "idx": {
+   "k_cout": 0.9952113608792437,
+   "k_creations": 0.9952113608792437,
+   "k_impot_sur_le_revenu": 0.9971058973170812,
+   "k_csg": 1.0046252252305354
+  },
+  "smic": {
+   "k_cout": 1.0025205452123387,
+   "k_creations": 1.0,
+   "k_impot_sur_le_revenu": 0.9175929891780372,
+   "k_csg": 1.0015392727322252,
+   "k_cotisations_salaries": 1.0,
+   "k_cotisations_employeurs": 1.0
+  },
+  "gaj": {
+   "k_cout": 1.0000003420043675,
+   "k_creations": 1.0000003420043675
+  },
+  "pfu": {
+   "k_cout": 0.9993036410114409,
+   "k_creations": 0.9986855280996304,
+   "k_impot_sur_le_revenu": 0.9992353140130469,
+   "k_csg": 1.0
+  },
+  "exo": {
+   "k_cout": 1.0,
+   "k_creations": 1.0,
+   "k_cotisations_employeurs": 1.0
+  },
+  "pa": {
+   "k_cout": 1.0042973848638108,
+   "k_creations": 1.0042973848638108,
+   "k_impot_sur_le_revenu": 1.0042973784416769
+  },
+  "programme": {
+   "k_cout": 1.0,
+   "k_creations": 1.0,
+   "k_impot_sur_le_revenu": 1.0,
+   "k_csg": 1.0,
+   "k_cotisations_salaries": 1.0,
+   "k_cotisations_employeurs": 1.0
+  }
+ },
+ "programme_etude": {
+  "figee": {
+   "ensemble": {
+    "b9_2026": -66.71,
+    "b9_2035": -46.87,
+    "dette_2035": 10.415,
+    "pib_2035": 1.882,
+    "emploi_2026": 12.8,
+    "emploi_2035": 63.1,
+    "consommation_2035": 93.86
+   },
+   "identites": {
+    "b9_par_bloc": 1.7023890057692926e-17,
+    "dette_recurrence": 3.8526323346794918e-16,
+    "ratio_par_cle": 6.661338147750939e-16,
+    "statique": 1.783416786861774e-18
+   },
+   "cascade": {
+    "annee": 2035,
+    "fleches": {
+     "statique": 23.67999453016414,
+     "consommation": -3.8482676914391325,
+     "travail_salaires_emploi": -9.22004339110494,
+     "commerce_prix": 0.7822027941623555,
+     "entreprises_investissement": -0.9785943845647579,
+     "demande_publique": 0.0,
+     "mesange_et_creations": 0.0,
+     "interets_et_pib": 0.0
+    },
+    "par_mesure": {
+     "pres2027_melenchon_defiscalisation_pensions_alimentaires": 0.029737109455711612,
+     "pres2027_melenchon_exonerations_au_dela_2_smic": -0.7697124664121788,
+     "pres2027_melenchon_garantie_autonomie_jeunes": 6.054077772730359,
+     "pres2027_melenchon_indexation_pensions_prestations_10": 5.4292140159395945,
+     "pres2027_melenchon_interaction": -0.03805041237908632,
+     "pres2027_melenchon_point_indice_10": 2.0012338020237075,
+     "pres2027_melenchon_smic_1700_net": 0.24675570252217138,
+     "pres2027_melenchon_suppression_pfu": -2.5379636666626118
+    },
+    "total": 10.415291857217678,
+    "residu": 1.2434497875801753e-14
+   },
+   "mesures": {
+    "point_indice_10": {
+     "b9_2026": -10.03,
+     "b9_2035": -9.32,
+     "dette_2035": 2.035,
+     "pib_2035": 0.181,
+     "emploi_2026": 7.7,
+     "emploi_2035": 33.3,
+     "consommation_2035": 9.14
+    },
+    "indexation_pensions_prestations_10": {
+     "b9_2026": -28.33,
+     "b9_2035": -25.44,
+     "dette_2035": 5.5,
+     "pib_2035": 0.572,
+     "emploi_2026": 24.3,
+     "emploi_2035": 105.0,
+     "consommation_2035": 28.78
+    },
+    "smic_1700_net": {
+     "b9_2026": -12.41,
+     "b9_2035": 1.04,
+     "dette_2035": 0.25,
+     "pib_2035": 0.695,
+     "emploi_2026": -30.6,
+     "emploi_2035": -137.3,
+     "consommation_2035": 33.3
+    },
+    "garantie_autonomie_jeunes": {
+     "b9_2026": -32.05,
+     "b9_2035": -28.47,
+     "dette_2035": 6.127,
+     "pib_2035": 0.677,
+     "emploi_2026": 28.7,
+     "emploi_2035": 124.3,
+     "consommation_2035": 34.08
+    },
+    "suppression_pfu": {
+     "b9_2026": 12.51,
+     "b9_2035": 12.04,
+     "dette_2035": -2.591,
+     "pib_2035": -0.22,
+     "emploi_2026": -10.2,
+     "emploi_2035": -40.6,
+     "consommation_2035": -12.04
+    },
+    "exonerations_au_dela_2_smic": {
+     "b9_2026": 3.78,
+     "b9_2035": 3.2,
+     "dette_2035": -0.784,
+     "pib_2035": -0.031,
+     "emploi_2026": -8.8,
+     "emploi_2035": -26.1,
+     "consommation_2035": 0.55
+    },
+    "defiscalisation_pensions_alimentaires": {
+     "b9_2026": -0.15,
+     "b9_2035": -0.14,
+     "dette_2035": 0.03,
+     "pib_2035": 0.003,
+     "emploi_2026": 0.1,
+     "emploi_2035": 0.6,
+     "consommation_2035": 0.15
+    },
+    "interaction": {
+     "b9_2026": -0.03,
+     "b9_2035": 0.21,
+     "dette_2035": -0.039,
+     "pib_2035": 0.004,
+     "emploi_2026": 1.4,
+     "emploi_2035": 3.9,
+     "consommation_2035": -0.09
+    }
+   },
+   "somme": {
+    "b9_2026": -66.71,
+    "b9_2035": -46.88,
+    "dette_2035": 10.528,
+    "pib_2035": 1.881,
+    "emploi_2026": 12.6,
+    "emploi_2035": 63.1,
+    "consommation_2035": 93.87
+   },
+   "ensemble_moins_somme": {
+    "b9_2026": 0.0,
+    "b9_2035": 0.01,
+    "dette_2035": -0.113,
+    "pib_2035": 0.001,
+    "emploi_2026": 0.2,
+    "emploi_2035": 0.0,
+    "consommation_2035": -0.01
+   }
+  },
+  "vieillie": {
+   "ensemble": {
+    "b9_2026": -70.85,
+    "b9_2035": -47.99,
+    "dette_2035": 11.425,
+    "pib_2035": 1.89,
+    "emploi_2026": 18.0,
+    "emploi_2035": 39.8,
+    "consommation_2035": 94.66
+   },
+   "identites": {
+    "b9_par_bloc": 1.033951718197081e-17,
+    "dette_recurrence": 5.135371348312308e-16,
+    "ratio_par_cle": 5.134781488891349e-16,
+    "statique": 8.915575257486644e-19
+   },
+   "cascade": {
+    "annee": 2035,
+    "fleches": {
+     "statique": 24.80032267958761,
+     "consommation": -3.9002487152342966,
+     "travail_salaires_emploi": -9.257303986579837,
+     "commerce_prix": 0.7841634184191709,
+     "entreprises_investissement": -1.0019868685274094,
+     "demande_publique": 0.0,
+     "mesange_et_creations": 0.0,
+     "interets_et_pib": 0.0
+    },
+    "par_mesure": {
+     "pres2027_melenchon_defiscalisation_pensions_alimentaires": 0.05102993829219123,
+     "pres2027_melenchon_exonerations_au_dela_2_smic": -1.1208033943772104,
+     "pres2027_melenchon_garantie_autonomie_jeunes": 5.942570853974252,
+     "pres2027_melenchon_indexation_pensions_prestations_10": 6.001268920906783,
+     "pres2027_melenchon_interaction": 0.08284346396986239,
+     "pres2027_melenchon_point_indice_10": 2.347573332977951,
+     "pres2027_melenchon_smic_1700_net": 1.247957385883721,
+     "pres2027_melenchon_suppression_pfu": -3.1274939739623155
+    },
+    "total": 11.424946527665236,
+    "residu": 0.0
+   },
+   "mesures": {
+    "point_indice_10": {
+     "b9_2026": -10.55,
+     "b9_2035": -12.21,
+     "dette_2035": 2.386,
+     "pib_2035": 0.235,
+     "emploi_2026": 8.1,
+     "emploi_2035": 42.4,
+     "consommation_2035": 11.8
+    },
+    "indexation_pensions_prestations_10": {
+     "b9_2026": -29.27,
+     "b9_2035": -30.19,
+     "dette_2035": 6.074,
+     "pib_2035": 0.673,
+     "emploi_2026": 25.1,
+     "emploi_2035": 122.3,
+     "consommation_2035": 33.83
+    },
+    "smic_1700_net": {
+     "b9_2026": -16.47,
+     "b9_2035": -0.36,
+     "dette_2035": 1.263,
+     "pib_2035": 0.673,
+     "emploi_2026": -24.4,
+     "emploi_2035": -152.1,
+     "consommation_2035": 31.89
+    },
+    "garantie_autonomie_jeunes": {
+     "b9_2026": -31.84,
+     "b9_2035": -27.6,
+     "dette_2035": 6.015,
+     "pib_2035": 0.657,
+     "emploi_2026": 28.5,
+     "emploi_2035": 120.9,
+     "consommation_2035": 33.09
+    },
+    "suppression_pfu": {
+     "b9_2026": 13.39,
+     "b9_2035": 17.14,
+     "dette_2035": -3.197,
+     "pib_2035": -0.314,
+     "emploi_2026": -10.9,
+     "emploi_2035": -56.6,
+     "consommation_2035": -16.94
+    },
+    "exonerations_au_dela_2_smic": {
+     "b9_2026": 4.07,
+     "b9_2035": 5.75,
+     "dette_2035": -1.143,
+     "pib_2035": -0.047,
+     "emploi_2026": -9.4,
+     "emploi_2035": -42.5,
+     "consommation_2035": 0.75
+    },
+    "defiscalisation_pensions_alimentaires": {
+     "b9_2026": -0.19,
+     "b9_2035": -0.34,
+     "dette_2035": 0.052,
+     "pib_2035": 0.007,
+     "emploi_2026": 0.2,
+     "emploi_2035": 1.2,
+     "consommation_2035": 0.35
+    },
+    "interaction": {
+     "b9_2026": 0.01,
+     "b9_2035": -0.17,
+     "dette_2035": 0.084,
+     "pib_2035": 0.006,
+     "emploi_2026": 0.8,
+     "emploi_2035": 4.3,
+     "consommation_2035": -0.11
+    }
+   },
+   "somme": {
+    "b9_2026": -70.85,
+    "b9_2035": -47.98,
+    "dette_2035": 11.534,
+    "pib_2035": 1.89,
+    "emploi_2026": 18.0,
+    "emploi_2035": 39.9,
+    "consommation_2035": 94.66
+   },
+   "ensemble_moins_somme": {
+    "b9_2026": -0.0,
+    "b9_2035": -0.01,
+    "dette_2035": -0.109,
+    "pib_2035": 0.0,
+    "emploi_2026": -0.0,
+    "emploi_2035": -0.1,
+    "consommation_2035": 0.0
+   }
+  }
+ },
+ "programme_d687": {
+  "figee": {
+   "ensemble": {
+    "b9_2026": -66.71,
+    "b9_2035": -46.88,
+    "dette_2035": 10.416,
+    "pib_2035": 1.882,
+    "emploi_2026": 12.8,
+    "emploi_2035": 63.1,
+    "consommation_2035": 93.86
+   },
+   "identites": {
+    "b9_par_bloc": 1.70640272607082e-17,
+    "dette_recurrence": 5.136852846281402e-16,
+    "ratio_par_cle": 8.465450562766819e-16,
+    "statique": 1.9479774718127562e-18
+   },
+   "cascade": {
+    "annee": 2035,
+    "fleches": {
+     "statique": 23.68003679439397,
+     "consommation": -3.847901329845146,
+     "travail_salaires_emploi": -9.219639703164397,
+     "commerce_prix": 0.7821466491109557,
+     "entreprises_investissement": -0.9784468783919626,
+     "demande_publique": 0.0,
+     "mesange_et_creations": 0.0,
+     "interets_et_pib": 0.0
+    },
+    "par_mesure": {
+     "pres2027_melenchon_defiscalisation_pensions_alimentaires": 0.02985178805973419,
+     "pres2027_melenchon_exonerations_au_dela_2_smic": -0.7697138402006962,
+     "pres2027_melenchon_garantie_autonomie_jeunes": 6.05462899900919,
+     "pres2027_melenchon_indexation_pensions_prestations_10": 5.402870919365949,
+     "pres2027_melenchon_interaction": -0.03582209865865523,
+     "pres2027_melenchon_point_indice_10": 2.0111860233591066,
+     "pres2027_melenchon_smic_1700_net": 0.2593875267755923,
+     "pres2027_melenchon_suppression_pfu": -2.5361937856068044
+    },
+    "total": 10.416195532103401,
+    "residu": -1.9539925233402755e-14
+   },
+   "mesures": {
+    "point_indice_10": {
+     "b9_2026": -10.08,
+     "b9_2035": -9.36,
+     "dette_2035": 2.045,
+     "pib_2035": 0.183,
+     "emploi_2026": 7.7,
+     "emploi_2035": 33.5,
+     "consommation_2035": 9.19
+    },
+    "indexation_pensions_prestations_10": {
+     "b9_2026": -28.19,
+     "b9_2035": -25.32,
+     "dette_2035": 5.473,
+     "pib_2035": 0.569,
+     "emploi_2026": 24.2,
+     "emploi_2035": 104.5,
+     "consommation_2035": 28.64
+    },
+    "smic_1700_net": {
+     "b9_2026": -12.48,
+     "b9_2035": 0.98,
+     "dette_2035": 0.262,
+     "pib_2035": 0.696,
+     "emploi_2026": -30.5,
+     "emploi_2035": -137.1,
+     "consommation_2035": 33.37
+    },
+    "garantie_autonomie_jeunes": {
+     "b9_2026": -32.05,
+     "b9_2035": -28.47,
+     "dette_2035": 6.127,
+     "pib_2035": 0.677,
+     "emploi_2026": 28.7,
+     "emploi_2035": 124.3,
+     "consommation_2035": 34.07
+    },
+    "suppression_pfu": {
+     "b9_2026": 12.5,
+     "b9_2035": 12.04,
+     "dette_2035": -2.59,
+     "pib_2035": -0.219,
+     "emploi_2026": -10.2,
+     "emploi_2035": -40.6,
+     "consommation_2035": -12.03
+    },
+    "exonerations_au_dela_2_smic": {
+     "b9_2026": 3.78,
+     "b9_2035": 3.2,
+     "dette_2035": -0.784,
+     "pib_2035": -0.031,
+     "emploi_2026": -8.8,
+     "emploi_2035": -26.1,
+     "consommation_2035": 0.55
+    },
+    "defiscalisation_pensions_alimentaires": {
+     "b9_2026": -0.15,
+     "b9_2035": -0.14,
+     "dette_2035": 0.03,
+     "pib_2035": 0.003,
+     "emploi_2026": 0.1,
+     "emploi_2035": 0.6,
+     "consommation_2035": 0.15
+    },
+    "interaction": {
+     "b9_2026": -0.03,
+     "b9_2035": 0.2,
+     "dette_2035": -0.036,
+     "pib_2035": 0.004,
+     "emploi_2026": 1.4,
+     "emploi_2035": 3.9,
+     "consommation_2035": -0.09
+    }
+   },
+   "somme": {
+    "b9_2026": -66.7,
+    "b9_2035": -46.87,
+    "dette_2035": 10.527,
+    "pib_2035": 1.882,
+    "emploi_2026": 12.6,
+    "emploi_2035": 63.0,
+    "consommation_2035": 93.85
+   },
+   "ensemble_moins_somme": {
+    "b9_2026": -0.01,
+    "b9_2035": -0.01,
+    "dette_2035": -0.111,
+    "pib_2035": 0.0,
+    "emploi_2026": 0.2,
+    "emploi_2035": 0.1,
+    "consommation_2035": 0.01
+   }
+  },
+  "vieillie": {
+   "ensemble": {
+    "b9_2026": -70.85,
+    "b9_2035": -48.0,
+    "dette_2035": 11.426,
+    "pib_2035": 1.889,
+    "emploi_2026": 18.0,
+    "emploi_2035": 39.8,
+    "consommation_2035": 94.64
+   },
+   "identites": {
+    "b9_par_bloc": 1.3630154206661985e-17,
+    "dette_recurrence": 8.017579444259249e-16,
+    "ratio_par_cle": 5.967448757360216e-16,
+    "statique": 9.181177773030774e-19
+   },
+   "cascade": {
+    "annee": 2035,
+    "fleches": {
+     "statique": 24.80042119164848,
+     "consommation": -3.8995797044709883,
+     "travail_salaires_emploi": -9.25686460006013,
+     "commerce_prix": 0.7840118786293369,
+     "entreprises_investissement": -1.001765767010567,
+     "demande_publique": 0.0,
+     "mesange_et_creations": 0.0,
+     "interets_et_pib": 0.0
+    },
+    "par_mesure": {
+     "pres2027_melenchon_defiscalisation_pensions_alimentaires": 0.0512257938111257,
+     "pres2027_melenchon_exonerations_au_dela_2_smic": -1.1208078464423563,
+     "pres2027_melenchon_garantie_autonomie_jeunes": 5.943124081016987,
+     "pres2027_melenchon_indexation_pensions_prestations_10": 5.972159442505945,
+     "pres2027_melenchon_interaction": 0.0831325527861353,
+     "pres2027_melenchon_point_indice_10": 2.3592435286677502,
+     "pres2027_melenchon_smic_1700_net": 1.263471202299412,
+     "pres2027_melenchon_suppression_pfu": -3.1253257559088694
+    },
+    "total": 11.426222998736124,
+    "residu": -5.329070518200751e-15
+   },
+   "mesures": {
+    "point_indice_10": {
+     "b9_2026": -10.6,
+     "b9_2035": -12.27,
+     "dette_2035": 2.398,
+     "pib_2035": 0.236,
+     "emploi_2026": 8.1,
+     "emploi_2035": 42.7,
+     "consommation_2035": 11.87
+    },
+    "indexation_pensions_prestations_10": {
+     "b9_2026": -29.13,
+     "b9_2035": -30.04,
+     "dette_2035": 6.045,
+     "pib_2035": 0.67,
+     "emploi_2026": 25.0,
+     "emploi_2035": 121.7,
+     "consommation_2035": 33.67
+    },
+    "smic_1700_net": {
+     "b9_2026": -16.55,
+     "b9_2035": -0.42,
+     "dette_2035": 1.279,
+     "pib_2035": 0.674,
+     "emploi_2026": -24.4,
+     "emploi_2035": -151.9,
+     "consommation_2035": 31.95
+    },
+    "garantie_autonomie_jeunes": {
+     "b9_2026": -31.84,
+     "b9_2035": -27.61,
+     "dette_2035": 6.016,
+     "pib_2035": 0.657,
+     "emploi_2026": 28.5,
+     "emploi_2035": 120.9,
+     "consommation_2035": 33.09
+    },
+    "suppression_pfu": {
+     "b9_2026": 13.38,
+     "b9_2035": 17.12,
+     "dette_2035": -3.194,
+     "pib_2035": -0.314,
+     "emploi_2026": -10.9,
+     "emploi_2035": -56.5,
+     "consommation_2035": -16.93
+    },
+    "exonerations_au_dela_2_smic": {
+     "b9_2026": 4.07,
+     "b9_2035": 5.75,
+     "dette_2035": -1.143,
+     "pib_2035": -0.047,
+     "emploi_2026": -9.4,
+     "emploi_2035": -42.5,
+     "consommation_2035": 0.75
+    },
+    "defiscalisation_pensions_alimentaires": {
+     "b9_2026": -0.19,
+     "b9_2035": -0.34,
+     "dette_2035": 0.052,
+     "pib_2035": 0.007,
+     "emploi_2026": 0.2,
+     "emploi_2035": 1.2,
+     "consommation_2035": 0.35
+    },
+    "interaction": {
+     "b9_2026": 0.01,
+     "b9_2035": -0.19,
+     "dette_2035": 0.085,
+     "pib_2035": 0.006,
+     "emploi_2026": 0.8,
+     "emploi_2035": 4.3,
+     "consommation_2035": -0.11
+    }
+   },
+   "somme": {
+    "b9_2026": -70.85,
+    "b9_2035": -48.0,
+    "dette_2035": 11.538,
+    "pib_2035": 1.889,
+    "emploi_2026": 17.9,
+    "emploi_2035": 39.9,
+    "consommation_2035": 94.64
+   },
+   "ensemble_moins_somme": {
+    "b9_2026": 0.0,
+    "b9_2035": 0.0,
+    "dette_2035": -0.112,
+    "pib_2035": 0.0,
+    "emploi_2026": 0.1,
+    "emploi_2035": -0.1,
+    "consommation_2035": 0.0
+   }
+  }
+ },
+ "paires_jumeau_d687": {
+  "paires": {
+   "idx+gaj": {
+    "dette_2035": -0.07,
+    "b9_2035": 0.0,
+    "emploi_2035": 0.0
+   },
+   "smic+gaj": {
+    "dette_2035": -0.043,
+    "b9_2035": 0.0,
+    "emploi_2035": 0.0
+   },
+   "idx+smic": {
+    "dette_2035": -0.038,
+    "b9_2035": 0.01,
+    "emploi_2035": 0.0
+   },
+   "gaj+pfu": {
+    "dette_2035": 0.031,
+    "b9_2035": -0.01,
+    "emploi_2035": 0.0
+   },
+   "idx+pfu": {
+    "dette_2035": 0.027,
+    "b9_2035": 0.0,
+    "emploi_2035": 0.0
+   },
+   "pi+gaj": {
+    "dette_2035": -0.024,
+    "b9_2035": 0.0,
+    "emploi_2035": 0.0
+   },
+   "pi+idx": {
+    "dette_2035": -0.021,
+    "b9_2035": 0.0,
+    "emploi_2035": 0.0
+   },
+   "smic+pfu": {
+    "dette_2035": 0.019,
+    "b9_2035": 0.0,
+    "emploi_2035": 0.1
+   },
+   "pi+smic": {
+    "dette_2035": -0.014,
+    "b9_2035": -0.0,
+    "emploi_2035": 0.0
+   },
+   "pi+pfu": {
+    "dette_2035": 0.01,
+    "b9_2035": -0.01,
+    "emploi_2035": 0.1
+   },
+   "gaj+exo": {
+    "dette_2035": 0.007,
+    "b9_2035": -0.01,
+    "emploi_2035": 0.0
+   },
+   "idx+exo": {
+    "dette_2035": 0.006,
+    "b9_2035": -0.0,
+    "emploi_2035": 0.0
+   },
+   "smic+exo": {
+    "dette_2035": 0.006,
+    "b9_2035": -0.0,
+    "emploi_2035": 0.0
+   },
+   "pfu+exo": {
+    "dette_2035": -0.003,
+    "b9_2035": -0.01,
+    "emploi_2035": 0.1
+   },
+   "pi+exo": {
+    "dette_2035": 0.002,
+    "b9_2035": -0.01,
+    "emploi_2035": 0.1
+   },
+   "pi+pa": {
+    "dette_2035": 0.001,
+    "b9_2035": -0.0,
+    "emploi_2035": 0.0
+   },
+   "smic+pa": {
+    "dette_2035": 0.001,
+    "b9_2035": 0.0,
+    "emploi_2035": -0.0
+   },
+   "pfu+pa": {
+    "dette_2035": 0.001,
+    "b9_2035": 0.0,
+    "emploi_2035": 0.0
+   },
+   "idx+pa": {
+    "dette_2035": 0.0,
+    "b9_2035": -0.0,
+    "emploi_2035": -0.0
+   },
+   "gaj+pa": {
+    "dette_2035": 0.0,
+    "b9_2035": -0.0,
+    "emploi_2035": 0.0
+   },
+   "exo+pa": {
+    "dette_2035": 0.0,
+    "b9_2035": -0.0,
+    "emploi_2035": 0.0
+   }
+  },
+  "ensemble": {
+   "dette_2035": 10.452,
+   "b9_2035": -47.08,
+   "emploi_2035": 59.2
+  },
+  "somme": {
+   "dette_2035": 10.563,
+   "b9_2035": -47.07,
+   "emploi_2035": 59.1
+  },
+  "ensemble_moins_somme": {
+   "dette_2035": -0.111,
+   "b9_2035": -0.01,
+   "emploi_2035": 0.1
+  },
+  "reste_ordre_3": {
+   "dette_2035": -0.009,
+   "b9_2035": 0.03,
+   "emploi_2035": -0.3
+  }
+ }
+}
