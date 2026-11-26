@@ -3171,7 +3171,7 @@ class Etude:
         w("Ce qui touche chaque ligne :")
         w("")
         for entry in entries:
-            w(f"* **{texte.label(entry)}** : {', '.join(causes(entry))}.")
+            w(f"* **{texte.label(entry)}** : {self._touche(entry, avant)}.")
         w("")
         parts = self.decomposition(entries)
         if not parts:
@@ -3206,6 +3206,22 @@ class Etude:
               "de croissance : il ne le mesure pas.")
             w("")
 
+    @staticmethod
+    def _touche(entry: dict[str, Any], avant: dict[str, Any]) -> str:
+        """What touches a line since the frozen series. A freeze that names its
+        corrections (D-694) gives them to every line that moved; a line whose first year
+        and debt are the frozen ones to the bit is touched by none. A freeze without them
+        is but 16's, whose corrections `causes` names (D-350)."""
+        corrections = avant.get("corrections")
+        if not corrections:
+            return ", ".join(causes(entry))
+        then = avant["scenarios"].get(entry["name"])
+        if (then is not None and then["cout"] == entry["cost"]
+                and then["dette"] == entry["debt"][0]["theta"]):
+            return ("aucune : sa première année et sa dette sont celles de la série "
+                    "précédente, au bit près")
+        return ", ".join(corrections)
+
     #: The corrections a decomposition pass leaves out (D-354), as a reader names them.
     CORRECTIONS: ClassVar[dict[str, str]] = {"E1": "le secteur public statut par statut",
                    "E2": "la CVAE et la C3S déduites de l'IS"}
@@ -3225,10 +3241,12 @@ class Etude:
                     out.setdefault(other["name"], []).append((sans, other))
         return out
 
-    def figer_avant(self) -> Path:
+    def figer_avant(self, corrections: list[str] | None = None) -> Path:
         """`impots etude avant` : freeze what the committed series says (D-350), before
         the next one replaces its reports. Refused if a frozen file is already there: it
-        is the previous series', not overwritten in silence."""
+        is the previous series', not overwritten in silence. `corrections` name what
+        changes before the next series (D-694); without them, the page names those of
+        but 16, as the first freeze did."""
         target = self.rapports / AVANT
         if target.exists():
             raise EtudeError(f"{_relative(target)} existe : la série d'avant est déjà "
@@ -3238,6 +3256,8 @@ class Etude:
             e["name"]: {"cout": e["cost"], "dette": e["debt"][0]["theta"],
                         "selon_theta": verdict(e["debt"]), "verdict": verdict_mc(e)}
             for e in entries}}
+        if corrections:
+            snapshot["corrections"] = list(corrections)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
                           encoding="utf-8")

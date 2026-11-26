@@ -44276,6 +44276,36 @@ d'avant.
 (D-346, D-347, D-348, D-345), pas le changement de modèle de D-686 : c'est le même défaut
 dans une autre phrase, non corrigé ici.
 
+## D-694 — « Ce qui touche chaque ligne » : les corrections nommées par le gel
+
+**La décision** (demandée par le propriétaire, le reste de D-693). Sous « Ce qui a bougé »,
+la liste « Ce qui touche chaque ligne » venait de `causes` : les corrections du but 16, le
+secteur public (D-346), la CVAE et la C3S (D-347), la TVA (D-348), le verdict du
+Monte-Carlo (D-345). Vraies pour le gel du but 16, fausses pour celui de D-559 : entre
+01a24df et la série de D-689, seul `population/incomes.py` change un nombre des études,
+les gérants majoritaires retirés des salariés (D-686), sur la population refaite (D-687).
+Les autres fichiers de `src` touchés depuis (jumeau, parcours, `dependances.py`,
+`etude.py`) ne sont pas lus par les passes ; aucun scénario ni programme ne change.
+
+**Le correctif.** Le gel nomme ses corrections : `impots etude avant <nom> --correction
+TEXTE`, autant que voulu, les écrit sous `corrections`. Quand le gel en porte, chaque ligne
+qui a bougé les reçoit ; une ligne dont la première année et la dette sont celles du gel,
+au bit près, est dite touchée par aucune. Un gel sans elles est celui du but 16, et la page
+garde `causes`.
+
+**Les gels refaits.** Les quinze, PLF 2027 compris : son gel de 01a24df, oublié par D-693,
+lisait encore « la boîte θ » ; il porte désormais le verdict du Monte-Carlo (art. 2 et
+art. 3 « dépend », art. 15 « baisse »). Repris comme en D-693 des rapports du parent de
+707de49c ; chaque champ est identique au gel commité, `corrections` s'ajoute. La
+correction écrite : « les gérants majoritaires retirés des salariés d'un facteur commun,
+sur la population refaite (D-686, D-687) ». Dix-sept lignes la reçoivent ; l'art. 15 du
+PLF, une réforme des entreprises, est la seule identique au bit près. Aucun nombre ne
+bouge. Les quinze pages réécrites, le site reconstruit.
+
+**Le test.** `test_the_page_says_what_moved_against_the_frozen_series_and_why` : un gel
+qui nomme ses corrections les donne à la ligne qui a bougé, dit « aucune » de celle qui ne
+l'a pas fait, et ne nomme plus D-346 ni D-345. Il échoue sur le code d'avant.
+
 ## D-696 — Le but 29 sur la série de D-689 : six tests mis sur leurs nombres, les causes
 
 **La jonction** (8e45527) : `claude/but28` à ef26636 joint dans `claude/but29`, sans
@@ -44395,3 +44425,21 @@ désormais les dimensions dans l'ordre de la page (`ORDRE`, puis par nom de modu
 que soit l'import ; un test le tient (`test_impacts_tableau`), rouge sur le code d'avant.
 Le site reconstruit ne change que d'ordre dans « En bref » de `impacts.html` (même
 longueur, mêmes nombres), et le paquet du jumeau porte le nouveau `tableau.py`.
+
+## D-699 — Le but 29 ouvert sur main : la jonction du merge du but 28
+
+**La décision** (le propriétaire, 26 novembre : « ouvre le but suivant »). Le but 28 est
+mergé dans main (PR #133, merge 1831a2a), avec D-694, écrite après la jonction de D-698.
+`claude/but29` reçoit main par un merge : un seul conflit, `docs/DECISIONS.md`, où les deux
+côtés écrivaient en fin de fichier ; D-694 prend sa place avant D-696, rien n'est réécrit.
+Le reste se fusionne seul : le code de D-694 (`etude.py`, la commande `etude avant
+--correction`), ses quinze gels, ses quinze pages et leurs pages du site, qui gardent le
+lien de la page « Ce que ça change ».
+
+**Ce que dit D-698 et qui ne tient plus** : « D-694 et D-695 ne sont pas employés ». D-694
+l'est désormais, par le but 28 ; D-695 reste libre.
+
+**Vérifié après la jonction, sans passe** : `etude verifier` sur les quinze pages, « la
+page est celle de ses rapports » ; `site verifier`, « le site est celui des études » ;
+`ruff` sur `src`, `tests` et `scripts`, propre ; `test_etude` et `test_dependances`, 117
+verts. Aucun nombre ne change. La PR #134 visait `claude/but28` ; elle vise main.

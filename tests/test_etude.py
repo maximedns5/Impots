@@ -467,6 +467,15 @@ def test_the_page_says_what_moved_against_the_frozen_series_and_why(lu) -> None:
                         f"dépend de θ → hausse |")
     assert ("* **art. 74 du PLF, les aides au logement** : le secteur public modélisé "
             "statut par statut (D-346), le verdict lu sur le Monte-Carlo (D-345).") in section
+    # D-694: a freeze that names its corrections gives them to each line that moved, and
+    # says that none touches a line whose first year and debt are the frozen ones.
+    then["corrections"] = ["les gérants retirés des salariés (D-686)"]
+    section, _ = moved(then)
+    assert ("* **art. 74 du PLF, les aides au logement** : les gérants retirés des "
+            "salariés (D-686).") in section
+    assert ("* **art. 74 du PLF, la prime d'activité** : aucune : sa première année et sa "
+            "dette sont celles de la série précédente, au bit près.") in section
+    assert "(D-346)" not in section and "(D-345)." not in section
 
 
 def test_a_study_half_of_d349_is_refused(lu) -> None:
