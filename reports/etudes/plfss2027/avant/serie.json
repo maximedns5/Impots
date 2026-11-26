@@ -4,12 +4,14 @@
     "plf2027_art_74_ppa": {
       "cout": -748939544.0,
       "dette": -0.0022952469127379693,
-      "selon_theta": "baisse"
+      "selon_theta": "baisse",
+      "verdict": "baisse"
     },
     "plf2027_art_74_apl": {
       "cout": -87358129.15234375,
       "dette": -0.0008381576519627121,
-      "selon_theta": "baisse"
+      "selon_theta": "baisse",
+      "verdict": "baisse"
     }
   }
 }

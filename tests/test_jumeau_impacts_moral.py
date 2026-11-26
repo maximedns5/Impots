@@ -116,7 +116,7 @@ def test_controle_depart():
 def test_controle_depart_sur_les_cellules_commitees():
     """D-596 : les écarts que la dimension implique au départ, sur les cellules de
     `entrees_navigateur.json` (celles de la population de D-687 ; sur celle de D-553 :
-    0,6596, 0,8832, 0,5647, D-693)."""
+    0,6596, 0,8832, 0,5647, D-696)."""
     import json
 
     from impots.jumeau.cellules import Cellules

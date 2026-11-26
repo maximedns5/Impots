@@ -261,11 +261,11 @@ Le programme annonce lui-même un montant pour 3 de ses mesures. Ces montants ne
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_glucksmann/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_glucksmann/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Les deux verdicts lisent le Monte-Carlo (D-345).
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée (1 mesure sur 18 paramétrées, 27 relevées) | +30,84 Md€ → +29,66 Md€ | +0,88 pt → +0,86 pt | dépend de θ → dépend |
+| la part chiffrée (1 mesure sur 18 paramétrées, 27 relevées) | +30,84 Md€ → +29,66 Md€ | +0,88 pt → +0,86 pt | dépend → dépend |
 
 Ce qui touche chaque ligne :
 

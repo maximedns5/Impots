@@ -150,7 +150,7 @@ def test_no_study_page_runs_a_script(built, monkeypatch) -> None:
     # compares the candidates, which took the parcours' two-choice table (D-468), held by
     # their own tests. The cascade pages (D-485) run the twin in the page when θ moves;
     # they were left out of this list until D-685. « Ce que ça change » (D-607) calcule
-    # une mesure dans le navigateur ; elle manquait ici jusqu'à D-695.
+    # une mesure dans le navigateur ; elle manquait ici jusqu'à D-698.
     from impots import site_impacts, site_mesure, site_population
 
     assert not any("<script" in text.lower() for name, text in built.items()

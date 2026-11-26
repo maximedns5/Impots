@@ -4,7 +4,8 @@
     "pres2027_roussel_programme": {
       "cout": 34306851034.39377,
       "dette": 0.013356450722007862,
-      "selon_theta": "dépend de θ"
+      "selon_theta": "dépend de θ",
+      "verdict": "dépend"
     }
   }
 }

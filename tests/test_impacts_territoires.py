@@ -137,7 +137,7 @@ def test_la_moyenne_nationale_est_le_gain_des_cellules(session, retailleau) -> N
 def test_les_nombres_de_tete_de_d648(retailleau) -> None:
     """Retailleau, 2035, θ à ½ (D-648) : le gain en % du revenu, l'ensemble, le rural et
     l'outre-mer ; « illustratif ». Sur la série de D-689 et la population de D-687
-    (D-693) ; avant, sur les rapports d'avant D-559 : 2,077, 1,953, 2,302, 1 241,3."""
+    (D-696) ; avant, sur les rapports d'avant D-559 : 2,077, 1,953, 2,302, 1 241,3."""
     assert retailleau["statut"] == "illustratif"
     ind = {i["cle"]: i for i in retailleau["indicateurs"]}
     pct = ind["pct_types"]

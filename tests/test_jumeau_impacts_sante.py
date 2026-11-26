@@ -113,7 +113,7 @@ def test_inscrite():
 def test_controle_depart_sur_les_cellules_commitees():
     """D-621 : l'écart d'espérance de vie D10 − D1 que g implique sur les cellules de
     `entrees_navigateur.json` (population de D-687 ; sur celle de D-553 : 2,0780, 10,502,
-    6,864, D-693), face à l'Insee Première n° 1687."""
+    6,864, D-696), face à l'Insee Première n° 1687."""
     import json
 
     from impots.jumeau.cellules import Cellules

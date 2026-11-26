@@ -4,7 +4,8 @@
     "pres2027_le_pen_programme": {
       "cout": 21631217340.821014,
       "dette": 0.030206182808870663,
-      "selon_theta": "dépend de θ"
+      "selon_theta": "dépend de θ",
+      "verdict": "dépend"
     }
   }
 }

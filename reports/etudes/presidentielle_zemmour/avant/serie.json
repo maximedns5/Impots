@@ -4,7 +4,8 @@
     "pres2027_zemmour_programme": {
       "cout": 90542346435.0122,
       "dette": 0.12017299324505726,
-      "selon_theta": "dépend de θ"
+      "selon_theta": "dépend de θ",
+      "verdict": "dépend"
     }
   }
 }

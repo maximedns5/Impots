@@ -301,3 +301,18 @@ def test_sans_prix_l_ecart_du_pib_est_le_pib_en_volume() -> None:
     assert list(ind) == ["pib_volume"]
     assert ind["pib_volume"].libelle == "PIB en volume" and ind["pib_volume"].sens == 1
     assert ind["pib_volume"].valeurs[0] == pytest.approx(-0.7)
+
+
+def test_l_ordre_des_dimensions_ne_depend_pas_de_qui_les_a_importees() -> None:
+    """D-698 : un module importé avant `charger` (par un test, ou par `site_impacts` qui
+    lit la santé) s'inscrivait en tête, et « En bref » changeait d'ordre avec ce qui avait
+    tourné avant dans le processus. L'ordre est celui de la page, quel que soit l'import."""
+    from impots.jumeau.impacts import sante, territoires  # noqa: F401  (importés d'abord)
+
+    tableau.charger()
+    ordre = tableau.ordonnees()
+    assert sorted(ordre) == sorted(impacts.dimensions())
+    rangs = [tableau._rang(impacts._REGISTRE[c].__module__.rpartition(".")[2])
+             for c in ordre]
+    assert rangs == sorted(rangs)
+    assert ordre.index("pouvoir_achat") < ordre.index("moral") < ordre.index("sante")

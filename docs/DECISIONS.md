@@ -44244,7 +44244,39 @@ et la date. Le site reconstruit (`site verifier` : « le site est celui des étu
 Les 21 et `test_site_population` : verts. `ruff` : propre. `node ui/check.mjs` : vert.
 `make impact` et les lourds ne sont pas relancés : ils tournent une fois, avant la PR.
 
-## D-693 — Le but 29 sur la série de D-689 : six tests mis sur leurs nombres, les causes
+## D-693 — « Ce qui a bougé » : le verdict d'avant lu sur le Monte-Carlo, comme l'actuel
+
+**La décision** (demandée par le propriétaire). Les pages des quatorze études qui ont un gel
+disaient, sous « Ce qui a bougé depuis la série précédente », que le verdict de la série
+d'avant « lisait la boîte θ » et celui-ci « le Monte-Carlo ». C'était vrai du gel du but 16
+(D-350) ; c'est faux depuis D-345 : la série de D-559 lisait déjà le Monte-Carlo. Le gel
+(`figer_avant`) ne gardait que le verdict de la boîte (`selon_theta`), et la colonne
+comparait l'un à l'autre. D'où Lisnard « hausse → dépend » : la boîte de D-559 disait
+hausse, son Monte-Carlo disait déjà « dépend », et rien n'a bougé.
+
+**Le correctif.** `figer_avant` garde aussi le verdict du Monte-Carlo (`verdict`). Quand
+chaque ligne du gel le porte, la page compare verdict à verdict et dit « Les deux verdicts
+lisent le Monte-Carlo (D-345). » ; un gel d'avant ce correctif garde la phrase et la
+colonne d'avant, qui y sont vraies.
+
+**Les gels refaits.** Les rapports de D-559, retirés par 707de49c, sont repris de son
+parent dans un worktree à part ; `figer_avant` y refait les quatorze gels. Le commit, le
+coût, la dette et `selon_theta` sont identiques aux gels commités, ligne à ligne ; seul
+`verdict` s'ajoute. Labib et Arthaud, hors de la série, gardent le leur. La colonne
+« verdict, avant → après » devient : Lisnard dépend → dépend ; les huit lignes « dépend
+de θ → dépend » deviennent « dépend → dépend » ; les autres ne changent pas. Aucun nombre
+ne bouge. Les quatorze pages réécrites (`etude verifier` passe), le site reconstruit.
+
+**Le test.** `test_the_page_says_what_moved_against_the_frozen_series_and_why` tient les
+deux cas : le gel porte le verdict du Monte-Carlo, la page le compare et ne dit plus
+« lisait la boîte θ » ; un gel sans lui garde l'ancienne phrase. Il échoue sur le code
+d'avant.
+
+**Ce qui reste.** « Ce qui touche chaque ligne » nomme encore les corrections du but 16
+(D-346, D-347, D-348, D-345), pas le changement de modèle de D-686 : c'est le même défaut
+dans une autre phrase, non corrigé ici.
+
+## D-696 — Le but 29 sur la série de D-689 : six tests mis sur leurs nombres, les causes
 
 **La jonction** (8e45527) : `claude/but28` à ef26636 joint dans `claude/but29`, sans
 conflit, pour la PR #134. Les 41 rouges de 46be858 (« aucun rapport d'étude commité »,
@@ -44285,10 +44317,10 @@ Tests légers des fichiers du but (`test_impacts_*`, `test_jumeau_impacts_*`,
 celui des données du conteneur ci-dessus. Chacun des six a échoué sur l'avant : c'est
 ce qui les a montrés.
 
-## D-694 — La distribution des niveaux de vie refaite sur la population de D-687
+## D-697 — La distribution des niveaux de vie refaite sur la population de D-687
 
 **La décision** (le propriétaire, 25 novembre : « refais la distribution des niveaux de vie
-sur D-687 »). D-693 laissait `reports/jumeau/niveaux_de_vie_cellules.json` (D-592, D-640)
+sur D-687 »). D-696 laissait `reports/jumeau/niveaux_de_vie_cellules.json` (D-592, D-640)
 sur les cellules de D-553, alors que celles du jumeau sont de D-687 : l'entente mêlait
 deux populations.
 
@@ -44310,13 +44342,13 @@ des ménages aux cellules 0, aucune cellule approchée). Rc = 0 partout.
 | niveau de vie médian, € | 24 896 | 24 820 |
 
 Des écarts de l'ordre du pour mille ; aucun test léger du but ne bouge (134 passés, le
-même rouge que D-693, celui des données du conteneur).
+même rouge que D-696, celui des données du conteneur).
 
 **Ce qui n'est pas refait** : les passes du juge de l'Insee (D-592 : la prime de 2019,
 l'impôt de 2020) restent celles de D-553. Les refaire sur D-687 serait une nouvelle
 comparaison à un juge, à préenregistrer d'abord.
 
-## D-695 — `make impact` sur le but 29 : le site sans la page, deux scripts non déclarés
+## D-698 — `make impact` sur le but 29 : le site sans la page, deux scripts non déclarés
 
 **La décision** (le propriétaire, 25 novembre : « lance make impact et les lourds »).
 `make impact` a tourné au commit d3202eb, dans un worktree détaché qui porte la population
@@ -44334,7 +44366,7 @@ les chronos n'ont pas tourné.
   celui de D-689, reconstruit sur le but 28, qui n'a pas la page « Ce que ça change ».
   Reconstruit sur le but 29 : `impacts.html`, `impacts.js`, `impacts-pour-vous.json` en
   plus, le lien de la page dans le menu de toutes les pages, le paquet du jumeau qui porte
-  `impacts_json`, et les niveaux de vie de D-694 dans `jumeau-donnees.json`. Tout vient des
+  `impacts_json`, et les niveaux de vie de D-697 dans `jumeau-donnees.json`. Tout vient des
   fichiers commités ; rien des données du conteneur.
 * `test_no_study_page_runs_a_script` : la page calcule une mesure dans le navigateur
   (D-607) et n'était pas dans la liste des pages qui portent un script. Elle y est ajoutée
@@ -44345,3 +44377,21 @@ Les deux étapes que `make` n'avait pas atteintes ont tourné ensuite au commit 
 le même worktree, sous le verrou (15:59-16:43 UTC) : **29 lourds verts, 0 rouge**
 (`tests/memoire.py lancer --impact`), et les 5 chronos passent. La passe légère n'est pas
 refaite : ses seuls rouges sont ceux corrigés ici.
+
+**La jonction du 25 novembre au soir** (le propriétaire : « fais la jonction et
+renumérote »). `claude/but28` avait avancé à ed9f9c4, qui écrit sa propre D-693 (« Ce qui a
+bougé »). La sienne garde son numéro ; les trois entrées du but 29 écrites le même jour,
+D-693, D-694 et D-695, deviennent D-696, D-697 et D-698, ici et dans les tests qui les
+citent. D-694 et D-695 ne sont pas employés. Les commits poussés avant la jonction gardent
+les anciens numéros dans leurs messages ; rien n'est réécrit.
+
+**Un défaut trouvé par la jonction.** Après elle, trois tests de `test_site` rougissaient
+dans la passe des fichiers touchés et passaient seuls. L'ordre des dimensions de la page
+était celui de leur inscription, donc de leur première importation dans le processus : un
+test qui importe le moral, la santé ou les territoires avant que la page se construise, ou
+`site_impacts` qui lit la santé avant de calculer, les mettait en tête, et « En bref »
+énumérait autrement. Le site dépendait de ce qui avait tourné avant lui. `tableau` range
+désormais les dimensions dans l'ordre de la page (`ORDRE`, puis par nom de module), quel
+que soit l'import ; un test le tient (`test_impacts_tableau`), rouge sur le code d'avant.
+Le site reconstruit ne change que d'ordre dans « En bref » de `impacts.html` (même
+longueur, mêmes nombres), et le paquet du jumeau porte le nouveau `tableau.py`.

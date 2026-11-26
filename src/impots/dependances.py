@@ -63,7 +63,7 @@ MODULES_LOCAUX: frozenset[str] = frozenset({
     "test_allegements",
     # et deux scripts frères du but 29 : `scripts/juges_passe_b28.py`, que les juges du
     # pouvoir d'achat reprennent (D-591), et `scripts/jumeau_sante.py`, dont « pour vous »
-    # reprend la trajectoire (D-632 ; déclarés à D-695)
+    # reprend la trajectoire (D-632 ; déclarés à D-698)
     "juges_passe_b28", "jumeau_sante",
 })
 

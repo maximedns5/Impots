@@ -326,11 +326,11 @@ Le programme annonce lui-même un montant pour 11 de ses mesures. Ces montants n
 
 ## Ce qui a bougé depuis la série précédente
 
-La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_le_pen/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+La série précédente a tourné sur `01a24df` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_le_pen/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Les deux verdicts lisent le Monte-Carlo (D-345).
 
 | | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
 |---|---|---|---|
-| la part chiffrée (4 mesures sur 25 paramétrées, 36 relevées) | +21,63 Md€ → +21,60 Md€ | +3,02 pt → +3,01 pt | dépend de θ → dépend |
+| la part chiffrée (4 mesures sur 25 paramétrées, 36 relevées) | +21,63 Md€ → +21,60 Md€ | +3,02 pt → +3,01 pt | dépend → dépend |
 
 Ce qui touche chaque ligne :
 

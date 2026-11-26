@@ -67,7 +67,7 @@ def test_le_reel_est_le_nominal_moins_les_prix(session, retailleau) -> None:
 
 def test_les_nombres_de_tete_de_retailleau(session, retailleau) -> None:
     """D-593 : Retailleau, θ½, vue figée, la convention de D-414, en € de 2025 par UC.
-    Sur la série de D-689 (D-693) : +726 en 2026, +645 en 2035 ; D1 +4,76 %, D10 +1,16 %
+    Sur la série de D-689 (D-696) : +726 en 2026, +645 en 2035 ; D1 +4,76 %, D10 +1,16 %
     en 2026. Avant, sur les rapports d'avant D-559 : +791, +707, +5,2 %, +1,1 %."""
     traj, depart = retailleau
     d = calculer(traj, None, depart, session.cellules, cles=["pouvoir_achat"])[
@@ -125,7 +125,7 @@ def test_le_chemin_statique_de_melenchon(session) -> None:
     """D-593 : Mélenchon, que le mode structurel refuse (le Smic, D-412), lu sur la passe
     de sa première année : 68,7 Md€ aux ménages en 2026, +1 463 € par UC (€ de 2024) ; la
     pauvreté reconstituée sur la distribution approchée baisse de 1,12 point (série de
-    D-689, D-693 ; avant : 68,28, +1 454,4, −1,18). Chaque clé de répartition garde le
+    D-689, D-696 ; avant : 68,28, +1 454,4, −1,18). Chaque clé de répartition garde le
     choc de chaque décile."""
     cel = session.cellules
     ch = pouvoir.chocs_du_rapport(session.candidats["pres2027_melenchon_programme"][
@@ -147,7 +147,7 @@ def test_le_chemin_statique_de_melenchon(session) -> None:
 def test_la_page_donne_aux_deux_dimensions_la_bande_des_tirages(session) -> None:
     """D-594 : sur la page (le tableau, D-605), le pouvoir d'achat et l'entente lisent la
     trajectoire vectorisée des tirages des θ que le tableau leur passe : le centre reste
-    celui du réglage (+726 € par UC en 2026, +645 en 2035, D-693), une bande s'y ajoute (le
+    celui du réglage (+726 € par UC en 2026, +645 en 2035, D-696), une bande s'y ajoute (le
     réglage, θ½, n'est pas la médiane des tirages : il peut en sortir)."""
     choix = {**RETAILLEAU, "theta": _theta(session, RETAILLEAU), "tirages": 8}
     out = session.calculer(choix)

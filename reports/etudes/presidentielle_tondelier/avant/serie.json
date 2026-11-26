@@ -4,7 +4,8 @@
     "pres2027_tondelier_programme": {
       "cout": 20059650743.372498,
       "dette": 0.026431867263725595,
-      "selon_theta": "hausse"
+      "selon_theta": "hausse",
+      "verdict": "hausse"
     }
   }
 }

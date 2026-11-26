@@ -39,7 +39,7 @@ def charger() -> dict[str, str]:
     s'importent pas."""
     noms = sorted((m.name for m in pkgutil.iter_modules(impacts.__path__)
                    if not m.name.startswith("_") and m.name not in HORS),
-                  key=lambda n: (ORDRE.index(n) if n in ORDRE else len(ORDRE), n))
+                  key=_rang)
     erreurs: dict[str, str] = {}
     for nom in noms:
         try:
@@ -47,6 +47,19 @@ def charger() -> dict[str, str]:
         except Exception as e:  # dit à la page, pas avalé
             erreurs[nom] = f"{type(e).__name__} : {e}"
     return erreurs
+
+
+def _rang(nom: str) -> tuple[int, str]:
+    return (ORDRE.index(nom) if nom in ORDRE else len(ORDRE), nom)
+
+
+def ordonnees() -> list[str]:
+    """Les dimensions inscrites dans l'ordre de la page, celui de leur module : pas celui
+    de l'inscription, qui suit la première importation dans le processus (un test, ou
+    `site_impacts` qui lit la santé avant de calculer) ; la page en dépendait (D-698)."""
+    inscrites = list(impacts.dimensions())
+    return sorted(inscrites, key=lambda c: (
+        _rang(impacts._REGISTRE[c].__module__.rpartition(".")[2]), inscrites.index(c)))
 
 
 def propre(x: Any) -> Any:
@@ -71,7 +84,7 @@ def calculer_tout(variante: Sequence[Any], reference: Sequence[Any], depart: Any
     degrader = dict(options.pop("degrader", None) or {})
     commune = options.pop("limite_commune", None)
     dims: list[dict[str, Any]] = []
-    for cle in impacts.dimensions():
+    for cle in ordonnees():
         try:
             d = impacts.calculer(variante, reference, depart, cellules, cles=[cle],
                                  **options)[cle]
