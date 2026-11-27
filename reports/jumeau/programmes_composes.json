@@ -1,0 +1,155 @@
+{
+ "decision": "D-656",
+ "commit": "9b340f3c496302640697ac4410d6ecda38617d9a",
+ "tolerances": {
+  "C1": 1e-06,
+  "C2": 0.02,
+  "C3": 0.05,
+  "C4": 0.1
+ },
+ "composition": {
+  "mode": "structurel",
+  "vue": "figee",
+  "convention": "parts_premiere_annee"
+ },
+ "etudes": {
+  "mode": "reduit",
+  "vue": "vieillie"
+ },
+ "theta": 0.5,
+ "programmes": {
+  "melenchon": {
+   "C1": {
+    "pire_ecart_md": 0.0,
+    "tolerance": 1e-06,
+    "tenu": true
+   },
+   "C2": {
+    "composition": 88.98039628178317,
+    "etudes": 89.14891708678408,
+    "ecart_relatif": -0.0018903292435606257,
+    "tolerance": 0.02,
+    "tenu": true
+   },
+   "C3": {
+    "composition": -88.98039628178317,
+    "etudes": -89.14891708678408,
+    "ecart_relatif": 0.0018903292435606257,
+    "tolerance": 0.05,
+    "tenu": true
+   },
+   "C4": {
+    "composition": -66.1767724747076,
+    "etudes": -91.58751750673107,
+    "ecart_relatif": 0.27744768854725155,
+    "tolerance": 0.1,
+    "tenu": false
+   },
+   "dynamique_2026": {
+    "composition": 22.803623807075567,
+    "etudes": -2.4386004199469937
+   },
+   "interaction": {
+    "identifiant": "pres2027_melenchon_interaction",
+    "couts": {
+     "2026": 0.44428591117788585,
+     "2027": 0.5238158399677388,
+     "2028": 0.5259660529933115,
+     "2029": 0.5255317791681904,
+     "2030": 0.5254428269111031,
+     "2031": 0.5254371266845368,
+     "2032": 0.5256220115174841,
+     "2033": 0.5254373176049398,
+     "2034": 0.5254428269111031,
+     "2035": 0.5254371266845368
+    },
+    "cotisations_employeurs": {
+     "2026": 1.3329863169580065,
+     "2027": 1.4092430212143547,
+     "2028": 1.4092427138706007,
+     "2029": 1.4092430212143547,
+     "2030": 1.4092430212143547,
+     "2031": 1.4092430212143547,
+     "2032": 1.4092427138706007,
+     "2033": 1.4092430212143547,
+     "2034": 1.4092430212143547,
+     "2035": 1.4092430212143547
+    }
+   },
+   "mesures": [
+    "pres2027_melenchon_point_indice_10",
+    "pres2027_melenchon_indexation_pensions_prestations_10",
+    "pres2027_melenchon_smic_1700_net",
+    "pres2027_melenchon_garantie_autonomie_jeunes",
+    "pres2027_melenchon_suppression_pfu",
+    "pres2027_melenchon_exonerations_au_dela_2_smic",
+    "pres2027_melenchon_defiscalisation_pensions_alimentaires"
+   ]
+  },
+  "tondelier": {
+   "C1": {
+    "pire_ecart_md": 0.0,
+    "tolerance": 1e-06,
+    "tenu": true
+   },
+   "C2": {
+    "composition": 18.168466799945495,
+    "etudes": 18.1804503622453,
+    "ecart_relatif": -0.0006591455140566677,
+    "tolerance": 0.02,
+    "tenu": true
+   },
+   "C3": {
+    "composition": -18.563931897532555,
+    "etudes": -18.638934493286484,
+    "ecart_relatif": 0.004023974427344241,
+    "tolerance": 0.05,
+    "tenu": true
+   },
+   "C4": {
+    "composition": -10.084762012186076,
+    "etudes": -15.506382773654423,
+    "ecart_relatif": 0.34963800652978605,
+    "tolerance": 0.1,
+    "tenu": false
+   },
+   "dynamique_2026": {
+    "composition": 8.47916988534648,
+    "etudes": 3.132551719632062
+   },
+   "interaction": {
+    "identifiant": "pres2027_tondelier_interaction",
+    "couts": {
+     "2026": -0.019441697849579498,
+     "2027": -0.021650584965271946,
+     "2028": -0.02162152115283078,
+     "2029": -0.021620088573914842,
+     "2030": -0.021620082510192873,
+     "2031": -0.021620082509461014,
+     "2032": -0.021621597805175696,
+     "2033": -0.021620082509461014,
+     "2034": -0.021620082510192873,
+     "2035": -0.021620082509461014
+    },
+    "cotisations_employeurs": {
+     "2026": 0.018703879650637134,
+     "2027": 0.01998492714794864,
+     "2028": 0.019984927147946863,
+     "2029": 0.01998492714794864,
+     "2030": 0.01998492714794864,
+     "2031": 0.01998492714794864,
+     "2032": 0.019984927147946863,
+     "2033": 0.01998492714794864,
+     "2034": 0.01998492714794864,
+     "2035": 0.01998492714794864
+    }
+   },
+   "mesures": [
+    "pres2027_tondelier_tranche_ir_60",
+    "pres2027_tondelier_smic_2000_brut",
+    "pres2027_tondelier_point_indice_inflation",
+    "pres2027_tondelier_apl_plus_10"
+   ]
+  }
+ }
+}

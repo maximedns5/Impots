@@ -181,7 +181,20 @@ def donnees() -> dict[str, Any]:
              "persistence": premier["persistence"]}
     return {"entrees": navigateur.lire(), "cadre": cadre, "candidats": cands,
             "hypotheses": navigateur.HYPOTHESES, "annees": list(navigateur.ANNEES),
-            "juge": juge(), "origines_loi": navigateur.ORIGINES_LOI}
+            "juge": juge(), "origines_loi": navigateur.ORIGINES_LOI,
+            "niveaux_de_vie": niveaux_de_vie()}
+
+
+def niveaux_de_vie() -> dict[str, Any] | None:
+    """La distribution mesurée des niveaux de vie dans les cellules (D-591, des agrégats
+    commités), pour la dimension « ce qui rapproche ou sépare » ; la page la reçoit avec
+    ses entrées, jamais par un fichier. Absente, la dimension prend l'approchée, et le
+    dit."""
+    from impots.jumeau.impacts import entente
+
+    if not entente.FICHIER.exists():
+        return None
+    return json.loads(entente.FICHIER.read_text(encoding="utf-8"))
 
 
 # --------------------------------------------------------------------------- #
@@ -209,6 +222,11 @@ for choix in json.loads(sys.argv[1]):
     # La page de la cascade (D-484) fait tourner le même paquet, par `cascade`.
     from impots.jumeau import cascade
     cascade.calculer(s, {**choix, "theta_commun": 0.5})
+# La page « Ce que ça change » (D-607) : une proposition composée, toutes les dimensions.
+navigateur.impacts_json(s, json.dumps({"composition": [
+    {"candidat": premier, "echelle": 0.5, "decalage": 1},
+    {"hypothese": {"instrument": "tva", "montant": -5, "debut": 2027, "fin": 2035}}],
+    "tirages": 3}))
 modules = sorted(m.__file__ for n, m in list(sys.modules.items())
                  if n.split(".")[0] == "impots" and getattr(m, "__file__", None))
 import sysconfig

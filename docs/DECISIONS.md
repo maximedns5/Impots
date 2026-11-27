@@ -40229,6 +40229,3133 @@ Md€ (D-563). Le désaccord de fond, à trancher avant tout point : le T305 (he
 et l'Urssaf (ETP, DSN) ne disent pas la même densité de 2 à 2,5 Smic une fois le D9 de la
 Dares gardé.
 
+## D-590 — Le but 29 : ce qu'une mesure change pour les gens
+
+Dans la nuit du 17 au 18 novembre, le propriétaire demande de développer, sans attendre
+sa validation, ce qui permet de mesurer une proposition dans tout ce qu'elle touche : le
+pouvoir d'achat, le moral des gens, la productivité des entreprises, l'entente entre les
+gens, l'économie en général, avec la souplesse de composer sa proposition ; le matin, la
+chose doit pouvoir servir. Ce que le dépôt sait déjà faire : les comptes publics, l'emploi
+et le PIB du jumeau, les gagnants et perdants par décile (`jumeau/gagnants.py`). Ce qui
+manque : le revenu réel par groupe dans le temps, la pauvreté et les écarts entre groupes,
+le bien-être, la productivité, et une page qui les montre ensemble pour une proposition.
+
+**Décidé par le coordinateur, à la demande du propriétaire.** Le but 29 (BUT.md) : quatre
+volets en parallèle, `pouvoir`, `bienetre`, `productivite` et `tableau`, sur la population
+de D-553 (empreinte 5ace8bb6), pendant que la série des études (D-556, D-558) et le recalage
+sur l'Urssaf (D-580 et la suite) continuent. `claude/but29` part de `claude/but28`
+(1b30dff).
+Chaque dimension a une source publiée par coefficient, une bande, et un statut : jugée
+(un chiffrage officiel fait après coup, préenregistré) ou sourcée non jugée. Le moral et
+l'entente entre les gens n'ont pas de juge aveugle connu : ils sont montrés comme des
+ordres de grandeur sourcés, jamais comme des prévisions vérifiées. Les numéros : D-591 à
+D-609 par volet, D-610 et la suite pour la jonction.
+
+## D-591 — Le pouvoir d'achat et l'entente (1) : deux dimensions, leur juge préenregistré
+
+**Ce que fait le volet** (BUT.md, but 29, volet 1 ; D-590). Deux dimensions inscrites dans
+`jumeau/impacts` (commit 0775711), calculées sur la trajectoire du jumeau, son départ et
+ses cinquante cellules (décile × type de ménage, D-409), dans le navigateur (numpy seul) :
+
+* **le pouvoir d'achat** (`impacts/pouvoir.py`) : par cellule et par année, le gain
+  nominal (le choc statique de la mesure sur le décile, au prorata des ménages, et ce que
+  la dynamique apporte : `gagnants`), l'indexation des pensions et prestations sur le prix
+  de la consommation (p̂c P, Mésange p. 100), ce que la hausse des prix reprend (p̂c RD),
+  le gain réel (nominal + indexation − reprise, au premier ordre, comme le bloc
+  `consommation`) ; en € de 2025 par UC (le déflateur de la consommation de la référence,
+  chaîné) et en % du revenu disponible ; par décile, par type, par six cas types (des
+  cellules nommées), et la part des ménages gagnants et perdants (le seuil de 10 € de
+  `gagnants`). Les bandes : les quantiles de 5 et 95 % d'une trajectoire tirée sur les
+  lois de θ du navigateur (`trajectoire_tiree` : le tirage 0 au réglage, 200 tirages
+  ensemble, la graine de D-459) ; un seul tirage, pas de bande, et c'est dit ;
+* **ce qui rapproche ou sépare** (`impacts/entente.py`) : le taux de pauvreté à 60 % du
+  médian (ensemble et par type), le Gini, D9/D1, S80/S20 des niveaux de vie, et l'écart
+  moyen des groupes à la moyenne (types ; âge, statut de la personne de référence et
+  territoire quand la distribution les porte). Reconstitués : dans chaque cellule, une
+  distribution des niveaux de vie (mesurée sur la passe des cellules par
+  `scripts/jumeau_niveaux_de_vie.py`, ou à défaut approchée par interpolation entre les
+  niveaux de vie moyens des déciles), chaque personne déplacée du gain de sa cellule par
+  UC ; puis la répartition du mélange, interpolée, continue. **Aucun coefficient ne relie
+  ces écarts à la confiance** : la dimension ne mesure pas l'entente, elle mesure ce que la
+  littérature tient pour une de ses conditions matérielles, et le dit.
+
+Les deux dimensions sont « sourcées, non jugées » jusqu'à D-592. Ce que la méthode ne voit
+pas, écrit dans chaque `Dimension.limites` : une cellule n'a pas de distribution du gain
+(une mesure ciblée à l'intérieur d'une cellule est vue comme un gain uniforme) ; le choc
+statique vient par décile et se répartit entre types au prorata des ménages, d'où un gain
+par UC plus haut chez les personnes seules qui n'est pas une propriété de la mesure.
+
+**Le juge** : l'Insee et la Drees publient après coup, dans *France, portrait social*,
+l'effet des mesures socio-fiscales d'une année sur le niveau de vie par décile et sur la
+pauvreté (le modèle Ines). Deux mesures que le moteur sait rejouer sur la population de
+D-553 ramenée à l'année (indices constatés de l'Insee, D-360, D-362 ; la structure reste
+celle de 2024, dit) ; le script `scripts/juges_pouvoir_b29.py`, commité avec cette entrée ;
+aucune passe n'a tourné, aucune publication des juges n'a été ouverte. Passes de 20 000
+ménages, détachées, sous le verrou commun, une à la fois ; ménages gardés hors git.
+
+**L'aveugle, dit.** La part du gain de la prime de 2019 par décile est lue (D-536 :
+*Portrait social* 2020, figure 8) : contrôle, compté à part. L'enregistreur ne connaît ni
+l'effet publié de la prime sur la pauvreté, ni l'effet par décile de la baisse de l'impôt
+de 2020 ; il sait de mémoire le montant annoncé de cette baisse (« 5 milliards ») et
+qu'elle visait les « classes moyennes », sans nombre par décile.
+
+### Cas 1 — La prime d'activité de 2019 : la pauvreté et les inégalités
+
+**La mesure.** Celle de D-535 : la loi de 2019 contre la même loi à la bonification de
+2018 (miroir), la prime servie en espérance (`population.recours`). **Les grandeurs** :
+l'effet sur le taux de pauvreté (60 % du médian, pondéré personne, chaque situation à sa
+médiane), en points ; sur le Gini (en points, ×100) et sur D9/D1 s'ils sont publiés ;
+chacun mesuré (a) sur les ménages de la passe, (b) **reconstitué sur les cellules, le
+nombre que la dimension montre**, depuis les seuls chocs par décile (pondérés ménage, rang
+sans la mesure, comme les rapports), ramenés aux euros des cellules par le rapport des
+médianes. Le juge : *France, portrait social* 2020, l'effet de la revalorisation
+exceptionnelle de la prime sur le taux de pauvreté (et sur les inégalités) ; s'il ne donne
+que l'effet de l'ensemble des mesures de 2019, la grandeur est **sans juge**, non notée,
+et rien n'est mis à sa place.
+
+### Cas 2 — La baisse de l'impôt sur le revenu de 2020 : qui y gagne, et la pauvreté
+
+**La mesure.** La loi de finances pour 2020, art. 2 : la loi de 2020 (revenus de 2020 :
+11 % de 10 084 à 25 710 €, la décote à 779 et 1 289 €, 45,25 %) contre la même loi au
+barème et à la décote des revenus de 2019 (14 % jusqu'à 27 794 €, 1 208 et 1 990 €, 75 %),
+revalorisés de 0,2 % comme le seuil de la dernière tranche, que la loi n'a pas touché. Sur
+la population ramenée à 2020 (l'activité partielle de 2020 baisse le salaire par tête de
+3,7 %, `insee_constate`). **Les grandeurs** : le coût ; le gain moyen de niveau de vie par
+personne et par décile (rang sans la mesure) ; les parts du gain de D1 à D3 et de D8 à
+D10 ; le décile au gain moyen le plus haut ; la pauvreté, le Gini et D9/D1 comme au cas 1,
+(a) et (b). Le juge : *France, portrait social* 2021, l'effet de la baisse de l'impôt sur
+le revenu par décile et, s'il est publié pour elle, sur la pauvreté ; sinon, comme au
+cas 1, sans juge.
+
+**Les tolérances, et leur raison.** Le gain moyen : à 30 % du juge (la population a la
+structure de 2024, Ines a ses propres revenus de 2020). Le décile au gain le plus haut : à
+un décile près ; la part de D1 à D3 à 5 points ; celle de D8 à D10 à 10 points (D-535). La
+pauvreté : dans la tolérance si l'écart au juge est d'au plus 0,1 point, ou, quand le juge
+dépasse 0,2 point en valeur absolue, si le rapport est entre 0,5 et 2 (les cellules ne
+voient pas où tombe le gain dans le décile ; Ines n'a pas le recours en espérance). Le
+Gini : 0,1 point (×100) ; D9/D1 : 0,03. Le nombre noté est (b), celui de la dimension, sur
+la distribution mesurée si sa passe a tourné avant, sinon l'approchée ; (a) et l'autre
+distribution sont rapportés à côté. Hors juge, contrôle de la méthode : (b) à 0,1 point
+de (a) pour la pauvreté.
+
+**Le pronostic.** *La prime* : la pauvreté (a) −0,25 point (−0,10 à −0,40), (b) −0,20
+(−0,05 à −0,35) ; le modèle sous le juge en valeur absolue (son gain est un à deux
+déciles trop haut, D-536), rapport 0,6 : dans la tolérance de peu ; le Gini (a) −0,15
+(−0,05 à −0,25) ; D9/D1 −0,03 (−0,01 à −0,06). *L'impôt de 2020* : le coût 5,0 Md€ (4,0
+à 6,0) ; le gain moyen 110 € par personne (85 à 135) ; le gain le plus haut en D7 ou D8 ;
+D1 à D3, 4 % du gain (0 à 8) ; D8 à D10, 33 % (25 à 42) ; la pauvreté (a) +0,02 point
+(−0,03 à +0,08 : le seuil monte avec la médiane, le bas ne gagne rien), (b) de même ; le
+Gini −0,05 (−0,15 à +0,05). Contre le juge : les déciles dans la tolérance, la pauvreté
+dans la tolérance.
+
+**Rien n'est retouché après le premier calcul** ; un cas manqué reste écrit. Le résultat
+ira dans D-592 ; les nombres des dimensions sur des programmes réels, dans D-593.
+
+## D-593 — Le pouvoir d'achat et l'entente (3) : les nombres sur trois programmes réels
+
+**Ce qui a tourné** (commits 0775711, 923f50b ; le jumeau seul, en secondes, aucune passe
+sur la population). Le mode structurel du navigateur, vue figée, la convention de D-414
+(`parts_premiere_annee`), θ½ au tirage 0, et 200 tirages des lois de θ (la graine de
+D-459) pour les bandes, `trajectoire_tiree` : 2,4 s la trajectoire, 0,1 s la dimension.
+La distribution des niveaux de vie dans les cellules est **l'approchée** : la passe de
+la mesurée (`scripts/jumeau_niveaux_de_vie.py`, 93 s) attend le verrou commun, tenu
+depuis 23 h 30 UTC par une étude d'une autre session ; ses nombres iront dans D-594. Les
+bandes sont celles des θ seuls (5 et 95 %), pas celles de la méthode des cellules.
+
+**Les références reconstituées** (approchée, 2024) : pauvreté 15,6 %, Gini 0,300, D9/D1
+4,15, S80/S20 4,66, médiane 24 897 € ; l'Insee publie, pour 2023, de l'ordre de 15 %,
+0,29 à 0,30, 3,4 et 4,5 (de mémoire, non relu ici) : **D9/D1 est trop haut** (le bas de
+la distribution, prolongé linéairement sous le premier décile), le reste du bon ordre.
+
+**Retailleau** (37,5 Md€ aux ménages en 2026, chocs statiques et dynamique) :
+
+| | 2026 | 2030 | 2035 | bande 2035 |
+|---|---:|---:|---:|---|
+| gain réel, € de 2025 par UC | +791 | +767 | +707 | +639 à +764 |
+| en % du revenu disponible | +2,67 | +2,49 | +2,18 | +1,97 à +2,36 |
+| D1 / D5 / D10, % | +5,2 / +4,1 / +1,1 | | +4,7 / +3,4 / +0,8 | |
+| ce que les prix reprennent, € par UC | −7 | −15 | −33 | −85 à +9 |
+| pauvreté, points | −0,82 | −0,74 | −0,77 | −0,79 à −0,73 |
+| Gini, points (×100) | −0,71 | −0,72 | −0,63 | −0,64 à −0,60 |
+
+Les prix de la consommation baissent (−0,04 % en 2026, −0,15 % en 2035) : la « reprise »
+est négative, les prix rendent un peu de pouvoir d'achat. Tous les ménages gagnent.
+
+**Attal** (53,5 Md€ en 2026, 39,7 en 2035) : +1 133 € par UC en 2026 (+3,8 %), +848 en
+2035 (+594 à +1 101) ; D1 +1,9 %, D5 +4,7 %, D10 +3,7 % en 2026 : le gain va au milieu et
+au haut. Les prix baissent de 0,70 % en 2035, ce qui rend 153 € par UC. **La pauvreté
+monte de 1,1 point en 2026** (la médiane monte plus vite que le bas : la pauvreté est
+relative), puis +0,13 en 2035 (−0,02 à +0,57) ; le Gini +0,07 puis −0,14. En 2035, 0 à
+4,6 % de ménages perdants selon les tirages.
+
+**Mélenchon**, que le mode structurel refuse (le Smic, D-412), sur le seul choc statique
+de la passe de sa première année (`chocs_du_rapport`, `revenus_statiques`) : 68,3 Md€
+aux ménages en 2026, dont −5,9 Md€ pour D10 ; +1 454 € par UC (€ de 2024, +5,1 %), D1
++2 380, D10 −1 262 ; 90 % de gagnants, D10 entier perdant ; la pauvreté −1,18 point, le
+Gini −2,24 points, D9/D1 −0,31. Sans dynamique ni prix : ni l'emploi que le Smic détruit
+ou crée, ni la hausse des prix qu'il ferait ; dit sur la dimension.
+
+**Ce que le type de ménage ne dit pas.** Le choc d'un décile se répartit entre ses types
+au prorata des ménages ; une personne seule a une UC, un couple avec enfants plus de
+deux : à gain égal par ménage, le gain par UC des personnes seules est le double. Les
+bornes sous deux autres clés (UC, revenu) le montrent : Retailleau, personnes seules
++1 160 (ménages) contre +776 (UC) ; Mélenchon +2 316 contre +1 563. **Le gain par type
+est un ordre de grandeur, pas un résultat** ; il faudrait les chocs par décile et par
+type dans les rapports des études (la passe les a), un champ que les rapports n'ont pas.
+
+**Ce qui n'est pas fait, et pourquoi.** Aucun coefficient ne relie les écarts à la
+confiance ou à la cohésion : ceux que l'enregistreur connaît (corrélations entre pays du
+Gini et de la confiance) ne sont pas des effets d'une mesure, et il ne les a pas relus ;
+l'entente reste « ce qui rapproche ou sépare » en niveaux de vie. Le territoire et l'âge
+attendent la distribution mesurée.
+
+**Pour le volet `tableau`.** `impacts.calculer(traj, None, depart, cellules)` rend les
+deux dimensions ; pour des bandes, une trajectoire de `pouvoir.trajectoire_tiree(session,
+choix, tirages)` (tirage 0 au réglage) ; pour une mesure refusée, `options["revenus"] =
+pouvoir.revenus_statiques(pouvoir.chocs_du_rapport(premiere_annee), cellules)`. La
+distribution mesurée est lue dans `reports/jumeau/niveaux_de_vie_cellules.json` quand le
+fichier est là (à embarquer dans le paquet de la page), sinon l'approchée.
+
+## D-595 — Le moral des gens (1) : la dimension, ses coefficients, le contrôle préenregistré
+
+**Ce qui est fait** (volet `bienetre` du but 29, D-590). Une dimension « moral », inscrite
+dans `jumeau/impacts` (`jumeau/impacts/moral.py`), traduit ce que la trajectoire fait aux
+ménages en satisfaction dans la vie (de 0 à 10, la question de SRCV) et en WELLBY (un point
+de satisfaction pour une personne pendant un an). Quatre canaux, chacun avec un coefficient
+publié et sa bande (`jumeau/parametres/moral.yaml`, document, page du PDF, valeur) :
+
+| canal | coefficient | centre | bande | source |
+|---|---|---:|---|---|
+| revenu réel (log, par décile) | β, par unité de log | 0,425 | 0,35 à 0,50 | Green Book, document de fond, p. 19 (Lindqvist et al. 2020) |
+| chômage propre | δ, par chômeur et par an | 0,46 | 0,38 à 0,53 | Green Book, annexe A2, p. 65 (Clark et al. 2018) |
+| chômage autour de soi | ε, par adulte et point de chômage | 0,0279 | 0,0102 à 0,0390 | DMO 2001, tableau 1 (−2,0 ; −1,7 à −2,8), ancré ; bas : Helliwell et Huang 2014 |
+| inflation (moyenne sur trois ans) | φ, par adulte et point | 0,0195 | 0,0098 à 0,0321 | DMO 2001, tableau 1 (−1,4 ; −0,7 à −2,3), ancré |
+
+L'ancrage : DMO estiment sur une échelle de 1 à 4 ; leur coefficient d'un chômeur, sur la
+même échelle, est −0,33 (tableau A1). Un coefficient c du taux (en fraction) est porté sur
+0-10 par (c / 100) δ / 0,33 : le rapport des effets de DMO, à l'échelle du chômage propre
+du Green Book (choisi ; la règle linéaire 10/3 donnerait 2,4 fois plus, non retenue).
+L'insécurité de l'emploi n'est pas un canal de plus : elle passe par ε (Helliwell et Huang,
+p. 36-37 ; DMO, p. 11, « fear of unemployment »). Les adultes : la part des 16 ans ou plus,
+0,8183 (Eurostat, demo_pjan, France, 2024), des personnes des cellules, uniforme entre
+déciles. L'équivalent monétaire : la valeur d'un WELLBY du Green Book, 13 000 £ de 2019
+(10 000 à 16 000), au cours moyen de la BCE de 2019 (0,8777706 £ pour 1 €), soit 14 810 €
+de 2019, une convention ; elle se fonde sur un coefficient du revenu de 1,96, pas sur β,
+ce que les limites disent. Les entrées : le revenu disponible des dix déciles, le chômage,
+la population active et l'écart du prix de la consommation (D-414) de la variante et de la
+référence, au tirage 0. Statut : « sourcé, non jugé ». Aucun coefficient n'est estimé sur
+la France : les coefficients de l'Insee n'ont pas été lus, pour garder le contrôle aveugle.
+
+Les cellules lues sont celles de `reports/jumeau/entrees_navigateur.json` : leurs totaux
+(67 266 697 personnes, 1 352,2 Md€ de revenu disponible, 2 492 518 chômeurs) sont ceux de
+`jumeau_cellules_2024.json` de la population de D-553 (empreinte 5ace8bb6), au bit.
+
+**Le contrôle, préenregistré avant tout calcul sur les cellules** (pas un juge : un écart
+de l'état de départ, ce que la dimension doit retrouver de ce que SRCV publie).
+
+* **C1, le revenu, aveugle.** L'écart de satisfaction entre le cinquième et le premier
+  quintile de niveau de vie que la dimension implique au départ : β fois l'écart de la
+  moyenne du log du niveau de vie (revenu disponible sur unités de consommation des
+  cellules) des déciles 9-10 et 1-2, pondérée par les personnes (`controle_depart`). Le
+  juge : Eurostat, `ilc_pw02` (« Overall life satisfaction by income quintile, household
+  composition and degree of urbanisation », EU-SILC, dont SRCV est la part française),
+  France, tous ménages, tous degrés d'urbanisation, QU5 moins QU1, la dernière année
+  publiée ; à côté, sans juger, les autres années et, s'il existe, le tableau par quintile
+  de l'Insee (« Satisfaction dans la vie de 2010 à 2025 », Insee Résultats). Aucune de ces
+  valeurs n'a été lue. **Tolérance** : le rapport modèle / publié dans [0,5 ; 1,5]. Raison :
+  β est un effet causal, à caractéristiques données ; l'écart publié est brut et porte
+  aussi la santé, l'emploi, le diplôme, qui suivent le revenu : un rapport sous 1 est
+  attendu ; sous la moitié, la dimension manquerait l'essentiel du gradient ; au-dessus de
+  1,5, elle l'exagérerait. **Pronostic** : dans la tolérance, entre 0,5 et 0,9.
+* **C2, le chômage, NON aveugle.** L'écart entre personnes en emploi et chômeurs :
+  δ plus β fois l'écart de log du niveau de vie moyen des cellules, pondéré par les
+  personnes en emploi et par les chômeurs. Le juge : le tableau le plus récent de l'Insee
+  par statut d'activité (SRCV) que la recherche trouve ; à défaut, l'Insee Focus qui
+  publie la note des chômeurs et des personnes en emploi. **Il n'est pas aveugle** : un
+  extrait de recherche, lu en cherchant la source, donnait 6,3 contre 7,4 (données de 2014
+  à 2017, un Insee Focus) et 6,1 contre 7,5 (un article de presse, année non dite).
+  Même tolérance, [0,5 ; 1,5], pour la même raison. **Pronostic** : dans la tolérance,
+  vers 0,6 (δ fait l'essentiel ; les cellules, sans distribution interne, sous-estiment
+  l'écart de revenu entre chômeurs et personnes en emploi d'un même décile).
+
+Le résultat, dans D-596. La dimension tourne aussi sur trois programmes (Retailleau et
+Attal, le mode structurel, vieillie, la convention « parts_premiere_annee » ; Mélenchon,
+que le structurel refuse, par la convention « mesures_seules » de D-502), θ ½ : un ordre de
+grandeur, sans juge, dit dans D-597.
+
+## D-596 — Le moral des gens (2) : le contrôle de l'état de départ, deux sur deux
+
+Le préenregistrement de D-595 est commité et poussé (d68da81) avant le calcul ; les deux
+juges sont lus ensuite (Eurostat `ilc_pw02`, extrait le 17 novembre 2026, mis à jour le
+6 juillet 2026 ; Insee Résultats « Satisfaction dans la vie de 2010 à 2025 », fichier
+`srcv_satisfaction_f.xlsx`, France hors Mayotte, créé le 28 septembre 2026, onglets
+« emploi » et « niveau de vie » ; tous deux au manifeste de `data/raw`). Les écarts du
+modèle (`controle_depart`, cellules de la population de D-553), au centre et aux bornes de
+β et δ :
+
+| contrôle | modèle (bande) | publié | rapport | tolérance | tient |
+|---|---:|---:|---:|---|---|
+| C1 : Q5 − Q1, aveugle | 0,660 (0,543 à 0,776) | 1,3 (Eurostat, 2025 : 7,8 − 6,5) | 0,51 | [0,5 ; 1,5] | oui, au bord |
+| C2 : emploi − chômage, non aveugle | 0,565 (0,466 à 0,653) | 1,0 (Insee, 2025 : 7,4 − 6,4) | 0,56 | [0,5 ; 1,5] | oui |
+
+**Les deux tiennent ; C1 au bord.** Le rapport de C1, 0,507, est à 0,007 de la borne. Le
+publié est l'écart de deux moyennes arrondies au dixième : entre 1,25 et 1,35, le rapport
+va de 0,49 à 0,53 ; la tenue n'est pas solide, et le pronostic (« entre 0,5 et 0,9 ») n'est
+atteint qu'à son bord bas. Les autres années d'Eurostat (2013 : 1,3 ; 2018 : 1,0 ; 2021 :
+1,1 ; 2022 : 1,1 ; 2023 : 1,2 ; 2024 : 1,4) donneraient de 0,47 à 0,66 ; non jugées. Le
+pronostic de C2 (vers 0,6) est tenu (0,56), mais C2 n'était pas aveugle (D-595).
+
+**Ce que le contrôle dit.** Le canal du revenu explique environ la moitié du gradient de
+satisfaction par niveau de vie, et δ plus le revenu un peu plus de la moitié de l'écart
+entre chômeurs et personnes en emploi : c'est ce qu'on attend de coefficients causaux,
+« à caractéristiques données », face à des écarts bruts qui portent aussi la santé (de 5,5
+à 8,0 selon l'état de santé, même fichier), le diplôme et le logement. La dimension ne
+prétend donc pas reproduire le niveau de satisfaction des groupes, seulement ce qu'une
+mesure en change par ses canaux. Elle ne surestime pas le gradient.
+
+**La forme, non jugée.** Par décile, l'écart au premier décile (Insee 2025, de 6,5 à 7,9) :
+
+| décile | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| modèle | 0,19 | 0,28 | 0,35 | 0,40 | 0,45 | 0,51 | 0,57 | 0,65 | 0,88 |
+| Insee 2025 | 0,1 | 0,3 | 0,5 | 0,6 | 0,8 | 1,0 | 1,0 | 1,2 | 1,4 |
+
+Le log du niveau de vie fait monter le modèle vite en bas et en haut (le dixième décile,
+71 539 € par unité de consommation dans les cellules) ; la satisfaction publiée monte à peu
+près régulièrement d'un décile à l'autre. Le D10 − D1 du modèle, 0,883, fait 0,63 du
+publié (1,4). Rien n'est retouché : aucune tolérance ni coefficient ne change après ce
+calcul, et le coefficient de l'Insee, s'il en publie un, n'a pas été lu.
+
+Un test léger tient ces nombres (`test_controle_depart_sur_les_cellules_commitees`).
+
+## D-597 — Le moral des gens (3) : Mélenchon, Retailleau et Attal, un ordre de grandeur
+
+**Ce qui tourne** (`scripts/jumeau_moral.py`, commit 1a0dfe1, rapport
+`reports/jumeau/moral_programmes.json`, des agrégats). Le mode structurel, vue vieillie,
+convention « parts_premiere_annee », θ ½ pour chaque θ lu, tirage 0. Retailleau et Attal
+tournent comme un tout ; Mélenchon, que le structurel refuse comme un tout (des
+prélèvements agrégés sans ventilation, D-412), par ses mesures seules et leur interaction
+(D-502). Le jumeau tourne en secondes : aucune passe sur la population. Statut : « sourcé,
+non jugé » ; aucun de ces nombres n'est une prévision vérifiée.
+
+**En 2035** (milliers de WELLBY par an, l'enveloppe des coefficients entre crochets ;
+l'écart moyen de satisfaction d'un des 55,0 millions d'adultes ; l'équivalent monétaire à
+14 810 € de 2019 le WELLBY, une convention) :
+
+| programme | WELLBY 2035 | revenu | chômeurs | autour | inflation | points / adulte | Md€ 2019 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Mélenchon | 960 [374 ; 1 676] | +1 681 | −63 | −589 | −69 | +0,017 | 14,2 |
+| Retailleau | 1 960 [1 081 ; 2 573] | +673 | +114 | +1 144 | +29 | +0,036 | 29,0 |
+| Attal | 4 281 [2 096 ; 5 752] | +827 | +306 | +3 065 | +83 | +0,078 | 63,4 |
+
+Sur dix ans (2026-2035), en millions de WELLBY : Mélenchon 15,6 [10,6 ; 20,8], dont le
+revenu +18,6, l'inflation −1,1, le chômage autour de soi −1,7 et celui des chômeurs −0,2 ;
+Retailleau 17,9 [10,4 ; 23,2], dont le revenu +7,4 et le chômage autour de soi +9,3 ;
+Attal 35,7 [18,2 ; 47,7], dont le revenu +8,5 et le chômage autour de soi +24,0.
+
+**Par décile, en 2035** (points de satisfaction d'un adulte, tous canaux) : Mélenchon de
++0,062 (D1) à −0,016 (D10), le seul décile qui y perde ; Retailleau de +0,044 (D1) à +0,026
+(D10) ; Attal de +0,078 (D1) à +0,073 (D10), presque plat, parce que le chômage autour de
+soi, commun à tous, y fait l'essentiel.
+
+**Ce que ces nombres disent, et ce qu'ils ne disent pas.**
+
+1. Le canal du revenu suit le revenu réel par décile du jumeau ; il est le plus solide
+   (β entre 0,35 et 0,50, et le contrôle de D-596 dit qu'il ne surestime pas le
+   gradient). Mélenchon y fait plus du double des deux autres.
+2. Le chômage autour de soi pèse le plus chez Retailleau et Attal : un point de chômage en
+   moins touche 55 millions d'adultes. C'est ce que trouvent Helliwell et Huang (l'effet
+   indirect, à l'échelle de la population, plus grand que la perte des chômeurs), mais
+   c'est aussi le coefficient le plus incertain (0,0102 à 0,0390, presque 1 à 4) et il
+   multiplie l'emploi du jumeau, lui-même discuté (D-488 : Attal, +440 000 emplois avec
+   l'élasticité agrégée du coût du travail, environ +190 000 avec la matrice de
+   Bozio-Wasmer). Le classement des trois programmes dépend donc surtout de leur effet sur
+   le chômage, que le moral ne fait qu'amplifier.
+3. Les limites sont écrites dans la dimension (`LIMITES`) : pas d'adaptation hédonique au
+   revenu (une hausse durable est comptée chaque année), pas de comparaison sociale (une
+   hausse générale vaut moins qu'une hausse individuelle : le canal du revenu est un haut),
+   des coefficients estimés hors de France, des déciles sans distribution interne, l'âge
+   des adultes uniforme entre déciles. L'équivalent monétaire se fonde sur un coefficient
+   du revenu de 1,96 (Fujiwara) : il ne se compare pas au coût budgétaire.
+
+**Pas de test des nombres des programmes** : ils dépendent de tout le jumeau, que les
+autres volets changent ; le rapport commité les tient, avec son commit. Les tests légers
+tiennent les coefficients, les canaux à la main et le contrôle de départ.
+
+**Ce qui reste à décider** (le propriétaire) : (a) garder l'ancrage de ε et φ sur le
+chômage propre ou la règle linéaire 10/3 (2,4 fois plus) ; (b) borner l'adaptation
+hédonique (par exemple, un effet du revenu qui décroît de 0,425 à 0,13 sur cinq ans, Clark
+et al. 2018) ; (c) compter les moins de 16 ans ; (d) chercher un coefficient du revenu
+estimé sur SRCV, qui remplacerait la littérature après un nouveau préenregistrement.
+
+## D-600 — La productivité : ce que le jumeau porte déjà, et les canaux qui manquent
+
+**Pourquoi** (D-590, volet `productivite`). Dire ce qu'une mesure fait à la productivité
+des entreprises, et par là au PIB potentiel, au PIB et au salaire réel, année par année,
+avec bandes et statut ; une dimension `productivite` inscrite dans `jumeau/impacts`.
+Numéros du volet : D-600 à D-604. Cette entrée est l'inventaire, avant tout calcul.
+
+**Ce que le jumeau porte déjà** (lu dans `jumeau/blocs`, mode structurel) :
+
+* **La tendance est exogène.** `tendance` fait croître le PIB de la référence au taux des
+  entrées (croissance réelle et prix du cadre des études) : la productivité tendancielle
+  n'y est pas un objet, elle est dans la croissance donnée. Aucune mesure ne la touche.
+* **L'investissement passe au capital et au potentiel, pour la fiscalité des
+  entreprises.** `investissement` (D-407) : l'IS, la CVAE et la C3S entrent au coût
+  d'usage (Mésange, p. 42), l'investissement répond (p. 44, ε_K = 0,44), le capital
+  s'accumule (δ = 0,0777) et le PIB potentiel gagne s_K ΔK/K (sur les revenus non
+  ventilés). L'accélérateur (D-414) ajoute la demande d'investissement, qui n'entre pas
+  au capital du potentiel (dit dans le bloc). Les cotisations employeurs n'entrent pas au
+  coût d'usage (des impôts sur la main-d'œuvre, comme dans Mésange).
+* **La démographie des entreprises** (`productivite` de `demographie.py`, D-407) : la
+  valeur ajoutée des entrantes et des sortantes à la marge, à leur productivité relative
+  (r = 0,10), sur le PIB potentiel ; le champ `productivite_moyenne`.
+* **L'emploi et les salaires** : l'emploi répond au coût réel du travail (Mésange,
+  élasticité 0,44 ; le profil des non qualifiés pour l'allègement ciblé) ; le salaire
+  s'indexe à long terme sur la productivité apparente (équation WS, Mésange p. 58 du
+  PDF : « la productivité apparente du travail et les prix de valeur ajoutée, auxquels le
+  salaire s'ajuste intégralement »). Le Smic et ses allègements passent par `travail`
+  (D-478) : une hausse du Smic relève les salaires sous lui, et la RGDU, exprimée en Smic
+  de l'année, ouvre plus d'allègement ; la loi seule baisse donc le coût (−2,2 % de la
+  masse super-brute marchande pour +16,17 % de Smic), la diffusion le relève (+2,4 %).
+* **Ce que la productivité apparente du jumeau contient donc** : le PIB en volume sur
+  l'emploi ; la composition (un emploi à bas salaire en moins relève la moyenne), le
+  capital du coût d'usage, la démographie. **Ce qu'elle ne contient pas** : un effet de
+  la mesure sur l'efficacité des entreprises elles-mêmes (la productivité globale des
+  facteurs, PGF) : ni salaire d'efficience, ni pression du coût du travail, ni R&D.
+
+**Les canaux, un par mécanisme** (paramètres dans `jumeau/parametres/productivite.yaml`,
+chacun avec document, page, valeur et bande ; tous hors du jumeau, montrés à côté) :
+
+1. **La pression du coût du travail** (`pression_cout`) : une hausse du coût du travail
+   des entreprises relève leur PGF (organisation, formation, salaire d'efficience) ; la
+   baisse la réduit, si le mécanisme est symétrique. Riley et Rosazza Bondibene (NIESR
+   DP 449, 2015 ; Labour Economics 2017), tableau 1 p. 27 : à l'introduction du salaire
+   minimum britannique, coût moyen du travail des entreprises à bas salaires +4,2 %, PGF
+   +3,2 %, ratio capital-travail et emploi sans effet significatif ; η = 0,032 / 0,042 =
+   0,76 en haut. Harasztosi et Lindner (2015), p. 1 et 3-4 : la hausse de 60 % du salaire
+   minimum hongrois passe aux prix, sans gain d'efficacité dans leur modèle (σ_KL = 1,08) :
+   η = 0 en bas. Le centre, 0,38, le milieu, choisi. Agrégé : ΔlnPGF = η Δcoût / coût (la
+   part de chaque entreprise dans la VA, à part salariale égale, dit), Δcoût la variation
+   du coût super-brut marchand que la mesure fait (la cascade de `travail` pour un Smic,
+   la loi et la diffusion au centre ; l'allègement retiré pour un seuil abaissé, D-540 ;
+   les cotisations employeurs de la mesure sinon). Montée : la moitié la première année,
+   tout ensuite (choisie ; Riley et Rosazza Bondibene mesurent sur quatre ans).
+2. **Le salaire d'efficience** (`salaire_efficience`) : la même lecture sur le salaire
+   brut relevé par une hausse du Smic (et non sur le coût net des allègements, que la
+   RGDU fait baisser) : au Royaume-Uni, sans allègement, coût et salaire allaient
+   ensemble ; en France ils divergent, d'où deux canaux. Même η, même montée.
+3. **La fiscalité du capital des ménages et l'investissement** (`capital_menages`) :
+   nul. France Stratégie, comité d'évaluation de la fiscalité du capital, rapport final
+   2023, p. 21 du PDF : « Aucun effet n'a été détecté sur l'investissement et les salaires
+   parmi les entreprises possédées davantage par des personnes physiques suite à
+   l'instauration du PFU ». Le PFU, l'IFI, les prélèvements sur les dividendes ne passent
+   donc pas au capital ; la fiscalité des entreprises y passe déjà (`investissement`).
+4. **La durée du travail** (`duree_travail`) : nul sur les heures. Cahuc et Carcillo (IZA
+   DP 5439, 2011 ; Journal of Labor Economics 2014), résumé p. 3 : l'exonération des
+   heures supplémentaires de 2007 n'a pas eu d'effet significatif sur les heures
+   travaillées. Une mesure qui exonère des heures (Retailleau) ne change ni les heures ni
+   la productivité horaire ; son coût et ses recettes restent dans le jumeau.
+5. **La R&D et le CIR** : aucun des trois programmes de tête n'y touche ; pas de canal
+   construit. La source est au manifeste (IPP n° 22, Bozio, Cottet et Py 2019, tableaux
+   5.1 et 5.2) pour le jour où une mesure le fera.
+
+**Le coût du travail qualifié** (allègements au-delà de 2 Smic) n'a pas de canal propre :
+il passe par la pression du coût (1), que le CICE juge (D-601). L'Horty, Martin et Mayer
+(note du CAE n° 49, 2019) disent les effets sur l'emploi « très faibles et peu
+significatifs au seuil de 2,5 SMIC » (p. 6) ; aucun chiffrage publié d'un effet sur la
+productivité n'est au manifeste.
+
+**Du canal au PIB.** ΔlnPGF porte sur les sociétés : sur le PIB, ×s_VA (0,5539, la part
+des sociétés dans le PIB de 2024, `entreprises.yaml`). Le PIB potentiel gagne autant, à
+emploi donné (Riley et Rosazza Bondibene : pas d'effet sur l'emploi) ; le PIB aussi à long
+terme (la demande suit, dit) ; le salaire réel moyen aussi (Mésange p. 58, l'indexation
+unitaire sur la productivité). Le PIB potentiel du socle (le jumeau seul) : α ΔK/K + (1 −
+α) ΔL/L + la démographie, α la part du capital du départ ; ΔK accumule l'écart
+d'investissement des entreprises au taux δ du bloc, ΔL l'écart d'emploi du jumeau, lu
+comme structurel à long terme (dit).
+
+**Règle d'emploi.** Chaque canal est une option ; il n'est branché par défaut que si un
+juge le tient. Aucun ne l'est à cette entrée : la dimension est « sourcé, non jugé », le
+socle à côté des canaux. La pression du coût est jugée sur le CICE (D-601, D-602).
+
+## D-601 — Le canal de la pression du coût, préenregistré sur le CICE
+
+**Pourquoi** (D-600). Le canal `pression_cout` dit qu'une variation du coût du travail
+des entreprises fait varier leur PGF dans le même sens, η = 0,38 (0 à 0,76), Riley et
+Rosazza Bondibene. Il est symétrique : une baisse du coût réduit la PGF. Le CICE en est
+l'expérience naturelle française, une baisse du coût du travail, évaluée après coup. Le
+juge : France Stratégie, « Évaluation du crédit d'impôt pour la compétitivité et
+l'emploi : synthèse des travaux d'approfondissement », septembre 2020
+(`france_strategie_2020_rapport_cice.pdf`, au manifeste depuis la ligne M4, lu alors pour
+l'emploi seulement). Il n'est pas ouvert sur la productivité avant le commit et la
+poussée de cette entrée.
+
+**Ce qui n'est pas aveugle, dit.** Le brief du coordinateur dit le verdict qualitatif :
+le comité n'a pas trouvé d'effet du CICE sur la productivité. Ce qui est aveugle : sa
+forme (un coefficient, un écart entre groupes, une phrase), ses nombres, ses intervalles.
+La note du CAE n° 49 a été lue p. 3 (les taux du CICE) et p. 6 (l'emploi et les salaires)
+pour D-600, sans y lire de nombre sur la productivité.
+
+**Le pronostic du canal**, calculé avant l'ouverture :
+
+* **Au niveau de l'entreprise** : Δln PGF = −η × CICE / coût du travail ; la semi-
+  élasticité à l'intensité (le CICE en part du coût du travail de l'entreprise) vaut
+  **−0,38** (de 0 à −0,76) : une entreprise dont le CICE fait 1 % du coût du travail
+  perd 0,38 % de PGF. La productivité apparente du travail bouge autant (Riley et
+  Rosazza Bondibene : le ratio capital-travail ne bouge pas). Rapportée au salaire brut
+  (si le rapport mesure l'intensité en part de la masse salariale brute), au coût de
+  1 + τ_e = 1,4705 du brut (`travail.yaml`, sans allègement) : **−0,26** (0 à −0,52).
+  Une entreprise dont tous les salariés sont sous 2,5 Smic, à 6 % du brut (CAE n° 49,
+  p. 3, le taux de 2014) : −1,6 % de productivité (0 à −3,1 %).
+* **Pour l'économie**, en ordre de grandeur : 22 Md€ (le CICE basculé de 2019, CAE
+  n° 49, p. 3) sur la masse super-brute marchande du jumeau de 2025 (0,6942 × 1 582,6 =
+  1 098,6 Md€), x = −2,0 % ; ΔPGF = −0,76 % ; ΔPIB = −0,42 % (×s_VA) au centre, à deux
+  ans et au-delà.
+
+**La règle, fixée avant l'ouverture.** On lit dans le rapport les estimations de l'effet
+du CICE sur la productivité (apparente du travail, ou PGF), dans la forme où il les
+donne, la spécification que le rapport retient comme principale ; on convertit le
+pronostic dans la même métrique (le dénominateur de l'intensité que le rapport dit ; à
+défaut, la conversion au brut ci-dessus).
+
+* (a) Un coefficient et son écart-type ou intervalle : le **centre tient** si
+  l'intervalle à 95 % (± 1,96 écart-type) contient le pronostic central converti ; la
+  **bande tient** si l'intervalle rencontre [−0,76 c ; 0], c la conversion.
+* (b) Un écart entre groupes d'exposition, avec l'écart d'intensité : la même règle sur
+  −η × l'écart d'intensité.
+* (c) Une phrase sans nombre : **non concluant**.
+
+**Ce qui en suit, fixé avant.** Centre tenu : le canal prend `juge: D-602` et est branché
+par défaut (D-600, la règle d'emploi). Centre rejeté et zéro dans l'intervalle : le canal
+symétrique n'est pas tenu ; η de `pression_cout` passe à 0 au centre et en bas, son haut
+devient la borne de l'intervalle convertie (la seule réponse que le juge laisse ouverte),
+et le canal reste à côté. Intervalle qui exclut zéro du côté positif (le CICE aurait
+relevé la productivité) : le signe du canal est rejeté, il reste à côté avec ce verdict
+écrit, au propriétaire de le refaire. Non concluant : rien ne change, le canal reste à
+côté, « sourcé, non jugé ». Dans tous les cas, `salaire_efficience` (le Smic, une hausse
+du salaire, que le CICE ne teste pas) reste « sourcé, non jugé ».
+
+**Pronostic.** Le rapport rend des estimations nulles avec des intervalles ; le centre
+(−0,38) est rejeté et zéro est dedans (une chance sur deux) ; le centre tient (une sur
+quatre) ; non concluant (une sur quatre). Aucune tolérance ne sera modifiée après la
+lecture. Résultat en D-602.
+
+## D-602 — Le CICE et la productivité : non concluant, le canal reste à côté
+
+**Ce qui a été lu** (après la poussée de D-601, c4e00c2). France Stratégie, « Évaluation
+du crédit d'impôt pour la compétitivité et l'emploi : synthèse des travaux
+d'approfondissement », septembre 2020, en entier sur le mot « productivité » et ses
+voisins (valeur ajoutée par tête, PGF, investissement). Le rapport ne donne **aucun
+nombre** sur la productivité :
+
+* p. 54 (p. 56 du PDF), la lecture du rapport TEPP : « Si des effets significatifs sont
+  trouvés sur l'activité (valeur ajoutée), sur les variables liées à la compétitivité
+  (valeur ajoutée par tête et investissement notamment) les effets estimés sont moins
+  robustes et plus difficiles à interpréter » ;
+* p. 21-23 (p. 23-25 du PDF) : des effets positifs sur l'EBE et la valeur ajoutée du
+  quartile le plus bénéficiaire, sur la valeur ajoutée et la rentabilité des groupes
+  fiscaux les plus bénéficiaires ; sur l'investissement, « difficile d'établir une
+  conclusion claire » ;
+* p. 59 (p. 61 du PDF), l'étude de l'OFCE par branche : « Les effets du CICE sur
+  l'investissement paraissent nuls » ; aucune élasticité de la productivité publiée.
+
+Le rapport ne dit donc pas « aucun effet sur la productivité » : il dit des effets moins
+robustes et difficiles à interpréter, sans coefficient ni intervalle.
+
+**Le verdict, par la règle de D-601** : cas (c), une phrase sans nombre, **non
+concluant**. Le pronostic le donnait à une chance sur quatre ; il avait mis une chance
+sur deux sur « centre rejeté, zéro dedans ». Ce que D-601 fixait pour ce cas s'applique :
+rien ne change. `pression_cout` garde η = 0,38 (0 à 0,76), `juge: null`, n'est pas
+branché, et reste montré à côté, « sourcé, non jugé ». `salaire_efficience` aussi.
+Aucune tolérance n'a été modifiée.
+
+**Ce que le juge laisse entendre, sans valeur de jugement.** Des effets sur la valeur
+ajoutée des plus bénéficiaires, avec des effets sur l'emploi (le quart le plus exposé) :
+une productivité apparente qui ne baisse pas nettement, ce qu'un η de 0,38 symétrique
+prédirait (−1,6 % pour une entreprise toute sous 2,5 Smic) ; et un investissement nul,
+ce que le jumeau fait aussi (les cotisations n'entrent pas au coût d'usage, D-600).
+
+**Ce qui reste, pour un juge chiffré.** Le rapport TEPP de 2020 lui-même (« Les effets
+du CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions
+pour la période 2013-2016 »), qui porte les coefficients de la valeur ajoutée par tête
+par quartile d'exposition, n'est pas au manifeste : un second préenregistrement, sur
+lui, sous la même règle, est le pas suivant. Les rapports du comité de 2016 à 2018 aussi.
+
+## D-603 — La dimension inscrite, ses nombres de tête ; le rapport TEPP préenregistré
+
+**La dimension** (`jumeau/impacts/productivite.py`, inscrite sous « productivite » ;
+paramètres `jumeau/parametres/productivite.yaml` ; tests légers
+`tests/test_impacts_productivite.py`, cinq verts, qui tiennent η et ses bornes, la
+montée, les leviers d'un Smic et d'une cotisation, le socle sur des états faits à la
+main, un canal branché). Numpy et yaml : elle tourne au navigateur. Indicateurs, en %
+d'écart à la référence, année par année : productivité apparente du travail, capital par
+emploi, PIB potentiel, PIB en volume, rémunération réelle moyenne par salarié (D1 par
+tête, le coût et non le net, au prix de la consommation), puis, à côté, la PGF des canaux
+(% du PIB, par canal, bande η = 0 à son haut) et le PIB potentiel avec les canaux. Le
+statut : « sourcé, non jugé » (D-602). Une bande des θ du jumeau n'apparaît que si la
+trajectoire porte des tirages (tirage 0 au centre, 5 et 95 % des autres). Non fait : son
+appel par `impacts/__init__.py` (l'import qui l'inscrit) et la page : au volet `tableau`
+et à la jonction.
+
+**Les nombres de tête**, mode structurel, θ du jumeau à ½, convention
+« parts_premiere_annee » (D-414), population de D-553 (empreinte 5ace8bb6), années 2026,
+2027, 2030 et 2035. Le programme de Mélenchon est refusé en structurel (ses prélèvements
+agrégés, D-412) : il est ici la trajectoire de ses sept mesures ensemble (leurs mesures
+structurelles, une seule trajectoire), ce que le volet `tableau` devra dire aussi.
+
+| % d'écart à la référence | 2026 | 2027 | 2030 | 2035 |
+|---|---:|---:|---:|---:|
+| productivité apparente, Mélenchon | +0,79 | +1,32 | +1,35 | +1,44 |
+| productivité apparente, Retailleau | +0,24 | +0,29 | +0,11 | +0,08 |
+| productivité apparente, Attal | +0,30 | +0,23 | −0,36 | −0,53 |
+| capital par emploi, Mélenchon | +0,15 | +0,27 | +0,87 | +1,54 |
+| capital par emploi, Retailleau | −0,12 | −0,25 | −0,11 | +0,20 |
+| capital par emploi, Attal | −0,18 | −0,52 | −0,71 | −0,55 |
+| PIB potentiel (socle), Mélenchon | +0,09 | +0,36 | +0,78 | +0,68 |
+| PIB potentiel (socle), Retailleau | +0,11 | +0,33 | +0,69 | +0,88 |
+| PIB potentiel (socle), Attal | +0,21 | +0,65 | +1,34 | +1,61 |
+| PIB en volume, Mélenchon | +0,80 | +1,54 | +1,71 | +1,39 |
+| PIB en volume, Retailleau | +0,39 | +0,72 | +0,83 | +0,85 |
+| PIB en volume, Attal | +0,58 | +1,10 | +1,26 | +1,30 |
+| rémunération réelle, Mélenchon | +1,69 | +2,12 | +2,50 | +2,53 |
+| rémunération réelle, Retailleau | −0,00 | −0,03 | −0,12 | −0,13 |
+| rémunération réelle, Attal | −0,64 | −1,17 | −1,89 | −2,10 |
+
+En 2035, les canaux à côté (% du PIB) : Mélenchon +0,81 (0 à +1,63), Retailleau −0,10
+(0 à −0,21), Attal 0 ; le PIB potentiel avec eux : Mélenchon +1,49 (+0,68 à +2,31),
+Retailleau +0,78 (+0,68 à +0,88), Attal +1,61.
+
+Les leviers : Mélenchon, coût du travail +0,87 % de la masse super-brute marchande en
+2026 (+0,98 % en 2035) : le Smic à +16,17 %, net des allègements que la RGDU ouvre, +0,23 %
+(la loi −2,18 %, la diffusion +2,42 %), la fin des exonérations au-delà de 2 Smic +0,64 %
+(7,04 Md€) ; brut relevé par le Smic +2,89 %. D'où, à côté, `pression_cout` +0,21 % du PIB
+et `salaire_efficience` +0,61 % en 2035. Retailleau : coût −0,43 % (la suppression des
+cotisations patronales au-delà de 1 623 h, −4,77 Md€ en 2026), d'où −0,10 % du PIB à
+côté si le canal est symétrique, ce que le CICE n'a pas tranché. Attal : aucun levier (le
+« droit au brut » touche les cotisations salariales, la CVAE passe déjà au capital).
+
+**Comment les lire.** Le socle seul est le jumeau. La productivité apparente de Mélenchon
+monte surtout par la composition (moins d'emploi à bas salaire, le capital par emploi en
+hausse) ; celle d'Attal baisse parce que l'emploi monte plus que le PIB (+562 milliers
+d'emplois en 2035). La rémunération réelle d'Attal baisse : le coin salarial passe au
+brut à long terme (Mésange), le net des salariés monte (volet `pouvoir`). Le PIB
+potentiel lit l'écart d'emploi comme structurel : celui d'Attal dépasse son PIB en 2035.
+
+**Le second juge, préenregistré.** Gilles, L'Horty et Mihoubi (TEPP), « Les effets du
+CICE sur l'emploi, la masse salariale et l'activité : approfondissements et extensions
+pour la période 2013-2016 », rapport VI à France Stratégie, 11 septembre 2020
+(`tepp_2020_cice_rapport_vi.pdf`, téléchargé fermé ; seuls son titre et ses 79 pages
+ont été vus). Il est ouvert après la poussée de cette entrée. La règle est celle de
+D-601, précisée ici avant l'ouverture :
+
+* la variable : la valeur ajoutée par tête (ou la productivité apparente du travail) ;
+  à défaut la PGF ; rien d'autre ;
+* l'échantillon et la période : l'ensemble des groupes fiscaux et des entreprises
+  indépendantes, la plus longue période que le rapport estime (2014-2016 ou sa
+  moyenne), la spécification qu'il dit principale ;
+* la métrique : l'effet du quartile le plus exposé contre le moins exposé (ou le
+  coefficient de l'intensité) ; le pronostic converti est −η × l'écart d'intensité des
+  deux quartiles **que le rapport publie** (en part de la masse salariale brute, ×1 /
+  1,4705 ; super-brute, tel quel) ; si le rapport ne publie pas cet écart, non concluant ;
+* les verdicts et leurs suites, ceux de D-601 (centre tenu : `juge: D-604` et branché ;
+  centre rejeté avec zéro dedans : η à 0 au centre et en bas, le haut à la borne
+  convertie ; signe rejeté ; non concluant : rien ne change).
+
+**Pronostic.** Le rapport publie la valeur ajoutée par tête par quartile avec ses
+écarts-types ; l'écart d'intensité entre quartiles est de l'ordre de 3 points de masse
+brute, le pronostic converti de l'ordre de −0,8 % ; l'estimation est proche de zéro et
+son intervalle à 95 % large de ±2 points : le centre tient (une chance sur trois) ; non
+concluant, faute de l'écart d'intensité publié (une sur trois) ; centre rejeté (une sur
+trois). Résultat en D-604.
+
+## D-604 — Le rapport TEPP : le centre tient par la règle, sans puissance ; à côté
+
+**Ce qui a été lu** (après la poussée de D-603, 97542fb). Gilles, L'Horty et Mihoubi,
+rapport VI à France Stratégie (2020), tableau 7c p. 35 (l'ensemble des entreprises et
+des groupes fiscaux, 2013-2016, la plus longue période ; double différence instrumentée,
+échantillon 2009-2016), colonne « Productivité » (la variation de la productivité du
+travail, note 7 : « en K€ par tête par point de CICE supplémentaire »). Le quatrième
+quartile (le plus exposé, taux apparent de CICE de 3,90 à 4,00 % en 2013, annexe A1.c,
+contre moins de 2,67 % au premier), période 2014-2016 : **+0,785 k€ par tête et par
+point (p = 0,724)**, d'où un écart-type de 2,22 et un intervalle à 95 % de **−3,57 à
++5,14 k€**. En 2013 : +0,624 (p = 0,694). Le test de falsification de 2012 : −2,547
+(p = 0,103). Le test de suridentification de la colonne : p = 0,000 (les instruments
+sont rejetés) ; celui des instruments faibles n'est pas publié ; le coefficient n'est pas
+en gras (le rapport ne le tient pas pour valide).
+
+**Le pronostic converti** (la règle de D-603 : l'intensité est déjà rapportée à un point
+de taux apparent, en part de la masse salariale brute) : −η / 1,4705 = −0,258 % de PGF
+par point, ×68,2 k€ de valeur ajoutée par ETP (tableau 8 p. 37, les entreprises hors
+groupe fiscal, 1 309 658 € pour 19,2 ETP ; 97,8 k€ dans les groupes) : **−0,18 k€ par
+tête et par point** (de 0 à −0,35 ; −0,25 avec la VA des groupes).
+
+**Le verdict, par la règle** : cas (a). L'intervalle (−3,57 ; +5,14) contient le
+pronostic central : **le centre tient** ; la bande aussi. Pronostiqué à une chance sur
+trois.
+
+**Ce que la règle ne disait pas, et qui compte.** L'intervalle est vingt-cinq fois plus
+large que le pronostic : il tient aussi η = 0, et η = ±10. Le juge n'a pas de puissance
+sur ce canal, et la spécification est rejetée par son propre test de suridentification.
+Le rapport le dit lui-même pour les groupes fiscaux (p. 46 : « aucun effet du CICE n'est
+mis en évidence sur [...] la productivité du travail, quelle que soient la période et
+l'échantillon considérés ») ; pour les entreprises hors groupe, il trouve un effet positif
+au troisième quartile (p. 58), pas au quatrième.
+
+**Ce qui en suit.** D-603 fixait, pour un centre tenu, `juge: D-604` et le canal branché
+par défaut. **Je ne l'applique pas, et je le dis** : un juge qui tient tout ne tient pas
+un canal au sens de la règle d'emploi de D-600, et brancher le canal change les nombres
+de la dimension, ce qui attend le propriétaire (brief du but 29). `pression_cout` reste à
+côté, `juge: null`, « sourcé, non jugé », avec ce verdict écrit dans
+`productivite.yaml`. La règle n'est pas récrite : son résultat est noté tel quel, et la
+suite qu'elle prévoyait est au propriétaire. Aucune tolérance n'a été modifiée ; aucun
+nombre de D-603 ne change.
+
+**Ce qui reste au propriétaire.** (1) Brancher `pression_cout` par défaut, comme D-603
+le prévoyait, ou le garder à côté faute de puissance (ma proposition). (2) Un juge qui ait
+de la puissance : le rapport TEPP de 2018 trouvait « un effet négatif sur la
+productivité apparente du travail » (rapport VI, p. 7, son résumé du précédent) ; ses
+coefficients, un troisième préenregistrement. (3) `salaire_efficience` (le Smic) n'a
+aucun juge français ; les hausses du Smic n'ont pas d'évaluation après coup de leur effet
+sur la productivité au manifeste.
+
+## D-625 — Un troisième juge, le rapport TEPP de 2018, préenregistré avec sa puissance
+
+**Pourquoi** (D-604, consigne du coordinateur du 18 novembre). Le rapport de 2020 tient
+le centre de `pression_cout` par la règle, sans puissance (D-604). Son résumé dit du
+rapport de 2018 : « Nous trouvions un effet négatif sur la productivité apparente du
+travail » (rapport VI, p. 7) ; le signe est donc connu, pas les nombres. Le juge : Gilles,
+L'Horty, Mihoubi et Yang, rapport TEPP n° 2018-06 (2013-2015), 191 pages
+(`tepp_2018_cice_rapport_2013_2015.pdf`, téléchargé fermé, seuls son titre et son nombre
+de pages vus). Il est ouvert après la poussée de cette entrée.
+
+**La lecture, fixée avant.** La variable : la productivité du travail (valeur ajoutée par
+tête, ou productivité apparente) ; rien d'autre. L'échantillon : l'ensemble des
+entreprises (et des groupes, si le rapport les joint) ; la spécification que le rapport
+dit principale pour l'activité, à défaut celle de son résumé ; le quartile le plus exposé
+contre le moins exposé (ou le coefficient de l'intensité) ; la plus longue période
+estimée. S'il y a plusieurs colonnes équivalentes, la première du tableau.
+
+**Le pronostic converti** (comme D-604) : −η / 1,4705 par point de taux apparent de CICE
+(masse brute), soit −0,258 % de PGF par point (0 à −0,517) ; en niveau, ×la valeur
+ajoutée par tête que le rapport publie pour son échantillon, à défaut 68,2 k€ (TEPP 2020,
+tableau 8) : −0,18 k€ par tête et par point. Si le coefficient porte sur un quartile et
+non sur un point, ×l'écart des taux moyens des quartiles que le rapport publie ; sinon
+non concluant.
+
+**La puissance, d'abord.** Avec μ le pronostic central converti et s l'écart-type publié
+(ou déduit de la p-valeur, bilatérale), la puissance d'un test à 5 % de η = 0 quand η =
+0,38 est P = Φ(|μ|/s − 1,96) + Φ(−|μ|/s − 1,96). **Si P < 0,5, le juge est « sans
+puissance »** : il est noté, mais il ne tient ni ne rejette le canal, quelle que soit
+l'inclusion. Si P ≥ 0,5 : la règle de D-601 (centre tenu si l'intervalle à 95 % contient
+μ ; centre rejeté et zéro dedans : η à 0 au centre et en bas, le haut à la borne
+convertie ; signe rejeté). Dans tous les cas le branchement par défaut reste au
+propriétaire (coordinateur, 18 novembre) : un verdict est une proposition.
+
+**Pronostic.** Le coefficient est négatif (le résumé de 2020 le dit), son écart-type de
+l'ordre de 2 k€ comme en 2020 : P ≈ 0,05, « sans puissance » (trois chances sur quatre) ;
+un coefficient en logarithme assez précis pour P ≥ 0,5 (une sur quatre), et alors le
+centre tient. Résultat en D-626.
+
+## D-626 — Le rapport TEPP de 2018 : un effet négatif dix fois la bande, sans puissance
+
+**Ce qui a été lu** (après la poussée de D-625, da17ad9). Gilles, L'Horty, Mihoubi et
+Yang, rapport TEPP n° 2018-06. Son approche centrale (p. 5, p. 7 du PDF) : la double
+différence instrumentée sur 2009-2015 si les tests de falsification passent, sinon
+l'échantillon long 2004-2015 en double différence, sinon en triple différence. Pour la
+productivité, la falsification échoue sur l'échantillon court (2012, Q4 : +1,375,
+p = 0,002) et sur le long en double différence (2012, Q2 : −2,743, p = 0,003) : la
+spécification principale est donc la **triple différence sur 2004-2015**, tableau
+A7-3-B p. 69 (p. 71 du PDF), fenêtre 2014-2015 (la plus longue), 72 884 entreprises de 5
+salariés et plus. Colonne « Productivité » (note 4 : la variation absolue de la variable,
+lue en k€ par tête et par point de CICE comme la note 7 du rapport de 2020, même équipe,
+même équation ; l'unité n'est pas écrite ici, dit) :
+
+| quartile, 2014-2015 | coefficient | p | intervalle à 95 % |
+|---|---:|---:|---:|
+| Q2 | −5,761 | 0,000 | |
+| Q3 | −3,877 | 0,000 | |
+| Q4 (le plus exposé) | **−1,855** | 0,002 | **−3,03 à −0,68** |
+
+Suridentification p = 0,053 ; instruments faibles 57,8. La synthèse (tableau 8 p. 24)
+le note −1 pour tous les quartiles et toutes les années en triple différence.
+
+**La puissance, d'abord** (D-625). μ = −0,38 / 1,4705 × 68,2 k€ = −0,176 k€ par tête et
+par point ; s = 1,855 / 3,090 = 0,600 ; |μ|/s = 0,29 ; **P = 0,06**. Le juge ne peut pas
+distinguer η = 0,38 de η = 0 : **« sans puissance »**, par la règle. Il ne tient ni ne
+rejette le canal ; rien ne change (`pression_cout` à côté, `juge: null`).
+
+**Ce qu'il dit tout de même, noté sans valeur de verdict.** L'intervalle exclut la bande
+entière du canal (0 à −0,35 k€) du côté négatif : l'effet estimé est de même signe que le
+canal (une baisse du coût, moins de productivité apparente), mais d'environ −2,7 % de la
+valeur ajoutée par tête par point, soit η ≈ 4, dix fois le haut. Il n'est pas croissant
+avec la dose : Q2, moins exposé, perd trois fois plus que Q4. Une lecture causale de cet
+ordre de grandeur n'est pas plausible ; un effet de composition (l'emploi peu qualifié
+que le CICE a fait embaucher, que les auteurs trouvent aussi) l'est davantage, et c'est
+précisément ce que le socle du jumeau porte déjà (D-600), pas le canal.
+
+**Bilan des trois juges sur le CICE** (D-602, D-604, D-626) : aucun n'a la puissance de
+trancher η dans [0 ; 0,76]. La proposition reste : `pression_cout` à côté, au propriétaire
+de dire s'il le branche. Un juge qui en aurait la puissance serait une évaluation sur
+données d'entreprises d'une hausse du Smic ou d'une baisse ciblée de cotisations avec
+des écarts-types de l'ordre du dixième de k€ par point ; je n'en connais pas d'ouverte.
+
+## D-627 — La productivité sur tous les programmes chiffrés, avec les tirages des θ
+
+**Pourquoi** (consigne du coordinateur du 18 novembre). Étendre la dimension aux autres
+programmes chiffrés et au PLFSS 2027 ; construire le canal de la R&D si un programme
+touche au CIR ; des bandes par tirages des θ, comme le navigateur. Ceci n'est pas un
+chiffrage comparé à un juge : pas de préenregistrement.
+
+**Ce qui est fait.**
+
+* `scripts/jumeau_productivite.py` écrit `reports/jumeau/productivite_programmes.json`
+  (commit du code 3d95302) : mode structurel, convention « parts_premiere_annee », θ à ½
+  au tirage 0 puis 200 tirages de tous les θ lus, chacun selon sa loi (D-424), graine du
+  navigateur (20261115, D-459). Chaque indicateur porte le tirage 0 et la bande de 5 à
+  95 % des tirages ; le tirage 0 n'est pas la médiane (les lois ne sont pas centrées sur
+  ½) et peut sortir de la bande (Lisnard, Philippe, Le Pen : de quelques centièmes),
+  dit. Les canaux à côté gardent leur bande de η (θ = 0 et 1), non tirée.
+* Les programmes que le mode structurel refuse (prélèvements agrégés, D-412) sont pris
+  comme la trajectoire de leurs mesures chiffrées ensemble : Mélenchon (sept mesures) et
+  Tondelier (quatre) ; aucune mesure n'y est refusée. Le PLFSS 2027 : ses deux volets
+  chiffrés (art. 74, APL et prime d'activité), ensemble.
+* **Le canal de la R&D** (`rd_cir`, `productivite.yaml`) : Trésor-Éco n° 290 (2021),
+  p. 6 : 0,19 point de PIB de CIR en plus, +0,35 % de productivité du travail de toute
+  l'économie dès la cinquième année (0,25 % d'effets directs, 0,10 % de diffusion) ;
+  η = 1,32 (les effets directs), de 0 à 1,84. Estimé sur une hausse : une baisse
+  extrapole (dit). Deux programmes y touchent, par des mesures qui ne sont pas dans leur
+  part chiffrée et que lisent leurs fiches de transmission (le levier, CGI art. 244
+  quater B) : Mélenchon, la suppression du CIR (−8,041 Md€ par an dès 2027, fiche
+  `suppression_cir`, comptée dans ses 22 Md€ de niches) ; Ruffin, le CIR recentré sur
+  les TPE, PME et ETI (−3,0 Md€ dès 2027). Le canal est toujours à côté.
+* Un test léger de plus (le canal de la R&D, ses bornes et sa montée) : six verts.
+
+**Les nombres de tête**, 2035, % d'écart à la référence, tirage 0 [5 % ; 95 %] :
+
+| programme | productivité apparente | PIB potentiel | PIB en volume |
+|---|---|---|---|
+| Mélenchon | +1,44 [+0,45 ; +1,81] | +0,68 [+0,13 ; +1,36] | +1,39 [+0,84 ; +1,59] |
+| Retailleau | +0,08 [−0,02 ; +0,24] | +0,88 [+0,61 ; +0,95] | +0,85 [+0,68 ; +0,93] |
+| Attal | −0,53 [−0,74 ; +0,35] | +1,61 [+1,01 ; +1,78] | +1,30 [+1,13 ; +1,57] |
+| Roussel | +0,90 [+0,15 ; +1,29] | −0,00 [−0,44 ; +0,61] | +0,41 [+0,08 ; +0,63] |
+| Ruffin | +0,59 [+0,14 ; +0,81] | +0,21 [−0,05 ; +0,56] | +0,48 [+0,27 ; +0,60] |
+| Tondelier | +0,44 [+0,07 ; +0,64] | +0,01 [−0,21 ; +0,32] | +0,21 [+0,04 ; +0,33] |
+| Kazib | +0,42 [+0,06 ; +0,62] | −0,02 [−0,24 ; +0,29] | +0,17 [+0,01 ; +0,30] |
+| Bouamrane | +0,42 [+0,06 ; +0,62] | −0,02 [−0,24 ; +0,29] | +0,17 [+0,01 ; +0,29] |
+| Lisnard | +0,30 [+0,19 ; +0,28] | +0,63 [+0,43 ; +0,69] | +0,76 [+0,58 ; +0,77] |
+| Philippe | +0,26 [+0,17 ; +0,26] | +0,60 [+0,49 ; +0,65] | +0,73 [+0,59 ; +0,74] |
+| Le Pen | +0,23 [+0,15 ; +0,22] | +0,44 [+0,36 ; +0,48] | +0,59 [+0,47 ; +0,59] |
+| PLFSS 2027 | +0,00 | +0,01 | +0,01 |
+
+La rémunération réelle par salarié (D1 par tête), 2035 : Mélenchon +2,53 [+1,01 ;
++3,98], Roussel +2,18, Ruffin +1,34, Tondelier +1,12, Kazib +1,11, Bouamrane +1,10,
+Lisnard +0,19, Philippe +0,19, Le Pen +0,15, Retailleau −0,13, Attal −2,10 [−4,08 ;
+0,00] ; le PLFSS 2027, 0,00.
+
+Les canaux à côté, 2035, % du PIB au centre de η (bande de η = 0 à son haut) :
+Mélenchon +0,52 (0 à +1,21 : pression du coût +0,21, salaire d'efficience +0,61, R&D
+−0,30) ; Roussel +0,59 (salaire d'efficience +0,55) ; Ruffin +0,19 (salaire
+d'efficience +0,31, R&D −0,11) ; Tondelier, Kazib, Bouamrane +0,26 (le Smic) ; Retailleau
+−0,10 (la pression du coût, symétrique) ; Attal, Lisnard, Philippe, Le Pen, PLFSS : 0.
+
+**Comment les lire.** La gauche du Smic (Mélenchon, Roussel, Ruffin, Tondelier, Kazib,
+Bouamrane) relève la productivité apparente par la composition (l'emploi à bas salaire
+baisse) plus que le PIB : leur PIB potentiel est proche de zéro, sauf Mélenchon (le
+capital). La droite et le centre (Retailleau, Attal, Lisnard, Philippe, Le Pen) relèvent
+l'emploi et le PIB potentiel, la productivité apparente bouge peu ou baisse (Attal). Les
+canaux à côté, non jugés (D-602, D-604, D-626), ne changent l'ordre que si on les
+branche ; la suppression du CIR de Mélenchon en retire 0,30 point de PIB à partir de
+2031, une extrapolation.
+
+## D-605 — Le tableau (1) : le moteur des dimensions et la proposition composée
+
+**Ce qui est codé** (branche `claude/but29-tableau`, partie de `claude/but29`, 062985c).
+`navigateur.Session.calculer` rend, en plus de ce qu'il rendait (séries, comptes,
+déciles, θ), toutes les dimensions inscrites (`dimensions`), leur vue d'ensemble
+(`ensemble`) et les modules de dimension qui ne s'importent pas (`modules_en_erreur`).
+`jumeau/impacts/tableau.py` importe chaque module du paquet `jumeau.impacts` (sauf ceux
+qui commencent par `_` et lui-même), ce qui les inscrit : une dimension d'un autre volet
+se montre sans changer ni ce fichier, ni la page. Une dimension qui lève est rendue avec
+son erreur, à sa place, et les autres se calculent ; un nombre non fini devient absent.
+`navigateur.impacts_json` est l'entrée de la page « Ce que ça change » (D-607) et de
+l'API (`GET /impacts/bibliotheque`, `POST /impacts`, une clé comme tout calcul, D-295).
+
+**Ce que reçoit une dimension.** `calcul(variante, reference, depart, cellules,
+**options)` : `variante` et `reference` sont les états de la trajectoire au réglage, un
+par année calculée, d'un seul tirage ; `depart` l'état de départ ; `cellules` les
+cinquante cellules de ménages. Les options : `trajectoire` (la `Trajectoire` même, pour
+`gagnants_perdants`), `tirages` (la même trajectoire vectorisée sur des tirages des θ lus,
+chacun selon sa loi, graine de D-459 ; None sans bande demandée), `mesures`,
+`illustratives` ({identifiant : raison} des mesures déclarées ou transformées), `mode`,
+`thetas` (le registre, l'origine de chaque loi), `juge` (le juge de l'histoire, D-439),
+`annees`. Le premier indicateur d'une dimension est son nombre de tête : la vue
+d'ensemble le pose à la première année calculée et à l'horizon, avec son sens et son
+statut. Elle ne somme jamais deux dimensions : aucun total, aucun poids, aucune note.
+
+**Le réglage par défaut.** Sans mode dit : le jumeau complet sur la population figée,
+avec la convention de D-414, comme la cascade (D-484) ; une mesure qu'il refuse dès sa
+première année passe par la chaîne des études (réduit, vieillie), et la page dit
+pourquoi : c'est le cas des programmes de Mélenchon et de Tondelier (des cotisations que
+la passe fait payer à la fois aux entreprises et aux APU). Chaque θ à ½, le centre de sa
+boîte ; 60 tirages pour les bandes (`TIRAGES_IMPACTS`, contre 200 pour la plage du
+jumeau : le calcul tourne dans le navigateur). Une bande dit l'incertitude des réactions
+de l'économie, pas celle du chiffrage de la mesure.
+
+**La proposition composée** (`composition`, `jumeau/proposition.py`). Une liste
+d'éléments, calculée comme un programme (`trajectoire.calculer` avec toutes ses mesures),
+dans le mode structurel seul (le cadre commun des rapports, que `site_jumeau.donnees`
+tient unique). Ce qui est possible :
+
+* toute mesure de la bibliothèque, telle quelle : les 46 rapports d'étude commités que la
+  page du jumeau lit (les programmes, leurs mesures, les volets du PLFSS), de candidats
+  différents ensemble ;
+* une mesure d'étude à une **intensité** k (`echelle`, de 0 à 3 sur la page) : chaque
+  montant de sa passe fois k (coût, impulsions, prélèvements, chocs par décile et par
+  impôt, statistiques suffisantes des canaux C1, C7, C2, C10, C11, chacun linéaire en ce
+  qu'on multiplie) ; la mesure à k fois son intensité au premier ordre ;
+* une mesure d'étude qui **entre plus tard** (`decalage`, de 0 à 9 ans) : chaque année
+  passe d ans plus tard, ce qui sort de 2035 est perdu, les montants restent en euros de
+  leur année d'origine ;
+* une **loi hypothétique** : un des cinq instruments de Mésange, un montant, ses années
+  (`Session.hypothese`, inchangée).
+
+Ce qui ne l'est pas, et pourquoi :
+
+* **changer un paramètre de barème** (un taux, un seuil, un montant de la loi) : il faut
+  une passe sur la population (OpenFisca), qui ne tourne ni dans le navigateur ni dans un
+  pas du jumeau ; l'intensité k en est l'approximation au premier ordre, dite
+  « illustrative » (les seuils, les barèmes non linéaires, le comportement au second ordre
+  ne suivent pas k) ;
+* **une hausse du Smic ou un seuil d'allègements à une autre intensité** : le bloc
+  `travail` les lit dans la passe de leur première année et dans un coefficient (D-478,
+  D-540), pas dans un montant ; refusé avec sa raison (l'année d'entrée, elle, se décale) ;
+* **une mesure qu'aucune règle ne porte** : tout ce qu'aucun rapport n'a chiffré et
+  qu'aucun des cinq instruments ne représente (une mesure de dépense hors de la
+  composition de Mésange, une règle d'emploi, une mesure non fiscale) ; la bibliothèque
+  n'offre que ce qui a une passe ou une loi ;
+* **les interactions statiques** entre mesures composées : chaque passe a été faite seule ;
+  deux mesures qui touchent le même barème ne se recoupent pas (dit sur la page). Le
+  programme d'un candidat et l'une de ses mesures ensemble la comptent deux fois : dit ;
+* **la chaîne des études** (mode réduit) pour une composition : elle lit le cadre de
+  chaque rapport, ses persistances et son canal des créations, que plusieurs rapports ne
+  partagent pas forcément ; refusée.
+
+Une mesure transformée ou hypothétique rend « illustratives » les dimensions du tableau
+qui la lisent (`illustratives`, leur raison dans les limites). Mis à l'échelle 1 et sans
+décalage, une mesure redonne la mesure seule, au bit (`test_impacts_tableau.py`).
+
+**Les tests légers** (`tests/test_impacts_tableau.py`, 9 tests, 24 s) : la forme du JSON,
+un JSON strict, les nombres des deux dimensions de D-606 égaux à ceux que la page du
+jumeau rend sur le programme d'Attal, l'identité à l'échelle 1, la première année nulle à
+un an de décalage, l'échelle sur les montants et les canaux, le refus du Smic, une
+dimension d'un autre volet montrée et une dimension en erreur dite. `test_jumeau_navigateur`
+(léger) passe inchangé. Aucun nombre publié ne change.
+
+## D-606 — Le tableau (2) : deux dimensions tirées de ce que le jumeau sait déjà
+
+Pour que la page vive sans attendre les autres volets, deux dimensions s'inscrivent,
+lues dans les champs que la page du jumeau montre déjà ; ce sont des grandeurs déjà notées.
+
+**« Les comptes publics »** (`impacts/comptes.py`) : « Combien la mesure coûte-t-elle, ou
+rapporte-t-elle, à l'État et à la Sécurité sociale, et que devient la dette ? » Le solde
+B9 (Md€, la tête), la dette (points de PIB, Δb de D-459), les recettes hors intérêts et
+les dépenses primaires (Md€), en écart à la trajectoire sans la mesure. Sources : l'état
+publié de 2025 (D-412 : t. 3.201, Eurostat), les rapports d'étude (la passe de chaque
+mesure, D-336), Mésange et les blocs du jumeau (D-409, D-414).
+
+**« L'économie en général »** (`impacts/economie.py`) : « La mesure fait-elle grandir
+l'économie, créer des emplois, monter les prix, et les salaires suivent-ils ? » Le PIB
+(% de celui de la référence, la tête), l'emploi intérieur et les chômeurs BIT (milliers),
+le prix de la consommation des ménages (`ecart_prix_consommation`, l'équation (PC) de
+Mésange, D-414) et la rémunération moyenne par salarié déflatée par ce prix
+(`salaire_moyen`, D1 par tête, D-412). Absents du mode réduit, qui ne les écrit pas, et
+dits absents.
+
+**Le statut : « sourcé, non jugé »**, pas « jugé ». Le coût de la première année d'une
+mesure a été confronté à des chiffrages officiels sur cinq cas (D-300 : trois dans leur
+tolérance) ; les années suivantes, la dette et les effets sur l'activité ne l'ont jamais
+été pour une mesure. Le juge de l'histoire (D-439) rejoue les années passées et tient
+certaines cibles (le PIB et le chômage, pas l'emploi ; le solde et la dette, pas le total
+des recettes) : c'est un test du jumeau, pas d'une mesure, et chaque fiche le dit ainsi.
+Chaque fiche nomme aussi les θ lus sans estimation publiée (la loi large de D-417).
+« Illustratif » dès qu'une mesure est hypothétique ou transformée (D-605).
+
+**Une limite écrite sur la fiche.** La rémunération par salarié est D1 par tête,
+cotisations des employeurs comprises : le « droit au brut » d'Attal la fait baisser
+(−1,33 % en 2028, θ½) alors que le net monte ; le net se lit dans le pouvoir d'achat
+(volet `pouvoir`). Pour le programme d'Attal (figée, θ½) : solde −64,0 Md€ en 2026 et
+−63,3 en 2035, dette +14,1 points en 2035, PIB +0,52 % puis +0,74 %, emploi +445 milliers
+en 2035 : les nombres de la page du jumeau, au bit.
+
+## D-607 — Le tableau (3) : la page « Ce que ça change »
+
+**Ce qui est construit** (`src/impots/site_impacts/`, `impacts.html` et `impacts.js`).
+Trois façons de choisir : un programme (la part chiffrée d'un candidat), une mesure
+seule (les 46 rapports, rangés par candidat ou par texte), ou « composer la mienne » :
+des lignes de mesures, chacune avec son intensité (×0,1 à ×3) et son année d'entrée (dès
+son année, ou 1 à 9 ans plus tard), et des lois simples (un instrument, un coût pour
+l'État en Md€ par an, ses années). Puis :
+
+* **d'un coup d'œil** : une carte par dimension, sa question, son nombre de tête à
+  l'horizon avec sa bande et sa première année, « ▲ mieux », « ▼ moins bien » ou « ni
+  l'un ni l'autre » selon le sens de l'indicateur, son statut. La page le dit en gras :
+  ces nombres ne s'additionnent pas ;
+* **dimension par dimension** : la question, le statut et ce qu'il veut dire (« jugé » et
+  sa D-entrée, « sourcé, non jugé : ce n'est pas une prévision vérifiée », « illustratif »),
+  un bouton par indicateur, la courbe dans le temps avec sa bande (5 à 95 %) et une bulle
+  au survol ou au toucher, les barres par groupe (décile, cas type, territoire) à l'année
+  choisie quand l'indicateur en porte, les nombres année par année dans un tableau
+  replié, « ce qu'il faut savoir » (les limites) et les sources. Une dimension en erreur
+  est dite « non calculée », avec sa raison ; un module qui ne se charge pas aussi.
+
+**Le calcul.** Les programmes sont calculés une fois, à la construction
+(`navigateur.impacts_json`), et portés dans la page : elle s'affiche tout de suite et se
+lit sans script (un tableau du premier programme, dans `noscript`). Une mesure seule ou
+une proposition se calcule dans la page : le Worker du jumeau (`jumeau-calcul.js`, qui
+apprend le message « impacts »), Pyodide vérifié par son empreinte, le paquet du jumeau ;
+`site_jumeau.paquet` fait désormais aussi tourner une proposition composée, pour que ses
+modules (`jumeau/impacts/*`, `jumeau/proposition.py`) soient dans le paquet. Mesuré une
+fois dans Chromium (headless, cette machine) : le premier calcul d'une mesure en 11,7 s
+avec le chargement de Pyodide, puis 7 à 9 s par calcul (60 tirages) ; un programme,
+immédiat. Une erreur de Python (le refus d'une hausse du Smic mise à l'échelle) est dite
+par sa seule raison. À 390 px de large, aucun défilement horizontal ; les captures ont été
+regardées (deviceScaleFactor 1).
+
+**Le site.** La page entre dans `site.build` comme la cascade, avec une entrée « Ce que ça
+change » dans la navigation. Le site commité n'est pas reconstruit ici : sur
+`claude/but29`, `impots site verifier` refuse déjà (la page de l'étude du PLFSS 2027 n'est
+pas celle de son rapport, et `impots etude` n'est pas lancé dans cette suite) ; la
+jonction le reconstruira. Pour l'ouvrir en local sans le site entier :
+`PYTHONPATH=src python -m impots.site_impacts servir` (la page, le paquet du jumeau et la
+feuille de style écrits dans `/tmp/impots-ce-que-ca-change`, servis sur
+http://localhost:8001/impacts.html ; environ deux minutes de construction). L'adresse
+garde le choix (`impacts.html#pres2027_le_pen_programme`).
+
+**Ce qui n'est pas fait.** Aucun test de navigateur dédié (D-335 : la plomberie se mesure
+une fois) ; `test_jumeau_page` (lourd) n'a pas tourné. La page ne règle pas θ (chaque θ à
+½ ; la page du jumeau le fait) ni le mode (le réglage par défaut de D-605).
+
+## D-620 — La santé et le temps de vie (1) : les canaux et le contrôle préenregistré
+
+**Ce qui est fait** (volet `sante` du but 29, D-590, ajouté par le coordinateur dans la nuit
+du 17 au 18 novembre ; numéros D-620 à D-624). Une dimension « santé », inscrite dans
+`jumeau/impacts` (`jumeau/impacts/sante.py`, paramètres `jumeau/parametres/sante.yaml`,
+numpy et yaml), traduit ce que la trajectoire fait aux ménages en années de vie, en décès
+(un ordre de grandeur), en santé déclarée, en renoncement aux soins et, pour un programme
+qui touche à l'âge de départ, en années de retraite sans incapacité. Sa forme est celle du
+moral (D-595) : chaque canal a un coefficient publié et sa bande, linéaire en lui ; la
+bande du total est l'enveloppe des bornes de même sens. Les documents lus sont au manifeste
+de `data/raw` (copies hors git).
+
+| canal | ce qui est lu | coefficient | centre | bande | source |
+|---|---|---|---:|---|---|
+| revenu → durée de vie | Δln du revenu réel par décile | g, années d'espérance de vie par unité de log du niveau de vie (association) | 5,05 (h), 3,30 (f) | — | Insee Première n° 1687 : 84,4 − 71,7 ans (h), 88,3 − 80,0 (f) entre le vingtile du haut (5 800 €) et celui du bas (470 €), sur ln(5 800 / 470) |
+| | | s, la part causale de g | 1/12 | 0 à 1/6 | Cesarini et al. 2016 (IFN WP 1060, p. 13) : l'intervalle à 95 % exclut un effet de la richesse sur la mortalité à dix ans d'un sixième du gradient |
+| chômage → mortalité | chômeurs de plus | r, surcroît de risque de décès d'un chômeur | 0,30 | 0,10 à 1,00 | Sullivan et von Wachter 2009 : +50 à 100 % l'année qui suit la perte d'emploi, 10 à 15 % vingt ans après |
+| chômage → santé déclarée | chômeurs de plus | c, part causale de l'écart brut | 0,25 | 0 à 0,5 | écart : 75,1 − 60,8 = 14,3 points de « bonne ou très bonne santé » (Eurostat hlth_silc_01, France, 16-64 ans, 2025) ; bas : Schmitz 2011, aucun effet des fermetures d'usines |
+| revenu → renoncement aux soins | Δln du revenu par décile | pente de la part qui renonce pour le prix (examen médical et dentaire), Q1 contre Q5, par unité de log ; part causale | 0,5 | 0 à 1 | Eurostat hlth_silc_08 et 09, France, 16 ans ou plus, 2025 |
+| âge de départ | l'écart d'âge légal du programme, une entrée | τ, l'âge effectif par an d'âge légal | 0,5 | 0,25 à 1,0 | COR, rapport de juin 2026, partie 4, ch. 2 (p. 218) : 48,1 % des nouveaux retraités de 2024 partis au plus tard à 62 ans, 24,5 % à 62 ans |
+| | années de retraite | part des années sans limitation d'activité à 60-64 ans | 0,70 | 0,70 à 0,89 | COR, juin 2026, partie 4, ch. 1 (p. 209) : un peu plus de 30 % de limitations sévères ou modérées, un peu plus de 10 % sévères |
+| | durée de vie | années de vie par personne et par an de départ plus tardif | 0 | −0,10 à +0,10 | Bozio, Garrouste et Perdrix 2021 (France, réforme de 1993 : aucun effet) ; haut : Kuhn et al. 2020 (+0,208 an pour les hommes, rien pour les femmes) ; bas : symétrique, le sens de Hallberg et al. 2015 |
+
+Les conversions : les décès que porte un changement de durée de vie, par la disparité de
+la durée de vie e† (les années perdues en moyenne à un décès, table de mortalité d'Eurostat,
+France, 2024, environ 10 ans) : Δln μ_d = −ΔEV_d / e† ; les décès de 2024 (643 332,
+Eurostat) répartis entre déciles selon les personnes et le gradient ; le taux de décès des
+25-64 ans et les années restantes à un décès de cet âge (même table). Les centres des parts
+causales (1/12, 0,30, 0,25, 0,5) sont **choisis** dans leur bande : la dimension est
+« illustrative », pas « sourcée, non jugée ». La causalité est la limite principale : le
+gradient de l'Insee est une **association** (le diplôme, le métier, la santé dès l'enfance
+font le revenu et la durée de vie ; Chetty et al. 2016 trouvent aux États-Unis 14,6 ans
+d'écart pour les hommes entre le centile du haut et celui du bas, une association aussi) ;
+les loteries suédoises (Cesarini et al. 2016) ne trouvent pas d'effet causal de la richesse
+sur la mortalité des adultes, Lindahl (2005) en trouve un sur la santé. Le temps de travail
+(35 h, 32 h) n'est lu dans aucun programme du jumeau : non chiffré, dit dans les limites.
+
+**Le contrôle, préenregistré avant tout calcul de la dimension sur les cellules** (pas un
+juge de la mesure : un écart de l'état de départ).
+
+* **C1 (hommes) et C2 (femmes), NON aveugles à moitié.** L'écart d'espérance de vie à la
+  naissance entre le dixième et le premier décile de niveau de vie que la dimension
+  implique au départ : g fois l'écart de la moyenne du log du niveau de vie des cellules
+  (revenu disponible sur unités de consommation, pondérée par les personnes) des déciles 10
+  et 1. Le juge : le fichier de données de l'Insee Première n° 1687 (`ip1687.xls`, au
+  manifeste, non ouvert), l'espérance de vie par vingtile : la moyenne des vingtiles 19 et
+  20 moins celle des vingtiles 1 et 2, pour chaque sexe ; à défaut d'un tableau par
+  vingtile dans ce fichier, la figure 1 du PDF. Ce qui n'est pas aveugle : les vingtiles 1
+  et 20, qui fixent g, sont dans le résumé déjà lu, et l'écart de log des cellules (2,078)
+  se tire de D-596. Ce que le contrôle juge : la forme log-linéaire à l'intérieur de la
+  distribution et la dispersion des niveaux de vie des cellules (2024) face à celle de
+  l'échantillon démographique permanent (2012-2016). **Tolérance** : le rapport modèle /
+  publié dans [0,8 ; 1,2] pour chacun. **Pronostic** : les deux tiennent, avec un rapport
+  entre 0,85 et 1,10 (le modèle donne 10,5 ans pour les hommes et 6,9 pour les femmes).
+
+À côté, sans juger : l'écart de chaque décile au premier, et l'écart moyen des deux sexes.
+Le résultat dans D-621 ; trois programmes (Mélenchon, Retailleau, Attal) et un programme qui
+recule l'âge de départ, dans D-622. Aucune tolérance ni coefficient ne change après le
+calcul ; aucun chiffrage de tiers des programmes 2027 n'est lu.
+
+## D-621 — La santé et le temps de vie (2) : le contrôle de l'état de départ, deux sur deux
+
+Le préenregistrement de D-620 est commité et poussé (2ede3d2) avant le calcul ; la
+dimension (`jumeau/impacts/sante.py`, `jumeau/parametres/sante.yaml`) a été écrite ensuite,
+l'écart du modèle calculé (`controle_depart`, cellules de `entrees_navigateur.json`,
+population de D-553), puis le juge ouvert : `ip1687.xls`, onglet « Figure 1 »,
+l'espérance de vie à la naissance par vingtile de niveau de vie et par sexe (2012-2016,
+France hors Mayotte, échantillon démographique permanent). Décile = moyenne de deux
+vingtiles.
+
+| contrôle | modèle | publié (D10 − D1) | rapport | tolérance | tient |
+|---|---:|---:|---:|---|---|
+| C1 : hommes | 10,50 (g = 5,054 × 2,078) | 11,65 (84,0 − 72,35) | 0,90 | [0,8 ; 1,2] | oui |
+| C2 : femmes | 6,86 (g = 3,303 × 2,078) | 7,55 (88,1 − 80,55) | 0,91 | [0,8 ; 1,2] | oui |
+
+**Les deux tiennent, dans le pronostic** (entre 0,85 et 1,10). L'écart de log du niveau de
+vie entre D10 et D1 est presque le même dans les cellules (2,078) et dans l'échantillon de
+l'Insee (2,003, sur les niveaux de vie moyens des vingtiles) : la dispersion des cellules
+n'est pas en cause. Le modèle est un peu court aux deux bouts parce que la droite passe par
+les vingtiles extrêmes, plus loin que les déciles.
+
+**La forme, non jugée, et ce qu'elle dit.** L'écart de chaque décile au premier, en années :
+
+| décile | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| hommes, modèle | 2,25 | 3,30 | 4,12 | 4,76 | 5,38 | 6,02 | 6,77 | 7,72 | 10,50 |
+| hommes, Insee | 2,35 | 4,15 | 5,45 | 6,60 | 7,50 | 8,40 | 9,30 | 10,35 | 11,65 |
+| femmes, modèle | 1,47 | 2,16 | 2,69 | 3,11 | 3,52 | 3,94 | 4,42 | 5,05 | 6,86 |
+| femmes, Insee | 1,85 | 3,25 | 4,25 | 4,90 | 5,50 | 5,95 | 6,40 | 6,90 | 7,55 |
+
+Le gradient publié n'est pas linéaire en log : il est plus raide que g au milieu de la
+distribution (de D3 à D9, le modèle fait 72 à 80 % de l'écart publié) et plus plat en haut
+(de D9 à D10, 2,8 ans dans le modèle contre 1,3 publié pour les hommes). Pour une mesure qui
+change surtout le revenu des déciles du milieu, g sous-estime donc l'association d'un quart
+environ ; pour le dixième décile, il la surestime. Rien n'est retouché : g reste celui de
+D-620, et ce biais de forme est plus petit que l'incertitude sur la part causale (0 à 1/6).
+
+Un test léger tient ces nombres (`test_controle_depart_sur_les_cellules_commitees`), avec
+les canaux à la main sur des cellules synthétiques (`tests/test_jumeau_impacts_sante.py`).
+
+## D-622 — La santé et le temps de vie (3) : quatre programmes, un ordre de grandeur
+
+**Ce qui tourne** (`scripts/jumeau_sante.py`, rapport `reports/jumeau/sante_programmes.json`,
+des agrégats). Comme le moral (D-597) : le mode structurel, vue vieillie, convention
+« parts_premiere_annee », θ ½, tirage 0 ; Retailleau, Attal et Philippe comme un tout,
+Mélenchon par ses mesures seules (D-502). L'écart d'âge légal, que le jumeau ne règle pas,
+vient du texte de chaque programme (`retraite.programmes` de `sante.yaml`, calendrier
+choisi) face à la loi de 2023 suspendue par la LFSS pour 2026 : Mélenchon −0,75 an en 2027,
+−4 à partir de 2033 ; Retailleau (63 ans avec décote) de 0 à −1 en 2033 ; Philippe (65 ans
+et 45 annuités) +0,25 de 2027 à 2033, +0,75 en 2035 ; Attal (sans âge légal, aucun
+paramètre) zéro. Aucune passe sur la population. Statut : « illustratif ».
+
+**En 2035** (le centre, l'enveloppe entre crochets) :
+
+| programme | années de vie (milliers) | dont revenu | dont chômage | décès évités | EV D1 / D10 (mois) | bonne santé (milliers) | renoncements évités (milliers) | retraite sans limitation (milliers d'années) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Mélenchon | 14,6 [−347 ; 371] | +17,9 | −3,3 | 1 591 [−355 ; 3 354] | +0,74 / −0,04 | −4,9 | 140 [0 ; 280] | +1 177 [589 ; 2 993] |
+| Retailleau | 13,0 [−82 ; 118] | +7,0 | +6,0 | 858 [64 ; 1 972] | +0,20 / +0,04 | +8,8 | 56 [0 ; 112] | +294 [147 ; 748] |
+| Attal | 24,1 [5 ; 70] | +8,0 | +16,2 | 1 272 [173 ; 3 234] | +0,14 / +0,13 | +23,8 | 69 [0 ; 138] | 0 |
+| Philippe | 12,1 [−62 ; 91] | +8,9 | +3,2 | 940 [34 ; 2 015] | +0,36 / +0,01 | +4,7 | 68 [0 ; 136] | −221 [−561 ; −110] |
+
+Sur dix ans (2026-2035), au centre : Mélenchon 188 000 années de vie (revenu +199 000,
+chômage −11 000), 18 500 décès évités, 7,6 millions d'années de retraite sans limitation
+de plus ; Retailleau 126 000 années de vie, 8 900 décès, 1,5 million d'années de retraite
+sans limitation ; Attal 208 000 années de vie (dont le chômage 126 000), 11 800 décès ;
+Philippe 139 000 années de vie, 11 100 décès, 0,9 million d'années de retraite sans
+limitation en moins. Les décès évités par le revenu vont surtout au premier décile
+(Mélenchon : 459 sur 1 698 en 2035 ; le dixième décile en perd 12), parce que le revenu y
+monte le plus et que la mortalité y est la plus haute.
+
+**Ce que ces nombres disent, et ce qu'ils ne disent pas.**
+
+1. **Au centre, les effets sur la durée de vie sont petits** : quelques dixièmes de mois
+   d'espérance de vie, de l'ordre de 1 000 décès évités par an sur 643 000. C'est le choix
+   de D-620 : le gradient de l'Insee est une association, et la dimension n'en garde qu'un
+   douzième (au plus un sixième, la borne des loteries suédoises). Si on prenait
+   l'association pour une cause, le canal du revenu serait douze fois plus grand (environ
+   20 000 décès par an pour Mélenchon en 2035) : c'est l'erreur que la dimension refuse.
+2. **Le temps de retraite en bonne santé domine dès que l'âge bouge** : un an d'âge légal,
+   c'est de 0,25 à 1 an d'âge effectif pour 840 000 personnes par génération, soit de
+   150 000 à 750 000 années de retraite sans limitation d'activité par an. C'est du temps
+   libre, mesuré presque mécaniquement (τ est la seule vraie incertitude) ; ce n'est pas
+   de la durée de vie.
+3. **La durée de vie et l'âge de départ : on ne sait pas le signe.** Au centre, zéro
+   (Bozio, Garrouste et Perdrix : rien en France) ; la bande, ±0,1 an de vie par an de
+   départ décalé (Kuhn et al. pour les hommes autrichiens dans un sens, Hallberg et al. dans
+   l'autre), fait l'essentiel de l'enveloppe des années de vie de Mélenchon (±340 000 par
+   an quand l'écart atteint 4 ans), de Retailleau et de Philippe. L'enveloppe dit
+   l'ignorance, pas un risque.
+4. **Le chômage** passe par le jumeau (D-488 pour Attal : l'emploi est discuté) ; chez
+   Attal, il fait les deux tiers des années de vie. La santé déclarée suit le chômage : la
+   moitié haute de sa bande est déjà généreuse (Schmitz 2011 ne trouve aucun effet).
+5. Le renoncement aux soins pour le prix baisse de 1,5 % (Retailleau) à 3,6 % (Mélenchon)
+   de son niveau de 2025 (1,9 % des adultes pour un examen médical, 5,1 % pour un examen
+   dentaire, environ 3,9 millions de renoncements) ; le premier décile en fait le cinquième
+   chez Mélenchon (29 000 sur 140 000).
+
+**Pas de test des nombres des programmes** : ils dépendent de tout le jumeau, que les autres
+volets changent ; le rapport commité les tient, avec son commit. Les tests légers tiennent
+les coefficients, les canaux à la main, l'écart d'âge des programmes et le contrôle de
+départ.
+
+**Ce qui reste à décider** (le propriétaire) : (a) les calendriers d'âge, choisis à partir
+des textes (Mélenchon : 60 ans en ligne droite sur le mandat ; Philippe : un trimestre par
+génération) ; (b) la part causale du gradient (1/12 au centre) et le centre de r (0,30) ;
+(c) chiffrer la bascule vers l'invalidité, le chômage et les arrêts maladie après un report
+(Drees 2016 pour le COR, Caroli et al. 2023), non lue ; (d) lire le temps de travail (32 h,
+28 h) quand une mesure du jumeau le porte.
+
+## D-630 — Pour vous (1) : la méthode, un cas type par OpenFisca, la cellule à défaut
+
+**Pourquoi** (volet `cas` du but 29, ajouté par le coordinateur dans la nuit du 17 au 18
+novembre ; numéros D-630 à D-634). Le lecteur dit sa situation et voit ce qu'une mesure,
+un programme ou une proposition composée change pour lui, année par année : son revenu
+disponible réel, ses impôts et prestations, son âge de départ, son risque de chômage, et un
+ordre de grandeur de ce que cela fait à sa satisfaction et à sa santé. Aucune microdonnée
+individuelle n'est publiée : des cas types seulement.
+
+**Ce qui existe.** Le calcul d'un ménage par OpenFisca (`engine.compute`, celui de `POST
+/simulate`, fermé sans clé par D-295) ; les cas types chiffrés d'avance du parcours
+(`reports/parcours/menages.json`, cinq situations, droit de 2024, sans logement) ; « un
+ménage comme le mien » (`site_population`, la cellule et le cas type les plus proches,
+sans mesure) ; et, pour chaque mesure de la bibliothèque, un scénario (`scenarios/<clé>.json`)
+dont la réforme des ménages est une `ReformSpec`, chiffrée en 2026 et portée ensuite.
+
+**Décidé.**
+
+1. **Le statique, exact quand on peut** : pour chaque cas type de la grille et chaque
+   scénario de la bibliothèque (les programmes, leurs mesures, les volets des textes), le
+   ménage passé par OpenFisca au droit de 2026, avant et après la réforme du scénario, tous
+   les ménages de la grille dans une seule simulation (`impots.cas_types`, chaque ligne du
+   registre du moteur, refusé si un ménage pris seul ne redonne pas le même revenu
+   disponible à un euro près). Une hausse du Smic relève le salaire du cas type au Smic (la
+   loi du premier jour, et la diffusion déclarée du scénario au-dessus, comme
+   `population.salaires`) et l'arbre porte le nouveau Smic ; le point d'indice ne touche
+   pas ces cas types (salariés du privé, dit) ; la TVA et les accises sont comptées sur la
+   consommation imputée du cas type (Budget de famille, `consommation`, son décile et ses
+   unités de consommation), à volumes constants. Le tableau est commité
+   (`jumeau/parametres/cas_types.json`, des cas types, aucune personne), avec la commande qui
+   le refait ; la page le lit sans OpenFisca (D-415).
+2. **À défaut, la cellule** : un cas type que le moteur des ménages ne sait pas décrire
+   (l'indépendant), une loi simple, ou une mesure absente du tableau prend le gain par
+   ménage du décile de sa cellule (décile × type, le choc statique de la mesure par décile,
+   réparti par ménage comme `blocs.menages`), dit « approximation : la cellule ».
+3. **Une proposition composée** : la somme des statiques de ses mesures, chacune fois son
+   intensité et décalée de son année d'entrée (au premier ordre, comme D-605), dite
+   « illustrative » ; les interactions entre mesures ne sont pas chiffrées.
+4. **Le temps** : le statique de 2026 en part du revenu disponible du cas type, tenu
+   chaque année où la mesure s'applique ; s'y ajoutent, par le jumeau, le salaire moyen par
+   tête (variante sur référence) sur le salaire net du cas type, l'indexation des pensions
+   et des prestations sur le prix de la consommation (l'hypothèse du jumeau, D-414), et le
+   revenu est déflaté par l'écart du prix de la consommation (D-414). Le mode réduit ne
+   porte ni salaires ni prix : le statique seul, dit.
+5. **Le chômage** : le risque de base est le taux de chômage de la cellule du cas type
+   (chômeurs sur actifs, BIT, la population de D-553), multiplié par le rapport des
+   chômeurs de la variante et de la référence du jumeau.
+6. **La satisfaction et la santé**, aux coefficients de D-595 et D-620, sans en changer
+   aucun : β Δln y − δ Δ(risque) − ε Δu − φ π̄ pour la satisfaction (points de 0 à 10) ;
+   l'espérance de vie si l'écart durait (s g Δln y), la probabilité d'être en bonne santé
+   (−c (e − u) Δ(risque)) ; l'âge de départ de la génération du lecteur, lu dans
+   `sante.yaml` pour un programme entier (D-622), l'âge effectif τ fois l'écart légal.
+   Bandes : l'enveloppe des bornes, comme ces deux dimensions. Statut « illustratif ».
+7. **La grille** : seul ou en couple (les deux adultes dans la même situation), zéro à
+   trois enfants, Smic, salaire médian, salaire élevé (le neuvième décile), retraité,
+   chômeur indemnisé, indépendant ; locataire du parc privé ou propriétaire ; l'âge (moins
+   de 30 ans, 30 à 49, 50 à 61, 62 ou plus pour un retraité). Les niveaux sont ceux de la
+   population de D-553 (salariés à temps complet toute l'année : médiane et neuvième
+   décile des salaires bruts, en multiples du Smic de 2024 portés au Smic de 2026 ;
+   médianes des pensions des 65 ans ou plus et des allocations chômage des chômeurs ;
+   médiane des loyers des locataires), écrits avec leur source dans le tableau.
+
+Le contrôle d'un barème passé sur un cas type publié est préenregistré dans D-631 ; les
+nombres de tête dans D-633.
+
+## D-631 — Pour vous (2) : le contrôle sur la prime d'activité, préenregistré
+
+**Le juge** : la Drees, « Minima sociaux et prestations sociales », la fiche « La prime
+d'activité » de deux éditions, l'édition 2022 (fiche 29) et l'édition 2024 (fiche 30) :
+le cas type qu'elles publient, le montant mensuel de la prime d'activité selon le revenu
+d'activité et la configuration familiale, à la date que chaque fiche dit. Aucune valeur
+n'en a été lue : une recherche a seulement montré que la fiche de 2022 porte ce cas type,
+« au 1er juillet 2022 », avec une colonne pour la personne seule sans enfant ; et qu'au 1er
+juillet 2022 le Smic à temps plein valait 1 646 € bruts, 1 303 € nets (un extrait de presse,
+pas le juge).
+
+**Ce qui est comparé.** Pour chaque édition, les points du cas type de la personne seule
+sans enfant (chaque revenu d'activité que la fiche donne, en part du Smic ou en euros), et,
+s'ils y sont, ceux du couple sans enfant et du parent seul ou du couple avec deux enfants.
+Le modèle : le ménage du cas type par OpenFisca (`impots.cas_types`), au mois de la date de
+la fiche, le salaire du cas type celui que la fiche dit (en part du Smic du mois : le Smic
+de l'arbre), les hypothèses du cas type (le logement, le forfait logement, l'aide au
+logement) reprises telles que la fiche les écrit, lues avant le calcul et dites dans D-632.
+La prime d'activité d'un mois lit les ressources du trimestre d'avant : le salaire est
+constant toute l'année, et les mois d'avant portent le droit de leur mois.
+
+* **C1, les montants** : chaque point dans [publié − max(5 €, 3 %) ; publié + max(5 €,
+  3 %)]. La C1 tient si 80 % des points tiennent, et le point de la personne seule à un
+  Smic tient en tout cas.
+* **C2, ce que les barèmes de juillet 2022 à la date de 2024 ont changé** (la
+  revalorisation exceptionnelle de 4 % de juillet 2022, celles d'avril 2023 et d'avril 2024,
+  et le Smic) : pour la personne seule sans enfant à un Smic (à son plus proche point des
+  deux fiches s'il n'y est pas), le rapport de l'écart du modèle entre les deux dates à
+  l'écart publié dans [0,8 ; 1,2] ; un écart publié de moins de 10 € n'est pas jugé
+  (le dire).
+
+**Pronostic** : C1 tient, chaque point à moins de 2 % ou 3 € ; C2 tient, rapport entre 0,95
+et 1,05. Ce qui ferait manquer : la date (un mois de revalorisation), le forfait logement,
+l'arrondi des fiches à l'euro, le Smic net que la fiche retient. Aucune tolérance ne change
+après le calcul ; le résultat dans D-632.
+
+**Amendement, avant tout calcul** (ajouté après le commit 462f58d, poussé avant que le
+modèle ne tourne sur ce contrôle). Les deux fiches nommées ne s'ouvrent pas d'ici : le
+serveur de la Drees rend une réponse vide ou 503 à chaque essai (`curl`, et la lecture de
+page), et le panorama de 2025 que le manifeste porte est en quarantaine (sans URL, D-028).
+Une recherche pour trouver un miroir a rendu un résumé qui **montre les valeurs** d'une
+autre fiche du même panorama, la fiche 04 « La combinaison des prestations et ses effets sur
+le niveau de vie » : pour une personne seule sans enfant, locataire du parc privé, au Smic
+à temps plein, la prime d'activité mensuelle vaut 222 € au barème du 1er janvier 2024
+(édition 2024 ; revenu disponible 1 621 €) et 246 € au 1er janvier 2025 (édition 2025 ;
+revenu disponible 1 673 €, Smic net 1 426 €). **Le juge devient ces quatre nombres, non
+aveugles**, lus dans le résumé de la recherche (le document lui-même ne s'ouvre pas : ses
+hypothèses ne sont pas lues). L'hypothèse du modèle, posée ici : le cas type de la Drees
+paie le loyer plafond de l'aide au logement en zone 2 (la convention habituelle de ses cas
+types, de mémoire, non vérifiée) ; le salaire est le Smic brut à temps plein du mois de
+janvier de l'arbre ; le ménage n'a pas d'autre revenu ; les mois d'avant au même salaire.
+
+* **C1'** : la prime d'activité de janvier 2024 et de janvier 2025 dans [publié −
+  max(5 € ; 3 %) ; publié + max(5 € ; 3 %)], chacune.
+* **C2'** : l'écart de janvier 2024 à janvier 2025 (24 € publiés, au-dessus du seuil de
+  10 €), rapport modèle / publié dans [0,8 ; 1,2].
+* **C3'** : le revenu disponible mensuel de janvier (celui de l'année divisé par douze,
+  et celui du mois, les deux dits) dans ± 3 % du publié, chaque année. À côté, sans juger :
+  le même cas type au loyer médian de la population (D-630).
+
+**Pronostic** (non aveugle) : C1' et C2' tiennent ; C3' tient si l'hypothèse du loyer est
+celle de la Drees, et manque sinon, d'abord par l'aide au logement. Le résultat dans D-632.
+
+## D-632 — Pour vous (3) : le contrôle sur la prime d'activité, trois sur trois, non aveugle
+
+Le préenregistrement de D-631 est commité et poussé (462f58d), son amendement aussi
+(d127ec1), avant que le modèle ne tourne sur ce contrôle
+(`scripts/controle_pour_vous_ppa.py`, rapport `reports/jumeau/controle_pour_vous_ppa.json`,
+commit 90f0481). Le cas type : une personne seule sans enfant, locataire du parc privé en
+zone 2, au Smic brut de janvier toute l'année (1 766,92 € en 2024, 1 801,80 € en 2025),
+OpenFisca au droit de chaque année.
+
+| contrôle | modèle | publié (Drees, fiche 04) | tolérance | tient |
+|---|---:|---:|---|---|
+| C1' : prime d'activité, janvier 2024 | 222,99 € | 222 € | ± 6,66 € | oui |
+| C1' : prime d'activité, janvier 2025 | 247,57 € | 246 € | ± 7,38 € | oui |
+| C2' : son écart de 2024 à 2025 | +24,58 € | +24 € | rapport 0,8 à 1,2 | oui (1,02) |
+| C3' : revenu disponible, janvier 2024 | 1 621,66 € | 1 621 € | ± 3 % | oui (+0,04 %) |
+| C3' : revenu disponible, janvier 2025 | 1 673,86 € | 1 673 € | ± 3 % | oui (+0,05 %) |
+| C3' : l'année sur douze, 2024 | 1 640,88 € | 1 621 € | ± 3 % | oui (+1,2 %) |
+| C3' : l'année sur douze, 2025 | 1 671,03 € | 1 673 € | ± 3 % | oui (−0,1 %) |
+
+**Les trois tiennent, dans le pronostic.** Le revenu de janvier (salaire net 1 398,68 € en
+2024, 1 426,29 € en 2025, le Smic net que la fiche dit pour 2025, plus la prime
+d'activité) retrouve le publié à l'euro ; l'année sur douze s'en écarte de 1,2 % en 2024
+parce que le Smic a été relevé en novembre 2024. **Ce que le contrôle ne juge pas** :
+l'aide au logement est nulle à un Smic pour une personne seule, au loyer plafond (278,28 €
+en 2024) comme au loyer médian de la population (370 €) : l'hypothèse du loyer, qui n'a pas
+pu être lue, ne change rien ici, et l'aide au logement des cas types n'est pas jugée.
+**Non aveugle** : les quatre nombres étaient connus avant le calcul (D-631) ; le contrôle
+dit que le cas type et le barème d'OpenFisca reproduisent ce que la Drees publie, pas que
+la grille est juste ailleurs (couples, enfants, chômeurs, retraités). Aucune tolérance n'a
+changé. Un test léger tient ces nombres (`tests/test_pour_vous.py`).
+
+## D-633 — Pour vous (4) : trois programmes pour quatre cas types, et la page
+
+**Ce qui est fait** (volet `cas`, D-630). `impots.cas_types` chiffre 196 cas types par
+OpenFisca (deux foyers, zéro à trois enfants, Smic, salaire médian, salaire élevé,
+chômeur, retraité ; locataire ou propriétaire ; trois âges d'actifs) sous les 46 scénarios
+de la bibliothèque, tous dans une simulation par scénario (229 s en tout ; trois ménages
+pris seuls redonnent le même revenu disponible à 1 €, au droit et sous une réforme,
+`plf2027_art_74_ppa`) ; l'indépendant passe par sa cellule. Le tableau commité :
+`jumeau/parametres/cas_types.json` (0,44 Mo, les écarts nuls omis). Les niveaux, de la
+population de D-553 : Smic 22 185 € bruts par an en 2026 ; salaire médian 33 625 € et
+neuvième décile 73 724 € bruts en 2024 (temps complet, toute l'année), portés par le Smic
+(+4,3 %) ; pension médiane des 65 ans ou plus 20 294 € ; allocation chômage médiane
+13 362 € ; loyers médians du privé de 370 € (une personne) à 792 € (cinq ou plus).
+
+La dimension `pour_vous` (`jumeau/impacts/pour_vous.py`, statut « illustratif ») :
+D-630, deux précisions écrites à l'usage. (1) Le salaire du jumeau appliqué au salaire net
+du cas type retranche la part que le bloc `travail` écrit (la hausse mécanique des bas
+salaires d'une hausse du Smic, D-478) : le statique du cas type la porte déjà ; le reste du
+salaire moyen (WS de Mésange, l'indexation aux prix, le coin des cotisations) s'applique à
+tous les salariés, Smic compris (une approximation). (2) Un programme que le structurel
+calcule par ses mesures seules (D-502) garde le statique du programme entier
+(`cle_statique`). La page « Ce que ça change » a une section « Pour vous » : cinq choix
+(foyer, enfants, activité, logement, âge), et pour le cas type le revenu réel, ce que la
+mesure change aux impôts et prestations, le risque de chômage, la satisfaction, l'espérance
+de vie, l'âge de départ, la courbe et la table année par année, au téléphone aussi (390 px,
+aucun défilement horizontal, captures regardées). Les cas types des programmes précalculés
+sont dans `impacts-pour-vous.json`, lu à la demande (la page passe de 2,9 à 0,83 Mo).
+
+**Les nombres de tête** (`scripts/jumeau_pour_vous.py`, `reports/jumeau/
+pour_vous_programmes.json`) : comme D-597 et D-622, structurel, vieillie, convention
+« parts_premiere_annee », θ ½, tirage 0 ; Mélenchon par ses mesures seules. En 2035, euros
+de 2026 par an (le statique : la mesure elle-même, la première année) ; le risque de
+chômage en points ; la satisfaction d'un adulte en points de 0 à 10 ; l'espérance de vie
+en mois, si l'écart durait.
+
+| programme, cas type | statique | revenu réel 2035 | risque | satisfaction | vie |
+|---|---:|---:|---:|---:|---:|
+| Mélenchon, seul au Smic, locataire | +1 606 | +1 809 (+8,9 %) | +0,48 | +0,022 | +0,36 |
+| Mélenchon, couple 2 enfants, médians | +182 | +887 (+1,6 %) | +0,30 | −0,007 | +0,07 |
+| Mélenchon, couple de retraités | +3 341 | +3 326 (+8,6 %) | — | +0,023 | +0,35 |
+| Retailleau, seul au Smic, locataire | −1 225 | −1 251 (−6,1 %) | −0,86 | −0,002 | −0,27 |
+| Retailleau, couple 2 enf., médians | +2 966 | +2 896 (+5,2 %) | −0,54 | +0,045 | +0,21 |
+| Retailleau, couple de retraités | 0 | −5 (0,0 %) | — | +0,021 | 0,00 |
+| Attal, seul au Smic, locataire | +1 441 | +1 084 (+5,3 %) | −2,33 | +0,090 | +0,22 |
+| Attal, couple 2 enfants, médians | +5 298 | +4 165 (+7,4 %) | −1,46 | +0,094 | +0,30 |
+| Attal, couple de retraités | 0 | −17 (0,0 %) | — | +0,057 | 0,00 |
+
+D'où ils viennent. **Mélenchon** : le Smic à 1 700 € nets fait le statique du salarié au
+Smic (+2 840 € de salaire net, −955 € de prestations, +288 € d'impôt), l'indexation de 10 %
+celui des retraités (+4 059 € de pension) ; l'économie y ajoute le salaire moyen (+2,3 % en
+2035, hors la part mécanique ; les prix +1,1 %) et le chômage monte un peu (+0,48 point pour
+le salarié au Smic, risque de départ 8,6 %). L'âge : −4 ans d'âge légal pour toute
+génération qui l'atteint après 2033, −2 ans de départ effectif (de −4 à −1), +1,4 an de
+retraite sans limitation. **Retailleau** : le revenu d'incitation à l'activité retire 1 481
+€ de prestations au salarié seul au Smic, les gains rendus à moitié lui en rendent 265 ; le
+revenu familial fait l'essentiel du couple avec enfants (+3 918 € de prestations, +1 854 €
+d'impôt) ; l'âge minimal à 63 ans : −1 an légal, −0,5 effectif. **Attal** : le « droit au
+brut » (les cotisations salariales de retraite à 22 %) fait le statique ; le salaire moyen
+du jumeau baisse de 2,9 % en 2035 (le coin des cotisations revient à l'employeur, Mésange,
+D-606) et en reprend d'un cinquième à un quart ; le chômage baisse le plus (−2,3 points de
+risque au Smic). Les retraités ne bougent qu'avec les prix et le chômage autour d'eux.
+
+**Ce que ces nombres ne disent pas.** Des cas types, pas des personnes ; le statique est
+exact pour le cas type et tenu en part de son revenu ; l'économie est celle du jumeau
+(discutée : D-488 pour l'emploi d'Attal) ; la satisfaction et la santé ne sont pas jugées
+(D-596, D-621) ; dans la page, Mélenchon passe par la chaîne des études (le structurel le
+refuse comme un tout) : le statique seul, dit sur la page. Un test léger tient le statique
+d'Attal, les formules à la main, l'intensité, la cellule, l'âge de départ, le choix du cas
+type, le contrôle de D-632 et la simulation commune (`tests/test_pour_vous.py`, 7 tests,
+18 s) ; pas de test des nombres des programmes (ils dépendent du jumeau).
+
+**Ce qui reste à décider** (le propriétaire) : (a) la grille (un couple à deux revenus
+différents, le temps partiel, le parc social, l'Île-de-France) ; (b) l'indépendant par
+OpenFisca, quand le moteur des ménages portera ses revenus ; (c) le salaire moyen du jumeau
+appliqué à tous les salariés, ou par tranche de salaire (le bloc `travail` a une
+distribution) ; (d) le contrôle de l'aide au logement et des couples sur un cas type
+publié, les fiches de la Drees une fois ouvrables d'ici.
+
+## D-635 — Relecture adverse du but 29 : trois erreurs corrigées, le reste écrit
+
+**Ce qui est relu** (volet `relecture` du but 29, branche `claude/but29-relecture`, partie
+de `claude/but29` à a2dd03e) : `jumeau/impacts/` (comptes, economie, moral, productivite,
+sante, pour_vous, tableau, _commun), `jumeau/parametres/{moral,productivite,sante}.yaml`,
+`jumeau/proposition.py`, `cas_types.py`, `site_impacts/`, les ajouts à `navigateur.py` et à
+`api/main.py`, les quatre rapports `reports/jumeau/*_programmes.json`. Le code et les PDF
+de `data/raw` d'abord, les D-entrées (D-595 à D-633) ensuite. Le jumeau a tourné sur
+Retailleau par `navigateur.impacts_json` (la page, en secondes) ; aucune passe sur la
+population, aucun `make impact`, aucun lourd.
+
+**Les coefficients relus sur leur source** : tous retrouvés, à la page et à la valeur dites.
+Green Book (β 0,35 à 0,50, p. 19 du document de fond ; δ −0,46 [−0,38 ; −0,53], annexe A2 ;
+13 000 £ [10 000 ; 16 000]) ; DMO (tableaux 1, 2 et A1 : −2,0, −1,7, −2,8 ; −1,4, −0,7,
+−2,3 ; −0,33 ; p. 11, 0,02 et 0,0033) ; Helliwell et Huang (tableau 2, échelle de Cantril,
+en emploi, modèle 3 : 2,4 %) ; NIESR DP 449 (tableau 1, seuil 12 000 £, MCO : 0,042 et
+0,032) ; Trésor-Éco n° 290 (0,19 point, 0,35 % dont 0,25 % direct) ; Insee Première
+n° 1687 (84,4, 71,7, 88,3, 80,0 ans ; 5 800 et 470 €) ; Cesarini et al. (un sixième du
+gradient) ; Sullivan et von Wachter (50 à 100 %, 10 à 15 %) ; Kuhn et al. (0,208 an) ; COR
+(48,1 % et 24,5 % ; un peu plus de 30 % et de 10 %) ; la part des 16 ans ou plus, 0,8183
+(56 195 044 sur 68 669 303). Aucune unité fausse trouvée dans les conversions (DMO en
+fraction, ×c/100 ; Δu en points ; chômeurs en milliers ×1000 ; Md€ ×1e9 / ménages). La TVA
+n'est pas comptée deux fois : le prix de la consommation du jumeau l'exclut
+(`blocs/commerce.py`, équation PC), le statique des cas types la retranche une fois. La
+diffusion d'une hausse du Smic n'est pas comptée deux fois dans « Pour vous » : le cas type
+la porte (`cas_types`), la part du bloc `travail` est retranchée du salaire moyen.
+
+**Corrigé** (chaque correctif avec son test léger, en échec sur le code d'avant) :
+
+1. *Grave, la bande des canaux de la productivité était à l'envers*
+   (`impacts/productivite.py`, l'indicateur `pgf_canaux` et `pib_potentiel_avec_canaux`).
+   Les bornes de η (0, centre, haut) étaient sommées telles quelles : pour un levier qui
+   baisse (une baisse de cotisations, la suppression du CIR), le « bas » passait au-dessus
+   du « haut » ; pour des canaux de signes mêlés, la bande était trop étroite. Désormais
+   l'enveloppe canal par canal (`_enveloppe`). En 2035, en % du PIB, avant → après :
+   Retailleau [0 ; −0,207] → [−0,207 ; 0] ; Mélenchon [0 ; 1,214] → [−0,414 ; 1,628] ;
+   Ruffin [0 ; 0,452] → [−0,174 ; 0,625]. Le centre ne change pas. Le rapport
+   `productivite_programmes.json` garde son commit et sa bande d'avant : à refaire au
+   prochain passage du script (le jumeau seul, sans passe). Commit 91958a3.
+2. *Moyen, un statut trop fort.* Une loi hypothétique ou une mesure mise à l'échelle ou
+   décalée rendait les comptes et l'économie « illustratifs » (`_commun.statut`, D-606),
+   mais le moral et la productivité, qui lisent la même trajectoire, restaient « sourcés,
+   non jugés ». Ils suivent maintenant la même règle et en disent la raison. Aucun nombre
+   ne change ; les rapports (programmes entiers) ne sont pas touchés. Commit 44058d5.
+3. *Moyen, la page promettait plus que le calcul.* Toutes les bandes y étaient dites « de
+   5 à 95 % » (légende, en-têtes du tableau, « Comment c'est calculé ») ; celles du moral,
+   de la santé, de « Pour vous » et des canaux de la productivité sont l'enveloppe des
+   bornes publiées des coefficients, pas des tirages ni un intervalle de confiance. La page
+   dit les deux sortes, et ces trois dimensions le disent dans leurs limites. Commit
+   06c8e37.
+
+**Écrit, non changé** (des choix de modèle ou des points discutables ; au propriétaire),
+par gravité :
+
+* *La plus forte* : ε, le chômage autour de soi, fait l'essentiel du moral de Retailleau
+  et d'Attal (D-597), et son ancrage (c/100 × δ / 0,33) est un choix ; la règle linéaire
+  10/3 donnerait 2,4 fois plus, la borne basse de Helliwell et Huang passe par β (0,425),
+  pas par le coefficient du revenu de leur propre étude (0,24 sur l'échelle de Cantril,
+  tableau 1), qui donnerait 0,0058 au lieu de 0,0102 (`moral.yaml`, `bas_hh`). Le statut
+  « sourcé, non jugé » du moral tient sur des sources, mais deux centres (β au milieu de
+  sa plage, l'ancrage) sont choisis, comme ceux qui font dire la santé « illustrative ».
+* Le haut de φ (−2,3, DMO colonne 5) vient d'une équation avec un terme d'inflation au
+  carré (+3,5) : son effet marginal à 8 % d'inflation est −1,7, pas −2,3 ; la colonne 6
+  (−0,7) a une variable retardée (0,3), l'effet de long terme y est −1,0. La bande de φ est
+  donc un peu large aux deux bouts (`moral.yaml`, `inflation`).
+* Santé, un double compte partiel : le surcroît de mortalité d'un chômeur (Sullivan et von
+  Wachter) porte déjà sa perte de revenu, que le canal du revenu compte aussi par le revenu
+  du décile. Petit au centre (s = 1/12), non borné.
+* Santé, la forme de g : D-621 le dit, g sous-estime d'un quart l'association au milieu de
+  la distribution ; la conversion annuelle compte l'effet du revenu l'année même.
+* L'économie : son « PIB » est le PIB nominal (`pib` de l'état, comme la page du jumeau),
+  marqué « mieux » quand il monte ; la productivité montre le PIB en volume. Pour
+  Retailleau en 2035 : +0,735 % contre +0,796 % ; un écart de prix, pas d'activité.
+* La productivité, sur la page, n'a de bande que pour ses canaux : le socle (productivité
+  apparente, PIB potentiel…) ignore les tirages des θ que le tableau lui passe (`tirages`) ;
+  les rapports (`scripts/jumeau_productivite.py`) les ont. Une bande qui manque, pas fausse.
+* La productivité ne lit, comme levier de coût, que `entreprises["cotisations_employeurs"]`
+  (ni `cotisations_employeurs_ciblees`, ni les impulsions) : Attal, Lisnard, Philippe et
+  Le Pen ont un canal de coût nul dans le rapport ; à vérifier sur leurs passes.
+* « Pour vous » : le gain d'une mesure prise à la cellule (`Mesure.menages`, Md€ de son
+  année) se mêle au statique d'OpenFisca (euros de 2026) sans conversion : un écart de
+  quelques pour cent en fin de période, sur les cas approximés seulement.
+* Les rapports `moral_`, `sante_` et `pour_vous_programmes.json` restent ceux de leur
+  commit : aucun de leurs nombres ne change avec ces correctifs (le statut seul, et pas
+  pour des programmes entiers).
+
+**Ce qui n'a pas été fait** : la page n'a pas été construite ni ouverte au téléphone
+(`site_impacts.servir` demande le paquet du jumeau) ; `node ui/check.mjs` passe, mais il
+ne couvre pas cette page. Les contrôles dits aveugles (D-595 C1, D-620) n'ont pas été
+re-vérifiés au-delà de leurs D-entrées ; les non aveugles le disent eux-mêmes (D-595 C2,
+D-620 à moitié, D-632).
+
+## D-636 — Le rapport de la productivité refait avec la bande corrigée (D-635, point 1)
+
+**Ce qui est fait** (volet `corrige` du but 29, branche `claude/but29-corrige`) :
+`scripts/jumeau_productivite.py` relancé tel quel (le jumeau seul, 200 tirages, la graine
+du navigateur, une minute ; aucune passe sur la population) pour que
+`reports/jumeau/productivite_programmes.json` porte l'enveloppe canal par canal de D-635.
+
+**Avant → après**, en 2035, centre [bas ; haut], en % d'écart à la référence. Le centre
+ne bouge nulle part ; seules les deux lignes des canaux changent, et seulement pour les
+programmes qui ont un canal non nul :
+
+| programme | `pgf_canaux` | `pib_potentiel_avec_canaux` |
+|---|---|---|
+| Mélenchon | [0 ; 1,214] → [−0,414 ; 1,628] | [0,681 ; 1,894] → [0,267 ; 2,308] |
+| Retailleau | [0 ; −0,207] → [−0,207 ; 0] | [0,883 ; 0,676] → [0,676 ; 0,883] |
+| Ruffin | [0 ; 0,452] → [−0,174 ; 0,625] | [0,207 ; 0,659] → [0,033 ; 0,832] |
+| Tondelier | [0 ; 0,522] → [−0,022 ; 0,544] | [0,014 ; 0,536] → [−0,008 ; 0,558] |
+| Kazib | [0 ; 0,522] → [−0,022 ; 0,544] | [−0,018 ; 0,504] → [−0,041 ; 0,526] |
+| Bouamrane | [0 ; 0,517] → [−0,022 ; 0,539] | [−0,018 ; 0,499] → [−0,041 ; 0,521] |
+
+Les centres, inchangés : `pgf_canaux` 0,517, −0,104, 0,192, 0,261, 0,261, 0,258 ;
+`pib_potentiel_avec_canaux` 1,198, 0,779, 0,399, 0,275, 0,243, 0,240.
+
+Attal, Roussel, Lisnard, Philippe, Le Pen et l'article 74 du PLF 2027 : aucun nombre ne
+change (leurs canaux sont nuls ou d'un seul signe à bas nul). Les autres indicateurs
+(productivité apparente, capital par tête, PIB potentiel du socle, salaires) sont
+identiques au rapport d'avant : le correctif ne touche que l'addition des canaux.
+
+## D-637 — Le levier de coût de la productivité lit l'incidence des cotisations du jumeau
+
+**La question** (D-635, écrit, non changé) : le levier de coût du canal `pression_cout`
+ne lisait que `Mesure.entreprises[a]["cotisations_employeurs"]` ; Attal, Lisnard,
+Philippe et Le Pen y avaient un canal nul. Leurs passes et leurs fiches
+(`jumeau/transmission/<candidat>/`) relues mesure par mesure, et la trajectoire du jumeau
+(états par mesure, tirage 0) :
+
+* *Attal* : le « droit au brut » (a16, cotisations salariales de retraite à l'échelle
+  0,22 ; −77,14 Md€ en 2026, passe des ménages) est dans la trajectoire du programme
+  (impulsion `cotisations_salaries` : 81,7 Md€ en 2026, 105,2 en 2035). Légalement, le
+  brut et le coût ne bougent pas (la fiche, Saez et al. 2012). Mais le jumeau, lui, fait
+  bouger le coût : le bloc `salaires` (`blocs/menages.py`, D-478) écrit ŵ += (1 − λ_s)
+  L[κ], λ_s = 0,554 au centre (Bozio-Wasmer, tableau 4.2, p. 185, `travail.yaml`) ; les
+  rémunérations du programme y baissent de 24,6 Md€ en 2035. **Une ligne réelle
+  manquait.** La CVAE (a18) est un impôt de production, pas un coût du travail ; le
+  crédit d'impôt IA (a20) et l'intéressement (a32) sont sans choc.
+* *Lisnard* : la baisse de CSG d'activité (l1) est dans la trajectoire (35,6 Md€ en
+  2030), mais le jumeau ne la met pas dans le coin des salaires (le bloc ne lit que
+  `cotisations_salaries`) : le coût n'y bouge pas, le canal le suit. Les 120 Md€ de
+  cotisations salariales (l2) et les 40 Md€ d'impôts de production (l3) sont des
+  hypothèses hors du programme chiffré ; la C3S et la CVAE (l4) ne sont pas un coût du
+  travail. Canal nul : juste.
+* *Philippe* : l'exonération salariale de deux heures (p10) laisse une impulsion de
+  0,0015 Md€ ; la baisse de 50 Md€ des aides (p19) est en subventions (D3), hors du
+  programme chiffré, comme le « deal » des impôts de production (p3). Canal nul : juste.
+* *Le Pen* : TVA et IR seulement dans la trajectoire. La hausse de 10 % des salaires
+  exonérée de cotisations patronales (lp36) et les cotisations des seniors (lp16) n'ont
+  pas de montant (`origine: aucun`) : rien à lire. Canal nul : juste, faute de chiffrage ;
+  si lp36 est un jour chiffrée en cotisations employeurs, le levier la lira.
+
+**La décision** : le levier de coût ajoute, pour chaque mesure, le terme du jumeau
+lui-même (`impacts/productivite.py`, `cout_incidence`) :
+Δcoût_t += (1 − λ_s) L[κ]_t − λ_e L[τ]_t, κ et τ les impulsions de cotisations salariales
+et employeurs (ciblées comprises) de l'état, sur le D1 de la référence du bloc, λ celles
+que le bloc `travail` écrit (0 sans lui, le coin de Mésange), L le retard du profil de la
+productivité de Mésange (p. 65). La raison d'y mettre aussi λ_e : avant, le levier lisait
+l'employeur à λ_e = 0 (tout sur le coût) et le salarié à λ_s = 1 (rien sur le coût), deux
+bouts opposés de θ « travail_incidence » ; aucun θ du jumeau ne fait cela. Le statutaire
+employeur reste lu comme avant, sur π D1 ; le terme d'incidence suit la convention du
+bloc (sur D1) : un écart de 1/π sur ce terme seulement, dit. Le canal reste à côté, non
+branché (D-604). La fiscalité de la CSG reste hors du coût, comme dans le jumeau.
+
+**Avant → après** (`reports/jumeau/productivite_programmes.json`, refait ; 2035, centre
+[bas ; haut], `pgf_canaux` en % du PIB) :
+
+| programme | `pgf_canaux` | `pib_potentiel_avec_canaux` |
+|---|---|---|
+| Attal | 0 [0 ; 0] → −0,478 [−0,957 ; 0] | 1,611 → 1,133 [0,655 ; 1,611] |
+| Retailleau | −0,104 [−0,207 ; 0] → −0,144 [−0,288 ; 0] | 0,779 → 0,739 [0,595 ; 0,883] |
+| Mélenchon | 0,517 [−0,414 ; 1,628] → 0,568 [−0,414 ; 1,730] | 1,198 → 1,249 |
+| Roussel | 0,589 [0 ; 1,178] → 0,693 [0 ; 1,386] | 0,587 → 0,691 |
+| Ruffin | 0,192 [−0,174 ; 0,625] → 0,254 [−0,154 ; 0,730] | 0,399 → 0,461 |
+| Tondelier | 0,261 [−0,022 ; 0,544] → 0,315 [0 ; 0,630] | 0,275 → 0,329 |
+| Kazib | 0,261 [−0,022 ; 0,544] → 0,315 [0 ; 0,630] | 0,243 → 0,297 |
+| Bouamrane | 0,258 [−0,022 ; 0,539] → 0,312 [0 ; 0,624] | 0,240 → 0,294 |
+
+Lisnard, Philippe, Le Pen, l'article 74 : inchangés (nuls). Le levier d'Attal : −1,05 %
+du coût en 2026, −2,27 % en 2035. Le canal est symétrique par choix (D-600 : une baisse
+du coût réduit la PGF, ce que Riley et Rosazza Bondibene n'estiment que dans le sens de la
+hausse) : la baisse de 0,48 point du PIB d'Attal en dépend entièrement, son bas est 0.
+Test : `test_le_droit_au_brut_passe_au_cout_par_l_incidence`, en échec sur le code
+d'avant (le levier valait 0).
+
+## D-638 — « Pour vous » : le gain pris à la cellule ramené en euros de 2026
+
+**L'erreur** (D-635, écrit, non changé) : dans « Pour vous », le statique d'une mesure
+chiffrée par OpenFisca est en euros de 2026 (le cas type au droit et aux niveaux de 2026),
+tenu en part du revenu de 2026 chaque année ; à défaut (l'indépendant, une loi simple, une
+mesure hors du tableau), le gain est pris à la cellule, `Mesure.menages[a]` en Md€ de
+l'année a (vue vieillie : le total de l'année du chemin, aux parts de la première), divisé
+par le nombre de ménages du décile. Les deux étaient sommés et rapportés au revenu de 2026
+sans conversion : un gain de 2035 comptait comme des euros de 2026.
+
+**Le correctif** (`impacts/pour_vous.py`, `nominal`, `statique`) : le gain de la cellule de
+l'année a est divisé par le revenu disponible nominal de son décile dans la référence du
+jumeau (`rdb_dXX`), rapporté à celui de 2026 ; c'est le même rapport au revenu du décile
+que l'année dite, porté au revenu de 2026, la base du statique d'OpenFisca. Sans les
+déciles (un autre mode), le PIB nominal de la référence ; sans lui, rien (et `lus` le
+dit). Le facteur vaut 1 en 2026 et 1,307 en 2035 (Retailleau, décile 5 : 110,1 → 143,9
+Md€) : l'écart est de l'ordre de 23 % en fin de période, non de « quelques pour cent »
+comme D-635 l'estimait.
+
+**Avant → après**, les cas approximés (l'indépendant, seul et locataire, ou en couple,
+deux enfants, propriétaire : tous deux au même décile et à la même cellule), le statique
+en € par an, 2026 inchangé, puis 2035 ; et le revenu réel de 2035 :
+
+| programme | statique 2026 | statique 2035 | revenu réel 2035 (seul) |
+|---|---|---|---|
+| Mélenchon | 2 770 | 2 975 → 2 276 | 2 656 → 1 964 |
+| Retailleau | 1 357 | 1 391 → 1 064 | 1 456 → 1 129 |
+| Attal | 2 082 | 2 599 → 1 988 | 2 852 → 2 236 |
+| Roussel | 366 | 325 → 248 | 144 → 68 |
+| Ruffin | 699 | 730 → 558 | 622 → 451 |
+| Lisnard | 818 | 1 129 → 864 | 1 103 → 838 |
+| Le Pen | 606 | 923 → 706 | 903 → 686 |
+| Philippe | 1 750 | 1 558 → 1 192 | 1 533 → 1 167 |
+
+Les cas que le tableau d'OpenFisca tient ne changent pas : `pour_vous_programmes.json`
+(quatre cas tenus par OpenFisca, le programme d'un coup) ne bouge en aucun nombre (relancé,
+seul `lus` gagne « rdb_dXX ») et garde son commit. Test :
+`test_le_gain_de_la_cellule_est_ramene_en_euros_de_2026`, en échec sur le code d'avant.
+
+## D-639 — Le PIB en volume en tête de l'économie ; le double compte de la santé retiré
+
+**L'erreur** (D-635, écrit, non changé) : la dimension « économie » (D-606) n'avait qu'un
+PIB, le nominal (`pib` de l'état, celui de la page du jumeau), marqué « mieux » quand il
+monte, et c'était la tête de sa fiche dans la vue d'ensemble. Une mesure qui ne fait que
+monter les prix y paraissait faire grandir l'économie ; la productivité, elle, montrait le
+PIB en volume.
+
+**Le correctif** (`impacts/economie.py`) : un premier indicateur `pib_volume`, « PIB en
+volume », (ΔPIB − Δeffet_prix_pib) / PIB^r, la formule du socle de la productivité
+(D-600), sens « mieux » s'il monte ; il devient la tête de la fiche. Le PIB nominal reste
+à côté, renommé « PIB en valeur (nominal) », avec le sens 0 (ni mieux ni moins bien), et
+une limite le dit. La clé `pib` ne change pas : le test qui la tient égale à la page du
+jumeau, au bit, passe toujours. Le juge de l'histoire (D-439) lisait déjà `pib_volume`.
+
+**Avant → après**, 2035, la tête de la fiche (centre, θ à ½) :
+
+| programme | avant : PIB (nominal), « mieux » | après : PIB en volume | nominal, sens 0 |
+|---|---|---|---|
+| Retailleau | +0,735 % | +0,796 % | +0,735 % |
+| Attal | +0,741 % | +1,022 % | +0,741 % |
+| Ruffin | +0,650 % | +0,519 % | +0,650 % |
+| Lisnard | +0,575 % | +0,547 % | +0,575 % |
+| Le Pen | +0,388 % | +0,370 % | +0,388 % |
+
+Ruffin (le Smic) est celui dont la tête baisse le plus : une part de son PIB nominal était
+des prix. Aucun rapport commité ne lit cette dimension : aucun n'est refait. Test :
+`test_l_economie_met_en_tete_le_pib_en_volume`, en échec sur le code d'avant.
+
+**Le double compte de la santé** (D-635, écrit, non changé ; le même volet, les numéros
+réservés étant pris). Le canal du chômage (Sullivan et von Wachter : le surcroît de
+mortalité d'un travailleur qui perd son emploi, perte de revenu comprise) et le canal du
+revenu (le gradient de l'Insee sur le revenu des déciles) comptaient tous deux le revenu
+de ceux qui passent entre le chômage et l'emploi : le jumeau le met dans le revenu des
+déciles (`menages.revenus_cellules` : ρ_c π D1 ê aux cellules au prorata de leurs
+chômeurs, moins l'allocation a_s w ΔU). Mesuré (jumeau, θ à ½, `scripts/jumeau_sante.py`)
+avant tout correctif, 2035 : Attal, 665 000 chômeurs de moins, 8,78 Md€ de revenu des
+déciles par l'emploi ; ce revenu fait 1 835 des 7 978 années de vie du canal du revenu,
+quand le canal du chômage en compte 16 147. Mélenchon (des actifs en plus : le chômage et
+l'emploi montent ensemble en 2035) : rien de commun en 2035. **Un double compte
+manifeste** pour un programme qui fait baisser le chômage : retiré.
+
+*Le correctif* (`impacts/sante.py`, `revenu_du_chomage`, `calculer_sante`) : la part q =
+−ΔU / ΔE (bornée à [0, 1], nulle si le revenu n'a pas le signe de −ΔU) de ce revenu sort
+de Δln y pour la durée de vie et les décès ; le renoncement aux soins, que le canal du
+chômage ne couvre pas, la garde. Jamais plus que ce que le jumeau a mis dans le revenu.
+Sans l'état de départ, rien n'est retiré et `notes` le dit ; `scripts/jumeau_sante.py`
+passe désormais le départ. `reports/jumeau/sante_programmes.json` refait. Avant → après,
+2035, années de vie (milliers) [bande] et décès évités ; puis le cumul 2026-2035 :
+
+| programme | années de vie 2035 | dont revenu | décès 2035 | cumul |
+|---|---|---|---|---|
+| Attal | 24,13 → 22,29 [5,4 ; 66,1] | 7,98 → 6,14 | 1 272 → 1 099 | 207,9 → 193,3 |
+| Retailleau | 13,04 → 12,17 | 7,04 → 6,17 | 858 → 776 | 126,0 → 118,8 |
+| Philippe | 12,05 → 11,51 | 8,85 → 8,31 | 940 → 889 | 138,5 → 133,1 |
+| Mélenchon | 14,62 → 14,62 | 17,95 → 17,95 | 1 591 → 1 591 | 188,3 → 188,1 |
+
+Le canal du chômage ne change pas. Le revenu retiré en 2035 : 8,78 Md€ (Attal), 4,26
+(Retailleau), 2,72 (Philippe), 0 (Mélenchon). Test :
+`test_le_revenu_du_chomage_ne_compte_pas_deux_fois`, en échec sur le code d'avant. Le choix
+écrit : on retire du revenu, pas du chômage, parce que Sullivan et von Wachter mesurent
+l'effet total d'une perte d'emploi et que la part causale du gradient (s = 1/12) est la
+plus incertaine des deux ; le propriétaire peut préférer l'inverse.
+
+**La page vérifiée** (le même volet). `site_impacts.ecrire` dans un dossier à part
+(1 min 28 s), servie en local, ouverte dans Chromium (Playwright, deviceScaleFactor 1) à
+1 200 et à 390 px : le programme de Retailleau (précalculé), une mesure seule (Le Pen,
+l'IR des moins de 30 ans, calculée dans la page par Pyodide en 6 s), une proposition
+composée (une loi simple, 6 s) et « Pour vous » (l'indépendant, approximé). Aucune erreur
+dans la console, aucun défilement horizontal à 390 px. *Ce qui cassait* : deux fiches sur
+six n'avaient pas de bande, la productivité (son socle ignorait les tirages des θ que le
+tableau lui passe, D-635) et « Pour vous » (le revenu réel du cas par défaut, lu au seul
+réglage). Les deux lisent désormais les tirages de la page (5 et 95 %, comme
+`_commun.serie`) ; les rapports, qui portent leurs tirages dans la trajectoire, ne
+changent pas. Après : chaque fiche a son nombre, sa bande et son statut, aux deux
+largeurs et dans les quatre cas. Un point vu, non changé : la bande des tirages ne contient
+pas toujours le centre (θ à ½) ; pour la mesure de Le Pen, la productivité apparente en
+2035 vaut +0,054 % pour une bande de +0,037 à +0,053 %, comme peut le faire toute bande de
+tirages autour d'un modèle non linéaire. `node ui/check.mjs` passe (il ne couvre pas cette
+page).
+
+## D-645 — Où ça tombe (1) : la table de passage des cellules aux territoires
+
+**Pourquoi** (volet `territoires` du but 29, ajouté par le coordinateur dans la nuit du 17
+au 18 novembre ; numéros D-645 à D-649). Le jumeau chiffre le gain d'une mesure par
+cellule (décile de niveau de vie × type de ménage, `jumeau.cellules`), sans territoire. Le
+lecteur demande aussi « où ça tombe » : outre-mer ou métropole, grandes villes ou rural.
+
+**Ce que la population porte, lu avant de décider.** La population de D-553 (empreinte
+5ace8bb6) a `region` à deux valeurs seulement (`metropole`, `dom`), `departement` pour
+l'outre-mer seulement (971, 972, 973, 974 ; tiré sur le recensement, `logement`), et
+`zone_apl` (1, 2, 3), tirée ménage par ménage sur le statut de la commune dans l'unité
+urbaine et le statut d'occupation (`margins.APL_ZONE_BY_STCOMM`). Le fichier détail de
+l'enquête Emploi n'a ni région, ni département, ni commune en métropole : **aucune région
+métropolitaine n'est connue**, et aucune n'est inventée. Le statut de la commune dans
+l'unité urbaine 2020 (`STCOMM2020` : ville-centre, banlieue, ville isolée, hors unité
+urbaine), lui, est observé ; la population ne le garde pas, mais son identifiant de ménage
+est `IDENT-TRIM` de l'enquête : on le relit dans `FD_EEC_2024.parquet`, par ménage.
+
+**Décidé : deux axes.**
+
+1. **Les régions que la population connaît** : la métropole, la Guadeloupe, la Martinique,
+   la Guyane, La Réunion (Mayotte n'est pas dans l'enquête Emploi).
+2. **Les types de territoire** : en métropole, « rural (hors unité urbaine) »
+   (`STCOMM2020` = H, observé) ; dans une unité urbaine, selon la zone APL :
+   « agglomération parisienne (zone 1) », « grandes agglomérations (zone 2) », « villes
+   moyennes et petites (zone 3) » ; et « outre-mer » à part. Limite : la zone est tirée,
+   pas observée ; les revenus d'un ménage de zone 1 sont ceux des ménages urbains de même
+   statut de commune et de même statut d'occupation, pas ceux de l'Île-de-France.
+
+**La table** (`scripts/jumeau_territoires.py`, `jumeau/parametres/territoires.json`,
+commitée). Chaque ménage est rangé dans sa cellule comme `cellules.construire` le fait :
+le décile du niveau de vie (revenu disponible sur les unités de consommation de l'OCDE
+modifiée, rangé sur le poids des ménages, `aggregate.weighted_decile_index`) et le type
+(`cellules.types_menages`). Le revenu disponible est celui d'une passe de référence déjà
+faite sur toute la population de D-553 (199 451 ménages, droit de 2026, vue figée, sans
+les imputations des niches, du capital et des indemnités journalières) : la situation de
+référence de `complet_propres_smic` (série des études du but 28, son empreinte dans la
+table) ; aucune passe n'est lancée pour ce volet. Les cellules du jumeau, elles, viennent
+d'une passe au droit de 2024 sur 30 000 ménages avec ces imputations : le rangement peut
+différer aux bords des déciles, et la table dit l'écart des ménages par cellule.
+Pour chaque cellule et chaque territoire, la table porte des sommes pondérées : ménages,
+personnes, unités de consommation, revenu disponible ; et les neuf seuils de décile du
+niveau de vie. Aucune microdonnée : 50 cellules × 10 territoires.
+
+**Le seuil.** Une case (cellule, territoire) qui porte moins de **30 ménages observés**
+(lignes de l'enquête, non pondérées) ne publie pas sa propre part : sur l'axe de cette
+case, la cellule entière prend la répartition de son décile (les cinq types ensemble) ;
+si une case (décile, territoire) de cet axe a elle-même moins de 30 ménages, la cellule
+prend la répartition nationale de l'axe. Les personnes, unités et revenus d'une cellule
+regroupée suivent ses ménages, au prorata. La table dit quelles cellules sont regroupées.
+
+**Le gain d'un territoire.** Le gain par ménage d'une cellule (`gagnants.gagnants_perdants`
+dans le mode structurel : le choc statique et la dynamique ; le choc statique seul,
+réparti au prorata des ménages du décile, dans le mode réduit) est supposé **le même
+partout**. Le gain moyen d'un territoire est la moyenne des gains des cellules, pondérée
+par ses ménages dans chaque cellule (la part de la cellule dans le territoire, lue dans la
+table, fois les ménages de la cellule du jumeau). En % : rapporté au revenu disponible de
+référence du territoire, celui de chaque cellule dans le jumeau (sa part du PIB nominal
+de la référence, comme `blocs.menages`) corrigé du rapport du revenu par ménage de la case
+à celui de la cellule (la table). La part des gagnants : celle des ménages du territoire
+dans les cellules qui gagnent plus de 10 € par an (`gagnants.SEUIL`).
+
+**Les limites, écrites sur la fiche.** Les prix, les loyers et l'emploi locaux ne sont
+pas modélisés : l'emploi du jumeau est national et se répartit aux cellules, pas aux
+territoires ; une mesure territoriale (un taux réduit outre-mer, une aide au logement de
+zone 1) n'est vue que par la passe de sa mesure, au décile. Deux ménages de la même
+cellule gagnent autant à Paris et en Guyane. Statut : « illustratif ».
+
+## D-646 — Où ça tombe (2) : le contrôle de la table, préenregistré
+
+**Le juge.** Deux agrégats territoriaux publiés, qu'aucune étape de la population n'a lus
+pour se caler (la médiane métropolitaine de Filosofi est dans `margins` en « validation »
+seulement ; La Réunion et la grille de densité n'y sont pas ; les revenus de la population
+sont tirés sans le territoire, qui n'y joue que par la composition des ménages) :
+
+* Insee, « Niveau de vie en 2023 : comparaisons régionales et départementales »
+  (Filosofi 2023, `TCRD_022.xlsx`, `data/raw/insee_filosofi_2023_TCRD_022.xlsx`, feuille
+  DEP) : niveau de vie médian de La Réunion 19 110 €, de la France métropolitaine 25 920 €.
+* Insee Première n° 2117 (ERFS 2024, `data/raw/erfs_2024_ip2117_figures.xlsx`, tableau
+  complémentaire 4) : taux de pauvreté à 60 % de la médiane en 2024, communes rurales de la
+  grille de densité 10,5 %, ensemble de la métropole 15,4 %.
+
+**Ce qui est calculé, sur la seule table commitée.** Pour un territoire, les personnes de
+chaque décile national (somme des cinq types) ; la fonction de répartition du niveau de vie
+est interpolée linéairement entre les seuils de décile de la table (uniforme dans un
+décile). Une quantité qui tombe dans le premier ou le dernier décile n'a pas de borne :
+« non calculable », compté manqué.
+
+* **L1** : médiane de La Réunion / médiane de la métropole. Publié 19 110 / 25 920 =
+  0,737. **Tolérance ± 0,05.**
+* **L2** : taux de pauvreté du rural (hors unité urbaine) moins celui de la métropole, au
+  seuil de 60 % de la médiane de la métropole (même interpolation). Publié 10,5 − 15,4 =
+  −4,9 points. **Tolérance ± 3 points** : plus large, parce que la définition n'est pas la
+  même (les communes hors unité urbaine sont une part des communes rurales de la grille de
+  densité : 21 % des ménages de l'enquête contre 35 % de la population).
+
+On lit un rapport et un écart, pas des niveaux : la passe est au droit de 2026 sur les
+revenus de 2024, le juge en 2023 ou 2024. Les deux lignes sont dites aussi, à titre
+d'information, sur la population directement (le revenu disponible ménage par ménage, les
+quantiles pondérés par personne), pour séparer ce que la table perd de ce que la population
+porte ; ces nombres-là ne sont pas jugés.
+
+**Le pronostic, avant tout calcul par territoire.** L1 **manquée** : les revenus de la
+population sont tirés sur des lois nationales (par catégorie sociale, âge, activité) ; La
+Réunion n'y diffère que par son chômage, son inactivité et ses ménages ; je m'attends à un
+rapport vers 0,85 à 0,90, trop haut. L2 : à moitié ; le rural de l'enquête a plus de
+propriétaires, de retraités et de couples, sa pauvreté devrait être plus basse, mais
+l'écart sans revenus locaux est plus petit : vers −2,5 points, juste dans la tolérance.
+Aucune tolérance ne change après le premier calcul ; le résultat va dans D-647, manqué ou
+tenu, et la fiche de la dimension le dit.
+
+## D-647 — Où ça tombe (3) : le contrôle de la table, le résultat
+
+Le préenregistrement (D-646) est commité et poussé (7756a0b) avant la construction de la
+table (be9e808) et avant tout calcul par territoire. Calculé sur la seule table commitée
+(`impacts.territoires.quantile`, `part_sous`), les tolérances inchangées :
+
+| ligne | table | publié | écart | tolérance | |
+|---|---|---|---|---|---|
+| L1 médiane Réunion / métropole | 0,817 | 0,737 | +0,080 | ± 0,05 | manquée |
+| L2 pauvreté rural − métropole | −4,0 points (11,6 − 15,6 %) | −4,9 | +0,9 | ± 3 | tenue |
+
+Médianes de la table : 20 171 € (La Réunion), 24 680 € (métropole).
+
+**Une ligne sur deux.** L1 est manquée, comme le pronostic le disait, mais moins loin
+qu'il ne le craignait (0,817 contre « 0,85 à 0,90 ») : la composition des ménages de La
+Réunion (chômage, inactivité, familles monoparentales, prestations des DOM au droit de
+2026) fait déjà les deux tiers de l'écart publié (−18 % sur −26 %). Le reste est ce que
+la population ne porte pas : des salaires et des revenus non salariés tirés sur des lois
+nationales, sans écart local à catégorie égale. L2 est tenue : le rural hors unité
+urbaine est moins pauvre de 4,0 points que la métropole (publié, pour les communes
+rurales de la grille de densité : 4,9), par sa seule composition.
+
+**Ce que la table perd, lu sur la population directement** (non jugé : les quantiles
+pondérés par personne, ménage par ménage, sans interpolation) : médianes 20 259 et
+24 611 €, rapport 0,823 ; pauvreté 11,4 % dans le rural, 15,4 % en métropole, −4,0
+points. La table et la population disent la même chose à 0,006 et 0,1 point près :
+l'écart de L1 vient de la population, pas de l'interpolation entre les déciles. Le rural
+hors unité urbaine fait 21,0 % des personnes de métropole (D-646 l'écrivait à « 21 % des
+ménages » sur un compte non pondéré : c'est 21,0 % pondéré, en personnes).
+
+**Ce que la fiche en dit.** Pour l'outre-mer, la dimension sous-estime l'écart de revenu
+à la métropole : un gain fixe en euros y pèse plus en % du revenu que la table ne le dit.
+La limite est écrite sur la fiche (la ligne de D-647) ; le statut reste « illustratif ».
+Pour les médianes absolues : 24 680 € pour la métropole (droit de 2026, revenus de 2024),
+contre 25 920 publiés pour 2023 ; on ne juge pas un niveau (D-646).
+
+## D-648 — Où ça tombe (4) : la dimension, et ses nombres sur trois programmes
+
+**Ce qui est codé** (`jumeau/impacts/territoires.py`, numpy seulement ; la table est un
+JSON lu une fois, que le paquet du jumeau emporte : `parametres/territoires.json` y est,
+vérifié). La dimension « Où ça tombe : les territoires », statut « illustratif » toujours
+(la répartition des cellules entre territoires est une hypothèse, même pour un programme
+chiffré tel quel : la fiche le dit en tête de ses limites, parce que la page explique
+« illustratif » par une loi simple ou une mesure transformée). Sept indicateurs : sur
+chacun des deux axes, le gain en % du revenu, le gain en € par ménage, la part des ménages
+gagnants (plus de 10 € par an), chacun avec l'ensemble (la tête, sa bande sur les tirages
+du tableau) et une série par territoire ; et l'écart entre le type de territoire de
+métropole qui gagne le plus et celui qui gagne le moins (points de %). Dans le mode réduit,
+le choc statique par décile seul ; s'il manque pour une mesure (la vue vieillie n'a pas de
+ventilation publiée), la dimension lève `TerritoiresAbsents` avec la raison : la page dit
+« non calculée », jamais zéro.
+
+**Les nombres de tête**, réglage par défaut de la page (D-605 : figée, θ à ½, 60 tirages),
+2026 → 2035, gain en % du revenu disponible [bande 5-95 % en 2035] et en € par ménage :
+
+| programme | ensemble | Paris (z. 1) | grandes villes | v. moyennes | rural | outre-mer |
+|---|---|---|---|---|---|---|
+| Retailleau, % | 2,64 → 2,08 [1,62 ; 2,40] | 2,15 | 2,14 | 2,04 | 1,95 | 2,30 |
+| Retailleau, € | 1 208 → 1 241 | 1 256 | 1 241 | 1 231 | 1 244 | 1 247 |
+| Attal, % | 3,77 → 2,14 [0,39 ; 3,51] | 2,17 | 2,20 | 2,15 | 2,03 | 2,10 |
+| Attal, € | 1 723 → 1 280 | 1 266 | 1 275 | 1 297 | 1 294 | 1 138 |
+
+(les colonnes des territoires : 2035.) Par région en 2035, Retailleau : métropole 2,07 %,
+Guadeloupe 2,34, Martinique 2,36, Guyane 2,31, La Réunion 2,36 ; Attal : métropole 2,14 %,
+1 284 €, et 1 119 à 1 159 € dans les quatre départements d'outre-mer. La part des gagnants
+est de 100 % partout au centre (aucune cellule ne perd) ; sa bande descend à 95 %
+(Retailleau) et 76 % (Attal). L'écart entre types de métropole : 0,20 point (Retailleau),
+0,17 (Attal). Lecture : les gains de ces deux programmes sont à peu près les mêmes en
+euros partout ; en % du revenu, ils pèsent plus outre-mer (Retailleau) et moins dans le
+rural, plus aisé à composition égale ; Attal donne moins d'euros outre-mer, où les
+salariés sont moins nombreux.
+
+**Mélenchon** : son programme est calculé par la chaîne des études (le jumeau complet le
+refuse, D-605) dans la vue vieillie, qui n'a pas de choc par décile : non calculé, dit.
+Ses mesures seules passent par le jumeau complet ; en 2035, % du revenu, ensemble puis
+rural et outre-mer : la garantie d'autonomie des jeunes 2,21 (rural 1,96, outre-mer 2,85,
+La Réunion 2,93) ; l'indexation des pensions et prestations 1,97 (1,93 ; 2,02) ; le Smic à
+1 700 € nets 2,08 (2,14 ; 2,04) ; le point d'indice 0,62 (0,64 ; 0,58) ; la suppression du
+PFU −0,84 (−0,76 ; −0,65), 0 % de gagnants. Les sommer ne fait pas le programme (D-605).
+
+**Les tests légers** (`tests/test_impacts_territoires.py`, 8 tests, 11 s) : la table est
+un agrégat des 50 cellules aux deux axes cohérents ; le contrôle de D-647 redonné sur la
+table ; l'interpolation entre déciles sur une table jouet ; la règle du seuil ; le seuil
+des gagnants égal à celui du jumeau ; l'ensemble de chaque axe égal au gain des cellules
+du jumeau, et la moyenne pondérée des territoires aussi ; les nombres de Retailleau
+ci-dessus ; Mélenchon dit non calculé. `test_impacts_tableau` passe inchangé. Aucun nombre
+d'une autre dimension ne change ; aucun rapport n'est refait.
+
+## D-649 — Où ça tombe (5) : la page vérifiée, ce qui reste
+
+**La page** (`site_impacts.ecrire` dans un dossier à part, 1 min 31 s, servie en local,
+Chromium sans tête, deviceScaleFactor 1, à 1 200 et 390 px) : la fiche se montre sans
+changer la page (D-605), avec sa carte d'un coup d'œil, ses sept boutons, la courbe et sa
+bande, les barres par territoire, ses limites et ses sources. Trois cas : Retailleau
+(précalculé), le programme de Mélenchon (« non calculée », avec la raison), sa garantie
+d'autonomie des jeunes (calculée dans la page par Pyodide, 9 à 10 s). Aucun défilement
+horizontal, aucune erreur de script (un 404 au chargement, la petite icône). *Ce qui
+cassait* et est corrigé : les noms longs des territoires étaient coupés dans la colonne
+des barres (désormais « Paris (zone 1) », « Grandes villes », « Villes moyennes »,
+« Rural », « Outre-mer », les définitions dans les limites) ; les libellés des boutons
+raccourcis.
+
+**Ce qui reste, au propriétaire.** (1) La table se range sur une passe au droit de 2026
+sans le capital ; refaire la table sur la passe même des cellules (droit de 2024, avec
+les imputations) demanderait de garder les ménages de cette passe : `scripts/jumeau_
+cellules.py` ne les écrit pas. (2) Les régions de métropole demandent une autre source que
+l'enquête Emploi diffusée (l'ERFS ou Filosofi par région, sous convention). (3) L'outre-mer
+est trop riche dans la population (D-647) : des revenus locaux à catégorie égale
+changeraient la population, donc `population/*`, hors de ce volet. (4) La grille de
+densité (dense, intermédiaire, rural) n'est pas dans l'enquête : le rural hors unité
+urbaine en tient lieu. (5) Pas de bande par territoire, seulement pour l'ensemble.
+
+## D-650 — « En bref » : le paragraphe d'une proposition, écrit par des règles
+
+**Ce qui est codé** (branche `claude/but29-synthese`, partie de `claude/but29`, e6d1e36).
+`jumeau/impacts/synthese.py`, `en_bref` : à partir des dimensions calculées (la forme
+JSON de `Dimension`, ou des `Dimension`), des phrases en français, chacune sortie d'un
+gabarit et d'un seul indicateur d'une seule dimension. Aucun modèle de langue. Chaque
+phrase porte ce qu'elle cite : `dimension`, `indicateur`, l'année, la valeur, la bande,
+le statut, la certitude. `navigateur.impacts_json` ajoute `synthese` à chaque résultat
+(un programme précalculé, une mesure ou une proposition calculée dans la page, l'API) ;
+le module entre dans le paquet de Pyodide par le relevé de `site_jumeau.paquet`. Le
+tableau ne le prend pas pour une dimension (`tableau.HORS`). Générique : il ne connaît
+aucune dimension par son nom ; celles des volets `pouvoir` et `territoires` y entreront
+sans changer ce fichier.
+
+**Les règles.**
+
+* *La certitude d'une phrase* vient de la bande de son indicateur, à l'année qu'elle dit,
+  et du statut de sa dimension. « Probablement » : la bande reste tout entière d'un côté
+  de zéro (bas et haut strictement de même signe), du côté du nombre dit (une bande de
+  tirages ne contient pas toujours le centre, D-627), dans une dimension qui n'est pas
+  illustrative. « Un ordre de grandeur » : la dimension est illustrative ; jamais
+  « probablement », même avec une bande d'un côté. « Le sens n'est pas sûr » : la bande
+  touche ou franchit zéro, ou n'est pas du côté du nombre. « Au calcul central, sans
+  bande » : l'indicateur n'en a pas. Un nombre par groupe (décile, cas type) n'a pas de
+  bande : jamais « probablement ». Le statut est dit à la fin de chaque phrase.
+* *Ce qui bouge le plus.* Les dimensions n'ont pas d'unité commune : on ne compare pas
+  leurs tailles. On range par netteté : les « probablement » d'abord, de la bande la plus
+  loin de zéro au regard de sa largeur (min(|bas|, |haut|) / (haut − bas)) à la plus
+  proche, puis les ordres de grandeur, les nombres sans bande, ceux dont le sens n'est
+  pas sûr. La première phrase nomme les trois plus nettes et dit que ce n'est pas « le
+  plus gros ». Les deux sortes de bandes (tirages des θ ; enveloppe des bornes publiées
+  des coefficients) sont lues de la même façon : c'est une limite, dite ici.
+* *Une phrase par dimension* : son nombre de tête (le premier indicateur, D-605), à la
+  dernière année calculée, en hausse ou en baisse, avec sa bande, « c'est mieux » ou
+  « c'est moins bien » si l'indicateur a un sens (le sens de l'indicateur, pas un
+  jugement de la proposition).
+* *À quelle échéance* : la première année calculée contre l'horizon : l'écart change de
+  sens en route ; grandit (au moins le double) ; s'atténue (au plus la moitié) ; est là
+  dès le début ; ou n'apparaît qu'à une année dite.
+* *Pour qui* : le premier indicateur d'une dimension qui porte les dix déciles : la
+  moyenne des trois premiers (« les 30 % les plus modestes ») et des trois derniers
+  (« les 30 % les plus aisés »), et le décile où l'écart est le plus grand. Une moyenne de
+  déciles d'un même indicateur, jamais de deux. D'autres groupes (les cas types, les
+  canaux) : le plus haut et le plus bas, « dans le détail ».
+* *Les arbitrages*, sans aucun nombre : pour chaque dimension, son premier indicateur qui a
+  un sens, quand son signe est sûr (sa bande reste du côté du nombre) ; ceux qui vont du
+  côté « mieux » face à ceux du côté « moins bien » (« Ce qu'on gagne ici, on le paie
+  là »). Dans une dimension, les 30 % les plus modestes face aux plus aisés quand ils vont
+  en sens contraires. Si tout va d'un côté, la phrase dit que ce n'est pas un bilan.
+* *Jamais de somme ni de verdict.* Aucune phrase ne lit deux dimensions ; les trois qui en
+  nomment plusieurs (le plus net, les arbitrages, les absents) ne portent aucun nombre.
+  Aucun mot ne juge l'ensemble ; sous le paragraphe, toujours : « ces phrases ne
+  s'additionnent pas et ne disent pas si la proposition est bonne ou mauvaise ».
+* *Ce qui manque est dit* : une dimension sans nombre (« absent, pas nul »), une
+  dimension en erreur, et le cadre quand ce n'est pas le jumeau complet (la chaîne des
+  études et la raison du refus, des années refusées).
+
+**La page.** « En bref » en tête du résultat : l'essentiel d'un tenant (le cadre, le plus
+net, les arbitrages), puis une phrase par dimension, son titre lié à sa fiche, puis pour
+qui, puis ce qui manque ; une liste plutôt qu'un seul bloc, pour la lecture au
+téléphone. Sans script, le paragraphe du premier programme est dans `noscript`.
+
+**Les tests légers** (`tests/test_impacts_synthese.py`, 38 tests, 4 s) : une bande qui
+touche ou franchit zéro, ou qui n'est pas du côté du nombre, ne donne jamais
+« probablement » (24 cas, puis 200 tirages de quatre dimensions aux statuts mêlés) ; une
+dimension illustrative est un ordre de grandeur ; chaque phrase cite sa dimension (son
+titre en tête, son statut à la fin) ; changer les nombres d'une autre dimension ne change
+pas une phrase, ses nombres sont ceux de son indicateur ou des années, et aucune somme de
+deux têtes n'apparaît ; les phrases à plusieurs dimensions n'ont pas de nombre ;
+l'arbitrage suit le sens de chaque indicateur ; les déciles, l'échéance, les erreurs et
+les absents. `test_impacts_tableau` (léger) passe inchangé. Aucun nombre publié ne change.
+
+**Ce qui reste à décider par le propriétaire.** Les seuils de l'échéance (2 et ½) et le
+choix des trois déciles du bas et du haut sont des conventions, écrites ici, non
+discutées. La netteté compare des bandes de nature différente. Le paragraphe est long
+pour un programme qui touche six dimensions ; on peut n'en garder que l'essentiel.
+
+## D-651 — Ce que disent les synthèses de Mélenchon, Retailleau et Attal (à relire)
+
+Le texte rendu par les règles de D-650, tel que la page l'affiche, sur les programmes
+précalculés (le réglage par défaut de D-605 : jumeau complet, population figée, θ à ½, 60
+tirages ; `python -m impots.site_impacts ecrire`, commit de cette entrée). Mélenchon a
+deux textes : le jumeau complet refuse son programme entier (D-605), qui passe par la
+chaîne des études ; ses sept mesures, composées, passent par le jumeau complet (D-652).
+**À relire par le propriétaire** : ce sont des phrases écrites par des règles, que
+personne n'a encore lues comme un lecteur de la page les lira.
+
+**Ce que la relecture a déjà fait voir** (écrit, non changé, sauf le premier point) :
+
+1. *Corrigé avant cette entrée* : un arbitrage disait « le revenu disponible réel du
+   ménage en baisse » pour Retailleau, sans dire quel ménage (le libellé court coupait la
+   parenthèse du cas type : seul, au Smic, locataire). La parenthèse reste désormais.
+2. *Les deux calculs de Mélenchon ne disent pas la même chose de l'activité* : le programme
+   entier, par la chaîne des études, fait baisser le PIB (−0,69 % en 2035, bande de −1,22
+   à −0,15) ; ses mesures composées, par le jumeau complet, le font monter (PIB en volume
+   +1,48 %, bande de +0,90 à +1,70). Ce ne sont ni le même modèle (sans ou avec les
+   ménages et les entreprises : la hausse du Smic et le point d'indice passent par le
+   bloc `travail` et la demande) ni la même mesure (la somme des passes faites seules, sans
+   leurs interactions statiques : 88,5 Md€ de coût mécanique en 2026 contre 89,0 pour le
+   programme). La page montre les deux, chacun nommé ; aucun n'est préféré ici.
+3. *Dans la chaîne des études*, la productivité n'a que le PIB : sa tête redit le nombre
+   de l'économie (−0,69 %), et « le plus net » le cite deux fois (en valeur, puis en
+   volume). Ce n'est pas faux, c'est redondant.
+4. *« Pour vous » de Mélenchon par la chaîne des études* a une bande nulle (+1 606 € de
+   +1 606 à +1 606) : sans le jumeau complet, ni les salaires ni les prix ne bougent avec
+   les θ ; la phrase dit « un ordre de grandeur » comme la règle le veut.
+5. *Retailleau* : le cas type par défaut (seul, au Smic, locataire) perd 1 240 € par an en
+   2035 alors que la satisfaction moyenne monte et que les plus modestes y gagnent en
+   moyenne (le moral, pour qui) ; la phrase « dans le détail » le dit (le plus bas : ce
+   cas type). C'est l'arbitrage le plus visible des trois programmes.
+
+*Mélenchon, le programme entier (la chaîne des études)* :
+
+> Calculé par la chaîne des études, pas par le jumeau complet : le jumeau complet refuse
+> la mesure dès sa première année (mesure « pres2027_melenchon_programme » : des
+> prélèvements agrégés (le signal du canal du lot 1) sans leur ventilation par impôt ; les
+> blocs du lot 2 lisent chaque impôt et ne devinent pas la ventilation).
+>
+> Ce qui bouge le plus nettement : les comptes publics (solde des administrations
+> publiques (B9)), l'économie en général (PIB en valeur (nominal)), la productivité des
+> entreprises (PIB en volume) (le plus net au regard de sa bande, pas le plus gros : les
+> unités ne se comparent pas).
+>
+> Ce qu'on gagne ici, on le paie là. Du côté « mieux » : le revenu disponible réel du
+> ménage (seul, au Smic, locataire, par défaut) en hausse, un ordre de grandeur (pour
+> vous). Du côté « moins bien » : PIB en volume en baisse (la productivité des
+> entreprises), solde des administrations publiques (B9) en baisse (les comptes publics).
+>
+> Les comptes publics — Solde des administrations publiques (B9) : probablement en baisse,
+> de 119 Md€ en 2035 (bande : de −135 à −103), c'est moins bien (sourcé, non jugé).
+> L'écart est là dès 2026 (−91,6 Md€).
+>
+> L'économie en général — PIB en valeur (nominal) : probablement en baisse, de 0,69 % du
+> PIB sans la mesure en 2035 (bande : de −1,22 à −0,15) (sourcé, non jugé). L'écart
+> grandit avec le temps : −0,32 % du PIB sans la mesure en 2026.
+>
+> La productivité des entreprises — PIB en volume : probablement en baisse, de 0,69 %
+> d'écart à la référence en 2035 (bande : de −1,22 à −0,15), c'est moins bien (sourcé, non
+> jugé). L'écart grandit avec le temps : −0,32 % d'écart à la référence en 2026.
+>
+> Pour vous — Le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) :
+> en hausse, un ordre de grandeur : +1 606 € par an en 2035 (bande : de +1 606 à +1 606),
+> c'est mieux (illustratif). L'écart est là dès 2026 (+1 606 € par an).
+>
+> Pour vous — dans le détail (le revenu disponible réel du ménage (seul, au Smic,
+> locataire, par défaut), en 2035) : le plus haut, « Couple de retraités, propriétaire »
+> (+3 341 € par an) ; le plus bas, « Seul, salaire élevé, propriétaire » (0,00 € par an) ;
+> au calcul central, sans bande (illustratif).
+>
+> Pas de nombre ici pour le moral des gens, la santé et le temps de vie : leur fiche dit
+> pourquoi (absent, pas nul).
+
+*Mélenchon, par ses sept mesures (le jumeau complet)* :
+
+> Ce qui bouge le plus nettement : l'économie en général (PIB en volume), le moral des
+> gens (satisfaction gagnée), les comptes publics (solde des administrations publiques
+> (B9)) (le plus net au regard de sa bande, pas le plus gros : les unités ne se comparent
+> pas).
+>
+> Ce qu'on gagne ici, on le paie là. Du côté « mieux » : satisfaction gagnée en hausse (le
+> moral des gens), productivité apparente du travail (PIB en volume par emploi) en hausse
+> (la productivité des entreprises), PIB en volume en hausse (l'économie en général), le
+> revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) en hausse, un
+> ordre de grandeur (pour vous). Du côté « moins bien » : solde des administrations
+> publiques (B9) en baisse (les comptes publics).
+>
+> L'économie en général — PIB en volume : probablement en hausse, de 1,48 % du PIB sans la
+> mesure en 2035 (bande : de +0,90 à +1,70), c'est mieux (sourcé, non jugé). L'écart est
+> là dès 2026 (+0,80 % du PIB sans la mesure).
+>
+> Le moral des gens — Satisfaction gagnée, toutes personnes de 16 ans ou plus :
+> probablement en hausse, de 1 234 milliers de WELLBY par an en 2035 (bande : de +765 à
+> +1 780), c'est mieux (sourcé, non jugé). L'écart est là dès 2026 (+1 586 milliers de
+> WELLBY par an).
+>
+> Les comptes publics — Solde des administrations publiques (B9) : probablement en baisse,
+> de 47,9 Md€ en 2035 (bande : de −63,6 à −24,0), c'est moins bien (sourcé, non jugé).
+> L'écart est là dès 2026 (−65,9 Md€).
+>
+> La productivité des entreprises — Productivité apparente du travail (PIB en volume par
+> emploi) : probablement en hausse, de 1,34 % d'écart à la référence en 2035 (bande : de
+> +0,40 à +1,42), c'est mieux (sourcé, non jugé). L'écart est là dès 2026 (+0,78 % d'écart
+> à la référence).
+>
+> La santé et le temps de vie — Années de vie gagnées dans l'année, tous canaux : en
+> hausse au centre, un ordre de grandeur : +15,7 milliers d'années de vie par an en 2035,
+> et le sens n'est pas sûr (bande : de −6,89 à +34,9) (illustratif). L'écart est là dès
+> 2026 (+19,3 milliers d'années de vie par an).
+>
+> Pour vous — Le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) :
+> en hausse, un ordre de grandeur : +1 827 € par an en 2035 (bande : de +1 663 à +1 835),
+> c'est mieux (illustratif). L'écart est là dès 2026 (+1 673 € par an).
+>
+> Le moral des gens — pour qui (écart de satisfaction d'un adulte, par décile de niveau de
+> vie, en 2035) : en hausse pour les 30 % les plus modestes (+0,043 points sur 10 en
+> moyenne par décile), en hausse pour les 30 % les plus aisés (+0,0067 points sur 10) ;
+> l'écart le plus grand en D1 (+0,070 points sur 10) ; au calcul central, sans bande par
+> décile (sourcé, non jugé).
+>
+> La santé et le temps de vie — pour qui (dont décès évités par le revenu réel, par décile
+> de niveau de vie, en 2035) : en hausse pour les 30 % les plus modestes (+303 décès par
+> an en moyenne par décile), en hausse pour les 30 % les plus aisés (+63,6 décès par an) ;
+> l'écart le plus grand en D1 (+472 décès par an) ; au calcul central, sans bande par
+> décile, un ordre de grandeur (illustratif).
+>
+> Pour vous — dans le détail (le revenu disponible réel du ménage (seul, au Smic,
+> locataire, par défaut), en 2035) : le plus haut, « Couple de retraités, propriétaire »
+> (+3 328 € par an) ; le plus bas, « Seul, au chômage, locataire » (+243 € par an) ; au
+> calcul central, sans bande (illustratif).
+
+*Retailleau (le jumeau complet)* :
+
+> Ce qui bouge le plus nettement : les comptes publics (solde des administrations
+> publiques (B9)), l'économie en général (PIB en volume), le moral des gens (satisfaction
+> gagnée) (le plus net au regard de sa bande, pas le plus gros : les unités ne se
+> comparent pas).
+>
+> Ce qu'on gagne ici, on le paie là. Du côté « mieux » : satisfaction gagnée en hausse (le
+> moral des gens), productivité apparente du travail (PIB en volume par emploi) en hausse
+> (la productivité des entreprises), PIB en volume en hausse (l'économie en général). Du
+> côté « moins bien » : solde des administrations publiques (B9) en baisse (les comptes
+> publics), le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) en
+> baisse, un ordre de grandeur (pour vous).
+>
+> Les comptes publics — Solde des administrations publiques (B9) : probablement en baisse,
+> de 39,0 Md€ en 2035 (bande : de −46,2 à −36,4), c'est moins bien (sourcé, non jugé).
+> L'écart est là dès 2026 (−45,5 Md€).
+>
+> L'économie en général — PIB en volume : probablement en hausse, de 0,80 % du PIB sans la
+> mesure en 2035 (bande : de +0,64 à +0,83), c'est mieux (sourcé, non jugé). L'écart
+> grandit avec le temps : +0,39 % du PIB sans la mesure en 2026.
+>
+> Le moral des gens — Satisfaction gagnée, toutes personnes de 16 ans ou plus :
+> probablement en hausse, de 1 769 milliers de WELLBY par an en 2035 (bande : de +996 à
+> +2 309), c'est mieux (sourcé, non jugé). L'écart est là dès 2026 (+1 032 milliers de
+> WELLBY par an).
+>
+> La productivité des entreprises — Productivité apparente du travail (PIB en volume par
+> emploi) : probablement en hausse, de 0,12 % d'écart à la référence en 2035 (bande : de
+> +0,0073 à +0,25), c'est mieux (sourcé, non jugé). L'écart est là dès 2026 (+0,24 %
+> d'écart à la référence).
+>
+> La santé et le temps de vie — Années de vie gagnées dans l'année, tous canaux : en
+> hausse au centre, un ordre de grandeur : +11,3 milliers d'années de vie par an en 2035,
+> et le sens n'est pas sûr (bande : de −82,3 à +114) (illustratif). L'écart est là dès
+> 2026 (+9,10 milliers d'années de vie par an).
+>
+> Pour vous — Le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) :
+> en baisse, un ordre de grandeur : −1 240 € par an en 2035 (bande : de −1 332 à −1 166),
+> c'est moins bien (illustratif). L'écart est là dès 2026 (−1 225 € par an).
+>
+> Le moral des gens — pour qui (écart de satisfaction d'un adulte, par décile de niveau de
+> vie, en 2035) : en hausse pour les 30 % les plus modestes (+0,039 points sur 10 en
+> moyenne par décile), en hausse pour les 30 % les plus aisés (+0,025 points sur 10) ;
+> l'écart le plus grand en D3 (+0,040 points sur 10) ; au calcul central, sans bande par
+> décile (sourcé, non jugé).
+>
+> La santé et le temps de vie — pour qui (dont décès évités par le revenu réel, par décile
+> de niveau de vie, en 2035) : en hausse pour les 30 % les plus modestes (+97,4 décès par
+> an en moyenne par décile), en hausse pour les 30 % les plus aisés (+19,8 décès par an) ;
+> l'écart le plus grand en D3 (+98,4 décès par an) ; au calcul central, sans bande par
+> décile, un ordre de grandeur (illustratif).
+>
+> Pour vous — dans le détail (le revenu disponible réel du ménage (seul, au Smic,
+> locataire, par défaut), en 2035) : le plus haut, « Couple, 2 enfants, salaires médians,
+> propriétaire » (+2 927 € par an) ; le plus bas, « Seul, au Smic, locataire » (−1 240 €
+> par an) ; au calcul central, sans bande (illustratif).
+
+*Attal (le jumeau complet)* :
+
+> Ce qui bouge le plus nettement : l'économie en général (PIB en volume), les comptes
+> publics (solde des administrations publiques (B9)), le moral des gens (satisfaction
+> gagnée) (le plus net au regard de sa bande, pas le plus gros : les unités ne se
+> comparent pas).
+>
+> Ce qu'on gagne ici, on le paie là. Du côté « mieux » : satisfaction gagnée en hausse (le
+> moral des gens), PIB en volume en hausse (l'économie en général), années de vie gagnées
+> dans l'année en hausse, un ordre de grandeur (la santé et le temps de vie), le revenu
+> disponible réel du ménage (seul, au Smic, locataire, par défaut) en hausse, un ordre de
+> grandeur (pour vous). Du côté « moins bien » : solde des administrations publiques (B9)
+> en baisse (les comptes publics).
+>
+> L'économie en général — PIB en volume : probablement en hausse, de 1,02 % du PIB sans la
+> mesure en 2035 (bande : de +0,89 à +1,31), c'est mieux (sourcé, non jugé). L'écart est
+> là dès 2026 (+0,55 % du PIB sans la mesure).
+>
+> Les comptes publics — Solde des administrations publiques (B9) : probablement en baisse,
+> de 63,3 Md€ en 2035 (bande : de −83,2 à −54,8), c'est moins bien (sourcé, non jugé).
+> L'écart est là dès 2026 (−64,0 Md€).
+>
+> Le moral des gens — Satisfaction gagnée, toutes personnes de 16 ans ou plus :
+> probablement en hausse, de 3 361 milliers de WELLBY par an en 2035 (bande : de +1 640 à
+> +4 518), c'est mieux (sourcé, non jugé). L'écart grandit avec le temps : +1 412 milliers
+> de WELLBY par an en 2026.
+>
+> La santé et le temps de vie — Années de vie gagnées dans l'année, tous canaux : en
+> hausse, un ordre de grandeur : +17,4 milliers d'années de vie par an en 2035 (bande : de
+> +4,26 à +51,9), c'est mieux (illustratif). L'écart est là dès 2026 (+10,2 milliers
+> d'années de vie par an).
+>
+> Pour vous — Le revenu disponible réel du ménage (seul, au Smic, locataire, par défaut) :
+> en hausse, un ordre de grandeur : +1 168 € par an en 2035 (bande : de +860 à +1 462),
+> c'est mieux (illustratif). L'écart est là dès 2026 (+1 336 € par an).
+>
+> La productivité des entreprises — Productivité apparente du travail (PIB en volume par
+> emploi) : en baisse au centre, −0,43 % d'écart à la référence en 2035, mais le sens
+> n'est pas sûr (bande : de −0,81 à +0,26) (sourcé, non jugé). L'écart change de sens en
+> route : +0,28 % d'écart à la référence en 2026.
+>
+> Le moral des gens — pour qui (écart de satisfaction d'un adulte, par décile de niveau de
+> vie, en 2035) : en hausse pour les 30 % les plus modestes (+0,062 points sur 10 en
+> moyenne par décile), en hausse pour les 30 % les plus aisés (+0,058 points sur 10) ;
+> l'écart le plus grand en D3 (+0,065 points sur 10) ; au calcul central, sans bande par
+> décile (sourcé, non jugé).
+>
+> La santé et le temps de vie — pour qui (dont décès évités par le revenu réel, par décile
+> de niveau de vie, en 2035) : en hausse pour les 30 % les plus modestes (+39,5 décès par
+> an en moyenne par décile), en hausse pour les 30 % les plus aisés (+36,9 décès par an) ;
+> l'écart le plus grand en D5 (+58,3 décès par an) ; au calcul central, sans bande par
+> décile, un ordre de grandeur (illustratif).
+>
+> Pour vous — dans le détail (le revenu disponible réel du ménage (seul, au Smic,
+> locataire, par défaut), en 2035) : le plus haut, « Couple, 2 enfants, salaires médians,
+> propriétaire » (+4 429 € par an) ; le plus bas, « Couple de retraités, propriétaire »
+> (−13,8 € par an) ; au calcul central, sans bande (illustratif).
+
+## D-652 — « Comparer » : les programmes côte à côte ; les refusés par leurs mesures
+
+**Ce qui est construit** (`site_impacts`, un quatrième onglet, « Comparer »). Tous les
+programmes précalculés, côte à côte, sur un nombre : on choisit la dimension, l'indicateur
+(le premier par défaut, la tête de D-605), l'année (l'horizon par défaut) et l'ordre (du
+plus haut, du plus bas, le plus net d'abord, par nom). Chaque ligne : le nombre, sa bande
+(un trait clair autour d'un point sur un axe commun avec son zéro ; « sens pas sûr » quand
+la bande franchit zéro ou n'est pas du côté du nombre, la règle de D-650), le statut ; la
+couleur du point suit le sens de l'indicateur. Dessous, le tableau de tous les nombres de
+tête à l'année choisie, chaque colonne triable (`aria-sort`), dans un cadre qui défile
+seul au téléphone. Une mesure ou une proposition calculée dans la page s'ajoute à la
+comparaison (les cinq dernières). Générique : les dimensions et les indicateurs sont
+l'union de ce que rendent les calculs ; une dimension d'un autre volet y entre seule. Une
+case absente est « — », avec sa raison au survol (absent, pas nul). Aucun total, aucune
+note par programme.
+
+**Les refusés : Mélenchon et Tondelier.** Le jumeau complet refuse leur programme entier
+dès sa première année (des prélèvements agrégés sans leur ventilation par impôt, D-605) ;
+la page les calculait par la chaîne des études seulement, où le moral, la santé, l'emploi
+et la productivité hors PIB sont absents. Chacune de leurs mesures, elle, passe seule dans
+le jumeau complet (vérifié : 7 sur 7 et 4 sur 4). Décidé ici : un programme refusé a
+**deux lignes**, et la page deux vues, nommées : la chaîne des études sur le programme
+entier, et le jumeau complet sur la proposition composée de ses mesures (D-605 : chaque
+passe faite seule, leurs interactions statiques non chiffrées), précalculée à la
+construction (`site_impacts.par_mesures`, la clé `<programme>@mesures`). Ce que cela
+couvre est dit, au coût mécanique de la première année des rapports : Mélenchon, 88,5 Md€
+pour la somme de ses 7 mesures contre 89,0 pour le programme ; Tondelier, 18,2 contre 18,2
+(4 mesures). La raison du refus est écrite sous la comparaison et dans la vue du
+programme, avec un bouton vers le calcul par ses mesures, et retour. **Une limite** : la
+santé lit l'âge de départ d'un programme entier seulement (D-622) ; celui de Mélenchon (60
+ans en 2032, `sante.yaml`) n'est dans aucune de ses sept mesures chiffrées, et la chaîne
+des études n'a pas de santé : aucune des deux lignes de Mélenchon ne porte son âge de
+départ, et la page le dit sur la ligne par ses mesures. Tondelier n'a pas d'âge.
+
+**Vérifié dans Chromium** (headless, deviceScaleFactor 1, 1 200 et 390 px) : la page
+d'Attal, de Retailleau, de Mélenchon (et le passage à ses mesures, ses cas types de
+« Pour vous » chargés), « Comparer » (tri par une colonne), une mesure de Le Pen calculée
+dans la page par Pyodide (6,3 s) puis ajoutée à la comparaison ; aucune erreur de console
+hors le `favicon.ico` absent du serveur local ; aucun défilement horizontal de la page.
+Les captures ont été regardées. `node ui/check.mjs` passe (il ne couvre pas cette page).
+Aucun test de navigateur dédié (D-335).
+
+**Ce qui reste à décider par le propriétaire.** Quelle ligne de Mélenchon et de Tondelier
+la page met en avant (aujourd'hui : le programme entier par la chaîne des études, comme
+avant ; la comparaison montre les deux). La comparaison ne règle ni θ ni le mode.
+
+## D-655 — Les programmes refusés (1) : Mélenchon et Tondelier par leurs mesures chiffrées
+
+**Le problème** (volet `refuses` du but 29, ajouté par le coordinateur dans la nuit ;
+numéros D-655 à D-659). Sur la page « Ce que ça change », les programmes de Mélenchon et
+de Tondelier passaient par la chaîne des études (réduit, vieillie, D-605) : pas de
+ménages par cellule, pas de choc par décile. Les territoires y étaient « non calculés »,
+« Pour vous » réduit au statique, le moral et la santé sans l'économie des ménages ;
+quand la productivité (D-627) et « Pour vous » (D-633) les avaient calculés, hors de la
+page, comme leurs mesures chiffrées ensemble. Deux programmes majeurs, vus à moitié.
+
+**Pourquoi le tout est refusé**, relu dans le code et non dans D-605 (qui disait « des
+cotisations payées à la fois par les entreprises et les APU », la raison de D-487, plus la
+première levée). Le bloc `chocs_entreprises` (`blocs/entreprises.py`, `preparer`) refuse
+une mesure qui porte des prélèvements agrégés (le signal du canal du lot 1) sans leur
+ventilation par impôt : le rapport du programme ne ventile pas sa passe (D-412), et les
+blocs du lot 2 lisent chaque impôt. Ses mesures, elles, ont chacune leur passe ventilée,
+et se calculent toutes sur les dix ans (sept chez Mélenchon, quatre chez Tondelier ;
+aucune refusée, figée comme vieillie, convention « parts_premiere_annee »).
+
+**La voie retenue : la convention « mesures_seules » de D-502**, dans le jumeau complet,
+au réglage de la page (structurel, population figée, parts de la première année, θ à ½,
+60 tirages pour les bandes), le même que pour les autres programmes : les deux se lisent à
+côté d'Attal ou de Retailleau. Le programme tourne comme ses mesures, chacune comme le mode
+structurel la lit (le Smic par `travail.mesure_smic`, le point d'indice par la
+rémunération publique), plus la mesure d'interaction de sa passe (`papillon.interaction`) :
+chaque année, le coût du programme moins la somme de ses mesures, sur le solde, sans
+comportement ni décile ; et l'écart de ses cotisations des employeurs (le Smic et les
+exonérations sur la même base), en impulsion et en impôt des entreprises privées. La somme
+des coûts est celle du programme, chaque année (`papillon.verifier_somme`). C'est plus
+que ce que fait D-627 (les mesures sans l'interaction) : le coût du programme y est
+entier ; c'est le choix de D-502, déjà publié pour Mélenchon.
+
+**Ce qui manque, dit en tête de la page et dans chaque fiche.** (1) La répartition de
+l'interaction entre les ménages : le revenu par décile est la somme des passes des
+mesures, faites seules ; l'interaction ne se lit que sur le solde et les cotisations
+(Mélenchon : +0,44 Md€ de coût et +1,33 Md€ de cotisations des employeurs en 2026, figée ;
+Tondelier : −0,02 et +0,02, lus au premier calcul de la page). (2) Les mesures du
+programme qu'aucun rapport ne chiffre (comme pour tout programme : la part chiffrée). (3)
+Aucune mesure chiffrée n'est refusée ; si l'une l'était, la composition serait refusée
+(sinon l'interaction la compterait sur le solde seul), et la page reviendrait à la chaîne
+des études, en disant les deux raisons.
+
+**Le statut dégradé là où il le faut.** Les dimensions qui lisent le revenu des ménages
+par décile, et pas le programme entier, passent à « illustratif » avec la raison : le
+moral (il était « sourcé, non jugé » ; `statut_sans_composition` le garde), la santé et
+les territoires (déjà illustratifs). « Pour vous » lit le statique du programme entier
+dans le tableau des cas types (OpenFisca, `cle_statique`, D-633), interactions comprises ;
+il reste illustratif. Les comptes publics, l'économie et la productivité lisent des
+agrégats qui portent l'interaction entière : leur statut ne change pas.
+
+**Ce qui n'est pas fait, et pourquoi.** Les chocs par décile pour la chaîne des études
+(vue vieillie) : le rapport du programme n'en porte pas (sa première année n'est pas
+ventilée, c'est la raison même du refus) ; les tirer de la somme des passes des mesures
+mêlerait les deux chemins. Une fois la composition dans le jumeau complet, la chaîne des
+études n'est plus le chemin de la page pour ces deux programmes ; elle reste celui de
+l'API quand le mode « reduit » est demandé, sans territoires (dit).
+
+**Le code** : `navigateur.Session.programme_compose` (les mesures, refus nommés, et ce
+que la page en dit, `composee`), `reglage_impacts` (essaie la composition avant de
+revenir aux études), `_contexte` (`mesures_seules`), `_options_compose` ; dans
+`impacts/tableau.calculer_tout`, deux options génériques, `degrader` (dimension : raison)
+et `limite_commune`. Aucune dimension n'est réécrite.
+
+## D-656 — Les programmes refusés (2) : le contrôle de la composition, préenregistré
+
+**Ce qui est comparé.** La composition de D-655 (le chemin de la page) au chemin des
+études (le programme comme un tout, réduit, vieillie, θ à ½), pour Mélenchon et pour
+Tondelier, sur ce que les deux partagent : les passes (le coût statique) et la première
+année du solde. Un script (`scripts/jumeau_programmes_composes.py`) écrit
+`reports/jumeau/programmes_composes.json` ; aucune passe OpenFisca, le jumeau seul.
+
+**Ce qui a déjà été vu, avant d'écrire ceci** (non aveugle sur un côté) : au premier
+calcul de la page, ΔB9 2026 de la composition vaut −66,18 Md€ (Mélenchon) et −10,09
+(Tondelier) ; D-502 publiait, sur un code plus ancien, −71,53 (structurel figée) et −91,59
+(réduit vieillie) pour Mélenchon. Le chemin des études n'a pas été recalculé depuis.
+
+**Les lignes, leur tolérance, leur pronostic** (chacune pour les deux programmes) :
+
+* **C1** : Σ coûts des mesures + interaction − coût du programme, chaque année de 2026 à
+  2035, figée et vieillie. Tolérance 1e-6 Md€. Pronostic : tenu (par construction).
+* **C2** : le coût statique de 2026, composition (figée) contre programme (vieillie, le
+  chemin des études). Tolérance 2 %. Pronostic : tenu, vers 1 % (D-502 : figée et
+  vieillie à 1 % l'une de l'autre sur ΔB9 2026 en réduit).
+* **C3** : la part statique de ΔB9 2026 (la contribution du bloc `mesures`), composition
+  contre chemin des études. Tolérance 5 %. Pronostic : tenu, peu sûr (le structurel peut
+  lire autrement les canaux de recettes des mesures ventilées).
+* **C4** : ΔB9 2026 entier, composition contre chemin des études. Tolérance 10 %.
+  Pronostic : manqué pour Mélenchon (vers −66 contre vers −90 : le réduit ne fait pas
+  dépenser les transferts, D-500) ; manqué aussi pour Tondelier, de moins.
+
+Les écarts relatifs se prennent sur le chemin des études. C1 et C2 disent si la
+composition porte le programme entier ; C3 si les deux chemins lisent le même choc
+statique ; C4 n'est pas une erreur de la composition s'il manque : la première année d'un
+mode et de l'autre n'ont pas la même économie (D-500, D-502). Aucune tolérance ne changera
+après le premier calcul ; une ligne manquée reste notée, avec son explication en D-657.
+
+## D-657 — Les programmes refusés (3) : le contrôle, six lignes sur huit, C4 manqué
+
+Préenregistré en D-656 (9b340f3, poussé avant le calcul) ; calculé par
+`scripts/jumeau_programmes_composes.py`, écrit dans `reports/jumeau/
+programmes_composes.json` (θ à ½, le jumeau seul). Md€ ; l'écart relatif est pris sur
+le chemin des études.
+
+| ligne | Mélenchon : composition / études | écart | Tondelier | écart | tolérance |
+|---|---|---:|---|---:|---:|
+| C1 | pire écart des coûts, 2026-2035 | 0 | idem | 0 | 1e-6 Md€ |
+| C2 | coût 2026 : 88,98 / 89,15 | −0,19 % | 18,17 / 18,18 | −0,07 % | 2 % |
+| C3 | ΔB9 statique 2026 : −88,98 / −89,15 | +0,19 % | −18,56 / −18,64 | +0,40 % | 5 % |
+| C4 | ΔB9 2026 : −66,18 / −91,59 | +27,7 % | −10,08 / −15,51 | +35,0 % | 10 % |
+
+**Tenu** : C1, C2, C3 pour les deux programmes, comme pronostiqué. La composition porte
+le coût du programme au bit, chaque année, figée et vieillie (C1) ; d'une vue à l'autre,
+la première année ne bouge que de 0,2 % (C2) ; les deux chemins lisent le même choc
+statique sur le solde (C3 : la contribution du bloc `mesures`, celle des canaux de
+recettes comprise).
+
+**Manqué** : C4, pour les deux, comme pronostiqué ; et plus que le pronostic ne le disait
+pour Tondelier (« de moins » : il manque de plus, en relatif). Ce n'est pas la
+composition : tout l'écart est dans la dynamique de la première année, c'est-à-dire
+ΔB9 moins sa part statique : +22,80 Md€ dans la composition contre −2,44 dans le chemin
+des études (Mélenchon) ; +8,48 contre +3,13 (Tondelier). Dans le jumeau complet, les
+ménages dépensent les transferts (l'indexation, la garantie d'autonomie, les APL, le
+point d'indice) et les recettes suivent ; dans le réduit, 68 Md€ de transferts n'ont pas
+de multiplicateur (D-500). C'était l'écart de D-502 entre les deux modes (−71,53 et
+−91,59 sur un code plus ancien), il reste. La ligne demeure manquée ; la page montre le
+solde du jumeau complet, le même mode que pour les autres programmes, et le chemin des
+études reste celui des rapports publiés.
+
+Ce que cela dit au lecteur : sur le statique, les deux chemins sont les mêmes à 0,4 %
+près ; la première année du solde dépend du modèle de l'économie, pas de la composition.
+
+## D-658 — Les programmes refusés (4) : joints à « Comparer », la page vérifiée, les nombres
+
+**La jonction avec D-652** (le volet `synthese`, joint à `claude/but29` pendant ce volet,
+a559784). D-652 avait déjà donné deux lignes aux programmes refusés : le programme entier
+par la chaîne des études, et « par ses mesures », la proposition composée de ses mesures
+(D-605 : sans interaction, la santé sans l'âge de départ, « Pour vous » sur la somme des
+cellules). D-655 est rangé dans ce cadre, au lieu de le refaire : **la ligne « par ses
+mesures » est désormais la composition de D-655** (les mesures et l'interaction de la
+passe, `site_impacts.par_mesures` appelle `impacts_json` avec `mesures_seules`) ; la ligne
+mise en avant reste le programme entier par la chaîne des études, comme D-652 le laisse au
+propriétaire. D-655 est corrigé en cela : la composition ne se fait plus d'elle-même dans
+`reglage_impacts` ; elle se demande (`"mesures_seules": true`, la page et l'API, `POST
+/impacts`), et un programme que le jumeau complet calcule l'ignore. Le contrôle de D-656
+et D-657 porte sur ce même calcul ; il ne change pas.
+
+**L'âge de départ** (la question de D-651). Sur la ligne par ses mesures, la santé et
+« Pour vous » lisent l'âge du programme (`programme_age` : la clé est le programme, pas une
+proposition) : Mélenchon, l'âge légal −0,75 an en 2027 jusqu'à −4 ans en 2033 (60 ans).
+C'est honnête au même titre que pour tout programme entier (D-622) : la ligne porte le coût
+du programme entier (C1 de D-657), et l'âge est lu par la santé sur le programme, pas sur
+ses mesures ; comme pour Retailleau ou Attal, les comptes publics ne chiffrent pas l'âge
+(aucun rapport ne le chiffre). La page le dit ainsi, en tête et dans « Comparer ».
+
+**La couverture** (D-652) gagne l'interaction : Mélenchon, 88,5 Md€ pour ses sept mesures
+plus 0,44 d'interaction, 89,0 pour le programme (coût mécanique de 2026, figée, sans
+convention ; la somme est le programme au bit, C1).
+
+**Les nombres de tête** (`impacts_json`, le réglage de la page : structurel, figée, parts
+de la première année, θ à ½, bande de 5 à 95 % sur 60 tirages ; 2026, puis 2035 [bande]).
+La ligne du programme entier par la chaîne des études, en regard ; « — » : absent, dit.
+
+| 2035 [bande] | Mélenchon, par ses mesures | études | Tondelier, par ses mesures | études |
+|---|---|---|---|---|
+| moral (k WELLBY/an) | +1 289 [+838 ; +1 807] | — | −224 [−443 ; +84] | — |
+| productivité (%) | +1,33 [+0,40 ; +1,43] | −0,69 | +0,39 [+0,01 ; +0,47] | +0,30 |
+| PIB en volume (%) | +1,50 [+0,92 ; +1,74] | −0,69 | +0,26 [+0,06 ; +0,38] | +0,30 |
+| solde B9 (Md€) | −47,9 [−63,8 ; −23,3] | −118,8 | −4,0 [−12,7 ; +7,4] | −10,9 |
+| santé (k années/an) | +16,0 [−342 ; +371] | — | +0,1 [−7,2 ; +3,8] | — |
+| pour vous (€/an) | +1 830 [+1 663 ; +1 842] | +1 606 | +967 [+888 ; +989] | +878 |
+| territoires (%) | +6,05 [+4,53 ; +7,63] | — | +1,09 [+0,27 ; +1,87] | — |
+
+En 2026 (par ses mesures) : moral +1 606 et +25 ; PIB en volume +0,80 % et +0,10 % ;
+solde −66,2 et −10,1 Md€ ; « pour vous » +1 676 et +909 € ; territoires +6,04 % et +0,82 %.
+(« pour vous » : le salarié seul au Smic, locataire ; « études » : le statique seul.
+L'économie de la chaîne des études est le PIB nominal du réduit.) La bande de la santé de
+Mélenchon, très large, vient des tirages des θ du canal du chômage, que les deux sens
+traversent (le chômage et l'emploi montent ensemble, D-639) ; dite, non changée.
+
+**La page vérifiée** (`site_impacts.ecrire` dans un dossier à part, 2 min ; servie en
+local ; Chromium sans tête, deviceScaleFactor 1, 1 200 et 390 px) : Mélenchon et Tondelier
+« par ses mesures » : les sept fiches ont leur nombre, aucune carte vide, l'avertissement
+en tête (le titre en gras, ce qui manque, les mesures), le bouton vers le programme entier ;
+la ligne des études de Mélenchon : deux cartes « aucun indicateur », avec leur raison et le
+bouton vers ses mesures (D-652). Aucun défilement horizontal, aucune erreur hors le
+`favicon.ico` du serveur local. Captures regardées. Vu, non changé : dans les barres du
+moral, une étiquette de valeur négative longue (−385) chevauche son libellé (« le chômage
+autour de soi »), sur tous les programmes. Le moral se dit « illustratif » avec un texte
+de statut élargi (« ou approchée : un programme pris par ses mesures »).
+
+**Ce qui n'est pas fait.** Pas de `make impact`, pas de lourds, aucune passe OpenFisca ;
+le site commité n'est pas reconstruit (la jonction le fera). `node ui/check.mjs` ne couvre
+pas cette page. **À décider par le propriétaire** : la ligne de Mélenchon et de Tondelier
+mise en avant (la chaîne des études aujourd'hui ; « par ses mesures » porte toutes les
+dimensions et le coût du programme entier, C1, mais pas la répartition de l'interaction ;
+c'est une ligne à changer dans `precalculer`).
+
+## D-660 — Votre barème (1) : une passe à la demande, ce qu'elle coûte, la décision
+
+**Le problème** (volet `parametrique` du but 29, ajouté par le coordinateur dans la nuit ;
+numéros D-660 à D-664). La proposition composée de D-605 ne sait pas changer un paramètre
+de barème : il faut une passe sur la population (OpenFisca), qui ne tourne ni dans le
+navigateur ni dans un pas du jumeau ; l'intensité k en est l'approximation au premier
+ordre, et une hausse du Smic n'a même pas celle-là (refusée, D-605). Le lecteur doit
+pouvoir proposer SA mesure en réglant un barème, et en voir toutes les dimensions.
+
+**L'inventaire des boutons.** `ReformSpec` porte la liste blanche du moteur (environ 150
+boutons, `engine.reforms`, `boutons_programmes`) ; les scénarios des programmes de 2027 et
+des textes (PLF, PLFSS) en règlent 53, dont le Smic (18 scénarios), les cotisations ou la
+CSG (12), la TVA et les accises (10), le quotient familial (13), les heures
+supplémentaires (18), le point d'indice (12), les indexations des prestations (6) ; côté
+entreprises, la CVAE et la C3S (`FirmReformSpec`, 11). Le menu du lecteur en garde ce qui
+se règle d'un seul nombre et se dit sans jargon (`parametrique.BOUTONS`, 13 réglages) :
+le Smic de ±x % (`smic_revalorisation`, la loi seule le premier jour, sans diffusion :
+la valeur de candidat des programmes, D-380) ; le RSA, la prime d'activité, l'AAH, l'Aspa,
+les prestations familiales, les aides au logement, les pensions de ±y % (`indexations`,
+chacune à sa date légale de 2026) ; les taux de l'IR de ±p points (`ir_bareme`, le barème
+de 2026 lu dans l'arbre, la tranche à 0 % laissée) et une tranche en plus (seuil et
+taux) ; le taux normal de TVA (`tva_taux_normal`, l'imputation de la consommation, D-323) ;
+les cotisations salariales de retraite (`cotisations_salariales_retraite_echelle`). Un
+réglage à sa valeur neutre n'entre pas dans la réforme ; aucun chemin de paramètre n'est
+accepté. **Hors du menu, et dit sur la page** : l'âge de départ (aucune passe ne le
+chiffre, la population ne porte pas de carrières ; la santé seule le lit, D-622) ; les
+impôts des entreprises (leur simulateur n'est pas branché ici) ; une réforme qui change
+d'une année à l'autre (la proposition entre en 2026, la loi reconduite).
+
+**Ce qu'une passe coûte**, lu dans les journaux de la série de Mélenchon de cette nuit
+(même machine, même population de D-553, sans nouvelle passe) : la première année d'une
+mesure seule (le simulateur, 20 000 ménages, comportements et boucle) de 1 min 20 à 2 min
+(01:31 à 01:42) ; le chemin annuel du programme (dix années, deux vues, comportements,
+boucle, canal des créations) 38 min (00:52 à 01:30), environ 6 Go (D-236). Le moteur rapide
+(D-462, D-465 : les mêmes nombres, au bit) ne sert pas une hausse du Smic (une réforme des
+salaires est hors de son champ) ; il sert les autres réglages, sa référence calculée une
+fois par année et par vue. Les cas types de « Pour vous » (D-630) : 229 s pour 46 mesures,
+quelques secondes par mesure après la base. **Pronostic : 40 à 50 min par proposition,
+6 Go, une à la fois.** La mesure vient en D-661.
+
+**La décision.**
+
+(a) **Une route d'API asynchrone.** `POST /impacts/proposition` ({"boutons": {id :
+valeur}}) traduit le réglage (`parametrique.reforme`, validé par `ReformSpec`), le met en
+file et rend tout de suite son état (202) ; `GET /impacts/proposition/<id>` dit l'état
+(« en_file », « en_cours » et son étape, « fait » et le résultat, « echec » et pourquoi) ;
+`GET /impacts/proposition/boutons` donne le menu. Chaque proposition tourne dans son
+processus détaché (une session à lui), sous un verrou de fichier (`fcntl.flock`, celui de
+`flock(1)` : `IMPOTS_VERROU_PASSES` le partage avec les autres passes), une à la fois ; au
+plus trois en file (503 au-delà). Le processus fait ce que fait `impots etude` pour une
+mesure seule, sans en être une : la première année (`etude.first_year`), le chemin annuel
+(`impots predictif`, dans le cadre des études publiées, `etudes/cadres/central.json`,
+avec le canal des créations), puis les cas types (`cas_types.construire`, sur son seul
+scénario) ; ensuite le jumeau : les deux rapports deviennent un candidat de la session
+(`navigateur.alleger`, ce que la page lit d'une mesure d'étude : la première année
+ventilée par impôt et par décile, ce que le jumeau complet exige, D-655), et
+`navigateur.impacts_json` rend toutes les dimensions au réglage de la page (structurel,
+figée, parts de la première année, θ à ½, 60 tirages). L'identifiant est l'empreinte de
+la réforme, du commit et du cadre : la même proposition n'est passée qu'une fois. Tout
+est écrit sous `data/processed/propositions/<id>/` (hors de git) : le scénario, les deux
+rapports, les cas types, l'état, le journal, le résultat. Les calculs restent fermés sans
+clé (D-295) : le POST en demande une, les GET sont publics.
+
+(b) **Sur la page, un onglet « Votre barème ».** Le menu est dans la page (elle le montre
+sans l'API) ; « Lancer » appelle l'API à la même origine, suit l'état, puis dessine le
+résultat comme un autre. Sans API (le site statique), la page le dit et donne les deux
+commandes pour la lancer en local ; l'API sert alors la page écrite en local (`GET
+/site/<fichier>`, le dossier de `site_impacts.ecrire`), ce qui garde la politique de
+sécurité de la page (`connect-src 'self'`).
+
+**Le statut : illustratif, toujours.** Une proposition du lecteur est un chiffrage non
+préenregistré : chaque dimension passe à « illustratif » (l'option `degrader` du tableau,
+D-655), avec sa raison en tête de ses limites, et le résultat le dit
+(`proposition.statut`). Aucune n'est comparée à un juge ; aucune ne devient un rapport
+d'étude. Dans « Comparer », elle s'ajoute comme tout calcul fait dans la page (« Votre
+calcul »), avec son statut.
+
+**Les voies écartées.** (1) La première année seule reportée en part de PIB (le chemin des
+plages et de la grille, `annuel.carried_payload`, quelques minutes) : le jumeau complet
+lit la vue figée et son coût chaque année (`mechanical_frozen_eur`), qu'un report ne
+porte pas ; ce serait une autre chaîne que celle des études, et la proposition ne se
+lirait pas à côté d'elles. (2) L'intensité k sur une mesure voisine : le premier ordre de
+D-605, déjà là. (3) Une passe dans le processus du serveur : 6 Go et 40 min tiendraient un
+fil du serveur, et une passe d'un autre agent tournerait en même temps.
+
+## D-661 — Votre barème (2) : ce qui marche, ce qui a coûté, la passe de démonstration
+
+**Ce qui est codé** (branche `claude/but29-parametrique`, 30c5763, 877fe74, 54fe38c).
+`src/impots/parametrique.py` (le menu, la traduction, la file, la passe, le jumeau) ;
+trois routes et la page servie en local dans `api/main.py` ; dans `navigateur.Session`,
+`parametriques` ({candidat : raison, tableau des cas types}) et, dans `_options_compose`,
+la branche qui dit chaque dimension illustrative et donne à « Pour vous » le tableau de la
+passe ; `cas_types.construire` lit les scénarios d'un dossier donné ; l'onglet « Votre
+barème » de la page (`site_impacts`). Aucune dimension n'est réécrite. `IMPOTS_PASSES=non`
+fait un serveur qui rend les propositions déjà passées sans en lancer (une instance en
+lecture, ou une vérification de la page).
+
+**Le test léger** (`tests/test_parametrique.py`, 12 tests, 12 s, aucune passe) : chaque
+réglage traduit en son bouton, à la valeur près ; les taux de l'IR lus dans l'arbre de
+2026 ; sept refus (vide, neutre, inconnu, hors bornes, tranche sans taux, tranche sous la
+dernière, pas un nombre) ; une proposition passée de bout en bout, ses deux passes et ses
+cas types remplacés par les rapports commités du Smic à 2 000 € bruts de Tondelier (un
+coefficient de 1,0818 : le réglage « smic = 8,18 ») : les sept dimensions sont
+« illustratif », avec la raison en tête de leurs limites, et **chaque nombre de tête est
+celui de la mesure lue comme une étude, au bit** (le jumeau lit la passe du lecteur comme
+celle d'un candidat) ; un échec écrit dans l'état, puis relancé ; l'API (202, l'état, 422,
+404, la file pleine, la file fermée, la proposition déjà là rendue sans relance).
+`test_impacts_tableau` et `test_jumeau_navigateur` (31 tests, légers) passent inchangés.
+Le premier calcul du test confrontait aussi « Pour vous » : sans le tableau des cas types de
+la passe, le salarié seul au Smic gagnait 116 € par an en 2026 (le gain moyen de son
+décile) au lieu de 918 € (OpenFisca sur le cas type) ; c'est pourquoi la passe fait aussi
+les cas types (`cas_types.construire` sur son seul scénario).
+
+**Les temps mesurés.** Les cas types d'une proposition (le Smic +5 %, 244 ménages types,
+OpenFisca) : 17 s, hors du verrou (ce n'est pas une passe sur la population) ; le salarié
+seul au Smic, locataire, y gagne 585,70 € de revenu disponible par an en 2026 (878 € de
+salaire net, 295 € de prestations en moins). Le jumeau sur les deux rapports : 3,5 s (60
+tirages). La première année et le chemin annuel ne sont pas mesurés ici : voir plus bas.
+
+**Un incident, dit.** La première version du test de l'API remplaçait `_detacher` par
+`monkeypatch` alors que `proposer` l'avait lié en valeur par défaut : le test a lancé deux
+vraies propositions (le Smic +5 %, le RSA +5 %), détachées, sous le verrou privé du test et
+non sous le verrou commun, vers 02:13 UTC, pendant le chemin annuel de la série de
+Mélenchon. Le noyau en a tué une faute de mémoire ; l'autre a fait sa première année sur la
+population et commençait son chemin annuel quand elle a été arrêtée, à la main, vers 02:16.
+La série de Mélenchon a continué (son chemin de `indexation_pensions_prestations_10`
+tournait encore après) ; aucun de ses rapports n'a été touché, aucun rapport de ces passes
+n'a été gardé. Corrigé : `proposer` lit `_detacher` à l'appel, et la fixture des tests le
+remplace par une fonction qui échoue ; le test de l'API compte ce qu'il aurait lancé. Une
+seconde fois, pendant la vérification de la page, un POST a mis une proposition en file
+sous le verrou commun (le commit avait changé, donc l'identifiant) : elle attendait son tour
+et a été arrêtée avant d'avoir rien calculé ; d'où `IMPOTS_PASSES=non`.
+
+**La page vérifiée** (`site_impacts ecrire` dans un dossier à part, servie par l'API,
+`IMPOTS_PASSES=non`, la proposition de démonstration faite des rapports de Tondelier ;
+Chromium sans tête, deviceScaleFactor 1, 1 200 et 390 px) : l'onglet, les 13 réglages et
+ce que le menu ne règle pas ; « Lancer la passe » rend la proposition faite, ses temps,
+l'avertissement en tête (« Votre barème, un chiffrage illustratif »), sept cartes
+« illustratif », « En bref », « Pour vous » ; l'état « en cours » (l'étape, les minutes,
+l'adresse où revenir) ; servie en statique, « Aucun serveur de calcul ici » et les trois
+commandes. Aucun défilement horizontal, aucune erreur. Captures regardées. `node
+ui/check.mjs` passe (il ne couvre pas cette page).
+
+**La passe de démonstration n'a pas tourné.** Le verrou commun est tenu par la série des
+études de Mélenchon (`impots etude lancer`, un seul `flock` pour toute la série, ses
+chemins annuels de 28 à 38 min chacun, cinq encore à faire à 02:30), et deux autres passes
+attendent derrière elle (une construction de la population, les niveaux de vie du
+jumeau) : rien ne se libère avant 06:00 UTC. Comme le demande le coordinateur, elle n'est
+pas mise en file ; voici comment la lancer, d'un worktree où rien d'autre ne tourne et
+dont `src/` est commité (sinon les rapports le disent « modifié ») :
+
+    cd /home/user/Impots-b29-parametrique
+    IMPOTS_VERROU_PASSES=<le verrou commun> PYTHONPATH=src \
+      /home/user/Impots-but19/.venv/bin/python -m impots.parametrique lancer smic=5
+    PYTHONPATH=src /home/user/Impots-but19/.venv/bin/python -m impots.parametrique \
+      etat <id rendu>
+
+ou, avec la page : `PYTHONPATH=src …/python -m impots.site_impacts ecrire
+/tmp/impots-votre-bareme`, puis `IMPOTS_AUTH=aucune IMPOTS_SITE_LOCAL=/tmp/impots-votre-
+bareme IMPOTS_VERROU_PASSES=<le verrou> PYTHONPATH=src …/python -m uvicorn
+impots.api.main:app`, et http://localhost:8000/site/impacts.html#bareme. Pronostic, d'après
+D-660 : de 40 à 50 min, dont 1 à 2 min pour la première année et 30 à 40 min pour le
+chemin annuel, 6 Go au plus haut ; l'état les écrit (`temps`).
+
+**Ce qui reste.** (1) La mesure des temps et de la mémoire d'une vraie proposition (ci-
+dessus). (2) Les impôts des entreprises (IS, CVAE) : le simulateur des entreprises et le
+scénario mixte (`first_year_payload(mixte=True)`) le permettraient ; pas branché. (3) Le
+chemin annuel refait dix fois la vue figée (D-462) : c'est la plus grosse part du temps
+d'une proposition, et le premier gain à chercher si la page doit répondre plus vite.
+(4) Une clé pour le POST sur une instance publique (D-295) : la page n'envoie pas de clé ;
+en local, `IMPOTS_AUTH=aucune`. (5) Les propositions ne sont jamais effacées (le dossier
+`data/processed/propositions/`) : quelques Mo chacune.
+
+## D-665 — Seconde relecture adverse du but 29 : six erreurs corrigées
+
+**Ce qui est relu** (volet `relecture2` du but 29, branche `claude/but29-relecture2`,
+partie de `claude/but29` à 279666f) : les pièces ajoutées après D-635. Le code d'abord,
+les D-entrées ensuite : `impacts/territoires.py` et `table_territoires.py` (D-645 à
+D-649), `impacts/synthese.py` (D-650 à D-652), `navigateur.programme_compose` et les
+options `degrader` et `limite_commune` du tableau (D-655 à D-658), `parametrique.py` et
+ses routes (D-660, D-661), `impacts/pour_vous.py` et `cas_types.py` (D-630 à D-633,
+D-638), la page `site_impacts`. Le jumeau a tourné (Retailleau, Attal, Mélenchon, en
+secondes) ; aucune passe sur la population, aucune proposition lancée, aucun lourd ;
+`test_parametrique.py` vérifié avant de tourner (`_detacher` remplacé, `lancer` injecté).
+
+**Relu et tenu.** Les unités du gain des territoires (Md€ × 1e9 / ménages du décile, le
+même rangement décile × type que `cellules.deciles`) ; le revenu de référence corrigé du
+rapport case / cellule ; l'interpolation des quantiles et le contrôle de D-647 (la médiane
+de Filosofi n'est dans `margins` qu'en validation, rien ne s'y cale) ; dans « Pour vous »,
+les signes des coefficients (des valeurs absolues, le signe au canal), l'intensité d'une
+mesure à la cellule (déjà dans `Mesure.menages`, `proposition.transformer`), la
+conversion en euros de 2026 (D-638) ; la dégradation des statuts d'un programme composé
+(moral, santé, territoires) ; les identifiants de proposition (aucun chemin possible) et
+la page servie en local (un nom de fichier du dossier, rien d'autre).
+
+**Corrigé**, chaque correctif avec son test léger, en échec sur le code d'avant :
+
+1. *Grave, la file des propositions se fermait pour toujours* (`parametrique`). Une passe
+   tuée sans écrire sa fin (la mémoire, comme cette nuit ; la machine relancée) restait
+   « en_cours » : la même proposition ne se relançait plus, et trois comme elle rendaient
+   503 à tout le monde. Le pid de la passe est écrit (au détachement, puis par la passe) ;
+   un processus disparu, ou zombie, met la proposition en échec avec sa raison, et elle
+   se relance. Une remise en file efface l'ancien pid. Commit d6e7f39.
+2. *Moyen, un réglage qui n'est pas une table* (`{"boutons": [..]}`, un nombre, `null`)
+   rendait une erreur 500 : désormais 422 et la raison. Même commit.
+3. *Grave, `POST /impacts` sans borne sur ses tirages* (`navigateur.impacts_json`) : la
+   trajectoire est vectorisée sur les tirages ; une requête qui en demandait des millions
+   tenait autant de trajectoires en mémoire et faisait tomber le serveur (une clé suffit,
+   le débit ne compte que les requêtes). Borné à la plage du jumeau, de 0 à 200 ; au-delà,
+   422. La page en demande 60 : aucun nombre publié ne change. Commit 7d0d668.
+4. *Moyen, une bande qui n'en était pas* (`impacts/pour_vous.py`). Dans la chaîne des
+   études, ni salaires ni prix ne bougent avec les θ : la « bande » du revenu réel du cas
+   par défaut était le statique répété, et « En bref » la disait. Mélenchon (programme
+   entier), 2035 : [+1 606 ; +1 606] € → sans bande ; le centre ne change pas ; Retailleau
+   (jumeau complet) garde [−1 332 ; −1 166].
+5. *Moyen, une phrase qui disait plus que ses indicateurs* (`synthese`). « Ce qu'on gagne
+   ici, on le paie là » affirmait un lien entre deux dimensions qu'aucun indicateur ne
+   mesure, contre la règle de D-650 (aucun mot ne juge l'ensemble). La phrase dit
+   désormais que les nombres sûrs ne vont pas tous du même côté, « ce n'est pas un bilan,
+   ni un lien ». Les textes cités en D-651 sont ceux d'avant.
+6. *Le défaut connu de la page, et plus* (`site_impacts/page.js`). Dans les barres par
+   groupe, une étiquette négative longue chevauchait son libellé, et les libellés plus
+   longs que la colonne de gauche étaient coupés au bord du dessin (« le chômage autour
+   de soi », tous les cas types de « Pour vous »). La place des étiquettes de valeur est
+   réservée de chaque côté ; un libellé trop long passe au-dessus de sa barre. Mesuré dans
+   Chromium (deviceScaleFactor 1, 1 200 et 390 px, les 22 programmes, chaque indicateur de
+   chaque fiche, les boîtes des textes) : 52 chevauchements et 978 textes coupés avant, 0
+   et 0 après ; aucun défilement horizontal, aucune erreur hors le `favicon.ico`. Et les
+   cartes de la vue d'ensemble disaient « ▼ moins bien » sans réserve quand leur bande
+   franchit zéro, là où « En bref » et « Comparer » disent « sens pas sûr » : elles le
+   disent aussi (Attal, productivité −0,43 % [−0,81 ; +0,26]). Pas de test (D-335 : rendu).
+
+Les rapports commités ne lisent aucune de ces lignes : aucun n'est refait. Les points
+écrits et non changés sont dans D-666.
+
+## D-666 — Seconde relecture : ce qui est écrit, non changé (au propriétaire)
+
+Par gravité.
+
+* *La même grandeur sous deux noms, dans la chaîne des études.* Sans le champ
+  `effet_prix_pib` (le mode réduit), la productivité prend l'écart du PIB pour le « PIB
+  en volume » (`productivite.socle`, `dprix = 0`), sens « mieux » ; l'économie dit le même
+  nombre « PIB en valeur (nominal) », sens 0. Mélenchon, programme entier, 2035 : −0,6886 %
+  des deux côtés, à 1e-14 près ; « En bref » le cite deux fois et l'arbitrage met « PIB en
+  volume en baisse » du côté « moins bien ». D-651 (point 3) le disait redondant ; c'est
+  une étiquette fausse d'un côté ou de l'autre. Le bloc `mesange` lit la ligne du PIB des
+  variantes de Mésange, publiée en volume à vérifier sur le PDF : si c'est le volume,
+  c'est l'économie qui se trompe de nom dans ce mode. Non tranché ici.
+* *Le verrou des propositions n'est pas celui des autres passes par défaut.* Sans
+  `IMPOTS_VERROU_PASSES`, il est privé (`data/processed/propositions/passe.lock`) : une
+  proposition et `/population/simulate` ou `/predictif/simulate` (le compteur des calculs
+  lourds de D-295, dans le processus du serveur) peuvent tourner ensemble. La file compte
+  ses places sans verrou (deux requêtes simultanées peuvent passer FILE_MAX). Le pid
+  écrit (D-665) peut être réutilisé par un autre processus : une passe perdue paraîtrait
+  vivante, rarement.
+* *D-661 dit les cas types « hors du verrou »* ; `passer` les fait sous le verrou, avec
+  les deux passes. Le temps (17 s) est petit ; le texte est faux, pas le calcul.
+* *Les territoires : la part des gagnants* est celle des ménages des cellules dont le gain
+  moyen dépasse 10 € : « 100 % partout » (Retailleau, Attal) dit que toutes les cellules
+  gagnent en moyenne, pas que tous les ménages gagnent. Le statut « illustratif » le
+  couvre ; le libellé pourrait le dire. Les déciles de la table sont ceux des ménages, les
+  quantiles du contrôle ceux des personnes (D-647 le mesure : 0,006 d'écart).
+* *« Pour vous » sur la page* ne montre pas la bande du revenu réel du cas par défaut, que
+  la fiche porte ; la productivité garde des noms de canaux bruts dans ses barres
+  (`pression_cout`).
+* *La certitude « probablement »* lit de la même façon les bandes de tirages et les
+  enveloppes de bornes publiées (moral) : D-650 le dit ; cela reste le point le plus
+  discutable du paragraphe. La netteté d'une bande de largeur nulle est infinie : une
+  dimension sourcée à bande dégénérée viendrait en tête ; aucune ne l'est aujourd'hui.
+* *Une composition sans borne* (`POST /impacts`, la liste `composition`) : bornée par le
+  débit seulement.
+
+**Ce qui n'a pas été fait** : pas de `make impact`, pas de lourds ; le site commité n'est
+pas reconstruit (la page a été écrite à part pour la vérifier). Les contrôles aveugles
+(D-646, D-656) relus sur leurs commits seulement.
+
+## D-670 — Le PIB de la chaîne des études est un volume : l'économie le disait en valeur
+
+**Le problème** (D-666, premier point ; volet `finition` du but 29, branche
+`claude/but29-finition`, numéros D-670 à D-674). Dans la chaîne des études (le mode
+réduit : les blocs `mesange` et `creations`, sans ménages ni entreprises), aucun état ne
+porte l'effet des prix du PIB (`effet_prix_pib`). La productivité prenait alors l'écart du
+PIB pour le « PIB en volume » (`productivite.socle`, `dprix = 0`), sens « mieux » ;
+l'économie disait le même nombre « PIB en valeur (nominal) », sens 0. L'un des deux noms
+était faux.
+
+**La source qui tranche** : Insee, Mésange (G2017-04),
+`data/raw/insee_G2017-04_mesange.pdf`, section 4. Chaque tableau de variante imprime en
+première ligne « PIB en volume », en % d'écart au compte central (lu avec `pdftotext`,
+mise en page gardée ; ainsi, « Baisse de l'impôt sur le revenu des ménages de 1 % du PIB
+ex ante » : PIB en volume 0,41 0,83 0,88 0,81 0,87 1,05). C'est la ligne que
+`macro.mesange.ROWS["gdp"]` lit (« PIB en volume » ; « PIB (en volume et en %) » pour la
+variante ciblée), que `retroaction.replay_tables` porte et que le bloc `mesange` multiplie
+par le PIB de la référence. Le canal des créations écrit une valeur ajoutée sans prix
+(s_VA r c Σ Δe). Aucun prix ne bouge dans ce mode : l'écart est un volume. **C'est
+l'économie qui se trompait de nom** ; la productivité avait raison.
+
+**Le correctif** (`impacts/economie.py`). Quand aucun état ne porte `effet_prix_pib`,
+l'écart du PIB devient l'indicateur `pib_volume`, « PIB en volume », sens « mieux », en
+tête de la fiche comme dans le jumeau complet (D-639) ; il n'y a pas de PIB en valeur à
+part (ce serait le même nombre sous un autre nom), et une limite dit d'où vient le PIB.
+Dans le jumeau complet, rien ne change (le test de D-639 et celui qui tient `pib` égal à
+la page du jumeau, au bit, passent inchangés). La clé `pib_volume` aligne aussi la
+chaîne des études sur le jumeau complet dans « Comparer ». La productivité n'est pas
+touchée.
+
+**Avant → après**, Mélenchon, 2035, centre à θ ½, bande de 60 tirages (jumeau, en
+secondes ; aucune passe ; « entier » : le programme entier, mode réduit) :
+
+| ligne, dimension | avant | après |
+|---|---|---|
+| entier, économie | « PIB en valeur (nominal) », sens 0 | « PIB en volume », mieux |
+| entier, économie | −0,6886 % [−1,219 ; −0,149] | −0,6886 % [−1,219 ; −0,149] |
+| entier, productivité | « PIB en volume » −0,6886 % | inchangé |
+| par ses mesures, économie | volume +1,5011 %, valeur +1,8672 % | inchangé |
+
+Le nombre ne change pas, son nom et son sens changent. « En bref » (programme entier) :
+« l'économie en général (PIB en valeur (nominal)) » devient « (PIB en volume) », et
+l'arbitrage met désormais les deux PIB en volume en baisse du côté « moins bien » (avant :
+celui de la productivité seulement). Le doublon reste (le même nombre dans deux
+dimensions, D-651 point 3) ; il n'est plus contradictoire. Test :
+`test_sans_prix_l_ecart_du_pib_est_le_pib_en_volume`, en échec sur le code d'avant.
+
+**Une phrase fausse de plus, trouvée en le mesurant** (`impacts/synthese._cadre`). Sur la
+ligne « par ses mesures » (D-655), qui tourne dans le jumeau complet, « En bref »
+commençait par « Calculé par la chaîne des études, pas par le jumeau complet » : la phrase
+du cadre ne regardait que la présence d'une raison de mode. Elle lit désormais le mode du
+réglage : « Calculé par le jumeau complet, mesure par mesure : » et la raison. Test :
+`test_un_programme_calcule_par_ses_mesures_n_est_pas_la_chaine_des_etudes`, en échec sur
+le code d'avant. Aucun rapport commité ne lit ces lignes : aucun n'est refait ; le site
+commité n'est pas reconstruit.
+
+## D-671 — D-661 précisé : les cas types d'une proposition tournent sous le verrou
+
+D-661 (« Les temps mesurés ») dit les cas types d'une proposition faits « hors du verrou
+(ce n'est pas une passe sur la population) ». C'est faux pour le code commité, comme D-666
+le relevait : `parametrique.passer` prend le verrou (`fcntl.flock`, `IMPOTS_VERROU_PASSES`
+s'il est donné) avant la première étape et le garde jusqu'au résultat ; les cas types
+(`cas_types.construire` sur le seul scénario de la proposition, 244 ménages types) en sont
+la troisième étape, après la première année et le chemin annuel, et le jumeau la
+quatrième. Relu sur 348e673 (`passer`, la boucle des étapes dans le `with` du verrou).
+
+Ce qui reste vrai de D-661 : les 17 s sont le temps de `cas_types.construire` seul, et
+les cas types ne sont pas une passe sur la population (OpenFisca sur des ménages types,
+quelques secondes). Le calcul ne change pas, aucun nombre non plus ; rien n'est refait.
+**Le choix est gardé** : sous le verrou, une proposition ne fait tourner qu'un OpenFisca
+à la fois sur la machine, dans l'ordre de sa file, pour 17 s de plus sur 40 à 50 min ;
+les sortir du verrou demanderait un second verrou ou une seconde file, sans gain lisible.
+D-661 n'est pas réécrite ; elle se lit avec celle-ci.
+
+## D-672 — Les canaux de la productivité dits en français sur la page
+
+D-666 relevait que la productivité gardait des noms de canaux bruts dans ses barres : la
+fiche « Productivité des entreprises par les canaux à côté » montrait par groupe
+`pression_cout`, `salaire_efficience` et `rd_cir`, et ses sources disaient « canal
+« pression_cout » ». Le correctif (`impacts/productivite.LIBELLES`) les dit comme le moral
+et la santé disent les leurs (`LIBELLES`, minuscule et article) : « la pression du coût
+du travail », « le salaire d'efficience », « la R&D (crédit d'impôt recherche) ». Les
+clés restent celles de `parametres/productivite.yaml` et des notes (`canaux_branches`,
+`canaux_a_cote`), que le code lit. Aucun nombre ne change. Le test de D-627 lit désormais
+le libellé (`test_impacts_productivite`).
+
+Relu de la même façon sur Retailleau, Attal, Mélenchon (les deux lignes) et le Smic +15 %
+de Roussel : dans les libellés, les groupes et « En bref », plus aucun nom brut de canal.
+Restent, écrits et non changés : les clés des θ dans la limite « θ lus sans estimation
+publiée » (ce sont les noms du panneau des θ de la page du jumeau, qui n'ont pas de
+libellé court), les codes des tables citées dans les sources (`hlth_silc_01`,
+`demo_pjan` : des références, pas des noms), et l'identifiant du programme dans la raison
+d'un refus du jumeau complet (« mesure « pres2027_melenchon_programme » »), que la page
+cite telle qu'elle vient du jumeau.
+
+## D-673 — Le mode d'emploi de la page, et sa dernière vérification
+
+**Le mode d'emploi** : `docs/CE_QUE_CA_CHANGE.md` (à quoi sert la page, les dimensions,
+leur statut et leurs D-entrées, l'ouvrir en local, composer, « Votre barème » et le verrou
+commun, ce qui n'est pas fait, les décisions qui attendent le propriétaire, tirées de
+D-590 à D-669). Ses commandes ont été lancées telles quelles : `site_impacts ecrire`
+(1 min 39 s), le dossier servi seul (`http.server`), `site_impacts servir` (la page
+répond après 1 min 50 s), l'API avec `IMPOTS_AUTH=aucune`, `IMPOTS_SITE_LOCAL` et
+`IMPOTS_PASSES=non` (la page, le menu des réglages, `POST /impacts` sur une mesure et sur
+une composition : sept dimensions, toutes « illustratif »). Aucune proposition lancée,
+aucune passe sur la population.
+
+**La page vérifiée** (écrite sur ce commit, servie par l'API ; Chromium sans tête,
+deviceScaleFactor 1, 1 200 et 390 px) : Retailleau ; Mélenchon, programme entier (la
+chaîne des études : six dimensions, les territoires « non calculés » avec leur raison) et
+par ses mesures (sept dimensions ; « En bref » dit désormais « Calculé par le jumeau
+complet, mesure par mesure », D-670) ; une proposition composée (deux mesures et une loi
+simple : tout « illustratif »). Aucune erreur de la console, aucun défilement horizontal,
+aucun nom brut de canal dans le texte (D-672) ; sur le programme entier de Mélenchon,
+l'économie dit « PIB en volume » (D-670). Trois captures à 1 200 px (deviceScaleFactor 2)
+gardées hors du dépôt pour le propriétaire.
+
+**Vu, non changé** : sur la composition (Lisnard, CSG ; Le Pen, IR des moins de 30 ans ;
++10 Md€ d'IR), le centre est au bord de sa bande ou juste dehors (PIB en volume +0,73 %,
+bande +0,58 à +0,73 ; productivité apparente +0,27 %, bande +0,18 à +0,26). Le centre est
+le calcul à θ = ½, la bande les quantiles de 5 et 95 % des tirages : rien n'impose que
+l'un tombe dans l'autre quand la réponse aux θ n'est pas symétrique ; la page ne le dit
+pas. Et la raison d'un refus est citée brute (« TerritoiresAbsents : le mode reduit… »,
+« mesure « pres2027_melenchon_programme » »).
+
+## D-594 — Le pouvoir d'achat et l'entente (4) : sur la page, avec la bande des tirages
+
+**Ce qui est fait** (commits cf47902, 830830e ; le jumeau seul, aucune passe). Les deux
+dimensions de D-591 se montrent sur la page « Ce que ça change » par le tableau (D-605),
+sans changer le tableau ni la page : `impacts.tableau.calculer_tout` les rend à leur
+place, après `pouvoir`, avant le moral. Trois choses changent pour elles.
+
+* **La bande.** Le tableau passe à chaque dimension la trajectoire vectorisée des tirages
+  des θ (`options["tirages"]`) ; les deux dimensions ne la lisaient pas et n'avaient pas
+  de bande sur la page. Elles la joignent au réglage (`pouvoir.chemins`, `joindre` : le
+  tirage 0 est le réglage, les suivants font la bande, 5 et 95 %). Le centre ne change
+  pas : Retailleau, θ½, +791 € de 2025 par UC en 2026, +707 en 2035 (D-593) ; la bande
+  de 2035 sur 50 tirages, +626 à +752 (sur 200, D-593 : +639 à +764). La pauvreté
+  −0,82 point en 2026, −0,77 en 2035, bande −0,78 à −0,73. Le test
+  (`test_la_page_donne_aux_deux_dimensions_la_bande_des_tirages`) échoue sur le code
+  d'avant (pas de bande) et passe. Le réglage, θ½, n'est pas la médiane des tirages :
+  sur 8 tirages, le centre de 2035 sort de la bande, ce que D-673 dit déjà des autres.
+* **La distribution des niveaux de vie** arrive avec les entrées de la page
+  (`site_jumeau.donnees()["niveaux_de_vie"]`, la session la passe en `distribution`,
+  `lire_fichier=False`) au lieu d'être lue comme un fichier : le paquet de la page
+  refuse un fichier lu hors de `src/impots`, et la page n'aurait pas vu la mesurée.
+  Sans le fichier, l'approchée, dite dans la source de la dimension.
+* **Un programme composé de ses mesures** (D-655) : le pouvoir d'achat et l'entente
+  lisent les chocs par décile des passes, faites seules, comme le moral ; ils entrent
+  dans `LISENT_LES_DECILES` et deviennent « illustratif », avec la raison.
+
+Tests légers des fichiers touchés (`test_impacts_*`, `test_jumeau_impacts_*`,
+`test_jumeau_navigateur`) : 110 passés. Les nombres sur la distribution mesurée et le
+juge (D-591) iront dans D-592 et D-640 quand les passes auront tourné.
+
+## D-610 — La jonction du but 29 au matin du 18 novembre : ce qui sert, ce qui attend
+
+**Joint sur `claude/but29`** (d3679d0 et ce commit ; non mergé, parti de `claude/but28`) :
+les dix dimensions de « Ce que ça change », par `jumeau/impacts` (D-605) : les comptes et
+l'économie (D-606, D-639, D-670), le pouvoir d'achat et l'entente (D-591, D-593, D-594),
+le moral (D-595 à D-597), la productivité (D-600 à D-604, D-625 à D-627, D-636, D-637),
+la santé (D-620 à D-622), « Pour vous » (D-630 à D-633, D-638), les territoires (D-645 à
+D-649), « En bref » (D-650, D-651), « Comparer » et les programmes refusés par leurs
+mesures (D-652, D-655 à D-658), « Votre barème » (D-660, D-661, D-671), deux relectures
+adverses (D-635, D-665, D-666) et le mode d'emploi (`docs/CE_QUE_CA_CHANGE.md`, D-673).
+
+**Le statut, sans arrondi** : aucune dimension n'est « jugée ». Les contrôles de l'état
+de départ tiennent (moral, santé, la prime d'activité de « Pour vous », la table des
+territoires sur L2) ; les juges d'effet n'ont pas de puissance (les trois du CICE) ou
+n'ont pas encore tourné (l'Insee pour le pouvoir d'achat, D-591 : les trois passes
+attendent le verrou commun, tenu par la série des études de D-556). D-592 et D-640 les
+écriront ; le pronostic de D-591 annonce déjà trois écarts hors tolérance.
+
+**Ce qui n'est pas fait** : la série des dix-sept études (D-556) tourne encore sur
+Mélenchon, mesure par mesure ; la population de la forme Urssaf (D-580) attend derrière
+elle, puis les passes du juge de l'Insee. Le site n'est pas réécrit (`etude ecrire`
+après la série). Pas de PR, pas de `make impact`, pas de lourds.
+
+**Tests légers** des fichiers du but (`test_impacts_*`, `test_jumeau_impacts_*`,
+`test_jumeau_navigateur`, `test_parametrique`, `test_pour_vous`) sur ce commit : 135
+passés. Aucun nombre ne change ici.
+
+## D-674 — La raison d'un refus en clair, et le centre hors de sa bande
+
+**Ce qui est fait** (le dessin de la page seul, `site_impacts/page.js` et `impacts.css` ;
+aucun nombre ne change, aucune passe). Les deux points vus et non changés dans D-673.
+
+* **La raison d'un refus** passe par `lisible` partout où la page la cite (le réglage,
+  « En bref », la fiche et la carte d'une dimension non calculée, « Comparer », l'erreur
+  d'un calcul dans la page) : le nom de la classe d'exception est retiré
+  (« TerritoiresAbsents : »), une clé connue de la bibliothèque devient le nom du
+  programme ou de la mesure (« pres2027_melenchon_programme » devient « Jean-Luc
+  Mélenchon : le programme (sa part chiffrée) »), « le mode reduit » devient « la chaîne
+  des études » et « le mode structurel » « le jumeau complet ». Le reste du texte est
+  gardé tel quel : la raison ne perd rien ; une clé inconnue reste écrite.
+* **Le centre hors de sa bande.** Là où le calcul à θ = ½ sort de la bande des tirages
+  (5 et 95 %), la carte et la fiche le disent en une phrase (« le réglage central sort de
+  la bande des tirages : la réponse aux θ n'est pas symétrique », « de moins que
+  l'arrondi » quand les nombres affichés sont égaux) ; « Comparer » dit « centre hors de
+  la bande » sur la ligne, et le tableau « (centre hors) » dans la cellule. Sur les
+  programmes précalculés en 2035 : la productivité apparente de Lisnard, Philippe et Le
+  Pen, le PIB en volume de Lisnard.
+
+Vérifié sur la page écrite pour D-673 (le script et le style remplacés, sans la récrire),
+dans Chromium sans tête à 1 200 et 390 px : aucune erreur de la console, aucun défilement
+horizontal, plus de nom de classe ni de clé brute dans le texte. `ui/check.mjs` ne couvre
+pas cette page. Pas de test dédié : c'est du rendu (D-335). Tests légers des fichiers
+du but (`test_impacts_*`, `test_jumeau_impacts_*`, `test_jumeau_navigateur`) : 110 passés.
+
+## D-675 — « Refuse le programme » pour un programme : la tournure laissée par D-674
+
+La raison d'un refus, pour un programme entier que le jumeau complet refuse et qui
+passe à la chaîne des études, disait « refuse la mesure dès sa première année »
+(`Session.reglage_impacts`, D-605). Elle dit désormais « refuse le programme » quand la
+clé est celle d'un programme (`…_programme`), « la mesure » sinon. Aucun nombre ne
+change. Tests légers des fichiers touchés (`test_impacts_tableau`,
+`test_impacts_synthese`, `test_jumeau_navigateur`) : 72 passés. La page réécrite
+(`site_impacts ecrire`, hors du dépôt) porte la nouvelle tournure.
+
+## D-592 — Le pouvoir d'achat et l'entente (2) : le juge de D-591, la prime manquée
+
+**Ce qui a tourné** (le code de D-591, 4cbe38f, figé dans un worktree détaché ; les
+passes une à une sous le verrou commun, détachées). La distribution mesurée des niveaux
+de vie dans les cellules (`scripts/jumeau_niveaux_de_vie.py`, 18 novembre, 11 h 19 UTC,
+76 s) ; les cellules de D-553 refaites (`jumeau_cellules.py`, 30 000 ménages, 89 s) ;
+`ppa_passe` (112 s) et `ir_passe` (112 s), 20 000 ménages, de 18 h 26 à 18 h 58 UTC ;
+puis `rapport` et le verdict (`relais/pouvoir/verdict.py`, commité au relais 0ffe422 sur
+`claude/relais-b28-b29`, ses juges codés tels quels). Rapports :
+`reports/verification/juges_pouvoir_b29/modele.json` et `verdict.json`,
+`reports/jumeau/niveaux_de_vie_cellules.json`. La passe
+de la mesurée a tourné avant celles des juges : **le nombre noté est (b) sur la
+mesurée**, comme D-591 le disait ; l'approchée est rapportée à côté.
+
+**Les cellules, dites.** L'empreinte du fichier refait (79fb44e6…) n'est pas celle de
+D-557 (605ee363…) : le fichier porte la date, les durées et la mémoire de sa passe. Le
+contenu est le même : population 5ace8bb6…, graine 20240101, 30 000 ménages, et les
+recoupements de D-553 au centième (salaire brut −0,56 %, IR contre les recettes nettes
++9,85 %, « dit », médiane contre Filosofi −6,36 %). Le conteneur a été récupéré deux fois
+pendant la chaîne (16 h 51, puis 16 h 53 à 18 h 24, la session inactive) ; la chaîne a
+été relancée en entier, rien d'une passe interrompue n'est gardé. Deux fichiers manquaient
+au checkout neuf et ont été posés depuis leur URL du manifeste, l'empreinte vérifiée :
+`ccss_mai2026_comptes_secu_resultats2025.pdf` et `plfss2026_annexe9_evaluations_
+prealables.pdf` (la part ALD de la Drees, p. 228, D-312 ; aucune évaluation préalable
+n'y est jugée). Si l'interdit du propriétaire sur les évaluations préalables couvre
+aussi ce fichier de 2026, ce résultat est à refaire sans lui.
+
+### Cas 1 — La prime d'activité de 2019 (*Portrait social* 2020, fig. 4) : manqué
+
+| | modèle | pronostic | juge | tient |
+|---|---:|---|---:|---|
+| pauvreté, (b) mesurée, points | −0,17 | −0,20 (−0,05 à −0,35) | −0,7 | non (0,24) |
+| pauvreté, (a) ménages de la passe | −0,32 | −0,25 (−0,10 à −0,40) | −0,7 | non (0,45) |
+| pauvreté, (b) approchée | −0,39 | | −0,7 | (0,55) |
+| Gini, (a), points ×100 | −0,19 | −0,15 (−0,05 à −0,25) | sans juge | |
+| D9/D1, (a) | −0,031 | −0,03 (−0,01 à −0,06) | sans juge | |
+
+**La pauvreté est manquée** : (b) fait le quart de l'effet publié, le rapport sort de 0,5
+à 2. Le pronostic l'avait dite sous le juge, rapport 0,6, « dans la tolérance de peu » ;
+elle l'est bien plus. (a) manque aussi, de peu (0,45). Le contrôle de la méthode, (b) à
+0,1 point de (a), **est manqué** : 0,15 point d'écart. La distribution approchée, qui
+tiendrait (0,55), n'est pas celle que D-591 note ; elle est rapportée, rien n'est mis à
+la place. Ce que cela dit : le gain de la prime tombe dans le modèle en D2 à D4 (129, 193,
+206 € par personne et par an ; le plus haut en D4), et la mesurée place, dans ces
+cellules, peu de personnes juste sous le seuil ; D-536 disait déjà le gain d'un à deux
+déciles trop haut. Le Gini et D9/D1, sans juge par mesure (le *Portrait social* 2020
+n'en donne qu'une part), tombent dans leurs fourchettes. Coût : 3,71 Md€ (non jugé).
+
+### Cas 2 — La baisse de l'impôt de 2020 (*Portrait social* 2022, D2) : à part (D-677)
+
+**Noté à part, non aveugle** (D-677) : le juge a été lu avant que le modèle ne tourne ;
+ce cas n'entre dans aucune note. **La différence de champ, dite et non corrigée** : le
+juge est un effet consolidé, sur la législation de 2021 ; le modèle mesure la loi de 2020
+contre la même loi au barème et à la décote de 2019 revalorisés de 0,2 % (27 850 €,
+1 210 et 1 994 €), sur la population ramenée à 2020.
+
+| | modèle | pronostic | juge | tient |
+|---|---:|---|---:|---|
+| coût, Md€ | 6,54 | 5,0 (4,0 à 6,0) | 5,39 | sans tolérance |
+| gain moyen, € par personne | 135 | 110 (85 à 135) | 120 | oui (+12 %) |
+| décile au gain le plus haut | D8 | D7 ou D8 | D8 | oui |
+| part de D1 à D3, % | 1,1 | 4 (0 à 8) | 0,9 | oui |
+| part de D8 à D10, % | 56,7 | 33 (25 à 42) | 59,8 | oui |
+| pauvreté, (b) mesurée, points | +0,41 | +0,02 (−0,03 à +0,08) | +0,232 | oui (1,75) |
+| pauvreté, (a) | +0,30 | +0,02 (−0,03 à +0,08) | +0,232 | oui (1,28) |
+| Gini, (a), points ×100 | +0,10 | −0,05 (−0,15 à +0,05) | sans juge | |
+
+Le gain par décile, € par personne : 1, 3, 11, 23, 82, 165, 299, 344, 273, 146 (le juge :
+0, 0, 10, 20, 70, 140, 230, 290, 250, 160). **Contre le juge, tout tient** ; le contrôle
+(b) contre (a) manque de 0,01 point (0,11). **Le pronostic se trompe** sur la forme : il
+mettait un tiers du gain en haut, le modèle et le juge y en mettent près de 60 % ; il
+voyait la pauvreté quasi nulle, elle monte de 0,3 à 0,4 point (le juge, 0,23) ; il
+voyait le Gini baisser, il monte. Le coût dépasse la fourchette : 6,5 Md€ contre 5,0
+prévus et 5,39 publiés, le champ (2020 contre 2019 revalorisé, et non le consolidé)
+pouvant en porter une part, non mesurée.
+
+**Ce qui reste.** La prime manquée n'est pas corrigée ici : il faudrait voir où tombe le
+gain dans le décile (la distribution du gain dans la cellule, D-591, limite dite), et
+D-536 n'a pas été repris. Aucune tolérance n'est retouchée.
+
+## D-640 — Le pouvoir d'achat et l'entente (5) : les nombres de D-593 sur la mesurée
+
+**Ce qui a tourné** (le code de D-594, d3679d0, le jumeau seul, aucune passe sur la
+population ; `relais/pouvoir/essai2.py`, 200 tirages, la graine de D-459) : le tableau de
+D-593 refait, la distribution des niveaux de vie dans les cellules étant **la mesurée**
+(`reports/jumeau/niveaux_de_vie_cellules.json`, D-592), commitée avec cette entrée ; la
+page la lit par `site_jumeau.donnees()` (D-594).
+
+**Les références** (mesurée, 2024 ; entre parenthèses, l'approchée de D-593) : pauvreté
+16,5 % (15,6), Gini 0,288 (0,300), D9/D1 3,57 (4,15), S80/S20 4,39 (4,66), médiane
+24 889 € (24 897). **D9/D1 se rapproche** de l'ordre que l'Insee publie (3,4, de mémoire,
+non relu) : le bas de la distribution n'est plus prolongé linéairement. La pauvreté monte
+d'un point.
+
+**Le pouvoir d'achat ne bouge pas** : il ne lit pas la distribution. Retailleau +791 €
+de 2025 par UC en 2026, +707 en 2035 (bande +639 à +764) ; Attal +1 133 puis +848 ;
+Mélenchon +1 454 (€ de 2024), comme D-593.
+
+**Ce qui rapproche ou sépare**, mesurée (approchée, D-593), la pauvreté en points :
+
+| | 2026 | 2030 | 2035 | bande 2035 |
+|---|---:|---:|---:|---|
+| Retailleau, pauvreté | −0,49 (−0,82) | −0,64 (−0,74) | −0,57 (−0,77) | −0,62 à −0,53 |
+| Retailleau, Gini ×100 | −0,69 (−0,71) | −0,71 (−0,72) | −0,62 (−0,63) | −0,64 à −0,59 |
+| Attal, pauvreté | +1,12 (+1,1) | +0,71 | +0,43 (+0,13) | +0,22 à +1,00 |
+| Attal, Gini ×100 | +0,12 (+0,07) | −0,11 | −0,12 (−0,14) | −0,17 à +0,01 |
+
+Mélenchon, choc statique seul : pauvreté −1,16 point (−1,18), Gini −2,22 (−2,24), D9/D1
+−0,37 (−0,31), S80/S20 −0,53. **La pauvreté bouge le plus** : la mesurée met moins de
+monde près du seuil en bas qu'elle ne le prolongeait ; Retailleau la baisse d'un tiers de
+moins, Attal la monte plus longtemps (sa bande de 2035 ne passe plus par zéro). Le Gini
+change peu. Retailleau : pauvreté des personnes seules −2,59 point en 2026.
+
+**Les groupes que la mesurée ouvre** (D-593 les attendait) : l'écart moyen à la moyenne,
+en points du niveau de vie moyen, en 2026. Retailleau : âge de la personne de référence
++0,04, statut −0,46 (les retraités +0,54, les personnes en emploi −0,43), territoire
+−0,06 (l'outre-mer +0,10). Attal : âge +0,23 (les 75 ans et plus s'éloignent), statut
+−0,31, territoire −0,05. Mélenchon : âge −0,06, statut −1,37, territoire −0,15. Ces
+écarts ne sont pas jugés.
+
+Le Mélenchon de D-593 et les nombres de la page (50 tirages, D-594) se lisent sur la même
+distribution dès que le fichier est là ; aucun code n'est changé par cette entrée.
+
 ## D-558 — Cinq études ajoutées à la série de D-556 : le PLF 2027 et quatre programmes
 
 **La décision** (le propriétaire, 17 novembre ; D-575, choix 3) : la population des études
@@ -41178,3 +44305,141 @@ bouge. Les quinze pages réécrites, le site reconstruit.
 **Le test.** `test_the_page_says_what_moved_against_the_frozen_series_and_why` : un gel
 qui nomme ses corrections les donne à la ligne qui a bougé, dit « aucune » de celle qui ne
 l'a pas fait, et ne nomme plus D-346 ni D-345. Il échoue sur le code d'avant.
+
+## D-696 — Le but 29 sur la série de D-689 : six tests mis sur leurs nombres, les causes
+
+**La jonction** (8e45527) : `claude/but28` à ef26636 joint dans `claude/but29`, sans
+conflit, pour la PR #134. Les 41 rouges de 46be858 (« aucun rapport d'étude commité »,
+D-688) disparaissent avec les rapports de D-689. Sept tests légers du but restent rouges.
+
+**Six tiennent des nombres du but 29 lus sur l'avant.** Mis sur la série de D-689 et la
+population de D-687, chaque ancien nombre écrit à côté, aucune tolérance changée :
+
+| test | avant | après |
+|---|---:|---:|
+| Retailleau, € 2025 par UC, 2026 et 2035 | +790,6 ; +706,9 | +725,9 ; +644,6 |
+| Retailleau, gain réel D1 et D10, 2026, % | +5,20 ; +1,10 | +4,76 ; +1,16 |
+| Mélenchon : Md€ ; € par UC ; pauvreté | 68,28 ; 1 454 ; −1,18 | 68,68 ; 1 463 ; −1,12 |
+| territoires 2035 : %, rural, outre-mer | 2,077 ; 1,953 ; 2,302 | 1,891 ; 1,788 ; 2,077 |
+| territoires, € par ménage, régions | 1 241,3 | 1 129,7 |
+| santé, départ (D-621) : ln, H, F | 2,0780 ; 10,50 ; 6,86 | 2,0835 ; 10,53 ; 6,88 |
+| moral, départ (D-596) : Q5−Q1, D10−D1 | 0,6596 ; 0,8832 | 0,6610 ; 0,8855 |
+
+**Les causes.** Le pouvoir d'achat et les territoires de Retailleau baissent d'environ
+8 % parce que le choc aux ménages de sa première année baisse d'autant : 37,18 Md€ dans
+les rapports que le but 29 lisait (ceux d'avant D-559), 34,17 dans la série de D-559 et
+34,18 dans celle de D-689 ; le coût total, lui, bouge à peine (D-689). Le reste vient des
+cellules de la population de D-687 (l'IR des cellules +0,6 %). Les juges des contrôles
+de départ tiennent encore, avec les bornes d'origine : santé 0,90 et 0,91 (de 0,8 à 1,2),
+moral 0,51 et 0,57 (de 0,5 à 1,5), le premier à 0,01 de sa borne basse.
+
+**Le septième ne vient pas du code** : `test_les_entrees_commitees_sont_celles_des_donnees`
+compare les entrées commitées aux données de ce conteneur, qui sont encore celles de
+D-553 ; il passe sur des données de D-687 (D-692). Non changé.
+
+**Ce qui n'est pas refait** : la distribution mesurée des niveaux de vie
+(`reports/jumeau/niveaux_de_vie_cellules.json`, D-592, D-640) a été calculée sur les
+cellules de D-553 ; l'entente qui la lit mêle donc deux populations jusqu'à ce qu'une
+passe la refasse sur D-687. Les nombres du juge de D-592 restent ceux de D-553.
+
+Tests légers des fichiers du but (`test_impacts_*`, `test_jumeau_impacts_*`,
+`test_jumeau_navigateur`, `test_parametrique`, `test_pour_vous`) : 134 passés, un rouge,
+celui des données du conteneur ci-dessus. Chacun des six a échoué sur l'avant : c'est
+ce qui les a montrés.
+
+## D-697 — La distribution des niveaux de vie refaite sur la population de D-687
+
+**La décision** (le propriétaire, 25 novembre : « refais la distribution des niveaux de vie
+sur D-687 »). D-696 laissait `reports/jumeau/niveaux_de_vie_cellules.json` (D-592, D-640)
+sur les cellules de D-553, alors que celles du jumeau sont de D-687 : l'entente mêlait
+deux populations.
+
+**Ce qui a tourné**, au commit 10643f2, figé dans un worktree détaché, chaque passe sous le
+verrou commun, le 25 novembre : la population reconstruite (empreinte **03400239…**, celle
+de D-687) ; les cellules (`jumeau_cellules.py`, 30 000 ménages, 74 s ; leurs recoupements
+tiennent, l'IR et les chômeurs BIT « dits » comme à D-687), dont les valeurs sont celles
+d'`entrees_navigateur.json` au bit près ; puis `jumeau_niveaux_de_vie.py` (73 s ; écart
+des ménages aux cellules 0, aucune cellule approchée). Rc = 0 partout.
+
+**Ce qui change**, la référence mesurée sur la passe, de D-553 à D-687 :
+
+| | D-553 | D-687 |
+|---|---:|---:|
+| pauvreté (60 % du médian) | 16,56 % | 16,53 % |
+| Gini | 0,3029 | 0,3043 |
+| D9/D1 | 3,589 | 3,602 |
+| S80/S20 | 4,648 | 4,672 |
+| niveau de vie médian, € | 24 896 | 24 820 |
+
+Des écarts de l'ordre du pour mille ; aucun test léger du but ne bouge (134 passés, le
+même rouge que D-696, celui des données du conteneur).
+
+**Ce qui n'est pas refait** : les passes du juge de l'Insee (D-592 : la prime de 2019,
+l'impôt de 2020) restent celles de D-553. Les refaire sur D-687 serait une nouvelle
+comparaison à un juge, à préenregistrer d'abord.
+
+## D-698 — `make impact` sur le but 29 : le site sans la page, deux scripts non déclarés
+
+**La décision** (le propriétaire, 25 novembre : « lance make impact et les lourds »).
+`make impact` a tourné au commit d3202eb, dans un worktree détaché qui porte la population
+de D-687 et ses cellules, sous le verrou commun (14:10-15:28 UTC). Ruff passe ; la passe
+légère donne 4 977 passés, 21 sautés, **6 rouges**, et `make` s'arrête là : les lourds et
+les chronos n'ont pas tourné.
+
+**Les six rouges**, tous du but 29, aucun des données :
+
+* `test_dependances` : `scripts/juges_pouvoir_b29.py` importe `juges_passe_b28` et
+  `scripts/jumeau_pour_vous.py` importe `jumeau_sante`, deux scripts frères chargés après
+  un `sys.path.insert`, que `MODULES_LOCAUX` ne nommait pas. Ils y sont nommés, un par
+  un, comme les autres.
+* quatre de `test_site` (le site commité, la dérive, `site verifier`) : le site commité est
+  celui de D-689, reconstruit sur le but 28, qui n'a pas la page « Ce que ça change ».
+  Reconstruit sur le but 29 : `impacts.html`, `impacts.js`, `impacts-pour-vous.json` en
+  plus, le lien de la page dans le menu de toutes les pages, le paquet du jumeau qui porte
+  `impacts_json`, et les niveaux de vie de D-697 dans `jumeau-donnees.json`. Tout vient des
+  fichiers commités ; rien des données du conteneur.
+* `test_no_study_page_runs_a_script` : la page calcule une mesure dans le navigateur
+  (D-607) et n'était pas dans la liste des pages qui portent un script. Elle y est ajoutée
+  par son nom, `site_impacts.PAGE`.
+
+Aucun nombre ne change. Les tests de ces deux fichiers passent ; `node ui/check.mjs` passe.
+Les deux étapes que `make` n'avait pas atteintes ont tourné ensuite au commit 51b9898, dans
+le même worktree, sous le verrou (15:59-16:43 UTC) : **29 lourds verts, 0 rouge**
+(`tests/memoire.py lancer --impact`), et les 5 chronos passent. La passe légère n'est pas
+refaite : ses seuls rouges sont ceux corrigés ici.
+
+**La jonction du 25 novembre au soir** (le propriétaire : « fais la jonction et
+renumérote »). `claude/but28` avait avancé à ed9f9c4, qui écrit sa propre D-693 (« Ce qui a
+bougé »). La sienne garde son numéro ; les trois entrées du but 29 écrites le même jour,
+D-693, D-694 et D-695, deviennent D-696, D-697 et D-698, ici et dans les tests qui les
+citent. D-694 et D-695 ne sont pas employés. Les commits poussés avant la jonction gardent
+les anciens numéros dans leurs messages ; rien n'est réécrit.
+
+**Un défaut trouvé par la jonction.** Après elle, trois tests de `test_site` rougissaient
+dans la passe des fichiers touchés et passaient seuls. L'ordre des dimensions de la page
+était celui de leur inscription, donc de leur première importation dans le processus : un
+test qui importe le moral, la santé ou les territoires avant que la page se construise, ou
+`site_impacts` qui lit la santé avant de calculer, les mettait en tête, et « En bref »
+énumérait autrement. Le site dépendait de ce qui avait tourné avant lui. `tableau` range
+désormais les dimensions dans l'ordre de la page (`ORDRE`, puis par nom de module), quel
+que soit l'import ; un test le tient (`test_impacts_tableau`), rouge sur le code d'avant.
+Le site reconstruit ne change que d'ordre dans « En bref » de `impacts.html` (même
+longueur, mêmes nombres), et le paquet du jumeau porte le nouveau `tableau.py`.
+
+## D-699 — Le but 29 ouvert sur main : la jonction du merge du but 28
+
+**La décision** (le propriétaire, 26 novembre : « ouvre le but suivant »). Le but 28 est
+mergé dans main (PR #133, merge 1831a2a), avec D-694, écrite après la jonction de D-698.
+`claude/but29` reçoit main par un merge : un seul conflit, `docs/DECISIONS.md`, où les deux
+côtés écrivaient en fin de fichier ; D-694 prend sa place avant D-696, rien n'est réécrit.
+Le reste se fusionne seul : le code de D-694 (`etude.py`, la commande `etude avant
+--correction`), ses quinze gels, ses quinze pages et leurs pages du site, qui gardent le
+lien de la page « Ce que ça change ».
+
+**Ce que dit D-698 et qui ne tient plus** : « D-694 et D-695 ne sont pas employés ». D-694
+l'est désormais, par le but 28 ; D-695 reste libre.
+
+**Vérifié après la jonction, sans passe** : `etude verifier` sur les quinze pages, « la
+page est celle de ses rapports » ; `site verifier`, « le site est celui des études » ;
+`ruff` sur `src`, `tests` et `scripts`, propre ; `test_etude` et `test_dependances`, 117
+verts. Aucun nombre ne change. La PR #134 visait `claude/but28` ; elle vise main.

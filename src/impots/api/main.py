@@ -651,6 +651,111 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     return service.predictif_simulate(request)
 
 
+@functools.cache
+def _session_impacts() -> Any:
+    """La session du jumeau que lit la page « Ce que ça change » (D-605) : les mêmes
+    entrées que le site (`site_jumeau.donnees`), lues une fois par processus."""
+    from impots import site_jumeau
+    from impots.jumeau import navigateur
+
+    return navigateur.Session(json.loads(json.dumps(site_jumeau.donnees())))
+
+
+@app.get("/impacts/bibliotheque")
+def impacts_bibliotheque() -> JSONResponse:
+    """Ce qu'on peut composer (D-605) : les mesures d'étude (programmes, mesures, volets),
+    les lois hypothétiques, les dimensions inscrites et les modules en erreur."""
+    from impots.jumeau import impacts, navigateur
+    from impots.jumeau.impacts import tableau
+    from impots.jumeau.proposition import DECALAGE_MAX, ECHELLE_MAX
+
+    s = _session_impacts()
+    erreurs = tableau.charger()
+    return JSONResponse({
+        "candidats": [{"cle": k, "libelle": c["libelle"], "groupe": c["groupe"],
+                       "rapport": c["rapport"]} for k, c in s.candidats.items()],
+        "hypotheses": navigateur.HYPOTHESES, "annees": list(navigateur.ANNEES),
+        "echelle_max": ECHELLE_MAX, "decalage_max": DECALAGE_MAX,
+        "dimensions": list(impacts.dimensions()), "modules_en_erreur": erreurs})
+
+
+@app.post("/impacts")
+def impacts_calculer(reglage: dict[str, Any]) -> JSONResponse:
+    """Ce que change un programme, une mesure, une loi hypothétique ou une proposition
+    composée (`composition`), dans toutes les dimensions inscrites (but 29, D-605) : le
+    calcul de la page, `navigateur.impacts_json`, sans navigateur."""
+    from impots.jumeau import navigateur
+
+    try:
+        texte = navigateur.impacts_json(_session_impacts(), json.dumps(reglage))
+    except (navigateur.NavigateurError, KeyError, TypeError, ValueError) as error:
+        raise HTTPException(status_code=422, detail=f"{type(error).__name__} : {error}"
+                            ) from error
+    return JSONResponse(json.loads(texte))
+
+
+@app.get("/impacts/proposition/boutons")
+def impacts_proposition_boutons() -> JSONResponse:
+    """Le menu de « votre barème » (D-660) : chaque réglage, ses bornes, sa valeur neutre
+    et ce qu'il bouge ; ce que le menu ne porte pas."""
+    from impots import parametrique
+
+    return JSONResponse({"boutons": parametrique.BOUTONS,
+                         "hors_menu": parametrique.HORS_MENU,
+                         "statut": "illustratif", "raison": parametrique.RAISON})
+
+
+@app.post("/impacts/proposition")
+def impacts_proposition(reglage: dict[str, Any]) -> JSONResponse:
+    """Votre barème (D-660) : la proposition mise en file, une passe sur la population à
+    la fois (la première année, puis le chemin annuel, comme une mesure d'étude), puis
+    toutes les dimensions du jumeau. Rend tout de suite son état (202), ou son résultat
+    (200) quand la même proposition est déjà passée. Un chiffrage illustratif, non
+    préenregistré, jamais comparé à un juge."""
+    from impots import parametrique
+
+    try:
+        e = parametrique.proposer(reglage.get("boutons", reglage))
+    except parametrique.PropositionError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except parametrique.FileFermee as error:
+        raise HTTPException(status_code=503, detail=str(error),
+                            headers={"Retry-After": "600"}) from error
+    return JSONResponse(e, status_code=200 if e.get("etat") == "fait" else 202)
+
+
+@app.get("/impacts/proposition/{ident}")
+def impacts_proposition_etat(ident: str) -> JSONResponse:
+    """Où en est une proposition (D-660) : en file, en cours (et son étape), faite (et son
+    résultat, toutes les dimensions), ou en échec (et pourquoi)."""
+    from impots import parametrique
+
+    try:
+        return JSONResponse(parametrique.etat(ident))
+    except parametrique.PropositionError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except FileNotFoundError as error:
+        raise HTTPException(status_code=404, detail=f"proposition « {ident} » inconnue"
+                            ) from error
+
+
+@app.get("/site/{nom}", include_in_schema=False)
+def site_impacts_local(nom: str) -> FileResponse:
+    """La page « Ce que ça change » écrite en local (`python -m impots.site_impacts
+    ecrire [dossier]`, `IMPOTS_SITE_LOCAL` s'il n'est pas celui par défaut), servie par
+    l'API pour que son formulaire « votre barème » l'appelle à la même origine (D-660).
+    Un nom de fichier du dossier, rien d'autre."""
+    from impots.site_impacts import LOCAL
+
+    dossier = Path(os.environ.get("IMPOTS_SITE_LOCAL") or LOCAL).resolve()
+    chemin = (dossier / nom).resolve()
+    if chemin.parent != dossier or not chemin.is_file():
+        raise HTTPException(status_code=404, detail=(
+            f"« {nom} » absent : la page s'écrit par `PYTHONPATH=src python -m "
+            f"impots.site_impacts ecrire` (environ deux minutes)"))
+    return FileResponse(chemin)
+
+
 @app.get("/", include_in_schema=False)
 def index() -> FileResponse:
     """Serve the static UI so the quickstart is one command instead of two.
