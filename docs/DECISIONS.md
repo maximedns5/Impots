@@ -44673,3 +44673,22 @@ cinq cas d'avant le but (D-360), onze cas notés, dont huit dans leur tolérance
 9 (D-703) attendent les fiches des PLF 2021 et 2022, à ouvrir ; le cas 1 attend celle du
 PLF 2023. Six des sept cas ont un rendement connu de mémoire (D-360) : leur note se lit à
 part.
+
+## D-705 — Le cas 8 noté : l'indexation des revenus 2020, dans sa tolérance
+
+**Ce qui a été fait.** L'évaluation préalable du PLF 2021 (n° 3360) est lue et manifestée
+(budget.gouv.fr, `EP_PLF_2021-W.pdf`, 375 p.). Art. 2, § 4.2.1, p. 17 : « le rendement de
+l'IR aurait été majoré d'environ 230 M€ au titre des revenus de 2020 », l'année pleine des
+revenus, à revenus constants, contre la LF 2020 : le contrefactuel de D-703. Le cas 8
+(`plf2021_art_2`), chiffré sur la population ramenée à 2020, en miroir : +0,217 Md€ contre
++0,230, **−5,7 %, dans** sa tolérance de ±30 % (pronostic : dans, plutôt en dessous).
+Les citations sont dans `docs/triage_retro/fiches_b30.md`.
+
+**Ce qui attend.** Les fiches du PLF 2022 (cas 9) et du PLF 2023 (cas 1) : budget.gouv.fr
+renvoie une page anti-robot au conteneur pour ces deux pièces, et ni l'Assemblée ni le
+Sénat ne les lient. Les pistes, à ouvrir depuis un navigateur : `budget.gouv.fr`,
+`documentation/file-download/13324` (2022) et `file-download/18984` (2023).
+
+**Le compte.** Sept cas notés dans ce but, six dans leur tolérance ; deux aveugles (3 et 8,
+le second avec la réserve de D-703), tous deux dans. Avec les cinq d'avant, douze cas
+notés, neuf dans leur tolérance.

@@ -2824,6 +2824,15 @@
       "quarantined": false,
       "description": "Insee, France portrait social 2022, dossier « Les réformes sociofiscales de 2020 et 2021 augmentent le revenu disponible des ménages… », texte ; juge du but 29 (D-592)."
     },
+    "plf2021_evaluations_prealables.pdf": {
+      "url": "https://www.budget.gouv.fr/files/uploads/extract/2021/PLF_2021/EP_PLF_2021-W.pdf",
+      "sha256": "678e1d769693259c71c82f9b7b547e1c8c323a5313123f1fc866b40629506c4e",
+      "bytes": 2491634,
+      "downloaded": "2026-11-28",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "PLF 2021, « Évaluations préalables des articles du PLF » (375 p.), annexe au projet de loi n° 3360 (15e législature), direction du budget ; PDF créé le 2 octobre 2020. Ni le dossier de l'Assemblée (loi_de_finances_pour_2021) ni celui du Sénat ne la lient. URL donnée par un index de recherche restreint à budget.gouv.fr (le titre seul, sans extrait de la fiche) ; le fichier est la pièce elle-même, servie par budget.gouv.fr, dont les pages HTML renvoient au conteneur une page anti-robot. Manifestée le 2026-11-28, APRÈS le commit des enregistrements des cas 8 et 9 (D-703).\nComparateur du cas plf2021_art_2 : fiche p. 7-17, chiffre au 4.2.1, p. 17 (en prose, sans tableau). Les numéros imprimés sont ceux du PDF. Voir docs/triage_retro/fiches_b30.md.",
+      "quarantined": false
+    },
     "plf2024_evaluations_prealables.pdf": {
       "url": "https://www.assemblee-nationale.fr/dyn/contenu/visualisation/705211/file/Evaluations%20pr%C3%A9alables%20des%20articles%20du%20projet%20de%20loi.pdf",
       "sha256": "fbde509e1798506788944ad9206543ebe34e99d23bb22e2fc9abe239a5e5b7c6",

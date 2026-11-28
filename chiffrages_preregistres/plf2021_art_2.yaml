@@ -42,7 +42,20 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: true
-comparator: null
+comparator:
+  published_eur: 230000000.0
+  sign: cost
+  basis: annee-pleine
+  retrieved: '2026-11-28'
+  source: 'PLF 2021, évaluations préalables des articles (texte AN n° 3360), art. 2, § 4.2.1,
+    p. 17 : « le rendement de l''IR aurait été majoré d''environ 230 M€ au titre des revenus
+    de 2020 »'
+  vintage: PLF 2021 (texte n° 3360, déposé le 2020-09-28) ; à revenus constants entre 2019
+    et 2020 (§ 4.3), contre la LF 2020
+  perimeter: 'IR, État ; tout l''article sauf les grilles du PAS : indexation de 0,2 % des
+    tranches, des plafonds du quotient familial, de la décote et du 196 B, non séparés. Le
+    scénario ne porte que les tranches, la décote, la demi-part et le parent isolé.'
+  net_of: Année pleine des revenus 2020 ; aucun effet comportemental ; « environ ».
 vieillissement:
   jeu: insee_constate
   source: 'Insee, constaté : salaires par tête, D11 sur l''emploi intérieur salarié

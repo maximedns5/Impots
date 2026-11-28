@@ -232,6 +232,90 @@ coefficient sur LODEOM et TO-DE (p. 26-27) peuvent y être. Signe : économie (g
 (convention B) chiffre le projet contre la règle de 2024 : bandeaux et coefficient, comme
 le total. Pour noter un volet seul, la fiche donne 2,7 (coefficient) et 2,5 (bandeaux).
 
+## 1 (suite). `plf2023_art_2` — toujours sans document
+
+Nouvelle recherche le 28 novembre, après le commit de D-703 (aa298b04). L'annexe du PLF
+2023 reste introuvable dans une source que ce conteneur peut lire :
+
+* l'Assemblée ne la porte pas : la page du dossier `plf_2023` lie les PAP et le RESF
+  (`/dyn/contenu/visualisation/494433` à `494604`), aucune évaluation préalable ; les
+  identifiants voisins non liés, sondés de 494400 à 494700, ne la donnent pas ;
+  `l16b0273_etude-impact.pdf` n'existe pas (celui du PLFSS, `l16b0274`, existe) ;
+* ni le dossier `pjlf2023` du Sénat, ni sa page de commission, ni le texte n° 114 ;
+* budget.gouv.fr : un index de recherche restreint au site donne un document titré
+  « R É P U B L I Q U E F R A N Ç A I S E 2023 » sous `documentation/file-download/18984`,
+  peut-être la pièce ; le lien renvoie la page anti-robot, et les chemins de fichier
+  essayés par analogie avec celui du PLF 2021 (`files/uploads/extract/2023/…`) sont en
+  404 ;
+* Légifrance (page de défi Cloudflare, 403), data.gouv.fr et web.archive.org (le
+  mandataire coupe la connexion), performance-publique.budget.gouv.fr (hôte non résolu
+  dans ce conteneur).
+
+Aucun chiffre retenu. Les extraits d'index lus pendant cette recherche ne portaient aucun
+montant de l'art. 2 du PLF 2023 ; l'aveugle n'a pas bougé depuis la réserve écrite au
+cas 1.
+
+## 8. `plf2021_art_2` — indexation de 0,2 %, revenus 2020
+
+Le document : `plf2021_evaluations_prealables.pdf`, « Évaluations préalables des articles
+du PLF » 2021, 375 p., direction du budget, sur budget.gouv.fr
+(`files/uploads/extract/2021/PLF_2021/EP_PLF_2021-W.pdf`, PDF créé le 2 octobre 2020) ;
+manifesté le 28 novembre, après le commit de D-703. Ni l'Assemblée ni le Sénat ne le
+lient. Les numéros imprimés sont ceux du PDF (vérifié sur les en-têtes).
+
+Fiche p. 7-17. Le chiffre est en prose, au 4.2.1, p. 17, sans tableau :
+
+> « En l'absence d'indexation du barème de l'IR pour tenir compte de l'inflation entre
+> 2019 et 2020, le rendement de l'IR aurait été majoré d'environ 230 M€ au titre des
+> revenus de 2020. »
+
+Méthode, 4.3, p. 17 : « Le chiffrage a été réalisé à revenus constants entre 2020 et
+2019, à partir d’un échantillon représentatif de la métropole et des départements
+d’outre-mer (DOM) de 500 000 déclarations d’IR de 2018 et, majoritairement, de 2019 dans
+l’environnement de la loi de finances 2020 intégrant la réforme du barème et de la décote
+adoptée en LF 2020. La mesure d'indexation a été estimée au titre des revenus de 2020 en
+comparant à cette législation de référence celle qui résulterait de l’ensemble des
+mesures proposées : indexation de 0,2 % des limites de tranches du barème et des seuils
+associés, des plafonds du quotient familial, de la décote et revalorisation du plafond
+de déduction des pensions alimentaires versées aux enfants majeurs non rattachés et de
+l’abattement pour rattachement d’enfant marié. » (L'appel de note après « seuils
+associés » est numéroté 7, la note en bas de page 5 : les minimum et plafond de la
+déduction de 10 % sur les salaires et de l'abattement de 10 % sur les pensions, les frais
+d'accueil des plus de 75 ans, l'abattement des personnes âgées ou invalides.) Taux, 1.4,
+p. 14 : « la prévision d’évolution de l’indice des prix à la consommation hors tabac de
+2020 par rapport à 2019, soit 0,2 % ». Application, 3.4, p. 16 : « à compter de
+l'imposition des revenus de l'année 2020 (IR dû en 2021) » ; les grilles par défaut du
+PAS « aux revenus perçus ou réalisés à compter du 1er janvier 2021 ».
+
+Base : **l'année pleine des revenus 2020** (« au titre des revenus de 2020 »), comme le
+cas 2, non une année budgétaire. Une différence avec les PLF 2024 et 2025 : les revenus
+ne sont pas vieillis, le chiffrage est fait « à revenus constants entre 2020 et 2019 ».
+La loi de référence est celle de la LF 2020, barème à 11 % et décote réformée compris :
+c'est le contrefactuel de D-703, non l'arbre au 2019-01-01. Périmètre : l'IR, l'État ;
+tout l'article sauf les grilles par défaut du PAS, soit aussi les trois autres plafonds
+du quotient familial et le 196 B (5 947 € portés à 5 959 €, p. 7), que le scénario ne
+porte pas ; le document ne sépare pas ces volets. Net ou brut : sans objet. Signe : coût
+(manque à gagner de l'État).
+
+**Retenu : +230 M€ (« environ »), année pleine des revenus 2020.** Le cas est en année
+pleine des revenus 2020 ; la base de l'annexe est la même, aucune conversion.
+
+## 9. `plf2022_art_2` — indexation des revenus 2021
+
+Pas de fiche : l'annexe du PLF 2022 (n° 4482) n'a pas été obtenue. Le même index de
+recherche restreint à budget.gouv.fr montre la page « Le projet de loi de finances et les
+documents annexés pour 2022 », qui porterait une pièce « Évaluations préalables aux
+articles du PLF 2022 » (PDF de 1,74 Mo, daté du 24 septembre 2021), et un document titré
+« R É P U B L I Q U E F R A N Ç A I S E 2022 » sous `documentation/file-download/13324` ;
+l'une et l'autre renvoient la page anti-robot. Les chemins de fichier essayés par analogie
+avec celui du PLF 2021 (`files/uploads/extract/2022/…`, `files/files/plf/2022/…`,
+`sites/performance_publique/…/2022/pap/pdf/PLF2022_Eval.pdf`) sont en 404. Le dossier de
+l'Assemblée (`plf_2022`), le texte n° 4482 et le dossier `pjlf2022` du Sénat ne la lient
+pas.
+
+Aucun chiffre retenu ; le cas attend le document. Les extraits d'index lus ne portaient
+aucun montant de l'art. 2 : l'aveugle tient, avec la réserve de D-703.
+
 ## Ce qui reste ambigu
 
 * **Cas 1** : pas de document.
@@ -245,3 +329,7 @@ le total. Pour noter un volet seul, la fiche donne 2,7 (coefficient) et 2,5 (ban
 * **Cas 7** : ROBSS seuls, Agirc-Arrco et Unédic vides en 2025 ; le SMIC des seuils de
   2,2 et 3,2 n'est pas dit ; ce que la colonne 2025 garde de la PPV et des exonérations
   spécifiques n'est pas dit ; le PDF est peut-être une version de fin novembre.
+* **Cas 8** : chiffré « à revenus constants entre 2020 et 2019 », sans vieillissement,
+  sur la loi de la LF 2020 ; arrondi (« environ 230 M€ ») ; périmètre de tout l'article
+  hors PAS, trois plafonds de quotient familial et 196 B compris.
+* **Cas 9** : pas de document.
