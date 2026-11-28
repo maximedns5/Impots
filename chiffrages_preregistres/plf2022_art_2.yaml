@@ -1,0 +1,63 @@
+case: plf2022_art_2
+pre_registered: '2026-11-28T11:19:52+00:00'
+commit: aa298b0473d82dcb651cd75e6658f3ee683e7644
+scenario: plf2022_art_2
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -1587340499.9291992
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 140000000.0
+  rationale: 'Indexation de 1,4 % des tranches, de la décote, du plafond général de
+    la demi-part et de celui du parent isolé, revenus 2021, chiffrée en miroir : le
+    barème des revenus 2020 rétabli sur l''arbre de 2021, dont l''article est l''opposé.
+    Plus ou moins 25 % parce que : la grille n''a pas de ligne pour 2021, et ce qui
+    en tient lieu est la loi d''erreur de 2022 à 2024 de cette population, ramenée
+    par les mêmes indices, prolongée d''une année sans mesure : les foyers par taux
+    marginal sortent de −15 % à +12 % de la DGFiP selon la tranche, d''un biais régulier
+    (11 % : −12 à −15 % ; 30 % : +5 à +12 %, croissant à mesure qu''on recule), environ
+    +2 % en 2022 une fois pondérés par le saut de taux, les salaires déclarés de −7
+    à −8 % ; la structure des ménages est celle de 2024, trois ans plus tard ; les
+    salaires par tête de 2022, qui ramènent 2021, portent la fin de l''activité partielle,
+    que les comptes ne comptent pas, et tirent un peu vers le bas ; le scénario ne
+    porte ni les trois autres plafonds de quotient familial ni le 196 B, de l''ordre
+    de −1 à −2 % ; le chiffrage officiel est fait sur des revenus projetés ; le sous-échantillon
+    de 20 000 ménages ajoute un bruit de l''ordre du pour cent. Les biais se compensent
+    à peu près : fenêtre symétrique, plus large que celle du cas 1 pour l''année de
+    plus sans ligne de grille. Plancher de 140 M EUR, 100 M EUR par point d''indexation
+    comme au cas 3 (200 M EUR pour 2 %).'
+note: ''
+bound: two-sided
+mirror: true
+comparator: null
+vieillissement:
+  jeu: insee_constate
+  source: 'Insee, constaté : salaires par tête, D11 sur l''emploi intérieur salarié
+    (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac,
+    ensemble des ménages, France (BDM 001768695)'
+  de: 2024
+  vers: 2021
+  salaires:
+    '2022': 0.055844276565951256
+    '2023': 0.046620701783021135
+    '2024': 0.026386633280596428
+  prix:
+    '2022': 0.053
+    '2023': 0.048
+    '2024': 0.018000000000000002
+  facteur_salaires: 0.8816573282854502
+  facteur_prix: 0.890148712801522
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

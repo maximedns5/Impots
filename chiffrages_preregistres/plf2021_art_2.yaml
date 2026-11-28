@@ -1,0 +1,70 @@
+case: plf2021_art_2
+pre_registered: '2026-11-28T11:17:52+00:00'
+commit: aa298b0473d82dcb651cd75e6658f3ee683e7644
+scenario: plf2021_art_2
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -216936186.93774414
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 50000000.0
+  rationale: 'Indexation de 0,2 % des tranches, de la décote, du plafond général de
+    la demi-part et de celui du parent isolé, revenus 2020, chiffrée en miroir : le
+    barème à 11 % de la LF 2020 avant indexation, que l''article modifie, rétabli
+    sur l''arbre de 2020, dont l''article est l''opposé. Plus ou moins 30 % parce
+    que : la grille n''a pas de ligne pour 2020, et ce qui en tient lieu est la loi
+    d''erreur de 2022 à 2024 de cette population, ramenée par les mêmes indices, prolongée
+    de deux ans sans mesure : les foyers par taux marginal sortent de −15 % à +12
+    % de la DGFiP selon la tranche, d''un biais régulier (11 % : −12 à −15 % ; 30
+    % : +5 à +12 %, croissant à mesure qu''on recule), environ +2 % en 2022 une fois
+    pondérés par le saut de taux, les salaires déclarés de −7 à −8 % ; la structure
+    des ménages est celle de 2024, quatre ans plus tard ; la population est ramenée
+    à 2020 par les salaires par tête des comptes, qui ne comptent pas l''activité
+    partielle : des salaires imposables trop bas d''environ 3 %, un coût trop bas
+    de l''ordre de −2 à −4 % ; le scénario ne porte ni les trois autres plafonds de
+    quotient familial ni le 196 B, de l''ordre de −1 à −2 % ; le chiffrage officiel
+    est fait sur des revenus projetés à l''automne 2020, en pleine crise sanitaire
+    ; le sous-échantillon de 20 000 ménages ajoute un bruit de l''ordre du pour cent.
+    L''activité partielle et les volets tirent vers le bas, la tranche à 30 % vers
+    le haut : fenêtre symétrique, plus large que celle du cas 1 pour les deux années
+    de plus et l''année de crise. Plancher de 50 M EUR, la moitié du dixième de milliard
+    auquel un chiffre publié peut être arrondi : l''indexation est sept fois plus
+    petite que celle du cas 9 et vingt-sept fois plus petite que celle du cas 1, et
+    le plancher de 200 M EUR de ces cas n''y laisserait aucune épreuve.'
+note: ''
+bound: two-sided
+mirror: true
+comparator: null
+vieillissement:
+  jeu: insee_constate
+  source: 'Insee, constaté : salaires par tête, D11 sur l''emploi intérieur salarié
+    (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac,
+    ensemble des ménages, France (BDM 001768695)'
+  de: 2024
+  vers: 2020
+  salaires:
+    '2021': 0.05250448012329545
+    '2022': 0.055844276565951256
+    '2023': 0.046620701783021135
+    '2024': 0.026386633280596428
+  prix:
+    '2021': 0.016
+    '2022': 0.053
+    '2023': 0.048
+    '2024': 0.018000000000000002
+  facteur_salaires: 0.8376756060764403
+  facteur_prix: 0.8761306228361437
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage
