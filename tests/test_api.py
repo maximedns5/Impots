@@ -64,6 +64,94 @@ def test_parameters_ir_reads_current_law(client: TestClient) -> None:
 
 def test_parameters_ir_rejects_an_out_of_range_year(client: TestClient) -> None:
     assert client.get("/parameters/ir", params={"year": 1998}).status_code == 422
+    assert client.get("/parameters/ir", params={"year": 2019}).status_code == 422
+
+
+# --------------------------------------------------------------------------- #
+# The incomes of 2020 and 2021 (but 30, D-703)
+# --------------------------------------------------------------------------- #
+#: CGI art. 197, I, as the PLF 2021 (n° 3360, art. 2) and the PLF 2022 (n° 4482, art. 2)
+#: write it, in clear: the four thresholds, the décote's two ceilings (at 45.25 %), the
+#: general ceiling of the half-part and that of a lone parent's first child. « avant » is
+#: what each article replaces: for 2020, the 11 % scale of the LF 2020 (art. 2, I, 3°)
+#: before its indexation, NOT the 14 % one of 2019 incomes; for 2021, the law of 2020.
+LOI_197 = {
+    2020: {"loi": ((10_084, 25_710, 73_516, 158_122), (779, 1_289), 1_570, 3_704),
+           "avant": ((10_064, 25_659, 73_369, 157_806), (777, 1_286), 1_567, 3_697)},
+    2021: {"loi": ((10_225, 26_070, 74_545, 160_336), (790, 1_307), 1_592, 3_756),
+           "avant": ((10_084, 25_710, 73_516, 158_122), (779, 1_289), 1_570, 3_704)},
+}
+#: Salaried households, the adults of a couple on equal salaries, each 10 % deduction
+#: between its floor and its cap. Each binds one piece: the décote (alone, as a couple),
+#: the scale alone, the lone parent's ceiling, the half-part's.
+FOYERS_197 = {
+    "seul_22k": ({"adults": [{"salaire_brut_annuel": 22_000, "annee_naissance": 1990}]},
+                 1, 0, False),
+    "seul_30k": ({"adults": [{"salaire_brut_annuel": 30_000, "annee_naissance": 1990}]},
+                 1, 0, False),
+    "couple_44k": ({"adults": [{"salaire_brut_annuel": 22_000, "annee_naissance": 1985},
+                               {"salaire_brut_annuel": 22_000, "annee_naissance": 1986}],
+                    "couple_marie_ou_pacse": True}, 2, 0, False),
+    "parent_isole_70k": ({"adults": [{"salaire_brut_annuel": 70_000, "annee_naissance": 1985}],
+                          "children": [{"annee_naissance": 2012}]}, 1, 1, True),
+    "couple_2_enfants_120k": ({"adults": [
+        {"salaire_brut_annuel": 60_000, "annee_naissance": 1985},
+        {"salaire_brut_annuel": 60_000, "annee_naissance": 1986}],
+        "children": [{"annee_naissance": 2012}, {"annee_naissance": 2014}],
+        "couple_marie_ou_pacse": True}, 2, 2, False),
+}
+
+
+def _ir_a_la_main(rni: float, declarants: int, enfants: int, parent_isole: bool,
+                  loi: tuple) -> float:
+    """The tax of art. 197, by hand: the scale on the quotient, the advantage of the
+    children's half-parts capped, then the décote. The DGFiP rounds the décote and the
+    tax to the euro; the test allows the euro that moves."""
+    seuils, (decote_seul, decote_couple), demi_part, premier_enfant = loi
+
+    def bareme(revenu: float) -> float:
+        bornes = (0.0, *seuils, float("inf"))
+        taux = (0.0, 0.11, 0.30, 0.41, 0.45)
+        return sum(t * max(0.0, min(revenu, haut) - bas)
+                   for t, bas, haut in zip(taux, bornes, bornes[1:], strict=False))
+
+    # Half a part for each of the first two children, a whole one after; a lone parent's
+    # first child takes a whole part (case T), whose advantage has its own ceiling.
+    demi_parts = sum(1 if i < 2 else 2 for i in range(enfants)) + parent_isole
+    parts = declarants + demi_parts / 2
+    impot = parts * bareme(rni / parts)
+    if demi_parts:
+        plafond = (premier_enfant + (demi_parts - 2) * demi_part if parent_isole
+                   else demi_parts * demi_part)
+        impot = max(impot, declarants * bareme(rni / declarants) - plafond)
+    decote = max(0.0, (decote_couple if declarants == 2 else decote_seul) - 0.4525 * impot)
+    return max(0.0, impot - decote)
+
+
+@pytest.mark.parametrize("year", [2020, 2021])
+@pytest.mark.parametrize("foyer", sorted(FOYERS_197))
+def test_the_income_tax_of_2020_and_2021_is_the_published_scale_by_hand(
+        client: TestClient, year: int, foyer: str) -> None:
+    """The engine's income tax on the law of 2020 and 2021, and under the mirror the
+    scenarios of the PLF 2021 and 2022 write (`scenarios/plf2021_art_2`, `plf2022_art_2`),
+    equal to the tax computed by hand from the published art. 197. Seen failing before the
+    window opened to 2020: the API refused both years (422)."""
+    from impots import scenarios
+
+    household, declarants, enfants, parent_isole = FOYERS_197[foyer]
+    scenario = scenarios.load({2020: "plf2021_art_2", 2021: "plf2022_art_2"}[year])
+    response = client.post("/simulate", json={
+        "household": household, "year": year, "tier": "light",
+        "reform": scenario.reform.model_dump(exclude_none=True)})
+    assert response.status_code == 200, response.text
+    body = response.json()
+    # The engine's taxable salary, the 10 % deduction by hand, per declarant.
+    salaire = body["baseline"]["salaire_imposable"] / declarants
+    rni = declarants * (salaire - round(0.1 * salaire))
+    for colonne, loi in (("baseline", "loi"), ("reform", "avant")):
+        attendu = _ir_a_la_main(rni, declarants, enfants, parent_isole, LOI_197[year][loi])
+        assert body[colonne]["ir"] == pytest.approx(attendu, abs=1.0), (colonne, attendu)
+        assert attendu > 0
 
 
 def test_simulate_light(client: TestClient) -> None:

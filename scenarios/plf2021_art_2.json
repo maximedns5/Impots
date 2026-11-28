@@ -1,0 +1,36 @@
+{
+  "name": "plf2021_art_2",
+  "year": 2020,
+  "created": "2026-11-28",
+  "source": "PLF 2021 (AN, texte n° 3360, XVe législature), art. 2 — Indexation sur l'inflation du barème de l'impôt sur le revenu pour les revenus 2020 et des grilles de taux par défaut du prélèvement à la source. Volet chiffré : l'indexation de 0,2 % des tranches (CGI 197, I, 1), des seuils de la décote (197, I, 4, a), du plafond général de la demi-part et du plafond du premier enfant d'un parent isolé (197, I, 2), revenus 2020. EN MIROIR (D-298, D-360) : l'arbre des revenus 2020 porte la loi votée, qui est l'article ; le scénario rétablit le barème que l'article modifie, non indexé, et l'article en est l'opposé.",
+  "note": "Le contrefactuel n'est PAS l'arbre au 2019-01-01 : les revenus 2019 étaient imposés à 14 % sur la première tranche (10 064, 27 794, 74 517, 157 806 €), décote de 1 208 et 1 990 € à 75 %. L'article modifie le I de l'art. 197 « dans sa rédaction résultant du 3° du I de l'article 2 » de la LF 2020, le barème à 11 % des revenus 2020 avant indexation, lu dans le texte : tranches 10 064, 25 659, 73 369, 157 806 € ; décote 777 et 1 286 € (le taux de 45,25 % de l'arbre de 2020 reste) ; demi-part 1 567 € ; parent isolé 3 697 €. L'arbre au 2020-01-01 porte le projet : 10 084 / 25 710 / 73 516 / 158 122 ; 779 et 1 289 ; 1 570 ; 3 704. Ne porte PAS : les plafonds de QF des cases L (938 €), de la réduction complémentaire (1 565 €) et des veufs (1 748 €), le 196 B (5 959 €), ni les grilles de taux par défaut du PAS. Population de 2024 ramenée à 2020 par les indices constatés de l'Insee (--vieillir insee_constate), dont les salaires de 2020 ne comptent pas l'activité partielle (D-360).",
+  "tags": [],
+  "reform": {
+    "ir_bareme": [
+      {
+        "threshold": 0.0,
+        "rate": 0.0
+      },
+      {
+        "threshold": 10064.0,
+        "rate": 0.11
+      },
+      {
+        "threshold": 25659.0,
+        "rate": 0.3
+      },
+      {
+        "threshold": 73369.0,
+        "rate": 0.41
+      },
+      {
+        "threshold": 157806.0,
+        "rate": 0.45
+      }
+    ],
+    "decote_seuil_celib": 777.0,
+    "decote_seuil_couple": 1286.0,
+    "plafond_qf_demi_part": 1567.0,
+    "plafond_qf_parent_isole": 3697.0
+  }
+}

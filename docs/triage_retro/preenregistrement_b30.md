@@ -374,3 +374,205 @@ registre n'a pas de drapeau pour cela (à décider s'il en faut un).
    moteur ; le dire dans le champ `net_of` du comparateur suffit.
 6. **L'échantillon du cas 7.** 20 000 ménages, comme ailleurs ; les bandes étroites des
    plafonds plaideraient pour plus, au prix du temps. À dire avant la passe, pas après.
+
+## Les cas 8 et 9 (D-703)
+
+Les indexations des revenus 2020 et 2021 (PLF 2021 et 2022, art. 2), que D-702 laissait
+attendre la fenêtre. Préparées le 28 novembre sur `claude/but30` (657ae1b), à l'aveugle
+comme le reste : aucune évaluation préalable ouverte, aucun accès réseau, ni
+`chiffrages_preregistres/`, ni `reports/` hors de `reports/verification/grille.json`, ni
+`fiches_b30.md`. Les dispositifs des deux articles 2 ont été relus en clair dans
+`data/interim/textes_retro/plf2021.json` et `plf2022.json` (le champ `dispositif` seul).
+Le seul calcul sur la population est un essai de bouton sur 200 ménages, dont on n'a
+gardé que le signe. Les deux cas sont marqués « rendement non connu » par D-360 : ils sont
+aveugles, et aucun montant retenu de mémoire n'entre ci-dessous.
+
+| # | cas | couche, année | miroir | signe | tolérance | pronostic |
+|---|---|---|---|---|---|---|
+| 8 | `plf2021_art_2` | ménages, revenus 2020 (2024 ramené) | oui | coût | ±30 %, 50 M€ | dans, plutôt en dessous |
+| 9 | `plf2022_art_2` | ménages, revenus 2021 (2024 ramené) | oui | coût | ±25 %, 140 M€ | dans, sens non connu |
+
+### La fenêtre des années
+
+**Ce que le relecteur a établi tient.** `MIN_YEAR` (`api/schemas.py`) ne borne que les
+requêtes de l'API (`SimulateRequest`, `PopulationSimulateRequest`, `/parameters/ir`) et le
+message de `service`. `cmd_chiffrage_register` ne le lit pas : il va de `scenarios.load` à
+`scenarios.mechanical_price`, puis à `population.runner.run`, sans borne d'année ; l'essai
+de 200 ménages a tourné en 2020 et en 2021 sans refus, sur la population ramenée.
+
+**Ce qui est changé.** `MIN_YEAR` passe de 2022 à 2020, parce que le moteur sert ces
+années et qu'un cas type les vérifie (ci-dessous), et pour que `/simulate` et
+`/parameters/ir` montrent la loi que les cas 8 et 9 chiffrent. Ce que cela ouvre et que
+rien ne vérifie : `/population/simulate` en 2020 et 2021 chiffre la vue figée, la loi de
+l'année sur les revenus de 2024 sans vieillissement, comme il le fait déjà en 2022 et
+2023 ; les prestations de 2020 et 2021, qu'aucun test ne tient.
+
+**Les docstrings de `engine/corrections.py`.** La correction 1 (la déduction forfaitaire
+qui mange une pension, aides au logement) ne couvre que la formule de 2021 ; celle de
+2018, qui porte la même ligne sur les revenus de N-2, est maintenant atteinte : tous les
+mois de 2020, et octobre à décembre 2020 pour 2021 (le trimestre de référence de la prime
+d'activité de janvier). Elle reste non corrigée, et la docstring le dit : les cas 8 et 9
+sont des cas d'impôt, dont le barème ne bouge pas l'aide ; une prestation chiffrée sur
+2020 demanderait de corriger d'abord l'ère de 2018. La correction 5 lit l'aide dès
+octobre 2019, sous l'article en vigueur depuis septembre 2019 ; la correction 15 part de
+2020, la première année servie.
+
+**Les boutons dans l'arbre** (`engine/reforms.py`, `make_reform` puis `verify_bareme` et
+relecture des cinq valeurs) : `ir_bareme`, `decote_seuil_celib`, `decote_seuil_couple`,
+`plafond_qf_demi_part` et `plafond_qf_parent_isole` s'écrivent au 2020-01-01 et au
+2021-01-01, et l'arbre réformé rend exactement les valeurs des deux scénarios (taux de la
+décote 45,25 % gardé). Le test qui les tient est `tests/test_api.py::
+test_the_income_tax_of_2020_and_2021_is_the_published_scale_by_hand` : cinq foyers
+salariés (décote seul et en couple, barème seul, plafond du parent isolé, plafond de la
+demi-part), sur la loi de l'année et sous le scénario miroir, l'IR du moteur égal à
+l'euro près à l'IR calculé à la main depuis l'art. 197 publié (les seuils des deux textes,
+en clair). Vu échouer sur le code d'avant : 422, « greater than or equal to 2022 ».
+
+### La loi votée et le projet
+
+L'arbre au 2020-01-01 porte le projet du PLF 2021 : 10 084 / 25 710 / 73 516 / 158 122 € ;
+décote 779 et 1 289 € ; demi-part 1 570 € ; parent isolé 3 704 € ; et aussi les trois
+autres plafonds (938, 1 565, 1 748 €). L'arbre au 2021-01-01 porte le projet du PLF 2022 :
+10 225 / 26 070 / 74 545 / 160 336 ; 790 et 1 307 ; 1 592 ; 3 756 ; 951, 1 587, 1 772. La
+loi votée est égale au projet sur tout ce que les scénarios portent : le miroir de la loi
+votée juge le projet, sans l'écart des cas 3 et 7.
+
+### 8. PLF 2021, art. 2 — indexation de 0,2 %, revenus 2020
+
+**Le contrefactuel n'est pas l'arbre au 2019-01-01.** Les revenus 2019 étaient imposés au
+barème à 14 % (10 064, 27 794, 74 517, 157 806 € ; décote de 1 208 et 1 990 € à 75 %). La
+LF 2020 a écrit, pour les revenus 2020, un barème à 11 % (art. 2, I, 3°), et c'est lui que
+l'article indexe : « Au I de l'article 197, dans sa rédaction résultant du 3° du I de
+l'article 2 de la loi n° 2019-1479 ». Le scénario `plf2021_art_2` rétablit donc les
+montants que le texte remplace : 10 064 / 25 659 / 73 369 / 157 806 € à 11, 30, 41 et
+45 % ; décote 777 et 1 286 € (le taux de 45,25 % de l'arbre de 2020 reste) ; demi-part
+1 567 € ; parent isolé 3 697 €. `--mirror`. Non portés : les plafonds de 936, 1 562 et
+1 745 € (cases L, réduction complémentaire, veufs), le 196 B (5 947 → 5 959 €), les
+grilles du PAS.
+
+**Une différence avec le triage.** `docs/triage_retro/plf2021.json` donne comme boutons
+les montants indexés (10 084…, ceux de l'arbre) et non ceux du gel, que sa raison écrit
+pourtant, et il range le parent isolé parmi les plafonds sans bouton. Le scénario suit le
+texte et la raison : les montants d'avant, et le parent isolé porté par
+`plafond_qf_parent_isole`, comme aux cas 1, 2 et 9.
+
+**Le vieillissement.** `--vieillir insee_constate` ramène 2024 à 2020 par les taux des
+années 2021 à 2024, tous lus : salaires par tête (D11 sur l'emploi salarié) +5,25, +5,58,
++4,66, +2,64 % ; IPC hors tabac +1,6, +5,3, +4,8, +1,8 %. Facteurs 0,8377 (salaires) et
+0,8761 (prix), passés aussi aux données imputées et au capital. **Le défaut de 2020**
+(D-360) : D11 ne compte pas l'activité partielle, imposable comme un salaire. Les
+salaires par tête de 2020 ont baissé de 3,66 % et ceux de 2021 rebondi de 5,25 % ; c'est
+ce rebond qui ramène 2021 à 2020, et la population ramenée perd les indemnités que les
+salariés ont reçues. En ordre de grandeur, et sans source pour le chiffrer mieux : le
+creux de 2020 est d'environ 4,3 % sous le chemin régulier de 2019 à 2021, les indemnités
+en remplaçaient de l'ordre de 70 %, d'où des salaires imposables trop bas d'environ 3 %,
+concentrés sur les salariés modestes, près des seuils bas. Moins de foyers au-dessus des
+seuils, un coût trop bas, de l'ordre de −2 à −4 %.
+
+Raison (R8) : « Indexation de 0,2 % des tranches, de la décote, du plafond général de la
+demi-part et de celui du parent isolé, revenus 2020, chiffrée en miroir : le barème à
+11 % de la LF 2020 avant indexation, que l'article modifie, rétabli sur l'arbre de 2020,
+dont l'article est l'opposé. Plus ou moins 30 % parce que : la grille n'a pas de ligne
+pour 2020, et ce qui en tient lieu est la loi d'erreur de 2022 à 2024 de cette population,
+ramenée par les mêmes indices, prolongée de deux ans sans mesure : les foyers par taux
+marginal sortent de −15 % à +12 % de la DGFiP selon la tranche, d'un biais régulier
+(11 % : −12 à −15 % ; 30 % : +5 à +12 %, croissant à mesure qu'on recule), environ +2 %
+en 2022 une fois pondérés par le saut de taux, les salaires déclarés de −7 à −8 % ; la
+structure des ménages est celle de 2024, quatre ans plus tard ; la population est ramenée
+à 2020 par les salaires par tête des comptes, qui ne comptent pas l'activité partielle :
+des salaires imposables trop bas d'environ 3 %, un coût trop bas de l'ordre de −2 à
+−4 % ; le scénario ne porte ni les trois autres plafonds de quotient familial ni le
+196 B, de l'ordre de −1 à −2 % ; le chiffrage officiel est fait sur des revenus projetés
+à l'automne 2020, en pleine crise sanitaire ; le sous-échantillon de 20 000 ménages
+ajoute un bruit de l'ordre du pour cent. L'activité partielle et les volets tirent vers
+le bas, la tranche à 30 % vers le haut : fenêtre symétrique, plus large que celle du cas 1
+pour les deux années de plus et l'année de crise. Plancher de 50 M EUR, la moitié du
+dixième de milliard auquel un chiffre publié peut être arrondi : l'indexation est sept fois
+plus petite que celle du cas 9 et vingt-sept fois plus petite que celle du cas 1, et le
+plancher de 200 M EUR de ces cas n'y laisserait aucune épreuve. »
+
+Pronostic : dans la tolérance, plutôt en dessous (−2 à −4 % d'activité partielle et −1 à
+−2 % de volets, contre la tranche à 30 %). Signe : coût (l'essai de 200 ménages : le
+miroir fait baisser l'impôt). Base : le modèle donne l'année pleine des revenus 2020 ; le
+comparateur attendu est l'effet de 2021, la règle de base de D-702 s'applique (conversion
+par `pas.budget_effects`, fixée avant l'ouverture : le cas reste aveugle). Le plancher de
+50 M EUR peut gouverner la fenêtre : on ne sait pas d'avance laquelle des deux bornes
+jouera.
+
+### 9. PLF 2022, art. 2 — indexation de 1,4 %, revenus 2021
+
+L'arbre au 2021-01-01 porte le projet ; le scénario `plf2022_art_2` rétablit l'arbre au
+2020-01-01, qui est aussi ce que le texte remplace (10 084 / 25 710 / 73 516 / 158 122 ;
+779 et 1 289 ; 1 570 ; 3 704), `--mirror`. Les boutons sont ceux du triage
+(`plf2022.json`). Non portés : les plafonds de 938 → 951, 1 565 → 1 587, 1 748 → 1 772 €,
+le 196 B (5 959 → 6 042 €), les grilles du PAS.
+
+**Le vieillissement.** Taux des années 2022 à 2024, tous lus : salaires +5,58, +4,66,
++2,64 % ; prix +5,3, +4,8, +1,8 %. Facteurs 0,8817 et 0,8901. L'activité partielle pèse
+encore en 2021, moins qu'en 2020 : le taux de 2022 qui ramène 2021 en porte la fin, et les
+revenus de 2021 ramenés sortent un peu bas.
+
+Raison (R9) : « Indexation de 1,4 % des tranches, de la décote, du plafond général de la
+demi-part et de celui du parent isolé, revenus 2021, chiffrée en miroir : le barème des
+revenus 2020 rétabli sur l'arbre de 2021, dont l'article est l'opposé. Plus ou moins 25 %
+parce que : la grille n'a pas de ligne pour 2021, et ce qui en tient lieu est la loi
+d'erreur de 2022 à 2024 de cette population, ramenée par les mêmes indices, prolongée
+d'une année sans mesure : les foyers par taux marginal sortent de −15 % à +12 % de la
+DGFiP selon la tranche, d'un biais régulier (11 % : −12 à −15 % ; 30 % : +5 à +12 %,
+croissant à mesure qu'on recule), environ +2 % en 2022 une fois pondérés par le saut de
+taux, les salaires déclarés de −7 à −8 % ; la structure des ménages est celle de 2024,
+trois ans plus tard ; les salaires par tête de 2022, qui ramènent 2021, portent la fin de
+l'activité partielle, que les comptes ne comptent pas, et tirent un peu vers le bas ; le
+scénario ne porte ni les trois autres plafonds de quotient familial ni le 196 B, de
+l'ordre de −1 à −2 % ; le chiffrage officiel est fait sur des revenus projetés ; le
+sous-échantillon de 20 000 ménages ajoute un bruit de l'ordre du pour cent. Les biais se
+compensent à peu près : fenêtre symétrique, plus large que celle du cas 1 pour l'année de
+plus sans ligne de grille. Plancher de 140 M EUR, 100 M EUR par point d'indexation comme
+au cas 3 (200 M EUR pour 2 %). »
+
+Pronostic : dans la tolérance, sans sens attendu (la tranche à 30 % vers le haut, les
+volets et l'activité partielle vers le bas). Signe : coût. Base : l'année pleine des
+revenus 2021 ; comparateur attendu, l'effet de 2022 ; même règle de base de D-702.
+
+### Ce qui en tient lieu de grille, et pourquoi les fenêtres s'élargissent
+
+La grille (`reports/verification/grille.json`) mesure 2022, 2023 et 2024. Pour 2020 et
+2021, rien n'est mesuré, et l'IR au barème n'a pas de total publié même en 2022 (ligne
+refusée ; l'IR net sort à +6,2 %). Ce qui tient lieu de ligne est la loi d'erreur de
+trois années, sur la même population ramenée par la même construction : ses biais sont
+réguliers (les foyers à 11 % de −12 à −15 %, les salaires déclarés de −7 à −8 % chaque
+année), ce qui plaide pour les reporter ; mais celui de la tranche à 30 % croît quand on
+recule (+5,4, +11,7, +12,4 %), et rien ne dit où il est en 2021 ou en 2020. Les fenêtres
+s'élargissent donc d'un cran par année hors de la grille (±20 % au cas 1, à deux ans de
+2024 ; ±25 % à trois ; ±30 % à quatre, avec l'activité partielle), et non davantage : la
+construction est la même, et la dérive de structure d'une année est petite devant les
+biais déjà mesurés.
+
+### Les commandes de passe
+
+Depuis `/home/user/Impots-b30`, chacune détachée, après le commit et le push de D-703 qui
+porte ces raisons, la fenêtre et les deux scénarios. `R8` et `R9` sont les textes
+ci-dessus, entre guillemets :
+
+```
+PYTHONPATH=src /home/user/impots/.venv/bin/impots chiffrage register plf2021_art_2 \
+  --scenario plf2021_art_2 --vintage 2024 --sample 20000 --vieillir insee_constate \
+  --mirror --tolerance-relative 0.30 --tolerance-absolute 50000000 \
+  --tolerance-rationale "R8"
+PYTHONPATH=src /home/user/impots/.venv/bin/impots chiffrage register plf2022_art_2 \
+  --scenario plf2022_art_2 --vintage 2024 --sample 20000 --vieillir insee_constate \
+  --mirror --tolerance-relative 0.25 --tolerance-absolute 140000000 \
+  --tolerance-rationale "R9"
+```
+
+Aucune ne prend `--apres-annexe`. Les fiches du PLF 2021 et du PLF 2022 s'ouvrent après le
+commit des deux fiches du registre.
+
+### Ce qui reste à décider
+
+1. **Les planchers.** 50 et 140 M EUR, proportionnés au taux de l'indexation, au lieu des
+   200 M EUR uniformes des cas 1 à 3. Le choix est fait par le rapport des taux du texte
+   (0,2 et 1,4 %) et le précédent du cas 3, sans aucun montant publié. Garder 200 M EUR
+   partout serait la règle des cas 1 à 3, mais ferait du cas 8 une épreuve de signe.
+2. **L'ère de 2018 des aides au logement** (correction 1) : non corrigée ; sans effet sur
+   ces deux cas, à corriger avant toute prestation chiffrée sur 2020.

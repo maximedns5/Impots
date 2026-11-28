@@ -25,7 +25,11 @@ from impots.predictif.transformations import TRANSFORMATIONS
 
 # Year window Phase 0 will answer for. The golden values are 2024; the engine
 # holds law well outside this range, but nothing here has been checked against it.
-MIN_YEAR = 2022
+# Opened to 2020 for the PLF 2021 and 2022 (but 30, D-703): the income tax of 2020 and
+# 2021 is checked against art. 197 by hand (`tests/test_api.py`), nothing else is. The
+# housing aid of 2020 runs openfisca's 2018 formula, which correction 1 leaves as it is
+# (`engine.corrections`).
+MIN_YEAR = 2020
 MAX_YEAR = 2026
 MIN_BIRTH_YEAR = 1920
 MAX_SALARY = 10_000_000.0

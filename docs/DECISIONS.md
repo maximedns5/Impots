@@ -44587,3 +44587,42 @@ exercice voté de la CEBGE (2025). Sa tolérance ne s'appuie pas sur ce chiffre.
 **Ce qui ne bouge plus.** Les tolérances, leurs raisons et les constructions ci-dessus. Les
 passes se lancent après le commit et le push de cette entrée, une à la fois ; les fiches
 s'ouvrent après le commit des fiches du registre. Un cas qui manque reste noté.
+
+## D-703 — La fenêtre ouverte à 2020 ; les indexations de 2020 et 2021 préenregistrées
+
+**La fenêtre.** `MIN_YEAR` passe de 2022 à 2020 (`api/schemas.py`). Il ne bornait que
+l'API : `chiffrage register` et `population.runner.run` servaient déjà ces années, sans
+vérification (D-535 a tourné en 2014 et en 2019). La vérification est faite ici :
+l'arbre réformé rend exactement les cinq boutons du barème au 2020-01-01 et au
+2021-01-01, et la loi votée y est égale au projet. Un test tient le nombre
+(`test_the_income_tax_of_2020_and_2021_is_the_published_scale_by_hand`, `test_api.py`) :
+cinq foyers salariés, sur la loi de 2020 et de 2021 et sous le miroir, dont l'IR du
+moteur égale à l'euro un calcul à la main sur l'art. 197 tel que les textes l'écrivent ;
+vu rouge sur le code d'avant (422). Les docstrings de `engine/corrections.py` disent que la
+formule de 2018 des aides au logement, lue en 2020, n'est pas corrigée : sans effet sur
+l'impôt, à corriger avant de chiffrer une prestation de 2020.
+
+**Les deux cas, préenregistrés avant toute passe** (construction, raisons R8 et R9 et
+commandes dans `docs/triage_retro/preenregistrement_b30.md`, « Les cas 8 et 9 ») :
+
+| # | cas | année | construction | tolérance | pronostic |
+|---|---|---|---|---|---|
+| 8 | `plf2021_art_2` | rev. 2020 | miroir, ramenée | ±30 %, 50 M€ | dans, plutôt en dessous |
+| 9 | `plf2022_art_2` | rev. 2021 | miroir, ramenée | ±25 %, 140 M€ | dans, sens inconnu |
+
+La grille n'a pas de ligne en 2020 ni en 2021 : la fenêtre s'élargit d'un cran par année
+hors d'elle (±20 % à deux ans de 2024, ±25 % à trois, ±30 % à quatre, avec l'activité
+partielle que D11 ne compte pas et qui manque aux revenus ramenés à 2020). Les planchers
+suivent le taux d'indexation du texte (0,2 % et 1,4 %, contre 200 M€ pour 2 %), sans aucun
+montant connu. La règle de base de D-702 vaut ici : une fiche en première année se note
+convertie par le calendrier du PAS. Le contrefactuel de 2020 n'est pas l'arbre au
+2019-01-01 (le barème à 14 %), mais le barème à 11 % de la LF 2020 avant indexation, lu
+dans le texte.
+
+**Ce que l'aveugle a vu, dit d'avance.** La préparation des deux cas est faite à
+l'aveugle, sans fiche ni réseau, et achevée avant que les fiches de D-702 ne soient
+relevées. Mais celui qui commite cette entrée a reçu, avant le commit, le relevé des
+fiches des PLF 2024 et 2025 : le coût officiel de leurs indexations. Ce n'est pas le
+rendement des cas 8 et 9, mais c'est une échelle : le coût d'un point d'indexation. Les
+tolérances, les raisons et les pronostics ci-dessus sont ceux de la préparation, inchangés
+après ce relevé. Les deux cas se comptent aveugles, avec cette réserve écrite sur chacun.

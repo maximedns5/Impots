@@ -34,9 +34,13 @@ forfaitaire deduction: real expenses (frais réels) above the salaries leave a d
 the income tax too, and openfisca's treatment of them stands. Wrapped around openfisca's
 own formula rather than copied, so everything else in it stays openfisca's.
 
-Only the 2021 era is corrected. The 2018 one carries the same line, but no year this
-project accepts reaches it (the API starts in 2022, the housing aid is read from
-October N-1), and `update_variable` keeps openfisca's formulas before 2021 as they are.
+Only the 2021 era is corrected, and `update_variable` keeps openfisca's formulas before
+2021 as they are. The 2018 one carries the same line, on the incomes of N-2, and since the
+window opened to 2020 (D-703) two years reach it, the housing aid being read from October
+N-1: every month of 2020, and October to December 2020 for 2021, the reference quarter of
+January's prime d'activité. There the deduction can still eat a pension. Left so: the
+2020 and 2021 cases are income tax ones, whose scale the housing aid does not read; a
+benefit priced on 2020 incomes would need the 2018 era corrected first.
 
 **Blast radius, measured:** a salary under the minimum deduction, beside other income in
 the family. The fixture population has no salary under 1 000 EUR, and nothing in it moves.
@@ -136,8 +140,8 @@ needs nothing: openfisca pays the AEEH only for a child it flags `handicap`, and
 already lifts the taper. Wrapped around openfisca's formula, which stands for everyone
 else; the aid untapered is its own, less the flat minoration that follows the taper. The
 correction starts with openfisca's formula, in July 2016; the article quoted is the one
-in force since September 2019, and no year this project accepts reads the aid before
-October 2021.
+in force since September 2019, and the earliest year this project accepts, 2020 (D-703),
+reads the aid from October 2019.
 
 **Blast radius:** an AAH beneficiary, or the spouse of one, whose rent passes the
 threshold. On the wire, the disability field with a dwelling. The population carries no
@@ -415,7 +419,8 @@ a dependent child born in 1950 once. A person in case R, which `nb_pac2` also co
 and the simulator does not, comes with the card, so with case 7DG, which takes no increment
 (D-202). The age is read off `date_naissance`, so a birth on 31 December
 counts; with births on 1 January, as both builders write them, it is the year of birth. Wrapped
-from 2020, the date of openfisca's formula; no year this project accepts reads an earlier one.
+from 2020, the date of openfisca's formula and the earliest year this project accepts (D-703):
+none reads an earlier one.
 
 **Blast radius:** a foyer with a declarant of 65 or more on 31 December whose home help, less the
 aid received, passes 12 000 EUR (15 000 the first year), without case 7DG. On the wire, the
