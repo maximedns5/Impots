@@ -1,0 +1,110 @@
+{
+ "texte": "plfss2025",
+ "trie_par": "agent but 30",
+ "articles": [
+  {
+   "numero": "3",
+   "intitule": "Fusion des cotisations d'assurance vieillesse des non-salariés agricoles en une cotisation unique",
+   "case": "structure",
+   "case_avant": "structure",
+   "raison": "Cotisation vieillesse unique des non-salariés agricoles : la population porte désormais des bénéfices agricoles (margins.AGRICOLES), mais aucun bouton ne règle les cotisations MSA et les taux sont renvoyés à un décret.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "4",
+   "intitule": "Pérennisation et relèvement à 1,25 SMIC de l'exonération pour l'emploi de travailleurs occasionnels agricoles (TO-DE)",
+   "case": "structure",
+   "case_avant": "structure",
+   "raison": "Exonération TO-DE des contrats saisonniers agricoles : aucun bouton, et ni secteur agricole ni contrat saisonnier identifiable chez les salariés de la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "5",
+   "intitule": "Cumul de l'exonération des jeunes agriculteurs avec les réductions de taux de droit commun",
+   "case": "structure",
+   "case_avant": "structure",
+   "raison": "Cumul de l'exonération des jeunes agriculteurs : aucun bouton sur les cotisations des non-salariés agricoles, et la population ne porte pas la date d'installation.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "7",
+   "intitule": "Rationalisation des exonérations spécifiques : apprentis, armement maritime, jeunes entreprises innovantes",
+   "case": "structure",
+   "case_avant": "structure",
+   "raison": "CSG-CRDS des apprentis au-delà de 50 % du SMIC, seuil d'exonération abaissé par décret, exonérations maritime et JEI recentrées : aucun bouton, ni statut d'apprenti ni JEI ni armateur dans les populations.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "9",
+   "intitule": "Clause de sauvegarde des produits de santé",
+   "case": "structure",
+   "case_avant": "structure",
+   "raison": "Contribution des laboratoires pharmaceutiques sur une assiette collective : hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "22",
+   "intitule": "Calcul des retraites agricoles sur les vingt-cinq meilleures années",
+   "case": "structure",
+   "case_avant": "structure",
+   "raison": "Règle de calcul des pensions agricoles : les retraites sont des données, sans règle de calcul.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "23",
+   "intitule": "Report au 1er juillet de la revalorisation des pensions de retraite",
+   "case": "donnees",
+   "case_avant": "structure",
+   "raison": "La structure existe en partie : le bouton indexations.pensions multiplie la pension déclarée de la passe de la réforme (boutons_programmes.facteur_pensions, population/runner.py), 2025 dans [2024, 2040] et dans la fenêtre [MIN_YEAR=2022, 2026]. Mais la population porte la pension totale, pas la part de base, seule revalorisée ; le report de date ne s'écrit qu'en coefficient annuel déduit, et le moteur prend les pensions comme une donnée, pas comme une dépense (même lecture que l'art. 35 du PLFSS 2027 dans plf_coverage).",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": true,
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "24",
+   "intitule": "Réforme de l'indemnisation de l'incapacité permanente AT/MP",
+   "case": "structure",
+   "case_avant": "structure",
+   "raison": "Rente AT/MP scindée en parts professionnelle et fonctionnelle : aucune rente d'incapacité dans la population (ij.py ne porte que des indemnités journalières), aucun bouton.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "trie_par": "agent but 30"
+  }
+ ]
+}

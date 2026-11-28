@@ -1,0 +1,97 @@
+{
+ "texte": "plf2023",
+ "trie_par": "agent but 30",
+ "articles": [
+  {
+   "numero": "4",
+   "intitule": "Aménagement du régime fiscal des grands événements sportifs",
+   "case": "donnees",
+   "raison": "Régime fiscal des organisateurs de grandes compétitions et dégrèvement d'IR des sportifs non résidents : aucun bouton neuf ne touche ces régimes, et aucune des deux populations ne porte d'organisme organisateur ni de sportif non résident.",
+   "volet": "",
+   "boutons": {},
+   "couche": "entreprises",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "donnees",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "5",
+   "intitule": "Suppression de la cotisation sur la valeur ajoutée des entreprises",
+   "case": "structure",
+   "raison": "Inchangé. L'année 2023 est servie par le module entreprises (EARLIEST_YEAR = 2022) mais la formule `cvae` (entreprises/variables.py) rend zéro tant que `bareme.pente_t1` n'est pas daté, soit avant 2024 : la réduction de moitié de 2023 n'a pas d'assiette, et cvae_taux_max ou cvae_echelle n'y écrivent dans rien. La suppression de 2024 se chiffrerait contre un arbre de 2024 qui porte la trajectoire votée plus tard, pas le droit dont partait le texte ; la CFE plafonnée et la taxe additionnelle des CCI restent absentes.",
+   "volet": "",
+   "boutons": {},
+   "couche": "entreprises",
+   "annee_revenus": null,
+   "rendement_connu": true,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "6",
+   "intitule": "Prorogation de la réduction des tarifs d'accise sur l'électricité",
+   "case": "structure",
+   "raison": "Inchangé. Le bouton accise_electricite existe, mais `consommation.annee_servie` refuse toute année avant 2024 (LOI_ENERGIE ne porte que 2024 et 2026) : l'article vise février 2023 - janvier 2024. Le volet entreprises (0,5 €/MWh) n'a pas de consommation d'énergie dans la population d'entreprises.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": true,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "7",
+   "intitule": "Adaptation du système fiscal aux exigences de la transition énergétique",
+   "case": "structure",
+   "raison": "Inchangé. Étalement des aides CEE, TVA des bornes de recharge et de la rénovation, TFPB des logements sociaux, taxe d'aménagement, accise du charbon, PTZ : aucun bouton neuf ne porte ces volets (tva_postes nomme des postes de consommation, pas des prestations de travaux), ni assiette dans les populations.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "8",
+   "intitule": "Renforcement des incitations fiscales à l'utilisation d'énergie renouvelable dans les transports",
+   "case": "structure",
+   "raison": "Inchangé. Tarifs et taux de la TIRUERT, due par les metteurs à la consommation de carburants : ni bouton ni redevable dans le modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "9",
+   "intitule": "Suppression de dépenses fiscales inefficientes",
+   "case": "donnees",
+   "raison": "Inchangé. Six dépenses fiscales très ciblées (tuteurs de chômeurs créateurs, SOFIPECHE, navires de pêche, Corse, inventions non brevetées, maîtres-restaurateurs) : ni bouton, ni base dans les populations ; l'IS du modèle entreprises est avant crédits d'impôt.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "donnees",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "11",
+   "intitule": "Relèvement du taux de la contribution additionnelle aux primes ou cotisations afférentes aux conventions d'assurance applicable aux exploitations agricoles",
+   "case": "structure",
+   "raison": "Inchangé. Contribution additionnelle sur les conventions d'assurance des exploitations agricoles (FNGRA) : aucune taxe sur les assurances ni bouton correspondant dans le moteur.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  }
+ ]
+}

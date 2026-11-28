@@ -1,0 +1,97 @@
+{
+ "texte": "plfss2024",
+ "trie_par": "agent but 30",
+ "articles": [
+  {
+   "numero": "4",
+   "intitule": "Au II de l’article 18 de la loi n° 2022‑1616 du 23 décembre 2022 de financement de la sécurité sociale pour 2023, le nombre : « 24,6 » est remplacé par le nombre : « 24,9 ».",
+   "case": "structure",
+   "raison": "Inchangé. Montant M de la clause de sauvegarde du médicament 2023 : ni laboratoire ni bouton.",
+   "volet": "",
+   "boutons": {},
+   "couche": "entreprises",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "11",
+   "intitule": "Clause de sauvegarde du médicament exprimée en montants remboursés",
+   "case": "structure",
+   "raison": "Inchangé. Clause de sauvegarde exprimée en montants remboursés : ni laboratoire ni dépense remboursée.",
+   "volet": "",
+   "boutons": {},
+   "couche": "entreprises",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "21",
+   "intitule": "Attribution simplifiée de la complémentaire santé solidaire aux allocataires de minima sociaux",
+   "case": "structure",
+   "raison": "Inchangé. Attribution simplifiée de la C2S aux allocataires de l'ASPA et du RSA : la C2S n'est ni calculée ni réglable par un bouton.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "27",
+   "intitule": "Responsabilisation des prescripteurs et des assurés sur les arrêts de travail",
+   "case": "structure",
+   "raison": "Inchangé de case, raison revue. La population porte désormais des IJ imputées (population/ij.py), mais en espérance par cellule, sans arrêt ni prescription ; l'article règle des contrôles, qu'aucun bouton n'exprime.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "28",
+   "intitule": "Arrêts de travail prescrits en téléconsultation limités à trois jours",
+   "case": "structure",
+   "raison": "Inchangé de case, raison revue. Les IJ imputées n'ont pas de durée (population/ij.py, artefact 5) ni de mode de prescription ; aucun bouton ne borne la durée d'un arrêt.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "39",
+   "intitule": "Nature duale de la rente AT-MP (part professionnelle et part fonctionnelle)",
+   "case": "structure",
+   "raison": "Inchangé. Rente AT-MP duale : le moteur ne code pas les rentes AT-MP (ij_at_mp_part_exoneree porte l'imposition des IJ, pas la rente), et la population ne porte pas d'incapacité permanente.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "40",
+   "intitule": "Montée en charge de l'âge légal de départ à Mayotte et Saint-Pierre-et-Miquelon",
+   "case": "structure",
+   "raison": "Inchangé. Âge légal à Mayotte et Saint-Pierre-et-Miquelon : retraites données, sans âge légal, et territoires absents.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  }
+ ]
+}

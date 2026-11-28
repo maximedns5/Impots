@@ -1,0 +1,123 @@
+{
+ "texte": "plfss2021",
+ "trie_par": "agent but 30",
+ "articles": [
+  {
+   "numero": "3",
+   "intitule": "(sans intitulé) Contribution exceptionnelle de 2,6 % sur les primes des complémentaires santé en 2020",
+   "case": "structure",
+   "raison": "Contribution exceptionnelle sur les primes des complémentaires santé en 2020 : ni organismes complémentaires ni primes dans le modèle ; hors fenêtre.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": 2020,
+   "rendement_connu": true,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "10",
+   "intitule": "Il est institué au titre de l’année 2021 une contribution exceptionnelle à la prise en charge des dépenses liées à la gestion de l’épidémie de covid‑19. Son produit est affecté à la Caisse nationale d",
+   "case": "structure",
+   "raison": "Contribution exceptionnelle des complémentaires santé en 2021 : même assiette absente que l'article 3 ; hors fenêtre.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": 2021,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "12",
+   "intitule": "Au premier alinéa de l’article L. 241‑3 du code de la sécurité sociale :",
+   "case": "structure",
+   "raison": "Règle de non-baisse du plafond de la sécurité sociale : aucun bouton sur le PASS, et sa règle d'évolution n'est pas codée.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": 2021,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "13",
+   "intitule": "Au 4° du III de l’article 8 de la loi n° 2018‑1203 du 22 décembre 2018 de financement de la sécurité sociale pour 2019, la date : « 1 er janvier 2021 » est remplacée par la date : « 1 er janvier 2023",
+   "case": "structure",
+   "raison": "Report de la suppression de l'exonération TO-DE (travailleurs occasionnels agricoles) : aucun bouton, et ni ce dispositif ni ces employeurs dans la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": 2021,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "14",
+   "intitule": "(sans intitulé) Option de paiement simplifié des cotisations pour les petites activités sur plateformes",
+   "case": "structure",
+   "raison": "Option de paiement simplifié des cotisations pour les petites activités sur plateformes : régime des micro-activités non codé, aucun bouton.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": 2022,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "17",
+   "intitule": "(sans intitulé) Clause de sauvegarde des médicaments et dispositifs médicaux (montants M et Z)",
+   "case": "structure",
+   "raison": "Clause de sauvegarde des médicaments et dispositifs médicaux (montants M et Z) : industrie pharmaceutique hors du modèle.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": 2021,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "28",
+   "intitule": "(sans intitulé) Forfait patient aux urgences et calendrier des réformes hospitalières",
+   "case": "structure",
+   "raison": "Forfait patient aux urgences : ni dépense de soins ni reste à charge dans le moteur.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": 2021,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "32",
+   "intitule": "La participation de l’assuré mentionnée au premier alinéa du I de l’article L. 160‑13 du code de la sécurité sociale relative aux actes de téléconsultation est supprimée jusqu’au 31 décembre 2021.",
+   "case": "structure",
+   "raison": "Suppression du ticket modérateur des téléconsultations : ni dépense de soins ni reste à charge dans le moteur.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": 2021,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "35",
+   "intitule": "(sans intitulé) Allongement du congé de paternité",
+   "case": "structure",
+   "raison": "Allongement du congé de paternité : l'indemnité journalière de paternité n'est ni un bouton ni portée par la population (ni naissance de l'année ni congé) ; hors fenêtre.",
+   "volet": "",
+   "boutons": {},
+   "couche": "",
+   "annee_revenus": 2021,
+   "rendement_connu": true,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  }
+ ]
+}

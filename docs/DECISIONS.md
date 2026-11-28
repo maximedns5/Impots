@@ -44486,3 +44486,43 @@ D-729.
 l'élargir, après vérification. La population ramenée en arrière garde sa structure de
 2024. L'aveugle est percé (D-360) : les relecteurs sont le même modèle que celui qui
 enregistre.
+
+## D-701 — Le triage revu sur le moteur d'afc2d7b : aucun chiffrable de plus
+
+**Ce qui a été fait** (D-700). Les 127 articles que D-360 classait « structure » ou
+« données » ont été relus par trois relecteurs indépendants, sur la consigne de D-360 :
+le texte seul, exposés montants masqués, le code d'afc2d7b, sans réseau, sans `data/raw`,
+sans aucun chiffrage du dépôt. Le triage revu est figé dans `docs/triage_retro/revu/`,
+avant l'ouverture de toute évaluation préalable ; l'ancien ne change pas. Les montants
+qui y restent sont des tarifs de dispositif (21 €/MWh, 0,5 €), pas des rendements.
+
+**Le compte.** Aucun article ne devient chiffrable : 113 « structure », 14 « données ».
+Quatre changent de case sans changer le verdict : les art. 13, 47 et 48 du PLFSS 2022
+passent de « données » à « structure » (la population porte maintenant les indépendants et
+les exploitants agricoles, mais aucune de ces règles n'est codée) ; l'art. 23 du PLFSS
+2025 (le report de la revalorisation des pensions) passe de « structure » à « données »,
+comme l'art. 35 du PLFSS 2027 (la pension totale, pas sa part de base). Le banc reste
+celui de D-360 : 9 cas, dont 3 aveugles.
+
+**Pourquoi les boutons neufs n'ont rien ouvert.** Ils ont été écrits pour les programmes
+de 2027 (heures supplémentaires, indexations, Smic, point d'indice), et ce qui ferme les
+textes de 2021 à 2025 est ailleurs :
+
+* **les années** : `MIN_YEAR` vaut 2022, le module entreprises refuse aussi avant 2022, le
+  bouton `indexations` ne sert que 2024 à 2040 ;
+* **la consommation** n'est servie qu'en 2024 et 2026 : la TVA et les accises de 2021 à
+  2023 et de 2025 sont refusées, quel que soit le bouton ;
+* **la CVAE** n'a de barème daté qu'à partir de 2024 : sa division par deux en 2021 et sa
+  suppression étalée restent sans assiette ;
+* **les règles absentes** : pas de bouton sur les plafonds de la RLS, la base ressources
+  de l'AAH, le CMG, la C2S, la CDHR, les cotisations des indépendants ou de la MSA.
+
+Ce qui rouvrirait le plus d'articles est donc de dater le moteur en arrière (2021 à 2023
+pour la CVAE et la consommation, 2021 pour la fenêtre), pas d'ajouter des boutons. Rien
+n'est fait ici : c'est un choix de travail, à prendre avant le préenregistrement.
+
+**Les doutes des relecteurs, gardés.** L'art. 11 du PLF 2024 (le bouclier sur
+l'électricité) se chiffrerait contre le tarif de 2024 que l'arbre porte, qui est celui que
+l'article a fixé : ce serait chiffrer le passage de 21 à 1 €/MWh, pas le texte ; il reste
+« structure ». La suppression de la CVAE (PLF 2023, art. 5) se chiffrerait sur 2024 contre
+un arbre qui porte la trajectoire votée plus tard ; elle reste « structure ».

@@ -1,0 +1,84 @@
+{
+ "texte": "plfss2023",
+ "trie_par": "agent but 30",
+ "articles": [
+  {
+   "numero": "7",
+   "intitule": "Prolongation d'un an de l'exonération TO-DE en agriculture",
+   "case": "structure",
+   "raison": "Inchangé. Prorogation de l'exonération TO-DE : les boutons allegement_general_* règlent la réduction générale, pas cette exonération, et aucun emploi saisonnier agricole n'est identifié.",
+   "volet": "",
+   "boutons": {},
+   "couche": "entreprises",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "8",
+   "intitule": "Fiscalité du tabac : indexation des tarifs et barème des produits",
+   "case": "structure",
+   "raison": "Inchangé. Accises sur les tabacs : la consommation imputée porte un poste tabac et sa TVA (tva_postes), mais aucune accise du tabac ni bouton pour ses tarifs ; et `consommation.annee_servie` refuse 2023.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "9",
+   "intitule": "Médecins régulateurs : déclaration simplifiée des cotisations et couverture assurantielle",
+   "case": "donnees",
+   "raison": "Inchangé. Déclaration simplifiée des médecins régulateurs : ni bouton, ni médecin libéral ni revenu de régulation dans la population.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "donnees",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "36",
+   "intitule": "Réforme du complément de libre choix du mode de garde",
+   "case": "structure",
+   "raison": "Inchangé. Réforme du CMG : `paje` est une ligne de résultat, pas un bouton ; aucun champ de ReformSpec ne règle le CMG, et la population ne porte ni heures ni coût de garde par mode.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "structure",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "38",
+   "intitule": "Convergence des droits sociaux à Mayotte et autres simplifications",
+   "case": "donnees",
+   "raison": "Inchangé. Droits sociaux à Mayotte et rachat de trimestres : la population est hors Mayotte, et les retraites sont des données.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "donnees",
+   "trie_par": "agent but 30"
+  },
+  {
+   "numero": "40",
+   "intitule": "Indemnisation des non-salariés agricoles pluriactifs victimes d'AT/MP",
+   "case": "donnees",
+   "raison": "Inchangé. IJ AT-MP des pluriactifs agricoles : la population impute des IJ du régime général aux salariés du privé (population/ij.py), régimes agricoles exclus, et aucune pluriactivité agricole.",
+   "volet": "",
+   "boutons": {},
+   "couche": "menages",
+   "annee_revenus": null,
+   "rendement_connu": false,
+   "case_avant": "donnees",
+   "trie_par": "agent but 30"
+  }
+ ]
+}
