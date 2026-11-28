@@ -31,7 +31,21 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: true
-comparator: null
+comparator:
+  published_eur: 6100000000.0
+  sign: cost
+  basis: annee-pleine
+  retrieved: '2026-11-28'
+  source: 'PLF 2024, évaluations préalables des articles (texte AN n° 1680), art. 2, § 4.2.1,
+    p. 18 : « le rendement de l''IR aurait été majoré d''environ 6,1 Md€ au titre des revenus
+    de 2023 »'
+  vintage: PLF 2024 (texte n° 1680, déposé le 2023-09-27) ; 500 000 déclarations de 2021 et
+    2022 vieillies 2023 (§ 4.3)
+  perimeter: 'IR, État ; tout l''article sauf les grilles du PAS : indexation de 4,8 % des
+    tranches, des plafonds du quotient familial, de la décote, du plafond de déduction des
+    pensions alimentaires et de l''abattement pour enfant marié, non séparés. Le scénario
+    ne porte que les tranches, la décote, la demi-part et le parent isolé.'
+  net_of: Année pleine des revenus 2023 ; aucun effet comportemental.
 vieillissement:
   jeu: insee_constate
   source: 'Insee, constaté : salaires par tête, D11 sur l''emploi intérieur salarié

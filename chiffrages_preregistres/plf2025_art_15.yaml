@@ -32,7 +32,20 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: -1000000000.0
+  sign: yield
+  basis: premiere-annee
+  retrieved: '2026-11-28'
+  source: 'PLF 2025, évaluations préalables des articles (texte AN n° 324), art. 15, § 4.2.1,
+    p. 174 : « Par rapport à une suppression de la CVAE intervenant au 1er janvier 2027, le
+    surcroît de recettes pour l''État est de l''ordre d''1 Md€ en 2025 »'
+  vintage: PLF 2025 (texte n° 324) ; impositions de CVAE 2023 vieillies au PIB en valeur (§
+    4.3)
+  perimeter: 'État ; tout l''article : barème et dégrèvement de 2024 reconduits, plafonnement
+    en fonction de la valeur ajoutée gardé à 1,531 % ; la TACVAE va aux CCI.'
+  net_of: Net d'IR et d'IS (taux moyen de 20 %, 50 %) ; arrondi au milliard ; le moteur est
+    net du retour d'IS (D-347).
 vieillissement:
   jeu: insee_constate
   de: 2024

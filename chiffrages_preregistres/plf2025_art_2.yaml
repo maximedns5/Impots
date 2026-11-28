@@ -32,7 +32,21 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: 3700000000.0
+  sign: cost
+  basis: premiere-annee
+  retrieved: '2026-11-28'
+  source: 'PLF 2025, évaluations préalables des articles (texte AN n° 324), art. 2, § 4.2.1,
+    p. 18 : « le rendement de l''IR aurait été majoré d''environ 3,7 Md€ en 2025 (somme de
+    l''effet sur les avis d''imposition au titre des revenus 2024 et de l''effet sur le prélèvement
+    à la source) »'
+  vintage: PLF 2025 (texte n° 324, déposé le 2024-10-10) ; 500 000 déclarations de 2022 et
+    2023 vieillies 2024 (§ 4.3)
+  perimeter: IR, État ; le projet (2 %) contre le barème des revenus 2023 gelé ; mêmes volets
+    que l'art. 2 du PLF 2024, non séparés.
+  net_of: 'Effet budgétaire de 2025 : avis sur les revenus 2024 et PAS ; aucun effet comportemental.
+    Converti par la règle de D-702.'
 moins:
   scenario: plf2025_art_2
   mechanical_eur: -2323074834.422119

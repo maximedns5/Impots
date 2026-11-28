@@ -2823,6 +2823,33 @@
       "licence": "Insee, licence ouverte Etalab",
       "quarantined": false,
       "description": "Insee, France portrait social 2022, dossier « Les réformes sociofiscales de 2020 et 2021 augmentent le revenu disponible des ménages… », texte ; juge du but 29 (D-592)."
+    },
+    "plf2024_evaluations_prealables.pdf": {
+      "url": "https://www.assemblee-nationale.fr/dyn/contenu/visualisation/705211/file/Evaluations%20pr%C3%A9alables%20des%20articles%20du%20projet%20de%20loi.pdf",
+      "sha256": "fbde509e1798506788944ad9206543ebe34e99d23bb22e2fc9abe239a5e5b7c6",
+      "bytes": 4929589,
+      "downloaded": "2026-11-28",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "PLF 2024, « Évaluations préalables des articles du projet de loi » (535 p.), annexe au projet de loi n° 1680 (16e législature). URL relevée sur la page du dossier plf_2024 de l'Assemblée (lien « Évaluations préalables des articles du projet de loi »), après qu'un index de recherche a donné la même pièce sous /dyn/content/download/705211/ (même sha256). Manifestée le 2026-11-28, APRÈS le push des sept enregistrements du but 30 (D-702, 657ae1b).\nComparateur des cas plf2024_art_2 (fiche p. 7-19, chiffre au 4.2.1, p. 18) et plf2024_art_8 (fiche p. 184-196, chiffre au 4.2.1, p. 196). Les numéros imprimés sont ceux du PDF. Voir docs/triage_retro/fiches_b30.md.",
+      "quarantined": false
+    },
+    "plf2025_evaluations_prealables.pdf": {
+      "url": "https://www2.assemblee-nationale.fr/static/17/Annexes-DL/PLF-2025/PLF-2025_Evaluations%20prealables.pdf",
+      "sha256": "7531aecda4536173e274a5fe151f582cf52cd967dfd389d9c8c31e6a12bd2857",
+      "bytes": 4455325,
+      "downloaded": "2026-11-28",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "PLF 2025, « Évaluations préalables des articles du projet de loi » (464 p.), annexe au projet de loi n° 324 (17e législature). URL relevée sur la page du dossier PLF2025 de l'Assemblée (lien « Évaluations préalables des articles du projet de loi de finances pour 2025 », en http ; téléchargée en https). Manifestée le 2026-11-28, APRÈS le push des sept enregistrements du but 30 (D-702, 657ae1b).\nComparateur des cas plf2025_art_2 (fiche p. 8-19, chiffre au 4.2.1, p. 18), plf2025_art_11 (p. 119-124, chiffre p. 123) et plf2025_art_15 (p. 166-175, chiffre p. 174). Les numéros imprimés sont ceux du PDF. Voir docs/triage_retro/fiches_b30.md.",
+      "quarantined": false
+    },
+    "plfss2025_annexe9_evaluations_prealables.pdf": {
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/PLFSS/2025/PLFSS2025_Annexe%2009.pdf",
+      "sha256": "679cbbcf1d5d75c57089e5f44466182120834364ee80df01e0ce603ff075f628",
+      "bytes": 2492862,
+      "downloaded": "2026-11-28",
+      "licence": "securite-sociale.fr — publication officielle",
+      "description": "PLFSS 2025, annexe 9, « Fiches d'évaluation préalable des articles du projet de loi » (172 p.), projet n° 325. URL relevée sur la page « Années passées > LFSS 2025 » de securite-sociale.fr (lien « Consulter l'annexe 9 »). ATTENTION : métadonnées du PDF datées du 27 novembre 2024, après le dépôt du 10 octobre ; le tableau de l'art. 6 porte une colonne « 2024 (rectificatif) ». Manifestée le 2026-11-28, APRÈS le push des sept enregistrements du but 30 (D-702, 657ae1b).\nComparateur du cas plfss2025_art_6 : fiche p. 24-34 imprimées (PDF + 2), tableau « Impact financier en droits constatés » p. 28-29 imprimées (p. 30-31 du PDF). Voir docs/triage_retro/fiches_b30.md.",
+      "quarantined": false
     }
   }
 }

@@ -41,4 +41,15 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: -8000000000.0
+  sign: yield
+  basis: premiere-annee
+  retrieved: '2026-11-28'
+  source: 'PLF 2025, évaluations préalables des articles (texte AN n° 324), art. 11, § 4.2.1,
+    p. 123 : « Le rendement de la contribution exceptionnelle est estimé à 8 Md€ en 2025 et
+    4 Md€ en 2026 »'
+  vintage: PLF 2025 (texte n° 324) ; résultats des entreprises de l'exercice 2023 (§ 4.3)
+  perimeter: État ; toute la contribution, premier exercice (clos à compter du 31 décembre
+    2024), versé en 2025.
+  net_of: 'Sans objet : la contribution n''est pas déductible ; aucun effet comportemental.'

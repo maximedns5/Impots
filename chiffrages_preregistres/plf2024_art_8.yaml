@@ -35,4 +35,17 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: true
-comparator: null
+comparator:
+  published_eur: -3000000000.0
+  sign: yield
+  basis: premiere-annee
+  retrieved: '2026-11-28'
+  source: 'PLF 2024, évaluations préalables des articles (texte AN n° 1680), art. 8, § 4.2.1,
+    p. 196 : « Par rapport à une suppression de la CVAE qui devait intervenir au 1er janvier
+    2024, le surcroît de recettes pour l''État est de l''ordre de 3 Md€ en 2024 »'
+  vintage: PLF 2024 (texte n° 1680) ; impositions de CVAE 2022 vieillies au PIB en valeur
+    (§ 4.3)
+  perimeter: 'État ; tout l''article : barème de 2024, taux du plafonnement en fonction de
+    la valeur ajoutée (1,531 %), franchise de 63 € ; la TACVAE va aux CCI.'
+  net_of: Net d'IR et d'IS (taux moyen de 20 %, 70 % dès 2024) ; le moteur est net du retour
+    d'IS (D-347).

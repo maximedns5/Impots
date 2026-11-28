@@ -34,7 +34,19 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: -5100000000.0
+  sign: yield
+  basis: annee-pleine
+  retrieved: '2026-11-28'
+  source: 'PLFSS 2025, annexe 9, évaluations préalables, art. 6, IV.1, tableau p. 28-29 (PDF
+    30-31) : ROBSS 5,1 Md€ en 2025, en droits constatés (maladie 2,2, famille 0,3, vieillesse
+    2,7)'
+  vintage: PLFSS 2025 (texte n° 325, déposé le 2024-10-10) ; fichier en ligne daté du 2024-11-27
+  perimeter: Régimes obligatoires de base seuls ; Agirc-Arrco et Unédic vides en 2025 ; l'étape
+    de 2025 entière (coefficient et bandeaux).
+  net_of: Droits constatés 2025 ; brut des effets retour sur l'IS (rien n'en est dit) ; «
+    des ordres de grandeur ».
 vieillissement:
   jeu: insee_constate
   source: 'Insee, constaté : salaires par tête, D11 sur l''emploi intérieur salarié
