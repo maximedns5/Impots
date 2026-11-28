@@ -91,12 +91,18 @@ def test_the_reduced_rate_slice_widened_for_fy2022_not_fy2023(tbs: object) -> No
     assert p.plafond_taux_reduit("2022-01-01") == 42_500
 
 
-def test_the_normal_rate_has_no_value_before_2022(tbs: object) -> None:
-    """From 2019 to 2021 the normal rate was a two-bracket scale that also depended
-    on turnover. This module does not encode that, so an earlier query resolves to
+def test_the_normal_rate_has_no_value_before_2021(tbs: object) -> None:
+    """In 2019 and 2020 the normal rate was a two-bracket scale that also depended on
+    turnover. This module does not encode that, so an earlier query resolves to
     nothing and any formula using it fails — rather than silently applying a flat
-    rate that never existed."""
-    assert tbs.parameters.impot_societes.taux_normal("2021-01-01") is None  # type: ignore[attr-defined]
+    rate that never existed. The rule moved by one year with D-706: 2021 has a rate
+    on the whole profit that depends on turnover alone (26,5 %, 27,5 % from 250 M€),
+    which the module now carries."""
+    p = tbs.parameters.impot_societes  # type: ignore[attr-defined]
+    assert p.taux_normal("2020-01-01") is None
+    assert p.taux_normal("2021-01-01") == pytest.approx(0.265)
+    assert p.taux_normal_grandes_entreprises("2021-01-01") == pytest.approx(0.275)
+    assert p.taux_normal_grandes_entreprises("2022-01-01") is None
 
 
 def test_the_two_pme_turnover_thresholds_are_separate(tbs: object) -> None:
@@ -604,6 +610,87 @@ def test_cvae_rate_rose_in_2026_rather_than_falling(tbs: object) -> None:
     assert p("2025-01-01").cvae.taux_max == pytest.approx(0.0019)
     assert p("2026-01-01").cvae.taux_max == pytest.approx(0.0028)
     assert p("2029-01-01").cvae.taux_max == pytest.approx(0.0009)
+
+
+# --------------------------------------------------------------------------- #
+# La CVAE et l'IS datés en arrière, 2020 à 2023 (D-706)
+# --------------------------------------------------------------------------- #
+#: Quatre entreprises types : (chiffre d'affaires, valeur ajoutée). Une dans chacune des
+#: tranches c, d et e du barème de l'art. 1586 quater, I, et une sous le seuil du
+#: dégrèvement (2 M€), où la cotisation minimale de l'art. 1586 septies joue.
+FIRMES_TYPES = ([6_200_000.0, 40_100_000.0, 80_000_000.0, 1_500_000.0],
+                [1_860_000.0, 12_030_000.0, 20_000_000.0, 600_000.0])
+
+
+@pytest.mark.parametrize(("year", "expected"), [
+    # 2021, barème divisé par deux (LF 2021, art. 8 ; PLF 2021, art. 3, I, D et F) :
+    # - 6,2 M€ : 0,25 % + 0,45 % × 3,2 / 7 = 0,45571 %, arrondi à 0,46 % ; la VA, sous
+    #   80 % du CA, n'est pas plafonnée : 1 860 000 × 0,0046 = 8 556 € ;
+    # - 40,1 M€ : 0,7 % + 0,05 % × 30,1 / 40 = 0,73763 %, arrondi à 0,74 % :
+    #   12 030 000 × 0,0074 = 89 022 € ;
+    # - 80 M€ : le plafond, 0,75 %, non arrondi : 150 000 € ;
+    # - 1,5 M€ : 0,25 % × 1 / 2,5 = 0,1 % : 600 €, moins le dégrèvement de 500 €, 100 €,
+    #   relevés à la cotisation minimale de 125 € (CA au-delà de 500 000 €).
+    ("2021", [8_556.0, 89_022.0, 150_000.0, 125.0]),
+    # 2023, divisé encore par deux (LF 2023, art. 55 ; PLF 2023, art. 5, I, H et I) :
+    # - 0,125 % + 0,225 % × 3,2 / 7 = 0,22786 %, arrondi à 0,23 % : 4 278 € ;
+    # - 0,35 % + 0,025 % × 30,1 / 40 = 0,36881 %, arrondi à 0,37 % : 44 511 € ;
+    # - 0,375 % : 75 000 € ;
+    # - 0,125 % × 0,4 = 0,05 % : 300 €, moins 250 €, 50 €, relevés au minimum de 63 €.
+    ("2023", [4_278.0, 44_511.0, 75_000.0, 63.0]),
+    # 2020, la loi d'avant la LF 2021 (les taux que le PLF 2021 remplace) :
+    # - 0,5 % + 0,9 % × 3,2 / 7 = 0,91143 %, arrondi à 0,91 % : 16 926 € ;
+    # - 1,4 % + 0,1 % × 30,1 / 40 = 1,47525 %, arrondi à 1,48 % : 178 044 € ;
+    # - 1,5 % : 300 000 € ;
+    # - 0,5 % × 0,4 = 0,2 % : 1 200 €, moins 1 000 €, 200 €, relevés au minimum de 250 €.
+    ("2020", [16_926.0, 178_044.0, 300_000.0, 250.0]),
+])
+def test_the_cvae_before_2024_is_the_schedule_of_its_text_by_hand(
+        tbs: object, year: str, expected: list[float]) -> None:
+    """Le barème d'avant 2024, calculé à la main sur les taux que les textes écrivent en
+    clair (`data/interim/textes_retro/plf2021.md` et `plf2023.md`). Avant D-706, le barème
+    n'était daté qu'à partir de 2024 et la CVAE de ces années valait zéro. Le dernier
+    chiffre tient aussi l'ordre de la cotisation minimale après le dégrèvement, que D-706
+    marque à vérifier."""
+    turnovers, vas = FIRMES_TYPES
+    simulation = simulate(tbs, turnovers, [0.0] * 4, vas, year=year)
+    got = simulation.calculate("cvae", year)  # type: ignore[attr-defined]
+    for value, wanted in zip(got, expected, strict=True):
+        assert close(float(value), wanted), (year, list(got), expected)
+
+
+def test_the_cvae_minimum_of_2021_is_owed_above_500_000_euros_only(tbs: object) -> None:
+    """Sous 500 000 € de chiffre d'affaires, le taux est nul et la cotisation minimale ne
+    joue pas (art. 1586 septies, D-440) : rien n'est dû. Au-dessus, elle est due même sur
+    une valeur ajoutée nulle."""
+    simulation = simulate(tbs, [400_000.0, 600_000.0], [0.0, 0.0], [200_000.0, 0.0],
+                          year="2021")
+    got = simulation.calculate("cvae", "2021")  # type: ignore[attr-defined]
+    assert list(got) == [0.0, 125.0]
+
+
+def test_the_is_of_2021_is_the_two_rates_of_its_law_by_hand(tbs: object) -> None:
+    """L'IS de 2021, à la main (CGI art. 219, I : LF 2018 art. 84 et LF 2020 art. 39) :
+    - 300 M€ de CA, 10 M€ de bénéfice : 27,5 % sur tout le bénéfice, 2 750 000 € ;
+    - 100 M€ de CA, 10 M€ : 26,5 %, 2 650 000 € ;
+    - 5 M€ de CA, 100 000 € : 15 % sur 38 120 €, 26,5 % sur le reste,
+      5 718 + 16 398,20 = 22 116,20 €.
+    Avant D-706, le taux normal n'était pas daté en 2021 et la formule ne calculait rien."""
+    simulation = simulate(tbs, [300e6, 100e6, 5e6], [10e6, 10e6, 100_000.0],
+                          [60e6, 20e6, 1e6], year="2021")
+    got = simulation.calculate("impot_societes", "2021")  # type: ignore[attr-defined]
+    for value, wanted in zip(got, [2_750_000.0, 2_650_000.0, 22_116.2], strict=True):
+        assert close(float(value), wanted), list(got)
+
+
+def test_the_firm_module_prices_2021_and_refuses_2020(
+        firm_population: tuple[pl.DataFrame, object]) -> None:
+    """`EARLIEST_YEAR` passe de 2022 à 2021 (D-706) : l'IS de 2021 est daté. 2020 reste
+    refusé : son plafond de CA du taux réduit (7,63 M€) et ses taux ne sont pas datés."""
+    firms, _ = firm_population
+    assert firm_runner.run(firms, 2021).n_firms == firms.height
+    with pytest.raises(firm_runner.FirmRunError, match="ne sait pas chiffrer 2020"):
+        firm_runner.run(firms, 2020)
 
 
 # --------------------------------------------------------------------------- #

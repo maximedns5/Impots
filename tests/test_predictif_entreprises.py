@@ -298,15 +298,16 @@ def test_a_firm_bundle_the_firm_reform_refuses_stops_before_the_first_pass() -> 
         recherche.check_grid(request)
 
 
-#: Two firm reforms the layer itself refuses: a year before the scalar IS rate (2022), and
-#: a CEBGE revived in a year where it still exists (D-044).
+#: Two firm reforms the layer itself refuses: a year before the IS rate the module carries
+#: (2021 since D-706, 2022 before), and a CEBGE revived in a year where it still exists
+#: (D-044).
 REVIVED_CEBGE = FirmReformSpec(
     cebge_seuils_et_taux=[{"seuil_ca": 1e9, "taux": 0.2}, {"seuil_ca": 3e9, "taux": 0.4}],
     cebge_prorogation_largeur=1e8)
 
 
 @pytest.mark.parametrize("year, spec, status, needle", [
-    (2021, IS_24, 500, "ne sait pas chiffrer 2021"),
+    (2020, IS_24, 500, "ne sait pas chiffrer 2020"),
     (2026, REVIVED_CEBGE, 422, "existe déjà"),
 ], ids=["annee", "cebge"])
 def test_a_firm_pass_the_layer_refuses_keeps_its_status_and_reason(year: int,

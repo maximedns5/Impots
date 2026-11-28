@@ -70,6 +70,13 @@ CVAE_SCHEDULE: tuple[tuple[str, ...], ...] = (
     ("cvae", "degrevement", "montant"),
 )
 
+#: Before 2024, the minimum contribution of art. 1586 septies, which the law moved with
+#: the schedule (250, 125, 63 €) and replaced by the franchise in 2024 (D-706). Scaled
+#: with the schedule where the year carries it; kept out of `CVAE_SCHEDULE`, whose
+#: paths are dated in every year the CVAE exists.
+CVAE_MINIMUM: tuple[str, ...] = ("cvae", "cotisation_minimale", "montant")
+CVAE_SCALED: tuple[tuple[str, ...], ...] = (*CVAE_SCHEDULE, CVAE_MINIMUM)
+
 
 class CebgeTranche(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)  # D-173
@@ -96,7 +103,8 @@ class FirmReformSpec(BaseModel):
     cvae_echelle: Annotated[float, Field(ge=0.0, le=3.0)] | None = Field(
         default=None,
         description="The CVAE's whole schedule of the year, scaled: the ceiling, the "
-        "brackets below it and the dégrèvement, as the law moves them itself (D-254). 0 "
+        "brackets below it and the dégrèvement, and before 2024 the minimum contribution, "
+        "as the law moves them itself (D-254, D-706). 0 "
         "abolishes it, 0.5 halves it. In a year where the law has abolished it, there is "
         "nothing to scale. Not with `cvae_taux_max` or `cvae_degrevement`, which it "
         "already moves.")
@@ -246,7 +254,7 @@ def _scale_cvae(parameters: Any, factor: float, start: Any, instant: str) -> Non
     the law of that year, cloned. Where the law has abolished the CVAE its schedule is
     null, and there is nothing to scale: nothing is written, and the year costs
     nothing (D-254)."""
-    for path in CVAE_SCHEDULE:
+    for path in CVAE_SCALED:
         law = resolve(parameters, path)(instant)
         if law is None:
             continue
@@ -310,7 +318,7 @@ def _cvae_read_back(system: Any, factor: float, instant: str) -> list[str]:
     from impots.entreprises.system import baseline as _baseline
 
     problems = []
-    for path in CVAE_SCHEDULE:
+    for path in CVAE_SCALED:
         law = resolve(_baseline().parameters, path)(instant)
         got = resolve(system.parameters, path)(instant)
         name = ".".join(path)
@@ -331,9 +339,9 @@ def _knob_paths(knob: str) -> tuple[tuple[str, ...], ...]:
     if knob in SCALAR_KNOBS:
         return (SCALAR_KNOBS[knob],)
     if knob == "cvae_echelle":
-        return CVAE_SCHEDULE
+        return CVAE_SCALED
     if knob in ("impots_production_baisse", "impots_production_part_cvae"):
-        return (*CVAE_SCHEDULE, SCALAR_KNOBS["c3s_taux"])
+        return (*CVAE_SCALED, SCALAR_KNOBS["c3s_taux"])
     if knob in ("cebge_seuils_et_taux", "cebge_prorogation_largeur"):
         return (*(path for paths in CEBGE_TRANCHE_PATHS for path in paths),
                 ("cebge", "lissage", "largeur"))

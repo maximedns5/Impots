@@ -11,6 +11,22 @@ metadata:
   reference:
     2026-01-01: https://bofip.impots.gouv.fr/bofip/839-PGP.html/identifiant=BOI-CVAE-LIQ-10-20251119
 values:
+  # D-706. Avant 2024, du texte des PLF, dans le dépôt (data/interim/textes_retro/),
+  # pour les entreprises sous 2 000 000 € de CA (seuil_ca) :
+  # 2020 : « 1 000 € », le montant que le PLF 2021 (art. 3, I, D, 2°) remplace : la loi
+  #   en vigueur en 2020 ; 2010 à 2019 ne sont pas datés ;
+  # 2021 : « 500 € », celui qu'il met à sa place (LF 2021, art. 8) ; 2022 inchangé ;
+  # 2023 : « 250 € », le II réécrit par le PLF 2023 (art. 5, I, H, 2°) : « Les
+  #   entreprises dont le chiffre d'affaires est inférieur à 2 000 000 € bénéficient
+  #   d'un dégrèvement de 250 € » (LF 2023, art. 55).
+  # Textes des PROJETS : le montant voté est À VÉRIFIER sur JORFARTI000042753599 et
+  # JORFARTI000046845693. 1 000, 500, 250 puis 188 : le montant suit le barème.
+  2020-01-01:
+    value: 1000
+  2021-01-01:
+    value: 500
+  2023-01-01:
+    value: 250
   2024-01-01:
     value: 188
   2025-01-01:

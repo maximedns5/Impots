@@ -1,0 +1,28 @@
+description: "Cotisation minimale de CVAE, avant 2024 (CGI art. 1586 septies)"
+# D-706. Avant l'imposition de 2024, la CVAE due par une entreprise dont le chiffre
+# d'affaires dépasse 500 000 € (seuil_ca) ne pouvait être inférieure à ce montant ; depuis
+# 2024 le minimum est remplacé par une franchise (cvae/franchise.yaml), d'où la valeur
+# nulle. Du texte des PLF, dans le dépôt (data/interim/textes_retro/) :
+# 2020 : « 250 € », le montant que le PLF 2021 (art. 3, I, F) remplace : la loi en vigueur
+#   en 2020 ; 2010 à 2019 ne sont pas datés ;
+# 2021 : « 125 € », celui qu'il met à sa place (LF 2021, art. 8) ; 2022 inchangé ;
+# 2023 : « 63 € » (PLF 2023, art. 5, I, I ; LF 2023, art. 55).
+# Textes des PROJETS : le montant voté est À VÉRIFIER sur JORFARTI000042753599 et
+# JORFARTI000046845693.
+# À VÉRIFIER AUSSI, l'ordre : la formule applique le minimum à la cotisation APRÈS le
+# dégrèvement de l'art. 1586 quater, II (une entreprise de 1,5 M€ de CA doit le minimum,
+# même si le dégrèvement absorbe sa cotisation). Aucun texte du dépôt ne le dit.
+metadata:
+  unit: currency
+  reference:
+    2021-01-01: https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000042753599
+    2023-01-01: https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000046845693
+values:
+  2020-01-01:
+    value: 250
+  2021-01-01:
+    value: 125
+  2023-01-01:
+    value: 63
+  2024-01-01:
+    value: null

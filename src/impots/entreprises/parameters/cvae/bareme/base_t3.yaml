@@ -4,6 +4,22 @@ metadata:
   reference:
     2026-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048860944
 values:
+  # D-706. Avant 2024, du texte des PLF, dans le dépôt (data/interim/textes_retro/) :
+  # 2020 : le taux que le PLF 2021 (art. 3, I, D) remplace, d, « 1,4 % » : la loi en
+  #   vigueur en 2020, lue dans le texte qui la modifie ; 2010 à 2019 ne sont pas datés ;
+  # 2021 : celui qu'il met à sa place, d, « 0,7 % » (LF 2021, art. 8) ; 2022
+  #   inchangé, puisque le PLF 2023 (art. 5, I, H) le remplace à son tour ;
+  # 2023 : d, « 0,35 % » (PLF 2023, art. 5, I, H ; LF 2023, art. 55).
+  # Ce sont les textes des PROJETS. Le taux plafond voté est vérifié au JORF
+  # (jumeau/historique/mesures_votees.yaml : lfi2021_cvae_regions, lfi2023_cvae) ;
+  # ce coefficient, tel que voté, est À VÉRIFIER sur JORFARTI000042753599 (LF 2021,
+  # art. 8) et JORFARTI000046845693 (LF 2023, art. 55).
+  2020-01-01:
+    value: 0.014
+  2021-01-01:
+    value: 0.007
+  2023-01-01:
+    value: 0.0035
   2024-01-01:
     value: 0.00263
   2025-01-01:

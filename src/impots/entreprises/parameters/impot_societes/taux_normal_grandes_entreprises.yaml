@@ -1,0 +1,20 @@
+description: "Taux normal de l'IS des redevables d'au moins 250 M€ de chiffre d'affaires, en 2021"
+metadata:
+  unit: /1
+  reference:
+    2021-01-01: https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000039683972
+values:
+  # D-706. CGI art. 219, I, rédaction de la LF 2020 (art. 39), lue au JORF (D-413 :
+  # jumeau/historique/mesures_votees.yaml, lfi2020_is_grandes_entreprises) : 27,5 % pour
+  # les exercices ouverts en 2021, sur tout le bénéfice. Nul à partir de 2022, où le taux
+  # est unique (taux_normal.yaml, 25 %). Pas daté en 2020 : ces redevables y avaient un
+  # taux de 28 % jusqu'à 500 000 € de bénéfice et 31 % au-delà, une tranche que le
+  # module ne porte pas.
+  #
+  # Le chiffre d'affaires s'apprécie, pour une société membre d'un groupe intégré, sur la
+  # somme des chiffres d'affaires du groupe. La population est d'entreprises, pas de
+  # groupes : une filiale sous 250 M€ d'un grand groupe est taxée ici à 26,5 %.
+  2021-01-01:
+    value: 0.275
+  2022-01-01:
+    value: null

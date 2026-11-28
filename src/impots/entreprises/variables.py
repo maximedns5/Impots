@@ -152,7 +152,14 @@ class impot_societes(Variable):
         # The reduced rate applies to a slice, not to the whole profit: a firm just
         # over the ceiling does not suddenly pay 25 % on its first euro.
         part_reduite = np.minimum(benefice, p.plafond_taux_reduit) * eligible
-        return part_reduite * p.taux_reduit + (benefice - part_reduite) * p.taux_normal
+        taux_normal = p.taux_normal
+        # 2021 only (D-706): the normal rate depended on turnover, 27,5 % from 250 M€
+        # instead of 26,5 % (LF 2020 art. 39). Outside that year the parameter is null.
+        if _dated(p, "taux_normal_grandes_entreprises"):
+            ca = entreprise("chiffre_affaires", period)
+            taux_normal = np.where(ca >= p.seuil_ca_grandes_entreprises,
+                                   p.taux_normal_grandes_entreprises, p.taux_normal)
+        return part_reduite * p.taux_reduit + (benefice - part_reduite) * taux_normal
 
 
 class contribution_sociale_is(Variable):
@@ -321,12 +328,13 @@ class cvae(Variable):
         ca = entreprise("chiffre_affaires", period)
         # The guard has to cover the WHOLE schedule, not just the ceiling rate. An
         # earlier version checked `taux_max` alone — which is dated from 2010 — and
-        # then reached into `bareme.pente_t1`, which is dated from 2024 because the
-        # pre-2024 bracket coefficients were never verified against the primary text.
-        # The result was that no firm run at any year before 2024 could complete at
+        # then reached into `bareme.pente_t1`, which was dated from 2024 only. The
+        # result was that no firm run at any year before 2024 could complete at
         # all: `prelevements_entreprise` always computes CVAE, so a
         # ParameterNotFoundError from deep inside this formula killed the whole run.
-        # It surfaced when a backtest case tried to price a 2016 measure.
+        # It surfaced when a backtest case tried to price a 2016 measure. Since D-706
+        # the schedule is dated from 2020, read in the PLF 2021 and 2023 texts; before
+        # 2020 it is still undated, and the CVAE of those years is zero.
         if not _dated(p, "taux_max") or not _dated(p, "bareme", "pente_t1"):
             return np.zeros_like(ca)
 
@@ -360,11 +368,20 @@ class cvae(Variable):
 
         degrevement = (ca <= p.degrevement.seuil_ca) * p.degrevement.montant
         due = np.maximum(assiette * taux - degrevement, 0.0)
+        # Before 2024 (D-706), a minimum contribution instead of a franchise: above
+        # 500 000 € of turnover the CVAE could not be less than 250 €, 125 € from 2021,
+        # 63 € in 2023 (art. 1586 septies). Applied after the dégrèvement, a reading
+        # D-706 marks as still to be checked against the text.
+        if _dated(p, "cotisation_minimale", "montant"):
+            minimum = p.cotisation_minimale
+            due = np.where(ca > minimum.seuil_ca, np.maximum(due, minimum.montant), due)
         # Two different thresholds, and conflating them is the classic error: 152 500 €
         # is the scope test, while below 500 000 € the rate is simply nil. On top of
         # both sits a franchise — since 2024 there is no minimum contribution, so the
         # CVAE is owed from 64 €, not from 63 €.
-        return np.where((ca > p.seuil_assujettissement) & (due > p.franchise), due, 0.0)
+        if _dated(p, "franchise"):
+            due = np.where(due > p.franchise, due, 0.0)
+        return np.where(ca > p.seuil_assujettissement, due, 0.0)
 
 
 class prelevements_entreprise(Variable):

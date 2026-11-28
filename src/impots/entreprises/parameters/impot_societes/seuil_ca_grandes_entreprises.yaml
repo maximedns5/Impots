@@ -1,0 +1,13 @@
+description: "Chiffre d'affaires à partir duquel le taux normal de l'IS est majoré, en 2021"
+metadata:
+  unit: currency
+  reference:
+    2021-01-01: https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000039683972
+values:
+  # D-706. « Au moins 250 000 000 € de chiffre d'affaires » (LF 2020, art. 39 ;
+  # jumeau/historique/mesures_votees.yaml, lfi2020_is_grandes_entreprises) : égal ou
+  # supérieur. Nul à partir de 2022, avec le taux qu'il ouvre.
+  2021-01-01:
+    value: 250000000
+  2022-01-01:
+    value: null

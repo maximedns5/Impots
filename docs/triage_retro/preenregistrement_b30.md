@@ -576,3 +576,156 @@ commit des deux fiches du registre.
    partout serait la règle des cas 1 à 3, mais ferait du cas 8 une épreuve de signe.
 2. **L'ère de 2018 des aides au logement** (correction 1) : non corrigée ; sans effet sur
    ces deux cas, à corriger avant toute prestation chiffrée sur 2020.
+
+## Les cas 10 et 11 (D-706)
+
+**Brouillon**, écrit le 28 novembre sur `claude/but30` (9c21832a et le travail non commité
+qui date le module entreprises en arrière), avant toute passe sur la population réelle.
+Ni `chiffrages_preregistres/`, ni `reports/`, ni aucune évaluation préalable n'ont été
+ouverts ; aucun réseau. Les dispositifs des deux articles ont été relus en clair dans
+`data/interim/textes_retro/plf2021.md` (art. 3) et `plf2023.md` (art. 5). Le seul calcul
+est un essai de bouton sur les cellules de test (`load_cells`), dont on n'a gardé que le
+signe.
+
+**Ce que l'aveugle a vu, dit d'avance.** Les deux cas ont un rendement connu de mémoire
+(D-360), et le rédacteur de ce brouillon le connaît aussi : ils se notent à part, comme des
+révisions, et aucun montant retenu de mémoire n'entre ci-dessous. Pour le cas 11, de plus,
+le document qui porte sa fiche, l'évaluation préalable du PLF 2021, a déjà été ouvert par
+le coordinateur pour le cas 8 (D-705) : le cas est connu deux fois, comme le cas 5.
+
+| # | cas | couche, année | miroir | signe | tolérance | pronostic |
+|---|---|---|---|---|---|---|
+| 10 | `plf2023_art_5` | entreprises, 2023 (2024 ramené) | oui | coût | ±35 %, 200 M€ | en dessous ; dans si net d'IS |
+| 11 | `plf2021_art_3` | entreprises, 2021 (2024 ramené) | oui | coût | ±40 %, 200 M€ | en dessous ; dans si net d'IS |
+
+### Ce qui les rend chiffrables
+
+Le module entreprises est daté en arrière (D-706) : le barème de la CVAE de 2020 à 2023,
+lu dans les deux textes (les taux que le PLF 2021 remplace, ceux qu'il met à leur place,
+ceux que le PLF 2023 met à la place de ceux-ci), le dégrèvement des entreprises sous
+2 M€ de chiffre d'affaires (1 000, 500, 250 €) et la cotisation minimale de l'art. 1586
+septies (250, 125, 63 €), une branche de formule qui n'existait pas ; l'IS de 2021 (26,5 %,
+27,5 % à partir de 250 M€ de chiffre d'affaires, taux réduit 15 %), et
+`EARLIEST_YEAR = 2021`. Le recul de la population d'entreprises au PIB des comptes marche :
+`hypotheses.vieillissement_entreprises("insee_constate", 2024, …)` rend 0,8545 pour 2021
+et 0,9655 pour 2023 (« comptes nationaux (INSEE), de 2024 ramené à … »). Les cas types qui
+tiennent ces nombres, calculés à la main sur le barème des textes :
+`test_the_cvae_before_2024_is_the_schedule_of_its_text_by_hand` et
+`test_the_is_of_2021_is_the_two_rates_of_its_law_by_hand` (`tests/test_entreprises.py`),
+`test_twice_the_schedule_is_the_law_of_the_year_before` (`tests/test_cvae_echelle.py`).
+
+**Le bouton.** Les deux articles divisent le barème entier par deux, taux plafond,
+pentes, ordonnées, dégrèvement et minimum : `cvae_echelle = 2` dans l'année de l'article
+rétablit la loi d'avant, et le cas est en miroir (`--mirror`), comme le cas 4. En 2021,
+le doublement rend la loi de 2020 à l'euro (le minimum compris, 2 × 125 = 250 €). En 2023,
+il rend la loi de 2022, à un euro près sur le minimum : 2 × 63 = 126 € au lieu de 125 €,
+sur les seules entreprises que le minimum relève, un écart de l'ordre de la centaine de
+milliers d'euros, dit et non corrigé. Les fichiers à écrire, hors de ce brouillon :
+
+* `reforms/plf2023_art_5.json` : `{"cvae_echelle": 2.0}` ;
+* `reforms/plf2021_art_3.json` : `{"cvae_echelle": 2.0}`.
+
+**Ce que le moteur ne porte pas des articles.** Le plafonnement de la CET en fonction de
+la valeur ajoutée (3 % → 2 % en 2021 ; 2 % → 1,625 % en 2023), qui réduit ce que la baisse
+rend aux entreprises plafonnées et que l'article abaisse à son tour ; la taxe additionnelle
+pour frais de chambres (art. 1600 : 6,92 % → 3,46 % en 2021 ; supprimée en partie en 2023) ;
+la CFE ; l'affectation (la fraction de TVA des régions en 2021, du bloc communal et des
+départements en 2023), qui ne change pas l'impôt des entreprises ; l'acompte (K du PLF
+2021, à partir de 2022). Le PLF 2023 supprime aussi la CVAE en 2024 : cette étape a été
+remplacée par la LF 2024 avant son effet (D-701), et le cas 10 n'est que l'étape de 2023.
+
+### 10. PLF 2023, art. 5 — la CVAE de 2023 divisée par deux
+
+L'arbre de 2023 porte l'article (0,375 %, dégrèvement 250 €, minimum 63 €) ; la loi
+d'avant est celle de 2022 reconduite (0,75 %, 500 €, 125 €). `cvae_echelle = 2` en 2023,
+`--mirror`. Population du millésime 2023 (impôts de 2024), ramenée à 2023 par le PIB des
+comptes (×0,9655). Le coût du moteur est net du retour d'IS de la déductibilité (D-347),
+au taux de 25 %.
+
+Raison (R10) : « La CVAE due au titre de 2023 divisée par deux (taux maximal 0,375 % au
+lieu de 0,75 %, pentes, ordonnées, dégrèvement de 250 EUR et cotisation minimale de
+63 EUR avec lui), chiffrée en miroir : le barème de 2022 rétabli en 2023, dont l'article
+est l'opposé. Plus ou moins 35 % parce que : la CVAE de 2024 de cette population sort à
+−15,2 % des comptes nationaux (D292) ; le millésime est ramené à 2023 au PIB nominal, pas
+à la valeur ajoutée, et ses chiffres d'affaires de 2024 sont lus sur les seuils de 2023,
+ce qui place quelques entreprises un cran plus haut dans le barème ; le coût est net du
+retour d'IS, et un comparateur brut serait plus haut d'environ le quart de la CVAE des
+entreprises bénéficiaires ; ni le plafonnement de la CET, qui réduit ce que l'article
+rend, ni la taxe additionnelle pour frais de chambres ne sont portés ; le barème d'avant
+2024 est lu dans le texte du projet, le taux plafond seul vérifié sur la loi votée ; la
+population est bâtie par cellules ; le chiffre officiel est une prévision faite avant
+l'année. Le niveau et le retour d'IS tirent vers le bas, le plafonnement vers le haut :
+fenêtre symétrique, d'un cran plus large que celle du cas 4 pour l'année de recul.
+Plancher de 200 M EUR. »
+
+Pronostic : en dessous ; dans la tolérance si le comparateur est net de l'IS, à la limite
+ou hors s'il est brut. Base : la CVAE due au titre de 2023 (acomptes de 2023, solde de
+2024) ; le comparateur attendu est l'effet de l'article en 2023, pas son coût de 2024 ni
+son coût en régime de croisière. Signe : coût (l'essai sur les cellules de test : le
+doublement rapporte, l'article est son opposé).
+
+### 11. PLF 2021, art. 3 — la CVAE de 2021 divisée par deux
+
+L'arbre de 2021 porte l'article (0,75 %, dégrèvement 500 €, minimum 125 €) ; la loi
+d'avant est celle de 2020 (1,5 %, 1 000 €, 250 €), que le texte remplace en clair.
+`cvae_echelle = 2` en 2021, `--mirror`. Population du millésime 2023 ramenée à 2021 par le
+PIB des comptes (×0,8545). Le retour d'IS de la déductibilité se fait au taux de 2021,
+26,5 % et 27,5 % au-delà de 250 M€ de chiffre d'affaires : c'est pour lui que l'IS de 2021
+est daté.
+
+Raison (R11) : « La CVAE due au titre de 2021 divisée par deux (taux maximal 0,75 % au
+lieu de 1,5 %, pentes, ordonnées, dégrèvement de 500 EUR et cotisation minimale de
+125 EUR avec lui), chiffrée en miroir : le barème de 2020 rétabli en 2021, dont l'article
+est l'opposé. Plus ou moins 40 % parce que : la CVAE de 2024 de cette population sort à
+−15,2 % des comptes nationaux (D292) ; le millésime est ramené de trois ans au PIB
+nominal, pas à la valeur ajoutée, et sa structure par secteur et par taille est celle de
+2024 ; 2021 est l'année du rebond, après une année 2020 dont la valeur ajoutée a chuté, et
+la prévision officielle, faite à l'automne 2020, ne pouvait pas le voir ; ses chiffres
+d'affaires de 2024, lus sur les seuils de 2021, placent des entreprises un cran trop haut
+dans le barème ; le coût est net du retour d'IS, et un comparateur brut serait plus haut
+d'un peu plus du quart de la CVAE des entreprises bénéficiaires ; le seuil de 250 M EUR de
+l'IS se lit sur l'entreprise, pas sur le groupe intégré ; ni le plafonnement de la CET (de
+3 à 2 %, que l'article abaisse), ni la taxe additionnelle pour frais de chambres ne sont
+portés ; le barème est lu dans le texte du projet, le taux plafond seul vérifié sur la loi
+votée. Le niveau et le retour d'IS tirent vers le bas, les seuils et le plafonnement vers
+le haut : fenêtre symétrique, plus large que celle du cas 10 pour les deux années de plus
+et l'année de crise. Plancher de 200 M EUR. »
+
+Pronostic : en dessous ; dans la tolérance si le comparateur est net de l'IS, à la limite
+ou hors s'il est brut. Base : la CVAE due au titre de 2021. Si la fiche chiffre l'ensemble
+de la baisse des impôts de production (cet article et l'art. 4, les valeurs locatives des
+établissements industriels), le cas se note sur la seule part de la CVAE, si la fiche la
+donne ; sinon il reste non noté. Signe : coût.
+
+### Les commandes de passe
+
+Depuis `/home/user/Impots-b30`, chacune détachée, après le commit et le push de D-706 qui
+porte ces raisons, la datation et les deux réformes. `R10` et `R11` sont les textes
+ci-dessus, entre guillemets :
+
+```
+PYTHONPATH=src /home/user/impots/.venv/bin/impots chiffrage register-entreprises \
+  plf2023_art_5 --reform reforms/plf2023_art_5.json --year 2023 --vintage 2023 \
+  --vieillir insee_constate --mirror --tolerance-relative 0.35 \
+  --tolerance-absolute 200000000 --tolerance-rationale "R10"
+PYTHONPATH=src /home/user/impots/.venv/bin/impots chiffrage register-entreprises \
+  plf2021_art_3 --reform reforms/plf2021_art_3.json --year 2021 --vintage 2023 \
+  --vieillir insee_constate --mirror --tolerance-relative 0.40 \
+  --tolerance-absolute 200000000 --tolerance-rationale "R11"
+```
+
+Aucune ne prend `--apres-annexe`. Les fiches du PLF 2023 (celle qui attend déjà pour le
+cas 1) et du PLF 2021 (déjà ouverte pour le cas 8) se lisent après le commit des deux
+fiches du registre.
+
+### Ce qui reste à décider
+
+1. **Le barème voté.** Les coefficients d'avant 2024 sont ceux des projets ; seul le taux
+   plafond voté est vérifié au JORF (`lfi2021_cvae_regions`, `lfi2023_cvae`). Les lire
+   sur JORFARTI000042753599 et JORFARTI000046845693 avant la passe, ou dire que la passe
+   porte le projet.
+2. **L'ordre du minimum et du dégrèvement.** La formule relève au minimum la cotisation
+   déjà dégrevée ; aucun texte du dépôt ne le dit. Sans effet sur les entreprises au-delà
+   de 2 M€ de chiffre d'affaires.
+3. **Le cas 11, deux fois connu.** Sa fiche est dans un document déjà ouvert (D-705). Le
+   garder au banc, noté à part, ou le retirer.

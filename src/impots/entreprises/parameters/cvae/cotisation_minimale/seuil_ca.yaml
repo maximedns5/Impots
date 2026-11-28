@@ -1,0 +1,13 @@
+description: "CA au-delà duquel la cotisation minimale de CVAE est due, avant 2024 (CGI art. 1586 septies)"
+# D-706. « Le minimum de cotisation ne s'applique qu'au-delà » de 500 000 € de chiffre
+# d'affaires : loi n° 2009-1673, art. 2 (JORFARTI000021557915), lu au JORF pour D-440, et
+# seuil gardé par la loi n° 2022-1726, art. 55 ; la formule lit « au-delà » strictement.
+metadata:
+  unit: currency
+  reference:
+    2010-01-01: https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000021557915
+values:
+  2020-01-01:
+    value: 500000
+  2024-01-01:
+    value: null

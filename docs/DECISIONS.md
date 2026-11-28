@@ -44692,3 +44692,55 @@ Sénat ne les lient. Les pistes, à ouvrir depuis un navigateur : `budget.gouv.f
 **Le compte.** Sept cas notés dans ce but, six dans leur tolérance ; deux aveugles (3 et 8,
 le second avec la réserve de D-703), tous deux dans. Avec les cinq d'avant, douze cas
 notés, neuf dans leur tolérance.
+
+## D-706 — Le module entreprises daté en arrière : la CVAE de 2020 à 2023, l'IS de 2021
+
+**Ce qui est fait** (D-701 : dater le moteur rouvre plus que des boutons). Le barème de la
+CVAE est daté de 2020 à 2023, lu dans les textes du dépôt : les taux que le PLF 2021 (art.
+3, I, D et F) remplace, ceux qu'il met à leur place, ceux que le PLF 2023 (art. 5, I, H et
+I) met à la place de ceux-ci. 2020 : 0,5 % ; 0,5 + 0,9 % ; 1,4 + 0,1 % ; 1,5 % ; dégrèvement
+de 1 000 € sous 2 M€ de chiffre d'affaires. 2021 et 2022 : la moitié, 500 €. 2023 : le
+quart, 250 €. La cotisation minimale de l'art. 1586 septies (250, 125 et 63 € au-delà de
+500 000 € de chiffre d'affaires) devient une branche de la formule, que la franchise de
+2024 remplace ; `cvae_echelle` la déplace avec le barème. L'IS de 2021 est daté : 26,5 %,
+27,5 % à partir de 250 M€ de chiffre d'affaires (LF 2018, art. 84 ; LF 2020, art. 39 ; lus
+au JORF par D-413), taux réduit 15 %. `EARLIEST_YEAR` passe de 2022 à 2021.
+
+**Deux tests changent de règle, pas d'assertion.** `test_the_normal_rate_has_no_value_…`
+tenait qu'aucun taux n'existe en 2021, faute d'un taux selon le chiffre d'affaires ; le
+module le porte, et le test tient désormais 2020 vide et 2021 à 26,5 et 27,5 %. Le refus
+d'année de `test_predictif_entreprises.py` passe de 2021 à 2020.
+
+**Les nombres tenus**, à la main sur le barème des textes, vus rouges sur le code d'avant
+(la CVAE de ces années valait zéro, l'IS de 2021 ne se calculait pas) : la CVAE de quatre
+entreprises types en 2020, 2021 et 2023 ; le minimum de 2021 dû au-delà de 500 000 €
+seulement ; l'IS de 2021 au-delà de 250 M€ ; le barème doublé de 2021 et de 2023 égal à la
+loi d'avant, à 1 € près sur le minimum de 2023 (2 × 63 contre 125 €). 200 tests légers des
+fichiers touchés passent ; ruff est propre.
+
+**Ce qui change hors des cas.** La CVAE de 2022 et 2023 valait zéro en silence, y compris
+dans `/entreprises/simulate` ; elle est désormais due. Les lignes de la CVAE de la grille
+en 2022 et 2023 sont refusées (D-362) et l'IS de la loi ne dépend pas de la CVAE : la
+grille ne bouge pas. Aucune étude ne lit ces années.
+
+**À vérifier, dit dans les fichiers.** Les coefficients d'avant 2024 sont ceux des projets ;
+seul le taux plafond voté est vérifié. L'ordre du minimum après le dégrèvement, le taux
+réduit de 2021 et l'absence de tranche de bénéfice en 2021 ne sont lus sur aucun texte du
+dépôt. Le dégrèvement de 2023 vaut « inférieur à 2 000 000 € » au texte, le code teste
+« inférieur ou égal » : non changé. 2010 à 2019 restent sans barème.
+
+**Les cas 10 et 11, préenregistrés avant toute passe** (construction, raisons R10 et R11 et
+commandes dans `docs/triage_retro/preenregistrement_b30.md`) :
+
+| # | cas | année | construction | tolérance | pronostic |
+|---|---|---|---|---|---|
+| 10 | `plf2023_art_5` | 2023 | miroir, ramenée | ±35 %, 200 M€ | en dessous, dans si net |
+| 11 | `plf2021_art_3` | 2021 | miroir, ramenée | ±40 %, 200 M€ | en dessous, dans si net |
+
+Le bouton est `cvae_echelle = 2` : la loi d'avant de chaque article. Le moteur ne porte ni
+le plafonnement de la CET, ni la TACVAE, ni la CFE ; l'étape 2024 du PLF 2023, remplacée
+par la LF 2024 avant son effet, n'est pas chiffrée. Si la fiche du PLF 2021 ne chiffre que
+l'ensemble des impôts de production (art. 3 et 4 ensemble), le cas 11 reste non noté. Les
+deux ont un rendement connu de mémoire (D-360) et se notent à part ; le cas 11 l'est deux
+fois, sa fiche étant dans l'évaluation préalable du PLF 2021, ouverte pour le cas 8 (son
+art. 2 seul a été lu).

@@ -141,6 +141,29 @@ def test_the_read_back_refuses_a_cvae_brought_back_where_the_law_has_none() -> N
         verify_scales(_reform(revived), FirmReformSpec(cvae_echelle=0.5), 2030)
 
 
+#: Les entreprises types de `test_entreprises.py` (D-706) : 6,2, 40,1, 80 et 1,5 M€ de CA.
+FIRMES_TYPES = ([6.2e6, 40.1e6, 80e6, 1.5e6], [1.86e6, 12.03e6, 20e6, 0.6e6])
+
+
+@pytest.mark.parametrize(("year", "expected"), [
+    # 2021 doublé : la loi de 2020 à l'euro, calculée à la main dans test_entreprises.py
+    # (0,91 %, 1,48 %, 1,5 % ; 1 200 € moins 1 000 €, relevés au minimum de 250 €).
+    (2021, [16_926.0, 178_044.0, 300_000.0, 250.0]),
+    # 2023 doublé : la loi de 2022 (0,46 %, 0,74 %, 0,75 % ; 600 € moins 500 €), à un
+    # euro près sur le minimum, 2 × 63 = 126 € là où la loi de 2022 dit 125 €.
+    (2023, [8_556.0, 89_022.0, 150_000.0, 126.0]),
+])
+def test_twice_the_schedule_is_the_law_of_the_year_before(year: int,
+                                                          expected: list[float]) -> None:
+    """Le bouton des cas 10 et 11 (D-706) : la LF 2021 et la LF 2023 divisent chacune le
+    barème par deux, dégrèvement et cotisation minimale compris ; le barème de l'année
+    doublé est la loi d'avant. Le minimum suit le facteur : sans lui, l'entreprise de
+    1,5 M€ resterait à 125 € (2021) ou 63 € (2023)."""
+    doubled = _cvae(firm_system.reformed_for(FirmReformSpec(cvae_echelle=2.0), year),
+                    *FIRMES_TYPES, year=year)
+    assert doubled == pytest.approx(expected, rel=1e-5)
+
+
 # --------------------------------------------------------------------------- #
 # the carried path
 # --------------------------------------------------------------------------- #
