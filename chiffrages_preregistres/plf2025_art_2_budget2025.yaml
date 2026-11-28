@@ -1,0 +1,66 @@
+case: plf2025_art_2_budget2025
+pre_registered: '2026-11-28T11:21:39+00:00'
+commit: 1b0d47a759591fed7275cc615eb0dd5bc940ebf4
+scenario: plf2025_art_2_projet
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 3428622035.9518228
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.15
+  absolute_eur: 200000000.0
+  rationale: 'Indexation de 2 % des tranches, de la décote, du plafond général de
+    la demi-part et de celui du parent isolé, revenus 2024, le projet contre le barème
+    des revenus 2023 gelé : deux passes sur les mêmes ménages, le projet contre la
+    loi votée (1,8 %) moins le barème gelé contre la loi votée. Plus ou moins 15 %
+    parce que : l''impôt au barème de cette population sort à −4,2 % de la DGFiP,
+    et les foyers par taux marginal de −14 % à +5 % selon la tranche, environ −2 %
+    une fois pondérés par le saut de taux ; la population est celle de l''année, sans
+    vieillissement ; le scénario ne porte ni les trois autres plafonds de quotient
+    familial ni le 196 B, de l''ordre de −1 à −2 % ; le chiffrage officiel est fait
+    sur des revenus projetés ; le sous-échantillon de 20 000 ménages ajoute un bruit
+    de l''ordre du pour cent. Ces biais tirent vers le bas ; la fenêtre reste symétrique
+    parce qu''aucun n''est sûr. Plancher de 200 M EUR pour le cas où le chiffre publié
+    serait petit.'
+note: 'Révision de « plf2025_art_2 », écrite après l''ouverture de l''annexe : pas
+  un préenregistrement aveugle. Conversion à l''effet budgétaire de 2025 par le calendrier
+  du PAS, fixée d''avance par D-702 avant l''ouverture de la fiche ; la fiche publie
+  la première année (avis et PAS).'
+bound: two-sided
+mirror: false
+comparator:
+  published_eur: 3700000000.0
+  source: 'PLF 2025, évaluations préalables des articles (texte AN n° 324), art. 2,
+    § 4.2.1, p. 18 : « le rendement de l''IR aurait été majoré d''environ 3,7 Md€
+    en 2025 (somme de l''effet sur les avis d''imposition au titre des revenus 2024
+    et de l''effet sur le prélèvement à la source) »'
+  vintage: PLF 2025 (texte n° 324, déposé le 2024-10-10) ; 500 000 déclarations de
+    2022 et 2023 vieillies 2024 (§ 4.3)
+  perimeter: IR, État ; le projet (2 %) contre le barème des revenus 2023 gelé ; mêmes
+    volets que l'art. 2 du PLF 2024, non séparés.
+  net_of: 'Effet budgétaire de 2025 : avis sur les revenus 2024 et PAS ; aucun effet
+    comportemental. Converti par la règle de D-702.'
+  sign: cost
+  basis: premiere-annee
+  retrieved: '2026-11-28'
+revision:
+  de: plf2025_art_2
+  apres_annexe: true
+  annee_budgetaire: 2025
+  premiere_annee_de_revenus: 2024
+  annee_pleine_eur: 2571466526.963867
+  methode: impots.pas.budget_effects, 4 mois de taux mis à jour
+  raison: Conversion à l'effet budgétaire de 2025 par le calendrier du PAS, fixée
+    d'avance par D-702 avant l'ouverture de la fiche ; la fiche publie la première
+    année (avis et PAS).
+moins:
+  scenario: plf2025_art_2
+  mechanical_eur: -2323074834.422119
+principal_eur: 248391692.54174805
