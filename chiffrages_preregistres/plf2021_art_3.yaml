@@ -42,7 +42,20 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: true
-comparator: null
+comparator:
+  published_eur: 5900000000.0
+  sign: cost
+  basis: premiere-annee
+  retrieved: '2026-11-28'
+  source: 'PLF 2021, évaluations préalables des articles (texte AN n° 3360), art. 3, § 4.2,
+    tableau p. 30 : « État -5,9 » Md€ en 2021 (-5,1 en 2022, -5,5 ensuite) ; § 4.3.1, p. 30
+    : la réduction de 50 % de la CVAE « estimé à 7,2 Md€ » avant effet sur l''IS'
+  vintage: PLF 2021 (texte n° 3360) ; impositions de CVAE 2018 (§ 4.3)
+  perimeter: État (les régions compensées par la TVA) ; la baisse de moitié de la CVAE et
+    de la cotisation minimale, et la baisse du taux du plafonnement en fonction de la valeur
+    ajoutée de 3 à 2 %, non séparées ; le moteur ne porte pas le plafonnement.
+  net_of: Net d'IR et d'IS (taux moyen de 20 %, 70 % dès 2021, § 4.3.3) ; le moteur est net
+    du retour d'IS (D-347). Le brut de la seule CVAE est 7,2 Md€.
 vieillissement:
   jeu: insee_constate
   de: 2024

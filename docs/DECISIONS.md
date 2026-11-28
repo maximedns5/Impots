@@ -44744,3 +44744,23 @@ l'ensemble des impôts de production (art. 3 et 4 ensemble), le cas 11 reste non
 deux ont un rendement connu de mémoire (D-360) et se notent à part ; le cas 11 l'est deux
 fois, sa fiche étant dans l'évaluation préalable du PLF 2021, ouverte pour le cas 8 (son
 art. 2 seul a été lu).
+
+## D-707 — Le cas 11 noté : la CVAE divisée par deux en 2021, dans sa tolérance
+
+**La fiche** (évaluation préalable du PLF 2021, art. 3, lue après le commit du cas,
+059fbdb). Le tableau du § 4.2, p. 30 : « État -5,9 » Md€ en 2021, net d'IR et d'IS (un taux
+moyen de 20 %, 70 % de l'effet dès 2021, § 4.3.3). Le périmètre est l'article entier : la
+baisse de moitié de la CVAE et de la cotisation minimale, et la baisse du taux du
+plafonnement en fonction de la valeur ajoutée de 3 à 2 %, que le moteur ne porte pas ; la
+fiche ne les sépare pas. Le brut de la seule CVAE est donné à part, 7,2 Md€ (§ 4.3.1). Le
+comparateur retenu est le net de l'État, comme aux cas 4 et 6, sur la base du moteur.
+
+**La note.** Le cas 11 (`plf2021_art_3`) : +5,962 Md€ contre +5,9, **+1,0 %, dans** sa
+tolérance de ±40 %. Le pronostic disait « en dessous » : il est au-dessus, de peu. L'accord
+est en partie fortuit : le moteur ne porte pas le plafonnement, qui réduit le gain des
+entreprises plafonnées, et sa population est celle de 2024 ramenée au PIB, sur les seuils
+de 2021. Le rendement était connu de mémoire (D-360) : la note se lit à part.
+
+**Ce qui attend.** Le cas 10 (`plf2023_art_5`) attend, comme les cas 1 et 9, une fiche
+que budget.gouv.fr refuse au conteneur. Le compte du but : huit cas notés, sept dans leur
+tolérance ; deux aveugles, dans.
