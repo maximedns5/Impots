@@ -1,0 +1,53 @@
+case: plf2021_art_3
+pre_registered: '2026-11-28T11:53:20+00:00'
+commit: dfdf7c79f87ec8f5e0ac49bd156a0c4ac42381f3
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2021
+  spec:
+    cvae_echelle: 2.0
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -5961596315.50806
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.4
+  absolute_eur: 200000000.0
+  rationale: 'La CVAE due au titre de 2021 divisée par deux (taux maximal 0,75 % au
+    lieu de 1,5 %, pentes, ordonnées, dégrèvement de 500 EUR et cotisation minimale
+    de 125 EUR avec lui), chiffrée en miroir : le barème de 2020 rétabli en 2021,
+    dont l''article est l''opposé. Plus ou moins 40 % parce que : la CVAE de 2024
+    de cette population sort à −15,2 % des comptes nationaux (D292) ; le millésime
+    est ramené de trois ans au PIB nominal, pas à la valeur ajoutée, et sa structure
+    par secteur et par taille est celle de 2024 ; 2021 est l''année du rebond, après
+    une année 2020 dont la valeur ajoutée a chuté, et la prévision officielle, faite
+    à l''automne 2020, ne pouvait pas le voir ; ses chiffres d''affaires de 2024,
+    lus sur les seuils de 2021, placent des entreprises un cran trop haut dans le
+    barème ; le coût est net du retour d''IS, et un comparateur brut serait plus haut
+    d''un peu plus du quart de la CVAE des entreprises bénéficiaires ; le seuil de
+    250 M EUR de l''IS se lit sur l''entreprise, pas sur le groupe intégré ; ni le
+    plafonnement de la CET (de 3 à 2 %, que l''article abaisse), ni la taxe additionnelle
+    pour frais de chambres ne sont portés ; le barème est lu dans le texte du projet,
+    le taux plafond seul vérifié sur la loi votée. Le niveau et le retour d''IS tirent
+    vers le bas, les seuils et le plafonnement vers le haut : fenêtre symétrique,
+    plus large que celle du cas 10 pour les deux années de plus et l''année de crise.
+    Plancher de 200 M EUR.'
+note: ''
+bound: two-sided
+mirror: true
+comparator: null
+vieillissement:
+  jeu: insee_constate
+  de: 2024
+  vers: 2021
+  facteur: 0.8544805255863583
+  source: comptes nationaux (INSEE), de 2024 ramené à 2021
+  pib_valeur: {}
+  convention: le coût du millésime suit le PIB nominal (D-246)

@@ -1,0 +1,50 @@
+case: plf2023_art_5
+pre_registered: '2026-11-28T11:53:19+00:00'
+commit: dfdf7c79f87ec8f5e0ac49bd156a0c4ac42381f3
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2023
+  spec:
+    cvae_echelle: 2.0
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -3425079883.6711183
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.35
+  absolute_eur: 200000000.0
+  rationale: 'La CVAE due au titre de 2023 divisée par deux (taux maximal 0,375 %
+    au lieu de 0,75 %, pentes, ordonnées, dégrèvement de 250 EUR et cotisation minimale
+    de 63 EUR avec lui), chiffrée en miroir : le barème de 2022 rétabli en 2023, dont
+    l''article est l''opposé. Plus ou moins 35 % parce que : la CVAE de 2024 de cette
+    population sort à −15,2 % des comptes nationaux (D292) ; le millésime est ramené
+    à 2023 au PIB nominal, pas à la valeur ajoutée, et ses chiffres d''affaires de
+    2024 sont lus sur les seuils de 2023, ce qui place quelques entreprises un cran
+    plus haut dans le barème ; le coût est net du retour d''IS, et un comparateur
+    brut serait plus haut d''environ le quart de la CVAE des entreprises bénéficiaires
+    ; ni le plafonnement de la CET, qui réduit ce que l''article rend, ni la taxe
+    additionnelle pour frais de chambres ne sont portés ; le barème d''avant 2024
+    est lu dans le texte du projet, le taux plafond seul vérifié sur la loi votée
+    ; la population est bâtie par cellules ; le chiffre officiel est une prévision
+    faite avant l''année. Le niveau et le retour d''IS tirent vers le bas, le plafonnement
+    vers le haut : fenêtre symétrique, d''un cran plus large que celle du cas 4 pour
+    l''année de recul. Plancher de 200 M EUR.'
+note: ''
+bound: two-sided
+mirror: true
+comparator: null
+vieillissement:
+  jeu: insee_constate
+  de: 2024
+  vers: 2023
+  facteur: 0.9654508189460745
+  source: comptes nationaux (INSEE), de 2024 ramené à 2023
+  pib_valeur: {}
+  convention: le coût du millésime suit le PIB nominal (D-246)
