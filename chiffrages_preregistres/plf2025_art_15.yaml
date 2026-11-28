@@ -1,0 +1,43 @@
+case: plf2025_art_15
+pre_registered: '2026-11-28T10:58:52+00:00'
+commit: 9bd29802198a7c23cdf52cf51ef2340fe418eddd
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2025
+  spec:
+    cvae_echelle: 1.473684
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -826857322.9401828
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 100000000.0
+  rationale: 'Le barème de la CVAE due au titre de 2025 ramené à celui de 2024 (taux
+    maximal 0,28 % au lieu de 0,19 %), contre la trajectoire de la LF 2024. Plus ou
+    moins 30 % parce que : la CVAE de 2024 de cette population sort à −15,2 % des
+    comptes nationaux ; le millésime est vieilli à 2025 au PIB nominal, pas à la valeur
+    ajoutée ; l''échelle unique sous-estime d''un à deux pour cent les pentes des
+    petites tranches ; le coût est net du retour d''IS ; ni le report du plafonnement
+    de la CET ni la taxe additionnelle pour CCI France ne sont portés ; le chiffre
+    officiel est une prévision faite avant l''année. Les biais tirent vers le bas,
+    le plafonnement vers le haut : fenêtre symétrique. Plancher de 100 M EUR.'
+note: ''
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: insee_constate
+  de: 2024
+  vers: 2025
+  facteur: 1.0190172102004744
+  source: comptes nationaux (INSEE) de 2024 à 2025
+  pib_valeur: {}
+  convention: le coût du millésime suit le PIB nominal (D-246)

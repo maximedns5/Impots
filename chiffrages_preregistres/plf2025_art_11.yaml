@@ -1,0 +1,44 @@
+case: plf2025_art_11
+pre_registered: '2026-11-28T10:58:51+00:00'
+commit: 9bd29802198a7c23cdf52cf51ef2340fe418eddd
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2024
+  spec:
+    cebge_seuils_et_taux:
+    - seuil_ca: 1000000000.0
+      taux: 0.206
+    - seuil_ca: 3000000000.0
+      taux: 0.412
+    cebge_prorogation_largeur: 100000000.0
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -9520811618.992447
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.4
+  absolute_eur: 300000000.0
+  rationale: 'Premier exercice de la CEBGE (exercice 2024), 20,6 % et 41,2 %, seuils
+    de 1 et 3 Md EUR de chiffre d''affaires, contre un droit de 2024 qui ne la connaît
+    pas. Plus ou moins 40 % parce que : la contribution est assise sur l''IS de quelques
+    centaines d''entreprises, tirées dans les cellules des grandes entreprises d''une
+    population bâtie par cellules (331 lignes au-delà d''un milliard, 197 au-delà
+    de trois), dont la queue de distribution n''est calée sur aucun total de la CEBGE
+    ; l''IS de cette population sort de −20 % à +2 % selon l''année, la contribution
+    sociale sur l''IS, que paient surtout les grandes, de −20 % à +34 % (+20 % en
+    2024) ; la base est la moyenne de deux exercices, prise stationnaire (D-022) ;
+    le seuil se lit sur l''entreprise de la population, pas sur le groupe intégré,
+    ce qui tire vers le bas. La contribution sociale tire vers le haut, le seuil vers
+    le bas : la direction n''est pas connue d''avance, d''où une fenêtre symétrique.
+    Plancher de 300 M EUR.'
+note: ''
+bound: two-sided
+mirror: false
+comparator: null

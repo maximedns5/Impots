@@ -1,0 +1,53 @@
+case: plf2024_art_2
+pre_registered: '2026-11-28T10:53:28+00:00'
+commit: 9bd29802198a7c23cdf52cf51ef2340fe418eddd
+scenario: plf2024_art_2
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -6003011078.811035
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.15
+  absolute_eur: 200000000.0
+  rationale: 'Indexation de 4,8 % des tranches, de la décote, du plafond général de
+    la demi-part et de celui du parent isolé, revenus 2023, chiffrée en miroir : le
+    barème des revenus 2022 rétabli sur l''arbre de 2023. Plus ou moins 15 % parce
+    que : l''impôt au barème de cette population, ramenée à 2023 par les indices constatés
+    de l''Insee, sort à −0,1 % de la DGFiP, et les foyers par taux marginal de −13
+    % à +12 % selon la tranche, environ +1,6 % une fois pondérés par le saut de taux
+    ; la structure des ménages est celle de 2024 ; le scénario ne porte ni les trois
+    autres plafonds de quotient familial ni le 196 B, de l''ordre de −1 à −2 % ; le
+    chiffrage officiel est fait sur des revenus projetés ; le sous-échantillon de
+    20 000 ménages ajoute un bruit de l''ordre du pour cent. Les biais se compensent
+    : fenêtre symétrique. Plancher de 200 M EUR pour le cas où le chiffre publié serait
+    petit.'
+note: ''
+bound: two-sided
+mirror: true
+comparator: null
+vieillissement:
+  jeu: insee_constate
+  source: 'Insee, constaté : salaires par tête, D11 sur l''emploi intérieur salarié
+    (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac,
+    ensemble des ménages, France (BDM 001768695)'
+  de: 2024
+  vers: 2023
+  salaires:
+    '2024': 0.026386633280596428
+  prix:
+    '2024': 0.018000000000000002
+  facteur_salaires: 0.9742917216329504
+  facteur_prix: 0.9823182711198428
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

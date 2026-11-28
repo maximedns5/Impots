@@ -1,0 +1,38 @@
+case: plf2024_art_8
+pre_registered: '2026-11-28T10:58:50+00:00'
+commit: 9bd29802198a7c23cdf52cf51ef2340fe418eddd
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2024
+  spec:
+    cvae_echelle: 0.0
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 2646149946.3669586
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 200000000.0
+  rationale: 'Le barème de la CVAE due au titre de 2024 (taux maximal 0,28 %, dégrèvement
+    de 188 EUR), contre sa suppression en 2024 que prévoyait la LF 2023, chiffré en
+    miroir : la CVAE de 2024 mise à zéro, dont l''article est l''opposé. Plus ou moins
+    30 % parce que : la CVAE de 2024 de cette population sort à −15,2 % des comptes
+    nationaux (D292, droits constatés, tous affectataires) ; le coût du moteur est
+    net du retour d''IS de la déductibilité, et un comparateur brut serait plus haut
+    d''environ le quart de la CVAE payée par les entreprises bénéficiaires ; ni le
+    plafonnement de la CET en fonction de la valeur ajoutée, qui réduit ce que l''article
+    garde, ni la taxe additionnelle pour frais de chambres ne sont portés ; la population
+    d''entreprises est bâtie par cellules ; le chiffre officiel est une prévision
+    faite un an avant. Les deux premiers biais tirent vers le bas, le plafonnement
+    vers le haut : la fenêtre est symétrique. Plancher de 200 M EUR.'
+note: ''
+bound: two-sided
+mirror: true
+comparator: null

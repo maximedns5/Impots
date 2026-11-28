@@ -1,0 +1,58 @@
+case: plf2023_art_2
+pre_registered: '2026-11-28T10:51:56+00:00'
+commit: 9bd29802198a7c23cdf52cf51ef2340fe418eddd
+scenario: plf2023_art_2
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -6453497151.637207
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.2
+  absolute_eur: 200000000.0
+  rationale: 'Indexation de 5,4 % des tranches, de la décote, du plafond général de
+    la demi-part et de celui du parent isolé, revenus 2022, chiffrée en miroir : le
+    barème des revenus 2021 rétabli sur l''arbre de 2022, dont l''article est l''opposé.
+    Plus ou moins 20 % parce que : le coût d''une indexation suit le nombre de foyers
+    au-dessus de chaque seuil, pondéré par le saut de taux, et les foyers par taux
+    marginal de cette population, ramenée à 2022 par les indices constatés de l''Insee,
+    sortent de −12 % à +12 % de la DGFiP selon la tranche, environ +2 % une fois pondérés
+    ; l''impôt au barème de 2022 n''a pas de total publié dans la grille, et l''IR
+    net de cette année en sort à +6,2 % ; la structure des ménages est celle de 2024,
+    deux ans plus tard ; le scénario ne porte ni les trois autres plafonds de quotient
+    familial ni le 196 B, de l''ordre de −1 à −2 % ; le chiffrage officiel est fait
+    sur des revenus projetés avant l''année ; et le sous-échantillon de 20 000 ménages
+    ajoute un bruit de l''ordre du pour cent. Les biais se compensent à peu près :
+    la direction nette n''est pas connue d''avance, d''où une fenêtre symétrique.
+    Plancher de 200 M EUR pour le cas où le chiffre publié serait petit.'
+note: ''
+bound: two-sided
+mirror: true
+comparator: null
+vieillissement:
+  jeu: insee_constate
+  source: 'Insee, constaté : salaires par tête, D11 sur l''emploi intérieur salarié
+    (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac,
+    ensemble des ménages, France (BDM 001768695)'
+  de: 2024
+  vers: 2022
+  salaires:
+    '2023': 0.046620701783021135
+    '2024': 0.026386633280596428
+  prix:
+    '2023': 0.048
+    '2024': 0.018000000000000002
+  facteur_salaires: 0.9308928439626207
+  facteur_prix: 0.9373265945800026
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage

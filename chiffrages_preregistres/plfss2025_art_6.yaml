@@ -1,0 +1,60 @@
+case: plfss2025_art_6
+pre_registered: '2026-11-28T10:58:48+00:00'
+commit: 9bd29802198a7c23cdf52cf51ef2340fe418eddd
+scenario: plfss2025_art_6_projet
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -7159159246.69165
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 200000000.0
+  rationale: 'L''étape du 1er janvier 2025 du projet, bandeaux maladie et famille
+    abaissés de 2,5 à 2,2 et de 3,5 à 3,2 Smic dans la règle de 2024 et coefficient
+    maximal de la réduction générale abaissé de deux points, contre la règle de 2024
+    reconduite. Plus ou moins 25 % parce que : la réduction générale de cette population
+    sort de +10,7 % à +13,1 % des montants de la CCSS sur 2022-2024, le bandeau maladie
+    de +7,9 % à +9,9 %, le bandeau famille de +9,2 % à +12,2 %, des biais réguliers
+    qui passent dans le coût d''un déplacement du coefficient et des plafonds ; la
+    part du bandeau famille portée par les salaires de 2,5 à 3,5 Smic sort à +1,3
+    %, la densité des salaires autour des plafonds est donc juste, mais les plafonds
+    se déplacent dans des bandes étroites où 20 000 ménages ne placent que quelques
+    centaines de salariés, un bruit de quelques pour cent ; la population est vieillie
+    d''une année ; ni le plafond de la réduction générale fixé par décret ni la réintégration
+    de la prime de partage de la valeur ne sont portés, et ils tirent vers le bas.
+    Les biais du modèle tirent vers le haut : fenêtre symétrique, pronostic au-dessus.
+    Plancher de 200 M EUR.'
+note: ''
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: insee_constate
+  source: 'Insee, constaté : salaires par tête, D11 sur l''emploi intérieur salarié
+    (comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors tabac,
+    ensemble des ménages, France (BDM 001768695)'
+  de: 2024
+  vers: 2025
+  salaires:
+    '2025': 0.01770126845054376
+  prix:
+    '2025': 0.009000000000000001
+  facteur_salaires: 1.0177012684505438
+  facteur_prix: 1.009
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
+    revenu_non_salarie_annuel: wage
+moins:
+  scenario: plfss2025_art_6
+  mechanical_eur: 2427024523.419922
+principal_eur: -4732134723.2717285
