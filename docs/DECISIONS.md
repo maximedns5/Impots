@@ -44443,3 +44443,46 @@ l'est désormais, par le but 28 ; D-695 reste libre.
 page est celle de ses rapports » ; `site verifier`, « le site est celui des études » ;
 `ruff` sur `src`, `tests` et `scripts`, propre ; `test_etude` et `test_dependances`, 117
 verts. Aucun nombre ne change. La PR #134 visait `claude/but28` ; elle vise main.
+
+## D-700 — Le but 30 ouvert : les juges du passé, sur le triage de D-360 revu
+
+**La décision** (le propriétaire, 28 novembre : « ouvre le but suivant »). Le but 29 est
+mergé (PR #134, merge afc2d7b). Le premier but de `docs/BUT.md` qui n'est pas fait est
+celui que D-361 avait mis de côté, « lorsque tout est vérifié » : les juges du passé. La
+grille tient depuis D-521 (35 lignes sur 35 en 2024), et les buts 28 et 29 sont mergés. Il
+devient le but 30, sur `claude/but30`, parti de main (afc2d7b).
+
+**Les décisions de D-359 tiennent**, et le `/goal` est mis à leur lettre : les PLF et
+PLFSS de 2021 à 2025, pas de 2019 (le propriétaire, 9 novembre : « en commençant en
+2021 ») ; les articles de prestations entrent comme l'art. 74 (D-298) ; un rendement
+déjà connu de celui qui enregistre se note à part, comme une révision. Aucune évaluation
+préalable de 2021 à 2025 n'est dans `data/raw` ; seule celle du PLFSS 2026 y est (D-592),
+hors du but.
+
+**Pourquoi revoir le triage avant de chiffrer.** D-360 a trié les 531 articles sur le
+moteur du 9 novembre (0ad1622) : 9 chiffrables, 111 hors de sa structure, 16 hors de ses
+données. Depuis, `ReformSpec` a reçu trente-quatre boutons, entre autres les heures
+supplémentaires, les indexations, le Smic et le point d'indice, les pensions
+alimentaires, les intérêts d'emprunt, la réduction de loyer de solidarité, l'ARS, la
+PAJE, la CVEC, la garantie jeunes. Un article refusé en novembre pour un bouton absent
+peut être chiffrable aujourd'hui : c'est le deuxième chiffre de la règle de priorité, le
+nombre de cas notés.
+
+**Ce qui est fait ici, sans aucune ouverture de fiche.** Les dix textes de D-359 sont
+redécoupés par `scripts/decoupe_textes.py`, montants masqués, hors de git : 531 articles,
+le même compte que D-360. Les 127 articles « structure » ou « données » sont relus sur
+la consigne de D-360 (`docs/triage_retro/CONSIGNE.md`), sur le code d'afc2d7b, sans
+réseau ni `data/raw` ; les 395 articles « périmètre » ne sont pas relus, et les neuf
+chiffrables restent. Le triage revu s'écrit à côté de l'ancien, qui ne change pas.
+
+**L'ordre.** Le triage revu (D-701) ; le préenregistrement de chaque cas, tolérance,
+raison et pronostic, commité et poussé (D-702) ; l'ouverture des fiches et les passes, une
+à la fois ; les juges par décile de l'Insee et de la Drees, enregistrés avant d'être lus ;
+la loi d'erreur de la première année par famille d'instrument. Les numéros : D-700 à
+D-729.
+
+**Les limites, dites d'avance.** La fenêtre des années servies commence en 2022
+(`api/schemas.MIN_YEAR`) : les indexations des revenus 2020 et 2021 demandent de
+l'élargir, après vérification. La population ramenée en arrière garde sa structure de
+2024. L'aveugle est percé (D-360) : les relecteurs sont le même modèle que celui qui
+enregistre.

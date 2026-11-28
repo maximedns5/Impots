@@ -1460,7 +1460,7 @@ la Dares qui cale, ni la MECSS qui juge), la population refaite et la grille rep
 préenregistrées. (6) Le CICE et la prime de 2019 restent des juges, comptés à part. Le
 volet `suite` (`claude/but28-suite`) : D-551 à D-559.
 
-### But 29 — Ce qu'une mesure change pour les gens (décidé le 18 novembre 2026, D-590)
+### But 29 — Ce qu'une mesure change pour les gens (fait, D-590 à D-699 ; PR #134, merge afc2d7b)
 
 Le propriétaire, dans la nuit du 17 au 18 novembre : mesurer une proposition de candidat
 dans tout ce qu'elle peut toucher, et pas seulement dans les comptes : le pouvoir d'achat,
@@ -1510,7 +1510,15 @@ sur la page (D-640 à D-644), les territoires (D-645 à D-649), « En bref » et
 barème » (D-660 à D-664), la finition et le mode d'emploi (D-670 à D-674). La page et son
 usage : `docs/CE_QUE_CA_CHANGE.md`.
 
-### Mis de côté — Les juges du passé (D-359, D-360, D-361)
+### But 30 — Les juges du passé (ouvert le 28 novembre 2026, D-700 ; D-359 à D-361)
+
+Mis de côté le 9 novembre (D-361) « jusqu'à ce que tout soit vérifié » ; rouvert le 28
+novembre, à la demande du propriétaire, après la grille tenue (D-521) et les buts 28 et 29
+mergés. Les décisions de D-359 tiennent : on commence en 2021, les prestations entrent
+comme l'art. 74, un rendement déjà connu se note à part. Le triage de D-360 est revu sur
+le moteur d'aujourd'hui (D-700), puis les cas sont préenregistrés avant toute fiche.
+
+Ce qui suit est le texte de novembre, gardé tel quel.
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
 et il repose sur cinq cas : trois dans leur tolérance, des écarts de −22 % (les aides au
@@ -1533,7 +1541,7 @@ que l'audit du 8 novembre désigne comme la plus grande incertitude non publiée
 
 ```
 /goal Le modèle est noté sur assez de chiffrages officiels pour que la note veuille dire
-quelque chose, et c'est mergé dans main. Les PLF et PLFSS de 2019 à 2025 sont triés article
+quelque chose, et c'est mergé dans main. Les PLF et PLFSS de 2021 à 2025 sont triés article
 par article sur leur texte, avant toute ouverture de leurs évaluations préalables ; chaque
 article chiffrable sur la population de son année est préenregistré (cas, tolérance et sa
 raison, pronostic), commité et poussé, puis sa fiche est ouverte et il est noté. La
