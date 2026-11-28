@@ -44626,3 +44626,50 @@ fiches des PLF 2024 et 2025 : le coût officiel de leurs indexations. Ce n'est p
 rendement des cas 8 et 9, mais c'est une échelle : le coût d'un point d'indexation. Les
 tolérances, les raisons et les pronostics ci-dessus sont ceux de la préparation, inchangés
 après ce relevé. Les deux cas se comptent aveugles, avec cette réserve écrite sur chacun.
+
+## D-704 — Les fiches ouvertes : cinq cas sur six dans leur tolérance, l'aveugle compris
+
+**Ce qui a été fait.** Les fiches des sept cas de D-702 ont été ouvertes après le commit de
+leurs fiches du registre (657ae1b). Trois documents sont lus et manifestés : les
+évaluations préalables du PLF 2024 (n° 1680) et du PLF 2025 (n° 324), sur le site de
+l'Assemblée, et l'annexe 9 du PLFSS 2025, sur securite-sociale.fr (le fichier en ligne est
+daté du 27 novembre 2024). Les citations, les pages et le chiffre retenu de chaque cas sont
+dans `docs/triage_retro/fiches_b30.md`. Celle du PLF 2023 n'a pas pu être lue :
+budget.gouv.fr renvoie une page anti-robot au conteneur, et ni l'Assemblée ni le Sénat ne
+la lient. Le cas 1 attend son document ; il n'est noté sur aucun chiffre de presse. Les
+tolérances n'ont pas changé.
+
+**Les notes** (`chiffrage grade`, coût positif, gain négatif ; Md€) :
+
+| # | cas | simulé | publié | écart | toléré | verdict |
+|---|---|---|---|---|---|---|
+| 1 | `plf2023_art_2` | +6,453 | — | — | ±20 % | en attente du document |
+| 2 | `plf2024_art_2` | +6,003 | +6,1 | −1,6 % | ±15 % | **dans** |
+| 3 | `plf2025_art_2_budget2025` | +3,429 | +3,7 | −7,3 % | ±15 % | **dans** (aveugle) |
+| 4 | `plf2024_art_8` | −2,646 | −3,0 | +11,8 % | ±30 % | **dans** |
+| 5 | `plf2025_art_11` | −9,521 | −8,0 | −19,0 % | ±40 % | **dans** |
+| 6 | `plf2025_art_15` | −0,827 | −1,0 | +17,3 % | ±30 % | **dans** |
+| 7 | `plfss2025_art_6` | −7,159 | −5,1 | −40,4 % | ±25 % | **hors** |
+
+**Le cas 3, le seul aveugle,** est noté sur l'effet budgétaire de 2025, par la règle que
+D-702 a fixée avant l'ouverture : l'année pleine des revenus 2024 (+2,571 Md€) convertie
+par le calendrier du PAS (`chiffrage revise`, ×4/3). L'outil range la conversion parmi les
+révisions écrites après l'annexe ; par D-702, elle n'en est pas une, et le cas compte
+aveugle. Non converti, il serait à −30,5 %, hors : c'est la base, pas le modèle.
+
+**Les pronostics** tiennent pour les cas 2 à 6, et le sens annoncé aussi : en dessous pour
+2 et 3, en dessous du gain pour 4 et 6. Le cas 5 est au-dessus du gain, que le pronostic ne
+savait pas dire. **Le cas 7 manque**, du côté annoncé (au-dessus en valeur absolue), mais
+de quatre fois l'écart prévu : +40 % au lieu de +10 %. Ce qui pourrait l'expliquer, et qui
+n'est pas vérifié : la fiche ne compte que les régimes de base, alors que le moteur compte
+aussi la réduction générale sur les cotisations Agirc-Arrco et Unédic ; la réduction
+générale de la population est déjà à +11 à +13 % de la CCSS ; la loi d'avant est lue à
+2,4242 et 3,3939 Smic du 1er janvier 2025. Le cas reste noté hors. Sa décomposition par
+branche, contre les 2,7 (vieillesse) et 2,5 Md€ (maladie et famille) de la fiche, est une
+mesure à faire, pas une correction de tolérance.
+
+**Le compte.** Six cas notés, cinq dans leur tolérance ; un seul aveugle, dans. Avec les
+cinq cas d'avant le but (D-360), onze cas notés, dont huit dans leur tolérance. Les cas 8 et
+9 (D-703) attendent les fiches des PLF 2021 et 2022, à ouvrir ; le cas 1 attend celle du
+PLF 2023. Six des sept cas ont un rendement connu de mémoire (D-360) : leur note se lit à
+part.
