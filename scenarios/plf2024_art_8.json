@@ -1,0 +1,12 @@
+{
+  "name": "plf2024_art_8",
+  "year": 2024,
+  "created": "2026-11-28",
+  "source": "PLF 2024 (AN, texte n° 1680, XVIe législature), art. 8 — Aménagement de la suppression de la cotisation sur la valeur ajoutée des entreprises. Volet chiffré : le barème de la CVAE due au titre de 2024 (taux maximal 0,28 %, dégrèvement de 188 €), contre la suppression en 2024 que prévoyait la LF 2023. EN MIROIR (D-298, D-360) : l'arbre de 2024 porte le barème de l'article ; la réforme le met à zéro (cvae_echelle = 0, la loi d'avant), et l'article en est l'opposé.",
+  "note": "Réforme entreprises : la FirmReformSpec est {\"cvae_echelle\": 0.0}. Ne porte PAS : le plafonnement de la CET en fonction de la valeur ajoutée, la taxe additionnelle pour frais de chambres, la CFE, les années 2025 à 2027. Le coût est net du retour d'IS de la déductibilité (D-347). Millésime d'entreprises 2023, dont les impôts sont ceux de 2024 : aucun vieillissement.",
+  "tags": [],
+  "reform": {},
+  "firm_reform": {
+    "cvae_echelle": 0.0
+  }
+}

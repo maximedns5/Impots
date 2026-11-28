@@ -1,0 +1,36 @@
+{
+  "name": "plf2023_art_2",
+  "year": 2022,
+  "created": "2026-11-28",
+  "source": "PLF 2023 (AN, texte n° 273, XVIe législature), art. 2 — Indexation sur l'inflation du barème de l'impôt sur le revenu pour les revenus de 2022 et des grilles de taux par défaut du prélèvement à la source. Volet chiffré : l'indexation de 5,4 % des tranches (CGI 197, I, 1), des seuils de la décote (197, I, 4, a), du plafond général de la demi-part et du plafond du premier enfant d'un parent isolé (197, I, 2), revenus 2022. EN MIROIR (D-298, D-360) : l'arbre des revenus 2022 porte la loi votée, qui est l'article ; le scénario rétablit le barème des revenus 2021 non indexé, et l'article en est l'opposé.",
+  "note": "Le contrefactuel est lu dans l'arbre au 2021-01-01 : tranches 10 225, 26 070, 74 545, 160 336 € ; décote 790 et 1 307 € ; demi-part 1 592 € ; parent isolé 3 756 €. Le projet et la loi votée portent la même indexation (l'arbre au 2022-01-01 est le barème du projet, 10 777 / 27 478 / 78 570 / 168 994). Ne porte PAS : les plafonds de QF des cases L (951 €), de la réduction complémentaire (1 587 €) et des veufs (1 772 €), le 196 B, ni les grilles de taux par défaut du PAS. Population de 2024 ramenée à 2022 par les indices constatés de l'Insee (--vieillir insee_constate).",
+  "tags": [],
+  "reform": {
+    "ir_bareme": [
+      {
+        "threshold": 0.0,
+        "rate": 0.0
+      },
+      {
+        "threshold": 10225.0,
+        "rate": 0.11
+      },
+      {
+        "threshold": 26070.0,
+        "rate": 0.3
+      },
+      {
+        "threshold": 74545.0,
+        "rate": 0.41
+      },
+      {
+        "threshold": 160336.0,
+        "rate": 0.45
+      }
+    ],
+    "decote_seuil_celib": 790.0,
+    "decote_seuil_couple": 1307.0,
+    "plafond_qf_demi_part": 1592.0,
+    "plafond_qf_parent_isole": 3756.0
+  }
+}

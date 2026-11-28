@@ -1,0 +1,14 @@
+{
+  "name": "plfss2025_art_6_projet",
+  "year": 2025,
+  "created": "2026-11-28",
+  "source": "PLFSS 2025 (AN, texte n° 325, XVIIe législature), art. 6, III, 1° — l'écart entre le projet et la loi votée en 2025. Scénario direct, sans miroir : les bandeaux du projet (« 2,5 » remplacé par « 2,2 » et « 3,5 » par « 3,2 », dans la règle du décret de 2024 reconduite) et le coefficient maximal de la réduction générale abaissé de deux points (0,3034 et 0,2994), contre l'arbre de 2025 (2,25 et 3,3 Smic du 1er janvier 2025, 0,3234 et 0,3194). Complément de plfss2025_art_6 : la somme des deux est l'étape 2025 du projet contre la loi de 2024 reconduite.",
+  "note": "Les plafonds : la règle de 2024 (D. 241-1-2, décret n° 2023-1329) prend le plus haut de 2,5 Smic du 31 décembre 2023 et de 2 Smic courant ; le projet y remplace 2,5 par 2,2 et 3,5 par 3,2. Lus en Smic du 1er janvier 2025 (11,88 €), comme la formule de 2025 : 2,2 × 11,52 / 11,88 = 2,1333 et 3,2 × 11,52 / 11,88 = 3,1030, où le terme de 2 Smic courant ne mord pas. Variante, si le décret d'application avait pris le Smic courant : 2,2 et 3,2 (doute ouvert dans docs/triage_retro/preenregistrement_b30.md). Le coefficient de l'arbre passe à 0,3233 et 0,3193 au 1er mai 2025 ; le bouton écrit 0,3034 et 0,2994 dès janvier (écart de 0,0001 sur huit mois). Ne porte PAS : le plafond de la réduction générale fixé par décret entre 1,6 Smic du 1er janvier 2024 et 1,6 Smic courant (I), la réintégration de la prime de partage de la valeur. Ce n'est pas un cas noté seul : son usage dépend de la convention retenue.",
+  "tags": [],
+  "reform": {
+    "bandeau_maladie_plafond": 2.133333,
+    "bandeau_famille_plafond": 3.10303,
+    "allegement_general_taux_50_et_plus": 0.3034,
+    "allegement_general_taux_moins_de_50": 0.2994
+  }
+}

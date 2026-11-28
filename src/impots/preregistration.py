@@ -223,6 +223,14 @@ class Chiffrage:
     vieillissement: dict[str, Any] | None = None
     """How the population was aged to the case's year, and on which declared indices
     (D-317). None on every case written before."""
+    moins: dict[str, Any] | None = None
+    """The case is a DIFFERENCE of two scenarios priced on the same frame, sample and
+    ageing: `mechanical_eur` is the principal's figure minus this one's, and `moins` keeps
+    `{scenario, mechanical_eur}` of the scenario subtracted. A project priced against the
+    law before it, when the tree carries the law voted. None on every case written
+    before."""
+    principal_eur: float | None = None
+    """The principal scenario's own figure, on a difference case only."""
 
     def to_dict(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
@@ -251,6 +259,10 @@ class Chiffrage:
             payload["revision"] = dict(self.revision)
         if self.vieillissement is not None:
             payload["vieillissement"] = dict(self.vieillissement)
+        # Only on a difference: every case written before reads and writes back as it was.
+        if self.moins is not None:
+            payload["moins"] = dict(self.moins)
+            payload["principal_eur"] = self.principal_eur
         return payload
 
 
@@ -491,12 +503,22 @@ def load(case: str, directory: Path | None = None) -> Chiffrage:
             comparator=Comparator(**comparator) if comparator else None,
             revision=document.get("revision"),
             vieillissement=document.get("vieillissement"),
+            moins=_moins(document.get("moins")),
+            principal_eur=(None if document.get("principal_eur") is None
+                           else float(document["principal_eur"])),
         )
     except ChiffrageError:
         raise
     except (KeyError, TypeError, ValueError) as error:
         raise ChiffrageError(
             f"« {case} » est incomplet ou mal formé : {error!r}") from error
+
+
+def _moins(block: Any) -> dict[str, Any] | None:
+    if block is None:
+        return None
+    return {"scenario": str(block["scenario"]),
+            "mechanical_eur": float(block["mechanical_eur"])}
 
 
 def available(directory: Path | None = None) -> list[str]:
@@ -523,6 +545,7 @@ def register(
     mirror: bool = False,
     apres_annexe: str | None = None,
     vieillissement: dict[str, Any] | None = None,
+    moins: dict[str, Any] | None = None,
     directory: Path | None = None,
     now: str | None = None,
 ) -> Path:
@@ -531,6 +554,11 @@ def register(
     `apres_annexe` says why a NEW case is written after its annex was opened, and makes it
     a revision in D-292's sense: counted apart from the blind cases, never among them. It
     revises no earlier case (« de » is empty), and the reason is required (D-306).
+
+    `moins` — `{scenario, mechanical_eur}` — makes the case a DIFFERENCE: `mechanical_eur`
+    is then the principal scenario's figure, and the figure registered is that minus
+    `moins["mechanical_eur"]`, both kept in the file. Refused with `mirror`: which of the
+    two would be the reverse is not said.
 
     The timestamp is taken here, not passed by a caller: a pre-registration whose date its
     author chooses is not one. `now` exists so tests are deterministic and for no other
@@ -546,6 +574,19 @@ def register(
         raise ChiffrageError(
             f"« {case} » est écrit après l'annexe sans dire pourquoi : une révision dit sa "
             f"raison (D-292, D-306)")
+    principal_eur = None
+    if moins is not None:
+        if mirror:
+            raise ChiffrageError(
+                f"« {case} » : une différence de deux scénarios et un miroir à la fois — "
+                f"lequel des deux serait l'inverse de l'article ne se dit pas. Choisir.")
+        if scenario is None or not moins.get("scenario"):
+            raise ChiffrageError(
+                f"« {case} » : une différence nomme ses deux scénarios")
+        moins = {"scenario": str(moins["scenario"]),
+                 "mechanical_eur": float(moins["mechanical_eur"])}
+        principal_eur = float(mechanical_eur)
+        mechanical_eur = principal_eur - moins["mechanical_eur"]
     stamp = now or datetime.now(UTC).isoformat(timespec="seconds")
     chiffrage = Chiffrage(
         case=case, pre_registered=stamp, commit=head_commit(),
@@ -556,7 +597,7 @@ def register(
         bound=bound, mirror=mirror,
         revision=(None if apres_annexe is None else
                   {"de": None, "apres_annexe": True, "raison": apres_annexe}),
-        vieillissement=vieillissement,
+        vieillissement=vieillissement, moins=moins, principal_eur=principal_eur,
     )
     return save(chiffrage, directory)
 
@@ -573,6 +614,7 @@ def register_firm(
     facteur: float = 1.0,
     vieillissement: dict[str, Any] | None = None,
     apres_annexe: str | None = None,
+    mirror: bool = False,
     directory: Path | None = None,
 ) -> Path:
     """Price a FIRM reform over a firm population, and pre-register the figure.
@@ -583,6 +625,9 @@ def register_firm(
     `priceable_now`. There is no scenario file to point at, so the reform is recorded
     whole — chain, year, spec — and, as on the household side, the figure is computed
     here from the run and never handed in.
+
+    `mirror`, as on the household side: the figure registered is still the run's, and
+    `grade` turns it back, because the spec prices the article's reverse.
     """
     from impots.entreprises import aggregate as firm_aggregate
     from impots.entreprises import runner as firm_runner
@@ -600,8 +645,8 @@ def register_firm(
         population_vintage=population_vintage, sample="population complète",
         reform={"chaine": "entreprises", "annee": year,
                 "spec": spec.model_dump(exclude_none=True, mode="json")},
-        note=note, apres_annexe=apres_annexe, vieillissement=vieillissement,
-        directory=directory)
+        note=note, mirror=mirror, apres_annexe=apres_annexe,
+        vieillissement=vieillissement, directory=directory)
 
 
 def revise_to_budget_year(case: str, new_case: str, *, year: int, raison: str,

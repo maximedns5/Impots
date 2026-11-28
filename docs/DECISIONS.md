@@ -44526,3 +44526,64 @@ l'électricité) se chiffrerait contre le tarif de 2024 que l'arbre porte, qui e
 l'article a fixé : ce serait chiffrer le passage de 21 à 1 €/MWh, pas le texte ; il reste
 « structure ». La suppression de la CVAE (PLF 2023, art. 5) se chiffrerait sur 2024 contre
 un arbre qui porte la trajectoire votée plus tard ; elle reste « structure ».
+
+## D-702 — Les sept cas servis aujourd'hui, préenregistrés avant toute passe
+
+**Ce qui est fixé ici, avant toute passe et toute ouverture de fiche** (le propriétaire,
+28 novembre : préenregistrer d'abord les cas que le moteur sert, puis dater le moteur en
+arrière). Les sept chiffrables de D-360 dont l'année est servie (2022 et après). Les
+indexations des revenus 2020 et 2021 (PLF 2021 et 2022, art. 2) attendent la fenêtre. Le
+texte entier de chaque cas, sa construction, sa raison et sa commande, est dans
+`docs/triage_retro/preenregistrement_b30.md`, commité avec cette entrée ; les raisons R1 à
+R7 y sont celles que les commandes écrivent dans les fiches du registre.
+
+| # | cas | année | construction | tolérance | pronostic |
+|---|---|---|---|---|---|
+| 1 | `plf2023_art_2` | rev. 2022 | miroir, ramenée | ±20 %, 200 M€ | dans, sens inconnu |
+| 2 | `plf2024_art_2` | rev. 2023 | miroir, ramenée | ±15 %, 200 M€ | dans, près de zéro |
+| 3 | `plf2025_art_2` | rev. 2024 | projet moins gel | ±15 %, 200 M€ | dans, en dessous |
+| 4 | `plf2024_art_8` | 2024 | miroir | ±30 %, 200 M€ | dans, en dessous |
+| 5 | `plf2025_art_11` | ex. 2024 | direct | ±40 %, 300 M€ | dans, sens inconnu |
+| 6 | `plf2025_art_15` | 2025 | direct, vieillie | ±30 %, 100 M€ | dans, en dessous |
+| 7 | `plfss2025_art_6` | 2025 | projet moins 2024 | ±25 %, 200 M€ | dans, au-dessus |
+
+Les cas 1 à 3 et 7 sont des ménages (20 000), les cas 4 à 6 des entreprises (population
+complète du millésime 2023). « Ramenée » : la population de 2024 ramenée à l'année par les
+indices constatés de l'Insee (`--vieillir insee_constate`), sa structure gardée.
+
+**Les choix, faits par le coordinateur et dits d'avance.**
+
+* **Le projet contre la loi d'avant** (cas 3 et 7). L'arbre porte la loi votée, qui
+  diffère du projet : 1,8 % au lieu de 2 % pour l'indexation de 2025 ; ni la baisse de deux
+  points du coefficient, ni toute l'ampleur des plafonds pour les allègements. Le miroir de
+  la loi votée (D-360) jugerait l'écart entre le projet et la loi, pas le modèle. Le cas
+  est donc la différence de deux passes sur les mêmes ménages : le projet contre la loi
+  votée, moins la loi d'avant contre la loi votée (`chiffrage register --moins`, ajouté
+  ici). C'est ce que l'annexe chiffre.
+* **Le miroir des entreprises** (cas 4). La CVAE de 2024 est l'article ; la loi d'avant la
+  supprimait. `register-entreprises` reçoit `--mirror`, que la notation lit comme côté
+  ménages (D-298).
+* **La règle de base des indexations** (cas 1 à 3). Le moteur chiffre l'année pleine des
+  revenus. Si la fiche publie l'effet budgétaire de la première année, le cas est noté sur
+  cette base, converti par le calendrier du PAS (`pas.budget_effects`, l'année pleine
+  tenue constante, D-292). La règle est fixée ici, avant l'ouverture : la conversion n'est
+  pas une révision, et le cas 3 reste aveugle. Pour le cas 3, une différence, la
+  conversion porte sur le chiffre enregistré ; ses deux termes restent en année pleine.
+* **La loi d'avant des allègements** (cas 7) est la règle de 2024 reconduite, lue en Smic du
+  1er janvier 2025 : 2,4242 et 3,3939 Smic, puis 2,1333 et 3,1030 pour le projet. Une
+  fiche qui lirait 2,5 et 3,5 Smic courants déplacerait la bande d'environ 3 % ; cet écart
+  est dit, pas corrigé.
+* **Net du retour d'IS** (cas 4 et 6), comme le moteur (D-347). Une fiche brute le dit
+  dans le champ `net_of` du comparateur, et le pronostic glisse vers le bas.
+* **20 000 ménages partout**, cas 7 compris : le bruit des bandes étroites est dans sa
+  tolérance.
+
+**L'aveugle, compté d'avance.** Un seul cas est aveugle, le cas 3. Les six autres ont un
+rendement connu de mémoire (D-360) ; ils se notent à part, comme des révisions, et le
+rapport les sépare. Le cas 5 l'est deux fois : la préparation a lu le début de
+`chiffrages_preregistres/plf2027_art_15.yaml`, dont la raison cite le rendement du premier
+exercice voté de la CEBGE (2025). Sa tolérance ne s'appuie pas sur ce chiffre.
+
+**Ce qui ne bouge plus.** Les tolérances, leurs raisons et les constructions ci-dessus. Les
+passes se lancent après le commit et le push de cette entrée, une à la fois ; les fiches
+s'ouvrent après le commit des fiches du registre. Un cas qui manque reste noté.

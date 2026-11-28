@@ -1,0 +1,25 @@
+{
+  "name": "plf2025_art_11",
+  "year": 2024,
+  "created": "2026-11-28",
+  "source": "PLF 2025 (AN, texte n° 324, XVIIe législature), art. 11 — Instauration d'une contribution exceptionnelle sur les bénéfices des grandes entreprises. Volet chiffré : le premier exercice (IV de l'article, exercice clos le 31 décembre 2024 d'une entreprise calendaire), à 20,6 % de 1 à 3 Md€ de chiffre d'affaires et 41,2 % au-delà, bandes de lissage de 100 M€. Direct : l'arbre de 2024 n'a pas de CEBGE, ce qui est la loi d'avant ; la contribution est créée (cebge_prorogation_largeur).",
+  "note": "Réforme entreprises : la FirmReformSpec est la firm_reform ci-dessous. Ne porte PAS : le second exercice (10,3 % et 20,6 %), que l'arbre de 2025 porte autrement (la CEBGE votée) ; l'intégration fiscale (le seuil se lit sur le chiffre d'affaires de chaque entreprise de la population, pas du groupe). La base est la moyenne de l'IS de deux exercices, prise stationnaire (D-022). Millésime d'entreprises 2023, dont les impôts sont ceux de 2024 : aucun vieillissement.",
+  "tags": [],
+  "reform": {},
+  "firm_reform": {
+    "cebge_seuils_et_taux": [
+      {
+        "seuil_ca": 1000000000.0,
+        "taux": 0.206
+      },
+      {
+        "seuil_ca": 3000000000.0,
+        "taux": 0.412
+      }
+    ],
+    "cebge_prorogation_largeur": 100000000.0
+  },
+  "annees": [
+    2024
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "plf2025_art_15",
+  "year": 2025,
+  "created": "2026-11-28",
+  "source": "PLF 2025 (AN, texte n° 324, XVIIe législature), art. 15 — Report de trois ans de la suppression progressive de la CVAE. Volet chiffré : le barème de la CVAE due au titre de 2025 ramené à celui de 2024 (taux maximal 0,28 % au lieu de 0,19 %). Direct : l'arbre de 2025 porte la trajectoire de la LF 2024 (0,19 %, dégrèvement de 125 €), la loi d'avant ; cvae_echelle = 0,28 / 0,19.",
+  "note": "Réforme entreprises : {\"cvae_echelle\": 1.473684}. L'échelle est le rapport des taux maximaux ; la loi relève les pentes de 1,46 à 1,50 et le dégrèvement de 1,504, d'où un écart de un à deux pour cent sur les petites tranches. Seul 2025 : en 2026 et 2027 l'arbre porte déjà le report voté. Ne porte PAS : le report du plafonnement de la CET en fonction de la valeur ajoutée, la taxe additionnelle pour CCI France, la CFE. Le coût est net du retour d'IS (D-347). Millésime d'entreprises 2023 (impôts de 2024) vieilli à 2025 par le PIB nominal des comptes (--vieillir insee_constate).",
+  "tags": [],
+  "reform": {},
+  "firm_reform": {
+    "cvae_echelle": 1.473684
+  },
+  "annees": [
+    2025
+  ]
+}

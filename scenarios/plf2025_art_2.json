@@ -1,0 +1,36 @@
+{
+  "name": "plf2025_art_2",
+  "year": 2024,
+  "created": "2026-11-28",
+  "source": "PLF 2025 (AN, texte n° 324, XVIIe législature), art. 2 — Indexation sur l'inflation du barème de l'impôt sur le revenu pour les revenus de 2024 et des grilles du prélèvement à la source. Volet chiffré : l'indexation des tranches, des seuils de la décote, du plafond général de la demi-part et du plafond du premier enfant d'un parent isolé, revenus 2024. EN MIROIR (D-298, D-360) : l'arbre des revenus 2024 porte la loi votée, une indexation de 1,8 %, et non les 2 % du projet ; le scénario rétablit le barème des revenus 2023 non indexé, et l'article voté en est l'opposé.",
+  "note": "Le contrefactuel est lu dans l'arbre au 2023-01-01 : tranches 11 294, 28 797, 82 341, 177 106 € ; décote 873 et 1 444 € ; demi-part 1 759 € ; parent isolé 4 149 €. Ce cas mesure l'indexation VOTÉE (1,8 % : 11 497 / 29 315 / 83 823 / 180 294), pas celle du projet (2 % : 11 520 / 29 373 / 83 988 / 180 648) ; l'écart des 0,2 point est le scénario plf2025_art_2_projet, à part. Ne porte PAS : les plafonds de QF des cases L, des invalides et des veufs, le 196 B, ni les grilles du PAS. Population de 2024, l'année du cas : aucun vieillissement.",
+  "tags": [],
+  "reform": {
+    "ir_bareme": [
+      {
+        "threshold": 0.0,
+        "rate": 0.0
+      },
+      {
+        "threshold": 11294.0,
+        "rate": 0.11
+      },
+      {
+        "threshold": 28797.0,
+        "rate": 0.3
+      },
+      {
+        "threshold": 82341.0,
+        "rate": 0.41
+      },
+      {
+        "threshold": 177106.0,
+        "rate": 0.45
+      }
+    ],
+    "decote_seuil_celib": 873.0,
+    "decote_seuil_couple": 1444.0,
+    "plafond_qf_demi_part": 1759.0,
+    "plafond_qf_parent_isole": 4149.0
+  }
+}

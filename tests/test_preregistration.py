@@ -459,6 +459,91 @@ def test_the_register_command_carries_the_mirror_flag(tmp_path, monkeypatch):
     assert ch.load("miroir", tmp_path).mirror is True
 
 
+def _register_cli(tmp_path, monkeypatch, *extra, years=None, prices=None):
+    """The register command on a test frame, with the pricing stubbed per scenario: what
+    it records is what the command does with the two figures, not the engine's."""
+    import polars as pl
+
+    from impots import scenarios
+    from impots.population import cli
+
+    years = years or {}
+    prices = prices if prices is not None else {}
+    seen = []
+    pl.DataFrame({"x": [1]}).write_parquet(tmp_path / "population_2024.parquet")
+    monkeypatch.setattr(cli, "PROCESSED", tmp_path)
+    monkeypatch.setattr(scenarios, "load",
+                        lambda name: SimpleNamespace(name=name, year=years.get(name, 2024)))
+
+    def price(scenario, frame, households, **kw):
+        seen.append((scenario.name, frame, households, kw))
+        return {"mechanical": prices[scenario.name]}
+
+    monkeypatch.setattr(scenarios, "mechanical_price", price)
+    monkeypatch.setattr(ch, "head_commit", lambda: "abc1234")
+    args = cli.build_parser().parse_args([
+        "chiffrage", "register", "difference", "--scenario", "projet",
+        "--tolerance-relative", "0.3", "--tolerance-absolute", "1e7",
+        "--tolerance-rationale", "essai", "--sample", "500", "--dir", str(tmp_path / "cas"),
+        *extra])
+    return args.func(args), seen
+
+
+def test_the_register_command_records_the_difference_of_two_scenarios(tmp_path,
+                                                                      monkeypatch):
+    """`--moins`: the project against the freeze, when the tree carries the law voted, is
+    (project − voted) − (freeze − voted). The figure registered is exactly that, both
+    terms are kept, and both were priced on the same frame, sample and ageing. Fails if
+    the subtraction is inverted, if only the principal is registered, or if the trace is
+    lost on save or load."""
+    code, seen = _register_cli(tmp_path, monkeypatch, "--moins", "gel",
+                               prices={"projet": 1.25e9, "gel": 0.4e9})
+    assert code == 0
+    case = ch.load("difference", tmp_path / "cas")
+    assert case.mechanical_eur == 1.25e9 - 0.4e9
+    assert case.principal_eur == 1.25e9
+    assert case.moins == {"scenario": "gel", "mechanical_eur": 0.4e9}
+    assert case.scenario == "projet" and case.mirror is False
+    assert [name for name, *_ in seen] == ["projet", "gel"]
+    (_, frame_a, sample_a, kw_a), (_, frame_b, sample_b, kw_b) = seen
+    assert frame_a is frame_b and sample_a == sample_b == 500 and kw_a == kw_b
+
+
+def test_a_case_without_moins_writes_no_trace_of_one(tmp_path, monkeypatch):
+    """The field is optional: a case registered as before writes and reads as before."""
+    monkeypatch.setattr(ch, "head_commit", lambda: "abc1234")
+    path = ch.register("seul", mechanical_eur=1.0e9, tolerance=TOLERANCE,
+                       population_vintage="2024", sample=1, scenario="s",
+                       directory=tmp_path)
+    text = path.read_text(encoding="utf-8")
+    assert "moins" not in text and "principal_eur" not in text
+    back = ch.load("seul", tmp_path)
+    assert back.moins is None and back.principal_eur is None
+
+
+def test_moins_with_mirror_is_refused(tmp_path, monkeypatch, capsys):
+    """Which of the two scenarios would be the article's reverse is not said."""
+    code, seen = _register_cli(tmp_path, monkeypatch, "--moins", "gel", "--mirror",
+                               prices={"projet": 1.0e9, "gel": 0.5e9})
+    assert code == 1 and seen == []
+    assert "--mirror" in capsys.readouterr().err
+    assert not (tmp_path / "cas").exists()
+    with pytest.raises(ch.ChiffrageError, match="miroir"):
+        ch.register("x", mechanical_eur=1.0e9, tolerance=TOLERANCE,
+                    population_vintage="2024", sample=1, scenario="s", mirror=True,
+                    moins={"scenario": "t", "mechanical_eur": 0.0}, directory=tmp_path)
+
+
+def test_moins_on_a_scenario_of_another_year_is_refused(tmp_path, monkeypatch, capsys):
+    """Two years' difference mixes two laws and two populations."""
+    code, seen = _register_cli(tmp_path, monkeypatch, "--moins", "gel",
+                               years={"projet": 2024, "gel": 2025},
+                               prices={"projet": 1.0e9, "gel": 0.5e9})
+    assert code == 1 and seen == []
+    assert "même année" in capsys.readouterr().err
+    assert not (tmp_path / "cas").exists()
+
+
 def test_saving_refuses_to_write_through_a_planted_link(tmp_path):
     """Same defect, same fix as scenarios (D-173): `exists()` is False for a dangling
     link, and `write_text` follows it out of the directory."""

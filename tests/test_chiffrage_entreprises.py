@@ -136,3 +136,49 @@ def test_the_cli_refuses_a_reform_file_that_is_not_a_firm_reform(tmp_path, monke
 
     assert _cli(tmp_path, reform_file) == 1
     assert "decote_taux" in capsys.readouterr().err
+
+
+def test_a_firm_mirror_case_keeps_the_run_s_figure_and_is_graded_turned_back(
+        tmp_path, monkeypatch, fixture_firms) -> None:
+    """The household path knew `mirror` and the firm path did not: an article whose end
+    state the tree already carries could only be registered as its reverse, and graded as
+    the reverse. The figure in the file stays the run's; `grade` turns it back. Fails if
+    `register_firm` drops the flag, or if it negates the figure itself (then the grade
+    would turn it back a second time)."""
+    from dataclasses import replace
+
+    from impots.entreprises import aggregate, runner
+
+    monkeypatch.setattr(ch, "head_commit", lambda: "abc1234")
+    spec = FirmReformSpec.model_validate(PROROGATION_2027)
+    path = ch.register_firm("plf2027_miroir", spec=spec, year=2027, frame=fixture_firms,
+                            tolerance=_tolerance(), population_vintage="entreprises-fixture",
+                            mirror=True, directory=tmp_path)
+    assert "mirror: true" in path.read_text(encoding="utf-8")
+
+    run = aggregate.aggregate(
+        runner.run(fixture_firms, year=2027, reform=spec).firms).reform_cost
+    case = ch.load("plf2027_miroir", tmp_path)
+    assert case.mirror is True
+    assert case.mechanical_eur == pytest.approx(run)
+
+    comparator = ch.Comparator(
+        published_eur=-run, source="essai", vintage="PLF 2027", perimeter="État",
+        net_of="brut", sign="yield" if -run < 0 else "cost", basis="annee-pleine")
+    verdict = ch.grade(replace(case, comparator=comparator))
+    assert verdict.simulated_eur == pytest.approx(-run)
+    assert verdict.gap_eur == pytest.approx(0.0)
+    assert verdict.verdict == "within"
+
+
+def test_the_firm_cli_carries_the_mirror_flag(tmp_path, monkeypatch, fixture_firms) -> None:
+    import impots.entreprises.build as firm_build
+
+    monkeypatch.setattr(firm_build, "PROCESSED", tmp_path)
+    monkeypatch.setattr(ch, "head_commit", lambda: "abc1234")
+    _population_on_disk(tmp_path, fixture_firms, synthetic=False)
+    reform_file = tmp_path / "reforme.json"
+    reform_file.write_text(json.dumps(PROROGATION_2027), encoding="utf-8")
+
+    assert _cli(tmp_path, reform_file, "--mirror") == 0
+    assert ch.load("plf2027_art_15_cli", tmp_path / "cas").mirror is True

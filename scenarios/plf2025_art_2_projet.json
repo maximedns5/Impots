@@ -1,0 +1,36 @@
+{
+  "name": "plf2025_art_2_projet",
+  "year": 2024,
+  "created": "2026-11-28",
+  "source": "PLF 2025 (AN, texte n° 324, XVIIe législature), art. 2 — l'écart entre le projet (indexation de 2 %) et la loi votée (1,8 %), que l'arbre des revenus 2024 porte. Scénario direct, sans miroir : le barème, la décote et les deux plafonds de QF du projet, contre la loi votée. Complément de plf2025_art_2 : la somme des deux est l'indexation du projet contre le barème gelé.",
+  "note": "Tranches 11 520, 29 373, 83 988, 180 648 € ; décote 890 et 1 473 € ; demi-part 1 794 € ; parent isolé 4 232 € (texte du projet, I, A et B). Ce n'est pas un cas noté seul : son usage dépend de la convention retenue pour l'art. 2 du PLF 2025 (docs/triage_retro/preenregistrement_b30.md).",
+  "tags": [],
+  "reform": {
+    "ir_bareme": [
+      {
+        "threshold": 0.0,
+        "rate": 0.0
+      },
+      {
+        "threshold": 11520.0,
+        "rate": 0.11
+      },
+      {
+        "threshold": 29373.0,
+        "rate": 0.3
+      },
+      {
+        "threshold": 83988.0,
+        "rate": 0.41
+      },
+      {
+        "threshold": 180648.0,
+        "rate": 0.45
+      }
+    ],
+    "decote_seuil_celib": 890.0,
+    "decote_seuil_couple": 1473.0,
+    "plafond_qf_demi_part": 1794.0,
+    "plafond_qf_parent_isole": 4232.0
+  }
+}

@@ -1233,10 +1233,20 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
         return 1
 
     directory = Path(args.dir) if args.dir else None
+    if args.moins is not None and args.mirror:
+        print("refusé : --moins et --mirror ensemble — lequel des deux scénarios serait "
+              "l'inverse de l'article ne se dit pas. Choisir.", file=sys.stderr)
+        return 1
     try:
         scenario = scenarios_module.load(args.scenario)
+        moins = None if args.moins is None else scenarios_module.load(args.moins)
     except scenarios_module.ScenarioError as error:
         print(str(error), file=sys.stderr)
+        return 1
+    if moins is not None and moins.year != scenario.year:
+        print(f"refusé : « {args.scenario} » est de {scenario.year} et « {args.moins} » de "
+              f"{moins.year} : une différence se fait sur la même année, sinon elle mêle "
+              f"deux droits et deux populations.", file=sys.stderr)
         return 1
 
     population = PROCESSED / f"population_{args.vintage}.parquet"
@@ -1275,6 +1285,15 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
     priced = scenarios_module.mechanical_price(
         scenario, frame=frame, households=args.sample, prix_au_dela=prix_au_dela,
         menages_facteurs=menages_facteurs, capital_index=capital_index)
+    retranche = None
+    if moins is not None:
+        # The same frame, sample and ageing: the difference is the two laws', and
+        # nothing else's.
+        print(f"  moins « {args.moins} », sur le même cadre…", flush=True)
+        moins_priced = scenarios_module.mechanical_price(
+            moins, frame=frame, households=args.sample, prix_au_dela=prix_au_dela,
+            menages_facteurs=menages_facteurs, capital_index=capital_index)
+        retranche = {"scenario": args.moins, "mechanical_eur": moins_priced["mechanical"]}
 
     try:
         path = chiffrages_module.register(
@@ -1282,13 +1301,19 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
             population_vintage=args.vintage, sample=args.sample,
             scenario=args.scenario, note=args.note or "", mirror=args.mirror,
             apres_annexe=args.apres_annexe, vieillissement=vieillissement,
-            directory=directory)
+            moins=retranche, directory=directory)
     except chiffrages_module.ChiffrageError as error:
         print(str(error), file=sys.stderr)
         return 1
 
     print(f"préenregistré {path}")
-    print(f"  mécanique {priced['mechanical'] / 1e9:+.3f} md EUR")
+    if retranche is not None:
+        print(f"  « {args.scenario} » {priced['mechanical'] / 1e9:+.3f} md EUR, "
+              f"« {args.moins} » {retranche['mechanical_eur'] / 1e9:+.3f} md EUR")
+        print(f"  mécanique (différence) "
+              f"{(priced['mechanical'] - retranche['mechanical_eur']) / 1e9:+.3f} md EUR")
+    else:
+        print(f"  mécanique {priced['mechanical'] / 1e9:+.3f} md EUR")
     print(f"  toléré {tolerance.relative:.0%} ou "
           f"{tolerance.absolute_eur / 1e6:.0f} M EUR, au choix du plus large")
     print("\n  CE FICHIER N'EST PAS ENCORE UN PRÉENREGISTREMENT : le commit l'est.")
@@ -1367,7 +1392,7 @@ def cmd_chiffrage_register_entreprises(args: argparse.Namespace) -> int:
             args.case, spec=spec, year=args.year, frame=pl.read_parquet(population),
             tolerance=tolerance, population_vintage=f"entreprises-{args.vintage}",
             note=args.note or "", facteur=facteur, vieillissement=vieillissement,
-            apres_annexe=args.apres_annexe,
+            apres_annexe=args.apres_annexe, mirror=args.mirror,
             directory=Path(args.dir) if args.dir else None)
     except chiffrages_module.ChiffrageError as error:
         print(str(error), file=sys.stderr)
@@ -2505,6 +2530,11 @@ def build_parser() -> argparse.ArgumentParser:
                            help="the scenario prices the article's REVERSE, because the "
                                 "tree already carries its end state; graded turned back "
                                 "(D-298)")
+    registrar.add_argument("--moins", metavar="SCENARIO", default=None,
+                           help="register the DIFFERENCE: the scenario minus this one, "
+                                "priced on the same frame, sample and ageing — a project "
+                                "against the law before it, when the tree carries the law "
+                                "voted; same year, and not with --mirror")
     registrar.add_argument("--apres-annexe", metavar="RAISON", default=None,
                            help="a new case written after its annex was opened: a revision "
                                 "in D-292's sense, counted apart from the blind cases, with "
@@ -2531,6 +2561,10 @@ def build_parser() -> argparse.ArgumentParser:
                                 help="why THIS tolerance, stated before the answer is known")
     firm_registrar.add_argument("--vintage", type=millesime, default="2023")
     firm_registrar.add_argument("--note", default="")
+    firm_registrar.add_argument("--mirror", action="store_true",
+                                help="the reform prices the article's REVERSE, because "
+                                     "the tree already carries its end state; the run's "
+                                     "figure is registered and graded turned back (D-298)")
     firm_registrar.add_argument("--apres-annexe", metavar="RAISON", default=None,
                                 help="a revision written after the annex was opened (D-292)")
     firm_registrar.add_argument("--vieillir", metavar="JEU", default=None,

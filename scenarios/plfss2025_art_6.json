@@ -1,0 +1,12 @@
+{
+  "name": "plfss2025_art_6",
+  "year": 2025,
+  "created": "2026-11-28",
+  "source": "PLFSS 2025 (AN, texte n° 325, XVIIe législature), art. 6 — Réforme des allègements généraux de cotisations patronales. Volet chiffré : l'étape du 1er janvier 2025 telle que la LFSS 2025 l'a votée, que l'arbre de 2025 porte (bandeau maladie à 2,25 Smic, bandeau famille à 3,3 Smic, en Smic du 1er janvier 2025 ; coefficient de la réduction générale inchangé). EN MIROIR (D-298, D-360) : le scénario rétablit la règle de 2024 reconduite, et la loi votée en est l'opposé.",
+  "note": "La règle de 2024 (arbre au 2024-01-01) : max(2 Smic courant, 2,5 Smic du 31 décembre 2023) pour le bandeau maladie, max(2 Smic courant, 3,5 Smic du 31 décembre 2023) pour le bandeau famille. La formule de 2025 lit le plafond en Smic du 1er janvier 2025 (11,88 €) : 2,5 × 11,52 / 11,88 = 2,4242 et 3,5 × 11,52 / 11,88 = 3,3939, où le terme de 2 Smic courant ne mord pas (le Smic est de 11,88 € toute l'année 2025). Ce cas mesure la loi VOTÉE, pas le projet (2,2 et 3,2 Smic, coefficient maximal abaissé de deux points) ; l'écart est le scénario plfss2025_art_6_projet, à part. Ne porte PAS : la réintégration de la prime de partage de la valeur, le plafond fixé par décret, la refonte de 2026. Population de 2024 vieillie à 2025 par les indices constatés de l'Insee (--vieillir insee_constate).",
+  "tags": [],
+  "reform": {
+    "bandeau_maladie_plafond": 2.424242,
+    "bandeau_famille_plafond": 3.393939
+  }
+}
